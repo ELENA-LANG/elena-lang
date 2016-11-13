@@ -190,29 +190,9 @@
 [
     // class ( method ( message = print code ( expression ( symbol = system'console message = writeLine literal = "Hello World" ) ) ) )
     
-    // 2, %"tapeOp.var[]" open&class open&method new&messageToken "print" open&code open&expression new&symbolToken "system'console" new&messageToken "writeLine" new&literalToken "Hello World" close close close
+    #var factory := scriptEngine eval &path:"~\scripts\test.es".
     
-//    #var factory := Tape(
-//        "Hello World", 
-//        "writeLine", 
-//        "system'console", 
-//        "print",
-//        2, %"tapeOp.var[]",
-//        %"open&class[0]", 
-//        %"open&method[0]", 
-//        %"new&messageToken[1]",
-//        %"open&code[0]",
-//        %"open&expression[0]",
-//        %"new&symbolToken[1]",
-//        %"new&messageToken[1]",
-//        %"new&literalToken[1]",
-//        %"close[0]",
-//        %"close[0]",
-//        %"close[0]").
-//    
-//    #var obj := factory eval:(Library new) new.
-//    
-//    obj eval&print.
-
-    scriptEngine eval &path:"~\scripts\test.es".
+    #var obj := factory eval:(Library new) new.
+    
+    obj eval&print.
 ].

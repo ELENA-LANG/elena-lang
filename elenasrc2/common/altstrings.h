@@ -50,7 +50,7 @@ public:
    static void move(wchar_t* s1, const wchar_t* s2, size_t length);
    static void append(char* dest, const char* sour, size_t length);
    static void append(wide_c* dest, const wide_c* sour, size_t length);
-   static void insert(char* s, int pos, const char* subs);
+   static void insert(char* s, int pos, int length, const char* subs);
 
    static char* lower(char* s);
    static wchar_t* lower(wide_c* s);
@@ -315,7 +315,12 @@ public:
 
    void insert(const T* s, size_t index)
    {
-      StrHelper::insert(_string, index, s);
+      StrHelper::insert(_string, index, getlength(s), s);
+   }
+
+   void insert(const T* s, size_t index, int length)
+   {
+      StrHelper::insert(_string, index, length, s);
    }
 
    void append(const T* s, size_t length)

@@ -3521,6 +3521,12 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       case SET_MESSAGE_ID:
          immOp = true;
          break;
+      case APPEND_MESSAGE_ID:
+      case REDUCE_MESSAGE_ID:
+      case INCREASE_MESSAGE_ID:
+         immOp = true;
+         break;
+
    }
 
    SNode larg;

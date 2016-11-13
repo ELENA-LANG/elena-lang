@@ -1503,10 +1503,8 @@ void StrHelper :: append(wide_c* dest, const wide_c* sour, size_t length)
    ::append(dest, sour, length);
 }
 
-void StrHelper :: insert(char* s, int pos, const char* subs)
+void StrHelper :: insert(char* s, int pos, int len, const char* subs)
 {
-   size_t len = getlength(subs);
-
    //s[getlength(s) + len + 1] = 0;
    for (int i = getlength(s); i >= pos; i--) {
       s[i + len] = s[i];

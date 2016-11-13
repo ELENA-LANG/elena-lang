@@ -22,10 +22,14 @@ class InlineScriptParser : public _Parser
 
    //void writeSubject(TapeWriter& writer, ident_t message);
    bool writeObject(TapeWriter& writer, char state, ident_t token);
+   bool parseMessage(ident_t message, IdentifierString& reference, int paramCounter);
    bool writeMessage(TapeWriter& writer, ident_t message, int paramCounter, int command);
+   bool writeExtension(TapeWriter& writer, ident_t message, int paramCounter, int command);
+   bool insertMessage(TapeWriter& writer, int bookmark, ident_t message, int paramCounter, int command);
+   bool insertExtension(TapeWriter& writer, int bookmark, ident_t message, int paramCounter, int command);
    bool insertObject(TapeWriter& writer, int bookmark, char state, ident_t token);
    void parseArray(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
-   int parseExpression(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
+   int parseExpression(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer, int bookmark);
    int parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 
 public:

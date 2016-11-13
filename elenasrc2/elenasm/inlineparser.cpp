@@ -188,26 +188,8 @@ bool InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
    return true;
 }
 
-bool InlineScriptParser :: writeMessage(TapeWriter& writer, ident_t message, int paramCounter, int command)
+bool InlineScriptParser :: parseMessage(ident_t message, IdentifierString& reference, int paramCounter)
 {
-   IdentifierString reference;
-
-   int verb_id = 0;
-
-   int subjPos = message.find('&');
-
-   if (subjPos != -1) {
-      reference.copy(message, subjPos);
-      message += subjPos + 1;
-
-      verb_id = mapVerb(reference);
-   }
-   else {
-      verb_id = mapVerb(message);
-      if (verb_id != 0)
-         message = NULL;
-   }
-
    int length = getlength(message);
    if (paramCounter == -1) {
       length = message.find('[');
@@ -215,13 +197,33 @@ bool InlineScriptParser :: writeMessage(TapeWriter& writer, ident_t message, int
          reference.copy(message + length + 1);
          if (reference[reference.Length() - 1] == ']') {
             reference.truncate(reference.Length() - 1);
-
-            paramCounter = reference.ident().toInt();
+            if (emptystr(reference)) {
+               paramCounter = 12;
+            }
+            else paramCounter = reference.ident().toInt();
 
          }
          else return false;
       }
       else return false;
+   }
+
+   int verb_id = 0;
+   int subjPos = message.find('&');
+   if (subjPos != -1) {
+      reference.copy(message, subjPos);
+      verb_id = mapVerb(reference);
+      if (verb_id != 0) {
+         message += subjPos + 1;
+         length -= subjPos + 1;
+      }         
+   }
+   else {
+      reference.copy(message, length);
+
+      verb_id = mapVerb(reference);
+      if (verb_id != 0)
+         message = NULL;
    }
 
    if (verb_id == 0)
@@ -236,22 +238,75 @@ bool InlineScriptParser :: writeMessage(TapeWriter& writer, ident_t message, int
       reference.append(message, length);
    }
 
-   writer.writeCommand(command, reference);
-
    return true;
 }
 
-int InlineScriptParser :: parseExpression(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer)
+bool InlineScriptParser :: writeMessage(TapeWriter& writer, ident_t message, int paramCounter, int command)
+{
+   IdentifierString reference;
+
+   if (parseMessage(message, reference, paramCounter)) {
+      writer.writeCommand(command, reference);
+
+      return true;
+   }
+   else return false;
+}
+
+bool InlineScriptParser :: insertMessage(TapeWriter& writer, int bookmark, ident_t message, int paramCounter, int command)
+{
+   IdentifierString reference;
+
+   if (parseMessage(message, reference, paramCounter)) {
+      writer.insertCommand(bookmark, command, reference);
+
+      return true;
+   }
+   else return false;
+}
+
+bool InlineScriptParser :: writeExtension(TapeWriter& writer, ident_t message, int paramCounter, int command)
+{
+   IdentifierString reference;
+
+   int dotPos = message.find('.');
+   if (parseMessage(message + dotPos + 1, reference, paramCounter)) {
+      reference.insert(message, 0, dotPos + 1);
+
+      writer.writeCommand(command, reference);
+
+      return true;
+   }
+   else return false;
+}
+
+bool InlineScriptParser :: insertExtension(TapeWriter& writer, int bookmark, ident_t message, int paramCounter, int command)
+{
+   IdentifierString reference;
+
+   int dotPos = message.find('.');
+   if (parseMessage(message + dotPos + 1, reference, paramCounter)) {
+      reference.insert(message, 0, dotPos + 1);
+
+      writer.insertCommand(bookmark, command, reference);
+
+      return true;
+   }
+   else return false;
+}
+
+int InlineScriptParser :: parseExpression(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer, int bookmark)
 {
    bm = reader.read();
 
    IdentifierString message;
 
-   int bookmark = writer.Bookmark();
-
+   int saved = writer.Bookmark();
    int paramCounter = 0;
    int counter = 0;
    while (!reader.compare(")")) {
+      int offset = writer.Bookmark() - saved;
+
       if (reader.compare("+")) {
          bm = reader.read();
 
@@ -265,27 +320,33 @@ int InlineScriptParser :: parseExpression(_ScriptReader& reader, ScriptBookmark&
       else if (reader.compare("^")) {
          bm = reader.read();
          if (reader.compare("=")) {
-            writeMessage(writer, message, paramCounter, SEND_TAPE_MESSAGE_ID);
+            insertMessage(writer, bookmark + offset, message, paramCounter, SEND_TAPE_MESSAGE_ID);
 
             message.clear();
          }
-         else writeMessage(writer, reader.lookup(bm), -1, SEND_TAPE_MESSAGE_ID);
+         else insertMessage(writer, bookmark + offset, reader.lookup(bm), -1, SEND_TAPE_MESSAGE_ID);
 
          counter = 1;
       }
       else if (reader.compare("%")) {
          bm = reader.read();
          if (reader.compare("=")) {
-            writeMessage(writer, message, paramCounter, PUSHM_TAPE_MESSAGE_ID);
+            insertMessage(writer, bookmark + offset,  message, paramCounter, PUSHM_TAPE_MESSAGE_ID);
 
             message.clear();
          }
-         else writeMessage(writer, reader.lookup(bm), -1, PUSHM_TAPE_MESSAGE_ID);
+         else {
+            ident_t message = reader.lookup(bm);
+            if (message.find('.') != -1) {
+               insertExtension(writer, bookmark + offset, reader.lookup(bm), -1, PUSHE_TAPE_MESSAGE_ID);
+            }
+            else insertMessage(writer, bookmark + offset, reader.lookup(bm), -1, PUSHM_TAPE_MESSAGE_ID);
+         }
 
          counter++;
       }
       else if (reader.compare("(")) {
-         counter += parseExpression(reader, bm, writer);
+         counter += parseExpression(reader, bm, writer, bookmark);
          paramCounter++;
       }
       else {
@@ -323,7 +384,7 @@ void InlineScriptParser :: parseArray(_ScriptReader& reader, ScriptBookmark& bm,
 int InlineScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer)
 {
    if (reader.compare("(")) {
-      return parseExpression(reader, bm, writer);
+      return parseExpression(reader, bm, writer, writer.Bookmark());
    }
    else if (reader.compare("[")) {
       parseArray(reader, bm, writer);
