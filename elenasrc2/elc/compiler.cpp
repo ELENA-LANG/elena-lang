@@ -6948,7 +6948,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
          SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxAssigning);
          if (subNode == lxAssigning) {
             // assignment operation
-            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxIntArrOp);
+            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxIntArrOp, lxByteArrOp, lxShortArrOp);
             if (operationNode != lxNone) {
                SNode larg = operationNode.findSubNodeMask(lxObjectMask);
                SNode target = node.firstChild(lxObjectMask);
@@ -6963,7 +6963,9 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
                   target = lxIdle;
                }
                // if it is an operation with an extra temporal variable
-               else if (node.argument == subNode.argument && subNode.existChild(lxTempAttr)) {
+               else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) 
+                  && subNode.existChild(lxTempAttr)) 
+               {
                   larg = subNode.findSubNodeMask(lxObjectMask);
 
                   // remove an extra assignment

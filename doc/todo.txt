@@ -2,8 +2,6 @@
 In development:
 ------                              
               zdev 
-                 * new tape parser
-                 * scripting library : generate simple expression
                  * scripting library : generate simple class
                  * scripting library : run time
                  * scripting library : compile time
@@ -11,9 +9,6 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
 
               xrev                 
-                 * array of byte : an extra assignment
-                 * support array of short
-
                  * optimize unbox : root expression / assigning
                  * message $self does not belong to the object points to the target instead of message
 
