@@ -10,7 +10,6 @@
 // --------------------------------------------------------------------------
 #include "compiler.h"
 #include "errors.h"
-#include "derivation.h"
 //#include <errno.h>
 
 using namespace _ELENA_;
@@ -25,24 +24,6 @@ using namespace _ELENA_;
 //      current = current.nextNode();
 //   }
 //}
-
-// --- ModuleInfo ---
-struct ModuleInfo
-{
-   _Module* codeModule;
-   _Module* debugModule;
-
-   ModuleInfo()
-   {
-      codeModule = debugModule = NULL;
-   }
-
-   ModuleInfo(_Module* codeModule, _Module* debugModule)
-   {
-      this->codeModule = codeModule;
-      this->debugModule = debugModule;
-   }
-};
 
 // --- Hint constants ---
 #define HINT_MASK             0xFFFFF000
@@ -1628,8 +1609,8 @@ void Compiler::TemplateScope :: generateClassName(bool newName)
 
 // --- Compiler ---
 
-Compiler :: Compiler(StreamReader* syntax, _CompilerLogic* logic)
-   : _parser(syntax), _verbs(0)
+Compiler :: Compiler(/*StreamReader* syntax, */_CompilerLogic* logic)
+   : /*_parser(syntax), */_verbs(0)
 {
    _optFlag = 0;
 
@@ -3675,33 +3656,10 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    }
    else compileLazyExpressionMethod(syntaxTree.readRoot().findChild(lxClassMethod), methodScope);
 
-//   //HOTFIX : recognize if it is nested template action
-//   //!!should be refactored
-//   if (scope.getScope(Scope::slOwnerClass) != &scope && ((InlineClassScope*)&scope)->templateMode) {
-//      InlineClassScope* inlineScope = (InlineClassScope*)&scope;
-//
-//      // import fields
-//      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = inlineScope->outers.start();
-//      while (!outer_it.Eof()) {
-//         writer.newNode(lxTemplateField, (*outer_it).reference);
-//         writer.appendNode(lxTerminal, outer_it.key());
-//         writer.closeNode();
-//
-//         outer_it++;
-//      }
-//
-//      inlineScope->templateRef = scope.moduleScope->mapNestedTemplate();
-//
-//      _Memory* section = scope.moduleScope->module->mapSection(inlineScope->templateRef | mskSyntaxTreeRef, false);
-//
-//      scope.syntaxTree.save(section);
-//   }
-//   else {
-      if (!alreadyDeclared)
-         generateClassDeclaration(syntaxTree.readRoot(), scope, test(scope.info.header.flags, elClosed));
+   if (!alreadyDeclared)
+      generateClassDeclaration(syntaxTree.readRoot(), scope, test(scope.info.header.flags, elClosed));
 
-      generateClassImplementation(syntaxTree.readRoot(), scope);
-//   }
+   generateClassImplementation(syntaxTree.readRoot(), scope);
 }
 
 void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
@@ -4902,7 +4860,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    // if it is a dynamic object implicit constructor call is not possible
    else scope.raiseError(errIllegalConstructor, node);
 
-   if (bodyNode != nsNone) {
+   if (bodyNode != lxNone) {
       if (!withFrame) {
          withFrame = true;
 
@@ -4994,7 +4952,7 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope)
 {
    SNode current = node.firstChild();
 
-   while (current != nsNone) {
+   while (current != lxNone) {
       switch(current) {
          case lxClassMethod:
          {
@@ -5089,7 +5047,7 @@ void Compiler :: compileFieldDeclarations(SNode node, ClassScope& scope)
 {
    SNode current = node.firstChild();
 
-   while (current != nsNone) {
+   while (current != lxNone) {
       if (current == lxClassField) {
          compileFieldAttributes(current, scope, current);
       }
@@ -5207,7 +5165,7 @@ void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classCl
    writer.closeNode();
 
    SNode current = tree.readRoot().firstChild();
-   while (current != nsNone) {
+   while (current != lxNone) {
       //DNode hints = skipHints(member);
    
       if (current == lxClassMethod) {
@@ -6306,7 +6264,7 @@ void Compiler :: declareSingletonAction(ClassScope& classScope, SNode objNode)
    SyntaxWriter writer(syntaxTree);
    writer.newNode(lxRoot, classScope.reference);
 
-   if (objNode != nsNone) {
+   if (objNode != lxNone) {
       ActionScope methodScope(&classScope);
       declareActionScope(objNode, classScope, objNode.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxMessage), methodScope, 0, false);
       writer.newNode(lxClassMethod, methodScope.message);
@@ -7290,7 +7248,7 @@ void Compiler :: declareSubject(SNode member, ModuleScope& scope)
       SNode terminal = classNode.findChild(lxPrivate, lxIdentifier, lxReference);
 
       SNode option = classNode.findChild(lxAttributeValue);
-      if (option != nsNone) {
+      if (option != lxNone) {
          ref_t attrRef = mapAttribute(classNode, scope);
          if (!attrRef)
             scope.raiseError(errInvalidHint, terminal);
@@ -7319,7 +7277,7 @@ void Compiler :: compileSubject(SNode member, ModuleScope& scope)
       SNode terminal = classNode.findChild(lxPrivate, lxIdentifier, lxReference);
 
       SNode option = classNode.findChild(lxAttributeValue);
-      if (option != nsNone) {
+      if (option != lxNone) {
          ref_t attrRef = mapAttribute(classNode, scope);
          if (!attrRef)
             scope.raiseError(errInvalidHint, terminal);
@@ -7418,7 +7376,7 @@ void Compiler :: compileDeclarations(SNode current, ModuleScope& scope)
 
 void Compiler :: compileImplementations(SNode member, ModuleScope& scope)
 {
-   while (member != nsNone) {
+   while (member != lxNone) {
       switch (member) {
          case lxSubject:
             compileSubject(member, scope);
@@ -7551,100 +7509,33 @@ void Compiler :: compileModule(SNode node, ModuleScope& scope)
    compileImplementations(node.firstChild(), scope);
 }
 
-void Compiler :: compileModule(ident_t source, ModuleScope& scope)
+void Compiler :: compileModule(_ProjectManager& project, ident_t file, SNode node, ModuleInfo& info, Unresolveds& unresolveds)
 {
-   Path path(source);
+   ModuleScope scope(&project, file, info.codeModule, info.debugModule, &unresolveds);
 
-   // parse
-   TextFileReader sourceFile(path.c_str(), scope.project->getDefaultEncoding(), true);
-   if (!sourceFile.isOpened())
-      scope.project->raiseError(errInvalidFile, source);
-   
-   SyntaxTree tree;
-   DerivationWriter writer(tree);
-   _parser.parse(&sourceFile, writer, scope.project->getTabSize());
-   
-   // compile
-   compileModule(tree.readRoot(), scope);
+   // HOTFIX : the module path should be presaved in debug section
+   scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
+
+   // HOTFIX : the module path should be the first saved string
+   _writer.clear();
+   _writer.writeString(file);
+
+   project.printInfo("%s", file);
+
+   // compile source
+   compileModule(node, scope);
 }
 
-bool Compiler :: run(_ProjectManager& project, bool withDebugInfo)
+ModuleInfo Compiler :: createModule(ident_t name, _ProjectManager& project, bool withDebugInfo)
 {
-   Map<ident_t, ModuleInfo> modules(ModuleInfo(NULL, NULL));
+   ModuleInfo info;
+   info.codeModule = project.createModule(name);
+   if (withDebugInfo)
+      info.debugModule = project.createDebugModule(name);
 
-   Unresolveds unresolveds(Unresolved(), NULL);
+   createPackageInfo(info.codeModule, project);
 
-   Path modulePath;
-   ReferenceNs name(project.Namespace());
-   int rootLength = name.Length();
-   for (SourceIterator it = project.getSourceIt(); !it.Eof(); it++) {
-      try {
-         // build module namespace
-         modulePath.copySubPath(it.key());
-         name.truncate(rootLength);
-         name.pathToName(modulePath.c_str());
-
-         // create or update module
-         ModuleInfo info = modules.get(name);
-         if (info.codeModule == NULL) {
-            info.codeModule = project.createModule(name);
-            if (withDebugInfo)
-               info.debugModule = project.createDebugModule(name);
-
-            createPackageInfo(info.codeModule, project);
-
-            modules.add(name, info);
-         }
-
-         ModuleScope scope(&project, it.key(), info.codeModule, info.debugModule, &unresolveds);
-
-         // HOTFIX : the module path should be presaved in debug section
-         scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
-
-         // HOTFIX : the module path should be the first saved string
-         _writer.clear();
-         _writer.writeString(it.key());
-
-         project.printInfo("%s", it.key());
-
-         // compile source
-         compileModule(*it, scope);
-      }
-      catch (LineTooLong& e)
-      {
-         project.raiseError(errLineTooLong, it.key(), e.row, 1);
-      }
-      catch (InvalidChar& e)
-      {
-         size_t destLength = 6;
-
-         String<char, 6> symbol;
-         Convertor::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
-
-         project.raiseError(errInvalidChar, it.key(), e.row, e.column, (const char*)symbol);
-      }
-      catch (SyntaxError& e)
-      {
-         project.raiseError(e.error, it.key(), e.row, e.column, e.token);
-      }
-   }
-
-   Map<ident_t, ModuleInfo>::Iterator it = modules.start();
-   while (!it.Eof()) {
-      ModuleInfo info = *it;
-
-      project.saveModule(info.codeModule, "nl");
-
-      if (info.debugModule)
-         project.saveModule(info.debugModule, "dnl");
-
-      it++;
-   }
-
-   // validate the unresolved forward refereces if unresolved reference warning is enabled
-   validateUnresolved(unresolveds, project);
-
-   return !project.HasWarnings();
+   return info;
 }
 
 void Compiler :: injectVirtualReturningMethod(SNode node, ident_t variable)

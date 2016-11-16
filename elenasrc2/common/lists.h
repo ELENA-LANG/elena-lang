@@ -519,12 +519,12 @@ public:
 
    Key key() const { return _current->key; }
 
-//   Item* _item() const { return _current; }
-//
-////   void rename(Key key)
-////   {
-////      _current->rename(key);
-////   }
+   Item* _item() const { return _current; }
+
+//   void rename(Key key)
+//   {
+//      _current->rename(key);
+//   }
 
    _Iterator(Item* current)
    {
@@ -1385,6 +1385,20 @@ public:
    Iterator getIt(Key key) const
    {
       Item* current = _top;
+      while (current) {
+         if (*current == key)
+            return Iterator(current);
+
+         current = current->next;
+      }
+      return Iterator();
+   }
+
+   Iterator nextIt(Key key, Iterator it) const
+   {
+      Item* current = it._item();
+      current = current->next;
+
       while (current) {
          if (*current == key)
             return Iterator(current);
@@ -3106,12 +3120,17 @@ public:
       else return _Iterator<VItem, _MapItem<SubKey, VItem>, SubKey>();
    }
 
-//   int getCount(Key key)
-//   {
-//      Map<SubKey, VItem>* setting = _items.get(key);
-//
-//      return setting ? setting->Count() : 0;
-//   }
+   int Count() const
+   {
+      return _items.Count();
+   }
+
+   int Count(Key key)
+   {
+      Map<SubKey, VItem>* setting = _items.get(key);
+
+      return setting ? setting->Count() : 0;
+   }
 
    template<class Value> Value get(Key key, Value defaultValue) const
    {

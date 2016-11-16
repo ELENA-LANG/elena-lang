@@ -10,23 +10,27 @@
 #define projectH 1
 
 #include "libman.h"
+#include "compiler.h"
+#include "parser.h"
 
 namespace _ELENA_
 {
 
 // --- Project list types ---
-////typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
-typedef Dictionary2D<int, ident_t> ProjectSettings;
-typedef Map<ident_t, char*>        Sources;
+typedef Dictionary2D<int, ident_t>     ProjectSettings;
+typedef Dictionary2D<ident_t, ident_t> TargetSettings;
 
 typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ForwardIterator;
+typedef _Iterator<ProjectSettings::VItem, _MapItem<int, ProjectSettings::VItem>, int>         SourceIterator;
+
+//typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ProjectSettingIterator;
 
 // --- ELENA Project options ---
 enum ProjectSetting
 {
    opNone                  = 0x0000,
 
-//   // compiler options
+   // compiler options
    opAppPath		         = 0x0001,
    opProjectPath           = 0x0002,
    opLibPath               = 0x0003,
@@ -62,7 +66,7 @@ enum ProjectSetting
 
    opPrimitives            = 0x0060,
    opForwards              = 0x0061,
-   opSources               = 0x0062,
+   opSources               = 0x0062,   // !! obsolete
    opTemplates             = 0x0063,
    opExternals             = 0x0064,
    opWinAPI                = 0x0065,   // used only for WIN32
@@ -71,7 +75,7 @@ enum ProjectSetting
    // compiler manfifest
    opManifestName          = 0x0070,
    opManifestVersion       = 0x0071,
-   opManifestAuthor        = 0x0072
+   opManifestAuthor        = 0x0072,
 };
 
 // --- Project ---
@@ -84,8 +88,10 @@ protected:
    int             _warningMasks;
 
    LibraryManager  _loader;
+
    ProjectSettings _settings;
-   Sources         _sources;
+   TargetSettings  _targets;
+   ProjectSettings _sources;
 
    virtual ConfigCategoryIterator getCategory(_ConfigFile& config, ProjectSetting setting) = 0;
    virtual ident_t getOption(_ConfigFile& config, ProjectSetting setting) = 0;
@@ -125,11 +131,6 @@ public:
 //      return _settings.exist(key);
 //   }
 
-   virtual SourceIterator getSourceIt()
-   {
-      return _sources.start();
-   }
-
    ForwardIterator getForwardIt()
    {
       return _settings.getIt(opForwards);
@@ -141,6 +142,8 @@ public:
    }
 
    virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
+
+   virtual void addSource(path_t path) = 0;
 
 //   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, path_t configPath);
@@ -230,6 +233,8 @@ public:
    {
       return BoolSetting(opWarnOnWeakUnresolved);
    }
+
+   void compile(ident_t sourceFile, Compiler& compiler, Parser& parser, ModuleInfo& moduleInfo, Unresolveds& unresolved);
 
    Project();
    virtual ~Project() {}

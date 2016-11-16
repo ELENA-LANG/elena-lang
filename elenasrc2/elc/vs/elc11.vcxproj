@@ -141,6 +141,7 @@
     <ClInclude Include="..\..\common\altstrings.h" />
     <ClInclude Include="..\..\common\config.h" />
     <ClInclude Include="..\..\engine\bytecode.h" />
+    <ClInclude Include="..\..\engine\compilercommon.h" />
     <ClInclude Include="..\..\engine\compilerlogic.h" />
     <ClInclude Include="..\..\engine\elena.h" />
     <ClInclude Include="..\..\engine\elenaconst.h" />

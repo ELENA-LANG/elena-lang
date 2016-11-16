@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0087
+#define ELC_REVISION_NUMBER             0x0088
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -89,6 +89,10 @@
 #define ELC_L0                      "l0"                // optimization: byte code optimization
 #define ELC_L1                      "l1"                // optimization: source code optimization
 
+#define ELC_TARGET_NAME             "target"
+#define ELC_TYPE_NAME               "type"
+#define ELC_INCLUDE                 "include"
+
 #define ELC_MANIFEST_NAME           "name"
 #define ELC_MANIFEST_VERSION        "version"
 #define ELC_MANIFEST_AUTHOR         "author"
@@ -145,14 +149,14 @@ public:
    virtual void printInfo(const char* msg, _ELENA_::ident_t param);
 
    //virtual void raiseError(const char* msg);
-   virtual void raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
+   virtual void raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal = NULL);
    virtual void raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t value);
    virtual void raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _ELENA_::ident_t identifier);
 
    virtual void raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
    virtual void raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path);
 
-   void addSource(_ELENA_::path_t path);
+   virtual void addSource(_ELENA_::path_t path);
 
    virtual void loadConfig(_ELENA_::_ConfigFile& config, _ELENA_::path_t configPath)
    {
@@ -166,6 +170,8 @@ public:
    virtual int getDefaultEncoding() { return _encoding; }
 
    virtual int getTabSize() { return _tabSize; }
+
+   bool compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser);
 
    void cleanUp();
 

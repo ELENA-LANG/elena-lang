@@ -1,6 +1,10 @@
 ------                                 
 In development:
 ------                              
+              xrev                 
+                 * #14 : switch to xml config files
+                 * make sure clean works
+
               zdev 
                  * scripting library : generate simple class
                  * scripting library : run time
@@ -9,7 +13,6 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
 
               xrev                 
-                 * optimize unbox : root expression / assigning
                  * message $self does not belong to the object points to the target instead of message
 
                  * returning from closure (to simulate normal branching)
@@ -143,6 +146,7 @@ In development:
                  * tape_test
                  * test template in template (with parameters)
                  * test calc sample
+                 * optimize unbox : root expression / assigning
 
               xdev - ide
                 * vertical scroller does not work correctly
@@ -177,7 +181,6 @@ Pipeline:
               xdev
                  * lib40 : hello world
                  * lib40 : true / false could be member of enumeration list 
-                 * lib40 : review predefined boolean constants (bool,true,false), could we get rid of them from lib40 config file
                  * lib40 : implementing
                  * refactoring : minimalistic library should be able to work with only super class declared (currently at least literal
                    object should be declared)

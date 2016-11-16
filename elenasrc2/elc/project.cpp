@@ -11,6 +11,7 @@
 #include "project.h"
 #include "errors.h"
 #include "module.h"
+#include "derivation.h"
 
 using namespace _ELENA_;
 
@@ -38,7 +39,7 @@ inline ident_t getLoadError(LoadResult result)
 // --- Project ---
 
 Project :: Project()
-   : _sources(NULL, freestr)
+   : _sources(true)
 {
    _hasWarning = false;
    _numberOfWarnings = 100;
@@ -182,9 +183,9 @@ void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
    ConfigCategoryIterator it = getCategory(config, opSources);
    while (!it.Eof()) {
       // add path if provided
-      Path filePath(path, it.key());
+      Path filePath(it.key());
 
-      _sources.add(it.key(), IdentifierString::clonePath(filePath.c_str()));
+      addSource(filePath.c_str());
 
       it++;
    }
@@ -340,7 +341,7 @@ _Module* Project :: resolveCore(ref_t reference, bool silentMode)
    else return module;
 }
 
-ident_t Project::resolveExternalAlias(ident_t alias, bool& stdCall)
+ident_t Project :: resolveExternalAlias(ident_t alias, bool& stdCall)
 {
    ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);
    if (!emptystr(dll)) {
@@ -349,4 +350,42 @@ ident_t Project::resolveExternalAlias(ident_t alias, bool& stdCall)
       return dll;
    }
    else return _settings.get(opExternals, alias, DEFAULT_STR);
+}
+
+void Project :: compile(ident_t filePath, Compiler& compiler, Parser& parser, ModuleInfo& moduleInfo, Unresolveds& unresolved)
+{
+   try {
+      // based on the target type generate the syntax tree for the file
+      Path fullPath(StrSetting(_ELENA_::opProjectPath));
+      fullPath.combine(filePath);
+
+      // parse
+      TextFileReader sourceFile(fullPath.c_str(), getDefaultEncoding(), true);
+      if (!sourceFile.isOpened())
+         raiseError(errInvalidFile, filePath);
+
+      SyntaxTree tree;
+      DerivationWriter writer(tree);
+      parser.parse(&sourceFile, writer, getTabSize());
+
+      // compile the syntax tree
+      compiler.compileModule(*this, filePath, tree.readRoot(), moduleInfo, unresolved);
+   }
+   catch (LineTooLong& e)
+   {
+      raiseError(errLineTooLong, filePath, e.row, 1);
+   }
+   catch (InvalidChar& e)
+   {
+      size_t destLength = 6;
+
+      _ELENA_::String<char, 6> symbol;
+      _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
+
+      raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
+   }
+   catch (SyntaxError& e)
+   {
+      raiseError(e.error, filePath, e.row, e.column, e.token);
+   }
 }

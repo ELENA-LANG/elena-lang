@@ -53,18 +53,15 @@ public:
 
 // --- _Project ---
 
-typedef Map<ident_t, char*>::Iterator SourceIterator;
-
 class _ProjectManager
 {
 public:
-   virtual ident_t Namespace() const = 0;
+   virtual ident_t Namespace() const = 0; // !! obsolete??
 
-   virtual int getDefaultEncoding() = 0;
-   virtual int getTabSize() = 0;
-   virtual SourceIterator getSourceIt() = 0;
+   virtual int getDefaultEncoding() = 0; // !! obsolete
+   virtual int getTabSize() = 0;  // !! obsolete
 
-   virtual bool HasWarnings() const = 0;
+   virtual bool HasWarnings() const = 0;     // !! obsolete
    virtual int getWarningMask() const = 0;
    virtual bool WarnOnUnresolved() const = 0;
    virtual bool WarnOnWeakUnresolved() const = 0;
@@ -84,11 +81,11 @@ public:
    virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
    virtual void raiseWarning(ident_t msg, ident_t path) = 0;
 
-   virtual _Module* createModule(ident_t name) = 0;
-   virtual _Module* createDebugModule(ident_t name) = 0 ;
+   virtual _Module* createModule(ident_t name) = 0;      // !! obsolete
+   virtual _Module* createDebugModule(ident_t name) = 0 ; // !! obsolete
 
    virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
-   virtual void saveModule(_Module* module, ident_t extension) = 0;
+   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
 
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
 
@@ -326,6 +323,8 @@ class ReferenceNs : public String<char, IDENTIFIER_LEN * 2>
 {
 public:
    operator ident_t() const { return _string; }
+
+   ident_t ident() { return (const char*)_string; }
 
    void pathToName(path_t path)
    {

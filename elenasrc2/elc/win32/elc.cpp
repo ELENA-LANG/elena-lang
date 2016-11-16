@@ -13,7 +13,6 @@
 #include "elc.h"
 #include "constants.h"
 #include "errors.h"
-#include "compiler.h"
 #include "compilerlogic.h"
 #include "linker.h"
 #include "image.h"
@@ -275,38 +274,53 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
 
 void _ELC_::Project :: addSource(_ELENA_::path_t path)
 {
-   _ELENA_::Path fullPath(StrSetting(_ELENA_::opProjectPath));
-   fullPath.combine(path);
+   _ELENA_::Path modulePath;
+   _ELENA_::ReferenceNs name(Namespace());
 
-   _settings.add(_ELENA_::opSources, 
-      _ELENA_::IdentifierString(path), 
-      _ELENA_::IdentifierString::clonePath(fullPath.c_str()));
+   // build module namespace
+   modulePath.copySubPath(path);
+   name.pathToName(modulePath.c_str());
+
+   int key = 0;
+   for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
+      _ELENA_::ident_t currentName = _sources.get(it.key(), ELC_NAMESPACE, DEFAULT_STR);
+      if (currentName.compare(name)) {
+         key = it.key();
+         break;
+      }
+         
+   }
+   if (key == 0) {
+      key = _sources.Count() + 1;
+
+      _sources.add(key, ELC_NAMESPACE, name.ident().clone());
+   }
+
+   _sources.add(key, ELC_INCLUDE, _ELENA_::IdentifierString::clonePath(path));
 }
 
 void _ELC_::Project :: cleanUp()
 {
    _ELENA_::Path rootPath(StrSetting(_ELENA_::opProjectPath), StrSetting(_ELENA_::opOutputPath));
 
-   for(_ELENA_::SourceIterator it = getSourceIt() ; !it.Eof() ; it++) {
-      _ELENA_::Path path;
-      path.copySubPath(it.key());
+   for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
+      _ELENA_::ident_t ns = _sources.get(it.key(), ELC_NAMESPACE, DEFAULT_STR);
 
-      _ELENA_::ReferenceNs name(StrSetting(_ELENA_::opNamespace));
-      name.pathToName(path.c_str());          // get a full name
+      _ELENA_::Path path;
 
       // remove module
       path.copy(rootPath.c_str());
-      _loader.nameToPath(name, path, "nl");
+      _loader.nameToPath(ns, path, "nl");
       _wremove(path);
 
       // remove debug module
       path.copy(rootPath.c_str());
-      _loader.nameToPath(name, path, "dnl");
+      _loader.nameToPath(ns, path, "dnl");
       _wremove(path);
    }
 }
 
-void _ELC_ :: Project::loadConfig(_ELENA_::path_t path, bool root, bool requiered)
+void _ELC_::Project :: loadConfig(_ELENA_::path_t path, bool root, bool requiered)
 {
    ElcConfigFile config(true);
    _ELENA_::Path configPath;
@@ -419,6 +433,52 @@ _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
    return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 }
 
+bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
+{
+   bool debugMode = BoolSetting(_ELENA_::opDebugMode);
+   bool result = true;
+
+   _ELENA_::Unresolveds unresolveds(_ELENA_::Unresolved(), NULL);
+   for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
+      _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ProjectSettings::VItem>* source = *it;
+
+      // create module
+      _ELENA_::ident_t name = source->get(ELC_NAMESPACE);
+      _ELENA_::ModuleInfo moduleInfo = compiler.createModule(name, *this, debugMode);
+
+      _ELENA_::ident_t target = source->get(ELC_TARGET_NAME);      
+      int type = !emptystr(target) ? _targets.get(target, ELC_TYPE_NAME, 1) : 1;
+      
+      // compile files
+      _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
+      while (!file_it.Eof()) {
+         switch (type) {
+            case 1:
+               // if it is a normal ELENA source file
+               compile(*file_it, compiler, parser, moduleInfo, unresolveds);
+               break;
+         }
+
+         file_it = source->nextIt(ELC_INCLUDE, file_it);
+      }
+
+      saveModule(moduleInfo.codeModule, "nl");
+
+      if (moduleInfo.debugModule)
+         saveModule(moduleInfo.debugModule, "dnl");
+   }
+
+   // validate the unresolved forward refereces if unresolved reference warning is enabled
+   compiler.validateUnresolved(unresolveds, *this);
+
+   return !HasWarnings();
+}
+
+//bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler)
+//{
+//   return compiler.run(*this, BoolSetting(_ELENA_::opDebugMode));
+//}
+
 void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
 {
    if (project.IntSetting(_ELENA_::opL0, -1) != 0) {
@@ -511,10 +571,11 @@ int main()
       // compile normal project
       bool result = false;
       _ELENA_::CompilerLogic elenaLogic;
-      _ELENA_::Compiler compiler(&syntaxFile, &elenaLogic);
+      _ELENA_::Compiler compiler(&elenaLogic);
+      _ELENA_::Parser parser(&syntaxFile);
       setCompilerOptions(project, compiler);
 
-      result = compiler.run(project, project.BoolSetting(_ELENA_::opDebugMode));
+      result = project.compileSources(compiler, parser);
 
       if (result)
          print(ELC_SUCCESSFUL_COMPILATION);

@@ -9,12 +9,54 @@
 #ifndef compilerH
 #define compilerH
 
-#include "parser.h"
-#include "bcwriter.h"
+#include "elena.h"
 #include "compilercommon.h" 
+#include "bcwriter.h"
 
 namespace _ELENA_
 {
+
+// --- ModuleInfo ---
+struct ModuleInfo
+{
+   _Module* codeModule;
+   _Module* debugModule;
+
+   ModuleInfo()
+   {
+      codeModule = debugModule = NULL;
+   }
+
+   ModuleInfo(_Module* codeModule, _Module* debugModule)
+   {
+      this->codeModule = codeModule;
+      this->debugModule = debugModule;
+   }
+};
+
+struct Unresolved
+{
+   ident_t    fileName;
+   ref_t      reference;
+   _Module*   module;
+   size_t     row;
+   size_t     col;           // virtual column
+
+   Unresolved()
+   {
+      reference = 0;
+   }
+   Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
+   {
+      this->fileName = fileName;
+      this->reference = reference;
+      this->module = module;
+      this->row = row;
+      this->col = col;
+   }
+};
+
+typedef List<Unresolved> Unresolveds;
 
 // --- Compiler class ---
 class Compiler : public _Compiler
@@ -73,28 +115,6 @@ public:
       irSealed,
       irInvalid,
       irObsolete
-   };
-
-   struct Unresolved
-   {
-      ident_t    fileName;
-      ref_t      reference;
-      _Module*   module;
-      size_t     row;
-      size_t     col;           // virtual column
-
-      Unresolved()
-      {
-         reference = 0;
-      }
-      Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
-      {
-         this->fileName = fileName;
-         this->reference = reference;
-         this->module = module;
-         this->row = row;
-         this->col = col;
-      }
    };
 
    enum ObjectKind
@@ -190,8 +210,7 @@ public:
 
    typedef Map<ident_t, ref_t>            ForwardMap;
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
-//   typedef MemoryMap<int, ref_t>          RoleMap;
-   typedef List<Unresolved>               Unresolveds;
+//   typedef MemoryMap<int, ref_t>          RoleMap;   
    typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
 private:
@@ -774,7 +793,6 @@ private:
    _CompilerLogic*  _logic;
 
    ByteCodeWriter _writer;
-   Parser         _parser;
 
    MessageMap     _verbs;                            // list of verbs
    MessageMap     _operators;                        // list of operators
@@ -965,7 +983,6 @@ private:
    void compileIncludeSection(SNode& node, ModuleScope& scope);
 
    bool validate(_ProjectManager& project, _Module* module, int reference);
-   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 
    ObjectInfo typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object);
    ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
@@ -992,6 +1009,8 @@ private:
 
    void createPackageInfo(_Module* module, _ProjectManager& project);
 
+   void compileModule(SNode node, ModuleScope& scope);
+
 public:
    void loadRules(StreamReader* optimization);
    void turnOnOptimiation(int level)
@@ -999,10 +1018,11 @@ public:
       _optFlag |= level;
    }
 
-   void compileModule(SNode node, ModuleScope& scope);
-   void compileModule(ident_t source, ModuleScope& scope);
+   void compileModule(_ProjectManager& project, ident_t file, SNode node, ModuleInfo& moduleInfo, Unresolveds& unresolveds);
 
-   bool run(_ProjectManager& project, bool withDebugInfo);
+   ModuleInfo createModule(ident_t name, _ProjectManager& project, bool withDebugInfo);
+
+   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 
    // _Compiler interface implementation
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable);
@@ -1013,7 +1033,7 @@ public:
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
-   Compiler(StreamReader* syntax, _CompilerLogic* logic);
+   Compiler(_CompilerLogic* logic);
 };
 
 } // _ELENA_
