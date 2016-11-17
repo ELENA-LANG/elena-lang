@@ -1419,6 +1419,14 @@ bool ident_t::compare(const char* s, size_t length) const
    return ::compare(_string, s, length);
 }
 
+bool ident_t :: endsWith(const char* s)
+{
+   int slen = getlength(s);
+   int len = getlength(_string);
+
+   return ::compare(_string + len - slen, s, slen);
+}
+
 // --- wide_t ---
 
 bool wide_t :: copyTo(char* dest, size_t length, size_t& destLength)

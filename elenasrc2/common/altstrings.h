@@ -113,6 +113,8 @@ public:
 
    bool greater(const char* s);
 
+   bool endsWith(const char* s);
+
    ident_t()
    {
       _string = NULL;

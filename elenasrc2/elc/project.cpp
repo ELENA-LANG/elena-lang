@@ -120,74 +120,76 @@ void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, path_t
 {
    IdentifierString key;
 
-   ConfigCategoryIterator it = getCategory(config, setting);
-   while (!it.Eof()) {
-      // copy line key
-      key.copy(it.key());
+   _ConfigFile::Nodes nodes;
+   if (readCategory(config, setting, nodes)) {
+      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
+         // copy line key
+         key.copy(it.key());
 
-      // copy value or key if the value is absent
-      ident_t value = *it;
-      if (emptystr(value))
-         value = it.key();
+         // copy value or key if the value is absent
+         ident_t value = (*it).Content();
+         if (emptystr(value))
+            value = it.key();
 
-      // add path if provided
-      if (!emptystr(path)) {
-         Path filePath(path, value);
+         // add path if provided
+         if (!emptystr(path)) {
+            Path filePath(path, value);
 
-         _settings.add(setting, key, IdentifierString::clonePath(filePath.c_str()));
+            _settings.add(setting, key, IdentifierString::clonePath(filePath.c_str()));
+         }
+         else _settings.add(setting, key, value.clone());
       }
-      else _settings.add(setting, key, value.clone());
-
-      it++;
    }
 }
 
 void Project :: loadForwardCategory(_ConfigFile& config)
 {
-   ConfigCategoryIterator it = getCategory(config, opForwards);
-   while (!it.Eof()) {
-      _settings.add(opForwards, it.key(), ((ident_t)*it).clone());
-
-      it++;
+   _ConfigFile::Nodes nodes;
+   if (readCategory(config, opForwards, nodes)) {
+      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
+         _settings.add(opForwards, it.key(), (*it).Content().clone());
+      }
    }
 }
 
 void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
 {
-   ConfigCategoryIterator it = getCategory(config, opPrimitives);
-   while (!it.Eof()) {
-      // copy value or key if the value is absent
-      ident_t value = *it;
-      if (emptystr(value))
-         value = it.key();
+   _ConfigFile::Nodes nodes;
+   if (readCategory(config, opPrimitives, nodes)) {
+      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
+         // copy value or key if the value is absent
+         ident_t value = (*it).Content();
+         if (emptystr(value))
+            value = it.key();
 
-      // add path if provided
-      Path filePath(path);
-      // if path starts with tilda - skip path
-      if (value[0] == '~') {
-         filePath.copy(value + 1);
+         // add path if provided
+         Path filePath(path);
+         // if path starts with tilda - skip path
+         if (value[0] == '~') {
+            filePath.copy(value + 1);
+         }
+         else filePath.combine(value);
+
+         if (it.key().compare(CORE_ALIAS)) {
+            _loader.addCorePath(filePath.c_str());
+         }
+         else _loader.addPrimitivePath(it.key(), filePath.c_str());
       }
-      else filePath.combine(value);
-
-      if (it.key().compare(CORE_ALIAS)) {
-         _loader.addCorePath(filePath.c_str());
-      }
-      else _loader.addPrimitivePath(it.key(), filePath.c_str());
-
-      it++;
    }
 }
 
 void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
 {
-   ConfigCategoryIterator it = getCategory(config, opSources);
-   while (!it.Eof()) {
-      // add path if provided
-      Path filePath(it.key());
+   _ConfigFile::Nodes nodes;
+   if (readCategory(config, opSources, nodes)) {
+      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
+         if (emptystr((*it).Content())) {
+            // add path if provided
+            Path filePath(it.key());
 
-      addSource(filePath.c_str());
-
-      it++;
+            addSource(filePath.c_str());
+         }
+      }
    }
 }
 

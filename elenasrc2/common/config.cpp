@@ -21,6 +21,59 @@ IniConfigFile :: IniConfigFile(bool allowDuplicates)
 {
 }
 
+_ConfigFile::Node IniConfigFile :: get(ident_t key)
+{
+   int index = key.find('/');
+   if (index != -1) {
+      String<char, 50> category(key, index);
+
+      ident_t settingName = key + index + 1;
+      index = settingName.find('/');
+      if (index > 0) {
+         // HOTFIX : if sub category is used
+         String<char, 50> temp(settingName);
+         temp[index] = ':';
+
+         const char* value = getSetting((const char*)category, (const char*)temp);
+
+         return _ConfigFile::Node(this, (void*)value);
+      }
+      else {
+         const char* value = getSetting((const char*)category, settingName);
+
+         return _ConfigFile::Node(this, (void*)value);
+      }
+   }
+   else return _ConfigFile::Node();
+}
+
+bool IniConfigFile :: select(ident_t key, Map<ident_t, Node>& list)
+{
+   bool idle = true;
+   if (key.endsWith("/*")) {
+      String<char, 50> category(key, getlength(key) - 2);
+      for (ConfigCategoryIterator it = getCategoryIt((const char*)category) ; !it.Eof() ; it++) {
+         idle = false;
+
+         ident_t value = *it;
+
+         list.add(it.key(), _ConfigFile::Node(this, (void*)value.c_str()));
+      }
+   }   
+
+   return !idle;
+}
+
+ident_t IniConfigFile :: getNodeContent(void* reference)
+{
+   return (const char*)reference;
+}
+
+ident_t IniConfigFile :: getNodeAttribute(void* reference, ident_t name)
+{
+   return NULL;
+}
+
 bool IniConfigFile :: load(path_t path, int encoding)
 {
    String<char, 255> line, key, subKey;

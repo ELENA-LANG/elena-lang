@@ -20,12 +20,25 @@ class IniConfigFile : public _ConfigFile
    ConfigSettings _settings;
 
 public:
-   virtual ConfigCategoryIterator getCategoryIt(ident_t name)
+   virtual Node get(ident_t key);
+
+   virtual bool select(ident_t key, Map<ident_t, Node>& list);
+
+   virtual ident_t getNodeContent(void* reference);
+
+   virtual ident_t getNodeAttribute(void* reference, ident_t name);
+
+   ConfigCategoryIterator getCategoryIt(ident_t name)
    {
       return _settings.getIt(name);
    }
 
-   virtual ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL);
+   virtual ident_t getSetting(ident_t key)
+   {
+      return _ConfigFile::getSetting(key);
+   }
+
+   ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL);
 
    void setSetting(const char* category, const char* key, const char* value);
    void setSetting(const char* category, const char* key, int value);

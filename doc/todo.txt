@@ -2,8 +2,10 @@
 In development:
 ------                              
               xrev                 
+                 * ini vs xml : forwards, source files, include / exclude file
+                 * ini vs xml : project scope : config
                  * #14 : switch to xml config files
-                 * make sure clean works
+                 * ini : replace warn/weakunresolved with warn:weakunresolved
 
               zdev 
                  * scripting library : generate simple class

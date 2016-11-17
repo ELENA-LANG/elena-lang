@@ -984,7 +984,6 @@ public:
       _list.set(it, item);
    }
 
-
    void insert(T item)
    {
       _list.addToTop(item);

@@ -93,7 +93,7 @@ protected:
    TargetSettings  _targets;
    ProjectSettings _sources;
 
-   virtual ConfigCategoryIterator getCategory(_ConfigFile& config, ProjectSetting setting) = 0;
+   virtual bool readCategory(_ConfigFile& config, ProjectSetting setting, _ConfigFile::Nodes& list) = 0;
    virtual ident_t getOption(_ConfigFile& config, ProjectSetting setting) = 0;
 
    bool loadOption(_ConfigFile& config, ProjectSetting setting);

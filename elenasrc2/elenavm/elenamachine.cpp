@@ -26,8 +26,8 @@ using namespace _ELENA_;
 
 #define PROJECT_TEMPLATE            "template"
 //#define SYSTEM_MAXTHREAD            _T("maxthread")
-#define LINKER_MGSIZE               "mgsize"
-#define LINKER_YGSIZE               "ygsize"
+#define LINKER_MGSIZE               "linker/mgsize"
+#define LINKER_YGSIZE               "linker/ygsize"
 #define LIBRARY_PATH                "path"
 
 // --- InstanceConfig ---
@@ -113,8 +113,8 @@ void InstanceConfig :: init(path_t configPath, IniConfigFile& config)
 {
    // compiler options
    //maxThread = config.getIntSetting(SYSTEM_CATEGORY, SYSTEM_MAXTHREAD, maxThread);
-   mgSize = config.getIntSetting(LINKER_CATEGORY, LINKER_MGSIZE, mgSize);
-   ygSize = config.getIntSetting(LINKER_CATEGORY, LINKER_YGSIZE, ygSize);
+   mgSize = config.getIntSetting(LINKER_MGSIZE, mgSize);
+   ygSize = config.getIntSetting(LINKER_YGSIZE, ygSize);
 
    const char* path = config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL);
    if (!emptystr(path)) {

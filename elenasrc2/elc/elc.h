@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0088
+#define ELC_REVISION_NUMBER             0x0089
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -51,51 +51,47 @@
 #define ELC_PRM_OPT1OFF             "xo1-"
 
 // --- ELC config categories ---
-#define COMPILER_CATEGORY           "compiler"
-#define SOURCE_CATEGORY             "files"
-#define FORWARD_CATEGORY            "forwards"
-#define LINKER_CATEGORY             "linker"
-#define PRIMITIVE_CATEGORY          "primitives"
-#define PROJECT_CATEGORY            "project"
-#define SYSTEM_CATEGORY             "system"
-#define TEMPLATE_CATEGORY           "templates"
-#define WINAPI_CATEGORY             "winapi"
-#define EXTERNALS_CATEGORY          "externals"
-#define REFERENCE_CATEGORY          "references"
-#define MANIFEST_CATEGORY           "manifest"
+#define SOURCE_CATEGORY             "files/*"
+#define FORWARD_CATEGORY            "forwards/*"
+#define PRIMITIVE_CATEGORY          "primitives/*"
+#define TEMPLATE_CATEGORY           "templates/*"
+#define WINAPI_CATEGORY             "winapi/*"
+#define EXTERNALS_CATEGORY          "externals/*"
+#define REFERENCE_CATEGORY          "references/*"
 
 // --- ELC config settings ---
-#define ELC_DEBUGINFO               "debuginfo"
-#define ELC_SUBJECTINFO             "subjectinfo"
-#define ELC_CLASSSYMBOLLOAD         "classsymbolload"
-#define ELC_TARGET                  "executable"
-#define ELC_MG_SIZE                 "mgsize"
-#define ELC_HEAP_COMMIT             "heapcommit"
-#define ELC_HEAP_RESERV             "heapresrv"
-#define ELC_YG_IMAGEBASE            "imagebase"
-#define ELC_LIB_PATH                "libpath"
-#define ELC_SYSTEM_THREADMAX        "maxthread"
-#define ELC_OUTPUT_PATH             "output"
-#define ELC_NAMESPACE               "namespace"
-#define ELC_STACK_COMMIT            "stackcommit"
-#define ELC_STACK_RESERV            "stackresrv"
+#define ELC_DEBUGINFO               "project/debuginfo"
+#define ELC_SUBJECTINFO             "project/subjectinfo"
+#define ELC_CLASSSYMBOLLOAD         "project/classsymbolload"
+#define ELC_TARGET                  "project/executable"
+#define ELC_MG_SIZE                 "linker/mgsize"
+#define ELC_HEAP_COMMIT             "linker/heapcommit"
+#define ELC_HEAP_RESERV             "linker/heapresrv"
+#define ELC_YG_IMAGEBASE            "linker/imagebase"
+#define ELC_LIB_PATH                "project/libpath"
+#define ELC_SYSTEM_THREADMAX        "system/maxthread"
+#define ELC_OUTPUT_PATH             "project/output"
+#define ELC_NAMESPACE               "project/namespace"
+#define ELC_STACK_COMMIT            "linker/stackcommit"
+#define ELC_STACK_RESERV            "linker/stackresrv"
 //#define ELC_PROJECT_START           "start"
-#define ELC_PROJECT_TEMPLATE        "template"
-#define ELC_PLATFORMTYPE            "platform"
-#define ELC_WARNON_UNRESOLVED       "warn:unresolved"
-#define ELC_WARNON_WEAKUNRESOLVED   "warn:weakunresolved"
+#define ELC_PROJECT_TEMPLATE        "project/template"
+#define ELC_PLATFORMTYPE            "system/platform"
+#define ELC_WARNON_UNRESOLVED       "project/warn/unresolved"
+#define ELC_WARNON_WEAKUNRESOLVED   "project/warn/weakunresolved"
 //#define ELC_WARNON_SIGNATURE        "warn:signature"
-#define ELC_YG_SIZE                 "ygsize"
-#define ELC_L0                      "l0"                // optimization: byte code optimization
-#define ELC_L1                      "l1"                // optimization: source code optimization
+#define ELC_YG_SIZE                 "linker/ygsize"
+#define ELC_L0                      "compiler/l0"                // optimization: byte code optimization
+#define ELC_L1                      "compiler/l1"                // optimization: source code optimization
 
 #define ELC_TARGET_NAME             "target"
 #define ELC_TYPE_NAME               "type"
 #define ELC_INCLUDE                 "include"
+#define ELC_NAMESPACE_KEY           "namespace"
 
-#define ELC_MANIFEST_NAME           "name"
-#define ELC_MANIFEST_VERSION        "version"
-#define ELC_MANIFEST_AUTHOR         "author"
+#define ELC_MANIFEST_NAME           "manifest/name"
+#define ELC_MANIFEST_VERSION        "manifest/version"
+#define ELC_MANIFEST_AUTHOR         "manifest/author"
 
 // --- ELC information messages ---
 #define ELC_GREETING                "ELENA Command-line compiler %d.%d.%d (C)2005-2016 by Alex Rakov\n"
@@ -137,7 +133,7 @@ class Project : public _ELENA_::Project
 {
    int _tabSize, _encoding;
 
-   virtual _ELENA_::ConfigCategoryIterator getCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
+   virtual bool readCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting, _ELENA_::_ConfigFile::Nodes& list);
    virtual _ELENA_::ident_t getOption(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
 
 public:

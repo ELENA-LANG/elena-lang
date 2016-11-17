@@ -74,27 +74,74 @@ typedef _Iterator<ConfigSettings::VItem, _MapItem<ident_t, ConfigSettings::VItem
 class _ConfigFile
 {
 public:
-   virtual bool load(path_t path, int encoding) = 0;
-
-   virtual ConfigCategoryIterator getCategoryIt(ident_t name) = 0;
-
-   virtual ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL) = 0;
-   virtual int getIntSetting(const char* category, const char* key, int defaultValue = 0)
+   struct Node
    {
-      ident_t value = getSetting(category, key);
+      _ConfigFile* owner;
+      void*        reference;
+
+      ident_t Content()
+      {
+         if (reference) {
+            return owner->getNodeContent(reference);
+         }
+         else return NULL;
+      }
+
+      ident_t Attribute(ident_t name)
+      {
+         return owner->getNodeAttribute(reference, name);
+      }
+
+      Node(_ConfigFile* owner, void* reference)
+      {
+         this->owner = owner;
+         this->reference = reference;
+      }
+      Node(_ConfigFile* owner)
+      {
+         this->owner = owner;
+         this->reference = NULL;
+      }
+      Node()
+      {
+         owner = NULL;
+         reference = NULL;
+      }
+   };
+
+   typedef Map<ident_t, Node> Nodes;
+
+   virtual Node get(ident_t key) = 0;
+
+   virtual bool select(ident_t key, Nodes& list) = 0;
+
+   virtual ident_t getNodeContent(void* reference) = 0;
+
+   virtual ident_t getNodeAttribute(void* reference, ident_t name) = 0;
+
+   virtual ident_t getSetting(ident_t key)
+   {
+      Node node = get(key);
+
+      return node.Content();
+   }
+   virtual int getIntSetting(ident_t key, int defaultValue = 0)
+   {
+      ident_t value = getSetting(key);
 
       return emptystr(value) ? defaultValue : value.toInt();
    }
-
-   virtual bool getBoolSetting(ident_t category, ident_t key, bool defaultValue = false)
+   virtual int getBoolSetting(ident_t key, bool defaultValue = false)
    {
-      ident_t value = getSetting(category, key);
+      ident_t value = getSetting(key);
 
       if (!emptystr(value)) {
          return value.compare("-1");
       }
       else return defaultValue;
    }
+
+   virtual bool load(path_t path, int encoding) = 0;
 
    virtual ~_ConfigFile() {}
 };

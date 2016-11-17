@@ -84,7 +84,7 @@ class IDEController : public _Controller
 
       ProjectManager()
       {
-//         _model = NULL;
+         _model = NULL;
       }
    };
 
