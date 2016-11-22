@@ -2216,6 +2216,38 @@ void IDEController::ProjectManager :: reloadSources()
    else reloadSourcesIni();
 }
 
+void IDEController::ProjectManager :: reloadForwardsIni()
+{
+   for (_ELENA_::ConfigCategoryIterator it = _model->project.config.getCategoryIt(IDE_FORWARDS_SECTION); !it.Eof(); it++) {
+      _forwards.add(it.key(), *it);
+   }
+}
+
+void IDEController::ProjectManager :: reloadForwardsXml()
+{
+   _ELENA_::Map<_ELENA_::ident_t, _ELENA_::_ConfigFile::Node> list;
+   _model->project.xmlConfig.select(IDE_FILES_XMLSECTION, list);
+
+   for (_ELENA_::_ConfigFile::Nodes::Iterator it = list.start(); !it.Eof(); it++) {
+      _ELENA_::_ConfigFile::Nodes files;
+      (*it).select(ELC_INCLUDE, files);
+
+      for (_ELENA_::_ConfigFile::Nodes::Iterator file_it = files.start(); !file_it.Eof(); file_it++) {
+         _sources.add((*file_it).Content());
+      }
+   }
+}
+
+void IDEController::ProjectManager :: reloadForwards()
+{
+   _forwards.clear();
+
+   if (_model->project.type == ctXml) {
+      reloadForwardsXml();
+   }
+   else reloadForwardsIni();
+}
+
 void IDEController::ProjectManager :: refresh()
 {
    const char* projectTemplate = getTemplate();
@@ -2240,6 +2272,7 @@ void IDEController::ProjectManager :: refresh()
    reloadSources();
 
    // reload forward list
+   reloadForwards();
 }
 
 bool IDEController::ProjectManager :: openIni(_ELENA_::path_t path)

@@ -22,8 +22,10 @@ class IDEController : public _Controller
 {
    class ProjectManager : public _ProjectManager
    {
-      Model*                          _model;
-      _ELENA_::List<_ELENA_::ident_t> _sources;
+      Model* _model;
+
+      _ELENA_::List<_ELENA_::ident_t>  _sources;
+      _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ident_t>  _forwards;
 
       bool openIni(_ELENA_::path_t path);
       bool openXml(_ELENA_::path_t path);
@@ -53,6 +55,10 @@ class IDEController : public _Controller
       void reloadSourcesXml();
       void reloadSources();
 
+      void reloadForwardsIni();
+      void reloadForwardsXml();
+      void reloadForwards();
+
    public:
       virtual void retrievePath(_ELENA_::ident_t name, _ELENA_::Path & path, _ELENA_::path_t extension);
 
@@ -74,9 +80,9 @@ class IDEController : public _Controller
          return _sources.start();
       }
 
-      virtual _ELENA_::ConfigCategoryIterator Forwards()
+      virtual ForwardIterator Forwards()
       {
-         return _model->project.config.getCategoryIt(IDE_FORWARDS_SECTION);
+         return _forwards.start();
       }
 
       void setSectionOption(const char* option, const char* value);

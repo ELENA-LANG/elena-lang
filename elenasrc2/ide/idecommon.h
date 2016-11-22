@@ -204,6 +204,7 @@ class _ProjectManager
 {
 public:
    typedef _ELENA_::List<_ELENA_::ident_t>::Iterator SourceIterator;
+   typedef _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ident_t>::Iterator ForwardIterator;
 
    virtual _ELENA_::path_t getAppPath() = 0;
 
@@ -231,7 +232,7 @@ public:
    virtual void setTemplate(const char* target) = 0;
    virtual void setDebugMode(int mode) = 0;
 
-   virtual _ELENA_::ConfigCategoryIterator Forwards() = 0;
+   virtual ForwardIterator Forwards() = 0;
    virtual void clearForwards() = 0;
    virtual void addForward(const char* name, const char* reference) = 0;
 };

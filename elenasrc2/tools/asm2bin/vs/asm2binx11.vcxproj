@@ -107,6 +107,7 @@
     <ClCompile Include="..\..\..\common\altstrings.cpp" />
     <ClCompile Include="..\..\..\engine\bytecode.cpp" />
     <ClCompile Include="..\asm2binx.cpp" />
+    <ClCompile Include="..\..\..\common\xmlreader.cpp" />
     <ClCompile Include="..\..\..\common\config.cpp" />
     <ClCompile Include="..\..\..\common\dump.cpp" />
     <ClCompile Include="..\..\..\common\files.cpp" />
@@ -123,6 +124,7 @@
     <ClInclude Include="..\..\..\engine\bytecode.h" />
     <ClInclude Include="..\assembler.h" />
     <ClInclude Include="..\..\..\common\common.h" />
+    <ClInclude Include="..\..\..\common\xmlreader.h" />
     <ClInclude Include="..\..\..\common\config.h" />
     <ClInclude Include="..\..\..\common\dump.h" />
     <ClInclude Include="..\..\..\engine\elena.h" />

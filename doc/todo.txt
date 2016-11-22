@@ -1,12 +1,6 @@
 ------                                 
 In development:
 ------                              
-              xrev                 
-                 * ini vs xml : forwards, source files, include / exclude file
-                 * ini vs xml : project scope : config
-                 * #14 : switch to xml config files (.xprj project)
-                 * ini : replace warn/weakunresolved with warn:weakunresolved
-
               zdev 
                  * scripting library : generate simple class
                  * scripting library : run time
@@ -15,6 +9,15 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
 
               xrev                 
+                 * ide : include / exclude
+                 * ide : forwards
+                 * #14 : switch to xml config files (.xprj project)
+                 * xmlreader : after deleting / changing presaved settings should be remove, problably ProjectManager
+                   should keep the string copies or be reloaded every time
+                 * ini to xml
+                 * xml to ini : not allowed
+                 * xml : indent
+
                  * message $self does not belong to the object points to the target instead of message
 
                  * returning from closure (to simulate normal branching)
@@ -149,6 +152,7 @@ In development:
                  * test template in template (with parameters)
                  * test calc sample
                  * optimize unbox : root expression / assigning
+                 * ini : replace warn/weakunresolved with warn:weakunresolved
 
               xdev - ide
                 * vertical scroller does not work correctly

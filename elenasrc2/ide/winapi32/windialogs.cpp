@@ -467,7 +467,7 @@ void ProjectForwardsDialog :: deleteItem()
 
 void ProjectForwardsDialog :: onCreate()
 {
-   _ELENA_::ConfigCategoryIterator forwards = _project->Forwards();
+   _ProjectManager::ForwardIterator forwards = _project->Forwards();
    _ELENA_::IdentifierString item;
    while (!forwards.Eof()) {
       item.copy(forwards.key());

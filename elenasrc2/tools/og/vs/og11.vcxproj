@@ -99,6 +99,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\common\altstrings.cpp" />
+    <ClCompile Include="..\..\..\common\xmlreader.cpp" />
     <ClCompile Include="..\..\..\common\config.cpp" />
     <ClCompile Include="..\..\..\common\dump.cpp" />
     <ClCompile Include="..\..\..\common\files.cpp" />
@@ -109,6 +110,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\common\altstrings.h" />
     <ClInclude Include="..\..\..\common\common.h" />
+    <ClInclude Include="..\..\..\common\xmlreader.h" />
     <ClInclude Include="..\..\..\common\config.h" />
     <ClInclude Include="..\..\..\common\dump.h" />
     <ClInclude Include="..\..\..\engine\bytecode.h" />
