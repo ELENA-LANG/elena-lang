@@ -118,18 +118,17 @@ bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, path
 
 void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, path_t path)
 {
-   IdentifierString key;
-
    _ConfigFile::Nodes nodes;
    if (readCategory(config, setting, nodes)) {
       for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
-         // copy line key
-         key.copy(it.key());
+         ident_t key = (*it).Attribute("key");
+         if (emptystr(key))
+            key = it.key();
 
          // copy value or key if the value is absent
          ident_t value = (*it).Content();
          if (emptystr(value))
-            value = it.key();
+            value = key;
 
          // add path if provided
          if (!emptystr(path)) {
@@ -147,7 +146,11 @@ void Project :: loadForwardCategory(_ConfigFile& config)
    _ConfigFile::Nodes nodes;
    if (readCategory(config, opForwards, nodes)) {
       for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
-         _settings.add(opForwards, it.key(), (*it).Content().clone());
+         ident_t key = (*it).Attribute("key");
+         if (emptystr(key))
+            key = it.key();
+
+         _settings.add(opForwards, key, (*it).Content().clone());
       }
    }
 }
@@ -157,10 +160,14 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
    _ConfigFile::Nodes nodes;
    if (readCategory(config, opPrimitives, nodes)) {
       for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
+         ident_t key = (*it).Attribute("key");
+         if (emptystr(key))
+            key = it.key();
+
          // copy value or key if the value is absent
          ident_t value = (*it).Content();
          if (emptystr(value))
-            value = it.key();
+            value = key;
 
          // add path if provided
          Path filePath(path);
@@ -170,10 +177,10 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
          }
          else filePath.combine(value);
 
-         if (it.key().compare(CORE_ALIAS)) {
+         if (key.compare(CORE_ALIAS)) {
             _loader.addCorePath(filePath.c_str());
          }
-         else _loader.addPrimitivePath(it.key(), filePath.c_str());
+         else _loader.addPrimitivePath(key, filePath.c_str());
       }
    }
 }
@@ -189,6 +196,7 @@ void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
 
             addSource(filePath.c_str());
          }
+         else addModule(*it);
       }
    }
 }

@@ -192,3 +192,142 @@ void IniConfigFile :: clear()
 {
     _settings.clear();
 }
+
+// --- XmlConfigFile ---
+
+XmlConfigFile :: XmlConfigFile()
+   : _values(NULL, freestr)
+{
+}
+
+bool XmlConfigFile :: load(path_t path, int encoding)
+{
+   try
+   {
+      if (_tree.load(path, encoding)) {
+         return _tree.compareTag("configuration");
+      }
+   }
+   catch (XMLException&)
+   {      
+   }
+   return false;
+}
+
+int XmlConfigFile :: find(XMLNode& node, ident_t key)
+{
+   int length = getlength(key);
+   int end = key.find('/', length);
+
+   XMLNodeTag tag((const char*)key, end);
+
+   XMLNode foundNode = node.findNode((const char*)tag);
+   if (foundNode.Position() != -1) {
+      if (end < length) {
+         return find(foundNode, (const char*)key + end + 1);
+      }
+      else return foundNode.Position();
+   }
+
+   return -1;
+}
+
+_ConfigFile::Node XmlConfigFile :: get(ident_t key)
+{
+   int position = find(_tree, key);
+
+   if (position >= 0) {
+      return _ConfigFile::Node(this, (void*)position);
+   }
+   else return _ConfigFile::Node();
+}
+
+bool XmlConfigFile :: select(ident_t key, Map<ident_t, _ConfigFile::Node>& list)
+{
+   int length = getlength(key);
+   int end = key.findLast('/', length);
+
+   int position = 0;
+   if (length > end) {
+      XMLNodeTag tag((const char*)key, end);
+
+      position = find(_tree, (const char*)tag);
+   }
+
+   if (position == -1)
+      return false;
+
+   XMLNode node(position, &_tree);
+   NodeList nodeList;
+   if (node.getNodeList(nodeList)) {
+      XMLNodeTag tag;
+      for (NodeList::Iterator it = nodeList.start(); !it.Eof(); it++) {
+         position = (*it).Position();
+         (*it).readTag(tag);
+
+         list.add(tag.str(), _ConfigFile::Node(this, (void*)position));
+      }
+
+      return true;
+   }
+   else return false;
+}
+
+bool XmlConfigFile :: select(Node root, ident_t key, Map<ident_t, _ConfigFile::Node>& list)
+{
+   bool found = false;
+   int position = (int)root.reference;
+
+   XMLNode node(position, &_tree);
+   NodeList nodeList;
+   if (node.getNodeList(nodeList)) {
+      XMLNodeTag tag;
+      for (NodeList::Iterator it = nodeList.start(); !it.Eof(); it++) {
+         position = (*it).Position();
+         (*it).readTag(tag);
+
+         if ((*it).compareTag(key)) {
+            found = true;
+
+            list.add(tag.str(), _ConfigFile::Node(this, (void*)position));
+         }         
+      }
+   }
+
+   return found;
+}
+
+ident_t XmlConfigFile :: getNodeContent(void* reference)
+{
+   if (!_values.exist((int)reference)) {
+      XMLNode node((int)reference, &_tree);
+
+      DynamicString<char> content;
+      node.readContent(content);
+
+      char* value = content.cut();
+      _values.add((int)reference, value);
+
+      return value;
+   }
+   else return _values.get((int)reference);
+}
+
+ident_t XmlConfigFile :: getNodeAttribute(void* reference, ident_t name)
+{
+   const char* value = _attributes.get((int)reference, name, DEFAULT_STR).c_str();
+   if (emptystr(value)) {
+      XMLNode node((int)reference, &_tree);
+
+      DynamicString<char> attrValue;
+      if (node.readAttribute(name, attrValue)) {
+         char* s = attrValue.cut();
+
+         _attributes.add((int)reference, name, s);
+
+         return s;
+      }
+      else return NULL;
+   }
+   else return value;   
+}

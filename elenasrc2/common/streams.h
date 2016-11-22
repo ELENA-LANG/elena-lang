@@ -226,6 +226,17 @@ public:
       }
       return (getlength(s) != 0);
    }
+
+   template<class String, class T> bool readAll(String& s, T* buffer, size_t size = BLOCK_SIZE)
+   {
+      s.clear();
+
+      while (read(buffer, size)) {
+         s.append(buffer);
+      }
+      return (getlength(s) != 0);
+   }
+
    virtual ~TextReader() {}
 };
 

@@ -413,8 +413,10 @@ char* StrFactory :: allocate(size_t size, const char* value)
 {
    char*s = (char*)malloc(size);
 
-   if (!emptystr(value))
+   if (!emptystr(value)) {
       memcpy(s, value, size);
+      s[size] = 0;
+   }      
 
    return s;
 }
@@ -529,6 +531,11 @@ char* StrHelper :: upper(char* s)
 char* clone(const char* s)
 {
    return emptystr(s) ? NULL : _strdup(s);
+}
+
+char* clone(const char* s, int length)
+{
+   return emptystr(s) ? NULL : StrFactory::allocate(length, s);
 }
 
 char* Convertor :: intToStr(int n, char* s, int radix)
@@ -1379,6 +1386,13 @@ int ident_t :: find(const char* s, int defValue)
    return ::find(_string, s, defValue);
 }
 
+int ident_t :: findSubStr(int index, const char* s, int defValue)
+{
+   int retVal = ::find(_string + index, s, defValue);
+
+   return retVal == -1 ? -1 : retVal + index;
+}
+
 int ident_t :: find(char c, int defValue)
 {
    return __find(_string, c, defValue);
@@ -1391,7 +1405,11 @@ int ident_t :: findLast(char c, int defValue)
 
 int ident_t :: findSubStr(int index, char c, size_t length, int defValue)
 {
-   return ::findSubStr(_string + index, c, length, defValue);
+   int pos = ::findSubStr(_string + index, c, length, -1);
+   if (pos != -1) {
+      return index + pos;
+   }
+   else return defValue;
 }
 
 char* ident_t :: clone()
@@ -1402,6 +1420,11 @@ char* ident_t :: clone()
 char* ident_t :: clone(int index)
 {
    return ::clone(_string + index);
+}
+
+char* ident_t::clone(int index, int length)
+{
+   return ::clone(_string + index, length);
 }
 
 bool ident_t :: compare(const char* s) const
@@ -1417,6 +1440,11 @@ bool ident_t::greater(const char* s)
 bool ident_t::compare(const char* s, size_t length) const
 {
    return ::compare(_string, s, length);
+}
+
+bool ident_t::compare(const char* s, int index, size_t length)
+{
+   return ::compare(_string + index, s, length);
 }
 
 bool ident_t :: endsWith(const char* s)

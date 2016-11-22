@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0089
+#define ELC_REVISION_NUMBER             0x008A
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -88,6 +88,7 @@
 #define ELC_TYPE_NAME               "type"
 #define ELC_INCLUDE                 "include"
 #define ELC_NAMESPACE_KEY           "namespace"
+#define ELC_NAME_KEY                "name"
 
 #define ELC_MANIFEST_NAME           "manifest/name"
 #define ELC_MANIFEST_VERSION        "manifest/version"
@@ -127,6 +128,7 @@ namespace _ELC_
 
 // --- ELC type definitions ---
 typedef _ELENA_::IniConfigFile ElcConfigFile;
+typedef _ELENA_::XmlConfigFile ElcXmlConfigFile;
 
 // --- Command Line Project ---
 class Project : public _ELENA_::Project
@@ -153,6 +155,7 @@ public:
    virtual void raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path);
 
    virtual void addSource(_ELENA_::path_t path);
+   virtual void addModule(_ELENA_::_ConfigFile::Node moduleNode);
 
    virtual void loadConfig(_ELENA_::_ConfigFile& config, _ELENA_::path_t configPath)
    {
@@ -160,6 +163,10 @@ public:
    }
 
    virtual void loadConfig(_ELENA_::path_t path, bool root = false, bool requiered = true);
+
+   void loadGenericConfig(_ELENA_::_ConfigFile& config, _ELENA_::path_t configPath, bool root, bool requiered);
+   void loadIniConfig(_ELENA_::path_t path, bool root, bool requiered);
+   void loadXMLConfig(_ELENA_::path_t path, bool root, bool requiered);
 
    void setOption(_ELENA_::path_t value);
 

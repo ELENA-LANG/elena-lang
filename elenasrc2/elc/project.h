@@ -144,6 +144,7 @@ public:
    virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
    virtual void addSource(path_t path) = 0;
+   virtual void addModule(_ConfigFile::Node moduleNode) = 0;
 
 //   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, path_t configPath);

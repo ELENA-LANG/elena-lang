@@ -92,6 +92,11 @@ public:
          return owner->getNodeAttribute(reference, name);
       }
 
+      bool select(ident_t key, Map<ident_t, Node>& list)
+      {
+         return owner->select(*this, key, list);
+      }
+
       Node(_ConfigFile* owner, void* reference)
       {
          this->owner = owner;
@@ -114,6 +119,7 @@ public:
    virtual Node get(ident_t key) = 0;
 
    virtual bool select(ident_t key, Nodes& list) = 0;
+   virtual bool select(Node root, ident_t subKey, Nodes& list) = 0;
 
    virtual ident_t getNodeContent(void* reference) = 0;
 

@@ -45,7 +45,7 @@ bool Path :: checkExtension(path_t path, path_t extension)
 {
    int namepos = path.findLast(PATH_SEPARATOR) + 1;
 
-   int pos = path.findLast(namepos, '.');
+   int pos = path.findLast(namepos, '.', -1);
    if (pos != -1) {
       return wide_t(path + pos + 1).compare(extension);
    }

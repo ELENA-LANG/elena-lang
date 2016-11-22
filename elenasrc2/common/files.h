@@ -201,6 +201,13 @@ public:
    }
 
 #ifdef _WIN32
+   static bool checkExtension(path_t path, const char* extension)
+   {
+      Path ext(extension);
+
+      return checkExtension(path, ext.c_str());
+   }
+
    static bool checkExtension(const char* path, const char* extension)
    {
       ident_t s = path;

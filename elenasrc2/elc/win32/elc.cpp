@@ -272,6 +272,25 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
    }
 }
 
+void _ELC_::Project :: addModule(_ELENA_::_ConfigFile::Node moduleNode)
+{
+   _ELENA_::ReferenceNs name(Namespace());
+
+   name.combine(moduleNode.Attribute(ELC_NAME_KEY));
+
+   int key = _sources.Count() + 1;
+   _sources.add(key, ELC_NAMESPACE_KEY, name.ident().clone());
+
+   _ELENA_::_ConfigFile::Nodes list;
+   moduleNode.select(ELC_INCLUDE, list);
+
+   for (_ELENA_::_ConfigFile::Nodes::Iterator it = list.start(); !it.Eof(); it++) {
+      _ELENA_::ident_t file = (*it).Content();
+
+      _sources.add(key, ELC_INCLUDE, file.clone());
+   }
+}
+
 void _ELC_::Project :: addSource(_ELENA_::path_t path)
 {
    _ELENA_::Path modulePath;
@@ -322,6 +341,30 @@ void _ELC_::Project :: cleanUp()
 
 void _ELC_::Project :: loadConfig(_ELENA_::path_t path, bool root, bool requiered)
 {
+   // HOTFIX : loading xml configuarion if required
+   if (_ELENA_::Path::checkExtension(path, "xprj")) {
+      loadXMLConfig(path, root, requiered);
+   }
+   else loadIniConfig(path, root, requiered);
+}
+
+void _ELC_::Project :: loadXMLConfig(_ELENA_::path_t path, bool root, bool requiered)
+{
+   ElcXmlConfigFile config;
+   _ELENA_::Path configPath;
+
+   configPath.copySubPath(path);
+
+   if (!config.load(path, getDefaultEncoding())) {
+      raiseErrorIf(requiered, ELC_ERR_INVALID_PATH, _ELENA_::IdentifierString(path));
+      return;
+   }
+
+   loadGenericConfig(config, configPath.c_str(), root, requiered);
+}
+
+void _ELC_::Project :: loadIniConfig(_ELENA_::path_t path, bool root, bool requiered)
+{
    ElcConfigFile config(true);
    _ELENA_::Path configPath;
 
@@ -332,9 +375,14 @@ void _ELC_::Project :: loadConfig(_ELENA_::path_t path, bool root, bool requiere
       return;
    }
 
+   loadGenericConfig(config, configPath.c_str(), root, requiered);
+}
+
+void _ELC_::Project :: loadGenericConfig(_ELENA_::_ConfigFile& config, _ELENA_::path_t configPath, bool root, bool requiered)
+{
    // load template list
    if (root)
-      loadCategory(config, _ELENA_::opTemplates, configPath.c_str());
+      loadCategory(config, _ELENA_::opTemplates, configPath);
 
    // load template
    _ELENA_::ident_t projectTemplate = config.getSetting(ELC_PROJECT_TEMPLATE);
@@ -348,7 +396,7 @@ void _ELC_::Project :: loadConfig(_ELENA_::path_t path, bool root, bool requiere
       else raiseErrorIf(requiered, ELC_ERR_INVALID_TEMPLATE, projectTemplate);
    }
 
-   loadConfig(config, configPath.c_str());
+   loadConfig(config, configPath);
 }
 
 void _ELC_::Project :: setOption(_ELENA_::path_t value)

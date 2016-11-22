@@ -359,8 +359,10 @@ public:
 
    void combine(ident_t s)
    {
-      append('\'');
-      append(s);
+      if (!emptystr(s)) {
+         append('\'');
+         append(s);
+      }
    }
 
    ReferenceNs()

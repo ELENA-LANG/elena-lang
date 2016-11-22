@@ -94,6 +94,7 @@ public:
    int findLast(char c, int defValue = -1);
 
    int findSubStr(int index, char c, size_t length, int defValue);
+   int findSubStr(int index, const char* s, int defValue = -1);
 
    int toInt();
    int toInt(int index);
@@ -107,9 +108,11 @@ public:
 
    char* clone();
    char* clone(int index);
+   char* clone(int index, int length);
 
    bool compare(const char* s) const;
    bool compare(const char* s, size_t length) const;
+   bool compare(const char* s, int start, size_t length);
 
    bool greater(const char* s);
 
@@ -281,6 +284,8 @@ public:
    operator const T*() const { return _string; }
 
    operator T*() { return _string; }
+
+   const T* str() const { return _string; }
 
    T& operator[](size_t index)
    {
@@ -465,11 +470,11 @@ protected:
    T*     _string;
    size_t _size;
 
-//   void assignOrCopy(const T* value, T* &ptr, size_t& size)
-//   {
-//      ptr = value;
-//      size = 0;
-//   }
+   void assignOrCopy(const T* value, T* &ptr, size_t& size)
+   {
+      ptr = value;
+      size = 0;
+   }
 
    void create(T*, size_t size)
    {
@@ -504,33 +509,13 @@ public:
    }
 
 //   bool isEmpty() const { return emptystr(_string); }
-//
-//   int findLast(T ch)
-//   {
-//      return StringHelper::findLast(_string, ch, -1);
-//   }
-//
-//   int find(T ch)
-//   {
-//      return StringHelper::find(_string, ch, -1);
-//   }
-//
-//   int find(int index, T ch)
-//   {
-//      return StringHelper::find(_string + index, ch, -1);
-//   }
-//
-//   bool compare(const T* s)
-//   {
-//      return StringHelper::compare(_string, s);
-//   }
 
    void copy(const T* s, size_t length)
    {
       if (_size <= length) {
          create(_string, length + 1);
       }
-      __copy(_string, s, length, length);
+      Convertor::copy(_string, s, length, length);
       _string[length] = 0;
    }
    void copy(const T* s)
@@ -575,16 +560,36 @@ public:
       intToStr(n, _string, 10);
    }
 
-//   void lower()
-//   {
-//      StringHelper::lower(_string);
-//   }
-//
-//   void trim(T ch)
-//   {
-//      StringHelper::trim(_string, ch);
-//   }
-//
+   void lower()
+   {
+      StrHelper::lower(_string);
+   }
+
+   void upper()
+   {
+      StrHelper::upper(_string);
+   }
+
+   void trim(T ch)
+   {
+      StringHelper::trim(_string, ch);
+   }
+
+   void truncate(size_t pos)
+   {
+      _string[pos] = 0;
+   }
+
+   char* cut()
+   {
+      char* value = _string;
+
+      _string = NULL;
+      _size = 0;
+
+      return value;
+   }
+
 //   T* clone()
 //   {
 //      return StringHelper::clone(_string);
@@ -599,17 +604,17 @@ public:
 //   {
 //      return StringHelper::strToInt(_string);
 //   }
-//
-//   void clear()
-//   {
-//      if (_string)
-//         _string[0] = 0;
-//   }
-//
-//   size_t Length()
-//   {
-//      return getlength(_string);
-//   }
+
+   void clear()
+   {
+      if (_string)
+         _string[0] = 0;
+   }
+
+   size_t Length()
+   {
+      return getlength(_string);
+   }
 
    DynamicString()
    {
