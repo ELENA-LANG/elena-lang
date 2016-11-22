@@ -285,13 +285,13 @@ bool IDEController :: openProject(_ELENA_::path_t path)
 
    if (_model->autoProjectLoad) {
       _ELENA_::Path sourcePath;
-      _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
+      _ProjectManager::SourceIterator it = _project.SourceFiles();
       while (!it.Eof()) {
-         sourcePath.copy(it.key());
+         sourcePath.copy(*it);
          Paths::resolveRelativePath(sourcePath, _model->project.path.c_str());
 
          if (!openFile(sourcePath.c_str()))
-            _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
+            _view->error(ERROR_CANNOT_OPEN_FILE, TextString(*it));
 
          it++;
       }
@@ -303,17 +303,17 @@ bool IDEController :: openProject(_ELENA_::path_t path)
 
 void IDEController :: selectProjectFile(int index)
 {
-   _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
+   _ProjectManager::SourceIterator it = _project.SourceFiles();
    while (index > 0) {
       index--;
       it++;
    }
 
-   _ELENA_::Path sourcePath(it.key());
+   _ELENA_::Path sourcePath(*it);
    Paths::resolveRelativePath(sourcePath, _model->project.path.c_str());
 
    if (!openFile(sourcePath.c_str())) {
-      _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
+      _view->error(ERROR_CANNOT_OPEN_FILE, TextString(*it));
    }
    else onChange();
 }
@@ -464,8 +464,8 @@ void IDEController :: cleanUpProject()
    }
    // clean module files
    _ELENA_::Path rootPath(_model->project.path.c_str(), _project.getOutputPath());
-   for (_ELENA_::ConfigCategoryIterator it = _project.SourceFiles(); !it.Eof(); it++) {
-      _ELENA_::Path source(rootPath.c_str(), it.key());
+   for (_ProjectManager::SourceIterator it = _project.SourceFiles(); !it.Eof(); it++) {
+      _ELENA_::Path source(rootPath.c_str(), *it);
 
       _ELENA_::Path module;
       module.copySubPath(source.c_str());
@@ -1777,11 +1777,11 @@ bool IDEController :: isOutaged(bool noWarning)
    }
 
    _ELENA_::Path rootPath(_model->project.path.c_str(), _project.getOutputPath());
-   for (_ELENA_::ConfigCategoryIterator it = _project.SourceFiles(); !it.Eof(); it++) {
-      _ELENA_::Path source(rootPath.c_str(), it.key());
+   for (_ProjectManager::SourceIterator it = _project.SourceFiles(); !it.Eof(); it++) {
+      _ELENA_::Path source(rootPath.c_str(), *it);
 
       _ELENA_::Path module;
-      module.copySubPath(it.key());
+      module.copySubPath(*it);
 
       _ELENA_::ReferenceNs name(_project.getPackage());
       name.pathToName(module.c_str());          // get a full name
@@ -1962,37 +1962,115 @@ void IDEController :: toggleBreakpoint()
 
 // --- Projects ---
 
-const char* IDEController::ProjectManager::getPackage()
+const char* IDEController::ProjectManager :: getPackageIni()
 {
    return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_PACKAGE_SETTING);
 }
 
-const char* IDEController::ProjectManager::getTemplate()
+const char* IDEController::ProjectManager :: getPackageXml()
+{
+   return _model->project.xmlConfig.getSetting(IDE_PACKAGE_XMLSETTING);
+}
+
+const char* IDEController::ProjectManager :: getPackage()
+{
+   if (_model->project.type == ctXml) {
+      return getPackageXml();
+   }
+   else return getPackageIni();
+}
+
+const char* IDEController::ProjectManager :: getTemplateIni()
 {
    return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_TEMPLATE_SETTING);
 }
 
-const char* IDEController::ProjectManager::getOptions()
+const char* IDEController::ProjectManager :: getTemplateXml()
+{
+   return _model->project.xmlConfig.getSetting(IDE_TEMPLATE_XMLSETTING);
+}
+
+const char* IDEController::ProjectManager::getTemplate()
+{
+   if (_model->project.type == ctXml) {
+      return getTemplateXml();
+   }
+   else return getTemplateIni();
+}
+
+const char* IDEController::ProjectManager::getOptionsIni()
 {
    return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_COMPILER_OPTIONS);
 }
 
-const char* IDEController::ProjectManager::getTarget()
+const char* IDEController::ProjectManager::getOptionsXml()
+{
+   return _model->project.xmlConfig.getSetting(IDE_COMPILER_XMLOPTIONS);
+}
+
+const char* IDEController::ProjectManager::getOptions()
+{
+   if (_model->project.type == ctXml) {
+      return getOptionsXml();
+   }
+   else return getOptionsIni();
+}
+
+const char* IDEController::ProjectManager::getTargetIni()
 {
    return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_EXECUTABLE_SETTING);
 }
 
-const char* IDEController::ProjectManager::getOutputPath()
+const char* IDEController::ProjectManager::getTargetXml()
+{
+   return _model->project.xmlConfig.getSetting(IDE_EXECUTABLE_XMLSETTING);
+}
+
+const char* IDEController::ProjectManager::getTarget()
+{
+   if (_model->project.type == ctXml) {
+      return getTargetXml();
+   }
+   else return getTargetIni();
+}
+
+const char* IDEController::ProjectManager::getOutputPathIni()
 {
    return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_OUTPUT_SETTING);
 }
 
-const char* IDEController::ProjectManager::getArguments()
+const char* IDEController::ProjectManager::getOutputPathXml()
+{
+   return _model->project.xmlConfig.getSetting(IDE_OUTPUT_XMLSETTING);
+}
+
+const char* IDEController::ProjectManager::getOutputPath()
+{
+   if (_model->project.type == ctXml) {
+      return getOutputPathXml();
+   }
+   else return getOutputPathIni();
+}
+
+const char* IDEController::ProjectManager::getArgumentsIni()
 {
    return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_ARGUMENT_SETTING);
 }
 
-int IDEController::ProjectManager::getDebugMode()
+const char* IDEController::ProjectManager::getArgumentsXml()
+{
+   return _model->project.xmlConfig.getSetting(IDE_ARGUMENT_XMLSETTING);
+}
+
+const char* IDEController::ProjectManager::getArguments()
+{
+   if (_model->project.type == ctXml) {
+      return getArgumentsXml();
+   }
+   else return getArgumentsIni();
+}
+
+int IDEController::ProjectManager :: getDebugModeIni()
 {
    _ELENA_::ident_t mode = _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
    if (mode.compare("-1")) {
@@ -2004,59 +2082,99 @@ int IDEController::ProjectManager::getDebugMode()
    else return 0;
 }
 
+int IDEController::ProjectManager::getDebugModeXml()
+{
+   _ELENA_::ident_t mode = _model->project.xmlConfig.getSetting(IDE_DEBUGINFO_XMLSETTING);
+   if (mode.compare("-1")) {
+      return -1;
+   }
+   else if (mode.compare("-2")) {
+      return -2;
+   }
+   else return 0;
+}
+
+int IDEController::ProjectManager :: getDebugMode()
+{
+   if (_model->project.type == ctXml) {
+      return getDebugModeXml();
+   }
+   else return getDebugModeIni();
+}
+
 bool IDEController::ProjectManager::getBoolSetting(const char* name)
 {
-   _ELENA_::ident_t value = _model->project.config.getSetting(IDE_PROJECT_SECTION, name);
+   _ELENA_::ident_t value = NULL;
+   if (_model->project.type == ctXml) {
+      value = _model->project.xmlConfig.getSetting(name);
+   }
+   else value = _model->project.config.getSetting(name);
 
    return value.compare("-1");
 }
 
 void IDEController::ProjectManager::setSectionOption(const char* option, const char* value)
 {
-   if (!_ELENA_::emptystr(value)) {
-      _model->project.config.setSetting(IDE_PROJECT_SECTION, option, value);
+   if (_model->project.type == ctXml) {
+      if (!_ELENA_::emptystr(value)) {
+         _model->project.xmlConfig.setSetting(option, value);
+      }
+      else _model->project.xmlConfig.setSetting(option, NULL);
    }
-   else _model->project.config.clear(IDE_PROJECT_SECTION, option);
+   else {
+      if (!_ELENA_::emptystr(value)) {
+         _model->project.config.setSetting(option, value);
+      }
+      else _model->project.config.setSetting(option, NULL);
+   }
 
    _model->project.changed = true;
 }
 
 void IDEController::ProjectManager::setTarget(const char* target)
 {
-   setSectionOption(IDE_EXECUTABLE_SETTING, target);
+   setSectionOption(IDE_EXECUTABLE_XMLSETTING, target);
 }
 
 void IDEController::ProjectManager::setArguments(const char* arguments)
 {
-   setSectionOption(IDE_ARGUMENT_SETTING, arguments);
+   setSectionOption(IDE_ARGUMENT_XMLSETTING, arguments);
 }
 
 void IDEController::ProjectManager::setTemplate(const char* templateName)
 {
-   setSectionOption(IDE_TEMPLATE_SETTING, templateName);
+   setSectionOption(IDE_TEMPLATE_XMLSETTING, templateName);
 }
 
 void IDEController::ProjectManager::setOutputPath(const char* path)
 {
-   setSectionOption(IDE_OUTPUT_SETTING, path);
+   setSectionOption(IDE_OUTPUT_XMLSETTING, path);
 }
 
 void IDEController::ProjectManager::setOptions(const char* options)
 {
-   setSectionOption(IDE_COMPILER_OPTIONS, options);
+   setSectionOption(IDE_COMPILER_XMLOPTIONS, options);
 }
 
 void IDEController::ProjectManager::setPackage(const char* package)
 {
-   setSectionOption(IDE_PACKAGE_SETTING, package);
+   setSectionOption(IDE_PACKAGE_XMLSETTING, package);
 }
 
 void IDEController::ProjectManager::setDebugMode(int mode)
 {
-   if (mode != 0) {
-      _model->project.config.setSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING, mode);
+   if (_model->project.type == ctXml) {
+      if (mode != 0) {
+         _model->project.xmlConfig.setSetting(IDE_DEBUGINFO_XMLSETTING, mode);
+      }
+      else _model->project.xmlConfig.setSetting(IDE_DEBUGINFO_XMLSETTING, NULL);
    }
-   else _model->project.config.clear(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
+   else {
+      if (mode != 0) {
+         _model->project.config.setSetting(IDE_DEBUGINFO_XMLSETTING, mode);
+      }
+      else _model->project.config.setSetting(IDE_DEBUGINFO_XMLSETTING, NULL);
+   }
 
    _model->project.changed = true;
 }
@@ -2066,7 +2184,39 @@ void IDEController::ProjectManager::setBoolSetting(const char* key, bool value)
    setSectionOption(key, value ? "-1" : "0");
 }
 
-void IDEController::ProjectManager::refresh()
+void IDEController::ProjectManager :: reloadSourcesIni()
+{
+   for (_ELENA_::ConfigCategoryIterator it = _model->project.config.getCategoryIt(IDE_FILES_SECTION); !it.Eof(); it++) {
+      _sources.add(it.key());
+   }
+}
+
+void IDEController::ProjectManager :: reloadSourcesXml()
+{
+   _ELENA_::Map<_ELENA_::ident_t, _ELENA_::_ConfigFile::Node> list;
+   _model->project.xmlConfig.select(IDE_FILES_XMLSECTION, list);
+
+   for (_ELENA_::_ConfigFile::Nodes::Iterator it = list.start(); !it.Eof(); it++) {
+      _ELENA_::_ConfigFile::Nodes files;
+      (*it).select(ELC_INCLUDE, files);
+
+      for (_ELENA_::_ConfigFile::Nodes::Iterator file_it = files.start(); !file_it.Eof(); file_it++) {
+         _sources.add((*file_it).Content());
+      }
+   }
+}
+
+void IDEController::ProjectManager :: reloadSources()
+{
+   _sources.clear();
+
+   if (_model->project.type == ctXml) {
+      reloadSourcesXml();
+   }
+   else reloadSourcesIni();
+}
+
+void IDEController::ProjectManager :: refresh()
 {
    const char* projectTemplate = getTemplate();
 
@@ -2085,10 +2235,16 @@ void IDEController::ProjectManager::refresh()
 
    _model->paths.libraryRoot.copy(templatePath);
    Paths::resolveRelativePath(_model->paths.libraryRoot, _model->paths.appPath.c_str());
+
+   // reload source list
+   reloadSources();
+
+   // reload forward list
 }
 
-bool IDEController::ProjectManager::open(_ELENA_::path_t path)
+bool IDEController::ProjectManager :: openIni(_ELENA_::path_t path)
 {
+   _model->project.type = ctIni;
    _model->project.config.clear();
 
    if (!_model->project.config.load(path, _ELENA_::feUTF8))
@@ -2099,6 +2255,29 @@ bool IDEController::ProjectManager::open(_ELENA_::path_t path)
 
    _model->project.changed = false;
    return true;
+}
+
+bool IDEController::ProjectManager :: openXml(_ELENA_::path_t path)
+{
+   _model->project.type = ctXml;
+   _model->project.xmlConfig.clear();
+
+   if (!_model->project.xmlConfig.load(path, _ELENA_::feUTF8))
+      return false;
+
+   rename(path);
+   refresh();
+
+   _model->project.changed = false;
+   return true;
+}
+
+bool IDEController::ProjectManager::open(_ELENA_::path_t path)
+{
+   if (_ELENA_::Path::checkExtension(path, "xprj")) {
+      return openXml(path);
+   }
+   else return openIni(path);
 }
 
 void IDEController::ProjectManager::reset()
@@ -2178,9 +2357,9 @@ bool IDEController::ProjectManager :: isIncluded(_ELENA_::path_t path)
    _ELENA_::Path relPath(path);
    Paths::makeRelativePath(relPath, _model->project.path.c_str());
 
-   _ELENA_::ConfigCategoryIterator it = SourceFiles();
+   _ProjectManager::SourceIterator it = SourceFiles();
    while (!it.Eof()) {
-      current.copy(it.key());
+      current.copy(*it);
 
       if (relPath.str().compare(current, _ELENA_::getlength(current))) {
          return true;

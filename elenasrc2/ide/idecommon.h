@@ -38,6 +38,18 @@ namespace _GUI_
 #define IDE_OUTPUT_SETTING                      "output"
 #define IDE_ARGUMENT_SETTING                    "arguments"
 #define IDE_DEBUGINFO_SETTING                   "debuginfo"
+#define ELC_INCLUDE                             "include"
+
+#define IDE_TEMPLATE_XMLSETTING                 "project/template"
+#define IDE_PACKAGE_XMLSETTING                  "project/namespace"
+#define IDE_COMPILER_XMLOPTIONS                 "project/options"
+#define IDE_EXECUTABLE_XMLSETTING               "project/executable"
+#define IDE_OUTPUT_XMLSETTING                   "project/output"
+#define IDE_ARGUMENT_XMLSETTING                 "project/arguments"
+#define IDE_DEBUGINFO_XMLSETTING                "project/debuginfo"
+#define IDE_WARNON_UNRESOLVED                   "project/warn/unresolved"
+
+#define IDE_FILES_XMLSECTION                    "files/*"
 
 // --- ELENA IDE Styles ---
 #define SCHEME_COUNT                            2
@@ -135,10 +147,20 @@ struct MessageBookmark
    }
 };
 
+enum ConfigType
+{
+   ctIni = 0,
+   ctXml = 1
+};
+
 struct ProjectScope
 {
    bool                   changed;
+
+   ConfigType             type;
    _ELENA_::IniConfigFile config;
+   _ELENA_::XmlConfigFile xmlConfig;
+
    _ELENA_::FileName      name;
    _ELENA_::FileName      extension;
    _ELENA_::Path          path;
@@ -146,6 +168,7 @@ struct ProjectScope
    ProjectScope()
    {
       changed = false;
+      type = ctIni;
    }
 };
 
@@ -180,9 +203,11 @@ public:
 class _ProjectManager
 {
 public:
+   typedef _ELENA_::List<_ELENA_::ident_t>::Iterator SourceIterator;
+
    virtual _ELENA_::path_t getAppPath() = 0;
 
-   virtual _ELENA_::ConfigCategoryIterator SourceFiles() = 0;
+   virtual SourceIterator SourceFiles() = 0;
 
    virtual int getDebugMode() = 0;
 

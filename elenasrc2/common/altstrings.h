@@ -498,6 +498,8 @@ public:
 
    operator T*() { return _string; }
 
+   const char* str() const { return _string; }
+
    T& operator[](size_t index)
    {
       return *(_string + index);
@@ -558,6 +560,22 @@ public:
    void copyInt(int n)
    {
       intToStr(n, _string, 10);
+   }
+
+   void insert(const T* s, size_t index)
+   {
+      int slen = getlength(s);
+      int len = getlength(_string);
+      if (slen + len > _size) {
+         create(_string, slen + len + 1);
+      }
+
+      StrHelper::insert(_string, index, slen, s);
+   }
+
+   void cut(size_t index, int length)
+   {
+      StrHelper::move(_string + index, _string + index + length, length);
    }
 
    void lower()

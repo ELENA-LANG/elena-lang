@@ -12,7 +12,7 @@ using namespace _GUI_;
 
 // --- FileDialog ---
 
-wchar_t* FileDialog :: ProjectFilter = _T("ELENA Project file\0*.prj\0All types\0*.*\0\0");
+wchar_t* FileDialog :: ProjectFilter = _T("ELENA Project file\0*.prj\0ELENA XML Project file\0*.xprj\0All types\0*.*\0\0");
 wchar_t* FileDialog :: SourceFilter = _T("ELENA source file\0*.l\0All types\0*.*\0\0");
 
 //typedef _ELENA_::String<tchar_t, 255> ParamString;
@@ -344,7 +344,7 @@ void ProjectSettingsDialog :: onCreate()
    }
    else setComboBoxIndex(IDC_SETTINGS_DEBUG, 0);
 
-   setCheckState(IDC_SETTINGS_WARN_REF, _project->getBoolSetting("warn:unresolved"));
+   setCheckState(IDC_SETTINGS_WARN_REF, _project->getBoolSetting(IDE_WARNON_UNRESOLVED));
 
    loadTemplateList();
 
@@ -388,7 +388,7 @@ void ProjectSettingsDialog :: onOK()
    }
    else _project->setDebugMode(0);
 
-   _project->setBoolSetting("warn:unresolved", getCheckState(IDC_SETTINGS_WARN_REF));
+   _project->setBoolSetting(IDE_WARNON_UNRESOLVED, getCheckState(IDC_SETTINGS_WARN_REF));
 }
 
 // --- ProjectForwardsDialog ---

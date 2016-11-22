@@ -45,7 +45,12 @@ public:
 
    ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL);
 
-   void setSetting(const char* category, const char* key, const char* value);
+   void setSetting(ident_t key, const char* value);
+   void setSetting(ident_t key, int value);
+   void setSetting(ident_t key, size_t value);
+   void setSetting(ident_t key, bool value);
+
+   void setSetting(const char* category, const char* key, const char* value); // !! obsolete
    void setSetting(const char* category, const char* key, int value);
    void setSetting(const char* category, const char* key, size_t value);
    void setSetting(const char* category, const char* key, bool value);
@@ -97,14 +102,12 @@ public:
 
    //ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL);
 
-   //void setSetting(const char* category, const char* key, const char* value);
-   //void setSetting(const char* category, const char* key, int value);
-   //void setSetting(const char* category, const char* key, size_t value);
-   //void setSetting(const char* category, const char* key, bool value);
+   void setSetting(ident_t key, const char* value);
+   void setSetting(ident_t key, int value);
+   void setSetting(ident_t key, size_t value);
+   void setSetting(ident_t key, bool value);
 
-   //void clear(const char* category, const char* key);
-   //void clear(const char* category);
-   //void clear();
+   void clear();
 
    virtual bool load(path_t path, int encoding);
    //virtual bool save(path_t path, int encoding);

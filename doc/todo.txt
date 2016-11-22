@@ -4,7 +4,7 @@ In development:
               xrev                 
                  * ini vs xml : forwards, source files, include / exclude file
                  * ini vs xml : project scope : config
-                 * #14 : switch to xml config files
+                 * #14 : switch to xml config files (.xprj project)
                  * ini : replace warn/weakunresolved with warn:weakunresolved
 
               zdev 
@@ -208,6 +208,7 @@ Pipeline:
               idev - generic development                                          
                        * show internal errors in message list
                        * #263 - IDE : MTA Debugging 
+                       * refactor IDEController::ProjectManager - get rid of duplicate code
 
              xdev - linux
                        * implement UnsafePointer.get&literal / UnsafePointer.get&wide

@@ -173,6 +173,46 @@ void IniConfigFile :: setSetting(const char* category, const char* key, bool val
    _settings.add(category, key, value ? "-1" : "0");
 }
 
+void IniConfigFile :: setSetting(ident_t key, const char* value)
+{
+   int index = key.find('/');
+   if (index != -1) {
+      String<char, 50> category(key, index);
+
+      ident_t settingName = key + index + 1;
+      index = settingName.find('/');
+      if (index > 0) {
+         // HOTFIX : if sub category is used
+         String<char, 50> temp(settingName);
+         temp[index] = ':';
+
+         _settings.add(category.str(), temp.str(), ((ident_t)value).clone());
+      }
+      else _settings.add(category.str(), key, ((ident_t)value).clone());
+   }
+}
+
+void IniConfigFile::setSetting(ident_t key, int value)
+{
+   String<char, 15> string;
+   string.appendInt(value);
+
+   setSetting(key, string.str());
+}
+
+void IniConfigFile::setSetting(ident_t key, size_t value)
+{
+   String<char, 15> string;
+   string.appendInt(value);
+
+   setSetting(key, string.str());
+}
+
+void IniConfigFile::setSetting(ident_t key, bool value)
+{
+   setSetting(key, value ? "-1" : "0");
+}
+
 ident_t IniConfigFile :: getSetting(ident_t category, ident_t key, ident_t defaultValue)
 {
    return _settings.get(category, key, defaultValue);
@@ -330,4 +370,50 @@ ident_t XmlConfigFile :: getNodeAttribute(void* reference, ident_t name)
       else return NULL;
    }
    else return value;   
+}
+
+void XmlConfigFile :: setSetting(ident_t key, const char* value)
+{
+   int position = find(_tree, key);
+
+   if (position >= 0) {
+      XMLNode node(position, &_tree);
+
+      node.writeContent(value);
+   }
+   else {
+      int length = getlength(key);
+      int end = key.find('/', length);
+
+      String<char, 255> category(key, end);
+      int position = find(_tree, category.str());
+
+      XMLNode parent(position, &_tree);
+      XMLNode newNode = parent.appendNode(key);
+
+      newNode.writeContent(value);
+   }
+}
+
+void XmlConfigFile :: setSetting(ident_t key, int value)
+{
+
+}
+
+void XmlConfigFile :: setSetting(ident_t key, size_t value)
+{
+
+}
+
+void XmlConfigFile :: setSetting(ident_t key, bool value)
+{
+
+}
+
+void XmlConfigFile :: clear()
+{
+   _values.clear();
+   _attributes.clear();
+
+   _tree.clear();
 }

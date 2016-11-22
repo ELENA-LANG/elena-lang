@@ -44,6 +44,16 @@ protected:
       return _parent->getContent();
    }
 
+   virtual void setContent(int position, ident_t value)
+   {
+      _parent->setContent(position, value);
+   }
+
+   virtual void insertNode(int position, ident_t name)
+   {
+      _parent->insertNode(position, name);
+   }
+
    // recognize opening tag and parse it starting from start, return value - the node content position
    int loadTag(ident_t content, int start, XMLNodeTag& tag, AttributeList* list);
    // find and return the closing node position starting from start
@@ -64,11 +74,10 @@ public:
    virtual bool readAttribute(ident_t name, DynamicString<char>& s);
    virtual void readTag(XMLNodeTag& s);
 
-//   //// set content
-//   //// after set content child nodes may be unsafe
-//   //// if s is NULL - erase child node
-//   //virtual int setContent(int id, const char* s);
-//
+   virtual void writeContent(ident_t s);
+
+   virtual XMLNode appendNode(ident_t name);
+
 //   //// remove the node from the parent
 //   //void remove();
 
@@ -88,14 +97,20 @@ class XMLTree : public XMLNode
 {
    DynamicString<char> _content;
    
-   //virtual int appendContent(const char* s);
-
    virtual ident_t getContent()
    {
       return (const char*)_content;
    }
 
+   virtual void setContent(int position, ident_t value);
+   virtual void insertNode(int position, ident_t name);
+
 public:
+   void clear()
+   {
+      _content.clear();
+   }
+
    //void assign(const char* s);
    bool load(path_t path, int encoding);
    //   //void XMLS_saveFile(const char* path);

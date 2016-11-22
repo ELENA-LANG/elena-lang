@@ -22,7 +22,36 @@ class IDEController : public _Controller
 {
    class ProjectManager : public _ProjectManager
    {
-      Model* _model;
+      Model*                          _model;
+      _ELENA_::List<_ELENA_::ident_t> _sources;
+
+      bool openIni(_ELENA_::path_t path);
+      bool openXml(_ELENA_::path_t path);
+
+      const char* getTemplateIni();
+      const char* getTemplateXml();
+
+      const char* getPackageIni();
+      const char* getPackageXml();
+
+      const char* getOptionsIni();
+      const char* getOptionsXml();
+
+      const char* getTargetIni();
+      const char* getTargetXml();
+
+      const char* getOutputPathIni();
+      const char* getOutputPathXml();
+
+      const char* getArgumentsIni();
+      const char* getArgumentsXml();
+
+      int getDebugModeIni();
+      int getDebugModeXml();
+
+      void reloadSourcesIni();
+      void reloadSourcesXml();
+      void reloadSources();
 
    public:
       virtual void retrievePath(_ELENA_::ident_t name, _ELENA_::Path & path, _ELENA_::path_t extension);
@@ -40,9 +69,9 @@ class IDEController : public _Controller
 
       virtual bool getBoolSetting(const char* name);
 
-      virtual _ELENA_::ConfigCategoryIterator SourceFiles()
+      virtual SourceIterator SourceFiles()
       {
-         return _model->project.config.getCategoryIt(IDE_FILES_SECTION);
+         return _sources.start();
       }
 
       virtual _ELENA_::ConfigCategoryIterator Forwards()

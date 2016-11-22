@@ -1542,11 +1542,11 @@ void IDEWindow :: reloadProjectView(_ProjectManager* project)
 
    TreeViewItem root = projectView->insertTo(NULL, _model->project.name, -1, true);
 
-   _ELENA_::ConfigCategoryIterator it = project->SourceFiles();
+   _ProjectManager::SourceIterator it = project->SourceFiles();
    int index = 0;
    _ELENA_::wide_c buffer[0x100];
    while (!it.Eof()) {
-      _ELENA_::ident_t name = it.key();
+      _ELENA_::ident_t name = *it;
 
       TreeViewItem parent = root;
       int start = 0;      

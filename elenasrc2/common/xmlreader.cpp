@@ -155,6 +155,24 @@ void XMLNode :: readContent(DynamicString<char>& s)
    s.copy((const char*)content + start, end - start - tag.Length() - 3);
 }
 
+void XMLNode :: writeContent(ident_t s)
+{
+   setContent(_position, s);
+}
+
+XMLNode XMLNode :: appendNode(ident_t name)
+{
+   ident_t content = getContent();
+
+   XMLNodeTag tag;
+   int start = loadTag(content, _position, tag, NULL);
+   int end = parse(content, _position, getlength(content), NULL) - tag.Length() - 3;
+
+   insertNode(end, name);
+
+   return XMLNode(end, this);
+}
+
 bool XMLNode :: readAttribute(ident_t name, DynamicString<char>& s)
 {
    ident_t content = getContent();
@@ -252,4 +270,24 @@ bool XMLTree :: load(path_t path, int encoding)
    reader.readAll(_content, buffer, 128);
 
    return true;
+}
+
+void XMLTree :: setContent(int position, ident_t value)
+{
+   XMLNodeTag tag;
+   int start = loadTag(_content.str(), _position, tag, NULL);
+   int end = parse(_content.str(), _position, _content.Length(), NULL) - tag.Length() - 3;
+
+   _content.cut(start, end - start);
+   _content.insert(value.c_str(), start);
+}
+
+void XMLTree :: insertNode(int position, ident_t name)
+{
+   _content.insert(">", position);
+   _content.insert(name, position);
+   _content.insert("</", position);
+   _content.insert(">", position);
+   _content.insert(name, position);
+   _content.insert("\n<", position);
 }
