@@ -2,6 +2,7 @@
 In development:
 ------                              
               zdev 
+                 * scripting library : eson should be used to generate syntax tree
                  * scripting library : generate simple class
                  * assembly script : every method should be put into brackets
 

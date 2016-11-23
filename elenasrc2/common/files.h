@@ -217,7 +217,7 @@ public:
 
       int pos = s.findSubStr(namepos, '.', len - namepos, -1);
       if (pos != -1) {
-         return ident_t(path + namepos + pos + 1).compare(extension);
+         return ident_t(path + pos + 1).compare(extension);
       }
       else return emptystr(extension);
    }
