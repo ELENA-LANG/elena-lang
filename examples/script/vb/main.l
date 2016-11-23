@@ -184,6 +184,9 @@
         
         ^ class.
     ]
+    
+    #method first
+        => theClasses.
 }
 
 #symbol program =
@@ -192,7 +195,7 @@
     
     #var factory := scriptEngine eval &path:"~\scripts\test.es".
     
-    #var obj := factory eval:(Library new) new.
+    #var obj := factory eval:(Library new) first new.
     
     obj eval&print.
 ].
