@@ -101,7 +101,6 @@ protected:
    SyntaxTable       _table;
    NameMap           _names;
    MemoryDump        _body;
-   Stack<Mapping*>   _scopes;
 
    size_t mapRuleId(ident_t name)
    {
@@ -131,24 +130,6 @@ public:
    virtual bool parseGrammarRule(_ScriptReader& reader);
 
    virtual void parse(_ScriptReader& reader, TapeWriter& writer);
-
-   Mapping* newScope()
-   {
-      Mapping* mappings = new Mapping();
-      _scopes.push(mappings);
-
-      return mappings;
-   }
-
-   Mapping* getScope()
-   {
-      return _scopes.peek();
-   }
-
-   void freeScope()
-   {
-      freeobj(_scopes.pop());
-   }
 
    CFParser(_Parser* baseParser)
       : _table(Rule())

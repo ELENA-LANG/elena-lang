@@ -17,11 +17,6 @@ using namespace _ELENA_TOOL_;
 #define NUMERIC_KEYWORD       "$numeric"
 #define EPS_KEYWORD           "$eps"
 #define EOF_KEYWORD           "$eof"
-#define SCOPE_KEYWORD         "$scope"
-#define SCOPEEND_KEYWORD      "$end"
-#define VAR_KEYWORD           "$var"
-#define MAPPING_KEYWORD       "$newvar"
-#define IDLEMAPPING_KEYWORD   "$idlevar"
 
 #define REFERENCE_MODE        1
 #define IDENTIFIER_MODE       2
@@ -94,48 +89,6 @@ void saveLiteral(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, Scrip
    parser->readScriptBookmark(ptr, bm);
 
    log.writeQuote(scriptReader.lookup(bm));
-}
-
-void saveNewScope(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
-{
-   parser->newScope();
-}
-
-void saveEndScope(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
-{
-   parser->freeScope();
-}
-
-void saveMappings(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
-{
-   CFParser::Mapping* mapping = parser->getScope();
-
-   ScriptBookmark bm;
-   parser->readScriptBookmark(ptr, bm);
-
-   mapping->add(scriptReader.lookup(bm), mapping->Count() + 1);
-}
-
-void saveIdleMappings(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
-{
-   CFParser::Mapping* mapping = parser->getScope();
-
-   mapping->add(NULL, mapping->Count() + 1);
-}
-
-void saveVariable(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
-{
-   CFParser::Mapping* mapping = parser->getScope();
-
-   ScriptBookmark bm;
-   parser->readScriptBookmark(ptr, bm);
-
-   int index = mapping->get(scriptReader.lookup(bm));
-
-   String<char, 12> s;
-   s.appendInt(index);
-
-   log.write(ident_t(s));
 }
 
 void CFParser :: readScriptBookmark(size_t ptr, ScriptBookmark& bm)
@@ -288,30 +241,21 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
 
             mode = NUMERIC_MODE;
          }
-         else if (reader.compare(SCOPE_KEYWORD)) {
-            rule.saveTo = saveNewScope;
-         }
-         else if (reader.compare(SCOPEEND_KEYWORD)) {
-            rule.saveTo = saveEndScope;
-         }
-         else if (reader.compare(IDLEMAPPING_KEYWORD)) {
-            rule.saveTo = saveIdleMappings;
-         }
-         else if (reader.compare(MAPPING_KEYWORD)) {
-            rule.terminal = -1;
-            rule.saveTo = saveMappings;
-
-            mode = IDENTIFIER_MODE;
-         }
-         else if (reader.compare(VAR_KEYWORD)) {
-            rule.terminal = -1;
-            rule.saveTo = saveVariable;
-
-            mode = IDENTIFIER_MODE;
-         }
 
          writer.writeChar((char)0);
          rule.postfixPtr = _body.Length();
+      }
+      else if (bm.state == dfaQuote && reader.compare(REFERENCE_KEYWORD)) {
+         rule.terminal = -1;
+         rule.saveTo = saveLiteral;
+
+         mode = REFERENCE_MODE;
+      }
+      else if (bm.state == dfaQuote && reader.compare(IDENTIFIER_KEYWORD)) {
+         rule.terminal = -1;
+         rule.saveTo = saveLiteral;
+
+         mode = IDENTIFIER_MODE;
       }
       else {
          ident_t token = reader.lookup(bm);
