@@ -193,7 +193,10 @@
 [
     // class ( method ( message = print code ( expression ( symbol = system'console message = writeLine literal = "Hello World" ) ) ) )
     
-    #var factory := scriptEngine eval &path:"~\scripts\test.es".
+    #var factory := scriptEngine 
+        load &path:"~\scripts\assembly.es" 
+        load &path:"~\scripts\eson.es" 
+        eval &path:"~\scripts\test.es".
     
     #var obj := factory eval:(Library new) first new.
     
