@@ -572,7 +572,7 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
    log.write((char)0);
 }
 
-void CFParser :: parse(_ScriptReader& reader, TapeWriter& tapeWriter)
+void CFParser :: parse(_ScriptReader& reader, MemoryDump* output)
 {
    ScriptLog log;
 
@@ -587,7 +587,7 @@ void CFParser :: parse(_ScriptReader& reader, TapeWriter& tapeWriter)
       IdentifierTextReader logReader((const char*)log.getBody());
       ScriptReader scriptReader(&logReader);
       
-      _baseParser->parse(scriptReader, tapeWriter);
+      _baseParser->parse(scriptReader, output);
 
       _body.trim(presaved);
       log.clear();

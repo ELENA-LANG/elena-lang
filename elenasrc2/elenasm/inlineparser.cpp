@@ -399,8 +399,10 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& 
    return 1;
 }
 
-void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
+void InlineScriptParser :: parse(_ScriptReader& reader, MemoryDump* output)
 {
+   TapeWriter writer(output);
+
    ScriptBookmark bm = reader.read();
    while (!reader.Eof()) {      
       parseStatement(reader, bm, writer);

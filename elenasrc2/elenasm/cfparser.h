@@ -129,7 +129,7 @@ public:
 
    virtual bool parseGrammarRule(_ScriptReader& reader);
 
-   virtual void parse(_ScriptReader& reader, TapeWriter& writer);
+   virtual void parse(_ScriptReader& reader, MemoryDump* output);
 
    CFParser(_Parser* baseParser)
       : _table(Rule())
@@ -138,6 +138,11 @@ public:
 
       // all body pointers should be greater than zero
       _body.writeDWord(0, 0);
+   }
+
+   virtual ~CFParser()
+   {
+      freeobj(_baseParser);
    }
 };
 

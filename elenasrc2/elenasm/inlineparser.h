@@ -38,7 +38,7 @@ public:
       return false;
    }
 
-   virtual void parse(_ScriptReader& reader, TapeWriter& writer);
+   virtual void parse(_ScriptReader& reader, MemoryDump* output);
 
    InlineScriptParser();
 };

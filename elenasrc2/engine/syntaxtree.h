@@ -828,109 +828,6 @@ public:
    static Node findPattern(Node node, int counter, ...);
    static bool matchPattern(Node node, int mask, int counter, ...);
 
-//   static int countChild(Node node, LexicalType type1, LexicalType type2)
-//   {
-//      int counter = 0;
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone) {
-//         if (current == type1 || current == type2)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
-//
-//   static Node findMatchedChild(Node node, int mask)
-//   {
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone && !test(current.type, mask)) {
-//         current = current.nextNode();
-//      }
-//
-//      return current;
-//   }
-//
-//   static Node findSecondMatchedChild(Node node, int mask)
-//   {
-//      Node current = node.firstChild();
-//
-//      bool first = true;
-//      while (current != lxNone) {
-//         if (test(current.type, mask)) {
-//            if (first) {
-//               first = false;
-//            }
-//            else return current;
-//         }
-//         current = current.nextNode();
-//      }
-//
-//      return current;
-//   }
-//
-//   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3)
-//   {
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone && current != type1) {
-//         if (current == type2 || current == type3)
-//            return current;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return current;
-//   }
-//
-//   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
-//   {
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone && current != type1) {
-//         if (current == type2 || current == type3 || current == type4)
-//            return current;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return current;
-//   }
-//
-//   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
-//   {
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone && current != type1) {
-//         if (current == type2 || current == type3 || current == type4 || current == type5)
-//            return current;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return current;
-//   }
-//
-//   static bool existChild(Node node, LexicalType type)
-//   {
-//      Node child = findChild(node, type);
-//
-//      return child == type;
-//   }
-//
-//   static bool existChild(Node node, LexicalType type1, LexicalType type2)
-//   {
-//      Node child = findChild(node, type1, type2);
-//
-//      return child != lxNone;
-//   }
-//
-//   _Memory* Strings() { return &_strings; }
-
    Node readRoot();
    Node readFirstNode(size_t position);
    Node readNextNode(size_t position);
@@ -943,16 +840,6 @@ public:
    Node insertStrNode(size_t position, LexicalType type, int strArgument);
    Node insertNode(size_t position, LexicalType type, ident_t argument);
    Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);
-
-//   ref_t writeString(ident_t string)
-//   {
-//      MemoryWriter writer(&_strings);
-//      ref_t position = writer.Position();
-//
-//      writer.writeLiteral(string);
-//
-//      return position;
-//   }
 
    void save(_Memory* section)
    {

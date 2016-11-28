@@ -304,7 +304,7 @@ class _Parser
 {
 public:
    virtual bool parseGrammarRule(_ScriptReader& reader) = 0;  
-   virtual void parse(_ScriptReader& reader, TapeWriter& writer) = 0;
+   virtual void parse(_ScriptReader& reader, MemoryDump* output) = 0;
 
    virtual ~_Parser() {}
 };

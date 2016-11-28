@@ -108,9 +108,11 @@
     <ClCompile Include="..\..\common\files.cpp" />
     <ClCompile Include="..\..\engine\bytecode.cpp" />
     <ClCompile Include="..\..\engine\parsertable.cpp" />
+    <ClCompile Include="..\..\engine\syntaxtree.cpp" />
     <ClCompile Include="..\..\engine\textsource.cpp" />
     <ClCompile Include="..\cfparser.cpp" />
     <ClCompile Include="..\inlineparser.cpp" />
+    <ClCompile Include="..\treeparser.cpp" />
     <ClCompile Include="..\win32\dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -133,9 +135,11 @@
     <ClInclude Include="..\..\engine\elenaconst.h" />
     <ClInclude Include="..\..\common\lists.h" />
     <ClInclude Include="..\..\engine\parsertable.h" />
+    <ClInclude Include="..\..\engine\syntaxtree.h" />
     <ClInclude Include="..\..\engine\textsource.h" />
     <ClInclude Include="..\cfparser.h" />
     <ClInclude Include="..\inlineparser.h" />
+    <ClInclude Include="..\treeparser.h" />
     <ClInclude Include="..\scriptengine.h" />
     <ClInclude Include="..\session.h" />
     <ClInclude Include="..\scriptparser.h" />

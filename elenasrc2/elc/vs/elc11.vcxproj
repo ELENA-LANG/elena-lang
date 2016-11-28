@@ -120,8 +120,8 @@
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\..\engine\x86jitcompiler.cpp" />
+    <ClCompile Include="..\..\engine\syntaxtree.cpp" />
     <ClCompile Include="..\image.cpp" />
-    <ClCompile Include="..\syntaxtree.cpp" />
     <ClCompile Include="..\win32\elc.cpp" />
     <ClCompile Include="..\compiler.cpp" />
     <ClCompile Include="..\project.cpp" />
@@ -155,6 +155,7 @@
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\x86helper.h" />
     <ClInclude Include="..\..\engine\x86jitcompiler.h" />
+    <ClInclude Include="..\..\engine\syntaxtree.h" />
     <ClInclude Include="..\compiler.h" />
     <ClInclude Include="..\compilercommon.h" />
     <ClInclude Include="..\elc.h" />
@@ -167,7 +168,6 @@
     <ClInclude Include="..\source.h" />
     <ClInclude Include="..\syntax.h" />
     <ClInclude Include="..\bcwriter.h" />
-    <ClInclude Include="..\syntaxtree.h" />
     <ClInclude Include="..\win32\linker.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

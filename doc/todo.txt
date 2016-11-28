@@ -2,11 +2,6 @@
 In development:
 ------                              
               zdev 
-                 * scripting library : eson should be used to generate syntax tree
-                 * scripting library : generate simple class
-                 * assembly script : every method should be put into brackets
-
-                 * scripting library : run time
                  * scripting library : compile time
                  * scripting library : vb interpreter
                  * scripting library : elena script (both run-time / compile-time)

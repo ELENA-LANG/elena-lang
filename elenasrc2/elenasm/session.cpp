@@ -9,6 +9,7 @@
 #include "session.h"
 #include "cfparser.h"
 #include "inlineparser.h"
+#include "treeparser.h"
 
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
@@ -112,6 +113,16 @@ void Session :: parseMetaScript(MemoryDump& tape, _ScriptReader& reader)
             if (reader.compare("cf")) {
                _currentParser = new CFParser(_currentParser);
             }
+            else if (reader.compare("inline")) {
+               freeobj(_currentParser);
+
+               _currentParser = new InlineScriptParser();
+            }
+            else if (reader.compare("tree")) {
+               freeobj(_currentParser);
+
+               _currentParser = new TreeScriptParser();
+            }
             else throw EParseError(bm.column, bm.row);
          }
 //         else if(ConstantIdentifier::compare(token, "#mode")) {
@@ -127,7 +138,7 @@ void Session :: parseScript(MemoryDump& tape, _ScriptReader& reader)
 {
    TapeWriter writer(&tape);
 
-   _currentParser->parse(reader, writer);
+   _currentParser->parse(reader, &tape);
 }
 
 void* Session :: translate(TextReader* source)
