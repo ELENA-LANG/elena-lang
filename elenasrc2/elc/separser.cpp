@@ -13,14 +13,14 @@
 using namespace _ELENA_;
 
 ScriptParser :: ScriptParser()
-   : _library(Path("elenasm.dll"))
+   : _library(Path("elenasm.dll").str())
 {
    _encoding = feUTF8;
 
-   _InterpretScript = _library.loadFunction("InterpretScript");
-   _InterpretFile = _library.loadFunction("InterpretFile");
-   _Release = _library.loadFunction("Release");
-   _GetStatus = _library.loadFunction("GetStatus");
+   _InterpretScript = (void*(__cdecl*)(const char*))_library.loadFunction("InterpretScript");
+   _InterpretFile = (void*(__cdecl*)(const char*,int,bool))_library.loadFunction("InterpretFile");
+   _Release = (void(__cdecl*)(void*))_library.loadFunction("Release");
+   _GetStatus = (int(__cdecl*)(char*,int))_library.loadFunction("GetStatus");
 }
 
 void ScriptParser :: setOption(ident_t option)

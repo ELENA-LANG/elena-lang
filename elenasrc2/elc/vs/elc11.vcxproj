@@ -123,7 +123,6 @@
     <ClCompile Include="..\..\engine\syntaxtree.cpp" />
     <ClCompile Include="..\image.cpp" />
     <ClCompile Include="..\separser.cpp" />
-    <ClCompile Include="..\win32\dllloader.cpp" />
     <ClCompile Include="..\win32\elc.cpp" />
     <ClCompile Include="..\compiler.cpp" />
     <ClCompile Include="..\project.cpp" />
@@ -133,6 +132,7 @@
     <ClCompile Include="..\derivation.cpp" />
     <ClCompile Include="..\bcwriter.cpp" />
     <ClCompile Include="..\win32\linker.cpp" />
+    <ClCompile Include="..\win32\syslibloader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\common.h" />
@@ -171,7 +171,7 @@
     <ClInclude Include="..\source.h" />
     <ClInclude Include="..\syntax.h" />
     <ClInclude Include="..\bcwriter.h" />
-    <ClInclude Include="..\win32\dllloader.h" />
+    <ClInclude Include="..\win32\syslibloader.h" />
     <ClInclude Include="..\win32\linker.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

@@ -10,7 +10,10 @@
 #define separserH 1
 
 #include "syntaxtree.h"
-#include "dllloader.h"
+
+#ifdef _WIN32
+#include "win32\syslibloader.h"
+#endif
 
 namespace _ELENA_
 {

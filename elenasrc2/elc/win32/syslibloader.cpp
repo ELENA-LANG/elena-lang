@@ -8,7 +8,7 @@
 
 #include "elena.h"
 // --------------------------------------------------------------------------
-#include "dllloader.h"
+#include "syslibloader.h"
 
 using namespace _ELENA_;
 

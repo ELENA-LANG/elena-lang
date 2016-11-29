@@ -24,4 +24,4 @@ public:
 
 }
 
-#endif
+#endif // win32dllLoaderH
