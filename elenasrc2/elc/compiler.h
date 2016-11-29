@@ -438,12 +438,6 @@ private:
          else return Scope::getScope(level);
       }
 
-//      virtual bool validateTemplate(ref_t hintRef)
-//      {
-//         _Module* extModule = NULL;
-//         return moduleScope->loadTemplateInfo(hintRef, extModule) != 0;
-//      }
-
       void save()
       {
          // save class meta data
@@ -601,13 +595,6 @@ private:
          return scope ? scope->reference : 0;
       }
 
-//      ref_t getFieldType(int offset, bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->info.fieldTypes.get(offset) : 0;
-//      }
-
       ref_t getClassFlags(bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -642,8 +629,6 @@ private:
          }
       };
 
-      //bool                    templateMode;
-      //ref_t                   templateRef;
       Map<ident_t, Outer>     outers;
       ClassInfo::FieldTypeMap outerFieldTypes;
 
@@ -673,14 +658,6 @@ private:
       bool        classMode;
       int         sourceRef;
 
-//      // NOTE : reference is defined in subject namespace, so templateRef should be initialized and used
-//      // proper reference is 0 in this case
-//      TemplateScope(ModuleScope* parent, ref_t reference);
-//
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      virtual bool validateTemplate(ref_t reference);
-
       virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
       {
          ident_t name = terminal.findChild(lxTerminal).identifier();
@@ -693,11 +670,6 @@ private:
          }
          else return Scope::mapSubject(terminal, output);
       }
-
-//      virtual bool isVirtualSubject(TerminalInfo terminal)
-//      {
-//         return parameters.exist(terminal);
-//      }
 
       virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true)
       {
