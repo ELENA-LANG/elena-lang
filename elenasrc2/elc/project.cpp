@@ -201,6 +201,16 @@ void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
    }
 }
 
+void Project :: loadTargetCategory(_ConfigFile& config)
+{
+   _ConfigFile::Nodes nodes;
+   if (readCategory(config, opTargets, nodes)) {
+      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
+         addTarget(*it);
+      }
+   }
+}
+
 void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 {
    // load project settings (if setting is absent previous value is used)
@@ -251,6 +261,9 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadOption(config, opManifestName);
    loadOption(config, opManifestVersion);
    loadOption(config, opManifestAuthor);
+
+   // load targets
+   loadTargetCategory(config);
 }
 
 //void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
@@ -274,7 +287,7 @@ _Module* Project :: loadModule(ident_t package, bool silentMode)
    else return module;
 }
 
-_Module* Project::createModule(ident_t name)
+_Module* Project :: createModule(ident_t name)
 {
    LoadResult result = lrNotFound;
    _Module* module = _loader.createModule(name, result);
@@ -377,6 +390,39 @@ void Project :: compile(ident_t filePath, Compiler& compiler, Parser& parser, Mo
       SyntaxTree tree;
       DerivationWriter writer(tree);
       parser.parse(&sourceFile, writer, getTabSize());
+
+      // compile the syntax tree
+      compiler.compileModule(*this, filePath, tree.readRoot(), moduleInfo, unresolved);
+   }
+   catch (LineTooLong& e)
+   {
+      raiseError(errLineTooLong, filePath, e.row, 1);
+   }
+   catch (InvalidChar& e)
+   {
+      size_t destLength = 6;
+
+      _ELENA_::String<char, 6> symbol;
+      _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
+
+      raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
+   }
+   catch (SyntaxError& e)
+   {
+      raiseError(e.error, filePath, e.row, e.column, e.token);
+   }
+}
+
+void Project :: compile(ident_t filePath, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved)
+{
+   try {
+      // based on the target type generate the syntax tree for the file
+      Path fullPath(StrSetting(_ELENA_::opProjectPath));
+      fullPath.combine(filePath);
+
+      // parse
+      SyntaxTree tree;
+      parser.parse(fullPath.c_str(), tree/*, getTabSize()*/);
 
       // compile the syntax tree
       compiler.compileModule(*this, filePath, tree.readRoot(), moduleInfo, unresolved);

@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x008A
+#define ELC_REVISION_NUMBER             0x008B
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -58,6 +58,7 @@
 #define WINAPI_CATEGORY             "winapi/*"
 #define EXTERNALS_CATEGORY          "externals/*"
 #define REFERENCE_CATEGORY          "references/*"
+#define TARGET_CATEGORY             "targets/*"
 
 // --- ELC config settings ---
 #define ELC_DEBUGINFO               "project/debuginfo"
@@ -89,6 +90,7 @@
 #define ELC_INCLUDE                 "include"
 #define ELC_NAMESPACE_KEY           "namespace"
 #define ELC_NAME_KEY                "name"
+#define ELC_OPTION                  "option"
 
 #define ELC_MANIFEST_NAME           "manifest/name"
 #define ELC_MANIFEST_VERSION        "manifest/version"
@@ -156,6 +158,7 @@ public:
 
    virtual void addSource(_ELENA_::path_t path);
    virtual void addModule(_ELENA_::_ConfigFile::Node moduleNode);
+   virtual void addTarget(_ELENA_::_ConfigFile::Node moduleNode);
 
    virtual void loadConfig(_ELENA_::_ConfigFile& config, _ELENA_::path_t configPath)
    {

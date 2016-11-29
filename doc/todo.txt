@@ -5,6 +5,10 @@ In development:
                  * scripting library : compile time
                  * scripting library : vb interpreter
                  * scripting library : elena script (both run-time / compile-time)
+                 * bf interpreter
+                 * gui script
+                 * state machine script (calc)
+                 * reg ex
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :

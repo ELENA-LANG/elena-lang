@@ -12,6 +12,7 @@
 #include "libman.h"
 #include "compiler.h"
 #include "parser.h"
+#include "separser.h"
 
 namespace _ELENA_
 {
@@ -22,6 +23,7 @@ typedef Dictionary2D<ident_t, ident_t> TargetSettings;
 
 typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ForwardIterator;
 typedef _Iterator<ProjectSettings::VItem, _MapItem<int, ProjectSettings::VItem>, int>         SourceIterator;
+typedef _Iterator<TargetSettings::VItem, _MapItem<ident_t, TargetSettings::VItem>, ident_t>   TargetIterator;
 
 //typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ProjectSettingIterator;
 
@@ -71,6 +73,7 @@ enum ProjectSetting
    opExternals             = 0x0064,
    opWinAPI                = 0x0065,   // used only for WIN32
    opReferences            = 0x0066,
+   opTargets               = 0x0067,   // compiler targets (only xml project)
 
    // compiler manfifest
    opManifestName          = 0x0070,
@@ -108,6 +111,7 @@ protected:
    void loadSourceCategory(_ConfigFile& config, path_t configPath);
    void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
    void loadForwardCategory(_ConfigFile& config);
+   void loadTargetCategory(_ConfigFile& config);
 
 public:
    // project
@@ -145,6 +149,7 @@ public:
 
    virtual void addSource(path_t path) = 0;
    virtual void addModule(_ConfigFile::Node moduleNode) = 0;
+   virtual void addTarget(_ConfigFile::Node moduleNode) = 0;
 
 //   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, path_t configPath);
@@ -236,6 +241,7 @@ public:
    }
 
    void compile(ident_t sourceFile, Compiler& compiler, Parser& parser, ModuleInfo& moduleInfo, Unresolveds& unresolved);
+   void compile(ident_t sourceFile, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved);
 
    Project();
    virtual ~Project() {}

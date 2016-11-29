@@ -530,6 +530,77 @@ typedef LiteralTextReader<char> IdentifierTextReader;
 //   virtual ~LiteralReader() {}
 //};
 
+// --- DumpReader ---
+
+class DumpReader : public StreamReader
+{
+   void*   _dump;
+   size_t  _offset;
+   size_t  _length;
+
+public:
+   virtual bool Eof() { return _offset >= _length; }
+
+   virtual size_t Position() { return _offset; }
+
+   virtual bool seek(size_t position)
+   {
+      _offset = position;
+
+      return true;
+   }
+
+   virtual const char* getLiteral(const char* def)
+   {
+      const char* s = (char*)_dump + _offset;
+
+      _offset += getlength(s) + 1;
+
+      return s;
+
+   }
+   virtual const wide_c* getLiteral(const wide_c* def)
+   {
+      const wide_c* s = (const wchar_t*)((char*)_dump + _offset);
+
+      _offset += getlength(s) + 1;
+
+      return s;
+   }
+
+   virtual bool read(void* s, size_t length)
+   {
+      if (_offset + length <= _length) {
+         memcpy(s, (char*)_dump + _offset, length);
+
+         return true;
+      }
+      else return false;
+      
+   }
+
+   void setSize(size_t length)
+   {
+      _length = length;
+   }
+
+   DumpReader(void* dump, size_t length)
+   {
+      _dump = dump;
+	  _offset = 0;
+     _length = length;
+   }
+   DumpReader(void* dump, size_t length, int offset)
+   {
+      _dump = dump;
+      _offset = 0;
+      _length = length;
+      _offset = offset;
+   }
+
+   virtual ~DumpReader() {}
+};
+
 // --- MemoryReader ---
 
 class MemoryReader : public StreamReader

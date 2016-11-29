@@ -122,6 +122,8 @@
     <ClCompile Include="..\..\engine\x86jitcompiler.cpp" />
     <ClCompile Include="..\..\engine\syntaxtree.cpp" />
     <ClCompile Include="..\image.cpp" />
+    <ClCompile Include="..\separser.cpp" />
+    <ClCompile Include="..\win32\dllloader.cpp" />
     <ClCompile Include="..\win32\elc.cpp" />
     <ClCompile Include="..\compiler.cpp" />
     <ClCompile Include="..\project.cpp" />
@@ -165,9 +167,11 @@
     <ClInclude Include="..\parser.h" />
     <ClInclude Include="..\derivation.h" />
     <ClInclude Include="..\errors.h" />
+    <ClInclude Include="..\separser.h" />
     <ClInclude Include="..\source.h" />
     <ClInclude Include="..\syntax.h" />
     <ClInclude Include="..\bcwriter.h" />
+    <ClInclude Include="..\win32\dllloader.h" />
     <ClInclude Include="..\win32\linker.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

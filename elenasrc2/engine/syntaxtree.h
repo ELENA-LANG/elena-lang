@@ -330,17 +330,6 @@ public:
          : _bodyWriter(&tree._body), _stringWriter(&tree._strings)
       {
       }
-
-      /// parameter : appendMode - when true, the ending node is removed
-      //Writer(SyntaxTree& tree/*, bool appendMode*/)
-      //   : _writer(&tree._body), _stringWriter(&tree._strings)
-      //{
-//         if (appendMode && tree._body.Length() >= 12) {
-//            tree._body.trim(tree._body.Length() - 12);
-//            _writer.seekEOF();
-//         }
-//            
-//      }
    };
 
    struct NodePattern;
@@ -850,6 +839,16 @@ public:
 
       writer.writeDWord(_strings.Length());
       writer.write(_strings.get(0), _strings.Length());
+   }
+
+   void load(_Memory* section)
+   {
+      _body.clear();
+      _strings.clear();
+
+      MemoryReader reader(section);
+
+      read(reader);
    }
 
    void clear()

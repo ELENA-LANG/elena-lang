@@ -117,6 +117,7 @@ public:
    bool greater(const char* s);
 
    bool endsWith(const char* s);
+   bool startsWith(const char* s);
 
    ident_t()
    {

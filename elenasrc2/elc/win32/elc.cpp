@@ -207,6 +207,8 @@ bool _ELC_::Project :: readCategory(_ELENA_::_ConfigFile& config, _ELENA_::Proje
          return config.select(REFERENCE_CATEGORY, list);
       case _ELENA_::opWinAPI:
          return config.select(WINAPI_CATEGORY, list);
+      case _ELENA_::opTargets:
+         return config.select(TARGET_CATEGORY, list);
       default:
          return false;
    }
@@ -270,6 +272,29 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
       default:
          return NULL;
    }
+}
+
+void _ELC_::Project :: addTarget(_ELENA_::_ConfigFile::Node moduleNode)
+{
+   _ELENA_::ident_t name = moduleNode.Attribute(ELC_NAME_KEY);
+
+   _ELENA_::ident_t typeAttr = moduleNode.Attribute(ELC_TYPE_NAME);
+   int type = typeAttr.toInt();
+   if (type != 0) {
+      _targets.add(name, ELC_TYPE_NAME, type);
+
+      // copy options
+      _ELENA_::_ConfigFile::Nodes list;
+      moduleNode.select(ELC_INCLUDE, list);
+
+      for (_ELENA_::_ConfigFile::Nodes::Iterator it = list.start(); !it.Eof(); it++) {
+         _ELENA_::ident_t val = (*it).Content();
+
+         _targets.add(name, ELC_OPTION, val.clone());
+      }
+
+   }
+   // !! raise a warning if type is invalid
 }
 
 void _ELC_::Project :: addModule(_ELENA_::_ConfigFile::Node moduleNode)
@@ -496,18 +521,37 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
 
       _ELENA_::ident_t target = source->get(ELC_TARGET_NAME);      
       int type = !emptystr(target) ? _targets.get(target, ELC_TYPE_NAME, 1) : 1;
-      
-      // compile files
-      _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
-      while (!file_it.Eof()) {
-         switch (type) {
-            case 1:
-               // if it is a normal ELENA source file
-               compile(*file_it, compiler, parser, moduleInfo, unresolveds);
-               break;
+      if (type == 1) {
+         // if it is a normal ELENA source file
+         _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
+         while (!file_it.Eof()) {
+            // compile a source file
+            compile(*file_it, compiler, parser, moduleInfo, unresolveds);
+
+            file_it = source->nextIt(ELC_INCLUDE, file_it);
+         }
+      }
+      else if (type == 2) {
+         // if it is a script file
+         _ELENA_::ScriptParser scriptParser;
+
+         // load options
+         _ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>* targetInfo = *_targets.getIt(target);
+
+         _ELENA_::TargetIterator option_it = targetInfo->getIt(ELC_OPTION);
+         while (!option_it.Eof()) {
+            scriptParser.setOption(*option_it);
+
+            option_it = targetInfo->nextIt(ELC_INCLUDE, option_it);
          }
 
-         file_it = source->nextIt(ELC_INCLUDE, file_it);
+         // compile script files
+         _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
+         while (!file_it.Eof()) {
+            compile(*file_it, compiler, scriptParser, moduleInfo, unresolveds);
+
+            file_it = source->nextIt(ELC_INCLUDE, file_it);
+         }
       }
 
       saveModule(moduleInfo.codeModule, "nl");
