@@ -18,9 +18,28 @@
 namespace _ELENA_
 {
 
+// --- ScriptError ---
+
+struct ScriptError
+{
+   IdentifierString error;
+
+   ScriptError()
+   {
+      error = NULL;
+   }
+   ScriptError(ident_t error)
+   {
+      this->error = error;
+   }
+};
+
+// --- ScriptParser ---
+
 class ScriptParser
 {
    SysLibraryLoader _library;
+   char             _status[256];
 
    void*(*_InterpretScript)(const char* script);
    void*(*_InterpretFile)(const char* path, int encoding, bool autoDetect);

@@ -35,24 +35,32 @@ void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)
 {
    IdentifierString s(filePath);
 
-   void* tape = _InterpretFile(s, _encoding, false);
-   bool valid = false;
-   
-   DumpReader reader(tape, 8);
-   size_t length = 8;
-   if (reader.getDWord() == 0) {
-      size_t length = reader.getDWord();
-      reader.setSize(length + 4);
-
-      valid = true;
+   void* tape = _InterpretFile(s, _encoding, false);   
+   if (!tape) {
+      int length = _GetStatus(_status, 256);
+      _status[length] = 0;
+          
+      throw ScriptError(_status);
    }
+   else {
+      bool valid = false;
 
-   if (valid) {
-      MemoryDump temp;
-      temp.load(&reader, length - 8);
+      DumpReader reader(tape, 8);
+      size_t length = 8;
+      if (reader.getDWord() == 0) {
+         length = reader.getDWord();
+         reader.setSize(length + 4);
 
-      tree.load(&temp);
+         valid = true;
+      }
+
+      if (valid) {
+         MemoryDump temp;
+         temp.load(&reader, length - 8);
+
+         tree.load(&temp);
+      }
+
+      _Release(tape);
    }
-
-   _Release(tape);
 }

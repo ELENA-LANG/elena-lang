@@ -39,7 +39,7 @@ inline ident_t getLoadError(LoadResult result)
 // --- Project ---
 
 Project :: Project()
-   : _sources(true)
+   : _sources(true), _targets(true)
 {
    _hasWarning = false;
    _numberOfWarnings = 100;
@@ -251,6 +251,9 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadCategory(config, opWinAPI, NULL);
    loadCategory(config, opReferences, configPath);
 
+   // load targets
+   loadTargetCategory(config);
+
    // load sources
    loadSourceCategory(config, configPath);
 
@@ -261,9 +264,6 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadOption(config, opManifestName);
    loadOption(config, opManifestVersion);
    loadOption(config, opManifestAuthor);
-
-   // load targets
-   loadTargetCategory(config);
 }
 
 //void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
@@ -443,5 +443,9 @@ void Project :: compile(ident_t filePath, Compiler& compiler, ScriptParser parse
    catch (SyntaxError& e)
    {
       raiseError(e.error, filePath, e.row, e.column, e.token);
+   }
+   catch (ScriptError& e)
+   {
+      raiseError(e.error, filePath);
    }
 }

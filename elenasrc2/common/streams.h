@@ -573,6 +573,8 @@ public:
       if (_offset + length <= _length) {
          memcpy(s, (char*)_dump + _offset, length);
 
+         _offset += length;
+
          return true;
       }
       else return false;

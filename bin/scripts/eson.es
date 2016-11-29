@@ -1,7 +1,7 @@
 [[
    #grammar cf
 
-   #define start      ::= class;
+   #define start      ::= <= root ( => class <= ) =>;
    #define start      ::= $eof;
    #define class      ::= <= class ( => "{" members <= ) =>;
    #define members    ::= method members;

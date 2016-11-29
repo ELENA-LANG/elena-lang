@@ -830,7 +830,7 @@ public:
    Node insertNode(size_t position, LexicalType type, ident_t argument);
    Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);
 
-   void save(_Memory* section)
+   bool save(_Memory* section)
    {
       MemoryWriter writer(section);
 
@@ -839,6 +839,8 @@ public:
 
       writer.writeDWord(_strings.Length());
       writer.write(_strings.get(0), _strings.Length());
+
+      return _body.Length() > 0;
    }
 
    void load(_Memory* section)
@@ -847,8 +849,11 @@ public:
       _strings.clear();
 
       MemoryReader reader(section);
+      int bodyLength = reader.getDWord();
+      _body.load(&reader, bodyLength);
 
-      read(reader);
+      int stringLength = reader.getDWord();
+      _strings.load(&reader, stringLength);
    }
 
    void clear()

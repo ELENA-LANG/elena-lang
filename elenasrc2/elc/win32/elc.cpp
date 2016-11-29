@@ -285,7 +285,7 @@ void _ELC_::Project :: addTarget(_ELENA_::_ConfigFile::Node moduleNode)
 
       // copy options
       _ELENA_::_ConfigFile::Nodes list;
-      moduleNode.select(ELC_INCLUDE, list);
+      moduleNode.select(ELC_OPTION, list);
 
       for (_ELENA_::_ConfigFile::Nodes::Iterator it = list.start(); !it.Eof(); it++) {
          _ELENA_::ident_t val = (*it).Content();
@@ -305,6 +305,11 @@ void _ELC_::Project :: addModule(_ELENA_::_ConfigFile::Node moduleNode)
 
    int key = _sources.Count() + 1;
    _sources.add(key, ELC_NAMESPACE_KEY, name.ident().clone());
+
+   _ELENA_::ident_t targetAttr = moduleNode.Attribute(ELC_TARGET_NAME);
+   if (!_ELENA_::emptystr(targetAttr)) {
+      _sources.add(key, ELC_TARGET_NAME, targetAttr.clone());
+   }
 
    _ELENA_::_ConfigFile::Nodes list;
    moduleNode.select(ELC_INCLUDE, list);
@@ -536,13 +541,13 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
          _ELENA_::ScriptParser scriptParser;
 
          // load options
-         _ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>* targetInfo = *_targets.getIt(target);
+         _ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>* targetInfo = _targets.get(target, (_ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>*)NULL);
 
          _ELENA_::TargetIterator option_it = targetInfo->getIt(ELC_OPTION);
          while (!option_it.Eof()) {
             scriptParser.setOption(*option_it);
 
-            option_it = targetInfo->nextIt(ELC_INCLUDE, option_it);
+            option_it = targetInfo->nextIt(ELC_OPTION, option_it);
          }
 
          // compile script files
