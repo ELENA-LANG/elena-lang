@@ -56,7 +56,7 @@ void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)
 
       if (valid) {
          MemoryDump temp;
-         temp.load(&reader, length - 8);
+         temp.load(&reader, length - 4);
 
          tree.load(&temp);
       }

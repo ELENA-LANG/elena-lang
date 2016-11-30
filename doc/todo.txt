@@ -3,6 +3,16 @@ In development:
 ------                              
               zdev 
                  * scripting library : compile time
+                 * script : rename elena to default, elena is elenascript, eson - similar to json, only one class
+                 * script : elena - simple class,one method
+                 * script : elena - simple class,one method, several statements
+                 * script : elena - simple class,one method, parameters
+                 * script : elena - simple class,one method, fields
+                 * script : elena - simple class,branching
+                 * script : elena - simple class,loop
+                 * script : elena - simple class,constructor
+                 * script : elena - simple program, (e.g. 10-20 lines)
+
                  * scripting library : vb interpreter
                  * scripting library : elena script (both run-time / compile-time)
                  * bf interpreter
