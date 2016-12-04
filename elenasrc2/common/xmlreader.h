@@ -32,7 +32,7 @@ class XMLNode
 {
 public:
    typedef List<int>     PositionList;
-   typedef List<XMLNode> List;
+   typedef List<XMLNode> NodeList;
 
 protected:
    // node position (in the xml text)
@@ -82,7 +82,7 @@ public:
 //   //void remove();
 
    // search for the nodes with provided tag and return their indexes
-   bool getNodeList(List& list);
+   bool getNodeList(NodeList& list);
 
    XMLNode findNode(ident_t tag);
 
@@ -91,12 +91,12 @@ public:
    XMLNode();
 };
 
-typedef XMLNode::List NodeList;
+typedef XMLNode::NodeList NodeList;
 
 class XMLTree : public XMLNode
 {
    DynamicString<char> _content;
-   
+
    virtual ident_t getContent()
    {
       return (const char*)_content;

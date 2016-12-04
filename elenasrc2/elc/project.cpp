@@ -175,7 +175,7 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
          if (value[0] == '~') {
             filePath.copy(value + 1);
          }
-         else filePath.combine(value);
+         else filePath.combine((const char*)value);
 
          if (key.compare(CORE_ALIAS)) {
             _loader.addCorePath(filePath.c_str());
@@ -317,7 +317,7 @@ void Project :: saveModule(_Module* module, ident_t extension)
 
    FileWriter writer(path.c_str(), feRaw, false);
    if(!module->save(writer))
-      raiseError(getLoadError(lrCannotCreate), IdentifierString(path));
+      raiseError(getLoadError(lrCannotCreate), IdentifierString(path.c_str()));
 }
 
 ident_t Project :: resolveForward(ident_t forward)

@@ -62,7 +62,7 @@ namespace _ELENA_
 //   #define errInvalidRoleDeclr      "%s(%d:%d): error 143: %s cannot be used with a role\n"
 //   #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
    #define errNotApplicable         "%s(%d:%d): error 145: Illegal declaration '%s'\n"
-//   #define errNotSupportedType      "%s(%d:%d): error 146: Class '%s' is not compatible with its type\n" 
+//   #define errNotSupportedType      "%s(%d:%d): error 146: Class '%s' is not compatible with its type\n"
    #define errInvalidHint           "%s(%d:%d): error 147: Invalid hint '%s'\n"
    #define errStrongTypeNotAllowed  "%s(%d:%d): error 148: strong type '%s' cannot be used as a custom verb\n"
    #define errIllegalConstructor    "%s(%d:%d): error 149: Constructor cannot be declared\n"
@@ -75,7 +75,7 @@ namespace _ELENA_
 //   #define errInternalError         "internal error 599"
 //   #define errInvalidDynamicError   "internal error 600"
    #define errCommandSetAbsent     "internal error 600: command set is not defined"
-//   #define errFatalLinker          "internal error 601: linker fatal error"
+   #define errFatalLinker          "internal error 601: linker fatal error"
 
   // --- Linker error messages ---
    #define errUnknownModule         "linker: error 201: Unknown module '%s'\n"
@@ -106,9 +106,9 @@ namespace _ELENA_
 //   #define wrnOuterAssignment       "%s(%d:%d): warning 414: Outer assignment; the change will not be seen outside the nested code\n"
    #define wrnTypeMismatch          "%s(%d:%d): warning 415: Type mismatch, direct typecast is invoked\n"
 //   #define wrnUnknownMessage        "%s(%d:%d): warning 416: method '%s' is not supported by the object\n"
-   #define wrnBoxingCheck           "%s(%d:%d): warning 417: The object may be boxed\n" 
-//   #define wrnDuplicateExtension    "%s(%d:%d): warning 418: '%s': duplicate extension\n" 
-//   #define wrnUnboxinging           "%s(%d:%d): warning 419: '%s' will be unboxed\n" 
+   #define wrnBoxingCheck           "%s(%d:%d): warning 417: The object may be boxed\n"
+//   #define wrnDuplicateExtension    "%s(%d:%d): warning 418: '%s': duplicate extension\n"
+//   #define wrnUnboxinging           "%s(%d:%d): warning 419: '%s' will be unboxed\n"
    #define wrnTypeAlreadyDeclared   "%s(%d:%d): warning 420: Subject attribute cannot be overridden\n"
 
 } // _ELENA_

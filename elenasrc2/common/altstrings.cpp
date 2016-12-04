@@ -404,11 +404,6 @@ char* StrFactory :: clone(const char* s)
    return emptystr(s) ? NULL : _strdup(s);
 }
 
-wchar_t* StrFactory :: clone(const wchar_t* s)
-{
-   return _wcsdup(s);
-}
-
 char* StrFactory :: allocate(size_t size, const char* value)
 {
    char*s = (char*)malloc(size);
@@ -416,7 +411,7 @@ char* StrFactory :: allocate(size_t size, const char* value)
    if (!emptystr(value)) {
       memcpy(s, value, size);
       s[size] = 0;
-   }      
+   }
 
    return s;
 }
@@ -686,18 +681,6 @@ char* Convertor :: doubleToStr(double value, int digit, char* s)
    return s;
 }
 
-wchar_t* Convertor :: doubleToStr(double value, int digit, wchar_t* s)
-{
-   char tmp[25];
-   gcvt(value, digit, tmp);
-
-   for (size_t i = 0; i <= getlength(tmp); i++) {
-      s[i] = tmp[i];
-   }
-
-   return s;
-}
-
 double strToDouble(const char* s)
 {
    return atof(s);
@@ -713,6 +696,11 @@ double strToDouble(const char* s)
 //}
 
 #ifdef _WIN32
+
+wchar_t* StrFactory :: clone(const wchar_t* s)
+{
+   return _wcsdup(s);
+}
 
 wchar_t* StrFactory :: allocate(size_t size, const wchar_t* value)
 {
@@ -873,6 +861,18 @@ int findSubStr(const wchar_t* s, wchar_t c, size_t length, int defValue)
    return defValue;
 }
 
+wchar_t* Convertor :: doubleToStr(double value, int digit, wchar_t* s)
+{
+   char tmp[25];
+   gcvt(value, digit, tmp);
+
+   for (size_t i = 0; i <= getlength(tmp); i++) {
+      s[i] = tmp[i];
+   }
+
+   return s;
+}
+
 #else
 
 unsigned short* StrFactory :: allocate(size_t size, const unsigned short* value)
@@ -929,24 +929,24 @@ bool compare(const unsigned short* s1, const unsigned short* s2, size_t n)
    else return (n > 0);
 }
 
-//bool StringHelper :: greater(const unsigned short* s1, const unsigned short* s2, size_t n)
-//{
-//   if (s1 && s2) {
-//      while (*s1 && *s1 == *s2) {
-//         s1++;
-//         s2++;
-//      }
-//      return *s1 > *s2;
-//   }
-//   else return (n > 0);
-//}
+bool greater(const unsigned short* s1, const unsigned short* s2, size_t n)
+{
+   if (s1 && s2) {
+      while (*s1 && *s1 == *s2) {
+         s1++;
+         s2++;
+      }
+      return *s1 > *s2;
+   }
+   else return (n > 0);
+}
 
 bool greater(const unsigned short* s1, const unsigned short* s2)
 {
    return greater(s1, s2, getlength(s1) + 1);
 }
 
-int _ELENA_::__find(const unsigned short* s, unsigned short c, int defValue)
+int __find(const unsigned short* s, unsigned short c, int defValue)
 {
    const unsigned short* p = s;
 
@@ -960,7 +960,7 @@ int _ELENA_::__find(const unsigned short* s, unsigned short c, int defValue)
    return defValue;
 }
 
-int _ELENA_::__findLast(const unsigned short* s, unsigned short c, int defValue)
+int __findLast(const unsigned short* s, unsigned short c, int defValue)
 {
    const unsigned short* p = s + getlength(s);
 
@@ -974,42 +974,11 @@ int _ELENA_::__findLast(const unsigned short* s, unsigned short c, int defValue)
    return defValue;
 }
 
-unsigned short* _ELENA_::__lower(unsigned short* s)
-{
-   while (*s) {
-      *s = tolower(*s); // !! temporal: currently only ascii symbols are handled
-      s++;
-   }
-   return s;
-}
-
-unsigned short _ELENA_ :: __lower(unsigned short c)
-{
-   return tolower(c); // !! temporal: currently only ascii symbols are handled
-}
-
-unsigned short* _ELENA_::__upper(unsigned short* s)
-{
-   while (*s) {
-      *s = toupper(*s); // !! temporal: currently only ascii symbols are handled
-      s++;
-   }
-   return s;
-}
-
 unsigned short* clone(const unsigned short* s)
 {
-   if (emptystr(s)) {
-      return NULL;
-   }
-   else {
-      size_t length = getlength(s) + 1;
-      unsigned short* dup = allocate(length, (const unsigned short*)NULL);
-      copy(dup, s, length, length);
-      dup[length] = 0;
+   int length = getlength(s);
 
-      return dup;
-   }
+   return emptystr(s) ? NULL : StrFactory::allocate(length, s);
 }
 
 int strToInt(const unsigned short* s)
@@ -1203,6 +1172,30 @@ int findSubStr(const unsigned short* s, unsigned short c, size_t length, int def
    return defValue;
 }
 
+unsigned short* StrHelper :: lower(unsigned short* s)
+{
+   while (*s) {
+      *s = tolower(*s); // !! temporal: currently only ascii symbols are handled
+      s++;
+   }
+   return s;
+}
+
+unsigned short* StrHelper :: upper(unsigned short* s)
+{
+   while (*s) {
+      *s = toupper((unsigned char) *s);
+      s++;
+   }
+   return s;
+}
+
+
+unsigned short StrHelper :: lower(unsigned short c)
+{
+   return tolower(c); // !! temporal: currently only ascii symbols are handled
+}
+
 #endif
 
 //int StringHelper :: find(const wchar_t* s, const wchar_t* subs, int defValue)
@@ -1313,24 +1306,6 @@ int findSubStr(const unsigned short* s, unsigned short c, size_t length, int def
 //#ifdef _WIN32
 //
 //#else
-//
-//char* StringHelper :: lower(char* s)
-//{
-//   while (*s) {
-//      *s = tolower((unsigned char) *s);
-//      s++;
-//   }
-//   return s;
-//}
-//
-//char* StringHelper :: upper(char* s)
-//{
-//   while (*s) {
-//      *s = toupper((unsigned char) *s);
-//      s++;
-//   }
-//   return s;
-//}
 //
 //#endif
 

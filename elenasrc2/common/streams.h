@@ -561,9 +561,9 @@ public:
    }
    virtual const wide_c* getLiteral(const wide_c* def)
    {
-      const wide_c* s = (const wchar_t*)((char*)_dump + _offset);
+      const wide_c* s = (const wide_c*)((char*)_dump + _offset);
 
-      _offset += getlength(s) + 1;
+      _offset += (getlength(s) << 1) + 1;
 
       return s;
    }
@@ -578,7 +578,7 @@ public:
          return true;
       }
       else return false;
-      
+
    }
 
    void setSize(size_t length)

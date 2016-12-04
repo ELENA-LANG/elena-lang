@@ -217,7 +217,7 @@ XMLNode XMLNode :: findNode(ident_t tag)
    return XMLNode();
 }
 
-bool XMLNode :: getNodeList(List& list)
+bool XMLNode :: getNodeList(NodeList& list)
 {
    bool found = false;
 

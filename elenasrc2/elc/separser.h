@@ -13,6 +13,8 @@
 
 #ifdef _WIN32
 #include "win32\syslibloader.h"
+#else
+#include "linux32/syslibloader.h"
 #endif
 
 namespace _ELENA_

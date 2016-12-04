@@ -40,7 +40,7 @@ namespace _ELENA_
 
 namespace _ELENA_
 {
-   typedef char*           path_c;
+   typedef char            path_c;
    typedef unsigned short  wide_c;
    typedef unsigned int    unic_c;
 

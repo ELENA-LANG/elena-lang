@@ -157,17 +157,17 @@ int Linker32 :: fillImportTable(ImageInfo& info)
    while (!it.Eof()) {
       String<char, PATH_MAX> external(it.key());
 
-      int dotPos = external.findLast('.') + 1;
+      int dotPos = ident_t(external).findLast('.') + 1;
 
-      char* function = external + dotPos;
+      ident_t function = external + dotPos;
 
-      Path dll(external + getlength(DLL_NAMESPACE) + 1, getlength(external) - getlength(DLL_NAMESPACE) - getlength(function) - 2);
-      if (StringHelper::compare(dll, RTDLL_FORWARD)) {
+      IdentifierString dll(external + getlength(DLL_NAMESPACE) + 1, getlength(external) - getlength(DLL_NAMESPACE) - getlength(function) - 2);
+      if (dll.ident().compare(RTDLL_FORWARD)) {
          dll.copy(info.project->resolvePrimitive(RTDLL_FORWARD));
       }
 
-      info.functions.add(StringHelper::clone(function), *it);
-      if (!retrieve(info.libraries.start(), dll, (char*)NULL)) {
+      info.functions.add(function.clone(), *it);
+      if (!retrieve(info.libraries.start(), dll.ident(), (char*)NULL)) {
           info.libraries.add(dll.clone());
       }
 
@@ -533,7 +533,7 @@ void Linker32 :: run(Project& project, Image& image/*, ref_t tls_directory*/)
       throw InternalError(errEmptyTarget);
 
    if (!createExecutable(info, path/*, tls_directory*/))
-      project.raiseError(errCannotCreate, path);
+      project.raiseError(errCannotCreate, path.c_str());
 
    chmod(path, S_IXOTH | S_IXUSR | S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
 }

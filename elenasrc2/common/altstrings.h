@@ -36,28 +36,28 @@ class StrFactory
 public:
    static char* allocate(size_t size, const char* value);
    static char* reallocate(char* s, size_t size);
-   static wchar_t* allocate(size_t size, const wchar_t* value);
-   static wchar_t* reallocate(wchar_t* s, size_t size);
+   static wide_c* allocate(size_t size, const wide_c* value);
+   static wide_c* reallocate(wide_c* s, size_t size);
 
    static char* clone(const char* s);
-   static wchar_t* clone(const wchar_t* s);
+   static wide_c* clone(const wide_c* s);
 };
 
 class StrHelper
 {
 public:
    static void move(char* s1, const char* s2, size_t length);
-   static void move(wchar_t* s1, const wchar_t* s2, size_t length);
+   static void move(wide_c* s1, const wide_c* s2, size_t length);
    static void append(char* dest, const char* sour, size_t length);
    static void append(wide_c* dest, const wide_c* sour, size_t length);
    static void insert(char* s, int pos, int length, const char* subs);
 
    static char* lower(char* s);
-   static wchar_t* lower(wide_c* s);
+   static wide_c* lower(wide_c* s);
    static char lower(char s);
-   static wchar_t lower(wide_c s);
+   static wide_c lower(wide_c s);
    static char* upper(char* s);
-   static wchar_t* upper(wide_c* s);
+   static wide_c* upper(wide_c* s);
 };
 
 class ident_t
@@ -354,19 +354,19 @@ public:
    {
       int pos = getlength(_string);
 
-      intToStr(n, _string + pos, 10);
+      BaseString<T>::intToStr(n, _string + pos, 10);
    }
 
    void copyInt(int n)
    {
-      intToStr(n, _string, 10);
+      BaseString<T>::intToStr(n, _string, 10);
    }
 
    void appendHex(int n)
    {
       int pos = getlength(_string);
 
-      uintToStr(n, _string + pos, 16);
+      BaseString<T>::uintToStr(n, _string + pos, 16);
 
       StrHelper::upper(_string + pos);
    }
@@ -591,7 +591,11 @@ public:
 
    void trim(T ch)
    {
-      StringHelper::trim(_string, ch);
+      size_t length = getlength(_string);
+      while (length > 0 && _string[length - 1] == ch) {
+         _string[length - 1] = 0;
+         length = getlength(_string);
+      }
    }
 
    void truncate(size_t pos)

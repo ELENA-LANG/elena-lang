@@ -55,16 +55,16 @@ public:
       _packagePaths.add(package, NULL);
    }
 
-   void addPackage(ident_t package, path_t path)
-   {
-      _packagePaths.add(package, IdentifierString::clonePath(path));
-   }
-#ifdef _WIN32
+//   void addPackage(ident_t package, path_t path)
+//   {
+//      _packagePaths.add(package, IdentifierString::clonePath(path));
+//   }
+
    void addPackage(ident_t package, ident_t path)
    {
       _packagePaths.add(package, path.clone());
    }
-#endif
+
    void nameToPath(ident_t moduleName, Path& path, ident_t extension)
    {
       Path ext(extension);

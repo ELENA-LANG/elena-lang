@@ -141,9 +141,9 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return wide_t(key).compare(this->key);
    }
 
-   bool operator !=(const wchar_t* key) const
+   bool operator !=(wide_t key) const
    {
-      return !StringHelper::compare(this->key, key);
+      return !key-compare(this->key);
    }
 
    bool operator <=(const wchar_t* key) const
@@ -151,9 +151,9 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return !(this->key).greater(key);
    }
 
-   bool operator <(const wchar_t* key) const
+   bool operator <(wide_t key) const
    {
-      return (key).greater(this->key);
+      return key.greater(this->key);
    }
 
    bool operator >=(const wchar_t* key) const
@@ -410,7 +410,7 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
 
    bool operator <=(ident_t key) const
    {
-      ident_t s = KeyStored ? (const char*)this->key + (int)this : this->key;
+      ident_t s = KeyStored ? (const char*)this->key + (int)this : (const char*)this->key;
 
       return !s.greater(key);
    }
@@ -431,9 +431,9 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    bool operator >(ident_t key) const
    {
       if (KeyStored) {
-         return StringHelper::greater((ident_c*)((int)this + (int)this->key), key);
+         return ident_t((const char*)((int)this + (int)this->key));
       }
-      else return StringHelper::greater(this->key, key);
+      else return this->key.greater(key);
    }
 
    _MemoryMapItem()
@@ -3531,7 +3531,7 @@ template<class Key, class T, class Iterator> Key retrieveKey(Iterator it, T valu
 template<class Iterator> const char* retrieve(Iterator it, const char* value, const char* defaultValue)
 {
    while (!it.Eof()) {
-      if ((*it).compare(value))
+      if (ident_t(*it).compare(value))
          return *it;
 
       it++;

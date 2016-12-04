@@ -41,18 +41,6 @@ bool Path::comparePaths(path_t s1, path_t s2, size_t length)
    return true;
 }
 
-bool Path :: checkExtension(path_t path, path_t extension)
-{
-   int namepos = path.findLast(PATH_SEPARATOR) + 1;
-
-   int pos = path.findLast(namepos, '.', -1);
-   if (pos != -1) {
-      return wide_t(path + pos + 1).compare(extension);
-   }
-   else return emptystr(extension);
-}
-
-
 #ifdef _WIN32
 
 inline int checkDir(const wchar_t* name, int mode)
@@ -92,6 +80,17 @@ bool Path :: create(path_t root, path_t path)
       return true;
    }
    else return false;
+}
+
+bool Path :: checkExtension(path_t path, path_t extension)
+{
+   int namepos = path.findLast(PATH_SEPARATOR) + 1;
+
+   int pos = path.findLast(namepos, '.', -1);
+   if (pos != -1) {
+      return wide_t(path + pos + 1).compare(extension);
+   }
+   else return emptystr(extension);
 }
 
 // --- File ---
@@ -275,7 +274,7 @@ TextFileWriter :: TextFileWriter(path_t path, int encoding, bool withBOM)
 
 #else
 
-bool Path :: isRelative(const char* path, size_t length)
+bool Path :: isRelative(path_t path, size_t length)
 {
    // !! temporal
    if (path[0]!=PATH_SEPARATOR) {
@@ -294,14 +293,14 @@ inline void createDir(const char* path)
    mkdir(path, S_IRWXO | S_IRWXG);
 }
 
-bool Path :: create(const char* root, const char* path)
+bool Path :: create(path_t root, path_t path)
 {
    Path dirPath;
    dirPath.copySubPath(path);
 
    if (checkDir(dirPath, 0)!=0) {
-      if (!emptystr(dirPath) && !dirPath.compare(root)) {
-         create(root, dirPath);
+      if (!emptystr(dirPath) && !((ident_t)dirPath).compare(root)) {
+         create(root, path_t(dirPath.c_str()));
       }
       createDir(dirPath);
 
@@ -310,33 +309,44 @@ bool Path :: create(const char* root, const char* path)
    else return false;
 }
 
+bool Path :: checkExtension(path_t path, path_t extension)
+{
+   int namepos = path.findLast(PATH_SEPARATOR) + 1;
+
+   int pos = path.findLast(namepos, '.', -1);
+   if (pos != -1) {
+      return ident_t(path + pos + 1).compare(extension);
+   }
+   else return emptystr(extension);
+}
+
 //bool Path :: comparePaths(path_t s1, path_t s2, size_t length)
 //{
 //   return StringHelper::compare(s1, s2, length);
 //}
-//
-//// --- File ---
-//
-//File::File(const char* path, const char* mode, int encoding, bool withBOM)
-//{
-//   _file = fopen(path, mode);
-//
-//   if (isOpened()) {
-//      _encoding = encoding;
-//      if (withBOM) {
-//         detectEncoding();
-//      }
-//   }
-//}
-//
-//bool File :: readLine(char* s, size_t length)
-//{
-//   if (_encoding==feUTF8 || _encoding==feRaw) {
-//      return (fgets(s, length, _file) != NULL);
-//   }
-//   else return false; // !! temporal
-//}
-//
+
+// --- File ---
+
+File::File(path_t path, path_t mode, int encoding, bool withBOM)
+{
+   _file = fopen(path, mode);
+
+   if (isOpened()) {
+      _encoding = encoding;
+      if (withBOM) {
+         detectEncoding();
+      }
+   }
+}
+
+bool File :: readLine(char* s, size_t length)
+{
+   if (_encoding==feUTF8 || _encoding==feRaw) {
+      return (fgets(s, length, _file) != NULL);
+   }
+   else return false; // !! temporal
+}
+
 //bool File :: readLiteral(char* s, size_t length, size_t& wasread)
 //{
 //   if (_encoding >= feUTF8) {
@@ -345,61 +355,61 @@ bool Path :: create(const char* root, const char* path)
 //   }
 //   else return 0; // !! temporal
 //}
-//
-//bool File :: writeLiteral(const char* s, size_t length)
-//{
-//   if (_encoding >= feRaw) {
-//      return (fwrite(s, 1, length, _file) == length);
-//   }
-//   else {
-//      // !! temporal
-//      //char temp[TEMP_SIZE];
-//      //int count;
-//      //while (length > 0) {
-//      //   count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
-//
-//      //   BOOL withError = 0;
-//      //   WideCharToMultiByte(_encoding, WC_COMPOSITECHECK, s, count, temp, count, "?", &withError);
-//
-//      //   if (fwrite(temp, 1, count, _file) <= 0)
-//      //      return false;
-//
-//      //   length -= count;
-//      //   s += count;
-//      //}
-//      //return true;
-//
-//      return false; // !! temporal
-//   }
-//}
-//
-//bool File :: writeLiteral(const unsigned short* s, size_t length)
-//{
-//   if (_encoding==feUTF16 || _encoding==feRaw) {
-//      return (fwrite((const char*)s, 2, length, _file) == length);
-//   }
-//   else {
-//      char temp[TEMP_SIZE];
-//      size_t count, tmpCount;
-//      while (length > 0) {
-//         count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
-//
-//         StringHelper::copy(temp, s, count, tmpCount);
-//
-//         if (fwrite(temp, 1, tmpCount, _file) <= 0)
-//            return false;
-//
-//         length -= count;
-//         s += count;
-//      }
-//      return true;
-//   }
-//}
-//
-//bool File :: writeNewLine()
-//{
-//   return writeLiteral("\n", 1);
-//}
+
+bool File :: writeLiteral(const char* s, size_t length)
+{
+   if (_encoding >= feRaw) {
+      return (fwrite(s, 1, length, _file) == length);
+   }
+   else {
+      // !! temporal
+      //char temp[TEMP_SIZE];
+      //int count;
+      //while (length > 0) {
+      //   count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
+
+      //   BOOL withError = 0;
+      //   WideCharToMultiByte(_encoding, WC_COMPOSITECHECK, s, count, temp, count, "?", &withError);
+
+      //   if (fwrite(temp, 1, count, _file) <= 0)
+      //      return false;
+
+      //   length -= count;
+      //   s += count;
+      //}
+      //return true;
+
+      return false; // !! temporal
+   }
+}
+
+bool File :: writeLiteral(const unsigned short* s, size_t length)
+{
+   if (_encoding==feUTF16 || _encoding==feRaw) {
+      return (fwrite((const char*)s, 2, length, _file) == length);
+   }
+   else {
+      char temp[TEMP_SIZE];
+      size_t count, tmpCount;
+      while (length > 0) {
+         count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
+
+         Convertor::copy(temp, s, count, tmpCount);
+
+         if (fwrite(temp, 1, tmpCount, _file) <= 0)
+            return false;
+
+         length -= count;
+         s += count;
+      }
+      return true;
+   }
+}
+
+bool File :: writeNewLine()
+{
+   return writeLiteral("\n", 1);
+}
 
 // --- FileReader ---
 
@@ -408,16 +418,16 @@ FileReader::FileReader(path_t path, int encoding, bool withBOM)
 {
 }
 
-//// --- FileWriter ---
-//
-//FileWriter :: FileWriter(path_t path, int encoding, bool withBOM)
-//   : _file(path, "wb+", encoding, withBOM)
-//{
-//   if (encoding == feUTF16 && isOpened()) {
-//      unsigned short signature = 0xFEFF;
-//      _file.write((void*)&signature, 2);
-//   }
-//}
+// --- FileWriter ---
+
+FileWriter :: FileWriter(path_t path, int encoding, bool withBOM)
+   : _file(path, "wb+", encoding, withBOM)
+{
+   if (encoding == feUTF16 && isOpened()) {
+      unsigned short signature = 0xFEFF;
+      _file.write((void*)&signature, 2);
+   }
+}
 
 // --- TextFileReader ---
 
@@ -426,22 +436,22 @@ TextFileReader :: TextFileReader(path_t path, int encoding, bool withBOM)
 {
 }
 
-////// --- TextFileWriter ---
-////
-////TextFileWriter :: TextFileWriter(path_t path, int encoding, bool withBOM)
-////   : _file(path, "wb+", encoding, withBOM)
-////{
-////   if (withBOM) {
-////      if (encoding == feUTF16 && isOpened()) {
-////         unsigned short signature = 0xFEFF;
-////         _file.write((void*)&signature, 2);
-////      }
-////      else if (encoding == feUTF8 && isOpened()) {
-////         int signature = 0xBFBBEF;
-////         _file.write((void*)&signature, 3);
-////      }
-////   }
-////}
+// --- TextFileWriter ---
+
+TextFileWriter :: TextFileWriter(path_t path, int encoding, bool withBOM)
+   : _file(path, "wb+", encoding, withBOM)
+{
+   if (withBOM) {
+      if (encoding == feUTF16 && isOpened()) {
+         unsigned short signature = 0xFEFF;
+         _file.write((void*)&signature, 2);
+      }
+      else if (encoding == feUTF8 && isOpened()) {
+         int signature = 0xBFBBEF;
+         _file.write((void*)&signature, 3);
+      }
+   }
+}
 
 #endif
 

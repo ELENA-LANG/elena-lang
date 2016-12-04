@@ -19,37 +19,37 @@
 
 #ifdef _LINUX32
 
-//#include <ctype.h>
-//
-//#define _strdup strdup
+#include <ctype.h>
+
+#define _strdup strdup
 
 namespace _ELENA_
 {
 
-//inline static size_t wcslen(const unsigned short* s)
-//{
-//   const unsigned short* p = s;
-//
-//   while (*p) p++;
-//
-//   return (size_t)(p - s);
-//}
-//
-//inline char* _strlwr(char* str)
-//{
-//   char* it = str;
-//   while (*it != 0) { *it = tolower(*it); ++it; }
-//
-//   return str;
-//}
-//
-//inline char* _strupr(char* str)
-//{
-//   char* it = str;
-//   while (*it != 0) { *it = toupper(*it); ++it; }
-//
-//   return str;
-//}
+inline static size_t wcslen(const unsigned short* s)
+{
+   const unsigned short* p = s;
+
+   while (*p) p++;
+
+   return (size_t)(p - s);
+}
+
+inline char* _strlwr(char* str)
+{
+   char* it = str;
+   while (*it != 0) { *it = tolower(*it); ++it; }
+
+   return str;
+}
+
+inline char* _strupr(char* str)
+{
+   char* it = str;
+   while (*it != 0) { *it = toupper(*it); ++it; }
+
+   return str;
+}
 
 ////int _itow(int val, wchar_t* s, int radix)
 ////{

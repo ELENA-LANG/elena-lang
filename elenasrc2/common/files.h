@@ -30,7 +30,7 @@ public:
       return *this;
    }
 
-   path_c* clone()
+   path_c* clone() const
    {
       return StrFactory::clone(_path);
    }
@@ -97,11 +97,16 @@ public:
       return wide_t(_path).compare(s, length);
    }
 
-#else 
+#else
 
    bool compare(const char* s, int length)
    {
       return ident_t(_path).compare(s, length);
+   }
+
+   bool compare(const char* s)
+   {
+      return ident_t(_path).compare(s, getlength(s));
    }
 
 #endif
@@ -113,10 +118,6 @@ public:
    path_t(const path_c* value)
    {
       _path = value;
-   }
-   path_t(path_t& value)
-   {
-      _path = value._path;
    }
 };
 
@@ -137,15 +138,15 @@ public:
    const path_c* c_str() const { return _path; }
 
    static bool isRelative(path_t path, size_t length);
-   
+
    static bool create(path_t root, path_t path);
-   
+
    void nameToPath(ident_t name, path_t extension)
    {
       path_c buf[LOCAL_PATH_LENGTH];
       size_t bufLen;
       size_t maxLen = LOCAL_PATH_LENGTH;
-   
+
       bool stopped = false;
       while (!stopped) {
          int pos = name.find('\'');
@@ -153,39 +154,20 @@ public:
             pos = getlength(name);
             stopped = true;
          }
-   
+
          bufLen = maxLen;
          name.copyTo(buf, (size_t)pos, bufLen);
          maxLen -= bufLen;
-   
-         combine(buf, bufLen);
+
+         combine(path_t(buf), bufLen);
          name += pos + 1;
       }
       appendExtension(extension);
    }
 
-   void combine(path_t path, size_t length)
-   {
-      if (length > 0) {
-         if (isRelative(path, length)) {
-            size_t strLength = getlength(_path);
-   
-            if(strLength > 0 && _path[strLength - 1] != PATH_SEPARATOR)
-               _path.append(PATH_SEPARATOR);
-   
-            _path.append(path, length);
-         }
-         else _path.copy(path, length);
-      }
-   }
-   void combine(path_t path)
-   {
-      combine(path, getlength(path));
-   }
-
    void changeExtension(path_t extension)
    {
-      path_t path = _path;
+      path_t path(_path.str());
       int namepos = path.findLast(PATH_SEPARATOR) + 1;
       int index = path.findLast(namepos, '.', -1);
       if (index >= 0) {
@@ -194,7 +176,7 @@ public:
       _path.append('.');
       _path.append(extension);
    }
-   
+
    bool isEmpty()
    {
       return getlength(_path) == 0;
@@ -244,6 +226,25 @@ public:
       _path.copy(temp);
    }
 
+   void combine(path_t path, size_t length)
+   {
+      if (length > 0) {
+         if (isRelative(path, length)) {
+            size_t strLength = getlength(_path);
+
+            if(strLength > 0 && _path[strLength - 1] != PATH_SEPARATOR)
+               _path.append(PATH_SEPARATOR);
+
+            _path.append(path, length);
+         }
+         else _path.copy(path, length);
+      }
+   }
+   void combine(path_t path)
+   {
+      combine(path, getlength(path));
+   }
+
    void combine(ident_t path)
    {
       size_t len = getlength(path);
@@ -277,9 +278,36 @@ public:
    void changeExtension(const char* s)
    {
       Path ext(s);
-   
+
       changeExtension(ext.c_str());
    }
+
+   void append(wide_t s)
+   {
+      _path.append(s);
+   }
+
+#else
+
+   void combine(const char* path, size_t length)
+   {
+      if (length > 0) {
+         if (isRelative(path, length)) {
+            size_t strLength = getlength(_path);
+
+            if(strLength > 0 && _path[strLength - 1] != PATH_SEPARATOR)
+               _path.append(PATH_SEPARATOR);
+
+            _path.append(path, length);
+         }
+         else _path.copy(path, length);
+      }
+   }
+   void combine(const char* path)
+   {
+      combine(path, getlength(path));
+   }
+
 
 #endif
 
@@ -301,11 +329,6 @@ public:
          _path[pos] = 0;
       }
       else _path.clear();
-   }
-   
-   void append(wide_t s)
-   {
-      _path.append(s);
    }
 
    void append(wide_c c)
@@ -341,6 +364,11 @@ public:
 
    }
 
+   Path(const path_c* rootPath)
+      : _path(rootPath)
+   {
+   }
+
    Path(path_t rootPath)
       : _path(rootPath)
    {
@@ -351,6 +379,7 @@ public:
    {
    }
 
+#ifdef _WIN32
    Path(path_t rootPath, ident_t subPath)
       : _path(rootPath)
    {
@@ -372,6 +401,13 @@ public:
 
       combine(subPath);
    }
+#else
+   Path(const char* rootPath, const char* subPath)
+      : _path(rootPath)
+   {
+      combine(subPath);
+   }
+#endif
 };
 
 // --- FileNameTemplate ---
@@ -411,17 +447,19 @@ public:
       _path.clear();
    }
 
-   FileName(path_t path)
+   FileName(const path_c* path)
    {
       copyName(path);
    }
 
-   FileName(ident_t pathStr)
+#ifdef _WIN32
+   FileName(const char* pathStr)
    {
       Path path(pathStr);
 
       copyName(path.c_str());
    }
+#endif
 
    FileName()
    {

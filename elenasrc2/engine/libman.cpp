@@ -18,13 +18,13 @@ using namespace _ELENA_;
 // --- LibraryManager ---
 
 LibraryManager :: LibraryManager()
-   : _modules(NULL, freeobj), _binaries(NULL, freeobj), 
+   : _modules(NULL, freeobj), _binaries(NULL, freeobj),
    _binaryPaths(NULL, freestr), _packagePaths(NULL, freestr), _debugModules(NULL, freeobj)
 {
 }
 
 LibraryManager :: LibraryManager(path_t root, ident_t package)
-   : _rootPath(root), _namespace(package), _modules(NULL, freeobj), _binaries(NULL, freeobj), 
+   : _rootPath(root), _namespace(package), _modules(NULL, freeobj), _binaries(NULL, freeobj),
    _binaryPaths(NULL, freestr), _packagePaths(NULL, freestr)
 {
 }
@@ -139,14 +139,14 @@ bool LibraryManager :: loadCore(LoadResult& result)
       if (emptystr(it.key())) {
          Path path(*it);
 
-         FileReader reader(path.c_str(), feRaw, false);
+         FileReader reader(path.str(), feRaw, false);
 
          _Module* binary = new ROModule(reader, result);
          if(result != lrSuccessful) {
             delete binary;
 
             return false;
-            
+
          }
          else _binaries.addToTop(NULL, binary);
       }

@@ -17,10 +17,13 @@ ScriptParser :: ScriptParser()
 {
    _encoding = feUTF8;
 
+   // !! temporal
+#ifdef _WIN32
    _InterpretScript = (void*(__cdecl*)(const char*))_library.loadFunction("InterpretScript");
    _InterpretFile = (void*(__cdecl*)(const char*,int,bool))_library.loadFunction("InterpretFile");
    _Release = (void(__cdecl*)(void*))_library.loadFunction("Release");
    _GetStatus = (int(__cdecl*)(char*,int))_library.loadFunction("GetStatus");
+#endif
 }
 
 void ScriptParser :: setOption(ident_t option)
@@ -33,13 +36,15 @@ void ScriptParser :: setOption(ident_t option)
 
 void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)
 {
+   // !! temporal
+#ifdef _WIN32
    IdentifierString s(filePath);
 
-   void* tape = _InterpretFile(s, _encoding, false);   
+   void* tape = _InterpretFile(s, _encoding, false);
    if (!tape) {
       int length = _GetStatus(_status, 256);
       _status[length] = 0;
-          
+
       throw ScriptError(_status);
    }
    else {
@@ -63,4 +68,5 @@ void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)
 
       _Release(tape);
    }
+#endif
 }

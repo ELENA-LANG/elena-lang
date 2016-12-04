@@ -10,7 +10,7 @@
 #define compilerH
 
 #include "elena.h"
-#include "compilercommon.h" 
+#include "compilercommon.h"
 #include "bcwriter.h"
 
 namespace _ELENA_
@@ -120,21 +120,21 @@ public:
    enum ObjectKind
    {
       okUnknown = 0,
-   
+
       okObject,                       // param - class reference
       okSymbol,                       // param - reference
       okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
-      okLiteralConstant,              // param - reference 
-      okWideLiteralConstant,          // param - reference 
+      okLiteralConstant,              // param - reference
+      okWideLiteralConstant,          // param - reference
       okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
-      okLongConstant,                 // param - reference 
-      okRealConstant,                 // param - reference 
-      okMessageConstant,              // param - reference 
-      okExtMessageConstant,           // param - reference 
-      okSignatureConstant,            // param - reference 
-      okVerbConstant,                 // param - reference 
+      okLongConstant,                 // param - reference
+      okRealConstant,                 // param - reference
+      okMessageConstant,              // param - reference
+      okExtMessageConstant,           // param - reference
+      okSignatureConstant,            // param - reference
+      okVerbConstant,                 // param - reference
       okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
@@ -156,14 +156,14 @@ public:
       okExternal,
       okInternal,
    };
-   
+
    struct ObjectInfo
    {
       ObjectKind kind;
       ref_t      param;
       ref_t      extraparam;
       ref_t      type;
-   
+
       ObjectInfo()
       {
          this->kind = okUnknown;
@@ -210,7 +210,7 @@ public:
 
    typedef Map<ident_t, ref_t>            ForwardMap;
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
-//   typedef MemoryMap<int, ref_t>          RoleMap;   
+//   typedef MemoryMap<int, ref_t>          RoleMap;
    typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
 private:
@@ -231,7 +231,7 @@ private:
       Map<ref_t, ref_t> constantHints;
 
       // extensions
-      SubjectMap        extensionHints; 
+      SubjectMap        extensionHints;
       ExtensionMap      extensions;
 
       // type hints
@@ -452,12 +452,12 @@ private:
          ClassInfo::MethodMap::Iterator it = info.methods.getIt(message);
          if (it.Eof()) {
             info.methods.add(message, true);
-         
+
             return true;
          }
          else {
             (*it) = true;
-         
+
             return false;
          }
       }
@@ -470,7 +470,7 @@ private:
    {
       bool  constant;
 //      bool  preloaded;
-      ref_t typeRef;      
+      ref_t typeRef;
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -750,7 +750,7 @@ private:
             }
             else if(node != lxNone)
                scope.raiseWarning(level, message, node);
-         }            
+         }
       }
 
       WarningScope(int mask)
@@ -784,7 +784,7 @@ private:
    bool optimizeIdleBreakpoints(CommandTape& tape);
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
-   
+
    void insertDebugStep(SNode& node, int stepType)
    {
       node.insertNode(lxBreakpoint, stepType);
@@ -828,7 +828,7 @@ private:
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
-   void compileFieldDeclarations(SNode member, ClassScope& scope); 
+   void compileFieldDeclarations(SNode member, ClassScope& scope);
 
    void compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode);
    void compileSymbolAttributes(SNode node, SymbolScope& scope)
@@ -934,7 +934,7 @@ private:
    ref_t generateTemplate(SNode attribute, TemplateScope& scope);
 
    void generateClassField(ClassScope& scope, SyntaxTree::Node node, bool singleField);
-   void generateClassStaticField(ClassScope& scope, SNode current);   
+   void generateClassStaticField(ClassScope& scope, SNode current);
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root, bool singleField);
@@ -957,7 +957,7 @@ private:
 
    void compileDeclarations(SNode member, ModuleScope& scope);
    void compileImplementations(SNode member, ModuleScope& scope);
-   void compileIncludeSection(SNode& node, ModuleScope& scope);
+   void compileIncludeSection(SNode node, ModuleScope& scope);
 
    bool validate(_ProjectManager& project, _Module* module, int reference);
 
