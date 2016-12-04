@@ -46,6 +46,7 @@ enum LexicalType
    lxLoop            = 0x00030,
    lxInlineExpression= 0x00032,
    lxMessageReference= 0x00033,
+   lxLock            = 0x00037,
    lxExtern          = 0x00039,
    lxDefaultGeneric  = 0x00046,
    lxSubject         = 0x00047,
@@ -107,6 +108,7 @@ enum LexicalType
    lxResending       = 0x0C00A,   // resending a message, optional arg - message
    lxTrying          = 0x0C00C,   // try-catch expression
    lxAlt             = 0x0C00D,   // alt-catch expression
+   lxLocking         = 0x0C00E,   // branch expression
    lxBranching       = 0x0C00F,   // branch expression
    lxSwitching       = 0x0C010,
    lxLooping         = 0x0C011,
@@ -117,6 +119,7 @@ enum LexicalType
    lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
    lxAltExpression   = 0x0C018,
+   lxIfNot           = 0x0C019,   // optional arg - reference
    lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIf              = 0x0C01F,   // optional arg - reference
    lxElse            = 0x0C020,   // optional arg - reference

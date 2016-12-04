@@ -31,6 +31,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
       case nsDispatchExpression:
       case nsExtension:
       case nsLoop:
+      case nsLock:
       case nsExtern:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          if (_hints != lxNone) {

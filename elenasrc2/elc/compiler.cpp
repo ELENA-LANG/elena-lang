@@ -992,13 +992,24 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 Compiler::ActionScope :: ActionScope(ClassScope* parent)
    : MethodScope(parent)
 {
+   closureMode = false;
 }
 
 ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
 {
-   // HOTFIX : self / $self : closure should refer to the owner ones
+   // HOTFIX : $self : closure should refer to the owner ones
    if (identifier.compare(THIS_VAR)) {
       return parent->mapTerminal(identifier);
+   }
+   else if (identifier.compare(RETVAL_VAR) && closureMode) {
+      ObjectInfo retVar = parent->mapTerminal(identifier);
+      if (retVar.kind == okUnknown) {
+         InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
+
+         retVar = closure->allocateRetVar();
+      }
+
+      return retVar;
    }
    else return MethodScope::mapTerminal(identifier);
 }
@@ -1047,6 +1058,7 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
 Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
    : ClassScope(owner->moduleScope, reference), outers(Outer()), outerFieldTypes(ClassInfo::FieldInfo(0, 0))
 {
+   this->returningMode = false;
    this->parent = owner;
    info.header.flags |= elNestedClass;
 }
@@ -1115,6 +1127,11 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
             outers.add(identifier, outer);
             mapKey(info.fields, identifier, outer.reference);
 
+            if (outer.outerObject.kind == okOuter && identifier.compare(RETVAL_VAR)) {
+               // HOTFIX : quitting several clsoures
+               (*outers.getIt(identifier)).preserved = true;
+            }
+
             switch (outer.outerObject.kind) {
                case okOuterField:
                case okParam:
@@ -1166,6 +1183,20 @@ bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
    }
 
    return false;
+}
+
+ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
+{
+   returningMode = true;
+
+   Outer outer;
+   outer.reference = info.fields.Count();
+   outer.outerObject = ObjectInfo(okNil, -1);
+
+   outers.add(RETVAL_VAR, outer);
+   mapKey(info.fields, RETVAL_VAR, outer.reference);
+
+   return ObjectInfo(okOuter, outer.reference);
 }
 
 // --- Compiler::TemplateScope ---
@@ -3024,6 +3055,10 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    ActionScope methodScope(&scope);
    bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, mode, alreadyDeclared);
 
+   // HOTFIX : if the clousre emulates code brackets
+   if (test(mode, HINT_CLOSURE) && methodScope.message == encodeVerb(EVAL_MESSAGE_ID))
+      methodScope.closureMode = true;
+
    SyntaxTree syntaxTree;
    SyntaxWriter writer(syntaxTree);
    writer.newNode(lxClass, scope.reference);   
@@ -3140,6 +3175,21 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, InlineC
 
          outer_it++;
       }
+      
+      if (scope.returningMode) {
+         // injecting returning code if required
+         InlineClassScope::Outer retVal = scope.outers.get(RETVAL_VAR);
+
+         SNode retExpr = node.appendNode(lxCode).appendNode(lxExpression).appendNode(lxBranching);
+         SNode exprNode = retExpr.appendNode(lxExpression);
+         exprNode.appendNode(lxCurrent);
+         exprNode.appendNode(lxResultField, retVal.reference); // !! current field
+      
+         SNode retNode = retExpr.appendNode(lxIfNot, -1).appendNode(lxCode).appendNode(lxReturning);
+         retNode.appendNode(lxResult);
+         //retNode.appendNode(lxCurrent);
+         //retNode.appendNode(lxResultField, retVal.reference);
+      }
 
       return ObjectInfo(okObject, scope.reference);
    }
@@ -3242,6 +3292,19 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, int mo
       }                  
 
       info = typecastObject(exprNode, scope, subj, info);
+   }
+
+   // HOTFIX : implementing closure exit
+   if (test(mode, HINT_ROOT)) {
+      ObjectInfo retVar = scope.mapTerminal(RETVAL_VAR);
+      if (retVar.kind != okUnknown) {
+         SNode exprNode = node.firstChild(lxExprMask);
+         if (exprNode == lxExpression) {
+            exprNode = lxAssigning;
+
+            exprNode.insertNode(lxField, retVar.param);
+         }
+      }
    }
 
    return info;
@@ -3452,29 +3515,26 @@ void Compiler :: compileLoop(SNode node, CodeScope& scope)
 ////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
 //}
 
-//void Compiler :: compileLock(DNode node, CodeScope& scope)
-//{
-//   scope.writer->newNode(lxLocking);
-//
-//   // implement the expression to be locked
-//   ObjectInfo object = compileExpression(node.firstChild(), scope, 0, 0);
-//
-//   scope.writer->newNode(lxBody);
-//
-//   // implement critical section
-//   CodeScope subScope(&scope);
-//   subScope.level += 4; // HOT FIX : reserve place for the lock variable and exception info
-//
-//   compileCode(goToSymbol(node.firstChild(), nsSubCode), subScope);
-//
-//   // HOT FIX : clear the sub block local variables
-//   if (subScope.level - 4 > scope.level) {
-//      scope.writer->appendNode(lxReleasing, subScope.level - scope.level - 4);
-//   }
-//
-//   scope.writer->closeNode();
-//   scope.writer->closeNode();
-//}
+void Compiler :: compileLock(SNode node, CodeScope& scope)
+{
+   node = lxLocking;
+
+   // implement the expression to be locked
+   ObjectInfo object = compileExpression(node.findChild(lxExpression), scope, 0);
+
+   // implement critical section
+   CodeScope subScope(&scope);
+   subScope.level += 4; // HOT FIX : reserve place for the lock variable and exception info
+
+   SNode code = node.findChild(lxCode);
+
+   compileCode(code, subScope);
+
+   // HOT FIX : clear the sub block local variables
+   if (subScope.level - 4 > scope.level) {
+      code.appendNode(lxReleasing, subScope.level - scope.level - 4);
+   }
+}
 
 ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 {
@@ -3500,10 +3560,10 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileTry(statement, scope);
 //            break;
-//         case nsLock:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileLock(statement, scope);
-//            break;
+         case lxLock:
+            //recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileLock(current, scope);
+            break;
          case lxReturning:
          {
             needVirtualEnd = false;
@@ -4287,7 +4347,6 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope)
             methodScope.message = current.argument;
 
             // if it is a dispatch handler
-//            if (member.firstChild() == nsDispatchHandler) {
             if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
 //               if (test(scope.info.header.flags, elRole))
 //                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());

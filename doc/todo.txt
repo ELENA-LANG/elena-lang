@@ -1,9 +1,11 @@
 ------                                 
 In development:
 ------                              
+              xdev 
+                 * dynamic class : split functionality between struct and class, struct contains only fields, class contains only
+                   methods 
+
               zdev 
-                 * scripting library : compile time
-                 * script : rename elena to default, elena is elenascript, eson - similar to json, only one class
                  * script : elena - simple class,one method
                  * script : elena - simple class,one method, several statements
                  * script : elena - simple class,one method, parameters
@@ -25,6 +27,24 @@ In development:
                        #define method ::= "method" "(" name code ")";
 
               xrev                 
+                 * the following code : 
+                      #var anItem := $nil.
+                         #loop (anEnumerator next) ?
+                         [
+                             anItem := anEnumerator get.
+                             
+                             ($self eval:aParam:anItem) ?
+                                 [ ^ anItem. ].
+                         ].        
+                         
+                         ^ $nil.        
+                   should work if [ ^ ... ] is an explicit action ; return operator in the action
+                         should be similar to the one in implicit action, i.e. break the code and go to the method end
+                         (see for example bsort, arithmeval, arraymode (system'Filter), knutalg, calc (lexicalOp))
+                 * bsort : get rid of an extra bool messages (implementing exiting from nested closures)
+                 * truncproime : get rid of an extra bool messages
+
+
                  * ide : include / exclude
                  * ide : forwards
                  * #14 : switch to xml config files (.xprj project)
@@ -35,8 +55,6 @@ In development:
                  * xml : indent
 
                  * message $self does not belong to the object points to the target instead of message
-
-                 * returning from closure (to simulate normal branching)
 
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
                  * optimize : branching with numeric comparison
@@ -61,10 +79,7 @@ In development:
                  * typecast primitive array operation results
                  * support abstract attribute
                  * check sealed / limited class attributes
-                 * compliation should be based on set of rules
-                 * compile package info
                  * test optimized / direct operations
-                 * check : #var(-11,4)n := 0.#var(-11,4)d := n + 12. - there should be no double assigning
                  * debugging the following statements:
                      #var(-11,4)n := 0.        
                      #var(-11,4)d := n + 12.
@@ -99,26 +114,11 @@ In development:
                  * review ArgArray operations : should it be optimized
                  * use bool lamda expression for seek operations
                  * optimize BaseFunctionN retrieve operations
-                 * the following code : 
-                      #var anItem := $nil.
-                         #loop (anEnumerator next) ?
-                         [
-                             anItem := anEnumerator get.
-                             
-                             ($self eval:aParam:anItem) ?
-                                 [ ^ anItem. ].
-                         ].        
-                         
-                         ^ $nil.        
-                   should work if [ ^ ... ] is an explicit action ; return operator in the action
-                         should be similar to the one in implicit action, i.e. break the code and go to the method end
-                         (see for example bsort, arithmeval, arraymode (system'Filter), knutalg, calc (lexicalOp))
+
                  * ByteNumber.get&min - could we return the constant object?
                  * assigning param : #class BoxerHelper { #method exchange &ref:anObject1 [ anObject1 := 5. ...
                  * compiling  - (Cast == object class) ? [ ... ]
                  * implement idle typecasting message (see file_path)
-                 * bsort : get rid of an extra bool messages (implementing exiting from nested closures)
-                 * truncproime : get rid of an extra bool messages
                  * use imm mode for (n) => 1 ? [ now literal. ]
                  * optimize nil operations
                  * why console writeLine:"x:":theX:",y:"theY can be compiled
@@ -178,6 +178,9 @@ In development:
 ------                                 
 Pipeline:
 ------                                                                                         
+              zdev 
+                 * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
+
               xdev
                 * linux migration
 

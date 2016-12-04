@@ -534,6 +534,8 @@ private:
    // - ActionScope -
    struct ActionScope : public MethodScope
    {
+      bool closureMode;
+
       ActionScope(ClassScope* parent);
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
@@ -629,10 +631,13 @@ private:
          }
       };
 
+      bool                    returningMode;
       Map<ident_t, Outer>     outers;
       ClassInfo::FieldTypeMap outerFieldTypes;
 
       Outer mapSelf();
+
+      ObjectInfo allocateRetVar();
 
       bool markAsPresaved(ObjectInfo object);
 
@@ -877,7 +882,7 @@ private:
    void compileLoop(SNode node, CodeScope& scope);
    void compileThrow(SNode node, CodeScope& scope, int mode);
 //   void compileTry(DNode node, CodeScope& scope);
-//   void compileLock(DNode node, CodeScope& scope);
+   void compileLock(SNode node, CodeScope& scope);
 
    void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 

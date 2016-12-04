@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   11
+#define REVISION_VERSION   12
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -347,6 +347,9 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
    }
    else if (reference == 0) {
       referenceName = "$nil";
+   }
+   else if (reference == -1) {
+      referenceName = "$undefined";
    }
    else referenceName = module->resolveReference(reference & ~mskAnyRef);
 

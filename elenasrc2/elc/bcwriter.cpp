@@ -3223,7 +3223,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //         break;
       case lxNil:
          // acopyr 0
-         tape.write(bcACopyR);
+         tape.write(bcACopyR, argument);
          break;
       case lxField:
          // bloadfi 1
@@ -3912,7 +3912,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
          unboxMode = true;
       }
       // presave the nested object if outer operation is required
-      else if (member == lxNested && member.existChild(lxOuterMember)) {
+      else if (member == lxNested && member.existChild(lxOuterMember, lxCode)) {
          generateObjectExpression(tape, member);
          pushObject(tape, lxResult);
          presavedCount++;
@@ -3956,7 +3956,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
             }
             else loadObject(tape, lxLocal, tempLocal.argument);
          }
-         else if (current == lxNested && current.existChild(lxOuterMember)) {
+         else if (current == lxNested && current.existChild(lxOuterMember, lxCode)) {
             loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
             presavedCount--;
          }
@@ -4089,6 +4089,11 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
                   tape.write(bcPopB);
                }
                else saveObject(tape, target.type, target.argument);
+            }
+            else if (member == lxCode) {
+               unboxing = true;
+
+               generateCodeBlock(tape, member);
             }
 
             member = member.nextNode();
@@ -4251,35 +4256,34 @@ void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node n
    includeFrame(tape);
 }
 
-//void ByteCodeWriter ::generateLocking(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SNode target;
-//   SNode block;
-//   assignOpArguments(node, target, block);
-//
-//   generateObjectExpression(tape, target);
-//   pushObject(tape, lxResult);
-//
-//   tryLock(tape);
-//   declareTry(tape);
-//
-//   generateCodeBlock(tape, block);
-//
-//   // finally block - should free the lock if the exception was thrown
-//   declareCatch(tape);
-//
-//   loadBase(tape, lxResult);
-//   popObject(tape, lxResult);
-//   freeLock(tape);
-//   tape.write(bcPushB);
-//   
-//   throwCurrent(tape);
-//
-//   endCatch(tape);
-//
-//   popObject(tape, lxResult);
-//   freeLock(tape);
-//}
+void ByteCodeWriter ::generateLocking(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target = node.firstChild(lxObjectMask);
+   SNode block = node.findChild(lxCode);
+
+   generateObjectExpression(tape, target);
+   pushObject(tape, lxResult);
+
+   tryLock(tape);
+   declareTry(tape);
+
+   generateCodeBlock(tape, block);
+
+   // finally block - should free the lock if the exception was thrown
+   declareCatch(tape);
+
+   loadBase(tape, lxResult);
+   popObject(tape, lxResult);
+   freeLock(tape);
+   tape.write(bcPushB);
+   
+   throwCurrent(tape);
+
+   endCatch(tape);
+
+   popObject(tape, lxResult);
+   freeLock(tape);
+}
 
 void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
 {
@@ -4407,6 +4411,12 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
    while (current != lxNone) {
       if (current == lxIf) {
          jumpIfNotEqual(tape, current.argument);
+
+         //declareBlock(tape);
+         generateCodeBlock(tape, current.findSubNode(lxCode));
+      }
+      else if (current == lxIfNot) {
+         jumpIfEqual(tape, current.argument);
 
          //declareBlock(tape);
          generateCodeBlock(tape, current.findSubNode(lxCode));
@@ -4568,9 +4578,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxLooping:
          generateLooping(tape, node);
          break;
-//      case lxLocking:
-//         generateLocking(tape, node);
-//         break;
+      case lxLocking:
+         generateLocking(tape, node);
+         break;
       case lxStruct:
          generateStructExpression(tape, node);
          break;

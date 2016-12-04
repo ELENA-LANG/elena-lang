@@ -456,6 +456,7 @@ namespace _ELENA_
    #define SUPER_VAR               "$super"           // the predecessor class
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
+   #define RETVAL_VAR              "$$ret"            // the closure returning value
 
    #define TARGET_PSEUDO_VAR       "target"
 

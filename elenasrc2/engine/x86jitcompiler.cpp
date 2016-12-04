@@ -873,10 +873,13 @@ void _ELENA_::compileACopyR(int, x86JITScope& scope)
 {
    // mov eax, r
    scope.code->writeByte(0xB8);
-   if (scope.argument != 0) {
-      scope.writeReference(*scope.code, scope.argument, 0);
+   if (scope.argument == 0) {
+      scope.code->writeDWord(0);
    }
-   else scope.code->writeDWord(0);
+   else if (scope.argument == -1) {
+      scope.code->writeDWord(-1);
+   }
+   else scope.writeReference(*scope.code, scope.argument, 0);
 }
 
 void _ELENA_::compileBCopyR(int, x86JITScope& scope)
@@ -1177,10 +1180,13 @@ void _ELENA_::compileIfR(int, x86JITScope& scope)
 
    scope.code->writeByte(0x3D);
    // HOTFIX : support zero references
-   if (scope.argument != 0) {
-      scope.writeReference(*scope.code, scope.argument, 0);
+   if (scope.argument == 0) {
+      scope.code->writeDWord(0);
    }
-   else scope.code->writeDWord(0);
+   else if (scope.argument == -1) {
+      scope.code->writeDWord(-1);
+   }
+   else scope.writeReference(*scope.code, scope.argument, 0);
    //NOTE: due to compileJumpX implementation - compileJumpIf is called
    compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
