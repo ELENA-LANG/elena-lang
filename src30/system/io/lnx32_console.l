@@ -24,11 +24,11 @@
 
 // --- ConsoleWriter ---
 
-#class(sealed) $ConsoleWriter
+#class(sealed,struct) $ConsoleWriter
 {
     #field(handle) theHandle.
 
-    #constructor new &handle:aHandle
+    #constructor(stacksafe) new &handle:aHandle
     [
        theHandle := aHandle. 
     ]
@@ -73,7 +73,7 @@
 
 // --- ConsoleReader ---
 
-#class(sealed) $ConsoleReader
+#class(sealed,embeddable) $ConsoleReader
 {
     #constructor new
     [

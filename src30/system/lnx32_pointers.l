@@ -1,38 +1,38 @@
 // --- Handler ---
 
-#class(sealed,reference,dispatchable:handle,const) Handle
+#class(embeddable,sealed,dispatchable:handle) Handle
 {
-    #field(int)theHandle.
+    #field(4,-12)theHandle.
 
-    #constructor(stacksafe) &int:n
-    [
-        theHandle := n.
-    ]
-    
-    #constructor(stacksafe) new &handle:h
-    [
-        theHandle := h.
-    ]
-
-    #constructor(stacksafe) new &int:aHandle
-    [
-        theHandle := aHandle.
-    ]
-
-    #constructor min
-        = 0.
-
-    #method(bool,stacksafe) equal &handle:anOperand 
-        = theHandle == anOperand.
+//    #constructor(stacksafe) &int:n
+//    [
+//        theHandle := n.
+//    ]
+//    
+//    #constructor(stacksafe) new &handle:h
+//    [
+//        theHandle := h.
+//    ]
+//
+//    #constructor(stacksafe) new &int:aHandle
+//    [
+//        theHandle := aHandle.
+//    ]
+//
+//    #constructor min
+//        = 0.
+//
+//    #method(bool,stacksafe) equal &handle:anOperand 
+//        = theHandle == anOperand.
 }
 
 // --- RTPointer ---
 
 #static rt_sync = Object new.
 
-#class(sealed,embeddable) RTPointer
+#class(sealed,embeddable,const) RTPointer
 {
-    #field(int)theIndex.
+    #field(4,-12)theIndex.
     
     #constructor(stacksafe) &int:n
     [
@@ -58,14 +58,14 @@
 
 // --- UnsafePointer ---
 
-#class(sealed,reference,dispatchable:dirty_ptr) UnsafePointer
+#class(embeddable,sealed,dispatchable:dirty_ptr) UnsafePointer
 {
-    #field(int)thePointer.
+    #field(4,-12)thePointer.
 
-    #constructor new : anObject
-    [
-        $self set:anObject.
-    ]
+//    #constructor new : anObject
+//    [
+//        $self set:anObject.
+//    ]
     
     #method(stacksafe) set : anObject
         => system'core_routines'__dptr.
