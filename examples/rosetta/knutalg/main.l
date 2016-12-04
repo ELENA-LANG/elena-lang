@@ -16,7 +16,7 @@
                 [
                     counter += 1.
                     
-                    ((this length < self) bool)
+                    (this length < self)
                         ? [ this += n. ]
                         ! [ 
                             ((randomGenerator eval:counter < self) bool)

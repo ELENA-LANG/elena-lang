@@ -311,7 +311,7 @@
         ($nil == aLastNode)
             ? [ ^ aNewNode. ].
         
-        ((aNewNode level <= aLastNode level) bool) // !! temporal bool
+        (aNewNode level <= aLastNode level)
             ? [ aNewNode set &left:aLastNode. ^ aNewNode. ].
             
         #var aParent := aLastNode.

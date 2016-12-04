@@ -27,24 +27,6 @@ In development:
                        #define method ::= "method" "(" name code ")";
 
               xrev                 
-                 * the following code : 
-                      #var anItem := $nil.
-                         #loop (anEnumerator next) ?
-                         [
-                             anItem := anEnumerator get.
-                             
-                             ($self eval:aParam:anItem) ?
-                                 [ ^ anItem. ].
-                         ].        
-                         
-                         ^ $nil.        
-                   should work if [ ^ ... ] is an explicit action ; return operator in the action
-                         should be similar to the one in implicit action, i.e. break the code and go to the method end
-                         (see for example bsort, arithmeval, arraymode (system'Filter), knutalg, calc (lexicalOp))
-                 * bsort : get rid of an extra bool messages (implementing exiting from nested closures)
-                 * truncproime : get rid of an extra bool messages
-
-
                  * ide : include / exclude
                  * ide : forwards
                  * #14 : switch to xml config files (.xprj project)

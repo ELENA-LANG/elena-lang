@@ -18,7 +18,7 @@
     [
         #var aCurrent := aStart.
         
-        #loop ((aCurrent * 2 < anEnd) bool) ?
+        #loop (aCurrent * 2 < anEnd) ?
         [
             #var aMaxChild.
             #var aChild := (aCurrent * 2) + 1.
@@ -27,7 +27,7 @@
                 ? [ aMaxChild := aChild. ]  
                 ! [ aMaxChild := aChild + 1. ].
     
-            (((self@aCurrent) < (self@aMaxChild)) bool)
+            ((self@aCurrent) < (self@aMaxChild))
                 ? [
                     self exchange:aCurrent:aMaxChild.
     

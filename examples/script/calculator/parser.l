@@ -11,7 +11,7 @@
 {
     #method lexicalType
     [
-        ((self >= #48)and:(self <= #57) bool)
+        ((self >= #48)and:(self <= #57))
             ? [ ^ %digit. ].
 
         (self == #43)
