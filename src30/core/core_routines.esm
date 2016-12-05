@@ -437,7 +437,7 @@ procedure __literal.eval&copy&literal$&int$&int$&bytearray$[4]
   nload
   aloadsi 4
   
-  callextr api : subcopy
+  callextr api : subcopyz
   
   acopyb
   quitn 4
@@ -464,13 +464,7 @@ procedure __literal.eval&Substring&int$&int$[3]
   nload
 
   aloadsi 1
-  callextr api : subcopy
-  
-  acopyb
-  blen
-  ecopy 0
-  dec
-  bwriteb
+  callextr api : subcopyz
 
   quitn 3
 
@@ -974,14 +968,7 @@ procedure __wide.eval&Substring&int$&int$[3]
   nload
 
   aloadsi 1
-  callextr api : wsubcopy
-
-  acopyb
-  wlen
-  ecopy 0
-  dec
-  shiftn -1
-  bwritew
+  callextr api : wsubcopyz
 
   quitn 3
 
@@ -1025,7 +1012,7 @@ procedure __wide.eval&copy&wide$&int$&int$&shortarray$[4]
   nload
   aloadsi 4
   
-  callextr api : wsubcopy
+  callextr api : wsubcopyz
   
   acopyb
   quitn 4

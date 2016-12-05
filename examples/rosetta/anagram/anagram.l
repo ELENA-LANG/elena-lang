@@ -29,6 +29,7 @@
 
     "unixdict.txt" file_path run &eachLine: aWord
     [    
+        #var s := aWord.
         #var aKey := aWord normalized.
         #var anItem := aDictionary@aKey.
         ($nil == anItem) ?

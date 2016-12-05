@@ -1003,6 +1003,9 @@ ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
    if (identifier.compare(THIS_VAR)) {
       return parent->mapTerminal(identifier);
    }
+   else if (identifier.compare(METHOD_SELF_VAR) && subCodeMode) {
+      return parent->mapTerminal(identifier);
+   }
    else if (identifier.compare(RETVAL_VAR) && subCodeMode) {
       ObjectInfo retVar = parent->mapTerminal(identifier);
       if (retVar.kind == okUnknown) {

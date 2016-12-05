@@ -27,6 +27,7 @@ In development:
                        #define method ::= "method" "(" name code ")";
 
               xrev                 
+                 * test aplusb
                  * ide : include / exclude
                  * ide : forwards
                  * #14 : switch to xml config files (.xprj project)
@@ -115,20 +116,12 @@ In development:
                              i += 1.
                          ].
 
-                 * the following code does not work:
-                     eval : n
-                     [
-                         (this length < self)
-                             ? [ this += n. ]
-                     ]
-                   "this" points to the branch closure rather than on the top one
 
                  * support array of typed objects
                  * support array of objects
                  * support arrayof:struct
                  * test array of char / array of enumerator ...
 
-                 * test anonymrec
                  * test anagram
                  * test calendar
                  * test evolution

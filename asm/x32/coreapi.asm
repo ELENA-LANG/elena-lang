@@ -2561,6 +2561,26 @@ labEnd:
 
 end
 
+procedure coreapi'subcopyz
+
+  mov  esi, edi
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, [eax + ebx]
+  mov  byte ptr [esi], dl
+  add  ebx, 1
+  add  esi, 1
+  sub  ecx, 1
+  jnz  short labNext
+  mov  byte ptr [esi], cl
+
+labEnd:
+  ret
+
+end
+
 procedure coreapi'insert
 
   mov  esi, eax
@@ -2593,6 +2613,26 @@ labNext:
   lea  esi, [esi + 2]
   sub  ecx, 1
   jnz  short labNext
+
+labEnd:
+  ret
+
+end
+
+procedure coreapi'wsubcopyz
+
+  mov  esi, edi
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, [eax + ebx*2]
+  mov  word ptr [esi], dx
+  add  ebx, 1
+  lea  esi, [esi + 2]
+  sub  ecx, 1
+  jnz  short labNext
+  mov  word ptr [esi], cx
 
 labEnd:
   ret
