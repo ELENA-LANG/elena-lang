@@ -3493,7 +3493,6 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       case ADD_MESSAGE_ID:
       case SUB_MESSAGE_ID:
       case MUL_MESSAGE_ID:
-      case DIV_MESSAGE_ID:
       case AND_MESSAGE_ID:
       case OR_MESSAGE_ID:
       case XOR_MESSAGE_ID:
@@ -3502,8 +3501,9 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
          immOp = true;
          assignMode = true;
          break;
-      //case LESS_MESSAGE_ID:
-      //   invertMode = true;
+      case DIV_MESSAGE_ID:
+         assignMode = true;
+         break;
       case EQUAL_MESSAGE_ID:
          selectMode = true;
          break;
@@ -3526,7 +3526,6 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       case INCREASE_MESSAGE_ID:
          immOp = true;
          break;
-
    }
 
    SNode larg;
