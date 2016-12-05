@@ -129,7 +129,6 @@ In development:
                  * test array of char / array of enumerator ...
 
                  * test anonymrec
-                 * test amb
                  * test anagram
                  * test calendar
                  * test evolution
@@ -151,6 +150,7 @@ In development:
                  * test calc sample
                  * optimize unbox : root expression / assigning
                  * ini : replace warn/weakunresolved with warn:weakunresolved
+                 * breaking loop (loop and return statement)
 
               xdev - ide
                 * vertical scroller does not work correctly

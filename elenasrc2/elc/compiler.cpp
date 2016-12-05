@@ -26,7 +26,7 @@ using namespace _ELENA_;
 //}
 
 // --- Hint constants ---
-#define HINT_MASK             0xFFFFF000
+#define HINT_CLOSURE_MASK     0x00008800
 
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
@@ -42,8 +42,10 @@ using namespace _ELENA_;
 //#define HINT_ALTBOXING        0x00010000
 #define HINT_CLOSURE          0x00008000
 #define HINT_ASSIGNING        0x00004000
+#define HINT_SUBCODE_CLOSURE  0x00008800
 //#define HINT_CONSTRUCTOR_EPXR 0x00002000
 //#define HINT_VIRTUAL_FIELD    0x00001000
+
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
@@ -992,7 +994,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 Compiler::ActionScope :: ActionScope(ClassScope* parent)
    : MethodScope(parent)
 {
-   closureMode = false;
+   subCodeMode = false;
 }
 
 ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
@@ -1001,7 +1003,7 @@ ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
    if (identifier.compare(THIS_VAR)) {
       return parent->mapTerminal(identifier);
    }
-   else if (identifier.compare(RETVAL_VAR) && closureMode) {
+   else if (identifier.compare(RETVAL_VAR) && subCodeMode) {
       ObjectInfo retVar = parent->mapTerminal(identifier);
       if (retVar.kind == okUnknown) {
          InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
@@ -2193,7 +2195,7 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
       case lxCode:
 //      case nsSubjectArg:
 //      case nsMethodParameter:
-         result = compileClosure(member, scope, test(mode, HINT_CLOSURE) ? HINT_CLOSURE : 0);
+         result = compileClosure(member, scope, mode & HINT_CLOSURE_MASK);
          break;
 //      case nsInlineClosure:
 //         result = compileClosure(member.firstChild(), scope, HINT_CLOSURE);
@@ -2535,11 +2537,11 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, i
       operator_id = original_id;
 
       SNode roperandNode = loperandNode.nextNode(lxObjectMask);
-      compileObject(roperandNode, scope, HINT_CLOSURE);
+      compileObject(roperandNode, scope, HINT_SUBCODE_CLOSURE);
 
       SNode roperand2Node = roperandNode.nextNode(lxObjectMask);
       if (roperand2Node != lxNone) {
-         compileObject(roperand2Node, scope, HINT_CLOSURE);
+         compileObject(roperand2Node, scope, HINT_SUBCODE_CLOSURE);
 
          if (loopMode)
             node = node.injectNode(node);
@@ -3059,8 +3061,8 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, mode, alreadyDeclared);
 
    // HOTFIX : if the clousre emulates code brackets
-   if (test(mode, HINT_CLOSURE) && methodScope.message == encodeVerb(EVAL_MESSAGE_ID))
-      methodScope.closureMode = true;
+   if (test(mode, HINT_SUBCODE_CLOSURE))
+      methodScope.subCodeMode = true;
 
    SyntaxTree syntaxTree;
    SyntaxWriter writer(syntaxTree);
@@ -3208,7 +3210,12 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, int mod
    }
    // if it is a closure / lambda function with a parameter
    else if (node == lxInlineExpression) {
-      compileAction(node.findChild(lxCode), scope, node.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxMessage), mode);
+      SNode codeNode = node.findChild(lxCode);
+
+      compileAction(codeNode, scope, node.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxMessage), mode);
+
+      // HOTFIX : hide code node because it is no longer required
+      codeNode = lxIdle;
    }
 //   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
 //      compileAction(node.firstChild(), scope, node, mode);
@@ -4111,7 +4118,10 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& scope
       }
       else node = lxExpression;
 
-      expr.insertNode(lxResult);
+      if (withFrame) {
+         expr.insertNode(lxThisLocal, 1);
+      }
+      else expr.insertNode(lxResult);
 
       if (withFrame) {
          compileExtensionMessage(expr, scope, ObjectInfo(okConstantClass, 0, classRef));

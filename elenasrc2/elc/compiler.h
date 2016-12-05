@@ -534,7 +534,7 @@ private:
    // - ActionScope -
    struct ActionScope : public MethodScope
    {
-      bool closureMode;
+      bool subCodeMode;
 
       ActionScope(ClassScope* parent);
 
