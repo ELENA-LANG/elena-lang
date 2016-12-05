@@ -1,8 +1,8 @@
 /// basic array syntax
 
-#define system.
-#define system'collections.
-#define extensions.
+#import system.
+#import system'collections.
+#import extensions.
 
 #symbol program =
 [

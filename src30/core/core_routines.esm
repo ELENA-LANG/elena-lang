@@ -465,6 +465,7 @@ procedure __literal.eval&Substring&int$&int$[3]
 
   aloadsi 1
   callextr api : subcopyz
+  acopyb
 
   quitn 3
 
@@ -969,6 +970,7 @@ procedure __wide.eval&Substring&int$&int$[3]
 
   aloadsi 1
   callextr api : wsubcopyz
+  acopyb
 
   quitn 3
 
