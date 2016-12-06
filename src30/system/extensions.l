@@ -1253,47 +1253,47 @@
     #method Substring : anIndex : aLength
         = self Substring:aLength &at:anIndex.
             
-//    #method trimLeft &char:aChar
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trimLeft &char:aChar.
-//    ]
-//
-//    #method trimRight &char:aChar
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trimRight &char:aChar.
-//    ]
-//
-//    #method trim &char:aChar
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trim &char:aChar.
-//    ]
-//
-//    #method trim
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trim.
-//    ]
-//
-//    #method trimLeft
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trimLeft.
-//    ]
-//
-//    #method trimRight
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trimRight.
-//    ]
+    #method trimLeft &char:aChar
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trimLeft &char:aChar.
+    ]
+
+    #method trimRight &char:aChar
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trimRight &char:aChar.
+    ]
+
+    #method trim &char:aChar
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trim &char:aChar.
+    ]
+
+    #method trim
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trim.
+    ]
+
+    #method trimLeft
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trimLeft.
+    ]
+
+    #method trimRight
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trimRight.
+    ]
     
     #method padLeft &char:aChar &length:aLength
     [
@@ -1344,8 +1344,8 @@
         ^ self::dispatcher replace &literal:aReplacee &literal:aReplacer.
     ]
     
-//    #method write : aLiteral &length:aCounter
-//        = self::stringOp write : aLiteral &int:(aCounter int).
+    #method write : aLiteral &length:aCounter
+        = self::stringOp write : aLiteral &int:(aCounter int).
             
     #method(stacksafe) write : aLiteral &int:aCounter
     [

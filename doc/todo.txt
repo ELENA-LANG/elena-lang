@@ -27,7 +27,10 @@ In development:
                        #define method ::= "method" "(" name code ")";
 
               xrev                 
-                 * test aplusb
+                 * first class function
+                 * test knutalg
+                 * test manboy
+
                  * ide : include / exclude
                  * ide : forwards
                  * #14 : switch to xml config files (.xprj project)
@@ -122,13 +125,6 @@ In development:
                  * support arrayof:struct
                  * test array of char / array of enumerator ...
 
-                 * test anagram
-                 * test calendar
-                 * test evolution
-                 * test twelvestat
-                 * test truncprime
-                 * test manboy
-                 * test knutalg
                  * uncomment GroupTest
                  * uncomment DTOToStructTest
                  * uncomment jsonTest
@@ -144,6 +140,8 @@ In development:
                  * optimize unbox : root expression / assigning
                  * ini : replace warn/weakunresolved with warn:weakunresolved
                  * breaking loop (loop and return statement)
+                 * fixing dynamic array ineriting - constructor should call default dynamic constructor
+                   instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
 
               xdev - ide
                 * vertical scroller does not work correctly

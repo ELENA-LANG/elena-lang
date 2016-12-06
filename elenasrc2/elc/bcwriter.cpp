@@ -3353,6 +3353,7 @@ void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node 
       }
       else if (size == 0) {
          newDynamicObject(tape);
+         initDynamicObject(tape, lxNil);
       }
    }
    else {      
