@@ -36,7 +36,7 @@
     ]
 }.
 
-#class(sealed,reference,const) SystemTime :: BaseValue
+#class(sealed,embeddable,const) SystemTime :: BaseValue
 {
     #field(int)tv_sec.
     #field(int)tv_usec.
@@ -103,16 +103,6 @@
            [ ^ tv_usec < usec. ].
 
        ^ tv_sec < sec.
-    ]
-    
-    #method(stacksafe) write &__time:anOperand
-    [
-       #var(int)sec.
-       #var(int)usec.
-       anOperand $read &vint:sec &vint:usec.
-       
-       tv_sec := sec.
-       tv_usec := usec.       
     ]
     
     #method(stacksafe) read &vlong:aRetVal
@@ -287,7 +277,7 @@
         tm_usec := n.
     ]
     
-    #method(stacksafe) read &__time:aRetVal
+    #method(stacksafe) read &__vtime:aRetVal
     [
        // HOTFIX
        tm_isdst := -1.
@@ -295,7 +285,7 @@
        #var(int)tm_sec := system'external'libc mktime &__time_st:$self.
        #var(__time)tm := SystemTime $new &int:tm_sec &int:tm_usec.
 
-       aRetVal write &__time:tm. 
+       aRetVal set &__time:tm. 
     ]    
     
     #method(stacksafe) writeSpan &__time:aTime

@@ -1,6 +1,46 @@
 ------                                 
 In development:
 ------                              
+              xrev                 
+                 * migrate elc to Linux
+
+                 * first class function
+                 * test knutalg
+                 * test manboy
+
+                 * ide : include / exclude
+                 * ide : forwards
+                 * #14 : switch to xml config files (.xprj project)
+                 * xmlreader : after deleting / changing presaved settings should be remove, problably ProjectManager
+                   should keep the string copies or be reloaded every time
+                 * ini to xml
+                 * xml to ini : not allowed
+                 * xml : indent
+
+                 * fixing dynamic array ineriting - constructor should call default dynamic constructor
+                   instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
+
+                 * message $self does not belong to the object points to the target instead of message
+
+                 * uncomment GroupTest
+                 * uncomment DTOToStructTest
+                 * uncomment jsonTest
+                 * test graph
+                 * test c_a_g
+                 * test rest samples
+                 * test script samples
+                 * debugger : #var(int)n := 0. n := n + 1. Debugger skips the second statement
+                 * test elt (system'console write:"Hello" write:" World")
+                 * tape_test
+                 * test template in template (with parameters)
+                 * test calc sample
+                 * optimize unbox : root expression / assigning
+                 * ini : replace warn/weakunresolved with warn:weakunresolved
+                 * breaking loop (loop and return statement)
+------                                 
+Pipeline:
+------                                                                                         
+
               xdev 
                  * dynamic class : split functionality between struct and class, struct contains only fields, class contains only
                    methods 
@@ -27,21 +67,6 @@ In development:
                        #define method ::= "method" "(" name code ")";
 
               xrev                 
-                 * first class function
-                 * test knutalg
-                 * test manboy
-
-                 * ide : include / exclude
-                 * ide : forwards
-                 * #14 : switch to xml config files (.xprj project)
-                 * xmlreader : after deleting / changing presaved settings should be remove, problably ProjectManager
-                   should keep the string copies or be reloaded every time
-                 * ini to xml
-                 * xml to ini : not allowed
-                 * xml : indent
-
-                 * message $self does not belong to the object points to the target instead of message
-
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
                  * optimize : branching with numeric comparison
                  * test int => vint, vint =>, ref => obj, obj => ref
@@ -125,32 +150,12 @@ In development:
                  * support arrayof:struct
                  * test array of char / array of enumerator ...
 
-                 * uncomment GroupTest
-                 * uncomment DTOToStructTest
-                 * uncomment jsonTest
-                 * test graph
-                 * test c_a_g
-                 * test rest samples
-                 * test script samples
-                 * debugger : #var(int)n := 0. n := n + 1. Debugger skips the second statement
-                 * test elt (system'console write:"Hello" write:" World")
-                 * tape_test
-                 * test template in template (with parameters)
-                 * test calc sample
-                 * optimize unbox : root expression / assigning
-                 * ini : replace warn/weakunresolved with warn:weakunresolved
-                 * breaking loop (loop and return statement)
-                 * fixing dynamic array ineriting - constructor should call default dynamic constructor
-                   instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
 
               xdev - ide
                 * vertical scroller does not work correctly
                 * set focus on the editor after selecting a project item
                 * debugging vm client : f7 on start
 
-------                                 
-Pipeline:
-------                                                                                         
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
 
