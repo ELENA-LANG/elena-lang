@@ -56,7 +56,7 @@
                 ]
                 | if &Error: e
                 [
-                    aBulls << -1.
+                    aBulls set:(-1).
                 ].
             ].
 

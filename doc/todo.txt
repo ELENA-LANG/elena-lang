@@ -4,8 +4,6 @@ In development:
               xrev                 
                  * migrate elc to Linux
 
-                 * first class function
-                 * test knutalg
                  * test manboy
 
                  * ide : include / exclude
@@ -149,7 +147,7 @@ Pipeline:
                  * support array of objects
                  * support arrayof:struct
                  * test array of char / array of enumerator ...
-
+                 * remove core.config, no longer required
 
               xdev - ide
                 * vertical scroller does not work correctly
