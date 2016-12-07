@@ -188,16 +188,19 @@ void IniConfigFile :: setSetting(ident_t key, const char* value)
 
          _settings.add(category.str(), temp.str(), ((ident_t)value).clone());
       }
-      else _settings.add(category.str(), key, ((ident_t)value).clone());
+      else _settings.add(category.str(), settingName, ((ident_t)value).clone());
    }
 }
 
 void IniConfigFile::setSetting(ident_t key, int value)
 {
-   String<char, 15> string;
-   string.appendInt(value);
+   if (value != 0) {
+      String<char, 15> string;
+      string.appendInt(value);
 
-   setSetting(key, string.str());
+      setSetting(key, string.str());
+   }
+   else clearSetting(key);
 }
 
 void IniConfigFile::setSetting(ident_t key, size_t value)
@@ -216,6 +219,25 @@ void IniConfigFile::setSetting(ident_t key, bool value)
 ident_t IniConfigFile :: getSetting(ident_t category, ident_t key, ident_t defaultValue)
 {
    return _settings.get(category, key, defaultValue);
+}
+
+void IniConfigFile :: clearSetting(ident_t key)
+{
+   int index = key.find('/');
+   if (index != -1) {
+      String<char, 50> category(key, index);
+
+      ident_t settingName = key + index + 1;
+      index = settingName.find('/');
+      if (index > 0) {
+         // HOTFIX : if sub category is used
+         String<char, 50> temp(settingName);
+         temp[index] = ':';
+
+         _settings.clear(category.str(), temp.str());
+      }
+      else _settings.clear(category.str(), settingName);
+   }
 }
 
 void IniConfigFile :: clear(const char* category, const char* key)

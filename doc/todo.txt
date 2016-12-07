@@ -4,17 +4,6 @@ In development:
               xrev                 
                  * migrate elc to Linux
 
-                 * test manboy
-
-                 * ide : include / exclude
-                 * ide : forwards
-                 * #14 : switch to xml config files (.xprj project)
-                 * xmlreader : after deleting / changing presaved settings should be remove, problably ProjectManager
-                   should keep the string copies or be reloaded every time
-                 * ini to xml
-                 * xml to ini : not allowed
-                 * xml : indent
-
                  * fixing dynamic array ineriting - constructor should call default dynamic constructor
                    instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
 
@@ -32,9 +21,14 @@ In development:
                  * tape_test
                  * test template in template (with parameters)
                  * test calc sample
+                 * test db sample
+                 * test net sample
                  * optimize unbox : root expression / assigning
                  * ini : replace warn/weakunresolved with warn:weakunresolved
                  * breaking loop (loop and return statement)
+
+                 * test manboy
+
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -149,11 +143,6 @@ Pipeline:
                  * test array of char / array of enumerator ...
                  * remove core.config, no longer required
 
-              xdev - ide
-                * vertical scroller does not work correctly
-                * set focus on the editor after selecting a project item
-                * debugging vm client : f7 on start
-
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
 
@@ -205,9 +194,31 @@ Pipeline:
                        * #265 : enumeration list (declaration,pool of possible values,literal representation)
 
               idev - generic development                                          
+                       * allow to opem xml project
+                       * allow to create xml project
+                       * ini to xml
+
+                       * xml to ini not allowed
+                       * xml : include / exclude
+                       * xml : forwards
+                       * xmlreader : after deleting / changing presaved settings should be remove, problably ProjectManager
+                         should keep the string copies or be reloaded every time
+                       * #14 : switch to xml config files (.xprj project)
+
                        * show internal errors in message list
                        * #263 - IDE : MTA Debugging 
                        * refactor IDEController::ProjectManager - get rid of duplicate code
+
+                       * vertical scroller does not work correctly
+                       * set focus on the editor after selecting a project item
+                       * debugging vm client : f7 on start
+
+                       * project view : delays in openning the window
+                       * #191 : IDE : block commenting
+                       * #221 : Breakpoints are triggered even after removing (??can not reproduce at the moment)
+                       * #272 : it should be possible to set manifest
+                       * #131 : it should be possible to change the order of source files in the project 
+                       * #188 : Make possible to provide alternative path to lib
 
              xdev - linux
                        * implement UnsafePointer.get&literal / UnsafePointer.get&wide
@@ -357,14 +368,6 @@ Pipeline:
                              ]
                          proceed message should be called directly, because the class is sealed
                        * review winforms implementation for corex mode
-                       
-              idev - generic development                                          
-                       * project view : delays in openning the window
-                       * #191 : IDE : block commenting
-                       * #221 : Breakpoints are triggered even after removing (??can not reproduce at the moment)
-                       * #272 : it should be possible to set manifest
-                       * #131 : it should be possible to change the order of source files in the project 
-                       * #188 : Make possible to provide alternative path to lib
                        
              xdev - linux
                        * implement debugger

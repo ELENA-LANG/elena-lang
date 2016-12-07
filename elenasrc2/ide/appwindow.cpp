@@ -2125,7 +2125,7 @@ void IDEController::ProjectManager::setSectionOption(const char* option, const c
       if (!_ELENA_::emptystr(value)) {
          _model->project.config.setSetting(option, value);
       }
-      else _model->project.config.setSetting(option, NULL);
+      else _model->project.config.clearSetting(option);
    }
 
    _model->project.changed = true;
@@ -2407,7 +2407,11 @@ void IDEController::ProjectManager::includeSource(_ELENA_::path_t path)
    _ELENA_::Path relPath(path);
    Paths::makeRelativePath(relPath, _model->project.path.c_str());
 
-   _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clonePath(relPath.c_str()), (const char*)NULL);
+   if (_model->project.type == ctXml) {
+   }
+   else _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clonePath(relPath.c_str()), (const char*)NULL);
+
+   reloadSources();
 
    _model->project.changed = true;
 }
@@ -2417,7 +2421,11 @@ void IDEController::ProjectManager::excludeSource(_ELENA_::path_t path)
    _ELENA_::Path relPath(path);
    Paths::makeRelativePath(relPath, _model->project.path.c_str());
 
-   _model->project.config.clear(IDE_FILES_SECTION, _ELENA_::IdentifierString(relPath));
+   if (_model->project.type == ctXml) {
+   }
+   else _model->project.config.clear(IDE_FILES_SECTION, _ELENA_::IdentifierString(relPath));
+
+   reloadSources();
 
    _model->project.changed = true;
 }
@@ -2431,7 +2439,11 @@ void IDEController::ProjectManager::clearForwards()
 
 void IDEController::ProjectManager::addForward(const char* name, const char* reference)
 {
-   _model->project.config.setSetting(IDE_FORWARDS_SECTION, name, reference);
+   if (_model->project.type == ctXml) {
+   }
+   else _model->project.config.setSetting(IDE_FORWARDS_SECTION, name, reference);
 
    _model->project.changed = true;
+
+   reloadForwards();
 }

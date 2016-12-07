@@ -12,7 +12,8 @@ using namespace _GUI_;
 
 // --- FileDialog ---
 
-wchar_t* FileDialog :: ProjectFilter = _T("ELENA Project file\0*.prj\0ELENA XML Project file\0*.xprj\0All types\0*.*\0\0");
+wchar_t* FileDialog :: ProjectFilter = _T("ELENA Project file\0*.prj\0All types\0*.*\0\0");
+//wchar_t* FileDialog :: ProjectFilter = _T("ELENA Project file\0*.prj\0ELENA XML Project file\0*.xprj\0All types\0*.*\0\0");
 wchar_t* FileDialog :: SourceFilter = _T("ELENA source file\0*.l\0All types\0*.*\0\0");
 
 //typedef _ELENA_::String<tchar_t, 255> ParamString;

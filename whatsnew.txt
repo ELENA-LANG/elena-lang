@@ -19,7 +19,6 @@
 [ELC]
 [+] #271 : constant array
 [+] #238 : Library / Program Manifest (win32)
-[+] #14  : switch to xml config files
 
 ******************************************************************************
                              What's New in 2.0.3

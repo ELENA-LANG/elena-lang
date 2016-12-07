@@ -50,12 +50,14 @@ public:
    void setSetting(ident_t key, size_t value);
    void setSetting(ident_t key, bool value);
 
+   void clearSetting(ident_t key);
+
    void setSetting(const char* category, const char* key, const char* value); // !! obsolete
    void setSetting(const char* category, const char* key, int value);
    void setSetting(const char* category, const char* key, size_t value);
    void setSetting(const char* category, const char* key, bool value);
 
-   void clear(const char* category, const char* key);
+   void clear(const char* category, const char* key);    // !! obsolete
    void clear(const char* category);
    void clear();
 

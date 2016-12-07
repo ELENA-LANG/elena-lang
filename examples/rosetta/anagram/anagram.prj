@@ -3,13 +3,6 @@ executable=anagram.exe
 namespace=anagram
 template=mta_console
 debuginfo=-1
-project/executable=anagram.exe
-project/arguments=0
-project/output=0
-project/options=0
-project/namespace=anagram
-project/template=mta_gui
-project/debuginfo=-1
 warn:unresolved=0
 
 [files]
