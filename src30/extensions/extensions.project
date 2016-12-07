@@ -5,6 +5,11 @@ template=lib
 debuginfo=-1
 warn:unresolved=0
 
+[manifest]
+name=ELENA Extension Library
+version=3.0.1
+author=Alex Rakov
+
 [files]
 control.l
 convertors.l
