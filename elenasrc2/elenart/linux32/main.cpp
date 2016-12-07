@@ -71,7 +71,7 @@ void* GetVMLastError(void* retVal)
    return NULL;
 }
 
-int LoadSubjectName(void* subject, ident_c* lineInfo, size_t length)
+int LoadSubjectName(void* subject, char* lineInfo, size_t length)
 {
    if (instance == NULL)
       init();
@@ -84,10 +84,15 @@ void* LoadSubject(void* subjectName)
    if (instance == NULL)
       init();
 
-   return instance->loadSubject((ident_t)subjectName);
+   return instance->loadSubject((const char*)subjectName);
 }
 
-int LoadMessageName(void* subject, ident_c* lineInfo, size_t length)
+void* LoadMessage(void* messageName)
+{
+   return instance->loadMessage((const char*)messageName);
+}
+
+int LoadMessageName(void* subject, char* lineInfo, size_t length)
 {
    if (instance == NULL)
       init();
@@ -100,6 +105,6 @@ void* LoadSymbol(void* referenceName)
    if (instance == NULL)
       init();
 
-   return instance->loadSymbol((ident_t)referenceName);
+   return instance->loadSymbol((const char*)referenceName);
 }
 

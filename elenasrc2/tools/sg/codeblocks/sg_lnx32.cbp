@@ -89,6 +89,8 @@
 			<Option link="1" />
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="../../../common/xmlreader.cpp" />
+		<Unit filename="../../../common/xmlreader.h" />
 		<Unit filename="../../../engine/parsertable.cpp" />
 		<Unit filename="../../../engine/parsertable.h">
 			<Option compile="1" />

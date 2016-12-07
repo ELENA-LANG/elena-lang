@@ -27,12 +27,12 @@ struct ScriptError
    IdentifierString error;
 
    ScriptError()
+      : error((const char*)NULL)
    {
-      error = NULL;
    }
-   ScriptError(ident_t error)
+   ScriptError(const char* message)
+      : error(message)
    {
-      this->error = error;
    }
 };
 

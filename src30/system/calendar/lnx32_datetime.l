@@ -6,9 +6,9 @@
 
 // --- SystemTime ---
 
-#symbol $factory =
+#symbol $systemTimeFactory =
 {
-    #method(__time) utcNow
+    #method(stacksafe) readUtcNow &__vtime:retVal
     [
         #var(__time)time.
                       
@@ -21,10 +21,10 @@
 
         tm read &__time:time.
         
-        ^ SystemTime new &__time:time.
+        retVal := time.
     ]
     
-    #method(__time) now
+    #method(stacksafe) readNow &__vtime:retVal
     [
         #var(__time)time.
                       
@@ -32,7 +32,7 @@
             &__time:time
             &int:0.
         
-        ^ SystemTime new &__time:time.
+        retVal := time.
     ]
 }.
 
@@ -63,12 +63,6 @@
 
     #constructor new &__time:value
         = value.
-
-    #constructor now
-        <= new &__time:($factory now).
-
-    #constructor utcNow
-        <= new &__time:($factory utcNow).
                         
     #method(stacksafe) $read &vint:aSeconds &vint:aMicroSeconds 
     [

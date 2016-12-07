@@ -1,4 +1,4 @@
-﻿[project]
+[project]
 output=/usr/lib/elena/lib30
 namespace=extensions
 template=lib

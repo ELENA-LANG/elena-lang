@@ -1,6 +1,6 @@
 // ==== ver 3.4.1 ===
 
-#define system.
+#import system.
 
 // --- Arguments ---
 

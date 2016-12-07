@@ -187,7 +187,7 @@ public:
       size_t length = IDENTIFIER_LEN;
       value.copyTo(buf, length);
       buf[length] = 0;
-   
+
       return ((ident_t)buf).clone();
    }
 
@@ -219,7 +219,7 @@ public:
    IdentifierString()
    {
    }
-   IdentifierString(ident_t value)
+   IdentifierString(const char* value)
       : String(value)
    {
    }
@@ -299,7 +299,7 @@ public:
       copy(reference, pos);
       _string[pos] = 0;
    }
-   
+
    static bool compare(ident_t reference, ident_t ns)
    {
       size_t pos = reference.findLast('\'', 0);
@@ -310,7 +310,7 @@ public:
       }
       else return false;
    }
-   
+
    bool compare(ident_t reference)
    {
       return NamespaceName::compare(reference, _string);

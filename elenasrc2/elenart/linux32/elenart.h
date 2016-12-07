@@ -33,6 +33,8 @@ extern "C"
 
    DLL_PUBLIC int LoadMessageName(void* subject, char* lineInfo, size_t length);
 
+   DLL_PUBLIC void* LoadMessage(void* messageName);
+
    DLL_PUBLIC void* LoadSubject(void* subjectName);
 }
 

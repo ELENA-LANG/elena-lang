@@ -90,6 +90,8 @@
 			<Option link="1" />
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="../../../common/xmlreader.cpp" />
+		<Unit filename="../../../common/xmlreader.h" />
 		<Unit filename="../../../engine/bytecode.cpp" />
 		<Unit filename="../../../engine/bytecode.h" />
 		<Unit filename="../../../engine/textparser.h" />

@@ -17,15 +17,15 @@ cp bin/elena-lc /usr/bin/
 cp bin/libelenart.so /usr/lib/elena/
 
 echo core
-bin/elena-asm2binx src30/asm/x32/core.asm /usr/lib/elena/core/x32
+bin/elena-asm2binx asm/x32/core.asm /usr/lib/elena/core/x32
 
 echo core_lnx
-bin/elena-asm2binx src30/asm/x32/core_lnx.asm /usr/lib/elena/core/x32
+bin/elena-asm2binx asm/x32/core_lnx.asm /usr/lib/elena/core/x32
 
 echo coreapi
-bin/elena-asm2binx src30/asm/x32/coreapi.asm /usr/lib/elena/core/x32
+bin/elena-asm2binx asm/x32/coreapi.asm /usr/lib/elena/core/x32
 
-bin/elena-asm2binx src30/asm/core_routines.esm /usr/lib/elena/lib30/system
+bin/elena-asm2binx src30/core/core_routines.esm /usr/lib/elena/lib30/system
 
 elena-lc -csrc30/system/system.project
 elena-lc -csrc30/extensions/extensions.project
