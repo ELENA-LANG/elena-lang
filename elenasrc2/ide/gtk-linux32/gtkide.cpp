@@ -562,6 +562,10 @@ GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model
 
    populate(&_mainFrame, &_projectView, &_bottomTab, &_statusbar);
 
+   // set minimal sizes
+   _outputScroller.set_size_request(-1, 80);
+   _projectView.set_size_request(200, -1);
+
    //_output.set_editable(false);
 
    _outputDispatcher.connect(sigc::mem_fun(*this, &GTKIDEWindow::on_notification_from_output));

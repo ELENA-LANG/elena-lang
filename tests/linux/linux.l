@@ -5,8 +5,8 @@
 [
    console writeLine:"Hello".  
 
-//   #var d1 := Date new &year:2015 &month:1 &day:1 &hour:0&minute:0 &second:0.
-//   #var d2 := Date new &year:2015 &month:1 &day:11 &hour:1 &minute:0 &second:0.
+//   #var d1 := Date new &year:2015 &month1&a: &hour:0&miiiiiinute:0 &second:0.
+//   #var= Date new &yyeeaarr::2015 &mont::1 &day:11 &hou::1 &minute:0 &second:0.
 
 //   #var s := d2 - d1.
 //   #var msec := s milliseconds.

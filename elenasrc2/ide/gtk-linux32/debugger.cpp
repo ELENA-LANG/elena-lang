@@ -41,7 +41,7 @@ void DebugEventManager :: init()
 void DebugEventManager :: resetEvent(int eventId)
 {
    pthread_mutex_lock(&_lock);
-   _flag &= ~(_flag = 1 << eventId);
+   _flag &= ~(1 << eventId);
    pthread_mutex_unlock(&_lock);
 }
 
@@ -441,6 +441,7 @@ Debugger :: Debugger()
    started = false;
    threadId = 0;
 //   vmhookAddress = 0;
+   init_breakpoint = 0;
    current = NULL;
 
    currentId = traceeId = 0;
@@ -645,6 +646,12 @@ bool Debugger :: start(const char* exePath, const char* cmdLine)
 bool Debugger :: proceed(size_t timeout)
 {
    processEvent();
+
+   // stop if it is VM Hook mode
+   if (current && init_breakpoint == -1) {
+      init_breakpoint = current->context.eip;
+      trapped = true;
+   }
 
    return !trapped;
 }

@@ -197,6 +197,7 @@ class Debugger
    bool              trapped;
    bool              stepMode;
    bool              exitCheckPoint;
+   size_t            init_breakpoint;
 
    BreakpointContext breakpoints;
 
@@ -223,8 +224,7 @@ class Debugger
 public:
    bool isStarted() const { return started; }
    bool isTrapped() const { return trapped; }
-   // !! temporal
-   bool isInitBreakpoint() const { return /*vmhookAddress == current->context.Eip;*/ false; }
+   bool isInitBreakpoint() const { return init_breakpoint == current->context.eip; }
 
    ThreadContext* Context() { return current; }
    ProcessException* Exception() { return exception.code == 0 ? NULL : &exception; }
@@ -256,8 +256,7 @@ public:
 
    void activate();
 
-   // !! temporal
-   void initHook() { /*vmhookAddress = -1;*/ }
+   void initHook() { init_breakpoint = -1; }
    bool initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr);
 
    size_t findEntryPoint(const char* programPath);
