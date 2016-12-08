@@ -51,7 +51,7 @@ public:
 
    Gtk::Widget* _getTabControl(int index) const;
 //   const TCHAR* getTabName(int index);
-   int getTabIndex(const char* name);
+   int getTabIndex(text_str name);
    void eraseTabPage(int index);
 
    int addTab(const char* name, Gtk::Widget* control);

@@ -32,6 +32,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-march=pentium2" />
+			<Add option="-Wall" />
 			<Add option="-m32" />
 			<Add option="-Wno-conversion-null" />
 			<Add option="-D_LINUX32" />

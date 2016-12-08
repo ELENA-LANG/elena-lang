@@ -134,6 +134,16 @@ public:
 
    operator const path_c*() const { return _path; }
 
+   path_c& operator[](size_t index)
+   {
+      return *(_path + index);
+   }
+
+   path_c& operator[](int index)
+   {
+      return *(_path + index);
+   }
+
    path_t str() const { return path_t(_path); }
    const path_c* c_str() const { return _path; }
 
@@ -308,6 +318,15 @@ public:
       combine(path, getlength(path));
    }
 
+   void append(const char* s)
+   {
+      _path.append(s);
+   }
+
+   void copySubPath(const char* path)
+   {
+      copySubPath(path_t(path));
+   }
 
 #endif
 

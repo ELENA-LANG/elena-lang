@@ -287,7 +287,7 @@ bool IDEController :: openProject(_ELENA_::path_t path)
       _ELENA_::Path sourcePath;
       _ProjectManager::SourceIterator it = _project.SourceFiles();
       while (!it.Eof()) {
-         sourcePath.copy(*it);
+         sourcePath.copy((*it).c_str());
          Paths::resolveRelativePath(sourcePath, _model->project.path.c_str());
 
          if (!openFile(sourcePath.c_str()))
@@ -2350,7 +2350,7 @@ void IDEController::ProjectManager::rename(_ELENA_::path_t path)
 
 void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_::ReferenceNs & name)
 {
-   _ELENA_::path_t root = _model->project.path;
+   _ELENA_::path_t root = _model->project.path.c_str();
    size_t rootLength = _ELENA_::getlength(root);
 
    _ELENA_::Path fullPath;
@@ -2392,7 +2392,7 @@ bool IDEController::ProjectManager :: isIncluded(_ELENA_::path_t path)
 
    _ProjectManager::SourceIterator it = SourceFiles();
    while (!it.Eof()) {
-      current.copy(*it);
+      current.copy((*it).c_str());
 
       if (relPath.str().compare(current, _ELENA_::getlength(current))) {
          return true;

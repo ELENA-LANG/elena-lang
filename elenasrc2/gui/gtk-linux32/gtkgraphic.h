@@ -78,10 +78,10 @@ struct Font
    static void releaseFontCache();
 
 public:
-   const char* _fontName;
-   bool        _bold;
-   bool        _italic;
-   int         _size;
+   text_str _fontName;
+   bool     _bold;
+   bool     _italic;
+   int      _size;
 
    Pango::FontDescription _font;
 

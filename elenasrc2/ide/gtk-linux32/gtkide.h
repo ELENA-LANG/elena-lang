@@ -35,7 +35,7 @@ struct DebugMessage
    }
 };
 
-class MainWindow : public SDIWindow
+class GTKIDEWindow : public SDIWindow, public _View, public _DebugListener
 {
    class OutputProcess
    {

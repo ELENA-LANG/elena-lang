@@ -18,7 +18,7 @@ Font* Font :: createFont(const char* fontName, int size, bool bold, bool italic)
    while (!it.Eof()) {
       Font* font = *it;
 
-      if (_ELENA_::StringHelper::compare(font->_fontName, fontName) && font->_size == size &&
+      if (font->_fontName.compare(fontName) && font->_size == size &&
          font->_bold == bold && font->_italic==italic)
       {
          return font;

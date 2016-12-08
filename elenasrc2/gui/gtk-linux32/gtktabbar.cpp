@@ -48,12 +48,12 @@ Gtk::Widget* TabBar :: _getTabControl(int index) const
 //   return NULL;
 //}
 
-int TabBar :: getTabIndex(const char* name)
+int TabBar :: getTabIndex(text_str name)
 {
    int index = 0;
    TabPages::Iterator it = _tabs.start();
    while (!it.Eof()) {
-      if (_ELENA_::StringHelper::compare(name, it.key()))
+      if (name.compare(it.key()))
          return index;
 
       index++;

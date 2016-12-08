@@ -42,10 +42,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-march=pentium2" />
-			<Add option="-D_WIN32" />
-			<Add option="-D_UNICODE" />
-			<Add option="-DUNICODE" />
-			<Add option="-DMINGW" />
+			<Add option="-D_LINUX32" />
 			<Add directory="../../common" />
 			<Add directory="../../engine" />
 			<Add directory="../../engine/win32" />
@@ -54,7 +51,7 @@
 		</Compiler>
 		<Linker>
 			<Add option="-static-libgcc -static-libstdc++" />
-			<Add library="..\..\..\bin\libelenavm.a" />
+			<Add library="../../../bin/libelenavm.a" />
 		</Linker>
 		<Unit filename="../../common/altstrings.cpp" />
 		<Unit filename="../../common/altstrings.h" />

@@ -31,7 +31,7 @@ class Session
 public:
    ident_t getLastError()
    {
-      ident_t error = _lastError;
+      const char* error = _lastError;
 
       return !emptystr(error) ? error : NULL;
    }

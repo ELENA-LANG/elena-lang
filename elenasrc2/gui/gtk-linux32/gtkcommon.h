@@ -72,11 +72,11 @@ inline bool isPathRelative(const char* path)
 
 inline void canonicalize(_ELENA_::Path& path)
 {
-   int index = path.find('\\');
+   int index = path.str().find('\\');
    while (index != -1) {
       path[index] = '/';
 
-      index = path.find('\\');
+      index = path.str().find('\\');
    }
 //   TCHAR p[MAX_PATH];
 //
@@ -88,10 +88,10 @@ inline void canonicalize(_ELENA_::Path& path)
 inline void makePathRelative(_ELENA_::Path& path, const char* rootPath)
 {
    int len = _ELENA_::getlength(rootPath);
-   if (_ELENA_::StringHelper::compare(path, rootPath, len)) {
+   if (path.str().compare(rootPath, len)) {
       _ELENA_::Path tempPath(path + len);
 
-      path.copy(tempPath);
+      path.copy(tempPath.c_str());
    }
 }
 

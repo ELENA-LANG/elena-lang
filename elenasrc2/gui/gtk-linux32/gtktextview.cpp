@@ -652,7 +652,7 @@ void TextView::TextDrawingArea :: paint(Canvas& /*extCanvas*/canvas , int viewWi
       char buffer[0x100];
       int   length = 0;
 
-      char lineNumber[6];
+      _ELENA_::String<char, 6> lineNumber;
 
       _ELENA_::LiteralWriter<char> writer(buffer, 0xFF);
       Document::Reader reader(_document);
@@ -672,7 +672,7 @@ void TextView::TextDrawingArea :: paint(Canvas& /*extCanvas*/canvas , int viewWi
             y += lineHeight;
 
             if (_lineNumbersVisible) {
-               _ELENA_::StringHelper::intToStr(reader.row + 1, lineNumber, 10);
+               lineNumber.copyInt(reader.row + 1);
                canvas.drawText(
                      x - marginStyle.avgCharWidth * _ELENA_::getlength(lineNumber) - 4,
                      y,

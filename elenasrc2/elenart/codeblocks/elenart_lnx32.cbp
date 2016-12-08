@@ -39,6 +39,7 @@
 			<Add option="-fexceptions" />
 			<Add option="-fvisibility=hidden" />
 			<Add option="-fvisibility-inlines-hidden" />
+			<Add option="-Wno-switch" />
 			<Add option="-D_LINUX32" />
 			<Add directory="../../common" />
 			<Add directory="../../engine" />
@@ -57,6 +58,8 @@
 		<Unit filename="../../common/dump.h" />
 		<Unit filename="../../common/files.cpp" />
 		<Unit filename="../../common/files.h" />
+		<Unit filename="../../common/xmlreader.cpp" />
+		<Unit filename="../../common/xmlreader.h" />
 		<Unit filename="../../engine/bytecode.cpp" />
 		<Unit filename="../../engine/bytecode.h" />
 		<Unit filename="../../engine/libman.cpp" />

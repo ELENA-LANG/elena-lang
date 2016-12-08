@@ -23,7 +23,7 @@ typedef _ELENA_::wide_t text_str;
 typedef const char* text_t;
 typedef char        text_c;
 
-typedef ident_t     text_str;
+typedef _ELENA_::ident_t text_str;
 
 #define _T(x) x
 

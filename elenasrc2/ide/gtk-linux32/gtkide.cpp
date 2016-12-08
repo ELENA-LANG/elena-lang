@@ -21,12 +21,12 @@
 
 using namespace _GUI_;
 
-bool MainWindow::OutputProcess :: isStopped()
+bool GTKIDEWindow::OutputProcess :: isStopped()
 {
    return stopped;
 }
 
-void MainWindow::OutputProcess :: writeOut(Gtk::TextView& view)
+void GTKIDEWindow::OutputProcess :: writeOut(Gtk::TextView& view)
 {
    Glib::Threads::Mutex::Lock lock(_mutex);
 
@@ -36,7 +36,7 @@ void MainWindow::OutputProcess :: writeOut(Gtk::TextView& view)
    buf_len = 0;
 }
 
-void MainWindow::OutputProcess :: compile(MainWindow* owner)
+void GTKIDEWindow::OutputProcess :: compile(GTKIDEWindow* owner)
 {
    stopped = false;
 
@@ -291,9 +291,9 @@ static Glib::ustring ui_info =
 //        "  </toolbar>"
         "</ui>";
 
-// --- MainWindow ---
+// --- GTKIDEWindow ---
 
-void MainWindow :: populateMenu()
+void GTKIDEWindow :: populateMenu()
 {
    //File menu:
    _refActionGroup->add( Gtk::Action::create("FileMenu", "_File") );
@@ -307,85 +307,85 @@ void MainWindow :: populateMenu()
    _refActionGroup->add( Gtk::Action::create("SearchMenu", "_Search") );
 
    _refActionGroup->add( Gtk::Action::create("FileNew", "New") );
-   _refActionGroup->add( Gtk::Action::create("FileNewSource", "Source"), sigc::mem_fun(*this, &MainWindow::on_menu_file_new_source));
-   _refActionGroup->add( Gtk::Action::create("FileNewProject", "Project"), sigc::mem_fun(*this, &MainWindow::on_menu_file_new_project));
+   _refActionGroup->add( Gtk::Action::create("FileNewSource", "Source"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_new_source));
+   _refActionGroup->add( Gtk::Action::create("FileNewProject", "Project"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_new_project));
    _refActionGroup->add( Gtk::Action::create("FileOpen", "Open") );
-   _refActionGroup->add( Gtk::Action::create("FileOpenSource", "Source"), sigc::mem_fun(*this, &MainWindow::on_menu_file_open_source));
-   _refActionGroup->add( Gtk::Action::create("FileOpenProject", "Project"), sigc::mem_fun(*this, &MainWindow::on_menu_file_open_project));
-   _refActionGroup->add( Gtk::Action::create("FileSave", "Save"), sigc::mem_fun(*this, &MainWindow::on_menu_file_save));
-   _refActionGroup->add( Gtk::Action::create("FileSaveAs", "Save As..."), sigc::mem_fun(*this, &MainWindow::on_menu_file_saveas));
-   _refActionGroup->add( Gtk::Action::create("FileProjectAs", "Save Project As..."), sigc::mem_fun(*this, &MainWindow::on_menu_project_saveas));
-   _refActionGroup->add( Gtk::Action::create("FileSaveAll", "Save All"), sigc::mem_fun(*this, &MainWindow::on_menu_file_saveall));
-   _refActionGroup->add( Gtk::Action::create("FileClose", "Close"), sigc::mem_fun(*this, &MainWindow::on_menu_file_close));
-   _refActionGroup->add( Gtk::Action::create("FileCloseAll", "Close All"), sigc::mem_fun(*this, &MainWindow::on_menu_file_closeall));
-   _refActionGroup->add( Gtk::Action::create("ProjectClose", "Close Project"), sigc::mem_fun(*this, &MainWindow::on_menu_file_close));
-   _refActionGroup->add( Gtk::Action::create("FileCloseAllButActive", "Close All But Active"), sigc::mem_fun(*this, &MainWindow::on_menu_file_closeproject));
-   _refActionGroup->add( Gtk::Action::create("FileQuit", Gtk::Stock::QUIT), sigc::mem_fun(*this, &MainWindow::on_menu_file_quit));
+   _refActionGroup->add( Gtk::Action::create("FileOpenSource", "Source"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_source));
+   _refActionGroup->add( Gtk::Action::create("FileOpenProject", "Project"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_project));
+   _refActionGroup->add( Gtk::Action::create("FileSave", "Save"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_save));
+   _refActionGroup->add( Gtk::Action::create("FileSaveAs", "Save As..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveas));
+   _refActionGroup->add( Gtk::Action::create("FileProjectAs", "Save Project As..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_saveas));
+   _refActionGroup->add( Gtk::Action::create("FileSaveAll", "Save All"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveall));
+   _refActionGroup->add( Gtk::Action::create("FileClose", "Close"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
+   _refActionGroup->add( Gtk::Action::create("FileCloseAll", "Close All"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeall));
+   _refActionGroup->add( Gtk::Action::create("ProjectClose", "Close Project"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
+   _refActionGroup->add( Gtk::Action::create("FileCloseAllButActive", "Close All But Active"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeproject));
+   _refActionGroup->add( Gtk::Action::create("FileQuit", Gtk::Stock::QUIT), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_quit));
 
    _refActionGroup->add( Gtk::Action::create("FileRecentFiles", "Recent files") );
    _refActionGroup->add( Gtk::Action::create("FileRecentProjects", "Recent projects") );
-   _refActionGroup->add( Gtk::Action::create("FileRecentFilesClear", "Clear history"), sigc::mem_fun(*this, &MainWindow::on_menu_file_clearfilehistory));
-   _refActionGroup->add( Gtk::Action::create("FileRecentProjectsClear", "Clear history"), sigc::mem_fun(*this, &MainWindow::on_menu_file_clearprojecthistory));
+   _refActionGroup->add( Gtk::Action::create("FileRecentFilesClear", "Clear history"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_clearfilehistory));
+   _refActionGroup->add( Gtk::Action::create("FileRecentProjectsClear", "Clear history"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_clearprojecthistory));
 
-   _refActionGroup->add( Gtk::Action::create("EditUndo", "Undo"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_undo));
-   _refActionGroup->add( Gtk::Action::create("EditRedo", "Redo"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_redo));
-   _refActionGroup->add( Gtk::Action::create("EditCut", "Cut"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_cut));
-   _refActionGroup->add( Gtk::Action::create("EditCopy", "Copy"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_copy));
-   _refActionGroup->add( Gtk::Action::create("EditPaste", "Paste"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_paste));
-   _refActionGroup->add( Gtk::Action::create("EditDelete", "Delete"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_delete));
-   _refActionGroup->add( Gtk::Action::create("EditSelectAll", "Select All"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_select_all));
-   _refActionGroup->add( Gtk::Action::create("EditInsertTab", "Insert Tab (Indent)"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_indent));
-   _refActionGroup->add( Gtk::Action::create("EditRemoveTab", "Remove Tab (Outdent)"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_outdent));
-   _refActionGroup->add( Gtk::Action::create("EditTrim", "Trim whitespace"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_trim));
-   _refActionGroup->add( Gtk::Action::create("EditEraseLine", "Erase line"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_erase_line));
-   _refActionGroup->add( Gtk::Action::create("EditUpper", "To upper case"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_upper));
-   _refActionGroup->add( Gtk::Action::create("EditLower", "To lower case"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_lower));
-   _refActionGroup->add( Gtk::Action::create("EditComment", "Block comment"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_comment));
-   _refActionGroup->add( Gtk::Action::create("EditUncomment", "Block uncomment"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_uncomment));
+   _refActionGroup->add( Gtk::Action::create("EditUndo", "Undo"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_undo));
+   _refActionGroup->add( Gtk::Action::create("EditRedo", "Redo"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_redo));
+   _refActionGroup->add( Gtk::Action::create("EditCut", "Cut"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_cut));
+   _refActionGroup->add( Gtk::Action::create("EditCopy", "Copy"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_copy));
+   _refActionGroup->add( Gtk::Action::create("EditPaste", "Paste"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_paste));
+   _refActionGroup->add( Gtk::Action::create("EditDelete", "Delete"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_delete));
+   _refActionGroup->add( Gtk::Action::create("EditSelectAll", "Select All"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_select_all));
+   _refActionGroup->add( Gtk::Action::create("EditInsertTab", "Insert Tab (Indent)"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_indent));
+   _refActionGroup->add( Gtk::Action::create("EditRemoveTab", "Remove Tab (Outdent)"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_outdent));
+   _refActionGroup->add( Gtk::Action::create("EditTrim", "Trim whitespace"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_trim));
+   _refActionGroup->add( Gtk::Action::create("EditEraseLine", "Erase line"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_erase_line));
+   _refActionGroup->add( Gtk::Action::create("EditUpper", "To upper case"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_upper));
+   _refActionGroup->add( Gtk::Action::create("EditLower", "To lower case"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_lower));
+   _refActionGroup->add( Gtk::Action::create("EditComment", "Block comment"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_comment));
+   _refActionGroup->add( Gtk::Action::create("EditUncomment", "Block uncomment"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_uncomment));
 
-   _refActionGroup->add( Gtk::Action::create("ProjectView", "Project View"), sigc::mem_fun(*this, &MainWindow::on_menu_project_view));
-   _refActionGroup->add( Gtk::Action::create("ProjectOutput", "Compiler output"), sigc::mem_fun(*this, &MainWindow::on_menu_project_output));
-   _refActionGroup->add( Gtk::Action::create("ProjectMessages", "Messages"), sigc::mem_fun(*this, &MainWindow::on_menu_project_messages));
-   _refActionGroup->add( Gtk::Action::create("ProjectWatch", "Debug Watch"), sigc::mem_fun(*this, &MainWindow::on_menu_project_watch));
-   _refActionGroup->add( Gtk::Action::create("ProjectCallstack", "Call stack"), sigc::mem_fun(*this, &MainWindow::on_menu_project_callstack));
-   _refActionGroup->add( Gtk::Action::create("ProjectConsole", "ELENA Interactive"), sigc::mem_fun(*this, &MainWindow::on_menu_project_interactive));
+   _refActionGroup->add( Gtk::Action::create("ProjectView", "Project View"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view));
+   _refActionGroup->add( Gtk::Action::create("ProjectOutput", "Compiler output"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
+   _refActionGroup->add( Gtk::Action::create("ProjectMessages", "Messages"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages));
+   _refActionGroup->add( Gtk::Action::create("ProjectWatch", "Debug Watch"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_watch));
+   _refActionGroup->add( Gtk::Action::create("ProjectCallstack", "Call stack"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_callstack));
+   _refActionGroup->add( Gtk::Action::create("ProjectConsole", "ELENA Interactive"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_interactive));
 
-   _refActionGroup->add( Gtk::Action::create("Search", "Find..."), sigc::mem_fun(*this, &MainWindow::on_menu_search_find));
-   _refActionGroup->add( Gtk::Action::create("SearchNext", "Find Next"), sigc::mem_fun(*this, &MainWindow::on_menu_search_findnext));
-   _refActionGroup->add( Gtk::Action::create("Replace", "Replace..."), sigc::mem_fun(*this, &MainWindow::on_menu_search_replace));
-   _refActionGroup->add( Gtk::Action::create("ReplaceNext", "Replace Next"), sigc::mem_fun(*this, &MainWindow::on_menu_search_replacenext));
+   _refActionGroup->add( Gtk::Action::create("Search", "Find..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_search_find));
+   _refActionGroup->add( Gtk::Action::create("SearchNext", "Find Next"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_search_findnext));
+   _refActionGroup->add( Gtk::Action::create("Replace", "Replace..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_search_replace));
+   _refActionGroup->add( Gtk::Action::create("ReplaceNext", "Replace Next"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_search_replacenext));
 
-   _refActionGroup->add( Gtk::Action::create("ProjectInclude", "Include"), sigc::mem_fun(*this, &MainWindow::on_menu_project_include));
-   _refActionGroup->add( Gtk::Action::create("ProjectExclude", "Exclude"), sigc::mem_fun(*this, &MainWindow::on_menu_project_exclude));
-   _refActionGroup->add( Gtk::Action::create("ProjectCompile", "Compile"), sigc::mem_fun(*this, &MainWindow::on_menu_project_compile));
-   _refActionGroup->add( Gtk::Action::create("ProjectCleanup", "Clean up"), sigc::mem_fun(*this, &MainWindow::on_menu_project_cleanup));
-   _refActionGroup->add( Gtk::Action::create("ProjectForwards", "Forwards..."), sigc::mem_fun(*this, &MainWindow::on_menu_project_forwards));
-   _refActionGroup->add( Gtk::Action::create("ProjectOptions", "Options..."), sigc::mem_fun(*this, &MainWindow::on_menu_project_options));
+   _refActionGroup->add( Gtk::Action::create("ProjectInclude", "Include"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_include));
+   _refActionGroup->add( Gtk::Action::create("ProjectExclude", "Exclude"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_exclude));
+   _refActionGroup->add( Gtk::Action::create("ProjectCompile", "Compile"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_compile));
+   _refActionGroup->add( Gtk::Action::create("ProjectCleanup", "Clean up"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_cleanup));
+   _refActionGroup->add( Gtk::Action::create("ProjectForwards", "Forwards..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_forwards));
+   _refActionGroup->add( Gtk::Action::create("ProjectOptions", "Options..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_options));
 
-   _refActionGroup->add( Gtk::Action::create("DebugRun", "Run"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_run));
-   _refActionGroup->add( Gtk::Action::create("DebugNext", "Next Statement"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_next));
-   _refActionGroup->add( Gtk::Action::create("DebugStepover", "Step Over"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_stepover));
-   _refActionGroup->add( Gtk::Action::create("DebugStepin", "Step In"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_stepin));
-   _refActionGroup->add( Gtk::Action::create("DebugGoto", "Go To Cursor"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_goto));
-   _refActionGroup->add( Gtk::Action::create("DebugToggle", "Toggle Breakpoint"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_toggle));
-   _refActionGroup->add( Gtk::Action::create("DebugClearBreakpoints", "Clear All Breakpoints"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_clearbps));
-   _refActionGroup->add( Gtk::Action::create("DebugGotoSource", "Go To Source"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_source));
-   _refActionGroup->add( Gtk::Action::create("DebugStop", "Stop Execution"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_stop));
+   _refActionGroup->add( Gtk::Action::create("DebugRun", "Run"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_run));
+   _refActionGroup->add( Gtk::Action::create("DebugNext", "Next Statement"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_next));
+   _refActionGroup->add( Gtk::Action::create("DebugStepover", "Step Over"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepover));
+   _refActionGroup->add( Gtk::Action::create("DebugStepin", "Step In"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepin));
+   _refActionGroup->add( Gtk::Action::create("DebugGoto", "Go To Cursor"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_goto));
+   _refActionGroup->add( Gtk::Action::create("DebugToggle", "Toggle Breakpoint"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_toggle));
+   _refActionGroup->add( Gtk::Action::create("DebugClearBreakpoints", "Clear All Breakpoints"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_clearbps));
+   _refActionGroup->add( Gtk::Action::create("DebugGotoSource", "Go To Source"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_source));
+   _refActionGroup->add( Gtk::Action::create("DebugStop", "Stop Execution"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stop));
 
-   _refActionGroup->add( Gtk::Action::create("ToolsEditor", "Editor Options..."), sigc::mem_fun(*this, &MainWindow::on_menu_tools_editor));
-   _refActionGroup->add( Gtk::Action::create("ToolsDebugger", "Debugger Options..."), sigc::mem_fun(*this, &MainWindow::on_menu_tools_debugger));
+   _refActionGroup->add( Gtk::Action::create("ToolsEditor", "Editor Options..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_tools_editor));
+   _refActionGroup->add( Gtk::Action::create("ToolsDebugger", "Debugger Options..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_tools_debugger));
 
-   _refActionGroup->add( Gtk::Action::create("WindowNext", "Next"), sigc::mem_fun(*this, &MainWindow::on_menu_window_next));
-   _refActionGroup->add( Gtk::Action::create("WindowPrevious", "Previous"), sigc::mem_fun(*this, &MainWindow::on_menu_window_prev));
-   _refActionGroup->add( Gtk::Action::create("WindowWindows", "Window List..."), sigc::mem_fun(*this, &MainWindow::on_menu_windows));
+   _refActionGroup->add( Gtk::Action::create("WindowNext", "Next"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_window_next));
+   _refActionGroup->add( Gtk::Action::create("WindowPrevious", "Previous"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_window_prev));
+   _refActionGroup->add( Gtk::Action::create("WindowWindows", "Window List..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_windows));
 
-   _refActionGroup->add( Gtk::Action::create("HelpAPI", "ELENA API..."), sigc::mem_fun(*this, &MainWindow::on_menu_help_api));
-   _refActionGroup->add( Gtk::Action::create("HelpAbout", "About..."), sigc::mem_fun(*this, &MainWindow::on_menu_help_about));
+   _refActionGroup->add( Gtk::Action::create("HelpAPI", "ELENA API..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_help_api));
+   _refActionGroup->add( Gtk::Action::create("HelpAbout", "About..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_help_about));
 
    loadUI(ui_info, "/MenuBar");
 }
 
-void MainWindow :: populateToolbar()
+void GTKIDEWindow :: populateToolbar()
 {
    //Create the toolbar and add it to a container widget:
    Gtk::ToolButton* button = Gtk::manage(new Gtk::ToolButton());
@@ -398,32 +398,32 @@ void MainWindow :: populateToolbar()
    _box.pack_start(_toolbar, Gtk::PACK_SHRINK);
 }
 
-int MainWindow :: newDocument(const char* name, Document* doc)
+int GTKIDEWindow :: newDocument(const char* name, Document* doc)
 {
    return _mainFrame.newDocument(name, doc);
 }
 
-int MainWindow :: getCurrentDocumentIndex()
+int GTKIDEWindow :: getCurrentDocumentIndex()
 {
    return _mainFrame.getCurrentIndex();
 }
 
-void MainWindow :: closeDocument(int index)
+void GTKIDEWindow :: closeDocument(int index)
 {
    _mainFrame.eraseDocumentTab(index);
 }
 
-void MainWindow :: selectDocument(int docIndex)
+void GTKIDEWindow :: selectDocument(int docIndex)
 {
    _mainFrame.selectTab(docIndex);
 }
 
-void MainWindow :: refreshDocument()
+void GTKIDEWindow :: refreshDocument()
 {
    _mainFrame.refreshDocument();
 }
 
-bool MainWindow :: copyToClipboard(Document* document)
+bool GTKIDEWindow :: copyToClipboard(Document* document)
 {
    int length = document->getSelectionLength();
    char* text = _ELENA_::StringHelper::allocate(length, DEFAULT_STR);
@@ -437,7 +437,7 @@ bool MainWindow :: copyToClipboard(Document* document)
    return true;
 }
 
-void MainWindow :: pasteFrameClipboard(Document* document)
+void GTKIDEWindow :: pasteFrameClipboard(Document* document)
 {
    char* text = _clipboard.gettext();
    if  (!_ELENA_::emptystr(text)) {
@@ -447,7 +447,7 @@ void MainWindow :: pasteFrameClipboard(Document* document)
    }
 }
 
-void MainWindow :: reloadProjectView(_ProjectManager* project)
+void GTKIDEWindow :: reloadProjectView(_ProjectManager* project)
 {
     _projectTree->clear();
 
@@ -493,7 +493,7 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
    show_all_children();
 }
 
-bool MainWindow :: compileProject(_ProjectManager* manager, int postponedAction)
+bool GTKIDEWindow :: compileProject(_ProjectManager* manager, int postponedAction)
 {
    _output.get_buffer()->set_text("");
 
@@ -503,7 +503,7 @@ bool MainWindow :: compileProject(_ProjectManager* manager, int postponedAction)
       sigc::bind(sigc::mem_fun(_outputProcess, &OutputProcess::compile), this));
 }
 
-void MainWindow :: on_notification_from_output()
+void GTKIDEWindow :: on_notification_from_output()
 {
    if (_outputProcess.isStopped()) {
       _outputThread->join();
@@ -512,7 +512,7 @@ void MainWindow :: on_notification_from_output()
    else _outputProcess.writeOut(_output);
 }
 
-void MainWindow :: on_notification_from_debugger()
+void GTKIDEWindow :: on_notification_from_debugger()
 {
    Glib::Threads::Mutex::Lock lock(_debugMutex);
 
@@ -524,12 +524,12 @@ void MainWindow :: on_notification_from_debugger()
    }
 }
 
-void MainWindow :: notifyOutput()
+void GTKIDEWindow :: notifyOutput()
 {
    _outputDispatcher.emit();
 }
 
-void MainWindow :: notityDebugStep(DebugMessage message)
+void GTKIDEWindow :: notityDebugStep(DebugMessage message)
 {
    Glib::Threads::Mutex::Lock lock(_debugMutex);
 
@@ -537,7 +537,7 @@ void MainWindow :: notityDebugStep(DebugMessage message)
    _debugDispatcher.emit();
 }
 
-MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* model)
+GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model* model)
    : SDIWindow(caption), _mainFrame(model), _outputThread(NULL), _debugMessages(DebugMessage())
 {
    _controller = controller;
@@ -555,7 +555,7 @@ MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* mo
    _projectView.append_column("module", _projectTreeColumns._caption);
 
    _projectView.signal_row_activated().connect(sigc::mem_fun(*this,
-              &MainWindow::on_projectview_row_activated));
+              &GTKIDEWindow::on_projectview_row_activated));
 
    _outputScroller.add(_output);
    _bottomTab.append_page(_outputScroller, "Output");
@@ -564,6 +564,6 @@ MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* mo
 
    //_output.set_editable(false);
 
-   _outputDispatcher.connect(sigc::mem_fun(*this, &MainWindow::on_notification_from_output));
-   _debugDispatcher.connect(sigc::mem_fun(*this, &MainWindow::on_notification_from_debugger));
+   _outputDispatcher.connect(sigc::mem_fun(*this, &GTKIDEWindow::on_notification_from_output));
+   _debugDispatcher.connect(sigc::mem_fun(*this, &GTKIDEWindow::on_notification_from_debugger));
 }
