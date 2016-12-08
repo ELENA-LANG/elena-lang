@@ -17,7 +17,7 @@ namespace _GUI_
 class MenuHistoryList
 {
 protected:
-   int    _maxCount;
+   size_t _maxCount;
 
    Menu*  _menu;
    int    _menuBaseId;

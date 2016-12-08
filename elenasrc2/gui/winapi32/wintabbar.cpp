@@ -157,7 +157,7 @@ void MultiTabView :: eraseTabView(int index)
    // select next
    int count = getTabCount();
    if(count > 0) {
-      if ((size_t)index >= count) {
+      if (index >= count) {
          index = count - 1;
       }
       selectTab(index);

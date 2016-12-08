@@ -55,7 +55,7 @@ void executeTape(void* tape)
    if (!retVal) {
       ident_t error = GetVMLastError();
       if (!emptystr(error)) {
-         printf("\nFailed:%s", error);
+         printf("\nFailed:%s", (const char*)error);
       }
    }
 }

@@ -91,7 +91,9 @@ public:
 
    int find(const char* s, int defValue = -1);
    int find(char c, int defValue = -1);
+   int find(int index, char ch, int defValue);
    int findLast(char c, int defValue = -1);
+   int findLast(int index, char c, int defValue);
 
    int findSubStr(int index, char c, size_t length, int defValue);
    int findSubStr(int index, const char* s, int defValue = -1);
@@ -147,8 +149,20 @@ public:
    bool copyTo(char* dest, size_t length, size_t& destLength);
    bool copyTo(wide_c* dest, size_t length, size_t& destLength);
 
+   bool copyTo(char* dest, size_t& destLength)
+   {
+      return copyTo(dest, getlength(_string), destLength);
+   }
+   bool copyTo(wide_c* dest, size_t& destLength)
+   {
+      return copyTo(dest, getlength(_string), destLength);
+   }
+
    int find(wide_c c, int defValue = -1);
+   int find(int index, wide_c ch, int defValue);
+
    int findLast(wide_c c, int defValue = -1);
+   int findLast(int index, wide_c c, int defValue);
 
    int findSubStr(int index, wide_c c, size_t length, int defValue);
 
@@ -565,8 +579,8 @@ public:
 
    void insert(const T* s, size_t index)
    {
-      int slen = getlength(s);
-      int len = getlength(_string);
+      size_t slen = getlength(s);
+      size_t len = getlength(_string);
       if (slen + len > _size) {
          create(_string, slen + len + 1);
       }

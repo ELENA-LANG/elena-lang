@@ -1373,9 +1373,32 @@ int ident_t :: find(char c, int defValue)
    return __find(_string, c, defValue);
 }
 
+int ident_t :: find(int index, char ch, int defValue)
+{
+   for (size_t i = index; i < getlength(_string); i++) {
+      if (_string[i] == ch)
+         return i;
+   }
+
+   return defValue;
+}
+
 int ident_t :: findLast(char c, int defValue)
 {
    return __findLast(_string, c, defValue);
+}
+
+int ident_t :: findLast(int index, char ch, int defValue)
+{
+   int i = getlength(_string);
+   while (i >= index) {
+      if (_string[i] == ch)
+         return i;
+
+      i--;
+   }
+
+   return defValue;
 }
 
 int ident_t :: findSubStr(int index, char c, size_t length, int defValue)
@@ -1473,9 +1496,32 @@ int wide_t :: find(wide_c c, int defValue)
    return __find(_string, c, defValue);
 }
 
+int wide_t :: find(int index, wide_c ch, int defValue)
+{
+   for (size_t i = index; i < getlength(_string); i++) {
+      if (_string[i] == ch)
+         return i;
+   }
+
+   return defValue;
+}
+
 int wide_t :: findLast(wide_c c, int defValue)
 {
    return __findLast(_string, c, defValue);
+}
+
+int wide_t :: findLast(int index, wide_c ch, int defValue)
+{
+   int i = getlength(_string);
+   while (i >= index) {
+      if (_string[i] == ch)
+         return i;
+
+      i--;
+   }
+
+   return defValue;
 }
 
 int wide_t :: findSubStr(int index, wide_c c, size_t length, int defValue)

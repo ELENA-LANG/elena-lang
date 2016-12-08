@@ -16,110 +16,15 @@ namespace _ELENA_
 
 // --- path_t ---
 
-class path_t
-{
-   const path_c* _path;
-
-public:
-   operator const path_c*() const { return _path; }
-
-   path_t& operator +=(int offset)
-   {
-      _path += offset;
-
-      return *this;
-   }
-
-   path_c* clone() const
-   {
-      return StrFactory::clone(_path);
-   }
-
-   int findLast(path_c ch, int defValue = -1)
-   {
-      int index = getlength(_path) - 1;
-      while (index > 0) {
-         if (_path[index] == ch)
-            return index;
-
-         index--;
-      }
-
-      return defValue;
-   }
-   int findLast(int index, path_c ch, int defValue)
-   {
-      int i = getlength(_path);
-      while (i >= index) {
-         if (_path[i] == ch)
-            return i;
-
-         i--;
-      }
-
-      return defValue;
-   }
-
-   int find(path_c ch)
-   {
-      for (size_t i = 0; i < getlength(_path); i++) {
-         if (_path[i] == ch)
-            return i;
-      }
-
-      return -1;
-   }
-
-   int find(int index, path_c ch)
-   {
-      for (size_t i = index; i < getlength(_path); i++) {
-         if (_path[i] == ch)
-            return i;
-      }
-
-      return -1;
-   }
-
-   void copyTo(char* buffer, size_t& length) const
-   {
-      Convertor::copy(buffer, _path, getlength(_path), length);
-   }
-
-   void copyTo(char* buffer, size_t length, size_t& destLength) const
-   {
-      Convertor::copy(buffer, _path, length, destLength);
-   }
-
 #ifdef _WIN32
 
-   bool compare(const wchar_t* s, int length)
-   {
-      return wide_t(_path).compare(s, length);
-   }
+typedef wide_t path_t;
 
 #else
 
-   bool compare(const char* s, int length)
-   {
-      return ident_t(_path).compare(s, length);
-   }
-
-   bool compare(const char* s)
-   {
-      return ident_t(_path).compare(s, getlength(s));
-   }
+typedef ident_t path_t;
 
 #endif
-
-   path_t()
-   {
-      _path = NULL;
-   }
-   path_t(const path_c* value)
-   {
-      _path = value;
-   }
-};
 
 // --- Path ---
 

@@ -169,7 +169,7 @@ bool Document::Reader ::readCurrentLine(_ELENA_::TextWriter& writer, size_t leng
 
    _doc->_text->validateBookmark(bm);
 
-   int column = _region.bottomRight.x;
+   size_t column = _region.bottomRight.x;
    if ((bm.getColumn() < column) && !bm.isEOL()) {
       size_t styleLen = _doc->defineStyle(*this);
       if (styleLen < length)
@@ -663,7 +663,7 @@ void Document :: onErase(size_t position, size_t length, text_t line)
 
 int Document :: defineStyle(Reader& reader)
 {
-   int    length = _size.x;
+   size_t length = _size.x;
    size_t position = reader.bm.getPosition();
 
    if (_selection != 0) {
@@ -676,22 +676,22 @@ int Document :: defineStyle(Reader& reader)
          else if (position >= curPos && position < selPos) {
             reader.style = STYLE_SELECTION;
 
-            return min(selPos - position, (size_t)length);
+            return min(selPos - position, length);
          }
       }
       else {
          if (position >= selPos && position < curPos) {
             reader.style = STYLE_SELECTION;
 
-            return min(curPos - position, (size_t)length);
+            return min(curPos - position, length);
          }
          else if (position < selPos && position + length > selPos) {
-            length = min(selPos - position, (size_t)length);
+            length = min(selPos - position, length);
          }
       }
    }
    if (_styler) {
-      int proceeded = _styler->proceed(position, reader);
+      size_t proceeded = _styler->proceed(position, reader);
       return min(length, proceeded);
    }
    else return length;

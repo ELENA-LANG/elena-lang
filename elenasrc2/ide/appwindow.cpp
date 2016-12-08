@@ -2372,7 +2372,7 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
          name.pathToName(fullPath + rootLength + 1);
 
          // skip the root path + root namespace
-         int rootNs = path.str().find(rootLength + 1, PATH_SEPARATOR);
+         int rootNs = path.str().find(rootLength + 1, PATH_SEPARATOR, -1);
 
          path.copy(path + rootNs + 1);
       }
