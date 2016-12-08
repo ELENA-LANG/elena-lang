@@ -456,7 +456,7 @@ bool Debugger :: startProcess(const char* exePath, const char* cmdLine)
 
          //execlp("gnome-terminal", "gnome-terminal", "-x", exePath, cmdLine, NULL );
 
-         const char* exeName = exePath + StringHelper::findLast(exePath, PATH_SEPARATOR) + 1;
+         const char* exeName = exePath + path_t(exePath).findLast(PATH_SEPARATOR) + 1;
 
          execl(exePath, exeName, cmdLine, 0);
       }

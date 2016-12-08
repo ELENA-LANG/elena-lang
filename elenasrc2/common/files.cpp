@@ -347,14 +347,14 @@ bool File :: readLine(char* s, size_t length)
    else return false; // !! temporal
 }
 
-//bool File :: readLiteral(char* s, size_t length, size_t& wasread)
-//{
-//   if (_encoding >= feUTF8) {
-//      wasread = fread((char*)s, 1, length, _file);
-//      return (wasread > 0);
-//   }
-//   else return 0; // !! temporal
-//}
+bool File :: readLiteral(char* s, size_t length, size_t& wasread)
+{
+   if (_encoding >= feUTF8) {
+      wasread = fread((char*)s, 1, length, _file);
+      return (wasread > 0);
+   }
+   else return 0; // !! temporal
+}
 
 bool File :: writeLiteral(const char* s, size_t length)
 {

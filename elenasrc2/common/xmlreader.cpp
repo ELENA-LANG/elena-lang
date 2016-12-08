@@ -199,12 +199,10 @@ void XMLNode :: readTag(XMLNodeTag& tag)
 
 XMLNode XMLNode :: findNode(ident_t tag)
 {
-   bool found = false;
-
    ident_t content = getContent();
 
    PositionList positions;
-   int end = parse(content, _position, getlength(content), &positions);
+   parse(content, _position, getlength(content), &positions);
 
    for (PositionList::Iterator it = positions.start(); !it.Eof(); it++) {
       XMLNode node(*it, this);
@@ -224,7 +222,7 @@ bool XMLNode :: getNodeList(NodeList& list)
    ident_t content = getContent();
 
    PositionList positions;
-   int end = parse(content, _position, getlength(content), &positions);
+   parse(content, _position, getlength(content), &positions);
 
    for (PositionList::Iterator it = positions.start(); !it.Eof(); it++) {
       XMLNode node(*it, this);

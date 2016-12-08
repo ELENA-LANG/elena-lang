@@ -235,6 +235,14 @@ public:
 
 #endif
 
+   static bool checkExtension(path_t path)
+   {
+      int index = path.findLast(PATH_SEPARATOR) + 1;
+      int dotpos = path.findLast(index, '.', -1);
+
+      return dotpos != -1;
+   }
+
    path_c* clone()
    {
       return StrFactory::clone(_path);

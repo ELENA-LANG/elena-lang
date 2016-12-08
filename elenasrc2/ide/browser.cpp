@@ -236,7 +236,7 @@ void DebuggerWatch::write(_DebugController* controller, const char* value)
    _browser->getCaption(_root, caption, CAPTION_LEN);
 
    // cut the value from the caption if any
-   ident_t s = caption;
+   ident_t s = caption.str();
    if (s.find(" = {", -1) == -1) {
       ident_t type = s + s.find('{');
 

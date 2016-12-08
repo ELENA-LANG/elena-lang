@@ -567,16 +567,16 @@ void ProjectSettingsDialog :: loadTemplateList()
    _ELENA_::Path configPath("/etc/elena/elc.config");
 
    _ELENA_::IniConfigFile config;
-   if (!config.load(configPath, _ELENA_::feUTF8))
+   if (!config.load(configPath.c_str(), _ELENA_::feUTF8))
       return;
 
    const char* curTemplate = _project->getTemplate();
 
    int current = 0;
    for (_ELENA_::ConfigCategoryIterator it = config.getCategoryIt("templates") ; !it.Eof() ; it++, current++) {
-      _typeCombobox.append(it.key());
+      _typeCombobox.append(it.key().c_str());
 
-      if (_ELENA_::StringHelper::compare(curTemplate, it.key()))
+      if (it.key().compare(curTemplate))
          _typeCombobox.set_active(current);
    }
 }

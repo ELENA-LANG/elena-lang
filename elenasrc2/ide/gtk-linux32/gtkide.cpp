@@ -426,7 +426,7 @@ void GTKIDEWindow :: refreshDocument()
 bool GTKIDEWindow :: copyToClipboard(Document* document)
 {
    int length = document->getSelectionLength();
-   char* text = _ELENA_::StringHelper::allocate(length, DEFAULT_STR);
+   char* text = _ELENA_::StrFactory::allocate(length, DEFAULT_STR);
 
    document->copySelection(text);
 
@@ -437,7 +437,7 @@ bool GTKIDEWindow :: copyToClipboard(Document* document)
    return true;
 }
 
-void GTKIDEWindow :: pasteFrameClipboard(Document* document)
+void GTKIDEWindow :: pasteFromClipboard(Document* document)
 {
    char* text = _clipboard.gettext();
    if  (!_ELENA_::emptystr(text)) {
@@ -451,16 +451,16 @@ void GTKIDEWindow :: reloadProjectView(_ProjectManager* project)
 {
     _projectTree->clear();
 
-   _ELENA_::ConfigCategoryIterator p_it = project->SourceFiles();
+   _ProjectManager::SourceIterator p_it = project->SourceFiles();
    int index = 0;
    while (!p_it.Eof()) {
-      _ELENA_::ident_t name = p_it.key();
+      _ELENA_::ident_t name = *p_it;
       Gtk::TreeModel::Children children = _projectTree->children();
 
       int start = 0;
       int end = 0;
       while (end != -1) {
-         end = _ELENA_::StringHelper::find(name + start, PATH_SEPARATOR);
+         end = name.find(start, PATH_SEPARATOR, -1);
 
          _ELENA_::IdentifierString nodeName(name + start, (end == -1 ? _ELENA_::getlength(name) : end) - start);
          Gtk::TreeModel::iterator it = children.begin();

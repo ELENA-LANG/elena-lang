@@ -35,6 +35,7 @@
 			<Add option="-Wall" />
 			<Add option="-m32" />
 			<Add option="-Wno-conversion-null" />
+			<Add option="-Wno-switch" />
 			<Add option="-D_LINUX32" />
 			<Add directory="../../common" />
 			<Add directory="../../engine" />

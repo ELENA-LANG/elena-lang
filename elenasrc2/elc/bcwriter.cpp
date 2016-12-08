@@ -4175,7 +4175,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
    }
 
    if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_MESSAGE_ID && source.type != lxArrOp) ||
-      IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp)))
+      (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp))))
    {
       if (target == lxCreatingStruct) {
          generateObjectExpression(tape, target);
