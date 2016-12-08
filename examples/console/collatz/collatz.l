@@ -1,90 +1,159 @@
 #import system.
-#import system'dynamic.
+#import system'math.
 #import extensions.
 
-#class(extension)op
-{
-    #method y
-        = self int is &even iif:0:1.
-}
-
-#symbol factory =
-{
-    new : aF : aG
-        = () [ this int is &even iif:(this::aF eval):(this::aG eval) ].
-    
-    new : Func : C1 : C2
-//        = () [ (this * this y + (1 - this y) * C1)::Func eval + (1 - this y) * (C2 + this) ].
-        = ()
-        [
-            #var b := this y.
-            
-            #var a1 := this * b + (1 - b) * C1.
-            #var a2 := (1 - b) * (C2 + this).
-            
-            #var r1 := a1::Func eval.
-            
-            #var r := r1 + a2.
-            
-            ^ r.
-        ].
-        
-    compose : aF : aG
-        = () [ (this::aG eval)::aF eval ].
-}.
-
-#symbol F =
-    () [ this / 2 ].
-
-#symbol G =
-    () [ this * 2 + 3 ].
-
-#symbol hFh
-    = factory new:F:0:0.
-    
-#symbol hGh
-    = factory new:G:(-3/2):0.
-
-#static C2
-    = factory compose:hFh:hGh.
-
-#static C1
-    = factory new:F:G.
-
-#class(extension)CollatzOp
-{
-    #method Collatz1
-        = self::C1 eval.
-        
-    #method Collatz2
-        = self::C2 eval.
-}
-
-#symbol program=
+//function altcol(x)
+//clc, close all
+#symbol altcol = (:x)
 [
-    console writeLine:3.
-    console writeLine:(3 Collatz2).
+    //% Load auxilliary anonymous functions
+    //hR=@(x,y,z)(x-z)*y+z;
+    #var hR := (:x:y:z) [ (x-z)*y + z ].
     
-/*    
-    #var n := console write:"Enter x(0):" readLine toInt.
-    #var m := n.
-    console writeLine:n.
+    //hL=@(x,y,z,w)(1-y)*(x-z) + w;
+    #var hL := (:x:y:z:w) [ (1-y)*(x-z) + w ].
     
-    #loop (n < 100000)?
-    [       
-        n := n Collatz1.
-        
-        console writeLine:n.
-    ].
+    //Id=@(x)mod(x,2);
+    #var Id := (:x) [ x mod:2 ].
+
+    //f=@(x)x/2;
+    #var f := (:x) [ x / 2 ].
     
-    console writeLine:n.
+    //g=@(x)3*x+1;
+    #var g := (:x) [ 3*x + 1 ].
     
-    #loop (m < 100000)?
-    [       
-        m := m Collatz2.
-        
-        console writeLine:m.
-    ].
-*/    
-    console readChar.
+    //% Simple branching
+    //disp('Execute branches independently w. half morphism')
+    console writeLine:"Execute branches independently w. half morphism".
+    
+    //y = f( hR(x, 1-Id(x), 0) );
+    #var y := f eval:(hR eval:x:(1 - Id eval:x):0).
+    
+    //disp(['1st branch: mod: ', num2str(Id(x)),' out: ', num2str(y)])
+    console writeLine:"1st branch: mod: ":(Id eval:x):" out: ":y.
+    
+    //y = g( hR(x, Id(x), -1/3) );
+    y := g eval:(hR eval:x:(Id eval:x):(-1 realDiv:3)).
+    
+    //disp(['2nd branch: mod: ',num2str(Id(x)),' out: ', num2str(y)])
+    console writeLine:"2st branch: mod: ":(Id eval:x):" out: ":y.
+    
+    //disp '  '
+    //% Branching w. safety value return (restore original)
+    //disp('Execute branches independently w. full morphism')
+    console writeLine:"Execute branches independently w. full morphism".
+    
+    //y = hL( x, 1-Id(x), 0, f( hR(x, 1-Id(x), 0) ) );
+    y := hL eval:x:(1 - Id eval:x):0:(f eval:(hR eval:x:(1-Id eval:x):0)).
+    
+    //disp(['1st branch: mod:  ', num2str(Id(x)),' out: ', num2str(y)])
+    console writeLine:"1st branch: mod: ":(Id eval:x):" out: ":y.
+    
+    //y = hL( x, Id(x), 0, g( hR(x, Id(x), -1/3) ) );
+    y := hL eval:x:(Id eval:x):0:(g eval:(hR eval:x:(Id eval:x):(-1 realDiv:3))).
+    
+    //disp(['2nd branch: mod: ', num2str(Id(x)),' out: ',  num2str(y)])
+    console writeLine:"2st branch: mod: ":(Id eval:x):" out: ":y.
+    
+    //disp '  '
+    //% All together
+    //disp('Execute combined morphism')
+    console writeLine:"Execute combined morphism".
+    
+    //y = hL( x, 1-Id(x), 0, f( hR(x, 1-Id(x), 0) ) );
+    y := hL eval:x:(1 - Id eval:x):0:(f eval:(hR eval:x:(1- Id eval:x):0)).
+    
+    //z = hL( y, Id(x), 0, g( hR(y, Id(x), -1/3) ) );
+    #var z := hL eval:y:(Id eval:x):0:(g eval:(hR eval:y:(Id eval:x):(-1 realDiv:3))) toInt.
+    
+    //disp(['Final out: ', num2str(z), ' Correct should be ', num2str( col(x) )])
+    console writeLine:"Final out: ":z:" Correct should be ":(col eval:x).
+    
+//end
+].
+
+#symbol col = (:x)
+    [ x int is &even iif:[ x / 2 ]:[ 3*x + 1 ] ].
+
+//function x = col(x)
+//if ~mod(x,2)
+//	x = x/2;
+//else
+//	x = 3*x+1;
+// end
+//end
+
+//function altcolsingle(x)
+//clc, close all
+#symbol altcolsingle = (:x)
+[
+    //% Load auxilliary anonymous functions
+    //h=@(x,y,z,w)y*(x-z) + w;
+    #var h := (:x:y:z:w) [ y*(x-z) + w ].
+    
+    //Id=@(x)mod(x,2);
+    #var Id := (:x) [ x mod:2 ].
+    
+    //f=@(x)x/2;
+    #var f := (:x) [ x / 2 ].
+    
+    //g=@(x)3*x+1;
+    #var g := (:x) [ 3*x + 1 ].
+    
+    //% Simple branching
+    //disp('Execute branches independently w. half morphism')
+    console writeLine:"Execute branches independently w. half morphism".
+    
+    //y = f( h(x, 1-Id(x), 0, 0) );
+    #var y := f eval:(h eval:x:(1 - Id eval:x):0:0).
+    
+    //disp(['1st branch: mod: ', num2str(Id(x)),' out: ', num2str(y)])
+    console writeLine:"1st branch: mod: ":(Id eval:x):" out: ":y.
+    
+    //y = g( h(x, Id(x), -1/3, -1/3) );
+    y := g eval:(h eval:x:(Id eval:x):(-1 realDiv:3):(-1 realDiv:3)).
+    
+    //disp(['2nd branch: mod: ',num2str(Id(x)),' out: ', num2str(y)])
+    console writeLine:"2st branch: mod: ":(Id eval:x):" out: ":y.
+    
+    //disp '  '
+    //% Branching w. safety value return (restore original)
+    //disp('Execute branches independently w. full morphism')
+    console writeLine:"Execute branches independently w. full morphism".
+    
+    //y = h( x, Id(x), 0, f( h(x, 1-Id(x), 0, 0) ) );
+    y := h eval:x:(Id eval:x):0:(f eval:(h eval:x:(1 - Id eval:x):0:0)) toInt.
+    
+    //disp(['1st branch: mod:  ', num2str(Id(x)),' out: ', num2str(y)])
+    console writeLine:"1st branch: mod: ":(Id eval:x):" out: ":y.
+    
+    //y = h( x, 1-Id(x), 0, g( h(x, Id(x), -1/3, -1/3) ) );
+    y := h eval:x:(1 - Id eval:x):0:(g eval:(h eval:x:(Id eval:x):(-1 realDiv:3):(-1 realDiv:3))) toInt.
+    
+    //disp(['2nd branch: mod: ', num2str(Id(x)),' out: ',  num2str(y)])
+    console writeLine:"2st branch: mod: ":(Id eval:x):" out: ":y.
+    
+    //disp '  '
+    //% All together
+    //disp('Execute combined morphism')
+    console writeLine:"Execute combined morphism".
+    
+    //y = h( x, Id(x), 0, f( h(x, 1-Id(x), 0, 0) ) );
+    y := h eval:x:(Id eval:x):0:(f eval:(h eval:x:(1 - Id eval:x):0:0)).
+    
+    //z = h( y, 1-Id(x), 0, g( h(y, Id(x), -1/3, -1/3) ) );
+    #var z := h eval:y:(1 - Id eval:x):0:(g eval:(h eval:x:(Id eval:x):(-1 realDiv:3):(-1 realDiv:3))) toInt.
+    
+    //disp(['Final out: ', num2str(z), ' Correct should be ', num2str( col(x) )])
+    console writeLine:"Final out: ":z:" Correct should be ":(col eval:x).
+].
+//end
+
+#symbol program =
+[
+    altcol eval:7.
+    altcol eval:44.
+    
+    altcolsingle eval:7.
+    altcolsingle eval:44.
 ].

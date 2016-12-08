@@ -250,6 +250,9 @@
         ^ IntNumber new &int:(x - z).
     ]
     
+    #method(real)realDiv : anOperand
+        = RealNumber new &int:self divide:anOperand.
+    
     #method(int,stacksafe)power &int:y
     [
         #var(int)x := self.
