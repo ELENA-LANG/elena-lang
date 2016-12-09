@@ -28,36 +28,10 @@ protected:
 public:
    int newDocument(const char* name, Document* doc);
 
-//   virtual int getCurrentDocumentIndex() { return getCurrentIndex(); }
-//   virtual void markDocument(int index, bool modified);
    void eraseDocumentTab(int index);
-
-//   virtual const char* getDocumentName(int index);
-//   virtual int getCurrentDocumentIndex() { return get_current_page(); }
-//   virtual int getDocumentIndex(const char* name) { return getTabIndex(name); }
-//   virtual Document* getDocument(int index);
-//   virtual int getDocumentCount() { return getCount(); }
-
-//   virtual void renameDocument(int index, const TCHAR* name);
-//   virtual void markDocument(int index, bool modified);
-//   virtual void closeDocument(int index);
-//
-//   virtual void selectDocument(const TCHAR* name);
-//   virtual void selectDocument(int index);
 
    virtual void onTabChange(int index);
 
-//   bool copyClipboard(Clipboard& board);
-//   void eraseSelection();
-//   void pasteClipboard(Clipboard& board);
-//
-//   void indent();
-//   void outdent();
-//
-//   virtual void showContextMenu(int x, int y);
-//   virtual void reloadSettings();
-//
-//   void init(Model* model);
    void refreshDocument();
 
    EditFrame(Model* model);

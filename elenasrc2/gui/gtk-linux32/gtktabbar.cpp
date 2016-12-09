@@ -101,8 +101,6 @@ int TabBar :: addTab(const char* name, Gtk::Widget* control)
 
 void TabBar :: selectTab(int index)
 {
-   _current = NULL;
-
    set_current_page(index);
 }
 

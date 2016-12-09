@@ -316,6 +316,9 @@ protected:
    {
 
    }
+   void on_menu_search_gotoline()
+   {
+   }
    void on_menu_debug_run()
    {
       _controller->doDebugRun();

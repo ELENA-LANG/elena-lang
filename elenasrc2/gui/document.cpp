@@ -502,6 +502,9 @@ void Document :: setCaret(HighlightInfo info, bool selecting)
 int Document :: retrieveColumn(int row, int disp)
 {
    TextBookmark bm = _caret;
+
+   _text->validateBookmark(bm);
+
    bm.moveTo(0, row);
    bm.moveOn(disp);
 

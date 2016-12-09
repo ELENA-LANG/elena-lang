@@ -109,11 +109,6 @@ int EditFrame :: newDocument(const char* name, Document* document)
    return index;
 }
 
-////void EditFrame :: renameDocument(int index, const TCHAR* name)
-////{
-////   renameTab(index, name);
-////}
-
 void EditFrame :: eraseDocumentTab(int index)
 {
    _model->currentDoc = NULL;
@@ -132,99 +127,12 @@ void EditFrame :: onTabChange(int index)
    else _model->currentDoc = NULL;
 }
 
-////void EditFrame :: selectDocument(const TCHAR* name)
-////{
-////   _currentDoc = NULL;
-////   selectTab(getTabIndex(name));
-////   if (_current != NULL)
-////      _currentDoc = ((TextView*)_current)->getDocument();
-////}
-////
-////void EditFrame :: selectDocument(int index)
-////{
-////   _currentDoc = NULL;
-////   selectTab(index);
-////   if (_current != NULL)
-////      _currentDoc = ((TextView*)_current)->getDocument();
-////}
-////
-////bool EditFrame :: copyClipboard(Clipboard& board)
-////{
-////   if (_currentDoc && _currentDoc->hasSelection()) {
-////      //board.clear();
-////
-////      int length = _currentDoc->getSelectionLength();
-////      TCHAR* text = _ELENA_::String::allocate(length);
-////
-////      _currentDoc->copySelection(text);
-////
-////      board.settext(text);
-////
-////      _ELENA_::freestr(text);
-////
-////      return true;
-////   }
-////   else return false;
-////}
-//
-//void EditFrame :: eraseSelection()
-//{
-////   if (_currentDoc && !_currentDoc->status.readOnly) {
-////      _currentDoc->eraseChar(false);
-////
-////      ((TextView*)_current)->refreshView();
-////   }
-//}
-//
-//void EditFrame :: pasteClipboard(Clipboard& board)
-//{
-////   if (_currentDoc && !_currentDoc->status.readOnly) {
-////      TCHAR* text = board.gettext();
-////      if  (!_ELENA_::emptystr(text)) {
-////         _currentDoc->insertLine(text, _ELENA_::getlength(text));
-////
-////         board.freetext(text);
-////      }
-////      ((TextView*)_current)->refreshView();
-////   }
-//}
-
 void EditFrame :: refreshDocument()
 {
    if (_current)
       ((TextView*)_current)->refreshView();
 }
 
-//void EditFrame :: outdent()
-//{
-////   // !! partially migrated
-////   if (_currentDoc && !_currentDoc->status.readOnly) {
-////      ((TextView*)_current)->outdent();
-////   }
-//}
-//
-////void EditFrame :: markDocument(int index, bool modified)
-////{
-////   _ELENA_::String caption(getTabName(index));
-////   if (modified) {
-////      caption.append('*');
-////
-////      renameTabCaption(index, caption);
-////   }
-////   else renameTabCaption(index, caption);
-////}
-//
-//const char* EditFrame :: getDocumentName(int index)
-//{
-////   return getTabName((index == -1) ? getCurrentIndex() : index);
-//   return NULL; //!!temporal
-//}
-//
-//void EditFrame :: showContextMenu(int x, int y)
-//{
-//
-//}
-//
 //void EditFrame :: reloadSettings()
 //{
 ////   TabPages::Iterator it = _tabs.start();
