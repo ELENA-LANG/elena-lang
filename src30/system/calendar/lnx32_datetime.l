@@ -19,7 +19,7 @@
         #var(__time_st)tm.
         tm writeUTC &__time:time.
 
-        tm read &__time:time.
+        tm read &__vtime:time.
         
         retVal := time.
     ]
@@ -99,7 +99,7 @@
        ^ tv_sec < sec.
     ]
     
-    #method(stacksafe) read &vlong:aRetVal
+    #method(stacksafe,outlprop:long) readValue &vlong:aRetVal
     [
         #var(long)l := longConvertor convert &int:tv_sec.
         
@@ -169,6 +169,11 @@
        tm_isdst := -1.  
     ]
     
+    #constructor &__time:aTime
+    [
+        $self write &__time:aTime.
+    ]
+
     #constructor new &__time:aTime
     [
         $self write &__time:aTime.
@@ -176,7 +181,7 @@
 
     #method __time_st = $self.
 
-    #method(stacksafe) readYear &vint:aRetVal
+    #method(stacksafe,outnprop:year) readYear &vint:aRetVal
     [
         #var(int)aYear := tm_year.
         aYear += 1900.
@@ -184,7 +189,7 @@
         aRetVal := aYear.
     ]
 
-    #method(stacksafe) readMonth &vint:aRetVal
+    #method(stacksafe,outnprop:month) readMonth &vint:aRetVal
     [
         #var(int)aMonth := tm_mon.
         aMonth += 1.
@@ -192,40 +197,32 @@
         aRetVal := aMonth.
     ]
 
-    #method(stacksafe) readDayOfWeek &vint:aRetVal
+    #method(stacksafe,outnprop:dayOfWeek) readDayOfWeek &vint:aRetVal
     [
         aRetVal := tm_wday.
     ]
     
-    #method(stacksafe) readDay &vint:aRetVal
+    #method(stacksafe,outnprop:day) readDay &vint:aRetVal
     [
         aRetVal := tm_mday.
     ]
 
-    #method(stacksafe) readHour &vint:aRetVal
+    #method(stacksafe,outnprop:hour) readHour &vint:aRetVal
     [
         aRetVal := tm_hour.
     ]
 
-    #method hour
-    [
-        #var(int)n.
-        $self readHour &vint:n.
-
-        ^ n.
-    ]
-
-    #method(stacksafe) readMinute &vint:aRetVal
+    #method(stacksafe,outnprop:minute) readMinute &vint:aRetVal
     [
         aRetVal := tm_min.
     ]
 
-    #method(stacksafe) readSecond &vint:aRetVal
+    #method(stacksafe,outnprop:second) readSecond &vint:aRetVal
     [
         aRetVal := tm_sec.
     ]
 
-    #method(stacksafe) readMillisecond &vint:aRetVal
+    #method(stacksafe,outnprop:millisecond) readMillisecond &vint:aRetVal
     [
         #var(int)n := tm_usec.
         n /= 1000. 
@@ -233,37 +230,37 @@
         aRetVal := n.
     ]
 
-    #method(stacksafe) writeYear &int:aValue
+    #method(stacksafe,innprop:year) writeYear &int:aValue
     [ 
         tm_year := aValue - 1900.
     ]
     
-    #method(stacksafe) writeMonth &int:aValue 
+    #method(stacksafe,innprop:month) writeMonth &int:aValue 
     [ 
         tm_mon := aValue - 1.
     ]
 
-    #method(stacksafe) writeDay &int:aValue 
+    #method(stacksafe,innprop:day) writeDay &int:aValue 
     [ 
         tm_mday := aValue.
     ]
 
-    #method(stacksafe) writeHour &int:aValue 
+    #method(stacksafe,innprop:hour) writeHour &int:aValue 
     [ 
         tm_hour := aValue.
     ]
 
-    #method(stacksafe) writeMinute &int:aValue 
+    #method(stacksafe,innprop:minute) writeMinute &int:aValue 
     [ 
         tm_min := aValue.
     ]
 
-    #method(stacksafe) writeSecond &int:aValue 
+    #method(stacksafe,innprop:second) writeSecond &int:aValue 
     [ 
         tm_sec := aValue.
     ]
 
-    #method(stacksafe) writeMillisecond &int:aValue 
+    #method(stacksafe,innprop:millisecond2) writeMillisecond &int:aValue 
     [ 
         #var(int)n := aValue.
         n *= 1000. 

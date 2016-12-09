@@ -43,5 +43,5 @@ io/streamwriter.l
 io/lnx32_console.l
 io/lnx32_files.l
 io/files.l
-dynamic/groups.l
 dynamic/reflection.l
+dynamic/groups.l

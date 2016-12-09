@@ -94,15 +94,15 @@
             #var(byte)ch.
             $self read &vbyte:ch.
 
-            aBuffer write &int:i &byte:ch.
+            aBuffer@i := ch.
 
             i += 1.
 
             (ch == 0Ah)
-               ? [ aRetVal << i.  ^ $self. ].
+               ? [ aRetVal := i.  ^ $self. ].
         ].
 
-        aRetVal << i.
+        aRetVal := i.
     ]
 
     #method read &wide
@@ -120,8 +120,7 @@
             aLength := 127.
             $self read &bytearray:aBuffer &vint:aLength.
 
-            #var(byte)ch.
-            aBuffer read &int:(aLength - 1) &vbyte:ch.
+            #var(byte)ch := aBuffer@(aLength - 1).
 
             (ch == 0Ah)
                 ? [

@@ -23,7 +23,7 @@
                       &literal:(Attributes literal).
                       
         (0 == theHandle)
-            ? [ #throw IOException new:"Cannot open the file". ].
+            ? [ #throw IOException new &literal:"Cannot open the file". ].
     ]
   
     #method write &bytearray:aDump &int:aLength
