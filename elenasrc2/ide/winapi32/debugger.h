@@ -249,7 +249,7 @@ public:
    bool initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr);
 
    size_t findEntryPoint(const wchar_t* programPath);
-   bool findSignature(char* signature);
+   bool findSignature(StreamReader& reader, char* signature);
 
    Debugger();
 };

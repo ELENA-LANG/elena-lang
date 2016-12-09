@@ -688,7 +688,7 @@ size_t Debugger :: findEntryPoint(const wchar_t* programPath)
   return _ELENA_::PEHelper::findEntryPoint(programPath);
 }
 
-bool Debugger::findSignature(char* signature)
+bool Debugger :: findSignature(StreamReader&, char* signature)
 {
    // !! hard-coded address; better propely to load part of NT_HEADER to correctly get bss address
    size_t rdata = Context()->readDWord(0x4000D0);
