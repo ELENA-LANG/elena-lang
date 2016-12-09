@@ -352,11 +352,12 @@ void DebugController :: onInitBreakpoint()
 {
    bool starting = _debugInfoSize == 0;
    if (starting) {
+      DebugReader reader(&_debugger/*, 0x400000, 0*/);
+
       // define if it is a vm client or stand-alone
       char signature[0x10];
-      _debugger.findSignature(signature);
+      _debugger.findSignature(reader, signature);
 
-      DebugReader reader(&_debugger/*, 0x400000, 0*/);
       if (strcmp(signature, ELENACLIENT_SIGNITURE) == 0) {
          if (!_debugger.initDebugInfo(false, reader, _debugInfoPtr))
          {

@@ -4,7 +4,7 @@
 
 #symbol $globalVariables =
 {
-    stdout
+    #method(handle) stdout
     [
        #var(dirty_ptr)aVariable.
        #var(handle)aLibHandle := system'external'libdl dlopen 
@@ -18,7 +18,7 @@
        #var(int)aHandle.
        aVariable read &vint:aHandle.
 
-       ^ Handle new &int:aHandle.  
+       ^ aHandle.  
     ]
 }.
 

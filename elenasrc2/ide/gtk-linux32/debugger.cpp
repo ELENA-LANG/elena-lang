@@ -227,7 +227,6 @@ bool ThreadContext :: readDump(size_t address, char* dump, size_t length)
       val = ptrace(PTRACE_PEEKDATA,
                           threadId, address + index * 4,
                           NULL);
-
       if (length > 3) {
          memcpy(dump + index * 4, &val, 4);
          length -= 4;
@@ -372,13 +371,16 @@ void BreakpointContext :: setHardwareBreakpoint(size_t address, ThreadContext* c
    else context->breakpoint.stackLevel = 0;
 }
 
-void BreakpointContext :: applyPendingBreakpoints(ThreadContext* context)
+bool BreakpointContext :: applyPendingBreakpoints(ThreadContext* context)
 {
    if (context->breakpoint.pendingAddress) {
       context->setHardwareBreakpoint(context->breakpoint.pendingAddress);
 
       context->breakpoint.pendingAddress = 0;
+
+      return true;
    }
+   else return false;
 }
 
 bool BreakpointContext :: processStep(ThreadContext* context, bool stepMode)
@@ -595,8 +597,10 @@ void Debugger :: processVirtualStep(void* state)
 
 void Debugger :: continueProcess()
 {
-   if (current)
-      breakpoints.applyPendingBreakpoints(current);
+   if (current) {
+      if (breakpoints.applyPendingBreakpoints(current))
+         stepMode = false;
+   }
 
    ptrace(stepMode ? PTRACE_SINGLESTEP : PTRACE_CONT, currentId, NULL, NULL);
 }
@@ -737,12 +741,39 @@ size_t Debugger :: findEntryPoint(const char* programPath)
    return _ELENA_::ELFHelper::findEntryPoint(programPath);
 }
 
-bool Debugger :: findSignature(char* signature)
+bool Debugger :: findSignature(StreamReader& reader, char* signature)
 {
-   return false; // !! temporal
+   reader.seek(0x08048000);
+
+   size_t rva = 0;
+   ELFHelper::seekRDataSegment(reader, rva);
+
+   // load Executable image
+   current->readDump(rva, signature, strlen(ELENACLIENT_SIGNITURE));
+   signature[strlen(ELENACLIENT_SIGNITURE)] = 0;
+
+   return true;
 }
 
 bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr)
 {
-   return false; // !! temporal
+   if (standalone) {
+      reader.seek(0x08048000);
+
+      _ELENA_::ELFHelper::seekDebugSegment(reader, debugInfoPtr);
+   }
+//   else if (_vmHook == 0) {
+//      size_t rdata = Context()->readDWord(0x4000D0);
+//      //HOTFIX : the actual length should be used
+//      _vmHook = Context()->readDWord(0x400000 + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE) + 3, 4));
+//
+//      // enable debug mode
+//      Context()->writeDWord(_vmHook, -1);
+//
+//      return false;
+//   }
+//   // load VM debug section address
+//   else debugInfoPtr = Context()->readDWord(_vmHook + 4);
+
+   return true;
 }

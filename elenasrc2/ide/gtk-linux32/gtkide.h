@@ -19,20 +19,40 @@ namespace _GUI_
 enum DebugMessageType
 {
    dbgNone = 0,
-   dbgStart
+   dbgStart,
+   dbgStep
 };
 
 struct DebugMessage
 {
    DebugMessageType message;
 
+   const char* strparam1;
+   const char* strparam2;
+   int         nparam1;
+   int         nparam2;
+   int         nparam3;
+
    DebugMessage()
    {
       this->message = dbgNone;
+      strparam1 = strparam2 = NULL;
+      nparam1 = nparam2 = nparam3 = 0;
    }
    DebugMessage(DebugMessageType message)
    {
       this->message = message;
+      strparam1 = strparam2 = NULL;
+      nparam1 = nparam2 = nparam3 = 0;
+   }
+   DebugMessage(DebugMessageType message, const char* s1, const char* s2, int n1, int n2, int n3)
+   {
+      this->message = message;
+      this->strparam1 = s1;
+      this->strparam2 = s2;
+      this->nparam1 = n1;
+      this->nparam2 = n2;
+      this->nparam3 = n3;
    }
 };
 
@@ -371,6 +391,12 @@ protected:
          if (index >= 0)
             _controller->selectProjectFile(index);
       }
+   }
+
+   void on_client_change(Widget* page, guint page_number)
+   {
+      _controller->onCursorChange();
+      _controller->onFrameChange();
    }
 
    void on_notification_from_output();
@@ -934,7 +960,7 @@ public:
 
    virtual void onStep(_ELENA_::ident_t ns, _ELENA_::ident_t source, int row, int disp, int length)
    {
-      //appWindow._notify(IDE_DEBUGGER_STEP, TextString(ns), TextString(source), HighlightInfo(row, disp, length));
+      notityDebugStep(DebugMessage(dbgStep, ns, source, row, disp, length));
    }
 
    virtual void onDebuggerHook()

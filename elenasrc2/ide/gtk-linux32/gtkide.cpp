@@ -521,6 +521,9 @@ void GTKIDEWindow :: on_notification_from_debugger()
       case dbgStart:
          _controller->onDebuggerStart();
          break;
+      case dbgStep:
+         _controller->onDebuggerStep(rec.strparam1, rec.strparam2, HighlightInfo(rec.nparam1, rec.nparam2, rec.nparam3));
+         break;
    }
 }
 
@@ -545,6 +548,10 @@ GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model
 
    populateMenu();
    populateToolbar();
+
+   _mainFrame.signal_switch_page().connect(sigc::mem_fun(*this,
+           &GTKIDEWindow::on_client_change));
+
 
    // !! temporal
    _statusbar.push("Example");

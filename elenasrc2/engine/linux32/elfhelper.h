@@ -17,6 +17,7 @@ class ELFHelper
 public:
    static size_t findEntryPoint(path_t path);
 
+   static bool seekRDataSegment(StreamReader& reader, size_t& rvaAddress);
    static bool seekDebugSegment(StreamReader& reader, size_t& rvaAddress);
 };
 

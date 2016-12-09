@@ -180,7 +180,7 @@ struct BreakpointContext
    bool processBreakpoint(ThreadContext* context);
 
    void clear();
-   void applyPendingBreakpoints(ThreadContext* context);
+   bool applyPendingBreakpoints(ThreadContext* context);
 
    BreakpointContext();
 };
@@ -260,7 +260,7 @@ public:
    bool initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr);
 
    size_t findEntryPoint(const char* programPath);
-   bool findSignature(char* signature);
+   bool findSignature(StreamReader& reader, char* signature);
 
    Debugger();
 };
