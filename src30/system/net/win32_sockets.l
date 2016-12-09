@@ -139,9 +139,9 @@
 
 // --- Socket ---
 
-#class(sealed,reference,const)Socket
+#class(embeddable,sealed,const)Socket
 {
-    #field(int)theHandle.
+    #field(4,-12)theHandle.
     
     #constructor(stacksafe) $new &int:aSocket
     [
@@ -159,8 +159,6 @@
         (INVALID_SOCKET == theHandle)
             ? [ #throw SocketException new:"Error at socket". ].
     ]
-    
-    #method socket = $self.
     
     #method(stacksafe) open &dirty_ptr:aSockAddrPtr &int:aNameLen
     [
@@ -238,7 +236,7 @@
 
     #method accept  
     [
-        #var(socket)aSocket := system'external'WS2_32 accept
+        #var(netsocket)aSocket := system'external'WS2_32 accept
             &int:theHandle
             &int:0
             &int:0.

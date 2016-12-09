@@ -1747,11 +1747,11 @@
     #method => theObject.
 }
 
-//// --- DTO ---
-//
-//#class(dispatchable:dto) DTO
-//{
-//}
+// --- DTO ---
+
+#class(dispatchable:dto) DTO
+{
+}
 
 // === Basic Convertors ===
 

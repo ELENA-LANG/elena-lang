@@ -4,7 +4,7 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
-//#import extensions'dynamic.
+#import extensions'dynamic.
 
 // --- OpenArgTest ---
 
@@ -562,23 +562,23 @@
     a print:"Struct method works".
 ].
 
-//#symbol GroupMember1 =
-//{
-//    m1 : prm = "group 1 " + prm.
-//}.
-//
-//#symbol GroupMember2 =
-//{
-//    m2 : prm : prm2 = "group 2 " + prm.
-//}.
-//
-//#symbol GroupTest =
-//[
-//    #var g := Group(GroupMember1, GroupMember2).
-//    
-//    #var m1 := g m1:"called".
-//    #var m2 := g m2:"called":2.
-//].
+#symbol GroupMember1 =
+{
+    m1 : prm = "group 1 " + prm.
+}.
+
+#symbol GroupMember2 =
+{
+    m2 : prm : prm2 = "group 2 " + prm.
+}.
+
+#symbol GroupTest =
+[
+    #var g := Group(GroupMember1, GroupMember2).
+    
+    #var m1 := g m1:"called".
+    #var m2 := g m2:"called":2.
+].
 
 // --- ClassWithGeneric ---
 
@@ -632,27 +632,27 @@
     #var o := ChildClass new.
 ].
 
-//#symbol DTOToStructTest =
-//[
-//    #var aDTO := { X = 2. Y = 3. Z = 4. }.    
-//    #var aProperties := MessageArray new &int:10.
-//
-//    #var(vint)aLength := 0.
-//    aDTO readMatchedEntries &mssg:%"get[0]" &int:0 &mssgarray:aProperties &vint:aLength.
-//
-//    #var aCopy := DynamicStruct new.
-//    aProperties top:aLength run &each:(:aSubject)
-//    [
-//        #var prop_value := aDTO::aSubject eval.
-//        #var prop := aSubject subject.
-//        
-//        aCopy::prop set:prop_value.
-//    ].
-//    
-//    #var x := aCopy X.
-//    #var y := aCopy Y.
-//    #var z := aCopy Z.
-//].
+#symbol DTOToStructTest =
+[
+    #var aDTO := { X = 2. Y = 3. Z = 4. }.    
+    #var aProperties := MessageArray new &int:10.
+
+    #var(vint)aLength := 0.
+    aDTO readMatchedEntries &mssg:%"get[0]" &int:0 &mssgarray:aProperties &vint:aLength.
+
+    #var aCopy := DynamicStruct new.
+    aProperties top:aLength run &each:(:aSubject)
+    [
+        #var prop_value := aDTO::aSubject eval.
+        #var prop := aSubject subject.
+        
+        aCopy::prop set:prop_value.
+    ].
+    
+    #var x := aCopy X.
+    #var y := aCopy Y.
+    #var z := aCopy Z.
+].
 
 #class BoxerHelper
 {
@@ -753,11 +753,11 @@
 //    #var(type:test_var)var := TestVar new &int:2.
 //].
 
-//#symbol jsonTest =
-//[
-//    #var dto := DTO{ X = 2. Y = "Value". }.
-//    
-//    #var(literal)json := dto toJson literal.
-//    
-//    #var ori := json fromJson.
-//].
+#symbol jsonTest =
+[
+    #var dto := DTO{ X = 2. Y = "Value". }.
+    
+    #var(literal)json := dto toJson literal.
+    
+    #var ori := json fromJson.
+].

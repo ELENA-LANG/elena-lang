@@ -1,33 +1,20 @@
 ------                                 
 In development:
 ------                              
-              xrev                 
-                 * migrate elc to Linux
-
-                 * fixing dynamic array ineriting - constructor should call default dynamic constructor
-                   instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
-
-                 * message $self does not belong to the object points to the target instead of message
-
-                 * uncomment GroupTest
-                 * uncomment DTOToStructTest
-                 * uncomment jsonTest
-                 * test graph
-                 * test c_a_g
-                 * test rest samples
-                 * test script samples
-                 * debugger : #var(int)n := 0. n := n + 1. Debugger skips the second statement
-                 * test elt (system'console write:"Hello" write:" World")
-                 * tape_test
-                 * test template in template (with parameters)
-                 * test calc sample
-                 * test db sample
-                 * test net sample
-                 * optimize unbox : root expression / assigning
-                 * ini : replace warn/weakunresolved with warn:weakunresolved
-                 * breaking loop (loop and return statement)
-
-                 * test manboy
+             idev - linux
+                 * fixing editor
+                 * enabling / disabling menu items
+                 * status bar
+                 * message list
+                 * tuning styles
+                 * watch
+                 * call stack
+                 * recent files / recent projects
+                 * load / save config
+                 * toolbars
+                 * blicking caret
+                 * face lifting / tuning
+                 * proting IDE
 
 ------                                 
 Pipeline:
@@ -59,6 +46,27 @@ Pipeline:
                        #define method ::= "method" "(" name code ")";
 
               xrev                 
+                 * reimplement preloaded attribute
+
+                 * message $self does not belong to the object points to the target instead of message
+                 * test manboy
+
+                 * reimplement threading
+                 * reimplement net
+                 * test net sample
+
+                 * fixing dynamic array ineriting - constructor should call default dynamic constructor
+                   instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
+
+                 * test script samples
+                 * debugger : #var(int)n := 0. n := n + 1. Debugger skips the second statement
+                 * test elt (system'console write:"Hello" write:" World")
+                 * tape_test
+                 * test template in template (with parameters)
+                 * test calc sample
+                 * optimize unbox : root expression / assigning
+                 * ini : replace warn/weakunresolved with warn:weakunresolved
+                 * breaking loop (loop and return statement)
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
                  * optimize : branching with numeric comparison
                  * test int => vint, vint =>, ref => obj, obj => ref
@@ -91,8 +99,6 @@ Pipeline:
                  * optimize array of constants
                  * typecast implicit extension target if required
                  * switch statement with expression
-
-                 * fix invalid call stack info
 
                  * int constant to byte
 
@@ -142,6 +148,8 @@ Pipeline:
                  * support arrayof:struct
                  * test array of char / array of enumerator ...
                  * remove core.config, no longer required
+                 * bug : system'external'WS2_32 socket &int:anAdressFamily &int:aType &int:aProtocol - strong type
+                   socket cannot be a custom verb - message should be ignored for external call
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class

@@ -5648,6 +5648,9 @@ void Compiler :: optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScop
 void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
 {
    SNode target = node.findChild(lxTarget);
+   if (_logic->isPrimitiveRef(target.argument)) {
+      target.setArgument(_logic->resolvePrimitiveReference(scope, target.argument));
+   }
 
    optimizeSyntaxExpression(scope, node, warningScope, HINT_NOBOXING);
 

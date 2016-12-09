@@ -24,3 +24,4 @@ text\strings.l
 routines\enumerating.l
 routines\combinations.l
 scripting\interpreter.l
+dynamic\json.l

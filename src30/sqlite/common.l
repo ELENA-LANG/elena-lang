@@ -177,7 +177,7 @@
                                                 &int:0.
         (aRetVal != SQLITE_OK)? [ #throw DBException new &message:(theConnection last_error_message). ].
         
-        theCommandHandle := Handle new &int:aHandle.
+        theCommandHandle := aHandle.
     ]
     
     #method eval

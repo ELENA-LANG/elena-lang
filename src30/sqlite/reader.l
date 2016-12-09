@@ -73,6 +73,6 @@
     {
         #method get = self row.
     
-        #method(bool) next => self.
+        #method next => self.
     }.
 }
