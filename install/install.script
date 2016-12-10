@@ -24,6 +24,7 @@ mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textdb/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/console/goods/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/console/pi/
 mkdir -p ./$RELEASE/usr/elena-lang/src/elena/asm/x32/
+mkdir -p ./$RELEASE/usr/elena-lang/src/elena/src30/core/
 mkdir -p ./$RELEASE/usr/elena-lang/src/elena/src30/system/
 mkdir -p ./$RELEASE/usr/elena-lang/src/elena/src30/system/text/
 mkdir -p ./$RELEASE/usr/elena-lang/src/elena/src30/system/collections/
@@ -146,7 +147,7 @@ cp ../examples/rosetta/anagram/*.project $RELEASE/usr/elena-lang/examples/rosett
 cp ../examples/rosetta/anagram/*.txt $RELEASE/usr/elena-lang/examples/rosetta/anagram/
 
 cp ../asm/x32/*.asm $RELEASE/usr/elena-lang/src/elena/asm/x32/
-cp ../src30/core/*.esm $RELEASE/usr/elena-lang/src/elena/src30/core
+cp ../src30/core/*.esm $RELEASE/usr/elena-lang/src/elena/src30/core/
 
 cp ../src30/system/*.l $RELEASE/usr/elena-lang/src/elena/src30/system/
 cp ../src30/system/*.project $RELEASE/usr/elena-lang/src/elena/src30/system/
