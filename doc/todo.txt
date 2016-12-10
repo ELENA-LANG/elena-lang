@@ -46,7 +46,7 @@ Pipeline:
                        #define method ::= "method" "(" name code ")";
 
               xrev                 
-                 * reimplement preloaded attribute
+                 * reimplement preloaded attribute (#267 : Module initializers (preloaded attribute))
 
                  * message $self does not belong to the object points to the target instead of message
                  * test manboy
