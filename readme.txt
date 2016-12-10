@@ -1,4 +1,4 @@
-                      ELENA Language Project V. 2.0.4
+                      ELENA Language Project V. 2.1.0
                         (C)2005-2016  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
@@ -70,7 +70,7 @@ rebuild.script under the superuser. Alternatively install debian package
  dpkg -i /path/to/deb/file
  sudo apt-get install -f
 
-Examples are located in
+Examples are located in /usr/elena-lang
 
 To compile the program types : elena-lc -c<path to .project file>
 
