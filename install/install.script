@@ -166,4 +166,6 @@ cp ./control ./$RELEASE/DEBIAN
 
 dpkg-deb --build $RELEASE
 
+alien -r *.deb
+
 exit 0
