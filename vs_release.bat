@@ -71,7 +71,7 @@ move %1\dat\sg\syntax.dat %1\bin
 move %1\dat\og\rules.dat %1\bin
 
 md lib30
-%1\bin\asm2binx %1\asm\core_routines.esm lib30\system
+%1\bin\asm2binx %1\src30\core\core_routines.esm lib30\system
 
 %1\bin\asm2binx %1\asm\x32\commands.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\core.asm %1\bin\x32
