@@ -22,7 +22,8 @@ mkdir -p ./$RELEASE/usr/elena-lang/examples/console/datetime/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textfile/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textdb/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/console/goods/
-mkdir -p ./$RELEASE/usr/elena-lang/src/elena/src30/asm/x32/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/console/pi/
+mkdir -p ./$RELEASE/usr/elena-lang/src/elena/asm/x32/
 mkdir -p ./$RELEASE/usr/elena-lang/src/elena/src30/system/
 mkdir -p ./$RELEASE/usr/elena-lang/src/elena/src30/system/text/
 mkdir -p ./$RELEASE/usr/elena-lang/src/elena/src30/system/collections/
@@ -72,12 +73,12 @@ cp ../bin/elena-lc ./$RELEASE/usr/bin/
 cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena/
 
 echo compiling core
-../bin/elena-asm2binx ../src30/asm/x32/core.asm ./$RELEASE/usr/lib/elena/core/x32
-../bin/elena-asm2binx ../src30/asm/x32/core_lnx.asm ./$RELEASE/usr/lib/elena/core/x32
-../bin/elena-asm2binx ../src30/asm/x32/coreapi.asm ./$RELEASE/usr/lib/elena/core/x32
+../bin/elena-asm2binx ../asm/x32/core.asm ./$RELEASE/usr/lib/elena/core/x32
+../bin/elena-asm2binx ../asm/x32/core_lnx.asm ./$RELEASE/usr/lib/elena/core/x32
+../bin/elena-asm2binx ../asm/x32/coreapi.asm ./$RELEASE/usr/lib/elena/core/x32
 
 echo compiling lib30
-../bin/elena-asm2binx ../src30/asm/core_routines.esm /usr/lib/elena/lib30/system
+../bin/elena-asm2binx ../src30/core/core_routines.esm /usr/lib/elena/lib30/system
 elena-lc -c../src30/system/system.project
 elena-lc -c../src30/extensions/extensions.project
 
@@ -107,6 +108,8 @@ cp ../examples/console/goods/*.l $RELEASE/usr/elena-lang/examples/console/goods/
 cp ../examples/console/goods/*.project $RELEASE/usr/elena-lang/examples/console/goods/
 cp ../examples/files/textdb/*.l $RELEASE/usr/elena-lang/examples/files/textdb/
 cp ../examples/files/textdb/*.project $RELEASE/usr/elena-lang/examples/files/textdb/
+cp ../examples/console/pi/*.l $RELEASE/usr/elena-lang/examples/console/pi/
+cp ../examples/console/pi/*.project $RELEASE/usr/elena-lang/examples/console/pi/
 
 echo copying rosetta examples files
 cp ../examples/rosetta/accumulator/*.l $RELEASE/usr/elena-lang/examples/rosetta/accumulator/
@@ -142,8 +145,8 @@ cp ../examples/rosetta/anagram/*.l $RELEASE/usr/elena-lang/examples/rosetta/anag
 cp ../examples/rosetta/anagram/*.project $RELEASE/usr/elena-lang/examples/rosetta/anagram/
 cp ../examples/rosetta/anagram/*.txt $RELEASE/usr/elena-lang/examples/rosetta/anagram/
 
-cp ../src30/asm/x32/*.asm $RELEASE/usr/elena-lang/src/elena/src30/asm/x32/
-cp ../src30/asm/*.esm $RELEASE/usr/elena-lang/src/elena/src30/asm/
+cp ../asm/x32/*.asm $RELEASE/usr/elena-lang/src/elena/asm/x32/
+cp ../src30/core/*.esm $RELEASE/usr/elena-lang/src/elena/src30/core
 
 cp ../src30/system/*.l $RELEASE/usr/elena-lang/src/elena/src30/system/
 cp ../src30/system/*.project $RELEASE/usr/elena-lang/src/elena/src30/system/
@@ -166,6 +169,6 @@ cp ./control ./$RELEASE/DEBIAN
 
 dpkg-deb --build $RELEASE
 
-alien -r *.deb
+alien -r -c -v *.deb
 
 exit 0

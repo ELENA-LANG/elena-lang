@@ -32,6 +32,7 @@ mkdir -p ./$RELEASE/examples/console/datetime/
 mkdir -p ./$RELEASE/examples/files/textfile/
 mkdir -p ./$RELEASE/examples/files/textdb/
 mkdir -p ./$RELEASE/examples/console/goods/
+mkdir -p ./$RELEASE/examples/console/pi/
 mkdir -p ./$RELEASE/src30/asm/x32/
 mkdir -p ./$RELEASE/src30/system/
 mkdir -p ./$RELEASE/src30/system/text/
@@ -66,6 +67,7 @@ cp ../bin/elena-lc $RELEASE/bin/
 cp ../bin/elena-asm2binx $RELEASE/bin/
 cp ../bin/elena-og $RELEASE/bin/
 cp ../bin/elena-sg $RELEASE/bin/
+cp ../bin/libelenart.so $RELEASE/bin/
 cp ../bin/elc.config $RELEASE/bin/
 cp ../bin/templates/*.config $RELEASE/bin/templates/
 cp ../dat/og/rules.txt $RELEASE/dat/og/
@@ -131,6 +133,8 @@ cp ../examples/console/goods/*.l $RELEASE/examples/console/goods/
 cp ../examples/console/goods/*.project $RELEASE/examples/console/goods/
 cp ../examples/files/textdb/*.l $RELEASE/examples/files/textdb/
 cp ../examples/files/textdb/*.project $RELEASE/examples/files/textdb/
+cp ../examples/console/pi/*.l $RELEASE/examples/console/pi/
+cp ../examples/console/pi/*.project $RELEASE/examples/console/pi/
 
 echo copying rosetta examples files
 cp ../examples/rosetta/accumulator/*.l $RELEASE/examples/rosetta/accumulator/
