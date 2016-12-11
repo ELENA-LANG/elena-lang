@@ -624,11 +624,11 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
    }
 }
 
-//void ByteCodeWriter :: loadInternalReference(CommandTape& tape, ref_t reference)
-//{
-//   // acopyr reference
-//   tape.write(bcACopyR, reference | mskInternalRef);
-//}
+void ByteCodeWriter :: loadInternalReference(CommandTape& tape, ref_t reference)
+{
+   // acopyr reference
+   tape.write(bcACopyR, reference | mskInternalRef);
+}
 
 void ByteCodeWriter :: assignBaseTo(CommandTape& tape, LexicalType target, int offset)
 {
@@ -3685,22 +3685,23 @@ void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, 
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      /*if (arg == lxExtInteranlRef) {
+      if (current == lxExtInteranlRef) {
          // skip for symbol reference
+         current = current.nextNode();
       }
-      else {*/
-      if (test(current.type, lxObjectMask)) {
-         if (!isSimpleObject(current, true)) {
-            ExternalScope::ParamInfo param;
+      else {
+         if (test(current.type, lxObjectMask)) {
+            if (!isSimpleObject(current, true)) {
+               ExternalScope::ParamInfo param;
 
-            generateObjectExpression(tape, current);
-            pushObject(tape, lxResult);
-            param.offset = ++externalScope.frameSize;
+               generateObjectExpression(tape, current);
+               pushObject(tape, lxResult);
+               param.offset = ++externalScope.frameSize;
 
-            externalScope.operands.push(param);
+               externalScope.operands.push(param);
+            }
          }
       }
-      //}
       current = current.nextNode();
    }
 }
@@ -3713,38 +3714,40 @@ int ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node 
    Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
    SNode current = node.lastChild();
    while (current != lxNone) {
-   //   if (arg == lxExtInteranlRef) {
-   //      loadInternalReference(tape, arg.argument);
-   //      pushObject(tape, lxResult);
-   //      paramCount++;
-   //   }
-   //   else {
       SNode object = current;
       if (test(object.type, lxObjectMask)) {
          current = current.prevNode();
 
-         SNode value;
-         if (isSingleStatement(object))
-            value = object.findSubNode(lxConstantInt);
-
-         if (!isSimpleObject(object, true)) {
-            loadObject(tape, lxBlockLocal, (*out_it).offset);
-
-            out_it++;
-         }
-         else if (current != lxIntExtArgument || value==lxNone) {
-            generateObjectExpression(tape, object);
-         }
-
-         if (current == lxIntExtArgument) {
-            // optimization : use the numeric constant directly
-            if (value == lxConstantInt) {
-               declareVariable(tape, value.findChild(lxIntValue).argument);
-            }
-            else pushObject(tape, lxResultField);
-         }
-         else if (current == lxExtArgument) {
+         if (current == lxExtInteranlRef) {
+            // HOTFIX : ignore call operation
+            SNode ref = object.findChild(lxReference);
+            loadInternalReference(tape, ref.argument);
             pushObject(tape, lxResult);
+         }
+         else {
+            SNode value;
+            if (isSingleStatement(object))
+               value = object.findSubNode(lxConstantInt);
+
+            if (!isSimpleObject(object, true)) {
+               loadObject(tape, lxBlockLocal, (*out_it).offset);
+
+               out_it++;
+            }
+            else if (current != lxIntExtArgument || value == lxNone) {
+               generateObjectExpression(tape, object);
+            }
+
+            if (current == lxIntExtArgument) {
+               // optimization : use the numeric constant directly
+               if (value == lxConstantInt) {
+                  declareVariable(tape, value.findChild(lxIntValue).argument);
+               }
+               else pushObject(tape, lxResultField);
+            }
+            else if (current == lxExtArgument) {
+               pushObject(tape, lxResult);
+            }
          }
          paramCount++;
       }

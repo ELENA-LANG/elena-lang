@@ -1,6 +1,9 @@
 ------                                 
 In development:
 ------                              
+              xrev                 
+                 * reimplement threading
+
              idev - linux
                  * fixing editor
                  * enabling / disabling menu items
@@ -46,12 +49,14 @@ Pipeline:
                        #define method ::= "method" "(" name code ")";
 
               xrev                 
+                 * make possible to compile the file from command line without project
+                 * make possible to compile the file from command line without project and any parameter - using only
+                   default values e.g. elc collatz.l
                  * reimplement preloaded attribute (#267 : Module initializers (preloaded attribute))
 
                  * message $self does not belong to the object points to the target instead of message
                  * test manboy
 
-                 * reimplement threading
                  * reimplement net
                  * test net sample
 
@@ -155,7 +160,7 @@ Pipeline:
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
 
               xdev
-                * linux migration
+                * create closure outside the loop, so it will be created only once
 
               ydev
                  * upndown : playing a round

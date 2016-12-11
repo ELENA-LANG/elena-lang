@@ -159,7 +159,6 @@
     <ClInclude Include="..\..\engine\x86jitcompiler.h" />
     <ClInclude Include="..\..\engine\syntaxtree.h" />
     <ClInclude Include="..\compiler.h" />
-    <ClInclude Include="..\compilercommon.h" />
     <ClInclude Include="..\elc.h" />
     <ClInclude Include="..\image.h" />
     <ClInclude Include="..\project.h" />

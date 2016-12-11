@@ -52,6 +52,8 @@ io\files.l
 dynamic\reflection.l
 dynamic\groups.l
 dynamic\interpreters.l
+threading\win32_handlers.l
+threading\thread.l
 winforms\win32_types.l
 winforms\win32_exceptions.l
 winforms\win32_common.l

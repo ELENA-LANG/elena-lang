@@ -2101,9 +2101,10 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
          terminal.set(lxConstantSymbol, object.param);
          break;
       case okExternal:
+         break;
       case okInternal:
-         // HOTFIX : external / internal node will be declared later
-         return;
+         terminal.setArgument(object.param);
+         break;
    }
 }
 
@@ -3633,6 +3634,9 @@ void Compiler :: compileExternalArguments(SNode node, CodeScope& scope)
                   case V_MESSAGE:
                   case V_VERB:
                      current.set(_logic->isVariable(classInfo) ? lxExtArgument : lxIntExtArgument, 0);
+                     break;
+                  case V_SYMBOL:
+                     current.set(lxExtInteranlRef, 0);
                      break;
                   default:
                      if (test(classInfo.header.flags, elStructureRole)) {

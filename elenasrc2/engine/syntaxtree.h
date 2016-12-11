@@ -191,12 +191,13 @@ enum LexicalType
    lxEmbeddable      = 0x2001A,
    lxIntExtArgument  = 0x2001B,
    lxExtArgument     = 0x2001C,
-   lxConstAttr       = 0x2001D,
-   lxWarningMask     = 0x2001E,
-   lxTypecastAttr    = 0x2001F,
-   lxNotFoundAttr    = 0x20020,
-   lxBinarySelf      = 0x20021, // debug info only
-   lxOvreriddenMessage = 0x20022, // arg - message
+   lxExtInteranlRef  = 0x2001D,
+   lxConstAttr       = 0x2001E,
+   lxWarningMask     = 0x2001F,
+   lxTypecastAttr    = 0x20020,
+   lxNotFoundAttr    = 0x20021,
+   lxBinarySelf      = 0x20022, // debug info only
+   lxOvreriddenMessage = 0x20023, // arg - message
 
    lxFieldAttrMask   = 0x20100,
    lxStaticAttr      = 0x20102,

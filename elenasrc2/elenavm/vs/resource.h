@@ -27,5 +27,5 @@
 
 #define VER_PRODUCT_VERSION_STR     STRINGIZE(ENGINE_MAJOR_VERSION)        \
                                     "." STRINGIZE(ENGINE_MINOR_VERSION)    \
-                                    ".0"                                   \
+                                    ".1"                                   \
                                     ".0"                                   
