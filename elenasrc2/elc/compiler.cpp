@@ -3494,6 +3494,13 @@ void Compiler :: compileLoop(SNode node, CodeScope& scope)
    compileExpression(expr, scope, HINT_LOOP);
 
    // mark the inner expression as a loop
+   expr.refresh();
+   if (expr != lxBranching) {
+      // HOTFIX : calling node should not be overriden
+      while (expr != lxExpression) {
+         expr = expr.parentNode();
+      }
+   }
    expr.set(lxLooping, 0);
 }
 
