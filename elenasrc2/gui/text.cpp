@@ -686,7 +686,7 @@ void Text :: copyTo(TextBookmark bookmark, text_c* buffer, int length)
       if (copied > (size_t)length) {
          copied = length;
       }
-      _ELENA_::Convertor::copy(buffer, (*bookmark._page).text + bookmark._offset, copied, copied);
+      _ELENA_::StrHelper::move(buffer, (*bookmark._page).text + bookmark._offset, copied);
 
       if (!copied)
          break;
@@ -747,7 +747,7 @@ void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRo
             (*page).used = offset;
 
             Page newPage(size);
-            _ELENA_::Convertor::copy(newPage.text, (*page).text + offset, size, size);
+            _ELENA_::StrHelper::move(newPage.text, (*page).text + offset, size);
 
             _pages.insertAfter(page, newPage);
 
@@ -771,7 +771,7 @@ void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRo
          offset = bookmark._offset;
          continue;
       }
-      _ELENA_::Convertor::copy((*page).text + offset, s, size, size);
+      _ELENA_::StrHelper::move((*page).text + offset, s, size);
 
       (*page).used += size;
       if (checkRowCount) {
@@ -810,7 +810,7 @@ void Text :: erase(TextBookmark bookmark, size_t length, bool checkRowCount)
 
          if (offset + size < (*page).used) {
             size_t l = (*page).used - offset;
-            _ELENA_::Convertor::copy((*page).text + offset, (*page).text + offset + size, l, l);
+            _ELENA_::StrHelper::move((*page).text + offset, (*page).text + offset + size, l);
          }
          (*page).used -= size;
          length -= size;
