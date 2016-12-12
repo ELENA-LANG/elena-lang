@@ -2399,6 +2399,8 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
    // if message has generic argument list
    while (test(arg.type, lxObjectMask)) {
       paramCount++;
+      if (paramCount > 0x0F)
+         scope.raiseError(errNotApplicable, node);
 
       arg = arg.nextNode();
    }
@@ -2416,17 +2418,18 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
 
       arg = arg.nextNode();
 
+      // HOTFIX : if it was already compiled as open argument list
+      if (arg.type == lxIdle && scope.moduleScope->attributeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+         paramCount += OPEN_ARG_COUNT;
+
+         break;
+      }
       // skip an argument
-      if (test(arg.type, lxObjectMask)) {
+      else if (test(arg.type, lxObjectMask)) {
          // if it is an open argument list
          if (arg.nextNode() == lxNone && scope.moduleScope->attributeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
             paramCount += OPEN_ARG_COUNT;
 
-            //            ObjectInfo argListParam = scope.mapObject(arg.firstChild().Terminal());
-            //            // HOTFIX : set flag if the argument list has to be unboxed
-            //            if (arg.firstChild().nextNode() == nsNone && argListParam.kind == okParams) {
-            //               argsUnboxing = true;
-            //            }
             break;
          }
          else {
@@ -2788,7 +2791,9 @@ ObjectInfo Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
 
    // if message has named argument list
    while (arg == lxMessage) {
-      ref_t subjectRef = arg.argument;
+      SNode subject = arg.findChild(lxPrivate, lxIdentifier);
+      ref_t subjectRef = scope.mapSubject(subject);
+      arg.setArgument(subjectRef);
 
       arg = arg.nextNode();
 
@@ -2843,7 +2848,6 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, int mode)
 {
    //   bool argsUnboxing = false;
    size_t paramCount = 0;
-   ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
    ObjectInfo target = compileMessageParameters(node, scope);
 
    //   bool externalMode = false;
@@ -2851,8 +2855,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, int mode)
       return compileExternalCall(node, scope, mode);
    }
    else {
-      if (paramCount > 0x0F)
-         scope.raiseError(errNotApplicable, node);
+      ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
 
       if (target.kind == okInternal) {
          return compileInternalCall(node, scope, messageRef, target);
@@ -3019,9 +3022,6 @@ ObjectInfo Compiler :: compileExtensionMessage(SNode node, CodeScope& scope, Obj
    size_t paramCount = 0;
    ref_t  messageRef = mapMessage(node, scope, paramCount);
    compileMessageParameters(node, scope);
-
-   if (paramCount > 0x0F)
-      scope.raiseError(errNotApplicable, node);
 
    return compileMessage(node, scope, role, messageRef, HINT_EXTENSION_MODE);
 }
@@ -4093,8 +4093,6 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& scope
    // find where the target constructor is declared in the current class
    size_t count = 0;
    ref_t messageRef = mapMessage(expr, scope, count);
-   if (count > 0x0F)
-      scope.raiseError(errNotApplicable, node);
 
    ref_t classRef = classClassScope.reference;
    bool found = false;

@@ -2,7 +2,12 @@
 In development:
 ------                              
               xrev                 
-                 * reimplement threading
+                 * bug : system'external'WS2_32 socket &int:anAdressFamily &int:aType &int:aProtocol - strong type
+                   socket cannot be a custom verb - message should be ignored for external call
+
+                 * reimplement net
+                 * test net sample
+                 * test manboy
 
              idev - linux
                  * fixing editor
@@ -55,10 +60,6 @@ Pipeline:
                  * reimplement preloaded attribute (#267 : Module initializers (preloaded attribute))
 
                  * message $self does not belong to the object points to the target instead of message
-                 * test manboy
-
-                 * reimplement net
-                 * test net sample
 
                  * fixing dynamic array ineriting - constructor should call default dynamic constructor
                    instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
@@ -153,8 +154,6 @@ Pipeline:
                  * support arrayof:struct
                  * test array of char / array of enumerator ...
                  * remove core.config, no longer required
-                 * bug : system'external'WS2_32 socket &int:anAdressFamily &int:aType &int:aProtocol - strong type
-                   socket cannot be a custom verb - message should be ignored for external call
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
