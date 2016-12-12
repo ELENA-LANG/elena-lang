@@ -13,7 +13,7 @@ bin\asm2binx asm\x32\core_vm.asm bin\x32
 bin\asm2binx asm\x32\core_win.asm bin\x32
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
-rem bin\elc -csrc30\net\net.prj
+bin\elc -csrc30\net\net.prj
 bin\elc -csrc30\forms\forms.prj
 bin\elc -csrc30\sqlite\sqlite.prj
 bin\elc -cexamples\console\helloworld\u_helloworld.prj
@@ -40,5 +40,5 @@ bin\elc -cexamples\gui\c_a_g\c_area_gui.prj
 rem bin\elc -cexamples\gui\notepad\notepad.prj
 bin\elc -cexamples\db\sqlite\sqlite_test.prj
 bin\elc -cexamples\console\pi2\pi2.prj
-rem bin\elc -cexamples\net\chat\chatserver.prj
-rem bin\elc -cexamples\net\chat\chat.prj
+bin\elc -cexamples\net\chat\chatserver.prj
+bin\elc -cexamples\net\chat\chat.prj

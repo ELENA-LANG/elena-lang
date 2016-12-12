@@ -895,63 +895,63 @@
         ^ self Substring &int:anIndex &int:aLength.
     ]        
     
-//    #method trimLeft &char:aChar
-//    [
-//        #var(int)anIndex := 0.
-//        #var(int)aLength := self length.
-//        #var(char)aCurrent.
-//        #var(int)aCharLen := aChar length.
-//        
-//        #loop (anIndex < aLength) ?
-//        [
-//            self read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent == aChar)
-//                ! [ 
-//                    (anIndex == 0)
-//                        ? [ ^ self. ]
-//                        ! [^ self delete &int:0 &int:anIndex. ].
-//                ].
-//            
-//            anIndex += aCharLen.
-//        ].
-//        
-//        ^ emptyLiteralValue.
-//    ]
-//    
-//    #method trimLeft
-//        = self::literalOp trimLeft &char:#32.    
-//       
-//    #method(w2) trimRight &char:aChar
-//    [
-//        #var(int)aLength := self length.
-//        #var(int)anIndex := aLength - 1.
-//        #var(int)aPrevious := aLength.
-//        #var(char)aCurrent.
-//        #var(int)aCharLen := aChar length.
-//        
-//        #loop (anIndex >= 0) ?
-//        [
-//            self read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent equal &char:aChar)
-//                ! [ ^ self delete &int:aPrevious &int:(aLength - aPrevious). ].
-//            
-//            aPrevious := anIndex.
-//            anIndex -= aCharLen.
-//        ].
-//        
-//        ^ emptyLiteralValue.
-//    ]
-//    
-//    #method trimRight
-//        = self::literalOp trimRight &char:#32.
-//        
-//    #method trim &char:aChar
-//        = self::literalOp trimLeft &char:aChar trimRight &char:aChar.
-//    
-//    #method trim
-//        = self::literalOp trimLeft &char:#32 trimRight &char:#32.        
+    #method trimLeft &char:aChar
+    [
+        #var(int)anIndex := 0.
+        #var(int)aLength := self length.
+        #var(char)aCurrent.
+        #var(int)aCharLen := aChar length.
+        
+        #loop (anIndex < aLength) ?
+        [
+            self read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent == aChar)
+                ! [ 
+                    (anIndex == 0)
+                        ? [ ^ self. ]
+                        ! [^ self delete &int:0 &int:anIndex. ].
+                ].
+            
+            anIndex += aCharLen.
+        ].
+        
+        ^ emptyLiteralValue.
+    ]
+    
+    #method trimLeft
+        = self::literalOp trimLeft &char:#32.    
+       
+    #method(w2) trimRight &char:aChar
+    [
+        #var(int)aLength := self length.
+        #var(int)anIndex := aLength - 1.
+        #var(int)aPrevious := aLength.
+        #var(char)aCurrent.
+        #var(int)aCharLen := aChar length.
+        
+        #loop (anIndex >= 0) ?
+        [
+            self read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent equal &char:aChar)
+                ! [ ^ self delete &int:aPrevious &int:(aLength - aPrevious). ].
+            
+            aPrevious := anIndex.
+            anIndex -= aCharLen.
+        ].
+        
+        ^ emptyLiteralValue.
+    ]
+    
+    #method trimRight
+        = self::literalOp trimRight &char:#32.
+        
+    #method trim &char:aChar
+        = self::literalOp trimLeft &char:aChar trimRight &char:aChar.
+    
+    #method trim
+        = self::literalOp trimLeft &char:#32 trimRight &char:#32.        
     
     #method padLeft &char:aChar &int:aLength
     [
@@ -1082,59 +1082,59 @@
         ^ self Substring &int:anIndex &int:aLength.
     ]
      
-//    #method trimLeft &char:aChar
-//    [
-//        #var(int)anIndex := 0.
-//        #var(int)aLength := self length.
-//        #var(char)aCurrent.
-//        #var(int)aCharLen := aChar length.
-//        
-//        #loop (anIndex < aLength) ?
-//        [
-//            self read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent equal &char:aChar)
-//                ! [ ^ self delete &int:0 &int:anIndex. ].
-//            
-//            anIndex += aCharLen.
-//        ].
-//        
-//        ^ emptyWideLiteralValue.
-//    ]
-//    
-//    #method trimLeft
-//        = self::wideOp trimLeft &char:#32.
-//       
-//    #method trimRight &char:aChar
-//    [
-//        #var(int)aLength := self length.
-//        #var(char)aCurrent.
-//        #var(int)aCharLen := aChar length.
-//                
-//        #var(int)anIndex := aLength - 1.
-//        #var(int)aPrevious := aLength.
-//        #loop (anIndex >= 0) ?
-//        [
-//            self read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent equal &char:aChar)
-//                ! [ ^ self delete &int:aPrevious &int:(aLength - aPrevious). ].
-//            
-//            aPrevious := anIndex.
-//            anIndex -= aCharLen.
-//        ].
-//        
-//        ^ emptyWideLiteralValue.
-//    ]
-//    
-//    #method trimRight
-//        = self::wideOp trimRight &char:#32.
-//       
-//    #method trim &char:aChar
-//        = self::wideOp trimLeft &char:aChar trimRight &char:aChar.
-//    
-//    #method trim
-//        = self::wideOp trimLeft &char:#32 trimRight &char:#32.
+    #method trimLeft &char:aChar
+    [
+        #var(int)anIndex := 0.
+        #var(int)aLength := self length.
+        #var(char)aCurrent.
+        #var(int)aCharLen := aChar length.
+        
+        #loop (anIndex < aLength) ?
+        [
+            self read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent equal &char:aChar)
+                ! [ ^ self delete &int:0 &int:anIndex. ].
+            
+            anIndex += aCharLen.
+        ].
+        
+        ^ emptyWideLiteralValue.
+    ]
+    
+    #method trimLeft
+        = self::wideOp trimLeft &char:#32.
+       
+    #method trimRight &char:aChar
+    [
+        #var(int)aLength := self length.
+        #var(char)aCurrent.
+        #var(int)aCharLen := aChar length.
+                
+        #var(int)anIndex := aLength - 1.
+        #var(int)aPrevious := aLength.
+        #loop (anIndex >= 0) ?
+        [
+            self read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent equal &char:aChar)
+                ! [ ^ self delete &int:aPrevious &int:(aLength - aPrevious). ].
+            
+            aPrevious := anIndex.
+            anIndex -= aCharLen.
+        ].
+        
+        ^ emptyWideLiteralValue.
+    ]
+    
+    #method trimRight
+        = self::wideOp trimRight &char:#32.
+       
+    #method trim &char:aChar
+        = self::wideOp trimLeft &char:aChar trimRight &char:aChar.
+    
+    #method trim
+        = self::wideOp trimLeft &char:#32 trimRight &char:#32.
     
     #method padLeft &char:aChar &int:aLength
     [

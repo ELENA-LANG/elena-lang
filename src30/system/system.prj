@@ -8,7 +8,7 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA Standard Library
-version=3.0.3
+version=3.1.1
 author=Alex Rakov
 
 [files]
@@ -49,6 +49,7 @@ io\streamwriter.l
 io\win32_console.l
 io\win32_files.l
 io\files.l
+io\memorystream.l
 dynamic\reflection.l
 dynamic\groups.l
 dynamic\interpreters.l

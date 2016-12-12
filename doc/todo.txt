@@ -1,39 +1,6 @@
 ------                                 
 In development:
 ------                              
-              xrev                 
-                 * reimplement net
-                 * test net sample
-                 * test manboy
-
-             idev - linux
-                 * support mouse wheel
-                 * enabling / disabling menu items
-                 * status bar
-                 * message list
-                 * tuning styles
-                 * watch
-                 * call stack
-                 * recent files / recent projects
-                 * toolbars
-                 * load / save config
-                 * load last opened project / file
-                 * blicking caret
-                 * face lifting / tuning
-                 * proting IDE
-                 * proting debugger
-
-              adev - linux
-                 * migrate LIB30
-
-------                                 
-Pipeline:
-------                                                                                         
-
-              xdev 
-                 * dynamic class : split functionality between struct and class, struct contains only fields, class contains only
-                   methods 
-
               zdev 
                  * script : elena - simple class,one method
                  * script : elena - simple class,one method, several statements
@@ -44,18 +11,50 @@ Pipeline:
                  * script : elena - simple class,constructor
                  * script : elena - simple program, (e.g. 10-20 lines)
 
+                 * calc sample
+                 * bf interpreter
                  * scripting library : vb interpreter
                  * scripting library : elena script (both run-time / compile-time)
-                 * bf interpreter
                  * gui script
                  * state machine script (calc)
                  * reg ex
+
+             idev - linux
+                 * checking / unchecking menu items
+                 * status bar
+                 * message list
+                 * tuning styles
+                 * watch
+                 * call stack
+                 * recent files / recent projects
+                 * toolbars, enabling / disabling toolbar options
+                 * load / save config
+                 * load last opened project / file
+                 * blicking caret
+                 * face lifting / tuning
+                 * proting IDE
+                 * proting debugger
+
+              xdev 
+                 * dynamic class : split functionality between struct and class, struct contains only fields, class contains only
+                   methods 
+
+              adev - linux
+                 * migrate LIB30
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define method ::= "method" "(" name code ")";
 
+------                                 
+Pipeline:
+------                                                                                         
+
               xrev                 
+                 * reimplement net
+                 * test net sample
+                 * test manboy
+
                  * make possible to compile the file from command line without project
                  * make possible to compile the file from command line without project and any parameter - using only
                    default values e.g. elc collatz.l

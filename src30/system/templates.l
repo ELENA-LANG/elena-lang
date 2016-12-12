@@ -1,17 +1,17 @@
-//#ftemplate prop : prop_name
-//{
-//    #method set &prop_name : value
-//    [
-//        target := value.
-//    ]
-//    
-//    #method prop_name = target.
-//}
-//
-//#ftemplate outprop : prop_name
-//{
-//    #method prop_name = target.
-//}
+#template prop : prop_name
+{
+    #method set &prop_name : value
+    [
+        target := value.
+    ]
+    
+    #method prop_name = target.
+}
+
+#template outprop : prop_name
+{
+    #method prop_name = target.
+}
 
 // --- outnprop ---
 
