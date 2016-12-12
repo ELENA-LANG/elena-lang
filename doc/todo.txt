@@ -2,9 +2,6 @@
 In development:
 ------                              
               xrev                 
-                 * bug : system'external'WS2_32 socket &int:anAdressFamily &int:aType &int:aProtocol - strong type
-                   socket cannot be a custom verb - message should be ignored for external call
-
                  * reimplement net
                  * test net sample
                  * test manboy

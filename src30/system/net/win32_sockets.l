@@ -236,7 +236,7 @@
 
     #method accept  
     [
-        #var(netsocket)aSocket := system'external'WS2_32 accept
+        #var(socket)aSocket := system'external'WS2_32 accept
             &int:theHandle
             &int:0
             &int:0.
