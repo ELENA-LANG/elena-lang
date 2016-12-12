@@ -387,6 +387,115 @@ void GTKIDEWindow :: populateMenu()
    loadUI(ui_info, "/MenuBar");
 }
 
+Glib::RefPtr<Gtk::Action> GTKIDEWindow :: getMenuItem(int id)
+{
+   switch(id) {
+      case IDM_FILE_CLOSE:
+         return _refUIManager->get_action("/ui/MenuBar/FileMenu/FileClose");
+      case IDM_FILE_CLOSEALL:
+         return _refUIManager->get_action("/ui/MenuBar/FileMenu/FileCloseAll");
+      case IDM_FILE_CLOSEALLBUT:
+         return _refUIManager->get_action("/ui/MenuBar/FileMenu/FileCloseAllButActive");
+      case IDM_PROJECT_CLOSE:
+         return _refUIManager->get_action("/ui/MenuBar/FileMenu/ProjectClose");
+      case IDM_FILE_SAVEPROJECT:
+         return _refUIManager->get_action("/ui/MenuBar/FileMenu/FileProjectAs");
+      case IDM_FILE_SAVE:
+         return _refUIManager->get_action("/ui/MenuBar/FileMenu/FileSave");
+      case IDM_FILE_SAVEAS:
+         return _refUIManager->get_action("/ui/MenuBar/FileMenu/FileSaveAs");
+      case IDM_FILE_SAVEALL:
+         return _refUIManager->get_action("/ui/MenuBar/FileMenu/FileSaveAll");
+      case IDM_EDIT_UNDO:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditUndo");
+      case IDM_EDIT_REDO:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditRedo");
+      case IDM_EDIT_COPY:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditCopy");
+      case IDM_EDIT_PASTE:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditPaste");
+      case IDM_EDIT_CUT:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditCut");
+      case IDM_EDIT_DELETE:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditDelete");
+      case IDM_EDIT_SELECTALL:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditSelectAll");
+      case IDM_EDIT_TRIM:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditTrim");
+      case IDM_EDIT_ERASELINE:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditEraseLine");
+//      case IDM_EDIT_DUPLICATE:
+//         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditTrim");
+      case IDM_EDIT_COMMENT:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditComment");
+      case IDM_EDIT_UNCOMMENT:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditUncomment");
+      case IDM_EDIT_UPPERCASE:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditUpper");
+      case IDM_EDIT_LOWERCASE:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditLower");
+      case IDM_EDIT_INDENT:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditInsertTab");
+      case IDM_EDIT_OUTDENT:
+         return _refUIManager->get_action("/ui/MenuBar/EditMenu/EditRemoveTab");
+      case IDM_SEARCH_FIND:
+         return _refUIManager->get_action("/ui/MenuBar/SearchMenu/Search");
+      case IDM_SEARCH_FINDNEXT:
+         return _refUIManager->get_action("/ui/MenuBar/SearchMenu/SearchNext");
+      case IDM_SEARCH_REPLACE:
+         return _refUIManager->get_action("/ui/MenuBar/SearchMenu/Replace");
+      case IDM_SEARCH_GOTOLINE:
+         return _refUIManager->get_action("/ui/MenuBar/SearchMenu/GoToLine");
+      case IDM_VIEW_OUTPUT:
+         return _refUIManager->get_action("/ui/MenuBar/ViewMenu/ProjectOutput");
+      case IDM_VIEW_WATCH:
+         return _refUIManager->get_action("/ui/MenuBar/ViewMenu/ProjectWatch");
+      case IDM_VIEW_CALLSTACK:
+         return _refUIManager->get_action("/ui/MenuBar/ViewMenu/ProjectCallstack");
+      case IDM_VIEW_MESSAGES:
+         return _refUIManager->get_action("/ui/MenuBar/ViewMenu/ProjectMessages");
+      case IDM_VIEW_PROJECTVIEW:
+         return _refUIManager->get_action("/ui/MenuBar/ViewMenu/ProjectView");
+      case IDM_VIEW_VMCONSOLE:
+         return _refUIManager->get_action("/ui/MenuBar/ViewMenu/ProjectConsole");
+
+      case IDM_PROJECT_COMPILE:
+         return _refUIManager->get_action("/ui/MenuBar/ProjectMenu/ProjectCompile");
+      case IDM_PROJECT_OPTION:
+         return _refUIManager->get_action("/ui/MenuBar/ProjectMenu/ProjectOptions");
+      case IDM_PROJECT_FORWARDS:
+         return _refUIManager->get_action("/ui/MenuBar/ProjectMenu/ProjectForwards");
+      case IDM_DEBUG_RUN:
+         return _refUIManager->get_action("/ui/MenuBar/DebugMenu/DebugRun");
+      case IDM_DEBUG_RUNTO:
+         return _refUIManager->get_action("/ui/MenuBar/DebugMenu/DebugGoto");
+      case IDM_DEBUG_STEPOVER:
+         return _refUIManager->get_action("/ui/MenuBar/DebugMenu/DebugStepover");
+      case IDM_DEBUG_STEPINTO:
+         return _refUIManager->get_action("/ui/MenuBar/DebugMenu/DebugStepin");
+      case IDM_DEBUG_STOP:
+         return _refUIManager->get_action("/ui/MenuBar/DebugMenu/DebugStop");
+//      case IDM_DEBUG_INSPECT:
+//         return _refUIManager->get_action("/ui/MenuBar/DebugMenu/ProjectConsole");
+//      case IDM_DEBUG_SWITCHHEXVIEW:
+//         return _refUIManager->get_action("/ui/MenuBar/DebugMenu/ProjectConsole");
+      case IDM_DEBUG_BREAKPOINT:
+         return _refUIManager->get_action("/ui/MenuBar/DebugMenu/DebugToggle");
+      case IDM_DEBUG_CLEARBREAKPOINT:
+         return _refUIManager->get_action("/ui/MenuBar/DebugMenu/DebugClearBreakpoints");
+      case IDM_DEBUG_GOTOSOURCE:
+         return _refUIManager->get_action("/ui/MenuBar/DebugMenu/DebugGotoSource");
+      case IDM_PROJECT_INCLUDE:
+         return _refUIManager->get_action("/ui/MenuBar/ProjectMenu/ProjectInclude");
+      case IDM_PROJECT_EXCLUDE:
+         return _refUIManager->get_action("/ui/MenuBar/ProjectMenu/ProjectExclude");
+      case IDM_PROJECT_CLEAN:
+         return _refUIManager->get_action("/ui/MenuBar/ProjectMenu/ProjectCleanup");
+      default:
+         return Glib::RefPtr<Gtk::Action>();
+   }
+}
+
 void GTKIDEWindow :: populateToolbar()
 {
    //Create the toolbar and add it to a container widget:
@@ -503,6 +612,8 @@ bool GTKIDEWindow :: compileProject(_ProjectManager* manager, int postponedActio
 
    _outputThread = Glib::Threads::Thread::create(
       sigc::bind(sigc::mem_fun(_outputProcess, &OutputProcess::compile), this));
+
+   return true; //!! temporal
 }
 
 void GTKIDEWindow :: on_notification_from_output()

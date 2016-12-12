@@ -112,33 +112,6 @@ void TextView :: on_hscroll()
    _area.onHScroll(_hadjustment->get_value());
 }
 
-////void TextView :: _size_request(GtkWidget* widget, GtkRequisition* requisition)
-////{
-////   requisition->width = widget->allocation.width;
-////   requisition->height = widget->allocation.height;
-////}
-////
-////gint TextView :: _key_press_event(GtkWidget* widget, GdkEventKey* event)
-////{
-////   TextViewWidget* text_view = TEXT_VIEW(widget);
-////
-////   text_view->view->_resetBlinkTime();
-////   text_view->view->_pendBlink(true);
-////
-////   if (text_view->view->onKeyPressed(event)) {
-////      return TRUE;
-////   }
-////
-////   return GTK_WIDGET_CLASS(text_view_parent_class)->key_press_event (widget, event);
-////}
-////
-////gint TextView :: _key_release_event(GtkWidget* widget, GdkEventKey* event)
-////{
-////   TextViewWidget* text_view = TEXT_VIEW(widget);
-////
-////   return GTK_WIDGET_CLASS(text_view_parent_class)->key_release_event(widget, event);
-////}
-////
 ////gint TextView :: _motion_event(GtkWidget* widget, GdkEventMotion* event)
 ////{
 ////   TextViewWidget* text_view = TEXT_VIEW(widget);
@@ -168,13 +141,6 @@ void TextView :: on_hscroll()
 ////   text_view->view->_resetBlink(false);
 ////
 ////   return FALSE;
-////}
-////
-////void TextView :: _move_cursor(_TextViewWidget* widget, int keyAction, int isSelected)
-////{
-////   TextView* view = widget->view;
-////
-////   view->onKeyDown((TextView::_KeyAction)keyAction, (isSelected == -1));
 ////}
 
 // --- TextView::TextDrawingArea ---
@@ -373,6 +339,20 @@ bool TextView::TextDrawingArea :: on_button_release_event (GdkEventButton* event
    return true;
 }
 
+bool TextView::TextDrawingArea :: on_scroll_event(GdkEventScroll* scroll_event)
+{
+   if (_document) {
+      int offset = (scroll_event->direction == GDK_SCROLL_UP) ? -1 : 1;
+
+      if (_ELENA_::test(scroll_event->state, GDK_CONTROL_MASK)) {
+         offset *= _document->getSize().y;
+      }
+      _document->vscroll(offset);
+
+      onEditorChange();
+   }
+}
+
 void TextView::TextDrawingArea :: onResize(int x, int y, int width, int height)
 {
    resizeDocument(width, height);
@@ -546,6 +526,7 @@ void TextView::TextDrawingArea :: on_realize()
       attributes.event_mask = get_events () | Gdk::EXPOSURE_MASK
          | Gdk::BUTTON_PRESS_MASK
          | Gdk::BUTTON_RELEASE_MASK
+         | Gdk::SCROLL_MASK
          | Gdk::KEY_PRESS_MASK
          | Gdk::POINTER_MOTION_MASK;
       attributes.window_type = GDK_WINDOW_CHILD;

@@ -61,26 +61,6 @@ public:
 class TextView : public Gtk::Table
 {
 protected:
-//public:
-////   //// widget functions
-////   //static gboolean _expose(GtkWidget* textview, GdkEventExpose* event);
-////   //static void _dispose(GObject* object);
-////   ////static void text_view_grab_notify(GtkWidget* widget, gboolean was_grabbed);
-////   //static void _size_request(GtkWidget* widget, GtkRequisition* requisition);
-////   ////static gint text_view_event(GtkWidget* widget, GdkEvent* event);
-////   //static gint _key_release_event(GtkWidget* widget, GdkEventKey* event);
-////   //static gint _button_press_event(GtkWidget* widget, GdkEventButton* event);
-////   //static gint _button_release_event(GtkWidget* widget, GdkEventButton* event);
-////   //static gint _focus_in_event(GtkWidget* widget, GdkEventFocus* event);
-////   //static gint _focus_out_event(GtkWidget* widget, GdkEventFocus* event);
-////   //static gint _motion_event(GtkWidget* widget, GdkEventMotion* event);
-////   ////static gboolean text_view_focus(GtkWidget* widget, GtkDirectionType direction);
-////
-////   //static void _move_cursor(_TextViewWidget *text_view, int keyAction, int isSelected);
-////
-////   //virtual GtkWidget* getHandle() const { return _scrollerWindow; } // scroller window should be considered as a control handle
-////   //GtkWidget* getWidgetHandle() const { return _handle; }
-////
 ////   //void _resetImContext();
 ////
 ////   //int _getBlinkTime() const { return _blinkTime; }
@@ -95,22 +75,6 @@ protected:
 ////   //void _setBlinkTimeout(int timeout);
 ////
 ////   //bool isCaretVisible() const { return _caretVisible; }
-////
-////   //void _resetBlink(bool hasFocus);
-////   //void _pendBlink(bool hasFocus);
-////   //void showCaret();
-////   //void hideCaret();
-////   //virtual void onKeyDown(_KeyAction key, bool selection);
-////   //int _onMouseMove(Point point);
-////
-//   // object methods
-//
-////   //virtual void refreshView()
-////   //{
-////   //   onEditorChange();
-////   //}
-////
-////   //void applySettings(int tabSize, bool tabUsing, bool lineNumberVisible, bool highlight);
 
    class TextDrawingArea : public Gtk::DrawingArea
    {
@@ -141,6 +105,7 @@ protected:
       virtual bool on_key_press_event(GdkEventKey* event);
       virtual bool on_button_press_event(GdkEventButton* event);
       virtual bool on_button_release_event (GdkEventButton* event);
+      virtual bool on_scroll_event (GdkEventScroll* scroll_event);
 
       void onResize(int x, int y, int width, int height);
 

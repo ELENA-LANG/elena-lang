@@ -408,6 +408,8 @@ protected:
    void populateMenu();
    void populateToolbar();
 
+   Glib::RefPtr<Gtk::Action> getMenuItem(int id);
+
 public:
    void refreshDocument();
 
@@ -721,6 +723,10 @@ public:
 
    virtual void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable)
    {
+      Glib::RefPtr<Gtk::Action> menuItem = getMenuItem(id);
+      if (menuItem)
+         menuItem->set_sensitive(doEnable);
+
 //      appWindow.getMenu()->enableItemById(id, doEnable);
 //      if (toolBarItemAvailable)
 //         appWindow.getToolBar()->enableItemById(id, doEnable);
