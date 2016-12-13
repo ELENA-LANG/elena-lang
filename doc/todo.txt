@@ -2,6 +2,10 @@
 In development:
 ------                              
               zdev 
+                 * vm console : try operations with the current project
+                 * calc sample
+                 * bf interpreter
+
                  * script : elena - simple class,one method
                  * script : elena - simple class,one method, several statements
                  * script : elena - simple class,one method, parameters
@@ -11,8 +15,6 @@ In development:
                  * script : elena - simple class,constructor
                  * script : elena - simple program, (e.g. 10-20 lines)
 
-                 * calc sample
-                 * bf interpreter
                  * scripting library : vb interpreter
                  * scripting library : elena script (both run-time / compile-time)
                  * gui script
@@ -67,7 +69,6 @@ Pipeline:
 
                  * test script samples
                  * debugger : #var(int)n := 0. n := n + 1. Debugger skips the second statement
-                 * test elt (system'console write:"Hello" write:" World")
                  * tape_test
                  * test template in template (with parameters)
                  * test calc sample

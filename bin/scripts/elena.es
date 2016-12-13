@@ -4,13 +4,14 @@
    #define start      ::= statement;
    #define start      ::= $eof;
    #define statement  ::= expression next_expr;
-   #define expression ::= <= ( => object operation <= ) =>;   
+   #define expression ::= <= ( => object operations <= ) =>;   
    #define object     ::= <= $reference =>;
    #define object     ::= <= $literal =>;
    #define object     ::= <= $numeric =>;
    #define object     ::= "(" expression ")" ;
+   #define operations ::= operation operations;
+   #define operations ::= $eps;
    #define operation  ::= message parameters <= ^ = =>;
-   #define operation  ::= $eps;
    #define message    ::= <= + $identifier =>;
    #define parameters ::= parameter;
    #define parameters ::= $eps; 

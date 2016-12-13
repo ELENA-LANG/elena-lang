@@ -10,6 +10,9 @@
 [ELC]
 [-]  #277 : loop statement without branching operator
 
+[IDE]
+[+] #58 : it is possible to interact with the symbols from the current project
+
 ******************************************************************************
                              What's New in 2.1.0
 ******************************************************************************

@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  5
+#define ELENAVM_REVISION  6
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2016 by Alex Rakov"
@@ -211,8 +211,8 @@ protected:
 
    bool initLoader(InstanceConfig& config);
 
-   void setPackagePath(ident_t package, path_t path);
-   void setPackagePath(ident_t line);
+   void addPackagePath(ident_t package, ident_t path);
+   void addPackagePath(ident_t line);
 
    bool loadTemplate(ident_t name);
 
@@ -334,7 +334,7 @@ public:
 
    virtual void* getSymbolRef(ident_t referenceName)
    {
-      return loadSymbol(referenceName, mskSymbolRef);
+      return loadSymbol(referenceName, mskSymbolRef, true);
    }
 
    virtual ref_t getSubjectRef(ident_t subjectName)
@@ -361,7 +361,7 @@ public:
 
    virtual bool initSymbolReference(void* object, ident_t referenceName)
    {
-      void* symbolAddress = loadSymbol(referenceName, mskSymbolRef);
+      void* symbolAddress = loadSymbol(referenceName, mskSymbolRef, true);
       if (symbolAddress != LOADER_NOTLOADED) {
          *(int*)object = (int)symbolAddress;
 
@@ -376,7 +376,7 @@ public:
 
 //   bool init();
 
-   void* loadSymbol(ident_t reference, int mask);
+   void* loadSymbol(ident_t reference, int mask, bool silentMode = false);
    //size_t loadMessage(ident_t reference);
 
    int interprete(void* tape, ident_t interpreter);

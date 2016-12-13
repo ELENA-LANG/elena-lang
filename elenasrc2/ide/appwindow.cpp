@@ -1324,7 +1324,7 @@ void IDEController :: doShowVMConsole(bool checked, bool forced)
       _view->checkMenuItemById(IDM_VIEW_VMCONSOLE, _model->vmConsole);
 
       if (checked) {
-         _view->openVMConsole();
+         _view->openVMConsole(&_project);
       }
       else _view->closeVMConsole();
 

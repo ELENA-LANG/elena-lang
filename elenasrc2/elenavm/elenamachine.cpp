@@ -374,7 +374,7 @@ void Instance::addForward(ident_t line)
    }
 }
 
-void* Instance::loadSymbol(ident_t reference, int mask)
+void* Instance :: loadSymbol(ident_t reference, int mask, bool silentMode)
 {
    // reference should not be a forward one
    while (isWeakReference(reference)) {
@@ -385,7 +385,7 @@ void* Instance::loadSymbol(ident_t reference, int mask)
       }
       else reference = resolved;
    }
-   return _linker->resolve(reference, mask, true);
+   return _linker->resolve(reference, mask, silentMode);
 }
 
 bool Instance :: initLoader(InstanceConfig& config)
@@ -652,25 +652,21 @@ bool Instance::loadTemplate(ident_t name)
    return initLoader(_config);
 }
 
-void Instance::setPackagePath(ident_t package, path_t path)
+void Instance :: addPackagePath(ident_t package, ident_t path)
 {
-   _loader.setNamespace(package, path);
+   _loader.addPackage(package, path);
 }
 
-void Instance::setPackagePath(ident_t line)
+void Instance :: addPackagePath(ident_t line)
 {
    size_t sep = line.find('=', -1);
    if(sep != -1) {
-      Path path(line + sep + 1);
+      IdentifierString path(line + sep + 1);
       IdentifierString package(line, sep);
 
-      setPackagePath(package, path.c_str());
+      addPackagePath(package, path);
    }
-   else {
-      Path path(line);
-
-      setPackagePath(NULL, path.c_str());
-   }
+   else addPackagePath(NULL, line);
 }
 
 void Instance :: configurate(MemoryReader& reader, int terminator)
@@ -689,7 +685,7 @@ void Instance :: configurate(MemoryReader& reader, int terminator)
 
       switch (command) {
          case USE_VM_MESSAGE_ID:
-            setPackagePath(arg);
+            addPackagePath(arg);
             break;
          case MAP_VM_MESSAGE_ID:
             addForward(arg);

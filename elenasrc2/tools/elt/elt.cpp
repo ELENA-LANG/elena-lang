@@ -14,7 +14,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   3
+#define ELT_BUILD_NUMBER   4
  
 // global variables
 int   _encoding = feAnsi;
@@ -120,6 +120,17 @@ bool executeCommand(const char* line)
    return executeCommand(line, dummy);
 }
 
+void executeCommandLine(const char* line)
+{
+   IdentifierString command(line);
+   for(int i = 0; i < getlength(command) ; i++) {
+      if (command[i] == '^')
+         command[i] = '\"';
+   }
+
+   executeScript(command);
+}
+
 void runSession()
 {
    char          buffer[MAX_LINE];
@@ -170,6 +181,7 @@ int main(int argc, char* argv[])
 
             executeCommand(argv[i]);
          }
+         else executeCommandLine(argv[i]);
       }
    }
 

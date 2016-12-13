@@ -1295,14 +1295,20 @@ void IDEWindow :: closeOutput()
    closeTab(CTRL_OUTPUT);
 }
 
-void IDEWindow :: openVMConsole()
+void IDEWindow :: openVMConsole(_ProjectManager* project)
 {
    _ELENA_::Path appPath(_model->paths.appPath);
    appPath.combine(_T("elt.exe"));
 
    _ELENA_::Path curDir(_model->paths.appPath);
 
-   _ELENA_::Path cmdLine(_T("elt.exe"));
+   _ELENA_::Path cmdLine(_T("elt.exe \"[[ #use ^"));
+   
+   cmdLine.append(project->getPackage());
+   cmdLine.append(_T("="));
+   cmdLine.append(_model->project.path.c_str());
+
+   cmdLine.append(_T("^; ]]\""));
 
    if (((VMConsoleInteractive*)_controls[CTRL_VMCONSOLE])->start(appPath, cmdLine, curDir)) {
       openTab(VMCONSOLE_TAB, CTRL_VMCONSOLE);

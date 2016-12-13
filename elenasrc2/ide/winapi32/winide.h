@@ -240,7 +240,7 @@ public:
    virtual void switchToOutput();
    virtual void closeOutput();
 
-   virtual void openVMConsole();
+   virtual void openVMConsole(_ProjectManager* project);
 //   void switchToVMConsole();
    virtual void closeVMConsole();
 

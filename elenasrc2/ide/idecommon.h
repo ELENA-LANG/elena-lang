@@ -604,7 +604,7 @@ public:
    virtual void closeOutput() = 0;
    virtual void switchToOutput() = 0;
 
-   virtual void openVMConsole() = 0;
+   virtual void openVMConsole(_ProjectManager* project) = 0;
    virtual void closeVMConsole() = 0;
 
    virtual void openMessageList() = 0;

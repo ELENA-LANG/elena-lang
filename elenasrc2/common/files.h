@@ -197,6 +197,13 @@ public:
       changeExtension(ext.c_str());
    }
 
+   void append(const char* s)
+   {
+      Path temp(s);
+
+      append(temp.c_str());
+   }
+
    void append(wide_t s)
    {
       _path.append(s);
