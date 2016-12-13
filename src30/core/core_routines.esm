@@ -3975,6 +3975,15 @@ labDefault:
 
 end
 
+procedure __tape.eval&jump&args$[13]
+
+  aloadsi 1
+  nload
+  dsavefi -2
+  quitn 1
+
+end
+
 procedure __struct.dispatch[1]
 
   bsredirect

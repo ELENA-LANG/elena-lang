@@ -2,9 +2,12 @@
 In development:
 ------                              
               zdev 
-                 * vm console : try operations with the current project
-                 * calc sample
+                 * Tape implementation #62
+                 * Open argument list : assigning #61
+
                  * bf interpreter
+                 * bf tape : implement
+                 * calc sample
 
                  * script : elena - simple class,one method
                  * script : elena - simple class,one method, several statements
@@ -22,7 +25,6 @@ In development:
                  * reg ex
 
              idev - linux
-                 * checking / unchecking menu items
                  * status bar
                  * message list
                  * tuning styles
@@ -157,6 +159,7 @@ Pipeline:
                  * test array of char / array of enumerator ...
                  * remove core.config, no longer required
                  * invalid boxing for : WSADATA init &byte:2 &byte:2 
+                 * optimization #249
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
@@ -173,7 +176,6 @@ Pipeline:
 
               zdev 
                  * bf traditional : implement
-                 * bf tape : implement
                  * live programming
                  * eldoc
 
@@ -347,7 +349,6 @@ Pipeline:
                        * review try-catch statement, make sure the closure is created only in case of the error
                        * breaking int loop method (both #loop and pattern code), exiting closure (different behaviour between
                          explicit and pseudo closures (? operator))
-                       * #62 : Tape implementation
 
                        * elc refactoring : replace "SyntaxTree::findChild(child,..."  with "child.findChild(..."
                        * system_test should be transformed into automatic test

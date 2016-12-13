@@ -41,6 +41,13 @@
        
         ^ params@n.
     ]
+    
+    //#method forward &args:params
+    
+    //#method backward &args:params
+    
+    #method jump &args:params
+        => system'core_routines'__tape.
 }
 
 // --- Struct ---
