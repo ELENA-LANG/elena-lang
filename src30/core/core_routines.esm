@@ -3980,7 +3980,8 @@ procedure __tape.eval&jump&args$[13]
   aloadsi 1
   nload
   dsavefi -2
-  quitn 1
+  aloadsi 2
+  quitn 2
 
 end
 
