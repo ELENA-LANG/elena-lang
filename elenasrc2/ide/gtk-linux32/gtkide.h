@@ -129,6 +129,8 @@ class GTKIDEWindow : public SDIWindow, public _View, public _DebugListener
 protected:
    Clipboard      _clipboard;
 
+   bool _skip; // HOTFIX : to prevent infinite checkmenuitem call
+
    // event signals
    void on_menu_file_new_source()
    {
@@ -282,7 +284,10 @@ protected:
    }
    void on_menu_project_output()
    {
-
+      if (!_skip) {
+         _controller->doShowCompilerOutput(!_model->compilerOutput);
+      }
+      else _skip = false;
    }
    void on_menu_project_messages()
    {
@@ -671,26 +676,6 @@ public:
       }
    }
 
-//   virtual int newDocument(text_t name, Document* doc)
-//   {
-//      return appWindow.newDocument(name, doc);
-//   }
-//
-//   virtual int getCurrentDocumentIndex()
-//   {
-//      return appWindow.getCurrentDocumentIndex();
-//   }
-//
-//   virtual void selectDocument(int docIndex)
-//   {
-//      appWindow.selectDocument(docIndex);
-//   }
-//
-//   virtual void closeDocument(int index)
-//   {
-//      appWindow.closeDocument(index);
-//   }
-
    virtual void renameDocument(int index, text_t name)
    {
      // appWindow.renameDocument(index, name);
@@ -734,7 +719,15 @@ public:
 
    virtual void checkMenuItemById(int id, bool doEnable)
    {
-      //appWindow.getMenu()->checkItemById(id, doEnable);
+      Glib::RefPtr<Gtk::Action> menuItem = getMenuItem(id);
+
+      Glib::RefPtr<Gtk::ToggleAction> toggleItem =
+         Glib::RefPtr<Gtk::ToggleAction>::cast_static(menuItem);
+
+      if (toggleItem->get_active() != doEnable) {
+         _skip = true;
+         toggleItem->set_active(doEnable);
+      }
    }
 
    virtual void markDocumentTitle(int docIndex, bool changed)
@@ -869,12 +862,13 @@ public:
 
    virtual void openOutput()
    {
-      //appWindow.openOutput();
+      _bottomTab.append_page(_outputScroller, "Output");
+      _bottomTab.show_all_children();
    }
 
    virtual void closeOutput()
    {
-      //appWindow.closeOutput();
+      _bottomTab.remove_page(_outputScroller);
    }
 
    virtual void openMessageList()
@@ -922,7 +916,7 @@ public:
       //appWindow.clearMessageList();
    }
 
-   virtual void openVMConsole()
+   virtual void openVMConsole(_ProjectManager* project)
    {
 
    }

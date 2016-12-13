@@ -345,7 +345,7 @@ void GTKIDEWindow :: populateMenu()
    _refActionGroup->add( Gtk::Action::create("EditUncomment", "Block uncomment"), Gtk::AccelKey("<control><shift>K"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_uncomment));
 
    _refActionGroup->add( Gtk::Action::create("ProjectView", "Project View"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view));
-   _refActionGroup->add( Gtk::Action::create("ProjectOutput", "Compiler output"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
+   _refActionGroup->add( Gtk::ToggleAction::create("ProjectOutput", "Compiler output"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
    _refActionGroup->add( Gtk::Action::create("ProjectMessages", "Messages"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages));
    _refActionGroup->add( Gtk::Action::create("ProjectWatch", "Debug Watch"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_watch));
    _refActionGroup->add( Gtk::Action::create("ProjectCallstack", "Call stack"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_callstack));
@@ -658,6 +658,7 @@ GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model
 {
    _controller = controller;
    _model = model;
+   _skip = false;
 
    populateMenu();
    populateToolbar();
@@ -677,7 +678,7 @@ GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model
               &GTKIDEWindow::on_projectview_row_activated));
 
    _outputScroller.add(_output);
-   _bottomTab.append_page(_outputScroller, "Output");
+   //_bottomTab.append_page(_outputScroller, "Output");
 
    populate(&_mainFrame, &_projectView, &_bottomTab, &_statusbar);
 
