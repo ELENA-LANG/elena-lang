@@ -373,12 +373,12 @@ copy %1\examples\console\helloworld\*.l examples\console\helloworld
 copy %1\examples\console\helloworld\*.prj examples\console\helloworld
 rem copy %1\examples\helloworld\*.es examples\helloworld
 
-rem md examples\interpreter
-rem copy %1\examples\interpreter\*.l examples\interpreter
-rem copy %1\examples\interpreter\*.prj examples\interpreter
-rem copy %1\examples\interpreter\*.txt examples\interpreter
+md examples\interpreter
+copy %1\examples\interpreter\*.l examples\interpreter
+copy %1\examples\interpreter\*.prj examples\interpreter
+copy %1\examples\interpreter\*.txt examples\interpreter
 rem copy %1\examples\interpreter\*.bat examples\interpreter
-rem copy %1\examples\interpreter\*.es examples\interpreter
+copy %1\examples\interpreter\*.es examples\interpreter
 
 md examples\console\matrix 
 copy %1\examples\console\matrix\*.l examples\console\matrix 

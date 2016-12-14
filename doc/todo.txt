@@ -3,7 +3,9 @@ In development:
 ------                              
               zdev 
                  * bf interpreter
-                 * bf tape : implement
+                 * #64 : Stand alone executable: Script engine
+                 * bf interpreter : both stand-alone and vm client
+
                  * calc sample
 
                  * script : elena - simple class,one method

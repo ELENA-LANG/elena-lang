@@ -32,7 +32,7 @@ bin\elc -cexamples\console\random\random.prj
 bin\elc -cexamples\files\textdb\textdb.prj
 bin\elc -cexamples\console\matrix\matrix.prj
 bin\elc -cexamples\console\trans\tanslit.prj
-rem bin\elc -cexamples\interpreter\interpreter.prj
+bin\elc -cexamples\interpreter\interpreter.prj
 bin\elc -cexamples\script\calculator\calc.prj
 bin\elc -cexamples\gui\agenda\agenda.prj
 bin\elc -cexamples\gui\graphs\graphs.prj

@@ -42,7 +42,13 @@
         ^ params@n.
     ]
     
-    
+    #method stack &args:params
+    [
+        #var(int)n := self int.
+       
+        ^ params@n.
+    ]
+        
     #method jumpif : offset &args:params
         => system'core_routines'__tape.
     
