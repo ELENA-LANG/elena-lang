@@ -30,35 +30,4 @@ bin/elena-asm2binx src30/core/core_routines.esm /usr/lib/elena/lib30/system
 elena-lc -csrc30/system/system.project
 elena-lc -csrc30/extensions/extensions.project
 
-elena-lc -cexamples/console/helloworld/u_helloworld.project
-elena-lc -cexamples/console/sum/intsum.project
-elena-lc -cexamples/console/sum/realsum.project
-elena-lc -cexamples/console/binary/binary.project
-elena-lc -cexamples/console/words/words.project
-elena-lc -cexamples/console/bsort/bsort.project
-elena-lc -cexamples/console/replace/replace.project
-elena-lc -cexamples/console/matrix/matrix.project
-elena-lc -cexamples/console/trans/tanslit.project
-elena-lc -cexamples/console/pi/pi.project
-elena-lc -cexamples/files/textfile/textfile.project
-elena-lc -cexamples/console/goods/goods.project
-elena-lc -cexamples/files/textdb/textdb.project
-elena-lc -cexamples/console/datetime/dtcalculator.project
-
-elena-lc -cexamples/rosetta/accumulator/accumulator.project
-elena-lc -cexamples/rosetta/ackermann/ackerman.project
-elena-lc -cexamples/rosetta/addfield/addfield.project
-elena-lc -cexamples/rosetta/amb/amb.project
-elena-lc -cexamples/rosetta/anagram/anagram.project
-elena-lc -cexamples/rosetta/anonymrec/anonymrec.project
-elena-lc -cexamples/rosetta/aplusb/aplusb.project
-elena-lc -cexamples/rosetta/applycallback/arraycallback.project
-elena-lc -cexamples/rosetta/arithmeticint/arithmeticint.project
-elena-lc -cexamples/rosetta/arithmeval/arithmeval.project
-elena-lc -cexamples/rosetta/arithmmean/arithmmean.project
-elena-lc -cexamples/rosetta/arrayconcat/arrayconcat.project
-elena-lc -cexamples/rosetta/arraymode/arraymode.project
-elena-lc -cexamples/rosetta/arrays/arrays.project
-elena-lc -cexamples/rosetta/associativearrays/associativearrays.project
-
 exit 0

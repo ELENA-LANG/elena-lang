@@ -2586,6 +2586,24 @@ void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
    }
 }
 
+void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_MESSAGE_ID:
+         // bcopya
+         // get
+         tape.write(bcBCopyA);
+         tape.write(bcGet);
+         break;
+      case SET_REFER_MESSAGE_ID:
+         // xset
+         tape.write(bcXSet);
+         break;
+      default:
+         break;
+   }
+}
+
 void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
@@ -3367,7 +3385,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
 {
    bool lenMode = node.argument == READ_MESSAGE_ID;
    bool setMode = node.argument == SET_REFER_MESSAGE_ID;
-   bool assignMode = node != lxArrOp;
+   bool assignMode = node != lxArrOp || node != lxArgArrOp;
 
    SNode larg, rarg, rarg2;
    assignOpArguments(node, larg, rarg, rarg2);
@@ -3476,6 +3494,9 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          break;
       case lxArrOp:
          doArrayOperation(tape, node.argument);
+         break;
+      case lxArgArrOp:
+         doArgArrayOperation(tape, node.argument);
          break;
    }
 }
@@ -4177,7 +4198,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       child = child.nextNode();
    }
 
-   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_MESSAGE_ID && source.type != lxArrOp) ||
+   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_MESSAGE_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||
       (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp))))
    {
       if (target == lxCreatingStruct) {
@@ -4606,6 +4627,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxShortArrOp:
       case lxArrOp:
       case lxBinArrOp:
+      case lxArgArrOp:
          generateArrOperation(tape, node);
          break;
       case lxNewOp:

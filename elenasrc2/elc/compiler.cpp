@@ -5775,6 +5775,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
       case lxBinArrOp:
       case lxNewOp:
       case lxNilOp:
+      case lxArgArrOp:
          optimizeOp(scope, current, warningScope, mode);
          break;
 //      case lxBoolOp:

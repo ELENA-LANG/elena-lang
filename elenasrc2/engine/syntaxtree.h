@@ -133,6 +133,7 @@ enum LexicalType
    lxNewOp           = 0x0C028,
    lxArrOp           = 0x8C029, // arg - operation id
    lxBinArrOp        = 0x8C02A, // arg - operation id
+   lxArgArrOp        = 0x8C02B, // arg - operation id
    lxNilOp           = 0x8C02C, // arg - operation id
    lxIntArrOp        = 0x8C030,   // arg - operation id
    lxResendExpression= 0x0C031,

@@ -2,10 +2,6 @@
 In development:
 ------                              
               zdev 
-                 * Tape implementation #62
-                 * Open argument list : assigning #61
-                 * multy parameter dispatching
-
                  * bf interpreter
                  * bf tape : implement
                  * calc sample
@@ -54,6 +50,9 @@ In development:
 ------                                 
 Pipeline:
 ------                                                                                         
+
+              xdev
+                 * multy parameter dispatching
 
               xrev                 
                  * reimplement net

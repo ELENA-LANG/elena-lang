@@ -174,7 +174,8 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(READ_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
 
    // array of arg list
-   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, lxArrOp, 0));
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
    //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 }
 
