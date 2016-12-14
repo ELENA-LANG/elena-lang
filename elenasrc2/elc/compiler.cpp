@@ -2268,23 +2268,29 @@ ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int
                scope.raiseError(errInvalidSubject, terminal);
          }
          else if (message[i] == '[') {
+            int len = getlength(message);
             if (message[i+1] == ']') {
                //HOT FIX : support open argument list
                paramCount = OPEN_ARG_COUNT;
             }
-            else if (message[getlength(message) - 1] == ']') {
-               signature.copy(message + i + 1, getlength(message) - i - 2);
-               paramCount = signature.ident().toInt();
-               if (paramCount > 12)
-                  scope.raiseError(errInvalidSubject, terminal);
+            else if (message[len - 1] == ']') {
+               if (message[len - 2] == ',') {
+                  signature.copy(message + i + 1, len - i - 3);
+                  paramCount = signature.ident().toInt() + OPEN_ARG_COUNT;
+               }
+               else {
+                  signature.copy(message + i + 1, len - i - 2);
+                  paramCount = signature.ident().toInt();
+                  if (paramCount > 12)
+                     scope.raiseError(errInvalidSubject, terminal);
+               }
             }
             else scope.raiseError(errInvalidSubject, terminal);
 
             param = i;
+            break;
          }
          else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-         }
-         else if (message[i] == ']' && i == (getlength(message) - 1)) {
          }
          else scope.raiseError(errInvalidSubject, terminal);
       }
@@ -2301,7 +2307,7 @@ ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int
          }
       }
 
-      if (paramCount == OPEN_ARG_COUNT) {
+      if (paramCount >= OPEN_ARG_COUNT) {
          // HOT FIX : support open argument list
          ref_t openArgType = retrieveKey(scope.moduleScope->attributeHints.start(), scope.moduleScope->paramsReference, 0);
          if (!emptystr(signature))
