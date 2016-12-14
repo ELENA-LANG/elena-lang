@@ -4,6 +4,7 @@ In development:
               zdev 
                  * Tape implementation #62
                  * Open argument list : assigning #61
+                 * multy parameter dispatching
 
                  * bf interpreter
                  * bf tape : implement
@@ -82,7 +83,6 @@ Pipeline:
                  * test int => vint, vint =>, ref => obj, obj => ref
                  * make sure ref may be used as obj, vint may be used as int (generating virtual dispatcher only if it was not declared)
                  * passing vint as int probably should be possible only for embeddable classes
-                 * multy parameter dispatching
                  * for wrapper classes generate virutal set method
                  * test dispatching to the field / symbol
                  * test dispatching to the expression
@@ -160,6 +160,7 @@ Pipeline:
                  * remove core.config, no longer required
                  * invalid boxing for : WSADATA init &byte:2 &byte:2 
                  * optimization #249
+                 * implement date/time formatting
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class

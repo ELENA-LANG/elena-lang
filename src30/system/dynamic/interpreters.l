@@ -42,11 +42,17 @@
         ^ params@n.
     ]
     
-    //#method forward &args:params
     
-    //#method backward &args:params
+    #method jumpif : offset &args:params
+        => system'core_routines'__tape.
     
     #method jump &args:params
+        => system'core_routines'__tape.
+        
+    #method goif : offset &args:params
+        => system'core_routines'__tape.
+    
+    #method go &args:params
         => system'core_routines'__tape.
 }
 

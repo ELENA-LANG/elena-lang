@@ -3985,6 +3985,50 @@ procedure __tape.eval&jump&args$[13]
 
 end
 
+procedure __tape.eval&jumpif&args$[14]
+
+  aloadsi 2
+  elser labSkip const : system'true
+  aloadsi 1
+  nload
+  dsavefi -2  
+
+labSkip:
+  aloadsi 3
+  quitn 3
+
+end
+
+procedure __tape.eval&go&args$[13]
+
+  aloadsi 1
+  nload
+  ecopyd
+  dloadfi -2
+  add
+  dsavefi -2
+  aloadsi 2
+  quitn 2
+
+end
+
+procedure __tape.eval&goif&args$[14]
+
+  aloadsi 2
+  elser labSkip const : system'true
+  aloadsi 1
+  nload
+  ecopyd
+  dloadfi -2
+  add
+  dsavefi -2  
+
+labSkip:
+  aloadsi 3
+  quitn 3
+
+end
+
 procedure __struct.dispatch[1]
 
   bsredirect

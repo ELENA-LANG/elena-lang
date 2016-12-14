@@ -10,6 +10,9 @@
 [ELC]
 [-]  #277 : loop statement without branching operator
 
+[LIB]
+[+] #62 : branching / jumping in system'dynamic'Tape
+
 [IDE]
 [+] #58 : it is possible to interact with the symbols from the current project
 
