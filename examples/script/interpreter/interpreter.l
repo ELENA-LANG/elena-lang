@@ -182,8 +182,7 @@
 #symbol program2 =
 [
     #var program := scriptEngine 
-        load &path:"~\scripts\assembly.es" 
-        load &path:"~\scripts\rules.es"
+        load &path:"rules.es"
         eval:". ,".
   
     program eval:(BFTape new:1024).
