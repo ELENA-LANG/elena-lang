@@ -1,9 +1,11 @@
 [[   
    #grammar cf
 
-   #define start      ::= <= [ ( 2 %"system'dynamic'tapeOp.var&args$[]" => items <=  ) * system'dynamic'Tape ] =>;
+   #define start      ::= <= [ ( 2 %"system'dynamic'tapeOp.var&args$[]" => module <=  ) * system'dynamic'Tape ] =>;
+   #define module     ::= "root" "(" items module;
+   #define module     ::= $eof;
    #define items      ::= "class" class items;
-   #define items      ::= $eof;
+   #define items      ::= ")";
    #define class      ::= <= %"open&class[0]" => "(" members <= %"close[0]" =>;
    #define members    ::= method members;
    #define members    ::= ")";

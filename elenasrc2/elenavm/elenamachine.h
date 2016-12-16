@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  6
+#define ELENAVM_REVISION  7
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2016 by Alex Rakov"
@@ -210,6 +210,9 @@ protected:
    virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
 
    bool initLoader(InstanceConfig& config);
+
+   void setPackagePath(ident_t package, path_t path);
+   void setPackagePath(ident_t line);
 
    void addPackagePath(ident_t package, ident_t path);
    void addPackagePath(ident_t line);

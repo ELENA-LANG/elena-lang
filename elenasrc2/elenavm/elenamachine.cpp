@@ -652,6 +652,27 @@ bool Instance::loadTemplate(ident_t name)
    return initLoader(_config);
 }
 
+void Instance :: setPackagePath(ident_t package, path_t path)
+{
+   _loader.setNamespace(package, path);
+}
+
+void Instance :: setPackagePath(ident_t line)
+{
+   size_t sep = line.find('=', -1);
+   if (sep != -1) {
+      Path path(line + sep + 1);
+      IdentifierString package(line, sep);
+
+      setPackagePath(package, path.c_str());
+   }
+   else {
+      Path path(line);
+
+      setPackagePath(NULL, path.c_str());
+   }
+}
+
 void Instance :: addPackagePath(ident_t package, ident_t path)
 {
    _loader.addPackage(package, path);
@@ -685,7 +706,10 @@ void Instance :: configurate(MemoryReader& reader, int terminator)
 
       switch (command) {
          case USE_VM_MESSAGE_ID:
-            addPackagePath(arg);
+            if (emptystr(_loader.getNamespace())) {
+               setPackagePath(arg);
+            }
+            else addPackagePath(arg);
             break;
          case MAP_VM_MESSAGE_ID:
             addForward(arg);

@@ -212,7 +212,8 @@ Pipeline:
               xdev - generic development
                        * #265 : enumeration list (declaration,pool of possible values,literal representation)
 
-              idev - generic development                                          
+              idev - generic development
+                       * vm client : F8 on the start does not work
                        * allow to opem xml project
                        * allow to create xml project
                        * ini to xml

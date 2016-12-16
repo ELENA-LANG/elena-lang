@@ -1,7 +1,9 @@
 #import system.
 #import system'routines.
 #import system'dynamic.
+
 #import extensions.
+#import extensions'scripting.
 
 // --- Tape ---
 
@@ -174,5 +176,15 @@
     
     #var program := Tape(2, %"tapeOp.var[]", %"input[0]", %"output[0]", 0, %"tapeOp.stack[]", %"check[0]", 2, %"tapeOp.jumpif[1,]").
     
+    program eval:(BFTape new:1024).
+].
+
+#symbol program2 =
+[
+    #var program := scriptEngine 
+        load &path:"~\scripts\assembly.es" 
+        load &path:"~\scripts\rules.es"
+        eval:". ,".
+  
     program eval:(BFTape new:1024).
 ].
