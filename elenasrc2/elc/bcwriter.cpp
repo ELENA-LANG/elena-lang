@@ -3109,6 +3109,13 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
          while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
             terminal = terminal.firstChild(lxObjectMask);
          }
+         // HOTFIX : use idle node 
+         if (terminal == lxNone && node.nextNode() == lxIdle) {
+            terminal = node.nextNode();
+            while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
+               terminal = terminal.firstChild(lxObjectMask);
+            }
+         }
       }
 
       if (terminal != lxNone) {

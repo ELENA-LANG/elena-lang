@@ -1,6 +1,9 @@
 ------                                 
 In development:
 ------                              
+              xmaint
+                 * debugger : closure external variables
+
               zdev 
                  * bf interpreter
                  * #64 : Stand alone executable: Script engine
@@ -72,7 +75,6 @@ Pipeline:
                    instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
 
                  * test script samples
-                 * debugger : #var(int)n := 0. n := n + 1. Debugger skips the second statement
                  * tape_test
                  * test template in template (with parameters)
                  * test calc sample
