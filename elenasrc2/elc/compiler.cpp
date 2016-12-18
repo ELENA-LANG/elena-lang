@@ -16,14 +16,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 #define HINT_CLOSURE_MASK     0x00008800
@@ -3575,9 +3575,6 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
          case lxExpression:
             compileExpression(current, scope, HINT_ROOT);
             insertDebugStep(current, dsStep);
-
-            test2(current);
-
             break;
          case lxThrowing:
             compileThrow(current, scope, 0);
@@ -5609,7 +5606,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
 
    if (node.argument != 0) {
       SNode intValue = node.findSubNode(lxConstantInt);
-      if (intValue != lxNone) {
+      if (intValue != lxNone && node.argument == 4) {
          // direct operation with numeric constants
          node.set(lxIntOp, SET_MESSAGE_ID);
       }

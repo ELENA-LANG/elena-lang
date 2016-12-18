@@ -133,6 +133,14 @@ public:
       return word;
    }
 
+   size_t readByte(size_t address)
+   {
+      size_t word = 0;
+      readDump(address, (char*)&word, 1);
+
+      return word;
+   }
+
    void writeDWord(size_t address, size_t word)
    {
       writeDump(address, (char*)&word, 4);

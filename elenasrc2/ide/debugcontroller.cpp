@@ -797,6 +797,9 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
          else if (size == 2) {
             watch->write(this, 0, fieldName, (int)_debugger.Context()->readWord(address));
          }
+         else if (size == 1) {
+            watch->write(this, 0, fieldName, (int)_debugger.Context()->readByte(address));
+         }
 
          address += size;
       }

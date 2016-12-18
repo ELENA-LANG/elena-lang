@@ -1,8 +1,27 @@
 ------                                 
 In development:
 ------                              
-              xmaint
-                 * debugger : closure external variables
+              xrev                 
+                 * debug info : structure
+
+                 * int constant to byte field
+
+#class(struct) MyClass
+{
+    #field(byte)n1.
+    #field(byte)n2.
+    #field(byte)n3.
+    #field(byte)n4.
+    
+    #method init
+    [
+//        n2 := 3.
+        n1 := 2.
+    ]
+}
+
+
+                 * uncomment $FileWriter
 
               zdev 
                  * bf interpreter
@@ -104,23 +123,17 @@ Pipeline:
                  * support abstract attribute
                  * check sealed / limited class attributes
                  * test optimized / direct operations
-                 * debugging the following statements:
-                     #var(-11,4)n := 0.        
-                     #var(-11,4)d := n + 12.
-                 * debugger watch : wide literal
                  * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
                  * optimize array of constants
                  * typecast implicit extension target if required
                  * switch statement with expression
 
-                 * int constant to byte
 
                  * DerivationWriter : try to get rid of big switch statement
                  * ecv : use >out for ourput redirect
                  * test embeddable idle
                  * $ConsoleHandleFactory.newWriter - idle jump
                  * $ConsoleHandleFactory : handle is stack allocated, so the code should be modified to avoid extra object creating
-                 * uncomment $FileWriter
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
                  * optimize : LiteralValue#class.eval&system$new...
                  * warn on duplicate extensions
@@ -175,6 +188,7 @@ Pipeline:
                  * upndown : playing a round
 
               xmaint
+                 * debugger : closure external variables
                  * refactoring : introduce ident_t as a class wrapper around const char*
                  * issue
 
