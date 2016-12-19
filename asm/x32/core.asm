@@ -1262,7 +1262,7 @@ labCopy:
   mov  [ebx], edx
   lea  esi, [esi+4]
   lea  ebx, [ebx+4]
-  add  ecx, 4
+  sub  ecx, 4
   js   short labCopy
 
 end
@@ -1580,7 +1580,7 @@ labCopy:
   mov  [ebx], edx
   lea  esi, [esi+4]
   lea  ebx, [ebx+4]
-  add  ecx, 4
+  sub  ecx, 4
   jnz  short labCopy
 
 end

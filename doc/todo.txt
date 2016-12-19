@@ -1,6 +1,18 @@
 ------                                 
 In development:
 ------                              
+              xrev                 
+                 * boxing optimization:
+                         #var(int)i := 0.
+                         #var(int)n := list length.
+                         
+                         #loop(i < n)?
+                         [
+                             $self setField &int:i &object:(list@i). // i is boxed
+                             
+                             i += 1.
+                         ].
+
               zdev 
                  * bf interpreter
                  * #64 : Stand alone executable: Script engine
@@ -80,27 +92,20 @@ Pipeline:
                  * breaking loop (loop and return statement)
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
                  * optimize : branching with numeric comparison
-                 * test int => vint, vint =>, ref => obj, obj => ref
-                 * make sure ref may be used as obj, vint may be used as int (generating virtual dispatcher only if it was not declared)
                  * passing vint as int probably should be possible only for embeddable classes
                  * for wrapper classes generate virutal set method
                  * test dispatching to the field / symbol
                  * test dispatching to the expression
                  * overriding dispatching
                  * test vint : dispatch opertions 
-                 * test with generic if / if-else operator
                  * test constant list
-                 * test unboxing primitive array
                  * test dispatching method
                  * test dispatching method with generic methods
                  * check if self is embeddable
 
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
 
-                 * typecast primitive array operation results
                  * support abstract attribute
-                 * check sealed / limited class attributes
-                 * test optimized / direct operations
                  * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
                  * optimize array of constants
                  * typecast implicit extension target if required
@@ -135,17 +140,6 @@ Pipeline:
                  * use imm mode for (n) => 1 ? [ now literal. ]
                  * optimize nil operations
                  * why console writeLine:"x:":theX:",y:"theY can be compiled
-                 * boxing optimization:
-                         #var(int)i := 0.
-                         #var(int)n := list length.
-                         
-                         #loop(i < n)?
-                         [
-                             $self setField &int:i &object:(list@i). // i is boxed
-                             
-                             i += 1.
-                         ].
-
 
                  * support array of typed objects
                  * support array of objects
