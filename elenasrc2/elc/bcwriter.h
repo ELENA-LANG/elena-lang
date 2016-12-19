@@ -173,6 +173,7 @@ class ByteCodeWriter
    void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
+   void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
    void boxArgList(CommandTape& tape, ref_t vmtReference);
    void unboxArgList(CommandTape& tape);
 
@@ -289,6 +290,7 @@ class ByteCodeWriter
    void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
+   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
    void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);

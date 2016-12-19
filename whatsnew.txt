@@ -9,6 +9,7 @@
 
 [ELC]
 [-]  #277 : loop statement without branching operator
+[-]  several critical bug fixes in structure routines
 
 [LIB]
 [+] #62 : branching / jumping in system'dynamic'Tape

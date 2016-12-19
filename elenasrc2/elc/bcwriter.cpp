@@ -699,6 +699,20 @@ void ByteCodeWriter :: saveBase(CommandTape& tape, bool directOperation, Lexical
    }
 }
 
+void ByteCodeWriter :: boxField(CommandTape& tape, int offset, int size, ref_t vmtReference)
+{
+   // bcopya
+   // newn vmt, size
+   // bswap
+   tape.write(bcBCopyA);
+   tape.write(bcNewN, vmtReference | mskVMTRef, size);
+   tape.write(bcBSwap);
+
+   copyStructureField(tape, offset, 0, size);
+
+   assignBaseTo(tape, lxResult);
+}
+
 void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing)
 {
    // ifheap labSkip
@@ -1988,8 +2002,9 @@ void ByteCodeWriter :: assignStruct(CommandTape& tape, LexicalType target, int o
 {
    if (target == lxFieldAddress) {
       // bloadfi 1
+      tape.write(bcBLoadFI, 1);
 
-      copyStructure(tape, offset, size);
+      copyStructureField(tape, 0, offset, size);
    }
    else if (target == lxLocalAddress) {
       // bcopyf param
@@ -1997,12 +2012,12 @@ void ByteCodeWriter :: assignStruct(CommandTape& tape, LexicalType target, int o
 
       copyStructure(tape, 0, size);
    }
-   else if (target == lxLocalAddress) {
-      // bloadfi param
-      tape.write(bcBLoadFI, offset, bpFrame);
+   //else if (target == lxLocalAddress) {
+   //   // bloadfi param
+   //   tape.write(bcBLoadFI, offset, bpFrame);
 
-      copyStructure(tape, 0, size);
-   }
+   //   copyStructure(tape, 0, size);
+   //}
 }
 
 void ByteCodeWriter :: copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size)
@@ -2069,102 +2084,108 @@ void ByteCodeWriter :: copyStructureField(CommandTape& tape, int sour_offset, in
    }
    else if ((size & 3) == 0) {
       if ((sour_offset & 3) == 0 && (dest_offset & 3) == 0) {
+
          // pushn size
-         // pushn 0
+         // dcopy 0
+
          // labNext:
-         // dsavesi 0
-         // esavesi 1
          // addn sour_offset
          // nread
-         // dloadsi 0
-         // addn dest_offset
+         // addn dest_offset-sour_offset
          // nwrite
-         // eloadsi 1
-         // dloadsi 0
+         // addn -dest_offset
+         // eloadsi 0
          // next labNext
-         // popi 2
+         // pop
+
          tape.write(bcPushN, size >> 2);
-         tape.write(bcPushN, 0);
+         tape.write(bcDCopy, 0);
          tape.newLabel();
-         tape.write(bcDSaveSI, 0);
-         tape.write(bcESaveSI, 1);
-         tape.write(bcAddN, sour_offset >> 2);
+         tape.setLabel(true);
+
+         if (sour_offset != 0)
+            tape.write(bcAddN, sour_offset >> 2);
+
          tape.write(bcNRead);
-         tape.write(bcDLoadSI, 0);
-         tape.write(bcAddN, dest_offset >> 2);
+         tape.write(bcAddN, (dest_offset >> 2) - (sour_offset >> 2));
          tape.write(bcNWrite);
-         tape.write(bcELoadSI, 1);
-         tape.write(bcDLoadSI, 0);
+
+         if (dest_offset != 0)
+            tape.write(bcAddN, -(dest_offset >> 2));
+
+         tape.write(bcELoadSI, 0);
          tape.write(bcNext, baCurrentLabel);
          tape.releaseLabel();
-         tape.write(bcPopI, 2);
+         tape.write(bcPop);
       }
       else {
          // pushn size
-         // pushn 0
+         // dcopy 0
+
          // labNext:
-         // dsavesi 0
-         // esavesi 1
          // addn sour_offset
          // bread
-         // dloadsi 0
-         // addn dest_offset
+         // addn dest_offset-sour_offset
          // bwrite
-         // eloadsi 1
-         // dloadsi 0
-         // addn 4
-         // less labNext
-         // popi 2
+         // addn 3-dest_offset
+         // eloadsi 0
+         // next labNext
+         // pop
 
          tape.write(bcPushN, size);
-         tape.write(bcPushN, 0);
+         tape.write(bcDCopy, 0);
          tape.newLabel();
-         tape.write(bcDSaveSI, 0);
-         tape.write(bcESaveSI, 1);
-         tape.write(bcAddN, sour_offset);
-         tape.write(bcBRead);
-         tape.write(bcDLoadSI, 0);
-         tape.write(bcAddN, dest_offset);
-         tape.write(bcBWrite);
-         tape.write(bcELoadSI, 1);
-         tape.write(bcDLoadSI, 0);
-         tape.write(bcAddN, 4);
-         tape.write(bcLess, baCurrentLabel);
+         tape.setLabel(true);
+
+         if (sour_offset != 0)
+            tape.write(bcAddN, sour_offset);
+
+         tape.write(bcNRead);
+         tape.write(bcAddN, dest_offset - sour_offset);
+         tape.write(bcNWrite);
+
+         if (dest_offset != 0)
+            tape.write(bcAddN, 3-dest_offset);
+
+         tape.write(bcELoadSI, 0);
+         tape.write(bcNext, baCurrentLabel);
          tape.releaseLabel();
-         tape.write(bcPopI, 2);
+         tape.write(bcPop);
       }
    }
    else {
       // pushn size
-      // pushn 0
+      // dcopy 0
+
       // labNext:
-      // dsavesi 0
-      // esavesi 1
       // addn sour_offset
       // breadb
-      // dloadsi 0
-      // addn dest_offset
+      // addn dest_offset-sour_offset
       // bwriteb
-      // eloadsi 1
-      // dloadsi 0
+      // addn -dest_offset
+      // eloadsi 0
       // next labNext
-      // popi 2
+      // pop
 
       tape.write(bcPushN, size);
-      tape.write(bcPushN, 0);
+      tape.write(bcDCopy, 0);
       tape.newLabel();
-      tape.write(bcDSaveSI, 0);
-      tape.write(bcESaveSI, 1);
-      tape.write(bcAddN, sour_offset);
+      tape.setLabel(true);
+
+      if (sour_offset != 0)
+         tape.write(bcAddN, sour_offset);
+
       tape.write(bcBReadB);
-      tape.write(bcDLoadSI, 0);
-      tape.write(bcAddN, dest_offset);
+      tape.write(bcAddN, dest_offset - sour_offset);
       tape.write(bcBWriteB);
-      tape.write(bcELoadSI, 1);
-      tape.write(bcDLoadSI, 0);
+
+      if (dest_offset != 0)
+         tape.write(bcAddN, - dest_offset);
+
+      tape.write(bcELoadSI, 0);
       tape.write(bcNext, baCurrentLabel);
       tape.releaseLabel();
-      tape.write(bcPopI, 2);
+      tape.write(bcPop);
    }
 }
 
@@ -4175,10 +4196,24 @@ void ByteCodeWriter :: generateBoxing(CommandTape& tape, SNode node)
    }
 }
 
+void ByteCodeWriter :: generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset)
+{
+   SNode target = node.findChild(lxTarget);
+
+   boxField(tape, offset, node.argument, target.argument);
+}
+
 void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
 {
-   generateExpression(tape, node);
-   generateBoxing(tape, node);
+   SNode expr = node.firstChild(lxObjectMask);
+   if (expr == lxFieldAddress && expr.argument > 0) {
+      loadObject(tape, expr);
+      generateFieldBoxing(tape, node, expr.argument);
+   }
+   else {
+      generateExpression(tape, node);
+      generateBoxing(tape, node);
+   }
 }
 
 void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
@@ -4287,7 +4322,7 @@ void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node n
    includeFrame(tape);
 }
 
-void ByteCodeWriter ::generateLocking(CommandTape& tape, SyntaxTree::Node node)
+void ByteCodeWriter :: generateLocking(CommandTape& tape, SyntaxTree::Node node)
 {
    SNode target = node.firstChild(lxObjectMask);
    SNode block = node.findChild(lxCode);

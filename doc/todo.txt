@@ -2,26 +2,10 @@
 In development:
 ------                              
               xrev                 
-                 * debug info : structure
+                 * not ebeddable structure should not be embedded into another structure
 
-                 * int constant to byte field
-
-#class(struct) MyClass
-{
-    #field(byte)n1.
-    #field(byte)n2.
-    #field(byte)n3.
-    #field(byte)n4.
-    
-    #method init
-    [
-//        n2 := 3.
-        n1 := 2.
-    ]
-}
-
-
-                 * uncomment $FileWriter
+              idev - debugger
+                       * real field
 
               zdev 
                  * bf interpreter
@@ -227,6 +211,10 @@ Pipeline:
 
               xdev - generic development
                        * #265 : enumeration list (declaration,pool of possible values,literal representation)
+
+
+              idev - debugger
+                       * structure field
 
               idev - generic development
                        * vm client : F8 on the start does not work
