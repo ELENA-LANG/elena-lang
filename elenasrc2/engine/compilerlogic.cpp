@@ -262,7 +262,7 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
 
 int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
 {
-   if (loperand == 0 || roperand == 0 || roperand2 == 0)
+   if (loperand == 0 || roperand == 0 || (roperand2 == 0 && loperand != V_OBJARRAY))
       return 0;
 
    OperatorList::Iterator it = operators.start();

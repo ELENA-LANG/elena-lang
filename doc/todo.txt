@@ -1,17 +1,23 @@
 ------                                 
 In development:
 ------                              
-              xrev                 
-                 * boxing optimization:
-                         #var(int)i := 0.
-                         #var(int)n := list length.
-                         
-                         #loop(i < n)?
-                         [
-                             $self setField &int:i &object:(list@i). // i is boxed
-                             
-                             i += 1.
-                         ].
+
+              xrev           
+                 * arrayof:object
+                 * arrayof:myclass)array
+                 * arrayof:int.
+      
+                 * listof:object
+                 * listof:myclass)array
+                 * listof:int.
+
+                 * test listof:datatype / listof:type
+                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
+                 * optimize listof.$exapnd
+                 * implement #234 : Generic list 
+                 * support array of typed objects
+                 * support array of objects
+                 * support arrayof:struct
 
               zdev 
                  * bf interpreter
@@ -120,7 +126,6 @@ Pipeline:
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
                  * optimize : LiteralValue#class.eval&system$new...
                  * warn on duplicate extensions
-                 * test listof:datatype / listof:type
                  * test try catch statement
                  * operation with struct field : assigning
                  * test : a int + b::op int.
@@ -141,15 +146,36 @@ Pipeline:
                  * optimize nil operations
                  * why console writeLine:"x:":theX:",y:"theY can be compiled
 
-                 * support array of typed objects
-                 * support array of objects
-                 * support arrayof:struct
                  * test array of char / array of enumerator ...
                  * remove core.config, no longer required
-                 * invalid boxing for : WSADATA init &byte:2 &byte:2 
                  * optimization #249
                  * implement date/time formatting
                  * not ebeddable structure should not be embedded into another structure
+                 * implicit conversion of numeric constant:
+                     #class(sealed,embeddable) WSADATA
+                     {
+                         #field(short)    wVersion.
+                         #field(short)    wHighVersion.
+                         #field(byte:257) szDescription.
+                         #field(byte:129) szSystemStatus.
+                         #field(short)    iMaxSockets.
+                         #field(short)    iMaxUdpDg.
+                         #field(int)      lpVendorInfo.
+                         
+                         #constructor(stacksafe) init &byte:aVersion &byte:aHighVersion
+                         [
+                             #var b := aVersion. // b is intnumber, if int constant was passed
+                         ]
+                                          
+                         #method wsadata = $self.
+                         
+                         #method close
+                         [
+                             system'external'WS2_32 WSACleanup.
+                         ]
+                     }
+                     
+                     #symbol WSA = WSADATA init &byte:2 &byte:2.
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
@@ -260,7 +286,6 @@ Pipeline:
                        * implicit boxing (int to vint) should be possible only for stack allocated local variable, structure fields
                        * operation with primitive arrays should not be allowed
                        * extension should not be used stand-alone
-                       * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                        * primitive operation with subject
 
                        * Compiler::tryTypecasting should be reviewed, too many hot fixes
@@ -309,7 +334,6 @@ Pipeline:
                        * optimize charvalue#class.new&char$[1]
                        * optimize shift implementation
                        * optimize varof.append / varof.reduce / ...
-                       * optimize listof.$exapnd
                        * optimize ($nil != a) ? [ ... ]
                        * optimite #var(int)last_index := theLength - 1. // where theLength is vint
                        * optimize pop close => nop close

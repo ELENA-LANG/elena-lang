@@ -1079,7 +1079,7 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 
       owner.outerObject = parent->mapTerminal(THIS_VAR);
       if (owner.outerObject.extraparam == 0)
-         owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId();
+         owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
 
       outers.add(THIS_VAR, owner);
       mapKey(info.fields, THIS_VAR, owner.reference);
@@ -3337,6 +3337,8 @@ ObjectInfo Compiler :: compileNewOperator(SNode node, CodeScope& scope/*, int mo
    SNode objectNode = node.firstChild(lxTerminalMask);
 
    retVal.type = scope.mapSubject(objectNode);
+   if (retVal.type != 0 && scope.moduleScope->attributeHints.get(retVal.type) == 0)
+      retVal.type = 0; // HOTFIX : ignore weak types
 
    ref_t loperand = scope.moduleScope->attributeHints.get(retVal.type);
    ref_t roperand = resolveObjectReference(scope, compileExpression(objectNode.nextNode(lxObjectMask), scope, 0));

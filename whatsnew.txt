@@ -13,6 +13,7 @@
 
 [LIB]
 [+] #62 : branching / jumping in system'dynamic'Tape
+[+] #234 : Generic list
 
 [IDE]
 [+] #58 : it is possible to interact with the symbols from the current project

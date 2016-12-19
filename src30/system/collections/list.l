@@ -5,16 +5,18 @@
 #subject array_list = system'collections'ArrayList.
 #subject dictionary = system'collections'Dictionary.
 
-//// --- listof ---
-//
-//#template listof : type
-//{
-//    #field(arrayof:type)theArray.
-//    #field(vint)        theLength.
-//    #field(vint)        theCapacity.
-//
-//    #method $expand
-//    [
+// --- listof ---
+
+#template listof : type
+{
+    #field(arrayof:type)theArray.
+    #field(vint)        theLength.
+    #field(vint)        theCapacity.
+
+    #method $expand
+    [
+        #var(arrayof:type)newArray := type:theCapacity.
+        
 //        (theCapacity <= theLength)?
 //        [
 //            theCapacity += 32.
@@ -31,8 +33,8 @@
 //            
 //            theArray := newArray.
 //        ].
-//    ]
-//    
+    ]
+    
 //    /// Returns the object at the specified position
 //    #method getAt : anIndex
 //        = $self getAt &int:(anIndex int).
@@ -121,8 +123,8 @@
 //    [
 //        theArray readLength &vint:retVal.
 //    ]    
-//}
-//
+}
+
 //// --- ObjectList ---
 //
 //#class(listof:object,sealed) ObjectList
