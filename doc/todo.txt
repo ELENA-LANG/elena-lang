@@ -1,12 +1,6 @@
 ------                                 
 In development:
 ------                              
-              xrev                 
-                 * not ebeddable structure should not be embedded into another structure
-
-              idev - debugger
-                       * real field
-
               zdev 
                  * bf interpreter
                  * #64 : Stand alone executable: Script engine
@@ -161,6 +155,7 @@ Pipeline:
                  * invalid boxing for : WSADATA init &byte:2 &byte:2 
                  * optimization #249
                  * implement date/time formatting
+                 * not ebeddable structure should not be embedded into another structure
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
@@ -214,6 +209,7 @@ Pipeline:
 
 
               idev - debugger
+                       * real field
                        * structure field
 
               idev - generic development
