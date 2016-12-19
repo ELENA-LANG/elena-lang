@@ -103,6 +103,18 @@ class GTKIDEWindow : public SDIWindow, public _View, public _DebugListener
       }
    };
 
+   class StatusLine
+   {
+      _ELENA_::String<char, 127> line1;
+      _ELENA_::String<char, 20>  line2;
+      _ELENA_::String<char, 20>  line3;
+      _ELENA_::String<char, 20>  line4;
+
+   public:
+      void set(int index, text_t message);
+      void show(Gtk::Statusbar& statusbar);
+   };
+
    ProjectTreeColumns           _projectTreeColumns;
    Glib::RefPtr<Gtk::TreeStore> _projectTree;
 
@@ -128,6 +140,7 @@ class GTKIDEWindow : public SDIWindow, public _View, public _DebugListener
 
 protected:
    Clipboard      _clipboard;
+   StatusLine     _statusInfo;
 
    bool _skip; // HOTFIX : to prevent infinite checkmenuitem call
 
@@ -698,7 +711,9 @@ public:
 
    virtual void showStatus(int index, text_t message)
    {
-     // appWindow.setStatusBarText(index, message);
+      _statusInfo.set(index, message);
+
+      _statusInfo.show(_statusbar);
    }
 
    virtual void setCaption(text_t caption)

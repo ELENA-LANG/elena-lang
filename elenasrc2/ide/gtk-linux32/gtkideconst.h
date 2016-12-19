@@ -7,7 +7,7 @@
 #ifndef gtkideconstH
 #define gtkideconstH
 
-#define IDE_REVISION_NUMBER                     9
+#define IDE_REVISION_NUMBER                     A
 
 // --- Resources ---
 #define	IDM_FILE_NEW                           0x101

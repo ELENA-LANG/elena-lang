@@ -137,6 +137,56 @@ void GTKIDEWindow::OutputProcess :: compile(GTKIDEWindow* owner)
    }
 }
 
+// --- StatusLine ---
+
+void GTKIDEWindow::StatusLine :: set(int index, text_t message)
+{
+   switch(index) {
+      case 0:
+         line1.copy(message);
+         break;
+      case 1:
+         line2.copy(message);
+         break;
+      case 2:
+         line3.copy(message);
+         break;
+      case 3:
+         line4.copy(message);
+         break;
+   }
+}
+
+void GTKIDEWindow::StatusLine :: show(Gtk::Statusbar& statusbar)
+{
+   _ELENA_::String<char, 512> info;
+   if (line1.Length() > 100) {
+      info.copy(line1, 100);
+   }
+   else info.copy(line1);
+
+   while (info.Length() < 101)
+      info.append(' ');
+
+   info.append(line2);
+
+   while (info.Length() < 122)
+      info.append(' ');
+
+   info.append(line3);
+
+   while (info.Length() < 143)
+      info.append(' ');
+
+   info.append(line4);
+
+   while (info.Length() < 164)
+      info.append(' ');
+
+   statusbar.pop();
+   statusbar.push(info.str());
+}
+
 //int AppToolBarButtonNumber = 12;
 //ToolBarButton AppToolBarButtons[] =
 //{
@@ -665,9 +715,6 @@ GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model
 
    _mainFrame.signal_switch_page().connect(sigc::mem_fun(*this,
            &GTKIDEWindow::on_client_change));
-
-   // !! temporal
-   _statusbar.push("Example");
 
    _projectTree = Gtk::TreeStore::create(_projectTreeColumns);
    _projectView.set_model(_projectTree);
