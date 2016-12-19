@@ -31,7 +31,7 @@
 //                i += 1.
 //            ].
 //            
-//            theArray := newArray.
+            theArray := newArray.
 //        ].
     ]
     

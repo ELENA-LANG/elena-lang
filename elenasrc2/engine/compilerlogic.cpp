@@ -588,7 +588,9 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
       ClassInfo sourceInfo;
       defineClassInfo(scope, sourceInfo, sourceRef, true);
 
-      if (isCompatible(scope, sourceType, info.fieldTypes.get(-1).value1)) {
+      ref_t elementRef = scope.attributeHints.get(sourceType);
+
+      if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
          compiler.injectBoxing(scope, node,
             test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef);
 

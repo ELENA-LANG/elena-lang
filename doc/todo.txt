@@ -3,12 +3,10 @@ In development:
 ------                              
 
               xrev           
-                 * arrayof:object
-                 * arrayof:myclass)array
-                 * arrayof:int.
-      
-                 * listof:object
-                 * listof:myclass)array
+                 * listof:object : template field arrayof:xxx - generateTemplate should be used, wrong warning - dynamic template is applied
+                   directly to the field
+                 * listof:object - initializing
+                 * listof:myclass
                  * listof:int.
 
                  * test listof:datatype / listof:type
