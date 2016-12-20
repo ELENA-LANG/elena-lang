@@ -58,6 +58,8 @@ public:
    static wide_c lower(wide_c s);
    static char* upper(char* s);
    static wide_c* upper(wide_c* s);
+
+   static int findChar(const char* s, char ch, int length, int defaultValue = -1);
 };
 
 class ident_t

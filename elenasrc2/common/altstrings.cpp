@@ -437,6 +437,15 @@ char* StrFactory :: reallocate(char* s, size_t size)
    return (char*)realloc(s, size);
 }
 
+int StrHelper::findChar(const char* s, char ch, int length, int defValue)
+{
+   const char* p = (const char*)memchr(s, ch, length);
+   if (p == NULL) {
+      return defValue;
+   }
+   else return p - s;
+}
+
 int find(const char* s, const char* subs, int defValue)
 {
    const char* p = strstr(s, subs);

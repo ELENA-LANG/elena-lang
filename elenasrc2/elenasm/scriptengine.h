@@ -271,7 +271,6 @@ public:
          MemoryWriter writer(&_log);
 
          writer.writeLiteral(token, length);
-         writer.writeChar(' ');
       }
    }
    void writeQuote(ident_t token)

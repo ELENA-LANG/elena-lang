@@ -440,8 +440,11 @@ public:
       if (_offset + length > _length) {
          length = _length - _offset;
       }
-
       if (length > 0) {
+         int eol = StrHelper::findChar(_text + _offset, '\n', length);
+         if (eol >= 0)
+            length = eol + 1;
+
          Convertor::copy(s, _text + _offset, length, length);
          s[length] = 0;
 
