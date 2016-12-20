@@ -163,26 +163,26 @@ bool InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
    }
    else {
       switch (state) {
-      case dfaInteger:
-         writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
-         break;
-      case dfaReal:
-         writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
-         break;
-      case dfaLong:
-         writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
-         break;
-      case dfaQuote:
-         writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, token);
-         break;
-      case dfaFullIdentifier:
-         writer.writeCallCommand(token);
-         break;
-         //case dfaIdentifier:
-         //   writeSubject(writer, token);
-         //   break;
-      default:
-         return false;
+         case dfaInteger:
+            writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
+            break;
+         case dfaReal:
+            writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
+            break;
+         case dfaLong:
+            writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
+            break;
+         case dfaQuote:
+            writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, token);
+            break;
+         case dfaFullIdentifier:
+            writer.writeCallCommand(token);
+            break;
+            //case dfaIdentifier:
+            //   writeSubject(writer, token);
+            //   break;
+         default:
+            return false;
       }
    }
    return true;
@@ -393,6 +393,19 @@ int InlineScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& 
       bm = reader.read();
 
       writeMessage(writer, reader.lookup(bm), -1, SEND_TAPE_MESSAGE_ID);
+   }
+   else if (reader.compare("%")) {
+      bm = reader.read();
+      if (reader.compare("=")) {
+         writeMessage(writer, reader.lookup(bm), -1, PUSHM_TAPE_MESSAGE_ID);
+      }
+      else {
+         ident_t message = reader.lookup(bm);
+         if (message.find('.') != -1) {
+            writeExtension(writer, reader.lookup(bm), -1, PUSHE_TAPE_MESSAGE_ID);
+         }
+         else writeMessage(writer, reader.lookup(bm), -1, PUSHM_TAPE_MESSAGE_ID);
+      }
    }
    else writeObject(writer, bm.state, reader.lookup(bm));
 

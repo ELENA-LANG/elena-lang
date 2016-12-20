@@ -1,4 +1,5 @@
 #import system.
+#import system'collections.
 #import system'routines.
 #import system'dynamic.
 
@@ -11,12 +12,15 @@
 {
     #field theArray.
     #field thePointer.
+    #field theBrackets.
 
     #constructor new:aLength
     [
         theArray := Array new:aLength set &every: (&int:n) [ Integer new:0 ].
         
         thePointer := Integer new:0.
+        
+        theBrackets := Stack new.
     ]
 
 //    #method bf_tape = $self.
@@ -40,6 +44,14 @@
 //    [
 //        thePointer -= 1.
 //    ]
+    
+    #method push : bookmark
+    [
+        theBrackets push:bookmark.
+    ]
+    
+    #method pop
+        => theBrackets.
     
     #method input
     [
@@ -174,7 +186,20 @@
 [
     //[.,]
     
-    #var program := Tape(2, %"tapeOp.var[]", %"input[0]", %"output[0]", 0, %"tapeOp.stack[]", %"check[0]", 2, %"tapeOp.jumpif[1,]").
+    #var program := Tape(
+        2, %"tapeOp.var[]", 
+        
+        -2, %"tapeOp.ptr[]", 
+        1, %"tapeOp.stack[]", 
+        %"push[1]" , 
+        
+        %"input[0]", 
+        %"output[0]", 
+        
+        0, %"tapeOp.stack[]", 
+        %"check[0]", 
+        1, %"tapeOp.stack[]", %"pop[0]",
+        %"tapeOp.jumpif[1,]").
     
     program eval:(BFTape new:1024).
 ].
@@ -183,7 +208,7 @@
 [
     #var program := scriptEngine 
         load &path:"rules.es"
-        eval:". ,".
+        eval:"[ . , ]".
   
     program eval:(BFTape new:1024).
 ].

@@ -60,6 +60,9 @@
     
     #method go &args:params
         => system'core_routines'__tape.
+        
+    #method ptr &args:params
+        => system'core_routines'__tape.
 }
 
 // --- Struct ---
