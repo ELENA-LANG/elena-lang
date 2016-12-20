@@ -28,6 +28,11 @@ public:
       return false;
    }
 
+   virtual bool parseGrammarMode(_ScriptReader& reader)
+   {
+      return false;
+   }
+
    virtual void parse(_ScriptReader& reader, MemoryDump* output);
 
    TreeScriptParser();

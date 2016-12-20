@@ -172,7 +172,7 @@ public:
 
    virtual void reset() = 0;
 
-////   virtual void switchDFA(const char** dfa) = 0;
+   virtual void switchDFA(const char** dfa) = 0;
 };
 
 class ScriptReader : public _ScriptReader
@@ -239,10 +239,10 @@ public:
       buffer.clear();
    }
 
-//   virtual void switchDFA(const char** dfa)
-//   {
-//      reader.switchDFA(dfa);
-//   }
+   virtual void switchDFA(const char** dfa)
+   {
+      reader.switchDFA(dfa);
+   }
 
    ScriptReader(TextReader* script)
       : reader(4, script)
@@ -303,7 +303,8 @@ public:
 class _Parser
 {
 public:
-   virtual bool parseGrammarRule(_ScriptReader& reader) = 0;  
+   virtual bool parseGrammarRule(_ScriptReader& reader) = 0;
+   virtual bool parseGrammarMode(_ScriptReader& reader) = 0;
    virtual void parse(_ScriptReader& reader, MemoryDump* output) = 0;
 
    virtual ~_Parser() {}

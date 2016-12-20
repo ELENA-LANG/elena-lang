@@ -125,9 +125,9 @@ void Session :: parseMetaScript(MemoryDump& tape, _ScriptReader& reader)
             }
             else throw EParseError(bm.column, bm.row);
          }
-//         else if(ConstantIdentifier::compare(token, "#mode")) {
-//            _currentParser->parseDirective(reader);
-//         }
+         else if(reader.compare("#mode")) {
+            _currentParser->parseGrammarMode(reader);
+         }
          else parseDirectives(tape, reader);
       }
    }

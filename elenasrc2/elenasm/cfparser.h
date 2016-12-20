@@ -102,6 +102,8 @@ protected:
    NameMap           _names;
    MemoryDump        _body;
 
+   bool              _symbolMode;
+
    size_t mapRuleId(ident_t name)
    {
       return mapKey(_names, name, _names.Count() + 1);
@@ -131,6 +133,8 @@ public:
 
    virtual void parse(_ScriptReader& reader, MemoryDump* output);
 
+   virtual bool parseGrammarMode(_ScriptReader& reader);
+
    CFParser(_Parser* baseParser)
       : _table(Rule())
    {
@@ -138,6 +142,8 @@ public:
 
       // all body pointers should be greater than zero
       _body.writeDWord(0, 0);
+
+      _symbolMode = false;
    }
 
    virtual ~CFParser()
