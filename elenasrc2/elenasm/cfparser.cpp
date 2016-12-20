@@ -17,6 +17,8 @@ using namespace _ELENA_TOOL_;
 #define NUMERIC_KEYWORD       "$numeric"
 #define EPS_KEYWORD           "$eps"
 #define EOF_KEYWORD           "$eof"
+#define EOL_KEYWORD           "$eol"
+#define ANYCHR_KEYWORD        "$chr" // > 32
 
 #define REFERENCE_MODE        1
 #define IDENTIFIER_MODE       2
@@ -24,6 +26,8 @@ using namespace _ELENA_TOOL_;
 #define NUMERIC_MODE          4
 #define EOF_MODE              5
 #define IDLE_MODE             6
+#define EOL_MODE              7
+#define LETTER_MODE           8
 
 const char* dfaSymbolic[4] =
 {
@@ -48,6 +52,18 @@ bool normalApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& re
 bool normalEOFApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
 {
    return (bm.state == dfaEOF);
+}
+
+bool normalEOLApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+{
+   ident_t value = reader.lookup(bm);
+   return (value[0] == '\n');
+}
+
+bool normalLetterApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+{
+   ident_t value = reader.lookup(bm);
+   return (value[0] >= 'A' && value[0] <= 'Z') || (value[0] >= 'a' && value[0] <= 'z');
 }
 
 bool normalReferenceApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
@@ -152,6 +168,12 @@ void CFParser :: defineApplyRule(Rule& rule, int mode)
                rule.nonterminal = 0;
                rule.terminal = 0;
                rule.type = rtEps;
+               break;
+            case EOL_MODE:
+               rule.apply = normalEOLApplyRule;
+               break;
+            case LETTER_MODE:
+               rule.apply = normalLetterApplyRule;
                break;
             default:
                rule.apply = normalApplyRule;
@@ -334,6 +356,12 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
             }
             else if (reader.compare(IDENTIFIER_KEYWORD)) {
                applyMode = IDENTIFIER_MODE;
+            }
+            else if (reader.compare(EOL_KEYWORD)) {
+               applyMode = EOL_MODE;
+            }
+            else if (reader.compare(ANYCHR_KEYWORD)) {
+               applyMode = LETTER_MODE;
             }
          }
       }
