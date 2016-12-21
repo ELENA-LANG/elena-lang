@@ -214,3 +214,19 @@
     
     bfProgram eval:bfTape.
 ].
+
+#symbol program4 =
+[
+    ('program'arguments length == 1) ?
+        [ console write:"Please provide the path to the file to interpret". #throw AbortException new. ].
+
+    #var bfAssemblyProgram := scriptEngine 
+        load &path:"asmrules.es"
+        eval &path:('program'arguments@1).
+
+    #var bfProgram := bfAssemblyProgram eval:(TapeAssembler new).
+
+    #var bfTape := Array new:1024 set &every:(&int:n) [ 0 ].
+
+    bfProgram eval:bfTape.
+].
