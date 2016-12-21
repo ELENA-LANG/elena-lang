@@ -3955,6 +3955,7 @@ labEnd:
   popa
 
   dloadfi -3
+  dec
   ecopyd
   restore 4
   close
