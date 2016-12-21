@@ -18,9 +18,7 @@ In development:
                  * support arrayof:struct
 
               zdev 
-                 * bf interpreter
-                 * #64 : Stand alone executable: Script engine
-                 * bf interpreter : both stand-alone and vm client
+                 * bf interpreter : run-time, compile-time, code-generation
 
                  * calc sample
 
@@ -38,6 +36,8 @@ In development:
                  * gui script
                  * state machine script (calc)
                  * reg ex
+                 * #64 : Stand alone executable: Script engine
+                 * bf interpreter : stand-alone
 
              idev - linux
                  * status bar

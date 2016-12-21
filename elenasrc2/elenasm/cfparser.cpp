@@ -49,44 +49,44 @@ bool normalApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& re
    return bm.state != dfaEOF && parser->compareToken(reader, bm, rule.terminal);
 }
 
-bool normalEOFApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+bool normalEOFApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
 {
    return (bm.state == dfaEOF);
 }
 
-bool normalEOLApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+bool normalEOLApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
 {
    ident_t value = reader.lookup(bm);
    return (value[0] == '\n');
 }
 
-bool normalLetterApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+bool normalLetterApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
 {
    ident_t value = reader.lookup(bm);
    return (value[0] >= 'A' && value[0] <= 'Z') || (value[0] >= 'a' && value[0] <= 'z');
 }
 
-bool normalReferenceApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+bool normalReferenceApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
 {
    return (bm.state == dfaFullIdentifier);
 }
 
-bool normalIdentifierApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+bool normalIdentifierApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
 {
    return (bm.state == dfaIdentifier);
 }
 
-bool normalLiteralApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+bool normalLiteralApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
 {
    return (bm.state == dfaQuote);
 }
 
-bool nonterminalApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+bool nonterminalApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
 {
    return true;
 }
 
-bool normalNumericApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+bool normalNumericApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
 {
    return (bm.state == dfaInteger || bm.state == dfaLong || bm.state == dfaReal);
 }
