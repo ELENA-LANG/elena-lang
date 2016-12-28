@@ -199,6 +199,7 @@ enum LexicalType
    lxNotFoundAttr    = 0x20021,
    lxBinarySelf      = 0x20022, // debug info only
    lxOvreriddenMessage = 0x20023, // arg - message
+   lxClassRef        = 0x20024,
 
    lxFieldAttrMask   = 0x20100,
    lxStaticAttr      = 0x20102,

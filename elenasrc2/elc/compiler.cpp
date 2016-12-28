@@ -1254,8 +1254,11 @@ void Compiler::TemplateScope :: generateClassName(bool newName)
    }
    else {
       reference = moduleScope->resolveIdentifier(name);
-      if (!reference)
-         reference = moduleScope->mapNestedExpression();
+      if (!reference) {
+         ReferenceNs fullName(moduleScope->module->Name(), name);
+
+         reference = moduleScope->module->mapReference(fullName);
+      }
    }
 
    classMode = true;
@@ -1735,7 +1738,14 @@ void Compiler :: compileFieldAttributes(SNode node, ClassScope& scope, SNode roo
          else if (attribute) {
             ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
             if (classRef == INVALID_REF) {
-               copyTemplate(rootNode, scope, attribute, current);
+               //copyTemplate(rootNode, scope, attribute, current);
+               if (!copyFieldAttribute(scope, attribute, rootNode)) {
+                  TemplateScope templateScope(&scope, attribute);
+                  templateScope.loadParameters(current);
+
+                  templateScope.generateClassName();
+                  rootNode.appendNode(lxClassRef, generateTemplate(current, templateScope));
+               }
             }
             else node.appendNode(lxType, attribute);
          }
@@ -4753,8 +4763,12 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    int offset = 0;
    ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
 
+   ref_t classRef = current.findChild(lxClassRef).argument;
    ref_t typeAttr = current.findChild(lxType).argument;
-   ref_t classRef = typeAttr != 0 ? moduleScope->attributeHints.get(typeAttr) : 0;
+   if (!classRef && typeAttr) {
+      classRef = moduleScope->attributeHints.get(typeAttr);
+   }
+
    int sizeHint = current.findChild(lxSize).argument;
 
    // a role cannot have fields
@@ -4848,7 +4862,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          offset = scope.info.fields.Count();
          scope.info.fields.add(terminal, offset);
 
-         if (typeAttr != 0)
+         if (typeAttr != 0 || classRef != 0)
             scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, typeAttr));
       }
    }
@@ -5037,6 +5051,34 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    generateMethodDeclarations(scope, node, false, closed);
 
    _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info);
+}
+
+bool Compiler :: copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode)
+{
+   bool attrOnly = true;
+
+   _Memory* body = scope.moduleScope->loadAttributeInfo(attrRef);
+   if (body == NULL)
+      return false;
+
+   SyntaxTree tree(body);
+   SNode current = tree.readRoot().firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         int attrValue = 0;
+         ref_t attribute = mapAttribute(current, scope, attrValue);
+         if (attrValue != 0) {
+            if (_logic->validateFieldAttribute(attrValue)) {
+               rootNode.appendNode((LexicalType)attrValue);
+            }
+         }
+         else attrOnly = false;
+      }
+
+      current = current.nextNode();
+   }
+
+   return attrOnly;
 }
 
 bool Compiler :: copyTemplate(SNode node, Scope& scope, ref_t attrRef, SNode attributeNode)

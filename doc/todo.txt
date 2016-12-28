@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xrev           
-                 * listof:object : template field arrayof:xxx - generateTemplate should be used, wrong warning - dynamic template is applied
-                   directly to the field
                  * listof:object - initializing
                  * listof:myclass
                  * listof:int.
@@ -18,7 +16,7 @@ In development:
                  * support arrayof:struct
 
               zdev 
-                 * bf interpreter : run-time, compile-time, code-generation
+                 * bf interpreter : code-generation
 
                  * calc sample
 
@@ -36,8 +34,6 @@ In development:
                  * gui script
                  * state machine script (calc)
                  * reg ex
-                 * #64 : Stand alone executable: Script engine
-                 * bf interpreter : stand-alone
 
              idev - linux
                  * status bar

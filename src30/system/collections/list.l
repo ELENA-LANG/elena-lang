@@ -17,125 +17,125 @@
     [
         #var(arrayof:type)newArray := type:theCapacity.
         
-//        (theCapacity <= theLength)?
-//        [
-//            theCapacity += 32.
-//            
-//            #var(arrayof:type)newArray := type:theCapacity.
-//            
-//            #var(int) i := 0.
-//            #loop (i < theLength)?
-//            [
-//                newArray setAt &int:i &type:(theArray getAt &int:i).
-//                
-//                i += 1.
-//            ].
-//            
+        (theCapacity <= theLength)?
+        [
+            theCapacity += 32.
+            
+            #var(arrayof:type)newArray := type:theCapacity.
+
+            #var(int) i := 0.
+            #loop (i < theLength)?
+            [
+                newArray setAt &int:i &type:(theArray getAt &int:i).
+                
+                i += 1.
+            ].
+            
             theArray := newArray.
-//        ].
+        ].
     ]
     
-//    /// Returns the object at the specified position
-//    #method getAt : anIndex
-//        = $self getAt &int:(anIndex int).
-//
-//    /// Returns the object at the specified position
-//    #method(type,stacksafe)getAt &int:index
-//    [
-//        (index < theLength)
-//            ! [ #throw OutOfRangeException new. ].
-//            
-//        ^ theArray getAt &int:index.
-//    ]
-//
-//    /// Returns the object at the specified position
-//    #method(stacksafe) setAt &int:index &object:object
-//    [
-//        (index < theLength)
-//            ! [ #throw OutOfRangeException new. ].
-//        
-//        theArray setAt &int:index &object:object.
-//    ]
-//
-//    /// Returns the object at the specified position
-//    #method setAt : anIndex : anObject
-//        = $self setAt &int:(anIndex int) &object:anObject.
-//
-//    #method append : object
-//        <= append &type:object.
-//
-//    /// Appends a new object to the end of the list
-//    #method append &type:object
-//    [
-//        $self $expand.
-//        
-//        theArray setAt &int:theLength &object:object.
-//        
-//        theLength += 1.
-//    ]
-//
-//    /// Removes an object at the specified position
-//    #method(stacksafe) remove &int:anIndex
-//    [
-//        (anIndex < theLength)
-//            ! [ #throw OutOfRangeException new. ].
-//        
-//        theLength -= 1.
-//        
-//        #var(int)i := anIndex.
-//        #loop (i < theLength)?
-//        [
-//            theArray setAt &int:i &type:(theArray getAt &int:(i + 1)).
-//            
-//            i += 1.
-//        ].
-//    ]
-//        
-//    /// Clears the list
-//    #method clear 
-//    [
-//        theLength set &int:0.        
-//    ]
-//    
-//    #method(w3) enumerator 
-//    [
-//        #var(vint)index := -1.
-//        #var(int)length := theLength.
-//        
-//        ^ Enumerator
-//          {
-//              get = $owner getAt &int:index.
-//              
-//              enumerable = $owner.
-//              
-//              reset [ index := -1. ]
-//              
-//              next
-//              [
-//                  index += 1.
-//                  
-//                  ^ index < length.
-//              ]
-//          }.
-//    ]
-//        
-//    #method(outnprop:length,stacksafe)readLength &vint:retVal
-//    [
-//        theArray readLength &vint:retVal.
-//    ]    
+    /// Returns the object at the specified position
+    #method getAt : anIndex
+        = $self getAt &int:(anIndex int).
+
+    /// Returns the object at the specified position
+    #method(type,stacksafe)getAt &int:index
+    [
+        (index < theLength)
+            ! [ #throw OutOfRangeException new. ].
+            
+        ^ theArray getAt &int:index.
+    ]
+
+    /// Returns the object at the specified position
+    #method(stacksafe) setAt &int:index &object:object
+    [
+        (index < theLength)
+            ! [ #throw OutOfRangeException new. ].
+        
+        theArray setAt &int:index &object:object.
+    ]
+
+    /// Returns the object at the specified position
+    #method setAt : anIndex : anObject
+        = $self setAt &int:(anIndex int) &object:anObject.
+
+    #method append : object
+        <= append &type:object.
+
+    /// Appends a new object to the end of the list
+    #method append &type:object
+    [
+        $self $expand.
+        
+        theArray setAt &int:theLength &object:object.
+        
+        theLength += 1.
+    ]
+
+    /// Removes an object at the specified position
+    #method(stacksafe) remove &int:anIndex
+    [
+        (anIndex < theLength)
+            ! [ #throw OutOfRangeException new. ].
+        
+        theLength -= 1.
+        
+        #var(int)i := anIndex.
+        #loop (i < theLength)?
+        [
+            theArray setAt &int:i &type:(theArray getAt &int:(i + 1)).
+            
+            i += 1.
+        ].
+    ]
+        
+    /// Clears the list
+    #method clear 
+    [
+        theLength set &int:0.        
+    ]
+    
+    #method(w3) enumerator 
+    [
+        #var(vint)index := -1.
+        #var(int)length := theLength.
+        
+        ^ Enumerator
+          {
+              get = $owner getAt &int:index.
+              
+              enumerable = $owner.
+              
+              reset [ index := -1. ]
+              
+              next
+              [
+                  index += 1.
+                  
+                  ^ index < length.
+              ]
+          }.
+    ]
+        
+    #method(outnprop:length,stacksafe)readLength &vint:retVal
+    [
+        theArray readLength &vint:retVal.
+    ]    
 }
 
-//// --- ObjectList ---
-//
-//#class(listof:object,sealed) ObjectList
-//{
-//    #constructor(w3) new
-//    [
-//        theArray := object:32.
-//        theLength := 0.
-//        theCapacity := 32.
-//    ]
-//}
+// --- ObjectList ---
+
+#class(listof:object,sealed) ObjectList
+{
+    #constructor(w3) new
+    [
+        theArray := object:32.
+        theLength := 0.
+        theCapacity := 32.
+    ]
+}
 
 // --- ListItem ---
 
