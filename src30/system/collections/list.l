@@ -13,6 +13,10 @@
     #field(vint)        theLength.
     #field(vint)        theCapacity.
 
+//    #constructor &array:object
+//    [
+//    ]
+
     #method $expand
     [
         #var(arrayof:type)newArray := type:theCapacity.

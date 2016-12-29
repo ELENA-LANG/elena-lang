@@ -10,6 +10,7 @@
 [ELC]
 [-]  #277 : loop statement without branching operator
 [-]  several critical bug fixes in structure routines
+[+]  #190 : Closure : auto boxing / unboxing local variables
 
 [LIB]
 [+] #62 : branching / jumping in system'dynamic'Tape

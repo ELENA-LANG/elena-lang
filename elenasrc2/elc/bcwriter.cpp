@@ -2492,6 +2492,92 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
    }
 }
 
+void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg)
+{
+   switch (operator_id) {
+         // Note read / write operator is used for bitwise operations
+      case WRITE_MESSAGE_ID:
+         // dcopy offset
+         // bread
+         // eswap
+         // shiftn -immArg
+         // eswap
+         // bwrite
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcShiftN, -immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+         // Note read / write operator is used for bitwise operations
+      case READ_MESSAGE_ID:
+         // dcopy offset
+         // bread
+         // eswap
+         // shiftn immArg
+         // eswap
+         // bwrite
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcShiftN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case ADD_MESSAGE_ID:
+      case APPEND_MESSAGE_ID:
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcAddN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case SUB_MESSAGE_ID:
+      case REDUCE_MESSAGE_ID:
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcAddN, -immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case MUL_MESSAGE_ID:
+      case INCREASE_MESSAGE_ID:
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcMulN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case AND_MESSAGE_ID:
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcAndN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case OR_MESSAGE_ID:
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcOrN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case SET_MESSAGE_ID:
+         tape.write(bcECopy, immArg);
+         tape.write(bcDCopy, offset);
+         tape.write(bcBWrite);
+         break;
+      default:
+         break;
+   }
+}
+
 void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
@@ -3663,7 +3749,10 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    if (node.type == lxIntOp) {
       if (rargConst) {
          SNode immArg = rarg.findChild(lxIntValue);
-         doIntOperation(tape, operation, immArg.argument);
+         if (larg == lxFieldAddress && larg.argument > 0) {
+            doFieldIntOperation(tape, operation, larg.argument, immArg.argument);
+         }
+         else doIntOperation(tape, operation, immArg.argument);
       }
       else doIntOperation(tape, operation);
    }

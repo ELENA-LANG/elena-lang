@@ -2,18 +2,12 @@
 In development:
 ------                              
 
-              xrev           
-                 * listof:object - initializing
-                 * listof:myclass
-                 * listof:int.
+              xdev - generic development
+                       * #215 : Operations with structure fields
 
-                 * test listof:datatype / listof:type
-                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
-                 * optimize listof.$exapnd
-                 * implement #234 : Generic list 
-                 * support array of typed objects
-                 * support array of objects
-                 * support arrayof:struct
+                       * arrayof:bool - initializing
+                       * arrayof:bool - a@n -> should be bool
+                       * test array of structures
 
               zdev 
                  * calc sample
@@ -66,7 +60,19 @@ Pipeline:
               xdev
                  * multy parameter dispatching
 
-              xrev                 
+              xrev           
+                 * listof:object - initializing
+                 * listof:myclass
+                 * listof:int.
+
+                 * test listof:datatype / listof:type
+                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
+                 * optimize listof.$exapnd
+                 * implement #234 : Generic list 
+                 * support array of typed objects
+                 * support array of objects
+                 * support arrayof:struct
+
                  * reimplement net
                  * test net sample
                  * test manboy
@@ -108,7 +114,6 @@ Pipeline:
                  * optimize array of constants
                  * typecast implicit extension target if required
                  * switch statement with expression
-
 
                  * DerivationWriter : try to get rid of big switch statement
                  * ecv : use >out for ourput redirect
@@ -355,8 +360,6 @@ Pipeline:
                        * test live eson script                                                                                                         
                        * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
                          as light as possible
-                       * #190 : Closure : auto boxing / unboxing local variables  
-                       * #215 : Operations with structure fields
                          possible, no exception boxing
                        * review source code to use templates
                        * review try-catch statement, make sure the closure is created only in case of the error
