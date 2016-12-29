@@ -14,6 +14,7 @@
 [LIB]
 [+] #62 : branching / jumping in system'dynamic'Tape
 [+] #234 : Generic list
+[-] fixed bug in UTF8Encoding / UTF16Encoding
 
 [IDE]
 [+] #58 : it is possible to interact with the symbols from the current project

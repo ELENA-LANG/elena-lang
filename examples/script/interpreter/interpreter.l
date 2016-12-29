@@ -178,6 +178,64 @@
         = Tape new &array:theTape.
 }
 
+#class TapeCGenerator
+{    
+    #field theOutput.
+    
+    #constructor new
+    [
+        theOutput := system'text'TextBuilder new.
+    ]
+    
+    #method open
+    [
+        theOutput writeLine:"while (*p) {".
+    ]
+
+    #method close
+    [
+        theOutput writeLine:"}".
+    ]
+    
+    #method input
+    [
+        theOutput writeLine:"*p = getchar();".
+    ]
+    
+    #method output
+    [
+        theOutput writeLine:"putchar(*p);".
+    ]
+    
+    #method next
+    [
+        theOutput writeLine:"++p;".
+    ]
+    
+    #method previous
+    [
+        theOutput writeLine:"--p;".
+    ]
+
+    #method increase
+    [
+        theOutput writeLine:"++*p;".
+    ]
+    
+    #method decrease
+    [
+        theOutput writeLine:"--*p;".
+    ]
+    
+    #method get
+    [
+        theOutput insert:"void execute(char* p) {" &at:0.
+        theOutput writeLine:"}".
+        
+        ^ theOutput literal.
+    ]
+}
+
 #symbol program =
 [
     // [,.]
@@ -229,4 +287,18 @@
     #var bfTape := Array new:1024 set &every:(&int:n) [ 0 ].
 
     bfProgram eval:bfTape.
+].
+
+#symbol program5 =
+[
+    ('program'arguments length == 1) ?
+        [ console write:"Please provide the path to the file to interpret". #throw AbortException new. ].
+
+    #var bfAssemblyProgram := scriptEngine 
+        load &path:"asmrules.es"
+        eval &path:('program'arguments@1).
+
+    #var bfProgram := bfAssemblyProgram eval:(TapeCGenerator new).
+
+    console writeLine:bfProgram.
 ].

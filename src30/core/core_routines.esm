@@ -4179,8 +4179,10 @@ procedure __utf8encoder.eval&charCount&literal$&vint$[3]
   bcopya
   aloadsi 2
   blen
+  dec
+  ecopyd
   callextr api : strcharlen
-  aloadsi 3
+  bloadsi 3
   nsave
   quitn 3
 
@@ -4305,8 +4307,10 @@ procedure __utf16encoder.eval&charCount&wide$&vint$[3]
   bcopya
   aloadsi 2
   wlen
+  dec
+  ecopyd
   callextr api : wstrcharlen
-  aloadsi 3
+  bloadsi 3
   nsave
 
 end

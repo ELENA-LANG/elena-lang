@@ -48,9 +48,9 @@
         aLine cast:%write &to:$self.
     ]
 
-    #method writeLine : aLine
+    #method writeLine
     [
-        $self write:aLine write:'newLine.
+        $self write:'newLine.
     ]
 
     #method append : aLine
@@ -197,6 +197,19 @@
         
         theLength += 1.
     ]
+
+    #method insert : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+               eval:target &literal:aLiteral
+                  = target insert &int:(anIndex int) &literal:aLiteral.
+    
+               eval:target &wide:aLiteral
+                  = target insert &int:(anIndex int) &literal:(aLiteral literal).
+    
+               eval:target &char:aChar
+                  = target insert &int:(anIndex int) &char:aChar.
+            } &with:$self.
 
     #method(stacksafe) indexOf &int:aPosition &char:aValue &vint:aRetVal
     [
