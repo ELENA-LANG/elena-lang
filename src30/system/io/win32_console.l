@@ -146,14 +146,14 @@
 
     #method write &wide : literal
     [
-        #var(byte:255)buffer.
+        #var(byte:256)buffer.
         #var(int)length := literal length.
         #var(int)index := 0.
-        #var(int)buf_len := 255.
-        #var(int)subs_len := 255.
-        #loop (index < length)?
+        #var(int)buf_len := 256.
+        #var(int)subs_len := 256.
+        #loop (length > 0)?
         [
-            buf_len := 255.
+            buf_len := 256.
             
             (length < 128)
                 ? [ subs_len := length. ]  
@@ -163,20 +163,21 @@
             
             $self write &bytearray:buffer &int:buf_len.
             
-            index := index + subs_len.
+            index += subs_len.
+            length -= subs_len.
         ].
     ]
     
     #method write &literal : literal
     [
-        #var(byte:255)buffer.
+        #var(byte:256)buffer.
         #var(int)length := literal length.
         #var(int)index := 0.
-        #var(int)buf_len := 255.
-        #var(int)subs_len := 255.
-        #loop (index < length)?
+        #var(int)buf_len := 256.
+        #var(int)subs_len := 256.
+        #loop (length > 0)?
         [
-            buf_len := 255.
+            buf_len := 256.
             
             (length < 128)
                 ? [ subs_len := length. ]  
@@ -186,7 +187,8 @@
             
             $self write &bytearray:buffer &int:buf_len.
             
-            index := index + subs_len.
+            index += subs_len.
+            length -= subs_len.
         ].
     ]
     

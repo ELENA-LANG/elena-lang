@@ -16,8 +16,6 @@ In development:
                  * support arrayof:struct
 
               zdev 
-                 * bf interpreter : code-generation
-
                  * calc sample
 
                  * script : elena - simple class,one method

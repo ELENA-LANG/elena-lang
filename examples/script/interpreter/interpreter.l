@@ -300,5 +300,7 @@
 
     #var bfProgram := bfAssemblyProgram eval:(TapeCGenerator new).
 
+    #var len := bfProgram length.
+
     console writeLine:bfProgram.
 ].

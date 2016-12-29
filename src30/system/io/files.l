@@ -54,7 +54,25 @@
         
         aReader close.
     ]
-    
+ 
+    #method saveContent:content
+    [
+        #var(textwriter)aWriter := self::fileExtOp textwriter.
+        
+        aWriter write &literal:(content literal).
+        
+        aWriter close.
+    ]
+ 
+    #method saveWideContent:content
+    [
+        #var(textwriter)aWriter := self::fileExtOp textwriter.
+        
+        aWriter write &wide:(content wide).
+        
+        aWriter close.
+    ]
+          
     #method(literal) literalContent
     [
         #var(textbuffer)anOutput := TextBuilder new.
