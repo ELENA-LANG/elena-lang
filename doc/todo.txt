@@ -2,12 +2,13 @@
 In development:
 ------                              
 
-              xdev - generic development
-                       * #215 : Operations with structure fields
+              xdev - test
+                       * unbox field when passed as ref
 
-                       * arrayof:bool - initializing
-                       * arrayof:bool - a@n -> should be bool
-                       * test array of structures
+                       * test literalOp.trim method
+                       * test constructor returning not compatible object
+                       * test assigning generic object to stack allocated variable
+                            #var(integer:4)n := object. // !! should be typecasting
 
               zdev 
                  * calc sample
@@ -267,6 +268,10 @@ Pipeline:
                        * Object serialization
 
               xdev - generic development
+                       * arrayof:bool - initializing
+                       * arrayof:bool - a@n -> should be bool
+                       * test array of structures
+
                        * support the following syntax : #throw(exceptionof:MyError)"My message" (using implicit constructors for exceptions)
 
                        * #250 : embeddable structure : implicit constructor should be called without creating the object
@@ -279,7 +284,6 @@ Pipeline:
 
                        * optimize #var(dirty_ptr)aPtr := system'external'sqlite3 sqlite3_errmsg &int:1. - assigning is done three times!!
 
-
                        * implicit boxing (int to vint) should be possible only for stack allocated local variable, structure fields
                        * operation with primitive arrays should not be allowed
                        * extension should not be used stand-alone
@@ -289,12 +293,6 @@ Pipeline:
 
                        * test length operation
                        * test exception call stack, the place where it is raised is missing
-
-                       * arrayof:bool - a@n -> should be bool
-                       * test array of structures
-
-                       * equal message should be always the second one, so we could call it directly, equal / not equal message should 
-                         always return bool operand
 
                        * templates : make sure it is not possible to assign array (see arrayof, stringof) 
                          (probably assigning is not #correct for numeric template as well)
@@ -341,18 +339,12 @@ Pipeline:
                          the stack read optimization should work
                        * review Point.equal&coord[1] - why typecast message is sent
 
-                       * test constructor returning not compatible object
-
-                       * test assigning generic object to stack allocated variable
-                            #var(integer:4)n := object. // !! should be typecasting
-
                        * no need in temporal variable in this code
                          #var(handle)handle := $ConsoleHandleFactory new &attributes:0FFFFFFF5h.
 
                        * review array implementation (template usage)
                        * review primitive imlementation (template usage)
                        * probably all hints should be templates??
-                       * #54 : implementing generics / templates : class
                        * stack allocated variable and $nil
                        * review #10 issue
 
@@ -374,6 +366,7 @@ Pipeline:
                        * probably any stand-alone external cal should be declared in implicit extern block. If the operation
                          does not affect GC, a special hint should be used to skip external block declaration
                        * #238 : Manifest - store the manifest info into the resource
+                       * #215 : Operations with structure fields
                        
               xdev - general implementation     
                        * replace all operation with StringHelper with some built-in operators
@@ -479,7 +472,6 @@ Pipeline:
                        * external call: stack should be excluded only if the method is marked as threadsafe
                        * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
                          one for single constant #10 and another for several constant or literal + constant - #10#13)
-                       * #var l := 100000000000000l / 5000000000000l. warning the expression may be boxed, should in this case do not use primitive operation?
                        * if more than 11 parameters are passed, open argument list should be used automatically??
                        * no need to provide exclude command for every external call, special hint to ignore it?
                        * think over optimized way to get GCXT TLS TABLE, try to cache the pointer
@@ -594,13 +586,11 @@ Pipeline:
                        * use script generate code
                       
               xdev - test
-                       * unbox field when passed as ref
                        * test math functions
                        * test with cyriclic and chinese names (strings, variables, files2)
                        * test short -> int, int -> short should correctly set sign
                        * test system'io'StreamWriter
                        * test system'io'BinarayReader / system'io'BinarayWriter
-                       * test literalOp.trim method
                        * test vm samples       
                        * test thread operation                                                                               
                        * sqlite : test operation with double
@@ -727,7 +717,7 @@ Pipeline:
               sdev - samples
                        * calculator : gui
                        * get rid of reverse command
-                       * migrate calc, interpreter samples
+                       * migrate calc samples
                        * vmconsole
                        * notepad: add status bar
                        * notepad: add open / save

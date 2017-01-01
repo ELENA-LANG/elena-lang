@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1197,4 +1197,19 @@ void CompilerLogic :: optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler&
       node = (variable && !assingingMode) ? lxLocalUnboxing : lxExpression;
    }
    else node = lxExpression;
+}
+
+void CompilerLogic :: injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode)
+{
+   ClassInfo info;
+   defineClassInfo(scope, info, targetRef);
+
+   node.setArgument(defineStructSize(info, false));
+   //HOTFIX : allowing to assign a reference variable
+   if (!node.argument && paramMode) {
+      // replace the parameter with the field expression
+      compiler.injectFieldExpression(node.firstChild(lxObjectMask));
+
+      type = info.fieldTypes.get(0).value2;
+   }
 }

@@ -3,7 +3,7 @@
 //
 //      This file contains the common constants of the command-line
 //      compiler and a ELC project class
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elcH
@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x00A0
+#define ELC_REVISION_NUMBER             0x00A1
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -97,7 +97,7 @@
 #define ELC_MANIFEST_AUTHOR         "manifest/author"
 
 // --- ELC information messages ---
-#define ELC_GREETING                "ELENA Command-line compiler %d.%d.%d (C)2005-2016 by Alex Rakov\n"
+#define ELC_GREETING                "ELENA Command-line compiler %d.%d.%d (C)2005-2017 by Alex Rakov\n"
 #define ELC_INTERNAL_ERROR          "Internal error:%s\n"
 #define ELC_STARTING                "Project : %s, Platform: %s"
 #define ELC_COMPILING               "Compiling..."

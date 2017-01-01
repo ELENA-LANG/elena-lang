@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -2956,7 +2956,8 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
       else if (target.kind == okParam || target.kind == okOuter) {
          // Compiler magic : allowing to assign byref / variable parameter
          if (_logic->isVariable(*scope.moduleScope, targetRef)) {
-            node.setArgument(_logic->defineStructSize(*scope.moduleScope, targetRef));
+            _logic->injectVariableAssigning(node, *scope.moduleScope, *this, targetRef, target.type, target.kind == okParam);
+
             target.kind = (target.kind == okParam) ? okParamField : okOuterField;
          }
          // Compiler magic : allowing to assign outer local variables
@@ -6359,4 +6360,11 @@ void Compiler :: injectLocalBoxing(SNode node, int size)
    node.set(lxAssigning, size);
 
    node.insertNode(lxLocalAddress, offset);
+}
+
+void Compiler :: injectFieldExpression(SNode node)
+{
+   node.appendNode(node.type, node.argument);
+   node.appendNode(lxResultField);
+   node.set(lxFieldExpression, 0);
 }
