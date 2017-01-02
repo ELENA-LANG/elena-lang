@@ -50,21 +50,12 @@ Pipeline:
 ------                                                                                         
 
               xrev           
-                 * message $self does not belong to the object points to the target instead of message
-
-                 * test script samples
-                 * tape_test
                  * breaking loop (loop and return statement)
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
                  * optimize : branching with numeric comparison
                  * passing vint as int probably should be possible only for embeddable classes
                  * for wrapper classes generate virutal set method
-                 * overriding dispatching
-                 * test vint : dispatch opertions 
                  * test constant list
-                 * test dispatching method
-                 * test dispatching method with generic methods
-                 * check if self is embeddable
 
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
 
@@ -83,8 +74,6 @@ Pipeline:
                  * optimize : LiteralValue#class.eval&system$new...
                  * warn on duplicate extensions
                  * test try catch statement
-                 * operation with struct field : assigning
-                 * test : a int + b::op int.
                  * test sg
                  * wrong warning : vint literal ; do not raise a warning if the object has custom dispatcher
                  * ide : call stack is corrupted
@@ -95,9 +84,7 @@ Pipeline:
                  * optimize BaseFunctionN retrieve operations
 
                  * ByteNumber.get&min - could we return the constant object?
-                 * assigning param : #class BoxerHelper { #method exchange &ref:anObject1 [ anObject1 := 5. ...
                  * compiling  - (Cast == object class) ? [ ... ]
-                 * implement idle typecasting message (see file_path)
                  * use imm mode for (n) => 1 ? [ now literal. ]
                  * optimize nil operations
                  * why console writeLine:"x:":theX:",y:"theY can be compiled

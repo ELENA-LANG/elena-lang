@@ -666,8 +666,8 @@
     #method exchange &ref:anObject1 &ref:anObject2
     [
         #var tmp := anObject1 get.
-        anObject1 set &object:(anObject2 get).
-        anObject2 set &object:tmp.
+        anObject1 := anObject2 get.
+        anObject2 := tmp.
     ]    
 }
 

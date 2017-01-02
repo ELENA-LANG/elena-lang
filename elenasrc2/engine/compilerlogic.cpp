@@ -1218,3 +1218,22 @@ void CompilerLogic :: injectVariableAssigning(SNode node, _CompilerScope& scope,
       type = info.fieldTypes.get(0).value2;
    }
 }
+
+bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
+{
+   // check if it is a virtual call
+   if (node == lxDirectCalling && getVerb(node.argument) == GET_MESSAGE_ID && getParamCount(node.argument) == 0) {
+      SNode callTarget = node.findChild(lxCallTarget);
+
+      ClassInfo info;
+      defineClassInfo(scope, info, callTarget.argument);
+      if (info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == -1) {
+         // if it is an idle call, remove it
+         node = lxExpression;
+
+         return true;
+      }
+   }
+
+   return false;
+}

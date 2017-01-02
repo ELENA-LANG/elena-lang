@@ -5614,8 +5614,10 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
       if (test(hint, tpStackSafe))
          mode |= HINT_NOBOXING;
 
-      if (test(hint, tpEmbeddable))
-         node.appendNode(lxEmbeddable);
+      if (test(hint, tpEmbeddable)) {
+         if (!_logic->optimizeEmbeddable(node, scope))
+            node.appendNode(lxEmbeddable);
+      }         
    }
 
    optimizeSyntaxExpression(scope, node, warningScope, mode);

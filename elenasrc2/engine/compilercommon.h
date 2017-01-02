@@ -228,6 +228,7 @@ public:
    virtual void optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef, bool assingingMode) = 0;
    virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t returningType, ref_t& subject) = 0;
    virtual bool recognizeEmbeddableIdle(SNode node) = 0;
+   virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope) = 0;
 
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
 };
