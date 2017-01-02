@@ -16,14 +16,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 #define HINT_CLOSURE_MASK     0x00008800
@@ -5507,6 +5507,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
    }
 
    optimizeSymbolTree(node, scope, scope.moduleScope->warningMask);
+   node.refresh();
 
    // create constant if required
    if (scope.constant) {
@@ -5514,7 +5515,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
       if (isStatic)
          scope.raiseError(errInvalidOperation, expression);
 
-      if (!compileSymbolConstant(node, scope, retVal))
+      if (!compileSymbolConstant(expression, scope, retVal))
          scope.raiseError(errInvalidOperation, expression);
    }
 
@@ -5778,6 +5779,43 @@ int Compiler :: allocateStructure(SNode node, int& size)
 
 void Compiler :: optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
 {
+   if (node == lxNested) {
+      // check if the nested collection can be treated like constant one
+      bool constant = true;
+      SNode current = node.firstChild();
+      while (constant && current != lxNone) {
+         if (current == lxMember) {
+            SNode object = current.findSubNodeMask(lxObjectMask);
+            switch (object.type) {
+               case lxConstantChar:
+               case lxConstantClass:
+               case lxConstantInt:
+               case lxConstantLong:
+               case lxConstantList:
+               case lxConstantReal:
+               case lxConstantString:
+               case lxConstantWideStr:
+               case lxConstantSymbol:
+                  break;
+               default:
+                  constant = false;
+                  break;
+            }
+         }
+         current = current.nextNode();
+      }
+
+      // replace with constant array if possible
+      if (constant) {
+         ref_t reference = scope.mapNestedExpression();
+
+         node = lxConstantList;
+         node.setArgument(reference | mskConstArray);         
+
+         _writer.generateConstantList(node, scope.module, reference);
+      }
+   }
+
    optimizeSyntaxExpression(scope, node, warningScope);
 }
 

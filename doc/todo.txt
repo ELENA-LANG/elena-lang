@@ -55,7 +55,6 @@ Pipeline:
                  * optimize : branching with numeric comparison
                  * passing vint as int probably should be possible only for embeddable classes
                  * for wrapper classes generate virutal set method
-                 * test constant list
 
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
 
@@ -67,7 +66,6 @@ Pipeline:
 
                  * DerivationWriter : try to get rid of big switch statement
                  * ecv : use >out for ourput redirect
-                 * test embeddable idle
                  * $ConsoleHandleFactory.newWriter - idle jump
                  * $ConsoleHandleFactory : handle is stack allocated, so the code should be modified to avoid extra object creating
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
@@ -90,7 +88,6 @@ Pipeline:
                  * why console writeLine:"x:":theX:",y:"theY can be compiled
 
                  * test array of char / array of enumerator ...
-                 * remove core.config, no longer required
                  * optimization #249
                  * implement date/time formatting
                  * not ebeddable structure should not be embedded into another structure
@@ -470,6 +467,7 @@ Pipeline:
                        * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                        * optimize listof.$exapnd
                        * optimize listof template
+                       * constant list should be typified
                        
               xdev - native code optimization
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)
