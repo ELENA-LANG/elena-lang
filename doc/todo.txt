@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              xrev           
+                 * #234 : listof:int
+
               zdev 
                  * calc sample
 
@@ -53,13 +56,6 @@ Pipeline:
                  * multy parameter dispatching
 
               xrev           
-                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
-                 * optimize listof.$exapnd
-                 * implement #234 : Generic list 
-                 * support array of typed objects
-                 * support array of objects
-                 * support arrayof:struct
-
                  * reimplement net
                  * test net sample
                  * test manboy
@@ -517,6 +513,8 @@ Pipeline:
                        * optimize output code: system'BaseFunction2
                        * if $self/fields are not used - do not store eax
                        * optimize arrayof template
+                       * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
+                       * optimize listof.$exapnd
                        * optimize listof template
                        
               xdev - native code optimization

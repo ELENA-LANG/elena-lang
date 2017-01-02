@@ -69,17 +69,17 @@
     ]
 
     /// Returns the object at the specified position
-    #method(stacksafe) setAt &int:index &object:object
+    #method(stacksafe) setAt &int:index &type:object
     [
         (index < theLength)
             ! [ #throw OutOfRangeException new. ].
         
-        theArray setAt &int:index &object:object.
+        theArray setAt &int:index &type:object.
     ]
 
     /// Returns the object at the specified position
     #method setAt : anIndex : anObject
-        = $self setAt &int:(anIndex int) &object:anObject.
+        = $self setAt &int:(anIndex int) &type:anObject.
 
     #method append : object
         <= append &type:object.
@@ -89,7 +89,7 @@
     [
         $self $expand.
         
-        theArray setAt &int:theLength &object:object.
+        theArray setAt &int:theLength &type:object.
         
         theLength += 1.
     ]
