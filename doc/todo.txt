@@ -2,14 +2,6 @@
 In development:
 ------                              
 
-              xdev - test
-                       * unbox field when passed as ref
-
-                       * test literalOp.trim method
-                       * test constructor returning not compatible object
-                       * test assigning generic object to stack allocated variable
-                            #var(integer:4)n := object. // !! should be typecasting
-
               zdev 
                  * calc sample
 
@@ -29,9 +21,7 @@ In development:
                  * reg ex
 
              idev - linux
-                 * status bar
                  * message list
-                 * tuning styles
                  * watch
                  * call stack
                  * recent files / recent projects
@@ -39,6 +29,7 @@ In development:
                  * load / save config
                  * load last opened project / file
                  * blicking caret
+                 * tuning styles
                  * face lifting / tuning
                  * proting IDE
                  * proting debugger
@@ -62,11 +53,6 @@ Pipeline:
                  * multy parameter dispatching
 
               xrev           
-                 * listof:object - initializing
-                 * listof:myclass
-                 * listof:int.
-
-                 * test listof:datatype / listof:type
                  * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                  * optimize listof.$exapnd
                  * implement #234 : Generic list 
@@ -174,6 +160,9 @@ Pipeline:
                      }
                      
                      #symbol WSA = WSADATA init &byte:2 &byte:2.
+                 * test listof:object
+                 * test listof:myclass
+                 * test listof:int.
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
@@ -527,6 +516,8 @@ Pipeline:
                        
                        * optimize output code: system'BaseFunction2
                        * if $self/fields are not used - do not store eax
+                       * optimize arrayof template
+                       * optimize listof template
                        
               xdev - native code optimization
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)

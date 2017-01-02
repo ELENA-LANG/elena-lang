@@ -13,9 +13,25 @@
     #field(vint)        theLength.
     #field(vint)        theCapacity.
 
-//    #constructor &array:object
-//    [
-//    ]
+    #constructor(w2) &array:list
+    [
+        #var(int)len := list length.
+        #var(int)size := len / 32.
+        size += 1.
+        size *= 32.
+        
+        theLength := len.
+        theCapacity := size.
+        theArray := type:size.        
+        
+        #var(int)i := 0.
+        #loop (i < len)?
+        [
+            theArray@i := list@i.
+            
+            i += 1.
+        ].
+    ]
 
     #method $expand
     [
