@@ -41,11 +41,6 @@ public:
 //   {
 //      _feedback->onMenu(optionID);
 //   }
-//
-//   void _onClientChanged(void* data, int extraparam, int type)
-//   {
-//      _feedback->onClientChanged(data, extraparam, type);
-//   }
 
    SDIWindow(const char* caption);
 };

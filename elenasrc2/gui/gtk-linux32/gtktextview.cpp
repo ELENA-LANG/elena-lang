@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK+ TextView Control Implementation File
-//                                               (C)2005-2016, by Alexei Rakov
+//                                               (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "gtktextview.h"
@@ -372,7 +372,7 @@ void TextView::TextDrawingArea :: onEditorChange()
 
    update(false);
 
-//   gtk_signal_emit(GTK_OBJECT(_handle), signals[EDITOR_CHANGED], 0);
+   _view->_textview_changed.emit();
 }
 
 void TextView::TextDrawingArea :: onHScroll(int newPosition)
@@ -990,5 +990,10 @@ void TextView :: applySettings(int tabSize, bool tabUsing, bool lineNumberVisibl
 
       refreshView();
    }
+}
+
+type_textview_changed TextView :: textview_changed()
+{
+   return _textview_changed;
 }
 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK Common Header File
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef gtkcommonH
@@ -15,6 +15,8 @@ namespace _GUI_
 
 typedef Gtk::Widget Control;
 typedef Gtk::Window Window;
+
+typedef sigc::signal<void> type_textview_changed;
 
 // --- Clipboard ---
 

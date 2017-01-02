@@ -414,14 +414,19 @@ protected:
       }
    }
 
-   void on_client_change(Widget* page, guint page_number)
+   void on_notification_from_output();
+   void on_notification_from_debugger();
+
+   void on_textview_changed()
    {
       _controller->onCursorChange();
       _controller->onFrameChange();
    }
 
-   void on_notification_from_output();
-   void on_notification_from_debugger();
+   void on_client_change(Widget* page, guint page_number)
+   {
+      on_textview_changed();
+   }
 
    void populateMenu();
    void populateToolbar();

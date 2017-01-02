@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK TextView Control Header File
-//                                               (C)2005-2016, by Alexei Rakov
+//                                               (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef gtktextviewH
@@ -158,6 +158,8 @@ protected:
    Glib::RefPtr<Gtk::Adjustment> _vadjustment;
    Glib::RefPtr<Gtk::Adjustment> _hadjustment;
 
+   type_textview_changed         _textview_changed;
+
    void on_vscroll();
    void on_hscroll();
 
@@ -169,6 +171,8 @@ protected:
    void onEditorChange();
 
 public:
+   type_textview_changed textview_changed();
+
    int getVScrollerValue() const
    {
       return _vadjustment->get_value();

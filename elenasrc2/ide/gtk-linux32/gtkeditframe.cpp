@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     Gtk+ EditFrame Implementation
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "gtkeditframe.h"
@@ -9,11 +9,6 @@
 
 using namespace _GUI_;
 
-////static void editor_changed(gpointer view, gpointer window)
-////{
-////   ((SDIWindow*)window)->_onClientChanged(NULL, 0, VIEWCHANGED_NOTIFY);
-////}
-////
 ////static void ctrl_tab_pressed(GtkWidget* sender, gboolean shift, gpointer window)
 ////{
 ////   ((SDIWindow*)window)->_onMenu(shift ? IDM_WINDOW_PREVIOUS : IDM_WINDOW_NEXT);
@@ -83,10 +78,17 @@ EditFrame :: EditFrame(Model* model/*SDIWindow* owner*/)
 //
 //   return NULL; // !!temporal
 //}
-//
+
+type_textview_changed EditFrame :: textview_changed()
+{
+   return _textview_changed;
+}
+
 int EditFrame :: newDocument(const char* name, Document* document)
 {
    TextView* textView = new _GUI_::TextView();
+   textView->textview_changed().connect(sigc::mem_fun(*this,
+              &EditFrame::on_textview_changed));
 
    textView->setStyles(STYLE_MAX + 1, _schemes[_scheme], 15, 20);
    textView->applySettings(_model->tabSize, _model->tabCharUsing, _model->lineNumberVisible, _model->highlightSyntax);

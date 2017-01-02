@@ -124,7 +124,7 @@ void TabBar :: deleteTab(int index)
    _current = NULL;
    eraseTabPage(index);
 
-    remove_page(index);
+   remove_page(index);
 
    if (_tabs.Count() == 0)
       hide();

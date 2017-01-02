@@ -735,6 +735,9 @@ GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model
 
    //_output.set_editable(false);
 
+   _mainFrame.textview_changed().connect(sigc::mem_fun(*this,
+              &GTKIDEWindow::on_textview_changed) );
+
    _outputDispatcher.connect(sigc::mem_fun(*this, &GTKIDEWindow::on_notification_from_output));
    _debugDispatcher.connect(sigc::mem_fun(*this, &GTKIDEWindow::on_notification_from_debugger));
 }
