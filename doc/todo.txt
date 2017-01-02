@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              xrev           
-                 * #234 : listof:int
-
               zdev 
                  * calc sample
 
@@ -52,37 +49,16 @@ In development:
 Pipeline:
 ------                                                                                         
 
-              xdev
-                 * multy parameter dispatching
-
               xrev           
-                 * reimplement net
-                 * test net sample
-                 * test manboy
-
-                 * make possible to compile the file from command line without project
-                 * make possible to compile the file from command line without project and any parameter - using only
-                   default values e.g. elc collatz.l
-                 * reimplement preloaded attribute (#267 : Module initializers (preloaded attribute))
-
                  * message $self does not belong to the object points to the target instead of message
-
-                 * fixing dynamic array ineriting - constructor should call default dynamic constructor
-                   instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
 
                  * test script samples
                  * tape_test
-                 * test template in template (with parameters)
-                 * test calc sample
-                 * optimize unbox : root expression / assigning
-                 * ini : replace warn/weakunresolved with warn:weakunresolved
                  * breaking loop (loop and return statement)
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
                  * optimize : branching with numeric comparison
                  * passing vint as int probably should be possible only for embeddable classes
                  * for wrapper classes generate virutal set method
-                 * test dispatching to the field / symbol
-                 * test dispatching to the expression
                  * overriding dispatching
                  * test vint : dispatch opertions 
                  * test constant list
@@ -159,12 +135,22 @@ Pipeline:
                  * test listof:object
                  * test listof:myclass
                  * test listof:int.
+                 * reimplement net
+                 * test net sample
+                 * test manboy
+                 * fixing dynamic array ineriting - constructor should call default dynamic constructor
+                   instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
+
+              xdev - generic development
+                 * multy parameter dispatching
+                 * create closure outside the loop, so it will be created only once
+                 * #236 : Namespace sharing
+                 * #163 : try finally catch statement
+                 * #100 : classOp : test if object is subclass of 
+                 * #167 : stack allocated variable and $nil
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
-
-              xdev
-                * create closure outside the loop, so it will be created only once
 
               ydev
                  * upndown : playing a round
@@ -185,31 +171,17 @@ Pipeline:
                  * game of life : rules should be declared in external file
                  * game of life : viewer
 
-              xdev
-                 * lib40 : hello world
-                 * lib40 : true / false could be member of enumeration list 
-                 * lib40 : implementing
-                 * refactoring : minimalistic library should be able to work with only super class declared (currently at least literal
-                   object should be declared)
-
               ydev
                  * upndown : implementing, play with chaotic computer player
 
               xdev
                 * x64 platform
 
-              xdev - generic development
-                       * #236 : Namespace sharing
-                       * #163 : try finally catch statement
-                       * #100 : classOp : test if object is subclass of 
-                       * #167 : stack allocated variable and $nil
-
               xdev - byte code optimization                               
                        * #269 : short-circuit boolean operation
 
               xdev - generic development
                        * #265 : enumeration list (declaration,pool of possible values,literal representation)
-
 
               idev - debugger
                        * real field
@@ -253,8 +225,6 @@ Pipeline:
                        * Object serialization
 
               xdev - generic development
-                       * arrayof:bool - initializing
-                       * arrayof:bool - a@n -> should be bool
                        * test array of structures
 
                        * support the following syntax : #throw(exceptionof:MyError)"My message" (using implicit constructors for exceptions)
@@ -274,13 +244,7 @@ Pipeline:
                        * extension should not be used stand-alone
                        * primitive operation with subject
 
-                       * Compiler::tryTypecasting should be reviewed, too many hot fixes
-
-                       * test length operation
                        * test exception call stack, the place where it is raised is missing
-
-                       * templates : make sure it is not possible to assign array (see arrayof, stringof) 
-                         (probably assigning is not #correct for numeric template as well)
 
                        * template : add typecast around parameter passed with template_subj ; make sure
                          cast methods work correct after this
@@ -473,6 +437,9 @@ Pipeline:
                        * unboxing : for small objects (~4) use appropriate byte commands
                        * refactoring : create a single procedure to typecast acc, should be used every time
                          typecasting required
+                       * make possible to compile the file from command line without project
+                       * make possible to compile the file from command line without project and any parameter - using only
+                         default values e.g. elc collatz.l
     
               xdev - generic development
                        * tape_tester : classTest

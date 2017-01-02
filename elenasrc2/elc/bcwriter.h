@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code writer class.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef bcwriterH
@@ -115,7 +115,7 @@ class ByteCodeWriter
    void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef, bool appendMode);
    void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef);
 
-//   void declareInitializer(CommandTape& tape, ref_t reference);
+   void declareInitializer(CommandTape& tape, ref_t reference);
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
@@ -218,7 +218,7 @@ class ByteCodeWriter
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
-//   void endInitializer(CommandTape& tape);
+   void endInitializer(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
    void endSwitchOption(CommandTape& tape);
    void endSwitchBlock(CommandTape& tape);
@@ -313,7 +313,7 @@ public:
 
    void generateClass(CommandTape& tape, SNode root);
    void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
-//   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic);
    void generateConstantList(SyntaxTree::Node node, _Module* module, ref_t reference);
 

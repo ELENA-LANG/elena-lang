@@ -469,7 +469,7 @@ private:
    struct SymbolScope : public SourceScope
    {
       bool  constant;
-//      bool  preloaded;
+      bool  preloaded;
       ref_t typeRef;
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
@@ -920,7 +920,7 @@ private:
    void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
 //   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
-//   void compilePreloadedCode(SymbolScope& scope);
+   void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ClassScope& scope);
 //   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 

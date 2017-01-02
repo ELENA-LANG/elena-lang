@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Syntax Tree classes
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef syntaxTreeH
@@ -200,6 +200,7 @@ enum LexicalType
    lxBinarySelf      = 0x20022, // debug info only
    lxOvreriddenMessage = 0x20023, // arg - message
    lxClassRef        = 0x20024,
+   lxPreloadedAttr   = 0x20025,
 
    lxFieldAttrMask   = 0x20100,
    lxStaticAttr      = 0x20102,

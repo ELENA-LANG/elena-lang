@@ -869,7 +869,7 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
 {
    typeRef = 0;
    constant = false;
-//   preloaded = false;
+   preloaded = false;
 }
 
 ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
@@ -4506,18 +4506,18 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
       scope.moduleScope->sourcePathRef);
 }
 
-//void Compiler :: compilePreloadedCode(SymbolScope& scope)
-//{
-//   _Module* module = scope.moduleScope->module;
-//
-//   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
-//
-//   CommandTape tape;
-//   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbol, scope.reference);
-//
-//   // create byte code sections
-//   _writer.save(tape, module, NULL, NULL, 0);
-//}
+void Compiler :: compilePreloadedCode(SymbolScope& scope)
+{
+   _Module* module = scope.moduleScope->module;
+
+   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
+
+   CommandTape tape;
+   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbol, scope.reference);
+
+   // create byte code sections
+   _writer.save(tape, module, NULL, 0);
+}
 
 inline bool copyConstructors(SyntaxWriter& writer, SNode node)
 {
@@ -5489,6 +5489,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
    CodeScope codeScope(&scope);
    if (retVal.kind == okUnknown) {
       scope.constant = node.existChild(lxConstAttr);
+      scope.preloaded = node.existChild(lxPreloadedAttr);
       scope.typeRef = node.findChild(lxType).argument;
 
       // compile symbol body, if it is not a singleton
@@ -5517,9 +5518,9 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
          scope.raiseError(errInvalidOperation, expression);
    }
 
-//   if (scope.preloaded) {
-//      compilePreloadedCode(scope);
-//   }
+   if (scope.preloaded) {
+      compilePreloadedCode(scope);
+   }
 
    _writer.generateSymbol(scope.tape, node, isStatic);
 

@@ -938,6 +938,11 @@ bool CompilerLogic :: validateSymbolAttribute(int& attrValue)
 
       return true;
    }
+   else if (attrValue == (int)V_PRELOADED) {
+      attrValue = lxPreloadedAttr;
+
+      return true;
+   }
    else return false;
 }
 
