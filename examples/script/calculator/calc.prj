@@ -3,7 +3,7 @@ package=calc
 vmpath=..\..\bin
 executable=calc.exe
 namespace=calc
-template=vm_console
+template=console
 debuginfo=-1
 warn:unresolved=-1
 
@@ -12,7 +12,5 @@ parser.l
 control.l
 
 [forwards]
-'program_main=extensions'programLoop
-'program'control=calc'control
-'program=calc'testCase
+'program=calc'testProgram
 

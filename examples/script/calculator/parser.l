@@ -1,40 +1,40 @@
 #import system.
-#import system'routines.
-#import system'dynamic.
+//#import system'routines.
+//#import system'dynamic.
 #import extensions'text.
-#import extensions'scripting.
+//#import extensions'scripting.
 
-#static esonScript
-    = scriptEngine load &path:"~\scripts\eson.es" eval &path:"calc.es".
-
-#class(extension) lexicalOp
-{
-    #method lexicalType
-    [
-        ((self >= #48)and:(self <= #57))
-            ? [ ^ %digit. ].
-
-        (self == #43)
-            ? [ ^ %plus. ].
-
-        (self == #45)
-            ? [ ^ %minus. ].
-            
-        (self == #42)
-            ? [ ^ %star. ].
-            
-        (self == #47)
-            ? [ ^ %slash. ].
-            
-        (self == #40)
-            ? [ ^ %opening. ].
-            
-        (self == #41)
-            ? [ ^ %closing. ].
-            
-        ^ %unknown.            
-    ]
-}
+//#static esonScript
+//    = scriptEngine load &path:"~\scripts\eson.es" eval &path:"calc.es".
+//
+//#class(extension) lexicalOp
+//{
+//    #method lexicalType
+//    [
+//        ((self >= #48)and:(self <= #57))
+//            ? [ ^ %digit. ].
+//
+//        (self == #43)
+//            ? [ ^ %plus. ].
+//
+//        (self == #45)
+//            ? [ ^ %minus. ].
+//            
+//        (self == #42)
+//            ? [ ^ %star. ].
+//            
+//        (self == #47)
+//            ? [ ^ %slash. ].
+//            
+//        (self == #40)
+//            ? [ ^ %opening. ].
+//            
+//        (self == #41)
+//            ? [ ^ %closing. ].
+//            
+//        ^ %unknown.            
+//    ]
+//}
 
 #class DerivationTree
 {
@@ -141,64 +141,75 @@
 
 #class StateMachine
 {
-    #field theStatemachine.
-    #field theCurrentState.
+//    #field theStatemachine.
+//    #field theCurrentState.
     #field theDerivationTree.
-    
-    #method $loadBuiltinStatemachine
-    [
-        theStatemachine := esonScript.
-        
-        theCurrentState := theStatemachine start_state:theStatemachine.
-    ]
+
+//    #method $loadBuiltinStatemachine
+//    [
+//        theStatemachine := esonScript.
+//        
+//        theCurrentState := theStatemachine start_state:theStatemachine.
+//    ]
     
     #constructor new
     [
         theDerivationTree := DerivationTree new.
 
-        $self $loadBuiltinStatemachine.
+//        $self $loadBuiltinStatemachine.
     ]
 
-    #method invalidate
-    [
-        theDerivationTree := $nil.
-    ]
-
-    #method func1 = (:aChar)
-    [
-        #var aType := aChar lexicalType.
-
-        theCurrentState := theCurrentState::aType eval:theStatemachine:aChar:theDerivationTree.
-    ].
+//    #method invalidate
+//    [
+//        theDerivationTree := $nil.
+//    ]
+//
+//    #method func1 = (:aChar)
+//    [
+//        #var aType := aChar lexicalType.
+//
+//        theCurrentState := theCurrentState::aType eval:theStatemachine:aChar:theDerivationTree.
+//    ].
 
     #method value
+        => theDerivationTree.    
+//    [
+//        #var aValue := $nil.
+//        
+//        ($nil == theDerivationTree)
+//            ? [ aValue := "Invalid expression". ]
+//            ! [
+//                aValue := theDerivationTree value
+//                    | back:"Invalid expression".
+//            ].
+//            
+//        ^ aValue.
+//    ]
+
+    #method newLeaf : strategy
     [
-        #var aValue := $nil.
-        
-        ($nil == theDerivationTree)
-            ? [ aValue := "Invalid expression". ]
-            ! [
-                aValue := theDerivationTree value
-                    | back:"Invalid expression".
-            ].
-            
-        ^ aValue.
+        theDerivationTree append:(TreeLeaf new:strategy).
+    ]
+    
+    #method addContent : content
+    [
+        theDerivationTree last_node append:content.
     ]
 }
 
-// --- parserOp ---
-
-#class(extension)parserOp
-{
-    #method evaluated
-    [
-        #var aStateMachine := StateMachine new.
-        
-        self run &each:(aStateMachine func1)
-            | if &Error: e [
-                aStateMachine invalidate.
-            ].
-        
-        ^ aStateMachine value.
-    ]
-}
+//// --- parserOp ---
+//
+//#class(extension)parserOp
+//{
+//    #method evaluated
+//    [
+//        #var aStateMachine := StateMachine new.
+//        
+//        self run &each:(aStateMachine func1)
+//            | if &Error: e [
+//                aStateMachine invalidate.
+//            ].
+//        
+//        ^ aStateMachine value.
+//    ]
+//}
