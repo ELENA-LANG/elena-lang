@@ -141,8 +141,8 @@
 
 #class StateMachine
 {
-//    #field theStatemachine.
-//    #field theCurrentState.
+    #field theStates.
+    #field theCurrentState.
     #field theDerivationTree.
 
 //    #method $loadBuiltinStatemachine
@@ -152,11 +152,17 @@
 //        theCurrentState := theStatemachine start_state:theStatemachine.
 //    ]
     
-    #constructor new
+    #constructor new : states
     [
         theDerivationTree := DerivationTree new.
+        theStates := states.
 
 //        $self $loadBuiltinStatemachine.
+    ]
+
+    #method(generic)seek
+    [
+        theCurrentState := theStates::$subject get. 
     ]
 
 //    #method invalidate
@@ -195,6 +201,8 @@
     [
         theDerivationTree last_node append:content.
     ]
+    
+    #method => theCurrentState.
 }
 
 //// --- parserOp ---

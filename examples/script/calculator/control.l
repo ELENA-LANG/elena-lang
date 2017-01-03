@@ -1,7 +1,8 @@
 #import system.
-#import extensions.
 
 #import system'dynamic.
+#import extensions.
+#import extensions'scripting.
 
 //// --- controller ---
 //
@@ -45,7 +46,6 @@
 
 #symbol testProgram =
 [
-    #var base := StateMachine new.    
     #var state1 := Struct(%digit, 
         Tape(
             { order = 1. evalToken : content = content toReal. },
@@ -53,10 +53,17 @@
             %"newLeaf[1]",
             2, %"tapeOp.var[]",
             1, %"tapeOp.var[]",
-            %"addContent[1]"
+            %"addContent[1]",
+            1, %"tapeOp.var[]",
+            %"seek&state0"
         )).
-    
-    #var machine := Group(base, state1).
+                
+    #var states := Struct(%state0, state1).
+
+    #var states_alt := scriptEngine
+        eval &path:"test.es".
+
+    #var machine := StateMachine new:states seek &state0.
     
     machine digit:"1".
     

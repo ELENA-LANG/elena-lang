@@ -1,1 +1,0 @@
-..\..\bin\elt -lrules.es -l%1

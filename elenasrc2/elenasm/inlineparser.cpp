@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2016, by Alexei Rakov
+//                                              (C)2011-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -30,18 +30,18 @@ int InlineScriptParser :: mapVerb(ident_t literal)
    return _verbs.get(literal);
 }
 
-//void InlineScriptParser :: writeSubject(TapeWriter& writer, ident_t message)
-//{
-//   IdentifierString reference;
-//   reference.append('0');
-//   reference.append('#');
-//   reference.append(0x20);
-//   reference.append('&');
-//   reference.append(message);
-//
-//   writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, reference);
-//}
-//
+void InlineScriptParser :: writeSubject(TapeWriter& writer, ident_t message)
+{
+   IdentifierString reference;
+   reference.append('0');
+   reference.append('#');
+   reference.append(0x20);
+   reference.append('&');
+   reference.append(message);
+
+   writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, reference);
+}
+
 //int InlineScriptParser :: parseStack(_ScriptReader& reader, TapeWriter& writer, Stack<ScriptBookmark>& stack)
 //{
 //   IdentifierString message;
@@ -178,9 +178,9 @@ bool InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
          case dfaFullIdentifier:
             writer.writeCallCommand(token);
             break;
-            //case dfaIdentifier:
-            //   writeSubject(writer, token);
-            //   break;
+         case dfaIdentifier:
+            writeSubject(writer, token);
+            break;
          default:
             return false;
       }

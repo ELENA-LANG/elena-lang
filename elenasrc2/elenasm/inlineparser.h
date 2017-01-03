@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2011-2016, by Alexei Rakov
+//                                             (C)2011-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef inlineparserH
@@ -20,7 +20,7 @@ class InlineScriptParser : public _Parser
 
    int mapVerb(ident_t literal);
 
-   //void writeSubject(TapeWriter& writer, ident_t message);
+   void writeSubject(TapeWriter& writer, ident_t message);
    bool writeObject(TapeWriter& writer, char state, ident_t token);
    bool parseMessage(ident_t message, IdentifierString& reference, int paramCounter);
    bool writeMessage(TapeWriter& writer, ident_t message, int paramCounter, int command);
