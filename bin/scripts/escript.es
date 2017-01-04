@@ -1,10 +1,8 @@
 [[
    #grammar cf
 
-   #define start      ::= <= root ( => singleton <= ) =>;
+   #define start      ::= <= root ( => class <= ) =>;
    #define start      ::= $eof;
-
-
    #define class      ::= <= class ( => "{" members <= ) =>;
    #define members    ::= method members;
    #define members    ::=  "}";

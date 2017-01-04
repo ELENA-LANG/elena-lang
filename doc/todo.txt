@@ -3,6 +3,7 @@ In development:
 ------                              
 
               zdev 
+                 * eson : should generate a sinlgeton (both in run-time and compile-time)
                  * calc sample
 
                  * script : elena - simple class,one method
@@ -50,72 +51,36 @@ Pipeline:
 ------                                                                                         
 
               xrev           
+                 * $ConsoleHandleFactory.newWriter - idle jump
+                 * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
+                 * bytearray.getAt&int$[1] - two jumps in row, the second one is idle, jump after the throw - idle as well (#249)
+
                  * breaking loop (loop and return statement)
-                 * optimization : (a != b) ? [ ] => (a == b) ! [ ]
-                 * optimize : branching with numeric comparison
                  * passing vint as int probably should be possible only for embeddable classes
                  * for wrapper classes generate virutal set method
 
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
 
-                 * support abstract attribute
-                 * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
-                 * optimize array of constants
                  * typecast implicit extension target if required
                  * switch statement with expression
 
-                 * DerivationWriter : try to get rid of big switch statement
-                 * ecv : use >out for ourput redirect
-                 * $ConsoleHandleFactory.newWriter - idle jump
-                 * $ConsoleHandleFactory : handle is stack allocated, so the code should be modified to avoid extra object creating
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
                  * optimize : LiteralValue#class.eval&system$new...
                  * warn on duplicate extensions
-                 * test try catch statement
-                 * test sg
                  * wrong warning : vint literal ; do not raise a warning if the object has custom dispatcher
                  * ide : call stack is corrupted
-                 * bytearray.getAt&int$[1] - two jumps in row, the second one is idle, jump after the throw - idle as well
                  * optimize sort method : use typified lamda expression
                  * review ArgArray operations : should it be optimized
                  * use bool lamda expression for seek operations
                  * optimize BaseFunctionN retrieve operations
 
-                 * ByteNumber.get&min - could we return the constant object?
                  * compiling  - (Cast == object class) ? [ ... ]
                  * use imm mode for (n) => 1 ? [ now literal. ]
-                 * optimize nil operations
                  * why console writeLine:"x:":theX:",y:"theY can be compiled
 
                  * test array of char / array of enumerator ...
-                 * optimization #249
                  * implement date/time formatting
                  * not ebeddable structure should not be embedded into another structure
-                 * implicit conversion of numeric constant:
-                     #class(sealed,embeddable) WSADATA
-                     {
-                         #field(short)    wVersion.
-                         #field(short)    wHighVersion.
-                         #field(byte:257) szDescription.
-                         #field(byte:129) szSystemStatus.
-                         #field(short)    iMaxSockets.
-                         #field(short)    iMaxUdpDg.
-                         #field(int)      lpVendorInfo.
-                         
-                         #constructor(stacksafe) init &byte:aVersion &byte:aHighVersion
-                         [
-                             #var b := aVersion. // b is intnumber, if int constant was passed
-                         ]
-                                          
-                         #method wsadata = $self.
-                         
-                         #method close
-                         [
-                             system'external'WS2_32 WSACleanup.
-                         ]
-                     }
-                     
-                     #symbol WSA = WSADATA init &byte:2 &byte:2.
                  * test listof:object
                  * test listof:myclass
                  * test listof:int.
@@ -300,6 +265,8 @@ Pipeline:
                          does not affect GC, a special hint should be used to skip external block declaration
                        * #238 : Manifest - store the manifest info into the resource
                        * #215 : Operations with structure fields
+                       * ByteNumber.get&min - could we return the constant object?
+                       * support abstract attribute
                        
               xdev - general implementation     
                        * replace all operation with StringHelper with some built-in operators
@@ -392,6 +359,7 @@ Pipeline:
 
               xdev - usability
                        * ecv : dynamically define the page size
+                       * ecv : use >out for ourput redirect
 
               fdev - db app
                        * implement passing an object over tcp/ip
@@ -468,6 +436,11 @@ Pipeline:
                        * optimize listof.$exapnd
                        * optimize listof template
                        * constant list should be typified
+                       * #var(byte)n := 3. - assing the numeric value directly
+                       * optimization : (a != b) ? [ ] => (a == b) ! [ ]
+                       * optimize : branching with numeric comparison
+                       * optimize array of constants
+                       * optimize nil operations
                        
               xdev - native code optimization
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)
@@ -671,3 +644,6 @@ Pipeline:
                        * add network players
                        * use db for statistic info
                        * add AI player
+
+              xrev - refactoring
+                       * DerivationWriter : try to get rid of big switch statement

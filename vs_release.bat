@@ -377,7 +377,6 @@ md examples\interpreter
 copy %1\examples\interpreter\*.l examples\interpreter
 copy %1\examples\interpreter\*.prj examples\interpreter
 copy %1\examples\interpreter\*.txt examples\interpreter
-rem copy %1\examples\interpreter\*.bat examples\interpreter
 copy %1\examples\interpreter\*.es examples\interpreter
 
 md examples\console\matrix 

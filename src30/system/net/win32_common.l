@@ -65,7 +65,7 @@
     #field(short)    iMaxUdpDg.
     #field(int)      lpVendorInfo.
     
-    #constructor init &byte:aVersion &byte:aHighVersion
+    #constructor(stacksafe) init &byte:aVersion &byte:aHighVersion
     [
         #var(short)wVersionRequested := aVersion * 10h + aHighVersion.
 

@@ -64,10 +64,13 @@
         eval &path:"test.es".
 
     #var machine := StateMachine new:states seek &state0.
+    #var machine2 := StateMachine new:states_alt seek &state0.
     
     machine digit:"1".
+    machine2 digit:"1".
     
     #var retVal := machine value.
+    #var retVal2 := machine2 value.
 ].
 
 #symbol program =
