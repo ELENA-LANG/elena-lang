@@ -2201,19 +2201,9 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
    switch (member.type)
    {
       case lxNestedClass:
-//      case nsRetStatement:
-//         if (objectNode.Terminal() != nsNone) {
-//            result = compileClosure(objectNode, scope, 0);
-//            break;
-//         }
       case lxCode:
-//      case nsSubjectArg:
-//      case nsMethodParameter:
          result = compileClosure(member, scope, mode & HINT_CLOSURE_MASK);
          break;
-//      case nsInlineClosure:
-//         result = compileClosure(member.firstChild(), scope, HINT_CLOSURE);
-//         break;
       case lxInlineExpression:
          result = compileClosure(member, scope, HINT_CLOSURE);
          break;
@@ -2221,11 +2211,6 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
          if (isCollection(member)) {
             result = compileCollection(objectNode, scope, mode);
          }
-         /*else if (test(mode, HINT_TRY_MODE)) {
-            result = compileExpression(member, scope, 0);
-
-            objectNode = lxTrying;
-         }*/
          else result = compileExpression(member, scope, 0);
          break;
       case lxMessageReference:
@@ -3226,7 +3211,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, int mod
    InlineClassScope scope(&ownerScope, ownerScope.moduleScope->mapNestedExpression());
 
    // if it is a lazy expression / multi-statement closure without parameters
-   if (node == lxCode/* || node == nsInlineClosure*/) {
+   if (node == lxCode) {
       compileAction(node, scope, SNode(), mode);
    }
    // if it is a closure / lambda function with a parameter
@@ -3238,13 +3223,6 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, int mod
       // HOTFIX : hide code node because it is no longer required
       codeNode = lxIdle;
    }
-//   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
-//      compileAction(node.firstChild(), scope, node, mode);
-//   }
-//   // if it is an action code block
-//   else if (node == nsMethodParameter || node == nsSubjectArg) {
-//      compileAction(goToSymbol(node, nsInlineExpression), scope, node, 0);
-//   }
    // if it is a nested class
    else compileNestedVMT(node, scope);
 
@@ -3895,7 +3873,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       if (node == lxImplicitConstructor) {
          verb_id = EVAL_MESSAGE_ID;
       }
-      else if (arg != lxNone) {
+      else if (arg != lxNone && verb != lxNone) {
          verb_id = EVAL_MESSAGE_ID;
          first = signature.Length() == 0;
       }

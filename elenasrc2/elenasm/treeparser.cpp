@@ -19,10 +19,12 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("root", lxRoot);
    _tokens.add("class", lxClass);
    _tokens.add("symbol_decl", lxSymbol);
+   _tokens.add("nested_decl", lxNestedClass);
    _tokens.add("method", lxClassMethod);
    _tokens.add("message", lxMessage);
    _tokens.add("code", lxCode);
    _tokens.add("expression", lxExpression);
+   _tokens.add("returning", lxReturning);
    _tokens.add("symbol", lxReference);
    _tokens.add("literal", lxLiteral);
    _tokens.add("identifier", lxIdentifier);
