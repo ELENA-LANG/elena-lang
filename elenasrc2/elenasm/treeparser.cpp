@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2016, by Alexei Rakov
+//                                              (C)2011-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -18,12 +18,15 @@ TreeScriptParser :: TreeScriptParser()
 {
    _tokens.add("root", lxRoot);
    _tokens.add("class", lxClass);
+   _tokens.add("symbol_decl", lxSymbol);
    _tokens.add("method", lxClassMethod);
    _tokens.add("message", lxMessage);
    _tokens.add("code", lxCode);
    _tokens.add("expression", lxExpression);
    _tokens.add("symbol", lxReference);
    _tokens.add("literal", lxLiteral);
+   _tokens.add("identifier", lxIdentifier);
+   _tokens.add("numeric", lxInteger);
 }
 
 void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer)

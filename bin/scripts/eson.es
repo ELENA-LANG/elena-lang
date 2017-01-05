@@ -1,32 +1,17 @@
 [[
    #grammar cf
 
-   #define start      ::= <= root ( => singleton <= ) =>;
+   #define start      ::= <= root ( => members <= ) =>;
    #define start      ::= $eof;
 
+   #define members    ::= member ";" members;
+   #define members    ::= $eof;
+   #define member     ::= <= symbol_decl ( => s_name "=" expression <= ) =>;
 
-   #define class      ::= <= class ( => "{" members <= ) =>;
-   #define members    ::= method members;
-   #define members    ::=  "}";
-   #define method     ::= <= method ( => name parameters body <= ) =>;
-   #define parameters ::= "(" param;
-   #define param      ::= ")";
-   #define body       ::= <= code ( => "{" statements <= ) => ;
-   #define statements ::= statement next_stat;
-   #define statements ::= "}";
-   #define next_stat  ::= "}";
-   #define statement  ::= expression;
-   #define expression ::= <= expression ( => object operations <= ) =>; 
-   #define operations ::= call;
-   #define operations ::= $eps;
-   #define call       ::= "." message msg_params;
-   #define msg_params ::= "(" object next_m_prm;
-   #define next_m_prm ::= ")";
-   #define object     ::= reference;
-   #define object     ::= literal;
+   #define expression ::= <= expression ( => object <= ) =>; 
 
-   #define name       ::= <= message = $identifier =>;
-   #define message    ::= <= message = $identifier =>;
-   #define reference  ::= <= symbol = $reference =>;
-   #define literal    ::= <= literal = $literal =>;
+   #define object     ::= numeric;
+
+   #define numeric    ::= <= numeric = $numeric =>;
+   #define s_name     ::= <= identifier = $identifier =>;
 ]]

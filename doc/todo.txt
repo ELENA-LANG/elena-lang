@@ -59,8 +59,6 @@ Pipeline:
                  * passing vint as int probably should be possible only for embeddable classes
                  * for wrapper classes generate virutal set method
 
-                 * signature : make possible to create a combined signature from several subjects (constructor overloading)
-
                  * typecast implicit extension target if required
                  * switch statement with expression
 
@@ -91,6 +89,7 @@ Pipeline:
                    instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
 
               xdev - generic development
+                 * signature : make possible to create a combined signature from several subjects (constructor overloading)
                  * multy parameter dispatching
                  * create closure outside the loop, so it will be created only once
                  * #236 : Namespace sharing
@@ -131,6 +130,9 @@ Pipeline:
 
               xdev - generic development
                        * #265 : enumeration list (declaration,pool of possible values,literal representation)
+
+              irev
+                       * create a new project with a single new file - the path to the file should be relative
 
               idev - debugger
                        * real field
@@ -358,6 +360,7 @@ Pipeline:
                        * linux : migrate two rosetta samples to linux
 
               xdev - usability
+                       * it should be possible to compile the project only specifying the project file without any option
                        * ecv : dynamically define the page size
                        * ecv : use >out for ourput redirect
 
