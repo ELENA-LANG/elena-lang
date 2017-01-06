@@ -51,6 +51,10 @@ Pipeline:
 ------                                                                                         
 
               xrev           
+                 * it should be possible to work with TextBuffer as with an array
+                 * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray
+                 * review toLiteral code, temporal size??
+
                  * $ConsoleHandleFactory.newWriter - idle jump
                  * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
                  * bytearray.getAt&int$[1] - two jumps in row, the second one is idle, jump after the throw - idle as well (#249)
@@ -268,8 +272,9 @@ Pipeline:
                        * #238 : Manifest - store the manifest info into the resource
                        * #215 : Operations with structure fields
                        * ByteNumber.get&min - could we return the constant object?
-                       * support abstract attribute
-                       
+                       * support abstract attribute                       
+                       * probably we could get rid of conditional branching? (what about unboxing?)
+
               xdev - general implementation     
                        * replace all operation with StringHelper with some built-in operators
 

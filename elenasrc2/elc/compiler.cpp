@@ -16,14 +16,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 #define HINT_CLOSURE_MASK     0x00008800
@@ -3873,7 +3873,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       if (node == lxImplicitConstructor) {
          verb_id = EVAL_MESSAGE_ID;
       }
-      else if (arg != lxNone && verb != lxNone) {
+      //else if (arg != lxNone && (verb != lxNone || arg == lxMethodParameter)) {
+      else if (arg != lxNone && node.existChild(lxMethodParameter)) {
          verb_id = EVAL_MESSAGE_ID;
          first = signature.Length() == 0;
       }
