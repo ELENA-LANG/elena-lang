@@ -453,7 +453,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
    index = 0;
    CachedMemoryMap<int, int, 20>::Iterator b_it = blocks.start();
    int blockEnd = getBlockEnd(b_it, length);
-   while (*it != blEnd) {
+   while (*it != blEnd || ((*it).argument != bsMethod && (*it).argument != bsSymbol)) {
       ByteCode code = *it;
       bool command = (code <= bcReserved && code >= bcNop);
 

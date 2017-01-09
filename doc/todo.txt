@@ -51,13 +51,7 @@ Pipeline:
 ------                                                                                         
 
               xrev           
-                 * it should be possible to work with TextBuffer as with an array
-                 * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray
-                 * review toLiteral code, temporal size??
-
-                 * $ConsoleHandleFactory.newWriter - idle jump
                  * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
-                 * bytearray.getAt&int$[1] - two jumps in row, the second one is idle, jump after the throw - idle as well (#249)
 
                  * breaking loop (loop and return statement)
                  * passing vint as int probably should be possible only for embeddable classes
@@ -91,6 +85,10 @@ Pipeline:
                  * test manboy
                  * fixing dynamic array ineriting - constructor should call default dynamic constructor
                    instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
+
+                 * it should be possible to work with TextBuffer as with an array
+                 * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray
+                 * review toLiteral code, temporal size??
 
               xdev - generic development
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
