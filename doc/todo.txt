@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              xrev           
+                 * typecast implicit extension target if required
+
               zdev 
                  * eson : should generate a sinlgeton (both in run-time and compile-time)
                  * calc sample
@@ -51,20 +54,18 @@ Pipeline:
 ------                                                                                         
 
               xrev           
+                 * warn on duplicate extensions
+                 * wrong warning : vint literal ; do not raise a warning if the object has custom dispatcher
+                 * ide : call stack is corrupted
+
                  * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
 
                  * breaking loop (loop and return statement)
                  * passing vint as int probably should be possible only for embeddable classes
                  * for wrapper classes generate virutal set method
 
-                 * typecast implicit extension target if required
-                 * switch statement with expression
-
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
                  * optimize : LiteralValue#class.eval&system$new...
-                 * warn on duplicate extensions
-                 * wrong warning : vint literal ; do not raise a warning if the object has custom dispatcher
-                 * ide : call stack is corrupted
                  * optimize sort method : use typified lamda expression
                  * review ArgArray operations : should it be optimized
                  * use bool lamda expression for seek operations
@@ -447,6 +448,7 @@ Pipeline:
                        * optimize : branching with numeric comparison
                        * optimize array of constants
                        * optimize nil operations
+                       * switch statement with expression
                        
               xdev - native code optimization
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)

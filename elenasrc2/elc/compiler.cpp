@@ -2974,6 +2974,8 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 
 ObjectInfo Compiler :: compileExtension(SNode node, CodeScope& scope, int mode)
 {
+   ref_t extesionType = 0;
+
    ModuleScope* moduleScope = scope.moduleScope;
    ObjectInfo   role;
 
@@ -2997,11 +2999,10 @@ ObjectInfo Compiler :: compileExtension(SNode node, CodeScope& scope, int mode)
             moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
 
             flags = roleClass.header.flags;
-            ////HOTFIX : typecast the extension target if required
-            //if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
-            //   scope.writer->insert(lxTypecasting, encodeMessage(roleClass.fieldTypes.get(-1), GET_MESSAGE_ID, 0));
-            //   scope.writer->closeNode();
-            //}
+            //HOTFIX : typecast the extension target if required
+            if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
+               extesionType = roleClass.fieldTypes.get(-1).value2;
+            }
          }
       }
       // if the symbol VMT can be used as an external role
@@ -3016,14 +3017,19 @@ ObjectInfo Compiler :: compileExtension(SNode node, CodeScope& scope, int mode)
       role = compileExpression(roleNode, scope, 0);
    }
 
-   return compileExtensionMessage(node, scope, role);
+   return compileExtensionMessage(node, scope, role, extesionType);
 }
 
-ObjectInfo Compiler :: compileExtensionMessage(SNode node, CodeScope& scope, ObjectInfo role)
+// NOTE : extesionType refers to the type for the typified extension method
+ObjectInfo Compiler :: compileExtensionMessage(SNode node, CodeScope& scope, ObjectInfo role, ref_t extesionType)
 {
    size_t paramCount = 0;
    ref_t  messageRef = mapMessage(node, scope, paramCount);
-   compileMessageParameters(node, scope);
+   ObjectInfo target = compileMessageParameters(node, scope);
+
+   if (extesionType != 0) {
+      typecastObject(node.firstChild(lxObjectMask), scope, extesionType, target);
+   }
 
    return compileMessage(node, scope, role, messageRef, HINT_EXTENSION_MODE);
 }

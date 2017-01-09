@@ -867,7 +867,7 @@ private:
 
    ObjectInfo compileMessage(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileMessage(SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
-   ObjectInfo compileExtensionMessage(SNode node, CodeScope& scope, ObjectInfo role/*, int mode*/);
+   ObjectInfo compileExtensionMessage(SNode node, CodeScope& scope, ObjectInfo role, ref_t extesionType = 0);
 
    ObjectInfo compileNewOperator(SNode node, CodeScope& scope/*, int mode*/);
    ObjectInfo compileAssigning(SNode node, CodeScope& scope, int mode);
