@@ -8,7 +8,7 @@
    #define items      ::= "symbol_decl" symbol items;
    #define items      ::= ")";
 
-   #define symbol     ::= <= ( %"open&symbol[0]" => "(" symbol_bdy ")" <= %"close[0]" ) =>;
+   #define symbol     ::= <=  %"open&symbol[0]" => "(" symbol_bdy ")" <= %"close[0]"  =>;
    #define symbol_bdy ::= identifier expr;
 
    #define identifier ::= <= %"new&identToken[1]" => "identifier" name;

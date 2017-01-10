@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xrev                                              
-                 * test LiteralValue / WideLiteralValue new &int&char for 1,2,3,4 bytes
                  * warn on duplicate extensions
 
               zdev 
