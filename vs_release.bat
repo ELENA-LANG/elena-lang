@@ -128,9 +128,10 @@ copy %1\dat\og\rules.txt dat\og
 echo copying doc files
 
 md doc
-copy %1\doc\license.txt doc\
+copy %1\doc\license doc\
 copy %1\doc\roadmap.txt doc\
 copy %1\doc\contributors doc\
+copy %1\doc\readme.txt .
 
 md doc\api
 copy %1\doc\api\*.html doc\api

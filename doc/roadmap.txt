@@ -10,7 +10,6 @@ Version 2.1.0
 - basic linux version (only console)
 - start the code documentation
 - declarative gui description
-- migrate existing GUI samples to lib30
 - migrate upndown to lib30
 - eldoc
 - sockets
