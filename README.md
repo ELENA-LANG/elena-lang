@@ -33,7 +33,7 @@ in the folder &lt;app root&gt;\examples.
 License
 ---
 The compiler and executables distributed in this package fall under MIT License, 
-for more information read the file LICENSE.MD.
+for more information read the file LICENSE.
 
 ELENA Installation / Run
 ---
