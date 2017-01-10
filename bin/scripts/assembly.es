@@ -12,8 +12,8 @@
    #define symbol_bdy ::= identifier expr;
 
    #define identifier ::= <= %"new&identToken[1]" => "identifier" name;
-   #define expr       ::= "expression" "(" tokens;
-   #define ret_expr   ::= "returning" "(" expr ")";
+   #define expr       ::= <= %"open&expression" "expression" "(" tokens <= %"close[0]" =>;
+   #define ret_expr   ::= <= %"open&ret_expr[0]" => "returning" "(" expr ")" <= %"close[0]" =>;
    #define singleton  ::= <= %"open&singleton[0]" => "(" sing_items <= %"close[0]" =>;
 
    #define sing_items ::= sing_item sing_items; 
@@ -32,5 +32,5 @@
    #define numeric    ::= "=" num_token;
 
    #define ident_token::= <= "$identifier" =>; 
-   #define num_token::= <= $numeric =>; 
+   #define num_token::= <= %"new&numericToken[1]" $numeric =>; 
 ]]
