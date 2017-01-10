@@ -2,8 +2,9 @@
 In development:
 ------                              
 
-              xrev           
-                 * typecast implicit extension target if required
+              xrev                                              
+                 * test LiteralValue / WideLiteralValue new &int&char for 1,2,3,4 bytes
+                 * warn on duplicate extensions
 
               zdev 
                  * eson : should generate a sinlgeton (both in run-time and compile-time)
@@ -54,7 +55,6 @@ Pipeline:
 ------                                                                                         
 
               xrev           
-                 * warn on duplicate extensions
                  * wrong warning : vint literal ; do not raise a warning if the object has custom dispatcher
                  * ide : call stack is corrupted
 

@@ -813,29 +813,24 @@ procedure __literal.new&int$&char$[3]
   ifn lab2 2
   ifn lab3 3
 
-  popd
-  popi 2
-  popa
-
-  pushd
-  aloadsi 3
+  aloadsi 6
+  nload
   shiftn -2
+  pushd
   inc
-  
+  aloadsi 4
   acallvi 1
-  bcopya
 
-  blen
-  dec  
-  shiftn 2
+  bcopya
+  popd
   ecopyd
   dcopy 0
 
 labNext4:
   eswapsi 0
-  nwrite
+  bwrite
   eswapsi 0
-  addn 1
+  addn 3
   next labNext4
   jump labEnd  
   
@@ -858,24 +853,20 @@ labNext1:
   bwriteb
   eswapsi 0
   next labNext1
-  popi 4
   jump labEnd  
     
 lab2:
-  popi 2
-  popd
-  popi 2
-  popa
-
-  pushd
+  aloadsi 6
+  nload
   shiftn -1
+  pushd
   inc
+  aloadsi 4
   
   acallvi 1
   bcopya
 
-  blen
-  dec  
+  popd
   ecopyd
   dcopy 0
   
@@ -888,23 +879,16 @@ labNext2:
   jump labEnd  
 
 lab3:
-  popi 2
-  popd
-  popi 2
-  popa
-
+  aloadsi 6
+  nload
+  muln 3
   pushd
-  ecopyd
-  add
-  add
-  add
   inc
-  
+  aloadsi 4
   acallvi 1
-  bcopya
 
-  blen
-  dec  
+  bcopya
+  popd
   ecopyd
   dcopy 0
 
@@ -914,11 +898,9 @@ labNext3:
   eswapsi 0
   addn 2
   next labNext3
-  jump labEnd  
 
 labEnd:
-  blen
-  dec
+  popi 4
   ecopy 0
   bwriteb
 
@@ -1320,68 +1302,66 @@ end
 
 procedure __wide.new&int$&char$[3]
   
-  bcopya
+  pusha
 
-  aloadsi 3
+  aloadsi 4
   nload
   pushd
-  lessn labFill 10000h
-  
-  aloadsi 3
+  acopys 0
+  pushn 0
+  pushn 0
+  bcopys 0
+
+  callextr api : chartowstr
+  dcopye
+
+  ifn labFill 1 
+
+  aloadsi 6
   nload
   shiftn -1
+  pushd
   inc
-  acopyb
+  aloadsi 4
   acallvi 1
-  
+
   bcopya
-  acopys 0
-  callextr api : chartowstr
-  pop
-  
-  dcopy 0
-  nread
-  pushe
-  
-  wlen
-  dec  
-  shiftn 1
+  popd
+  shiftn -1
   ecopyd
   dcopy 0
 
 labNext2:
   eswapsi 0
-  nwrite
+  bwrite
   eswapsi 0
-  addn 1
+  addn 3
   next labNext2
   jump labEnd  
   
 labFill:
-  aloadsi 3
+  aloadsi 6
   nload
+  pushd
   inc
-  acopyb
+  aloadsi 4
   acallvi 1
 
   bcopya
-  wlen
-  dec
-  ecopyd  
+  popd
+  shiftn -1
+  ecopyd
   dcopy 0
 
 labNext:
   eswapsi 0
   bwritew
   eswapsi 0
-  addn 2
+  inc
   next labNext
 
 labEnd:
-  pop
-  wlen
-  dec
-  shiftn -1
+  popi 4
   ecopy 0
   bwritew
 
