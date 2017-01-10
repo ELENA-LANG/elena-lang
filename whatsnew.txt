@@ -7,6 +7,9 @@
                              What's New in 2.1.1
 ******************************************************************************
 
+[ELENA]              
+[!] Switched to MIT license
+
 [ELC]
 [-]  #277 : loop statement without branching operator
 [-]  several critical bug fixes in structure routines
