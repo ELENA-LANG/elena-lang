@@ -37,8 +37,8 @@ For more information see at http://elenalang.sourceforge.net/
 * License
 ****************************************************************************
 
-The compiler and executables distributed in this package fall under The Apache 
-License V2.0e, for more information read the file LICENSE.TXT.
+The compiler and executables distributed in this package fall under MIT License, 
+for more information read the file LICENSE.MD.
 
 ****************************************************************************
 * ELENA Installation / Run
