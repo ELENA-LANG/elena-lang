@@ -6,13 +6,13 @@
 
    #define module     ::= <= [ ( 2 %"system'dynamic'tapeOp.var&args$[]" => "root" "(" items <= ) * system'dynamic'Tape ] =>;
    #define items      ::= "symbol_decl" symbol items;
-   #define items      ::= ")";
+   #define items      ::= ")" eof;
 
-   #define symbol     ::= <=  %"open&symbol[0]" => "(" symbol_bdy ")" <= %"close[0]"  =>;
+   #define symbol     ::= <=  %"open&symbol[0]" => "(" symbol_bdy ")" <= %"close[0]" =>;
    #define symbol_bdy ::= identifier expr;
 
    #define identifier ::= <= %"new&identToken[1]" => "identifier" name;
-   #define expr       ::= <= %"open&expression" "expression" "(" tokens <= %"close[0]" =>;
+   #define expr       ::= <= %"open&expression[0]" => "expression" "(" tokens <= %"close[0]" =>;
    #define ret_expr   ::= <= %"open&ret_expr[0]" => "returning" "(" expr ")" <= %"close[0]" =>;
    #define singleton  ::= <= %"open&singleton[0]" => "(" sing_items <= %"close[0]" =>;
 
@@ -23,14 +23,16 @@
    #define method     ::= <= %"open&method[0]" => "(" mth_body <= %"close[0]" =>;
    #define mth_body   ::= mth_name mth_expr; 
    #define mth_name   ::= <= %"new&messageToken[1]" => "message" name;
-   #define mth_expr   ::= ret_expr;
+   #define mth_expr   ::= ret_expr ")";
 
    #define tokens     ::= "nested_decl" singleton tokens;
    #define tokens     ::= "numeric" numeric tokens;
    #define tokens     ::= ")";
    #define name       ::= "=" ident_token;
-   #define numeric    ::= "=" num_token;
+   #define numeric    ::= <= %"new&numericToken[1]" => "=" num_token;
 
    #define ident_token::= <= "$identifier" =>; 
-   #define num_token::= <= %"new&numericToken[1]" $numeric =>; 
+   #define num_token  ::= <= $numeric =>; 
+
+   #define eof        ::= $eof; 
 ]]

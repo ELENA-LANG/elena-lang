@@ -6,6 +6,7 @@ In development:
                  * warn on duplicate extensions
 
               zdev 
+                 * Tape : returning the value
                  * eson : should generate a sinlgeton (both in run-time and compile-time)
                  * calc sample
 
