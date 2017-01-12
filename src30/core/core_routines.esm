@@ -4078,6 +4078,57 @@ labEnd:
 
 end
 
+procedure __class.dispatch[1]
+
+  bsredirect
+
+  pushe
+  bcopya
+  pushn 0
+
+labNext:
+  count
+  dloadsi 0
+  if labEnd
+  get
+  inc
+  dsavesi 0
+
+  flag
+  andn elMessage
+  ifn  labNext 0
+
+  nload
+  ecopyd
+  dloadsi 1
+  else labNext
+
+labCall:
+  dloadsi 0
+  get
+  pop
+  pope
+  setsubj 0
+  setverb EVAL_MESSAGE_ID
+  ajumpvi 0
+
+labQuit:
+  quitn 1
+  
+labEnd:
+  popi 2
+  pope
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+
+end
+
 procedure __utf8encoder.convert&int$&vint$&bytearray$&chararray$&vint$[6]
 
   aloadsi 3
