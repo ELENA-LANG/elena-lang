@@ -263,8 +263,8 @@ bool XMLTree :: load(path_t path, int encoding)
    if (!reader.isOpened())
       return false;
 
-   //read the file
-   char buffer[128];
+   //read the file, NOTE : buffer should be bigger to contain the tailing zero
+   char buffer[132];
    reader.readAll(_content, buffer, 128);
 
    return true;

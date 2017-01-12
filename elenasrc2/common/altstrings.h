@@ -3,7 +3,7 @@
 //
 //		This header contains String classes declarations
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef altstringsH
@@ -548,9 +548,9 @@ public:
 
    void append(const T* s, size_t length)
    {
-      size_t newLength = getlength(_string) + length + 1;
-      if (newLength > _size)
-         create(_string, newLength);
+      size_t newLength = getlength(_string) + length;
+      if (newLength >= _size)
+         create(_string, newLength + 1);
 
       StrHelper::append(_string, s, length);
       _string[newLength] = 0;

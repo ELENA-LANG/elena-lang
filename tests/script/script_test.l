@@ -1,6 +1,11 @@
 #import system.
 #import extensions'scripting.
 
+#symbol program2 =
+[
+    #var n := script_test'mytest'States state0.
+].
+
 #symbol program =
 [
     #var factory := scriptEngine 
@@ -11,4 +16,5 @@
     #var obj := factory eval:(Library new) first eval.
     
     #var n := obj state0.
+    #var n2 := script_test'mytest'States state0.
 ].

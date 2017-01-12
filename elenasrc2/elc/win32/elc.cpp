@@ -646,6 +646,7 @@ int main()
          }
          else project.addSource(argv[i]);
       }
+
       project.initLoader();
 
       int platform = project.IntSetting(_ELENA_::opPlatform);
