@@ -3,7 +3,7 @@
 //
 //		This file contains the ELENA Compiler error messages
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jeterrorsH
@@ -107,7 +107,7 @@ namespace _ELENA_
    #define wrnTypeMismatch          "%s(%d:%d): warning 415: Type mismatch, direct typecast is invoked\n"
 //   #define wrnUnknownMessage        "%s(%d:%d): warning 416: method '%s' is not supported by the object\n"
    #define wrnBoxingCheck           "%s(%d:%d): warning 417: The object may be boxed\n"
-//   #define wrnDuplicateExtension    "%s(%d:%d): warning 418: '%s': duplicate extension\n"
+   #define wrnDuplicateExtension    "%s(%d:%d): warning 418: '%s': duplicate extension\n"
 //   #define wrnUnboxinging           "%s(%d:%d): warning 419: '%s' will be unboxed\n"
    #define wrnTypeAlreadyDeclared   "%s(%d:%d): warning 420: Subject attribute cannot be overridden\n"
 

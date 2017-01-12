@@ -300,7 +300,7 @@ private:
       _Memory* loadAttributeInfo(ident_t attribute/*, _Module* &argModule*/);
 
       void loadAttributes(_Module* module);
-      void loadExtensions(_Module* module);
+      void loadExtensions(_Module* module, bool& duplicateExtensions);
       void loadActions(_Module* module);
 
       void saveAttribute(ref_t attrRef, ref_t classReference, bool internalType);
@@ -315,8 +315,13 @@ private:
 
       void loadModuleInfo(_Module* extModule)
       {
+         bool dummy;
+         loadModuleInfo(module, dummy);
+      }
+      void loadModuleInfo(_Module* extModule, bool& duplicateExtensions)
+      {
          loadAttributes(extModule);
-         loadExtensions(extModule);
+         loadExtensions(extModule, duplicateExtensions);
          loadActions(extModule);
       }
 

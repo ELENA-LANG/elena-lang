@@ -764,7 +764,7 @@ void Compiler::ModuleScope :: loadAttributes(_Module* extModule)
    }
 }
 
-void Compiler::ModuleScope :: loadExtensions(_Module* extModule)
+void Compiler::ModuleScope :: loadExtensions(_Module* extModule, bool& duplicateExtensions)
 {
    if (extModule) {
       ReferenceNs sectionName(extModule->Name(), EXTENSION_SECTION);
@@ -789,7 +789,7 @@ void Compiler::ModuleScope :: loadExtensions(_Module* extModule)
 
                typeExtensions->add(message, role_ref);
             }
-            //else raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, terminal);
+            else duplicateExtensions = true;
          }
       }
    }
@@ -5969,7 +5969,10 @@ void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope)
       if (value == NULL) {
          scope.defaultNs.add(module->Name());
 
-         scope.loadModuleInfo(module);
+         bool duplicateExtensions = false;
+         scope.loadModuleInfo(module, duplicateExtensions);
+         if (duplicateExtensions)
+            scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
       }
    }
    else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
@@ -6164,7 +6167,7 @@ void Compiler :: compileIncludeSection(SNode member, ModuleScope& scope)
          //   compileIncludeModule(member, scope, hints);
          //   break;
          case lxImport:
-            compileIncludeModule(member, scope/*, hints*/);
+            compileIncludeModule(member, scope);
             break;
       }
       member = member.nextNode();
