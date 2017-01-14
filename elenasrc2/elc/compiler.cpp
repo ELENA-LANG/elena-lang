@@ -1595,7 +1595,7 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 ref_t Compiler::mapAttribute(SNode attribute, ModuleScope& scope)
 {
    Scope dummyScope(&scope);
-   int dummy;
+   int dummy = 0;
 
    return mapAttribute(attribute, dummyScope, dummy);
 }
@@ -2653,9 +2653,10 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
 
    // try to recognize the operation
    ref_t classReference = resolveObjectReference(scope, target);
-   bool classFound = false;
    bool dispatchCall = false;
-   int callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, classFound, retVal.type);
+   _CompilerLogic::ChechMethodInfo result;
+   int callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
+   retVal.type = result.outputType;
 
    if (target.kind == okThisParam && callType == tpPrivate) {
       messageRef = overwriteVerb(messageRef, PRIVATE_MESSAGE_ID);
@@ -2687,8 +2688,8 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
    else {
       node.set(lxCalling, messageRef);
 
-      // if the sealed/ closed class found and the message is not supported - warn the programmer and raise an exception
-      if (classFound && callType == tpUnknown)
+      // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
+      if (result.found && !result.withCustomDispatcher && callType == tpUnknown)
          node.appendNode(lxNotFoundAttr);
    }
 
@@ -5593,9 +5594,8 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
 //   bool methodNotFound = false;
    SNode target = node.findChild(lxCallTarget);
    if (target.argument != 0) {
-      bool dummy1 = false;
-      ref_t dummy2 = 0;
-      int hint = _logic->checkMethod(scope, target.argument, node.argument, dummy1, dummy2);
+
+      int hint = checkMethod(scope, target.argument, node.argument);
 
       if (test(hint, tpStackSafe))
          mode |= HINT_NOBOXING;

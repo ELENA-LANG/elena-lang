@@ -813,10 +813,9 @@ private:
 
    int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
    {
-      bool dummy1 = false;
-      ref_t dummy2 = 0;
+      _CompilerLogic::ChechMethodInfo dummy;
 
-      return _logic->checkMethod(scope, reference, message, dummy1, dummy2);
+      return _logic->checkMethod(scope, reference, message, dummy);
    }
 
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);

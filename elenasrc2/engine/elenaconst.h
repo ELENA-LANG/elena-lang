@@ -304,10 +304,10 @@ namespace _ELENA_
    const int elRole                = 0x00004080;
    const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
-   const int elExtMessage          = 0x00208000;
    const int elSymbol              = 0x00100000;
+   const int elExtMessage          = 0x00208000;
    const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
-//   const int elPointer             = 0x00800010;
+   const int elWithCustomDispatcher= 0x00800000;
 
    const int elDebugMask           = 0x001F0000;
    const int elDebugDWORD          = 0x00010000;

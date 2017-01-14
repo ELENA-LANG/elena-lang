@@ -203,28 +203,31 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputTy
    else return info.methodHints.get(Attribute(message, maHint));
 }
 
-int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType)
+int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
 {
    ClassInfo info;
-   found = defineClassInfo(scope, info, reference);
+   result.found = defineClassInfo(scope, info, reference);
 
-   if (found) {
+   if (result.found) {
       // only sealed / closed classes should be considered as found
       if (!test(info.header.flags, elClosed))
-         found = false;
+         result.found = false;
 
-      return checkMethod(info, message, outputType);
+      if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
+
+      return checkMethod(info, message, result.outputType);
    }
    else return tpUnknown;
 }
 
-int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, bool& classFound, ref_t& outputType)
+int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
 {
    if (isPrimitiveRef(classReference)) {
       classReference = resolvePrimitiveReference(scope, classReference);
    }
 
-   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, classFound, outputType);
+   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
 
    return callType;
@@ -809,6 +812,11 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
       if ((info.header.flags & elDebugMask) == 0) {
          info.header.flags |= elDebugBytes;
       }
+   }
+
+   // adjust objects with custom dispatch handler
+   if (info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
+      info.header.flags |= elWithCustomDispatcher;
    }
 }
 

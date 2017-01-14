@@ -161,7 +161,21 @@ public:
 class _CompilerLogic
 {
 public:
-   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType) = 0;
+   struct ChechMethodInfo
+   {
+      bool  found;
+      bool  withCustomDispatcher;
+      ref_t outputType;
+
+      ChechMethodInfo()
+      {
+         found = false;
+         outputType = 0;
+         withCustomDispatcher = false;
+      }
+   };
+
+   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
 
    // retrieve the class info / size
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
@@ -171,7 +185,7 @@ public:
    virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
 
    // retrieve the call type
-   virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, bool& classFound, ref_t& outputType) = 0;
+   virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
 
    // retrieve the operation type
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;

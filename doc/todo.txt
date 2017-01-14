@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              xrev                                              
-                 * warn on duplicate extensions
-
               zdev 
                  * eson : should generate a sinlgeton (both in run-time and compile-time)
                  * calc sample
@@ -50,10 +47,7 @@ Pipeline:
 ------                                                                                         
 
               xrev           
-                 * wrong warning : vint literal ; do not raise a warning if the object has custom dispatcher
                  * ide : call stack is corrupted
-
-                 * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
 
                  * breaking loop (loop and return statement)
                  * passing vint as int probably should be possible only for embeddable classes
@@ -68,7 +62,7 @@ Pipeline:
 
                  * compiling  - (Cast == object class) ? [ ... ]
                  * use imm mode for (n) => 1 ? [ now literal. ]
-                 * why console writeLine:"x:":theX:",y:"theY can be compiled
+                 * why console writeLine:"x:":theX:",y:":theY can be compiled
 
                  * test array of char / array of enumerator ...
                  * implement date/time formatting
@@ -85,6 +79,7 @@ Pipeline:
                  * it should be possible to work with TextBuffer as with an array
                  * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray
                  * review toLiteral code, temporal size??
+                 * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
 
               xdev - generic development
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
