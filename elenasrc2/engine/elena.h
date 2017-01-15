@@ -471,10 +471,12 @@ struct ClassHeader
 enum MethodAttribute
 {
    maSubjectMask        = 0x100,
+   maRefefernceMask     = 0x200,
 
    maNone               = 0x000,
    maHint               = 0x001,
    maType               = 0x102,
+   maReference          = 0x202,
    maEmbeddableGet      = 0x103,
 //   maEmbeddedInit   = 0x104,
    maEmbeddableIdle     = 0x005,

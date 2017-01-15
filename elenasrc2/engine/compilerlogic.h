@@ -55,10 +55,10 @@ class CompilerLogic : public _CompilerLogic
 
    typedef List<OperatorInfo> OperatorList;
 
-   int checkMethod(ClassInfo& info, ref_t message, ref_t& outputType);
+   int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
    int checkMethod(ClassInfo& info, ref_t message)
    {
-      ref_t dummy;
+      ChechMethodInfo dummy;
       return checkMethod(info, message, dummy);
    }   
 

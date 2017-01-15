@@ -179,13 +179,14 @@ CompilerLogic :: CompilerLogic()
    //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 }
 
-int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputType)
+int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
 {
    bool methodFound = info.methods.exist(message);
 
    if (methodFound) {
       int hint = info.methodHints.get(Attribute(message, maHint));
-      outputType = info.methodHints.get(Attribute(message, maType));
+      result.outputType = info.methodHints.get(Attribute(message, maType));
+      result.outputReference = info.methodHints.get(Attribute(message, maReference));
 
       if ((hint & tpMask) == tpSealed) {
          return hint;
@@ -216,7 +217,7 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
       if (test(info.header.flags, elWithCustomDispatcher))
          result.withCustomDispatcher = true;
 
-      return checkMethod(info, message, result.outputType);
+      return checkMethod(info, message, result);
    }
    else return tpUnknown;
 }

@@ -47,41 +47,25 @@ Pipeline:
 ------                                                                                         
 
               xrev           
-                 * ide : call stack is corrupted
-
-                 * breaking loop (loop and return statement)
-                 * passing vint as int probably should be possible only for embeddable classes
-                 * for wrapper classes generate virutal set method
-
-                 * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
-                 * optimize : LiteralValue#class.eval&system$new...
-                 * optimize sort method : use typified lamda expression
-                 * review ArgArray operations : should it be optimized
-                 * use bool lamda expression for seek operations
-                 * optimize BaseFunctionN retrieve operations
-
-                 * compiling  - (Cast == object class) ? [ ... ]
-                 * use imm mode for (n) => 1 ? [ now literal. ]
-                 * why console writeLine:"x:":theX:",y:":theY can be compiled
-
                  * test array of char / array of enumerator ...
-                 * implement date/time formatting
-                 * not ebeddable structure should not be embedded into another structure
                  * test listof:object
                  * test listof:myclass
                  * test listof:int.
                  * reimplement net
                  * test net sample
                  * test manboy
-                 * fixing dynamic array ineriting - constructor should call default dynamic constructor
-                   instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
 
+
+              adev - lib30     
+                 * review toLiteral code, temporal size??
                  * it should be possible to work with TextBuffer as with an array
                  * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray
-                 * review toLiteral code, temporal size??
-                 * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
+                 * implement date/time formatting
 
               xdev - generic development
+                 * fixing dynamic array ineriting - constructor should call default dynamic constructor
+                   instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
+                 * breaking loop (loop and return statement)
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
                  * multy parameter dispatching
                  * create closure outside the loop, so it will be created only once
@@ -89,6 +73,10 @@ Pipeline:
                  * #163 : try finally catch statement
                  * #100 : classOp : test if object is subclass of 
                  * #167 : stack allocated variable and $nil
+                 * passing vint as int probably should be possible only for embeddable classes
+                 * for wrapper classes generate virutal set method
+                 * use bool lamda expression for seek operations
+                 * not ebeddable structure should not be embedded into another structure
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
@@ -132,6 +120,7 @@ Pipeline:
                        * structure field
 
               idev - generic development
+                       * ide : call stack is corrupted
                        * vm client : F8 on the start does not work
                        * allow to opem xml project
                        * allow to create xml project
@@ -439,7 +428,14 @@ Pipeline:
                        * optimize array of constants
                        * optimize nil operations
                        * switch statement with expression
-                       
+                       * optimize sort method : use typified lamda expression
+                       * review ArgArray operations : should it be optimized
+                       * optimize BaseFunctionN retrieve operations                       
+                       * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
+                       * optimize : LiteralValue#class.eval&system$new...
+                       * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
+                       * use imm mode for (n) => 1 ? [ now literal. ]
+
               xdev - native code optimization
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)
                        * optimize hook / unhook commands

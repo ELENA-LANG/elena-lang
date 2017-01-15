@@ -539,8 +539,11 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
       while (!mtype_it.Eof()) {
          Attribute key = mtype_it.key();
          ref_t value = *mtype_it;
-         if (test(key.value2, maSubjectMask))
+         if (test(key.value2, maSubjectMask)) {
             value = importSubject(exporter, value, module);
+         }
+         else if (test(key.value2, maRefefernceMask))
+            value = importReference(exporter, value, module);
 
          target.methodHints.add(
             Attribute(importMessage(exporter, key.value1, module), key.value2),
@@ -1761,8 +1764,6 @@ void Compiler :: compileFieldAttributes(SNode node, ClassScope& scope, SNode roo
 
 void Compiler :: compileMethodAttributes(SNode node, MethodScope& scope, SNode rootNode)
 {
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
@@ -2657,6 +2658,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
    _CompilerLogic::ChechMethodInfo result;
    int callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
    retVal.type = result.outputType;
+   retVal.param = result.outputReference;
 
    if (target.kind == okThisParam && callType == tpPrivate) {
       messageRef = overwriteVerb(messageRef, PRIVATE_MESSAGE_ID);
@@ -2709,12 +2711,8 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
       setTerminal(terminal, scope, target, 0);
    }
 
-   // the result of construction call is its instance
-   if (target.kind == okConstantClass) {
-      retVal.param = target.param;
-   }
    // the result of get&type message should be typed
-   else if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
+   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
       if (scope.moduleScope->attributeHints.exist(signRef)) {
          retVal.type = signRef;
          retVal.param = scope.moduleScope->attributeHints.get(signRef);
@@ -4402,37 +4400,6 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope)
          case lxIdle:
             compileTemplateMethods(current, scope);
             break;
-         //case lxDefaultGeneric:
-         //{
-         //   MethodScope methodScope(&scope);
-         //   declareArgumentList(current, methodScope);
-
-         //   // override subject with generic postfix
-         //   methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
-
-         //   // mark as having generic methods
-         //   scope.info.header.flags |= elWithGenerics;
-         //   methodScope.generic = true;
-
-         //   compileMethod(current, methodScope);
-         //   break;
-         //}
-//         case nsImplicitConstructor:
-//         {
-//            MethodScope methodScope(&scope);
-//            declareArgumentList(member, methodScope);
-//
-//            // override message with private verb
-//            methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
-//
-//            int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
-//            methodScope.stackSafe = test(hint, tpStackSafe);
-               //
-         //initialize(scope, methodScope);
-//            compileMethod(member, writer, methodScope);
-//
-//            break;
-//         }
          case lxTemplate:
          {
             TemplateScope templateScope(&scope);
@@ -4513,6 +4480,7 @@ inline bool copyConstructors(SyntaxWriter& writer, SNode node)
    while (current != lxNone) {
       if (current == lxConstructor) {
          writer.newNode(lxClassMethod);
+         writer.appendNode(lxClassMethodAttr, tpConstructor); // Marking the method as a constructor
          SyntaxTree::copyNode(writer, current);
          writer.closeNode();
 
@@ -4562,6 +4530,18 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
 
    generateClassDeclaration(member, classClassScope, false);
 
+   // generate constructor attributes
+   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
+   while (!it.Eof()) {
+      int hints = classClassScope.info.methodHints.get(Attribute(it.key(), maHint));
+      if (test(hints, tpConstructor)) {
+         classClassScope.info.methodHints.exclude(Attribute(it.key(), maReference));
+         classClassScope.info.methodHints.add(Attribute(it.key(), maReference), classScope.reference);
+      }
+
+      it++;
+   }
+
    // save declaration
    classClassScope.save();
 }
@@ -4597,11 +4577,9 @@ void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classCl
             else compileDefaultConstructor(current, methodScope, classClassScope);
          }
          else {
-            //compileMethodHints(hints, writer, methodScope);
             declareArgumentList(current, methodScope);
             current.setArgument(methodScope.message);
 
-            //int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
             methodScope.stackSafe = _logic->isMethodStacksafe(classClassScope.info, methodScope.message);
 
             declareParameterDebugInfo(current, methodScope, true, false);
@@ -4632,8 +4610,6 @@ void Compiler :: declareTemplateMethods(SNode node, ClassScope& scope)
 void Compiler :: declareVMT(SNode current, ClassScope& scope)
 {
    while (current != lxNone) {
-//      DNode hints = skipHints(member);
-
       if (current == lxClassMethod || current == lxImplicitConstructor || current == lxDefaultGeneric) {
          bool dispatchMethod = current == lxClassMethod && current.findChild(lxIdentifier, lxPrivate, lxMessage) == lxNone;
 
@@ -4915,12 +4891,10 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t& 
    ref_t outputType = scope.info.methodHints.get(Attribute(message, maType));
    bool hintChanged = false;
    int hint = scope.info.methodHints.get(Attribute(message, maHint));
-//   int methodType = hint & tpMask;
 
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethodAttr) {
-//         if ((current.argument & tpMask) == 0 || methodType == 0)
          if (current.argument == tpSealed && node.existChild(lxPrivate)) {
             //HOTFIX : private sealed method should be marked appropriately
             hint |= tpPrivate;
@@ -4951,9 +4925,6 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t& 
 //         if (mssgAttr != lxNone) {
 //            scope.info.methodHints.add(Attribute(message, current.argument), getSignature(mssgAttr.argument));
 //         }
-//      }
-//      else if (current == lxMethodTemplate) {
-//         declareImportedTemplate(scope, current, 0, getSignature(message), 0);
 //      }
       current = current.nextNode();
    }

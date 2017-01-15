@@ -66,20 +66,21 @@ typedef Map<ref_t, ref_t> ClassMap;
 
 enum MethodHint
 {
-   tpMask        = 0x0F,
+   tpMask        = 0x00F,
 
-   tpUnknown     = 0x00,
-   tpSealed      = 0x01,
-   tpClosed      = 0x02,
+   tpUnknown     = 0x000,
+   tpSealed      = 0x001,
+   tpClosed      = 0x002,
    tpNormal      = 0x03,
 //      tpDispatcher = 0x04,
-   tpPrivate     = 0x05,
-   tpStackSafe   = 0x10,
-   tpEmbeddable  = 0x20,
-   tpGeneric     = 0x40,
-   tpAction      = 0x80,
+   tpPrivate     = 0x005,
+   tpStackSafe   = 0x010,
+   tpEmbeddable  = 0x020,
+   tpGeneric     = 0x040,
+   tpAction      = 0x080,
    tpIfBranch    = 0x100,
    tpIfNotBranch = 0x200,
+   tpConstructor = 0x400
 };
 
 // --- _CompileScope ---
@@ -166,11 +167,13 @@ public:
       bool  found;
       bool  withCustomDispatcher;
       ref_t outputType;
+      ref_t outputReference;
 
       ChechMethodInfo()
       {
          found = false;
          outputType = 0;
+         outputReference = 0;
          withCustomDispatcher = false;
       }
    };
