@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the win32 command-line compiler
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #define __MSVCRT_VERSION__ 0x0800
@@ -15,9 +15,9 @@
 #include "errors.h"
 #include "compilerlogic.h"
 #include "linker.h"
-#include "win64\linker64.h"
 #include "image.h"
 #include "x86jitcompiler.h"
+#include "i64jitcompiler.h"
 
 #include <stdarg.h>
 #include <windows.h>
@@ -512,6 +512,11 @@ _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
    return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 }
 
+_ELENA_::_JITCompiler* _ELC_::Project::createJITCompiler64()
+{
+   return new _ELENA_::I64JITCompiler(BoolSetting(_ELENA_::opDebugMode));
+}
+
 bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
 {
    bool debugMode = BoolSetting(_ELENA_::opDebugMode);
@@ -693,6 +698,16 @@ int main()
          _ELENA_::Linker linker;
          ImageHelper helper(&linker);
          _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
+      if (platform == _ELENA_::ptWin64Console) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker(true);
+         ImageHelper helper(&linker);
+         _ELENA_::ExecutableImage image(&project, project.createJITCompiler64(), helper);
          linker.run(project, image, (_ELENA_::ref_t) - 1);
 
          print(ELC_SUCCESSFUL_LINKING);

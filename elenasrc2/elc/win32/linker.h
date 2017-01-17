@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class declaration
 //		Supported platforms: Win32
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef linkerH
@@ -64,6 +64,8 @@ class Linker
       }
    };
 
+   bool _mode64bit;
+
    int countSections(Image* image);
 
    int fillImportTable(ImageInfo& info);
@@ -75,6 +77,7 @@ class Linker
    void writeDOSStub(Project* project, FileWriter* file);
    void writeHeader(FileWriter* file, short characteristics, int sectionCount);
    void writeNTHeader(ImageInfo& info, FileWriter* file, ref_t tls_directory);
+   void writeNTHeader64(ImageInfo& info, FileWriter* file, ref_t tls_directory);
 
    void writeSectionHeader(FileWriter* file, const char* name, Section* section, int& tblOffset, 
                            int alignment, int sectionAlignment, int vaddress, int characteristics);
@@ -92,6 +95,11 @@ public:
 
    Linker()
    {
+      _mode64bit = false;
+   }
+   Linker(bool mode64bit)
+   {
+      _mode64bit = mode64bit;
    }
 };
 

@@ -2,8 +2,8 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Executive Linker class implementation
-//		Supported platforms: Win32
-//                                              (C)2005-2016, by Alexei Rakov
+//		Supported platforms: Win32 / Win64 (limited)
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -257,8 +257,11 @@ void Linker :: writeDOSStub(Project* project, FileWriter* file)
 void Linker :: writeHeader(FileWriter* file, short characteristics, int sectionCount)
 {
    IMAGE_FILE_HEADER   header;
+   if (_mode64bit) {
+      header.Machine = IMAGE_FILE_MACHINE_AMD64;
+   }
+   else header.Machine = IMAGE_FILE_MACHINE_I386;
 
-   header.Machine = IMAGE_FILE_MACHINE_I386; // !! machine type may be different;
    header.NumberOfSections = (short)sectionCount;
    header.TimeDateStamp = (int)time(NULL);
    header.SizeOfOptionalHeader = IMAGE_SIZEOF_NT_OPTIONAL_HEADER;
@@ -333,6 +336,74 @@ void Linker :: writeNTHeader(ImageInfo& info, FileWriter* file, ref_t tls_direct
       header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size = getSize(info.image->getImportSection());
    //}
    
+   // IMAGE_DIRECTORY_ENTRY_TLS
+   if (tls_directory != 0xFFFFFFFF) {
+      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress = info.map.rdata + tls_directory;
+      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size = getSize(info.image->getTLSSection());
+   }
+   file->write((char*)&header, IMAGE_SIZEOF_NT_OPTIONAL_HEADER);
+}
+
+void Linker :: writeNTHeader64(ImageInfo& info, FileWriter* file, ref_t tls_directory)
+{
+   IMAGE_OPTIONAL_HEADER64   header;
+
+   header.Magic = IMAGE_NT_OPTIONAL_HDR64_MAGIC;
+   header.MajorLinkerVersion = 1;                                              // not used
+   header.MinorLinkerVersion = 0;
+   header.SizeOfCode = getSize(info.image->getTextSection());
+   header.SizeOfInitializedData = getSize(info.image->getRDataSection()) + getSize(info.image->getImportSection())/* + getSize(image.getTLSSection())*/;
+   header.SizeOfUninitializedData = getSize(info.image->getBSSSection()) + getSize(info.image->getStatSection());
+
+   header.AddressOfEntryPoint = info.map.code + info.entryPoint;
+   header.BaseOfCode = info.map.code;
+
+   header.ImageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
+   header.SectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
+   header.FileAlignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
+
+   header.MajorOperatingSystemVersion = MAJOR_OS;
+   header.MinorOperatingSystemVersion = MINOR_OS;
+   header.MajorImageVersion = 0;                                               // not used
+   header.MinorImageVersion = 0;
+   header.MajorSubsystemVersion = MAJOR_OS;                                    // set for Win 4.0
+   header.MinorSubsystemVersion = MINOR_OS;
+#ifndef mingw49
+   header.Win32VersionValue = 0;                                               // ??
+#endif
+
+   header.SizeOfImage = info.imageSize;
+   header.SizeOfHeaders = info.headerSize;
+   header.CheckSum = 0;                                                        // For EXE file
+   switch (info.project->IntSetting(opPlatform, ptWin64Console) & mtUIMask)
+   {
+      case mtGUI:
+         header.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
+         break;
+      case mtCUI:
+      default:
+         header.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
+         break;
+   }
+
+   header.DllCharacteristics = 0;                                              // For EXE file
+   header.LoaderFlags = 0;                                                     // not used
+
+   header.SizeOfStackReserve = info.project->IntSetting(opSizeOfStackReserv, 0x100000); // !! explicit constant name
+   header.SizeOfStackCommit = info.project->IntSetting(opSizeOfStackCommit, 0x1000);    // !! explicit constant name
+   header.SizeOfHeapReserve = info.project->IntSetting(opSizeOfHeapReserv, 0x100000);   // !! explicit constant name
+   header.SizeOfHeapCommit = info.project->IntSetting(opSizeOfHeapCommit, 0x10000);     // !! explicit constant name
+
+   header.NumberOfRvaAndSizes = IMAGE_NUMBEROF_DIRECTORY_ENTRIES;
+   for (unsigned long i = 0; i < header.NumberOfRvaAndSizes; i++) {
+      header.DataDirectory[i].VirtualAddress = 0;
+      header.DataDirectory[i].Size = 0;
+   }
+   //if (_sections.exist(IMPORT_SECTION)) { // !! temporal
+   header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress = info.map.import;
+   header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size = getSize(info.image->getImportSection());
+   //}
+
    // IMAGE_DIRECTORY_ENTRY_TLS
    if (tls_directory != 0xFFFFFFFF) {
       header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress = info.map.rdata + tls_directory;
@@ -488,7 +559,10 @@ bool Linker :: createExecutable(ImageInfo& info, path_t exePath, ref_t tls_direc
    info.headerSize = align(info.headerSize, info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT));
 
    writeHeader(&executable, IMAGE_FILE_EXECUTABLE_IMAGE, sectionCount);
-   writeNTHeader(info, &executable, tls_directory);
+   if (_mode64bit) {
+      writeNTHeader64(info, &executable, tls_directory);
+   }
+   else writeNTHeader(info, &executable, tls_directory);
    writeSections(info, &executable);
 
    return true;
