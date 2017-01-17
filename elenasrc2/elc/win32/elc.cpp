@@ -15,6 +15,7 @@
 #include "errors.h"
 #include "compilerlogic.h"
 #include "linker.h"
+#include "win64\linker64.h"
 #include "image.h"
 #include "x86jitcompiler.h"
 
@@ -598,6 +599,9 @@ const char* showPlatform(int platform)
 {
    if (platform == _ELENA_::ptWin32Console) {
       return ELC_WIN32CONSOLE;
+   }
+   else if (platform == _ELENA_::ptWin64Console) {
+      return ELC_WIN64CONSOLE;
    }
    else if (platform == _ELENA_::ptWin32ConsoleX) {
       return ELC_WIN32CONSOLEX;

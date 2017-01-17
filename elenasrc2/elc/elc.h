@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x00AC
+#define ELC_REVISION_NUMBER             0x00AD
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -110,6 +110,7 @@
 #define ELC_HELP_INFO               "elc {-key} {<input file>}\n\nkeys: -c<path>   - specifies the project file\n      -d<path>   - generates the debug info file\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -s<symbol> - resolves the entry forward symbol\n      -wun       - turns on unresolved reference warnings\n      -wX        - turns on warnings with level X=1,2,4\n      -wX-       - turns off warnings with level X=1,2,4\n      -wo-       - turns off optimization\n"
 
 #define ELC_WIN32CONSOLE            "STA Win32 Console"
+#define ELC_WIN64CONSOLE            "STA Win64 Console"
 #define ELC_WIN32CONSOLEX           "MTA Win32 Console"
 #define ELC_WIN32VMCONSOLEX         "STA Win32 VM Console"
 #define ELC_WIN32GUI                "STA Win32 GUI"

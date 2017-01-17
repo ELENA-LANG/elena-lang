@@ -45,6 +45,13 @@ In development:
                  * proting IDE
                  * proting debugger
 
+              xdev - x64 platform
+                * #206 : 64-bit architecture
+                * elc should be able to generate the code both for 32 and 64 bit platform, but the limitations will be kept
+                  (no more than 12 parameters, number of references)
+                * xelc will be compiled only for 64 bit platform and may generate code for both 32 and 64 but platforms but
+                  during linking 32 bit application it should enforce the limitations (no more than 12 parameters, number of references)
+
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -99,9 +106,6 @@ Pipeline:
 
               ydev
                  * upndown : implementing, play with chaotic computer player
-
-              xdev
-                * x64 platform
 
               xdev - byte code optimization                               
                        * #269 : short-circuit boolean operation

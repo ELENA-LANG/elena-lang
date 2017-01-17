@@ -2,9 +2,9 @@ States =
 {
    state0 : 
    {
-      digit : function()
+      digit : function(n)
       {
-         return 2;
+         return n;
       };
    };
 };

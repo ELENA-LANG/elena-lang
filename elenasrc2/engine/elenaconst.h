@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Engine constants
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaconstH
@@ -251,6 +251,7 @@ namespace _ELENA_
       mtPlatformMask     = 0x000FF,
       mtWin32            = 0x00001,
       mtLinux32          = 0x00002,
+      mtWin64            = 0x00081,
 
       mtTargetMask       = 0x00F00,
       mtStandalone       = 0x00000,
@@ -266,6 +267,7 @@ namespace _ELENA_
 
       ptLibrary          = 0x00000,
       ptWin32Console     = 0x00001,
+      ptWin64Console     = 0x00081,
       ptWin32GUI         = 0x01001,
       ptVMWin32Console   = 0x00101,
       ptWin32ConsoleX    = 0x10001,
