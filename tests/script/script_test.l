@@ -16,5 +16,8 @@
     #var obj := factory eval:(Library new) first eval.
     
     #var n := obj state0.
-    #var n2 := script_test'mytest'States state0.
+    #var m := script_test'mytest'States state0.
+    
+    #var nn := n digit.
+    #var mm := m digit.
 ].

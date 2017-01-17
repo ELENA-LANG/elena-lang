@@ -76,7 +76,7 @@
         (0 == aRetVal)
             ! [ #throw SocketException new:"Cannot start socket service" &error_code:(IntNumber new &int:aRetVal). ].
             
-        'startUp set &onAppEnd: arg [ $self close ].
+        startUpEvents set &onAppEnd: arg [ $self close ].
     ]
     
     #method wsadata = $self.

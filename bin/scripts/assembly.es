@@ -14,7 +14,12 @@
    #define identifier ::= <= %"new&identToken[1]" => "identifier" name;
    #define expr       ::= <= %"open&expression[0]" => "expression" "(" tokens <= %"close[0]" =>;
    #define ret_expr   ::= <= %"open&ret_expr[0]" => "returning" "(" expr ")" <= %"close[0]" =>;
+
    #define singleton  ::= <= %"open&singleton[0]" => "(" sing_items <= %"close[0]" =>;
+
+   #define action     ::= a_line;
+   #define a_line     ::= ret_expr a_line;
+   #define a_line     ::= ")";
 
    #define sing_items ::= sing_item sing_items; 
    #define sing_items ::= ")";
@@ -24,6 +29,9 @@
    #define mth_body   ::= mth_name mth_expr; 
    #define mth_name   ::= <= %"new&messageToken[1]" => "message" name;
    #define mth_expr   ::= ret_expr ")";
+   #define mth_expr   ::= mth_body ")";
+
+   #define mth_body   ::= <= %"open&action[0]" => "action" "(" action <= %"close[0]" =>;
 
    #define tokens     ::= "nested_decl" singleton tokens;
    #define tokens     ::= "numeric" numeric tokens;

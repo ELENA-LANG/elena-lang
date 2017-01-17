@@ -6,7 +6,7 @@
     #var m := Integer new:k.
     #var b := ()[ m -= 1. ^ A eval:m:this:x1:x2:x3:x4. ].
     
-    (m <= 0)
+    (m int <= 0)
         ? [ ^ x4 eval + x5 eval. ]
         ! [ ^ b eval. ].
 ].

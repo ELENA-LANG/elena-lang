@@ -44,7 +44,16 @@
         
         ^ expr.
     ]
+
+    #method open &singleton
+    [
+        #var expr := SingletonScope new:$self.
         
+        theCallstack push:expr.
+        
+        ^ expr.
+    ]
+                
     #method save &array_list:retVal
     [
         theCallExpr
@@ -151,6 +160,11 @@
     #constructor new : parent
         <= (new:parent)
     [
+    ]
+    
+    #method save &array_list:retVal
+    [
+        retVal += $self eval.
     ]
     
     #method eval

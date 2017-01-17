@@ -1,4 +1,10 @@
 States = 
 {
-   state0 : 1;
+   state0 : 
+   {
+      digit : function()
+      {
+         return 2;
+      };
+   };
 };

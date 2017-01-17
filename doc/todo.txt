@@ -2,6 +2,15 @@
 In development:
 ------                              
 
+              xrev           
+                 * test net sample
+
+              sdev - cf parser
+                 * the following grammar rule is not correctly split (code is ignored) :
+                       #define method ::= "method" "(" name code ")";
+                 * use pattern like in regex for terminal matching
+                 * at least print the token where the parser error is
+
               zdev 
                  * eson : should generate a sinlgeton (both in run-time and compile-time)
                  * calc sample
@@ -35,32 +44,16 @@ In development:
                  * proting IDE
                  * proting debugger
 
-              adev - linux
-                 * migrate LIB30
-
-              sdev - cf parser
-                 * the following grammar rule is not correctly split (code is ignored) :
-                       #define method ::= "method" "(" name code ")";
-
 ------                                 
 Pipeline:
 ------                                                                                         
-
-              xrev           
-                 * test array of char / array of enumerator ...
-                 * test listof:object
-                 * test listof:myclass
-                 * test listof:int.
-                 * reimplement net
-                 * test net sample
-                 * test manboy
-
 
               adev - lib30     
                  * review toLiteral code, temporal size??
                  * it should be possible to work with TextBuffer as with an array
                  * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray
                  * implement date/time formatting
+                 * Struct should support set method
 
               xdev - generic development
                  * fixing dynamic array ineriting - constructor should call default dynamic constructor
@@ -77,6 +70,9 @@ Pipeline:
                  * for wrapper classes generate virutal set method
                  * use bool lamda expression for seek operations
                  * not ebeddable structure should not be embedded into another structure
+
+              adev - linux
+                 * migrate LIB30
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class

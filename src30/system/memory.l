@@ -2137,42 +2137,42 @@
         = theArray getAt &int:theIndex.
 }
 
-//// --- Func1Group ---
-//
-//#subject func1array = arrayof:func1.
-//
-//#class Function1Group :: BaseFunction1
-//{
-//    #field(func1array) theHandlers.
-//    
-//    #constructor new &args:Handlers
-//    [
-//        #var(int)i.
-//        #var(int)len := Handlers length.
-//        
-//        theHandlers := func1:len.
-//        
-//        #loop (i < len)?
-//        [
-//            theHandlers setAt &int:i &func1:((Handlers@i) func1).
-//            
-//            i += 1.
-//        ].
-//    ]
-//    
-//    #method eval : anObject
-//    [
-//        #var(int)i.
-//        #var(int)len := theHandlers length.
-//        
-//        #loop (i < len)?
-//        [
-//            theHandlers getAt &int:i eval:anObject.
-//            
-//            i += 1.
-//        ].
-//    ]
-//}
+// --- Func1Group ---
+
+#subject func1array = arrayof:func1.
+
+#class Function1Group :: BaseFunction1
+{
+    #field(func1array) theHandlers.
+    
+    #constructor new &args:Handlers
+    [
+        #var(int)i.
+        #var(int)len := Handlers length.
+        
+        theHandlers := func1:len.
+        
+        #loop (i < len)?
+        [
+            theHandlers setAt &int:i &func1:((Handlers@i) func1).
+            
+            i += 1.
+        ].
+    ]
+    
+    #method eval : anObject
+    [
+        #var(int)i.
+        #var(int)len := theHandlers length.
+        
+        #loop (i < len)?
+        [
+            theHandlers getAt &int:i eval:anObject.
+            
+            i += 1.
+        ].
+    ]
+}
 
 // --- BitArrayIterator ---
 
