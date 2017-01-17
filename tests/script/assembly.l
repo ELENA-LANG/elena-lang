@@ -86,6 +86,43 @@
     ]
 }
 
+#class CodeScope :: Scope
+{
+    #field theStatements.
+    
+    #constructor new : aParent
+        <= (new : aParent)
+    [
+        theStatements := List new.
+    ]
+    
+    #method save &array_list:retVal
+    [
+        theStatements run &each:statement
+        [
+            statement save &array_list:retVal.
+        ].
+    ]
+
+    #method open &ret_expr
+    [
+        #var expr := RetExpressionScope new:$self.
+        
+        theStatements += expr.
+        
+        ^ expr.
+    ]
+        
+    #method open &expression
+    [
+        #var expr := ExpressionScope new:$self.
+        
+        theStatements += expr.
+        
+        ^ expr.
+    ]
+}
+
 #class MethodScope :: Scope
 {
     #field theSubject.
@@ -130,6 +167,13 @@
     #method open &ret_expr
     [
         theCode := RetExpressionScope new:$self.
+        
+        ^ theCode.
+    ]
+    
+    #method open &code
+    [
+        theCode := CodeScope new:$self.
         
         ^ theCode.
     ]

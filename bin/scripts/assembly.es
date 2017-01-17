@@ -17,7 +17,7 @@
 
    #define singleton  ::= <= %"open&singleton[0]" => "(" sing_items <= %"close[0]" =>;
 
-   #define action     ::= a_line;
+   #define code       ::= a_line;
    #define a_line     ::= ret_expr a_line;
    #define a_line     ::= ")";
 
@@ -31,7 +31,7 @@
    #define mth_expr   ::= ret_expr ")";
    #define mth_expr   ::= mth_body ")";
 
-   #define mth_body   ::= <= %"open&action[0]" => "action" "(" action <= %"close[0]" =>;
+   #define mth_body   ::= <= %"open&code[0]" => "code" "(" code <= %"close[0]" =>;
 
    #define tokens     ::= "nested_decl" singleton tokens;
    #define tokens     ::= "numeric" numeric tokens;

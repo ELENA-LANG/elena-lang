@@ -19,7 +19,7 @@
 
    #define cls_mmbr   ::= <= method ( => name ":" mmbr_expr <= ) =>;
    #define mmbr_expr  ::= <= returning ( => expression <= ) =>;
-   #define mmbr_expr  ::= <= action ( => "function" "(" f_params f_body <= ) =>;
+   #define mmbr_expr  ::= <= code ( => "function" "(" f_params f_body <= ) =>;
 
    #define f_params   ::= ")";
    #define f_body     ::= "{" f_line;

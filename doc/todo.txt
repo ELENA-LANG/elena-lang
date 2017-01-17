@@ -10,6 +10,7 @@ In development:
                        #define method ::= "method" "(" name code ")";
                  * use pattern like in regex for terminal matching
                  * at least print the token where the parser error is
+                 * CodeScope : after each statement clear the top stack item
 
               zdev 
                  * eson : should generate a sinlgeton (both in run-time and compile-time)
