@@ -29,6 +29,7 @@ In development:
                  * reg ex
 
               xdev - x64 platform
+                * core_routines : get rid of INV_PARAM_MASK - clearcount
                 * #206 : 64-bit architecture
                 * elc should be able to generate the code both for 32 and 64 bit platform, but the limitations will be kept
                   (no more than 12 parameters, number of references)

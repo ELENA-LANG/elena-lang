@@ -754,7 +754,7 @@ void FindDialog :: onOK()
 
 void AboutDialog :: onCreate()
 {
-   setText(IDC_ABOUT_LICENCE_TEXT, APACHE_LICENSE2);
+   setText(IDC_ABOUT_LICENCE_TEXT, MIT_LICENSE);
    setText(IDC_ABOUT_HOME, ELENA_HOMEPAGE);
    setText(IDC_ABOUT_BLOG, ELENA_BLOG);
 }

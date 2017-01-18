@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef winideconstH
@@ -13,7 +13,7 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDE_REVISION_NUMBER                     11
+#define IDE_REVISION_NUMBER                     1
 
 // --- Command line arguments ---
 
