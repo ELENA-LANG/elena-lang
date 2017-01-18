@@ -129,6 +129,9 @@
     #method safeSeek : aValue
         = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
 
+    #method seek : aValue
+        = x [ aValue equal:x ] retrieve &enumerator:(self enumerator).
+
     #method(bool) ifExists : aValue
         = $nil != self::enumerableOp safeSeek:aValue.
 

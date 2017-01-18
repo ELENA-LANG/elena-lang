@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              xrev           
-                 * test net sample
-
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define method ::= "method" "(" name code ")";
@@ -31,6 +28,17 @@ In development:
                  * state machine script (calc)
                  * reg ex
 
+              xdev - x64 platform
+                * #206 : 64-bit architecture
+                * elc should be able to generate the code both for 32 and 64 bit platform, but the limitations will be kept
+                  (no more than 12 parameters, number of references)
+                * xelc will be compiled only for 64 bit platform and may generate code for both 32 and 64 but platforms but
+                  during linking 32 bit application it should enforce the limitations (no more than 12 parameters, number of references)
+
+------                                 
+Pipeline:
+------                                                                                         
+
              idev - linux
                  * message list
                  * watch
@@ -45,16 +53,8 @@ In development:
                  * proting IDE
                  * proting debugger
 
-              xdev - x64 platform
-                * #206 : 64-bit architecture
-                * elc should be able to generate the code both for 32 and 64 bit platform, but the limitations will be kept
-                  (no more than 12 parameters, number of references)
-                * xelc will be compiled only for 64 bit platform and may generate code for both 32 and 64 but platforms but
-                  during linking 32 bit application it should enforce the limitations (no more than 12 parameters, number of references)
-
-------                                 
-Pipeline:
-------                                                                                         
+              xrev           
+                 * test net sample
 
               adev - lib30     
                  * review toLiteral code, temporal size??

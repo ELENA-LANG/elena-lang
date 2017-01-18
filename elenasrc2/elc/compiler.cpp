@@ -3857,6 +3857,15 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
    return encodeMessage(sign_id, EVAL_MESSAGE_ID, scope.parameters.Count());
 }
 
+inline SNode findTerminal(SNode node)
+{
+   SNode ident = node.findChild(lxIdentifier, lxPrivate);
+   if (ident == lxNone)
+      ident = node;
+
+   return ident.findChild(lxTerminal);
+}
+
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 {
    IdentifierString signature;
@@ -3865,7 +3874,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    bool first = true;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate);
-   if (verb != lxNone) {
+   if (scope.message != 0) {
+      verb_id = getVerb(scope.message);
+   }
+   else if (verb != lxNone) {
       verb_id = _verbs.get(verb.findChild(lxTerminal).identifier());
       if (verb_id == 0) {
          sign_id = scope.mapSubject(verb, signature);
@@ -3882,6 +3894,14 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       else if (arg != lxNone && node.existChild(lxMethodParameter)) {
          verb_id = EVAL_MESSAGE_ID;
          first = signature.Length() == 0;
+         //HOTFIX : to support gript generated code
+         if (arg == lxMessage && verb == lxNone) {
+            verb_id = _verbs.get(arg.findChild(lxTerminal).identifier());
+            if (verb_id == 0) {
+               sign_id = scope.mapSubject(arg, signature);
+            }
+            arg = arg.nextNode();
+         }
       }
       // otherwise it is GET message
       else verb_id = GET_MESSAGE_ID;
@@ -3892,7 +3912,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    while (arg == lxMethodParameter) {
       int index = 1 + scope.parameters.Count();
 
-      ident_t terminal = arg.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
+      ident_t terminal = findTerminal(arg).identifier();
       if (scope.parameters.exist(terminal))
          scope.raiseError(errDuplicatedLocal, arg);
 

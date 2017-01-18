@@ -26,18 +26,23 @@
 
    #define sing_item  ::= "method" method;
    #define method     ::= <= %"open&method[0]" => "(" mth_body <= %"close[0]" =>;
-   #define mth_body   ::= mth_name mth_expr; 
+   #define mth_body   ::= mth_name mth_params mth_expr; 
    #define mth_name   ::= <= %"new&messageToken[1]" => "message" name;
+   #define mth_params ::= mth_param mth_params;
+   #define mth_params ::= $eps;
    #define mth_expr   ::= ret_expr ")";
    #define mth_expr   ::= mth_body ")";
 
+   #define mth_param  ::= <= %"new&paramToken[1]" => "method_param" name;
    #define mth_body   ::= <= %"open&code[0]" => "code" "(" code <= %"close[0]" =>;
 
    #define tokens     ::= "nested_decl" singleton tokens;
    #define tokens     ::= "numeric" numeric tokens;
+   #define tokens     ::= "identifier" identifier tokens;
    #define tokens     ::= ")";
    #define name       ::= "=" ident_token;
    #define numeric    ::= <= %"new&numericToken[1]" => "=" num_token;
+   #define identifier ::= <= %"new&identToken[1]" => "=" ident_token;
 
    #define ident_token::= <= "$identifier" =>; 
    #define num_token  ::= <= $numeric =>; 

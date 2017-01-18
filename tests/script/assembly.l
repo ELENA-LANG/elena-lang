@@ -13,7 +13,12 @@
     [
         theParent := parent.
     ]
-    
+
+    #method save &variable:literal &array_list:list
+    [
+        theParent save &variable:literal &array_list:list.
+    ]
+            
     #method close = theParent.        
 }
 
@@ -35,6 +40,17 @@
     [
         theCallstack push:{ save &array_list:list [ list += literal toInt. ] }.
     ]
+        
+    #method new &identToken : literal
+    [
+        theCallstack push:
+        { 
+            save &array_list:list 
+            [ 
+                theParent save &variable:literal &array_list:list.
+            ] 
+        }.
+    ]        
         
     #method open &expression
     [
@@ -127,11 +143,13 @@
 {
     #field theSubject.
     #field theCode.
+    #field theParameters.
     
     #constructor new : aParent
         <= (new : aParent)
     [
         theSubject := TextBuilder new.
+        theParameters := List new.
     ]
         
     #method subject
@@ -141,7 +159,7 @@
     [
         theSubject 
             append:"["
-            append:"0"
+            append:(theParameters length literal)
             append:"]".
             
         ^ Message new &literal:theSubject.            
@@ -164,6 +182,11 @@
         theSubject write:message.
     ]    
     
+    #method new &paramToken : param
+    [
+        theParameters += KeyValue new &key:param &object:(theParameters length + 2).
+    ]
+    
     #method open &ret_expr
     [
         theCode := RetExpressionScope new:$self.
@@ -176,6 +199,20 @@
         theCode := CodeScope new:$self.
         
         ^ theCode.
+    ]
+    
+    #method save &variable:literal &array_list:list
+    [
+        #var param := theParameters seek &each:x [ x equal:literal ].
+        ($nil != param)
+            ? [
+                list += param object.
+                list += %"tapeOp.var[]".
+                
+            ]
+            ! [
+                $super save &variable:literal &array_list:list.
+            ].
     ]
 }
 

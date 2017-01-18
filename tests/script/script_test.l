@@ -18,6 +18,6 @@
     #var n := obj state0.
     #var m := script_test'mytest'States state0.
     
-    #var nn := n digit.
-    #var mm := m digit.
+    #var nn := n digit:3.
+    #var mm := m digit:3.
 ].

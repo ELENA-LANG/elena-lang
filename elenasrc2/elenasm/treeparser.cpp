@@ -29,6 +29,7 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("literal", lxLiteral);
    _tokens.add("identifier", lxIdentifier);
    _tokens.add("numeric", lxInteger);
+   _tokens.add("method_param", lxMethodParameter);
 }
 
 void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer)

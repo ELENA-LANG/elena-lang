@@ -702,7 +702,7 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
-      if (platform == _ELENA_::ptWin64Console) {
+      else if (platform == _ELENA_::ptWin64Console) {
          print(ELC_LINKING);
 
          _ELENA_::Linker linker(true);
