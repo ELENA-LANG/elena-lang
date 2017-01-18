@@ -2,7 +2,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                              (C)2009-2016, by Alexei Rakov
+//                                              (C)2009-2017, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #ifndef bytecodeH
@@ -72,6 +72,7 @@ enum ByteCode
    bcMIndex          = 0x37,
    bcACallVD         = 0x39,
    bcValidate        = 0x3A,
+   // 0x3F should be reserved for command
 
    bcNEqual          = 0x40,
    bcNLess           = 0x41,

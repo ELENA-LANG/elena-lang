@@ -241,7 +241,7 @@ ELENA byte codes (or ecodes)
  
  elseb label                - jump to the label if acc != base
  
- elsem n, label             - jump to the label if ext != m
+ elsem m, label             - jump to the label if ext != message
  
  elsen n, label             - jump to the label if index != n
  
@@ -253,7 +253,7 @@ ELENA byte codes (or ecodes)
  
  ifheap label               - jump to the label if acc is allocated in heap (more precisely - not in the stack) (*index affected)
 
- ifm n, label               - jump to the label if ext == m
+ ifm m, label               - jump to the label if ext == message
  
  ifn n, label               - jump to the label if index == n
  

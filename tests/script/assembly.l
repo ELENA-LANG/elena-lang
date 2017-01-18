@@ -203,7 +203,7 @@
     
     #method save &variable:literal &array_list:list
     [
-        #var param := theParameters seek &each:x [ x equal:literal ].
+        #var param := theParameters seek &each:x [ x key equal:literal ].
         ($nil != param)
             ? [
                 list += param object.

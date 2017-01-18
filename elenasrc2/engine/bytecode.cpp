@@ -3,7 +3,7 @@
 //
 //		This file contains implementation of ELENA byte code routines.
 //
-//                                                 (C)2009-2016, by Alexei Rakov
+//                                                 (C)2009-2017, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #include "elena.h"

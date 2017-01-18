@@ -9,8 +9,6 @@ define elExtMessage         000200000h
 define EVAL_MESSAGE_ID      085000000h
 define GET_MESSAGE_ID       086000000h
 
-define INV_PARAM_MASK       0FFFFFFF0h
-
 procedure __object.dispatch[1]
 
   bsredirect  
@@ -254,10 +252,8 @@ procedure __message.get&subject$[1]
   bcopya
   popa
   nload
-  andn INV_PARAM_MASK
   ecopyd
-  setverb 0
-  dcopye
+  dcopysubj
   nsave
   acopyb
 
@@ -339,10 +335,8 @@ procedure __signature.load&subject$&mssg$[2]
   bloadsi 1
   aloadsi 2
   nload
-  andn INV_PARAM_MASK
   ecopyd
-  setverb 0
-  dcopye
+  dcopysubj
   nsave
   acopyb
   quitn 2
@@ -4057,8 +4051,7 @@ labCall:
   popi 2
   pope
   setsubj 0
-  dcopye
-  ifn labQuit GET_MESSAGE_ID
+  ifm labQuit GET_MESSAGE_ID
   ajumpvi 0
 
 labQuit:

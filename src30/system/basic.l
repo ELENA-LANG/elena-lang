@@ -1737,9 +1737,6 @@
         theObject := anObject.
     ]
     
-    #method equal : object
-        => theKey.
-    
     /// Dispatches the verb to the target object
     #method cast : aVerb &to:aTarget => theObject.
     
