@@ -3,7 +3,7 @@
 //
 //		This header contains abstract Assembler declarations
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef assemblerH
@@ -64,6 +64,32 @@ struct TokenInfo
       else return false;
    }
 
+   bool getLongInteger(ref64_t& integer, Map<ident_t, ref64_t>& constants)
+   {
+      if (terminal.state == dfaInteger) {
+         integer = ident_t(value).toInt();
+         return true;
+      }
+      if (terminal.state == dfaLong) {
+         integer = ident_t(value).toULong(10);
+         return true;
+      }
+      else if (terminal.state == dfaHexInteger) {
+         value[getlength(value) - 1] = 0;
+         integer = ident_t(value).toULongLong(16);
+         return true;
+      }
+      else if (terminal.state == dfaIdentifier && constants.exist(value)) {
+         integer = constants.get(value);
+         return true;
+      }
+      else if (terminal.state == dfaFullIdentifier && constants.exist(value)) {
+         integer = constants.get(value);
+         return true;
+      }
+      else return false;
+   }
+
 	ident_t read()
 	{
 		terminal = reader->read(value, 50);
@@ -108,6 +134,17 @@ struct TokenInfo
 		else raiseErr("Invalid number (%d)\n");
 		return 0;
 	}
+
+   int readLongInteger(Map<ident_t, ref64_t>& constants)
+   {
+      read();
+      ref64_t integer;
+      if (getLongInteger(integer, constants)) {
+         return integer;
+      }
+      else raiseErr("Invalid number (%d)\n");
+      return 0;
+   }
 
    bool check(ident_t word)
 	{

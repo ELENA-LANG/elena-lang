@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              xdev - x64 platform
-                * callext should contain the number of parameters (willbe required by I64 implementation)
-
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define method ::= "method" "(" name code ")";
@@ -32,6 +29,7 @@ In development:
                  * reg ex
 
               xdev - x64 platform
+                * #280 : asm2binx should support 64bit assembly
                 * #206 : 64-bit architecture
                 * elc should be able to generate the code both for 32 and 64 bit platform, but the limitations will be kept
                   (no more than 12 parameters, number of references)

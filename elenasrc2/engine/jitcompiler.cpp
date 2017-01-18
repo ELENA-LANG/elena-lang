@@ -681,14 +681,14 @@ void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, 
 
 void JITCompiler64 :: generateProgramStart(MemoryDump& tape)
 {
-   //MemoryWriter ecodes(&tape);
+   MemoryWriter ecodes(&tape);
 
-   //ecodes.writeDWord(0);            // write size place holder
+   ecodes.writeDWord(0);            // write size place holder
 }
 
 void JITCompiler64 :: generateProgramEnd(MemoryDump& tape)
 {
-   //MemoryWriter ecodes(&tape);
+   MemoryWriter ecodes(&tape);
 
-   //tape[0] = ecodes.Position() - 4;
+   tape[0] = ecodes.Position() - 4;
 }

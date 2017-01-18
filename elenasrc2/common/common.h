@@ -3,7 +3,7 @@
 //
 //		This file contains the common templates, classes,
 //		structures, functions and constants
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef commonH
@@ -23,12 +23,13 @@
 
 namespace _ELENA_
 {
-   typedef wchar_t      path_c;
-   typedef wchar_t      wide_c;
-   typedef unsigned int unic_c;
+   typedef wchar_t            path_c;
+   typedef wchar_t            wide_c;
+   typedef unsigned int       unic_c;
 
-   typedef unsigned char   uident_c;
-   typedef size_t          ref_t;
+   typedef unsigned char      uident_c;
+   typedef size_t             ref_t;
+   typedef unsigned long long ref64_t;
 
    // --- FileEncoding ---
    enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 = -4 };

@@ -14,10 +14,47 @@
 namespace _ELENA_
 {
 
+class I64JITCompiler;
+
+// --- I64JITScope ---
+
+struct I64JITScope
+{
+   //_Module*          module;
+   //I64JITCompiler*   compiler;
+   //MemoryWriter*     code;
+   //_ReferenceHelper* helper;
+   //MemoryReader*     tape;
+   //x86LabelHelper    lh;
+
+   //bool              withDebugInfo;
+   //int               objectSize;
+
+   // byte code command argument
+   int            argument;
+
+   //void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
+
+   //ref_t resolveMessage(ref_t reference)
+   //{
+   //   return helper->resolveMessage(reference, module);
+   //}
+
+   //SectionInfo getSection(ref_t reference)
+   //{
+   //   return helper->getSection(reference, module);
+   //}
+
+   I64JITScope(/*MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler*/);
+};
+
 // --- I64JITCompiler ---
 
 class I64JITCompiler : public JITCompiler64
 {
+protected:
+   // commands
+   friend void compileNop(int opcode, I64JITScope& scope);
 
 public:
    virtual bool isWithDebugInfo() const;
@@ -45,6 +82,9 @@ public:
 
    I64JITCompiler(bool debugMode);
 };
+
+// --- compiler friend functions---
+void compileNop(int opcode, I64JITScope& scope);
 
 } // _ELENA_
 

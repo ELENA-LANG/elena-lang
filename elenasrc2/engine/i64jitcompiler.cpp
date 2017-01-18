@@ -13,15 +13,15 @@
 
 using namespace _ELENA_;
 
-//// --- ELENA Object constants ---
+// --- ELENA Object constants ---
 //const int gcPageSize = 0x0010;           // a heap page size constant
 //const int elObjectOffset = 0x0008;           // object header / offset constant
-//                                             // --- ELENA CORE built-in routines
+// --- ELENA CORE built-in routines
 //#define GC_ALLOC             0x10001
 //#define HOOK                 0x10010
 //#define INIT_RND             0x10012
-//#define INIT                 0x10013
-//#define NEWFRAME             0x10014
+#define INIT                 0x10013
+#define NEWFRAME             0x10014
 //#define INIT_ET              0x10015
 //#define ENDFRAME             0x10016
 //#define RESTORE_ET           0x10017
@@ -29,16 +29,16 @@ using namespace _ELENA_;
 //#define CLOSEFRAME           0x1001A
 //#define NEWTHREAD            0x1001B
 //#define CLOSETHREAD          0x1001C
-//#define EXIT                 0x1001D
+#define EXIT                 0x1001D
 //#define CALC_SIZE            0x1001F
 //#define GET_COUNT            0x10020
 //#define THREAD_WAIT          0x10021
 //#define NEW_HEAP             0x10025
 //#define BREAK                0x10026
-//#define PREPARE              0x10027
+#define PREPARE              0x10027
 //#define EXITTHREAD           0x1002A
 //#define NEW_EVENT            0x10101
-//
+
 //#define CORE_EXCEPTION_TABLE 0x20001
 //#define CORE_GC_TABLE        0x20002
 //#define CORE_GC_SIZE         0x20003
@@ -47,8 +47,8 @@ using namespace _ELENA_;
 //#define CORE_TLS_INDEX       0x20007
 //#define CORE_THREADTABLE     0x20008
 //#define CORE_OS_TABLE        0x20009
-//
-//                                             // preloaded gc routines
+
+// preloaded gc routines
 //const int coreVariableNumber = 3;
 //const int coreVariables[coreVariableNumber] =
 //{
@@ -63,15 +63,15 @@ using namespace _ELENA_;
 //   OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT, CALC_SIZE, GET_COUNT,
 //   THREAD_WAIT, EXITTHREAD, PREPARE, NEW_EVENT
 //};
-//
-//// preloaded gc commands
-//const int gcCommandNumber = 138;
-//const int gcCommands[gcCommandNumber] =
-//{
+
+// preloaded gc commands
+const int gcCommandNumber = /*138*/1;
+const int gcCommands[gcCommandNumber] =
+{
 //   bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcPackage,
 //   bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
 //   bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
-//   bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,
+/*   bcALoadBI, bcPushAI, */bcCallExtR//, bcPushF, bcBSRedirect,
 //   bcHook, bcThrow, bcUnhook, bcClass, bcACallVD,
 //   bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
 //   bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, bcESaveSI,
@@ -97,11 +97,11 @@ using namespace _ELENA_;
 //   bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
 //   bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
 //   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI
-//};
-//
-//// command table
-//void(*commands[0x100])(int opcode, x86JITScope& scope) =
-//{
+};
+
+// command table
+void(*commands[0x100])(int opcode, I64JITScope& scope) =
+{
 //   &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &loadOneByteOp, &compilePushE, &compileDCopyVerb, &loadOneByteOp,
 //   &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileDCopySubj,
 //
@@ -143,14 +143,56 @@ using namespace _ELENA_;
 //
 //   &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileDOrN,
 //   &compileEAddN, &compileDShiftN, &compileDMulN, &compileBLoadR, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
 //   &compileCreate, &compileCreateN, &compileNop, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
 //   &compileIfM, &compileElseM, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop
-//};
-//
+};
+
 //// --- x86JITCompiler commands ---
 //
 //inline void compileJump(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
@@ -572,9 +614,9 @@ using namespace _ELENA_;
 ////      scope.code->seekEOF();
 ////   }
 ////}
-//
-//void _ELENA_::compileNop(int, x86JITScope& scope)
-//{
+
+void _ELENA_::compileNop(int, I64JITScope& scope)
+{
 //   // nop command is used to indicate possible label
 //   // fix the label if it exists
 //   if (scope.lh.checkLabel(scope.tape->Position() - 1)) {
@@ -582,8 +624,8 @@ using namespace _ELENA_;
 //   }
 //   // or add the label
 //   else scope.lh.setLabel(scope.tape->Position() - 1);
-//}
-//
+}
+
 //void _ELENA_::compileBreakpoint(int, x86JITScope& scope)
 //{
 //   if (scope.withDebugInfo)
@@ -1335,12 +1377,12 @@ using namespace _ELENA_;
 //   // or ebx, ecx
 //   scope.code->writeWord(0xD90B);
 //}
-//
-//// --- x86JITScope ---
-//
-//x86JITScope::x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler)
+
+// --- x86JITScope ---
+
+I64JITScope :: I64JITScope(/*MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler*/)
 //   : lh(code)
-//{
+{
 //   this->tape = tape;
 //   this->code = code;
 //   this->helper = helper;
@@ -1348,10 +1390,8 @@ using namespace _ELENA_;
 //   this->withDebugInfo = compiler->isWithDebugInfo();
 //   this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
 //   this->module = NULL;
-//
-//   //   this->prevFSPOffs = 0;
-//}
-//
+}
+
 //void x86JITScope::writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
 //{
 //   // HOTFIX : mskLockVariable used to fool trylock opcode, adding virtual offset
@@ -1385,7 +1425,7 @@ bool I64JITCompiler :: isWithDebugInfo() const
 
 void I64JITCompiler :: alignCode(MemoryWriter* writer, int alignment, bool code)
 {
-   //writer->align(alignment, code ? 0x90 : 0x00);
+   writer->align(alignment, code ? 0x90 : 0x00);
 }
 
 //void I64JITCompiler::writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code)
@@ -1524,48 +1564,47 @@ int I64JITCompiler :: allocateTLSVariable(_JITLoader* loader)
    return 0;
 }
 
-//inline void compileTape(MemoryReader& tapeReader, size_t endPos, x86JITScope& scope)
-//{
-//   unsigned char code = 0;
-//   while (tapeReader.Position() < endPos) {
-//      // read bytecode + arguments
-//      code = tapeReader.getByte();
-//      // preload an argument if a command requires it
-//      if (code > MAX_SINGLE_ECODE) {
-//         scope.argument = tapeReader.getDWord();
-//      }
-//      commands[code](code, scope);
-//   }
-//}
+inline void compileTape(MemoryReader& tapeReader, size_t endPos, I64JITScope& scope)
+{
+   unsigned char code = 0;
+   while (tapeReader.Position() < endPos) {
+      // read bytecode + arguments
+      code = tapeReader.getByte();
+      // preload an argument if a command requires it
+      if (code > MAX_SINGLE_ECODE) {
+         scope.argument = tapeReader.getDWord();
+      }
+      commands[code](code, scope);
+   }
+}
 
 void I64JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
 {
-   //x86JITScope scope(&tapeReader, &codeWriter, &helper, this);
+   I64JITScope scope/*(&tapeReader, &codeWriter, &helper, this)*/;
 
-   //size_t codeSize = tapeReader.getDWord();
-   //size_t endPos = tapeReader.Position() + codeSize;
+   size_t codeSize = tapeReader.getDWord();
+   size_t endPos = tapeReader.Position() + codeSize;
 
-   //compileTape(tapeReader, endPos, scope);
+   compileTape(tapeReader, endPos, scope);
 
-   //// ; copy the parameter to the accumulator to simulate embedded symbol
-   //// ; exit the procedure
-   //// ret
-   //codeWriter.writeByte(0xC3);
+   // ; copy the parameter to the accumulator to simulate embedded symbol
+   // ; exit the procedure
+   // ret
+   codeWriter.writeByte(0xC3);
 
-   //alignCode(&codeWriter, 0x04, true);
+   alignCode(&codeWriter, 0x08, true);
 }
 
 void I64JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
 {
-   //x86JITScope scope(&tapeReader, &codeWriter, &helper, this);
-   ////   scope.prevFSPOffs = 4;
+   I64JITScope scope/*(&tapeReader, &codeWriter, &helper, this)*/;
 
-   //size_t codeSize = tapeReader.getDWord();
-   //size_t endPos = tapeReader.Position() + codeSize;
+   size_t codeSize = tapeReader.getDWord();
+   size_t endPos = tapeReader.Position() + codeSize;
 
-   //compileTape(tapeReader, endPos, scope);
+   compileTape(tapeReader, endPos, scope);
 
-   //alignCode(&codeWriter, 0x04, true);
+   alignCode(&codeWriter, 0x08, true);
 }
 
 void I64JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section)
@@ -1591,33 +1630,33 @@ void I64JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& write
 
 void I64JITCompiler :: generateProgramStart(MemoryDump& tape)
 {
-   //JITCompiler32::generateProgramStart(tape);
+   JITCompiler64::generateProgramStart(tape);
 
-   //MemoryWriter ecodes(&tape);
-   //ecodes.writeByte(bcCallExtR);
-   //ecodes.writeDWord(PREPARE | mskPreloadCodeRef);
+   MemoryWriter ecodes(&tape);
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(PREPARE | mskPreloadCodeRef);
 
-   //ecodes.writeByte(bcCallExtR);
-   //ecodes.writeDWord(INIT | mskPreloadCodeRef);
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(INIT | mskPreloadCodeRef);
 
-   //ecodes.writeByte(bcCallExtR);
-   //ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
 }
 
 void I64JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
 {
-   //MemoryWriter ecodes(&tape);
+   MemoryWriter ecodes(&tape);
 
-   //ecodes.writeByte(bcCallR);
-   //ecodes.writeDWord((size_t)address | mskCodeRef);
+   ecodes.writeByte(bcCallR);
+   ecodes.writeDWord((size_t)address | mskCodeRef);
 }
 
 void I64JITCompiler :: generateProgramEnd(MemoryDump& tape)
 {
-   //MemoryWriter ecodes(&tape);
+   MemoryWriter ecodes(&tape);
 
-   //ecodes.writeByte(bcCallExtR);
-   //ecodes.writeDWord(mskPreloadCodeRef | EXIT);
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(mskPreloadCodeRef | EXIT);
 
-   //JITCompiler32::generateProgramEnd(tape);
+   JITCompiler64::generateProgramEnd(tape);
 }

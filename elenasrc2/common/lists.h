@@ -3,7 +3,7 @@
 //
 //              This header contains various ELENA Engine list templates
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef listsH
@@ -136,6 +136,36 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return (this->key > key);
    }
 
+   bool operator ==(unsigned long long key) const
+   {
+      return (this->key == key);
+   }
+
+   bool operator !=(unsigned long long key) const
+   {
+      return (this->key != key);
+   }
+
+   bool operator <=(unsigned long long key) const
+   {
+      return (this->key <= key);
+   }
+
+   bool operator <(unsigned long long key) const
+   {
+      return (this->key < key);
+   }
+
+   bool operator >=(unsigned long long key) const
+   {
+      return (this->key >= key);
+   }
+
+   bool operator >(unsigned long long key) const
+   {
+      return (this->key > key);
+   }
+
    bool operator ==(const wchar_t* key) const
    {
       return wide_t(key).compare(this->key);
@@ -218,6 +248,7 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
 
    void freeKey(int key) { key = 0; }
    void freeKey(size_t key) { key = 0; }
+   void freeKey(unsigned long long key) { key = 0; }
    void freeKey(const wchar_t* key) { freestr((wchar_t*)key); }
    void freeKey(ident_t key) { const char* ptr = key; freestr((char*)ptr); }
 
@@ -228,6 +259,12 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       this->next = next;
    }
    _MapItem(size_t key, T item, _MapItem* next)
+   {
+      this->key = key;
+      this->item = item;
+      this->next = next;
+   }
+   _MapItem(unsigned long long key, T item, _MapItem* next)
    {
       this->key = key;
       this->item = item;

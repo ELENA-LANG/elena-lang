@@ -1,0 +1,10 @@
+﻿[project]
+executable=test64.exe
+template=console_64
+namespace=test64
+
+[files]
+test.l
+
+[forwards]
+'startUp=test64'startUp
