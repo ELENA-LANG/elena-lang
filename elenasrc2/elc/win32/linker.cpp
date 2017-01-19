@@ -18,6 +18,9 @@
 #define MAJOR_OS           0x05
 #define MINOR_OS           0x00
 
+#define MAJOR_OS_64        0x05
+#define MINOR_OS_64        0x02
+
 #define FILE_ALIGNMENT     0x200
 #define SECTION_ALIGNMENT  0x1000
 #define IMAGE_BASE         0x00400000
@@ -32,6 +35,10 @@
 
 #ifndef IMAGE_SIZEOF_NT_OPTIONAL_HEADER
 #define IMAGE_SIZEOF_NT_OPTIONAL_HEADER 224
+#endif
+
+#ifndef IMAGE_SIZEOF_NT_OPTIONAL_HEADER_64
+#define IMAGE_SIZEOF_NT_OPTIONAL_HEADER_64 240
 #endif
 
 using namespace _ELENA_;
@@ -257,20 +264,24 @@ void Linker :: writeDOSStub(Project* project, FileWriter* file)
 void Linker :: writeHeader(FileWriter* file, short characteristics, int sectionCount)
 {
    IMAGE_FILE_HEADER   header;
-   if (_mode64bit) {
-      header.Machine = IMAGE_FILE_MACHINE_AMD64;
-   }
-   else header.Machine = IMAGE_FILE_MACHINE_I386;
-
-   header.NumberOfSections = (short)sectionCount;
-   header.TimeDateStamp = (int)time(NULL);
-   header.SizeOfOptionalHeader = IMAGE_SIZEOF_NT_OPTIONAL_HEADER;
    header.Characteristics = characteristics;
-   header.Characteristics |= IMAGE_FILE_32BIT_MACHINE;
    header.Characteristics |= IMAGE_FILE_LOCAL_SYMS_STRIPPED;
    header.Characteristics |= IMAGE_FILE_LINE_NUMS_STRIPPED;
+   header.NumberOfSections = (short)sectionCount;
+   header.TimeDateStamp = (int)time(NULL);
    header.PointerToSymbolTable = 0;
    header.NumberOfSymbols = 0;
+
+   if (_mode64bit) {
+      header.Machine = IMAGE_FILE_MACHINE_AMD64;
+      header.SizeOfOptionalHeader = IMAGE_SIZEOF_NT_OPTIONAL_HEADER_64;
+      header.Characteristics |= IMAGE_FILE_LARGE_ADDRESS_AWARE;
+   }
+   else {
+      header.Machine = IMAGE_FILE_MACHINE_I386;
+      header.SizeOfOptionalHeader = IMAGE_SIZEOF_NT_OPTIONAL_HEADER;
+      header.Characteristics |= IMAGE_FILE_32BIT_MACHINE;
+   }   
 
    file->write(&header, IMAGE_SIZEOF_FILE_HEADER);
 }
@@ -331,7 +342,7 @@ void Linker :: writeNTHeader(ImageInfo& info, FileWriter* file, ref_t tls_direct
       header.DataDirectory[i].VirtualAddress = 0;
       header.DataDirectory[i].Size = 0;
    }
-   //if (_sections.exist(IMPORT_SECTION)) { // !! temporal
+   //if (getSize(info.image->getImportSection()) > 0) { // !! temporal
       header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress = info.map.import;
       header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size = getSize(info.image->getImportSection());
    //}
@@ -355,19 +366,19 @@ void Linker :: writeNTHeader64(ImageInfo& info, FileWriter* file, ref_t tls_dire
    header.SizeOfInitializedData = getSize(info.image->getRDataSection()) + getSize(info.image->getImportSection())/* + getSize(image.getTLSSection())*/;
    header.SizeOfUninitializedData = getSize(info.image->getBSSSection()) + getSize(info.image->getStatSection());
 
-   header.AddressOfEntryPoint = info.map.code + info.entryPoint;
+   header.AddressOfEntryPoint = info.map.code/* + info.entryPoint*/;
    header.BaseOfCode = info.map.code;
 
    header.ImageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
    header.SectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
    header.FileAlignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
 
-   header.MajorOperatingSystemVersion = MAJOR_OS;
-   header.MinorOperatingSystemVersion = MINOR_OS;
+   header.MajorOperatingSystemVersion = MAJOR_OS_64;
+   header.MinorOperatingSystemVersion = MINOR_OS_64;
    header.MajorImageVersion = 0;                                               // not used
    header.MinorImageVersion = 0;
-   header.MajorSubsystemVersion = MAJOR_OS;                                    // set for Win 4.0
-   header.MinorSubsystemVersion = MINOR_OS;
+   header.MajorSubsystemVersion = MAJOR_OS_64;                                 
+   header.MinorSubsystemVersion = MINOR_OS_64;
 #ifndef mingw49
    header.Win32VersionValue = 0;                                               // ??
 #endif
@@ -390,7 +401,7 @@ void Linker :: writeNTHeader64(ImageInfo& info, FileWriter* file, ref_t tls_dire
    header.LoaderFlags = 0;                                                     // not used
 
    header.SizeOfStackReserve = info.project->IntSetting(opSizeOfStackReserv, 0x100000); // !! explicit constant name
-   header.SizeOfStackCommit = info.project->IntSetting(opSizeOfStackCommit, 0x1000);    // !! explicit constant name
+   header.SizeOfStackCommit = info.project->IntSetting(opSizeOfStackCommit, 0x4000);    // !! explicit constant name
    header.SizeOfHeapReserve = info.project->IntSetting(opSizeOfHeapReserv, 0x100000);   // !! explicit constant name
    header.SizeOfHeapCommit = info.project->IntSetting(opSizeOfHeapCommit, 0x10000);     // !! explicit constant name
 
@@ -409,7 +420,7 @@ void Linker :: writeNTHeader64(ImageInfo& info, FileWriter* file, ref_t tls_dire
       header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress = info.map.rdata + tls_directory;
       header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size = getSize(info.image->getTLSSection());
    }
-   file->write((char*)&header, IMAGE_SIZEOF_NT_OPTIONAL_HEADER);
+   file->write((char*)&header, IMAGE_SIZEOF_NT_OPTIONAL_HEADER_64);
 }
 
 void Linker :: writeSectionHeader(FileWriter* file, const char* name, Section* section, int& tblOffset, int alignment, int sectionAlignment,
@@ -502,7 +513,7 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
    }
 
    // import section header
-   writeSectionHeader(file, IMPORT_SECTION, info.image->getImportSection(), tblOffset, alignment, sectionAlignment,
+   writeSectionHeader(file, IMPORT_SECTION, info.image->getImportSection(), tblOffset, alignment, /*sectionAlignment*/1,
       info.map.import, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
 
    // debug section header 
