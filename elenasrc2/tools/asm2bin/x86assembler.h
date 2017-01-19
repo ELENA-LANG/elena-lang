@@ -45,22 +45,6 @@ protected:
       }
    };
 
-	struct ProcedureInfo
-	{
-      _Module* binary;
-
-      ref_t reference;
-	   Map<ident_t, int> parameters;
-      bool inlineMode;
-
-      ProcedureInfo(_Module* binary, bool inlineMode)
-      {
-         this->binary = binary;
-         this->reference = 0;
-         this->inlineMode = inlineMode;
-      }
-	};
-
 	void checkComma(TokenInfo& token)
 	{
 		if (!token.check(","))
@@ -75,9 +59,7 @@ protected:
 		else operand.type = x86Helper::otDD;
 	}
 
-   void loadDefaultConstants();
-
-   void readParameterList(TokenInfo& token, ProcedureInfo& info, ReferenceNs& refName);
+   void loadDefaultConstants();   
 
    int readStReg(TokenInfo& token);
    bool setOffset(Operand& operand, Operand disp);

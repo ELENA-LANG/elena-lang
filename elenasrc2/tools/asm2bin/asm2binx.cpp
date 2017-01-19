@@ -32,6 +32,8 @@ int main(int argc, char* argv[])
 
    if (argc == 4) {
       if (_ELENA_::ident_t(argv[1]).compare("-amd64")) {
+         amd64Mode = true;
+
          _ELENA_::FileName name(argv[2]);
 
          target.copy(argv[3]);
@@ -62,7 +64,7 @@ int main(int argc, char* argv[])
    }
    else target.changeExtension("bin");
 
-   _ELENA_::Path source(argv[1]);
+   _ELENA_::Path source(amd64Mode ? argv[2] : argv[1]);
    _ELENA_::TextFileReader reader(source.c_str(), _ELENA_::feUTF8, true);
    if (!reader.isOpened()) {
       printf("Cannot open the file");

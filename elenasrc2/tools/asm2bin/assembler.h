@@ -12,6 +12,9 @@
 namespace _ELENA_
 {
 
+#define ARGUMENT1           "__arg1"
+#define ARGUMENT2           "__arg2"
+
 // --- AssemblerException ---
 
 struct AssemblerException
@@ -58,6 +61,28 @@ struct TokenInfo
          return true;
       }
       else if (terminal.state==dfaFullIdentifier && constants.exist(value)) {
+         integer = constants.get(value);
+         return true;
+      }
+      else return false;
+   }
+
+   bool getInteger(int& integer, Map<ident_t, ref64_t>& constants)
+   {
+      if (terminal.state == dfaInteger) {
+         integer = ident_t(value).toInt();
+         return true;
+      }
+      else if (terminal.state == dfaHexInteger) {
+         value[getlength(value) - 1] = 0;
+         integer = ident_t(value).toULong(16);
+         return true;
+      }
+      else if (terminal.state == dfaIdentifier && constants.exist(value)) {
+         integer = constants.get(value);
+         return true;
+      }
+      else if (terminal.state == dfaFullIdentifier && constants.exist(value)) {
          integer = constants.get(value);
          return true;
       }
@@ -116,6 +141,16 @@ struct TokenInfo
 		else raiseErr("Invalid number (%d)\n");
 		return 0;
 	}
+   int readInteger(Map<ident_t, ref64_t>& constants)
+   {
+      read();
+      int integer;
+      if (getInteger(integer, constants)) {
+         return integer;
+      }
+      else raiseErr("Invalid number (%d)\n");
+      return 0;
+   }
 
 	int readSignedInteger(Map<ident_t, size_t>& constants)
 	{
@@ -165,6 +200,62 @@ struct TokenInfo
 
 class Assembler
 {
+protected:
+   struct ProcedureInfo
+   {
+      _Module* binary;
+
+      ref_t reference;
+      Map<ident_t, int> parameters;
+      bool inlineMode;
+
+      ProcedureInfo(_Module* binary, bool inlineMode)
+      {
+         this->binary = binary;
+         this->reference = 0;
+         this->inlineMode = inlineMode;
+      }
+   };
+
+   void readParameterList(TokenInfo& token, ProcedureInfo& info, ReferenceNs& refName)
+   {
+      while (true) {
+         token.read();
+
+         if (token.terminal.state == dfaIdentifier) {
+            info.parameters.add(token.value, info.parameters.Count());
+            token.read();
+
+            if (!token.check(":"))
+               token.raiseErr("Semicolumn expected (%d)\n");
+
+            token.read();
+            if (token.check("out")) {
+               refName.append("&out");
+               token.read();
+               if (token.check(")"))
+                  break;
+            }
+            refName.append('&');
+            refName.append(token.value);
+
+            token.read();
+            if (token.check(")")) {
+               break;
+            }
+            else if (!token.check(","))
+               token.raiseErr("Comma expected (%d)\n");
+         }
+         else token.raiseErr("Invalid parameter list syntax (%d)\n");
+      }
+   }
+
+   void checkComma(TokenInfo& token)
+   {
+      if (!token.check(","))
+         throw AssemblerException("',' exprected(%d)\n", token.terminal.row);
+   }
+
 public:
 	virtual void compile(TextReader* reader, path_t outputPath) = 0;
 

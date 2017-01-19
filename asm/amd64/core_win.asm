@@ -4,11 +4,11 @@ define PREPARE              10027h
 
 procedure % EXIT
 
-  mov rcx, 0
+  mov ecx, 0
 
   // ; exit
   sub  rsp, 20h
-  call extern 'dlls'KERNEL32.ExitProcess     
+  //call extern 'dlls'KERNEL32.ExitProcess     
 
 end
 

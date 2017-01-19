@@ -17,47 +17,11 @@ using namespace _ELENA_;
 
 const int gcPageSize       = 0x0010;      // !! temporal
 
-#define ARGUMENT1           "__arg1"
-#define ARGUMENT2           "__arg2"
-
 void x86Assembler :: loadDefaultConstants()
 {
 //   constants.add(_EL_MINIMAL_SIZE, gcPageSize * 0x10);
 //   constants.add(_GC_PAGE_MASK, ~(gcPageSize - 1));
 //   constants.add(_GC_PAGE_LOG, logth(gcPageSize));
-}
-
-void x86Assembler :: readParameterList(TokenInfo& token, ProcedureInfo& info, ReferenceNs& refName)
-{
-   while (true) {
-      token.read();
-
-      if (token.terminal.state==dfaIdentifier) {
-         info.parameters.add(token.value, info.parameters.Count());
-		   token.read();
-
-		   if (!token.check(":"))
-             token.raiseErr("Semicolumn expected (%d)\n");
-
-         token.read();
-		   if (token.check("out")) {
-            refName.append("&out");
-            token.read();
-		      if (token.check(")"))
-               break;
-		   }
-         refName.append('&');
-         refName.append(token.value);
-
-         token.read();
-		   if (token.check(")")) {
-             break;
-		   }
-		   else if (!token.check(","))
-             token.raiseErr("Comma expected (%d)\n");
-	   }
-	   else token.raiseErr("Invalid parameter list syntax (%d)\n");
-   }
 }
 
 int x86Assembler :: readStReg(TokenInfo& token)
