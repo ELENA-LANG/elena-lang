@@ -145,6 +145,8 @@ namespace _ELENA_
       mskTLSRef              = 0xC0000000,
       mskImportRef           = 0xE0000000,
 
+      mskRelImportRef        = 0xEF000000,
+
       mskNativeCodeRef       = 0x18000000,
       mskNativeRelCodeRef    = 0x38000000,
       mskNativeRDataRef      = 0x48000000,

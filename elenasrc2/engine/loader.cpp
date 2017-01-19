@@ -91,6 +91,9 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
            return (void*)_symbolReferences.get(reference);
          case mskImportRef:
             return (void*)resolveExternal(reference);
+         case mskRelImportRef:
+            //HOTFIX : relative import ref mask should not be lost
+            return (void*)(resolveExternal(reference) | mskRelImportRef);
          case mskStatSymbolRef:
             return (void*)_statReferences.get(reference);
          default:

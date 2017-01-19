@@ -56,6 +56,7 @@ protected:
    bool _debugMode;
 
    // commands
+   friend void writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code);
    friend void loadCoreOp(AMD64JITScope& scope, char* code);
 
    friend void compileNop(int opcode, AMD64JITScope& scope);
@@ -65,6 +66,8 @@ protected:
 
    // preloaded references
    IntFixedMap<void*> _preloaded;
+
+   void writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code);
 
 public:
    virtual bool isWithDebugInfo() const;

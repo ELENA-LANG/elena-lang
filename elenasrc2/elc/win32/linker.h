@@ -70,6 +70,7 @@ class Linker
 
    int fillImportTable(ImageInfo& info);
    void createImportTable(ImageInfo& info);
+   void createImportTable64(ImageInfo& info);
 
    void mapImage(ImageInfo& info);
    void fixImage(ImageInfo& info);

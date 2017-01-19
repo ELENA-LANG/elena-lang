@@ -69,10 +69,42 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
          return ((ImageBaseMap*)map)->tls + base + disp;
       case mskImportRef:
       {
-         int address = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
+         if ((key & mskAnyRef) == mskRelImportRef) {
+            int tableAddress = ((ImageBaseMap*)map)->import + ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get((key & ~mskAnyRef) | mskImportRef);
+            int codeAddress = ((ImageBaseMap*)map)->code + ((ImageBaseMap*)map)->base + pos + 4;
 
-         return ((ImageBaseMap*)map)->import + address + disp;
+            return tableAddress - codeAddress;
+         }
+         else {
+            int address = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
+
+            return ((ImageBaseMap*)map)->import + address + disp;
+         }
       }
+      case mskDebugRef:
+         return ((ImageBaseMap*)map)->debug + base + disp;
+      default:
+         return disp;
+   }
+}
+
+ref_t reallocate64(ref_t pos, ref_t key, ref_t disp, void* map)
+{
+   int base = ((ImageBaseMap*)map)->base + key & ~mskAnyRef;
+
+   switch (key & mskImageMask) {
+      case mskCodeRef:
+         return ((ImageBaseMap*)map)->code + base + disp;
+      case mskRelCodeRef:
+         return (key & ~mskAnyRef) + disp - pos - 4;
+      case mskRDataRef:
+         return ((ImageBaseMap*)map)->rdata + base + disp;
+      case mskStatRef:
+         return ((ImageBaseMap*)map)->stat + base + disp;
+      case mskDataRef:
+         return ((ImageBaseMap*)map)->bss + base + disp;
+      case mskTLSRef:
+         return ((ImageBaseMap*)map)->tls + base + disp;
       case mskDebugRef:
          return ((ImageBaseMap*)map)->debug + base + disp;
       default:
@@ -181,6 +213,63 @@ void Linker :: createImportTable(ImageInfo& info)
          fun++;
       }
       lstWriter.writeDWord(0);                                            // mark end of chains
+      fwdWriter.writeDWord(0);
+
+      dll++;
+   }
+}
+
+void Linker::createImportTable64(ImageInfo& info)
+{
+   size_t count = fillImportTable(info);
+   Section* import = info.image->getImportSection();
+
+   MemoryWriter writer(import);
+
+   // reference to the import section
+   ref_t importRef = (count + 1) | mskImportRef;
+   info.map.importMapping.add(importRef, 0);
+
+   MemoryWriter tableWriter(import);
+   writer.writeBytes(0, (count + 1) * 20);               // fill import table
+   MemoryWriter fwdWriter(import);
+   writer.writeBytes(0, (info.importTable.Count() + count) * 8);  // fill forward table
+   MemoryWriter lstWriter(import);
+   writer.writeBytes(0, (info.importTable.Count() + count) * 8);  // fill import list
+
+   ImportTable::Iterator dll = info.importTable.start();
+   while (!dll.Eof()) {
+      tableWriter.writeRef(importRef, lstWriter.Position());              // OriginalFirstThunk
+      tableWriter.writeDWord((int)time(NULL));                            // TimeDateStamp
+      tableWriter.writeDWord(-1);                                         // ForwarderChain
+      tableWriter.writeRef(importRef, import->Length());                  // Name
+
+      const char* dllName = dll.key();
+      writer.write(dllName, getlength(dllName));
+      writer.writeChar('.');
+      writer.writeLiteral("dll");
+
+      tableWriter.writeRef(importRef, fwdWriter.Position());              // ForwarderChain
+
+      // fill OriginalFirstThunk & ForwarderChain
+      ReferenceMap::Iterator fun = (*dll)->start();
+      while (!fun.Eof()) {
+         info.map.importMapping.add(*fun, fwdWriter.Position());
+
+         // NOTE : the reference are 64 bit, but fixing function will ignore the high dword
+         fwdWriter.writeRef(importRef, import->Length());
+         fwdWriter.writeDWord(0);
+         lstWriter.writeRef(importRef, import->Length());
+         lstWriter.writeDWord(0);
+
+         writer.writeWord(1);                                             // Hint (not used)
+         writer.writeLiteral(fun.key());
+
+         fun++;
+      }
+      lstWriter.writeDWord(0);                                            // mark end of chains
+      lstWriter.writeDWord(0);
+      fwdWriter.writeDWord(0);
       fwdWriter.writeDWord(0);
 
       dll++;
@@ -585,7 +674,11 @@ void Linker :: run(Project& project, Image& image, ref_t tls_directory)
 
    info.entryPoint = image.getEntryPoint();
 
-   createImportTable(info);
+   if (_mode64bit) {
+      createImportTable64(info);
+   }
+   else createImportTable(info);
+
    mapImage(info);
    fixImage(info);
 

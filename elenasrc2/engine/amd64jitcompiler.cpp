@@ -239,46 +239,46 @@ void _ELENA_::loadCoreOp(AMD64JITScope& scope, char* code)
 
    writer->write(code, length);
 
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   int key, offset;
-//   while (count > 0) {
-//      key = relocation[0];
-//      offset = relocation[1];
-//
-//      // locate relocation position
-//      writer->seek(position + offset);
-//
-//      if ((key & mskTypeMask) == mskPreloaded) {
-//         scope.compiler->writeCoreReference(scope, key, position, offset, code);
-//      }
-//      else {
-//         //if ((key & mskAnyRef) == mskLinkerConstant) {
-//         //   scope.code->writeDWord(scope.helper->getLinkerConstant(key & ~mskAnyRef));
-//         //}
-//         /*else */scope.helper->writeReference(*writer, key, *(int*)(code + offset), scope.module);
-//      }
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   writer->seekEOF();
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   int key, offset;
+   while (count > 0) {
+      key = relocation[0];
+      offset = relocation[1];
+
+      // locate relocation position
+      writer->seek(position + offset);
+
+      if ((key & mskTypeMask) == mskPreloaded) {
+         scope.compiler->writeCoreReference(scope, key, position, offset, code);
+      }
+      else {
+         //if ((key & mskAnyRef) == mskLinkerConstant) {
+         //   scope.code->writeDWord(scope.helper->getLinkerConstant(key & ~mskAnyRef));
+         //}
+         /*else */scope.helper->writeReference(*writer, key, *(int*)(code + offset), scope.module);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   writer->seekEOF();
 }
 
-//inline void _ELENA_::writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code)
-//{
-//   // references should be already preloaded
-//   if ((reference & mskAnyRef) == mskPreloadRelCodeRef) {
-//      scope.helper->writeReference(*scope.code,
-//         scope.compiler->_preloaded.get(reference & ~mskAnyRef), true, *(int*)(code + offset));
-//
-//      scope.lh.addFixableJump(offset + position, (*scope.code->Memory())[offset + position]);
-//   }
-//   else scope.helper->writeReference(*scope.code,
-//      scope.compiler->_preloaded.get(reference & ~mskAnyRef), false, *(int*)(code + offset));
-//}
-//
+inline void _ELENA_::writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code)
+{
+   // references should be already preloaded
+   /*if ((reference & mskAnyRef) == mskPreloadRelCodeRef) {
+      scope.helper->writeReference(*scope.code,
+         scope.compiler->_preloaded.get(reference & ~mskAnyRef), true, *(int*)(code + offset));
+
+      scope.lh.addFixableJump(offset + position, (*scope.code->Memory())[offset + position]);
+   }
+   else */scope.helper->writeReference(*scope.code,
+      scope.compiler->_preloaded.get(reference & ~mskAnyRef), false, *(int*)(code + offset));
+}
+
 //void _ELENA_::loadOneByteOp(int opcode, x86JITScope& scope)
 //{
 //   MemoryWriter* writer = scope.code;
@@ -1381,23 +1381,23 @@ void AMD64JITCompiler :: alignCode(MemoryWriter* writer, int alignment, bool cod
    writer->align(alignment, code ? 0x90 : 0x00);
 }
 
-//void I64JITCompiler::writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code)
-//{
-//   if (!_preloaded.exist(reference& ~mskAnyRef)) {
-//      MemoryWriter writer(scope.code->Memory());
-//
-//      _preloaded.add(reference & ~mskAnyRef, scope.helper->getVAddress(writer, mskCodeRef));
-//
-//      // due to optimization section must be ROModule::ROSection instance
-//      SectionInfo info = scope.helper->getCoreSection(reference & ~mskAnyRef);
-//      // separate scope should be used to prevent overlapping
-//      x86JITScope newScope(NULL, &writer, scope.helper, this);
-//      newScope.module = info.module;
-//
-//      loadCoreOp(newScope, info.section ? (char*)info.section->get(0) : NULL);
-//   }
-//   _ELENA_::writeCoreReference(scope, reference, position, offset, code);
-//}
+void AMD64JITCompiler :: writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code)
+{
+   if (!_preloaded.exist(reference& ~mskAnyRef)) {
+      MemoryWriter writer(scope.code->Memory());
+
+      _preloaded.add(reference & ~mskAnyRef, scope.helper->getVAddress(writer, mskCodeRef));
+
+      // due to optimization section must be ROModule::ROSection instance
+      SectionInfo info = scope.helper->getCoreSection(reference & ~mskAnyRef);
+      // separate scope should be used to prevent overlapping
+      AMD64JITScope newScope(NULL, &writer, scope.helper, this);
+      newScope.module = info.module;
+
+      loadCoreOp(newScope, info.section ? (char*)info.section->get(0) : NULL);
+   }
+   _ELENA_::writeCoreReference(scope, reference, position, offset, code);
+}
 
 void AMD64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 {

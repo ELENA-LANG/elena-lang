@@ -8,7 +8,7 @@ procedure % EXIT
 
   // ; exit
   sub  rsp, 20h
-  //call extern 'dlls'KERNEL32.ExitProcess     
+  call extern 'dlls'KERNEL32.ExitProcess     
 
 end
 
