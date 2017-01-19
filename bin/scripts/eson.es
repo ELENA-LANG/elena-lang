@@ -8,7 +8,14 @@
    #define members    ::= $eof;
    #define member     ::= <= symbol_decl ( => s_name "=" expression <= ) =>;
 
-   #define expression ::= <= expression ( => object <= ) =>; 
+   #define expression ::= <= expression ( => object operations <= ) =>; 
+   #define operations ::= operation operations;
+   #define operations ::= $eps;
+
+   #define operation  ::= "." message op_params;
+   #define op_params  ::= "(" expression op_nparam;
+   #define op_nparam  ::= "," expression op_nparam;
+   #define op_nparam  ::= ")";
 
    #define object     ::= numeric;
    #define object     ::= identifier;
@@ -40,4 +47,5 @@
    #define s_name     ::= <= identifier = $identifier =>;
    #define parameter  ::= <= method_param = $identifier =>;
    #define identifier ::= <= identifier = $identifier =>;
+   #define message    ::= <= message = $identifier =>;
 ]]

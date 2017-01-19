@@ -39,6 +39,8 @@
    #define tokens     ::= "nested_decl" singleton tokens;
    #define tokens     ::= "numeric" numeric tokens;
    #define tokens     ::= "identifier" identifier tokens;
+   #define tokens     ::= <= %"new&messageToken[1]" => "message" name tokens;
+   #define tokens     ::= expr tokens;
    #define tokens     ::= ")";
    #define name       ::= "=" ident_token;
    #define numeric    ::= <= %"new&numericToken[1]" => "=" num_token;

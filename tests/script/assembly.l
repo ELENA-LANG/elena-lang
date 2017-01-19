@@ -52,6 +52,12 @@
         }.
     ]        
         
+    #method new &messageToken : literal
+    [
+        theCallExpr := true.
+        theMessage append:literal.
+    ]
+        
     #method open &expression
     [
         #var expr := ExpressionScope new:$self.

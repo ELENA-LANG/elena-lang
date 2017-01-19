@@ -6,6 +6,7 @@ In development:
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define method ::= "method" "(" name code ")";
                  * use pattern like in regex for terminal matching
+                 * there should be possibility to save the resulting code in the file
                  * at least print the token where the parser error is
                  * CodeScope : after each statement clear the top stack item
 
