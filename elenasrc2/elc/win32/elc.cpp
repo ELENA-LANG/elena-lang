@@ -17,7 +17,7 @@
 #include "linker.h"
 #include "image.h"
 #include "x86jitcompiler.h"
-#include "i64jitcompiler.h"
+#include "amd64jitcompiler.h"
 
 #include <stdarg.h>
 #include <windows.h>
@@ -514,7 +514,7 @@ _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
 
 _ELENA_::_JITCompiler* _ELC_::Project::createJITCompiler64()
 {
-   return new _ELENA_::I64JITCompiler(BoolSetting(_ELENA_::opDebugMode));
+   return new _ELENA_::AMD64JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 }
 
 bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)

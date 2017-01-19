@@ -115,7 +115,7 @@
     <ClCompile Include="..\..\..\engine\section.cpp" />
     <ClCompile Include="..\..\..\elc\source.cpp" />
     <ClCompile Include="..\ecassembler.cpp" />
-    <ClCompile Include="..\i64assembler.cpp" />
+    <ClCompile Include="..\amd64assembler.cpp" />
     <ClCompile Include="..\x86assembler.cpp" />
     <ClCompile Include="..\..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\x86jumphelper.cpp" />
@@ -138,7 +138,7 @@
     <ClInclude Include="..\..\..\common\streams.h" />
     <ClInclude Include="..\..\..\common\tools.h" />
     <ClInclude Include="..\ecassembler.h" />
-    <ClInclude Include="..\i64assembler.h" />
+    <ClInclude Include="..\amd64assembler.h" />
     <ClInclude Include="..\x86assembler.h" />
     <ClInclude Include="..\..\..\engine\x86helper.h" />
     <ClInclude Include="..\x86jumphelper.h" />

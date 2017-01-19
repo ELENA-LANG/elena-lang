@@ -366,7 +366,7 @@ void Linker :: writeNTHeader64(ImageInfo& info, FileWriter* file, ref_t tls_dire
    header.SizeOfInitializedData = getSize(info.image->getRDataSection()) + getSize(info.image->getImportSection())/* + getSize(image.getTLSSection())*/;
    header.SizeOfUninitializedData = getSize(info.image->getBSSSection()) + getSize(info.image->getStatSection());
 
-   header.AddressOfEntryPoint = info.map.code/* + info.entryPoint*/;
+   header.AddressOfEntryPoint = info.map.code + info.entryPoint;
    header.BaseOfCode = info.map.code;
 
    header.ImageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
