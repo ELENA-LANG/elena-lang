@@ -26,6 +26,10 @@ namespace _ELENA_
    #define MESSAGE_MASK            0x80000000
    #define OPEN_ARG_COUNT          0x0C
 
+   #define VERBX_MASK              0x7F00000000000000
+   #define SIGNX_MASK              0x00FFFFFFFFFF0000
+   #define PARAMX_MASK             0x000000000000FFFF
+
    #define DISPATCH_MESSAGE_ID     0x0001             // NOTE : verb id should not be bigger than 0xE0 due to message constant implementation
    #define NEWOBJECT_MESSAGE_ID    0x0002             // NOTE : verb id should not be equal to 7, due to message reference constant implementation
 

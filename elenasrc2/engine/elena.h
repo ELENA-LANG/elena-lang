@@ -729,6 +729,13 @@ inline void decodeMessage(ref_t message, ref_t& signatureRef, ref_t& verbId, int
    paramCount = message & PARAM_MASK;
 }
 
+inline void decodeMessage64(ref64_t message, ref_t& signatureRef, ref_t& verbId, int& paramCount)
+{
+   verbId = (message & VERBX_MASK) >> 56;
+   signatureRef = (message & SIGNX_MASK) >> 16;
+   paramCount = message & PARAMX_MASK;
+}
+
 inline int getParamCount(ref_t message)
 {
    int   paramCount;
@@ -766,6 +773,15 @@ inline ref64_t toMessage64(ref_t message)
    decodeMessage(message, signature, verb, paramCount);
 
    return encodeMessage64(signature, verb, paramCount);
+}
+
+inline ref_t fromMessage64(ref64_t message)
+{
+   int   paramCount;
+   ref_t verb, signature;
+   decodeMessage64(message, signature, verb, paramCount);
+
+   return encodeMessage(signature, verb, paramCount);
 }
 
 inline bool IsExprOperator(int operator_id)

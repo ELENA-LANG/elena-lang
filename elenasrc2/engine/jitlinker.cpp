@@ -248,6 +248,22 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
 
          (*image)[offset] = getVMTMethodIndex(refVAddress, messageID);
       }
+      // if it is a vmtx method address
+      else if (currentMask == mskVMTXMethodAddress) {
+         void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
+
+         // message id should be replaced with an appropriate method address
+         size_t offset = it.key();
+         ref64_t messageID = (*image)[offset + 4];
+         messageID <<= 32;
+         messageID |= (*image)[offset];
+
+         (*image)[offset] = resolveVMTMethodAddress(current.module, currentRef, fromMessage64(messageID));
+         if (_virtualMode) {
+            image->addReference(mskRelCodeRef, offset);
+         }
+         else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
+      }
       // otherwise
       else {   
          void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, currentMask), currentMask, false);

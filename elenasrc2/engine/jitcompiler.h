@@ -158,6 +158,7 @@ public:
    virtual size_t findFlags(void* refVMT);
    virtual size_t findLength(void* refVMT);
    virtual int findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
+   virtual ref64_t findMethodAddressX(void* refVMT, ref64_t messageID, size_t vmtLength);
    virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);
 
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength);
