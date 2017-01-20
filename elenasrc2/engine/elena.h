@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaH
@@ -455,6 +455,14 @@ struct VMTEntry
    int address;
 };
 
+// --- VMTXEntry ---
+
+struct VMTXEntry
+{
+   ref64_t message;
+   ref64_t address;
+};
+
 // --- ClassHeader ---
 
 struct ClassHeader
@@ -682,6 +690,16 @@ inline ref_t encodeMessage(ref_t signatureRef, ref_t verbId, int paramCount)
    return (verbId << 24) + (signatureRef << 4) + paramCount;
 }
 
+inline ref64_t encodeMessage64(ref_t signatureRef, ref_t verbId, int paramCount)
+{
+   ref64_t message = verbId;
+   message <<= 56;
+
+   message += (signatureRef << 16) + paramCount;
+
+   return message;
+}
+
 inline ref_t encodeVerb(int verbId)
 {
    return encodeMessage(0, verbId, 0);
@@ -739,6 +757,15 @@ inline ref_t getSignature(ref_t message)
    decodeMessage(message, signature, verb, paramCount);
 
    return signature;
+}
+
+inline ref64_t toMessage64(ref_t message)
+{
+   int   paramCount;
+   ref_t verb, signature;
+   decodeMessage(message, signature, verb, paramCount);
+
+   return encodeMessage64(signature, verb, paramCount);
 }
 
 inline bool IsExprOperator(int operator_id)

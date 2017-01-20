@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of abstract stream reader
 //      and writer classes
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef streamsH
@@ -161,6 +161,11 @@ public:
    void writeDWord(int dword)
    {
       write(&dword, 4);
+   }
+
+   void writeQWord(long long qword)
+   {
+      write(&qword, 8);
    }
 
    void writeWord(unsigned short word)

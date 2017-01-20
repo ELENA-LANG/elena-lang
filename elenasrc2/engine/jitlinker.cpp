@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -123,6 +123,26 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t re
    }
    // or resolve later
    else _references->add(position, RefInfo(reference, module));
+}
+
+void JITLinker::ReferenceHelper :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
+{
+   ref_t mask = reference & mskAnyRef;
+   ref_t refID = reference & ~mskAnyRef;
+
+   if (!module)
+      module = _module;
+
+   ref_t position = writer.Position();
+   writer.writeQWord(disp);
+
+   // vmt entry offset / address should be resolved later
+   if (mask == mskVMTXMethodAddress || mask == mskVMTXEntryOffset) {
+      _references->add(position, RefInfo(reference, module));
+      return;
+   }
+   // currently only mskVMTXMethodAddress and mskVMTXEntryOffset supported
+   else throw InternalError("64bit references are not supported");
 }
 
 void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp)
@@ -484,7 +504,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
          if (getVerb(entry.message) == PRIVATE_MESSAGE_ID) {
             _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
          }
-         else _compiler->addVMTEntry(refHelper, entry.message, methodPosition, (VMTEntry*)vmtImage->get(position), count);
+         else _compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
 
          size -= sizeof(VMTEntry);
       }

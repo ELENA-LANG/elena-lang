@@ -1,8 +1,7 @@
 #import system.
 
-#symbol startUp = $nil.
-/*
 #symbol program =
 [
 ].
-*/
+
+#symbol startUp = program eval.

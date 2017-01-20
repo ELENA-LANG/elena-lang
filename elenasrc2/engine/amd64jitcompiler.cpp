@@ -65,16 +65,16 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*138*/1;
+const int gcCommandNumber = /*138*/2;
 const int gcCommands[gcCommandNumber] =
 {
 //   bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcPackage,
 //   bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
 //   bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
-/*   bcALoadBI, bcPushAI, */bcCallExtR//, bcPushF, bcBSRedirect,
+/*   bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,*/
 //   bcHook, bcThrow, bcUnhook, bcClass, bcACallVD,
 //   bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
-//   bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, bcESaveSI,
+/*   bcEQuit, bcAJumpVI, bcASaveBI, */bcXCallRM, //bcESaveSI,
 //   bcGet, bcSet, bcXSet, bcACallI, bcBReadB,
 //   bcRestore, bcLen, bcIfHeap, bcFlag, bcNCreate,
 //   bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI, bcBWriteB,
@@ -91,7 +91,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
 //   bcCreate, bcExclude, bcDCopyR, bcInclude,
 //   bcSelectR, bcNext, bcXSelectR, bcCount,
-//   bcRAbs, bcRExp, bcRInt, bcValidate,
+/*   bcRAbs, bcRExp, bcRInt, */bcValidate//,
 //   bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
 //   bcAddress, bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
 //   bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
@@ -103,7 +103,16 @@ const int gcCommands[gcCommandNumber] =
 void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
 {
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compilePushA, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -121,18 +130,9 @@ void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileACopyR, &compileMCopy,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileACopyR, &compileNop,
-
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFunction, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -146,6 +146,9 @@ void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,
 };
 
 //// --- x86JITCompiler commands ---
@@ -338,15 +341,15 @@ inline void _ELENA_::writeCoreReference(AMD64JITScope& scope, ref_t reference, i
 //   }
 //   scope.code->seekEOF();
 //}
-//
-//void _ELENA_::loadOneByteLOp(int opcode, x86JITScope& scope)
-//{
-//   char* code = (char*)scope.compiler->_inlines[opcode];
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, *(int*)(code - 4));
-//}
-//
+
+void _ELENA_::loadOneByteLOp(int opcode, AMD64JITScope& scope)
+{
+   char* code = (char*)scope.compiler->_inlines[opcode];
+
+   // simply copy correspondent inline code
+   scope.code->write(code, *(int*)(code - 4));
+}
+
 //void _ELENA_::loadROp(int opcode, x86JITScope& scope)
 //{
 //   char*  code = (char*)scope.compiler->_inlines[opcode];
@@ -991,13 +994,13 @@ void _ELENA_::compileACopyR(int, AMD64JITScope& scope)
 //   scope.code->writeWord(0x3D8B);
 //   scope.writeReference(*scope.code, scope.argument, 0);
 //}
-//
-//void _ELENA_::compilePushA(int, x86JITScope& scope)
-//{
-//   // push eax
-//   scope.code->writeByte(0x50);
-//}
-//
+
+void _ELENA_::compilePushA(int, AMD64JITScope& scope)
+{
+   // push rax
+   scope.code->writeByte(0x50);
+}
+
 //void _ELENA_::compilePushFI(int, x86JITScope& scope)
 //{
 //   scope.code->writeWord(0xB5FF);
@@ -1055,14 +1058,15 @@ void _ELENA_::compileCallR(int, AMD64JITScope& scope)
 //   // pop eax
 //   scope.code->writeByte(0x58);
 //}
-//
-//void _ELENA_::compileMCopy(int, x86JITScope& scope)
-//{
-//   // mov ecx, message
-//   scope.code->writeByte(0xB9);
-//   scope.code->writeDWord(scope.resolveMessage(scope.argument));
-//}
-//
+
+void _ELENA_ :: compileMCopy(int, AMD64JITScope& scope)
+{
+   // mov ecx, message
+   scope.code->writeByte(0x48);
+   scope.code->writeByte(0xB9);
+   scope.code->writeQWord(scope.resolveMessage(scope.argument));
+}
+
 //void _ELENA_::compilePopN(int, x86JITScope& scope)
 //{
 //   // add esp, arg
@@ -1101,9 +1105,9 @@ void _ELENA_::compileCallR(int, AMD64JITScope& scope)
 //   scope.code->writeWord(0xEB83);
 //   scope.code->writeByte(1);
 //}
-//
-//void _ELENA_::compileInvokeVMTOffset(int opcode, x86JITScope& scope)
-//{
+
+void _ELENA_::compileInvokeVMTOffset(int opcode, AMD64JITScope& scope)
+{
 //   int message = scope.resolveMessage(scope.tape->getDWord());
 //
 //   char*  code = (char*)scope.compiler->_inlines[opcode];
@@ -1129,37 +1133,37 @@ void _ELENA_::compileCallR(int, AMD64JITScope& scope)
 //      count--;
 //   }
 //   scope.code->seekEOF();
-//}
-//
-//void _ELENA_::compileInvokeVMT(int opcode, x86JITScope& scope)
-//{
-//   int message = scope.resolveMessage(scope.tape->getDWord());
-//
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0] == -1) {
-//         // resolve message offset
-//         scope.writeReference(*scope.code, scope.argument | mskVMTMethodAddress, message);
-//      }
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
-//
+}
+
+void _ELENA_::compileInvokeVMT(int opcode, AMD64JITScope& scope)
+{
+   ref64_t message = scope.resolveMessage(scope.tape->getDWord());
+
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         // resolve message offset
+         scope.writeXReference(*scope.code, (scope.argument & ~mskAnyRef) | mskVMTXMethodAddress, message);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 //void _ELENA_::compileACopyS(int, x86JITScope& scope)
 //{
 //   // lea eax, [esp + index]
@@ -1357,6 +1361,11 @@ void AMD64JITScope::writeReference(MemoryWriter& writer, ref_t reference, size_t
    helper->writeReference(writer, reference, disp, module);
 }
 
+void AMD64JITScope :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp)
+{
+   helper->writeXReference(writer, reference, disp, module);
+}
+
 // --- AMD64JITCompiler ---
 
 AMD64JITCompiler :: AMD64JITCompiler(bool debugMode)
@@ -1453,13 +1462,13 @@ void AMD64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loade
       }
    }
 
-   //// preload vm commands
-   //for (int i = 0; i < gcCommandNumber; i++) {
-   //   SectionInfo info = helper.getCoreSection(gcCommands[i]);
+   // preload vm commands
+   for (int i = 0; i < gcCommandNumber; i++) {
+      SectionInfo info = helper.getCoreSection(gcCommands[i]);
 
-   //   // due to optimization section must be ROModule::ROSection instance
-   //   _inlines[gcCommands[i]] = (char*)info.section->get(0);
-   //}
+      // due to optimization section must be ROModule::ROSection instance
+      _inlines[gcCommands[i]] = (char*)info.section->get(0);
+   }
 }
 
 void AMD64JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode)

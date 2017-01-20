@@ -18,3 +18,20 @@ procedure % NEWFRAME
   ret
 
 end
+
+// ; ==== Command Set ==
+
+// ; validate
+
+inline % 03Ah
+
+  cmp dword ptr [rax], eax
+
+end
+
+// xcallrm (rdx contains message, __arg1 contains vmtentry)
+inline % 0FEh
+
+   call code : __arg1
+
+end

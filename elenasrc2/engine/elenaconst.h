@@ -170,6 +170,8 @@ namespace _ELENA_
       mskMetaRDataRef        = 0x44000000,   // meta data
       mskVMTEntryOffset      = 0x45000000,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
       mskSyntaxTreeRef       = 0x46000000,   // template, declared in subject namespace
+      mskVMTXMethodAddress   = 0x49000000,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
+      mskVMTXEntryOffset     = 0x4A000000,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
 
       mskConstantRef         = 0x01000000,   // reference to constant
       mskLiteralRef          = 0x02000000,   // reference to constant literal
@@ -312,6 +314,8 @@ namespace _ELENA_
    const int elExtMessage          = 0x00208000;
    const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
    const int elWithCustomDispatcher= 0x00800000;
+
+   const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
    const int elDebugMask           = 0x001F0000;
    const int elDebugDWORD          = 0x00010000;

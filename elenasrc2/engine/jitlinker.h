@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jitlinkerH
@@ -89,6 +89,8 @@ class JITLinker : _JITLoaderListener
 //      virtual void writeMethodReference(SectionWriter& writer, size_t tapeDisp);
       virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
       virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
+
+      virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module);
 
       ReferenceHelper(JITLinker* owner, _Module* module, References* references)
       {

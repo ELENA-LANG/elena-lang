@@ -26,14 +26,20 @@ public:
       otDW      = 0x00400005,
       otDQ      = 0x02000005,
 
+      otEAX     = 0x00100300,
       otECX     = 0x00100301,
 
+      otAL      = 0x00200300,
       otCL      = 0x00200301,
+      otAH      = 0x00200304,
 
+      otAX      = 0x00400300,
       otCX      = 0x00400301,
 
+      otXMM0    = 0x01000300,
       otXMM1    = 0x01000301,
 
+      otRAX     = 0x02000300,
       otRCX     = 0x02000301,
       otRSP     = 0x02000304,
 
@@ -123,7 +129,28 @@ public:
       }
    }
 
+   static OperandType addPrefix(OperandType type, OperandType prefix)
+   {
+      if (prefix != otNone) {
+         if (test(type, otR64)) {
+            type = (OperandType)((type & ~otR64) | prefix);
+         }
 
+      //   if (test(type, otR32)) {
+      //      type = (OperandType)((type & ~otR32) | prefix);
+      //   }
+      //   else if (type == otDB) {
+      //      if (prefix == otDW) {
+      //         type = (OperandType)((type & ~otDB) | prefix);
+      //      }
+      //      else if (prefix != otDB) {
+      //         type = (OperandType)((type & ~otDB) | otDD | prefix);
+      //      }
+      //   }
+      //   else type = (OperandType)(type | prefix);
+      }
+      return type;
+   }
 };
 
 } // _ELENA_

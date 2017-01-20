@@ -14,11 +14,19 @@ using namespace _ELENA_;
 
 // --- ELENA Class constants ---
 const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
+const int elVMTCountOffset64      = 0x0018;           // a VMTX size offset
 
 inline void insertVMTEntry(VMTEntry* entries, int count, int index)
 {
    for (int i = count ; i > index ; i--) {
       entries[i] = entries[i-1];
+   }
+}
+
+inline void insertVMTXEntry(VMTXEntry* entries, int count, int index)
+{
+   for (int i = count; i > index; i--) {
+      entries[i] = entries[i - 1];
    }
 }
 
@@ -278,14 +286,9 @@ int JITCompiler32 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
    else return 0;
 }
 
-void JITCompiler32 :: addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& entryCount)
+void JITCompiler32 :: addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& entryCount)
 {
    size_t index = 0;
-
-   // if message has subject it should be resolved
-   //if (message > MESSAGE_MASK) {
-      message = helper.resolveMessage(message);
-   //}
 
    // find the message entry
    while (index < entryCount && (entries[index].message < message))
@@ -567,78 +570,83 @@ void JITCompiler64 :: allocateArray(MemoryWriter& writer, size_t count)
 
 void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength)
 {
-   //alignCode(&vmtWriter, VA_ALIGNMENT, false);
+   alignCode(&vmtWriter, VA_ALIGNMENT, false);
 
-   //// create VMT header:
-   ////   dummy package reference
-   //vmtWriter.writeDWord(0);
+   // create VMT header:
+   //   dummy package reference
+   vmtWriter.writeQWord(0);
 
-   ////   vmt length
-   //vmtWriter.writeDWord(vmtLength);
+   //   vmt length
+   vmtWriter.writeQWord(vmtLength);
 
-   ////   vmt flags
-   //vmtWriter.writeDWord(flags);
+   //   vmt flags
+   vmtWriter.writeQWord((flags &  ~elStandartVMT) | elExtendedVMT);
 
-   ////   dummy class reference
-   //vmtWriter.writeDWord(0);
+   //   dummy class reference
+   vmtWriter.writeQWord(0);
 
-   //int position = vmtWriter.Position();
+   int position = vmtWriter.Position();
 
-   //size_t vmtSize = 0;
-   //if (test(flags, elStandartVMT)) {
-   //   // + VMT length
-   //   vmtSize = vmtLength * sizeof(VMTEntry);
-   //}
+   size_t vmtSize = 0;
+   if (test(flags, elStandartVMT)) {
+      // + VMT length
+      vmtSize = vmtLength * sizeof(VMTXEntry);
+   }
+   
+   vmtWriter.writeBytes(0, vmtSize);
 
-   //vmtWriter.writeBytes(0, vmtSize);
-
-   //vmtWriter.seek(position);
+   vmtWriter.seek(position);
 }
 
-int JITCompiler64:: copyParentVMT(void* parentVMT, VMTEntry* entries)
+int JITCompiler64 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
 {
-   //if (parentVMT != NULL) {
-   //   // get the parent vmt size
-   //   int count = *(int*)((int)parentVMT - elVMTCountOffset32);
-
-   //   // get the parent entry array
-   //   VMTEntry* parentEntries = (VMTEntry*)parentVMT;
-
-   //   // copy parent VMT
-   //   for (int i = 0; i < count; i++) {
-   //      entries[i] = parentEntries[i];
-   //   }
-
-   //   return count;
-   //}
-   //else return 0;
-
-   return 0; // !! temporal
+   //HOTFIX : 64bit compiler supports only VMTX
+   return copyParentVMTX(parentVMT, (VMTXEntry*)entries);
 }
 
-void JITCompiler64 :: addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& entryCount)
+int JITCompiler64 :: copyParentVMTX(void* parentVMT, VMTXEntry* entries)
 {
-   //size_t index = 0;
+   if (parentVMT != NULL) {
+      // get the parent vmt size
+      int count = *(int*)((int)parentVMT - elVMTCountOffset64);
 
-   //// if message has subject it should be resolved
-   ////if (message > MESSAGE_MASK) {
-   //message = helper.resolveMessage(message);
-   ////}
+      // get the parent entry array
+      VMTXEntry* parentEntries = (VMTXEntry*)parentVMT;
 
-   //// find the message entry
-   //while (index < entryCount && (entries[index].message < message))
-   //   index++;
+      // copy parent VMT
+      for (int i = 0; i < count; i++) {
+         entries[i] = parentEntries[i];
+      }
 
-   //if (index < entryCount) {
-   //   if (entries[index].message != message) {
-   //      insertVMTEntry(entries, entryCount, index);
-   //      entryCount++;
-   //   }
-   //}
-   //else entryCount++;
+      return count;
+   }
+   else return 0;
+}
 
-   //entries[index].message = message;
-   //entries[index].address = codePosition;
+void JITCompiler64 :: addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& entryCount)
+{
+   // HOTFIX : 64bit compiler supports only VMTX
+   addVMTXEntry(toMessage64(message), codePosition, (VMTXEntry*)entries, entryCount);
+}
+
+void JITCompiler64 :: addVMTXEntry(ref64_t message, size_t codePosition, VMTXEntry* entries, size_t& entryCount)
+{
+   size_t index = 0;
+
+   // find the message entry
+   while (index < entryCount && (entries[index].message < message))
+      index++;
+
+   if (index < entryCount) {
+      if (entries[index].message != message) {
+         insertVMTXEntry(entries, entryCount, index);
+         entryCount++;
+      }
+   }
+   else entryCount++;
+
+   entries[index].message = message;
+   entries[index].address = codePosition;
 }
 
 void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, void* packageVAddress, int count, bool virtualMode)

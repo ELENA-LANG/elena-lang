@@ -34,11 +34,14 @@ struct AMD64JITScope
    int            argument;
 
    void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
+   void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp);
 
-   //ref_t resolveMessage(ref_t reference)
-   //{
-   //   return helper->resolveMessage(reference, module);
-   //}
+   ref64_t resolveMessage(ref_t reference)
+   {
+      ref_t message32 = helper->resolveMessage(reference, module);
+
+      return toMessage64(message32);
+   }
 
    //SectionInfo getSection(ref_t reference)
    //{
@@ -58,11 +61,18 @@ protected:
    // commands
    friend void writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code);
    friend void loadCoreOp(AMD64JITScope& scope, char* code);
+   friend void loadOneByteLOp(int opcode, AMD64JITScope& scope);
 
    friend void compileNop(int opcode, AMD64JITScope& scope);
    friend void compileACopyR(int opcode, AMD64JITScope& scope);
    friend void loadFunction(int opcode, AMD64JITScope& scope);
    friend void compileCallR(int opcode, AMD64JITScope& scope);
+   friend void compilePushA(int opcode, AMD64JITScope& scope);
+   friend void compileMCopy(int opcode, AMD64JITScope& scope);
+   friend void compileInvokeVMT(int opcode, AMD64JITScope& scope);
+
+   // preloaded command set
+   void* _inlines[0x100];
 
    // preloaded references
    IntFixedMap<void*> _preloaded;
@@ -98,11 +108,16 @@ public:
 
 // --- compiler friend functions---
 void loadCoreOp(AMD64JITScope& scope, char* code);
+void loadOneByteLOp(int opcode, AMD64JITScope& scope);
 
 void compileNop(int opcode, AMD64JITScope& scope);
 void compileACopyR(int opcode, AMD64JITScope& scope);
 void loadFunction(int opcode, AMD64JITScope& scope);
 void compileCallR(int opcode, AMD64JITScope& scope);
+void compilePushA(int opcode, AMD64JITScope& scope);
+void compileMCopy(int opcode, AMD64JITScope& scope);
+void compileInvokeVMT(int opcode, AMD64JITScope& scope);
+void compileInvokeVMTOffset(int opcode, AMD64JITScope& scope);
 
 } // _ELENA_
 
