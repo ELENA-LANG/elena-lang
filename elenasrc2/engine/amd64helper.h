@@ -18,44 +18,48 @@ class AMD64Helper
 public:
    enum OperandType
    {
-      otUnknown = 0,
-      otNone    = 0,
+      otUnknown   = 0,
+      otNone      = 0,
 
-      otDD      = 0x00100005,
-      otDB      = 0x00200005,
-      otDW      = 0x00400005,
-      otDQ      = 0x02000005,
+      otDD        = 0x00100005,
+      otDB        = 0x00200005,
+      otDW        = 0x00400005,
+      otDQ        = 0x02000005,
 
-      otEAX     = 0x00100300,
-      otECX     = 0x00100301,
+      otEAX       = 0x00100300,
+      otECX       = 0x00100301,
 
-      otAL      = 0x00200300,
-      otCL      = 0x00200301,
-      otAH      = 0x00200304,
+      otAL        = 0x00200300,
+      otCL        = 0x00200301,
+      otAH        = 0x00200304,
 
-      otAX      = 0x00400300,
-      otCX      = 0x00400301,
+      otAX        = 0x00400300,
+      otCX        = 0x00400301,
 
-      otXMM0    = 0x01000300,
-      otXMM1    = 0x01000301,
+      otXMM0      = 0x01000300,
+      otXMM1      = 0x01000301,
 
-      otRAX     = 0x02000300,
-      otRCX     = 0x02000301,
-      otRSP     = 0x02000304,
+      otRAX       = 0x02000300,
+      otRCX       = 0x02000301,
+      otRSP       = 0x02000304,
+      otRBP       = 0x02000305,
 
-      otR32     = 0x00100300,
-      otM32     = 0x00110000,
+      otR32       = 0x00100300,
+      otM32       = 0x00110000,
+      otM32disp8  = 0x00110100,
+      otM32disp32 = 0x00110200,
 
-      otR8      = 0x00200300,
+      otR8        = 0x00200300,
+      otM8disp8   = 0x00210100,
 
-      otR16     = 0x00400300,
+      otR16       = 0x00400300,
 
-      otR64     = 0x02000300,
-      otM64     = 0x02010000,
+      otR64       = 0x02000300,
+      otM64       = 0x02010000,
 
-      otX128    = 0x01000300,
+      otX128      = 0x01000300,
 
-      otSIB     = 0x00000004,
+      otSIB       = 0x00000004,
    };
       
    struct Operand
@@ -88,23 +92,23 @@ public:
       int opcode = prefix + ((char)sour.type << 3) + (char)dest.type;
 
       code->writeByte((unsigned char)opcode);
-      //if ((char)dest.type == otSIB && dest.type != otESP && dest.type != otAH) {
-      //   int sib = (char)(dest.type >> 24);
-      //   if (sib == 0) {
-      //      sib = 0x24;
-      //   }
-      //   code->writeByte((unsigned char)sib);
-      //}
-      //if (test(dest.type, otM32disp8) || test(dest.type, otM8disp8)) {
-      //   code->writeByte((unsigned char)dest.offset);
-      //}
-      //// !! should only otM32 be checked?
-      //else if (test(dest.type, otM32disp32) || dest.factorReg) {
-      //   if (dest.reference != 0) {
-      //      code->writeRef(dest.reference, dest.offset);
-      //   }
-      //   else code->writeDWord(dest.offset);
-      //}
+      if ((char)dest.type == otSIB && dest.type != otRSP && dest.type != otAH) {
+         int sib = (char)(dest.type >> 24) & 0xFD; // excluding 64bit mask
+         if (sib == 0) {
+            sib = 0x24;
+         }
+         code->writeByte((unsigned char)sib);
+      }
+      if (test(dest.type, otM32disp8) || test(dest.type, otM8disp8)) {
+         code->writeByte((unsigned char)dest.offset);
+      }
+      // !! should only otM32 be checked?
+      else if (test(dest.type, otM32disp32)/* || dest.factorReg*/) {
+         if (dest.reference != 0) {
+            code->writeRef(dest.reference, dest.offset);
+         }
+         else code->writeDWord(dest.offset);
+      }
       //else if (dest.type == otDisp32) {
       //   if (dest.reference != 0) {
       //      code->writeRef(dest.reference, dest.offset);

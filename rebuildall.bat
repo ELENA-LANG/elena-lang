@@ -1,5 +1,3 @@
-rebuild.bat
-
 bin\elc -cexamples\console\helloworld\u_helloworld.prj
 bin\elc -cexamples\console\helloworld\helloworld.prj
 bin\elc -cexamples\console\sum\intsum.prj

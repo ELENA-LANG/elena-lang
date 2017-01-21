@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  1
+#define ELENAVM_REVISION  2
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2016 by Alex Rakov"
@@ -154,6 +154,11 @@ protected:
 
       virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
       virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
+
+      virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
+      {
+         throw InternalError("Currently not supported");
+      }
 
       virtual void addBreakpoint(size_t position);
 

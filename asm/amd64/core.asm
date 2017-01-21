@@ -12,7 +12,6 @@ procedure % INIT
 
 end
 
-
 procedure % NEWFRAME
 
   ret
@@ -21,11 +20,35 @@ end
 
 // ; ==== Command Set ==
 
+// ; close
+
+inline % 15h
+
+  mov  rsp, rbp
+  pop  rbp
+  
+end
+
 // ; validate
 
 inline % 03Ah
 
   cmp dword ptr [rax], eax
+
+end
+
+// ; aloadsi
+inline % 95h
+
+  mov  rax, qword ptr [rsp+__arg1]
+
+end
+
+// ; open
+inline % 98h
+
+  push rbp
+  mov  rbp, rsp
 
 end
 
