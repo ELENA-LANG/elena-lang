@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Linux-GTK+ GTK IDE
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //#include "gtk-linux32/gtkcommon.h"
@@ -12,6 +12,7 @@
 //#include "gtkeditframe.h"
 
 #include "gtkide.h"
+#include <sys/wait.h>
 //#include<pthread.h>
 
 #define COMPILER_PATH "/usr/bin/elena-lc"
@@ -39,6 +40,7 @@ void GTKIDEWindow::OutputProcess :: writeOut(Gtk::TextView& view)
 void GTKIDEWindow::OutputProcess :: compile(GTKIDEWindow* owner)
 {
    stopped = false;
+   exitCode = 0;
 
    int  stdinPipe[2];
    int  stdoutPipe[2];
@@ -126,7 +128,14 @@ void GTKIDEWindow::OutputProcess :: compile(GTKIDEWindow* owner)
       ::close(stdinPipe[PIPE_WRITE]);
       ::close(stdoutPipe[PIPE_READ]);
 
+      int status;
+      waitpid(child, &status, 0);
+      if (WIFEXITED(status)) {
+         exitCode = WEXITSTATUS(status);
+      }
+
       stopped = true;
+      owner->notifyCompletion(exitCode);
    }
    else {
       // failed to create child
@@ -695,12 +704,92 @@ void GTKIDEWindow :: notifyOutput()
    _outputDispatcher.emit();
 }
 
+void GTKIDEWindow :: notifyCompletion(int errorCode)
+{
+   if (errorCode == 0) {
+      _compilationSuccessDispatcher.emit();
+   }
+   else if (errorCode == -1) {
+      _compilationWarningDispatcher.emit();
+   }
+   else _compilationErrorDispatcher.emit();
+}
+
 void GTKIDEWindow :: notityDebugStep(DebugMessage message)
 {
    Glib::Threads::Mutex::Lock lock(_debugMutex);
 
    _debugMessages.push(message);
    _debugDispatcher.emit();
+}
+
+void GTKIDEWindow :: displayErrors()
+{
+   _ELENA_::String<char, 266> message, file;
+   _ELENA_::String<char, 15> colStr, rowStr;
+
+   Glib::ustring buffer = _output.get_buffer()->get_text();
+
+   const char* s = buffer.c_str();
+
+   while (s) {
+      const char* err = strstr(s, ": error ");
+      if (err==NULL) {
+         err = strstr(s, ": warning ");
+      }
+      if (err==NULL)
+         break;
+
+      const char* line = err - 1;
+      const char* row = NULL;
+      const char* col = NULL;
+      while (true) {
+         if (*line=='(') {
+            row = line + 1;
+         }
+         else if (*line==':' && col == NULL) {
+            col = line + 1;
+         }
+         else if (*line == '\n')
+            break;
+
+         line--;
+      }
+      s = strchr(err, '\n');
+
+      message.copy(err + 2, s - err- 3);
+      if (row==NULL) {
+         file.clear();
+         colStr.clear();
+         rowStr.clear();
+      }
+      else {
+         file.copy(line + 1, row - line - 2);
+         if (col != NULL) {
+            rowStr.copy(row, col - row - 1);
+            colStr.copy(col, err - col - 1);
+         }
+         else {
+            rowStr.copy(row, err - row - 1);
+            colStr.clear();
+         }
+      }
+
+      Gtk::TreeModel::Row logRow = *(_messageList->append());
+      logRow[_messageLogColumns._description] = message.str();
+      logRow[_messageLogColumns._file] = file.str();
+      logRow[_messageLogColumns._line] = rowStr.str();
+      logRow[_messageLogColumns._column] = colStr.str();
+
+      //break;
+   }
+
+   _controller->doShowCompilerOutput(true);
+   if (_model->messages) {
+      //((TabBar*)_controls[CTRL_TABBAR])->selectTabChild((Control*)_controls[CTRL_MESSAGELIST]);
+   }
+   else _controller->doShowMessages(true);
+
 }
 
 GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model* model)
@@ -716,6 +805,7 @@ GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model
    _mainFrame.signal_switch_page().connect(sigc::mem_fun(*this,
            &GTKIDEWindow::on_client_change));
 
+   // project tree
    _projectTree = Gtk::TreeStore::create(_projectTreeColumns);
    _projectView.set_model(_projectTree);
 
@@ -723,6 +813,15 @@ GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model
 
    _projectView.signal_row_activated().connect(sigc::mem_fun(*this,
               &GTKIDEWindow::on_projectview_row_activated));
+
+   // message log
+   _messageList = Gtk::TreeStore::create(_messageLogColumns);
+   _messageLog.set_model(_messageList);
+
+   _messageLog.append_column("description", _messageLogColumns._description);
+   _messageLog.append_column("file", _messageLogColumns._file);
+   _messageLog.append_column("line", _messageLogColumns._line);
+   _messageLog.append_column("column", _messageLogColumns._column);
 
    _outputScroller.add(_output);
    //_bottomTab.append_page(_outputScroller, "Output");
@@ -740,4 +839,7 @@ GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model
 
    _outputDispatcher.connect(sigc::mem_fun(*this, &GTKIDEWindow::on_notification_from_output));
    _debugDispatcher.connect(sigc::mem_fun(*this, &GTKIDEWindow::on_notification_from_debugger));
+   _compilationSuccessDispatcher.connect(sigc::mem_fun(*this, &GTKIDEWindow::on_compilation_success));
+   _compilationWarningDispatcher.connect(sigc::mem_fun(*this, &GTKIDEWindow::on_compilation_warning));
+   _compilationErrorDispatcher.connect(sigc::mem_fun(*this, &GTKIDEWindow::on_compilation_error));
 }

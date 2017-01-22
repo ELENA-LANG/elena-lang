@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Linux-GTK IDE
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef winideH
@@ -65,6 +65,7 @@ class GTKIDEWindow : public SDIWindow, public _View, public _DebugListener
       char buffer[512];
       int  buf_len;
       bool stopped;
+      int  exitCode;
 
       mutable Glib::Threads::Mutex _mutex;
 
@@ -87,6 +88,7 @@ class GTKIDEWindow : public SDIWindow, public _View, public _DebugListener
       {
          buf_len = 0;
          stopped = true;
+         exitCode = 0;
       }
    };
 
@@ -100,6 +102,23 @@ class GTKIDEWindow : public SDIWindow, public _View, public _DebugListener
       {
           add(_caption);
           add(_index);
+      }
+   };
+
+   class MessageLogColumns : public Gtk::TreeModel::ColumnRecord
+   {
+   public:
+      Gtk::TreeModelColumn<Glib::ustring> _description;
+      Gtk::TreeModelColumn<Glib::ustring> _file;
+      Gtk::TreeModelColumn<Glib::ustring> _line;
+      Gtk::TreeModelColumn<Glib::ustring> _column;
+
+      MessageLogColumns()
+      {
+          add(_description);
+          add(_file);
+          add(_line);
+          add(_column);
       }
    };
 
@@ -118,11 +137,15 @@ class GTKIDEWindow : public SDIWindow, public _View, public _DebugListener
    ProjectTreeColumns           _projectTreeColumns;
    Glib::RefPtr<Gtk::TreeStore> _projectTree;
 
+   MessageLogColumns            _messageLogColumns;
+   Glib::RefPtr<Gtk::TreeStore> _messageList;
+
    _Controller*        _controller;
    Model*              _model;
 
    Gtk::Toolbar        _toolbar;
    Gtk::TreeView       _projectView;
+   Gtk::TreeView       _messageLog;
    Gtk::Statusbar      _statusbar;
    Gtk::Notebook       _bottomTab;
 
@@ -134,6 +157,9 @@ class GTKIDEWindow : public SDIWindow, public _View, public _DebugListener
    Glib::Threads::Thread* _outputThread;
    Glib::Dispatcher       _outputDispatcher;
    Glib::Dispatcher       _debugDispatcher;
+   Glib::Dispatcher       _compilationSuccessDispatcher;
+   Glib::Dispatcher       _compilationWarningDispatcher;
+   Glib::Dispatcher       _compilationErrorDispatcher;
 
    mutable Glib::Threads::Mutex _debugMutex;
    _ELENA_::Queue<DebugMessage> _debugMessages;
@@ -143,6 +169,8 @@ protected:
    StatusLine     _statusInfo;
 
    bool _skip; // HOTFIX : to prevent infinite checkmenuitem call
+
+   void displayErrors();
 
    // event signals
    void on_menu_file_new_source()
@@ -416,6 +444,21 @@ protected:
 
    void on_notification_from_output();
    void on_notification_from_debugger();
+   void on_compilation_success()
+   {
+      _controller->onCompilationEnd(SUCCESSFULLY_COMPILED, true);
+   }
+   void on_compilation_warning()
+   {
+      displayErrors();
+      _controller->onCompilationEnd(COMPILED_WITH_WARNINGS, true);
+   }
+   void on_compilation_error()
+   {
+      _controller->cleanUpProject();
+      displayErrors();
+      _controller->onCompilationEnd(COMPILED_WITH_ERRORS, false);
+   }
 
    void on_textview_changed()
    {
@@ -442,6 +485,7 @@ public:
    void selectDocument(int docIndex);
 
    void notifyOutput();
+   void notifyCompletion(int errorCode);
    void notityDebugStep(DebugMessage message);
 
    virtual void reloadProjectView(_ProjectManager* project);
@@ -893,12 +937,13 @@ public:
 
    virtual void openMessageList()
    {
-      //appWindow.openMessageList();
+      _bottomTab.append_page(_messageLog, "Messages");
+      _bottomTab.show_all_children();
    }
 
    virtual void closeMessageList()
    {
-      //appWindow.closeMessageList();
+      _bottomTab.remove_page(_messageLog);
    }
 
    virtual void openDebugWatch()
