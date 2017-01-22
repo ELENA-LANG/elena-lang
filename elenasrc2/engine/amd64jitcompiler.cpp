@@ -65,7 +65,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*138*/8;
+const int gcCommandNumber = /*138*/10;
 const int gcCommands[gcCommandNumber] =
 {
    bcALoadSI, /*bcACallVI, */bcOpen, //bcBCopyA, bcPackage,
@@ -78,9 +78,9 @@ const int gcCommands[gcCommandNumber] =
 //   bcGet, bcSet, bcXSet, bcACallI, bcBReadB,
    bcRestore, //bcLen, bcIfHeap, bcFlag, bcNCreate,
 /*   bcBLoadFI, */bcReserve, //bcAXSaveBI, bcBLoadSI, bcBWriteB,
-//   bcNEqual, bcNLess, bcNCopy, bcNAdd, bcBSwapSI,
+/*   bcNEqual, bcNLess, bcNCopy, */bcNAdd, //bcBSwapSI,
 //   bcNSub, bcNMul, bcNDiv, bcNLoadE, bcDivN,
-/*   bcWLen, */bcNSave, //bcNLoad, bcWCreate, bcCopy,
+/*   bcWLen, */bcNSave, bcNLoad, //bcWCreate, bcCopy,
 //   bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
 //   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcSNop,
 //   bcNAnd, bcNOr, bcNXor, bcTryLock, bcFreeLock,
@@ -114,8 +114,8 @@ void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteLOp,
+   &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -130,7 +130,7 @@ void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileDCopy, &compileNop, &loadIndexOpX, &compileNop, &compileNop, &loadIndexOpX, &compileNop, &compileNop,
-   &compileOpen, &compileQuitN, &compileNop, &compileBCopyF, &compileNop, &compileNop, &compileACopyR, &compileMCopy,
+   &compileOpen, &compileQuitN, &compileNop, &compileBCopyF, &compileACopyF, &compileNop, &compileACopyR, &compileMCopy,
 
    &compileNop, &compileNop, &compileNop, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -141,7 +141,7 @@ void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileDAddN, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -915,14 +915,14 @@ void _ELENA_::compileDCopy(int, AMD64JITScope& scope)
 //   scope.code->writeWord(0xCB81);
 //   scope.code->writeDWord(scope.argument);
 //}
-//
-//void _ELENA_::compileDAddN(int, x86JITScope& scope)
-//{
-//   // add ebx, n
-//   scope.code->writeWord(0xC381);
-//   scope.code->writeDWord(scope.argument);
-//}
-//
+
+void _ELENA_::compileDAddN(int, AMD64JITScope& scope)
+{
+   // add ebx, n
+   scope.code->writeWord(0xC381);
+   scope.code->writeDWord(scope.argument);
+}
+
 //void _ELENA_::compileDMulN(int, x86JITScope& scope)
 //{
 //   // mov  esi, scope.argument
@@ -1299,14 +1299,15 @@ void _ELENA_::compileBCopyF(int, AMD64JITScope& scope)
 //   scope.code->writeByte(0x24);
 //   scope.code->writeDWord(-(scope.argument << 2));
 //}
-//
-//void _ELENA_::compileACopyF(int, x86JITScope& scope)
-//{
-//   // lea eax, [ebp+nn]
-//   scope.code->writeWord(0x858D);
-//   scope.code->writeDWord(-(scope.argument << 2));
-//}
-//
+
+void _ELENA_::compileACopyF(int, AMD64JITScope& scope)
+{
+   // lea eax, [ebp+nn]
+   scope.code->writeByte(0x48);
+   scope.code->writeWord(0x858D);
+   scope.code->writeDWord(-(scope.argument << 3));
+}
+
 //void _ELENA_::compileNot(int, x86JITScope& scope)
 //{
 //   // not ebx

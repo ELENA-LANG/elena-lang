@@ -37,10 +37,25 @@ inline % 03Ah
 
 end
 
+// ; nadd
+inline % 43h
+
+  mov  edx, dword ptr [rax]
+  add  dword ptr [rdi], edx
+
+end
+
 // ; nsave
 inline % 47h
 
   mov dword ptr [rdi], ebx
+
+end
+
+// ; nload
+inline % 48h
+
+  mov ebx, dword ptr [rax]
 
 end
 

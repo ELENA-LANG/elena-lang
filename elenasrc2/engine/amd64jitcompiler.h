@@ -76,6 +76,8 @@ protected:
    friend void compileBCopyF(int opcode, AMD64JITScope& scope);
    friend void compileDCopy(int opcode, AMD64JITScope& scope);
    friend void compileACopyB(int opcode, AMD64JITScope& scope);
+   friend void compileACopyF(int opcode, AMD64JITScope& scope);
+   friend void compileDAddN(int opcode, AMD64JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -130,6 +132,8 @@ void compileQuitN(int opcode, AMD64JITScope& scope);
 void compileBCopyF(int opcode, AMD64JITScope& scope);
 void compileDCopy(int opcode, AMD64JITScope& scope);
 void compileACopyB(int opcode, AMD64JITScope& scope);
+void compileACopyF(int opcode, AMD64JITScope& scope);
+void compileDAddN(int opcode, AMD64JITScope& scope);
 
 } // _ELENA_
 
