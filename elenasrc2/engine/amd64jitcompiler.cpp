@@ -65,7 +65,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*138*/5;
+const int gcCommandNumber = /*138*/8;
 const int gcCommands[gcCommandNumber] =
 {
    bcALoadSI, /*bcACallVI, */bcOpen, //bcBCopyA, bcPackage,
@@ -76,11 +76,11 @@ const int gcCommands[gcCommandNumber] =
 //   bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
 /*   bcEQuit, bcAJumpVI, bcASaveBI, */bcXCallRM, //bcESaveSI,
 //   bcGet, bcSet, bcXSet, bcACallI, bcBReadB,
-//   bcRestore, bcLen, bcIfHeap, bcFlag, bcNCreate,
-//   bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI, bcBWriteB,
+   bcRestore, //bcLen, bcIfHeap, bcFlag, bcNCreate,
+/*   bcBLoadFI, */bcReserve, //bcAXSaveBI, bcBLoadSI, bcBWriteB,
 //   bcNEqual, bcNLess, bcNCopy, bcNAdd, bcBSwapSI,
 //   bcNSub, bcNMul, bcNDiv, bcNLoadE, bcDivN,
-//   bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
+/*   bcWLen, */bcNSave, //bcNLoad, bcWCreate, bcCopy,
 //   bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
 //   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcSNop,
 //   bcNAnd, bcNOr, bcNXor, bcTryLock, bcFreeLock,
@@ -103,7 +103,7 @@ const int gcCommands[gcCommandNumber] =
 void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
 {
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compilePushA, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compilePushA, &compileNop, &compileACopyB, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -114,10 +114,7 @@ void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -129,14 +126,17 @@ void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadQIndexOp, &compileNop, &compileNop,
-   &compileOpen, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileACopyR, &compileMCopy,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileDCopy, &compileNop, &loadIndexOpX, &compileNop, &compileNop, &loadIndexOpX, &compileNop, &compileNop,
+   &compileOpen, &compileQuitN, &compileNop, &compileBCopyF, &compileNop, &compileNop, &compileACopyR, &compileMCopy,
 
    &compileNop, &compileNop, &compileNop, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOpX,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -377,7 +377,7 @@ void _ELENA_::loadOneByteLOp(int opcode, AMD64JITScope& scope)
 //   scope.code->seekEOF();
 //}
 
-void _ELENA_::loadQIndexOp(int opcode, AMD64JITScope& scope)
+void _ELENA_::loadIndexOpX(int opcode, AMD64JITScope& scope)
 {
    char*  code = (char*)scope.compiler->_inlines[opcode];
    size_t position = scope.code->Position();
@@ -887,14 +887,14 @@ void _ELENA_::compileACopyR(int, AMD64JITScope& scope)
 //   scope.code->writeByte(0xBF);
 //   scope.writeReference(*scope.code, scope.argument, 0);
 //}
-//
-//void _ELENA_::compileDCopy(int, x86JITScope& scope)
-//{
-//   // mov ebx, i
-//   scope.code->writeByte(0xBB);
-//   scope.code->writeDWord(scope.argument);
-//}
-//
+
+void _ELENA_::compileDCopy(int, AMD64JITScope& scope)
+{
+   // mov ebx, i
+   scope.code->writeByte(0xBB);
+   scope.code->writeDWord(scope.argument);
+}
+
 //void _ELENA_::compileECopy(int, x86JITScope& scope)
 //{
 //   // mov ecx, i
@@ -1077,13 +1077,14 @@ void _ELENA_ :: compileMCopy(int, AMD64JITScope& scope)
 //   //x86Helper::leaRM32disp(
 //   //   scope.code, x86Helper::otESP, x86Helper::otESP, scope.argument << 2);
 //}
-//
-//void _ELENA_::compileACopyB(int, x86JITScope& scope)
-//{
-//   // mov eax, edi
-//   scope.code->writeWord(0xF889);
-//}
-//
+
+void _ELENA_::compileACopyB(int, AMD64JITScope& scope)
+{
+   // mov rax, rdi
+   scope.code->writeByte(0x48);
+   scope.code->writeWord(0xF889);
+}
+
 //void _ELENA_::compileASaveR(int, x86JITScope& scope)
 //{
 //   // mov [ref], eax
@@ -1282,14 +1283,15 @@ void _ELENA_::compileInvokeVMT(int opcode, AMD64JITScope& scope)
 //   // mov ebx, ecx
 //   scope.code->writeWord(0xD98B);
 //}
-//
-//void _ELENA_::compileBCopyF(int, x86JITScope& scope)
-//{
-//   // lea edi, [ebp+nn]
-//   scope.code->writeWord(0xBD8D);
-//   scope.code->writeDWord(-(scope.argument << 2));
-//}
-//
+
+void _ELENA_::compileBCopyF(int, AMD64JITScope& scope)
+{
+   // lea rdi, [rbp+nn]
+   scope.code->writeByte(0x48);
+   scope.code->writeWord(0xBD8D);
+   scope.code->writeDWord(-(scope.argument << 3));
+}
+
 //void _ELENA_::compileBCopyS(int, x86JITScope& scope)
 //{
 //   // lea edi, [esp+nn]

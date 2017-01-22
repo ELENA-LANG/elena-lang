@@ -37,6 +37,21 @@ inline % 03Ah
 
 end
 
+// ; nsave
+inline % 47h
+
+  mov dword ptr [rdi], ebx
+
+end
+
+// ; restore
+
+inline % 92h
+
+  add  rbp, __arg1
+  
+end
+
 // ; aloadsi
 inline % 95h
 
@@ -48,6 +63,16 @@ end
 inline % 98h
 
   push rbp
+  mov  rbp, rsp
+
+end
+
+// ; reserve
+inline % 0BFh
+
+  sub  rsp, __arg1
+  push rbp
+  push 0
   mov  rbp, rsp
 
 end

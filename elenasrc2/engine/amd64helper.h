@@ -28,21 +28,28 @@ public:
 
       otEAX       = 0x00100300,
       otECX       = 0x00100301,
+      otEBX       = 0x00100303,
+      otEDI       = 0x00100307,
 
       otAL        = 0x00200300,
       otCL        = 0x00200301,
+      otBL        = 0x00200303,
       otAH        = 0x00200304,
+      otBH        = 0x00200307,
 
       otAX        = 0x00400300,
       otCX        = 0x00400301,
+      otBX        = 0x00400303,
 
       otXMM0      = 0x01000300,
       otXMM1      = 0x01000301,
 
       otRAX       = 0x02000300,
       otRCX       = 0x02000301,
+      otRBX       = 0x02000303,
       otRSP       = 0x02000304,
       otRBP       = 0x02000305,
+      otRDI       = 0x02000307,
 
       otR32       = 0x00100300,
       otM32       = 0x00110000,

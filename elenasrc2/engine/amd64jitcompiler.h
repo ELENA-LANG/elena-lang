@@ -62,7 +62,7 @@ protected:
    friend void writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code);
    friend void loadCoreOp(AMD64JITScope& scope, char* code);
    friend void loadOneByteLOp(int opcode, AMD64JITScope& scope); 
-   friend void loadQIndexOp(int opcode, AMD64JITScope& scope);
+   friend void loadIndexOpX(int opcode, AMD64JITScope& scope);
 
    friend void compileNop(int opcode, AMD64JITScope& scope);
    friend void compileACopyR(int opcode, AMD64JITScope& scope);
@@ -73,6 +73,9 @@ protected:
    friend void compileInvokeVMT(int opcode, AMD64JITScope& scope);
    friend void compileOpen(int opcode, AMD64JITScope& scope);
    friend void compileQuitN(int opcode, AMD64JITScope& scope);
+   friend void compileBCopyF(int opcode, AMD64JITScope& scope);
+   friend void compileDCopy(int opcode, AMD64JITScope& scope);
+   friend void compileACopyB(int opcode, AMD64JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -112,7 +115,7 @@ public:
 // --- compiler friend functions---
 void loadCoreOp(AMD64JITScope& scope, char* code);
 void loadOneByteLOp(int opcode, AMD64JITScope& scope);
-void loadQIndexOp(int opcode, AMD64JITScope& scope);
+void loadIndexOpX(int opcode, AMD64JITScope& scope);
 
 void compileNop(int opcode, AMD64JITScope& scope);
 void compileACopyR(int opcode, AMD64JITScope& scope);
@@ -124,6 +127,9 @@ void compileInvokeVMT(int opcode, AMD64JITScope& scope);
 void compileInvokeVMTOffset(int opcode, AMD64JITScope& scope);
 void compileOpen(int opcode, AMD64JITScope& scope);
 void compileQuitN(int opcode, AMD64JITScope& scope);
+void compileBCopyF(int opcode, AMD64JITScope& scope);
+void compileDCopy(int opcode, AMD64JITScope& scope);
+void compileACopyB(int opcode, AMD64JITScope& scope);
 
 } // _ELENA_
 
