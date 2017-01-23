@@ -3,7 +3,7 @@
 
 #symbol program =
 [
-   console writeLine:"Hello". !!
+   console writeLine:"Hello". 
 
 //   #var d1 := Date new &year:2015 &month1&a: &hour:0&miiiiiinute:0 &second:0.
 //   #var= Date new &year::2015 &mont::1 &day:11 &hou::1 &minute:0 &second:0.

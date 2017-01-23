@@ -332,7 +332,10 @@ protected:
    }
    void on_menu_project_messages()
    {
-
+      if (!_skip) {
+         _controller->doShowMessages(!_model->messages);
+      }
+      else _skip = false;
    }
    void on_menu_project_watch()
    {
@@ -439,6 +442,23 @@ protected:
          int index = row[_projectTreeColumns._index];
          if (index >= 0)
             _controller->selectProjectFile(index);
+      }
+   }
+
+   void on_messagelog_row_activated(const Gtk::TreeModel::Path& path,
+        Gtk::TreeViewColumn*)
+   {
+      Gtk::TreeModel::iterator iter = _messageList->get_iter(path);
+      if(iter) {
+         Gtk::TreeModel::Row row = *iter;
+
+         Glib::ustring file = row[_messageLogColumns._file];
+         Glib::ustring col = row[_messageLogColumns._column];
+         Glib::ustring line = row[_messageLogColumns._line];
+
+         MessageBookmark bookmark(file.c_str(), col.c_str(), line.c_str());
+
+         _controller->highlightMessage(&bookmark, STYLE_ERROR_LINE);
       }
    }
 
@@ -978,7 +998,7 @@ public:
 
    virtual void clearMessageList()
    {
-      //appWindow.clearMessageList();
+      _messageList->clear();
    }
 
    virtual void openVMConsole(_ProjectManager* project)

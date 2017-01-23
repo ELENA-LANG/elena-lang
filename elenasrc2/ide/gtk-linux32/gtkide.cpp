@@ -405,7 +405,7 @@ void GTKIDEWindow :: populateMenu()
 
    _refActionGroup->add( Gtk::Action::create("ProjectView", "Project View"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view));
    _refActionGroup->add( Gtk::ToggleAction::create("ProjectOutput", "Compiler output"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
-   _refActionGroup->add( Gtk::Action::create("ProjectMessages", "Messages"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages));
+   _refActionGroup->add( Gtk::ToggleAction::create("ProjectMessages", "Messages"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages));
    _refActionGroup->add( Gtk::Action::create("ProjectWatch", "Debug Watch"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_watch));
    _refActionGroup->add( Gtk::Action::create("ProjectCallstack", "Call stack"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_callstack));
    _refActionGroup->add( Gtk::Action::create("ProjectConsole", "ELENA Interactive"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_interactive));
@@ -822,6 +822,11 @@ GTKIDEWindow :: GTKIDEWindow(const char* caption, _Controller* controller, Model
    _messageLog.append_column("file", _messageLogColumns._file);
    _messageLog.append_column("line", _messageLogColumns._line);
    _messageLog.append_column("column", _messageLogColumns._column);
+
+   _messageLog.get_column(0)->set_min_width(500);
+
+   _messageLog.signal_row_activated().connect(sigc::mem_fun(*this,
+              &GTKIDEWindow::on_messagelog_row_activated));
 
    _outputScroller.add(_output);
    //_bottomTab.append_page(_outputScroller, "Output");
