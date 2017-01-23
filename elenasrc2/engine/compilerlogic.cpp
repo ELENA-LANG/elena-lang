@@ -991,7 +991,7 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_REAL64, 0));
             return true;
          case lxPtrAttr:
-            info.header.flags |= (elDebugPTR | elReadOnlyRole | elWrapper);
+            info.header.flags |= (elDebugPTR | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR32, 0));
             return info.size == 4;
          case lxSignatureAttr:
@@ -1196,19 +1196,28 @@ bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& co
 void CompilerLogic :: optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef, bool assingingMode)
 {
    SNode exprNode = node.findSubNodeMask(lxObjectMask);   
+
+   bool localBoxing = false;
+   bool variable = false;
    if (exprNode == lxFieldAddress && exprNode.argument > 0 && !assingingMode) {
+      variable = !isReadonly(scope, targetRef);
+      localBoxing = true;
+   }
+   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
+      variable = !isReadonly(scope, targetRef) && !assingingMode;
+      localBoxing = true;
+   }
+   else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
+      // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
+      localBoxing = true;
+   }
+
+   if (localBoxing) {
       bool variable = !isReadonly(scope, targetRef);
 
       compiler.injectLocalBoxing(exprNode, node.argument);
 
       node = variable ? lxLocalUnboxing : lxExpression;
-   }
-   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
-      bool variable = !isReadonly(scope, targetRef);
-
-      compiler.injectLocalBoxing(exprNode, node.argument);
-
-      node = (variable && !assingingMode) ? lxLocalUnboxing : lxExpression;
    }
    else node = lxExpression;
 }

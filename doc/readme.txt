@@ -65,7 +65,7 @@ compile the project and Project-Debug to debug it.
 Linux:
 ------
 To install just unzip all the files into a directory you want and execute 
-rebuild.script under the superuser. Alternatively install debian package
+rebuild_lib.script under the superuser. Alternatively install debian package
 
  dpkg -i /path/to/deb/file
  sudo apt-get install -f

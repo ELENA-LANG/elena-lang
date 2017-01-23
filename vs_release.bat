@@ -483,8 +483,8 @@ md src30\sqlite
 xcopy %1\src30\sqlite\*.l src30\sqlite /s
 xcopy %1\src30\sqlite\*.prj src30\sqlite /s
 
-copy %1\rebuild.bat 
-copy %1\rebuildall.bat 
+copy %1\rebuild_lib.bat 
+copy %1\rebuild_examples.bat 
 copy %1\*.txt
 
 echo copying rosetta files

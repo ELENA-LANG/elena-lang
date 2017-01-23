@@ -36,20 +36,29 @@ In development:
 Pipeline:
 ------                                                                                         
 
+             idev - linux
+                 * watch
+
+              adev - lib30     
+                 * review toLiteral code, temporal size??
+                 * it should be possible to work with TextBuffer as with an array
+                 * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray
+                 * implement date/time formatting
+                 * Struct should support set method
+
               xdev - x64 platform
                 * #280 : migrate IDE to 64 bit version
 
               xdev - x64 platform
                 * #280 : asm2binx should support 64bit assembly
                 * #206 : 64-bit architecture
+                * elc fails time to time when compiling system_64 (uninitialized variable?)
                 * elc should be able to generate the code both for 32 and 64 bit platform, but the limitations will be kept
                   (no more than 12 parameters, number of references)
                 * xelc will be compiled only for 64 bit platform and may generate code for both 32 and 64 but platforms but
                   during linking 32 bit application it should enforce the limitations (no more than 12 parameters, number of references)
 
              idev - linux
-                 * message list
-                 * watch
                  * call stack
                  * recent files / recent projects
                  * toolbars, enabling / disabling toolbar options
@@ -58,15 +67,10 @@ Pipeline:
                  * blicking caret
                  * tuning styles
                  * face lifting / tuning
+                 * message list : auto select after compilation with an error
+                 * get rid of _skip hot fix in IDE
                  * proting IDE
                  * proting debugger
-
-              adev - lib30     
-                 * review toLiteral code, temporal size??
-                 * it should be possible to work with TextBuffer as with an array
-                 * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray
-                 * implement date/time formatting
-                 * Struct should support set method
 
               xdev - generic development
                  * fixing dynamic array ineriting - constructor should call default dynamic constructor

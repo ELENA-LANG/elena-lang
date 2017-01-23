@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   1
+#define REVISION_VERSION   2
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -548,6 +548,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcALoadSI:
       case bcASaveSI:
       case bcBLoadSI:
+      case bcBSaveSI:
          command.append(opcode);
          command.append(" sp[");
          command.appendInt(argument);
