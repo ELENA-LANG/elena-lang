@@ -147,7 +147,7 @@ void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message, ref_t
       tape.write(bdSourcePath, sourcePathRef);
 }
 
-void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, bool withPresavedMessage, bool withNewFrame)
+void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, bool withPresavedMessage, bool withNewFrame)
 {
    // method-begin:
    //   { pope }?
@@ -171,6 +171,9 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
       else tape.write(bcOpen, 1);
 
       tape.write(bcPushA);
+
+      if (allocated > 0)
+         tape.write(bcInit, allocated);
    }
    tape.newLabel();     // declare exit point
 }
@@ -305,17 +308,13 @@ int ByteCodeWriter :: declareLoop(CommandTape& tape, bool threadFriendly)
    return end;
 }
 
-void ByteCodeWriter :: declareThenBlock(CommandTape& tape, bool withStackControl)
+void ByteCodeWriter :: declareThenBlock(CommandTape& tape)
 {
-   if (withStackControl)
-      tape.write(blDeclare, bsBranch);  // mark branch-level
-
    tape.newLabel();                  // declare then-end label
 }
 
 void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
 {
-   tape.write(blDeclare, bsBranch);  // mark branch-level
    tape.newLabel();                  // declare end label
    tape.newLabel();                  // declare else label
 }
@@ -417,7 +416,7 @@ void ByteCodeWriter :: declareAlt(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved)
+void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated)
 {
    //   open 1
    //   pusha
@@ -429,6 +428,11 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved)
    else tape.write(bcOpen, 1);
 
    tape.write(bcPushA);
+
+   if (allocated > 0) {
+      tape.write(bcInit, allocated);
+      tape.write(bcAllocStack, allocated);
+   }      
 }
 
 void ByteCodeWriter :: closeFrame(CommandTape& tape)
@@ -1014,18 +1018,12 @@ void ByteCodeWriter :: endAlt(CommandTape& tape)
    tape.write(bcFreeStack, 3);
 }
 
-void ByteCodeWriter :: endThenBlock(CommandTape& tape, bool withStackControl)
+void ByteCodeWriter :: endThenBlock(CommandTape& tape)
 {
    // then-end:
    //  scopyf  branch-level
 
    tape.setLabel();
-
-   if (withStackControl) {
-      tape.write(bcSCopyF, bsBranch);
-      tape.write(blEnd, bsBranch);
-   }
-
 }
 
 void ByteCodeWriter :: endLoop(CommandTape& tape)
@@ -4652,7 +4650,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
       while (current != lxNone) {
          if (current == lxNewFrame) {
             // new frame
-            newFrame(tape, 0);
+            newFrame(tape, 0, 0);
 
             // save message
             pushObject(tape, lxCurrentMessage);
@@ -4853,7 +4851,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             generateExternFrame(tape, current);
             break;
          case lxVariable:
-            declareVariable(tape, current.argument);
+            //declareVariable(tape, current.argument);
 
             declareLocalInfo(tape,
                current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
@@ -5054,6 +5052,7 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
 void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
 {
    int reserved = node.findChild(lxReserved).argument;
+   int allocated = node.findChild(lxAllocated).argument;
    int paramCount = node.findChild(lxParamCount).argument;
    ref_t sourcePathRef = node.findChild(lxSourcePath).argument;
 
@@ -5068,7 +5067,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                if (!open) {
                   open = true;
 
-                  declareMethod(tape, node.argument, sourcePathRef, 0, false, false);
+                  declareMethod(tape, node.argument, sourcePathRef, 0, 0, false, false);
                }
                // HOTFIX: -1 indicates the stack is not consumed by the constructor
                callMethod(tape, 1, -1);
@@ -5088,10 +5087,10 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
          case lxNewFrame:
             withNewFrame = true;
             if (!open) {
-               declareMethod(tape, node.argument, sourcePathRef, reserved, current.argument == -1);
+               declareMethod(tape, node.argument, sourcePathRef, reserved, allocated, current.argument == -1);
                open = true;
             }
-            else newFrame(tape, reserved);
+            else newFrame(tape, reserved, allocated);
 
             if (current.argument == -1)
                saveSubject(tape);
@@ -5111,7 +5110,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                if (!open) {
                   open = true;
 
-                  declareMethod(tape, node.argument, sourcePathRef, 0, false, false);
+                  declareMethod(tape, node.argument, sourcePathRef, 0, 0, false, false);
 
                   generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
                   //if (messageRef != -1)

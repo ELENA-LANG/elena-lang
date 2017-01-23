@@ -120,14 +120,14 @@ class ByteCodeWriter
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
    void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
-   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, bool withPresavedMessage, bool withNewFrame = true);
+   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, bool withPresavedMessage, bool withNewFrame = true);
    void declareExternalBlock(CommandTape& tape);
    void excludeFrame(CommandTape& tape);
    void includeFrame(CommandTape& tape);
    void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
-   void declareThenBlock(CommandTape& tape, bool withStackControl = true);
+   void declareThenBlock(CommandTape& tape);
    void declareThenElseBlock(CommandTape& tape);
    void declareElseBlock(CommandTape& tape);
    void declareSwitchBlock(CommandTape& tape);
@@ -151,7 +151,7 @@ class ByteCodeWriter
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
-   void newFrame(CommandTape& tape, int reserved);
+   void newFrame(CommandTape& tape, int reserved, int allocated);
    void newStructure(CommandTape& tape, int size, ref_t reference);
    void newDynamicStructure(CommandTape& tape, int itemSize);
    void newDynamicWStructure(CommandTape& tape);
@@ -209,7 +209,7 @@ class ByteCodeWriter
 
    void endCatch(CommandTape& tape);
    void endAlt(CommandTape& tape);
-   void endThenBlock(CommandTape& tape, bool withStackContro = true);
+   void endThenBlock(CommandTape& tape);
    void endLoop(CommandTape& tape);
    void endLoop(CommandTape& tape, ref_t comparingRef);
    void endExternalBlock(CommandTape& tape, bool idle = false);

@@ -143,7 +143,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
    &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileDOrN,
-   &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &loadNOp, &compileNop, &compileNop,
+   &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -1312,6 +1312,21 @@ void _ELENA_ :: compileNot(int, x86JITScope& scope)
 {
    // not ebx
    scope.code->writeWord(0xD3F7);
+}
+
+void _ELENA_::compileInit(int opcode, x86JITScope& scope)
+{
+   if (scope.argument == 1) {
+      scope.code->writeByte(0x68);
+      scope.code->writeDWord(0);
+   }
+   else if (scope.argument == 2) {
+      scope.code->writeByte(0x68);
+      scope.code->writeDWord(0);
+      scope.code->writeByte(0x68);
+      scope.code->writeDWord(0);
+   }
+   else loadNOp(opcode, scope);
 }
 
 void _ELENA_ :: compileDShiftN(int, x86JITScope& scope)

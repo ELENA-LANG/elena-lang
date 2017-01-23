@@ -3468,9 +3468,10 @@ ObjectInfo Compiler :: compileBranching(SNode thenNode, CodeScope& scope)
    if (expr == lxEOF || expr.nextNode() != lxNone) {
       compileCode(thenCode, subScope);
 
-      if (subScope.level > scope.level) {
-         thenCode.appendNode(lxReleasing, subScope.level - scope.level);
-      }
+      scope.level = subScope.level;
+      //if (subScope.level > scope.level) {
+      //   thenCode.appendNode(lxReleasing, subScope.level - scope.level);
+      //}
    }
    // if it is inline action
    else compileRetExpression(expr, scope, 0);
@@ -4029,7 +4030,7 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGene
 
 void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
 {
-   CodeScope codeScope(&scope/*, &writer*/);
+   CodeScope codeScope(&scope);
 
    declareParameterDebugInfo(node, scope, false, true);
 
@@ -4050,6 +4051,7 @@ void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
 
    node.appendNode(lxParamCount, scope.parameters.Count() + 1);
    node.appendNode(lxReserved, scope.reserved);
+   node.insertNode(lxAllocated, codeScope.level - 1);  // allocate the space for the local variables excluding "this" one
 }
 
 void Compiler :: compileLazyExpressionMethod(SNode node, MethodScope& scope)
@@ -4070,6 +4072,7 @@ void Compiler :: compileLazyExpressionMethod(SNode node, MethodScope& scope)
 
    node.appendNode(lxParamCount, scope.parameters.Count() + 1);
    node.appendNode(lxReserved, scope.reserved);
+   node.insertNode(lxAllocated, codeScope.level - 1);  // allocate the space for the local variables excluding "this" one
 }
 
 void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
@@ -4201,6 +4204,7 @@ void Compiler :: compileResendExpression(SNode node, CodeScope& scope)
 void Compiler :: compileMethod(SNode node, MethodScope& scope)
 {
    int paramCount = getParamCount(scope.message);
+   int preallocated = 0;
 
    CodeScope codeScope(&scope);
 
@@ -4210,6 +4214,7 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
    // check if it is a resend
    if (body == lxResendExpression) {
       compileResendExpression(body, codeScope);
+      preallocated = 1;
    }
    // check if it is a dispatch
    else if (body == lxDispatchCode) {
@@ -4235,6 +4240,8 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
          codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0, V_MESSAGE, 0);
       }
 
+      preallocated = codeScope.level;
+
       ObjectInfo retVal = compileCode(body, codeScope);
 
       // if the method returns itself
@@ -4253,10 +4260,12 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
             typecastObject(exprNode, codeScope, typeAttr, ObjectInfo(okThisParam));
          }
       }
+
    }
 
    node.appendNode(lxParamCount, paramCount + scope.rootToFree);
    node.appendNode(lxReserved, scope.reserved);
+   node.insertNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
 }
 
 void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef)
@@ -4268,6 +4277,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    bool retExpr = false;
    bool withFrame = false;
    int classFlags = codeScope.getClassFlags();
+   int preallocated = 0;
 
    SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
    if (bodyNode == lxDispatchCode) {
@@ -4317,6 +4327,8 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
             scope.raiseError(errIllegalConstructor, node);
       }
       else {
+         preallocated = codeScope.level;
+
          compileCode(bodyNode, codeScope);
 
          // HOT FIX : returning the created object
@@ -4325,6 +4337,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    }
    node.appendNode(lxParamCount, getParamCount(scope.message) + 1);
    node.appendNode(lxReserved, scope.reserved);
+   node.insertNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
 }
 
 void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)

@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   2
+#define REVISION_VERSION   3
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -540,6 +540,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcECopy:
       case bcAndN:
       case bcOrN:
+      case bcInit:
          command.append(opcode);
          command.append(' ');
          command.appendHex(argument);

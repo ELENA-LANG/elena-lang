@@ -154,6 +154,7 @@ protected:
    friend void compileDSub(int opcode, x86JITScope& scope);
    friend void compileOr(int opcode, x86JITScope& scope);
    friend void compileNot(int opcode, x86JITScope& scope);
+   friend void compileInit(int opcode, x86JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -283,6 +284,7 @@ void compileDSub(int opcode, x86JITScope& scope);
 void compileOr(int opcode, x86JITScope& scope);
 //void compileLoad(int opcode, x86JITScope& scope);
 void compileNot(int opcode, x86JITScope& scope);
+void compileInit(int opcode, x86JITScope& scope);
 
 } // _ELENA_
 

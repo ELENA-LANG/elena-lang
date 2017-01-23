@@ -370,7 +370,7 @@ ELENA byte codes (or ecodes)
  
  restore n                  - remove the excluded stack
 
- init i                     - allocate the stack block for variables and fill it with zero
+ init i                     - allocate the stack block for variables and fill it with zero ; acc,base are undefined
 
 
  Arithmeric operations:
