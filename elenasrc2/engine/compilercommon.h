@@ -247,6 +247,8 @@ public:
    virtual bool recognizeEmbeddableIdle(SNode node) = 0;
    virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope) = 0;
 
+   virtual void optimizeDuplicateBoxing(SNode node) = 0;
+
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
 };
    

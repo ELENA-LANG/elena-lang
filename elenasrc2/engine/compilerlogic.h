@@ -142,6 +142,8 @@ public:
 
    virtual void optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef, bool assingingMode);
 
+   virtual void optimizeDuplicateBoxing(SNode node);
+
    CompilerLogic();
 };
 

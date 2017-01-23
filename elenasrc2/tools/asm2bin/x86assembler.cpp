@@ -4029,7 +4029,7 @@ bool x86Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Memo
 		compileSTC(token, info, &writer);
       return true;
 	}
-	else if (token.check("stosd")) {
+	else if (token.check("stosd") || token.check("stos")) {
 		compileSTOSD(token, info, &writer);
       return true;
 	}

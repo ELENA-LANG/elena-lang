@@ -5599,6 +5599,9 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
 
    optimizeSyntaxExpression(scope, node, warningScope, mode);
 
+   //HOTFIX : if the same object boxed two times in the calling expression - only the one copy should be used
+   //_logic->optimizeDuplicateBoxing(node);
+
    if (node.existChild(lxTypecastAttr)) {
       warningScope.raise(scope, WARNING_LEVEL_2, wrnTypeMismatch, node.firstChild(lxObjectMask));
    }
@@ -5777,6 +5780,10 @@ void Compiler :: optimizeNestedExpression(ModuleScope& scope, SNode node, Warnin
                   constant = false;
                   break;
             }
+         }
+         else if (current == lxOuterMember) {
+            // nested class with outer member must not be constant
+            constant = false;
          }
          current = current.nextNode();
       }

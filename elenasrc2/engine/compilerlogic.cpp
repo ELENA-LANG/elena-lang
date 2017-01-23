@@ -1255,3 +1255,35 @@ bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
 
    return false;
 }
+
+inline bool seekDuplicateBoxing(SNode& current, SNode target)
+{
+   current = current.nextNode();
+
+   while (current != lxNone) {
+      if (current == lxBoxing) {
+         SNode duplicate = current.findSubNodeMask(lxObjectMask);
+         if (duplicate.type == target.type && duplicate.argument == target.type) {
+            return true;
+         }
+      }
+
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+void CompilerLogic :: optimizeDuplicateBoxing(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxBoxing) {
+         SNode target = current.findSubNodeMask(lxObjectMask);
+         SNode next = current;
+         while (seekDuplicateBoxing(next, target)) {
+
+         }
+      }
+   }
+}

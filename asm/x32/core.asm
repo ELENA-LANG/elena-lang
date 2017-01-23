@@ -471,17 +471,12 @@ labFixRoot:
   jnz  short labFixRoot 
 
   // ; clear WBar
-  mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
   mov  ecx, [data : %CORE_GC_TABLE + gc_end ]
-  xor  eax, eax
+  mov  edi, [data : %CORE_GC_TABLE + gc_mg_wbar]
   sub  ecx, [data : %CORE_GC_TABLE + gc_mg_start]
+  xor  eax, eax
   shr  ecx, page_size_order
-
-labClearWBar:
-  mov  [esi], eax
-  sub  ecx, 4
-  lea  esi, [esi+4]
-  ja   short labClearWBar
+  rep  stos
 
   // ; free root set
   mov  esp, [esp]
@@ -831,17 +826,12 @@ procedure % INIT
   finit
 
   // ; initialize
+
   mov  ecx, [data : %CORE_STAT_COUNT]
   mov  edi, data : %CORE_STATICROOT
-  test ecx, ecx
-  jz   short labNext
+  shr  ecx, 2
   xor  eax, eax
-
-clear:
-  mov  [edi], eax     
-  sub  ecx, 4
-  lea  edi, [edi+4]
-  jnz  short clear
+  rep  stos
 
 labNext:
   mov  ecx, 10000000h
