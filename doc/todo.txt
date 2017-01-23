@@ -4,7 +4,8 @@ In development:
 
               xdev - generic development
                  * use rep stos to initialize the blocks, new command to allocate managable stack
-                 * allocate variable on the program start ; lxVariable should be used only for debug info
+                 * allocate variable on the program start ; lxVariable should be used only for debug info ; sub code variable will 
+                   not be cleared after the block end
 
                  * boxing duplicate object
                  * unboxing duplicate object

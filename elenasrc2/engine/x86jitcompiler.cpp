@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -66,7 +66,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 138;
+const int gcCommandNumber = 139;
 const int gcCommands[gcCommandNumber] =
 {
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcPackage,
@@ -97,7 +97,7 @@ const int gcCommands[gcCommandNumber] =
    bcAddress, bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
    bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
    bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
-   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI
+   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit
 };
 
 // command table
@@ -143,7 +143,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
    &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileDOrN,
-   &compileEAddN, &compileDShiftN, &compileDMulN, &compileBLoadR, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &loadNOp, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -334,6 +334,9 @@ void _ELENA_::loadNOp(int opcode, x86JITScope& scope)
 
       if (relocation[0]==-1) {
          scope.code->writeDWord(scope.argument);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(scope.argument << 2);
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 

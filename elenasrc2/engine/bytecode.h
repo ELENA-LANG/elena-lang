@@ -221,6 +221,7 @@ enum ByteCode
    bcMulN            = 0xDA,
    bcDivN            = 0xDB,
    bcBLoadR          = 0xDC,
+   bcInit            = 0xDD,
 
    bcNew             = 0xF0,
    bcNewN            = 0xF1,

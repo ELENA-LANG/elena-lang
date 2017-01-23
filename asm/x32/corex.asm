@@ -3110,6 +3110,19 @@ inline %0DBh
 
 end
 
+// ; init i
+// ; __arg1 = i, __arg2 = i * 4 
+inline %0DCh
+
+  mov  ecx, __arg1
+  mov  edx, eax
+  sub  esp, __arg2
+  xor  eax, eax
+  rep  stos
+  mov  eax, edx
+
+end
+
 // ; new (ebx - size, __arg1 - length)
 
 inline % 0F0h
