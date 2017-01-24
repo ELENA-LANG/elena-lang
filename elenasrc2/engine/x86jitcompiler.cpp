@@ -1326,6 +1326,14 @@ void _ELENA_::compileInit(int opcode, x86JITScope& scope)
       scope.code->writeByte(0x68);
       scope.code->writeDWord(0);
    }
+   else if (scope.argument == 3) {
+      scope.code->writeByte(0x68);
+      scope.code->writeDWord(0);
+      scope.code->writeByte(0x68);
+      scope.code->writeDWord(0);
+      scope.code->writeByte(0x68);
+      scope.code->writeDWord(0);
+   }
    else loadNOp(opcode, scope);
 }
 
