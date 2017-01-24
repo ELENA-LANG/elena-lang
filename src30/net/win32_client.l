@@ -92,7 +92,7 @@
     [
         #var(int)aMode.
         
-        aValue 
+        (aValue bool)
             ? [
                 aMode := 0.
             ]
