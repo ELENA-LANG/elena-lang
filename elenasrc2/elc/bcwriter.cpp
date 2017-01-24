@@ -172,8 +172,10 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
 
       tape.write(bcPushA);
 
-      if (allocated > 0)
+      if (allocated > 0) {
          tape.write(bcInit, allocated);
+         tape.write(bcAllocStack, allocated);
+      }
    }
    tape.newLabel();     // declare exit point
 }
