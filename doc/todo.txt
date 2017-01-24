@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xdev - generic development
-                 * review switch implementation
-
                  * allocate variable on the program start ; lxVariable should be used only for debug info ; sub code variable will 
                    not be cleared after the block end
 

@@ -151,6 +151,7 @@ public:
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 
    virtual void injectLocalBoxing(SNode node, int size) = 0;
+   //virtual int injectTempLocal(SNode node) = 0;
 
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 

@@ -1847,14 +1847,18 @@ void Compiler :: compileSwitch(SNode node, CodeScope& scope)
    SNode targetNode = node.firstChild(lxObjectMask);
 
    bool immMode = true;
+   int localOffs = 0;
    if (targetNode == lxExpression) {
       immMode = false;
+
+      localOffs = scope.newLocal();
 
       compileExpression(targetNode, scope, 0);
 
       targetNode.refresh();
       targetNode.injectNode(targetNode.type, targetNode.argument);
-      targetNode.set(lxVariable, 0);
+      targetNode.set(lxAssigning, 0);
+      targetNode.insertNode(lxLocal, localOffs);
    }
 
    SNode option = node.findChild(lxOption, lxElse);
@@ -1885,7 +1889,7 @@ void Compiler :: compileSwitch(SNode node, CodeScope& scope)
       if (immMode) {
          SyntaxTree::copyNode(targetNode, valueNode.appendNode(targetNode.type));
       }
-      else valueNode.appendNode(lxBlockLocal, 1);
+      else valueNode.appendNode(lxLocal, localOffs);
 
       valueNode.appendNode(lxOperator, operator_id);
 
@@ -2599,9 +2603,9 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode, i
       loperand = compileExpression(loperandNode, scope, 0);
 
       SNode roperandNode = loperandNode.nextNode(lxObjectMask);
-      if (roperandNode == lxBlockLocal) {
+      if (roperandNode == lxLocal) {
          // HOTFIX : to compile switch statement
-         roperand = ObjectInfo(okBlockLocal, roperandNode.argument);
+         roperand = ObjectInfo(okLocal, roperandNode.argument);
       }
       else roperand = compileExpression(roperandNode, scope, 0);
    }
@@ -3392,12 +3396,14 @@ void Compiler :: compileAltOperation(SNode node, CodeScope& scope)
 
    targetNode.set(lxResult, 0);
 
+   int tempLocal = scope.newLocal();
+
    SNode secondExpr = firstExpr.nextNode(lxObjectMask);
-   secondExpr.insertNode(lxCurrent, 0);
+   secondExpr.insertNode(lxLocal, tempLocal);
 
-   SyntaxTree::copyNode(targetNode, node.insertNode(lxVariable).insertNode(targetType, targetArg));
-
-   node.appendNode(lxReleasing, 1);
+   SNode tempLocalNode = node.insertNode(lxAssigning);
+   SyntaxTree::copyNode(targetNode, tempLocalNode.insertNode(targetType, targetArg));
+   tempLocalNode.insertNode(lxLocal, tempLocal);
 }
 
 ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)

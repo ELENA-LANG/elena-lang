@@ -331,7 +331,6 @@ void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
 
 void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
 {
-   tape.write(blDeclare, bsBranch);  // mark branch-level
    tape.newLabel();                  // declare end label
 }
 
@@ -349,7 +348,6 @@ void ByteCodeWriter :: endSwitchOption(CommandTape& tape)
 void ByteCodeWriter :: endSwitchBlock(CommandTape& tape)
 {
    tape.setLabel();
-   tape.write(bcSCopyF, bsBranch);
 }
 
 void ByteCodeWriter :: declareTry(CommandTape& tape)
@@ -4528,7 +4526,7 @@ void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node nod
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxVariable) {
+      if (current == lxAssigning) {
          generateObjectExpression(tape, current);
       }
       else if (current == lxOption) {
@@ -4768,10 +4766,6 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxDispatching:
          generateDispatching(tape, node);
          break;
-      case lxVariable:
-         generateExpression(tape, node);
-         pushObject(tape, lxResult);
-         break;
       case lxIf:
          jumpIfNotEqual(tape, node.argument);
          generateCodeBlock(tape, node);
@@ -4804,9 +4798,6 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
    while (current != lxNone) {
       if (current == lxReleasing) {
          releaseObject(tape, current.argument);
-      }
-      if (current == lxVariable) {
-         generateObjectExpression(tape, current);
       }
       else if (test(current.type, lxObjectMask)) {
          generateObjectExpression(tape, current);
@@ -4851,8 +4842,6 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             generateExternFrame(tape, current);
             break;
          case lxVariable:
-            //declareVariable(tape, current.argument);
-
             declareLocalInfo(tape,
                current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
                current.findChild(lxLevel).argument);
