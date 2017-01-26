@@ -285,12 +285,12 @@ void Dialog :: doCommand(int id, int command)
 
 BOOL CALLBACK Dialog :: DialogProc(HWND hWnd, size_t message, WPARAM wParam, LPARAM lParam)
 {
-   Dialog* dialog = (Dialog*)::GetWindowLong(hWnd, GWL_USERDATA);
+   Dialog* dialog = (Dialog*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
    switch (message) {
       case WM_INITDIALOG:
          dialog = (Dialog*)lParam;
          dialog->_handle = hWnd;
-         ::SetWindowLong(hWnd, GWL_USERDATA, (long)lParam);
+         ::SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)lParam);
 
          dialog->onCreate();
 

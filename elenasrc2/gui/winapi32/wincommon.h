@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Header File
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef wincommonH
@@ -122,7 +122,7 @@ public:
    static void _registerClass(HINSTANCE hInstance, const wchar_t* name, size_t style, HCURSOR cursor = NULL, 
                              HBRUSH background = NULL, HICON icon = NULL, wchar_t* menu = NULL);
 
-   static LRESULT CALLBACK _Proc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam);
+   static LRESULT CALLBACK _Proc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
    Window(int left, int top, size_t width, size_t height)
       : Control(left, top, width, height)

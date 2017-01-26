@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of ELENA Engine Data Section
 //		classes.
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SectionH
@@ -13,7 +13,7 @@ namespace _ELENA_
 {
 
 // --- Section Fixup Hash function ---
-size_t indexReference(size_t reference);
+ref_t indexReference(ref_t reference);
 
 // --- Section Fixup map ---
 typedef MemoryHashTable<ref_t, int, indexReference, cnHashSize> RelocationFixMap;

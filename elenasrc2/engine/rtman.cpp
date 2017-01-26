@@ -165,7 +165,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
          isClass = false;
       }
       LoadResult result;
-      size_t position = 0;
+      ref_t position = 0;
       // load the appropriate debug module
       module = manager->resolveDebugModule(symbol, result, position);
       if (result == lrSuccessful) {

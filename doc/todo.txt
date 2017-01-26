@@ -48,6 +48,7 @@ Pipeline:
 
               xdev - x64 platform
                 * #280 : migrate IDE to 64 bit version
+                * rename gui\winapi32 to gui\winapi
 
               xdev - x64 platform
                 * #280 : asm2binx should support 64bit assembly

@@ -85,9 +85,14 @@ public:
       return read((void*)&dword, 4);
    }
 
-   bool readDWord(size_t& dword)
+   bool readDWord(unsigned int& dword)
    {
       return read((void*)&dword, 4);
+   }
+
+   bool readSize(size_t& size)
+   {
+      return read((void*)&size, sizeof(size_t));
    }
 
    bool readByte(unsigned char& ch)
@@ -161,6 +166,11 @@ public:
    void writeDWord(int dword)
    {
       write(&dword, 4);
+   }
+
+   void writeSize(size_t size)
+   {
+      write(&size, sizeof(size_t));
    }
 
    void writeQWord(long long qword)

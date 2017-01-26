@@ -106,32 +106,32 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return (this->key > key);
    }
 
-   bool operator ==(size_t key) const
+   bool operator ==(unsigned int key) const
    {
       return (this->key == key);
    }
 
-   bool operator !=(size_t key) const
+   bool operator !=(unsigned int key) const
    {
       return (this->key != key);
    }
 
-   bool operator <=(size_t key) const
+   bool operator <=(unsigned int key) const
    {
       return (this->key <= key);
    }
 
-   bool operator <(size_t key) const
+   bool operator <(unsigned int key) const
    {
       return (this->key < key);
    }
 
-   bool operator >=(size_t key) const
+   bool operator >=(unsigned int key) const
    {
       return (this->key >= key);
    }
 
-   bool operator >(size_t key) const
+   bool operator >(unsigned int key) const
    {
       return (this->key > key);
    }
@@ -247,7 +247,7 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
 //   }
 
    void freeKey(int key) { key = 0; }
-   void freeKey(size_t key) { key = 0; }
+   void freeKey(unsigned int key) { key = 0; }
    void freeKey(unsigned long long key) { key = 0; }
    void freeKey(const wchar_t* key) { freestr((wchar_t*)key); }
    void freeKey(ident_t key) { const char* ptr = key; freestr((char*)ptr); }
@@ -258,7 +258,7 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       this->item = item;
       this->next = next;
    }
-   _MapItem(size_t key, T item, _MapItem* next)
+   _MapItem(unsigned int key, T item, _MapItem* next)
    {
       this->key = key;
       this->item = item;
@@ -302,7 +302,7 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
 
 template <class Key, class T, bool KeyStored> struct _MemoryMapItem
 {
-   size_t next;      // offset from the memory dump begining
+   unsigned int next;      // offset from the memory dump begining
    Key    key;       // for Key=TCHAR* if keyStored is true, key is an offset in the map buffer
    T      item;
 
@@ -341,72 +341,72 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
       return (this->key > key);
    }
 
-   size_t getKey(size_t key) const
+   unsigned int getKey(unsigned int key) const
    {
       return key;
    }
 
-   bool operator ==(size_t key) const
+   bool operator ==(unsigned int key) const
    {
       return (this->key == key);
    }
 
-   bool operator !=(size_t key) const
+   bool operator !=(unsigned int key) const
    {
       return (this->key != key);
    }
 
-   bool operator <=(size_t key) const
+   bool operator <=(unsigned int key) const
    {
       return (this->key <= key);
    }
 
-   bool operator <(size_t key) const
+   bool operator <(unsigned int key) const
    {
       return (this->key < key);
    }
 
-   bool operator >=(size_t key) const
+   bool operator >=(unsigned int key) const
    {
       return (this->key >= key);
    }
 
-   bool operator >(size_t key) const
+   bool operator >(unsigned int key) const
    {
       return (this->key > key);
    }
 
-   Pair<size_t, int> getKey(Pair<size_t, int> key) const
+   Pair<unsigned int, int> getKey(Pair<unsigned int, int> key) const
    {
       return key;
    }
 
-   bool operator ==(Pair<size_t, int> key) const
+   bool operator ==(Pair<unsigned int, int> key) const
    {
       return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
    }
 
-   bool operator !=(Pair<size_t, int> key) const
+   bool operator !=(Pair<unsigned int, int> key) const
    {
       return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
    }
 
-   bool operator <=(Pair<size_t, int> key) const
+   bool operator <=(Pair<unsigned int, int> key) const
    {
       return (this->key.value1 <= key.value1);
    }
 
-   bool operator <(Pair<size_t, int> key) const
+   bool operator <(Pair<unsigned int, int> key) const
    {
       return (this->key.value1 < key.value1);
    }
 
-   bool operator >=(Pair<size_t, int> key) const
+   bool operator >=(Pair<unsigned int, int> key) const
    {
       return (this->key.value1 >= key.value1);
    }
 
-   bool operator >(Pair<size_t, int> key) const
+   bool operator >(Pair<unsigned int, int> key) const
    {
       return (this->key.value1 > key.value1);
    }
@@ -477,7 +477,7 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    {
       next = 0;
    }
-   _MemoryMapItem(Key key, T item, size_t next)
+   _MemoryMapItem(Key key, T item, unsigned int next)
    {
       this->key = key;
       this->item = item;
@@ -487,8 +487,8 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
 
 //struct _IntItem
 //{
-//   size_t key;
-//   size_t value;
+//   unsigned int key;
+//   unsigned int value;
 //};
 
 // --- Iterator template ---
@@ -580,7 +580,7 @@ template <class T, class Item, class Map, class Key = int> class _MemoryIterator
 {
 protected:
    const Map* _map;
-   size_t     _position;
+   unsigned int     _position;
    Item*      _current;
 
 public:
@@ -625,9 +625,9 @@ public:
 
    bool Eof() const { return (_current == NULL); }
 
-   size_t Position() const { return _position; }
+   unsigned int Position() const { return _position; }
 
-   _MemoryIterator(const Map* map, size_t position, Item* current)
+   _MemoryIterator(const Map* map, unsigned int position, Item* current)
    {
       _map = map;
       _position = position;
@@ -646,7 +646,7 @@ template <class T> class _List
 {
    typedef _Item<T> Item;
 
-   size_t _count;
+   unsigned int _count;
    Item  *_top, *_tale;
 
    void  (*_freeT)(T);
@@ -656,7 +656,7 @@ public:
 
    bool Eof() const { return _top==NULL; }
 
-   size_t Count() const { return _count; }
+   unsigned int Count() const { return _count; }
 
    Iterator start() { return Iterator(_top); }
 
@@ -828,7 +828,7 @@ template <class T> class _BList
 {
    typedef _BItem<T>    Item;
 
-   size_t _count;
+   unsigned int _count;
    Item *_top, *_tale;
 
    void (*_freeT)(T);
@@ -836,7 +836,7 @@ template <class T> class _BList
 public:
    typedef _Iterator<T, Item> Iterator;
 
-   size_t Count() const { return _count; }
+   unsigned int Count() const { return _count; }
 
    Iterator start() { return Iterator(_top); }
 
@@ -1004,7 +1004,7 @@ template <class T> class List
 public:
    typedef _Iterator<T, _Item<T> >    Iterator;
 
-   size_t Count() const { return _list.Count(); }
+   unsigned int Count() const { return _list.Count(); }
 
    Iterator start()
    {
@@ -1112,7 +1112,7 @@ public:
       return it;
    }
 
-   size_t Count() const { return _list.Count(); }
+   unsigned int Count() const { return _list.Count(); }
 
    T peek()
    {
@@ -1196,7 +1196,7 @@ public:
       return _list.end();
    }
 
-   size_t Count() const { return _list.Count(); }
+   unsigned int Count() const { return _list.Count(); }
 
    void insert(T item)
    {
@@ -1262,7 +1262,7 @@ template <class T> class BList
 public:
    typedef _Iterator<T, _BItem<T> >     Iterator;
 
-   size_t Count() const { return _list.Count(); }
+   unsigned int Count() const { return _list.Count(); }
 
    Iterator start() { return _list.start(); }
 
@@ -1323,7 +1323,7 @@ template <class T> class CList
 public:
    typedef _Iterator<T, _BItem<T> >     Iterator;
 
-   size_t Count() const { return _list.Count(); }
+   unsigned int Count() const { return _list.Count(); }
 
    Iterator start() { return _list.start(); }
 
@@ -1397,7 +1397,7 @@ template <class Key, class T, bool KeyStored = true> class Map
    typedef _MapItem<Key, T, KeyStored> Item;
 
    Item *_top, *_tale;
-   size_t _count;
+   unsigned int _count;
 
    T    _defaultItem;
    void (*_freeT)(T);
@@ -1407,7 +1407,7 @@ public:
 
    T DefaultValue() const { return _defaultItem; }
 
-   size_t Count() const { return _count; }
+   unsigned int Count() const { return _count; }
 
    Iterator start() const
    {
@@ -1635,7 +1635,7 @@ public:
       Key key;
       T   value = _defaultItem;
 
-      size_t counter = 0;
+      unsigned int counter = 0;
       reader->readDWord(counter);
       _readToMap(reader, this, counter, key, value);
    }
@@ -1687,8 +1687,8 @@ template <class Key, class T, bool KeyStored = true> class MemoryMap
 
    MemoryDump _buffer;
 
-   size_t _tale;
-   size_t _count;
+   unsigned int _tale;
+   unsigned int _count;
 
    T      _defaultItem;
 
@@ -1697,7 +1697,7 @@ public:
 
    T DefaultValue() const { return _defaultItem; }
 
-   size_t Count() const { return _count; }
+   unsigned int Count() const { return _count; }
 
    Iterator start() const
    {
@@ -1705,24 +1705,24 @@ public:
          return Iterator();
       }
       else {
-         size_t position = _buffer[0];
+         unsigned int position = _buffer[0];
 
          return Iterator(this, position, (Item*)_buffer.get(position));
       }
    }
 
-   void* getAddress(size_t position) const
+   void* getAddress(unsigned int position) const
    {
       return _buffer.get(position);
    }
 
    Iterator getIt(Key key) const
    {
-      size_t beginning = (size_t)_buffer.get(0);
+      unsigned int beginning = (unsigned int)_buffer.get(0);
 
       if (_buffer.Length() > 0) {
          // get top item position
-         size_t position = _buffer[0];
+         unsigned int position = _buffer[0];
          Item* current = NULL;
          while (position != 0) {
             current = (Item*)(beginning + position);
@@ -1741,11 +1741,11 @@ public:
    {
       it++;
 
-      size_t beginning = (size_t)_buffer.get(0);
+      unsigned int beginning = (unsigned int)_buffer.get(0);
 
       if (!it.Eof()) {
          // get top item position
-         size_t position = it.Position();
+         unsigned int position = it.Position();
          Item* current = NULL;
          while (position != 0) {
             current = (Item*)(beginning + position);
@@ -1762,11 +1762,11 @@ public:
 
    T get(Key key) const
    {
-      size_t beginning = (size_t)_buffer.get(0);
+      unsigned int beginning = (unsigned int)_buffer.get(0);
 
       if (_buffer.Length() > 0) {
          // get top item position
-         size_t position = _buffer[0];
+         unsigned int position = _buffer[0];
          Item* current = NULL;
          while (position != 0) {
             current = (Item*)(beginning + position);
@@ -1783,12 +1783,12 @@ public:
 
    T exclude(Key key)
    {
-      size_t beginning = (size_t)_buffer.get(0);
-      size_t previous = (size_t)-1;
+      unsigned int beginning = (unsigned int)_buffer.get(0);
+      unsigned int previous = (unsigned int)-1;
 
       if (_buffer.Length() > 0) {
          // get top item position
-         size_t position = _buffer[0];
+         unsigned int position = _buffer[0];
          Item* current = NULL;
          while (position != 0) {
             current = (Item*)(beginning + position);
@@ -1829,11 +1829,11 @@ public:
 
    bool exist(Key key, T item) const
    {
-      size_t beginning = (size_t)_buffer.get(0);
+      unsigned int beginning = (unsigned int)_buffer.get(0);
 
       if (_buffer.Length() > 0) {
          // get top item position
-         size_t position = _buffer[0];
+         unsigned int position = _buffer[0];
          Item* current = NULL;
          while (position != 0) {
             current = (Item*)(beginning + position);
@@ -1848,25 +1848,25 @@ public:
       return false;
    }
 
-   size_t storeKey(size_t, size_t key)
+   unsigned int storeKey(unsigned int, unsigned int key)
    {
       return key;
    }
 
-   ref_t storeKey(size_t position, Pair<size_t, int>)
+   ref_t storeKey(unsigned int position, Pair<unsigned int, int>)
    {
       return position;
    }
 
-   ref_t storeKey(size_t position, Pair<void*, int>)
+   ref_t storeKey(unsigned int position, Pair<void*, int>)
    {
       return position;
    }
 
-   const char* storeKey(size_t position, ident_t key)
+   const char* storeKey(unsigned int position, ident_t key)
    {
       if (KeyStored) {
-         size_t keyPos = _buffer.Length();
+         unsigned int keyPos = _buffer.Length();
 
          _buffer.writeLiteral(keyPos, key);
 
@@ -1897,7 +1897,7 @@ public:
          _buffer.writeDWord(position + 4, storedKey);
       }
 
-      size_t beginning = (size_t)_buffer.get(0);
+      unsigned int beginning = (unsigned int)_buffer.get(0);
 
       if (_tale != 0) {
          Item* tale = (Item*)(beginning + _tale);
@@ -1991,10 +1991,10 @@ private:
       friend class CachedMemoryMap;
 
       CachedMemoryMap* _cachedMap;
-      size_t           _index;
+      unsigned int           _index;
       MemoryIterator   _iterator;
 
-      CachedMemoryMapIterator(CachedMemoryMap* cachedMap, size_t index)
+      CachedMemoryMapIterator(CachedMemoryMap* cachedMap, unsigned int index)
       {
          this->_cachedMap = cachedMap;
          this->_index = index;
@@ -2069,14 +2069,14 @@ private:
 
    bool   _cached;
    Item   _cache[cacheSize];
-   size_t _count;
+   unsigned int _count;
 
 public:
    typedef CachedMemoryMapIterator Iterator;
 
    T DefaultValue() const { return _map.DefaultValue(); }
 
-   size_t Count() const { return _cached ? _count : _map.Count(); }
+   unsigned int Count() const { return _cached ? _count : _map.Count(); }
 
    Iterator start()
    {
@@ -2089,7 +2089,7 @@ public:
    Iterator getIt(Key key)
    {
       if (_cached) {
-         for (size_t i = 0 ; i < _count ; i++) {
+         for (unsigned int i = 0 ; i < _count ; i++) {
             if (_cache[i].key == key)
                return Iterator(this, i);
          }
@@ -2101,7 +2101,7 @@ public:
    T get(Key key) const
    {
       if (_cached) {
-         for (size_t i = 0 ; i < _count ; i++) {
+         for (unsigned int i = 0 ; i < _count ; i++) {
             if (_cache[i].key == key)
                return _cache[i].item;
          }
@@ -2119,7 +2119,7 @@ public:
    bool exist(Key key, T item) const
    {
       if (_cached) {
-         for (size_t i = 0 ; i < _count ; i++) {
+         for (unsigned int i = 0 ; i < _count ; i++) {
             if (_cache[i].key == key)
             if (_cache[i].key == key && _cache[i].item == item)
                return true;
@@ -2136,7 +2136,7 @@ public:
          if (cacheSize == _count) {
             _cached = false;
 
-            for (size_t i = 0 ; i < _count ; i++)
+            for (unsigned int i = 0 ; i < _count ; i++)
                _map.add(_cache[i].key, _cache[i].item);
 
             _map.add(key, value);
@@ -2166,11 +2166,11 @@ public:
    T exclude(Key key)
    {
       if (_cached) {
-         for (size_t i = 0 ; i < _count ; i++) {
+         for (unsigned int i = 0 ; i < _count ; i++) {
             if (_cache[i].key == key) {
                T item = _cache[i].item;
 
-               for (size_t j = i + 1 ; j < _count ; j++) {
+               for (unsigned int j = i + 1 ; j < _count ; j++) {
                   _cache[i] = _cache[j];
                }
 
@@ -2304,7 +2304,7 @@ template <class Key, class T, int(_scaleKey)(Key), int hashSize> class HashTable
    };
    friend class HashTableIterator;
 
-   size_t  _count;
+   unsigned int  _count;
    Item* _table[hashSize];
    T     _defaultItem;
 
@@ -2315,7 +2315,7 @@ public:
 
    T DefaultValue() const { return _defaultItem; }
 
-   size_t Count() const { return _count; }
+   unsigned int Count() const { return _count; }
 
    Iterator start() const
    {
@@ -2408,7 +2408,7 @@ public:
       Key key;
       T   value = _defaultItem;
 
-      size_t counter = 0;
+      unsigned int counter = 0;
       reader->readDWord(counter);
       _readToMap(reader, this, counter, key, value);
    }
@@ -2448,7 +2448,7 @@ public:
 
 // --- MemoryHashTable template ---
 
-template <class Key, class T, size_t(_scaleKey)(Key), size_t hashSize, bool KeyStored = true> class MemoryHashTable
+template <class Key, class T, unsigned int(_scaleKey)(Key), unsigned int hashSize, bool KeyStored = true> class MemoryHashTable
 {
    typedef _MemoryMapItem<Key, T, KeyStored> Item;
 
@@ -2457,11 +2457,11 @@ template <class Key, class T, size_t(_scaleKey)(Key), size_t hashSize, bool KeyS
       friend class MemoryHashTable;
 
       const MemoryDump* _buffer;
-      size_t      _position;
+      unsigned int      _position;
       Item*       _current;
-      size_t      _hashIndex;
+      unsigned int      _hashIndex;
 
-      MemoryHashTableIterator(const MemoryDump* buffer, size_t hashIndex, size_t position, Item* current)
+      MemoryHashTableIterator(const MemoryDump* buffer, unsigned int hashIndex, unsigned int position, Item* current)
       {
          _buffer = buffer;
          _hashIndex = hashIndex;
@@ -2545,14 +2545,14 @@ template <class Key, class T, size_t(_scaleKey)(Key), size_t hashSize, bool KeyS
    friend class MemoryHashTableIterator;
 
    MemoryDump _buffer;
-   size_t     _count;
+   unsigned int     _count;
 
    T     _defaultItem;
 
 public:
    typedef MemoryHashTableIterator Iterator;
 
-   size_t Count() const { return _count; }
+   unsigned int Count() const { return _count; }
 
    T DefaultValue() const { return _defaultItem; }
 
@@ -2563,13 +2563,13 @@ public:
 
    Iterator getIt(Key key) const
    {
-      size_t beginning = (size_t)_buffer.get(0);
+      unsigned int beginning = (unsigned int)_buffer.get(0);
 
-      size_t index = _scaleKey(key);
+      unsigned int index = _scaleKey(key);
       if (index > hashSize)
          index = hashSize - 1;
 
-      size_t position = _buffer[index << 2];
+      unsigned int position = _buffer[index << 2];
       Item* current = (position != 0) ? (Item*)(beginning + position) : NULL;
       while (current && *current < key) {
          if (current->next != 0) {
@@ -2613,15 +2613,15 @@ public:
       else return false;
    }
 
-   ref_t storeKey(size_t, ref_t key)
+   ref_t storeKey(unsigned int, ref_t key)
    {
       return key;
    }
 
-   const char* storeKey(size_t position, ident_t key)
+   const char* storeKey(unsigned int position, ident_t key)
    {
       if (KeyStored) {
-         size_t keyPos = _buffer.Length();
+         unsigned int keyPos = _buffer.Length();
 
          _buffer.writeLiteral(keyPos, key);
 
@@ -2634,13 +2634,13 @@ public:
    {
       Item item(key, value, 0);
 
-      size_t index = _scaleKey(key);
+      unsigned int index = _scaleKey(key);
       if (index > hashSize)
          index = hashSize - 1;
 
       int position = _buffer[index << 2];
 
-      size_t tale = _buffer.Length();
+      unsigned int tale = _buffer.Length();
 
       _buffer.write(tale, &item, sizeof(item));
       if (KeyStored) {
@@ -2649,7 +2649,7 @@ public:
          _buffer.writeDWord(tale + 4, storedKey);
       }
 
-      size_t beginning = (size_t)_buffer.get(0);
+      unsigned int beginning = (unsigned int)_buffer.get(0);
 
       Item* current = (position != 0) ? (Item*)(beginning + position) : NULL;
       if (current && *current <= key) {
@@ -2728,7 +2728,7 @@ public:
 
 // --- Cache ---
 
-template<class Key, class T, size_t cacheSize> class Cache
+template<class Key, class T, unsigned int cacheSize> class Cache
 {
    struct Item
    {
@@ -2745,12 +2745,12 @@ template<class Key, class T, size_t cacheSize> class Cache
          return (this->key != key);
       }
 
-      bool operator ==(size_t key) const
+      bool operator ==(unsigned int key) const
       {
          return (this->key == key);
       }
 
-      bool operator !=(size_t key) const
+      bool operator !=(unsigned int key) const
       {
          return (this->key != key);
       }
@@ -2899,7 +2899,7 @@ public:
 
       T& operator*() const { return *(T*)(_array + _position + 4); }
 
-      size_t key() const { return *(size_t*)(_array + _position); }
+      unsigned int key() const { return *(unsigned int*)(_array + _position); }
 
       Iterator(void* buffer)
       {
@@ -2918,9 +2918,9 @@ public:
 
    T DefaultValue() const { return _defaultValue; }
 
-   size_t Count() const { return _buffer[0]; }
+   unsigned int Count() const { return _buffer[0]; }
 
-   size_t Size() const { return _buffer.Length(); }
+   unsigned int Size() const { return _buffer.Length(); }
 
    void* Array() const { return _buffer.get(0); }
 
@@ -2929,7 +2929,7 @@ public:
       return Iterator((char*)_buffer.get(0), 4); // _buffer starts with the number of items
    }
 
-   Iterator getIt(size_t key) const
+   Iterator getIt(unsigned int key) const
    {
       int count = _buffer[0];
       int position = 4;
@@ -2943,18 +2943,18 @@ public:
       return Iterator((char*)_buffer.get(0), -1);
    }
 
-   T get(size_t key) const
+   T get(unsigned int key) const
    {
       Iterator it = getIt(key);
       return it.Eof() ? _defaultValue : *it;
    }
 
-   T& operator[](size_t index)
+   T& operator[](unsigned int index)
    {
       return *(T*)(_buffer.get(8 + (sizeof(T) + 4) * index));
    }
 
-   T* getPtr(size_t key) const
+   T* getPtr(unsigned int key) const
    {
       int count = _buffer[0];
       int position = 4;
@@ -2968,7 +2968,7 @@ public:
       return NULL;
    }
 
-   bool exist(size_t key) const
+   bool exist(unsigned int key) const
    {
       int count = _buffer[0];
       int position = 4;
@@ -2982,7 +2982,7 @@ public:
       return false;
    }
 
-   void add(size_t key, T item)
+   void add(unsigned int key, T item)
    {
       int position = _buffer.Length();
       _buffer.writeDWord(position, key);
@@ -2991,7 +2991,7 @@ public:
       _buffer[0] = (_buffer[0] + 1);
    }
 
-   bool add(size_t key, size_t item, const bool unique)
+   bool add(unsigned int key, unsigned int item, const bool unique)
    {
       if (!unique || !exist(key)) {
          add(key, item);
@@ -3008,7 +3008,7 @@ public:
 
    void read(StreamReader* reader)
    {
-      size_t count = reader->getDWord();
+      unsigned int count = reader->getDWord();
 
       _buffer.clear();
       _buffer.writeDWord(0, count);
@@ -3071,7 +3071,7 @@ public:
          const char*         literal;
          int                 number;
          bool                flag;
-         size_t              size;
+         unsigned int              size;
          Map<SubKey, VItem>* map;
       };
 
@@ -3094,7 +3094,7 @@ public:
          value.number = number;
          type = stDWORD;
       }
-      VItem(size_t number)
+      VItem(unsigned int number)
       {
          value.size = number;
          type = stDWORD;
@@ -3233,8 +3233,8 @@ public:
    struct Node
    {
       T      value;
-      size_t parent;
-      size_t firstChildLink;
+      unsigned int parent;
+      unsigned int firstChildLink;
 
       Node()
       {
@@ -3244,7 +3244,7 @@ public:
          value = defValue;
          firstChildLink = parent = 0;
       }
-      Node(T value, size_t parent)
+      Node(T value, unsigned int parent)
       {
          this->value = value;
          this->parent = parent;
@@ -3254,33 +3254,33 @@ public:
 
    struct ChildLink
    {
-      size_t node;
-      size_t nextChildLink;
+      unsigned int node;
+      unsigned int nextChildLink;
 
       ChildLink()
       {
       }
-      ChildLink(size_t node, size_t nextChildLink)
+      ChildLink(unsigned int node, unsigned int nextChildLink)
       {
          this->node = node;
          this->nextChildLink = nextChildLink;
       }
    };
 
-   size_t addRootNode(T value)
+   unsigned int addRootNode(T value)
    {
       // add new node
-      size_t position = _buffer.Length();
+      unsigned int position = _buffer.Length();
       Node node(value, -1);
       _buffer.write(position, &node, sizeof(Node));
 
       return position;
    }
 
-   size_t addNode(size_t parent, T value)
+   unsigned int addNode(unsigned int parent, T value)
    {
       // add new node
-      size_t position = _buffer.Length();
+      unsigned int position = _buffer.Length();
       Node node(value, parent);
       _buffer.write(position, &node, sizeof(Node));
 
@@ -3289,10 +3289,10 @@ public:
       return position;
    }
 
-   void addChildLink(size_t parent, size_t child)
+   void addChildLink(unsigned int parent, unsigned int child)
    {
       // add new child link
-      size_t linkPosition = _buffer.Length();
+      unsigned int linkPosition = _buffer.Length();
       ChildLink link(child, 0);
       _buffer.write(linkPosition, &link, sizeof(ChildLink));
 
@@ -3307,7 +3307,7 @@ public:
       }
       else {
          ChildLink link(0, parentNode.firstChildLink);
-         size_t position = parentNode.firstChildLink;
+         unsigned int position = parentNode.firstChildLink;
          do {
             position = link.nextChildLink;
 
@@ -3319,7 +3319,7 @@ public:
       }
    }
 
-   Node getNode(size_t position)
+   Node getNode(unsigned int position)
    {
       Node node(_defValue);
       _buffer.read(position, &node, sizeof(Node));
@@ -3327,7 +3327,7 @@ public:
       return node;
    }
 
-   size_t getLinkNodePosition(size_t linkPosition)
+   unsigned int getLinkNodePosition(unsigned int linkPosition)
    {
       if (linkPosition != 0) {
          ChildLink link(0, 0);
@@ -3338,7 +3338,7 @@ public:
       else return 0;
    }
 
-   size_t getNextLink(size_t linkPosition)
+   unsigned int getNextLink(unsigned int linkPosition)
    {
       ChildLink link;
       _buffer.read(linkPosition, &link, sizeof(ChildLink));
@@ -3377,7 +3377,7 @@ public:
 
 template <class T> class MemoryTrieNode
 {
-   size_t         _position;
+   unsigned int         _position;
    MemoryTrie<T>* _trie;
 
 public:
@@ -3385,7 +3385,7 @@ public:
 
    MemoryTrie<T>* Trie() { return _trie; }
 
-   size_t Position() { return _position; }
+   unsigned int Position() { return _position; }
 
    T Value()
    {
@@ -3435,7 +3435,7 @@ public:
       _trie = trie;
       _position = 0;
    }
-   MemoryTrieNode(MemoryTrie<T>* trie, size_t position)
+   MemoryTrieNode(MemoryTrie<T>* trie, unsigned int position)
    {
       _trie = trie;
       _position = position;
@@ -3447,9 +3447,9 @@ public:
 
    private:
       MemoryTrie<T>* _trie;
-      size_t         _linkPosition;
+      unsigned int         _linkPosition;
 
-      ChildEnumerator(MemoryTrie<T>* trie, size_t linkPosition)
+      ChildEnumerator(MemoryTrie<T>* trie, unsigned int linkPosition)
       {
          _trie = trie;
          _linkPosition = linkPosition;
@@ -3458,7 +3458,7 @@ public:
    public:
       MemoryTrieNode Node()
       {
-         size_t position = _trie->getLinkNodePosition(_linkPosition);
+         unsigned int position = _trie->getLinkNodePosition(_linkPosition);
 
          return MemoryTrieNode(_trie, position);
       }

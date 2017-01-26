@@ -28,7 +28,7 @@ namespace _ELENA_
    typedef unsigned int       unic_c;
 
    typedef unsigned char      uident_c;
-   typedef size_t             ref_t;
+   typedef unsigned int       ref_t;
    typedef unsigned long long ref64_t;
 
    // --- FileEncoding ---

@@ -27,8 +27,8 @@ Output :: Output(Control* owner, bool readOnly, const wchar_t* name)
       0, _T("edit"), name, styles,
       _left, _top, _width, _height, owner->getHandle(), NULL, _instance, (LPVOID)this);
 
-   _editProc = (WNDPROC)SetWindowLong(_handle, GWL_WNDPROC, (LONG)_Proc);
-   ::SetWindowLong(_handle, GWL_USERDATA, (LONG)this);
+   _editProc = (WNDPROC)SetWindowLongPtr(_handle, GWLP_WNDPROC, (LONG_PTR)_Proc);
+   ::SetWindowLongPtr(_handle, GWLP_USERDATA, (LONG_PTR)this);
 
    _redirector = new WindowRedirector(this, readOnly, 50);
 
@@ -49,7 +49,7 @@ Output :: ~Output()
 
 LRESULT CALLBACK Output::_Proc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam)
 {
-   Output* window = (Output*)::GetWindowLong(hWnd, GWL_USERDATA);
+   Output* window = (Output*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
    return window->_OutputProc(hWnd, Message, wParam, lParam);
 }
 

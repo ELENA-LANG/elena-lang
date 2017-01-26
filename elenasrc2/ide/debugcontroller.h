@@ -11,7 +11,11 @@
 #include "elena.h"
 #include "idecommon.h"
 
-#ifdef _WIN32
+#ifdef _WIN64
+
+#include "winapi64\debugger.h"
+
+#elif _WIN32
 
 #include "winapi32\debugger.h"
 

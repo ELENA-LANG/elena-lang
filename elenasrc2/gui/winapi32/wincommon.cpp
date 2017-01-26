@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Window Implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-201, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "wincommon.h"
@@ -187,13 +187,13 @@ void Window :: _registerClass(HINSTANCE hInstance, const wchar_t* name, size_t s
    }
 }
 
-LRESULT CALLBACK Window :: _Proc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK Window :: _Proc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-   Window* window = (Window*)::GetWindowLong(hWnd, GWL_USERDATA);
+   Window* window = (Window*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
    if (window==NULL) {
       if (Message==WM_CREATE) {
          window = (Window*)((LPCREATESTRUCT)lParam)->lpCreateParams;
-         ::SetWindowLong(hWnd, GWL_USERDATA, (LONG)window);
+         ::SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)window);
 
          return window->_WindProc(hWnd, Message, wParam, lParam);
       }

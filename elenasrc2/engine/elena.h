@@ -636,18 +636,18 @@ inline int simpleRule(int key)
    return key;
 }
 
-inline size_t syntaxRule(size_t key)
+inline ref_t syntaxRule(ref_t key)
 {
    return key >> cnSyntaxPower;
 }
 
-inline size_t tableRule(size_t key)
+inline ref_t tableRule(ref_t key)
 {
    return key >> cnTableKeyPower;
 }
 
 // --- mapping keys ---
-inline size_t mapReferenceKey(ident_t key)
+inline ref_t mapReferenceKey(ident_t key)
 {
    ident_t p = key + key.findLast('\'', 0) + 1;
 
@@ -675,8 +675,8 @@ typedef Map<ident_t, ref_t> MessageMap;
 // --- ParserTable auxiliary types ---
 typedef Stack<int>                                           ParserStack;
 typedef MemoryMap<ident_t, int>                              SymbolMap;
-typedef MemoryHashTable<size_t, int, syntaxRule, cnHashSize> SyntaxHash;
-typedef MemoryHashTable<size_t, int, tableRule, cnHashSize>  TableHash;
+typedef MemoryHashTable<ref_t, int, syntaxRule, cnHashSize> SyntaxHash;
+typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 
 // --- miscellaneous routines ---
 

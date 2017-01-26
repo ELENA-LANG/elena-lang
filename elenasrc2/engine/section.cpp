@@ -82,7 +82,7 @@ void Section :: fixupReferences(void* param, ref_t(realloc)(ref_t, ref_t, ref_t,
 
 // --- Section Fixup Hash function ---
 
-size_t _ELENA_::indexReference(size_t reference)
+ref_t _ELENA_::indexReference(ref_t reference)
 {
    return ((reference && ~mskAnyRef) >> 2);
 }

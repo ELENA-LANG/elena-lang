@@ -59,10 +59,10 @@ void LexicalStyler :: parse()
    bool lookAhead = false;
 
    TextScanner scanner(_text);
-   indexWriter.writeDWord(0);
+   indexWriter.writeSize(0);
    while (true) {
 	  if (scanner.getPosition() == indexedPos) {
-         indexWriter.writeDWord(writer.Position());
+         indexWriter.writeSize(writer.Position());
          indexedPos += INDEX_STEP;
       }
       s = scanner.getLine(length);
@@ -72,8 +72,8 @@ void LexicalStyler :: parse()
             style = _defineStyle(state, style);
          }
          else if (style != _defineStyle(state, style) || state == _lookaheadState) {
-            writer.writeDWord(style);
-            writer.writeDWord(scanner.getPosition() + i);
+            writer.writeSize(style);
+            writer.writeSize(scanner.getPosition() + i);
             style = _defineStyle(state, style);
          }
          lookAhead = (state == _lookaheadState);
@@ -81,8 +81,8 @@ void LexicalStyler :: parse()
       if (!scanner.goTo(length))
          break;
    }
-   writer.writeDWord(style);
-   writer.writeDWord(scanner.getPosition() + length);
+   writer.writeSize(style);
+   writer.writeSize(scanner.getPosition() + length);
 }
 
 size_t LexicalStyler :: proceed(size_t position, LexicalInfo& info)
@@ -96,8 +96,8 @@ size_t LexicalStyler :: proceed(size_t position, LexicalInfo& info)
    }
    _ELENA_::MemoryReader reader(&_lexic, info.step);
    size_t curStyle = 0, current = 0;
-   while (reader.readDWord(curStyle)) {
-      reader.readDWord(current);
+   while (reader.readSize(curStyle)) {
+      reader.readSize(current);
       if (current > position) {
          info.style = curStyle;
          count = current - position;
