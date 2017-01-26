@@ -38,7 +38,9 @@
    #define f_body     ::= <= code ( => "{" f_line <= ) =>;
 
    #define f_line     ::= <= returning ( => "return" expression f_end <= ) =>;
+   #define f_line     ::= expression f_next;
    #define f_line     ::= f_eof;
+   #define f_next     ::= ";" f_line;
    #define f_end      ::= ";" f_eof;
    #define f_eof      ::= "}";
 

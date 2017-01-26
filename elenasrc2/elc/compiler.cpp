@@ -2381,6 +2381,9 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
    if (name == lxNone)
       name = arg;
 
+   if (name == lxNone)
+      scope.raiseError(errInvalidOperation, node);
+
    verb_id = _verbs.get(name.findChild(lxTerminal).identifier());
    if (verb_id == 0) {
       ref_t id = scope.mapSubject(name, signature);

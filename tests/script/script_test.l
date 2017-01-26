@@ -10,7 +10,10 @@
 #symbol tester =
 {
     newLeaf : n
-        = n.
+    [
+        #var l := n level.
+        #var s := n evalToken:"2".
+    ]
 }.
 
 #symbol program =
@@ -27,7 +30,10 @@
   
     #var nmix := Group(tester, n).
     #var mmix := Group(tester, m).
-        
-    #var nn := nmix digit:3.
-    #var mm := mmix digit:3.
+    
+    nmix digit:3.
+    mmix digit:3.
+                
+//    #var nn := nmix digit:3.
+//    #var mm := mmix digit:3.
 ].

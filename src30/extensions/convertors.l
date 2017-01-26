@@ -3,6 +3,7 @@
 #import system'routines.
 #import system'calendar.
 #import system'text.
+#import system'dynamic.
 
 // --- convertors ---
 
@@ -199,6 +200,9 @@
     #method convert &to : aTarget
         = aTarget set:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
 }
+
+#symbol convertor 
+    = { ! : n = Wrap(n, convertorOp)::$subject get. }.
 
 #class(extension:datetime) dateFormatterOp 
 {

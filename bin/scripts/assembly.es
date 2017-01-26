@@ -19,6 +19,7 @@
 
    #define code       ::= a_line;
    #define a_line     ::= ret_expr a_line;
+   #define a_line     ::= expr a_line;
    #define a_line     ::= ")";
 
    #define sing_items ::= sing_item sing_items; 
