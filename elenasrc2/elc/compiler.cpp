@@ -3878,42 +3878,32 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    IdentifierString signature;
    ref_t verb_id = 0;
    ref_t sign_id = 0;
-   bool first = true;
 
-   SNode verb = node.findChild(lxIdentifier, lxPrivate);
    if (scope.message != 0) {
       verb_id = getVerb(scope.message);
    }
-   else if (verb != lxNone) {
+
+   SNode verb = node.findChild(lxIdentifier, lxPrivate);
+   SNode arg = node.findChild(lxMethodParameter, lxMessage);
+   if (verb == lxNone) {
+      if (arg == lxMessage && verb_id != PRIVATE_MESSAGE_ID && node != lxImplicitConstructor) {
+         verb = arg;
+         arg = verb.nextNode();
+
+         verb_id = _verbs.get(verb.findChild(lxTerminal).identifier());
+         if (verb_id == 0) {
+            sign_id = scope.mapSubject(verb, signature);
+         }
+      }
+   }
+   else {
       verb_id = _verbs.get(verb.findChild(lxTerminal).identifier());
       if (verb_id == 0) {
          sign_id = scope.mapSubject(verb, signature);
       }
    }
 
-   SNode arg = node.findChild(lxMethodParameter, lxMessage);
-   if (verb_id == 0) {
-      // if followed by argument list - it is a EVAL verb
-      if (node == lxImplicitConstructor) {
-         verb_id = EVAL_MESSAGE_ID;
-      }
-      //else if (arg != lxNone && (verb != lxNone || arg == lxMethodParameter)) {
-      else if (arg != lxNone && node.existChild(lxMethodParameter)) {
-         verb_id = EVAL_MESSAGE_ID;
-         first = signature.Length() == 0;
-         //HOTFIX : to support gript generated code
-         if (arg == lxMessage && verb == lxNone) {
-            verb_id = _verbs.get(arg.findChild(lxTerminal).identifier());
-            if (verb_id == 0) {
-               sign_id = scope.mapSubject(arg, signature);
-            }
-            arg = arg.nextNode();
-         }
-      }
-      // otherwise it is GET message
-      else verb_id = GET_MESSAGE_ID;
-   }
-
+   bool first = signature.Length() == 0;
    int paramCount = 0;
    // if method has generic (unnamed) argument list
    while (arg == lxMethodParameter) {
@@ -3923,11 +3913,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       if (scope.parameters.exist(terminal))
          scope.raiseError(errDuplicatedLocal, arg);
 
-      //// if it is shorthand of eval &subj - recognize the subject
-      //if (verb_id == EVAL_MESSAGE_ID && sign_id != 0 && paramCount == 0 && arg.nextNode() != nsMessageParameter) {
-      //   scope.parameters.add(arg.Terminal(), Parameter(index, sign_id));
-      //}
-      /*else */scope.parameters.add(terminal, Parameter(index));
+      scope.parameters.add(terminal, Parameter(index));
       paramCount++;
 
       arg = arg.nextNode();
@@ -3993,6 +3979,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
          signature.copy(GENERIC_PREFIX);
       }
+      else if (verb_id == 0)
+         verb_id = paramCount > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID;
 
       // if signature is presented
       if (!emptystr(signature)) {

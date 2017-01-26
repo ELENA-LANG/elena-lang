@@ -165,9 +165,9 @@
     [
         theSubject 
             append:"["
-            append:(theParameters length literal)
+            append:(theParameters length subtract:1 literal)
             append:"]".
-            
+
         ^ Message new &literal:theSubject.            
     ]
 
@@ -190,7 +190,7 @@
     
     #method new &paramToken : param
     [
-        theParameters += KeyValue new &key:param &object:(theParameters length + 2).
+        theParameters += KeyValue new &key:param &object:(theParameters length + 1).
     ]
     
     #method open &ret_expr
@@ -314,7 +314,7 @@
         => theBody.
 }
 
-#class Library
+#class Library :: Scope
 {
     #field theClasses.
     
@@ -340,7 +340,12 @@
 //        
 //        ^ class.
 //    ]
-    
+
+    #method save &variable:literal &array_list:list
+    [
+        #throw InvalidArgumentException new:("Variable cannot be resolved - " + literal).
+    ]
+        
     #method first
         => theClasses.
 }

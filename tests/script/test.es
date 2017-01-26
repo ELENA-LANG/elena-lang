@@ -4,7 +4,7 @@ States =
    {
       digit : function(n)
       {
-         return n.add(2);
+         return this.newLeaf(n);
       };
    };
 };
