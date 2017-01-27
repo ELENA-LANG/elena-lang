@@ -317,10 +317,17 @@
 #class Library :: Scope
 {
     #field theClasses.
+    #field theForwards.
     
     #constructor new
     [
         theClasses := List new.
+        theForwards := Dictionary new.
+    ]
+    
+    #method include:ref:symbol
+    [
+        theForwards@symbol := ref.
     ]
     
     #method open &symbol
@@ -343,7 +350,11 @@
 
     #method save &variable:literal &array_list:list
     [
-        #throw InvalidArgumentException new:("Variable cannot be resolved - " + literal).
+        #var ref := theForwards@literal.
+        ($nil == ref)
+            ? [ #throw InvalidArgumentException new:("Variable cannot be resolved - " + literal). ]
+            ! [ list += Symbol new &literal:ref. ].
+        
     ]
         
     #method first

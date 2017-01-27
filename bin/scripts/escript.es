@@ -26,5 +26,5 @@
    #define name       ::= <= message = $identifier =>;
    #define message    ::= <= message = $identifier =>;
    #define reference  ::= <= symbol = $reference =>;
-   #define literal    ::= <= literal = $literal =>;
+   #define literal    ::= <= literal = "$literal" =>;
 ]]

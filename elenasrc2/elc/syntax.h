@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser Symbol constants
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef syntaxH
@@ -68,7 +68,7 @@ enum Symbol
    nsElseOperation              = 0x0102A,
    nsExtension                  = 0x0102B,
    nsAltMessageOperation        = 0x0102C,
-   //nsInclude                    = 0x0102D,
+   nsInclude                    = 0x0102D,
    nsForward                    = 0x0102E,
    nsCatchMessageOperation      = 0x0102F,
    nsLoop                       = 0x01030,

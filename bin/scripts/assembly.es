@@ -6,7 +6,10 @@
 
    #define module     ::= <= [ ( 2 %"system'dynamic'tapeOp.var&args$[]" => "root" "(" items <= ) * system'dynamic'Tape ] =>;
    #define items      ::= "symbol_decl" symbol items;
+   #define items      ::= "include" include items;
    #define items      ::= ")" eof;
+
+   #define include    ::= <= %"include[2]" => "(" forward alias;
 
    #define symbol     ::= <=  %"open&symbol[0]" => "(" symbol_bdy ")" <= %"close[0]" =>;
    #define symbol_bdy ::= identifier expr;
@@ -44,10 +47,17 @@
    #define tokens     ::= expr tokens;
    #define tokens     ::= ")";
    #define name       ::= "=" ident_token;
+   #define reference  ::= "=" ref_token;
    #define numeric    ::= <= %"new&numericToken[1]" => "=" num_token;
    #define identifier ::= <= %"new&identToken[1]" => "=" ident_token;
+   #define ref_expr   ::= "reference" reference;
+
+   #define forward    ::= "forward" f_expr;
+   #define f_expr     ::= "(" ref_expr ")";
+   #define alias      ::= "identifier" name ")";
 
    #define ident_token::= <= "$identifier" =>; 
+   #define ref_token  ::= <= "$reference" =>;
    #define num_token  ::= <= $numeric =>; 
 
    #define eof        ::= $eof; 

@@ -107,6 +107,14 @@ void saveLiteral(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, Scrip
    log.writeQuote(scriptReader.lookup(bm));
 }
 
+void saveLiteralContent(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
+{
+   ScriptBookmark bm;
+   parser->readScriptBookmark(ptr, bm);
+
+   log.write(scriptReader.lookup(bm));
+}
+
 void CFParser :: readScriptBookmark(size_t ptr, ScriptBookmark& bm)
 {
    MemoryReader reader(&_body, ptr);
@@ -253,7 +261,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          }
          else if (reader.compare(LITERAL_KEYWORD)) {
             rule.terminal = -1;
-            rule.saveTo = saveLiteral;
+            rule.saveTo = saveLiteralContent;
 
             mode = LITERAL_MODE;
          }
@@ -278,6 +286,12 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          rule.saveTo = saveLiteral;
 
          mode = IDENTIFIER_MODE;
+      }
+      else if (bm.state == dfaQuote && reader.compare(LITERAL_KEYWORD)) {
+         rule.terminal = -1;
+         rule.saveTo = saveLiteral;
+
+         mode = LITERAL_MODE;
       }
       else {
          ident_t token = reader.lookup(bm);

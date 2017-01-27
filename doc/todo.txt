@@ -16,6 +16,7 @@ In development:
               zdev 
                  * eson : should generate a sinlgeton (both in run-time and compile-time)
                  * calc sample
+                 * hello world sample
 
                  * script : elena - simple class,one method
                  * script : elena - simple class,one method, several statements
@@ -28,6 +29,7 @@ In development:
 
                  * scripting library : vb interpreter
                  * scripting library : elena script (both run-time / compile-time)
+                 * graph : function declared in the script
                  * gui script
                  * state machine script (calc)
                  * reg ex

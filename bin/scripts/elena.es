@@ -6,7 +6,7 @@
    #define statement  ::= expression next_expr;
    #define expression ::= <= ( => object operations <= ) =>;   
    #define object     ::= <= $reference =>;
-   #define object     ::= <= $literal =>;
+   #define object     ::= <= "$literal" =>;
    #define object     ::= <= $numeric =>;
    #define object     ::= "(" expression ")" ;
    #define operations ::= operation operations;

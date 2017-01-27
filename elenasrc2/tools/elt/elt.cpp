@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line DSA script terminal main file
-//                                              (C)2011-2016, by Alexei Rakov
+//                                              (C)2011-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,7 +14,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   1
+#define ELT_BUILD_NUMBER   2
  
 // global variables
 int   _encoding = feAnsi;

@@ -5,8 +5,12 @@
    #define start      ::= $eof;
 
    #define members    ::= member ";" members;
+   #define members    ::= directive ";" members;
    #define members    ::= $eof;
    #define member     ::= <= symbol_decl ( => s_name "=" expression <= ) =>;
+
+   #define directive  ::= <= include ( => "#import" forward alias <= ) =>;
+   #define alias      ::= "as" s_name;
 
    #define expression ::= <= expression ( => object operations <= ) =>; 
    #define operations ::= operation operations;
@@ -50,4 +54,6 @@
    #define parameter  ::= <= method_param = $identifier =>;
    #define identifier ::= <= identifier = $identifier =>;
    #define message    ::= <= message = $identifier =>;
+
+   #define forward    ::= <= forward ( reference = $literal ) =>;
 ]]

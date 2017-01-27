@@ -5966,6 +5966,15 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
    }
 }
 
+void Compiler :: compileForward(SNode ns, ModuleScope& scope)
+{
+   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
+   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
+
+   if (!scope.defineForward(shortcut, reference))
+      scope.raiseError(errDuplicatedDefinition, ns);
+}
+
 void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope)
 {
    ident_t name = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
@@ -6169,13 +6178,11 @@ void Compiler :: compileIncludeSection(SNode member, ModuleScope& scope)
 {
    while (member != lxNone) {
       switch (member) {
-         //case nsInclude:
-         //   // NOTE: obsolete, used for backward compatibility
-         //   //       should be removed in 2.1.x
-         //   compileIncludeModule(member, scope, hints);
-         //   break;
          case lxImport:
             compileIncludeModule(member, scope);
+            break;
+         case lxInclude:
+            compileForward(member, scope);
             break;
       }
       member = member.nextNode();

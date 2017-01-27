@@ -41,7 +41,7 @@ namespace _ELENA_
    #define errIllegalField          "%s(%d:%d): error 111: Illegal field declaration '%s'\n"
    #define errTooManyParameters     "%s(%d:%d): error 113: Too many parameters for '%s' message\n"
 //   #define errUnknownRole           "%s(%d:%d): error 117: Unknown role '%s'\n"
-//   #define errDuplicatedDefinition  "%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n"
+   #define errDuplicatedDefinition  "%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n"
 //   #define errInvalidProperty       "%s(%d:%d): error 121: Invalid or none-existing property '%s'\n"
 //   #define errInvalidRedirectMessage "%s(%d:%d): error 127: It is not possible to use redirect message in this case\n"
    #define errInvalidIntNumber      "%s(%d:%d): error 130: Invalid integer value %s\n"
