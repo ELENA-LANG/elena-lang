@@ -84,10 +84,10 @@ bool Path :: create(path_t root, path_t path)
 
 bool Path :: checkExtension(path_t path, path_t extension)
 {
-   int namepos = path.findLast(PATH_SEPARATOR) + 1;
+   size_t namepos = path.findLast(PATH_SEPARATOR) + 1;
 
-   int pos = path.findLast(namepos, '.', -1);
-   if (pos != -1) {
+   size_t pos = path.findLast(namepos, '.', NOTFOUND_POS);
+   if (pos != NOTFOUND_POS) {
       return wide_t(path + pos + 1).compare(extension);
    }
    else return emptystr(extension);

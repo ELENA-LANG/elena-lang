@@ -192,6 +192,13 @@ public:
          this->extraparam = 0;
          this->type = 0;
       }
+      ObjectInfo(ObjectKind kind, int param)
+      {
+         this->kind = kind;
+         this->param = (ref_t)param;
+         this->extraparam = 0;
+         this->type = 0;
+      }
       ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
       {
          this->kind = kind;
@@ -199,11 +206,25 @@ public:
          this->extraparam = extraparam;
          this->type = 0;
       }
+      ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = (ref_t)extraparam;
+         this->type = 0;
+      }
       ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = extraparam;
+         this->type = type;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t type)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = (ref_t)extraparam;
          this->type = type;
       }
    };
@@ -316,7 +337,7 @@ private:
       void loadModuleInfo(_Module* extModule)
       {
          bool dummy;
-         loadModuleInfo(module, dummy);
+         loadModuleInfo(extModule, dummy);
       }
       void loadModuleInfo(_Module* extModule, bool& duplicateExtensions)
       {
@@ -626,13 +647,13 @@ private:
    {
       struct Outer
       {
-         int        reference;
+         ref_t      reference;
          bool       preserved;
          ObjectInfo outerObject;
 
          Outer()
          {
-            reference = -1;
+            reference = INVALID_REF;
             preserved = false;
          }
          Outer(int reference, ObjectInfo outerObject)
@@ -860,9 +881,9 @@ private:
    void compileVariable(SNode node, CodeScope& scope);
 
    ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, int mode);
-   ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
-   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope, int mode);
-   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
+   ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope);
+   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope, ref_t vmtReference);
 
    ObjectInfo compileMessageReference(SNode objectNode, CodeScope& scope, int mode);
    void setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
@@ -882,10 +903,10 @@ private:
 
    ObjectInfo compileNewOperator(SNode node, CodeScope& scope/*, int mode*/);
    ObjectInfo compileAssigning(SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileExtension(SNode node, CodeScope& scope, int mode = 0);
+   ObjectInfo compileExtension(SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileAssigningExpression(SNode assigning, CodeScope& scope, int mode = 0);
+   ObjectInfo compileAssigningExpression(SNode assigning, CodeScope& scope);
 
    ObjectInfo compileBranching(SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
@@ -902,7 +923,7 @@ private:
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
-   ObjectInfo compileExternalCall(SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileExternalCall(SNode node, CodeScope& scope);
    ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 
    void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
@@ -926,9 +947,9 @@ private:
    void compileDispatcher(SNode node, MethodScope& scope, bool withGenericMethods = false);
 
    void compileMethod(SNode node, MethodScope& scope);
-   void compileDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
-   void compileDynamicDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
-   void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
+   void compileDefaultConstructor(SNode node, MethodScope& scope);
+   void compileDynamicDefaultConstructor(SNode node, MethodScope& scope);
+   void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
 //   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
    void compilePreloadedCode(SymbolScope& scope);
@@ -943,7 +964,7 @@ private:
 
 //   void declareVirtualMethods(ClassScope& scope);
 
-   ref_t generateTemplate(SNode attribute, TemplateScope& scope);
+   ref_t generateTemplate(TemplateScope& scope);
 
    void generateClassField(ClassScope& scope, SyntaxTree::Node node, bool singleField);
    void generateClassStaticField(ClassScope& scope, SNode current);
@@ -980,16 +1001,16 @@ private:
    bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope, int mode);
-   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope, int mode);
+   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
+   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
    void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope, int mode);
+   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 //   void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
    void optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
 //   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScope& warningScope);
-   void optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
+   void optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope);
    void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
    void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
    void optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);

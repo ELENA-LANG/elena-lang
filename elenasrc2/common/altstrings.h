@@ -9,6 +9,8 @@
 #ifndef altstringsH
 #define altstringsH
 
+#define NOTFOUND_POS (size_t)-1
+
 namespace _ELENA_
 {
 
@@ -59,7 +61,7 @@ public:
    static char* upper(char* s);
    static wide_c* upper(wide_c* s);
 
-   static int findChar(const char* s, char ch, int length, int defaultValue = -1);
+   static size_t findChar(const char* s, char ch, size_t length, size_t defaultValue = NOTFOUND_POS);
 };
 
 class ident_t
@@ -72,7 +74,7 @@ public:
 
    const char* c_str() const { return _string; }
 
-   ident_t& operator +=(int offset)
+   ident_t& operator +=(size_t offset)
    {
       _string += offset;
 
@@ -91,32 +93,32 @@ public:
       return copyTo(dest, getlength(_string), destLength);
    }
 
-   int find(const char* s, int defValue = -1);
-   int find(char c, int defValue = -1);
-   int find(int index, char ch, int defValue);
-   int findLast(char c, int defValue = -1);
-   int findLast(int index, char c, int defValue);
+   size_t find(const char* s, size_t defValue = NOTFOUND_POS);
+   size_t find(char c, size_t defValue = NOTFOUND_POS);
+   size_t find(size_t index, char ch, size_t defValue);
+   size_t findLast(char c, size_t defValue = NOTFOUND_POS);
+   size_t findLast(size_t index, char c, size_t defValue);
 
-   int findSubStr(int index, char c, size_t length, int defValue);
-   int findSubStr(int index, const char* s, int defValue = -1);
+   size_t findSubStr(size_t index, char c, size_t length, size_t defValue);
+   size_t findSubStr(size_t index, const char* s, size_t defValue = NOTFOUND_POS);
 
    int toInt();
-   int toInt(int index);
+   int toInt(size_t index);
 
    long toLong(int radix);
-   long toLong(int radix, int index);
-   long toULong(int radix, int index = 0);
-   long long toULongLong(int radix, int index = 0);
+   long toLong(int radix, size_t index);
+   long toULong(int radix, size_t index = 0);
+   long long toULongLong(int radix, size_t index = 0);
 
-   double toDouble(int index = 0);
+   double toDouble(size_t index = 0);
 
    char* clone();
-   char* clone(int index);
-   char* clone(int index, int length);
+   char* clone(size_t index);
+   char* clone(size_t index, size_t length);
 
    bool compare(const char* s) const;
    bool compare(const char* s, size_t length) const;
-   bool compare(const char* s, int start, size_t length);
+   bool compare(const char* s, size_t start, size_t length);
 
    bool greater(const char* s);
 
@@ -160,22 +162,22 @@ public:
       return copyTo(dest, getlength(_string), destLength);
    }
 
-   int find(wide_c c, int defValue = -1);
-   int find(int index, wide_c ch, int defValue);
+   size_t find(wide_c c, size_t defValue = -1);
+   size_t find(size_t index, wide_c ch, size_t defValue);
 
-   int findLast(wide_c c, int defValue = -1);
-   int findLast(int index, wide_c c, int defValue);
+   size_t findLast(wide_c c, size_t defValue = -1);
+   size_t findLast(size_t index, wide_c c, size_t defValue);
 
-   int findSubStr(int index, wide_c c, size_t length, int defValue);
+   size_t findSubStr(size_t index, wide_c c, size_t length, size_t defValue);
 
    int toInt();
-   int toInt(int index);
+   int toInt(size_t index);
 
    long toLong(int radix);
-   long toLong(int radix, int index);
+   long toLong(int radix, size_t index);
 
    wide_c* clone();
-   wide_c* clone(int index);
+   wide_c* clone(size_t index);
 
    bool compare(const wide_c* s) const;
    bool compare(const wide_c* s, size_t length) const;
@@ -368,7 +370,7 @@ public:
 
    void appendInt(int n)
    {
-      int pos = getlength(_string);
+      size_t pos = getlength(_string);
 
       BaseString<T>::intToStr(n, _string + pos, 10);
    }
@@ -380,7 +382,7 @@ public:
 
    void appendHex(int n)
    {
-      int pos = getlength(_string);
+      size_t pos = getlength(_string);
 
       BaseString<T>::uintToStr(n, _string + pos, 16);
 
@@ -389,7 +391,7 @@ public:
 
    void appendDouble(double n)
    {
-      int pos = getlength(_string);
+      size_t pos = getlength(_string);
 
       Convertor::doubleToStr(n, 8, _string + pos);
       if (_string[getlength(_string) - 1]=='.')
@@ -398,7 +400,7 @@ public:
 
    void appendHex64(long long n)
    {
-      int pos = getlength(_string);
+      size_t pos = getlength(_string);
 
       Convertor::longlongToStr(n, _string + pos, 16);
       StrHelper::upper(_string + pos);
@@ -406,7 +408,7 @@ public:
 
    void appendInt64(long long n)
    {
-      int pos = getlength(_string);
+      size_t pos = getlength(_string);
 
       Convertor::longlongToStr(n, _string + pos, 10);
       StrHelper::upper(_string + pos);
@@ -501,7 +503,7 @@ protected:
          _string[0] = 0;
       }
       else {
-         int length = getlength(_string);
+         size_t length = getlength(_string);
 
          _size = align(size, pageSize);
          _string = StrFactory::reallocate(_string, _size);

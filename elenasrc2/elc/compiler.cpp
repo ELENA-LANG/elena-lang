@@ -14,8 +14,6 @@
 
 using namespace _ELENA_;
 
-#define INVALID_REF (size_t)-1
-
 //void test2(SNode node)
 //{
 //   SNode current = node.firstChild();
@@ -216,7 +214,7 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    this->sourcePath = sourcePath;
    this->module = module;
    this->debugModule = debugModule;
-   this->sourcePathRef = -1;
+   this->sourcePathRef = INVALID_REF;
 
    this->forwardsUnresolved = forwardsUnresolved;
 
@@ -935,7 +933,7 @@ void Compiler::ClassScope :: compileClassAttribute(SNode hint)
       case lxClassFlag:
          info.header.flags |= hint.argument;
          if (test(info.header.flags, elExtension))
-            extensionMode = -1;
+            extensionMode = INVALID_REF;
          break;
       case lxType:
          if (test(info.header.flags, elExtension)) {
@@ -1085,7 +1083,7 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
          owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
 
       outers.add(THIS_VAR, owner);
-      mapKey(info.fields, THIS_VAR, owner.reference);
+      mapKey(info.fields, THIS_VAR, (int)owner.reference);
    }
    return owner;
 }
@@ -1133,7 +1131,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
             outer.reference = info.fields.Count();
 
             outers.add(identifier, outer);
-            mapKey(info.fields, identifier, outer.reference);
+            mapKey(info.fields, identifier, (int)outer.reference);
 
             if (outer.outerObject.kind == okOuter && identifier.compare(RETVAL_VAR)) {
                // HOTFIX : quitting several clsoures
@@ -1202,7 +1200,7 @@ ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
    outer.outerObject = ObjectInfo(okNil, -1);
 
    outers.add(RETVAL_VAR, outer);
-   mapKey(info.fields, RETVAL_VAR, outer.reference);
+   mapKey(info.fields, RETVAL_VAR, (int)outer.reference);
 
    return ObjectInfo(okOuter, outer.reference);
 }
@@ -1478,9 +1476,9 @@ void Compiler :: importCode(SNode node, ModuleScope& scope, ident_t function, re
    // HOTFIX : include self as a parameter
    paramCount++;
 
-   virtualReference.append('0' + paramCount);
+   virtualReference.append('0' + (char)paramCount);
    virtualReference.append('#');
-   virtualReference.append(0x20 + verb_id);
+   virtualReference.append(0x20 + (char)verb_id);
 
    if (sign_ref != 0) {
       virtualReference.append('&');
@@ -1606,11 +1604,11 @@ ref_t Compiler::mapAttribute(SNode attribute, ModuleScope& scope)
 ref_t Compiler :: mapAttribute(SNode attribute, Scope& scope, int& attrValue)
 {
    int paramCounter =SyntaxTree::countChild(attribute, lxAttributeValue);
-   SNode value = attribute.findChild(lxAttributeValue).firstChild(lxTerminalMask);
-   if (value == lxInteger) {
+   SNode valueNode = attribute.findChild(lxAttributeValue).firstChild(lxTerminalMask);
+   if (valueNode == lxInteger) {
       //HOTFIX : only one dimensional arrays are supported currently
       if (paramCounter == 1) {
-         attrValue = value.findChild(lxTerminal).identifier().toInt();
+         attrValue = valueNode.findChild(lxTerminal).identifier().toInt();
 
          paramCounter = 0;
       }
@@ -1747,7 +1745,7 @@ void Compiler :: compileFieldAttributes(SNode node, ClassScope& scope, SNode roo
                   templateScope.loadParameters(current);
 
                   templateScope.generateClassName();
-                  rootNode.appendNode(lxClassRef, generateTemplate(current, templateScope));
+                  rootNode.appendNode(lxClassRef, generateTemplate(templateScope));
                }
             }
             else node.appendNode(lxType, attribute);
@@ -1827,7 +1825,7 @@ void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
 
                templateScope.generateClassName();
 
-               variable.extraparam = generateTemplate(current, templateScope);
+               variable.extraparam = generateTemplate(templateScope);
             }
             else if (variable.type == 0) {
                variable.type = attrRef;
@@ -2156,7 +2154,7 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mod
       String<char, 30> s("_"); // special mark to tell apart from integer constant
       s.append(token, getlength(token) - 1);
 
-      long long integer = token.toULongLong(10, 1);
+      token.toULongLong(10, 1);
       if (errno == ERANGE)
          scope.raiseError(errInvalidIntNumber, terminal);
 
@@ -2176,7 +2174,7 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mod
    }
    else if (terminal == lxReal) {
       String<char, 30> s(token, getlength(token) - 1);
-      double number = token.toDouble();
+      token.toDouble();
       if (errno == ERANGE)
          scope.raiseError(errInvalidIntNumber, terminal);
 
@@ -2248,7 +2246,7 @@ ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int
       int subject = 0;
       int param = 0;
       bool firstSubj = true;
-      for (int i = 0; i < getlength(message); i++) {
+      for (size_t i = 0; i < getlength(message); i++) {
          if (message[i] == '&') {
             if (firstSubj) {
                signature.copy(message + subject, i - subject);
@@ -2338,10 +2336,10 @@ ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int
    if (paramCount == -1) {
       message.append('0');
    }
-   else message.append('0' + paramCount);
+   else message.append('0' + (char)paramCount);
    message.append('#');
    if (verb_id != 0) {
-      message.append(0x20 + verb_id);
+      message.append((char)(0x20 + verb_id));
    }
    else message.append(0x20);
 
@@ -2575,7 +2573,7 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, i
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode, int operator_id)
+ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int, int operator_id)
 {
    ObjectInfo retVal(okObject);
    int paramCount = 1;
@@ -2707,8 +2705,8 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
 
    if (!test(mode, HINT_NODEBUGINFO)) {
       // set a breakpoint
-      SNode target = node.findChild(lxMessage, lxOperator);
-      setDebugStep(target, dsStep);
+      SNode targetNode = node.findChild(lxMessage, lxOperator);
+      setDebugStep(targetNode, dsStep);
    }
 
    // define the message target if required
@@ -2859,7 +2857,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, int mode)
 
    //   bool externalMode = false;
    if (target.kind == okExternal) {
-      return compileExternalCall(node, scope, mode);
+      return compileExternalCall(node, scope);
    }
    else {
       ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
@@ -2884,8 +2882,6 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, int mode)
 
 ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 {
-   int assignMode = 0;
-
    SNode exprNode = node;
    SNode operation = node.findChild(lxMessage, lxExpression, lxAssign);
    if (operation == lxExpression) {
@@ -2963,7 +2959,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
       else scope.raiseError(errInvalidOperation, node);
 
       SNode sourceNode = targetNode.nextNode(lxObjectMask);
-      ObjectInfo source = compileAssigningExpression(sourceNode, scope, assignMode);
+      ObjectInfo source = compileAssigningExpression(sourceNode, scope);
 
       if (target.type != 0) {
          typecastObject(sourceNode, scope, target.type, source);
@@ -2978,7 +2974,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
    }
 }
 
-ObjectInfo Compiler :: compileExtension(SNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileExtension(SNode node, CodeScope& scope)
 {
    ref_t extesionType = 0;
 
@@ -3158,7 +3154,7 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
    generateClassImplementation(syntaxTree.readRoot(), scope);
 }
 
-ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
+ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope)
 {
    if (test(scope.info.header.flags, elStateless)) {
       node.set(lxConstantSymbol, scope.reference);
@@ -3238,10 +3234,10 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, int mod
    // if it is a nested class
    else compileNestedVMT(node, scope);
 
-   return compileClosure(node, ownerScope, scope, mode);
+   return compileClosure(node, ownerScope, scope);
 }
 
-ObjectInfo Compiler :: compileCollection(SNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileCollection(SNode node, CodeScope& scope)
 {
    ref_t parentRef = scope.moduleScope->arrayReference;
    SNode parentNode = node.findChild(lxIdentifier, lxPrivate, lxReference);
@@ -3251,10 +3247,10 @@ ObjectInfo Compiler :: compileCollection(SNode node, CodeScope& scope, int mode)
          scope.raiseError(errUnknownObject, node);
    }
 
-   return compileCollection(node, scope, mode, parentRef);
+   return compileCollection(node, scope, parentRef);
 }
 
-ObjectInfo Compiler :: compileCollection(SNode node, CodeScope& scope, int mode, ref_t vmtReference)
+ObjectInfo Compiler :: compileCollection(SNode node, CodeScope& scope, ref_t vmtReference)
 {
    if (vmtReference == 0)
       vmtReference = scope.moduleScope->superReference;
@@ -3458,7 +3454,7 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
    return objectInfo;
 }
 
-ObjectInfo Compiler :: compileAssigningExpression(SNode assigning, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileAssigningExpression(SNode assigning, CodeScope& scope)
 {
    insertDebugStep(assigning, dsStep);
 
@@ -3679,7 +3675,7 @@ void Compiler :: compileExternalArguments(SNode node, CodeScope& scope)
    }
 }
 
-ObjectInfo Compiler :: compileExternalCall(SNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileExternalCall(SNode node, CodeScope& scope)
 {
    ObjectInfo retVal(okExternal);
 
@@ -3750,12 +3746,12 @@ ObjectInfo Compiler :: compileInternalCall(SNode node, CodeScope& scope, ref_t m
    virtualReference.append('.');
 
    int paramCount;
-   ref_t sign_ref, verb_id, dummy;
+   ref_t sign_ref, verb_id;
    decodeMessage(message, sign_ref, verb_id, paramCount);
 
-   virtualReference.append('0' + paramCount);
+   virtualReference.append('0' + (char)paramCount);
    virtualReference.append('#');
-   virtualReference.append(0x20 + verb_id);
+   virtualReference.append((char)(0x20 + verb_id));
 
    if (sign_ref != 0) {
       virtualReference.append('&');
@@ -4101,7 +4097,7 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
          node.set(lxResending, methodScope->message);
          SNode body = node.injectNode(lxNewFrame);
 
-         ObjectInfo target = compileExpression(body, scope, 0);
+         target = compileExpression(body, scope, 0);
       }
    }
 }
@@ -4265,7 +4261,7 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
    node.insertNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
 }
 
-void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef)
+void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
 {
    CodeScope codeScope(&scope);
 
@@ -4337,7 +4333,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    node.insertNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
 }
 
-void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
+void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
@@ -4351,7 +4347,7 @@ void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope, Class
    }
 }
 
-void Compiler :: compileDynamicDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
+void Compiler :: compileDynamicDefaultConstructor(SNode node, MethodScope& scope)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
@@ -4602,9 +4598,9 @@ void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classCl
 
          if (current.argument == encodeVerb(NEWOBJECT_MESSAGE_ID)) {
             if (test(classScope.info.header.flags, elDynamicRole)) {
-               compileDynamicDefaultConstructor(current, methodScope, classClassScope);
+               compileDynamicDefaultConstructor(current, methodScope);
             }
-            else compileDefaultConstructor(current, methodScope, classClassScope);
+            else compileDefaultConstructor(current, methodScope);
          }
          else {
             declareArgumentList(current, methodScope);
@@ -4688,7 +4684,7 @@ void Compiler :: declareVMT(SNode current, ClassScope& scope)
    }
 }
 
-ref_t Compiler :: generateTemplate(SNode attribute, TemplateScope& scope)
+ref_t Compiler :: generateTemplate(TemplateScope& scope)
 {
    if (scope.moduleScope->loadClassInfo(scope.info, scope.reference, true)) {
       return scope.reference;
@@ -4698,10 +4694,7 @@ ref_t Compiler :: generateTemplate(SNode attribute, TemplateScope& scope)
    SyntaxWriter writer(syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
-//   if (templateInfo.templateParent != 0) {
-//      compileParentDeclaration(DNode(), scope, templateInfo.templateParent);
-//   }
-   /*else */compileParentDeclaration(SNode(), scope);
+   compileParentDeclaration(SNode(), scope);
 
    writer.appendNode(lxClassFlag, elSealed);
    writer.closeNode();
@@ -5054,7 +5047,7 @@ bool Compiler :: copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode)
    while (current != lxNone) {
       if (current == lxAttribute) {
          int attrValue = 0;
-         ref_t attribute = mapAttribute(current, scope, attrValue);
+         mapAttribute(current, scope, attrValue);
          if (attrValue != 0) {
             if (_logic->validateFieldAttribute(attrValue)) {
                rootNode.appendNode((LexicalType)attrValue);
@@ -5163,7 +5156,7 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope)
    if (test(scope.info.header.flags, elExtension)) {
       scope.extensionMode = scope.info.fieldTypes.get(-1).value2;
       if (scope.extensionMode == 0)
-         scope.extensionMode = -1;
+         scope.extensionMode = INVALID_REF;
    }
 
    compileVMT(node, scope);
@@ -5334,7 +5327,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
       _Module* module = scope.moduleScope->module;
       MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
+      long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
 
       dataWriter.write(&value, 8);
 
@@ -5556,7 +5549,7 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
    else return retVal;
 }
 
-void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
+void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, WarningScope& warningScope)
 {
    //SNode parentNode = node.parentNode();
    //while (parentNode == lxExpression)
@@ -5574,7 +5567,7 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, WarningScope& w
    optimizeSyntaxExpression(scope, node, warningScope, HINT_NOBOXING /* | HINT_EXTERNALOP*/);
 }
 
-void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
+void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, WarningScope& warningScope)
 {
    //SNode parentNode = node.parentNode();
    //while (parentNode == lxExpression)
@@ -5620,7 +5613,7 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
    }
 }
 
-void Compiler :: optimizeOp(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
+void Compiler :: optimizeOp(ModuleScope& scope, SNode node, WarningScope& warningScope)
 {
    SNode larg, rarg, rarg2;
    larg = node.firstChild(lxObjectMask);
@@ -5766,7 +5759,7 @@ int Compiler :: allocateStructure(SNode node, int& size)
    return offset;
 }
 
-void Compiler :: optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
+void Compiler :: optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope)
 {
    if (node == lxNested) {
       // check if the nested collection can be treated like constant one
@@ -5824,10 +5817,10 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
       case lxStdExternalCall:
       case lxExternalCall:
       case lxCoreAPICall:
-         optimizeExtCall(scope, current, warningScope, mode);
+         optimizeExtCall(scope, current, warningScope);
          break;
       case lxInternalCall:
-         optimizeInternalCall(scope, current, warningScope, mode);
+         optimizeInternalCall(scope, current, warningScope);
          break;
       case lxExpression:
       case lxOverridden:
@@ -5855,11 +5848,8 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
       case lxNewOp:
       case lxNilOp:
       case lxArgArrOp:
-         optimizeOp(scope, current, warningScope, mode);
+         optimizeOp(scope, current, warningScope);
          break;
-//      case lxBoolOp:
-//         optimizeBoolOp(scope, current, warningMask, mode);
-//         break;
       case lxDirectCalling:
       case lxSDirctCalling:
       case lxCalling:
@@ -5867,7 +5857,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
          break;
       case lxNested:
       case lxMember:
-         optimizeNestedExpression(scope, current, warningScope, mode);
+         optimizeNestedExpression(scope, current, warningScope);
          break;
       case lxCode:
          optimizeSyntaxExpression(scope, current, warningScope/*, HINT_NOBOXING*/);
@@ -5962,7 +5952,7 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
 
    // Optimization : subject'get = self
    if (_logic->recognizeEmbeddableIdle(methodNode)) {
-      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableIdle), -1);
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableIdle), INVALID_REF);
    }
 }
 
@@ -6049,7 +6039,7 @@ void Compiler :: compileSubject(SNode member, ModuleScope& scope)
 
          templateScope.generateClassName();
 
-         ref_t classRef = generateTemplate(member, templateScope);
+         ref_t classRef = generateTemplate(templateScope);
          if (classRef == 0)
             scope.raiseError(errInvalidHint, member);
       }
@@ -6352,7 +6342,7 @@ void Compiler :: injectBoxing(_CompilerScope& scope, SNode node, LexicalType box
 
          node.appendNode(lxTarget, targetClassRef);
       }
-      else if (node == lxBoxing && node.argument == argument) {
+      else if (node == lxBoxing && (int)node.argument == argument) {
          node.set(boxingType, argument);
          node.findChild(lxTarget).setArgument(targetClassRef);
       }

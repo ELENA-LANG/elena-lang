@@ -189,7 +189,15 @@ inline void freestr(unsigned short* s)
 
 // --- alignment routines ---
 
-inline unsigned int align(unsigned int number, const unsigned int alignment)
+inline unsigned int align(unsigned int number, unsigned int alignment)
+{
+   if (number & (alignment - 1)) {
+      return (number & ~(alignment - 1)) + alignment;
+   }
+   else return number & ~(alignment - 1);
+}
+
+inline size_t alignSize(size_t number, size_t alignment)
 {
    if (number & (alignment - 1)) {
       return (number & ~(alignment - 1)) + alignment;

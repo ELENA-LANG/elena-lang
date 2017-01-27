@@ -24,7 +24,7 @@ public:
    virtual Node get(ident_t key);
 
    virtual bool select(ident_t key, Map<ident_t, Node>& list);
-   virtual bool select(Node root, ident_t subKey, Nodes& list)
+   virtual bool select(Node, ident_t, Nodes&)
    {
       return false;
    }

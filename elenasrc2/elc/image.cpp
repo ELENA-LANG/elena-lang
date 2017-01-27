@@ -75,7 +75,7 @@ ref_t ExecutableImage :: getDebugEntryPoint()
    return (ref_t)resolveReference(starter, mskSymbolRef) & ~mskAnyRef;
 }
 
-_Memory* ExecutableImage :: getTargetSection(size_t mask)
+_Memory* ExecutableImage :: getTargetSection(ref_t mask)
 {
    switch(mask & mskImageMask)
    {

@@ -140,8 +140,6 @@ int XMLNode :: parse(ident_t content, int position, int end, PositionList* list)
    }
 
    throw XMLException(position);
-
-   return -1;
 }
 
 void XMLNode :: readContent(DynamicString<char>& s)
@@ -165,7 +163,7 @@ XMLNode XMLNode :: appendNode(ident_t name)
    ident_t content = getContent();
 
    XMLNodeTag tag;
-   int start = loadTag(content, _position, tag, NULL);
+   loadTag(content, _position, tag, NULL);
    int end = parse(content, _position, getlength(content), NULL) - tag.Length() - 3;
 
    insertNode(end, name);
@@ -179,7 +177,7 @@ bool XMLNode :: readAttribute(ident_t name, DynamicString<char>& s)
 
    XMLNodeTag tag;
    AttributeList list;
-   int start = loadTag(content, _position, tag, &list);
+   loadTag(content, _position, tag, &list);
 
    ident_t value = list.get(name);
    if (!emptystr(value)) {
@@ -270,7 +268,7 @@ bool XMLTree :: load(path_t path, int encoding)
    return true;
 }
 
-void XMLTree :: setContent(int position, ident_t value)
+void XMLTree :: setContent(int, ident_t value)
 {
    XMLNodeTag tag;
    int start = loadTag(_content.str(), _position, tag, NULL);

@@ -10,6 +10,8 @@
 // --------------------------------------------------------------------------
 #include "jitcompiler.h"
 
+#pragma warning(disable : 4100)
+
 using namespace _ELENA_;
 
 // --- ELENA Class constants ---
@@ -506,7 +508,7 @@ size_t JITCompiler64 :: findFlags(void* refVMT)
 size_t JITCompiler64 :: findLength(void* refVMT)
 {
    ref64_t count = *(int*)((int)refVMT - elVMTCountOffset64);
-   return count;
+   return (size_t)count;
 }
 
 int JITCompiler64 :: findMethodAddress(void* refVMT, size_t message, size_t count)

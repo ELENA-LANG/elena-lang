@@ -9,6 +9,8 @@
 #ifndef syntaxH
 #define syntaxH 1
 
+#pragma warning(disable : 4458)
+
 namespace _ELENA_
 {
 

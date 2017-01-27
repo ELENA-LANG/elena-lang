@@ -128,7 +128,6 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t re
 void JITLinker::ReferenceHelper :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
 {
    ref_t mask = reference & mskAnyRef;
-   ref_t refID = reference & ~mskAnyRef;
 
    if (!module)
       module = _module;
@@ -226,7 +225,7 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
 
       // if it is a vmt method address
       if (currentMask == mskVMTMethodAddress) {
-         void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
+         resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
 
          // message id should be replaced with an appropriate method address
          size_t offset = it.key();
@@ -250,7 +249,7 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
       }
       // if it is a vmtx method address
       else if (currentMask == mskVMTXMethodAddress) {
-         void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
+         resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
 
          // message id should be replaced with an appropriate method address
          size_t offset = it.key();
@@ -405,7 +404,7 @@ void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo
 void* JITLinker :: resolveNativeVariable(ident_t reference, int mask)
 {
    // get target image & resolve virtual address
-   _Memory* image = _loader->getTargetSection(mskDataRef);
+   _Memory* image = _loader->getTargetSection((ref_t)mskDataRef);
    MemoryWriter writer(image);
 
    void* vaddress = calculateVAddress(&writer, mskDataRef, 4);

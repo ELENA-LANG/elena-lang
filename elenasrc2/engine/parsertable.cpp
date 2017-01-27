@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Parser table class implementation.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -174,7 +174,7 @@ int ParserTable :: generate()
          SymbolHash::Iterator it = FIRSTsets.getIt(*rule);
          while (!it.Eof() && it.key() == *rule) {
             if (*it == nsEps) {
-               SymbolHash::Iterator it = FOLLOWsets.getIt(l_symbol);
+               it = FOLLOWsets.getIt(l_symbol);
                while (!it.Eof() && it.key() == l_symbol) {
                   if (*it != nsEps) {
                      // check if the rule is ambigous

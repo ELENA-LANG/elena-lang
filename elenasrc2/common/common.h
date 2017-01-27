@@ -23,13 +23,15 @@
 
 namespace _ELENA_
 {
-   typedef wchar_t            path_c;
-   typedef wchar_t            wide_c;
-   typedef unsigned int       unic_c;
+   typedef wchar_t             path_c;
+   typedef wchar_t             wide_c;
+   typedef unsigned int        unic_c;
 
-   typedef unsigned char      uident_c;
-   typedef unsigned int       ref_t;
+   typedef unsigned char     uident_c;
+   typedef unsigned int         ref_t;
+   typedef unsigned int         pos_t;
    typedef unsigned long long ref64_t;
+   typedef unsigned long long pos64_t;
 
    // --- FileEncoding ---
    enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 = -4 };

@@ -185,7 +185,7 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
    }
 }
 
-void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
+void Project :: loadSourceCategory(_ConfigFile& config)
 {
    _ConfigFile::Nodes nodes;
    if (readCategory(config, opSources, nodes)) {
@@ -255,7 +255,7 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadTargetCategory(config);
 
    // load sources
-   loadSourceCategory(config, configPath);
+   loadSourceCategory(config);
 
    // load forwards
    loadForwardCategory(config);

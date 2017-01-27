@@ -161,7 +161,7 @@ class ByteCodeWriter
    void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
    void newDynamicObject(CommandTape& tape);
 
-   void popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void popObject(CommandTape& tape, LexicalType sourceTypeS);
 
    void copyBase(CommandTape& tape, int size);
    void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
@@ -224,7 +224,7 @@ class ByteCodeWriter
    void endSwitchBlock(CommandTape& tape);
    void closeFrame(CommandTape& tape);
 
-   void assignBaseTo(CommandTape& tape, LexicalType target, int offset = 0);
+   void assignBaseTo(CommandTape& tape, LexicalType target);
 
    void assignInt(CommandTape& tape, LexicalType target, int offset);
    void assignLong(CommandTape& tape, LexicalType target, int offset);

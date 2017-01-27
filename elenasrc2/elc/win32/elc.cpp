@@ -520,7 +520,6 @@ _ELENA_::_JITCompiler* _ELC_::Project::createJITCompiler64()
 bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
 {
    bool debugMode = BoolSetting(_ELENA_::opDebugMode);
-   bool result = true;
 
    _ELENA_::Unresolveds unresolveds(_ELENA_::Unresolved(), NULL);
    for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {

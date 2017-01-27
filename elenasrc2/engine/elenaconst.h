@@ -136,60 +136,60 @@ namespace _ELENA_
    enum ReferenceType
    {
       // masks
-      mskAnyRef              = 0xFF000000,
-      mskImageMask           = 0xE0000000,
-      mskTypeMask            = 0x0F000000,
+      mskAnyRef              = 0xFF000000u,
+      mskImageMask           = 0xE0000000u,
+      mskTypeMask            = 0x0F000000u,
 
-      mskCodeRef             = 0x00000000,
-      mskRelCodeRef          = 0x20000000,
-      mskRDataRef            = 0x40000000,
-      mskDebugRef            = 0x60000000,
-      mskStatRef             = 0x80000000,
-      mskDataRef             = 0xA0000000,
-      mskTLSRef              = 0xC0000000,
-      mskImportRef           = 0xE0000000,
+      mskCodeRef             = 0x00000000u,
+      mskRelCodeRef          = 0x20000000u,
+      mskRDataRef            = 0x40000000u,
+      mskDebugRef            = 0x60000000u,
+      mskStatRef             = 0x80000000u,
+      mskDataRef             = 0xA0000000u,
+      mskTLSRef              = 0xC0000000u,
+      mskImportRef           = 0xE0000000u,
 
-      mskRelImportRef        = 0xEF000000,
+      mskRelImportRef        = 0xEF000000u,
 
-      mskNativeCodeRef       = 0x18000000,
-      mskNativeRelCodeRef    = 0x38000000,
-      mskNativeRDataRef      = 0x48000000,
-      mskNativeDataRef       = 0xA8000000,
-      mskPreloadCodeRef      = 0x1C000000,
-      mskPreloadRelCodeRef   = 0x3C000000,
-      mskPreloadDataRef      = 0xAC000000,
-      mskNativeVariable      = 0xAD000000,
-      mskLockVariable        = 0xAE000000,   // HOTFIX : used to fool trylock opcode, adding virtual offset
+      mskNativeCodeRef       = 0x18000000u,
+      mskNativeRelCodeRef    = 0x38000000u,
+      mskNativeRDataRef      = 0x48000000u,
+      mskNativeDataRef       = 0xA8000000u,
+      mskPreloadCodeRef      = 0x1C000000u,
+      mskPreloadRelCodeRef   = 0x3C000000u,
+      mskPreloadDataRef      = 0xAC000000u,
+      mskNativeVariable      = 0xAD000000u,
+      mskLockVariable        = 0xAE000000u,   // HOTFIX : used to fool trylock opcode, adding virtual offset
 
-      mskInternalRef         = 0x13000000,   // internal code
-      mskInternalRelRef      = 0x33000000,   // internal code
-      mskSymbolRef           = 0x12000000,   // symbol code
-      mskSymbolRelRef        = 0x32000000,   // symbol code
-      mskVMTRef              = 0x41000000,   // class VMT
-      mskClassRef            = 0x11000000,   // class code
-      mskClassRelRef         = 0x31000000,   // class relative code
-      mskStatSymbolRef       = 0x82000000,   // reference to static symbol
+      mskInternalRef         = 0x13000000u,   // internal code
+      mskInternalRelRef      = 0x33000000u,   // internal code
+      mskSymbolRef           = 0x12000000u,   // symbol code
+      mskSymbolRelRef        = 0x32000000u,   // symbol code
+      mskVMTRef              = 0x41000000u,   // class VMT
+      mskClassRef            = 0x11000000u,   // class code
+      mskClassRelRef         = 0x31000000u,   // class relative code
+      mskStatSymbolRef       = 0x82000000u,   // reference to static symbol
 
-      mskVMTMethodAddress    = 0x43000000,   // the method address, where the reference offset is a message id, reference values is VMT
-      mskMetaRDataRef        = 0x44000000,   // meta data
-      mskVMTEntryOffset      = 0x45000000,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
-      mskSyntaxTreeRef       = 0x46000000,   // template, declared in subject namespace
-      mskVMTXMethodAddress   = 0x49000000,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
-      mskVMTXEntryOffset     = 0x4A000000,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
+      mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
+      mskMetaRDataRef        = 0x44000000u,   // meta data
+      mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
+      mskSyntaxTreeRef       = 0x46000000u,   // template, declared in subject namespace
+      mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
+      mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
 
-      mskConstantRef         = 0x01000000,   // reference to constant
-      mskLiteralRef          = 0x02000000,   // reference to constant literal
-      mskInt32Ref            = 0x03000000,   // reference to constant integer number
-      mskInt64Ref            = 0x04000000,   // reference to constant 64bit integer number
-      mskRealRef             = 0x05000000,   // reference to constant real number
-      mskMessage             = 0x06000000,   // message constant
-      mskCharRef             = 0x07000000,   // reference to character constant
-      mskWideLiteralRef      = 0x08000000,   // reference to constant wide literal
-      mskSignature           = 0x09000000,   // message signature constant
-      mskVerb                = 0x0A000000,   // message verb constant
-      mskExtMessage          = 0x0B000000,   // external message verb constant
-      mskPreloaded           = 0x0C000000,   // preloaded mask, should be used in combination with image mask
-      mskConstArray          = 0x0D000000    // constant array
+      mskConstantRef         = 0x01000000u,   // reference to constant
+      mskLiteralRef          = 0x02000000u,   // reference to constant literal
+      mskInt32Ref            = 0x03000000u,   // reference to constant integer number
+      mskInt64Ref            = 0x04000000u,   // reference to constant 64bit integer number
+      mskRealRef             = 0x05000000u,   // reference to constant real number
+      mskMessage             = 0x06000000u,   // message constant
+      mskCharRef             = 0x07000000u,   // reference to character constant
+      mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
+      mskSignature           = 0x09000000u,   // message signature constant
+      mskVerb                = 0x0A000000u,   // message verb constant
+      mskExtMessage          = 0x0B000000u,   // external message verb constant
+      mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
+      mskConstArray          = 0x0D000000u    // constant array
    };
 
    // --- ELENA Debug symbol constants ---

@@ -141,13 +141,13 @@ public:
 class _JITLoader
 {
 public:
-   virtual _Memory* getTargetSection(size_t mask) = 0;
+   virtual _Memory* getTargetSection(ref_t mask) = 0;
 
    virtual _Memory* getTargetDebugSection() = 0;
 
-   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask, bool silentMode) = 0;
-   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask) = 0;
-   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode) = 0;
+   virtual SectionInfo getSectionInfo(ident_t reference, ref_t mask, bool silentMode) = 0;
+   virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
+   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
 
    virtual size_t getLinkerConstant(int id) = 0;
 
@@ -165,9 +165,9 @@ public:
 
    virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
 
-   virtual void* resolveReference(ident_t reference, size_t mask) = 0;
+   virtual void* resolveReference(ident_t reference, ref_t mask) = 0;
 
-   virtual void mapReference(ident_t reference, void* vaddress, size_t mask) = 0;
+   virtual void mapReference(ident_t reference, void* vaddress, ref_t mask) = 0;
 
    virtual void addListener(_JITLoaderListener* listener) = 0;
 
@@ -267,7 +267,7 @@ public:
    }
    ReferenceName(ident_t reference, ident_t package)
    {
-      int length = getlength(package);
+      size_t length = getlength(package);
 
       if (reference.compare(package, length) && reference[length] == '\'') {
          copy(reference + length + 1);
@@ -295,7 +295,7 @@ public:
 
    NamespaceName(ident_t reference)
    {
-      int pos = reference.findLast('\'', 0);
+      size_t pos = reference.findLast('\'', 0);
       copy(reference, pos);
       _string[pos] = 0;
    }
@@ -335,8 +335,8 @@ public:
          if (!emptystr(_string)) {
             append('\'');
          }
-         int pos = path.find(PATH_SEPARATOR);
-         if (pos != -1) {
+         size_t pos = path.find(PATH_SEPARATOR);
+         if (pos != NOTFOUND_POS) {
             bufLen = IDENTIFIER_LEN;
             path.copyTo(buf, pos, bufLen);
 
@@ -732,7 +732,7 @@ inline void decodeMessage(ref_t message, ref_t& signatureRef, ref_t& verbId, int
 inline void decodeMessage64(ref64_t message, ref_t& signatureRef, ref_t& verbId, int& paramCount)
 {
    verbId = (message & VERBX_MASK) >> 56;
-   signatureRef = (message & SIGNX_MASK) >> 16;
+   signatureRef = (ref_t)((message & SIGNX_MASK) >> 16);
    paramCount = message & PARAMX_MASK;
 }
 

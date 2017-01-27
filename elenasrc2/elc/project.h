@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of the base class implementing
 //      ELENA Project interface.
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef projectH
@@ -108,7 +108,7 @@ protected:
    bool loadPathOption(_ConfigFile& config, ProjectSetting setting, path_t path);
 
    void loadCategory(_ConfigFile& config, ProjectSetting setting, path_t configPath);
-   void loadSourceCategory(_ConfigFile& config, path_t configPath);
+   void loadSourceCategory(_ConfigFile& config);
    void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
    void loadForwardCategory(_ConfigFile& config);
    void loadTargetCategory(_ConfigFile& config);

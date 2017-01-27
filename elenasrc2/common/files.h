@@ -64,8 +64,8 @@ public:
 
       bool stopped = false;
       while (!stopped) {
-         int pos = name.find('\'');
-         if (pos == -1) {
+         size_t pos = name.find('\'');
+         if (pos == NOTFOUND_POS) {
             pos = getlength(name);
             stopped = true;
          }
@@ -83,9 +83,9 @@ public:
    void changeExtension(path_t extension)
    {
       path_t path(_path.str());
-      int namepos = path.findLast(PATH_SEPARATOR) + 1;
-      int index = path.findLast(namepos, '.', -1);
-      if (index >= 0) {
+      size_t namepos = path.findLast(PATH_SEPARATOR) + 1;
+      size_t index = path.findLast(namepos, '.', NOTFOUND_POS);
+      if (index != NOTFOUND_POS) {
          _path[index] = 0;
       }
       _path.append('.');
@@ -108,12 +108,12 @@ public:
    static bool checkExtension(const char* path, const char* extension)
    {
       ident_t s = path;
-      int len = getlength(s);
+      size_t len = getlength(s);
 
-      int namepos = s.findLast(PATH_SEPARATOR) + 1;
+      size_t namepos = s.findLast(PATH_SEPARATOR) + 1;
 
-      int pos = s.findSubStr(namepos, '.', len - namepos, -1);
-      if (pos != -1) {
+      size_t pos = s.findSubStr(namepos, '.', len - namepos, NOTFOUND_POS);
+      if (pos != NOTFOUND_POS) {
          return ident_t(path + pos + 1).compare(extension);
       }
       else return emptystr(extension);
@@ -244,10 +244,10 @@ public:
 
    static bool checkExtension(path_t path)
    {
-      int index = path.findLast(PATH_SEPARATOR) + 1;
-      int dotpos = path.findLast(index, '.', -1);
+      size_t index = path.findLast(PATH_SEPARATOR) + 1;
+      size_t dotpos = path.findLast(index, '.', NOTFOUND_POS);
 
-      return dotpos != -1;
+      return dotpos != NOTFOUND_POS;
    }
 
    path_c* clone()
@@ -262,8 +262,8 @@ public:
 
    void copySubPath(path_t path)
    {
-      int pos =  path.findLast(PATH_SEPARATOR);
-      if (pos > 0) {
+      size_t pos =  path.findLast(PATH_SEPARATOR);
+      if (pos != NOTFOUND_POS) {
          _path.copy(path, pos);
          _path[pos] = 0;
       }
@@ -362,16 +362,16 @@ public:
 
    void copyName(path_t path)
    {
-      int index = path.findLast(PATH_SEPARATOR) + 1;
-      int dotpos = path.findLast('.', getlength(path));
+      size_t index = path.findLast(PATH_SEPARATOR) + 1;
+      size_t dotpos = path.findLast('.', getlength(path));
 
       _path.copy(path + index, dotpos - index);
    }
 
    void copyExtension(path_t path)
    {
-      int len = getlength(path);
-      int dotpos = path.findLast('.', len);
+      size_t len = getlength(path);
+      size_t dotpos = path.findLast('.', len);
 
       _path.copy(path + dotpos + 1);
    }

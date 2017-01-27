@@ -273,8 +273,7 @@ SyntaxTree::Node SyntaxTree :: readNextNode(size_t position)
 
    do {
       int type = reader.getDWord();
-      ref_t arg = reader.getDWord();
-      int str = reader.getDWord();
+      reader.getQWord();
 
       if (type == -1) {
          level--;
@@ -297,8 +296,7 @@ size_t SyntaxTree :: seekNodeEnd(size_t position)
       endPosition = reader.Position();
 
       int type = reader.getDWord();
-      ref_t arg = reader.getDWord();
-      int str = reader.getDWord();
+      reader.getQWord();
 
       if (type == -1) {
          level--;
@@ -424,7 +422,7 @@ SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
       NodePattern pattern = va_arg(argptr, NodePattern);
 
       size_t newLevel = level;
-      for (int j = 0; j < level; j++) {
+      for (size_t j = 0; j < level; j++) {
          Node member = nodes[j].firstChild();
 
          if (member != lxNone) {

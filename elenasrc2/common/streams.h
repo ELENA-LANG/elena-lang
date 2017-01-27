@@ -20,31 +20,35 @@ namespace _ELENA_
 class _Memory
 {
 public:
-   int& operator[](size_t position) const
+   int& operator[](pos_t position) const
    {
       return *(int*)get(position);
    }
 
-   virtual size_t Length() const = 0;
+   virtual pos_t Length() const = 0;
 
-   virtual void* get(size_t position) const = 0;
+   virtual void* get(pos_t position) const = 0;
 
-   virtual bool read(size_t position, void* s, size_t length) = 0;
+   virtual bool read(pos_t position, void* s, pos_t length) = 0;
 
-   virtual bool write(size_t position, const void* s, size_t length) = 0;
+   virtual bool write(pos_t position, const void* s, pos_t length) = 0;
 
-   virtual void insert(size_t position, const void* s, size_t length) = 0;
+   virtual void insert(pos_t position, const void* s, pos_t length) = 0;
 
-   virtual bool writeBytes(size_t position, char value, size_t length) = 0;
+   virtual bool writeBytes(pos_t position, char value, pos_t length) = 0;
 
-   virtual bool addReference(ref_t, size_t)
+   virtual bool addReference(ref_t, pos_t)
    {
       return false;
+   }
+   virtual bool addReference(ref_t ref, int offs)
+   {
+      return addReference(ref, (ref_t)offs);
    }
 
    virtual void* getReferences() { return NULL; }
 
-   virtual void trim(size_t position) = 0;
+   virtual void trim(pos_t position) = 0;
 
    virtual ~_Memory() {}
 };
@@ -55,18 +59,26 @@ class StreamReader
 {
 public:
    virtual bool Eof() = 0;
-   virtual size_t Position() = 0;
+   virtual pos_t Position() = 0;
 
-   virtual bool seek(size_t position) = 0;
+   virtual bool seek(pos_t position) = 0;
 
-   virtual bool read(void* s, size_t length) = 0;
+   virtual bool read(void* s, pos_t length) = 0;
 
    virtual const char* getLiteral(const char* def) = 0;
    virtual const wide_c* getLiteral(const wide_c* def) = 0;
 
-   int getDWord()
+   unsigned long long getQWord()
    {
-      int value = 0;
+      unsigned long long value = 0;
+      readQWord(value);
+
+      return value;
+   }
+
+   unsigned int getDWord()
+   {
+      unsigned int value = 0;
       readDWord(value);
 
       return value;
@@ -83,6 +95,11 @@ public:
    bool readDWord(int& dword)
    {
       return read((void*)&dword, 4);
+   }
+
+   bool readQWord(unsigned long long& qword)
+   {
+      return read((void*)&qword, 8);
    }
 
    bool readDWord(unsigned int& dword)
@@ -129,21 +146,21 @@ class StreamWriter
 public:
    virtual bool isOpened() = 0;
 
-   virtual size_t Position() const = 0;
+   virtual pos_t Position() const = 0;
 
-   virtual bool write(const void* s, size_t length) = 0;
+   virtual bool write(const void* s, pos_t length) = 0;
 
    bool writeLiteral(const char* s)
    {
       return writeLiteral(s, getlength(s) + 1);
    }
 
-   bool writeLiteral(const char* s, size_t length)
+   bool writeLiteral(const char* s, pos_t length)
    {
       return write((void*)s, length);
    }
 
-   bool writeLiteral(const wide_c* s, size_t length)
+   bool writeLiteral(const wide_c* s, pos_t length)
    {
       return write((void*)s, length << 1);
    }
@@ -187,8 +204,12 @@ public:
    {
       return write((void*)&ch, 1);
    }
+   bool writeByte(int ch)
+   {
+      return write((void*)&ch, 1);
+   }
 
-   virtual bool writeBytes(unsigned char ch, size_t count)
+   virtual bool writeBytes(unsigned char ch, pos_t count)
    {
       while (count > 0) {
          if (!write((char*)&ch, 1))
@@ -198,10 +219,10 @@ public:
       return true;
    }
 
-   void read(StreamReader* reader, size_t length)
+   void read(StreamReader* reader, pos_t length)
    {
-      char    buffer[BLOCK_SIZE];
-      size_t  blockLen = BLOCK_SIZE;
+      char   buffer[BLOCK_SIZE];
+      pos_t  blockLen = BLOCK_SIZE;
       while (length > 0) {
          if (blockLen >= length)
             blockLen = length;
@@ -221,15 +242,15 @@ public:
 class TextReader
 {
 public:
-   virtual size_t Position() = 0;
+   virtual pos_t Position() = 0;
 
-   virtual bool seek(size_t position) = 0;
+   virtual bool seek(pos_t position) = 0;
 
    virtual void reset() = 0;
 
-   virtual bool read(char* s, size_t length) = 0;
+   virtual bool read(char* s, pos_t length) = 0;
 
-   template<class String, class T> bool readLine(String& s, T* buffer, size_t size = BLOCK_SIZE)
+   template<class String, class T> bool readLine(String& s, T* buffer, pos_t size = BLOCK_SIZE)
    {
       s.clear();
 
@@ -242,7 +263,7 @@ public:
       return (getlength(s) != 0);
    }
 
-   template<class String, class T> bool readAll(String& s, T* buffer, size_t size = BLOCK_SIZE)
+   template<class String, class T> bool readAll(String& s, T* buffer, pos_t size = BLOCK_SIZE)
    {
       s.clear();
 
@@ -261,8 +282,8 @@ class TextWriter
 {
 public:
    virtual bool writeNewLine() = 0;
-   virtual bool write(const wide_c* s, size_t length) = 0;
-   virtual bool write(const char* s, size_t length) = 0;
+   virtual bool write(const wide_c* s, pos_t length) = 0;
+   virtual bool write(const char* s, pos_t length) = 0;
 
    virtual bool writeChar(char ch)
    {
@@ -319,7 +340,7 @@ public:
 //      return true;
 //   }
 
-   virtual bool fillText(const wide_c* s, size_t length, size_t count)
+   virtual bool fillText(const wide_c* s, pos_t length, pos_t count)
    {
       while (count > 0) {
          if (!write(s, length))
@@ -329,7 +350,7 @@ public:
       return true;
    }
 
-   virtual bool fillText(const char* s, size_t length, size_t count)
+   virtual bool fillText(const char* s, pos_t length, pos_t count)
    {
       while (count > 0) {
          if (!write(s, length))
@@ -346,12 +367,12 @@ public:
 
 template<class CHAR> class LiteralWriter : public TextWriter
 {
-   CHAR*   _text;
-   size_t  _offset;
-   size_t  _size;
+   CHAR* _text;
+   pos_t _offset;
+   pos_t _size;
 
 public:
-   size_t Position() const { return _offset; }
+   pos_t Position() const { return _offset; }
 
    void reset()
    {
@@ -363,9 +384,9 @@ public:
       return false; // !!
    }
 
-   virtual bool write(const wide_c* s, size_t length)
+   virtual bool write(const wide_c* s, pos_t length)
    {
-      size_t lenToWrite = _size - _offset;
+      pos_t lenToWrite = _size - _offset;
 
       if (Convertor::copy(_text + _offset, s, length, lenToWrite)) {
          _offset += lenToWrite;
@@ -375,9 +396,9 @@ public:
       else return false;
    }
 
-   virtual bool write(const char* s, size_t length)
+   virtual bool write(const char* s, pos_t length)
    {
-      size_t lenToWrite = _size - _offset;
+      pos_t lenToWrite = _size - _offset;
 
       if (Convertor::copy(_text + _offset, s, length, lenToWrite)) {
          _offset += lenToWrite;
@@ -408,13 +429,13 @@ public:
 //      else return false;
 //   }
 
-   LiteralWriter(CHAR* text, int size)
+   LiteralWriter(CHAR* text, pos_t size)
    {
       _text = text;
       _offset = 0;
       _size = size;
    }
-   LiteralWriter(CHAR* text, int size, int offset)
+   LiteralWriter(CHAR* text, pos_t size, pos_t offset)
    {
       _text = text;
       _offset = offset;
@@ -429,13 +450,13 @@ public:
 template<class CHAR> class LiteralTextReader : public TextReader
 {
    const CHAR* _text;
-   size_t      _offset;
-   size_t      _length;
+   pos_t       _offset;
+   pos_t       _length;
 
 public:
-   virtual size_t Position() { return _offset; }
+   virtual pos_t Position() { return _offset; }
 
-   virtual bool seek(size_t position)
+   virtual bool seek(pos_t position)
    {
       if (position < _length) {
          _offset = position;
@@ -450,7 +471,7 @@ public:
       _offset = 0;
    }
 
-   virtual bool read(char* s, size_t length)
+   virtual bool read(char* s, pos_t length)
    {
       if (_offset + length > _length) {
          length = _length - _offset;
@@ -476,7 +497,7 @@ public:
       _offset = 0;
       _length = getlength(text);
    }
-   LiteralTextReader(const CHAR* text, int offset)
+   LiteralTextReader(const CHAR* text, pos_t offset)
    {
       _text = text;
       _offset = offset;
@@ -552,23 +573,23 @@ typedef LiteralTextReader<char> IdentifierTextReader;
 
 class DumpReader : public StreamReader
 {
-   void*   _dump;
-   size_t  _offset;
-   size_t  _length;
+   void*  _dump;
+   pos_t  _offset;
+   pos_t  _length;
 
 public:
    virtual bool Eof() { return _offset >= _length; }
 
-   virtual size_t Position() { return _offset; }
+   virtual pos_t Position() { return _offset; }
 
-   virtual bool seek(size_t position)
+   virtual bool seek(pos_t position)
    {
       _offset = position;
 
       return true;
    }
 
-   virtual const char* getLiteral(const char* def)
+   virtual const char* getLiteral(const char*)
    {
       const char* s = (char*)_dump + _offset;
 
@@ -577,7 +598,7 @@ public:
       return s;
 
    }
-   virtual const wide_c* getLiteral(const wide_c* def)
+   virtual const wide_c* getLiteral(const wide_c*)
    {
       const wide_c* s = (const wide_c*)((char*)_dump + _offset);
 
@@ -586,7 +607,7 @@ public:
       return s;
    }
 
-   virtual bool read(void* s, size_t length)
+   virtual bool read(void* s, pos_t length)
    {
       if (_offset + length <= _length) {
          memcpy(s, (char*)_dump + _offset, length);
@@ -599,18 +620,18 @@ public:
 
    }
 
-   void setSize(size_t length)
+   void setSize(pos_t length)
    {
       _length = length;
    }
 
-   DumpReader(void* dump, size_t length)
+   DumpReader(void* dump, pos_t length)
    {
       _dump = dump;
 	  _offset = 0;
      _length = length;
    }
-   DumpReader(void* dump, size_t length, int offset)
+   DumpReader(void* dump, pos_t length, int offset)
    {
       _dump = dump;
       _offset = 0;
@@ -627,16 +648,16 @@ class MemoryReader : public StreamReader
 {
 protected:
    _Memory* _memory;
-   size_t   _position;
+   pos_t    _position;
 
 public:
    virtual bool Eof() { return _position >= _memory->Length(); }
 
-   virtual size_t Position() { return _position; }
+   virtual pos_t Position() { return _position; }
 
    void* Address() const { return _memory->get(_position); }
 
-   virtual bool seek(size_t position)
+   virtual bool seek(pos_t position)
    {
       if (position <= _memory->Length()) {
          _position = position;
@@ -646,7 +667,7 @@ public:
       else return false;
    }
 
-   virtual bool read(void* s, size_t length)
+   virtual bool read(void* s, pos_t length)
    {
       if (_memory->read(_position, s, length)) {
          _position += length;
@@ -709,7 +730,7 @@ public:
       _memory = memory;
       _position = 0;
    }
-   MemoryReader(_Memory* memory, size_t position)
+   MemoryReader(_Memory* memory, pos_t position)
    {
       _memory = memory;
       _position = position;
@@ -722,7 +743,7 @@ class MemoryWriter : public StreamWriter
 {
 protected:
    _Memory* _memory;
-   size_t   _position;
+   pos_t    _position;
 
 public:
    _Memory* Memory() { return _memory; }
@@ -731,9 +752,9 @@ public:
 
    virtual bool isOpened() { return (_memory != NULL); }
 
-   virtual size_t Position() const { return _position; }
+   virtual pos_t Position() const { return _position; }
 
-   virtual bool write(const void* s, size_t length)
+   virtual bool write(const void* s, pos_t length)
    {
       if (_memory->write(_position, s, length)) {
          _position += length;
@@ -743,7 +764,7 @@ public:
       else return false;
    }
 
-   bool writeBytes(unsigned char ch, size_t count)
+   bool writeBytes(unsigned char ch, pos_t count)
    {
       if (_memory->writeBytes(_position, ch, count)) {
          _position += count;
@@ -753,7 +774,7 @@ public:
       else return false;
    }
 
-   virtual bool seek(size_t position)
+   virtual bool seek(pos_t position)
    {
       if (position <= _memory->Length()) {
          _position = position;
@@ -768,14 +789,14 @@ public:
       _position = _memory->Length();
    }
 
-   void align(size_t alignment, unsigned char c)
+   void align(pos_t alignment, unsigned char c)
    {
-      size_t aligned = _ELENA_::align(_position, alignment);
+      pos_t aligned = _ELENA_::align(_position, alignment);
 
       writeBytes(c, aligned - _position);
    }
 
-   void insertDWord(size_t position, int value)
+   void insertDWord(pos_t position, int value)
    {
       _memory->insert(position, (char*)&value, 4);
 
@@ -783,7 +804,7 @@ public:
          _position += 4;
    }
 
-   void insertWord(size_t position, short value)
+   void insertWord(pos_t position, short value)
    {
       _memory->insert(position, (char*)&value, 2);
 
@@ -791,14 +812,14 @@ public:
          _position += 2;
    }
 
-   void insertByte(size_t position, char value)
+   void insertByte(pos_t position, char value)
    {
       _memory->insert(position, &value, 1);
 
       if (position <= _position)
          _position += 1;
    }
-   void insert(size_t position, void* value, size_t length)
+   void insert(pos_t position, void* value, pos_t length)
    {
       _memory->insert(position, value, length);
 
@@ -806,7 +827,7 @@ public:
          _position += length;
    }
 
-   bool writeRef(ref_t reference, size_t value)
+   bool writeRef(ref_t reference, pos_t value)
    {
       if (_memory->addReference(reference, _position)) {
          writeDWord(value);
@@ -821,7 +842,7 @@ public:
       _memory = memory;
       _position = _memory ? _memory->Length() : 0;
    }
-   MemoryWriter(_Memory* memory, size_t position)
+   MemoryWriter(_Memory* memory, pos_t position)
    {
       _memory = memory;
       _position = position;

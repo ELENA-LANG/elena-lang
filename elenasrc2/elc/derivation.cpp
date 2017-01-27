@@ -453,7 +453,7 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
 void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 {
    // HOT FIX : if there are several constants e.g. #10#13, it should be treated like literal terminal
-   if (terminal == tsCharacter && terminal.value.findSubStr(1, '#', terminal.length, -1) != -1) {
+   if (terminal == tsCharacter && terminal.value.findSubStr(1, '#', terminal.length, NOTFOUND_POS) != NOTFOUND_POS) {
       terminal.symbol = tsLiteral;
    }
 

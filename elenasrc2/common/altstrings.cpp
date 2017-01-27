@@ -3,7 +3,7 @@
 //
 //		This file contains String classes implementations
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //                                              (C)1994-2004, Unicode, Inc.
 //---------------------------------------------------------------------------
 
@@ -24,6 +24,8 @@
 #include "common.h"
 // --------------------------------------------------------------------------
 #include "altstrings.h"
+
+#pragma warning(disable : 4996)
 
 using namespace _ELENA_;
 
@@ -87,7 +89,7 @@ static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0x
  * If presented with a length > 4, this returns false.  The Unicode
  * definition of UTF-8 goes up to 4-byte sequences.
  */
-static bool isLegalUTF8(const unsigned char* source, int length)
+static bool isLegalUTF8(const unsigned char* source, size_t length)
 {
    unsigned char a;
    const unsigned char* srcptr = source + length;
@@ -437,7 +439,7 @@ char* StrFactory :: reallocate(char* s, size_t size)
    return (char*)realloc(s, size);
 }
 
-int StrHelper::findChar(const char* s, char ch, int length, int defValue)
+size_t StrHelper::findChar(const char* s, char ch, size_t length, size_t defValue)
 {
    const char* p = (const char*)memchr(s, ch, length);
    if (p == NULL) {
@@ -446,7 +448,7 @@ int StrHelper::findChar(const char* s, char ch, int length, int defValue)
    else return p - s;
 }
 
-int find(const char* s, const char* subs, int defValue)
+size_t find(const char* s, const char* subs, size_t defValue)
 {
    const char* p = strstr(s, subs);
    if (p==NULL) {
@@ -455,7 +457,7 @@ int find(const char* s, const char* subs, int defValue)
    else return p - s;
 }
 
-int __find(const char* s, char c, int defValue)
+size_t __find(const char* s, char c, size_t defValue)
 {
    const char* p = strchr(s, c);
    if (p==NULL) {
@@ -464,7 +466,7 @@ int __find(const char* s, char c, int defValue)
    else return p - s;
 }
 
-int __findLast(const char* s, char c, int defValue)
+size_t __findLast(const char* s, char c, size_t defValue)
 {
    const char* p = strrchr(s, c);
    if (p==NULL) {
@@ -473,7 +475,7 @@ int __findLast(const char* s, char c, int defValue)
    else return p - s;
 }
 
-int findSubStr(const char* s, char c, size_t length, int defValue)
+size_t findSubStr(const char* s, char c, size_t length, size_t defValue)
 {
    for (size_t i = 0; i < length; i++) {
       if (s[i] == c)
@@ -483,7 +485,7 @@ int findSubStr(const char* s, char c, size_t length, int defValue)
    return defValue;
 }
 
-void append(char* dest, const char* sour, int length)
+void append(char* dest, const char* sour, size_t length)
 {
    strncat(dest, sour, length);
 }
@@ -537,7 +539,7 @@ char* clone(const char* s)
    return emptystr(s) ? NULL : _strdup(s);
 }
 
-char* clone(const char* s, int length)
+char* clone(const char* s, size_t length)
 {
    return emptystr(s) ? NULL : StrFactory::allocate(length, s);
 }
@@ -614,13 +616,13 @@ long long strToLongLong(const char* s, int radix)
    long long number = 0;
 
    char dump[10];
-   int length = getlength(s);
+   size_t length = getlength(s);
    while (length > 9) {
       memcpy(dump, (char*)s, 9);
       dump[9] = 0;
 
       long long temp = strToLong(dump, radix);
-      for (int i = 0; i < (length - 9); i++) {
+      for (size_t i = 0; i < (length - 9); i++) {
          temp *= radix;
       }
       number += temp;
@@ -760,7 +762,7 @@ bool greater(const wchar_t* s1, const wchar_t* s2)
    else return (s1 == s2);
 }
 
-int __find(const wchar_t* s, wchar_t c, int defValue)
+size_t __find(const wchar_t* s, wchar_t c, size_t defValue)
 {
    const wchar_t* p = wcschr(s, c);
    if (p==NULL) {
@@ -769,7 +771,7 @@ int __find(const wchar_t* s, wchar_t c, int defValue)
    else return p - s;
 }
 
-int __findLast(const wchar_t* s, wchar_t c, int defValue)
+size_t __findLast(const wchar_t* s, wchar_t c, size_t defValue)
 {
    const wchar_t* p = wcsrchr(s, c);
    if (p==NULL) {
@@ -860,7 +862,7 @@ char* Convertor :: longlongToStr(long long n, char* s, int radix)
    return _i64toa(n, s, radix);
 }
 
-int findSubStr(const wchar_t* s, wchar_t c, size_t length, int defValue)
+size_t findSubStr(const wchar_t* s, wchar_t c, size_t length, size_t defValue)
 {
    for (size_t i = 0; i < length; i++) {
       if (s[i] == c)
@@ -955,7 +957,7 @@ bool greater(const unsigned short* s1, const unsigned short* s2)
    return greater(s1, s2, getlength(s1) + 1);
 }
 
-int __find(const unsigned short* s, unsigned short c, int defValue)
+size_t __find(const unsigned short* s, unsigned short c, size_t defValue)
 {
    const unsigned short* p = s;
 
@@ -969,7 +971,7 @@ int __find(const unsigned short* s, unsigned short c, int defValue)
    return defValue;
 }
 
-int __findLast(const unsigned short* s, unsigned short c, int defValue)
+size_t __findLast(const unsigned short* s, unsigned short c, size_t defValue)
 {
    const unsigned short* p = s + getlength(s);
 
@@ -1171,7 +1173,7 @@ char* Convertor :: longlongToStr(long long n, char* s, int radix)
    return s;
 }
 
-int findSubStr(const unsigned short* s, unsigned short c, size_t length, int defValue)
+size_t findSubStr(const unsigned short* s, unsigned short c, size_t length, size_t defValue)
 {
    for (size_t i = 0; i < length; i++) {
       if (s[i] == c)
@@ -1335,7 +1337,7 @@ int ident_t :: toInt()
    return Convertor::strToInt(_string);
 }
 
-int ident_t :: toInt(int index)
+int ident_t :: toInt(size_t index)
 {
    return Convertor::strToInt(_string + index);
 }
@@ -1345,44 +1347,44 @@ long ident_t :: toLong(int radix)
    return strToLong(_string, radix);
 }
 
-long ident_t :: toLong(int radix, int index)
+long ident_t :: toLong(int radix, size_t index)
 {
    return strToLong(_string + index, radix);
 }
 
-long ident_t :: toULong(int radix, int index)
+long ident_t :: toULong(int radix, size_t index)
 {
    return strToULong(_string + index, radix);
 }
 
-long long ident_t :: toULongLong(int radix, int index)
+long long ident_t :: toULongLong(int radix, size_t index)
 {
    return strToLongLong(_string + index, radix);
 }
 
-double ident_t :: toDouble(int index)
+double ident_t :: toDouble(size_t index)
 {
    return strToDouble(_string + index);
 }
 
-int ident_t :: find(const char* s, int defValue)
+size_t ident_t :: find(const char* s, size_t defValue)
 {
    return ::find(_string, s, defValue);
 }
 
-int ident_t :: findSubStr(int index, const char* s, int defValue)
+size_t ident_t :: findSubStr(size_t index, const char* s, size_t defValue)
 {
-   int retVal = ::find(_string + index, s, defValue);
+   size_t retVal = ::find(_string + index, s, defValue);
 
-   return retVal == -1 ? -1 : retVal + index;
+   return retVal == NOTFOUND_POS ? NOTFOUND_POS : retVal + index;
 }
 
-int ident_t :: find(char c, int defValue)
+size_t ident_t :: find(char c, size_t defValue)
 {
    return __find(_string, c, defValue);
 }
 
-int ident_t :: find(int index, char ch, int defValue)
+size_t ident_t :: find(size_t index, char ch, size_t defValue)
 {
    for (size_t i = index; i < getlength(_string); i++) {
       if (_string[i] == ch)
@@ -1392,14 +1394,14 @@ int ident_t :: find(int index, char ch, int defValue)
    return defValue;
 }
 
-int ident_t :: findLast(char c, int defValue)
+size_t ident_t :: findLast(char c, size_t defValue)
 {
    return __findLast(_string, c, defValue);
 }
 
-int ident_t :: findLast(int index, char ch, int defValue)
+size_t ident_t :: findLast(size_t index, char ch, size_t defValue)
 {
-   int i = getlength(_string);
+   size_t i = getlength(_string);
    while (i >= index) {
       if (_string[i] == ch)
          return i;
@@ -1410,10 +1412,10 @@ int ident_t :: findLast(int index, char ch, int defValue)
    return defValue;
 }
 
-int ident_t :: findSubStr(int index, char c, size_t length, int defValue)
+size_t ident_t :: findSubStr(size_t index, char c, size_t length, size_t defValue)
 {
-   int pos = ::findSubStr(_string + index, c, length, -1);
-   if (pos != -1) {
+   size_t pos = ::findSubStr(_string + index, c, length, NOTFOUND_POS);
+   if (pos != NOTFOUND_POS) {
       return index + pos;
    }
    else return defValue;
@@ -1424,12 +1426,12 @@ char* ident_t :: clone()
    return ::clone(_string);
 }
 
-char* ident_t :: clone(int index)
+char* ident_t :: clone(size_t index)
 {
    return ::clone(_string + index);
 }
 
-char* ident_t::clone(int index, int length)
+char* ident_t::clone(size_t index, size_t length)
 {
    return ::clone(_string + index, length);
 }
@@ -1449,22 +1451,22 @@ bool ident_t::compare(const char* s, size_t length) const
    return ::compare(_string, s, length);
 }
 
-bool ident_t::compare(const char* s, int index, size_t length)
+bool ident_t::compare(const char* s, size_t index, size_t length)
 {
    return ::compare(_string + index, s, length);
 }
 
 bool ident_t :: endsWith(const char* s)
 {
-   int slen = getlength(s);
-   int len = getlength(_string);
+   size_t slen = getlength(s);
+   size_t len = getlength(_string);
 
    return ::compare(_string + len - slen, s, slen);
 }
 
 bool ident_t::startsWith(const char* s)
 {
-   int slen = getlength(s);
+   size_t slen = getlength(s);
    return ::compare(_string, s, slen);
 }
 
@@ -1485,7 +1487,7 @@ int wide_t :: toInt()
    return strToInt(_string);
 }
 
-int wide_t :: toInt(int index)
+int wide_t :: toInt(size_t index)
 {
    return strToInt(_string + index);
 }
@@ -1495,17 +1497,17 @@ long wide_t :: toLong(int radix)
    return strToLong(_string, radix);
 }
 
-long wide_t :: toLong(int radix, int index)
+long wide_t :: toLong(int radix, size_t index)
 {
    return strToLong(_string + index, radix);
 }
 
-int wide_t :: find(wide_c c, int defValue)
+size_t wide_t :: find(wide_c c, size_t defValue)
 {
    return __find(_string, c, defValue);
 }
 
-int wide_t :: find(int index, wide_c ch, int defValue)
+size_t wide_t :: find(size_t index, wide_c ch, size_t defValue)
 {
    for (size_t i = index; i < getlength(_string); i++) {
       if (_string[i] == ch)
@@ -1515,14 +1517,14 @@ int wide_t :: find(int index, wide_c ch, int defValue)
    return defValue;
 }
 
-int wide_t :: findLast(wide_c c, int defValue)
+size_t wide_t :: findLast(wide_c c, size_t defValue)
 {
    return __findLast(_string, c, defValue);
 }
 
-int wide_t :: findLast(int index, wide_c ch, int defValue)
+size_t wide_t :: findLast(size_t index, wide_c ch, size_t defValue)
 {
-   int i = getlength(_string);
+   size_t i = getlength(_string);
    while (i >= index) {
       if (_string[i] == ch)
          return i;
@@ -1533,7 +1535,7 @@ int wide_t :: findLast(int index, wide_c ch, int defValue)
    return defValue;
 }
 
-int wide_t :: findSubStr(int index, wide_c c, size_t length, int defValue)
+size_t wide_t :: findSubStr(size_t index, wide_c c, size_t length, size_t defValue)
 {
    return ::findSubStr(_string + index, c, length, defValue);
 }
@@ -1543,7 +1545,7 @@ wide_c* wide_t :: clone()
    return ::clone(_string);
 }
 
-wide_c* wide_t :: clone(int index)
+wide_c* wide_t :: clone(size_t index)
 {
    return ::clone(_string + index);
 }

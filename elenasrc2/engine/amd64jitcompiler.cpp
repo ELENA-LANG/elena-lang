@@ -11,6 +11,8 @@
 #include "amd64jitcompiler.h"
 #include "bytecode.h"
 
+#pragma warning(disable : 4100)
+
 using namespace _ELENA_;
 
 // --- ELENA Object constants ---

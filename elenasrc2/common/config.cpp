@@ -2,11 +2,13 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class implementation
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
 #include "config.h"
+
+#pragma warning(disable : 4100)
 
 using namespace _ELENA_;
 
@@ -408,7 +410,7 @@ void XmlConfigFile :: setSetting(ident_t key, const char* value)
       int end = key.find('/', length);
 
       String<char, 255> category(key, end);
-      int position = find(_tree, category.str());
+      position = find(_tree, category.str());
 
       XMLNode parent(position, &_tree);
       XMLNode newNode = parent.appendNode(key);

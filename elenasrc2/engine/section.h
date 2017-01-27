@@ -44,7 +44,7 @@ public:
 
    virtual void insert(size_t position, const void* s, size_t length);
 
-   virtual bool addReference(ref_t reference, size_t position)
+   virtual bool addReference(ref_t reference, pos_t position)
    {
       _references.add(reference, position);
 

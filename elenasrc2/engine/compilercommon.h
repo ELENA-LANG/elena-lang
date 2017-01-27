@@ -12,52 +12,54 @@
 #include "elena.h"
 #include "syntaxtree.h"
 
+#define INVALID_REF   (ref_t)-1
+
 // virtual objects
-#define V_FLAG        (size_t)-03
-#define V_NIL         (size_t)-04
+#define V_FLAG        (ref_t)-03
+#define V_NIL         (ref_t)-04
 
-#define V_BINARY      (size_t)-10
-#define V_INT32       (size_t)-11
-#define V_PTR32       (size_t)-12
-#define V_INT64       (size_t)-13
-#define V_REAL64      (size_t)-14
-#define V_SIGNATURE   (size_t)-18
-#define V_MESSAGE     (size_t)-19
-#define V_VERB        (size_t)-20
-#define V_EXTMESSAGE  (size_t)-21
-#define V_SYMBOL      (size_t)-22
+#define V_BINARY      (ref_t)-10
+#define V_INT32       (ref_t)-11
+#define V_PTR32       (ref_t)-12
+#define V_INT64       (ref_t)-13
+#define V_REAL64      (ref_t)-14
+#define V_SIGNATURE   (ref_t)-18
+#define V_MESSAGE     (ref_t)-19
+#define V_VERB        (ref_t)-20
+#define V_EXTMESSAGE  (ref_t)-21
+#define V_SYMBOL      (ref_t)-22
 
-#define V_OBJECT      (size_t)-28
+#define V_OBJECT      (ref_t)-28
 
-#define V_OBJARRAY    (size_t)-30
-#define V_INT32ARRAY  (size_t)-31
-#define V_ARGARRAY    (size_t)-32
-#define V_BINARYARRAY (size_t)-35
-#define V_INT16ARRAY  (size_t)-38
-#define V_INT8ARRAY   (size_t)-39
+#define V_OBJARRAY    (ref_t)-30
+#define V_INT32ARRAY  (ref_t)-31
+#define V_ARGARRAY    (ref_t)-32
+#define V_BINARYARRAY (ref_t)-35
+#define V_INT16ARRAY  (ref_t)-38
+#define V_INT8ARRAY   (ref_t)-39
 
-#define V_IFBRANCH    (size_t)-4097
-#define V_IFNOTBRANCH (size_t)-4098
-#define V_WARNING1    (size_t)-4099
-#define V_WARNING2    (size_t)-4100
-#define V_WARNING3    (size_t)-4101
+#define V_IFBRANCH    (ref_t)-4097
+#define V_IFNOTBRANCH (ref_t)-4098
+#define V_WARNING1    (ref_t)-4099
+#define V_WARNING2    (ref_t)-4100
+#define V_WARNING3    (ref_t)-4101
 
-#define V_STATCKSAFE  (size_t)-8192
-#define V_EMBEDDABLE  (size_t)-8193
-#define V_STATIC      (size_t)-8194
-#define V_SEALED      (size_t)-8195
-#define V_LIMITED     (size_t)-8196
-#define V_STRUCT      (size_t)-8197
-#define V_ENUMLIST    (size_t)-8198
-#define V_DYNAMIC     (size_t)-8199
-#define V_STRING      (size_t)-8200
-#define V_CONST       (size_t)-8201
-#define V_GENERIC     (size_t)-8202
-#define V_EXTENSION   (size_t)-8203
-#define V_NOSTRUCT    (size_t)-8204
-#define V_ACTION      (size_t)-8205
-#define V_GROUP       (size_t)-8206
-#define V_PRELOADED   (size_t)-8207
+#define V_STATCKSAFE  (ref_t)-8192
+#define V_EMBEDDABLE  (ref_t)-8193
+#define V_STATIC      (ref_t)-8194
+#define V_SEALED      (ref_t)-8195
+#define V_LIMITED     (ref_t)-8196
+#define V_STRUCT      (ref_t)-8197
+#define V_ENUMLIST    (ref_t)-8198
+#define V_DYNAMIC     (ref_t)-8199
+#define V_STRING      (ref_t)-8200
+#define V_CONST       (ref_t)-8201
+#define V_GENERIC     (ref_t)-8202
+#define V_EXTENSION   (ref_t)-8203
+#define V_NOSTRUCT    (ref_t)-8204
+#define V_ACTION      (ref_t)-8205
+#define V_GROUP       (ref_t)-8206
+#define V_PRELOADED   (ref_t)-8207
 
 namespace _ELENA_
 {

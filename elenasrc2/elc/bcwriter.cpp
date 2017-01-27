@@ -634,7 +634,7 @@ void ByteCodeWriter :: loadInternalReference(CommandTape& tape, ref_t reference)
    tape.write(bcACopyR, reference | mskInternalRef);
 }
 
-void ByteCodeWriter :: assignBaseTo(CommandTape& tape, LexicalType target, int offset)
+void ByteCodeWriter :: assignBaseTo(CommandTape& tape, LexicalType target)
 {
    switch (target) {
       case lxResult:
@@ -856,7 +856,7 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape)
    tape.releaseLabel();
 }
 
-void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType)
 {
    switch (sourceType) {
       case lxResult:
@@ -3817,8 +3817,6 @@ void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node 
 
 void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, ExternalScope& externalScope)
 {
-   ref_t functionRef = 0;
-
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxExtInteranlRef) {
@@ -3903,7 +3901,6 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
       declareBlock(tape);
    }
 
-   bool stdCall = (node == lxStdExternalCall);
    bool apiCall = (node == lxCoreAPICall);
 
    // compile argument list
@@ -4076,7 +4073,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 
    size_t counter = countChildren(node);
    size_t index = 0;
-   for (int i = 0; i < counter; i++) {
+   for (size_t i = 0; i < counter; i++) {
       // get parameters in reverse order if required
       current = getChild(node, directMode ? counter - i - 1 : i);
       if (current == lxExpression) {

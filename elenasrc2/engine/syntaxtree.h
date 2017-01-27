@@ -9,6 +9,8 @@
 #ifndef syntaxTreeH
 #define syntaxTreeH 1
 
+#pragma warning(disable : 4458)
+
 namespace _ELENA_
 {
 
@@ -312,12 +314,21 @@ public:
 //      }
 
       void newNode(LexicalType type, ref_t argument);
+      void newNode(LexicalType type, int argument)
+      {
+         newNode(type, (ref_t)argument);
+      }
       void newNode(LexicalType type, ident_t argument);
       void newNode(LexicalType type)
       {
          newNode(type, 0u);
       }
       void appendNode(LexicalType type, ref_t argument)
+      {
+         newNode(type, argument);
+         closeNode();
+      }
+      void appendNode(LexicalType type, int argument)
       {
          newNode(type, argument);
          closeNode();
@@ -353,11 +364,11 @@ public:
 
       Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument, int strArgument);
 
-      Node appendStrNode(LexicalType type, int strOffset)
+      Node appendStrNode(LexicalType nodeType, int strOffset)
       {
          int end_position = tree->seekNodeEnd(position);
 
-         return tree->insertStrNode(end_position, type, strOffset);
+         return tree->insertStrNode(end_position, nodeType, strOffset);
       }
 
    public:
@@ -380,22 +391,22 @@ public:
 
       operator LexicalType() const { return type; }
 
-      bool operator == (LexicalType type)
+      bool operator == (LexicalType operand)
       {
-         return this->type == type;
+         return this->type == operand;
       }
-      bool operator != (LexicalType type)
+      bool operator != (LexicalType operand)
       {
-         return this->type != type;
+         return this->type != operand;
       }
 
-      void operator = (LexicalType type)
+      void operator = (LexicalType operand)
       {
-         this->type = type;
+         this->type = operand;
 
          MemoryReader reader(&tree->_body, position - 12);
 
-         *(int*)(reader.Address()) = (int)type;
+         *(int*)(reader.Address()) = (int)operand;
       }
 
       void set(LexicalType type, ref_t argument)
@@ -410,6 +421,11 @@ public:
 
          MemoryReader reader(&tree->_body, position - 8);
          *(int*)(reader.Address()) = (int)argument;
+      }
+
+      void setArgument(int argument)
+      {
+         setArgument((ref_t)argument);
       }
 
       Node firstChild() const

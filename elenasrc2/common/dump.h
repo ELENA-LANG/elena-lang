@@ -40,6 +40,10 @@ public:
 
    virtual bool writeBytes(size_t position, char value, size_t length);
 
+   bool writeSize(size_t position, size_t value)
+   {
+      return write(position, (void*)&value, sizeof(size_t));
+   }
    bool writeDWord(size_t position, int value)
    {
       return write(position, (void*)&value, 4);

@@ -9,6 +9,8 @@
 #ifndef listsH
 #define listsH 1
 
+#pragma warning(disable : 4458)
+
 namespace _ELENA_
 {
 
@@ -302,9 +304,9 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
 
 template <class Key, class T, bool KeyStored> struct _MemoryMapItem
 {
-   unsigned int next;      // offset from the memory dump begining
-   Key    key;       // for Key=TCHAR* if keyStored is true, key is an offset in the map buffer
-   T      item;
+   unsigned int next; // offset from the memory dump begining
+   Key          key;  // for Key=TCHAR* if keyStored is true, key is an offset in the map buffer
+   T            item;
 
    int getKey(int key) const
    {
@@ -424,7 +426,7 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    ident_t getKey(ident_t key) const
    {
       if (KeyStored) {
-         return (const char*)this->key + (int)this;
+         return (const char*)this->key + (size_t)this;
       }
       else return key;
    }
@@ -432,7 +434,7 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    bool operator ==(ident_t key) const
    {
       if (KeyStored) {
-         return key.compare((const char*)this->key + (int)this);
+         return key.compare((const char*)this->key + (size_t)this);
       }
       else return key.compare(this->key);
    }
@@ -440,14 +442,14 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    bool operator !=(ident_t key) const
    {
       if (KeyStored) {
-         return !key.compare((const char*)this->key + (int)this);
+         return !key.compare((const char*)this->key + (size_t)this);
       }
       else return !key.compare(this->key);
    }
 
    bool operator <=(ident_t key) const
    {
-      ident_t s = KeyStored ? (const char*)this->key + (int)this : (const char*)this->key;
+      ident_t s = KeyStored ? (const char*)this->key + (size_t)this : (const char*)this->key;
 
       return !s.greater(key);
    }
@@ -455,7 +457,7 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    bool operator <(ident_t key) const
    {
       if (KeyStored) {
-         return key.greater((const char*)this->key + (int)this);
+         return key.greater((const char*)this->key + (size_t)this);
       }
       else return key.greater(this->key);
    }
@@ -468,7 +470,7 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    bool operator >(ident_t key) const
    {
       if (KeyStored) {
-         return ident_t((const char*)((int)this + (int)this->key));
+         return ident_t((const char*)((size_t)this + (size_t)this->key));
       }
       else return this->key.greater(key);
    }
@@ -1718,7 +1720,7 @@ public:
 
    Iterator getIt(Key key) const
    {
-      unsigned int beginning = (unsigned int)_buffer.get(0);
+      size_t beginning = (size_t)_buffer.get(0);
 
       if (_buffer.Length() > 0) {
          // get top item position
@@ -1762,7 +1764,7 @@ public:
 
    T get(Key key) const
    {
-      unsigned int beginning = (unsigned int)_buffer.get(0);
+      size_t beginning = (size_t)_buffer.get(0);
 
       if (_buffer.Length() > 0) {
          // get top item position
@@ -1866,7 +1868,7 @@ public:
    const char* storeKey(unsigned int position, ident_t key)
    {
       if (KeyStored) {
-         unsigned int keyPos = _buffer.Length();
+         size_t keyPos = _buffer.Length();
 
          _buffer.writeLiteral(keyPos, key);
 
@@ -1893,11 +1895,11 @@ public:
 
       if (KeyStored) {
          // save stored key
-         ref_t storedKey = (ref_t)storeKey(position, key);
-         _buffer.writeDWord(position + 4, storedKey);
+         size_t storedKey = (size_t)storeKey(position, key);
+         _buffer.writeSize(position + 4, storedKey);
       }
 
-      unsigned int beginning = (unsigned int)_buffer.get(0);
+      size_t beginning = (size_t)_buffer.get(0);
 
       if (_tale != 0) {
          Item* tale = (Item*)(beginning + _tale);
@@ -2563,7 +2565,7 @@ public:
 
    Iterator getIt(Key key) const
    {
-      unsigned int beginning = (unsigned int)_buffer.get(0);
+      size_t beginning = (size_t)_buffer.get(0);
 
       unsigned int index = _scaleKey(key);
       if (index > hashSize)
@@ -2621,7 +2623,7 @@ public:
    const char* storeKey(unsigned int position, ident_t key)
    {
       if (KeyStored) {
-         unsigned int keyPos = _buffer.Length();
+         size_t keyPos = _buffer.Length();
 
          _buffer.writeLiteral(keyPos, key);
 
@@ -2645,11 +2647,11 @@ public:
       _buffer.write(tale, &item, sizeof(item));
       if (KeyStored) {
          // save stored key
-         ref_t storedKey = (ref_t)storeKey(tale, key);
-         _buffer.writeDWord(tale + 4, storedKey);
+         size_t storedKey = (size_t)storeKey(tale, key);
+         _buffer.writeSize(tale + 4, storedKey);
       }
 
-      unsigned int beginning = (unsigned int)_buffer.get(0);
+      size_t beginning = (size_t)_buffer.get(0);
 
       Item* current = (position != 0) ? (Item*)(beginning + position) : NULL;
       if (current && *current <= key) {
@@ -2844,9 +2846,9 @@ template<class T> class IntFixedMap
 public:
    struct Iterator
    {
-      char* _array;
-      int   _position;
-      int   _end;
+      char*  _array;
+      size_t _position;
+      size_t _end;
 
       Iterator& operator =(const Iterator& it)
       {
@@ -2920,7 +2922,7 @@ public:
 
    unsigned int Count() const { return _buffer[0]; }
 
-   unsigned int Size() const { return _buffer.Length(); }
+   size_t Size() const { return _buffer.Length(); }
 
    void* Array() const { return _buffer.get(0); }
 
@@ -2934,7 +2936,7 @@ public:
       int count = _buffer[0];
       int position = 4;
       while (count > 0) {
-         if (_buffer[position]==key)
+         if (_buffer[position]==(int)key)
             return Iterator((char*)_buffer.get(0), position);
 
          count--;
@@ -2959,7 +2961,7 @@ public:
       int count = _buffer[0];
       int position = 4;
       while (count > 0) {
-         if (_buffer[position]==key)
+         if (_buffer[position]==(int)key)
             return (T*)_buffer.get(position + 4);
 
          count--;
@@ -2973,7 +2975,7 @@ public:
       int count = _buffer[0];
       int position = 4;
       while (count > 0) {
-         if (_buffer[position]==key)
+         if (_buffer[position]==(int)key)
             return true;
 
          count--;

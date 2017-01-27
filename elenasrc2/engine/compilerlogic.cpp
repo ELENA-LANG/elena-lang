@@ -1049,7 +1049,7 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
    }
 }
 
-ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info)
+ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
 {
    if (test(info.header.flags, elStructureWrapper)) {
       ClassInfo::FieldInfo field = info.fieldTypes.get(0);
@@ -1213,7 +1213,7 @@ void CompilerLogic :: optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler&
    }
 
    if (localBoxing) {
-      bool variable = !isReadonly(scope, targetRef);
+      variable = !isReadonly(scope, targetRef);
 
       compiler.injectLocalBoxing(exprNode, node.argument);
 
@@ -1263,7 +1263,7 @@ inline bool seekDuplicateBoxing(SNode& current, SNode target)
    while (current != lxNone) {
       if (current == lxBoxing) {
          SNode duplicate = current.findSubNodeMask(lxObjectMask);
-         if (duplicate.type == target.type && duplicate.argument == target.type) {
+         if (duplicate.type == target.type && duplicate.argument == (ref_t)target.type) {
             return true;
          }
       }

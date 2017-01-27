@@ -56,7 +56,7 @@ public:
       return _exportReferences.start();
    }
 
-   virtual _Memory* getTargetSection(size_t mask);
+   virtual _Memory* getTargetSection(ref_t mask);
 
    virtual SectionInfo getSectionInfo(ident_t reference, size_t mask, bool silentMode);
    virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode);
