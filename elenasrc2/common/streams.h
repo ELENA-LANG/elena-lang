@@ -41,10 +41,6 @@ public:
    {
       return false;
    }
-   virtual bool addReference(ref_t ref, int offs)
-   {
-      return addReference(ref, (ref_t)offs);
-   }
 
    virtual void* getReferences() { return NULL; }
 

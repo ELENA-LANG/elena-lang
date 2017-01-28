@@ -2922,7 +2922,7 @@ public:
 
    unsigned int Count() const { return _buffer[0]; }
 
-   size_t Size() const { return _buffer.Length(); }
+   pos_t Size() const { return _buffer.Length(); }
 
    void* Array() const { return _buffer.get(0); }
 

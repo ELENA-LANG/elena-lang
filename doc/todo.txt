@@ -402,7 +402,8 @@ Pipeline:
                        * shoud "is" verb always return boolean?
                        * default dynamic constructor
                        
-              xdev - byte code optimization                               
+              xdev - byte code optimization  
+                       * use rep stos to clear the object after creating      
                        * review system_test code : $Console (ControlTest)
                        * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
                          better to compare value ?? (if it is true / false constants for example)

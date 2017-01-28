@@ -5222,5 +5222,5 @@ void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t r
 
    // add vmt reference
    if (target != lxNone)
-      writer.Memory()->addReference(target.argument | mskVMTRef, -4);
+      writer.Memory()->addReference(target.argument | mskVMTRef, (pos_t)-4);
 }

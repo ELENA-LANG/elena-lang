@@ -37,12 +37,12 @@ public:
       return _references.Array();
    }
 
-   size_t Size() const
+   pos_t Size() const
    {
       return Length() + _references.Size();
    }
 
-   virtual void insert(size_t position, const void* s, size_t length);
+   virtual void insert(pos_t position, const void* s, pos_t length);
 
    virtual bool addReference(ref_t reference, pos_t position)
    {
@@ -56,7 +56,7 @@ public:
 
    friend Section* _readSection(StreamReader* reader);
 
-   friend void _readToMap(StreamReader* reader, SectionMap* map, size_t counter, ref_t& key, Section* section);
+   friend void _readToMap(StreamReader* reader, SectionMap* map, pos_t counter, ref_t& key, Section* section);
 
    friend void _writeIterator(StreamWriter* writer, int key, Section* section)
    {
@@ -82,7 +82,7 @@ public:
 // --- section friend functions ---
 Section* _readSection(StreamReader* reader);
 
-void _readToMap(StreamReader* reader, SectionMap* map, size_t counter, ref_t& key, Section* section);
+void _readToMap(StreamReader* reader, SectionMap* map, pos_t counter, ref_t& key, Section* section);
 
 } // _ELENA_
 

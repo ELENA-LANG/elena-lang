@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Engine Data Section
 //		classes.
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -26,7 +26,7 @@ Section* _ELENA_::_readSection(StreamReader* reader)
    return section;
 }
 
-void _ELENA_::_readToMap(StreamReader* reader, SectionMap* map, size_t counter, ref_t& key, Section* section)
+void _ELENA_::_readToMap(StreamReader* reader, SectionMap* map, pos_t counter, ref_t& key, Section* section)
 {
    while (counter > 0) {
       reader->readDWord(key);
@@ -38,7 +38,7 @@ void _ELENA_::_readToMap(StreamReader* reader, SectionMap* map, size_t counter, 
    }
 }
 
-void Section :: insert(size_t position, const void* s, size_t length)
+void Section :: insert(pos_t position, const void* s, pos_t length)
 {
    MemoryDump::insert(position, s, length);
 
@@ -65,7 +65,7 @@ void Section :: fixupReferences(void* param, ref_t(realloc)(ref_t, ref_t, ref_t,
 {
    RelocationMap::Iterator it = _references.start();
    while (!it.Eof()) {
-      size_t pos = *it;
+      pos_t pos = *it;
 
       *((int*)(_buffer + pos)) = realloc(pos, it.key(), *((int*)(_buffer + pos)), param);
 //      if ((key & mskSectionMask) == mask) {

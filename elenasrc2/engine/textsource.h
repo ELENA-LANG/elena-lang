@@ -42,8 +42,8 @@ protected:
       info.line = token;
 
       size_t len = info.length;
-      _ELENA_::Convertor::copy(token, _line + info.position, len, len);
-      token[len] = 0;
+      _ELENA_::Convertor::copy(token, _line + info.position, len, length);
+      token[length] = 0;
    }
 
    void copyQuote(_ELENA_::LineInfo& info)

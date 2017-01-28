@@ -1151,7 +1151,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
          else if (outer.outerObject.kind == okUnknown) {
             // check if there is inherited fields
             outer.reference = info.fields.get(identifier);
-            if (outer.reference >= 0) {
+            if (outer.reference != INVALID_REF) {
                return ObjectInfo(okField, outer.reference);
             }
             else return outer.outerObject;

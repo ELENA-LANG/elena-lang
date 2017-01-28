@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of ELENA Engine Data Memory dump
 //		classes.
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DumpH
@@ -17,47 +17,47 @@ namespace _ELENA_
 class MemoryDump : public _Memory
 {
 protected:
-   char*  _buffer;
-   size_t _total;
-   size_t _used;
+   char* _buffer;
+   pos_t _total;
+   pos_t _used;
 
-   void resize(size_t size);
+   void resize(pos_t size);
 
 public:
-   size_t getFreeSpace() const { return _total - _used; }
+   pos_t getFreeSpace() const { return _total - _used; }
 
-   virtual size_t Length() const { return _used; }
+   virtual pos_t Length() const { return _used; }
 
-   virtual void* get(size_t position) const;
+   virtual void* get(pos_t position) const;
 
-   void reserve(size_t size);
+   void reserve(pos_t size);
 
-   virtual bool read(size_t position, void* s, size_t length);
+   virtual bool read(pos_t position, void* s, pos_t length);
 
-   virtual void load(StreamReader* reader, size_t length);
+   virtual void load(StreamReader* reader, pos_t length);
 
-   virtual bool write(size_t position, const void* s, size_t length);
+   virtual bool write(pos_t position, const void* s, pos_t length);
 
-   virtual bool writeBytes(size_t position, char value, size_t length);
+   virtual bool writeBytes(pos_t position, char value, pos_t length);
 
-   bool writeSize(size_t position, size_t value)
+   bool writeSize(pos_t position, size_t value)
    {
       return write(position, (void*)&value, sizeof(size_t));
    }
-   bool writeDWord(size_t position, int value)
+   bool writeDWord(pos_t position, int value)
    {
       return write(position, (void*)&value, 4);
    }
-   bool writeWord(size_t position, short value)
+   bool writeWord(pos_t position, short value)
    {
       return write(position, (void*)&value, 2);
    }
-   bool writeByte(size_t position, char value)
+   bool writeByte(pos_t position, char value)
    {
       return write(position, (void*)&value, 1);
    }
 
-   bool writeLiteral(size_t position, const char* s)
+   bool writeLiteral(pos_t position, const char* s)
    {
       if (!emptystr(s)) {
          return write(position, s, strlen(s) + 1);
@@ -65,11 +65,11 @@ public:
       else return writeWord(position, 0);
    }
 
-   virtual void insert(size_t position, const void* s, size_t length);
+   virtual void insert(pos_t position, const void* s, pos_t length);
 
    virtual void clear() { _used = 0; }
 
-   virtual void trim(size_t size)
+   virtual void trim(pos_t size)
    {
       _used = size;
    }
@@ -85,7 +85,7 @@ public:
    }
 
    MemoryDump();
-   MemoryDump(size_t capacity);
+   MemoryDump(pos_t capacity);
    MemoryDump(MemoryDump& copy);
    virtual ~MemoryDump() { freestr(_buffer); }
 };
@@ -94,29 +94,29 @@ public:
 
 class ByteArray : public _Memory
 {
-   char*  _bytes;
-   size_t _length;
+   char* _bytes;
+   pos_t _length;
 
 public:
-   virtual size_t Length() const { return _length; }
+   virtual pos_t Length() const { return _length; }
 
-   virtual void* get(size_t position) const;
+   virtual void* get(pos_t position) const;
 
-   virtual bool read(size_t position, void* s, size_t length);
+   virtual bool read(pos_t position, void* s, pos_t length);
 
-   virtual bool write(size_t position, const void* s, size_t length);
+   virtual bool write(pos_t position, const void* s, pos_t length);
 
-   virtual void insert(size_t position, const void* s, size_t length);
+   virtual void insert(pos_t position, const void* s, pos_t length);
 
-   virtual bool writeBytes(size_t position, char value, size_t length);
+   virtual bool writeBytes(pos_t position, char value, pos_t length);
 
    virtual void* getReferences() { return NULL; }
 
-   virtual void trim(size_t)
+   virtual void trim(pos_t)
    {
    }
 
-   ByteArray(void* bytes, size_t length)
+   ByteArray(void* bytes, pos_t length)
    {
       _bytes = (char*)bytes;
       _length = length;

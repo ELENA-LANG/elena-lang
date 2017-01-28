@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "sg.h"
@@ -9,7 +9,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_NUMBER 1
+#define BUILD_NUMBER 2
 
 // !! code duplication (syntax.h)
 const int mskAnySymbolMask             = 0x07000;               // masks
@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
       table.save(&file);
    }
    catch(_ELENA_::InvalidChar& e) {
-      printLine("(%d:%d): Invalid char %c\n", e.row, e.column, e.ch);
+      printLine("(%d:%d): Invalid char %c\n", e.row, e.column, (char)e.ch);
    }
    return 0;
 }

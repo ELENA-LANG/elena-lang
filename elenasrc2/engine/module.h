@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of the class implementing
 //      ELENA Engine Module class
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef moduleH
@@ -85,30 +85,30 @@ public:
       }
 
    public:
-      virtual size_t Length() const { return *(size_t*)_buffer; }
+      virtual pos_t Length() const { return *(pos_t*)_buffer; }
 
-      virtual void* get(size_t position) const { return (void*)(_buffer + position + 4); }
+      virtual void* get(pos_t position) const { return (void*)(_buffer + position + 4); }
 
-      virtual bool read(size_t position, void* s, size_t length)
+      virtual bool read(pos_t position, void* s, pos_t length)
       {
          memcpy(s, _buffer + position + 4, length);
 
          return true;
       }
 
-      virtual bool write(size_t, const void*, size_t)
+      virtual bool write(pos_t, const void*, pos_t)
       {
          // should never be called
          throw InternalError("Read-only Module");
       }
 
-      virtual void insert(size_t, const void*, size_t)
+      virtual void insert(pos_t, const void*, pos_t)
       {
          // should never be called
          throw InternalError("Read-only Module");
       }
 
-      virtual bool writeBytes(size_t, char, size_t)
+      virtual bool writeBytes(pos_t, char, pos_t)
       {
          // should never be called
          throw InternalError("Read-only Module");
@@ -121,7 +121,7 @@ public:
          return (void*)(_buffer + position + 4);
       }
 
-      virtual void trim(size_t)
+      virtual void trim(pos_t)
       {
          // should never be called
          throw InternalError("Read-only Module");

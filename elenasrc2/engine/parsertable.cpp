@@ -174,17 +174,17 @@ int ParserTable :: generate()
          SymbolHash::Iterator it = FIRSTsets.getIt(*rule);
          while (!it.Eof() && it.key() == *rule) {
             if (*it == nsEps) {
-               it = FOLLOWsets.getIt(l_symbol);
-               while (!it.Eof() && it.key() == l_symbol) {
-                  if (*it != nsEps) {
+               SymbolHash::Iterator f_it = FOLLOWsets.getIt(l_symbol);
+               while (!f_it.Eof() && f_it.key() == l_symbol) {
+                  if (*f_it != nsEps) {
                      // check if the rule is ambigous
-                     if (_table.exist(tableKey(l_symbol, *it)))
+                     if (_table.exist(tableKey(l_symbol, *f_it)))
                         return l_symbol;
 
                      //_table.add(tableKey(l_symbol, *it), nsEps);
-                     copySubSet(_syntax, _table, rule.key(), tableKey(l_symbol, *it));
+                     copySubSet(_syntax, _table, rule.key(), tableKey(l_symbol, *f_it));
                   }
-                  it++;
+                  f_it++;
                }
             }
             else {
