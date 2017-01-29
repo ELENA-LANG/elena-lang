@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains XML Reader / Writer class header
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef xmlreaderH
@@ -16,9 +16,9 @@ namespace _ELENA_
 // the internal exception if xml structure is not valid
 struct XMLException
 {
-   int index;
+   size_t index;
 
-   XMLException(int i)
+   XMLException(size_t i)
    {
       index = i;
    }
@@ -31,12 +31,12 @@ typedef Map<ident_t, char*> AttributeList;
 class XMLNode
 {
 public:
-   typedef List<int>     PositionList;
+   typedef List<size_t>  PositionList;
    typedef List<XMLNode> NodeList;
 
 protected:
    // node position (in the xml text)
-   int         _position;
+   size_t      _position;
    XMLNode*    _parent;
 
    virtual ident_t getContent()
@@ -44,28 +44,28 @@ protected:
       return _parent->getContent();
    }
 
-   virtual void setContent(int position, ident_t value)
+   virtual void setContent(size_t position, ident_t value)
    {
       _parent->setContent(position, value);
    }
 
-   virtual void insertNode(int position, ident_t name)
+   virtual void insertNode(size_t position, ident_t name)
    {
       _parent->insertNode(position, name);
    }
 
    // recognize opening tag and parse it starting from start, return value - the node content position
-   int loadTag(ident_t content, int start, XMLNodeTag& tag, AttributeList* list);
+   size_t loadTag(ident_t content, size_t start, XMLNodeTag& tag, AttributeList* list);
    // find and return the closing node position starting from start
-   bool isClosingTag(ident_t content, int start, XMLNodeTag& tag);
+   bool isClosingTag(ident_t content, size_t start, XMLNodeTag& tag);
    // parse xml
-   int parse(ident_t content, int start, int end, PositionList* list);
+   size_t parse(ident_t content, size_t start, size_t end, PositionList* list);
 
 //   //// add new sub node to the node content and return the node id
 //   //virtual int appendContent(const char* s);
 
 public:
-   int Position() { return _position; }
+   size_t Position() { return _position; }
 
    bool compareTag(ident_t tag);
 
@@ -87,7 +87,7 @@ public:
    XMLNode findNode(ident_t tag);
 
    // load an existing sub node
-   XMLNode(int position, XMLNode* parent);
+   XMLNode(size_t position, XMLNode* parent);
    XMLNode();
 };
 

@@ -133,7 +133,7 @@ bool File :: writeLiteral(const wchar_t* s, size_t length)
       char temp[TEMP_SIZE];
       int count;
       while (length > 0) {
-         count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
+         count = (length > TEMP_SIZE) ? TEMP_SIZE : (int)length;
 
          BOOL withError = 0;
          WideCharToMultiByte(_encoding, WC_COMPOSITECHECK, s, count, temp, count, "?", &withError);
@@ -212,11 +212,11 @@ bool File :: readLiteral(wchar_t* s, size_t length, size_t& wasread)
       char temp[0x100];
       int count;
       while (length > 0) {
-         count = (length > 0x100) ? 0x100 : length;
+         count = (length > 0x100) ? 0x100 : (int)length;
 
          wasread += fread(temp, 1, count, _file);
 
-         MultiByteToWideChar(_encoding, MB_PRECOMPOSED, temp, count, s, length);
+         MultiByteToWideChar(_encoding, MB_PRECOMPOSED, temp, count, s, count);
 
          length -= count;
          s += count;

@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class header
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef configH
@@ -47,14 +47,14 @@ public:
 
    void setSetting(ident_t key, const char* value);
    void setSetting(ident_t key, int value);
-   void setSetting(ident_t key, size_t value);
+   void setSetting(ident_t key, unsigned int value);
    void setSetting(ident_t key, bool value);
 
    void clearSetting(ident_t key);
 
    void setSetting(const char* category, const char* key, const char* value); // !! obsolete
    void setSetting(const char* category, const char* key, int value);
-   void setSetting(const char* category, const char* key, size_t value);
+   void setSetting(const char* category, const char* key, unsigned int value);
    void setSetting(const char* category, const char* key, bool value);
 
    void clear(const char* category, const char* key);    // !! obsolete
@@ -73,14 +73,14 @@ public:
 
 class XmlConfigFile : public _ConfigFile
 {
-   typedef Map<int, char*>            NodeValues;
-   typedef Dictionary2D<int, ident_t> NodeAttributes;
+   typedef Map<size_t, char*>            NodeValues;
+   typedef Dictionary2D<size_t, ident_t> NodeAttributes;
 
    XMLTree        _tree;
    NodeValues     _values;
    NodeAttributes _attributes;
 
-   int find(XMLNode& node, ident_t key);
+   size_t find(XMLNode& node, ident_t key);
 
 public:
    virtual Node get(ident_t key);

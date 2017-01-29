@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains XML Reader / Writer File class implementation
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
@@ -20,12 +20,12 @@ inline bool isWhitespace(char ch)
 XMLNode :: XMLNode()
 //   : _attributes(NULL, freestr)
 {
-   _position = -1;
+   _position = (size_t)-1;
    _parent = NULL;
 //   _noChildren = true;
 }
 
-XMLNode :: XMLNode(int position, XMLNode* parent)
+XMLNode :: XMLNode(size_t position, XMLNode* parent)
 //   : _attributes(NULL, freestr)
 {
    _parent = parent;
@@ -40,9 +40,9 @@ bool XMLNode :: compareTag(ident_t tag)
    return tag.compare(current);
 }
 
-int XMLNode :: loadTag(ident_t content, int start, XMLNodeTag & tag, AttributeList* list)
+size_t XMLNode :: loadTag(ident_t content, size_t start, XMLNodeTag & tag, AttributeList* list)
 {
-   int position = start;
+   size_t position = start;
 
    // read tag and attributes
    if (content[start] != '<' || content[start + 1] == '/')
@@ -100,7 +100,7 @@ int XMLNode :: loadTag(ident_t content, int start, XMLNodeTag & tag, AttributeLi
    return position + 1;
 }
 
-bool XMLNode :: isClosingTag(ident_t content, int start, XMLNodeTag& tag)
+bool XMLNode :: isClosingTag(ident_t content, size_t start, XMLNodeTag& tag)
 {
    if (content[start] == '<' && content[start + 1] == '/') {
       if (content.compare((const char*)tag, start + 2, tag.Length()) && content[start + 2 + tag.Length()] == '>')
@@ -110,7 +110,7 @@ bool XMLNode :: isClosingTag(ident_t content, int start, XMLNodeTag& tag)
    return false;
 }
 
-int XMLNode :: parse(ident_t content, int position, int end, PositionList* list)
+size_t XMLNode :: parse(ident_t content, size_t position, size_t end, PositionList* list)
 {
    // skip the ending whitespaces
    while (isWhitespace(content[position]))
@@ -147,8 +147,8 @@ void XMLNode :: readContent(DynamicString<char>& s)
    ident_t content = getContent();
 
    XMLNodeTag tag;
-   int start = loadTag(content, _position, tag, NULL);
-   int end = parse(content, _position, getlength(content), NULL);
+   size_t start = loadTag(content, _position, tag, NULL);
+   size_t end = parse(content, _position, getlength(content), NULL);
 
    s.copy((const char*)content + start, end - start - tag.Length() - 3);
 }
@@ -164,7 +164,7 @@ XMLNode XMLNode :: appendNode(ident_t name)
 
    XMLNodeTag tag;
    loadTag(content, _position, tag, NULL);
-   int end = parse(content, _position, getlength(content), NULL) - tag.Length() - 3;
+   size_t end = parse(content, _position, getlength(content), NULL) - tag.Length() - 3;
 
    insertNode(end, name);
 
@@ -271,8 +271,8 @@ bool XMLTree :: load(path_t path, int encoding)
 void XMLTree :: setContent(int, ident_t value)
 {
    XMLNodeTag tag;
-   int start = loadTag(_content.str(), _position, tag, NULL);
-   int end = parse(_content.str(), _position, _content.Length(), NULL) - tag.Length() - 3;
+   size_t start = loadTag(_content.str(), _position, tag, NULL);
+   size_t end = parse(_content.str(), _position, _content.Length(), NULL) - tag.Length() - 3;
 
    _content.cut(start, end - start);
    _content.insert(value.c_str(), start);

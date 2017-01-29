@@ -37,6 +37,13 @@ public:
    virtual void load(StreamReader* reader, pos_t length);
 
    virtual bool write(pos_t position, const void* s, pos_t length);
+   bool write(pos_t position, const void* s, pos64_t length)
+   {
+      if (length < INT_MAX) {
+         return write(position, s, (pos_t)length);
+      }
+      else return false;
+   }
 
    virtual bool writeBytes(pos_t position, char value, pos_t length);
 
@@ -46,15 +53,15 @@ public:
    }
    bool writeDWord(pos_t position, int value)
    {
-      return write(position, (void*)&value, 4);
+      return write(position, (void*)&value, 4u);
    }
    bool writeWord(pos_t position, short value)
    {
-      return write(position, (void*)&value, 2);
+      return write(position, (void*)&value, 2u);
    }
    bool writeByte(pos_t position, char value)
    {
-      return write(position, (void*)&value, 1);
+      return write(position, (void*)&value, 1u);
    }
 
    bool writeLiteral(pos_t position, const char* s)

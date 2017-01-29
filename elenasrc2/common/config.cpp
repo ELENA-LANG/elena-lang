@@ -25,8 +25,8 @@ IniConfigFile :: IniConfigFile(bool allowDuplicates)
 
 _ConfigFile::Node IniConfigFile :: get(ident_t key)
 {
-   int index = key.find('/');
-   if (index != -1) {
+   size_t index = key.find('/');
+   if (index != NOTFOUND_POS) {
       String<char, 50> category(key, index);
 
       ident_t settingName = key + index + 1;
@@ -103,8 +103,8 @@ bool IniConfigFile :: load(path_t path, int encoding)
          if (emptystr(key)) {
             return false;
          }
-         int pos = ((ident_t)line).find('=');
-         if (pos != -1) {
+         size_t pos = ((ident_t)line).find('=');
+         if (pos != NOTFOUND_POS) {
             subKey.copy(line, pos);
 
             _settings.add((ident_t)key, (ident_t)subKey, ((ident_t)line).clone(pos + 1));
@@ -162,7 +162,7 @@ void IniConfigFile :: setSetting(const char* category, const char* key, int valu
    _settings.add(category, key, ((ident_t)string).clone());
 }
 
-void IniConfigFile :: setSetting(const char* category, const char* key, size_t value)
+void IniConfigFile :: setSetting(const char* category, const char* key, unsigned int value)
 {
    String<char, 15> string;
    string.appendInt(value);
@@ -177,8 +177,8 @@ void IniConfigFile :: setSetting(const char* category, const char* key, bool val
 
 void IniConfigFile :: setSetting(ident_t key, const char* value)
 {
-   int index = key.find('/');
-   if (index != -1) {
+   size_t index = key.find('/');
+   if (index != NOTFOUND_POS) {
       String<char, 50> category(key, index);
 
       ident_t settingName = key + index + 1;
@@ -205,7 +205,7 @@ void IniConfigFile::setSetting(ident_t key, int value)
    else clearSetting(key);
 }
 
-void IniConfigFile::setSetting(ident_t key, size_t value)
+void IniConfigFile::setSetting(ident_t key, unsigned int value)
 {
    String<char, 15> string;
    string.appendInt(value);
@@ -225,8 +225,8 @@ ident_t IniConfigFile :: getSetting(ident_t category, ident_t key, ident_t defau
 
 void IniConfigFile :: clearSetting(ident_t key)
 {
-   int index = key.find('/');
-   if (index != -1) {
+   size_t index = key.find('/');
+   if (index != NOTFOUND_POS) {
       String<char, 50> category(key, index);
 
       ident_t settingName = key + index + 1;
@@ -278,10 +278,10 @@ bool XmlConfigFile :: load(path_t path, int encoding)
    return false;
 }
 
-int XmlConfigFile :: find(XMLNode& node, ident_t key)
+size_t XmlConfigFile :: find(XMLNode& node, ident_t key)
 {
-   int length = getlength(key);
-   int end = key.find('/', length);
+   size_t length = getlength(key);
+   size_t end = key.find('/', length);
 
    XMLNodeTag tag((const char*)key, end);
 
@@ -293,14 +293,14 @@ int XmlConfigFile :: find(XMLNode& node, ident_t key)
       else return foundNode.Position();
    }
 
-   return -1;
+   return (size_t)-1;
 }
 
 _ConfigFile::Node XmlConfigFile :: get(ident_t key)
 {
-   int position = find(_tree, key);
+   size_t position = find(_tree, key);
 
-   if (position >= 0) {
+   if (position != NOTFOUND_POS) {
       return _ConfigFile::Node(this, (void*)position);
    }
    else return _ConfigFile::Node();
@@ -308,17 +308,17 @@ _ConfigFile::Node XmlConfigFile :: get(ident_t key)
 
 bool XmlConfigFile :: select(ident_t key, Map<ident_t, _ConfigFile::Node>& list)
 {
-   int length = getlength(key);
-   int end = key.findLast('/', length);
+   size_t length = getlength(key);
+   size_t end = key.findLast('/', length);
 
-   int position = 0;
+   size_t position = 0;
    if (length > end) {
       XMLNodeTag tag((const char*)key, end);
 
       position = find(_tree, (const char*)tag);
    }
 
-   if (position == -1)
+   if (position == NOTFOUND_POS)
       return false;
 
    XMLNode node(position, &_tree);
@@ -340,7 +340,7 @@ bool XmlConfigFile :: select(ident_t key, Map<ident_t, _ConfigFile::Node>& list)
 bool XmlConfigFile :: select(Node root, ident_t key, Map<ident_t, _ConfigFile::Node>& list)
 {
    bool found = false;
-   int position = (int)root.reference;
+   size_t position = (size_t)root.reference;
 
    XMLNode node(position, &_tree);
    NodeList nodeList;
@@ -363,31 +363,31 @@ bool XmlConfigFile :: select(Node root, ident_t key, Map<ident_t, _ConfigFile::N
 
 ident_t XmlConfigFile :: getNodeContent(void* reference)
 {
-   if (!_values.exist((int)reference)) {
-      XMLNode node((int)reference, &_tree);
+   if (!_values.exist((size_t)reference)) {
+      XMLNode node((size_t)reference, &_tree);
 
       DynamicString<char> content;
       node.readContent(content);
 
       char* value = content.cut();
-      _values.add((int)reference, value);
+      _values.add((size_t)reference, value);
 
       return value;
    }
-   else return _values.get((int)reference);
+   else return _values.get((size_t)reference);
 }
 
 ident_t XmlConfigFile :: getNodeAttribute(void* reference, ident_t name)
 {
-   const char* value = _attributes.get((int)reference, name, DEFAULT_STR).c_str();
+   const char* value = _attributes.get((size_t)reference, name, DEFAULT_STR).c_str();
    if (emptystr(value)) {
-      XMLNode node((int)reference, &_tree);
+      XMLNode node((size_t)reference, &_tree);
 
       DynamicString<char> attrValue;
       if (node.readAttribute(name, attrValue)) {
          char* s = attrValue.cut();
 
-         _attributes.add((int)reference, name, s);
+         _attributes.add((size_t)reference, name, s);
 
          return s;
       }
@@ -398,16 +398,16 @@ ident_t XmlConfigFile :: getNodeAttribute(void* reference, ident_t name)
 
 void XmlConfigFile :: setSetting(ident_t key, const char* value)
 {
-   int position = find(_tree, key);
+   size_t position = find(_tree, key);
 
-   if (position >= 0) {
+   if (position != NOTFOUND_POS) {
       XMLNode node(position, &_tree);
 
       node.writeContent(value);
    }
    else {
-      int length = getlength(key);
-      int end = key.find('/', length);
+      size_t length = getlength(key);
+      size_t end = key.find('/', length);
 
       String<char, 255> category(key, end);
       position = find(_tree, category.str());

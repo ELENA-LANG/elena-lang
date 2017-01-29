@@ -341,7 +341,7 @@ public:
             path.copyTo(buf, pos, bufLen);
 
             append(buf, bufLen);
-            path += pos + 1;
+            path += pos + 1u;
          }
          else {
             pos = path.findLast('.');

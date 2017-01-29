@@ -65,7 +65,7 @@ inline void saveSetting(_ELENA_::IniConfigFile& config, const char* section, con
       config.setSetting(section, setting, value);
 }
 
-inline void saveSetting(_ELENA_::IniConfigFile& config, const char* section, const char* setting, size_t value, size_t defaultValue)
+inline void saveSetting(_ELENA_::IniConfigFile& config, const char* section, const char* setting, unsigned int value, unsigned int defaultValue)
 {
    if (value != defaultValue)
       config.setSetting(section, setting, value);

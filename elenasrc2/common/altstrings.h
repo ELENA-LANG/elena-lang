@@ -52,7 +52,7 @@ public:
    static void move(wide_c* s1, const wide_c* s2, size_t length);
    static void append(char* dest, const char* sour, size_t length);
    static void append(wide_c* dest, const wide_c* sour, size_t length);
-   static void insert(char* s, int pos, int length, const char* subs);
+   static void insert(char* s, size_t pos, size_t length, const char* subs);
 
    static char* lower(char* s);
    static wide_c* lower(wide_c* s);
@@ -144,6 +144,13 @@ public:
    operator const wide_c*() const { return _string; }
 
    wide_t& operator +=(int offset)
+   {
+      _string += offset;
+
+      return *this;
+   }
+
+   wide_t& operator +=(size_t offset)
    {
       _string += offset;
 
@@ -498,14 +505,14 @@ protected:
    void create(T*, size_t size)
    {
       if (_size == 0) {
-         _size = align(size, pageSize);
+         _size = alignSize(size, pageSize);
          _string = StrFactory::allocate(_size, (const T*)NULL);
          _string[0] = 0;
       }
       else {
          size_t length = getlength(_string);
 
-         _size = align(size, pageSize);
+         _size = alignSize(size, pageSize);
          _string = StrFactory::reallocate(_string, _size);
 
          _string[length] = 0;
@@ -592,7 +599,7 @@ public:
       StrHelper::insert(_string, index, slen, s);
    }
 
-   void cut(size_t index, int length)
+   void cut(size_t index, size_t length)
    {
       StrHelper::move(_string + index, _string + index + length, length);
    }

@@ -394,12 +394,27 @@ public:
       return false; // !!
    }
 
+   bool seek(pos_t position)
+   {
+      _offset = position;
+
+      return true;
+   }
+
+   bool seek(pos64_t position)
+   {
+      if (position < INT_MAX) {
+         return seek((pos_t)position);
+      }
+      else return false;
+   }
+
    virtual bool write(const wide_c* s, pos_t length)
    {
       size_t lenToWrite = _size - _offset;
 
       if (Convertor::copy(_text + _offset, s, length, lenToWrite)) {
-         _offset += lenToWrite;
+         seek(_offset + lenToWrite);
 
          return true;
       }
@@ -411,7 +426,7 @@ public:
       size_t lenToWrite = _size - _offset;
 
       if (Convertor::copy(_text + _offset, s, length, lenToWrite)) {
-         _offset += lenToWrite;
+         seek(_offset + lenToWrite);
 
          return true;
       }
@@ -752,7 +767,7 @@ public:
    {
       const char* s = (const char*)_memory->get(_position);
 
-      _position += (getlength(s) + 1);
+      seek(_position + getlength(s) + 1);
 
       return s;
    }
@@ -761,7 +776,7 @@ public:
    {
       const wide_c* s = (const wide_c*)_memory->get(_position);
 
-      _position += ((getlength(s) + 1) << 1);
+      seek(_position + ((getlength(s) + 1) << 1));
 
       return s;
    }

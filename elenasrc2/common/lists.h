@@ -1868,11 +1868,11 @@ public:
    const char* storeKey(unsigned int position, ident_t key)
    {
       if (KeyStored) {
-         size_t keyPos = _buffer.Length();
+         pos_t keyPos = _buffer.Length();
 
          _buffer.writeLiteral(keyPos, key);
 
-         return (const char*)(keyPos - position);
+         return (const char*)((size_t)keyPos - position);
       }
       else return key;
    }
@@ -2623,11 +2623,11 @@ public:
    const char* storeKey(unsigned int position, ident_t key)
    {
       if (KeyStored) {
-         size_t keyPos = _buffer.Length();
+         pos_t keyPos = _buffer.Length();
 
          _buffer.writeLiteral(keyPos, key);
 
-         return (const char*)(keyPos - position);
+         return (const char*)((size_t)keyPos - position);
       }
       else return key;
    }
