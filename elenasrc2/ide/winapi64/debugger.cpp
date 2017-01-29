@@ -703,7 +703,7 @@ bool Debugger :: findSignature(StreamReader&, char* signature)
 bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr)
 {
    if (standalone) {
-      reader.seek(0x400000);
+      reader.seek(0x400000u);
 
       _ELENA_::PEHelper::seekSection(reader, ".debug", debugInfoPtr);
    }

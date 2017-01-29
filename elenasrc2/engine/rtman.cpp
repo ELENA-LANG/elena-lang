@@ -74,8 +74,8 @@ size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, char
       symbol = reader.getLiteral(DEFAULT_STR);
 
       // define the next record position
-      size_t size = reader.getDWord() - 4;
-      int nextPosition = reader.Position() + size;
+      pos_t size = reader.getDWord() - 4;
+      pos_t nextPosition = reader.Position() + size;
 
       // check the class
       if (symbol[0] != '#') {
@@ -106,8 +106,8 @@ void* RTManager :: loadSymbol(StreamReader& reader, ident_t name)
       symbol = reader.getLiteral(DEFAULT_STR);
 
       // define the next record position
-      size_t size = reader.getDWord() - 4;
-      int nextPosition = reader.Position() + size;
+      pos_t size = reader.getDWord() - 4;
+      pos_t nextPosition = reader.Position() + size;
 
       // check the class
       if (symbol[0] == '#') {

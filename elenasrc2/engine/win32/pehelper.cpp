@@ -20,7 +20,7 @@ size_t PEHelper :: findEntryPoint(path_t path)
       return (size_t)-1;
 
    // !! hard-coded offset
-   reader.seek(0xC8);
+   reader.seek(0xC8u);
 
    ref_t entry = 0;
    reader.readDWord(entry);

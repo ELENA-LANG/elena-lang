@@ -174,7 +174,7 @@ bool File :: writeLiteral(const char* s, size_t length)
    }
 }
 
-bool File :: readLine(char* s, size_t length)
+bool File :: readLine(char* s, int length)
 {
    if (_encoding >= feUTF8) {
       return (fgets(s, length, _file) != NULL);
@@ -182,7 +182,7 @@ bool File :: readLine(char* s, size_t length)
    else return false; // !! temporal
 }
 
-bool File::readLiteral(wchar_t* s, size_t length, size_t& wasread)
+bool File :: readLiteral(wchar_t* s, size_t length, size_t& wasread)
 {
    if (_encoding == feUTF16 || _encoding == feRaw) {
       wasread = fread((char*)s, 2, length, _file);
@@ -627,7 +627,7 @@ void File :: rewind()
 
 // --- TextFileReader ---
 
-bool TextFileReader :: read(char* s, size_t length)
+bool TextFileReader :: read(char* s, pos_t length)
 {
    return _file.readLine(s, length);
 }
@@ -639,14 +639,14 @@ FileReader :: FileReader(path_t path, path_t mode, int encoding, bool withBOM)
 {
 }
 
-bool FileReader :: read(void* s, size_t length)
+bool FileReader :: read(void* s, pos_t length)
 {
    return _file.read(s, length);
 }
 
 // --- FileWriter ---
 
-bool FileWriter :: write(const void* s, size_t length)
+bool FileWriter :: write(const void* s, pos_t length)
 {
    return _file.write(s, length);
 }
@@ -658,12 +658,12 @@ void FileWriter :: align(int alignment)
    writeBytes('\0', len);
 }
 
-bool TextFileWriter :: write(const wide_c* s, size_t length)
+bool TextFileWriter :: write(const wide_c* s, pos_t length)
 {
    return _file.writeLiteral(s, length);
 }
 
-bool TextFileWriter :: write(const char* s, size_t length)
+bool TextFileWriter :: write(const char* s, pos_t length)
 {
    return _file.writeLiteral(s, length);
 }

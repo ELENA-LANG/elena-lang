@@ -588,7 +588,7 @@ void Text :: copyLineToX(TextBookmark& bookmark, _ELENA_::TextWriter& writer, si
             i++;
          }
          else {
-            int chLen = TextBookmark::charLength(line, i);
+            size_t chLen = TextBookmark::charLength(line, i);
             if (chLen > 1) {
                if (i + chLen < count) {
                   writer.write(&line[i], chLen);
@@ -596,7 +596,7 @@ void Text :: copyLineToX(TextBookmark& bookmark, _ELENA_::TextWriter& writer, si
                }
                else break;
             }
-            else writer.write(&line[i], 1);
+            else writer.write(&line[i], 1u);
 
             col++;
             i++;
@@ -646,7 +646,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, siz
             i++;
          }
          else {
-            int chLen = TextBookmark::charLength(line, i);
+            size_t chLen = TextBookmark::charLength(line, i);
             if (chLen > 1) {
                if (i + chLen < count) {
                   writer.write(&line[i], chLen);
@@ -654,7 +654,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, siz
                }
                else break;
             }
-            else writer.write(&line[i], 1);
+            else writer.write(&line[i], 1u);
 
             col++;
             i++;

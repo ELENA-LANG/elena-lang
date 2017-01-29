@@ -451,8 +451,8 @@ public:
 
 struct VMTEntry
 {
-   size_t message;
-   int address;
+   ref_t message;
+   pos_t address;
 };
 
 // --- VMTXEntry ---
@@ -581,11 +581,11 @@ struct DebugLineInfo
    int         col, row, length;
    union
    {
-      struct Source { int nameRef; } source;
-      struct Module { int nameRef; int flags; } symbol;
-      struct Step   { size_t address;         } step;
-      struct Local  { int nameRef; int level; } local;
-      struct Field  { int nameRef; int size;  } field;
+      struct Source { pos_t nameRef; } source;
+      struct Module { pos_t nameRef; int flags; } symbol;
+      struct Step   { pos_t address;         } step;
+      struct Local  { pos_t nameRef; int level; } local;
+      struct Field  { pos_t nameRef; int size;  } field;
    } addresses;
 
    DebugLineInfo()

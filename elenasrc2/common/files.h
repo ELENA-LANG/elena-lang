@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine File class declarations.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef filesH
@@ -436,7 +436,7 @@ public:
    bool readLiteral(wide_c* s, size_t length, size_t& wasread);
    bool readLiteral(char* s, size_t length, size_t& wasread);
 
-   bool readLine(char* s, size_t length);
+   bool readLine(char* s, int length);
 
    void rewind();
 
@@ -457,21 +457,81 @@ public:
 
    int getEncoding() const { return _file.getEncoding(); }
 
-   virtual size_t Position() { return _file.Position(); }
-   virtual size_t Length() { return _file.Length(); }
+   virtual pos_t Position() { return _file.Position(); }
+   virtual pos_t Length() { return _file.Length(); }
 
-   virtual bool seek(size_t position) { return _file.seek(position); }
-
-   virtual bool read(void* s, size_t length);
-
-   bool readText(wide_c* s, size_t length, size_t& wasread)
-   {
-      return _file.readLiteral(s, length, wasread);
+   virtual bool seek(pos_t position) { return _file.seek(position); }
+   virtual bool seek(pos64_t position) 
+   { 
+      if (position < INT_MAX) {
+         return _file.seek((long)position);
+      }
+      else return false;
    }
 
-   bool readText(char* s, size_t length, size_t& wasread)
+   virtual bool read(void* s, pos_t length);
+
+   bool readText(wide_c* s, pos_t length, pos_t& wasread)
    {
+#ifdef _WIN64
+      size_t longLength = length;
+      size_t longWasRead = wasread;
+
+      bool retVal = _file.readLiteral(s, longLength, longWasRead);
+
+      wasread = (pos_t)longWasRead;
+
+      return retVal;
+#else
       return _file.readLiteral(s, length, wasread);
+#endif
+   }
+
+   bool readText(char* s, pos_t length, pos_t& wasread)
+   {
+#ifdef _WIN64
+      size_t longLength = length;
+      size_t longWasRead = wasread;
+
+      bool retVal = _file.readLiteral(s, longLength, longWasRead);
+
+      wasread = (pos_t)longWasRead;
+
+      return retVal;
+#else
+      return _file.readLiteral(s, length, wasread);
+#endif
+   }
+
+   bool readText(char* s, pos64_t length, pos64_t& wasread)
+   {
+#ifdef _WIN64
+      return _file.readLiteral(s, length, wasread);
+#else
+      size_t longLength = (size_t)length;
+      size_t longWasRead = (size_t)wasread;
+
+      bool retVal = _file.readLiteral(s, longLength, longWasRead);
+
+      wasread = (pos64_t)longWasRead;
+
+      return retVal;
+#endif
+   }
+   bool readText(wide_c* s, pos64_t length, pos64_t& wasread)
+   {
+#ifdef _WIN64
+      return _file.readLiteral(s, length, wasread);
+#else
+      size_t longLength = (size_t)length;
+      size_t longWasRead = (size_t)wasread;
+
+      bool retVal = _file.readLiteral(s, longLength, longWasRead);
+
+      wasread = (pos64_t)longWasRead;
+
+      return retVal;
+#endif
    }
 
    virtual const char* getLiteral(const char* def) { return def; }
@@ -490,19 +550,26 @@ class FileWriter : public StreamWriter
 public:
    int getEncoding() const { return _file.getEncoding(); }
 
-   virtual size_t Position() const { return _file.Position(); }
-   virtual size_t Length()   { return _file.Length(); }
+   virtual pos_t Position() const { return _file.Position(); }
+   virtual pos_t Length()   { return _file.Length(); }
 
    virtual bool isOpened() { return _file.isOpened(); }
 
-   virtual bool write(const void* s, size_t length);
+   virtual bool write(const void* s, pos_t length);
+   virtual bool writeLong(const void* s, pos64_t length)
+   {
+      if (length < INT_MAX) {
+         return write(s, (pos_t)length);
+      }
+      else return false;
+   }
 
-   bool writeText(const wide_c* s, size_t length)
+   bool writeText(const wide_c* s, pos_t length)
    {
       return _file.writeLiteral(s, length);
    }
 
-   bool writeText(const char* s, size_t length)
+   bool writeText(const char* s, pos_t length)
    {
       return _file.writeLiteral(s, length);
    }
@@ -524,15 +591,15 @@ public:
       _file.rewind();
    }
 
-   virtual size_t Position() { return _file.Position(); }
+   virtual pos_t Position() { return _file.Position(); }
 
-   virtual bool seek(size_t position) { return _file.seek(position); }
+   virtual bool seek(pos_t position) { return _file.seek(position); }
 
    int getEncoding() const { return _file.getEncoding(); }
 
    bool isOpened() const { return _file.isOpened(); }
 
-   virtual bool read(char* s, size_t length);
+   virtual bool read(char* s, pos_t length);
 
    TextFileReader(path_t path, int encoding, bool withBOM);
 };
@@ -548,8 +615,22 @@ public:
 
    bool isOpened() const { return _file.isOpened(); }
 
-   virtual bool write(const wide_c* s, size_t length);
-   virtual bool write(const char* s, size_t length);
+   virtual bool write(const wide_c* s, pos_t length);
+   virtual bool write(const char* s, pos_t length);
+   virtual bool write(const wide_c* s, pos64_t length)
+   {
+      if (length < INT_MAX) {
+         return write(s, (pos_t)length);
+      }
+      else return false;
+   }
+   virtual bool write(const char* s, pos64_t length)
+   {
+      if (length < INT_MAX) {
+         return write(s, (pos_t)length);
+      }
+      else return false;
+   }
 
    virtual bool writeNewLine();
 

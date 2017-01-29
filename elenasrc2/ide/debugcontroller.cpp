@@ -507,8 +507,8 @@ bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress
       reader.readString(reference);
 
       // define the next record position
-      int size = reader.getDWord() - 4;
-      int nextPosition = reader.Position() + size;
+      pos_t size = reader.getDWord() - 4;
+      pos_t nextPosition = reader.Position() + size;
 
       if (setEntryAddress) {
          // if entry address was not defined take the first one

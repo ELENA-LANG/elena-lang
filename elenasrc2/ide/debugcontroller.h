@@ -84,9 +84,9 @@ protected:
 
    public:
       virtual bool Eof() { return (_position >= _size); }
-      virtual size_t Position() { return _position; }
+      virtual pos_t Position() { return _position; }
 
-      virtual bool seek(size_t position)
+      virtual bool seek(pos_t position)
       {
          //if (_address == 0) {
          //   _address = position;
@@ -95,8 +95,15 @@ protected:
 
          return true;
       }
+      virtual bool seek(pos64_t position)
+      {
+         if (position < INT_MAX) {
+            return seek((pos_t)position);
+         }
+         else return false;
+      }
 
-      virtual bool read(void* s, size_t length)
+      virtual bool read(void* s, pos_t length)
       {
          if (_debugger->Context()->readDump(_address + _position, (char*)s, length)) {
             _position += length;

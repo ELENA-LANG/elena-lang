@@ -58,6 +58,7 @@ public:
    virtual pos_t Position() = 0;
 
    virtual bool seek(pos_t position) = 0;
+   virtual bool seek(pos64_t position) = 0;
 
    virtual bool read(void* s, pos_t length) = 0;
 
@@ -145,6 +146,7 @@ public:
    virtual pos_t Position() const = 0;
 
    virtual bool write(const void* s, pos_t length) = 0;
+   virtual bool writeLong(const void* s, pos64_t length) = 0;
 
    bool writeLiteral(const char* s)
    {
@@ -161,6 +163,16 @@ public:
       return write((void*)s, length << 1);
    }
 
+   bool writeLiteral(const char* s, pos64_t length)
+   {
+      return writeLong((void*)s, length);
+   }
+
+   bool writeLiteral(const wide_c* s, pos64_t length)
+   {
+      return writeLong((void*)s, length << 1);
+   }
+
    bool writeLiteral(const wide_c* s)
    {
       return writeLiteral(s, getlength(s) + 1);
@@ -168,12 +180,12 @@ public:
 
    bool writeChar(char ch)
    {
-      return writeLiteral(&ch, 1);
+      return writeLiteral(&ch, 1u);
    }
 
    bool writeChar(wide_c ch)
    {
-      return writeLiteral(&ch, 1);
+      return writeLiteral(&ch, 1u);
    }
 
    void writeDWord(int dword)
@@ -280,15 +292,17 @@ public:
    virtual bool writeNewLine() = 0;
    virtual bool write(const wide_c* s, pos_t length) = 0;
    virtual bool write(const char* s, pos_t length) = 0;
+   virtual bool write(const wide_c* s, pos64_t length) = 0;
+   virtual bool write(const char* s, pos64_t length) = 0;
 
    virtual bool writeChar(char ch)
    {
-      return write(&ch, 1);
+      return write(&ch, 1u);
    }
 
    virtual bool writeChar (wide_c ch)
    {
-      return write(&ch, 1);
+      return write(&ch, 1u);
    }
 
    virtual bool writeLiteral(const wide_c* s)
@@ -382,7 +396,7 @@ public:
 
    virtual bool write(const wide_c* s, pos_t length)
    {
-      pos_t lenToWrite = _size - _offset;
+      size_t lenToWrite = _size - _offset;
 
       if (Convertor::copy(_text + _offset, s, length, lenToWrite)) {
          _offset += lenToWrite;
@@ -394,12 +408,28 @@ public:
 
    virtual bool write(const char* s, pos_t length)
    {
-      pos_t lenToWrite = _size - _offset;
+      size_t lenToWrite = _size - _offset;
 
       if (Convertor::copy(_text + _offset, s, length, lenToWrite)) {
          _offset += lenToWrite;
 
          return true;
+      }
+      else return false;
+   }
+
+   virtual bool write(const wide_c* s, pos64_t length)
+   {
+      if (length < INT_MAX) {
+         return write(s, (pos_t)length);
+      }
+      else return false;
+   }
+
+   virtual bool write(const char* s, pos64_t length)
+   {
+      if (length < INT_MAX) {
+         return write(s, (pos_t)length);
       }
       else return false;
    }
@@ -585,11 +615,19 @@ public:
       return true;
    }
 
+   virtual bool seek(pos64_t position)
+   {
+      if (position < INT_MAX) {
+         return seek((pos_t)position);
+      }
+      else return false;
+   }
+
    virtual const char* getLiteral(const char*)
    {
       const char* s = (char*)_dump + _offset;
 
-      _offset += getlength(s) + 1;
+      seek(_offset + getlength(s) + 1);
 
       return s;
 
@@ -598,7 +636,7 @@ public:
    {
       const wide_c* s = (const wide_c*)((char*)_dump + _offset);
 
-      _offset += (getlength(s) << 1) + 1;
+      seek(_offset + (getlength(s) << 1) + 1);
 
       return s;
    }
@@ -659,6 +697,13 @@ public:
          _position = position;
 
          return true;
+      }
+      else return false;
+   }
+   virtual bool seek(pos64_t position)
+   {
+      if (position < INT_MAX) {
+         return seek((pos_t)position);
       }
       else return false;
    }
@@ -756,6 +801,13 @@ public:
          _position += length;
 
          return true;
+      }
+      else return false;
+   }
+   virtual bool writeLong(const void* s, pos64_t length)
+   {
+      if (length < INT_MAX) {
+         return write(s, (pos_t)length);
       }
       else return false;
    }

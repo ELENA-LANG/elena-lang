@@ -105,7 +105,7 @@ void JITCompiler32 :: compileReal64(MemoryWriter* writer, double number)
 
 void JITCompiler32 :: compileLiteral(MemoryWriter* writer, const char* value)
 {
-   int length = getlength(value) + 1;
+   size_t length = getlength(value) + 1;
 
    writer->seek(writer->Position() - 8);
 
@@ -120,7 +120,7 @@ void JITCompiler32 :: compileLiteral(MemoryWriter* writer, const char* value)
 
 void JITCompiler32 :: compileWideLiteral(MemoryWriter* writer, const wide_c* value)
 {
-   int length = (getlength(value) + 1) << 1;
+   size_t length = (getlength(value) + 1) << 1;
 
    writer->seek(writer->Position() - 8);
 
