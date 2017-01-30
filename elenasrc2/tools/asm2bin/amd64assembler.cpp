@@ -489,7 +489,7 @@ AMD64Assembler::Operand AMD64Assembler :: readPtrOperand(TokenInfo& token, Proce
 //      return operand;
 //	}
 
-   return OperandType::otUnknown; // !! temporal
+   return AMD64Helper::otUnknown; // !! temporal
 }
 
 AMD64Assembler::Operand AMD64Assembler:: compileOperand(TokenInfo& token, ProcedureInfo& info/*, _Module* binary*/, const char* err)
@@ -1210,7 +1210,7 @@ void AMD64Assembler :: compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryW
 //}
 //
 //void x86Assembler :: compileSUBSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
-//{	
+//{
 //	// Opcode: F3 0F 5C /r
 //	// Mnemonic: SUBSS xmm1, xmm2/m32
 //	// f3 0f 5c ca -- subss xmm1, xmm2
@@ -2126,7 +2126,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //	// 66 0f e0 ca -- pavgb xmm1, xmm2
 //	// 66 0f e0 08 -- pavgb xmm1, XMMWORD PTR[eax]
 //
-//	// Opcode: 0F E0 /r 
+//	// Opcode: 0F E0 /r
 //	// Mnemonic : PAVGB mm1, mm2/m64
 //	// 0f e0 c8 -- pavgb mm1, mm0
 //	// 0f e0 08 -- pavgb mm1, QWORD PTR [eax]
@@ -2156,7 +2156,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //	// 66 0f e3 ca -- pavgw xmm1, xmm2
 //	// 66 0f e3 08 -- pavgw xmm1, XMMWORD PTR[eax]
 //
-//	// Opcode: 0F E0 /r 
+//	// Opcode: 0F E0 /r
 //	// Mnemonic : PAVGW mm1, mm2/m64
 //	// 0f e3 c8 -- pavgw mm1, mm0
 //	// 0f e3 08 -- pavgw mm1, QWORD PTR [eax]
@@ -2186,7 +2186,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //	// 66 0f e3 ca -- psadbw xmm1, xmm2
 //	// 66 0f e3 08 -- psadbw xmm1, XMMWORD PTR[eax]
 //
-//	// Opcode: 0F F6 /r 
+//	// Opcode: 0F F6 /r
 //	// Mnemonic : psadbw mm1, mm2/m64
 //	// 0f e3 c8 -- psadbw mm1, mm0
 //	// 0f e3 08 -- psadbw mm1, QWORD PTR [eax]
@@ -2209,8 +2209,8 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //	else token.raiseErr("Invalid command (%d)");
 //}
 //
-//void x86Assembler::compilePEXTRW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code) 
-//{ 
+//void x86Assembler::compilePEXTRW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+//{
 //	// Opcode: 66 0F C5 /r ib
 //	// Mnemonic: pextrw r32, xmm, imm8
 //	// 66 0f c5 c1 03 -- pextrw eax,xmm1,3
@@ -2249,7 +2249,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //{
 //	// Opcode: 0F C4 /r ib
 //	// Mnemonic: pinsrw mm, r32/m16, imm8
-//	// 0f c4 c0 03 -- pinsrw mm0, eax, 3 
+//	// 0f c4 c0 03 -- pinsrw mm0, eax, 3
 //	// 0f c4 08 03 -- pinsrw mm1, WORD PTR [eax], 3
 //	// 0f c4 c8 03 -- pinsrw mm1, eax, 3
 //
@@ -2287,7 +2287,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //
 //void x86Assembler::compilePMAXSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
-//	// Opcode: 0F EE /r 
+//	// Opcode: 0F EE /r
 //	// Mnemonic : pmaxsw mm1, mm2/m64
 //	// 0f ee c8 -- pmaxsw mm1, mm0
 //	// 0f ee 08 -- pmaxsw mm1, QWORD PTR [eax]
@@ -2317,7 +2317,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //
 //void x86Assembler::compilePMAXUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
-//	// Opcode: 0F DE /r 
+//	// Opcode: 0F DE /r
 //	// Mnemonic : pmaxub mm1, mm2/m64
 //	// 0f de c8 -- pmaxub mm1, mm0
 //	// 0f de 08 -- pmaxub mm1, QWORD PTR [eax]
@@ -2347,7 +2347,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //
 //void x86Assembler::compilePMINSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
-//	// Opcode: 0F EA /r 
+//	// Opcode: 0F EA /r
 //	// Mnemonic : pminsw mm1, mm2/m64
 //	// 0f ea c8 -- pminsw mm1, mm0
 //	// 0f ea 08 -- pminsw mm1, QWORD PTR [eax]
@@ -2377,7 +2377,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //
 //void x86Assembler::compilePMINUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
-//	// Opcode: 0F DA /r 
+//	// Opcode: 0F DA /r
 //	// Mnemonic : pminub mm1, mm2/m64
 //	// 0f da c8 -- pminub mm1, mm0
 //	// 0f da 08 -- pminub mm1, QWORD PTR [eax]
@@ -2407,7 +2407,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //
 //void x86Assembler::compilePMOVMSKB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
-//	// Opcode: 0F D7 /r 
+//	// Opcode: 0F D7 /r
 //	// Mnemonic: pmovmskb r32, mm
 //	// 0f d7 c0 -- pmovmskb eax, mm0
 //
@@ -2435,7 +2435,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //
 //void x86Assembler::compilePMULHUW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
-//	// Opcode: 0F E4 /r 
+//	// Opcode: 0F E4 /r
 //	// Mnemonic: pmulhuw mm1, mm2/m64
 //	// 0f e4 c1 -- pmulhuw mm0, mm1
 //	// 0f e4 00 -- pmulhuw mm0, QWORD PTR [eax]
@@ -2465,7 +2465,7 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //
 //void x86Assembler::compilePSHUFW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
-//	// Opcode: 0F 70 /r ib 
+//	// Opcode: 0F 70 /r ib
 //	// Mnemonic: pshufw mm1, mm2/m64, imm8
 //	// 0f 70 c1 32 -- pshufw mm0, mm1, 50
 //	// 0f 70 00 32 -- pshufw mm0, QWORD PTR [eax], 50
@@ -3277,7 +3277,7 @@ void AMD64Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, Memory
 //	// f3 0f c2 ca 00 -- cmpss xmm1, xmm2, 0 -- this instruction is the same of: CMPEQSS xmm1, xmm2
 //	// f3 0f c2 ca 01 -- cmpss xmm1, xmm2, 1 -- this instruction is the same of: CMPLTSS xmm1, xmm2
 //	// f3 0f c2 ca 02 -- cmpss xmm1, xmm2, 2 -- this instruction is the same of: CMPLESS xmm1, xmm2
-//	// f3 0f c2 ca 03 -- cmpss xmm1, xmm2, 3 -- this instruction is the same of: CMPUNORDSS xmm1, xmm2 
+//	// f3 0f c2 ca 03 -- cmpss xmm1, xmm2, 3 -- this instruction is the same of: CMPUNORDSS xmm1, xmm2
 //	// f3 0f c2 ca 04 -- cmpss xmm1, xmm2, 4 -- this instruction is the same of: CMPNEQSS xmm1, xmm2
 //	// f3 0f c2 ca 05 -- cmpss xmm1, xmm2, 5 -- this instruction is the same of: CMPNLTSS xmm1, xmm2
 //	// f3 0f c2 ca 06 -- cmpss xmm1, xmm2, 6 -- this instruction is the same of: CMPNLESS xmm1, xmm2
@@ -3309,7 +3309,7 @@ void AMD64Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, Memory
 //	// 0f c2 ca 00 -- cmpps xmm1, xmm2, 0 -- this instruction is the same of: CMPEQPS xmm1, xmm2
 //	// 0f c2 ca 01 -- cmpps xmm1, xmm2, 1 -- this instruction is the same of: CMPLTPS xmm1, xmm2
 //	// 0f c2 ca 02 -- cmpps xmm1, xmm2, 2 -- this instruction is the same of: CMPLEPS xmm1, xmm2
-//	// 0f c2 ca 03 -- cmpps xmm1, xmm2, 3 -- this instruction is the same of: CMPUNORDPS xmm1, xmm2 
+//	// 0f c2 ca 03 -- cmpps xmm1, xmm2, 3 -- this instruction is the same of: CMPUNORDPS xmm1, xmm2
 //	// 0f c2 ca 04 -- cmpps xmm1, xmm2, 4 -- this instruction is the same of: CMPNEQPS xmm1, xmm2
 //	// 0f c2 ca 05 -- cmpps xmm1, xmm2, 5 -- this instruction is the same of: CMPNLTPS xmm1, xmm2
 //	// 0f c2 ca 06 -- cmpps xmm1, xmm2, 6 -- this instruction is the same of: CMPNLEPS xmm1, xmm2
@@ -4189,7 +4189,7 @@ bool AMD64Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Me
 //      prefix.clear();
 //      return true;
 //	}
-//	
+//
 //	// SSE instructions
 //	else if (token.check("xorps")) {
 //		compileXORPS(token, info, &writer);
@@ -4368,7 +4368,7 @@ void AMD64Assembler :: compile(TextReader* source, path_t outputPath)
 		}
       else if (token.check("inline")) {
          compileProcedure(token, &binary, false, false);
-         
+
          token.read();
       }
 //      else if (token.check("structure")) {

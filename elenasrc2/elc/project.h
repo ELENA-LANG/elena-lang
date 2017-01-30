@@ -108,7 +108,7 @@ protected:
    bool loadPathOption(_ConfigFile& config, ProjectSetting setting, path_t path);
 
    void loadCategory(_ConfigFile& config, ProjectSetting setting, path_t configPath);
-   void loadSourceCategory(_ConfigFile& config);
+   void loadSourceCategory(_ConfigFile& config, path_t path);
    void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
    void loadForwardCategory(_ConfigFile& config);
    void loadTargetCategory(_ConfigFile& config);
@@ -162,7 +162,7 @@ public:
 
          _loader.setRootPath(libPath.c_str());
       }
-         
+
       // if package is set we need to set the loader package as well
       Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
 

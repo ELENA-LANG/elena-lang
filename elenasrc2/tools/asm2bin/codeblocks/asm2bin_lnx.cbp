@@ -90,6 +90,8 @@
 			<Option link="1" />
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="../../../engine/amd64helper.cpp" />
+		<Unit filename="../../../engine/amd64helper.h" />
 		<Unit filename="../../../engine/bytecode.cpp" />
 		<Unit filename="../../../engine/bytecode.h" />
 		<Unit filename="../../../engine/elena.h">
@@ -111,6 +113,8 @@
 		<Unit filename="../../../engine/x86helper.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="../amd64assembler.cpp" />
+		<Unit filename="../amd64assembler.h" />
 		<Unit filename="../asm2binx.cpp" />
 		<Unit filename="../assembler.h">
 			<Option compile="1" />

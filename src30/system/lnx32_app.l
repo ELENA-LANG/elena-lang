@@ -33,7 +33,7 @@
 
 // --- startUp ---
 
-#class StartUpEvents
+#class $StartUpEvents
 {
     #field theFinializeEvent.
     
@@ -41,7 +41,7 @@
     [
         ($nil == theFinializeEvent)
             ? [ theFinializeEvent := aHandle. ]
-            ! [ theFinializeEvent := Function1Group new &args:theFinializeEvent:aHandle. ].
+            ! [ theFinializeEvent := Function1Group new &args:(theFinializeEvent,aHandle). ].
     ]
     
     #method $onStop : arg

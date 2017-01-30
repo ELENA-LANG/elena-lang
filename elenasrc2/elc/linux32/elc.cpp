@@ -291,12 +291,12 @@ void _ELC_::Project :: cleanUp()
       // remove module
       path.copy(rootPath.c_str());
       _loader.nameToPath(ns, path, "nl");
-      //_wremove(path);
+      remove(path);
 
       // remove debug module
       path.copy(rootPath.c_str());
       _loader.nameToPath(ns, path, "dnl");
-      //_wremove(path);
+      remove(path);
    }
 }
 
