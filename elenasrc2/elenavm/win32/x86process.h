@@ -28,23 +28,50 @@ class x86Process : public _Memory
    int getProtectedMode(bool writeAccess, bool executeAccess);
 
 public:
-   virtual size_t Length() const { return _used; }
+   virtual pos_t Length() const { return _used; }
 
-   virtual void* get(size_t position) const { return (void*)((size_t)_code + position); }
+   virtual void* getLong(pos64_t position) const
+   {
+      if (position < INT_MAX)
+      {
+         return get((pos_t)position);
+      }
+      else return NULL;
+   }
 
-   virtual bool read(size_t position, void* s, size_t length);
+   virtual void* get(pos_t position) const 
+   { 
+      return (void*)((size_t)_code + position);
+   }
 
-   virtual bool write(size_t position, const void* s, size_t length);
+   virtual bool read(pos_t position, void* s, pos_t length);
 
-   virtual void insert(size_t position, const void* s, size_t length);
+   virtual bool readLong(pos64_t position, void* s, pos64_t length)
+   {
+      if (position < INT_MAX && length < INT_MAX) {
+         return read((pos_t)position, s, (pos_t)length);
+      }
+      else return false;
+   }
 
-   virtual bool writeBytes(size_t position, char value, size_t length);
+   virtual bool write(pos_t position, const void* s, pos_t length);
+
+   virtual void insert(pos_t position, const void* s, pos_t length);
+
+   virtual bool writeBytes(pos_t position, char value, pos_t length);
 
    virtual bool exportFunction(path_t rootPath, size_t position, path_t dllName, ident_t funName);
 
-   virtual void trim(size_t size)
+   virtual void trim(pos_t size)
    {
       _used = size;
+   }
+   virtual void trimLong(pos64_t size)
+   {
+      if (size < INT_MAX)
+      {
+         _used = (size_t)size;
+      }
    }
 
    void protect(bool writeAccess, bool executeAccess);

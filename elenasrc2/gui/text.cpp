@@ -321,7 +321,7 @@ bool TextBookmark :: moveToClosestPosition(size_t position)
    return true;
 }
 
-void TextBookmark :: moveToClosestColumn(size_t column)
+void TextBookmark :: moveToClosestColumn(int column)
 {
    if (column > _column) {
       while (column > _column && move(1));

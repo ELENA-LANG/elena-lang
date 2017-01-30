@@ -39,20 +39,20 @@ struct StyleInfo
 class ViewStyles
 {
    Style* _styles;
-   int    _count;
+   size_t _count;
 
    int   _lineHeight;
    int   _marginWidth;
 
 public:
-   int Count() const { return _count; }
+   size_t Count() const { return _count; }
 
    Style operator[](size_t index)
    {
       return _styles[index];
    }
 
-   void assign(int count, StyleInfo* styles, int lineHeight, int marginWidth);
+   void assign(size_t count, StyleInfo* styles, int lineHeight, int marginWidth);
 
    int getLineHeight() const { return _lineHeight; }
    int getMarginWidth() const { return _marginWidth; }

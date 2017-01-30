@@ -132,23 +132,24 @@ public:
 
 struct ScriptBookmark
 {
-   int   offset;
+   pos_t offset;
    int   state;
    short row;
    short column;
 
    ScriptBookmark()
    {
-      state = offset = 0;
+      offset = 0;
+      state = 0;
       row = column = 0;
    }
-   ScriptBookmark(int offset, int state)
+   ScriptBookmark(pos_t offset, int state)
    {
       this->state = state;
       this->offset = offset;
       this->row = this->column = 0;
    }
-   ScriptBookmark(int offset, int state, int row, int column)
+   ScriptBookmark(pos_t offset, int state, int row, int column)
    {
       this->state = state;
       this->offset = offset;

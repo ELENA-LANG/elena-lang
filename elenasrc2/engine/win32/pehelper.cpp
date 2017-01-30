@@ -40,13 +40,13 @@ bool PEHelper :: seekSection(StreamReader& reader, char* name, size_t& address)
       return false;
 
    IMAGE_NT_HEADERS ntHeader;
-   reader.seek(base + dosHeader.e_lfanew);
+   reader.seek((size_t)(base + dosHeader.e_lfanew));
    reader.read(&ntHeader, sizeof(IMAGE_NT_HEADERS));
    //Check if valid PE file  
    if (ntHeader.Signature != IMAGE_NT_SIGNATURE)
       return false;
 
-   reader.seek(base + dosHeader.e_lfanew + 4 + sizeof(IMAGE_FILE_HEADER) + ntHeader.FileHeader.SizeOfOptionalHeader);
+   reader.seek((size_t)(base + dosHeader.e_lfanew + 4 + sizeof(IMAGE_FILE_HEADER) + ntHeader.FileHeader.SizeOfOptionalHeader));
    for (int i = 0 ; i < ntHeader.FileHeader.NumberOfSections ; i++) {
       IMAGE_SECTION_HEADER header;
 
@@ -55,7 +55,7 @@ bool PEHelper :: seekSection(StreamReader& reader, char* name, size_t& address)
       {
          address = header.VirtualAddress + 0x400000;
 
-         reader.seek(base + header.VirtualAddress);
+         reader.seek((size_t)(base + header.VirtualAddress));
 
          return true;
       }

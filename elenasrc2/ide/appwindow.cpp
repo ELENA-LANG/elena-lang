@@ -679,7 +679,7 @@ void IDEController :: doExit()
 bool findBracket(Text* text, TextBookmark& bookmark, text_c starting, text_c ending, bool forward)
 {
    // define the upper / lower border of bracket search
-   size_t frameY = 0;
+   int frameY = 0;
    if (forward)
       frameY = text->getRowCount();
 
@@ -1574,7 +1574,7 @@ void IDEController :: onRowChange(int row)
    // shift breakpoints if the row number was changed
    Breakpoints::Iterator it = _breakpoints.start();
    while (!it.Eof()) {
-      if ((*it).row > (size_t)row && (*it).param == _model->currentDoc) {
+      if ((*it).row > row && (*it).param == _model->currentDoc) {
          (*it).row += rowChange;
          changed = true;
 

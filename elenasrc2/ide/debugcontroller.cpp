@@ -33,7 +33,7 @@ void* DebugController :: unmapDebugPTR32(pos_t position)
    //!! temporal : does not work if the address > 2GB
    return (void*)(size_t)position;
 #else
-   return (void*)address;
+   return (void*)position;
 #endif
 }
 

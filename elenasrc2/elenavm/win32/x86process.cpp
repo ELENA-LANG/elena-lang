@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2015, by Alexei Rakov
+//                                              (C)2009-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -65,7 +65,7 @@ bool x86Process :: allocate(size_t size)
    return true;
 }
 
-bool x86Process :: write(size_t position, const void* s, size_t length)
+bool x86Process :: write(pos_t position, const void* s, pos_t length)
 {
    size_t newSize = position + length;
 
@@ -82,7 +82,7 @@ bool x86Process :: write(size_t position, const void* s, size_t length)
    return true;
 }
 
-bool x86Process :: writeBytes(size_t position, char value, size_t length)
+bool x86Process :: writeBytes(pos_t position, char value, pos_t length)
 {
    size_t newSize = position + length;
 
@@ -99,7 +99,7 @@ bool x86Process :: writeBytes(size_t position, char value, size_t length)
    return true;
 }
 
-void x86Process :: insert(size_t position, const void* s, size_t length)
+void x86Process :: insert(pos_t position, const void* s, pos_t length)
 {
    if (_allocated - _used < length)
       allocate(length);
@@ -110,7 +110,7 @@ void x86Process :: insert(size_t position, const void* s, size_t length)
    _used += length;
 }
 
-bool x86Process :: read(size_t position, void* s, size_t length)
+bool x86Process :: read(pos_t position, void* s, pos_t length)
 {
    if (position < _used && _used >= position + length) {
       memcpy(s, (LPVOID)((size_t)_code + position), length);

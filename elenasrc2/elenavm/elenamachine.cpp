@@ -818,7 +818,7 @@ int Instance::interprete(void* tape, ident_t interpreter)
 bool Instance :: loadAddressInfo(void* address, char* buffer, size_t& maxLength)
 {
    RTManager manager;
-   MemoryReader reader(getTargetDebugSection(), 8);
+   MemoryReader reader(getTargetDebugSection(), 8u);
    reader.getLiteral(DEFAULT_STR);
 
    maxLength = manager.readAddressInfo(reader, (size_t)address, &_loader, buffer, maxLength);

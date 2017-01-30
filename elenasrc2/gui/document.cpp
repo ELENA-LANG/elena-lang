@@ -190,8 +190,8 @@ bool Document::Reader :: readNext(_ELENA_::TextWriter& writer, size_t length)
    if (bm.isEOF())
      return false;
 
-   if (bm.getColumn() >= (size_t)_region.bottomRight.x || bm.isEOL()) {
-      if (bm.getRow() >= (size_t)_region.bottomRight.y)
+   if (bm.getColumn() >= _region.bottomRight.x || bm.isEOL()) {
+      if (bm.getRow() >= _region.bottomRight.y)
          return false;
 
       bm.moveTo(_region.topLeft.x, bm.getRow() + 1);
@@ -353,8 +353,7 @@ void Document :: moveRightToken(bool selecting, bool trimWhitespace)
    bool _operator = false;
    bool first = true;
    size_t pos = _caret.getPosition();
-   while (first || _caret.getColumn() < _caret.getLength()) {
-
+   while (first || _caret.getColumn() < (int)_caret.getLength()) {
       size_t length;
       text_t line = _text->getLine(_caret, length);
       if (length == 0)
@@ -443,14 +442,14 @@ void Document :: setCaret(int column, int row, bool selecting)
 {
    if (column < 0) column = 0;
    if (row < 0) row = 0;
-   else if ((size_t)row >= _text->getRowCount()) row = _text->getRowCount() - 1;
+   else if (row >= _text->getRowCount()) row = _text->getRowCount() - 1;
 
    _text->validateBookmark(_caret);
 
    size_t position = _caret.getPosition();
 
    _caret.moveTo(column, row);
-   if (_maxColumn < _caret.getLength() + _size.x) {
+   if (_maxColumn < (int)_caret.getLength() + _size.x) {
       _maxColumn = (int)_caret.getLength() + _size.x;
 
       status.maxColChanged = true;
@@ -518,7 +517,7 @@ void Document :: vscroll(int displacement)
    frame.y += displacement;
    if (frame.y < 0)
       frame.y = 0;
-   else if ((size_t)frame.y > _text->getRowCount())
+   else if (frame.y > _text->getRowCount())
       frame.y = _text->getRowCount();
 
    if (_frame.getCaret() != frame) {
@@ -569,7 +568,7 @@ void Document :: insertChar(text_c ch, size_t count)
 
       status.rowDifference += (_text->getRowCount() - rowCount);
    }
-   else if (status.overwriteMode && _caret.getLength() > _caret.getColumn(false)) {
+   else if (status.overwriteMode && (int)_caret.getLength() > _caret.getColumn(false)) {
       _text->eraseChar(_caret);
    }
 
@@ -879,7 +878,7 @@ void Document :: commentBlock()
    TextBookmark end = _caret;
    end.moveOn(selection);
 
-   while ((size_t)caret.y < end.getRow() || ((size_t)caret.y == end.getRow() && end.getColumn() > 0)) {
+   while (caret.y < end.getRow() || (caret.y == end.getRow() && end.getColumn() > 0)) {
       if (!_caret.moveTo(0, caret.y))
          return;
 
@@ -902,7 +901,7 @@ void Document :: uncommentBlock()
    end.moveOn(selection);
 
    text_c line[3];
-   while ((size_t)caret.y <= end.getRow()) {
+   while (caret.y <= end.getRow()) {
       if (!_caret.moveTo(0, caret.y))
          return;
 
@@ -968,7 +967,7 @@ void Document :: toLowercase()
 }
 void Document :: swap()
 {
-   if (_caret.getColumn() > 0 && _caret.getColumn() < _caret.getLength()) {
+   if (_caret.getColumn() > 0 && _caret.getColumn() < (int)_caret.getLength()) {
       text_c pair[3];
 
       _caret.moveOn(-1);

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2016, by Alexei Rakov
+//                                              (C)2009-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -18,12 +18,12 @@ using namespace _ELENA_;
 
 // --- Instance::ImageSection ---
 
-void* Instance::ImageSection :: get(size_t position) const
+void* Instance::ImageSection :: get(pos_t position) const
 {
    return (unsigned char*)_section + position;
 }
 
-bool Instance::ImageSection :: read(size_t position, void* s, size_t length)
+bool Instance::ImageSection :: read(pos_t position, void* s, pos_t length)
 {
    if (position < _length && _length >= position + length) {
       memcpy(s, (unsigned char*)_section + position, length);

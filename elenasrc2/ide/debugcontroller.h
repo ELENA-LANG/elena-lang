@@ -101,7 +101,7 @@ protected:
       }
       virtual bool seek(pos64_t position)
       {
-         _position = position;
+         _position = (size_t)position;
 
          return true;
       }

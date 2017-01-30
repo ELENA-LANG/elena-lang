@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2016, by Alexei Rakov
+//                                              (C)2009-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenamachineH
@@ -42,33 +42,53 @@ public:
          return reader.Position();
       }
 
-      virtual size_t Length() const
+      virtual pos_t Length() const
       {
          return _length;
       }
 
-      virtual void* get(size_t position) const;
+      virtual void* get(pos_t position) const;
 
-      virtual bool read(size_t position, void* s, size_t length);
+      virtual void* getLong(pos64_t position) const
+      {
+         if (position < INT_MAX) {
+            return get((pos_t)position);
+         }
+         else return NULL;
+      }
 
-      virtual bool write(size_t position, const void* s, size_t length)
+      virtual bool read(pos_t position, void* s, pos_t length);
+
+      virtual bool readLong(pos64_t position, void* s, pos64_t length)
+      {
+         if (position < INT_MAX && length < INT_MAX) {
+            return read((pos_t)position, s, (pos_t)length);
+         }
+         else return false;
+      }
+
+      virtual bool write(pos_t position, const void* s, pos_t length)
       {
          // write operations are not supported
          return false;
       }
 
-      virtual void insert(size_t position, const void* s, size_t length)
+      virtual void insert(pos_t position, const void* s, pos_t length)
       {
          // insert operations are not supported
       }
 
-      virtual bool writeBytes(size_t position, char value, size_t length)
+      virtual bool writeBytes(pos_t position, char value, pos_t length)
       {
          // write operations are not supported
          return false;
       }
 
-      virtual void trim(size_t position)
+      virtual void trim(pos_t position)
+      {
+         // trim operations are not supported
+      }
+      virtual void trimLong(pos64_t position)
       {
          // trim operations are not supported
       }

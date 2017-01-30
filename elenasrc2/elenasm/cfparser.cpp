@@ -467,7 +467,7 @@ inline int writeTrailItem(MemoryWriter& writer, int nonterminal, int next)
 inline void readTailItemAndPush(MemoryReader& reader, MemoryWriter& writer, CFParser::DerivationQueue& queue, int offset)
 {
    int nonterminal = reader.getDWord();
-   int next = reader.getDWord();
+   pos_t next = reader.getDWord();
 
    while (nonterminal == 0) {
       offset = writeDerivationItem(writer, 0, 0, offset);
@@ -488,11 +488,11 @@ inline void readTailItemAndPush(MemoryReader& reader, MemoryWriter& writer, CFPa
 inline void readTailItemAndInsert(MemoryReader& reader, MemoryWriter& writer, CFParser::DerivationQueue& queue, int offset)
 {
    int nonterminal = reader.getDWord();
-   int next = reader.getDWord();
+   pos_t next = reader.getDWord();
 
    while (nonterminal == 0) {
       offset = writeDerivationItem(writer, 0, 0, offset);
-      if (next != -1) {
+      if (next != (pos_t)-1) {
          reader.seek(next);
          nonterminal = reader.getDWord();
          next = reader.getDWord();
@@ -518,7 +518,7 @@ void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptRea
          int next = writeTrailItem(writer, 0, item.next);
 
          if (rule.type == rtEps) {
-            MemoryReader reader(&_body, next);
+            MemoryReader reader(&_body, (pos_t)next);
             readTailItemAndInsert(reader, writer, queue, offset);
          }
          else if (rule.type != rtNormal) {
@@ -530,7 +530,7 @@ void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptRea
             queue.insert(DerivationItem(rule.nonterminal, offset, next));
          }
          else if (rule.nonterminal == 0) {
-            MemoryReader reader(&_body, next);
+            MemoryReader reader(&_body, (pos_t)next);
             readTailItemAndPush(reader, writer, queue, offset);
          }
          else queue.push(DerivationItem(rule.nonterminal, offset, next));
@@ -574,7 +574,7 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
    if (offset == 0)
       return;
 
-   MemoryReader reader(&_body, offset);
+   MemoryReader reader(&_body, (pos_t)offset);
    Stack<TraceItem> stack(TraceItem(0));
    TraceItem item;
    reader.read(&item, sizeof(TraceItem));
@@ -583,7 +583,7 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
       if (item.previous == 0)
          break;
 
-      reader.seek(item.previous);
+      reader.seek((pos_t)item.previous);
       reader.read(&item, sizeof(TraceItem));
    }
 

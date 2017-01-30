@@ -253,7 +253,7 @@ SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
 
 SyntaxTree::Node SyntaxTree:: readRoot()
 {
-   MemoryReader reader(&_body, 0);
+   MemoryReader reader(&_body, 0u);
 
    return read(reader);
 }

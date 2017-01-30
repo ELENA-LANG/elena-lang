@@ -15,7 +15,7 @@ inline bool isKeyDown(int key)
 
 // --- ViewStyles ---
 
-void ViewStyles :: assign(int count, StyleInfo* styles, int lineHeight, int marginWidth)
+void ViewStyles :: assign(size_t count, StyleInfo* styles, int lineHeight, int marginWidth)
 {
    _count = count;
    _styles = new Style[count];
@@ -32,7 +32,7 @@ void ViewStyles :: assign(int count, StyleInfo* styles, int lineHeight, int marg
 
 void ViewStyles :: validate(Canvas* canvas)
 {
-   for (int i = 0 ; i < _count ; i++) {
+   for (size_t i = 0 ; i < _count ; i++) {
       _styles[i].validate(canvas);
 
       if (_styles[i].valid && _lineHeight < _styles[i].lineHeight) {

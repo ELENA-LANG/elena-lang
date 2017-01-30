@@ -124,7 +124,7 @@ private:
 
    void moveToStart();
    void moveToClosestRow(int row);
-   void moveToClosestColumn(size_t column);
+   void moveToClosestColumn(int column);
    bool moveToClosestPosition(size_t position);
 
    bool moveToPrevBOL();
@@ -221,7 +221,7 @@ public:
    bool isValid() const { return (size_t)_status != BM_INVALID; }
 
    bool isEOF() const { return _page.Last() && _offset>=(int)(*_page).used; }
-   bool isEOL() { return (getLength() <= _column); }
+   bool isEOL() { return ((int)getLength() <= _column); }
 
    Point getCaret(bool _virtual = true) const
    {
