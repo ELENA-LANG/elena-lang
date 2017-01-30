@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class header
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textH
@@ -18,6 +18,17 @@
 
 namespace _GUI_
 {
+
+#ifdef _WIN64
+
+typedef long long disp_t;
+
+#else 
+
+typedef int disp_t;
+
+#endif // _WIN64
+
 
 enum EOLMode
 {
@@ -47,7 +58,7 @@ typedef _ELENA_::List<_TextWatcher*> TextWatchers;
 struct Page
 {
    size_t  used;
-   size_t  rows;
+   int     rows;
    text_c  text[PAGE_SIZE];
 
    Page()
@@ -55,7 +66,7 @@ struct Page
       used = 0;
       rows = 0;
    }
-   Page(int size)
+   Page(size_t size)
    {
       rows = 0;
       used = size;
@@ -81,15 +92,15 @@ private:
    EOLMode        _mode;
 
    // bookmark text position
-   size_t         _column;
-   size_t         _virtual_column;
-   size_t         _row;
+   int            _column;
+   int            _virtual_column;
+   int            _row;
    size_t         _length;
 
    // bookmark stream position
-   int             _status;
+   size_t          _status;
    size_t          _position;
-   int             _offset;
+   size_t          _offset;
    Pages::Iterator _page;
 
    void set(Pages* pages);
@@ -108,11 +119,11 @@ private:
 
    void normalize();                                 // make sure _offset is within page text range
 
-   bool go(int disp, bool allowEmpty = false);       // moving without tracing caret coordinate
-   bool move(int disp);                              // moving with tracing caret coordinate
+   bool go(disp_t disp, bool allowEmpty = false);    // moving without tracing caret coordinate
+   bool move(disp_t disp);                           // moving with tracing caret coordinate
 
    void moveToStart();
-   void moveToClosestRow(size_t row);
+   void moveToClosestRow(int row);
    void moveToClosestColumn(size_t column);
    bool moveToClosestPosition(size_t position);
 
@@ -121,7 +132,7 @@ private:
 
    size_t seekEOL();
 
-   bool nextChar(int& disp)
+   bool nextChar(disp_t& disp)
    {
 #ifdef _UTF8
       if (_ELENA_::test((*_page).text[_offset], 0x80)) {
@@ -148,7 +159,7 @@ private:
 #endif
    }
 
-   bool prevChar(int& disp)
+   bool prevChar(disp_t& disp)
    {
 #ifdef _UTF8
       if (_status == 0 && _ELENA_::test((*_page).text[_offset], 0x80)) {
@@ -170,7 +181,7 @@ private:
    }
 
 public:
-   static size_t charLength(text_t s, int offset)
+   static size_t charLength(text_t s, size_t offset)
    {
 #ifdef _UTF8
       if (_ELENA_::test(s[offset], 0x80)) {
@@ -216,8 +227,8 @@ public:
    {
       return Point(_virtual ? _virtual_column : _column, _row);
    }
-   size_t getRow() const { return _row; }
-   size_t getColumn(bool _virtual = true) const { return _virtual ? _virtual_column : _column; }
+   int getRow() const { return _row; }
+   int getColumn(bool _virtual = true) const { return _virtual ? _virtual_column : _column; }
 
    size_t getLength();
 
@@ -225,8 +236,8 @@ public:
 
    int getVirtualDiff() const { return _column - _virtual_column; }
 
-   bool moveTo(size_t column, size_t row);
-   bool moveOn(int disp);
+   bool moveTo(int column, int row);
+   bool moveOn(disp_t disp);
 
    void invalidate()
    {
@@ -251,7 +262,7 @@ public:
 
    text_t getLine(size_t& length);
 
-   bool goTo(int disp)
+   bool goTo(disp_t disp)
    {
       return _bookmark.go(disp);
    }
@@ -266,7 +277,7 @@ class Text
    EOLMode      _mode;
 
    Pages        _pages;
-   size_t       _rowCount;
+   int          _rowCount;
 
    TextWatchers _watchers;
 
@@ -281,8 +292,8 @@ class Text
 public:
    static int TabSize;
 
-   size_t getRowCount() const { return _rowCount; }
-   size_t getRowLength(size_t row);
+   int getRowCount() const { return _rowCount; }
+   size_t getRowLength(int row);
 
    void validateBookmark(TextBookmark& bookmark);
 
@@ -292,7 +303,7 @@ public:
 
    void copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, size_t length, bool stopOnEOL);
    void copyLineToX(TextBookmark& bookmark, _ELENA_::TextWriter& writer, size_t length, int x);
-   void copyTo(TextBookmark bookmark, text_c* buffer, int length);
+   void copyTo(TextBookmark bookmark, text_c* buffer, disp_t length);
 
    text_t getLine(TextBookmark& bookmark, size_t& length);
    text_c getChar(TextBookmark& bookmark);
@@ -304,7 +315,7 @@ public:
    bool eraseChar(TextBookmark& bookmark);
    bool eraseLine(TextBookmark& bookmark, size_t length);
 
-   bool compare(TextBookmark bookmark, text_t line, int len, bool matchCase, text_t terminators);
+   bool compare(TextBookmark bookmark, text_t line, size_t len, bool matchCase, text_t terminators);
    bool findWord(TextBookmark& bookmark, text_t text, bool matchCase, text_t terminators);
 
    void attachWatcher(_TextWatcher* watcher);

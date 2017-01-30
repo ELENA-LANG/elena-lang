@@ -36,7 +36,7 @@ class Redirector
    DWORD  _dwWaitTime;		// wait time to check the status of the child process
 
    char   _buffer[BUF_SIZE];
-   int    _offset;
+   size_t _offset;
 
 protected:
    HANDLE _hStdinWrite;	// write end of child's stdin pipe
@@ -66,7 +66,7 @@ public:
 
    void flush();
 
-   Redirector(bool readOnly, size_t waitTime);
+   Redirector(bool readOnly, int waitTime);
    virtual ~Redirector();
 };
 
@@ -81,7 +81,7 @@ protected:
    virtual void afterExecution(DWORD exitCode);
 
 public:
-   WindowRedirector(RedirectorListener* target, bool readOnly, size_t waitTime);
+   WindowRedirector(RedirectorListener* target, bool readOnly, int waitTime);
 };
 
 };

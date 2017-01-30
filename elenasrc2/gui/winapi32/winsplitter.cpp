@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Splitter class implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "winsplitter.h"
@@ -21,11 +21,11 @@ static LRESULT CALLBACK hookProcMouse(int nCode, WPARAM wParam, LPARAM lParam)
       switch (wParam) {
          case WM_MOUSEMOVE:
          case WM_NCMOUSEMOVE:
-            ::PostMessage(hWndMouse, wParam, 0, 0);
+            ::PostMessage(hWndMouse, (UINT)wParam, 0, 0);
             break;
          case WM_LBUTTONUP:
          case WM_NCLBUTTONUP:
-            ::PostMessage(hWndMouse, wParam, 0, 0);
+            ::PostMessage(hWndMouse, (UINT)wParam, 0, 0);
             return TRUE;
          default:
             break;
@@ -91,7 +91,7 @@ bool Splitter :: isVisible()
    return Window::isVisible();
 }
 
-size_t Splitter :: getWidth() const
+int Splitter :: getWidth() const
 {
    if (_vertical) {
       return _client->getWidth() + _width;
@@ -99,7 +99,7 @@ size_t Splitter :: getWidth() const
    else return _height;
 }
 
-size_t Splitter :: getHeight() const
+int Splitter :: getHeight() const
 {
    if (!_vertical) {
       return _client->getHeight() + _height;
@@ -121,7 +121,7 @@ void Splitter :: _setCoordinate(int x, int y)
    }
 }
 
-void Splitter :: _setWidth(size_t width)
+void Splitter :: _setWidth(int width)
 {
    if (_vertical) {
 	  if (width > 3) {
@@ -138,7 +138,7 @@ void Splitter :: _setWidth(size_t width)
    }
 }
 
-void Splitter :: _setHeight(size_t height)
+void Splitter :: _setHeight(int height)
 {
    if (!_vertical) {
       if (height > 3) {
@@ -161,7 +161,7 @@ void Splitter :: _resize()
    Control::_resize();
 }
 
-LRESULT Splitter :: _WindProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam)
+LRESULT Splitter :: _WindProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
    switch (Message)
    {

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI SDI Control Implementation File
-//                                               (C)2005-2015, by Alexei Rakov
+//                                               (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "winsdi.h"
@@ -15,7 +15,7 @@ bool isVisible(Control* control)
    return (control && control->isVisible());
 }
 
-void adjustVertical(size_t width, size_t& height, Control* control)
+void adjustVertical(int width, int& height, Control* control)
 {
    if (isVisible(control)) {
       control->_setWidth(width);
@@ -29,7 +29,7 @@ void adjustVertical(size_t width, size_t& height, Control* control)
    }
 }
 
-void adjustHorizontal(size_t& width, size_t height, Control* control)
+void adjustHorizontal(int& width, int height, Control* control)
 {
    if (isVisible(control)) {
       control->_setHeight(height);
@@ -43,7 +43,7 @@ void adjustHorizontal(size_t& width, size_t height, Control* control)
    }
 }
 
-void adjustClient(size_t width, size_t height, Control* control)
+void adjustClient(int width, int height, Control* control)
 {
    if (isVisible(control)) {
       control->_setWidth(width);
@@ -53,8 +53,8 @@ void adjustClient(size_t width, size_t height, Control* control)
 
 void LayoutManager :: resizeTo(_GUI_::Rectangle area)
 {
-   size_t totalHeight = area.Height();
-   size_t totalWidth = area.Width();
+   int totalHeight = area.Height();
+   int totalWidth = area.Width();
    int y = area.topLeft.x;
    int x = area.topLeft.y;
 
@@ -95,7 +95,7 @@ void SDIWindow :: _registerClass(HINSTANCE instance, HICON icon, wchar_t* menu)
    Window::_registerClass(instance, APP_WND_CLASS, CS_BYTEALIGNWINDOW | CS_DBLCLKS, NULL, (HBRUSH)COLOR_WINDOW, icon, menu);
 }
 
-LRESULT SDIWindow :: _WindProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam)
+LRESULT SDIWindow :: _WindProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
    switch (Message)
    {

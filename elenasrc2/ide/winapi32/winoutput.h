@@ -21,9 +21,9 @@ protected:
    WindowRedirector* _redirector;
    WNDPROC           _editProc;
    
-   static LRESULT CALLBACK _Proc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam);
+   static LRESULT CALLBACK _Proc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
-   virtual LRESULT _OutputProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam);
+   virtual LRESULT _OutputProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
    virtual void destroy();
 

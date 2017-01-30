@@ -201,15 +201,15 @@ protected:
    Point         _size;
    TextBookmark  _frame;
    TextBookmark  _caret;
-   int           _selection;
+   disp_t        _selection;
 
-   size_t        _maxColumn;
+   int           _maxColumn;
 
    virtual void onUpdate(size_t position);
    virtual void onInsert(size_t position, size_t length, text_t line);
    virtual void onErase(size_t position, size_t length, text_t line);
 
-   int defineStyle(Reader& reader);
+   size_t defineStyle(Reader& reader);
 
    bool eraseSelection();
 
@@ -219,7 +219,7 @@ public:
    DocStatus status;
 
    bool hasSelection() const { return (_selection != 0); }
-   int getSelectionLength();
+   disp_t getSelectionLength();
 
    Text* getText() const { return _text; }
    TextBookmark getCurrentTextBookmark() { return _caret; }
@@ -270,7 +270,7 @@ public:
    void moveRightToken(bool selecting, bool trimWhitespace = false);
    void moveFrameUp();
    void moveFrameDown();
-   void moveToFrame(size_t column, size_t row, bool selecting);
+   void moveToFrame(int column, int row, bool selecting);
    void movePageUp(bool selecting);
    void movePageDown(bool selecting);
 
@@ -284,13 +284,13 @@ public:
    void copySelection(text_c* text);
    void copyText(text_c* text, int length);
 
-   void insertLine(text_t text, int length);
+   void insertLine(text_t text, disp_t length);
    virtual void insertNewLine();
    void insertChar(text_c ch)
    {
       insertChar(ch, 1);
    }
-   void insertChar(text_c ch, int number);
+   void insertChar(text_c ch, size_t number);
 
    void eraseChar(bool moveback);
 

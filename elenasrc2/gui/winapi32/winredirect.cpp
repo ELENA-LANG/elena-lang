@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Redirect Class
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //                                              (C)2001, by Jeff Lee
 //---------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ inline void destroyHandle(HANDLE& hObject)
 
 // --- Redirector ---
 
-Redirector :: Redirector(bool readOnly, size_t waitTime)
+Redirector :: Redirector(bool readOnly, int waitTime)
 {
    _hStdinWrite = NULL;
    _hStdoutRead = NULL;
@@ -194,7 +194,7 @@ bool Redirector :: start(const wchar_t* path, const wchar_t* cmdLine, const wcha
 void Redirector :: flush()
 {
    DWORD dwWritten;
-   ::WriteFile(_hStdinWrite, _buffer, _offset, &dwWritten, NULL);
+   ::WriteFile(_hStdinWrite, _buffer, (int)_offset, &dwWritten, NULL);
 
    //!! should be moved if dwWritten != _offset
    _offset = 0;
@@ -307,7 +307,7 @@ DWORD WINAPI Redirector :: OutputThread(LPVOID lpvThreadParam)
 
 // --- WindowRedirector ---
 
-WindowRedirector :: WindowRedirector(RedirectorListener* target, bool readOnly, size_t waitTime)
+WindowRedirector :: WindowRedirector(RedirectorListener* target, bool readOnly, int waitTime)
    : Redirector(readOnly, waitTime)
 {
    _target = target;

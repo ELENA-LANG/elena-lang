@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      MenuList class implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "menulist.h"
@@ -71,7 +71,7 @@ void MenuHistoryList :: add(text_str item)
 
    _list.insert(itemCopy);
 
-   if (_list.Count() >= _maxCount)
+   if ((int)_list.Count() >= _maxCount)
       eraseLast();
 
    refresh();
@@ -96,12 +96,12 @@ void MenuHistoryList :: refresh()
       _menu->enableItemById(_menuBaseId + _maxCount + 1, true);
    }
 
-   while (_list.Count() > _menuSize) {
+   while ((int)_list.Count() > _menuSize) {
       _menuSize++;
       _menu->insertItemById(_menuBaseId, _menuBaseId + _menuSize, _T("none"));
    }
 
-   while (_list.Count() < _menuSize) {
+   while ((int)_list.Count() < _menuSize) {
       _menu->eraseItemById(_menuBaseId + _menuSize);
       _menuSize--;
    }

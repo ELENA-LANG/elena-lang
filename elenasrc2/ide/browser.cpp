@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Debugger watch window implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "idecommon.h"
@@ -353,7 +353,7 @@ void* DebuggerAutoWatch :: addNode(_ELENA_::ident_t variableName, _ELENA_::ident
 {
    void* item = DebuggerWatch::addNode(variableName, className, address);
 
-   _items.add((int)item, false);
+   _items.add((size_t)item, false);
 
    return item;
 }
@@ -374,11 +374,11 @@ void DebuggerAutoWatch :: writeSubWatch(_DebugController* controller, void* node
 
 void DebuggerAutoWatch :: refreshNode(void* node)
 {
-   Map<int, bool>::Iterator it = _items.getIt((int)node);
+   Map<size_t, bool>::Iterator it = _items.getIt((size_t)node);
    if (!it.Eof()) {
       *it = false;
    }
-   else _items.add((int)node, false);
+   else _items.add((size_t)node, false);
 }
 
 void DebuggerAutoWatch :: clear()
@@ -391,7 +391,7 @@ void DebuggerAutoWatch :: clear()
 void DebuggerAutoWatch :: refresh(_ELENA_::_DebugController* controller)
 {
    // mark all auto items
-   Map<int, bool>::Iterator it = _items.start();
+   Map<size_t, bool>::Iterator it = _items.start();
    while (!it.Eof()) {
       (*it) = true;
 
@@ -407,7 +407,7 @@ void DebuggerAutoWatch :: refresh(_ELENA_::_DebugController* controller)
          it++;
 
          _browser->erase(item);
-         _items.erase((int)item);
+         _items.erase((size_t)item);
       }
       else it++;
    }

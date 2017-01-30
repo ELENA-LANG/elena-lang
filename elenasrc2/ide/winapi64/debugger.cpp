@@ -205,30 +205,30 @@ void ThreadContext :: writeDump(size_t address, char* dump, size_t length)
 
 size_t ThreadContext :: ClassVMT(size_t objectPtr)
 {
-   int    dump = -1;
+   size_t dump = -1;
    size_t size = 0;
 
-   ReadProcessMemory(hProcess, (void*)(objectPtr - 8), &dump, 4, &size);
+   ReadProcessMemory(hProcess, (void*)(objectPtr - 8), &dump, 8, &size);
 
    return dump;
 }
 
 size_t ThreadContext :: VMTFlags(size_t vmtPtr)
 {
-   int    dump = -1;
+   size_t dump = -1;
    size_t size = 0;
 
-   ReadProcessMemory(hProcess, (void*)(vmtPtr - 16), &dump, 4, &size);
+   ReadProcessMemory(hProcess, (void*)(vmtPtr - 16), &dump, 8, &size);
 
    return dump;
 }
 
 size_t ThreadContext :: ObjectPtr(size_t address)
 {
-   int    dump = -1;
+   size_t dump = -1;
    size_t size = 0;
 
-   ReadProcessMemory(hProcess, (void*)(address), &dump, 4, &size);
+   ReadProcessMemory(hProcess, (void*)(address), &dump, 8, &size);
 
    return dump;
 }
@@ -393,7 +393,7 @@ bool Debugger :: startProcess(const wchar_t* exePath, const wchar_t* cmdLine)
    return true;
 }
 
-void Debugger :: processEvent(size_t timeout)
+void Debugger :: processEvent(DWORD timeout)
 {
    DEBUG_EVENT event;
 
@@ -492,7 +492,7 @@ void Debugger :: processException(EXCEPTION_DEBUG_INFO* exception)
          }
          else {
             this->exception.code = exception->ExceptionRecord.ExceptionCode;
-            this->exception.address = (int)exception->ExceptionRecord.ExceptionAddress;
+            this->exception.address = (size_t)exception->ExceptionRecord.ExceptionAddress;
             TerminateProcess(current->hProcess, 1);
          }
          break;
@@ -592,7 +592,7 @@ bool Debugger :: start(const wchar_t* exePath, const wchar_t* cmdLine)
    else return false;
 }
 
-bool Debugger :: proceed(size_t timeout)
+bool Debugger :: proceed(DWORD timeout)
 {
    processEvent(timeout);
 
@@ -710,7 +710,7 @@ bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& de
    else if (_vmHook == 0) {
       size_t rdata = Context()->readDWord(0x4000D0);
       //HOTFIX : the actual length should be used
-      _vmHook = Context()->readDWord(0x400000 + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE) + 3, 4));
+      _vmHook = Context()->readDWord(rdata + 0x400000 + _ELENA_::alignSize(strlen(ELENACLIENT_SIGNITURE) + 3, 4));
 
       // enable debug mode
       Context()->writeDWord(_vmHook, -1);

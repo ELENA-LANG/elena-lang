@@ -574,6 +574,30 @@ public:
       return _file.writeLiteral(s, length);
    }
 
+   bool writeText(const wide_c* s, pos64_t length)
+   {
+#ifdef _WIN64
+      return _file.writeLiteral(s, length);
+#else
+      if (length < INT_MAX) {
+         return _file.writeLiteral(s, (size_t)length);
+      }
+      else return false;
+#endif
+   }
+
+   bool writeText(const char* s, pos64_t length)
+   {
+#ifdef _WIN64
+      return _file.writeLiteral(s, length);
+#else
+      if (length < INT_MAX) {
+         return _file.writeLiteral(s, (size_t)length);
+      }
+      else return false;
+#endif
+   }
+
    virtual void align(int alignment);
 
    FileWriter(path_t path, int encoding, bool withBOM);

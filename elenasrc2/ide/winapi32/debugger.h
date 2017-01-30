@@ -259,6 +259,11 @@ public:
    size_t findEntryPoint(const wchar_t* programPath);
    bool findSignature(StreamReader& reader, char* signature);
 
+   size_t readRetAddress(_Memory& memory, size_t position)
+   {
+      return memory[(pos_t)position];
+   }
+
    Debugger();
 };
 

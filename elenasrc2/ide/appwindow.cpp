@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      IDE main window class implementation
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "appwindow.h"
@@ -97,7 +97,7 @@ size_t defineStyle(text_c state, size_t style)
 
 // --- IDELexicalStyler ---
 
-inline size_t evaluateLength(_GUI_::TextBookmark& bookmark, size_t column)
+inline size_t evaluateLength(_GUI_::TextBookmark& bookmark, int column)
 {
    _GUI_::TextBookmark bm = bookmark;
 
@@ -716,21 +716,21 @@ void IDEController :: doHighlightBrackets(Document* doc)
 
    text_c current_ch = text->getChar(caret);
 
-   int pos = text_str(OPENING_BRACKET).find(current_ch, -1);
-   if (pos != -1) {
+   size_t pos = text_str(OPENING_BRACKET).find(current_ch, -1);
+   if (pos != NOTFOUND_POS) {
       //Point frame = doc->getFrame();
       //Point size = doc->getSize();
 
       _model->state |= uiBracketBold;
 
-      int openBracketPos = caret.getPosition();
-      int closeBracketPos = -1;
+      size_t openBracketPos = caret.getPosition();
+      size_t closeBracketPos = NOTFOUND_POS;
 
       if (findBracket(text, caret, OPENING_BRACKET[pos], CLOSING_BRACKET[pos], true)) {
          closeBracketPos = caret.getPosition();
       }
 
-      if (doc->addMarker(HighlightInfo(openBracketPos, closeBracketPos, -1, -1), STYLE_HIGHLIGHTED_BRACKET, STYLE_HIGHLIGHTED_BRACKET, false))
+      if (doc->addMarker(HighlightInfo((int)openBracketPos, (int)closeBracketPos, -1, -1), STYLE_HIGHLIGHTED_BRACKET, STYLE_HIGHLIGHTED_BRACKET, false))
          _view->refresh();
 
       return;
@@ -741,14 +741,14 @@ void IDEController :: doHighlightBrackets(Document* doc)
    if (closing.find(current_ch, -1) != -1) {
       _model->state |= uiBracketBold;
 
-      int openBracketPos = -1;
-      int closeBracketPos = caret.getPosition();
+      size_t openBracketPos = NOTFOUND_POS;
+      size_t closeBracketPos = caret.getPosition();
 
       if (findBracket(text, caret, CLOSING_BRACKET[pos], OPENING_BRACKET[pos], false)) {
          openBracketPos = caret.getPosition();
       }
 
-      if (doc->addMarker(HighlightInfo(closeBracketPos, openBracketPos, -1, -1), STYLE_HIGHLIGHTED_BRACKET, STYLE_HIGHLIGHTED_BRACKET, false))
+      if (doc->addMarker(HighlightInfo((int)closeBracketPos, (int)openBracketPos, -1, -1), STYLE_HIGHLIGHTED_BRACKET, STYLE_HIGHLIGHTED_BRACKET, false))
          _view->refresh();
 
       return;
@@ -905,7 +905,7 @@ bool IDEController :: doSaveAll(bool forced)
       if (!doSaveProject(false))
          return false;
    }
-   for (size_t index = 0 ; index < _model->mappings.Count() ; index++) {
+   for (int index = 0 ; index < (int)_model->mappings.Count() ; index++) {
       if (_model->isDocumentModified(index) || _model->isDocumentUnnamed(index)) {
          if (forced || _model->isDocumentUnnamed(index)) {
             doSave(index, false);
@@ -1891,8 +1891,8 @@ bool IDEController :: loadModule(text_t ns, text_t source)
       return false;
 
    // HOTFIX : if it is template code
-   int pos = text_str(source).findLast('\'');
-   if (pos >= 0) {
+   size_t pos = text_str(source).findLast('\'');
+   if (pos != NOTFOUND_POS) {
       text_c templateNs[IDENTIFIER_LEN];
       size_t dummy = pos;
       _ELENA_::Convertor::copy(templateNs, source, (size_t)pos, dummy);
@@ -1917,7 +1917,7 @@ bool IDEController :: loadModule(text_t ns, text_t source)
    return true;
 }
 
-bool IDEController :: toggleBreakpoint(_ELENA_::ident_t module, _ELENA_::ident_t path, size_t row, Document* doc)
+bool IDEController :: toggleBreakpoint(_ELENA_::ident_t module, _ELENA_::ident_t path, int row, Document* doc)
 {
    _ELENA_::List<_ELENA_::Breakpoint>::Iterator it = _breakpoints.start();
    while (!it.Eof()) {
@@ -2372,7 +2372,7 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
          name.pathToName(fullPath + rootLength + 1);
 
          // skip the root path + root namespace
-         int rootNs = path.str().find(rootLength + 1, PATH_SEPARATOR, -1);
+         size_t rootNs = path.str().find(rootLength + 1, PATH_SEPARATOR, -1);
 
          path.copy(path + rootNs + 1);
       }

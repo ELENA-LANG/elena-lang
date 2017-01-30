@@ -815,6 +815,31 @@ long strToLong(const wchar_t* s, int radix)
    return wcstoul(s, NULL, radix);
 }
 
+//double StringHelper :: strToDouble(const wchar_t* s)
+//{
+//   return wcstod(s, NULL);
+//}
+//
+//wchar_t* StringHelper :: intToStr(int n, wchar_t* s, int radix)
+//{
+//   return _itow(n, s, radix);
+//}
+
+//wchar_t* ulongToStr(unsigned long n, wchar_t* s, int radix)
+//{
+//   return _ultow(n, s, radix);
+//}
+
+char* Convertor :: longlongToStr(long long n, char* s, int radix)
+{
+   return _i64toa(n, s, radix);
+}
+
+wchar_t* Convertor :: longlongToStr(long long n, wchar_t* s, int radix)
+{
+   return _i64tow(n, s, radix);
+}
+
 //long long StringHelper :: strToLongLong(const wchar_t* s, int radix)
 //{
 //   long long number = 0;
@@ -842,25 +867,7 @@ long strToLong(const wchar_t* s, int radix)
 //   return number;
 //}
 
-//double StringHelper :: strToDouble(const wchar_t* s)
-//{
-//   return wcstod(s, NULL);
-//}
-//
-//wchar_t* StringHelper :: intToStr(int n, wchar_t* s, int radix)
-//{
-//   return _itow(n, s, radix);
-//}
 
-//wchar_t* ulongToStr(unsigned long n, wchar_t* s, int radix)
-//{
-//   return _ultow(n, s, radix);
-//}
-
-char* Convertor :: longlongToStr(long long n, char* s, int radix)
-{
-   return _i64toa(n, s, radix);
-}
 
 size_t findSubStr(const wchar_t* s, wchar_t c, size_t length, size_t defValue)
 {

@@ -21,7 +21,7 @@ void WindowList :: add(text_t item)
    if (emptystr(item))
       return;
 
-   for (size_t i = 0 ; i < _menuSize ; i++) {
+   for (int i = 0 ; i < _menuSize ; i++) {
       _menu->checkItemById(_menuBaseId + i + 1, false);
    }
 

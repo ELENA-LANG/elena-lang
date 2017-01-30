@@ -154,7 +154,7 @@ void EditFrame :: markDocument(int index, bool modified)
    wchar_t caption[0x100];
    getTabName(index, caption, 0x100);
 
-   int length = _ELENA_::getlength(caption);
+   size_t length = _ELENA_::getlength(caption);
    bool marked = caption[length - 1] == '*';
 
    if (modified) {

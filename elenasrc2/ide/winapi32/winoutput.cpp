@@ -47,13 +47,13 @@ Output :: ~Output()
    destroy();
 }
 
-LRESULT CALLBACK Output::_Proc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK Output::_Proc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
    Output* window = (Output*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
    return window->_OutputProc(hWnd, Message, wParam, lParam);
 }
 
-LRESULT Output ::_OutputProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam)
+LRESULT Output ::_OutputProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
    switch (Message)
    {
@@ -100,7 +100,7 @@ void Output :: onOutput(const char* text)
       if (text_len > 128)
          text_len = 128;
 
-      buf_len = MultiByteToWideChar(CP_OEMCP, 0, text, text_len, buffer, 256);
+      buf_len = MultiByteToWideChar(CP_OEMCP, 0, text, (int)text_len, buffer, 256);
       buffer[buf_len] = 0;
 
       int eol = GetWindowTextLength(_handle);

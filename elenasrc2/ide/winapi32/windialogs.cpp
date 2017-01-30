@@ -154,7 +154,7 @@ Dialog :: Dialog(Control* owner)
 
 int Dialog :: showModal()
 {
-   return ::DialogBoxParam(_owner->_getInstance(), MAKEINTRESOURCE(_getDialogID()),
+   return (int)::DialogBoxParam(_owner->_getInstance(), MAKEINTRESOURCE(_getDialogID()),
 	   _owner->getHandle(), (DLGPROC)DialogProc, (LPARAM)this);
 }
 
@@ -179,17 +179,17 @@ int Dialog :: getIntText(int id)
 
 bool Dialog :: getCheckState(int id)
 {
-   return _ELENA_::test(::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_CHECKED);
+   return _ELENA_::test((int)::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_CHECKED);
 }
 
 int Dialog :: getComboBoxIndex(int id)
 {
-   return ::SendDlgItemMessage(_handle, id, CB_GETCURSEL, 0, 0);
+   return (int)::SendDlgItemMessage(_handle, id, CB_GETCURSEL, 0, 0);
 }
 
 int Dialog :: getListCount(int id)
 {
-   return ::SendDlgItemMessage(_handle, id, LB_GETCOUNT, 0, 0);
+   return (int)::SendDlgItemMessage(_handle, id, LB_GETCOUNT, 0, 0);
 }
 
 void Dialog :: getListItem(int id, int index, wchar_t** text)
@@ -199,7 +199,7 @@ void Dialog :: getListItem(int id, int index, wchar_t** text)
 
 int Dialog :: getListIndex(int id)
 {
-   return ::SendDlgItemMessage(_handle, id, LB_GETCURSEL, 0, 0);
+   return (int)::SendDlgItemMessage(_handle, id, LB_GETCURSEL, 0, 0);
 }
 
 void Dialog :: setText(int id, const wchar_t* text)
@@ -257,7 +257,7 @@ void Dialog :: removeListItem(int id, int index)
 
 int  Dialog :: getListSelCount(int id)
 {
-   return ::SendDlgItemMessage(_handle, id, LB_GETSELCOUNT, 0, 0);
+   return (int)::SendDlgItemMessage(_handle, id, LB_GETSELCOUNT, 0, 0);
 }
 
 void Dialog :: getListSelected(int id, int count, int* selected)
@@ -493,7 +493,7 @@ void ProjectForwardsDialog :: onOK()
 
          _ELENA_::IdentifierString line(item);
 
-         int pos = line.ident().find('=');
+         size_t pos = line.ident().find('=');
 
          _ELENA_::IdentifierString name(line, pos);
 

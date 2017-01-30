@@ -5329,7 +5329,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
       long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
 
-      dataWriter.write(&value, 8);
+      dataWriter.write(&value, 8u);
 
       dataWriter.Memory()->addReference(scope.moduleScope->longReference | mskVMTRef, (ref_t)-4);
 
@@ -5341,7 +5341,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
       double value = module->resolveConstant(retVal.param).toDouble();
 
-      dataWriter.write(&value, 8);
+      dataWriter.write(&value, 8u);
 
       dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, (ref_t)-4);
 

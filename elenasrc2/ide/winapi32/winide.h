@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Win32 IDE
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef winideH
@@ -55,7 +55,7 @@ class IDEWindow : public SDIWindow, public _View, public _DebugListener
 
       virtual void* getCurrent();
 
-      virtual void* newNode(void* parent, _ELENA_::ident_t caption, int param);
+      virtual void* newNode(void* parent, _ELENA_::ident_t caption, size_t param);
       virtual void* findNodeStartingWith(void* node, _ELENA_::ident_t caption);
 
       void assign(Control* treeView);
@@ -292,7 +292,7 @@ public:
    void _notify(int code);
    void _notify(int code, const wchar_t* message, int param = 0);
    void _notify(int code, const wchar_t* message, const wchar_t* param);
-   void _notify(int code, const wchar_t* message, int param1, int param2);
+   void _notify(int code, const wchar_t* message, size_t param1, int param2);
    void _notify(int code, const wchar_t* ns, const wchar_t* source, HighlightInfo info);
 
 //   void resetDebugWindows();

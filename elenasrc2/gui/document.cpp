@@ -78,7 +78,7 @@ void LexicalStyler :: parse()
          }
          lookAhead = (state == _lookaheadState);
       }
-      if (!scanner.goTo(length))
+      if (!scanner.goTo((disp_t)length))
          break;
    }
    writer.writeSize(style);
@@ -169,7 +169,7 @@ bool Document::Reader ::readCurrentLine(_ELENA_::TextWriter& writer, size_t leng
 
    _doc->_text->validateBookmark(bm);
 
-   size_t column = _region.bottomRight.x;
+   int column = _region.bottomRight.x;
    if ((bm.getColumn() < column) && !bm.isEOL()) {
       size_t styleLen = _doc->defineStyle(*this);
       if (styleLen < length)
@@ -231,7 +231,7 @@ Document :: ~Document()
    _text->detachWatcher(this);
 }
 
-int Document :: getSelectionLength()
+disp_t Document :: getSelectionLength()
 {
    return abs(_selection);
 }
@@ -290,7 +290,7 @@ void Document :: moveHome(bool selecting)
 
 void Document :: moveEnd(bool selecting)
 {
-   setCaret(_caret.getLength(), _caret.getRow(), selecting);
+   setCaret((int)_caret.getLength(), _caret.getRow(), selecting);
 }
 
 void Document :: moveFirst(bool selecting)
@@ -300,8 +300,8 @@ void Document :: moveFirst(bool selecting)
 
 void Document :: moveLast(bool selecting)
 {
-   size_t lastRow = _text->getRowCount() - 1;
-   return setCaret(_text->getRowLength(lastRow), lastRow, selecting);
+   int lastRow = _text->getRowCount() - 1;
+   return setCaret((int)_text->getRowLength(lastRow), lastRow, selecting);
 }
 
 void Document :: moveLeftToken(bool selecting)
@@ -447,11 +447,11 @@ void Document :: setCaret(int column, int row, bool selecting)
 
    _text->validateBookmark(_caret);
 
-   int position = _caret.getPosition();
+   size_t position = _caret.getPosition();
 
    _caret.moveTo(column, row);
    if (_maxColumn < _caret.getLength() + _size.x) {
-      _maxColumn = _caret.getLength() + _size.x;
+      _maxColumn = (int)_caret.getLength() + _size.x;
 
       status.maxColChanged = true;
    }
@@ -560,7 +560,7 @@ bool Document :: eraseSelection()
    return true;
 }
 
-void Document :: insertChar(text_c ch, int count)
+void Document :: insertChar(text_c ch, size_t count)
 {
    if (hasSelection()) {
       int rowCount = _text->getRowCount();
@@ -585,7 +585,7 @@ void Document :: insertChar(text_c ch, int count)
    }
 }
 
-void Document :: insertLine(text_t text, int length)
+void Document :: insertLine(text_t text, disp_t length)
 {
    int rowCount = _text->getRowCount();
 
@@ -664,7 +664,7 @@ void Document :: onErase(size_t position, size_t length, text_t line)
    status.frameChanged = true;
 }
 
-int Document :: defineStyle(Reader& reader)
+size_t Document :: defineStyle(Reader& reader)
 {
    size_t length = _size.x;
    size_t position = reader.bm.getPosition();
@@ -733,7 +733,7 @@ void Document :: tabbing(text_c space, size_t count, bool indent)
    end.moveOn(_selection);
 
    // if only part of the line was selected just insert tab
-   size_t lastRow = end.getRow();
+   int lastRow = end.getRow();
    if (lastRow == _caret.getRow()) {
       if (indent)
          insertChar(space, count);
@@ -806,7 +806,7 @@ void Document :: save(_ELENA_::path_t path)
    status.unnamed = false;
 }
 
-void Document :: moveToFrame(size_t column, size_t row, bool selecting)
+void Document :: moveToFrame(int column, int row, bool selecting)
 {
    setCaret(_frame.getColumn() + column, _frame.getRow() + row, selecting);
 }
@@ -844,7 +844,7 @@ void Document :: duplicateLine()
    _caret.moveTo(0, caret.y);
 
    TextBookmark bm = _caret;
-   bm.moveTo(_caret.getLength(), caret.y);
+   bm.moveTo((int)_caret.getLength(), caret.y);
 
    size_t length = bm.getPosition() - _caret.getPosition();
    text_c* buffer = _ELENA_::StrFactory::allocate(length + 1, DEFAULT_TEXT);
@@ -868,7 +868,7 @@ void Document :: eraseLine()
 }
 void Document :: commentBlock()
 {
-   int selection = _selection;
+   disp_t selection = _selection;
    _selection = 0;
 
    if (selection < 0) {
@@ -890,7 +890,7 @@ void Document :: commentBlock()
 
 void Document :: uncommentBlock()
 {
-   int selection = _selection;
+   disp_t selection = _selection;
    _selection = 0;
 
    if (selection < 0) {
@@ -917,7 +917,7 @@ void Document :: uncommentBlock()
 
 void Document :: toUppercase()
 {
-   int selection = getSelectionLength();
+   disp_t selection = getSelectionLength();
    if (selection > 0) {
       text_c* buffer = _ELENA_::StrFactory::allocate(selection + 1, DEFAULT_TEXT);
       copySelection(buffer);
@@ -943,7 +943,7 @@ void Document :: toUppercase()
 
 void Document :: toLowercase()
 {
-   int selection = getSelectionLength();
+   disp_t selection = getSelectionLength();
    if (selection > 0) {
       text_c* buffer = _ELENA_::StrFactory::allocate(selection + 1, DEFAULT_TEXT);
       copySelection(buffer);
@@ -992,7 +992,7 @@ bool Document :: findLine(text_t text, bool matchCase, bool wholeWord)
    TextBookmark bookmark = _caret;
    if (_text->findWord(bookmark, text, matchCase, wholeWord ? TERMINATORS : NULL)) {
       setCaret(bookmark.getCaret(false), false);
-      setCaret(_caret.getColumn() + _ELENA_::getlength(text), _caret.getRow(), true);
+      setCaret(_caret.getColumn() + (int)_ELENA_::getlength(text), _caret.getRow(), true);
 
       return true;
    }

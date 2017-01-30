@@ -122,7 +122,7 @@ struct MessageBookmark
 {
    char*             module;
    _ELENA_::path_c*  file;
-   size_t            col, row;
+   int               col, row;
 
    MessageBookmark(_ELENA_::path_t file, text_str col, text_str row)
    {
@@ -132,7 +132,7 @@ struct MessageBookmark
       this->row = row.toInt();
    }
 
-   MessageBookmark(_ELENA_::ident_t module, _ELENA_::path_t file, size_t col, size_t row)
+   MessageBookmark(_ELENA_::ident_t module, _ELENA_::path_t file, int col, int row)
    {
       this->module = module.clone();
       this->file = file.clone();
@@ -279,14 +279,14 @@ public:
    Point  lastCaret;
    int    defaultEncoding;
    bool   autoDetecting;
-   size_t tabSize;
+   int    tabSize;
    bool   tabCharUsing;
    bool   lineNumberVisible;
    bool   highlightSyntax;
    bool   highlightBrackets;
    bool   hexNumberMode;
-   size_t scheme;
-   size_t font_size;
+   int    scheme;
+   int    font_size;
 
    //   static bool debugTape;
 

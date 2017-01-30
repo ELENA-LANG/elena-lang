@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Window Implementation
-//                                              (C)2005-201, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "wincommon.h"
@@ -20,7 +20,7 @@ bool Clipboard :: open(HWND id)
    return (::OpenClipboard(id)!=0);
 }
 
-HGLOBAL Clipboard :: create(int size)
+HGLOBAL Clipboard :: create(size_t size)
 {
    return ::GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (size + 1) * 2);
 }
@@ -40,7 +40,7 @@ HGLOBAL Clipboard :: get()
    return ::GetClipboardData(CF_UNICODETEXT);
 }
 
-int Clipboard :: getSize(HGLOBAL buffer)
+size_t Clipboard :: getSize(HGLOBAL buffer)
 {
    return ::GlobalSize(buffer);
 }
@@ -62,7 +62,7 @@ void Clipboard :: close()
 
 // --- Control ---
 
-Control :: Control(int left, int top, size_t width, size_t height)
+Control :: Control(int left, int top, int width, int height)
 {
    _minWidth = 0;
    _minHeight = 0;
@@ -102,7 +102,7 @@ _GUI_::Rectangle Control :: getRectangle()
    return Rectangle(rc.left, rc.top, rc.right, rc.bottom);
 }
 
-void Control :: _setWidth(size_t width)
+void Control :: _setWidth(int width)
 {
    if (width < _minWidth) {
       _width = _minWidth;
@@ -110,7 +110,7 @@ void Control :: _setWidth(size_t width)
    else _width = width;
 }
 
-void Control :: _setHeight(size_t height)
+void Control :: _setHeight(int height)
 {
    if (height < _minHeight) {
       _height = _minHeight;
@@ -166,7 +166,7 @@ void Control :: _notify(HWND receptor, int code, int extParam)
 
 // --- Window ---
 
-void Window :: _registerClass(HINSTANCE hInstance, const wchar_t* name, size_t style, HCURSOR cursor, HBRUSH background, HICON icon, wchar_t* menu)
+void Window :: _registerClass(HINSTANCE hInstance, const wchar_t* name, UINT style, HCURSOR cursor, HBRUSH background, HICON icon, wchar_t* menu)
 {
    WNDCLASSEX wndClass;
    wndClass.cbSize = sizeof(wndClass);
@@ -202,7 +202,7 @@ LRESULT CALLBACK Window :: _Proc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM 
    else return window->_WindProc(hWnd, Message, wParam, lParam);
 }
 
-LRESULT Window :: _WindProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam)
+LRESULT Window :: _WindProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
    switch (Message)
    {

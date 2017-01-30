@@ -1,13 +1,59 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class implementation
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "text.h"
 
 using namespace _GUI_;
 using namespace _ELENA_;
+
+#ifdef _WIN64
+
+#define ERASE_MODE 0x8000000000000000
+
+inline size_t readData(MemoryDump* buffer, size_t offset)
+{
+   size_t size;
+   buffer->readLong(offset, &size, sizeof(size_t));
+
+   return size;
+}
+
+inline bool testEraseMode(size_t value)
+{
+   return testLong(value, ERASE_MODE);
+}
+
+inline void trimData(MemoryDump* buffer, size_t offset)
+{
+   buffer->trimLong(offset);
+}
+
+#else
+
+#define ERASE_MODE 0x80000000
+
+inline size_t readData(MemoryDump* buffer, size_t offset)
+{
+   size_t size;
+   buffer->read(offset, &size, sizeof(size_t));
+
+   return size;
+}
+
+inline bool testEraseMode(size_t value)
+{
+   return test(value, ERASE_MODE);
+}
+
+inline void trimData(MemoryDump* buffer, size_t offset)
+{
+   buffer->trim(offset);
+}
+
+#endif
 
 // --- Text static variables ---
 int Text::TabSize = 4;
@@ -108,10 +154,10 @@ void TextBookmark :: normalize()
       goToNextPage();
 }
 
-bool TextBookmark :: go(int disp, bool allowEmpty)
+bool TextBookmark :: go(disp_t disp, bool allowEmpty)
 {
    if (disp < 0) {
-      while (_offset < -disp) {
+      while (_offset < (size_t)-disp) {
          disp += _offset + 1;
          if (!goToPreviousPage(allowEmpty))
             return false;
@@ -133,7 +179,7 @@ bool TextBookmark :: go(int disp, bool allowEmpty)
    return (_status != BM_EOT);
 }
 
-bool TextBookmark :: move(int disp)
+bool TextBookmark :: move(disp_t disp)
 {
    if (disp < 0) {
       // go to the next page start if <end of the page>
@@ -163,7 +209,8 @@ bool TextBookmark :: move(int disp)
 
             bm.moveToPrevBOL();
 
-           _column = _length = bm.getLength();
+            _length = bm.getLength();
+            _column = (int)_length;  // !! temporal
          }
          else if ((*_page).text[_offset]==0x09) {
             TextBookmark bm = *this;
@@ -238,11 +285,11 @@ void TextBookmark :: moveToStart()
 //   skipEmptyPages(true);
 }
 
-void TextBookmark :: moveToClosestRow(size_t row)
+void TextBookmark :: moveToClosestRow(int row)
 {
    moveToStart();
    if (row != _row) {
-      size_t closestRow = 0;
+      int closestRow = 0;
       // looking for the closest page
       while (closestRow + (*_page).rows < row) {
          closestRow += (*_page).rows;
@@ -354,7 +401,7 @@ size_t TextBookmark :: seekEOL()
    return bm._column - _column;
 }
 
-bool TextBookmark :: moveTo(size_t column, size_t row)
+bool TextBookmark :: moveTo(int column, int row)
 {
    if (_status==BM_INVALID)
       return false;
@@ -382,15 +429,15 @@ bool TextBookmark :: moveTo(size_t column, size_t row)
       return false;
 
    _virtual_column = column;
-   if (column > getLength())
-      column = getLength();
+   if ((size_t)column > getLength())
+      column = (int)getLength();
 
    moveToClosestColumn(column);
 
    return true;
 }
 
-bool TextBookmark :: moveOn(int disp)
+bool TextBookmark :: moveOn(disp_t disp)
 {
    if ((size_t)_status==BM_INVALID)
       return false;
@@ -508,11 +555,11 @@ void Text :: save(_ELENA_::path_t path, int encoding)
 
 void Text :: refreshPage(Pages::Iterator page)
 {
-   int used = (*page).used;
+   size_t used = (*page).used;
    text_c* text = (*page).text;
 
    (*page).rows = 0;
-   for (int i = 0 ; i < used ; i++) {
+   for (size_t i = 0 ; i < used ; i++) {
       if (text[i]==10) {
          (*page).rows++;
       }
@@ -539,7 +586,7 @@ int Text :: retrieveRowCount()
    return count;
 }
 
-size_t Text :: getRowLength(size_t row)
+size_t Text :: getRowLength(int row)
 {
    if (row < _rowCount) {
       TextBookmark bookmark;
@@ -668,7 +715,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, siz
    }
 }
 
-void Text :: copyTo(TextBookmark bookmark, text_c* buffer, int length)
+void Text :: copyTo(TextBookmark bookmark, text_c* buffer, disp_t length)
 {
    validateBookmark(bookmark);
 
@@ -726,7 +773,7 @@ text_c Text :: getChar(TextBookmark& bookmark)
 
 void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRowCount)
 {
-   ref_t position = bookmark.getPosition();
+   size_t position = bookmark.getPosition();
 
    TextWatchers::Iterator it = _watchers.start();
    while (!it.Eof()) {
@@ -928,7 +975,7 @@ inline bool check(text_c ch1, text_c ch2, bool matchCase)
    else return (_ELENA_::StrHelper::lower(ch1)==_ELENA_::StrHelper::lower(ch2));
 }
 
-bool Text :: compare(TextBookmark bookmark, text_t line, int len, bool matchCase, text_t terminators)
+bool Text :: compare(TextBookmark bookmark, text_t line, size_t len, bool matchCase, text_t terminators)
 {
    if (terminators) {
       if (bookmark.go(-1)) {
@@ -939,7 +986,7 @@ bool Text :: compare(TextBookmark bookmark, text_t line, int len, bool matchCase
       }
    }
 
-   for (int i = 0 ; i < len ; i++) {
+   for (size_t i = 0 ; i < len ; i++) {
 	  if (!check((*bookmark._page).text[bookmark._offset], line[i], matchCase))
 	     return false;
 
@@ -957,7 +1004,7 @@ bool Text :: findWord(TextBookmark& bookmark, text_t line, bool matchCase, text_
    validateBookmark(bookmark);
    bookmark.normalize();
 
-   int len = getlength(line);
+   size_t len = getlength(line);
    text_c ch = line[0];
    while (true) {
       if (check((*bookmark._page).text[bookmark._offset], ch, matchCase)) {
@@ -1001,14 +1048,14 @@ struct HistoryWriter
       if (_lastOperation == operation && (_lastPosition + shift) == position) {
          if (freeSpace > length + getEndRecordSize()) {
             _lastLength += length;
-            writer.write(line, length);
+            writer.write_st(line, length);
          }
          else {
             // if it is enough place to end buffer record
             size_t sublength = 0;
             if (freeSpace > getEndRecordSize()) {
                sublength = freeSpace - getEndRecordSize();
-               writer.write(line, sublength);
+               writer.write_st(line, sublength);
             }
 
             writeEndRecord(writer, _lastLength + sublength);
@@ -1030,15 +1077,15 @@ struct HistoryWriter
          _lastPosition = position;
          if (freeSpace >= length + getStartRecordSize()) {
             _lastLength = length;
-            writer.writeDWord((operation == TextHistory::opInsert) ? position : position | 0x80000000);
-            writer.write(line, length);
+            writer.writeSize((operation == TextHistory::opInsert) ? position : position | ERASE_MODE);
+            writer.write_st(line, length);
          }
          else {
             size_t sublength = 0;
             if (freeSpace > getStartRecordSize()) {
                sublength = freeSpace - getStartRecordSize();
-               writer.writeDWord((operation == TextHistory::opInsert) ? position : position | 0x80000000);
-               writer.write(line, sublength);
+               writer.writeSize((operation == TextHistory::opInsert) ? position : position | ERASE_MODE);
+               writer.write_st(line, sublength);
 
                writeEndRecord(writer, sublength);
             }
@@ -1062,10 +1109,10 @@ struct HistoryWriter
    // ending record should include the length field (4) and a terminator symbol (2)
    size_t getEndRecordSize() { return 6; }
 
-   void writeEndRecord(MemoryWriter& writer, int length)
+   void writeEndRecord(MemoryWriter& writer, size_t length)
    {
       writer.writeChar((text_c)0);
-      writer.writeDWord(length);
+      writer.writeSize(length);
    }
 
    bool write(Operation operation, size_t& position, size_t& length, void* &line, size_t& offset)
@@ -1126,29 +1173,28 @@ class HistoryBackReader
 public:
    size_t Position() const { return _offset; }
 
-   int getDWord()
+   size_t getSize()
    {
-      _offset -= 4;
+      _offset -= sizeof(size_t);
 
-      int dword;
-      _buffer->read(_offset, &dword, 4);
+      size_t size = readData(_buffer, _offset);
 
-      return dword;
+      return size;
    }
 
 #ifdef _WIN32
-   int readLength()
+   size_t readLength()
    {
       // length saved in bytes should be converted to the wchar_t index
-      return getDWord() >> 1;
+      return getSize() >> 1;
    }
 
    size_t readPosition(bool& eraseMode)
    {
-      size_t value = getDWord();
+      size_t value = getSize();
 
-      size_t position = value & 0x7FFFFFFF;
-      eraseMode = test(value, 0x80000000);
+      size_t position = value & (ERASE_MODE - 1);
+      eraseMode = testEraseMode(value);
 
       // position saved in bytes should be converted to wchar_t index
       return position >> 1;
@@ -1158,7 +1204,7 @@ public:
    {
       _offset -= ((length << 1) + 2);
 
-      return (wchar_t*)_buffer->get(_offset);
+      return (wchar_t*)_buffer->get_st(_offset);
    }
 #else
    int readLength()
@@ -1207,10 +1253,11 @@ public:
 
    size_t readPosition(bool& eraseMode)
    {
-      size_t value = _reader.getDWord();
+      size_t value;
+      _reader.readSize(value);
 
-      size_t position = value & 0x7FFFFFFF;
-      eraseMode = test(value, 0x80000000);
+      size_t position = value & (ERASE_MODE - 1);
+      eraseMode = testEraseMode(value);
 
       // position saved in bytes should be converted to wchar_t index
       return position >> 1;
@@ -1266,7 +1313,7 @@ void TextHistory :: onInsert(size_t position, size_t length, text_t line)
    if (_locking)
       return;
 
-   _buffer->trim(_offset);
+   trimData(_buffer, _offset);
 
    addRecord(opInsert, position, length, (void*)line);
 }
@@ -1276,7 +1323,7 @@ void TextHistory :: onErase(size_t position, size_t length, text_t line)
    if (_locking)
       return;
 
-   _buffer->trim(_offset);
+   trimData(_buffer, _offset);
 
    addRecord(opErase, position, length, (void*)line);
 }

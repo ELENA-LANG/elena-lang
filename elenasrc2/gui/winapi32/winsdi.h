@@ -65,7 +65,7 @@ protected:
    virtual bool _onSetCursor();   
    virtual void _onDrawItem(DRAWITEMSTRUCT* item);
    
-   virtual LRESULT _WindProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam);
+   virtual LRESULT _WindProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
 public:
    static void _registerClass(HINSTANCE instance, HICON icon, wchar_t* menu);

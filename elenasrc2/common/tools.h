@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Project routine functions
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef toolsH
@@ -222,16 +222,26 @@ inline bool test(int number, int mask, int value)
    return ((number & mask) == value);
 }
 
+inline bool testLong(long long number, long long mask)
+{
+   return ((number & mask) == mask);
+}
+
+inline bool testLong(long long number, long long mask, long long value)
+{
+   return ((number & mask) == value);
+}
+
 inline bool testany(int number, int mask)
 {
    return ((number & mask) != 0);
 }
 
-inline bool isbetween(int starting, int len , int value)
+inline bool isbetween(size_t starting, size_t len , size_t value)
 {
    return (starting < value && value < starting + len);
 }
-//
+
 //inline bool isNumeric(ident_t s, int length)
 //{
 //   for (int i = 0 ; i < length ; i++)
@@ -245,7 +255,7 @@ inline bool isbetween(int starting, int len , int value)
 
 // --- calcTabShift ---
 
-inline size_t calcTabShift(int col, int tabSize)
+inline int calcTabShift(int col, int tabSize)
 {
    int nextCol = (col / tabSize * tabSize) + tabSize;
 

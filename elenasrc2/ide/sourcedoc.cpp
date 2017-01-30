@@ -38,7 +38,7 @@ text_c SourceDoc::getCurrentChar()
    return (length > 0) ? line[0] : 0;
 }
 
-text_t SourceDoc :: getCurrentLine(int disp, size_t& length)
+text_t SourceDoc :: getCurrentLine(disp_t disp, size_t& length)
 {
    TextBookmark bm = _caret;
    bm.moveTo(0, _caret.getRow());
@@ -54,7 +54,7 @@ text_t SourceDoc :: getCurrentLine(int disp, size_t& length)
 
 void SourceDoc :: insertNewLine()
 {
-   int disp = 0;
+   disp_t disp = 0;
    size_t length = 0;
    text_t line = getCurrentLine(0, length);
    while (length > 0) {

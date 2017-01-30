@@ -349,7 +349,7 @@ void _ELENA_::loadOneByteLOp(int opcode, AMD64JITScope& scope)
    char* code = (char*)scope.compiler->_inlines[opcode];
 
    // simply copy correspondent inline code
-   scope.code->write(code, *(int*)(code - 4));
+   scope.code->write(code, *(pos_t*)(code - 4));
 }
 
 //void _ELENA_::loadROp(int opcode, x86JITScope& scope)

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Debugger watch window header
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef browserH
@@ -27,7 +27,7 @@ public:
    virtual void clear(void* node) = 0;
    virtual void erase(void* node) = 0;
 
-   virtual void* newNode(void* parent, _ELENA_::ident_t name, int param) = 0;
+   virtual void* newNode(void* parent, _ELENA_::ident_t name, size_t param) = 0;
 
    virtual void* findNodeStartingWith(void* node, _ELENA_::ident_t name)   = 0;
 
@@ -99,7 +99,7 @@ public:
 
 class DebuggerAutoWatch : public DebuggerWatch
 {
-   _ELENA_::Map<int, bool> _items;
+   _ELENA_::Map<size_t, bool> _items;
 
    virtual void* addNode(_ELENA_::ident_t variableName, _ELENA_::ident_t className, size_t address);
    virtual void editNode(void* node, _ELENA_::ident_t variableName, _ELENA_::ident_t className, size_t address);

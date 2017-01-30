@@ -297,9 +297,9 @@ void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap
    subjects.read(&reader);
 
    IdentifierString signature;
-   int subject = 0;
-   int param = 0;
-   int verb_id = 0;
+   size_t subject = 0;
+   size_t param = 0;
+   size_t verb_id = 0;
    int paramCount = -1;
    for (size_t i = 0; i < getlength(message); i++) {
       if (message[i] == '&' && subject == 0) {

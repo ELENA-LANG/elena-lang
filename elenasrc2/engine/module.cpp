@@ -3,7 +3,7 @@
 //
 //		This file contains the class implementing ELENA Engine Module class
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -69,7 +69,7 @@ void Module :: mapPredefinedReference(ident_t name, ref_t reference)
 
 ref_t Module :: mapReference(ident_t reference)
 {
-   size_t nextId = _references.Count() + 1;
+   ref_t nextId = _references.Count() + 1;
 
    // generate an exception if reference id is out of range
    if (nextId > ~mskAnyRef)
@@ -89,7 +89,7 @@ ref_t Module :: mapSubject(ident_t subject, bool existing)
    if (existing)
       return _subjects.get(subject);
    else {
-      size_t nextId = _subjects.Count() + 1;
+      ref_t nextId = _subjects.Count() + 1;
 
       ref_t refId = mapKey(_subjects, subject, nextId);
 
@@ -103,7 +103,7 @@ ref_t Module :: mapSubject(ident_t subject, bool existing)
 
 ref_t Module :: mapConstant(ident_t constant)
 {
-   size_t nextId = _constants.Count() + 1;
+   ref_t nextId = _constants.Count() + 1;
 
    return mapKey(_constants, constant, nextId);
 }
@@ -173,7 +173,7 @@ LoadResult Module :: load(StreamReader& reader)
 
    // load signature...
    char signature[12];
-   reader.read(signature, strlen(MODULE_SIGNATURE));
+   reader.read(signature, (pos_t)strlen(MODULE_SIGNATURE));
    if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
       return (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? lrWrongVersion : lrWrongStructure;
    }
@@ -202,7 +202,7 @@ bool Module :: save(StreamWriter& writer)
       return false;
 
    // save signature...
-   writer.write(MODULE_SIGNATURE, strlen(MODULE_SIGNATURE));
+   writer.write(MODULE_SIGNATURE, (pos_t)strlen(MODULE_SIGNATURE));
 
    // save name...
    writer.writeLiteral(_name, getlength(_name) + 1);
@@ -234,7 +234,7 @@ ROModule :: ROModule(StreamReader& reader, LoadResult& result)
 
    // load signature...
    char signature[12];
-   reader.read(signature, strlen(MODULE_SIGNATURE));
+   reader.read(signature, (pos_t)strlen(MODULE_SIGNATURE));
    if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
       result = (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? lrWrongVersion : lrWrongStructure;
       return;

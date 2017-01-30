@@ -51,7 +51,7 @@ int ListView :: addItem(const wchar_t* item)
    lvItem.iSubItem = 0;
    lvItem.pszText = (wchar_t*)item; 
 
-   row = ::SendMessage(_handle, LVM_INSERTITEM, 0, (LPARAM)&lvItem);
+   row = (int)::SendMessage(_handle, LVM_INSERTITEM, 0, (LPARAM)&lvItem);
 
    return row;
 }

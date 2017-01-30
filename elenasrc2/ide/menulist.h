@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      MenuList class header
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef menulistH
@@ -17,11 +17,11 @@ namespace _GUI_
 class MenuHistoryList
 {
 protected:
-   size_t _maxCount;
+   int    _maxCount;
 
    Menu*  _menu;
    int    _menuBaseId;
-   size_t _menuSize;
+   int    _menuSize;
 
    bool   _withSeparator;
 

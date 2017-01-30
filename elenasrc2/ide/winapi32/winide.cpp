@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    WinAPI: IDE & IDE Controls
-//                             (C)2005-2016, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2017, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #include "winide.h"
@@ -132,7 +132,7 @@ class CallStackLog : public ListView
          }
          source.append(' ');
          source.append('<');
-         source.appendHex(address);
+         source.appendSize(address);
          source.append('>');
          
          int index = _log->addItem(_ELENA_::WideString(source));
@@ -150,7 +150,7 @@ class CallStackLog : public ListView
       {
          _ELENA_::WideString source;
          source.append('<');
-         source.appendHex(address);
+         source.appendSize(address);
          source.append('>');
 
          _log->addItem(source);
@@ -213,7 +213,7 @@ inline void setForegroundWindow(HWND hwnd)
    ::SetForegroundWindow (hwnd);
 
    // Set the timeout back
-   ::SystemParametersInfo (0x2001, 0, (LPVOID)dwTimeoutMS, 0);   //HWND hCurrWnd;
+   ::SystemParametersInfo (0x2001, 0, (LPVOID)(size_t)dwTimeoutMS, 0);   //HWND hCurrWnd;
 }
 
 // --- ContextBrowser ---
@@ -279,7 +279,7 @@ void IDEWindow::ContextBrowser :: erase(void* node)
    ((TreeView*)_treeView)->erase((TreeViewItem)node);
 }
 
-void* IDEWindow::ContextBrowser :: newNode(void* parent, _ELENA_::ident_t caption, int param)
+void* IDEWindow::ContextBrowser :: newNode(void* parent, _ELENA_::ident_t caption, size_t param)
 {
    return (void*)((TreeView*)_treeView)->insertTo((TreeViewItem)parent, _ELENA_::WideString(caption), param, true);
 }
@@ -461,7 +461,7 @@ void IDEWindow :: _onNotify(NMHDR* notification)
          message.appendHex(((Message2NMHDR*)notification)->param2);
          message.append(_T(": "));
          message.append(((Message2NMHDR*)notification)->message);
-         message.appendHex(((Message2NMHDR*)notification)->param1);
+         message.appendSize(((Message2NMHDR*)notification)->param1);
          ::MessageBox(getHandle(), message, APP_NAME, MB_OK | MB_ICONERROR); // !!
          break;
       }
@@ -579,7 +579,7 @@ void IDEWindow :: _onToolTip(NMTTDISPINFO* toolTip)
 
 void IDEWindow :: _onTabTip(NMTTDISPINFO* tip)
 {
-   const wchar_t* path = _model->getDocumentPath(tip->hdr.idFrom);
+   const wchar_t* path = _model->getDocumentPath((int)tip->hdr.idFrom);
 
    tip->lpszText = (LPWSTR)path;
 }
@@ -1453,7 +1453,7 @@ void IDEWindow :: _notify(int code, const wchar_t* message, const wchar_t* param
    ::SendMessage(_handle, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-void IDEWindow :: _notify(int code, const wchar_t* message, int param1, int param2)
+void IDEWindow :: _notify(int code, const wchar_t* message, size_t param1, int param2)
 {
    Message2NMHDR notification;
 
@@ -1555,9 +1555,9 @@ void IDEWindow :: reloadProjectView(_ProjectManager* project)
       _ELENA_::ident_t name = *it;
 
       TreeViewItem parent = root;
-      int start = 0;      
+      size_t start = 0;
       while (true) {
-         int end = _ELENA_::ident_t(name + start).find(PATH_SEPARATOR);
+         size_t end = _ELENA_::ident_t(name + start).find(PATH_SEPARATOR);
 
          _ELENA_::WideString nodeName(name + start, (end == -1 ? _ELENA_::getlength(name) : end) - start);
 
@@ -1572,7 +1572,7 @@ void IDEWindow :: reloadProjectView(_ProjectManager* project)
          }
 
          if (current == NULL) {
-            current = projectView->insertTo(parent, nodeName, end == -1 ? index : -1, end != -1 ? true : false);
+            current = projectView->insertTo(parent, nodeName, end == NOTFOUND_POS ? index : NOTFOUND_POS, end != NOTFOUND_POS ? true : false);
          }
          parent = current;
 

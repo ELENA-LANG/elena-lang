@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI ListView Implementation
-//                             (C)2005-2016, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2017, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #include "wintreeview.h"
@@ -79,7 +79,7 @@ int TreeView :: getParam(TreeViewItem item)
 
    TreeView_GetItem(_handle, &itemRec);
 
-   return itemRec.lParam;
+   return (int)itemRec.lParam;
 }
 
 void TreeView :: getCaption(TreeViewItem item, wchar_t* caption, int length)
@@ -94,7 +94,7 @@ void TreeView :: getCaption(TreeViewItem item, wchar_t* caption, int length)
    TreeView_GetItem(_handle, &itemRec);
 }
 
-void TreeView :: setParam(TreeViewItem item, int param)
+void TreeView :: setParam(TreeViewItem item, size_t param)
 {
    TVITEM itemRec; 
     
@@ -111,7 +111,7 @@ void TreeView :: setCaption(TreeViewItem item, const wchar_t* caption)
 
    itemRec.mask = TVIF_TEXT;
    itemRec.hItem = item;
-   itemRec.cchTextMax = _ELENA_::getlength(caption);
+   itemRec.cchTextMax = (int)_ELENA_::getlength(caption);
    itemRec.pszText = (wchar_t*)caption;
 
    TreeView_SetItem(_handle, &itemRec);
@@ -132,7 +132,7 @@ void TreeView :: collapse(TreeViewItem item)
    TreeView_Expand(_handle, item, TVE_COLLAPSE);
 }
 
-TreeViewItem TreeView :: insertTo(TreeViewItem parent, const wchar_t* caption, int param, bool isNode)
+TreeViewItem TreeView :: insertTo(TreeViewItem parent, const wchar_t* caption, size_t param, bool isNode)
 {
    TV_INSERTSTRUCT item;
 

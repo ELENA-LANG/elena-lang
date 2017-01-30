@@ -120,7 +120,7 @@ public:
 
    bool isReleased() const;
 
-   void clone(Canvas* canvas, size_t width, size_t height);
+   void clone(Canvas* canvas, int width, int height);
 
    bool validateStyle(Style* style);
 

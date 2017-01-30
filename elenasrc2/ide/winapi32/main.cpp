@@ -67,7 +67,7 @@ void loadCommandLine(Model* model, char* cmdLine, _ELENA_::Path& configPath)
    _ELENA_::Convertor::copy(cmdWLine, cmdLine, len, len);
    cmdWLine[len] = 0;
 
-   int start = 0;
+   size_t start = 0;
    for (size_t i = 1 ; i <= wcslen(cmdWLine) ; i++) {
       if (cmdWLine[i]==' ' || cmdWLine[i]==0) {
          _ELENA_::Path parameter(cmdWLine + start, i - start);

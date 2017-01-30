@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      IDE main window class header
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef appwindowH
@@ -204,7 +204,7 @@ class IDEController : public _Controller
       }
    };
 
-   bool toggleBreakpoint(_ELENA_::ident_t module, _ELENA_::ident_t path, size_t row, Document* doc);
+   bool toggleBreakpoint(_ELENA_::ident_t module, _ELENA_::ident_t path, int row, Document* doc);
 
    void setCaption(text_t projectName);
 

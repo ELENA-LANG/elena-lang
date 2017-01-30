@@ -18,7 +18,7 @@ Section* _ELENA_::_readSection(StreamReader* reader)
 {
    Section* section = new Section();
 
-   size_t length = reader->getDWord();
+   pos_t length = reader->getDWord();
    section->load(reader, length);
 
    section->_references.read(reader);

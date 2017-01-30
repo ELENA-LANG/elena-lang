@@ -61,9 +61,9 @@ void CustomTabBar :: _onDrawItem(DRAWITEMSTRUCT* item)
       //rect.topLeft.y -= ::GetSystemMetrics(SM_CYEDGE);
       rect.topLeft.y += 1;
 
-      canvas.drawText(rect, label, _ELENA_::getlength(label), Colour(0, 0, 0), true);
+      canvas.drawText(rect, label, (int)_ELENA_::getlength(label), Colour(0, 0, 0), true);
    } 
-   else canvas.drawText(rect, label, _ELENA_::getlength(label), Colour(128, 128, 128), true);
+   else canvas.drawText(rect, label, (int)_ELENA_::getlength(label), Colour(128, 128, 128), true);
 }
 
 int CustomTabBar :: getCurrentIndex()
@@ -100,7 +100,7 @@ void CustomTabBar :: addTab(int index, const wchar_t* name, void* param)
 
 void CustomTabBar :: selectTab(int index)
 {
-   int previous = ::SendMessage(_handle, TCM_SETCURSEL, index, 0);
+   int previous = (int)::SendMessage(_handle, TCM_SETCURSEL, index, 0);
    if (_notSelected || previous != index) {
       _notify(_owner, TCN_SELCHANGE);
 
@@ -182,7 +182,7 @@ void MultiTabView :: renameTabView(int index, const wchar_t* newName)
    renameTab(index, newName);
 }
 
-void MultiTabView :: _setWidth(size_t width)
+void MultiTabView :: _setWidth(int width)
 {   
    Control::_setWidth(width);
    if (_child) {
@@ -190,7 +190,7 @@ void MultiTabView :: _setWidth(size_t width)
    }
 }
 
-void MultiTabView :: _setHeight(size_t height)
+void MultiTabView :: _setHeight(int height)
 { 
    Control::_setHeight(height);
    if (_child) {
@@ -298,7 +298,7 @@ void TabBar :: selectTabChild(int index)
    Control::refresh();
 }
 
-void TabBar :: _setWidth(size_t width)
+void TabBar :: _setWidth(int width)
 {   
    Control::_setWidth(width);
    _ELENA_::List<Control*>::Iterator it = _children.start();
@@ -308,7 +308,7 @@ void TabBar :: _setWidth(size_t width)
    }   
 }
 
-void TabBar :: _setHeight(size_t height)
+void TabBar :: _setHeight(int height)
 { 
    Control::_setHeight(height);
    _ELENA_::List<Control*>::Iterator it = _children.start();

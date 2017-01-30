@@ -239,8 +239,8 @@ namespace _ELENA_
    };
 
    // predefined debug module sections
-   #define DEBUG_LINEINFO_ID      (size_t)-1
-   #define DEBUG_STRINGS_ID       (size_t)-2
+   #define DEBUG_LINEINFO_ID      (pos_t)-1
+   #define DEBUG_STRINGS_ID       (pos_t)-2
 
    // --- LoadResult enum ---
    enum LoadResult

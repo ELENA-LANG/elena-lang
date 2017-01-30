@@ -52,11 +52,11 @@ protected:
 
    int       _left;
    int       _top;
-   size_t    _width;
-   size_t    _height;
+   int       _width;
+   int       _height;
 
-   size_t    _minWidth;
-   size_t    _minHeight;
+   int       _minWidth;
+   int       _minHeight;
 
 public:
    virtual bool checkHandle(void* param) const
@@ -76,14 +76,14 @@ public:
 
    virtual int getLeft() const { return _left; }
    virtual int getTop() const { return _top; }
-   virtual size_t getWidth() const { return _width; }
-   virtual size_t getHeight() const { return _height; }
+   virtual int getWidth() const { return _width; }
+   virtual int getHeight() const { return _height; }
    virtual Rectangle getRectangle();
 
    virtual void _setCoordinate(int x, int y);
    virtual void _setConstraint(int minWidth, int minHeight);
-   virtual void _setWidth(size_t width);
-   virtual void _setHeight(size_t height);
+   virtual void _setWidth(int width);
+   virtual void _setHeight(int height);
 
    virtual void setFocus();
    virtual void show();
@@ -97,7 +97,7 @@ public:
    void _notify(HWND receptor, int code);
    void _notify(HWND receptor,   int code, int extParam);
 
-   Control(int left, int top, size_t width, size_t height);
+   Control(int left, int top, int width, int height);
    virtual ~Control() {}
 };
 
@@ -106,7 +106,7 @@ public:
 class Window : public Control
 {
 protected:
-   virtual LRESULT _WindProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam);
+   virtual LRESULT _WindProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
    virtual bool onClose();
    virtual void onResize() {} 
@@ -119,12 +119,12 @@ protected:
 public:
    void setCaption(const wchar_t* caption);
 
-   static void _registerClass(HINSTANCE hInstance, const wchar_t* name, size_t style, HCURSOR cursor = NULL, 
+   static void _registerClass(HINSTANCE hInstance, const wchar_t* name, UINT style, HCURSOR cursor = NULL, 
                              HBRUSH background = NULL, HICON icon = NULL, wchar_t* menu = NULL);
 
    static LRESULT CALLBACK _Proc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
-   Window(int left, int top, size_t width, size_t height)
+   Window(int left, int top, int width, int height)
       : Control(left, top, width, height)
    {
    }
@@ -148,11 +148,11 @@ public:
    }
 
    bool open(HWND id);
-   HGLOBAL create(int size);
+   HGLOBAL create(size_t size);
    wchar_t* allocate(HGLOBAL buffer);
    void free(HGLOBAL buffer);
    void copy(HGLOBAL buffer);
-   int getSize(HGLOBAL buffer);
+   size_t getSize(HGLOBAL buffer);
    HGLOBAL get();
 
    void clear();
@@ -270,7 +270,7 @@ struct Message2NMHDR
 {
    NMHDR        nmhrd;
    const wchar_t* message;
-   int          param1;
+   size_t       param1;
    int          param2;
 };
 

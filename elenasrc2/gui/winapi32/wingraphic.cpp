@@ -159,7 +159,7 @@ void Canvas :: setTransparentMode(bool on)
       ::SetBkMode(_handler, TRANSPARENT);
 }
 
-void Canvas :: clone(Canvas* canvas, size_t width, size_t height)
+void Canvas :: clone(Canvas* canvas, int width, int height)
 {
    release();
 
@@ -236,7 +236,7 @@ void Canvas :: drawText(_GUI_::Rectangle rect, const wchar_t* s, int length, Col
 
    ::SetTextColor(_handler, foreground);
 
-   ::DrawText(_handler, s, _ELENA_::getlength(s), &r, DT_SINGLELINE | DT_VCENTER | (centered ? DT_CENTER : DT_LEFT));
+   ::DrawText(_handler, s, (int)_ELENA_::getlength(s), &r, DT_SINGLELINE | DT_VCENTER | (centered ? DT_CENTER : DT_LEFT));
 }
 
 void Canvas :: drawTextClipped(_GUI_::Rectangle rect, Font* font, int x, int y, const wchar_t* s, int length, Colour foreground, Colour background)

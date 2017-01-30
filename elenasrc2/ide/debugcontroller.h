@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the DebugController class and its helpers header
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef debugcontrollerH
@@ -84,7 +84,11 @@ protected:
 
    public:
       virtual bool Eof() { return (_position >= _size); }
-      virtual pos_t Position() { return _position; }
+      virtual pos_t Position() 
+      { 
+         // !! temporal : should return 0 for > 2G address
+         return (pos_t)_position;
+      }
 
       virtual bool seek(pos_t position)
       {
@@ -97,10 +101,9 @@ protected:
       }
       virtual bool seek(pos64_t position)
       {
-         if (position < INT_MAX) {
-            return seek((pos_t)position);
-         }
-         else return false;
+         _position = position;
+
+         return true;
       }
 
       virtual bool read(void* s, pos_t length)
@@ -140,7 +143,7 @@ protected:
    };
 
    // class mapping between vmt ptr and debuglineinfo position in debug module
-   typedef MemoryMap<ref_t, size_t, false> ClassInfoMap;
+   typedef MemoryMap<size_t, size_t, false> ClassInfoMap;
 
    Debugger          _debugger;
    DebugEventManager _events;
@@ -165,6 +168,9 @@ protected:
    _GUI_::_DebugListener*  _listener;
    _GUI_::_ProjectManager* _manager;
 
+   pos_t mapDebugPTR32(void* address);
+   void* unmapDebugPTR32(pos_t position);
+
    bool loadSymbolDebugInfo(ident_t reference, StreamReader& addressReader);
 //   bool loadTapeDebugInfo(StreamReader& reader, size_t size);
 
@@ -178,28 +184,28 @@ protected:
       return /*(lineInfoAddress < _tape.Length()) ? (DebugLineInfo*)_tape.get(lineInfoAddress) :*/ (DebugLineInfo*)lineInfoAddress;
    }
 
-   DebugLineInfo* seekClassInfo(size_t address, ident_t &className, int& flags, size_t vmtAddress = 0);
+   DebugLineInfo* seekClassInfo(size_t address, ident_t &className, size_t& flags, size_t vmtAddress = 0);
    DebugLineInfo* seekLineInfo(size_t address, ident_t &moduleName, ident_t &className,
       ident_t &methodName, ident_t &path);
 
    DebugLineInfo* getNextStep(DebugLineInfo* step, bool stepOverMode);
    DebugLineInfo* getEndStep(DebugLineInfo* step);
 
-   size_t findNearestAddress(_Module* module, ident_t path, size_t row);
+   size_t findNearestAddress(_Module* module, ident_t path, int row);
 
    void readFields(_DebuggerWatch* watch, DebugLineInfo* self, size_t address);
    void readList(_DebuggerWatch* watch, int* list, int length);
    void readByteArray(_DebuggerWatch* watch, size_t address, ident_t name);
    void readShortArray(_DebuggerWatch* watch, size_t address, ident_t name);
    void readIntArray(_DebuggerWatch* watch, size_t address, ident_t name);
-   void readObject(_DebuggerWatch* watch, ref_t selfPtr, ident_t name);
-   void readObject(_DebuggerWatch* watch, ref_t address, ident_t className, ident_t name);
+   void readObject(_DebuggerWatch* watch, size_t selfPtr, ident_t name);
+   void readObject(_DebuggerWatch* watch, size_t address, ident_t className, ident_t name);
    void readMessage(_DebuggerWatch* watch, ref_t reference);
    void readPString(size_t address, IdentifierString& string);
-   void readLocalInt(_DebuggerWatch* watch, ref_t selfPtr, ident_t name);
-   void readLocalLong(_DebuggerWatch* watch, ref_t selfPtr, ident_t name);
-   void readLocalReal(_DebuggerWatch* watch, ref_t selfPtr, ident_t name);
-   void readParams(_DebuggerWatch* watch, ref_t selfPtr, ident_t name, bool ignoreInline);
+   void readLocalInt(_DebuggerWatch* watch, size_t selfPtr, ident_t name);
+   void readLocalLong(_DebuggerWatch* watch, size_t selfPtr, ident_t name);
+   void readLocalReal(_DebuggerWatch* watch, size_t selfPtr, ident_t name);
+   void readParams(_DebuggerWatch* watch, size_t selfPtr, ident_t name, bool ignoreInline);
 
    const char* getValue(size_t address, char* value, size_t length);
    const wide_c* getValue(size_t address, wide_c* value, size_t length);

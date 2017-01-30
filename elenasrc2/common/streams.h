@@ -29,7 +29,11 @@ public:
 
    virtual void* get(pos_t position) const = 0;
 
+   virtual void* getLong(pos64_t position) const = 0;
+
    virtual bool read(pos_t position, void* s, pos_t length) = 0;
+
+   virtual bool readLong(pos64_t position, void* s, pos64_t length) = 0;
 
    virtual bool write(pos_t position, const void* s, pos_t length) = 0;
 
@@ -45,6 +49,23 @@ public:
    virtual void* getReferences() { return NULL; }
 
    virtual void trim(pos_t position) = 0;
+   virtual void trimLong(pos64_t position) = 0;
+
+#ifdef _WIN64
+
+   void* get_st(size_t position)
+   {
+      return getLong(position);
+   }
+
+#else
+
+   void* get_st(size_t position)
+   {
+      return get(position);
+   }
+
+#endif
 
    virtual ~_Memory() {}
 };
@@ -177,6 +198,22 @@ public:
    {
       return writeLiteral(s, getlength(s) + 1);
    }
+
+#ifdef _WIN64
+
+   bool write_st(void* s, pos64_t length)
+   {
+      return writeLong(s, length);
+   }
+
+#else
+
+   bool write_st(void* s, pos_t length)
+   {
+      return writeLong(s, length);
+   }
+
+#endif
 
    bool writeChar(char ch)
    {
@@ -790,6 +827,11 @@ public:
    {
       _memory = memory;
       _position = position;
+   }
+   MemoryReader(_Memory* memory, pos64_t position)
+   {
+      _memory = memory;
+      seek(position);
    }
 };
 

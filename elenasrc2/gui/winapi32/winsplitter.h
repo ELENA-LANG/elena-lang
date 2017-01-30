@@ -28,7 +28,7 @@ class Splitter : public Window
 
    int      _notifyCode;
 
-   virtual LRESULT _WindProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam);
+   virtual LRESULT _WindProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
    virtual bool _onSetCursor();
 
@@ -39,12 +39,12 @@ public:
 
    virtual bool isVisible(); 
 
-   virtual size_t getWidth() const;
-   virtual size_t getHeight() const;
+   virtual int getWidth() const;
+   virtual int getHeight() const;
 
    virtual void _setCoordinate(int x, int y);
-   virtual void _setWidth(size_t width);
-   virtual void _setHeight(size_t height);
+   virtual void _setWidth(int width);
+   virtual void _setHeight(int height);
    
    virtual void _resize();
 

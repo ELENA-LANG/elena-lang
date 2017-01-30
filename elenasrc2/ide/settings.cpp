@@ -30,7 +30,7 @@ inline void loadSetting(const char* value, bool& setting)
    }
 }
 
-inline void loadSetting(const char* value, size_t& setting, size_t minValue, size_t maxValue, size_t defaultValue)
+inline void loadSetting(const char* value, int& setting, int minValue, int maxValue, int defaultValue)
 {
    if (value) {
       setting = _ELENA_::ident_t(value).toInt();
@@ -180,10 +180,10 @@ void Settings :: save(Model* model, _ELENA_::IniConfigFile& config)
    saveSetting(config, SETTINGS_SECTION, HIGHLIGHT_SETTING, model->highlightSyntax, true);
    saveSetting(config, SETTINGS_SECTION, BRACKETS_SETTING, model->highlightBrackets, true);
    saveSetting(config, SETTINGS_SECTION, TABSCORE_SETTING, model->tabWithAboveScore, true);
-   saveSetting(config, SETTINGS_SECTION, SCHEME_SETTING, model->scheme, 0u);
-   saveSetting(config, SETTINGS_SECTION, FONTSIZE_SETTING, model->font_size, 10u);
+   saveSetting(config, SETTINGS_SECTION, SCHEME_SETTING, model->scheme, 0);
+   saveSetting(config, SETTINGS_SECTION, FONTSIZE_SETTING, model->font_size, 10);
 
-   saveSetting(config, SETTINGS_SECTION, TAB_SIZE_SETTING, model->tabSize, 4u);
+   saveSetting(config, SETTINGS_SECTION, TAB_SIZE_SETTING, model->tabSize, 4);
    saveSetting(config, SETTINGS_SECTION, ENCODING_SETTING, model->defaultEncoding, 0);
 
    saveSection(config, SRCPATH_SECTION, model->packageRoots);

@@ -62,7 +62,7 @@ void JITCompiler32 :: compileInt64(MemoryWriter* writer, long long integer)
    writer->writeDWord(0);
 
    // object body
-   writer->write(&integer, 8);
+   writer->write(&integer, 8u);
 }
 
 void JITCompiler32 :: compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset)
@@ -100,7 +100,7 @@ void JITCompiler32 :: compileReal64(MemoryWriter* writer, double number)
    writer->writeDWord(0);
 
    // object body
-   writer->write(&number, 8);
+   writer->write(&number, 8u);
 }
 
 void JITCompiler32 :: compileLiteral(MemoryWriter* writer, const char* value)

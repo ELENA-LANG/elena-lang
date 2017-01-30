@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TreeView Header File
-//                             (C)2005-2016, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2017, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef wintreeviewH
@@ -33,14 +33,14 @@ public:
    int getParam(TreeViewItem item);
    void getCaption(TreeViewItem item, wchar_t* caption, int length);
 
-   void setParam(TreeViewItem item, int param);
+   void setParam(TreeViewItem item, size_t param);
    void setCaption(TreeViewItem item, const wchar_t* caption);
 
    void select(TreeViewItem item);
    void expand(TreeViewItem item);
    void collapse(TreeViewItem item);
 
-   TreeViewItem insertTo(TreeViewItem parent, const wchar_t* caption, int param, bool isNode);
+   TreeViewItem insertTo(TreeViewItem parent, const wchar_t* caption, size_t param, bool isNode);
    void clear(TreeViewItem item);
    void erase(TreeViewItem item);
 

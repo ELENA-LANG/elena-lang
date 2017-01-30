@@ -15,12 +15,27 @@
 
 using namespace _ELENA_;
 
-//// --- verbs ---
-//
-////MessageMap         _verbs;
-////ConstantIdentifier _tapeSymbol(TAPE_SYMBOL);
-
 // --- DebugController ---
+
+pos_t DebugController :: mapDebugPTR32(void* address)
+{
+#ifdef _WIN64
+   //!! temporal : does not work if the address > 2GB
+   return (pos_t)(size_t)address;
+#else
+   return (pos_t)address;
+#endif
+}
+
+void* DebugController :: unmapDebugPTR32(pos_t position)
+{
+#ifdef _WIN64
+   //!! temporal : does not work if the address > 2GB
+   return (void*)(size_t)position;
+#else
+   return (void*)address;
+#endif
+}
 
 void DebugController :: debugThread()
 {
@@ -117,7 +132,7 @@ DebugLineInfo* DebugController :: seekDebugLineInfo(size_t lineInfoAddress, iden
 //   }
 }
 
-DebugLineInfo* DebugController :: seekClassInfo(size_t address, ident_t &className, int& flags, size_t vmtPtr)
+DebugLineInfo* DebugController :: seekClassInfo(size_t address, ident_t &className, size_t& flags, size_t vmtPtr)
 {
    // read class VMT address if not provided
    if (vmtPtr == 0) {
@@ -138,7 +153,7 @@ DebugLineInfo* DebugController :: seekClassInfo(size_t address, ident_t &classNa
 
    if (position != 0 && section != NULL) {
       // to resolve class name we need offset in the section rather then the real address
-      className = module->resolveReference(position - (size_t)section->get(0));
+      className = module->resolveReference((ref_t)(position - (size_t)section->get_st(0)));
 
       return (DebugLineInfo*)position;
    }
@@ -275,7 +290,7 @@ DebugLineInfo* DebugController :: seekLineInfo(size_t address, ident_t &moduleNa
    return NULL;
 }
 
-size_t DebugController :: findNearestAddress(_Module* module, ident_t path, size_t row)
+size_t DebugController :: findNearestAddress(_Module* module, ident_t path, int row)
 {
    _Memory* section = module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true);
    _Memory* strings = module->mapSection(DEBUG_STRINGS_ID, true);
@@ -457,7 +472,7 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
             // replace field name reference with the name
             stringReader.seek(info.addresses.symbol.nameRef);
 
-            ((DebugLineInfo*)current)->addresses.symbol.nameRef = (ref_t)stringReader.Address();
+            ((DebugLineInfo*)current)->addresses.symbol.nameRef = mapDebugPTR32(stringReader.Address());
          }
          else if ((info.symbol & dsDebugMask) == dsStep) {
             ref_t stepAddress = addressReader.getDWord();
@@ -775,11 +790,11 @@ void DebugController :: readCallStack(_DebuggerCallStack* watch)
       ident_t className = NULL;
       ident_t methodName = NULL;
 
-      DebugLineInfo* info = seekLineInfo((size_t)retPoints[pos], moduleName, className, methodName, path);
+      DebugLineInfo* info = seekLineInfo(_debugger.readRetAddress(retPoints, pos), moduleName, className, methodName, path);
       if (info != NULL) {
-         watch->write(moduleName, className, methodName, path, info->col + 1, info->row + 1, (size_t)retPoints[pos]);
+         watch->write(moduleName, className, methodName, path, info->col + 1, info->row + 1, _debugger.readRetAddress(retPoints, pos));
       }
-      else watch->write((size_t)retPoints[pos]);
+      else watch->write(_debugger.readRetAddress(retPoints, pos));
    }
 }
 
@@ -787,7 +802,7 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
 {
    int index = 1;
    while (info[index].symbol == dsField) {
-      ident_t fieldName = (const char*)info[index].addresses.field.nameRef;
+      ident_t fieldName = (const char*)unmapDebugPTR32(info[index].addresses.field.nameRef);
       int size = info[index].addresses.field.size;
       // if it is a data field
       if (size != 0) {
@@ -809,7 +824,7 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
             watch->write(this, fieldPtr, fieldName, "<nil>");
          }
          else {
-            int flags = 0;
+            size_t flags = 0;
             ident_t className = NULL;
             DebugLineInfo* field = seekClassInfo(fieldPtr, className, flags);
             if (field) {
@@ -845,7 +860,7 @@ void DebugController :: readList(_DebuggerWatch* watch, int* list, int length)
          watch->write(this, memberPtr, ident_t(index), "<nil>");
       }
       else {
-         int flags = 0;
+         size_t flags = 0;
          ident_t className = NULL;
          DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
          if (item) {
@@ -926,7 +941,7 @@ void DebugController :: readMessage(_DebuggerWatch* watch, ref_t reference)
    watch->write(this, reference, "$message", (const char*)messageValue);
 }
 
-void DebugController :: readObject(_DebuggerWatch* watch, ref_t address, ident_t className, ident_t name)
+void DebugController :: readObject(_DebuggerWatch* watch, size_t address, ident_t className, ident_t name)
 {
    if (!emptystr(className)) {
       watch->write(this, address, name, className);
@@ -934,11 +949,11 @@ void DebugController :: readObject(_DebuggerWatch* watch, ref_t address, ident_t
    else watch->write(this, address, name, "<unknown>");
 }
 
-void DebugController :: readObject(_DebuggerWatch* watch, ref_t address, ident_t name)
+void DebugController :: readObject(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    if (address != 0) {
       ident_t className = NULL;
-      int flags = 0;
+      size_t flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
 
       readObject(watch, address, className, name);
@@ -946,11 +961,11 @@ void DebugController :: readObject(_DebuggerWatch* watch, ref_t address, ident_t
    else watch->write(this, address, name, "<nil>");
 }
 
-void DebugController::readLocalInt(_DebuggerWatch* watch, ref_t address, ident_t name)
+void DebugController::readLocalInt(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    if (address != 0) {
       ident_t className = NULL;
-      int flags = 0;
+      size_t flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
       if (info != NULL) {
          watch->write(this, address, name, className);
@@ -965,11 +980,11 @@ void DebugController::readLocalInt(_DebuggerWatch* watch, ref_t address, ident_t
    else watch->write(this, address, name, "<nil>");
 }
 
-void DebugController::readLocalLong(_DebuggerWatch* watch, ref_t address, ident_t name)
+void DebugController::readLocalLong(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    if (address != 0) {
       ident_t className = NULL;
-      int flags = 0;
+      size_t flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
       if (info != NULL) {
          watch->write(this, address, name, className);
@@ -984,11 +999,11 @@ void DebugController::readLocalLong(_DebuggerWatch* watch, ref_t address, ident_
    else watch->write(this, address, name, "<nil>");
 }
 
-void DebugController::readLocalReal(_DebuggerWatch* watch, ref_t address, ident_t name)
+void DebugController::readLocalReal(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    if (address != 0) {
       ident_t className = NULL;
-      int flags = 0;
+      size_t flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
       if (info != NULL) {
          watch->write(this, address, name, className);
@@ -1003,7 +1018,7 @@ void DebugController::readLocalReal(_DebuggerWatch* watch, ref_t address, ident_
    else watch->write(this, address, name, "<nil>");
 }
 
-void DebugController::readParams(_DebuggerWatch* watch, ref_t address, ident_t name, bool ignoreInline)
+void DebugController::readParams(_DebuggerWatch* watch, size_t address, ident_t name, bool ignoreInline)
 {
    if (address != 0) {
 
@@ -1020,7 +1035,7 @@ void DebugController::readParams(_DebuggerWatch* watch, ref_t address, ident_t n
          if (memberPtr == 0)
             break;
 
-         int flags = 0;
+         size_t flags = 0;
          ident_t className = NULL;
          DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
          if (item) {
@@ -1053,79 +1068,79 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
       while (lineInfo[index].symbol != dsProcedure) {
          if (lineInfo[index].symbol == dsLocal) {
             // write local variable
-            int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            readObject(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            size_t localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
+            readObject(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsIntLocal) {
             // write stack allocated local variable
-            int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            readLocalInt(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            size_t localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
+            readLocalInt(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsIntLocalPtr) {
             // write stack allocated local variable
-            int localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
-            readLocalInt(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            readLocalInt(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsLongLocal) {
             // write stack allocated local variable
-            int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            readLocalLong(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            size_t localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
+            readLocalLong(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsLongLocalPtr) {
             // write stack allocated local variable
-            int localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
-            readLocalLong(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            readLocalLong(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsRealLocal) {
             // write stack allocated local variable
-            int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            readLocalReal(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            size_t localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
+            readLocalReal(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsRealLocalPtr) {
             // write stack allocated local variable
-            int localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
-            readLocalReal(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            readLocalReal(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsParamsLocal) {
             // write stack allocated local variable
-            int localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
-            readParams(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef, false);
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            readParams(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef), false);
          }
          else if (lineInfo[index].symbol == dsByteArrayLocal) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
 
-            readByteArray(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            readByteArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsByteArrayLocalPtr) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
 
-            readByteArray(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            readByteArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsShortArrayLocal) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
 
-            readShortArray(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            readShortArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsShortArrayLocalPtr) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
 
-            readShortArray(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            readShortArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsIntArrayLocal) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
 
-            readIntArray(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsIntArrayLocalPtr) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
 
-            readIntArray(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          //else if (lineInfo[index].symbol == dsMessage) {
          //   // write local variable
@@ -1133,26 +1148,30 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          //   readMessage(watch, message);
          //}
          else if (lineInfo[index].symbol == dsStructPtr) {
-            int localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
-            ref_t classPtr = _classNames.get((const char*)lineInfo[index + 1].addresses.source.nameRef);
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef));
             if (classPtr != 0) {
-               readObject(watch, localPtr, (const char*)lineInfo[index + 1].addresses.source.nameRef, (const char*)lineInfo[index].addresses.local.nameRef);
+               readObject(watch, localPtr, 
+                  (const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef), 
+                  (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
 
-               watch->append(this, (const char*)lineInfo[index].addresses.local.nameRef, localPtr, classPtr);
+               watch->append(this, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef), localPtr, classPtr);
             }
          }
          else if (lineInfo[index].symbol == dsLocalPtr) {
             size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
-            ref_t classPtr = _classNames.get((const char*)lineInfo[index + 1].addresses.source.nameRef);
+            ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef));
 
-            readObject(watch, localPtr, (const char*)lineInfo[index + 1].addresses.source.nameRef, (const char*)lineInfo[index].addresses.local.nameRef);
+            readObject(watch, localPtr, 
+               (const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef), 
+               (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
 
-            watch->append(this, (const char*)lineInfo[index].addresses.local.nameRef, localPtr, classPtr);
+            watch->append(this, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef), localPtr, classPtr);
          }
          else if (lineInfo[index].symbol == dsStack) {
             // write local variable
-            int localPtr = _debugger.Context()->CurrentPtr(lineInfo[index].addresses.local.level);
-            readObject(watch, localPtr, (const char*)lineInfo[index].addresses.local.nameRef);
+            size_t localPtr = _debugger.Context()->CurrentPtr(lineInfo[index].addresses.local.level);
+            readObject(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          index--;
       }
@@ -1162,7 +1181,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
 void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_t classPtr)
 {
    if (_debugger.isStarted()) {
-      int flags = 0;
+      size_t flags = 0;
       ident_t className = NULL;
       DebugLineInfo* info = seekClassInfo(selfPtr, className, flags, classPtr);
       if (info) {
@@ -1216,7 +1235,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
          }
          else if (type==elDebugArray) {
             int list[DEBUG_MAX_LIST_LENGTH];
-            size_t length = 0;
+            int length = 0;
 
             // get array size
             getValue(selfPtr - 8, (char*)&length, 4);

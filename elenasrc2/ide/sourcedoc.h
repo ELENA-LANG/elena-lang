@@ -24,7 +24,7 @@ class SourceDoc : public Document
    IndentDirection IsAutoIndent(text_c ch);
 
    text_c getCurrentChar();
-   text_t getCurrentLine(int disp, size_t& length);
+   text_t getCurrentLine(disp_t disp, size_t& length);
 
 public:
    virtual void insertNewLine();

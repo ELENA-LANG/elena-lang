@@ -47,7 +47,7 @@ class ViewStyles
 public:
    int Count() const { return _count; }
 
-   Style operator[](unsigned int index)
+   Style operator[](size_t index)
    {
       return _styles[index];
    }
@@ -85,12 +85,12 @@ protected:
    Document*   _document;
    bool        _needToResize;
    bool        _tabUsing;
-   size_t      _tabSize;
-   size_t      _caret_x;
+   int         _tabSize;
+   int         _caret_x;
 
    Document::Reader* _docReader;
 
-   virtual LRESULT _WindProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam);
+   virtual LRESULT _WindProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
    void paint(Canvas& canvas, _GUI_::Rectangle clientRect);
 

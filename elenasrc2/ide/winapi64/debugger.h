@@ -71,8 +71,8 @@ struct ThreadBreakpoint
 
 struct ProcessException
 {
-   int code;
-   int address;
+   int    code;
+   size_t address;
 
    wchar_t* Text();
 
@@ -206,12 +206,12 @@ class Debugger
 
    size_t            minAddress, maxAddress;
 
-   MemoryMap<int, void*> steps;
+   MemoryMap<size_t, void*> steps;
 
    ProcessException exception;
 
    bool startProcess(const wchar_t* exePath, const wchar_t* cmdLine);
-   void processEvent(size_t timeout);
+   void processEvent(DWORD timeout);
    void processException(EXCEPTION_DEBUG_INFO* exception);
    void continueProcess();
 
@@ -243,7 +243,7 @@ public:
 
    bool start(const wchar_t* exePath, const wchar_t* cmdLine);
    void run();
-   bool proceed(size_t timeout);
+   bool proceed(DWORD timeout);
    void stop();
 
    void processVirtualStep(void* step);
@@ -258,6 +258,14 @@ public:
 
    size_t findEntryPoint(const wchar_t* programPath);
    bool findSignature(StreamReader& reader, char* signature);
+
+   size_t readRetAddress(_Memory& memory, size_t position)
+   {
+      size_t address = 0;
+      memory.readLong(position, &address, 8);
+
+      return address;
+   }
 
    Debugger();
 };
@@ -276,7 +284,7 @@ inline void setForegroundWindow(HWND hwnd)
    ::SetForegroundWindow (hwnd);
 
    // Set the timeout back
-   ::SystemParametersInfo (0x2001, 0, (LPVOID)dwTimeoutMS, 0);   //HWND hCurrWnd;
+   ::SystemParametersInfo (0x2001, 0, (LPVOID)(size_t)dwTimeoutMS, 0);   //HWND hCurrWnd;
 }
 
 } // _ELENA_

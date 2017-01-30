@@ -33,7 +33,7 @@ ToolBar :: ToolBar(Window* owner, int iconSize, int count, ToolBarButton* button
 
       if (buttons[i].command != 0) {
          bitmap.nID = buttons[i].iconId;
-         tbButtons[i].iBitmap = ::SendMessage(_handle, TB_ADDBITMAP, 1, (LPARAM)&bitmap);
+         tbButtons[i].iBitmap = (int)::SendMessage(_handle, TB_ADDBITMAP, 1, (LPARAM)&bitmap);
 
          tbButtons[i].fsStyle = BTNS_BUTTON;
       }

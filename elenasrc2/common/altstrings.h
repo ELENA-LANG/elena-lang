@@ -28,6 +28,7 @@ public:
    static wide_c* doubleToStr(double value, int digit, wide_c* s);
 
    static char* longlongToStr(long long n, char* s, int radix);
+   static wide_c* longlongToStr(long long n, wide_c* s, int radix);
 
    static char* intToStr(int n, char* s, int radix);
    static int strToInt(const char* s);
@@ -419,6 +420,15 @@ public:
 
       Convertor::longlongToStr(n, _string + pos, 10);
       StrHelper::upper(_string + pos);
+   }
+
+   void appendSize(size_t n)
+   {
+#ifdef _WIN64
+      appendHex64(n);
+#else
+      appendHex(n);
+#endif
    }
 
    void lower()

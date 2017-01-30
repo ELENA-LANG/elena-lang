@@ -22,7 +22,7 @@ void ViewStyles :: assign(int count, StyleInfo* styles, int lineHeight, int marg
    _lineHeight = lineHeight;
    _marginWidth = marginWidth;
 
-   for (int i = 0 ; i < count ; i++) {
+   for (size_t i = 0 ; i < count ; i++) {
       Font* font = Font::createFont(styles[i].faceName, styles[i].characterSet, styles[i].size,
          styles[i].bold, styles[i].italic);
 
@@ -147,7 +147,7 @@ void TextView :: updateHScroller(bool resize)
    }
 }
 
-LRESULT TextView :: _WindProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam)
+LRESULT TextView :: _WindProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
    switch (Message)
    {
@@ -160,7 +160,7 @@ LRESULT TextView :: _WindProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM l
          }
          else break;
       case WM_KEYDOWN:
-         if (onKeyDown(wParam, isKeyDown(VK_SHIFT), isKeyDown(VK_CONTROL))) {
+         if (onKeyDown((int)wParam, isKeyDown(VK_SHIFT), isKeyDown(VK_CONTROL))) {
             return 0;
          }
          else break;
@@ -495,8 +495,8 @@ void TextView :: paint(Canvas& canvas, _GUI_::Rectangle clientRect)
 
    Style defaultStyle = _styles[STYLE_DEFAULT];
    Style marginStyle = _styles[STYLE_MARGIN];
-   size_t lineHeight = _styles.getLineHeight();
-   size_t marginWidth = _styles.getMarginWidth();
+   int lineHeight = _styles.getLineHeight();
+   int marginWidth = _styles.getMarginWidth();
    if (_lineNumbersVisible) {
       marginWidth += getLineNumberMargin();
    }
@@ -562,10 +562,10 @@ void TextView :: paint(Canvas& canvas, _GUI_::Rectangle clientRect)
                lineNumber.copyInt(reader.row + 1);
                canvas.drawTextClipped(
                      Rectangle(x - marginWidth, y, marginWidth, lineHeight + 1),
-                     x - marginStyle.avgCharWidth * _ELENA_::getlength(lineNumber) - 4,
+                     x - marginStyle.avgCharWidth * (int)_ELENA_::getlength(lineNumber) - 4,
                      y,
                      lineNumber,
-                     _ELENA_::getlength(lineNumber),
+                     (int)_ELENA_::getlength(lineNumber),
                      marginStyle);
             }
             
@@ -756,7 +756,7 @@ void TextView :: indent()
    }
    else {
       if (!_document->hasSelection()) {
-         size_t shift = _ELENA_::calcTabShift(_document->getCaret().x, _tabSize);
+         int shift = _ELENA_::calcTabShift(_document->getCaret().x, _tabSize);
          _document->insertChar(' ', shift);
       } 
       else _document->tabbing(' ', _tabSize, true);

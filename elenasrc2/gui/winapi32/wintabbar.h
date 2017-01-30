@@ -55,8 +55,8 @@ public:
    void eraseTabView(int index);
    void renameTabView(int index, const wchar_t* newName);
 
-   virtual void _setWidth(size_t width);
-   virtual void _setHeight(size_t height);
+   virtual void _setWidth(int width);
+   virtual void _setHeight(int height);
 
    virtual void _resize();
 
@@ -92,8 +92,8 @@ public:
       selectTabChild(_children.Count() - 1);
    }
 
-   virtual void _setWidth(size_t width);
-   virtual void _setHeight(size_t height);
+   virtual void _setWidth(int width);
+   virtual void _setHeight(int height);
 
    virtual void _resize();
 

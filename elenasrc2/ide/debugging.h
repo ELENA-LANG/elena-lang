@@ -68,7 +68,7 @@ public:
 
 struct Breakpoint
 {
-   size_t           row;
+   int              row;
    IdentifierString source;
    IdentifierString module;
    void*            param;
@@ -77,7 +77,7 @@ struct Breakpoint
    {
       param = NULL;
    }
-   Breakpoint(ident_t module, ident_t source, size_t row, void* param)
+   Breakpoint(ident_t module, ident_t source, int row, void* param)
    {
       this->module.copy(module);
       this->source.copy(source);

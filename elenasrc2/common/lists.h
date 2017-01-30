@@ -378,6 +378,36 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
       return (this->key > key);
    }
 
+   bool operator ==(unsigned long long key) const
+   {
+      return (this->key == key);
+   }
+
+   bool operator !=(unsigned long long key) const
+   {
+      return (this->key != key);
+   }
+
+   bool operator <=(unsigned long long key) const
+   {
+      return (this->key <= key);
+   }
+
+   bool operator <(unsigned long long key) const
+   {
+      return (this->key < key);
+   }
+
+   bool operator >=(unsigned long long key) const
+   {
+      return (this->key >= key);
+   }
+
+   bool operator >(unsigned long long key) const
+   {
+      return (this->key > key);
+   }
+
    Pair<unsigned int, int> getKey(Pair<unsigned int, int> key) const
    {
       return key;
