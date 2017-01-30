@@ -72,7 +72,7 @@ rebuild_lib.script under the superuser. Alternatively install debian package
 
 Examples are located in /usr/elena-lang
 
-To compile the program types : elena-lc -c<path to .project file>
+To compile the program types : elena-lc <path to .project file>
 
 ****************************************************************************
 * Documentation

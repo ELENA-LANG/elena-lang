@@ -108,7 +108,7 @@ protected:
    bool loadPathOption(_ConfigFile& config, ProjectSetting setting, path_t path);
 
    void loadCategory(_ConfigFile& config, ProjectSetting setting, path_t configPath);
-   void loadSourceCategory(_ConfigFile& config, path_t path);
+   void loadSourceCategory(_ConfigFile& config);
    void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
    void loadForwardCategory(_ConfigFile& config);
    void loadTargetCategory(_ConfigFile& config);

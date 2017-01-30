@@ -185,14 +185,14 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
    }
 }
 
-void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
+void Project :: loadSourceCategory(_ConfigFile& config)
 {
    _ConfigFile::Nodes nodes;
    if (readCategory(config, opSources, nodes)) {
       for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
          if (emptystr((*it).Content())) {
             // add path if provided
-            Path filePath(/*path, */it.key());
+            Path filePath(it.key());
 
             addSource(filePath.c_str());
          }
@@ -255,7 +255,7 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadTargetCategory(config);
 
    // load sources
-   loadSourceCategory(config, configPath);
+   loadSourceCategory(config);
 
    // load forwards
    loadForwardCategory(config);

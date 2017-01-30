@@ -356,7 +356,6 @@ Pipeline:
                        * linux : migrate two rosetta samples to linux
 
               xdev - usability
-                       * it should be possible to compile the project only specifying the project file without any option
                        * ecv : dynamically define the page size
                        * ecv : use >out for ourput redirect
 

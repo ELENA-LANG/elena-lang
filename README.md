@@ -59,7 +59,7 @@ compile the project and Project-Debug to debug it.
 To install just unzip all the files into a directory you want and execute 
 rebuild_lib.script under the superuser. Alternatively install debian package
 
-To compile the program types : ./bin/elena-lc -c<path to .project file>
+To compile the program types : elena-lc your_project.project
 
 Get started!
 ---

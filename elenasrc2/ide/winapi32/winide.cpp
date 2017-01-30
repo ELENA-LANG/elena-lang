@@ -1403,12 +1403,10 @@ bool IDEWindow :: compileProject(_ProjectManager* project, int postponedAction)
 
    if (path.str().find(_T(' '))) {
       cmdLine.append(_T(" \""));
-      cmdLine.append(_T("-c"));
       cmdLine.append(text_str(path));
       cmdLine.append(_T("\""));
    }
    else {
-      cmdLine.append(_T(" -c"));
       cmdLine.append(text_str(path));
    }
 

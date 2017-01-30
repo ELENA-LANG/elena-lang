@@ -430,6 +430,22 @@ void _ELC_::Project :: loadGenericConfig(_ELENA_::_ConfigFile& config, _ELENA_::
    loadConfig(config, configPath);
 }
 
+bool _ELC_::Project :: loadProject(_ELENA_::path_t path)
+{
+   if (emptystr(projectName)) {
+      projectName.copy(_ELENA_::IdentifierString(path));
+
+      loadConfig(path);
+
+      _ELENA_::Path projectPath;
+      projectPath.copySubPath(path);
+      _settings.add(_ELENA_::opProjectPath, _ELENA_::IdentifierString::clonePath(projectPath.c_str()));
+
+      return true;
+   }
+   else return false;
+}
+
 void _ELC_::Project :: setOption(_ELENA_::path_t value)
 {
    _ELENA_::IdentifierString valueName(value);
@@ -492,13 +508,8 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
          break;
       case ELC_PRM_CONFIG:
       {
-         projectName.copy(valueName + 1);
-
-         loadConfig(value + 1);
-
-         _ELENA_::Path projectPath;
-         projectPath.copySubPath(value + 1);
-         _settings.add(_ELENA_::opProjectPath, _ELENA_::IdentifierString::clonePath(projectPath.c_str()));
+         if (!loadProject(value + 1))
+            raiseError(ELC_ERR_INVALID_OPTION, valueName);
 
          break;
       }
@@ -651,6 +662,9 @@ int main()
       for (int i = 1 ; i < argc ; i++) {
          if (argv[i][0]=='-') {
             project.setOption(argv[i] + 1);
+         }
+         else if (_ELENA_::Path::checkExtension(argv[i], "xprj") || _ELENA_::Path::checkExtension(argv[i], "prj")) {
+            project.loadProject(argv[i]);
          }
          else project.addSource(argv[i]);
       }

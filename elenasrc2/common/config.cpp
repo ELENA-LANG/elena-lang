@@ -31,7 +31,7 @@ _ConfigFile::Node IniConfigFile :: get(ident_t key)
 
       ident_t settingName = key + index + 1;
       index = settingName.find('/');
-      if (index > 0) {
+      if (index != NOTFOUND_POS) {
          // HOTFIX : if sub category is used
          String<char, 50> temp(settingName);
          temp[index] = ':';
