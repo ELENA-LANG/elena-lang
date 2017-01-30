@@ -2141,7 +2141,7 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mod
    else if (terminal == lxInteger) {
       String<char, 20> s;
 
-      long integer = token.toInt();
+      int integer = token.toInt();
       if (errno == ERANGE)
          scope.raiseError(errInvalidIntNumber, terminal);
 
@@ -2163,7 +2163,7 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mod
    else if (terminal == lxHexInteger) {
       String<char, 20> s;
 
-      long integer = token.toULong(16);
+      int integer = token.toULong(16);
       if (errno == ERANGE)
          scope.raiseError(errInvalidIntNumber, terminal);
 
@@ -5597,7 +5597,7 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
       if (test(hint, tpEmbeddable)) {
          if (!_logic->optimizeEmbeddable(node, scope))
             node.appendNode(lxEmbeddable);
-      }         
+      }
    }
 
    optimizeSyntaxExpression(scope, node, warningScope, mode);
@@ -5796,7 +5796,7 @@ void Compiler :: optimizeNestedExpression(ModuleScope& scope, SNode node, Warnin
          ref_t reference = scope.mapNestedExpression();
 
          node = lxConstantList;
-         node.setArgument(reference | mskConstArray);         
+         node.setArgument(reference | mskConstArray);
 
          _writer.generateConstantList(node, scope.module, reference);
       }

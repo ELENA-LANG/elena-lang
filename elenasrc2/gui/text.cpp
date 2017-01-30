@@ -1207,14 +1207,14 @@ public:
       return (wchar_t*)_buffer->get_st(_offset);
    }
 #else
-   int readLength()
+   size_t readLength()
    {
-      return getDWord();
+      return getSize();
    }
 
    size_t readPosition(bool& eraseMode)
    {
-      size_t value = getDWord();
+      size_t value = getSize();
 
       size_t position = value & 0x7FFFFFFF;
       eraseMode = test(value, 0x80000000);

@@ -743,7 +743,7 @@ size_t Debugger :: findEntryPoint(const char* programPath)
 
 bool Debugger :: findSignature(StreamReader& reader, char* signature)
 {
-   reader.seek(0x08048000);
+   reader.seek(0x08048000u);
 
    size_t rva = 0;
    ELFHelper::seekRDataSegment(reader, rva);
@@ -758,7 +758,7 @@ bool Debugger :: findSignature(StreamReader& reader, char* signature)
 bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr)
 {
    if (standalone) {
-      reader.seek(0x08048000);
+      reader.seek(0x08048000u);
 
       _ELENA_::ELFHelper::seekDebugSegment(reader, debugInfoPtr);
    }

@@ -25,7 +25,7 @@ size_t ELFHelper :: findEntryPoint(path_t path)
       return (size_t)-1;
 
    // !! hard-coded offset
-   reader.seek(0x18);
+   reader.seek(0x18u);
 
    size_t entry = 0;
    reader.readDWord(entry);

@@ -339,7 +339,7 @@ File::File(path_t path, path_t mode, int encoding, bool withBOM)
    }
 }
 
-bool File :: readLine(char* s, size_t length)
+bool File :: readLine(char* s, int length)
 {
    if (_encoding==feUTF8 || _encoding==feRaw) {
       return (fgets(s, length, _file) != NULL);

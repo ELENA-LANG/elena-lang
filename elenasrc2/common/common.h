@@ -39,6 +39,8 @@ namespace _ELENA_
 
 #else
 
+#include <climits>
+
 #define PATH_SEPARATOR '/'
 
 namespace _ELENA_
@@ -49,7 +51,9 @@ namespace _ELENA_
 
    typedef unsigned char      uident_c;
    typedef size_t             ref_t;
+   typedef unsigned int       pos_t;
    typedef unsigned long long ref64_t;
+   typedef unsigned long long pos64_t;
 
    // --- FileEncoding ---
    enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };
