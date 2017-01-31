@@ -46,25 +46,16 @@
 
 #symbol testProgram =
 [
-    #var state1 := Struct(%digit, 
-        Tape(
-            { order = 1. evalToken : content = content toReal. },
-            1, %"tapeOp.var[]",
-            %"newLeaf[1]",
-            2, %"tapeOp.var[]",
-            1, %"tapeOp.var[]",
-            %"addContent[1]",
-            1, %"tapeOp.var[]",
-            %"seek&state0"
-        )).
-                
-    #var states := Struct(%state0, state1).
+    #var factory := scriptEngine 
+        load &path:"~\scripts\assembly.es" 
+        load &path:"~\scripts\eson.es" 
+        eval &path:"test.es".   
 
-    #var states_alt := scriptEngine
-        eval &path:"test.es".
-
-    #var machine := StateMachine new:states seek &state0.
-    #var machine2 := StateMachine new:states_alt seek &state0.
+    #var dynamicRules := factory eval:(Library new) first eval.
+    #var staticRules := calc'rules'States.
+            
+    #var machine := StateMachine new:dynamicRules seek &state0.
+    #var machine2 := StateMachine new:staticRules seek &state0.
     
     machine digit:"1".
     machine2 digit:"1".
