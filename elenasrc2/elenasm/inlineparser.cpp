@@ -190,10 +190,10 @@ bool InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
 
 bool InlineScriptParser :: parseMessage(ident_t message, IdentifierString& reference, int paramCounter)
 {
-   int length = getlength(message);
+   size_t length = getlength(message);
    if (paramCounter == -1) {
       length = message.find('[');
-      if (length != -1) {
+      if (length != NOTFOUND_POS) {
          reference.copy(message + length + 1);
          if (reference[reference.Length() - 1] == ']') {
             reference.truncate(reference.Length() - 1);
@@ -209,8 +209,8 @@ bool InlineScriptParser :: parseMessage(ident_t message, IdentifierString& refer
    }
 
    int verb_id = 0;
-   int subjPos = message.find('&');
-   if (subjPos != -1) {
+   size_t subjPos = message.find('&');
+   if (subjPos != NOTFOUND_POS) {
       reference.copy(message, subjPos);
       verb_id = mapVerb(reference);
       if (verb_id != 0) {
@@ -230,9 +230,9 @@ bool InlineScriptParser :: parseMessage(ident_t message, IdentifierString& refer
       verb_id = (paramCounter == 0) ? GET_MESSAGE_ID : EVAL_MESSAGE_ID;
 
    reference.clear();
-   reference.append('0' + paramCounter);
+   reference.append('0' + (char)paramCounter);
    reference.append('#');
-   reference.append(0x20 + verb_id);
+   reference.append(0x20 + (char)verb_id);
    if (!emptystr(message)) {
       reference.append('&');
       reference.append(message, length);
@@ -284,7 +284,7 @@ bool InlineScriptParser :: insertExtension(TapeWriter& writer, int bookmark, ide
 {
    IdentifierString reference;
 
-   int dotPos = message.find('.');
+   size_t dotPos = message.find('.');
    if (parseMessage(message + dotPos + 1, reference, paramCounter)) {
       reference.insert(message, 0, dotPos + 1);
 
@@ -336,8 +336,8 @@ int InlineScriptParser :: parseExpression(_ScriptReader& reader, ScriptBookmark&
             message.clear();
          }
          else {
-            ident_t message = reader.lookup(bm);
-            if (message.find('.') != -1) {
+            ident_t s = reader.lookup(bm);
+            if (s.find('.') != NOTFOUND_POS) {
                insertExtension(writer, bookmark + offset, reader.lookup(bm), -1, PUSHE_TAPE_MESSAGE_ID);
             }
             else insertMessage(writer, bookmark + offset, reader.lookup(bm), -1, PUSHM_TAPE_MESSAGE_ID);

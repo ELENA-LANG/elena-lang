@@ -2212,7 +2212,7 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
          break;
       case lxExpression:
          if (isCollection(member)) {
-            result = compileCollection(objectNode, scope, mode);
+            result = compileCollection(objectNode, scope);
          }
          else result = compileExpression(member, scope, 0);
          break;

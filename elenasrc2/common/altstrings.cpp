@@ -1587,8 +1587,9 @@ void StrHelper :: append(wide_c* dest, const wide_c* sour, size_t length)
 void StrHelper :: insert(char* s, size_t pos, size_t len, const char* subs)
 {
    //s[getlength(s) + len + 1] = 0;
-   for (size_t i = getlength(s); i >= pos; i--) {
-      s[i + len] = s[i];
+
+   for (size_t i = getlength(s) + 1; i > pos; i--) {
+      s[i + len - 1] = s[i - 1];
    }
    memcpy(s + pos, subs, len);
 }

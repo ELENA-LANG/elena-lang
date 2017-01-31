@@ -2,8 +2,8 @@
 In development:
 ------                              
 
-              xrev           
-                 * test net sample
+             idev - linux
+                 * watch
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
@@ -38,8 +38,8 @@ In development:
 Pipeline:
 ------                                                                                         
 
-             idev - linux
-                 * watch
+              xrev           
+                 * test net sample
 
               adev - lib30     
                  * review toLiteral code, temporal size??

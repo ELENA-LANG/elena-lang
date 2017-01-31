@@ -23,12 +23,12 @@ class TreeScriptParser : public _Parser
    void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer);
 
 public:
-   virtual bool parseGrammarRule(_ScriptReader& reader)
+   virtual bool parseGrammarRule(_ScriptReader&)
    {
       return false;
    }
 
-   virtual bool parseGrammarMode(_ScriptReader& reader)
+   virtual bool parseGrammarMode(_ScriptReader&)
    {
       return false;
    }

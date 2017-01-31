@@ -49,44 +49,44 @@ bool normalApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& re
    return bm.state != dfaEOF && parser->compareToken(reader, bm, rule.terminal);
 }
 
-bool normalEOFApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
+bool normalEOFApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader&, CFParser*)
 {
    return (bm.state == dfaEOF);
 }
 
-bool normalEOLApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
+bool normalEOLApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
 {
    ident_t value = reader.lookup(bm);
    return (value[0] == '\n');
 }
 
-bool normalLetterApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
+bool normalLetterApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
 {
    ident_t value = reader.lookup(bm);
    return (value[0] >= 'A' && value[0] <= 'Z') || (value[0] >= 'a' && value[0] <= 'z');
 }
 
-bool normalReferenceApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
+bool normalReferenceApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader&, CFParser*)
 {
    return (bm.state == dfaFullIdentifier);
 }
 
-bool normalIdentifierApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
+bool normalIdentifierApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader&, CFParser*)
 {
    return (bm.state == dfaIdentifier);
 }
 
-bool normalLiteralApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
+bool normalLiteralApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader&, CFParser*)
 {
    return (bm.state == dfaQuote);
 }
 
-bool nonterminalApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
+bool nonterminalApplyRule(CFParser::Rule&, ScriptBookmark&, _ScriptReader&, CFParser*)
 {
    return true;
 }
 
-bool normalNumericApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
+bool normalNumericApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader&, CFParser*)
 {
    return (bm.state == dfaInteger || bm.state == dfaLong || bm.state == dfaReal);
 }
@@ -248,25 +248,25 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
             throw EParseError(bm.column, bm.row);
 
          if (reader.compare(REFERENCE_KEYWORD)) {
-            rule.terminal = -1;
+            rule.terminal = (size_t)-1;
             rule.saveTo = saveReference;
 
             mode = REFERENCE_MODE;
          }
          else if (reader.compare(IDENTIFIER_KEYWORD)) {
-            rule.terminal = -1;
+            rule.terminal = (size_t)-1;
             rule.saveTo = saveReference;
 
             mode = IDENTIFIER_MODE;
          }
          else if (reader.compare(LITERAL_KEYWORD)) {
-            rule.terminal = -1;
+            rule.terminal = (size_t)-1;
             rule.saveTo = saveLiteralContent;
 
             mode = LITERAL_MODE;
          }
          else if (reader.compare(NUMERIC_KEYWORD)) {
-            rule.terminal = -1;
+            rule.terminal = (size_t)-1;
             rule.saveTo = saveReference;
 
             mode = NUMERIC_MODE;
@@ -276,19 +276,19 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          rule.postfixPtr = _body.Length();
       }
       else if (bm.state == dfaQuote && reader.compare(REFERENCE_KEYWORD)) {
-         rule.terminal = -1;
+         rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
          mode = REFERENCE_MODE;
       }
       else if (bm.state == dfaQuote && reader.compare(IDENTIFIER_KEYWORD)) {
-         rule.terminal = -1;
+         rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
          mode = IDENTIFIER_MODE;
       }
       else if (bm.state == dfaQuote && reader.compare(LITERAL_KEYWORD)) {
-         rule.terminal = -1;
+         rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
          mode = LITERAL_MODE;
@@ -345,7 +345,7 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
             break;
          }
          else {
-            rule.terminal = -1;
+            rule.terminal = (size_t)-1;
 //            rule.prefixPtr = defineDSARule(token, reader);
 
             if (reader.compare(LITERAL_KEYWORD)) {
@@ -358,8 +358,8 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
                if (rule.nonterminal)
                   throw EParseError(bm.column, bm.row);
 
-               rule.nonterminal = -1;
-               rule.terminal = -1;
+               rule.nonterminal = (size_t)-1;
+               rule.terminal = (size_t)-1;
                applyMode = IDLE_MODE;
             }
             else if (reader.compare(EOF_KEYWORD)) {

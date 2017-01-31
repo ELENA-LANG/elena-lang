@@ -134,8 +134,8 @@ struct ScriptBookmark
 {
    pos_t offset;
    int   state;
-   short row;
-   short column;
+   int   row;
+   int   column;
 
    ScriptBookmark()
    {

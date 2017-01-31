@@ -33,12 +33,12 @@ class InlineScriptParser : public _Parser
    int parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 
 public:
-   virtual bool parseGrammarRule(_ScriptReader& reader)
+   virtual bool parseGrammarRule(_ScriptReader&)
    {
       return false;
    }
 
-   virtual bool parseGrammarMode(_ScriptReader& reader)
+   virtual bool parseGrammarMode(_ScriptReader&)
    {
       return false;
    }
