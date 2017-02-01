@@ -19,6 +19,7 @@ Version 2.1.0
 
 Version 2.2.0
 -------------
+- x64 alpha version
 - web
 - api : optimize utf8 <-> utf16, utf8 <-> utf32, utf16 <-> utf32
 - code optimization
@@ -41,7 +42,6 @@ Version 2.3.0
 Version 2.4.0
 -------------
 - start work on visualizer
-- x64 alpha version
 
 Version 2.5.0
 -------------

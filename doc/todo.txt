@@ -1,13 +1,17 @@
 ------                                 
 In development:
 ------                              
-
-             idev - linux
-                 * watch
+             sdev - transformer
+                 * implement vm tape parser
+                 * implement transformer 
+                 * test elt
+                 * test script_test
+                 * test calc
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define method ::= "method" "(" name code ")";
+                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
                  * use pattern like in regex for terminal matching
                  * there should be possibility to save the resulting code in the file
                  * at least print the token where the parser error is
@@ -62,6 +66,7 @@ Pipeline:
                   during linking 32 bit application it should enforce the limitations (no more than 12 parameters, number of references)
 
              idev - linux
+                 * watch
                  * call stack
                  * recent files / recent projects
                  * toolbars, enabling / disabling toolbar options
@@ -292,6 +297,7 @@ Pipeline:
                        * review winforms implementation for corex mode
                        
              xdev - linux
+                       * support compiling the project without -c option
                        * support manifest info
                        
               fdev - live programming

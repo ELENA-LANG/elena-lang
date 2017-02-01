@@ -293,13 +293,17 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
 
          mode = LITERAL_MODE;
       }
+      else if (bm.state == dfaQuote && reader.compare(NUMERIC_KEYWORD)) {
+         rule.terminal = (size_t)-1;
+         rule.saveTo = saveLiteral;
+
+         mode = NUMERIC_MODE;
+      }
       else {
          ident_t token = reader.lookup(bm);
 
          if (bm.state == dfaQuote) {
-            writer.writeChar('\"');
-            writer.writeLiteral(token, getlength(token));
-            writer.writeChar('\"');
+            ScriptLog::writeQuote(writer, token);
          }
          else writer.writeLiteral(token, getlength(token));
          writer.writeChar(' ');

@@ -112,6 +112,7 @@
     <ClCompile Include="..\..\engine\textsource.cpp" />
     <ClCompile Include="..\cfparser.cpp" />
     <ClCompile Include="..\inlineparser.cpp" />
+    <ClCompile Include="..\transformer.cpp" />
     <ClCompile Include="..\treeparser.cpp" />
     <ClCompile Include="..\win32\dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -139,6 +140,7 @@
     <ClInclude Include="..\..\engine\textsource.h" />
     <ClInclude Include="..\cfparser.h" />
     <ClInclude Include="..\inlineparser.h" />
+    <ClInclude Include="..\transformer.h" />
     <ClInclude Include="..\treeparser.h" />
     <ClInclude Include="..\scriptengine.h" />
     <ClInclude Include="..\session.h" />

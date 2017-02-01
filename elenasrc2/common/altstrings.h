@@ -635,7 +635,8 @@ public:
 
    void truncate(size_t pos)
    {
-      _string[pos] = 0;
+      if (_string != NULL)
+         _string[pos] = 0;
    }
 
    char* cut()

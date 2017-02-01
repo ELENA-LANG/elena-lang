@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                               (C)2011-2016 by Alexei Rakov
+//                                               (C)2011-2017 by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -10,6 +10,7 @@
 #include "cfparser.h"
 #include "inlineparser.h"
 #include "treeparser.h"
+#include "transformer.h"
 
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
@@ -19,7 +20,7 @@ using namespace _ELENA_TOOL_;
 Session::Session(path_t rootPath)
    : _rootPath(rootPath)
 {
-   _currentParser = new InlineScriptParser();
+   _currentParser = new VMTapeParser();
 }
 
 Session :: ~Session()
@@ -116,7 +117,10 @@ void Session :: parseMetaScript(MemoryDump& tape, _ScriptReader& reader)
             else if (reader.compare("inline")) {
                freeobj(_currentParser);
 
-               _currentParser = new InlineScriptParser();
+               _currentParser = new VMTapeParser();
+            }
+            else if (reader.compare("transform")) {
+               _currentParser = new Transformer(_currentParser);
             }
             else if (reader.compare("tree")) {
                freeobj(_currentParser);

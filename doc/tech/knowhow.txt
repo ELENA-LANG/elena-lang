@@ -136,10 +136,23 @@ be copied there;
  <bss>                   data section
 -- debuf segment ---
 
-10) Script engine commands
+10) Script engine : VMTape
 
-[ ]  - reverse the parameters order
-; - free the stack
-, - continue
-! - put breakpoint
-^ - send a message , if breakpoint available is inserted after it
+system'console writeLine:"Hello" <=  "Hello" system'console %"writeLine[1]"
+
+10) Script engine : Tranformer
+
+"Hello" system'console %"writeLine[1]" <= ( < " " "system'console" > " ^""" "writeLine" < " " """Hello World""" + > "[" = "]""" )
+
+There are two buffers : r - reverse buffer, s - streight buffer
+
+commands:
+(     - new scope
+)     - close scope, inserts the r + s into the previous scope r buffer if available or append to the output
+<     - switch to r buffer
+>     - switch to s buffer
+quote - if r buffer selected - insert into the beginning of r, if s - to the end of s
++     - increament the scope level
+-     - decreament the scope level
+=     - insert the scope level to r or s
+

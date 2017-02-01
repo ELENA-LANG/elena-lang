@@ -43,7 +43,6 @@ void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, S
 
       bm = reader.read();
    }
-
 }
 
 void TreeScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer)
