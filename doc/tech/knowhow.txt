@@ -148,11 +148,13 @@ There are two buffers : r - reverse buffer, s - streight buffer
 
 commands:
 (     - new scope
-)     - close scope, inserts the r + s into the previous scope r buffer if available or append to the output
+)     - close scope, inserts the r + s into the previous scope r buffer if available or append to the output, appends the counter to the parent one
 <     - switch to r buffer
 >     - switch to s buffer
 quote - if r buffer selected - insert into the beginning of r, if s - to the end of s
 +     - increament the scope level
 -     - decreament the scope level
 =     - insert the scope level to r or s
-
++=    - increament the scope counter
+-=    - decreament the scope counter
+==    - insert the scope counter to r or s

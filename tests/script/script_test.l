@@ -21,8 +21,8 @@
     #var factory := scriptEngine 
         load &path:"~\scripts\assembly.es" 
         load &path:"~\scripts\eson.es" 
-        eval &path:"test.es".   
-        
+        eval &path:"test.es".
+
     #var obj := factory eval:(Library new) first eval.
     
     #var n := obj state0.

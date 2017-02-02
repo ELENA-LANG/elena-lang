@@ -600,13 +600,15 @@ public:
 
    void insert(const T* s, size_t index)
    {
-      size_t slen = getlength(s);
-      size_t len = getlength(_string);
-      if (slen + len > _size) {
-         create(_string, slen + len + 1);
-      }
+      if (!emptystr(s)) {
+         size_t slen = getlength(s);
+         size_t len = getlength(_string);
+         if (slen + len > _size) {
+            create(_string, slen + len + 1);
+         }
 
-      StrHelper::insert(_string, index, slen, s);
+         StrHelper::insert(_string, index, slen, s);
+      }
    }
 
    void cut(size_t index, size_t length)

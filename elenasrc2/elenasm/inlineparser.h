@@ -22,14 +22,11 @@ class VMTapeParser : public _Parser
 
    void writeSubject(TapeWriter& writer, ident_t message);
    bool writeObject(TapeWriter& writer, char state, ident_t token);
+   bool writeArgument(TapeWriter& writer, char state, ident_t token);
+   bool writeArray(TapeWriter& writer, char state, ident_t token);
    bool parseMessage(ident_t message, IdentifierString& reference);
    bool writeMessage(TapeWriter& writer, ident_t message, int command);
-   //bool writeExtension(TapeWriter& writer, ident_t message, int paramCounter, int command);
-   //bool insertMessage(TapeWriter& writer, int bookmark, ident_t message, int paramCounter, int command);
-   //bool insertExtension(TapeWriter& writer, int bookmark, ident_t message, int paramCounter, int command);
-   //bool insertObject(TapeWriter& writer, int bookmark, char state, ident_t token);
-   //void parseArray(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
-   //int parseExpression(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer, int bookmark);
+   bool writeExtension(TapeWriter& writer, ident_t message, int command);
    void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 
 public:
