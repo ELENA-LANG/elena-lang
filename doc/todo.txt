@@ -1,24 +1,7 @@
 ------                                 
 In development:
 ------                              
-             sdev - transformer
-                 * implement vm tape parser
-                 * implement transformer 
-                 * test elt
-                 * test script_test
-                 * test calc
-
-              sdev - cf parser
-                 * the following grammar rule is not correctly split (code is ignored) :
-                       #define method ::= "method" "(" name code ")";
-                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
-                 * use pattern like in regex for terminal matching
-                 * there should be possibility to save the resulting code in the file
-                 * at least print the token where the parser error is
-                 * CodeScope : after each statement clear the top stack item
-
               zdev 
-                 * eson : should generate a sinlgeton (both in run-time and compile-time)
                  * calc sample
                  * hello world sample
 
@@ -41,6 +24,15 @@ In development:
 ------                                 
 Pipeline:
 ------                                                                                         
+
+              sdev - cf parser
+                 * the following grammar rule is not correctly split (code is ignored) :
+                       #define method ::= "method" "(" name code ")";
+                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
+                 * use pattern like in regex for terminal matching
+                 * there should be possibility to save the resulting code in the file
+                 * at least print the token where the parser error is
+                 * CodeScope : after each statement clear the top stack item
 
               xrev           
                  * test net sample
