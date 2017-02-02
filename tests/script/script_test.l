@@ -14,6 +14,10 @@
         #var l := n level.
         #var s := n evalToken:"2".
     ]
+    
+    seek &state0
+    [
+    ]
 }.
 
 #symbol program =

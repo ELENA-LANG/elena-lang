@@ -55,6 +55,9 @@
     #method new &messageToken : literal
     [
         theCallExpr := true.
+        (0 == theMessage length)
+            ! [ theMessage append:"&". ].
+            
         theMessage append:literal.
     ]
         

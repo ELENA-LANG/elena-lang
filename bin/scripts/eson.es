@@ -16,10 +16,18 @@
    #define operations ::= operation operations;
    #define operations ::= $eps;
 
-   #define operation  ::= "." message op_params;
-   #define op_params  ::= "(" expression op_nparam;
+   #define operation  ::= "." message ext_op op_params;
+   #define op_params  ::= "(" op_params_r;
+   #define op_params_r::= expression op_nparam;
+   #define op_params_r::= ")";
+
    #define op_nparam  ::= "," expression op_nparam;
    #define op_nparam  ::= ")";
+
+   #define ext_op     ::= "<" extension ">";
+   #define ext_op     ::= $eps;
+
+   #define extension  ::= "%" message;
 
    #define object     ::= numeric;
    #define object     ::= identifier;
