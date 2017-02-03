@@ -512,7 +512,7 @@ protected:
       size = 0;
    }
 
-   void create(T*, size_t size)
+   void create(size_t size)
    {
       if (_size == 0) {
          _size = alignSize(size, pageSize);
@@ -551,8 +551,9 @@ public:
    void copy(const T* s, size_t length)
    {
       if (_size <= length) {
-         create(_string, length + 1);
+         create(length + 1);
       }
+
       Convertor::copy(_string, s, length, length);
       _string[length] = 0;
    }
@@ -569,7 +570,7 @@ public:
    {
       size_t newLength = getlength(_string) + length;
       if (newLength >= _size)
-         create(_string, newLength + 1);
+         create(newLength + 1);
 
       StrHelper::append(_string, s, length);
       _string[newLength] = 0;
@@ -603,8 +604,8 @@ public:
       if (!emptystr(s)) {
          size_t slen = getlength(s);
          size_t len = getlength(_string);
-         if (slen + len > _size) {
-            create(_string, slen + len + 1);
+         if (slen + len >= _size) {
+            create(slen + len + 1);
          }
 
          StrHelper::insert(_string, index, slen, s);
@@ -679,6 +680,10 @@ public:
 
    DynamicString()
    {
+      //_size = 2048;
+      //_string = StrFactory::allocate(_size, (const char*)NULL);
+      //_string[0] = 0;
+
       _size = 0;
       _string = NULL;
    }

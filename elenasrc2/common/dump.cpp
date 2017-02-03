@@ -22,7 +22,8 @@ MemoryDump :: MemoryDump()
    _used = 0;
    _total = SECTION_PAGE_SIZE;
 
-   _buffer = (char*)malloc(SECTION_PAGE_SIZE);
+   //_buffer = (char*)malloc(SECTION_PAGE_SIZE);
+   _buffer = (char*)realloc(NULL, SECTION_PAGE_SIZE);
 }
 
 MemoryDump :: MemoryDump(pos_t capacity)
@@ -30,7 +31,8 @@ MemoryDump :: MemoryDump(pos_t capacity)
    _used = 0;
    _total = capacity;
 
-   _buffer = (capacity > 0) ? (char*)malloc(capacity) : NULL;
+   //_buffer = (capacity > 0) ? (char*)malloc(capacity) : NULL;
+   _buffer = (capacity > 0) ? (char*)realloc(NULL, capacity) : NULL;
 }
 
 MemoryDump :: MemoryDump(MemoryDump& copy)
@@ -38,7 +40,8 @@ MemoryDump :: MemoryDump(MemoryDump& copy)
    _used = copy._used;
    _total = copy._total;
 
-   _buffer = (char*)malloc(_total);
+   //_buffer = (char*)malloc(_total);
+   _buffer = (char*)realloc(NULL, _total);
    memcpy(_buffer, copy._buffer, _total);
 }
 
@@ -53,9 +56,14 @@ void* MemoryDump :: get(pos_t position) const
 void MemoryDump :: reserve(pos_t size)
 {
    if (size > _total) {
-      _total = align(size, SECTION_PAGE_SIZE);
+      _total = align(size/* + SECTION_PAGE_SIZE*/, SECTION_PAGE_SIZE);
 
-      _buffer = (char*)realloc(_buffer, _total);
+      void* oldOne = _buffer;
+      void* newOne = realloc(oldOne, _total);
+
+      _buffer = (char*)newOne;
+
+      //_buffer = (char*)realloc(_buffer, _total);
    }
 }
 

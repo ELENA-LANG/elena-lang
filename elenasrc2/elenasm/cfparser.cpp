@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  :  ELENA VM Script Engine
 //
-//                                              (C)2011-2016, by Alexei Rakov
+//                                              (C)2011-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -630,7 +630,7 @@ void CFParser :: parse(_ScriptReader& reader, MemoryDump* output)
    size_t startId = mapRuleId("start");
    while (!reader.Eof()) {
       MemoryWriter writer(&_body);
-      int presaved = writer.Position();
+      pos_t presaved = writer.Position();
 
       int trace = buildDerivationTree(reader, startId, writer);
       generateOutput(trace, reader, log);

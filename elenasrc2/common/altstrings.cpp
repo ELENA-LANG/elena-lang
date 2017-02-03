@@ -411,8 +411,7 @@ char* StrFactory :: allocate(size_t size, const char* value)
    char*s = (char*)malloc(size);
 
    if (!emptystr(value)) {
-      memcpy(s, value, size);
-      s[size] = 0;
+      memcpy(s, value, getlength(value) + 1);
    }
 
    return s;
@@ -1586,10 +1585,13 @@ void StrHelper :: append(wide_c* dest, const wide_c* sour, size_t length)
 
 void StrHelper :: insert(char* s, size_t pos, size_t len, const char* subs)
 {
-   //s[getlength(s) + len + 1] = 0;
+   size_t totalLen = getlength(s);
 
-   for (size_t i = getlength(s) + 1; i > pos; i--) {
+   for (size_t i = totalLen; i > pos; i--) {
       s[i + len - 1] = s[i - 1];
    }
-   memcpy(s + pos, subs, len);
+
+   memmove(s + pos, subs, len);
+
+   s[totalLen + len] = 0;
 }

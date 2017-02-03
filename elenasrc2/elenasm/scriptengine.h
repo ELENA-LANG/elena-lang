@@ -61,7 +61,7 @@ public:
       writeCommand(CALL_TAPE_MESSAGE_ID, reference);
    }
 
-   void writeCommand(size_t command, ident_t param)
+   void writeCommand(pos_t command, ident_t param)
    {
       MemoryWriter writer(_tape);
 
@@ -73,7 +73,7 @@ public:
       else writer.writeDWord(0);
    }
 
-   void writeCommand(size_t command, size_t param)
+   void writeCommand(pos_t command, pos_t param)
    {
       MemoryWriter writer(_tape);
 
@@ -82,7 +82,7 @@ public:
       writer.writeDWord(param);
    }
 
-   void insertCommand(int bookmark, size_t command, ident_t param)
+   void insertCommand(int bookmark, pos_t command, ident_t param)
    {
       if (!emptystr(param)) {
          _tape->insert(bookmark, NULL, getlength(param) + 1);
@@ -100,7 +100,7 @@ public:
       else writer.writeDWord(0);
    }
 
-   void insertCommand(int bookmark, size_t command, size_t param)
+   void insertCommand(int bookmark, pos_t command, pos_t param)
    {
       _tape->insert(bookmark, NULL, 8);
 
@@ -111,9 +111,9 @@ public:
       writer.writeDWord(param);
    }
 
-   void writeCommand(size_t command)
+   void writeCommand(pos_t command)
    {
-      writeCommand(command, (size_t)0);
+      writeCommand(command, (pos_t)0);
    }
 
    void writeEndCommand()

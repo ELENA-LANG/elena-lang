@@ -3,6 +3,7 @@ In development:
 ------                              
               zdev 
                  * calc sample
+                 * fix interpreter sample
                  * hello world sample
 
                  * script : elena - simple class,one method

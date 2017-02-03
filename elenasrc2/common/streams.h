@@ -169,19 +169,11 @@ public:
    virtual bool write(const void* s, pos_t length) = 0;
    virtual bool writeLong(const void* s, pos64_t length) = 0;
 
+#ifdef _WIN64
+
    bool writeLiteral(const char* s)
    {
       return writeLiteral(s, getlength(s) + 1);
-   }
-
-   bool writeLiteral(const char* s, pos_t length)
-   {
-      return write((void*)s, length);
-   }
-
-   bool writeLiteral(const wide_c* s, pos_t length)
-   {
-      return write((void*)s, length << 1);
    }
 
    bool writeLiteral(const char* s, pos64_t length)
@@ -199,8 +191,6 @@ public:
       return writeLiteral(s, getlength(s) + 1);
    }
 
-#ifdef _WIN64
-
    bool write_st(void* s, pos64_t length)
    {
       return writeLong(s, length);
@@ -208,9 +198,29 @@ public:
 
 #else
 
+   bool writeLiteral(const char* s)
+   {
+      return writeLiteral(s, getlength(s) + 1);
+   }
+
+   bool writeLiteral(const char* s, pos_t length)
+   {
+      return write((void*)s, length);
+   }
+
+   bool writeLiteral(const wide_c* s, pos_t length)
+   {
+      return write((void*)s, length << 1);
+   }
+
+   bool writeLiteral(const wide_c* s)
+   {
+      return writeLiteral(s, getlength(s) + 1);
+   }
+
    bool write_st(void* s, pos_t length)
    {
-      return writeLong(s, length);
+      return write(s, length);
    }
 
 #endif

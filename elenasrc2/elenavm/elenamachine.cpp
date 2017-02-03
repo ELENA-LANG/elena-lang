@@ -811,7 +811,7 @@ int Instance::interprete(void* tape, ident_t interpreter)
 
    if (retVal == 0)
       setStatus("Broken");
-
+      
    return retVal;
 }
 

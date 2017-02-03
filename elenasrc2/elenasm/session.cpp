@@ -18,7 +18,7 @@ using namespace _ELENA_TOOL_;
 // --- Session ---
 
 Session::Session(path_t rootPath)
-   : _rootPath(rootPath)
+   : _rootPath(rootPath), _tape(16384)
 {
    _currentParser = new VMTapeParser();
 }
