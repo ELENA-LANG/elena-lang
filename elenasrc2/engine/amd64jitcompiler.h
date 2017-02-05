@@ -63,6 +63,7 @@ protected:
    friend void loadCoreOp(AMD64JITScope& scope, char* code);
    friend void loadOneByteLOp(int opcode, AMD64JITScope& scope); 
    friend void loadIndexOpX(int opcode, AMD64JITScope& scope);
+   friend void loadFPOpX(int opcode, AMD64JITScope& scope);
 
    friend void compileNop(int opcode, AMD64JITScope& scope);
    friend void compileACopyR(int opcode, AMD64JITScope& scope);
@@ -78,6 +79,7 @@ protected:
    friend void compileACopyB(int opcode, AMD64JITScope& scope);
    friend void compileACopyF(int opcode, AMD64JITScope& scope);
    friend void compileDAddN(int opcode, AMD64JITScope& scope);
+   friend void compileBreakpoint(int opcode, AMD64JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -118,6 +120,7 @@ public:
 void loadCoreOp(AMD64JITScope& scope, char* code);
 void loadOneByteLOp(int opcode, AMD64JITScope& scope);
 void loadIndexOpX(int opcode, AMD64JITScope& scope);
+void loadFPOpX(int opcode, AMD64JITScope& scope);
 
 void compileNop(int opcode, AMD64JITScope& scope);
 void compileACopyR(int opcode, AMD64JITScope& scope);
@@ -134,6 +137,7 @@ void compileDCopy(int opcode, AMD64JITScope& scope);
 void compileACopyB(int opcode, AMD64JITScope& scope);
 void compileACopyF(int opcode, AMD64JITScope& scope);
 void compileDAddN(int opcode, AMD64JITScope& scope);
+void compileBreakpoint(int opcode, AMD64JITScope& scope);
 
 } // _ELENA_
 

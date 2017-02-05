@@ -67,20 +67,20 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*138*/10;
+const int gcCommandNumber = /*138*/14;
 const int gcCommands[gcCommandNumber] =
 {
    bcALoadSI, /*bcACallVI, */bcOpen, //bcBCopyA, bcPackage,
-/*   bcALoadFI, bcASaveSI, bcASaveFI, */bcClose, //bcMIndex,
+   bcALoadFI, /*bcASaveSI, bcASaveFI, */bcClose, //bcMIndex,
 //   bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
-/*   bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,*/
+   bcALoadBI, /*bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,*/
 //   bcHook, bcThrow, bcUnhook, bcClass, bcACallVD,
 //   bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
 /*   bcEQuit, bcAJumpVI, bcASaveBI, */bcXCallRM, //bcESaveSI,
 //   bcGet, bcSet, bcXSet, bcACallI, bcBReadB,
    bcRestore, //bcLen, bcIfHeap, bcFlag, bcNCreate,
-/*   bcBLoadFI, */bcReserve, //bcAXSaveBI, bcBLoadSI, bcBWriteB,
-/*   bcNEqual, bcNLess, bcNCopy, */bcNAdd, //bcBSwapSI,
+/*   bcBLoadFI, */bcReserve, /*bcAXSaveBI, */bcBLoadSI, //bcBWriteB,
+/*   bcNEqual, bcNLess, */bcNCopy, bcNAdd, //bcBSwapSI,
 //   bcNSub, bcNMul, bcNDiv, bcNLoadE, bcDivN,
 /*   bcWLen, */bcNSave, bcNLoad, //bcWCreate, bcCopy,
 //   bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
@@ -104,7 +104,7 @@ const int gcCommands[gcCommandNumber] =
 // command table
 void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
 {
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileBreakpoint, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compilePushA, &compileNop, &compileACopyB, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop,
@@ -116,7 +116,7 @@ void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteLOp,
+   &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteLOp,
    &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -131,7 +131,7 @@ void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileDCopy, &compileNop, &loadIndexOpX, &compileNop, &compileNop, &loadIndexOpX, &compileNop, &compileNop,
+   &compileDCopy, &compileNop, &loadIndexOpX, &compileNop, &loadFPOpX, &loadIndexOpX, &compileNop, &compileNop,
    &compileOpen, &compileQuitN, &compileNop, &compileBCopyF, &compileACopyF, &compileNop, &compileACopyR, &compileMCopy,
 
    &compileNop, &compileNop, &compileNop, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
@@ -141,7 +141,7 @@ void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOpX,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &loadIndexOpX, &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOpX, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileDAddN, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -459,33 +459,33 @@ void _ELENA_::loadIndexOpX(int opcode, AMD64JITScope& scope)
 ////   }
 ////   scope.code->seekEOF();
 ////}
-//
-//void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
-//{
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0] == -1) {
-//         scope.code->writeDWord(-(scope.argument << 2));
-//      }
-//      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
+
+void _ELENA_::loadFPOpX(int opcode, AMD64JITScope& scope)
+{
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(-(scope.argument << 3));
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
 
 void _ELENA_::loadFunction(int opcode, AMD64JITScope& scope)
 {
@@ -586,12 +586,12 @@ void _ELENA_::compileNop(int, AMD64JITScope& scope)
 //   else scope.lh.setLabel(scope.tape->Position() - 1);
 }
 
-//void _ELENA_::compileBreakpoint(int, x86JITScope& scope)
-//{
-//   if (scope.withDebugInfo)
-//      scope.helper->addBreakpoint(scope.code->Position());
-//}
-//
+void _ELENA_::compileBreakpoint(int, AMD64JITScope& scope)
+{
+   if (scope.withDebugInfo)
+      scope.helper->addBreakpoint(scope.code->Position());
+}
+
 //void _ELENA_::compilePush(int opcode, x86JITScope& scope)
 //{
 //   // push constant | reference

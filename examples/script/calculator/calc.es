@@ -1,10 +1,16 @@
-States =
+#import "extensions'convertor" as convertor;
+
+States = 
 {
    state0 : 
    {
       digit : function(n)
       {
-         return n.add(2);
+         this.newLeaf({ level : 1; evalToken: function(s) { return convertor.toReal(s); }; });
+
+         this.addContent(n);
+
+         this.seek<%state0>();
       };
-   };   
+   };
 };

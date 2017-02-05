@@ -47,9 +47,9 @@ AMD64Assembler::Operand AMD64Assembler :: defineRegister(TokenInfo& token)
    else if (token.check("ebx")) {
       return AMD64Helper::otEBX;
    }
-//	else if (token.check("esi")) {
-//		return x86Helper::otESI;
-//	}
+   else if (token.check("esi")) {
+      return AMD64Helper::otESI;
+   }
    else if (token.check("edi")) {
       return AMD64Helper::otEDI;
    }
@@ -158,6 +158,9 @@ AMD64Assembler::Operand AMD64Assembler :: defineRegister(TokenInfo& token)
    }
    else if (token.check("rbp")) {
       return Operand(AMD64Helper::otRBP);
+   }
+   else if (token.check("rsi")) {
+      return Operand(AMD64Helper::otRSI);
    }
    else if (token.check("rdi")) {
       return Operand(AMD64Helper::otRDI);

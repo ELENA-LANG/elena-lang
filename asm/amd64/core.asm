@@ -37,6 +37,14 @@ inline % 03Ah
 
 end
 
+// ; ncopy (src, tgt)
+inline % 42h
+
+  mov  esi, dword ptr [rax]
+  mov  dword ptr [rdi], esi
+    
+end
+
 // ; nadd
 inline % 43h
 
@@ -67,6 +75,13 @@ inline % 92h
   
 end
 
+// ; aloadfi
+inline % 94h
+
+  mov  rax, qword ptr [rbp+__arg1]
+
+end
+
 // ; aloadsi
 inline % 95h
 
@@ -89,6 +104,22 @@ inline % 0BFh
   push rbp
   push 0
   mov  rbp, rsp
+
+end
+
+// ; bloadsi
+
+inline % 0C9h
+
+  mov  rdi, qword ptr [rsp + __arg1]
+
+end
+
+// ; aloadbi (__arg1 : index)
+
+inline % 0CEh
+
+  mov  rax, qword ptr [rdi + __arg1]
 
 end
 

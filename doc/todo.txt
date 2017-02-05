@@ -3,6 +3,8 @@ In development:
 ------                              
               zdev 
                  * calc sample
+                 * state machine script (calc)
+                 * calculator : move lexicalOp to the script
                  * fix interpreter sample
                  * hello world sample
 
@@ -19,7 +21,6 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
                  * graph : function declared in the script
                  * gui script
-                 * state machine script (calc)
                  * reg ex
 
 ------                                 
@@ -305,7 +306,6 @@ Pipeline:
 
 
               fdev - samples
-                       * calculator : move lexicalOp to the script
                        * reimplement script samples: interpreter, helloworld, vmconsole
 
               fdev - eldoc
@@ -524,7 +524,6 @@ Pipeline:
                          script, so we could check if the caller stack is included correctly)
 
               xdev - x64
-                      * think over general architecture
                       * asm2bin64 - compile x64 bit opcodes
                       * create x64 elena vm
                       
@@ -637,7 +636,6 @@ Pipeline:
               sdev - samples
                        * calculator : gui
                        * get rid of reverse command
-                       * migrate calc samples
                        * vmconsole
                        * notepad: add status bar
                        * notepad: add open / save

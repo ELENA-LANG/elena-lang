@@ -30,6 +30,7 @@ public:
       otECX       = 0x00100301,
       otEDX       = 0x00100302,
       otEBX       = 0x00100303,
+      otESI       = 0x00100306,
       otEDI       = 0x00100307,
 
       otAL        = 0x00200300,
@@ -54,6 +55,7 @@ public:
       otRBX       = 0x02000303,
       otRSP       = 0x02000304,
       otRBP       = 0x02000305,
+      otRSI       = 0x02000306,
       otRDI       = 0x02000307,
 
       otR32       = 0x00100300,
