@@ -878,7 +878,7 @@ void _ELENA_::compileACopyR(int, AMD64JITScope& scope)
       scope.code->writeDWord(0);
    }
    else if (scope.argument == -1) {
-      scope.code->writeDWord(-1);
+      scope.code->writeDWord((pos_t)-1);
    }
    else scope.writeReference(*scope.code, scope.argument, 0);
 }

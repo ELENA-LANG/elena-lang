@@ -88,30 +88,6 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
    }
 }
 
-ref_t reallocate64(ref_t pos, ref_t key, ref_t disp, void* map)
-{
-   int base = ((ImageBaseMap*)map)->base + key & ~mskAnyRef;
-
-   switch (key & mskImageMask) {
-      case mskCodeRef:
-         return ((ImageBaseMap*)map)->code + base + disp;
-      case mskRelCodeRef:
-         return (key & ~mskAnyRef) + disp - pos - 4;
-      case mskRDataRef:
-         return ((ImageBaseMap*)map)->rdata + base + disp;
-      case mskStatRef:
-         return ((ImageBaseMap*)map)->stat + base + disp;
-      case mskDataRef:
-         return ((ImageBaseMap*)map)->bss + base + disp;
-      case mskTLSRef:
-         return ((ImageBaseMap*)map)->tls + base + disp;
-      case mskDebugRef:
-         return ((ImageBaseMap*)map)->debug + base + disp;
-      default:
-         return disp;
-   }
-}
-
 ref_t reallocateImport(ref_t, ref_t key, ref_t disp, void* map)
 {
    if ((key & mskImageMask)==mskImportRef) {
@@ -188,8 +164,8 @@ void Linker :: createImportTable(ImageInfo& info)
    ImportTable::Iterator dll = info.importTable.start();
    while (!dll.Eof()) {
       tableWriter.writeRef(importRef, lstWriter.Position());              // OriginalFirstThunk
-      tableWriter.writeDWord((int)time(NULL));                            // TimeDateStamp
-      tableWriter.writeDWord(-1);                                         // ForwarderChain
+      tableWriter.writeDWord((pos_t)time(NULL));                            // TimeDateStamp
+      tableWriter.writeDWord((pos_t)-1);                                         // ForwarderChain
       tableWriter.writeRef(importRef, import->Length());                  // Name
 
       const char* dllName = dll.key();
@@ -240,8 +216,8 @@ void Linker::createImportTable64(ImageInfo& info)
    ImportTable::Iterator dll = info.importTable.start();
    while (!dll.Eof()) {
       tableWriter.writeRef(importRef, lstWriter.Position());              // OriginalFirstThunk
-      tableWriter.writeDWord((int)time(NULL));                            // TimeDateStamp
-      tableWriter.writeDWord(-1);                                         // ForwarderChain
+      tableWriter.writeDWord((pos_t)time(NULL));                            // TimeDateStamp
+      tableWriter.writeDWord((pos_t)-1);                                         // ForwarderChain
       tableWriter.writeRef(importRef, import->Length());                  // Name
 
       const char* dllName = dll.key();

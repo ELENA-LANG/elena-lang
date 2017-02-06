@@ -235,7 +235,7 @@ public:
       return writeLiteral(&ch, 1u);
    }
 
-   void writeDWord(int dword)
+   void writeDWord(unsigned int dword)
    {
       write(&dword, 4);
    }
@@ -245,7 +245,7 @@ public:
       write(&size, sizeof(size_t));
    }
 
-   void writeQWord(long long qword)
+   void writeQWord(unsigned long long qword)
    {
       write(&qword, 8);
    }

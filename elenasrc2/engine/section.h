@@ -46,6 +46,10 @@ public:
 
    virtual bool addReference(ref_t reference, pos_t position)
    {
+      if (position == 0) {
+         position += 0;
+      }
+
       _references.add(reference, position);
 
       return true;

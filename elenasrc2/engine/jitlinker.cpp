@@ -536,7 +536,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
          packageVAddress = resolve(sectionInfo.module->resolveReference(header.packageRef), mskConstArray, true);
 
       // fix VMT
-      _compiler->fixVMT(vmtWriter, classClassVAddress, packageVAddress, count, _virtualMode);
+      _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)packageVAddress, count, _virtualMode);
    }
 
    return vaddress;

@@ -880,7 +880,7 @@ void _ELENA_::compileACopyR(int, x86JITScope& scope)
       scope.code->writeDWord(0);
    }
    else if (scope.argument == -1) {
-      scope.code->writeDWord(-1);
+      scope.code->writeDWord((pos_t)-1);
    }
    else scope.writeReference(*scope.code, scope.argument, 0);
 }
@@ -1187,7 +1187,7 @@ void _ELENA_::compileIfR(int, x86JITScope& scope)
       scope.code->writeDWord(0);
    }
    else if (scope.argument == -1) {
-      scope.code->writeDWord(-1);
+      scope.code->writeDWord((pos_t)-1);
    }
    else scope.writeReference(*scope.code, scope.argument, 0);
    //NOTE: due to compileJumpX implementation - compileJumpIf is called

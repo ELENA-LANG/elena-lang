@@ -190,7 +190,7 @@ size_t JITCompiler32 :: findLength(void* refVMT)
    return count;
 }
 
-int JITCompiler32 :: findMethodAddress(void* refVMT, size_t message, size_t count)
+pos_t JITCompiler32 :: findMethodAddress(void* refVMT, size_t message, size_t count)
 {
    VMTEntry* entries = (VMTEntry*)refVMT;
 
@@ -215,7 +215,7 @@ int JITCompiler32 :: findMethodIndex(void* refVMT, ref_t message, size_t count)
       i++;
    }
 
-   // return the method address
+   // return the method index
    // if the vmt entry was not resolved, SEND_MESSAGE index should be used (the first method entry)
    return (i < count) ? i : 0;
 }
@@ -308,7 +308,7 @@ void JITCompiler32 :: addVMTEntry(ref_t message, size_t codePosition, VMTEntry* 
    entries[index].address = codePosition;
 }
 
-void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, void* packageVAddress, int count, bool virtualMode)
+void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageVAddress, int count, bool virtualMode)
 {
    _Memory* image = vmtWriter.Memory();   
 
@@ -364,140 +364,140 @@ void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
 
 void JITCompiler64 :: compileInt32(MemoryWriter* writer, int integer)
 {
-   //writer->seek(writer->Position() - 8);
+   writer->seek(writer->Position() - 0x10);
 
-   //// object header
-   //writer->writeDWord(0x800004);
-   //writer->writeDWord(0);
+   // object header
+   writer->writeQWord(0x80000004u);
+   writer->writeQWord(0);
 
-   //// object body
-   //writer->writeDWord(integer);
+   // object body
+   writer->writeQWord(integer);
 }
 
 void JITCompiler64 :: compileInt64(MemoryWriter* writer, long long integer)
 {
-   //writer->seek(writer->Position() - 8);
+   writer->seek(writer->Position() - 0x10);
 
-   //// object header
-   //writer->writeDWord(0x800008);
-   //writer->writeDWord(0);
+   // object header
+   writer->writeQWord(0x80000008u);
+   writer->writeQWord(0);
 
-   //// object body
-   //writer->write(&integer, 8);
+   // object body
+   writer->write(&integer, 8);
 }
 
 void JITCompiler64 :: compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset)
 {
-   //writer->seek(writer->Position() - 8);
+   writer->seek(writer->Position() - 0x10);
 
-   //// object header
-   //writer->writeDWord(0x800008);
-   //writer->writeDWord(0);
+   // object header
+   writer->writeQWord(0x80000008u);
+   writer->writeQWord(0);
 
-   //// object body
-   //writer->writeDWord(low);
-   //writer->writeRef(ref, refOffset);
+   // object body
+   writer->writeDWord(low);
+   writer->writeRef(ref, refOffset);
 }
 
 void JITCompiler64 :: compileInt64(MemoryWriter* writer, int low, int high)
 {
-   //writer->seek(writer->Position() - 8);
+   writer->seek(writer->Position() - 0x10);
 
-   //// object header
-   //writer->writeDWord(0x800008);
-   //writer->writeDWord(0);
+   // object header
+   writer->writeQWord(0x80000008u);
+   writer->writeQWord(0);
 
-   //// object body
-   //writer->writeDWord(low);
-   //writer->writeDWord(high);
+   // object body
+   writer->writeDWord(low);
+   writer->writeDWord(high);
 }
 
 void JITCompiler64 :: compileReal64(MemoryWriter* writer, double number)
 {
-   //writer->seek(writer->Position() - 8);
+   writer->seek(writer->Position() - 0x10);
 
-   //// object header
-   //writer->writeDWord(0x800008);
-   //writer->writeDWord(0);
+   // object header
+   writer->writeQWord(0x80000008u);
+   writer->writeQWord(0);
 
-   //// object body
-   //writer->write(&number, 8);
+   // object body
+   writer->write(&number, 8);
 }
 
 void JITCompiler64 :: compileLiteral(MemoryWriter* writer, const char* value)
 {
-   //int length = getlength(value) + 1;
+   unsigned int length = getlength(value) + 1;
 
-   //writer->seek(writer->Position() - 8);
+   writer->seek(writer->Position() - 0x10);
 
-   //// object header
-   //writer->writeDWord(0x800000 | length);
-   //writer->writeDWord(0);
+   // object header
+   writer->writeQWord(0x80000000u | length);
+   writer->writeQWord(0);
 
-   //// object body
-   //writer->writeLiteral(value, length);
-   //writer->align(4, 0);
+   // object body
+   writer->writeLiteral(value, length);
+   writer->align(8, 0);
 }
 
 void JITCompiler64 :: compileWideLiteral(MemoryWriter* writer, const wide_c* value)
 {
-   //int length = (getlength(value) + 1) << 1;
+   unsigned int length = (getlength(value) + 1) << 1;
 
-   //writer->seek(writer->Position() - 8);
+   writer->seek(writer->Position() - 0x10);
 
-   //// object header
-   //writer->writeDWord(0x800000 | length);
-   //writer->writeDWord(0);
+   // object header
+   writer->writeQWord(0x80000000u | length);
+   writer->writeQWord(0);
 
-   //// object body
-   //writer->writeLiteral(value, length);
-   //writer->align(4, 0);
+   // object body
+   writer->writeLiteral(value, length);
+   writer->align(8, 0);
 }
 
 void JITCompiler64 :: compileChar32(MemoryWriter* writer, const char* value)
 {
-   //size_t len = 1;
-   //unic_c ch = 0;
-   //Convertor::copy(&ch, value, getlength(value), len);
+   size_t len = 1;
+   unic_c ch = 0;
+   Convertor::copy(&ch, value, getlength(value), len);
 
-   //writer->seek(writer->Position() - 8);
+   writer->seek(writer->Position() - 0x10);
 
-   //// object header
-   //writer->writeDWord(0x800004);
-   //writer->writeDWord(0);
+   // object header
+   writer->writeQWord(0x80000004u);
+   writer->writeQWord(0);
 
-   //// object body
-   //writer->writeDWord(ch);
+   // object body
+   writer->writeQWord(ch);
 }
 
 void JITCompiler64 :: compileBinary(MemoryWriter* writer, _Memory* binary)
 {
-   //size_t length = binary->Length();
+   unsigned int length = binary->Length();
 
-   //writer->seek(writer->Position() - 8);
+   writer->seek(writer->Position() - 0x10);
 
-   //// object header
-   //writer->writeDWord(0x800000 | length);
-   //writer->writeDWord(0);
+   // object header
+   writer->writeQWord(0x80000000u | length);
+   writer->writeQWord(0);
 
-   //// object body
-   //writer->write(binary->get(0), length);
-   //writer->align(4, 0);
+   // object body
+   writer->write(binary->get(0), length);
+   writer->align(8, 0);
 }
 
 void JITCompiler64 :: compileCollection(MemoryWriter* writer, _Memory* binary)
 {
-   //size_t length = binary->Length();
+   unsigned int length = binary->Length();
 
-   //writer->seek(writer->Position() - 8);
+   writer->seek(writer->Position() - 0x10);
 
-   //// object header
-   //writer->writeDWord(length);
-   //writer->writeDWord(0);
+   // object header
+   writer->writeQWord(length);
+   writer->writeQWord(0);
 
-   //// object body
-   //writer->write(binary->get(0), length);
-   //writer->align(4, 0);
+   // object body
+   writer->write(binary->get(0), length);
+   writer->align(8, 0);
 }
 
 size_t JITCompiler64 :: findFlags(void* refVMT)
@@ -511,12 +511,12 @@ size_t JITCompiler64 :: findLength(void* refVMT)
    return (size_t)count;
 }
 
-int JITCompiler64 :: findMethodAddress(void* refVMT, size_t message, size_t count)
+pos_t JITCompiler64 :: findMethodAddress(void* refVMT, size_t message, size_t count)
 {
    ref64_t address = findMethodAddressX(refVMT, toMessage64(message), count);
 
    if (address < 10000000000000000ull) {
-      return (ref_t)address;
+      return (pos_t)address;
    }
    else throw InternalError("Addresses bigger than 4GB are not supported");
 }
@@ -536,42 +536,43 @@ ref64_t JITCompiler64 :: findMethodAddressX(void* refVMT, ref64_t messageID, siz
    return (i < count) ? entries[i].address : entries[0].address;
 }
 
-int JITCompiler64 :: findMethodIndex(void* refVMT, ref_t message, size_t count)
+int JITCompiler64::findMethodIndex(void* refVMT, size_t message, size_t count)
 {
-   //VMTEntry* entries = (VMTEntry*)refVMT;
+   return findMethodIndexX(refVMT, toMessage64(message), count);
+}
 
-   //// search for the message entry
-   //size_t i = 0;
-   //while (i < count && entries[i].message != message) {
-   //   i++;
-   //}
+int JITCompiler64::findMethodIndexX(void* refVMT, ref64_t messageID, size_t count)
+{
+   VMTXEntry* entries = (VMTXEntry*)refVMT;
 
-   //// return the method address
-   //// if the vmt entry was not resolved, SEND_MESSAGE index should be used (the first method entry)
-   //return (i < count) ? i : 0;
+   // search for the message entry
+   size_t i = 0;
+   while (i < count && entries[i].message != messageID) {
+      i++;
+   }
 
-   return 0; // !! temporal
+   // return the method index
+   // if the vmt entry was not resolved, SEND_MESSAGE index should be used (the first method entry)
+   return (i < count) ? i : 0;
 }
 
 int JITCompiler64 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
 {
-   //writer.writeBytes(0, objectOffset);
+   writer.writeBytes(0, objectOffset);
 
-   //alignCode(&writer, VA_ALIGNMENT, false);
+   alignCode(&writer, VA_ALIGNMENT, false);
 
-   //return writer.Position() - 4;
-
-   return 0; // !! temporal
+   return writer.Position() - 8;
 }
 
 void JITCompiler64 :: allocateVariable(MemoryWriter& writer)
 {
-   //writer.writeDWord(0);
+   writer.writeQWord(0);
 }
 
 void JITCompiler64 :: allocateArray(MemoryWriter& writer, size_t count)
 {
-   //writer.writeBytes(0, count * 4);
+   writer.writeBytes(0, count * 8);
 }
 
 void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength)
@@ -655,42 +656,42 @@ void JITCompiler64 :: addVMTXEntry(ref64_t message, size_t codePosition, VMTXEnt
    entries[index].address = codePosition;
 }
 
-void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, void* packageVAddress, int count, bool virtualMode)
+void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageVAddress, int count, bool virtualMode)
 {
-   //_Memory* image = vmtWriter.Memory();
+   _Memory* image = vmtWriter.Memory();
 
-   //// update class package reference if available
-   //if (packageVAddress != NULL) {
-   //   int position = vmtWriter.Position();
-   //   vmtWriter.seek(position - 0x10);
+   // update class package reference if available
+   if (packageVAddress != NULL) {
+      int position = vmtWriter.Position();
+      vmtWriter.seek(position - 0x20);
 
-   //   if (virtualMode) {
-   //      vmtWriter.writeRef((ref_t)packageVAddress, 0);
-   //   }
-   //   else vmtWriter.writeDWord((int)packageVAddress);
+      if (virtualMode) {
+         vmtWriter.writeRef((ref_t)packageVAddress, 0);
+      }
+      else vmtWriter.writeDWord(packageVAddress);
 
-   //   vmtWriter.seek(position);
-   //}
+      vmtWriter.seek(position);
+   }
 
-   //// update class vmt reference if available
-   //if (classClassVAddress != NULL) {
-   //   vmtWriter.seek(vmtWriter.Position() - 4);
+   // update class vmt reference if available
+   if (classClassVAddress != NULL) {
+      vmtWriter.seek(vmtWriter.Position() - 8);
 
-   //   if (virtualMode) {
-   //      vmtWriter.writeRef((ref_t)classClassVAddress, 0);
-   //   }
-   //   else vmtWriter.writeDWord((int)classClassVAddress);
-   //}
+      if (virtualMode) {
+         vmtWriter.writeRef((ref_t)classClassVAddress, 0);
+      }
+      else vmtWriter.writeDWord(classClassVAddress);
+   }
 
-   //// if in virtual mode mark method addresses as reference
-   //if (virtualMode) {
-   //   ref_t entryPosition = vmtWriter.Position();
-   //   for (int i = 0; i < count; i++) {
-   //      image->addReference(mskCodeRef, entryPosition + 4);
+   // if in virtual mode mark method addresses as reference
+   if (virtualMode) {
+      ref_t entryPosition = vmtWriter.Position();
+      for (int i = 0; i < count; i++) {
+         image->addReference(mskCodeRef, entryPosition + 8);
 
-   //      entryPosition += 8;
-   //   }
-   //}
+         entryPosition += 16;
+      }
+   }
 }
 
 void JITCompiler64 :: generateProgramStart(MemoryDump& tape)

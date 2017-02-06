@@ -90,7 +90,7 @@ void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
    // writer node
    _bodyWriter.writeDWord(type);
    _bodyWriter.writeDWord(argument);
-   _bodyWriter.writeDWord(-1);
+   _bodyWriter.writeDWord((pos_t)-1);
 }
 
 void SyntaxWriter :: newNode(LexicalType type, ident_t argument)
@@ -105,9 +105,9 @@ void SyntaxWriter :: newNode(LexicalType type, ident_t argument)
 
 void SyntaxWriter :: closeNode()
 {
-   _bodyWriter.writeDWord(-1);
+   _bodyWriter.writeDWord((pos_t)-1);
    _bodyWriter.writeDWord(0);
-   _bodyWriter.writeDWord(-1);
+   _bodyWriter.writeDWord((pos_t)-1);
 }
 
 // --- SyntaxTree::Node ---
