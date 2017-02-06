@@ -517,6 +517,65 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    }
 };
 
+// --- _Memory32MapItem structure ---
+
+template <class Key, class T> struct _Memory32MapItem
+{
+   unsigned int next;       // offset from the memory dump begining
+   unsigned int keyOffset;  // offset from the memory dump begining
+   T            item;
+
+   ident_t getKey(ident_t) const // parameter is passed only for overloading
+   {
+      return (const char*)((size_t)this + keyOffset);
+   }
+
+   bool operator ==(ident_t key) const
+   {
+      return key.compare(getKey(key));
+   }
+
+   bool operator !=(ident_t key) const
+   {
+      return !key.compare(getKey(key));
+   }
+
+   bool operator <=(ident_t key) const
+   {
+      ident_t s = getKey(key);
+
+      return !s.greater(key);
+   }
+
+   bool operator <(ident_t key) const
+   {
+      return key.greater(getKey(key));
+   }
+
+   bool operator >=(ident_t key) const
+   {
+      return (this > key || this == key);
+   }
+
+   bool operator >(ident_t key) const
+   {
+      ident_t s = getKey(key);
+
+      return s.greater(key);
+   }
+
+   _Memory32MapItem()
+   {
+      keyOffset = next = 0;
+   }
+   _Memory32MapItem(pos_t keyOffset, T item, unsigned int next)
+   {
+      this->keyOffset = keyOffset;
+      this->item = item;
+      this->next = next;
+   }
+};
+
 //struct _IntItem
 //{
 //   unsigned int key;
@@ -671,6 +730,7 @@ public:
       _current = NULL;
    }
 };
+
 
 // --- Base list template ---
 
@@ -2753,6 +2813,282 @@ public:
       _buffer.writeBytes(0, 0, hashSize << 2);
    }
    ~MemoryHashTable()
+   {
+      clear();
+   }
+};
+
+// --- Memory32HashTable template ---
+
+template <class Key, class T, unsigned int(_scaleKey)(Key), unsigned int hashSize> class Memory32HashTable
+{
+   typedef _Memory32MapItem<Key, T> Item;
+
+   class Memory32HashTableIterator
+   {
+      friend class Memory32HashTable;
+
+      const MemoryDump* _buffer;
+      unsigned int      _position;
+      Item*             _current;
+      unsigned int      _hashIndex;
+
+      Memory32HashTableIterator(const MemoryDump* buffer, unsigned int hashIndex, unsigned int position, Item* current)
+      {
+         _buffer = buffer;
+         _hashIndex = hashIndex;
+         _current = current;
+         _position = position;
+      }
+      Memory32HashTableIterator(const MemoryDump* buffer)
+      {
+         _buffer = buffer;
+         _current = NULL;
+
+         if (buffer->Length() > 0) {
+            for (_hashIndex = 0; _hashIndex < hashSize && !(*buffer)[_hashIndex << 2]; _hashIndex++);
+
+            if (_hashIndex < hashSize) {
+               _position = (*_buffer)[_hashIndex << 2];
+               _current = (Item*)_buffer->get(_position);
+            }
+            else _current = NULL;
+         }
+      }
+
+   public:
+      Memory32HashTableIterator& operator =(const Memory32HashTableIterator& it)
+      {
+         this->_current = it._current;
+         this->_position = it._position;
+         this->_buffer = it._buffer;
+         this->_hashIndex = it._hashIndex;
+
+         return *this;
+      }
+
+      Memory32HashTableIterator& operator++()
+      {
+         if (_current->next != 0) {
+            _position = _current->next;
+
+            if (_position != 0) {
+               _current = (Item*)_buffer->get(_position);
+            }
+            else _current = NULL;
+         }
+         else _current = NULL;
+
+         while (!_current && _hashIndex < (hashSize - 1)) {
+            _hashIndex++;
+
+            _position = (*_buffer)[_hashIndex << 2];
+            if (_position != 0)
+               _current = (Item*)_buffer->get(_position);
+         }
+         return *this;
+      }
+
+      Memory32HashTableIterator operator++(int)
+      {
+         Memory32HashTableIterator tmp = *this;
+         ++*this;
+
+         return tmp;
+      }
+
+      T operator*() const { return _current->item; }
+
+      Key key() const
+      {
+         return _current->getKey(Key());
+      }
+
+      bool Eof() const { return (_current == NULL); }
+
+      Memory32HashTableIterator()
+      {
+         _current = NULL;
+         _position = 0;
+         _hashIndex = hashSize;
+         _buffer = NULL;
+      }
+   };
+   friend class Memory32HashTableIterator;
+
+   MemoryDump   _buffer;
+   unsigned int _count;
+
+   T            _defaultItem;
+
+public:
+   typedef Memory32HashTableIterator Iterator;
+
+   unsigned int Count() const { return _count; }
+
+   T DefaultValue() const { return _defaultItem; }
+
+   Iterator start() const
+   {
+      return Iterator(&_buffer);
+   }
+
+   Iterator getIt(Key key) const
+   {
+      size_t beginning = (size_t)_buffer.get(0);
+
+      unsigned int index = _scaleKey(key);
+      if (index > hashSize)
+         index = hashSize - 1;
+
+      unsigned int position = _buffer[index << 2];
+      Item* current = (position != 0) ? (Item*)(beginning + position) : NULL;
+      while (current && *current < key) {
+         if (current->next != 0) {
+            position = current->next;
+            current = (Item*)(beginning + position);
+         }
+         else current = NULL;
+      }
+
+      if (current && (*current != key)) {
+         return Iterator((const MemoryDump*)&_buffer, index, 0, NULL);
+      }
+      else return Iterator((const MemoryDump*)&_buffer, index, position, current);
+   }
+
+   T get(Key key) const
+   {
+      Iterator it = getIt(key);
+
+      return it.Eof() ? _defaultItem : *it;
+   }
+
+   bool exist(const int key, T item) const
+   {
+      Iterator it = getIt(key);
+      while (!it.Eof() && it.key() == key) {
+         if (*it == item)
+            return true;
+
+         it++;
+      }
+      return false;
+   }
+
+   bool exist(Key key) const
+   {
+      Iterator it = getIt(key);
+      if (!it.Eof()) {
+         return true;
+      }
+      else return false;
+   }
+
+   pos_t storeKey(unsigned int, ref_t key)
+   {
+      return key;
+   }
+
+   pos_t storeKey(unsigned int position, ident_t key)
+   {
+      pos_t offset = _buffer.Length();
+
+      _buffer.writeLiteral(offset, key);
+
+      return offset - position;
+   }
+
+   void add(Key key, T value)
+   {
+      Item item(0, value, 0);
+
+      unsigned int index = _scaleKey(key);
+      if (index > hashSize)
+         index = hashSize - 1;
+
+      int position = _buffer[index << 2];
+
+      unsigned int tale = _buffer.Length();
+
+      _buffer.write(tale, &item, sizeof(item));
+
+      // save stored key
+      pos_t storedKey = storeKey(tale, key);
+      _buffer.writeDWord(tale + 4, storedKey);
+
+      size_t beginning = (size_t)_buffer.get(0);
+
+      Item* current = (position != 0) ? (Item*)(beginning + position) : NULL;
+      if (current && *current <= key) {
+         while (current->next != 0 && *(Item*)(beginning + current->next) <= key) {
+            position = current->next;
+            current = (Item*)(beginning + position);
+         }
+         _buffer[tale] = current->next;
+         current->next = tale;
+      }
+      else {
+         if (position == 0) {
+            _buffer[tale] = 0;
+         }
+         else _buffer[tale] = position;
+         _buffer[index << 2] = tale;
+      }
+
+      _count++;
+   }
+
+   bool add(int key, T item, bool unique)
+   {
+      if (!unique || !exist(key, item)) {
+         add(key, item);
+
+         return true;
+      }
+      else return false;
+   }
+
+   void write(StreamWriter* writer)
+   {
+      writer->writeDWord(_buffer.Length());
+      writer->writeDWord(_count);
+
+      MemoryReader reader(&_buffer);
+      writer->read(&reader, _buffer.Length());
+   }
+
+   void read(StreamReader* reader)
+   {
+      _buffer.clear();
+
+      int length = reader->getDWord();
+      if (length > 0) {
+         _buffer.reserve(length);
+
+         _count = reader->getDWord();
+
+         MemoryWriter writer(&_buffer);
+         writer.read(reader, length);
+      }
+   }
+
+   void clear()
+   {
+      _buffer.clear();
+      _count = 0;
+
+      _buffer.writeBytes(0, 0, hashSize << 2);
+   }
+
+   Memory32HashTable(T defaultItem)
+   {
+      _defaultItem = defaultItem;
+      _count = 0;
+
+      _buffer.writeBytes(0, 0, hashSize << 2);
+   }
+   ~Memory32HashTable()
    {
       clear();
    }

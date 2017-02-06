@@ -205,6 +205,7 @@ class Debugger
    DWORD             dwCurrentThreadId;
 
    size_t            minAddress, maxAddress;
+   LPVOID            baseAddress;
 
    MemoryMap<int, void*> steps;
 
@@ -218,6 +219,8 @@ class Debugger
    void processStep();
 
 public:
+   size_t getBaseAddress() const { return (size_t)baseAddress; }
+
    bool isStarted() const { return started; }
    bool isTrapped() const { return trapped; }
    bool isInitBreakpoint() const { return init_breakpoint == current->context.Eip; }

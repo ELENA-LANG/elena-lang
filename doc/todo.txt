@@ -47,6 +47,7 @@ Pipeline:
                  * Struct should support set method
 
               xdev - x64 platform
+                * ReferenceMap should be redesigned (introducing )
                 * #280 : migrate IDE to 64 bit version
                 * rename gui\winapi32 to gui\winapi
                 * #280 : asm2binx should support 64bit assembly
@@ -262,6 +263,8 @@ Pipeline:
                        * ByteNumber.get&min - could we return the constant object?
                        * support abstract attribute                       
                        * probably we could get rid of conditional branching? (what about unboxing?)
+                       * MemoryMap, MemoryHashTable are not compatible with amd64 ; they should be retired and replaced
+                         with Memory32Map, Memory32HashTable
 
               xdev - general implementation     
                        * replace all operation with StringHelper with some built-in operators

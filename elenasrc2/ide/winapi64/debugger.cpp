@@ -410,14 +410,6 @@ void Debugger :: processEvent(DWORD timeout)
             case CREATE_PROCESS_DEBUG_EVENT:
                baseAddress = event.u.CreateProcessInfo.lpBaseOfImage;
 
-               {
-                  size_t data = 0;
-                  size_t size = 0;
-                  ReadProcessMemory(event.u.CreateProcessInfo.hProcess, baseAddress, &data, 8, &size);
-
-                  data = 2;
-               }
-
                current = new ThreadContext(event.u.CreateProcessInfo.hProcess, event.u.CreateProcessInfo.hThread);
                current->refresh();
 
@@ -718,7 +710,7 @@ bool Debugger :: findSignature(StreamReader& reader, char* signature)
 bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr)
 {
    if (standalone) {
-      reader.seek(0x400000u);
+      reader.seek((pos64_t)baseAddress);
 
       _ELENA_::PEHelper::seekSection(reader, ".debug", debugInfoPtr);
    }

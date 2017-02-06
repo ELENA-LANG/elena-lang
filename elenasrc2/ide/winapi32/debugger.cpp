@@ -356,6 +356,7 @@ Debugger :: Debugger()
    _vmHook = 0;
    threadId = 0;
    current = NULL;
+   baseAddress = NULL;
 
    dwCurrentProcessId = dwCurrentThreadId = 0;
    exitCheckPoint = false;
@@ -404,6 +405,8 @@ void Debugger :: processEvent(size_t timeout)
 
       switch (event.dwDebugEventCode) {
          case CREATE_PROCESS_DEBUG_EVENT:
+            baseAddress = event.u.CreateProcessInfo.lpBaseOfImage;
+
             current = new ThreadContext(event.u.CreateProcessInfo.hProcess, event.u.CreateProcessInfo.hThread);
             current->refresh();
 
@@ -703,14 +706,14 @@ bool Debugger :: findSignature(StreamReader& reader, char* signature)
 bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr)
 {
    if (standalone) {
-      reader.seek(0x400000u);
+      reader.seek((pos_t)baseAddress);
 
       _ELENA_::PEHelper::seekSection(reader, ".debug", debugInfoPtr);
    }
    else if (_vmHook == 0) {
       size_t rdata = Context()->readDWord(0x4000D0);
       //HOTFIX : the actual length should be used
-      _vmHook = Context()->readDWord(0x400000 + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE) + 3, 4));
+      _vmHook = Context()->readDWord((pos_t)baseAddress + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE) + 3, 4));
 
       // enable debug mode
       Context()->writeDWord(_vmHook, -1);

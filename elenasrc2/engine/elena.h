@@ -666,15 +666,15 @@ typedef Map<ident_t, _Module*> ModuleMap;
 typedef List<_Module*>         ModuleList;
 
 // --- Reference mapping types ---
-typedef MemoryHashTable<ident_t, ref_t, mapReferenceKey, 29> ReferenceMap;
-typedef Map<ref_t, ref_t>                                    SubjectMap;
+typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29> ReferenceMap;
+typedef Map<ref_t, ref_t>                                      SubjectMap;
 
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> MessageMap;
 
 // --- ParserTable auxiliary types ---
-typedef Stack<int>                                           ParserStack;
-typedef MemoryMap<ident_t, int>                              SymbolMap;
+typedef Stack<int>                                          ParserStack;
+typedef MemoryMap<ident_t, int>                             SymbolMap;
 typedef MemoryHashTable<ref_t, int, syntaxRule, cnHashSize> SyntaxHash;
 typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 

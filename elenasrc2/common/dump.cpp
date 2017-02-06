@@ -56,14 +56,9 @@ void* MemoryDump :: get(pos_t position) const
 void MemoryDump :: reserve(pos_t size)
 {
    if (size > _total) {
-      _total = align(size/* + SECTION_PAGE_SIZE*/, SECTION_PAGE_SIZE);
+      _total = align(size, SECTION_PAGE_SIZE);
 
-      void* oldOne = _buffer;
-      void* newOne = realloc(oldOne, _total);
-
-      _buffer = (char*)newOne;
-
-      //_buffer = (char*)realloc(_buffer, _total);
+      _buffer = (char*)realloc(_buffer, _total);
    }
 }
 

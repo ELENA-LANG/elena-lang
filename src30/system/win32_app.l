@@ -40,8 +40,6 @@
     {
         #method start : events
         [
-            #var s := 'program.
-            
             'program eval
                 | on:
                 {
