@@ -139,6 +139,9 @@ public:
          }
          else code->writeDWord(sour.offset);
       }
+      else if (sour.type == otDQ) {
+         code->writeQWord(sour.offset);
+      }
       else if (sour.type == otDB) {
          code->writeByte((unsigned char)sour.offset);
       }

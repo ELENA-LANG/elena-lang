@@ -3,6 +3,7 @@ define INIT                 10013h
 define NEWFRAME             10014h
 define EXIT                 1001Dh
 define PREPARE              10027h
+define CORE_OS_TABLE        20009h
 
 // --- System Core Functions --
 

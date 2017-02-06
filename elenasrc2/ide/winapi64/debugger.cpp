@@ -356,8 +356,9 @@ Debugger :: Debugger()
    _vmHook = 0;
    threadId = 0;
    current = NULL;
+   baseAddress = NULL;
 
-   dwCurrentProcessId = dwCurrentThreadId = 0;
+   dwDebugeeProcessId = dwCurrentProcessId = dwCurrentThreadId = 0;
    exitCheckPoint = false;
 }
 
@@ -379,6 +380,8 @@ bool Debugger :: startProcess(const wchar_t* exePath, const wchar_t* cmdLine)
    {
       return false;
    }
+
+   dwDebugeeProcessId = pi.dwProcessId;
 
    if (pi.hProcess)
       CloseHandle(pi.hProcess);
@@ -402,55 +405,67 @@ void Debugger :: processEvent(DWORD timeout)
       dwCurrentThreadId = event.dwThreadId;
       dwCurrentProcessId = event.dwProcessId;
 
-      switch (event.dwDebugEventCode) {
-         case CREATE_PROCESS_DEBUG_EVENT:
-            current = new ThreadContext(event.u.CreateProcessInfo.hProcess, event.u.CreateProcessInfo.hThread);
-            current->refresh();
+      if (dwCurrentProcessId == dwDebugeeProcessId) {
+         switch (event.dwDebugEventCode) {
+            case CREATE_PROCESS_DEBUG_EVENT:
+               baseAddress = event.u.CreateProcessInfo.lpBaseOfImage;
 
-            threads.add(dwCurrentThreadId, current);
+               {
+                  size_t data = 0;
+                  size_t size = 0;
+                  ReadProcessMemory(event.u.CreateProcessInfo.hProcess, baseAddress, &data, 8, &size);
 
-            breakpoints.setSoftwareBreakpoints(current);
+                  data = 2;
+               }
 
-            ::CloseHandle(event.u.CreateProcessInfo.hFile);
-            break;
-         case EXIT_PROCESS_DEBUG_EVENT:
-            current = threads.get(dwCurrentThreadId);
-            if (current) {
-               current->refresh();
-               exitCheckPoint = proceedCheckPoint();
-            }
-            threads.clear();
-            current = NULL;
-            started = false;
-            break;
-         case CREATE_THREAD_DEBUG_EVENT:
-            current = new ThreadContext((*threads.start())->hProcess, event.u.CreateThread.hThread);
-            current->refresh();
-
-            threads.add(dwCurrentThreadId, current);
-            break;
-         case EXIT_THREAD_DEBUG_EVENT:
-            threads.erase(event.dwThreadId);
-            current = NULL;
-            break;
-         case LOAD_DLL_DEBUG_EVENT:
-            ::CloseHandle(event.u.LoadDll.hFile);
-            break;
-         case UNLOAD_DLL_DEBUG_EVENT:
-            break;
-         case OUTPUT_DEBUG_STRING_EVENT:
-            break;
-         case RIP_EVENT:
-            started = false;
-            break;
-         case EXCEPTION_DEBUG_EVENT:
-            current = threads.get(dwCurrentThreadId);
-            if (current)
+               current = new ThreadContext(event.u.CreateProcessInfo.hProcess, event.u.CreateProcessInfo.hThread);
                current->refresh();
 
-            processException(&event.u.Exception);
-            current->refresh();
-            break;
+               threads.add(dwCurrentThreadId, current);
+
+               breakpoints.setSoftwareBreakpoints(current);
+
+               ::CloseHandle(event.u.CreateProcessInfo.hFile);
+               break;
+            case EXIT_PROCESS_DEBUG_EVENT:
+               current = threads.get(dwCurrentThreadId);
+               if (current) {
+                  current->refresh();
+                  exitCheckPoint = proceedCheckPoint();
+               }
+               threads.clear();
+               current = NULL;
+               started = false;
+               break;
+            case CREATE_THREAD_DEBUG_EVENT:
+               current = new ThreadContext((*threads.start())->hProcess, event.u.CreateThread.hThread);
+               current->refresh();
+
+               threads.add(dwCurrentThreadId, current);
+               break;
+            case EXIT_THREAD_DEBUG_EVENT:
+               threads.erase(event.dwThreadId);
+               current = NULL;
+               break;
+            case LOAD_DLL_DEBUG_EVENT:
+               ::CloseHandle(event.u.LoadDll.hFile);
+               break;
+            case UNLOAD_DLL_DEBUG_EVENT:
+               break;
+            case OUTPUT_DEBUG_STRING_EVENT:
+               break;
+            case RIP_EVENT:
+               started = false;
+               break;
+            case EXCEPTION_DEBUG_EVENT:
+               current = threads.get(dwCurrentThreadId);
+               if (current)
+                  current->refresh();
+
+               processException(&event.u.Exception);
+               current->refresh();
+               break;
+         }
       }
    }
 }
@@ -688,13 +703,13 @@ size_t Debugger :: findEntryPoint(const wchar_t* programPath)
   return _ELENA_::PEHelper::findEntryPoint(programPath);
 }
 
-bool Debugger :: findSignature(StreamReader&, char* signature)
+bool Debugger :: findSignature(StreamReader& reader, char* signature)
 {
-   // !! hard-coded address; better propely to load part of NT_HEADER to correctly get bss address
-   size_t rdata = Context()->readDWord(0x4000D0);
+   size_t rdata = 0;
+   PEHelper::seekSection64(reader, ".rdata", rdata);
 
    // load Executable image
-   Context()->readDump(0x400000 + rdata, signature, strlen(ELENACLIENT_SIGNITURE));
+   Context()->readDump(rdata, signature, strlen(ELENACLIENT_SIGNITURE));
    signature[strlen(ELENACLIENT_SIGNITURE)] = 0;
 
    return true;

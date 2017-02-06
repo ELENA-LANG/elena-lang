@@ -43,19 +43,19 @@ const int elObjectOffset = 0x0010;           // object header / offset constant
 
 //#define CORE_EXCEPTION_TABLE 0x20001
 //#define CORE_GC_TABLE        0x20002
-//#define CORE_GC_SIZE         0x20003
-//#define CORE_STAT_COUNT      0x20004
-//#define CORE_STATICROOT      0x20005
+#define CORE_GC_SIZE         0x20003
+#define CORE_STAT_COUNT      0x20004
+#define CORE_STATICROOT      0x20005
 //#define CORE_TLS_INDEX       0x20007
 //#define CORE_THREADTABLE     0x20008
-//#define CORE_OS_TABLE        0x20009
+#define CORE_OS_TABLE        0x20009
 
 // preloaded gc routines
-//const int coreVariableNumber = 3;
-//const int coreVariables[coreVariableNumber] =
-//{
-//   CORE_EXCEPTION_TABLE, CORE_GC_TABLE, CORE_OS_TABLE
-//};
+const int coreVariableNumber = /*3*/1;
+const int coreVariables[coreVariableNumber] =
+{
+   /*CORE_EXCEPTION_TABLE, CORE_GC_TABLE, */CORE_OS_TABLE
+};
 
 // preloaded gc routines
 const int coreFunctionNumber = /*21*/4;
@@ -1415,44 +1415,44 @@ void AMD64JITCompiler :: writeCoreReference(AMD64JITScope& scope, ref_t referenc
 
 void AMD64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 {
-   //// preload core data
-   //_Memory* data = loader->getTargetSection((ref_t)mskDataRef);
-   //_Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
-   //_Memory* sdata = loader->getTargetSection((ref_t)mskStatRef);
+   // preload core data
+   _Memory* data = loader->getTargetSection((ref_t)mskDataRef);
+   _Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
+   _Memory* sdata = loader->getTargetSection((ref_t)mskStatRef);
    _Memory* code = loader->getTargetSection((ref_t)mskCodeRef);
 
-   //MemoryWriter dataWriter(data);
-   //MemoryWriter rdataWriter(rdata);
-   //MemoryWriter sdataWriter(sdata);
+   MemoryWriter dataWriter(data);
+   MemoryWriter rdataWriter(rdata);
+   MemoryWriter sdataWriter(sdata);
    MemoryWriter codeWriter(code);
 
-   //x86JITScope dataScope(NULL, &dataWriter, &helper, this);
-   //for (int i = 0; i < coreVariableNumber; i++) {
-   //   if (!_preloaded.exist(coreVariables[i])) {
-   //      _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
+   AMD64JITScope dataScope(NULL, &dataWriter, &helper, this);
+   for (int i = 0; i < coreVariableNumber; i++) {
+      if (!_preloaded.exist(coreVariables[i])) {
+         _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
 
-   //      // due to optimization section must be ROModule::ROSection instance
-   //      SectionInfo info = helper.getCoreSection(coreVariables[i]);
-   //      dataScope.module = info.module;
+         // due to optimization section must be ROModule::ROSection instance
+         SectionInfo info = helper.getCoreSection(coreVariables[i]);
+         dataScope.module = info.module;
 
-   //      loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
-   //   }
-   //}
+         loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
+      }
+   }
 
-   //// GC SIZE Table
-   //_preloaded.add(CORE_GC_SIZE, helper.getVAddress(rdataWriter, mskRDataRef));
-   //rdataWriter.writeDWord(helper.getLinkerConstant(lnGCMGSize));
-   //rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
-   //rdataWriter.writeDWord(helper.getLinkerConstant(lnThreadCount));
+   // GC SIZE Table
+   _preloaded.add(CORE_GC_SIZE, helper.getVAddress(rdataWriter, mskRDataRef));
+   rdataWriter.writeQWord(helper.getLinkerConstant(lnGCMGSize));
+   rdataWriter.writeQWord(helper.getLinkerConstant(lnGCYGSize));
+   rdataWriter.writeQWord(helper.getLinkerConstant(lnThreadCount));
 
-   //// load GC static root
-   //_preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
+   // load GC static root
+   _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
 
-   //// STAT COUNT
-   //_preloaded.add(CORE_STAT_COUNT, helper.getVAddress(rdataWriter, mskRDataRef));
-   //rdataWriter.writeDWord(0);
+   // STAT COUNT
+   _preloaded.add(CORE_STAT_COUNT, helper.getVAddress(rdataWriter, mskRDataRef));
+   rdataWriter.writeQWord(0);
 
-   //dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance));
+   dataWriter.writeQWord(helper.getLinkerConstant(lnVMAPI_Instance));
 
    AMD64JITScope scope(NULL, &codeWriter, &helper, this);
    for (int i = 0; i < coreFunctionNumber; i++) {

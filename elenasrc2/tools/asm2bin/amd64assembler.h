@@ -253,7 +253,7 @@ protected:
    bool compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer/*, x86JumpHelper& helper*/);
 
    virtual void compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned);
- //  virtual void compileStructure(TokenInfo& token, _Module* binary, int mask);
+   virtual void compileStructure(TokenInfo& token, _Module* binary, int mask);
 
 public:
 	virtual void compile(TextReader* reader, path_t outputPath);

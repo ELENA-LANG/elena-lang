@@ -3354,66 +3354,79 @@ void AMD64Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, Memory
 //	}
 //	else token.raiseErr("Invalid command (%d)");
 //}
-//
-//void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mask)
-//{
-//	token.read();
-//
-//   int ref = 0;
-//   if (token.check("%")) {
-//      ref = token.readInteger(constants);
-//   }
-//   else {
-//      ReferenceNs refName(NATIVE_MODULE, token.value);
-//
-//	   ref = binary->mapReference(refName) | mask;
-//   }
-//
-//   ProcedureInfo info(binary, false);
-//
-//   if (binary->mapSection(ref, true)!=NULL) {
-//      throw AssemblerException("Structure / Procedure already exists (%d)\n", token.terminal.row);
-//   }
-//   _Memory* code = binary->mapSection(ref, false);
-//   MemoryWriter writer(code);
-//
-//   token.read();
-//   while (!token.check("end")) {
-//      if (token.check("dd")) {
-//         token.read();
-//         Operand operand = defineOperand(token, info, "Invalid constant");
-//         if (operand.type==x86Helper::otDD) {
-//            x86Helper::writeImm(&writer, operand);
-//         }
-//         else if (operand.type==x86Helper::otDB) {
-//            operand.type = x86Helper::otDD;
-//            x86Helper::writeImm(&writer, operand);
-//         }
-//         else token.raiseErr("Invalid operand (%d)");
-//      }
-//      else if (token.check("dw")) {
-//         token.read();
-//         Operand operand = defineOperand(token, info, "Invalid constant");
-//         if (operand.type==x86Helper::otDB) {
-//            operand.type = x86Helper::otDW;
-//            x86Helper::writeImm(&writer, operand);
-//         }
-//         else token.raiseErr("Invalid operand (%d)");
-//      }
-//      else if (token.check("db")) {
-//         token.read();
-//         Operand operand = defineOperand(token, info, "Invalid constant");
-//         if (operand.type==x86Helper::otDB) {
-//            x86Helper::writeImm(&writer, operand);
-//         }
-//         else token.raiseErr("Invalid operand (%d)");
-//      }
-//      else if (token.Eof()) {
-//         token.raiseErr("Invalid end of the file\n");
-//      }
-//      else token.read();
-//   }
-//}
+
+void AMD64Assembler:: compileStructure(TokenInfo& token, _Module* binary, int mask)
+{
+	token.read();
+
+   int ref = 0;
+   if (token.check("%")) {
+      ref = token.readInteger(constants);
+   }
+   else {
+      ReferenceNs refName(NATIVE_MODULE, token.value);
+
+	   ref = binary->mapReference(refName) | mask;
+   }
+
+   ProcedureInfo info(binary, false);
+
+   if (binary->mapSection(ref, true)!=NULL) {
+      throw AssemblerException("Structure / Procedure already exists (%d)\n", token.terminal.row);
+   }
+   _Memory* code = binary->mapSection(ref, false);
+   MemoryWriter writer(code);
+
+   token.read();
+   while (!token.check("end")) {
+      if (token.check("dd")) {
+         token.read();
+         Operand operand = defineOperand(token, info, "Invalid constant");
+         if (operand.type== AMD64Helper::otDD) {
+            AMD64Helper::writeImm(&writer, operand);
+         }
+         else if (operand.type== AMD64Helper::otDB) {
+            operand.type = AMD64Helper::otDD;
+            AMD64Helper::writeImm(&writer, operand);
+         }
+         else token.raiseErr("Invalid operand (%d)");
+      }
+      else if (token.check("dq")) {
+         token.read();
+         Operand operand = defineOperand(token, info, "Invalid constant");
+         if (operand.type == AMD64Helper::otDD) {
+            operand.type = AMD64Helper::otDQ;
+            AMD64Helper::writeImm(&writer, operand);
+         }
+         else if (operand.type == AMD64Helper::otDB) {
+            operand.type = AMD64Helper::otDQ;
+            AMD64Helper::writeImm(&writer, operand);
+         }
+         else token.raiseErr("Invalid operand (%d)");
+      }
+      else if (token.check("dw")) {
+         token.read();
+         Operand operand = defineOperand(token, info, "Invalid constant");
+         if (operand.type== AMD64Helper::otDB) {
+            operand.type = AMD64Helper::otDW;
+            AMD64Helper::writeImm(&writer, operand);
+         }
+         else token.raiseErr("Invalid operand (%d)");
+      }
+      else if (token.check("db")) {
+         token.read();
+         Operand operand = defineOperand(token, info, "Invalid constant");
+         if (operand.type== AMD64Helper::otDB) {
+            AMD64Helper::writeImm(&writer, operand);
+         }
+         else token.raiseErr("Invalid operand (%d)");
+      }
+      else if (token.Eof()) {
+         token.raiseErr("Invalid end of the file\n");
+      }
+      else token.read();
+   }
+}
 
 bool AMD64Assembler :: compileCommandA(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
@@ -4374,11 +4387,11 @@ void AMD64Assembler :: compile(TextReader* source, path_t outputPath)
 
          token.read();
       }
-//      else if (token.check("structure")) {
-//			compileStructure(token, &binary, mskNativeDataRef);
-//
-//			token.read();
-//      }
+      else if (token.check("structure")) {
+         compileStructure(token, &binary, mskNativeDataRef);
+         
+         token.read();
+      }
 //      else if (token.check("rstructure")) {
 //         compileStructure(token, &binary, mskNativeRDataRef);
 //

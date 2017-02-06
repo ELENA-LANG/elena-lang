@@ -2,6 +2,14 @@
 define EXIT                 1001Dh
 define PREPARE              10027h
 
+define CORE_OS_TABLE        20009h
+
+structure % CORE_OS_TABLE
+
+  dq 0 // ; dummy
+
+end
+
 procedure % EXIT
 
   mov ecx, 0

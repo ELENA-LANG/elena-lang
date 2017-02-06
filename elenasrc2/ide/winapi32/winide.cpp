@@ -1079,7 +1079,7 @@ IDEWindow :: IDEWindow(HINSTANCE instance, const wchar_t* caption, _Controller* 
    _tabTTHandle = NULL;
 
    _controlCount = 15;
-   _controls = (_BaseControl**)malloc(_controlCount << 2);
+   _controls = new _BaseControl*[_controlCount];
 
    _controls[0] = NULL;
    _controls[CTRL_MENU] = new Menu(instance, IDR_IDE_ACCELERATORS, ::GetMenu(getHandle()));

@@ -183,7 +183,7 @@ void IniConfigFile :: setSetting(ident_t key, const char* value)
 
       ident_t settingName = key + index + 1;
       index = settingName.find('/');
-      if (index > 0) {
+      if (index != NOTFOUND_POS) {
          // HOTFIX : if sub category is used
          String<char, 50> temp(settingName);
          temp[index] = ':';
@@ -231,7 +231,7 @@ void IniConfigFile :: clearSetting(ident_t key)
 
       ident_t settingName = key + index + 1;
       index = settingName.find('/');
-      if (index > 0) {
+      if (index != NOTFOUND_POS) {
          // HOTFIX : if sub category is used
          String<char, 50> temp(settingName);
          temp[index] = ':';

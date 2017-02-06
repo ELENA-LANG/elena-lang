@@ -688,13 +688,13 @@ size_t Debugger :: findEntryPoint(const wchar_t* programPath)
   return _ELENA_::PEHelper::findEntryPoint(programPath);
 }
 
-bool Debugger :: findSignature(StreamReader&, char* signature)
+bool Debugger :: findSignature(StreamReader& reader, char* signature)
 {
-   // !! hard-coded address; better propely to load part of NT_HEADER to correctly get bss address
-   size_t rdata = Context()->readDWord(0x4000D0);
+   size_t rdata = 0;
+   PEHelper::seekSection(reader, ".rdata", rdata);
 
    // load Executable image
-   Context()->readDump(0x400000 + rdata, signature, strlen(ELENACLIENT_SIGNITURE));
+   Context()->readDump(rdata, signature, strlen(ELENACLIENT_SIGNITURE));
    signature[strlen(ELENACLIENT_SIGNITURE)] = 0;
 
    return true;

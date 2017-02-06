@@ -18,6 +18,7 @@ public:
    static size_t findEntryPoint(path_t path);
 
    static bool seekSection(StreamReader& reader, char* name, size_t& rvaAddress);
+   static bool seekSection64(StreamReader& reader, char* name, size_t& rvaAddress);
 };
 
 } // _ELENA_

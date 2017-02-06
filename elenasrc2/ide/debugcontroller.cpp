@@ -367,7 +367,7 @@ void DebugController :: onInitBreakpoint()
 {
    bool starting = _debugInfoSize == 0;
    if (starting) {
-      DebugReader reader(&_debugger/*, 0x400000, 0*/);
+      DebugReader reader(&_debugger, 0, _debugger.getBaseAddress());
 
       // define if it is a vm client or stand-alone
       char signature[0x10];
