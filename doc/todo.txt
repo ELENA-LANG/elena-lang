@@ -2,6 +2,25 @@
 In development:
 ------                              
               zdev 
+                 * calc sample : using eson grammar - sum expression
+
+              xdev - general implementation
+                 * gui vm client
+                 * game of life : display 2d map in gui window
+                 * game of life : display 2d map in vm gui window
+
+              idev - generic development
+                 * vm client : F8 on the start does not work
+                 * debugging vm client : f7 on start
+
+              zevo
+
+                 * game of life : simple implementation
+                 * game of life : create an engine (time slots)
+                 * game of life : rules should be declared in external file
+                 * game of life : viewer
+
+              zdev 
                  * calc sample
                  * state machine script (calc)
                  * calculator : move lexicalOp to the script
@@ -38,6 +57,7 @@ Pipeline:
 
               xrev           
                  * test net sample
+                 * test anagram
 
               adev - lib30     
                  * review toLiteral code, temporal size??
@@ -108,12 +128,6 @@ Pipeline:
                  * live programming
                  * eldoc
 
-              zevo
-                 * game of life : simple implementation
-                 * game of life : create an engine (time slots)
-                 * game of life : rules should be declared in external file
-                 * game of life : viewer
-
               ydev
                  * upndown : implementing, play with chaotic computer player
 
@@ -130,9 +144,9 @@ Pipeline:
                        * real field
                        * structure field
 
+
               idev - generic development
                        * ide : call stack is corrupted
-                       * vm client : F8 on the start does not work
                        * allow to opem xml project
                        * allow to create xml project
                        * ini to xml
@@ -150,7 +164,6 @@ Pipeline:
 
                        * vertical scroller does not work correctly
                        * set focus on the editor after selecting a project item
-                       * debugging vm client : f7 on start
 
                        * project view : delays in openning the window
                        * #191 : IDE : block commenting
@@ -365,7 +378,6 @@ Pipeline:
                        
               xdev - general implementation
                        * implementing 2.0.0 issues
-                       * vm console should use startUp symbol
                        * variable: no need to store nil if the variable statement has initializing part
                        * drop message flag for message ids, messages should be saved in raw data stack frame
                        * external call: stack should be excluded only if the method is marked as threadsafe
@@ -375,7 +387,6 @@ Pipeline:
                        * no need to provide exclude command for every external call, special hint to ignore it?
                        * think over optimized way to get GCXT TLS TABLE, try to cache the pointer
                        * cast should be called directly, make sure it is always after dispatch
-                       * gui vm client
                        * handle access vialation exception : exception handler should be called
                        * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
                        * review graph sample, get rid of warnings

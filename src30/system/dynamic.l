@@ -53,6 +53,8 @@
 
     #method(stacksafe)literal
     [
+        #var(mssg)val := $self.
+        
         #var(byte:256)aBuffer.        
         #var(int)aLength := system'external LoadMessageName &mssg:$self &bytearray:aBuffer &int:255.
         

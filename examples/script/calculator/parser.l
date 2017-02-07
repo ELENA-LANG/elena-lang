@@ -1,40 +1,37 @@
 #import system.
-//#import system'routines.
+#import system'routines.
 //#import system'dynamic.
 #import extensions'text.
 //#import extensions'scripting.
 
-//#static esonScript
-//    = scriptEngine load &path:"~\scripts\eson.es" eval &path:"calc.es".
-//
-//#class(extension) lexicalOp
-//{
-//    #method lexicalType
-//    [
-//        ((self >= #48)and:(self <= #57))
-//            ? [ ^ %digit. ].
-//
-//        (self == #43)
-//            ? [ ^ %plus. ].
-//
-//        (self == #45)
-//            ? [ ^ %minus. ].
-//            
-//        (self == #42)
-//            ? [ ^ %star. ].
-//            
-//        (self == #47)
-//            ? [ ^ %slash. ].
-//            
-//        (self == #40)
-//            ? [ ^ %opening. ].
-//            
-//        (self == #41)
-//            ? [ ^ %closing. ].
-//            
-//        ^ %unknown.            
-//    ]
-//}
+#class(extension) lexicalOp
+{
+    #method lexicalType
+    [
+        ((self >= #48)and:(self <= #57))
+            ? [ ^ %digit. ].
+
+        (self == #43)
+            ? [ ^ %plus. ].
+
+        (self == #45)
+            ? [ ^ %minus. ].
+            
+        (self == #42)
+            ? [ ^ %star. ].
+            
+        (self == #47)
+            ? [ ^ %slash. ].
+            
+        (self == #40)
+            ? [ ^ %opening. ].
+            
+        (self == #41)
+            ? [ ^ %closing. ].
+            
+        ^ %unknown.            
+    ]
+}
 
 #class DerivationTree
 {
@@ -145,19 +142,10 @@
     #field theCurrentState.
     #field theDerivationTree.
 
-//    #method $loadBuiltinStatemachine
-//    [
-//        theStatemachine := esonScript.
-//        
-//        theCurrentState := theStatemachine start_state:theStatemachine.
-//    ]
-    
     #constructor new : states
     [
         theDerivationTree := DerivationTree new.
         theStates := states.
-
-//        $self $loadBuiltinStatemachine.
     ]
 
     #method(generic)seek
@@ -165,32 +153,31 @@
         theCurrentState := theStates::$subject get. 
     ]
 
-//    #method invalidate
-//    [
-//        theDerivationTree := $nil.
-//    ]
-//
-//    #method func1 = (:aChar)
-//    [
-//        #var aType := aChar lexicalType.
-//
-//        theCurrentState := theCurrentState::aType eval:theStatemachine:aChar:theDerivationTree.
-//    ].
+    #method invalidate
+    [
+        theDerivationTree := $nil.
+    ]
+
+    #method func1 = (:aChar)
+    [
+        #var type := aChar lexicalType.
+
+        self::type eval:aChar.
+    ].
 
     #method value
-        => theDerivationTree.    
-//    [
-//        #var aValue := $nil.
-//        
-//        ($nil == theDerivationTree)
-//            ? [ aValue := "Invalid expression". ]
-//            ! [
-//                aValue := theDerivationTree value
-//                    | back:"Invalid expression".
-//            ].
-//            
-//        ^ aValue.
-//    ]
+    [
+        #var aValue := $nil.
+        
+        ($nil == theDerivationTree)
+            ? [ aValue := "Invalid expression". ]
+            ! [
+                aValue := theDerivationTree value
+                    | back:"Invalid expression".
+            ].
+            
+        ^ aValue.
+    ]
 
     #method newLeaf : strategy
     [
@@ -205,19 +192,19 @@
     #method => theCurrentState.
 }
 
-//// --- parserOp ---
-//
-//#class(extension)parserOp
-//{
-//    #method evaluated
-//    [
-//        #var aStateMachine := StateMachine new.
-//        
-//        self run &each:(aStateMachine func1)
-//            | if &Error: e [
-//                aStateMachine invalidate.
-//            ].
-//        
-//        ^ aStateMachine value.
-//    ]
-//}
+// --- parserOp ---
+
+#class(extension)parserOp
+{
+    #method evaluated &with:states
+    [
+        #var aStateMachine := StateMachine new:states seek &state0.
+        
+        self run &each:(aStateMachine func1)
+            | if &Error: e [
+                aStateMachine invalidate.
+            ].
+        
+        ^ aStateMachine value.
+    ]
+}

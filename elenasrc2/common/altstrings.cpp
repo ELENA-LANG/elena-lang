@@ -411,7 +411,8 @@ char* StrFactory :: allocate(size_t size, const char* value)
    char*s = (char*)malloc(size);
 
    if (!emptystr(value)) {
-      memcpy(s, value, getlength(value) + 1);
+      memcpy(s, value, size);
+      s[size] = 0;
    }
 
    return s;

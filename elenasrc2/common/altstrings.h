@@ -680,10 +680,6 @@ public:
 
    DynamicString()
    {
-      //_size = 2048;
-      //_string = StrFactory::allocate(_size, (const char*)NULL);
-      //_string[0] = 0;
-
       _size = 0;
       _string = NULL;
    }

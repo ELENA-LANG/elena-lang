@@ -12,5 +12,5 @@ parser.l
 control.l
 
 [forwards]
-'program=calc'testProgram
+'program=calc'testCase
 

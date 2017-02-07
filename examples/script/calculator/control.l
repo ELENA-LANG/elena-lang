@@ -22,12 +22,43 @@
 //    ]    
 //}.
 ////'program=extensions'programLoop
-//// --- testCase ---
-//
-//#symbol testCase =
-//[    
-////    console writeLine:"Press any key to start" readChar.
-//    
+// --- testCase ---
+
+#static factory
+    = scriptEngine 
+        load &path:"~\scripts\assembly.es" 
+        load &path:"~\scripts\eson.es" 
+        eval &path:"calc.es".
+
+#symbol dynamicRules = 
+    factory eval:(Library new) first eval.
+    
+#symbol staticRules =
+    calc'rules'States.
+
+#class(extension)testOp
+{
+    #method testEvaluation
+    [
+        #var result := self evaluated &with:dynamicRules.
+        
+        console writeLine:self:" evaluated as ":result.
+    ]
+    
+    #method testStaticEvaluation
+    [
+        #var result := self evaluated &with:staticRules.
+        
+        console writeLine:self:" evaluated as ":result.
+    ]
+}
+
+#symbol testCase =
+[    
+//    console writeLine:"Press any key to start" readChar.
+    "2" testEvaluation.
+    "2" testStaticEvaluation.
+    
 //    #var aCase1 := "-2+3".
 //    
 //    #var aCaseResult1 := aCase1 evaluated.    
@@ -42,18 +73,10 @@
 //    
 //    #var aCaseResult3 := aCase3 evaluated.
 //    console writeLine:aCase3:" evaluated as ":aCaseResult3.
-//].
+].
 
 #symbol testProgram =
 [
-    #var factory := scriptEngine 
-        load &path:"~\scripts\assembly.es" 
-        load &path:"~\scripts\eson.es" 
-        eval &path:"test.es".   
-
-    #var dynamicRules := factory eval:(Library new) first eval.
-    #var staticRules := calc'rules'States.
-            
     #var machine := StateMachine new:dynamicRules seek &state0.
     #var machine2 := StateMachine new:staticRules seek &state0.
     
