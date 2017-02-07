@@ -61,11 +61,11 @@
 {
     #field theStrategy.
     
-    #method order = theStrategy order.
+    #method level = theStrategy level.
     
     #method add : aNode
     [
-        (self order < aNode order)?
+        (self level < aNode level)?
         [
             self += aNode.
             
@@ -183,6 +183,11 @@
     [
         theDerivationTree append:(TreeLeaf new:strategy).
     ]
+
+    #method newNode : strategy
+    [
+        theDerivationTree append:(TreeNode new:strategy).
+    ]
     
     #method addContent : content
     [
@@ -202,6 +207,8 @@
         
         self run &each:(aStateMachine func1)
             | if &Error: e [
+                //console writeLine:e.
+                
                 aStateMachine invalidate.
             ].
         

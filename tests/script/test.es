@@ -12,8 +12,11 @@
     #define rule_rs    ::= $eps;
 
     #define rule_body  ::= "=>" new_leaf add_cont next_state;
+    #define rule_body  ::= "=>" new_node next_state;
+    #define rule_body  ::= "=>" add_cont next_state;
 
     #define new_leaf   ::= <= this.newLeaf({ => "(" body ")" <= }); =>;
+    #define new_node   ::= <= this.newNode({ => "[" body "]" <= }); =>;
     #define add_cont   ::= "+=" <= this.addContent(c); =>;
 
     #define level        ::= integer; 
@@ -27,4 +30,9 @@
 ]]
 
 state0
-  : digit => ( "level : 1; evalToken: function(s) { return convertor.toReal(s); };" ) += = digit
+  : digit => ( "level : 9; evalToken: function(s) { return convertor.toReal(s); };" ) += = digit
+
+digit
+  : digit => += = digit
+  : plus => [ "level : 1; evalNode: function(left,right){ return left.add(right); }; " ] = state0
+  : minus => [ "level : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = state0

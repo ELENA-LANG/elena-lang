@@ -2,7 +2,17 @@
 In development:
 ------                              
               zdev 
-                 * calc sample : using eson grammar - sum expression
+                 * calc sample : sum expression
+                 * calc sample : difference expression
+                 * calc sample : product expression
+                 * calc sample : fraction expression
+                 * calc sample : brackets
+                 * calc sample : negative number
+                 * calc sample : real number
+                 * calculator : move lexicalOp to the script
+                 * calc sample
+                 * fix interpreter sample
+                 * hello world sample
 
               xdev - general implementation
                  * gui vm client
@@ -14,19 +24,25 @@ In development:
                  * debugging vm client : f7 on start
 
               zevo
-
                  * game of life : simple implementation
                  * game of life : create an engine (time slots)
                  * game of life : rules should be declared in external file
                  * game of life : viewer
 
-              zdev 
-                 * calc sample
-                 * state machine script (calc)
-                 * calculator : move lexicalOp to the script
-                 * fix interpreter sample
-                 * hello world sample
+              sdev - cf parser
+                 * the following grammar rule is not correctly split (code is ignored) :
+                       #define method ::= "method" "(" name code ")";
+                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
+                 * use pattern like in regex for terminal matching
+                 * there should be possibility to save the resulting code in the file
+                 * at least print the token where the parser error is
+                 * CodeScope : after each statement clear the top stack item
 
+------                                 
+Pipeline:
+------                                                                                         
+
+              zdev 
                  * script : elena - simple class,one method
                  * script : elena - simple class,one method, several statements
                  * script : elena - simple class,one method, parameters
@@ -41,19 +57,6 @@ In development:
                  * graph : function declared in the script
                  * gui script
                  * reg ex
-
-------                                 
-Pipeline:
-------                                                                                         
-
-              sdev - cf parser
-                 * the following grammar rule is not correctly split (code is ignored) :
-                       #define method ::= "method" "(" name code ")";
-                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
-                 * use pattern like in regex for terminal matching
-                 * there should be possibility to save the resulting code in the file
-                 * at least print the token where the parser error is
-                 * CodeScope : after each statement clear the top stack item
 
               xrev           
                  * test net sample

@@ -56,9 +56,12 @@
 #symbol testCase =
 [    
 //    console writeLine:"Press any key to start" readChar.
-    "2" testEvaluation.
-    "2" testStaticEvaluation.
-    
+    "22" testEvaluation.
+    "22" testStaticEvaluation.
+
+    //"2+3-1" testEvaluation.
+    "2+3-1" testStaticEvaluation.
+            
 //    #var aCase1 := "-2+3".
 //    
 //    #var aCaseResult1 := aCase1 evaluated.    
