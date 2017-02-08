@@ -569,7 +569,7 @@ public:
          if (eol == NOTFOUND_POS) {            
             if (_length - _offset > length) {
                // if we are not lucky - try to find a whitespace
-               eol = _offset + length - 1;
+               eol = _offset + length - 2;
 
                while (eol != 0 && _text[eol] != ' ')
                   eol--;
