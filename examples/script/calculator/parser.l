@@ -51,7 +51,7 @@
 
     #constructor new
     [
-        theRoot := BaseTreeNode { order = -1. add : aNode = aNode. }
+        theRoot := BaseTreeNode { level = -1. add : aNode = aNode. }
     ]
 }
 
@@ -60,8 +60,9 @@
 #class BaseTreeNode
 {
     #field theStrategy.
+    #field theLevel.
     
-    #method level = theStrategy level.
+    #method level = theLevel.
     
     #method add : aNode
     [
@@ -76,6 +77,12 @@
             
             ^ aNode.
         ].
+    ]
+    
+    #constructor new:strategy &baseLevel:baseLevel
+    [
+        theStrategy := strategy.
+        theLevel := baseLevel + strategy order.
     ]
 }
 
@@ -108,10 +115,10 @@
         ^ theStrategy evalNode:(theLeft value):(theRight value).
     ]
     
-    #constructor new : aStrategy
+    #constructor new:aStrategy &baseLevel:baseLevel
+        <= (new:aStrategy &baseLevel:baseLevel)
     [
-        theStrategy := aStrategy.
-    ]
+    ]    
 }
 
 // --- TreeLeaf ---
@@ -127,7 +134,8 @@
 
     #method value = theStrategy evalToken:theToken.
             
-    #constructor new : aStrategy
+    #constructor new:aStrategy &baseLevel:baseLevel
+        <= (new:aStrategy &baseLevel:baseLevel)
     [
         theToken := String new.
         theStrategy := aStrategy.
@@ -141,16 +149,33 @@
     #field theStates.
     #field theCurrentState.
     #field theDerivationTree.
+    
+    #field(prop:level)theLevel.
 
     #constructor new : states
     [
         theDerivationTree := DerivationTree new.
         theStates := states.
+        theLevel := 0.
     ]
 
     #method(generic)seek
     [
         theCurrentState := theStates::$subject get. 
+    ]
+
+    #method opening : ch
+    [
+        theLevel := theLevel + 10.
+        
+        $self::theCurrentState opening:ch.
+    ]
+
+    #method closing : ch
+    [
+        theLevel := theLevel - 10.
+        
+        $self::theCurrentState closing:ch.
     ]
 
     #method invalidate
@@ -181,12 +206,12 @@
 
     #method newLeaf : strategy
     [
-        theDerivationTree append:(TreeLeaf new:strategy).
+        theDerivationTree append:(TreeLeaf new:strategy &baseLevel:theLevel).
     ]
 
     #method newNode : strategy
     [
-        theDerivationTree append:(TreeNode new:strategy).
+        theDerivationTree append:(TreeNode new:strategy &baseLevel:theLevel).
     ]
     
     #method addContent : content
@@ -207,7 +232,7 @@
         
         self run &each:(aStateMachine func1)
             | if &Error: e [
-                //console writeLine:e.
+                console writeLine:e.
                 
                 aStateMachine invalidate.
             ].

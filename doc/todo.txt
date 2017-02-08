@@ -2,11 +2,9 @@
 In development:
 ------                              
               zdev 
-                 * calc sample : sum expression
-                 * calc sample : difference expression
-                 * calc sample : product expression
-                 * calc sample : fraction expression
                  * calc sample : brackets
+                 * calc sqrt function
+                 * calc max function
                  * calc sample : negative number
                  * calc sample : real number
                  * calculator : move lexicalOp to the script

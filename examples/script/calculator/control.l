@@ -55,7 +55,6 @@
 
 #symbol testCase =
 [    
-//    console writeLine:"Press any key to start" readChar.
     "22" testEvaluation.
     "22" testStaticEvaluation.
 
@@ -63,19 +62,12 @@
     "2+3-1" testStaticEvaluation.
             
 //    #var aCase1 := "-2+3".
-//    
-//    #var aCaseResult1 := aCase1 evaluated.    
-//    console writeLine:aCase1:" evaluated as ":aCaseResult1.
-//    
-//    #var aCase2 := "2+3*4".
-//    
-//    #var aCaseResult2 := aCase2 evaluated.
-//    console writeLine:aCase2:" evaluated as ":aCaseResult2.
-//    
-//    #var aCase3 := "(2+3)*4".
-//    
-//    #var aCaseResult3 := aCase3 evaluated.
-//    console writeLine:aCase3:" evaluated as ":aCaseResult3.
+
+    "2+3*4" testEvaluation.
+    "2+3*4" testStaticEvaluation.
+
+    "(2+3)*4" testEvaluation.
+    "(2+3)*4" testStaticEvaluation.
 ].
 
 #symbol testProgram =
