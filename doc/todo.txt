@@ -2,7 +2,6 @@
 In development:
 ------                              
               zdev 
-                 * calc sample : brackets
                  * calc sqrt function
                  * calc max function
                  * calc sample : negative number

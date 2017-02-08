@@ -1,5 +1,0 @@
-? "Enter two integer numbers:"
-a=extensions'io'consoleEx => system'Integer.new()
-b=extensions'io'consoleEx => system'Integer.new()
-? "The result is:"
-? a + b

@@ -15,6 +15,7 @@ bin\elc examples\files\textdb\textdb.prj
 bin\elc examples\console\matrix\matrix.prj
 bin\elc examples\console\trans\tanslit.prj
 bin\elc examples\script\interpreter\interpreter.prj
+bin\elc examples\script\calculator\calc.xprj
 bin\elc examples\script\calculator\calc.prj
 bin\elc examples\gui\agenda\agenda.prj
 bin\elc examples\gui\graphs\graphs.prj

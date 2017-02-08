@@ -1,9 +1,0 @@
-system'console
-system'console "Enter two integer number:" ^write(1) .
-extensions'io'consoleEx system'Integer ^new(0) ^eval&readLine(1)
-system'console "Enter two integer number:" ^write(1) .
-extensions'io'consoleEx system'Integer ^new(0) ^eval&readLine(1)
-^add(1)
-system'console "The result is:" ^write(1) .
-^eval&writeLine(1)
-                            
