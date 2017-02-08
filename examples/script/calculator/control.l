@@ -59,7 +59,7 @@
     "22" testEvaluation.
     "22" testStaticEvaluation.
 
-    //"2+3-1" testEvaluation.
+    "2+3-1" testEvaluation.
     "2+3-1" testStaticEvaluation.
             
 //    #var aCase1 := "-2+3".

@@ -10,9 +10,9 @@
    #define items      ::= "include" include items;
    #define items      ::= ")" eof;
 
-   #define include    ::= <= ( < += "2" > += " %""system'dynamic'tapeOp.var&args$[]""" += " %""include[2]""" => "(" forward alias <= ) " " >> > " . " =>;
+   #define include    ::= <= ( < += "2" > += " %""system'dynamic'tapeOp.var&args$[]""" += " %""include[2]""" => "(" forward alias <= ) " " >> > " " =>;
 
-   #define symbol     ::= <= ( < += "2" > += " %""system'dynamic'tapeOp.var&args$[]""" => "(" symbol_bdy ")" <= ) " " >> > " . " =>;
+   #define symbol     ::= <= ( < += "2" > += " %""system'dynamic'tapeOp.var&args$[]""" => "(" symbol_bdy ")" <= ) " " >> > " " =>;
    #define symbol_bdy ::= <= > += " %""open&symbol[0]""" => identifier expr <= > += " %""close[0]""" =>;
 
    #define identifier ::= <= > += " %""new&identToken[1]""" => "identifier" name;

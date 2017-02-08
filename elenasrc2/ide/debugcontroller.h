@@ -28,9 +28,9 @@
 namespace _ELENA_
 {
 
-#define DEBUG_MAX_LIST_LENGTH  100
+#define DEBUG_MAX_LIST_LENGTH  300
 #define DEBUG_MAX_STR_LENGTH   260
-#define DEBUG_MAX_ARRAY_LENGTH 100
+#define DEBUG_MAX_ARRAY_LENGTH 300
 
 // --- DebugController ---
 

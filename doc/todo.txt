@@ -38,6 +38,9 @@ In development:
                  * at least print the token where the parser error is
                  * CodeScope : after each statement clear the top stack item
 
+              xdev - generic development
+                 * message string
+                 * several messages can be packed into the message string
 ------                                 
 Pipeline:
 ------                                                                                         
