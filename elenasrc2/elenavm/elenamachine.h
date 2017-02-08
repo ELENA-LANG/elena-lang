@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  4
+#define ELENAVM_REVISION  5
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2016 by Alex Rakov"

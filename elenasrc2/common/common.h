@@ -145,6 +145,12 @@ public:
 
       return emptystr(value) ? defaultValue : value.toInt();
    }
+   virtual int getHexSetting(ident_t key, int defaultValue = 0)
+   {
+      ident_t value = getSetting(key);
+
+      return emptystr(value) ? defaultValue : value.toLong(16);
+   }
    virtual int getBoolSetting(ident_t key, bool defaultValue = false)
    {
       ident_t value = getSetting(key);

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2016, by Alexei Rakov
+//                                              (C)2009-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -113,8 +113,8 @@ void InstanceConfig :: init(path_t configPath, IniConfigFile& config)
 {
    // compiler options
    //maxThread = config.getIntSetting(SYSTEM_CATEGORY, SYSTEM_MAXTHREAD, maxThread);
-   mgSize = config.getIntSetting(LINKER_MGSIZE, mgSize);
-   ygSize = config.getIntSetting(LINKER_YGSIZE, ygSize);
+   mgSize = config.getHexSetting(LINKER_MGSIZE, mgSize);
+   ygSize = config.getHexSetting(LINKER_YGSIZE, ygSize);
 
    const char* path = config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL);
    if (!emptystr(path)) {

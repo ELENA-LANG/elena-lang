@@ -35,6 +35,7 @@ In development:
                  * there should be possibility to save the resulting code in the file
                  * at least print the token where the parser error is
                  * CodeScope : after each statement clear the top stack item
+                 * NEW_TAPE_MESSAGE - command to copy the stack into the object
 
               xdev - generic development
                  * message string

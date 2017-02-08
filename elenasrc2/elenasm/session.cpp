@@ -199,6 +199,11 @@ void* Session :: translate(ident_t script)
 
       return NULL;
    }
+   catch (_Exception) {
+      _lastError.copy("Internal Error");
+
+      return NULL;
+   }
 }
 
 void* Session :: translate(path_t path, int encoding, bool autoDetect)

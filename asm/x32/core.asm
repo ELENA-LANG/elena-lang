@@ -834,14 +834,14 @@ procedure % INIT
   rep  stos
 
 labNext:
-  mov  ecx, 10000000h
+  mov  ecx, 8000000h // ; 10000000h
   mov  ebx, [data : %CORE_GC_SIZE]
   and  ebx, 0FFFFFF80h     // ; align to 128
   shr  ebx, page_size_order_minus2
   call code : %NEW_HEAP
   mov  [data : %CORE_GC_TABLE + gc_header], eax
 
-  mov  ecx, 40000000h
+  mov  ecx, 20000000h // ; 40000000h
   mov  ebx, [data : %CORE_GC_SIZE]
   and  ebx, 0FFFFFF80h     // align to 128
   call code : %NEW_HEAP
