@@ -4,23 +4,6 @@
 #import extensions.
 #import extensions'scripting.
 
-//// --- controller ---
-//
-//#symbol control =
-//{
-//    greeting = "Enter the expression to evaluate (e.g. 2+2) or -q to exit".
-//    
-//    prompt = ">".
-//    
-//    proceed : aLine
-//    [
-//        ("-q" == aLine)
-//            ? [ 'program stop. ^emptyLiteralValue. ]
-//            ! [
-//                ^ aLine evaluated.
-//            ].
-//    ]    
-//}.
 ////'program=extensions'programLoop
 // --- testCase ---
 
@@ -53,35 +36,52 @@
     ]
 }
 
-#symbol testCase =
+#symbol testCases =
 [    
-    "22" testEvaluation.
-    "22" testStaticEvaluation.
+    "22.4" testEvaluation.
 
     "2+3-1" testEvaluation.
-    "2+3-1" testStaticEvaluation.
             
-//    #var aCase1 := "-2+3".
+    "-2+3" testEvaluation.
 
     "2+3*4" testEvaluation.
-    "2+3*4" testStaticEvaluation.
 
     "(2+3)*4" testEvaluation.
+    
+    "sqrt(2*2)" testEvaluation.
+    
+    "min(2,3)" testEvaluation.
+].
+
+#symbol staticTestCases =
+[    
+    "22.4" testStaticEvaluation.
+
+    "2+3-1" testStaticEvaluation.
+            
+    "-2+3" testEvaluation.
+
+    "2+3*4" testStaticEvaluation.
+
     "(2+3)*4" testStaticEvaluation.
+    
+    "sqrt(2*2)" testEvaluation.    
 ].
 
-#symbol testProgram =
-[
-    #var machine := StateMachine new:dynamicRules seek &state0.
-    #var machine2 := StateMachine new:staticRules seek &state0.
-    
-    machine digit:"1".
-    machine2 digit:"1".
-    
-    #var retVal := machine value.
-    #var retVal2 := machine2 value.
-].
+// --- controller ---
 
-#symbol program =
-[
-].
+#symbol control =
+{
+    greeting = "Enter the expression to evaluate (e.g. 2+2) or -q to exit".
+    
+    prompt = ">".
+    
+    proceed : aLine
+    [
+        ("-q" == aLine)
+            ? [ 'program stop. ^emptyLiteralValue. ]
+            ! [
+                ^ aLine evaluated &with:'rules.
+            ].
+    ]    
+}.

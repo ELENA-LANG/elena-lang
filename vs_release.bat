@@ -343,6 +343,7 @@ md examples\gui\c_a_g\bin
 md examples\script\calculator 
 copy %1\examples\script\calculator\*.l examples\script\calculator 
 copy %1\examples\script\calculator\*.prj examples\script\calculator 
+copy %1\examples\script\calculator\*.xprj examples\script\calculator 
 copy %1\examples\script\calculator\*.es examples\script\calculator 
 
 md examples\console\datetime 

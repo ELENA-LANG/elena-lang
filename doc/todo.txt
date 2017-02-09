@@ -2,14 +2,15 @@
 In development:
 ------                              
               zdev 
-                 * calc sqrt function
-                 * calc max function
-                 * calc sample : negative number
-                 * calc sample : real number
-                 * calculator : move lexicalOp to the script
-                 * calc sample
+                 * calc sample : static one
+
+              zdev - cellular automata
+                 * general architecture
+
+              zdev 
                  * fix interpreter sample
                  * hello world sample
+                 * calc sample : gui
 
               xdev - general implementation
                  * gui vm client

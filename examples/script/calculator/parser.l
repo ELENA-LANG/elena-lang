@@ -11,25 +11,20 @@
         ((self >= #48)and:(self <= #57))
             ? [ ^ %digit. ].
 
-        (self == #43)
-            ? [ ^ %plus. ].
+        ((self >= #97)and:(self <= #122))
+            ? [ ^ %letter. ].
 
-        (self == #45)
-            ? [ ^ %minus. ].
-            
-        (self == #42)
-            ? [ ^ %star. ].
-            
-        (self == #47)
-            ? [ ^ %slash. ].
-            
-        (self == #40)
-            ? [ ^ %opening. ].
-            
-        (self == #41)
-            ? [ ^ %closing. ].
-            
-        ^ %unknown.            
+        self =>
+            #32 ? [ ^ %whitespace. ]
+            #40 ? [ ^ %opening. ]
+            #41 ? [ ^ %closing. ]
+            #42 ? [ ^ %star. ]
+            #43 ? [ ^ %plus. ]
+            #44 ? [ ^ %comma. ]
+            #45 ? [ ^ %minus. ]
+            #46 ? [ ^ %dot. ]
+            #47 ? [ ^ %slash. ]
+            ! [ ^ %unknown. ].
     ]
 }
 
@@ -47,6 +42,11 @@
         theLast := aNode.
 
         theRoot := theRoot + aNode.
+    ]
+
+    #method newArgument
+    [
+        theLast := theLast newArgument.
     ]
 
     #constructor new
@@ -78,7 +78,9 @@
             ^ aNode.
         ].
     ]
-    
+
+    #method setFunction : function []
+        
     #constructor new:strategy &baseLevel:baseLevel
     [
         theStrategy := strategy.
@@ -125,9 +127,23 @@
 
 #class TreeLeaf :: BaseTreeNode
 {
-    #field theToken.    
+    #field theToken.
+    #field theFunction.
 
-    #method append : aChar
+    #method setFunction : function
+    [
+        theFunction := function.
+    ]
+
+    #method newArgument
+    [
+        ($nil == theFunction)
+            ? [ #throw InvalidArgumentException new. ].
+            
+        ^ theFunction set.
+    ]
+
+    #method appendContent : aChar
     [
         theToken += aChar.
     ]
@@ -138,7 +154,65 @@
         <= (new:aStrategy &baseLevel:baseLevel)
     [
         theToken := String new.
-        theStrategy := aStrategy.
+    ]
+}
+
+// --- FunctionNode ---
+
+#class FunctionNode :: TreeLeaf
+{
+    #field theArg1.
+    #field theArg2.
+    
+    #field theArgState.
+    
+    #method value
+    [
+        #var subj := Signature new &literal:theToken.
+        
+        ($nil == theArg1)
+            ? [ ^ theStrategy::subj get. ].
+            
+        ($nil == theArg2)
+            ? [ ^ theStrategy::subj eval:(theArg1 value). ].
+            
+        ^ theStrategy::subj eval:(theArg1 value):(theArg2 value).
+    ]
+
+    #method append &first_arg:node
+    [
+        ($nil == theArg1)
+            ? [ theArg1 := node setFunction:$self. ]
+            ! [ theArg1 := theArg1 + node setFunction:$self. ].
+    ]
+
+    #method append &second_arg:node
+    [
+        ($nil == theArg2)
+            ? [ theArg2 := node setFunction:$self. ]
+            ! [ theArg2 := theArg2 + node setFunction:$self. ].
+    ]
+
+    #method set
+        => theArgState.
+        
+    #method set &first_arg
+    [
+        theArgState := %second_arg.
+    ]    
+        
+    #method set &second_arg
+    [
+        theArgState := %third_arg.
+    ]    
+
+    #method append : aNode
+        => theArgState.
+        
+    #constructor new:aStrategy &baseLevel:baseLevel
+        <= (new:aStrategy &baseLevel:baseLevel)
+    [
+        theArgState := %first_arg.
     ]
 }
 
@@ -175,7 +249,17 @@
     [
         theLevel := theLevel - 10.
         
+        (0 > theLevel)
+            ? [ #throw InvalidOperationException new. ].
+        
         $self::theCurrentState closing:ch.
+    ]
+
+    #method comma : ch
+    [
+        theDerivationTree newArgument.
+        
+        $self::theCurrentState comma:ch.
     ]
 
     #method invalidate
@@ -213,10 +297,15 @@
     [
         theDerivationTree append:(TreeNode new:strategy &baseLevel:theLevel).
     ]
+
+    #method newFunction : strategy
+    [
+        theDerivationTree append:(FunctionNode new:strategy &baseLevel:theLevel).
+    ]
     
     #method addContent : content
     [
-        theDerivationTree last_node append:content.
+        theDerivationTree last_node appendContent:content.
     ]
     
     #method => theCurrentState.
