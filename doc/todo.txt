@@ -1,8 +1,15 @@
 ------                                 
 In development:
 ------                              
-              zdev 
-                 * calc sample : static one
+
+              idev - debugger
+                 * show int array correctly
+
+              xdev - general implementation
+                 * #247 : operator with known operands 
+                 * embeddable call : #var(int)n := a@2. // where a is known e.g. intarray
+                 * operations with matrix
+                 * embeddable call : #var(int)n := a@2@2. // where a is known e.g. intmatrix
 
               zdev - cellular automata
                  * general architecture

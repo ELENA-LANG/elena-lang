@@ -15,6 +15,7 @@
 [-] several critical bug fixes in structure routines
 [+] #190 : Closure : auto boxing / unboxing local variables
 [-] option "-c" can be skipped, the project path may be given directly
+[*] #247 : operator with known operands 
 
 [LIB]
 [+] #62 : branching / jumping in system'dynamic'Tape

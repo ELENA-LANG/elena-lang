@@ -2616,15 +2616,16 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int, int op
    }
 
    ref_t loperandRef = resolveObjectReference(scope, loperand);
+   ref_t roperandRef = resolveObjectReference(scope, roperand);
+   ref_t roperand2Ref = 0;
    ref_t resultClassRef = 0;
    int operationType = 0;
    if (roperand2.kind != okUnknown) {
-      operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef,
-         resolveObjectReference(scope, roperand),
-         resolveObjectReference(scope, roperand2), resultClassRef);
+      roperand2Ref = resolveObjectReference(scope, roperand2);
+
+      operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, roperand2Ref, resultClassRef);
    }
-   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef,
-      resolveObjectReference(scope, roperand), resultClassRef);
+   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
 
    if (operationType != 0) {
       // if it is a primitive operation
@@ -2632,7 +2633,8 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int, int op
 
       retVal = assignResult(scope, node, resultClassRef);
    }
-   else retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, paramCount), HINT_NODEBUGINFO);
+   // if not , replace with appropriate method call
+   else retVal = compileMessage(node, scope, loperand, _logic->defineOperatorMessage(*scope.moduleScope, operator_id, paramCount, loperandRef, roperandRef, roperand2Ref), HINT_NODEBUGINFO);
 
    return retVal;
 }

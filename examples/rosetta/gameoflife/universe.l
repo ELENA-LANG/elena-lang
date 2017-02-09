@@ -1,4 +1,36 @@
 #import system.
+
+//#template nindexer : template_subj
+//{
+//   #method(stacksafe,int,embeddable,w3) template_subj &int:x &int:y
+//   [
+//        #var(int)val.
+//        $self target &int:x &int:y &vint:val.
+//        
+//        ^ val.
+//   ]
+//}
+
+//#subject space = BaseSpace.
+//
+//#class(limited) BaseSpace
+//{
+////    #method read &int:x &int:y &vnt:retVal
+////    [
+////    ]
+////    
+////    #method set &int:x &int:y &int:val
+////    [
+////    ]
+//}
+//
+//#class Space :: BaseSpace
+//{
+//    #constructor new
+//    [
+//    ]
+//}
+
 //#define system'collections.
 //
 //// --- Point ---

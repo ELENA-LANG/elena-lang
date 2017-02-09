@@ -144,6 +144,8 @@ public:
 
    virtual void optimizeDuplicateBoxing(SNode node);
 
+   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2);
+
    CompilerLogic();
 };
 
