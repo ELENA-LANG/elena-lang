@@ -5,7 +5,7 @@ Ultimate goals
 - maximally reusable code        
 - dynamic code without reflection
 
-Version 2.1.0
+Version 2.2.0
 -------------
 - basic linux version (only console)
 - start the code documentation
@@ -16,10 +16,11 @@ Version 2.1.0
 - gcx: multi-theading beta (standalone, vm client, gui, console)
 - gui / console vm clients
 - gui vm / mt
-
-Version 2.2.0
--------------
 - x64 alpha version
+
+Version 2.3.0
+-------------
+- x64 beta version
 - web
 - api : optimize utf8 <-> utf16, utf8 <-> utf32, utf16 <-> utf32
 - code optimization
@@ -32,20 +33,19 @@ Version 2.2.0
 - linux version (console & windowsx)
 - vmt-less action                 
 
-Version 2.3.0
+Version 2.4.0
 -------------
 - MVC
 - start migrating all assembler code to c; either dll or import object code
 - gcx, final version
 - x86 native code: optimize with pentium pro commands
 
-Version 2.4.0
+Version 2.5.0
 -------------
 - start work on visualizer
 
-Version 2.5.0
+Version 2.6.0
 -------------
-- x64 beta version
 - lib30 review -> lib31
 - optimize elenavm
 - optimize elenart
@@ -56,14 +56,8 @@ Version 2.x.x
 - system'dynamics'tape optimization, currently every object is checked if it is a message,
   could it be optimized (move the check to the message, the only question how one can
   check if it is a tape call)?
-- maintenance: review postponed todo
 - ide: make possible to copy content of output
-= dynamic programming: beta
-- maintenance: review known bugs
 - elenavm script: make possible to dynamically declare static variable
-- samples: multi-threading
-- guiopencalc: gui description script (elenascript)
-- elenavm: make sure several applications can work simultaneously
 - guivmconsole
 = vm: full support (console & gui)
 = gcx: full support (including vm & gui)
@@ -124,16 +118,12 @@ Version 2.x.x
 - optimization: nested in the nested inline class: the current implementation
   will be optimized only for the first nested class, the second
   one still hold the object rather then link to the field owner
-- use get_count / get_size for the primitive code requiring object field count 
-  (what about string / array code, code it be leaved like it is for optimization?)
 - advanced byte code optimization / simple native code optimization
 - make possible to set warning for every module (like pragma in C++)
 - increase elenavm speed (caching, cachetable usage, 10%)
 - increase elena code speed (up to 35%)
 - ide: support thread list
 - f:metamorphose - sample to demostrate the group modification 
-- start x64 support
-- convert elena projects to xml
 - elenasm: try to minimize the memory usage
 - elenasm: try to improve performance
 - native code optimization: reduce branching
@@ -163,14 +153,10 @@ Version 2.x.x
 - forward module implementation: is it possible to optimize the implementation?
   (probably map it only if the reference exists)
 - replace external functions with inline one if is does not call OS routine
-- dsa rules: it should be possible to use syntax to generate source code
-  (compiler compiler mode)
 - ide2: win32 plug-ins
 - full linux support (x64 + x32, console, gui)
 - advanced native code optimization
 
-- elt: code generation, it should be possible to create a code based on syntax
-  expression
 - there should be two build mode - release / debug
 - start to use pentium commands
 - start to use GetDateFormatExW (windows server 2003 will not be supported)

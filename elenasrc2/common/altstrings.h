@@ -186,6 +186,7 @@ public:
 
    wide_c* clone();
    wide_c* clone(size_t index);
+   wide_c* clone(size_t index, size_t length);
 
    bool compare(const wide_c* s) const;
    bool compare(const wide_c* s, size_t length) const;

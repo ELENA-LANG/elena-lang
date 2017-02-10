@@ -5686,7 +5686,9 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
             }
          }
          else if (subNode != lxNone && subNode.existChild(lxEmbeddable)) {
-            _logic->optimizeEmbeddableGet(scope, *this, node);
+            if (!_logic->optimizeEmbeddableGet(scope, *this, node)) {
+               _logic->optimizeEmbeddableGetAt(scope, *this, node);
+            }
          }
       }
    }
@@ -5950,11 +5952,18 @@ void Compiler :: optimizeSymbolTree(SNode node, SourceScope& scope, int warningM
 
 void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
 {
-   // Optimization : var = get&subject => eval&subject2:var[1]
+   // Optimization : var = get&subject => eval&subject&var[1]
    ref_t type = 0;
    ref_t returnType = classScope.info.methodHints.get(ClassInfo::Attribute(methodNode.argument, maType));
    if (_logic->recognizeEmbeddableGet(*classScope.moduleScope, methodNode, returnType, type)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGet), type);
+
+      // HOTFIX : allowing to recognize embeddable get in the class itself
+      classScope.save();
+   }
+   // Optimization : var = getAt&int => read&int&subject&var[2]
+   else if (_logic->recognizeEmbeddableGetAt(*classScope.moduleScope, methodNode, returnType, type)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt), type);
 
       // HOTFIX : allowing to recognize embeddable get in the class itself
       classScope.save();
@@ -6389,6 +6398,20 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t sub
       callNode.appendNode(assignTarget.type, assignTarget.argument);
       assignTarget = lxIdle;
       callNode.setArgument(encodeMessage(subject, EVAL_MESSAGE_ID, 1));
+   }
+}
+
+void Compiler :: injectEmbeddableGetAt(SNode assignNode, SNode callNode, ref_t subject)
+{
+   // removing assinging operation
+   assignNode = lxExpression;
+
+   // move assigning target into the call node
+   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+   if (assignTarget != lxNone) {
+      callNode.appendNode(assignTarget.type, assignTarget.argument);
+      assignTarget = lxIdle;
+      callNode.setArgument(encodeMessage(subject, READ_MESSAGE_ID, 2));
    }
 }
 

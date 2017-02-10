@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              idev - debugger
-                 * show int array correctly
-
               xdev - general implementation
                  * #247 : operator with known operands 
                  * embeddable call : #var(int)n := a@2. // where a is known e.g. intarray

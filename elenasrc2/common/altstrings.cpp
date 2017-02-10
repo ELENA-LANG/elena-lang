@@ -410,10 +410,8 @@ char* StrFactory :: allocate(size_t size, const char* value)
 {
    char*s = (char*)malloc(size);
 
-   if (!emptystr(value)) {
+   if (!emptystr(value))
       memcpy(s, value, size);
-      s[size] = 0;
-   }
 
    return s;
 }
@@ -711,6 +709,11 @@ double strToDouble(const char* s)
 wchar_t* StrFactory :: clone(const wchar_t* s)
 {
    return _wcsdup(s);
+}
+
+wchar_t* clone(const wchar_t* s, size_t length)
+{
+   return emptystr(s) ? NULL : StrFactory::allocate(length, s);
 }
 
 wchar_t* StrFactory :: allocate(size_t size, const wchar_t* value)
@@ -1440,7 +1443,11 @@ char* ident_t :: clone(size_t index)
 
 char* ident_t::clone(size_t index, size_t length)
 {
-   return ::clone(_string + index, length);
+   char* dup = ::clone(_string + index, length + 1);
+
+   dup[length] = 0;
+
+   return dup;
 }
 
 bool ident_t :: compare(const char* s) const
@@ -1555,6 +1562,15 @@ wide_c* wide_t :: clone()
 wide_c* wide_t :: clone(size_t index)
 {
    return ::clone(_string + index);
+}
+
+wide_c* wide_t :: clone(size_t index, size_t length)
+{
+   wide_c* dup = ::clone(_string + index, length + 1);
+
+   dup[length] = 0;
+
+   return dup;
 }
 
 bool wide_t :: compare(const wide_c* s) const
