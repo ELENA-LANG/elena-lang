@@ -1208,6 +1208,13 @@ bool CompilerLogic :: recognizeEmbeddableGetAt(_CompilerScope& scope, SNode root
             SNodePattern(lxExpression),
             SNodePattern(lxDirectCalling, lxSDirctCalling),
             SNodePattern(lxLocal));
+         if (indexArg == lxNone)
+            indexArg = SyntaxTree::findPattern(root, 4,
+               SNodePattern(lxExpression),
+               SNodePattern(lxDirectCalling, lxSDirctCalling),
+               SNodePattern(lxExpression),
+               SNodePattern(lxLocal));
+
          if (indexArg.type != lxLocal || indexArg.argument != (ref_t)-2)
             return false;
 

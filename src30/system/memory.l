@@ -138,6 +138,15 @@
     #method(stacksafe) read &int:anIndex &vbyte:anInt
         => system'core_routines'__bytearray.
 
+    #method(embeddable,w3) getAt&int:n
+    [
+        #var(byte)retVal.
+        
+        $self read &int:n &vbyte:retVal.
+        
+        ^ retVal.
+    ]
+
     /// Writes a short integer value at the specified position
     #method(stacksafe) write &int:anIndex &short:anInt
         => system'core_routines'__bytearray.
@@ -276,6 +285,15 @@
     #method(stacksafe) write &int:anIndex &short:aValue
         => system'core_routines'__shortarray.
 
+    #method(embeddable,w3) getAt&int:n
+    [
+        #var(short)retVal.
+        
+        $self read &int:n &vshort:retVal.
+        
+        ^ retVal.
+    ]
+
     /// Reads a short integer value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vshort:aValue
         => system'core_routines'__shortarray.
@@ -349,6 +367,15 @@
     /// Reads an integer value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vint:anInt
         => system'core_routines'__intarray.
+
+    #method(embeddable,w3) getAt&int:n
+    [
+        #var(int)retVal.
+        
+        $self read &int:n &vint:retVal.
+        
+        ^ retVal.
+    ]
 
     /// Creates the object copy
     #method clone = IntArray new &intarray:$self.
@@ -619,6 +646,15 @@
     #method(stacksafe) read &int:anIndex &vreal:aReal
         => system'core_routines'__realarray.
 
+    #method(embeddable,w3) getAt&int:n
+    [
+        #var(real)retVal.
+        
+        $self read &int:n &vreal:retVal.
+        
+        ^ retVal.
+    ]
+
     /// Creates the object copy
     #method clone = RealArray new &realarray:$self.
 }
@@ -760,6 +796,15 @@
     /// Reads a character value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vchar:anInt
         => system'core_routines'__chararray.
+
+    #method(embeddable,w3) getAt&int:n
+    [
+        #var(char)retVal.
+        
+        $self read &int:n &vchar:retVal.
+        
+        ^ retVal.
+    ]
 
     #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
         => system'core_routines'__chararray.
