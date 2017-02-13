@@ -5687,7 +5687,8 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
          }
          else if (subNode != lxNone && subNode.existChild(lxEmbeddable)) {
             if (!_logic->optimizeEmbeddableGet(scope, *this, node)) {
-               _logic->optimizeEmbeddableGetAt(scope, *this, node);
+               if (!_logic->optimizeEmbeddableGetAt(scope, *this, node, maEmbeddableGetAt, 2))
+                  _logic->optimizeEmbeddableGetAt(scope, *this, node, maEmbeddableGetAt2, 3);
             }
          }
       }
@@ -5964,6 +5965,13 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
    // Optimization : var = getAt&int => read&int&subject&var[2]
    else if (_logic->recognizeEmbeddableGetAt(*classScope.moduleScope, methodNode, returnType, type)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt), type);
+
+      // HOTFIX : allowing to recognize embeddable get in the class itself
+      classScope.save();
+   }
+   // Optimization : var = getAt&int => read&int&subject&var[2]
+   else if (_logic->recognizeEmbeddableGetAt2(*classScope.moduleScope, methodNode, returnType, type)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt2), type);
 
       // HOTFIX : allowing to recognize embeddable get in the class itself
       classScope.save();
@@ -6401,7 +6409,7 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t sub
    }
 }
 
-void Compiler :: injectEmbeddableGetAt(SNode assignNode, SNode callNode, ref_t subject)
+void Compiler :: injectEmbeddableGetAt(SNode assignNode, SNode callNode, ref_t subject, int paramCount)
 {
    // removing assinging operation
    assignNode = lxExpression;
@@ -6411,7 +6419,7 @@ void Compiler :: injectEmbeddableGetAt(SNode assignNode, SNode callNode, ref_t s
    if (assignTarget != lxNone) {
       callNode.appendNode(assignTarget.type, assignTarget.argument);
       assignTarget = lxIdle;
-      callNode.setArgument(encodeMessage(subject, READ_MESSAGE_ID, 2));
+      callNode.setArgument(encodeMessage(subject, READ_MESSAGE_ID, paramCount));
    }
 }
 

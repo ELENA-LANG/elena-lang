@@ -1251,6 +1251,81 @@ bool CompilerLogic :: recognizeEmbeddableGetAt(_CompilerScope& scope, SNode root
    return false;
 }
 
+bool CompilerLogic :: recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode root, ref_t returningType, ref_t& subject)
+{
+   if (returningType != 0 && defineStructSize(scope, scope.attributeHints.get(returningType), 0, true) > 0) {
+      root = root.findChild(lxNewFrame);
+
+      if (SyntaxTree::matchPattern(root, lxObjectMask, 2,
+         SNodePattern(lxExpression),
+         SNodePattern(lxReturning)))
+      {
+         SNode message = SyntaxTree::findPattern(root, 2,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling));
+
+         // if it is read&index1&index2&var[2] message
+         if (getParamCount(message.argument) != 3 || getVerb(message.argument) != READ_MESSAGE_ID)
+            return false;
+
+         // check if it is operation with $self
+         SNode target = SyntaxTree::findPattern(root, 3,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling),
+            SNodePattern(lxThisLocal));
+
+         if (target == lxNone || target.argument != 1)
+            return false;
+
+         // check if the index is used
+         SNode index1Arg = target.nextNode(lxObjectMask);
+         SNode index2Arg = index1Arg.nextNode(lxObjectMask);
+
+         if (index1Arg == lxExpression)
+            index1Arg = index1Arg.firstChild(lxObjectMask);
+
+         if (index2Arg == lxExpression)
+            index2Arg = index2Arg.firstChild(lxObjectMask);
+
+         if (index1Arg.type != lxLocal || index1Arg.argument != (ref_t)-2)
+            return false;
+
+         if (index2Arg.type != lxLocal || index2Arg.argument != (ref_t)-3)
+            return false;
+
+         // check if the argument is returned
+         SNode arg = SyntaxTree::findPattern(root, 4,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling),
+            SNodePattern(lxExpression),
+            SNodePattern(lxLocalAddress));
+
+         if (arg == lxNone) {
+            arg = SyntaxTree::findPattern(root, 5,
+               SNodePattern(lxExpression),
+               SNodePattern(lxDirectCalling, lxSDirctCalling),
+               SNodePattern(lxExpression),
+               SNodePattern(lxExpression),
+               SNodePattern(lxLocalAddress));
+         }
+
+         SNode ret = SyntaxTree::findPattern(root, 4,
+            SNodePattern(lxReturning),
+            SNodePattern(lxExpression),
+            SNodePattern(lxBoxing),
+            SNodePattern(lxLocalAddress));
+
+         if (arg != lxNone && ret != lxNone && arg.argument == ret.argument) {
+            subject = getSignature(message.argument);
+
+            return true;
+         }
+      }
+   }
+
+   return false;
+}
+
 bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode)
 {
    SNode object = SyntaxTree::findPattern(methodNode, 4,
@@ -1287,7 +1362,7 @@ bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& co
    else return false;
 }
 
-bool CompilerLogic :: optimizeEmbeddableGetAt(_CompilerScope& scope, _Compiler& compiler, SNode node)
+bool CompilerLogic :: optimizeEmbeddableGetAt(_CompilerScope& scope, _Compiler& compiler, SNode node, int attribte, int paramCount)
 {
    SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
    SNode callTarget = callNode.findChild(lxCallTarget);
@@ -1295,10 +1370,10 @@ bool CompilerLogic :: optimizeEmbeddableGetAt(_CompilerScope& scope, _Compiler& 
    ClassInfo info;
    defineClassInfo(scope, info, callTarget.argument);
 
-   ref_t subject = info.methodHints.get(Attribute(callNode.argument, maEmbeddableGetAt));
+   ref_t subject = info.methodHints.get(Attribute(callNode.argument, attribte));
    // if it is possible to replace get&subject operation with eval&subject2:local
    if (subject != 0) {
-      compiler.injectEmbeddableGetAt(node, callNode, subject);
+      compiler.injectEmbeddableGetAt(node, callNode, subject, paramCount);
 
       return true;
    }

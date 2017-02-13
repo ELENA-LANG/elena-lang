@@ -489,6 +489,7 @@ enum MethodAttribute
    //   maEmbeddedInit   = 0x104,
    maEmbeddableIdle     = 0x005,
    maEmbeddableGetAt    = 0x106,
+   maEmbeddableGetAt2   = 0x107,
 };
 
 struct ClassInfo
