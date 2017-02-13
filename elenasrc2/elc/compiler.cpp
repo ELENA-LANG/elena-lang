@@ -5986,7 +5986,7 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
       classScope.save();
    }
    // Optimization : var = eval&subj&int => eval&subj&var[2]
-   else if (_logic->recognizeEmbeddableEval(*classScope.moduleScope, methodNode, classScope.extensionMode, returnType, type)) {
+   else if (_logic->recognizeEmbeddableEval(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval), type);
 
       // HOTFIX : allowing to recognize embeddable get in the class itself

@@ -2,13 +2,6 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * template outnprop with extension : magic - replace $self with extension call?
-                 * test get, getAt, getAt2, eval
-
-              adev - general implementation
-                 * test sqr, sqrt, power
-
               zdev - cellular automata
                  * general architecture
                  * game of life : simple implementation

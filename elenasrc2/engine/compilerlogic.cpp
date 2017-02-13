@@ -1224,16 +1224,10 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
             return false;
 
          // check if the index is used
-         SNode indexArg = SyntaxTree::findPattern(root, 3,
-            SNodePattern(lxExpression),
-            SNodePattern(lxDirectCalling, lxSDirctCalling),
-            SNodePattern(lxLocal));
-         if (indexArg == lxNone)
-            indexArg = SyntaxTree::findPattern(root, 4,
-               SNodePattern(lxExpression),
-               SNodePattern(lxDirectCalling, lxSDirctCalling),
-               SNodePattern(lxExpression),
-               SNodePattern(lxLocal));
+         SNode indexArg = target.nextNode(lxObjectMask);
+
+         if (indexArg == lxExpression)
+            indexArg = indexArg.firstChild(lxObjectMask);
 
          if (indexArg.type != lxLocal || indexArg.argument != (ref_t)-2)
             return false;
