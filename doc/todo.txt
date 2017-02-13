@@ -2,6 +2,13 @@
 In development:
 ------                              
 
+              xdev - general implementation
+                 * template outnprop with extension : magic - replace $self with extension call?
+                 * test get, getAt, getAt2, eval
+
+              adev - general implementation
+                 * test sqr, sqrt, power
+
               zdev - cellular automata
                  * general architecture
                  * game of life : simple implementation
@@ -414,7 +421,6 @@ Pipeline:
                        * default dynamic constructor
                        
               xdev - byte code optimization  
-                       * use rep stos to clear the object after creating      
                        * review system_test code : $Console (ControlTest)
                        * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
                          better to compare value ?? (if it is true / false constants for example)
@@ -438,7 +444,6 @@ Pipeline:
 
                        * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
                        * n := n - $self - should be replaced with direct subtract operation if n is of int type and $self is IntNumber                       
-                       * make sure intvar can be passed as int without major overhead (no explicit typecasting)
                        
                        * optimize output code: system'BaseFunction2
                        * if $self/fields are not used - do not store eax
@@ -462,6 +467,7 @@ Pipeline:
                        * use imm mode for (n) => 1 ? [ now literal. ]
 
               xdev - native code optimization
+                       * use rep stos to clear the object after creating      
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)
                        * optimize hook / unhook commands
                        * should ret be followed with several nops?

@@ -229,31 +229,37 @@
 
 #class(extension:int) intOp
 {
-    #method(int,stacksafe) absolute
+    #method(stacksafe,outnprop:absolute) absolute &vint:retVal
     [
         #var(int)n := self.
-        
+
         (n < 0)
-            ? [ n := n * -1. ].
-        
-        ^ IntNumber new &int:n.
+            ? [ n *= -1. ].
+
+        retVal := n.
     ]
     
-    #method(int) mod : anOperand
+    #method(stacksafe,nfn:mod) mod &int:y &vint:retVal
     [
         #var(int)x := self.
-        #var(int)y := anOperand int.
         
         #var(int)z := x / y.
-        z := z * y.
+        z *= y.
         
-        ^ IntNumber new &int:(x - z).
+        retVal := (x - z).
+    ]
+    
+    #method(int,w3) mod : anOperand
+    [
+        #var(int)retVal := self mod &int:(anOperand int).
+        
+        ^ retVal.
     ]
     
     #method(real,w2)realDiv : anOperand
         = RealNumber new &int:self divide:anOperand.
     
-    #method(int,stacksafe)power &int:y
+    #method(stacksafe,nfn:power)power &int:y &vint:retVal
     [
         #var(int)x := self.
         #var(int)r := 1.
@@ -266,20 +272,17 @@
             i += 1.
         ].
         
-        ^ IntNumber new &int:r.
+        retVal := r.
     ]
     
-    #method(int,stacksafe) sqr
+    #method(stacksafe,outnprop:sqr) sqr &vint:retVal
     [
         #var(int)n := self.        
-        #var(int)aRetVal.
         
-        aRetVal := n * n.
-        
-        ^ IntNumber new &int:aRetVal.
+        retVal := n * n.
     ]
-
-    #method(int,stacksafe) sqrt
+    
+    #method(stacksafe,outnprop:sqrt) sqrt &vint:retVal
     [
         #var(int)num := self.
         
@@ -294,7 +297,7 @@
             n1 := (n + (num / n)) / 2.
         ].
         
-        ^ IntNumber new &int:n.
+        retVal := n.
     ]
 
     #method power : aPower

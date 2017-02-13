@@ -63,3 +63,15 @@
         ^ val.
    ]
 }
+
+// --- nfn ---
+
+#template nfn : template_fn
+{
+    #method(stacksafe,int,embeddable,w3) template_fn &int:n
+    [
+        #var(int)retVal.
+        $self target &int:n &vint:retVal.
+        ^ retVal.            
+    ]
+}

@@ -529,6 +529,7 @@ private:
       bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;
+      bool         extensionTemplateMode;
 //      bool         sealed;
 
       virtual Scope* getScope(ScopeLevel level)
@@ -1041,7 +1042,7 @@ public:
    virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef);
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
-   virtual void injectEmbeddableGetAt(SNode assignNode, SNode callNode, ref_t subject, int paramCount);
+   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
    virtual void injectFieldExpression(SNode node);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);

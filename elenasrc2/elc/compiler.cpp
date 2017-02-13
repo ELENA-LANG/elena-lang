@@ -956,16 +956,17 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->withOpenArg = false;
    this->stackSafe = this->classEmbeddable = false;
    this->generic = false;
-//   this->sealed = false;
-
-//   //NOTE : tape has to be overridden in the constructor
-//   this->tape = &parent->tape;
+   this->extensionTemplateMode = false;
 }
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 {
    if (terminal.compare(THIS_VAR)) {
-      if (stackSafe && classEmbeddable) {
+      if (extensionTemplateMode) {
+         //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
+         return ObjectInfo(okLocal, -1, ((ClassScope*)getScope(slClass))->reference);          
+      }
+      else if (stackSafe && classEmbeddable) {
          return ObjectInfo(okThisParam, 1, -1);
       }
       else return ObjectInfo(okThisParam, 1);
@@ -4413,6 +4414,13 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope)
             MethodScope methodScope(&scope);
             methodScope.message = current.argument;
 
+            //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
+            if (scope.getScope(Scope::slTemplate) != NULL) {
+               ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+               methodScope.extensionTemplateMode = (ownerScope != NULL && ownerScope->extensionMode != 0);
+            }
+
             // if it is a dispatch handler
             if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
 //               if (test(scope.info.header.flags, elRole))
@@ -5689,8 +5697,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
          }
          else if (subNode != lxNone && subNode.existChild(lxEmbeddable)) {
             if (!_logic->optimizeEmbeddableGet(scope, *this, node)) {
-               if (!_logic->optimizeEmbeddableGetAt(scope, *this, node, maEmbeddableGetAt, 2))
-                  _logic->optimizeEmbeddableGetAt(scope, *this, node, maEmbeddableGetAt2, 3);
+               _logic->optimizeEmbeddableOp(scope, *this, node);
             }
          }
       }
@@ -5958,22 +5965,29 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
    // Optimization : var = get&subject => eval&subject&var[1]
    ref_t type = 0;
    ref_t returnType = classScope.info.methodHints.get(ClassInfo::Attribute(methodNode.argument, maType));
-   if (_logic->recognizeEmbeddableGet(*classScope.moduleScope, methodNode, returnType, type)) {
+   if (_logic->recognizeEmbeddableGet(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGet), type);
 
       // HOTFIX : allowing to recognize embeddable get in the class itself
       classScope.save();
    }
    // Optimization : var = getAt&int => read&int&subject&var[2]
-   else if (_logic->recognizeEmbeddableGetAt(*classScope.moduleScope, methodNode, returnType, type)) {
+   else if (_logic->recognizeEmbeddableGetAt(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt), type);
 
       // HOTFIX : allowing to recognize embeddable get in the class itself
       classScope.save();
    }
    // Optimization : var = getAt&int => read&int&subject&var[2]
-   else if (_logic->recognizeEmbeddableGetAt2(*classScope.moduleScope, methodNode, returnType, type)) {
+   else if (_logic->recognizeEmbeddableGetAt2(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt2), type);
+
+      // HOTFIX : allowing to recognize embeddable get in the class itself
+      classScope.save();
+   }
+   // Optimization : var = eval&subj&int => eval&subj&var[2]
+   else if (_logic->recognizeEmbeddableEval(*classScope.moduleScope, methodNode, classScope.extensionMode, returnType, type)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval), type);
 
       // HOTFIX : allowing to recognize embeddable get in the class itself
       classScope.save();
@@ -6411,7 +6425,7 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t sub
    }
 }
 
-void Compiler :: injectEmbeddableGetAt(SNode assignNode, SNode callNode, ref_t subject, int paramCount)
+void Compiler :: injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb)
 {
    // removing assinging operation
    assignNode = lxExpression;
@@ -6421,7 +6435,7 @@ void Compiler :: injectEmbeddableGetAt(SNode assignNode, SNode callNode, ref_t s
    if (assignTarget != lxNone) {
       callNode.appendNode(assignTarget.type, assignTarget.argument);
       assignTarget = lxIdle;
-      callNode.setArgument(encodeMessage(subject, READ_MESSAGE_ID, paramCount));
+      callNode.setArgument(encodeMessage(subject, verb, paramCount));
    }
 }
 

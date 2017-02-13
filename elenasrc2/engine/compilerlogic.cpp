@@ -72,6 +72,28 @@ inline bool IsInvertedOperator(int& operator_id)
    }
 }
 
+// --- CompilerLogic Optimization Ops ---
+struct EmbeddableOp
+{
+   int attribute;
+   int paramCount;
+   int verb;
+
+   EmbeddableOp(int attr, int count, int verb)
+   {
+      this->attribute = attr;
+      this->paramCount = count;
+      this->verb = verb;
+   }
+};
+#define EMBEDDABLEOP_MAX 3
+EmbeddableOp embeddableOps[EMBEDDABLEOP_MAX] =
+{
+   EmbeddableOp(maEmbeddableGetAt, 2, READ_MESSAGE_ID),
+   EmbeddableOp(maEmbeddableGetAt2, 3, READ_MESSAGE_ID),
+   EmbeddableOp(maEmbeddableEval, 2, EVAL_MESSAGE_ID)
+};
+
 // --- CompilerLogic ---
 
 CompilerLogic :: CompilerLogic()
@@ -1108,7 +1130,7 @@ bool CompilerLogic :: validateClassFlag(ClassInfo& info, int flag)
    return true;
 }
 
-bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t returningType, ref_t& subject)
+bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
 {
    if (returningType != 0 && defineStructSize(scope, scope.attributeHints.get(returningType), 0, true) > 0) {
       root = root.findChild(lxNewFrame);
@@ -1129,14 +1151,13 @@ bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, 
          SNode target = SyntaxTree::findPattern(root, 3,
             SNodePattern(lxExpression),
             SNodePattern(lxDirectCalling, lxSDirctCalling),
-            SNodePattern(lxThisLocal));
+            SNodePattern(lxThisLocal, lxLocal));
 
-         //// if the target was optimized
-         //if (target == lxExpression) {
-         //   target = SyntaxTree::findChild(target, lxLocal);
-         //}
-
-         if (target == lxNone || target.argument != 1)
+         if (target == lxLocal && target.argument == -1 && extensionRef != 0) {            
+            if (message.findChild(lxCallTarget).argument != extensionRef)
+               return false;
+         }
+         else if (target != lxThisLocal || target.argument != 1)
             return false;
 
          // check if the argument is returned
@@ -1172,7 +1193,7 @@ bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, 
    return false;
 }
 
-bool CompilerLogic :: recognizeEmbeddableGetAt(_CompilerScope& scope, SNode root, ref_t returningType, ref_t& subject)
+bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, int verb, ref_t& subject)
 {
    if (returningType != 0 && defineStructSize(scope, scope.attributeHints.get(returningType), 0, true) > 0) {
       root = root.findChild(lxNewFrame);
@@ -1186,21 +1207,20 @@ bool CompilerLogic :: recognizeEmbeddableGetAt(_CompilerScope& scope, SNode root
             SNodePattern(lxDirectCalling, lxSDirctCalling));
 
          // if it is read&subject&var[2] message
-         if (getParamCount(message.argument) != 2 || getVerb(message.argument) != READ_MESSAGE_ID)
+         if (getParamCount(message.argument) != 2 || getVerb(message.argument) != verb)
             return false;
 
          // check if it is operation with $self
          SNode target = SyntaxTree::findPattern(root, 3,
             SNodePattern(lxExpression),
             SNodePattern(lxDirectCalling, lxSDirctCalling),
-            SNodePattern(lxThisLocal));
+            SNodePattern(lxThisLocal, lxLocal));
 
-         //// if the target was optimized
-         //if (target == lxExpression) {
-         //   target = SyntaxTree::findChild(target, lxLocal);
-         //}
-
-         if (target == lxNone || target.argument != 1)
+         if (target == lxLocal && target.argument == -1 && extensionRef != 0) {
+            if (message.findChild(lxCallTarget).argument != extensionRef)
+               return false;
+         }
+         else if (target != lxThisLocal || target.argument != 1)
             return false;
 
          // check if the index is used
@@ -1251,7 +1271,17 @@ bool CompilerLogic :: recognizeEmbeddableGetAt(_CompilerScope& scope, SNode root
    return false;
 }
 
-bool CompilerLogic :: recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode root, ref_t returningType, ref_t& subject)
+bool CompilerLogic :: recognizeEmbeddableGetAt(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
+{
+   return recognizeEmbeddableOp(scope, root, extensionRef,  returningType, READ_MESSAGE_ID, subject);
+}
+
+bool CompilerLogic :: recognizeEmbeddableEval(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
+{
+   return recognizeEmbeddableOp(scope, root, extensionRef, returningType, EVAL_MESSAGE_ID, subject);
+}
+
+bool CompilerLogic :: recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
 {
    if (returningType != 0 && defineStructSize(scope, scope.attributeHints.get(returningType), 0, true) > 0) {
       root = root.findChild(lxNewFrame);
@@ -1272,9 +1302,13 @@ bool CompilerLogic :: recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode roo
          SNode target = SyntaxTree::findPattern(root, 3,
             SNodePattern(lxExpression),
             SNodePattern(lxDirectCalling, lxSDirctCalling),
-            SNodePattern(lxThisLocal));
+            SNodePattern(lxThisLocal, lxLocal));
 
-         if (target == lxNone || target.argument != 1)
+         if (target == lxLocal && target.argument == -1 && extensionRef != 0) {
+            if (message.findChild(lxCallTarget).argument != extensionRef)
+               return false;
+         }
+         else if (target != lxThisLocal || target.argument != 1)
             return false;
 
          // check if the index is used
@@ -1362,7 +1396,7 @@ bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& co
    else return false;
 }
 
-bool CompilerLogic :: optimizeEmbeddableGetAt(_CompilerScope& scope, _Compiler& compiler, SNode node, int attribte, int paramCount)
+bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node)
 {
    SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
    SNode callTarget = callNode.findChild(lxCallTarget);
@@ -1370,14 +1404,18 @@ bool CompilerLogic :: optimizeEmbeddableGetAt(_CompilerScope& scope, _Compiler& 
    ClassInfo info;
    defineClassInfo(scope, info, callTarget.argument);
 
-   ref_t subject = info.methodHints.get(Attribute(callNode.argument, attribte));
-   // if it is possible to replace get&subject operation with eval&subject2:local
-   if (subject != 0) {
-      compiler.injectEmbeddableGetAt(node, callNode, subject, paramCount);
+   for (int i = 0; i < EMBEDDABLEOP_MAX; i++) {
+      EmbeddableOp op = embeddableOps[i];
+      ref_t subject = info.methodHints.get(Attribute(callNode.argument, op.attribute));
+      // if it is possible to replace get&subject operation with eval&subject2:local
+      if (subject != 0) {
+         compiler.injectEmbeddableOp(node, callNode, subject, op.paramCount, op.verb);
 
-      return true;
+         return true;
+      }
    }
-   else return false;
+
+   return false;
 }
 
 void CompilerLogic :: optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef, bool assingingMode)

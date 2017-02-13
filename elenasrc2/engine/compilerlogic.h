@@ -134,14 +134,17 @@ public:
       return (info.header.flags & elDebugMask) != elEnumList;
    }
 
-   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t returningType, ref_t& subject);
-   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t returningType, ref_t& subject);
-   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t returningType, ref_t& subject);
+   bool recognizeEmbeddableOp(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, int verb, ref_t& subject);
+
+   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject);
+   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject);
+   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject);
+   virtual bool recognizeEmbeddableEval(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject);
    virtual bool recognizeEmbeddableIdle(SNode node);
 
    virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope);
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node);
-   virtual bool optimizeEmbeddableGetAt(_CompilerScope& scope, _Compiler& compiler, SNode node, int attribte, int paramCount);
+   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node);
 
    virtual void optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef, bool assingingMode);
 
