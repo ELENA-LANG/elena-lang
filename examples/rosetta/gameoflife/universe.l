@@ -1,38 +1,41 @@
 #import system.
 
-//#template nindexer : template_subj
-//{
-//   #method(stacksafe,int,embeddable,w3) template_subj &int:x &int:y
-//   [
-//        #var(int)val.
-//        $self target &int:x &int:y &vint:val.
-//        
-//        ^ val.
-//   ]
-//}
+#subject cell = BaseCell.
+#subject vcell = varof:cell.
+#class(limited)BaseCell
+{
+}
 
-//#subject space = BaseSpace.
-//
-//#class(limited) BaseSpace
-//{
-////    #method read &int:x &int:y &vnt:retVal
-////    [
-////    ]
-////    
-////    #method set &int:x &int:y &int:val
-////    [
-////    ]
-//}
-//
-//#class Space :: BaseSpace
-//{
-//    #constructor new
-//    [
-//    ]
-//}
+#subject space = BaseSpace.
+#class(limited) BaseSpace
+{
+    #method(stacksafe) read &int:x &int:y &vcell:retVal
+    [        
+    ]
+    
+    #method(cell,w3,embeddable,stacksafe)getAt &int:x &int:y
+    [
+        #var(cell)retVal.
+        $self read &int:x &int:y &vcell:retVal.
+        
+        ^ retVal.
+    ]
+    
+    #method(stacksafe) setAt &int:x &int:y &cell:cell
+    [
+    ]
+}
 
-//#define system'collections.
-//
+#class IntMatrixSpace :: BaseSpace
+{
+    #field(intmatrix)theMatrix.
+    
+    #constructor new &int:n &int:m
+    [
+        theMatrix := IntMatrix new &int:n &int:m.
+    ]
+}
+
 //// --- Point ---
 //
 //#class Point

@@ -2,13 +2,12 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * #247 : operator with known operands 
-                 * operations with matrix
-                 * embeddable call : #var(int)n := a@2@2. // where a is known e.g. intmatrix
-
               zdev - cellular automata
                  * general architecture
+                 * game of life : simple implementation
+                 * game of life : create an engine (time slots)
+                 * game of life : rules should be declared in external file
+                 * game of life : viewer
 
               zdev 
                  * fix interpreter sample
@@ -23,12 +22,6 @@ In development:
               idev - generic development
                  * vm client : F8 on the start does not work
                  * debugging vm client : f7 on start
-
-              zevo
-                 * game of life : simple implementation
-                 * game of life : create an engine (time slots)
-                 * game of life : rules should be declared in external file
-                 * game of life : viewer
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :

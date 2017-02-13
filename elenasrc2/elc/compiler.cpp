@@ -1973,6 +1973,8 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope)
 
                   if (variable.extraparam != 0) {
                      node.appendNode(lxClassName, scope.moduleScope->module->resolveReference(variable.extraparam));
+
+                     identifier = terminal.findChild(lxTerminal).identifier(); // !! HOTFIX : identifier may refer to unallocated memory (because Tree._strings was reallocated)
                   }
                }
                break;

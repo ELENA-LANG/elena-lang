@@ -560,6 +560,13 @@
         theArray read &int:(i * theColumns + j) &vint:anInt.
     ]
 
+    #method(int,w3,embeddable)getAt &int:i &int:j
+    [
+        #var(int)retVal.
+        $self read &int:i &int:j &vint:retVal.
+        ^ retVal.
+    ]
+
     #method getAt : i : j
     [
         #var(int)aValue.            
@@ -701,6 +708,13 @@
         #var(int)anIndex := i * theColumns + j.
         
         theArray read &int:anIndex &vreal:aValue.
+    ]
+
+    #method(real,w3,embeddable)getAt &int:i &int:j
+    [
+        #var(real)retVal.
+        $self read &int:i &int:j &vreal:retVal.
+        ^ retVal.
     ]
 
     #method getAt : i : j
