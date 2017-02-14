@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              idev - generic development
-                 * debug template
-
               xdev - generic development
                  * call stack is corrupted
 

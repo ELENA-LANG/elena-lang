@@ -11,7 +11,7 @@
 #include "linux32/elfhelper.h"
 
 #define ROOT_PATH          "/usr/lib/elena"
-#define CONFIG_PATH        "/etc/elena/elc.config"
+#define CONFIG_PATH        "/etc/elena/elenart.config"
 #define IMAGE_BASE         0x08048000
 
 using namespace _ELENA_;

@@ -11,8 +11,8 @@
 #include "config.h"
 #include "bytecode.h"
 
-#define PROJECT_CATEGORY            "project"
-#define LIBRARY_PATH                "libpath"
+#define LIBRARY_CATEGORY            "library"
+#define LIBRARY_PATH                "path"
 
 using namespace _ELENA_;
 
@@ -51,7 +51,7 @@ bool Instance :: loadConfig(path_t configFile)
       return false;
    }
 
-   Path path(_rootPath.c_str(), config.getSetting(PROJECT_CATEGORY, LIBRARY_PATH, NULL));
+   Path path(_rootPath.c_str(), config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL));
 
    if (!emptystr(path)) {
       _loader.setRootPath(path.c_str());

@@ -6,7 +6,7 @@
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
-#define CONFIG_PATH "elc.cfg"
+#define CONFIG_PATH "elenart.cfg"
 
 using namespace _ELENA_;
 

@@ -69,6 +69,7 @@ cp ../bin/elena-og $RELEASE/bin/
 cp ../bin/elena-sg $RELEASE/bin/
 cp ../bin/libelenart.so $RELEASE/bin/
 cp ../bin/elc.config $RELEASE/bin/
+cp ../bin/elenart.config $RELEASE/bin/
 cp ../bin/templates/*.config $RELEASE/bin/templates/
 cp ../dat/og/rules.txt $RELEASE/dat/og/
 cp ../dat/sg/syntax.txt $RELEASE/dat/sg/
