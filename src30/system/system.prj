@@ -22,6 +22,7 @@ dynamic.l
 win32_strings.l
 extensions.l
 exceptions.l
+events.l
 console.l
 win32_pointers.l
 win32_app.l

@@ -63,6 +63,9 @@
     #method clear 
         => theWriter.
 
+    #method(stacksafe) setCursorPosition &int:x &int:y
+        => theWriter.
+
     /// Reads the next line of characters from the standard input stream.
     #method readLine
         = theReader read &literal.

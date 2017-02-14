@@ -3,7 +3,8 @@ In development:
 ------                              
 
               xdev - generic development
-                 * call stack is corrupted
+                 * support property template
+
 
               zdev - cellular automata
                  * general architecture
@@ -308,6 +309,9 @@ Pipeline:
                              ]
                          proceed message should be called directly, because the class is sealed
                        * review winforms implementation for corex mode
+                       * sealed private method containing only strong type should not be allowed (it could be automatically called on
+                         assigning)
+                       * primitive array of objec should not be allowed
                        
              xdev - linux
                        * support compiling the project without -c option
@@ -461,6 +465,7 @@ Pipeline:
                        * optimize : LiteralValue#class.eval&system$new...
                        * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
                        * use imm mode for (n) => 1 ? [ now literal. ]
+                       * optimize __castover / __event handler
 
               xdev - native code optimization
                        * use rep stos to clear the object after creating      

@@ -6,7 +6,7 @@ Currently Win32-x86 and Linux-I386 platforms are supported.
 Features
 ---
 - Pure polymorphic object oriented language
-- Dynamic "class mutation"
+- Mixins
 - Message dispatching
 - Virtual machine
 - Command line 32-bit compiler
@@ -14,7 +14,7 @@ Features
 - Unicode support (utf-8)
 - Complete source code
 - Number of samples
-- Script Engine / Interpreter
+- Script Engine
 - Virtual Machine Terminal
 
 Minimum requirements

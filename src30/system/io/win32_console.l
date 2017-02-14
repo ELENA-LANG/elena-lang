@@ -108,7 +108,14 @@
         
         system'external'KERNEL32 FillConsoleOutputCharacterW &int:theHandle &short:32 &int:aLength &int:0 &vint:aRetVal.
         
-        system'external'KERNEL32 SetConsoleCursorPosition &int:0.
+        system'external'KERNEL32 SetConsoleCursorPosition &int:theHandle &int:0.
+    ]
+
+    #method(stacksafe) setCursorPosition &int:x &int:y
+    [
+        #var(int)coord := y * 10000h + x.
+                
+        system'external'KERNEL32 SetConsoleCursorPosition &int:theHandle &int:coord.
     ]
 
     #method refresh

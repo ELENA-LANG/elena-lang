@@ -83,7 +83,7 @@
         theMatrix := matrix.
     ]
 
-    #method(stacksafe) read &int:x &int:y &vint:retVal
+    #method(stacksafe) read &int:y &int:x &vint:retVal
     [
         #var(int)i := x.
         (i > theN)?
@@ -99,14 +99,14 @@
         theMatrix read &int:i &int:j &vint:retVal.
     ]
     
-    #method(stacksafe) setAt &int:x &int:y &int:cell
+    #method(stacksafe) setAt &int:y &int:x &int:cell
     [
-        #var(int)i := x.
+        #var(int)i := y.
         (i > theN)?
         [
             i := i mod &int:theN.
         ].
-        #var(int)j := y.
+        #var(int)j := x.
         (j > theM)?
         [
             j := j mod &int:theM.

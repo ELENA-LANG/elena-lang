@@ -205,6 +205,7 @@ enum LexicalType
    lxClassRef        = 0x20025,
    lxPreloadedAttr   = 0x20026,
    lxInclude         = 0x20027,
+   lxTemplateField   = 0x20028,
 
    lxFieldAttrMask   = 0x20100,
    lxStaticAttr      = 0x20102,
@@ -376,10 +377,10 @@ public:
       ref_t         argument;
       int           strArgument;   // if strArgument is not -1 - it contains the position of the argument string
 
-//      SyntaxTree* Tree()
-//      {
-//         return tree;
-//      }
+      SyntaxTree* Tree()
+      {
+         return tree;
+      }
 
       ident_t identifier()
       {

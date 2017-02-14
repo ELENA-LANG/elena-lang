@@ -695,6 +695,7 @@ private:
       ForwardMap  parameters;
       SubjectMap  subjects;
       bool        classMode;
+      bool        generationMode;
       int         sourceRef;
 
       virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
@@ -748,6 +749,7 @@ private:
          this->parent = parent;
          this->info.header.flags = 0;
          this->classMode = false;
+         this->generationMode = false;
          this->sourceRef = -1;
       }
       TemplateScope(Scope* parent, ref_t attrRef)
@@ -756,6 +758,7 @@ private:
          this->parent = parent;
          this->templateRef = attrRef;
          this->classMode = false;
+         this->generationMode = false;
          this->sourceRef = -1;
       }
       TemplateScope(ModuleScope* moduleScope, ref_t attrRef)
@@ -764,6 +767,7 @@ private:
          this->parent = NULL;
          this->templateRef = attrRef;
          this->classMode = false;
+         this->generationMode = false;
          this->sourceRef = -1;
       }
    };
@@ -858,7 +862,7 @@ private:
    void declareParameterDebugInfo(SNode node, MethodScope& scope, bool withThis, bool withSelf);
 
    bool copyTemplate(SNode node, Scope& scope, ref_t attrRef, SNode attributeNode);
-   bool copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode);
+   bool copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode, SNode currentNode);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);

@@ -625,18 +625,44 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
    }
 
    // check if there are implicit constructors
-   if (test(info.header.flags, elSealed) && sourceType != 0) {
-      int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
-      if (info.methods.exist(implicitMessage)) {
-         if (test(info.header.flags, elStructureRole)) {
-            compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
-         }
-         else if (test(info.header.flags, elDynamicRole)) {
-            return false;
-         }
-         else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
+   if (test(info.header.flags, elSealed)) {
+      if (sourceType != 0) {
+         // if the source type is defined we are lucky
+         int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
+         if (info.methods.exist(implicitMessage)) {
+            if (test(info.header.flags, elStructureRole)) {
+               compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
+            }
+            else if (test(info.header.flags, elDynamicRole)) {
+               return false;
+            }
+            else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
 
-         return true;
+            return true;
+         }
+      }
+      else {
+         // otherwise we have to go through the list
+         ClassInfo::MethodMap::Iterator it = info.methods.start();
+         while (!it.Eof()) {
+            pos_t implicitMessage = it.key();
+            if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
+               ref_t subj = getSignature(implicitMessage);
+               if (isCompatible(scope, scope.attributeHints.get(subj), sourceRef)) {
+                  if (test(info.header.flags, elStructureRole)) {
+                     compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
+                  }
+                  else if (test(info.header.flags, elDynamicRole)) {
+                     return false;
+                  }
+                  else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
+
+                  return true;
+               }
+            }
+
+            it++;
+         }
       }
    }
 

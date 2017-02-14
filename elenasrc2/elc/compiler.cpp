@@ -1232,6 +1232,14 @@ void Compiler::TemplateScope :: loadParameters(SNode node, ByteCodeWriter& write
       else if (current == lxSourcePath) {
          sourceRef = writer.writeString(current.identifier());
       }
+      else if (current == lxTemplateField && generationMode) {
+         ClassScope* parentClass = (ClassScope*)parent->getScope(Scope::slClass);
+
+         int offset = parentClass->info.fields.get(current.identifier());
+
+         info.fields.add(TARGET_PSEUDO_VAR, offset);
+         info.fieldTypes.add(offset, parentClass->info.fieldTypes.get(offset));
+      }
 
       current = current.nextNode();
    }
@@ -1738,9 +1746,8 @@ void Compiler :: compileFieldAttributes(SNode node, ClassScope& scope, SNode roo
          }
          else if (attribute) {
             ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
-            if (classRef == INVALID_REF) {
-               //copyTemplate(rootNode, scope, attribute, current);
-               if (!copyFieldAttribute(scope, attribute, rootNode)) {
+            if (classRef == INVALID_REF) {               
+               if (!copyFieldAttribute(scope, attribute, rootNode, current)) {
                   TemplateScope templateScope(&scope, attribute);
                   templateScope.loadParameters(current, _writer);
 
@@ -4447,6 +4454,7 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope)
          case lxTemplate:
          {
             TemplateScope templateScope(&scope);
+            templateScope.generationMode = true;
             templateScope.loadParameters(current, _writer);
 
             compileVMT(current, templateScope);
@@ -5048,7 +5056,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info);
 }
 
-bool Compiler :: copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode)
+bool Compiler :: copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode, SNode currentNode)
 {
    bool attrOnly = true;
 
@@ -5068,6 +5076,19 @@ bool Compiler :: copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode)
             }
          }
          else attrOnly = false;
+      }
+      else if (current == lxClassMethod) {
+         SNode classNode = rootNode;
+         while (classNode.type != lxClass && classNode != lxNone)
+            classNode = classNode.parentNode();
+
+         if (classNode != lxNone) {
+            copyTemplate(classNode, scope, attrRef, currentNode);
+
+            SNode last = classNode.lastChild();
+
+            last.appendNode(lxTemplateField, rootNode.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier());
+         }
       }
 
       current = current.nextNode();
