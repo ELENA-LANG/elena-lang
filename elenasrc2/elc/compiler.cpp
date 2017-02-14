@@ -1208,7 +1208,7 @@ ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
 
 // --- Compiler::TemplateScope ---
 
-void Compiler::TemplateScope :: loadParameters(SNode node)
+void Compiler::TemplateScope :: loadParameters(SNode node, ByteCodeWriter& writer)
 {
    SNode current = node.firstChild();
    // load template parameters
@@ -1228,6 +1228,9 @@ void Compiler::TemplateScope :: loadParameters(SNode node)
             subject = moduleScope->module->mapSubject(terminalNode.findChild(lxTerminal).identifier(), false);
 
          subjects.add(subjects.Count() + 1, subject);
+      }
+      else if (current == lxSourcePath) {
+         sourceRef = writer.writeString(current.identifier());
       }
 
       current = current.nextNode();
@@ -1675,11 +1678,7 @@ void Compiler :: compileClassAttributes(SNode node, ClassScope& scope, SNode roo
       }
       else if (current == lxTemplate) {
          TemplateScope templateScope(&scope);
-         templateScope.loadParameters(current);
-
-         SNode sourceNode = current.findChild(lxSourcePath);
-         if (sourceNode != lxNone)
-            templateScope.sourceRef = _writer.writeString(sourceNode.identifier());
+         templateScope.loadParameters(current, _writer);
 
          compileClassAttributes(current, templateScope, rootNode);
       }
@@ -1743,7 +1742,7 @@ void Compiler :: compileFieldAttributes(SNode node, ClassScope& scope, SNode roo
                //copyTemplate(rootNode, scope, attribute, current);
                if (!copyFieldAttribute(scope, attribute, rootNode)) {
                   TemplateScope templateScope(&scope, attribute);
-                  templateScope.loadParameters(current);
+                  templateScope.loadParameters(current, _writer);
 
                   templateScope.generateClassName();
                   rootNode.appendNode(lxClassRef, generateTemplate(templateScope));
@@ -1822,7 +1821,7 @@ void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
             variable.extraparam = scope.moduleScope->attributeHints.get(attrRef);
             if (variable.extraparam == INVALID_REF) {
                TemplateScope templateScope(&scope, attrRef);
-               templateScope.loadParameters(current);
+               templateScope.loadParameters(current, _writer);
 
                templateScope.generateClassName();
 
@@ -4386,8 +4385,7 @@ void Compiler :: compileTemplateMethods(SNode node, ClassScope& scope)
    while (current != lxNone) {
       if (current == lxTemplate && current.existChild(lxClassMethod)) {
          TemplateScope templateScope(&scope);
-         templateScope.loadParameters(current);
-         templateScope.sourceRef = _writer.writeString(current.findChild(lxSourcePath).identifier());
+         templateScope.loadParameters(current, _writer);
 
          if (node == lxClassMethod || node == lxIdle) {
             ident_t signature = scope.moduleScope->module->resolveSubject(getSignature(node.argument));
@@ -4449,11 +4447,7 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope)
          case lxTemplate:
          {
             TemplateScope templateScope(&scope);
-            templateScope.loadParameters(current);
-
-            SNode sourceNode = current.findChild(lxSourcePath);
-            if (sourceNode != lxNone)
-               templateScope.sourceRef = _writer.writeString(sourceNode.identifier());
+            templateScope.loadParameters(current, _writer);
 
             compileVMT(current, templateScope);
          }
@@ -4483,7 +4477,7 @@ void Compiler :: compileFieldDeclarations(SNode node, ClassScope& scope)
       }
       else if (current == lxTemplate) {
          TemplateScope templateScope(&scope);
-         templateScope.loadParameters(current);
+         templateScope.loadParameters(current, _writer);
 
          compileFieldDeclarations(current, templateScope);
       }
@@ -4645,7 +4639,7 @@ void Compiler :: declareTemplateMethods(SNode node, ClassScope& scope)
    while (current != lxNone) {
       if (current == lxTemplate && current.existChild(lxClassMethod)) {
          TemplateScope templateScope(&scope);
-         templateScope.loadParameters(current);
+         templateScope.loadParameters(current, _writer);
 
          declareVMT(current.firstChild(), templateScope);
       }
@@ -4695,7 +4689,7 @@ void Compiler :: declareVMT(SNode current, ClassScope& scope)
       }
       else if (current == lxTemplate) {
          TemplateScope templateScope(&scope);
-         templateScope.loadParameters(current);
+         templateScope.loadParameters(current, _writer);
 
          declareVMT(current.firstChild(), templateScope);
       }
@@ -4723,7 +4717,7 @@ ref_t Compiler :: generateTemplate(TemplateScope& scope)
 
    // import the template
    SyntaxTree::loadNode(syntaxTree.readRoot(), body);
-   scope.loadParameters(syntaxTree.readRoot());
+   scope.loadParameters(syntaxTree.readRoot(), _writer);
 
    // declare the template class
    compileClassAttributes(syntaxTree.readRoot(), scope, syntaxTree.readRoot());
@@ -6049,7 +6043,7 @@ void Compiler :: declareSubject(SNode member, ModuleScope& scope)
             scope.raiseError(errInvalidHint, terminal);
 
          TemplateScope templateScope(&scope, attrRef);
-         templateScope.loadParameters(classNode);
+         templateScope.loadParameters(classNode, _writer);
 
          templateScope.generateClassName(true);
 
@@ -6078,7 +6072,7 @@ void Compiler :: compileSubject(SNode member, ModuleScope& scope)
             scope.raiseError(errInvalidHint, terminal);
 
          TemplateScope templateScope(&scope, attrRef);
-         templateScope.loadParameters(classNode);
+         templateScope.loadParameters(classNode, _writer);
 
          templateScope.generateClassName();
 

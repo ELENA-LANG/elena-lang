@@ -1137,7 +1137,7 @@ void ByteCodeWriter :: writeProcedureDebugInfo(Scope& scope, ident_t path)
    ref_t sourceRef = scope.debugStrings->Position();
    ident_t defaultPath = scope.defaultNameRef != -1 ? (const char*)scope.debugStrings->Memory()->get(scope.defaultNameRef) : NULL;
 
-   if (!path.compare(defaultPath)) {
+   if (!emptystr(path) && !path.compare(defaultPath)) {
       scope.debugStrings->writeLiteral(path);
    }
    else sourceRef = scope.defaultNameRef;
@@ -1472,6 +1472,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 
       it++;
    }
+   else if (scope.debug)
+      writeProcedureDebugInfo(scope, NULL);
 
    size_t procPosition = 4;
    if (!scope.appendMode || scope.code->Position() == 0) {

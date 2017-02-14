@@ -737,7 +737,7 @@ private:
          return sourceRef;
       }
 
-      void loadParameters(SNode node);
+      void loadParameters(SNode node, ByteCodeWriter& writer);
 
       void generateClassName(bool newName = false);
 

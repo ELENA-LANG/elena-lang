@@ -784,7 +784,7 @@ void DebugController :: readCallStack(_DebuggerCallStack* watch)
    RTManager manager;
    manager.readCallStack(reader, _debugger.Context()->Frame(), _debugger.Context()->IP(), writer);
 
-   for(size_t pos = 0 ; pos < retPoints.Length(); pos += 4) {
+   for(pos_t pos = 0 ; pos < retPoints.Length(); pos += 4) {
       ident_t path = NULL;
       ident_t moduleName = NULL;
       ident_t className = NULL;

@@ -3,7 +3,7 @@ In development:
 ------                              
 
               idev - generic development
-                 * call stack is corrupted
+                 * debug template
 
               xdev - generic development
                  * call stack is corrupted
