@@ -6133,12 +6133,11 @@ void Compiler :: compileDeclarations(SNode current, ModuleScope& scope)
                scope.raiseError(errDuplicatedSymbol, name);
 
             // HOTFIX : save the template source path
-
             IdentifierString fullPath(scope.module->Name());
             fullPath.append('\'');
             fullPath.append(scope.sourcePath);
 
-            current.appendNode(lxSourcePath, scope.sourcePath);
+            current.appendNode(lxSourcePath, fullPath);
 
             SyntaxTree::saveNode(current, scope.module->mapSection(templateRef | mskSyntaxTreeRef, false));
 
