@@ -1,4 +1,9 @@
 #import system.
+#import cellular.
+#import extensions.
+
+#symbol(const,int)maxX = 3.
+#symbol(const,int)maxY = 3.
 
 //// ---- program ---
 //
@@ -19,7 +24,7 @@
 
 #symbol program =
 [
-    #var(space) space := IntMatrixSpace new &int:10 &int:10.
+    #var(space) space := IntMatrixSpace new &int:maxX &int:maxY &nnfunc:(&int:i &int:j) [ randomGenerator eval:0:1 ].
     
     #var(int)cell := space getAt &int:0 &int:0.
     

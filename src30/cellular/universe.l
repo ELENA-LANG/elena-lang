@@ -8,6 +8,11 @@
     #method(stacksafe,action) eval &space:space &int:x &int:y
     [
     ]
+    
+    #method(stacksafe,action) eval:target &space:space &int:x &int:y
+    [
+        $self eval &space:space &int:x &int:y.
+    ]
 }
 
 #class(limited,dispatchable:space) BaseSpace
@@ -38,8 +43,13 @@
     [
     ]
     
+    #method scan:target &cellfunc:func
+    [
+    ]        
+        
     #method scan &cellfunc:func
     [
+        $self scan:$nil &cellfunc:func.
     ]
 }
 
@@ -57,6 +67,13 @@
         theMatrix := IntMatrix new &int:n &int:m.
         
         $self scan &cellfunc:(&space:space &int:i &int:j) [ space setAt &int:i &int:j &int:0. ].
+    ]
+
+    #constructor new &int:n &int:m &nnfunc:initFunc    
+        <= (new &int:n &int:m)
+    [
+        $self scan:initFunc &cellfunc:(:target&space:space &int:i &int:j)
+            [ space setAt &int:i &int:j &int:(target nnfunc eval &int:i &int:j). ].
     ]
 
     #constructor new &intmatrix:matrix
@@ -108,7 +125,7 @@
         retVal := theM.
     ]
     
-    #method scan &cellfunc:func
+    #method scan:target &cellfunc:func
     [
         #var(int)i := 0.
         #var(int)j := 0.
@@ -117,7 +134,7 @@
             j := 0.            
             #loop (j < theM)?
             [
-                func eval &space:$self &int:i &int:j.
+                func eval:target &space:$self &int:i &int:j.
                 
                 j += 1.
             ].

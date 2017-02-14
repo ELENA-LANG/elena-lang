@@ -2,6 +2,12 @@
 In development:
 ------                              
 
+              idev - generic development
+                 * call stack is corrupted
+
+              xdev - generic development
+                 * call stack is corrupted
+
               zdev - cellular automata
                  * general architecture
                  * game of life : simple implementation
@@ -149,7 +155,6 @@ Pipeline:
 
 
               idev - generic development
-                       * ide : call stack is corrupted
                        * allow to opem xml project
                        * allow to create xml project
                        * ini to xml
@@ -372,7 +377,6 @@ Pipeline:
                        * linux : migrate two rosetta samples to linux
 
               xdev - usability
-                       * ecv : dynamically define the page size
                        * ecv : use >out for ourput redirect
 
               fdev - db app
