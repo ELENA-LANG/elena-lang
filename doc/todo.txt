@@ -6,8 +6,6 @@ In development:
                  * general architecture
                  * game of life : simple implementation
                  * game of life : create an engine (time slots)
-                 * game of life : rules should be declared in external file
-                 * game of life : viewer
 
               zdev 
                  * fix interpreter sample
@@ -36,6 +34,10 @@ In development:
               xdev - generic development
                  * message string
                  * several messages can be packed into the message string
+
+              zdev - cellular automata
+                 * game of life : rules should be declared in external file
+                 * game of life : viewer
 ------                                 
 Pipeline:
 ------                                                                                         

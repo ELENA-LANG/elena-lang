@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2012-2016, by Alexei Rakov
+//                                              (C)2012-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -16,11 +16,17 @@
 #include "config.h"
 #include "bytecode.h"
 
+#ifdef _WIN32
+
+#include "winapi/consolehelper.h"
+
+#endif // _WIN32
+
 #define PROJECT_SECTION "project"
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   3
+#define REVISION_VERSION   4
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -39,6 +45,8 @@ ident_t _real = REAL_CLASS;
 ident_t _literal = STR_CLASS;
 ident_t _wide = WSTR_CLASS;
 ident_t _char = CHAR_CLASS;
+
+bool    _ignoreBreakpoints = true;
 
 TextFileWriter* _writer;
 
@@ -103,6 +111,7 @@ void printLoadError(LoadResult result)
 
 void printHelp()
 {
+   printf("-b                      - hide / show breakpoints\n");
    printf("-q                      - quit\n");
    printf("-h                      - help\n");
    printf("?<class>.<method name>  - view method byte codes\n");
@@ -416,11 +425,15 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    }
 }
 
-void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<int>& labels)
+bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<int>& labels)
 {
    // read bytecode + arguments
    int position = codeReader.Position();
    unsigned char code = codeReader.getByte();
+
+   // ignore a breakpoint if required
+   if (code == bcBreakpoint && _ignoreBreakpoints)
+      return false;
 
    char opcode[0x30];
    ByteCodeCompiler::decode((ByteCode)code, opcode);
@@ -630,6 +643,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
    }
 
    print(command);
+   return true;
 }
 
 void printByteCodes(_Module* module, _Memory* code, ref_t address, int indent, int pageSize)
@@ -639,20 +653,21 @@ void printByteCodes(_Module* module, _Memory* code, ref_t address, int indent, i
    size_t codeSize = codeReader.getDWord();
    size_t endPos = codeReader.Position() + codeSize;
 
-   int row = 0;
+   int row = 1;
    List<int> labels;
    while(codeReader.Position() < endPos) {
-      printCommand(module, codeReader, indent, labels);
-      print("\n");
+      if (printCommand(module, codeReader, indent, labels)) {
+         print("\n");
 
-      row++;
-      if (row == pageSize) {
-         printf("Press any key to continue...");
-         _fgetchar();
-         printf("\n");
+         row++;
+         if (row == pageSize - 1) {
+            printf("Press any key to continue...");
+            ConsoleHelper::getChar();
+            printf("\n");
 
-         row = 0;
-      }
+            row = 0;
+         }
+      }      
    }
 }
 
@@ -1044,11 +1059,10 @@ void setOutputMode(path_t path)
    _writer = new TextFileWriter(path, 0, false);
 }
 
-void runSession(_Module* module)
+void runSession(_Module* module, int pageSize)
 {
    char              buffer[MAX_LINE];
    IdentifierString  line;
-   int               pageSize = 30;
    while (true) {
       printf("\n>");
 
@@ -1084,6 +1098,9 @@ void runSession(_Module* module)
                break;
             case 'l':
                printAPI(module, pageSize);
+               break;
+            case 'b':
+               _ignoreBreakpoints = !_ignoreBreakpoints;
                break;
             //case 'c':
             //   printConstructor(module, line + 2, pageSize);
@@ -1139,6 +1156,10 @@ int main(int argc, char* argv[])
       return 0;
    }
 
+   // define the console size for pagination
+   int columns = 0, rows = 30;
+   ConsoleHelper::getConsoleSize(columns, rows);
+
    // prepare library manager
    Path configPath("templates\\lib.cfg");
    Path rootPath("..\\lib30");
@@ -1184,7 +1205,7 @@ int main(int argc, char* argv[])
 
    ByteCodeCompiler::loadVerbs(_verbs);
 
-   runSession(module);
+   runSession(module, rows);
 
    if (_writer)
       freeobj(_writer);

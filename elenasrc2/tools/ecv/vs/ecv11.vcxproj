@@ -108,6 +108,7 @@
     <ClCompile Include="..\..\..\engine\module.cpp" />
     <ClCompile Include="..\..\..\engine\section.cpp" />
     <ClCompile Include="..\ecv.cpp" />
+    <ClCompile Include="..\winapi\consolehelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\common\altstrings.h" />
@@ -125,6 +126,7 @@
     <ClInclude Include="..\..\..\engine\section.h" />
     <ClInclude Include="..\..\..\common\streams.h" />
     <ClInclude Include="..\..\..\common\tools.h" />
+    <ClInclude Include="..\winapi\consolehelper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
