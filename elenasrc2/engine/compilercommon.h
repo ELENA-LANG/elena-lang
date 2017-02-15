@@ -65,25 +65,25 @@ namespace _ELENA_
 {
 
 //typedef Map<ref_t, ref_t> ClassMap;
-//
-//enum MethodHint
-//{
-//   tpMask        = 0x00F,
-//
-//   tpUnknown     = 0x000,
-//   tpSealed      = 0x001,
-//   tpClosed      = 0x002,
-//   tpNormal      = 0x03,
-////      tpDispatcher = 0x04,
-//   tpPrivate     = 0x005,
-//   tpStackSafe   = 0x010,
-//   tpEmbeddable  = 0x020,
-//   tpGeneric     = 0x040,
-//   tpAction      = 0x080,
-//   tpIfBranch    = 0x100,
-//   tpIfNotBranch = 0x200,
-//   tpConstructor = 0x400
-//};
+
+enum MethodHint
+{
+   tpMask        = 0x00F,
+
+   tpUnknown     = 0x000,
+   tpSealed      = 0x001,
+   tpClosed      = 0x002,
+   tpNormal      = 0x03,
+//      tpDispatcher = 0x04,
+   tpPrivate     = 0x005,
+   tpStackSafe   = 0x010,
+   tpEmbeddable  = 0x020,
+   tpGeneric     = 0x040,
+   tpAction      = 0x080,
+   tpIfBranch    = 0x100,
+   tpIfNotBranch = 0x200,
+   tpConstructor = 0x400
+};
 
 // --- _CompileScope ---
 
@@ -104,8 +104,8 @@ struct _CompilerScope
 
    _Module* module;
 
-//   // cached references
-//   ref_t superReference;
+   // cached references
+   ref_t superReference;
 //   ref_t intReference;
 //   ref_t longReference;
 //   ref_t realReference;
@@ -132,7 +132,7 @@ struct _CompilerScope
    _CompilerScope()
    {
       module = NULL;
-//      intReference = boolReference = superReference = 0;
+      /*intReference = boolReference = */superReference = 0;
 //      signatureReference = verbReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      arrayReference = charReference = realReference = 0;

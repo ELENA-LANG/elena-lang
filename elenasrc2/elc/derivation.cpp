@@ -18,10 +18,10 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 {
    Symbol symbol = (Symbol)node.type;
    switch (symbol) {
-//      case nsClass:
+      case nsClass:
       case nsSymbol:
 //      case nsStatic:
-//      case nsMethod:
+      case nsMethod:
 //      case nsConstructor:
 //      case nsImplicitConstructor:
 //      case nsTemplate:
@@ -42,15 +42,15 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
          unpackChildren(node);
          _writer.closeNode();
          break;
-//      case nsSubCode:
-//         _writer.newNode(lxCode);
-//         unpackChildren(node);
-//         _writer.closeNode();
-//         if (mode == 1) {
-//            _writer.insert(lxExpression);
-//            _writer.closeNode();
-//         }
-//         break;
+      case nsSubCode:
+         _writer.newNode(lxCode);
+         unpackChildren(node);
+         _writer.closeNode();
+         if (mode == 1) {
+            _writer.insert(lxExpression);
+            _writer.closeNode();
+         }
+         break;
 //      case nsInlineExpression:
 //      case nsInlineClosure:
 //         unpackChildren(node);
@@ -193,11 +193,11 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //         unpackChildren(node);
 //         _writer.closeNode();
 //         break;
-//      case nsCodeEnd:
-//         _writer.newNode(lxEOF);
-//         copyChildren(node.firstChild());
-//         _writer.closeNode();
-//         break;
+      case nsCodeEnd:
+         _writer.newNode(lxEOF);
+         copyChildren(node.firstChild());
+         _writer.closeNode();
+         break;
 //      case nsHint:
 //         if (_hints == lxNone) {
 //            _hints = node;

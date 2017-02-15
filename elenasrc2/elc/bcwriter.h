@@ -57,28 +57,28 @@ class ByteCodeWriter
 //         frameSize = 0;
 //      }
 //   };
-//
-//   struct ImportScope
-//   {
-//      _Memory*    section; 
-//      _Module*    sour;
-//      _Module*    dest;
-//
-//      ImportScope()
-//      {
-//         section = NULL;
-//         sour = NULL;
-//         dest = NULL;
-//      }
-//      ImportScope(_Memory* section, _Module* sour, _Module* dest)
-//      {
-//         this->section = section;
-//         this->sour = sour;
-//         this->dest = dest;
-//      }
-//   };
-//
-//   List<ImportScope> imports;
+
+   struct ImportScope
+   {
+      _Memory*    section; 
+      _Module*    sour;
+      _Module*    dest;
+
+      ImportScope()
+      {
+         section = NULL;
+         sour = NULL;
+         dest = NULL;
+      }
+      ImportScope(_Memory* section, _Module* sour, _Module* dest)
+      {
+         this->section = section;
+         this->sour = sour;
+         this->dest = dest;
+      }
+   };
+
+   List<ImportScope> imports;
    MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
 
    ByteCode peekNext(ByteCodeIterator it)
@@ -116,11 +116,11 @@ class ByteCodeWriter
    void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef);
 
 //   void declareInitializer(CommandTape& tape, ref_t reference);
-//   void declareClass(CommandTape& tape, ref_t reference);
+   void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
-//   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
-//   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, bool withPresavedMessage, bool withNewFrame = true);
+   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
+   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
@@ -136,38 +136,38 @@ class ByteCodeWriter
    void declareCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
 //
-//   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
-//   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
-//   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareSelfInfo(CommandTape& tape, int level);
-//   void declareMessageInfo(CommandTape& tape, ident_t message);
+   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
+   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
+   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
+   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
+   void declareSelfInfo(CommandTape& tape, int level);
+   void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
-//   void newFrame(CommandTape& tape, int reserved, int allocated);
-//   void newStructure(CommandTape& tape, int size, ref_t reference);
-//   void newDynamicStructure(CommandTape& tape, int itemSize);
-//   void newDynamicWStructure(CommandTape& tape);
-//   void newDynamicNStructure(CommandTape& tape);
-//
-//   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
+   void newFrame(CommandTape& tape, int reserved, int allocated);
+   void newStructure(CommandTape& tape, int size, ref_t reference);
+   void newDynamicStructure(CommandTape& tape, int itemSize);
+   void newDynamicWStructure(CommandTape& tape);
+   void newDynamicNStructure(CommandTape& tape);
+
+   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
-//   void newDynamicObject(CommandTape& tape);
-//
-//   void popObject(CommandTape& tape, LexicalType sourceTypeS);
-//
+   void newDynamicObject(CommandTape& tape);
+
+   void popObject(CommandTape& tape, LexicalType sourceTypeS);
+
 //   void copyBase(CommandTape& tape, int size);
 //   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void initBase(CommandTape& tape, int fieldCount);
-//   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void initBase(CommandTape& tape, int fieldCount);
+   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
+   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
@@ -179,14 +179,14 @@ class ByteCodeWriter
 //
 //   void releaseObject(CommandTape& tape, int count = 1);
 //   void releaseArgList(CommandTape& tape);
-//
-//   void setSubject(CommandTape& tape, ref_t subject);
-//
-//   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
+
+   void setSubject(CommandTape& tape, ref_t subject);
+
+   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
 //   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
 //   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
-//
-//   void doGenericHandler(CommandTape& tape);
+
+   void doGenericHandler(CommandTape& tape);
 //   void resend(CommandTape& tape);
 //   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
@@ -213,17 +213,17 @@ class ByteCodeWriter
 //   void endLoop(CommandTape& tape);
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape, bool idle = false);
-//   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
-//   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
-//   void endIdleMethod(CommandTape& tape);
-//   void endClass(CommandTape& tape);
+   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
+   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
+   void endIdleMethod(CommandTape& tape);
+   void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
 //   void endInitializer(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
-//   void closeFrame(CommandTape& tape);
-//
+   void closeFrame(CommandTape& tape);
+
 //   void assignBaseTo(CommandTape& tape, LexicalType target);
 //
 //   void assignInt(CommandTape& tape, LexicalType target, int offset);
@@ -237,7 +237,7 @@ class ByteCodeWriter
 //   void copyShort(CommandTape& tape, int offset);
 //   void copyStructure(CommandTape& tape, int offset, int size);
 //   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
-//   void saveSubject(CommandTape& tape);
+   void saveSubject(CommandTape& tape);
 //   void saveIntConstant(CommandTape& tape, int value);
 ////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
 //   void doIntOperation(CommandTape& tape, int operator_id);
@@ -254,13 +254,13 @@ class ByteCodeWriter
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
-//   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
+   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
 //   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 //
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void pushObject(CommandTape& tape, SyntaxTree::Node node);
+
+   void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
 
@@ -273,7 +273,7 @@ class ByteCodeWriter
 //   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
 //
 //   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
+   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
 //   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
@@ -298,20 +298,20 @@ class ByteCodeWriter
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
-//   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void generateMethod(CommandTape& tape, SyntaxTree::Node node);
-//   void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void importCode(CommandTape& tape, ImportScope& scope);
-//
+   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
+
+   void generateMethod(CommandTape& tape, SyntaxTree::Node node);
+   void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
+
+   void importCode(CommandTape& tape, ImportScope& scope);
+
 //   void generateTemplateMethods(CommandTape& tape, SNode root);
 
 public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
    int writeString(ident_t path);
 
-//   void generateClass(CommandTape& tape, SNode root);
+   void generateClass(CommandTape& tape, SNode root);
    void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic);
@@ -328,7 +328,7 @@ public:
    void clear()
    {
       _strings.clear();
-      //imports.clear();
+      imports.clear();
    }
 };
 

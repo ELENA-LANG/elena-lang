@@ -39,7 +39,7 @@ enum Symbol
 //   tsLong                       = 0x0300C,
    tsWide                       = 0x0300D,
 
-//   nsClass                      = 0x0100E,               // non-terminals
+   nsClass                      = 0x0100E,               // non-terminals
 //   nsTemplate                   = 0x0100F,
 //   nsSubjectArg                 = 0x01010,
    nsSymbol                     = 0x01011,
@@ -47,14 +47,14 @@ enum Symbol
 //   nsField                      = 0x01013,
 //   nsHint                       = 0x01014,
 //   nsHintValue                  = 0x01015,
-//   nsMethod                     = 0x01016,
+   nsMethod                     = 0x01016,
 //   nsMethodParameter            = 0x01017,
 //   nsNestedClass                = 0x01018,
    nsObject                     = 0x01019,
-//   nsSubCode                    = 0x0101A,
+   nsSubCode                    = 0x0101A,
 //   nsMessageOperation           = 0x0101B,
 //   nsMessageParameter           = 0x0101C,
-//   nsCodeEnd                    = 0x0101D,
+   nsCodeEnd                    = 0x0101D,
 //   nsVariable                   = 0x0101E,
 //   nsL4Operation                = 0x0101F,
 //   nsDispatchExpression         = 0x01020,

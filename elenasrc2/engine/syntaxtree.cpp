@@ -348,41 +348,41 @@ SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
    return Node();
 }
 
-//SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
-//{
-//   MemoryReader reader(&_body);
-//   position -= 24;
-//
-//   reader.seek(position);
-//   if (reader.getDWord() != -1) {
-//      reader.seek(position);
-//
-//      return read(reader);
-//   }
-//
-//   int level = 0;
-//   while (position > 11) {
-//      reader.seek(position);
-//
-//      int type = reader.getDWord();
-//
-//      if (type != -1) {
-//         if (level == 0) {
-//            reader.seek(position);
-//
-//            return read(reader);
-//         }
-//
-//         level++;
-//      }
-//      else level--;
-//
-//      position -= 12;
-//   }
-//
-//   return Node();
-//}
-//
+SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
+{
+   MemoryReader reader(&_body);
+   position -= 24;
+
+   reader.seek(position);
+   if (reader.getDWord() != -1) {
+      reader.seek(position);
+
+      return read(reader);
+   }
+
+   int level = 0;
+   while (position > 11) {
+      reader.seek(position);
+
+      int type = reader.getDWord();
+
+      if (type != -1) {
+         if (level == 0) {
+            reader.seek(position);
+
+            return read(reader);
+         }
+
+         level++;
+      }
+      else level--;
+
+      position -= 12;
+   }
+
+   return Node();
+}
+
 //bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)
 //{
 //   va_list argptr;

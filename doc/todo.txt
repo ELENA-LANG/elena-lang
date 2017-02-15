@@ -4,6 +4,8 @@ In development:
 
               xdev - generic development
                  * implementing ELENA 3.0
+                 * uncomment generateMethodDeclarations
+                 * uncomment ModuleScope::mapAttribute
                  * uncomment ByteCodeWriter :: generateCodeBlock
                  * uncomment ByteCodeWriter :: generateExpression
                  * uncomment ModuleScope :: defineObjectInfo
@@ -11,6 +13,7 @@ In development:
                  * uncomment getError
                  * uncomment validateUnresolved
                  * uncomment createPackageInfo
+                 * syntax : BLOCK_CLOSING_EXPECTED / DECLARATION_END_EXPECTED and so on
 
               xdev - generic development
                  * support property template

@@ -32,15 +32,15 @@ enum LexicalType
 
    // scopes
    lxRoot            = 0x00001,
-//   lxIdle            = 0x00002,
-//   lxClass           = 0x0000E,
+   lxIdle            = 0x00002,
+   lxClass           = 0x0000E,
 //   lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
 //   lxClassField      = 0x00013,
 //   lxAttributeValue  = 0x00015,
-//   lxClassMethod     = 0x00016,
+   lxClassMethod     = 0x00016,
 //   lxNestedClass     = 0x00018,
-//   lxCode            = 0x0001A,
+   lxCode            = 0x0001A,
 //   lxDispatchCode    = 0x00020,
    lxStatic          = 0x00022,
 //   lxConstructor     = 0x00024,
@@ -55,8 +55,8 @@ enum LexicalType
 //   lxImplicitConstructor = 0x0004B,
    lxScope           = 0x0004D,
 
-//   // parameters
-//   lxEOF             = 0x18003, // indicating closing code bracket
+   // parameters
+   lxEOF             = 0x18003, // indicating closing code bracket
 //   lxLiteral         = 0x18004,
    lxIdentifier      = 0x18005,
    lxPrivate         = 0x18006,
@@ -67,8 +67,8 @@ enum LexicalType
 //   lxCharacter       = 0x1800B,
 //   lxLong            = 0x1800C,
 //   lxWide            = 0x1800D,
-//
-//   lxImporting       = 0x08101,
+
+   lxImporting       = 0x08101,
 //   lxNested          = 0x08102, // arg - count
 //   lxStruct          = 0x08103, // arg - count
 //   lxConstantSymbol  = 0x0A104, // arg - reference
@@ -85,7 +85,7 @@ enum LexicalType
 //   lxConstantInt     = 0x1A10F, // arg - reference
 //   lxConstantLong    = 0x1A110, // arg - reference
 //   lxConstantReal    = 0x1A111, // arg - reference
-//   lxConstantClass   = 0x0A112, // arg - reference
+   lxConstantClass   = 0x0A112, // arg - reference
 //   lxMessageConstant = 0x0A113, // arg - rererence
 //   lxExtMessageConstant = 0x0A114, // arg -reference
 //   lxSignatureConstant  = 0x0A115, // arg - reference
@@ -94,7 +94,7 @@ enum LexicalType
 //   lxCurrent         = 0x0A118, // arg -offset
 //   lxResult          = 0x0A119, // arg -offset
 //   lxResultField     = 0x0A11A, // arg -offset
-//   lxCurrentMessage  = 0x0A11B,
+   lxCurrentMessage  = 0x0A11B,
 //   lxThisLocal       = 0x0A11C,
 //   lxConstantList    = 0x0A11E, // arg - reference
 //   lxBlockLocalAddr  = 0x0A11F, // arg - offset
@@ -105,7 +105,7 @@ enum LexicalType
 //   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
 //   lxArgUnboxing     = 0x0C006,
-//   lxCalling         = 0x0C007,   // sending a message, arg - message
+   lxCalling         = 0x0C007,   // sending a message, arg - message
 //   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
 //   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
 //   lxResending       = 0x0C00A,   // resending a message, optional arg - message
@@ -129,9 +129,9 @@ enum LexicalType
 //   lxOption          = 0x0C021,
 //   lxFieldExpression = 0x0C022,
 //   lxExternFrame     = 0x04023,
-//   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
-//   lxCreatingClass   = 0x0C025,   // arg - count
-//   lxCreatingStruct  = 0x0C026,   // arg - size
+   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
+   lxCreatingClass   = 0x0C025,   // arg - count
+   lxCreatingStruct  = 0x0C026,   // arg - size
 //   lxReturning       = 0x0C027,
 //   lxNewOp           = 0x0C028,
 //   lxArrOp           = 0x8C029, // arg - operation id
@@ -143,7 +143,7 @@ enum LexicalType
 //   lxByteArrOp       = 0x8C032, // arg - operation id
 //   lxShortArrOp      = 0x8C033, // arg - operation id
 //   lxReleasing       = 0x0C034,
-//   lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
+   lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
 //   lxAssigning       = 0x0C037,   // an assigning expression, arg - size
 //   lxIntOp           = 0x8C038,   // arg - operation id
 //   lxLongOp          = 0x8C039,   // arg - operation id
@@ -152,18 +152,18 @@ enum LexicalType
 //
 //   lxBaseParent      = 0x10023,
 //   lxOperator        = 0x10025,
-//   lxIntVariable     = 0x10028,
-//   lxLongVariable    = 0x10029,
-//   lxReal64Variable  = 0x1002A,
+   lxIntVariable     = 0x10028,
+   lxLongVariable    = 0x10029,
+   lxReal64Variable  = 0x1002A,
 //   lxForward         = 0x1002E,
-//   lxVariable        = 0x10037,
+   lxVariable        = 0x10037,
 //   lxBinaryVariable  = 0x10038,
 //   lxMember          = 0x10039,  // a collection member, arg - offset
 //   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
-//   lxIntsVariable    = 0x1003B,
-//   lxBytesVariable   = 0x1003C,
-//   lxShortsVariable  = 0x1003D,
-//   lxParamsVariable  = 0x1003E,
+   lxIntsVariable    = 0x1003B,
+   lxBytesVariable   = 0x1003C,
+   lxShortsVariable  = 0x1003D,
+   lxParamsVariable  = 0x1003E,
 
    // attributes
    lxAttribute       = 0x20000,
@@ -174,16 +174,16 @@ enum LexicalType
    lxLength          = 0x02005,
    lxBreakpoint      = 0x20006,
 //   lxImport          = 0x20007,
-//   lxReserved        = 0x20008,
-//   lxAllocated       = 0x20009,
-//   lxParamCount      = 0x2000A,
+   lxReserved        = 0x20008,
+   lxAllocated       = 0x20009,
+   lxParamCount      = 0x2000A,
 //   lxClassFlag       = 0x2000B, // class fields
-//   lxTarget          = 0x2000C, // arg - reference
-//   lxMessageVariable = 0x2000D, // debug info only
-//   lxSelfVariable    = 0x2000E, // debug info only
+   lxTarget          = 0x2000C, // arg - reference
+   lxMessageVariable = 0x2000D, // debug info only
+   lxSelfVariable    = 0x2000E, // debug info only
 //   lxMessage         = 0x2000F, // arg - message
 //   lxAssign          = 0x20010,
-//   lxLevel           = 0x20011,
+   lxLevel           = 0x20011,
 //   lxType            = 0x20012, // arg - subject
 //   lxCallTarget      = 0x20013, // arg - reference
 //   lxClassName       = 0x20014, // arg - identifier
@@ -416,19 +416,19 @@ public:
 //         (*this) = type;
 //         setArgument(argument);
 //      }
-//
-//      void setArgument(ref_t argument)
-//      {
-//         this->argument = argument;
-//
-//         MemoryReader reader(&tree->_body, position - 8);
-//         *(int*)(reader.Address()) = (int)argument;
-//      }
-//
-//      void setArgument(int argument)
-//      {
-//         setArgument((ref_t)argument);
-//      }
+
+      void setArgument(ref_t argument)
+      {
+         this->argument = argument;
+
+         MemoryReader reader(&tree->_body, position - 8);
+         *(int*)(reader.Address()) = (int)argument;
+      }
+
+      void setArgument(int argument)
+      {
+         setArgument((ref_t)argument);
+      }
 
       Node firstChild() const
       {
@@ -552,10 +552,10 @@ public:
          return tree->readPreviousNode(position);
       }
 
-//      Node parentNode() const
-//      {
-//         return tree->readParentNode(position);
-//      }
+      Node parentNode() const
+      {
+         return tree->readParentNode(position);
+      }
 
       Node insertNode(LexicalType type, int argument = 0)
       {
@@ -849,7 +849,7 @@ public:
    Node readFirstNode(size_t position);
    Node readNextNode(size_t position);
    Node readPreviousNode(size_t position);
-//   Node readParentNode(size_t position);
+   Node readParentNode(size_t position);
 
    size_t seekNodeEnd(size_t position);
 

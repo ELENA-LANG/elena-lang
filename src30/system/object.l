@@ -8,15 +8,17 @@
 //    /// Dispatches the verb to the target with a specified subject providing a parameter
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
 //}
-//
-//// --- super object ---
-//
-///// A common ancestor
-//#class(dispatchable:object) Object
-//{
+
+// --- super object ---
+
+/// a common ancestor
+#class/*(dispatchable:object)*/ Object
+{
+    #method test []
+    
 //    /// Creates the object
 //    #constructor new []
-//
+
 //    /// Returns true if the specified object is equal to the current object; otherwise, false.
 //    ///
 //    /// By default compares the object references.
@@ -26,8 +28,8 @@
 //                        
 //    /// Implements a message dispatching in VMT
 //    #method => system'core_routines'__object.
-//}
-//
+}
+
 ///// A common boolean value
 //
 //#class(enumlist,dispatchable:bool) BaseBoolValue
