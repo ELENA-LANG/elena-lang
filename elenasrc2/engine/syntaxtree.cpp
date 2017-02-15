@@ -9,42 +9,42 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "syntaxtree.h"
-#include <stdarg.h>
+//#include <stdarg.h>
 
 using namespace _ELENA_;
 
-//SyntaxTree::Node _ELENA_::findSubNode(SyntaxTree::Node node, LexicalType type)
-//{
-//   SyntaxTree::Node child = SyntaxTree::findChild(node, type, lxExpression);
-//   if (child == lxExpression)
-//   {
-//      return SyntaxTree::findChild(child, type);
-//   }
-//   else return child;
-//}
-//
-//SyntaxTree::Node _ELENA_::findSubNode(SyntaxTree::Node node, LexicalType type1, LexicalType type2)
-//{
-//   SyntaxTree::Node child = SyntaxTree::findChild(node, type1, type2, lxExpression);
-//   if (child == lxExpression)
-//   {
-//      return SyntaxTree::findChild(child, type1, type2);
-//   }
-//   else return child;
-//}
+////SyntaxTree::Node _ELENA_::findSubNode(SyntaxTree::Node node, LexicalType type)
+////{
+////   SyntaxTree::Node child = SyntaxTree::findChild(node, type, lxExpression);
+////   if (child == lxExpression)
+////   {
+////      return SyntaxTree::findChild(child, type);
+////   }
+////   else return child;
+////}
+////
+////SyntaxTree::Node _ELENA_::findSubNode(SyntaxTree::Node node, LexicalType type1, LexicalType type2)
+////{
+////   SyntaxTree::Node child = SyntaxTree::findChild(node, type1, type2, lxExpression);
+////   if (child == lxExpression)
+////   {
+////      return SyntaxTree::findChild(child, type1, type2);
+////   }
+////   else return child;
+////}
 //
 // --- SyntaxWriter ---
 
-void SyntaxWriter :: set(int bookmark, LexicalType type)
-{
-   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
-
-   size_t old = _bodyWriter.Position();
-
-   _bodyWriter.seek(position);
-   _bodyWriter.writeDWord(type);
-   _bodyWriter.seek(old);   
-}
+//void SyntaxWriter :: set(int bookmark, LexicalType type)
+//{
+//   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
+//
+//   size_t old = _bodyWriter.Position();
+//
+//   _bodyWriter.seek(position);
+//   _bodyWriter.writeDWord(type);
+//   _bodyWriter.seek(old);   
+//}
 
 void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 {
@@ -159,23 +159,31 @@ SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, ide
    return read(reader);
 }
 
-void SyntaxTree :: saveNode(Node node, _Memory* dump)
+//void SyntaxTree :: saveNode(Node node, _Memory* dump)
+//{
+//   SyntaxTree tree;
+//   SyntaxWriter writer(tree);
+//
+//   writer.newNode(lxRoot);
+//   copyNode(writer, node);
+//   writer.closeNode();
+//
+//   tree.save(dump);
+//}
+//
+//void SyntaxTree :: loadNode(Node node, _Memory* dump)
+//{
+//   SyntaxTree tree(dump);
+//
+//   copyNode(tree.readRoot(), node);
+//}
+
+void SyntaxTree :: copyNode(Writer& writer, LexicalType type, Node owner)
 {
-   SyntaxTree tree;
-   SyntaxWriter writer(tree);
-
-   writer.newNode(lxRoot);
-   copyNode(writer, node);
-   writer.closeNode();
-
-   tree.save(dump);
-}
-
-void SyntaxTree :: loadNode(Node node, _Memory* dump)
-{
-   SyntaxTree tree(dump);
-
-   copyNode(tree.readRoot(), node);
+   SyntaxTree::Node node = owner.findChild(type);
+   if (type != lxNone) {
+      writer.appendNode(type, node.argument);
+   }
 }
 
 void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
@@ -213,12 +221,12 @@ void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destinatio
    }
 }
 
-void SyntaxTree :: copyNodeSafe(Node source, Node destination)
-{
-   MemoryDump dump;
-   saveNode(source, &dump);
-   loadNode(destination, &dump);
-}
+//void SyntaxTree :: copyNodeSafe(Node source, Node destination)
+//{
+//   MemoryDump dump;
+//   saveNode(source, &dump);
+//   loadNode(destination, &dump);
+//}
 
 SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_position, LexicalType type, int argument)
 {
@@ -230,14 +238,14 @@ SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_posi
    return read(reader);
 }
 
-void SyntaxTree :: refresh(SyntaxTree::Node& node)
-{
-   MemoryReader reader(&_body, node.position - 12);
-
-   node.type = (LexicalType)reader.getDWord();
-   node.argument = reader.getDWord();
-   node.strArgument = reader.getDWord();
-}
+//void SyntaxTree :: refresh(SyntaxTree::Node& node)
+//{
+//   MemoryReader reader(&_body, node.position - 12);
+//
+//   node.type = (LexicalType)reader.getDWord();
+//   node.argument = reader.getDWord();
+//   node.strArgument = reader.getDWord();
+//}
 
 SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
 {
@@ -340,118 +348,118 @@ SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
    return Node();
 }
 
-SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
-{
-   MemoryReader reader(&_body);
-   position -= 24;
-
-   reader.seek(position);
-   if (reader.getDWord() != -1) {
-      reader.seek(position);
-
-      return read(reader);
-   }
-
-   int level = 0;
-   while (position > 11) {
-      reader.seek(position);
-
-      int type = reader.getDWord();
-
-      if (type != -1) {
-         if (level == 0) {
-            reader.seek(position);
-
-            return read(reader);
-         }
-
-         level++;
-      }
-      else level--;
-
-      position -= 12;
-   }
-
-   return Node();
-}
-
-bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)
-{
-   va_list argptr;
-   va_start(argptr, counter);
-
-   Node member = node.firstChild();
-   if (member == lxNone)
-      return false;
-
-   for (int i = 0; i < counter; i++) {
-      // get the next pattern
-      NodePattern pattern = va_arg(argptr, NodePattern);
-
-      // find the next tree node
-      while (!test(member.type, mask)) {
-         member = member.nextNode();
-         if (member == lxNone) {
-            va_end(argptr);
-            return false;
-         }
-      }
-
-      if (!pattern.match(member)) {
-         va_end(argptr);
-         return false;
-      }
-      else member = member.nextNode();
-   }
-
-   va_end(argptr);
-   return true;
-}
-
-SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
-{
-   va_list argptr;
-   va_start(argptr, counter);
-
-   size_t level = 1;
-   Node nodes[0x10];
-   nodes[0] = node;
-
-   for (int i = 0; i < counter; i++) {
-      // get the next pattern
-      NodePattern pattern = va_arg(argptr, NodePattern);
-
-      size_t newLevel = level;
-      for (size_t j = 0; j < level; j++) {
-         Node member = nodes[j].firstChild();
-
-         if (member != lxNone) {
-            // find the matched member
-            while (member != lxNone) {
-               if (pattern.match(member)) {
-                  nodes[newLevel] = member;
-                  newLevel++;
-               }
-
-               member = member.nextNode();
-            }
-         }
-      }
-
-      size_t oldLevel = level;
-      level = 0;
-      for (size_t j = oldLevel; j < newLevel; j++) {
-         nodes[level] = nodes[j];
-         level++;
-      }
-
-      if (level == 0) {
-         nodes[0] = Node();
-
-         break;
-      }
-         
-   }
-
-   return nodes[0];
-}
+//SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
+//{
+//   MemoryReader reader(&_body);
+//   position -= 24;
+//
+//   reader.seek(position);
+//   if (reader.getDWord() != -1) {
+//      reader.seek(position);
+//
+//      return read(reader);
+//   }
+//
+//   int level = 0;
+//   while (position > 11) {
+//      reader.seek(position);
+//
+//      int type = reader.getDWord();
+//
+//      if (type != -1) {
+//         if (level == 0) {
+//            reader.seek(position);
+//
+//            return read(reader);
+//         }
+//
+//         level++;
+//      }
+//      else level--;
+//
+//      position -= 12;
+//   }
+//
+//   return Node();
+//}
+//
+//bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)
+//{
+//   va_list argptr;
+//   va_start(argptr, counter);
+//
+//   Node member = node.firstChild();
+//   if (member == lxNone)
+//      return false;
+//
+//   for (int i = 0; i < counter; i++) {
+//      // get the next pattern
+//      NodePattern pattern = va_arg(argptr, NodePattern);
+//
+//      // find the next tree node
+//      while (!test(member.type, mask)) {
+//         member = member.nextNode();
+//         if (member == lxNone) {
+//            va_end(argptr);
+//            return false;
+//         }
+//      }
+//
+//      if (!pattern.match(member)) {
+//         va_end(argptr);
+//         return false;
+//      }
+//      else member = member.nextNode();
+//   }
+//
+//   va_end(argptr);
+//   return true;
+//}
+//
+//SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
+//{
+//   va_list argptr;
+//   va_start(argptr, counter);
+//
+//   size_t level = 1;
+//   Node nodes[0x10];
+//   nodes[0] = node;
+//
+//   for (int i = 0; i < counter; i++) {
+//      // get the next pattern
+//      NodePattern pattern = va_arg(argptr, NodePattern);
+//
+//      size_t newLevel = level;
+//      for (size_t j = 0; j < level; j++) {
+//         Node member = nodes[j].firstChild();
+//
+//         if (member != lxNone) {
+//            // find the matched member
+//            while (member != lxNone) {
+//               if (pattern.match(member)) {
+//                  nodes[newLevel] = member;
+//                  newLevel++;
+//               }
+//
+//               member = member.nextNode();
+//            }
+//         }
+//      }
+//
+//      size_t oldLevel = level;
+//      level = 0;
+//      for (size_t j = oldLevel; j < newLevel; j++) {
+//         nodes[level] = nodes[j];
+//         level++;
+//      }
+//
+//      if (level == 0) {
+//         nodes[0] = Node();
+//
+//         break;
+//      }
+//         
+//   }
+//
+//   return nodes[0];
+//}

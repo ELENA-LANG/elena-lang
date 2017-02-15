@@ -34,19 +34,19 @@ SyntaxError :: SyntaxError(int column, int row, ident_t token, const char* error
 inline const char* getError(Symbol symbol)
 {
    switch(symbol) {
-      case nsDeclarationEndExpected:
-      case nsStatementEndExpected:
-      case nsDirectiveEndExpected:
-      case nsInlineExpressionEndExpected:
-         return errDotExpectedSyntax;
-      case nsErrClosingSBracketExpected:
-         return errCSBrExpectedSyntax;
-      case nsErrNestedMemberExpected:
-         return errMethodNameExpected;
-      case nsErrObjectExpected:
-         return errObjectExpected;
-      case nsErrMessageExpected:
-         return errMessageExpected;
+//      case nsDeclarationEndExpected:
+//      case nsStatementEndExpected:
+//      case nsDirectiveEndExpected:
+//      case nsInlineExpressionEndExpected:
+//         return errDotExpectedSyntax;
+//      case nsErrClosingSBracketExpected:
+//         return errCSBrExpectedSyntax;
+//      case nsErrNestedMemberExpected:
+//         return errMethodNameExpected;
+//      case nsErrObjectExpected:
+//         return errObjectExpected;
+//      case nsErrMessageExpected:
+//         return errMessageExpected;
       default:
          return errInvalidSyntax;
    }
@@ -61,12 +61,12 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
    terminal.disp = info.position;
    terminal.length = info.length;
    switch (info.state) {
-      case dfaQuote:
-         terminal.symbol = tsLiteral;
-         break;
-      case dfaCharacter:
-         terminal.symbol = tsCharacter;
-         break;
+//      case dfaQuote:
+//         terminal.symbol = tsLiteral;
+//         break;
+//      case dfaCharacter:
+//         terminal.symbol = tsCharacter;
+//         break;
       case dfaEOF:
          terminal.symbol = tsEof;
          terminal.value = _eof_message;
@@ -74,24 +74,24 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
       case dfaIdentifier:
          terminal.symbol = tsIdentifier;
          break;
-	   case dfaFullIdentifier:
-         terminal.symbol = tsReference;
-         break;
+//	   case dfaFullIdentifier:
+//         terminal.symbol = tsReference;
+//         break;
 	   case dfaPrivate:
          terminal.symbol = tsPrivate;
          break;
-	   case dfaInteger:
-         terminal.symbol = tsInteger;
-         break;
-      case dfaLong:
-         terminal.symbol = tsLong;
-         break;
-	   case dfaHexInteger:
-         terminal.symbol = tsHexInteger;
-         break;
-	   case dfaReal:
-         terminal.symbol = tsReal;
-         break;
+//	   case dfaInteger:
+//         terminal.symbol = tsInteger;
+//         break;
+//      case dfaLong:
+//         terminal.symbol = tsLong;
+//         break;
+//	   case dfaHexInteger:
+//         terminal.symbol = tsHexInteger;
+//         break;
+//	   case dfaReal:
+//         terminal.symbol = tsReal;
+//         break;
       case dfaWideQuote:
          terminal.symbol = tsWide;
          break;

@@ -3,8 +3,17 @@ In development:
 ------                              
 
               xdev - generic development
-                 * support property template
+                 * implementing ELENA 3.0
+                 * uncomment ByteCodeWriter :: generateCodeBlock
+                 * uncomment ByteCodeWriter :: generateExpression
+                 * uncomment ModuleScope :: defineObjectInfo
+                 * uncomment ModuleScope :: mapReferenceInfo
+                 * uncomment getError
+                 * uncomment validateUnresolved
+                 * uncomment createPackageInfo
 
+              xdev - generic development
+                 * support property template
 
               zdev - cellular automata
                  * general architecture

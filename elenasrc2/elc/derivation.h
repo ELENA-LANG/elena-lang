@@ -32,10 +32,10 @@ class DerivationWriter : public _DerivationWriter
 
    void copyExpression(SNode node, bool explicitOne = true);
    void copyObject(SNode node, int mode);
-   void copyMessage(SNode node, bool operationMode = false);
-   void copyVariable(SNode node);
-   void copyAssigning(SNode node);
-   void copySwitching(SNode node);
+//   void copyMessage(SNode node, bool operationMode = false);
+//   void copyVariable(SNode node);
+//   void copyAssigning(SNode node);
+//   void copySwitching(SNode node);
    void copyHints(SNode node);
 
 public:

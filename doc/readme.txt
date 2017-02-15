@@ -1,4 +1,4 @@
-                      ELENA Language Project V. 2.1.1
+                      ELENA Language Project V. 3.0.0
                         (C)2005-2017  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
