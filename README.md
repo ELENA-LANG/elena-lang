@@ -70,6 +70,8 @@ Get started!
 * [ELENA 2.x: messages, types, dispatching...](http://elenalang.blogspot.de/2015/02/elena-2x-messages-types-dispatching.html)
 * [Stack allocated variables in ELENA](http://elenalang.blogspot.de/2015/08/stack-allocated-variables-in-elena.html)
 * [Dynamic code generation in ELENA](http://elenalang.blogspot.de/2016/06/tutorial-dynamic-code-generation-in.html)
+* [ELENA Programming Language : Interactions](https://www.codeproject.com/Articles/1165723/ELENA-Programming-Language-Interactions)
+* [Introduction to ELENA Programming Language](https://www.codeproject.com/Articles/1127103/Introduction-to-ELENA-Programming-Language)
 
 Contribute!
 ---
