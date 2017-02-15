@@ -121,7 +121,7 @@ public:
 //   virtual bool tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info);
 //
 //   virtual bool validateClassAttribute(int& attrValue);
-//   virtual bool validateMethodAttribute(int& attrValue);
+   virtual bool validateMethodAttribute(int& attrValue);
 //   virtual bool validateFieldAttribute(int& attrValue);
 //   virtual bool validateLocalAttribute(int& attrValue);
 //   virtual bool validateSymbolAttribute(int& attrValue);
@@ -153,6 +153,7 @@ public:
 //   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2);
 
    virtual bool recognizeScope(SNode& node);
+   virtual bool recognizeMember(SNode& node);
 
    CompilerLogic();
 };

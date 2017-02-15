@@ -293,12 +293,12 @@ private:
 
       ref_t resolveIdentifier(ident_t name);
 
-//      ref_t mapNewAttribute(ident_t terminal);
+      ref_t mapNewSubject(ident_t terminal);
 //
 //      // NOTE : the function returns 0 for implicit subjects
 //      // in any case output is set (for explicit one - the namespace is copied as well)
-      ref_t mapAttribute(SNode terminal, IdentifierString& output);
-      ref_t mapAttribute(SNode terminal, bool explicitOnly = true);
+      ref_t mapSubject(SNode terminal, IdentifierString& output);
+      ref_t mapSubject(SNode terminal, bool explicitOnly = true);
       ref_t resolveAttributeRef(ident_t name, bool explicitOnly = true);
 
       ref_t mapTerminal(SNode terminal, bool existing = false);
@@ -323,8 +323,8 @@ private:
 //      void loadAttributes(_Module* module);
 //      void loadExtensions(_Module* module, bool& duplicateExtensions);
 //      void loadActions(_Module* module);
-//
-//      void saveAttribute(ref_t attrRef, ref_t classReference, bool internalType);
+
+      void saveSubject(ref_t attrRef, ref_t classReference, bool internalType);
 //      bool saveExtension(ref_t message, ref_t type, ref_t role);
 //      void saveAction(ref_t message, ref_t reference);
 //
@@ -413,7 +413,7 @@ private:
          if (parent) {
             return parent->mapSubject(terminal, output);
          }
-         else return moduleScope->mapAttribute(terminal, output);
+         else return moduleScope->mapSubject(terminal, output);
       }
 
 //      virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true)
@@ -840,7 +840,7 @@ private:
 ////
 ////   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
 //   void insertMessage(SNode node, ModuleScope& scope, ref_t messageRef);
-//   ref_t mapAttribute(SNode attribute, Scope& scope, int& attrValue);
+   ref_t mapAttribute(SNode attribute, Scope& scope, int& attrValue);
 //   ref_t mapAttribute(SNode attribute, ModuleScope& scope);
 //   void initialize(Scope& scope, MethodScope& methodScope);
 //
@@ -879,6 +879,12 @@ private:
    //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
    //void declareVMT(SyntaxWriter& writer, SNode member, ClassScope& scope);
    void buildVMT(SyntaxWriter& writer, SNode member, ClassScope& scope);
+   bool buildConstructors(SyntaxWriter& writer, SNode member, ClassScope& classClassScope, ClassScope& classScope);
+
+   void recognizeMemebers(SNode member, ClassScope& scope);
+   void readAttributes(SNode member, ClassScope& scope);
+   void readMethodAttributes(SNode member, ClassScope& scope);
+
 //   void declareTemplateMethods(SNode node, ClassScope& scope);
 //
 //   ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
@@ -954,6 +960,8 @@ private:
 //
 //   void compileMethod(SNode node, MethodScope& scope);
    void buildMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void buildConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
+
 //   void compileDefaultConstructor(SNode node, MethodScope& scope);
 //   void compileDynamicDefaultConstructor(SNode node, MethodScope& scope);
 //   void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
@@ -988,6 +996,7 @@ private:
    void compileClassDeclaration(SNode node, ClassScope& scope);
    void compileClassImplementation(SNode node, ModuleScope& scope);
    void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void buildClassClassDeclaration(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope, SyntaxWriter& writer);
    void buildSymbolDeclaration(SNode node, SymbolScope& scope, SyntaxWriter& writer);

@@ -61,10 +61,12 @@
 //#define V_GROUP       (ref_t)-8206
 //#define V_PRELOADED   (ref_t)-8207
 
+#define V_CONSTRUCTOR   (ref_t)-16384
+
 namespace _ELENA_
 {
 
-//typedef Map<ref_t, ref_t> ClassMap;
+typedef Map<ref_t, ref_t> ClassMap;
 
 enum MethodHint
 {
@@ -118,11 +120,11 @@ struct _CompilerScope
 //   ref_t charReference;
 //   ref_t arrayReference;
 //   ref_t paramsReference;
-//
-//   // list of typified classes which may need get&type message
-//   ClassMap    typifiedClasses;
-//   SubjectMap  attributeHints;
-//
+
+   // list of typified classes which may need get&type message
+   ClassMap    typifiedClasses;
+   SubjectMap  subjectHints;
+
 //   // cached bool values
 //   BranchingInfo branchingInfo;
 //
@@ -234,10 +236,10 @@ public:
 //   virtual bool tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info) = 0;
 //
 //   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
-//
-//   // attribute validations
+
+   // attribute validations
 //   virtual bool validateClassAttribute(int& attrValue) = 0;
-//   virtual bool validateMethodAttribute(int& attrValue) = 0;
+   virtual bool validateMethodAttribute(int& attrValue) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue) = 0;
 //   virtual bool validateLocalAttribute(int& attrValue) = 0;
 //   virtual bool validateSymbolAttribute(int& attrValue) = 0;
@@ -262,6 +264,7 @@ public:
 //   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
    
    virtual bool recognizeScope(SNode& node) = 0;
+   virtual bool recognizeMember(SNode& node) = 0;
 };
    
 }  // _ELENA_

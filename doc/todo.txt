@@ -13,7 +13,11 @@ In development:
                  * uncomment getError
                  * uncomment validateUnresolved
                  * uncomment createPackageInfo
+                 * uncomment buildConstructor
+                 * uncomment buildClassDeclaration
                  * syntax : BLOCK_CLOSING_EXPECTED / DECLARATION_END_EXPECTED and so on
+                 * singleton classes / roles / extensions should not have a class class
+                 * declaring : test [] - action ?
 
               xdev - generic development
                  * support property template

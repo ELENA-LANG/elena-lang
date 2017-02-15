@@ -24,7 +24,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
       case nsMethod:
 //      case nsConstructor:
 //      case nsImplicitConstructor:
-//      case nsTemplate:
+      case nsTemplate:
 //      case nsField:
 //      case nsSubject:
 //      case nsDefaultGeneric:
@@ -61,15 +61,15 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //            _writer.closeNode();
 //         }
 //         break;
-//      case nsNestedClass:
-//         unpackChildren(node);
-//         _writer.insert(lxNestedClass);
-//         _writer.closeNode();
-//         if (mode == 1) {
-//            _writer.insert(lxExpression);
-//            _writer.closeNode();
-//         }
-//         break;
+      case nsNestedClass:
+         unpackChildren(node);
+         _writer.insert(lxNestedClass);
+         _writer.closeNode();
+         if (mode == 1) {
+            _writer.insert(lxExpression);
+            _writer.closeNode();
+         }
+         break;
 //      case nsMessageReference:
 //         _writer.newNode(lxExpression);
 //         _writer.newNode(lxMessageReference);
@@ -118,7 +118,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //      case tsLiteral:
       case tsPrivate:
 //      case tsReference:
-//      case tsInteger:
+      case tsInteger:
 //      case tsReal:
 //      case tsLong:
 //      case tsWide:
@@ -198,11 +198,11 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
          copyChildren(node.firstChild());
          _writer.closeNode();
          break;
-//      case nsHint:
-//         if (_hints == lxNone) {
-//            _hints = node;
-//         }
-//         break;
+      case nsToken:
+         if (_hints == lxNone) {
+            _hints = node;
+         }
+         break;
       default:
          break;
    }

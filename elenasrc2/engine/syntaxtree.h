@@ -34,12 +34,12 @@ enum LexicalType
    lxRoot            = 0x00001,
    lxIdle            = 0x00002,
    lxClass           = 0x0000E,
-//   lxTemplate        = 0x0000F,
+   lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
 //   lxClassField      = 0x00013,
 //   lxAttributeValue  = 0x00015,
    lxClassMethod     = 0x00016,
-//   lxNestedClass     = 0x00018,
+   lxNestedClass     = 0x00018,
    lxCode            = 0x0001A,
 //   lxDispatchCode    = 0x00020,
    lxStatic          = 0x00022,
@@ -61,7 +61,7 @@ enum LexicalType
    lxIdentifier      = 0x18005,
    lxPrivate         = 0x18006,
    lxReference       = 0x18007,
-//   lxInteger         = 0x18008,
+   lxInteger         = 0x18008,
 //   lxHexInteger      = 0x18009,
 //   lxReal            = 0x1800A,
 //   lxCharacter       = 0x1800B,
@@ -77,7 +77,7 @@ enum LexicalType
 //   lxSymbolReference = 0x08107,
 //   lxLocalAddress    = 0x0A108, // arg - offset
 //   lxFieldAddress    = 0x08109, // arg - offset
-//   lxLocal           = 0x0A10A, // arg - offset
+   lxLocal           = 0x0A10A, // arg - offset
 //   lxBlockLocal      = 0x0A10B, // arg - offset
 //   lxConstantString  = 0x0A10C, // arg - reference
 //   lxConstantWideStr = 0x0A10D, // arg - reference
@@ -210,7 +210,7 @@ enum LexicalType
 //
 //   lxFieldAttrMask   = 0x20100,
 //   lxStaticAttr      = 0x20102,
-//   lxClassMethodAttr = 0x20103,
+   lxClassMethodAttr = 0x20103,
 //   lxDWordAttr       = 0x20104,
 //   lxSignatureAttr   = 0x20105,
 //   lxMessageAttr     = 0x20106,
@@ -411,11 +411,11 @@ public:
          *(int*)(reader.Address()) = (int)operand;
       }
 
-//      void set(LexicalType type, ref_t argument)
-//      {
-//         (*this) = type;
-//         setArgument(argument);
-//      }
+      void set(LexicalType type, ref_t argument)
+      {
+         (*this) = type;
+         setArgument(argument);
+      }
 
       void setArgument(ref_t argument)
       {
@@ -824,7 +824,7 @@ public:
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);
 //   static void copyNodeSafe(Node source, Node destination);
-//   static void saveNode(Node node, _Memory* dump);
+   static void saveNode(Node node, _Memory* dump);
 //   static void loadNode(Node node, _Memory* dump);
 //
 //   static int countChild(Node node, LexicalType type)

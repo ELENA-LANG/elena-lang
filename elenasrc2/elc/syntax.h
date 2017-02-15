@@ -32,7 +32,7 @@ enum Symbol
    tsIdentifier                 = 0x03005,
    tsPrivate                    = 0x03006,
 //   tsReference                  = 0x03007,
-//   tsInteger                    = 0x03008,
+   tsInteger                    = 0x03008,
 //   tsHexInteger                 = 0x03009,
 //   tsReal                       = 0x0300A,
    tsCharacter                  = 0x0300B,
@@ -40,7 +40,7 @@ enum Symbol
    tsWide                       = 0x0300D,
 
    nsClass                      = 0x0100E,               // non-terminals
-//   nsTemplate                   = 0x0100F,
+   nsTemplate                   = 0x0100F,
 //   nsSubjectArg                 = 0x01010,
    nsSymbol                     = 0x01011,
    nsExpression                 = 0x01012,
@@ -49,7 +49,7 @@ enum Symbol
 //   nsHintValue                  = 0x01015,
    nsMethod                     = 0x01016,
 //   nsMethodParameter            = 0x01017,
-//   nsNestedClass                = 0x01018,
+   nsNestedClass                = 0x01018,
    nsObject                     = 0x01019,
    nsSubCode                    = 0x0101A,
 //   nsMessageOperation           = 0x0101B,

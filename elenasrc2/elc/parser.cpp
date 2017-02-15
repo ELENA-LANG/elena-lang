@@ -80,9 +80,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
 	   case dfaPrivate:
          terminal.symbol = tsPrivate;
          break;
-//	   case dfaInteger:
-//         terminal.symbol = tsInteger;
-//         break;
+	   case dfaInteger:
+         terminal.symbol = tsInteger;
+         break;
 //      case dfaLong:
 //         terminal.symbol = tsLong;
 //         break;

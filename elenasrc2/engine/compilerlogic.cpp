@@ -925,11 +925,11 @@ CompilerLogic :: CompilerLogic()
 //         return false;
 //   }
 //}
-//
-//bool CompilerLogic :: validateMethodAttribute(int& attrValue)
-//{
-//   switch ((size_t)attrValue)
-//   {
+
+bool CompilerLogic :: validateMethodAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
 //      case V_IFBRANCH:
 //         attrValue = tpIfBranch;
 //         return true;
@@ -951,11 +951,14 @@ CompilerLogic :: CompilerLogic()
 //      case V_ACTION:
 //         attrValue = tpAction;
 //         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+      case V_CONSTRUCTOR:
+         attrValue = tpConstructor;
+         return true;
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 //{
 //   switch ((size_t)attrValue)
@@ -1582,22 +1585,54 @@ CompilerLogic :: CompilerLogic()
 //   return encodeMessage(foundSubjRef, operatorId, paramCount);
 //}
 
-bool CompilerLogic :: recognizeScope(SNode& node)
+inline bool setIdentifier(SNode terminal)
 {
-   SNode expr = node.findChild(lxExpression);
-   if (expr != lxNone) {
-      // if it could be compiled as a symbol
-      SNode terminal = expr;
-      while (terminal != lxNone && terminal != lxAttribute) {
-         terminal = terminal.prevNode();
-      }
+   while (terminal != lxNone && terminal != lxAttribute) {
+      terminal = terminal.prevNode();
+   }
 
-      node = lxSymbol;
+   SNode ident = terminal.findChild(lxIdentifier);
+   if (ident == lxIdentifier) {
       terminal = lxIdentifier;
-      SyntaxTree::copyNode(terminal.findChild(lxIdentifier), terminal);
+      SyntaxTree::copyNode(ident, terminal);
 
       return true;
    }
+   else return false;
+}
+
+bool CompilerLogic :: recognizeScope(SNode& node)
+{
+   SNode body = node.findChild(lxExpression);
+   if (body == lxExpression) {
+      // if it could be compiled as a symbol
+      if (setIdentifier(body)) {
+         node = lxSymbol;
+
+         return true;
+      }
+   }
+   else {
+      // if it could be compiled as a symbol
+      if (setIdentifier(node.firstChild())) {
+         node = lxClass;
+
+         return true;
+      }
+   }
 
    return false;
+}
+
+bool CompilerLogic :: recognizeMember(SNode& node)
+{
+   SNode body = node.findChild(lxCode);
+   if (body != lxNone) {
+      setIdentifier(body);
+
+      node = lxClassMethod;
+
+      return true;
+   }
+   else return false;
 }

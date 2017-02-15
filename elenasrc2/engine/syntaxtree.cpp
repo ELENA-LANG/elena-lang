@@ -159,18 +159,18 @@ SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, ide
    return read(reader);
 }
 
-//void SyntaxTree :: saveNode(Node node, _Memory* dump)
-//{
-//   SyntaxTree tree;
-//   SyntaxWriter writer(tree);
-//
-//   writer.newNode(lxRoot);
-//   copyNode(writer, node);
-//   writer.closeNode();
-//
-//   tree.save(dump);
-//}
-//
+void SyntaxTree :: saveNode(Node node, _Memory* dump)
+{
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxRoot);
+   copyNode(writer, node);
+   writer.closeNode();
+
+   tree.save(dump);
+}
+
 //void SyntaxTree :: loadNode(Node node, _Memory* dump)
 //{
 //   SyntaxTree tree(dump);
