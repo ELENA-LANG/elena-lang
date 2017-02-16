@@ -4,6 +4,7 @@ In development:
 
               xdev - generic development
                  * implementing ELENA 3.0
+                 * raise an error when costructor new [] // !!
                  * check for method duplicates
                  * allow to override the template method
                  * singleton classes / roles / extensions should not have a class class

@@ -12,23 +12,29 @@
 // --- super object ---
 
 /// a common ancestor
-#class/*(dispatchable:object)*/ Object
+Object
 {
-    #method test []
+    /// Creates the object
+    constructor new []
     
-//    /// Creates the object
-//    #constructor new []
-
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    ///
-//    /// By default compares the object references.
-//    #method(bool) equal : anObject => system'core_routines'__object.
-//    
-//    #method(bool)notequal : anObject = $self equal:anObject inverted.
-//                        
-//    /// Implements a message dispatching in VMT
-//    #method => system'core_routines'__object.
+    equal []
 }
+
+//#class/*(dispatchable:object)*/ Object
+//{
+////    /// Creates the object
+////    #constructor new []
+//
+////    /// Returns true if the specified object is equal to the current object; otherwise, false.
+////    ///
+////    /// By default compares the object references.
+////    #method(bool) equal : anObject => system'core_routines'__object.
+////    
+////    #method(bool)notequal : anObject = $self equal:anObject inverted.
+////                        
+////    /// Implements a message dispatching in VMT
+////    #method => system'core_routines'__object.
+//}
 
 ///// A common boolean value
 //

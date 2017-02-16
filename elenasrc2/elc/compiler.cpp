@@ -244,7 +244,7 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 
    defaultNs.add(module->Name());
 
-//   loadModuleInfo(module);
+   loadModuleInfo(module);
 }
 
 //ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()

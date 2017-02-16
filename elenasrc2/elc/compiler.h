@@ -334,11 +334,11 @@ private:
 
       void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
 
-//      void loadModuleInfo(_Module* extModule)
-//      {
-//         bool dummy;
-//         loadModuleInfo(extModule, dummy);
-//      }
+      void loadModuleInfo(_Module* extModule)
+      {
+         bool dummy;
+         loadModuleInfo(extModule, dummy);
+      }
       void loadModuleInfo(_Module* extModule, bool& duplicateExtensions)
       {
          loadAttributes(extModule);
