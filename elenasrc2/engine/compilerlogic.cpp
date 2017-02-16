@@ -1613,9 +1613,20 @@ bool CompilerLogic :: recognizeScope(SNode& node)
       }
    }
    else {
-      // if it could be compiled as a symbol
+      // if it could be compiled as a class
       if (setIdentifier(node.firstChild())) {
          node = lxClass;
+
+         SNode member = node.firstChild();
+         while (member != lxNone) {
+            if (member == lxScope) {
+               SNode codeNode = member.findChild(lxCode, lxExpression);
+               if (setIdentifier(codeNode))
+                  member = lxClassMethod;
+            }
+
+            member = member.nextNode();
+         }
 
          return true;
       }

@@ -173,7 +173,7 @@ enum LexicalType
    lxRow             = 0x20004,
    lxLength          = 0x02005,
    lxBreakpoint      = 0x20006,
-//   lxImport          = 0x20007,
+   lxImport          = 0x20007,
    lxReserved        = 0x20008,
    lxAllocated       = 0x20009,
    lxParamCount      = 0x2000A,
@@ -210,7 +210,7 @@ enum LexicalType
 //
 //   lxFieldAttrMask   = 0x20100,
 //   lxStaticAttr      = 0x20102,
-   lxClassMethodAttr = 0x20103,
+//   lxClassMethodAttr = 0x20103,
 //   lxDWordAttr       = 0x20104,
 //   lxSignatureAttr   = 0x20105,
 //   lxMessageAttr     = 0x20106,
