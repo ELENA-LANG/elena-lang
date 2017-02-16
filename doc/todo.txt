@@ -17,6 +17,8 @@ In development:
                  * uncomment buildClassDeclaration
                  * syntax : BLOCK_CLOSING_EXPECTED / DECLARATION_END_EXPECTED and so on
                  * singleton classes / roles / extensions should not have a class class
+                 * should not be allowed to provide returning type for constructors
+                 * check sealed / limited
                  * declaring : test [] - action ?
 
               xdev - generic development
