@@ -36,6 +36,7 @@ In development:
                  * dispatch method should be generic and without parameters
                  * declaring : test [] - action ?
                  * declaring : test => [] ?
+                 * warn if for the expression "a b := c." - a could be considered both as symbol (variable,...) and subject.
 
               xdev - generic development
                  * support property template

@@ -252,7 +252,7 @@ class ByteCodeWriter
 //   void doShortArrayOperation(CommandTape& tape, int operator_id);
 //   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
 
-   void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
+   bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
    void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
@@ -286,7 +286,7 @@ class ByteCodeWriter
 //   void generateLooping(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
-//   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);

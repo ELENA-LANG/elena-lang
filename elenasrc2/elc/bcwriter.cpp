@@ -3202,7 +3202,7 @@ inline ref_t defineConstantMask(LexicalType type)
    }
 }
 
-void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
+bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
 {
    if (node != lxNone) {
       // try to find the terminal symbol
@@ -3231,7 +3231,10 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
             terminal.findChild(lxCol).argument - 1,
             terminal.findChild(lxLength).argument, node.argument);
       }
+
+      return true;
    }
+   else return false;
 }
 
 void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t argument)
@@ -4300,104 +4303,104 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 //      generateBoxing(tape, node);
 //   }
 //}
-//
-//void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   int size = node.argument;
-//
-//   SNode target;
-//   SNode source;
-//
-//   SNode child = node.firstChild();
-//   while (child != lxNone) {
-//      if (test(child.type, lxObjectMask)) {
-//         if (target == lxNone) {
-//            target = child;
+
+void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   int size = node.argument;
+
+   SNode target;
+   SNode source;
+
+   SNode child = node.firstChild();
+   while (child != lxNone) {
+      if (test(child.type, lxObjectMask)) {
+         if (target == lxNone) {
+            target = child;
+         }
+         else if (child == lxExpression) {
+            translateBreakpoint(tape, child.findChild(lxBreakpoint));
+
+            source = child.findSubNodeMask(lxObjectMask);
+         }
+         else source = child;
+      }
+
+      child = child.nextNode();
+   }
+
+   //if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_MESSAGE_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||
+   //   (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp))))
+   //{
+   //   if (target == lxCreatingStruct) {
+   //      generateObjectExpression(tape, target);
+   //      loadBase(tape, lxResult);
+   //   }
+   //   else loadBase(tape, target.type, target.argument);
+
+   //   generateObjectExpression(tape, source);
+   //}
+   //else {
+      generateObjectExpression(tape, source);
+
+      //if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
+      //   if (node.argument == 4) {
+      //      saveInt(tape, target.type, target.argument);
+      //   }
+      //   else if (node.argument == 8) {
+      //      saveReal(tape, target.type, target.argument);
+      //   }
+      //}
+      //else if (target == lxFieldExpression || target == lxExpression) {
+      //   SNode arg1, arg2;
+
+      //   assignOpArguments(target, arg1, arg2);
+      //   loadBase(tape, arg1.type, arg1.argument);
+      //   saveBase(tape, false, lxResult, arg2.argument);
+      //}
+      //else if (size != 0) {
+      //   if (source == lxFieldAddress) {
+      //      loadBase(tape, target.type, target.argument);
+      //      if (target == lxFieldAddress) {
+      //         copyStructureField(tape, source.argument, target.argument, size);
+      //      }
+      //      else if (size == 4) {
+      //         copyInt(tape, source.argument);
+      //      }
+      //      else if (size == 2) {
+      //         copyShort(tape, source.argument);
+      //      }
+      //      else copyStructure(tape, source.argument, size);
+      //   }
+      //   else {
+      //      if (size == 4) {
+      //         assignInt(tape, target.type, target.argument);
+      //      }
+      //      else if (size == 2) {
+      //         assignShort(tape, target.type, target.argument);
+      //      }
+      //      else if (size == 1) {
+      //         assignByte(tape, target.type, target.argument);
+      //      }
+      //      else if (size == 8) {
+      //         assignLong(tape, target.type, target.argument);
+      //      }
+      //      else assignStruct(tape, target.type, target.argument, size);
+
+      //      assignBaseTo(tape, lxResult);
+      //   }
+      //}
+      //else {
+         // if assinging the result of primitive assigning operation
+         // it should be boxed before
+//         if (source == lxAssigning && source.argument > 0) {
+//            generateBoxing(tape, source);
 //         }
-//         else if (child == lxExpression) {
-//            translateBreakpoint(tape, child.findChild(lxBreakpoint));
-//
-//            source = child.findSubNodeMask(lxObjectMask);
-//         }
-//         else source = child;
-//      }
-//
-//      child = child.nextNode();
+
+         saveObject(tape, target.type, target.argument);
+      //}
 //   }
-//
-//   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_MESSAGE_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||
-//      (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp))))
-//   {
-//      if (target == lxCreatingStruct) {
-//         generateObjectExpression(tape, target);
-//         loadBase(tape, lxResult);
-//      }
-//      else loadBase(tape, target.type, target.argument);
-//
-//      generateObjectExpression(tape, source);
-//   }
-//   else {
-//      generateObjectExpression(tape, source);
-//
-//      if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
-//         if (node.argument == 4) {
-//            saveInt(tape, target.type, target.argument);
-//         }
-//         else if (node.argument == 8) {
-//            saveReal(tape, target.type, target.argument);
-//         }
-//      }
-//      else if (target == lxFieldExpression || target == lxExpression) {
-//         SNode arg1, arg2;
-//
-//         assignOpArguments(target, arg1, arg2);
-//         loadBase(tape, arg1.type, arg1.argument);
-//         saveBase(tape, false, lxResult, arg2.argument);
-//      }
-//      else if (size != 0) {
-//         if (source == lxFieldAddress) {
-//            loadBase(tape, target.type, target.argument);
-//            if (target == lxFieldAddress) {
-//               copyStructureField(tape, source.argument, target.argument, size);
-//            }
-//            else if (size == 4) {
-//               copyInt(tape, source.argument);
-//            }
-//            else if (size == 2) {
-//               copyShort(tape, source.argument);
-//            }
-//            else copyStructure(tape, source.argument, size);
-//         }
-//         else {
-//            if (size == 4) {
-//               assignInt(tape, target.type, target.argument);
-//            }
-//            else if (size == 2) {
-//               assignShort(tape, target.type, target.argument);
-//            }
-//            else if (size == 1) {
-//               assignByte(tape, target.type, target.argument);
-//            }
-//            else if (size == 8) {
-//               assignLong(tape, target.type, target.argument);
-//            }
-//            else assignStruct(tape, target.type, target.argument, size);
-//
-//            assignBaseTo(tape, lxResult);
-//         }
-//      }
-//      else {
-//         // if assinging the result of primitive assigning operation
-//         // it should be boxed before
-////         if (source == lxAssigning && source.argument > 0) {
-////            generateBoxing(tape, source);
-////         }
-//
-//         saveObject(tape, target.type, target.argument);
-//      }
-//   }
-//}
-//
+}
+
 //void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   excludeFrame(tape);
@@ -4717,9 +4720,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxUnboxing:
 //         generateBoxingExpression(tape, node);
 //         break;
-//      case lxAssigning:
-//         generateAssigningExpression(tape, node);
-//         break;
+      case lxAssigning:
+         generateAssigningExpression(tape, node);
+         break;
 //      case lxBranching:
 //         generateBranching(tape, node);
 //         break;
@@ -4780,9 +4783,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxCreatingStruct:
          generateCreating(tape, node);
          break;
-//      //case lxBreakpoint:
-//      //   translateBreakpoint(tape, node);
-//      //   break;
+      //case lxBreakpoint:
+      //   translateBreakpoint(tape, node);
+      //   break;
 //      case lxCode:
 //         generateCodeBlock(tape, node);
 //         break;
@@ -4821,11 +4824,12 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
       switch (type)
       {
          case lxExpression:
-            translateBreakpoint(tape, current.findChild(lxBreakpoint));
-
-            declareBlock(tape);
-            generateExpression(tape, current);
-            declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+            if (translateBreakpoint(tape, current.findChild(lxBreakpoint))) {
+               declareBlock(tape);
+               generateExpression(tape, current);
+               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+            }
+            else generateExpression(tape, current);
             break;
 //         case lxAssigning:
 //         case lxReturning:
@@ -4841,11 +4845,11 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxExternFrame:
 //            generateExternFrame(tape, current);
 //            break;
-//         case lxVariable:
-//            declareLocalInfo(tape,
-//               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-//               current.findChild(lxLevel).argument);
-//            break;
+         case lxVariable:
+            declareLocalInfo(tape,
+               current.findChild(lxTerminal).identifier(),
+               current.findChild(lxLevel).argument);
+            break;
 //         case lxIntVariable:
 //            declareLocalIntInfo(tape,
 //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
@@ -5008,7 +5012,7 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
             break;
          case lxVariable:
             declareLocalInfo(tape,
-               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+               current.findChild(lxTerminal).identifier(),
                current.findChild(lxLevel).argument);
             break;
          case lxSelfVariable:

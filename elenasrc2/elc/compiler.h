@@ -62,27 +62,27 @@ typedef List<Unresolved> Unresolveds;
 class Compiler : public _Compiler
 {
 public:
-//   struct Parameter
-//   {
-//      int    offset;
+   struct Parameter
+   {
+      int    offset;
 //      ref_t  class_ref;
 //      ref_t  subj_ref;
 //      int    size;
-//
-//      Parameter()
-//      {
-//         offset = -1;
+
+      Parameter()
+      {
+         offset = -1;
 //         subj_ref = 0;
 //         class_ref = 0;
 //         size = 0;
-//      }
-//      Parameter(int offset)
-//      {
-//         this->offset = offset;
+      }
+      Parameter(int offset)
+      {
+         this->offset = offset;
 //         this->subj_ref = 0;
 //         this->class_ref = 0;
 //         this->size = 0;
-//      }
+      }
 //      Parameter(int offset, ref_t subj_ref)
 //      {
 //         this->offset = offset;
@@ -104,7 +104,7 @@ public:
 //         this->class_ref = class_ref;
 //         this->size = size;
 //      }
-//   };
+   };
 
    // InheritResult
    enum InheritResult
@@ -141,7 +141,7 @@ public:
 //      okFieldAddress,                 // param - field offset, extraparam - class reference
 //      okOuter,                        // param - field offset, extraparam - class reference
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
-//      okLocal,                        // param - local / out parameter offset, extraparam : class reference
+      okLocal,                        // param - local / out parameter offset, extraparam : class reference
 //      okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
 //      okParamField,
 //      okSubject,                      // param - parameter offset
@@ -230,7 +230,7 @@ public:
    };
 
    typedef Map<ident_t, ref_t>            ForwardMap;
-//   typedef MemoryMap<ident_t, Parameter>  LocalMap;
+   typedef MemoryMap<ident_t, Parameter>  LocalMap;
 ////   typedef MemoryMap<int, ref_t>          RoleMap;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
@@ -579,30 +579,30 @@ private:
    // - CodeScope -
    struct CodeScope : public Scope
    {
-//      // scope local variables
-//      LocalMap     locals;
+      // scope local variables
+      LocalMap     locals;
       int          level;
 
 //      // scope stack allocation
 //      int          reserved;  // allocated for the current statement
 //      int          saved;     // permanently allocated
-//
-//      int newLocal()
-//      {
-//         level++;
-//
-//         return level;
-//      }
-//
+
+      int newLocal()
+      {
+         level++;
+
+         return level;
+      }
+
 //      void mapLocal(ident_t local, int level/*, ref_t type*/)
 //      {
 //         locals.add(local, Parameter(level/*, type*/));
 //      }
-//      void mapLocal(ident_t local, int level, ref_t type, size_t class_ref, int size)
-//      {
-//         locals.add(local, Parameter(level, type, class_ref, size));
-//      }
-//
+      void mapLocal(ident_t local, int level/*, ref_t type, size_t class_ref, int size*/)
+      {
+         locals.add(local, Parameter(level/*, type, class_ref, size*/));
+      }
+
 //      void freeSpace()
 //      {
 //         reserved = saved;
@@ -840,7 +840,7 @@ private:
 ////   void raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered = true);
 ////
 ////   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
-//   void insertMessage(SNode node, ModuleScope& scope, ref_t messageRef);
+   void writeMessageInfo(SyntaxWriter& writer, ModuleScope& scope, ref_t messageRef);
    ref_t mapAttribute(SNode attribute, Scope& scope, int& attrValue);
 //   ref_t mapAttribute(SNode attribute, ModuleScope& scope);
 //   void initialize(Scope& scope, MethodScope& methodScope);
@@ -860,7 +860,7 @@ private:
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
-//   void declareParameterDebugInfo(SNode node, MethodScope& scope, bool withThis, bool withSelf);
+   void declareParameterDebugInfo(SyntaxWriter& writer, /*SNode node, */MethodScope& scope, bool withThis, bool withSelf);
 //
    bool declareTemplate(SNode node, Scope* scope, ref_t attrRef);
 ////   bool copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode, SNode currentNode);
@@ -892,7 +892,7 @@ private:
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
 //   void compileSwitch(SNode node, CodeScope& scope);
-//   void compileVariable(SNode node, CodeScope& scope);
+   void declareVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //
 //   ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, int mode);
 //   ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope);
@@ -917,12 +917,12 @@ private:
 //   ObjectInfo compileExtensionMessage(SNode node, CodeScope& scope, ObjectInfo role, ref_t extesionType = 0);
 //
 ////   ObjectInfo compileNewOperator(SNode node, CodeScope& scope/*, int mode*/);
-////   ObjectInfo compileAssigning(SNode node, CodeScope& scope, int mode);
+   ObjectInfo declareAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 ////   ObjectInfo compileExtension(SNode node, CodeScope& scope);
    ObjectInfo declareExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-////   ObjectInfo compileRetExpression(SNode node, CodeScope& scope, int mode);
-////   ObjectInfo compileAssigningExpression(SNode assigning, CodeScope& scope);
-////
+//   ObjectInfo compileRetExpression(SNode node, CodeScope& scope, int mode);
+   ObjectInfo declareAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
+
 ////   ObjectInfo compileBranching(SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 ////
 ////   void compileTrying(SNode node, CodeScope& scope);

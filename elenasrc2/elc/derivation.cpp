@@ -126,8 +126,8 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
          copyChildren(node);
          _writer.closeNode();
          break;
-//      case nsRootExpression:
-//         node = lxExpression;
+      case nsRootExpression:
+         node = lxExpression;
       case nsExpression:
 //      case nsDispatchHandler:
 //      case nsRetStatement:
@@ -145,12 +145,12 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //
 //         _writer.removeBookmark();
 //         break;
-//      case nsVariable:
-//         copyVariable(node);
-//         break;
-//      case nsAssigning:
-//         copyAssigning(node);
-//         break;
+      case nsVariable:
+         copyVariable(node);
+         break;
+      case nsAssigning:
+         copyAssigning(node);
+         break;
 //      case nsCatchMessageOperation:
 //      case nsAltMessageOperation:
 //         _writer.newBookmark();
@@ -365,38 +365,38 @@ void DerivationWriter :: copyMessage(SNode node, bool operationMode)
    }
 }
 
-//void DerivationWriter :: copyVariable(SNode node)
-//{
-//   SNode local = node.firstChild();
-//
-//   _writer.newNode(lxVariable);
-//
-//   if (_hints != lxNone) {
-//      copyHints(_hints);
-//      _hints = lxNone;
-//   }
-//
-//   unpackNode(local, 0);
-//   _writer.closeNode();
-//
-//   SNode current = node.findChild((LexicalType)nsAssigning);
-//   if (current != lxNone) {
-//      _writer.newNode(lxExpression);
-//      _writer.appendNode(lxAssign);
-//      unpackNode(local, 1);
-//
-//      unpackChildren(current);
-//
-//      _writer.closeNode();
-//   }
-//}
-//
-//void DerivationWriter :: copyAssigning(SNode node)
-//{
-//   _writer.appendNode(lxAssign);
-//
-//   unpackChildren(node);
-//}
+void DerivationWriter :: copyVariable(SNode node)
+{
+   SNode local = node.firstChild();
+
+   _writer.newNode(lxVariable);
+
+   if (_hints != lxNone) {
+      copyHints(_hints);
+      _hints = lxNone;
+   }
+
+   unpackNode(local, 0);
+   _writer.closeNode();
+
+   SNode current = node.findChild((LexicalType)nsAssigning);
+   if (current != lxNone) {
+      _writer.newNode(lxExpression);
+      _writer.appendNode(lxAssign);
+      unpackNode(local, 1);
+
+      unpackChildren(current);
+
+      _writer.closeNode();
+   }
+}
+
+void DerivationWriter :: copyAssigning(SNode node)
+{
+   _writer.appendNode(lxAssign);
+
+   unpackChildren(node);
+}
 
 void DerivationWriter :: copyHints(SNode current)
 {
