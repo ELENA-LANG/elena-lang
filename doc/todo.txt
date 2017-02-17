@@ -36,6 +36,7 @@ In development:
                  * dispatch method should be generic and without parameters
                  * declaring : test [] - action ?
                  * declaring : test => [] ?
+                 * declaring : test param. // ?
                  * warn if for the expression "a b := c." - a could be considered both as symbol (variable,...) and subject.
                  * test short hand assigning : a prop := b.
                  * test a b c := d. (both when a is a varialbe and when it is a subject / attribute)

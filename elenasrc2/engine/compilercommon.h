@@ -266,6 +266,7 @@ public:
    
    virtual bool recognizeScope(SNode& node) = 0;
    virtual bool recognizeNewLocal(SNode& node) = 0;
+   virtual bool recognizeNewField(SNode& node) = 0;
 };
    
 }  // _ELENA_

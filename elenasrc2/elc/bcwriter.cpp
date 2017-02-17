@@ -21,9 +21,9 @@ bool isSimpleObject(SNode node, bool ignoreFields = false)
          if (!isSimpleObjectExpression(node, ignoreFields))
             return false;
       }
-      //else if (ignoreFields && (node.type == lxField || node.type == lxFieldAddress)) {
-      //   // ignore fields if required
-      //}
+      else if (ignoreFields && (node.type == lxField/* || node.type == lxFieldAddress*/)) {
+         // ignore fields if required
+      }
       else if (!test(node.type, lxSimpleMask))
          return false;
    }
@@ -3279,15 +3279,15 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushsi index
          tape.write(bcPushSI, argument);
          break;
-//      case lxField:
-//         // aloadfi 1
-//         // pushai offset / pusha
-//         tape.write(bcALoadFI, 1, bpFrame);
-//         if ((int)argument < 0) {
-//            tape.write(bcPushA);
-//         }
-//         else tape.write(bcPushAI, argument);
-//         break;
+      case lxField:
+         // aloadfi 1
+         // pushai offset / pusha
+         tape.write(bcALoadFI, 1, bpFrame);
+         if ((int)argument < 0) {
+            tape.write(bcPushA);
+         }
+         else tape.write(bcPushAI, argument);
+         break;
 //      case lxStaticField:
 //         // aloadr r
 //         // pusha
@@ -3360,15 +3360,15 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // acopyr 0
          tape.write(bcACopyR, argument);
          break;
-//      case lxField:
-//         // bloadfi 1
-//         // aloadbi / acopyb
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         if ((int)argument < 0) {
-//            tape.write(bcACopyB);
-//         }
-//         else tape.write(bcALoadBI, argument);
-//         break;
+      case lxField:
+         // bloadfi 1
+         // aloadbi / acopyb
+         tape.write(bcBLoadFI, 1, bpFrame);
+         if ((int)argument < 0) {
+            tape.write(bcACopyB);
+         }
+         else tape.write(bcALoadBI, argument);
+         break;
 //      case lxStaticField:
 //         // aloadr r
 //         tape.write(bcALoadR, argument | mskStatSymbolRef);
@@ -3415,12 +3415,12 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
          // asavesi index
          tape.write(bcASaveSI, argument);
          break;
-      //case lxField:
-      //   // bloadfi 1
-      //   // asavebi index
-      //   tape.write(bcBLoadFI, 1, bpFrame);
-      //   tape.write(bcASaveBI, argument);
-      //   break;
+      case lxField:
+         // bloadfi 1
+         // asavebi index
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcASaveBI, argument);
+         break;
       //case lxStaticField:
       //   // asaver arg
       //   tape.write(bcASaveR, argument | mskStatSymbolRef);

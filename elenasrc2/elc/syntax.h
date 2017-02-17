@@ -44,7 +44,7 @@ enum Symbol
 //   nsSubjectArg                 = 0x01010,
    nsSymbol                     = 0x01011,
    nsExpression                 = 0x01012,
-//   nsField                      = 0x01013,
+   nsField                      = 0x01013,
 //   nsHint                       = 0x01014,
 //   nsHintValue                  = 0x01015,
    nsMethod                     = 0x01016,

@@ -36,7 +36,7 @@ enum LexicalType
    lxClass           = 0x0000E,
    lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
-//   lxClassField      = 0x00013,
+   lxClassField      = 0x00013,
 //   lxAttributeValue  = 0x00015,
    lxClassMethod     = 0x00016,
    lxNestedClass     = 0x00018,
@@ -72,7 +72,7 @@ enum LexicalType
 //   lxNested          = 0x08102, // arg - count
 //   lxStruct          = 0x08103, // arg - count
 //   lxConstantSymbol  = 0x0A104, // arg - reference
-//   lxField           = 0x08105, // arg - offset
+   lxField           = 0x08105, // arg - offset
 //   lxStaticField     = 0x08106, // arg - reference
    lxSymbolReference = 0x08107,
 //   lxLocalAddress    = 0x0A108, // arg - offset
@@ -517,17 +517,17 @@ public:
 //
 //         return child;
 //      }
-//
-//      Node lastChild() const
-//      {
-//         Node current = firstChild();
-//         if (current != lxNone) {
-//            while (current.nextNode() != lxNone) {
-//               current = current.nextNode();
-//            }
-//         }
-//         return current;
-//      }
+
+      Node lastChild() const
+      {
+         Node current = firstChild();
+         if (current != lxNone) {
+            while (current.nextNode() != lxNone) {
+               current = current.nextNode();
+            }
+         }
+         return current;
+      }
 
       Node nextNode() const
       {

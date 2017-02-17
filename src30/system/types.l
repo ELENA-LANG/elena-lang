@@ -103,3 +103,4 @@
 
 // --- Generic attributes ---
 #subject object.
+#subject var.

@@ -136,7 +136,7 @@ public:
 //      okSignatureConstant,            // param - reference
 //      okVerbConstant,                 // param - reference
 //      okArrayConst,
-//      okField,                        // param - field offset, extraparam - class reference
+      okField,                        // param - field offset, extraparam - class reference
 //      okStaticField,                  // param - reference
 //      okFieldAddress,                 // param - field offset, extraparam - class reference
 //      okOuter,                        // param - field offset, extraparam - class reference
@@ -458,9 +458,9 @@ private:
    {
       ClassInfo   info;
 //      ref_t       extensionMode;
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
+
 //      void compileClassAttribute(SyntaxTree::Node hint);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -867,8 +867,8 @@ private:
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
-//   void compileFieldDeclarations(SNode member, ClassScope& scope);
-//
+   void compileFieldDeclarations(SNode member, ClassScope& scope);
+
 //   void compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode);
 //   void compileSymbolAttributes(SNode node, SymbolScope& scope)
 //   {
@@ -983,8 +983,8 @@ private:
 //////   void declareVirtualMethods(ClassScope& scope);
 ////
 ////   ref_t generateTemplate(TemplateScope& scope);
-////
-////   void generateClassField(ClassScope& scope, SyntaxTree::Node node, bool singleField);
+
+   void generateClassField(ClassScope& scope, SNode node/*, bool singleField*/);
 ////   void generateClassStaticField(ClassScope& scope, SNode current);
 ////
 ////   void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);

@@ -1601,6 +1601,22 @@ inline bool setIdentifier(SNode terminal)
    else return false;
 }
 
+inline bool setTokenIdentifier(SNode terminal)
+{
+   while (terminal != lxNone && terminal != lxAttribute) {
+      terminal = terminal.prevNode();
+   }
+
+   SNode ident = terminal.findChild(lxIdentifier);
+   if (ident == lxIdentifier) {
+      terminal = lxIdentifier;
+      SyntaxTree::copyNode(ident, terminal);
+
+      return true;
+   }
+   else return false;
+}
+
 bool CompilerLogic :: recognizeScope(SNode& node)
 {
    SNode body = node.findChild(lxExpression);
@@ -1670,6 +1686,19 @@ bool CompilerLogic :: recognizeNewLocal(SNode& node)
 
       //   return true;
       //}
+   }
+   return false;
+}
+
+bool CompilerLogic :: recognizeNewField(SNode& node)
+{
+   SNode body = node.findChild(lxExpression, lxCode);
+   if (body == lxNone) {
+      if (setTokenIdentifier(node.lastChild())) {
+         node = lxClassField;
+
+         return true;
+      }
    }
    return false;
 }

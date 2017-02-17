@@ -893,8 +893,8 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 //   extensionMode = 0;
 }
 
-//ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
-//{
+ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
+{
 //   if (terminal.compare(SUPER_VAR)) {
 //      return ObjectInfo(okSuper, info.header.parentRef);
 //   }
@@ -905,27 +905,27 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 //      else return ObjectInfo(okParam, (size_t)-1);
 //   }
 //   else {
-//      int offset = info.fields.get(terminal);
-//      if (offset >= 0) {
+      int offset = info.fields.get(terminal);
+      if (offset >= 0) {
 //         ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
 //         if (test(info.header.flags, elStructureRole)) {
 //            return ObjectInfo(okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2);
 //         }
-//         return ObjectInfo(okField, offset, fieldInfo.value1, fieldInfo.value2);
-//      }
+         return ObjectInfo(okField, offset/*, fieldInfo.value1, fieldInfo.value2*/);
+      }
 //      else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
 //         return ObjectInfo(okThisParam, 1, -2, info.fieldTypes.get(-1).value2);
 //      }
-//      else {
+      else {
 //         ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
 //         if (staticInfo.value1 != 0) {
 //            return ObjectInfo(okStaticField, staticInfo.value1, 0, staticInfo.value2);
 //         }
-//         else return Scope::mapTerminal(terminal);
-//      }
+         /*else */return Scope::mapTerminal(terminal);
+      }
 //   }
-//}
-//
+}
+
 //void Compiler::ClassScope :: compileClassAttribute(SNode hint)
 //{
 //   switch (hint.type)
@@ -2071,10 +2071,10 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //      case okSuper:
 //         terminal.set(lxLocal, 1);
 //         break;
-//      case okField:
+      case okField:
 //      case okOuter:
-//         terminal.set(lxField, object.param);
-//         break;
+         writer.newNode(lxField, object.param);
+         break;
 //      case okStaticField:
 //         terminal.set(lxStaticField, object.param);
 //         break;
@@ -3016,7 +3016,7 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
 //         }
 //         else scope.raiseError(errInvalidOperation, node);
 //      }
-      /*else */if (retVal.kind == okLocal/* || target.kind == okField || target.kind == okOuterField || target.kind == okStaticField*/) {
+      /*else */if (retVal.kind == okLocal || retVal.kind == okField /*|| target.kind == okOuterField || target.kind == okStaticField*/) {
       }
 //      else if (target.kind == okParam || target.kind == okOuter) {
 //         // Compiler magic : allowing to assign byref / variable parameter
@@ -4776,24 +4776,31 @@ void Compiler :: declareDefaultConstructor(SyntaxWriter& writer, SNode node, Met
 ////      compileDispatcher(methodNode, methodScope, true);
 ////   }
 ////}
-////
-////void Compiler :: compileFieldDeclarations(SNode node, ClassScope& scope)
-////{
-////   SNode current = node.firstChild();
-////
-////   while (current != lxNone) {
-////      if (current == lxClassField) {
-////         compileFieldAttributes(current, scope, current);
-////      }
-////      else if (current == lxTemplate) {
-////         TemplateScope templateScope(&scope);
-////         templateScope.loadParameters(current, _writer);
-////
-////         compileFieldDeclarations(current, templateScope);
-////      }
-////      current = current.nextNode();
-////   }
-////}
+
+void Compiler :: compileFieldDeclarations(SNode node, ClassScope& scope)
+{
+   SNode current = node.firstChild();
+
+   while (current != lxNone) {
+      if (current == lxClassField) {
+         generateClassField(scope, current);
+
+         //compileFieldAttributes(current, scope, current);
+      }
+      else if (current == lxScope) {
+         if (_logic->recognizeNewField(current)) {
+            generateClassField(scope, current);
+         }
+      }
+      //else if (current == lxTemplate) {
+      //   TemplateScope templateScope(&scope);
+      //   templateScope.loadParameters(current, _writer);
+
+      //   compileFieldDeclarations(current, templateScope);
+      //}
+      current = current.nextNode();
+   }
+}
 
 void Compiler :: compileSymbolCode(ModuleScope& scope, ref_t reference)
 {
@@ -5236,119 +5243,119 @@ bool Compiler :: declareClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
 ////      current = current.nextNode();
 ////   }
 ////}
-////
-////void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, bool singleField)
-////{
-////   ModuleScope* moduleScope = scope.moduleScope;
-////
-////   int offset = 0;
-////   ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
-////
-////   ref_t classRef = current.findChild(lxClassRef).argument;
-////   ref_t typeAttr = current.findChild(lxType).argument;
-////   if (!classRef && typeAttr) {
-////      classRef = moduleScope->attributeHints.get(typeAttr);
-////   }
-////
-////   int sizeHint = current.findChild(lxSize).argument;
-////
-////   // a role cannot have fields
-////   if (test(scope.info.header.flags, elStateless))
-////      scope.raiseError(errIllegalField, current);
-////
-////   int size = (typeAttr != 0) ? _logic->defineStructSize(*moduleScope, classRef) : 0;
-////   if (sizeHint != 0) {
-//////      if (size < 0) {
-//////         size = sizeHint * (-size);
-//////      }
-////      /*else */if (size == 0) {
-////         size = sizeHint;
+
+void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current/*, bool singleField*/)
+{
+//   ModuleScope* moduleScope = scope.moduleScope;
+
+   int offset = 0;
+   ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
+
+//   ref_t classRef = current.findChild(lxClassRef).argument;
+//   ref_t typeAttr = current.findChild(lxType).argument;
+//   if (!classRef && typeAttr) {
+//      classRef = moduleScope->attributeHints.get(typeAttr);
+//   }
+//
+//   int sizeHint = current.findChild(lxSize).argument;
+//
+//   // a role cannot have fields
+//   if (test(scope.info.header.flags, elStateless))
+//      scope.raiseError(errIllegalField, current);
+//
+//   int size = (typeAttr != 0) ? _logic->defineStructSize(*moduleScope, classRef) : 0;
+//   if (sizeHint != 0) {
+////      if (size < 0) {
+////         size = sizeHint * (-size);
 ////      }
-////      else scope.raiseError(errIllegalField, current);
-////   }
-////
-////   SNode attr = current.firstChild(lxFieldAttrMask);
-////   if (test(scope.info.header.flags, elWrapper) && scope.info.fields.Count() > 0) {
-////      // wrapper may have only one field
-////      scope.raiseError(errIllegalField, current);
-////   }
-////   // if it is a primitive data wrapper
-////   else if (attr != lxNone) {
-////      if (classRef != 0 || testany(scope.info.header.flags, elNonStructureRole | elDynamicRole))
-////         scope.raiseError(errIllegalField, current);
-////
-////      if (test(scope.info.header.flags, elStructureRole)) {
-////         scope.info.fields.add(terminal, scope.info.size);
-////         scope.info.size += size;
-////      }
-////      else scope.raiseError(errIllegalField, current);
-////
-////      if (!_logic->tweakPrimitiveClassFlags(attr.type, scope.info))
-////         scope.raiseError(errIllegalField, current);
-////   }
-////   // a class with a dynamic length structure must have no fields
-////   else if (test(scope.info.header.flags, elDynamicRole)) {
-////      if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
-////         // compiler magic : turn a field declaration into an array or string one
-////         if (size != 0) {
-////            scope.info.header.flags |= elStructureRole;
-////            scope.info.size = -size;
-////         }
-////
-////         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classRef, typeAttr));
-////         scope.info.fields.add(terminal, -2);
-////      }
-////      else scope.raiseError(errIllegalField, current);
-////   }
-////   else {
-////      if (scope.info.fields.exist(terminal))
-////         scope.raiseError(errDuplicatedField, current);
-////
-////      // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-////      if (!test(scope.info.header.flags, elNonStructureRole) && singleField
-////         && test(scope.info.header.flags, elSealed) && size != 0 && scope.info.fields.Count() == 0)
-////      {
-////         scope.info.header.flags |= elStructureRole;
-////         scope.info.size = size;
-////
-////         //if (size < 0) {
-////         //   scope.info.header.flags |= elDynamicRole;
-////         //}
-////
-////         scope.info.fields.add(terminal, 0);
-////         scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, typeAttr));
-////      }
-////      // if it is a structure field
-////      else if (test(scope.info.header.flags, elStructureRole)) {
-////         if (size <= 0)
-////            scope.raiseError(errIllegalField, current);
-////
-////         if (scope.info.size != 0 && scope.info.fields.Count() == 0)
-////            scope.raiseError(errIllegalField, current);
-////
-////         offset = scope.info.size;
-////         scope.info.size += size;
-////
-////         scope.info.fields.add(terminal, offset);
-////         scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, typeAttr));
-////      }
-////      // if it is a normal field
-////      else {
-////         // primitive / virtual classes cannot be declared
-////         if (size != 0 && _logic->isPrimitiveRef(classRef))
-////            scope.raiseError(errIllegalField, current);
-////
-////         scope.info.header.flags |= elNonStructureRole;
-////
-////         offset = scope.info.fields.Count();
-////         scope.info.fields.add(terminal, offset);
-////
-////         if (typeAttr != 0 || classRef != 0)
-////            scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, typeAttr));
-////      }
-////   }
-////}
-////
+//      /*else */if (size == 0) {
+//         size = sizeHint;
+//      }
+//      else scope.raiseError(errIllegalField, current);
+//   }
+//
+//   SNode attr = current.firstChild(lxFieldAttrMask);
+//   if (test(scope.info.header.flags, elWrapper) && scope.info.fields.Count() > 0) {
+//      // wrapper may have only one field
+//      scope.raiseError(errIllegalField, current);
+//   }
+//   // if it is a primitive data wrapper
+//   else if (attr != lxNone) {
+//      if (classRef != 0 || testany(scope.info.header.flags, elNonStructureRole | elDynamicRole))
+//         scope.raiseError(errIllegalField, current);
+//
+//      if (test(scope.info.header.flags, elStructureRole)) {
+//         scope.info.fields.add(terminal, scope.info.size);
+//         scope.info.size += size;
+//      }
+//      else scope.raiseError(errIllegalField, current);
+//
+//      if (!_logic->tweakPrimitiveClassFlags(attr.type, scope.info))
+//         scope.raiseError(errIllegalField, current);
+//   }
+//   // a class with a dynamic length structure must have no fields
+//   else if (test(scope.info.header.flags, elDynamicRole)) {
+//      if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
+//         // compiler magic : turn a field declaration into an array or string one
+//         if (size != 0) {
+//            scope.info.header.flags |= elStructureRole;
+//            scope.info.size = -size;
+//         }
+//
+//         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classRef, typeAttr));
+//         scope.info.fields.add(terminal, -2);
+//      }
+//      else scope.raiseError(errIllegalField, current);
+//   }
+//   else {
+      if (scope.info.fields.exist(terminal))
+         scope.raiseError(errDuplicatedField, current);
+
+//      // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+//      if (!test(scope.info.header.flags, elNonStructureRole) && singleField
+//         && test(scope.info.header.flags, elSealed) && size != 0 && scope.info.fields.Count() == 0)
+//      {
+//         scope.info.header.flags |= elStructureRole;
+//         scope.info.size = size;
+//
+//         //if (size < 0) {
+//         //   scope.info.header.flags |= elDynamicRole;
+//         //}
+//
+//         scope.info.fields.add(terminal, 0);
+//         scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, typeAttr));
+//      }
+//      // if it is a structure field
+//      else if (test(scope.info.header.flags, elStructureRole)) {
+//         if (size <= 0)
+//            scope.raiseError(errIllegalField, current);
+//
+//         if (scope.info.size != 0 && scope.info.fields.Count() == 0)
+//            scope.raiseError(errIllegalField, current);
+//
+//         offset = scope.info.size;
+//         scope.info.size += size;
+//
+//         scope.info.fields.add(terminal, offset);
+//         scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, typeAttr));
+//      }
+      // if it is a normal field
+//      else {
+//         // primitive / virtual classes cannot be declared
+//         if (size != 0 && _logic->isPrimitiveRef(classRef))
+//            scope.raiseError(errIllegalField, current);
+//
+//         scope.info.header.flags |= elNonStructureRole;
+
+         offset = scope.info.fields.Count();
+         scope.info.fields.add(terminal, offset);
+
+//         if (typeAttr != 0 || classRef != 0)
+//            scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, typeAttr));
+//      }
+//   }
+}
+
 ////void Compiler :: generateClassStaticField(ClassScope& scope, SNode current)
 ////{
 ////   _Module* module = scope.moduleScope->module;
@@ -5680,7 +5687,7 @@ void Compiler :: compileClassDeclaration(SyntaxWriter& writer, SNode node, Class
 //   int flagCopy = scope.info.header.flags;
 //
 ////   compileClassAttributes(node, scope, node);
-////   compileFieldDeclarations(node, scope);
+   compileFieldDeclarations(node, scope);
 
    declareVMT(writer, node.firstChild(), scope);
 

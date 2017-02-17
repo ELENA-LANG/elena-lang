@@ -155,6 +155,7 @@ public:
 
    virtual bool recognizeScope(SNode& node);
    virtual bool recognizeNewLocal(SNode& node);
+   virtual bool recognizeNewField(SNode& node);
 
    CompilerLogic();
 };

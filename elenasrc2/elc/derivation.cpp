@@ -25,7 +25,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //      case nsConstructor:
 //      case nsImplicitConstructor:
       case nsTemplate:
-//      case nsField:
+      case nsField:
       case nsSubject:
 //      case nsDefaultGeneric:
       case nsDispatchExpression:
