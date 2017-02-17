@@ -7046,14 +7046,11 @@ void Compiler :: compileModule(_ProjectManager& project, ident_t file, SyntaxTre
    // HOTFIX : the module path should be presaved in debug section
    scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
 
-   //// HOTFIX : the module path should be the first saved string
-   //_writer.clear();
-   //_writer.writeString(file);
+   // HOTFIX : the module path should be the first saved string
+   _writer.clear();
+   _writer.writeString(file);
 
-   //project.printInfo("%s", file);
-
-   //// build expression tree
-   //buildTree(writer, syntaxTree.readRoot(), scope);
+   project.printInfo("%s", file);
 
    // declare 
    SyntaxWriter writer(expressionTree);
