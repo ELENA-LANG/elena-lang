@@ -901,6 +901,7 @@ private:
 //
 //   ObjectInfo compileMessageReference(SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
+   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
    ObjectInfo declareTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo declareObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);

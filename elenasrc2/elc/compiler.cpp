@@ -1995,6 +1995,16 @@ ref_t Compiler :: mapAttribute(SNode attribute, Scope& scope, int& attrValue)
 ////   else scope.raiseError(errDuplicatedLocal, terminal);
 ////}
 
+void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode node)
+{
+   SNode terminalInfoNode = node.findChild(lxTerminal);
+   if (terminalInfoNode != lxNone) {
+      SyntaxTree::copyNode(writer, lxRow, node);
+      SyntaxTree::copyNode(writer, lxCol, node);
+      SyntaxTree::copyNode(writer, lxLength, node);
+   }
+}
+
 void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode)
 {
    switch (object.kind) {
@@ -2127,12 +2137,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //         break;
    }
 
-   SNode terminalInfoNode = terminal.findChild(lxTerminal);
-   if (terminalInfoNode != lxNone) {
-      SyntaxTree::copyNode(writer, lxRow, terminal);
-      SyntaxTree::copyNode(writer, lxCol, terminal);
-      SyntaxTree::copyNode(writer, lxLength, terminal);
-   }
+   writeTerminalInfo(writer, terminal);
 
    writer.closeNode();
 }
@@ -2725,20 +2730,18 @@ ObjectInfo Compiler :: declareMessage(SyntaxWriter& writer, SNode node, CodeScop
 //   if (classReference)
 //      node.appendNode(lxCallTarget, classReference);
 
-   writer.newNode(lxMessage);
+   
    if (!test(mode, HINT_NODEBUGINFO)) {
       // set a breakpoint
-      writer.appendNode(lxBreakpoint, dsStep);
+      writer.newNode(lxBreakpoint, dsStep);
 
-      SNode messageNode = node.findChild(lxIdentifier, lxPrivate);
-      SNode terminalNode = messageNode.findChild(lxTerminal);
-      if (terminalNode != lxNone) {
-         SyntaxTree::copyNode(writer, lxRow, messageNode);
-         SyntaxTree::copyNode(writer, lxCol, messageNode);
-         SyntaxTree::copyNode(writer, lxLength, messageNode);
+      SNode messageNode = node.findChild(lxMessage).findChild(lxIdentifier, lxPrivate);
+      if (messageNode != lxNone) {
+         writeTerminalInfo(writer, messageNode);
       }
-   }
-   writer.closeNode();
+
+      writer.closeNode();
+   }   
 
    // inserting calling expression
    writer.insert(operation, argument);
@@ -3657,8 +3660,9 @@ ObjectInfo Compiler :: declareCode(SyntaxWriter& writer, SNode node, CodeScope& 
 //            break;
          case lxEOF:
 //            needVirtualEnd = false;
-//            setDebugStep(current, dsEOP);
-            writer.appendNode(lxBreakpoint, dsEOP);
+            writer.newNode(lxBreakpoint, dsEOP);
+            writeTerminalInfo(writer, current);
+            writer.closeNode();
             break;
       }
 //
