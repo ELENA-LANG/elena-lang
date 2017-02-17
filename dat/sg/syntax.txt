@@ -9,7 +9,9 @@ __define METHOD			4118
 __define NESTED_CLASS		4120
 __define OBJECT			4121
 __define CODE_BLOCK		4122
+__define MESSAGE		4123
 __define BLOCK_END		4125
+__define DISPATCH               4128
 __define IMPORT                 4149
 __define TOKEN   		4172
 __define SCOPE   		4173
@@ -17,6 +19,7 @@ __define SCOPE   		4173
 __define eof            	12291
 __define identifier		12293
 __define private	        12294
+__define reference		12295
 __define integer		12296
 
 START ->
@@ -72,6 +75,10 @@ HINTS ->
 	( HINT NEXT_HINT
 	| eps
 
+OPERATIONS ->
+	MESSAGE
+	| eps
+
 HINT  ->
 	TOKEN
 
@@ -97,6 +104,7 @@ NESTED_CLASS ->
 
 SCOPE ->
 	= SYMBOL_EXPRESSION DECLARATION_END
+	| => DISPATCH DECLARATION_END
 	| { METHODS SCOPES CLOSING_CURLY_BRACKET
 	| CODE_BLOCK
 	
@@ -105,6 +113,9 @@ TEMPLATE ->
 	
 IMPORT ->
 	identifier DECLARATION_END
+
+MESSAGE ->
+	identifier
 	
 SYMBOL_BODY ->
 	= SYMBOL_EXPRESSION DECLARATION_END
@@ -117,6 +128,7 @@ TEMPLATE_BODY ->
 	
 METHOD_BODY ->
 	CODE_BLOCK
+	| => DISPATCH DECLARATION_END
 
 CODE_BLOCK ->
 	[ FIRST_STATEMENT
@@ -128,10 +140,15 @@ SYMBOL_EXPRESSION ->
 	EXPRESSION
 
 EXPRESSION ->
-	OBJECT
+	OBJECT OPERATIONS
 
 OBJECT ->
-	private
+	identifier
+	| private
+	| reference
+	
+DISPATCH ->
+	OBJECT
 
 TERMINATOR ->
 	.

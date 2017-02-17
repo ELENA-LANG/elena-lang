@@ -126,14 +126,15 @@ public:
 //   virtual bool validateLocalAttribute(int& attrValue);
 //   virtual bool validateSymbolAttribute(int& attrValue);
 //   virtual bool validateWarningAttribute(int& attrValue);
+   virtual bool validateMessage(ref_t message, bool isClassClass);
 //
 //   virtual bool validateClassFlag(ClassInfo& info, int flag);
-//
-//   virtual bool isDefaultConstructorEnabled(ClassInfo& info)
-//   {
-//      return (info.header.flags & elDebugMask) != elEnumList;
-//   }
-//
+
+   virtual bool isDefaultConstructorEnabled(ClassInfo& info)
+   {
+      return (info.header.flags & elDebugMask) != elEnumList;
+   }
+
 //   bool recognizeEmbeddableOp(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, int verb, ref_t& subject);
 //
 //   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject);
@@ -153,7 +154,6 @@ public:
 //   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2);
 
    virtual bool recognizeScope(SNode& node);
-   virtual bool recognizeMember(SNode& node);
 
    CompilerLogic();
 };

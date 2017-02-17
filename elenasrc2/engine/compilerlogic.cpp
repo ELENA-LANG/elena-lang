@@ -1617,15 +1617,15 @@ bool CompilerLogic :: recognizeScope(SNode& node)
       if (setIdentifier(node.firstChild())) {
          node = lxClass;
 
-         SNode member = node.firstChild();
-         while (member != lxNone) {
-            if (member == lxScope) {
-               SNode codeNode = member.findChild(lxCode, lxExpression);
+         SNode current = node.firstChild();
+         while (current != lxNone) {
+            if (current == lxScope) {
+               SNode codeNode = current.findChild(lxCode, lxExpression, lxDispatchCode);
                if (setIdentifier(codeNode))
-                  member = lxClassMethod;
+                  current = lxClassMethod;
             }
 
-            member = member.nextNode();
+            current = current.nextNode();
          }
 
          return true;
@@ -1635,15 +1635,15 @@ bool CompilerLogic :: recognizeScope(SNode& node)
    return false;
 }
 
-bool CompilerLogic :: recognizeMember(SNode& node)
+bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)
 {
-   SNode body = node.findChild(lxCode);
-   if (body != lxNone) {
-      setIdentifier(body);
+   bool dispatchOne = getVerb(message) == DISPATCH_MESSAGE_ID;
 
-      node = lxClassMethod;
-
-      return true;
+   if (isClassClass && dispatchOne) {
+      return false;
    }
-   else return false;
+   else if (!isClassClass && dispatchOne && (getSignature(message) != 0 || getParamCount(message) != 0)) {
+      return false;
+   }
+   else return true;
 }

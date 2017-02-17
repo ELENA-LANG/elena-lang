@@ -28,7 +28,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //      case nsField:
 //      case nsSubject:
 //      case nsDefaultGeneric:
-//      case nsDispatchExpression:
+      case nsDispatchExpression:
 //      case nsExtension:
 //      case nsLoop:
 //      case nsLock:
@@ -117,7 +117,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //      case tsHexInteger:
 //      case tsLiteral:
       case tsPrivate:
-//      case tsReference:
+      case tsReference:
       case tsInteger:
 //      case tsReal:
 //      case tsLong:
@@ -154,21 +154,21 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //      case nsCatchMessageOperation:
 //      case nsAltMessageOperation:
 //         _writer.newBookmark();
-//      case nsMessageOperation:
-//         copyMessage(node);
-//         _writer.insert(lxExpression);
-//         _writer.closeNode();
-//         if (symbol == nsCatchMessageOperation) {
-//            _writer.removeBookmark();            
-//            _writer.insert(lxTrying);
-//            _writer.closeNode();
-//         }
-//         else if (symbol == nsAltMessageOperation) {
-//            _writer.removeBookmark();
-//            _writer.insert(lxAlt);
-//            _writer.closeNode();
-//         }
-//         break;
+      case nsMessageOperation:
+         copyMessage(node);
+         _writer.insert(lxExpression);
+         _writer.closeNode();
+         //if (symbol == nsCatchMessageOperation) {
+         //   _writer.removeBookmark();            
+         //   _writer.insert(lxTrying);
+         //   _writer.closeNode();
+         //}
+         //else if (symbol == nsAltMessageOperation) {
+         //   _writer.removeBookmark();
+         //   _writer.insert(lxAlt);
+         //   _writer.closeNode();
+         //}
+         break;
 //      case nsSwitching:
 //         copySwitching(node);
 //         _writer.insert(lxSwitching);
@@ -290,81 +290,81 @@ void DerivationWriter :: copyObject(SNode node, int mode)
 //      current = current.nextNode();
 //   }
 //}
-//
-//void DerivationWriter :: copyMessage(SNode node, bool operationMode)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      Symbol symbol = (Symbol)current.type;
-//      switch (symbol) {
-//         case nsSubjectArg:
-//            _writer.newNode(lxMessage);
-//            unpackChildren(current);
-//            _writer.closeNode();
-//            break;
-//         case nsMessageParameter:
-//         case nsObject:
-//         case nsExpression:
-//            _writer.newBookmark();
-//            unpackChildren(current, 1);
-//            _writer.removeBookmark();
-//            break;
-//         case nsElseOperation:
-//            _writer.newNode(lxExpression);
-//            unpackChildren(current);
-//            _writer.closeNode();
-//            break;
-//         case nsSubCode:
-//            unpackNode(current, 1);
-//            break;
-//         case nsL0Operation:
-//         case nsL3Operation:
-//         case nsL4Operation:
-//         case nsL5Operation:
-//         case nsL6Operation:
-//         case nsL7Operation:
-//         case nsNewOperator:
-//         case nsMessageOperation:
-//            copyMessage(current, (symbol != nsMessageOperation));
-//            _writer.insert(lxExpression);
-//            _writer.closeNode();
-//            break;
-//         case tsIdentifier:
-//         case tsPrivate:
-//         case tsReference:
-//            if (!operationMode) {
-//               _writer.newNode(lxMessage);
-//               unpackNode(current, 0);
-//               _writer.closeNode();
-//               break;
-//            }
-//         default:
-//            if (operationMode && current.existChild(lxTerminal)) {
-//               if ((Symbol)node.type == nsNewOperator) {
-//                  //HOTFIX : mark new operator
-//                  _writer.appendNode(lxOperator, -1);
-//                  if (symbol == tsInteger || symbol == tsIdentifier) {
-//                     unpackNode(current, 0);
-//                  }
-//               }
-//               else {
-//                  _writer.newNode(lxOperator);
-//                  copyChildren(current);
-//                  _writer.closeNode();
-//               }
-//
-//               _writer.newBookmark();               
-//            }
-//            break;
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   if (operationMode) {
-//      _writer.removeBookmark();
-//   }
-//}
-//
+
+void DerivationWriter :: copyMessage(SNode node, bool operationMode)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      Symbol symbol = (Symbol)current.type;
+      switch (symbol) {
+         //case nsSubjectArg:
+         //   _writer.newNode(lxMessage);
+         //   unpackChildren(current);
+         //   _writer.closeNode();
+         //   break;
+         //case nsMessageParameter:
+         case nsObject:
+         case nsExpression:
+            _writer.newBookmark();
+            unpackChildren(current, 1);
+            _writer.removeBookmark();
+            break;
+         //case nsElseOperation:
+         //   _writer.newNode(lxExpression);
+         //   unpackChildren(current);
+         //   _writer.closeNode();
+         //   break;
+         case nsSubCode:
+            unpackNode(current, 1);
+            break;
+         //case nsL0Operation:
+         //case nsL3Operation:
+         //case nsL4Operation:
+         //case nsL5Operation:
+         //case nsL6Operation:
+         //case nsL7Operation:
+         //case nsNewOperator:
+         case nsMessageOperation:
+            copyMessage(current, (symbol != nsMessageOperation));
+            _writer.insert(lxExpression);
+            _writer.closeNode();
+            break;
+         case tsIdentifier:
+         case tsPrivate:
+         case tsReference:
+            if (!operationMode) {
+               _writer.newNode(lxMessage);
+               unpackNode(current, 0);
+               _writer.closeNode();
+               break;
+            }
+         default:
+            //if (operationMode && current.existChild(lxTerminal)) {
+            //   if ((Symbol)node.type == nsNewOperator) {
+            //      //HOTFIX : mark new operator
+            //      _writer.appendNode(lxOperator, -1);
+            //      if (symbol == tsInteger || symbol == tsIdentifier) {
+            //         unpackNode(current, 0);
+            //      }
+            //   }
+            //   else {
+            //      _writer.newNode(lxOperator);
+            //      copyChildren(current);
+            //      _writer.closeNode();
+            //   }
+
+            //   _writer.newBookmark();               
+            //}
+            break;
+      }
+      current = current.nextNode();
+   }
+
+   if (operationMode) {
+      _writer.removeBookmark();
+   }
+}
+
 //void DerivationWriter :: copyVariable(SNode node)
 //{
 //   SNode local = node.firstChild();

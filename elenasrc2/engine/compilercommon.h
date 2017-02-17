@@ -244,9 +244,10 @@ public:
 //   virtual bool validateLocalAttribute(int& attrValue) = 0;
 //   virtual bool validateSymbolAttribute(int& attrValue) = 0;
 //   virtual bool validateWarningAttribute(int& attrValue) = 0;
-//
-//   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
-//
+   virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
+
+   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
+
 //   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
 //
 //   // optimization
@@ -264,7 +265,6 @@ public:
 //   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
    
    virtual bool recognizeScope(SNode& node) = 0;
-   virtual bool recognizeMember(SNode& node) = 0;
 };
    
 }  // _ELENA_

@@ -3,13 +3,18 @@ In development:
 ------                              
 
               xdev - generic development
+
                  * implementing ELENA 3.0
+                 * class class is sealed and stateless
                  * raise an error when costructor new [] // !!
+                 * constructor constructor [] / constructor [] - raise warning
                  * check for method duplicates
                  * allow to override the template method
                  * singleton classes / roles / extensions should not have a class class
                  * should not be allowed to provide returning type for constructors
                  * type / sealed hint should not be overridden
+                 * uncomment compileClassDeclaration
+                 * uncomment compileClassClassDeclaration
                  * uncomment generateMethodDeclarations
                  * uncomment ModuleScope::mapAttribute
                  * uncomment ByteCodeWriter :: generateCodeBlock
@@ -21,9 +26,16 @@ In development:
                  * uncomment createPackageInfo
                  * uncomment buildConstructor
                  * uncomment buildClassDeclaration
+                 * uncomment isSimpleObject
+                 * uncomment __object.dispatch
                  * syntax : BLOCK_CLOSING_EXPECTED / DECLARATION_END_EXPECTED and so on
-                 * check sealed / limited
+                 * check sealed / limited / sealed method
+                 * dispatch verb should not be called explicitly
+                 * dispatch method cannot be a constructor
+                 * dispatch method should support only dispatching expression currently (e.g. =>)
+                 * dispatch method should be generic and without parameters
                  * declaring : test [] - action ?
+                 * declaring : test => [] ?
 
               xdev - generic development
                  * support property template

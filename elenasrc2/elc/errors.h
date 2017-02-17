@@ -68,6 +68,7 @@ namespace _ELENA_
    #define errIllegalConstructor    "%s(%d:%d): error 149: Constructor cannot be declared\n"
    #define errClosedMethod          "%s(%d:%d): error 150: sealed method cannot be overridden\n"
    #define errNoConstructorDefined  "%s(%d:%d): error 151: Class '%s' has no implicit or explicit constructors\n"
+   #define errIllegalMethod         "%s(%d:%d): error 152: Illegal method declaration\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"

@@ -74,13 +74,13 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
       case dfaIdentifier:
          terminal.symbol = tsIdentifier;
          break;
-//	   case dfaFullIdentifier:
-//         terminal.symbol = tsReference;
-//         break;
+      case dfaFullIdentifier:
+         terminal.symbol = tsReference;
+         break;
 	   case dfaPrivate:
          terminal.symbol = tsPrivate;
          break;
-	   case dfaInteger:
+      case dfaInteger:
          terminal.symbol = tsInteger;
          break;
 //      case dfaLong:

@@ -18,8 +18,8 @@ namespace _ELENA_
 
 enum LexicalType
 {
-//   lxSimpleMask      = 0x02000,
-//   lxCodeScopeMask   = 0x04000,
+   lxSimpleMask      = 0x02000,
+   lxCodeScopeMask   = 0x04000,
    lxObjectMask      = 0x08000,
    lxExprMask        = 0x0C000,
    lxTerminalMask    = 0x10000,
@@ -41,7 +41,7 @@ enum LexicalType
    lxClassMethod     = 0x00016,
    lxNestedClass     = 0x00018,
    lxCode            = 0x0001A,
-//   lxDispatchCode    = 0x00020,
+   lxDispatchCode    = 0x00020,
    lxStatic          = 0x00022,
 //   lxConstructor     = 0x00024,
 //   lxExtension       = 0x0002B,
@@ -74,7 +74,7 @@ enum LexicalType
 //   lxConstantSymbol  = 0x0A104, // arg - reference
 //   lxField           = 0x08105, // arg - offset
 //   lxStaticField     = 0x08106, // arg - reference
-//   lxSymbolReference = 0x08107,
+   lxSymbolReference = 0x08107,
 //   lxLocalAddress    = 0x0A108, // arg - offset
 //   lxFieldAddress    = 0x08109, // arg - offset
    lxLocal           = 0x0A10A, // arg - offset
@@ -91,8 +91,8 @@ enum LexicalType
 //   lxSignatureConstant  = 0x0A115, // arg - reference
 //   lxVerbConstant    = 0x0A116, // arg - reference
    lxNil             = 0x0A117,
-//   lxCurrent         = 0x0A118, // arg -offset
-//   lxResult          = 0x0A119, // arg -offset
+   lxCurrent         = 0x0A118, // arg -offset
+   lxResult          = 0x0A119, // arg -offset
 //   lxResultField     = 0x0A11A, // arg -offset
    lxCurrentMessage  = 0x0A11B,
 //   lxThisLocal       = 0x0A11C,
@@ -181,7 +181,7 @@ enum LexicalType
    lxTarget          = 0x2000C, // arg - reference
    lxMessageVariable = 0x2000D, // debug info only
    lxSelfVariable    = 0x2000E, // debug info only
-//   lxMessage         = 0x2000F, // arg - message
+   lxMessage         = 0x2000F, // arg - message
 //   lxAssign          = 0x20010,
    lxLevel           = 0x20011,
 //   lxType            = 0x20012, // arg - subject
