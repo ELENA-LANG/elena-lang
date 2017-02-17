@@ -68,8 +68,8 @@ class CompilerLogic : public _CompilerLogic
 
 public:
 //   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
-//
-//   virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
+
+   virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 //   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false);
 //   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly);
 //
@@ -82,12 +82,12 @@ public:
 //   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference);
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
 //   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
-//
-//   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
-//   virtual bool isPrimitiveRef(ref_t reference)
-//   {
-//      return (int)reference < 0;
-//   }
+
+   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
+   virtual bool isPrimitiveRef(ref_t reference)
+   {
+      return (int)reference < 0;
+   }
 //   virtual bool isEmbeddableArray(ClassInfo& info);
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
 //   virtual bool isVariable(ClassInfo& info);
@@ -113,7 +113,7 @@ public:
 //
 //   virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
 //   virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type);
-//   virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType);
+   virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/);
 //   virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef);
 //   virtual void injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode);
 //

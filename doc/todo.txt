@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xdev - generic development
-                 * local type
-                 * field type
                  * enforce types
 
                  * implementing ELENA 3.0

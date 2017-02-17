@@ -308,10 +308,10 @@ private:
 //      virtual _Module* loadReferenceModule(ref_t& reference);
 
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
-//      virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
-//      {
-//         return loadClassInfo(info, module->resolveReference(reference), headerOnly);
-//      }
+      virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
+      {
+         return loadClassInfo(info, module->resolveReference(reference), headerOnly);
+      }
 //      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
       _Memory* loadAttributeInfo(ref_t reference/*, _Module* &argModule*/)
@@ -852,8 +852,8 @@ private:
 //      return _logic->checkMethod(scope, reference, message, dummy);
 //   }
 
-//   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
-//
+   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
    void importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t reference, ref_t message);
@@ -1016,21 +1016,21 @@ private:
 //   void compileDeclarations(SyntaxWriter& writer, SNode member, ModuleScope& scope);
 //   void compileImplementations(SNode member, ModuleScope& scope);
    void compileIncludeSection(SNode node, ModuleScope& scope);
-////
-////   bool validate(_ProjectManager& project, _Module* module, int reference);
-////
-////   ObjectInfo typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object);
-////   ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
-////
-////   bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
-////
-////   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-////   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-////   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-////   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-////   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-//////   void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-////
+//
+//   bool validate(_ProjectManager& project, _Module* module, int reference);
+
+   ObjectInfo typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
+//   ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
+
+   bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
+
+//   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
+//   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
+//   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
+//   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
+//   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
+////   void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+//
 ////   void optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
 //////   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 ////   void optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScope& warningScope);

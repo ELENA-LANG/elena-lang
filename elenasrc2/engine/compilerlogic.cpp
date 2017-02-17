@@ -395,20 +395,20 @@ CompilerLogic :: CompilerLogic()
 //
 //   return 0;
 //}
-//
-//inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
-//{
-//   switch (sourceRef)
-//   {
+
+inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
+{
+   switch (sourceRef)
+   {
 //      case V_PTR32:
 //         return targetRef == V_INT32;
 //      case V_INT32:
 //         return targetRef == V_PTR32;
-//      default:
-//         return false;
-//   }
-//}
-//
+      default:
+         return false;
+   }
+}
+
 //inline bool isPrimitiveArrayCompatible(ref_t targetRef, ref_t sourceRef)
 //{
 //   switch (sourceRef)
@@ -419,38 +419,38 @@ CompilerLogic :: CompilerLogic()
 //         return false;
 //   }
 //}
-//
-//bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
-//{
-//   if (!targetRef)
-//      return true;
-//
-//   if (sourceRef == V_NIL)
-//      return true;
-//
-//   if (isPrimitiveCompatible(targetRef, sourceRef))
-//      return true;
-//
-//   while (sourceRef != 0) {
-//      if (targetRef != sourceRef) {
-//         ClassInfo info;
-//         defineClassInfo(scope, info, sourceRef);
-//
-//         // if it is a structure wrapper
-//         if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
-//            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-//            if (isCompatible(scope, targetRef, inner.value1))
-//               return true;
-//         }
-//
-//         sourceRef = info.header.parentRef;
-//      }
-//      else return true;
-//   }
-//
-//   return false;
-//}
-//
+
+bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
+{
+   if (!targetRef)
+      return true;
+
+   if (sourceRef == V_NIL)
+      return true;
+
+   if (isPrimitiveCompatible(targetRef, sourceRef))
+      return true;
+
+   while (sourceRef != 0) {
+      if (targetRef != sourceRef) {
+         ClassInfo info;
+         defineClassInfo(scope, info, sourceRef);
+
+         // if it is a structure wrapper
+         if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
+            ref_t classRef = info.fieldTypes.get(0);
+            if (isCompatible(scope, targetRef, classRef))
+               return true;
+         }
+
+         sourceRef = info.header.parentRef;
+      }
+      else return true;
+   }
+
+   return false;
+}
+
 //bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
 //{
 //   return test(info.header.flags, elDynamicRole | elEmbeddable | elStructureRole);
@@ -558,117 +558,117 @@ CompilerLogic :: CompilerLogic()
 //{
 //   return test(info.header.flags, elReadOnlyRole);
 //}
-//
-//bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType)
-//{
-//   ClassInfo info;
-//   defineClassInfo(scope, info, targetRef);   
-//
-//   // if the target class is wrapper around the source
-//   if (test(info.header.flags, elWrapper)) {
-//      ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-//
-//      bool compatible = false;
-//      if (test(info.header.flags, elStructureWrapper) && isPrimitiveRef(sourceRef)) {
-//         compatible = isCompatible(scope, sourceRef, inner.value1);
-//      }
-//      else compatible = isCompatible(scope, inner.value1, sourceRef);
-//
-//      if (compatible) {
-//         compiler.injectBoxing(scope, node, 
-//            isReadonly(info) ? lxBoxing : lxUnboxing,
-//            test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
-//
-//         return true;
-//      }
-//   }
-//
-//   // HOT FIX : trying to typecast primitive structure array
-//   if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
-//      ClassInfo sourceInfo;      
-//      if (sourceRef == V_BINARYARRAY && sourceType != 0) {
-//         // HOTFIX : for binary array of structures - sourceType  contains the element size
-//         ref_t elementRef = scope.attributeHints.get(sourceType);
-//
-//         defineClassInfo(scope, sourceInfo, elementRef, true);
-//         if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
-//            compiler.injectBoxing(scope, node,
-//               test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
-//
-//            return true;
-//         }
-//      }
-//      else {
-//         defineClassInfo(scope, sourceInfo, sourceRef, true);
-//         if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
-//            compiler.injectBoxing(scope, node,
-//               test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
-//
-//            return true;
-//         }
-//      }
-//   }
-//
-//   // HOTFIX : trying to typecast primitive array
-//   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
-//      ClassInfo sourceInfo;
-//      defineClassInfo(scope, sourceInfo, sourceRef, true);
-//
-//      ref_t elementRef = scope.attributeHints.get(sourceType);
-//
-//      if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
-//         compiler.injectBoxing(scope, node,
-//            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef);
-//
-//         return true;
-//      }
-//   }
-//
-//   // check if there are implicit constructors
-//   if (test(info.header.flags, elSealed)) {
-//      if (sourceType != 0) {
-//         // if the source type is defined we are lucky
-//         int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
-//         if (info.methods.exist(implicitMessage)) {
-//            if (test(info.header.flags, elStructureRole)) {
-//               compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
-//            }
-//            else if (test(info.header.flags, elDynamicRole)) {
-//               return false;
-//            }
-//            else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
-//
-//            return true;
-//         }
-//      }
-//      else {
-//         // otherwise we have to go through the list
-//         ClassInfo::MethodMap::Iterator it = info.methods.start();
-//         while (!it.Eof()) {
-//            pos_t implicitMessage = it.key();
-//            if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
-//               ref_t subj = getSignature(implicitMessage);
-//               if (isCompatible(scope, scope.attributeHints.get(subj), sourceRef)) {
-//                  if (test(info.header.flags, elStructureRole)) {
-//                     compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
-//                  }
-//                  else if (test(info.header.flags, elDynamicRole)) {
-//                     return false;
-//                  }
-//                  else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
-//
-//                  return true;
-//               }
-//            }
-//
-//            it++;
-//         }
-//      }
-//   }
-//
-//   return false;
-//}
-//
+
+bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/)
+{
+   //ClassInfo info;
+   //defineClassInfo(scope, info, targetRef);   
+
+   //// if the target class is wrapper around the source
+   //if (test(info.header.flags, elWrapper)) {
+   //   ref_t fieldRef = info.fieldTypes.get(0);
+
+   //   bool compatible = false;
+   //   if (test(info.header.flags, elStructureWrapper) && isPrimitiveRef(sourceRef)) {
+   //      compatible = isCompatible(scope, sourceRef, fieldRef);
+   //   }
+   //   else compatible = isCompatible(scope, fieldRef, sourceRef);
+
+   //   if (compatible) {
+   //      compiler.injectBoxing(scope, node, 
+   //         isReadonly(info) ? lxBoxing : lxUnboxing,
+   //         test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
+
+   //      return true;
+   //   }
+   //}
+
+   //// HOT FIX : trying to typecast primitive structure array
+   //if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
+   //   ClassInfo sourceInfo;      
+   //   if (sourceRef == V_BINARYARRAY && sourceType != 0) {
+   //      // HOTFIX : for binary array of structures - sourceType  contains the element size
+   //      ref_t elementRef = scope.attributeHints.get(sourceType);
+
+   //      defineClassInfo(scope, sourceInfo, elementRef, true);
+   //      if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+   //         compiler.injectBoxing(scope, node,
+   //            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+
+   //         return true;
+   //      }
+   //   }
+   //   else {
+   //      defineClassInfo(scope, sourceInfo, sourceRef, true);
+   //      if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
+   //         compiler.injectBoxing(scope, node,
+   //            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+
+   //         return true;
+   //      }
+   //   }
+   //}
+
+   //// HOTFIX : trying to typecast primitive array
+   //if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
+   //   ClassInfo sourceInfo;
+   //   defineClassInfo(scope, sourceInfo, sourceRef, true);
+
+   //   ref_t elementRef = scope.attributeHints.get(sourceType);
+
+   //   if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+   //      compiler.injectBoxing(scope, node,
+   //         test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef);
+
+   //      return true;
+   //   }
+   //}
+
+   //// check if there are implicit constructors
+   //if (test(info.header.flags, elSealed)) {
+   //   if (sourceType != 0) {
+   //      // if the source type is defined we are lucky
+   //      int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
+   //      if (info.methods.exist(implicitMessage)) {
+   //         if (test(info.header.flags, elStructureRole)) {
+   //            compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
+   //         }
+   //         else if (test(info.header.flags, elDynamicRole)) {
+   //            return false;
+   //         }
+   //         else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
+
+   //         return true;
+   //      }
+   //   }
+   //   else {
+   //      // otherwise we have to go through the list
+   //      ClassInfo::MethodMap::Iterator it = info.methods.start();
+   //      while (!it.Eof()) {
+   //         pos_t implicitMessage = it.key();
+   //         if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
+   //            ref_t subj = getSignature(implicitMessage);
+   //            if (isCompatible(scope, scope.attributeHints.get(subj), sourceRef)) {
+   //               if (test(info.header.flags, elStructureRole)) {
+   //                  compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
+   //               }
+   //               else if (test(info.header.flags, elDynamicRole)) {
+   //                  return false;
+   //               }
+   //               else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
+
+   //               return true;
+   //            }
+   //         }
+
+   //         it++;
+   //      }
+   //   }
+   //}
+
+   return false;
+}
+
 //void CompilerLogic :: injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef)
 //{
 //   SNode operationNode = node.injectNode((LexicalType)operation, targetRef);
@@ -677,97 +677,97 @@ CompilerLogic :: CompilerLogic()
 //   if (size != 0)
 //      operationNode.appendNode(lxSize, size);
 //}
-//
-//bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
-//{
-//   if (isPrimitiveRef(reference) && !headerOnly) {
-//      scope.loadClassInfo(info, scope.superReference);
-//   }
-//
-//   switch (reference)
-//   {
-//      case V_INT32:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugDWORD | elStructureRole | elEmbeddable;
-//         info.size = 4;
-//         break;
-//      case V_INT64:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugQWORD | elStructureRole | elEmbeddable;
-//         info.size = 8;
-//         break;
-//      case V_REAL64:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugReal64 | elStructureRole | elEmbeddable;
-//         info.size = 8;
-//         break;
-//      case V_PTR32:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugPTR | elStructureRole | elEmbeddable;
-//         info.size = 4;
-//         break;
-//      case V_SIGNATURE:
-//      case V_VERB:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugSubject | elStructureRole | elEmbeddable;
-//         info.size = 4;
-//         break;
-//      case V_MESSAGE:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
-//         info.size = 4;
-//         break;
-//      case V_EXTMESSAGE:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
-//         info.size = 8;
-//         break;
-//      case V_SYMBOL:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugReference | elStructureRole | elEmbeddable;
-//         info.size = 8;
-//         break;
-//      case V_INT32ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
-//         info.size = -4;
-//         break;
-//      case V_INT16ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elEmbeddable;
-//         info.size = -2;
-//         break;
-//      case V_INT8ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elEmbeddable;
-//         info.size = -1;
-//         break;
-//      case V_OBJARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugArray | elDynamicRole;
-//         info.size = 0;
-//         break;
-//      case V_BINARYARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDynamicRole | elStructureRole;
-//         info.size = -1;
-//         break;
-//      default:
-//         if (reference != 0) {
-//            if (!scope.loadClassInfo(info, reference, headerOnly))
-//               return false;
-//         }
-//         else {
-//            info.header.parentRef = 0;
-//            info.header.flags = 0;
-//            info.size = 0;
-//         }
-//         break;
-//   }
-//
-//   return true;
-//}
-//
+
+bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
+{
+   if (isPrimitiveRef(reference) && !headerOnly) {
+      scope.loadClassInfo(info, scope.superReference);
+   }
+
+   switch (reference)
+   {
+      //case V_INT32:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugDWORD | elStructureRole | elEmbeddable;
+      //   info.size = 4;
+      //   break;
+      //case V_INT64:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugQWORD | elStructureRole | elEmbeddable;
+      //   info.size = 8;
+      //   break;
+      //case V_REAL64:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugReal64 | elStructureRole | elEmbeddable;
+      //   info.size = 8;
+      //   break;
+      //case V_PTR32:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugPTR | elStructureRole | elEmbeddable;
+      //   info.size = 4;
+      //   break;
+      //case V_SIGNATURE:
+      //case V_VERB:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugSubject | elStructureRole | elEmbeddable;
+      //   info.size = 4;
+      //   break;
+      //case V_MESSAGE:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
+      //   info.size = 4;
+      //   break;
+      //case V_EXTMESSAGE:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
+      //   info.size = 8;
+      //   break;
+      //case V_SYMBOL:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugReference | elStructureRole | elEmbeddable;
+      //   info.size = 8;
+      //   break;
+      //case V_INT32ARRAY:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
+      //   info.size = -4;
+      //   break;
+      //case V_INT16ARRAY:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elEmbeddable;
+      //   info.size = -2;
+      //   break;
+      //case V_INT8ARRAY:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elEmbeddable;
+      //   info.size = -1;
+      //   break;
+      //case V_OBJARRAY:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDebugArray | elDynamicRole;
+      //   info.size = 0;
+      //   break;
+      //case V_BINARYARRAY:
+      //   info.header.parentRef = scope.superReference;
+      //   info.header.flags = elDynamicRole | elStructureRole;
+      //   info.size = -1;
+      //   break;
+      default:
+         if (reference != 0) {
+            if (!scope.loadClassInfo(info, reference, headerOnly))
+               return false;
+         }
+         else {
+            info.header.parentRef = 0;
+            info.header.flags = 0;
+            info.size = 0;
+         }
+         break;
+   }
+
+   return true;
+}
+
 //int CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementType, bool embeddableOnly)
 //{
 //   if (reference == V_BINARYARRAY && elementType != 0) {

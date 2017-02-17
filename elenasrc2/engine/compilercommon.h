@@ -14,10 +14,10 @@
 
 #define INVALID_REF   (ref_t)-1
 
-//// virtual objects
+// virtual objects
 //#define V_FLAG        (ref_t)-03
-//#define V_NIL         (ref_t)-04
-//
+#define V_NIL         (ref_t)-04
+
 //#define V_BINARY      (ref_t)-10
 //#define V_INT32       (ref_t)-11
 //#define V_PTR32       (ref_t)-12
@@ -127,8 +127,8 @@ struct _CompilerScope
 
 //   // cached bool values
 //   BranchingInfo branchingInfo;
-//
-//   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+
+   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 //   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
    _CompilerScope()
@@ -185,9 +185,9 @@ public:
 //   };
 //
 //   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
-//
+
 //   // retrieve the class info / size
-//   virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+   virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 //   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false) = 0;
 //   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
 //
@@ -206,10 +206,10 @@ public:
 //
 //   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
-//
-//   // check if the classes is compatible
-//   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
-//
+
+   // check if the classes is compatible
+   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
+
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 //
 //   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
@@ -227,7 +227,7 @@ public:
 //   // auto generate virtual methods / fields
 //   virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
 //   virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
-//   virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
+   virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/) = 0;
 //   virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
 //   virtual void injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode) = 0;
 //

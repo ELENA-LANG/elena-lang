@@ -899,11 +899,11 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
 //   else {
       int offset = info.fields.get(terminal);
       if (offset >= 0) {
-//         ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
+         ref_t fieldRef = info.fieldTypes.get(offset);
 //         if (test(info.header.flags, elStructureRole)) {
 //            return ObjectInfo(okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2);
 //         }
-         return ObjectInfo(okField, offset/*, fieldInfo.value1, fieldInfo.value2*/);
+         return ObjectInfo(okField, offset, fieldRef/*, fieldInfo.value2*/);
       }
 //      else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
 //         return ObjectInfo(okThisParam, 1, -2, info.fieldTypes.get(-1).value2);
@@ -1348,70 +1348,70 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
-//ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
-//{
-//   // if static message is sent to a class class
-//   switch (object.kind)
-//   {
-//      case okConstantClass:
+ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
+{
+   // if static message is sent to a class class
+   switch (object.kind)
+   {
+      case okConstantClass:
+         return object.extraparam;
+      //case okConstantRole:
+      //   // if external role is provided
+      //   return object.param;
+      case okConstantSymbol:
+         if (object.extraparam != 0) {
+            return object.extraparam;
+         }
+         else return object.param;
+      //case okLocalAddress:
+      //   return object.extraparam;
+      //case okIntConstant:
+      //   return V_INT32;
+      //case okLongConstant:
+      //   return V_INT64;
+      //case okRealConstant:
+      //   return V_REAL64;
+      //case okCharConstant:
+      //   return scope.moduleScope->charReference;
+      //case okLiteralConstant:
+      //   return scope.moduleScope->literalReference;
+      //case okWideLiteralConstant:
+      //   return scope.moduleScope->wideReference;
+      //case okThisParam:
+      //   if (object.extraparam == -2) {
+      //      return _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(object.type));
+      //   }
+      //   else return scope.getClassRefId(false);
+      //case okSubject:
+      //case okSignatureConstant:
+      //   return V_SIGNATURE;
+      //case okSuper:
+      //   return object.param;
+//      case okTemplateLocal:
 //         return object.extraparam;
-//      case okConstantRole:
-//         // if external role is provided
-//         return object.param;
-//      case okConstantSymbol:
-//         if (object.extraparam != 0) {
-//            return object.extraparam;
-//         }
-//         else return object.param;
-//      case okLocalAddress:
-//         return object.extraparam;
-//      case okIntConstant:
-//         return V_INT32;
-//      case okLongConstant:
-//         return V_INT64;
-//      case okRealConstant:
-//         return V_REAL64;
-//      case okCharConstant:
-//         return scope.moduleScope->charReference;
-//      case okLiteralConstant:
-//         return scope.moduleScope->literalReference;
-//      case okWideLiteralConstant:
-//         return scope.moduleScope->wideReference;
-//      case okThisParam:
-//         if (object.extraparam == -2) {
-//            return _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(object.type));
-//         }
-//         else return scope.getClassRefId(false);
-//      case okSubject:
-//      case okSignatureConstant:
-//         return V_SIGNATURE;
-//      case okSuper:
-//         return object.param;
-////      case okTemplateLocal:
-////         return object.extraparam;
-//      case okParams:
-//         return V_ARGARRAY;
-//      case okExternal:
-//         return V_INT32;
-//      case okMessageConstant:
-//         return V_MESSAGE;
-//      case okNil:
-//         return V_NIL;
-//      case okField:
-//      case okLocal:
-//      case okFieldAddress:
-//      case okOuter:
-//         if (object.extraparam != 0) {
-//            return object.extraparam;
-//         }
-//      case okParam:
-//      default:
-//         if (object.kind == okObject && object.param != 0) {
-//            return object.param;
-//         }
-//         else return (object.type != 0) ? scope.moduleScope->attributeHints.get(object.type) : 0;
-//   }
-//}
+      //case okParams:
+      //   return V_ARGARRAY;
+      //case okExternal:
+      //   return V_INT32;
+      //case okMessageConstant:
+      //   return V_MESSAGE;
+      case okNil:
+         return V_NIL;
+      case okField:
+      case okLocal:
+      //case okFieldAddress:
+      //case okOuter:
+         if (object.extraparam != 0) {
+            return object.extraparam;
+         }
+      //case okParam:
+      default:
+         if (object.kind == okObject && object.param != 0) {
+            return object.param;
+         }
+         else return /*(object.type != 0) ? scope.moduleScope->attributeHints.get(object.type) :*/ 0;
+   }
+}
 
 void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, /*SNode node, */MethodScope& scope, bool withThis, bool withSelf)
 {
@@ -2789,39 +2789,40 @@ ObjectInfo Compiler :: declareMessage(SyntaxWriter& writer, SNode node, CodeScop
    return retVal;
 }
 
-////bool Compiler :: convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source)
-////{
-////   ref_t sourceRef = resolveObjectReference(scope, source);
-////
-////   if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
-////      // if it can be boxed / implicitly converted
-////      return _logic->injectImplicitConversion(node, *scope.moduleScope, *this, targetRef, sourceRef, source.type);
-////   }
-////   else return true;
-////}
-////
-////ObjectInfo Compiler :: typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object)
-////{
-////   ref_t targetRef = scope.moduleScope->attributeHints.get(subjectRef);
-////   if (targetRef != 0) {
-////      if (!convertObject(node, scope, targetRef, object)) {
-////         node.appendNode(lxTypecastAttr);
-////
-////         // HOTFIX : inject expression node if required
-////         node.refresh();
-////         if (node != lxExpression) {
-////            node.injectNode(node.type, node.argument);
-////            node.set(lxExpression, 0);
-////         }
-////
-////         // if not compatible - send a typecast message
-////         object = compileMessage(node, scope, object, encodeMessage(subjectRef, GET_MESSAGE_ID, 0), HINT_NODEBUGINFO);
-////      }
-////      else object = ObjectInfo(okObject, targetRef, 0, subjectRef);
-////   }
-////
-////   return object;
-////}
+bool Compiler :: convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source)
+{
+   ref_t sourceRef = resolveObjectReference(scope, source);
+
+   if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
+      // if it can be boxed / implicitly converted
+      return _logic->injectImplicitConversion(node, *scope.moduleScope, *this, targetRef, sourceRef/*, source.type*/);
+   }
+   else return true;
+}
+
+ObjectInfo Compiler :: typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source)
+{
+   ref_t subjectRef = scope.moduleScope->typifiedClasses.get(targetRef);
+   if (!subjectRef)
+      scope.raiseError(errInvalidOperation, node);
+
+   if (!convertObject(node, scope, targetRef, source)) {
+      //node.appendNode(lxTypecastAttr);
+
+      // HOTFIX : inject expression node if required
+      ////node.refresh();
+      //if (node != lxExpression) {
+      //   node.injectNode(node.type, node.argument);
+      //   node.set(lxExpression, 0);
+      //}
+
+      // if not compatible - send a typecast message
+      source = declareMessage(writer, node, scope, source, encodeMessage(subjectRef, GET_MESSAGE_ID, 0), HINT_NODEBUGINFO);
+   }
+   else source = ObjectInfo(okObject, targetRef);
+
+   return source;
+}
 
 ObjectInfo Compiler :: declareMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -3020,7 +3021,7 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
       retVal = declareObject(writer, targetNode, scope, mode/* | HINT_NOBOXING*/);
 
-//      ref_t targetRef = resolveObjectReference(scope, target);
+      ref_t targetRef = resolveObjectReference(scope, retVal);
 //      if (target.kind == okLocalAddress) {
 //         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
 //         if (size != 0) {
@@ -3056,16 +3057,12 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
       else scope.raiseError(errInvalidOperation, node);
 
       SNode sourceNode = targetNode.nextNode(lxObjectMask);
+      writer.newBookmark();
       ObjectInfo source = declareAssigningExpression(writer, sourceNode, scope);
-
-//      if (target.type != 0) {
-//         typecastObject(sourceNode, scope, target.type, source);
-//      }
-//      else {
-//         if (!convertObject(sourceNode, scope, targetRef, source)) {
-//            scope.raiseError(errInvalidOperation, node);
-//         }
-//      }
+      if (!convertObject(sourceNode, scope, targetRef, source)) {
+         typecastObject(writer, sourceNode, scope, targetRef, source);            
+      }
+      writer.removeBookmark();
    }
 
    if (operationType != lxNone) {
