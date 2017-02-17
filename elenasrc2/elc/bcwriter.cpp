@@ -4802,7 +4802,12 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
       //if (current == lxReleasing) {
       //   releaseObject(tape, current.argument);
       //}
-      /*else */if (test(current.type, lxObjectMask)) {
+      /*else*/ if (current == lxVariable) {
+         declareLocalInfo(tape,
+            current.findChild(lxTerminal).identifier(),
+            current.findChild(lxLevel).argument);
+      }
+      else if (test(current.type, lxObjectMask)) {
          generateObjectExpression(tape, current);
       }
 

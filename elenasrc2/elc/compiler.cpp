@@ -43,6 +43,7 @@ using namespace _ELENA_;
 //#define HINT_SUBCODE_CLOSURE  0x00008800
 ////#define HINT_CONSTRUCTOR_EPXR 0x00002000
 ////#define HINT_VIRTUAL_FIELD    0x00001000
+//#define HINT_SILENTMODE      0x00000800
 //
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
@@ -1798,54 +1799,53 @@ ref_t Compiler :: mapAttribute(SNode attribute, Scope& scope, int& attrValue)
 ////      current = current.nextNode();
 ////   }
 ////}
-////
-////void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
-////{
-////   SNode current = node.firstChild(lxAttribute);
-////   while (current != lxNone) {
-////      if (current == lxAttribute) {
-////         int attrValue = 0;
-////         ref_t attrRef = mapAttribute(current, scope, attrValue);
-////         if (attrRef != 0 && attrValue != 0) {
-////            // if it is a primitive array declaration
-////            size = attrValue;
-////            variable.type = attrRef;
-////            variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(attrRef));
-////         }
-////         else if (attrValue != 0) {
-////            // positive value defines the target size
-////            if (attrValue > 0) {
-////               size = attrValue;
-////            }
-////            else if (_logic->validateLocalAttribute(attrValue)) {
-////               // negative value defines the target virtual class
-////               variable.extraparam = attrValue;
-////            }
-////            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-////         }
-////         else if (attrRef != 0) {
-////            variable.extraparam = scope.moduleScope->attributeHints.get(attrRef);
-////            if (variable.extraparam == INVALID_REF) {
-////               TemplateScope templateScope(&scope, attrRef);
-////               templateScope.loadParameters(current, _writer);
-////
-////               templateScope.generateClassName();
-////
-////               variable.extraparam = generateTemplate(templateScope);
-////            }
-////            else if (variable.type == 0) {
-////               variable.type = attrRef;
-////            }
-////            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-////         }
-////         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-////
-////      }
-////
-////      current = current.nextNode();
-////   }
-////}
-////
+
+void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable/*, int& size*/)
+{
+   SNode current = node.firstChild(lxAttribute);
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+//         int attrValue = 0;
+//         ref_t attrRef = mapAttribute(current, scope, attrValue);
+//         if (attrRef != 0 && attrValue != 0) {
+//            // if it is a primitive array declaration
+//            size = attrValue;
+//            variable.type = attrRef;
+//            variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(attrRef));
+//         }
+//         else if (attrValue != 0) {
+//            // positive value defines the target size
+//            if (attrValue > 0) {
+//               size = attrValue;
+//            }
+//            else if (_logic->validateLocalAttribute(attrValue)) {
+//               // negative value defines the target virtual class
+//               variable.extraparam = attrValue;
+//            }
+//            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+//         }
+//         else if (attrRef != 0) {
+//            variable.extraparam = scope.moduleScope->attributeHints.get(attrRef);
+//            if (variable.extraparam == INVALID_REF) {
+//               TemplateScope templateScope(&scope, attrRef);
+//               templateScope.loadParameters(current, _writer);
+//
+//               templateScope.generateClassName();
+//
+//               variable.extraparam = generateTemplate(templateScope);
+//            }
+//            else if (variable.type == 0) {
+//               variable.type = attrRef;
+//            }
+//            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+//         }
+//         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 ////void Compiler :: compileSwitch(SNode node, CodeScope& scope)
 ////{
 ////   SNode targetNode = node.firstChild(lxObjectMask);
@@ -1928,8 +1928,8 @@ void Compiler :: declareVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
    if (!scope.locals.exist(identifier)) {
 //      int size = 0;
       ObjectInfo variable(okLocal);
-//      compileLocalAttributes(node, scope, variable, size);
-//
+      declareLocalAttributes(node, scope, variable/*, size*/);
+
 //      ClassInfo localInfo;
 //      bool bytearray = false;
 //      _logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam);
@@ -2226,9 +2226,9 @@ ObjectInfo Compiler :: declareObject(SyntaxWriter& writer, SNode objectNode, Cod
 {
    ObjectInfo result;
 
-//   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxInlineExpression, lxExpression);
-//   switch (member.type)
-//   {
+   SNode member = objectNode.findChild(/*lxCode, lxNestedClass, lxMessageReference, lxInlineExpression, */lxExpression);
+   switch (member.type)
+   {
 //      case lxNestedClass:
 //      case lxCode:
 //         result = compileClosure(member, scope, mode & HINT_CLOSURE_MASK);
@@ -2236,18 +2236,18 @@ ObjectInfo Compiler :: declareObject(SyntaxWriter& writer, SNode objectNode, Cod
 //      case lxInlineExpression:
 //         result = compileClosure(member, scope, HINT_CLOSURE);
 //         break;
-//      case lxExpression:
+      case lxExpression:
 //         if (isCollection(member)) {
 //            result = compileCollection(objectNode, scope);
 //         }
-//         else result = compileExpression(member, scope, 0);
-//         break;
+         /*else */result = declareExpression(writer, member, scope, 0);
+         break;
 //      case lxMessageReference:
 //         result = compileMessageReference(member, scope, mode);
 //         break;
-//      default:
+      default:
          result = declareTerminal(writer, objectNode, scope, mode);
-//   }
+   }
 
    return result;
 }
@@ -2939,45 +2939,64 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
    writer.newBookmark();
 
    ObjectInfo retVal;
-   LexicalType operation = lxAssigning;
+   LexicalType operationType = lxAssigning;
    int operand = 0;
 
-//   SNode exprNode = node;
-//   SNode operation = node.findChild(lxMessage, lxExpression, lxAssign);
-//   if (operation == lxExpression) {
-//      exprNode = operation;
-//      operation = exprNode.findChild(lxMessage, lxOperator);
-//   }
-//
-//   // if it is shorthand property settings
-//   if (operation == lxMessage) {
-//      //if (operation.nextNode() != lxAssign)
-//      //   scope.raiseError(errInvalidSyntax, operation);
-//
-//      SNode name = operation.findChild(lxIdentifier, lxPrivate);
-//      ref_t subject = scope.mapSubject(name);
-//      //HOTFIX : support lexical subjects
-//      if (subject == 0)
-//         subject = scope.moduleScope->module->mapSubject(name.findChild(lxTerminal).identifier(), false);
-//
-//      ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
-//
-//      // compile target
-//      // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
-//      ObjectInfo target = compileMessageParameters(exprNode, scope);
-//
-//      // compile the parameter
-//      SNode sourceNode = exprNode.nextNode(lxObjectMask);
-//      ObjectInfo source = compileExpression(sourceNode, scope, 0);
-//      typecastObject(sourceNode, scope, subject, source);
-//
-//      return compileMessage(node, scope, target, messageRef, HINT_NODEBUGINFO);
-//   }
+   SNode exprNode = node;
+   SNode operation = node.findChild(lxMessage, lxExpression, lxAssign);
+   if (operation == lxExpression) {
+      exprNode = operation;
+      operation = exprNode.findChild(lxMessage/*, lxOperator*/);
+   }
+   
+   if (operation == lxMessage) {
+      // try to figure out if it is property assignging or variable declaration
+      SNode firstToken = exprNode.firstChild(lxObjectMask);
+      ObjectInfo tokenInfo = scope.mapObject(firstToken);
+      ref_t attrRef = scope.mapSubject(firstToken);
+      if (tokenInfo.kind != okUnknown) {
+         // if it is shorthand property settings
+
+         //if (operation.nextNode() != lxAssign)
+         //   scope.raiseError(errInvalidSyntax, operation);
+
+         SNode name = operation.findChild(lxIdentifier, lxPrivate);
+         ref_t subject = scope.mapSubject(name);
+         //HOTFIX : support lexical subjects
+         if (subject == 0)
+            subject = scope.moduleScope->module->mapSubject(name.findChild(lxTerminal).identifier(), false);
+
+         ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
+
+         // compile target
+         // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
+         ObjectInfo target = declareMessageParameters(writer, exprNode, scope);
+
+         // compile the parameter
+         SNode sourceNode = exprNode.nextNode(lxObjectMask);
+         ObjectInfo source = declareExpression(writer, sourceNode, scope, 0);
+         //      typecastObject(sourceNode, scope, subject, source);
+
+         retVal = declareMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
+
+         operationType = lxNone;
+      }
+      else if (attrRef != 0) {
+         // if it is variable declaration
+         _logic->recognizeNewLocal(exprNode);
+
+         declareVariable(writer, exprNode.firstChild(lxObjectMask), scope);
+         declareExpression(writer, node, scope, 0);
+
+         operationType = lxNone;
+      }
+      else scope.raiseError(errUnknownObject, firstToken);
+   }
 //   // if it setat operator
 //   else if (operation == lxOperator) {
 //      return compileOperator(node, scope, mode, SET_REFER_MESSAGE_ID);
 //   }
-//   else {
+   else {
       SNode targetNode = node.firstChild(lxObjectMask);
 
       retVal = declareObject(writer, targetNode, scope, mode/* | HINT_NOBOXING*/);
@@ -3028,10 +3047,12 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
 //            scope.raiseError(errInvalidOperation, node);
 //         }
 //      }
-//   }
+   }
 
-   writer.insert(operation, operand);
-   writer.closeNode();
+   if (operationType != lxNone) {
+      writer.insert(operationType, operand);
+      writer.closeNode();
+   }
 
    writer.removeBookmark();
 
@@ -6671,43 +6692,43 @@ void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope)
    else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
 }
 
-////void Compiler :: declareSubject(SNode member, ModuleScope& scope)
-////{
-////   SNode name = member.findChild(lxIdentifier, lxPrivate);
-////
-////   bool internalSubject = name == lxPrivate;
-////
-////   // map a full type name
-////   ref_t subjRef = scope.mapNewAttribute(name.findChild(lxTerminal).identifier());
-////   ref_t classRef = 0;
-////
-////   SNode classNode = member.findChild(lxForward);
-////   if (classNode != lxNone) {
-////      SNode terminal = classNode.findChild(lxPrivate, lxIdentifier, lxReference);
-////
-////      SNode option = classNode.findChild(lxAttributeValue);
-////      if (option != lxNone) {
-////         ref_t attrRef = mapAttribute(classNode, scope);
-////         if (!attrRef)
-////            scope.raiseError(errInvalidHint, terminal);
-////
-////         TemplateScope templateScope(&scope, attrRef);
-////         templateScope.loadParameters(classNode, _writer);
-////
-////         templateScope.generateClassName(true);
-////
-////         classRef = templateScope.reference;
-////      }
-////      else {
-////         classRef = scope.mapTerminal(terminal);
-////         if (classRef == 0)
-////            scope.raiseError(errUnknownClass, terminal);
-////      }
-////   }
-////
-////   scope.saveAttribute(subjRef, classRef, internalSubject);
-////}
-////
+void Compiler :: declareSubject(SNode member, ModuleScope& scope)
+{
+   SNode name = member.findChild(lxIdentifier, lxPrivate);
+
+   bool internalSubject = name == lxPrivate;
+
+   // map a full type name
+   ref_t subjRef = scope.mapNewSubject(name.findChild(lxTerminal).identifier());
+   ref_t classRef = 0;
+
+//   SNode classNode = member.findChild(lxForward);
+//   if (classNode != lxNone) {
+//      SNode terminal = classNode.findChild(lxPrivate, lxIdentifier, lxReference);
+//
+//      SNode option = classNode.findChild(lxAttributeValue);
+//      if (option != lxNone) {
+//         ref_t attrRef = mapAttribute(classNode, scope);
+//         if (!attrRef)
+//            scope.raiseError(errInvalidHint, terminal);
+//
+//         TemplateScope templateScope(&scope, attrRef);
+//         templateScope.loadParameters(classNode, _writer);
+//
+//         templateScope.generateClassName(true);
+//
+//         classRef = templateScope.reference;
+//      }
+//      else {
+//         classRef = scope.mapTerminal(terminal);
+//         if (classRef == 0)
+//            scope.raiseError(errUnknownClass, terminal);
+//      }
+//   }
+
+   scope.saveSubject(subjRef, classRef, internalSubject);
+}
+
 ////void Compiler :: compileSubject(SNode member, ModuleScope& scope)
 ////{
 ////   SNode classNode = member.findChild(lxForward);
@@ -6746,9 +6767,6 @@ void Compiler :: declareScope(SyntaxWriter& writer, SNode member, ModuleScope& s
 //   //ident_t nameStr = name.findChild(lxTerminal).identifier();
 //
 //   switch (current) {
-//   //         case lxSubject:
-//   //            declareSubject(current, scope);
-//   //            break;
 //      case lxClass:
 //      {
 //         ClassScope classScope(&scope, name == lxNone ? scope.mapNestedExpression() : scope.mapTerminal(name));
@@ -6926,9 +6944,9 @@ void Compiler :: compileDeclaration(SyntaxWriter& writer, SNode current, ModuleS
    SNode name = current.findChild(lxIdentifier, lxPrivate);
 
    switch (current) {
-//         case lxSubject:
-//            declareSubject(current, scope);
-//            break;
+      case lxSubject:
+         declareSubject(current, scope);
+         break;
       case lxClass:
       {
          ClassScope classScope(&scope, name == lxNone ? scope.mapNestedExpression() : scope.mapTerminal(name));

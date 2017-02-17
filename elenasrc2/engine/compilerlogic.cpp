@@ -1647,3 +1647,29 @@ bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)
    }
    else return true;
 }
+
+bool CompilerLogic :: recognizeNewLocal(SNode& node)
+{
+   SNode firstToken = node.firstChild(lxObjectMask);
+   if (firstToken == lxIdentifier) {
+      firstToken = lxAttribute;
+
+      SNode identifier = firstToken.nextNode();
+      if (identifier == lxMessage) {
+         identifier = lxExpression;
+
+         return true;
+      }
+
+      //SNode token = identifier.findChild(lxIdentifier, lxPrivate);
+      //if (token != lxNone) {
+      //   identifier = token.type;
+
+      //   SyntaxTree::copyNode(token, identifier);
+      //   token = lxIdle;
+
+      //   return true;
+      //}
+   }
+   return false;
+}

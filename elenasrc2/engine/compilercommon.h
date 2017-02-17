@@ -265,6 +265,7 @@ public:
 //   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
    
    virtual bool recognizeScope(SNode& node) = 0;
+   virtual bool recognizeNewLocal(SNode& node) = 0;
 };
    
 }  // _ELENA_

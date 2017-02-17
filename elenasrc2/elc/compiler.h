@@ -875,7 +875,7 @@ private:
 //      compileSymbolAttributes(node, scope, node);
 //   }
 //   void compileClassAttributes(SNode node, ClassScope& scope, SNode rootNode);
-//   void compileLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
+   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
 //   void compileFieldAttributes(SNode hints, ClassScope& scope, SNode rootNode);
    //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
    void declareVMT(SyntaxWriter& writer, SNode member, ClassScope& scope);
@@ -1007,7 +1007,7 @@ private:
 ////   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
    void compileIncludeModule(SNode node, ModuleScope& scope);
 ////   void compileForward(SNode node, ModuleScope& scope);
-////   void declareSubject(SNode member, ModuleScope& scope);
+   void declareSubject(SNode member, ModuleScope& scope);
 ////   void compileSubject(SNode member, ModuleScope& scope);
    void declareScope(SyntaxWriter& writer, SNode member, ModuleScope& scope);
 //   void buildDeclaration(SyntaxWriter& writer, SNode member, ModuleScope& scope);
