@@ -155,7 +155,7 @@ enum LexicalType
    lxIntVariable     = 0x10028,
    lxLongVariable    = 0x10029,
    lxReal64Variable  = 0x1002A,
-//   lxForward         = 0x1002E,
+   lxForward         = 0x1002E,
    lxVariable        = 0x10037,
 //   lxBinaryVariable  = 0x10038,
 //   lxMember          = 0x10039,  // a collection member, arg - offset

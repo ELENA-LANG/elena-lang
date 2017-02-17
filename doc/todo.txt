@@ -3,6 +3,9 @@ In development:
 ------                              
 
               xdev - generic development
+                 * local type
+                 * field type
+                 * enforce types
 
                  * implementing ELENA 3.0
                  * class class is sealed and stateless
@@ -13,6 +16,7 @@ In development:
                  * singleton classes / roles / extensions should not have a class class
                  * should not be allowed to provide returning type for constructors
                  * type / sealed hint should not be overridden
+                 * support local template
                  * uncomment compileClassDeclaration
                  * uncomment compileClassClassDeclaration
                  * uncomment generateMethodDeclarations

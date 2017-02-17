@@ -92,11 +92,11 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //         unpackChildren(node);
 //         _writer.closeNode();
 //         break;
-//      case nsForward:
-//         _writer.newNode(lxForward);
-//         unpackChildren(node);
-//         _writer.closeNode();
-//         break;
+      case nsForward:
+         _writer.newNode(lxForward);
+         unpackChildren(node);
+         _writer.closeNode();
+         break;
 //      case nsBaseClass:
 //         _writer.newNode(lxBaseParent);
 //         unpackChildren(node);

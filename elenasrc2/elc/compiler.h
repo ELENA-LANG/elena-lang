@@ -65,7 +65,7 @@ public:
    struct Parameter
    {
       int    offset;
-//      ref_t  class_ref;
+      ref_t  class_ref;
 //      ref_t  subj_ref;
 //      int    size;
 
@@ -73,14 +73,14 @@ public:
       {
          offset = -1;
 //         subj_ref = 0;
-//         class_ref = 0;
+         class_ref = 0;
 //         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
 //         this->subj_ref = 0;
-//         this->class_ref = 0;
+         this->class_ref = 0;
 //         this->size = 0;
       }
 //      Parameter(int offset, ref_t subj_ref)
@@ -90,13 +90,13 @@ public:
 //         this->class_ref = 0;
 //         this->size = 0;
 //      }
-//      Parameter(int offset, ref_t subj_ref, ref_t class_ref)
-//      {
-//         this->offset = offset;
-//         this->subj_ref = subj_ref;
-//         this->class_ref = class_ref;
-//         this->size = 0;
-//      }
+      Parameter(int offset, /*ref_t subj_ref, */ref_t class_ref)
+      {
+         this->offset = offset;
+         //this->subj_ref = subj_ref;
+         this->class_ref = class_ref;
+         //this->size = 0;
+      }
 //      Parameter(int offset, ref_t subj_ref, ref_t class_ref, int size)
 //      {
 //         this->offset = offset;
@@ -161,58 +161,58 @@ public:
    {
       ObjectKind kind;
       ref_t      param;
-//      ref_t      extraparam;
+      ref_t      extraparam;
 //      ref_t      type;
 
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
-//      ObjectInfo(ObjectKind kind, ObjectInfo copy)
-//      {
-//         this->kind = kind;
-//         this->param = copy.param;
-//         this->extraparam = copy.extraparam;
-//         this->type = copy.type;
-//      }
+      ObjectInfo(ObjectKind kind, ObjectInfo copy)
+      {
+         this->kind = kind;
+         this->param = copy.param;
+         this->extraparam = copy.extraparam;
+         //this->type = copy.type;
+      }
       ObjectInfo(ObjectKind kind, ref_t param)
       {
          this->kind = kind;
          this->param = param;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
       ObjectInfo(ObjectKind kind, int param)
       {
          this->kind = kind;
          this->param = (ref_t)param;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
-//         this->type = 0;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = (ref_t)extraparam;
-//         this->type = 0;
-//      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
+         //this->type = 0;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = (ref_t)extraparam;
+         //this->type = 0;
+      }
 //      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
 //      {
 //         this->kind = kind;
@@ -598,9 +598,9 @@ private:
 //      {
 //         locals.add(local, Parameter(level/*, type*/));
 //      }
-      void mapLocal(ident_t local, int level/*, ref_t type, size_t class_ref, int size*/)
+      void mapLocal(ident_t local, int level/*, ref_t type*/, ref_t class_ref/*, int size*/)
       {
-         locals.add(local, Parameter(level/*, type, class_ref, size*/));
+         locals.add(local, Parameter(level/*, type*/, class_ref/*, size*/));
       }
 
 //      void freeSpace()
@@ -876,7 +876,8 @@ private:
 //   }
 //   void compileClassAttributes(SNode node, ClassScope& scope, SNode rootNode);
    void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
-//   void compileFieldAttributes(SNode hints, ClassScope& scope, SNode rootNode);
+   void declareFieldAttribute(SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldRef);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef);
    //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
    void declareVMT(SyntaxWriter& writer, SNode member, ClassScope& scope);
    bool declareClassVMT(SyntaxWriter& writer, SNode member, ClassScope& classClassScope, ClassScope& classScope);
@@ -984,7 +985,7 @@ private:
 ////
 ////   ref_t generateTemplate(TemplateScope& scope);
 
-   void generateClassField(ClassScope& scope, SNode node/*, bool singleField*/);
+   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, bool singleField*/);
 ////   void generateClassStaticField(ClassScope& scope, SNode current);
 ////
 ////   void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);

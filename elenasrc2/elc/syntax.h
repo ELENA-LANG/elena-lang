@@ -71,7 +71,7 @@ enum Symbol
 //   nsExtension                  = 0x0102B,
 //   nsAltMessageOperation        = 0x0102C,
 //   nsInclude                    = 0x0102D,
-//   nsForward                    = 0x0102E,
+   nsForward                    = 0x0102E,
 //   nsCatchMessageOperation      = 0x0102F,
 //   nsLoop                       = 0x01030,
 //   nsResendExpression           = 0x01031,

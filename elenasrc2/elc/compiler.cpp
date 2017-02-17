@@ -339,7 +339,7 @@ ref_t Compiler::ModuleScope :: resolveAttributeRef(ident_t identifier, bool expl
 ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, bool explicitOnly)
 {
    ident_t identifier = NULL;
-   if (terminal.type == lxIdentifier || terminal.type == lxPrivate/* || terminal.type == lxMessage*/) {
+   if (terminal.type == lxIdentifier || terminal.type == lxPrivate/* || terminal.type == lxMessage*/ || terminal.type == lxAttribute) {
       identifier = terminal.findChild(lxTerminal).identifier();
    }
    else raiseError(errInvalidSubject, terminal);
@@ -523,11 +523,7 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
       // import field types
       ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
       while (!type_it.Eof()) {
-         ClassInfo::FieldInfo info = *type_it;
-         info.value1 = importReference(exporter, info.value1, module);
-         info.value2 = importSubject(exporter, info.value2, module);
-
-         target.fieldTypes.add(type_it.key(), info);
+         target.fieldTypes.add(type_it.key(), importReference(exporter, *type_it, module));
 
          type_it++;
       }
@@ -553,11 +549,7 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
       // import static fields
       ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
       while (!static_it.Eof()) {
-         ClassInfo::FieldInfo info(
-            importReference(exporter, (*static_it).value2, module),
-            importSubject(exporter, (*static_it).value2, module));
-
-         target.statics.add(static_it.key(), info);
+         target.statics.add(static_it.key(), importReference(exporter, *static_it, module));
 
          static_it++;
       }
@@ -1056,7 +1048,7 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
 //      else if (local.size != 0) {
 //         return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.subj_ref);
 //      }
-      /*else */return ObjectInfo(okLocal, local.offset/*, local.class_ref, local.subj_ref*/);
+      /*else */return ObjectInfo(okLocal, local.offset, local.class_ref/*, local.subj_ref*/);
    }
    else return Scope::mapTerminal(identifier);
 }
@@ -1630,6 +1622,8 @@ ref_t Compiler :: mapAttribute(SNode attribute, Scope& scope, int& attrValue)
    ref_t attrRef = 0;
 
    SNode terminal = attribute.findChild(/*lxPrivate, */lxIdentifier, lxInteger/*, lxHexInteger*/);
+   if (terminal == lxNone)
+      terminal = attribute;
 
    if (terminal == lxInteger) {
       ident_t value = terminal.findChild(lxTerminal).identifier();
@@ -1724,49 +1718,71 @@ ref_t Compiler :: mapAttribute(SNode attribute, Scope& scope, int& attrValue)
 ////      current = current.nextNode();
 ////   }
 ////}
-////
-////void Compiler :: compileFieldAttributes(SNode node, ClassScope& scope, SNode rootNode)
-////{
-//////   ModuleScope* moduleScope = scope.moduleScope;
-////
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == lxAttribute) {
-////         int attrValue = 0;
-////         ref_t attribute = mapAttribute(current, scope, attrValue);
-////         if (attrValue != 0) {
-////            if (attrValue > 0) {
-////               // positive value defines the target size
-////               rootNode.appendNode(lxSize, attrValue);
-////            }
-////            else if (_logic->validateFieldAttribute(attrValue)) {
-////               rootNode.appendNode((LexicalType)attrValue);
-////            }
-////            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-////         }
-////         else if (attribute) {
-////            ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
-////            if (classRef == INVALID_REF) {               
-////               if (!copyFieldAttribute(scope, attribute, rootNode, current)) {
-////                  TemplateScope templateScope(&scope, attribute);
-////                  templateScope.loadParameters(current, _writer);
-////
-////                  templateScope.generateClassName();
-////                  rootNode.appendNode(lxClassRef, generateTemplate(templateScope));
-////               }
-////            }
-////            else node.appendNode(lxType, attribute);
-////         }
-////         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-////      }
-////      else if (current == lxTemplate) {
-////         compileFieldAttributes(current, scope, rootNode);
-////      }
-////
-////      current = current.nextNode();
-////   }
-////}
-////
+
+void Compiler :: declareFieldAttribute(SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldRef)
+{
+   int attrValue = 0;
+   ref_t attrRef = mapAttribute(current, scope, attrValue);
+   if (attrValue != 0) {
+      //if (_logic->validateMethodAttribute(attrValue)) {
+      //   scope.hints |= attrValue;
+      //}
+      /*else */scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+   }
+   else if (attrRef != 0) {
+      ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
+      if (classRef == INVALID_REF) {
+         //declareTemplate(rootNode, &scope, attrRef);
+      }
+      else fieldRef = classRef;
+   }
+   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
+}
+
+void Compiler ::declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef)
+{
+//   ModuleScope* moduleScope = scope.moduleScope;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         declareFieldAttribute(current, scope, node, fieldRef);
+
+//         int attrValue = 0;
+//         ref_t attribute = mapAttribute(current, scope, attrValue);
+//         if (attrValue != 0) {
+//            if (attrValue > 0) {
+//               // positive value defines the target size
+//               rootNode.appendNode(lxSize, attrValue);
+//            }
+//            else if (_logic->validateFieldAttribute(attrValue)) {
+//               rootNode.appendNode((LexicalType)attrValue);
+//            }
+//            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+//         }
+//         else if (attribute) {
+//            ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
+//            if (classRef == INVALID_REF) {               
+//               if (!copyFieldAttribute(scope, attribute, rootNode, current)) {
+//                  TemplateScope templateScope(&scope, attribute);
+//                  templateScope.loadParameters(current, _writer);
+//
+//                  templateScope.generateClassName();
+//                  rootNode.appendNode(lxClassRef, generateTemplate(templateScope));
+//               }
+//            }
+//            else node.appendNode(lxType, attribute);
+//         }
+//         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
+      }
+//      else if (current == lxTemplate) {
+//         compileFieldAttributes(current, scope, rootNode);
+//      }
+
+      current = current.nextNode();
+   }
+}
+
 ////void Compiler :: compileMethodAttributes(SNode node, MethodScope& scope, SNode rootNode)
 ////{
 ////   SNode current = node.firstChild();
@@ -1805,8 +1821,8 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
    SNode current = node.firstChild(lxAttribute);
    while (current != lxNone) {
       if (current == lxAttribute) {
-//         int attrValue = 0;
-//         ref_t attrRef = mapAttribute(current, scope, attrValue);
+         int attrValue = 0;
+         ref_t attrRef = mapAttribute(current, scope, attrValue);
 //         if (attrRef != 0 && attrValue != 0) {
 //            // if it is a primitive array declaration
 //            size = attrValue;
@@ -1824,22 +1840,22 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
 //            }
 //            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 //         }
-//         else if (attrRef != 0) {
-//            variable.extraparam = scope.moduleScope->attributeHints.get(attrRef);
-//            if (variable.extraparam == INVALID_REF) {
+         /*else */if (attrRef != 0) {
+            ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
+            if (classRef == INVALID_REF) {
 //               TemplateScope templateScope(&scope, attrRef);
 //               templateScope.loadParameters(current, _writer);
 //
 //               templateScope.generateClassName();
 //
 //               variable.extraparam = generateTemplate(templateScope);
-//            }
-//            else if (variable.type == 0) {
-//               variable.type = attrRef;
-//            }
-//            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//         }
-//         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
+            }
+            else if (variable.extraparam == 0) {
+               variable.extraparam = classRef;
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
       }
 
       current = current.nextNode();
@@ -1922,7 +1938,10 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
 
 void Compiler :: declareVariable(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
-   SNode terminal = node.findChild(lxIdentifier, lxPrivate);
+   SNode terminal = node.findChild(lxIdentifier, lxPrivate, lxExpression);
+   if (terminal == lxExpression)
+      terminal = terminal.findChild(lxIdentifier, lxPrivate);
+
    ident_t identifier = terminal.findChild(lxTerminal).identifier();
 
    if (!scope.locals.exist(identifier)) {
@@ -1995,7 +2014,7 @@ void Compiler :: declareVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
 
       writer.closeNode();
 
-      scope.mapLocal(identifier, variable.param/*, variable.type, variable.extraparam, size*/);
+      scope.mapLocal(identifier, variable.param/*, variable.type*/, variable.extraparam/*, size*/);
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
@@ -2985,7 +3004,7 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
          // if it is variable declaration
          _logic->recognizeNewLocal(exprNode);
 
-         declareVariable(writer, exprNode.firstChild(lxObjectMask), scope);
+         declareVariable(writer, exprNode, scope);
          declareExpression(writer, node, scope, 0);
 
          operationType = lxNone;
@@ -4783,13 +4802,17 @@ void Compiler :: compileFieldDeclarations(SNode node, ClassScope& scope)
 
    while (current != lxNone) {
       if (current == lxClassField) {
-         generateClassField(scope, current);
+         ref_t fieldRef = 0;
+         declareFieldAttributes(current, scope, fieldRef);
 
-         //compileFieldAttributes(current, scope, current);
+         generateClassField(scope, current, fieldRef);
       }
       else if (current == lxScope) {
          if (_logic->recognizeNewField(current)) {
-            generateClassField(scope, current);
+            ref_t fieldRef = 0;
+            declareFieldAttributes(current, scope, fieldRef);
+
+            generateClassField(scope, current, fieldRef);
          }
       }
       //else if (current == lxTemplate) {
@@ -5244,14 +5267,13 @@ bool Compiler :: declareClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
 ////   }
 ////}
 
-void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current/*, bool singleField*/)
+void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t classRef/*, bool singleField*/)
 {
 //   ModuleScope* moduleScope = scope.moduleScope;
 
    int offset = 0;
    ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
 
-//   ref_t classRef = current.findChild(lxClassRef).argument;
 //   ref_t typeAttr = current.findChild(lxType).argument;
 //   if (!classRef && typeAttr) {
 //      classRef = moduleScope->attributeHints.get(typeAttr);
@@ -5350,8 +5372,8 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current/
          offset = scope.info.fields.Count();
          scope.info.fields.add(terminal, offset);
 
-//         if (typeAttr != 0 || classRef != 0)
-//            scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, typeAttr));
+         if (/*typeAttr != 0 || */classRef != 0)
+            scope.info.fieldTypes.add(offset, classRef);
 //      }
 //   }
 }
@@ -6709,10 +6731,10 @@ void Compiler :: declareSubject(SNode member, ModuleScope& scope)
    ref_t subjRef = scope.mapNewSubject(name.findChild(lxTerminal).identifier());
    ref_t classRef = 0;
 
-//   SNode classNode = member.findChild(lxForward);
-//   if (classNode != lxNone) {
-//      SNode terminal = classNode.findChild(lxPrivate, lxIdentifier, lxReference);
-//
+   SNode classNode = member.findChild(lxForward);
+   if (classNode != lxNone) {
+      SNode terminal = classNode.findChild(lxPrivate, lxIdentifier, lxReference);
+
 //      SNode option = classNode.findChild(lxAttributeValue);
 //      if (option != lxNone) {
 //         ref_t attrRef = mapAttribute(classNode, scope);
@@ -6727,11 +6749,11 @@ void Compiler :: declareSubject(SNode member, ModuleScope& scope)
 //         classRef = templateScope.reference;
 //      }
 //      else {
-//         classRef = scope.mapTerminal(terminal);
-//         if (classRef == 0)
-//            scope.raiseError(errUnknownClass, terminal);
+         classRef = scope.mapTerminal(terminal);
+         if (classRef == 0)
+            scope.raiseError(errUnknownClass, terminal);
 //      }
-//   }
+   }
 
    scope.saveSubject(subjRef, classRef, internalSubject);
 }
