@@ -882,6 +882,9 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.packageRef = parent->packageReference;
    info.size = 0;
 
+   withConstructors = false;
+
+   declaredFlags = 0;
 //   extensionMode = 0;
 }
 
@@ -4924,9 +4927,24 @@ void Compiler :: compileSymbolCode(ModuleScope& scope, ref_t reference)
 
 void Compiler :: compileClassClassDeclaration(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
+   bool withDefaultConstructor = _logic->isDefaultConstructorEnabled(classScope.info);
+   // if no construtors are defined inherits the default one
+   if (!classScope.withConstructors && withDefaultConstructor) {
+      if (classScope.info.header.parentRef == 0)
+         classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
+
+      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.moduleScope->superReference));
+      classClassParentName.append(CLASSCLASS_POSTFIX);
+
+      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
+   }
+
    compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef, true);
 
-   bool withDefaultConstructor = _logic->isDefaultConstructorEnabled(classScope.info);
+   // class class is always stateless and sealed
+   classClassScope.declaredFlags |= elStateless;
+   classClassScope.declaredFlags |= elSealed;
+
    // add virtual constructor
    if (withDefaultConstructor) {
       MethodScope methodScope(&classScope);
@@ -4940,25 +4958,10 @@ void Compiler :: compileClassClassDeclaration(SyntaxWriter& writer, SNode node, 
       /*else */declareDefaultConstructor(writer, node, methodScope);
    }
 
-   bool inheritedConstructors = declareClassVMT(writer, node, classClassScope, classScope) && withDefaultConstructor;
-
-   //   // if no construtors are defined inherits the default one
-   //   if (inheritedConstructors) {
-   //      if (classScope.info.header.parentRef == 0)
-   //         classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
-   //
-   //      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.moduleScope->superReference));
-   //      classClassParentName.append(CLASSCLASS_POSTFIX);
-   //
-   //      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-   //   }
-   
-   //   // class class is always stateless and sealed
-   //   writer.appendNode(lxClassFlag, elStateless);
-   //   writer.appendNode(lxClassFlag, elSealed);
+   declareClassVMT(writer, node, classClassScope, classScope);
 
    generateClassDeclaration(writer, classClassScope/*, false*/);
-   
+
    // generate constructor attributes
    ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
    while (!it.Eof()) {
@@ -5054,27 +5057,27 @@ void Compiler :: compileClassClassDeclaration(SyntaxWriter& writer, SNode node, 
 
 void Compiler :: includeMethod(SNode node, ClassScope& scope, MethodScope& methodScope)
 {
+   int defaultHints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
+
    bool included = scope.include(methodScope.message);
-   //            bool sealedMethod = (methodHints & tpMask) == tpSealed;
-   //            // if the class is closed, no new methods can be declared
-   //            if (included && closed)
-   //               scope.raiseError(errClosedParent, findParent(current, lxClass));
-   //
+   bool sealedMethod = (defaultHints & tpMask) == tpSealed;
+   bool closed = test(scope.info.header.flags, elClosed);
+   // if the class is closed, no new methods can be declared
+   if (included && closed)
+      scope.raiseError(errClosedParent, findParent(node, lxClass));
+   
    // if the method is sealed, it cannot be overridden
-   if (!included/* && sealedMethod*/)
+   if (!included && sealedMethod)
       scope.raiseError(errClosedMethod, findParent(node, lxClass));
-   //
-   ////            // save extensions if required ; private method should be ignored
-   ////            if (test(scope.info.header.flags, elExtension) && !root.existChild(lxPrivate)) {
-   ////               scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
-   ////            }
-   //         }
+   
+//            // save extensions if required ; private method should be ignored
+//            if (test(scope.info.header.flags, elExtension) && !root.existChild(lxPrivate)) {
+//               scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
+//            }
 
-   if (methodScope.hints != 0) {
-      methodScope.hints |= scope.info.methodHints.get(Attribute(methodScope.message, maHint));
-
+   if (methodScope.hints != 0) {      
       scope.info.methodHints.exclude(Attribute(methodScope.message, maHint));
-      scope.info.methodHints.add(Attribute(methodScope.message, maHint), methodScope.hints);
+      scope.info.methodHints.add(Attribute(methodScope.message, maHint), methodScope.hints | defaultHints);
    }
 }
 
@@ -5136,14 +5139,14 @@ void Compiler :: declareVMT(SyntaxWriter& writer, SNode current, ClassScope& sco
             else declareMethod(writer, current, methodScope);
             //         }
          }
+         else scope.withConstructors = true;
       }
       current = current.nextNode();
    }
 }
 
-bool Compiler :: declareClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)
+void Compiler :: declareClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-   bool found = false;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod/* || current == lxImplicitConstructor || current == lxDefaultGeneric*/) {
@@ -5197,8 +5200,6 @@ bool Compiler :: declareClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
 
       current = current.nextNode();
    }
-
-   return found;
 }
 
 ////ref_t Compiler :: generateTemplate(TemplateScope& scope)
@@ -5534,15 +5535,17 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
 //   }
 //}
 
-void Compiler :: generateClassDeclaration(SyntaxWriter& writer, ClassScope& scope/*, bool closed*/)
+void Compiler :: generateClassDeclaration(SyntaxWriter& writer, ClassScope& scope)
 {
-//   // generate flags
+   _logic->injectVirtualCode(writer, *scope.moduleScope, scope.reference, scope.info, *this);
+
+   // generate flags
+   scope.info.header.flags |= scope.declaredFlags;
+
 //   generateClassFlags(scope, node);
-//
+
 //   // generate fields
 //   generateClassFields(scope, node, countFields(node) == 1);
-
-   _logic->injectVirtualCode(writer, *scope.moduleScope, scope.reference, scope.info, *this);
 
 //   // generate methods
 //   generateMethodDeclarations(scope, node, false, closed);
@@ -5698,14 +5701,12 @@ void Compiler :: compileClassDeclaration(SyntaxWriter& writer, SNode node, Class
 //   }
    /*else */compileParentDeclaration(SNode(), scope);
 
-//   int flagCopy = scope.info.header.flags;
-//
 ////   compileClassAttributes(node, scope, node);
    compileFieldDeclarations(node, scope);
 
    declareVMT(writer, node.firstChild(), scope);
 
-   generateClassDeclaration(writer, scope/*, test(flagCopy, elClosed)*/);
+   generateClassDeclaration(writer, scope);
 
 //   // if it cannot be initiated
 //   if (_logic->isRole(scope.info)) {

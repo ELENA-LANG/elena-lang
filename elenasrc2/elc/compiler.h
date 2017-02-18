@@ -457,6 +457,8 @@ private:
    struct ClassScope : public SourceScope
    {
       ClassInfo   info;
+      bool        withConstructors;
+      int         declaredFlags;
 //      ref_t       extensionMode;
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
@@ -880,7 +882,7 @@ private:
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef);
    //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
    void declareVMT(SyntaxWriter& writer, SNode member, ClassScope& scope);
-   bool declareClassVMT(SyntaxWriter& writer, SNode member, ClassScope& classClassScope, ClassScope& classScope);
+   void declareClassVMT(SyntaxWriter& writer, SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
 //   void recognizeMemebers(SNode member, ClassScope& scope);
 //   void readAttributes(SNode member, ClassScope& scope);
