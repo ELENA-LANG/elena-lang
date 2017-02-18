@@ -14,6 +14,7 @@ In development:
                  * singleton classes / roles / extensions should not have a class class
                  * should not be allowed to provide returning type for constructors
                  * type / sealed hint should not be overridden
+                 * method duplicates
                  * support local template
                  * uncomment compileClassDeclaration
                  * uncomment compileClassClassDeclaration
@@ -43,6 +44,7 @@ In development:
                  * test short hand assigning : a prop := b.
                  * test a b c := d. (both when a is a varialbe and when it is a subject / attribute)
                  * support private variables / fields
+                 * optimize virtual get&type method
 
               xdev - generic development
                  * support property template

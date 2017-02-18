@@ -132,7 +132,7 @@ enum LexicalType
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
    lxCreatingClass   = 0x0C025,   // arg - count
    lxCreatingStruct  = 0x0C026,   // arg - size
-//   lxReturning       = 0x0C027,
+   lxReturning       = 0x0C027,
 //   lxNewOp           = 0x0C028,
 //   lxArrOp           = 0x8C029, // arg - operation id
 //   lxBinArrOp        = 0x8C02A, // arg - operation id
@@ -467,56 +467,56 @@ public:
          else return child;
       }
 
-//      Node findSubNode(LexicalType type)
-//      {
-//         Node current = firstChild();
-//         while (current != lxNone && current.type != type) {
-//            if (current == lxExpression) {
-//               Node subNode = current.findSubNode(type);
-//               if (subNode != lxNone)
-//                  return subNode;
-//            }
-//            current = current.nextNode();
-//         }
-//
-//         return current;
-//      }
-//      Node findSubNode(LexicalType type1, LexicalType type2)
-//      {
-//         Node child = firstChild();
-//         while (child != lxNone && child.type != type1) {
-//            if (child == lxExpression) {
-//               Node subNode = child.findSubNode(type1, type2);
-//               if (subNode != lxNone)
-//                  return subNode;
-//            }
-//            else if (child == type2)
-//               break;
-//
-//            child = child.nextNode();
-//         }
-//
-//         return child;
-//      }
-//      Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
-//      {
-//         Node child = firstChild();
-//         while (child != lxNone && child.type != type1) {
-//            if (child == lxExpression) {
-//               Node subNode = child.findSubNode(type1, type2, type3);
-//               if (subNode != lxNone)
-//                  return subNode;
-//            }
-//            else if (child == type2)
-//               break;
-//            else if (child == type3)
-//               break;
-//
-//            child = child.nextNode();
-//         }
-//
-//         return child;
-//      }
+      Node findSubNode(LexicalType type)
+      {
+         Node current = firstChild();
+         while (current != lxNone && current.type != type) {
+            if (current == lxExpression) {
+               Node subNode = current.findSubNode(type);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findSubNode(LexicalType type1, LexicalType type2)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
+
+            child = child.nextNode();
+         }
+
+         return child;
+      }
+      Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2, type3);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
+            else if (child == type3)
+               break;
+
+            child = child.nextNode();
+         }
+
+         return child;
+      }
 
       Node lastChild() const
       {

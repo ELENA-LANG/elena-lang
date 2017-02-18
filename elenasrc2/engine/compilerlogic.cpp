@@ -488,30 +488,29 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
 //}
-//
-//void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler)
-//{
+
+void CompilerLogic :: injectVirtualCode(SyntaxWriter& writer, _CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler)
+{
 //   SNode templateNode = node.appendNode(lxTemplate);
-//
-//   // auto generate get&type message if required
-//   ClassMap::Iterator c_it = scope.typifiedClasses.getIt(node.argument);
-//   while (!c_it.Eof()) {
-//      if (c_it.key() == node.argument) {
-//         int message = encodeMessage(*c_it, GET_MESSAGE_ID, 0);
-//
-//         SNode methodNode = templateNode.appendNode(lxClassMethod, message);
-//
-//         compiler.injectVirtualReturningMethod(methodNode, THIS_VAR);
-//      }
-//      c_it++;
-//   }
-//
+
+   // auto generate get&type message if required
+   ref_t subjRef = scope.typifiedClasses.get(classRef);
+   if (subjRef != 0) {
+      int message = encodeMessage(subjRef, GET_MESSAGE_ID, 0);
+
+      if (!info.methods.exist(message) && !test(info.header.flags, elClosed)) {
+         info.methods.add(message, true);
+
+         compiler.injectVirtualReturningMethod(writer, message, lxLocal, -1);
+      }
+   }
+
 //   // generate enumeration list
 //   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
 //      compiler.generateEnumListMember(scope, info.header.parentRef, node.argument);
 //   }
-//}
-//
+}
+
 //void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t type)
 //{
 //   int size = 0;
@@ -795,9 +794,9 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 //
 //   return 0;
 //}
-//
-//void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info)
-//{
+
+void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info)
+{
 //   if (test(info.header.flags, elNestedClass)) {
 //      // stateless inline class
 //      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
@@ -877,13 +876,13 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 //         else info.header.flags |= elDebugBytes;
 //      }
 //   }
-//
-//   // adjust objects with custom dispatch handler
-//   if (info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
-//      info.header.flags |= elWithCustomDispatcher;
-//   }
-//}
-//
+
+   // adjust objects with custom dispatch handler
+   if (info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
+      info.header.flags |= elWithCustomDispatcher;
+   }
+}
+
 //bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //{
 //   switch ((size_t)attrValue)

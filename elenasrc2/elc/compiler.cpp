@@ -4924,8 +4924,6 @@ void Compiler :: compileSymbolCode(ModuleScope& scope, ref_t reference)
 
 void Compiler :: compileClassClassDeclaration(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-   writer.newNode(lxClass, classClassScope.reference);
-   
    compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef, true);
 
    bool withDefaultConstructor = _logic->isDefaultConstructorEnabled(classScope.info);
@@ -4958,23 +4956,20 @@ void Compiler :: compileClassClassDeclaration(SyntaxWriter& writer, SNode node, 
    //   // class class is always stateless and sealed
    //   writer.appendNode(lxClassFlag, elStateless);
    //   writer.appendNode(lxClassFlag, elSealed);
-   //
 
-   writer.closeNode();
-   //
-   //   generateClassDeclaration(member, classClassScope, false);
-   //
-   //   // generate constructor attributes
-   //   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
-   //   while (!it.Eof()) {
-   //      int hints = classClassScope.info.methodHints.get(Attribute(it.key(), maHint));
-   //      if (test(hints, tpConstructor)) {
-   //         classClassScope.info.methodHints.exclude(Attribute(it.key(), maReference));
-   //         classClassScope.info.methodHints.add(Attribute(it.key(), maReference), classScope.reference);
-   //      }
-   //
-   //      it++;
-   //   }
+   generateClassDeclaration(writer, classClassScope/*, false*/);
+   
+   // generate constructor attributes
+   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
+   while (!it.Eof()) {
+      int hints = classClassScope.info.methodHints.get(Attribute(it.key(), maHint));
+      if (test(hints, tpConstructor)) {
+         classClassScope.info.methodHints.exclude(Attribute(it.key(), maReference));
+         classClassScope.info.methodHints.add(Attribute(it.key(), maReference), classScope.reference);
+      }
+   
+      it++;
+   }
    
    // save declaration
    classClassScope.save();
@@ -5538,23 +5533,23 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
 //      current = current.nextNode();
 //   }
 //}
+
+void Compiler :: generateClassDeclaration(SyntaxWriter& writer, ClassScope& scope/*, bool closed*/)
+{
+//   // generate flags
+//   generateClassFlags(scope, node);
 //
-//void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool closed)
-//{
-////   // generate flags
-////   generateClassFlags(scope, node);
-////
-////   // generate fields
-////   generateClassFields(scope, node, countFields(node) == 1);
-////
-////   _logic->injectVirtualCode(node, *scope.moduleScope, scope.info, *this);
-//
+//   // generate fields
+//   generateClassFields(scope, node, countFields(node) == 1);
+
+   _logic->injectVirtualCode(writer, *scope.moduleScope, scope.reference, scope.info, *this);
+
 //   // generate methods
 //   generateMethodDeclarations(scope, node, false, closed);
-//
-////   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info);
-//}
-//
+
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info);
+}
+
 ////bool Compiler :: copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode, SNode currentNode)
 ////{
 ////   bool attrOnly = true;
@@ -5710,7 +5705,7 @@ void Compiler :: compileClassDeclaration(SyntaxWriter& writer, SNode node, Class
 
    declareVMT(writer, node.firstChild(), scope);
 
-//   generateClassDeclaration(node, scope, test(flagCopy, elClosed));
+   generateClassDeclaration(writer, scope/*, test(flagCopy, elClosed)*/);
 
 //   // if it cannot be initiated
 //   if (_logic->isRole(scope.info)) {
@@ -6993,7 +6988,10 @@ void Compiler :: compileDeclaration(SyntaxWriter& writer, SNode current, ModuleS
          // compile class class if it available
          if (classScope.info.header.classRef != classScope.reference) {
             ClassScope classClassScope(&scope, classScope.info.header.classRef);
+
+            writer.newNode(lxClass, classClassScope.reference);
             compileClassClassDeclaration(writer, current, classClassScope, classScope);
+            writer.closeNode();
          }
          break;
       }
@@ -7116,12 +7114,23 @@ ModuleInfo Compiler :: createModule(ident_t name, _ProjectManager& project, bool
    return info;
 }
 
-//void Compiler :: injectVirtualReturningMethod(SNode node, ident_t variable)
-//{
-//   SNode expr = node.appendNode(lxReturning).appendNode(lxExpression);
-//   expr.appendNode(lxIdentifier).appendNode(lxTerminal, variable);
-//}
-//
+void Compiler :: injectVirtualReturningMethod(SyntaxWriter& writer, ref_t message, LexicalType type, int argument)
+{
+   writer.newNode(lxClassMethod, message);
+   writer.appendNode(lxParamCount, 1);
+   if (type == lxLocal && argument == -1) {
+      writer.newNode(lxReturning);
+      writer.appendNode(lxResult);
+      writer.closeNode();
+   }
+   else {
+      writer.newNode(lxExpression);
+      writer.appendNode(type, argument);
+      writer.closeNode();
+   }
+   writer.closeNode();
+}
+
 //void Compiler :: generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)
 //{
 //   MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskConstArray, false));

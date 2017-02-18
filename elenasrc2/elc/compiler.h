@@ -992,7 +992,7 @@ private:
 ////   void generateClassFields(ClassScope& scope, SyntaxTree::Node root, bool singleField);
 ////   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t& message);
 //   void generateMethodDeclarations(ClassScope& scope, SNode node, bool hideDuplicates, bool closed);
-//   void generateClassDeclaration(SNode node, ClassScope& scope, bool closed);
+   void generateClassDeclaration(SyntaxWriter& writer, ClassScope& scope/*, bool closed*/);
 
    void generateClassImplementation(SNode node, ModuleScope& scope);
 
@@ -1065,8 +1065,8 @@ public:
 
    void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 
-//   // _Compiler interface implementation
-//   virtual void injectVirtualReturningMethod(SNode node, ident_t variable);
+   // _Compiler interface implementation
+   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
 //   virtual void injectBoxing(_CompilerScope& scope, SNode node, LexicalType boxingType, int argument, ref_t targetClassRef);
 //   virtual void injectLocalBoxing(SNode node, int size);
 //   virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef);
