@@ -95,7 +95,7 @@ enum LexicalType
    lxResult          = 0x0A119, // arg -offset
 //   lxResultField     = 0x0A11A, // arg -offset
    lxCurrentMessage  = 0x0A11B,
-//   lxThisLocal       = 0x0A11C,
+   lxThisLocal       = 0x0A11C,
 //   lxConstantList    = 0x0A11E, // arg - reference
 //   lxBlockLocalAddr  = 0x0A11F, // arg - offset
 //

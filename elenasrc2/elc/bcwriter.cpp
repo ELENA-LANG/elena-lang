@@ -3262,7 +3262,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
       case lxLocal:
-//      case lxThisLocal:
+      case lxThisLocal:
          //case lxBoxableLocal:
          // pushfi index
          tape.write(bcPushFI, argument, bpFrame);
@@ -3341,7 +3341,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcACopyR, argument | defineConstantMask(type));
          break;
       case lxLocal:
-//      case lxThisLocal:
+      case lxThisLocal:
 //      //case lxBoxableLocal:
          // aloadfi index
          tape.write(bcALoadFI, argument, bpFrame);
@@ -3406,7 +3406,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
    switch (type)
    {
       case lxLocal:
-//      case lxThisLocal:
+      case lxThisLocal:
       //case lxBoxableLocal:
          // asavefi index
          tape.write(bcASaveFI, argument, bpFrame);

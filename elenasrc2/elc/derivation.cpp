@@ -130,7 +130,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
          node = lxExpression;
       case nsExpression:
 //      case nsDispatchHandler:
-//      case nsRetStatement:
+      case nsRetStatement:
          copyExpression(node);
          break;
 //      case nsResendExpression:

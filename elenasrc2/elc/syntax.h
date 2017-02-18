@@ -64,7 +64,7 @@ enum Symbol
 //   nsConstructor                = 0x01024,
 //   nsL3Operation                = 0x01025,
 //   nsL7Operation                = 0x01026,
-//   nsRetStatement               = 0x01027,
+   nsRetStatement               = 0x01027,
 //   nsL5Operation                = 0x01028,
 //   //nsTry                        = 0x01029,
 //   nsElseOperation              = 0x0102A,

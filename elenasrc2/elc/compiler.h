@@ -145,7 +145,7 @@ public:
 //      okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
 //      okParamField,
 //      okSubject,                      // param - parameter offset
-//      okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
+      okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
 //      okSuper,
 //      okLocalAddress,                 // param - local offset, extraparam - class reference
@@ -528,6 +528,7 @@ private:
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
+      ref_t        resultRef;
 //      bool         withOpenArg;
 //      bool         stackSafe;
 //      bool         classEmbeddable;
@@ -543,13 +544,13 @@ private:
          else return parent->getScope(level);
       }
 
-//      ref_t getReturningType(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope->info.methodHints.get(ClassInfo::Attribute(message, maType));
-//      }
-//
+      ref_t getReturningRef(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope->info.methodHints.get(ClassInfo::Attribute(message, maReference));
+      }
+
 //      ref_t getClassFlags(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -562,8 +563,8 @@ private:
 //
 //         return scope ? scope->reference : 0;
 //      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
 
       MethodScope(ClassScope* parent);
    };
@@ -620,20 +621,20 @@ private:
          else return parent->getScope(level);
       }
 
-//      int getMessageID()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(slMethod);
-//
-//         return scope ? scope->message : 0;
-//      }
-//
-//      ref_t getClassRefId(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
-//
+      int getMessageID()
+      {
+         MethodScope* scope = (MethodScope*)getScope(slMethod);
+
+         return scope ? scope->message : 0;
+      }
+
+      ref_t getClassRefId(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
+      }
+
 //      ref_t getClassFlags(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -923,7 +924,7 @@ private:
    ObjectInfo declareAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 ////   ObjectInfo compileExtension(SNode node, CodeScope& scope);
    ObjectInfo declareExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileRetExpression(SNode node, CodeScope& scope, int mode);
+   ObjectInfo declareRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo declareAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
 
 ////   ObjectInfo compileBranching(SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);

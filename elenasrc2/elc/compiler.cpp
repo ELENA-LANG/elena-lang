@@ -949,15 +949,16 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->reserved = 0;
    this->rootToFree = 1;
    this->hints = 0;
+   this->resultRef = 0;
 //   this->withOpenArg = false;
 //   this->stackSafe = this->classEmbeddable = false;
 //   this->generic = false;
 //   this->extensionTemplateMode = false;
 }
 
-//ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
-//{
-//   if (terminal.compare(THIS_VAR)) {
+ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
+{
+   if (terminal.compare(THIS_VAR)) {
 //      if (extensionTemplateMode) {
 //         //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
 //         return ObjectInfo(okLocal, -1, ((ClassScope*)getScope(slClass))->reference);          
@@ -965,12 +966,12 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //      else if (stackSafe && classEmbeddable) {
 //         return ObjectInfo(okThisParam, 1, -1);
 //      }
-//      else return ObjectInfo(okThisParam, 1);
-//   }
+      /*else */return ObjectInfo(okThisParam, 1);
+   }
 //   else if (terminal.compare(METHOD_SELF_VAR)) {
 //      return ObjectInfo(okParam, (size_t)-1);
 //   }
-//   else {
+   else {
 //      Parameter param = parameters.get(terminal);
 //
 //      int local = param.offset;
@@ -983,10 +984,10 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //         }
 //         return ObjectInfo(okParam, -1 - local, 0, param.subj_ref);
 //      }
-//      else return Scope::mapTerminal(terminal);
-//   }
-//}
-//
+      /*else */return Scope::mapTerminal(terminal);
+   }
+}
+
 //// --- Compiler::ActionScope ---
 //
 //Compiler::ActionScope :: ActionScope(ClassScope* parent)
@@ -1380,11 +1381,11 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
       //   return scope.moduleScope->literalReference;
       //case okWideLiteralConstant:
       //   return scope.moduleScope->wideReference;
-      //case okThisParam:
-      //   if (object.extraparam == -2) {
-      //      return _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(object.type));
-      //   }
-      //   else return scope.getClassRefId(false);
+      case okThisParam:
+         /*if (object.extraparam == -2) {
+            return _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(object.type));
+         }
+         else */return scope.getClassRefId(false);
       //case okSubject:
       //case okSignatureConstant:
       //   return V_SIGNATURE;
@@ -2081,15 +2082,15 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //         }
          /*else */writer.newNode(lxLocal, object.param);
          break;
-//      case okThisParam:
+      case okThisParam:
 //         if (object.extraparam == -1) {
 //            ref_t targetRef = resolveObjectReference(scope, object);
 //            terminal.set(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef));
 //            terminal.appendNode(lxThisLocal, object.param);
 //            terminal.appendNode(lxTarget, targetRef);
 //         }
-//         else terminal.set(lxThisLocal, object.param);
-//         break;
+         /*else */writer.newNode(lxThisLocal, object.param);
+         break;
 //      case okSuper:
 //         terminal.set(lxLocal, 1);
 //         break;
@@ -2805,11 +2806,11 @@ bool Compiler :: convertObject(SNode node, CodeScope& scope, ref_t targetRef, Ob
 
 ObjectInfo Compiler :: typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source)
 {
-   ref_t subjectRef = scope.moduleScope->typifiedClasses.get(targetRef);
-   if (!subjectRef)
-      scope.raiseError(errInvalidOperation, node);
-
    if (!convertObject(node, scope, targetRef, source)) {
+      ref_t subjectRef = scope.moduleScope->typifiedClasses.get(targetRef);
+      if (!subjectRef)
+         scope.raiseError(errInvalidOperation, node);
+
       //node.appendNode(lxTypecastAttr);
 
       // HOTFIX : inject expression node if required
@@ -2992,6 +2993,8 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
          ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
 
          // compile target
+         writer.newBookmark();
+
          // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
          ObjectInfo target = declareMessageParameters(writer, exprNode, scope);
 
@@ -3001,6 +3004,8 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
          //      typecastObject(sourceNode, scope, subject, source);
 
          retVal = declareMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
+
+         writer.closeNode();
 
          operationType = lxNone;
       }
@@ -3061,10 +3066,10 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
       SNode sourceNode = targetNode.nextNode(lxObjectMask);
       writer.newBookmark();
+
       ObjectInfo source = declareAssigningExpression(writer, sourceNode, scope);
-      if (!convertObject(sourceNode, scope, targetRef, source)) {
-         typecastObject(writer, sourceNode, scope, targetRef, source);            
-      }
+      typecastObject(writer, sourceNode, scope, targetRef, source);
+
       writer.removeBookmark();
    }
 
@@ -3381,56 +3386,56 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
 ////
 ////   return ObjectInfo(okObject, vmtReference);
 ////}
-////
-////ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, int mode)
-////{
-////   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-////
-////   bool typecasting = false;
-////   ref_t subj = 0;
-////   if (test(mode, HINT_ROOT)) {
-////      // type cast returning value if required
-////      int paramCount;
-////      ref_t verb;
-////      decodeMessage(scope.getMessageID(), subj, verb, paramCount);
-////      if (verb == GET_MESSAGE_ID && paramCount == 0) {
-////         typecasting = true;
-////      }
-////      else if (classScope->info.methodHints.exist(Attribute(scope.getMessageID(), maType))) {
-////         subj = classScope->info.methodHints.get(Attribute(scope.getMessageID(), maType));
-////         typecasting = true;
-////      }
-////      else subj = 0;
-////   }
-////
-////   ObjectInfo info = compileExpression(node, scope, mode);
-////
-////   if (typecasting) {
-////      SNode exprNode = node.firstChild(lxExprMask);
-////      if (exprNode != lxExpression) {
-////         // HOTFIX : inject an expression node if required
-////         exprNode = node.injectNode(lxExpression);
-////      }
-////
-////      info = typecastObject(exprNode, scope, subj, info);
-////   }
-////
-////   // HOTFIX : implementing closure exit
-////   if (test(mode, HINT_ROOT)) {
-////      ObjectInfo retVar = scope.mapTerminal(RETVAL_VAR);
-////      if (retVar.kind != okUnknown) {
-////         SNode exprNode = node.firstChild(lxExprMask);
-////         if (exprNode == lxExpression) {
-////            exprNode = lxAssigning;
-////
-////            exprNode.insertNode(lxField, retVar.param);
-////         }
-////      }
-////   }
-////
-////   return info;
-////}
-////
+
+ObjectInfo Compiler :: declareRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   bool typecasting = false;
+   ref_t targetRef = 0;
+   if (test(mode, HINT_ROOT)) {
+      // type cast returning value if required
+      int paramCount;
+      ref_t verb;
+      ref_t subj = 0;
+      decodeMessage(scope.getMessageID(), subj, verb, paramCount);
+      if (classScope->info.methodHints.exist(Attribute(scope.getMessageID(), maReference))) {
+         targetRef = classScope->info.methodHints.get(Attribute(scope.getMessageID(), maReference));
+         typecasting = true;
+      }
+      else if (verb == GET_MESSAGE_ID && paramCount == 0) {
+         typecasting = true;
+         targetRef = scope.moduleScope->subjectHints.get(subj);
+      }
+      else targetRef = 0;
+   }
+
+   writer.newBookmark();
+
+   ObjectInfo info = declareExpression(writer, node, scope, mode);
+
+   if (typecasting) {
+      info = typecastObject(writer, node, scope, targetRef, info);
+   }
+
+//   // HOTFIX : implementing closure exit
+//   if (test(mode, HINT_ROOT)) {
+//      ObjectInfo retVar = scope.mapTerminal(RETVAL_VAR);
+//      if (retVar.kind != okUnknown) {
+//         SNode exprNode = node.firstChild(lxExprMask);
+//         if (exprNode == lxExpression) {
+//            exprNode = lxAssigning;
+//
+//            exprNode.insertNode(lxField, retVar.param);
+//         }
+//      }
+//   }
+
+   writer.removeBookmark();
+
+   return info;
+}
+
 ////ObjectInfo Compiler :: compileNewOperator(SNode node, CodeScope& scope/*, int mode*/)
 ////{
 ////   ObjectInfo retVal(okObject);
@@ -3676,7 +3681,7 @@ ObjectInfo Compiler :: declareCode(SyntaxWriter& writer, SNode node, CodeScope& 
 {
    ObjectInfo retVal;
 
-//   bool needVirtualEnd = true;
+   bool needVirtualEnd = true;
    SNode current = node.firstChild();
 
    while (current != lxNone) {
@@ -3702,14 +3707,17 @@ ObjectInfo Compiler :: declareCode(SyntaxWriter& writer, SNode node, CodeScope& 
 //            //recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileLock(current, scope);
 //            break;
-//         case lxReturning:
-//         {
-//            needVirtualEnd = false;
-//            insertDebugStep(current, dsStep);
-//            retVal = compileRetExpression(current, scope, HINT_ROOT);
-//
-//            break;
-//         }
+         case lxReturning:
+         {
+            needVirtualEnd = false;
+
+            writer.newNode(lxReturning);
+            writer.appendNode(lxBreakpoint, dsStep);
+            retVal = declareRetExpression(writer, current, scope, HINT_ROOT);
+            writer.closeNode();
+
+            break;
+         }
          case lxVariable:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             declareVariable(writer, current, scope);
@@ -3719,7 +3727,7 @@ ObjectInfo Compiler :: declareCode(SyntaxWriter& writer, SNode node, CodeScope& 
 //            compileCode(current, scope);
 //            break;
          case lxEOF:
-//            needVirtualEnd = false;
+            needVirtualEnd = false;
             writer.newNode(lxBreakpoint, dsEOP);
             writeTerminalInfo(writer, current);
             writer.closeNode();
@@ -3731,9 +3739,9 @@ ObjectInfo Compiler :: declareCode(SyntaxWriter& writer, SNode node, CodeScope& 
       current = current.nextNode();
    }
 
-//   if (needVirtualEnd) {
-//      appendDebugStep(node, dsVirtualEnd);
-//   }
+   if (needVirtualEnd) {
+      writer.appendNode(lxBreakpoint, dsVirtualEnd);
+   }
 
    return retVal;
 }
@@ -4385,8 +4393,8 @@ void Compiler :: declareMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
    writer.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
 
-   SNode body = node.findChild(lxCode/*, lxReturning, lxDispatchCode, lxResendExpression*/);
-   //   // check if it is a resend
+   SNode body = node.findChild(lxCode, lxReturning/*, lxDispatchCode, lxResendExpression*/);
+      // check if it is a resend
    //   if (body == lxResendExpression) {
    //      compileResendExpression(body, codeScope);
    //      preallocated = 1;
@@ -4396,14 +4404,7 @@ void Compiler :: declareMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    //      compileDispatchExpression(body, codeScope);
    //   }
    //   else {
-   //      if (body == lxReturning) {
-   //         // HOTFIX : if it is an returning expression, inject returning node
-   //         SNode expr = body.findChild(lxExpression);
-   //         expr = lxReturning;
-   //      }
-   //
-      writer.newNode(lxNewFrame);
-   //      body = lxNewFrame;
+         writer.newNode(lxNewFrame);
    //      body.setArgument(scope.generic ? -1 : 0u);
    
          // new stack frame
@@ -4418,29 +4419,31 @@ void Compiler :: declareMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    
          preallocated = codeScope.level;
    
-         ObjectInfo retVal = declareCode(writer, body, codeScope);
+         ObjectInfo retVal = declareCode(writer, body == lxReturning ? node : body, codeScope);
    
          // if the method returns itself
          if(retVal.kind == okUnknown) {
             // adding the code loading $self
             writer.newNode(lxExpression);
+            writer.newBookmark();
             writer.appendNode(lxLocal, 1);
-            writer.closeNode();
 
-   //         ref_t typeAttr = scope.getReturningType(false);
-   //         if (typeAttr != 0) {
+            ref_t resultRef = scope.getReturningRef(false);
+            if (resultRef != 0) {
    //            // HOTFIX : copy EOP coordinates
    //            SNode eop = body.lastChild().prevNode();
    //            if (eop != lxNone)
    //               SyntaxTree::copyNode(eop, localNode);
-   //
-   //            typecastObject(exprNode, codeScope, typeAttr, ObjectInfo(okThisParam));
-   //         }
-         }
-   //
-   //   }
+   
+               typecastObject(writer, node, codeScope, resultRef, ObjectInfo(okThisParam));
+            }
 
-      writer.closeNode();
+            writer.removeBookmark();
+            writer.closeNode();
+         }
+
+         writer.closeNode();
+   //   }
    
    writer.appendNode(lxParamCount, paramCount + scope.rootToFree);
    writer.appendNode(lxReserved, scope.reserved);
@@ -4459,12 +4462,12 @@ void Compiler :: declareConstructor(SyntaxWriter& writer, SNode node, MethodScop
 
    writer.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
 
-//   bool retExpr = false;
+   bool retExpr = false;
    bool withFrame = false;
 //   int classFlags = codeScope.getClassFlags();
    int preallocated = 0;
 
-   SNode bodyNode = node.findChild(/*lxResendExpression, */lxCode/*, lxReturning, lxDispatchCode*/);
+   SNode bodyNode = node.findChild(/*lxResendExpression, */lxCode, lxReturning/*, lxDispatchCode*/);
 //   if (bodyNode == lxDispatchCode) {
 //      compileConstructorDispatchExpression(bodyNode, codeScope);
 //      return;
@@ -4474,15 +4477,11 @@ void Compiler :: declareConstructor(SyntaxWriter& writer, SNode node, MethodScop
 //
 //      bodyNode = bodyNode.findChild(lxCode);
 //   }
-//   else if (bodyNode == lxReturning) {
-//      retExpr = true;
-//
-//      // HOTFIX : if it is an returning expression, inject returning node
-//      SNode expr = bodyNode.findChild(lxExpression);
-//      expr = lxReturning;
-//   }
+   /*else */if (bodyNode == lxReturning) {
+      retExpr = true;
+   }
    // if no redirect statement - call virtual constructor implicitly
-   /*else */if (/*!test(classFlags, elDynamicRole) && */classClassScope.info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID))) {
+   else if (/*!test(classFlags, elDynamicRole) && */classClassScope.info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID))) {
       writer.appendNode(lxCalling, -1);
    }
    // if it is a dynamic object implicit constructor call is not possible
@@ -4497,18 +4496,22 @@ void Compiler :: declareConstructor(SyntaxWriter& writer, SNode node, MethodScop
          // new stack frame
          // stack already contains $self value
          codeScope.level++;
-//      }
-//
-//      if (retExpr) {
-//         SNode expr = bodyNode.findChild(lxReturning);
-////         recordDebugStep(codeScope, bodyNode.firstChild().FirstTerminal(), dsStep);
-//
-//         ObjectInfo retVal = compileRetExpression(expr, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
-//
-//         if(!convertObject(expr, codeScope, codeScope.getClassRefId(), retVal))
-//            scope.raiseError(errIllegalConstructor, node);
-//      }
-//      else {
+      }
+
+      if (retExpr) {
+         SNode expr = bodyNode.findChild(lxReturning);
+//         recordDebugStep(codeScope, bodyNode.firstChild().FirstTerminal(), dsStep);
+
+         writer.newNode(lxReturning);         
+         writer.newBookmark();
+
+         ObjectInfo retVal = declareRetExpression(writer, expr, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
+         typecastObject(writer, expr, codeScope, codeScope.getClassRefId(), retVal);
+
+         writer.removeBookmark();
+         writer.closeNode();
+      }
+      else {
          preallocated = codeScope.level;
 
          declareCode(writer, bodyNode, codeScope);
@@ -5074,6 +5077,14 @@ void Compiler :: includeMethod(SNode node, ClassScope& scope, MethodScope& metho
 //            if (test(scope.info.header.flags, elExtension) && !root.existChild(lxPrivate)) {
 //               scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
 //            }
+
+   if (methodScope.resultRef != 0) {
+      ref_t defaultResultRef = scope.info.methodHints.get(Attribute(methodScope.message, maReference));
+      if (defaultResultRef == 0) {
+         scope.info.methodHints.add(Attribute(methodScope.message, maReference), methodScope.resultRef);
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnTypeAlreadyDeclared, node);
+   }
 
    if (methodScope.hints != 0) {      
       scope.info.methodHints.exclude(Attribute(methodScope.message, maHint));
@@ -5688,7 +5699,7 @@ void Compiler :: declareMethodAttribute(SNode current, MethodScope& scope, SNode
       if (classRef == INVALID_REF) {
          declareTemplate(rootNode, &scope, attrRef);
       }
-      //else node.appendNode(lxType, attribute);
+      else scope.resultRef = classRef;
    }
    else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
 }

@@ -3,9 +3,10 @@ In development:
 ------                              
 
               xdev - generic development
-                 * enforce types
+                 * implements var as template
 
                  * implementing ELENA 3.0
+                 * get rid of maType hint
                  * class class is sealed and stateless
                  * raise an error when costructor new [] // !!
                  * constructor constructor [] / constructor [] - raise warning
@@ -30,6 +31,7 @@ In development:
                  * uncomment buildConstructor
                  * uncomment buildClassDeclaration
                  * uncomment isSimpleObject
+                 * uncomment declareRetExpression
                  * uncomment __object.dispatch
                  * syntax : BLOCK_CLOSING_EXPECTED / DECLARATION_END_EXPECTED and so on
                  * check sealed / limited / sealed method
