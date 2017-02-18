@@ -1,4 +1,5 @@
 /// Attributes
+#template(-16385) var {}
 #template(-16384) constructor {}
 
 //#template(-8194) static {}
@@ -103,4 +104,3 @@
 
 // --- Generic attributes ---
 #subject object.
-#subject var.

@@ -62,6 +62,7 @@
 //#define V_PRELOADED   (ref_t)-8207
 
 #define V_CONSTRUCTOR   (ref_t)-16384
+#define V_VARIABLE      (ref_t)-16385
 
 namespace _ELENA_
 {
@@ -241,7 +242,7 @@ public:
 //   virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue) = 0;
-//   virtual bool validateLocalAttribute(int& attrValue) = 0;
+   virtual bool validateLocalAttribute(int& attrValue) = 0;
 //   virtual bool validateSymbolAttribute(int& attrValue) = 0;
 //   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;

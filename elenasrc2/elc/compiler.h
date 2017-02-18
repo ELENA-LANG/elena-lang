@@ -865,7 +865,13 @@ private:
 
    void declareParameterDebugInfo(SyntaxWriter& writer, /*SNode node, */MethodScope& scope, bool withThis, bool withSelf);
 //
-   bool declareTemplate(SNode node, Scope* scope, ref_t attrRef);
+   bool declareTemplate(SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object);
+   bool declareTemplate(SNode node, Scope* scope, ref_t attrRef)
+   {
+      ObjectInfo temp;
+
+      return declareTemplate(node, scope, attrRef, temp);
+   }
 ////   bool copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode, SNode currentNode);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
@@ -878,6 +884,7 @@ private:
 //      compileSymbolAttributes(node, scope, node);
 //   }
 //   void compileClassAttributes(SNode node, ClassScope& scope, SNode rootNode);
+   void declareLocalAttribute(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/, SNode rootNode);
    void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
    void declareFieldAttribute(SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldRef);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef);

@@ -1825,45 +1825,51 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
    SNode current = node.firstChild(lxAttribute);
    while (current != lxNone) {
       if (current == lxAttribute) {
-         int attrValue = 0;
-         ref_t attrRef = mapAttribute(current, scope, attrValue);
+         declareLocalAttribute(current, scope, variable, node);
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: declareLocalAttribute(SNode current, CodeScope& scope, ObjectInfo& variable/*, int& size*/, SNode rootNode)
+{
+   int attrValue = 0;
+   ref_t attrRef = mapAttribute(current, scope, attrValue);
 //         if (attrRef != 0 && attrValue != 0) {
 //            // if it is a primitive array declaration
 //            size = attrValue;
 //            variable.type = attrRef;
 //            variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(attrRef));
 //         }
-//         else if (attrValue != 0) {
+   /*else */if (attrValue != 0) {
 //            // positive value defines the target size
 //            if (attrValue > 0) {
 //               size = attrValue;
 //            }
-//            else if (_logic->validateLocalAttribute(attrValue)) {
-//               // negative value defines the target virtual class
-//               variable.extraparam = attrValue;
-//            }
-//            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//         }
-         /*else */if (attrRef != 0) {
-            ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
-            if (classRef == INVALID_REF) {
+      /*else */if (_logic->validateLocalAttribute(attrValue)) {
+         // negative value defines the target virtual class
+         variable.extraparam = attrValue;
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+   }
+   else if (attrRef != 0) {
+      ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
+      if (classRef == INVALID_REF) {
+         declareTemplate(rootNode, &scope, attrRef, variable);
 //               TemplateScope templateScope(&scope, attrRef);
 //               templateScope.loadParameters(current, _writer);
 //
 //               templateScope.generateClassName();
 //
 //               variable.extraparam = generateTemplate(templateScope);
-            }
-            else if (variable.extraparam == 0) {
-               variable.extraparam = classRef;
-            }
-            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-         }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
       }
-
-      current = current.nextNode();
+      else if (variable.extraparam == 0) {
+         variable.extraparam = classRef;
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
    }
+   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
 }
 
 ////void Compiler :: compileSwitch(SNode node, CodeScope& scope)
@@ -2977,7 +2983,7 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
       // try to figure out if it is property assignging or variable declaration
       SNode firstToken = exprNode.firstChild(lxObjectMask);
       ObjectInfo tokenInfo = scope.mapObject(firstToken);
-      ref_t attrRef = scope.mapSubject(firstToken);
+      //ref_t attrRef = scope.mapSubject(firstToken);
       if (tokenInfo.kind != okUnknown) {
          // if it is shorthand property settings
 
@@ -3009,10 +3015,8 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
          operationType = lxNone;
       }
-      else if (attrRef != 0) {
+      else if (_logic->recognizeNewLocal(exprNode)) {
          // if it is variable declaration
-         _logic->recognizeNewLocal(exprNode);
-
          declareVariable(writer, exprNode, scope);
          declareExpression(writer, node, scope, 0);
 
@@ -5605,7 +5609,7 @@ void Compiler :: generateClassDeclaration(SyntaxWriter& writer, ClassScope& scop
 ////   return attrOnly;
 ////}
 
-bool Compiler :: declareTemplate(SNode node, Scope* scope, ref_t attrRef)
+bool Compiler :: declareTemplate(SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object)
 {
    _Memory* body = scope->moduleScope->loadAttributeInfo(attrRef);
    if (body == NULL)
@@ -5617,6 +5621,9 @@ bool Compiler :: declareTemplate(SNode node, Scope* scope, ref_t attrRef)
       if (current == lxAttribute) {
          if (node == lxClassMethod) {
             declareMethodAttribute(current, *((MethodScope*)scope), node);
+         }
+         else if (node == lxExpression) {
+            declareLocalAttribute(current, *((CodeScope*)scope), object, node);
          }
       }
       current = current.nextNode();

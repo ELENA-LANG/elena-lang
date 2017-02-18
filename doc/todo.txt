@@ -46,6 +46,7 @@ In development:
                  * test short hand assigning : a prop := b.
                  * test a b c := d. (both when a is a varialbe and when it is a subject / attribute)
                  * support private variables / fields
+                 * var should may be used for resovling "a b := c" ambiguity
                  * optimize virtual get&type method
 
               xdev - generic development
