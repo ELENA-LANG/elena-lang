@@ -1715,3 +1715,31 @@ bool CompilerLogic :: recognizeNewField(SNode& node)
    }
    return false;
 }
+
+bool CompilerLogic :: recognizeTemplateScope(SNode& node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) { 
+      if (current == lxScope) {
+         SNode codeNode = current.findChild(lxCode, lxExpression, lxDispatchCode, lxReturning);
+         if (codeNode != lxNone) {
+            if (setIdentifier(codeNode)) {
+               current = lxClassMethod;
+
+               // !! HOTFIX : the node should be once again found
+               codeNode = current.findChild(lxCode, lxExpression, lxDispatchCode);
+
+               if (codeNode == lxExpression)
+                  codeNode = lxReturning;
+            }
+         }
+         else if (setTokenIdentifier(current.lastChild())) {
+            current = lxClassField;
+         }
+      }
+
+      current = current.nextNode();
+   }
+
+   return true;
+}

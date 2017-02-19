@@ -713,8 +713,8 @@ private:
    struct TemplateScope : ClassScope
    {
 //      ref_t       templateRef;
-//      ForwardMap  parameters;
-//      SubjectMap  subjects;
+      ForwardMap  parameters;
+      SubjectMap  subjects;
 //      bool        classMode;
 //      bool        generationMode;
 //      int         sourceRef;
@@ -747,29 +747,29 @@ private:
          return classScope->include(message);
       }
 
-//      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
-//      {
-//         ident_t name = terminal.findChild(lxTerminal).identifier();
-//         ref_t parameter = parameters.get(name);
-//         if (parameter != 0) {
-//            ref_t subjRef = subjects.get(parameter);
-//            output.append(moduleScope->module->resolveSubject(subjRef));
-//
-//            return subjRef;
-//         }
-//         else return Scope::mapSubject(terminal, output);
-//      }
-//
-//      virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true)
-//      {
-//         ident_t identifier = terminal.findChild(lxTerminal).identifier();
-//
-//         ref_t parameter = parameters.get(identifier);
-//         if (parameter != 0) {
-//            return subjects.get(parameter);
-//         }
-//         else return Scope::mapSubject(terminal, implicitOnly);
-//      }
+      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
+      {
+         ident_t name = terminal.findChild(lxTerminal).identifier();
+         ref_t parameter = parameters.get(name);
+         if (parameter != 0) {
+            ref_t subjRef = subjects.get(parameter);
+            output.append(moduleScope->module->resolveSubject(subjRef));
+
+            return subjRef;
+         }
+         else return Scope::mapSubject(terminal, output);
+      }
+
+      virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true)
+      {
+         ident_t identifier = terminal.findChild(lxTerminal).identifier();
+
+         ref_t parameter = parameters.get(identifier);
+         if (parameter != 0) {
+            return subjects.get(parameter);
+         }
+         else return Scope::mapSubject(terminal, implicitOnly);
+      }
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -786,9 +786,10 @@ private:
 //      {
 //         return sourceRef;
 //      }
-//
-//      void loadParameters(SNode node, ByteCodeWriter& writer);
-//
+
+      void loadParameters(SNode node);
+      void loadAttributeValues(SNode node);
+
 //      void generateClassName(bool newName = false);
 //
 //      TemplateScope(ClassScope* parent)
@@ -910,12 +911,12 @@ private:
 
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
 //
-   bool declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object);
-   bool declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef)
+   bool declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object, SNode attributeNode);
+   bool declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef, SNode attributeNode)
    {
       ObjectInfo temp;
 
-      return declareTemplate(writer, node, scope, attrRef, temp);
+      return declareTemplate(writer, node, scope, attrRef, temp, attributeNode);
    }
 ////   bool copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode, SNode currentNode);
 

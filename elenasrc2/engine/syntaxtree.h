@@ -37,7 +37,7 @@ enum LexicalType
    lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
    lxClassField      = 0x00013,
-//   lxAttributeValue  = 0x00015,
+   lxAttributeValue  = 0x00015,
    lxClassMethod     = 0x00016,
    lxNestedClass     = 0x00018,
    lxCode            = 0x0001A,
@@ -826,22 +826,22 @@ public:
 //   static void copyNodeSafe(Node source, Node destination);
    static void saveNode(Node node, _Memory* dump);
 //   static void loadNode(Node node, _Memory* dump);
-//
-//   static int countChild(Node node, LexicalType type)
-//   {
-//      int counter = 0;
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone) {
-//         if (current == type)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
+
+   static int countChild(Node node, LexicalType type)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (current == type)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
 //   static Node findPattern(Node node, int counter, ...);
 //   static bool matchPattern(Node node, int mask, int counter, ...);
 

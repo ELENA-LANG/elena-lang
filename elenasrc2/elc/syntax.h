@@ -46,7 +46,7 @@ enum Symbol
    nsExpression                 = 0x01012,
    nsField                      = 0x01013,
 //   nsHint                       = 0x01014,
-//   nsHintValue                  = 0x01015,
+   nsTokenParam                 = 0x01015,
    nsMethod                     = 0x01016,
    nsMethodParameter            = 0x01017,
    nsNestedClass                = 0x01018,
