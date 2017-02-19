@@ -24,10 +24,10 @@
 //#template(-8203,subject) extension : subject {}
 //
 ///// Provides classes that describe the basic functionality
-//
-//// === basic logical types ===
-//#subject bool       = system'BaseBoolValue.
-//
+
+// === basic logical types ===
+#subject bool       = system'BaseBoolValue.
+
 //// === basic primitive types ===
 //
 //#subject keyvalue   = system'KeyValue.

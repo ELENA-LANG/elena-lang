@@ -271,6 +271,9 @@ private:
       // list of references to the current module which should be checked after the project is compiled
       Unresolveds* forwardsUnresolved;
 
+      // the module expression tree
+      SyntaxTree expressionTree;
+
       ObjectInfo mapObject(SNode identifier);
 
       ref_t mapReference(ident_t reference, bool existing = false);
@@ -664,9 +667,9 @@ private:
 //      CodeScope(CodeScope* parent);
    };
 
-//   // - InlineClassScope -
-//   struct InlineClassScope : public ClassScope
-//   {
+   // - InlineClassScope -
+   struct InlineClassScope : public ClassScope
+   {
 //      struct Outer
 //      {
 //         ref_t      reference;
@@ -705,9 +708,9 @@ private:
 //      }
 //
 //      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      InlineClassScope(CodeScope* owner, ref_t reference);
-//   };
+
+      InlineClassScope(CodeScope* owner, ref_t reference);
+   };
 
    // --- TemplateScope ---
    struct TemplateScope : ClassScope
@@ -717,8 +720,7 @@ private:
       SubjectMap  subjects;
 //      bool        classMode;
 //      bool        generationMode;
-//      int         sourceRef;
-//
+      int         sourceRef;
 
       virtual int getMethodInfo(ref_t message, MethodAttribute attr)
       {
@@ -782,12 +784,11 @@ private:
          else return parent->getScope(level);
       }
 
-//      virtual int getSourcePathRef()
-//      {
-//         return sourceRef;
-//      }
+      virtual int getSourcePathRef()
+      {
+         return sourceRef;
+      }
 
-      void loadParameters(SNode node);
       void loadAttributeValues(SNode node);
 
 //      void generateClassName(bool newName = false);
@@ -910,7 +911,8 @@ private:
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
-//
+
+   void declareTemplateParameters(SNode node, TemplateScope& templateScope);
    bool declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object, SNode attributeNode);
    bool declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef, SNode attributeNode)
    {
@@ -951,9 +953,9 @@ private:
 
 //   void compileSwitch(SNode node, CodeScope& scope);
    void declareVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
-//   ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, int mode);
-//   ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+
+   ObjectInfo declareClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo declareClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope, ref_t vmtReference);
 //
@@ -972,11 +974,11 @@ private:
 
    ObjectInfo declareMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo declareMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
-//   ObjectInfo compileExtensionMessage(SNode node, CodeScope& scope, ObjectInfo role, ref_t extesionType = 0);
-//
+   ObjectInfo declareExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ObjectInfo role, ref_t targetRef = 0*/);
+
 ////   ObjectInfo compileNewOperator(SNode node, CodeScope& scope/*, int mode*/);
    ObjectInfo declareAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-////   ObjectInfo compileExtension(SNode node, CodeScope& scope);
+   ObjectInfo declareExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo declareExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo declareRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo declareAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
@@ -1000,9 +1002,9 @@ private:
 ////   ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 ////
 ////   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-////   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
+//   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
 ////   void compileResendExpression(SNode node, CodeScope& scope);
-////   void compileDispatchExpression(SNode node, CodeScope& scope);
+   void declareDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo declareCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
@@ -1030,17 +1032,17 @@ private:
 //
 //   void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ModuleScope& scope, ref_t reference);
-////   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
+//   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
+
+//   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode, bool alreadyDeclared = false);
+   void declareNestedVMT(SNode node, InlineClassScope& scope);
+
+//   void compileVMT(SNode node, ClassScope& scope);
+//   void compileTemplateMethods(SNode node, ClassScope& scope);
 //
-////   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode, bool alreadyDeclared = false);
-////   void compileNestedVMT(SNode node, InlineClassScope& scope);
-////
-////   void compileVMT(SNode node, ClassScope& scope);
-////   void compileTemplateMethods(SNode node, ClassScope& scope);
-////
-//////   void declareVirtualMethods(ClassScope& scope);
-////
-////   ref_t generateTemplate(TemplateScope& scope);
+////   void declareVirtualMethods(ClassScope& scope);
+//
+//   ref_t generateTemplate(TemplateScope& scope);
 
    void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, bool singleField*/);
 ////   void generateClassStaticField(ClassScope& scope, SNode current);
@@ -1067,7 +1069,7 @@ private:
 ////   void compileForward(SNode node, ModuleScope& scope);
    void declareSubject(SNode member, ModuleScope& scope);
 ////   void compileSubject(SNode member, ModuleScope& scope);
-   void declareScope(SyntaxWriter& writer, SNode member, ModuleScope& scope);
+   void declareScope(SyntaxTree& buffer, SNode member, ModuleScope& scope);
 //   void buildDeclaration(SyntaxWriter& writer, SNode member, ModuleScope& scope);
 //
 //   void compileDeclarations(SyntaxWriter& writer, SNode member, ModuleScope& scope);
@@ -1104,9 +1106,9 @@ private:
 ////
 ////   void compileModule(SNode node, ModuleScope& scope);
 //   void buildTree(SyntaxWriter& writer, SNode node, ModuleScope& scope);
-   void compileDeclaration(SyntaxWriter& writer, SNode node, ModuleScope& scope);
+   void compileDeclaration(SyntaxTree& buffer, SNode node, ModuleScope& scope);
 
-   void compileDeclarations(SyntaxWriter& writer, SNode node, ModuleScope& scope);
+   void compileDeclarations(SNode node, ModuleScope& scope);
    void compileImplementations(SNode node, ModuleScope& scope);
 
 public:

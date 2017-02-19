@@ -584,66 +584,66 @@ void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
    }
 }
 
-//void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
-//{
-//   switch (sourceType) {
-//      case lxCurrent:
-//         // bloadsi param
-//         tape.write(bcBLoadSI, sourceArgument);
-//         break;
-//      case lxLocal:
-//      case lxThisLocal:
-//         //case lxBoxableLocal:
-//         // bloadfi param
-//         tape.write(bcBLoadFI, sourceArgument, bpFrame);
-//         break;
-//      case lxLocalAddress:
-//         // bcopyf n
-//         tape.write(bcBCopyF, sourceArgument);
-//         break;
-//      case lxResult:
-//         // bcopya
-//         tape.write(bcBCopyA);
-//         break;
-//      case lxField:
-//         // pusha
-//         // bloadfi 1
-//         // aloadbi
-//         // bcopya
-//         // popa
-//         tape.write(bcPushA);
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         tape.write(bcALoadBI, sourceArgument);
-//         tape.write(bcBCopyA);
-//         tape.write(bcPopA);
-//         break;
-//      case lxFieldAddress:
-//         // bloadfi 1
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         break;
-//      case lxStaticField:
-//         // bloadr ref
-//         tape.write(bcBLoadR, sourceArgument | mskStatSymbolRef);
-//         break;
-//   }
-//}
-//
+void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+{
+   switch (sourceType) {
+      case lxCurrent:
+         // bloadsi param
+         tape.write(bcBLoadSI, sourceArgument);
+         break;
+      case lxLocal:
+      case lxThisLocal:
+         //case lxBoxableLocal:
+         // bloadfi param
+         tape.write(bcBLoadFI, sourceArgument, bpFrame);
+         break;
+      //case lxLocalAddress:
+      //   // bcopyf n
+      //   tape.write(bcBCopyF, sourceArgument);
+      //   break;
+      case lxResult:
+         // bcopya
+         tape.write(bcBCopyA);
+         break;
+      case lxField:
+         // pusha
+         // bloadfi 1
+         // aloadbi
+         // bcopya
+         // popa
+         tape.write(bcPushA);
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcALoadBI, sourceArgument);
+         tape.write(bcBCopyA);
+         tape.write(bcPopA);
+         break;
+      //case lxFieldAddress:
+      //   // bloadfi 1
+      //   tape.write(bcBLoadFI, 1, bpFrame);
+      //   break;
+      //case lxStaticField:
+      //   // bloadr ref
+      //   tape.write(bcBLoadR, sourceArgument | mskStatSymbolRef);
+      //   break;
+   }
+}
+
 //void ByteCodeWriter :: loadInternalReference(CommandTape& tape, ref_t reference)
 //{
 //   // acopyr reference
 //   tape.write(bcACopyR, reference | mskInternalRef);
 //}
-//
-//void ByteCodeWriter :: assignBaseTo(CommandTape& tape, LexicalType target)
-//{
-//   switch (target) {
-//      case lxResult:
-//         // acopyb
-//         tape.write(bcACopyB);
-//         break;
-//   }
-//}
-//
+
+void ByteCodeWriter :: assignBaseTo(CommandTape& tape, LexicalType target)
+{
+   switch (target) {
+      case lxResult:
+         // acopyb
+         tape.write(bcACopyB);
+         break;
+   }
+}
+
 //void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
 //{
 //   switch (size) {
@@ -3248,7 +3248,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case lxConstantString:
 //      case lxConstantWideStr:
       case lxConstantClass:
-//      case lxConstantSymbol:
+      case lxConstantSymbol:
 //      case lxConstantChar:
 //      case lxConstantInt:
 //      case lxConstantLong:
@@ -3327,7 +3327,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case lxConstantString:
 //      case lxConstantWideStr:
       case lxConstantClass:
-//      case lxConstantSymbol:
+      case lxConstantSymbol:
 //      case lxConstantChar:
 //      case lxConstantInt:
 //      case lxConstantLong:
@@ -3945,11 +3945,11 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
       declareBlock(tape);
    }
 
-   //SNode overridden = callNode.findChild(lxOverridden);
-   //if (overridden != lxNone) {
-   //   generateExpression(tape, overridden);
-   //}
-   /*else */tape.write(bcALoadSI, 0);
+   SNode overridden = callNode.findChild(lxOverridden);
+   if (overridden != lxNone) {
+      generateExpression(tape, overridden);
+   }
+   else tape.write(bcALoadSI, 0);
 
    // copym message
    ref_t message = callNode.argument;
@@ -4590,45 +4590,45 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //   if(!switchBranching)
 //      endThenBlock(tape);
 //}
-//
-//void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SNode target = node.findChild(lxTarget);
-//
-//   // presave all the members which could create new objects
-//   SNode current = node.lastChild();
-//   while (current != lxNone) {
-//      if (current.type == lxMember || current.type == lxOuterMember) {
-//         if (!isSimpleObjectExpression(current)) {
-//            generateExpression(tape, current);
-//            pushObject(tape, lxResult);
-//         }
-//      }
-//
-//      current = current.prevNode();
-//   }
-//
-//   newObject(tape, node.argument, target.argument);
-//
-//   loadBase(tape, lxResult);
-//
-//   current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current.type == lxMember || current.type == lxOuterMember) {
-//         if (!isSimpleObjectExpression(current)) {
-//            popObject(tape, lxResult);
-//         }
-//         else generateExpression(tape, current);
-//
-//         saveBase(tape, true, lxResult, current.argument);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   assignBaseTo(tape, lxResult);
-//}
-//
+
+void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target = node.findChild(lxTarget);
+
+   // presave all the members which could create new objects
+   SNode current = node.lastChild();
+   while (current != lxNone) {
+      //if (current.type == lxMember || current.type == lxOuterMember) {
+      //   if (!isSimpleObjectExpression(current)) {
+      //      generateExpression(tape, current);
+      //      pushObject(tape, lxResult);
+      //   }
+      //}
+
+      current = current.prevNode();
+   }
+
+   newObject(tape, node.argument, target.argument);
+
+   loadBase(tape, lxResult);
+
+   current = node.firstChild();
+   while (current != lxNone) {
+      //if (current.type == lxMember || current.type == lxOuterMember) {
+      //   if (!isSimpleObjectExpression(current)) {
+      //      popObject(tape, lxResult);
+      //   }
+      //   else generateExpression(tape, current);
+
+      //   saveBase(tape, true, lxResult, current.argument);
+      //}
+
+      current = current.nextNode();
+   }
+
+   assignBaseTo(tape, lxResult);
+}
+
 //void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   SNode target = node.findChild(lxTarget);
@@ -4738,9 +4738,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxStruct:
 //         generateStructExpression(tape, node);
 //         break;
-//      case lxNested:
-//         generateNestedExpression(tape, node);
-//         break;
+      case lxNested:
+         generateNestedExpression(tape, node);
+         break;
 ////      case lxBoolOp:
 ////         generateBoolOperation(tape, node);
 ////         break;

@@ -29,7 +29,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
       case nsSubject:
 //      case nsDefaultGeneric:
       case nsDispatchExpression:
-//      case nsExtension:
+      case nsExtension:
 //      case nsLoop:
 //      case nsLock:
 //      case nsExtern:

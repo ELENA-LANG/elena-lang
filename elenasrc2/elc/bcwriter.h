@@ -164,7 +164,7 @@ class ByteCodeWriter
    void popObject(CommandTape& tape, LexicalType sourceTypeS);
 
 //   void copyBase(CommandTape& tape, int size);
-//   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
@@ -224,8 +224,8 @@ class ByteCodeWriter
 //   void endSwitchBlock(CommandTape& tape);
    void closeFrame(CommandTape& tape);
 
-//   void assignBaseTo(CommandTape& tape, LexicalType target);
-//
+   void assignBaseTo(CommandTape& tape, LexicalType target);
+
 //   void assignInt(CommandTape& tape, LexicalType target, int offset);
 //   void assignLong(CommandTape& tape, LexicalType target, int offset);
 //   void assignShort(CommandTape& tape, LexicalType target, int offset);
@@ -293,7 +293,7 @@ class ByteCodeWriter
 //   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
 //   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
 //   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node);

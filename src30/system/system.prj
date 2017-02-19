@@ -14,3 +14,4 @@ author=Alex Rakov
 [files]
 types.l
 object.l
+basic.l

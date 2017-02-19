@@ -31,6 +31,7 @@ In development:
                  * uncomment buildClassDeclaration
                  * uncomment isSimpleObject
                  * uncomment declareRetExpression
+                 * uncomment declareDispatchExpression
                  * uncomment __object.dispatch
                  * syntax : BLOCK_CLOSING_EXPECTED / DECLARATION_END_EXPECTED and so on
                  * check sealed / limited / sealed method
@@ -48,6 +49,8 @@ In development:
                  * support private variables / fields
                  * var should may be used for resovling "a b := c" ambiguity
                  * optimize virtual get&type method
+                 * nested class : declaring fields
+                 * nested class : initializing fields??
 
               xdev - generic development
                  * support property template

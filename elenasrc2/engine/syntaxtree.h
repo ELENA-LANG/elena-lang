@@ -44,7 +44,7 @@ enum LexicalType
    lxDispatchCode    = 0x00020,
    lxStatic          = 0x00022,
 //   lxConstructor     = 0x00024,
-//   lxExtension       = 0x0002B,
+   lxExtension       = 0x0002B,
 //   lxLoop            = 0x00030,
 //   lxInlineExpression= 0x00032,
 //   lxMessageReference= 0x00033,
@@ -69,9 +69,9 @@ enum LexicalType
 //   lxWide            = 0x1800D,
 
    lxImporting       = 0x08101,
-//   lxNested          = 0x08102, // arg - count
+   lxNested          = 0x08102, // arg - count
 //   lxStruct          = 0x08103, // arg - count
-//   lxConstantSymbol  = 0x0A104, // arg - reference
+   lxConstantSymbol  = 0x0A104, // arg - reference
    lxField           = 0x08105, // arg - offset
 //   lxStaticField     = 0x08106, // arg - reference
    lxSymbolReference = 0x08107,
@@ -148,8 +148,8 @@ enum LexicalType
 //   lxIntOp           = 0x8C038,   // arg - operation id
 //   lxLongOp          = 0x8C039,   // arg - operation id
 //   lxRealOp          = 0x8C03A,   // arg - operation id
-//   lxOverridden      = 0x04047,
-//
+   lxOverridden      = 0x04047,
+
 //   lxBaseParent      = 0x10023,
 //   lxOperator        = 0x10025,
    lxIntVariable     = 0x10028,
@@ -199,7 +199,7 @@ enum LexicalType
 //   lxExtInteranlRef  = 0x2001E,
 //   lxConstAttr       = 0x2001F,
 //   lxWarningMask     = 0x20020,
-//   lxTypecastAttr    = 0x20021,
+   lxTypecastAttr    = 0x20021,
 //   lxNotFoundAttr    = 0x20022,
 //   lxBinarySelf      = 0x20023, // debug info only
 //   lxOvreriddenMessage = 0x20024, // arg - message
