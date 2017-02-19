@@ -1634,7 +1634,7 @@ bool CompilerLogic :: recognizeScope(SNode& node)
    }
    else {
       // if it could be compiled as a class
-      if (setIdentifier(node.firstChild())) {
+      if (setIdentifier(node.lastChild())) {
          node = lxClass;
 
          SNode current = node.firstChild();

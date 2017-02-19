@@ -461,6 +461,23 @@ private:
       int         declaredFlags;
 //      ref_t       extensionMode;
 
+      virtual int getMethodInfo(ref_t message, MethodAttribute attr)
+      {
+         return info.methodHints.get(ClassInfo::Attribute(message, attr));
+      }
+      virtual void setMethodInfo(ref_t message, MethodAttribute attr, int value, bool clearPreviousOne = true)
+      {
+         if (clearPreviousOne)
+            info.methodHints.exclude(ClassInfo::Attribute(message, attr));
+
+         info.methodHints.add(ClassInfo::Attribute(message, attr), value);
+      }
+
+      virtual bool isClosed()
+      {
+         return test(info.header.flags, elClosed);
+      }
+
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
 //      void compileClassAttribute(SyntaxTree::Node hint);
@@ -481,7 +498,7 @@ private:
          info.save(&metaWriter);
       }
 
-      bool include(ref_t message)
+      virtual bool include(ref_t message)
       {
          // check if the method is inhreited and update vmt size accordingly
          ClassInfo::MethodMap::Iterator it = info.methods.getIt(message);
@@ -691,10 +708,10 @@ private:
 //
 //      InlineClassScope(CodeScope* owner, ref_t reference);
 //   };
-//
-//   // --- TemplateScope ---
-//   struct TemplateScope : ClassScope
-//   {
+
+   // --- TemplateScope ---
+   struct TemplateScope : ClassScope
+   {
 //      ref_t       templateRef;
 //      ForwardMap  parameters;
 //      SubjectMap  subjects;
@@ -702,6 +719,34 @@ private:
 //      bool        generationMode;
 //      int         sourceRef;
 //
+
+      virtual int getMethodInfo(ref_t message, MethodAttribute attr)
+      {
+         ClassScope* classScope = (ClassScope*)getScope(slClass);
+
+         return classScope->getMethodInfo(message, attr);
+      }
+      virtual void setMethodInfo(ref_t message, MethodAttribute attr, int value, bool clearPreviousOne = true)
+      {
+         ClassScope* classScope = (ClassScope*)getScope(slClass);
+
+         classScope->setMethodInfo(message, attr, value, clearPreviousOne);
+      }
+
+      virtual bool isClosed()
+      {
+         ClassScope* classScope = (ClassScope*)getScope(slClass);
+
+         return classScope->isClosed();
+      }
+
+      virtual bool include(ref_t message)
+      {
+         ClassScope* classScope = (ClassScope*)getScope(slClass);
+
+         return classScope->include(message);
+      }
+
 //      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
 //      {
 //         ident_t name = terminal.findChild(lxTerminal).identifier();
@@ -725,18 +770,18 @@ private:
 //         }
 //         else return Scope::mapSubject(terminal, implicitOnly);
 //      }
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slTemplate) {
-//            return this;
-//         }
-//         else if (level == slClass && classMode) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slTemplate) {
+            return this;
+         }
+         //else if (level == slClass && classMode) {
+         //   return this;
+         //}
+         else return parent->getScope(level);
+      }
+
 //      virtual int getSourcePathRef()
 //      {
 //         return sourceRef;
@@ -756,15 +801,15 @@ private:
 //         this->generationMode = false;
 //         this->sourceRef = -1;
 //      }
-//      TemplateScope(Scope* parent, ref_t attrRef)
-//         : ClassScope(parent->moduleScope, 0)
-//      {
-//         this->parent = parent;
+      TemplateScope(Scope* parent/*, ref_t attrRef*/)
+         : ClassScope(parent->moduleScope, 0)
+      {
+         this->parent = parent;
 //         this->templateRef = attrRef;
 //         this->classMode = false;
 //         this->generationMode = false;
 //         this->sourceRef = -1;
-//      }
+      }
 //      TemplateScope(ModuleScope* moduleScope, ref_t attrRef)
 //         : ClassScope(moduleScope, 0)
 //      {
@@ -774,8 +819,8 @@ private:
 //         this->generationMode = false;
 //         this->sourceRef = -1;
 //      }
-//   };
-//
+   };
+
 //   struct WarningScope
 //   {
 //      ident_t terminal;
@@ -865,12 +910,12 @@ private:
 
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
 //
-   bool declareTemplate(SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object);
-   bool declareTemplate(SNode node, Scope* scope, ref_t attrRef)
+   bool declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object);
+   bool declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef)
    {
       ObjectInfo temp;
 
-      return declareTemplate(node, scope, attrRef, temp);
+      return declareTemplate(writer, node, scope, attrRef, temp);
    }
 ////   bool copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode, SNode currentNode);
 
@@ -883,9 +928,10 @@ private:
 //   {
 //      compileSymbolAttributes(node, scope, node);
 //   }
-//   void compileClassAttributes(SNode node, ClassScope& scope, SNode rootNode);
-   void declareLocalAttribute(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/, SNode rootNode);
-   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
+   void declareClassAttribute(SyntaxWriter& writer, SNode node, ClassScope& scope, SNode rootNode);
+   void declareClassAttributes(SyntaxWriter& writer, SNode node, ClassScope& scope);
+   void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/, SNode rootNode);
+   void declareLocalAttributes(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
    void declareFieldAttribute(SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldRef);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef);
    //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
@@ -894,8 +940,8 @@ private:
 
 //   void recognizeMemebers(SNode member, ClassScope& scope);
 //   void readAttributes(SNode member, ClassScope& scope);
-   void declareMethodAttribute(SNode current, MethodScope& scope, SNode rootNode);
-   void declareMethodAttributes(SNode member, MethodScope& scope);
+   void declareMethodAttribute(SyntaxWriter& writer, SNode current, MethodScope& scope, SNode rootNode);
+   void declareMethodAttributes(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void includeMethod(SNode member, ClassScope& classScope, MethodScope& scope);
 
 //   void declareTemplateMethods(SNode node, ClassScope& scope);

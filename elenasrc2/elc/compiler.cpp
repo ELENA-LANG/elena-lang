@@ -1663,39 +1663,38 @@ ref_t Compiler :: mapAttribute(SNode attribute, Scope& scope, int& attrValue)
    return attrRef;
 }
 
-////void Compiler :: compileClassAttributes(SNode node, ClassScope& scope, SNode rootNode)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == lxAttribute) {
-////         int attrValue = 0;
-////         ref_t attrRef = mapAttribute(current, scope, attrValue);
-////         if (attrValue != 0) {
-////            if (_logic->validateClassAttribute(attrValue)) {
-////               current.set(lxClassFlag, attrValue);
-////            }
-////            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-////         }
-////         else if (attrRef != 0) {
-////            if (scope.moduleScope->attributeHints.get(attrRef) != -1) {
-////               current.set(lxType, attrRef);
-////            }
-////            else if(!copyTemplate(rootNode, scope, attrRef, current))
-////               scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-////         }
-////         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-////      }
-////      else if (current == lxTemplate) {
-////         TemplateScope templateScope(&scope);
-////         templateScope.loadParameters(current, _writer);
-////
-////         compileClassAttributes(current, templateScope, rootNode);
-////      }
-////
-////      current = current.nextNode();
-////   }
-////}
-////
+void Compiler :: declareClassAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode)
+{
+   int attrValue = 0;
+   ref_t attrRef = mapAttribute(current, scope, attrValue);
+   if (attrValue != 0) {
+      //            if (_logic->validateClassAttribute(attrValue)) {
+      //               current.set(lxClassFlag, attrValue);
+      //            }
+      /*else */scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+   }
+   else if (attrRef != 0) {
+      ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
+      if (classRef == INVALID_REF) {
+         if(!declareTemplate(writer, rootNode, &scope, attrRef))
+            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+   }
+   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
+}
+
+void Compiler :: declareClassAttributes(SyntaxWriter& writer, SNode node, ClassScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         declareClassAttribute(writer, current, scope, node);
+      }   
+      current = current.nextNode();
+   }
+}
+
 ////void Compiler :: compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode)
 ////{
 ////   SNode current = node.firstChild();
@@ -1823,19 +1822,19 @@ void Compiler ::declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fie
 ////   }
 ////}
 
-void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable/*, int& size*/)
+void Compiler :: declareLocalAttributes(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo& variable/*, int& size*/)
 {
    SNode current = node.firstChild(lxAttribute);
    while (current != lxNone) {
       if (current == lxAttribute) {
-         declareLocalAttribute(current, scope, variable, node);
+         declareLocalAttribute(writer, current, scope, variable, node);
       }
 
       current = current.nextNode();
    }
 }
 
-void Compiler :: declareLocalAttribute(SNode current, CodeScope& scope, ObjectInfo& variable/*, int& size*/, SNode rootNode)
+void Compiler :: declareLocalAttribute(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo& variable/*, int& size*/, SNode rootNode)
 {
    int attrValue = 0;
    ref_t attrRef = mapAttribute(current, scope, attrValue);
@@ -1859,7 +1858,7 @@ void Compiler :: declareLocalAttribute(SNode current, CodeScope& scope, ObjectIn
    else if (attrRef != 0) {
       ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
       if (classRef == INVALID_REF) {
-         declareTemplate(rootNode, &scope, attrRef, variable);
+         declareTemplate(writer, rootNode, &scope, attrRef, variable);
 //               TemplateScope templateScope(&scope, attrRef);
 //               templateScope.loadParameters(current, _writer);
 //
@@ -1960,7 +1959,7 @@ void Compiler :: declareVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
    if (!scope.locals.exist(identifier)) {
 //      int size = 0;
       ObjectInfo variable(okLocal);
-      declareLocalAttributes(node, scope, variable/*, size*/);
+      declareLocalAttributes(writer, node, scope, variable/*, size*/);
 
 //      ClassInfo localInfo;
 //      bool bytearray = false;
@@ -5043,8 +5042,6 @@ void Compiler :: compileClassClassDeclaration(SyntaxWriter& writer, SNode node, 
 ////   SNode current = node.firstChild();
 ////   while (current != lxNone) {
 ////      if (current == lxTemplate && current.existChild(lxClassMethod)) {
-////         TemplateScope templateScope(&scope);
-////         templateScope.loadParameters(current, _writer);
 ////
 ////         declareVMT(current.firstChild(), templateScope);
 ////      }
@@ -5070,11 +5067,11 @@ void Compiler :: compileClassClassDeclaration(SyntaxWriter& writer, SNode node, 
 
 void Compiler :: includeMethod(SNode node, ClassScope& scope, MethodScope& methodScope)
 {
-   int defaultHints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
+   int defaultHints = scope.getMethodInfo(methodScope.message, maHint);
 
    bool included = scope.include(methodScope.message);
    bool sealedMethod = (defaultHints & tpMask) == tpSealed;
-   bool closed = test(scope.info.header.flags, elClosed);
+   bool closed = scope.isClosed();
    // if the class is closed, no new methods can be declared
    if (included && closed)
       scope.raiseError(errClosedParent, findParent(node, lxClass));
@@ -5089,16 +5086,15 @@ void Compiler :: includeMethod(SNode node, ClassScope& scope, MethodScope& metho
 //            }
 
    if (methodScope.resultRef != 0) {
-      ref_t defaultResultRef = scope.info.methodHints.get(Attribute(methodScope.message, maReference));
+      ref_t defaultResultRef = scope.getMethodInfo(methodScope.message, maReference);
       if (defaultResultRef == 0) {
-         scope.info.methodHints.add(Attribute(methodScope.message, maReference), methodScope.resultRef);
+         scope.setMethodInfo(methodScope.message, maReference, methodScope.resultRef, false);
       }
       else scope.raiseWarning(WARNING_LEVEL_1, wrnTypeAlreadyDeclared, node);
    }
 
    if (methodScope.hints != 0) {      
-      scope.info.methodHints.exclude(Attribute(methodScope.message, maHint));
-      scope.info.methodHints.add(Attribute(methodScope.message, maHint), methodScope.hints | defaultHints);
+      scope.setMethodInfo(methodScope.message, maHint, methodScope.hints | defaultHints);
    }
 }
 
@@ -5117,7 +5113,7 @@ void Compiler :: declareVMT(SyntaxWriter& writer, SNode current, ClassScope& sco
 //            //         }
 //            //         else {
          declareArgumentList(current, methodScope);
-         declareMethodAttributes(current, methodScope);
+         declareMethodAttributes(writer, current, methodScope);
          // skip constructord
          if (!test(methodScope.hints, tpConstructor)) {
             if (!_logic->validateMessage(methodScope.message, false))
@@ -5182,7 +5178,7 @@ void Compiler :: declareClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
          //            //         }
          //            //         else {
          declareArgumentList(current, methodScope);
-         declareMethodAttributes(current, methodScope);
+         declareMethodAttributes(writer, current, methodScope);
          // skip constructord
          if (test(methodScope.hints, tpConstructor)) {
             if (!_logic->validateMessage(methodScope.message, true))
@@ -5615,8 +5611,13 @@ void Compiler :: generateClassDeclaration(SyntaxWriter& writer, ClassScope& scop
 ////   return attrOnly;
 ////}
 
-bool Compiler :: declareTemplate(SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object)
+bool Compiler :: declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object)
 {
+   bool withMethods = false;
+
+   TemplateScope templateScope(scope);
+   ////         templateScope.loadParameters(current, _writer);
+
    _Memory* body = scope->moduleScope->loadAttributeInfo(attrRef);
    if (body == NULL)
       return false;
@@ -5626,14 +5627,25 @@ bool Compiler :: declareTemplate(SNode node, Scope* scope, ref_t attrRef, Object
    while (current != lxNone) {
       if (current == lxAttribute) {
          if (node == lxClassMethod) {
-            declareMethodAttribute(current, *((MethodScope*)scope), node);
+            declareMethodAttribute(writer, current, *((MethodScope*)scope), node);
          }
          else if (node == lxExpression) {
-            declareLocalAttribute(current, *((CodeScope*)scope), object, node);
+            declareLocalAttribute(writer, current, *((CodeScope*)scope), object, node);
          }
+      }
+      else if (current == lxClassMethod) {
+         withMethods = true;
       }
       current = current.nextNode();
    }
+
+   if (withMethods) {
+      if (node == lxClass) {
+         declareVMT(writer, templateTree.readRoot().firstChild(), templateScope);
+      }
+      else return false;
+   }
+
 
 //   SNode templNode = node.appendNode(lxTemplate);
 //
@@ -5686,18 +5698,18 @@ bool Compiler :: declareTemplate(SNode node, Scope* scope, ref_t attrRef, Object
 //   }
 //}
 
-void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
+void Compiler :: declareMethodAttributes(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         declareMethodAttribute(current, scope, node);
+         declareMethodAttribute(writer, current, scope, node);
       }
       current = current.nextNode();
    }
 }
 
-void Compiler :: declareMethodAttribute(SNode current, MethodScope& scope, SNode rootNode)
+void Compiler :: declareMethodAttribute(SyntaxWriter& writer, SNode current, MethodScope& scope, SNode rootNode)
 {
    int attrValue = 0;
    ref_t attrRef = mapAttribute(current, scope, attrValue);
@@ -5710,7 +5722,8 @@ void Compiler :: declareMethodAttribute(SNode current, MethodScope& scope, SNode
    else if (attrRef != 0) {
       ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
       if (classRef == INVALID_REF) {
-         declareTemplate(rootNode, &scope, attrRef);
+         if (!declareTemplate(writer, rootNode, &scope, attrRef))
+            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
       else scope.resultRef = classRef;
    }
@@ -5725,7 +5738,7 @@ void Compiler :: compileClassDeclaration(SyntaxWriter& writer, SNode node, Class
 //   }
    /*else */compileParentDeclaration(SNode(), scope);
 
-////   compileClassAttributes(node, scope, node);
+   declareClassAttributes(writer, node, scope);
    compileFieldDeclarations(node, scope);
 
    declareVMT(writer, node.firstChild(), scope);
