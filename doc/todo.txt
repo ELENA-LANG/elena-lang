@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xdev - generic development
-                 * implements var as template
 
                  * implementing ELENA 3.0
                  * get rid of maType hint
@@ -42,6 +41,7 @@ In development:
                  * declaring : test [] - action ?
                  * declaring : test => [] ?
                  * declaring : test param. // ?
+                 * declaring : test test : test // ??
                  * warn if for the expression "a b := c." - a could be considered both as symbol (variable,...) and subject.
                  * test short hand assigning : a prop := b.
                  * test a b c := d. (both when a is a varialbe and when it is a subject / attribute)

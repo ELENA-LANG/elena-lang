@@ -120,7 +120,7 @@ enum LexicalType
 //   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
 //   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
 //   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
-//   lxMethodParameter = 0x0C017,
+   lxMethodParameter = 0x0C017,
 //   lxAltExpression   = 0x0C018,
 //   lxIfNot           = 0x0C019,   // optional arg - reference
 //   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference

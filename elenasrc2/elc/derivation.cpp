@@ -102,16 +102,16 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //         unpackChildren(node);
 //         _writer.closeNode();
 //         break;
-//      case nsMethodParameter:
-//         _writer.newNode(lxMethodParameter);
-//         unpackChildren(node);
-//         _writer.closeNode();
-//         break;
-//      case nsSubjectArg:
-//         _writer.newNode(lxMessage);
-//         unpackChildren(node);
-//         _writer.closeNode();
-//         break;
+      case nsMethodParameter:
+         _writer.newNode(lxMethodParameter);
+         unpackChildren(node);
+         _writer.closeNode();
+         break;
+      case nsSubjectArg:
+         _writer.newNode(lxMessage);
+         unpackChildren(node);
+         _writer.closeNode();
+         break;
       case tsIdentifier:
 //      case tsCharacter:
 //      case tsHexInteger:
@@ -297,12 +297,12 @@ void DerivationWriter :: copyMessage(SNode node, bool operationMode)
    while (current != lxNone) {
       Symbol symbol = (Symbol)current.type;
       switch (symbol) {
-         //case nsSubjectArg:
-         //   _writer.newNode(lxMessage);
-         //   unpackChildren(current);
-         //   _writer.closeNode();
-         //   break;
-         //case nsMessageParameter:
+         case nsSubjectArg:
+            _writer.newNode(lxMessage);
+            unpackChildren(current);
+            _writer.closeNode();
+            break;
+         case nsMessageParameter:
          case nsObject:
          case nsExpression:
             _writer.newBookmark();

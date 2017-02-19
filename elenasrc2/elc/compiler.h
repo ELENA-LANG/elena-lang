@@ -142,7 +142,7 @@ public:
 //      okOuter,                        // param - field offset, extraparam - class reference
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
-//      okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
+      okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
 //      okParamField,
 //      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
@@ -162,71 +162,71 @@ public:
       ObjectKind kind;
       ref_t      param;
       ref_t      extraparam;
-//      ref_t      type;
+      ref_t      target;
 
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
          this->extraparam = 0;
-//         this->type = 0;
+         this->target = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
          this->extraparam = 0;
-//         this->type = 0;
+         this->target = 0;
       }
       ObjectInfo(ObjectKind kind, ObjectInfo copy)
       {
          this->kind = kind;
          this->param = copy.param;
          this->extraparam = copy.extraparam;
-         //this->type = copy.type;
+         this->target = copy.target;
       }
       ObjectInfo(ObjectKind kind, ref_t param)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = 0;
-//         this->type = 0;
+         this->target = 0;
       }
       ObjectInfo(ObjectKind kind, int param)
       {
          this->kind = kind;
          this->param = (ref_t)param;
          this->extraparam = 0;
-//         this->type = 0;
+         this->target = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = extraparam;
-         //this->type = 0;
+         this->target = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = (ref_t)extraparam;
-         //this->type = 0;
+         this->target = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
-//         this->type = type;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t type)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = (ref_t)extraparam;
-//         this->type = type;
-//      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t target)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
+         this->target = target;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t target)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = (ref_t)extraparam;
+         this->target = target;
+      }
    };
 
    typedef Map<ident_t, ref_t>            ForwardMap;
@@ -524,7 +524,7 @@ private:
    struct MethodScope : public Scope
    {
       ref_t        message;
-//      LocalMap     parameters;
+      LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
@@ -863,7 +863,7 @@ private:
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
-   void declareParameterDebugInfo(SyntaxWriter& writer, /*SNode node, */MethodScope& scope, bool withThis, bool withSelf);
+   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
 //
    bool declareTemplate(SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object);
    bool declareTemplate(SNode node, Scope* scope, ref_t attrRef)
