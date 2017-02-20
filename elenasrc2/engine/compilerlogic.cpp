@@ -12,8 +12,8 @@
 
 using namespace _ELENA_;
 
-//typedef ClassInfo::Attribute Attribute;
-//
+typedef ClassInfo::Attribute Attribute;
+
 //inline bool isWrappable(int flags)
 //{
 //   return !test(flags, elWrapper) && test(flags, elSealed);
@@ -201,61 +201,60 @@ CompilerLogic :: CompilerLogic()
 //   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 }
 
-//int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
-//{
-//   bool methodFound = info.methods.exist(message);
-//
-//   if (methodFound) {
-//      int hint = info.methodHints.get(Attribute(message, maHint));
-//      result.outputType = info.methodHints.get(Attribute(message, maType));
-//      result.outputReference = info.methodHints.get(Attribute(message, maReference));
-//
-//      if ((hint & tpMask) == tpSealed) {
-//         return hint;
-//      }
-//      else if (test(info.header.flags, elSealed)) {
-//         return tpSealed | hint;
-//      }
-//      else if (test(info.header.flags, elClosed)) {
-//         return tpClosed | hint;
-//      }
-//      else return tpNormal | hint;
-//   }
-//   //HOTFIX : to recognize the sealed private method call
-//   //         hint search should be done even if the method is not declared
-//   else return info.methodHints.get(Attribute(message, maHint));
-//}
-//
-//int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
-//{
-//   ClassInfo info;
-//   result.found = defineClassInfo(scope, info, reference);
-//
-//   if (result.found) {
-//      // only sealed / closed classes should be considered as found
-//      if (!test(info.header.flags, elClosed))
-//         result.found = false;
-//
-//      if (test(info.header.flags, elWithCustomDispatcher))
-//         result.withCustomDispatcher = true;
-//
-//      return checkMethod(info, message, result);
-//   }
-//   else return tpUnknown;
-//}
-//
-//int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
-//{
-//   if (isPrimitiveRef(classReference)) {
-//      classReference = resolvePrimitiveReference(scope, classReference);
-//   }
-//
-//   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
-//   int callType = methodHint & tpMask;
-//
-//   return callType;
-//}
-//
+int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
+{
+   bool methodFound = info.methods.exist(message);
+
+   if (methodFound) {
+      int hint = info.methodHints.get(Attribute(message, maHint));
+      result.outputReference = info.methodHints.get(Attribute(message, maReference));
+
+      if ((hint & tpMask) == tpSealed) {
+         return hint;
+      }
+      else if (test(info.header.flags, elSealed)) {
+         return tpSealed | hint;
+      }
+      else if (test(info.header.flags, elClosed)) {
+         return tpClosed | hint;
+      }
+      else return tpNormal | hint;
+   }
+   //HOTFIX : to recognize the sealed private method call
+   //         hint search should be done even if the method is not declared
+   else return info.methodHints.get(Attribute(message, maHint));
+}
+
+int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
+{
+   ClassInfo info;
+   result.found = defineClassInfo(scope, info, reference);
+
+   if (result.found) {
+      // only sealed / closed classes should be considered as found
+      if (!test(info.header.flags, elClosed))
+         result.found = false;
+
+      if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
+
+      return checkMethod(info, message, result);
+   }
+   else return tpUnknown;
+}
+
+int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
+{
+   if (isPrimitiveRef(classReference)) {
+      classReference = resolvePrimitiveReference(scope, classReference);
+   }
+
+   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
+   int callType = methodHint & tpMask;
+
+   return callType;
+}
+
 //int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
 //{
 //   if (loperand == 0 || (roperand == 0 && loperand != V_NIL))
@@ -473,12 +472,12 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
 //{
 //   return test(info.header.flags, elStructureRole | elEmbeddable) && !test(info.header.flags, elDynamicRole);
 //}
-//
-//bool CompilerLogic :: isRole(ClassInfo& info)
-//{
-//   return test(info.header.flags, elRole);
-//}
-//
+
+bool CompilerLogic :: isRole(ClassInfo& info)
+{
+   return test(info.header.flags, elRole);
+}
+
 //bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
@@ -492,18 +491,6 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
 void CompilerLogic :: injectVirtualCode(SyntaxWriter& writer, _CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler)
 {
 //   SNode templateNode = node.appendNode(lxTemplate);
-
-   // auto generate get&type message if required
-   ref_t subjRef = scope.typifiedClasses.get(classRef);
-   if (subjRef != 0) {
-      int message = encodeMessage(subjRef, GET_MESSAGE_ID, 0);
-
-      if (!info.methods.exist(message) && !test(info.header.flags, elClosed)) {
-         info.methods.add(message, true);
-
-         compiler.injectVirtualReturningMethod(writer, message, lxLocal, -1);
-      }
-   }
 
 //   // generate enumeration list
 //   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
@@ -883,10 +870,10 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
    }
 }
 
-//bool CompilerLogic :: validateClassAttribute(int& attrValue)
-//{
-//   switch ((size_t)attrValue)
-//   {
+bool CompilerLogic :: validateClassAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
 //      case V_SEALED:
 //         attrValue = elSealed;
 //         return true;
@@ -896,9 +883,9 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 //      case V_STRUCT:
 //         attrValue = elStructureRole;
 //         return true;
-//      case V_ENUMLIST:
-//         attrValue = elStateless | elEnumList | elClosed;
-//         return true;
+      case V_ENUMLIST:
+         attrValue = elStateless | elEnumList | elClosed;
+         return true;
 //      case V_EMBEDDABLE:
 //         attrValue = elStructureRole | elEmbeddable;
 //         return true;
@@ -920,21 +907,24 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 //      case V_GROUP:
 //         attrValue = elGroup;
 //         return true;
-//      default:
-//         return false;
-//   }
-//}
+      case V_CLASS:
+         attrValue = 0;
+         return true;
+      default:
+         return false;
+   }
+}
 
 bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 {
    switch ((size_t)attrValue)
    {
-//      case V_IFBRANCH:
-//         attrValue = tpIfBranch;
-//         return true;
-//      case V_IFNOTBRANCH:
-//         attrValue = tpIfNotBranch;
-//         return true;
+      case V_IFBRANCH:
+         attrValue = tpIfBranch;
+         return true;
+      case V_IFNOTBRANCH:
+         attrValue = tpIfNotBranch;
+         return true;
 //      case V_STATCKSAFE:
 //         attrValue = tpStackSafe;
 //         return true;
@@ -1096,10 +1086,10 @@ bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 //{
 //   return ref1 ? ref1 : ref2;
 //}
-//
-//ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
-//{
-//   switch (reference) {
+
+ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
+{
+   switch (reference) {
 //      case V_INT32:
 //         return firstNonZero(scope.intReference, scope.superReference);
 //      case V_INT64:
@@ -1115,10 +1105,10 @@ bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 //      case V_ARGARRAY:
 //         return firstNonZero(scope.paramsReference, scope.superReference);
 //      default:
-//         return scope.superReference;
-//   }
-//}
-//
+         return scope.superReference;
+   }
+}
+
 //ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
 //{
 //   if (test(info.header.flags, elStructureWrapper)) {
@@ -1444,11 +1434,21 @@ bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 //
 //   return false;
 //}
-//
-//void CompilerLogic :: optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef, bool assingingMode)
-//{
-//   SNode exprNode = node.findSubNodeMask(lxObjectMask);   
-//
+
+bool CompilerLogic :: optimizeBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef/*, bool assingingMode*/)
+{
+   SNode exprNode = node.findSubNodeMask(lxObjectMask);   
+
+   if (targetRef == sourceRef) {
+      //if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
+      //}
+      /*else */node = lxExpression;
+   }
+   else if (sourceRef == V_NIL) {
+      // NIL reference is never boxed
+      node = lxExpression;
+   }
+
 //   bool localBoxing = false;
 //   bool variable = false;
 //   if (exprNode == lxFieldAddress && exprNode.argument > 0 && !assingingMode) {
@@ -1472,8 +1472,10 @@ bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 //      node = variable ? lxLocalUnboxing : lxExpression;
 //   }
 //   else node = lxExpression;
-//}
-//
+
+   return true;
+}
+
 //void CompilerLogic :: injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode)
 //{
 //   ClassInfo info;

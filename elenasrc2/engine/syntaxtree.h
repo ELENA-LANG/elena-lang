@@ -100,14 +100,14 @@ enum LexicalType
 //   lxBlockLocalAddr  = 0x0A11F, // arg - offset
 //
 //   lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
-//   lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
+   lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
 //   lxLocalUnboxing   = 0x0C003,   // arg - size
 //   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
 //   lxArgUnboxing     = 0x0C006,
    lxCalling         = 0x0C007,   // sending a message, arg - message
-//   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
-//   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
+   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
+   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
 //   lxResending       = 0x0C00A,   // resending a message, optional arg - message
 //   lxTrying          = 0x0C00C,   // try-catch expression
 //   lxAlt             = 0x0C00D,   // alt-catch expression
@@ -185,7 +185,7 @@ enum LexicalType
    lxAssign          = 0x20010,
    lxLevel           = 0x20011,
 //   lxType            = 0x20012, // arg - subject
-//   lxCallTarget      = 0x20013, // arg - reference
+   lxCallTarget      = 0x20013, // arg - reference
 //   lxClassName       = 0x20014, // arg - identifier
 //   lxIntValue        = 0x20015, // arg - integer value
 //   lxTempLocal       = 0x20016,
@@ -199,7 +199,6 @@ enum LexicalType
 //   lxExtInteranlRef  = 0x2001E,
 //   lxConstAttr       = 0x2001F,
 //   lxWarningMask     = 0x20020,
-   lxTypecastAttr    = 0x20021,
 //   lxNotFoundAttr    = 0x20022,
 //   lxBinarySelf      = 0x20023, // debug info only
 //   lxOvreriddenMessage = 0x20024, // arg - message

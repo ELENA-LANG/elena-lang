@@ -37,9 +37,9 @@
 //#define V_BINARYARRAY (ref_t)-35
 //#define V_INT16ARRAY  (ref_t)-38
 //#define V_INT8ARRAY   (ref_t)-39
-//
-//#define V_IFBRANCH    (ref_t)-4097
-//#define V_IFNOTBRANCH (ref_t)-4098
+
+#define V_IFBRANCH    (ref_t)-4097
+#define V_IFNOTBRANCH (ref_t)-4098
 //#define V_WARNING1    (ref_t)-4099
 //#define V_WARNING2    (ref_t)-4100
 //#define V_WARNING3    (ref_t)-4101
@@ -50,7 +50,7 @@
 //#define V_SEALED      (ref_t)-8195
 //#define V_LIMITED     (ref_t)-8196
 //#define V_STRUCT      (ref_t)-8197
-//#define V_ENUMLIST    (ref_t)-8198
+#define V_ENUMLIST    (ref_t)-8198
 //#define V_DYNAMIC     (ref_t)-8199
 //#define V_STRING      (ref_t)-8200
 //#define V_CONST       (ref_t)-8201
@@ -63,6 +63,7 @@
 
 #define V_CONSTRUCTOR   (ref_t)-16384
 #define V_VARIABLE      (ref_t)-16385
+#define V_CLASS         (ref_t)-16386
 
 namespace _ELENA_
 {
@@ -76,7 +77,7 @@ enum MethodHint
    tpUnknown     = 0x000,
    tpSealed      = 0x001,
    tpClosed      = 0x002,
-   tpNormal      = 0x03,
+   tpNormal      = 0x003,
 //      tpDispatcher = 0x04,
    tpPrivate     = 0x005,
    tpStackSafe   = 0x010,
@@ -123,7 +124,6 @@ struct _CompilerScope
 //   ref_t paramsReference;
 
    // list of typified classes which may need get&type message
-   ClassMap    typifiedClasses;
    SubjectMap  subjectHints;
 
 //   // cached bool values
@@ -169,23 +169,21 @@ public:
 class _CompilerLogic
 {
 public:
-//   struct ChechMethodInfo
-//   {
-//      bool  found;
-//      bool  withCustomDispatcher;
-//      ref_t outputType;
-//      ref_t outputReference;
-//
-//      ChechMethodInfo()
-//      {
-//         found = false;
-//         outputType = 0;
-//         outputReference = 0;
-//         withCustomDispatcher = false;
-//      }
-//   };
-//
-//   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
+   struct ChechMethodInfo
+   {
+      bool  found;
+      bool  withCustomDispatcher;
+      ref_t outputReference;
+
+      ChechMethodInfo()
+      {
+         found = false;
+         outputReference = 0;
+         withCustomDispatcher = false;
+      }
+   };
+
+   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
 
 //   // retrieve the class info / size
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
@@ -193,10 +191,10 @@ public:
 //   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
 //
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
-//
-//   // retrieve the call type
-//   virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
-//
+
+   // retrieve the call type
+   virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
+
 //   // retrieve the operation type
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
@@ -204,8 +202,8 @@ public:
 //
 //   // retrieve the branching operation type
 //   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
-//
-//   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
+
+   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
 
    // check if the classes is compatible
@@ -219,10 +217,10 @@ public:
 //   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
-//
-//   // class is considered to be a role if it cannot be initiated
-//   virtual bool isRole(ClassInfo& info) = 0;          
-//
+
+   // class is considered to be a role if it cannot be initiated
+   virtual bool isRole(ClassInfo& info) = 0;          
+
 //   virtual bool isPrimitiveRef(ref_t reference) = 0;
 
    // auto generate virtual methods / fields
@@ -239,7 +237,7 @@ public:
 //   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
 
    // attribute validations
-//   virtual bool validateClassAttribute(int& attrValue) = 0;
+   virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
@@ -250,9 +248,9 @@ public:
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
 //   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
-//
-//   // optimization
-//   virtual void optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef, bool assingingMode) = 0;
+
+   // optimization
+   virtual bool optimizeBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef/*, bool assingingMode*/) = 0;
 //   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;

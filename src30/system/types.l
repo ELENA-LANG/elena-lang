@@ -1,5 +1,6 @@
 /// Attributes
 #template(-16385) var {}
+#template(-16386) class {}
 #template(-16384) constructor {}
 
 //#template(-8194) static {}
@@ -17,12 +18,15 @@
 //#template(-8201) const   {}
 //#template(-8197) struct  {}
 //#template(-8204) nonstructural {}
-//#template(-8198) enumlist {}
+#template(-8198) listable {}
 //#template(-8200) string {}
 //#template(-8193) embeddable {}
 //#template(-8203) extension {}
 //#template(-8203,subject) extension : subject {}
-//
+
+#template(-4097)__ifoperator {}
+#template(-4097)__ifnotoperator {}
+
 ///// Provides classes that describe the basic functionality
 
 // === basic logical types ===

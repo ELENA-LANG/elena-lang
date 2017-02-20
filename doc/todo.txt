@@ -3,9 +3,13 @@ In development:
 ------                              
 
               xdev - generic development
+                 * idle optimization : sealed typecasting message should be not called
+                 * implement 
+                 * warn on not found messages
 
                  * implementing ELENA 3.0
-                 * get rid of maType hint
+                 * attributes var, class should enforce the compiler to treat the code as variable or class declaration
+
                  * class class is sealed and stateless
                  * raise an error when costructor new [] // !!
                  * constructor constructor [] / constructor [] - raise warning
@@ -51,6 +55,11 @@ In development:
                  * optimize virtual get&type method
                  * nested class : declaring fields
                  * nested class : initializing fields??
+                 * idle optimization: sending get message to $nil - should always return $nil
+                 * test typecastObject
+                 * test boxObject
+                 * ret rid of maType hint
+                 * optimization bcopya quit => quit
 
               xdev - generic development
                  * support property template

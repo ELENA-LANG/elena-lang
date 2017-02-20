@@ -183,8 +183,8 @@ class ByteCodeWriter
    void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-//   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
-//   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
+   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 
    void doGenericHandler(CommandTape& tape);
 //   void resend(CommandTape& tape);

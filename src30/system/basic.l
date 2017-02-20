@@ -102,33 +102,33 @@
 /// A true value symbol
 true = BaseBoolValue
 {
-//    /// Executes the action
-//    #method(-4097) if : aTrueAction = aTrueAction eval.
-//
-//    /// Executes then-action
-//    #method if : aTrueAction : aFalseAction = aTrueAction eval.
-//
-//    /// Always returns nil.
-//    #method(-4098) ifnot : aTrueAction = $nil.
-//
-//    #method iif:aTrueValue:aFalseValue = aTrueValue.
-//    
-//    /// Executes logical OR operation
-//    ///
-//    /// Always return true
-//    #method or : anExpr = $self.
-//
-//    /// Executes logical AND operation
-//    #method and : anExpr = anExpr bool.
-//
+    /// Executes the action
+    __ifoperator if : aTrueAction = aTrueAction eval.
+
+    /// Executes then-action
+    if : aTrueAction : aFalseAction = aTrueAction eval.
+
+    /// Always returns nil.
+    __ifnotoperator ifnot : aTrueAction = $nil.
+
+    iif:aTrueValue:aFalseValue = aTrueValue.
+    
+    /// Executes logical OR operation
+    ///
+    /// Always return true
+    or : anExpr = $self.
+
+    /// Executes logical AND operation
+    and : anExpr = anExpr bool.
+
 //    /// Executes logical XOR operation
-//    #method xor : aBool
+//    xor : aBool
 //    [
 //        aBool ? [ ^ false. ].
 //        
 //        ^ $self.
 //    ]
-//
+
 //    /// Determines whether the specified object is equal to the current object boolean value.
 //    #method equal : anExpr = anExpr bool.
 //
@@ -215,14 +215,14 @@ false = BaseBoolValue
 //#subject vlong  = nvarof:long.
 //#subject vreal  = nvarof:real.
 //#subject vchar  = varof:char.
-//
-//// === basic data classes ===
-//
-//// --- BaseValue ---
-//
-//// A base value
-//#class BaseValue
-//{
+
+// === basic data classes ===
+
+// --- BaseValue ---
+
+// A base value
+BaseValue
+{
 //    /// Compares the values
 //    #method equal : anObject = anObject cast:%equal &to:$self bool.
 //
@@ -235,29 +235,29 @@ false = BaseBoolValue
 //    #method(bool) notless : anObject = $self less:anObject inverted.
 //    
 //    #method(bool) notgreater : anObject = $self greater:anObject inverted.
-//}
-//
-//// --- BaseNumber ---
-//
+}
+
+// --- BaseNumber ---
+
 ///// A base numeric value
 //#class BaseNumber :: BaseValue
 //{
-//    /// Adds the value
-//    #method add : anObject = anObject cast:%add &to:$self.
-//
-//    /// Subtracts the value
-//    #method subtract : anObject = anObject cast:%subtract &to:$self.
-//
-//    /// Multiply by the value
-//    #method multiply : anObject = anObject cast:%multiply &to:$self.
-//
-//    /// Divides into the value
-//    #method divide : anObject = anObject cast:%divide &to:$self.
-//    
-//    #method negative
-//        = 0 - self.
+////    /// Adds the value
+////    #method add : anObject = anObject cast:%add &to:$self.
+////
+////    /// Subtracts the value
+////    #method subtract : anObject = anObject cast:%subtract &to:$self.
+////
+////    /// Multiply by the value
+////    #method multiply : anObject = anObject cast:%multiply &to:$self.
+////
+////    /// Divides into the value
+////    #method divide : anObject = anObject cast:%divide &to:$self.
+////    
+////    #method negative
+////        = 0 - self.
 //}
-//
+
 //// --- IntBaseNumber ---
 //
 ///// A base integer value

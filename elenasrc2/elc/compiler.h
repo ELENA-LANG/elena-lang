@@ -823,38 +823,38 @@ private:
 //      }
    };
 
-//   struct WarningScope
-//   {
-//      ident_t terminal;
-//
-//      int warningMask;
-//      int col;
-//      int row;
-//
-//      void raise(ModuleScope& scope, int level, ident_t message, SNode node)
-//      {
-//         if (test(warningMask, level)) {
-//            if (col != 0) {
-//               scope.raiseWarning(level, message, row, col, terminal);
-//            }
-//            else if(node != lxNone)
-//               scope.raiseWarning(level, message, node);
-//         }
-//      }
-//
-//      WarningScope(int mask)
-//      {
-//         warningMask = mask;
-//         col = row = 0;
-//         terminal = NULL;
-//      }
-//      WarningScope()
-//      {
-//         warningMask = 0;
-//         col = row = 0;
-//         terminal = NULL;
-//      }
-//   };
+   struct WarningScope
+   {
+      ident_t terminal;
+
+      int warningMask;
+      int col;
+      int row;
+
+      void raise(ModuleScope& scope, int level, ident_t message, SNode node)
+      {
+         if (test(warningMask, level)) {
+            if (col != 0) {
+               scope.raiseWarning(level, message, row, col, terminal);
+            }
+            else if(node != lxNone)
+               scope.raiseWarning(level, message, node);
+         }
+      }
+
+      WarningScope(int mask)
+      {
+         warningMask = mask;
+         col = row = 0;
+         terminal = NULL;
+      }
+      WarningScope()
+      {
+         warningMask = 0;
+         col = row = 0;
+         terminal = NULL;
+      }
+   };
 
    _CompilerLogic*  _logic;
 
@@ -1075,10 +1075,12 @@ private:
 //   void compileDeclarations(SyntaxWriter& writer, SNode member, ModuleScope& scope);
 //   void compileImplementations(SNode member, ModuleScope& scope);
    void compileIncludeSection(SNode node, ModuleScope& scope);
-//
+
 //   bool validate(_ProjectManager& project, _Module* module, int reference);
 
-   ObjectInfo typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
+   bool typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t subjectRef);
+   bool boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t targetRef);
+
 //   ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
 
    bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
@@ -1096,7 +1098,13 @@ private:
 ////   void optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope);
 ////   void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
 ////   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
-////   void optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);
+   ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   ref_t optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   ref_t optimizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   void optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   void optimizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   void optimizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   void optimizeClassTree(SNode node, ModuleScope& scope, WarningScope& warningScope);
 ////   void optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask);
 ////
 ////   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);

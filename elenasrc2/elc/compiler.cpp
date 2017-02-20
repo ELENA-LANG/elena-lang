@@ -746,9 +746,6 @@ void Compiler::ModuleScope :: loadAttributes(_Module* extModule)
             ref_t class_ref = metaReader.getDWord();
             if (class_ref != INVALID_REF) {
                class_ref = importReference(extModule, class_ref, module);
-
-               if (/*owner && */class_ref != 0)
-                  typifiedClasses.add(class_ref, subj_ref);
             }
 
             subjectHints.add(subj_ref, class_ref);
@@ -798,9 +795,6 @@ void Compiler::ModuleScope :: saveSubject(ref_t attrRef, ref_t classReference, b
       metaWriter.writeDWord(attrRef);
       metaWriter.writeDWord(classReference);
    }
-
-   if (classReference != 0 && classReference != INVALID_REF)
-      typifiedClasses.add(classReference, attrRef);
 
    subjectHints.add(attrRef, classReference, true);
 }
@@ -1660,10 +1654,10 @@ void Compiler :: declareClassAttribute(SyntaxWriter& writer, SNode current, Clas
    int attrValue = 0;
    ref_t attrRef = mapAttribute(current, scope, attrValue);
    if (attrValue != 0) {
-      //            if (_logic->validateClassAttribute(attrValue)) {
-      //               current.set(lxClassFlag, attrValue);
-      //            }
-      /*else */scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      if (_logic->validateClassAttribute(attrValue)) {
+         scope.declaredFlags |= attrValue;
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
    }
    else if (attrRef != 0) {
       ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
@@ -2033,6 +2027,12 @@ void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode node)
    }
 }
 
+inline void writeTarget(SyntaxWriter& writer, ref_t targetRef)
+{
+   if (targetRef)
+      writer.appendNode(lxTarget, targetRef);
+}
+
 void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode)
 {
    switch (object.kind) {
@@ -2164,6 +2164,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //         terminal.setArgument(object.param);
 //         break;
    }
+
+   writeTarget(writer, resolveObjectReference(scope, object));
 
    writeTerminalInfo(writer, terminal);
 
@@ -2771,6 +2773,9 @@ ObjectInfo Compiler :: declareMessage(SyntaxWriter& writer, SNode node, CodeScop
       writer.closeNode();
    }   
 
+   // adding dummy call target for the optimzation
+   writer.appendNode(lxCallTarget, 0);
+
    // inserting calling expression
    writer.insert(operation, argument);
    writer.closeNode();   
@@ -2804,28 +2809,30 @@ bool Compiler :: convertObject(SNode node, CodeScope& scope, ref_t targetRef, Ob
    else return true;
 }
 
-ObjectInfo Compiler :: typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source)
+bool Compiler :: typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t subjectRef)
 {
-   if (/*!convertObject(node, scope, targetRef, source)*/targetRef != 0) {
-      ref_t subjectRef = scope.moduleScope->typifiedClasses.get(targetRef);
-      if (!subjectRef)
-         scope.raiseError(errInvalidOperation, node);
+   ref_t ref = scope.moduleScope->subjectHints.get(subjectRef);
+   if (ref == INVALID_REF)
+      scope.raiseError(errInvalidOperation, node);
+   else if (ref != 0) {
+      declareMessage(writer, node, scope, source, encodeMessage(subjectRef, GET_MESSAGE_ID, 0), HINT_NODEBUGINFO);
 
-      writer.appendNode(lxTypecastAttr);
-
-      // HOTFIX : inject expression node if required
-      ////node.refresh();
-      //if (node != lxExpression) {
-      //   node.injectNode(node.type, node.argument);
-      //   node.set(lxExpression, 0);
-      //}
-
-      // if not compatible - send a typecast message
-      source = declareMessage(writer, node, scope, source, encodeMessage(subjectRef, GET_MESSAGE_ID, 0), HINT_NODEBUGINFO);
+      return true;
    }
-   else source = ObjectInfo(okObject, targetRef);
+   else return false;
+}
 
-   return source;
+bool Compiler :: boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t targetRef)
+{
+   ref_t sourceRef = resolveObjectReference(scope, source);
+   if (sourceRef != targetRef) {
+      writer.insert(lxBoxing);
+      writer.appendNode(lxTarget, targetRef);
+      writer.closeNode();
+
+      return true;
+   }
+   else return false;
 }
 
 ObjectInfo Compiler :: declareMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope)
@@ -2909,9 +2916,11 @@ ObjectInfo Compiler :: declareMessageParameters(SyntaxWriter& writer, SNode node
 //         }
 //         else {
             writer.newBookmark();
+
             ObjectInfo param = declareExpression(writer, arg, scope, paramMode);
             if (subjectRef != 0)
-               typecastObject(writer, arg, scope, scope.moduleScope->subjectHints.get(subjectRef), param);
+               typecastObject(writer, arg, scope, param, subjectRef);
+
             writer.removeBookmark();
 
             arg = arg.nextNode();
@@ -3003,7 +3012,6 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
          // compile the parameter
          SNode sourceNode = exprNode.nextNode(lxObjectMask);
          ObjectInfo source = declareExpression(writer, sourceNode, scope, 0);
-         //      typecastObject(sourceNode, scope, subject, source);
 
          retVal = declareMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
 
@@ -3068,7 +3076,8 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
       writer.newBookmark();
 
       ObjectInfo source = declareAssigningExpression(writer, sourceNode, scope);
-      typecastObject(writer, sourceNode, scope, targetRef, source);
+
+      boxObject(writer, sourceNode, scope, source, targetRef);
 
       writer.removeBookmark();
    }
@@ -3418,22 +3427,21 @@ ObjectInfo Compiler :: declareRetExpression(SyntaxWriter& writer, SNode node, Co
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
    bool typecasting = false;
+   bool boxing = false;
+   ref_t subjectRef = 0;
    ref_t targetRef = 0;
    if (test(mode, HINT_ROOT)) {
       // type cast returning value if required
       int paramCount;
       ref_t verb;
-      ref_t subj = 0;
-      decodeMessage(scope.getMessageID(), subj, verb, paramCount);
+      decodeMessage(scope.getMessageID(), subjectRef, verb, paramCount);
       if (classScope->info.methodHints.exist(Attribute(scope.getMessageID(), maReference))) {
          targetRef = classScope->info.methodHints.get(Attribute(scope.getMessageID(), maReference));
-         typecasting = true;
+         boxing = true;
       }
       else if (verb == GET_MESSAGE_ID && paramCount == 0) {
          typecasting = true;
-         targetRef = scope.moduleScope->subjectHints.get(subj);
       }
-      else targetRef = 0;
    }
 
    writer.newBookmark();
@@ -3441,8 +3449,9 @@ ObjectInfo Compiler :: declareRetExpression(SyntaxWriter& writer, SNode node, Co
    ObjectInfo info = declareExpression(writer, node, scope, mode);
 
    if (typecasting) {
-      info = typecastObject(writer, node, scope, targetRef, info);
+      typecastObject(writer, node, scope, info, subjectRef);
    }
+   else boxObject(writer, node, scope, info, targetRef);
 
 //   // HOTFIX : implementing closure exit
 //   if (test(mode, HINT_ROOT)) {
@@ -4462,7 +4471,7 @@ void Compiler :: declareMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 //            if (eop != lxNone)
 //               SyntaxTree::copyNode(eop, localNode);
    
-            typecastObject(writer, node, codeScope, resultRef, ObjectInfo(okThisParam));
+            boxObject(writer, node, codeScope, ObjectInfo(okThisParam), resultRef);            
          }
 
          writer.removeBookmark();
@@ -4533,7 +4542,7 @@ void Compiler :: declareConstructor(SyntaxWriter& writer, SNode node, MethodScop
          writer.newBookmark();
 
          ObjectInfo retVal = declareRetExpression(writer, expr, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
-         typecastObject(writer, expr, codeScope, codeScope.getClassRefId(), retVal);
+         boxObject(writer, expr, codeScope, retVal, codeScope.getClassRefId());
 
          writer.removeBookmark();
          writer.closeNode();
@@ -5102,6 +5111,18 @@ void Compiler :: includeMethod(SNode node, ClassScope& scope, MethodScope& metho
 //            if (test(scope.info.header.flags, elExtension) && !root.existChild(lxPrivate)) {
 //               scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
 //            }
+
+   // recognize get&type method
+   if (getVerb(methodScope.message) == GET_MESSAGE_ID && getParamCount(methodScope.message) == 0) {
+      ref_t targetRef = scope.moduleScope->subjectHints.get(getSignature(methodScope.message));
+      if (targetRef == INVALID_REF) {
+         scope.raiseError(errIllegalMethod, node);
+      }
+      else if (targetRef != 0 && methodScope.resultRef == 0) {
+         methodScope.resultRef = targetRef;
+      }
+   }
+
 
    if (methodScope.resultRef != 0) {
       ref_t defaultResultRef = scope.getMethodInfo(methodScope.message, maReference);
@@ -5691,6 +5712,9 @@ bool Compiler :: declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope,
          else if (node == lxExpression) {
             declareLocalAttribute(writer, current, *((CodeScope*)scope), object, node);
          }
+         else if (node == lxClass) {
+            declareClassAttribute(writer, current, *((ClassScope*)scope), node);
+         }
       }
       else if (current == lxClassMethod) {
          withMethods = true;
@@ -5804,24 +5828,24 @@ void Compiler :: compileClassDeclaration(SyntaxWriter& writer, SNode node, Class
 
    generateClassDeclaration(writer, scope);
 
-//   // if it cannot be initiated
-//   if (_logic->isRole(scope.info)) {
-//      // class is its own class class
-//      scope.info.header.classRef = scope.reference;
-//   }
-//   else {
+   // if it cannot be initiated
+   if (_logic->isRole(scope.info)) {
+      // class is its own class class
+      scope.info.header.classRef = scope.reference;
+   }
+   else {
       // define class class name
       IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
       classClassName.append(CLASSCLASS_POSTFIX);
 
       scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
+   }
+
+//   // if it is a super class validate it
+//   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
+//      if (!scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID)))
+//         scope.raiseError(errNoDispatcher, node.findChild(lxIdentifier, lxPrivate));
 //   }
-//
-////   // if it is a super class validate it
-////   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
-////      if (!scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID)))
-////         scope.raiseError(errNoDispatcher, node.findChild(lxIdentifier, lxPrivate));
-////   }
 
    // save declaration
    scope.save();
@@ -5834,9 +5858,9 @@ void Compiler :: compileClassDeclaration(SyntaxWriter& writer, SNode node, Class
 
 void Compiler :: generateClassImplementation(SNode node, ModuleScope& scope)
 {
-//   WarningScope warningScope(scope.moduleScope->warningMask);
-//
-//   optimizeClassTree(node, scope, warningScope);
+   WarningScope warningScope(scope.warningMask);
+
+   optimizeClassTree(node, scope, warningScope);
 
    CommandTape tape;
    _writer.generateClass(tape, node);
@@ -6520,25 +6544,6 @@ void Compiler :: compileSymbolImplementation(SNode node, ModuleScope& scope)
 ////         boxing = false;
 ////      }
 ////
-////      // if no boxing hint provided
-////      // then boxing should be skipped
-////      if (!boxing) {
-////         _logic->optimizeEmbeddableBoxing(scope, *this, node, target.argument, test(mode, HINT_ASSIGNING));
-////      }
-////      else {
-////         if (node == lxUnboxing && test(mode, HINT_NOUNBOXING)) {
-////            node = lxBoxing;
-////         }
-////         else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {
-////            node = lxBoxing;
-////         }
-////
-////         // HOTFIX : replace virtual class with generic one
-////         if (_logic->isPrimitiveRef(target.argument))
-////            target.setArgument(_logic->resolvePrimitiveReference(scope, target.argument));
-////
-////         warningScope.raise(scope, WARNING_LEVEL_3, wrnBoxingCheck, node);
-////      }
 ////   }
 ////}
 ////
@@ -6686,45 +6691,196 @@ void Compiler :: compileSymbolImplementation(SNode node, ModuleScope& scope)
 ////      current = current.nextNode();
 ////   }
 ////}
-////
-////void Compiler :: optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == lxClassMethod) {
-////         SNode mask = current.findChild(lxWarningMask);
-////         if (mask != lxNone)
-////            warningScope.warningMask = mask.argument;
-////
-////         optimizeSyntaxExpression(*scope.moduleScope, current, warningScope);
-////
-////         // HOTFIX : analize nested template methods
-////         optimizeClassTree(current, scope, warningScope);
-////
-////         if (test(_optFlag, 1)) {
-////            if (test(scope.info.methodHints.get(Attribute(current.argument, maHint)), tpEmbeddable)) {
-////               defineEmbeddableAttributes(scope, current);
-////            }
-////         }
-////      }
-////      else if (current == lxIdle) {
-////         // HOTFIX : analize nested template methods
-////         optimizeClassTree(current, scope, warningScope);
-////      }
-////      else if (current == lxTemplate) {
-////         WarningScope templateWarningScope;
-////         templateWarningScope.warningMask = warningScope.warningMask;
-////         templateWarningScope.col = current.findChild(lxCol).argument;
-////         templateWarningScope.row = current.findChild(lxRow).argument;
-////
-////         // HOTFIX : analize nested template methods
-////         optimizeClassTree(current, scope, templateWarningScope);
-////      }
-////
-////      current = current.nextNode();
-////   }
-////}
-////
+
+inline void setAttribute(SNode node, LexicalType argType, int argParameter)
+{
+   SNode attr = node.findChild(argType);
+   if (attr == argType) {
+      attr.setArgument(argParameter);
+   }
+   else node.appendNode(argType, argParameter);
+}
+
+ref_t Compiler :: optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
+{
+   ref_t targetRef = 0;
+   ref_t resultRef = 0;
+   bool firstOp = true;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (firstOp) {
+            targetRef = optimizeExpression(current, scope, warningScope);
+
+            firstOp = false;
+         }
+         else optimizeExpression(current, scope, warningScope);
+      }
+      current = current.nextNode();
+   }
+
+   SNode overridden = node.findChild(lxOverridden);
+   if (overridden != lxNone) {
+      targetRef = optimizeExpression(overridden, scope, warningScope);
+   }
+
+   if (targetRef != 0) {
+      // try to recognize the operation
+      //   bool dispatchCall = false;
+      _CompilerLogic::ChechMethodInfo result;
+      int callType = _logic->resolveCallType(scope, targetRef, node.argument, result);
+      resultRef = result.outputReference;
+
+      // if it is typecasting message to itself
+      if (targetRef == resultRef && getVerb(node.argument) == GET_MESSAGE_ID && getParamCount(node.argument) == 0
+         && scope.subjectHints.get(getSignature(node.argument)) == targetRef)
+      {
+         node = lxExpression;
+      }
+      else {
+         //   if (dispatchCall) {
+         //      node.set(lxDirectCalling, encodeVerb(DISPATCH_MESSAGE_ID));
+         //
+         //      node.appendNode(lxOvreriddenMessage, messageRef);
+         //   }
+         /*else */if (callType == tpClosed || callType == tpSealed) {
+            node = callType == tpClosed ? lxSDirctCalling : lxDirectCalling;
+
+            setAttribute(node, lxCallTarget, targetRef);
+            //      if (test(methodHint, tpStackSafe))
+            //         scope.writer->appendNode(lxStacksafe);
+         }
+         //   else {
+         //      // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
+         //      if (result.found && !result.withCustomDispatcher && callType == tpUnknown)
+         //         node.appendNode(lxNotFoundAttr);
+         //   }
+      }
+   }
+
+   return resultRef;
+}
+
+ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope)
+{
+   ref_t targetRef = node.findChild(lxTarget).argument;
+
+   ref_t sourceRef = optimizeExpression(node.firstChild(lxObjectMask), scope, warningScope);
+
+   //      // if no boxing hint provided
+   //      // then boxing should be skipped
+   //      if (!boxing) {
+      if (!_logic->optimizeBoxing(scope, *this, node, targetRef, sourceRef/*, test(mode, HINT_ASSIGNING)*/))
+         throw new InternalError("Broken boxing");
+   //      }
+   //      else {
+   //         if (node == lxUnboxing && test(mode, HINT_NOUNBOXING)) {
+   //            node = lxBoxing;
+   //         }
+   //         else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {
+   //            node = lxBoxing;
+   //         }
+   //
+   //         // HOTFIX : replace virtual class with generic one
+   //         if (_logic->isPrimitiveRef(target.argument))
+   //            target.setArgument(_logic->resolvePrimitiveReference(scope, target.argument));
+   //
+   //         warningScope.raise(scope, WARNING_LEVEL_3, wrnBoxingCheck, node);
+   //      }
+
+   return targetRef; 
+}
+
+ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningScope& warningScope)
+{
+   switch (current.type) {
+      case lxCalling:
+         return optimizeMessageCall(current, scope, warningScope);
+      case lxExpression:
+         return optimizeExpression(current, scope, warningScope);
+      case lxBoxing:
+         return optimizeBoxing(current, scope, warningScope);
+      default:
+         return current.findChild(lxTarget).argument;
+   }
+}
+
+void Compiler :: optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         optimizeExpression(current, scope, warningScope);
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: optimizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxReturning:
+            optimizeExpressionTree(current, scope, warningScope);
+            break;
+      }
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: optimizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxNewFrame) {
+         optimizeCode(current, scope, warningScope);
+      }
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: optimizeClassTree(SNode node, ModuleScope& scope, WarningScope& warningScope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+//         SNode mask = current.findChild(lxWarningMask);
+//         if (mask != lxNone)
+//            warningScope.warningMask = mask.argument;
+//
+//         optimizeSyntaxExpression(*scope.moduleScope, current, warningScope);
+         optimizeMethod(current, scope, warningScope);
+//
+//         // HOTFIX : analize nested template methods
+//         optimizeClassTree(current, scope, warningScope);
+//
+//         if (test(_optFlag, 1)) {
+//            if (test(scope.info.methodHints.get(Attribute(current.argument, maHint)), tpEmbeddable)) {
+//               defineEmbeddableAttributes(scope, current);
+//            }
+//         }
+//      }
+//      else if (current == lxIdle) {
+//         // HOTFIX : analize nested template methods
+//         optimizeClassTree(current, scope, warningScope);
+//      }
+//      else if (current == lxTemplate) {
+//         WarningScope templateWarningScope;
+//         templateWarningScope.warningMask = warningScope.warningMask;
+//         templateWarningScope.col = current.findChild(lxCol).argument;
+//         templateWarningScope.row = current.findChild(lxRow).argument;
+//
+//         // HOTFIX : analize nested template methods
+//         optimizeClassTree(current, scope, templateWarningScope);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 ////void Compiler :: optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask)
 ////{
 ////   WarningScope warningScope(warningMask);
