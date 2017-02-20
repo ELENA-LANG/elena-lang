@@ -25,7 +25,7 @@
 //#template(-8203,subject) extension : subject {}
 
 #template(-4097)__ifoperator {}
-#template(-4097)__ifnotoperator {}
+#template(-4098)__ifnotoperator {}
 
 ///// Provides classes that describe the basic functionality
 

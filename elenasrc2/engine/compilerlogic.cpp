@@ -312,78 +312,78 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
 //
 //   return 0;
 //}
-//
-//bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
-//{
-//   if (scope.branchingInfo.trueRef == reference || scope.branchingInfo.falseRef == reference)
-//      return true;
-//
-//   ClassInfo info;
-//   scope.loadClassInfo(info, reference, true);
-//
-//   if ((info.header.flags & elDebugMask) == elEnumList) {
-//      _Module* extModule = NULL;
-//      _Memory* listSection = NULL;
-//
-//      while (true) {
-//         extModule = scope.loadReferenceModule(reference);
-//         listSection = extModule ? extModule->mapSection(reference | mskConstArray, true) : NULL;
-//
-//         if (listSection == NULL && info.header.parentRef != 0) {
-//            reference = info.header.parentRef;
-//
-//            scope.loadClassInfo(info, reference, true);
-//         }
-//         else break;
-//      }
-//
-//      if (listSection) {
-//         MemoryReader reader(listSection);
-//
-//         ref_t trueRef = 0, falseRef = 0;
-//         while (!reader.Eof()) {
-//            ref_t memberRef = compiler.readEnumListMember(scope, extModule, reader);
-//
-//            ClassInfo memberInfo;
-//            scope.loadClassInfo(memberInfo, memberRef);
-//            int attribute = checkMethod(memberInfo, encodeMessage(0, IF_MESSAGE_ID, 1));
-//            if (attribute == (tpIfBranch | tpSealed)) {
-//               trueRef = memberRef;
-//            }
-//            else if (attribute == (tpIfNotBranch | tpSealed)) {
-//               falseRef = memberRef;
-//            }
-//         }
-//
-//         if (trueRef && falseRef) {
-//            scope.branchingInfo.reference = reference;
-//            scope.branchingInfo.trueRef = trueRef;
-//            scope.branchingInfo.falseRef = falseRef;
-//
-//            return true;
-//         }
-//      }
-//   }
-//
-//   return false;
-//}
-//
-//bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference)
-//{
-//   if (!loperand)
-//      return false;
-//
-//   if (loperand != scope.branchingInfo.reference) {
-//      if (!loadBranchingInfo(scope, compiler, loperand))
-//         return false;
-//   }
-//
-//   reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
-//
-//   return true;
-//
-//}
-//
+
+bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
+{
+   if (scope.branchingInfo.trueRef == reference || scope.branchingInfo.falseRef == reference)
+      return true;
+
+   ClassInfo info;
+   scope.loadClassInfo(info, reference, true);
+
+   if ((info.header.flags & elDebugMask) == elEnumList) {
+      _Module* extModule = NULL;
+      _Memory* listSection = NULL;
+
+      while (true) {
+         extModule = scope.loadReferenceModule(reference);
+         listSection = extModule ? extModule->mapSection(reference | mskConstArray, true) : NULL;
+
+         if (listSection == NULL && info.header.parentRef != 0) {
+            reference = info.header.parentRef;
+
+            scope.loadClassInfo(info, reference, true);
+         }
+         else break;
+      }
+
+      if (listSection) {
+         MemoryReader reader(listSection);
+
+         ref_t trueRef = 0, falseRef = 0;
+         while (!reader.Eof()) {
+            ref_t memberRef = compiler.readEnumListMember(scope, extModule, reader);
+
+            ClassInfo memberInfo;
+            scope.loadClassInfo(memberInfo, memberRef);
+            int attribute = checkMethod(memberInfo, encodeMessage(0, IF_MESSAGE_ID, 1));
+            if (attribute == (tpIfBranch | tpSealed)) {
+               trueRef = memberRef;
+            }
+            else if (attribute == (tpIfNotBranch | tpSealed)) {
+               falseRef = memberRef;
+            }
+         }
+
+         if (trueRef && falseRef) {
+            scope.branchingInfo.reference = reference;
+            scope.branchingInfo.trueRef = trueRef;
+            scope.branchingInfo.falseRef = falseRef;
+
+            return true;
+         }
+      }
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference)
+{
+   if (!loperand)
+      return false;
+
+   if (loperand != scope.branchingInfo.reference) {
+      if (!loadBranchingInfo(scope, compiler, loperand))
+         return false;
+   }
+
+   reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
+
+   return true;
+
+}
+
 //int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
 //{
 //   if (isCompatible(scope, V_INT32, roperand)) {
@@ -492,10 +492,10 @@ void CompilerLogic :: injectVirtualCode(SyntaxWriter& writer, _CompilerScope& sc
 {
 //   SNode templateNode = node.appendNode(lxTemplate);
 
-//   // generate enumeration list
-//   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
-//      compiler.generateEnumListMember(scope, info.header.parentRef, node.argument);
-//   }
+   // generate enumeration list
+   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
+      compiler.generateEnumListMember(scope, info.header.parentRef, classRef);
+   }
 }
 
 //void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t type)
@@ -1439,7 +1439,7 @@ bool CompilerLogic :: optimizeBoxing(_CompilerScope& scope, _Compiler& compiler,
 {
    SNode exprNode = node.findSubNodeMask(lxObjectMask);   
 
-   if (targetRef == sourceRef) {
+   if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
       //if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
       //}
       /*else */node = lxExpression;
@@ -1448,6 +1448,7 @@ bool CompilerLogic :: optimizeBoxing(_CompilerScope& scope, _Compiler& compiler,
       // NIL reference is never boxed
       node = lxExpression;
    }
+   else return false;
 
 //   bool localBoxing = false;
 //   bool variable = false;

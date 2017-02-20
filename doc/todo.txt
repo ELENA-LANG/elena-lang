@@ -60,6 +60,8 @@ In development:
                  * test boxObject
                  * ret rid of maType hint
                  * optimization bcopya quit => quit
+                 * declareBranchingOperator : try to limit number of times when sub code duplicates are created
+                   (probably all comparision operators are always return bool value)
 
               xdev - generic development
                  * support property template

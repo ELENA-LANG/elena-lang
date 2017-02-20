@@ -153,25 +153,25 @@ true = BaseBoolValue
 /// A false value symbol
 false = BaseBoolValue
 {
-//    /// Always returns nil
-//    #method(-4098) if : anAction = $nil.
-//    
-//    /// Executes else-action
-//    #method if : aTrueAction : aFalseAction = aFalseAction eval.
-//
-//    /// Executes the action
-//    #method(-4097) ifnot : aFalseAction = aFalseAction eval.
-//
-//    #method iif:aTrueValue:aFalseValue = aFalseValue.
-//
-//    /// Executes logical OR operation
-//    #method or : anExpr = anExpr bool.
-//
-//    /// Executes logical AND operation
-//    ///
-//    /// Always return false
-//    #method and : anExpr = $self.
-//
+    /// Always returns nil
+    __ifnotoperator if : anAction = $nil.
+    
+    /// Executes else-action
+    if : aTrueAction : aFalseAction = aFalseAction eval.
+
+    /// Executes the action
+    __ifoperator ifnot : aFalseAction = aFalseAction eval.
+
+    iif:aTrueValue:aFalseValue = aFalseValue.
+
+    /// Executes logical OR operation
+    or : anExpr = anExpr bool.
+
+    /// Executes logical AND operation
+    ///
+    /// Always return false
+    and : anExpr = $self.
+
 //    /// Executes logical XOR operation
 //    #method xor : anExpr 
 //    [

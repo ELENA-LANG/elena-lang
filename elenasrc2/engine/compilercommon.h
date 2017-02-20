@@ -93,18 +93,18 @@ enum MethodHint
 
 struct _CompilerScope
 {
-//   struct BranchingInfo
-//   {
-//      ref_t reference;
-//      ref_t trueRef;
-//      ref_t falseRef;
-//
-//      BranchingInfo()
-//      {
-//         reference = 0;
-//         trueRef = falseRef = 0;
-//      }
-//   };
+   struct BranchingInfo
+   {
+      ref_t reference;
+      ref_t trueRef;
+      ref_t falseRef;
+
+      BranchingInfo()
+      {
+         reference = 0;
+         trueRef = falseRef = 0;
+      }
+   };
 
    _Module* module;
 
@@ -126,11 +126,11 @@ struct _CompilerScope
    // list of typified classes which may need get&type message
    SubjectMap  subjectHints;
 
-//   // cached bool values
-//   BranchingInfo branchingInfo;
+   // cached bool values
+   BranchingInfo branchingInfo;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-//   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
+   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
    _CompilerScope()
    {
@@ -158,10 +158,10 @@ public:
 //
 //   virtual void injectLocalBoxing(SNode node, int size) = 0;
 //   //virtual int injectTempLocal(SNode node) = 0;
-//
-//   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
-//
-//   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
+
+   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
+
+   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };
 
 // --- _CompilerLogic ---
@@ -199,9 +199,9 @@ public:
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
-//
-//   // retrieve the branching operation type
-//   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
+
+   // retrieve the branching operation type
+   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;

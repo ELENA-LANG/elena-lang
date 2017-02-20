@@ -93,7 +93,7 @@ enum LexicalType
    lxNil             = 0x0A117,
    lxCurrent         = 0x0A118, // arg -offset
    lxResult          = 0x0A119, // arg -offset
-//   lxResultField     = 0x0A11A, // arg -offset
+   lxResultField     = 0x0A11A, // arg -offset
    lxCurrentMessage  = 0x0A11B,
    lxThisLocal       = 0x0A11C,
 //   lxConstantList    = 0x0A11E, // arg - reference
@@ -112,7 +112,7 @@ enum LexicalType
 //   lxTrying          = 0x0C00C,   // try-catch expression
 //   lxAlt             = 0x0C00D,   // alt-catch expression
 //   lxLocking         = 0x0C00E,   // branch expression
-//   lxBranching       = 0x0C00F,   // branch expression
+   lxBranching       = 0x0C00F,   // branch expression
 //   lxSwitching       = 0x0C010,
 //   lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,
@@ -122,10 +122,10 @@ enum LexicalType
 //   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
 //   lxAltExpression   = 0x0C018,
-//   lxIfNot           = 0x0C019,   // optional arg - reference
+   lxIfNot           = 0x0C019,   // optional arg - reference
 //   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
-//   lxIf              = 0x0C01F,   // optional arg - reference
-//   lxElse            = 0x0C020,   // optional arg - reference
+   lxIf              = 0x0C01F,   // optional arg - reference
+   lxElse            = 0x0C020,   // optional arg - reference
 //   lxOption          = 0x0C021,
 //   lxFieldExpression = 0x0C022,
 //   lxExternFrame     = 0x04023,
@@ -151,15 +151,15 @@ enum LexicalType
    lxOverridden      = 0x04047,
 
 //   lxBaseParent      = 0x10023,
-//   lxOperator        = 0x10025,
+   lxOperator        = 0x10025,
    lxIntVariable     = 0x10028,
    lxLongVariable    = 0x10029,
    lxReal64Variable  = 0x1002A,
    lxForward         = 0x1002E,
    lxVariable        = 0x10037,
 //   lxBinaryVariable  = 0x10038,
-//   lxMember          = 0x10039,  // a collection member, arg - offset
-//   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
+   lxMember          = 0x10039,  // a collection member, arg - offset
+   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
    lxIntsVariable    = 0x1003B,
    lxBytesVariable   = 0x1003C,
    lxShortsVariable  = 0x1003D,
@@ -768,14 +768,14 @@ public:
          return current;
       }
 
-//      bool existChild(LexicalType type)
-//      {
-//         return findChild(type) == type;
-//      }
-//      bool existChild(LexicalType type1, LexicalType type2)
-//      {
-//         return findChild(type1, type2) != lxNone;
-//      }
+      bool existChild(LexicalType type)
+      {
+         return findChild(type) == type;
+      }
+      bool existChild(LexicalType type1, LexicalType type2)
+      {
+         return findChild(type1, type2) != lxNone;
+      }
 
       Node()
       {

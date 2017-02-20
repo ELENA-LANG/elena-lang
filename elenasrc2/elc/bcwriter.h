@@ -127,9 +127,9 @@ class ByteCodeWriter
 //   void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
-//   void declareThenBlock(CommandTape& tape);
-//   void declareThenElseBlock(CommandTape& tape);
-//   void declareElseBlock(CommandTape& tape);
+   void declareThenBlock(CommandTape& tape);
+   void declareThenElseBlock(CommandTape& tape);
+   void declareElseBlock(CommandTape& tape);
 //   void declareSwitchBlock(CommandTape& tape);
 //   void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
@@ -163,12 +163,12 @@ class ByteCodeWriter
 
    void popObject(CommandTape& tape, LexicalType sourceTypeS);
 
-//   void copyBase(CommandTape& tape, int size);
+   void copyBase(CommandTape& tape, int size);
    void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
+   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
 //
@@ -209,7 +209,7 @@ class ByteCodeWriter
 
    void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
-//   void endThenBlock(CommandTape& tape);
+   void endThenBlock(CommandTape& tape);
 //   void endLoop(CommandTape& tape);
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape, bool idle = false);
@@ -258,7 +258,7 @@ class ByteCodeWriter
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
-//   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
+   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
@@ -284,7 +284,7 @@ class ByteCodeWriter
 //   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
 //   void generateLooping(CommandTape& tape, SyntaxTree::Node node);
-//   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
+   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);

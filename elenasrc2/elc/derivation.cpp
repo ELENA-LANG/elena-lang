@@ -179,12 +179,12 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //      case nsL4Operation:
 //      case nsL5Operation:
 //      case nsL6Operation:
-//      case nsL7Operation:
+      case nsL7Operation:
 //      case nsNewOperator:
-//         copyMessage(node, true);
-//         _writer.insert(lxExpression);
-//         _writer.closeNode();
-//         break;
+         copyMessage(node, true);
+         _writer.insert(lxExpression);
+         _writer.closeNode();
+         break;
       case nsObject:
          copyObject(node, mode);
          break;
@@ -339,22 +339,22 @@ void DerivationWriter :: copyMessage(SNode node, bool operationMode)
                break;
             }
          default:
-            //if (operationMode && current.existChild(lxTerminal)) {
-            //   if ((Symbol)node.type == nsNewOperator) {
-            //      //HOTFIX : mark new operator
-            //      _writer.appendNode(lxOperator, -1);
-            //      if (symbol == tsInteger || symbol == tsIdentifier) {
-            //         unpackNode(current, 0);
-            //      }
-            //   }
-            //   else {
-            //      _writer.newNode(lxOperator);
-            //      copyChildren(current);
-            //      _writer.closeNode();
-            //   }
+            if (operationMode && current.existChild(lxTerminal)) {
+               //if ((Symbol)node.type == nsNewOperator) {
+               //   //HOTFIX : mark new operator
+               //   _writer.appendNode(lxOperator, -1);
+               //   if (symbol == tsInteger || symbol == tsIdentifier) {
+               //      unpackNode(current, 0);
+               //   }
+               //}
+               //else {
+                  _writer.newNode(lxOperator);
+                  copyChildren(current);
+                  _writer.closeNode();
+               //}
 
-            //   _writer.newBookmark();               
-            //}
+               _writer.newBookmark();               
+            }
             break;
       }
       current = current.nextNode();
