@@ -184,7 +184,7 @@ enum LexicalType
    lxMessage         = 0x2000F, // arg - message
    lxAssign          = 0x20010,
    lxLevel           = 0x20011,
-//   lxType            = 0x20012, // arg - subject
+   lxType            = 0x20012, // arg - subject
    lxCallTarget      = 0x20013, // arg - reference
 //   lxClassName       = 0x20014, // arg - identifier
 //   lxIntValue        = 0x20015, // arg - integer value

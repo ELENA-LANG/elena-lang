@@ -100,7 +100,7 @@
 // --- true ---
 
 /// A true value symbol
-true = BaseBoolValue
+const true = BaseBoolValue
 {
     /// Executes the action
     __ifoperator if : aTrueAction = aTrueAction eval.
@@ -121,23 +121,23 @@ true = BaseBoolValue
     /// Executes logical AND operation
     and : anExpr = anExpr bool.
 
-//    /// Executes logical XOR operation
-//    xor : aBool
-//    [
-//        aBool ? [ ^ false. ].
-//        
-//        ^ $self.
-//    ]
+    /// Executes logical XOR operation
+    xor : aBool
+    [
+        aBool bool ? [ ^ false. ].
+        
+        ^ $self.
+    ]
 
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    #method equal : anExpr = anExpr bool.
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    #method equal &bool:aBool = aBool.
-//
-//    /// Always returns false.
-//    #method inverted = false.
-//
+    /// Determines whether the specified object is equal to the current object boolean value.
+    equal : anExpr = anExpr bool.
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    equal &bool:aBool = aBool.
+
+    /// Always returns false.
+    inverted = false.
+
 //    /// Returns literal representation.
 //    #method literal = "true".
 //
@@ -151,7 +151,7 @@ true = BaseBoolValue
 // --- false ---
 
 /// A false value symbol
-false = BaseBoolValue
+const false = BaseBoolValue
 {
     /// Always returns nil
     __ifnotoperator if : anAction = $nil.
@@ -172,31 +172,31 @@ false = BaseBoolValue
     /// Always return false
     and : anExpr = $self.
 
-//    /// Executes logical XOR operation
-//    #method xor : anExpr 
-//    [
-//        anExpr ? [ ^ true. ].
-//        
-//        ^ $self.
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    #method equal : anExpr
-//    [
-//        anExpr bool ? [ ^ $self. ].
-//        
-//        ^ true.
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    #method equal &bool:anExpr
-//    [
-//        ^ anExpr not.
-//    ]
-//
-//    /// Always returns true
-//    #method inverted = true.
-//
+    /// Executes logical XOR operation
+    xor : anExpr 
+    [
+        anExpr bool ? [ ^ true. ].
+        
+        ^ $self.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    equal : anExpr
+    [
+        anExpr bool ? [ ^ $self. ].
+        
+        ^ true.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    equal &bool:anExpr
+    [
+        ^ anExpr inverted.
+    ]
+
+    /// Always returns true
+    inverted = true.
+
 //    /// Returns literal representation
 //    #method literal = "false".
 //    

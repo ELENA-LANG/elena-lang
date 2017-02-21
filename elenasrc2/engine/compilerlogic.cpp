@@ -231,9 +231,8 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
    result.found = defineClassInfo(scope, info, reference);
 
    if (result.found) {
-      // only sealed / closed classes should be considered as found
       if (!test(info.header.flags, elClosed))
-         result.found = false;
+         result.closed = false;
 
       if (test(info.header.flags, elWithCustomDispatcher))
          result.withCustomDispatcher = true;
@@ -437,8 +436,8 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
 
          // if it is a structure wrapper
          if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
-            ref_t classRef = info.fieldTypes.get(0);
-            if (isCompatible(scope, targetRef, classRef))
+            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+            if (isCompatible(scope, targetRef, inner.value1))
                return true;
          }
 
@@ -1000,21 +999,21 @@ bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 //   else return false;
 }
 
-//bool CompilerLogic :: validateSymbolAttribute(int& attrValue)
-//{
-//   if (attrValue == (int)V_CONST) {
-//      attrValue = lxConstAttr;
-//
-//      return true;
-//   }
+bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant)
+{
+   if (attrValue == (int)V_CONST) {
+      constant = true;
+
+      return true;
+   }
 //   else if (attrValue == (int)V_PRELOADED) {
 //      attrValue = lxPreloadedAttr;
 //
 //      return true;
 //   }
-//   else return false;
-//}
-//
+   else return false;
+}
+
 //bool CompilerLogic :: validateWarningAttribute(int& attrValue)
 //{
 //   switch ((size_t)attrValue)

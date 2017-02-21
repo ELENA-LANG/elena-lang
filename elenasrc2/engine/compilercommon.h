@@ -53,7 +53,7 @@
 #define V_ENUMLIST    (ref_t)-8198
 //#define V_DYNAMIC     (ref_t)-8199
 //#define V_STRING      (ref_t)-8200
-//#define V_CONST       (ref_t)-8201
+#define V_CONST       (ref_t)-8201
 //#define V_GENERIC     (ref_t)-8202
 //#define V_EXTENSION   (ref_t)-8203
 //#define V_NOSTRUCT    (ref_t)-8204
@@ -173,11 +173,12 @@ public:
    {
       bool  found;
       bool  withCustomDispatcher;
+      bool  closed;
       ref_t outputReference;
 
       ChechMethodInfo()
       {
-         found = false;
+         closed = found = false;
          outputReference = 0;
          withCustomDispatcher = false;
       }
@@ -241,7 +242,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
-//   virtual bool validateSymbolAttribute(int& attrValue) = 0;
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant) = 0;
 //   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
 

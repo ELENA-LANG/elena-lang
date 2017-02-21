@@ -66,34 +66,34 @@ public:
    {
       int    offset;
       ref_t  class_ref;
-//      ref_t  subj_ref;
+      ref_t  subj_ref;
 //      int    size;
 
       Parameter()
       {
          offset = -1;
-//         subj_ref = 0;
+         subj_ref = 0;
          class_ref = 0;
 //         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
-//         this->subj_ref = 0;
+         this->subj_ref = 0;
          this->class_ref = 0;
 //         this->size = 0;
       }
-//      Parameter(int offset, ref_t subj_ref)
-//      {
-//         this->offset = offset;
-//         this->subj_ref = subj_ref;
-//         this->class_ref = 0;
-//         this->size = 0;
-//      }
-      Parameter(int offset, /*ref_t subj_ref, */ref_t class_ref)
+      Parameter(int offset, ref_t subj_ref)
       {
          this->offset = offset;
-         //this->subj_ref = subj_ref;
+         this->subj_ref = subj_ref;
+         this->class_ref = 0;
+         //this->size = 0;
+      }
+      Parameter(int offset, ref_t subj_ref, ref_t class_ref)
+      {
+         this->offset = offset;
+         this->subj_ref = subj_ref;
          this->class_ref = class_ref;
          //this->size = 0;
       }
@@ -162,70 +162,70 @@ public:
       ObjectKind kind;
       ref_t      param;
       ref_t      extraparam;
-      ref_t      target;
+      ref_t      type;
 
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
          this->extraparam = 0;
-         this->target = 0;
+         this->type = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
          this->extraparam = 0;
-         this->target = 0;
+         this->type = 0;
       }
       ObjectInfo(ObjectKind kind, ObjectInfo copy)
       {
          this->kind = kind;
          this->param = copy.param;
          this->extraparam = copy.extraparam;
-         this->target = copy.target;
+         this->type = copy.type;
       }
       ObjectInfo(ObjectKind kind, ref_t param)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = 0;
-         this->target = 0;
+         this->type = 0;
       }
       ObjectInfo(ObjectKind kind, int param)
       {
          this->kind = kind;
          this->param = (ref_t)param;
          this->extraparam = 0;
-         this->target = 0;
+         this->type = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = extraparam;
-         this->target = 0;
+         this->type = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = (ref_t)extraparam;
-         this->target = 0;
+         this->type = 0;
       }
-      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t target)
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = extraparam;
-         this->target = target;
+         this->type = type;
       }
-      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t target)
+      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t type)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = (ref_t)extraparam;
-         this->target = target;
+         this->type = type;
       }
    };
 
@@ -523,7 +523,7 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-//      bool  constant;
+      bool  constant;
 //      bool  preloaded;
 //      ref_t typeRef;
 
@@ -548,6 +548,7 @@ private:
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
+      ref_t        resultType;
       ref_t        resultRef;
 //      bool         withOpenArg;
 //      bool         stackSafe;
@@ -569,6 +570,13 @@ private:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
          return scope->info.methodHints.get(ClassInfo::Attribute(message, maReference));
+      }
+
+      ref_t getReturningType(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope->info.methodHints.get(ClassInfo::Attribute(message, maType));
       }
 
 //      ref_t getClassFlags(bool ownerClass = true)
@@ -621,9 +629,9 @@ private:
 //      {
 //         locals.add(local, Parameter(level/*, type*/));
 //      }
-      void mapLocal(ident_t local, int level/*, ref_t type*/, ref_t class_ref/*, int size*/)
+      void mapLocal(ident_t local, int level, ref_t type, ref_t class_ref/*, int size*/)
       {
-         locals.add(local, Parameter(level/*, type*/, class_ref/*, size*/));
+         locals.add(local, Parameter(level, type, class_ref/*, size*/));
       }
 
 //      void freeSpace()
@@ -902,6 +910,7 @@ private:
 //      return _logic->checkMethod(scope, reference, message, dummy);
 //   }
 
+   ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
@@ -931,12 +940,14 @@ private:
 //   {
 //      compileSymbolAttributes(node, scope, node);
 //   }
+   void declareSymbolAttribute(SyntaxWriter& writer, SNode hints, SymbolScope& scope, SNode rootNode);
+   void declareSymbolAttributes(SyntaxWriter& writer, SNode node, SymbolScope& scope);
    void declareClassAttribute(SyntaxWriter& writer, SNode node, ClassScope& scope, SNode rootNode);
    void declareClassAttributes(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/, SNode rootNode);
    void declareLocalAttributes(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
-   void declareFieldAttribute(SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldRef);
-   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef);
+   void declareFieldAttribute(SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef);
    //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
    void declareVMT(SyntaxWriter& writer, SNode member, ClassScope& scope);
    void declareClassVMT(SyntaxWriter& writer, SNode member, ClassScope& classClassScope, ClassScope& classScope);
@@ -1045,7 +1056,7 @@ private:
 //
 //   ref_t generateTemplate(TemplateScope& scope);
 
-   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, bool singleField*/);
+   void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef/*, bool singleField*/);
 ////   void generateClassStaticField(ClassScope& scope, SNode current);
 ////
 ////   void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
@@ -1080,7 +1091,7 @@ private:
 //   bool validate(_ProjectManager& project, _Module* module, int reference);
 
    bool typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t subjectRef);
-   bool boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t targetRef);
+   bool boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t targetType, ref_t targetRef);
 
 //   ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
 
@@ -1099,6 +1110,7 @@ private:
 ////   void optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope);
 ////   void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
 ////   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
+   ref_t optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope);

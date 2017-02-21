@@ -372,6 +372,7 @@ Pipeline:
                        * sealed private method containing only strong type should not be allowed (it could be automatically called on
                          assigning)
                        * primitive array of objec should not be allowed
+                       * refactor branching operator implementation
                        
              xdev - linux
                        * support compiling the project without -c option
