@@ -47,7 +47,7 @@ enum LexicalType
    lxExtension       = 0x0002B,
 //   lxLoop            = 0x00030,
 //   lxInlineExpression= 0x00032,
-//   lxMessageReference= 0x00033,
+   lxMessageReference= 0x00033,
 //   lxLock            = 0x00037,
 //   lxExtern          = 0x00039,
 //   lxDefaultGeneric  = 0x00046,
@@ -70,7 +70,7 @@ enum LexicalType
 
    lxImporting       = 0x08101,
    lxNested          = 0x08102, // arg - count
-//   lxStruct          = 0x08103, // arg - count
+   lxStruct          = 0x08103, // arg - count
    lxConstantSymbol  = 0x0A104, // arg - reference
    lxField           = 0x08105, // arg - offset
 //   lxStaticField     = 0x08106, // arg - reference
@@ -86,10 +86,10 @@ enum LexicalType
 //   lxConstantLong    = 0x1A110, // arg - reference
 //   lxConstantReal    = 0x1A111, // arg - reference
    lxConstantClass   = 0x0A112, // arg - reference
-//   lxMessageConstant = 0x0A113, // arg - rererence
-//   lxExtMessageConstant = 0x0A114, // arg -reference
-//   lxSignatureConstant  = 0x0A115, // arg - reference
-//   lxVerbConstant    = 0x0A116, // arg - reference
+   lxMessageConstant = 0x0A113, // arg - rererence
+   lxExtMessageConstant = 0x0A114, // arg -reference
+   lxSignatureConstant  = 0x0A115, // arg - reference
+   lxVerbConstant    = 0x0A116, // arg - reference
    lxNil             = 0x0A117,
    lxCurrent         = 0x0A118, // arg -offset
    lxResult          = 0x0A119, // arg -offset

@@ -19,8 +19,8 @@ procedure __object.dispatch[1]
   bcopys  -2
   pushb
   pusha
-//  pushr class : system'MethodNotFoundException
-//  pushr const : %new&object&mssg$[2]
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&object&mssg$[2]
   throw
 
 end

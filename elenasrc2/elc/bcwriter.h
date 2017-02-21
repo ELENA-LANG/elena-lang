@@ -294,7 +294,7 @@ class ByteCodeWriter
 //   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
 //   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);

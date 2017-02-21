@@ -131,10 +131,10 @@ public:
 //      okIntConstant,                  // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference
 //      okRealConstant,                 // param - reference
-//      okMessageConstant,              // param - reference
-//      okExtMessageConstant,           // param - reference
-//      okSignatureConstant,            // param - reference
-//      okVerbConstant,                 // param - reference
+      okMessageConstant,              // param - reference
+      okExtMessageConstant,           // param - reference
+      okSignatureConstant,            // param - reference
+      okVerbConstant,                 // param - reference
 //      okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
 //      okStaticField,                  // param - reference
@@ -933,7 +933,7 @@ private:
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
-   void compileFieldDeclarations(SNode member, ClassScope& scope);
+   void compileFieldDeclarations(SyntaxWriter& writer, SNode member, ClassScope& scope);
 
 //   void compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode);
 //   void compileSymbolAttributes(SNode node, SymbolScope& scope)
@@ -946,8 +946,8 @@ private:
    void declareClassAttributes(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/, SNode rootNode);
    void declareLocalAttributes(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
-   void declareFieldAttribute(SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef);
-   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef);
+   void declareFieldAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef, int& size);
+   void declareFieldAttributes(SyntaxWriter& writer, SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size);
    //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
    void declareVMT(SyntaxWriter& writer, SNode member, ClassScope& scope);
    void declareClassVMT(SyntaxWriter& writer, SNode member, ClassScope& classClassScope, ClassScope& classScope);
@@ -969,8 +969,8 @@ private:
    ObjectInfo declareClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope, ref_t vmtReference);
-//
-//   ObjectInfo compileMessageReference(SNode objectNode, CodeScope& scope, int mode);
+
+   ObjectInfo declareMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
@@ -1056,7 +1056,7 @@ private:
 //
 //   ref_t generateTemplate(TemplateScope& scope);
 
-   void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef/*, bool singleField*/);
+   void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef, int sizeHint/*, bool singleField*/);
 ////   void generateClassStaticField(ClassScope& scope, SNode current);
 ////
 ////   void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);

@@ -23,9 +23,9 @@
 //#define V_PTR32       (ref_t)-12
 //#define V_INT64       (ref_t)-13
 //#define V_REAL64      (ref_t)-14
-//#define V_SIGNATURE   (ref_t)-18
-//#define V_MESSAGE     (ref_t)-19
-//#define V_VERB        (ref_t)-20
+#define V_SIGNATURE   (ref_t)-18
+#define V_MESSAGE     (ref_t)-19
+#define V_VERB        (ref_t)-20
 //#define V_EXTMESSAGE  (ref_t)-21
 //#define V_SYMBOL      (ref_t)-22
 //
@@ -45,11 +45,11 @@
 //#define V_WARNING3    (ref_t)-4101
 //
 //#define V_STATCKSAFE  (ref_t)-8192
-//#define V_EMBEDDABLE  (ref_t)-8193
+#define V_EMBEDDABLE  (ref_t)-8193
 //#define V_STATIC      (ref_t)-8194
-//#define V_SEALED      (ref_t)-8195
+#define V_SEALED      (ref_t)-8195
 //#define V_LIMITED     (ref_t)-8196
-//#define V_STRUCT      (ref_t)-8197
+#define V_STRUCT      (ref_t)-8197
 #define V_ENUMLIST    (ref_t)-8198
 //#define V_DYNAMIC     (ref_t)-8199
 //#define V_STRING      (ref_t)-8200
@@ -113,9 +113,9 @@ struct _CompilerScope
 //   ref_t intReference;
 //   ref_t longReference;
 //   ref_t realReference;
-//   ref_t signatureReference;
-//   ref_t messageReference;
-//   ref_t verbReference;
+   ref_t signatureReference;
+   ref_t messageReference;
+   ref_t verbReference;
 //   ref_t boolReference;
 //   ref_t literalReference;
 //   ref_t wideReference;
@@ -136,7 +136,7 @@ struct _CompilerScope
    {
       module = NULL;
       /*intReference = boolReference = */superReference = 0;
-//      signatureReference = verbReference = messageReference = 0;
+      signatureReference = verbReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      arrayReference = charReference = realReference = 0;
 //      paramsReference = 0;
@@ -188,9 +188,9 @@ public:
 
 //   // retrieve the class info / size
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-//   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false) = 0;
-//   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
-//
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false) = 0;
+   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
+
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
 
    // retrieve the call type
@@ -211,11 +211,11 @@ public:
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
-//
+
 //   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
 //   virtual bool isVariable(ClassInfo& info) = 0;
-//   virtual bool isEmbeddable(ClassInfo& info) = 0;
-//   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
+   virtual bool isEmbeddable(ClassInfo& info) = 0;
+   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
 
@@ -233,14 +233,14 @@ public:
 
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info) = 0;
-//   virtual bool tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info) = 0;
-//
+   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
+
 //   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue) = 0;
-//   virtual bool validateFieldAttribute(int& attrValue) = 0;
+   virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant) = 0;
 //   virtual bool validateWarningAttribute(int& attrValue) = 0;

@@ -2,12 +2,18 @@
 In development:
 ------                              
 
+              xdev - usability
+                 * ecv : display class size
+
               xdev - generic development
-                 * idle optimization : sealed typecasting message should be not called
-                 * implement 
-                 * warn on not found messages
+                 * support structures
+                 * box structure fields
+                 * support stacksafe
 
                  * implementing ELENA 3.0
+
+                 * idle optimization : sealed typecasting message should be not called
+                 * warn on not found messages
                  * attributes var, class should enforce the compiler to treat the code as variable or class declaration
 
                  * class class is sealed and stateless

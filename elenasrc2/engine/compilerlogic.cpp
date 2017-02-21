@@ -466,11 +466,11 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
 //{
 //   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
 //}
-//
-//bool CompilerLogic :: isEmbeddable(ClassInfo& info)
-//{
-//   return test(info.header.flags, elStructureRole | elEmbeddable) && !test(info.header.flags, elDynamicRole);
-//}
+
+bool CompilerLogic :: isEmbeddable(ClassInfo& info)
+{
+   return test(info.header.flags, elStructureRole | elEmbeddable) && !test(info.header.flags, elDynamicRole);
+}
 
 bool CompilerLogic :: isRole(ClassInfo& info)
 {
@@ -691,17 +691,17 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
       //   info.header.flags = elDebugPTR | elStructureRole | elEmbeddable;
       //   info.size = 4;
       //   break;
-      //case V_SIGNATURE:
-      //case V_VERB:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugSubject | elStructureRole | elEmbeddable;
-      //   info.size = 4;
-      //   break;
-      //case V_MESSAGE:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
-      //   info.size = 4;
-      //   break;
+      case V_SIGNATURE:
+      case V_VERB:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugSubject | elStructureRole | elEmbeddable;
+         info.size = 4;
+         break;
+      case V_MESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
+         info.size = 4;
+         break;
       //case V_EXTMESSAGE:
       //   info.header.parentRef = scope.superReference;
       //   info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
@@ -753,33 +753,33 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
    return true;
 }
 
-//int CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementType, bool embeddableOnly)
-//{
-//   if (reference == V_BINARYARRAY && elementType != 0) {
-//      // HOTFIX : binary array of structures
-//      ref_t elementRef = scope.attributeHints.get(elementType);
-//
-//      return -defineStructSize(scope, elementRef, 0, false);
-//   }
-//   else {
-//      ClassInfo classInfo;
-//      defineClassInfo(scope, classInfo, reference);
-//
-//      return defineStructSize(classInfo, embeddableOnly);
-//   }
-//}
-//
-//int CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
-//{
-//   //   variable = !test(classInfo.header.flags, elReadOnlyRole);
-//   
-//   if (test(info.header.flags, elStructureRole)) {
-//      if (!embeddableOnly || isEmbeddable(info))
-//         return info.size;
-//   }
-//
-//   return 0;
-//}
+int CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementType, bool embeddableOnly)
+{
+   //if (reference == V_BINARYARRAY && elementType != 0) {
+   //   // HOTFIX : binary array of structures
+   //   ref_t elementRef = scope.subjectHints.get(elementType);
+
+   //   return -defineStructSize(scope, elementRef, 0, false);
+   //}
+   //else {
+      ClassInfo classInfo;
+      defineClassInfo(scope, classInfo, reference);
+
+      return defineStructSize(classInfo, embeddableOnly);
+   //}
+}
+
+int CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
+{
+   //   variable = !test(classInfo.header.flags, elReadOnlyRole);
+   
+   if (test(info.header.flags, elStructureRole)) {
+      if (!embeddableOnly || isEmbeddable(info))
+         return info.size;
+   }
+
+   return 0;
+}
 
 void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info)
 {
@@ -873,21 +873,21 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 {
    switch ((size_t)attrValue)
    {
-//      case V_SEALED:
-//         attrValue = elSealed;
-//         return true;
+      case V_SEALED:
+         attrValue = elSealed;
+         return true;
 //      case V_LIMITED:
 //         attrValue = elClosed;
 //         return true;
-//      case V_STRUCT:
-//         attrValue = elStructureRole;
-//         return true;
+      case V_STRUCT:
+         attrValue = elStructureRole;
+         return true;
       case V_ENUMLIST:
          attrValue = elStateless | elEnumList | elClosed;
          return true;
-//      case V_EMBEDDABLE:
-//         attrValue = elStructureRole | elEmbeddable;
-//         return true;
+      case V_EMBEDDABLE:
+         attrValue = elEmbeddable;
+         return true;
 //      case V_DYNAMIC:
 //         attrValue = elDynamicRole;
 //         return true;
@@ -947,10 +947,10 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
    }
 }
 
-//bool CompilerLogic :: validateFieldAttribute(int& attrValue)
-//{
-//   switch ((size_t)attrValue)
-//   {
+bool CompilerLogic :: validateFieldAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
 //      case V_STATIC:
 //         attrValue = lxStaticAttr;
 //         return true;
@@ -972,19 +972,17 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 //      case V_SYMBOL:
 //         attrValue = lxSymbolAttr;
 //         return true;
-//      case V_MESSAGE:
-//         attrValue = lxMessageAttr;
-//         return true;
+      case V_MESSAGE:
+         return true;
 //      case V_EXTMESSAGE:
 //         attrValue = lxExtMessageAttr;
 //         return true;
-//      case V_VERB:
-//         attrValue = lxVerbAttr;
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+      case V_VERB:
+         return true;
+      default:
+         return false;
+   }
+}
 
 bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 {
@@ -1031,60 +1029,60 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant)
 //         return false;
 //   }
 //}
-//
-//bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info)
-//{
-//   // if it is a primitive field
-//   if (info.fields.Count() == 1) {
-//      switch (attr) {
-//         case lxDWordAttr:
-//            info.header.flags |= (elDebugDWORD | elReadOnlyRole | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
-//            return true;
-//         case lxQWordAttr:
-//            info.header.flags |= (elDebugQWORD | elReadOnlyRole | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT64, 0));
-//            return true;
-//         case lxRealAttr:
-//            info.header.flags |= (elDebugReal64 | elReadOnlyRole | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_REAL64, 0));
-//            return true;
-//         case lxPtrAttr:
-//            info.header.flags |= (elDebugPTR | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR32, 0));
-//            return info.size == 4;
-//         case lxSignatureAttr:
-//            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
-//            return info.size == 4;
-//         case lxVerbAttr:
-//            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_VERB, 0));
-//            return info.size == 4;
-//         case lxMessageAttr:
-//            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
-//            return info.size == 4;
-//         case lxExtMessageAttr:
-//            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
-//            return info.size == 8;
-//         case lxSymbolAttr:
-//            info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
-//            return info.size == 4;
-//         default:
-//            break;
-//      }
-//   }
-//
-//   return false;
-//}
-//
-//inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
-//{
-//   return ref1 ? ref1 : ref2;
-//}
+
+bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
+{
+   // if it is a primitive field
+   if (info.fields.Count() == 1) {
+      switch (classRef) {
+         //case lxDWordAttr:
+         //   info.header.flags |= (elDebugDWORD | elReadOnlyRole | elWrapper);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
+         //   return true;
+         //case lxQWordAttr:
+         //   info.header.flags |= (elDebugQWORD | elReadOnlyRole | elWrapper);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT64, 0));
+         //   return true;
+         //case lxRealAttr:
+         //   info.header.flags |= (elDebugReal64 | elReadOnlyRole | elWrapper);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_REAL64, 0));
+         //   return true;
+         //case lxPtrAttr:
+         //   info.header.flags |= (elDebugPTR | elWrapper);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR32, 0));
+         //   return info.size == 4;
+         case V_SIGNATURE:
+            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
+            return info.size == 4;
+         case V_VERB:
+            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_VERB, 0));
+            return info.size == 4;
+         case V_MESSAGE:
+            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
+            return info.size == 4;
+         //case lxExtMessageAttr:
+         //   info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
+         //   return info.size == 8;
+         //case lxSymbolAttr:
+         //   info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
+         //   return info.size == 4;
+         default:
+            break;
+      }
+   }
+
+   return false;
+}
+
+inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
+{
+   return ref1 ? ref1 : ref2;
+}
 
 ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
 {
@@ -1095,12 +1093,12 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
 //         return firstNonZero(scope.longReference, scope.superReference);
 //      case V_REAL64:
 //         return firstNonZero(scope.realReference, scope.superReference);
-//      case V_SIGNATURE:
-//         return firstNonZero(scope.signatureReference, scope.superReference);
-//      case V_MESSAGE:
-//         return firstNonZero(scope.messageReference, scope.superReference);
-//      case V_VERB:
-//         return firstNonZero(scope.verbReference, scope.superReference);
+      case V_SIGNATURE:
+         return firstNonZero(scope.signatureReference, scope.superReference);
+      case V_MESSAGE:
+         return firstNonZero(scope.messageReference, scope.superReference);
+      case V_VERB:
+         return firstNonZero(scope.verbReference, scope.superReference);
 //      case V_ARGARRAY:
 //         return firstNonZero(scope.paramsReference, scope.superReference);
 //      default:

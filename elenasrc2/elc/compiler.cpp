@@ -230,9 +230,9 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //   literalReference = mapReference(project->resolveForward(STR_FORWARD));
 //   wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
 //   charReference = mapReference(project->resolveForward(CHAR_FORWARD));
-//   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
-//   messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
-//   verbReference = mapReference(project->resolveForward(VERB_FORWARD));
+   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
+   messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
+   verbReference = mapReference(project->resolveForward(VERB_FORWARD));
 //   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
 //   arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
 //   boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
@@ -1389,8 +1389,8 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
       //case okWideLiteralConstant:
       //   return scope.moduleScope->wideReference;
       //case okSubject:
-      //case okSignatureConstant:
-      //   return V_SIGNATURE;
+      case okSignatureConstant:
+         return V_SIGNATURE;
       case okSuper:
          return object.param;
 //      case okTemplateLocal:
@@ -1399,8 +1399,8 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
       //   return V_ARGARRAY;
       //case okExternal:
       //   return V_INT32;
-      //case okMessageConstant:
-      //   return V_MESSAGE;
+      case okMessageConstant:
+         return V_MESSAGE;
       case okNil:
          return V_NIL;
       case okField:
@@ -1758,15 +1758,18 @@ void Compiler :: declareSymbolAttributes(SyntaxWriter& writer, SNode node, Symbo
 ////   }
 ////}
 
-void Compiler :: declareFieldAttribute(SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef)
+void Compiler :: declareFieldAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef, int& size)
 {
    int attrValue = 0;
    ref_t attrRef = mapAttribute(current, scope, attrValue);
    if (attrValue != 0) {
-      //if (_logic->validateMethodAttribute(attrValue)) {
-      //   scope.hints |= attrValue;
-      //}
-      /*else */scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      if (attrValue > 0) {
+         size = attrValue;
+      }
+      else if (_logic->validateFieldAttribute(attrValue)) {
+         fieldRef = attrValue;
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
    }
    else if (attrRef != 0) {
       ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
@@ -1774,19 +1777,27 @@ void Compiler :: declareFieldAttribute(SNode current, ClassScope& scope, SNode r
          fieldType = attrRef;
          fieldRef = classRef;
       }
-      //else declareTemplate(rootNode, &scope, attrRef);
+      else {
+         ObjectInfo fieldInfo(okField);
+         if (declareTemplate(writer, rootNode, &scope, attrRef, fieldInfo, current)) {
+            fieldType = fieldInfo.type;
+            fieldRef = fieldInfo.param;
+            size = (int)fieldInfo.extraparam;
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      }
    }
    else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
 }
 
-void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef)
+void Compiler :: declareFieldAttributes(SyntaxWriter& writer, SNode node, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size)
 {
 //   ModuleScope* moduleScope = scope.moduleScope;
 
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         declareFieldAttribute(current, scope, node, fieldType, fieldRef);
+         declareFieldAttribute(writer, current, scope, node, fieldType, fieldRef, size);
 
 //         int attrValue = 0;
 //         ref_t attribute = mapAttribute(current, scope, attrValue);
@@ -1815,9 +1826,6 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
 //         }
 //         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
       }
-//      else if (current == lxTemplate) {
-//         compileFieldAttributes(current, scope, rootNode);
-//      }
 
       current = current.nextNode();
    }
@@ -2181,18 +2189,18 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okNil:
          writer.newNode(lxNil, object.param);
          break;
-//      case okVerbConstant:
-//         terminal.set(lxVerbConstant, object.param);
-//         break;
-//      case okMessageConstant:
-//         terminal.set(lxMessageConstant, object.param);
-//         break;
-//      case okExtMessageConstant:
-//         terminal.set(lxExtMessageConstant, object.param);
-//         break;
-//      case okSignatureConstant:
-//         terminal.set(lxSignatureConstant, object.param);
-//         break;
+      case okVerbConstant:
+         writer.newNode(lxVerbConstant, object.param);
+         break;
+      case okMessageConstant:
+         writer.newNode(lxMessageConstant, object.param);
+         break;
+      case okExtMessageConstant:
+         writer.newNode(lxExtMessageConstant, object.param);
+         break;
+      case okSignatureConstant:
+         terminal.set(lxSignatureConstant, object.param);
+         break;
 //      case okBlockLocal:
 //         terminal.set(lxBlockLocal, object.param);
 //         break;
@@ -2300,7 +2308,7 @@ ObjectInfo Compiler :: declareObject(SyntaxWriter& writer, SNode objectNode, Cod
 {
    ObjectInfo result;
 
-   SNode member = objectNode.findChild(lxCode, lxNestedClass, /*lxMessageReference, lxInlineExpression, */lxExpression);
+   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, /*lxInlineExpression, */lxExpression);
    switch (member.type)
    {
       case lxNestedClass:
@@ -2316,9 +2324,9 @@ ObjectInfo Compiler :: declareObject(SyntaxWriter& writer, SNode objectNode, Cod
 //         }
          /*else */result = declareExpression(writer, member, scope, 0);
          break;
-//      case lxMessageReference:
-//         result = compileMessageReference(member, scope, mode);
-//         break;
+      case lxMessageReference:
+         result = declareMessageReference(writer, member, scope, mode);
+         break;
       default:
          result = declareTerminal(writer, objectNode, scope, mode);
    }
@@ -2326,145 +2334,145 @@ ObjectInfo Compiler :: declareObject(SyntaxWriter& writer, SNode objectNode, Cod
    return result;
 }
 
-////ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int mode)
-////{
-////   SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
-////   IdentifierString signature;
-////   ref_t verb_id = 0;
-////   int paramCount = -1;
-////   ref_t extensionRef = 0;
-////   if (terminal == lxIdentifier || terminal == lxPrivate) {
-////      ident_t name = terminal.findChild(lxTerminal).identifier();
-////      verb_id = _verbs.get(name);
-////      if (verb_id == 0) {
-////         signature.copy(name);
-////      }
-////   }
-////   else {
-////      ident_t message = terminal.findChild(lxTerminal).identifier();
-////
-////      int subject = 0;
-////      int param = 0;
-////      bool firstSubj = true;
-////      for (size_t i = 0; i < getlength(message); i++) {
-////         if (message[i] == '&') {
-////            if (firstSubj) {
-////               signature.copy(message + subject, i - subject);
-////               verb_id = _verbs.get(signature);
-////               if (verb_id != 0) {
-////                  subject = i + 1;
-////               }
-////               firstSubj = false;
-////            }
-////         }
-////         else if (message[i] == '.' && extensionRef == 0) {
-////            signature.copy(message + subject, i - subject);
-////            subject = i + 1;
-////
-////            extensionRef = scope.moduleScope->resolveIdentifier(signature);
-////            if (extensionRef == 0)
-////               scope.raiseError(errInvalidSubject, terminal);
-////         }
-////         else if (message[i] == '[') {
-////            int len = getlength(message);
-////            if (message[i+1] == ']') {
-////               //HOT FIX : support open argument list
-////               paramCount = OPEN_ARG_COUNT;
-////            }
-////            else if (message[len - 1] == ']') {
-////               if (message[len - 2] == ',') {
-////                  signature.copy(message + i + 1, len - i - 3);
-////                  paramCount = signature.ident().toInt() + OPEN_ARG_COUNT;
-////               }
-////               else {
-////                  signature.copy(message + i + 1, len - i - 2);
-////                  paramCount = signature.ident().toInt();
-////                  if (paramCount > 12)
-////                     scope.raiseError(errInvalidSubject, terminal);
-////               }
-////            }
-////            else scope.raiseError(errInvalidSubject, terminal);
-////
-////            param = i;
-////            break;
-////         }
-////         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-////         }
-////         else scope.raiseError(errInvalidSubject, terminal);
-////      }
-////
-////      if (param != 0) {
-////         signature.copy(message + subject, param - subject);
-////      }
-////      else signature.copy(message + subject);
-////
-////      if (subject == 0 && paramCount != -1) {
-////         verb_id = _verbs.get(signature);
-////         if (verb_id != 0) {
-////            signature.clear();
-////         }
-////      }
-////
-////      if (paramCount >= OPEN_ARG_COUNT) {
-////         // HOT FIX : support open argument list
-////         ref_t openArgType = retrieveKey(scope.moduleScope->attributeHints.start(), scope.moduleScope->paramsReference, 0);
-////         if (!emptystr(signature))
-////            signature.append('&');
-////
-////         signature.append(scope.moduleScope->module->resolveSubject(openArgType));
-////      }
-////   }
-////
-////   if (verb_id == 0 && paramCount != -1) {
-////      if (paramCount == 0) {
-////         verb_id = GET_MESSAGE_ID;
-////      }
-////      else verb_id = EVAL_MESSAGE_ID;
-////   }
-////
-////   ObjectInfo retVal;
-////   IdentifierString message;
-////   if (extensionRef != 0) {
-////      if (verb_id == 0) {
-////         scope.raiseError(errInvalidSubject, terminal);
-////      }
-////
-////      message.append(scope.moduleScope->module->resolveReference(extensionRef));
-////      message.append('.');
-////   }
-////
-////   if (paramCount == -1) {
-////      message.append('0');
-////   }
-////   else message.append('0' + (char)paramCount);
-////   message.append('#');
-////   if (verb_id != 0) {
-////      message.append((char)(0x20 + verb_id));
-////   }
-////   else message.append(0x20);
-////
-////   if (!emptystr(signature)) {
-////      message.append('&');
-////      message.append(signature);
-////   }
-////
-////   if (verb_id != 0) {
-////      if (extensionRef != 0) {
-////         retVal.kind = okExtMessageConstant;
-////      }
-////      else if (paramCount == -1 && emptystr(signature)) {
-////         retVal.kind = okVerbConstant;
-////      }
-////      else retVal.kind = okMessageConstant;
-////   }
-////   else retVal.kind = okSignatureConstant;
-////
-////   retVal.param = scope.moduleScope->module->mapReference(message);
-////
-////   setTerminal(node, scope, retVal, mode);
-////
-////   return retVal;
-////}
+ObjectInfo Compiler :: declareMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   SNode terminal = node.findChild(lxPrivate, lxIdentifier/*, lxLiteral*/);
+   IdentifierString signature;
+   ref_t verb_id = 0;
+   int paramCount = -1;
+   ref_t extensionRef = 0;
+   if (terminal == lxIdentifier || terminal == lxPrivate) {
+      ident_t name = terminal.findChild(lxTerminal).identifier();
+      verb_id = _verbs.get(name);
+      if (verb_id == 0) {
+         signature.copy(name);
+      }
+   }
+   else {
+      ident_t message = terminal.findChild(lxTerminal).identifier();
+
+      int subject = 0;
+      int param = 0;
+      bool firstSubj = true;
+      for (size_t i = 0; i < getlength(message); i++) {
+         if (message[i] == '&') {
+            if (firstSubj) {
+               signature.copy(message + subject, i - subject);
+               verb_id = _verbs.get(signature);
+               if (verb_id != 0) {
+                  subject = i + 1;
+               }
+               firstSubj = false;
+            }
+         }
+         else if (message[i] == '.' && extensionRef == 0) {
+            signature.copy(message + subject, i - subject);
+            subject = i + 1;
+
+            extensionRef = scope.moduleScope->resolveIdentifier(signature);
+            if (extensionRef == 0)
+               scope.raiseError(errInvalidSubject, terminal);
+         }
+         else if (message[i] == '[') {
+            int len = getlength(message);
+            if (message[i+1] == ']') {
+               //HOT FIX : support open argument list
+               paramCount = OPEN_ARG_COUNT;
+            }
+            else if (message[len - 1] == ']') {
+               if (message[len - 2] == ',') {
+                  signature.copy(message + i + 1, len - i - 3);
+                  paramCount = signature.ident().toInt() + OPEN_ARG_COUNT;
+               }
+               else {
+                  signature.copy(message + i + 1, len - i - 2);
+                  paramCount = signature.ident().toInt();
+                  if (paramCount > 12)
+                     scope.raiseError(errInvalidSubject, terminal);
+               }
+            }
+            else scope.raiseError(errInvalidSubject, terminal);
+
+            param = i;
+            break;
+         }
+         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+         }
+         else scope.raiseError(errInvalidSubject, terminal);
+      }
+
+      if (param != 0) {
+         signature.copy(message + subject, param - subject);
+      }
+      else signature.copy(message + subject);
+
+      if (subject == 0 && paramCount != -1) {
+         verb_id = _verbs.get(signature);
+         if (verb_id != 0) {
+            signature.clear();
+         }
+      }
+
+      //if (paramCount >= OPEN_ARG_COUNT) {
+      //   // HOT FIX : support open argument list
+      //   ref_t openArgType = retrieveKey(scope.moduleScope->subjectHints.start(), scope.moduleScope->paramsReference, 0);
+      //   if (!emptystr(signature))
+      //      signature.append('&');
+
+      //   signature.append(scope.moduleScope->module->resolveSubject(openArgType));
+      //}
+   }
+
+   if (verb_id == 0 && paramCount != -1) {
+      if (paramCount == 0) {
+         verb_id = GET_MESSAGE_ID;
+      }
+      else verb_id = EVAL_MESSAGE_ID;
+   }
+
+   ObjectInfo retVal;
+   IdentifierString message;
+   if (extensionRef != 0) {
+      if (verb_id == 0) {
+         scope.raiseError(errInvalidSubject, terminal);
+      }
+
+      message.append(scope.moduleScope->module->resolveReference(extensionRef));
+      message.append('.');
+   }
+
+   if (paramCount == -1) {
+      message.append('0');
+   }
+   else message.append('0' + (char)paramCount);
+   message.append('#');
+   if (verb_id != 0) {
+      message.append((char)(0x20 + verb_id));
+   }
+   else message.append(0x20);
+
+   if (!emptystr(signature)) {
+      message.append('&');
+      message.append(signature);
+   }
+
+   if (verb_id != 0) {
+      if (extensionRef != 0) {
+         retVal.kind = okExtMessageConstant;
+      }
+      else if (paramCount == -1 && emptystr(signature)) {
+         retVal.kind = okVerbConstant;
+      }
+      else retVal.kind = okMessageConstant;
+   }
+   else retVal.kind = okSignatureConstant;
+
+   retVal.param = scope.moduleScope->module->mapReference(message);
+
+   writeTerminal(writer, node, scope, retVal, mode);
+
+   return retVal;
+}
 
 ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*, bool& argsUnboxing*/)
 {
@@ -3342,19 +3350,19 @@ ObjectInfo Compiler :: declareClosure(SyntaxWriter& writer, SNode node, CodeScop
       return ObjectInfo();
    }
    else {
-//      // dynamic binary symbol
-//      if (test(scope.info.header.flags, elStructureRole)) {
-//         node.set(lxStruct, scope.info.size);
-//         node.appendNode(lxTarget, scope.reference);
-//
-//         if (scope.outers.Count() > 0)
-//            scope.raiseError(errInvalidInlineClass, node);
-//      }
-//      else {
+      // dynamic binary symbol
+      if (test(scope.info.header.flags, elStructureRole)) {
+         node.set(lxStruct, scope.info.size);
+         node.appendNode(lxTarget, scope.reference);
+
+         if (scope.outers.Count() > 0)
+            scope.raiseError(errInvalidInlineClass, node);
+      }
+      else {
          // dynamic normal symbol
          writer.newNode(lxNested, scope.info.fields.Count());
          writer.appendNode(lxTarget, scope.reference);
-//      }
+      }
 
       Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
       //int toFree = 0;
@@ -4607,14 +4615,13 @@ void Compiler :: declareConstructor(SyntaxWriter& writer, SNode node, MethodScop
       }
 
       if (retExpr) {
-         SNode expr = bodyNode.findChild(lxReturning);
 //         recordDebugStep(codeScope, bodyNode.firstChild().FirstTerminal(), dsStep);
 
          writer.newNode(lxReturning);         
          writer.newBookmark();
 
-         ObjectInfo retVal = declareRetExpression(writer, expr, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
-         boxObject(writer, expr, codeScope, retVal, 0, codeScope.getClassRefId());
+         ObjectInfo retVal = declareRetExpression(writer, bodyNode, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
+         boxObject(writer, node, codeScope, retVal, 0, codeScope.getClassRefId());
 
          writer.removeBookmark();
          writer.closeNode();
@@ -4784,16 +4791,18 @@ void Compiler :: declareDefaultConstructor(SyntaxWriter& writer, SNode node, Met
 
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-//   if (test(classScope->info.header.flags, elStructureRole)) {
-//      if (!test(classScope->info.header.flags, elDynamicRole)) {
-//         node.appendNode(lxCreatingStruct, classScope->info.size).appendNode(lxTarget, classScope->reference);
-//      }
-//   }
-//   else if (!test(classScope->info.header.flags, elDynamicRole)) {
-   writer.newNode(lxCreatingClass, classScope->info.fields.Count());
-   writer.appendNode(lxTarget, classScope->reference);
-   writer.closeNode();
-      //   }
+   if (test(classScope->info.header.flags, elStructureRole)) {
+      if (!test(classScope->info.header.flags, elDynamicRole)) {
+         writer.newNode(lxCreatingStruct, classScope->info.size);
+         writer.appendNode(lxTarget, classScope->reference);
+         writer.closeNode();
+      }
+   }
+   else if (!test(classScope->info.header.flags, elDynamicRole)) {
+      writer.newNode(lxCreatingClass, classScope->info.fields.Count());
+      writer.appendNode(lxTarget, classScope->reference);
+      writer.closeNode();
+   }
 
    writer.closeNode();
 }
@@ -4907,7 +4916,7 @@ void Compiler :: declareDefaultConstructor(SyntaxWriter& writer, SNode node, Met
 ////   }
 ////}
 
-void Compiler :: compileFieldDeclarations(SNode node, ClassScope& scope)
+void Compiler :: compileFieldDeclarations(SyntaxWriter& writer, SNode node, ClassScope& scope)
 {
    SNode current = node.firstChild();
 
@@ -4915,17 +4924,19 @@ void Compiler :: compileFieldDeclarations(SNode node, ClassScope& scope)
       if (current == lxClassField) {
          ref_t fieldRef = 0;
          ref_t fieldType = 0;
-         declareFieldAttributes(current, scope, fieldType, fieldRef);
+         int sizeHint = 0;
+         declareFieldAttributes(writer, current, scope, fieldType, fieldRef, sizeHint);
 
-         generateClassField(scope, current, fieldType, fieldRef);
+         generateClassField(scope, current, fieldType, fieldRef, sizeHint);
       }
       else if (current == lxScope) {
          if (_logic->recognizeNewField(current)) {
             ref_t fieldRef = 0;
             ref_t fieldType = 0;
-            declareFieldAttributes(current, scope, fieldType, fieldRef);
+            int sizeHint = 0;
+            declareFieldAttributes(writer, current, scope, fieldType, fieldRef, sizeHint);
 
-            generateClassField(scope, current, fieldType, fieldRef);
+            generateClassField(scope, current, fieldType, fieldRef, sizeHint);
          }
       }
       //else if (current == lxTemplate) {
@@ -5392,56 +5403,53 @@ void Compiler :: declareClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
 ////   }
 ////}
 
-void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t typeRef, ref_t classRef/*, bool singleField*/)
+void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t typeRef, ref_t classRef, int sizeHint/*, bool singleField*/)
 {
-//   ModuleScope* moduleScope = scope.moduleScope;
+   ModuleScope* moduleScope = scope.moduleScope;
 
+   int flags = scope.info.header.flags | scope.declaredFlags;
    int offset = 0;
    ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
 
-//   ref_t typeAttr = current.findChild(lxType).argument;
 //   if (!classRef && typeAttr) {
 //      classRef = moduleScope->attributeHints.get(typeAttr);
 //   }
-//
-//   int sizeHint = current.findChild(lxSize).argument;
-//
-//   // a role cannot have fields
-//   if (test(scope.info.header.flags, elStateless))
-//      scope.raiseError(errIllegalField, current);
-//
-//   int size = (typeAttr != 0) ? _logic->defineStructSize(*moduleScope, classRef) : 0;
-//   if (sizeHint != 0) {
-////      if (size < 0) {
-////         size = sizeHint * (-size);
-////      }
-//      /*else */if (size == 0) {
-//         size = sizeHint;
+
+   // a role cannot have fields
+   if (test(flags, elStateless))
+      scope.raiseError(errIllegalField, current);
+
+   int size = (classRef != 0) ? _logic->defineStructSize(*moduleScope, classRef) : 0;
+   if (sizeHint != 0) {
+//      if (size < 0) {
+//         size = sizeHint * (-size);
 //      }
-//      else scope.raiseError(errIllegalField, current);
-//   }
-//
-//   SNode attr = current.firstChild(lxFieldAttrMask);
-//   if (test(scope.info.header.flags, elWrapper) && scope.info.fields.Count() > 0) {
-//      // wrapper may have only one field
-//      scope.raiseError(errIllegalField, current);
-//   }
-//   // if it is a primitive data wrapper
-//   else if (attr != lxNone) {
-//      if (classRef != 0 || testany(scope.info.header.flags, elNonStructureRole | elDynamicRole))
-//         scope.raiseError(errIllegalField, current);
-//
-//      if (test(scope.info.header.flags, elStructureRole)) {
-//         scope.info.fields.add(terminal, scope.info.size);
-//         scope.info.size += size;
-//      }
-//      else scope.raiseError(errIllegalField, current);
-//
-//      if (!_logic->tweakPrimitiveClassFlags(attr.type, scope.info))
-//         scope.raiseError(errIllegalField, current);
-//   }
-//   // a class with a dynamic length structure must have no fields
-//   else if (test(scope.info.header.flags, elDynamicRole)) {
+      /*else */if (size == 0) {
+         size = sizeHint;
+      }
+      else scope.raiseError(errIllegalField, current);
+   }
+
+   if (test(flags, elWrapper) && scope.info.fields.Count() > 0) {
+      // wrapper may have only one field
+      scope.raiseError(errIllegalField, current);
+   }
+   // if it is a primitive data wrapper
+   else if (isPrimitiveRef(classRef)) {
+      if (testany(flags, elNonStructureRole | elDynamicRole))
+         scope.raiseError(errIllegalField, current);
+
+      if (test(flags, elStructureRole)) {
+         scope.info.fields.add(terminal, scope.info.size);
+         scope.info.size += size;
+      }
+      else scope.raiseError(errIllegalField, current);
+
+      if (!_logic->tweakPrimitiveClassFlags(classRef, scope.info))
+         scope.raiseError(errIllegalField, current);
+   }
+   // a class with a dynamic length structure must have no fields
+   else if (test(scope.info.header.flags, elDynamicRole)) {
 //      if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
 //         // compiler magic : turn a field declaration into an array or string one
 //         if (size != 0) {
@@ -5452,9 +5460,9 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
 //         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classRef, typeAttr));
 //         scope.info.fields.add(terminal, -2);
 //      }
-//      else scope.raiseError(errIllegalField, current);
-//   }
-//   else {
+      /*else */scope.raiseError(errIllegalField, current);
+   }
+   else {
       if (scope.info.fields.exist(terminal))
          scope.raiseError(errDuplicatedField, current);
 
@@ -5500,7 +5508,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          if (typeRef != 0 || classRef != 0)
             scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, typeRef));
 //      }
-//   }
+   }
 }
 
 ////void Compiler :: generateClassStaticField(ClassScope& scope, SNode current)
@@ -5794,6 +5802,11 @@ bool Compiler :: declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope,
          else if (node == lxSymbol) {
             declareSymbolAttribute(writer, current, *((SymbolScope*)scope), node);
          }
+         else if (node == lxClassField) {
+            int size = (int)object.extraparam;
+            declareFieldAttribute(writer, current, *((ClassScope*)scope), node, object.type, object.param, size);
+            object.extraparam = (pos_t)size;
+         }
       }
       else if (current == lxClassMethod) {
          withMethods = true;
@@ -5904,7 +5917,7 @@ void Compiler :: compileClassDeclaration(SyntaxWriter& writer, SNode node, Class
    /*else */compileParentDeclaration(SNode(), scope);
 
    declareClassAttributes(writer, node, scope);
-   compileFieldDeclarations(node, scope);
+   compileFieldDeclarations(writer, node, scope);
 
    declareVMT(writer, node.firstChild(), scope);
 

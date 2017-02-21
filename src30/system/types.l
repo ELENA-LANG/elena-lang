@@ -11,21 +11,23 @@
 //#template(-4099) w1 {}
 //#template(-4100) w2 {}
 //#template(-4101) w3 {}
-//#template(-8195) sealed  {}
+#template(-8195) sealed  {}
 //#template(-8199) dynamic {}
 //#template(-8196) limited {}
 //#template(-8206) group   {}
 #template(-8201) const   {}
-//#template(-8197) struct  {}
+#template(-8197) struct  {}
 //#template(-8204) nonstructural {}
 #template(-8198) listable {}
 //#template(-8200) string {}
-//#template(-8193) embeddable {}
+#template(-8193) embeddable {}
 //#template(-8203) extension {}
 //#template(-8203,subject) extension : subject {}
 
 #template(-4097)__ifoperator {}
 #template(-4098)__ifnotoperator {}
+#template(-19)  __mssg {}
+#template(-20)  __verb {}
 
 ///// Provides classes that describe the basic functionality
 
@@ -44,14 +46,14 @@
 //#subject long       = system'LongNumber.
 //#subject real       = system'RealNumber.
 //#subject char       = system'CharValue.
-//#subject mssg       = system'Message.
+#subject mssg       = system'Message.
 //#subject ext_mssg   = system'ExtensionMessage.
 //
-///// A verb symbol
-/////
-///// An instance of system'Verb class. 
-//#subject verb       = system'Verb.
-//
+/// A verb symbol
+///
+/// An instance of system'Verb class. 
+#subject verb       = system'Verb.
+
 //#subject subject    = system'Signature.
 //#subject symbol_ref = system'Symbol.
 //

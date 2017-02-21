@@ -23,6 +23,7 @@ __define L7_OPERATION           4134
 __define RET_STATEMENT		4135
 __define EXTENSION		4139
 __define FORWARD		4142
+__define MESSAGE_REFERENCE	4147
 __define IMPORT                 4149
 __define ROOT_EXPRESSION        4152
 __define TYPE                   4167
@@ -152,7 +153,8 @@ HINT  ->
 	TOKEN
 
 NEXT_HINT ->
-	)
+	, HINT NEXT_HINT
+	| )
 
 TOKEN ->
 	identifier TOKEN_BODY
@@ -213,6 +215,10 @@ PARAMETER ->
 
 SUBJECT_ARG ->
 	identifier
+
+MESSAGE_REFERENCE ->
+	identifier
+	| literal
 	
 MESSAGE_PARAMETER ->
 	OBJECT
@@ -315,6 +321,7 @@ OBJECT ->
 	| private
 	| reference
 	| ( SUB_EXPRESSION
+	| % MESSAGE_REFERENCE
 	
 DISPATCH ->
 	OBJECT

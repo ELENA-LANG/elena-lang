@@ -70,13 +70,13 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
             _writer.closeNode();
          }
          break;
-//      case nsMessageReference:
-//         _writer.newNode(lxExpression);
-//         _writer.newNode(lxMessageReference);
-//         unpackChildren(node);
-//         _writer.closeNode();
-//         _writer.closeNode();
-//         break;
+      case nsMessageReference:
+         _writer.newNode(lxExpression);
+         _writer.newNode(lxMessageReference);
+         unpackChildren(node);
+         _writer.closeNode();
+         _writer.closeNode();
+         break;
       case nsTokenParam:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          unpackChildren(node);

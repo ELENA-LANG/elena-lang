@@ -3187,14 +3187,14 @@ inline ref_t defineConstantMask(LexicalType type)
 //         return mskInt64Ref;
 //      case lxConstantReal:
 //         return mskRealRef;
-//      case lxMessageConstant:
-//         return mskMessage;
-//      case lxExtMessageConstant:
-//         return mskExtMessage;
-//      case lxSignatureConstant:
-//         return mskSignature;
-//      case lxVerbConstant:
-//         return mskVerb;
+      case lxMessageConstant:
+         return mskMessage;
+      case lxExtMessageConstant:
+         return mskExtMessage;
+      case lxSignatureConstant:
+         return mskSignature;
+      case lxVerbConstant:
+         return mskVerb;
 //      case lxConstantList:
 //         return mskConstArray;
       default:
@@ -3253,10 +3253,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case lxConstantInt:
 //      case lxConstantLong:
 //      case lxConstantReal:
-//      case lxMessageConstant:
-//      case lxExtMessageConstant:
-//      case lxSignatureConstant:
-//      case lxVerbConstant:
+      case lxMessageConstant:
+      case lxExtMessageConstant:
+      case lxSignatureConstant:
+      case lxVerbConstant:
 //      case lxConstantList:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
@@ -3332,10 +3332,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case lxConstantInt:
 //      case lxConstantLong:
 //      case lxConstantReal:
-//      case lxMessageConstant:
-//      case lxExtMessageConstant:
-//      case lxSignatureConstant:
-//      case lxVerbConstant:
+      case lxMessageConstant:
+      case lxExtMessageConstant:
+      case lxSignatureConstant:
+      case lxVerbConstant:
 //      case lxConstantList:
          // pushr reference
          tape.write(bcACopyR, argument | defineConstantMask(type));
@@ -4629,13 +4629,13 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
    assignBaseTo(tape, lxResult);
 }
 
-//void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SNode target = node.findChild(lxTarget);
-//
-//   newStructure(tape, node.argument, target.argument);
-//}
-//
+void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target = node.findChild(lxTarget);
+
+   newStructure(tape, node.argument, target.argument);
+}
+
 //void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   SNode target = node.findChild(lxTarget);
@@ -4735,9 +4735,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxLocking:
 //         generateLocking(tape, node);
 //         break;
-//      case lxStruct:
-//         generateStructExpression(tape, node);
-//         break;
+      case lxStruct:
+         generateStructExpression(tape, node);
+         break;
       case lxNested:
          generateNestedExpression(tape, node);
          break;

@@ -70,9 +70,9 @@ public:
    virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
 
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
-//   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false);
-//   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly);
-//
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false);
+   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly);
+
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
@@ -91,14 +91,14 @@ public:
 //   virtual bool isEmbeddableArray(ClassInfo& info);
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
 //   virtual bool isVariable(ClassInfo& info);
-//   virtual bool isEmbeddable(ClassInfo& info);
-//   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference)
-//   {
-//      ClassInfo info;
-//      defineClassInfo(scope, info, reference, true);
-//
-//      return isEmbeddable(info);
-//   }
+   virtual bool isEmbeddable(ClassInfo& info);
+   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      defineClassInfo(scope, info, reference, true);
+
+      return isEmbeddable(info);
+   }
    virtual bool isRole(ClassInfo& info);
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
@@ -118,11 +118,11 @@ public:
 //   virtual void injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode);
 
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info);
-//   virtual bool tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info);
+   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool validateClassAttribute(int& attrValue);
    virtual bool validateMethodAttribute(int& attrValue);
-//   virtual bool validateFieldAttribute(int& attrValue);
+   virtual bool validateFieldAttribute(int& attrValue);
    virtual bool validateLocalAttribute(int& attrValue);
    virtual bool validateSymbolAttribute(int attrValue, bool& constant);
 //   virtual bool validateWarningAttribute(int& attrValue);
