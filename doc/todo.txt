@@ -6,9 +6,7 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
-                 * local : copy var
-                 * local : box
-                 * local : pass as a parameter
+                 * local : typified parameter for stack safe method
                  * field : assign const, generic var, local struct, field struct
                  * field : copy var
                  * field : box
@@ -84,6 +82,7 @@ In development:
                    (probably all comparision operators are always return bool value)
                  * get rid of __ifoperator / ifnotoeprator - embeddable attribute should be used instead
                  * use intOp for assigning a constant
+                 * warn on boxing
 
               xdev - generic development
                  * support property template

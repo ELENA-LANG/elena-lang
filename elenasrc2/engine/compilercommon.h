@@ -43,8 +43,8 @@
 //#define V_WARNING1    (ref_t)-4099
 //#define V_WARNING2    (ref_t)-4100
 //#define V_WARNING3    (ref_t)-4101
-//
-//#define V_STATCKSAFE  (ref_t)-8192
+
+#define V_STATCKSAFE  (ref_t)-8192
 #define V_EMBEDDABLE  (ref_t)-8193
 //#define V_STATIC      (ref_t)-8194
 #define V_SEALED      (ref_t)-8195
@@ -174,6 +174,7 @@ public:
       bool  found;
       bool  withCustomDispatcher;
       bool  closed;
+      bool  stackSafe;
       ref_t outputReference;
 
       ChechMethodInfo()
@@ -181,6 +182,7 @@ public:
          closed = found = false;
          outputReference = 0;
          withCustomDispatcher = false;
+         stackSafe = false;
       }
    };
 

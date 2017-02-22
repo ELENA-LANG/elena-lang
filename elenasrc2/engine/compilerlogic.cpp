@@ -250,6 +250,9 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
 
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
+   if (callType == tpClosed || callType == tpSealed) {
+      result.stackSafe = test(methodHint, tpStackSafe);
+   }      
 
    return callType;
 }
@@ -924,9 +927,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_IFNOTBRANCH:
          attrValue = tpIfNotBranch;
          return true;
-//      case V_STATCKSAFE:
-//         attrValue = tpStackSafe;
-//         return true;
+      case V_STATCKSAFE:
+         attrValue = tpStackSafe;
+         return true;
 //      case V_EMBEDDABLE:
 //         attrValue = tpEmbeddable;
 //         return true;

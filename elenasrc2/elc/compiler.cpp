@@ -4252,10 +4252,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
                scope.raiseError(errTooManyParameters, verb);
 
             ref_t paramRef = scope.moduleScope->subjectHints.get(subj_ref);
-            //int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
-            //   paramRef, 0, true) : 0;
+            int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
+               paramRef, 0, true) : 0;
 
-            scope.parameters.add(name, Parameter(index, subj_ref, paramRef/*, 0, size*/));
+            scope.parameters.add(name, Parameter(index, subj_ref, paramRef, size));
 
             arg = arg.nextNode();
 //         }
@@ -6809,24 +6809,31 @@ ref_t Compiler :: optimizeMessageCall(SNode node, ModuleScope& scope, WarningSco
 
    ref_t targetRef = 0;
    ref_t resultRef = 0;
-   bool firstOp = true;
 
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      if (test(current.type, lxObjectMask)) {
-         if (firstOp) {
-            targetRef = optimizeExpression(current, scope, warningScope);
-
-            firstOp = false;
-         }
-         else optimizeExpression(current, scope, warningScope);
-      }
-      current = current.nextNode();
-   }
+   SNode targetNode = node.firstChild(lxObjectMask);
+   targetRef = optimizeExpression(targetNode, scope, warningScope);
 
    SNode overridden = node.findChild(lxOverridden);
    if (overridden != lxNone) {
       targetRef = optimizeExpression(overridden, scope, warningScope);
+   }
+
+   // try to recognize the operation
+   //   bool dispatchCall = false;
+   _CompilerLogic::ChechMethodInfo result;
+   int callType = _logic->resolveCallType(scope, targetRef, node.argument, result);
+   resultRef = result.outputReference;
+
+   int paramMode = 0;
+   if (result.stackSafe)
+      paramMode |= HINT_NOBOXING;
+
+   SNode current = targetNode.nextNode(lxObjectMask);
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         optimizeExpression(current, scope, warningScope, paramMode);
+      }
+      current = current.nextNode();
    }
 
    ref_t verb, subj;
@@ -6873,12 +6880,6 @@ ref_t Compiler :: optimizeMessageCall(SNode node, ModuleScope& scope, WarningSco
    }
 
    if (targetRef != 0) {
-      // try to recognize the operation
-      //   bool dispatchCall = false;
-      _CompilerLogic::ChechMethodInfo result;
-      int callType = _logic->resolveCallType(scope, targetRef, node.argument, result);
-      resultRef = result.outputReference;
-
       // if it is typecasting message to itself
       if (targetRef == resultRef && verb == GET_MESSAGE_ID && paramCount == 0 && scope.subjectHints.get(subj) == targetRef)
       {
@@ -6950,7 +6951,7 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
    else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
       boxing = false;
    }
-   else if (sourceNode == lxLocalAddress || sourceNode == lxFieldAddress) {
+   else if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal) && node.argument != 0) {
       sourceRef = targetRef;
    }
    else sourceRef = optimizeExpression(sourceNode, scope, warningScope);
@@ -7000,6 +7001,7 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxExpression:
          return optimizeExpression(current.firstChild(lxObjectMask), scope, warningScope, mode);
       case lxBoxing:
+      case lxCondBoxing:
          return optimizeBoxing(current, scope, warningScope, mode);
       case lxAssigning:
          return optimizeAssigning(current, scope, warningScope);
