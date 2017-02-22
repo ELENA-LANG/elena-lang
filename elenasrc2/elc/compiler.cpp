@@ -2887,13 +2887,11 @@ ObjectInfo Compiler :: declareMessage(SyntaxWriter& writer, SNode node, CodeScop
    return retVal;
 }
 
-bool Compiler :: convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source)
+bool Compiler :: convertObject(SNode node, ModuleScope& scope, ref_t targetRef, ref_t sourceRef)
 {
-   ref_t sourceRef = resolveObjectReference(scope, source);
-
-   if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
+   if (!_logic->isCompatible(scope, targetRef, sourceRef)) {
       // if it can be boxed / implicitly converted
-      return _logic->injectImplicitConversion(node, *scope.moduleScope, *this, targetRef, sourceRef/*, source.type*/);
+      return _logic->injectImplicitConversion(node, scope, *this, targetRef, sourceRef/*, source.type*/);
    }
    else return true;
 }
@@ -2902,9 +2900,10 @@ bool Compiler :: boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, O
 {
    ref_t sourceRef = resolveObjectReference(scope, source);
    if (targetRef != 0 && sourceRef != targetRef) {
-      writer.insert(lxBoxing);
       writer.appendNode(lxTarget, targetRef);
       writer.appendNode(lxType, targetType);
+
+      writer.insert(lxBoxing);
       writer.closeNode();
 
       return true;
@@ -5193,6 +5192,10 @@ void Compiler :: compileClassClassDeclaration(SyntaxWriter& writer, SNode node, 
 
 void Compiler :: includeMethod(SNode node, ClassScope& scope, MethodScope& methodScope)
 {
+   if (test(methodScope.hints, tpSealed | tpConversion)) {
+      methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
+   }
+
    int defaultHints = scope.getMethodInfo(methodScope.message, maHint);
 
    bool included = scope.include(methodScope.message);
@@ -6648,28 +6651,28 @@ void Compiler :: compileSymbolImplementation(SNode node, ModuleScope& scope)
 ////
 ////   }
 ////}
-////
-////int Compiler :: allocateStructure(SNode node, int& size)
-////{
-////   // finding method's reserved attribute
-////   SNode methodNode = node.parentNode();
-////   while (methodNode != lxClassMethod)
-////      methodNode = methodNode.parentNode();
-////
-////   SNode reserveNode = methodNode.findChild(lxReserved);
-////   int reserved = reserveNode.argument;
-////
-////   // allocating space
-////   int offset = allocateStructure(false, size, reserved);
-////
-////   // HOT FIX : size should be in bytes
-////   size *= 4;
-////
-////   reserveNode.setArgument(reserved);
-////
-////   return offset;
-////}
-////
+
+int Compiler :: allocateStructure(SNode node, int& size)
+{
+   // finding method's reserved attribute
+   SNode methodNode = node.parentNode();
+   while (methodNode != lxClassMethod)
+      methodNode = methodNode.parentNode();
+
+   SNode reserveNode = methodNode.findChild(lxReserved);
+   int reserved = reserveNode.argument;
+
+   // allocating space
+   int offset = allocateStructure(false, size, reserved);
+
+   // HOT FIX : size should be in bytes
+   size *= 4;
+
+   reserveNode.setArgument(reserved);
+
+   return offset;
+}
+
 ////void Compiler :: optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope)
 ////{
 ////   if (node == lxNested) {
@@ -6956,24 +6959,32 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
    }
    else sourceRef = optimizeExpression(sourceNode, scope, warningScope);
    
-   if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef/*, test(mode, HINT_ASSIGNING)*/)) {
-      if (targetType != 0 && !_logic->isPrimitiveRef(sourceRef)) {
-         node = lxCalling;
-         node.setArgument(encodeMessage(targetType, GET_MESSAGE_ID, 0));
+   if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef, !boxing)) {
+      if (_logic->isPrimitiveRef(sourceRef) && sourceNode == lxConstantInt)
+         sourceRef = _logic->resolvePrimitiveReference(scope, sourceRef);
 
-         return optimizeMessageCall(node, scope, warningScope);
+      if (!convertObject(node, scope, targetRef, sourceRef)) {
+         if (targetType != 0 && !_logic->isPrimitiveRef(sourceRef)) {
+            node = lxCalling;
+            node.setArgument(encodeMessage(targetType, GET_MESSAGE_ID, 0));
+
+            return optimizeMessageCall(node, scope, warningScope);
+         }
+         else scope.raiseError(errInvalidOperation, node);
       }
-      else scope.raiseError(errInvalidOperation, node);
    }
    else if (!boxing) {
       node = lxExpression;
    }
-   else {
+   else if (node != lxExpression) {
       if (node.argument != 0) {
 
       }
       else {
          node.setArgument(_logic->defineStructSize(scope, targetRef));
+      }
+      if (_logic->isVariable(scope, targetRef)) {
+         node = lxUnboxing;
       }
    }
 
@@ -7651,16 +7662,16 @@ ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, 
 //      }
 //   }
 //}
-//
-//void Compiler :: injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef)
-//{
-//   node.set(convertOp, convertArg);
-//
-//   node.insertNode(createOp, createArg).appendNode(lxTarget, targetClassRef);
-//
-//   node.appendNode(lxCallTarget, targetClassRef);
-//}
-//
+
+void Compiler :: injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef)
+{
+   node.set(convertOp, convertArg);
+
+   node.insertNode(createOp, createArg).appendNode(lxTarget, targetClassRef);
+
+   node.appendNode(lxCallTarget, targetClassRef);
+}
+
 //void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject)
 //{
 //   // removing assinging operation
@@ -7688,21 +7699,21 @@ ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, 
 //      callNode.setArgument(encodeMessage(subject, verb, paramCount));
 //   }
 //}
-//
-//void Compiler :: injectLocalBoxing(SNode node, int size)
-//{
-//   //HOTFIX : using size variable copy to prevent aligning
-//   int dummy = size;
-//   int offset = allocateStructure(node, dummy);
-//
-//   // allocate place for the local copy
-//   node.injectNode(node.type, node.argument);
-//
-//   node.set(lxAssigning, size);
-//
-//   node.insertNode(lxLocalAddress, offset);
-//}
-//
+
+void Compiler :: injectLocalBoxing(SNode node, int size)
+{
+   //HOTFIX : using size variable copy to prevent aligning
+   int dummy = size;
+   int offset = allocateStructure(node, dummy);
+
+   // allocate place for the local copy
+   node.injectNode(node.type, node.argument);
+
+   node.set(lxAssigning, size);
+
+   node.insertNode(lxLocalAddress, offset);
+}
+
 //void Compiler :: injectFieldExpression(SNode node)
 //{
 //   node.appendNode(node.type, node.argument);

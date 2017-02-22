@@ -294,11 +294,11 @@ sealed embeddable dispatchable(byte) struct ByteNumber :: IntBaseNumber
 {
     __int8 theValue.
 
-//    #constructor(stacksafe) &int:n
-//    [
+    stacksafe sealed conversion int:n
+    [
 //        theValue := n && 255.
-//    ]
-//            
+    ]
+
 //    /// Returns the minimal value (0)
 //    #constructor(w3) min
 //        = 0.

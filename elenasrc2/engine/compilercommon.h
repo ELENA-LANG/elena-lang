@@ -64,6 +64,7 @@
 #define V_CONSTRUCTOR   (ref_t)-16384
 #define V_VARIABLE      (ref_t)-16385
 #define V_CLASS         (ref_t)-16386
+#define V_CONVERSION    (ref_t)-16387
 
 namespace _ELENA_
 {
@@ -86,7 +87,8 @@ enum MethodHint
    tpAction      = 0x080,
    tpIfBranch    = 0x100,
    tpIfNotBranch = 0x200,
-   tpConstructor = 0x400
+   tpConstructor = 0x400,
+   tpConversion  = 0x800
 };
 
 // --- _CompileScope ---
@@ -150,13 +152,13 @@ class _Compiler
 public:
    virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument) = 0;
 //   virtual void injectBoxing(_CompilerScope& scope, SNode node, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
-//   virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef) = 0;
+   virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef) = 0;
 //   virtual void injectFieldExpression(SNode node) = 0;
 //
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
-//
-//   virtual void injectLocalBoxing(SNode node, int size) = 0;
+
+   virtual void injectLocalBoxing(SNode node, int size) = 0;
 //   //virtual int injectTempLocal(SNode node) = 0;
 
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
@@ -253,7 +255,7 @@ public:
    virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
 
    // optimization
-   virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef/*, bool assingingMode*/) = 0;
+   virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool assingingMode) = 0;
 //   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;

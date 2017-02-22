@@ -101,8 +101,8 @@ enum LexicalType
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
-//   lxLocalUnboxing   = 0x0C003,   // arg - size
-//   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
+   lxLocalUnboxing   = 0x0C003,   // arg - size
+   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
 //   lxArgUnboxing     = 0x0C006,
    lxCalling         = 0x0C007,   // sending a message, arg - message
@@ -580,19 +580,19 @@ public:
          return tree->insertNode(end_position, type, argument);
       }
 
-//      Node injectNode(LexicalType type, int argument = 0)
-//      {
-//         int start_position = position;
-//         int end_position = tree->seekNodeEnd(position);
-//         
-//         return tree->insertNode(start_position, end_position, type, argument);
-//      }
-//
-//      void refresh()
-//      {
-//         tree->refresh(*this);
-//      }
-//
+      Node injectNode(LexicalType type, int argument = 0)
+      {
+         int start_position = position;
+         int end_position = tree->seekNodeEnd(position);
+         
+         return tree->insertNode(start_position, end_position, type, argument);
+      }
+
+      void refresh()
+      {
+         tree->refresh(*this);
+      }
+
 //      Node findPattern(NodePattern pattern)
 //      {
 //         return tree->findPattern(*this, 1, pattern);

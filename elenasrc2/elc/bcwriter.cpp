@@ -3777,20 +3777,20 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    }
    else assignBaseTo(tape, lxResult);
 
-   //if (larg == lxLocalUnboxing) {
-   //   SNode assignNode = larg.findChild(lxAssigning);
-   //   assignOpArguments(assignNode, larg, rarg);
+   if (larg == lxLocalUnboxing) {
+      SNode assignNode = larg.findChild(lxAssigning);
+      assignOpArguments(assignNode, larg, rarg);
 
-   //   loadBase(tape, rarg.type, 0);
+      loadBase(tape, rarg.type, 0);
 
-   //   if (assignNode.argument == 4) {
-   //      assignInt(tape, lxFieldAddress, rarg.argument);
-   //   }
-   //   else if (assignNode.argument == 2) {
-   //      assignLong(tape, lxFieldAddress, rarg.argument);
-   //   }
-   //   else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
-   //}
+      if (assignNode.argument == 4) {
+         assignInt(tape, lxFieldAddress, rarg.argument);
+      }
+      else if (assignNode.argument == 2) {
+         assignLong(tape, lxFieldAddress, rarg.argument);
+      }
+      else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
+   }
 
    releaseObject(tape, level);
 }
@@ -4038,21 +4038,21 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 //         unboxArgList(tape);
 //      }
       /*else */if (test(member.type, lxObjectMask)) {
-//         if (member.type == lxLocalUnboxing)
-//            unboxMode = true;
+         if (member.type == lxLocalUnboxing)
+            unboxMode = true;
 
          paramCount++;
       }
 
-//      // presave the boxed arguments if required
-//      if (member == lxUnboxing) {
-//         generateObjectExpression(tape, member);
-//         pushObject(tape, lxResult);
-//         presavedCount++;
-//         unboxMode = true;
-//      }
+      // presave the boxed arguments if required
+      if (member == lxUnboxing) {
+         generateObjectExpression(tape, member);
+         pushObject(tape, lxResult);
+         presavedCount++;
+         unboxMode = true;
+      }
       // presave the nested object if outer operation is required
-      /*else */if (member == lxNested && member.existChild(lxOuterMember, lxCode)) {
+      else if (member == lxNested && member.existChild(lxOuterMember, lxCode)) {
          generateObjectExpression(tape, member);
          pushObject(tape, lxResult);
          presavedCount++;
@@ -4088,15 +4088,15 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 //         // argument list is already unboxed
 //      }
       /*else */if (test(current.type, lxObjectMask)) {
-         //if (current == lxUnboxing) {
-         //   SNode tempLocal = current.findChild(lxTempLocal);
-         //   if (tempLocal == lxNone) {
-         //      loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
-         //      presavedCount--;
-         //   }
-         //   else loadObject(tape, lxLocal, tempLocal.argument);
-         //}
-         /*else */if (current == lxNested && current.existChild(lxOuterMember, lxCode)) {
+         if (current == lxUnboxing) {
+            SNode tempLocal = current.findChild(lxTempLocal);
+            if (tempLocal == lxNone) {
+               loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
+               presavedCount--;
+            }
+            else loadObject(tape, lxLocal, tempLocal.argument);
+         }
+         else if (current == lxNested && current.existChild(lxOuterMember, lxCode)) {
             loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
             presavedCount--;
          }
@@ -4139,69 +4139,69 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
       if (current == lxExpression)
          current = current.firstChild(lxObjectMask);
 
-      //if (current == lxUnboxing) {
-      //   SNode target = current.firstChild(lxObjectMask);
-      //   SNode tempLocal = current.findChild(lxTempLocal);
-      //   if (tempLocal != lxNone) {
-      //      loadObject(tape, lxLocal, tempLocal.argument);
-      //   }
-      //   else popObject(tape, lxResult);
+      if (current == lxUnboxing) {
+         SNode target = current.firstChild(lxObjectMask);
+         SNode tempLocal = current.findChild(lxTempLocal);
+         if (tempLocal != lxNone) {
+            loadObject(tape, lxLocal, tempLocal.argument);
+         }
+         else popObject(tape, lxResult);
 
-      //   if (current.argument != 0) {
-      //      if (target == lxExpression)
-      //         target = target.firstChild(lxObjectMask);
+         if (current.argument != 0) {
+            if (target == lxExpression)
+               target = target.firstChild(lxObjectMask);
 
-      //      tape.write(bcPushB);
-      //      if (target == lxAssigning) {
-      //         // unboxing field address
-      //         SNode larg, rarg;
-      //         assignOpArguments(target, larg, rarg);
+            tape.write(bcPushB);
+            if (target == lxAssigning) {
+               // unboxing field address
+               SNode larg, rarg;
+               assignOpArguments(target, larg, rarg);
 
-      //         target = rarg;
-      //      }
+               target = rarg;
+            }
 
-      //      if (target == lxFieldAddress) {
-      //         if (current.argument == 4) {
-      //            assignInt(tape, lxFieldAddress, target.argument);
-      //         }
-      //         else if (current.argument == 2) {
-      //            assignLong(tape, lxFieldAddress, target.argument);
-      //         }
-      //         else assignStruct(tape, lxFieldAddress, target.argument, current.argument);
-      //      }
-      //      else {
-      //         loadBase(tape, target.type, target.argument);
-      //         copyBase(tape, current.argument);
-      //      }
+            if (target == lxFieldAddress) {
+               if (current.argument == 4) {
+                  assignInt(tape, lxFieldAddress, target.argument);
+               }
+               else if (current.argument == 2) {
+                  assignLong(tape, lxFieldAddress, target.argument);
+               }
+               else assignStruct(tape, lxFieldAddress, target.argument, current.argument);
+            }
+            else {
+               loadBase(tape, target.type, target.argument);
+               copyBase(tape, current.argument);
+            }
 
-      //      tape.write(bcPopB);
-      //   }
-      //   else {
-      //      loadObject(tape, lxResultField);
-      //      saveObject(tape, target.type, target.argument);
-      //   }
-      //}
-      //else if (current == lxLocalUnboxing) {
-      //   SNode assignNode = current.findChild(lxAssigning);
-      //   SNode larg;
-      //   SNode rarg;
+            tape.write(bcPopB);
+         }
+         else {
+            loadObject(tape, lxResultField);
+            saveObject(tape, target.type, target.argument);
+         }
+      }
+      else if (current == lxLocalUnboxing) {
+         SNode assignNode = current.findChild(lxAssigning);
+         SNode larg;
+         SNode rarg;
 
-      //   assignOpArguments(assignNode, larg, rarg);
+         assignOpArguments(assignNode, larg, rarg);
 
-      //   tape.write(bcPushB);
-      //   loadObject(tape, larg.type, larg.argument);
-      //   loadBase(tape, rarg.type, 0);
+         tape.write(bcPushB);
+         loadObject(tape, larg.type, larg.argument);
+         loadBase(tape, rarg.type, 0);
 
-      //   if (assignNode.argument == 4) {
-      //      assignInt(tape, lxFieldAddress, rarg.argument);
-      //   }
-      //   else if (assignNode.argument == 2) {
-      //      assignLong(tape, lxFieldAddress, rarg.argument);
-      //   }
-      //   else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
+         if (assignNode.argument == 4) {
+            assignInt(tape, lxFieldAddress, rarg.argument);
+         }
+         else if (assignNode.argument == 2) {
+            assignLong(tape, lxFieldAddress, rarg.argument);
+         }
+         else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
 
-      //   tape.write(bcPopB);
-      //}
+         tape.write(bcPopB);
+      }
       else if (current == lxNested) {
          bool unboxing = false;
          SNode member = current.firstChild();
@@ -4717,7 +4717,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxBoxing:
       case lxCondBoxing:
 //      case lxArgBoxing:
-//      case lxUnboxing:
+      case lxUnboxing:
          generateBoxingExpression(tape, node);
          break;
       case lxAssigning:

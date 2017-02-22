@@ -1009,7 +1009,7 @@ private:
 //   void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-//   int allocateStructure(SNode node, int& size);
+   int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
 //   ObjectInfo compileExternalCall(SNode node, CodeScope& scope);
@@ -1096,7 +1096,7 @@ private:
 
    //ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
 
-   bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
+   bool convertObject(SNode node, ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
 
 //   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 //   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
@@ -1150,8 +1150,8 @@ public:
    // _Compiler interface implementation
    virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
 //   virtual void injectBoxing(_CompilerScope& scope, SNode node, LexicalType boxingType, int argument, ref_t targetClassRef);
-//   virtual void injectLocalBoxing(SNode node, int size);
-//   virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef);
+   virtual void injectLocalBoxing(SNode node, int size);
+   virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 //   virtual void injectFieldExpression(SNode node);

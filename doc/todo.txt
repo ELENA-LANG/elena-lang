@@ -6,15 +6,10 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
-                 * local : typified parameter for stack safe method
-                 * field : assign const, generic var, local struct, field struct
-                 * field : copy var
-                 * field : box
-                 * field : pass as a parameter
-                 * local : assign field struct
                  
                  * support structures
 
+                 * do not unbox returning objects
                  * box structure fields
                  * support stacksafe
 
@@ -83,6 +78,12 @@ In development:
                  * get rid of __ifoperator / ifnotoeprator - embeddable attribute should be used instead
                  * use intOp for assigning a constant
                  * warn on boxing
+                 * test field : assign const, generic var, local struct, field struct
+                 * test field : copy var
+                 * test field : box
+                 * test field : pass as a parameter
+                 * test local : assign field struct
+                 * test implicit convertor with stack allocated local / field
 
               xdev - generic development
                  * support property template

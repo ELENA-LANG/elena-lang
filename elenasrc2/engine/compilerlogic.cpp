@@ -541,16 +541,16 @@ void CompilerLogic :: injectVirtualCode(SyntaxWriter& writer, _CompilerScope& sc
 //      }
 //   }
 //}
-//
-//bool CompilerLogic :: isReadonly(ClassInfo& info)
-//{
-//   return test(info.header.flags, elReadOnlyRole);
-//}
+
+bool CompilerLogic :: isReadonly(ClassInfo& info)
+{
+   return test(info.header.flags, elReadOnlyRole);
+}
 
 bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/)
 {
-   //ClassInfo info;
-   //defineClassInfo(scope, info, targetRef);   
+   ClassInfo info;
+   defineClassInfo(scope, info, targetRef);   
 
    //// if the target class is wrapper around the source
    //if (test(info.header.flags, elWrapper)) {
@@ -612,8 +612,8 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
    //   }
    //}
 
-   //// check if there are implicit constructors
-   //if (test(info.header.flags, elSealed)) {
+   // check if there are implicit constructors
+   if (test(info.header.flags, elSealed)) {
    //   if (sourceType != 0) {
    //      // if the source type is defined we are lucky
    //      int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
@@ -630,29 +630,29 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
    //      }
    //   }
    //   else {
-   //      // otherwise we have to go through the list
-   //      ClassInfo::MethodMap::Iterator it = info.methods.start();
-   //      while (!it.Eof()) {
-   //         pos_t implicitMessage = it.key();
-   //         if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
-   //            ref_t subj = getSignature(implicitMessage);
-   //            if (isCompatible(scope, scope.attributeHints.get(subj), sourceRef)) {
-   //               if (test(info.header.flags, elStructureRole)) {
-   //                  compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
-   //               }
-   //               else if (test(info.header.flags, elDynamicRole)) {
-   //                  return false;
-   //               }
-   //               else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
+         // otherwise we have to go through the list
+         ClassInfo::MethodMap::Iterator it = info.methods.start();
+         while (!it.Eof()) {
+            pos_t implicitMessage = it.key();
+            if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
+               ref_t subj = getSignature(implicitMessage);
+               if (isCompatible(scope, scope.subjectHints.get(subj), sourceRef)) {
+                  if (test(info.header.flags, elStructureRole)) {
+                     compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
+                  }
+                  else if (test(info.header.flags, elDynamicRole)) {
+                     return false;
+                  }
+                  else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
 
-   //               return true;
-   //            }
-   //         }
+                  return true;
+               }
+            }
 
-   //         it++;
-   //      }
+            it++;
+         }
    //   }
-   //}
+   }
 
    return false;
 }
@@ -936,14 +936,17 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 //      case V_GENERIC:
 //         attrValue = tpGeneric;
 //         return true;
-//      case V_SEALED:
-//         attrValue = tpSealed;
-//         return true;
+      case V_SEALED:
+         attrValue = tpSealed;
+         return true;
 //      case V_ACTION:
 //         attrValue = tpAction;
 //         return true;
       case V_CONSTRUCTOR:
          attrValue = tpConstructor;
+         return true;
+      case V_CONVERSION:
+         attrValue = tpConversion;
          return true;
       default:
          return false;
@@ -1434,7 +1437,7 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
 //   return false;
 //}
 
-bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef/*, bool assingingMode*/)
+bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool assingingMode)
 {
    SNode exprNode = node.findSubNodeMask(lxObjectMask);   
 
@@ -1452,29 +1455,28 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
    }
    else return false;
 
-//   bool localBoxing = false;
-//   bool variable = false;
-//   if (exprNode == lxFieldAddress && exprNode.argument > 0 && !assingingMode) {
-//      variable = !isReadonly(scope, targetRef);
-//      localBoxing = true;
-//   }
-//   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
-//      variable = !isReadonly(scope, targetRef) && !assingingMode;
-//      localBoxing = true;
-//   }
-//   else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
-//      // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
-//      localBoxing = true;
-//   }
-//
-//   if (localBoxing) {
-//      variable = !isReadonly(scope, targetRef);
-//
-//      compiler.injectLocalBoxing(exprNode, node.argument);
-//
-//      node = variable ? lxLocalUnboxing : lxExpression;
-//   }
-//   else node = lxExpression;
+   bool localBoxing = false;
+   bool variable = false;
+   if (exprNode == lxFieldAddress && exprNode.argument > 0 && !assingingMode) {
+      variable = !isReadonly(scope, targetRef);
+      localBoxing = true;
+   }
+   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
+      variable = !isReadonly(scope, targetRef) && !assingingMode;
+      localBoxing = true;
+   }
+   //else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
+   //   // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
+   //   localBoxing = true;
+   //}
+
+   if (localBoxing) {
+      variable = !isReadonly(scope, targetRef);
+
+      compiler.injectLocalBoxing(exprNode, node.argument);
+
+      node = variable ? lxLocalUnboxing : lxExpression;
+   }
 
    return true;
 }
