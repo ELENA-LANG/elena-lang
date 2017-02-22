@@ -67,43 +67,43 @@ public:
       int    offset;
       ref_t  class_ref;
       ref_t  subj_ref;
-//      int    size;
+      int    size;
 
       Parameter()
       {
          offset = -1;
          subj_ref = 0;
          class_ref = 0;
-//         size = 0;
+         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
          this->subj_ref = 0;
          this->class_ref = 0;
-//         this->size = 0;
+         this->size = 0;
       }
       Parameter(int offset, ref_t subj_ref)
       {
          this->offset = offset;
          this->subj_ref = subj_ref;
          this->class_ref = 0;
-         //this->size = 0;
+         this->size = 0;
       }
       Parameter(int offset, ref_t subj_ref, ref_t class_ref)
       {
          this->offset = offset;
          this->subj_ref = subj_ref;
          this->class_ref = class_ref;
-         //this->size = 0;
+         this->size = 0;
       }
-//      Parameter(int offset, ref_t subj_ref, ref_t class_ref, int size)
-//      {
-//         this->offset = offset;
-//         this->subj_ref = subj_ref;
-//         this->class_ref = class_ref;
-//         this->size = size;
-//      }
+      Parameter(int offset, ref_t subj_ref, ref_t class_ref, int size)
+      {
+         this->offset = offset;
+         this->subj_ref = subj_ref;
+         this->class_ref = class_ref;
+         this->size = size;
+      }
    };
 
    // InheritResult
@@ -128,7 +128,7 @@ public:
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
-//      okIntConstant,                  // param - reference, extraparam - imm argument
+      okIntConstant,                  // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference
 //      okRealConstant,                 // param - reference
       okMessageConstant,              // param - reference
@@ -137,18 +137,18 @@ public:
       okVerbConstant,                 // param - reference
 //      okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
-//      okStaticField,                  // param - reference
-//      okFieldAddress,                 // param - field offset, extraparam - class reference
+      okStaticField,                  // param - reference
+      okFieldAddress,                 // param - field offset, extraparam - class reference
       okOuter,                        // param - field offset, extraparam - class reference
       okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
-//      okParamField,
+      okParamField,
 //      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
       okSuper,
-//      okLocalAddress,                 // param - local offset, extraparam - class reference
+      okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
 //      okBlockLocal,                   // param - local offset
 //      okConstantRole,                 // param - role reference
@@ -551,8 +551,8 @@ private:
       ref_t        resultType;
       ref_t        resultRef;
 //      bool         withOpenArg;
-//      bool         stackSafe;
-//      bool         classEmbeddable;
+      bool         stackSafe;
+      bool         classEmbeddable;
 //      bool         generic;
 //      bool         extensionTemplateMode;
 ////      bool         sealed;
@@ -585,12 +585,12 @@ private:
 //
 //         return scope ? scope->info.header.flags : 0;
 //      }
-//      ref_t getClassRef(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
+      ref_t getClassRef(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
+      }
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -614,9 +614,9 @@ private:
       LocalMap     locals;
       int          level;
 
-//      // scope stack allocation
-//      int          reserved;  // allocated for the current statement
-//      int          saved;     // permanently allocated
+      // scope stack allocation
+      int          reserved;  // allocated for the current statement
+      int          saved;     // permanently allocated
 
       int newLocal()
       {
@@ -629,15 +629,15 @@ private:
 //      {
 //         locals.add(local, Parameter(level/*, type*/));
 //      }
-      void mapLocal(ident_t local, int level, ref_t type, ref_t class_ref/*, int size*/)
+      void mapLocal(ident_t local, int level, ref_t type, ref_t class_ref, int size)
       {
-         locals.add(local, Parameter(level, type, class_ref/*, size*/));
+         locals.add(local, Parameter(level, type, class_ref, size));
       }
 
-//      void freeSpace()
-//      {
-//         reserved = saved;
-//      }
+      void freeSpace()
+      {
+         reserved = saved;
+      }
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -705,7 +705,7 @@ private:
 
       ObjectInfo allocateRetVar();
 
-//      bool markAsPresaved(ObjectInfo object);
+      bool markAsPresaved(ObjectInfo object);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -931,6 +931,8 @@ private:
    }
 ////   bool copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode, SNode currentNode);
 
+   int countFields(SNode node);
+
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
    void compileFieldDeclarations(SyntaxWriter& writer, SNode member, ClassScope& scope);
@@ -944,8 +946,8 @@ private:
    void declareSymbolAttributes(SyntaxWriter& writer, SNode node, SymbolScope& scope);
    void declareClassAttribute(SyntaxWriter& writer, SNode node, ClassScope& scope, SNode rootNode);
    void declareClassAttributes(SyntaxWriter& writer, SNode node, ClassScope& scope);
-   void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/, SNode rootNode);
-   void declareLocalAttributes(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
+   void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size, SNode rootNode);
+   void declareLocalAttributes(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef, int& size);
    void declareFieldAttributes(SyntaxWriter& writer, SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size);
    //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
@@ -982,7 +984,7 @@ private:
    void declareBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference);
    ObjectInfo declareBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
 
-   ObjectInfo declareMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope);   // returns an info of the first operand
+   ObjectInfo declareMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
 
    ObjectInfo declareMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo declareMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
@@ -1003,19 +1005,19 @@ private:
 //   void compileThrow(SNode node, CodeScope& scope, int mode);
 ////   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(SNode node, CodeScope& scope);
+
+//   void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
+
+   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
+//   int allocateStructure(SNode node, int& size);
+   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
+
+//   ObjectInfo compileExternalCall(SNode node, CodeScope& scope);
+//   ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 //
-////   void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
-////
-////   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-////   int allocateStructure(SNode node, int& size);
-////   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
-////
-////   ObjectInfo compileExternalCall(SNode node, CodeScope& scope);
-////   ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
-////
-////   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+//   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
-////   void compileResendExpression(SNode node, CodeScope& scope);
+   void declareResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void declareDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo declareCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -1056,7 +1058,7 @@ private:
 //
 //   ref_t generateTemplate(TemplateScope& scope);
 
-   void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef, int sizeHint/*, bool singleField*/);
+   void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef, int sizeHint, bool singleField);
 ////   void generateClassStaticField(ClassScope& scope, SNode current);
 ////
 ////   void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
@@ -1093,7 +1095,7 @@ private:
    bool typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t subjectRef);
    bool boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t targetType, ref_t targetRef);
 
-//   ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
+   //ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
 
    bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
 

@@ -24,10 +24,13 @@
 //#template(-8203) extension {}
 //#template(-8203,subject) extension : subject {}
 
-#template(-4097)__ifoperator {}
-#template(-4098)__ifnotoperator {}
-#template(-19)  __mssg {}
-#template(-20)  __verb {}
+#template(-4097)  __ifoperator {}
+#template(-4098)  __ifnotoperator {}
+#template(-19,4)  __mssg  {}
+#template(-20,4)  __verb  {}
+#template(-11,1)  __int8  {}
+#template(-11,2)  __int16 {}
+#template(-11,4)  __int32 {}
 
 ///// Provides classes that describe the basic functionality
 
@@ -39,10 +42,10 @@
 //#subject keyvalue   = system'KeyValue.
 //
 //#subject ref        = system'Variable.
-//
-//#subject byte       = system'ByteNumber.
-//#subject short      = system'ShortNumber.
-//#subject int        = system'IntNumber.
+
+#subject byte       = system'ByteNumber.
+#subject short      = system'ShortNumber.
+#subject int        = system'IntNumber.
 //#subject long       = system'LongNumber.
 //#subject real       = system'RealNumber.
 //#subject char       = system'CharValue.

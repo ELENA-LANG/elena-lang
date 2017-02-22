@@ -15,11 +15,11 @@
 #define INVALID_REF   (ref_t)-1
 
 // virtual objects
-//#define V_FLAG        (ref_t)-03
+#define V_FLAG        (ref_t)-03
 #define V_NIL         (ref_t)-04
 
 //#define V_BINARY      (ref_t)-10
-//#define V_INT32       (ref_t)-11
+#define V_INT32       (ref_t)-11
 //#define V_PTR32       (ref_t)-12
 //#define V_INT64       (ref_t)-13
 //#define V_REAL64      (ref_t)-14
@@ -110,7 +110,7 @@ struct _CompilerScope
 
    // cached references
    ref_t superReference;
-//   ref_t intReference;
+   ref_t intReference;
 //   ref_t longReference;
 //   ref_t realReference;
    ref_t signatureReference;
@@ -135,7 +135,7 @@ struct _CompilerScope
    _CompilerScope()
    {
       module = NULL;
-      /*intReference = boolReference = */superReference = 0;
+      intReference = /*boolReference = */superReference = 0;
       signatureReference = verbReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      arrayReference = charReference = realReference = 0;
@@ -196,8 +196,8 @@ public:
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
 
-//   // retrieve the operation type
-//   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+   // retrieve the operation type
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 
@@ -210,19 +210,19 @@ public:
    // check if the classes is compatible
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 
-//   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
+   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 
 //   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
 //   virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
-//   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          
 
-//   virtual bool isPrimitiveRef(ref_t reference) = 0;
+   virtual bool isPrimitiveRef(ref_t reference) = 0;
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(SyntaxWriter& writer, _CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
@@ -248,7 +248,7 @@ public:
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
-//   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
+   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
 
    // optimization
    virtual bool optimizeBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef/*, bool assingingMode*/) = 0;

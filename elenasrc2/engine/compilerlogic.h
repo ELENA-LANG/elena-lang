@@ -17,43 +17,43 @@ namespace _ELENA_
 
 class CompilerLogic : public _CompilerLogic
 {
-//   struct OperatorInfo
-//   {
-//      int         operatorId;
-//
-//      ref_t       loperand;
-//      ref_t       roperand;
-//      ref_t       roperand2;
-//      LexicalType operationType;
-//      ref_t       result;
-//
-//      OperatorInfo()
-//      {
-//         operatorId = 0;
-//         loperand = roperand = result = roperand2 = 0;
-//         operationType = lxNone;
-//      }
-//      OperatorInfo(int operatorId, ref_t loperand, ref_t roperand, LexicalType type, ref_t result)
-//      {
-//         this->operatorId = operatorId;
-//         this->loperand = loperand;
-//         this->roperand = roperand;
-//         this->operationType = type;
-//         this->result = result;
-//         this->roperand2 = 0;
-//      }
-//      OperatorInfo(int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, LexicalType type, ref_t result)
-//      {
-//         this->operatorId = operatorId;
-//         this->loperand = loperand;
-//         this->roperand = roperand;
-//         this->roperand2 = roperand2;
-//         this->operationType = type;
-//         this->result = result;
-//      }
-//   };
-//
-//   typedef List<OperatorInfo> OperatorList;
+   struct OperatorInfo
+   {
+      int         operatorId;
+
+      ref_t       loperand;
+      ref_t       roperand;
+      ref_t       roperand2;
+      LexicalType operationType;
+      ref_t       result;
+
+      OperatorInfo()
+      {
+         operatorId = 0;
+         loperand = roperand = result = roperand2 = 0;
+         operationType = lxNone;
+      }
+      OperatorInfo(int operatorId, ref_t loperand, ref_t roperand, LexicalType type, ref_t result)
+      {
+         this->operatorId = operatorId;
+         this->loperand = loperand;
+         this->roperand = roperand;
+         this->operationType = type;
+         this->result = result;
+         this->roperand2 = 0;
+      }
+      OperatorInfo(int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, LexicalType type, ref_t result)
+      {
+         this->operatorId = operatorId;
+         this->loperand = loperand;
+         this->roperand = roperand;
+         this->roperand2 = roperand2;
+         this->operationType = type;
+         this->result = result;
+      }
+   };
+
+   typedef List<OperatorInfo> OperatorList;
 
    int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
    int checkMethod(ClassInfo& info, ref_t message)
@@ -62,7 +62,7 @@ class CompilerLogic : public _CompilerLogic
       return checkMethod(info, message, dummy);
    }   
 
-//   OperatorList operators;
+   OperatorList operators;
 
    bool loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
 
@@ -76,7 +76,7 @@ public:
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
-//   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result);
    virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference);
@@ -89,8 +89,8 @@ public:
       return (int)reference < 0;
    }
 //   virtual bool isEmbeddableArray(ClassInfo& info);
-//   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
-//   virtual bool isVariable(ClassInfo& info);
+   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
+   virtual bool isVariable(ClassInfo& info);
    virtual bool isEmbeddable(ClassInfo& info);
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference)
    {
@@ -100,7 +100,7 @@ public:
       return isEmbeddable(info);
    }
    virtual bool isRole(ClassInfo& info);
-//   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
+   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
 //   virtual bool isReadonly(ClassInfo& info);
 //   virtual bool isReadonly(_CompilerScope& scope, ref_t reference)
@@ -150,8 +150,8 @@ public:
    virtual bool optimizeBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef/*, bool assingingMode*/);
 
 //   virtual void optimizeDuplicateBoxing(SNode node);
-//
-//   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2);
+
+   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2);
 
    virtual bool recognizeNestedScope(SNode& node);
    virtual bool recognizeScope(SNode& node);

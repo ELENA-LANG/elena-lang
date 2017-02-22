@@ -158,7 +158,7 @@ class ByteCodeWriter
    void newDynamicNStructure(CommandTape& tape);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
-//   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
+   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
    void newDynamicObject(CommandTape& tape);
 
    void popObject(CommandTape& tape, LexicalType sourceTypeS);
@@ -171,9 +171,9 @@ class ByteCodeWriter
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
-//
-//   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
-//   void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
+
+   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
+   void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
 //   void boxArgList(CommandTape& tape, ref_t vmtReference);
 //   void unboxArgList(CommandTape& tape);
 
@@ -202,9 +202,9 @@ class ByteCodeWriter
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
-//   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
-//
+   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
+
 //   void freeVirtualStack(CommandTape& tape, int count);
 
    void endCatch(CommandTape& tape);
@@ -226,23 +226,23 @@ class ByteCodeWriter
 
    void assignBaseTo(CommandTape& tape, LexicalType target);
 
-//   void assignInt(CommandTape& tape, LexicalType target, int offset);
-//   void assignLong(CommandTape& tape, LexicalType target, int offset);
-//   void assignShort(CommandTape& tape, LexicalType target, int offset);
-//   void assignByte(CommandTape& tape, LexicalType target, int offset);
-//   void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
+   void assignInt(CommandTape& tape, LexicalType target, int offset);
+   void assignLong(CommandTape& tape, LexicalType target, int offset);
+   void assignShort(CommandTape& tape, LexicalType target, int offset);
+   void assignByte(CommandTape& tape, LexicalType target, int offset);
+   void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
 //   void saveInt(CommandTape& tape, LexicalType target, int argument);
 //   void saveReal(CommandTape& tape, LexicalType target, int argument);
-//   void copyInt(CommandTape& tape, int offset);
-//   void copyShort(CommandTape& tape, int offset);
-//   void copyStructure(CommandTape& tape, int offset, int size);
-//   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
+   void copyInt(CommandTape& tape, int offset);
+   void copyShort(CommandTape& tape, int offset);
+   void copyStructure(CommandTape& tape, int offset, int size);
+   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
    void saveSubject(CommandTape& tape);
-//   void saveIntConstant(CommandTape& tape, int value);
-////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-//   void doIntOperation(CommandTape& tape, int operator_id);
-//   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
-//   void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
+   void saveIntConstant(CommandTape& tape, int value);
+//   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
+   void doIntOperation(CommandTape& tape, int operator_id);
+   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
+   void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
 //   void doLongOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
@@ -264,11 +264,11 @@ class ByteCodeWriter
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
 
-//   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
-//
-////   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
+
+//   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
 //
@@ -290,9 +290,9 @@ class ByteCodeWriter
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
-//   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
-//   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
+   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
+   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);

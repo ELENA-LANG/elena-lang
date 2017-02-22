@@ -97,11 +97,11 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
          unpackChildren(node);
          _writer.closeNode();
          break;
-//      case nsBaseClass:
-//         _writer.newNode(lxBaseParent);
-//         unpackChildren(node);
-//         _writer.closeNode();
-//         break;
+      case nsBaseClass:
+         _writer.newNode(lxBaseParent);
+         unpackChildren(node);
+         _writer.closeNode();
+         break;
       case nsMethodParameter:
          _writer.newNode(lxMethodParameter);
          unpackChildren(node);
@@ -133,18 +133,18 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
       case nsRetStatement:
          copyExpression(node);
          break;
-//      case nsResendExpression:
-//         _writer.newBookmark();
-//         unpackChildren(node);
-//
-//         node = node.nextNode();
-//         unpackNode(node, 0);
-//
-//         _writer.insert(lxResendExpression);
-//         _writer.closeNode();
-//
-//         _writer.removeBookmark();
-//         break;
+      case nsResendExpression:
+         _writer.newBookmark();
+         unpackChildren(node);
+
+         node = node.nextNode();
+         unpackNode(node, 0);
+
+         _writer.insert(lxResendExpression);
+         _writer.closeNode();
+
+         _writer.removeBookmark();
+         break;
       case nsVariable:
          copyVariable(node);
          break;
@@ -176,9 +176,9 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
 //         break;
 //      case nsL0Operation:
 //      case nsL3Operation:
-//      case nsL4Operation:
+      case nsL4Operation:
 //      case nsL5Operation:
-//      case nsL6Operation:
+      case nsL6Operation:
       case nsL7Operation:
 //      case nsNewOperator:
          copyMessage(node, true);

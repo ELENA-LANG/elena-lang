@@ -6,7 +6,11 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
+                 * stack allocated local variable
+                 * embeddable fields
+
                  * support structures
+
                  * box structure fields
                  * support stacksafe
 
@@ -16,6 +20,7 @@ In development:
                  * warn on not found messages
                  * attributes var, class should enforce the compiler to treat the code as variable or class declaration
 
+                 * static fields
                  * class class is sealed and stateless
                  * raise an error when costructor new [] // !!
                  * constructor constructor [] / constructor [] - raise warning
@@ -43,6 +48,8 @@ In development:
                  * uncomment declareRetExpression
                  * uncomment declareDispatchExpression
                  * uncomment __object.dispatch
+                 * uncomment ByteCodeWriter::generateOperation
+                 * uncomment Compiler::declareAssigning
                  * syntax : BLOCK_CLOSING_EXPECTED / DECLARATION_END_EXPECTED and so on
                  * check sealed / limited / sealed method
                  * dispatch verb should not be called explicitly
@@ -65,9 +72,11 @@ In development:
                  * test typecastObject
                  * test boxObject
                  * ret rid of maType hint
+                 * optimie opertion with int constant
                  * optimization bcopya quit => quit
                  * declareBranchingOperator : try to limit number of times when sub code duplicates are created
                    (probably all comparision operators are always return bool value)
+                 * get rid of __ifoperator / ifnotoeprator - embeddable attribute should be used instead
 
               xdev - generic development
                  * support property template
