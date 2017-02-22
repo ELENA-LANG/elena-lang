@@ -1452,7 +1452,7 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
 ////         writer.closeNode();
 //         }
          /*else */if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->intReference)) {
-            current = lxIntVariable;
+            writer.newNode(lxIntVariable);
          }
          //else if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->longReference)) {
          //   writer.newNode(lxLongVariable);
@@ -1470,7 +1470,9 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
          else writer.newNode(lxVariable);
 
          writer.appendNode(lxLevel, -1 - param.offset);
+         writer.newNode(lxIdentifier);
          writer.appendNode(lxTerminal, name);
+         writer.closeNode();
 
          writer.closeNode();
       }
@@ -2034,7 +2036,7 @@ void Compiler :: declareVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
          switch (localInfo.header.flags & elDebugMask)
          {
             case elDebugDWORD:
-               node = lxIntVariable;
+               variableType = lxIntVariable;
                break;
 //            case elDebugQWORD:
 //               node = lxLongVariable;

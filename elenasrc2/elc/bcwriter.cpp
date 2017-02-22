@@ -4856,11 +4856,11 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
                current.findChild(lxTerminal).identifier(),
                current.findChild(lxLevel).argument);
             break;
-//         case lxIntVariable:
-//            declareLocalIntInfo(tape,
-//               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-//               current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-//            break;
+         case lxIntVariable:
+            declareLocalIntInfo(tape,
+               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+               current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+            break;
 //         case lxLongVariable:
 //            declareLocalLongInfo(tape,
 //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
@@ -5018,7 +5018,7 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
             break;
          case lxVariable:
             declareLocalInfo(tape,
-               current.findChild(lxTerminal).identifier(),
+               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
                current.findChild(lxLevel).argument);
             break;
          case lxSelfVariable:
