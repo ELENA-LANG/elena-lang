@@ -2075,7 +2075,9 @@ void Compiler :: declareVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
       writer.newNode(variableType, size);
 
       writer.appendNode(lxLevel, variable.param);
+      writer.newNode(lxIdentifier);
       writer.appendNode(lxTerminal, identifier);
+      writer.closeNode();
       if (!emptystr(className))
          writer.appendNode(lxClassName, className);
 
@@ -3080,7 +3082,7 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
    SNode operation = node.findChild(lxMessage, lxExpression, lxAssign);
    if (operation == lxExpression) {
       exprNode = operation;
-      operation = exprNode.findChild(lxMessage/*, lxOperator*/);
+      operation = exprNode.findChild(lxMessage, lxOperator);
    }
    
    if (operation == lxMessage) {
@@ -3127,21 +3129,20 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
       }
       else scope.raiseError(errUnknownObject, firstToken);
    }
-//   // if it setat operator
-//   else if (operation == lxOperator) {
-//      return compileOperator(node, scope, mode, SET_REFER_MESSAGE_ID);
-//   }
+   // if it setat operator
+   else if (operation == lxOperator) {
+      return declareOperator(writer, node, scope, mode, SET_REFER_MESSAGE_ID);
+   }
    else {
       SNode targetNode = node.firstChild(lxObjectMask);
-
-      retVal = declareObject(writer, targetNode, scope, mode | HINT_NOBOXING);
+      retVal = declareExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
 
       ref_t targetRef = resolveObjectReference(scope, retVal);
       ref_t targetType = retVal.type;
       if (retVal.kind == okLocalAddress) {
          size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
          if (size != 0) {
-            node.setArgument(size);
+            operand = size;
          }
          else scope.raiseError(errInvalidOperation, node);
       }
@@ -3172,9 +3173,9 @@ ObjectInfo Compiler :: declareAssigning(SyntaxWriter& writer, SNode node, CodeSc
       }
       else scope.raiseError(errInvalidOperation, node);
 
-      SNode sourceNode = targetNode.nextNode(lxObjectMask);
       writer.newBookmark();
 
+      SNode sourceNode = targetNode.nextNode(lxObjectMask);
       ObjectInfo source = declareAssigningExpression(writer, sourceNode, scope);
 
       boxObject(writer, sourceNode, scope, source, targetType, targetRef);
@@ -6928,6 +6929,19 @@ ref_t Compiler :: optimizeMessageCall(SNode node, ModuleScope& scope, WarningSco
    return resultRef;
 }
 
+ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope)
+{
+   //ref_t targetRef = node.findChild(lxTarget).argument;
+   SNode targetNode = node.firstChild(lxObjectMask);
+   SNode sourceNode = targetNode.nextNode(lxObjectMask);
+
+   ref_t targetRef = targetNode.findChild(lxTarget).argument;
+
+   ref_t sourceRef = optimizeExpression(sourceNode, scope, warningScope);
+
+   return targetRef;
+}
+
 ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope)
 {
    ref_t targetRef = node.findChild(lxTarget).argument;
@@ -6935,32 +6949,17 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
 
    ref_t sourceRef = optimizeExpression(node.firstChild(lxObjectMask), scope, warningScope);
 
-   //      // if no boxing hint provided
-   //      // then boxing should be skipped
-   //      if (!boxing) {
-      if (!_logic->optimizeBoxing(scope, *this, node, targetRef, sourceRef/*, test(mode, HINT_ASSIGNING)*/))
-         if (targetType != 0) {
-            node = lxCalling;
-            node.setArgument(encodeMessage(targetType, GET_MESSAGE_ID, 0));
+   node.setArgument(_logic->defineStructSize(scope, targetRef));
 
-            return optimizeMessageCall(node, scope, warningScope);
-         }
-         else scope.raiseError(errInvalidOperation, node);
-   //      }
-   //      else {
-   //         if (node == lxUnboxing && test(mode, HINT_NOUNBOXING)) {
-   //            node = lxBoxing;
-   //         }
-   //         else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {
-   //            node = lxBoxing;
-   //         }
-   //
-   //         // HOTFIX : replace virtual class with generic one
-   //         if (_logic->isPrimitiveRef(target.argument))
-   //            target.setArgument(_logic->resolvePrimitiveReference(scope, target.argument));
-   //
-   //         warningScope.raise(scope, WARNING_LEVEL_3, wrnBoxingCheck, node);
-   //      }
+   if (!_logic->optimizeBoxing(scope, *this, node, targetRef, sourceRef/*, test(mode, HINT_ASSIGNING)*/)) {
+      if (targetType != 0) {
+         node = lxCalling;
+         node.setArgument(encodeMessage(targetType, GET_MESSAGE_ID, 0));
+
+         return optimizeMessageCall(node, scope, warningScope);
+      }
+      else scope.raiseError(errInvalidOperation, node);
+   }
 
    return targetRef; 
 }
@@ -6984,9 +6983,11 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxCalling:
          return optimizeMessageCall(current, scope, warningScope);
       case lxExpression:
-         return optimizeExpression(current, scope, warningScope);
+         return optimizeExpression(current.firstChild(lxObjectMask), scope, warningScope);
       case lxBoxing:
          return optimizeBoxing(current, scope, warningScope);
+      case lxAssigning:
+         return optimizeAssigning(current, scope, warningScope);
       case lxSymbolReference:
          return optimizeSymbol(current, scope, warningScope);
       default:

@@ -1113,6 +1113,7 @@ private:
 ////   void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
 ////   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
    ref_t optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
+   ref_t optimizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope);

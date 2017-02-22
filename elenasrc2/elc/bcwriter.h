@@ -297,6 +297,7 @@ class ByteCodeWriter
    void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
    void generateCreating(CommandTape& tape, SyntaxTree::Node node);
 

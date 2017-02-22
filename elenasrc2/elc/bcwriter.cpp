@@ -4802,14 +4802,10 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
       //if (current == lxReleasing) {
       //   releaseObject(tape, current.argument);
       //}
-      /*else*/ if (current == lxVariable) {
-         declareLocalInfo(tape,
-            current.findChild(lxTerminal).identifier(),
-            current.findChild(lxLevel).argument);
-      }
-      else if (test(current.type, lxObjectMask)) {
+      /*else */if (test(current.type, lxObjectMask)) {
          generateObjectExpression(tape, current);
       }
+      else generateDebugInfo(tape, current);
 
       current = current.nextNode();
    }
@@ -4819,6 +4815,86 @@ void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, 
 {
    loadObject(tape, lxLocalAddress, offset + 2);
    saveIntConstant(tape, 0x800000 + node.argument);
+}
+
+void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node current)
+{
+   LexicalType type = current.type;
+   switch (type)
+   {
+      case lxVariable:
+         declareLocalInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+            current.findChild(lxLevel).argument);
+         break;
+      case lxIntVariable:
+         declareLocalIntInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+         break;
+         //         case lxLongVariable:
+         //            declareLocalLongInfo(tape,
+         //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+         //               current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+         //            break;
+         //         case lxReal64Variable:
+         //            declareLocalRealInfo(tape,
+         //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+         //               current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+         //            break;
+         //         case lxMessageVariable:
+         //            declareMessageInfo(tape, current.identifier());
+         //            break;
+         //         //case lxParamsVariable:
+         //         //   declareLocalParamsInfo(tape,
+         //         //      current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+         //         //      current.findChild(lxLevel).argument);
+         //         //   break;
+         //         case lxBytesVariable:
+         //         {
+         //            int level = current.findChild(lxLevel).argument;
+         //
+         //            generateBinary(tape, current, level);
+         //            declareLocalByteArrayInfo(tape,
+         //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+         //               level, false);
+         //            break;
+         //         }
+         //         case lxShortsVariable:
+         //         {
+         //            int level = current.findChild(lxLevel).argument;
+         //
+         //            generateBinary(tape, current, level);
+         //            declareLocalShortArrayInfo(tape,
+         //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+         //               level, false);
+         //            break;
+         //         }
+         //         case lxIntsVariable:
+         //         {
+         //            int level = current.findChild(lxLevel).argument;
+         //
+         //            generateBinary(tape, current, level);
+         //
+         //            declareLocalIntArrayInfo(tape,
+         //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+         //               level, false);
+         //            break;
+         //         }
+      case lxBinaryVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+
+         // HOTFIX : only for dynamic objects
+         if (current.argument != 0)
+            generateBinary(tape, current, level);
+
+         declareStructInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+            level, current.findChild(lxClassName).identifier());
+         break;
+      }
+   }
 }
 
 void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node node)
@@ -4851,78 +4927,6 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxExternFrame:
 //            generateExternFrame(tape, current);
 //            break;
-         case lxVariable:
-            declareLocalInfo(tape,
-               current.findChild(lxTerminal).identifier(),
-               current.findChild(lxLevel).argument);
-            break;
-         case lxIntVariable:
-            declareLocalIntInfo(tape,
-               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-               current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-            break;
-//         case lxLongVariable:
-//            declareLocalLongInfo(tape,
-//               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-//               current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-//            break;
-//         case lxReal64Variable:
-//            declareLocalRealInfo(tape,
-//               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-//               current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-//            break;
-//         case lxMessageVariable:
-//            declareMessageInfo(tape, current.identifier());
-//            break;
-//         //case lxParamsVariable:
-//         //   declareLocalParamsInfo(tape,
-//         //      current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-//         //      current.findChild(lxLevel).argument);
-//         //   break;
-//         case lxBytesVariable:
-//         {
-//            int level = current.findChild(lxLevel).argument;
-//
-//            generateBinary(tape, current, level);
-//            declareLocalByteArrayInfo(tape,
-//               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-//               level, false);
-//            break;
-//         }
-//         case lxShortsVariable:
-//         {
-//            int level = current.findChild(lxLevel).argument;
-//
-//            generateBinary(tape, current, level);
-//            declareLocalShortArrayInfo(tape,
-//               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-//               level, false);
-//            break;
-//         }
-//         case lxIntsVariable:
-//         {
-//            int level = current.findChild(lxLevel).argument;
-//
-//            generateBinary(tape, current, level);
-//
-//            declareLocalIntArrayInfo(tape,
-//               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-//               level, false);
-//            break;
-//         }
-         case lxBinaryVariable:
-         {
-            int level = current.findChild(lxLevel).argument;
-
-            // HOTFIX : only for dynamic objects
-            if (current.argument != 0)
-               generateBinary(tape, current, level);
-
-            declareStructInfo(tape,
-               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-               level, current.findChild(lxClassName).identifier());
-            break;
-         }
 //         case lxReleasing:
 //            releaseObject(tape, current.argument);
 //            break;
@@ -4932,6 +4936,18 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             break;
          case lxBreakpoint:
             translateBreakpoint(tape, current);
+            break;
+         case lxVariable:
+         case lxIntVariable:
+         case lxLongVariable:
+         case lxReal64Variable:
+         case lxMessageVariable:
+         case lxParamsVariable:
+         case lxBytesVariable:
+         case lxShortsVariable:
+         case lxIntsVariable:
+         case lxBinaryVariable:
+            generateDebugInfo(tape, current);
             break;
          default:
             generateObjectExpression(tape, current);
