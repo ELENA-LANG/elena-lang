@@ -1092,7 +1092,6 @@ private:
 
 //   bool validate(_ProjectManager& project, _Module* module, int reference);
 
-   bool typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t subjectRef);
    bool boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t targetType, ref_t targetRef);
 
    //ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
@@ -1114,9 +1113,9 @@ private:
 ////   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
    ref_t optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope);
-   ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
    ref_t optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
-   ref_t optimizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   ref_t optimizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    void optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope);

@@ -2898,19 +2898,6 @@ bool Compiler :: convertObject(SNode node, CodeScope& scope, ref_t targetRef, Ob
    else return true;
 }
 
-bool Compiler :: typecastObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t subjectRef)
-{
-   ref_t ref = scope.moduleScope->subjectHints.get(subjectRef);
-   if (ref == INVALID_REF)
-      scope.raiseError(errInvalidOperation, node);
-   else if (ref != 0) {
-      declareMessage(writer, node, scope, source, encodeMessage(subjectRef, GET_MESSAGE_ID, 0), HINT_NODEBUGINFO);
-
-      return true;
-   }
-   else return false;
-}
-
 bool Compiler :: boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t targetType, ref_t targetRef)
 {
    ref_t sourceRef = resolveObjectReference(scope, source);
@@ -3014,7 +3001,7 @@ ObjectInfo Compiler :: declareMessageParameters(SyntaxWriter& writer, SNode node
 
             ObjectInfo param = declareExpression(writer, arg, scope, paramMode);
             if (subjectRef != 0)
-               typecastObject(writer, arg, scope, param, subjectRef);
+               boxObject(writer, arg, scope, param, subjectRef, scope.moduleScope->subjectHints.get(subjectRef));
 
             writer.removeBookmark();
 
@@ -3533,7 +3520,7 @@ ObjectInfo Compiler :: declareRetExpression(SyntaxWriter& writer, SNode node, Co
    ObjectInfo info = declareExpression(writer, node, scope, mode);
 
    if (typecasting) {
-      typecastObject(writer, node, scope, info, subjectRef);
+      boxObject(writer, node, scope, info, subjectRef, scope.moduleScope->subjectHints.get(subjectRef));
    }
    else if (boxing)
       boxObject(writer, node, scope, info, subjectRef, targetRef);
@@ -6937,28 +6924,56 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
 
    ref_t targetRef = targetNode.findChild(lxTarget).argument;
 
-   ref_t sourceRef = optimizeExpression(sourceNode, scope, warningScope);
+   ref_t sourceRef = optimizeExpression(sourceNode, scope, warningScope, node.argument != 0 ? HINT_NOBOXING : 0);
 
    return targetRef;
 }
 
-ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope)
+ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
 {
    ref_t targetRef = node.findChild(lxTarget).argument;
    ref_t targetType = node.findChild(lxType).argument;
+   ref_t sourceRef = 0;
+   bool boxing = !test(mode, HINT_NOBOXING);
 
-   ref_t sourceRef = optimizeExpression(node.firstChild(lxObjectMask), scope, warningScope);
+   // adjust primitive taeget
+   if (_logic->isPrimitiveRef(targetRef)) {
+      targetRef = _logic->resolvePrimitiveReference(scope, targetRef);
+      node.findChild(lxTarget).setArgument(targetRef);
+   }
 
-   node.setArgument(_logic->defineStructSize(scope, targetRef));
-
-   if (!_logic->optimizeBoxing(scope, *this, node, targetRef, sourceRef/*, test(mode, HINT_ASSIGNING)*/)) {
-      if (targetType != 0) {
+   SNode sourceNode = node.findSubNodeMask(lxObjectMask);
+   // HOTFIX : do not box constant classes
+   if (sourceNode == lxConstantInt && targetRef == scope.intReference) {
+      boxing = false;
+   }
+   else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
+      boxing = false;
+   }
+   else if (sourceNode == lxLocalAddress || sourceNode == lxFieldAddress) {
+      sourceRef = targetRef;
+   }
+   else sourceRef = optimizeExpression(sourceNode, scope, warningScope);
+   
+   if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef/*, test(mode, HINT_ASSIGNING)*/)) {
+      if (targetType != 0 && !_logic->isPrimitiveRef(sourceRef)) {
          node = lxCalling;
          node.setArgument(encodeMessage(targetType, GET_MESSAGE_ID, 0));
 
          return optimizeMessageCall(node, scope, warningScope);
       }
       else scope.raiseError(errInvalidOperation, node);
+   }
+   else if (!boxing) {
+      node = lxExpression;
+   }
+   else {
+      if (node.argument != 0) {
+
+      }
+      else {
+         node.setArgument(_logic->defineStructSize(scope, targetRef));
+      }
    }
 
    return targetRef; 
@@ -6977,15 +6992,15 @@ ref_t Compiler :: optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& 
    return resolveObjectReference(scope, result);
 }
 
-ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningScope& warningScope)
+ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningScope& warningScope, int mode)
 {
    switch (current.type) {
       case lxCalling:
          return optimizeMessageCall(current, scope, warningScope);
       case lxExpression:
-         return optimizeExpression(current.firstChild(lxObjectMask), scope, warningScope);
+         return optimizeExpression(current.firstChild(lxObjectMask), scope, warningScope, mode);
       case lxBoxing:
-         return optimizeBoxing(current, scope, warningScope);
+         return optimizeBoxing(current, scope, warningScope, mode);
       case lxAssigning:
          return optimizeAssigning(current, scope, warningScope);
       case lxSymbolReference:

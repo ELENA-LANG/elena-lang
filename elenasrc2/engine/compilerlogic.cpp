@@ -1431,18 +1431,21 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
 //   return false;
 //}
 
-bool CompilerLogic :: optimizeBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef/*, bool assingingMode*/)
+bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef/*, bool assingingMode*/)
 {
    SNode exprNode = node.findSubNodeMask(lxObjectMask);   
 
    if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
-      //if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
-      //}
-      /*else */node = lxExpression;
+      if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
+      }
+      else node = lxExpression;
    }
    else if (sourceRef == V_NIL) {
       // NIL reference is never boxed
       node = lxExpression;
+   }
+   else if (isPrimitiveRef(sourceRef) && isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef))) {
+
    }
    else return false;
 

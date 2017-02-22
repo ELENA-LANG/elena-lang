@@ -6,9 +6,15 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
-                 * stack allocated local variable
-                 * embeddable fields
-
+                 * local : copy var
+                 * local : box
+                 * local : pass as a parameter
+                 * field : assign const, generic var, local struct, field struct
+                 * field : copy var
+                 * field : box
+                 * field : pass as a parameter
+                 * local : assign field struct
+                 
                  * support structures
 
                  * box structure fields
@@ -77,6 +83,7 @@ In development:
                  * declareBranchingOperator : try to limit number of times when sub code duplicates are created
                    (probably all comparision operators are always return bool value)
                  * get rid of __ifoperator / ifnotoeprator - embeddable attribute should be used instead
+                 * use intOp for assigning a constant
 
               xdev - generic development
                  * support property template
