@@ -1,6 +1,6 @@
-///// Attributes
+/// Attributes
 //#template(-16385) var {}
-//#template(-16386) class {}
+#template(-16386) class {}
 //#template(-16384) constructor {}
 //#template(-16387) conversion {}
 //

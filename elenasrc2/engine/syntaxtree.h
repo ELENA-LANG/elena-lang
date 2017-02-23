@@ -177,7 +177,7 @@ enum LexicalType
    lxReserved        = 0x20008,
    lxAllocated       = 0x20009,
    lxParamCount      = 0x2000A,
-//   lxClassFlag       = 0x2000B, // class fields
+   lxClassFlag       = 0x2000B, // class fields
    lxTarget          = 0x2000C, // arg - reference
    lxMessageVariable = 0x2000D, // debug info only
    lxSelfVariable    = 0x2000E, // debug info only

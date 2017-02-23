@@ -63,7 +63,7 @@
 //
 //#define V_CONSTRUCTOR   (ref_t)-16384
 //#define V_VARIABLE      (ref_t)-16385
-//#define V_CLASS         (ref_t)-16386
+#define V_CLASS         (ref_t)-16386
 //#define V_CONVERSION    (ref_t)-16387
 
 namespace _ELENA_
@@ -240,9 +240,9 @@ public:
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 //
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
-//
-//   // attribute validations
-//   virtual bool validateClassAttribute(int& attrValue) = 0;
+
+   // attribute validations
+   virtual bool validateClassAttribute(int& attrValue) = 0;
 //   virtual bool validateMethodAttribute(int& attrValue) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue) = 0;
 //   virtual bool validateLocalAttribute(int& attrValue) = 0;

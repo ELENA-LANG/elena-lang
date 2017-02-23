@@ -951,7 +951,7 @@ private:
 //   void declareSymbolAttribute(SyntaxWriter& writer, SNode hints, SymbolScope& scope, SNode rootNode);
 //   void declareSymbolAttributes(SyntaxWriter& writer, SNode node, SymbolScope& scope);
 //   void declareClassAttribute(SyntaxWriter& writer, SNode node, ClassScope& scope, SNode rootNode);
-//   void declareClassAttributes(SyntaxWriter& writer, SNode node, ClassScope& scope);
+   void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size, SNode rootNode);
 //   void declareLocalAttributes(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
 //   void declareFieldAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef, int& size);
@@ -1066,11 +1066,11 @@ private:
 //   ref_t generateTemplate(TemplateScope& scope);
 
 //   void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef, int sizeHint, bool singleField);
-//////   void generateClassStaticField(ClassScope& scope, SNode current);
-//////
-//////   void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
-//////   void generateClassFields(ClassScope& scope, SyntaxTree::Node root, bool singleField);
-//////   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t& message);
+//   void generateClassStaticField(ClassScope& scope, SNode current);
+
+   void generateClassFlags(ClassScope& scope, SNode node);
+////   void generateClassFields(ClassScope& scope, SyntaxTree::Node root, bool singleField);
+////   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t& message);
    void generateMethodDeclarations(SNode node, ClassScope& scope/*, bool hideDuplicates*/, bool closed, bool classClassMode);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode);
 

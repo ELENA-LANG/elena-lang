@@ -875,10 +875,10 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
    }
 }
 
-//bool CompilerLogic :: validateClassAttribute(int& attrValue)
-//{
-//   switch ((size_t)attrValue)
-//   {
+bool CompilerLogic :: validateClassAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
 //      case V_SEALED:
 //         attrValue = elSealed;
 //         return true;
@@ -912,14 +912,14 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 ////      case V_GROUP:
 ////         attrValue = elGroup;
 ////         return true;
-//      case V_CLASS:
-//         attrValue = 0;
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+      case V_CLASS:
+         attrValue = 0;
+         return true;
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 //{
 //   switch ((size_t)attrValue)

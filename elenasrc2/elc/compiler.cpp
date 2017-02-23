@@ -1736,18 +1736,26 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 //   }
 //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
 //}
-//
-//void Compiler :: declareClassAttributes(SyntaxWriter& writer, SNode node, ClassScope& scope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         declareClassAttribute(writer, current, scope, node);
-//      }   
-//      current = current.nextNode();
-//   }
-//}
-//
+
+void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         int value = current.argument;
+         if (!_logic->validateClassAttribute(value)) {
+            current = lxIdle;
+
+            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+         else current.set(lxClassFlag, value);
+      }
+      else break;
+
+      current = current.nextNode();
+   }
+}
+
 //void Compiler :: declareSymbolAttribute(SyntaxWriter& writer, SNode current, SymbolScope& scope, SNode rootNode)
 //{
 //   int attrValue = 0;
@@ -5381,64 +5389,58 @@ void Compiler :: declareVMT(SNode current, ClassScope& scope)
    }
 }
 
-//////ref_t Compiler :: generateTemplate(TemplateScope& scope)
-//////{
-//////   if (scope.moduleScope->loadClassInfo(scope.info, scope.reference, true)) {
-//////      return scope.reference;
-//////   }
-//////
-//////   SyntaxTree syntaxTree;
-//////   SyntaxWriter writer(syntaxTree);
-//////   writer.newNode(lxRoot, scope.reference);
-//////
-//////   compileParentDeclaration(SNode(), scope);
-//////
-//////   writer.appendNode(lxClassFlag, elSealed);
-//////   writer.closeNode();
-//////
-//////   _Memory* body = scope.moduleScope->loadAttributeInfo(scope.templateRef);
-//////
-//////   // import the template
-//////   SyntaxTree::loadNode(syntaxTree.readRoot(), body);
-//////   scope.loadParameters(syntaxTree.readRoot(), _writer);
-//////
-//////   // declare the template class
-//////   compileClassAttributes(syntaxTree.readRoot(), scope, syntaxTree.readRoot());
-//////   compileFieldDeclarations(syntaxTree.readRoot(), scope);
-//////
-//////   declareVMT(syntaxTree.readRoot().firstChild(), scope);
-//////
-//////   generateClassDeclaration(syntaxTree.readRoot(), scope, false);
-//////   scope.save();
-//////
-//////   // implement the template class
-//////   compileVMT(syntaxTree.readRoot(), scope);
-//////   generateClassImplementation(syntaxTree.readRoot(), scope);
-//////
-//////   return scope.reference;
-//////}
-//////
-//////void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
-//////{
-//////   SNode current = root.firstChild();
-//////   while (current != lxNone) {
-//////      if (current == lxTemplate) {
-//////         generateClassFlags(scope, current);
-//////      }
-//////      else if (current == lxClassFlag) {
-//////         if (_logic->validateClassFlag(scope.info, current.argument)) {
-//////            scope.compileClassAttribute(current);
-//////         }
-//////         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//////      }
-//////      else if (current == lxType) {
-//////         scope.compileClassAttribute(current);
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////}
-//
+////ref_t Compiler :: generateTemplate(TemplateScope& scope)
+////{
+////   if (scope.moduleScope->loadClassInfo(scope.info, scope.reference, true)) {
+////      return scope.reference;
+////   }
+////
+////   SyntaxTree syntaxTree;
+////   SyntaxWriter writer(syntaxTree);
+////   writer.newNode(lxRoot, scope.reference);
+////
+////   compileParentDeclaration(SNode(), scope);
+////
+////   writer.appendNode(lxClassFlag, elSealed);
+////   writer.closeNode();
+////
+////   _Memory* body = scope.moduleScope->loadAttributeInfo(scope.templateRef);
+////
+////   // import the template
+////   SyntaxTree::loadNode(syntaxTree.readRoot(), body);
+////   scope.loadParameters(syntaxTree.readRoot(), _writer);
+////
+////   // declare the template class
+////   compileClassAttributes(syntaxTree.readRoot(), scope, syntaxTree.readRoot());
+////   compileFieldDeclarations(syntaxTree.readRoot(), scope);
+////
+////   declareVMT(syntaxTree.readRoot().firstChild(), scope);
+////
+////   generateClassDeclaration(syntaxTree.readRoot(), scope, false);
+////   scope.save();
+////
+////   // implement the template class
+////   compileVMT(syntaxTree.readRoot(), scope);
+////   generateClassImplementation(syntaxTree.readRoot(), scope);
+////
+////   return scope.reference;
+////}
+
+void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
+{
+   SNode current = root.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassFlag) {
+         scope.info.header.flags |= current.argument;
+      }
+//      else if (current == lxType) {
+//         scope.compileClassAttribute(current);
+//      }
+
+      current = current.nextNode();
+   }
+}
+
 //void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t typeRef, ref_t classRef, int sizeHint, bool singleField)
 //{
 //   ModuleScope* moduleScope = scope.moduleScope;
@@ -5700,11 +5702,8 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
       scope.include(encodeVerb(NEWOBJECT_MESSAGE_ID));
    }
 
-//   // generate flags
-//   scope.info.header.flags |= scope.declaredFlags;
-//
-////   generateClassFlags(scope, node);
-//
+   generateClassFlags(scope, node);
+
 ////   // generate fields
 ////   generateClassFields(scope, node, countFields(node) == 1);
 
@@ -5940,7 +5939,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    }
    else compileParentDeclaration(SNode(), scope);
 
-//   declareClassAttributes(writer, node, scope);
+   declareClassAttributes(node, scope);
 //   compileFieldDeclarations(writer, node, scope);
 
    declareVMT(node.firstChild(), scope);
@@ -7769,8 +7768,11 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope)
    
    SyntaxTree templateTree(body);
    
-   SNode current = templateTree.readRoot();
+   SNode current = templateTree.readRoot().firstChild();
    while (current != lxNone) {
+      if (current == lxAttribute) {
+         writer.appendNode(current.type, current.argument);
+      }
       current = current.nextNode();
    }
 
@@ -7784,7 +7786,10 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
       int attrValue = 0;
       ref_t attrRef = scope.mapAttribute(current, attrValue);
       if (attrValue != 0) {
-         scope.raiseError(errInvalidHint, current);
+         if (attrValue < 0) {
+            writer.appendNode(lxAttribute, attrValue);
+         }
+         else scope.raiseError(errInvalidHint, current);
       }
       else if (attrRef != 0) {
          ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
@@ -7801,8 +7806,10 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
       current = current.nextNode();
    }
 
-   SNode nameNode = current == lxNameAttr ? current.findChild(lxIdentifier, lxPrivate) : node.findChild(lxIdentifier, lxPrivate);
-   copyIdentifier(writer, nameNode);
+   if (node != lxNone) {
+      SNode nameNode = current == lxNameAttr ? current.findChild(lxIdentifier, lxPrivate) : node.findChild(lxIdentifier, lxPrivate);
+      copyIdentifier(writer, nameNode);
+   }
 }
 
 void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes)
@@ -7862,7 +7869,10 @@ void Compiler :: generateMethodScope(SyntaxWriter& writer, SNode node, TemplateS
 void Compiler :: generateScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes)
 {
    SNode body = node.findChild(lxExpression);
-   if (body == lxExpression) {
+   if (body == lxNone && node == lxTemplate) {
+      generateAttributes(writer, body, scope, attributes);
+   }
+   else if (body == lxExpression) {
       // if it could be compiled as a symbol
       if (setIdentifier(attributes)) {
          node = lxSymbol;
@@ -7903,6 +7913,13 @@ void Compiler :: saveTemplate(_Memory* target, SNode node, ModuleScope& scope, S
    SyntaxWriter writer(tree);
 
    writer.newNode(lxTemplate);
+
+   // HOTFIX : save the template source path
+   IdentifierString fullPath(scope.module->Name());
+   fullPath.append('\'');
+   fullPath.append(scope.sourcePath);
+
+   writer.appendNode(lxSourcePath, fullPath);
 
    TemplateScope rootScope(&scope);
    generateScope(writer, node, rootScope, attributes);
@@ -7959,13 +7976,6 @@ void Compiler :: generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScop
             // check for duplicate declaration
             if (scope.module->mapSection(templateRef | mskSyntaxTreeRef, true))
                scope.raiseError(errDuplicatedSymbol, name);
-
-            // HOTFIX : save the template source path
-            IdentifierString fullPath(scope.module->Name());
-            fullPath.append('\'');
-            fullPath.append(scope.sourcePath);
-
-            current.appendNode(lxSourcePath, fullPath);
 
             saveTemplate(scope.module->mapSection(templateRef | mskSyntaxTreeRef, false), current, scope, attributes);
             attributes = SNode();
