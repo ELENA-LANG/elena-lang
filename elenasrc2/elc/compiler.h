@@ -305,7 +305,7 @@ private:
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-//      virtual _Module* loadReferenceModule(ref_t& reference);
+      virtual _Module* loadReferenceModule(ref_t& reference);
 
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
       virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
@@ -330,7 +330,7 @@ private:
 
       void validateReference(SNode terminal, ref_t reference);
 
-//      ref_t getBaseLazyExpressionClass();
+      ref_t getBaseLazyExpressionClass();
 
       void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
 
@@ -346,14 +346,14 @@ private:
          loadActions(extModule);
       }
 
-//      ref_t mapNestedExpression();
-//
-////      bool defineForward(ident_t forward, ident_t referenceName)
-////      {
-////         ObjectInfo info = mapReferenceInfo(referenceName, false);
-////      
-////         return forwards.add(forward, info.param, true);
-////      }
+      ref_t mapNestedExpression();
+
+//      bool defineForward(ident_t forward, ident_t referenceName)
+//      {
+//         ObjectInfo info = mapReferenceInfo(referenceName, false);
+//      
+//         return forwards.add(forward, info.param, true);
+//      }
 
       ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
@@ -594,15 +594,15 @@ private:
       MethodScope(ClassScope* parent);
    };
 
-//   // - ActionScope -
-//   struct ActionScope : public MethodScope
-//   {
-//      bool subCodeMode;
-//
-//      ActionScope(ClassScope* parent);
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//   };
+   // - ActionScope -
+   struct ActionScope : public MethodScope
+   {
+      bool subCodeMode;
+
+      ActionScope(ClassScope* parent);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
+   };
 
    // - CodeScope -
    struct CodeScope : public Scope
@@ -669,54 +669,54 @@ private:
 
       CodeScope(SymbolScope* parent);
       CodeScope(MethodScope* parent);
-//      CodeScope(CodeScope* parent);
+      CodeScope(CodeScope* parent);
    };
 
-//   // - InlineClassScope -
-//   struct InlineClassScope : public ClassScope
-//   {
-//      struct Outer
-//      {
-//         ref_t      reference;
-//         bool       preserved;
-//         ObjectInfo outerObject;
-//
-//         Outer()
-//         {
-//            reference = INVALID_REF;
-//            preserved = false;
-//         }
-//         Outer(int reference, ObjectInfo outerObject)
-//         {
-//            this->reference = reference;
-//            this->outerObject = outerObject;
-//            this->preserved = false;
-//         }
-//      };
-//
-//      bool                    returningMode;
-//      Map<ident_t, Outer>     outers;
-//      ClassInfo::FieldTypeMap outerFieldTypes;
-//
-//      Outer mapSelf();
-//
-//      ObjectInfo allocateRetVar();
-//
-//      bool markAsPresaved(ObjectInfo object);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      InlineClassScope(CodeScope* owner, ref_t reference);
-//   };
-//
+   // - InlineClassScope -
+   struct InlineClassScope : public ClassScope
+   {
+      struct Outer
+      {
+         ref_t      reference;
+         bool       preserved;
+         ObjectInfo outerObject;
+
+         Outer()
+         {
+            reference = INVALID_REF;
+            preserved = false;
+         }
+         Outer(int reference, ObjectInfo outerObject)
+         {
+            this->reference = reference;
+            this->outerObject = outerObject;
+            this->preserved = false;
+         }
+      };
+
+      bool                    returningMode;
+      Map<ident_t, Outer>     outers;
+      ClassInfo::FieldTypeMap outerFieldTypes;
+
+      Outer mapSelf();
+
+      ObjectInfo allocateRetVar();
+
+      bool markAsPresaved(ObjectInfo object);
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
+
+      InlineClassScope(CodeScope* owner, ref_t reference);
+   };
+
 //   // --- TemplateScope ---
 //   struct TemplateScope : ClassScope
 //   {
@@ -957,81 +957,81 @@ private:
 //   void declareMethodAttributes(SyntaxWriter& writer, SNode member, MethodScope& scope);
    //void includeMethod(SNode member, ClassScope& classScope, MethodScope& scope);
 
-////   void declareTemplateMethods(SNode node, ClassScope& scope);
-//
-//   ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
-//
+//   void declareTemplateMethods(SNode node, ClassScope& scope);
+
+   ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
+
 ////   void compileSwitch(SNode node, CodeScope& scope);
 //   void declareVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
-//   ObjectInfo declareClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
-//   ObjectInfo declareClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 ////   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope);
 ////   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope, ref_t vmtReference);
-//
-//   ObjectInfo declareMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+
+   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
    ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
-//
-//   ObjectInfo declareOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
-//   ObjectInfo declareOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   void declareBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference);
-//   ObjectInfo declareBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
-//
-//   ObjectInfo declareMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
-//
-//   ObjectInfo declareMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo declareMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
-//   ObjectInfo declareExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ObjectInfo role, ref_t targetRef = 0*/);
-//
-//////   ObjectInfo compileNewOperator(SNode node, CodeScope& scope/*, int mode*/);
-//   ObjectInfo declareAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo declareExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
+
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference);
+   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
+
+   ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
+
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
+   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ObjectInfo role, ref_t targetRef = 0*/);
+
+//   ObjectInfo compileNewOperator(SNode node, CodeScope& scope/*, int mode*/);
+   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo declareRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo declareAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
+
+   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+
+//   void compileTrying(SNode node, CodeScope& scope);
+//   void compileAltOperation(SNode node, CodeScope& scope);
+//   void compileLoop(SNode node, CodeScope& scope);
+//   void compileThrow(SNode node, CodeScope& scope, int mode);
+////   void compileTry(DNode node, CodeScope& scope);
+//   void compileLock(SNode node, CodeScope& scope);
+
+//   void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
+
+   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
+   int allocateStructure(SNode node, int& size);
+   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
+
+//   ObjectInfo compileExternalCall(SNode node, CodeScope& scope);
+//   ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 //
-//   ObjectInfo declareBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
-//
-////   void compileTrying(SNode node, CodeScope& scope);
-////   void compileAltOperation(SNode node, CodeScope& scope);
-////   void compileLoop(SNode node, CodeScope& scope);
-////   void compileThrow(SNode node, CodeScope& scope, int mode);
-//////   void compileTry(DNode node, CodeScope& scope);
-////   void compileLock(SNode node, CodeScope& scope);
-//
-////   void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
-//
-//   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-//   int allocateStructure(SNode node, int& size);
-//   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
-//
-////   ObjectInfo compileExternalCall(SNode node, CodeScope& scope);
-////   ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
-////
-////   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-////   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
+//   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+//   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
    void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-//   ObjectInfo declareCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
+   ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
+
    void declareArgumentList(SNode node, MethodScope& scope);
-//   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
-//   bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
-//
+   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
+   bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
+
 ////   void declareSingletonClass(SNode node, ClassScope& scope, SNode hints);
 ////   void compileSingletonClass(SNode member, ClassScope& scope, SNode hints);
 ////
 ////   void declareSingletonAction(ClassScope& scope, SNode objNode);
-//
-//   void declareActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-//   void declareLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+
+   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
 //   void declareDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods = false*/);
-//
+
 ////   void compileMethod(SNode node, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //   void declareConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
@@ -1044,9 +1044,9 @@ private:
 ////   void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ClassScope& scope);
 ////   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
-//
-//   void declareAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
-//   void declareNestedVMT(SNode node, InlineClassScope& scope);
+
+   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
+   void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
 //   void compileTemplateMethods(SNode node, ClassScope& scope);
@@ -1091,7 +1091,7 @@ private:
 //
 //   bool boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t targetType, ref_t targetRef);
 //
-//   //ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
+   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t targetType = 0);
 
    bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef);
    bool typecastObject(SyntaxWriter& writer, ref_t targetType);
@@ -1102,17 +1102,17 @@ private:
 ////   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 ////   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 //////   void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-////
-//////   void optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
-////////   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-//////   void optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScope& warningScope);
-//////   void optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope);
-//////   void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
-//////   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
-//   ref_t optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
-//   ref_t optimizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope);
-//   ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
-//   ref_t optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
+//
+////   void optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
+//////   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+////   void optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScope& warningScope);
+////   void optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope);
+////   void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
+////   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
+   ref_t optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
+   ref_t optimizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
+   ref_t optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    void optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
@@ -1161,13 +1161,13 @@ public:
 //   // _Compiler interface implementation
 //   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
 ////   virtual void injectBoxing(_CompilerScope& scope, SNode node, LexicalType boxingType, int argument, ref_t targetClassRef);
-//   virtual void injectLocalBoxing(SNode node, int size);
+   virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef);
 ////   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 ////   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 ////   virtual void injectFieldExpression(SNode node);
 //   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
-//   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
+   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
    Compiler(_CompilerLogic* logic);
 };

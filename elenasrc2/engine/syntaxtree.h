@@ -221,7 +221,7 @@ enum LexicalType
 //   lxRealAttr        = 0x2010A,
 //   lxExtMessageAttr  = 0x2010B,
 //   lxSymbolAttr      = 0x2010C,
-//   lxTempAttr        = 0x2010D,
+   lxTempAttr        = 0x2010D,
 };
 
 // --- SyntaxTree ---

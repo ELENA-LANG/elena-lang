@@ -50,243 +50,243 @@ typedef ClassInfo::Attribute Attribute;
 ////         return 0;
 ////   }
 ////}
-//
-//inline bool IsInvertedOperator(int& operator_id)
+
+inline bool IsInvertedOperator(int& operator_id)
+{
+   switch (operator_id)
+   {
+      case NOTEQUAL_MESSAGE_ID:
+         operator_id = EQUAL_MESSAGE_ID;
+
+         return true;
+      case NOTLESS_MESSAGE_ID:
+         operator_id = LESS_MESSAGE_ID;
+
+         return true;
+      case NOTGREATER_MESSAGE_ID:
+         operator_id = GREATER_MESSAGE_ID;
+
+         return true;
+      default:
+         return false;
+   }
+}
+
+//// --- CompilerLogic Optimization Ops ---
+//struct EmbeddableOp
 //{
-//   switch (operator_id)
+//   int attribute;
+//   int paramCount;
+//   int verb;
+//
+//   EmbeddableOp(int attr, int count, int verb)
 //   {
-//      case NOTEQUAL_MESSAGE_ID:
-//         operator_id = EQUAL_MESSAGE_ID;
-//
-//         return true;
-//      case NOTLESS_MESSAGE_ID:
-//         operator_id = LESS_MESSAGE_ID;
-//
-//         return true;
-//      case NOTGREATER_MESSAGE_ID:
-//         operator_id = GREATER_MESSAGE_ID;
-//
-//         return true;
-//      default:
-//         return false;
+//      this->attribute = attr;
+//      this->paramCount = count;
+//      this->verb = verb;
 //   }
-//}
-//
-////// --- CompilerLogic Optimization Ops ---
-////struct EmbeddableOp
-////{
-////   int attribute;
-////   int paramCount;
-////   int verb;
-////
-////   EmbeddableOp(int attr, int count, int verb)
-////   {
-////      this->attribute = attr;
-////      this->paramCount = count;
-////      this->verb = verb;
-////   }
-////};
-////#define EMBEDDABLEOP_MAX 3
-////EmbeddableOp embeddableOps[EMBEDDABLEOP_MAX] =
-////{
-////   EmbeddableOp(maEmbeddableGetAt, 2, READ_MESSAGE_ID),
-////   EmbeddableOp(maEmbeddableGetAt2, 3, READ_MESSAGE_ID),
-////   EmbeddableOp(maEmbeddableEval, 2, EVAL_MESSAGE_ID)
-////};
+//};
+//#define EMBEDDABLEOP_MAX 3
+//EmbeddableOp embeddableOps[EMBEDDABLEOP_MAX] =
+//{
+//   EmbeddableOp(maEmbeddableGetAt, 2, READ_MESSAGE_ID),
+//   EmbeddableOp(maEmbeddableGetAt2, 3, READ_MESSAGE_ID),
+//   EmbeddableOp(maEmbeddableEval, 2, EVAL_MESSAGE_ID)
+//};
 
 // --- CompilerLogic ---
 
 CompilerLogic :: CompilerLogic()
 {
-//   // nil
-//   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
-//
-//   // int32 primitive operations
-//   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(AND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(OR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(XOR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//
-//   operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
-//   operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
-//   operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
-//   operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
-//
-//   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(LESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTLESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//
-//   // subject primitive operations
-//   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
-//
-//   //// int64 primitive operations
-//   //operators.add(OperatorInfo(ADD_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
-//   //operators.add(OperatorInfo(SUB_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
-//   //operators.add(OperatorInfo(MUL_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
-//   //operators.add(OperatorInfo(DIV_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
-//   //operators.add(OperatorInfo(AND_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
-//   //operators.add(OperatorInfo(OR_MESSAGE_ID,    V_INT64, V_INT64, lxLongOp, V_INT64));
-//   //operators.add(OperatorInfo(XOR_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
-//   //operators.add(OperatorInfo(READ_MESSAGE_ID,  V_INT64, V_INT32, lxLongOp, V_INT64));
-//   //operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT64, V_INT32, lxLongOp, V_INT64));
-//
-//   //operators.add(OperatorInfo(APPEND_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, 0));
-//   //operators.add(OperatorInfo(REDUCE_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, 0));
-//   //operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
-//   //operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
-//
-//   //operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
-//   //operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
-//   //operators.add(OperatorInfo(LESS_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
-//   //operators.add(OperatorInfo(NOTLESS_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
-//   //operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
-//   //operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
-//
-//   //// real64 primitive operations
-//   //operators.add(OperatorInfo(ADD_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
-//   //operators.add(OperatorInfo(SUB_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
-//   //operators.add(OperatorInfo(MUL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
-//   //operators.add(OperatorInfo(DIV_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
-//
-//   //operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
-//   //operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
-//   //operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
-//   //operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
-//
-//   //operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//   //operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//   //operators.add(OperatorInfo(LESS_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//   //operators.add(OperatorInfo(NOTLESS_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//   //operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//   //operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//
-//   //// array of int32 primitive operations
-//   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, V_INT32));
-//   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
-//   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, 0));
-//
-//   //// array of int16 primitive operations
-//   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, V_INT32));
-//   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
-//   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, 0));
-//
-//   //// array of int8 primitive operations
-//   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, V_INT32));
-//   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
-//   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, 0));
-//
-//   //// array of object primitive operations
-//   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
-//   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
-//   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
-//
-//   //// array of structures primitive operations
-//   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
-//   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
-//   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
-//
-//   //// array of arg list
-//   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
-//   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
-//   ////operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
+   // nil
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
+
+   // int32 primitive operations
+   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(AND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(OR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(XOR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+
+   operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+   operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+   operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+   operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(LESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTLESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+
+   // subject primitive operations
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
+
+   //// int64 primitive operations
+   //operators.add(OperatorInfo(ADD_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   //operators.add(OperatorInfo(SUB_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   //operators.add(OperatorInfo(MUL_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   //operators.add(OperatorInfo(DIV_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   //operators.add(OperatorInfo(AND_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   //operators.add(OperatorInfo(OR_MESSAGE_ID,    V_INT64, V_INT64, lxLongOp, V_INT64));
+   //operators.add(OperatorInfo(XOR_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   //operators.add(OperatorInfo(READ_MESSAGE_ID,  V_INT64, V_INT32, lxLongOp, V_INT64));
+   //operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT64, V_INT32, lxLongOp, V_INT64));
+
+   //operators.add(OperatorInfo(APPEND_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, 0));
+   //operators.add(OperatorInfo(REDUCE_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, 0));
+   //operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
+   //operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
+
+   //operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+   //operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+   //operators.add(OperatorInfo(LESS_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+   //operators.add(OperatorInfo(NOTLESS_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+   //operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+   //operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+
+   //// real64 primitive operations
+   //operators.add(OperatorInfo(ADD_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+   //operators.add(OperatorInfo(SUB_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+   //operators.add(OperatorInfo(MUL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+   //operators.add(OperatorInfo(DIV_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+
+   //operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+   //operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+   //operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+   //operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+
+   //operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   //operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   //operators.add(OperatorInfo(LESS_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   //operators.add(OperatorInfo(NOTLESS_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   //operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   //operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+
+   //// array of int32 primitive operations
+   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, V_INT32));
+   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
+   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, 0));
+
+   //// array of int16 primitive operations
+   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, V_INT32));
+   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
+   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, 0));
+
+   //// array of int8 primitive operations
+   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, V_INT32));
+   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
+   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, 0));
+
+   //// array of object primitive operations
+   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
+   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
+   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
+
+   //// array of structures primitive operations
+   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
+   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
+   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
+
+   //// array of arg list
+   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
+   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
+   ////operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 }
 
-//int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
-//{
-//   bool methodFound = info.methods.exist(message);
-//
-//   if (methodFound) {
-//      int hint = info.methodHints.get(Attribute(message, maHint));
-//      result.outputReference = info.methodHints.get(Attribute(message, maReference));
-//
-//      if ((hint & tpMask) == tpSealed) {
-//         return hint;
-//      }
-//      else if (test(info.header.flags, elSealed)) {
-//         return tpSealed | hint;
-//      }
-//      else if (test(info.header.flags, elClosed)) {
-//         return tpClosed | hint;
-//      }
-//      else return tpNormal | hint;
-//   }
-//   //HOTFIX : to recognize the sealed private method call
-//   //         hint search should be done even if the method is not declared
-//   else return info.methodHints.get(Attribute(message, maHint));
-//}
-//
-//int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
-//{
-//   ClassInfo info;
-//   result.found = defineClassInfo(scope, info, reference);
-//
-//   if (result.found) {
-//      if (!test(info.header.flags, elClosed))
-//         result.closed = false;
-//
-//      if (test(info.header.flags, elWithCustomDispatcher))
-//         result.withCustomDispatcher = true;
-//
-//      return checkMethod(info, message, result);
-//   }
-//   else return tpUnknown;
-//}
-//
-//int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
-//{
-//   if (isPrimitiveRef(classReference)) {
-//      classReference = resolvePrimitiveReference(scope, classReference);
-//   }
-//
-//   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
-//   int callType = methodHint & tpMask;
-//   if (callType == tpClosed || callType == tpSealed) {
-//      result.stackSafe = test(methodHint, tpStackSafe);
-//   }      
-//
-//   return callType;
-//}
-//
-//int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
-//{
-//   if (loperand == 0 || (roperand == 0 && loperand != V_NIL))
-//      return 0;
-//
-//   OperatorList::Iterator it = operators.start();
-//   while (!it.Eof()) {
-//      OperatorInfo info = *it;
-//
-//      if (info.operatorId == operatorId) {
-//         if (info.loperand == V_NIL) {
-//            if (loperand == V_NIL) {
-//               result = info.result;
-//
-//               return info.operationType;
-//            }
-//         }
-//         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
-//            result = info.result;
-//
-//            return info.operationType;
-//         }
-//      }
-//
-//      it++;
-//   }
-//
-//   return 0;
-//}
-//
+int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
+{
+   bool methodFound = info.methods.exist(message);
+
+   if (methodFound) {
+      int hint = info.methodHints.get(Attribute(message, maHint));
+      result.outputReference = info.methodHints.get(Attribute(message, maReference));
+
+      if ((hint & tpMask) == tpSealed) {
+         return hint;
+      }
+      else if (test(info.header.flags, elSealed)) {
+         return tpSealed | hint;
+      }
+      else if (test(info.header.flags, elClosed)) {
+         return tpClosed | hint;
+      }
+      else return tpNormal | hint;
+   }
+   //HOTFIX : to recognize the sealed private method call
+   //         hint search should be done even if the method is not declared
+   else return info.methodHints.get(Attribute(message, maHint));
+}
+
+int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
+{
+   ClassInfo info;
+   result.found = defineClassInfo(scope, info, reference);
+
+   if (result.found) {
+      if (!test(info.header.flags, elClosed))
+         result.closed = false;
+
+      if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
+
+      return checkMethod(info, message, result);
+   }
+   else return tpUnknown;
+}
+
+int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
+{
+   if (isPrimitiveRef(classReference)) {
+      classReference = resolvePrimitiveReference(scope, classReference);
+   }
+
+   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
+   int callType = methodHint & tpMask;
+   if (callType == tpClosed || callType == tpSealed) {
+      result.stackSafe = test(methodHint, tpStackSafe);
+   }      
+
+   return callType;
+}
+
+int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
+{
+   if (loperand == 0 || (roperand == 0 && loperand != V_NIL))
+      return 0;
+
+   OperatorList::Iterator it = operators.start();
+   while (!it.Eof()) {
+      OperatorInfo info = *it;
+
+      if (info.operatorId == operatorId) {
+         if (info.loperand == V_NIL) {
+            if (loperand == V_NIL) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
+            result = info.result;
+
+            return info.operationType;
+         }
+      }
+
+      it++;
+   }
+
+   return 0;
+}
+
 ////int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
 ////{
 ////   if (loperand == 0 || roperand == 0 || (roperand2 == 0 && loperand != V_OBJARRAY))
@@ -314,78 +314,78 @@ CompilerLogic :: CompilerLogic()
 ////
 ////   return 0;
 ////}
-//
-//bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
-//{
-//   if (scope.branchingInfo.trueRef == reference || scope.branchingInfo.falseRef == reference)
-//      return true;
-//
-//   ClassInfo info;
-//   scope.loadClassInfo(info, reference, true);
-//
-//   if ((info.header.flags & elDebugMask) == elEnumList) {
-//      _Module* extModule = NULL;
-//      _Memory* listSection = NULL;
-//
-//      while (true) {
-//         extModule = scope.loadReferenceModule(reference);
-//         listSection = extModule ? extModule->mapSection(reference | mskConstArray, true) : NULL;
-//
-//         if (listSection == NULL && info.header.parentRef != 0) {
-//            reference = info.header.parentRef;
-//
-//            scope.loadClassInfo(info, reference, true);
-//         }
-//         else break;
-//      }
-//
-//      if (listSection) {
-//         MemoryReader reader(listSection);
-//
-//         ref_t trueRef = 0, falseRef = 0;
-//         while (!reader.Eof()) {
-//            ref_t memberRef = compiler.readEnumListMember(scope, extModule, reader);
-//
-//            ClassInfo memberInfo;
-//            scope.loadClassInfo(memberInfo, memberRef);
-//            int attribute = checkMethod(memberInfo, encodeMessage(0, IF_MESSAGE_ID, 1));
-//            if (attribute == (tpIfBranch | tpSealed)) {
-//               trueRef = memberRef;
-//            }
-//            else if (attribute == (tpIfNotBranch | tpSealed)) {
-//               falseRef = memberRef;
-//            }
-//         }
-//
-//         if (trueRef && falseRef) {
-//            scope.branchingInfo.reference = reference;
-//            scope.branchingInfo.trueRef = trueRef;
-//            scope.branchingInfo.falseRef = falseRef;
-//
-//            return true;
-//         }
-//      }
-//   }
-//
-//   return false;
-//}
-//
-//bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference)
-//{
-//   if (!loperand)
-//      return false;
-//
-//   if (loperand != scope.branchingInfo.reference) {
-//      if (!loadBranchingInfo(scope, compiler, loperand))
-//         return false;
-//   }
-//
-//   reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
-//
-//   return true;
-//
-//}
-//
+
+bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
+{
+   if (scope.branchingInfo.trueRef == reference || scope.branchingInfo.falseRef == reference)
+      return true;
+
+   ClassInfo info;
+   scope.loadClassInfo(info, reference, true);
+
+   if ((info.header.flags & elDebugMask) == elEnumList) {
+      _Module* extModule = NULL;
+      _Memory* listSection = NULL;
+
+      while (true) {
+         extModule = scope.loadReferenceModule(reference);
+         listSection = extModule ? extModule->mapSection(reference | mskConstArray, true) : NULL;
+
+         if (listSection == NULL && info.header.parentRef != 0) {
+            reference = info.header.parentRef;
+
+            scope.loadClassInfo(info, reference, true);
+         }
+         else break;
+      }
+
+      if (listSection) {
+         MemoryReader reader(listSection);
+
+         ref_t trueRef = 0, falseRef = 0;
+         while (!reader.Eof()) {
+            ref_t memberRef = compiler.readEnumListMember(scope, extModule, reader);
+
+            ClassInfo memberInfo;
+            scope.loadClassInfo(memberInfo, memberRef);
+            int attribute = checkMethod(memberInfo, encodeMessage(0, IF_MESSAGE_ID, 1));
+            if (attribute == (tpIfBranch | tpSealed)) {
+               trueRef = memberRef;
+            }
+            else if (attribute == (tpIfNotBranch | tpSealed)) {
+               falseRef = memberRef;
+            }
+         }
+
+         if (trueRef && falseRef) {
+            scope.branchingInfo.reference = reference;
+            scope.branchingInfo.trueRef = trueRef;
+            scope.branchingInfo.falseRef = falseRef;
+
+            return true;
+         }
+      }
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference)
+{
+   if (!loperand)
+      return false;
+
+   if (loperand != scope.branchingInfo.reference) {
+      if (!loadBranchingInfo(scope, compiler, loperand))
+         return false;
+   }
+
+   reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
+
+   return true;
+
+}
+
 ////int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
 ////{
 ////   if (isCompatible(scope, V_INT32, roperand)) {
@@ -456,19 +456,19 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
 //{
 //   return test(info.header.flags, elDynamicRole | elEmbeddable | elStructureRole);
 //}
-//
-//bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
-//{
-//   ClassInfo info;
-//   defineClassInfo(scope, info, classReference);
-//
-//   return isVariable(info);
-//}
-//
-//bool CompilerLogic :: isVariable(ClassInfo& info)
-//{
-//   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
-//}
+
+bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
+{
+   ClassInfo info;
+   defineClassInfo(scope, info, classReference);
+
+   return isVariable(info);
+}
+
+bool CompilerLogic :: isVariable(ClassInfo& info)
+{
+   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
+}
 
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 {
@@ -499,53 +499,50 @@ bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
 //      compiler.generateEnumListMember(scope, info.header.parentRef, classRef);
 //   }
 //}
-//
-//void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference)
-//{
-//   //int size = 0;
-//   //if (operationType == lxBinArrOp) {
-//   //   // HOTFIX : define an item size for the binary array operations
-//   //   size = -defineStructSize(scope, V_BINARYARRAY, type);
-//   //}
-//
-//   //if (reference == V_BINARY && type != 0) {
-//   //   reference = scope.attributeHints.get(type);
-//   //}
-//   //else if (reference == V_OBJECT && type != 0) {
-//   //   reference = scope.attributeHints.get(type);
-//   //}
-//
-//   bool inverting = IsInvertedOperator(operator_id);
-//
-//   SNode operationNode = node.injectNode((LexicalType)operationType, operator_id);
-//   //if (size != 0) {
-//   //   // HOTFIX : inject an item size for the binary array operations
-//   //   operationNode.appendNode(lxSize, size);
-//   //}
-//
-//   if (reference == V_FLAG) {      
-//      if (!scope.branchingInfo.reference) {
-//         // HOTFIX : resolve boolean symbols
-//         ref_t dummy;
-//         resolveBranchOperation(scope, compiler, IF_MESSAGE_ID, scope.boolReference, dummy);
-//      }
-//
-//      reference = scope.branchingInfo.reference;
-//      if (inverting) {
-//         operationNode.appendNode(lxIfValue, scope.branchingInfo.falseRef);
-//         operationNode.appendNode(lxElseValue, scope.branchingInfo.trueRef);
-//      }
-//      else {
-//         operationNode.appendNode(lxIfValue, scope.branchingInfo.trueRef);
-//         operationNode.appendNode(lxElseValue, scope.branchingInfo.falseRef);
-//      }
-//   }
-//}
-//
-//bool CompilerLogic :: isReadonly(ClassInfo& info)
-//{
-//   return test(info.header.flags, elReadOnlyRole);
-//}
+
+void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference)
+{
+   //int size = 0;
+   //if (operationType == lxBinArrOp) {
+   //   // HOTFIX : define an item size for the binary array operations
+   //   size = -defineStructSize(scope, V_BINARYARRAY, type);
+   //}
+
+   //if (reference == V_BINARY && type != 0) {
+   //   reference = scope.attributeHints.get(type);
+   //}
+   //else if (reference == V_OBJECT && type != 0) {
+   //   reference = scope.attributeHints.get(type);
+   //}
+
+   bool inverting = IsInvertedOperator(operator_id);
+
+   if (reference == V_FLAG) {      
+      if (!scope.branchingInfo.reference) {
+         // HOTFIX : resolve boolean symbols
+         ref_t dummy;
+         resolveBranchOperation(scope, compiler, IF_MESSAGE_ID, scope.boolReference, dummy);
+      }
+
+      reference = scope.branchingInfo.reference;
+      if (inverting) {
+         writer.appendNode(lxIfValue, scope.branchingInfo.falseRef);
+         writer.appendNode(lxElseValue, scope.branchingInfo.trueRef);
+      }
+      else {
+         writer.appendNode(lxIfValue, scope.branchingInfo.trueRef);
+         writer.appendNode(lxElseValue, scope.branchingInfo.falseRef);
+      }
+   }
+
+   writer.insert((LexicalType)operationType, operator_id);
+   writer.closeNode();
+}
+
+bool CompilerLogic :: isReadonly(ClassInfo& info)
+{
+   return test(info.header.flags, elReadOnlyRole);
+}
 
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/)
 {
@@ -1083,78 +1080,78 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 //
 //   return false;
 //}
-//
-//inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
+
+inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
+{
+   return ref1 ? ref1 : ref2;
+}
+
+ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
+{
+   switch (reference) {
+      case V_INT32:
+         return firstNonZero(scope.intReference, scope.superReference);
+//      case V_INT64:
+//         return firstNonZero(scope.longReference, scope.superReference);
+//      case V_REAL64:
+//         return firstNonZero(scope.realReference, scope.superReference);
+      case V_SIGNATURE:
+         return firstNonZero(scope.signatureReference, scope.superReference);
+      case V_MESSAGE:
+         return firstNonZero(scope.messageReference, scope.superReference);
+      case V_VERB:
+         return firstNonZero(scope.verbReference, scope.superReference);
+//      case V_ARGARRAY:
+//         return firstNonZero(scope.paramsReference, scope.superReference);
+      default:
+         return scope.superReference;
+   }
+}
+
+//ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
 //{
-//   return ref1 ? ref1 : ref2;
-//}
-//
-//ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
-//{
-//   switch (reference) {
-//      case V_INT32:
-//         return firstNonZero(scope.intReference, scope.superReference);
-////      case V_INT64:
-////         return firstNonZero(scope.longReference, scope.superReference);
-////      case V_REAL64:
-////         return firstNonZero(scope.realReference, scope.superReference);
-//      case V_SIGNATURE:
-//         return firstNonZero(scope.signatureReference, scope.superReference);
-//      case V_MESSAGE:
-//         return firstNonZero(scope.messageReference, scope.superReference);
-//      case V_VERB:
-//         return firstNonZero(scope.verbReference, scope.superReference);
-////      case V_ARGARRAY:
-////         return firstNonZero(scope.paramsReference, scope.superReference);
-//      default:
-//         return scope.superReference;
+//   if (test(info.header.flags, elStructureWrapper)) {
+//      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
+//      if (isPrimitiveRef(field.value1))
+//         return field.value1;
 //   }
+//
+//   return 0;
 //}
 //
-////ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
-////{
-////   if (test(info.header.flags, elStructureWrapper)) {
-////      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
-////      if (isPrimitiveRef(field.value1))
-////         return field.value1;
-////   }
-////
-////   return 0;
-////}
-////
-////ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)
-////{
-////   ClassInfo info;
-////   defineClassInfo(scope, info, elementRef, true);
-////
-////   if (isEmbeddable(info)) {
-////      if (isCompatible(scope, V_INT32, elementRef)) {
-////         switch (info.size) {
-////            case 4:
-////               return V_INT32ARRAY;
-////            case 2:
-////               return V_INT16ARRAY;
-////            case 1:
-////               return V_INT8ARRAY;
-////            default:
-////               break;
-////         }
-////      }
-////      return V_BINARYARRAY;
-////   }
-////   else return V_OBJARRAY;
-////
-////   return 0;
-////}
-////
-////bool CompilerLogic :: validateClassFlag(ClassInfo& info, int flag)
-////{
-////   if (test(flag, elDynamicRole) && info.fields.Count() != 0)
-////      return false;
-////
-////   return true;
-////}
-////
+//ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)
+//{
+//   ClassInfo info;
+//   defineClassInfo(scope, info, elementRef, true);
+//
+//   if (isEmbeddable(info)) {
+//      if (isCompatible(scope, V_INT32, elementRef)) {
+//         switch (info.size) {
+//            case 4:
+//               return V_INT32ARRAY;
+//            case 2:
+//               return V_INT16ARRAY;
+//            case 1:
+//               return V_INT8ARRAY;
+//            default:
+//               break;
+//         }
+//      }
+//      return V_BINARYARRAY;
+//   }
+//   else return V_OBJARRAY;
+//
+//   return 0;
+//}
+//
+//bool CompilerLogic :: validateClassFlag(ClassInfo& info, int flag)
+//{
+//   if (test(flag, elDynamicRole) && info.fields.Count() != 0)
+//      return false;
+//
+//   return true;
+//}
+//
 ////bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
 ////{
 ////   if (returningType != 0 && defineStructSize(scope, scope.attributeHints.get(returningType), 0, true) > 0) {
@@ -1436,51 +1433,51 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 ////
 ////   return false;
 ////}
-//
-//bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool assingingMode)
-//{
-//   SNode exprNode = node.findSubNodeMask(lxObjectMask);   
-//
-//   if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
-//      if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
-//      }
-//      else node = lxExpression;
-//   }
-//   else if (sourceRef == V_NIL) {
-//      // NIL reference is never boxed
-//      node = lxExpression;
-//   }
-//   else if (isPrimitiveRef(sourceRef) && isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef))) {
-//
-//   }
-//   else return false;
-//
-//   bool localBoxing = false;
-//   bool variable = false;
-//   if (exprNode == lxFieldAddress && exprNode.argument > 0 && !assingingMode) {
-//      variable = !isReadonly(scope, targetRef);
-//      localBoxing = true;
-//   }
-//   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
-//      variable = !isReadonly(scope, targetRef) && !assingingMode;
-//      localBoxing = true;
-//   }
-//   //else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
-//   //   // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
-//   //   localBoxing = true;
-//   //}
-//
-//   if (localBoxing) {
-//      variable = !isReadonly(scope, targetRef);
-//
-//      compiler.injectLocalBoxing(exprNode, node.argument);
-//
-//      node = variable ? lxLocalUnboxing : lxExpression;
-//   }
-//
-//   return true;
-//}
-//
+
+bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool assingingMode)
+{
+   SNode exprNode = node.findSubNodeMask(lxObjectMask);   
+
+   if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
+      if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
+      }
+      else node = lxExpression;
+   }
+   else if (sourceRef == V_NIL) {
+      // NIL reference is never boxed
+      node = lxExpression;
+   }
+   else if (isPrimitiveRef(sourceRef) && isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef))) {
+
+   }
+   else return false;
+
+   bool localBoxing = false;
+   bool variable = false;
+   if (exprNode == lxFieldAddress && exprNode.argument > 0 && !assingingMode) {
+      variable = !isReadonly(scope, targetRef);
+      localBoxing = true;
+   }
+   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
+      variable = !isReadonly(scope, targetRef) && !assingingMode;
+      localBoxing = true;
+   }
+   //else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
+   //   // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
+   //   localBoxing = true;
+   //}
+
+   if (localBoxing) {
+      variable = !isReadonly(scope, targetRef);
+
+      compiler.injectLocalBoxing(exprNode, node.argument);
+
+      node = variable ? lxLocalUnboxing : lxExpression;
+   }
+
+   return true;
+}
+
 ////void CompilerLogic :: injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode)
 ////{
 ////   ClassInfo info;
@@ -1532,70 +1529,69 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 ////
 ////   return false;
 ////}
-////
-////void CompilerLogic :: optimizeDuplicateBoxing(SNode node)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == lxBoxing) {
-////         SNode target = current.findSubNodeMask(lxObjectMask);
-////         SNode next = current;
-////         while (seekDuplicateBoxing(next, target)) {
-////
-////         }
-////      }
-////   }
-////}
 //
-//// defineOperatorMessage tries to find the best match for the operator
-//ref_t CompilerLogic :: defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2)
+//void CompilerLogic :: optimizeDuplicateBoxing(SNode node)
 //{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      if (current == lxBoxing) {
+//         SNode target = current.findSubNodeMask(lxObjectMask);
+//         SNode next = current;
+//         while (seekDuplicateBoxing(next, target)) {
 //
-//   ref_t foundSubjRef = 0;
-//
-//   if (loperand != 0 && roperand != 0 && (paramCount == 1 || roperand2 != 0)) {
-//      ClassInfo info;
-//      defineClassInfo(scope, info, loperand);
-//
-//      // search for appropriate methods
-//      ClassInfo::MethodMap::Iterator it = info.methods.start();
-//      while (!it.Eof()) {
-//         ref_t message = it.key();
-//
-//         ref_t messageSubj = getSignature(message);
-//         if (getVerb(message) == operatorId && getParamCount(message) == paramCount && messageSubj != 0) {
-//            if (paramCount == 2) {
-//               // if the signature contains the two subjects
-//               ident_t signature(scope.module->resolveSubject(messageSubj));
-//               size_t index = signature.find('&');
-//               if (index != NOTFOUND_POS) {
-//                  IdentifierString subj1(signature, index);
-//                  IdentifierString subj2(signature.c_str() + index + 1);
-//
-//                  ref_t subj1Ref = scope.module->mapSubject(subj1, true);
-//                  ref_t subj2Ref = scope.module->mapSubject(subj2, true);
-//
-//                  if (isCompatible(scope, roperand, scope.subjectHints.get(subj1Ref)) && isCompatible(scope, roperand2, scope.subjectHints.get(subj2Ref))) {
-//                     foundSubjRef = messageSubj;
-//
-//                     break;
-//                  }
-//               }
-//            }
-//            else if (isCompatible(scope, roperand, scope.subjectHints.get(messageSubj))) {
-//               foundSubjRef = messageSubj;
-//
-//               break;
-//            }
 //         }
-//
-//         it++;
 //      }
 //   }
-//
-//   return encodeMessage(foundSubjRef, operatorId, paramCount);
 //}
-//
+
+// defineOperatorMessage tries to find the best match for the operator
+ref_t CompilerLogic :: defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2)
+{
+   ref_t foundSubjRef = 0;
+
+   if (loperand != 0 && roperand != 0 && (paramCount == 1 || roperand2 != 0)) {
+      ClassInfo info;
+      defineClassInfo(scope, info, loperand);
+
+      // search for appropriate methods
+      ClassInfo::MethodMap::Iterator it = info.methods.start();
+      while (!it.Eof()) {
+         ref_t message = it.key();
+
+         ref_t messageSubj = getSignature(message);
+         if (getVerb(message) == operatorId && getParamCount(message) == paramCount && messageSubj != 0) {
+            if (paramCount == 2) {
+               // if the signature contains the two subjects
+               ident_t signature(scope.module->resolveSubject(messageSubj));
+               size_t index = signature.find('&');
+               if (index != NOTFOUND_POS) {
+                  IdentifierString subj1(signature, index);
+                  IdentifierString subj2(signature.c_str() + index + 1);
+
+                  ref_t subj1Ref = scope.module->mapSubject(subj1, true);
+                  ref_t subj2Ref = scope.module->mapSubject(subj2, true);
+
+                  if (isCompatible(scope, roperand, scope.subjectHints.get(subj1Ref)) && isCompatible(scope, roperand2, scope.subjectHints.get(subj2Ref))) {
+                     foundSubjRef = messageSubj;
+
+                     break;
+                  }
+               }
+            }
+            else if (isCompatible(scope, roperand, scope.subjectHints.get(messageSubj))) {
+               foundSubjRef = messageSubj;
+
+               break;
+            }
+         }
+
+         it++;
+      }
+   }
+
+   return encodeMessage(foundSubjRef, operatorId, paramCount);
+}
+
 //inline bool setTokenIdentifier(SNode terminal)
 //{
 //   while (terminal != lxNone && terminal != lxAttribute) {
