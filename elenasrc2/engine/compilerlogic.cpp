@@ -781,8 +781,14 @@ int CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
    return 0;
 }
 
-void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info)
+void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode)
 {
+   if (classClassMode) {
+      // class class is always stateless and sealed
+      info.header.flags |= elStateless;
+      info.header.flags |= elSealed;
+   }
+
    if (test(info.header.flags, elNestedClass)) {
       // stateless inline class
       if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {

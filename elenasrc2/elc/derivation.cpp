@@ -24,7 +24,6 @@ using namespace _ELENA_;
 //      case nsMethod:
 ////      case nsConstructor:
 ////      case nsImplicitConstructor:
-//      case nsTemplate:
 //      case nsField:
 //      case nsSubject:
 ////      case nsDefaultGeneric:
@@ -427,6 +426,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
          break;
       case nsSubCode:
       case nsScope:
+      case nsTemplate:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          break;
       default:

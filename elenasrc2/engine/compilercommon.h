@@ -228,15 +228,15 @@ public:
 
    virtual bool isPrimitiveRef(ref_t reference) = 0;
 
-//   // auto generate virtual methods / fields
-//   virtual void injectVirtualCode(SyntaxWriter& writer, _CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
+   // auto generate virtual methods / fields
+   //virtual void injectVirtualCode(SyntaxWriter& writer, _CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/) = 0;
 ////   virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
 ////   virtual void injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode) = 0;
 
    // auto generate class flags
-   virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info) = 0;
+   virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 //
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
@@ -250,7 +250,7 @@ public:
 ////   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
 
-//   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
+   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
    virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
 

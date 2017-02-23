@@ -10,12 +10,12 @@
 //    /// Dispatches the verb to the target with a specified subject providing a parameter
 //    cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
 //}
-//
-//// --- super object ---
-//
-///// a common ancestor
-//dispatchable(object) class Object
-//{
+
+// --- super object ---
+
+/// a common ancestor
+/*dispatchable(object) class */Object
+{
 //    /// Creates the object
 //    constructor new []
 //    
@@ -28,8 +28,8 @@
 //                
 //    /// Implements a message dispatching in VMT
 //    dispatch => system'core_routines'__object.
-//}
-//
+}
+
 ///// A common boolean value
 //listable dispatchable(bool) class BaseBoolValue
 //{
