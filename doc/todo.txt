@@ -6,6 +6,9 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
+                 * optimize the code
+                 * declareBranchingOperator : try to limit number of times when sub code duplicates are created
+                   (probably all comparision operators are always return bool value)
                  
                  * support structures
 
@@ -73,8 +76,6 @@ In development:
                  * ret rid of maType hint
                  * optimie opertion with int constant
                  * optimization bcopya quit => quit
-                 * declareBranchingOperator : try to limit number of times when sub code duplicates are created
-                   (probably all comparision operators are always return bool value)
                  * get rid of __ifoperator / ifnotoeprator - embeddable attribute should be used instead
                  * use intOp for assigning a constant
                  * warn on boxing
@@ -84,6 +85,8 @@ In development:
                  * test field : pass as a parameter
                  * test local : assign field struct
                  * test implicit convertor with stack allocated local / field
+                 * optimize n := n + m.
+                 * system should be included by default
 
               xdev - generic development
                  * support property template

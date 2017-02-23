@@ -238,14 +238,14 @@ SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_posi
    return read(reader);
 }
 
-//void SyntaxTree :: refresh(SyntaxTree::Node& node)
-//{
-//   MemoryReader reader(&_body, node.position - 12);
-//
-//   node.type = (LexicalType)reader.getDWord();
-//   node.argument = reader.getDWord();
-//   node.strArgument = reader.getDWord();
-//}
+void SyntaxTree :: refresh(SyntaxTree::Node& node)
+{
+   MemoryReader reader(&_body, node.position - 12);
+
+   node.type = (LexicalType)reader.getDWord();
+   node.argument = reader.getDWord();
+   node.strArgument = reader.getDWord();
+}
 
 SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
 {

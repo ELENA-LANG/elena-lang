@@ -21,22 +21,23 @@ class DerivationWriter : public _DerivationWriter
 {
    SyntaxWriter _writer;
 
-   SyntaxTree   _buffer;
-   SNode        _hints;
-
-   int          _level; // tree node level ; starting from level=1 the content is buffered and unpacked on the level=0
-
-   void unpackNode(SNode& node, int mode);
-   void unpackChildren(SNode node, int mode = 0);
-   void copyChildren(SNode node);
-
-   void copyExpression(SNode node, bool explicitOne = true);
-   void copyObject(SNode node, int mode);
-   void copyMessage(SNode node, bool operationMode = false);
-   void copyVariable(SNode node);
-   void copyAssigning(SNode node);
-//   void copySwitching(SNode node);
-   void copyHints(SNode node);
+   //   SyntaxTree   _buffer;
+   //   SNode        _hints;
+   //
+   //   int          _level; // tree node level ; starting from level=1 the content is buffered and unpacked on the level=0
+   //
+   void writeNode(Symbol symbol);
+   //   void unpackNode(SNode& node, int mode);
+   //   void unpackChildren(SNode node, int mode = 0);
+   //   void copyChildren(SNode node);
+   //
+   //   void copyExpression(SNode node, bool explicitOne = true);
+   //   void copyObject(SNode node, int mode);
+   //   void copyMessage(SNode node, bool operationMode = false);
+   //   void copyVariable(SNode node);
+   //   void copyAssigning(SNode node);
+   ////   void copySwitching(SNode node);
+   //   void copyHints(SNode node);
 
 public:
    void writeSymbol(Symbol symbol);
@@ -45,8 +46,8 @@ public:
    DerivationWriter(SyntaxTree& target)
       : _writer(target)
    {
-      _level = 0;
-   } 
+      //      _level = 0;
+   }
 };
 
 } // _ELENA_

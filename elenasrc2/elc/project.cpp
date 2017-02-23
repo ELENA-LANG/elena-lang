@@ -387,12 +387,12 @@ void Project :: compile(ident_t filePath, Compiler& compiler, Parser& parser, Mo
       if (!sourceFile.isOpened())
          raiseError(errInvalidFile, filePath);
 
-      SyntaxTree syntaxTree;
-      DerivationWriter writer(syntaxTree);
+      SyntaxTree derivationTree;
+      DerivationWriter writer(derivationTree);
       parser.parse(&sourceFile, writer, getTabSize());
 
       // compile the syntax tree
-      compiler.compileModule(*this, filePath, syntaxTree, moduleInfo, unresolved);
+      compiler.compileModule(*this, filePath, derivationTree, moduleInfo, unresolved);
    }
    catch (LineTooLong& e)
    {
@@ -425,7 +425,7 @@ void Project :: compile(ident_t filePath, Compiler& compiler, ScriptParser parse
       parser.parse(fullPath.c_str(), tree/*, getTabSize()*/);
 
       // compile the syntax tree
-      compiler.compileModule(*this, filePath, tree, moduleInfo, unresolved);
+      compiler.compileSyntaxTree(*this, filePath, tree, moduleInfo, unresolved);
    }
    catch (LineTooLong& e)
    {
