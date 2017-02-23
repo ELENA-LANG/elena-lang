@@ -14,7 +14,7 @@
 // --- super object ---
 
 /// a common ancestor
-/*dispatchable(object) class */Object
+/*dispatchable(object)*/ class Object
 {
 //    /// Creates the object
 //    constructor new []

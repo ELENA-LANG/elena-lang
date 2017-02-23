@@ -43,7 +43,7 @@ enum LexicalType
    lxCode            = 0x0001A,
    lxDispatchCode    = 0x00020,
    lxStatic          = 0x00022,
-//   lxConstructor     = 0x00024,
+   lxConstructor     = 0x00024,
    lxExtension       = 0x0002B,
 //   lxLoop            = 0x00030,
 //   lxInlineExpression= 0x00032,

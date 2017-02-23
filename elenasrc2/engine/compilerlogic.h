@@ -121,7 +121,7 @@ public:
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool validateClassAttribute(int& attrValue);
-//   virtual bool validateMethodAttribute(int& attrValue);
+   virtual bool validateMethodAttribute(int& attrValue);
 //   virtual bool validateFieldAttribute(int& attrValue);
 //   virtual bool validateLocalAttribute(int& attrValue);
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant);

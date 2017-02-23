@@ -920,10 +920,10 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
    }
 }
 
-//bool CompilerLogic :: validateMethodAttribute(int& attrValue)
-//{
-//   switch ((size_t)attrValue)
-//   {
+bool CompilerLogic :: validateMethodAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
 //      case V_IFBRANCH:
 //         attrValue = tpIfBranch;
 //         return true;
@@ -945,17 +945,17 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 ////      case V_ACTION:
 ////         attrValue = tpAction;
 ////         return true;
-//      case V_CONSTRUCTOR:
-//         attrValue = tpConstructor;
-//         return true;
+      case V_CONSTRUCTOR:
+         attrValue = tpConstructor;
+         return true;
 //      case V_CONVERSION:
 //         attrValue = tpConversion;
 //         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 //{
 //   switch ((size_t)attrValue)

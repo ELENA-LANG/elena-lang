@@ -326,7 +326,7 @@ private:
 
       void saveSubject(ref_t attrRef, ref_t classReference, bool internalType);
 //      bool saveExtension(ref_t message, ref_t type, ref_t role);
-//      void saveAction(ref_t message, ref_t reference);
+      void saveAction(ref_t message, ref_t reference);
 
       void validateReference(SNode terminal, ref_t reference);
 
@@ -544,7 +544,7 @@ private:
       LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-//      int          hints;
+      int          hints;
 //      ref_t        resultType;
 //      ref_t        resultRef;
 ////      bool         withOpenArg;
@@ -963,7 +963,7 @@ private:
 ////   void recognizeMemebers(SNode member, ClassScope& scope);
 ////   void readAttributes(SNode member, ClassScope& scope);
 //   void declareMethodAttribute(SyntaxWriter& writer, SNode current, MethodScope& scope, SNode rootNode);
-//   void declareMethodAttributes(SyntaxWriter& writer, SNode member, MethodScope& scope);
+   void declareMethodAttributes(SNode member, MethodScope& scope);
    //void includeMethod(SNode member, ClassScope& classScope, MethodScope& scope);
 
 //   void declareTemplateMethods(SNode node, ClassScope& scope);
@@ -1070,7 +1070,7 @@ private:
 
    void generateClassFlags(ClassScope& scope, SNode node);
 ////   void generateClassFields(ClassScope& scope, SyntaxTree::Node root, bool singleField);
-////   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t& message);
+   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
    void generateMethodDeclarations(SNode node, ClassScope& scope/*, bool hideDuplicates*/, bool closed, bool classClassMode);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode);
 

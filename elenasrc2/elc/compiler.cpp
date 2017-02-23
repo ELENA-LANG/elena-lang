@@ -839,18 +839,18 @@ void Compiler::ModuleScope :: saveSubject(ref_t attrRef, ref_t classReference, b
 ////   }
 ////   else return false;
 ////}
-//
-//void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
-//{
-//   ReferenceNs sectionName(module->Name(), ACTION_SECTION);
-//
-//   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//   metaWriter.writeDWord(mssg_ref);
-//   metaWriter.writeDWord(reference);
-//
-//   actionHints.add(mssg_ref, reference);
-//}
+
+void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
+{
+   ReferenceNs sectionName(module->Name(), ACTION_SECTION);
+
+   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+   metaWriter.writeDWord(mssg_ref);
+   metaWriter.writeDWord(reference);
+
+   actionHints.add(mssg_ref, reference);
+}
 
 ref_t Compiler::ModuleScope :: mapAttribute(SNode attribute, int& attrValue)
 {
@@ -1004,7 +1004,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->message = 0;
    this->reserved = 0;
    this->rootToFree = 1;
-//   this->hints = 0;
+   this->hints = 0;
 //   this->resultRef = 0;
 //   this->resultType = 0;
 ////   this->withOpenArg = false;
@@ -4983,59 +4983,56 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
       /*else */compileDefaultConstructor(writer, node, methodScope);
    }
 
+   SNode current = node.firstChild();
 
+   while (current != lxNone) {
+      switch (current) {
+         case lxConstructor:
+         {
+            MethodScope methodScope(&classScope);
+            methodScope.message = current.argument;
 
-   //SNode current = node.firstChild();
+            //            //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
+            //            if (scope.getScope(Scope::slTemplate) != NULL) {
+            //               ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
+            //
+            //               methodScope.extensionTemplateMode = (ownerScope != NULL && ownerScope->extensionMode != 0);
+            //            }
 
-   //while (current != lxNone) {
-   //   switch (current) {
-   //      case lxClassMethod:
-   //      {
-   //         MethodScope methodScope(&classScope);
-   //         methodScope.message = current.argument;
+            //            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
+            //               ////               if (test(scope.info.header.flags, elRole))
+            //               ////                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
+            //               //
+            //               SNode body = current.findChild(lxDispatchCode);
+            //               if (body != lxNone) {
+            //                  declareDispatcher(writer, body, methodScope/*, test(scope.info.header.flags, elWithGenerics)*/);
+            //               }
+            //               else scope.raiseError(errIllegalMethod, current);
+            //            }
+            //            else declareMethod(writer, current, methodScope);
 
-   //         //            //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
-   //         //            if (scope.getScope(Scope::slTemplate) != NULL) {
-   //         //               ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
-   //         //
-   //         //               methodScope.extensionTemplateMode = (ownerScope != NULL && ownerScope->extensionMode != 0);
-   //         //            }
-   //         //
+            //            // if it is a dispatch handler
+            //            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
+            ////               if (test(scope.info.header.flags, elRole))
+            ////                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
+            //
+            //               initialize(scope, methodScope);
+            //
+            //               compileDispatcher(current.firstChild(lxCodeScopeMask), methodScope, test(scope.info.header.flags, elWithGenerics));
+            //            }
+            //            // if it is a normal method
+            //            else {
+            declareArgumentList(current, methodScope);
 
-   //         //            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-   //         //               ////               if (test(scope.info.header.flags, elRole))
-   //         //               ////                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-   //         //               //
-   //         //               SNode body = current.findChild(lxDispatchCode);
-   //         //               if (body != lxNone) {
-   //         //                  declareDispatcher(writer, body, methodScope/*, test(scope.info.header.flags, elWithGenerics)*/);
-   //         //               }
-   //         //               else scope.raiseError(errIllegalMethod, current);
-   //         //            }
-   //         //            else declareMethod(writer, current, methodScope);
+            initialize(classClassScope, methodScope);
 
-   //         //            // if it is a dispatch handler
-   //         //            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-   //         ////               if (test(scope.info.header.flags, elRole))
-   //         ////                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-   //         //
-   //         //               initialize(scope, methodScope);
-   //         //
-   //         //               compileDispatcher(current.firstChild(lxCodeScopeMask), methodScope, test(scope.info.header.flags, elWithGenerics));
-   //         //            }
-   //         //            // if it is a normal method
-   //         //            else {
-   //         declareArgumentList(current, methodScope);
+            compileConstructor(writer, current, methodScope, classClassScope);
+            break;
+         }
+      }
 
-   //         initialize(classClassScope, methodScope);
-
-   //         compileConstructor(writer, current, methodScope, classClassScope);
-   //         break;
-   //      }
-   //   }
-
-   //   current = current.nextNode();
-   //}
+      current = current.nextNode();
+   }
 }
 
 //int Compiler :: countFields(SNode node)
@@ -5339,14 +5336,16 @@ void Compiler :: declareVMT(SNode current, ClassScope& scope)
 ////            //            methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
 ////            //         }
 ////            //         else {
-         declareArgumentList(current, methodScope);
+         declareMethodAttributes(current, methodScope);
 
+         declareArgumentList(current, methodScope);
          current.setArgument(methodScope.message);
-//         declareMethodAttributes(writer, current, methodScope);
-//         // skip constructord
-//         if (!test(methodScope.hints, tpConstructor)) {
-            //if (!_logic->validateMessage(methodScope.message, false))
-            //   scope.raiseError(errIllegalMethod, current);
+
+         if (test(methodScope.hints, tpConstructor))
+            current = lxConstructor;
+
+            if (!_logic->validateMessage(methodScope.message, false))
+               scope.raiseError(errIllegalMethod, current);
 
             //includeMethod(current, scope, methodScope);
 //            //            //            if (current == lxDefaultGeneric) {
@@ -5590,65 +5589,65 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 //////      current = current.nextNode();
 //////   }
 //////}
-//////
-//////void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t& message)
-//////{
-//////   ref_t outputType = scope.info.methodHints.get(Attribute(message, maType));
-//////   bool hintChanged = false;
-//////   int hint = scope.info.methodHints.get(Attribute(message, maHint));
-//////
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      if (current == lxClassMethodAttr) {
-//////         if (current.argument == tpSealed && node.existChild(lxPrivate)) {
-//////            //HOTFIX : private sealed method should be marked appropriately
-//////            hint |= tpPrivate;
-//////         }
-//////         else {
-//////            hint |= current.argument;
-//////
-//////            if (current.argument == tpAction)
-//////               scope.moduleScope->saveAction(message, scope.reference);
-//////
-//////            //HOTFIX : overwrite the message for the generic one
-//////            if (hint == tpGeneric) {
-//////               message = overwriteSubject(message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
-//////            }
-//////         }
-//////
-//////         hintChanged = true;
-//////      }
-//////      else if (current == lxType) {
-//////         if (outputType == 0) {
-//////            outputType = current.argument;
-//////            scope.info.methodHints.add(Attribute(message, maType), outputType);
-//////         }
-//////         else scope.raiseWarning(WARNING_LEVEL_1, wrnTypeAlreadyDeclared, node);
-//////      }
-////////      else if (current == lxClassMethodOpt) {
-////////         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
-////////         if (mssgAttr != lxNone) {
-////////            scope.info.methodHints.add(Attribute(message, current.argument), getSignature(mssgAttr.argument));
-////////         }
-////////      }
-//////      current = current.nextNode();
-//////   }
-//////
-//////   if (hintChanged) {
-//////      scope.info.methodHints.exclude(Attribute(message, maHint));
-//////      scope.info.methodHints.add(Attribute(message, maHint), hint);
-//////   }
-//////}
+
+void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message)
+{
+   ref_t outputType = scope.info.methodHints.get(Attribute(message, maType));
+   bool hintChanged = false;
+   int hint = scope.info.methodHints.get(Attribute(message, maHint));
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         //if (current.argument == tpSealed && node.existChild(lxPrivate)) {
+         //   //HOTFIX : private sealed method should be marked appropriately
+         //   hint |= tpPrivate;
+         //}
+         //else {
+            hint |= current.argument;
+
+            if (current.argument == tpAction)
+               scope.moduleScope->saveAction(message, scope.reference);
+
+            ////HOTFIX : overwrite the message for the generic one
+            //if (hint == tpGeneric) {
+            //   message = overwriteSubject(message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
+            //}
+         //}
+
+         hintChanged = true;
+      }
+      else if (current == lxType) {
+         if (outputType == 0) {
+            outputType = current.argument;
+            scope.info.methodHints.add(Attribute(message, maType), outputType);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnTypeAlreadyDeclared, node);
+      }
+//      else if (current == lxClassMethodOpt) {
+//         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
+//         if (mssgAttr != lxNone) {
+//            scope.info.methodHints.add(Attribute(message, current.argument), getSignature(mssgAttr.argument));
+//         }
+//      }
+      current = current.nextNode();
+   }
+
+   if (hintChanged) {
+      scope.info.methodHints.exclude(Attribute(message, maHint));
+      scope.info.methodHints.add(Attribute(message, maHint), hint);
+   }
+}
 
 void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope/*, bool hideDuplicates*/, bool closed, bool classClassMode)
 {
    SNode current = root.firstChild();
    while (current != lxNone) {
-      if (current == lxClassMethod) {
+      if ((current == lxClassMethod && !classClassMode) || (classClassMode && current == lxConstructor)) {
          ref_t message = current.argument;
 
-////         generateMethodAttributes(scope, current, message);
-//
+         generateMethodAttributes(scope, current, message);
+
          int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
 //         bool privat = (methodHints & tpMask) == tpPrivate;
 //
@@ -5895,25 +5894,33 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
 ////      current = current.nextNode();
 ////   }
 ////}
-//
-//void Compiler :: declareMethodAttributes(SyntaxWriter& writer, SNode node, MethodScope& scope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         declareMethodAttribute(writer, current, scope, node);
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
+
+void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         int value = current.argument;
+         if (_logic->validateMethodAttribute(value)) {
+            scope.hints |= value;
+
+            current.setArgument(value);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      }
+      else break;
+
+      current = current.nextNode();
+   }
+}
+
 //void Compiler :: declareMethodAttribute(SyntaxWriter& writer, SNode current, MethodScope& scope, SNode rootNode)
 //{
 //   int attrValue = 0;
 //   ref_t attrRef = mapAttribute(current, scope, attrValue);
 //   if (attrValue != 0) {
 //      if (_logic->validateMethodAttribute(attrValue)) {
-//         scope.hints |= attrValue;
+//         
 //      }
 //      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 //   }
