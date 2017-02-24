@@ -7749,7 +7749,7 @@ void Compiler :: generateSymbolTree(SyntaxWriter& writer, SNode node, TemplateSc
 
 void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
 {
-   writer.newNode(lxCode);
+   writer.newNode(node.type, node.argument);
 
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -7759,6 +7759,7 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
       else if (current == lxEOF) {
          copyIdentifier(writer, current);
       }
+      else generateObjectTree(writer, current, scope);
 
       current = current.nextNode();
    }
