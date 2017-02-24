@@ -1141,15 +1141,20 @@ private:
    void compileDeclarations(SNode node, ModuleScope& scope);
    void compileImplementations(SNode node, ModuleScope& scope);
 
+   void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+
+   void generateScopeMembers(SNode node, TemplateScope& scope);
+
    bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope);
    void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
    void generateObjectTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool explicitOne = true);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
    void generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-   void generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
+   void generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
+   void generateTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
    void generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
-   void generateMethodScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
+   void generateMethodScope(SNode node, TemplateScope& scope, SNode attributes);
    void generateScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
 
    void compileSyntaxTree(SyntaxTree& tree, ModuleScope& scope);

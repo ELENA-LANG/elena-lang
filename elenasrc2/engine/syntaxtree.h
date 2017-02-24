@@ -821,6 +821,9 @@ private:
    void refresh(Node& node);
 
 public:
+   static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type);
+   static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2);
+   static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3);
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);

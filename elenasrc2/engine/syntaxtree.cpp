@@ -178,6 +178,58 @@ void SyntaxTree :: saveNode(Node node, _Memory* dump)
 //   copyNode(tree.readRoot(), node);
 //}
 
+void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type)
+{
+   SNode current = buffer.readRoot();
+   while (current != lxNone) {
+      if (current == type) {
+         if (current.strArgument >= 0) {
+            writer.newNode(current.type, current.identifier());
+         }
+         else writer.newNode(current.type, current.argument);
+
+         SyntaxTree::copyNode(writer, current);
+         writer.closeNode();
+      }
+      current = current.nextNode();
+   }
+}
+
+void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2)
+{
+   SNode current = buffer.readRoot();
+   while (current != lxNone) {
+      if (current == type1 || current == type2) {
+         if (current.strArgument >= 0) {
+            writer.newNode(current.type, current.identifier());
+         }
+         else writer.newNode(current.type, current.argument);
+
+         SyntaxTree::copyNode(writer, current);
+         writer.closeNode();
+      }
+      current = current.nextNode();
+   }
+}
+
+void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3)
+{
+   SNode current = buffer.readRoot();
+   while (current != lxNone) {
+      if (current == type1 || current == type2 || current == type3) {
+         if (current.strArgument >= 0) {
+            writer.newNode(current.type, current.identifier());
+         }
+         else writer.newNode(current.type, current.argument);
+
+         SyntaxTree::copyNode(writer, current);
+         writer.closeNode();
+      }
+      current = current.nextNode();
+   }
+}
+
+
 void SyntaxTree :: copyNode(Writer& writer, LexicalType type, Node owner)
 {
    SyntaxTree::Node node = owner.findChild(type);
@@ -463,3 +515,4 @@ SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
 //
 //   return nodes[0];
 //}
+

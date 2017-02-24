@@ -340,8 +340,8 @@ ref_t Compiler::ModuleScope :: resolveAttributeRef(ident_t identifier, bool expl
 ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, bool explicitOnly)
 {
    ident_t identifier = NULL;
-   if (terminal.type == lxIdentifier || terminal.type == lxPrivate/* || terminal.type == lxMessage*/ || terminal.type == lxAttribute) {
-      identifier = terminal.findChild(lxTerminal).identifier();
+   if (terminal.type == lxIdentifier || terminal.type == lxPrivate/* || terminal.type == lxMessage || terminal.type == lxAttribute*/) {
+      identifier = terminal.identifier();
    }
    else raiseError(errInvalidSubject, terminal);
 
@@ -350,7 +350,7 @@ ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, bool explicitOnly)
 
 ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& output)
 {
-   ident_t identifier = terminal.findChild(lxTerminal).identifier();
+   ident_t identifier = terminal.identifier();
 
 //   // add a namespace for the private message
 //   if (terminal.type == lxPrivate) {
@@ -1750,7 +1750,6 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
          }
          else current.set(lxClassFlag, value);
       }
-      else break;
 
       current = current.nextNode();
    }
@@ -5908,7 +5907,6 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
-      else break;
 
       current = current.nextNode();
    }
@@ -7665,12 +7663,15 @@ inline bool setIdentifier(SNode current)
 
 inline void copyIdentifier(SyntaxWriter& writer, SNode ident)
 {
-   SNode terminal = ident.findChild(lxTerminal);
-   if (terminal != lxNone) {
-      writer.newNode(ident.type, terminal.identifier());
+   if (emptystr(ident.identifier())) {
+      SNode terminal = ident.findChild(lxTerminal);
+      if (terminal != lxNone) {
+         writer.newNode(ident.type, terminal.identifier());
+      }
+      else writer.newNode(ident.type);
    }
-   else writer.newNode(ident.type);
-   
+   else writer.newNode(ident.type, ident.identifier());
+
    SyntaxTree::copyNode(writer, lxRow, ident);
    SyntaxTree::copyNode(writer, lxCol, ident);
    SyntaxTree::copyNode(writer, lxLength, ident);
@@ -7765,10 +7766,25 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
    writer.closeNode();
 }
 
+void Compiler :: copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
+{
+   writer.newNode(node.type, node.argument);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxIdentifier || current == lxPrivate || current == lxReference) {
+         copyIdentifier(writer, current);
+      }
+      else copyMethodTree(writer, current, scope);
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
 bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope)
 {
-   SyntaxTree syntaxTree;
-
    _Memory* body = scope.moduleScope->loadAttributeInfo(scope.templateRef);
    if (body == NULL)
       return false;
@@ -7779,6 +7795,9 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope)
    while (current != lxNone) {
       if (current == lxAttribute) {
          writer.appendNode(current.type, current.argument);
+      }
+      else if (current == lxClassMethod) {
+         copyMethodTree(writer, current, scope);
       }
       current = current.nextNode();
    }
@@ -7819,11 +7838,18 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
    }
 }
 
-void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes)
+void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode)
 {
-   writer.newNode(lxClassMethod);
+   buffer.clear();
 
-   generateAttributes(writer, node, scope, attributes);
+   SyntaxWriter bufferWriter(buffer);
+
+   writer.newNode(lxClassMethod, templateMode ? -1 : 0);
+
+   generateAttributes(bufferWriter, node, scope, attributes);
+
+   // copy attributes
+   SyntaxTree::copyTree(writer, buffer, lxAttribute, lxIdentifier, lxPrivate);
 
    SNode bodyNode = node.findChild(lxCode, lxExpression, lxDispatchCode, lxReturning, lxResendExpression);
    if (bodyNode != lxNone) {
@@ -7831,10 +7857,37 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
    }
 
    writer.closeNode();
+
+   // copy methods
+   SyntaxTree::copyTree(writer, buffer, lxClassMethod);
+}
+
+void Compiler :: generateTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes)
+{
+   SyntaxTree buffer;
+
+   generateAttributes(writer, node, scope, attributes);
+
+   SNode current = node.firstChild();
+   SNode subAttributes;
+   while (current != lxNone) {
+      if (current == lxAttribute || current == lxNameAttr) {
+         if (subAttributes == lxNone)
+            subAttributes = current;
+      }
+      if (current == lxClassMethod) {
+         generateMethodTree(writer, current, scope, subAttributes, buffer, true);
+         subAttributes = SNode();
+      }
+
+      current = current.nextNode();
+   }
 }
 
 void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes)
 {
+   SyntaxTree buffer;
+
    writer.newNode(lxClass);
 
    generateAttributes(writer, node, scope, attributes);
@@ -7847,7 +7900,7 @@ void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateSco
             subAttributes = current;
       }
       if (current == lxClassMethod) {
-         generateMethodTree(writer, current, scope, subAttributes);
+         generateMethodTree(writer, current, scope, subAttributes, buffer);
          subAttributes = SNode();
       }
 
@@ -7857,7 +7910,7 @@ void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateSco
    writer.closeNode();
 }
 
-void Compiler :: generateMethodScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes)
+void Compiler :: generateMethodScope(SNode node, TemplateScope& scope, SNode attributes)
 {
    SNode current = node.findChild(lxCode, lxExpression, lxDispatchCode, lxReturning, lxResendExpression);
    if (current != lxNone) {
@@ -7873,13 +7926,28 @@ void Compiler :: generateMethodScope(SyntaxWriter& writer, SNode node, TemplateS
    }
 }
 
+void Compiler :: generateScopeMembers(SNode node, TemplateScope& scope)
+{
+   SNode current = node.firstChild();
+   SNode subAttributes;
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         if (subAttributes == lxNone)
+            subAttributes = current;
+      }
+      else if (current == lxScope) {
+         generateMethodScope(current, scope, subAttributes);
+         subAttributes = SNode();
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: generateScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes)
 {
    SNode body = node.findChild(lxExpression);
-   if (body == lxNone && node == lxTemplate) {
-      generateAttributes(writer, body, scope, attributes);
-   }
-   else if (body == lxExpression) {
+   if (body == lxExpression) {
       // if it could be compiled as a symbol
       if (setIdentifier(attributes)) {
          node = lxSymbol;
@@ -7889,25 +7957,18 @@ void Compiler :: generateScope(SyntaxWriter& writer, SNode node, TemplateScope& 
       }
    }
    else {
+      // it is is a template
+      if (node == lxTemplate) {
+         generateScopeMembers(node, scope);
+
+         generateTemplateTree(writer, node, scope, attributes);
+      }
       // if it could be compiled as a class
-      if (setIdentifier(attributes)) {
+      else if (setIdentifier(attributes)) {
          node = lxClass;
          attributes.refresh();
 
-         SNode current = node.firstChild();
-         SNode subAttributes;
-         while (current != lxNone) {
-            if (current == lxAttribute) {
-               if (subAttributes == lxNone)
-                  subAttributes = current;
-            }
-            else if (current == lxScope) {
-               generateMethodScope(writer, current, scope, subAttributes);
-               subAttributes = SNode();
-            }
-
-            current = current.nextNode();
-         }
+         generateScopeMembers(node, scope);
 
          generateClassTree(writer, node, scope, attributes);
       }
