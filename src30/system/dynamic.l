@@ -31,12 +31,12 @@
 //    /// Dispatches incoming messages and redirects to the target
 //    dispatch => system'core_routines'__verb.
 //}
-//
-//// --- Message ---
-//
-///// A message constant
-//sealed embeddable struct Message
-//{
+
+// --- Message ---
+
+/// A message constant
+/*sealed embeddable struct*/ Message
+{
 //    __mssg theValue.
 //
 ////    #constructor new &literal:name
@@ -63,8 +63,8 @@
 //
 //    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
 //    dispatch => system'core_routines'__message.
-//}
-//
+}
+
 ////// --- ExtensionMessage ---
 ////
 /////// An extended message constant

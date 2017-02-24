@@ -1,20 +1,20 @@
-//// === basic templates ===
-//
-//#template dispatchable(template_subj)
-//{
-//    template_subj = $self.
-//    
+// === basic templates ===
+
+#template dispatchable(template_subj)
+{
+    template_subj = $self.
+    
 //    /// Dispatches the verb to the target with a specified subject
 //    cast : verb &to:target = target::verb eval &template_subj:$self.
 //
 //    /// Dispatches the verb to the target with a specified subject providing a parameter
 //    cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
-//}
+}
 
 // --- super object ---
 
 /// a common ancestor
-/*dispatchable(object)*/ class Object
+dispatchable(object) class Object
 {
     /// Creates the object
     constructor new []
@@ -25,9 +25,9 @@
 //    bool equal : anObject => system'core_routines'__object.
 //    
 //    bool notequal : anObject = $self equal:anObject inverted.
-//                
-//    /// Implements a message dispatching in VMT
-//    dispatch => system'core_routines'__object.
+                
+    /// Implements a message dispatching in VMT
+    dispatch => system'core_routines'__object.
 }
 
 ///// A common boolean value

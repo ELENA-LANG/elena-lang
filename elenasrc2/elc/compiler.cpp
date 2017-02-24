@@ -2628,7 +2628,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
    if (name == lxNone)
       scope.raiseError(errInvalidOperation, node);
 
-   verb_id = _verbs.get(name.findChild(lxTerminal).identifier());
+   verb_id = _verbs.get(name.identifier());
    if (verb_id == 0) {
       ref_t id = scope.mapSubject(name, signature);
 
@@ -4507,7 +4507,7 @@ void Compiler :: compileLazyExpressionMethod(SyntaxWriter& writer, SNode node, M
 void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
    if (isImportRedirect(node)) {
-      importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).findChild(lxTerminal).identifier(), scope.getMessageID());
+      importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).identifier(), scope.getMessageID());
    }
 //   else {
 //      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
@@ -5419,8 +5419,8 @@ void Compiler :: declareVMT(SNode current, ClassScope& scope)
          if (test(methodScope.hints, tpConstructor))
             current = lxConstructor;
 
-            if (!_logic->validateMessage(methodScope.message, false))
-               scope.raiseError(errIllegalMethod, current);
+         if (!_logic->validateMessage(methodScope.message, false))
+            scope.raiseError(errIllegalMethod, current);
 
             //includeMethod(current, scope, methodScope);
 //            //            //            if (current == lxDefaultGeneric) {
@@ -6039,12 +6039,12 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
       scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
 //   }
-//
-//   // if it is a super class validate it
-//   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
-//      if (!scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID)))
-//         scope.raiseError(errNoDispatcher, node.findChild(lxIdentifier, lxPrivate));
-//   }
+
+   // if it is a super class validate it
+   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
+      if (!scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID)))
+         scope.raiseError(errNoDispatcher, node.findChild(lxIdentifier, lxPrivate));
+   }
 
    // save declaration
    scope.save();
@@ -7751,9 +7751,97 @@ inline bool setIdentifier(SNode current)
 //   }
 //}
 
+void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode*/)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+   //         case nsSubjectArg:
+   //            _writer.newNode(lxMessage);
+   //            unpackChildren(current);
+   //            _writer.closeNode();
+   //            break;
+   //         case nsMessageParameter:
+   //         case nsObject:
+   //         case nsExpression:
+   //            _writer.newBookmark();
+   //            unpackChildren(current, 1);
+   //            _writer.removeBookmark();
+   //            break;
+   //         //case nsElseOperation:
+   //         //   _writer.newNode(lxExpression);
+   //         //   unpackChildren(current);
+   //         //   _writer.closeNode();
+   //         //   break;
+   //         case nsSubCode:
+   //            unpackNode(current, 1);
+   //            break;
+   //         //case nsL0Operation:
+   //         //case nsL3Operation:
+   //         //case nsL4Operation:
+   //         //case nsL5Operation:
+   //         //case nsL6Operation:
+   //         //case nsL7Operation:
+   //         //case nsNewOperator:
+   //         case nsMessageOperation:
+   //            copyMessage(current, (symbol != nsMessageOperation));
+   //            _writer.insert(lxExpression);
+   //            _writer.closeNode();
+   //            break;
+         case lxIdentifier:
+         case lxPrivate:
+         case lxReference:
+            //if (!operationMode) {
+            writer.newNode(lxMessage);
+            copyIdentifier(writer, current);
+            writer.closeNode();
+            break;
+            //}
+   //         default:
+   //            if (operationMode && current.existChild(lxTerminal)) {
+   //               //if ((Symbol)node.type == nsNewOperator) {
+   //               //   //HOTFIX : mark new operator
+   //               //   _writer.appendNode(lxOperator, -1);
+   //               //   if (symbol == tsInteger || symbol == tsIdentifier) {
+   //               //      unpackNode(current, 0);
+   //               //   }
+   //               //}
+   //               //else {
+   //                  _writer.newNode(lxOperator);
+   //                  copyChildren(current);
+   //                  _writer.closeNode();
+   //               //}
+   //
+   //               _writer.newBookmark();               
+   //            }
+   //            break;
+      }
+      current = current.nextNode();
+   }
+   //
+   //   if (operationMode) {
+   //      _writer.removeBookmark();
+   //   }
+}
+
 void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, TemplateScope& scope/*, int mode*/)
 {
    switch (current.type) {
+      case lxMessage:
+         generateMessageTree(writer, current, scope);
+         writer.insert(lxExpression);
+         writer.closeNode();
+         //if (symbol == nsCatchMessageOperation) {
+         //   _writer.removeBookmark();            
+         //   _writer.insert(lxTrying);
+         //   _writer.closeNode();
+         //}
+         //else if (symbol == nsAltMessageOperation) {
+         //   _writer.removeBookmark();
+         //   _writer.insert(lxAlt);
+         //   _writer.closeNode();
+         //}
+         break;
       default:
       {
          SNode terminal = current.findChild(lxIdentifier, lxReference, lxPrivate, lxInteger);
@@ -7816,7 +7904,13 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          generateExpressionTree(writer, current, scope);
       }
       else if (current == lxEOF) {
-         copyIdentifier(writer, current);
+         writer.newNode(lxEOF);
+
+         SNode terminal = current.firstChild();
+         SyntaxTree::copyNode(writer, lxRow, terminal);
+         SyntaxTree::copyNode(writer, lxCol, terminal);
+         SyntaxTree::copyNode(writer, lxLength, terminal);
+         writer.closeNode();
       }
       else generateObjectTree(writer, current, scope);
 
