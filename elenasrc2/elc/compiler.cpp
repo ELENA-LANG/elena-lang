@@ -1006,24 +1006,24 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
    }
 }
 
-////void Compiler::ClassScope :: compileClassAttribute(SNode hint)
-////{
-////   switch (hint.type)
-////   {
-////      case lxClassFlag:
-////         info.header.flags |= hint.argument;
-////         if (test(info.header.flags, elExtension))
-////            extensionMode = INVALID_REF;
-////         break;
-////      case lxType:
-////         if (test(info.header.flags, elExtension)) {
-////            extensionMode = hint.argument;
-////
-////            info.fieldTypes.add(-1, ClassInfo::FieldInfo(0, extensionMode));
-////         }
-////         break;
-////   }
-////}
+//void Compiler::ClassScope :: compileClassAttribute(SNode hint)
+//{
+//   switch (hint.type)
+//   {
+//      case lxClassFlag:
+//         info.header.flags |= hint.argument;
+//         if (test(info.header.flags, elExtension))
+//            extensionMode = INVALID_REF;
+//         break;
+//      case lxType:
+//         if (test(info.header.flags, elExtension)) {
+//            extensionMode = hint.argument;
+//
+//            info.fieldTypes.add(-1, ClassInfo::FieldInfo(0, extensionMode));
+//         }
+//         break;
+//   }
+//}
 
 // --- Compiler::MetodScope ---
 
@@ -1861,37 +1861,37 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
 //      current = current.nextNode();
 //   }
 //}
-//
-//////void Compiler :: compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode)
-//////{
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      if (current == lxAttribute) {
-//////         int attrValue = 0;
-//////         ref_t attribute = mapAttribute(current, scope, attrValue);
-//////         if (attrValue != 0) {
-//////            if (_logic->validateSymbolAttribute(attrValue)) {
-//////               rootNode.appendNode((LexicalType)attrValue);
-//////            }
-//////            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//////         }
-//////         else if (attribute) {
-//////            ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
-//////            if (classRef == INVALID_REF) {
-//////               copyTemplate(rootNode, scope, attribute, current);
-//////            }
-//////            else node.appendNode(lxType, attribute);
-//////         }
-//////         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-//////      }
-//////      else if (current == lxTemplate) {
-//////         compileSymbolAttributes(current, scope, rootNode);
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////}
-//
+
+////void Compiler :: compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode)
+////{
+////   SNode current = node.firstChild();
+////   while (current != lxNone) {
+////      if (current == lxAttribute) {
+////         int attrValue = 0;
+////         ref_t attribute = mapAttribute(current, scope, attrValue);
+////         if (attrValue != 0) {
+////            if (_logic->validateSymbolAttribute(attrValue)) {
+////               rootNode.appendNode((LexicalType)attrValue);
+////            }
+////            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+////         }
+////         else if (attribute) {
+////            ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
+////            if (classRef == INVALID_REF) {
+////               copyTemplate(rootNode, scope, attribute, current);
+////            }
+////            else node.appendNode(lxType, attribute);
+////         }
+////         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
+////      }
+////      else if (current == lxTemplate) {
+////         compileSymbolAttributes(current, scope, rootNode);
+////      }
+////
+////      current = current.nextNode();
+////   }
+////}
+
 //void Compiler :: declareFieldAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef, int& size)
 //{
 //   int attrValue = 0;
@@ -5627,25 +5627,25 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 //   }
 //}
 //
-//////void Compiler :: generateClassStaticField(ClassScope& scope, SNode current)
-//////{
-//////   _Module* module = scope.moduleScope->module;
-//////
-//////   ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
-//////   ref_t typeHint = current.findChild(lxType).argument;
-//////
-//////   if (scope.info.statics.exist(terminal))
-//////      scope.raiseError(errDuplicatedField, current);
-//////
-//////   // generate static reference
-//////   ReferenceNs name(module->resolveReference(scope.reference));
-//////   name.append(STATICFIELD_POSTFIX);
-//////
-//////   findUninqueName(module, name);
-//////
-//////   scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), typeHint));
-//////}
-//
+////void Compiler :: generateClassStaticField(ClassScope& scope, SNode current)
+////{
+////   _Module* module = scope.moduleScope->module;
+////
+////   ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
+////   ref_t typeHint = current.findChild(lxType).argument;
+////
+////   if (scope.info.statics.exist(terminal))
+////      scope.raiseError(errDuplicatedField, current);
+////
+////   // generate static reference
+////   ReferenceNs name(module->resolveReference(scope.reference));
+////   name.append(STATICFIELD_POSTFIX);
+////
+////   findUninqueName(module, name);
+////
+////   scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), typeHint));
+////}
+
 //////void Compiler :: generateClassFields(ClassScope& scope, SNode root, bool singleField)
 //////{
 //////   SNode current = root.firstChild();
@@ -5696,6 +5696,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
          if (outputType == 0) {
             outputType = current.argument;
             scope.info.methodHints.add(Attribute(message, maType), outputType);
+            scope.info.methodHints.add(Attribute(message, maReference), scope.moduleScope->subjectHints.get(outputType));
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnTypeAlreadyDeclared, node);
       }
@@ -7884,13 +7885,7 @@ void Compiler :: generateSymbolTree(SyntaxWriter& writer, SNode node, TemplateSc
 {
    writer.newNode(lxSymbol);
 
-   SNode current = attributes;
-   while (current == lxAttribute) {
-      current = current.nextNode();
-   }
-
-   SNode nameNode = current == lxNameAttr ? current.findChild(lxIdentifier, lxPrivate) : node.findChild(lxIdentifier, lxPrivate);
-   copyIdentifier(writer, nameNode);
+   generateAttributes(writer, node, scope, attributes);
 
    generateExpressionTree(writer, node.findChild(lxExpression), scope);
 
@@ -7994,7 +7989,8 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
             if (!generateTemplate(writer, templateScope))
                scope.raiseError(errInvalidHint, current);
          }
-         else scope.raiseError(errInvalidHint, current);
+         else if (classRef != 0)
+            writer.appendNode(lxType, attrRef);
       }
       else scope.raiseError(errInvalidHint, current);
 
@@ -8019,7 +8015,7 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
    generateAttributes(bufferWriter, node, scope, attributes);
 
    // copy attributes
-   SyntaxTree::copyTree(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam);
+   SyntaxTree::copyTree(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxType);
 
    // copy method arguments
    SNode current = node.firstChild();

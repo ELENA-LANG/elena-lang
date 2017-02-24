@@ -826,6 +826,7 @@ public:
    static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2);
    static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3);
    static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4);
+   static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5);
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);

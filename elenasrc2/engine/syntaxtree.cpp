@@ -246,6 +246,22 @@ void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type
    }
 }
 
+void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
+{
+   SNode current = buffer.readRoot();
+   while (current != lxNone) {
+      if (current == type1 || current == type2 || current == type3 || current == type4 || current == type5) {
+         if (current.strArgument >= 0) {
+            writer.newNode(current.type, current.identifier());
+         }
+         else writer.newNode(current.type, current.argument);
+
+         SyntaxTree::copyNode(writer, current);
+         writer.closeNode();
+      }
+      current = current.nextNode();
+   }
+}
 
 void SyntaxTree :: copyNode(Writer& writer, LexicalType type, Node owner)
 {

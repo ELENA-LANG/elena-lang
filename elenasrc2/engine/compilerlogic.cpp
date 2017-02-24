@@ -888,9 +888,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //      case V_STRUCT:
 //         attrValue = elStructureRole;
 //         return true;
-//      case V_ENUMLIST:
-//         attrValue = elStateless | elEnumList | elClosed;
-//         return true;
+      case V_ENUMLIST:
+         attrValue = elStateless | elEnumList | elClosed;
+         return true;
 //      case V_EMBEDDABLE:
 //         attrValue = elEmbeddable;
 //         return true;

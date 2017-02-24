@@ -50,7 +50,7 @@
 //#define V_SEALED      (ref_t)-8195
 ////#define V_LIMITED     (ref_t)-8196
 //#define V_STRUCT      (ref_t)-8197
-//#define V_ENUMLIST    (ref_t)-8198
+#define V_ENUMLIST    (ref_t)-8198
 ////#define V_DYNAMIC     (ref_t)-8199
 ////#define V_STRING      (ref_t)-8200
 //#define V_CONST       (ref_t)-8201

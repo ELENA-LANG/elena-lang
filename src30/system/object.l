@@ -19,20 +19,20 @@ dispatchable(object) class Object
     /// Creates the object
     constructor new []
     
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    ///
-//    /// By default compares the object references.
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    ///
+    /// By default compares the object references.
 //    bool equal : anObject => system'core_routines'__object.
-//    
+    
 //    bool notequal : anObject = $self equal:anObject inverted.
                 
     /// Implements a message dispatching in VMT
     dispatch => system'core_routines'__object.
 }
 
-///// A common boolean value
-//listable dispatchable(bool) class BaseBoolValue
-//{
+/// A common boolean value
+listable dispatchable(bool) class BaseBoolValue
+{
 //    if : aTrueAction = $nil.
 //
 //    if : aTrueAction : aFalseAction = $nil.
@@ -56,6 +56,6 @@ dispatchable(object) class Object
 ////    #method literal = $nil.
 ////
 ////    #method wide = $nil.
-//
-//    clone = $nil.
-//}
+
+    clone = $nil.
+}

@@ -1,148 +1,148 @@
-////
-////#template varof : template_subj
-////{
-////    #field(template_subj)$value.
-////
-////    #method set : val
-////    [
-////        $value := val template_subj.
-////    ]
-////    
-////    #method(stacksafe) set &template_subj:val
-////    [
-////        $value := val.
-////    ]
-////
-////    #method(w3) get = $value.
-////    
-////    #method(w3) cast : verb &to:target => $value.
-////
-////    /// Dispatches the verb to the target object with generic subject
-////    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
-////    
-////    #method(w3) equal : anObject
-////        => $value.
-////
-////    #method(embeddable,w3) => $value.
-////}
-////
-////#template nvarof : template_subj
-////{
-////    #field(template_subj)$value.
-////    
-////    #method set : val
-////    [
-////        $value := val template_subj.
-////    ]
-////    
-////    #method(stacksafe) set &template_subj:val
-////    [
-////        $value := val.
-////    ]
-////    
-////    #method append : val
-////    [
-////        $value := $value + val template_subj.
-////    ]
-////    
-////    #method reduce : val
-////    [
-////        $value := $value - val template_subj.
-////    ]
-////
-////    #method multiplyBy : val
-////    [
-////        $value := $value * val template_subj.
-////    ]
-////    
-////    /// Divides into the value
-////    #method divideInto : val
-////    [
-////        $value := $value / val template_subj.
-////    ]
-////    
-////    #method(stacksafe) append &template_subj:val
-////    [
-////        $value := $value + val.
-////    ]
-////    
-////    #method(stacksafe) reduce &template_subj:val
-////    [
-////        $value := $value - val.
-////    ]
-////
-////    #method(stacksafe) multiplyBy &template_subj:val
-////    [
-////        $value := $value * val.
-////    ]
-////    
-////    /// Divides into the value
-////    #method(stacksafe) divideInto &template_subj:val
-////    [
-////        $value := $value / val.
-////    ]
-////
-////    #method(w3) get = $value.
-////    
-////    #method(w3) cast : verb &to:target => $value.
-////
-////    /// Dispatches the verb to the target object with generic subject
-////    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
-////    
-////    #method(w3) equal : anObject
-////        => $value.
-////        
-////    #method(embeddable,w3) => $value.
-////}
 //
-//// === Boolean values ===
+//#template varof : template_subj
+//{
+//    #field(template_subj)$value.
 //
-//// --- true ---
+//    #method set : val
+//    [
+//        $value := val template_subj.
+//    ]
+//    
+//    #method(stacksafe) set &template_subj:val
+//    [
+//        $value := val.
+//    ]
 //
+//    #method(w3) get = $value.
+//    
+//    #method(w3) cast : verb &to:target => $value.
+//
+//    /// Dispatches the verb to the target object with generic subject
+//    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
+//    
+//    #method(w3) equal : anObject
+//        => $value.
+//
+//    #method(embeddable,w3) => $value.
+//}
+//
+//#template nvarof : template_subj
+//{
+//    #field(template_subj)$value.
+//    
+//    #method set : val
+//    [
+//        $value := val template_subj.
+//    ]
+//    
+//    #method(stacksafe) set &template_subj:val
+//    [
+//        $value := val.
+//    ]
+//    
+//    #method append : val
+//    [
+//        $value := $value + val template_subj.
+//    ]
+//    
+//    #method reduce : val
+//    [
+//        $value := $value - val template_subj.
+//    ]
+//
+//    #method multiplyBy : val
+//    [
+//        $value := $value * val template_subj.
+//    ]
+//    
+//    /// Divides into the value
+//    #method divideInto : val
+//    [
+//        $value := $value / val template_subj.
+//    ]
+//    
+//    #method(stacksafe) append &template_subj:val
+//    [
+//        $value := $value + val.
+//    ]
+//    
+//    #method(stacksafe) reduce &template_subj:val
+//    [
+//        $value := $value - val.
+//    ]
+//
+//    #method(stacksafe) multiplyBy &template_subj:val
+//    [
+//        $value := $value * val.
+//    ]
+//    
+//    /// Divides into the value
+//    #method(stacksafe) divideInto &template_subj:val
+//    [
+//        $value := $value / val.
+//    ]
+//
+//    #method(w3) get = $value.
+//    
+//    #method(w3) cast : verb &to:target => $value.
+//
+//    /// Dispatches the verb to the target object with generic subject
+//    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
+//    
+//    #method(w3) equal : anObject
+//        => $value.
+//        
+//    #method(embeddable,w3) => $value.
+//}
+
+// === Boolean values ===
+
+// --- true ---
+
 ///// A true value symbol
 //const true = BaseBoolValue
 //{
-//    /// Executes the action
-//    __ifoperator if : aTrueAction = aTrueAction eval.
-//
-//    /// Executes then-action
-//    if : aTrueAction : aFalseAction = aTrueAction eval.
-//
-//    /// Always returns nil.
-//    __ifnotoperator ifnot : aTrueAction = $nil.
-//
-//    iif:aTrueValue:aFalseValue = aTrueValue.
-//    
-//    /// Executes logical OR operation
-//    ///
-//    /// Always return true
-//    or : anExpr = $self.
-//
-//    /// Executes logical AND operation
-//    and : anExpr = anExpr bool.
-//
-//    /// Executes logical XOR operation
-//    xor : aBool
-//    [
-//        aBool bool ? [ ^ false. ].
-//        
-//        ^ $self.
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    equal : anExpr = anExpr bool.
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    equal &bool:aBool = aBool.
-//
-//    /// Always returns false.
-//    inverted = false.
-//
-////    /// Returns literal representation.
-////    #method literal = "true".
+////    /// Executes the action
+////    __ifoperator if : aTrueAction = aTrueAction eval.
 ////
-////    /// Returns literal representation.
-////    #method wide = "true"w.
+////    /// Executes then-action
+////    if : aTrueAction : aFalseAction = aTrueAction eval.
+////
+////    /// Always returns nil.
+////    __ifnotoperator ifnot : aTrueAction = $nil.
+////
+////    iif:aTrueValue:aFalseValue = aTrueValue.
+////    
+////    /// Executes logical OR operation
+////    ///
+////    /// Always return true
+////    or : anExpr = $self.
+////
+////    /// Executes logical AND operation
+////    and : anExpr = anExpr bool.
+////
+////    /// Executes logical XOR operation
+////    xor : aBool
+////    [
+////        aBool bool ? [ ^ false. ].
+////        
+////        ^ $self.
+////    ]
+////
+////    /// Determines whether the specified object is equal to the current object boolean value.
+////    equal : anExpr = anExpr bool.
+////
+////    /// Determines whether the specified object is equal to the current object boolean value.
+////    equal &bool:aBool = aBool.
+////
+////    /// Always returns false.
+////    inverted = false.
+////
+//////    /// Returns literal representation.
+//////    #method literal = "true".
+//////
+//////    /// Returns literal representation.
+//////    #method wide = "true"w.
 //
 //    /// Returns itself.
 //    clone = $self.
@@ -153,60 +153,60 @@
 ///// A false value symbol
 //const false = BaseBoolValue
 //{
-//    /// Always returns nil
-//    __ifnotoperator if : anAction = $nil.
-//    
-//    /// Executes else-action
-//    if : aTrueAction : aFalseAction = aFalseAction eval.
-//
-//    /// Executes the action
-//    __ifoperator ifnot : aFalseAction = aFalseAction eval.
-//
-//    iif:aTrueValue:aFalseValue = aFalseValue.
-//
-//    /// Executes logical OR operation
-//    or : anExpr = anExpr bool.
-//
-//    /// Executes logical AND operation
-//    ///
-//    /// Always return false
-//    and : anExpr = $self.
-//
-//    /// Executes logical XOR operation
-//    xor : anExpr 
-//    [
-//        anExpr bool ? [ ^ true. ].
-//        
-//        ^ $self.
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    equal : anExpr
-//    [
-//        anExpr bool ? [ ^ $self. ].
-//        
-//        ^ true.
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    equal &bool:anExpr
-//    [
-//        ^ anExpr inverted.
-//    ]
-//
-//    /// Always returns true
-//    inverted = true.
-//
-////    /// Returns literal representation
-////    #method literal = "false".
+////    /// Always returns nil
+////    __ifnotoperator if : anAction = $nil.
 ////    
-////    /// Returns literal representation
-////    #method wide = "false"w.
+////    /// Executes else-action
+////    if : aTrueAction : aFalseAction = aFalseAction eval.
+////
+////    /// Executes the action
+////    __ifoperator ifnot : aFalseAction = aFalseAction eval.
+////
+////    iif:aTrueValue:aFalseValue = aFalseValue.
+////
+////    /// Executes logical OR operation
+////    or : anExpr = anExpr bool.
+////
+////    /// Executes logical AND operation
+////    ///
+////    /// Always return false
+////    and : anExpr = $self.
+////
+////    /// Executes logical XOR operation
+////    xor : anExpr 
+////    [
+////        anExpr bool ? [ ^ true. ].
+////        
+////        ^ $self.
+////    ]
+////
+////    /// Determines whether the specified object is equal to the current object boolean value
+////    equal : anExpr
+////    [
+////        anExpr bool ? [ ^ $self. ].
+////        
+////        ^ true.
+////    ]
+////
+////    /// Determines whether the specified object is equal to the current object boolean value
+////    equal &bool:anExpr
+////    [
+////        ^ anExpr inverted.
+////    ]
+////
+////    /// Always returns true
+////    inverted = true.
+////
+//////    /// Returns literal representation
+//////    #method literal = "false".
+//////    
+//////    /// Returns literal representation
+//////    #method wide = "false"w.
 //
 //    /// Returns itself
 //    clone = $self.
 //}.
-//
+
 ////// === Numeric Variables ===
 ////
 ////#subject vbyte  = nvarof:byte.
