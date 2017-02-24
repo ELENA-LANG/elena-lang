@@ -111,6 +111,6 @@
 ////// --- Enumerators / Indexers ---
 ////#subject enumerator = system'Enumerator.
 ////#subject iterator   = system'Iterator.
-//
-//// --- Generic attributes ---
-//#subject object.
+
+// --- Generic attributes ---
+#subject object.

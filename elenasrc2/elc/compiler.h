@@ -721,8 +721,8 @@ private:
    struct TemplateScope : Scope
    {
       ref_t       templateRef;
-//      ForwardMap  parameters;
-//      SubjectMap  subjects;
+      ForwardMap  parameters;
+      SubjectMap  subjects;
 ////      bool        classMode;
 ////      bool        generationMode;
 //      int         sourceRef;
@@ -793,8 +793,13 @@ private:
 //      {
 //         return sourceRef;
 //      }
-//
-//      void loadAttributeValues(SNode node);
+
+      int mapAttribute(SNode terminal);
+
+      void loadAttributeValues(SNode node);
+      void loadParameters(SNode node);
+
+      void copySubject(SyntaxWriter& writer, SNode terminal);
 
       ref_t mapAttribute(SNode terminal, int& attrValue);
 
@@ -1087,8 +1092,8 @@ private:
 //////   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
    void compileIncludeModule(SNode node, ModuleScope& scope);
 //////   void compileForward(SNode node, ModuleScope& scope);
-//   void declareSubject(SNode member, ModuleScope& scope);
-//////   void compileSubject(SNode member, ModuleScope& scope);
+   void declareSubject(SNode member, ModuleScope& scope);
+//   void compileSubject(SNode member, ModuleScope& scope);
 //   void declareScope(SyntaxTree& buffer, SNode member, ModuleScope& scope);
 ////   void buildDeclaration(SyntaxWriter& writer, SNode member, ModuleScope& scope);
 ////

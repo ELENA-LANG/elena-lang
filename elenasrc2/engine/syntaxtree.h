@@ -192,7 +192,7 @@ enum LexicalType
    lxIfValue         = 0x20017, // arg - reference
    lxElseValue       = 0x20018, // arg - reference
 //   lxSize            = 0x20019,
-//   lxTemplateParam   = 0x2001A,
+   lxTemplateParam   = 0x2001A,
 //   lxEmbeddable      = 0x2001B,
 //   lxIntExtArgument  = 0x2001C,
 //   lxExtArgument     = 0x2001D,
@@ -824,6 +824,7 @@ public:
    static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type);
    static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2);
    static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3);
+   static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4);
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);

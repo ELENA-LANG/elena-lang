@@ -63,7 +63,7 @@ namespace _ELENA_
 //   #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
    #define errNotApplicable         "%s(%d:%d): error 145: Illegal declaration '%s'\n"
 //   #define errNotSupportedType      "%s(%d:%d): error 146: Class '%s' is not compatible with its type\n"
-   #define errInvalidHint           "%s(%d:%d): error 147: Invalid hint '%s'\n"
+   #define errInvalidHint           "%s(%d:%d): error 147: Invalid attribute '%s'\n"
    #define errStrongTypeNotAllowed  "%s(%d:%d): error 148: strong type '%s' cannot be used as a custom verb\n"
    #define errIllegalConstructor    "%s(%d:%d): error 149: Constructor cannot be declared\n"
    #define errClosedMethod          "%s(%d:%d): error 150: sealed method cannot be overridden\n"

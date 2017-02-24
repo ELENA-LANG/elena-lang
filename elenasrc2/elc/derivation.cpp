@@ -76,11 +76,6 @@ using namespace _ELENA_;
 //         _writer.closeNode();
 //         _writer.closeNode();
 //         break;
-//      case nsTokenParam:
-//         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
-//         unpackChildren(node);
-//         _writer.closeNode();
-//         break;
 //      case nsImport:
 //         _writer.newNode(lxImport);
 //         unpackChildren(node);
@@ -424,17 +419,21 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsCodeEnd:
          _writer.newNode(lxEOF);
          break;
+      case nsMethodParameter:
+         _writer.newNode(lxMethodParameter);
+         break;
       case nsSubCode:
       case nsScope:
       case nsTemplate:
       case nsRetStatement:
+      case nsTokenParam:
+      case nsSubject:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          break;
       default:
          _writer.newNode((LexicalType)symbol);
          break;
-   }
-   
+   }   
 }
 
 void DerivationWriter :: writeSymbol(Symbol symbol)
