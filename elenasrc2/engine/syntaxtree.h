@@ -54,6 +54,7 @@ enum LexicalType
    lxSubject         = 0x00047,
 //   lxImplicitConstructor = 0x0004B,
    lxScope           = 0x0004D,
+   lxMessageParameter= 0x0C04E,
 
    // parameters
    lxEOF             = 0x18003, // indicating closing code bracket

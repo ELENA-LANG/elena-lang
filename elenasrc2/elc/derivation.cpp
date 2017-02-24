@@ -423,15 +423,22 @@ void DerivationWriter :: writeNode(Symbol symbol)
          _writer.newNode(lxMethodParameter);
          break;
       case nsMessageOperation:
+      case nsSubjectArg:
          _writer.newNode(lxMessage);
+         break;
+      case nsRetStatement:
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
+         break;
+      case nsMessageParameter:
+         _writer.newNode(lxMessageParameter);
          break;
       case nsSubCode:
       case nsScope:
       case nsTemplate:
-      case nsRetStatement:
       case nsTokenParam:
       case nsSubject:
       case nsDispatchExpression:
+      case nsExtension:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          break;
       default:
