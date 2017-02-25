@@ -3480,12 +3480,16 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
    SyntaxTree expressionTree;
    SyntaxWriter writer(expressionTree);
 
-   compileParentDeclaration(node, scope);
+   // check if the class was already compiled
+   if (!node.argument) {
+      compileParentDeclaration(node, scope);
 
-   declareVMT(node.firstChild(), scope);
-   generateClassDeclaration(node, scope, false);
+      declareVMT(node.firstChild(), scope);
+      generateClassDeclaration(node, scope, false);
 
-   scope.save();
+      scope.save();
+   }
+   else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
 
    writer.newNode(lxClass, scope.reference);
 
@@ -6108,7 +6112,7 @@ void Compiler :: generateClassImplementation(SNode node, ModuleScope& scope)
       scope.sourcePathRef);
 }
 
-void Compiler ::compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope)
+void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope)
 {
    expressionTree.clear();
 
@@ -6132,170 +6136,150 @@ void Compiler ::compileClassImplementation(SyntaxTree& expressionTree, SNode nod
       compileSymbolCode(scope);
 }
 
-//////void Compiler :: declareSingletonClass(SNode node, ClassScope& scope, SNode hints)
-//////{
-//////   // inherit parent
-//////   compileParentDeclaration(node, scope);
-//////
-//////   SyntaxTree syntaxTree;
-//////   SyntaxWriter writer(syntaxTree);
-//////   writer.newNode(lxRoot, scope.reference);
-//////
-//////   while (hints == lxAttribute) {
-//////      writer.newNode(lxAttribute);
-//////      SyntaxTree::copyNode(writer, hints);
-//////      writer.closeNode();
-//////
-//////      hints = hints.nextNode();
-//////   }
-//////
-//////   SyntaxTree::copyNode(writer, node);
-//////   writer.closeNode();
-//////
-//////   compileClassAttributes(syntaxTree.readRoot(), scope, node);
-//////
-//////   declareVMT(syntaxTree.readRoot().firstChild(), scope);
-//////
-//////   generateClassDeclaration(syntaxTree.readRoot(), scope, test(scope.info.header.flags, elClosed));
-//////
-//////   scope.save();
-//////}
-//////
-//////void Compiler :: declareSingletonAction(ClassScope& classScope, SNode objNode)
-//////{
-////////   if (hints != nsNone)
-////////      classScope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
-////////
-//////   SyntaxTree syntaxTree;
-//////   SyntaxWriter writer(syntaxTree);
-//////   writer.newNode(lxRoot, classScope.reference);
-//////
-//////   if (objNode != lxNone) {
-//////      ActionScope methodScope(&classScope);
-//////      declareActionScope(objNode, classScope, objNode.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxMessage), methodScope, 0, false);
-//////      writer.newNode(lxClassMethod, methodScope.message);
-//////
-//////      writer.closeNode();
-//////   }
-//////
-//////   writer.closeNode();
-//////
-//////   generateClassDeclaration(syntaxTree.readRoot(), classScope, test(classScope.info.header.flags, elClosed));
-//////
-//////   classScope.save();
-//////}
-//////
-//////void Compiler :: compileSingletonClass(SNode node, ClassScope& scope, SNode hints)
-//////{
-//////   SyntaxTree syntaxTree;
-//////   SyntaxWriter writer(syntaxTree);
-//////   writer.newNode(lxRoot, scope.reference);
-//////
-//////   while (hints == lxAttribute) {
-//////      writer.newNode(lxAttribute);
-//////      SyntaxTree::copyNode(writer, hints);
-//////      writer.closeNode();
-//////
-//////      hints = hints.nextNode();
-//////   }
-//////
-//////   SyntaxTree::copyNode(writer, node);
-//////   writer.closeNode();
-//////
-//////   compileClassAttributes(syntaxTree.readRoot(), scope, node);
-//////
-//////   declareVMT(syntaxTree.readRoot().firstChild(), scope);
-//////   compileVMT(syntaxTree.readRoot(), scope);
-//////
-//////   generateClassImplementation(syntaxTree.readRoot(), scope);
-//////}
+void Compiler :: declareSingletonClass(SNode node, ClassScope& scope)
+{
+   compileParentDeclaration(node, scope);
+
+   declareVMT(node.firstChild(), scope);
+   generateClassDeclaration(node, scope, false);
+
+   scope.save();
+}
+
+//void Compiler :: declareSingletonAction(ClassScope& classScope, SNode objNode)
+//{
+////   if (hints != nsNone)
+////      classScope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
+////
+//   SyntaxTree syntaxTree;
+//   SyntaxWriter writer(syntaxTree);
+//   writer.newNode(lxRoot, classScope.reference);
+//
+//   if (objNode != lxNone) {
+//      ActionScope methodScope(&classScope);
+//      declareActionScope(objNode, classScope, objNode.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxMessage), methodScope, 0, false);
+//      writer.newNode(lxClassMethod, methodScope.message);
+//
+//      writer.closeNode();
+//   }
+//
+//   writer.closeNode();
+//
+//   generateClassDeclaration(syntaxTree.readRoot(), classScope, test(classScope.info.header.flags, elClosed));
+//
+//   classScope.save();
+//}
+//
+//void Compiler :: compileSingletonClass(SNode node, ClassScope& scope, SNode hints)
+//{
+//   SyntaxTree syntaxTree;
+//   SyntaxWriter writer(syntaxTree);
+//   writer.newNode(lxRoot, scope.reference);
+//
+//   while (hints == lxAttribute) {
+//      writer.newNode(lxAttribute);
+//      SyntaxTree::copyNode(writer, hints);
+//      writer.closeNode();
+//
+//      hints = hints.nextNode();
+//   }
+//
+//   SyntaxTree::copyNode(writer, node);
+//   writer.closeNode();
+//
+//   compileClassAttributes(syntaxTree.readRoot(), scope, node);
+//
+//   declareVMT(syntaxTree.readRoot().firstChild(), scope);
+//   compileVMT(syntaxTree.readRoot(), scope);
+//
+//   generateClassImplementation(syntaxTree.readRoot(), scope);
+//}
 
 void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 {
+   declareSymbolAttributes(node, scope);
+   bool singleton = false;
+   
 //   ObjectInfo retVal;
+
+   SNode expression = node.findChild(lxExpression);
+
+   // if it is a singleton
+   if (isSingleStatement(expression) && scope.constant) {
+      SNode objNode = expression.findChild(lxCode, lxNestedClass, /*lxInlineExpression, */lxExpression);
+//      // HOTFIX : ignore sub expession
+//      if (objNode == lxExpression && isSingleStatement(objNode))
+//         objNode = objNode.findChild(lxCode, lxNestedClass, lxInlineExpression);
+
+      if (objNode == lxNestedClass) {
+         ClassScope classScope(scope.moduleScope, scope.reference);
+         classScope.info.header.flags |= elNestedClass;
+
+         objNode.setArgument(scope.reference);
+
+         declareSingletonClass(objNode, classScope);
+         singleton = true;
+      }
+//      else if (objNode == lxCode) {
+//         ClassScope classScope(scope.moduleScope, scope.reference);
+//         classScope.info.header.flags |= elNestedClass;
 //
-//////   bool singleton = false;
+//         declareSingletonAction(classScope, objNode);
+//         singleton = true;
+//      }
+//      else if (objNode == lxInlineExpression) {
+//         ClassScope classScope(scope.moduleScope, scope.reference);
+//         classScope.info.header.flags |= elNestedClass;
+//
+//         declareSingletonAction(classScope, objNode);
+//         singleton = true;
+//      }
+////      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
+////         ClassScope classScope(scope.moduleScope, scope.reference);
+//      // classScope.info.header.flags |= elNestedClass;
 ////
-////   SNode expression = node.findChild(lxExpression);
+////         declareSingletonAction(classScope, objNode, objNode, hints);
+////         singleton = true;
+////      }
+////      else compileSymbolHints(hints, scope, false);
+   }
+
+//   CodeScope codeScope(&scope);
+////   if (retVal.kind == okUnknown) {
+////      scope.constant = node.existChild(lxConstAttr);
+////      scope.preloaded = node.existChild(lxPreloadedAttr);
+////      scope.typeRef = node.findChild(lxType).argument;
 ////
-//////   // if it is a singleton
-//////   if (isSingleStatement(expression)) {
-//////      SNode objNode = expression.findChild(lxCode, lxNestedClass, lxInlineExpression, lxExpression);
-//////      // HOTFIX : ignore sub expession
-//////      if (objNode == lxExpression && isSingleStatement(objNode))
-//////         objNode = objNode.findChild(lxCode, lxNestedClass, lxInlineExpression);
-//////
-//////      if (objNode == lxNestedClass) {
-//////         ClassScope classScope(scope.moduleScope, scope.reference);
-//////         classScope.info.header.flags |= elNestedClass;
-//////
-//////         declareSingletonClass(objNode, classScope, node.findChild(lxAttribute));
-//////         singleton = true;
-//////      }
-//////      else if (objNode == lxCode) {
-//////         ClassScope classScope(scope.moduleScope, scope.reference);
-//////         classScope.info.header.flags |= elNestedClass;
-//////
-//////         declareSingletonAction(classScope, objNode);
-//////         singleton = true;
-//////      }
-//////      else if (objNode == lxInlineExpression) {
-//////         ClassScope classScope(scope.moduleScope, scope.reference);
-//////         classScope.info.header.flags |= elNestedClass;
-//////
-//////         declareSingletonAction(classScope, objNode);
-//////         singleton = true;
-//////      }
-////////      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
-////////         ClassScope classScope(scope.moduleScope, scope.reference);
-//////      // classScope.info.header.flags |= elNestedClass;
-////////
-////////         declareSingletonAction(classScope, objNode, objNode, hints);
-////////         singleton = true;
-////////      }
-////////      else compileSymbolHints(hints, scope, false);
+////      // compile symbol body, if it is not a singleton
+//   writer.newNode(lxExpression);
+//   writer.appendNode(lxBreakpoint, dsStep);
+//   ///*retVal = */buildExpression(writer, expression, codeScope/*, 0*/);
+//   writer.closeNode();
+//
+////      if (scope.typeRef != 0) {
+////         typecastObject(expression, codeScope, scope.typeRef, retVal);
+////      }
 ////   }
-//   declareSymbolAttributes(writer, node, scope);
-//
-////   CodeScope codeScope(&scope);
-//////   if (retVal.kind == okUnknown) {
-//////      scope.constant = node.existChild(lxConstAttr);
-//////      scope.preloaded = node.existChild(lxPreloadedAttr);
-//////      scope.typeRef = node.findChild(lxType).argument;
-//////
-//////      // compile symbol body, if it is not a singleton
-////   writer.newNode(lxExpression);
-////   writer.appendNode(lxBreakpoint, dsStep);
-////   ///*retVal = */buildExpression(writer, expression, codeScope/*, 0*/);
-////   writer.closeNode();
+////   else {
+////      SNode terminal = node.firstChild(lxTerminalMask);
 ////
-//////      if (scope.typeRef != 0) {
-//////         typecastObject(expression, codeScope, scope.typeRef, retVal);
-//////      }
-//////   }
-//////   else {
-//////      SNode terminal = node.firstChild(lxTerminalMask);
-//////
-//////      setTerminal(terminal, codeScope, retVal, 0);
-//////   }
+////      setTerminal(terminal, codeScope, retVal, 0);
+////   }
+//
+//
+////   SNode constNode = node.findChild(lxConstAttr);
+////   SNode typeNode = node.findChild(lxType);
 ////
+////   if (!singleton && (typeNode.argument != 0 || constNode != lxNone)) {
+////      SymbolExpressionInfo info;
+////      info.expressionTypeRef = typeNode.argument;
+////      info.constant = constNode != lxNone;
 ////
-//////   SNode constNode = node.findChild(lxConstAttr);
-//////   SNode typeNode = node.findChild(lxType);
-//////
-//////   if (!singleton && (typeNode.argument != 0 || constNode != lxNone)) {
-//////      SymbolExpressionInfo info;
-//////      info.expressionTypeRef = typeNode.argument;
-//////      info.constant = constNode != lxNone;
-//////
-//////      // save class meta data
-//////      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-//////      info.save(&metaWriter);
-//////   }
-//
-//
-//   //   bool singleton = false;
-//
+////      // save class meta data
+////      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+////      info.save(&metaWriter);
+////   }
+
 //   SNode expression = node.findChild(lxExpression);
 //
 //   //   // if it is a singleton

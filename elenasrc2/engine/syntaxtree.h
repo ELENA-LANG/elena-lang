@@ -909,10 +909,10 @@ public:
    }
 };
 
-//inline bool isSingleStatement(SyntaxTree::Node expr)
-//{
-//   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
-//}
+inline bool isSingleStatement(SyntaxTree::Node expr)
+{
+   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
+}
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
