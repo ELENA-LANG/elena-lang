@@ -161,7 +161,7 @@ public:
    virtual void injectLocalBoxing(SNode node, int size) = 0;
 //   //virtual int injectTempLocal(SNode node) = 0;
 
-//   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
+   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };
@@ -229,7 +229,7 @@ public:
    virtual bool isPrimitiveRef(ref_t reference) = 0;
 
    // auto generate virtual methods / fields
-   //virtual void injectVirtualCode(SyntaxWriter& writer, _CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
+   virtual void injectVirtualCode(_CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/) = 0;
 ////   virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;

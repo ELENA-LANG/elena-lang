@@ -111,7 +111,7 @@ public:
       return isReadonly(info);
    }
 
-//   virtual void injectVirtualCode(SyntaxWriter& writer, _CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler);
+   virtual void injectVirtualCode(_CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference);
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/);
 //   virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef);

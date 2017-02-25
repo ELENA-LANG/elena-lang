@@ -2505,14 +2505,14 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
    int paramCount = -1;
    ref_t extensionRef = 0;
    if (terminal == lxIdentifier || terminal == lxPrivate) {
-      ident_t name = terminal.findChild(lxTerminal).identifier();
+      ident_t name = terminal.identifier();
       verb_id = _verbs.get(name);
       if (verb_id == 0) {
          signature.copy(name);
       }
    }
    else {
-      ident_t message = terminal.findChild(lxTerminal).identifier();
+      ident_t message = terminal.identifier();
 
       int subject = 0;
       int param = 0;
@@ -5810,8 +5810,10 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
 
    generateClassFlags(scope, node);
 
-////   // generate fields
-////   generateClassFields(scope, node, countFields(node) == 1);
+//   // generate fields
+//   generateClassFields(scope, node, countFields(node) == 1);
+
+   _logic->injectVirtualCode(*scope.moduleScope, scope.reference, scope.info, *this);
 
    // generate methods
    generateMethodDeclarations(node, scope/*, false*/, closed, classClassMode);
@@ -7909,15 +7911,24 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          break;
       default:
       {
-         SNode terminal = current.findChild(lxIdentifier, lxReference, lxPrivate, lxInteger);
-         if (terminal != lxNone)
-            copyIdentifier(writer, terminal);
+         SNode terminal = current.findChild(lxIdentifier, lxReference, lxPrivate, lxInteger, lxMessageReference);
+         if (terminal == lxMessageReference) {
+            writer.newNode(lxExpression);
+            writer.newNode(terminal.type);
+            copyIdentifier(writer, terminal.findChild(lxIdentifier, lxPrivate));
+            writer.closeNode();
+            writer.closeNode();
+         }
+         else {
+            if (terminal != lxNone)
+               copyIdentifier(writer, terminal);
 
-         SNode closureNode = current.findChild(lxNestedClass);         
-         if (closureNode == lxNestedClass) {
-            generateScopeMembers(closureNode, scope);
+            SNode closureNode = current.findChild(lxNestedClass);
+            if (closureNode == lxNestedClass) {
+               generateScopeMembers(closureNode, scope);
 
-            generateClassTree(writer, closureNode, scope, SNode(), true);
+               generateClassTree(writer, closureNode, scope, SNode(), true);
+            }
          }
          break;
       }
@@ -8353,13 +8364,13 @@ ModuleInfo Compiler :: createModule(ident_t name, _ProjectManager& project, bool
 //   }
 //   writer.closeNode();
 //}
-//
-//void Compiler :: generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)
-//{
-//   MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskConstArray, false));
-//
-//   metaWriter.writeDWord(memberRef | mskConstantRef);
-//}
+
+void Compiler :: generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)
+{
+   MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskConstArray, false));
+
+   metaWriter.writeDWord(memberRef | mskConstantRef);
+}
 
 ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader)
 {

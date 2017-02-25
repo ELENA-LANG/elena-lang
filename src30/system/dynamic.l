@@ -16,12 +16,12 @@
 ////    /// Redirects incoming messages to the symbol
 ////    #method => system'core_routines'__symbol.
 ////}
-//
-//// --- Verb ---
-//
-///// A dynamic verb extender
-//sealed embeddable struct Verb
-//{
+
+// --- Verb ---
+
+/// A dynamic verb extender
+/*sealed embeddable struct */Verb
+{
 //    __verb theValue.
 //
 //    /// Loads a dynamic verb
@@ -30,7 +30,7 @@
 //    
 //    /// Dispatches incoming messages and redirects to the target
 //    dispatch => system'core_routines'__verb.
-//}
+}
 
 // --- Message ---
 

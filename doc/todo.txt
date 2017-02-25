@@ -6,10 +6,6 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
-                 * optimize the code
-                 * declareBranchingOperator : try to limit number of times when sub code duplicates are created
-                   (probably all comparision operators are always return bool value)
-
                  * support structures
 
                  * do not unbox returning objects

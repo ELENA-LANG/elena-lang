@@ -490,15 +490,15 @@ bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
 //}
 
-//void CompilerLogic :: injectVirtualCode(SyntaxWriter& writer, _CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler)
-//{
-////   SNode templateNode = node.appendNode(lxTemplate);
-//
-//   // generate enumeration list
-//   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
-//      compiler.generateEnumListMember(scope, info.header.parentRef, classRef);
-//   }
-//}
+void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler)
+{
+//   SNode templateNode = node.appendNode(lxTemplate);
+
+   // generate enumeration list
+   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
+      compiler.generateEnumListMember(scope, info.header.parentRef, classRef);
+   }
+}
 
 void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference)
 {

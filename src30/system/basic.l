@@ -162,46 +162,46 @@ const false = BaseBoolValue
     /// Executes the action
     __ifoperator ifnot : aFalseAction = aFalseAction eval.
 
-//    iif:aTrueValue:aFalseValue = aFalseValue.
-//
-//    /// Executes logical OR operation
-//    or : anExpr = anExpr bool.
-//
-//    /// Executes logical AND operation
-//    ///
-//    /// Always return false
-//    and : anExpr = $self.
-//
-//    /// Executes logical XOR operation
-//    xor : anExpr 
-//    [
-//        anExpr bool ? [ ^ true. ].
-//        
-//        ^ $self.
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    equal : anExpr
-//    [
-//        anExpr bool ? [ ^ $self. ].
-//        
-//        ^ true.
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    equal &bool:anExpr
-//    [
-//        ^ anExpr inverted.
-//    ]
-//
-//    /// Always returns true
-//    inverted = true.
-//
-////    /// Returns literal representation
-////    #method literal = "false".
-////    
-////    /// Returns literal representation
-////    #method wide = "false"w.
+    iif:aTrueValue:aFalseValue = aFalseValue.
+
+    /// Executes logical OR operation
+    or : anExpr = anExpr bool.
+
+    /// Executes logical AND operation
+    ///
+    /// Always return false
+    and : anExpr = $self.
+
+    /// Executes logical XOR operation
+    xor : anExpr 
+    [
+        anExpr bool ? [ ^ true. ].
+        
+        ^ $self.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    equal : anExpr
+    [
+        anExpr bool ? [ ^ $self. ].
+        
+        ^ true.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    equal &bool:anExpr
+    [
+        ^ anExpr inverted.
+    ]
+
+    /// Always returns true
+    inverted = true.
+
+//    /// Returns literal representation
+//    #method literal = "false".
+//    
+//    /// Returns literal representation
+//    #method wide = "false"w.
 
     /// Returns itself
     clone = $self.
@@ -215,14 +215,14 @@ const false = BaseBoolValue
 ////#subject vlong  = nvarof:long.
 ////#subject vreal  = nvarof:real.
 ////#subject vchar  = varof:char.
-//
-//// === basic data classes ===
-//
-//// --- BaseValue ---
-//
-//// A base value
-//class BaseValue
-//{
+
+// === basic data classes ===
+
+// --- BaseValue ---
+
+// A base value
+class BaseValue
+{
 //    /// Compares the values
 //    equal : anObject = anObject cast:%equal &to:$self bool.
 //
@@ -235,8 +235,8 @@ const false = BaseBoolValue
 //    bool notless : anObject = $self less:anObject inverted.
 //
 //    bool notgreater : anObject = $self greater:anObject inverted.
-//}
-//
+}
+
 //// --- BaseNumber ---
 //
 ///// A base numeric value
