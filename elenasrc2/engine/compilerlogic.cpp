@@ -991,19 +991,19 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 //         return false;
 //   }
 //}
-//
-//bool CompilerLogic :: validateLocalAttribute(int& attrValue)
-//{
-//   if (attrValue == (int)V_INT32) {
-//      return true;
-//   }
-//   else if (attrValue == (int)V_VARIABLE) {
-//      attrValue = 0;
-//
-//      return true;
-//   }
-//   else return false;
-//}
+
+bool CompilerLogic :: validateLocalAttribute(int& attrValue)
+{
+   //if (attrValue == (int)V_INT32) {
+   //   return true;
+   //}
+   /*else */if (attrValue == (int)V_VARIABLE) {
+      attrValue = 0;
+
+      return true;
+   }
+   else return false;
+}
 
 bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant)
 {

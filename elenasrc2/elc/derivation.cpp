@@ -432,6 +432,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsNestedClass:
          _writer.newNode(lxNestedClass);
          break;
+      case nsAssigning:
+         _writer.newNode(lxAssigning);
+         break;
       case nsL7Operation:
          _writer.newNode(lxOperator);
          break;

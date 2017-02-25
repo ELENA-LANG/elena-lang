@@ -915,9 +915,9 @@ ref_t Compiler::ModuleScope :: mapAttribute(SNode attribute, int& attrValue)
    ////   }
    
    SNode terminal = attribute.findChild(/*lxPrivate, */lxIdentifier, lxInteger/*, lxHexInteger*/);
-   //   if (terminal == lxNone)
-   //      terminal = attribute;
-   //
+   if (terminal == lxNone)
+      terminal = attribute;
+   
    if (terminal == lxInteger) {
       ident_t value = terminal.findChild(lxTerminal).identifier();
    
@@ -2017,18 +2017,25 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
 //////      current = current.nextNode();
 //////   }
 //////}
-//
-//void Compiler :: declareLocalAttributes(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
-//{
-//   SNode current = node.firstChild(lxAttribute);
-//   while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         declareLocalAttribute(writer, current, scope, variable, size, node);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
+
+void Compiler :: declareLocalAttributes(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
+{
+   SNode current = node.firstChild(lxAttribute);
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         int value = current.argument;
+         if (value > 0) {
+            size = value;
+         }
+         else if (_logic->validateLocalAttribute(value)) {
+            // negative value defines the target virtual class
+            variable.extraparam = value;
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      }
+      current = current.nextNode();
+   }
+}
 //
 //void Compiler :: declareLocalAttribute(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo& variable, int& size, SNode rootNode)
 //{
@@ -2076,168 +2083,166 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
 //   }
 //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
 //}
-//
-//////void Compiler :: compileSwitch(SNode node, CodeScope& scope)
-//////{
-//////   SNode targetNode = node.firstChild(lxObjectMask);
-//////
-//////   bool immMode = true;
-//////   int localOffs = 0;
-//////   if (targetNode == lxExpression) {
-//////      immMode = false;
-//////
-//////      localOffs = scope.newLocal();
-//////
-//////      compileExpression(targetNode, scope, 0);
-//////
-//////      targetNode.refresh();
-//////      targetNode.injectNode(targetNode.type, targetNode.argument);
-//////      targetNode.set(lxAssigning, 0);
-//////      targetNode.insertNode(lxLocal, localOffs);
-//////   }
-//////
-//////   SNode option = node.findChild(lxOption, lxElse);
-//////   while (option == lxOption) {
-//////      insertDebugStep(option, dsStep);
-//////
-//////      int operator_id = option.argument;
-//////      //HOTFIX : invert operation because the option value is compared with a target
-//////      switch (operator_id) {
-//////         case GREATER_MESSAGE_ID:
-//////            operator_id = LESS_MESSAGE_ID;
-//////            break;
-//////         case LESS_MESSAGE_ID:
-//////            operator_id = GREATER_MESSAGE_ID;
-//////            break;
-//////      }
-//////
-//////      SNode expr = option.injectNode(lxExpression);
-//////
-//////      // find option value
-//////      SNode valueNode = expr.firstChild(lxObjectMask);
-//////
-//////      // inject operation
-//////      valueNode.injectNode(valueNode.type);
-//////      valueNode = lxExpression;
-//////
-//////      // inject target
-//////      if (immMode) {
-//////         SyntaxTree::copyNode(targetNode, valueNode.appendNode(targetNode.type));
-//////      }
-//////      else valueNode.appendNode(lxLocal, localOffs);
-//////
-//////      valueNode.appendNode(lxOperator, operator_id);
-//////
-//////      // inject code expression
-//////      SNode codeExpr = expr.findChild(lxCode);
-//////      codeExpr.injectNode(lxCode);
-//////      codeExpr = lxExpression;
-//////
-//////      compileBranchingOperator(expr, scope, HINT_SWITCH, IF_MESSAGE_ID);
-//////
-//////      option = option.nextNode();
-//////   }
-//////
-//////   if (option == lxElse) {
-//////      CodeScope subScope(&scope);
-//////      SNode thenCode = option.findChild(lxCode);
-//////
-//////      SNode statement = thenCode.firstChild(lxObjectMask);
-//////      if (statement.nextNode() != lxNone || statement == lxEOF) {
-//////         compileCode(thenCode, subScope);
-//////      }
-//////      // if it is inline action
-//////      else compileRetExpression(statement, scope, 0);
-//////   }
-//////}
-//
-//void Compiler :: declareVariable(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   SNode terminal = node.findChild(lxIdentifier, lxPrivate, lxExpression);
-//   if (terminal == lxExpression)
-//      terminal = terminal.findChild(lxIdentifier, lxPrivate);
-//
-//   ident_t identifier = terminal.findChild(lxTerminal).identifier();
-//
-//   if (!scope.locals.exist(identifier)) {
-//      LexicalType variableType = lxVariable;
-//      int size = 0;
-//      ident_t className = NULL;
-//
-//      ObjectInfo variable(okLocal);
-//      declareLocalAttributes(writer, node, scope, variable, size);
-//
-//      ClassInfo localInfo;
-//      bool bytearray = false;
-//      _logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam);
-////      if (_logic->isEmbeddableArray(localInfo)) {
-////         bytearray = true;
-////         size = size * (-((int)localInfo.size));
+
+////void Compiler :: compileSwitch(SNode node, CodeScope& scope)
+////{
+////   SNode targetNode = node.firstChild(lxObjectMask);
+////
+////   bool immMode = true;
+////   int localOffs = 0;
+////   if (targetNode == lxExpression) {
+////      immMode = false;
+////
+////      localOffs = scope.newLocal();
+////
+////      compileExpression(targetNode, scope, 0);
+////
+////      targetNode.refresh();
+////      targetNode.injectNode(targetNode.type, targetNode.argument);
+////      targetNode.set(lxAssigning, 0);
+////      targetNode.insertNode(lxLocal, localOffs);
+////   }
+////
+////   SNode option = node.findChild(lxOption, lxElse);
+////   while (option == lxOption) {
+////      insertDebugStep(option, dsStep);
+////
+////      int operator_id = option.argument;
+////      //HOTFIX : invert operation because the option value is compared with a target
+////      switch (operator_id) {
+////         case GREATER_MESSAGE_ID:
+////            operator_id = LESS_MESSAGE_ID;
+////            break;
+////         case LESS_MESSAGE_ID:
+////            operator_id = GREATER_MESSAGE_ID;
+////            break;
 ////      }
-////      else if (_logic->isEmbeddable(localInfo))
-////         size = _logic->defineStructSize(localInfo);
-//
-//      if (size > 0) {
-//         if (!allocateStructure(scope, size, bytearray, variable))
-//            scope.raiseError(errInvalidOperation, terminal);
-//
-//         // make the reservation permanent
-//         scope.saved = scope.reserved;
-//
-//         switch (localInfo.header.flags & elDebugMask)
-//         {
-//            case elDebugDWORD:
-//               variableType = lxIntVariable;
-//               break;
-////            case elDebugQWORD:
-////               node = lxLongVariable;
-////               break;
-////            case elDebugReal64:
-////               node = lxReal64Variable;
-////               break;
-////            case elDebugIntegers:
-////               node.set(lxIntsVariable, size);
-////               break;
-////            case elDebugShorts:
-////               node.set(lxShortsVariable, size);
-////               break;
-////            case elDebugBytes:
-////               node.set(lxBytesVariable, size);
-////               break;
-//            default:
-//               if (isPrimitiveRef(variable.extraparam)) {
-//                  variableType = lxBytesVariable;
-//               }
-//               else {
-//                  variableType = lxBinaryVariable;
-//                  // HOTFIX : size should be provide only for dynamic variables
-//                  if (bytearray)
-//                     node.setArgument(size);
-//
-//                  if (variable.extraparam != 0) {
-//                     className = scope.moduleScope->module->resolveReference(variable.extraparam);
-//                  }
-//               }
-//               break;
-//         }
+////
+////      SNode expr = option.injectNode(lxExpression);
+////
+////      // find option value
+////      SNode valueNode = expr.firstChild(lxObjectMask);
+////
+////      // inject operation
+////      valueNode.injectNode(valueNode.type);
+////      valueNode = lxExpression;
+////
+////      // inject target
+////      if (immMode) {
+////         SyntaxTree::copyNode(targetNode, valueNode.appendNode(targetNode.type));
+////      }
+////      else valueNode.appendNode(lxLocal, localOffs);
+////
+////      valueNode.appendNode(lxOperator, operator_id);
+////
+////      // inject code expression
+////      SNode codeExpr = expr.findChild(lxCode);
+////      codeExpr.injectNode(lxCode);
+////      codeExpr = lxExpression;
+////
+////      compileBranchingOperator(expr, scope, HINT_SWITCH, IF_MESSAGE_ID);
+////
+////      option = option.nextNode();
+////   }
+////
+////   if (option == lxElse) {
+////      CodeScope subScope(&scope);
+////      SNode thenCode = option.findChild(lxCode);
+////
+////      SNode statement = thenCode.firstChild(lxObjectMask);
+////      if (statement.nextNode() != lxNone || statement == lxEOF) {
+////         compileCode(thenCode, subScope);
+////      }
+////      // if it is inline action
+////      else compileRetExpression(statement, scope, 0);
+////   }
+////}
+
+void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   SNode terminal = node.findChild(lxIdentifier, lxPrivate, lxExpression);
+   if (terminal == lxExpression)
+      terminal = terminal.findChild(lxIdentifier, lxPrivate);
+
+   ident_t identifier = terminal.identifier();
+
+   if (!scope.locals.exist(identifier)) {
+      LexicalType variableType = lxVariable;
+      int size = 0;
+      ident_t className = NULL;
+
+      ObjectInfo variable(okLocal);
+      declareLocalAttributes(writer, node, scope, variable, size);
+
+      ClassInfo localInfo;
+      bool bytearray = false;
+      _logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam);
+//      if (_logic->isEmbeddableArray(localInfo)) {
+//         bytearray = true;
+//         size = size * (-((int)localInfo.size));
 //      }
-//      else variable.param = scope.newLocal();
-//
-//      writer.newNode(variableType, size);
-//
-//      writer.appendNode(lxLevel, variable.param);
-//      writer.newNode(lxIdentifier);
-//      writer.appendNode(lxTerminal, identifier);
-//      writer.closeNode();
-//      if (!emptystr(className))
-//         writer.appendNode(lxClassName, className);
-//
-//      writer.closeNode();
-//
-//      scope.mapLocal(identifier, variable.param, variable.type, variable.extraparam, size);
-//   }
-//   else scope.raiseError(errDuplicatedLocal, terminal);
-//}
+//      else if (_logic->isEmbeddable(localInfo))
+//         size = _logic->defineStructSize(localInfo);
+
+      if (size > 0) {
+         if (!allocateStructure(scope, size, bytearray, variable))
+            scope.raiseError(errInvalidOperation, terminal);
+
+         // make the reservation permanent
+         scope.saved = scope.reserved;
+
+         switch (localInfo.header.flags & elDebugMask)
+         {
+            case elDebugDWORD:
+               variableType = lxIntVariable;
+               break;
+//            case elDebugQWORD:
+//               node = lxLongVariable;
+//               break;
+//            case elDebugReal64:
+//               node = lxReal64Variable;
+//               break;
+//            case elDebugIntegers:
+//               node.set(lxIntsVariable, size);
+//               break;
+//            case elDebugShorts:
+//               node.set(lxShortsVariable, size);
+//               break;
+//            case elDebugBytes:
+//               node.set(lxBytesVariable, size);
+//               break;
+            default:
+               if (isPrimitiveRef(variable.extraparam)) {
+                  variableType = lxBytesVariable;
+               }
+               else {
+                  variableType = lxBinaryVariable;
+                  // HOTFIX : size should be provide only for dynamic variables
+                  if (bytearray)
+                     node.setArgument(size);
+
+                  if (variable.extraparam != 0) {
+                     className = scope.moduleScope->module->resolveReference(variable.extraparam);
+                  }
+               }
+               break;
+         }
+      }
+      else variable.param = scope.newLocal();
+
+      writer.newNode(variableType, size);
+
+      writer.appendNode(lxLevel, variable.param);
+      writer.appendNode(lxIdentifier, identifier);
+      if (!emptystr(className))
+         writer.appendNode(lxClassName, className);
+
+      writer.closeNode();
+
+      scope.mapLocal(identifier, variable.param, variable.type, variable.extraparam, size);
+   }
+   else scope.raiseError(errDuplicatedLocal, terminal);
+}
 
 void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
 {
@@ -3219,8 +3224,8 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    writer.newBookmark();
 
    ObjectInfo retVal;
-   //LexicalType operationType = lxAssigning;
-   //int operand = 0;
+   LexicalType operationType = lxAssigning;
+   int operand = 0;
 
    //SNode exprNode = node;
    //SNode operation = node.findChild(lxMessage, lxExpression, lxAssign);
@@ -3278,59 +3283,60 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    //   return declareOperator(writer, node, scope, mode, SET_REFER_MESSAGE_ID);
    //}
    //else {
-   //   SNode targetNode = node.firstChild(lxObjectMask);
-   //   retVal = declareExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
+      SNode targetNode = node.firstChild(lxObjectMask);
+      retVal = compileExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
 
-   //   ref_t targetRef = resolveObjectReference(scope, retVal);
-   //   ref_t targetType = retVal.type;
-   //   if (retVal.kind == okLocalAddress) {
-   //      size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
-   //      if (size != 0) {
-   //         operand = size;
-   //      }
-   //      else scope.raiseError(errInvalidOperation, node);
-   //   }
-   //   else if (retVal.kind == okFieldAddress) {
-   //      size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
-   //      if (size != 0) {
-   //         operand = size;
-   //      }
-   //      else scope.raiseError(errInvalidOperation, node);
-   //   }
-   //   else if (retVal.kind == okLocal || retVal.kind == okField || retVal.kind == okOuterField || retVal.kind == okStaticField) {
-   //   }
-   //   else if (retVal.kind == okParam || retVal.kind == okOuter) {
-   //      // Compiler magic : allowing to assign byref / variable parameter
-   //      //if (_logic->isVariable(*scope.moduleScope, targetRef)) {
-   //      //   _logic->injectVariableAssigning(node, *scope.moduleScope, *this, targetRef, retVal.type, retVal.kind == okParam);
+      ref_t targetRef = resolveObjectReference(scope, retVal);
+      ref_t targetType = retVal.type;
+      if (retVal.kind == okLocalAddress) {
+         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
+         if (size != 0) {
+            operand = size;
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
+      else if (retVal.kind == okFieldAddress) {
+         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
+         if (size != 0) {
+            operand = size;
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
+      else if (retVal.kind == okLocal || retVal.kind == okField || retVal.kind == okOuterField || retVal.kind == okStaticField) {
+      }
+      else if (retVal.kind == okParam || retVal.kind == okOuter) {
+         // Compiler magic : allowing to assign byref / variable parameter
+         //if (_logic->isVariable(*scope.moduleScope, targetRef)) {
+         //   _logic->injectVariableAssigning(node, *scope.moduleScope, *this, targetRef, retVal.type, retVal.kind == okParam);
 
-   //      //   retVal.kind = (retVal.kind == okParam) ? okParamField : okOuterField;
-   //      //}
-   //      // Compiler magic : allowing to assign outer local variables
-   //      /*else */if (retVal.kind == okOuter) {
-   //         InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+         //   retVal.kind = (retVal.kind == okParam) ? okParamField : okOuterField;
+         //}
+         // Compiler magic : allowing to assign outer local variables
+         /*else */if (retVal.kind == okOuter) {
+            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
 
-   //         if (!closure->markAsPresaved(retVal))
-   //            scope.raiseError(errInvalidOperation, node);
-   //      }
-   //      else scope.raiseError(errInvalidOperation, node);
-   //   }
-   //   else scope.raiseError(errInvalidOperation, node);
+            if (!closure->markAsPresaved(retVal))
+               scope.raiseError(errInvalidOperation, node);
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
+      else scope.raiseError(errInvalidOperation, node);
 
-   //   writer.newBookmark();
+      writer.newBookmark();
 
-   //   SNode sourceNode = targetNode.nextNode(lxObjectMask);
-   //   ObjectInfo source = declareAssigningExpression(writer, sourceNode, scope);
+      SNode sourceNode = targetNode.nextNode(lxObjectMask);
+      ObjectInfo source = compileAssigningExpression(writer, sourceNode, scope);
 
-   //   boxObject(writer, sourceNode, scope, source, targetType, targetRef);
+      if (!convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, source)))
+         scope.raiseError(errInvalidOperation, node);
 
-   //   writer.removeBookmark();
+      writer.removeBookmark();
    //}
 
-   //if (operationType != lxNone) {
-   //   writer.insert(operationType, operand);
-   //   writer.closeNode();
-   //}
+   if (operationType != lxNone) {
+      writer.insert(operationType, operand);
+      writer.closeNode();
+   }
 
    writer.removeBookmark();
 
@@ -3815,17 +3821,17 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    return objectInfo;
 }
 
-//ObjectInfo Compiler :: declareAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope)
-//{
-//   writer.newNode(lxExpression);
-//   writer.appendNode(lxBreakpoint, dsStep);
-//
-//   ObjectInfo objectInfo = declareExpression(writer, assigning, scope, 0);
-//
-//   writer.closeNode();
-//
-//   return objectInfo;
-//}
+ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope)
+{
+   writer.newNode(lxExpression);
+   writer.appendNode(lxBreakpoint, dsStep);
+
+   ObjectInfo objectInfo = compileExpression(writer, assigning, scope, 0);
+
+   writer.closeNode();
+
+   return objectInfo;
+}
 
 ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope)
 {
@@ -3974,10 +3980,10 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 
             break;
          }
-//         case lxVariable:
-////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            declareVariable(writer, current, scope);
-//            break;
+         case lxVariable:
+//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileVariable(writer, current, scope);
+            break;
 //         case lxExtern:
 //            current = lxExternFrame;
 //            compileCode(current, scope);
@@ -7849,9 +7855,48 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
    }
 }
 
+void Compiler :: generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
+{
+   // check if the first token is attribute
+   SNode current = node.firstChild();
+   SNode attr = current.findChild(lxIdentifier);
+   int dummy = 0;
+   ref_t attrRef = scope.mapAttribute(attr, dummy);
+   if (attrRef != 0) {
+      while (current != lxAssigning) {
+         current = lxAttribute;
+
+         current = current.nextNode();
+      }
+
+      writer.newNode(lxVariable);
+
+      setIdentifier(node.firstChild());
+      SNode ident = node.findChild(lxNameAttr);
+
+      generateAttributes(writer, SNode(), scope, node.firstChild());
+      copyIdentifier(writer, ident.findChild(lxIdentifier, lxPrivate));
+
+      writer.closeNode();
+
+      writer.newNode(lxExpression);
+
+      copyIdentifier(writer, ident.findChild(lxIdentifier, lxPrivate));
+      writer.appendNode(lxAssign);
+      generateExpressionTree(writer, current, scope, false);
+
+      writer.closeNode();
+   }
+   else generateExpressionTree(writer, node, scope);
+}
+
 void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, TemplateScope& scope/*, int mode*/)
 {
    switch (current.type) {
+      case lxAssigning:
+         writer.appendNode(lxAssign);
+         generateExpressionTree(writer, current, scope, false);
+         break;
       case lxOperator:
          copyOperator(writer, current.firstChild());
       case lxMessage:
@@ -7937,7 +7982,10 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxExpression || current == lxReturning) {
-         generateExpressionTree(writer, current, scope);
+         if (current.existChild(lxAssigning)) {
+            generateVariableTree(writer, current, scope);
+         }
+         else generateExpressionTree(writer, current, scope);
       }
       else if (current == lxEOF) {
          writer.newNode(lxEOF);

@@ -4824,12 +4824,12 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
    {
       case lxVariable:
          declareLocalInfo(tape,
-            current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
             current.findChild(lxLevel).argument);
          break;
       case lxIntVariable:
          declareLocalIntInfo(tape,
-            current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
             current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
          break;
          //         case lxLongVariable:
@@ -4890,7 +4890,7 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
             generateBinary(tape, current, level);
 
          declareStructInfo(tape,
-            current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
             level, current.findChild(lxClassName).identifier());
          break;
       }

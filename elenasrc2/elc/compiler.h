@@ -615,21 +615,21 @@ private:
       int          reserved;  // allocated for the current statement
       int          saved;     // permanently allocated
 
-//      int newLocal()
+      int newLocal()
+      {
+         level++;
+
+         return level;
+      }
+
+//      void mapLocal(ident_t local, int level/*, ref_t type*/)
 //      {
-//         level++;
-//
-//         return level;
+//         locals.add(local, Parameter(level/*, type*/));
 //      }
-//
-////      void mapLocal(ident_t local, int level/*, ref_t type*/)
-////      {
-////         locals.add(local, Parameter(level/*, type*/));
-////      }
-//      void mapLocal(ident_t local, int level, ref_t type, ref_t class_ref, int size)
-//      {
-//         locals.add(local, Parameter(level, type, class_ref, size));
-//      }
+      void mapLocal(ident_t local, int level, ref_t type, ref_t class_ref, int size)
+      {
+         locals.add(local, Parameter(level, type, class_ref, size));
+      }
 
       void freeSpace()
       {
@@ -958,7 +958,7 @@ private:
 //   void declareClassAttribute(SyntaxWriter& writer, SNode node, ClassScope& scope, SNode rootNode);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size, SNode rootNode);
-//   void declareLocalAttributes(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
+   void declareLocalAttributes(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
 //   void declareFieldAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef, int& size);
 //   void declareFieldAttributes(SyntaxWriter& writer, SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size);
 //   //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
@@ -975,8 +975,8 @@ private:
 
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
-////   void compileSwitch(SNode node, CodeScope& scope);
-//   void declareVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//   void compileSwitch(SNode node, CodeScope& scope);
+   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
@@ -1006,7 +1006,7 @@ private:
    ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo declareAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
+   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
 
    ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
@@ -1152,6 +1152,7 @@ private:
 
    bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope);
    void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
+   void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool operationMode);
    void generateObjectTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool explicitOne = true);
