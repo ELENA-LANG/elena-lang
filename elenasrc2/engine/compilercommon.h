@@ -37,13 +37,13 @@
 ////#define V_BINARYARRAY (ref_t)-35
 ////#define V_INT16ARRAY  (ref_t)-38
 ////#define V_INT8ARRAY   (ref_t)-39
-//
-//#define V_IFBRANCH    (ref_t)-4097
-//#define V_IFNOTBRANCH (ref_t)-4098
-////#define V_WARNING1    (ref_t)-4099
-////#define V_WARNING2    (ref_t)-4100
-////#define V_WARNING3    (ref_t)-4101
-//
+
+#define V_IFBRANCH    (ref_t)-4097
+#define V_IFNOTBRANCH (ref_t)-4098
+//#define V_WARNING1    (ref_t)-4099
+//#define V_WARNING2    (ref_t)-4100
+//#define V_WARNING3    (ref_t)-4101
+
 //#define V_STATCKSAFE  (ref_t)-8192
 //#define V_EMBEDDABLE  (ref_t)-8193
 ////#define V_STATIC      (ref_t)-8194

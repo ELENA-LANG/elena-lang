@@ -414,6 +414,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
          _writer.newNode(lxAttribute);
          break;
       case nsExpression:
+      case nsRootExpression:
          _writer.newNode(lxExpression);
          break;
       case nsCodeEnd:
@@ -430,6 +431,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
          break;
       case nsNestedClass:
          _writer.newNode(lxNestedClass);
+         break;
+      case nsL7Operation:
+         _writer.newNode(lxOperator);
          break;
       case nsMessageOperation:
       case nsSubjectArg:

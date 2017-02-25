@@ -1152,7 +1152,7 @@ private:
 
    bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope);
    void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
-   void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);
+   void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool operationMode);
    void generateObjectTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool explicitOne = true);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);

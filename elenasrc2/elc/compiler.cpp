@@ -206,6 +206,23 @@ inline void copyIdentifier(SyntaxWriter& writer, SNode ident)
    writer.closeNode();
 }
 
+inline void copyOperator(SyntaxWriter& writer, SNode ident)
+{
+   if (emptystr(ident.identifier())) {
+      SNode terminal = ident.findChild(lxTerminal);
+      if (terminal != lxNone) {
+         writer.newNode(lxOperator, terminal.identifier());
+      }
+      else writer.newNode(ident.type);
+   }
+   else writer.newNode(lxOperator, ident.identifier());
+
+   SyntaxTree::copyNode(writer, lxRow, ident);
+   SyntaxTree::copyNode(writer, lxCol, ident);
+   SyntaxTree::copyNode(writer, lxLength, ident);
+   writer.closeNode();
+}
+
 SNode findTerminalInfo(SNode node)
 {
    if (node.existChild(lxRow))
@@ -2910,8 +2927,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
 ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    SNode operatorNode = node.findChild(lxOperator);
-   SNode operatorName = operatorNode.findChild(lxTerminal);
-   int operator_id = operatorNode.argument != 0 ? operatorNode.argument : _operators.get(operatorName.identifier());
+   int operator_id = operatorNode.argument != 0 ? operatorNode.argument : _operators.get(operatorNode.identifier());
 
 //   // if it is a new operator
 //   if (operator_id == -1) {
@@ -3432,6 +3448,8 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    ActionScope methodScope(&scope);
    bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, mode/*, alreadyDeclared*/);
 
+   scope.include(methodScope.message);
+
    // HOTFIX : if the clousre emulates code brackets
    if (test(mode, HINT_SUBCODE_CLOSURE))
       methodScope.subCodeMode = true;
@@ -3442,12 +3460,13 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    }
    else compileLazyExpressionMethod(writer, node, methodScope);
 
+   generateClassDeclaration(SNode(), scope, false);
+
    writer.closeNode();
 
-   generateClassDeclaration(node, scope, false);
-   generateClassImplementation(expressionTree.readRoot(), *scope.moduleScope/*, test(scope.info.header.flags, elClosed)*/);
-
    scope.save();
+
+   generateClassImplementation(expressionTree.readRoot(), *scope.moduleScope/*, test(scope.info.header.flags, elClosed)*/);
 }
 
 void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
@@ -3750,8 +3769,8 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    ObjectInfo objectInfo;
-   SNode child = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator/*, lxTrying, lxAlt, lxSwitching*/);
-   switch (child.type) {
+   SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator/*, lxTrying, lxAlt, lxSwitching*/);
+   switch (current.type) {
       case lxAssign:
          objectInfo = compileAssigning(writer, node, scope, mode);
          break;
@@ -3780,15 +3799,15 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          objectInfo = compileOperator(writer, node, scope, mode);
          break;
       default:
-         child = node.firstChild(lxObjectMask);
+         current = node.firstChild(lxObjectMask);
 //         SNode nextChild = child.nextNode(lxObjectMask);
 
-         if (child == lxExpression/* && nextChild == lxNone*/) {
+         if (current == lxExpression/* && nextChild == lxNone*/) {
             // if it is a nested expression
-            objectInfo = compileExpression(writer, child, scope, mode);
+            objectInfo = compileExpression(writer, current, scope, mode);
          }
-         else if (test(child.type, lxTerminalMask)/* && nextChild == lxNone*/) {
-            objectInfo = compileObject(writer, child, scope, mode);
+         else if (test(current.type, lxTerminalMask)/* && nextChild == lxNone*/) {
+            objectInfo = compileObject(writer, current, scope, mode);
          }
          else objectInfo = compileObject(writer, node, scope, mode);
    }
@@ -7754,8 +7773,11 @@ inline bool setIdentifier(SNode current)
 //   }
 //}
 
-void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode*/)
+void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool operationMode)
 {
+   if (operationMode)
+      writer.newBookmark();
+
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
@@ -7769,9 +7791,11 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
    //         //   unpackChildren(current);
    //         //   _writer.closeNode();
    //         //   break;
-   //         case nsSubCode:
-   //            unpackNode(current, 1);
-   //            break;
+         case lxCode:
+            generateCodeTree(writer, current, scope);
+            writer.insert(lxExpression);
+            writer.closeNode();
+            break;
    //         //case nsL0Operation:
    //         //case nsL3Operation:
    //         //case nsL4Operation:
@@ -7819,19 +7843,22 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
       }
       current = current.nextNode();
    }
-   //
-   //   if (operationMode) {
-   //      _writer.removeBookmark();
-   //   }
+   
+   if (operationMode) {
+      writer.removeBookmark();
+   }
 }
 
 void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, TemplateScope& scope/*, int mode*/)
 {
    switch (current.type) {
+      case lxOperator:
+         copyOperator(writer, current.firstChild());
       case lxMessage:
-         generateMessageTree(writer, current, scope);
+         generateMessageTree(writer, current, scope, current != lxMessage);
          writer.insert(lxExpression);
          writer.closeNode();
+         break;
          //if (symbol == nsCatchMessageOperation) {
          //   _writer.removeBookmark();            
          //   _writer.insert(lxTrying);
@@ -7847,6 +7874,9 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          writer.newNode(current.type, current.argument);
          generateExpressionTree(writer, current, scope, false);
          writer.closeNode();
+         break;
+      case lxExpression:
+         generateExpressionTree(writer, current, scope, false);
          break;
       default:
       {
@@ -7882,7 +7912,7 @@ void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, Templa
    }
    
    if (explicitOne) {
-      writer.insert(lxExpression);
+      writer.insert(node.type);
       writer.closeNode();
    }
 
@@ -7906,7 +7936,7 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxExpression) {
+      if (current == lxExpression || current == lxReturning) {
          generateExpressionTree(writer, current, scope);
       }
       else if (current == lxEOF) {

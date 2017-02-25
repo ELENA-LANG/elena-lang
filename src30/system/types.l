@@ -24,9 +24,9 @@
 //#template(-8193) embeddable {}
 ////#template(-8203) extension {}
 ////#template(-8203,subject) extension : subject {}
-//
-//#template(-4097)  __ifoperator {}
-//#template(-4098)  __ifnotoperator {}
+
+#template(-4097)  __ifoperator {}
+#template(-4098)  __ifnotoperator {}
 //#template(-19,4)  __mssg  {}
 //#template(-20,4)  __verb  {}
 //#template(-11,1)  __int8  {}

@@ -924,12 +924,12 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 {
    switch ((size_t)attrValue)
    {
-//      case V_IFBRANCH:
-//         attrValue = tpIfBranch;
-//         return true;
-//      case V_IFNOTBRANCH:
-//         attrValue = tpIfNotBranch;
-//         return true;
+      case V_IFBRANCH:
+         attrValue = tpIfBranch;
+         return true;
+      case V_IFNOTBRANCH:
+         attrValue = tpIfNotBranch;
+         return true;
 //      case V_STATCKSAFE:
 //         attrValue = tpStackSafe;
 //         return true;

@@ -6,10 +6,12 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
+                 * true.get&inverted - use direct symbol without typecasting
+
                  * optimize the code
                  * declareBranchingOperator : try to limit number of times when sub code duplicates are created
                    (probably all comparision operators are always return bool value)
-                 
+
                  * support structures
 
                  * do not unbox returning objects
@@ -87,6 +89,7 @@ In development:
                  * test implicit convertor with stack allocated local / field
                  * optimize n := n + m.
                  * system should be included by default
+                 * compile n + m * k
 
               xdev - generic development
                  * support property template
