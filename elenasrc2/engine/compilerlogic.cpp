@@ -1004,22 +1004,22 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 //   }
 //   else return false;
 //}
-//
-//bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant)
-//{
-//   if (attrValue == (int)V_CONST) {
-//      constant = true;
+
+bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant)
+{
+   if (attrValue == (int)V_CONST) {
+      constant = true;
+
+      return true;
+   }
+//   else if (attrValue == (int)V_PRELOADED) {
+//      attrValue = lxPreloadedAttr;
 //
 //      return true;
 //   }
-////   else if (attrValue == (int)V_PRELOADED) {
-////      attrValue = lxPreloadedAttr;
-////
-////      return true;
-////   }
-//   else return false;
-//}
-//
+   else return false;
+}
+
 ////bool CompilerLogic :: validateWarningAttribute(int& attrValue)
 ////{
 ////   switch ((size_t)attrValue)

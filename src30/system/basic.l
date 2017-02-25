@@ -99,113 +99,113 @@
 
 // --- true ---
 
-///// A true value symbol
-//const true = BaseBoolValue
-//{
-////    /// Executes the action
-////    __ifoperator if : aTrueAction = aTrueAction eval.
+/// A true value symbol
+const true = BaseBoolValue
+{
+//    /// Executes the action
+//    __ifoperator if : aTrueAction = aTrueAction eval.
+//
+//    /// Executes then-action
+//    if : aTrueAction : aFalseAction = aTrueAction eval.
+//
+//    /// Always returns nil.
+//    __ifnotoperator ifnot : aTrueAction = $nil.
+//
+//    iif:aTrueValue:aFalseValue = aTrueValue.
+//    
+//    /// Executes logical OR operation
+//    ///
+//    /// Always return true
+//    or : anExpr = $self.
+//
+//    /// Executes logical AND operation
+//    and : anExpr = anExpr bool.
+//
+//    /// Executes logical XOR operation
+//    xor : aBool
+//    [
+//        aBool bool ? [ ^ false. ].
+//        
+//        ^ $self.
+//    ]
+//
+//    /// Determines whether the specified object is equal to the current object boolean value.
+//    equal : anExpr = anExpr bool.
+//
+//    /// Determines whether the specified object is equal to the current object boolean value.
+//    equal &bool:aBool = aBool.
+//
+//    /// Always returns false.
+//    inverted = false.
+//
+////    /// Returns literal representation.
+////    #method literal = "true".
 ////
-////    /// Executes then-action
-////    if : aTrueAction : aFalseAction = aTrueAction eval.
-////
-////    /// Always returns nil.
-////    __ifnotoperator ifnot : aTrueAction = $nil.
-////
-////    iif:aTrueValue:aFalseValue = aTrueValue.
+////    /// Returns literal representation.
+////    #method wide = "true"w.
+
+    /// Returns itself.
+    clone = $self.
+}.
+
+// --- false ---
+
+/// A false value symbol
+const false = BaseBoolValue
+{
+//    /// Always returns nil
+//    __ifnotoperator if : anAction = $nil.
+//    
+//    /// Executes else-action
+//    if : aTrueAction : aFalseAction = aFalseAction eval.
+//
+//    /// Executes the action
+//    __ifoperator ifnot : aFalseAction = aFalseAction eval.
+//
+//    iif:aTrueValue:aFalseValue = aFalseValue.
+//
+//    /// Executes logical OR operation
+//    or : anExpr = anExpr bool.
+//
+//    /// Executes logical AND operation
+//    ///
+//    /// Always return false
+//    and : anExpr = $self.
+//
+//    /// Executes logical XOR operation
+//    xor : anExpr 
+//    [
+//        anExpr bool ? [ ^ true. ].
+//        
+//        ^ $self.
+//    ]
+//
+//    /// Determines whether the specified object is equal to the current object boolean value
+//    equal : anExpr
+//    [
+//        anExpr bool ? [ ^ $self. ].
+//        
+//        ^ true.
+//    ]
+//
+//    /// Determines whether the specified object is equal to the current object boolean value
+//    equal &bool:anExpr
+//    [
+//        ^ anExpr inverted.
+//    ]
+//
+//    /// Always returns true
+//    inverted = true.
+//
+////    /// Returns literal representation
+////    #method literal = "false".
 ////    
-////    /// Executes logical OR operation
-////    ///
-////    /// Always return true
-////    or : anExpr = $self.
-////
-////    /// Executes logical AND operation
-////    and : anExpr = anExpr bool.
-////
-////    /// Executes logical XOR operation
-////    xor : aBool
-////    [
-////        aBool bool ? [ ^ false. ].
-////        
-////        ^ $self.
-////    ]
-////
-////    /// Determines whether the specified object is equal to the current object boolean value.
-////    equal : anExpr = anExpr bool.
-////
-////    /// Determines whether the specified object is equal to the current object boolean value.
-////    equal &bool:aBool = aBool.
-////
-////    /// Always returns false.
-////    inverted = false.
-////
-//////    /// Returns literal representation.
-//////    #method literal = "true".
-//////
-//////    /// Returns literal representation.
-//////    #method wide = "true"w.
-//
-//    /// Returns itself.
-//    clone = $self.
-//}.
-//
-//// --- false ---
-//
-///// A false value symbol
-//const false = BaseBoolValue
-//{
-////    /// Always returns nil
-////    __ifnotoperator if : anAction = $nil.
-////    
-////    /// Executes else-action
-////    if : aTrueAction : aFalseAction = aFalseAction eval.
-////
-////    /// Executes the action
-////    __ifoperator ifnot : aFalseAction = aFalseAction eval.
-////
-////    iif:aTrueValue:aFalseValue = aFalseValue.
-////
-////    /// Executes logical OR operation
-////    or : anExpr = anExpr bool.
-////
-////    /// Executes logical AND operation
-////    ///
-////    /// Always return false
-////    and : anExpr = $self.
-////
-////    /// Executes logical XOR operation
-////    xor : anExpr 
-////    [
-////        anExpr bool ? [ ^ true. ].
-////        
-////        ^ $self.
-////    ]
-////
-////    /// Determines whether the specified object is equal to the current object boolean value
-////    equal : anExpr
-////    [
-////        anExpr bool ? [ ^ $self. ].
-////        
-////        ^ true.
-////    ]
-////
-////    /// Determines whether the specified object is equal to the current object boolean value
-////    equal &bool:anExpr
-////    [
-////        ^ anExpr inverted.
-////    ]
-////
-////    /// Always returns true
-////    inverted = true.
-////
-//////    /// Returns literal representation
-//////    #method literal = "false".
-//////    
-//////    /// Returns literal representation
-//////    #method wide = "false"w.
-//
-//    /// Returns itself
-//    clone = $self.
-//}.
+////    /// Returns literal representation
+////    #method wide = "false"w.
+
+    /// Returns itself
+    clone = $self.
+}.
 
 ////// === Numeric Variables ===
 ////

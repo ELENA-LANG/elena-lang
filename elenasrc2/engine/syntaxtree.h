@@ -209,6 +209,7 @@ enum LexicalType
 //   lxInclude         = 0x20027,
 //   lxTemplateField   = 0x20028,
    lxNameAttr        = 0x20029,
+   lxTypeAttr        = 0x2002A,
 
 //   lxFieldAttrMask   = 0x20100,
 //   lxStaticAttr      = 0x20102,

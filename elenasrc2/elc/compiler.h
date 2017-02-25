@@ -520,9 +520,9 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-//      bool  constant;
-////      bool  preloaded;
-////      ref_t typeRef;
+      bool  constant;
+//      bool  preloaded;
+//      ref_t typeRef;
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -954,7 +954,7 @@ private:
 ////      compileSymbolAttributes(node, scope, node);
 ////   }
 //   void declareSymbolAttribute(SyntaxWriter& writer, SNode hints, SymbolScope& scope, SNode rootNode);
-//   void declareSymbolAttributes(SyntaxWriter& writer, SNode node, SymbolScope& scope);
+   void declareSymbolAttributes(SNode node, SymbolScope& scope);
 //   void declareClassAttribute(SyntaxWriter& writer, SNode node, ClassScope& scope, SNode rootNode);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size, SNode rootNode);
@@ -1159,7 +1159,7 @@ private:
    void generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
-   void generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
+   void generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool nested = false);
    void generateMethodScope(SNode node, TemplateScope& scope, SNode attributes);
    void generateScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
 

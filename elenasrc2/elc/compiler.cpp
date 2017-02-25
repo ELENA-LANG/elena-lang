@@ -946,8 +946,8 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    : SourceScope(parent, reference)
 {
 //   typeRef = 0;
-//   constant = false;
-////   preloaded = false;
+   constant = false;
+//   preloaded = false;
 }
 
 ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
@@ -1850,17 +1850,20 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
 //   }
 //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
 //}
-//
-//void Compiler :: declareSymbolAttributes(SyntaxWriter& writer, SNode node, SymbolScope& scope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         declareSymbolAttribute(writer, current, scope, node);
-//      }
-//      current = current.nextNode();
-//   }
-//}
+
+void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         int value = current.argument;
+         if (!_logic->validateSymbolAttribute(value, scope.constant))
+            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      }
+
+      current = current.nextNode();
+   }
+}
 
 ////void Compiler :: compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode)
 ////{
@@ -3449,24 +3452,23 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
 void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 {
-   //_logic->recognizeNestedScope(node);
-
    SyntaxTree expressionTree;
    SyntaxWriter writer(expressionTree);
 
-   writer.newNode(lxClass, scope.reference);
-
    compileParentDeclaration(node, scope);
 
-   declareVMT(node, scope);
+   declareVMT(node.firstChild(), scope);
+   generateClassDeclaration(node, scope, false);
+
+   scope.save();
+
+   writer.newNode(lxClass, scope.reference);
+
    compileVMT(writer, node, scope);
 
    writer.closeNode();
 
-   generateClassDeclaration(node, scope, false);
    generateClassImplementation(expressionTree.readRoot(), *scope.moduleScope);
-
-   scope.save();
 }
 
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope)
@@ -5692,9 +5694,9 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 
          hintChanged = true;
       }
-      else if (current == lxType) {
+      else if (current == lxTypeAttr) {
          if (outputType == 0) {
-            outputType = current.argument;
+            outputType = scope.moduleScope->module->mapSubject(current.identifier(), false);
             scope.info.methodHints.add(Attribute(message, maType), outputType);
             scope.info.methodHints.add(Attribute(message, maReference), scope.moduleScope->subjectHints.get(outputType));
          }
@@ -6448,8 +6450,8 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 
    SyntaxWriter writer(expressionTree);
 
-   //   declareSymbolAttributes(writer, node, scope);
-   //
+   declareSymbolAttributes(node, scope);
+   
    SNode expression = node.findChild(lxExpression);
    
    CodeScope codeScope(&scope);
@@ -6457,7 +6459,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    writer.newNode(lxSymbol, node.argument);
    writer.newNode(lxExpression);
    writer.appendNode(lxBreakpoint, dsStep);
-   ObjectInfo retVal = compileExpression(writer, expression, codeScope, /*scope.constant ? HINT_ROOT : */0);
+   ObjectInfo retVal = compileExpression(writer, expression, codeScope, scope.constant ? HINT_ROOT : 0);
    writer.closeNode();
    writer.closeNode();
 
@@ -7849,8 +7851,14 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
       default:
       {
          SNode terminal = current.findChild(lxIdentifier, lxReference, lxPrivate, lxInteger);
-         if (terminal != lxNone) {
+         if (terminal != lxNone)
             copyIdentifier(writer, terminal);
+
+         SNode closureNode = current.findChild(lxNestedClass);         
+         if (closureNode == lxNestedClass) {
+            generateScopeMembers(closureNode, scope);
+
+            generateClassTree(writer, closureNode, scope, SNode(), true);
          }
          break;
       }
@@ -7874,7 +7882,7 @@ void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, Templa
    }
    
    if (explicitOne) {
-      writer.insert(node.type);
+      writer.insert(lxExpression);
       writer.closeNode();
    }
 
@@ -7910,7 +7918,11 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
       }
-      else generateObjectTree(writer, current, scope);
+      else {
+         writer.newBookmark();
+         generateObjectTree(writer, current, scope);
+         writer.removeBookmark();
+      }
 
       current = current.nextNode();
    }
@@ -7990,7 +8002,7 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
                scope.raiseError(errInvalidHint, current);
          }
          else if (classRef != 0)
-            writer.appendNode(lxType, attrRef);
+            writer.appendNode(lxTypeAttr, scope.moduleScope->module->resolveSubject(attrRef));
       }
       else scope.raiseError(errInvalidHint, current);
 
@@ -8015,7 +8027,7 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
    generateAttributes(bufferWriter, node, scope, attributes);
 
    // copy attributes
-   SyntaxTree::copyTree(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxType);
+   SyntaxTree::copyTree(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr);
 
    // copy method arguments
    SNode current = node.firstChild();
@@ -8062,13 +8074,15 @@ void Compiler :: generateTemplateTree(SyntaxWriter& writer, SNode node, Template
    }
 }
 
-void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes)
+void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool nested)
 {
    SyntaxTree buffer;
 
-   writer.newNode(lxClass);
+   if (!nested) {
+      writer.newNode(lxClass);
 
-   generateAttributes(writer, node, scope, attributes);
+      generateAttributes(writer, node, scope, attributes);
+   }
 
    SNode current = node.firstChild();
    SNode subAttributes;
@@ -8084,6 +8098,9 @@ void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateSco
 
       current = current.nextNode();
    }
+
+   if (nested)
+      writer.insert(lxNestedClass);
 
    writer.closeNode();
 }

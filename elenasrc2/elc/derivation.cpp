@@ -428,6 +428,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsMessageParameter:
          _writer.newNode(lxMessageParameter);
          break;
+      case nsNestedClass:
+         _writer.newNode(lxNestedClass);
+         break;
       case nsMessageOperation:
       case nsSubjectArg:
          _writer.newNode(lxMessage);
