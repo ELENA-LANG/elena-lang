@@ -946,13 +946,13 @@ private:
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
-//   void compileFieldDeclarations(SyntaxWriter& writer, SNode member, ClassScope& scope);
-//
-////   void compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode);
-////   void compileSymbolAttributes(SNode node, SymbolScope& scope)
-////   {
-////      compileSymbolAttributes(node, scope, node);
-////   }
+   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
+
+//   void compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode);
+//   void compileSymbolAttributes(SNode node, SymbolScope& scope)
+//   {
+//      compileSymbolAttributes(node, scope, node);
+//   }
 //   void declareSymbolAttribute(SyntaxWriter& writer, SNode hints, SymbolScope& scope, SNode rootNode);
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
 //   void declareClassAttribute(SyntaxWriter& writer, SNode node, ClassScope& scope, SNode rootNode);
@@ -960,7 +960,7 @@ private:
 //   void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size, SNode rootNode);
    void declareLocalAttributes(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
 //   void declareFieldAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef, int& size);
-//   void declareFieldAttributes(SyntaxWriter& writer, SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size);
 //   //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
    void declareVMT(SNode member, ClassScope& scope);
    void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
@@ -1070,7 +1070,7 @@ private:
 //
 //   ref_t generateTemplate(TemplateScope& scope);
 
-//   void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef, int sizeHint, bool singleField);
+   void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef, int sizeHint, bool singleField);
 //   void generateClassStaticField(ClassScope& scope, SNode current);
 
    void generateClassFlags(ClassScope& scope, SNode node);
@@ -1159,9 +1159,10 @@ private:
    void generateSymbolTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
    void generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
+   void generateFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
    void generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool nested = false);
-   void generateMethodScope(SNode node, TemplateScope& scope, SNode attributes);
+   bool generateMethodScope(SNode node, TemplateScope& scope, SNode attributes);
    void generateScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
 
    void compileSyntaxTree(SyntaxTree& tree, ModuleScope& scope);

@@ -12,26 +12,26 @@
 ////#template(-4099) w1 {}
 ////#template(-4100) w2 {}
 ////#template(-4101) w3 {}
-//#template(-8195) sealed  {}
-////#template(-8199) dynamic {}
-////#template(-8196) limited {}
-////#template(-8206) group   {}
+#template(-8195) sealed  {}
+//#template(-8199) dynamic {}
+//#template(-8196) limited {}
+//#template(-8206) group   {}
 #template(-8201) const   {}
-//#template(-8197) struct  {}
+#template(-8197) struct  {}
 ////#template(-8204) nonstructural {}
 #template(-8198) listable {}
 ////#template(-8200) string {}
-//#template(-8193) embeddable {}
-////#template(-8203) extension {}
-////#template(-8203,subject) extension : subject {}
+#template(-8193) embeddable {}
+//#template(-8203) extension {}
+//#template(-8203,subject) extension : subject {}
 
 #template(-4097)  __ifoperator {}
 #template(-4098)  __ifnotoperator {}
-//#template(-19,4)  __mssg  {}
-//#template(-20,4)  __verb  {}
-//#template(-11,1)  __int8  {}
-//#template(-11,2)  __int16 {}
-//#template(-11,4)  __int32 {}
+#template(-19,4)  __mssg  {}
+#template(-20,4)  __verb  {}
+#template(-11,1)  __int8  {}
+#template(-11,2)  __int16 {}
+#template(-11,4)  __int32 {}
 
 ///// Provides classes that describe the basic functionality
 
@@ -43,10 +43,10 @@
 ////#subject keyvalue   = system'KeyValue.
 ////
 ////#subject ref        = system'Variable.
-//
-//#subject byte       = system'ByteNumber.
-//#subject short      = system'ShortNumber.
-//#subject int        = system'IntNumber.
+
+#subject byte       = system'ByteNumber.
+#subject short      = system'ShortNumber.
+#subject int        = system'IntNumber.
 ////#subject long       = system'LongNumber.
 ////#subject real       = system'RealNumber.
 ////#subject char       = system'CharValue.

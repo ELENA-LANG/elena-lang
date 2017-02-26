@@ -45,11 +45,11 @@
 //#define V_WARNING3    (ref_t)-4101
 
 //#define V_STATCKSAFE  (ref_t)-8192
-//#define V_EMBEDDABLE  (ref_t)-8193
+#define V_EMBEDDABLE  (ref_t)-8193
 ////#define V_STATIC      (ref_t)-8194
-//#define V_SEALED      (ref_t)-8195
+#define V_SEALED      (ref_t)-8195
 ////#define V_LIMITED     (ref_t)-8196
-//#define V_STRUCT      (ref_t)-8197
+#define V_STRUCT      (ref_t)-8197
 #define V_ENUMLIST    (ref_t)-8198
 ////#define V_DYNAMIC     (ref_t)-8199
 ////#define V_STRING      (ref_t)-8200
@@ -237,14 +237,14 @@ public:
 
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
-//   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
-//
-////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
+   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
+
+//   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue) = 0;
-//   virtual bool validateFieldAttribute(int& attrValue) = 0;
+   virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant) = 0;
 //   virtual bool validateWarningAttribute(int& attrValue) = 0;

@@ -20,10 +20,10 @@
 // --- Verb ---
 
 /// A dynamic verb extender
-/*sealed embeddable struct */Verb
+sealed embeddable struct Verb
 {
-//    __verb theValue.
-//
+    __verb theValue.
+
 //    /// Loads a dynamic verb
 //    constructor new &verb:aVerb
 //        = aVerb.
@@ -35,15 +35,15 @@
 // --- Message ---
 
 /// A message constant
-/*sealed embeddable struct*/ Message
+sealed embeddable struct Message
 {
-//    __mssg theValue.
-//
-////    #constructor new &literal:name
-////    [
-////        system'core_routines'__message load &mssg:$self &literal:name.
-////    ]
-//    
+    __mssg theValue.
+
+//    #constructor new &literal:name
+//    [
+//        system'core_routines'__message load &mssg:$self &literal:name.
+//    ]
+    
 //    /// Loads a message
 //    constructor new &mssg:message
 //        = message.

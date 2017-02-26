@@ -118,11 +118,11 @@ public:
 //   virtual void injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode);
 
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
-//   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
+   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool validateClassAttribute(int& attrValue);
    virtual bool validateMethodAttribute(int& attrValue);
-//   virtual bool validateFieldAttribute(int& attrValue);
+   virtual bool validateFieldAttribute(int& attrValue);
    virtual bool validateLocalAttribute(int& attrValue);
    virtual bool validateSymbolAttribute(int attrValue, bool& constant);
 ////   virtual bool validateWarningAttribute(int& attrValue);
