@@ -914,12 +914,12 @@ private:
    ref_t mapAttribute(SNode attribute, ModuleScope& scope);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
-//   int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
-//   {
-//      _CompilerLogic::ChechMethodInfo dummy;
-//
-//      return _logic->checkMethod(scope, reference, message, dummy);
-//   }
+   int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
+   {
+      _CompilerLogic::ChechMethodInfo dummy;
+
+      return _logic->checkMethod(scope, reference, message, dummy);
+   }
 
    ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
@@ -1026,7 +1026,7 @@ private:
 //   ObjectInfo compileExternalCall(SNode node, CodeScope& scope);
 //   ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 //
-//   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
    void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -1123,6 +1123,7 @@ private:
 ////   void optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope);
 ////   void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
 ////   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
+   ref_t optimizeOp(SNode current, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);

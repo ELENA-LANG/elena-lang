@@ -24,7 +24,7 @@ enum LexicalType
    lxExprMask        = 0x0C000,
    lxTerminalMask    = 0x10000,
 //   lxReferenceMask   = 0x40000,
-//   lxPrimitiveOpMask = 0x80000,
+   lxPrimitiveOpMask = 0x80000,
 
    lxEnding          = -1,
    lxInvalid         = -2,

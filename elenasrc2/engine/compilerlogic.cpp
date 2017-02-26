@@ -1460,7 +1460,8 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
       // NIL reference is never boxed
       node = lxExpression;
    }
-   else if (isPrimitiveRef(sourceRef) && isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef))) {
+   //HOTFIX : allowing numeric constant direct boxing
+   else if (isPrimitiveRef(sourceRef) && (isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef)) || sourceRef == V_INT32)) {
 
    }
    else return false;

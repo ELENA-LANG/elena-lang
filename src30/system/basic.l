@@ -296,29 +296,29 @@ sealed embeddable dispatchable(byte) struct ByteNumber :: IntBaseNumber
 
     stacksafe sealed conversion int:n
     [
-//        theValue := n && 255.
+        theValue := n && 255.
     ]
 
-//    /// Returns the minimal value (0)
-//    #constructor(w3) min
-//        = 0.
-//
-//    /// Returns the maxial value (255)
-//    #constructor(w3) max
-//        = 255.
-//    
-//    /// Creates the object with a specified value
-//    #constructor(stacksafe,w3) new &byte:value
-//        = value.
-//
-//    /// Creates the object with a specified value
-//    #constructor new : aValue
-//        <= new &byte:(aValue byte).
-//
-//    /// Creates the object with a default value (0)
-//    #constructor new
-//        = 0.
-//
+    /// Returns the minimal value (0)
+    constructor min
+        = 0.
+
+    /// Returns the maxial value (255)
+    constructor max
+        = 255.
+    
+    /// Creates the object with a specified value
+    stacksafe constructor new &byte:value
+        = value.
+
+    /// Creates the object with a specified value
+    constructor new : aValue
+        <= new &byte:(aValue byte).
+
+    /// Creates the object with a default value (0)
+    constructor new
+        = 0.
+
 //    /// Returns the value as a short integer
 //    #method short = ShortNumber new &byte:$self.
 //
@@ -538,8 +538,8 @@ sealed embeddable dispatchable(short) struct ShortNumber :: IntBaseNumber
 {
     __int16 theValue.
 
-//    #constructor(stacksafe)&int:n
-//    [
+    stacksafe sealed conversion int:n
+    [
 //        (n < 0)
 //            ? [ 
 //                theValue := n && 0FFFFh. 
@@ -547,8 +547,8 @@ sealed embeddable dispatchable(short) struct ShortNumber :: IntBaseNumber
 //                theValue := theValue || 0FFFF0000h.
 //            ]
 //            ! [ theValue := n && 0FFFFh. ].
-//    ]
-//    
+    ]
+    
 //    /// Returns the minimal value (-32768)
 //    #constructor(w3) min
 //        = -32768.

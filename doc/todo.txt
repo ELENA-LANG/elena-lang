@@ -6,13 +6,16 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
-                 * support structures
+                 * optimize k := n + m. - remove an extra assignment
+                 * optimize k := k + m.
+                 * optimize k += m.
+                 * optimize k := k + 2.
+                 * optimize k += 3.
+
+                 * implementing ELENA 3.0
 
                  * do not unbox returning objects
                  * box structure fields
-                 * support stacksafe
-
-                 * implementing ELENA 3.0
 
                  * idle optimization : sealed typecasting message should be not called
                  * warn on not found messages

@@ -4328,18 +4328,18 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       child = child.nextNode();
    }
 
-   //if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_MESSAGE_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||
-   //   (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp))))
-   //{
-   //   if (target == lxCreatingStruct) {
-   //      generateObjectExpression(tape, target);
-   //      loadBase(tape, lxResult);
-   //   }
-   //   else loadBase(tape, target.type, target.argument);
+   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || /*(source.argument == REFER_MESSAGE_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||*/
+      (IsShiftOperator(source.argument) && (source.type == lxIntOp/* || source.type == lxLongOp*/))))
+   {
+      if (target == lxCreatingStruct) {
+         generateObjectExpression(tape, target);
+         loadBase(tape, lxResult);
+      }
+      else loadBase(tape, target.type, target.argument);
 
-   //   generateObjectExpression(tape, source);
-   //}
-   //else {
+      generateObjectExpression(tape, source);
+   }
+   else {
       generateObjectExpression(tape, source);
 
       //if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
@@ -4398,7 +4398,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 
          saveObject(tape, target.type, target.argument);
       }
-   //}
+   }
 }
 
 //void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node)
