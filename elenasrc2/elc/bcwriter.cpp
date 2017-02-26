@@ -3175,10 +3175,10 @@ inline ref_t defineConstantMask(LexicalType type)
    switch(type) {
       case lxConstantClass:
          return mskVMTRef;
-//      case lxConstantString:
-//         return mskLiteralRef;
-//      case lxConstantWideStr:
-//         return mskWideLiteralRef;
+      case lxConstantString:
+         return mskLiteralRef;
+      case lxConstantWideStr:
+         return mskWideLiteralRef;
 //      case lxConstantChar:
 //         return mskCharRef;
       case lxConstantInt:
@@ -3245,8 +3245,8 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcCallR, argument | mskSymbolRef);
          tape.write(bcPushA);
          break;
-//      case lxConstantString:
-//      case lxConstantWideStr:
+      case lxConstantString:
+      case lxConstantWideStr:
       case lxConstantClass:
       case lxConstantSymbol:
 //      case lxConstantChar:
@@ -3324,8 +3324,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxSymbolReference:
          tape.write(bcCallR, argument | mskSymbolRef);
          break;
-//      case lxConstantString:
-//      case lxConstantWideStr:
+      case lxConstantString:
+      case lxConstantWideStr:
       case lxConstantClass:
       case lxConstantSymbol:
 //      case lxConstantChar:
@@ -3953,9 +3953,9 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    // copym message
    ref_t message = callNode.argument;
-   //SNode msg = callNode.findChild(lxOvreriddenMessage);
-   //if (msg != lxNone)
-   //   message = msg.argument;
+   SNode msg = callNode.findChild(lxOvreriddenMessage);
+   if (msg != lxNone)
+      message = msg.argument;
 
    tape.write(bcCopyM, message);
 

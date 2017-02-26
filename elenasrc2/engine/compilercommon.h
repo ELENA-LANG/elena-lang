@@ -119,8 +119,8 @@ struct _CompilerScope
    ref_t messageReference;
    ref_t verbReference;
    ref_t boolReference;
-//   ref_t literalReference;
-//   ref_t wideReference;
+   ref_t literalReference;
+   ref_t wideReference;
 //   ref_t charReference;
 //   ref_t arrayReference;
 //   ref_t paramsReference;
@@ -139,7 +139,7 @@ struct _CompilerScope
       module = NULL;
       intReference = boolReference = superReference = 0;
       signatureReference = verbReference = messageReference = 0;
-//      longReference = literalReference = wideReference = 0;
+/*      longReference = */literalReference = wideReference = 0;
 //      arrayReference = charReference = realReference = 0;
 //      paramsReference = 0;
    }

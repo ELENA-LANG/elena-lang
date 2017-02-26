@@ -36,10 +36,13 @@ __define TOKEN   		4172
 __define SCOPE   		4173
 
 __define eof            	12291
+__define literal		12292
 __define identifier		12293
 __define private	        12294
 __define reference		12295
 __define integer		12296
+__define hex			12297
+__define wide                   12301
 
 START ->
 	INCLUDE_DECLARATION INCLUDE_DECLARATIONS DECLARATIONS eof
@@ -182,10 +185,12 @@ NEXT_HINT ->
 TOKEN ->
 	identifier TOKEN_BODY
 	| integer
+	| hex
 
 TOKEN_PARAM ->
 	identifier
 	| integer
+	| hex
 	
 RESEND ->
 	MESSAGE
@@ -387,6 +392,9 @@ OBJECT ->
 	| private
 	| reference
 	| integer
+	| hex
+	| literal
+	| wide
 	| ( SUB_EXPRESSION
 	| % MESSAGE_REFERENCE
 	| NESTED_CLASS

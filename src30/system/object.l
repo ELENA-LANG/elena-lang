@@ -53,9 +53,9 @@ listable dispatchable(bool) class BaseBoolValue
 
     bool inverted = $nil.
 
-//    literal = $nil.
-//
-//    wide = $nil.
+    literal = $nil.
+
+    wide = $nil.
 
     clone = $nil.
 }

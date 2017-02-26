@@ -125,8 +125,8 @@ public:
       okSymbol,                       // param - reference
       okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
-//      okLiteralConstant,              // param - reference
-//      okWideLiteralConstant,          // param - reference
+      okLiteralConstant,              // param - reference
+      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference
@@ -144,15 +144,15 @@ public:
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
       okParamField,
-//      okSubject,                      // param - parameter offset
+      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
       okSuper,
       okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
 //      okBlockLocal,                   // param - local offset
-//      okConstantRole,                 // param - role reference
-//
+      okConstantRole,                 // param - role reference
+
 //      okExternal,
 //      okInternal,
    };
@@ -232,7 +232,7 @@ public:
    typedef Map<ident_t, ref_t>            ForwardMap;
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
 //   typedef MemoryMap<int, ref_t>          RoleMap;
-//   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
+   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
 private:
    // - ModuleScope -
@@ -250,10 +250,10 @@ private:
 
 //      // symbol hints
 //      Map<ref_t, ref_t> constantHints;
-//
-//      // extensions
-//      SubjectMap        extensionHints;
-//      ExtensionMap      extensions;
+
+      // extensions
+      SubjectMap        extensionHints;
+      ExtensionMap      extensions;
 
       // type hints
       MessageMap        attributes;
@@ -321,7 +321,7 @@ private:
       _Memory* loadAttributeInfo(ident_t attribute/*, _Module* &argModule*/);
 
       void loadAttributes(_Module* module);
-//      void loadExtensions(_Module* module, bool& duplicateExtensions);
+      void loadExtensions(_Module* module, bool& duplicateExtensions);
       void loadActions(_Module* module);
 
       void saveSubject(ref_t attrRef, ref_t classReference, bool internalType);
@@ -342,7 +342,7 @@ private:
       void loadModuleInfo(_Module* extModule, bool& duplicateExtensions)
       {
          loadAttributes(extModule);
-         //loadExtensions(extModule, duplicateExtensions);
+         loadExtensions(extModule, duplicateExtensions);
          loadActions(extModule);
       }
 
@@ -576,12 +576,12 @@ private:
          return scope->info.methodHints.get(ClassInfo::Attribute(message, maType));
       }
 
-//      ref_t getClassFlags(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->info.header.flags : 0;
-//      }
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.header.flags : 0;
+      }
       ref_t getClassRef(bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -660,12 +660,12 @@ private:
          return scope ? scope->reference : 0;
       }
 
-////      ref_t getClassFlags(bool ownerClass = true)
-////      {
-////         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-////
-////         return scope ? scope->info.header.flags : 0;
-////      }
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.header.flags : 0;
+      }
 
       CodeScope(SymbolScope* parent);
       CodeScope(MethodScope* parent);
@@ -924,7 +924,7 @@ private:
    ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
-//   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
+   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
    void importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 
@@ -999,7 +999,7 @@ private:
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
-   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ObjectInfo role, ref_t targetRef = 0*/);
+   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0, ref_t targetType = 0);
 
 //   ObjectInfo compileNewOperator(SNode node, CodeScope& scope/*, int mode*/);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
@@ -1129,7 +1129,7 @@ private:
    ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
    ref_t optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
-   void optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   void optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    void optimizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeClassTree(SNode node, ModuleScope& scope, WarningScope& warningScope);

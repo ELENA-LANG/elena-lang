@@ -33,7 +33,7 @@ enum Symbol
    tsPrivate                    = 0x03006,
    tsReference                  = 0x03007,
    tsInteger                    = 0x03008,
-//   tsHexInteger                 = 0x03009,
+   tsHexInteger                 = 0x03009,
 //   tsReal                       = 0x0300A,
    tsCharacter                  = 0x0300B,
 //   tsLong                       = 0x0300C,

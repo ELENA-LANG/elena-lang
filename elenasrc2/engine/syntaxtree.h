@@ -59,16 +59,16 @@ enum LexicalType
 
    // parameters
    lxEOF             = 0x18003, // indicating closing code bracket
-//   lxLiteral         = 0x18004,
+   lxLiteral         = 0x18004,
    lxIdentifier      = 0x18005,
    lxPrivate         = 0x18006,
    lxReference       = 0x18007,
    lxInteger         = 0x18008,
-//   lxHexInteger      = 0x18009,
+   lxHexInteger      = 0x18009,
 //   lxReal            = 0x1800A,
 //   lxCharacter       = 0x1800B,
 //   lxLong            = 0x1800C,
-//   lxWide            = 0x1800D,
+   lxWide            = 0x1800D,
 
    lxImporting       = 0x08101,
    lxNested          = 0x08102, // arg - count
@@ -81,8 +81,8 @@ enum LexicalType
    lxFieldAddress    = 0x08109, // arg - offset
    lxLocal           = 0x0A10A, // arg - offset
 //   lxBlockLocal      = 0x0A10B, // arg - offset
-//   lxConstantString  = 0x0A10C, // arg - reference
-//   lxConstantWideStr = 0x0A10D, // arg - reference
+   lxConstantString  = 0x0A10C, // arg - reference
+   lxConstantWideStr = 0x0A10D, // arg - reference
 //   lxConstantChar    = 0x0A10E, // arg - reference
    lxConstantInt     = 0x1A10F, // arg - reference
 //   lxConstantLong    = 0x1A110, // arg - reference
@@ -204,13 +204,14 @@ enum LexicalType
    lxOperatorAttr    = 0x20021,
 //   lxNotFoundAttr    = 0x20022,
    lxBinarySelf      = 0x20023, // debug info only
-//   lxOvreriddenMessage = 0x20024, // arg - message
+   lxOvreriddenMessage = 0x20024, // arg - message
 //   lxClassRef        = 0x20025,
 //   lxPreloadedAttr   = 0x20026,
 //   lxInclude         = 0x20027,
 //   lxTemplateField   = 0x20028,
    lxNameAttr        = 0x20029,
    lxTypeAttr        = 0x2002A,
+   lxStacksafeAttr   = 0x2002B,
 
 //   lxFieldAttrMask   = 0x20100,
 //   lxStaticAttr      = 0x20102,
