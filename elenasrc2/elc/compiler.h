@@ -1184,9 +1184,9 @@ public:
 
    void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 
-//   // _Compiler interface implementation
+   // _Compiler interface implementation
 //   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
-////   virtual void injectBoxing(_CompilerScope& scope, SNode node, LexicalType boxingType, int argument, ref_t targetClassRef);
+   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef);
    virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);

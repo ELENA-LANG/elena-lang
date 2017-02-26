@@ -44,7 +44,7 @@
 //#define V_WARNING2    (ref_t)-4100
 //#define V_WARNING3    (ref_t)-4101
 
-//#define V_STATCKSAFE  (ref_t)-8192
+#define V_STATCKSAFE  (ref_t)-8192
 #define V_EMBEDDABLE  (ref_t)-8193
 ////#define V_STATIC      (ref_t)-8194
 #define V_SEALED      (ref_t)-8195
@@ -64,7 +64,7 @@
 #define V_CONSTRUCTOR   (ref_t)-16384
 #define V_VARIABLE      (ref_t)-16385
 #define V_CLASS         (ref_t)-16386
-//#define V_CONVERSION    (ref_t)-16387
+#define V_CONVERSION    (ref_t)-16387
 
 namespace _ELENA_
 {
@@ -151,7 +151,7 @@ class _Compiler
 {
 public:
 //   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument) = 0;
-////   virtual void injectBoxing(_CompilerScope& scope, SNode node, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
+   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef) = 0;
 //   virtual void injectFieldExpression(SNode node) = 0;
 //

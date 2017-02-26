@@ -85,6 +85,7 @@ In development:
                  * system should be included by default
                  * compile n + m * k
                  * compile obj prop := n.
+                 * do not box numeric constants
 
               xdev - generic development
                  * support property template

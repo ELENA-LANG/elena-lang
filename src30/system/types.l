@@ -2,16 +2,16 @@
 #template(-16385) var {}
 #template(-16386) class {}
 #template(-16384) constructor {}
-//#template(-16387) conversion {}
-//
-////#template(-8194) static {}
-////#template(-8207) preloaded {}
-////#template(-8202) generic {}
-//#template(-8192) stacksafe {}
-////#template(-8205) action {}
-////#template(-4099) w1 {}
-////#template(-4100) w2 {}
-////#template(-4101) w3 {}
+#template(-16387) conversion {}
+
+//#template(-8194) static {}
+//#template(-8207) preloaded {}
+//#template(-8202) generic {}
+#template(-8192) stacksafe {}
+//#template(-8205) action {}
+//#template(-4099) w1 {}
+//#template(-4100) w2 {}
+//#template(-4101) w3 {}
 #template(-8195) sealed  {}
 //#template(-8199) dynamic {}
 //#template(-8196) limited {}

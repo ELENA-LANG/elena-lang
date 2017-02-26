@@ -549,24 +549,28 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
    ClassInfo info;
    defineClassInfo(scope, info, targetRef);   
 
-   //// if the target class is wrapper around the source
-   //if (test(info.header.flags, elWrapper)) {
-   //   ref_t fieldRef = info.fieldTypes.get(0);
+   // if the target class is wrapper around the source
+   if (test(info.header.flags, elWrapper)) {
+      ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
 
-   //   bool compatible = false;
-   //   if (test(info.header.flags, elStructureWrapper) && isPrimitiveRef(sourceRef)) {
-   //      compatible = isCompatible(scope, sourceRef, fieldRef);
-   //   }
-   //   else compatible = isCompatible(scope, fieldRef, sourceRef);
+      bool compatible = false;
+      if (test(info.header.flags, elStructureWrapper)) {
+         if (isPrimitiveRef(sourceRef)) {
+            compatible = isCompatible(scope, sourceRef, inner.value1);
+         }
+         // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
+         else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef);
+      }
+      else compatible = isCompatible(scope, inner.value1, sourceRef);
 
-   //   if (compatible) {
-   //      compiler.injectBoxing(scope, node, 
-   //         isReadonly(info) ? lxBoxing : lxUnboxing,
-   //         test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
+      if (compatible) {
+         compiler.injectBoxing(writer, scope, 
+            isReadonly(info) ? lxBoxing : lxUnboxing,
+            test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
 
-   //      return true;
-   //   }
-   //}
+         return true;
+      }
+   }
 
    //// HOT FIX : trying to typecast primitive structure array
    //if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
@@ -930,27 +934,27 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_IFNOTBRANCH:
          attrValue = tpIfNotBranch;
          return true;
-//      case V_STATCKSAFE:
-//         attrValue = tpStackSafe;
+      case V_STATCKSAFE:
+         attrValue = tpStackSafe;
+         return true;
+//      case V_EMBEDDABLE:
+//         attrValue = tpEmbeddable;
 //         return true;
-////      case V_EMBEDDABLE:
-////         attrValue = tpEmbeddable;
-////         return true;
-////      case V_GENERIC:
-////         attrValue = tpGeneric;
-////         return true;
-//      case V_SEALED:
-//         attrValue = tpSealed;
+//      case V_GENERIC:
+//         attrValue = tpGeneric;
 //         return true;
-////      case V_ACTION:
-////         attrValue = tpAction;
-////         return true;
+      case V_SEALED:
+         attrValue = tpSealed;
+         return true;
+//      case V_ACTION:
+//         attrValue = tpAction;
+//         return true;
       case V_CONSTRUCTOR:
          attrValue = tpConstructor;
          return true;
-//      case V_CONVERSION:
-//         attrValue = tpConversion;
-//         return true;
+      case V_CONVERSION:
+         attrValue = tpConversion;
+         return true;
       default:
          return false;
    }
