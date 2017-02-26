@@ -7814,7 +7814,10 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
             writer.closeNode();
             break;
             //}
-   //         default:
+         case lxObject:
+            writer.newBookmark();
+            generateObjectTree(writer, current, scope);
+            writer.removeBookmark();
    //            if (operationMode && current.existChild(lxTerminal)) {
    //               //if ((Symbol)node.type == nsNewOperator) {
    //               //   //HOTFIX : mark new operator
@@ -7831,7 +7834,7 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
    //
    //               _writer.newBookmark();               
    //            }
-   //            break;
+            break;
       }
       current = current.nextNode();
    }
@@ -7911,13 +7914,16 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          break;
       default:
       {
-         SNode terminal = current.findChild(lxIdentifier, lxReference, lxPrivate, lxInteger, lxMessageReference);
+         SNode terminal = current.findChild(lxIdentifier, lxReference, lxPrivate, lxInteger, lxMessageReference, lxExpression);
          if (terminal == lxMessageReference) {
             writer.newNode(lxExpression);
             writer.newNode(terminal.type);
             copyIdentifier(writer, terminal.findChild(lxIdentifier, lxPrivate));
             writer.closeNode();
             writer.closeNode();
+         }
+         else if (terminal == lxExpression) {
+            generateExpressionTree(writer, current, scope, false);
          }
          else {
             if (terminal != lxNone)
@@ -7991,7 +7997,7 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
       }
-      else {
+      else if (current == lxObject || current == lxMessage) {
          writer.newBookmark();
          generateObjectTree(writer, current, scope);
          writer.removeBookmark();

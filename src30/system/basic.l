@@ -223,70 +223,70 @@ const false = BaseBoolValue
 // A base value
 class BaseValue
 {
-//    /// Compares the values
-//    equal : anObject = anObject cast:%equal &to:$self bool.
-//
-//    /// Compares the values
-//    bool less : anObject = anObject cast:%less &to:$self bool.
-//
-//    /// Compares the values
-//    bool greater : anObject = anObject less:$self bool.
-//
-//    bool notless : anObject = $self less:anObject inverted.
-//
-//    bool notgreater : anObject = $self greater:anObject inverted.
+    /// Compares the values
+    equal : anObject = anObject cast:%equal &to:$self bool.
+
+    /// Compares the values
+    bool less : anObject = anObject cast:%less &to:$self bool.
+
+    /// Compares the values
+    bool greater : anObject = anObject less:$self bool.
+
+    bool notless : anObject = $self less:anObject inverted.
+
+    bool notgreater : anObject = $self greater:anObject inverted.
 }
 
-//// --- BaseNumber ---
-//
-///// A base numeric value
-//class BaseNumber :: BaseValue
-//{
-//    /// Adds the value
-//    add : anObject = anObject cast:%add &to:$self.
-//
-//    /// Subtracts the value
-//    subtract : anObject = anObject cast:%subtract &to:$self.
-//
-//    /// Multiply by the value
-//    multiply : anObject = anObject cast:%multiply &to:$self.
-//
-//    /// Divides into the value
-//    divide : anObject = anObject cast:%divide &to:$self.
-//    
-//    negative
-//        = 0 - self.
-//}
-//
-//// --- IntBaseNumber ---
-//
-///// A base integer value
-//class IntBaseNumber :: BaseNumber
-//{
-//    /// Execute bitwise AND operation
-//    and : anObject = anObject cast:%and &to:$self.
-//
-//    /// Execute bitwise OR operation
-//    or : anObject = anObject cast:%or &to:$self.
-//    
-//    /// Execute bitwise XOR operation
-//    xor : anObject = anObject cast:%xor &to:$self.
-//    
-//    /// Returns true if all the mask bits are set
-//    allMask : anOperand
-//        = $self and:anOperand == anOperand.
-//        
-//    /// Returns true if any of the mask bits are set    
-//    anyMask : anOperand
-//        = 0 != $self and:anOperand.
-//
-//    shift &int:v [ ]
-//    
-//    /// Bitwise shift operation
-//    shift : anOrder
-//        <= shift &int:(anOrder int).
-//}
-//
+// --- BaseNumber ---
+
+/// A base numeric value
+class BaseNumber :: BaseValue
+{
+    /// Adds the value
+    add : anObject = anObject cast:%add &to:$self.
+
+    /// Subtracts the value
+    subtract : anObject = anObject cast:%subtract &to:$self.
+
+    /// Multiply by the value
+    multiply : anObject = anObject cast:%multiply &to:$self.
+
+    /// Divides into the value
+    divide : anObject = anObject cast:%divide &to:$self.
+    
+    negative
+        = 0 - self.
+}
+
+// --- IntBaseNumber ---
+
+/// A base integer value
+class IntBaseNumber :: BaseNumber
+{
+    /// Execute bitwise AND operation
+    and : anObject = anObject cast:%and &to:$self.
+
+    /// Execute bitwise OR operation
+    or : anObject = anObject cast:%or &to:$self.
+    
+    /// Execute bitwise XOR operation
+    xor : anObject = anObject cast:%xor &to:$self.
+    
+    /// Returns true if all the mask bits are set
+    allMask : anOperand
+        = $self and:anOperand == anOperand.
+        
+    /// Returns true if any of the mask bits are set    
+    anyMask : anOperand
+        = 0 != $self and:anOperand.
+
+    shift &int:v [ ]
+    
+    /// Bitwise shift operation
+    shift : anOrder
+        <= shift &int:(anOrder int).
+}
+
 //// --- ByteNumber ---
 //
 ///// An unsigned 8 bit integer
@@ -788,12 +788,12 @@ class BaseValue
 ////        ^ aCode.
 ////    ]        
 //}
-//
-//// --- IntNumber ---
-//
-///// A signed 32 bit integer
-//sealed embeddable dispatchable(int) struct IntNumber :: IntBaseNumber
-//{
+
+// --- IntNumber ---
+
+/// A signed 32 bit integer
+/*sealed embeddable dispatchable(int) struct */IntNumber :: IntBaseNumber
+{
 //    __int32 theValue.
 //
 ////    #constructor(stacksafe)&byte:n
@@ -1048,12 +1048,12 @@ class BaseValue
 ////    /// Bitwise inversion
 ////    #method(int,stacksafe) inverted
 ////        => system'core_routines'__int.  
-////        
-//////    /// Negates the value
-//////    #method(stacksafe/*,suppress:w3*/) negative
-//////        = 0 - theValue.
-//}
-//
+//        
+////    /// Negates the value
+////    #method(stacksafe/*,suppress:w3*/) negative
+////        = 0 - theValue.
+}
+
 ////// --- LongNumber ---
 ////
 /////// A signed 64 bit integer value

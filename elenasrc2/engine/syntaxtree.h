@@ -33,6 +33,7 @@ enum LexicalType
    // scopes
    lxRoot            = 0x00001,
    lxIdle            = 0x00002,
+   lxObject          = 0x00003,
    lxClass           = 0x0000E,
    lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,

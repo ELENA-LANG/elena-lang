@@ -435,6 +435,13 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsAssigning:
          _writer.newNode(lxAssigning);
          break;
+      case nsResendExpression:
+         _writer.newNode(lxResendExpression);
+         break;
+      case nsObject:
+         _writer.newNode(lxObject);
+         break;
+      case nsL4Operation:
       case nsL7Operation:
          _writer.newNode(lxOperator);
          break;
