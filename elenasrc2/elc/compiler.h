@@ -457,10 +457,8 @@ private:
    struct ClassScope : public SourceScope
    {
       ClassInfo   info;
-//      bool        withConstructors;
-//      int         declaredFlags;
-////      ref_t       extensionMode;
-//
+      ref_t       extensionMode;
+
 //      virtual int getMethodInfo(ref_t message, MethodAttribute attr)
 //      {
 //         return info.methodHints.get(ClassInfo::Attribute(message, attr));
@@ -1080,7 +1078,7 @@ private:
    void generateMethodDeclarations(SNode node, ClassScope& scope/*, bool hideDuplicates*/, bool closed, bool classClassMode);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode);
 
-   void generateClassImplementation(SNode node, ModuleScope& scope);
+   void generateClassImplementation(SNode node, ClassScope& scope);
 
 ////   void buildClassDeclaration(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassDeclaration(SNode node, ClassScope& scope);
@@ -1133,12 +1131,12 @@ private:
    void optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    void optimizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope);
-   void optimizeClassTree(SNode node, ModuleScope& scope, WarningScope& warningScope);
-////   void optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask);
-////
-////   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
-////
-////   void createPackageInfo(_Module* module, _ProjectManager& project);
+   void optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);
+//   void optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask);
+
+   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
+
+//   void createPackageInfo(_Module* module, _ProjectManager& project);
 
 ////
 ////   void compileModule(SNode node, ModuleScope& scope);
@@ -1192,8 +1190,8 @@ public:
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef);
    virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef);
-//   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
-//   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
+   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
+   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 //   virtual void injectFieldExpression(SNode node);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);

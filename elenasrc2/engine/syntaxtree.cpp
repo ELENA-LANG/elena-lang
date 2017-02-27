@@ -9,7 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "syntaxtree.h"
-//#include <stdarg.h>
+#include <stdarg.h>
 
 using namespace _ELENA_;
 
@@ -497,84 +497,84 @@ SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
    return Node();
 }
 
-//bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)
-//{
-//   va_list argptr;
-//   va_start(argptr, counter);
-//
-//   Node member = node.firstChild();
-//   if (member == lxNone)
-//      return false;
-//
-//   for (int i = 0; i < counter; i++) {
-//      // get the next pattern
-//      NodePattern pattern = va_arg(argptr, NodePattern);
-//
-//      // find the next tree node
-//      while (!test(member.type, mask)) {
-//         member = member.nextNode();
-//         if (member == lxNone) {
-//            va_end(argptr);
-//            return false;
-//         }
-//      }
-//
-//      if (!pattern.match(member)) {
-//         va_end(argptr);
-//         return false;
-//      }
-//      else member = member.nextNode();
-//   }
-//
-//   va_end(argptr);
-//   return true;
-//}
-//
-//SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
-//{
-//   va_list argptr;
-//   va_start(argptr, counter);
-//
-//   size_t level = 1;
-//   Node nodes[0x10];
-//   nodes[0] = node;
-//
-//   for (int i = 0; i < counter; i++) {
-//      // get the next pattern
-//      NodePattern pattern = va_arg(argptr, NodePattern);
-//
-//      size_t newLevel = level;
-//      for (size_t j = 0; j < level; j++) {
-//         Node member = nodes[j].firstChild();
-//
-//         if (member != lxNone) {
-//            // find the matched member
-//            while (member != lxNone) {
-//               if (pattern.match(member)) {
-//                  nodes[newLevel] = member;
-//                  newLevel++;
-//               }
-//
-//               member = member.nextNode();
-//            }
-//         }
-//      }
-//
-//      size_t oldLevel = level;
-//      level = 0;
-//      for (size_t j = oldLevel; j < newLevel; j++) {
-//         nodes[level] = nodes[j];
-//         level++;
-//      }
-//
-//      if (level == 0) {
-//         nodes[0] = Node();
-//
-//         break;
-//      }
-//         
-//   }
-//
-//   return nodes[0];
-//}
+bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)
+{
+   va_list argptr;
+   va_start(argptr, counter);
+
+   Node member = node.firstChild();
+   if (member == lxNone)
+      return false;
+
+   for (int i = 0; i < counter; i++) {
+      // get the next pattern
+      NodePattern pattern = va_arg(argptr, NodePattern);
+
+      // find the next tree node
+      while (!test(member.type, mask)) {
+         member = member.nextNode();
+         if (member == lxNone) {
+            va_end(argptr);
+            return false;
+         }
+      }
+
+      if (!pattern.match(member)) {
+         va_end(argptr);
+         return false;
+      }
+      else member = member.nextNode();
+   }
+
+   va_end(argptr);
+   return true;
+}
+
+SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
+{
+   va_list argptr;
+   va_start(argptr, counter);
+
+   size_t level = 1;
+   Node nodes[0x10];
+   nodes[0] = node;
+
+   for (int i = 0; i < counter; i++) {
+      // get the next pattern
+      NodePattern pattern = va_arg(argptr, NodePattern);
+
+      size_t newLevel = level;
+      for (size_t j = 0; j < level; j++) {
+         Node member = nodes[j].firstChild();
+
+         if (member != lxNone) {
+            // find the matched member
+            while (member != lxNone) {
+               if (pattern.match(member)) {
+                  nodes[newLevel] = member;
+                  newLevel++;
+               }
+
+               member = member.nextNode();
+            }
+         }
+      }
+
+      size_t oldLevel = level;
+      level = 0;
+      for (size_t j = oldLevel; j < newLevel; j++) {
+         nodes[level] = nodes[j];
+         level++;
+      }
+
+      if (level == 0) {
+         nodes[0] = Node();
+
+         break;
+      }
+         
+   }
+
+   return nodes[0];
+}
 

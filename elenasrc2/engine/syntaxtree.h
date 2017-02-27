@@ -213,6 +213,7 @@ enum LexicalType
    lxTypeAttr        = 0x2002A,
    lxStacksafeAttr   = 0x2002B,
    lxTemplateType    = 0x2002C,
+   lxEmbeddableAttr  = 0x2002D,
 
 //   lxFieldAttrMask   = 0x20100,
 //   lxStaticAttr      = 0x20102,
@@ -360,7 +361,7 @@ public:
       }
    };
 
-//   struct NodePattern;
+   struct NodePattern;
 
    // --- Node ---
    class Node
@@ -599,10 +600,10 @@ public:
          tree->refresh(*this);
       }
 
-//      Node findPattern(NodePattern pattern)
-//      {
-//         return tree->findPattern(*this, 1, pattern);
-//      }
+      Node findPattern(NodePattern pattern)
+      {
+         return tree->findPattern(*this, 1, pattern);
+      }
 
       Node findChild(LexicalType type)
       {
@@ -794,32 +795,32 @@ public:
       }
    };
 
-//   struct NodePattern
-//   {
-//      LexicalType type;
-//      LexicalType alt_type1;
-//
-//      bool match(Node node)
-//      {
-//         return node.type == type || node.type == alt_type1;
-//      }
-//
-//      NodePattern()
-//      {
-//         type = lxNone;
-//         alt_type1 = lxInvalid;
-//      }
-//      NodePattern(LexicalType type)
-//      {
-//         this->type = type;
-//         this->alt_type1 = lxInvalid;
-//      }
-//      NodePattern(LexicalType type1, LexicalType type2)
-//      {
-//         this->type = type1;
-//         this->alt_type1 = type2;
-//      }
-//   };
+   struct NodePattern
+   {
+      LexicalType type;
+      LexicalType alt_type1;
+
+      bool match(Node node)
+      {
+         return node.type == type || node.type == alt_type1;
+      }
+
+      NodePattern()
+      {
+         type = lxNone;
+         alt_type1 = lxInvalid;
+      }
+      NodePattern(LexicalType type)
+      {
+         this->type = type;
+         this->alt_type1 = lxInvalid;
+      }
+      NodePattern(LexicalType type1, LexicalType type2)
+      {
+         this->type = type1;
+         this->alt_type1 = type2;
+      }
+   };
 
 private:
    Node read(StreamReader& reader);
@@ -854,8 +855,8 @@ public:
       return counter;
    }
 
-//   static Node findPattern(Node node, int counter, ...);
-//   static bool matchPattern(Node node, int mask, int counter, ...);
+   static Node findPattern(Node node, int counter, ...);
+   static bool matchPattern(Node node, int mask, int counter, ...);
 
    Node readRoot();
    Node readFirstNode(size_t position);
@@ -920,7 +921,7 @@ inline bool isSingleStatement(SyntaxTree::Node expr)
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
-//typedef SyntaxTree::NodePattern  SNodePattern;
+typedef SyntaxTree::NodePattern  SNodePattern;
 
 } // _ELENA_
 

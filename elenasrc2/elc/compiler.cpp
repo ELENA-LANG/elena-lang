@@ -984,10 +984,7 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.packageRef = parent->packageReference;
    info.size = 0;
 
-//   withConstructors = false;
-//
-//   declaredFlags = 0;
-////   extensionMode = 0;
+   extensionMode = 0;
 }
 
 ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
@@ -2991,6 +2988,9 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
       if (result.stackSafe)
          writer.appendNode(lxStacksafeAttr);
+
+      if (result.embeddable)
+         writer.appendNode(lxEmbeddableAttr);
    }
 //   else {
 //      // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
@@ -3474,7 +3474,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
    scope.save();
 
-   generateClassImplementation(expressionTree.readRoot(), *scope.moduleScope/*, test(scope.info.header.flags, elClosed)*/);
+   generateClassImplementation(expressionTree.readRoot(), scope/*, test(scope.info.header.flags, elClosed)*/);
 }
 
 void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
@@ -3499,7 +3499,7 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 
    writer.closeNode();
 
-   generateClassImplementation(expressionTree.readRoot(), *scope.moduleScope);
+   generateClassImplementation(expressionTree.readRoot(), scope);
 }
 
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope)
@@ -5356,7 +5356,7 @@ void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNo
    compileClassVMT(writer, node, classClassScope, classScope);
    writer.closeNode();
 
-   generateClassImplementation(expressionTree.readRoot(), *classScope.moduleScope);
+   generateClassImplementation(expressionTree.readRoot(), classScope);
 }
 
 //////void Compiler :: declareTemplateMethods(SNode node, ClassScope& scope)
@@ -6106,9 +6106,9 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 //      compileSymbolCode(*scope.moduleScope, scope.reference);
 }
 
-void Compiler :: generateClassImplementation(SNode node, ModuleScope& scope)
+void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 {
-   WarningScope warningScope(scope.warningMask);
+   WarningScope warningScope(scope.moduleScope->warningMask);
 
    optimizeClassTree(node, scope, warningScope);
 
@@ -6120,8 +6120,8 @@ void Compiler :: generateClassImplementation(SNode node, ModuleScope& scope)
 
    //// create byte code sections
    //scope.save();
-   _writer.save(tape, scope.module, scope.debugModule,
-      scope.sourcePathRef);
+   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule,
+      scope.moduleScope->sourcePathRef);
 }
 
 void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope)
@@ -6140,7 +6140,7 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
    compileVMT(writer, node, scope);
    writer.closeNode();
 
-   generateClassImplementation(expressionTree.readRoot(), *scope.moduleScope);
+   generateClassImplementation(expressionTree.readRoot(), scope);
 
    // compile explicit symbol
    // extension cannot be used stand-alone, so the symbol should not be generated
@@ -6889,10 +6889,11 @@ ref_t Compiler :: optimizeMessageCall(SNode node, ModuleScope& scope, WarningSco
    if (node.existChild(lxStacksafeAttr)) {
       mode |= HINT_NOBOXING;
    }
-   //if (test(hint, tpEmbeddable)) {
-   //   if (!_logic->optimizeEmbeddable(node, scope))
-   //      node.appendNode(lxEmbeddable);
-   //}
+
+   if (node.existChild(lxEmbeddableAttr)) {
+      if (!_logic->optimizeEmbeddable(node, scope))
+         node.appendNode(lxEmbeddable);
+   }
 
    optimizeExpressionTree(node, scope, warningScope, mode);
 
@@ -6946,11 +6947,11 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
                }
             }
          }
-         //else if (subNode != lxNone && subNode.existChild(lxEmbeddable)) {
-         //   if (!_logic->optimizeEmbeddableGet(scope, *this, node)) {
-         //      _logic->optimizeEmbeddableOp(scope, *this, node);
-         //   }
-         //}
+         else if (subNode != lxNone && subNode.existChild(lxEmbeddable)) {
+            if (!_logic->optimizeEmbeddableGet(scope, *this, node)) {
+               _logic->optimizeEmbeddableOp(scope, *this, node);
+            }
+         }
       }
    }
 
@@ -7098,7 +7099,7 @@ void Compiler :: optimizeMethod(SNode node, ModuleScope& scope, WarningScope& wa
    }
 }
 
-void Compiler :: optimizeClassTree(SNode node, ModuleScope& scope, WarningScope& warningScope)
+void Compiler :: optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -7106,101 +7107,85 @@ void Compiler :: optimizeClassTree(SNode node, ModuleScope& scope, WarningScope&
 //         SNode mask = current.findChild(lxWarningMask);
 //         if (mask != lxNone)
 //            warningScope.warningMask = mask.argument;
-//
-//         optimizeSyntaxExpression(*scope.moduleScope, current, warningScope);
-         optimizeMethod(current, scope, warningScope);
-//
-//         // HOTFIX : analize nested template methods
-//         optimizeClassTree(current, scope, warningScope);
-//
-//         if (test(_optFlag, 1)) {
-//            if (test(scope.info.methodHints.get(Attribute(current.argument, maHint)), tpEmbeddable)) {
-//               defineEmbeddableAttributes(scope, current);
-//            }
-//         }
+
+         optimizeMethod(current, *scope.moduleScope, warningScope);
+
+         if (test(_optFlag, 1)) {
+            if (test(scope.info.methodHints.get(Attribute(current.argument, maHint)), tpEmbeddable)) {
+               defineEmbeddableAttributes(scope, current);
+            }
+         }
 //      }
-//      else if (current == lxIdle) {
-//         // HOTFIX : analize nested template methods
-//         optimizeClassTree(current, scope, warningScope);
-//      }
-//      else if (current == lxTemplate) {
-//         WarningScope templateWarningScope;
-//         templateWarningScope.warningMask = warningScope.warningMask;
-//         templateWarningScope.col = current.findChild(lxCol).argument;
-//         templateWarningScope.row = current.findChild(lxRow).argument;
-//
-//         // HOTFIX : analize nested template methods
-//         optimizeClassTree(current, scope, templateWarningScope);
       }
 
       current = current.nextNode();
    }
 }
 
-//////void Compiler :: optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask)
-//////{
-//////   WarningScope warningScope(warningMask);
-//////
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      /*if (current == lxWarningMask) {
-//////         warningMask = current.argument;
-//////      }
-//////      else */if (test(current.type, lxExprMask)) {
-//////         optimizeSyntaxExpression(*scope.moduleScope, current, warningScope);
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////}
-//////
-//////void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
-//////{
-//////   // Optimization : var = get&subject => eval&subject&var[1]
-//////   ref_t type = 0;
-//////   ref_t returnType = classScope.info.methodHints.get(ClassInfo::Attribute(methodNode.argument, maType));
-//////   if (_logic->recognizeEmbeddableGet(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGet), type);
-//////
-//////      // HOTFIX : allowing to recognize embeddable get in the class itself
-//////      classScope.save();
-//////   }
-//////   // Optimization : var = getAt&int => read&int&subject&var[2]
-//////   else if (_logic->recognizeEmbeddableGetAt(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt), type);
-//////
-//////      // HOTFIX : allowing to recognize embeddable get in the class itself
-//////      classScope.save();
-//////   }
-//////   // Optimization : var = getAt&int => read&int&subject&var[2]
-//////   else if (_logic->recognizeEmbeddableGetAt2(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt2), type);
-//////
-//////      // HOTFIX : allowing to recognize embeddable get in the class itself
-//////      classScope.save();
-//////   }
-//////   // Optimization : var = eval&subj&int => eval&subj&var[2]
-//////   else if (_logic->recognizeEmbeddableEval(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval), type);
-//////
-//////      // HOTFIX : allowing to recognize embeddable get in the class itself
-//////      classScope.save();
-//////   }
-//////
-//////   // Optimization : subject'get = self
-//////   if (_logic->recognizeEmbeddableIdle(methodNode)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableIdle), INVALID_REF);
-//////   }
-//////}
-//////
-//////void Compiler :: compileForward(SNode ns, ModuleScope& scope)
-//////{
-//////   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
-//////   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
-//////
-//////   if (!scope.defineForward(shortcut, reference))
-//////      scope.raiseError(errDuplicatedDefinition, ns);
-//////}
+//void Compiler :: optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask)
+//{
+//   WarningScope warningScope(warningMask);
+//
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      /*if (current == lxWarningMask) {
+//         warningMask = current.argument;
+//      }
+//      else */if (test(current.type, lxExprMask)) {
+//         optimizeSyntaxExpression(*scope.moduleScope, current, warningScope);
+//      }
+//
+//      current = current.nextNode();
+//   }
+//}
+
+void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
+{
+   // Optimization : var = get&subject => eval&subject&var[1]
+   ref_t type = 0;
+   ref_t returnType = classScope.info.methodHints.get(ClassInfo::Attribute(methodNode.argument, maType));
+   if (_logic->recognizeEmbeddableGet(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGet), type);
+
+      // HOTFIX : allowing to recognize embeddable get in the class itself
+      classScope.save();
+   }
+   // Optimization : var = getAt&int => read&int&subject&var[2]
+   else if (_logic->recognizeEmbeddableGetAt(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt), type);
+
+      // HOTFIX : allowing to recognize embeddable get in the class itself
+      classScope.save();
+   }
+   // Optimization : var = getAt&int => read&int&subject&var[2]
+   else if (_logic->recognizeEmbeddableGetAt2(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt2), type);
+
+      // HOTFIX : allowing to recognize embeddable get in the class itself
+      classScope.save();
+   }
+   // Optimization : var = eval&subj&int => eval&subj&var[2]
+   else if (_logic->recognizeEmbeddableEval(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval), type);
+
+      // HOTFIX : allowing to recognize embeddable get in the class itself
+      classScope.save();
+   }
+
+   // Optimization : subject'get = self
+   if (_logic->recognizeEmbeddableIdle(methodNode)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableIdle), INVALID_REF);
+   }
+}
+
+//void Compiler :: compileForward(SNode ns, ModuleScope& scope)
+//{
+//   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
+//   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
+//
+//   if (!scope.defineForward(shortcut, reference))
+//      scope.raiseError(errDuplicatedDefinition, ns);
+//}
 
 void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope)
 {
@@ -7766,7 +7751,7 @@ void Compiler :: generateVariableTree(SyntaxWriter& writer, SNode node, Template
    SNode current = node.firstChild();
    SNode attr = current.findChild(lxIdentifier, lxPrivate);
    int dummy = 0;
-   ref_t attrRef = (attr == lxPrivate) ? scope.mapAttribute(attr, dummy) : 0;
+   ref_t attrRef = (attr != lxPrivate) ? scope.mapAttribute(attr, dummy) : 0;
    if (attrRef != 0) {
       while (current != lxAssigning) {
          current = lxAttribute;
@@ -8451,33 +8436,33 @@ void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, i
    writer.closeNode();
 }
 
-////void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject)
-////{
-////   // removing assinging operation
-////   assignNode = lxExpression;
-////
-////   // move assigning target into the call node
-////   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
-////   if (assignTarget != lxNone) {
-////      callNode.appendNode(assignTarget.type, assignTarget.argument);
-////      assignTarget = lxIdle;
-////      callNode.setArgument(encodeMessage(subject, EVAL_MESSAGE_ID, 1));
-////   }
-////}
-////
-////void Compiler :: injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb)
-////{
-////   // removing assinging operation
-////   assignNode = lxExpression;
-////
-////   // move assigning target into the call node
-////   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
-////   if (assignTarget != lxNone) {
-////      callNode.appendNode(assignTarget.type, assignTarget.argument);
-////      assignTarget = lxIdle;
-////      callNode.setArgument(encodeMessage(subject, verb, paramCount));
-////   }
-////}
+void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject)
+{
+   // removing assinging operation
+   assignNode = lxExpression;
+
+   // move assigning target into the call node
+   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+   if (assignTarget != lxNone) {
+      callNode.appendNode(assignTarget.type, assignTarget.argument);
+      assignTarget = lxIdle;
+      callNode.setArgument(encodeMessage(subject, EVAL_MESSAGE_ID, 1));
+   }
+}
+
+void Compiler :: injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb)
+{
+   // removing assinging operation
+   assignNode = lxExpression;
+
+   // move assigning target into the call node
+   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+   if (assignTarget != lxNone) {
+      callNode.appendNode(assignTarget.type, assignTarget.argument);
+      assignTarget = lxIdle;
+      callNode.setArgument(encodeMessage(subject, verb, paramCount));
+   }
+}
 
 void Compiler :: injectLocalBoxing(SNode node, int size)
 {

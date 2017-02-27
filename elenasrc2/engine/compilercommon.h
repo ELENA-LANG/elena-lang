@@ -154,9 +154,9 @@ public:
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef) = 0;
 //   virtual void injectFieldExpression(SNode node) = 0;
-//
-//   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
-//   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
+
+   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
+   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
 
    virtual void injectLocalBoxing(SNode node, int size) = 0;
 //   //virtual int injectTempLocal(SNode node) = 0;
@@ -177,11 +177,12 @@ public:
       bool  withCustomDispatcher;
       bool  closed;
       bool  stackSafe;
+      bool  embeddable;
       ref_t outputReference;
 
       ChechMethodInfo()
       {
-         closed = found = false;
+         embeddable = closed = found = false;
          outputReference = 0;
          withCustomDispatcher = false;
          stackSafe = false;
@@ -256,18 +257,18 @@ public:
 
    // optimization
    virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool assingingMode) = 0;
-////   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
-////   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
-////   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
-////   virtual bool recognizeEmbeddableEval(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
-////   virtual bool recognizeEmbeddableIdle(SNode node) = 0;
-////   virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope) = 0;
-////
-////   virtual void optimizeDuplicateBoxing(SNode node) = 0;
-////
-////   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
-////   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
-//   
+   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
+   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
+   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
+   virtual bool recognizeEmbeddableEval(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
+   virtual bool recognizeEmbeddableIdle(SNode node) = 0;
+   virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope) = 0;
+
+//   virtual void optimizeDuplicateBoxing(SNode node) = 0;
+
+   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
+   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
+   
 //   virtual bool recognizeNestedScope(SNode& node) = 0;
 //   virtual bool recognizeScope(SNode& node) = 0;
 //   virtual bool recognizeNewLocal(SNode& node) = 0;

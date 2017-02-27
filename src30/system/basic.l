@@ -518,17 +518,17 @@ sealed embeddable dispatchable(byte) struct ByteNumber :: IntBaseNumber
     /// Clones the value
     clone = ByteNumber new &byte:$self.
 
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode 
-//        => system'core_routines'__int.
-//    
-//    #method(embeddable,int,w3) hash_code
-//    [
-//        #var(int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ aCode.
-//    ]
+    // Reads the object hash code into the output parameter
+    stacksafe readHashCode &vint:aCode 
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        $self readHashCode &vint:aCode.
+        
+        ^ aCode.
+    ]
 }
 
 // --- ShortNumber ---
@@ -573,19 +573,19 @@ sealed embeddable dispatchable(short) struct ShortNumber :: IntBaseNumber
     constructor new : anObject
         <= new &short:(anObject short).
 
-//    /// Returns the byte value        
-//    #method byte = byteConvertor convert &short:$self.
-//    
-//    /// Returns the integer value
-//    #method int = IntNumber new &short:$self.
-//    
-//    /// Returns the long integer value
-//    #method long = LongNumber new &short:$self.
-//    
-//    /// Returns the value as a real number
-//    #method real = RealNumber new &short:$self.
-//
-//    /// Compares the value
+    /// Returns the byte value        
+    byte = byteConvertor convert &short:$self.
+    
+    /// Returns the integer value
+    int = IntNumber new &short:$self.
+    
+    /// Returns the long integer value
+    long = LongNumber new &short:$self.
+    
+    /// Returns the value as a real number
+    real = RealNumber new &short:$self.
+
+    /// Compares the value
 //    #method(bool,stacksafe) equal &short:anOperand 
 //        = theValue == anOperand.
 //        
@@ -1749,112 +1749,112 @@ sealed embeddable dispatchable(int) struct IntNumber :: IntBaseNumber
 ////#class(dispatchable:dto) DTO
 ////{
 ////}
-////
-////// === Basic Convertors ===
-////
-////// --- convertor helpers ---
-////
-/////// A byte convertor
-////#symbol byteConvertor =
-////{
-////    /// Converts a character into a byte value and saves the result into an output parameter
-////    #method(stacksafe) convert &char:aValue &vbyte:aRetVal
-////        => system'core_routines'__byteconvertor.
-////        
-////    /// Converts a short integer into a byte value and saves the result into an output parameter
-////    #method(byte,stacksafe) convert &short:aValue &vbyte:aRetVal
-////        => system'core_routines'__byteconvertor.
-////        
-////    /// Converts an integer into a byte value and saves the result into an output parameter
-////    #method(byte,stacksafe) convert &int:aValue &vbyte:aRetVal
-////        => system'core_routines'__byteconvertor.
-////
-////    /// Converts a long integer into a byte value and saves the result into an output parameter
-////    #method(stacksafe) convert &long:aValue &vbyte:aRetVal
-////        => system'core_routines'__byteconvertor.
-////        
-////    /// Converts a real number into a byte value and saves the result into an output parameter
-////    #method(stacksafe) convert &real:aValue &vbyte:aRetVal
-////        => system'core_routines'__byteconvertor.
-////        
-////    /// Converts a literal value into a byte value and saves the result into an output parameter
-////    #method(stacksafe) convert &literal:aValue &vbyte:aRetVal
-////        => system'core_routines'__byteconvertor.
-////
-////    /// Converts a wide literal value into a byte value and saves the result into an output parameter
-////    #method(stacksafe) convert &wide:aValue &vbyte:aRetVal
-////        => system'core_routines'__byteconvertor.
-////        
-////    /// Returns the parameter        
-////    #method(byte,stacksafe) convert &byte:anInt
-////        = ByteNumber new &byte:(anInt).
-////        
-////    /// Converts a character into a byte value
-////    #method(byte,stacksafe) convert &char:aValue
-////    [
-////        #var(byte)aRetVal.
-////        $self convert &char:aValue &vbyte:aRetVal.
-////        
-////        ^ ByteNumber new &byte:aRetVal.
-////    ]
-////        
-////    /// Converts a short integer into a byte value
-////    #method(byte,stacksafe) convert &short:aValue
-////    [
-////        #var(byte)aRetVal.
-////        $self convert &short:aValue &vbyte:aRetVal.
-////        
-////        ^ ByteNumber new &byte:aRetVal.
-////    ]
-////        
-////    /// Converts an integer into a byte value
-////    #method(byte,stacksafe) convert &int:aValue
-////    [
-////        #var(byte)aRetVal.
-////        $self convert &int:aValue &vbyte:aRetVal.
-////        
-////        ^ ByteNumber new &byte:aRetVal.
-////    ]
-////
-////    /// Converts a long integer into a byte value
-////    #method(byte,stacksafe) convert &long:aValue
-////    [
-////        #var(byte)aRetVal.
-////        $self convert &long:aValue &vbyte:aRetVal.
-////        
-////        ^ ByteNumber new &byte:aRetVal.
-////    ]
-////
-////    /// Converts a real number into a byte value
-////    #method(byte,stacksafe) convert &real:aValue
-////    [
-////        #var(byte)aRetVal.
-////        $self convert &real:aValue &vbyte:aRetVal.
-////        
-////        ^ ByteNumber new &byte:aRetVal.
-////    ]
-////                
-////    /// Converts a literal value into a byte value
-////    #method(byte,stacksafe) convert &literal:aLiteral
-////    [
-////        #var(byte)aValue.
-////        $self convert &literal:aLiteral &vbyte:aValue.
-////        
-////        ^ ByteNumber new &byte:aValue.
-////    ]
-////                
-////    /// Converts a wide literal value into a byte value
-////    #method(byte,stacksafe) convert &wide:aLiteral
-////    [
-////        #var(byte)aValue. 
-////        $self convert &wide:aLiteral &vbyte:aValue.
-////        
-////        ^ ByteNumber new &byte:aValue.
-////    ]
-////        
-////    #method(byte) convert : anObject
-////        = anObject cast:%convert &to:$self byte.
-////}.
+
+// === Basic Convertors ===
+
+// --- convertor helpers ---
+
+/// A byte convertor
+const byteConvertor =
+{
+//    /// Converts a character into a byte value and saves the result into an output parameter
+//    #method(stacksafe) convert &char:aValue &vbyte:aRetVal
+//        => system'core_routines'__byteconvertor.
+//        
+//    /// Converts a short integer into a byte value and saves the result into an output parameter
+//    #method(byte,stacksafe) convert &short:aValue &vbyte:aRetVal
+//        => system'core_routines'__byteconvertor.
+//        
+//    /// Converts an integer into a byte value and saves the result into an output parameter
+//    #method(byte,stacksafe) convert &int:aValue &vbyte:aRetVal
+//        => system'core_routines'__byteconvertor.
+//
+//    /// Converts a long integer into a byte value and saves the result into an output parameter
+//    #method(stacksafe) convert &long:aValue &vbyte:aRetVal
+//        => system'core_routines'__byteconvertor.
+//        
+//    /// Converts a real number into a byte value and saves the result into an output parameter
+//    #method(stacksafe) convert &real:aValue &vbyte:aRetVal
+//        => system'core_routines'__byteconvertor.
+//        
+//    /// Converts a literal value into a byte value and saves the result into an output parameter
+//    #method(stacksafe) convert &literal:aValue &vbyte:aRetVal
+//        => system'core_routines'__byteconvertor.
+//
+//    /// Converts a wide literal value into a byte value and saves the result into an output parameter
+//    #method(stacksafe) convert &wide:aValue &vbyte:aRetVal
+//        => system'core_routines'__byteconvertor.
+//        
+//    /// Returns the parameter        
+//    #method(byte,stacksafe) convert &byte:anInt
+//        = ByteNumber new &byte:(anInt).
+//        
+//    /// Converts a character into a byte value
+//    #method(byte,stacksafe) convert &char:aValue
+//    [
+//        #var(byte)aRetVal.
+//        $self convert &char:aValue &vbyte:aRetVal.
+//        
+//        ^ ByteNumber new &byte:aRetVal.
+//    ]
+//        
+//    /// Converts a short integer into a byte value
+//    #method(byte,stacksafe) convert &short:aValue
+//    [
+//        #var(byte)aRetVal.
+//        $self convert &short:aValue &vbyte:aRetVal.
+//        
+//        ^ ByteNumber new &byte:aRetVal.
+//    ]
+//        
+//    /// Converts an integer into a byte value
+//    #method(byte,stacksafe) convert &int:aValue
+//    [
+//        #var(byte)aRetVal.
+//        $self convert &int:aValue &vbyte:aRetVal.
+//        
+//        ^ ByteNumber new &byte:aRetVal.
+//    ]
+//
+//    /// Converts a long integer into a byte value
+//    #method(byte,stacksafe) convert &long:aValue
+//    [
+//        #var(byte)aRetVal.
+//        $self convert &long:aValue &vbyte:aRetVal.
+//        
+//        ^ ByteNumber new &byte:aRetVal.
+//    ]
+//
+//    /// Converts a real number into a byte value
+//    #method(byte,stacksafe) convert &real:aValue
+//    [
+//        #var(byte)aRetVal.
+//        $self convert &real:aValue &vbyte:aRetVal.
+//        
+//        ^ ByteNumber new &byte:aRetVal.
+//    ]
+//                
+//    /// Converts a literal value into a byte value
+//    #method(byte,stacksafe) convert &literal:aLiteral
+//    [
+//        #var(byte)aValue.
+//        $self convert &literal:aLiteral &vbyte:aValue.
+//        
+//        ^ ByteNumber new &byte:aValue.
+//    ]
+//                
+//    /// Converts a wide literal value into a byte value
+//    #method(byte,stacksafe) convert &wide:aLiteral
+//    [
+//        #var(byte)aValue. 
+//        $self convert &wide:aLiteral &vbyte:aValue.
+//        
+//        ^ ByteNumber new &byte:aValue.
+//    ]
+//        
+//    #method(byte) convert : anObject
+//        = anObject cast:%convert &to:$self byte.
+}.
 
 /// A 16bit integer convertor
 const shortConvertor =

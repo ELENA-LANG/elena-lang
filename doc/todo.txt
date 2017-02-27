@@ -6,6 +6,8 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
+                 * compile ByteNumber.shift&int[1]
+                 * compile ShortNumber.#private&int[1]
                  * vint.set&int[1] - do not box the variable before assigning
                  * local attribute : do not allow embeddable templates
                  * field attribute : if the template marked as embeddable it should be included into the body, otherwise -
