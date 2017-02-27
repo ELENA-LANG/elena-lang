@@ -3087,6 +3087,9 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
    //   paramMode |= HINT_ALTBOXING;
 
    SNode arg = node.firstChild();
+   if (test(mode, HINT_RESENDEXPR) && (arg == lxMessage && arg.nextNode() != lxMessage)) {
+      arg = arg.nextNode();
+   }
 
    // compile the message target and generic argument list
    while (arg != lxMessage && arg != lxNone) {
@@ -4664,6 +4667,8 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
             assignExpr.appendNode(lxResult);
          }
       }
+
+      writer.closeNode();
 
       writer.removeBookmark();
    }
@@ -7115,7 +7120,6 @@ void Compiler :: optimizeClassTree(SNode node, ClassScope& scope, WarningScope& 
                defineEmbeddableAttributes(scope, current);
             }
          }
-//      }
       }
 
       current = current.nextNode();
