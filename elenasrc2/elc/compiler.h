@@ -721,9 +721,10 @@ private:
    struct TemplateScope : Scope
    {
       ref_t       templateRef;
+      ref_t       reference;
       ForwardMap  parameters;
       SubjectMap  subjects;
-////      bool        classMode;
+      bool        classMode;
 ////      bool        generationMode;
 //      int         sourceRef;
 //
@@ -803,18 +804,18 @@ private:
 
       ref_t mapAttribute(SNode terminal, int& attrValue);
 
-////      void generateClassName(bool newName = false);
-////
-////      TemplateScope(ClassScope* parent)
-////         : ClassScope(parent->moduleScope, parent->reference)
-////      {
-////         this->templateRef = 0;
-////         this->parent = parent;
-////         this->info.header.flags = 0;
-////         this->classMode = false;
-////         this->generationMode = false;
-////         this->sourceRef = -1;
-////      }
+      void generateClassName(bool newName = false);
+
+//      TemplateScope(ClassScope* parent)
+//         : ClassScope(parent->moduleScope, parent->reference)
+//      {
+//         this->templateRef = 0;
+//         this->parent = parent;
+//         this->info.header.flags = 0;
+//         this->classMode = false;
+//         this->generationMode = false;
+//         this->sourceRef = -1;
+//      }
 //      TemplateScope(Scope* parent/*, ref_t attrRef*/)
 //         : ClassScope(parent->moduleScope, 0)
 //      {
@@ -828,10 +829,10 @@ private:
          : Scope(parent)
       {
          templateRef = attrRef;
+         reference = 0;
+         classMode = false;
 
-         //this->parent = NULL;
          //this->templateRef = attrRef;
-         //this->classMode = false;
          //this->generationMode = false;
          //this->sourceRef = -1;
       }
@@ -839,6 +840,8 @@ private:
          : Scope(moduleScope)
       {
          templateRef = 0;
+         reference = 0;
+         classMode = false;
       }
    };
 
@@ -1068,8 +1071,6 @@ private:
 //
 ////   void declareVirtualMethods(ClassScope& scope);
 //
-//   ref_t generateTemplate(TemplateScope& scope);
-
    void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef, int sizeHint, bool singleField);
 //   void generateClassStaticField(ClassScope& scope, SNode current);
 
@@ -1092,7 +1093,7 @@ private:
 //////   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
    void compileIncludeModule(SNode node, ModuleScope& scope);
 //////   void compileForward(SNode node, ModuleScope& scope);
-   void declareSubject(SNode member, ModuleScope& scope);
+   void declareSubject(SyntaxWriter& writer, SNode member, ModuleScope& scope);
 //   void compileSubject(SNode member, ModuleScope& scope);
 //   void declareScope(SyntaxTree& buffer, SNode member, ModuleScope& scope);
 ////   void buildDeclaration(SyntaxWriter& writer, SNode member, ModuleScope& scope);
@@ -1148,11 +1149,12 @@ private:
    void compileImplementations(SNode node, ModuleScope& scope);
 
    void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 
    void generateScopeMembers(SNode node, TemplateScope& scope);
 
-   bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope);
-   void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
+   bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool embeddableMode);
+   void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool embeddableMode = false);
    void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool operationMode);
    void generateObjectTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);

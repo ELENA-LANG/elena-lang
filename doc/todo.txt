@@ -6,6 +6,11 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
+                 * local attribute : do not allow embeddable templates
+                 * field attribute : if the template marked as embeddable it should be included into the body, otherwise -
+                   generate the new class
+                 * method attribute : only embeddable templates should be allowed
+
                  * byte shift operations
 
                  * optimize k := n + m. - remove an extra assignment

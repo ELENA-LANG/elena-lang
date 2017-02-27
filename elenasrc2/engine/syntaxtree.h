@@ -195,7 +195,7 @@ enum LexicalType
    lxElseValue       = 0x20018, // arg - reference
 //   lxSize            = 0x20019,
    lxTemplateParam   = 0x2001A,
-//   lxEmbeddable      = 0x2001B,
+   lxEmbeddable      = 0x2001B,
 //   lxIntExtArgument  = 0x2001C,
 //   lxExtArgument     = 0x2001D,
 //   lxExtInteranlRef  = 0x2001E,
@@ -212,6 +212,7 @@ enum LexicalType
    lxNameAttr        = 0x20029,
    lxTypeAttr        = 0x2002A,
    lxStacksafeAttr   = 0x2002B,
+   lxTemplateType    = 0x2002C,
 
 //   lxFieldAttrMask   = 0x20100,
 //   lxStaticAttr      = 0x20102,
@@ -825,11 +826,12 @@ private:
    void refresh(Node& node);
 
 public:
-   static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type);
-   static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2);
-   static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3);
-   static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4);
-   static void copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5);
+   static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type);
+   static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2);
+   static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3);
+   static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4);
+   static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5);
+   static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6);
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);

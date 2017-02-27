@@ -178,7 +178,7 @@ void SyntaxTree :: saveNode(Node node, _Memory* dump)
 //   copyNode(tree.readRoot(), node);
 //}
 
-void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type)
+void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type)
 {
    SNode current = buffer.readRoot();
    while (current != lxNone) {
@@ -190,12 +190,14 @@ void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type
 
          SyntaxTree::copyNode(writer, current);
          writer.closeNode();
+
+         current = lxIdle;
       }
       current = current.nextNode();
    }
 }
 
-void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2)
+void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2)
 {
    SNode current = buffer.readRoot();
    while (current != lxNone) {
@@ -207,12 +209,14 @@ void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type
 
          SyntaxTree::copyNode(writer, current);
          writer.closeNode();
+
+         current = lxIdle;
       }
       current = current.nextNode();
    }
 }
 
-void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3)
+void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3)
 {
    SNode current = buffer.readRoot();
    while (current != lxNone) {
@@ -224,12 +228,14 @@ void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type
 
          SyntaxTree::copyNode(writer, current);
          writer.closeNode();
+
+         current = lxIdle;
       }
       current = current.nextNode();
    }
 }
 
-void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
+void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
 {
    SNode current = buffer.readRoot();
    while (current != lxNone) {
@@ -241,12 +247,14 @@ void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type
 
          SyntaxTree::copyNode(writer, current);
          writer.closeNode();
+
+         current = lxIdle;
       }
       current = current.nextNode();
    }
 }
 
-void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
+void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
 {
    SNode current = buffer.readRoot();
    while (current != lxNone) {
@@ -258,6 +266,27 @@ void SyntaxTree :: copyTree(Writer& writer, SyntaxTree& buffer, LexicalType type
 
          SyntaxTree::copyNode(writer, current);
          writer.closeNode();
+
+         current = lxIdle;
+      }
+      current = current.nextNode();
+   }
+}
+
+void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6)
+{
+   SNode current = buffer.readRoot();
+   while (current != lxNone) {
+      if (current == type1 || current == type2 || current == type3 || current == type4 || current == type5 || current == type6) {
+         if (current.strArgument >= 0) {
+            writer.newNode(current.type, current.identifier());
+         }
+         else writer.newNode(current.type, current.argument);
+
+         SyntaxTree::copyNode(writer, current);
+         writer.closeNode();
+
+         current = lxIdle;
       }
       current = current.nextNode();
    }
