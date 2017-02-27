@@ -6,7 +6,6 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
-                 * compile IntNumber#class.new[0]
                  * compile ByteNumber.shift&int[1]
                  * compile ShortNumber.shift&int[1]
                  * compile ShortNumber.#private&int[1]
