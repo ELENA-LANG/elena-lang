@@ -28,9 +28,9 @@ using namespace _ELENA_;
 
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
-//#define HINT_NOUNBOXING       0x20000000
-////#define HINT_EXTERNALOP       0x10000000
-//#define HINT_NOCONDBOXING     0x08000000
+#define HINT_NOUNBOXING       0x20000000
+//#define HINT_EXTERNALOP       0x10000000
+#define HINT_NOCONDBOXING     0x08000000
 #define HINT_EXTENSION_MODE   0x04000000
 ////#define HINT_TRY_MODE         0x02000000
 //#define HINT_LOOP             0x01000000
@@ -1617,6 +1617,7 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
                writer.newNode(lxBinaryVariable);
                writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
             }
+            else writer.newNode(lxVariable);
          }
          else writer.newNode(lxVariable);
 
@@ -2973,7 +2974,8 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    }
 
    if (dispatchCall) {
-      node.set(lxDirectCalling, encodeVerb(DISPATCH_MESSAGE_ID));
+      operation = lxDirectCalling;
+      argument = encodeVerb(DISPATCH_MESSAGE_ID);
 
       writer.appendNode(lxOvreriddenMessage, messageRef);
    }
@@ -2991,10 +2993,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //   }
 
    if (classReference)
-      node.appendNode(lxCallTarget, classReference);
+      writer.appendNode(lxCallTarget, classReference);
    
    if (result.outputReference)
-      node.appendNode(lxTarget, result.outputReference);
+      writer.appendNode(lxTarget, result.outputReference);
 
    if (!test(mode, HINT_NODEBUGINFO)) {
       // set a breakpoint
@@ -3008,10 +3010,6 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       writer.closeNode();
    }   
 
-   // inserting calling expression
-   writer.insert(operation, argument);
-   writer.closeNode();   
-
    // define the message target if required
    if (target.kind == okConstantRole || target.kind == okSubject) {
       writer.newNode(lxOverridden);
@@ -3020,6 +3018,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       writer.closeNode();
       writer.closeNode();
    }
+
+   // inserting calling expression
+   writer.insert(operation, argument);
+   writer.closeNode();   
 
    // the result of get&type message should be typed
    if (retVal.param == 0 && paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
@@ -4638,9 +4640,9 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
 
       writer.appendNode(lxCallTarget, classRef);
 
-      compileMessageParameters(writer, node, scope, HINT_RESENDEXPR);
+      compileMessageParameters(writer, expr, scope, HINT_RESENDEXPR);
 
-      compileMessage(writer, node, scope, ObjectInfo(okObject, classRef), messageRef, HINT_RESENDEXPR);
+      compileMessage(writer, expr, scope, ObjectInfo(okObject, classRef), messageRef, HINT_RESENDEXPR);
       
       if (withFrame) {
          // HOT FIX : inject saving of the created object
@@ -6946,16 +6948,16 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
 
 ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
 {
+   if (node == lxCondBoxing && test(mode, HINT_NOCONDBOXING))
+      node = lxBoxing;
+
+   if (node == lxUnboxing && test(mode, HINT_NOUNBOXING))
+      node = lxBoxing;
+
    ref_t targetRef = node.findChild(lxTarget).argument;
    ref_t targetType = node.findChild(lxType).argument;
    ref_t sourceRef = 0;
    bool boxing = !test(mode, HINT_NOBOXING);
-
-   // adjust primitive target
-   if (_logic->isPrimitiveRef(targetRef)) {
-      targetRef = _logic->resolvePrimitiveReference(scope, targetRef);
-      node.findChild(lxTarget).setArgument(targetRef);
-   }
 
    SNode sourceNode = node.findSubNodeMask(lxObjectMask);
 
@@ -6971,6 +6973,12 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
    //   boxing = false;
    //}
    else sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
+
+   // adjust primitive target
+   if (_logic->isPrimitiveRef(targetRef) && boxing) {
+      targetRef = _logic->resolvePrimitiveReference(scope, targetRef);
+      node.findChild(lxTarget).setArgument(targetRef);
+   }
 
    if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef, !boxing)) {
       scope.raiseError(errIllegalOperation, node);
@@ -7027,6 +7035,7 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
          return optimizeExpression(current.firstChild(lxObjectMask), scope, warningScope, mode);
       case lxBoxing:
       case lxCondBoxing:
+      case lxUnboxing:
          return optimizeBoxing(current, scope, warningScope, mode);
       case lxAssigning:
          return optimizeAssigning(current, scope, warningScope);
@@ -7057,6 +7066,8 @@ void Compiler :: optimizeCode(SNode node, ModuleScope& scope, WarningScope& warn
    while (current != lxNone) {
       switch (current.type) {
          case lxReturning:
+            optimizeExpressionTree(current, scope, warningScope, HINT_NOUNBOXING | HINT_NOCONDBOXING);
+            break;
          case lxExpression:
             optimizeExpressionTree(current, scope, warningScope);
             break;
@@ -7845,7 +7856,7 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          break;
       default:
       {
-         SNode terminal = current.findChild(lxIdentifier, lxReference, lxPrivate, lxInteger, lxMessageReference, lxExpression, lxHexInteger, lxLiteral, lxWide);
+         SNode terminal = current.findChild(lxMessageReference, lxExpression);
          if (terminal == lxMessageReference) {
             writer.newNode(lxExpression);
             writer.newNode(terminal.type);
@@ -7857,6 +7868,8 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
             generateExpressionTree(writer, current, scope, false);
          }
          else {
+            terminal = current.firstChild(lxTerminalMask);
+
             if (terminal != lxNone)
                copyIdentifier(writer, terminal);
 
@@ -7911,6 +7924,10 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
 {
    writer.newNode(node.type, node.argument);
 
+   bool withBreakpoint = (node == lxReturning || node == lxResendExpression);
+   if (withBreakpoint)
+      writer.newBookmark();
+
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxExpression || current == lxReturning) {
@@ -7928,14 +7945,13 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
       }
-      else if (current == lxObject || current == lxMessage) {
-         writer.newBookmark();
-         generateObjectTree(writer, current, scope);
-         writer.removeBookmark();
-      }
+      else generateObjectTree(writer, current, scope);
 
       current = current.nextNode();
    }
+
+   if (withBreakpoint)
+      writer.removeBookmark();
 
    writer.closeNode();
 }

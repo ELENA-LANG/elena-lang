@@ -74,12 +74,12 @@
 //#subject mssgarray  = system'MessageArray.
 //#subject bitarray   = system'BitArray.
 //#subject bitset     = system'BitArray32.
-//
-///// An instance of system'LiteralValue class. 
-//#subject literal    = system'LiteralValue.
-//
-//#subject wide       = system'WideLiteralValue.
-//
+
+/// An instance of system'LiteralValue class. 
+#subject literal    = system'LiteralValue.
+
+#subject wide       = system'WideLiteralValue.
+
 //// === function types ===
 //#subject func       = system'BaseFunction.
 //

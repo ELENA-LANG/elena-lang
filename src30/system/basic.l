@@ -337,187 +337,187 @@ sealed embeddable dispatchable(byte) struct ByteNumber :: IntBaseNumber
     stacksafe bool equal &short:anOperand
         = ShortNumber new &byte:$self equal &short:anOperand.
 
-//    #method(bool,stacksafe) less &byte:anOperand
-//        = theValue < anOperand.
-//
-//    #method(bool,stacksafe) less &short:anOperand
-//        = ShortNumber new &byte:$self less &short:anOperand.
-//
-//    /// Compares the value
-//    #method(bool,stacksafe) equal &int:anOperand
-//        = IntNumber new &byte:$self less &int:anOperand.
-//        
-//    /// Compares the value
-//    #method(bool,stacksafe) less &int:anOperand
-//        = IntNumber new &byte:$self less &int:anOperand.
-//
-//    /// Compares the value
-//    #method(bool,stacksafe) equal &long:anOperand
-//        = LongNumber new &byte:$self equal &long:anOperand.
-//        
-//    /// Compares the value
-//    #method(bool,stacksafe) less &long:anOperand
-//        = LongNumber new &byte:$self less &long:anOperand.
-//
-//    /// Compares the value
-//    #method(bool,stacksafe) equal &real:anOperand
-//        = RealNumber new &byte:$self equal &real:anOperand.
-//
-//    /// Compares the value
-//    #method(bool,stacksafe) less &real:anOperand
-//        = RealNumber new &byte:$self less &real:anOperand.
-//
-//    /// Returns the sum
-//    #method(byte,stacksafe,w3) add &byte:anOperand
-//        = theValue + anOperand.
-//
-//    /// Returns the sum
-//    #method(byte,stacksafe,w3) subtract &byte:anOperand
-//        = theValue - anOperand.
-//
-//    /// Returns the product
-//    #method(byte,stacksafe,w3) multiply &byte:anOperand
-//        = theValue * anOperand.
-//
-//    /// Returns the result of integer division
-//    #method(byte,stacksafe,w3) divide &byte:anOperand
-//        = theValue / anOperand.
-//
-//    /// Returns the sum
-//    #method(short,stacksafe) add &short:anOperand
-//        = ShortNumber new &byte:$self add &short:anOperand.
-//
-//    /// Returns the difference
-//    #method(short,stacksafe) subtract &short:anOperand
-//        = ShortNumber new &byte:$self subtract &short:anOperand.
-//
-//    /// Returns the product
-//    #method(short,stacksafe) multiply &short:anOperand
-//        = ShortNumber new &byte:$self multiply &short:anOperand.
-//
-//    /// Returns the result of integer division
-//    #method(short,stacksafe) divide &short:anOperand
-//        = ShortNumber new &byte:$self divide &short:anOperand.
-//
-//    /// Returns the sum
-//    #method(int,stacksafe) add &int:anOperand
-//        = IntNumber new &byte:$self add &int:anOperand.
-//
-//    /// Returns the difference
-//    #method(int,stacksafe) subtract &int:anOperand
-//        = IntNumber new &byte:$self subtract &int:anOperand.
-//
-//    /// Returns the product
-//    #method(int,stacksafe) multiply &int:anOperand
-//        = IntNumber new &byte:$self multiply &int:anOperand.
-//
-//    /// Returns the result of integer division
-//    #method(int,stacksafe) divide &int:anOperand
-//        = IntNumber new &byte:$self divide &int:anOperand.
-//
-//    /// Returns the sum
-//    #method(long,stacksafe) add &long:anOperand
-//        = LongNumber new &byte:$self add &long:anOperand.
-//
-//    /// Returns the difference
-//    #method(long,stacksafe) subtract &long:anOperand
-//        = LongNumber new &byte:$self subtract &long:anOperand.
-//
-//    /// Returns the product
-//    #method(long,stacksafe) multiply &long:anOperand
-//        = LongNumber new &byte:$self multiply &long:anOperand.
-//
-//    /// Returns the result of integer division
-//    #method(long,stacksafe) divide &long:anOperand
-//        = LongNumber new &byte:$self divide &long:anOperand.
-//
-//    /// Returns the sum
-//    #method(real,stacksafe) add &real:anOperand
-//        = RealNumber new &byte:$self add &real:anOperand.
-//
-//    /// Returns the difference
-//    #method(real,stacksafe) subtract &real:anOperand
-//        = RealNumber new &byte:$self subtract &real:anOperand.
-//
-//    /// Returns the product
-//    #method(real,stacksafe) multiply &real:anOperand
-//        = RealNumber new &byte:$self multiply &real:anOperand.
-//
-//    /// Returns the result of integer division
-//    #method(real,stacksafe) divide &real:anOperand
-//        = RealNumber new &byte:$self divide &real:anOperand.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(byte,stacksafe,w3) and &byte:anOperand
-//        = theValue && anOperand.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(byte,stacksafe,w3) or &byte:anOperand
-//        = theValue || anOperand.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(byte,stacksafe,w3) xor &byte:anOperand
-//        = theValue ^^ anOperand.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(short,stacksafe) and &short:anOperand
-//        = ShortNumber new &byte:$self and &short:anOperand.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(short,stacksafe) or &short:anOperand
-//        = ShortNumber new &byte:$self or &short:anOperand.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(short,stacksafe) xor &short:anOperand
-//        = ShortNumber new &byte:$self xor &short:anOperand.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(int,stacksafe) and &int:anOperand
-//        = IntNumber new &byte:$self and &int:anOperand.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(int,stacksafe) or &int:anOperand
-//        = IntNumber new &byte:$self or &int:anOperand.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(int,stacksafe) xor &int:anOperand
-//        = IntNumber new &byte:$self xor &int:anOperand.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(long,stacksafe) and &long:anOperand
-//        = LongNumber new &byte:$self and &long:anOperand.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(long,stacksafe) or &long:anOperand
-//        = LongNumber new &byte:$self or &long:anOperand.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(long,stacksafe) xor &long:anOperand
-//        = LongNumber new &byte:$self xor &long:anOperand.
-//
-//    #method(byte,stacksafe,w3) shift &int:val
+    stacksafe bool less &byte:anOperand
+        = theValue < anOperand.
+
+    stacksafe bool less &short:anOperand
+        = ShortNumber new &byte:$self less &short:anOperand.
+
+    /// Compares the value
+    stacksafe bool equal &int:anOperand
+        = IntNumber new &byte:$self less &int:anOperand.
+        
+    /// Compares the value
+    stacksafe bool less &int:anOperand
+        = IntNumber new &byte:$self less &int:anOperand.
+
+    /// Compares the value
+    stacksafe bool equal &long:anOperand
+        = LongNumber new &byte:$self equal &long:anOperand.
+        
+    /// Compares the value
+    stacksafe bool less &long:anOperand
+        = LongNumber new &byte:$self less &long:anOperand.
+
+    /// Compares the value
+    stacksafe bool equal &real:anOperand
+        = RealNumber new &byte:$self equal &real:anOperand.
+
+    /// Compares the value
+    stacksafe bool less &real:anOperand
+        = RealNumber new &byte:$self less &real:anOperand.
+
+    /// Returns the sum
+    stacksafe byte add &byte:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    stacksafe byte subtract &byte:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    stacksafe byte multiply &byte:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    stacksafe byte divide &byte:anOperand
+        = theValue / anOperand.
+
+    /// Returns the sum
+    stacksafe short add &short:anOperand
+        = ShortNumber new &byte:$self add &short:anOperand.
+
+    /// Returns the difference
+    stacksafe short subtract &short:anOperand
+        = ShortNumber new &byte:$self subtract &short:anOperand.
+
+    /// Returns the product
+    stacksafe short multiply &short:anOperand
+        = ShortNumber new &byte:$self multiply &short:anOperand.
+
+    /// Returns the result of integer division
+    stacksafe short divide &short:anOperand
+        = ShortNumber new &byte:$self divide &short:anOperand.
+
+    /// Returns the sum
+    stacksafe int add &int:anOperand
+        = IntNumber new &byte:$self add &int:anOperand.
+
+    /// Returns the difference
+    stacksafe int subtract &int:anOperand
+        = IntNumber new &byte:$self subtract &int:anOperand.
+
+    /// Returns the product
+    stacksafe int multiply &int:anOperand
+        = IntNumber new &byte:$self multiply &int:anOperand.
+
+    /// Returns the result of integer division
+    stacksafe int divide &int:anOperand
+        = IntNumber new &byte:$self divide &int:anOperand.
+
+    /// Returns the sum
+    stacksafe long add &long:anOperand
+        = LongNumber new &byte:$self add &long:anOperand.
+
+    /// Returns the difference
+    stacksafe long subtract &long:anOperand
+        = LongNumber new &byte:$self subtract &long:anOperand.
+
+    /// Returns the product
+    stacksafe long multiply &long:anOperand
+        = LongNumber new &byte:$self multiply &long:anOperand.
+
+    /// Returns the result of integer division
+    stacksafe long divide &long:anOperand
+        = LongNumber new &byte:$self divide &long:anOperand.
+
+    /// Returns the sum
+    stacksafe real add &real:anOperand
+        = RealNumber new &byte:$self add &real:anOperand.
+
+    /// Returns the difference
+    stacksafe real subtract &real:anOperand
+        = RealNumber new &byte:$self subtract &real:anOperand.
+
+    /// Returns the product
+    stacksafe real multiply &real:anOperand
+        = RealNumber new &byte:$self multiply &real:anOperand.
+
+    /// Returns the result of integer division
+    stacksafe real divide &real:anOperand
+        = RealNumber new &byte:$self divide &real:anOperand.
+
+    /// Returns the result of bitwise AND operation
+    stacksafe byte and &byte:anOperand
+        = theValue && anOperand.
+
+    /// Returns the result of bitwise OR operation
+    stacksafe byte or &byte:anOperand
+        = theValue || anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    stacksafe byte xor &byte:anOperand
+        = theValue ^^ anOperand.
+
+    /// Returns the result of bitwise AND operation
+    stacksafe short and &short:anOperand
+        = ShortNumber new &byte:$self and &short:anOperand.
+
+    /// Returns the result of bitwise OR operation
+    stacksafe short or &short:anOperand
+        = ShortNumber new &byte:$self or &short:anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    stacksafe short xor &short:anOperand
+        = ShortNumber new &byte:$self xor &short:anOperand.
+
+    /// Returns the result of bitwise AND operation
+    stacksafe int and &int:anOperand
+        = IntNumber new &byte:$self and &int:anOperand.
+
+    /// Returns the result of bitwise OR operation
+    stacksafe int or &int:anOperand
+        = IntNumber new &byte:$self or &int:anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    stacksafe int xor &int:anOperand
+        = IntNumber new &byte:$self xor &int:anOperand.
+
+    /// Returns the result of bitwise AND operation
+    stacksafe long and &long:anOperand
+        = LongNumber new &byte:$self and &long:anOperand.
+
+    /// Returns the result of bitwise OR operation
+    stacksafe long or &long:anOperand
+        = LongNumber new &byte:$self or &long:anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    stacksafe long xor &long:anOperand
+        = LongNumber new &byte:$self xor &long:anOperand.
+
+//    stacksafe byte shift &int:val
 //    [
 //        (val > 0)
 //            ? [ ^ theValue >> val. ].
 //            
-//        #var(int)neg_val := 0 - val - 1.
+//        int neg_val := 0 - val - 1.
 //            
 //        ^ theValue << neg_val.
 //    ]
-//    
-//    /// Bitwise inversion
-//    #method(byte,stacksafe) inverted
-//        => system'core_routines'__byte.
-//        
-//    /// Returns the literal presentation
-//    #method(w2) literal = system'literalConvertor convert &byte:$self.
-//
-//    /// Returns the literal presentation
-//    #method(w2) wide = system'wideConvertor convert &byte:$self.
-//
-//    /// Clones the value
-//    #method clone = ByteNumber new &byte:$self.
-//
+    
+    /// Bitwise inversion
+    stacksafe byte inverted
+        => system'core_routines'__byte.
+        
+    /// Returns the literal presentation
+    literal = system'literalConvertor convert &byte:$self.
+
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert &byte:$self.
+
+    /// Clones the value
+    clone = ByteNumber new &byte:$self.
+
 //    // Reads the object hash code into the output parameter
 //    #method(stacksafe) readHashCode &vint:aCode 
 //        => system'core_routines'__int.
@@ -538,16 +538,16 @@ sealed embeddable dispatchable(short) struct ShortNumber :: IntBaseNumber
 {
     __int16 theValue.
 
-    sealed stacksafe conversion int:n
-    [
-        (n < 0)
-            ? [ 
-                theValue := n && 0FFFFh. 
-                
-                theValue := theValue || 0FFFF0000h.
-            ]
-            ! [ theValue := n && 0FFFFh. ].
-    ]
+//    sealed stacksafe conversion int:n
+//    [
+//        (n < 0)
+//            ? [ 
+//                theValue := n && 0FFFFh. 
+//                
+//                theValue := theValue || 0FFFF0000h.
+//            ]
+//            ! [ theValue := n && 0FFFFh. ].
+//    ]
     
     /// Returns the minimal value (-32768)
     constructor min

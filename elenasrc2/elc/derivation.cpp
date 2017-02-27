@@ -443,6 +443,8 @@ void DerivationWriter :: writeNode(Symbol symbol)
          break;
       case nsL3Operation:
       case nsL4Operation:
+      case nsL5Operation:
+      case nsL6Operation:
       case nsL7Operation:
          _writer.newNode(lxOperator);
          break;
