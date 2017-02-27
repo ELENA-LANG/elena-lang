@@ -14,42 +14,42 @@ using namespace _ELENA_;
 
 typedef ClassInfo::Attribute Attribute;
 
-////inline bool isWrappable(int flags)
-////{
-////   return !test(flags, elWrapper) && test(flags, elSealed);
-////}
-////
-////inline bool isPrimitiveStructArrayRef(ref_t classRef)
-////{
-////   switch (classRef)
-////   {
-////      case V_INT32ARRAY:
-////      case V_INT16ARRAY:
-////      case V_INT8ARRAY:
-////      case V_BINARYARRAY:
-////         return true;
-////      default:
-////         return false;
-////   }
-////}
-////
-////inline bool isPrimitiveArrayRef(ref_t classRef)
-////{
-////   return classRef == V_OBJARRAY;
-////}
-////
-////inline ref_t definePrimitiveArrayItem(ref_t classRef)
-////{
-////   switch (classRef)
-////   {
-////      case V_INT32ARRAY:
-////      case V_INT16ARRAY:
-////      case V_INT8ARRAY:
-////         return V_INT32;
-////      default:
-////         return 0;
-////   }
-////}
+inline bool isWrappable(int flags)
+{
+   return !test(flags, elWrapper) && test(flags, elSealed);
+}
+
+//inline bool isPrimitiveStructArrayRef(ref_t classRef)
+//{
+//   switch (classRef)
+//   {
+//      case V_INT32ARRAY:
+//      case V_INT16ARRAY:
+//      case V_INT8ARRAY:
+//      case V_BINARYARRAY:
+//         return true;
+//      default:
+//         return false;
+//   }
+//}
+//
+//inline bool isPrimitiveArrayRef(ref_t classRef)
+//{
+//   return classRef == V_OBJARRAY;
+//}
+//
+//inline ref_t definePrimitiveArrayItem(ref_t classRef)
+//{
+//   switch (classRef)
+//   {
+//      case V_INT32ARRAY:
+//      case V_INT16ARRAY:
+//      case V_INT8ARRAY:
+//         return V_INT32;
+//      default:
+//         return 0;
+//   }
+//}
 
 inline bool IsInvertedOperator(int& operator_id)
 {
@@ -807,30 +807,30 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
       info.header.flags |= elSealed;
    }
 
-//   if (test(info.header.flags, elExtension)) {
-//      info.header.flags |= elSealed;
-//   }
-//
-//   // verify if the class may be a wrapper
-//   if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
-//      test(info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
-//   {
-//      if (test(info.header.flags, elStructureRole)) {
-//         ClassInfo::FieldInfo field = *info.fieldTypes.start();
-//
-//         ClassInfo fieldInfo;
-//         defineClassInfo(scope, fieldInfo, field.value1, true);
-//         if (isEmbeddable(fieldInfo)) {
-//            // wrapper around embeddable object should be marked as embeddable wrapper
-//            info.header.flags |= elEmbeddableWrapper;
-//
-//            if ((info.header.flags & elDebugMask) == 0)
-//               info.header.flags |= fieldInfo.header.flags & elDebugMask;
-//         }
-//      }
-//      else info.header.flags |= elWrapper;
-//   }
-//
+   if (test(info.header.flags, elExtension)) {
+      info.header.flags |= elSealed;
+   }
+
+   // verify if the class may be a wrapper
+   if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
+      test(info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
+   {
+      if (test(info.header.flags, elStructureRole)) {
+         ClassInfo::FieldInfo field = *info.fieldTypes.start();
+
+         ClassInfo fieldInfo;
+         defineClassInfo(scope, fieldInfo, field.value1, true);
+         if (isEmbeddable(fieldInfo)) {
+            // wrapper around embeddable object should be marked as embeddable wrapper
+            info.header.flags |= elEmbeddableWrapper;
+
+            if ((info.header.flags & elDebugMask) == 0)
+               info.header.flags |= fieldInfo.header.flags & elDebugMask;
+         }
+      }
+      else info.header.flags |= elWrapper;
+   }
+
 //   // adjust literal wrapper
 //   if ((info.header.flags & elDebugMask) == elDebugLiteral) {
 //      info.header.flags &= ~elDebugMask;
@@ -937,9 +937,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_STATCKSAFE:
          attrValue = tpStackSafe;
          return true;
-//      case V_EMBEDDABLE:
-//         attrValue = tpEmbeddable;
-//         return true;
+      case V_EMBEDDABLE:
+         attrValue = tpEmbeddable;
+         return true;
 //      case V_GENERIC:
 //         attrValue = tpGeneric;
 //         return true;

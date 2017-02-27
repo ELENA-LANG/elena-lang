@@ -916,12 +916,12 @@ void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCou
    tape.write(bcFreeStack, 1 + paramCount);
 }
 
-//void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
-//{
-//   // xjumprm r, m
-//
-//   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
-//}
+void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+{
+   // xjumprm r, m
+
+   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
+}
 
 void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
 {
@@ -954,12 +954,12 @@ void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
    tape.write(bcBSRedirect);
 }
 
-//void ByteCodeWriter :: resend(CommandTape& tape)
-//{
-//   // ajumpvi 0
-//   tape.write(bcAJumpVI);
-//}
-//
+void ByteCodeWriter :: resend(CommandTape& tape)
+{
+   // ajumpvi 0
+   tape.write(bcAJumpVI);
+}
+
 //void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
 //{
 //   // callextr ref
@@ -4636,47 +4636,47 @@ void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::N
    newStructure(tape, node.argument, target.argument);
 }
 
-//void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SNode target = node.findChild(lxTarget);
-//   if (node.argument == 0) {
-//      SNode message = node.findChild(lxMessage);
-//
-//      pushObject(tape, lxCurrentMessage);
-//      setSubject(tape, message.argument);
-//      resendResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument);
-//   }
-//   else {
-//      SNode current = node.firstChild();
-//      while (current != lxNone) {
-//         if (current == lxNewFrame) {
-//            // new frame
-//            newFrame(tape, 0, 0);
-//
-//            // save message
-//            pushObject(tape, lxCurrentMessage);
-//
-//            generateExpression(tape, current);
-//
-//            // restore message
-//            popObject(tape, lxCurrentMessage);
-//
-//            // close frame
-//            closeFrame(tape);
-//         }
-//         else if (current == lxExpression) {
-//            generateExpression(tape, current);
-//         }
-//
-//         current = current.nextNode();
-//      }
-//
-//      if (target.argument != 0) {
-//         resendResolvedMethod(tape, target.argument, node.argument);
-//      }
-//      else resend(tape);
-//   }
-//}
+void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target = node.findChild(lxTarget);
+   if (node.argument == 0) {
+      SNode message = node.findChild(lxMessage);
+
+      pushObject(tape, lxCurrentMessage);
+      setSubject(tape, message.argument);
+      resendResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument);
+   }
+   else {
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         if (current == lxNewFrame) {
+            // new frame
+            newFrame(tape, 0, 0);
+
+            // save message
+            pushObject(tape, lxCurrentMessage);
+
+            generateExpression(tape, current);
+
+            // restore message
+            popObject(tape, lxCurrentMessage);
+
+            // close frame
+            closeFrame(tape);
+         }
+         else if (current == lxExpression) {
+            generateExpression(tape, current);
+         }
+
+         current = current.nextNode();
+      }
+
+      if (target.argument != 0) {
+         resendResolvedMethod(tape, target.argument, node.argument);
+      }
+      else resend(tape);
+   }
+}
 
 void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 {
@@ -4763,9 +4763,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxNewOp:
 //         generateNewOperation(tape, node);
 //         break;
-//      case lxResending:
-//         generateResendingExpression(tape, node);
-//         break;
+      case lxResending:
+         generateResendingExpression(tape, node);
+         break;
 //      case lxDispatching:
 //         generateDispatching(tape, node);
 //         break;

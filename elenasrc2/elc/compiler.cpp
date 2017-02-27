@@ -4379,7 +4379,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    // if method has named argument list
    while (arg == lxMessage) {
-      SNode subject = arg.findChild(lxIdentifier, lxPrivate);
+      SNode subject = arg.findChild(lxIdentifier, lxPrivate, lxReference);
 //      //HOTFIX : to support script
 //      if (subject == lxNone)
 //         subject = arg;
@@ -4460,40 +4460,42 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    }
 }
 
-//void Compiler :: declareDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods*/)
-//{
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   CodeScope codeScope(&scope);
-//
-//////   CommandTape* tape = scope.tape;
-////
-//   writer.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
-//
-//   if (isImportRedirect(node)) {
-//      importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).findChild(lxTerminal).identifier(), scope.message);
-//   }
-////   else {
-////      // if it is generic handler with redirect statement / redirect statement
-////      if (node.firstChild(lxObjectMask) != lxNone) {
-////         node.injectNode(lxExpression);
-////
-////         if (withGenericMethods) {
-////            node.insertNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
-////         }
-////         compileDispatchExpression(node.findChild(lxExpression), codeScope);
-////      }
-////      // if it is generic handler only
-////      else if (withGenericMethods) {
-////         SNode exprNode = node.appendNode(lxDispatching).appendNode(lxResending);
-////
-////         exprNode.appendNode(lxMessage, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
-////         exprNode.appendNode(lxTarget, scope.moduleScope->superReference).appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));
-////      }
-////   }
-//
-//   writer.closeNode();
-//}
+void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   CodeScope codeScope(&scope);
+
+   writer.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
+
+   if (isImportRedirect(node)) {
+      importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).identifier(), scope.message);
+   }
+   else {
+      // if it is generic handler with redirect statement / redirect statement
+      if (node.firstChild(lxObjectMask) != lxNone) {
+         if (withGenericMethods) {
+            writer.newNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
+         }
+
+         compileDispatchExpression(writer, node, codeScope);
+      }
+      // if it is generic handler only
+      else if (withGenericMethods) {
+         writer.newNode(lxDispatching);
+         writer.newNode(lxResending);
+         writer.appendNode(lxMessage, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
+         writer.appendNode(lxTarget, scope.moduleScope->superReference);
+         writer.appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));
+         writer.closeNode();
+      }
+
+      if (withGenericMethods)
+         writer.closeNode();
+   }
+
+   writer.closeNode();
+}
 
 void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
@@ -4561,33 +4563,36 @@ void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, Cod
    if (isImportRedirect(node)) {
       importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).identifier(), scope.getMessageID());
    }
-//   else {
-//      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//      // try to implement light-weight resend operation
-//      ObjectInfo target;
-//      if (isSingleStatement(node)) {
-//         target = scope.mapObject(node.firstChild(lxTerminalMask));
-//      }
-//
-//      if (target.kind == okConstantSymbol || target.kind == okField) {
-//         node.set(lxResending, methodScope->message);
-//
-//         SNode exprNode = node.firstChild(lxTerminalMask);
-//         exprNode.set(lxExpression, 0);
-//
-//         if (target.kind == okField) {
-//            exprNode.appendNode(lxResultField, target.param);
-//         }
-//         else exprNode.appendNode(lxConstantSymbol, target.param);
-//      }
-//      else {
-//         node.set(lxResending, methodScope->message);
-//         SNode body = node.injectNode(lxNewFrame);
-//
-//         target = compileExpression(body, scope, 0);
-//      }
-//   }
+   else {
+      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+      // try to implement light-weight resend operation
+      ObjectInfo target;
+      if (isSingleStatement(node)) {
+         target = scope.mapObject(node.firstChild(lxTerminalMask));
+      }
+
+      if (target.kind == okConstantSymbol || target.kind == okField) {
+         writer.newNode(lxResending, methodScope->message);
+         writer.newNode(lxExpression);
+         if (target.kind == okField) {
+            writer.appendNode(lxResultField, target.param);
+         }
+         else writer.appendNode(lxConstantSymbol, target.param);
+
+         writer.closeNode();
+         writer.closeNode();
+      }
+      else {
+         writer.newNode(lxNewFrame);
+         writer.newNode(lxResending, methodScope->message);
+
+         target = compileExpression(writer, node, scope, 0);
+
+         writer.closeNode();
+         writer.closeNode();
+      }
+   }
 }
 
 void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
@@ -5069,23 +5074,23 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 //            }
 //            else declareMethod(writer, current, methodScope);
 
-//            // if it is a dispatch handler
-//            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-////               if (test(scope.info.header.flags, elRole))
-////                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-//
-//               initialize(scope, methodScope);
-//
-//               compileDispatcher(current.firstChild(lxCodeScopeMask), methodScope, test(scope.info.header.flags, elWithGenerics));
-//            }
-//            // if it is a normal method
-//            else {
+            // if it is a dispatch handler
+            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
+//               if (test(scope.info.header.flags, elRole))
+//                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
+
+               initialize(scope, methodScope);
+
+               compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope, test(scope.info.header.flags, elWithGenerics));
+            }
+            // if it is a normal method
+            else {
                declareArgumentList(current, methodScope);
 
                initialize(scope, methodScope);
 
                compileMethod(writer, current, methodScope);
-//            }
+            }
             break;
          }
       }
@@ -7434,9 +7439,6 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current) {
-   ////         case lxSubject:
-   ////            compileSubject(member, scope);
-   ////            break;
          case lxClass:
          {
             // compile class
@@ -8095,7 +8097,10 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
    while (current != lxNone) {
       if (current == lxMethodParameter || current == lxMessage) {
          writer.newNode(current.type, current.argument);
-         copyIdentifier(writer, current.firstChild(lxTerminalMask));
+         if (current == lxMessage) {
+            scope.copySubject(writer, current.firstChild(lxTerminalMask));
+         }
+         else copyIdentifier(writer, current.firstChild(lxTerminalMask));
          writer.closeNode();
       }
 

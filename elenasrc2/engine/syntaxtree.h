@@ -110,7 +110,7 @@ enum LexicalType
    lxCalling         = 0x0C007,   // sending a message, arg - message
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
-//   lxResending       = 0x0C00A,   // resending a message, optional arg - message
+   lxResending       = 0x0C00A,   // resending a message, optional arg - message
 //   lxTrying          = 0x0C00C,   // try-catch expression
 //   lxAlt             = 0x0C00D,   // alt-catch expression
 //   lxLocking         = 0x0C00E,   // branch expression

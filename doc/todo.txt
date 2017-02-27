@@ -6,6 +6,7 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
+                 * vint.set&int[1] - do not box the variable before assigning
                  * local attribute : do not allow embeddable templates
                  * field attribute : if the template marked as embeddable it should be included into the body, otherwise -
                    generate the new class
@@ -97,6 +98,9 @@ In development:
                  * compile obj prop := n.
                  * do not box numeric constants
                  * get rid of #method, #field, #var, #class and so on - only #import, #subject, #loop, #throw, #lock will be used
+                 * compiling : dispatch = theValue. - should be allowed?
+                 * test dispatching for the class with generic methods
+                 * test dispatching to the expression result
 
               xdev - generic development
                  * support property template

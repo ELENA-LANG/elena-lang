@@ -187,8 +187,8 @@ class ByteCodeWriter
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 
    void doGenericHandler(CommandTape& tape);
-//   void resend(CommandTape& tape);
-//   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void resend(CommandTape& tape);
+   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 //   void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
 
@@ -271,8 +271,8 @@ class ByteCodeWriter
    void generateOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
+
+   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);

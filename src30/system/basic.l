@@ -1,99 +1,99 @@
-//
-//#template varof : template_subj
-//{
-//    #field(template_subj)$value.
-//
-//    #method set : val
-//    [
-//        $value := val template_subj.
-//    ]
-//    
-//    #method(stacksafe) set &template_subj:val
-//    [
-//        $value := val.
-//    ]
-//
-//    #method(w3) get = $value.
-//    
-//    #method(w3) cast : verb &to:target => $value.
-//
-//    /// Dispatches the verb to the target object with generic subject
-//    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
-//    
-//    #method(w3) equal : anObject
-//        => $value.
-//
-//    #method(embeddable,w3) => $value.
-//}
-//
-//#template nvarof : template_subj
-//{
-//    #field(template_subj)$value.
-//    
-//    #method set : val
-//    [
-//        $value := val template_subj.
-//    ]
-//    
-//    #method(stacksafe) set &template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
-//    #method append : val
-//    [
-//        $value := $value + val template_subj.
-//    ]
-//    
-//    #method reduce : val
-//    [
-//        $value := $value - val template_subj.
-//    ]
-//
-//    #method multiplyBy : val
-//    [
-//        $value := $value * val template_subj.
-//    ]
-//    
-//    /// Divides into the value
-//    #method divideInto : val
-//    [
-//        $value := $value / val template_subj.
-//    ]
-//    
-//    #method(stacksafe) append &template_subj:val
-//    [
-//        $value := $value + val.
-//    ]
-//    
-//    #method(stacksafe) reduce &template_subj:val
-//    [
-//        $value := $value - val.
-//    ]
-//
-//    #method(stacksafe) multiplyBy &template_subj:val
-//    [
-//        $value := $value * val.
-//    ]
-//    
-//    /// Divides into the value
-//    #method(stacksafe) divideInto &template_subj:val
-//    [
-//        $value := $value / val.
-//    ]
-//
-//    #method(w3) get = $value.
-//    
-//    #method(w3) cast : verb &to:target => $value.
-//
-//    /// Dispatches the verb to the target object with generic subject
-//    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
-//    
-//    #method(w3) equal : anObject
-//        => $value.
-//        
-//    #method(embeddable,w3) => $value.
-//}
+
+#template varof(template_subj)
+{
+    template_subj $value.
+
+    set : val
+    [
+        $value := val template_subj.
+    ]
+    
+    stacksafe set &template_subj:val
+    [
+        $value := val.
+    ]
+
+    get = $value.
+    
+    cast : verb &to:target => $value.
+
+    /// Dispatches the verb to the target object with generic subject
+    cast : aVerb &to:aTarget &with:aParam => $value.
+    
+    equal : anObject
+        => $value.
+
+    embeddable dispatch => $value.
+}
+
+#template nvarof(template_subj)
+{
+    template_subj $value.
+    
+    set : val
+    [
+        $value := val template_subj.
+    ]
+    
+    stacksafe set &template_subj:val
+    [
+        $value := val.
+    ]
+    
+    append : val
+    [
+        $value := $value + val template_subj.
+    ]
+    
+    reduce : val
+    [
+        $value := $value - val template_subj.
+    ]
+
+    multiplyBy : val
+    [
+        $value := $value * val template_subj.
+    ]
+    
+    /// Divides into the value
+    divideInto : val
+    [
+        $value := $value / val template_subj.
+    ]
+    
+    stacksafe append &template_subj:val
+    [
+        $value := $value + val.
+    ]
+    
+    stacksafe reduce &template_subj:val
+    [
+        $value := $value - val.
+    ]
+
+    stacksafe multiplyBy &template_subj:val
+    [
+        $value := $value * val.
+    ]
+    
+    /// Divides into the value
+    stacksafe divideInto &template_subj:val
+    [
+        $value := $value / val.
+    ]
+
+    get = $value.
+    
+    cast : verb &to:target => $value.
+
+    /// Dispatches the verb to the target object with generic subject
+    cast : aVerb &to:aTarget &with:aParam => $value.
+    
+    equal : anObject
+        => $value.
+
+    embeddable dispatch => $value.
+}
 
 // === Boolean values ===
 
@@ -207,14 +207,14 @@ const false = BaseBoolValue
     clone = $self.
 }.
 
-////// === Numeric Variables ===
-////
-////#subject vbyte  = nvarof:byte.
-////#subject vshort = nvarof:short.
-////#subject vint   = nvarof:int.
-////#subject vlong  = nvarof:long.
-////#subject vreal  = nvarof:real.
-////#subject vchar  = varof:char.
+// === Numeric Variables ===
+
+#subject vbyte  = nvarof(byte).
+#subject vshort = nvarof(short).
+#subject vint   = nvarof(int).
+//#subject vlong  = nvarof:long.
+//#subject vreal  = nvarof:real.
+//#subject vchar  = varof:char.
 
 // === basic data classes ===
 
