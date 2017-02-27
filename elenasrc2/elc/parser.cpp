@@ -64,9 +64,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
       case dfaQuote:
          terminal.symbol = tsLiteral;
          break;
-//      case dfaCharacter:
-//         terminal.symbol = tsCharacter;
-//         break;
+      case dfaCharacter:
+         terminal.symbol = tsCharacter;
+         break;
       case dfaEOF:
          terminal.symbol = tsEof;
          terminal.value = _eof_message;
@@ -83,15 +83,15 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
       case dfaInteger:
          terminal.symbol = tsInteger;
          break;
-//      case dfaLong:
-//         terminal.symbol = tsLong;
-//         break;
+      case dfaLong:
+         terminal.symbol = tsLong;
+         break;
 	   case dfaHexInteger:
          terminal.symbol = tsHexInteger;
          break;
-//	   case dfaReal:
-//         terminal.symbol = tsReal;
-//         break;
+	   case dfaReal:
+         terminal.symbol = tsReal;
+         break;
       case dfaWideQuote:
          terminal.symbol = tsWide;
          break;

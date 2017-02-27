@@ -65,9 +65,9 @@ enum LexicalType
    lxReference       = 0x18007,
    lxInteger         = 0x18008,
    lxHexInteger      = 0x18009,
-//   lxReal            = 0x1800A,
-//   lxCharacter       = 0x1800B,
-//   lxLong            = 0x1800C,
+   lxReal            = 0x1800A,
+   lxCharacter       = 0x1800B,
+   lxLong            = 0x1800C,
    lxWide            = 0x1800D,
 
    lxImporting       = 0x08101,
@@ -83,10 +83,10 @@ enum LexicalType
 //   lxBlockLocal      = 0x0A10B, // arg - offset
    lxConstantString  = 0x0A10C, // arg - reference
    lxConstantWideStr = 0x0A10D, // arg - reference
-//   lxConstantChar    = 0x0A10E, // arg - reference
+   lxConstantChar    = 0x0A10E, // arg - reference
    lxConstantInt     = 0x1A10F, // arg - reference
-//   lxConstantLong    = 0x1A110, // arg - reference
-//   lxConstantReal    = 0x1A111, // arg - reference
+   lxConstantLong    = 0x1A110, // arg - reference
+   lxConstantReal    = 0x1A111, // arg - reference
    lxConstantClass   = 0x0A112, // arg - reference
    lxMessageConstant = 0x0A113, // arg - rererence
    lxExtMessageConstant = 0x0A114, // arg -reference
@@ -148,8 +148,8 @@ enum LexicalType
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
    lxIntOp           = 0x8C038,   // arg - operation id
-//   lxLongOp          = 0x8C039,   // arg - operation id
-//   lxRealOp          = 0x8C03A,   // arg - operation id
+   lxLongOp          = 0x8C039,   // arg - operation id
+   lxRealOp          = 0x8C03A,   // arg - operation id
    lxOverridden      = 0x04047,
 
    lxBaseParent      = 0x10023,

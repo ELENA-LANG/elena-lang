@@ -32,6 +32,9 @@
 #template(-11,1)  __int8  {}
 #template(-11,2)  __int16 {}
 #template(-11,4)  __int32 {}
+#template(-12,4)  __dword {}
+#template(-13,8)  __int64 {}
+#template(-14,8)  __real64{}
 
 ///// Provides classes that describe the basic functionality
 
@@ -49,7 +52,7 @@
 #subject int        = system'IntNumber.
 #subject long       = system'LongNumber.
 #subject real       = system'RealNumber.
-//#subject char       = system'CharValue.
+#subject char       = system'CharValue.
 //#subject mssg       = system'Message.
 ////#subject ext_mssg   = system'ExtensionMessage.
 ////

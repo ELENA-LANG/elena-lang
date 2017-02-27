@@ -20,9 +20,9 @@
 
 //#define V_BINARY      (ref_t)-10
 #define V_INT32       (ref_t)-11
-////#define V_PTR32       (ref_t)-12
-////#define V_INT64       (ref_t)-13
-////#define V_REAL64      (ref_t)-14
+#define V_PTR32       (ref_t)-12
+#define V_INT64       (ref_t)-13
+#define V_REAL64      (ref_t)-14
 #define V_SIGNATURE   (ref_t)-18
 #define V_MESSAGE     (ref_t)-19
 #define V_VERB        (ref_t)-20
@@ -113,15 +113,15 @@ struct _CompilerScope
 //   // cached references
    ref_t superReference;
    ref_t intReference;
-//   ref_t longReference;
-//   ref_t realReference;
+   ref_t longReference;
+   ref_t realReference;
    ref_t signatureReference;
    ref_t messageReference;
    ref_t verbReference;
    ref_t boolReference;
    ref_t literalReference;
    ref_t wideReference;
-//   ref_t charReference;
+   ref_t charReference;
 //   ref_t arrayReference;
 //   ref_t paramsReference;
 
@@ -139,8 +139,8 @@ struct _CompilerScope
       module = NULL;
       intReference = boolReference = superReference = 0;
       signatureReference = verbReference = messageReference = 0;
-/*      longReference = */literalReference = wideReference = 0;
-//      arrayReference = charReference = realReference = 0;
+      longReference = literalReference = wideReference = 0;
+/*      arrayReference = */charReference = realReference = 0;
 //      paramsReference = 0;
    }
 };

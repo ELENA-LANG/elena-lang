@@ -34,9 +34,9 @@ enum Symbol
    tsReference                  = 0x03007,
    tsInteger                    = 0x03008,
    tsHexInteger                 = 0x03009,
-//   tsReal                       = 0x0300A,
+   tsReal                       = 0x0300A,
    tsCharacter                  = 0x0300B,
-//   tsLong                       = 0x0300C,
+   tsLong                       = 0x0300C,
    tsWide                       = 0x0300D,
 
    nsClass                      = 0x0100E,               // non-terminals

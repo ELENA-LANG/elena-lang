@@ -127,10 +127,10 @@ public:
       okConstantClass,                // param - reference, extraparam - class reference
       okLiteralConstant,              // param - reference
       okWideLiteralConstant,          // param - reference
-//      okCharConstant,                 // param - reference
+      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
-//      okLongConstant,                 // param - reference
-//      okRealConstant,                 // param - reference
+      okLongConstant,                 // param - reference
+      okRealConstant,                 // param - reference
       okMessageConstant,              // param - reference
       okExtMessageConstant,           // param - reference
       okSignatureConstant,            // param - reference

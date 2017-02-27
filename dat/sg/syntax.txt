@@ -42,6 +42,9 @@ __define private	        12294
 __define reference		12295
 __define integer		12296
 __define hex			12297
+__define real			12298
+__define character		12299
+__define long                   12300
 __define wide                   12301
 
 START ->
@@ -369,8 +372,11 @@ OBJECT ->
 	| reference
 	| integer
 	| hex
+	| long
+	| real
 	| literal
 	| wide
+	| character
 	| ( SUB_EXPRESSION
 	| % MESSAGE_REFERENCE
 	| NESTED_CLASS
