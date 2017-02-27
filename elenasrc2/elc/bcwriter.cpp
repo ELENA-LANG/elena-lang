@@ -4350,14 +4350,14 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       //      saveReal(tape, target.type, target.argument);
       //   }
       //}
-      //else if (target == lxFieldExpression || target == lxExpression) {
-      //   SNode arg1, arg2;
+      /*else */if (target == lxFieldExpression || target == lxExpression) {
+         SNode arg1, arg2;
 
-      //   assignOpArguments(target, arg1, arg2);
-      //   loadBase(tape, arg1.type, arg1.argument);
-      //   saveBase(tape, false, lxResult, arg2.argument);
-      //}
-      /*else */if (size != 0) {
+         assignOpArguments(target, arg1, arg2);
+         loadBase(tape, arg1.type, arg1.argument);
+         saveBase(tape, false, lxResult, arg2.argument);
+      }
+      else if (size != 0) {
          if (source == lxFieldAddress) {
             loadBase(tape, target.type, target.argument);
             if (target == lxFieldAddress) {
@@ -4683,8 +4683,8 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
    switch (node.type)
    {
       case lxExpression:
-//      case lxLocalUnboxing:
-//      case lxFieldExpression:
+      case lxLocalUnboxing:
+      case lxFieldExpression:
 //      case lxAltExpression:
          generateExpression(tape, node);
          break;

@@ -30,6 +30,11 @@
 {
     template_subj $value.
     
+    sealed stacksafe conversion template_subj : val
+    [
+        $value := val.
+    ]
+    
     set : val
     [
         $value := val template_subj.
@@ -206,15 +211,6 @@ const false = BaseBoolValue
     /// Returns itself
     clone = $self.
 }.
-
-// === Numeric Variables ===
-
-#subject vbyte  = nvarof(byte).
-#subject vshort = nvarof(short).
-#subject vint   = nvarof(int).
-#subject vlong  = nvarof(long).
-#subject vreal  = nvarof(real).
-#subject vchar  = varof(char).
 
 // === basic data classes ===
 
@@ -495,15 +491,15 @@ sealed embeddable dispatchable(byte) struct ByteNumber :: IntBaseNumber
     stacksafe long xor &long:anOperand
         = LongNumber new &byte:$self xor &long:anOperand.
 
-//    stacksafe byte shift &int:val
-//    [
-//        (val > 0)
-//            ? [ ^ theValue >> val. ].
-//            
-//        int neg_val := 0 - val - 1.
-//            
-//        ^ theValue << neg_val.
-//    ]
+    stacksafe byte shift &int:val
+    [
+        (val > 0)
+            ? [ ^ theValue >> val. ].
+            
+        int neg_val := 0 - val - 1.
+            
+        ^ theValue << neg_val.
+    ]
     
     /// Bitwise inversion
     stacksafe byte inverted
@@ -538,16 +534,16 @@ sealed embeddable dispatchable(short) struct ShortNumber :: IntBaseNumber
 {
     __int16 theValue.
 
-//    sealed stacksafe conversion int:n
-//    [
-//        (n < 0)
-//            ? [ 
-//                theValue := n && 0FFFFh. 
-//                
-//                theValue := theValue || 0FFFF0000h.
-//            ]
-//            ! [ theValue := n && 0FFFFh. ].
-//    ]
+    sealed stacksafe conversion int:n
+    [
+        (n < 0)
+            ? [ 
+                theValue := n && 0FFFFh. 
+                
+                theValue := theValue || 0FFFF0000h.
+            ]
+            ! [ theValue := n && 0FFFFh. ].
+    ]
     
     /// Returns the minimal value (-32768)
     constructor min
@@ -753,15 +749,15 @@ sealed embeddable dispatchable(short) struct ShortNumber :: IntBaseNumber
     stacksafe xor &long:anOperand
         = LongNumber new &short:$self xor &long:anOperand.        
 
-//    #method(short,stacksafe,w3) shift &int:val
-//    [
-//        (val > 0)
-//            ? [ ^ theValue >> val. ].
-//            
-//        #var(int)neg_val := 0 - val - 1.
-//            
-//        ^ theValue << neg_val.
-//    ]
+    stacksafe short shift &int:val
+    [
+        (val > 0)
+            ? [ ^ theValue >> val. ].
+            
+        int neg_val := 0 - val - 1.
+            
+        ^ theValue << neg_val.
+    ]
     
     /// Bitwise inversion
     stacksafe short inverted
@@ -1562,80 +1558,80 @@ sealed const embeddable dispatchable(char) struct CharValue :: BaseValue
     stacksafe readLength &vint:aLength
         => system'core_routines'__char.
         
-//    /// Reads the number of bytes to represent the symbol
-//    stacksafe readWideLength &vint:aRetVal
-//    [
-//        int aLength := 0.
-//        $self readLength &vint:aLength.
-//        
-//        aLength := aLength + 1.
-//        aLength := aLength / 2.
-//
-//        aRetVal := aLength.
-//    ]
-//        
-//    /// Retuns the number of bytes to represent the symbol        
-//    stacksafe embeddable int length
-//    [
-//        int aLength := 0.
-//        $self readLength &vint:aLength.
-//        
-//        ^ aLength.
-//    ]
-//    
-//    /// Retuns the number of short integers to represent the symbol
-//    stacksafe embeddable int wideLength
-//    [
-//        int aLength := 0.
-//        $self readWideLength &vint:aLength.
-//        
-//        ^ aLength.
-//    ]
+    /// Reads the number of bytes to represent the symbol
+    stacksafe readWideLength &vint:aRetVal
+    [
+        int aLength := 0.
+        $self readLength &vint:aLength.
+        
+        aLength := aLength + 1.
+        aLength := aLength / 2.
 
-//    /// Compares values
-//    #method(bool,stacksafe) equal &char:anOperand 
-//        = theValue == anOperand.
-//
-//    /// Compares values
-//    #method(bool,stacksafe) less &char:anOperand 
-//        = theValue < anOperand.
-//        
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode 
-//        => system'core_routines'__int.
-//    
-//    #method(embeddable,int,w3) hash_code
-//    [
-//        #var(int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ aCode.
-//    ]
+        aRetVal := aLength.
+    ]
+        
+    /// Retuns the number of bytes to represent the symbol        
+    stacksafe embeddable int length
+    [
+        int aLength := 0.
+        $self readLength &vint:aLength.
+        
+        ^ aLength.
+    ]
+    
+    /// Retuns the number of short integers to represent the symbol
+    stacksafe embeddable int wideLength
+    [
+        int aLength := 0.
+        $self readWideLength &vint:aLength.
+        
+        ^ aLength.
+    ]
+
+    /// Compares values
+    stacksafe bool equal &char:anOperand 
+        = theValue == anOperand.
+
+    /// Compares values
+    stacksafe bool less &char:anOperand 
+        = theValue < anOperand.
+        
+    // Reads the object hash code into the output parameter
+    stacksafe readHashCode &vint:aCode 
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        $self readHashCode &vint:aCode.
+        
+        ^ aCode.
+    ]
 }
 
-////// --- nil constant ---
-////
-/////// A nil value
-////#symbol(dispatchable:void) nil =
-////{
-////    /// Returns true if the specified object is nil.
-////    #method equal : anObject 
-////    [
-////        ($nil == anObject)
-////            ? [ ^ true. ].
-////        
-////        ($super equal:anObject)
-////            ? [ ^ true. ].
-////        
-////        ^ false.
-////    ]
-////    
-////    /// Returns nil
-////    ///
-////    /// Any typecasting message will be handled and nil value returned
-////    #method(generic)get = $nil.
-////}.
-////
+// --- nil constant ---
+
+///// A nil value
+//#symbol(dispatchable:void) nil =
+//{
+//    /// Returns true if the specified object is nil.
+//    #method equal : anObject 
+//    [
+//        ($nil == anObject)
+//            ? [ ^ true. ].
+//        
+//        ($super equal:anObject)
+//            ? [ ^ true. ].
+//        
+//        ^ false.
+//    ]
+//    
+//    /// Returns nil
+//    ///
+//    /// Any typecasting message will be handled and nil value returned
+//    #method(generic)get = $nil.
+//}.
+
 ////// === Basic Factory symbols ==
 ////
 ////#class BaseExtender
@@ -2450,6 +2446,16 @@ const realConvertor =
 ////#symbol(real)pi_value = realOpController pi.
 ////
 ////#symbol(real)e_value = realOpController e.
+
+// === Numeric Variables ===
+
+#subject vbyte  = nvarof(byte).
+#subject vshort = nvarof(short).
+#subject vint   = nvarof(int).
+#subject vlong  = nvarof(long).
+#subject vreal  = nvarof(real).
+#subject vchar  = varof(char).
+
 ////
 ////// --- obsolete variables ---
 ////

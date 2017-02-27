@@ -546,6 +546,11 @@ bool CompilerLogic :: isReadonly(ClassInfo& info)
    return test(info.header.flags, elReadOnlyRole);
 }
 
+//bool CompilerLogic :: isConvertable(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef)
+//{
+//
+//}
+
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/)
 {
    ClassInfo info;
@@ -1458,9 +1463,11 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
       // NIL reference is never boxed
       node = lxExpression;
    }
-   //HOTFIX : allowing numeric constant direct boxing
    else if (isPrimitiveRef(sourceRef) && (isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef)) || sourceRef == V_INT32)) {
-
+      //HOTFIX : allowing numeric constant direct boxing
+   }
+   else if (node.existChild(lxBoxableAttr)) {
+      // HOTFIX : if the object was explicitly boxed
    }
    else return false;
 
@@ -1490,20 +1497,21 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
    return true;
 }
 
-//void CompilerLogic :: injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode)
-//{
-//   ClassInfo info;
-//   defineClassInfo(scope, info, targetRef);
-//
-//   node.setArgument(defineStructSize(info, false));
-//   //HOTFIX : allowing to assign a reference variable
-//   if (!node.argument && paramMode) {
-//      // replace the parameter with the field expression
-//      compiler.injectFieldExpression(node.firstChild(lxObjectMask));
-//
-//      type = info.fieldTypes.get(0).value2;
-//   }
-//}
+void CompilerLogic :: injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, int& operand, bool paramMode)
+{
+   ClassInfo info;
+   defineClassInfo(scope, info, targetRef);
+
+   operand = defineStructSize(info, false);
+
+   //HOTFIX : allowing to assign a reference variable
+   if (operand == 0 && paramMode) {
+      // replace the parameter with the field expression
+      compiler.injectFieldExpression(writer);
+
+      type = info.fieldTypes.get(0).value2;
+   }
+}
 
 bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
 {

@@ -115,7 +115,7 @@ public:
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference);
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/);
 //   virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef);
-//   virtual void injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode);
+   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, int& operand, bool paramMode);
 
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
    virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);

@@ -153,7 +153,7 @@ public:
 //   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument) = 0;
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef) = 0;
-//   virtual void injectFieldExpression(SNode node) = 0;
+   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
    virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
@@ -233,8 +233,8 @@ public:
    virtual void injectVirtualCode(_CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/) = 0;
-////   virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
-////   virtual void injectVariableAssigning(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, bool paramMode) = 0;
+//   virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
+   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, int& operand, bool paramMode) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;

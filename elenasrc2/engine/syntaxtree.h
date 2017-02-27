@@ -129,7 +129,7 @@ enum LexicalType
    lxIf              = 0x0C01F,   // optional arg - reference
    lxElse            = 0x0C020,   // optional arg - reference
 //   lxOption          = 0x0C021,
-//   lxFieldExpression = 0x0C022,
+   lxFieldExpression = 0x0C022,
 //   lxExternFrame     = 0x04023,
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
    lxCreatingClass   = 0x0C025,   // arg - count
@@ -214,6 +214,7 @@ enum LexicalType
    lxStacksafeAttr   = 0x2002B,
    lxTemplateType    = 0x2002C,
    lxEmbeddableAttr  = 0x2002D,
+   lxBoxableAttr     = 0x2002E,
 
 //   lxFieldAttrMask   = 0x20100,
 //   lxStaticAttr      = 0x20102,

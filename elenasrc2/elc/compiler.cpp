@@ -2319,11 +2319,11 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okStaticField:
          writer.newNode(lxStaticField, object.param);
          break;
-//      case okOuterField:
-//         terminal.set(lxFieldExpression, 0);
-//         terminal.appendNode(lxField, object.param);
-//         terminal.appendNode(lxResultField, object.extraparam);
-//         break;
+      case okOuterField:
+         writer.newNode(lxFieldExpression, 0);
+         writer.appendNode(lxField, object.param);
+         writer.appendNode(lxResultField, object.extraparam);
+         break;
       case okSubject:
          writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->signatureReference));
          writer.appendNode(lxLocalAddress, object.param);
@@ -3047,7 +3047,7 @@ bool Compiler :: convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t t
       if (!_logic->injectImplicitConversion(writer, scope, *this, targetRef, sourceRef/*, source.type*/))
          return typecastObject(writer, targetType);
    }
-   else return true;
+   return true;
 }
 
 bool Compiler :: typecastObject(SyntaxWriter& writer, ref_t targetType)
@@ -3312,13 +3312,13 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       }
       else if (retVal.kind == okParam || retVal.kind == okOuter) {
          // Compiler magic : allowing to assign byref / variable parameter
-         //if (_logic->isVariable(*scope.moduleScope, targetRef)) {
-         //   _logic->injectVariableAssigning(node, *scope.moduleScope, *this, targetRef, retVal.type, retVal.kind == okParam);
+         if (_logic->isVariable(*scope.moduleScope, targetRef)) {
+            _logic->injectVariableAssigning(writer, *scope.moduleScope, *this, targetRef, retVal.type, operand, retVal.kind == okParam);
 
-         //   retVal.kind = (retVal.kind == okParam) ? okParamField : okOuterField;
-         //}
+            retVal.kind = (retVal.kind == okParam) ? okParamField : okOuterField;
+         }
          // Compiler magic : allowing to assign outer local variables
-         /*else */if (retVal.kind == okOuter) {
+         else if (retVal.kind == okOuter) {
             InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
 
             if (!closure->markAsPresaved(retVal))
@@ -5458,14 +5458,6 @@ void Compiler :: declareVMT(SNode current, ClassScope& scope)
       if (current == lxClassMethod/* || current == lxImplicitConstructor || current == lxDefaultGeneric*/) {
          MethodScope methodScope(&scope);
 
-//            //compileMethodAttributes(current, methodScope, current);
-//
-//            ////         DNode firstChild = member.firstChild();
-//            ////         if (firstChild == nsDispatchHandler) {
-//            //         if (dispatchMethod) {
-//            //            methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
-//            //         }
-//            //         else {
          declareMethodAttributes(current, methodScope);
 
          declareArgumentList(current, methodScope);
@@ -5476,43 +5468,6 @@ void Compiler :: declareVMT(SNode current, ClassScope& scope)
 
          if (!_logic->validateMessage(methodScope.message, false))
             scope.raiseError(errIllegalMethod, current);
-
-            //includeMethod(current, scope, methodScope);
-//            //            //            if (current == lxDefaultGeneric) {
-//            //            //               // override subject with generic postfix
-//            //            //               methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
-//            //            //
-//            //            //               current.appendNode(lxClassMethodAttr, tpGeneric);
-//            //            //
-//            //            //               current = lxClassMethod;
-//            //            //            }
-//            //            //            else if (current == lxImplicitConstructor) {
-//            //            //               methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
-//            //            //
-//            //            //               current = lxClassMethod;
-//            //            //            }
-//            //            //         }
-//            //            //
-//            //            //         current.setArgument(methodScope.message);
-//            //            //
-//            //            //         // mark as having generic methods
-//            //            //         if (current == lxDefaultGeneric)
-//            //            //            current.parentNode().appendNode(lxClassFlag, elWithGenerics);
-//            //            //
-//            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-//               ////               if (test(scope.info.header.flags, elRole))
-//               ////                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-//               //
-//               SNode body = current.findChild(lxDispatchCode);
-//               if (body != lxNone) {
-//                  declareDispatcher(writer, body, methodScope/*, test(scope.info.header.flags, elWithGenerics)*/);
-//               }
-//               else scope.raiseError(errIllegalMethod, current);
-//            }
-//            else declareMethod(writer, current, methodScope);
-//            //         }
-//         }
-//         else scope.withConstructors = true;
       }
       current = current.nextNode();
    }
@@ -6972,7 +6927,6 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
       node = lxBoxing;
 
    ref_t targetRef = node.findChild(lxTarget).argument;
-   ref_t targetType = node.findChild(lxType).argument;
    ref_t sourceRef = 0;
    bool boxing = !test(mode, HINT_NOBOXING);
 
@@ -7235,7 +7189,7 @@ void Compiler :: declareSubject(SyntaxWriter& writer, SNode member, ModuleScope&
          int dummy = 0;
          ref_t attrRef = scope.mapAttribute(classNode, dummy);
          if (attrRef != 0) {
-            ref_t classRef = scope.subjectHints.get(attrRef);
+            classRef = scope.subjectHints.get(attrRef);
             if (classRef == INVALID_REF) {
                TemplateScope templateScope(&scope);
                templateScope.templateRef = attrRef;
@@ -7573,7 +7527,7 @@ void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
             current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapTerminal(name));
 
             ClassScope classScope(&scope, current.argument);
-         
+      
             // check for duplicate declaration
             if (scope.module->mapSection(classScope.reference | mskSymbolRef, true))
                scope.raiseError(errDuplicatedSymbol, name);
@@ -8015,8 +7969,9 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
 
    if (generatedClass) {
       scope.generateClassName();
-      writer.newNode(lxClass);
+      writer.newNode(lxClass, -1);
       writer.appendNode(lxReference, scope.moduleScope->module->resolveReference(scope.reference));
+      writer.appendNode(lxAttribute, V_SEALED);
    }
 
    SNode current = templateTree.readRoot().firstChild();
@@ -8429,6 +8384,7 @@ void Compiler :: injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, Lexic
    //   //HOTFIX : do not box compatible numeric constants
    //}
    //else {
+      writer.appendNode(lxBoxableAttr);
       writer.appendNode(lxTarget, targetClassRef);
       writer.insert(boxingType, argument);
       writer.closeNode();
@@ -8488,9 +8444,10 @@ void Compiler :: injectLocalBoxing(SNode node, int size)
    node.insertNode(lxLocalAddress, offset);
 }
 
-//void Compiler :: injectFieldExpression(SNode node)
-//{
-//   node.appendNode(node.type, node.argument);
-//   node.appendNode(lxResultField);
-//   node.set(lxFieldExpression, 0);
-//}
+void Compiler :: injectFieldExpression(SyntaxWriter& writer)
+{
+   writer.appendNode(lxResultField);
+
+   writer.insert(lxFieldExpression);
+   writer.closeNode();
+}
