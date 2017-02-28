@@ -209,6 +209,7 @@ IMPORT ->
 
 MESSAGE ->
 	identifier MESSAGE_BODY
+	| private MESSAGE_BODY
 	
 VARIABLE ->
 	identifier VARIABLE_BODY

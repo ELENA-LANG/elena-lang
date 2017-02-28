@@ -395,13 +395,13 @@ ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& outp
 {
    ident_t identifier = terminal.identifier();
 
-//   // add a namespace for the private message
-//   if (terminal.type == lxPrivate) {
-//      output.append(project->Namespace());
-//      output.append(identifier);
-//
-//      return 0;
-//   }
+   // add a namespace for the private message
+   if (terminal.type == lxPrivate) {
+      output.append(project->Namespace());
+      output.append(identifier);
+
+      return 0;
+   }
 
    ref_t subjRef = mapSubject(terminal);
    if (subjRef != 0) {

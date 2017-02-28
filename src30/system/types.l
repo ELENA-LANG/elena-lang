@@ -63,10 +63,10 @@
 
 //#subject subject    = system'Signature.
 //#subject symbol_ref = system'Symbol.
-//
-//// === basic dynamic types ===
-//#subject bytearray  = system'ByteArray.
-//#subject shortarray = system'ShortArray.
+
+// === basic dynamic types ===
+#subject bytearray  = system'ByteArray.
+#subject shortarray = system'ShortArray.
 //#subject intarray   = system'IntArray.
 //#subject intmatrix  = system'IntMatrix.
 //#subject realarray  = system'RealArray.

@@ -105,6 +105,9 @@ In development:
                  * pass vint as int
                  * generating template based class inside the code / closure (the generated class should be copied to the syntax tree root)
                  * test generic methods
+                 * assign the real stack allocated variable with integer constant
+                 * typified symbols (e.g. system'pi_value, system'e_value)
+                 * uncomment Integer, Real
 
               xdev - generic development
                  * support property template
