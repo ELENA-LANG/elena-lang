@@ -893,9 +893,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_SEALED:
          attrValue = elSealed;
          return true;
-//      case V_LIMITED:
-//         attrValue = elClosed;
-//         return true;
+      case V_LIMITED:
+         attrValue = elClosed;
+         return true;
       case V_STRUCT:
          attrValue = elStructureRole;
          return true;
@@ -927,7 +927,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
          attrValue = 0;
          return true;
       case V_SINGLETON:
-         attrValue = elStateless;
+         attrValue = elStateless | elNestedClass;
          return true;
       default:
          return false;

@@ -12,20 +12,20 @@
 #include "elena.h"
 #include "syntaxtree.h"
 
-#define INVALID_REF   (ref_t)-1
+#define INVALID_REF      (ref_t)-1
 
 // virtual objects
-#define V_FLAG        (ref_t)-03
-#define V_NIL         (ref_t)-04
+#define V_FLAG           (ref_t)-03
+#define V_NIL            (ref_t)-04
 
 //#define V_BINARY      (ref_t)-10
-#define V_INT32       (ref_t)-11
-#define V_PTR32       (ref_t)-12
-#define V_INT64       (ref_t)-13
-#define V_REAL64      (ref_t)-14
-#define V_SIGNATURE   (ref_t)-18
-#define V_MESSAGE     (ref_t)-19
-#define V_VERB        (ref_t)-20
+#define V_INT32          (ref_t)-11
+#define V_PTR32          (ref_t)-12
+#define V_INT64          (ref_t)-13
+#define V_REAL64         (ref_t)-14
+#define V_SIGNATURE      (ref_t)-18
+#define V_MESSAGE        (ref_t)-19
+#define V_VERB           (ref_t)-20
 //#define V_EXTMESSAGE  (ref_t)-21
 //#define V_SYMBOL      (ref_t)-22
 //
@@ -38,34 +38,35 @@
 ////#define V_INT16ARRAY  (ref_t)-38
 ////#define V_INT8ARRAY   (ref_t)-39
 
-#define V_IFBRANCH    (ref_t)-4097
-#define V_IFNOTBRANCH (ref_t)-4098
+#define V_IFBRANCH       (ref_t)-4097
+#define V_IFNOTBRANCH    (ref_t)-4098
 //#define V_WARNING1    (ref_t)-4099
 //#define V_WARNING2    (ref_t)-4100
 //#define V_WARNING3    (ref_t)-4101
 
-#define V_STATCKSAFE  (ref_t)-8192
-#define V_EMBEDDABLE  (ref_t)-8193
+#define V_STATCKSAFE     (ref_t)-8192
+#define V_EMBEDDABLE     (ref_t)-8193
 ////#define V_STATIC      (ref_t)-8194
-#define V_SEALED      (ref_t)-8195
-////#define V_LIMITED     (ref_t)-8196
-#define V_STRUCT      (ref_t)-8197
-#define V_ENUMLIST    (ref_t)-8198
+#define V_SEALED         (ref_t)-8195
+#define V_LIMITED        (ref_t)-8196
+#define V_STRUCT         (ref_t)-8197
+#define V_ENUMLIST       (ref_t)-8198
 ////#define V_DYNAMIC     (ref_t)-8199
 ////#define V_STRING      (ref_t)-8200
-#define V_CONST       (ref_t)-8201
-#define V_GENERIC     (ref_t)-8202
-//#define V_EXTENSION   (ref_t)-8203
-//#define V_NOSTRUCT    (ref_t)-8204
-//#define V_ACTION      (ref_t)-8205
-//#define V_GROUP       (ref_t)-8206
-//#define V_PRELOADED   (ref_t)-8207
-#define V_SINGLETON     (ref_t)-8208
+#define V_CONST          (ref_t)-8201
+#define V_GENERIC        (ref_t)-8202
+//#define V_EXTENSION    (ref_t)-8203
+//#define V_NOSTRUCT     (ref_t)-8204
+//#define V_ACTION       (ref_t)-8205
+//#define V_GROUP        (ref_t)-8206
+//#define V_PRELOADED    (ref_t)-8207
+#define V_SINGLETON      (ref_t)-8208
 
-#define V_CONSTRUCTOR   (ref_t)-16384
-#define V_VARIABLE      (ref_t)-16385
-#define V_CLASS         (ref_t)-16386
-#define V_CONVERSION    (ref_t)-16387
+#define V_CONSTRUCTOR    (ref_t)-16384
+#define V_VARIABLE       (ref_t)-16385
+#define V_CLASS          (ref_t)-16386
+#define V_CONVERSION     (ref_t)-16387
+#define V_EMBEDDABLETMPL (ref_t)-16388
 
 namespace _ELENA_
 {

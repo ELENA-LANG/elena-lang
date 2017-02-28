@@ -148,11 +148,11 @@
 //    /// Returns the message
 //    #method message = theMessage.
 //}
-//
-//// --- FormatException ---
-//
-//#class(exceptionof:FormatError) FormatException
-//{
+
+// --- FormatException ---
+
+/*#class(exceptionof:FormatError)*/ FormatException
+{
 //    #constructor new
 //    [
 //        theMessage := "A number is not in the correct format".
@@ -165,12 +165,12 @@
 //        theMessage := aMessage literal.
 //        theCallStack := CallStack new.
 //    ]
-//}
-//
-//// --- OutOfRangeException ---
-//
-//#class(exceptionof:OutOfRangeError) OutOfRangeException
-//{
+}
+
+// --- OutOfRangeException ---
+
+/*#class(exceptionof:OutOfRangeError)*/ OutOfRangeException
+{
 //    #constructor new &literal:message
 //    [
 //        theMessage := message.
@@ -184,8 +184,8 @@
 //    /// Creates the exception
 //    #constructor new:aMessage
 //        <= new &literal:(aMessage literal).
-//}
-//
+}
+
 ////// --- IndexOutOfRangeException ---
 ////
 ////#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException

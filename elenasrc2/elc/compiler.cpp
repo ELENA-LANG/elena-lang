@@ -1307,6 +1307,17 @@ ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
 
 ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue)
 {
+   SNode terminal = attribute.firstChild(lxTerminalMask);
+   if (terminal == lxInteger) {
+      // HOTFIX : read template attribute
+      int value = terminal.findChild(lxTerminal).identifier().toInt();
+      if (value == V_EMBEDDABLETMPL) {
+         attrValue = -1;
+
+         return INVALID_REF;
+      }
+   }
+      
    int index = mapAttribute(attribute.findChild(lxIdentifier));
    if (index) {
       attrValue = index;
@@ -7005,9 +7016,9 @@ ref_t Compiler :: optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& 
 ref_t Compiler :: optimizeOp(SNode current, ModuleScope& scope, WarningScope& warningScope)
 {
    SNode loperand = current.firstChild(lxObjectMask);
-   SNode roperand = loperand.nextNode(lxObjectMask);
-
    optimizeExpression(loperand, scope, warningScope, HINT_NOBOXING);
+
+   SNode roperand = loperand.nextNode(lxObjectMask);
    optimizeExpression(roperand, scope, warningScope, HINT_NOBOXING);
 
    SNode roperand2 = roperand.nextNode(lxObjectMask);
@@ -7417,6 +7428,8 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
       switch (current) {
          case lxClass:
          {
+            //ident_t name = scope.module->resolveReference(current.argument);
+
             // compile class
             ClassScope classScope(&scope, current.argument);
             scope.loadClassInfo(classScope.info, scope.module->resolveReference(current.argument), false);
@@ -7910,11 +7923,15 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
 
 void Compiler :: copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
 {
-   writer.newNode(node.type, node.argument);
+   if (node.strArgument != -1) {
+      writer.newNode(node.type, node.identifier());
+   }
+   else writer.newNode(node.type, node.argument);
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxIdentifier || current == lxPrivate || current == lxReference) {
+      if (test(current.type, lxTerminalMask | lxObjectMask)) {
+      //if (current == lxIdentifier || current == lxPrivate || current == lxReference) {
          copyIdentifier(writer, current);
       }
       else if (current == lxTemplate) {
@@ -7938,6 +7955,9 @@ void Compiler :: copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope&
 
          SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
          writer.closeNode();
+      }
+      else if (current == lxTypeAttr) {
+         writer.appendNode(current.type, current.identifier());
       }
       else copyMethodTree(writer, current, scope);
 
@@ -8034,7 +8054,10 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
       int attrValue = 0;
       ref_t attrRef = scope.mapAttribute(current, attrValue);
       if (attrRef == INVALID_REF) {
-         writer.appendNode(lxTemplateType, attrValue);
+         if (attrValue == -1) {
+            writer.appendNode(lxEmbeddable);
+         }
+         else writer.appendNode(lxTemplateType, attrValue);
       }
       else if (attrValue != 0) {
          writer.appendNode(lxAttribute, attrValue);
