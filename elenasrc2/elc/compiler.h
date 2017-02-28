@@ -458,6 +458,7 @@ private:
    {
       ClassInfo   info;
       ref_t       extensionMode;
+      ref_t       pseudoVar;
 
 //      virtual int getMethodInfo(ref_t message, MethodAttribute attr)
 //      {
@@ -475,6 +476,9 @@ private:
 //      {
 //         return test(info.header.flags, elClosed);
 //      }
+      
+      virtual ref_t mapSubject(SNode terminal, IdentifierString& output);
+      virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true);
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -549,6 +553,7 @@ private:
       bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;
+      bool         templateOne;
 //      bool         extensionTemplateMode;
 ////      bool         sealed;
 
@@ -723,6 +728,7 @@ private:
       ForwardMap  parameters;
       SubjectMap  subjects;
       bool        classMode;
+      bool        embeddableMode;
 ////      bool        generationMode;
 //      int         sourceRef;
 //
@@ -829,6 +835,7 @@ private:
          templateRef = attrRef;
          reference = 0;
          classMode = false;
+         embeddableMode = false;
 
          //this->templateRef = attrRef;
          //this->generationMode = false;
@@ -840,6 +847,7 @@ private:
          templateRef = 0;
          reference = 0;
          classMode = false;
+         embeddableMode = false;
       }
    };
 
@@ -931,6 +939,7 @@ private:
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
+   /// NOTE : the method is used to set template pseudo variable
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
 
 //   void declareTemplateParameters(SNode node, TemplateScope& templateScope);

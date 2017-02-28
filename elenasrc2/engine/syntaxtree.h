@@ -215,6 +215,7 @@ enum LexicalType
    lxTemplateType    = 0x2002C,
    lxEmbeddableAttr  = 0x2002D,
    lxBoxableAttr     = 0x2002E,
+   lxPseudoVarAttr   = 0x2002F,
 
 //   lxFieldAttrMask   = 0x20100,
 //   lxStaticAttr      = 0x20102,

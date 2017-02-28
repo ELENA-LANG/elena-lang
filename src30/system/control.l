@@ -32,8 +32,8 @@ limited dispatchable(iterator) class Iterator
     /// Sets the current member
     set : anObject []
     
-//    /// Reads the current index into an output parameter
-//    #method(stacksafe,outnprop:index) readIndex &vint:anIndex []
+    /// Reads the current index into an output parameter
+    stacksafe outnaccs(index) readIndex &vint:anIndex []
     
     /// Sets the index by specified value
     ///
@@ -72,11 +72,11 @@ limited dispatchable(iterator) class Iterator
         $self writeIndex &int:anIndex.
     ]
 
-//    /// Reads the length to the output parameter    
-//    #method(stacksafe,outnprop:length) readLength &vint:anOutput
-//    [
-//        anOutput := 0. 
-//    ]
+    /// Reads the length to the output parameter    
+    stacksafe outnaccs(length) readLength &vint:anOutput
+    [
+        anOutput := 0. 
+    ]
 }
 
 //// --- base functions ---
