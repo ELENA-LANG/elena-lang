@@ -54,12 +54,13 @@
 ////#define V_DYNAMIC     (ref_t)-8199
 ////#define V_STRING      (ref_t)-8200
 #define V_CONST       (ref_t)-8201
-//#define V_GENERIC     (ref_t)-8202
+#define V_GENERIC     (ref_t)-8202
 //#define V_EXTENSION   (ref_t)-8203
 //#define V_NOSTRUCT    (ref_t)-8204
 //#define V_ACTION      (ref_t)-8205
 //#define V_GROUP       (ref_t)-8206
 //#define V_PRELOADED   (ref_t)-8207
+#define V_SINGLETON     (ref_t)-8208
 
 #define V_CONSTRUCTOR   (ref_t)-16384
 #define V_VARIABLE      (ref_t)-16385
@@ -222,7 +223,7 @@ public:
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
 
 //   // class is considered to be a role if it cannot be initiated
 //   virtual bool isRole(ClassInfo& info) = 0;          

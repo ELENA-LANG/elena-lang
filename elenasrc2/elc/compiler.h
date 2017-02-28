@@ -548,7 +548,7 @@ private:
 ////      bool         withOpenArg;
       bool         stackSafe;
       bool         classEmbeddable;
-//      bool         generic;
+      bool         generic;
 //      bool         extensionTemplateMode;
 ////      bool         sealed;
 
@@ -1075,7 +1075,8 @@ private:
    void generateClassFlags(ClassScope& scope, SNode node);
 ////   void generateClassFields(ClassScope& scope, SyntaxTree::Node root, bool singleField);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
-   void generateMethodDeclarations(SNode node, ClassScope& scope/*, bool hideDuplicates*/, bool closed, bool classClassMode);
+   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed);
+   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, bool classClassMode);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode);
 
    void generateClassImplementation(SNode node, ClassScope& scope);
@@ -1162,8 +1163,10 @@ private:
    void generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
-   void generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool nested = false);
+   // nested = -1 - nested class, -2 - singleton
+   void generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, int nested = 0);
    bool generateMethodScope(SNode node, TemplateScope& scope, SNode attributes);
+   bool generateSingletonScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
    void generateScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
 
    void compileSyntaxTree(SyntaxTree& tree, ModuleScope& scope);

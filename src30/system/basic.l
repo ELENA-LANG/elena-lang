@@ -105,7 +105,7 @@
 // --- true ---
 
 /// A true value symbol
-const true = BaseBoolValue
+class true = BaseBoolValue
 {
     /// Executes the action
     __ifoperator if : aTrueAction = aTrueAction eval.
@@ -156,7 +156,7 @@ const true = BaseBoolValue
 // --- false ---
 
 /// A false value symbol
-const false = BaseBoolValue
+class false = BaseBoolValue
 {
     /// Always returns nil
     __ifnotoperator if : anAction = $nil.
@@ -1611,97 +1611,97 @@ sealed const embeddable dispatchable(char) struct CharValue :: BaseValue
 
 // --- nil constant ---
 
-///// A nil value
-//#symbol(dispatchable:void) nil =
-//{
-//    /// Returns true if the specified object is nil.
-//    #method equal : anObject 
-//    [
-//        ($nil == anObject)
-//            ? [ ^ true. ].
-//        
-//        ($super equal:anObject)
-//            ? [ ^ true. ].
-//        
-//        ^ false.
-//    ]
-//    
-//    /// Returns nil
-//    ///
-//    /// Any typecasting message will be handled and nil value returned
-//    #method(generic)get = $nil.
-//}.
+/// A nil value
+class dispatchable(void) nil =
+{
+    /// Returns true if the specified object is nil.
+    equal : anObject 
+    [
+        ($nil == anObject)
+            ? [ ^ true. ].
+        
+        ($super equal:anObject)
+            ? [ ^ true. ].
+        
+        ^ false.
+    ]
+    
+    /// Returns nil
+    ///
+    /// Any typecasting message will be handled and nil value returned
+    generic get = $nil.
+}.
 
-////// === Basic Factory symbols ==
-////
-////#class BaseExtender
-////{
-////    #field theObject.
-////    
-////    /// Returns true if the specified object is equal to the current object; otherwise, false.
-////    #method equal : anObject
-////        => theObject.
-////      
-////    /// Dispatches the verb to the target object
-////    #method cast : aVerb &to:aTarget => theObject.
-////    
-////    /// Dispatches the verb to the target object
-////    #method cast : aVerb &to:aTarget &with:aParam => theObject.
-////    
-////    #method => theObject.
-////}
-////
-/////// A generic variable. 
-///////
-/////// Extends an assigned value
-////#class(sealed,nvarof:object) Variable
-////{
-////    /// Creates the empty variable
-////    #constructor new
-////    [
-////    ]        
-////        
-////    /// Creates the variable
-////    #constructor new : value
-////    [
-////        $value := value.
-////    ]
-////    
-////    #method set : value
-////    [
-////        $value := value.
-////    ]
-////    
-////    #method append : val
-////    [
-////        ($nil == $value)
-////            ? [ $value := val. ]
-////            ! [ $value := $value + val. ].
-////    ]
-////    
-////    #method reduce : val
-////    [
-////        ($nil == $value)
-////            ? [ #throw system'InvalidOperationException new. ]
-////            ! [ $value := $value - val. ].
-////    ]
-////
-////    #method multiplyBy : val
-////    [
-////        ($nil == $value)
-////            ? [ #throw system'InvalidOperationException new. ]
-////            ! [ $value := $value * val. ].
-////    ]
-////    
-////    /// Divides into the value
-////    #method divideInto : val
-////    [
-////        ($nil == $value)
-////            ? [ #throw system'InvalidOperationException new. ]
-////            ! [ $value := $value / val. ].
-////    ]    
-////}
-////
+// === Basic Factory symbols ==
+
+class BaseExtender
+{
+    object theObject.
+    
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    equal : anObject
+        => theObject.
+      
+    /// Dispatches the verb to the target object
+    cast : aVerb &to:aTarget => theObject.
+    
+    /// Dispatches the verb to the target object
+    cast : aVerb &to:aTarget &with:aParam => theObject.
+    
+    dispatch => theObject.
+}
+
+/// A generic variable. 
+///
+/// Extends an assigned value
+sealed nvarof(object) class Variable
+{
+    /// Creates the empty variable
+    constructor new
+    [
+    ]        
+        
+    /// Creates the variable
+    constructor new : value
+    [
+        $value := value.
+    ]
+    
+    set : value
+    [
+        $value := value.
+    ]
+    
+    append : val
+    [
+        ($nil == $value)
+            ? [ $value := val. ]
+            ! [ $value := $value + val. ].
+    ]
+    
+    reduce : val
+    [
+        ($nil == $value)
+            ? [ system'InvalidOperationException new raise. ]
+            ! [ $value := $value - val. ].
+    ]
+
+    multiplyBy : val
+    [
+        ($nil == $value)
+            ? [ system'InvalidOperationException new raise. ]
+            ! [ $value := $value * val. ].
+    ]
+    
+    /// Divides into the value
+    divideInto : val
+    [
+        ($nil == $value)
+            ? [ system'InvalidOperationException new raise. ]
+            ! [ $value := $value / val. ].
+    ]    
+}
+
 ////// --- KeyValue ---
 ////
 /////// A key - object pair

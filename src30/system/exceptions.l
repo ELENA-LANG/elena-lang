@@ -93,6 +93,11 @@
 //    [
 //        aCatchBlock subject eval:$self | if &MethodNotFoundError: e [ #throw $self. ].
 //    ]    
+//
+//    #method raise
+//    [
+//        #throw $self.  
+//    ]
 //}
 //
 //// --- Exception ---
