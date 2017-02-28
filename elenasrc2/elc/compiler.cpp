@@ -33,7 +33,7 @@ using namespace _ELENA_;
 #define HINT_NOCONDBOXING     0x08000000
 #define HINT_EXTENSION_MODE   0x04000000
 ////#define HINT_TRY_MODE         0x02000000
-//#define HINT_LOOP             0x01000000
+#define HINT_LOOP             0x01000000
 //#define HINT_SWITCH           0x00800000
 #define HINT_NODEBUGINFO      0x00020000
 ////#define HINT_ACTION           0x00020000
@@ -2843,30 +2843,31 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
    return extRef;
 }
 
-void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference)
+void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode)
 {
    SNode thenBody = loperandNode.nextNode(lxObjectMask);
-   //if (loopMode) {
-   //   thenBody.set(lxElse, ifReference);
-   //   compileBranching(thenBody, scope);
-   //}
-   //else {
-   writer.newNode(lxIf, ifReference);
-   compileBranching(writer, thenBody, scope);
-   writer.closeNode();
-
-   SNode elseBody = thenBody.nextNode(lxObjectMask);
-   if (elseBody != lxNone) {
-      writer.newNode(lxElse, 0);
-      compileBranching(writer, elseBody, scope);
+   if (loopMode) {
+      writer.newNode(lxElse, ifReference);
+      compileBranching(writer, thenBody, scope);
       writer.closeNode();
    }
-   //}
+   else {
+      writer.newNode(lxIf, ifReference);
+      compileBranching(writer, thenBody, scope);
+      writer.closeNode();
+
+      SNode elseBody = thenBody.nextNode(lxObjectMask);
+      if (elseBody != lxNone) {
+         writer.newNode(lxElse, 0);
+         compileBranching(writer, elseBody, scope);
+         writer.closeNode();
+      }
+   }
 }
 
 ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id)
 {
-//   bool loopMode = test(mode, HINT_LOOP);
+   bool loopMode = test(mode, HINT_LOOP);
    ObjectInfo retVal(okObject);
 
    writer.newBookmark();
@@ -2874,26 +2875,28 @@ ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& nod
    SNode loperandNode = node.firstChild(lxObjectMask);
    ObjectInfo loperand = compileExpression(writer, loperandNode, scope, 0);
 
-   //// HOTFIX : in loop expression, else node is used to be similar with branching code
-   //// because of optimization rules
-   //ref_t original_id = operator_id;
-   //if (loopMode) {
-   //   operator_id = operator_id == IF_MESSAGE_ID ? IFNOT_MESSAGE_ID : IF_MESSAGE_ID;
-   //}
+   // HOTFIX : in loop expression, else node is used to be similar with branching code
+   // because of optimization rules
+   ref_t original_id = operator_id;
+   if (loopMode) {
+      operator_id = operator_id == IF_MESSAGE_ID ? IFNOT_MESSAGE_ID : IF_MESSAGE_ID;
+   }
 
    ref_t ifReference = 0;
    ref_t resolved_operator_id = operator_id;
    // try to resolve the branching operator directly
    if (_logic->resolveBranchOperation(*scope.moduleScope, *this, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
       // good luck : we can implement branching directly
-      compileBranchingNodes(writer, loperandNode, scope, ifReference);
+      compileBranchingNodes(writer, loperandNode, scope, ifReference, loopMode);
 
-      writer.insert(lxBranching);
+      writer.insert(loopMode ? lxLooping : lxBranching);
       //if (test(mode, HINT_SWITCH))
       //   node.setArgument(-1);
       writer.closeNode();
    }
    else {
+      operator_id = original_id;
+
       // bad luck : we have to create closure
       SNode roperandNode = loperandNode.nextNode(lxObjectMask);
 
@@ -2903,17 +2906,9 @@ ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& nod
       if (roperand2Node != lxNone) {
          compileObject(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
 
-         //if (loopMode)
-         //   node = node.injectNode(node);
-
          retVal = compileMessage(writer, node, scope, loperand, encodeMessage(0, operator_id, 2), 0);
       }
-      else {
-         //if (loopMode)
-         //   node = node.injectNode(node);
-
-         retVal = compileMessage(writer, node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
-      }
+      else retVal = compileMessage(writer, node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
    }
 
    writer.removeBookmark();
@@ -3930,86 +3925,76 @@ ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenNode, Co
    return ObjectInfo(okObject);
 }
 
-////void Compiler :: compileThrow(SNode node, CodeScope& scope, int mode)
+//void Compiler :: compileThrow(SNode node, CodeScope& scope, int mode)
+//{
+//   ObjectInfo object = compileExpression(node.firstChild(), scope, mode);
+//}
+
+void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   // find inner expression
+   SNode expr = node;
+   while (expr.findChild(lxMessage, lxAssign, lxOperator) == lxNone) {
+      expr = expr.findChild(lxExpression);
+   }
+
+   compileExpression(writer, expr, scope, HINT_LOOP);
+
+   writer.removeBookmark();
+}
+
+////void Compiler :: compileTry(DNode node, CodeScope& scope)
 ////{
-////   ObjectInfo object = compileExpression(node.firstChild(), scope, mode);
-////}
-////
-////void Compiler :: compileLoop(SNode node, CodeScope& scope)
-////{
-////   node = lxExpression;
-////
-////   // find inner expression
-////   SNode expr = node;
-////   while (expr.findChild(lxMessage, lxAssign, lxOperator) == lxNone) {
-////      expr = expr.findChild(lxExpression);
-////   }
-////
-////   compileExpression(expr, scope, HINT_LOOP);
-////
-////   // mark the inner expression as a loop
-////   expr.refresh();
-////   if (expr != lxBranching) {
-////      // HOTFIX : calling node should not be overriden
-////      while (expr != lxExpression) {
-////         expr = expr.parentNode();
-////      }
-////   }
-////   expr.set(lxLooping, 0);
-////}
-////
-//////void Compiler :: compileTry(DNode node, CodeScope& scope)
-//////{
-////////   scope.writer->newNode(lxTrying);
-////////
-////////   // implement try expression
-////////   compileExpression(node.firstChild(), scope, 0, 0);
-////////
-//////////   // implement finally block
-//////////   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//////////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-//////////   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-////////
-////////   DNode catchNode = goToSymbol(node.firstChild(), nsCatchMessageOperation);
-////////   if (catchNode != nsNone) {
-////////      scope.writer->newBookmark();
-////////
-////////      scope.writer->appendNode(lxResult);
-////////
-////////      // implement catch message
-////////      compileMessage(catchNode, scope, ObjectInfo(okObject));
-////////
-////////      scope.writer->removeBookmark();
-////////   }
-//////////   // or throw the exception further
-//////////   else _writer.throwCurrent(*scope.tape);
-////////
-////////   scope.writer->closeNode();
-////////
+//////   scope.writer->newNode(lxTrying);
+//////
+//////   // implement try expression
+//////   compileExpression(node.firstChild(), scope, 0, 0);
+//////
 ////////   // implement finally block
+////////   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
 ////////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-//////}
-////
-////void Compiler :: compileLock(SNode node, CodeScope& scope)
-////{
-////   node = lxLocking;
-////
-////   // implement the expression to be locked
-////   ObjectInfo object = compileExpression(node.findChild(lxExpression), scope, 0);
-////
-////   // implement critical section
-////   CodeScope subScope(&scope);
-////   subScope.level += 4; // HOT FIX : reserve place for the lock variable and exception info
-////
-////   SNode code = node.findChild(lxCode);
-////
-////   compileCode(code, subScope);
-////
-////   // HOT FIX : clear the sub block local variables
-////   if (subScope.level - 4 > scope.level) {
-////      code.appendNode(lxReleasing, subScope.level - scope.level - 4);
-////   }
+////////   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+//////
+//////   DNode catchNode = goToSymbol(node.firstChild(), nsCatchMessageOperation);
+//////   if (catchNode != nsNone) {
+//////      scope.writer->newBookmark();
+//////
+//////      scope.writer->appendNode(lxResult);
+//////
+//////      // implement catch message
+//////      compileMessage(catchNode, scope, ObjectInfo(okObject));
+//////
+//////      scope.writer->removeBookmark();
+//////   }
+////////   // or throw the exception further
+////////   else _writer.throwCurrent(*scope.tape);
+//////
+//////   scope.writer->closeNode();
+//////
+//////   // implement finally block
+//////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
 ////}
+//
+//void Compiler :: compileLock(SNode node, CodeScope& scope)
+//{
+//   node = lxLocking;
+//
+//   // implement the expression to be locked
+//   ObjectInfo object = compileExpression(node.findChild(lxExpression), scope, 0);
+//
+//   // implement critical section
+//   CodeScope subScope(&scope);
+//   subScope.level += 4; // HOT FIX : reserve place for the lock variable and exception info
+//
+//   SNode code = node.findChild(lxCode);
+//
+//   compileCode(code, subScope);
+//
+//   // HOT FIX : clear the sub block local variables
+//   if (subScope.level - 4 > scope.level) {
+//      code.appendNode(lxReleasing, subScope.level - scope.level - 4);
+//   }
+//}
 
 ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -4029,10 +4014,12 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 //         case lxThrowing:
 //            compileThrow(current, scope, 0);
 //            break;
-//         case lxLoop:
-//            insertDebugStep(current, dsStep);
-//            compileLoop(current, scope);
-//            break;
+         case lxLoop:
+            writer.newNode(lxExpression);
+            writer.appendNode(lxBreakpoint, dsStep);
+            compileLoop(writer, current, scope);
+            writer.closeNode();
+            break;
 ////         case nsTry:
 ////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 ////            compileTry(statement, scope);
@@ -7119,7 +7106,10 @@ void Compiler :: optimizeExpressionTree(SNode node, ModuleScope& scope, WarningS
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (test(current.type, lxObjectMask)) {
+      if (current == lxLooping || current == lxElse || current == lxCode) {
+         optimizeExpressionTree(current, scope, warningScope);
+      }
+      else if (test(current.type, lxObjectMask)) {
          optimizeExpression(current, scope, warningScope, mode);
       }
 
@@ -7961,6 +7951,9 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          SyntaxTree::copyNode(writer, lxCol, terminal);
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
+      }
+      else if (current == lxLoop) {
+         generateCodeTree(writer, current, scope);
       }
       else generateObjectTree(writer, current, scope);
 

@@ -110,6 +110,7 @@ In development:
                  * assign the real stack allocated variable with integer constant
                  * typified symbols (e.g. system'pi_value, system'e_value)
                  * uncomment Integer, Real
+                 * test loop operation with unrecognized branching operator
 
               xdev - generic development
                  * support property template

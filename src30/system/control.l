@@ -33,7 +33,7 @@ limited dispatchable(iterator) class Iterator
     set : anObject []
     
     /// Reads the current index into an output parameter
-    stacksafe outnaccs(index) readIndex &vint:anIndex []
+    stacksafe outnprop(index) readIndex &vint:anIndex []
     
     /// Sets the index by specified value
     ///
@@ -73,29 +73,32 @@ limited dispatchable(iterator) class Iterator
     ]
 
     /// Reads the length to the output parameter    
-    stacksafe outnaccs(length) readLength &vint:anOutput
+    stacksafe outnprop(length) readLength &vint:anOutput
     [
         anOutput := 0. 
     ]
 }
 
-//// --- base functions ---
-//
-///// A base action
-//#class(limited,dispatchable:func)BaseFunction
-//{
-//    /// Executes the action
-//    #method(action) eval []
-//    
-//    /// Executes the action while the condition is true
-//    #method(sealed,w2) run &if:aBool
-//    [
+// --- base functions ---
+
+/// A base action
+limited dispatchable(func) class BaseFunction
+{
+    /// Executes the action
+    action eval []
+    
+    /// Executes the action while the condition is true
+    sealed run &if:aBool
+    [
+//        while (aBool)
+//        [
+//        ].
 //        #loop aBool ?
 //        [
 //            $self eval.
 //        ].
-//    ]
-//
+    ]
+
 //    /// Executes the action while the condition is false
 //    ///
 //    /// Executes at least once
@@ -110,8 +113,8 @@ limited dispatchable(iterator) class Iterator
 //            flag := aBool bool.
 //        ].
 //    ]
-//}
-//
+}
+
 ///// A base function
 //#class(limited,dispatchable:func1)BaseFunction1
 //{

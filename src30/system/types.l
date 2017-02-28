@@ -8,7 +8,7 @@
 //#template(-8207) preloaded {}
 #template(-8202) generic {}
 #template(-8192) stacksafe {}
-//#template(-8205) action {}
+#template(-8205) action {}
 //#template(-4099) w1 {}
 //#template(-4100) w2 {}
 //#template(-4101) w3 {}
@@ -83,9 +83,9 @@
 
 #subject wide       = system'WideLiteralValue.
 
-//// === function types ===
-//#subject func       = system'BaseFunction.
-//
+// === function types ===
+#subject func       = system'BaseFunction.
+
 ///// An anonymous function with a generic parameter.
 /////
 ///// An instance of system'BaseFunction1

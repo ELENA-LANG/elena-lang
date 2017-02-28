@@ -465,6 +465,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsSubject:
       case nsDispatchExpression:
       case nsExtension:
+      case nsLoop:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          break;
       default:

@@ -1002,7 +1002,7 @@ private:
 
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference);
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode);
    ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
 
    ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
@@ -1022,7 +1022,7 @@ private:
 
 //   void compileTrying(SNode node, CodeScope& scope);
 //   void compileAltOperation(SNode node, CodeScope& scope);
-//   void compileLoop(SNode node, CodeScope& scope);
+   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileThrow(SNode node, CodeScope& scope, int mode);
 ////   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(SNode node, CodeScope& scope);

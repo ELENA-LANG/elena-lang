@@ -15,7 +15,7 @@
 
 // --- outnprop ---
 
-#template(-16388) outnaccs(template_subj)
+#template(-16388) outnprop(template_subj)
 {
    stacksafe embeddable int template_subj
    [

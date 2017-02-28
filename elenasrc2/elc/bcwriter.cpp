@@ -293,22 +293,22 @@ void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
 //   // pushn  value
 //   tape.write(bcPushN, value);
 //}
-//
-//int ByteCodeWriter :: declareLoop(CommandTape& tape, bool threadFriendly)
-//{
-//   // loop-begin
-//
-//   tape.newLabel();                 // declare loop start label
-//   tape.setLabel(true);
-//
-//   int end = tape.newLabel();       // declare loop end label
-//
-//   if (threadFriendly)
-//      // snop
-//      tape.write(bcSNop);
-//
-//   return end;
-//}
+
+int ByteCodeWriter :: declareLoop(CommandTape& tape, bool threadFriendly)
+{
+   // loop-begin
+
+   tape.newLabel();                 // declare loop start label
+   tape.setLabel(true);
+
+   int end = tape.newLabel();       // declare loop end label
+
+   if (threadFriendly)
+      // snop
+      tape.write(bcSNop);
+
+   return end;
+}
 
 void ByteCodeWriter :: declareThenBlock(CommandTape& tape)
 {
@@ -1026,21 +1026,21 @@ void ByteCodeWriter :: endThenBlock(CommandTape& tape)
    tape.setLabel();
 }
 
-//void ByteCodeWriter :: endLoop(CommandTape& tape)
-//{
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//   tape.releaseLabel();
-//}
-//
-//void ByteCodeWriter :: endLoop(CommandTape& tape, ref_t comparingRef)
-//{
-//   tape.write(bcIfR, baPreviousLabel, comparingRef | mskConstantRef);
-//
-//   tape.setLabel();
-//   tape.releaseLabel();
-//}
-//
+void ByteCodeWriter :: endLoop(CommandTape& tape)
+{
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+   tape.releaseLabel();
+}
+
+void ByteCodeWriter :: endLoop(CommandTape& tape, ref_t comparingRef)
+{
+   tape.write(bcIfR, baPreviousLabel, comparingRef | mskConstantRef);
+
+   tape.setLabel();
+   tape.releaseLabel();
+}
+
 //void ByteCodeWriter :: endExternalBlock(CommandTape& tape,  bool idle)
 //{
 //   if (!idle)
@@ -4486,43 +4486,43 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //
 //   endAlt(tape);
 //}
-//
-//void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   declareLoop(tape, true);
-//
-//   //declareBlock(tape);
-//
-//   SNode current = node.firstChild();
-//   bool repeatMode = true;
-//   while (current != lxNone) {
-//      if (current == lxElse) {
-//         jumpIfEqual(tape, current.argument);
-//
-//         generateCodeBlock(tape, current.findSubNode(lxCode));
-//
-//         repeatMode = false;
-//      }
-//      else if (test(current.type, lxObjectMask)) {
-//         declareBlock(tape);
-//         generateObjectExpression(tape, current);
-//         declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   if (repeatMode)
-//      jumpIfEqual(tape, 0);
-//
-//   //declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//
-//   if (node.argument != 0) {
-//      endLoop(tape, node.argument);
-//   }
-//   else endLoop(tape);
-//}
-//
+
+void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
+{
+   declareLoop(tape, true);
+
+   //declareBlock(tape);
+
+   SNode current = node.firstChild();
+   bool repeatMode = true;
+   while (current != lxNone) {
+      if (current == lxElse) {
+         jumpIfEqual(tape, current.argument);
+
+         generateCodeBlock(tape, current.findSubNode(lxCode));
+
+         repeatMode = false;
+      }
+      else if (test(current.type, lxObjectMask)) {
+         declareBlock(tape);
+         generateObjectExpression(tape, current);
+         declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+      }
+
+      current = current.nextNode();
+   }
+
+   if (repeatMode)
+      jumpIfEqual(tape, 0);
+
+   //declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+
+   if (node.argument != 0) {
+      endLoop(tape, node.argument);
+   }
+   else endLoop(tape);
+}
+
 //void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   declareSwitchBlock(tape);
@@ -4729,9 +4729,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxSwitching:
 //         generateSwitching(tape, node);
 //         break;
-//      case lxLooping:
-//         generateLooping(tape, node);
-//         break;
+      case lxLooping:
+         generateLooping(tape, node);
+         break;
 //      case lxLocking:
 //         generateLocking(tape, node);
 //         break;

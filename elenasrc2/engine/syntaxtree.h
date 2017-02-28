@@ -46,7 +46,7 @@ enum LexicalType
    lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
    lxExtension       = 0x0002B,
-//   lxLoop            = 0x00030,
+   lxLoop            = 0x00030,
 //   lxInlineExpression= 0x00032,
    lxMessageReference= 0x00033,
 //   lxLock            = 0x00037,
@@ -116,7 +116,7 @@ enum LexicalType
 //   lxLocking         = 0x0C00E,   // branch expression
    lxBranching       = 0x0C00F,   // branch expression
 //   lxSwitching       = 0x0C010,
-//   lxLooping         = 0x0C011,
+   lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,
 //   lxThrowing        = 0x0C013,
 //   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
