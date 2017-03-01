@@ -115,6 +115,7 @@ In development:
                  * test primitive operations with message / subject
                  * test primitive operations with arrays, int array, short arrays, byte arrays, binary arrays
                  * test generic arrayof(byte), arrayof(message), arrayof(object), arrayof(enumerator)
+                 * new verb : raise
 
               xdev - generic development
                  * support property template

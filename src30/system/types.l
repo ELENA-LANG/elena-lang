@@ -67,16 +67,16 @@
 // === basic dynamic types ===
 #subject bytearray  = system'ByteArray.
 #subject shortarray = system'ShortArray.
-//#subject intarray   = system'IntArray.
-//#subject intmatrix  = system'IntMatrix.
-//#subject realarray  = system'RealArray.
-//#subject realmatrix = system'RealMatrix.
-//#subject chararray  = system'CharArray.
+#subject intarray   = system'IntArray.
+#subject intmatrix  = system'IntMatrix.
+#subject realarray  = system'RealArray.
+#subject realmatrix = system'RealMatrix.
+#subject chararray  = system'CharArray.
 //#subject array      = system'Array.
 //#subject args       = system'ArgArray.
 //#subject mssgarray  = system'MessageArray.
-//#subject bitarray   = system'BitArray.
-//#subject bitset     = system'BitArray32.
+#subject bitarray   = system'BitArray.
+#subject bitset     = system'BitArray32.
 
 /// An instance of system'LiteralValue class. 
 #subject literal    = system'LiteralValue.
