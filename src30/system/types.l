@@ -86,26 +86,26 @@
 // === function types ===
 #subject func       = system'BaseFunction.
 
-///// An anonymous function with a generic parameter.
-/////
-///// An instance of system'BaseFunction1
-//#subject func1      = system'BaseFunction1.
-//
-//#subject func2      = system'BaseFunction2.
-//#subject func3      = system'BaseFunction3.
-//#subject func4      = system'BaseFunction4.
-//#subject func5      = system'BaseFunction5.
-//#subject func6      = system'BaseFunction6.
-//#subject func7      = system'BaseFunction7.
-//#subject func8      = system'BaseFunction8.
-//#subject func9      = system'BaseFunction9.
-//#subject func10     = system'BaseFunction10.
-//#subject func11     = system'BaseFunction11.
-//
-//#subject nfunc      = system'IndexFunction1.
-//#subject nnfunc     = system'IndexFunction2.
-//#subject n3func     = system'IndexFunction3.
-//
+/// An anonymous function with a generic parameter.
+///
+/// An instance of system'BaseFunction1
+#subject func1      = system'BaseFunction1.
+
+#subject func2      = system'BaseFunction2.
+#subject func3      = system'BaseFunction3.
+#subject func4      = system'BaseFunction4.
+#subject func5      = system'BaseFunction5.
+#subject func6      = system'BaseFunction6.
+#subject func7      = system'BaseFunction7.
+#subject func8      = system'BaseFunction8.
+#subject func9      = system'BaseFunction9.
+#subject func10     = system'BaseFunction10.
+#subject func11     = system'BaseFunction11.
+
+#subject nfunc      = system'IndexFunction1.
+#subject nnfunc     = system'IndexFunction2.
+#subject n3func     = system'IndexFunction3.
+
 //// === system handles ===
 //#subject handle     = system'Handle.
 //#subject rt_ptr     = system'RTPointer.

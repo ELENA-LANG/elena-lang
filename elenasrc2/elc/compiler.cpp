@@ -3951,8 +3951,6 @@ void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
    }
 
    compileExpression(writer, expr, scope, HINT_LOOP);
-
-   writer.removeBookmark();
 }
 
 ////void Compiler :: compileTry(DNode node, CodeScope& scope)
@@ -8030,7 +8028,9 @@ void Compiler :: copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope&
          }
          else if (scope.codeMode && current.argument == 0) {
             // if it is a code template parameter
-            generateCodeTree(writer, scope.codeNode, scope);
+            TemplateScope* parentScope = (TemplateScope*)scope.parent;
+
+            generateCodeTree(writer, scope.codeNode, *parentScope);
 
             //writer.insert(lxExpression);
             //writer.closeNode();

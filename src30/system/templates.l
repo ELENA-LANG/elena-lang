@@ -75,3 +75,23 @@
 //        ^ retVal.            
 //    ]
 //}
+
+// --- while statement ---
+
+#template while (expr)
+[
+    #loop(expr)?
+    [
+    ].
+].
+
+// --- until statement ---
+
+#template until (expr)
+[
+    #loop(expr)!
+    [
+    ].
+].
+
+
