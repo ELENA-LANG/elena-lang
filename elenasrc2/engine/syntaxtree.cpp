@@ -159,13 +159,23 @@ SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, ide
    return read(reader);
 }
 
-void SyntaxTree :: saveNode(Node node, _Memory* dump)
+void SyntaxTree :: saveNode(Node node, _Memory* dump, bool inclusingNode)
 {
    SyntaxTree tree;
    SyntaxWriter writer(tree);
 
    writer.newNode(lxRoot);
-   copyNode(writer, node);
+
+   if (inclusingNode) {
+      if (node.strArgument >= 0) {
+         writer.newNode(node.type, node.identifier());
+      }
+      else writer.newNode(node.type, node.argument);
+      copyNode(writer, node);
+      writer.closeNode();
+   }
+   else copyNode(writer, node);
+
    writer.closeNode();
 
    tree.save(dump);
@@ -335,10 +345,10 @@ void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destinatio
    }
 }
 
-void SyntaxTree :: copyNodeSafe(Node source, Node destination)
+void SyntaxTree :: copyNodeSafe(Node source, Node destination, bool inclusingNode)
 {
    MemoryDump dump;
-   saveNode(source, &dump);
+   saveNode(source, &dump, inclusingNode);
    loadNode(destination, &dump);
 }
 

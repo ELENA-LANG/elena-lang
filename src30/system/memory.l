@@ -27,13 +27,13 @@
           }.
     ]
         
-//    stacksafe outnprop(length) readLength &vint:retVal
-//    [
-//        int len := 0.
-//        $target >> len.
-//        
-//        retVal := len.
-//    ]
+    stacksafe outnprop(length) readLength &vint:retVal
+    [
+        int len := 0.
+        $target >> len.
+        
+        retVal := len.
+    ]
 
     stacksafe template_subj getAt &int:n
     [
@@ -48,18 +48,18 @@
             ! [ InvalidArgumentException new raise. ].
     ]
 
-//    stacksafe setAt &int:n &template_subj:item
-//    [
-//        (n < 0)
-//            ? [ InvalidArgumentException new raise. ].
-//        
-//        int len := 0.
-//        $target >> len.
-//
-//        (n < len)
-//            ? [ $target @ n := item. ]
-//            ! [ InvalidArgumentException new raise. ].
-//    ]
+    stacksafe setAt &int:n &template_subj:item
+    [
+        (n < 0)
+            ? [ InvalidArgumentException new raise. ].
+        
+        int len := 0.
+        $target >> len.
+
+        (n < len)
+            ? [ $target @ n := item. ]
+            ! [ InvalidArgumentException new raise. ].
+    ]
                 
     /// Returns the item at the specified index
     template_subj getAt : aParam

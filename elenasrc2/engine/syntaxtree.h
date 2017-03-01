@@ -838,8 +838,8 @@ public:
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);
-   static void copyNodeSafe(Node source, Node destination);
-   static void saveNode(Node node, _Memory* dump);
+   static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);
+   static void saveNode(Node node, _Memory* dump, bool inclusingNode = false);
    static void loadNode(Node node, _Memory* dump);
 
    static int countChild(Node node, LexicalType type)
