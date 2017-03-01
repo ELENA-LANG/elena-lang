@@ -27,7 +27,7 @@
 #define V_MESSAGE        (ref_t)-19
 #define V_VERB           (ref_t)-20
 //#define V_EXTMESSAGE  (ref_t)-21
-//#define V_SYMBOL      (ref_t)-22
+#define V_SYMBOL      (ref_t)-22
 
 #define V_OBJECT      (ref_t)-28
 

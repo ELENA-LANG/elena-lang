@@ -1,21 +1,21 @@
-////#subject vmssg = varof:mssg.
-////
-////// --- Symbol ---
-////
-/////// A dynamic symbol
-////#class(sealed,embeddable) Symbol
-////{
-////    #field(-22,4)theValue.
-////    
-////    /// Loads a symbol
-////    #constructor new &literal:name
-////    [
-////        system'core_routines'__symbol load &symbol_ref:$self &literal:name.
-////    ]
-////        
-////    /// Redirects incoming messages to the symbol
-////    #method => system'core_routines'__symbol.
-////}
+//#subject vmssg = varof:mssg.
+
+// --- Symbol ---
+
+/// A dynamic symbol
+sealed embeddable struct Symbol
+{
+    __symbol theValue.
+    
+    /// Loads a symbol
+    constructor new &literal:name
+    [
+        system'core_routines'__symbol load &symbol_ref:$self &literal:name.
+    ]
+        
+    /// Redirects incoming messages to the symbol
+    dispatch => system'core_routines'__symbol.
+}
 
 // --- Verb ---
 

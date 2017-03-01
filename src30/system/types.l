@@ -29,6 +29,7 @@
 #template(-4098)  __ifnotoperator {}
 #template(-19,4)  __mssg  {}
 #template(-20,4)  __verb  {}
+#template(-22,4)  __symbol{}
 #template(-11,1)  __int8  {}
 #template(-11,2)  __int16 {}
 #template(-11,4)  __int32 {}
