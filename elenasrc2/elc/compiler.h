@@ -729,75 +729,12 @@ private:
       SubjectMap  subjects;
       bool        classMode;
       bool        embeddableMode;
+      bool        codeMode;
 ////      bool        generationMode;
 //      int         sourceRef;
-//
-//      virtual int getMethodInfo(ref_t message, MethodAttribute attr)
-//      {
-//         ClassScope* classScope = (ClassScope*)getScope(slClass);
-//
-//         return classScope->getMethodInfo(message, attr);
-//      }
-//      virtual void setMethodInfo(ref_t message, MethodAttribute attr, int value, bool clearPreviousOne = true)
-//      {
-//         ClassScope* classScope = (ClassScope*)getScope(slClass);
-//
-//         classScope->setMethodInfo(message, attr, value, clearPreviousOne);
-//      }
-//
-//      virtual bool isClosed()
-//      {
-//         ClassScope* classScope = (ClassScope*)getScope(slClass);
-//
-//         return classScope->isClosed();
-//      }
-//
-//      virtual bool include(ref_t message)
-//      {
-//         ClassScope* classScope = (ClassScope*)getScope(slClass);
-//
-//         return classScope->include(message);
-//      }
-//
-//      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
-//      {
-//         ident_t name = terminal.findChild(lxTerminal).identifier();
-//         ref_t parameter = parameters.get(name);
-//         if (parameter != 0) {
-//            ref_t subjRef = subjects.get(parameter);
-//            output.append(moduleScope->module->resolveSubject(subjRef));
-//
-//            return subjRef;
-//         }
-//         else return Scope::mapSubject(terminal, output);
-//      }
-//
-//      virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true)
-//      {
-//         ident_t identifier = terminal.findChild(lxTerminal).identifier();
-//
-//         ref_t parameter = parameters.get(identifier);
-//         if (parameter != 0) {
-//            return subjects.get(parameter);
-//         }
-//         else return Scope::mapSubject(terminal, implicitOnly);
-//      }
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slTemplate) {
-//            return this;
-//         }
-//         //else if (level == slClass && classMode) {
-//         //   return this;
-//         //}
-//         else return parent->getScope(level);
-//      }
-//
-//      virtual int getSourcePathRef()
-//      {
-//         return sourceRef;
-//      }
+
+      SNode       exprNode;
+      SNode       codeNode;
 
       int mapAttribute(SNode terminal);
 
@@ -807,28 +744,10 @@ private:
       void copySubject(SyntaxWriter& writer, SNode terminal);
 
       ref_t mapAttribute(SNode terminal, int& attrValue);
+      int mapIdentifier(SNode terminal);
 
       void generateClassName(bool newName = false);
 
-//      TemplateScope(ClassScope* parent)
-//         : ClassScope(parent->moduleScope, parent->reference)
-//      {
-//         this->templateRef = 0;
-//         this->parent = parent;
-//         this->info.header.flags = 0;
-//         this->classMode = false;
-//         this->generationMode = false;
-//         this->sourceRef = -1;
-//      }
-//      TemplateScope(Scope* parent/*, ref_t attrRef*/)
-//         : ClassScope(parent->moduleScope, 0)
-//      {
-//         this->parent = parent;
-////         this->templateRef = attrRef;
-////         this->classMode = false;
-////         this->generationMode = false;
-////         this->sourceRef = -1;
-//      }
       TemplateScope(TemplateScope* parent, ref_t attrRef)
          : Scope(parent)
       {
@@ -836,10 +755,7 @@ private:
          reference = 0;
          classMode = false;
          embeddableMode = false;
-
-         //this->templateRef = attrRef;
-         //this->generationMode = false;
-         //this->sourceRef = -1;
+         codeMode = false;
       }
       TemplateScope(ModuleScope* moduleScope)
          : Scope(moduleScope)
@@ -848,6 +764,7 @@ private:
          reference = 0;
          classMode = false;
          embeddableMode = false;
+         codeMode = false;
       }
    };
 
@@ -1162,8 +1079,10 @@ private:
    void generateScopeMembers(SNode node, TemplateScope& scope);
 
    bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool embeddableMode);
+   bool generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope);
    void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool embeddableMode = false);
    void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool operationMode);
    void generateObjectTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool explicitOne = true);

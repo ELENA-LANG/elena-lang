@@ -111,6 +111,7 @@ In development:
                  * typified symbols (e.g. system'pi_value, system'e_value)
                  * uncomment Integer, Real
                  * test loop operation with unrecognized branching operator
+                 * test a[] a(x)[]
 
               xdev - generic development
                  * support property template
