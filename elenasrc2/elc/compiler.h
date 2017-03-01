@@ -135,7 +135,7 @@ public:
       okExtMessageConstant,           // param - reference
       okSignatureConstant,            // param - reference
       okVerbConstant,                 // param - reference
-//      okArrayConst,
+      okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
       okFieldAddress,                 // param - field offset, extraparam - class reference
@@ -154,7 +154,7 @@ public:
       okConstantRole,                 // param - role reference
 
 //      okExternal,
-//      okInternal,
+      okInternal,
    };
 
    struct ObjectInfo
@@ -248,8 +248,8 @@ private:
       List<ident_t> defaultNs;
       ForwardMap    forwards;       // forward declarations
 
-//      // symbol hints
-//      Map<ref_t, ref_t> constantHints;
+      // symbol hints
+      Map<ref_t, ref_t> constantHints;
 
       // extensions
       SubjectMap        extensionHints;
@@ -278,10 +278,10 @@ private:
 
       ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 
-//      void defineConstantSymbol(ref_t reference, ref_t classReference)
-//      {
-//         constantHints.add(reference, classReference);
-//      }
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
+      {
+         constantHints.add(reference, classReference);
+      }
 
       void raiseError(const char* message, int row, int col, ident_t terminal);
       void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
@@ -312,7 +312,7 @@ private:
       {
          return loadClassInfo(info, module->resolveReference(reference), headerOnly);
       }
-//      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
+      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
       _Memory* loadAttributeInfo(ref_t reference/*, _Module* &argModule*/)
       {
@@ -524,7 +524,7 @@ private:
    {
       bool  constant;
 //      bool  preloaded;
-//      ref_t typeRef;
+      ref_t typeRef;
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -951,8 +951,8 @@ private:
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
 //   ObjectInfo compileExternalCall(SNode node, CodeScope& scope);
-//   ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
-//
+   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
+
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
    void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -1015,7 +1015,7 @@ private:
    void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
-//////   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
+   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
    void compileIncludeModule(SNode node, ModuleScope& scope);
 //////   void compileForward(SNode node, ModuleScope& scope);
    void declareSubject(SyntaxWriter& writer, SNode member, ModuleScope& scope);
@@ -1038,7 +1038,6 @@ private:
 
 ////   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 ////   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-////   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 ////   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 ////   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 //////   void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
@@ -1055,11 +1054,12 @@ private:
    ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
    ref_t optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
+   ref_t optimizeInternalCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    void optimizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);
-//   void optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask);
+   void optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask);
 
    void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 

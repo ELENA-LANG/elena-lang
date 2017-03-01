@@ -1776,7 +1776,7 @@ labErr:
 
 end
 
-procedure __array.setAt&int$&object[3]
+procedure __array.setAt&int$&object$[3]
 
   bcopya
   len

@@ -827,647 +827,647 @@ sealed dispatchable(chararray) arrayof(char) CharArray
     clone = CharArray new &chararray:$self.
 }
         
-//// --- emptyliteralvalue ---
-//
-///// An empty literal value
-//#symbol(const,literal) emptyLiteralValue = "".
+// --- emptyliteralvalue ---
+
+/// An empty literal value
+const literal emptyLiteralValue = "".
 
 // --- LiteralValue ---
 
 /// A UTF-8 literal value
-/*#class(sealed,dispatchable:literal,dynamic,string) */LiteralValue :: BaseValue
+sealed dispatchable(literal) dynamic string LiteralValue :: BaseValue
 {
-//    #field(byte)$target.
-//    
-//    /// Creates the empty literal
-//    #constructor min
-//        = emptyLiteralValue.
-//        
-//    /// Creates the literal string with specified length        
-//    #constructor(stacksafe) new &int:size
-//        = byte:(size + 1).
-//
-//    /// Creates the literal string with specified length and copies the parameter value
-//    #constructor(stacksafe) new &int:aSize &literal:aLiteral
-//        <= (new &int:aSize)
-//    [
-//        system'core_routines'__literal copy &literal:$self &literal:aLiteral.
-//    ]
-//
-//    /// Creates the literal string with specified length fills with spciefied character value        
-//    #constructor(stacksafe) new &int:aSize &char:aChar
-//        => system'core_routines'__literal.
-//
-//    /// Creates the literal string copy              
-//    #constructor new &literal:aLiteral
-//        <= new &int:(aLiteral length) &literal:aLiteral.
-//        
-//    /// Creates the copy of a subarray        
-//    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-//        => system'core_routines'__literal.
-//
-//    #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
-//        <= (new &int:aSize)
-//    [
-//        system'core_routines'__literal copy &literal:$self &int:anIndex &int:aSize &bytearray:anArray.
-//    ]
-//    
-//    /// Converts to UTF-16 literal
-//    #method wide = wideConvertor convert &literal:$self.
-//
-//    /// Compares the values
-//    #method(bool) equal &literal : aLiteral
-//        => system'core_routines'__literal.
-//
-//    /// Compares the values
-//    #method(bool) less &literal : aLiteral
-//        => system'core_routines'__literal.
-//
-//    /// Compares the values
-//    #method(bool) equal &wide : aLiteral
-//        = $self wide equal &wide:aLiteral.
-//
-//    /// Compares the values
-//    #method(bool) less &wide : aLiteral
-//        = $self wide less &wide:aLiteral.
-//
-//    /// Compares the values
-//    #method(bool) equal &char : aChar
-//        <= %equal &literal:(aChar literal).
-//
-//    /// Compares the values
-//    #method(bool) less &char : aChar
-//        <= %less &literal:(aChar literal).
-//
-//    /// Concatinates the values
-//    #method(literal) add &literal : aLiteral
-//        => system'core_routines'__literal.
-//
-//    #method add : anObject = anObject cast:%add &to:$self.
-//
-//    /// Returns the character at the specified index
-//    #method getAt : aParam
-//        <= %getAt &int:(aParam int).
-//
-//    /// Returns the character at the specified index
-//    #method(char,stacksafe) getAt &int:anIndex
-//    [
-//        #var(char)aChar.
-//        $self read &int:anIndex &vchar:aChar.
-//        
-//        ^ CharValue new &char:aChar.
-//    ]
-//    
-//    /// Concatinates the values
-//    #method(literal,stacksafe) add &char:aChar
-//        = $self add &literal:(aChar literal).
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'core_routines'__literal.
-//
-//    // Reads the byte at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vbyte:anInt
-//        => system'core_routines'__literal.
-//
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &literal:aLiteral &vint:aRetVal
-//        => system'core_routines'__literal.
-//
-//    /// Saves the index of the first occurence of the specified symbol into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
-//        => system'core_routines'__literal.
-//
-//    /// Returns the index of the first occurence of the specified object.
-//    /// 
-//    /// If the object is not found. returns -1
-//    #method indexOf : aSearchObject &at:anIndex
-//        = aSearchObject cast:%eval &to:
-//            {
-//               eval:target &literal:aLiteral
-//                  = target indexOf &literal:aLiteral &at:anIndex.
-//    
-//               eval:target &wide:aLiteral
-//                  = target indexOf &literal:(aLiteral literal) &at:anIndex.
-//    
-//               eval:target &char:aChar
-//                  = target indexOf &char:aChar &at:anIndex.
-//            } &with:$self.
-//
-//    /// obsolete            
-//    #method indexOf:anIndex:aSearchObject
-//        <= indexOf:aSearchObject &at:anIndex.
-//
-//    /// Returns the index of the first occurence of the specified symbol.
-//    /// 
-//    /// If the substring is not found. returns -1
-//    #method indexOf &char:aChar &at:anIndex
-//    [
-//        #var(int)aRetVal.
-//        $self indexOf &int:(anIndex int) &char:aChar &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method indexOf &literal:aLiteral &at:anIndex
-//    [
-//        #var(int)aRetVal.
-//        $self indexOf &int:(anIndex int) &literal:aLiteral &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Inserts the substring into and returns the new one
-//    #method(literal,stacksafe) insert &int:anIndex &literal:aLiteral
-//        => system'core_routines'__literal.
-//
-//    /// Inserts a character into and returns the new one
-//    #method(literal,stacksafe) insert &int:anIndex &char:aChar
-//        = $self insert &int:anIndex &literal:(literalConvertor convert &char:aChar).
-//
-//    /// Inserts an object into and returns the new one
-//    #method insert : anObject &at:anIndex
-//        = anObject cast:%eval &to:
-//            {
-//               eval:target &literal:aLiteral
-//                  = target insert &int:(anIndex int) &literal:aLiteral.
-//    
-//               eval:target &wide:aLiteral
-//                  = target insert &int:(anIndex int) &literal:(aLiteral literal).
-//    
-//               eval:target &char:aChar
-//                  = target insert &int:(anIndex int) &char:aChar.
-//            } &with:$self.
-//
-//    /// Deletes the substring from the object and returns the new one
-//    #method delete:aLength &at:anIndex
-//        = $self delete &int:(anIndex int) &int:(aLength int).
-//
-//    /// Deletes the substring from the object and returns the new one
-//    #method(literal,stacksafe) delete &int:anIndex &int:aLength
-//        => system'core_routines'__literal.
-//
-//    /// Returns the substring
-//    #method Substring : aLength &at:anIndex
-//        = $self Substring &int:(anIndex int) &int:(aLength int).
-//
-//    /// Returns the substring
-//    #method(literal,stacksafe) Substring &int:anIndex &int:aLength
-//        => system'core_routines'__literal.
-//
-//    /// Reads the literal length into an output parameter
-//    #method(outnprop:length,stacksafe) readLength &vint:aLength
-//        => system'core_routines'__literal.
-//
-//    /// Saves the literal into a UTF-32 character array
-//    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
-//        => system'core_routines'__literal.
-//
-//    #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
-//        => system'core_routines'__literal.
-//
-//    /// Returns the string enumerator
-//    #method enumerator = LiteralEnumerator new &literal:$self.
-//
-//    /// Returns the string iterator
-//    #method iterator = LiteralIterator new &literal:$self.
-//    
-//    /// Clones the value
-//    #method clone = LiteralValue new &literal:$self.
-//
-//    /// Reads the object hash code into the output parameter
-//    #method(stacksafe,outnprop:hash_code) readHashCode &vint:aCode 
-//        => system'core_routines'__literal.
+    byte $target.
+
+    /// Creates the empty literal
+    constructor min
+        = emptyLiteralValue.
+        
+    /// Creates the literal string with specified length        
+    stacksafe constructor new &int:size
+        = byte(size + 1).
+
+    /// Creates the literal string with specified length and copies the parameter value
+    stacksafe constructor new &int:aSize &literal:aLiteral
+        <= new &int:aSize;
+    [
+        system'core_routines'__literal copy &literal:$self &literal:aLiteral.
+    ]
+
+    /// Creates the literal string with specified length fills with spciefied character value        
+    stacksafe constructor new &int:aSize &char:aChar
+        => system'core_routines'__literal.
+
+    /// Creates the literal string copy              
+    constructor new &literal:aLiteral
+        <= new &int:(aLiteral length) &literal:aLiteral.
+        
+    /// Creates the copy of a subarray        
+    stacksafe constructor new &int:anIndex &int:aSize &chararray:anArray
+        => system'core_routines'__literal.
+
+    stacksafe constructor $new &int:anIndex &int:aSize &bytearray:anArray
+        <= new &int:aSize;
+    [
+        system'core_routines'__literal copy &literal:$self &int:anIndex &int:aSize &bytearray:anArray.
+    ]
+    
+    /// Converts to UTF-16 literal
+    wide = wideConvertor convert &literal:$self.
+
+    /// Compares the values
+    bool equal &literal : aLiteral
+        => system'core_routines'__literal.
+
+    /// Compares the values
+    bool less &literal : aLiteral
+        => system'core_routines'__literal.
+
+    /// Compares the values
+    bool equal &wide : aLiteral
+        = $self wide equal &wide:aLiteral.
+
+    /// Compares the values
+    bool less &wide : aLiteral
+        = $self wide less &wide:aLiteral.
+
+    /// Compares the values
+    bool equal &char : aChar
+        <= equal &literal:(aChar literal).
+
+    /// Compares the values
+    bool less &char : aChar
+        <= less &literal:(aChar literal).
+
+    /// Concatinates the values
+    literal add &literal : aLiteral
+        => system'core_routines'__literal.
+
+    add : anObject = anObject cast:%add &to:$self.
+
+    /// Returns the character at the specified index
+    getAt : aParam
+        <= getAt &int:(aParam int).
+
+    /// Returns the character at the specified index
+    stacksafe char getAt &int:anIndex
+    [
+        char aChar := #0.
+        $self read &int:anIndex &vchar:aChar.
+        
+        ^ CharValue new &char:aChar.
+    ]
+    
+    /// Concatinates the values
+    stacksafe literal add &char:aChar
+        = $self add &literal:(aChar literal).
+
+    // Reads the character at the specified index and saves into an output parameter
+    stacksafe read &int:anIndex &vchar:aChar
+        => system'core_routines'__literal.
+
+    // Reads the byte at the specified index and saves into an output parameter
+    stacksafe read &int:anIndex &vbyte:anInt
+        => system'core_routines'__literal.
+
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    stacksafe indexOf &int:anIndex &literal:aLiteral &vint:aRetVal
+        => system'core_routines'__literal.
+
+    /// Saves the index of the first occurence of the specified symbol into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    stacksafe indexOf &int:anIndex &char:aChar &vint:aRetVal
+        => system'core_routines'__literal.
+
+    /// Returns the index of the first occurence of the specified object.
+    /// 
+    /// If the object is not found. returns -1
+    indexOf : aSearchObject &at:anIndex
+        = aSearchObject cast:%eval &to:
+            {
+               eval:target &literal:aLiteral
+                  = target indexOf &literal:aLiteral &at:anIndex.
+    
+               eval:target &wide:aLiteral
+                  = target indexOf &literal:(aLiteral literal) &at:anIndex.
+    
+               eval:target &char:aChar
+                  = target indexOf &char:aChar &at:anIndex.
+            } &with:$self.
+
+    /// obsolete            
+    indexOf:anIndex:aSearchObject
+        <= indexOf:aSearchObject &at:anIndex.
+
+    /// Returns the index of the first occurence of the specified symbol.
+    /// 
+    /// If the substring is not found. returns -1
+    indexOf &char:aChar &at:anIndex
+    [
+        int aRetVal := 0.
+        $self indexOf &int:(anIndex int) &char:aChar &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf &literal:aLiteral &at:anIndex
+    [
+        int aRetVal := 0.
+        $self indexOf &int:(anIndex int) &literal:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Inserts the substring into and returns the new one
+    stacksafe literal insert &int:anIndex &literal:aLiteral
+        => system'core_routines'__literal.
+
+    /// Inserts a character into and returns the new one
+    stacksafe literal insert &int:anIndex &char:aChar
+        = $self insert &int:anIndex &literal:(literalConvertor convert &char:aChar).
+
+    /// Inserts an object into and returns the new one
+    insert : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+               eval:target &literal:aLiteral
+                  = target insert &int:(anIndex int) &literal:aLiteral.
+    
+               eval:target &wide:aLiteral
+                  = target insert &int:(anIndex int) &literal:(aLiteral literal).
+    
+               eval:target &char:aChar
+                  = target insert &int:(anIndex int) &char:aChar.
+            } &with:$self.
+
+    /// Deletes the substring from the object and returns the new one
+    delete:aLength &at:anIndex
+        = $self delete &int:(anIndex int) &int:(aLength int).
+
+    /// Deletes the substring from the object and returns the new one
+    stacksafe literal delete &int:anIndex &int:aLength
+        => system'core_routines'__literal.
+
+    /// Returns the substring
+    Substring : aLength &at:anIndex
+        = $self Substring &int:(anIndex int) &int:(aLength int).
+
+    /// Returns the substring
+    stacksafe literal Substring &int:anIndex &int:aLength
+        => system'core_routines'__literal.
+
+    /// Reads the literal length into an output parameter
+    stacksafe outnprop(length) readLength &vint:aLength
+        => system'core_routines'__literal.
+
+    /// Saves the literal into a UTF-32 character array
+    stacksafe save &int:anIndex &chararray:anArray &vint:aRetVal
+        => system'core_routines'__literal.
+
+    stacksafe $save &int:anIndex &bytearray:anArray &int:aRetVal
+        => system'core_routines'__literal.
+
+    /// Returns the string enumerator
+    enumerator = LiteralEnumerator new &literal:$self.
+
+    /// Returns the string iterator
+    iterator = LiteralIterator new &literal:$self.
+    
+    /// Clones the value
+    clone = LiteralValue new &literal:$self.
+
+    /// Reads the object hash code into the output parameter
+    stacksafe outnprop(hash_code) readHashCode &vint:aCode 
+        => system'core_routines'__literal.
 }
 
-//// --- emptyWideLiteralValue ---
-//
-///// An empty wide literal value
-//#symbol(const,wide) emptyWideLiteralValue = ""w.
-//
+// --- emptyWideLiteralValue ---
+
+/// An empty wide literal value
+const wide emptyWideLiteralValue = ""w.
+
 //// --- WideLiteralValue ---
 
 /// A UTF-18 literal value
-/*#class(sealed,dispatchable:wide,dynamic,string) */WideLiteralValue :: BaseValue
+sealed dispatchable(wide) dynamic string WideLiteralValue :: BaseValue
 {
-//    #field(short)$target.
-//
-//    /// Creates the empty literal
-//    #constructor min
-//        = emptyWideLiteralValue.
-//        
-//    /// Creates the literal string with specified length
-//    #constructor(stacksafe) new &int:size
-//        = short:(size + 1).
-//
-//    /// Creates the literal string with specified length and copies the parameter value
-//    #constructor(stacksafe) new &int:aSize &wide:aLiteral
-//        <= (new &int:aSize)
-//    [
-//        system'core_routines'__wide copy &wide:$self &wide:aLiteral.
-//    ]
-//
-//    /// Creates the literal string with specified length fills with spciefied character value
-//    #constructor(stacksafe) new &int:aSize &char:aChar
-//        => system'core_routines'__wide.
-//
-//    /// Creates the literal string copy
-//    #constructor new &wide:aLiteral
-//        <= %new &int:(aLiteral length) &wide:aLiteral.
-//        
-//    /// Creates the copy of a subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-//        => system'core_routines'__wide.
-//
-//    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
-//        <= (new &int:aSize)
-//    [
-//        system'core_routines'__wide copy &wide:$self &int:anIndex &int:aSize &shortarray:anArray.
-//    ]
-//
-//    /// Converts to UTF-8 literal
-//    #method literal = literalConvertor convert &wide:$self.
-//
-//    /// Compares the values
-//    #method(bool) equal &wide : aLiteral
-//        => system'core_routines'__wide.
-//
-//    /// Compares the values
-//    #method(bool) less &wide : aLiteral
-//        => system'core_routines'__wide.
-//
-//    /// Compares the values
-//    #method(bool) equal &char : aChar
-//        <= %equal &wide:(aChar wide).
-//
-//    /// Compares the values
-//    #method(bool) less &char : aChar
-//        <= %less &wide:(aChar wide).
-//
-//    #method add : anObject = anObject cast:%add &to:$self.
-//
-//    /// Returns the character at the specified index
-//    #method getAt : aParam
-//        <= %getAt &int:(aParam int).
-//
-//    /// Returns the character at the specified index
-//    #method(char,stacksafe) getAt &int:anIndex
-//    [
-//        #var(char)aChar.
-//        $self read &int:anIndex &vchar:aChar.
-//        
-//        ^ CharValue new &char:aChar.
-//    ]
-//
-//    /// Concatinates the values
-//    #method(wide,stacksafe) add &wide : aLiteral
-//        => system'core_routines'__wide.
-//
-//    /// Concatinates the values
-//    #method(wide,stacksafe) add &char:aChar
-//        = $self add &wide:(wideConvertor convert &char:aChar).
-//
-//    /// Concatinates the values
-//    #method(wide) add &literal:aLiteral
-//        = $self add &wide:(aLiteral wide).
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'core_routines'__wide.
-//
-//    // Reads the short integer at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vshort:aValue
-//        => system'core_routines'__wide.
-//
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral &vint:aRetVal
-//        => system'core_routines'__wide.
-//
-//    /// Saves the index of the first occurence of the specified character into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
-//        => system'core_routines'__wide.
-//
-//    /// Returns the index of the first occurence of the specified character.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &char:aChar
-//    [
-//        #var(int)aRetVal.
-//        $self indexOf &int:anIndex &char:aChar &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral
-//    [
-//        #var(int)aRetVal.
-//        $self indexOf &int:anIndex &wide:aLiteral &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Returns the index of the first occurence of the specified object.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method indexOf : anObject &at:anIndex
-//        = anObject cast:%eval &to:
-//            {
-//                eval:target &literal:aLiteral = target indexOf &int:(anIndex int) &wide:(aLiteral wide).
-//                
-//                eval:target &wide:aLiteral = target indexOf &int:(anIndex int) &wide:aLiteral.
-//                
-//                eval:target &char:aChar = target indexOf &int:(anIndex int) &char:aChar.
-//            } &with:$self.
-//
-//    /// Inserts the substring into and returns the new one
-//    #method(wide,stacksafe) insert &int:anIndex &wide:aLiteral
-//        => system'core_routines'__wide.
-//
-//    /// Inserts the substring into and returns the new one
-//    #method(wide,stacksafe) insert &int:anIndex &literal:aLiteral
-//        = $self insert &int:anIndex &wide:(aLiteral wide).
-//
-//    /// Inserts a character into and returns the new one
-//    #method(wide,stacksafe) insert &int:anIndex &char:aChar
-//        = $self insert &int:anIndex &wide:(wideConvertor convert &char:aChar).
-//
-//    /// Inserts an object into and returns the new one
-//    #method insert : anObject &at:anIndex
-//        = anObject cast:%eval &to:
-//            {
-//               eval:target &wide:aLiteral
-//                  = target insert &int:(anIndex int) &wide:aLiteral.
-//    
-//               eval:target &literal:aLiteral
-//                  = target insert &int:(anIndex int) &wide:(aLiteral wide).
-//    
-//               eval:target &char:aChar
-//                  = target insert &int:(anIndex int) &char:aChar.
-//            } &with:$self.
-//
-//    /// Deletes the substring from the object and returns the new one
-//    #method delete:aLength &at:anIndex
-//        = $self delete &int:(anIndex int) &int:(aLength int).
-//            
-//    /// Deletes the substring from the object and returns the new one            
-//    #method(wide,stacksafe) delete &int:anIndex &int:aLength
-//        => system'core_routines'__wide.
-//
-//    /// Returns the substring
-//    #method(wide,stacksafe) Substring &int:anIndex &int:aLength
-//        => system'core_routines'__wide.
-//
-//    #method(wide) Substring : aLength &at:anIndex
-//        <= Substring &int:(anIndex int) &int:(aLength int).
-//
-//    /// Reads the literal length into an output parameter
-//    #method(outnprop:length,stacksafe) readLength &vint:aLength
-//        => system'core_routines'__wide.
-//
-//    /// Saves the literal into a UTF-32 character array
-//    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
-//        => system'core_routines'__wide.
-//
-//    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
-//        => system'core_routines'__wide.
-//
-//    /// Returns the object enumerator
-//    #method enumerator = WideLiteralEnumerator new &wide:$self.
-//    
-//    /// Returns the object iterator
-//    #method iterator = WideLiteralIterator new &wide:$self.
-//    
-//    /// Clones the value
-//    #method clone = WideLiteralValue new &wide:$self.
-//
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe,outnprop:hash_code) readHashCode &vint:aCode 
-//        => system'core_routines'__wide.
+    short $target.
+
+    /// Creates the empty literal
+    constructor min
+        = emptyWideLiteralValue.
+        
+    /// Creates the literal string with specified length
+    stacksafe constructor new &int:size
+        = short(size + 1).
+
+    /// Creates the literal string with specified length and copies the parameter value
+    stacksafe constructor new &int:aSize &wide:aLiteral
+        <= new &int:aSize;
+    [
+        system'core_routines'__wide copy &wide:$self &wide:aLiteral.
+    ]
+
+    /// Creates the literal string with specified length fills with spciefied character value
+    stacksafe constructor new &int:aSize &char:aChar
+        => system'core_routines'__wide.
+
+    /// Creates the literal string copy
+    constructor new &wide:aLiteral
+        <= new &int:(aLiteral length) &wide:aLiteral.
+        
+    /// Creates the copy of a subarray
+    stacksafe constructor new &int:anIndex &int:aSize &chararray:anArray
+        => system'core_routines'__wide.
+
+    stacksafe constructor $new &int:anIndex &int:aSize &shortarray:anArray
+        <= new &int:aSize;
+    [
+        system'core_routines'__wide copy &wide:$self &int:anIndex &int:aSize &shortarray:anArray.
+    ]
+
+    /// Converts to UTF-8 literal
+    literal = literalConvertor convert &wide:$self.
+
+    /// Compares the values
+    bool equal &wide : aLiteral
+        => system'core_routines'__wide.
+
+    /// Compares the values
+    bool less &wide : aLiteral
+        => system'core_routines'__wide.
+
+    /// Compares the values
+    bool equal &char : aChar
+        <= equal &wide:(aChar wide).
+
+    /// Compares the values
+    bool less &char : aChar
+        <= less &wide:(aChar wide).
+
+    add : anObject = anObject cast:%add &to:$self.
+
+    /// Returns the character at the specified index
+    getAt : aParam
+        <= getAt &int:(aParam int).
+
+    /// Returns the character at the specified index
+    stacksafe char getAt &int:anIndex
+    [
+        char aChar := #0.
+        $self read &int:anIndex &vchar:aChar.
+        
+        ^ CharValue new &char:aChar.
+    ]
+
+    /// Concatinates the values
+    stacksafe wide add &wide : aLiteral
+        => system'core_routines'__wide.
+
+    /// Concatinates the values
+    stacksafe wide add &char:aChar
+        = $self add &wide:(wideConvertor convert &char:aChar).
+
+    /// Concatinates the values
+    wide add &literal:aLiteral
+        = $self add &wide:(aLiteral wide).
+
+    // Reads the character at the specified index and saves into an output parameter
+    stacksafe read &int:anIndex &vchar:aChar
+        => system'core_routines'__wide.
+
+    // Reads the short integer at the specified index and saves into an output parameter
+    stacksafe read &int:anIndex &vshort:aValue
+        => system'core_routines'__wide.
+
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    stacksafe indexOf &int:anIndex &wide:aLiteral &vint:aRetVal
+        => system'core_routines'__wide.
+
+    /// Saves the index of the first occurence of the specified character into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    stacksafe indexOf &int:anIndex &char:aChar &vint:aRetVal
+        => system'core_routines'__wide.
+
+    /// Returns the index of the first occurence of the specified character.
+    ///
+    /// If the substring is not found. returns -1
+    stacksafe indexOf &int:anIndex &char:aChar
+    [
+        int aRetVal := 0.
+        $self indexOf &int:anIndex &char:aChar &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    stacksafe indexOf &int:anIndex &wide:aLiteral
+    [
+        int aRetVal := 0.
+        $self indexOf &int:anIndex &wide:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified object.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+                eval:target &literal:aLiteral = target indexOf &int:(anIndex int) &wide:(aLiteral wide).
+                
+                eval:target &wide:aLiteral = target indexOf &int:(anIndex int) &wide:aLiteral.
+                
+                eval:target &char:aChar = target indexOf &int:(anIndex int) &char:aChar.
+            } &with:$self.
+
+    /// Inserts the substring into and returns the new one
+    stacksafe wide insert &int:anIndex &wide:aLiteral
+        => system'core_routines'__wide.
+
+    /// Inserts the substring into and returns the new one
+    stacksafe wide insert &int:anIndex &literal:aLiteral
+        = $self insert &int:anIndex &wide:(aLiteral wide).
+
+    /// Inserts a character into and returns the new one
+    stacksafe wide insert &int:anIndex &char:aChar
+        = $self insert &int:anIndex &wide:(wideConvertor convert &char:aChar).
+
+    /// Inserts an object into and returns the new one
+    insert : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+               eval:target &wide:aLiteral
+                  = target insert &int:(anIndex int) &wide:aLiteral.
+    
+               eval:target &literal:aLiteral
+                  = target insert &int:(anIndex int) &wide:(aLiteral wide).
+    
+               eval:target &char:aChar
+                  = target insert &int:(anIndex int) &char:aChar.
+            } &with:$self.
+
+    /// Deletes the substring from the object and returns the new one
+    delete:aLength &at:anIndex
+        = $self delete &int:(anIndex int) &int:(aLength int).
+            
+    /// Deletes the substring from the object and returns the new one            
+    stacksafe wide delete &int:anIndex &int:aLength
+        => system'core_routines'__wide.
+
+    /// Returns the substring
+    stacksafe wide Substring &int:anIndex &int:aLength
+        => system'core_routines'__wide.
+
+    wide Substring : aLength &at:anIndex
+        <= Substring &int:(anIndex int) &int:(aLength int).
+
+    /// Reads the literal length into an output parameter
+    stacksafe outnprop(length) readLength &vint:aLength
+        => system'core_routines'__wide.
+
+    /// Saves the literal into a UTF-32 character array
+    stacksafe save &int:anIndex &chararray:anArray &vint:aLength
+        => system'core_routines'__wide.
+
+    stacksafe $save &int:anIndex &shortarray:anArray &int:aRetVal
+        => system'core_routines'__wide.
+
+    /// Returns the object enumerator
+    enumerator = WideLiteralEnumerator new &wide:$self.
+    
+    /// Returns the object iterator
+    iterator = WideLiteralIterator new &wide:$self.
+    
+    /// Clones the value
+    clone = WideLiteralValue new &wide:$self.
+
+    // Reads the object hash code into the output parameter
+    stacksafe outnprop(hash_code) readHashCode &vint:aCode 
+        => system'core_routines'__wide.
 }
 
-//// --- Variant ---
-//
-///// A basic type variant class
-//#class Variant
-//{
-//    #field theValue.
-//    
-//    #constructor new : object
-//    [
-//        theValue := object.
-//    ]
-//    
-//    /// Tries to convert the value to a byte number
-//    #method byte
-//        = byteConvertor convert:theValue.
-//
-//    /// Tries to convert the value to a short integer number
-//    #method short
-//        = shortConvertor convert:theValue.
-//
-//    /// Tries to convert the value to a character
-//    #method char
-//        = charConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the integer number
-//    #method int
-//        = intConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the long integer number
-//    #method long
-//        = longConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the real number
-//    #method real
-//        = realConvertor convert:theValue.
-//
-//    /// Returns a literal value
-//    #method literal 
-//        = literalConvertor convert:theValue.
-//    
-//    /// Returns a wide literal value
-//    #method wide 
-//        = wideConvertor convert:theValue.
-//
-//    /// Converts the parameter into a literal string
-//    #method set &int:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method set &short:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &byte:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &long:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &real:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    #method cast : aVerb &to:aTarget
-//    [
-//        #var aValue := aTarget cast:%eval &to:
-//        {
-//            eval : aVariant &int:aValue
-//                = aVariant int.
-//                
-//            eval : aVariant &byte:aValue
-//                = aVariant byte.
-//                
-//            eval : aVariant &short:aValue
-//                = aVariant short.
-//                
-//            eval : aVariant &long:aValue
-//                = aVariant long.
-//                
-//            eval : aVariant &real:aValue
-//                = aVariant real.
-//                
-//            eval : aVariant &literal:aValue
-//                = aVariant literal.
-//                
-//            eval : aVariant &wide:aValue
-//                = aVariant wide.
-//        }
-//        &with:$self.
-//        
-//        ^ aValue cast:aVerb &to:aTarget.
-//    ]
-//
-//    #method equal : anObject
-//        = anObject equal:$self bool.
-//}
-//
-//// --- Array ---
-//
-///// An array
-//#class(sealed,arrayof:object,dispatchable:array) Array
-//{
-//    /// Creates an empty array
-//    #constructor min
-//        = object:0.
-//    
-//    /// Creates the array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the array with the specified length
-//    ///
-//    /// Obsolete
-//    #constructor new &length:aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the array with the specified length
-//    #constructor(stacksafe) new &int:aLength
-//        = object:aLength.
-//
-//    /// Creates a copy of the provided array
-//    #constructor new &array:anArray
-//        <= %new &int:0 &int:(anArray length int) &array:anArray.
-//    
-//    /// Creates a copy of the provided sub array
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
-//        <= (new &int:aLength)
-//    [
-//        system'core_routines'__array copy &array:$self &int:anIndex &int:aLength &array:anArray.
-//    ]
-//        
-//    #constructor new &object:singleItem
-//        <= (new &int:1)
-//    [
-//        $self setAt &int:0 &object:singleItem.
-//    ]
-//
-//    /// Concatinates the arrays    
-//    #method add : anObject
-//        = $self add &array:(anObject array).
-//
-//    /// Concatinates the arrays    
-//    #method add &array:anArray
-//    [
-//        #var(int)aLength1 := $self length.
-//        #var(int)aLength2 := anArray length.
-//        
-//        #var(array)aRetVal := Array new &int:(aLength1 + aLength2).
-//
-//        #var(int)anIndex := 0.
-//        #loop (anIndex < aLength1) ?
-//        [
-//            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
-//            
-//            anIndex += 1.
-//        ].
-//
-//        anIndex := 0.
-//        #loop (anIndex < aLength2) ?
-//        [
-//            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
-//            
-//            anIndex += 1.
-//        ].
-//            
-//        ^ aRetVal.
-//    ]
-//
-//    /// Reads the array length into an output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'__array.
-//
-//    /// Sets the specified array member
-//    #method(stacksafe) setAt &int:anIndex &object:anObject
-//        => system'core_routines'__array.
-//
-//    /// Returns the specified array member
-//    #method(stacksafe) getAt &int:anIndex
-//        => system'core_routines'__array.
-//        
-//    /// Returns the array enumerator
-//    #method enumerator = ArrayEnumerator new &array:$self.
-//
-//    /// Returns the array iterator
-//    #method iterator = ArrayIterator new &array:$self.
-//
-//    /// Clones the array
-//    #method(array) clone 
-//        = Array new &array:$self.
-//}
-//
-//// --- ArgArray ---
-//
-//#class(sealed,arrayof:object)ArgArray
-//{
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'__args.
-//}
+// --- Variant ---
+
+/// A basic type variant class
+class Variant
+{
+    object theValue.
+    
+    constructor new : object
+    [
+        theValue := object.
+    ]
+    
+    /// Tries to convert the value to a byte number
+    byte
+        = byteConvertor convert:theValue.
+
+    /// Tries to convert the value to a short integer number
+    short
+        = shortConvertor convert:theValue.
+
+    /// Tries to convert the value to a character
+    char
+        = charConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the integer number
+    int
+        = intConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the long integer number
+    long
+        = longConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the real number
+    real
+        = realConvertor convert:theValue.
+
+    /// Returns a literal value
+    literal 
+        = literalConvertor convert:theValue.
+    
+    /// Returns a wide literal value
+    wide 
+        = wideConvertor convert:theValue.
+
+    /// Converts the parameter into a literal string
+    set &int:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    set &short:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    write &byte:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    write &long:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    write &real:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    cast : aVerb &to:aTarget
+    [
+        var aValue := aTarget cast:%eval &to:
+        {
+            eval : aVariant &int:aValue
+                = aVariant int.
+                
+            eval : aVariant &byte:aValue
+                = aVariant byte.
+                
+            eval : aVariant &short:aValue
+                = aVariant short.
+                
+            eval : aVariant &long:aValue
+                = aVariant long.
+                
+            eval : aVariant &real:aValue
+                = aVariant real.
+                
+            eval : aVariant &literal:aValue
+                = aVariant literal.
+                
+            eval : aVariant &wide:aValue
+                = aVariant wide.
+        }
+        &with:$self.
+        
+        ^ aValue cast:aVerb &to:aTarget.
+    ]
+
+    equal : anObject
+        = anObject equal:$self bool.
+}
+
+// --- Array ---
+
+/// An array
+sealed dispatchable(array) arrayof(object) Array
+{
+    /// Creates an empty array
+    constructor min
+        = object(0).
+    
+    /// Creates the array with the specified length
+    constructor new : aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the array with the specified length
+    ///
+    /// Obsolete
+    constructor new &length:aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the array with the specified length
+    stacksafe constructor new &int:aLength
+        = object(aLength).
+
+    /// Creates a copy of the provided array
+    constructor new &array:anArray
+        <= new &int:0 &int:(anArray length int) &array:anArray.
+    
+    /// Creates a copy of the provided sub array
+    stacksafe constructor new &int:anIndex &int:aLength &array:anArray
+        <= new &int:aLength;
+    [
+        system'core_routines'__array copy &array:$self &int:anIndex &int:aLength &array:anArray.
+    ]
+        
+    constructor new &object:singleItem
+        <= new &int:1;
+    [
+        $self setAt &int:0 &object:singleItem.
+    ]
+
+    /// Concatinates the arrays    
+    add : anObject
+        = $self add &array:(anObject array).
+
+    /// Concatinates the arrays    
+    add &array:anArray
+    [
+        int aLength1 := $self length.
+        int aLength2 := anArray length.
+        
+        array aRetVal := Array new &int:(aLength1 + aLength2).
+
+        int anIndex := 0.
+        while(anIndex < aLength1)
+        [
+            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
+            
+            anIndex += 1.
+        ].
+
+        anIndex := 0.
+        while(anIndex < aLength2)
+        [
+            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
+            
+            anIndex += 1.
+        ].
+            
+        ^ aRetVal.
+    ]
+
+    /// Reads the array length into an output parameter
+    stacksafe readLength &vint:aLength
+        => system'core_routines'__array.
+
+    /// Sets the specified array member
+    stacksafe setAt &int:anIndex &object:anObject
+        => system'core_routines'__array.
+
+    /// Returns the specified array member
+    stacksafe getAt &int:anIndex
+        => system'core_routines'__array.
+        
+    /// Returns the array enumerator
+    enumerator = ArrayEnumerator new &array:$self.
+
+    /// Returns the array iterator
+    iterator = ArrayIterator new &array:$self.
+
+    /// Clones the array
+    array clone 
+        = Array new &array:$self.
+}
+
+// --- ArgArray ---
+
+sealed arrayof(object) ArgArray
+{
+    stacksafe readLength &vint:aLength
+        => system'core_routines'__args.
+}
 
 // === Convertors ===
 
@@ -1476,10 +1476,10 @@ sealed dispatchable(chararray) arrayof(char) CharArray
 /// A literal convertor
 const literalConvertor =
 {
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &char:aValue &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//    
+    /// Converts the parameter to the literal value
+    stacksafe convert &char:aValue &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+    
 //    #method(literal,stacksafe)convert &char:aValue
 //    [
 //        #var(byte:4)buffer.
@@ -1873,13 +1873,13 @@ const wideConvertor =
 //        = aLiteral.
 }.
 
-//// === Enumerators / Indexers
-//
-//// --- LiteralEnumerator ---
-//
-///// A literal enumerator
-//#class LiteralEnumerator :: Enumerator
-//{
+// === Enumerators / Indexers
+
+// --- LiteralEnumerator ---
+
+/// A literal enumerator
+class LiteralEnumerator :: Enumerator
+{
 //    #field(literal) theLiteral.
 //    #field(vint)    theIndex.
 //    #field(vint)    theDiff.
@@ -1929,13 +1929,13 @@ const wideConvertor =
 //    
 //    /// Returns the current character
 //    #method get = theChar.
-//}
-//
-//// --- LiteralIterator ---
-//
-///// A literal value iterator
-//#class LiteralIterator :: Iterator
-//{
+}
+
+// --- LiteralIterator ---
+
+/// A literal value iterator
+class LiteralIterator :: Iterator
+{
 //    #field(literal) theLiteral.
 //    #field(vint)    theIndex.
 //    
@@ -1988,13 +1988,13 @@ const wideConvertor =
 //    /// Reads the length to the output parameter    
 //    #method readLength &vint:anOutput
 //        => theLiteral.
-//}
-//
-//// --- WideLiteralEnumerator ---
-//
-///// A literal enumerator
-//#class WideLiteralEnumerator :: Enumerator
-//{
+}
+
+// --- WideLiteralEnumerator ---
+
+/// A literal enumerator
+class WideLiteralEnumerator :: Enumerator
+{
 //    #field(wide) theLiteral.
 //    #field(vint) theIndex.
 //    #field(vint) theDiff.
@@ -2046,13 +2046,13 @@ const wideConvertor =
 //    
 //    /// Returns the current character
 //    #method get = theChar.
-//}
-//
-//// --- WideLiteralIterator ---
-//
-///// A wide literal enumerator
-//#class WideLiteralIterator :: Iterator
-//{
+}
+
+// --- WideLiteralIterator ---
+
+/// A wide literal enumerator
+class WideLiteralIterator :: Iterator
+{
 //    #field(wide) theLiteral.
 //    #field(vint) theIndex.
 //    
@@ -2099,13 +2099,13 @@ const wideConvertor =
 //    /// Reads the length to the output parameter    
 //    #method readLength &vint:anOutput
 //        => theLiteral.
-//}
-//
-//// --- ArrayIterator ---
-//
-///// An array iterator
-//#class ArrayIterator :: Iterator
-//{
+}
+
+// --- ArrayIterator ---
+
+/// An array iterator
+class ArrayIterator :: Iterator
+{
 //    #field(array) theArray.
 //    #field(vint)  theIndex.
 //
@@ -2154,13 +2154,13 @@ const wideConvertor =
 //    /// Reads the length to the output parameter    
 //    #method readLength &vint:anOutput
 //        => theArray.
-//}
-//
-//// --- ArrayEnumerator ---
-//
-///// An array enumerator
-//#class ArrayEnumerator :: Enumerator
-//{
+}
+
+// --- ArrayEnumerator ---
+
+/// An array enumerator
+class ArrayEnumerator :: Enumerator
+{
 //    #field(array) theArray.
 //    #field(vint)  theIndex.
 //    
@@ -2194,12 +2194,12 @@ const wideConvertor =
 //    /// Returns the current object
 //    #method get
 //        = theArray getAt &int:theIndex.
-//}
-//
-//// --- Func1Group ---
-//
+}
+
+// --- Func1Group ---
+
 //#subject func1array = arrayof:func1.
-//
+
 //#class Function1Group :: BaseFunction1
 //{
 //    #field(func1array) theHandlers.

@@ -870,10 +870,10 @@ void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType)
    }
 }
 
-//void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
-//{
-//   tape.write(bcFreeStack, count);
-//}
+void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
+{
+   tape.write(bcFreeStack, count);
+}
 
 void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
 {
@@ -3195,8 +3195,8 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskSignature;
       case lxVerbConstant:
          return mskVerb;
-//      case lxConstantList:
-//         return mskConstArray;
+      case lxConstantList:
+         return mskConstArray;
       default:
          return mskConstantRef;
    }
@@ -3257,7 +3257,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxExtMessageConstant:
       case lxSignatureConstant:
       case lxVerbConstant:
-//      case lxConstantList:
+      case lxConstantList:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
@@ -3336,7 +3336,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxExtMessageConstant:
       case lxSignatureConstant:
       case lxVerbConstant:
-//      case lxConstantList:
+      case lxConstantList:
          // pushr reference
          tape.write(bcACopyR, argument | defineConstantMask(type));
          break;
@@ -3393,9 +3393,9 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // aloadai
          tape.write(bcALoadAI, argument);
          break;
-//      case lxInternalCall:
-//         tape.write(bcCallR, argument | mskInternalRef);
-//         break;
+      case lxInternalCall:
+         tape.write(bcCallR, argument | mskInternalRef);
+         break;
       default:
          break;
    }
@@ -3978,42 +3978,42 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
    return message;
 }
 
-//void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
-//{
-//   int paramCount = 0;
-//
-//   // analizing a sub tree
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         paramCount++;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   declareArgumentList(tape, paramCount);
-//
-//   int index = 0;
-//   current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         paramCount++;
-//      }
-//
-//      if (test(current.type, lxObjectMask)) {
-//         generateObjectExpression(tape, current);
-//
-//         saveObject(tape, lxCurrent, index);
-//         index++;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   loadObject(tape, node);
-//   freeVirtualStack(tape, paramCount);
-//}
+void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
+{
+   int paramCount = 0;
+
+   // analizing a sub tree
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         paramCount++;
+      }
+
+      current = current.nextNode();
+   }
+
+   declareArgumentList(tape, paramCount);
+
+   int index = 0;
+   current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         paramCount++;
+      }
+
+      if (test(current.type, lxObjectMask)) {
+         generateObjectExpression(tape, current);
+
+         saveObject(tape, lxCurrent, index);
+         index++;
+      }
+
+      current = current.nextNode();
+   }
+
+   loadObject(tape, node);
+   freeVirtualStack(tape, paramCount);
+}
 
 void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 {
@@ -4711,9 +4711,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxExternalCall:
 //         generateExternalCall(tape, node);
 //         break;
-//      case lxInternalCall:
-//         generateInternalCall(tape, node);
-//         break;
+      case lxInternalCall:
+         generateInternalCall(tape, node);
+         break;
       case lxBoxing:
       case lxCondBoxing:
 //      case lxArgBoxing:

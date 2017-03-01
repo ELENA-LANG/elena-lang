@@ -844,16 +844,16 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
       else info.header.flags |= elWrapper;
    }
 
-//   // adjust literal wrapper
-//   if ((info.header.flags & elDebugMask) == elDebugLiteral) {
-//      info.header.flags &= ~elDebugMask;
-//      if (info.size == -2) {
-//         info.header.flags |= elDebugWideLiteral;
-//      }
-//      else if (info.size == -1) {
-//         info.header.flags |= elDebugLiteral;
-//      }
-//   }
+   // adjust literal wrapper
+   if ((info.header.flags & elDebugMask) == elDebugLiteral) {
+      info.header.flags &= ~elDebugMask;
+      if (info.size == -2) {
+         info.header.flags |= elDebugWideLiteral;
+      }
+      else if (info.size == -1) {
+         info.header.flags |= elDebugLiteral;
+      }
+   }
 
    // adjust array
    if (test(info.header.flags, elDynamicRole) && !testany(info.header.flags, elStructureRole | elNonStructureRole)) {
@@ -914,9 +914,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_DYNAMIC:
          attrValue = elDynamicRole;
          return true;
-//      case V_STRING:
-//         attrValue = elDebugLiteral;
-//         return true;
+      case V_STRING:
+         attrValue = elDebugLiteral;
+         return true;
       case V_CONST:
          attrValue = elReadOnlyRole;
          return true;

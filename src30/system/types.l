@@ -20,7 +20,7 @@
 #template(-8197) struct  {}
 ////#template(-8204) nonstructural {}
 #template(-8198) listable {}
-////#template(-8200) string {}
+#template(-8200) string {}
 #template(-8193) embeddable {}
 //#template(-8203) extension {}
 //#template(-8203,subject) extension : subject {}
@@ -72,8 +72,8 @@
 #subject realarray  = system'RealArray.
 #subject realmatrix = system'RealMatrix.
 #subject chararray  = system'CharArray.
-//#subject array      = system'Array.
-//#subject args       = system'ArgArray.
+#subject array      = system'Array.
+#subject args       = system'ArgArray.
 //#subject mssgarray  = system'MessageArray.
 #subject bitarray   = system'BitArray.
 #subject bitset     = system'BitArray32.

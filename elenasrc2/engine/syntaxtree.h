@@ -98,7 +98,7 @@ enum LexicalType
    lxResultField     = 0x0A11A, // arg -offset
    lxCurrentMessage  = 0x0A11B,
    lxThisLocal       = 0x0A11C,
-//   lxConstantList    = 0x0A11E, // arg - reference
+   lxConstantList    = 0x0A11E, // arg - reference
 //   lxBlockLocalAddr  = 0x0A11F, // arg - offset
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
@@ -125,7 +125,7 @@ enum LexicalType
    lxMethodParameter = 0x0C017,
 //   lxAltExpression   = 0x0C018,
    lxIfNot           = 0x0C019,   // optional arg - reference
-//   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
+   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIf              = 0x0C01F,   // optional arg - reference
    lxElse            = 0x0C020,   // optional arg - reference
 //   lxOption          = 0x0C021,

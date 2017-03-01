@@ -243,7 +243,7 @@ SNode findTerminalInfo(SNode node)
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
-   : /*constantHints(INVALID_REF), */extensions(NULL, freeobj)
+   : constantHints(INVALID_REF), extensions(NULL, freeobj)
 {
    this->project = project;
    this->sourcePath = sourcePath;
@@ -468,10 +468,10 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
    if (reference == 0) {
       return ObjectInfo();
    }
-   //// check if symbol should be treated like constant one
-   //else if (constantHints.exist(reference)) {
-   //   return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
-   //}
+   // check if symbol should be treated like constant one
+   else if (constantHints.exist(reference)) {
+      return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
+   }
    else if (checkState) {
       ClassInfo info;
       // check if the object can be treated like a constant object
@@ -487,25 +487,25 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
             return ObjectInfo(okConstantClass, reference, info.header.classRef);
          }
       }
-   //   else {
-   //      // check if the object is typed expression
-   //      SymbolExpressionInfo symbolInfo;
-   //      // check if the object can be treated like a constant object
-   //      r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
-   //      if (r) {
-   //         // if it is a constant
-   //         if (symbolInfo.constant) {
-   //            if (symbolInfo.listRef != 0) {
-   //               return ObjectInfo(okArrayConst, symbolInfo.listRef, attributeHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
-   //            }
-   //            else return ObjectInfo(okConstantSymbol, reference, attributeHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
-   //         }
-   //         // if it is a typed symbol
-   //         else if (symbolInfo.expressionTypeRef != 0) {
-   //            return ObjectInfo(okSymbol, reference, 0, symbolInfo.expressionTypeRef);
-   //         }
-   //      }
-   //   }
+      else {
+         // check if the object is typed expression
+         SymbolExpressionInfo symbolInfo;
+         // check if the object can be treated like a constant object
+         r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
+         if (r) {
+            // if it is a constant
+            if (symbolInfo.constant) {
+               if (symbolInfo.listRef != 0) {
+                  return ObjectInfo(okArrayConst, symbolInfo.listRef, subjectHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
+               }
+               else return ObjectInfo(okConstantSymbol, reference, subjectHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
+            }
+            // if it is a typed symbol
+            else if (symbolInfo.expressionTypeRef != 0) {
+               return ObjectInfo(okSymbol, reference, 0, symbolInfo.expressionTypeRef);
+            }
+         }
+      }
    }
 
    // otherwise it is a normal one
@@ -541,10 +541,10 @@ ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool exi
    //   if (ch == '\'' || ch == 0)
    //      return ObjectInfo(okExternal);
    //}
-   //// To tell apart primitive modules, the name convention is used
-   //else if (reference.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
-   //   return ObjectInfo(okInternal, module->mapReference(reference));
-   //}
+   // To tell apart primitive modules, the name convention is used
+   /*else */if (reference.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
+      return ObjectInfo(okInternal, module->mapReference(reference));
+   }
 
    ref_t referenceID = mapReference(reference, existing);
 
@@ -658,33 +658,33 @@ ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, b
    return moduleRef;
 }
 
-////ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
-////{
-////   if (emptystr(symbol))
-////      return 0;
-////
-////   // load class meta data
-////   ref_t moduleRef = 0;
-////   _Module* argModule = project->resolveModule(symbol, moduleRef);
-////
-////   if (argModule == NULL || moduleRef == 0)
-////      return 0;
-////
-////   // load argument VMT meta data
-////   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
-////   if (metaData == NULL || metaData->Length() != sizeof(SymbolExpressionInfo))
-////      return 0;
-////
-////   MemoryReader reader(metaData);
-////
-////   info.load(&reader);
-////
-////   if (argModule != module) {
-////      // import type
-////      info.expressionTypeRef = importSubject(argModule, info.expressionTypeRef, module);
-////   }
-////   return moduleRef;
-////}
+ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
+{
+   if (emptystr(symbol))
+      return 0;
+
+   // load class meta data
+   ref_t moduleRef = 0;
+   _Module* argModule = project->resolveModule(symbol, moduleRef);
+
+   if (argModule == NULL || moduleRef == 0)
+      return 0;
+
+   // load argument VMT meta data
+   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
+   if (metaData == NULL || metaData->Length() != sizeof(SymbolExpressionInfo))
+      return 0;
+
+   MemoryReader reader(metaData);
+
+   info.load(&reader);
+
+   if (argModule != module) {
+      // import type
+      info.expressionTypeRef = importSubject(argModule, info.expressionTypeRef, module);
+   }
+   return moduleRef;
+}
 
 _Memory* Compiler::ModuleScope :: loadAttributeInfo(ident_t attribute/*, _Module* &argModule*/)
 {
@@ -962,7 +962,7 @@ Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference)
 Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    : SourceScope(parent, reference)
 {
-//   typeRef = 0;
+   typeRef = 0;
    constant = false;
 //   preloaded = false;
 }
@@ -1953,6 +1953,12 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
          if (!_logic->validateSymbolAttribute(value, scope.constant))
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
+      else if (current == lxTypeAttr) {
+         if (scope.typeRef == 0) {
+            scope.typeRef = scope.moduleScope->module->mapSubject(current.identifier(), false);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      }
 
       current = current.nextNode();
    }
@@ -2361,9 +2367,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okRealConstant:
          writer.newNode(lxConstantReal, object.param);
          break;
-//      case okArrayConst:
-//         terminal.set(lxConstantList, object.param);
-//         break;
+      case okArrayConst:
+         writer.newNode(lxConstantList, object.param);
+         break;
       case okLocal:
       case okParam:
          if (object.extraparam == -1) {
@@ -2448,9 +2454,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          break;
 //      case okExternal:
 //         break;
-//      case okInternal:
-//         terminal.setArgument(object.param);
-//         break;
+      case okInternal:
+         terminal.setArgument(object.param);
+         return;
    }
 
    writeTarget(writer, resolveObjectReference(scope, object));
@@ -3272,10 +3278,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //   else {
       ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
 //
-//      if (target.kind == okInternal) {
-//         return compileInternalCall(node, scope, messageRef, target);
-//      }
-//      else {
+      if (target.kind == okInternal) {
+         return compileInternalCall(writer, node, scope, messageRef, target);
+      }
+      else {
          ref_t extensionRef = mapExtension(scope, messageRef, target);
 
          if (extensionRef != 0) {
@@ -3286,7 +3292,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          }
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode);
-//      }
+      }
 //   }
 
    writer.removeBookmark();
@@ -4249,35 +4255,36 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 ////
 ////   return retVal;
 ////}
-////
-////ObjectInfo Compiler :: compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo routine)
-////{
-////   ModuleScope* moduleScope = scope.moduleScope;
-////
-////   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
-////   virtualReference.append('.');
-////
-////   int paramCount;
-////   ref_t sign_ref, verb_id;
-////   decodeMessage(message, sign_ref, verb_id, paramCount);
-////
-////   virtualReference.append('0' + (char)paramCount);
-////   virtualReference.append('#');
-////   virtualReference.append((char)(0x20 + verb_id));
-////
-////   if (sign_ref != 0) {
-////      virtualReference.append('&');
-////      virtualReference.append(moduleScope->module->resolveSubject(sign_ref));
-////   }
-////
-////   node.set(lxInternalCall, moduleScope->module->mapReference(virtualReference));
-////
-////   SNode targetNode = node.firstChild(lxTerminalMask);
-////   // HOTFIX : comment out dll reference
-////   targetNode = lxIdle;
-////
-////   return ObjectInfo(okObject);
-////}
+
+ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo routine)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
+   virtualReference.append('.');
+
+   int paramCount;
+   ref_t sign_ref, verb_id;
+   decodeMessage(message, sign_ref, verb_id, paramCount);
+
+   virtualReference.append('0' + (char)paramCount);
+   virtualReference.append('#');
+   virtualReference.append((char)(0x20 + verb_id));
+
+   if (sign_ref != 0) {
+      virtualReference.append('&');
+      virtualReference.append(moduleScope->module->resolveSubject(sign_ref));
+   }
+
+   writer.insert(lxInternalCall, moduleScope->module->mapReference(virtualReference));
+   writer.closeNode();
+
+   SNode targetNode = node.firstChild(lxTerminalMask);
+   // HOTFIX : comment out dll reference
+   targetNode = lxIdle;
+
+   return ObjectInfo(okObject);
+}
 
 int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reserved)
 {
@@ -4853,6 +4860,8 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
    SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
    if (bodyNode == lxDispatchCode) {
       compileConstructorDispatchExpression(writer, bodyNode, codeScope);
+
+      writer.closeNode();
       return;
    }
    else if (bodyNode == lxResendExpression) {
@@ -5856,7 +5865,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
 
    if (templateMethods) {
       // second pass - do not include overwritten template-based methods
-      SNode current = root.firstChild();
+      current = root.firstChild();
       while (current != lxNone) {
          if (current == lxClassMethod && current.existChild(lxTemplate)) {
             generateMethodDeclaration(current, scope, true, closed);
@@ -6266,258 +6275,113 @@ void Compiler :: declareSingletonClass(SNode node, ClassScope& scope)
 void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 {
    declareSymbolAttributes(node, scope);
-   bool singleton = false;
    
-//   ObjectInfo retVal;
-
-//   SNode expression = node.findChild(lxExpression);
-
-   // if it is a singleton
-//   if (isSingleStatement(expression) && scope.constant) {
-//      SNode objNode = expression.findChild(lxCode, lxNestedClass, /*lxInlineExpression, */lxExpression);
-////      // HOTFIX : ignore sub expession
-////      if (objNode == lxExpression && isSingleStatement(objNode))
-////         objNode = objNode.findChild(lxCode, lxNestedClass, lxInlineExpression);
-//
-//      if (objNode == lxNestedClass) {
-//         ClassScope classScope(scope.moduleScope, scope.reference);
-//         classScope.info.header.flags |= elNestedClass;
-//
-//         objNode.setArgument(scope.reference);
-//
-//         declareSingletonClass(objNode, classScope);
-//         singleton = true;
-//      }
-////      else if (objNode == lxCode) {
-////         ClassScope classScope(scope.moduleScope, scope.reference);
-////         classScope.info.header.flags |= elNestedClass;
-////
-////         declareSingletonAction(classScope, objNode);
-////         singleton = true;
-////      }
-////      else if (objNode == lxInlineExpression) {
-////         ClassScope classScope(scope.moduleScope, scope.reference);
-////         classScope.info.header.flags |= elNestedClass;
-////
-////         declareSingletonAction(classScope, objNode);
-////         singleton = true;
-////      }
-//////      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
-//////         ClassScope classScope(scope.moduleScope, scope.reference);
-////      // classScope.info.header.flags |= elNestedClass;
-//////
-//////         declareSingletonAction(classScope, objNode, objNode, hints);
-//////         singleton = true;
-//////      }
-//////      else compileSymbolHints(hints, scope, false);
-//   }
-
-//   CodeScope codeScope(&scope);
-////   if (retVal.kind == okUnknown) {
-////      scope.constant = node.existChild(lxConstAttr);
-////      scope.preloaded = node.existChild(lxPreloadedAttr);
-////      scope.typeRef = node.findChild(lxType).argument;
-////
-////      // compile symbol body, if it is not a singleton
-//   writer.newNode(lxExpression);
-//   writer.appendNode(lxBreakpoint, dsStep);
-//   ///*retVal = */buildExpression(writer, expression, codeScope/*, 0*/);
-//   writer.closeNode();
-//
-////      if (scope.typeRef != 0) {
-////         typecastObject(expression, codeScope, scope.typeRef, retVal);
-////      }
-////   }
-////   else {
-////      SNode terminal = node.firstChild(lxTerminalMask);
-////
-////      setTerminal(terminal, codeScope, retVal, 0);
-////   }
-//
-//
-////   SNode constNode = node.findChild(lxConstAttr);
-////   SNode typeNode = node.findChild(lxType);
-////
-////   if (!singleton && (typeNode.argument != 0 || constNode != lxNone)) {
-////      SymbolExpressionInfo info;
-////      info.expressionTypeRef = typeNode.argument;
-////      info.constant = constNode != lxNone;
-////
-////      // save class meta data
-////      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-////      info.save(&metaWriter);
-////   }
-
-//   SNode expression = node.findChild(lxExpression);
-//
-//   //   // if it is a singleton
-//   //   if (isSingleStatement(expression)) {
-//   //      SNode objNode = expression.findChild(lxCode, lxNestedClass, lxInlineExpression, lxExpression);
-//   //      // HOTFIX : ignore sub expession
-//   //      if (objNode == lxExpression && isSingleStatement(objNode))
-//   //         objNode = objNode.findChild(lxCode, lxNestedClass, lxInlineExpression);
-//   //
-//   //      if (objNode == lxNestedClass) {
-//   //         ClassScope classScope(scope.moduleScope, scope.reference);
-//   //         classScope.info.header.flags |= elNestedClass;
-//   //
-//   //         declareSingletonClass(objNode, classScope, node.findChild(lxAttribute));
-//   //         singleton = true;
-//   //      }
-//   //      else if (objNode == lxCode) {
-//   //         ClassScope classScope(scope.moduleScope, scope.reference);
-//   //         classScope.info.header.flags |= elNestedClass;
-//   //
-//   //         declareSingletonAction(classScope, objNode);
-//   //         singleton = true;
-//   //      }
-//   //      else if (objNode == lxInlineExpression) {
-//   //         ClassScope classScope(scope.moduleScope, scope.reference);
-//   //         classScope.info.header.flags |= elNestedClass;
-//   //
-//   //         declareSingletonAction(classScope, objNode);
-//   //         singleton = true;
-//   //      }
-//   ////      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
-//   ////         ClassScope classScope(scope.moduleScope, scope.reference);
-//   //      // classScope.info.header.flags |= elNestedClass;
-//   ////
-//   ////         declareSingletonAction(classScope, objNode, objNode, hints);
-//   ////         singleton = true;
-//   ////      }
-//   ////      else compileSymbolHints(hints, scope, false);
-//   //   }
-//   //   compileSymbolAttributes(node, scope);
-//
-//   CodeScope codeScope(&scope);
-//   //   if (retVal.kind == okUnknown) {
-//   //      scope.constant = node.existChild(lxConstAttr);
-//   //      scope.preloaded = node.existChild(lxPreloadedAttr);
-//   //      scope.typeRef = node.findChild(lxType).argument;
-//   //
-//   //      // compile symbol body, if it is not a singleton
-//   writer.newNode(lxExpression);
-//   writer.appendNode(lxBreakpoint, dsStep);
-//   retVal = declareExpression(writer, expression, codeScope, scope.constant ? HINT_ROOT : 0);
-//   writer.closeNode();
-//
-//   //      if (scope.typeRef != 0) {
-//   //         typecastObject(expression, codeScope, scope.typeRef, retVal);
-//   //      }
-//   //   }
-//   //   else {
-//   //      SNode terminal = node.firstChild(lxTerminalMask);
-//   //
-//   //      setTerminal(terminal, codeScope, retVal, 0);
-//   //   }
-//
-//   if (scope.constant && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == false) {
-//      //      SymbolExpressionInfo info;
-//      //      info.expressionTypeRef = typeNode.argument;
-//      //      info.constant = constNode != lxNone;
-//      //
-//      //      // save class meta data
-//      //      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-//      //      info.save(&metaWriter);
-//   }
+   if ((scope.constant || scope.typeRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == false) {
+      SymbolExpressionInfo info;
+      info.expressionTypeRef = scope.typeRef;
+      info.constant = scope.constant;
+      
+      // save class meta data
+      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+      info.save(&metaWriter);
+   }
 }
 
-////
-//////bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal)
-//////{
-//////   if (retVal.kind == okIntConstant) {
-//////      _Module* module = scope.moduleScope->module;
-//////      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-//////
-//////      size_t value = module->resolveConstant(retVal.param).toULong(16);
-//////
-//////      dataWriter.writeDWord(value);
-//////
-//////      dataWriter.Memory()->addReference(scope.moduleScope->intReference | mskVMTRef, (ref_t)-4);
-//////
-//////      scope.moduleScope->defineConstantSymbol(scope.reference, V_INT32);
-//////   }
-//////   else if (retVal.kind == okLongConstant) {
-//////      _Module* module = scope.moduleScope->module;
-//////      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-//////
-//////      long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
-//////
-//////      dataWriter.write(&value, 8u);
-//////
-//////      dataWriter.Memory()->addReference(scope.moduleScope->longReference | mskVMTRef, (ref_t)-4);
-//////
-//////      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->longReference);
-//////   }
-//////   else if (retVal.kind == okRealConstant) {
-//////      _Module* module = scope.moduleScope->module;
-//////      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-//////
-//////      double value = module->resolveConstant(retVal.param).toDouble();
-//////
-//////      dataWriter.write(&value, 8u);
-//////
-//////      dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, (ref_t)-4);
-//////
-//////      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->realReference);
-//////   }
-//////   else if (retVal.kind == okLiteralConstant) {
-//////      _Module* module = scope.moduleScope->module;
-//////      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-//////
-//////      ident_t value = module->resolveConstant(retVal.param);
-//////
-//////      dataWriter.writeLiteral(value, getlength(value) + 1);
-//////
-//////      dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, (size_t)-4);
-//////
-//////      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->literalReference);
-//////   }
-//////   else if (retVal.kind == okWideLiteralConstant) {
-//////      _Module* module = scope.moduleScope->module;
-//////      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-//////
-//////      WideString wideValue(module->resolveConstant(retVal.param));
-//////
-//////      dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
-//////
-//////      dataWriter.Memory()->addReference(scope.moduleScope->wideReference | mskVMTRef, (size_t)-4);
-//////
-//////      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->wideReference);
-//////   }
-//////   else if (retVal.kind == okCharConstant) {
-//////      _Module* module = scope.moduleScope->module;
-//////      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-//////
-//////      ident_t value = module->resolveConstant(retVal.param);
-//////
-//////      dataWriter.writeLiteral(value, getlength(value));
-//////
-//////      dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, (ref_t)-4);
-//////
-//////      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->charReference);
-//////   }
-//////   else if (retVal.kind == okObject) {
-//////      SNode root = node.findSubNodeMask(lxObjectMask);
-//////
-//////      if (root == lxConstantList) {
-//////         SymbolExpressionInfo info;
-//////         info.expressionTypeRef = scope.typeRef;
-//////         info.constant = scope.constant;
-//////         info.listRef = root.argument;
-//////
-//////         // save class meta data
-//////         MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-//////         info.save(&metaWriter);
-//////
-//////         return true;
-//////      }
-//////      else return false;
-//////   }
-//////   else return false;
-//////
-//////   return true;
-//////}
+bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal)
+{
+   if (retVal.kind == okIntConstant) {
+      _Module* module = scope.moduleScope->module;
+      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+      size_t value = module->resolveConstant(retVal.param).toULong(16);
+
+      dataWriter.writeDWord(value);
+
+      dataWriter.Memory()->addReference(scope.moduleScope->intReference | mskVMTRef, (ref_t)-4);
+
+      scope.moduleScope->defineConstantSymbol(scope.reference, V_INT32);
+   }
+   else if (retVal.kind == okLongConstant) {
+      _Module* module = scope.moduleScope->module;
+      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+      long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
+
+      dataWriter.write(&value, 8u);
+
+      dataWriter.Memory()->addReference(scope.moduleScope->longReference | mskVMTRef, (ref_t)-4);
+
+      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->longReference);
+   }
+   else if (retVal.kind == okRealConstant) {
+      _Module* module = scope.moduleScope->module;
+      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+      double value = module->resolveConstant(retVal.param).toDouble();
+
+      dataWriter.write(&value, 8u);
+
+      dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, (ref_t)-4);
+
+      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->realReference);
+   }
+   else if (retVal.kind == okLiteralConstant) {
+      _Module* module = scope.moduleScope->module;
+      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+      ident_t value = module->resolveConstant(retVal.param);
+
+      dataWriter.writeLiteral(value, getlength(value) + 1);
+
+      dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, (size_t)-4);
+
+      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->literalReference);
+   }
+   else if (retVal.kind == okWideLiteralConstant) {
+      _Module* module = scope.moduleScope->module;
+      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+      WideString wideValue(module->resolveConstant(retVal.param));
+
+      dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
+
+      dataWriter.Memory()->addReference(scope.moduleScope->wideReference | mskVMTRef, (size_t)-4);
+
+      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->wideReference);
+   }
+   else if (retVal.kind == okCharConstant) {
+      _Module* module = scope.moduleScope->module;
+      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+      ident_t value = module->resolveConstant(retVal.param);
+
+      dataWriter.writeLiteral(value, getlength(value));
+
+      dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, (ref_t)-4);
+
+      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->charReference);
+   }
+   else if (retVal.kind == okObject) {
+      SNode root = node.findSubNodeMask(lxObjectMask);
+
+      if (root == lxConstantList) {
+         SymbolExpressionInfo info;
+         info.expressionTypeRef = scope.typeRef;
+         info.constant = scope.constant;
+         info.listRef = root.argument;
+
+         // save class meta data
+         MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+         info.save(&metaWriter);
+
+         return true;
+      }
+      else return false;
+   }
+   else return false;
+
+   return true;
+}
 
 void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope)
 {
@@ -6536,105 +6400,33 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    writer.newNode(lxSymbol, node.argument);
    writer.newNode(lxExpression);
    writer.appendNode(lxBreakpoint, dsStep);
+   writer.newBookmark();
    ObjectInfo retVal = compileExpression(writer, expression, codeScope, scope.constant ? HINT_ROOT : 0);
+   if (scope.typeRef != 0) {
+      ModuleScope* moduleScope = scope.moduleScope;
+
+      convertObject(writer, *moduleScope, moduleScope->subjectHints.get(scope.typeRef), scope.typeRef, resolveObjectReference(codeScope, retVal));
+   }
+   writer.removeBookmark();
    writer.closeNode();
    writer.closeNode();
 
-////   ObjectInfo retVal;
-////   SNode expression = node.findChild(lxExpression);
-////
-////   // if it is a singleton
-////   if (isSingleStatement(expression)) {
-////      SNode classNode = expression.findChild(lxCode, lxNestedClass, lxInlineExpression, lxExpression);
-////      // HOTFIX : ignore sub expession
-////      if (classNode == lxExpression && isSingleStatement(classNode))
-////         classNode = classNode.findChild(lxCode, lxNestedClass, lxInlineExpression);
-////
-////      if (classNode == lxNestedClass) {
-////         ModuleScope* moduleScope = scope.moduleScope;
-////
-////         ClassScope classScope(moduleScope, scope.reference);
-////         moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
-////
-////         compileSingletonClass(classNode, classScope, node.findChild(lxAttribute));
-////
-////         if (test(classScope.info.header.flags, elStateless)) {
-////            // if it is a stateless singleton
-////            retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
-////         }
-////      }
-////      else if (classNode == lxCode) {
-////         ModuleScope* moduleScope = scope.moduleScope;
-////
-////         ClassScope classScope(moduleScope, scope.reference);
-////         moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
-////
-////         compileAction(classNode, classScope, SNode(), 0, true);
-////
-////         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
-////      }
-////      else if (classNode == lxInlineExpression) {
-////         ModuleScope* moduleScope = scope.moduleScope;
-////
-////         ClassScope classScope(moduleScope, scope.reference);
-////         moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
-////
-////         compileAction(classNode, classScope, classNode.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxMessage), 0, true);
-////
-////         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
-////      }
-//////      else if (classNode == nsSubjectArg || classNode == nsMethodParameter) {
-//////         ModuleScope* moduleScope = scope.moduleScope;
-//////
-//////         ClassScope classScope(moduleScope, scope.reference);
-//////         moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
-//////
-//////         compileAction(goToSymbol(classNode, nsInlineExpression), classScope, classNode, 0, true);
-//////
-//////         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
-//////      }
-////   }
-////
-////   // compile symbol into byte codes
-////
-////   CodeScope codeScope(&scope);
-////   if (retVal.kind == okUnknown) {
-////      scope.constant = node.existChild(lxConstAttr);
-////      scope.preloaded = node.existChild(lxPreloadedAttr);
-////      scope.typeRef = node.findChild(lxType).argument;
-////
-////      // compile symbol body, if it is not a singleton
-////      insertDebugStep(expression, dsStep);
-////      retVal = compileExpression(expression, codeScope, 0);
-////
-////      if (scope.typeRef != 0) {
-////         typecastObject(expression, codeScope, scope.typeRef, retVal);
-////      }
-////   }
-////   else {
-////      SNode terminal = node.firstChild(lxTerminalMask);
-////
-////      setTerminal(terminal, codeScope, retVal, 0);
-////   }
-////
-////   optimizeSymbolTree(node, scope, scope.moduleScope->warningMask);
-////   node.refresh();
-////
-////   // create constant if required
-////   if (scope.constant) {
-////      // static symbol cannot be constant
-////      if (isStatic)
-////         scope.raiseError(errInvalidOperation, expression);
-////
-////      if (!compileSymbolConstant(expression, scope, retVal))
-////         scope.raiseError(errInvalidOperation, expression);
-////   }
-////
-////   if (scope.preloaded) {
-////      compilePreloadedCode(scope);
-////   }
+   optimizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
+   node.refresh();
 
-// optimizeSymbolTree(node, scope, scope.moduleScope->warningMask);
+   // create constant if required
+   if (scope.constant) {
+      // static symbol cannot be constant
+      if (isStatic)
+         scope.raiseError(errInvalidOperation, expression);
+
+      if (!compileSymbolConstant(expression, scope, retVal))
+         scope.raiseError(errInvalidOperation, expression);
+   }
+
+//   if (scope.preloaded) {
+//      compilePreloadedCode(scope);
+//   }
 
    CommandTape tape;
    _writer.generateSymbol(tape, expressionTree.readRoot(), isStatic);
@@ -6700,20 +6492,14 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
 //
 //   optimizeSyntaxExpression(scope, node, warningScope, HINT_NOBOXING /* | HINT_EXTERNALOP*/);
 //}
-//
-//void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, WarningScope& warningScope)
-//{
-//   //SNode parentNode = node.parentNode();
-//   //while (parentNode == lxExpression)
-//   //   parentNode = parentNode.parentNode();
-//
-//   //if (parentNode == lxAssigning) {
-//   //   boxPrimitive(scope, node, -1, warningMask, mode);
-//   //}
-//
-//   optimizeSyntaxExpression(scope, node, warningScope, HINT_NOBOXING);
-//}
-//
+
+ref_t Compiler :: optimizeInternalCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
+{
+   optimizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
+
+   return V_INT32;
+}
+
 //////void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warningScope)
 //////{
 //////   int mode = 0;
@@ -7050,13 +6836,13 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
       if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxThisLocal) && node.argument != 0) {
          sourceRef = targetRef;
       }
-      //// HOTFIX : do not box constant classes
-      //else if (sourceNode == lxConstantInt && targetRef == scope.intReference) {
-      //   boxing = false;
-      //}
-      //else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
-      //   boxing = false;
-      //}
+      // HOTFIX : do not box constant classes
+      else if (sourceNode == lxConstantInt && targetRef == scope.intReference) {
+         boxing = false;
+      }
+      else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
+         boxing = false;
+      }
       else sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
 
       // adjust primitive target
@@ -7141,6 +6927,9 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxBinArrOp:
       case lxNewOp:
          return optimizeOp(current, scope, warningScope);
+      case lxInternalCall:
+         return optimizeInternalCall(current, scope, warningScope);
+         break;
       default:
          return current.findChild(lxTarget).argument;
    }
@@ -7210,22 +6999,22 @@ void Compiler :: optimizeClassTree(SNode node, ClassScope& scope, WarningScope& 
    }
 }
 
-//void Compiler :: optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask)
-//{
-//   WarningScope warningScope(warningMask);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      /*if (current == lxWarningMask) {
-//         warningMask = current.argument;
-//      }
-//      else */if (test(current.type, lxExprMask)) {
-//         optimizeSyntaxExpression(*scope.moduleScope, current, warningScope);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
+void Compiler :: optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask)
+{
+   WarningScope warningScope(warningMask);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      /*if (current == lxWarningMask) {
+         warningMask = current.argument;
+      }
+      else */if (test(current.type, lxExprMask)) {
+         optimizeExpressionTree(current, *scope.moduleScope, warningScope, HINT_NOUNBOXING);
+      }
+
+      current = current.nextNode();
+   }
+}
 
 void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
 {

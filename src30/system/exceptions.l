@@ -204,11 +204,11 @@
 ////    #constructor new:aMessage
 ////        <= new &literal:(aMessage literal).
 ////}
-//
-//// --- InvalidArgumentException ---
-//
-//#class(exceptionof:InvalidArgumentError) InvalidArgumentException
-//{
+
+// --- InvalidArgumentException ---
+
+/*#class(exceptionof:InvalidArgumentError) */InvalidArgumentException
+{
 //    #constructor new &literal:message
 //    [
 //        theMessage := message.
@@ -226,8 +226,8 @@
 //    /// obsolete
 //    #constructor new &message:aMessage
 //        <= new &literal:(aMessage literal).
-//}
-//
+}
+
 //// --- InvalidOperationException ---
 //
 //#class(exceptionof:InvalidOperationError) InvalidOperationException
