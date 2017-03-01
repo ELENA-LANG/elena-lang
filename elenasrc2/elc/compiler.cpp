@@ -4716,20 +4716,20 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
       compileMessageParameters(writer, expr, scope, HINT_RESENDEXPR);
 
       compileMessage(writer, expr, scope, ObjectInfo(okObject, classRef), messageRef, HINT_RESENDEXPR);
+
+      writer.removeBookmark();
       
       if (withFrame) {
          // HOT FIX : inject saving of the created object
          SNode codeNode = node.findChild(lxCode);
          if (codeNode != lxNone) {
-            SNode assignExpr = codeNode.insertNode(lxAssigning);
-            assignExpr.appendNode(lxLocal, 1);
-            assignExpr.appendNode(lxResult);
+            writer.newNode(lxAssigning);
+            writer.appendNode(lxLocal, 1);
+            writer.appendNode(lxResult);
+            writer.closeNode();
          }
       }
-
-      writer.closeNode();
-
-      writer.removeBookmark();
+      else writer.closeNode();
    }
    else scope.raiseError(errUnknownMessage, node);
 }
@@ -8033,7 +8033,7 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
       }
-      else if (current == lxLoop) {
+      else if (current == lxLoop || current == lxCode) {
          generateCodeTree(writer, current, scope);
       }
       else generateObjectTree(writer, current, scope);

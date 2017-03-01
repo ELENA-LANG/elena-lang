@@ -16,7 +16,7 @@ using namespace _ELENA_ ;
 
 const char* DFA_table[30] =
 {
-        ".????????cc??c??????????????????cmvbxhmehhmmhyhinnnnnnnnnnmhmmmhhddddddddddddddddddddddddddhmhmd?ddddddddddddddddddddddddddhmhhd",
+        ".????????cc??c??????????????????cmvbxhmehhmmhyhinnnnnnnnnnmmmmmhhddddddddddddddddddddddddddhmhmd?ddddddddddddddddddddddddddhmhhd",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}}}}}}}}}}aaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbaaaababbbbbbbbbbbbbbbbbbbbbbbbbbaaaab",
         "*********cc*********************c***********************************************************************************************",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaeaaaaaaaaddddddddddaaaaaaaddddddddddddddddddddddddddaaaadaddddddddddddddddddddddddddaaaad",
@@ -28,7 +28,7 @@ const char* DFA_table[30] =
         "*jjjjjjjjj*jj*jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",
         "?kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkklkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
         "?kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkckkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaahahhhaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaahhhhhaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$annnnnnnnnnaaaaaaassssssaaaaaaaaaaaaaaaaaaaaaaaaaassssssataaaraaaaaqaaaaaaaaaaaaa",
         "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!pppppppppp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
         "??????????????????????????????????????????????" "!?pppppppppp???????????????????????????????????????????z????????????q?????????????", //!! the space should be removed after turning off trigraphs
