@@ -6,8 +6,6 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
-                 * template : import method attributes
-
                  * vint.set&int[1] - do not box the variable before assigning
                  * local attribute : do not allow embeddable templates
                  * field attribute : if the template marked as embeddable it should be included into the body, otherwise -
@@ -22,7 +20,8 @@ In development:
                  * optimize k := k + 2.
                  * optimize k += 3.
 
-                 * implementing ELENA 3.0
+                 * extension in the template (see mytest)
+                 * implementing ELENA 3.0     
 
                  * do not unbox returning objects
                  * box structure fields
@@ -35,7 +34,6 @@ In development:
                  * class class is sealed and stateless
                  * raise an error when costructor new [] // !!
                  * constructor constructor [] / constructor [] - raise warning
-                 * allow to override the template method
                  * singleton classes / roles / extensions should not have a class class
                  * should not be allowed to provide returning type for constructors
                  * type / sealed hint should not be overridden
@@ -112,6 +110,11 @@ In development:
                  * uncomment Integer, Real
                  * test loop operation with unrecognized branching operator
                  * test a[] a(x)[]
+                 * support operation with typified array
+                 * test primitive operations with numbers
+                 * test primitive operations with message / subject
+                 * test primitive operations with arrays, int array, short arrays, byte arrays, binary arrays
+                 * test generic arrayof(byte), arrayof(message), arrayof(object), arrayof(enumerator)
 
               xdev - generic development
                  * support property template

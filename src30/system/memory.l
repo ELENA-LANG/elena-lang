@@ -1,90 +1,90 @@
-//// --- arrayof ---
-//
-//#template(dynamic) arrayof : template_subj
-//{
-//    #field(template_subj)$target.
-//
-//    #method(w3) enumerator 
+// --- arrayof ---
+
+#template(dynamic) arrayof(template_subj)
+{
+    template_subj $target.
+
+    enumerator 
+    [
+        vint index := -1.
+        int length := 0.
+        $target >> length.
+        
+        ^ Enumerator
+          {
+              get = $owner getAt &int:index.
+              
+              enumerable = $owner.
+              
+              reset [ index := -1. ]
+              
+              next
+              [
+                  index += 1.
+                  
+                  ^ index < length.
+              ]
+          }.
+    ]
+        
+//    stacksafe outnprop(length) readLength &vint:retVal
 //    [
-//        #var(vint)index := -1.
-//        #var(int)length := 0.
-//        $target >> length.
-//        
-//        ^ Enumerator
-//          {
-//              get = $owner getAt &int:index.
-//              
-//              enumerable = $owner.
-//              
-//              reset [ index := -1. ]
-//              
-//              next
-//              [
-//                  index += 1.
-//                  
-//                  ^ index < length.
-//              ]
-//          }.
-//    ]
-//        
-//    #method(outnprop:length,stacksafe)readLength &vint:retVal
-//    [
-//        #var(int)len.
+//        int len := 0.
 //        $target >> len.
 //        
 //        retVal := len.
 //    ]
-//
-//    #method(w2,stacksafe,template_subj) getAt &int:n
+
+    stacksafe template_subj getAt &int:n
+    [
+        (n < 0)
+            ? [ InvalidArgumentException new raise. ].
+        
+        int len := 0.
+        $target >> len.
+
+        (n < len)
+            ? [ ^ $target @ n. ]
+            ! [ InvalidArgumentException new raise. ].
+    ]
+
+//    stacksafe setAt &int:n &template_subj:item
 //    [
 //        (n < 0)
-//            ? [ #throw InvalidArgumentException new. ].
+//            ? [ InvalidArgumentException new raise. ].
 //        
-//        #var(int)len.
-//        $target >> len.
-//
-//        (n < len)
-//            ? [ ^ $target @ n. ]
-//            ! [ #throw InvalidArgumentException new. ].
-//    ]
-//
-//    #method(w3,stacksafe) setAt &int:n &template_subj:item
-//    [
-//        (n < 0)
-//            ? [ #throw InvalidArgumentException new. ].
-//        
-//        #var(int)len.
+//        int len := 0.
 //        $target >> len.
 //
 //        (n < len)
 //            ? [ $target @ n := item. ]
-//            ! [ #throw InvalidArgumentException new. ].
+//            ! [ InvalidArgumentException new raise. ].
 //    ]
-//                
-//    /// Returns the item at the specified index
-//    #method(template_subj) getAt : aParam
-//        <= %getAt &int:(aParam int).
-//        
-//    /// Returns the item at the specified index
-//    #method(w2) setAt : index : value
-//        <= %setAt &int:(index int) &template_subj:value.
-//}
-//
-//// === basic memory classes ===
-//
-//// --- ByteArray ---
-//
-///// A byte array
-//#class(sealed,arrayof:byte,dispatchable:bytearray) ByteArray
-//{
-//    /// Creates the byte array with the specified length
-//    #constructor(stacksafe) new &int:len
-//        = byte:len.
-//
-//    /// Creates the byte array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//    
+                
+    /// Returns the item at the specified index
+    template_subj getAt : aParam
+        <= getAt &int:(aParam int).
+        
+    /// Returns the item at the specified index
+    setAt : index : value
+        <= setAt &int:(index int) &template_subj:value.
+}
+
+// === basic memory classes ===
+
+// --- ByteArray ---
+
+/// A byte array
+sealed dispatchable(bytearray) arrayof(byte) ByteArray
+{
+    /// Creates the byte array with the specified length
+    stacksafe constructor new &int:len
+        = byte(len).
+
+    /// Creates the byte array with the specified length
+    constructor new : aLength
+        <= new &int:(aLength int).
+    
 //    /// Creates the copy of a byte subarray
 //    #constructor(stacksafe) new &int:anIndex &int:aLength &bytearray:anArray
 //        <= (new &int:aLength)
@@ -221,8 +221,8 @@
 //
 //    /// Creates the object copy
 //    #method clone = ByteArray new &bytearray:$self.
-//}
-//
+}
+
 //// --- ShortArray ---
 //
 ///// A short integer array

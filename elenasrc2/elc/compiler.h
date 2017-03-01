@@ -928,7 +928,7 @@ private:
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0, ref_t targetType = 0);
 
-//   ObjectInfo compileNewOperator(SNode node, CodeScope& scope/*, int mode*/);
+   ObjectInfo compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
@@ -954,7 +954,7 @@ private:
 //   ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 //
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-//   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
+   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
@@ -978,7 +978,7 @@ private:
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
 
    void compileDefaultConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//   void compileDynamicDefaultConstructor(SNode node, MethodScope& scope);
+   void compileDynamicDefaultConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //   void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
 ////   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 

@@ -34,19 +34,19 @@ SyntaxError :: SyntaxError(int column, int row, ident_t token, const char* error
 inline const char* getError(Symbol symbol)
 {
    switch(symbol) {
-//      case nsDeclarationEndExpected:
-//      case nsStatementEndExpected:
-//      case nsDirectiveEndExpected:
-//      case nsInlineExpressionEndExpected:
-//         return errDotExpectedSyntax;
-//      case nsErrClosingSBracketExpected:
-//         return errCSBrExpectedSyntax;
-//      case nsErrNestedMemberExpected:
-//         return errMethodNameExpected;
-//      case nsErrObjectExpected:
-//         return errObjectExpected;
-//      case nsErrMessageExpected:
-//         return errMessageExpected;
+      //case nsDeclarationEndExpected:
+      //case nsStatementEndExpected:
+      //case nsDirectiveEndExpected:
+      //case nsInlineExpressionEndExpected:
+      //   return errDotExpectedSyntax;
+      //case nsErrClosingSBracketExpected:
+      //   return errCSBrExpectedSyntax;
+      //case nsErrNestedMemberExpected:
+      //   return errMethodNameExpected;
+      //case nsErrObjectExpected:
+      //   return errObjectExpected;
+      //case nsErrMessageExpected:
+      //   return errMessageExpected;
       default:
          return errInvalidSyntax;
    }

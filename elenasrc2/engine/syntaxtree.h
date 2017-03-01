@@ -135,15 +135,15 @@ enum LexicalType
    lxCreatingClass   = 0x0C025,   // arg - count
    lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
-//   lxNewOp           = 0x0C028,
-//   lxArrOp           = 0x8C029, // arg - operation id
-//   lxBinArrOp        = 0x8C02A, // arg - operation id
-//   lxArgArrOp        = 0x8C02B, // arg - operation id
+   lxNewOp           = 0x0C028,
+   lxArrOp           = 0x8C029, // arg - operation id
+   lxBinArrOp        = 0x8C02A, // arg - operation id
+   lxArgArrOp        = 0x8C02B, // arg - operation id
    lxNilOp           = 0x8C02C, // arg - operation id
-//   lxIntArrOp        = 0x8C030,   // arg - operation id
+   lxIntArrOp        = 0x8C030,   // arg - operation id
    lxResendExpression= 0x0C031,
-//   lxByteArrOp       = 0x8C032, // arg - operation id
-//   lxShortArrOp      = 0x8C033, // arg - operation id
+   lxByteArrOp       = 0x8C032, // arg - operation id
+   lxShortArrOp      = 0x8C033, // arg - operation id
 //   lxReleasing       = 0x0C034,
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
@@ -193,7 +193,7 @@ enum LexicalType
    lxTempLocal       = 0x20016,
    lxIfValue         = 0x20017, // arg - reference
    lxElseValue       = 0x20018, // arg - reference
-//   lxSize            = 0x20019,
+   lxSize            = 0x20019,
    lxTemplateParam   = 0x2001A,
    lxEmbeddable      = 0x2001B,
 //   lxIntExtArgument  = 0x2001C,
@@ -838,9 +838,9 @@ public:
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);
-//   static void copyNodeSafe(Node source, Node destination);
+   static void copyNodeSafe(Node source, Node destination);
    static void saveNode(Node node, _Memory* dump);
-//   static void loadNode(Node node, _Memory* dump);
+   static void loadNode(Node node, _Memory* dump);
 
    static int countChild(Node node, LexicalType type)
    {

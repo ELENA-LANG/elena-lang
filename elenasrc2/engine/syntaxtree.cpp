@@ -171,12 +171,12 @@ void SyntaxTree :: saveNode(Node node, _Memory* dump)
    tree.save(dump);
 }
 
-//void SyntaxTree :: loadNode(Node node, _Memory* dump)
-//{
-//   SyntaxTree tree(dump);
-//
-//   copyNode(tree.readRoot(), node);
-//}
+void SyntaxTree :: loadNode(Node node, _Memory* dump)
+{
+   SyntaxTree tree(dump);
+
+   copyNode(tree.readRoot(), node);
+}
 
 void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type)
 {
@@ -335,12 +335,12 @@ void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destinatio
    }
 }
 
-//void SyntaxTree :: copyNodeSafe(Node source, Node destination)
-//{
-//   MemoryDump dump;
-//   saveNode(source, &dump);
-//   loadNode(destination, &dump);
-//}
+void SyntaxTree :: copyNodeSafe(Node source, Node destination)
+{
+   MemoryDump dump;
+   saveNode(source, &dump);
+   loadNode(destination, &dump);
+}
 
 SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_position, LexicalType type, int argument)
 {

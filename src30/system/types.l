@@ -13,7 +13,7 @@
 //#template(-4100) w2 {}
 //#template(-4101) w3 {}
 #template(-8195) sealed  {}
-//#template(-8199) dynamic {}
+#template(-8199) dynamic {}
 #template(-8196) limited {}
 //#template(-8206) group   {}
 #template(-8201) const   {}
@@ -41,11 +41,11 @@
 // === basic logical types ===
 #subject bool       = system'BaseBoolValue.
 
-////// === basic primitive types ===
-////
-////#subject keyvalue   = system'KeyValue.
-////
-////#subject ref        = system'Variable.
+// === basic primitive types ===
+
+#subject keyvalue   = system'KeyValue.
+
+#subject ref        = system'Variable.
 
 #subject byte       = system'ByteNumber.
 #subject short      = system'ShortNumber.
@@ -54,14 +54,14 @@
 #subject real       = system'RealNumber.
 #subject char       = system'CharValue.
 //#subject mssg       = system'Message.
-////#subject ext_mssg   = system'ExtensionMessage.
-////
-///// A verb symbol
-/////
-///// An instance of system'Verb class. 
-//#subject verb       = system'Verb.
+//#subject ext_mssg   = system'ExtensionMessage.
 
-//#subject subject    = system'Signature.
+/// A verb symbol
+
+/// An instance of system'Verb class. 
+#subject verb       = system'Verb.
+
+#subject subject    = system'Signature.
 //#subject symbol_ref = system'Symbol.
 
 // === basic dynamic types ===

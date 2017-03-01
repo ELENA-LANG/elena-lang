@@ -19,37 +19,37 @@ inline bool isWrappable(int flags)
    return !test(flags, elWrapper) && test(flags, elSealed);
 }
 
-//inline bool isPrimitiveStructArrayRef(ref_t classRef)
-//{
-//   switch (classRef)
-//   {
-//      case V_INT32ARRAY:
-//      case V_INT16ARRAY:
-//      case V_INT8ARRAY:
-//      case V_BINARYARRAY:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
-//inline bool isPrimitiveArrayRef(ref_t classRef)
-//{
-//   return classRef == V_OBJARRAY;
-//}
-//
-//inline ref_t definePrimitiveArrayItem(ref_t classRef)
-//{
-//   switch (classRef)
-//   {
-//      case V_INT32ARRAY:
-//      case V_INT16ARRAY:
-//      case V_INT8ARRAY:
-//         return V_INT32;
-//      default:
-//         return 0;
-//   }
-//}
+inline bool isPrimitiveStructArrayRef(ref_t classRef)
+{
+   switch (classRef)
+   {
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
+      case V_BINARYARRAY:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline bool isPrimitiveArrayRef(ref_t classRef)
+{
+   return classRef == V_OBJARRAY;
+}
+
+inline ref_t definePrimitiveArrayItem(ref_t classRef)
+{
+   switch (classRef)
+   {
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
+         return V_INT32;
+      default:
+         return 0;
+   }
+}
 
 inline bool IsInvertedOperator(int& operator_id)
 {
@@ -170,35 +170,35 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
    operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
 
-   //// array of int32 primitive operations
-   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, V_INT32));
-   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
-   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, 0));
+   // array of int32 primitive operations
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, V_INT32));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, 0));
 
-   //// array of int16 primitive operations
-   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, V_INT32));
-   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
-   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, 0));
+   // array of int16 primitive operations
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, V_INT32));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, 0));
 
-   //// array of int8 primitive operations
-   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, V_INT32));
-   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
-   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, 0));
+   // array of int8 primitive operations
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, V_INT32));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, 0));
 
-   //// array of object primitive operations
-   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
-   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
+   // array of object primitive operations
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
+
+   // array of structures primitive operations
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
+
+   // array of arg list
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
    //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
-
-   //// array of structures primitive operations
-   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
-   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
-   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
-
-   //// array of arg list
-   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
-   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
-   ////operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
@@ -289,33 +289,33 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
    return 0;
 }
 
-////int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
-////{
-////   if (loperand == 0 || roperand == 0 || (roperand2 == 0 && loperand != V_OBJARRAY))
-////      return 0;
-////
-////   OperatorList::Iterator it = operators.start();
-////   while (!it.Eof()) {
-////      OperatorInfo info = *it;
-////
-////      if (info.operatorId == operatorId) {
-////         if (info.loperand == V_NIL) {
-////            // skip operation with NIL
-////         }
-////         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)
-////            && isCompatible(scope, info.roperand2, roperand2)) 
-////         {
-////            result = info.result;
-////
-////            return info.operationType;
-////         }
-////
-////      }
-////      it++;
-////   }
-////
-////   return 0;
-////}
+int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
+{
+   if (loperand == 0 || roperand == 0 || (roperand2 == 0 && loperand != V_OBJARRAY))
+      return 0;
+
+   OperatorList::Iterator it = operators.start();
+   while (!it.Eof()) {
+      OperatorInfo info = *it;
+
+      if (info.operatorId == operatorId) {
+         if (info.loperand == V_NIL) {
+            // skip operation with NIL
+         }
+         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)
+            && isCompatible(scope, info.roperand2, roperand2)) 
+         {
+            result = info.result;
+
+            return info.operationType;
+         }
+
+      }
+      it++;
+   }
+
+   return 0;
+}
 
 bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
 {
@@ -388,16 +388,16 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& c
 
 }
 
-////int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
-////{
-////   if (isCompatible(scope, V_INT32, roperand)) {
-////      result = definePrimitiveArray(scope, loperand);
-////      if (result != 0)
-////         return lxNewOp;
-////   }
-////
-////   return 0;
-////}
+int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
+{
+   if (isCompatible(scope, V_INT32, roperand)) {
+      result = definePrimitiveArray(scope, loperand);
+      if (result != 0)
+         return lxNewOp;
+   }
+
+   return 0;
+}
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {
@@ -502,20 +502,20 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, ref_t classRef, C
    }
 }
 
-void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference)
+void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t elementType)
 {
-   //int size = 0;
-   //if (operationType == lxBinArrOp) {
-   //   // HOTFIX : define an item size for the binary array operations
-   //   size = -defineStructSize(scope, V_BINARYARRAY, type);
-   //}
+   int size = 0;
+   if (operationType == lxBinArrOp) {
+      // HOTFIX : define an item size for the binary array operations
+      size = -defineStructSize(scope, V_BINARYARRAY, elementType);
+   }
 
-   //if (reference == V_BINARY && type != 0) {
-   //   reference = scope.attributeHints.get(type);
-   //}
-   //else if (reference == V_OBJECT && type != 0) {
-   //   reference = scope.attributeHints.get(type);
-   //}
+   if (reference == V_BINARY && elementType != 0) {
+      reference = scope.subjectHints.get(elementType);
+   }
+   else if (reference == V_OBJECT && elementType != 0) {
+      reference = scope.subjectHints.get(elementType);
+   }
 
    bool inverting = IsInvertedOperator(operator_id);
 
@@ -535,6 +535,11 @@ void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scop
          writer.appendNode(lxIfValue, scope.branchingInfo.trueRef);
          writer.appendNode(lxElseValue, scope.branchingInfo.falseRef);
       }
+   }
+
+   if (size != 0) {
+      // HOTFIX : inject an item size for the binary array operations
+      writer.appendNode(lxSize, size);
    }
 
    writer.insert((LexicalType)operationType, operator_id);
@@ -579,46 +584,46 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       }
    }
 
-   //// HOT FIX : trying to typecast primitive structure array
-   //if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
-   //   ClassInfo sourceInfo;      
-   //   if (sourceRef == V_BINARYARRAY && sourceType != 0) {
-   //      // HOTFIX : for binary array of structures - sourceType  contains the element size
-   //      ref_t elementRef = scope.attributeHints.get(sourceType);
+   // HOT FIX : trying to typecast primitive structure array
+   if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
+      ClassInfo sourceInfo;      
+      if (sourceRef == V_BINARYARRAY && sourceRef != 0) {
+         // HOTFIX : for binary array of structures - sourceType  contains the element size
+         ref_t elementRef = sourceRef;
 
-   //      defineClassInfo(scope, sourceInfo, elementRef, true);
-   //      if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
-   //         compiler.injectBoxing(scope, node,
-   //            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+         defineClassInfo(scope, sourceInfo, elementRef, true);
+         if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+            compiler.injectBoxing(writer, scope, 
+               test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
 
-   //         return true;
-   //      }
-   //   }
-   //   else {
-   //      defineClassInfo(scope, sourceInfo, sourceRef, true);
-   //      if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
-   //         compiler.injectBoxing(scope, node,
-   //            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+            return true;
+         }
+      }
+      else {
+         defineClassInfo(scope, sourceInfo, sourceRef, true);
+         if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
+            compiler.injectBoxing(writer, scope,
+               test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
 
-   //         return true;
-   //      }
-   //   }
-   //}
+            return true;
+         }
+      }
+   }
 
-   //// HOTFIX : trying to typecast primitive array
-   //if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
-   //   ClassInfo sourceInfo;
-   //   defineClassInfo(scope, sourceInfo, sourceRef, true);
+   // HOTFIX : trying to typecast primitive array
+   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
+      ClassInfo sourceInfo;
+      defineClassInfo(scope, sourceInfo, sourceRef, true);
 
-   //   ref_t elementRef = scope.attributeHints.get(sourceType);
+      ref_t elementRef = sourceRef;
 
-   //   if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
-   //      compiler.injectBoxing(scope, node,
-   //         test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef);
+      if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+         compiler.injectBoxing(writer, scope,
+            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef);
 
-   //      return true;
-   //   }
-   //}
+         return true;
+      }
+   }
 
    // check if there are implicit constructors
    if (test(info.header.flags, elSealed)) {
@@ -665,14 +670,15 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
    return false;
 }
 
-//void CompilerLogic :: injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef)
-//{
-//   SNode operationNode = node.injectNode((LexicalType)operation, targetRef);
-//
-//   int size = defineStructSize(scope, targetRef, elementType, false);
-//   if (size != 0)
-//      operationNode.appendNode(lxSize, size);
-//}
+void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef)
+{
+   int size = defineStructSize(scope, targetRef, elementType, false);
+   if (size != 0)
+      writer.appendNode(lxSize, size);
+
+   writer.insert((LexicalType)operation, targetRef);
+   writer.closeNode();
+}
 
 bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
 {
@@ -723,31 +729,31 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
       //   info.header.flags = elDebugReference | elStructureRole | elEmbeddable;
       //   info.size = 8;
       //   break;
-      //case V_INT32ARRAY:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
-      //   info.size = -4;
-      //   break;
-      //case V_INT16ARRAY:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elEmbeddable;
-      //   info.size = -2;
-      //   break;
-      //case V_INT8ARRAY:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elEmbeddable;
-      //   info.size = -1;
-      //   break;
-      //case V_OBJARRAY:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugArray | elDynamicRole;
-      //   info.size = 0;
-      //   break;
-      //case V_BINARYARRAY:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDynamicRole | elStructureRole;
-      //   info.size = -1;
-      //   break;
+      case V_INT32ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
+         info.size = -4;
+         break;
+      case V_INT16ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elEmbeddable;
+         info.size = -2;
+         break;
+      case V_INT8ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elEmbeddable;
+         info.size = -1;
+         break;
+      case V_OBJARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugArray | elDynamicRole;
+         info.size = 0;
+         break;
+      case V_BINARYARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDynamicRole | elStructureRole;
+         info.size = -1;
+         break;
       default:
          if (reference != 0) {
             if (!scope.loadClassInfo(info, reference, headerOnly))
@@ -766,18 +772,18 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 
 int CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementType, bool embeddableOnly)
 {
-   //if (reference == V_BINARYARRAY && elementType != 0) {
-   //   // HOTFIX : binary array of structures
-   //   ref_t elementRef = scope.subjectHints.get(elementType);
+   if (reference == V_BINARYARRAY && elementType != 0) {
+      // HOTFIX : binary array of structures
+      ref_t elementRef = scope.subjectHints.get(elementType);
 
-   //   return -defineStructSize(scope, elementRef, 0, false);
-   //}
-   //else {
+      return -defineStructSize(scope, elementRef, 0, false);
+   }
+   else {
       ClassInfo classInfo;
       defineClassInfo(scope, classInfo, reference);
 
       return defineStructSize(classInfo, embeddableOnly);
-   //}
+   }
 }
 
 int CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
@@ -848,37 +854,37 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 //         info.header.flags |= elDebugLiteral;
 //      }
 //   }
-//
-//   // adjust array
-//   if (test(info.header.flags, elDynamicRole) && !testany(info.header.flags, elStructureRole | elNonStructureRole)) {
-//      info.header.flags |= elNonStructureRole;
-//
-//      if ((info.header.flags & elDebugMask) == 0) {
-//         info.header.flags |= elDebugArray;
-//      }
-//   }
-//
-//   // adjust binary array
-//   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
-//      if ((info.header.flags & elDebugMask) == 0) {
-//         ref_t itemRef = info.fieldTypes.get(-1).value1;
-//         if (isCompatible(scope, V_INT32, itemRef)) {
-//            switch (info.size) {
-//               case -4:
-//                  info.header.flags |= elDebugIntegers;
-//                  break;
-//               case -2:
-//                  info.header.flags |= elDebugShorts;
-//                  break;
-//               case -1:
-//               default:
-//                  info.header.flags |= elDebugBytes;
-//                  break;
-//            }
-//         }
-//         else info.header.flags |= elDebugBytes;
-//      }
-//   }
+
+   // adjust array
+   if (test(info.header.flags, elDynamicRole) && !testany(info.header.flags, elStructureRole | elNonStructureRole)) {
+      info.header.flags |= elNonStructureRole;
+
+      if ((info.header.flags & elDebugMask) == 0) {
+         info.header.flags |= elDebugArray;
+      }
+   }
+
+   // adjust binary array
+   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
+      if ((info.header.flags & elDebugMask) == 0) {
+         ref_t itemRef = info.fieldTypes.get(-1).value1;
+         if (isCompatible(scope, V_INT32, itemRef)) {
+            switch (info.size) {
+               case -4:
+                  info.header.flags |= elDebugIntegers;
+                  break;
+               case -2:
+                  info.header.flags |= elDebugShorts;
+                  break;
+               case -1:
+               default:
+                  info.header.flags |= elDebugBytes;
+                  break;
+            }
+         }
+         else info.header.flags |= elDebugBytes;
+      }
+   }
 
    // adjust objects with custom dispatch handler
    if (info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
@@ -905,9 +911,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_EMBEDDABLE:
          attrValue = elEmbeddable;
          return true;
-//      case V_DYNAMIC:
-//         attrValue = elDynamicRole;
-//         return true;
+      case V_DYNAMIC:
+         attrValue = elDynamicRole;
+         return true;
 //      case V_STRING:
 //         attrValue = elDebugLiteral;
 //         return true;
@@ -1141,32 +1147,32 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
 //
 //   return 0;
 //}
-//
-//ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)
-//{
-//   ClassInfo info;
-//   defineClassInfo(scope, info, elementRef, true);
-//
-//   if (isEmbeddable(info)) {
-//      if (isCompatible(scope, V_INT32, elementRef)) {
-//         switch (info.size) {
-//            case 4:
-//               return V_INT32ARRAY;
-//            case 2:
-//               return V_INT16ARRAY;
-//            case 1:
-//               return V_INT8ARRAY;
-//            default:
-//               break;
-//         }
-//      }
-//      return V_BINARYARRAY;
-//   }
-//   else return V_OBJARRAY;
-//
-//   return 0;
-//}
-//
+
+ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)
+{
+   ClassInfo info;
+   defineClassInfo(scope, info, elementRef, true);
+
+   if (isEmbeddable(info)) {
+      if (isCompatible(scope, V_INT32, elementRef)) {
+         switch (info.size) {
+            case 4:
+               return V_INT32ARRAY;
+            case 2:
+               return V_INT16ARRAY;
+            case 1:
+               return V_INT8ARRAY;
+            default:
+               break;
+         }
+      }
+      return V_BINARYARRAY;
+   }
+   else return V_OBJARRAY;
+
+   return 0;
+}
+
 //bool CompilerLogic :: validateClassFlag(ClassInfo& info, int flag)
 //{
 //   if (test(flag, elDynamicRole) && info.fields.Count() != 0)

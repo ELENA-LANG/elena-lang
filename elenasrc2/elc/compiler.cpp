@@ -2938,26 +2938,26 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
 
    ObjectInfo loperand;
    ObjectInfo roperand;
-//   ObjectInfo roperand2;
-//   if (operator_id == SET_REFER_MESSAGE_ID) {
-//      SNode exprNode = node.firstChild(lxObjectMask);
-//
-//      // HOTFIX : inject the third parameter to the first two ones
-//      SyntaxTree::copyNodeSafe(exprNode.nextNode(lxObjectMask), exprNode.appendNode(lxExpression));
-//      exprNode.nextNode(lxObjectMask) = lxIdle;
-//
-//      SNode loperandNode = exprNode.firstChild(lxObjectMask);
-//      loperand = compileExpression(loperandNode, scope, 0);
-//
-//      SNode roperandNode = loperandNode.nextNode(lxObjectMask);
-//      roperand = compileExpression(roperandNode, scope, 0);
-//      roperand2 = compileExpression(roperandNode.nextNode(lxObjectMask), scope, 0);
-//
-//      node = exprNode;
-//
-//      paramCount++;
-//   }
-//   else {
+   ObjectInfo roperand2;
+   if (operator_id == SET_REFER_MESSAGE_ID) {
+      SNode exprNode = node.firstChild(lxObjectMask);
+
+      // HOTFIX : inject the third parameter to the first two ones
+      SyntaxTree::copyNodeSafe(exprNode.nextNode(lxObjectMask), exprNode.appendNode(lxExpression));
+      exprNode.nextNode(lxObjectMask) = lxIdle;
+
+      SNode loperandNode = exprNode.firstChild(lxObjectMask);
+      loperand = compileExpression(writer, loperandNode, scope, 0);
+
+      SNode roperandNode = loperandNode.nextNode(lxObjectMask);
+      roperand = compileExpression(writer, roperandNode, scope, 0);
+      roperand2 = compileExpression(writer, roperandNode.nextNode(lxObjectMask), scope, 0);
+
+      node = exprNode;
+
+      paramCount++;
+   }
+   else {
       SNode loperandNode = node.firstChild(lxObjectMask);
       loperand = compileExpression(writer, loperandNode, scope, 0);
 
@@ -2967,23 +2967,23 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
          roperand = ObjectInfo(okLocal, roperandNode.argument);
       }
       else */roperand = compileExpression(writer, roperandNode, scope, 0);
-//   }
+   }
 
    ref_t loperandRef = resolveObjectReference(scope, loperand);
    ref_t roperandRef = resolveObjectReference(scope, roperand);
    ref_t roperand2Ref = 0;
    ref_t resultClassRef = 0;
    int operationType = 0;
-//   if (roperand2.kind != okUnknown) {
-//      roperand2Ref = resolveObjectReference(scope, roperand2);
-//
-//      operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, roperand2Ref, resultClassRef);
-//   }
-   /*else */operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
+   if (roperand2.kind != okUnknown) {
+      roperand2Ref = resolveObjectReference(scope, roperand2);
+
+      operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, roperand2Ref, resultClassRef);
+   }
+   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
 
    if (operationType != 0) {
       // if it is a primitive operation
-      _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef/*, loperand.type*/);
+      _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.type);
 
       retVal = assignResult(writer, scope, resultClassRef);
    }
@@ -3000,12 +3000,12 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    SNode operatorNode = node.findChild(lxOperator);
    int operator_id = operatorNode.argument != 0 ? operatorNode.argument : _operators.get(operatorNode.identifier());
 
-//   // if it is a new operator
-//   if (operator_id == -1) {
-//      return compileNewOperator(node, scope/*, mode*/);
-//   }
-//   // if it is branching operators
-   /*else */if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
+   // if it is a new operator
+   if (operator_id == -1) {
+      return compileNewOperator(writer, node, scope/*, mode*/);
+   }
+   // if it is branching operators
+   else if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
       return compileBranchingOperator(writer, node, scope, mode, operator_id);
    }
    else return compileOperator(writer, node, scope, mode, operator_id);
@@ -3773,83 +3773,83 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
    return info;
 }
 
-//////ObjectInfo Compiler :: compileNewOperator(SNode node, CodeScope& scope/*, int mode*/)
-//////{
-//////   ObjectInfo retVal(okObject);
-//////
-//////   SNode objectNode = node.firstChild(lxTerminalMask);
-//////
-//////   retVal.type = scope.mapSubject(objectNode);
-//////   if (retVal.type != 0 && scope.moduleScope->attributeHints.get(retVal.type) == 0)
-//////      retVal.type = 0; // HOTFIX : ignore weak types
-//////
-//////   ref_t loperand = scope.moduleScope->attributeHints.get(retVal.type);
-//////   ref_t roperand = resolveObjectReference(scope, compileExpression(objectNode.nextNode(lxObjectMask), scope, 0));
-//////   ref_t targetRef = 0;
-//////   int operationType = _logic->resolveNewOperationType(*scope.moduleScope, loperand, roperand, targetRef);
-//////
-//////   if (operationType != 0) {
-//////   //   // if it is a primitive operation
-//////      _logic->injectNewOperation(node, *scope.moduleScope, operationType, retVal.type, targetRef);
-//////
-//////      retVal = assignResult(scope, node, targetRef, retVal.type);
-//////   }
-//////   else scope.raiseError(errInvalidOperation, node);
-//////
-//////   return retVal;
-//////}
-//////
-//////void Compiler :: compileTrying(SNode node, CodeScope& scope)
-//////{
-//////   bool catchNode = false;
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      if (test(current.type, lxExprMask)) {
-//////         if (catchNode) {
-//////            current.insertNode(lxResult);
-//////         }
-//////         else catchNode = true;
-//////
-//////         compileExpression(current, scope, 0);
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////}
-//////
-//////void Compiler :: compileAltOperation(SNode node, CodeScope& scope)
-//////{
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      if (test(current.type, lxExprMask)) {
-//////         compileExpression(current, scope, 0);
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////
-//////   // inject a nested expression
-//////   node = lxAltExpression;
-//////   SNode altNode = node.injectNode(lxAlt);
-//////
-//////   // extract the expression target
-//////   SNode firstExpr = altNode.firstChild(lxObjectMask);
-//////   SNode targetNode = firstExpr.firstChild(lxObjectMask);
-//////
-//////   LexicalType targetType = targetNode.type;
-//////   int targetArg = targetNode.argument;
-//////
-//////   targetNode.set(lxResult, 0);
-//////
-//////   int tempLocal = scope.newLocal();
-//////
-//////   SNode secondExpr = firstExpr.nextNode(lxObjectMask);
-//////   secondExpr.insertNode(lxLocal, tempLocal);
-//////
-//////   SNode tempLocalNode = node.insertNode(lxAssigning);
-//////   SyntaxTree::copyNode(targetNode, tempLocalNode.insertNode(targetType, targetArg));
-//////   tempLocalNode.insertNode(lxLocal, tempLocal);
-//////}
+ObjectInfo Compiler :: compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/)
+{
+   ObjectInfo retVal(okObject);
+
+   SNode objectNode = node.firstChild(lxTerminalMask);
+
+   retVal.type = scope.mapSubject(objectNode);
+   if (retVal.type != 0 && scope.moduleScope->subjectHints.get(retVal.type) == 0)
+      retVal.type = 0; // HOTFIX : ignore weak types
+
+   ref_t loperand = scope.moduleScope->subjectHints.get(retVal.type);
+   ref_t roperand = resolveObjectReference(scope, compileExpression(writer, objectNode.nextNode(lxObjectMask), scope, 0));
+   ref_t targetRef = 0;
+   int operationType = _logic->resolveNewOperationType(*scope.moduleScope, loperand, roperand, targetRef);
+
+   if (operationType != 0) {
+      // if it is a primitive operation
+      _logic->injectNewOperation(writer, *scope.moduleScope, operationType, retVal.type, targetRef);
+
+      retVal = assignResult(writer, scope, targetRef, retVal.type);
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   return retVal;
+}
+
+//void Compiler :: compileTrying(SNode node, CodeScope& scope)
+//{
+//   bool catchNode = false;
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      if (test(current.type, lxExprMask)) {
+//         if (catchNode) {
+//            current.insertNode(lxResult);
+//         }
+//         else catchNode = true;
+//
+//         compileExpression(current, scope, 0);
+//      }
+//
+//      current = current.nextNode();
+//   }
+//}
+//
+//void Compiler :: compileAltOperation(SNode node, CodeScope& scope)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      if (test(current.type, lxExprMask)) {
+//         compileExpression(current, scope, 0);
+//      }
+//
+//      current = current.nextNode();
+//   }
+//
+//   // inject a nested expression
+//   node = lxAltExpression;
+//   SNode altNode = node.injectNode(lxAlt);
+//
+//   // extract the expression target
+//   SNode firstExpr = altNode.firstChild(lxObjectMask);
+//   SNode targetNode = firstExpr.firstChild(lxObjectMask);
+//
+//   LexicalType targetType = targetNode.type;
+//   int targetArg = targetNode.argument;
+//
+//   targetNode.set(lxResult, 0);
+//
+//   int tempLocal = scope.newLocal();
+//
+//   SNode secondExpr = firstExpr.nextNode(lxObjectMask);
+//   secondExpr.insertNode(lxLocal, tempLocal);
+//
+//   SNode tempLocalNode = node.insertNode(lxAssigning);
+//   SyntaxTree::copyNode(targetNode, tempLocalNode.insertNode(targetType, targetArg));
+//   tempLocalNode.insertNode(lxLocal, tempLocal);
+//}
 
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
@@ -4735,13 +4735,13 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    else scope.raiseError(errUnknownMessage, node);
 }
 
-//void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& scope)
-//{
-//   if (isImportRedirect(node)) {
-//      importCode(node, *scope.moduleScope, node.findChild(lxReference).findChild(lxTerminal).identifier(), scope.getMessageID());
-//   }
-//   else scope.raiseError(errInvalidOperation, node);
-//}
+void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   if (isImportRedirect(node)) {
+      importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).identifier(), scope.getMessageID());
+   }
+   else scope.raiseError(errInvalidOperation, node);
+}
 
 void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -4848,15 +4848,15 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
 
    bool retExpr = false;
    bool withFrame = false;
-//   int classFlags = codeScope.getClassFlags();
+   int classFlags = codeScope.getClassFlags();
    int preallocated = 0;
 
-   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning/*, lxDispatchCode*/);
-//   if (bodyNode == lxDispatchCode) {
-//      compileConstructorDispatchExpression(bodyNode, codeScope);
-//      return;
-//   }
-   /*else */if (bodyNode == lxResendExpression) {
+   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
+   if (bodyNode == lxDispatchCode) {
+      compileConstructorDispatchExpression(writer, bodyNode, codeScope);
+      return;
+   }
+   else if (bodyNode == lxResendExpression) {
       compileConstructorResendExpression(writer, bodyNode, codeScope, classClassScope, withFrame);
 
       bodyNode = bodyNode.findChild(lxCode);
@@ -4865,7 +4865,7 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
       retExpr = true;
    }
    // if no redirect statement - call virtual constructor implicitly
-   else if (/*!test(classFlags, elDynamicRole) && */classClassScope.info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID))) {
+   else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID))) {
       writer.appendNode(lxCalling, -1);
    }
    // if it is a dynamic object implicit constructor call is not possible
@@ -5075,16 +5075,26 @@ void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, SNode node, Met
    writer.closeNode();
 }
 
-//void Compiler :: compileDynamicDefaultConstructor(SNode node, MethodScope& scope)
-//{
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
-//   if (test(classScope->info.header.flags, elStructureRole)) {
-//      node.appendNode(lxCreatingStruct, classScope->info.size).appendNode(lxTarget, classScope->reference);
-//   }
-//   else node.appendNode(lxCreatingClass, -1).appendNode(lxTarget, classScope->reference);
-//}
-//
+void Compiler :: compileDynamicDefaultConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   if (test(classScope->info.header.flags, elStructureRole)) {
+      writer.newNode(lxCreatingStruct, classScope->info.size);
+      writer.appendNode(lxTarget, classScope->reference);
+      writer.closeNode();
+   }
+   else {
+      writer.newNode(lxCreatingClass, -1);
+      writer.appendNode(lxTarget, classScope->reference);
+      writer.closeNode();
+   }
+
+   writer.closeNode();
+}
+
 //void Compiler :: compileTemplateMethods(SNode node, ClassScope& scope)
 //{
 //   SNode current = node.firstChild();
@@ -5185,10 +5195,10 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
       MethodScope methodScope(&classScope);
       methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
 
-      //if (test(classScope.info.header.flags, elDynamicRole)) {
-      //   compileDynamicDefaultConstructor(current, methodScope);
-      //}
-      /*else */compileDefaultConstructor(writer, node, methodScope);
+      if (test(classScope.info.header.flags, elDynamicRole)) {
+         compileDynamicDefaultConstructor(writer, node, methodScope);
+      }
+      else compileDefaultConstructor(writer, node, methodScope);
    }
 
    SNode current = node.firstChild();
@@ -6965,7 +6975,7 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
          SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxAssigning);
          if (subNode == lxAssigning) {
             // assignment operation
-            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxLongOp/*, lxIntArrOp, lxByteArrOp, lxShortArrOp*/);
+            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxLongOp, lxIntArrOp, lxByteArrOp, lxShortArrOp);
             if (operationNode != lxNone) {
                SNode larg = operationNode.findSubNodeMask(lxObjectMask);
                SNode target = node.firstChild(lxObjectMask);
@@ -6980,7 +6990,7 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
                   target = lxIdle;
                }      
                // if it is an operation with an extra temporal variable
-               else if ((node.argument == subNode.argument/* || operationNode == lxByteArrOp || operationNode == lxShortArrOp*/)
+               else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp)
                   && subNode.existChild(lxTempAttr))
                {
                   ////HOTFIX : exclude arithmetic operations
@@ -7018,28 +7028,47 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
    bool boxing = !test(mode, HINT_NOBOXING);
 
    SNode sourceNode = node.findSubNodeMask(lxObjectMask);
+   if (sourceNode == lxBoxing) {
+      SNode newNode = sourceNode.findSubNodeMask(lxObjectMask);
+      if (newNode == lxNewOp) {
+         // HOTFIX : boxing inside boxing
+         sourceNode = lxExpression;
 
-   // for boxing stack allocated / embeddable variables - source is the same as target
-   if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxThisLocal) && node.argument != 0) {
-      sourceRef = targetRef;
-   }
-   //// HOTFIX : do not box constant classes
-   //else if (sourceNode == lxConstantInt && targetRef == scope.intReference) {
-   //   boxing = false;
-   //}
-   //else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
-   //   boxing = false;
-   //}
-   else sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
-
-   // adjust primitive target
-   if (_logic->isPrimitiveRef(targetRef) && boxing) {
-      targetRef = _logic->resolvePrimitiveReference(scope, targetRef);
-      node.findChild(lxTarget).setArgument(targetRef);
+         sourceNode = newNode;
+      }
    }
 
-   if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef, !boxing)) {
-      scope.raiseError(errIllegalOperation, node);
+   if (sourceNode == lxNewOp) {
+      // HOTFIX : set correct target for the new operator
+      sourceNode.setArgument(targetRef);
+   
+      optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
+
+      boxing = false;
+   }
+   else {
+      // for boxing stack allocated / embeddable variables - source is the same as target
+      if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxThisLocal) && node.argument != 0) {
+         sourceRef = targetRef;
+      }
+      //// HOTFIX : do not box constant classes
+      //else if (sourceNode == lxConstantInt && targetRef == scope.intReference) {
+      //   boxing = false;
+      //}
+      //else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
+      //   boxing = false;
+      //}
+      else sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
+
+      // adjust primitive target
+      if (_logic->isPrimitiveRef(targetRef) && boxing) {
+         targetRef = _logic->resolvePrimitiveReference(scope, targetRef);
+         node.findChild(lxTarget).setArgument(targetRef);
+      }
+
+      if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef, !boxing)) {
+         scope.raiseError(errIllegalOperation, node);
+      }
    }
 
    if (!boxing) {
@@ -7106,6 +7135,12 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxIntOp:
       case lxLongOp:
       case lxRealOp:
+      case lxIntArrOp:
+      case lxShortArrOp:
+      case lxByteArrOp:
+      case lxArrOp:
+      case lxBinArrOp:
+      case lxNewOp:
          return optimizeOp(current, scope, warningScope);
       default:
          return current.findChild(lxTarget).argument;
@@ -7903,7 +7938,14 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
             writer.closeNode();
          }
          else if (terminal == lxExpression) {
-            generateExpressionTree(writer, current, scope, false);
+            terminal = current.findChild(lxIdentifier);
+            if (terminal == lxIdentifier) {
+               //HOTFIX : recognize new operator
+               copyIdentifier(writer, terminal);
+               writer.appendNode(lxOperator, -1);
+               generateExpressionTree(writer, current.findChild(lxExpression), scope, true);
+            }
+            else generateExpressionTree(writer, current, scope, false);
          }
          else {
             terminal = current.firstChild(lxTerminalMask);

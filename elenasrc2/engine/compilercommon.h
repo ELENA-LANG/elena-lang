@@ -18,7 +18,7 @@
 #define V_FLAG           (ref_t)-03
 #define V_NIL            (ref_t)-04
 
-//#define V_BINARY      (ref_t)-10
+#define V_BINARY      (ref_t)-10
 #define V_INT32          (ref_t)-11
 #define V_PTR32          (ref_t)-12
 #define V_INT64          (ref_t)-13
@@ -28,15 +28,15 @@
 #define V_VERB           (ref_t)-20
 //#define V_EXTMESSAGE  (ref_t)-21
 //#define V_SYMBOL      (ref_t)-22
-//
-//#define V_OBJECT      (ref_t)-28
-//
-////#define V_OBJARRAY    (ref_t)-30
-////#define V_INT32ARRAY  (ref_t)-31
-////#define V_ARGARRAY    (ref_t)-32
-////#define V_BINARYARRAY (ref_t)-35
-////#define V_INT16ARRAY  (ref_t)-38
-////#define V_INT8ARRAY   (ref_t)-39
+
+#define V_OBJECT      (ref_t)-28
+
+#define V_OBJARRAY      (ref_t)-30
+#define V_INT32ARRAY    (ref_t)-31
+#define V_ARGARRAY      (ref_t)-32
+#define V_BINARYARRAY   (ref_t)-35
+#define V_INT16ARRAY    (ref_t)-38
+#define V_INT8ARRAY     (ref_t)-39
 
 #define V_IFBRANCH       (ref_t)-4097
 #define V_IFNOTBRANCH    (ref_t)-4098
@@ -51,7 +51,7 @@
 #define V_LIMITED        (ref_t)-8196
 #define V_STRUCT         (ref_t)-8197
 #define V_ENUMLIST       (ref_t)-8198
-////#define V_DYNAMIC     (ref_t)-8199
+#define V_DYNAMIC        (ref_t)-8199
 ////#define V_STRING      (ref_t)-8200
 #define V_CONST          (ref_t)-8201
 #define V_GENERIC        (ref_t)-8202
@@ -198,15 +198,15 @@ public:
    virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false) = 0;
    virtual int defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
 
-////   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
+   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
 
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
 
    // retrieve the operation type
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
-////   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
-////   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
+   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 
    // retrieve the branching operation type
    virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
@@ -233,9 +233,9 @@ public:
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
-   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference) = 0;
+   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/) = 0;
-//   virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
+   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
    virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, int& operand, bool paramMode) = 0;
 
    // auto generate class flags
