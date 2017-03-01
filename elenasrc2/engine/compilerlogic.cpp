@@ -719,11 +719,11 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
          info.size = 4;
          break;
-      //case V_EXTMESSAGE:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
-      //   info.size = 8;
-      //   break;
+      case V_EXTMESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
+         info.size = 8;
+         break;
       case V_SYMBOL:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugReference | elStructureRole | elEmbeddable;
@@ -995,18 +995,18 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
       case V_PTR32:
          attrValue = 0;
          return true;
-//      case V_SIGNATURE:
-//         attrValue = lxSignatureAttr;
-//         return true;
+      case V_SIGNATURE:
+         attrValue = 0;
+         return true;
       case V_SYMBOL:
          attrValue = 0;
          return true;
       case V_MESSAGE:
          attrValue = 0;
          return true;
-//      case V_EXTMESSAGE:
-//         attrValue = lxExtMessageAttr;
-//         return true;
+      case V_EXTMESSAGE:
+         attrValue = 0;
+         return true;
       case V_VERB:
          attrValue = 0;
          return true;
@@ -1017,10 +1017,10 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 
 bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 {
-   //if (attrValue == (int)V_INT32) {
-   //   return true;
-   //}
-   /*else */if (attrValue == (int)V_VARIABLE) {
+   if (attrValue == (int)V_INT32) {
+      return true;
+   }
+   else if (attrValue == (int)V_VARIABLE) {
       attrValue = 0;
 
       return true;
@@ -1094,10 +1094,10 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
             info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
             return info.size == 4;
-         //case lxExtMessageAttr:
-         //   info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
-         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
-         //   return info.size == 8;
+         case V_EXTMESSAGE:
+            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_EXTMESSAGE, 0));
+            return info.size == 8;
          case V_SYMBOL:
             info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
@@ -1130,23 +1130,23 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
          return firstNonZero(scope.messageReference, scope.superReference);
       case V_VERB:
          return firstNonZero(scope.verbReference, scope.superReference);
-//      case V_ARGARRAY:
-//         return firstNonZero(scope.paramsReference, scope.superReference);
+      case V_ARGARRAY:
+         return firstNonZero(scope.paramsReference, scope.superReference);
       default:
          return scope.superReference;
    }
 }
 
-//ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
-//{
-//   if (test(info.header.flags, elStructureWrapper)) {
-//      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
-//      if (isPrimitiveRef(field.value1))
-//         return field.value1;
-//   }
-//
-//   return 0;
-//}
+ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
+{
+   if (test(info.header.flags, elStructureWrapper)) {
+      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
+      if (isPrimitiveRef(field.value1))
+         return field.value1;
+   }
+
+   return 0;
+}
 
 ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)
 {
@@ -1490,10 +1490,10 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
       variable = !isReadonly(scope, targetRef) && !assingingMode;
       localBoxing = true;
    }
-   //else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
-   //   // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
-   //   localBoxing = true;
-   //}
+   else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
+      // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
+      localBoxing = true;
+   }
 
    if (localBoxing) {
       variable = !isReadonly(scope, targetRef);

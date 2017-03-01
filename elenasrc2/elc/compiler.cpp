@@ -268,15 +268,15 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
    messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
    verbReference = mapReference(project->resolveForward(VERB_FORWARD));
-//   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
+   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
 //   arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
    boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
 
-//   // HOTFIX : package section should be created if at least literal class is declated
-//   if (literalReference != 0) {
-//      packageReference = module->mapReference(ReferenceNs(module->Name(), PACKAGE_SECTION));
-//   }
-   /*else */packageReference = 0;
+   // HOTFIX : package section should be created if at least literal class is declated
+   if (literalReference != 0) {
+      packageReference = module->mapReference(ReferenceNs(module->Name(), PACKAGE_SECTION));
+   }
+   else packageReference = 0;
 
    defaultNs.add(module->Name());
 
@@ -536,13 +536,13 @@ ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing
 
 ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool existing)
 {
-   //if (reference.compare(EXTERNAL_MODULE, strlen(EXTERNAL_MODULE))) {
-   //   char ch = reference[strlen(EXTERNAL_MODULE)];
-   //   if (ch == '\'' || ch == 0)
-   //      return ObjectInfo(okExternal);
-   //}
+   if (reference.compare(EXTERNAL_MODULE, strlen(EXTERNAL_MODULE))) {
+      char ch = reference[strlen(EXTERNAL_MODULE)];
+      if (ch == '\'' || ch == 0)
+         return ObjectInfo(okExternal);
+   }
    // To tell apart primitive modules, the name convention is used
-   /*else */if (reference.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
+   else if (reference.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
       return ObjectInfo(okInternal, module->mapReference(reference));
    }
 
@@ -1605,8 +1605,8 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
 //         return object.extraparam;
       //case okParams:
       //   return V_ARGARRAY;
-      //case okExternal:
-      //   return V_INT32;
+      case okExternal:
+         return V_INT32;
       case okMessageConstant:
          return V_MESSAGE;
       case okNil:
@@ -2457,8 +2457,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okConstantRole:
          writer.newNode(lxConstantSymbol, object.param);
          break;
-//      case okExternal:
-//         break;
+      case okExternal:
+         break;
       case okInternal:
          terminal.setArgument(object.param);
          return;
@@ -3276,13 +3276,13 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       target = ObjectInfo(okThisParam, 1);
    }      
 
-//   //   bool externalMode = false;
-//   if (target.kind == okExternal) {
-//      return compileExternalCall(node, scope);
-//   }
-//   else {
+   //   bool externalMode = false;
+   if (target.kind == okExternal) {
+      return compileExternalCall(writer, node, scope);
+   }
+   else {
       ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
-//
+
       if (target.kind == okInternal) {
          return compileInternalCall(writer, node, scope, messageRef, target);
       }
@@ -3298,7 +3298,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode);
       }
-//   }
+   }
 
    writer.removeBookmark();
 
@@ -4087,179 +4087,176 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
    return retVal;
 }
 
-///////*ObjectInfo*/void Compiler::compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//////{
-//////   //   ObjectInfo retVal;
-//////   //
-//////   //   bool needVirtualEnd = true;
-//////   SNode current = node.firstChild();
-//////
-//////   while (current != lxNone) {
-//////      switch (current) {
-//////         //         case lxExpression:
-//////         //            compileExpression(current, scope, HINT_ROOT);
-//////         //            insertDebugStep(current, dsStep);
-//////         //            break;
-//////         //         case lxThrowing:
-//////         //            compileThrow(current, scope, 0);
-//////         //            break;
-//////         //         case lxLoop:
-//////         //            insertDebugStep(current, dsStep);
-//////         //            compileLoop(current, scope);
-//////         //            break;
-//////         ////         case nsTry:
-//////         ////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//////         ////            compileTry(statement, scope);
-//////         ////            break;
-//////         //         case lxLock:
-//////         //            //recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//////         //            compileLock(current, scope);
-//////         //            break;
-//////         //         case lxReturning:
-//////         //         {
-//////         //            needVirtualEnd = false;
-//////         //            insertDebugStep(current, dsStep);
-//////         //            retVal = compileRetExpression(current, scope, HINT_ROOT);
-//////         //
-//////         //            break;
-//////         //         }
-//////         //         case lxVariable:
-//////         ////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//////         //            compileVariable(current, scope);
-//////         //            break;
-//////         //         case lxExtern:
-//////         //            current = lxExternFrame;
-//////         //            compileCode(current, scope);
-//////         //            break;
-//////      case lxEOF:
-//////         //            needVirtualEnd = false;
-//////         //            setDebugStep(current, dsEOP);
-//////         writer.appendNode(lxBreakpoint, dsEOP);
-//////         break;
-//////      }
-//////      //
-//////      //      scope.freeSpace();
-//////
-//////      current = current.nextNode();
-//////   }
-//////
-//////   //   if (needVirtualEnd) {
-//////   //      appendDebugStep(node, dsVirtualEnd);
-//////   //   }
-//////   //
-//////   //   return retVal;
-//////}
-////
-//////void Compiler :: compileExternalArguments(SNode node, CodeScope& scope)
-//////{
-//////   ModuleScope* moduleScope = scope.moduleScope;
-//////
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      if (current == lxMessage) {
-//////         ref_t subject = current.argument;
-//////         if (subject != 0) {
-//////            ref_t classReference = moduleScope->attributeHints.get(subject);
-//////            if (classReference) {
-//////               ClassInfo classInfo;
-//////               _logic->defineClassInfo(*moduleScope, classInfo, classReference);
-//////
-//////               ref_t primitiveRef = _logic->retrievePrimitiveReference(*moduleScope, classInfo);
-//////               switch (primitiveRef)
-//////               {
-//////                  case V_INT32:
-//////                  case V_SIGNATURE:
-//////                  case V_MESSAGE:
-//////                  case V_VERB:
-//////                     current.set(_logic->isVariable(classInfo) ? lxExtArgument : lxIntExtArgument, 0);
-//////                     break;
-//////                  case V_SYMBOL:
-//////                     current.set(lxExtInteranlRef, 0);
-//////                     break;
-//////                  default:
-//////                     if (test(classInfo.header.flags, elStructureRole)) {
-//////                        current.set(lxExtArgument, 0);
-//////
-//////                        subject = 0;
-//////                     }
-//////                     else if (test(classInfo.header.flags, elWrapper)) {
-//////                        //HOTFIX : allow to pass a normal object
-//////                        current.set(lxExtArgument, 0);
-//////                     }
-//////                     else scope.raiseError(errInvalidOperation, current);
-//////                     break;
-//////               }
-//////            }
-//////            else scope.raiseError(errInvalidOperation, current);
-//////         }
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////}
-////
-////ObjectInfo Compiler :: compileExternalCall(SNode node, CodeScope& scope)
-////{
-////   ObjectInfo retVal(okExternal);
-////
-////   ModuleScope* moduleScope = scope.moduleScope;
-////
-//////   bool rootMode = test(mode, HINT_ROOT);
-////   bool stdCall = false;
-////   bool apiCall = false;
-////
-////   SNode targetNode = node.firstChild(lxTerminalMask);
-////   // HOTFIX : comment out dll reference
-////   targetNode = lxIdle;
-////
-////   SNode messageNode = node.findChild(lxMessage);
-////   insertDebugStep(messageNode, dsAtomicStep);
-////
-////   ident_t dllAlias = targetNode.findChild(lxTerminal).identifier();
-////   ident_t functionName = node.findChild(lxMessage).firstChild(lxTerminalMask).findChild(lxTerminal).identifier();
-////
-////   ident_t dllName = NULL;
-////   if (dllAlias.compare(EXTERNAL_MODULE)) {
-////      // if run time dll is used
-////      dllName = RTDLL_FORWARD;
-////
-////      if (functionName.compare(COREAPI_MASK, COREAPI_MASK_LEN))
-////         apiCall = true;
-////   }
-////   else dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
-////
-////   // legacy : if dll is not mapped, use the name directly
-////   if (emptystr(dllName))
-////      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
-////
-////   ReferenceNs name;
-////   if (!apiCall) {
-////      name.copy(DLL_NAMESPACE);
-////      name.combine(dllName);
-////      name.append(".");
-////      name.append(functionName);
-////   }
-////   else {
-////      name.copy(NATIVE_MODULE);
-////      name.combine(CORE_MODULE);
-////      name.combine(functionName);
-////   }
-////
-////   ref_t reference = moduleScope->module->mapReference(name);
-////
-////   // To tell apart coreapi calls, the name convention is used
-////   if (apiCall) {
-////      node.set(lxCoreAPICall, reference);
-////   }
-////   else node.set(stdCall ? lxStdExternalCall : lxExternalCall, reference);
-////
-//////   if (!rootMode)
-//////      scope.writer->appendNode(lxTarget, -1);
-////
-////   compileExternalArguments(node, scope);
-////
-////   return retVal;
-////}
+///*ObjectInfo*/void Compiler::compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
+//{
+//   //   ObjectInfo retVal;
+//   //
+//   //   bool needVirtualEnd = true;
+//   SNode current = node.firstChild();
+//
+//   while (current != lxNone) {
+//      switch (current) {
+//         //         case lxExpression:
+//         //            compileExpression(current, scope, HINT_ROOT);
+//         //            insertDebugStep(current, dsStep);
+//         //            break;
+//         //         case lxThrowing:
+//         //            compileThrow(current, scope, 0);
+//         //            break;
+//         //         case lxLoop:
+//         //            insertDebugStep(current, dsStep);
+//         //            compileLoop(current, scope);
+//         //            break;
+//         ////         case nsTry:
+//         ////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+//         ////            compileTry(statement, scope);
+//         ////            break;
+//         //         case lxLock:
+//         //            //recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+//         //            compileLock(current, scope);
+//         //            break;
+//         //         case lxReturning:
+//         //         {
+//         //            needVirtualEnd = false;
+//         //            insertDebugStep(current, dsStep);
+//         //            retVal = compileRetExpression(current, scope, HINT_ROOT);
+//         //
+//         //            break;
+//         //         }
+//         //         case lxVariable:
+//         ////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+//         //            compileVariable(current, scope);
+//         //            break;
+//         //         case lxExtern:
+//         //            current = lxExternFrame;
+//         //            compileCode(current, scope);
+//         //            break;
+//      case lxEOF:
+//         //            needVirtualEnd = false;
+//         //            setDebugStep(current, dsEOP);
+//         writer.appendNode(lxBreakpoint, dsEOP);
+//         break;
+//      }
+//      //
+//      //      scope.freeSpace();
+//
+//      current = current.nextNode();
+//   }
+//
+//   //   if (needVirtualEnd) {
+//   //      appendDebugStep(node, dsVirtualEnd);
+//   //   }
+//   //
+//   //   return retVal;
+//}
+
+void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxMessage) {
+         ref_t subject = current.argument;
+         if (subject != 0) {
+            ref_t classReference = moduleScope.subjectHints.get(subject);
+            if (classReference) {
+               ClassInfo classInfo;
+               _logic->defineClassInfo(moduleScope, classInfo, classReference);
+
+               ref_t primitiveRef = _logic->retrievePrimitiveReference(moduleScope, classInfo);
+               switch (primitiveRef)
+               {
+                  case V_INT32:
+                  case V_SIGNATURE:
+                  case V_MESSAGE:
+                  case V_VERB:
+                     current.set(_logic->isVariable(classInfo) ? lxExtArgument : lxIntExtArgument, 0);
+                     break;
+                  case V_SYMBOL:
+                     current.set(lxExtInteranlRef, 0);
+                     break;
+                  default:
+                     if (test(classInfo.header.flags, elStructureRole)) {
+                        current.set(lxExtArgument, 0);
+
+                        subject = 0;
+                     }
+                     else if (test(classInfo.header.flags, elWrapper)) {
+                        //HOTFIX : allow to pass a normal object
+                        current.set(lxExtArgument, 0);
+                     }
+                     else moduleScope.raiseError(errInvalidOperation, current);
+                     break;
+               }
+            }
+            else moduleScope.raiseError(errInvalidOperation, current);
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
+ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ObjectInfo retVal(okExternal);
+
+   ModuleScope* moduleScope = scope.moduleScope;
+
+//   bool rootMode = test(mode, HINT_ROOT);
+   bool stdCall = false;
+   bool apiCall = false;
+
+   SNode targetNode = node.firstChild(lxTerminalMask);
+   // HOTFIX : comment out dll reference
+   targetNode = lxIdle;
+
+   //SNode messageNode = node.findChild(lxMessage);
+   writer.appendNode(lxBreakpoint, dsAtomicStep);
+
+   ident_t dllAlias = targetNode.identifier();
+   ident_t functionName = node.findChild(lxMessage).firstChild(lxTerminalMask).identifier();
+
+   ident_t dllName = NULL;
+   if (dllAlias.compare(EXTERNAL_MODULE)) {
+      // if run time dll is used
+      dllName = RTDLL_FORWARD;
+
+      if (functionName.compare(COREAPI_MASK, COREAPI_MASK_LEN))
+         apiCall = true;
+   }
+   else dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
+
+   // legacy : if dll is not mapped, use the name directly
+   if (emptystr(dllName))
+      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
+
+   ReferenceNs name;
+   if (!apiCall) {
+      name.copy(DLL_NAMESPACE);
+      name.combine(dllName);
+      name.append(".");
+      name.append(functionName);
+   }
+   else {
+      name.copy(NATIVE_MODULE);
+      name.combine(CORE_MODULE);
+      name.combine(functionName);
+   }
+
+   ref_t reference = moduleScope->module->mapReference(name);
+
+//   if (!rootMode)
+//      scope.writer->appendNode(lxTarget, -1);
+
+   // To tell apart coreapi calls, the name convention is used
+   if (apiCall) {
+      writer.insert(lxCoreAPICall, reference);
+   }
+   else writer.insert(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+   writer.closeNode();
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo routine)
 {
@@ -6480,23 +6477,27 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
    else return retVal;
 }
 
-//void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, WarningScope& warningScope)
-//{
-//   //SNode parentNode = node.parentNode();
-//   //while (parentNode == lxExpression)
-//   //   parentNode = parentNode.parentNode();
-//
-//   //if (parentNode == lxAssigning) {
-//   //   if (parentNode.argument != 4) {
-//   //      boxPrimitive(scope, node, -1, warningMask, mode);
-//   //   }
-//   //}
-//   //else if (parentNode == lxTypecasting) {
-//   //   boxPrimitive(scope, node, -1, warningMask, mode);
-//   //}
-//
-//   optimizeSyntaxExpression(scope, node, warningScope, HINT_NOBOXING /* | HINT_EXTERNALOP*/);
-//}
+ref_t Compiler :: optimizeExtCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
+{
+   //SNode parentNode = node.parentNode();
+   //while (parentNode == lxExpression)
+   //   parentNode = parentNode.parentNode();
+
+   //if (parentNode == lxAssigning) {
+   //   if (parentNode.argument != 4) {
+   //      boxPrimitive(scope, node, -1, warningMask, mode);
+   //   }
+   //}
+   //else if (parentNode == lxTypecasting) {
+   //   boxPrimitive(scope, node, -1, warningMask, mode);
+   //}
+
+   optimizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
+
+   compileExternalArguments(node, scope);
+
+   return V_INT32;
+}
 
 ref_t Compiler :: optimizeInternalCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
 {
@@ -6934,7 +6935,10 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
          return optimizeOp(current, scope, warningScope);
       case lxInternalCall:
          return optimizeInternalCall(current, scope, warningScope);
-         break;
+      case lxStdExternalCall:
+      case lxExternalCall:
+      case lxCoreAPICall:
+         return optimizeExtCall(current, scope, warningScope);
       default:
          return current.findChild(lxTarget).argument;
    }
@@ -7244,59 +7248,59 @@ void Compiler :: validateUnresolved(Unresolveds& unresolveds, _ProjectManager& p
 //   }
 }
 
-//////inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
-//////{
-//////   writer.newNode(lxMember);
-//////   if (!emptystr(str)) {
-//////      writer.appendNode(lxConstantString, module->mapConstant(str));
-//////   }
-//////   else writer.appendNode(lxNil);
-//////   writer.closeNode();
-//////}
-//////
-//////inline ref_t mapForwardRef(_Module* module, _ProjectManager& project, ident_t forward)
-//////{
-//////   ident_t name = project.resolveForward(forward);
-//////
-//////   return emptystr(name) ? 0 : module->mapReference(name);
-//////}
-//////
-//////void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
-//////{
-//////   ReferenceNs sectionName(module->Name(), PACKAGE_SECTION);
-//////   ref_t reference = module->mapReference(sectionName);
-//////   ref_t vmtReference = mapForwardRef(module, project, SUPER_FORWARD);
-//////   if (vmtReference == 0)
-//////      return;
-//////
-//////   SyntaxTree tree;
-//////   SyntaxWriter writer(tree);
-//////
-//////   writer.newNode(lxConstantList, reference);
-//////   writer.appendNode(lxTarget, vmtReference);
-//////
-//////   // namespace
-//////   addPackageItem(writer, module, module->Name());
-//////
-//////   // package name
-//////   addPackageItem(writer, module, project.getManinfestName());
-//////
-//////   // package version
-//////   addPackageItem(writer, module, project.getManinfestVersion());
-//////
-//////   // package author
-//////   addPackageItem(writer, module, project.getManinfestAuthor());
-//////
-//////   writer.closeNode();
-//////
-//////   _writer.generateConstantList(tree.readRoot(), module, reference);
-//////}
-////
-//////void Compiler :: compileModule(SNode node, ModuleScope& scope)
-//////{
-//////   compileIncludeSection(node.firstChild(), scope);
-//////
-//////}
+inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
+{
+   writer.newNode(lxMember);
+   if (!emptystr(str)) {
+      writer.appendNode(lxConstantString, module->mapConstant(str));
+   }
+   else writer.appendNode(lxNil);
+   writer.closeNode();
+}
+
+inline ref_t mapForwardRef(_Module* module, _ProjectManager& project, ident_t forward)
+{
+   ident_t name = project.resolveForward(forward);
+
+   return emptystr(name) ? 0 : module->mapReference(name);
+}
+
+void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
+{
+   ReferenceNs sectionName(module->Name(), PACKAGE_SECTION);
+   ref_t reference = module->mapReference(sectionName);
+   ref_t vmtReference = mapForwardRef(module, project, SUPER_FORWARD);
+   if (vmtReference == 0)
+      return;
+
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxConstantList, reference);
+   writer.appendNode(lxTarget, vmtReference);
+
+   // namespace
+   addPackageItem(writer, module, module->Name());
+
+   // package name
+   addPackageItem(writer, module, project.getManinfestName());
+
+   // package version
+   addPackageItem(writer, module, project.getManinfestVersion());
+
+   // package author
+   addPackageItem(writer, module, project.getManinfestAuthor());
+
+   writer.closeNode();
+
+   _writer.generateConstantList(tree.readRoot(), module, reference);
+}
+
+//void Compiler :: compileModule(SNode node, ModuleScope& scope)
+//{
+//   compileIncludeSection(node.firstChild(), scope);
+//
+//}
 
 void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
 {
@@ -8426,7 +8430,7 @@ ModuleInfo Compiler :: createModule(ident_t name, _ProjectManager& project, bool
    if (withDebugInfo)
       info.debugModule = project.createDebugModule(name);
 
-   //createPackageInfo(info.codeModule, project);
+   createPackageInfo(info.codeModule, project);
 
    return info;
 }

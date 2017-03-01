@@ -153,7 +153,7 @@ public:
 //      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
 
-//      okExternal,
+      okExternal,
       okInternal,
    };
 
@@ -944,13 +944,13 @@ private:
 ////   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(SNode node, CodeScope& scope);
 
-//   void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
+   void compileExternalArguments(SNode node, ModuleScope& scope/*, ExternalScope& externalScope*/);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
-//   ObjectInfo compileExternalCall(SNode node, CodeScope& scope);
+   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
@@ -1037,7 +1037,6 @@ private:
    bool typecastObject(SyntaxWriter& writer, ref_t targetType);
 
 ////   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-////   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 ////   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 ////   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 //////   void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
@@ -1055,6 +1054,7 @@ private:
    ref_t optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    ref_t optimizeInternalCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
+   ref_t optimizeExtCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    void optimizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope);
@@ -1063,12 +1063,7 @@ private:
 
    void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 
-//   void createPackageInfo(_Module* module, _ProjectManager& project);
-
-////
-////   void compileModule(SNode node, ModuleScope& scope);
-//   void buildTree(SyntaxWriter& writer, SNode node, ModuleScope& scope);
-//   void compileDeclaration(SyntaxTree& buffer, SNode node, ModuleScope& scope);
+   void createPackageInfo(_Module* module, _ProjectManager& project);
 
    void compileDeclarations(SNode node, ModuleScope& scope);
    void compileImplementations(SNode node, ModuleScope& scope);

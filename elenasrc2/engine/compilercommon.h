@@ -18,7 +18,7 @@
 #define V_FLAG           (ref_t)-03
 #define V_NIL            (ref_t)-04
 
-#define V_BINARY      (ref_t)-10
+#define V_BINARY         (ref_t)-10
 #define V_INT32          (ref_t)-11
 #define V_PTR32          (ref_t)-12
 #define V_INT64          (ref_t)-13
@@ -26,10 +26,10 @@
 #define V_SIGNATURE      (ref_t)-18
 #define V_MESSAGE        (ref_t)-19
 #define V_VERB           (ref_t)-20
-//#define V_EXTMESSAGE  (ref_t)-21
-#define V_SYMBOL      (ref_t)-22
+#define V_EXTMESSAGE     (ref_t)-21
+#define V_SYMBOL         (ref_t)-22
 
-#define V_OBJECT      (ref_t)-28
+#define V_OBJECT         (ref_t)-28
 
 #define V_OBJARRAY      (ref_t)-30
 #define V_INT32ARRAY    (ref_t)-31
@@ -125,7 +125,7 @@ struct _CompilerScope
    ref_t wideReference;
    ref_t charReference;
 //   ref_t arrayReference;
-//   ref_t paramsReference;
+   ref_t paramsReference;
 
    // list of typified classes which may need get&type message
    SubjectMap  subjectHints;
@@ -143,7 +143,7 @@ struct _CompilerScope
       signatureReference = verbReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
 /*      arrayReference = */charReference = realReference = 0;
-//      paramsReference = 0;
+      paramsReference = 0;
    }
 };
 
@@ -212,7 +212,7 @@ public:
    virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
-//   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
+   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
 
    // check if the classes is compatible
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;

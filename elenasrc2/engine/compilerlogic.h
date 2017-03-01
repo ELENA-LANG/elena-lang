@@ -73,7 +73,7 @@ public:
    virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false);
    virtual int defineStructSize(ClassInfo& info, bool embeddableOnly);
 
-//   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
+   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);

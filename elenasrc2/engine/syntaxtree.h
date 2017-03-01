@@ -80,7 +80,7 @@ enum LexicalType
    lxLocalAddress    = 0x0A108, // arg - offset
    lxFieldAddress    = 0x08109, // arg - offset
    lxLocal           = 0x0A10A, // arg - offset
-//   lxBlockLocal      = 0x0A10B, // arg - offset
+   lxBlockLocal      = 0x0A10B, // arg - offset
    lxConstantString  = 0x0A10C, // arg - reference
    lxConstantWideStr = 0x0A10D, // arg - reference
    lxConstantChar    = 0x0A10E, // arg - reference
@@ -99,7 +99,7 @@ enum LexicalType
    lxCurrentMessage  = 0x0A11B,
    lxThisLocal       = 0x0A11C,
    lxConstantList    = 0x0A11E, // arg - reference
-//   lxBlockLocalAddr  = 0x0A11F, // arg - offset
+   lxBlockLocalAddr  = 0x0A11F, // arg - offset
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
@@ -119,9 +119,9 @@ enum LexicalType
    lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,
 //   lxThrowing        = 0x0C013,
-//   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
-//   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
-//   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
+   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
+   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
+   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
 //   lxAltExpression   = 0x0C018,
    lxIfNot           = 0x0C019,   // optional arg - reference
@@ -196,9 +196,9 @@ enum LexicalType
    lxSize            = 0x20019,
    lxTemplateParam   = 0x2001A,
    lxEmbeddable      = 0x2001B,
-//   lxIntExtArgument  = 0x2001C,
-//   lxExtArgument     = 0x2001D,
-//   lxExtInteranlRef  = 0x2001E,
+   lxIntExtArgument  = 0x2001C,
+   lxExtArgument     = 0x2001D,
+   lxExtInteranlRef  = 0x2001E,
 //   lxConstAttr       = 0x2001F,
 //   lxWarningMask     = 0x20020,
    lxOperatorAttr    = 0x20021,
