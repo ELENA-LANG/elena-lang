@@ -1480,195 +1480,195 @@ const literalConvertor =
     stacksafe convert &char:aValue &bytearray:buffer &vint:length
         => system'core_routines'__literalconvertor.
     
-//    #method(literal,stacksafe)convert &char:aValue
-//    [
-//        #var(byte:4)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &char:aValue &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//    
-//    #method(stacksafe) convert &int:aNumber &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//    
-//    /// Converts the parameter to the literal value
-//    #method(literal,stacksafe) convert &int:aNumber
-//    [
-//        #var(byte:12)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &int:aNumber &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &short:aNumber &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//    
-//    /// Converts the parameter to the literal value
-//    #method(literal,stacksafe) convert &short:aNumber
-//    [
-//        #var(byte:12)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &short:aNumber &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &byte:aNumber &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//    
-//    /// Converts the parameter to the literal value
-//    #method(literal,stacksafe) convert &byte:aNumber
-//    [
-//        #var(byte:4)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &byte:aNumber &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &long:aNumber &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(literal,stacksafe) convert &long:aNumber
-//    [
-//        #var(byte:64)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &long:aNumber &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(stacksafe) convert &int:aNumber &int:aRadix &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(literal,stacksafe) convert &int:aNumber &int:aRadix
-//    [
-//        #var(byte:48)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &int:aNumber &int:aRadix &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(stacksafe) convert &short:aNumber &int:aRadix &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(literal,stacksafe) convert &short:aNumber &int:aRadix
-//    [
-//        #var(byte:32)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &short:aNumber &int:aRadix &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(literal,stacksafe) convert &byte:aNumber &int:aRadix &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(literal,stacksafe) convert &byte:aNumber &int:aRadix
-//    [
-//        #var(byte:8)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &byte:aNumber &int:aRadix &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(stacksafe) convert &long:aNumber &int:aRadix &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(literal,stacksafe) convert &long:aNumber &int:radix
-//    [
-//        #var(byte:64)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &long:aNumber &int:radix &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &real:aNumber &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(literal,stacksafe) convert &real:aNumber
-//    [
-//        #var(byte:32)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &real:aNumber &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts UTF-16 literal to UTF-8 one
-//    #method(stacksafe) convert &wide:aLiteral &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//
-//    #method(literal,stacksafe) convert &wide:aLiteral
-//    [
-//        #var(int)i := 0.
-//        #var(int)m := 0.
-//        #var(int)page := 0.
-//        #var(int)l := aLiteral length.
-//        #var(byte:256)buffer.
-//        (l < 128)?
-//        [
-//            $self convert &wide:aLiteral &bytearray:buffer &vint:m.
-//            
-//            ^ LiteralValue $new &int:0 &int:m &bytearray:buffer.
-//        ].
-//
-//        #var(literal)retVal := emptyLiteralValue.
-//        #loop (l > 0)?
-//        [
-//            page := l.
-//            (page > 127)?
-//            [
-//               page := 127.
-//            ].
-//            
-//            $self convert &wide:(aLiteral Substring &int:i &int:page) &bytearray:buffer &vint:m.
-//            
-//            retVal := retVal add &literal:(LiteralValue $new &int:0 &int:m &bytearray:buffer).
-//            
-//            i += page.
-//            l -= page.
-//        ].
-//        
-//        ^ retVal.
-//    ]
-//
-//    /// Returns the literal presentation of the parameter
-//    #method(literal,stacksafe) convert : anObject
-//        = anObject literal.
-//
-//    /// Returns a parameter                
-//    #method(literal,stacksafe) convert &literal:aLiteral
-//        = aLiteral.
+    stacksafe literal convert &char:aValue
+    [
+        byte(4) buffer := 0.
+        int     length := 0.
+        
+        $self convert &char:aValue &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+    
+    stacksafe convert &int:aNumber &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+    
+    /// Converts the parameter to the literal value
+    stacksafe literal convert &int:aNumber
+    [
+        byte(12) buffer := 0.
+        int      length := 0.
+        
+        $self convert &int:aNumber &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    stacksafe convert &short:aNumber &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+    
+    /// Converts the parameter to the literal value
+    stacksafe literal convert &short:aNumber
+    [
+        byte(12) buffer := 0.
+        int      length := 0.
+        
+        $self convert &short:aNumber &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    stacksafe convert &byte:aNumber &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+    
+    /// Converts the parameter to the literal value
+    stacksafe literal convert &byte:aNumber
+    [
+        byte(4) buffer := 0.
+        int     length := 0.
+        
+        $self convert &byte:aNumber &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    stacksafe convert &long:aNumber &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    /// Converts the parameter to the literal value
+    stacksafe literal convert &long:aNumber
+    [
+        byte(64) buffer := 0.
+        int      length := 0.
+        
+        $self convert &long:aNumber &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe convert &int:aNumber &int:aRadix &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe literal convert &int:aNumber &int:aRadix
+    [
+        byte(48) buffer := 0.
+        int      length := 0.
+        
+        $self convert &int:aNumber &int:aRadix &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe convert &short:aNumber &int:aRadix &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe literal convert &short:aNumber &int:aRadix
+    [
+        byte(32) buffer := 0.
+        int      length := 0.
+        
+        $self convert &short:aNumber &int:aRadix &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe literal convert &byte:aNumber &int:aRadix &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe literal convert &byte:aNumber &int:aRadix
+    [
+        byte(8) buffer := 0.
+        int     length := 0.
+        
+        $self convert &byte:aNumber &int:aRadix &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe convert &long:aNumber &int:aRadix &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    /// Converts the parameter to the literal value
+    stacksafe literal convert &long:aNumber &int:radix
+    [
+        byte(64) buffer := 0.
+        int      length := 0.
+        
+        $self convert &long:aNumber &int:radix &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    stacksafe convert &real:aNumber &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    /// Converts the parameter to the literal value
+    stacksafe literal convert &real:aNumber
+    [
+        byte(32) buffer := 0.
+        int      length := 0.
+        
+        $self convert &real:aNumber &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts UTF-16 literal to UTF-8 one
+    stacksafe convert &wide:aLiteral &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    stacksafe literal convert &wide:aLiteral
+    [
+        int       i := 0.
+        int       m := 0.
+        int       page := 0.
+        int       l := aLiteral length.
+        byte(256) buffer := 0.
+        (l < 128)?
+        [
+            $self convert &wide:aLiteral &bytearray:buffer &vint:m.
+            
+            ^ LiteralValue $new &int:0 &int:m &bytearray:buffer.
+        ].
+
+        literal retVal := emptyLiteralValue.
+        while(l > 0)
+        [
+            page := l.
+            (page > 127)?
+            [
+               page := 127.
+            ].
+            
+            $self convert &wide:(aLiteral Substring &int:i &int:page) &bytearray:buffer &vint:m.
+            
+            retVal := retVal add &literal:(LiteralValue $new &int:0 &int:m &bytearray:buffer).
+            
+            i += page.
+            l -= page.
+        ].
+        
+        ^ retVal.
+    ]
+
+    /// Returns the literal presentation of the parameter
+    stacksafe literal convert : anObject
+        = anObject literal.
+
+    /// Returns a parameter                
+    stacksafe literal convert &literal:aLiteral
+        = aLiteral.
 }.
 
 // --- wideConvertor ---
@@ -1676,201 +1676,201 @@ const literalConvertor =
 /// A wide literal convertor
 const wideConvertor =
 {
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &char:aValue &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//    
-//    #method(wide,stacksafe)convert &char:aValue
-//    [
-//        #var(short:2)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &char:aValue &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]    
-//    
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &int:aNumber &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(wide,stacksafe) convert &int:aNumber
-//    [
-//        #var(short:12)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &int:aNumber &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &short:aNumber &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(wide,stacksafe) convert &short:aNumber
-//    [
-//        #var(short:12)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &short:aNumber &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &byte:aNumber &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(wide,stacksafe) convert &byte:aNumber
-//    [
-//        #var(short:12)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &byte:aNumber &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &long:aNumber &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(wide,stacksafe) convert &long:aNumber
-//    [
-//        #var(short:64)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &long:aNumber &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(stacksafe) convert &int:aNumber &int:aRadix &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(wide,stacksafe) convert &int:aNumber &int:aRadix
-//    [
-//        #var(short:32)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &int:aNumber &int:aRadix &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(stacksafe) convert &short:aNumber &int:aRadix &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(wide,stacksafe) convert &short:aNumber &int:aRadix
-//    [
-//        #var(short:16)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &short:aNumber &int:aRadix &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(stacksafe) convert &byte:aNumber &int:aRadix &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(wide,stacksafe) convert &byte:aNumber &int:aRadix
-//    [
-//        #var(short:12)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &byte:aNumber &int:aRadix &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(stacksafe) convert &long:aNumber &int:aRadix &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(wide,stacksafe) convert &long:aNumber &int:aRadix
-//    [
-//        #var(short:64)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &long:aNumber &int:aRadix &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &real:aNumber&shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(wide,stacksafe) convert &real:aNumber
-//    [
-//        #var(short:32)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &real:aNumber &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts UTF-8 literal to UTF-16e
-//    #method(stacksafe) convert &literal:aLiteral &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts UTF-8 literal to UTF-16e
-//    #method(wide,stacksafe) convert &literal:aLiteral
-//    [
-//        #var(int)i := 0.
-//        #var(int)m := 0.
-//        #var(int)page := 0.
-//        #var(int)l := aLiteral length.
-//        #var(short:256)buffer.
-//        (l < 256)?
-//        [
-//            $self convert &literal:aLiteral &shortarray:buffer &vint:m.
-//            
-//            ^ WideLiteralValue $new &int:0 &int:m &shortarray:buffer.
-//        ].
-//        
-//        #var(wide)retVal := emptyWideLiteralValue.
-//        #loop (l > 0)?
-//        [
-//            page := l.
-//            (page > 256)?
-//            [
-//                page := 256.
-//            ].
-//            
-//            $self convert &literal:(aLiteral Substring &int:i &int:page) &shortarray:buffer &vint:m.
-//            
-//            retVal := retVal add &wide:(WideLiteralValue $new &int:0 &int:m &shortarray:buffer).
-//            
-//            i += page.
-//            l -= page.
-//        ].
-//        
-//        ^ retVal.
-//    ]        
-//
-//    /// Returns the literal presentation of the parameter
-//    #method(wide,stacksafe) convert : anObject
-//        = anObject wide.
-//        
-//    /// Returns a parameter
-//    #method(wide,stacksafe) convert &wide:aLiteral
-//        = aLiteral.
+    /// Converts the parameter to the literal value
+    stacksafe convert &char:aValue &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+    
+    stacksafe wide convert &char:aValue
+    [
+        short(2) buffer := 0.
+        int      length := 0.
+        
+        $self convert &char:aValue &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]    
+    
+    /// Converts the parameter to the literal value
+    stacksafe convert &int:aNumber &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value
+    stacksafe wide convert &int:aNumber
+    [
+        short(12) buffer := 0.
+        int       length := 0.
+        
+        $self convert &int:aNumber &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    stacksafe convert &short:aNumber &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value
+    stacksafe wide convert &short:aNumber
+    [
+        short(12) buffer := 0.
+        int       length := 0.
+        
+        $self convert &short:aNumber &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    stacksafe convert &byte:aNumber &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value
+    stacksafe wide convert &byte:aNumber
+    [
+        short(12) buffer := 0.
+        int       length := 0.
+        
+        $self convert &byte:aNumber &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    stacksafe convert &long:aNumber &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value
+    stacksafe wide convert &long:aNumber
+    [
+        short(64) buffer := 0.
+        int       length := 0.
+        
+        $self convert &long:aNumber &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe convert &int:aNumber &int:aRadix &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe wide convert &int:aNumber &int:aRadix
+    [
+        short(32) buffer := 0.
+        int       length := 0.
+        
+        $self convert &int:aNumber &int:aRadix &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe convert &short:aNumber &int:aRadix &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe wide convert &short:aNumber &int:aRadix
+    [
+        short(16) buffer := 0.
+        int       length := 0.
+        
+        $self convert &short:aNumber &int:aRadix &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe convert &byte:aNumber &int:aRadix &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe wide convert &byte:aNumber &int:aRadix
+    [
+        short(12) buffer := 0.
+        int       length := 0.
+        
+        $self convert &byte:aNumber &int:aRadix &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe convert &long:aNumber &int:aRadix &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe wide convert &long:aNumber &int:aRadix
+    [
+        short(64) buffer := 0.
+        int       length := 0.
+        
+        $self convert &long:aNumber &int:aRadix &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    stacksafe convert &real:aNumber&shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value
+    stacksafe wide convert &real:aNumber
+    [
+        short(32) buffer := 0.
+        int       length := 0.
+        
+        $self convert &real:aNumber &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts UTF-8 literal to UTF-16e
+    stacksafe convert &literal:aLiteral &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts UTF-8 literal to UTF-16e
+    stacksafe wide convert &literal:aLiteral
+    [
+        int        i := 0.
+        int        m := 0.
+        int        page := 0.
+        int        l := aLiteral length.
+        short(256) buffer := 0.
+        (l < 256)?
+        [
+            $self convert &literal:aLiteral &shortarray:buffer &vint:m.
+            
+            ^ WideLiteralValue $new &int:0 &int:m &shortarray:buffer.
+        ].
+        
+        wide retVal := emptyWideLiteralValue.
+        while(l > 0)
+        [
+            page := l.
+            (page > 256)?
+            [
+                page := 256.
+            ].
+            
+            $self convert &literal:(aLiteral Substring &int:i &int:page) &shortarray:buffer &vint:m.
+            
+            retVal := retVal add &wide:(WideLiteralValue $new &int:0 &int:m &shortarray:buffer).
+            
+            i += page.
+            l -= page.
+        ].
+        
+        ^ retVal.
+    ]        
+
+    /// Returns the literal presentation of the parameter
+    stacksafe wide convert : anObject
+        = anObject wide.
+        
+    /// Returns a parameter
+    stacksafe wide convert &wide:aLiteral
+        = aLiteral.
 }.
 
 // === Enumerators / Indexers
@@ -1880,55 +1880,55 @@ const wideConvertor =
 /// A literal enumerator
 class LiteralEnumerator :: Enumerator
 {
-//    #field(literal) theLiteral.
-//    #field(vint)    theIndex.
-//    #field(vint)    theDiff.
-//    #field(char)    theChar.
-//    
-//    /// Creates an enumerator
-//    #constructor new : anObject
-//        <= new &literal:(anObject literal).
-//    
-//    /// Creates an enumerator
-//    #constructor(w3) new &literal:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := -1.
-//        theDiff := 1.
-//        theChar := #0.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method(w3) reset
-//    [
-//        theIndex := -1.
-//        theDiff := 1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        #var(int)aLength := theLiteral length.
-//        
-//        theIndex += theDiff.
-//        
-//        (theIndex < aLength)
-//            ? [
-//                theChar := theLiteral getAt &int:theIndex.                
-//                
-//                theChar readLength &vint:theDiff.
-//                
-//                ^ true.
-//            ].
-//
-//        theDiff := 0.
-//        theChar := #0.
-//
-//        ^ false.
-//    ]
-//    
-//    /// Returns the current character
-//    #method get = theChar.
+    literal theLiteral.
+    vint    theIndex.
+    vint    theDiff.
+    char    theChar.
+    
+    /// Creates an enumerator
+    constructor new : anObject
+        <= new &literal:(anObject literal).
+    
+    /// Creates an enumerator
+    constructor new &literal:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := -1.
+        theDiff := 1.
+        theChar := #0.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex := -1.
+        theDiff := 1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        int aLength := theLiteral length.
+        
+        theIndex += theDiff.
+        
+        (theIndex < aLength)
+            ? [
+                theChar := theLiteral getAt &int:theIndex.                
+                
+                theChar readLength &vint:theDiff.
+                
+                ^ true.
+            ].
+
+        theDiff := 0.
+        theChar := #0.
+
+        ^ false.
+    ]
+    
+    /// Returns the current character
+    get = theChar.
 }
 
 // --- LiteralIterator ---
@@ -1936,58 +1936,58 @@ class LiteralEnumerator :: Enumerator
 /// A literal value iterator
 class LiteralIterator :: Iterator
 {
-//    #field(literal) theLiteral.
-//    #field(vint)    theIndex.
-//    
-//    /// Creates an iterator
-//    #constructor new : anObject
-//        <= new &literal:(anObject literal).
-//    
-//    /// Creates an iterator
-//    #constructor(w3) new &literal:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    #method available
-//    [
-//        #var(int)aLength := theLiteral length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current character
-//    #method get
-//    [
-//        #var(char)aChar.
-//        theLiteral read &int:theIndex &vchar:aChar.
-//        
-//        ^ CharValue new &char:aChar.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method set : anObject 
-//    [
-//        #throw system'NotSupportedException new.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    #method readIndex &vint:anIndex
-//    [
-//        anIndex := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex set &int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    #method readLength &vint:anOutput
-//        => theLiteral.
+    literal theLiteral.
+    vint    theIndex.
+    
+    /// Creates an iterator
+    constructor new : anObject
+        <= new &literal:(anObject literal).
+    
+    /// Creates an iterator
+    constructor new &literal:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    available
+    [
+        int aLength := theLiteral length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current character
+    get
+    [
+        char aChar := #0.
+        theLiteral read &int:theIndex &vchar:aChar.
+        
+        ^ CharValue new &char:aChar.
+    ]
+    
+    /// Sets the index by specified value
+    set : anObject 
+    [
+        system'NotSupportedException new raise.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndex &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLength &vint:anOutput
+        => theLiteral.
 }
 
 // --- WideLiteralEnumerator ---
@@ -1995,57 +1995,57 @@ class LiteralIterator :: Iterator
 /// A literal enumerator
 class WideLiteralEnumerator :: Enumerator
 {
-//    #field(wide) theLiteral.
-//    #field(vint) theIndex.
-//    #field(vint) theDiff.
-//    #field(char) theChar.
-//    
-//    /// Creates an enumerator
-//    #constructor new : anObject
-//        <= new &wide:(anObject wide).
-//    
-//    /// Creates an enumerator
-//    #constructor(w3) new &wide:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := -1.
-//        theDiff := 1.
-//        theChar := #0.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex set &int:-1.
-//        theDiff set &int:1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        #var(int)aLength := theLiteral length.
-//
-//        theIndex += theDiff.
-//        
-//        (theIndex < aLength)
-//            ? [
-//                theChar := theLiteral getAt &int:theIndex.
-//                
-//                theChar readLength &vint:theDiff.
-//                theDiff += 1.
-//                theDiff /= 2.
-//                
-//                ^ true.
-//            ].
-//
-//        theDiff set &int:0.
-//        theChar := #0.
-//
-//        ^ false.
-//    ]
-//    
-//    /// Returns the current character
-//    #method get = theChar.
+    wide theLiteral.
+    vint theIndex.
+    vint theDiff.
+    char theChar.
+    
+    /// Creates an enumerator
+    constructor new : anObject
+        <= new &wide:(anObject wide).
+    
+    /// Creates an enumerator
+    constructor new &wide:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := -1.
+        theDiff := 1.
+        theChar := #0.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex set &int:-1.
+        theDiff set &int:1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        int aLength := theLiteral length.
+
+        theIndex += theDiff.
+        
+        (theIndex < aLength)
+            ? [
+                theChar := theLiteral getAt &int:theIndex.
+                
+                theChar readLength &vint:theDiff.
+                theDiff += 1.
+                theDiff /= 2.
+                
+                ^ true.
+            ].
+
+        theDiff set &int:0.
+        theChar := #0.
+
+        ^ false.
+    ]
+    
+    /// Returns the current character
+    get = theChar.
 }
 
 // --- WideLiteralIterator ---
@@ -2053,52 +2053,52 @@ class WideLiteralEnumerator :: Enumerator
 /// A wide literal enumerator
 class WideLiteralIterator :: Iterator
 {
-//    #field(wide) theLiteral.
-//    #field(vint) theIndex.
-//    
-//    /// Creates an iterator
-//    #constructor new : anObject
-//        <= new &wide:(anObject wide).
-//    
-//    /// Creates an iterator
-//    #constructor(w3) new &wide:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := 0.
-//    ]
-//
-//    /// Returns false if the index out of range    
-//    #method available
-//    [
-//        #var(int)aLength := theLiteral length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current character
-//    #method get
-//        = theLiteral getAt &int:theIndex.
-//    
-//    #method set : anObject 
-//    [
-//        #throw system'NotSupportedException new.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    #method readIndex &vint:anIndex
-//    [
-//        anIndex := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex set &int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    #method readLength &vint:anOutput
-//        => theLiteral.
+    wide theLiteral.
+    vint theIndex.
+    
+    /// Creates an iterator
+    constructor new : anObject
+        <= new &wide:(anObject wide).
+    
+    /// Creates an iterator
+    constructor new &wide:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := 0.
+    ]
+
+    /// Returns false if the index out of range    
+    available
+    [
+        int aLength := theLiteral length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current character
+    get
+        = theLiteral getAt &int:theIndex.
+    
+    set : anObject 
+    [
+        system'NotSupportedException new raise.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndex &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLength &vint:anOutput
+        => theLiteral.
 }
 
 // --- ArrayIterator ---
@@ -2106,54 +2106,54 @@ class WideLiteralIterator :: Iterator
 /// An array iterator
 class ArrayIterator :: Iterator
 {
-//    #field(array) theArray.
-//    #field(vint)  theIndex.
-//
-//    /// Returns the parameter iterator
-//    #constructor new : anArray
-//        <= new &array:(anArray array).
-//    
-//    /// Returns the parameter iterator
-//    #constructor(w3) new &array:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    #method available
-//    [
-//        #var(int)aLength.
-//        theArray readLength &vint:aLength.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    #method get
-//        = theArray getAt &int:theIndex.
-//    
-//    /// Sets the current member
-//    #method set : anObject
-//    [
-//        theArray setAt &int:theIndex &object:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    #method readIndex  &vint:anIndex
-//    [
-//        anIndex := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex set &int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    #method readLength &vint:anOutput
-//        => theArray.
+    array theArray.
+    vint  theIndex.
+
+    /// Returns the parameter iterator
+    constructor new : anArray
+        <= new &array:(anArray array).
+    
+    /// Returns the parameter iterator
+    constructor new &array:anArray
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    available
+    [
+        int aLength := 0.
+        theArray readLength &vint:aLength.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current member
+    get
+        = theArray getAt &int:theIndex.
+    
+    /// Sets the current member
+    set : anObject
+    [
+        theArray setAt &int:theIndex &object:anObject.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndex  &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLength &vint:anOutput
+        => theArray.
 }
 
 // --- ArrayEnumerator ---
@@ -2161,39 +2161,39 @@ class ArrayIterator :: Iterator
 /// An array enumerator
 class ArrayEnumerator :: Enumerator
 {
-//    #field(array) theArray.
-//    #field(vint)  theIndex.
-//    
-//    /// Creates an array enumerator
-//    #constructor new : anArray
-//        <= new &array:(anArray array).
-//    
-//    /// Creates an array enumerator
-//    #constructor(w3) new &array:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex set &int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        #var(int)aLength := theArray length.
-//        
-//        theIndex += 1.
-//
-//        ^ theIndex < aLength.
-//    ]
-//    
-//    /// Returns the current object
-//    #method get
-//        = theArray getAt &int:theIndex.
+    array theArray.
+    vint  theIndex.
+    
+    /// Creates an array enumerator
+    constructor new : anArray
+        <= new &array:(anArray array).
+    
+    /// Creates an array enumerator
+    constructor new &array:anArray
+    [
+        theArray := anArray.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex set &int:-1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        int aLength := theArray length.
+        
+        theIndex += 1.
+
+        ^ theIndex < aLength.
+    ]
+    
+    /// Returns the current object
+    get
+        = theArray getAt &int:theIndex.
 }
 
 // --- Func1Group ---
@@ -2238,53 +2238,53 @@ class ArrayEnumerator :: Enumerator
 /// An array iterator
 class BitArrayIterator :: Iterator
 {
-//    #field(bitarray) theArray.
-//    #field(vint)  theIndex.
-//
-//    /// Returns the parameter iterator
-//    #constructor new : anArray
-//        <= new &bitarray:(anArray bitarray).
-//    
-//    /// Returns the parameter iterator
-//    #constructor(w3) new &bitarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    #method available
-//    [
-//        #var(int)aLength := theArray length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    #method(bool) get
-//        = theArray getAt &int:theIndex.
-//    
-//    /// Sets the current member
-//    #method set : anObject
-//    [
-//        theArray setAt &int:theIndex &bool:(anObject bool).
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    #method readIndex  &vint:anIndex
-//    [
-//        anIndex := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex set &int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    #method readLength &vint:anOutput
-//        => theArray.
+    bitarray theArray.
+    vint  theIndex.
+
+    /// Returns the parameter iterator
+    constructor new : anArray
+        <= new &bitarray:(anArray bitarray).
+    
+    /// Returns the parameter iterator
+    constructor new &bitarray:anArray
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    available
+    [
+        int aLength := theArray length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current member
+    bool get
+        = theArray getAt &int:theIndex.
+    
+    /// Sets the current member
+    set : anObject
+    [
+        theArray setAt &int:theIndex &bool:(anObject bool).
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndex  &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLength &vint:anOutput
+        => theArray.
 }
 
 // --- BitArrayEnumerator ---
@@ -2292,39 +2292,39 @@ class BitArrayIterator :: Iterator
 /// An array enumerator
 class BitArrayEnumerator :: Enumerator
 {
-//    #field(bitarray) theArray.
-//    #field(vint)  theIndex.
-//    
-//    /// Creates an array enumerator
-//    #constructor new : anArray
-//        <= new &bitarray:(anArray bitarray).
-//    
-//    /// Creates an array enumerator
-//    #constructor(w3) new &bitarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex set &int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        #var(int)aLength := theArray length.
-//        
-//        theIndex append &int:1.
-//
-//        ^ theIndex < aLength.
-//    ]
-//    
-//    /// Returns the current object
-//    #method(bool) get
-//        = theArray getAt &int:theIndex.
+    bitarray theArray.
+    vint     theIndex.
+    
+    /// Creates an array enumerator
+    constructor new : anArray
+        <= new &bitarray:(anArray bitarray).
+    
+    /// Creates an array enumerator
+    constructor new &bitarray:anArray
+    [
+        theArray := anArray.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex set &int:-1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        int aLength := theArray length.
+        
+        theIndex append &int:1.
+
+        ^ theIndex < aLength.
+    ]
+    
+    /// Returns the current object
+    bool get
+        = theArray getAt &int:theIndex.
 }
 
 // --- BitArray32Iterator ---
@@ -2332,51 +2332,51 @@ class BitArrayEnumerator :: Enumerator
 /// An array iterator
 class BitArray32Iterator :: Iterator
 {
-//    #field(bitset) theArray.
-//    #field(vint)  theIndex.
-//
-//    /// Returns the parameter iterator
-//    #constructor new : anArray
-//        <= new &bitset:(anArray bitset).
-//    
-//    /// Returns the parameter iterator
-//    #constructor(w3) new &bitset:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    #method available
-//    [
-//        ^ theIndex < 32.
-//    ]
-//
-//    /// Returns the current member
-//    #method(bool) get
-//        = theArray getAt &int:theIndex.
-//    
-//    /// Sets the current member
-//    #method set : anObject
-//    [
-//        theArray setAt &int:theIndex &bool:(anObject bool).
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    #method readIndex  &vint:anIndex
-//    [
-//        anIndex := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex set &int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    #method readLength &vint:anOutput
-//        => theArray.
+    bitset theArray.
+    vint   theIndex.
+
+    /// Returns the parameter iterator
+    constructor new : anArray
+        <= new &bitset:(anArray bitset).
+    
+    /// Returns the parameter iterator
+    constructor new &bitset:anArray
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    available
+    [
+        ^ theIndex < 32.
+    ]
+
+    /// Returns the current member
+    bool get
+        = theArray getAt &int:theIndex.
+    
+    /// Sets the current member
+    set : anObject
+    [
+        theArray setAt &int:theIndex &bool:(anObject bool).
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndex  &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLength &vint:anOutput
+        => theArray.
 }
 
 // --- BitArray32Enumerator ---
@@ -2384,35 +2384,35 @@ class BitArray32Iterator :: Iterator
 /// An array enumerator
 class BitArray32Enumerator :: Enumerator
 {
-//    #field(bitset) theArray.
-//    #field(vint)  theIndex.
-//    
-//    /// Creates an array enumerator
-//    #constructor new : anArray
-//        <= new &bitset:(anArray bitset).
-//    
-//    /// Creates an array enumerator
-//    #constructor(w3) new &bitset:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex set &int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        theIndex append &int:1.
-//
-//        ^ theIndex < 32.
-//    ]
-//    
-//    /// Returns the current object
-//    #method get
-//        = theArray getAt &int:theIndex.
+    bitset theArray.
+    vint   theIndex.
+    
+    /// Creates an array enumerator
+    constructor new : anArray
+        <= new &bitset:(anArray bitset).
+    
+    /// Creates an array enumerator
+    constructor new &bitset:anArray
+    [
+        theArray := anArray.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex set &int:-1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        theIndex append &int:1.
+
+        ^ theIndex < 32.
+    ]
+    
+    /// Returns the current object
+    get
+        = theArray getAt &int:theIndex.
 }

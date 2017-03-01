@@ -2109,6 +2109,11 @@ void Compiler :: declareLocalAttributes(SyntaxWriter& writer, SNode node, CodeSc
       }
       current = current.nextNode();
    }
+
+   if (size != 0 && variable.type != 0) {
+      variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, variable.extraparam);
+   }
+   
 }
 //
 //void Compiler :: declareLocalAttribute(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo& variable, int& size, SNode rootNode)
@@ -2251,11 +2256,11 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
       ClassInfo localInfo;
       bool bytearray = false;
       _logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam);
-//      if (_logic->isEmbeddableArray(localInfo)) {
-//         bytearray = true;
-//         size = size * (-((int)localInfo.size));
-//      }
-      /*else */if (_logic->isEmbeddable(localInfo))
+      if (_logic->isEmbeddableArray(localInfo)) {
+         bytearray = true;
+         size = size * (-((int)localInfo.size));
+      }
+      else if (_logic->isEmbeddable(localInfo))
          size = _logic->defineStructSize(localInfo);
 
       if (size > 0) {
@@ -2276,15 +2281,15 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
             case elDebugReal64:
                variableType = lxReal64Variable;
                break;
-//            case elDebugIntegers:
-//               node.set(lxIntsVariable, size);
-//               break;
-//            case elDebugShorts:
-//               node.set(lxShortsVariable, size);
-//               break;
-//            case elDebugBytes:
-//               node.set(lxBytesVariable, size);
-//               break;
+            case elDebugIntegers:
+               variableType = lxIntsVariable;
+               break;
+            case elDebugShorts:
+               variableType = lxShortsVariable;
+               break;
+            case elDebugBytes:
+               variableType = lxBytesVariable;
+               break;
             default:
                if (isPrimitiveRef(variable.extraparam)) {
                   variableType = lxBytesVariable;
@@ -7627,6 +7632,10 @@ void Compiler :: generateVariableTree(SyntaxWriter& writer, SNode node, Template
    if (attrRef != 0) {
       while (current != lxAssigning) {
          current = lxAttribute;
+         SNode option = current.findChild(lxExpression);
+         if (option != lxNone) {
+            option = lxAttributeValue;
+         }
 
          current = current.nextNode();
       }
@@ -8018,6 +8027,15 @@ bool Compiler :: generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope
    return true;
 }
 
+inline int readSizeValue(SNode node, int radix)
+{
+   ident_t val = node.identifier();
+   if (emptystr(val))
+      val = node.findChild(lxTerminal).identifier();
+
+   return val.toLong(radix);
+}
+
 void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool embeddableMode)
 {
    SNode current = attributes;
@@ -8042,8 +8060,20 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
             if (!generateTemplate(writer, templateScope, embeddableMode))
                scope.raiseError(errInvalidHint, current);
          }
-         else if (classRef != 0)
+         else if (classRef != 0) {
             writer.appendNode(lxTypeAttr, scope.moduleScope->module->resolveSubject(attrRef));
+            SNode sizeNode = current.findChild(lxAttributeValue);
+            if (sizeNode != lxNone) {
+               sizeNode = sizeNode.findChild(lxInteger, lxHexInteger, lxObject);
+               if (sizeNode == lxObject)
+                  sizeNode = sizeNode.findChild(lxInteger, lxHexInteger, lxObject);
+
+               if (sizeNode != lxNone) {
+                  writer.appendNode(lxAttribute, readSizeValue(sizeNode, sizeNode == lxHexInteger ? 16 : 10));
+               }
+               else scope.raiseError(errInvalidHint, current);
+            }
+         }            
       }
       else scope.raiseError(errInvalidHint, current);
 

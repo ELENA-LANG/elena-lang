@@ -6,6 +6,12 @@ In development:
                  * ecv : display class size
 
               xdev - generic development
+                 * implementing ELENA 3.0     
+
+                 * primitive array declaration : byte(4) buffer := ??.
+
+                 * implement primitive array initializing : byte(4) buffer := (0,)
+
                  * vint.set&int[1] - do not box the variable before assigning
                  * local attribute : do not allow embeddable templates
                  * field attribute : if the template marked as embeddable it should be included into the body, otherwise -
@@ -21,8 +27,6 @@ In development:
                  * optimize k += 3.
 
                  * extension in the template (see mytest)
-                 * implementing ELENA 3.0     
-
                  * do not unbox returning objects
                  * box structure fields
 
@@ -117,6 +121,8 @@ In development:
                  * test generic arrayof(byte), arrayof(message), arrayof(object), arrayof(enumerator)
                  * new verb : raise
                  * optimization : constant array
+                 * should be possible to declare field / local : varof(int). - the class should be reused, if it is already
+                   declared in this module
 
               xdev - generic development
                  * support property template

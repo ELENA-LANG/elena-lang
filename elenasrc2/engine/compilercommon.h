@@ -219,7 +219,7 @@ public:
 
    virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 
-//   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
+   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
    virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
