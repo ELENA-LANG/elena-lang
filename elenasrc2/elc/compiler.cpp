@@ -6393,7 +6393,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    writer.newNode(lxExpression);
    writer.appendNode(lxBreakpoint, dsStep);
    writer.newBookmark();
-   ObjectInfo retVal = compileExpression(writer, expression, codeScope, scope.constant ? HINT_ROOT : 0);
+   ObjectInfo retVal = compileExpression(writer, expression, codeScope, isSingleStatement(expression) ? HINT_ROOT : 0);
    if (scope.typeRef != 0) {
       ModuleScope* moduleScope = scope.moduleScope;
 

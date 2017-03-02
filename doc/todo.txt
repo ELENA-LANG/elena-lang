@@ -124,6 +124,7 @@ In development:
                  * optimization : constant array
                  * should be possible to declare field / local : varof(int). - the class should be reused, if it is already
                    declared in this module
+                 * test class and className extensions
 
               xdev - generic development
                  * support property template

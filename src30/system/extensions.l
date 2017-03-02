@@ -1,82 +1,81 @@
-//// === actions ===
-//
-//#symbol ifOrdered
-//    = (:aFormer:aLater) [ aFormer < aLater ].
-//
-//#symbol ifDecrescent
-//    = (:aFormer:aLater) [ aFormer > aLater ].
-//
-//// --- common methods ---
-//
-///// A generic extender
-//#class(extension)objectOp
-//{
-//    #method class
-//        => system'core_routines'__object.
-//
-//    #method(literal) className
-//    [
-//        #var class := self::objectOp class.
-//        
-//        #var(byte:256)aBuffer.
-//        #var(int)aLength := system'external LoadClassName 
-//            &ref:class
-//            &bytearray:aBuffer
-//            &int:255.
-//         
-//        (aLength == 0)
-//            ? [ ^ "Unknown class". ].
-//        
-//        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-//    ]    
-//    
-//    
-//    /// Returns true if the specified object instances are equal; otherwise, false.
-//    #method(bool) equal &reference:anObject
-//        => system'core_routines'__object.
-//        
-//    /// Returns the parameter        
-//    #method back : anObject = anObject.
-//
-//    #method evalSelf &func1:aFunction
-//        = aFunction eval:self.
-//
-//    #method evalSelf:aFunction
-//        = aFunction eval:self.
-//
+// === actions ===
+
+symbol ifOrdered
+    = (:aFormer:aLater) [ aFormer < aLater ].
+
+symbol ifDecrescent
+    = (:aFormer:aLater) [ aFormer > aLater ].
+
+// --- common methods ---
+
+/// A generic extender
+extension objectOp
+{
+    class
+        => system'core_routines'__object.
+
+    literal className
+    [
+        var class := self::objectOp class.
+        
+        byte(256) aBuffer := 0.
+        int       aLength := system'external LoadClassName 
+                                &ref:class
+                                &bytearray:aBuffer
+                                &int:255.
+         
+        (aLength == 0)
+            ? [ ^ "Unknown class". ].
+        
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+    ]    
+    
+    /// Returns true if the specified object instances are equal; otherwise, false.
+    bool equal &reference:anObject
+        => system'core_routines'__object.
+        
+    /// Returns the parameter        
+    back : anObject = anObject.
+
+    evalSelf &func1:aFunction
+        = aFunction eval:self.
+
+    evalSelf:aFunction
+        = aFunction eval:self.
+
 //    /// Returns true if the object is nil
-//    #method(bool) is &nil
+//    bool is &nil
 //        = nil == self.
-//        
+        
 //    /// Returns true if the object is literal or character
-//    #method is &literal
+//    is &literal
 //        = self cast:%eval &to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. ! : anObject = false. }.
 //        
 //    /// Returns true if the object is integer numereric
-//    #method is &integer
+//    is &integer
 //        = self cast:%eval &to:{ int : x = true. long : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
 //        
 //    /// Returns true if the object is numereric
-//    #method is &numeric
+//    is &numeric
 //        = self cast:%eval &to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
 //        
-//    #method(bool,w2) is &empty
+//    bool is &empty
 //        = self length == 0.
 //        
-//    #method(bool) is &nonempty
+//    bool is &nonempty
 //        = self length != 0.
 //        
 //    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
-//    #method(bool) safeEqual : anObject
+//    bool safeEqual : anObject
 //        = anObject cast:%eval &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject \ back:false. } &with:self bool.
-//
-//    #method eval &with:action
-//        = action eval:self.
-//        
-//    #method(stacksafe) reallocate &int:aNewLength
-//        => system'core_routines'__array.
-//}
-//
+
+    eval &with:action
+        = action eval:self.
+        
+    stacksafe reallocate &int:aNewLength
+        => system'core_routines'__array.
+}
+
 //// --- Operations ---
 //
 //// --- byteOp ---
