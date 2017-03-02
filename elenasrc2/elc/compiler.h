@@ -937,8 +937,8 @@ private:
 
    ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
-//   void compileTrying(SNode node, CodeScope& scope);
-//   void compileAltOperation(SNode node, CodeScope& scope);
+   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileThrow(SNode node, CodeScope& scope, int mode);
 ////   void compileTry(DNode node, CodeScope& scope);

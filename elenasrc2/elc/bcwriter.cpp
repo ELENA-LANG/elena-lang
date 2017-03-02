@@ -401,20 +401,20 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-//void ByteCodeWriter :: declareAlt(CommandTape& tape)
-//{
-//   //   unhook
-//   //   jump labEnd
-//   // labErr:
-//   //   unhook
-//
-//   tape.write(bcUnhook);
-//   tape.write(bcJump, baPreviousLabel);
-//
-//   tape.setLabel();
-//
-//   tape.write(bcUnhook);
-//}
+void ByteCodeWriter :: declareAlt(CommandTape& tape)
+{
+   //   unhook
+   //   jump labEnd
+   // labErr:
+   //   unhook
+
+   tape.write(bcUnhook);
+   tape.write(bcJump, baPreviousLabel);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
 
 void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated)
 {
@@ -4435,54 +4435,54 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //   popObject(tape, lxResult);
 //   freeLock(tape);
 //}
-//
-//void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool first = true;
-//
-//   declareTry(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExprMask)) {
-//         generateObjectExpression(tape, current);
-//
-//         if (first) {
-//            declareCatch(tape);
-//
-//            // ...
-//
-//            first = false;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   endCatch(tape);
-//}
-//
-//void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool first = true;
-//
-//   declareTry(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExprMask)) {
-//         generateObjectExpression(tape, current);
-//
-//         if (first) {
-//            declareAlt(tape);
-//
-//            first = false;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   endAlt(tape);
-//}
+
+void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         generateObjectExpression(tape, current);
+
+         if (first) {
+            declareCatch(tape);
+
+            // ...
+
+            first = false;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   endCatch(tape);
+}
+
+void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         generateObjectExpression(tape, current);
+
+         if (first) {
+            declareAlt(tape);
+
+            first = false;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   endAlt(tape);
+}
 
 void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
 {
@@ -4682,7 +4682,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxExpression:
       case lxLocalUnboxing:
       case lxFieldExpression:
-//      case lxAltExpression:
+      case lxAltExpression:
          generateExpression(tape, node);
          break;
 ////      case lxTypecasting:
@@ -4691,12 +4691,12 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxSDirctCalling:
          generateCallExpression(tape, node);
          break;
-//      case lxTrying:
-//         generateTrying(tape, node);
-//         break;
-//      case lxAlt:
-//         generateAlt(tape, node);
-//         break;
+      case lxTrying:
+         generateTrying(tape, node);
+         break;
+      case lxAlt:
+         generateAlt(tape, node);
+         break;
       case lxReturning:
          generateReturnExpression(tape, node);
          break;

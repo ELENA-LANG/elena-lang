@@ -3827,62 +3827,66 @@ ObjectInfo Compiler :: compileNewOperator(SyntaxWriter& writer, SNode node, Code
    return retVal;
 }
 
-//void Compiler :: compileTrying(SNode node, CodeScope& scope)
-//{
-//   bool catchNode = false;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExprMask)) {
-//         if (catchNode) {
-//            current.insertNode(lxResult);
-//         }
-//         else catchNode = true;
-//
-//         compileExpression(current, scope, 0);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
-//void Compiler :: compileAltOperation(SNode node, CodeScope& scope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExprMask)) {
-//         compileExpression(current, scope, 0);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   // inject a nested expression
-//   node = lxAltExpression;
-//   SNode altNode = node.injectNode(lxAlt);
-//
-//   // extract the expression target
-//   SNode firstExpr = altNode.firstChild(lxObjectMask);
-//   SNode targetNode = firstExpr.firstChild(lxObjectMask);
-//
-//   LexicalType targetType = targetNode.type;
-//   int targetArg = targetNode.argument;
-//
-//   targetNode.set(lxResult, 0);
-//
-//   int tempLocal = scope.newLocal();
-//
-//   SNode secondExpr = firstExpr.nextNode(lxObjectMask);
-//   secondExpr.insertNode(lxLocal, tempLocal);
-//
-//   SNode tempLocalNode = node.insertNode(lxAssigning);
-//   SyntaxTree::copyNode(targetNode, tempLocalNode.insertNode(targetType, targetArg));
-//   tempLocalNode.insertNode(lxLocal, tempLocal);
-//}
+void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   //bool catchNode = false;
+   //SNode current = node.firstChild();
+   //while (current != lxNone) {
+   //   if (test(current.type, lxExprMask)) {
+   //      if (catchNode) {
+   //         writer.insertChild(0, lxResult, 0);
+   //      }
+   //      else catchNode = true;
+
+   //      compileExpression(writer, current, scope, 0);
+   //   }
+
+   //   current = current.nextNode();
+   //}
+}
+
+void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   writer.newBookmark();
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         compileExpression(writer, current, scope, 0);
+      }
+
+      current = current.nextNode();
+   }
+
+   // inject a nested expression
+   writer.insert(lxAltExpression);
+   //SNode altNode = node.injectNode(lxAlt);
+
+   //// extract the expression target
+   //SNode firstExpr = altNode.firstChild(lxObjectMask);
+   //SNode targetNode = firstExpr.firstChild(lxObjectMask);
+
+   //LexicalType targetType = targetNode.type;
+   //int targetArg = targetNode.argument;
+
+   //targetNode.set(lxResult, 0);
+
+   //int tempLocal = scope.newLocal();
+
+   //SNode secondExpr = firstExpr.nextNode(lxObjectMask);
+   //secondExpr.insertNode(lxLocal, tempLocal);
+
+   //SNode tempLocalNode = node.insertNode(lxAssigning);
+   //SyntaxTree::copyNode(targetNode, tempLocalNode.insertNode(targetType, targetArg));
+   //tempLocalNode.insertNode(lxLocal, tempLocal);
+
+   writer.removeBookmark();
+}
 
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    ObjectInfo objectInfo;
-   SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator/*, lxTrying, lxAlt, lxSwitching*/);
+   SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxTrying, lxAlt/*, lxSwitching*/);
    switch (current.type) {
       case lxAssign:
          objectInfo = compileAssigning(writer, node, scope, mode);
@@ -3890,16 +3894,16 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       case lxMessage:
          objectInfo = compileMessage(writer, node, scope, mode);
          break;
-//      case lxTrying:
-//         compileTrying(child, scope);
-//
-//         objectInfo = ObjectInfo(okObject);
-//         break;
-//      case lxAlt:
-//         compileAltOperation(child, scope);
-//
-//         objectInfo = ObjectInfo(okObject);
-//         break;
+      case lxTrying:
+         compileTrying(writer, current, scope);
+
+         objectInfo = ObjectInfo(okObject);
+         break;
+      case lxAlt:
+         compileAltOperation(writer, current, scope);
+
+         objectInfo = ObjectInfo(okObject);
+         break;
 //      case lxSwitching:
 //         compileSwitch(child, scope);
 //
@@ -7724,6 +7728,9 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          writer.insert(lxExpression);
          writer.closeNode();
          break;
+      case lxCatchOperation:
+      case lxAltOperation:
+         writer.newBookmark();
       case lxMessage:
          if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
             writer.newNode(lxClosureMessage);
@@ -7735,17 +7742,16 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
             writer.insert(lxExpression);
             writer.closeNode();
          }
-         break;
-         //if (symbol == nsCatchMessageOperation) {
-         //   _writer.removeBookmark();            
-         //   _writer.insert(lxTrying);
-         //   _writer.closeNode();
-         //}
-         //else if (symbol == nsAltMessageOperation) {
-         //   _writer.removeBookmark();
-         //   _writer.insert(lxAlt);
-         //   _writer.closeNode();
-         //}
+         if (current == lxCatchOperation) {
+            writer.removeBookmark();            
+            writer.insert(lxTrying);
+            writer.closeNode();
+         }
+         else if (current == lxAltOperation) {
+            writer.removeBookmark();
+            writer.insert(lxAlt);
+            writer.closeNode();
+         }
          break;
       case lxExtension:
          writer.newNode(current.type, current.argument);

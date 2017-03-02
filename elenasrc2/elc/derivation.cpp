@@ -473,6 +473,8 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsExtension:
       case nsLoop:
       case nsDefaultGeneric:
+      case nsCatchMessageOperation:
+      case nsAltMessageOperation:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          break;
       default:

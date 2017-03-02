@@ -47,24 +47,24 @@ extension objectOp
     bool is &nil
         = nil == self.
         
-//    /// Returns true if the object is literal or character
-//    is &literal
-//        = self cast:%eval &to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. ! : anObject = false. }.
-//        
-//    /// Returns true if the object is integer numereric
-//    is &integer
-//        = self cast:%eval &to:{ int : x = true. long : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
-//        
-//    /// Returns true if the object is numereric
-//    is &numeric
-//        = self cast:%eval &to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
-//        
-//    bool is &empty
-//        = self length == 0.
-//        
-//    bool is &nonempty
-//        = self length != 0.
-//        
+    /// Returns true if the object is literal or character
+    is &literal
+        = self cast:%eval &to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. ! anObject = false. }.
+        
+    /// Returns true if the object is integer numereric
+    is &integer
+        = self cast:%eval &to:{ int : x = true. long : x = true. short : x = true. byte : x = true. ! anObject = false. }.
+        
+    /// Returns true if the object is numereric
+    is &numeric
+        = self cast:%eval &to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. ! anObject = false. }.
+        
+    bool is &empty
+        = self length == 0.
+        
+    bool is &nonempty
+        = self length != 0.
+        
 //    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
 //    bool safeEqual : anObject
 //        = anObject cast:%eval &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject \ back:false. } &with:self bool.

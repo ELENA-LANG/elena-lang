@@ -47,11 +47,14 @@ enum LexicalType
    lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
    lxExtension       = 0x0002B,
+   lxAltOperation    = 0x0002C,
+   lxCatchOperation  = 0x0002F,
    lxLoop            = 0x00030,
 //   lxInlineExpression= 0x00032,
    lxMessageReference= 0x00033,
 //   lxLock            = 0x00037,
 //   lxExtern          = 0x00039,
+
    lxDefaultGeneric  = 0x00046,
    lxSubject         = 0x00047,
 //   lxImplicitConstructor = 0x0004B,
@@ -112,8 +115,8 @@ enum LexicalType
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
    lxResending       = 0x0C00A,   // resending a message, optional arg - message
-//   lxTrying          = 0x0C00C,   // try-catch expression
-//   lxAlt             = 0x0C00D,   // alt-catch expression
+   lxTrying          = 0x0C00C,   // try-catch expression
+   lxAlt             = 0x0C00D,   // alt-catch expression
 //   lxLocking         = 0x0C00E,   // branch expression
    lxBranching       = 0x0C00F,   // branch expression
 //   lxSwitching       = 0x0C010,
@@ -124,7 +127,7 @@ enum LexicalType
    lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
    lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
-//   lxAltExpression   = 0x0C018,
+   lxAltExpression   = 0x0C018,
    lxIfNot           = 0x0C019,   // optional arg - reference
    lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIf              = 0x0C01F,   // optional arg - reference

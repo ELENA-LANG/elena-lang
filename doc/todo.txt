@@ -125,6 +125,7 @@ In development:
                  * should be possible to declare field / local : varof(int). - the class should be reused, if it is already
                    declared in this module
                  * test class and className extensions
+                 * test is &numeric, is &literal, ...
 
               xdev - generic development
                  * support property template
