@@ -1052,7 +1052,7 @@ sealed dispatchable(literal) dynamic string LiteralValue :: BaseValue
 /// An empty wide literal value
 const wide emptyWideLiteralValue = ""w.
 
-//// --- WideLiteralValue ---
+// --- WideLiteralValue ---
 
 /// A UTF-18 literal value
 sealed dispatchable(wide) dynamic string WideLiteralValue :: BaseValue

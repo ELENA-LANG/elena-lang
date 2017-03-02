@@ -4,6 +4,7 @@ In development:
 
               xdev - usability
                  * ecv : display class size
+                 * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
 
               xdev - generic development
                  * implementing ELENA 3.0     

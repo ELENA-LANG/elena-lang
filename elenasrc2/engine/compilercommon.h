@@ -67,6 +67,7 @@
 #define V_CLASS          (ref_t)-16386
 #define V_CONVERSION     (ref_t)-16387
 #define V_EMBEDDABLETMPL (ref_t)-16388
+#define V_SYMBOLEXPR     (ref_t)-16389
 
 namespace _ELENA_
 {

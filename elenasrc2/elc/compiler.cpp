@@ -223,6 +223,15 @@ inline void copyOperator(SyntaxWriter& writer, SNode ident)
    writer.closeNode();
 }
 
+inline int readSizeValue(SNode node, int radix)
+{
+   ident_t val = node.identifier();
+   if (emptystr(val))
+      val = node.findChild(lxTerminal).identifier();
+
+   return val.toLong(radix);
+}
+
 SNode findTerminalInfo(SNode node)
 {
    if (node.existChild(lxRow))
@@ -1331,8 +1340,14 @@ ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
 // --- Compiler::TemplateScope ---
 
 ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue)
-{
+{   
+   if (attribute == lxAttribute && attribute.argument != 0) {
+      // HOTFIX : if the attribute was already defined - return it immediately
+      return attribute.argument;
+   }      
+
    SNode terminal = attribute.firstChild(lxTerminalMask);
+
    if (terminal == lxInteger) {
       // HOTFIX : read template attribute
       int value = terminal.findChild(lxTerminal).identifier().toInt();
@@ -1342,8 +1357,8 @@ ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue)
          return INVALID_REF;
       }
    }
-      
-   int index = mapAttribute(attribute.findChild(lxIdentifier));
+
+   int index = mapAttribute(terminal);
    if (index) {
       attrValue = index;
 
@@ -2556,8 +2571,10 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
    switch (member.type)
    {
       case lxNestedClass:
-      case lxCode:
          result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
+         break;
+      case lxCode:
+         result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
          break;
 //      case lxInlineExpression:
 //         result = compileClosure(member, scope, HINT_CLOSURE);
@@ -3677,7 +3694,8 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    InlineClassScope scope(&ownerScope, nestedRef);
 
    // if it is a lazy expression / multi-statement closure without parameters
-   if (node == lxCode) {
+   SNode argNode = node.firstChild();
+   if (argNode == lxCode) {
       compileAction(node, scope, SNode(), mode);
    }
 //   // if it is a closure / lambda function with a parameter
@@ -7502,9 +7520,12 @@ void Compiler :: compileSyntaxTree(_ProjectManager& project, ident_t file, Synta
 inline bool setIdentifier(SNode current)
 {
    SNode lastAttribute;
-   while (current == lxAttribute) {
+   while (current == lxAttribute ) {
       lastAttribute = current;
       current = current.nextNode();
+      // HOTFIX : skip attribute value
+      if (current == lxAttributeValue)
+         current = current.nextNode();
    }
 
    if (lastAttribute == lxAttribute) {
@@ -7572,9 +7593,7 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
             break;
             //}
          case lxObject:
-            writer.newBookmark();
-            generateObjectTree(writer, current, scope);
-            writer.removeBookmark();
+            generateExpressionTree(writer, current, scope, false);
    //            if (operationMode && current.existChild(lxTerminal)) {
    //               //if ((Symbol)node.type == nsNewOperator) {
    //               //   //HOTFIX : mark new operator
@@ -7605,15 +7624,20 @@ void Compiler :: generateVariableTree(SyntaxWriter& writer, SNode node, Template
 {
    // check if the first token is attribute
    SNode current = node.firstChild();
-   SNode attr = current.findChild(lxIdentifier, lxPrivate);
+   SNode attr = node.findChild(lxIdentifier, lxPrivate);
    int dummy = 0;
    ref_t attrRef = (attr != lxPrivate) ? scope.mapAttribute(attr, dummy) : 0;
    if (attrRef != 0) {
+      // HOTFIX : set already recognized attribute value
+      attr.setArgument(attrRef);
+
       while (current != lxAssigning) {
          current = lxAttribute;
-         SNode option = current.findChild(lxExpression);
-         if (option != lxNone) {
+         SNode option = current.nextNode(lxObjectMask);
+         if (option == lxExpression) {
+            // HOTFIX : recognize size attribute
             option = lxAttributeValue;
+            current = current.nextNode();
          }
 
          current = current.nextNode();
@@ -7644,7 +7668,7 @@ void Compiler :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, Temp
 {
    // check if the first token is attribute
    SNode loperand = node.firstChild();
-   SNode attr = loperand.findChild(lxIdentifier);
+   SNode attr = node.findChild(lxIdentifier);
    if (attr != lxNone) {
       IdentifierString attrName(attr.findChild(lxTerminal).identifier());
       attrName.append('#');
@@ -7655,7 +7679,7 @@ void Compiler :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, Temp
          ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
          if (classRef == INVALID_REF) {
             TemplateScope templateScope(&scope, attrRef);
-            templateScope.exprNode = loperand.findChild(lxExpression);
+            templateScope.exprNode = node.findChild(lxExpression);
             templateScope.codeNode = node.findChild(lxCode);
             templateScope.codeMode = true;
             
@@ -7668,6 +7692,26 @@ void Compiler :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, Temp
    }
 
    generateExpressionTree(writer, node, scope);
+}
+
+inline bool isTerminal(LexicalType type)
+{
+   switch (type)
+   {
+      case lxIdentifier:
+      case lxPrivate:
+      case lxInteger:
+      case lxHexInteger:
+      case lxLong:
+      case lxReal:
+      case lxLiteral:
+      case lxReference:
+      case lxCharacter:
+      case lxWide:
+         return true;
+      default:
+         return false;
+   }
 }
 
 void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, TemplateScope& scope/*, int mode*/)
@@ -7703,45 +7747,37 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
       case lxExpression:
          generateExpressionTree(writer, current, scope, false);
          break;
+      case lxMessageReference:
+         writer.newNode(lxExpression);
+         writer.newNode(current.type);
+         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+         writer.closeNode();
+         writer.closeNode();
+         break;
+      case lxObject:
+         generateExpressionTree(writer, current, scope, false);
+         break;
+      case lxNestedClass:
+         generateScopeMembers(current, scope);
+
+         generateClassTree(writer, current, scope, SNode(), -1);
+         break;
+      case lxCode:
+         generateCodeTree(writer, current, scope);
+
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
       default:
       {
-         SNode terminal = current.findChild(lxMessageReference, lxExpression);
-         if (terminal == lxMessageReference) {
-            writer.newNode(lxExpression);
-            writer.newNode(terminal.type);
-            copyIdentifier(writer, terminal.findChild(lxIdentifier, lxPrivate));
-            writer.closeNode();
-            writer.closeNode();
-         }
-         else if (terminal == lxExpression) {
-            terminal = current.findChild(lxIdentifier);
-            if (terminal == lxIdentifier) {
-               //HOTFIX : recognize new operator
-               copyIdentifier(writer, terminal);
-               writer.appendNode(lxOperator, -1);
-               generateExpressionTree(writer, current.findChild(lxExpression), scope, true);
+         if (isTerminal(current.type)) {
+            if (scope.codeMode && scope.mapIdentifier(current)) {
+               writer.newNode(lxTemplateParam, 1);
+               copyIdentifier(writer, current);
+               writer.closeNode();
             }
-            else generateExpressionTree(writer, current, scope, false);
-         }
-         else {
-            terminal = current.firstChild(lxTerminalMask);
-
-            if (terminal != lxNone) {
-               if (scope.codeMode && scope.mapIdentifier(terminal)) {
-                  writer.newNode(lxTemplateParam, 1);
-                  copyIdentifier(writer, terminal);
-                  writer.closeNode();
-               }
-               else copyIdentifier(writer, terminal);
-            }               
-
-            SNode closureNode = current.findChild(lxNestedClass);
-            if (closureNode == lxNestedClass) {
-               generateScopeMembers(closureNode, scope);
-
-               generateClassTree(writer, closureNode, scope, SNode(), -1);
-            }
-         }
+            else copyIdentifier(writer, current);
+         }               
          break;
       }
    }
@@ -7757,8 +7793,19 @@ void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, Templa
    writer.newBookmark();
    
    SNode current = node.firstChild();
+   bool identifierMode = current.type == lxIdentifier;
    while (current != lxNone) {
-      generateObjectTree(writer, current, scope);
+      if (current == lxExpression && identifierMode) {
+         if (current.nextNode(lxObjectMask) != lxExpression) {
+            writer.appendNode(lxOperator, -1);
+            generateExpressionTree(writer, current, scope, false);
+            writer.insert(lxExpression);
+            writer.closeNode();
+         }
+         // !! array mode
+         else generateExpressionTree(writer, current, scope, false);
+      }
+      else generateObjectTree(writer, current, scope);
 
       current = current.nextNode();
    }
@@ -8014,15 +8061,6 @@ bool Compiler :: generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope
    return true;
 }
 
-inline int readSizeValue(SNode node, int radix)
-{
-   ident_t val = node.identifier();
-   if (emptystr(val))
-      val = node.findChild(lxTerminal).identifier();
-
-   return val.toLong(radix);
-}
-
 void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool embeddableMode)
 {
    SNode current = attributes;
@@ -8050,6 +8088,12 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
          else if (classRef != 0) {
             writer.appendNode(lxTypeAttr, scope.moduleScope->module->resolveSubject(attrRef));
             SNode sizeNode = current.findChild(lxAttributeValue);
+            if (sizeNode == lxNone && current.nextNode() == lxAttributeValue) {
+               // HOTFIX : for local variable size attribute
+               sizeNode = current.nextNode();
+               current = current.nextNode();
+            }
+
             if (sizeNode != lxNone) {
                sizeNode = sizeNode.findChild(lxInteger, lxHexInteger, lxObject);
                if (sizeNode == lxObject)
@@ -8185,7 +8229,12 @@ void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateSco
          if (subAttributes == lxNone)
             subAttributes = current;
       }
-      if (current == lxClassMethod) {
+      else if (current == lxBaseParent) {
+         writer.newNode(lxBaseParent);
+         copyIdentifier(writer, current.firstChild(lxTerminalMask));
+         writer.closeNode();
+      }
+      else if (current == lxClassMethod) {
          generateMethodTree(writer, current, scope, subAttributes, buffer);
          subAttributes = SNode();
       }

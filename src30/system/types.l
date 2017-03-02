@@ -3,6 +3,7 @@
 #template(-16386) class {}
 #template(-16384) constructor {}
 #template(-16387) conversion {}
+#template(-16389) symbol {}
 
 //#template(-8194) static {}
 //#template(-8207) preloaded {}
@@ -65,7 +66,7 @@
 #subject verb       = system'Verb.
 
 #subject subject    = system'Signature.
-//#subject symbol_ref = system'Symbol.
+#subject symbol_ref = system'Symbol.
 
 // === basic dynamic types ===
 #subject bytearray  = system'ByteArray.

@@ -23,6 +23,7 @@ enum LexicalType
    lxObjectMask      = 0x08000,
    lxExprMask        = 0x0C000,
    lxTerminalMask    = 0x10000,
+   lxTerminalObjMask = 0x18000,
 //   lxReferenceMask   = 0x40000,
    lxPrimitiveOpMask = 0x80000,
 
@@ -449,12 +450,12 @@ public:
 
       Node firstChild(LexicalType mask) const
       {
-         Node node = firstChild();
+         Node current = firstChild();
 
-         while (node != lxNone && !test(node.type, mask))
-            node = node.nextNode();
+         while (current != lxNone && !test(current.type, mask))
+            current = current.nextNode();
 
-         return node;
+         return current;
       }
 
       Node findNext(LexicalType mask) const

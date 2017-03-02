@@ -1035,7 +1035,10 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant)
 
       return true;
    }
-//   else if (attrValue == (int)V_PRELOADED) {
+   else if (attrValue == (int)V_SYMBOLEXPR) {
+      return true;
+   }
+   //   else if (attrValue == (int)V_PRELOADED) {
 //      attrValue = lxPreloadedAttr;
 //
 //      return true;
