@@ -23,7 +23,7 @@
 //            &ref:class
 //            &bytearray:aBuffer
 //            &int:255.
-//        
+//         
 //        (aLength == 0)
 //            ? [ ^ "Unknown class". ].
 //        

@@ -1665,8 +1665,8 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
    SNode current = node.firstChild();
    // method parameter debug info
    while (current != lxNone) {
-      if (current == lxMethodParameter) {         
-         ident_t name = current.findChild(lxIdentifier, lxPrivate).identifier();
+      if (current == lxMethodParameter || current == lxIdentifier) {         
+         ident_t name = (current == lxIdentifier) ? current.identifier() : current.findChild(lxIdentifier, lxPrivate).identifier();
          Parameter param = scope.parameters.get(name);
 
 //         if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->paramsReference)) {
@@ -2567,7 +2567,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 {
    ObjectInfo result;
 
-   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, /*lxInlineExpression, */lxExpression);
+   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression);
    switch (member.type)
    {
       case lxNestedClass:
@@ -2576,9 +2576,6 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
       case lxCode:
          result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
          break;
-//      case lxInlineExpression:
-//         result = compileClosure(member, scope, HINT_CLOSURE);
-//         break;
       case lxExpression:
 //         if (isCollection(member)) {
 //            result = compileCollection(objectNode, scope);
@@ -3698,15 +3695,15 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    if (argNode == lxCode) {
       compileAction(node, scope, SNode(), mode);
    }
-//   // if it is a closure / lambda function with a parameter
-//   else if (node == lxInlineExpression) {
-//      SNode codeNode = node.findChild(lxCode);
-//
-//      compileAction(codeNode, scope, node.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxMessage), mode);
-//
-//      // HOTFIX : hide code node because it is no longer required
-//      codeNode = lxIdle;
-//   }
+   else if (node.existChild(lxCode)) {
+      SNode codeNode = node.findChild(lxCode);
+
+      // if it is a closure / lambda function with a parameter
+      compileAction(node, scope, node.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxClosureMessage), mode);
+
+      // HOTFIX : hide code node because it is no longer required
+      codeNode = lxIdle;
+   }
    // if it is a nested class
    else compileNestedVMT(node, scope);
 
@@ -3915,13 +3912,13 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          break;
       default:
          current = node.firstChild(lxObjectMask);
-//         SNode nextChild = child.nextNode(lxObjectMask);
+         SNode nextChild = current.nextNode();
 
          if (current == lxExpression/* && nextChild == lxNone*/) {
             // if it is a nested expression
             objectInfo = compileExpression(writer, current, scope, mode);
          }
-         else if (test(current.type, lxTerminalMask)/* && nextChild == lxNone*/) {
+         else if (test(current.type, lxTerminalMask) && nextChild == lxNone) {
             objectInfo = compileObject(writer, current, scope, mode);
          }
          else objectInfo = compileObject(writer, node, scope, mode);
@@ -4364,14 +4361,14 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
          terminalNode = terminalNode.findChild(lxIdentifier, lxPrivate);
       }
 
-      ident_t terminal = terminalNode.findChild(lxTerminal).identifier();
+      ident_t terminal = terminalNode.identifier();
       int index = 1 + scope.parameters.Count();
       scope.parameters.add(terminal, Parameter(index));
 
       arg = arg.nextNode();
    }
    bool first = true;
-   while (arg == lxMessage) {
+   while (arg == lxMessage || arg == lxClosureMessage) {
       SNode subject = arg.findChild(lxIdentifier, lxPrivate);
 
       if (!first) {
@@ -4385,7 +4382,7 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
       arg = arg.nextNode();
 
       if (arg == lxMethodParameter) {
-         ident_t name = arg.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
+         ident_t name = arg.findChild(lxIdentifier, lxPrivate).identifier();
 
          // !! check duplicates
          if (scope.parameters.exist(name))
@@ -7723,10 +7720,21 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          break;
       case lxOperator:
          copyOperator(writer, current.firstChild());
-      case lxMessage:
-         generateMessageTree(writer, current, scope, current != lxMessage);
+         generateMessageTree(writer, current, scope, true);
          writer.insert(lxExpression);
          writer.closeNode();
+         break;
+      case lxMessage:
+         if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
+            writer.newNode(lxClosureMessage);
+            copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+            writer.closeNode();
+         }
+         else {
+            generateMessageTree(writer, current, scope, false);
+            writer.insert(lxExpression);
+            writer.closeNode();
+         }
          break;
          //if (symbol == nsCatchMessageOperation) {
          //   _writer.removeBookmark();            
@@ -7766,6 +7774,11 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          generateCodeTree(writer, current, scope);
 
          writer.insert(lxExpression);
+         writer.closeNode();
+         break;
+      case lxMethodParameter:
+         writer.newNode(lxMethodParameter);
+         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
          writer.closeNode();
          break;
       default:

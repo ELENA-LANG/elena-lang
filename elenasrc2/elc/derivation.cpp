@@ -453,8 +453,10 @@ void DerivationWriter :: writeNode(Symbol symbol)
          _writer.newNode(lxOperator);
          break;
       case nsMessageOperation:
-      case nsSubjectArg:
          _writer.newNode(lxMessage);
+         break;
+      case nsSubjectArg:
+         _writer.newNode(lxMessage, -1);
          break;
       case nsRetStatement:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
