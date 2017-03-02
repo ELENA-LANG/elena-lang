@@ -272,10 +272,10 @@
 //        <= new &literal:(object className add &literal:" : Method " add &literal:(missingMessage literal) add &literal:" not found").
 }
 
-//// --- MethodNotSupported ---
-//
-//#class(exceptionof:NotSupportedError) NotSupportedException
-//{
+// --- MethodNotSupported ---
+
+/*class(exceptionof:NotSupportedError) */NotSupportedException
+{
 //    #constructor new &literal:message
 //    [
 //        theMessage := message.
@@ -289,8 +289,8 @@
 //    /// Creates the exception
 //    #constructor new :aMessage
 //        <= new &literal:(aMessage literal).
-//}
-//
+}
+
 //// --- AbortException ---
 //
 ///// An abort exception 

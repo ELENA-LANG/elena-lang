@@ -46,112 +46,112 @@ class $characterController =
     ]
 }.
 
-//// --- caseLitrealOp ---
-//
-//#class(extension:literal)caseLiteralOp
-//{
-//    #method upperCase
-//    [
-//        #var(literal)aRetVal := emptyLiteralValue.        
-//        #var(int)anIndex := 0.
-//        #var(char)aCurrent.
-//        #var(char)aConverted.
-//        #var(int)aCurrentLen.
-//        
-//        #var(int)aLength := self length.
-//        
-//        #loop (anIndex < aLength)?
-//        [
-//            self read &int:anIndex &vchar:aCurrent.
-//            aCurrentLen := aCurrent length.
-//            
-//            $characterController toUpperCase &char:aCurrent &vchar:aConverted.
-//            
-//            aRetVal := aRetVal add &char:aConverted.
-//            
-//            anIndex := anIndex + aCurrentLen.
-//        ].
-//            
-//        ^ aRetVal.
-//    ]
-//
-//    #method lowerCase
-//    [
-//        #var(literal)aRetVal := emptyLiteralValue.        
-//        #var(int)anIndex := 0.
-//        #var(char)aCurrent.
-//        #var(char)aConverted.
-//        #var(int)aCurrentLen.
-//        
-//        #var(int)aLength := self length.
-//        
-//        #loop (anIndex < aLength)?
-//        [
-//            self read &int:anIndex &vchar:aCurrent.
-//            aCurrentLen := aCurrent length.
-//            
-//            $characterController toLowerCase &char:aCurrent &vchar:aConverted.
-//            
-//            aRetVal := aRetVal add &char:aConverted.
-//            
-//            anIndex := anIndex + aCurrentLen.
-//        ].
-//            
-//        ^ aRetVal.
-//    ]    
-//}
-//
-//// --- caseLitrealOp ---
-//
-//#class(extension:wide)caseWideOp
-//{
-//    #method upperCase
-//    [
-//        #var(wide)aRetVal := emptyWideLiteralValue.        
-//        #var(int)anIndex := 0.
-//        #var(char)aCurrent.
-//        #var(char)aConverted.
-//        #var(int)aCurrentLen.
-//
-//        #var(int)aLength := self length.
-//                
-//        #loop (anIndex < aLength)?
-//        [
-//            self read &int:anIndex &vchar:aCurrent.
-//            aCurrentLen := aCurrent length.
-//            
-//            $characterController toUpperCase &char:aCurrent &vchar:aConverted.
-//            
-//            aRetVal := aRetVal add &char:aConverted.
-//            
-//            anIndex := anIndex + aCurrentLen.
-//        ].
-//            
-//        ^ aRetVal.
-//    ]
-//
-//    #method lowerCase
-//    [
-//        #var(wide)aRetVal := emptyWideLiteralValue.        
-//        #var(int)anIndex := 0.
-//        #var(char)aCurrent.
-//        #var(char)aConverted.
-//        #var(int)aCurrentLen.
-//        
-//        #var(int)aLength := self length.
-//        
-//        #loop (anIndex < aLength)?
-//        [
-//            self read &int:anIndex &vchar:aCurrent.
-//            aCurrentLen := aCurrent length.
-//            
-//            $characterController toLowerCase &char:aCurrent &vchar:aConverted.
-//            
-//            aRetVal := aRetVal add &char:aConverted.
-//            
-//            anIndex := anIndex + aCurrentLen.
-//        ].
-//            
-//        ^ aRetVal.
-//    ]
-//}
+// --- caseLitrealOp ---
+
+extension(literal) caseLiteralOp
+{
+    upperCase
+    [
+        literal aRetVal := emptyLiteralValue.        
+        int     anIndex := 0.
+        char    aCurrent := #0.
+        char    aConverted := #0.
+        int     aCurrentLen := 0.
+        
+        int     aLength := self length.
+        
+        while (anIndex < aLength)
+        [
+            self read &int:anIndex &vchar:aCurrent.
+            aCurrentLen := aCurrent length.
+            
+            $characterController toUpperCase &char:aCurrent &vchar:aConverted.
+            
+            aRetVal := aRetVal add &char:aConverted.
+            
+            anIndex := anIndex + aCurrentLen.
+        ].
+            
+        ^ aRetVal.
+    ]
+
+    lowerCase
+    [
+        literal aRetVal := emptyLiteralValue.        
+        int     anIndex := 0.
+        char    aCurrent := #0.
+        char    aConverted := #0.
+        int     aCurrentLen := 0.
+        
+        int     aLength := self length.
+        
+        while (anIndex < aLength)
+        [
+            self read &int:anIndex &vchar:aCurrent.
+            aCurrentLen := aCurrent length.
+            
+            $characterController toLowerCase &char:aCurrent &vchar:aConverted.
+            
+            aRetVal := aRetVal add &char:aConverted.
+            
+            anIndex := anIndex + aCurrentLen.
+        ].
+            
+        ^ aRetVal.
+    ]    
+}
+
+// --- caseLitrealOp ---
+
+extension(wide) caseWideOp
+{
+    upperCase
+    [
+        wide aRetVal := emptyWideLiteralValue.        
+        int  anIndex := 0.
+        char aCurrent := #0.
+        char aConverted := #0.
+        int  aCurrentLen := 0.
+
+        int  aLength := self length.
+                
+        while (anIndex < aLength)
+        [
+            self read &int:anIndex &vchar:aCurrent.
+            aCurrentLen := aCurrent length.
+            
+            $characterController toUpperCase &char:aCurrent &vchar:aConverted.
+            
+            aRetVal := aRetVal add &char:aConverted.
+            
+            anIndex := anIndex + aCurrentLen.
+        ].
+            
+        ^ aRetVal.
+    ]
+
+    lowerCase
+    [
+        wide aRetVal := emptyWideLiteralValue.        
+        int  anIndex := 0.
+        char aCurrent := #0.
+        char aConverted := #0.
+        int  aCurrentLen := 0.
+        
+        int  aLength := self length.
+        
+        while (anIndex < aLength)
+        [
+            self read &int:anIndex &vchar:aCurrent.
+            aCurrentLen := aCurrent length.
+            
+            $characterController toLowerCase &char:aCurrent &vchar:aConverted.
+            
+            aRetVal := aRetVal add &char:aConverted.
+            
+            anIndex := anIndex + aCurrentLen.
+        ].
+            
+        ^ aRetVal.
+    ]
+}

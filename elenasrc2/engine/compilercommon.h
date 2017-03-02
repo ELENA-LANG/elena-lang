@@ -38,8 +38,8 @@
 #define V_INT16ARRAY    (ref_t)-38
 #define V_INT8ARRAY     (ref_t)-39
 
-#define V_IFBRANCH       (ref_t)-4097
-#define V_IFNOTBRANCH    (ref_t)-4098
+#define V_IFBRANCH      (ref_t)-4097
+#define V_IFNOTBRANCH   (ref_t)-4098
 //#define V_WARNING1    (ref_t)-4099
 //#define V_WARNING2    (ref_t)-4100
 //#define V_WARNING3    (ref_t)-4101
@@ -52,12 +52,12 @@
 #define V_STRUCT         (ref_t)-8197
 #define V_ENUMLIST       (ref_t)-8198
 #define V_DYNAMIC        (ref_t)-8199
-#define V_STRING      (ref_t)-8200
+#define V_STRING         (ref_t)-8200
 #define V_CONST          (ref_t)-8201
 #define V_GENERIC        (ref_t)-8202
-//#define V_EXTENSION    (ref_t)-8203
+#define V_EXTENSION      (ref_t)-8203
 //#define V_NOSTRUCT     (ref_t)-8204
-#define V_ACTION       (ref_t)-8205
+#define V_ACTION         (ref_t)-8205
 //#define V_GROUP        (ref_t)-8206
 //#define V_PRELOADED    (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
@@ -226,8 +226,8 @@ public:
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
 
-//   // class is considered to be a role if it cannot be initiated
-//   virtual bool isRole(ClassInfo& info) = 0;          
+   // class is considered to be a role if it cannot be initiated
+   virtual bool isRole(ClassInfo& info) = 0;          
 
    virtual bool isPrimitiveRef(ref_t reference) = 0;
 

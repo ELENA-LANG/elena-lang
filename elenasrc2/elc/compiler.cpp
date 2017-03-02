@@ -856,35 +856,35 @@ void Compiler::ModuleScope :: saveSubject(ref_t attrRef, ref_t classReference, b
    subjectHints.add(attrRef, classReference, true);
 }
 
-////bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
-////{
-////   if (type == -1)
-////      type = 0;
-////
-////   ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
-////
-////   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
-////
-////   metaWriter.writeDWord(type);
-////   metaWriter.writeDWord(message);
-////   metaWriter.writeDWord(role);
-////
-////   if (!extensionHints.exist(message, type)) {
-////      extensionHints.add(message, type);
-////
-////      SubjectMap* typeExtensions = extensions.get(type);
-////      if (!typeExtensions) {
-////         typeExtensions = new SubjectMap();
-////
-////         extensions.add(type, typeExtensions);
-////      }
-////
-////      typeExtensions->add(message, role);
-////
-////      return true;
-////   }
-////   else return false;
-////}
+bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
+{
+   if (type == -1)
+      type = 0;
+
+   ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
+
+   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+   metaWriter.writeDWord(type);
+   metaWriter.writeDWord(message);
+   metaWriter.writeDWord(role);
+
+   if (!extensionHints.exist(message, type)) {
+      extensionHints.add(message, type);
+
+      SubjectMap* typeExtensions = extensions.get(type);
+      if (!typeExtensions) {
+         typeExtensions = new SubjectMap();
+
+         extensions.add(type, typeExtensions);
+      }
+
+      typeExtensions->add(message, role);
+
+      return true;
+   }
+   else return false;
+}
 
 void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
 {
@@ -994,10 +994,10 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
       return ObjectInfo(okSuper, info.header.parentRef);
    }
    else if (terminal.compare(SELF_VAR)) {
-      /*if (extensionMode != 0 && extensionMode != -1) {
+      if (extensionMode != 0 && extensionMode != -1) {
          return ObjectInfo(okParam, (size_t)-1, 0, extensionMode);
       }
-      else*/ return ObjectInfo(okParam, (size_t)-1);
+      else return ObjectInfo(okParam, (size_t)-1);
    }
    else {
       int offset = info.fields.get(terminal);
@@ -1919,7 +1919,9 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
          }
          else current.set(lxClassFlag, value);
       }
-
+      else if (current == lxTypeAttr) {
+         current.set(lxType, scope.moduleScope->module->mapSubject(current.identifier(), false));
+      }
       current = current.nextNode();
    }
 }
@@ -5435,46 +5437,12 @@ void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNo
 
    SyntaxWriter writer(expressionTree);
 
-   //   if (test(scope.info.header.flags, elExtension)) {
-   //      scope.extensionMode = scope.info.fieldTypes.get(-1).value2;
-   //      if (scope.extensionMode == 0)
-   //         scope.extensionMode = INVALID_REF;
-   //   }
-
    writer.newNode(lxClass, classClassScope.reference);
    compileClassVMT(writer, node, classClassScope, classScope);
    writer.closeNode();
 
    generateClassImplementation(expressionTree.readRoot(), classScope);
 }
-
-//////void Compiler :: declareTemplateMethods(SNode node, ClassScope& scope)
-//////{
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      if (current == lxTemplate && current.existChild(lxClassMethod)) {
-//////
-//////         declareVMT(current.firstChild(), templateScope);
-//////      }
-//////      current = current.nextNode();
-//////   }
-//////}
-////
-////inline int accumulate(SNode node, LexicalType type)
-////{
-////   int value = 0;
-////
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == type) {
-////         value |= current.argument;
-////      }
-////
-////      current = current.nextNode();
-////   }
-////
-////   return value;
-////}
 
 void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 {
@@ -5502,11 +5470,6 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 //   if (!included && sealedMethod)
 //      scope.raiseError(errClosedMethod, findParent(node, lxClass));
 //   
-////            // save extensions if required ; private method should be ignored
-////            if (test(scope.info.header.flags, elExtension) && !root.existChild(lxPrivate)) {
-////               scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
-////            }
-//
 //   // recognize get&type method
 //   if (getVerb(methodScope.message) == GET_MESSAGE_ID && getParamCount(methodScope.message) == 0) {
 //      ref_t targetRef = scope.moduleScope->subjectHints.get(getSignature(methodScope.message));
@@ -5602,9 +5565,15 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
       if (current == lxClassFlag) {
          scope.info.header.flags |= current.argument;
       }
-//      else if (current == lxType) {
-//         scope.compileClassAttribute(current);
-//      }
+      else if (current == lxType) {
+         if (test(scope.info.header.flags, elExtension)) {
+            scope.extensionMode = current.argument;
+
+            scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(0, scope.extensionMode));
+
+         }
+         else scope.raiseError(errInvalidHint, current);
+      }
 
       current = current.nextNode();
    }
@@ -5839,10 +5808,10 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       if (!included && sealedMethod)
          scope.raiseError(errClosedMethod, findParent(current, lxClass));
 
-      //            // save extensions if required ; private method should be ignored
-      //            if (test(scope.info.header.flags, elExtension) && !root.existChild(lxPrivate)) {
-      //               scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
-      //            }
+      // save extensions if required ; private method should be ignored
+      if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
+         scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
+      }
    }
 }
 
@@ -5886,6 +5855,12 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    }
 
    generateClassFlags(scope, node);
+
+   if (test(scope.info.header.flags, elExtension)) {
+      scope.extensionMode = scope.info.fieldTypes.get(-1).value2;
+      if (scope.extensionMode == 0)
+         scope.extensionMode = INVALID_REF;
+   }
 
    // generate fields
    generateClassFields(node, scope, countFields(node) == 1);
@@ -6138,18 +6113,18 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
    generateClassDeclaration(node, scope, false);
 
-//   // if it cannot be initiated
-//   if (_logic->isRole(scope.info)) {
-//      // class is its own class class
-//      scope.info.header.classRef = scope.reference;
-//   }
-//   else {
+   // if it cannot be initiated
+   if (_logic->isRole(scope.info)) {
+      // class is its own class class
+      scope.info.header.classRef = scope.reference;
+   }
+   else {
       // define class class name
       IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
       classClassName.append(CLASSCLASS_POSTFIX);
 
       scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
-//   }
+   }
 
    // if it is a super class validate it
    if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
@@ -6197,11 +6172,11 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
 
    SyntaxWriter writer(expressionTree);
 
-   //   if (test(scope.info.header.flags, elExtension)) {
-//      scope.extensionMode = scope.info.fieldTypes.get(-1).value2;
-//      if (scope.extensionMode == 0)
-//         scope.extensionMode = INVALID_REF;
-//   }
+   if (test(scope.info.header.flags, elExtension)) {
+      scope.extensionMode = scope.info.fieldTypes.get(-1).value2;
+      if (scope.extensionMode == 0)
+         scope.extensionMode = INVALID_REF;
+   }
 
    writer.newNode(lxClass, node.argument);
    compileVMT(writer, node, scope);
@@ -7993,6 +7968,14 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
    while (current != lxNone) {
       if (current == lxAttribute) {
          writer.appendNode(current.type, current.argument);
+      }
+      else if (current == lxTemplateType) {
+         ref_t subjRef = scope.subjects.get(current.argument);
+         ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
+         writer.newNode(lxTypeAttr, subjName);
+
+         SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+         writer.closeNode();
       }
       else if (current == lxClassMethod) {
          copyMethodTree(writer, current, scope);

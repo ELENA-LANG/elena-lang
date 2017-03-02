@@ -477,10 +477,10 @@ bool CompilerLogic :: isEmbeddable(ClassInfo& info)
    return test(info.header.flags, elStructureRole | elEmbeddable) && !test(info.header.flags, elDynamicRole);
 }
 
-//bool CompilerLogic :: isRole(ClassInfo& info)
-//{
-//   return test(info.header.flags, elRole);
-//}
+bool CompilerLogic :: isRole(ClassInfo& info)
+{
+   return test(info.header.flags, elRole);
+}
 
 bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
 {
@@ -920,9 +920,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_CONST:
          attrValue = elReadOnlyRole;
          return true;
-//      case V_EXTENSION:
-//         attrValue = elExtension;
-//         return true;
+      case V_EXTENSION:
+         attrValue = elExtension;
+         return true;
 //      case V_NOSTRUCT:
 //         attrValue = elNonStructureRole;
 //         return true;
