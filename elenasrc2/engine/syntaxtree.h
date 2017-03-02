@@ -52,7 +52,7 @@ enum LexicalType
    lxMessageReference= 0x00033,
 //   lxLock            = 0x00037,
 //   lxExtern          = 0x00039,
-//   lxDefaultGeneric  = 0x00046,
+   lxDefaultGeneric  = 0x00046,
    lxSubject         = 0x00047,
 //   lxImplicitConstructor = 0x0004B,
    lxScope           = 0x0004D,

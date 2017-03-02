@@ -1,29 +1,29 @@
 /// Attributes
-#template(-16385) var {}
-#template(-16386) class {}
-#template(-16384) constructor {}
-#template(-16387) conversion {}
-#template(-16389) symbol {}
+#template(-16385)        var {}
+#template(-16386)        class {}
+#template(-16384)        constructor {}
+#template(-16387)        conversion {}
+#template(-16389)        symbol {}
 
 //#template(-8194) static {}
 //#template(-8207) preloaded {}
-#template(-8202) generic {}
-#template(-8192) stacksafe {}
-#template(-8205) action {}
+#template(-8202,-8195)   generic {}
+#template(-8192)         stacksafe {}
+#template(-8205)         action {}
 //#template(-4099) w1 {}
 //#template(-4100) w2 {}
 //#template(-4101) w3 {}
-#template(-8195) sealed  {}
-#template(-8199) dynamic {}
-#template(-8196) limited {}
+#template(-8195)         sealed  {}
+#template(-8199)         dynamic {}
+#template(-8196)         limited {}
 //#template(-8206) group   {}
-#template(-8201) const   {}
-#template(-8197) struct  {}
+#template(-8201)         const   {}
+#template(-8197)         struct  {}
 ////#template(-8204) nonstructural {}
-#template(-8198) listable {}
-#template(-8200) string {}
-#template(-8193) embeddable {}
-#template(-8203) extension {}
+#template(-8198)         listable {}
+#template(-8200)         string {}
+#template(-8193)         embeddable {}
+#template(-8203)         extension {}
 #template(-8203,subject) extension(subject) {}
 
 #template(-4097)  __ifoperator {}

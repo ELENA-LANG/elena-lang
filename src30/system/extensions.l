@@ -16,11 +16,11 @@ extension objectOp
 
     literal className
     [
-        var class := self::objectOp class.
+        var c := self::objectOp class.
         
         byte(256) aBuffer := 0.
         int       aLength := system'external LoadClassName 
-                                &ref:class
+                                &ref:c
                                 &bytearray:aBuffer
                                 &int:255.
          
@@ -43,9 +43,9 @@ extension objectOp
     evalSelf:aFunction
         = aFunction eval:self.
 
-//    /// Returns true if the object is nil
-//    bool is &nil
-//        = nil == self.
+    /// Returns true if the object is nil
+    bool is &nil
+        = nil == self.
         
 //    /// Returns true if the object is literal or character
 //    is &literal

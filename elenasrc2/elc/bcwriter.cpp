@@ -3824,15 +3824,14 @@ void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, 
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxExtInteranlRef) {
-         // skip for symbol reference
-         current = current.nextNode();
       }
-      else {
-         if (test(current.type, lxObjectMask)) {
-            if (!isSimpleObject(current, true)) {
+      else if (current == lxIntExtArgument || current == lxExtArgument) {
+         SNode object = current.firstChild(lxObject);
+         if (test(object.type, lxObjectMask)) {
+            if (!isSimpleObject(object, true)) {
                ExternalScope::ParamInfo param;
 
-               generateObjectExpression(tape, current);
+               generateObjectExpression(tape, object);
                pushObject(tape, lxResult);
                param.offset = ++externalScope.frameSize;
 
@@ -3844,7 +3843,7 @@ void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, 
    }
 }
 
-int ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope)
+int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope)
 {
    int paramCount = 0;
 
@@ -3852,40 +3851,38 @@ int ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node 
    Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
    SNode current = node.lastChild();
    while (current != lxNone) {
-      SNode object = current;
-      if (test(object.type, lxObjectMask)) {
-         current = current.prevNode();
+      if (current == lxExtInteranlRef) {
+         // HOTFIX : ignore call operation
+         SNode ref = current.findChild(lxReference);
+         loadInternalReference(tape, ref.argument);
+         pushObject(tape, lxResult);
 
-         if (current == lxExtInteranlRef) {
-            // HOTFIX : ignore call operation
-            SNode ref = object.findChild(lxReference);
-            loadInternalReference(tape, ref.argument);
-            pushObject(tape, lxResult);
+         paramCount++;
+      }
+      else if (current == lxIntExtArgument || current == lxExtArgument) {
+         SNode object = current.firstChild(lxObject);
+         SNode value;
+         if (object == lxConstantInt)
+            value = object;
+
+         if (!isSimpleObject(object, true)) {
+            loadObject(tape, lxBlockLocal, (*out_it).offset);
+
+            out_it++;
          }
-         else {
-            SNode value;
-            if (isSingleStatement(object))
-               value = object.findSubNode(lxConstantInt);
+         else if (current != lxIntExtArgument || value == lxNone) {
+            generateObjectExpression(tape, object);
+         }
 
-            if (!isSimpleObject(object, true)) {
-               loadObject(tape, lxBlockLocal, (*out_it).offset);
-
-               out_it++;
+         if (current == lxIntExtArgument) {
+            // optimization : use the numeric constant directly
+            if (value == lxConstantInt) {
+               declareVariable(tape, value.findChild(lxIntValue).argument);
             }
-            else if (current != lxIntExtArgument || value == lxNone) {
-               generateObjectExpression(tape, object);
-            }
-
-            if (current == lxIntExtArgument) {
-               // optimization : use the numeric constant directly
-               if (value == lxConstantInt) {
-                  declareVariable(tape, value.findChild(lxIntValue).argument);
-               }
-               else pushObject(tape, lxResultField);
-            }
-            else if (current == lxExtArgument) {
-               pushObject(tape, lxResult);
-            }
+            else pushObject(tape, lxResultField);
+         }
+         else if (current == lxExtArgument) {
+            pushObject(tape, lxResult);
          }
          paramCount++;
       }
@@ -3898,7 +3895,7 @@ int ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node 
 
 void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
 {
-   SNode bpNode = node.findChild(lxMessage).findChild(lxBreakpoint);
+   SNode bpNode = node.findChild(lxBreakpoint);
    if (bpNode != lxNone) {
       translateBreakpoint(tape, bpNode);
 

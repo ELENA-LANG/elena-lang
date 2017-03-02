@@ -1668,38 +1668,39 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
       if (current == lxMethodParameter || current == lxIdentifier) {         
          ident_t name = (current == lxIdentifier) ? current.identifier() : current.findChild(lxIdentifier, lxPrivate).identifier();
          Parameter param = scope.parameters.get(name);
-
-//         if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->paramsReference)) {
-//            current = lxParamsVariable;
-////         writer.appendNode(lxTerminal, it.key());
-////         writer.appendNode(lxLevel, -1 - (*it).offset);
-////         writer.closeNode();
-//         }
-         /*else */if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->intReference)) {
-            writer.newNode(lxIntVariable);
-         }
-         else if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->longReference)) {
-            writer.newNode(lxLongVariable);
-         }
-         else if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->realReference)) {
-            writer.newNode(lxReal64Variable);
-         }
-         else if (scope.stackSafe && param.subj_ref != 0) {
-            ref_t classRef = scope.moduleScope->subjectHints.get(param.subj_ref);
-            if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
-               writer.newNode(lxBinaryVariable);
-               writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+         if (param.offset != -1) {
+            //         if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->paramsReference)) {
+            //            current = lxParamsVariable;
+            ////         writer.appendNode(lxTerminal, it.key());
+            ////         writer.appendNode(lxLevel, -1 - (*it).offset);
+            ////         writer.closeNode();
+            //         }
+            /*else */if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->intReference)) {
+               writer.newNode(lxIntVariable);
+            }
+            else if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->longReference)) {
+               writer.newNode(lxLongVariable);
+            }
+            else if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->realReference)) {
+               writer.newNode(lxReal64Variable);
+            }
+            else if (scope.stackSafe && param.subj_ref != 0) {
+               ref_t classRef = scope.moduleScope->subjectHints.get(param.subj_ref);
+               if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
+                  writer.newNode(lxBinaryVariable);
+                  writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+               }
+               else writer.newNode(lxVariable);
             }
             else writer.newNode(lxVariable);
+
+            writer.appendNode(lxLevel, -1 - param.offset);
+            writer.newNode(lxIdentifier);
+            writer.appendNode(lxTerminal, name);
+            writer.closeNode();
+
+            writer.closeNode();
          }
-         else writer.newNode(lxVariable);
-
-         writer.appendNode(lxLevel, -1 - param.offset);
-         writer.newNode(lxIdentifier);
-         writer.appendNode(lxTerminal, name);
-         writer.closeNode();
-
-         writer.closeNode();
       }
       else if (current == lxTemplateParam && current.argument == -1) {
          pseudoVarRequired = true;
@@ -2475,7 +2476,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          writer.newNode(lxConstantSymbol, object.param);
          break;
       case okExternal:
-         break;
+         return;
       case okInternal:
          terminal.setArgument(object.param);
          return;
@@ -3294,13 +3295,13 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
    //   bool externalMode = false;
    if (target.kind == okExternal) {
-      return compileExternalCall(writer, node, scope);
+      retVal = compileExternalCall(writer, node, scope);
    }
    else {
       ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
 
       if (target.kind == okInternal) {
-         return compileInternalCall(writer, node, scope, messageRef, target);
+         retVal = compileInternalCall(writer, node, scope, messageRef, target);
       }
       else {
          ref_t extensionRef = mapExtension(scope, messageRef, target);
@@ -4171,42 +4172,38 @@ void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxMessage) {
-         ref_t subject = current.argument;
-         if (subject != 0) {
-            ref_t classReference = moduleScope.subjectHints.get(subject);
-            if (classReference) {
-               ClassInfo classInfo;
-               _logic->defineClassInfo(moduleScope, classInfo, classReference);
+      if (test(current.type, lxObjectMask)) {
+         SNode target = current.findChild(lxTarget);
 
-               ref_t primitiveRef = _logic->retrievePrimitiveReference(moduleScope, classInfo);
-               switch (primitiveRef)
-               {
-                  case V_INT32:
-                  case V_SIGNATURE:
-                  case V_MESSAGE:
-                  case V_VERB:
-                     current.set(_logic->isVariable(classInfo) ? lxExtArgument : lxIntExtArgument, 0);
-                     break;
-                  case V_SYMBOL:
-                     current.set(lxExtInteranlRef, 0);
-                     break;
-                  default:
-                     if (test(classInfo.header.flags, elStructureRole)) {
-                        current.set(lxExtArgument, 0);
+         ref_t classReference = target.argument;
+         if (classReference) {
+            ClassInfo classInfo;
+            _logic->defineClassInfo(moduleScope, classInfo, classReference);
 
-                        subject = 0;
-                     }
-                     else if (test(classInfo.header.flags, elWrapper)) {
-                        //HOTFIX : allow to pass a normal object
-                        current.set(lxExtArgument, 0);
-                     }
-                     else moduleScope.raiseError(errInvalidOperation, current);
-                     break;
-               }
+            ref_t primitiveRef = _logic->retrievePrimitiveReference(moduleScope, classInfo);
+            switch (primitiveRef) {
+               case V_INT32:
+               case V_SIGNATURE:
+               case V_MESSAGE:
+               case V_VERB:
+                  current.set(_logic->isVariable(classInfo) ? lxExtArgument : lxIntExtArgument, 0);
+                  break;
+               case V_SYMBOL:
+                  current.set(lxExtInteranlRef, 0);
+                  break;
+               default:
+                  if (test(classInfo.header.flags, elStructureRole)) {
+                     current.set(lxExtArgument, 0);
+                  }
+                  else if (test(classInfo.header.flags, elWrapper)) {
+                     //HOTFIX : allow to pass a normal object
+                     current.set(lxExtArgument, 0);
+                  }
+                  else moduleScope.raiseError(errInvalidOperation, current);
+                  break;
             }
-            else moduleScope.raiseError(errInvalidOperation, current);
          }
+         else moduleScope.raiseError(errInvalidOperation, current);
       }
 
       current = current.nextNode();
@@ -4573,8 +4570,9 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
          writer.newNode(lxDispatching);
          writer.newNode(lxResending);
          writer.appendNode(lxMessage, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
-         writer.appendNode(lxTarget, scope.moduleScope->superReference);
+         writer.newNode(lxTarget, scope.moduleScope->superReference);
          writer.appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));
+         writer.closeNode();
          writer.closeNode();
       }
 
@@ -6484,6 +6482,8 @@ ref_t Compiler :: optimizeExtCall(SNode node, ModuleScope& scope, WarningScope& 
 
    optimizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
 
+   test2(node);
+
    compileExternalArguments(node, scope);
 
    return V_INT32;
@@ -7769,6 +7769,9 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          generateScopeMembers(current, scope);
 
          generateClassTree(writer, current, scope, SNode(), -1);
+
+         writer.insert(lxExpression);
+         writer.closeNode();
          break;
       case lxCode:
          generateCodeTree(writer, current, scope);
@@ -8139,7 +8142,12 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
    if (templateMode)
       writer.appendNode(lxTemplate, scope.templateRef);
 
-   generateAttributes(bufferWriter, node, scope, attributes, true);
+   if (node == lxDefaultGeneric) {
+      writer.appendNode(lxIdentifier, EVAL_MESSAGE);
+      writer.appendNode(lxAttribute, V_SEALED);
+      writer.appendNode(lxAttribute, V_GENERIC);
+   }
+   else generateAttributes(bufferWriter, node, scope, attributes, true);
 
    // copy attributes
    SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxTemplateType);
@@ -8250,6 +8258,9 @@ void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateSco
       else if (current == lxClassMethod) {
          generateMethodTree(writer, current, scope, subAttributes, buffer);
          subAttributes = SNode();
+      }
+      else if (current == lxDefaultGeneric) {
+         generateMethodTree(writer, current, scope, subAttributes, buffer);
       }
       else if (current == lxClassField) {
          generateFieldTree(writer, current, scope, subAttributes, buffer);
