@@ -2,99 +2,99 @@
 
 // --- mathOp ---
 
-#symbol mathOpDispatcher =
+class mathOpDispatcher =
 {
-    #method eval &byte:aValue = byteOp.
+    eval &byte:aValue = byteOp.
     
-    #method eval &short:aValue = shortOp.
+    eval &short:aValue = shortOp.
     
-    #method eval &int:aValue = intOp.
+    eval &int:aValue = intOp.
     
-    #method eval &long:aValue = longOp.
+    eval &long:aValue = longOp.
     
-    #method eval &real:aValue = realOp.
+    eval &real:aValue = realOp.
 }.
 
-#class(extension)mathOp
+extension mathOp
 {
-    #method absolute
+    absolute
     [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval &to:mathOpDispatcher.
         
         ^ self::dispatcher absolute.
     ]
     
-    #method mod : anOperand
+    mod : anOperand
     [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval &to:mathOpDispatcher.
         
         ^ self::dispatcher mod:anOperand.
     ]
     
-    #method is &odd
+    is &odd
     [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval &to:mathOpDispatcher.
         
         ^ self::dispatcher is &odd.
     ]
         
-    #method is &even
+    is &even
     [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval &to:mathOpDispatcher.
         
         ^ self::dispatcher is &even.
     ]
         
-    #method is &zero
+    is &zero
     [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval &to:mathOpDispatcher.
         
         ^ self::dispatcher is &zero.
     ]
         
-    #method is &positive
+    is &positive
     [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval &to:mathOpDispatcher.
         
         ^ self::dispatcher is &positive.
     ]
         
-    #method is &negative
+    is &negative
     [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval &to:mathOpDispatcher.
         
         ^ self::dispatcher is &negative.
     ]
         
-    #method is &nonnegative
+    is &nonnegative
     [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval &to:mathOpDispatcher.
         
         ^ self::dispatcher is &nonnegative.
     ]
     
-    #method exp
+    exp
         = (self real)::realOp exp.
     
-    #method(real) ln
+    real ln
         = self real ln.
     
-    #method sqrt
+    sqrt
         = self real sqrt.
 
-    #method power &int:aPower
+    power &int:aPower
     [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval &to:mathOpDispatcher.
         
         ^ self::dispatcher power &int:aPower.
     ]
 
-    #method power : aPower
+    power : aPower
         = aPower cast:%eval &to:
         {
             eval:target &int:n
             [
-                #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+                var dispatcher := self cast:%eval &to:mathOpDispatcher.
                 
                 ^ self::dispatcher power : aPower.                
             ]
@@ -104,52 +104,52 @@
         }
         &with:self.
 
-    #method sqr
+    sqr
     [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval &to:mathOpDispatcher.
         
         ^ self::dispatcher sqr.
     ]
 
-    #method rounded
+    rounded
         = self real rounded.
 
-    #method roundedInt
+    roundedInt
         = intConvertor convert &real:(self real rounded).
 
-    #method integer
+    integer
         = (self real)::realOp integer.
 
-    #method integerInt
+    integerInt
         = intConvertor convert &real:((self real)::realOp integer).
 
-    #method frac
+    frac
         = (self real)::realOp frac.
 
-    #method sin
+    sin
         = (self real)::realOp sin.
 
-    #method cos
+    cos
         = (self real)::realOp cos.
 
-    #method tan
+    tan
         = (self real)::realOp tan.
 
-    #method arctan
+    arctan
         = (self real)::realOp arctan.
             
-    #method arcsin
+    arcsin
         = (self real)::realOp arcsin.
             
-    #method arccos
+    arccos
         = (self real)::realOp arccos.
             
-    #method radian
+    radian
         = (self real)::realOp radian.
             
-    #method degree
+    degree
         = (self real)::realOp degree.
             
-    #method reciprocal
+    reciprocal
         = (self real)::realOp reciprocal.
 }

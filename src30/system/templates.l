@@ -26,30 +26,30 @@
    ]
 }
 
-//// --- innprop ---
-//
-//#template innprop : template_subj
-//{
-//   #method(stacksafe,w2) set &template_subj:val
-//   [
-//        $self target &int:val.
-//        
-//        ^ val.
-//   ]
-//}
-// 
-//// --- outlprop ---
-//
-//#template outlprop : template_subj
-//{
-//   #method(stacksafe,long,embeddable,w3) template_subj
-//   [
-//        #var(long)val.
-//        $self target &vlong:val.
-//        
-//        ^ val.
-//   ]
-//}
+// --- innprop ---
+
+#template innprop (template_subj)
+{
+   stacksafe set &template_subj:val
+   [
+        $self target &int:val.
+        
+        ^ val.
+   ]
+}
+ 
+// --- outlprop ---
+
+#template outlprop (template_subj)
+{
+   stacksafe embeddable long template_subj
+   [
+        long val := 0l.
+        $self target &vlong:val.
+        
+        ^ val.
+   ]
+}
 
 // --- outwprop ---
 
