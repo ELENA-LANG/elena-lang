@@ -3942,7 +3942,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
             current = node.firstChild(lxObjectMask);
             SNode nextChild = current.nextNode();
 
-            if (current == lxExpression/* && nextChild == lxNone*/) {
+            if ((current == lxExpression || current == lxAlt || current == lxTrying)/* && nextChild == lxNone*/) {
                // if it is a nested expression
                objectInfo = compileExpression(writer, current, scope, mode);
             }

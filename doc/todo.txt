@@ -126,6 +126,14 @@ In development:
                    declared in this module
                  * test class and className extensions
                  * test is &numeric, is &literal, ...
+                 * external function : duplicate assigning
+                 * typified extension : self should be typified
+                 * embeddable eval, get, getAt, getAt[2]
+                 * direct constant assigning : real r := 0.
+                 * warn on boxing
+                 * warn on typifying
+                 * warn on not found method
+                 * suppresw warnings in the code
 
               xdev - generic development
                  * support property template
