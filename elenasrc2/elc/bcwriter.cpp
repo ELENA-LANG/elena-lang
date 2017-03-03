@@ -4829,55 +4829,55 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
             current.findChild(lxIdentifier, lxPrivate).identifier(),
             current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
          break;
-         //         case lxLongVariable:
-         //            declareLocalLongInfo(tape,
-         //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-         //               current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-         //            break;
-         //         case lxReal64Variable:
-         //            declareLocalRealInfo(tape,
-         //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-         //               current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-         //            break;
-         //         case lxMessageVariable:
-         //            declareMessageInfo(tape, current.identifier());
-         //            break;
-         //         //case lxParamsVariable:
-         //         //   declareLocalParamsInfo(tape,
-         //         //      current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-         //         //      current.findChild(lxLevel).argument);
-         //         //   break;
-         //         case lxBytesVariable:
-         //         {
-         //            int level = current.findChild(lxLevel).argument;
-         //
-         //            generateBinary(tape, current, level);
-         //            declareLocalByteArrayInfo(tape,
-         //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-         //               level, false);
-         //            break;
-         //         }
-         //         case lxShortsVariable:
-         //         {
-         //            int level = current.findChild(lxLevel).argument;
-         //
-         //            generateBinary(tape, current, level);
-         //            declareLocalShortArrayInfo(tape,
-         //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-         //               level, false);
-         //            break;
-         //         }
-         //         case lxIntsVariable:
-         //         {
-         //            int level = current.findChild(lxLevel).argument;
-         //
-         //            generateBinary(tape, current, level);
-         //
-         //            declareLocalIntArrayInfo(tape,
-         //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-         //               level, false);
-         //            break;
-         //         }
+      case lxLongVariable:
+         declareLocalLongInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
+            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+         break;
+      case lxReal64Variable:
+         declareLocalRealInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
+            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+         break;
+      case lxMessageVariable:
+         declareMessageInfo(tape, current.identifier());
+         break;
+      //case lxParamsVariable:
+      //   declareLocalParamsInfo(tape,
+      //      current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+      //      current.findChild(lxLevel).argument);
+      //   break;
+      case lxBytesVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         declareLocalByteArrayInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
+            level, false);
+         break;
+      }
+      case lxShortsVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         declareLocalShortArrayInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
+            level, false);
+         break;
+      }
+      case lxIntsVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         
+         declareLocalIntArrayInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
+            level, false);
+         break;
+      }
       case lxBinaryVariable:
       {
          int level = current.findChild(lxLevel).argument;

@@ -221,6 +221,7 @@ enum LexicalType
    lxBoxableAttr     = 0x2002E,
    lxPseudoVarAttr   = 0x2002F,
    lxClosureMessage  = 0x20030,
+   lxExtArgumentType = 0x20031,
 
 //   lxFieldAttrMask   = 0x20100,
 //   lxStaticAttr      = 0x20102,

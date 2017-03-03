@@ -46,12 +46,12 @@ const int FILE_TYPE_CHAR = 2.
 
 class $ConsoleHandleFactory =
 {
-//    handle new &attributes:anAttributes
-//    [ 
-//        handle aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
-//        
-//        ^ aHandle.
-//    ]
+    handle new &attributes:anAttributes
+    [ 
+        handle aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
+        
+        ^ aHandle.
+    ]
     
     newWriter
     [

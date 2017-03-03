@@ -14,14 +14,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 #define HINT_CLOSURE_MASK     0x80008800
@@ -29,7 +29,7 @@ void test2(SNode node)
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
 #define HINT_NOUNBOXING       0x20000000
-//#define HINT_EXTERNALOP       0x10000000
+#define HINT_EXTERNALOP       0x10000000
 #define HINT_NOCONDBOXING     0x08000000
 #define HINT_EXTENSION_MODE   0x04000000
 #define HINT_TRY_MODE         0x02000000
@@ -2264,6 +2264,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
 
    if (!scope.locals.exist(identifier)) {
       LexicalType variableType = lxVariable;
+      int variableArg = 0;
       int size = 0;
       ident_t className = NULL;
 
@@ -2315,7 +2316,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
                   variableType = lxBinaryVariable;
                   // HOTFIX : size should be provide only for dynamic variables
                   if (bytearray)
-                     node.setArgument(size);
+                     variableArg = size;
 
                   if (variable.extraparam != 0) {
                      className = scope.moduleScope->module->resolveReference(variable.extraparam);
@@ -2326,7 +2327,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
       }
       else variable.param = scope.newLocal();
 
-      writer.newNode(variableType, size);
+      writer.newNode(variableType, variableArg);
 
       writer.appendNode(lxLevel, variable.param);
       writer.appendNode(lxIdentifier, identifier);
@@ -3202,6 +3203,11 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
             }
             else target = compileExpression(writer, arg, scope, paramMode);
 
+            // HOTFIX : recognize external operation
+            if (target.kind == okExternal) {
+               paramMode |= HINT_EXTERNALOP;
+            }
+
             // HOTFIX : skip the prime message
             arg = arg.nextNode();
          }
@@ -3268,6 +3274,14 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
             if (subjectRef != 0)
                if (!convertObject(writer, *scope.moduleScope, scope.moduleScope->subjectHints.get(subjectRef), subjectRef, resolveObjectReference(scope, param)))
                   scope.raiseError(errInvalidOperation, arg);
+
+            // HOTFIX : externall operation arguments should be inside expression node
+            if (test(paramMode, HINT_EXTERNALOP)) {
+               writer.appendNode(lxExtArgumentType, subjectRef);
+
+               writer.insert(lxExpression);
+               writer.closeNode();
+            }
 
             writer.removeBookmark();
 
@@ -4194,14 +4208,16 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 //   //   return retVal;
 //}
 
-void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope)
+void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope, WarningScope& warningScope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (test(current.type, lxObjectMask)) {
-         SNode target = current.findChild(lxTarget);
+         optimizeExpressionTree(current, moduleScope, warningScope, HINT_NOBOXING);
 
-         ref_t classReference = target.argument;
+         ref_t argType = current.findChild(lxExtArgumentType).argument;
+
+         ref_t classReference = moduleScope.subjectHints.get(argType);
          if (classReference) {
             ClassInfo classInfo;
             _logic->defineClassInfo(moduleScope, classInfo, classReference);
@@ -6510,11 +6526,7 @@ ref_t Compiler :: optimizeExtCall(SNode node, ModuleScope& scope, WarningScope& 
    //   boxPrimitive(scope, node, -1, warningMask, mode);
    //}
 
-   optimizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
-
-   test2(node);
-
-   compileExternalArguments(node, scope);
+   compileExternalArguments(node, scope, warningScope);
 
    return V_INT32;
 }
@@ -8455,8 +8467,6 @@ void Compiler :: saveTemplate(_Memory* target, SNode node, ModuleScope& scope, S
    generateScope(writer, node, rootScope, attributes);
 
    writer.closeNode();
-
-   test2(tree.readRoot());
 
    SyntaxTree::saveNode(tree.readRoot(), target);
 }

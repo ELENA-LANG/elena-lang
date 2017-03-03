@@ -9,6 +9,10 @@ In development:
               xdev - generic development
                  * migrating examples to ELENA 3.0
 
+                 * int h := system'external'KERNEL32 GetStdHandle &int:0FFFFFFF5h. - no need for temporal variable - the result should
+                   be written directly to the target
+                 * external operation : pass constant / local varialbe directly (without presaving)
+
                  * byte array operation - assigning (see streamreader)
 
                  * primitive array declaration : byte(4) buffer := ??.

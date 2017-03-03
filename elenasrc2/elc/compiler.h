@@ -945,8 +945,6 @@ private:
 ////   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(SNode node, CodeScope& scope);
 
-   void compileExternalArguments(SNode node, ModuleScope& scope/*, ExternalScope& externalScope*/);
-
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
@@ -1035,17 +1033,8 @@ private:
    bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef);
    bool typecastObject(SyntaxWriter& writer, ref_t targetType);
 
-////   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-////   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-////   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
-//////   void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-//
-////   void optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
-//////   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-////   void optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScope& warningScope);
-////   void optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope);
-////   void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
-////   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
+   void compileExternalArguments(SNode node, ModuleScope& scope, WarningScope& warningScope);
+
    ref_t optimizeOp(SNode current, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope);
