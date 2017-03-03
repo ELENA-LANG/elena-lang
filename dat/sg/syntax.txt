@@ -250,6 +250,7 @@ TEMPLATE ->
 	
 IMPORT ->
 	identifier DECLARATION_END
+	| reference DECLARATION_END
 
 MESSAGE ->
 	identifier MESSAGE_BODY

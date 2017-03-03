@@ -28,5 +28,6 @@ win32_pointers.l
 win32_app.l
 collections\list.l
 collections\queues.l
+routines\patterns.l
 text\win32_common.l
 io\win32_console.l
