@@ -5,16 +5,16 @@
 
 // --- Encoder ---
 
-#class(limited)Encoder
+limited class Encoder
 {
-    #method(stacksafe) convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength [] 
+    stacksafe convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength [] 
 
-    #method(stacksafe) convert &int:anIndex &vint:aLength &chararray:aCharArray &bytearray:anOutput &vint:anOutputLength []
+    stacksafe convert &int:anIndex &vint:aLength &chararray:aCharArray &bytearray:anOutput &vint:anOutputLength []
     
-    #method(stacksafe) convert &int:anIndex &vint:aLength &literal:aLiteral &bytearray:anOutput &vint:anOutputLength
+    stacksafe convert &int:anIndex &vint:aLength &literal:aLiteral &bytearray:anOutput &vint:anOutputLength
     [
-        #var(char:64)temp.
-        #var(int)temp_len := 64.
+        char(64)temp := 0.
+        int     temp_len := 64.
         (temp_len > aLength)
             ? [ temp_len := aLength. ]
             ! [ aLength := temp_len. ].
@@ -24,10 +24,10 @@
         $self convert &int:0 &vint:temp_len &chararray:temp &bytearray:anOutput &vint:anOutputLength.
     ]
     
-    #method(stacksafe) convert &int:anIndex &vint:aLength &wide:aLiteral &bytearray:anOutput &vint:anOutputLength
+    stacksafe convert &int:anIndex &vint:aLength &wide:aLiteral &bytearray:anOutput &vint:anOutputLength
     [
-        #var(char:64)temp.
-        #var(int)temp_len := 64.
+        char(64) temp := 0.
+        int      temp_len := 64.
         (temp_len > aLength)
             ? [ temp_len := aLength. ]
             ! [ aLength := temp_len. ].
@@ -37,17 +37,17 @@
         $self convert &int:0 &vint:temp_len &chararray:temp &bytearray:anOutput &vint:anOutputLength.
     ]
     
-    #method(stacksafe) toByteArray &int:anIndex &int:aLength &literal:aLiteral
+    stacksafe toByteArray &int:anIndex &int:aLength &literal:aLiteral
     [
-        #var(int)i := anIndex.
-        #var(bytearray)aRetVal := $nil.
-        #var(int)remaining := aLength.
+        int       i := anIndex.
+        bytearray aRetVal := $nil.
+        int       remaining := aLength.
         
-        #loop (i < aLength)?
+        while (i < aLength)
         [
-            #var(byte:64)tmp.
-            #var(int)tmp_len := 64.
-            #var(int)len := remaining.
+            byte(64) tmp := 0.
+            int      tmp_len := 64.
+            int      len := remaining.
             (len > tmp_len)
                 ? [ len := tmp_len. ].
              
@@ -64,17 +64,17 @@
         ^ aRetVal.
     ]
     
-    #method(stacksafe) toByteArray &int:anIndex &int:aLength &wide:aLiteral
+    stacksafe toByteArray &int:anIndex &int:aLength &wide:aLiteral
     [
-        #var(int)i := anIndex.
-        #var(bytearray)aRetVal := $nil.
-        #var(int)remaining := aLength.
+        int       i := anIndex.
+        bytearray aRetVal := $nil.
+        int       remaining := aLength.
         
-        #loop (i < aLength)?
+        while (i < aLength)
         [
-            #var(byte:64)tmp.
-            #var(int)tmp_len := 64.
-            #var(int)len := remaining.
+            byte(64) tmp := 0.
+            int      tmp_len := 64.
+            int      len := remaining.
             (len > tmp_len)
                 ? [ len := tmp_len. ].
              
@@ -91,17 +91,17 @@
         ^ aRetVal.
     ]
     
-    #method(stacksafe) toLiteral &int:anIndex &int:aLength &bytearray:anArray
+    stacksafe toLiteral &int:anIndex &int:aLength &bytearray:anArray
     [
-        #var(int)i := anIndex.
-        #var(literal)aRetVal := $nil.
-        #var(int)remaining := aLength.
+        int     i := anIndex.
+        literal aRetVal := $nil.
+        int     remaining := aLength.
         
-        #loop (i < aLength)?
+        while (i < aLength)
         [
-            #var(char:64)tmp.
-            #var(int)tmp_len := 64.
-            #var(int)len := remaining.
+            char(64) tmp := 0.
+            int      tmp_len := 64.
+            int      len := remaining.
             (len > tmp_len)
                 ? [ len := tmp_len. ].
              
@@ -118,17 +118,17 @@
         ^ aRetVal.
     ]
     
-    #method(stacksafe) toWide &int:anIndex &int:aLength &bytearray:anArray
+    stacksafe toWide &int:anIndex &int:aLength &bytearray:anArray
     [
-        #var(int)i := anIndex.
-        #var(wide)aRetVal := $nil.
-        #var(int)remaining := aLength.
+        int  i := anIndex.
+        wide aRetVal := $nil.
+        int  remaining := aLength.
         
-        #loop (i < aLength)?
+        while (i < aLength)
         [
-            #var(char:64)tmp.
-            #var(int)tmp_len := 64.
-            #var(int)len := remaining.
+            char(64) tmp := 0.
+            int      tmp_len := 64.
+            int      len := remaining.
             (len > tmp_len)
                 ? [ len := tmp_len. ].
              
@@ -148,84 +148,84 @@
 
 // --- UTF8Encoder ---
 
-#symbol UTF8Encoder = Encoder
+class UTF8Encoder = Encoder
 {
-    #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
+    convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
         => system'core_routines'__utf8encoder.
     
-    #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength
+    convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength
         => system'core_routines'__utf8encoder.
     
-    #method(stacksafe) convert &int:anIndex &vint:aLength &literal:aLiteral &bytearray:anOutput &vint:anOutputLength
+    stacksafe convert &int:anIndex &vint:aLength &literal:aLiteral &bytearray:anOutput &vint:anOutputLength
     [
         aLiteral $save &int:anIndex &bytearray:anOutput &int:aLength.
 
         anOutputLength := aLength.
     ]
     
-    #method(stacksafe) toLiteral &int:anIndex &int:aLength &bytearray:anArray
+    stacksafe toLiteral &int:anIndex &int:aLength &bytearray:anArray
         = UTF8Encoding toLiteral &int:anIndex &int:aLength &bytearray:anArray.
 }.
 
 // --- UTF8Encoding ---
 
-#symbol UTF8Encoding =
+class UTF8Encoding =
 {
     encoder = UTF8Encoder.
     
-    #method(stacksafe)charCount &literal:aLiteral &vint:aRetVal
+    stacksafe charCount &literal:aLiteral &vint:aRetVal
         => system'core_routines'__utf8encoder.
         
-    #method(stacksafe)convert &int:anIndex &int:aLength &literal:aLiteral &bytearray:anArray
+    stacksafe convert &int:anIndex &int:aLength &literal:aLiteral &bytearray:anArray
     [
         aLiteral $save &int:anIndex &bytearray:anArray &int:aLength.
     ]
         
-    #method(stacksafe) toLiteral &int:anIndex &int:aLength &bytearray:anArray
+    stacksafe toLiteral &int:anIndex &int:aLength &bytearray:anArray
         = LiteralValue $new &int:anIndex &int:aLength &bytearray:anArray.
         
-    #method(stacksafe) convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
+    stacksafe convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
         => system'core_routines'__utf8encoder.
         
-    #method(stacksafe) convert &int:anIndex &vint:aLength &literal:aByteArray &chararray:anOutput &vint:anOutputLength
+    stacksafe convert &int:anIndex &vint:aLength &literal:aByteArray &chararray:anOutput &vint:anOutputLength
         => system'core_routines'__utf8encoder.
 }.
 
 // --- UTF16Encoder ---
 
-#symbol UTF16Encoder = Encoder
+class UTF16Encoder = Encoder
 {
-    #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
+    convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
         => system'core_routines'__utf16encoder.
     
-    #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength
+    convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength
         => system'core_routines'__utf16encoder.
 }.
 
 // --- UTF16Encoding ---
 
-#symbol UTF16Encoding =
+class UTF16Encoding =
 {
     encoder = UTF16Encoder.
     
-    #method(stacksafe)charCount &wide:aLiteral &vint:aRetVal
+    stacksafe charCount &wide:aLiteral &vint:aRetVal
         => system'core_routines'__utf16encoder.
         
-    #method(stacksafe)convert &int:anIndex &int:aLength &wide:aLiteral &shortarray:anArray
+    stacksafe convert &int:anIndex &int:aLength &wide:aLiteral &shortarray:anArray
     [
         aLiteral $save &int:anIndex &shortarray:anArray &int:aLength.
     ]
 
-    #method(stacksafe)convert &int:anIndex &int:aSize &shortarray:aByteArray &chararray:anOutput &vint:anOutputLength
+    stacksafe convert &int:anIndex &int:aSize &shortarray:aByteArray &chararray:anOutput &vint:anOutputLength
         => system'core_routines'__utf16encoder.
         
-    #method(stacksafe)convert &int:anIndex &int:aSize &chararray:aByteArray &shortarray:anOutput &vint:anOutputLength
+    stacksafe convert &int:anIndex &int:aSize &chararray:aByteArray &shortarray:anOutput &vint:anOutputLength
         => system'core_routines'__utf16encoder.
         
-    #method(stacksafe)convert &int:anIndex &vint:aSize &literal:aLiteral &shortarray:anOutput &vint:anOutputLength
+    stacksafe convert &int:anIndex &vint:aSize &literal:aLiteral &shortarray:anOutput &vint:anOutputLength
     [
-        #var(char:64)temp.
-        #var(int)temp_len := 64.
+        char(64) temp := 0.
+        int      temp_len := 64.
         (temp_len < aSize)
             ? [ aSize := temp_len. ].
         
@@ -234,10 +234,10 @@
         $self convert &int:0 &int:temp_len &chararray:temp &shortarray:anOutput &vint:anOutputLength.            
     ]
         
-    #method(stacksafe,literal)toLiteral &int:anIndex &int:aSize &shortarray:anInput
+    stacksafe literal toLiteral &int:anIndex &int:aSize &shortarray:anInput
     [
-        #var(char:64)temp.
-        #var(int)temp_len := 64.
+        char(64) temp := 0.
+        int      temp_len := 64.
         
         $self convert &int:anIndex &int:aSize &shortarray:anInput &chararray:temp &vint:temp_len.
         

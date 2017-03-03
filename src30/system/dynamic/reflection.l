@@ -8,53 +8,53 @@
 
 // --- classOp ---
 
-#class(extension) classROp
+extension classROp
 {
-    #method(int) fieldCount
+    int fieldCount
     [
-        #var(int)aLength.                
+        int aLength := 0.
         system'core_routines'__object readLength &object:self &vint:aLength.
         
         ^ IntNumber new &int:aLength.
     ]     
 
-    #method(stacksafe) readFieldCount &vint:retVal
+    stacksafe readFieldCount &vint:retVal
     [
         system'core_routines'__object readLength &object:self &vint:retVal.
     ]
 
-    #method(stacksafe) setField &int:anIndex &object:anObject        
+    stacksafe setField &int:anIndex &object:anObject        
         => system'core_routines'__object.
         
-    #method(stacksafe) getField &int:anIndex
+    stacksafe getField &int:anIndex
         => system'core_routines'__object.
         
-    #method getFieldAt : anIndex
+    getFieldAt : anIndex
         = self::classROp getField &int:(anIndex int).
 
-    #method(stacksafe) respondTo &mssg:aMessage
+    stacksafe respondTo &mssg:aMessage
         => system'core_routines'__object.
 
-    #method(stacksafe) readMatchedEntries &mssg:aMask &int:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
-    [
-        #var class := self::objectOp class.
-
-        #var(int)retVal := system'external core_filtervmt
-           &mssg:aMask
-           &ref:class
-           &int:aVMTOffset
-           &int:aResultLength
-           &mssgarray:aResultArray.
-
-        aResultLength := retVal.
-    ]
+//    stacksafe readMatchedEntries &mssg:aMask &int:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
+//    [
+//        var class := self::objectOp class.
+//
+//        int retVal := system'external core_filtervmt
+//           &mssg:aMask
+//           &ref:class
+//           &int:aVMTOffset
+//           &int:aResultLength
+//           &mssgarray:aResultArray.
+//
+//        aResultLength := retVal.
+//    ]
     
-    #method setFields &args:objects
+    setFields &args:objects
     [
-        #var(int)i := 0.
-        #var(int)l := objects length.
+        int i := 0.
+        int l := objects length.
         
-        #loop (i < l)?
+        while (i < l)
         [
             self setField &int:i &object:(objects@i).
             
@@ -67,18 +67,18 @@
 
 // --- manifestOp ---
 
-#class(extension) manifestOp
+extension manifestOp
 {
-    #method packageNamespace
+    packageNamespace
         => system'core_routines'__object.
         
-    #method packageName
+    packageName
         => system'core_routines'__object.
         
-    #method packageVersion
+    packageVersion
         => system'core_routines'__object.
         
-    #method packageAuthor
+    packageAuthor
         => system'core_routines'__object.
 }
 

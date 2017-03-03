@@ -4,9 +4,9 @@
 
 // --- outputOp ---
 
-#class(extension) outputOp
+extension outputOp
 {
-    #method writeLiteral:anObject1
+    writeLiteral:anObject1
     [
         self
             write:(anObject1::convertorOp toLiteral).
@@ -14,7 +14,7 @@
        ^ self.
     ]
     
-    #method writeLiteral:anObject1:anObject2
+    writeLiteral:anObject1:anObject2
     [
         self
             write:(anObject1::convertorOp toLiteral)
@@ -23,7 +23,7 @@
        ^ self.
     ]
     
-    #method writeLiteral:anObject1:anObject2:anObject3
+    writeLiteral:anObject1:anObject2:anObject3
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -33,7 +33,7 @@
        ^ self.
     ]
     
-    #method writeLiteral:anObject1:anObject2:anObject3:anObject4
+    writeLiteral:anObject1:anObject2:anObject3:anObject4
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -44,7 +44,7 @@
        ^ self.
     ]
     
-    #method writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5
+    writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -56,7 +56,7 @@
        ^ self.
     ]
     
-    #method writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
+    writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -69,7 +69,7 @@
        ^ self.
     ]
     
-    #method writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
+    writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -83,7 +83,7 @@
        ^ self.
     ]
     
-    #method writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
+    writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -98,7 +98,7 @@
        ^ self.
     ]
     
-    #method writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
+    writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -114,7 +114,7 @@
        ^ self.
     ]
     
-    #method writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
+    writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -131,7 +131,7 @@
        ^ self.
     ]
     
-    #method writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
+    writeLiteral:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -149,11 +149,11 @@
        ^ self.
     ]
     
-    #method writeLiteral &args:Arguments
+    writeLiteral &args:Arguments
     [
-        #var(int)aLength := Arguments length.
-        #var(int)anIndex := 0.
-        #loop (anIndex < aLength) ?
+        int aLength := Arguments length.
+        int anIndex := 0.
+        while (anIndex < aLength) 
         [
             self write:((Arguments @ anIndex)::convertorOp toLiteral).
             
@@ -161,9 +161,9 @@
         ].
     ]
     
-    #method write : anObject1 : anObject2 &padding:aWidth &with:aChar
+    write : anObject1 : anObject2 &padding:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -174,9 +174,9 @@
         ^ self.
     ]
     
-    #method write : anObject1 : anObject2 &paddingLeft:aWidth &with:aChar
+    write : anObject1 : anObject2 &paddingLeft:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -187,9 +187,9 @@
         ^ self.
     ]
     
-    #method writeLiteral : anObject1 : anObject2 &paddingLeft:aWidth
+    writeLiteral : anObject1 : anObject2 &paddingLeft:aWidth
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -200,9 +200,9 @@
         ^ self.
     ]
     
-    #method writeLine : anObject1 &paddingLeft:aWidth &with:aChar
+    writeLine : anObject1 &paddingLeft:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral).
@@ -212,12 +212,12 @@
         ^ self.
     ]
     
-    #method writeLine : anObject1 &paddingLeft:aWidth
+    writeLine : anObject1 &paddingLeft:aWidth
         = self::outputOp writeLine:anObject1 &paddingLeft:aWidth &with:#32.
     
-    #method writeLine : anObject1 : anObject2 &paddingLeft:aWidth &with:aChar
+    writeLine : anObject1 : anObject2 &paddingLeft:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -228,9 +228,9 @@
         ^ self.
     ]
 
-    #method write : anObject1 &paddingRight:aWidth
+    write : anObject1 &paddingRight:aWidth
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral).
@@ -240,9 +240,9 @@
         ^ self.
     ]
     
-    #method write : anObject1 : anObject2 &paddingRight:aWidth &with:aChar
+    write : anObject1 : anObject2 &paddingRight:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -253,19 +253,19 @@
         ^ self.
     ]
     
-    #method writeLine : anObject1 &paddingRight:aWidth &with:aChar
+    writeLine : anObject1 &paddingRight:aWidth &with:aChar
     [
         self write:(anObject1::convertorOp toLiteral) &paddingRight:aWidth &with:aChar writeLine.
             
         ^ self.
     ]
     
-    #method writeLine : anObject1 &paddingRight:aWidth
+    writeLine : anObject1 &paddingRight:aWidth
         = self::outputOp writeLine:anObject1 &paddingRight:aWidth &with:#32.
 
-    #method writeLine : anObject1 : anObject2 &paddingRight:aWidth &with:aChar
+    writeLine : anObject1 : anObject2 &paddingRight:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -276,9 +276,9 @@
         ^ self.
     ]
 
-    #method write : anObject1 : anObject2 : anObject3 &paddingLeft:aWidth &with:aChar
+    write : anObject1 : anObject2 : anObject3 &paddingLeft:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -290,9 +290,9 @@
         ^ self.
     ]
 
-    #method write : anObject1 : anObject2 : anObject3 &paddingRight:aWidth &with:aChar
+    write : anObject1 : anObject2 : anObject3 &paddingRight:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -304,9 +304,9 @@
         ^ self.
     ]
     
-    #method write : anObject1 : anObject2 : anObject3 : anObject4 &paddingLeft:aWidth &with:aChar
+    write : anObject1 : anObject2 : anObject3 : anObject4 &paddingLeft:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -319,9 +319,9 @@
         ^ self.
     ]
 
-    #method write : anObject1 : anObject2 : anObject3 : anObject4 &paddingRight:aWidth &with:aChar
+    write : anObject1 : anObject2 : anObject3 : anObject4 &paddingRight:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -334,9 +334,9 @@
         ^ self.
     ]
     
-    #method write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 &paddingLeft:aWidth &with:aChar
+    write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 &paddingLeft:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -350,9 +350,9 @@
         ^ self.
     ]
 
-    #method write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 &paddingRight:aWidth &with:aChar
+    write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 &paddingRight:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -366,9 +366,9 @@
         ^ self.
     ]
     
-    #method write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6 &paddingLeft:aWidth &with:aChar
+    write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6 &paddingLeft:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -383,9 +383,9 @@
         ^ self.
     ]
 
-    #method write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6 &paddingRight:aWidth &with:aChar
+    write : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6 &paddingRight:aWidth &with:aChar
     [
-        #var(textbuffer)aBuffer := TextBuilder new.
+        textbuffer aBuffer := TextBuilder new.
         
         aBuffer
             write:(anObject1::convertorOp toLiteral)
@@ -400,7 +400,7 @@
         ^ self.
     ]
             
-    #method writeLine:anObject1
+    writeLine:anObject1
     [
         self
             write:(anObject1::convertorOp toLiteral)
@@ -409,7 +409,7 @@
        ^ self.
     ]
     
-    #method writeLine:anObject1:anObject2
+    writeLine:anObject1:anObject2
     [
         self
             write:(anObject1::convertorOp toLiteral)
@@ -419,7 +419,7 @@
        ^ self.
     ]
     
-    #method writeLine:anObject1:anObject2:anObject3
+    writeLine:anObject1:anObject2:anObject3
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -430,7 +430,7 @@
        ^ self.
     ]
     
-    #method writeLine:anObject1:anObject2:anObject3:anObject4
+    writeLine:anObject1:anObject2:anObject3:anObject4
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -442,7 +442,7 @@
        ^ self.
     ]
     
-    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5
+    writeLine:anObject1:anObject2:anObject3:anObject4:anObject5
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -455,7 +455,7 @@
        ^ self.
     ]
     
-    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
+    writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -469,7 +469,7 @@
        ^ self.
     ]
     
-    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
+    writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -484,7 +484,7 @@
        ^ self.
     ]
     
-    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
+    writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -500,7 +500,7 @@
        ^ self.
     ]
     
-    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
+    writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -517,7 +517,7 @@
        ^ self.
     ]
     
-    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
+    writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -535,7 +535,7 @@
        ^ self.
     ]
     
-    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
+    writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
     [ 
         self
             write:(anObject1::convertorOp toLiteral)
@@ -554,12 +554,12 @@
        ^ self.
     ]
     
-    #method writeLine &args:Arguments
+    writeLine &args:Arguments
     [
-        #var(int)aLength := Arguments length.
+        int aLength := Arguments length.
         
-        #var(int)anIndex := 0.
-        #loop (anIndex < aLength) ?
+        int anIndex := 0.
+        while (anIndex < aLength)
         [
             self write:((Arguments @ anIndex)::convertorOp toLiteral).
             
@@ -569,7 +569,7 @@
         self writeLine.
     ]
     
-    #method writeWideLine:anObject1
+    writeWideLine:anObject1
     [
         self
             write:(anObject1::convertorOp toWide)
@@ -578,7 +578,7 @@
        ^ self.
     ]
     
-    #method writeWideLine:anObject1:anObject2
+    writeWideLine:anObject1:anObject2
     [
         self
             write:(anObject1::convertorOp toWide)
@@ -588,7 +588,7 @@
        ^ self.
     ]
     
-    #method writeWideLine:anObject1:anObject2:anObject3
+    writeWideLine:anObject1:anObject2:anObject3
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -599,7 +599,7 @@
        ^ self.
     ]
     
-    #method writeWideLine:anObject1:anObject2:anObject3:anObject4
+    writeWideLine:anObject1:anObject2:anObject3:anObject4
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -611,7 +611,7 @@
        ^ self.
     ]
     
-    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5
+    writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -624,7 +624,7 @@
        ^ self.
     ]
     
-    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
+    writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -638,7 +638,7 @@
        ^ self.
     ]
     
-    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
+    writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -653,7 +653,7 @@
        ^ self.
     ]
     
-    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
+    writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -669,7 +669,7 @@
        ^ self.
     ]
     
-    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
+    writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -686,7 +686,7 @@
        ^ self.
     ]
     
-    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
+    writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -704,7 +704,7 @@
        ^ self.
     ]
     
-    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
+    writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -723,12 +723,12 @@
        ^ self.
     ]
     
-    #method writeWideLine &args:Arguments
+    writeWideLine &args:Arguments
     [
-        #var(int)aLength := Arguments length.
+        int aLength := Arguments length.
         
-        #var(int)anIndex := 0.
-        #loop (anIndex < aLength) ?
+        int anIndex := 0.
+        while (anIndex < aLength)
         [
             self write:((Arguments @ anIndex)::convertorOp toLiteral).
             
@@ -738,7 +738,7 @@
         self writeLine.
     ]
     
-    #method writeWide:anObject1
+    writeWide:anObject1
     [
         self
             write:(anObject1::convertorOp toWide).
@@ -746,7 +746,7 @@
        ^ self.
     ]
     
-    #method writeWide:anObject1:anObject2
+    writeWide:anObject1:anObject2
     [
         self
             write:(anObject1::convertorOp toWide)
@@ -755,7 +755,7 @@
        ^ self.
     ]
     
-    #method writeWide:anObject1:anObject2:anObject3
+    writeWide:anObject1:anObject2:anObject3
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -765,7 +765,7 @@
        ^ self.
     ]
     
-    #method writeWide:anObject1:anObject2:anObject3:anObject4
+    writeWide:anObject1:anObject2:anObject3:anObject4
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -776,7 +776,7 @@
        ^ self.
     ]
     
-    #method writeWide:anObject1:anObject2:anObject3:anObject4:anObject5
+    writeWide:anObject1:anObject2:anObject3:anObject4:anObject5
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -788,7 +788,7 @@
        ^ self.
     ]
     
-    #method writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
+    writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -801,7 +801,7 @@
        ^ self.
     ]
     
-    #method writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
+    writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -815,7 +815,7 @@
        ^ self.
     ]
     
-    #method writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
+    writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -830,7 +830,7 @@
        ^ self.
     ]
     
-    #method writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
+    writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -846,7 +846,7 @@
        ^ self.
     ]
     
-    #method writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
+    writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -863,7 +863,7 @@
        ^ self.
     ]
     
-    #method writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
+    writeWide:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
     [ 
         self
             write:(anObject1::convertorOp toWide)
@@ -881,12 +881,12 @@
        ^ self.
     ]
     
-    #method writeWide&args:Arguments
+    writeWide&args:Arguments
     [
-        #var(int)aLength := Arguments length.
+        int aLength := Arguments length.
         
-        #var(int)anIndex := 0.
-        #loop (anIndex < aLength) ?
+        int anIndex := 0.
+        while (anIndex < aLength)
         [
             self write:((Arguments @ anIndex)::convertorOp toLiteral).
             
@@ -897,16 +897,16 @@
 
 // --- formatterOp ---
 
-#symbol $helper =
+class $helper =
 {
-    #method(stacksafe)readIndex &literal:s &vint:i &vint:retVal
+    stacksafe readIndex &literal:s &vint:i &vint:retVal
     [
-        #var(char)ch.
-        #var(int)n.
+        char ch := #0.
+        int  n := 0.
         
         retVal := 0.
         s read &int:i &vchar:ch.
-        #loop (ch != #125)?
+        while (ch != #125)
         [
             intConvertor convert &char:ch &vint:n.
             ((n >= 30h)and:(n <= 39h))?
@@ -916,7 +916,7 @@
                 retVal *= 10.
                 retVal += n.
             ]
-            ! [ #throw InvalidArgumentException new. ].
+            ! [ InvalidArgumentException new raise. ].
                 
             i += 1.
             s read &int:i &vchar:ch.   
@@ -924,20 +924,20 @@
     ]
 }.
 
-#class(extension) formatterOp
+extension formatterOp
 {
-    #method(stacksafe) write : pattern &args:args
+    stacksafe write : pattern &args:args
     [
-        #var(literal) s := pattern literal.
-        #var(textbuffer)buffer := TextBuilder new.
+        literal s := pattern literal.
+        textbuffer buffer := TextBuilder new.
         
-        #var(int)len := s length.
-        #var(int)i := 0.
-        #var(char)ch.
-        #var(int)chlen.
-        #var(int)index := 0.        
+        int  len := s length.
+        int  i := 0.
+        char ch := #0.
+        int  chlen := 0.
+        int  index := 0.        
         
-        #loop (i < len)?
+        while (i < len)
         [
             s read &int:i &vchar:ch.
             
@@ -961,7 +961,7 @@
         self write:buffer.
     ]
     
-    #method writeLine : pattern &args:args
+    writeLine : pattern &args:args
     [
         self::formatterOp write:pattern &args:args.
         
@@ -971,20 +971,20 @@
 
 // --- inputOp ---
 
-#class(extension) inputOp
+extension inputOp
 {
-    #method readLine : anObject
+    readLine : anObject
     [
         (self read &literal)::convertorOp convert &to:anObject.
         
         ^ anObject.
     ]
 
-    #method readLine : anObject1 : anObject2
+    readLine : anObject1 : anObject2
     [
-        #var aLine := self read &literal.
+        var aLine := self read &literal.
         
-        #var aParams := aLine split &char:#32.
+        var aParams := aLine split &char:#32.
         
         (aParams@0)::convertorOp convert &to:anObject1.
         (aParams@1)::convertorOp convert &to:anObject2.
@@ -992,11 +992,11 @@
         ^ self.
     ]
         
-    #method readLine : anObject1 : anObject2 : anObject3
+    readLine : anObject1 : anObject2 : anObject3
     [ 
-        #var aLine := self read &literal.
+        var aLine := self read &literal.
         
-        #var aParams := aLine split &char:#32.
+        var aParams := aLine split &char:#32.
         
         (aParams@0)::convertorOp convert &to:anObject1.
         (aParams@1)::convertorOp convert &to:anObject2.
@@ -1005,11 +1005,11 @@
         ^ self.
     ]
         
-    #method readLine : anObject1 : anObject2 : anObject3 : anObject4
+    readLine : anObject1 : anObject2 : anObject3 : anObject4
     [
-        #var aLine := self read &literal.
+        var aLine := self read &literal.
         
-        #var aParams := aLine split &char:#32.
+        var aParams := aLine split &char:#32.
         
         (aParams@0)::convertorOp convert &to:anObject1.
         (aParams@1)::convertorOp convert &to:anObject2.
@@ -1019,11 +1019,11 @@
         ^ self.
     ]
         
-    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5
+    readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5
     [
-        #var aLine := self read &literal.
+        var aLine := self read &literal.
         
-        #var aParams := aLine split &char:#32.
+        var aParams := aLine split &char:#32.
         
         (aParams@0)::convertorOp convert &to:anObject1.
         (aParams@1)::convertorOp convert &to:anObject2.
@@ -1034,11 +1034,11 @@
         ^ self.
     ]
         
-    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6
+    readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6
     [
-        #var aLine := self read &literal.
+        var aLine := self read &literal.
         
-        #var aParams := aLine split &char:#32.
+        var aParams := aLine split &char:#32.
         
         (aParams@0)::convertorOp convert &to:anObject1.
         (aParams@1)::convertorOp convert &to:anObject2.
@@ -1050,16 +1050,16 @@
         ^ self.
     ]
     
-    #method readLine &args:Arguments
+    readLine &args:Arguments
     [
-        #var aLine := self read &literal.
+        var aLine := self read &literal.
         
-        #var(array) aParams := aLine split &char:#32 array.
+        array aParams := aLine split &char:#32 array.
         
-        #var(int)aLength := Arguments length.
+        int aLength := Arguments length.
         
-        #var(int)anIndex := 0.
-        #loop (anIndex < aLength) ?
+        int anIndex := 0.
+        while (anIndex < aLength)
         [
             (aParams getAt &int:anIndex)::convertorOp convert &to:(Arguments @ anIndex).
             

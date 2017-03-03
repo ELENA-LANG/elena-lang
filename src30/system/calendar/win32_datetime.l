@@ -234,7 +234,7 @@ sealed embeddable struct TimeStruct
     
 //    stacksafe toWide &time_attributes:Flags
 //    [
-//        short(127) aBuffer.
+//        short(127) aBuffer := 0.
 //
 //        int aLength := system'external'KERNEL32 GetTimeFormatW
 //            &int:0

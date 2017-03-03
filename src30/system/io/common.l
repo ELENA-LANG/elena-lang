@@ -10,51 +10,51 @@
 #subject file_path.
 #subject directory_path.
 
-#class(extension)ioTypeOp
+extension ioTypeOp
 {
-    #method(embeddable) file_path = self.
+    embeddable file_path = self.
     
-    #method(embeddable) directory_path = self.
+    embeddable directory_path = self.
 }
 
 // --- Stream ---
 
-#class(limited)Stream
+limited class Stream
 {
-    #method stream = $self.
+    stream = $self.
     
-    #method(stacksafe,innprop:length) writeLength &int:aLength [ ] // !! default implementation
+    stacksafe innprop(length) writeLength &int:aLength [ ] // !! default implementation
         
-    #method(stacksafe,outnprop:length) readLength &vint:aLength [ aLength := 0. ] // !! default implementation
+    stacksafe outnprop(length) readLength &vint:aLength [ aLength := 0. ] // !! default implementation
     
-    #method(stacksafe,outnprop:index) readIndex &vint:anIndex []
+    stacksafe outnprop(index) readIndex &vint:anIndex []
 
-    #method appendIndex &int:anIndex 
+    appendIndex &int:anIndex 
     [
-        #var(int)aNewIndex := $self index.
+        int aNewIndex := $self index.
         
         aNewIndex += anIndex.
         
         $self writeIndex &int:aNewIndex.
     ]
 
-    #method reduce &index:anIndex 
+    reduce &index:anIndex 
         <= reduceIndex &int:(anIndex int).
         
-    #method(stacksafe) reduceIndex &int:anIndex 
+    stacksafe reduceIndex &int:anIndex 
     [
-        #var(int)aNewIndex := $self index.
+        int aNewIndex := $self index.
         
         aNewIndex -= anIndex.
         
         $self writeIndex &int:aNewIndex.
     ]
 
-    #method(stacksafe,innprop:index) writeIndex &int:anIndex []
+    stacksafe innprop(index) writeIndex &int:anIndex []
         
-    #method(stacksafe) read &bytearray:aDump &vint:aLength []
+    stacksafe read &bytearray:aDump &vint:aLength []
     
-    #method(stacksafe) write &bytearray:aDump &int:aLength []
+    stacksafe write &bytearray:aDump &int:aLength []
     
-    #method close []
+    close []
 }

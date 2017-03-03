@@ -8,19 +8,19 @@
 
 // --- IOException ---
 
-#class(exceptionof:JSONError) JsonException
+exceptionof(JSONError) JsonException
 {
-    #constructor new
-        <= %new : "Json Deserializer error".
+    constructor new
+        <= new : "Json Deserializer error".
         
-    #constructor new : aMessage
+    constructor new : aMessage
     [
         theMessage := aMessage literal.
         theCallStack := CallStack new.
     ]
 }
 
-#symbol jsonDispatcher =
+class jsonDispatcher =
 {
     eval:output &int:n
     [
@@ -32,22 +32,22 @@
         output write:(b literal).
     ]
     
-    #method(w2) eval:output &array:array
+    eval:output &array:array
     [
         output::jsonSerializer jsonSerialize &enumerable:array.
     ]
     
-    #method(w2) eval:output &enumerable:list
+    eval:output &enumerable:list
     [
         output::jsonSerializer jsonSerialize &enumerable:list.
     ]
     
-    #method(w2) eval:output &dto:object
+    eval:output &dto:object
     [
         output::jsonSerializer jsonSerialize &dto:object.
     ]
     
-    #method(w2) eval:output &struct:object
+    eval:output &struct:object
     [
         output::jsonSerializer jsonSerialize &struct:object.
     ]
@@ -57,13 +57,13 @@
         output writeLiteral:"""":s:"""".
     ]
     
-    ! : output : object
-        = output writeLiteral:"""":(object literal):"""".
+//    ! output : object
+//        = output writeLiteral:"""":(object literal):"""".
 }.
 
-#class(extension:textbuffer)jsonSerializer
+extension(textbuffer) jsonSerializer
 {
-    #method jsonSerialize &struct:object
+    jsonSerialize &struct:object
     [
         self write:"{".
 
@@ -72,12 +72,12 @@
             (0 == i) 
                 ! [ self write:"," ].
             
-            #var prop := object getFieldAt:(i + 1).
+            var prop := object getFieldAt:(i + 1).
             self write:"""".
             self write:(prop literal).
             self write:""":".
             
-            #var member := object getFieldAt:(i + 1).
+            var member := object getFieldAt:(i + 1).
             
             member cast:%eval &to:jsonDispatcher &with:self.
         ].
@@ -87,21 +87,21 @@
         ^ self.
     ]
     
-    #method jsonSerialize &dto:object
+    jsonSerialize &dto:object
     [
         self write:"{".
                 
-        #var(mssg:10) properties.
-        #var(int)len := 10.
-        #var(int)offs := 0.
+        mssg(10) properties := 0.
+        int      len := 10.
+        int      offs := 0.
 
         object readMatchedEntries &mssg:%"get[0]" &int:0 &mssgarray:properties &vint:len.
-        #loop (len > 0) ?
+        while (len > 0)
         [
-            #var(int)i:=0.
-            #loop (i < len)?
+            int i:=0.
+            while (i < len)
             [
-                #var(mssg) message := properties@i.
+                mssg message := properties@i.
                 
                 self writeLiteral:"""":(message subject literal):""":".
                 
@@ -117,7 +117,7 @@
             object readMatchedEntries &mssg:%"get[0]" &int:offs &mssgarray:properties &vint:len.
         ].
         
-        #var(int)outputLen := self length.
+        int outputLen := self length.
         (outputLen > 1)
             ? [ self setLength &int:(outputLen - 1). ].
         
@@ -126,7 +126,7 @@
         ^ self.
     ]    
     
-    #method jsonSerialize &enumerable:object
+    jsonSerialize &enumerable:object
     [
         self write:"[".
 
@@ -137,7 +137,7 @@
             self write:",".
         ].
         
-        #var(int)outputLen := self length.
+        int outputLen := self length.
         (outputLen > 1)
             ? [ self setLength &int:(outputLen - 1). ].
         
@@ -146,7 +146,7 @@
         ^ self.
     ]    
     
-    #method jsonSerialize : object
+    jsonSerialize : object
     [
         ($nil != object)
             ? [
@@ -157,57 +157,57 @@
         ^ self.            
     ]
 }
-#symbol $helper =
+class $helper =
 {
-    #method deserializeStruct:target &enumerator:e
-    [
-        #var(literal)token := $helper $readNext &enumerator:e literal.
-        #var(bool)eof := false.
-        #loop (eof)!
-        [
-            #var(literal)field := $helper $getIdentifier &literal:token.
-            
-            ($helper $readNext &enumerator:e == ":")
-                ! [ #throw JsonException new. ].
-            
-            #var object := $helper deserializeObject &enumerator:e.
-            
-            target::(Signature new &literal:field) set:object.
-            
-            token := $helper $readNext &enumerator:e literal.
-            token =>
-                "," ? [ token := $helper $readNext &enumerator:e literal. ]
-                "}" ? [ eof := true. ]
-                ! [ #throw JsonException new. ].
-        ].
-        
-        ^ target.
-    ]
+//    deserializeStruct:target &enumerator:e
+//    [
+//        literal token := $helper $readNext &enumerator:e literal.
+//        bool    eof := false.
+//        until (eof)
+//        [
+//            literal field := $helper $getIdentifier &literal:token.
+//            
+//            ($helper $readNext &enumerator:e == ":")
+//                ! [ JsonException new raise. ].
+//            
+//            var object := $helper deserializeObject &enumerator:e.
+//            
+//            target::(Signature new &literal:field) set:object.
+//            
+//            token := $helper $readNext &enumerator:e literal.
+//            token =>
+//                "," ? [ token := $helper $readNext &enumerator:e literal. ]
+//                "}" ? [ eof := true. ]
+//                ! [ JsonException new raise. ].
+//        ].
+//        
+//        ^ target.
+//    ]
     
-    #method deserializeArray:target &enumerator:e
-    [
-        #var(literal)token := $helper $readNext &enumerator:e literal.
-        #var(bool)eof := false.
-        #loop (eof)!
-        [
-            target += $helper deserializeObject &literal:token &enumerator:e.
-            
-            token := $helper $readNext &enumerator:e literal.
-            token =>
-                "," ? [ token := $helper $readNext &enumerator:e literal. ]
-                "]" ? [ eof := true. ]
-                ! [ #throw JsonException new. ].
-        ].
-        
-        ^ target.
-    ]
+//    deserializeArray:target &enumerator:e
+//    [
+//        literal token := $helper $readNext &enumerator:e literal.
+//        bool    eof := false.
+//        until (eof)
+//        [
+//            target += $helper deserializeObject &literal:token &enumerator:e.
+//            
+//            token := $helper $readNext &enumerator:e literal.
+//            token =>
+//                "," ? [ token := $helper $readNext &enumerator:e literal. ]
+//                "]" ? [ eof := true. ]
+//                ! [ JsonException new raise. ].
+//        ].
+//        
+//        ^ target.
+//    ]
     
-    #method deserializeObject &enumerator:e
+    deserializeObject &enumerator:e
         <= deserializeObject &literal:($helper $readNext &enumerator:e literal) &enumerator:e.
         
-    #method deserializeObject &literal:token &enumerator:e
+    deserializeObject &literal:token &enumerator:e
     [
-        #var(char)ch.
+        char ch := #0.
         token read &int:0 &vchar:ch.
         
         (ch == #34) // "
@@ -222,70 +222,70 @@
                                 (ch is &digit) 
                                     ? [ ^ token toInt. ].
                                     
-                                #throw JsonException new.
+                                JsonException new raise.
                             ].
                     ]
             ].
     ]
     
-    #method deserializeStruct &object:object &enumerator:e
+    deserializeStruct &object:object &enumerator:e
         <= deserializeStruct &object:object &literal:($helper $readNext &enumerator:e literal) &enumerator:e.
         
-    #method deserializeStruct &object:object &literal:token &enumerator:e
+    deserializeStruct &object:object &literal:token &enumerator:e
     [
-        #var(char)ch.
+        char ch := #0.
         token read &int:0 &vchar:ch.
 
         (ch == #123)
             ? [ ^ $helper deserializeStruct:object &enumerator:e. ]
-            ! [ #throw JsonException new. ].
+            ! [ JsonException new raise. ].
     ]
     
     $readNext &enumerator:e
     [
         (e next)
-            ! [ #throw JsonException new. ].
+            ! [ JsonException new raise. ].
 
         ^ e get.        
     ]
     
-    #method(literal) $getIdentifier &literal:field
+    literal $getIdentifier &literal:field
     [
-        #var(int)len := field length.
-        #var(char)fch.
-        #var(char)lch.
+        int  len := field length.
+        char fch := #0.
+        char lch := #0.
         field read &int:0 &vchar:fch.
         field read &int:(len - 1) &vchar:lch.
         
         ((lch == #34)&&(fch == #34))
-            ! [ #throw JsonException new. ].
+            ! [ JsonException new raise. ].
             
         ^ field Substring &int:1 &int:(len - 2).            
     ]
     
-    #method(literal) $getQuote &literal:field
+    literal $getQuote &literal:field
     [
-        #var(int)len := field length.
-        #var(char)fch.
-        #var(char)lch.
+        int  len := field length.
+        char fch := #0.
+        char lch := #0.
         field read &int:0 &vchar:fch.
         field read &int:(len - 1) &vchar:lch.
         
         ((lch == #34)&&(fch == #34))
-            ! [ #throw JsonException new. ].
+            ! [ JsonException new raise. ].
             
         ^ field Substring &int:1 &int:(len - 2).
     ]
 }.
 
-#class(extension)jsonOp
+extension jsonOp
 {
-    #method toJson
+    toJson
         = TextBuilder new jsonSerialize:self literal.
         
-    #method fromJson
+    fromJson
         = $helper deserializeObject &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:(ExpressionStatemachine new)).
         
-    #method readJson : object
+    readJson : object
         = $helper deserializeStruct &object:object &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:(ExpressionStatemachine new)).
 }        

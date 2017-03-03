@@ -2,50 +2,50 @@
 
 // --- MemoryBuffer ---
 
-#symbol(const,int)$TextPageSize = 128.
+const int $TextPageSize = 128.
 
 #subject membuffer = MemoryBuffer.
 
-#class(sealed)MemoryBuffer
+sealed class MemoryBuffer
 {
-    #field(bytearray)theBuffer.
-    #field(int)theUsed.
-    #field(int)theCapacity.
+    bytearray theBuffer.
+    int       theUsed.
+    int       theCapacity.
     
-    #constructor new &int:length
+    constructor new &int:length
     [
         theBuffer := ByteArray new &int:length.
         theCapacity := length.
         theUsed := 0.
     ]
     
-    #constructor new
+    constructor new
         <= new &int:$TextPageSize.
     
-    #method membuffer = $self.
+    membuffer = $self.
     
-    #method bytearray = theBuffer.
+    bytearray = theBuffer.
     
-    #method(stacksafe,w3) reserve &int:len
+    stacksafe reserve &int:len
     [
         theCapacity := theUsed + len.
         theCapacity := (theCapacity / $TextPageSize + 1) * $TextPageSize.
         
-        #var(bytearray) aNewBuffer := ByteArray new &int:theCapacity.
+        bytearray aNewBuffer := ByteArray new &int:theCapacity.
             
         aNewBuffer write &int:0 &int:theUsed &bytearray:theBuffer.
             
         theBuffer := aNewBuffer.
     ]
     
-    #method(stacksafe) $write &int:index &int:length &bytearray:array
+    stacksafe $write &int:index &int:length &bytearray:array
     [        
-        #var(byte:64)temp.
-        #var(int)n := index.
-        #var(int)len := length.
-        #var(int)temp_len := 64.
+        byte(64) temp := 0.
+        int      n := index.
+        int      len := length.
+        int      temp_len := 64.
         
-        #loop (len > 0)?
+        while (len > 0)
         [
             (len < 64)
                 ? [ temp_len := len. ]
@@ -59,10 +59,10 @@
         ].
     ]
     
-    #method(stacksafe,w3) write &int:index &int:length &bytearray:array
+    stacksafe write &int:index &int:length &bytearray:array
     [
         (index > theUsed)
-            ? [ #throw OutOfRangeException new. ].
+            ? [ OutOfRangeException new raise. ].
         
         (theUsed + length > theCapacity)?
             [ $self reserve &int:length. ].
@@ -77,18 +77,18 @@
             ].
     ]
     
-    #method(stacksafe)read &int:index &vint:retVal
+    stacksafe read &int:index &vint:retVal
     [
         (index > theUsed)
-            ? [ #throw OutOfRangeException new. ].
+            ? [ OutOfRangeException new raise. ].
         
         theBuffer read &int:index &vint:retVal.
     ]
     
-    #method(stacksafe,w3) delete &int:anIndex &int:aLength
+    stacksafe delete &int:anIndex &int:aLength
     [
-        #var(int)n := 0 - aLength.
-        #var(int)l := theUsed.
+        int n := 0 - aLength.
+        int l := theUsed.
         l := l - anIndex.
         l := l - aLength.
         
@@ -97,7 +97,7 @@
         theUsed := theUsed - aLength.
     ]
     
-    #method(stacksafe,outnprop:length)readLength &vint:retVal
+    stacksafe outnprop(length) readLength &vint:retVal
     [
         retVal := theUsed.
     ]

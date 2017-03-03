@@ -1,24 +1,24 @@
 #import system.
 //#import system'routines.
 
-#subject struct   = system'dynamic'Struct.
+#subject structure   = system'dynamic'Struct.
 
 // --- Tape ---
 
-#class(dynamic,group) Tape
+dynamic group Tape
 {
-    #field $item.
+    object $item.
     
-    #constructor $new &int:n
-        = object:n.
+    constructor $new &int:n
+        = object(n).
     
-    #constructor new &array:list
-        <= ($new &int:(list length))
+    constructor new &array:list
+        <= $new &int:(list length);
     [
-        #var(int)i := 0.
-        #var(int)n := list length.
+        int i := 0.
+        int n := list length.
         
-        #loop(i < n)?
+        while(i < n)
         [
             $self setField &int:i &object:(list getAt &int:i).
             
@@ -26,61 +26,61 @@
         ].
     ]    
     
-    #method => system'core_routines'__tape.
+    dispatch => system'core_routines'__tape.
 }
 
 // --- tapeControl ---
 
-#class(extension)tapeOp
+extension tapeOp
 {
-    #method var &args:params
+    var &args:params
     [
-        #var(int)len := params length.
-        #var(int)n := len.
+        int len := params length.
+        int n := len.
         n -= self int.
        
         ^ params@n.
     ]
     
-    #method stack &args:params
+    stack &args:params
     [
-        #var(int)n := self int.
+        int n := self int.
        
         ^ params@n.
     ]
         
-    #method jumpif : offset &args:params
+    jumpif : offset &args:params
         => system'core_routines'__tape.
     
-    #method jump &args:params
+    jump &args:params
         => system'core_routines'__tape.
         
-    #method goif : offset &args:params
+    goif : offset &args:params
         => system'core_routines'__tape.
     
-    #method go &args:params
+    go &args:params
         => system'core_routines'__tape.
         
-    #method ptr &args:params
+    ptr &args:params
         => system'core_routines'__tape.
 }
 
 // --- Struct ---
 
-#class(dynamic,group,dispatchable:struct) Struct
+dynamic dispatchable(structure) group Struct
 {
-    #field $item.
+    object $item.
     
-    #constructor new &int:n
-        = object:n.
+    constructor new &int:n
+        = object(n).
     
-    #constructor new &array:list
-        <= (new &int:(list length))
+    constructor new &array:list
+        <= new &int:(list length);
     [
-        #var(int)i := 0.
-        #var(int)n := list length.
+        int i := 0.
+        int n := list length.
         
-        #loop(i < n)?
+        while(i < n)
         [
             $self setField &int:i &object:(list getAt &int:i).
             
@@ -88,44 +88,44 @@
         ].
     ]    
     
-    #method => system'core_routines'__struct.
+    dispatch => system'core_routines'__struct.
 }
 
 // --- Dynamic ---
 
-#class Dynamic
+class Dynamic
 {
-    #field(struct) theStruct.
+    structure theStruct.
     
-    #constructor new
+    constructor new
     [
         theStruct := Struct new &int:0.
     ]
     
-    #constructor new : aStruct
+    constructor new : aStruct
     [
         theStruct := aStruct struct.
     ]
 
-    #method value = theStruct.
+    value = theStruct.
             
     /// Dispatches the verb to the target object with generic subject
-    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &struct:theStruct.
+    cast : aVerb &to:aTarget = aTarget::aVerb eval &struct:theStruct.
     
     /// Dispatches the verb to the target object with generic subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &struct:theStruct.
+    cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &struct:theStruct.
     
-    #method(generic,w2)set : anObject
+    generic set : anObject
     [
         // looking for the current subject
-        #var(int)anIndex := 0.
-        #var(int)aLength.
-        #var(bool) aNotFound := true.
+        int  anIndex := 0.
+        int  aLength := 0.
+        bool aNotFound := true.
         
         theStruct readFieldCount &vint:aLength.
-        #loop ((anIndex < aLength)and:aNotFound) ?
+        while ((anIndex < aLength)and:aNotFound)
         [
-            #var aCurrent := theStruct::classROp getField &int:anIndex.
+            var aCurrent := theStruct::classROp getField &int:anIndex.
             
             ($subject equal &subject:(aCurrent subject))
                 ? [ aNotFound := false. ]
@@ -144,15 +144,15 @@
         theStruct::classROp setField &int:(anIndex + 1) &object:anObject.
     ]
     
-    #method(generic) if
+    generic if
     [
-        #var(int)anIndex := 0.
-        #var(int)aLength.
+        int anIndex := 0.
+        int aLength := 0.
         
         theStruct readFieldCount &vint:aLength.
-        #loop (anIndex < aLength) ?
+        while (anIndex < aLength)
         [
-            #var aCurrent := theStruct::classROp getField &int:anIndex.
+            var aCurrent := theStruct::classROp getField &int:anIndex.
             
             ($subject equal &subject:(aCurrent subject))
                 ? [ ^ true. ].
@@ -163,25 +163,25 @@
         ^ false.
     ]
     
-    #method => theStruct.
+    dispatch => theStruct.
 }
 
 // --- Class ---
 
-#class(dynamic,group) Class
+dynamic group Class
 {
-    #field $item.
+    object $item.
     
-    #constructor $new &int:n
-        = object:n.
+    constructor $new &int:n
+        = object(n).
     
-    #constructor new &array:list
-        <= ($new &int:(list length))
+    constructor new &array:list
+        <= $new &int:(list length);
     [
-        #var(int)i := 0.
-        #var(int)n := list length.
+        int i := 0.
+        int n := list length.
         
-        #loop(i < n)?
+        while (i < n)
         [
             $self setField &int:i &object:(list getAt &int:i).
             
@@ -189,10 +189,10 @@
         ].
     ]    
     
-    #method => system'core_routines'__class.
+    dispatch => system'core_routines'__class.
 }
 
 
 // --- obsolete ---
 
-#symbol DynamicStruct = Dynamic.
+symbol DynamicStruct = Dynamic.

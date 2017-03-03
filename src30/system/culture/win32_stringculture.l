@@ -3,26 +3,26 @@
 
 // --- literalCultureOp ---
 
-#class(extension:literal)literalCultureOp
+extension(literal) literalCultureOp
 {
-    #method(literal) toUpper &locale:aLocale
+    literal toUpper &locale:aLocale
     [
-        #var(literal)aRetVal := $nil.
+        literal aRetVal := $nil.
         
-        #var(int)i := 0.
-        #var(int)len := self length.
+        int     i := 0.
+        int     len := self length.
         
-        #loop (len > 0)?
+        while (len > 0)
         [
-            #var(int)s_len := 32.
+            int s_len := 32.
             (s_len > len)
                 ? [ s_len := len. ].
             
-            #var(short:32)src_tmp.
-            #var(int)src_len := 32.
+            short(32) src_tmp := 0.
+            int       src_len := 32.
             
-            #var(short:32)dst_tmp.
-            #var(int)dst_len := 64.
+            short(32) dst_tmp := 0.
+            int       dst_len := 64.
 
             UTF16Encoding convert &int:i &vint:s_len &literal:self &shortarray:src_tmp &vint:src_len.
                                     
@@ -39,24 +39,24 @@
         ^ aRetVal.
     ]
     
-    #method(literal) toLower &locale:aLocale
+    literal toLower &locale:aLocale
     [
-        #var(literal)aRetVal := $nil.
+        literal aRetVal := $nil.
         
-        #var(int)i := 0.
-        #var(int)len := self length.
+        int i := 0.
+        int len := self length.
         
-        #loop (len > 0)?
+        while (len > 0)
         [
-            #var(int)s_len := 32.
+            int s_len := 32.
             (s_len > len)
                 ? [ s_len := len. ].
             
-            #var(short:32)src_tmp.
-            #var(int)src_len := 32.
+            short(32) src_tmp := 0.
+            int       src_len := 32.
             
-            #var(short:32)dst_tmp.
-            #var(int)dst_len := 64.
+            short(32) dst_tmp := 0.
+            int       dst_len := 64.
 
             UTF16Encoding convert &int:i &vint:s_len &literal:self &shortarray:src_tmp &vint:src_len.
                                     
@@ -76,24 +76,24 @@
 
 // --- wideCultureOp ---
 
-#class(extension:wide)wideCultureOp
+extension(wide) wideCultureOp
 {
-    #method(wide) toUpper &locale:aLocale
+    wide toUpper &locale:aLocale
     [
-        #var(wide)aRetVal := $nil.
+        wide aRetVal := $nil.
         
-        #var(int)i := 0.
-        #var(int)len := self length.
+        int i := 0.
+        int len := self length.
         
-        #loop (len > 0)?
+        while (len > 0)
         [
-            #var(short:32)src_tmp.
-            #var(int)src_len := 32.
+            short(32) src_tmp := 0.
+            int       src_len := 32.
             (src_len > len)
                 ? [ src_len := len. ].
             
-            #var(short:32)dst_tmp.
-            #var(int)dst_len := 64.
+            short(32) dst_tmp := 0.
+            int       dst_len := 64.
             
             self $save &int:i &shortarray:src_tmp &int:src_len.
             
@@ -110,22 +110,22 @@
         ^ aRetVal.
     ]
     
-    #method(wide) toLower &locale:aLocale
+    wide toLower &locale:aLocale
     [
-        #var(wide)aRetVal := $nil.
+        wide aRetVal := $nil.
         
-        #var(int)i := 0.
-        #var(int)len := self length.
+        int i := 0.
+        int len := self length.
         
-        #loop (len > 0)?
+        while (len > 0)
         [
-            #var(short:32)src_tmp.
-            #var(int)src_len := 32.
+            short(32) src_tmp := 0.
+            int       src_len := 32.
             (src_len > len)
                 ? [ src_len := len. ].
             
-            #var(short:32)dst_tmp.
-            #var(int)dst_len := 64.
+            short(32) dst_tmp := 0.
+            int       dst_len := 64.
             
             self $save &int:i &shortarray:src_tmp &int:src_len.
             
@@ -145,25 +145,25 @@
 
 // --- stringCultureOp ---
 
-#symbol stringCultureDispatcher =
+class stringCultureDispatcher =
 {
     eval &literal:aLiteral = literalCultureOp.
     
     eval &wide:aLiteral = wideCultureOp.
 }.
 
-#class(extension)stringCultureOp
+extension stringCultureOp
 {
-    #method toUpper &locale:aLocale
+    toUpper &locale:aLocale
     [
-        #var dispatcher := self cast:%eval &to:stringCultureDispatcher.
+        var dispatcher := self cast:%eval &to:stringCultureDispatcher.
         
         ^ self::dispatcher toUpper &locale:aLocale.
     ]
     
-    #method toLower &locale:aLocale
+    toLower &locale:aLocale
     [
-        #var dispatcher := self cast:%eval &to:stringCultureDispatcher.
+        var dispatcher := self cast:%eval &to:stringCultureDispatcher.
         
         ^ self::dispatcher toLower &locale:aLocale.
     ]

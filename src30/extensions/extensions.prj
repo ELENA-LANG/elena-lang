@@ -13,7 +13,6 @@ author=Alex Rakov
 
 [files]
 control.l
-threading.l
 convertors.l
 console.l
 app.l
@@ -25,7 +24,5 @@ text\words.l
 text\strings.l
 routines\enumerating.l
 routines\combinations.l
-scripting\interpreter.l
 dynamic\json.l
-scripting\assembly.l
 

@@ -2,43 +2,43 @@
 #import system'text.
 
 // --- File Access Modes ---
-#symbol(const,int) $FILE_READ_DATA     = 00000001h.
-#symbol(const,int) $FILE_APPEND_DATA   = 00000004h.
-#symbol(const,int) $FILE_GENERIC_READ  = 80000000h.
-#symbol(const,int) $FILE_GENERIC_WRITE = 40000000h.
+const int $FILE_READ_DATA     = 00000001h.
+const int $FILE_APPEND_DATA   = 00000004h.
+const int $FILE_GENERIC_READ  = 80000000h.
+const int $FILE_GENERIC_WRITE = 40000000h.
 
-#symbol(const,int) $OPEN_EXISTING      = 0003h.
-#symbol(const,int) $CREATE_ALWAYS      = 0002h.
-#symbol(const,int) $OPEN_ALWAYS        = 0004h.
+const int $OPEN_EXISTING      = 0003h.
+const int $CREATE_ALWAYS      = 0002h.
+const int $OPEN_ALWAYS        = 0004h.
 
-#symbol(const,int) $FILE_SHARE_READ    = 00000001h.
-#symbol(const,int) $FILE_SHARE_WRITE   = 00000002h.
+const int $FILE_SHARE_READ    = 00000001h.
+const int $FILE_SHARE_WRITE   = 00000002h.
 
-#symbol(const,int) $FILE_BEGIN = 0.
-#symbol(const,int) $FILE_CURRENT = 1.
-#symbol(const,int) $FILE_END = 2.
+const int $FILE_BEGIN = 0.
+const int $FILE_CURRENT = 1.
+const int $FILE_END = 2.
 
-#symbol(const,int) $FILE_ATTRIBUTE_DIRECTORY = 10h.
+const int $FILE_ATTRIBUTE_DIRECTORY = 10h.
 
 // --- FileStream ---
 
-#class(struct) FileStream :: Stream
+struct FileStream :: Stream
 {
-    #field(handle) theHandle.
+    handle theHandle.
     
-    #constructor openForRead &path:aPath
-        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_READ &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
+    constructor openForRead &path:aPath
+        <= new &wide:(aPath wide) &int:$FILE_GENERIC_READ &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
     
-    #constructor openForReWrite &path:aPath
-        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$CREATE_ALWAYS &int:0.
+    constructor openForReWrite &path:aPath
+        <= new &wide:(aPath wide) &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$CREATE_ALWAYS &int:0.
     
-    #constructor openForAppend &path:aPath
-        <= %new &wide:(aPath wide) &int:$FILE_APPEND_DATA &int:$FILE_SHARE_READ &int:$OPEN_ALWAYS &int:0.
+    constructor openForAppend &path:aPath
+        <= new &wide:(aPath wide) &int:$FILE_APPEND_DATA &int:$FILE_SHARE_READ &int:$OPEN_ALWAYS &int:0.
     
-    #constructor openForEdit &path:aPath
-        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
+    constructor openForEdit &path:aPath
+        <= new &wide:(aPath wide) &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
     
-    #constructor new &wide:aPath &int:dwDesiredAccess &int:dwShareMode &int:dwCreationDisposition &int:dwFlagsAndAttributes
+    constructor new &wide:aPath &int:dwDesiredAccess &int:dwShareMode &int:dwCreationDisposition &int:dwFlagsAndAttributes
     [
         theHandle := system'external'KERNEL32 CreateFileW
                       &wide:aPath
@@ -50,12 +50,12 @@
                       &int:0.
                       
         (-1 == theHandle)
-            ? [ #throw IOException new &literal:"Cannot open the file". ].
+            ? [ IOException new &literal:"Cannot open the file" raise. ].
     ]
     
-    #method write &bytearray:aDump &int:aLength
+    write &bytearray:aDump &int:aLength
     [
-        #var(int)aWritten := 0.
+        int aWritten := 0.
         system'external'KERNEL32 WriteFile
             &int       : theHandle
             &bytearray : aDump
@@ -64,7 +64,7 @@
             &int       : 0.
     ]
 
-    #method read &bytearray:aDump &vint:aLength
+    read &bytearray:aDump &vint:aLength
     [
         system'external'KERNEL32 ReadFile
             &int       : theHandle
@@ -74,9 +74,9 @@
             &int       : 0.
     ]
     
-    #method readIndex &vint:anIndex
+    readIndex &vint:anIndex
     [
-        #var(int) ret := system'external'KERNEL32 SetFilePointer
+        int ret := system'external'KERNEL32 SetFilePointer
             &int : theHandle
             &int : 0
             &int : 0
@@ -85,27 +85,27 @@
         anIndex := ret.
     ] 
     
-    #method writeIndex &int:anIndex
+    writeIndex &int:anIndex
     [
-        #var(int) ret := system'external'KERNEL32 SetFilePointer
+        int ret := system'external'KERNEL32 SetFilePointer
             &int : theHandle
             &int : anIndex
             &int : 0
             &int : $FILE_BEGIN.
     ] 
     
-    #method readLength &vint:aLength 
+    readLength &vint:aLength 
     [ 
-        #var(int)n := system'external'KERNEL32 GetFileSize
+        int n := system'external'KERNEL32 GetFileSize
             &int : theHandle
             &int:0.
     
         aLength := n. 
     ]
     
-    #method writeLength &int:length
+    writeLength &int:length
     [
-        #var(int)pos := $self index.
+        int pos := $self index.
         
         $self writeIndex &int:length.
         system'external'KERNEL32 SetEndOfFile &int:theHandle.
@@ -114,7 +114,7 @@
             ? [ $self writeIndex &int:pos. ].
     ]
     
-    #method close
+    close
     [
         system'external'KERNEL32 CloseHandle
             &int:theHandle.
@@ -123,9 +123,9 @@
 
 // --- fileStreamHelper ---
 
-#symbol $fileStreamHelper =
+class $fileStreamHelper =
 {
-    #method(stream)openForWrite &path:aPath &bool:anAppendMode
+    stream openForWrite &path:aPath &bool:anAppendMode
     [
         anAppendMode ? [ ^ FileStream openForAppend &path:aPath. ].
         
@@ -135,13 +135,13 @@
 
 // --- StreamWriter ---
 
-#class StreamWriter :: TextWriter
+class StreamWriter :: TextWriter
 {
-    #field(stream) theStream.
-    #field(encoder) theEncoder.
+    stream  theStream.
+    encoder theEncoder.
 
-    #constructor new &stream:aStream &encoder:anEncoder
-        <= (new)
+    constructor new &stream:aStream &encoder:anEncoder
+        <= new;
     [
         theStream := aStream.
         theEncoder := anEncoder.
@@ -149,25 +149,25 @@
         theNewLineConstant := system'text'newLine literal.
     ]
 
-    #constructor new &path:aPath
-        <= %new &stream:(FileStream openForReWrite &path:aPath) &encoder:UTF8Encoder.
+    constructor new &path:aPath
+        <= new &stream:(FileStream openForReWrite &path:aPath) &encoder:UTF8Encoder.
         
-    #constructor new &path:aPath &bool:anAppendMode
-        <= %new &stream:($fileStreamHelper openForWrite &path:aPath &bool:anAppendMode) &encoder:UTF8Encoder.
+    constructor new &path:aPath &bool:anAppendMode
+        <= new &stream:($fileStreamHelper openForWrite &path:aPath &bool:anAppendMode) &encoder:UTF8Encoder.
         
-    #method stream = theStream.        
+    stream = theStream.        
         
-    #method encoder = theEncoder.        
+    encoder = theEncoder.        
         
-    #method write &chararray:anInput &int:aLength
+    write &chararray:anInput &int:aLength
     [
-        #var(int)aTotal := aLength.
-        #var(byte:64)aBuffer.
-        #var(int)aBlockLength.
-        #var(int)aBufferLength.
-        #var(int)anOffset := 0.
+        int      aTotal := aLength.
+        byte(64) aBuffer := 0.
+        int      aBlockLength := 0.
+        int      aBufferLength := 0.
+        int      anOffset := 0.
         
-        #loop (aTotal > 0) ?
+        while (aTotal > 0)
         [
             (aTotal < 64)
                 ? [ aBlockLength := aTotal. ]
@@ -182,7 +182,7 @@
         ].
     ]
     
-    #method close
+    close
     [
         theStream close.
     ]
@@ -190,41 +190,41 @@
 
 // --- StreamReader ---
 
-#class StreamReader :: TextReader
+class StreamReader :: TextReader
 {
-    #field(stream)  theStream.
-    #field(encoder) theEncoder.
-    #field(bool)    theOpen.
+    stream  theStream.
+    encoder theEncoder.
+    bool    theOpen.
 
-    #constructor new &stream:aStream &encoder:anEncoder
-        <= ( %new )
+    constructor new &stream:aStream &encoder:anEncoder
+        <= new;
     [
         theStream := aStream.
         theEncoder := anEncoder.
         theOpen := true.
     ]
 
-    #constructor new &path:aPath
-        <= %new &stream:(FileStream openForRead &path:aPath) &encoder:UTF8Encoder.
+    constructor new &path:aPath
+        <= new &stream:(FileStream openForRead &path:aPath) &encoder:UTF8Encoder.
 
-    #constructor new &path:aPath &encoder:anEncoder
-        <= %new &stream:(FileStream openForRead &path:aPath) &encoder:anEncoder.
+    constructor new &path:aPath &encoder:anEncoder
+        <= new &stream:(FileStream openForRead &path:aPath) &encoder:anEncoder.
 
-    #method available = theOpen.
+    available = theOpen.
 
-    #method stream = theStream.
+    stream = theStream.
 
-    #method encoder = theEncoder.
+    encoder = theEncoder.
 
-    #method read &chararray:anOutput &vint:aLength
+    read &chararray:anOutput &vint:aLength
     [
-        #var(int)aBufferLength := 64.
-        #var(byte:64)aBuffer.
+        int      aBufferLength := 64.
+        byte(64) aBuffer := 0.
         theStream read &bytearray:aBuffer &vint:aBufferLength.
         (aBufferLength == 0)
             ? [ theOpen := false. aLength := 0. ]
             ! [
-                #var(int)aRead := aBufferLength.
+                int aRead := aBufferLength.
 
                 theEncoder convert &int:0 &vint:aBufferLength &bytearray:aBuffer &chararray:anOutput &vint:aLength.
                 
@@ -233,7 +233,7 @@
             ].            
     ]
     
-    #method close
+    close
     [
         theStream close.
     ]
@@ -241,92 +241,92 @@
 
 // --- BinaryFileReader ---
 
-#class(sealed)BinaryFileReader :: BinaryReader
+sealed BinaryFileReader :: BinaryReader
 {
-    #constructor new &path:aPath
-        <= %new &stream:(FileStream openForRead &path:aPath).
+    constructor new &path:aPath
+        <= new &stream:(FileStream openForRead &path:aPath).
 }
 
 // --- BinaryFileWriter ---
 
-#class(sealed)BinaryFileWriter :: BinaryWriter
+sealed BinaryFileWriter :: BinaryWriter
 {
-    #constructor new &path:aPath
-        <= %new &stream:(FileStream openForReWrite &path:aPath).
+    constructor new &path:aPath
+        <= new &stream:(FileStream openForReWrite &path:aPath).
 }
 
 // --- fileOp ---
 
-#class(extension:file_path)fileExtOp
+extension(file_path) fileExtOp
 {
-    #method openForRead = FileStream openForRead &path:self.
+    openForRead = FileStream openForRead &path:self.
     
-    #method openForReWrite = FileStream openForReWrite &path:self.
+    openForReWrite = FileStream openForReWrite &path:self.
     
-    #method openForEdit = FileStream openForEdit &path:self.
+    openForEdit = FileStream openForEdit &path:self.
     
-    #method openForAppend = FileStream openForAppend &path:self.    
+    openForAppend = FileStream openForAppend &path:self.    
         
-    #method textreader = StreamReader new &path:self.
+    textreader = StreamReader new &path:self.
     
-    #method textwriter = StreamWriter new &path:self.
+    textwriter = StreamWriter new &path:self.
     
-    #method logger = StreamWriter new &path:self &bool:true.
+    logger = StreamWriter new &path:self &bool:true.
     
-    #method(bool) is &available
-    [
-        #var(int) ret := system'external'KERNEL32 GetFileAttributesW &wide:(self wide).
-        
-        (ret != 0FFFFFFFFh)
-            ? [
-                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
-                
-                ^ ret == 0.
-            ].
-            
-        ^ false.            
-    ]
+//    bool is &available
+//    [
+//        int ret := system'external'KERNEL32 GetFileAttributesW &wide:(self wide).
+//        
+//        (ret != 0FFFFFFFFh)
+//            ? [
+//                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
+//                
+//                ^ ret == 0.
+//            ].
+//            
+//        ^ false.            
+//    ]
     
-    #method delete
-    [
-        #var(int) ret := system'external'KERNEL32 DeleteFileW &wide:(self wide).
-        
-       ^ ret != 0.
-    ]
+//    delete
+//    [
+//        int ret := system'external'KERNEL32 DeleteFileW &wide:(self wide).
+//        
+//       ^ ret != 0.
+//    ]
 }
 
 // --- directoryExtOp
 
-#class(extension:directory_path)directoryExtOp
+extension(directory_path)directoryExtOp
 {
-    #method(bool) is &available
-    [
-        #var(int) ret := system'external'KERNEL32 GetFileAttributesW &wide:(self wide).
-     
-        (ret != 0FFFFFFFFh)
-            ? [
-                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
-                
-                ^ ret != 0.
-            ].
-            
-        ^ false.            
-    ]    
-    
-    #method create
-    [
-        #var(int) ret := system'external'KERNEL32 CreateDirectoryW
-            &wide:(self wide)
-            &int:0.
-            
-        (ret == 0)
-            ? [ #throw IOException new &literal:"Cannot create a directory". ].
-    ]
-    
-    #method delete
-    [
-        #var(int) ret := system'external'KERNEL32 RemoveDirectoryW &wide:(self wide).
-        
-       ^ ret != 0.
-    ]    
+//    bool is &available
+//    [
+//        int ret := system'external'KERNEL32 GetFileAttributesW &wide:(self wide).
+//     
+//        (ret != 0FFFFFFFFh)
+//            ? [
+//                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
+//                
+//                ^ ret != 0.
+//            ].
+//            
+//        ^ false.            
+//    ]    
+//    
+//    create
+//    [
+//        int ret := system'external'KERNEL32 CreateDirectoryW
+//            &wide:(self wide)
+//            &int:0.
+//            
+//        (ret == 0)
+//            ? [ IOException new &literal:"Cannot create a directory" raise. ].
+//    ]
+//    
+//    delete
+//    [
+//        int ret := system'external'KERNEL32 RemoveDirectoryW &wide:(self wide).
+//        
+//       ^ ret != 0.
+//    ]    
 }

@@ -4,120 +4,120 @@
 
 // --- BinaryReader ---
 
-#class(limited) BinaryReader
+limited class BinaryReader
 {
-    #field(stream)theStream.
-    #field(int)   theLength.
+    stream theStream.
+    int    theLength.
     
-    #constructor new &stream:aStream
+    constructor new &stream:aStream
     [
         theStream := aStream.
         
         theLength := aStream length.
     ]
     
-    #method(stacksafe) read &bytearray:anArray &vint:anActualLength
+    stacksafe read &bytearray:anArray &vint:anActualLength
     [
         theStream read &bytearray:anArray &vint:anActualLength.
     ]
 
-    #method stream = theStream.
+    stream = theStream.
 
-    #method close => theStream.
+    close => theStream.
 
-    #method(bool) available
+    bool available
     [
-        #var(int)aPosition := theStream index.
+        int aPosition := theStream index.
         
         ^ aPosition < theLength.
     ]
             
-    #method(stacksafe) read &bytearray:anArray &int:aLength
+    stacksafe read &bytearray:anArray &int:aLength
     [
-        #var(int)aRead := aLength.
+        int aRead := aLength.
         
         $self read &bytearray:anArray &vint:aRead.
          
         (aLength > aRead)
-            ? [ #throw IOException new. ].
+            ? [ IOException new raise. ].
     ]
 
-    #method read &vbyte:anInt
+//    read &vbyte:anInt
+//    [
+//        byte(4) aBuffer := 0.
+//        int     aRead := 1.
+//        
+//        $self read &bytearray:aBuffer &vint:aRead.
+//        
+//        (aRead < 1)
+//            ? [ IOException new raise. ].
+//     
+//        byte b := aBuffer@0.
+//                          
+//        anInt := b.
+//    ]
+
+    read &vshort:anInt
     [
-        #var(byte:4)aBuffer.
-        #var(int)aRead := 1.
+        byte(4) aBuffer := 0.
+        int     aRead := 2.
         
         $self read &bytearray:aBuffer &vint:aRead.
         
         (aRead < 1)
-            ? [ #throw IOException new. ].
-     
-        #var(byte)b := aBuffer@0.
-                          
-        anInt := b.
-    ]
-
-    #method read &vshort:anInt
-    [
-        #var(byte:4)aBuffer.
-        #var(int)aRead := 2.
-        
-        $self read &bytearray:aBuffer &vint:aRead.
-        
-        (aRead < 1)
-            ? [ #throw IOException new. ].
+            ? [ IOException new raise. ].
             
         byteArrayHelper read &bytearray:aBuffer &int:0 &vshort:anInt.
     ]
 
-    #method read &vchar:anInt
+    read &vchar:anInt
     [
-        #var(byte:4)aBuffer.
-        #var(int)aRead := 4.
+        byte(4) aBuffer := 0.
+        int     aRead := 4.
         
         $self read &bytearray:aBuffer &vint:aRead.
         
         (aRead < 1)
-            ? [ #throw IOException new. ].
+            ? [ IOException new raise. ].
             
         byteArrayHelper read &bytearray:aBuffer &int:0 &vchar:anInt.
     ]
 
-    #method read &vint:anInt
+    read &vint:anInt
     [
-        #var(byte:4)aBuffer.
-        #var(int)aRead := 4.
+        byte(4) aBuffer := 0.
+        int     aRead := 4.
         
         $self read &bytearray:aBuffer &int:aRead.
         
         (aRead < 4)
-            ? [ #throw IOException new. ].
+            ? [ IOException new raise. ].
             
         byteArrayHelper read &bytearray:aBuffer &int:0 &vint:anInt.
     ]
 
-    #method read &vlong:aLong
+    read &vlong:aLong
     [
-        #var(byte:8)aBuffer.
-        #var(int)aRead := 8.
+        byte(8) aBuffer := 0.
+        int     aRead := 8.
         
         $self read &bytearray:aBuffer &vint:aRead.
         
         (aRead < 8)
-            ? [ #throw IOException new. ].
+            ? [ IOException new raise. ].
             
         byteArrayHelper read &bytearray:aBuffer &int:0 &vlong:aLong.
     ]
 
-    #method read &vreal:aReal
+    read &vreal:aReal
     [
-        #var(byte:8)aBuffer.
-        #var(int)aRead := 8.
+        byte(8) aBuffer := 0.
+        int     aRead := 8.
         
         $self read &bytearray:aBuffer &vint:aRead.
         
         (aRead < 8)
-            ? [ #throw IOException new. ].
+            ? [ IOException new raise. ].
             
         byteArrayHelper read &bytearray:aBuffer &int:0 &vreal:aReal.
     ]
@@ -125,13 +125,13 @@
 
 // --- TextReader ---
 
-#class(limited) TextReader
+limited class TextReader
 {
-    #field(textbuffer) theOutput.
-    #field(literal)    theNewLineConstant.
-    #field(int)        theNewLineLength.
+    textbuffer theOutput.
+    literal    theNewLineConstant.
+    int        theNewLineLength.
 
-    #constructor new
+    constructor new
     [
         theOutput := TextBuilder new.
         theNewLineConstant := 'newLine literal.
@@ -139,31 +139,31 @@
         theNewLineLength := theNewLineConstant length.
     ]
 
-    #method(stacksafe) read &chararray:anArray &vint:anActualLength
+    stacksafe read &chararray:anArray &vint:anActualLength
     [
     ]
 
-    #method stream [ #throw NotSupportedException new. ]
+    stream [ NotSupportedException new raise. ]
 
-    #method encoder [ #throw NotSupportedException new. ]
+    encoder [ NotSupportedException new raise. ]
 
-    #method close [ ]
+    close [ ]
     
-    #method(bool) available = false.
+    bool available = false.
             
-    #method(literal) read &literal
+    literal read &literal
     [
-        #var(literal) aLine := emptyLiteralValue.
+        literal aLine := emptyLiteralValue.
         
-        #var(int)aLength := -1.
-        #loop (aLength == -1) ?
+        int aLength := -1.
+        while (aLength == -1)
         [
             theOutput indexOf &int:0 &literal:theNewLineConstant &vint:aLength.
             
             (aLength == -1)
                 ? [
-                    #var(char:64)aBuffer.
-                    #var(int)aBufferLength := 64.
+                    char(64) aBuffer := 0.
+                    int      aBufferLength := 64.
                     
                     $self read &chararray:aBuffer &vint:aBufferLength.
                     (aBufferLength == 0)
@@ -185,22 +185,22 @@
         ^ aLine.
     ]
     
-    #method(wide) read &wide
+    wide read &wide
     [
-        #var(wide) aLine := emptyWideLiteralValue.
-        #var(wide) nl := theNewLineConstant wide.
-        #var(int) nl_len.
+        wide aLine := emptyWideLiteralValue.
+        wide nl := theNewLineConstant wide.
+        int  nl_len := 0.
         nl readLength &vint:nl_len.
         
-        #var(int)aLength := -1.
-        #loop (aLength == -1) ?
+        int aLength := -1.
+        while (aLength == -1)
         [
             theOutput indexOf &int:0 &wide:nl &vint:aLength.
             
             (aLength == -1)
                 ? [
-                    #var(char:64)aBuffer.
-                    #var(int)aBufferLength := 64.
+                    char(64) aBuffer := 0.
+                    int      aBufferLength := 64.
                     
                     $self read &chararray:aBuffer &vint:aBufferLength.
                     (aBufferLength == 0)

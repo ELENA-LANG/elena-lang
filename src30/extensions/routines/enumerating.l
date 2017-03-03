@@ -5,45 +5,45 @@
 
 // --- ReaderEnumerator ---
 
-#class ReaderEnumerator :: Enumerator
+class ReaderEnumerator :: Enumerator
 {
-    #field(textreader) theReader.
-    #field theLine.
+    textreader theReader.
+    object     theLine.
 
-    #constructor new
+    constructor new
     [ 
     ]
 
-    #constructor new : source
-        <= (new)
+    constructor new : source
+        <= new;
     [
         theReader := source textreader.
     ]
 
-    #constructor new &stream:aStream &encoder:anEncoder
-        <= (%new)
+    constructor new &stream:aStream &encoder:anEncoder
+        <= new;
     [
         theReader := StreamReader new &stream:aStream &encoder:anEncoder.
     ]        
                         
-    #constructor new &path:aPath
-        <= (%new)
+    constructor new &path:aPath
+        <= new;
     [
         theReader := StreamReader new &path:aPath.
     ]
     
-    #constructor new &path:aPath &encoder:anEncoder
-        <= (%new)
+    constructor new &path:aPath &encoder:anEncoder
+        <= new;
     [
         theReader := StreamReader new &path:aPath &encoder:anEncoder.
     ]
     
-    #method reset 
+    reset 
     [
-        #throw NotSupportedException new.
+        NotSupportedException new raise.
     ]
     
-    #method next
+    next
     [
         (theReader available)
             ? [
@@ -57,39 +57,39 @@
         ^ false.
     ]
     
-    #method get = theLine.
+    get = theLine.
 }
 
 // --- fileExOp ---
 
-#class(extension:file_path)fileExOp
+extension(file_path) fileExOp
 {
-    #method run &eachLine:anAction
+    run &eachLine:anAction
         = anAction run &enumerator:(ReaderEnumerator new &path:self).
         
-    #method run &for:anEncoder &eachLine:anAction
+    run &for:anEncoder &eachLine:anAction
         = anAction run &enumerator:(ReaderEnumerator new &path:self &encoder:(anEncoder encoder)).
 }
 
 // --- stringExOp ---
 
-#class(extension)stringExOp
+extension stringExOp
 {
-    #method run &eachWord:aFunction
+    run &eachWord:aFunction
         = aFunction run &enumerator:(TokenEnumerator new &literal:(self literal)).
         
-    #method run &token_dfa:aStatemachine &each:aFunction
+    run &token_dfa:aStatemachine &each:aFunction
         = aFunction run &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:aStatemachine).
 }
 
 // --- printingLn ---
 
-#symbol printingLn = aLine [ 'program'output writeLine:aLine ].
+symbol printingLn = aLine [ 'program'output writeLine:aLine ].
 
 // --- func1Op ---
 
-#class(extension:func1)func1Op
+extension(func1) func1Op
 {
-    #method asComparer
+    asComparer
         = { equal : object = self eval:object bool. }.
 }

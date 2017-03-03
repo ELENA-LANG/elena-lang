@@ -3,48 +3,48 @@
 
 // --- File ---
 
-#class File
+class File
 {
-    #field(file_path) thePath.
+    file_path thePath.
     
-    #constructor new &path:aPath
+    constructor new &path:aPath
     [
         thePath := aPath.
     ]
 
-    #method file_path = thePath.
+    file_path = thePath.
 
-    #method literal = thePath literal.
+    literal = thePath literal.
     
-    #method wide = thePath wide.
+    wide = thePath wide.
     
-    #method textreader = thePath::fileExtOp textreader.
+    textreader = thePath::fileExtOp textreader.
     
-    #method textwriter = thePath::fileExtOp textwriter.
+    textwriter = thePath::fileExtOp textwriter.
     
-    #method(bool)is &available
+    bool is &available
         = thePath::fileExtOp is &available.
     
-    #method(literal) literalContent
+    literal literalContent
         = thePath::fileOp literalContent.
     
-    #method(wide) wideContent
+    wide wideContent
         = thePath::fileOp wideContent.
     
-    #method(int)length
+    int length
         = thePath::fileOp length.
 }
 
 // --- fileOp ---
 
-#class(extension:file_path)fileOp
+extension(file_path) fileOp
 {
-    #method read &textbuffer:anOutput
+    read &textbuffer:anOutput
     [
-        #var(textreader)aReader := self::fileExtOp textreader.
-        #var(char:128)buffer.
-        #var(int)read.
-        #loop (aReader available)?
+        textreader aReader := self::fileExtOp textreader.
+        char(128)  buffer := 0.
+        int        read := 0.
+        while (aReader available)
         [
             read := 128.
             aReader read &chararray:buffer &vint:read.
@@ -55,46 +55,46 @@
         aReader close.
     ]
  
-    #method saveContent:content
+    saveContent:content
     [
-        #var(textwriter)aWriter := self::fileExtOp textwriter.
+        textwriter aWriter := self::fileExtOp textwriter.
         
         aWriter write &literal:(content literal).
         
         aWriter close.
     ]
  
-    #method saveWideContent:content
+    saveWideContent:content
     [
-        #var(textwriter)aWriter := self::fileExtOp textwriter.
+        textwriter aWriter := self::fileExtOp textwriter.
         
         aWriter write &wide:(content wide).
         
         aWriter close.
     ]
           
-    #method(literal) literalContent
+    literal literalContent
     [
-        #var(textbuffer)anOutput := TextBuilder new.
+        textbuffer anOutput := TextBuilder new.
         
         self::fileOp read &textbuffer:anOutput.
         
         ^ anOutput literal.
     ]
     
-    #method(wide) wideContent
+    wide wideContent
     [
-        #var(textbuffer)anOutput := TextBuilder new.
+        textbuffer anOutput := TextBuilder new.
         
         self::fileOp read &textbuffer:anOutput.
         
         ^ anOutput wide.
     ]
     
-    #method(int,w2)length
+    int length
     [
-        #var(stream)stream := FileStream openForRead &path:self.
-        #var(int) fileLen := stream length.        
+        stream stream := FileStream openForRead &path:self.
+        int    fileLen := stream length.        
         
         stream close.
         

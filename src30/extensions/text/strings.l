@@ -2,36 +2,36 @@
 
 // --- StringBookmark ---
 
-#class StringBookmark :: BaseValue
+class StringBookmark :: BaseValue
 {
-    #field theValue.
-    #field theIndex.
-    #field theStart.
+    object theValue.
+    object theIndex.
+    object theStart.
     
-    #constructor new
+    constructor new
     [
         theValue := emptyLiteralValue.
         theIndex := 0.
         theStart := 0.
     ]
 
-    #constructor new : aText
+    constructor new : aText
     [
         theValue := aText.
         theIndex := 0.
         theStart := 0.
     ]
 
-    #method equal &int:aValue
+    equal &int:aValue
         => theIndex.
 
-    #method equal &literal:aValue
+    equal &literal:aValue
         => theValue.
 
-    #method equal &wide:aValue
+    equal &wide:aValue
         => theValue.
 
-    #method find : anObject
+    find : anObject
         = anObject cast:%eval &to:
         {
             eval:aBookmark &int : anIndex = aBookmark find &index:anIndex.
@@ -41,7 +41,7 @@
             eval:aBookmark &wide : aLiteral = aBookmark find &value:aLiteral.
         } &with:self.
 
-    #method append : anObject
+    append : anObject
         = anObject cast:%eval &to:
         {
             eval:aBookmark &int : anIndex = aBookmark append &index:anIndex.
@@ -52,7 +52,7 @@
             
         } &with:self.
 
-    #method insert : anObject
+    insert : anObject
         = anObject cast:%eval &to:
         {
             eval:aBookmark &literal : aLiteral = aBookmark insert &value:aLiteral.
@@ -61,7 +61,7 @@
             
         } &with:self.
 
-    #method delete : anObject
+    delete : anObject
         = anObject cast:%eval &to:
         {
             eval:aBookmark &int : aValue = aBookmark delete &length:aValue.
@@ -72,19 +72,19 @@
             
         } &with:self.
 
-    #method find &index:anIndex
+    find &index:anIndex
     [
         theIndex := anIndex.
     ]
 
-    #method find &value:aValue
+    find &value:aValue
     [
         theIndex := theValue indexOf:aValue &at:theIndex.
         
         ^ (-1 != theIndex).
     ]
     
-    #method mark
+    mark
     [
         (-1 == theIndex)
             ? [
@@ -97,112 +97,112 @@
         
     ]
     
-    #method append &value:aValue 
+    append &value:aValue 
     [
         theValue := theValue + aValue.
     ]
     
-    #method append &index:aValue 
+    append &index:aValue 
     [
         theIndex := theIndex + aValue.
     ]
     
-    #method insert &value:aValue
+    insert &value:aValue
     [
         theValue := theValue insert:aValue &at:theIndex.
         
         theIndex := theIndex + aValue length.
     ]
     
-    #method delete &length:aLength
+    delete &length:aLength
     [
         theValue := theValue delete:aLength &at:theIndex.
     ]
 
-    #method clear
+    clear
     [
         theValue := emptyLiteralValue.
         theIndex := 0.
         theStart := 0.
     ]
 
-    #method Marked
+    Marked
         = (-1 == theIndex)
             ? [ theValue Substring:theStart ]
             ! [ theValue Substring:(theIndex - theStart) &at:theStart ].
     
-    #method literal => theValue.
+    literal => theValue.
     
-    #method wide => theValue.
+    wide => theValue.
     
-    #method length => theValue.
+    length => theValue.
     
-    #method index = theIndex int.
+    index = theIndex int.
 }
 
 // --- StringWriter ---
 
-#class StringWriter
+class StringWriter
 {    
-    #field(literal) theValue.
+    literal theValue.
     
-    #constructor new
+    constructor new
     [
         theValue := emptyLiteralValue.
     ]
     
-    #constructor new : aText
+    constructor new : aText
     [
         theValue := aText literal.
     ]
     
-    #method write : aText
+    write : aText
     [
         theValue := theValue add:aText literal.
     ]
     
-    #method writeLine : aText
+    writeLine : aText
     [
         $self write:aText write:'newLine.
     ]
    
-    #method writeLine
+    writeLine
     [
         $self write:'newLine.
     ]    
 
-    #method set : aText
+    set : aText
     [
         theValue := aText literal.
     ]
 
-    #method append : aText
+    append : aText
     [
         theValue := theValue add:aText literal.
     ]
     
-    #method insert:s &at:index
+    insert:s &at:index
     [
         theValue := theValue insert:s &at:index literal.
     ]
     
-    #method get = theValue.
+    get = theValue.
 
-    #method clear
+    clear
     [
         theValue := emptyLiteralValue.
     ]
 
-    #method wide => theValue.
+    wide => theValue.
 
     /// Dispatches the verb to the target object
-    #method cast : aVerb &to:aTarget => theValue.
+    cast : aVerb &to:aTarget => theValue.
     
     /// Dispatches the verb to the target object
-    #method cast : aVerb &to:aTarget &with:aParam => theValue.
+    cast : aVerb &to:aTarget &with:aParam => theValue.
 
-    #method => theValue.
+    dispatch => theValue.
 }
 
 /// obsolete
-#symbol String = StringWriter.
+symbol String = StringWriter.

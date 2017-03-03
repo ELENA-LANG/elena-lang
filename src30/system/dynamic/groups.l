@@ -2,77 +2,77 @@
 
 // --- Wrap ---
 
-#class(dynamic,group) Wrap
+dynamic group Wrap
 {
-    #field $item.
+    object $item.
     
-    #method => system'core_routines'__wrap.
+    dispatch => system'core_routines'__wrap.
 }
 
 // --- Extension ---
 
-#class(dynamic,group) Extension
+dynamic group Extension
 {
-    #field $item.
+    object $item.
     
-    #method => system'core_routines'__extension.
+    dispatch => system'core_routines'__extension.
 }
 
 // --- Group ---
 
-#class(dynamic,group) Group
+dynamic group Group
 {
-    #field $item.
+    object $item.
     
-    #constructor(stacksafe) $new &int:aLength
-        = object:aLength.
+    stacksafe constructor $new &int:aLength
+        = object(aLength).
         
-    #constructor new &args:objects
-        <= ($new &int:(objects length))
+    constructor new &args:objects
+        <= $new &int:(objects length);
     [
         $self setFields &args:objects.
     ]
     
-    #method => system'core_routines'__group.
+    dispatch => system'core_routines'__group.
 }
 
 // --- Cast ---
 
-#class(sealed,arrayof:object,group) Cast
+sealed arrayof(object) group Cast
 {
-    #constructor(stacksafe) $new &int:aLength
-        = object:aLength.
+    stacksafe constructor $new &int:aLength
+        = object(aLength).
         
-    #constructor new &args:objects
-        <= ($new &int:(objects length))
+    constructor new &args:objects
+        <= $new &int:(objects length);
     [
         $self setFields &args:objects.
     ]
     
-    #method => system'core_routines'__castover.
+    dispatch => system'core_routines'__castover.
 }
 
 // --- extensions ---
 
-#class(extension) dynamicOp
+extension dynamicOp
 {
-    #method mix &into:role
-        = Extension(role, self).
+//    mix &into:role
+//        = Extension(role, self).
         
-    #method group &with:object
+    group &with:object
     [
         ($nil == object)
             ? [ ^ self. ].
         
         (Group == self class)
             ? [ 
-                #var(int)length := self fieldCount.
+                int length := self fieldCount.
             
-                #var retVal := Group $new &int:(length + 1).
+                var retVal := Group $new &int:(length + 1).
                                 
-                #var(int)i := 0.
+                int i := 0.
                 
-                #loop (i < length)?
+                while (i < length)
                 [
                     retVal setField &int:i &object:(self getField &int:i).
                     
@@ -86,13 +86,13 @@
             ! [ 
                 (Group == object class)
                     ? [
-                        #var(int)length := object fieldCount.
+                        int length := object fieldCount.
                     
-                        #var retVal := Group $new &int:(length + 1).
+                        var retVal := Group $new &int:(length + 1).
                                         
-                        #var(int)i := 0.
+                        int i := 0.
                         
-                        #loop (i < length)?
+                        while (i < length)
                         [
                             retVal setField &int:(i + 1) &object:(self getField &int:i).
                             
@@ -107,20 +107,20 @@
             ].
     ]        
         
-    #method cast &with:object
+    cast &with:object
     [
         ($nil == object)
             ? [ ^ self. ].
         
         (self class == Cast)
             ? [ 
-                #var(int)length := self fieldCount.
+                int length := self fieldCount.
             
-                #var retVal := Cast $new &int:(length + 1).
+                var retVal := Cast $new &int:(length + 1).
                                 
-                #var(int)i := 0.
+                int i := 0.
                 
-                #loop (i < length)?
+                while (i < length)
                 [
                     retVal setField &int:i &object:(self getField &int:i).
                     
@@ -134,13 +134,13 @@
             ! [ 
                 (object class == Cast)
                     ? [
-                        #var(int)length := object fieldCount.
+                        int length := object fieldCount.
                     
-                        #var retVal := Cast $new &int:(length + 1).
+                        var retVal := Cast $new &int:(length + 1).
                                         
-                        #var(int)i := 0.
+                        int i := 0.
                         
-                        #loop (i < length)?
+                        while (i < length)
                         [
                             retVal setField &int:(i + 1) &object:(self getField &int:i).
                             

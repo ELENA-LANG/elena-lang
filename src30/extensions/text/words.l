@@ -5,27 +5,27 @@
 
 #subject token_dfa = Statemachine.
 
-#class(limited) Statemachine
+limited class Statemachine
 {
-    #method(bool,stacksafe) proceed &char:aChar = $nil.
+    stacksafe bool proceed &char:aChar = $nil.
     
-    #method(bool) is &whitespace = $nil.
+    bool is &whitespace = $nil.
     
-    #method token_dfa = $self.
+    token_dfa = $self.
     
-    #method state = $nil.
+    state = $nil.
 }
 
-#class SimpleStatemachine :: Statemachine
+class SimpleStatemachine :: Statemachine
 {
-    #field(bool)theSpaceMode.
+    bool theSpaceMode.
     
-    #constructor new
+    constructor new
     [
         theSpaceMode := true.
     ]
     
-    #method proceed &char:aChar
+    proceed &char:aChar
     [
         (aChar is &whitespace)
             ? [
@@ -39,17 +39,17 @@
         ^ false.            
     ]
     
-    #method is &whitespace = theSpaceMode.
+    is &whitespace = theSpaceMode.
 }
 
-#class ExpressionStatemachine :: Statemachine
+class ExpressionStatemachine :: Statemachine
 {
-    #field(bool)theSpaceMode.
-    #field(bool)theQuoteMode.
-    #field(bool)theNewToken.
-    #field(bool)theOperatorMode.
+    bool theSpaceMode.
+    bool theQuoteMode.
+    bool theNewToken.
+    bool theOperatorMode.
     
-    #constructor new
+    constructor new
     [
         theSpaceMode := true.
         theQuoteMode := false.
@@ -57,7 +57,7 @@
         theOperatorMode := false.
     ]
     
-    #method proceed &char:aChar
+    proceed &char:aChar
     [
         theQuoteMode?
             [
@@ -67,9 +67,9 @@
                 ^ false.                
             ].
         
-        #var(bool)whitespace := aChar is &whitespace.
-        #var(bool)digit := aChar is &digit.
-        #var(bool)letter := aChar is &ltoken.
+        bool whitespace := aChar is &whitespace.
+        bool digit := aChar is &digit.
+        bool letter := aChar is &ltoken.
         whitespace
             ? [
                 theSpaceMode
@@ -111,21 +111,21 @@
         ^ false.
     ]
     
-    #method is &whitespace = theSpaceMode.    
+    is &whitespace = theSpaceMode.    
 }
 
 /// obosolet
-#symbol WordEnumerator = TokenEnumerator.
+symbol WordEnumerator = TokenEnumerator.
 
-#class TokenEnumerator :: Enumerator
+class TokenEnumerator :: Enumerator
 {
-    #field(literal)    theLiteral.
-    #field(vint)       theIndex.
-    #field(textbuffer) theBuffer.
+    literal    theLiteral.
+    vint       theIndex.
+    textbuffer theBuffer.
     
-    #field(token_dfa)  theDFA.
+    token_dfa  theDFA.
     
-    #constructor(w3) new &literal:aLiteral &token_dfa:dfa
+    constructor new &literal:aLiteral &token_dfa:dfa
     [
         theLiteral := aLiteral.
         theIndex := 0.
@@ -133,26 +133,26 @@
         theDFA := dfa.
     ]    
     
-    #constructor new &literal:aLiteral
+    constructor new &literal:aLiteral
         <= new &literal:aLiteral &token_dfa:(SimpleStatemachine new).
     
-    #method reset 
+    reset 
     [
         theIndex set &int:0.
     ]
     
-    #method next
+    next
     [
         theBuffer clear.
 
-        #var(int)aLength.
-        #var(int)aCurrent := theIndex.
-        #var(char)aChar.
-        #var(int)aCharLen.
+        int  aLength := 0.
+        int  aCurrent := theIndex.
+        char aChar := #0.
+        int  aCharLen := 0.
         
         theLiteral readLength &vint:aLength.
         
-        #loop (aCurrent < aLength) ?
+        while (aCurrent < aLength)
         [
             theLiteral read &int:aCurrent &vchar:aChar.
             
@@ -176,6 +176,5 @@
         ^ theBuffer is &nonempty.
     ]
     
-    #method get = theBuffer literal.
+    get = theBuffer literal.
 }
-

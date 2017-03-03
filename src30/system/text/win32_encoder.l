@@ -1,30 +1,30 @@
 #import system.
 
-#symbol(const,int) $MB_ERR_INVALID_CHARS     = 00000008h.
+const int $MB_ERR_INVALID_CHARS     = 00000008h.
 
 // --- WinEncoder ---
 
-#class(struct) WinEncoder :: Encoder
+struct WinEncoder :: Encoder
 {
-    #field(int)theCodePage.
+    int theCodePage.
     
-    #constructor new &int:aCodePage
+    constructor new &int:aCodePage
     [
         theCodePage := aCodePage.
     ]
 
-    #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength 
+    convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength 
     [
         (aLength > 127)
-            ? [ #throw InvalidArgumentException new. ].
+            ? [ InvalidArgumentException new raise. ].
         
-        #var(short:127)temp_buf.
-        #var(int)aConverted := aLength.
-        #var(int)n := aLength.                
+        short(127) temp_buf := 0.
+        int        aConverted := aLength.
+        int        n := aLength.                
         
         (anIndex != 0)
             ? [
-                #var(dirty_ptr)ptr.
+                dirty_ptr ptr := 0.
                 ptr set:aByteArray.
                 ptr offset &int:anIndex.
 
@@ -44,14 +44,14 @@
         UTF16Encoding convert &int:0 &int:aConverted &shortarray:temp_buf &chararray:anOutput &vint:anOutputLength.
     ]
 
-    #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength 
+    convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength 
     [
-        #var(short:127)temp_buf.
-        #var(int)temp_len := 127.
+        short(127) temp_buf := 0.
+        int        temp_len := 127.
 
         UTF16Encoding convert &int:anIndex &int:aLength &chararray:aByteArray &shortarray:temp_buf &vint:temp_len.
         
-        #var(int)retVal := system'external'KERNEL32 WideCharToMultiByte 
+        int retVal := system'external'KERNEL32 WideCharToMultiByte 
             &int:theCodePage 
             &int:0
             &shortarray:temp_buf 
@@ -61,7 +61,7 @@
             &int:0 &int:0.
 
         (retVal > anOutputLength)
-            ? [ #throw InvalidArgumentException new. ].
+            ? [ InvalidArgumentException new raise. ].
                 
         system'external'KERNEL32 WideCharToMultiByte 
             &int:theCodePage 
@@ -78,16 +78,16 @@
 
 // --- Win1252Encoder ---
 
-#static(encoder) WIN1252Encoder = WinEncoder new &int:1252.
+static encoder WIN1252Encoder = WinEncoder new &int:1252.
 
 // --- Win1251Encoder ---
 
-#static(encoder) WIN1251Enc = WinEncoder new &int:1251.
+static encoder WIN1251Enc = WinEncoder new &int:1251.
 
 // --- OEMEncoder ---
 
-#static(encoder) OEMEncoder = WinEncoder new &int:1.
+static encoder OEMEncoder = WinEncoder new &int:1.
 
 // --- AnsiEncoder ---
 
-#static(encoder) AnsiEncoder = WinEncoder new &int:0.
+static encoder AnsiEncoder = WinEncoder new &int:0.

@@ -1,36 +1,34 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 
 // --- ProgramLoop ---
 
-#class $ProgramLoop
+class $ProgramLoop
 {
-    #field(bool) theActive.
-    #field theControl.
+    bool   theActive.
+    object theControl.
     
-    #constructor new : aControl
+    constructor new : aControl
     [
         theActive := true.
         theControl := aControl.
     ]
     
-    #method stop [ theActive := false. ]
+    stop [ theActive := false. ]
     
-    #method eval
+    eval
     [
         // if grettings is not defined - do nothing
         console writeLine:(theControl greeting)
             | on:
             {
-                Abort = e [ #throw e. ].
+                Abort = e [ e raise. ].
                 
                 ! = e [].
             }.
         
-        #var aPrompt := theControl prompt.
+        var aPrompt := theControl prompt.
         
-        #loop theActive?
+        while (theActive)
         [
             console write:aPrompt.
             
@@ -39,4 +37,4 @@
     ]
 }
 
-#static programLoop = $ProgramLoop new:'program'control.
+static programLoop = $ProgramLoop new:'program'control.

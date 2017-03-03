@@ -1,14 +1,14 @@
 #import system.
 #import system'routines.
 
-#class(extension:int)intLoopOp
+extension(int) intLoopOp
 {
-    #method to &int:anEnd &doEvery:aFunction
+    to &int:anEnd &doEvery:aFunction
         = self::intLoopOp to &int:anEnd &nfunc:(aFunction nfunc).
     
-    #method(stacksafe) to &int:anEnd &nfunc:aFunction
+    stacksafe to &int:anEnd &nfunc:aFunction
     [
-       #var(int)aStart := self.
+       int aStart := self.
 
        ^ (aStart < anEnd)
             ? [ ^ aFunction run &int:aStart &int:anEnd &int:1. ]
@@ -16,40 +16,40 @@
     ]
 }
 
-#class(extension)forLoopOp
+extension forLoopOp
 {
-    #method to:aMaxValue &doEach:aFunction
+    to:aMaxValue &doEach:aFunction
         = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
         
-    #method to:aMaxValue &by:aStep &doEach:aFunction
+    to:aMaxValue &by:aStep &doEach:aFunction
         = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
         
-    #method till:aMaxValue &doEach:aFunction
+    till:aMaxValue &doEach:aFunction
         = aFunction run &enumerator:(IntervalEnumerator new &from:self &till:aMaxValue).
         
-    #method till:aMaxValue &by:aStep &doEach:aFunction
+    till:aMaxValue &by:aStep &doEach:aFunction
         = aFunction run &enumerator:(IntervalEnumerator new &from:self &till:aMaxValue &by:aStep).
         
-    #method to:aMaxValue &seekEach:aFunction
+    to:aMaxValue &seekEach:aFunction
         = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
         
-    #method to:aMaxValue &by:aStep &seekEach:aFunction
+    to:aMaxValue &by:aStep &seekEach:aFunction
         = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
 }
 
-#class(extension)loopOp
+extension loopOp
 {
-    #method doWhile:anAction
+    doWhile:anAction
     [
-        #loop (self bool)?
+        while (self bool)
         [
             anAction eval.
         ].
     ]
     
-    #method doWhile
+    doWhile
     [
-        #loop (self bool)?
+        while (self bool)
         [
         ].
     ]
@@ -74,9 +74,9 @@
 
 // --- controlOp ---
 
-#class(extension)controlOp
+extension controlOp
 {
-    #method save &to:target
+    save &to:target
     [
         target write:self.
         
@@ -86,7 +86,7 @@
 
 // --- control ---
 
-#symbol control =
+class control =
 {
 //    try : anAction &catching:aHandler
 //    [

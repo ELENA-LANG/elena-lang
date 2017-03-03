@@ -7,15 +7,15 @@
 
 // --- convertors ---
 
-#symbol literalExConvertor =
+class literalExConvertor =
 {
     convert &enumerable:aList
     [
-        #var(textbuffer) anOutput := TextBuilder new.
+        textbuffer anOutput := TextBuilder new.
 
         aList run:anOutput &eachPair:(:aParam:anItem) [ aParam write:(anItem::convertorOp toLiteral) write:"," ].
         
-        #var(int)aLength := anOutput length.
+        int aLength := anOutput length.
 
         (0 < aLength)
             ? [ anOutput setLength &int:(-1 + aLength). ].
@@ -24,15 +24,15 @@
     ]
 }.
 
-#symbol wideExConvertor =
+class wideExConvertor =
 {
     convert &enumerable:aList
     [
-        #var(textbuffer) anOutput := TextBuilder new.
+        textbuffer anOutput := TextBuilder new.
 
         aList run:anOutput &eachPair:(:aParam:anItem) [ aParam write:(anItem::convertorOp toWide) write:"," ].
         
-        #var(int)aLength := anOutput length.
+        int aLength := anOutput length.
 
         (0 < aLength)
             ? [ anOutput setLength &int:(-1 + aLength). ].
@@ -41,11 +41,11 @@
     ]
 }.
 
-#symbol arrayExConvertor =
+class arrayExConvertor =
 {
     convert &enumerable:aList
     [
-        #var(array_list)aRetVal := ArrayList new.
+        array_list aRetVal := ArrayList new.
 
         aList run &each:anItem [ aRetVal append:anItem ].
 
@@ -55,9 +55,9 @@
 
 // --- convertorOp ---
 
-#class(extension)convertorOp
+extension convertorOp
 {
-    #method toArray
+    toArray
         = self cast:%eval &to:
             {
                 literal : aLiteral = arrayExConvertor convert &enumerable:aLiteral.
@@ -77,7 +77,7 @@
                     = Array min.                    
             }.
     
-    #method toLiteral
+    toLiteral
         = self cast:%eval &to:
             {
                 literal : aLiteral = aLiteral.
@@ -104,10 +104,10 @@
                     
                 timestamp : aValue = aValue literal.
                 
-                ! : anObject = anObject literal.
+                ! anObject = anObject literal.
             }.
     
-    #method toWide
+    toWide
         = self cast:%eval &to:
             {
                 literal : aLiteral = aLiteral wide.
@@ -134,10 +134,10 @@
                     
                 timestamp : aValue = aValue wide.
                 
-                ! : anObject = anObject wide.
+                ! anObject = anObject wide.
             }.
 
-     #method toLiteral &base:aBase
+     toLiteral &base:aBase
         = self cast:%eval &to:
                    { 
                       eval : aBase &byte : anInt = literalConvertor convert &byte:anInt &int:(aBase int).
@@ -150,7 +150,7 @@
                       
                    }&with:aBase.
 
-     #method toWide &base:aBase
+     toWide &base:aBase
         = self cast:%eval &to:
                    { 
                       eval : aBase &byte : anInt = wideConvertor convert &byte:anInt &int:(aBase int).
@@ -163,16 +163,16 @@
                       
                    } &with:aBase.
             
-    #method toByte
+    toByte
         = self cast:%convert &to:byteConvertor.
 
-    #method toShort
+    toShort
         = self cast:%convert &to:shortConvertor.
 
-    #method toInt
+    toInt
         = self cast:%convert &to:intConvertor.
         
-    #method toHexInt
+    toHexInt
         = self cast:%eval &to:
             {
                 literal : l = intConvertor convert &literal:l &base:16.
@@ -180,10 +180,10 @@
                 wide : l = intConvertor convert &wide:l &base:16.
             }.
 
-    #method toLong
+    toLong
         = self cast:%convert &to:longConvertor.
         
-    #method toHexLong
+    toHexLong
         = self cast:%eval &to:
             {
                 literal : l = longConvertor convert &literal:l &base:16.
@@ -191,24 +191,24 @@
                 wide : l = longConvertor convert &wide:l &base:16.
             }.
     
-    #method toChar
+    toChar
         = self cast:%convert &to:charConvertor.
     
-    #method toReal
+    toReal
         = self cast:%convert &to:realConvertor.
 
-    #method convert &to : aTarget
-        = aTarget set:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
+//    convert &to : aTarget
+//        = aTarget set:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
 }
 
-#symbol convertor 
-    = { ! : n = Wrap(n, convertorOp)::$subject get. }.
+//symbol convertor 
+//    = { ! n = Wrap(n, convertorOp)::$subject get. }.
 
-#class(extension:datetime) dateFormatterOp 
+extension(datetime) dateFormatterOp 
 {
-    #method toShortTimeLiteral
+    toShortTimeLiteral
         = self __time_st toShortTime literal.
 }
 
 /// obsolete
-#symbol String = extensions'text'StringWriter.
+symbol String = extensions'text'StringWriter.

@@ -53,7 +53,7 @@ labTrue:
   
 end
 
-procedure __object.eval&setField&int$&object[3]
+procedure __object.eval&setField&int$&object$[3]
 
   aloadsi 1
   flag
