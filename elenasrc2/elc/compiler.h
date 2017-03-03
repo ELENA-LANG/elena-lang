@@ -886,7 +886,7 @@ private:
 //   void declareClassAttribute(SyntaxWriter& writer, SNode node, ClassScope& scope, SNode rootNode);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size, SNode rootNode);
-   void declareLocalAttributes(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
+   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
 //   void declareFieldAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size);
 //   //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
@@ -978,8 +978,8 @@ private:
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
 
-   void compileDefaultConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
-   void compileDynamicDefaultConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
+   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 //   void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
 ////   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
@@ -1027,11 +1027,9 @@ private:
 ////   void compileDeclarations(SyntaxWriter& writer, SNode member, ModuleScope& scope);
 ////   void compileImplementations(SNode member, ModuleScope& scope);
 //   void compileIncludeSection(SNode node, ModuleScope& scope);
-//
-////   bool validate(_ProjectManager& project, _Module* module, int reference);
-//
-//   bool boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t targetType, ref_t targetRef);
-//
+
+   bool validate(_ProjectManager& project, _Module* module, int reference);
+
    ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t targetType = 0);
 
    bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef);

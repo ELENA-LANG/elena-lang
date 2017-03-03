@@ -2102,7 +2102,7 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
 //////   }
 //////}
 
-void Compiler :: declareLocalAttributes(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
+void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
 {
    SNode current = node.firstChild(lxAttribute);
    while (current != lxNone) {
@@ -2268,7 +2268,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
       ident_t className = NULL;
 
       ObjectInfo variable(okLocal);
-      declareLocalAttributes(writer, node, scope, variable, size);
+      declareLocalAttributes(node, scope, variable, size);
 
       ClassInfo localInfo;
       bool bytearray = false;
@@ -5104,7 +5104,7 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
 ////   node.insertNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
 ////}
 
-void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
+void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope)
 {
    writer.newNode(lxClassMethod, scope.message);
 
@@ -5126,7 +5126,7 @@ void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, SNode node, Met
    writer.closeNode();
 }
 
-void Compiler :: compileDynamicDefaultConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
+void Compiler :: compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope)
 {
    writer.newNode(lxClassMethod, scope.message);
 
@@ -5247,9 +5247,9 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
       methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
 
       if (test(classScope.info.header.flags, elDynamicRole)) {
-         compileDynamicDefaultConstructor(writer, node, methodScope);
+         compileDynamicDefaultConstructor(writer, methodScope);
       }
-      else compileDefaultConstructor(writer, node, methodScope);
+      else compileDefaultConstructor(writer, methodScope);
    }
 
    SNode current = node.firstChild();
@@ -5440,15 +5440,15 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
 {
    bool withDefaultConstructor = _logic->isDefaultConstructorEnabled(classScope.info);
    // if no construtors are defined inherits the default one
-//   if (!classScope.withConstructors && withDefaultConstructor) {
-//      if (classScope.info.header.parentRef == 0)
-//         classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
-//
-//      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.moduleScope->superReference));
-//      classClassParentName.append(CLASSCLASS_POSTFIX);
-//
-//      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-//   }
+   if (!node.existChild(lxConstructor) && withDefaultConstructor) {
+      if (classScope.info.header.parentRef == 0)
+         classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
+
+      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.moduleScope->superReference));
+      classClassParentName.append(CLASSCLASS_POSTFIX);
+
+      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
+   }
 
    compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef, true);
 
@@ -5889,20 +5889,24 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
 {
    bool closed = test(scope.info.header.flags, elClosed);
 
-   if (classClassMode && _logic->isDefaultConstructorEnabled(scope.info)) {
-      scope.include(encodeVerb(NEWOBJECT_MESSAGE_ID));
+   if (classClassMode) {
+      if (_logic->isDefaultConstructorEnabled(scope.info)) {
+         scope.include(encodeVerb(NEWOBJECT_MESSAGE_ID));
+      }
    }
+   else {
+      // HOTFIX : flags / fields should be compiled only for the class itself
+      generateClassFlags(scope, node);
 
-   generateClassFlags(scope, node);
+      if (test(scope.info.header.flags, elExtension)) {
+         scope.extensionMode = scope.info.fieldTypes.get(-1).value2;
+         if (scope.extensionMode == 0)
+            scope.extensionMode = INVALID_REF;
+      }
 
-   if (test(scope.info.header.flags, elExtension)) {
-      scope.extensionMode = scope.info.fieldTypes.get(-1).value2;
-      if (scope.extensionMode == 0)
-         scope.extensionMode = INVALID_REF;
+      // generate fields
+      generateClassFields(node, scope, countFields(node) == 1);
    }
-
-   // generate fields
-   generateClassFields(node, scope, countFields(node) == 1);
 
    _logic->injectVirtualCode(*scope.moduleScope, scope.reference, scope.info, *this);
 
@@ -7245,26 +7249,26 @@ void Compiler :: declareSubject(SyntaxWriter& writer, SNode member, ModuleScope&
 //      member = member.nextNode();
 //   }
 //}
-//
-//////bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
-//////{
-//////   int   mask = reference & mskAnyRef;
-//////   ref_t extReference = 0;
-//////   ident_t refName = module->resolveReference(reference & ~mskAnyRef);
-//////   _Module* extModule = project.resolveModule(refName, extReference, true);
-//////
-//////   return (extModule != NULL && extModule->mapSection(extReference | mask, true) != NULL);
-//////}
+
+bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
+{
+   int   mask = reference & mskAnyRef;
+   ref_t extReference = 0;
+   ident_t refName = module->resolveReference(reference & ~mskAnyRef);
+   _Module* extModule = project.resolveModule(refName, extReference, true);
+
+   return (extModule != NULL && extModule->mapSection(extReference | mask, true) != NULL);
+}
 
 void Compiler :: validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project)
 {
-//   for (List<Unresolved>::Iterator it = unresolveds.start() ; !it.Eof() ; it++) {
-//      if (!validate(project, (*it).module, (*it).reference)) {
-//         ident_t refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
-//
-//         project.raiseWarning(wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
-//      }
-//   }
+   for (List<Unresolved>::Iterator it = unresolveds.start() ; !it.Eof() ; it++) {
+      if (!validate(project, (*it).module, (*it).reference)) {
+         ident_t refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
+
+         project.raiseWarning(wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
+      }
+   }
 }
 
 inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)

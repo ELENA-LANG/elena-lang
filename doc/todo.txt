@@ -7,8 +7,9 @@ In development:
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
 
               xdev - generic development
+                 * migrating examples to ELENA 3.0
+
                  * byte array operation - assigning (see streamreader)
-                 * implementing ELENA 3.0     
 
                  * primitive array declaration : byte(4) buffer := ??.
 
@@ -141,6 +142,7 @@ In development:
                  * support property template
                  * implement switch
                  * support argument list
+                 * exception in static symbol (e.g. $StartUpEvents new - if "new" is not found)
 
               zdev - cellular automata
                  * general architecture

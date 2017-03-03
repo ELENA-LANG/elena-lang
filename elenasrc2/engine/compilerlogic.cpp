@@ -1262,7 +1262,7 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
             SNodePattern(lxDirectCalling, lxSDirctCalling));
 
          // if it is read&subject&var[2] message
-         if (getParamCount(message.argument) != 2 || getVerb(message.argument) != verb)
+         if (getParamCount(message.argument) != 2 || getVerb(message.argument) != (ref_t)verb)
             return false;
 
          // check if it is operation with $self
