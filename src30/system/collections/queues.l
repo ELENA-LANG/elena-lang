@@ -6,32 +6,32 @@
 
 // --- Stack
 
-#class(sealed,dispatchable:enumerable) Stack
+sealed dispatchable(enumerable) class Stack
 {
-    #field(array_list)theList.
-    #field(vint)theTop.
+    array_list theList.
+    vint       theTop.
     
-    #constructor(w3) new
+    constructor new
     [
         theList := ArrayList new.
         theTop := 0.
     ]
     
-    #method array_list = theList.
+    array_list = theList.
     
-    #method enumerator = StackEnumerator new &stack:$self.
+    enumerator = StackEnumerator new &stack:$self.
     
-    #method(stacksafe,outnprop:length) readLength &vint:aLength
+    stacksafe outnprop(length) readLength &vint:aLength
     [
         aLength := theTop.
     ]
     
-    #method(bool) is &empty
+    bool is &empty
         = 0 == theTop.
     
-    #method push : anObject
+    push : anObject
     [
-        #var(int)aCapacity := theList length.
+        int aCapacity := theList length.
         
         (theTop < aCapacity)
             ? [ theList setAt &int:theTop &object:anObject. ]
@@ -40,28 +40,28 @@
         theTop += 1.
     ]
     
-    #method peek
+    peek
     [
         (0 == theTop)
-            ? [ #throw InvalidOperationException new &message:"Stack is empty". ].
+            ? [ InvalidOperationException new &message:"Stack is empty" raise. ].
             
         ^ theList getAt &int:(theTop - 1).
     ]        
     
-    #method pop
+    pop
     [
         (0 == theTop)
-            ? [ #throw InvalidOperationException new &message:"Stack is empty". ].
+            ? [ InvalidOperationException new &message:"Stack is empty" raise. ].
             
         theTop -= 1.
         
-        #var item := theList getAt &int:theTop.                        
+        var item := theList getAt &int:theTop.                        
         theList setAt &int:theTop &object:$nil.
         
         ^ item.
     ]
     
-    #method clear
+    clear
     [
         theList clear.
         theTop set &int:0.
@@ -70,26 +70,26 @@
 
 // --- Queue ---
 
-#class(sealed,dispatchable:enumerable) Queue
+sealed dispatchable(enumerable) class Queue
 {
-    #field(array_list)theList.
-    #field(vint)theTop.
-    #field(vint)theTale.
+    array_list theList.
+    vint       theTop.
+    vint       theTale.
     
-    #constructor(w3) new
+    constructor new
     [
         theList := ArrayList new.
         theTop := 0.
         theTale := 0.
     ]
     
-    #method array_list = theList.
+    array_list = theList.
     
-    #method enumerator = QueueEnumerator new &queue:$self.
+    enumerator = QueueEnumerator new &queue:$self.
     
-    #method push : anObject
+    push : anObject
     [
-        #var(int)aCapacity := theList length.
+        int aCapacity := theList length.
         
         (theTale < aCapacity)
             ? [ theList setAt &int:theTale &object:anObject. ]
@@ -98,20 +98,20 @@
         theTale += 1.
     ]
     
-    #method peek
+    peek
     [
         (theTale == theTop)
-            ? [ #throw InvalidOperationException new &message:"Queue is empty". ].
+            ? [ InvalidOperationException new &message:"Queue is empty" raise. ].
             
         ^ theList getAt &int:theTop.  
     ]
     
-    #method pop
+    pop
     [
         (theTale == theTop)
-            ? [ #throw InvalidOperationException new &message:"Queue is empty". ].
+            ? [ InvalidOperationException new &message:"Queue is empty" raise. ].
 
-        #var item := theList getAt &int:theTop.
+        var item := theList getAt &int:theTop.
                                     
         theList setAt &int:theTop &object:$nil.
         theTop += 1.
@@ -126,28 +126,28 @@
         ^ item.            
     ]
     
-    #method(stacksafe,outnprop:length) readLength &vint:aRetVal
+    stacksafe outnprop(length) readLength &vint:aRetVal
     [
-        #var(int)n := theTale - theTop.
+        int n := theTale - theTop.
         
         aRetVal := n.
     ]
     
-    #method clear
+    clear
     [
         theList clear.
         theTop set &int:0.
         theTale set &int:0.
     ]
     
-    #method shift : offset
+    shift : offset
     [
-        #var(int)i := theTop.
-        #var(int)n := theTale - 1.
+        int i := theTop.
+        int n := theTale - 1.
         
-        #var topItem := theList getAt &int:i.
+        var topItem := theList getAt &int:i.
         
-        #loop (i < n)?
+        while (i < n)
         [
             theList setAt &int:i &object:(theList getAt &int:(i + 1)).
             
@@ -160,24 +160,24 @@
 
 // --- StackEnumerator ---
 
-#class StackEnumerator :: Enumerator
+class StackEnumerator :: Enumerator
 {
-    #field(stack)theStack.
-    #field(enumerator)theEnumerator.
+    stack      theStack.
+    enumerator theEnumerator.
     
-    #constructor new &stack:aStack
+    constructor new &stack:aStack
     [
         theStack := aStack.
         theEnumerator := aStack array_list enumerator.
     ]
     
-    #method next 
+    next 
         = theEnumerator next.
         
-    #method get
+    get
         = theEnumerator get.
         
-    #method reset
+    reset
     [
         theEnumerator reset.
     ]        
@@ -185,24 +185,24 @@
 
 // --- QueueEnumerator ---
 
-#class QueueEnumerator :: Enumerator
+class QueueEnumerator :: Enumerator
 {
-    #field(queue)theQueue.
-    #field(enumerator)theEnumerator.
+    queue      theQueue.
+    enumerator theEnumerator.
     
-    #constructor new &queue:aQueue
+    constructor new &queue:aQueue
     [
         theQueue := aQueue.
         theEnumerator := aQueue array_list enumerator.
     ]
     
-    #method next 
+    next 
         = theEnumerator next.
         
-    #method get
+    get
         = theEnumerator get.        
         
-    #method reset
+    reset
     [
         theEnumerator reset.
     ]        

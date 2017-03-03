@@ -144,9 +144,9 @@
 //        theArray readLength &vint:retVal.
 //    ]    
 //}
-//
-//// --- ObjectList ---
-//
+
+// --- ObjectList ---
+
 //#class(listof:object,sealed) ObjectList
 //{
 //    #constructor(w3) new
@@ -160,31 +160,31 @@
 // --- ListItem ---
 
 /// A list item
-#class(sealed) ListItem
+sealed class ListItem
 {
-    #field            theContent.
-    #field(list_item) theNext.
+    object    theContent.
+    list_item theNext.
     
     /// Creates a new item
-    #constructor new : aValue
+    constructor new : aValue
     [
         theContent := aValue.
     ]
 
     /// Returns the item object
-    #method get = theContent.
+    get = theContent.
             
     /// Sets the item object
-    #method set : anObject
+    set : anObject
     [
         theContent := anObject.
     ]    
 
     /// Returns the next item
-    #method(list_item) nextItem = theNext.
+    list_item nextItem = theNext.
 
     /// Sets the next item
-    #method setNextItem &list_item:aNext
+    setNextItem &list_item:aNext
     [
         theNext := aNext.
     ]
@@ -193,32 +193,32 @@
 // --- ListEnumerator ---
 
 /// A list enumerator
-#class ListEnumerator :: Enumerator
+class ListEnumerator :: Enumerator
 {
-    #field(list)     theList.
-    #field(list_item)theCurrent.
+    list      theList.
+    list_item theCurrent.
     
     /// Creates a list enumerator
-    #constructor new &list:aList
+    constructor new &list:aList
     [
         theList := aList.
     ]
 
     /// Creates a list enumerator
-    #constructor new : anObject
+    constructor new : anObject
         <= new &list:(anObject list).
 
     /// Returns the current object
-    #method get = theCurrent get.
+    get = theCurrent get.
     
     /// Resets the enumerator
-    #method reset
+    reset
     [
         theCurrent := $nil.
     ]
 
     /// Goes to the next enumeration member and returns true if it is not the last member
-    #method next
+    next
     [
         ($nil == theCurrent)
             ? [ theCurrent := theList topItem. ]
@@ -231,14 +231,14 @@
 // --- ListIndexer ---
 
 /// A list iterator
-#class ListIterator :: Iterator
+class ListIterator :: Iterator
 {
-    #field(list)      theList.
-    #field(list_item) theCurrent.
-    #field(vint)      theIndex.
+    list      theList.
+    list_item theCurrent.
+    vint      theIndex.
     
     /// Creates a list iterator
-    #constructor(w3) new &list:aList
+    constructor new &list:aList
     [
         theList := aList.
         theCurrent := aList topItem.
@@ -246,31 +246,31 @@
     ]
 
     /// Creates a list iterator
-    #constructor new : anObject
+    constructor new : anObject
         <= new &list:(anObject list).
     
     /// Returns false if the index out of range
-    #method available = $nil != theCurrent.
+    available = $nil != theCurrent.
 
     /// Returns the current member
-    #method get = theCurrent get.
+    get = theCurrent get.
     
     /// Sets the current member
-    #method set : anObject 
+    set : anObject 
     [
         theCurrent set:anObject.
     ]
     
     /// Reads the current index into an output parameter
-    #method readIndex &vint:anIndex
+    readIndex &vint:anIndex
     [
         anIndex := theIndex.
     ]
     
     /// Sets the index by specified value
-    #method writeIndex &int:anIndex
+    writeIndex &int:anIndex
     [
-        #var(int)i := theIndex.
+        int i := theIndex.
         
         (anIndex < i) ?
         [
@@ -278,10 +278,10 @@
             i := 0.
         ].
         
-        #loop (i < anIndex) ?
+        while (i < anIndex) 
         [
             ($nil == theCurrent)
-                ? [ #throw OutOfRangeException new. ].
+                ? [ OutOfRangeException new raise. ].
             
             theCurrent := theCurrent nextItem.            
             i := i + 1.
@@ -294,30 +294,30 @@
 // --- List ---
 
 /// A list object
-#class(sealed,dispatchable:enumerable) List
+sealed dispatchable(enumerable) class List
 {
-    #field theState.
-    #field(vint)      theCount.
-    #field(list_item) theTop.
-    #field(list_item) theLast.
+    object    theState.
+    vint      theCount.
+    list_item theTop.
+    list_item theLast.
 
     /// Creates a list
-    #constructor(w3) new
+    constructor new
     [
         theState := %empty.
         theCount := 0.
     ]
 
     /// Returns the top item
-    #method(list_item) topItem = theTop.
+    list_item topItem = theTop.
 
     /// Returns the top object
-    #method first = theTop get.
+    first = theTop get.
 
     /// Returns the last object
-    #method last = theLast get.    
+    last = theLast get.    
 
-    #method append&empty : anObject
+    append&empty : anObject
     [
         theCount set &int:1.
         theTop := ListItem new:anObject.
@@ -325,47 +325,47 @@
         theState := %active.
     ]
 
-    #method insert&empty : anObject
-        <= %append &empty:anObject.
+    insert&empty : anObject
+        <= append &empty:anObject.
 
-    #method append&active : anObject
+    append&active : anObject
     [
         theCount += 1.
         
-        #var(list_item) aNewItem := ListItem new:anObject.
+        list_item aNewItem := ListItem new:anObject.
         
         theLast setNextItem &list_item:aNewItem.        
         theLast := aNewItem.
     ]
 
-    #method insert&active : anObject
+    insert&active : anObject
     [
         theCount += 1.        
         
-        #var(list_item) aNewItem := ListItem new:anObject.
+        list_item aNewItem := ListItem new:anObject.
         aNewItem setNextItem &list_item:theTop.        
         theTop := aNewItem.
     ]
     
     /// Returns the object at the specified position
-    #method getAt : anIndex
+    getAt : anIndex
         = $self getAt &int:(anIndex int).
 
     /// Returns the object at the specified position
-    #method setAt : anIndex : anObject
+    setAt : anIndex : anObject
         = $self setAt &int:(anIndex int) &object:anObject.
 
     /// Returns the list item at the specified position
-    #method(list_item,stacksafe) getItemAt &int:anIndex
+    stacksafe list_item getItemAt &int:anIndex
     [
-        #var(int)aCurrentIndex := anIndex.
-        #var(list_item) anItem := theTop.
+        int       aCurrentIndex := anIndex.
+        list_item anItem := theTop.
         
-        #loop (aCurrentIndex > 0) ?
+        while (aCurrentIndex > 0)
         [
             anItem := anItem nextItem.
             ($nil == anItem)
-                ? [ #throw OutOfRangeException new. ].
+                ? [ OutOfRangeException new raise. ].
             
             aCurrentIndex := aCurrentIndex - 1.
         ].
@@ -374,31 +374,31 @@
     ]
 
     /// Returns the object at the specified position
-    #method(stacksafe) getAt &int:anIndex
+    stacksafe getAt &int:anIndex
         = $self getItemAt &int:anIndex get.
 
     /// Returns the object at the specified position
-    #method(stacksafe) setAt &int:anIndex &object:anObject
+    stacksafe setAt &int:anIndex &object:anObject
         = $self getItemAt &int:anIndex set:anObject.
 
     /// Appends a new object to the end of the list
-    #method append : anObject => theState.
+    append : anObject => theState.
 
     /// Inserts a new object to the beginning of the list
-    #method insert : anObject => theState.
+    insert : anObject => theState.
 
-    #method insert : anObject &at:anIndex
+    insert : anObject &at:anIndex
         <= insert &int:(anIndex int) &object:anObject.
 
     /// Inserts a new object to the specified position
-    #method insert &int:anIndex &object:anObject
+    insert &int:anIndex &object:anObject
     [
         (anIndex == 0)
             ? [ $self insert:anObject. ]
             ! [
-                #var(list_item) aNew := ListItem new:anObject.        
-                #var(list_item) aPrevious := $self getItemAt &int:(anIndex - 1).
-                #var(list_item) aNext := aPrevious nextItem.
+                list_item aNew := ListItem new:anObject.        
+                list_item aPrevious := $self getItemAt &int:(anIndex - 1).
+                list_item aNext := aPrevious nextItem.
                 
                 aPrevious setNextItem &list_item:aNew.
                 aNew setNextItem &list_item:aNext.
@@ -406,10 +406,10 @@
     ]
 
     /// Removes an object at the specified position
-    #method(w2) remove &int:anIndex
+    remove &int:anIndex
     [
         ($nil == theTop)
-            ? [ #throw OutOfRangeException new. ].
+            ? [ OutOfRangeException new raise. ].
         
         (0 == anIndex)
             ? [
@@ -418,8 +418,8 @@
                     ? [ theLast := $nil. theState := %empty. ].
             ]
             ! [
-                #var(list_item) aPrevious := $self getItemAt &int:(anIndex - 1).
-                #var(list_item) aNext := aPrevious nextItem.
+                list_item aPrevious := $self getItemAt &int:(anIndex - 1).
+                list_item aNext := aPrevious nextItem.
                 
                 aPrevious setNextItem &list_item:(aNext nextItem).
                 
@@ -430,21 +430,21 @@
         theCount -= 1.
     ]
         
-    #method remove &at:anIndex
+    remove &at:anIndex
         <= remove &int:(anIndex int).
 
     /// obsolete        
-    #method remove &index:anIndex
+    remove &index:anIndex
         <= remove &int:(anIndex int).
         
     /// Reads the number of list item to the output parameter
-    #method(stacksafe,outnprop:length) readLength &vint:aLength
+    stacksafe outnprop(length) readLength &vint:aLength
     [
         aLength := theCount.
     ]
     
     /// Clears the list
-    #method clear 
+    clear 
     [
         theCount set &int:0.
         
@@ -454,18 +454,18 @@
     ]
 
     /// Returns the list enumerator
-    #method enumerator = ListEnumerator new &list:$self.
+    enumerator = ListEnumerator new &list:$self.
 
     /// Returns the list iterator
-    #method iterator = ListIterator new &list:$self.
+    iterator = ListIterator new &list:$self.
     
     /// Clones the list
-    #method clone 
+    clone 
     [
-        #var aList := List new.
+        object aList := List new.
         
-        #var(list_item) anItem := theTop.        
-        #loop ($nil != anItem) ?
+        list_item anItem := theTop.        
+        while ($nil != anItem)
         [
             aList append:(anItem get).
             
@@ -477,14 +477,14 @@
 // --- ArrayList ---
 
 /// An array list object
-#class(sealed,dispatchable:enumerable) ArrayList
+sealed dispatchable(enumerable) class ArrayList
 {
-    #field(array) theArray.
-    #field(vint)  theLength.
-    #field(vint)  theCapacity.
+    array theArray.
+    vint  theLength.
+    vint  theCapacity.
     
     /// Creates the list
-    #constructor(w3) new
+    constructor new
     [
         theCapacity := 32.
         theLength := 0.
@@ -492,20 +492,20 @@
     ]
     
     /// Creates the list
-    #constructor(w2) new : param
-        <= (new &int:(param cast:%eval &to:
+    constructor new : param
+        <= new &int:(param cast:%eval &to:
                         { 
                             int : n = n. 
                             
                             array : a = a length.
                             
-                            ! : n = 32. 
-                        }))
+                            ! n = 32. 
+                        });
     [
-        $self append &array:(param cast:%eval &to:{ array : a = a. ! : o = $nil. }).
+        $self append &array:(param cast:%eval &to:{ array : a = a. ! o = $nil. }).
     ]
     
-    #constructor(w3) new &int:aCapacity
+    constructor new &int:aCapacity
     [
         theCapacity := aCapacity.
         theLength := 0.
@@ -513,9 +513,9 @@
     ]
     
     /// Creates the list
-    #constructor(stacksafe,w3) $new &array:anArray &int:aLength
+    stacksafe constructor $new &array:anArray &int:aLength
     [
-        #var(int)capacity := anArray length.
+        int capacity := anArray length.
         
         theCapacity := capacity.
         theLength := aLength.
@@ -524,40 +524,40 @@
     ]
     
     /// Returns the object at the specified position
-    #method getAt : anIndex
+    getAt : anIndex
         = $self getAt &int:(anIndex int).
 
     /// Returns the object at the specified position
-    #method(stacksafe) getAt &int:anIndex
+    stacksafe getAt &int:anIndex
     [
         (theLength > anIndex)
-            ! [ #throw OutOfRangeException new. ].
+            ! [ OutOfRangeException new raise. ].
 
         ^ theArray getAt &int:anIndex.
     ]
     
     /// Returns the object at the specified position
-    #method setAt : anIndex : anObject
+    setAt : anIndex : anObject
         = $self setAt &int:(anIndex int) &object:anObject.
 
     /// Returns the object at the specified position
-    #method(stacksafe) setAt &int:anIndex &object:anObject
+    stacksafe setAt &int:anIndex &object:anObject
     [
         (theLength > anIndex)
-            ! [ #throw OutOfRangeException new. ].
+            ! [ OutOfRangeException new raise. ].
         
         theArray setAt &int:anIndex &object:anObject.
     ]
     
-    #method $expand
+    $expand
     [
         (theCapacity <= theLength)?
         [
             theCapacity += 32.
             
-            #var(array)aNewArray := Array new &int:theCapacity.
-            #var(int) i := 0.
-            #loop (i < theLength)?
+            array aNewArray := Array new &int:theCapacity.
+            int   i := 0.
+            while (i < theLength)
             [
                 aNewArray setAt &int:i &object:(theArray getAt &int:i).
                 
@@ -568,13 +568,13 @@
         ].
     ]
     
-    #method append &array:subarray
+    append &array:subarray
     [
         ($nil != subarray) ?
         [
-            #var(int)len := subarray length.
-            #var(int)i := 0.
-            #loop (i < len)?
+            int len := subarray length.
+            int i := 0.
+            while (i < len)
             [
                 $self append &object:(subarray getAt &int:i).
                 i := i + 1.
@@ -583,7 +583,7 @@
     ]
         
     /// Appends a new object to the end of the list
-    #method append &object:anObject
+    append &object:anObject
     [
         $self $expand.
         
@@ -592,19 +592,19 @@
         theLength += 1.
     ]
     
-    #method append : object
+    append : object
         <= append &object:object.
     
     /// Inserts a new object to the specified position
-    #method insert &int:anIndex &object:anObject
+    insert &int:anIndex &object:anObject
     [
         (anIndex >= theLength)
-            ? [ #throw OutOfRangeException new. ].
+            ? [ OutOfRangeException new raise. ].
         
         $self $expand.
         
-        #var(int) i := theLength.
-        #loop (i > anIndex)?
+        int i := theLength.
+        while (i > anIndex)
         [
             theArray setAt &int:i &object:(theArray getAt &int:(i - 1)).
             
@@ -615,22 +615,22 @@
     ]    
     
     /// Inserts a new object to the beginning of the list
-    #method insert : anObject
+    insert : anObject
         <= insert &int:0 &object:anObject.
 
-    #method insert : anObject &at:anIndex
+    insert : anObject &at:anIndex
         <= insert &int:(anIndex int) &object:anObject.
         
     /// Removes an object at the specified position
-    #method(stacksafe) remove &int:anIndex
+    stacksafe remove &int:anIndex
     [
         (anIndex >= theLength)
-            ? [ #throw OutOfRangeException new. ].
+            ? [ OutOfRangeException new raise. ].
         
         theLength -= 1.
         
-        #var(int)i := anIndex.
-        #loop (i < theLength)?
+        int i := anIndex.
+        while (i < theLength)
         [
             theArray setAt &int:i &object:(theArray getAt &int:(i + 1)).
             
@@ -638,94 +638,94 @@
         ].
     ]
         
-    #method remove &index:anIndex
+    remove &index:anIndex
         <= remove &int:(anIndex int).
 
-    #method remove &at:anIndex
+    remove &at:anIndex
         <= remove &int:(anIndex int).
 
     /// Returns itself
-    #method array_list = $self.
+    array_list = $self.
     
     /// Reads the number of list item to the output parameter
-    #method(stacksafe,outnprop:length) readLength &vint:aLength
+    stacksafe outnprop(length) readLength &vint:aLength
     [
         aLength := theLength.
     ]
     
-    #method(stacksafe,outnprop:capacity) readCapacity &vint:aCapacity
+    stacksafe outnprop(capacity) readCapacity &vint:aCapacity
     [
         aCapacity := theCapacity.
     ]
     
     /// Clears the list
-    #method clear 
+    clear 
     [
         theLength set &int:0.        
     ]
     
     /// Returns the top object
-    #method first = theArray getAt &int:0.
+    first = theArray getAt &int:0.
 
     /// Returns the last object
-    #method last
+    last
     [
-        #var(int)len := theLength.
+        int len := theLength.
         
         ^ theArray getAt &int:(len - 1).
     ]
     
     /// Returns the list enumerator
-    #method enumerator = ArrayListEnumerator new &array_list:$self.
+    enumerator = ArrayListEnumerator new &array_list:$self.
     
     /// Returns the list iterator9
-    #method iterator = ArrayListIterator new &array_list:$self.
+    iterator = ArrayListIterator new &array_list:$self.
     
     /// Returns a list copy
-    #method(array_list) clone
+    array_list clone
         = ArrayList $new &array:theArray &int:theLength.
         
-    #method array
+    array
         = Array new &int:0 &int:theLength &array:theArray.
         
-    #method get
+    get
         <= array.
 }
 
 // --- ArrayListEnumerator ---
 
 /// A list enumerator
-#class ArrayListEnumerator :: Enumerator
+class ArrayListEnumerator :: Enumerator
 {
-    #field(array_list) theList.
-    #field(vint)       theIndex.
+    array_list theList.
+    vint       theIndex.
     
     /// Creates a list enumerator
-    #constructor(w3) new &array_list:aList
+    constructor new &array_list:aList
     [
         theList := aList.
         theIndex := -1.
     ]
 
     /// Creates a list enumerator
-    #constructor new : anObject
+    constructor new : anObject
         <= new &array_list:(anObject array_list).
 
     /// Returns the current object
-    #method get = theList getAt &int:theIndex.
+    get = theList getAt &int:theIndex.
     
     /// Resets the enumerator
-    #method reset
+    reset
     [
         theIndex set &int:-1.
     ]
 
     /// Goes to the next enumeration member and returns true if it is not the last member
-    #method next
+    next
     [
         theIndex += 1.
         
-        #var(int)aLength := theList length.
+        int aLength := theList length.
         
         ^ (aLength > theIndex).
     ]
@@ -734,47 +734,47 @@
 // --- ArrayListIndexer ---
 
 /// A list iterator
-#class ArrayListIterator :: Iterator
+class ArrayListIterator :: Iterator
 {
-    #field(array_list)theList.
-    #field(vint)      theIndex.
+    array_list theList.
+    vint       theIndex.
     
     /// Creates a list iterator
-    #constructor(w3) new &array_list:aList
+    constructor new &array_list:aList
     [
         theList := aList.
         theIndex := 0.
     ]
 
     /// Creates a list iterator
-    #constructor new : anObject
+    constructor new : anObject
         <= new &array_list:(anObject array_list).
     
     /// Returns false if the index out of range
-    #method available
+    available
     [
-        #var(int)aLength := theList length.
+        int aLength := theList length.
         
         ^ (aLength > theIndex).
     ]
 
     /// Returns the current member
-    #method get = theList getAt &int:theIndex.
+    get = theList getAt &int:theIndex.
     
     /// Sets the current member
-    #method set : anObject 
+    set : anObject 
     [
         theList setAt &int:theIndex &object:anObject.
     ]
     
     /// Reads the current index into an output parameter
-    #method readIndex &vint:anIndex
+    readIndex &vint:anIndex
     [
         anIndex := theIndex.
     ]
     
     /// Sets the index by specified value
-    #method writeIndex &int:anIndex
+    writeIndex &int:anIndex
     [
         theIndex set &int:anIndex.
     ]
@@ -783,29 +783,29 @@
 // --- Dictionary ---
 
 /// Dictionary class
-#class(sealed,dispatchable:enumerable) Dictionary
+sealed dispatchable(enumerable) class Dictionary
 {
-    #field(array_list) theList.
-    #field(array)      theHashTable.
-    #field(int)        theHashMask.
+    array_list theList.
+    array      theHashTable.
+    int        theHashMask.
     
-    #field theDefault.
+    object     theDefault.
 
     /// Creates a dictionary
-    #constructor new
+    constructor new
         <= new &int:32 &int:32 &object:$nil.
 
-    #constructor new &default:aDefault
+    constructor new &default:aDefault
         <= new &int:32 &int:32 &object:aDefault.
 
-    #constructor new:aCapacity &default:aDefault
+    constructor new:aCapacity &default:aDefault
         <= new &int:(aCapacity int) &int:32 &object:aDefault.
 
     /// Creates a dictionary
-    #constructor new &int:aCapacity &int:aHashLength &object:aDefault
+    constructor new &int:aCapacity &int:aHashLength &object:aDefault
     [
-        #var(int)size := 32.
-        #loop (size < aHashLength)?
+        int size := 32.
+        while (size < aHashLength)
         [
             size := size << 1.
         ].
@@ -820,22 +820,22 @@
     ]
     
     /// Gets a dictionary item with the specified key
-    #method getAt : aKey
+    getAt : aKey
         = aKey cast:%getAt &to:$self.
         
     /// Sets a dictionary item with the specified key
-    #method(w2) setAt : aKey : anObject
+    setAt : aKey : anObject
     [
-        #var(int)aHashCode := aKey hash_code.
+        int aHashCode := aKey hash_code.
         
         $self $getItem &int:aHashCode &key:aKey set &object:anObject.
     ]
         
-    #method(stacksafe,w2) $getItem &int:aCode &key:aKey
+    stacksafe $getItem &int:aCode &key:aKey
     [
-        #var(int)aHashCode := aCode && theHashMask.
+        int aHashCode := aCode && theHashMask.
         
-        #var aHashItem := theHashTable getAt &int:aHashCode.
+        var aHashItem := theHashTable getAt &int:aHashCode.
         ($nil == aHashItem) ?
         [
             aHashItem := IntArray new &int:5.
@@ -845,17 +845,17 @@
             theHashTable setAt &int:aHashCode &object:aHashItem.
         ].
         
-        #var(intarray) aBacket := aHashItem intarray.        
-        #var(int)aLength := 0.
+        intarray aBacket := aHashItem intarray.        
+        int      aLength := 0.
         aBacket read &int:0 &vint:aLength.
         
-        #var(int)i := 1.
-        #loop (i < aLength)?
+        int i := 1.
+        while (i < aLength)
         [
-            #var(int)anItemIndex.
+            int anItemIndex := 0.
             aBacket read &int:i &vint:anItemIndex.
             
-            #var anItem := theList getAt &int:anItemIndex.
+            var anItem := theList getAt &int:anItemIndex.
             
             (aKey safeEqual:(anItem key))
                 ? [ ^ anItem. ].
@@ -863,17 +863,17 @@
             i := i + 1.
         ].
         
-        #var aNewItem := KeyValue new &key:aKey &object:theDefault.
+        var aNewItem := KeyValue new &key:aKey &object:theDefault.
         
         theList readLength &vint:i.
         theList append:aNewItem.
         
         // Extend a backet
-        #var(int)aCapacity.
+        int aCapacity := 0.
         aBacket readLength &vint:aCapacity.
         (aCapacity == aLength)
             ? [
-                #var(intarray)aNewBacket := IntArray new &int:(aCapacity + 5).
+                intarray aNewBacket := IntArray new &int:(aCapacity + 5).
                 aNewBacket write &int:0 &int:aCapacity &intarray:aBacket.
 
                 aBacket := aNewBacket.
@@ -888,76 +888,76 @@
         ^ aNewItem.
     ]    
         
-    #method(generic,w2)getAt : aKey
+    generic getAt : aKey
     [
-        #var(int)aHashCode := aKey hash_code.
+        int aHashCode := aKey hash_code.
         
         ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
             
-    #method getAt &int:aKey
+    getAt &int:aKey
     [
-        #var(int)aHashCode.
+        int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
         ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
         
-    #method getAt &long:aKey
+    getAt &long:aKey
     [
-        #var(int)aHashCode.
+        int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
         ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
         
-    #method getAt &real:aKey
+    getAt &real:aKey
     [
-        #var(int)aHashCode.
+        int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
         ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
         
-    #method getAt &char:aKey
+    getAt &char:aKey
     [
-        #var(int)aHashCode.
+        int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
         ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
         
-    #method getAt &literal:aKey
+    getAt &literal:aKey
     [
-        #var(int)aHashCode.
+        int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
         ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
         
-    #method getAt &wide:aKey
+    getAt &wide:aKey
     [
-        #var(int)aHashCode.
+        int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
         ^ $self $getItem &int:aHashCode &key:aKey object.
     ]
 
     /// Returns a dictionary enumerator
-    #method enumerator => theList.
+    enumerator => theList.
     
-    #method array_list
+    array_list
         = theList clone.
 
     /// Clones a dictionary
-    #method clone 
+    clone 
     [
-        #var aList := Dictionary new.
+        var aList := Dictionary new.
 
-        #var(enumerator) it := theList enumerator.
-        #loop (it next)?
+        enumerator it := theList enumerator.
+        while (it next)
         [
-            #var anItem := it get.
+            var anItem := it get.
             
             aList@(anItem key) := anItem object.
         ].
@@ -965,7 +965,7 @@
         ^ aList.
     ]
     
-    #method clear
+    clear
     [
         theHashTable := Array new &int:(theHashTable length).
         theList clear.

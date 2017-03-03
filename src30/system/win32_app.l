@@ -34,21 +34,21 @@ class $StartUpEvents
     ]
 }
 
-//#static startUpEvents = $StartUpEvents new.
-//
-//#symbol startUp = 
-//    {
-//        #method start : events
-//        [
-//            'program eval
-//                | on:
-//                {
-//                    Abort = e [].
-//                    
-//                    ! = e [ console writeLine:(e literal). ].
-//                }.
-//    
-//            events $onStop:$nil.
-//        ]        
-//    }
-//    start:startUpEvents.
+static startUpEvents = $StartUpEvents new.
+
+symbol startUp = 
+    {
+        start : events
+        [
+            'program eval
+                | on:
+                {
+                    Abort = e [].
+                    
+                    ! = e [ console writeLine:(e literal). ].
+                }.
+    
+            events $onStop:$nil.
+        ]        
+    }
+    start:startUpEvents.
