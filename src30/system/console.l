@@ -1,14 +1,14 @@
 // --- Console ---
 
 /// A console
-#class $Console
+class $Console
 {
-    #field theWriter.
-    #field theReader.
-    #field(literal)theNewLineConstant.
+    object  theWriter.
+    object  theReader.
+    literal theNewLineConstant.
 
     /// Creates a console
-    #constructor new &reader:aReader &writer:aWriter
+    constructor new &reader:aReader &writer:aWriter
     [
         theWriter := aWriter.
         theReader := aReader.
@@ -16,7 +16,7 @@
     ]
 
     /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
-    #method writeLine : anObject
+    writeLine : anObject
     [
         theWriter write &literal:(anObject literal).
         
@@ -24,13 +24,13 @@
     ]
 
     /// Writes the specified literal value to the standard output stream.
-    #method write : anObject
+    write : anObject
     [
         anObject cast:%write &to:$self.
     ]
 
     /// Writes the object literal presentation to the standard output stream.
-    #method(generic) write : anObject
+    generic write : anObject
     [
         theWriter write &literal:(anObject literal).
         
@@ -38,7 +38,7 @@
     ]
 
     /// Writes the specified literal value to the standard output stream.
-    #method write &literal:aLiteral
+    write &literal:aLiteral
     [
         theWriter write &literal:aLiteral.
         
@@ -46,7 +46,7 @@
     ]
 
     /// Writes the specified literal value to the standard output stream.
-    #method write &wide:aLiteral
+    write &wide:aLiteral
     [
         theWriter write &wide:aLiteral.
         
@@ -54,38 +54,38 @@
     ]
 
     /// the current line terminator to the standard output stream.
-    #method writeLine
+    writeLine
     [
         self write:theNewLineConstant.
     ]
 
     /// Clears the console
-    #method clear 
+    clear 
         => theWriter.
 
-    #method(stacksafe) setCursorPosition &int:x &int:y
+    stacksafe setCursorPosition &int:x &int:y
         => theWriter.
 
     /// Reads the next line of characters from the standard input stream.
-    #method readLine
+    readLine
         = theReader read &literal.
 
     /// Reads the next line of characters from the standard input stream.
-    #method read &literal
+    read &literal
         = theReader read &literal.
 
     /// Reads the next line of characters from the standard input stream.
-    #method read &wide
+    read &wide
         = theReader read &wide.
 
     /// Reads the next character from the input stream
-    #method readChar
+    readChar
         = theReader char.
 
     /// Reads the next key code from the input stream
-    #method readKey
+    readKey
         = theReader int.
 }
 
 /// A standard console
-#static console = $Console new &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter.
+static console = $Console new &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter.

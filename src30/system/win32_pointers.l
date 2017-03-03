@@ -1,124 +1,124 @@
 // --- Handler ---
 
-#class(embeddable,sealed,dispatchable:handle) Handle
+sealed embeddable dispatchable(handle) struct Handle
 {
-    #field(4,-12)theHandle.
+    __ptr theHandle.
     
-//    #constructor(stacksafe) new &handle:h
-//    [
-//        theHandle := h.
-//    ]
-//
-//    #constructor(stacksafe) new &int:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-//
-//    #method(bool,stacksafe) equal &handle:anOperand 
-//        = theHandle == anOperand.
+    stacksafe new &handle:h
+    [
+        theHandle := h.
+    ]
+
+    stacksafe new &int:aHandle
+    [
+        theHandle := aHandle.
+    ]
+
+    stacksafe bool equal &handle:anOperand 
+        = theHandle == anOperand.
 }
 
 // --- RTPointer ---
 
-#static rt_sync = Object new.
+static rt_sync = Object new.
 
-#class(sealed,embeddable,const) RTPointer
+sealed const embeddable struct RTPointer
 {
-    #field(4,-12)theIndex.
+    __dword theIndex.
     
-    #constructor(stacksafe) &int:n
+    sealed stacksafe conversion int:n
     [
         theIndex := n.
     ]
     
-    #constructor new : anObject
+    constructor new : anObject
     [
         system'core_routines'__rtptr new &object:$self &object:anObject.
     ]
 
-    #method(stacksafe,outnprop:index) readIndex &vint:aRetVal
+    stacksafe outnprop(index) readIndex &vint:aRetVal
     [
         aRetVal := theIndex.
     ]
         
-    #method(stacksafe) get
+    stacksafe get
         => system'core_routines'__rtptr.
 
-    #method(stacksafe)  free
+    stacksafe  free
         => system'core_routines'__rtptr.
 }
 
 // --- UnsafePointer ---
 
-#class(embeddable,sealed,dispatchable:dirty_ptr) UnsafePointer
+sealed embeddable dispatchable(dirty_ptr) struct UnsafePointer
 {
-    #field(4,-12)thePointer.
+    __ptr thePointer.
 
 //    #constructor new : anObject
 //    [
 //        $self set:anObject.
 //    ]
     
-    #method(stacksafe) set : anObject
+    stacksafe set : anObject
         => system'core_routines'__dptr.
                 
-    #method(stacksafe) set &int:aValue
+    stacksafe set &int:aValue
     [
         thePointer := aValue.
     ]
                 
-    #method(stacksafe) offset &int:offs
+    stacksafe offset &int:offs
     [
         thePointer := thePointer + offs.
     ]
 
-    #method(stacksafe) set &dirty_ptr:anObject
+    stacksafe set &dirty_ptr:anObject
         => system'core_routines'__dptr.
                 
-    #method(stacksafe) write &int:anObject
+    stacksafe write &int:anObject
         => system'core_routines'__dptr.
                 
-    #method(stacksafe) read &vint:aPointer
+    stacksafe read &vint:aPointer
         => system'core_routines'__dptr.
 
-    #method(stacksafe) read &bytearray:arr &int:len
+    stacksafe read &bytearray:arr &int:len
         => system'core_routines'__dptr.
 
     // unsafe code
-    #method(stacksafe) int
+    stacksafe int
     [
-        #var(int)aValue.
+        int aValue := 0.
         $self read &vint:aValue.
         
         ^ IntNumber new &int:aValue.
     ]
 
     // unsafe code
-    #method(stacksafe) literal
+    stacksafe literal
     [
-        #var(int)aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
-        #var(literal)aLiteral := LiteralValue new &int:aLen.
+        int     aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
+        literal aLiteral := LiteralValue new &int:aLen.
         system'external'KERNEL32 lstrcpyA &literal:aLiteral &int:thePointer.
         
         ^ aLiteral.
     ]        
 
     // unsafe code
-    #method(stacksafe) wide
+    stacksafe wide
     [
-        #var(int)aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
-        #var(wide)aLiteral := WideLiteralValue new &int:aLen.
+        int  aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
+        wide aLiteral := WideLiteralValue new &int:aLen.
         system'external'KERNEL32 lstrcpyW &wide:aLiteral &int:thePointer.
         
         ^ aLiteral.
     ]
     
-    #method(stacksafe) saveTo &bytearray:target &int:offs
+    stacksafe saveTo &bytearray:target &int:offs
     [
         target write &int:offs &int:thePointer.
     ]
     
-    #method(stacksafe,bool)is &empty
+    stacksafe bool is &empty
         = 0 == thePointer.
 }
 
@@ -126,41 +126,41 @@
 
 #subject win_coord = system'COORD.
 
-#class(sealed,embeddable) COORD
+sealed embeddable struct COORD
 {
-    #field(short)theX.
-    #field(short)theY.
+    short theX.
+    short theY.
     
-    #constructor new
+    constructor new
     [
         theX := 0.
         theY := 0.
     ]
     
-    #method set : anObject
+    set : anObject
         <= write &win_coord:(anObject win_coord).
     
-    #method(stacksafe) write &short:X &short:Y
+    stacksafe write &short:X &short:Y
     [
         theX := X.
         theY := Y.
     ]
     
-    #method(stacksafe) write &win_coord:aValue
+    stacksafe write &win_coord:aValue
     [
-        #var(short)tmp := aValue X.
+        short tmp := aValue X.
         theX := tmp.
         
         tmp := aValue Y.
         theY := tmp.
     ]
     
-    #method(stacksafe,outwprop:X) readX &vshort:aRetVal
+    stacksafe outwprop(X) readX &vshort:aRetVal
     [
         aRetVal := theX.
     ]
     
-    #method(stacksafe,outwprop:Y) readY &vshort:aRetVal
+    stacksafe outwprop(Y) readY &vshort:aRetVal
     [
         aRetVal := theY.
     ]
@@ -170,39 +170,39 @@
 
 #subject win_small_rect = system'SMALL_RECT.
                 
-#class(sealed,embeddable) SMALL_RECT
+sealed embeddable struct SMALL_RECT
 {
-    #field(short)theLeft.
-    #field(short)theTop.
-    #field(short)theRight.
-    #field(short)theBottom.
+    short theLeft.
+    short theTop.
+    short theRight.
+    short theBottom.
     
-    #method(stacksafe,outwprop:Left) readLeft &vshort:aRetVal
+    stacksafe outwprop(Left) readLeft &vshort:aRetVal
     [
         aRetVal := theLeft.
     ]
     
-    #method(stacksafe,outwprop:Top) readTop &vshort:aRetVal
+    stacksafe outwprop(Top) readTop &vshort:aRetVal
     [
         aRetVal := theTop.
     ]
     
-    #method(stacksafe,outwprop:Right) readRight &vshort:aRetVal
+    stacksafe outwprop(Right) readRight &vshort:aRetVal
     [
         aRetVal := theRight.
     ]
     
-    #method(stacksafe,outwprop:Bottom) readBottom &vshort:aRetVal
+    stacksafe outwprop(Bottom) readBottom &vshort:aRetVal
     [
         aRetVal := theBottom.
     ]
     
-    #method set : anObject
+    set : anObject
         <= write &win_small_rect:(anObject win_small_rect).
     
-    #method write &win_small_rect:aValue
+    write &win_small_rect:aValue
     [
-        #var(short)tmp := aValue Left.
+        short tmp := aValue Left.
         theLeft := tmp.
         
         tmp := aValue  Top.

@@ -124,7 +124,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue);
    virtual bool validateFieldAttribute(int& attrValue);
    virtual bool validateLocalAttribute(int& attrValue);
-   virtual bool validateSymbolAttribute(int attrValue, bool& constant);
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne);
 ////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(ref_t message, bool isClassClass);
 //

@@ -5,7 +5,7 @@
 #template(-16387)        conversion {}
 #template(-16389)        symbol {}
 
-//#template(-8194) static {}
+#template(-8194)         static {}
 //#template(-8207) preloaded {}
 #template(-8202,-8195)   generic {}
 #template(-8192)         stacksafe {}
@@ -37,6 +37,7 @@
 #template(-11,2)  __int16 {}
 #template(-11,4)  __int32 {}
 #template(-12,4)  __dword {}
+#template(-12,4)  __ptr {}
 #template(-13,8)  __int64 {}
 #template(-14,8)  __real64{}
 
@@ -110,10 +111,10 @@
 #subject nnfunc     = system'IndexFunction2.
 #subject n3func     = system'IndexFunction3.
 
-//// === system handles ===
-//#subject handle     = system'Handle.
-//#subject rt_ptr     = system'RTPointer.
-//#subject dirty_ptr  = system'UnsafePointer.
+// === system handles ===
+#subject handle     = system'Handle.
+#subject rt_ptr     = system'RTPointer.
+#subject dirty_ptr  = system'UnsafePointer.
 
 // --- Enumerators / Indexers ---
 #subject enumerator = system'Enumerator.

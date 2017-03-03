@@ -46,7 +46,7 @@
 
 #define V_STATCKSAFE     (ref_t)-8192
 #define V_EMBEDDABLE     (ref_t)-8193
-////#define V_STATIC      (ref_t)-8194
+#define V_STATIC         (ref_t)-8194
 #define V_SEALED         (ref_t)-8195
 #define V_LIMITED        (ref_t)-8196
 #define V_STRUCT         (ref_t)-8197
@@ -125,7 +125,7 @@ struct _CompilerScope
    ref_t literalReference;
    ref_t wideReference;
    ref_t charReference;
-//   ref_t arrayReference;
+   ref_t arrayReference;
    ref_t paramsReference;
 
    // list of typified classes which may need get&type message
@@ -143,7 +143,7 @@ struct _CompilerScope
       intReference = boolReference = superReference = 0;
       signatureReference = verbReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
-/*      arrayReference = */charReference = realReference = 0;
+      arrayReference = charReference = realReference = 0;
       paramsReference = 0;
    }
 };
@@ -250,7 +250,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
-   virtual bool validateSymbolAttribute(int attrValue, bool& constant) = 0;
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne) = 0;
 //   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
 

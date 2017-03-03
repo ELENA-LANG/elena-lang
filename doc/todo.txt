@@ -135,9 +135,11 @@ In development:
                  * warn on not found method
                  * suppresw warnings in the code
                  * exception template : default constructor
-
-              xdev - generic development
+                 * reimplement event templates
+                 * static fields
                  * support property template
+                 * implement switch
+                 * support argument list
 
               zdev - cellular automata
                  * general architecture

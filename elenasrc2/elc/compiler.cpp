@@ -73,11 +73,11 @@ typedef ClassInfo::Attribute Attribute;
 //         return false;
 //   }
 //}
-//
-//inline bool isCollection(SNode node)
-//{
-//   return (node == lxExpression && node.nextNode() == lxExpression);
-//}
+
+inline bool isCollection(SNode node)
+{
+   return (node == lxExpression && node.nextNode() == lxExpression);
+}
 
 inline bool isReturnExpression(SNode expr)
 {
@@ -279,7 +279,7 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
    verbReference = mapReference(project->resolveForward(VERB_FORWARD));
    paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
-//   arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
+   arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
    boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
 
    // HOTFIX : package section should be created if at least literal class is declated
@@ -641,7 +641,7 @@ ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, b
 
    // load class meta data
    ref_t moduleRef = 0;
-   argModule = project->resolveModule(vmtName, moduleRef);
+   argModule = project->resolveModule(vmtName, moduleRef, true);
 
    if (argModule == NULL || moduleRef == 0)
       return 0;
@@ -675,7 +675,7 @@ ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& in
 
    // load class meta data
    ref_t moduleRef = 0;
-   _Module* argModule = project->resolveModule(symbol, moduleRef);
+   _Module* argModule = project->resolveModule(symbol, moduleRef, true);
 
    if (argModule == NULL || moduleRef == 0)
       return 0;
@@ -974,6 +974,7 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
 {
    typeRef = 0;
    constant = false;
+   staticOne = false;
 //   preloaded = false;
 }
 
@@ -1084,7 +1085,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->hints = 0;
 //   this->resultRef = 0;
 //   this->resultType = 0;
-////   this->withOpenArg = false;
+   this->withOpenArg = false;
    this->stackSafe = this->classEmbeddable = false;
    this->generic = false;
    this->templateOne = false;
@@ -1111,10 +1112,10 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 
       int local = param.offset;
       if (local >= 0) {
-//         if (withOpenArg && moduleScope->attributeHints.exist(param.subj_ref, moduleScope->paramsReference)) {
-//            return ObjectInfo(okParams, -1 - local, 0, param.subj_ref);
-//         }
-         /*else */if (stackSafe && param.subj_ref != 0 && param.size != 0) {
+         if (withOpenArg && moduleScope->subjectHints.exist(param.subj_ref, moduleScope->paramsReference)) {
+            return ObjectInfo(okParams, -1 - local, 0, param.subj_ref);
+         }
+         else if (stackSafe && param.subj_ref != 0 && param.size != 0) {
             return ObjectInfo(okParam, -1 - local, -1, param.subj_ref);
          }
          return ObjectInfo(okParam, -1 - local, 0, param.subj_ref);
@@ -1619,8 +1620,8 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
          return object.param;
 //      case okTemplateLocal:
 //         return object.extraparam;
-      //case okParams:
-      //   return V_ARGARRAY;
+      case okParams:
+         return V_ARGARRAY;
       case okExternal:
          return V_INT32;
       case okMessageConstant:
@@ -1670,13 +1671,10 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
          ident_t name = (current == lxIdentifier) ? current.identifier() : current.findChild(lxIdentifier, lxPrivate).identifier();
          Parameter param = scope.parameters.get(name);
          if (param.offset != -1) {
-            //         if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->paramsReference)) {
-            //            current = lxParamsVariable;
-            ////         writer.appendNode(lxTerminal, it.key());
-            ////         writer.appendNode(lxLevel, -1 - (*it).offset);
-            ////         writer.closeNode();
-            //         }
-            /*else */if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->intReference)) {
+            if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->paramsReference)) {
+               writer.newNode(lxParamsVariable);
+            }
+            else if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->intReference)) {
                writer.newNode(lxIntVariable);
             }
             else if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->longReference)) {
@@ -1969,7 +1967,7 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateSymbolAttribute(value, scope.constant))
+         if (!_logic->validateSymbolAttribute(value, scope.constant, scope.staticOne))
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
       else if (current == lxTypeAttr) {
@@ -2465,11 +2463,11 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //      case okBlockLocal:
 //         terminal.set(lxBlockLocal, object.param);
 //         break;
-//      case okParams:
-//         terminal.set(lxArgBoxing, 0);
-//         terminal.appendNode(lxBlockLocalAddr, object.param);
-//         terminal.appendNode(lxTarget, scope.moduleScope->paramsReference);
-//         break;
+      case okParams:
+         writer.newNode(lxArgBoxing, 0);
+         writer.appendNode(lxBlockLocalAddr, object.param);
+         writer.appendNode(lxTarget, scope.moduleScope->paramsReference);
+         break;
       case okObject:
          writer.newNode(lxResult, 0);
          break;
@@ -2579,10 +2577,10 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
          result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxExpression:
-//         if (isCollection(member)) {
-//            result = compileCollection(objectNode, scope);
-//         }
-         /*else */result = compileExpression(writer, member, scope, 0);
+         if (isCollection(member)) {
+            result = compileCollection(writer, objectNode, scope);
+         }
+         else result = compileExpression(writer, member, scope, 0);
          break;
       case lxMessageReference:
          result = compileMessageReference(writer, member, scope, mode);
@@ -2673,14 +2671,14 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
          }
       }
 
-      //if (paramCount >= OPEN_ARG_COUNT) {
-      //   // HOT FIX : support open argument list
-      //   ref_t openArgType = retrieveKey(scope.moduleScope->subjectHints.start(), scope.moduleScope->paramsReference, 0);
-      //   if (!emptystr(signature))
-      //      signature.append('&');
+      if (paramCount >= OPEN_ARG_COUNT) {
+         // HOT FIX : support open argument list
+         ref_t openArgType = retrieveKey(scope.moduleScope->subjectHints.start(), scope.moduleScope->paramsReference, 0);
+         if (!emptystr(signature))
+            signature.append('&');
 
-      //   signature.append(scope.moduleScope->module->resolveSubject(openArgType));
-      //}
+         signature.append(scope.moduleScope->module->resolveSubject(openArgType));
+      }
    }
 
    if (verb_id == 0 && paramCount != -1) {
@@ -2797,25 +2795,25 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
 
       arg = arg.nextNode();
 
-//      // HOTFIX : if it was already compiled as open argument list
-//      if (arg.type == lxIdle && scope.moduleScope->attributeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-//         paramCount += OPEN_ARG_COUNT;
-//
-//         break;
-//      }
+      // HOTFIX : if it was already compiled as open argument list
+      if (arg.type == lxIdle && scope.moduleScope->subjectHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+         paramCount += OPEN_ARG_COUNT;
+
+         break;
+      }
       // skip an argument
-      /*else */if (test(arg.type, lxObjectMask)) {
-//         // if it is an open argument list
-//         if (arg.nextNode() == lxNone && scope.moduleScope->attributeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-//            paramCount += OPEN_ARG_COUNT;
-//
-//            break;
-//         }
-//         else {
+      else if (test(arg.type, lxObjectMask)) {
+         // if it is an open argument list
+         if (arg.nextNode() == lxNone && scope.moduleScope->subjectHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+            paramCount += OPEN_ARG_COUNT;
+
+            break;
+         }
+         else {
             paramCount++;
 
             arg = arg.nextNode();
-         //}
+         }
       }
    }
 
@@ -3231,39 +3229,39 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
 
       // compile an argument
       if (test(arg.type, lxObjectMask)) {
-//         // if it is an open argument list
-//         if (arg.nextNode() != lxMessage && scope.moduleScope->attributeHints.exist(subjectRef, scope.moduleScope->paramsReference)) {
-//            if (arg == lxExpression) {
-//               SNode argListNode = arg.firstChild();
-//               while (argListNode != lxNone) {
-//                  compileExpression(argListNode, scope, paramMode);
-//
-//                  argListNode = argListNode.nextNode();
-//               }
-//
-//               // terminator
-//               arg.appendNode(lxNil);
-//
-//               // HOTFIX : copy the argument list into the call expression
-//               SyntaxTree::copyNode(arg, node);
-//               arg = lxIdle;
-//            }
-//            else {
-//               ObjectInfo argListParam = compileExpression(arg, scope, paramMode);
-//               if (argListParam.kind == okParams) {
-//                  arg.refresh();
-//
-//                  // unbox param list
-//                  arg.injectNode(arg.type, arg.argument);
-//                  arg.set(lxArgUnboxing, 0);
-//               }
-//               else {
-//                  // treat it like an argument list with one parameter
-//                  node.appendNode(lxNil);
-//               }
-//            }
-//         }
-//         else {
+         // if it is an open argument list
+         if (arg.nextNode() != lxMessage && scope.moduleScope->subjectHints.exist(subjectRef, scope.moduleScope->paramsReference)) {
+            if (arg == lxExpression) {
+               SNode argListNode = arg.firstChild();
+               while (argListNode != lxNone) {
+                  compileExpression(writer, argListNode, scope, paramMode);
+
+                  argListNode = argListNode.nextNode();
+               }
+
+               // terminator
+               arg.appendNode(lxNil);
+
+               // HOTFIX : copy the argument list into the call expression
+               SyntaxTree::copyNode(arg, node);
+               arg = lxIdle;
+            }
+            else {
+               ObjectInfo argListParam = compileExpression(writer, arg, scope, paramMode);
+               if (argListParam.kind == okParams) {
+                  arg.refresh();
+
+                  // unbox param list
+                  arg.injectNode(arg.type, arg.argument);
+                  arg.set(lxArgUnboxing, 0);
+               }
+               else {
+                  // treat it like an argument list with one parameter
+                  node.appendNode(lxNil);
+               }
+            }
+         }
+         else {
             writer.newBookmark();
 
             ObjectInfo param = compileExpression(writer, arg, scope, paramMode);
@@ -3274,7 +3272,7 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
             writer.removeBookmark();
 
             arg = arg.nextNode();
-//         }
+         }
       }
    }
 
@@ -3724,46 +3722,47 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    return compileClosure(writer, node, ownerScope, scope);
 }
 
-////ObjectInfo Compiler :: compileCollection(SNode node, CodeScope& scope)
-////{
-////   ref_t parentRef = scope.moduleScope->arrayReference;
-////   SNode parentNode = node.findChild(lxIdentifier, lxPrivate, lxReference);
-////   if (parentNode != lxNone) {
-////      parentRef = scope.moduleScope->mapTerminal(parentNode, true);
-////      if (parentRef == 0)
-////         scope.raiseError(errUnknownObject, node);
-////   }
-////
-////   return compileCollection(node, scope, parentRef);
-////}
-////
-//////ObjectInfo Compiler :: compileCollection(SNode node, CodeScope& scope, ref_t vmtReference)
-//////{
-//////   if (vmtReference == 0)
-//////      vmtReference = scope.moduleScope->superReference;
-//////
-//////   int counter = 0;
-//////
-//////   // all collection memebers should be created before the collection itself
-//////   SNode current = node.findChild(lxExpression);
-//////   while (current != lxNone) {
-//////      compileExpression(current, scope, 0);
-//////      current.refresh();
-//////
-//////      if (current != lxExpression) {
-//////         current.injectNode(current.type, current.argument);
-//////      }
-//////      current.set(lxMember, counter);
-//////
-//////      current = current.nextNode();
-//////      counter++;
-//////   }
-//////
-//////   node.set(lxNested, counter);
-//////   node.appendNode(lxTarget, vmtReference);
-//////
-//////   return ObjectInfo(okObject, vmtReference);
-//////}
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ref_t parentRef = scope.moduleScope->arrayReference;
+   SNode parentNode = node.findChild(lxIdentifier, lxPrivate, lxReference);
+   if (parentNode != lxNone) {
+      parentRef = scope.moduleScope->mapTerminal(parentNode, true);
+      if (parentRef == 0)
+         scope.raiseError(errUnknownObject, node);
+   }
+
+   return compileCollection(writer, node, scope, parentRef);
+}
+
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t vmtReference)
+{
+   if (vmtReference == 0)
+      vmtReference = scope.moduleScope->superReference;
+
+   int counter = 0;
+
+   writer.newBookmark();
+
+   // all collection memebers should be created before the collection itself
+   SNode current = node.findChild(lxExpression);
+   while (current != lxNone) {
+      writer.newNode(lxMember, counter);
+      compileExpression(writer, current, scope, 0);
+      writer.closeNode();
+
+      current = current.nextNode();
+      counter++;
+   }
+
+   writer.appendNode(lxTarget, vmtReference);
+   writer.insert(lxNested, counter);
+   writer.closeNode();
+
+   writer.removeBookmark();
+
+   return ObjectInfo(okObject, vmtReference);
+}
 
 ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
@@ -3942,7 +3941,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
             current = node.firstChild(lxObjectMask);
             SNode nextChild = current.nextNode();
 
-            if ((current == lxExpression || current == lxAlt || current == lxTrying)/* && nextChild == lxNone*/) {
+            if ((current == lxExpression || current == lxAlt || current == lxTrying) && nextChild == lxNone) {
                // if it is a nested expression
                objectInfo = compileExpression(writer, current, scope, mode);
             }
@@ -4513,20 +4512,20 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
          int index = 1 + scope.parameters.Count();
 
-//         // if it is an open argument type
-//         if (scope.moduleScope->attributeHints.exist(subj_ref, scope.moduleScope->paramsReference)) {
-//            scope.parameters.add(name, Parameter(index, subj_ref));
-//
-//            // the generic arguments should be free by the method exit
-//            scope.rootToFree += paramCount;
-//            scope.withOpenArg = true;
-//
-//            // to indicate open argument list
-//            paramCount += OPEN_ARG_COUNT;
-//            if (paramCount > 0xF)
-//               scope.raiseError(errNotApplicable, arg);
-//         }
-//         else {
+         // if it is an open argument type
+         if (scope.moduleScope->subjectHints.exist(subj_ref, scope.moduleScope->paramsReference)) {
+            scope.parameters.add(name, Parameter(index, subj_ref));
+
+            // the generic arguments should be free by the method exit
+            scope.rootToFree += paramCount;
+            scope.withOpenArg = true;
+
+            // to indicate open argument list
+            paramCount += OPEN_ARG_COUNT;
+            if (paramCount > 0xF)
+               scope.raiseError(errNotApplicable, arg);
+         }
+         else {
             paramCount++;
             if (paramCount >= OPEN_ARG_COUNT)
                scope.raiseError(errTooManyParameters, verb);
@@ -4538,7 +4537,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             scope.parameters.add(name, Parameter(index, subj_ref, paramRef, size));
 
             arg = arg.nextNode();
-//         }
+         }
       }
    }
 
@@ -6402,14 +6401,14 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
 void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope)
 {
-   bool isStatic = /*(node == lxStatic)*/false;
-   
    expressionTree.clear();
 
    SyntaxWriter writer(expressionTree);
 
    declareSymbolAttributes(node, scope);
-   
+
+   bool isStatic = scope.staticOne;
+
    SNode expression = node.findChild(lxExpression);
    
    CodeScope codeScope(&scope);
@@ -7843,22 +7842,37 @@ void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, Templa
    
    SNode current = node.firstChild();
    bool identifierMode = current.type == lxIdentifier;
+   bool listMode = false;
    while (current != lxNone) {
-      if (current == lxExpression && identifierMode) {
-         if (current.nextNode(lxObjectMask) != lxExpression) {
-            writer.appendNode(lxOperator, -1);
-            generateExpressionTree(writer, current, scope, false);
-            writer.insert(lxExpression);
-            writer.closeNode();
+      if (current == lxExpression) {
+         if (current.nextNode() == lxExpression)
+            listMode = true;
+
+         if (identifierMode) {
+            if (current.nextNode(lxObjectMask) != lxExpression) {
+               writer.appendNode(lxOperator, -1);
+               generateExpressionTree(writer, current, scope, false);
+               writer.insert(lxExpression);
+               writer.closeNode();
+            }
+            // !! array mode
+            else generateExpressionTree(writer, current, scope, false);
          }
-         // !! array mode
-         else generateExpressionTree(writer, current, scope, false);
+         else if (listMode) {
+            generateExpressionTree(writer, current, scope, true);
+         }
+         else generateObjectTree(writer, current, scope);
       }
       else generateObjectTree(writer, current, scope);
 
       current = current.nextNode();
    }
-   
+
+   if (listMode) {
+      writer.insert(lxExpression);
+      writer.closeNode();
+   }
+
    if (explicitOne) {
       writer.insert(node.type);
       writer.closeNode();

@@ -149,7 +149,7 @@ public:
       okNil,
       okSuper,
       okLocalAddress,                 // param - local offset, extraparam - class reference
-//      okParams,                       // param - local offset
+      okParams,                       // param - local offset
 //      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
 
@@ -523,6 +523,7 @@ private:
    struct SymbolScope : public SourceScope
    {
       bool  constant;
+      bool  staticOne;
 //      bool  preloaded;
       ref_t typeRef;
 
@@ -549,7 +550,7 @@ private:
       int          hints;
 //      ref_t        resultType;
 //      ref_t        resultRef;
-////      bool         withOpenArg;
+      bool         withOpenArg;
       bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;
@@ -907,8 +908,8 @@ private:
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
-////   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope);
-////   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope, ref_t vmtReference);
+   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
+   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
 
    ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);

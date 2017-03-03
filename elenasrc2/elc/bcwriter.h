@@ -174,11 +174,11 @@ class ByteCodeWriter
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
    void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
-//   void boxArgList(CommandTape& tape, ref_t vmtReference);
-//   void unboxArgList(CommandTape& tape);
+   void boxArgList(CommandTape& tape, ref_t vmtReference);
+   void unboxArgList(CommandTape& tape);
 
    void releaseObject(CommandTape& tape, int count = 1);
-//   void releaseArgList(CommandTape& tape);
+   void releaseArgList(CommandTape& tape);
 
    void setSubject(CommandTape& tape, ref_t subject);
 

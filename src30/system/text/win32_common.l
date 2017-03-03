@@ -2,5 +2,5 @@
 
 // --- LRLN ---
 
-#symbol(const) newLine
+const newLine
     = #13#10.
