@@ -990,11 +990,11 @@ void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, boo
    else tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef | mskConstantRef);
 }
 
-//void ByteCodeWriter :: throwCurrent(CommandTape& tape)
-//{
-//   // throw
-//   tape.write(bcThrow);
-//}
+void ByteCodeWriter :: throwCurrent(CommandTape& tape)
+{
+   // throw
+   tape.write(bcThrow);
+}
 
 void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
 {
@@ -4252,16 +4252,16 @@ void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
    gotoEnd(tape, baFirstLabel);
 }
 
-//void ByteCodeWriter :: generateThrowExpression(CommandTape& tape, SNode node)
-//{
-//   generateExpression(tape, node);
-//
-//   pushObject(tape, lxResult);
-//   throwCurrent(tape);
-//
-//
-//   gotoEnd(tape, baFirstLabel);
-//}
+void ByteCodeWriter :: generateThrowExpression(CommandTape& tape, SNode node)
+{
+   generateExpression(tape, node);
+
+   pushObject(tape, lxResult);
+   throwCurrent(tape);
+
+
+   gotoEnd(tape, baFirstLabel);
+}
 
 void ByteCodeWriter :: generateBoxing(CommandTape& tape, SNode node)
 {
@@ -4700,9 +4700,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxReturning:
          generateReturnExpression(tape, node);
          break;
-//      case lxThrowing:
-//         generateThrowExpression(tape, node);
-//         break;
+      case lxThrowing:
+         generateThrowExpression(tape, node);
+         break;
       case lxCoreAPICall:
       case lxStdExternalCall:
       case lxExternalCall:

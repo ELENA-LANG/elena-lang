@@ -19,7 +19,7 @@
 //#template(-8206) group   {}
 #template(-8201)         const   {}
 #template(-8197)         struct  {}
-////#template(-8204) nonstructural {}
+#template(-8204)         nonstructural {}
 #template(-8198)         listable {}
 #template(-8200)         string {}
 #template(-8193)         embeddable {}

@@ -122,7 +122,7 @@ enum LexicalType
 //   lxSwitching       = 0x0C010,
    lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,
-//   lxThrowing        = 0x0C013,
+   lxThrowing        = 0x0C013,
    lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
    lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
    lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference

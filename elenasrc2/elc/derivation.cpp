@@ -444,6 +444,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsBaseClass:
          _writer.newNode(lxBaseParent);
          break;
+      case nsThrow:
+         _writer.newNode(lxThrowing);
+         break;
       case nsL0Operation:
       case nsL3Operation:
       case nsL4Operation:

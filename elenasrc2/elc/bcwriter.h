@@ -195,7 +195,7 @@ class ByteCodeWriter
    void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
 
-//   void throwCurrent(CommandTape& tape);
+   void throwCurrent(CommandTape& tape);
 
    void tryLock(CommandTape& tape);
    void freeLock(CommandTape& tape);
@@ -288,7 +288,7 @@ class ByteCodeWriter
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
    void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);

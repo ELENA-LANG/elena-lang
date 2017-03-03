@@ -134,6 +134,7 @@ In development:
                  * warn on typifying
                  * warn on not found method
                  * suppresw warnings in the code
+                 * exception template : default constructor
 
               xdev - generic development
                  * support property template
