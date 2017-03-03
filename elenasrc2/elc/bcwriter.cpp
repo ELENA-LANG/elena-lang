@@ -1010,13 +1010,13 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
    tape.write(bcFreeStack, 3);
 }
 
-//void ByteCodeWriter :: endAlt(CommandTape& tape)
-//{
-//   // labEnd
-//
-//   tape.setLabel();
-//   tape.write(bcFreeStack, 3);
-//}
+void ByteCodeWriter :: endAlt(CommandTape& tape)
+{
+   // labEnd
+
+   tape.setLabel();
+   tape.write(bcFreeStack, 3);
+}
 
 void ByteCodeWriter :: endThenBlock(CommandTape& tape)
 {

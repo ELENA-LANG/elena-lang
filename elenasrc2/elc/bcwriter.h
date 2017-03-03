@@ -208,7 +208,7 @@ class ByteCodeWriter
    void freeVirtualStack(CommandTape& tape, int count);
 
    void endCatch(CommandTape& tape);
-//   void endAlt(CommandTape& tape);
+   void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape);
    void endLoop(CommandTape& tape);
    void endLoop(CommandTape& tape, ref_t comparingRef);
