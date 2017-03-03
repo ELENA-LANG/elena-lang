@@ -3826,7 +3826,7 @@ void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, 
       if (current == lxExtInteranlRef) {
       }
       else if (current == lxIntExtArgument || current == lxExtArgument) {
-         SNode object = current.firstChild(lxObject);
+         SNode object = current.findSubNodeMask(lxObjectMask);
          if (test(object.type, lxObjectMask)) {
             if (!isSimpleObject(object, true)) {
                ExternalScope::ParamInfo param;
@@ -3860,7 +3860,7 @@ int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
          paramCount++;
       }
       else if (current == lxIntExtArgument || current == lxExtArgument) {
-         SNode object = current.firstChild(lxObject);
+         SNode object = current.findSubNodeMask(lxObjectMask);
          SNode value;
          if (object == lxConstantInt)
             value = object;

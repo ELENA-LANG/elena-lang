@@ -1474,7 +1474,7 @@ sealed arrayof(object) ArgArray
 // --- literalConvertor ---
 
 /// A literal convertor
-const literalConvertor =
+class literalConvertor =
 {
     /// Converts the parameter to the literal value
     stacksafe convert &char:aValue &bytearray:buffer &vint:length
@@ -1674,7 +1674,7 @@ const literalConvertor =
 // --- wideConvertor ---
 
 /// A wide literal convertor
-const wideConvertor =
+class wideConvertor =
 {
     /// Converts the parameter to the literal value
     stacksafe convert &char:aValue &shortarray:buffer &vint:length

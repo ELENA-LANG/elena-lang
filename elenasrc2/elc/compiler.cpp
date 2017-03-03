@@ -6212,11 +6212,6 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
       compileClassClassDeclaration(node, classClassScope, scope);
    }
-
-//   // compile explicit symbol
-//   // extension cannot be used stand-alone, so the symbol should not be generated
-//   //if (scope.extensionMode == 0)
-//      compileSymbolCode(*scope.moduleScope, scope.reference);
 }
 
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
@@ -6257,7 +6252,7 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
 
    // compile explicit symbol
    // extension cannot be used stand-alone, so the symbol should not be generated
-   //if (scope.extensionMode == 0)
+   if (scope.extensionMode == 0)
       compileSymbolCode(scope);
 }
 
@@ -6963,6 +6958,7 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxExpression:
          return optimizeExpression(current.firstChild(lxObjectMask), scope, warningScope, mode);
       case lxAltExpression:
+      case lxBranching:
          optimizeExpressionTree(current, scope, warningScope);
          return 0;
       case lxBoxing:
@@ -6998,7 +6994,7 @@ void Compiler :: optimizeExpressionTree(SNode node, ModuleScope& scope, WarningS
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxLooping || current == lxElse || current == lxCode) {
+      if (current == lxLooping || current == lxElse || current == lxCode || current == lxIf) {
          optimizeExpressionTree(current, scope, warningScope);
       }
       else if (test(current.type, lxObjectMask)) {
