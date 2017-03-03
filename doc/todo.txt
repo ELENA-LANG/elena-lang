@@ -13,6 +13,8 @@ In development:
                    be written directly to the target
                  * external operation : pass constant / local varialbe directly (without presaving)
 
+                 * assigning to the primitive array
+
                  * byte array operation - assigning (see streamreader)
 
                  * primitive array declaration : byte(4) buffer := ??.
@@ -147,6 +149,7 @@ In development:
                  * implement switch
                  * support argument list
                  * exception in static symbol (e.g. $StartUpEvents new - if "new" is not found)
+                 * temporal code for declaring uninitialized array - "type(size)var := 0" - should be replaced!?
 
               zdev - cellular automata
                  * general architecture

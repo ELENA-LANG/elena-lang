@@ -231,6 +231,7 @@ public:
    virtual bool isRole(ClassInfo& info) = 0;          
 
    virtual bool isPrimitiveRef(ref_t reference) = 0;
+   virtual bool isPrimitiveArray(ref_t reference) = 0;
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;

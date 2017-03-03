@@ -2301,16 +2301,20 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
                break;
             case elDebugIntegers:
                variableType = lxIntsVariable;
+               variableArg = size;
                break;
             case elDebugShorts:
                variableType = lxShortsVariable;
+               variableArg = size;
                break;
             case elDebugBytes:
                variableType = lxBytesVariable;
+               variableArg = size;
                break;
             default:
                if (isPrimitiveRef(variable.extraparam)) {
                   variableType = lxBytesVariable;
+                  variableArg = size;
                }
                else {
                   variableType = lxBinaryVariable;
@@ -3455,7 +3459,15 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       SNode sourceNode = targetNode.nextNode(lxObjectMask);
       ObjectInfo source = compileAssigningExpression(writer, sourceNode, scope);
 
-      if (!convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, source)))
+      // assigning primitive array
+      if (_logic->isPrimitiveArray(targetRef)) {
+         // HOTFIX : allowing to declare the primitive array 
+         if (source.kind == okIntConstant && source.extraparam == 0) {
+            operationType = lxIdle;
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
+      else if (!convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, source)))
          scope.raiseError(errInvalidOperation, node);
 
       writer.removeBookmark();
@@ -6928,6 +6940,9 @@ ref_t Compiler :: optimizeOp(SNode current, ModuleScope& scope, WarningScope& wa
 
    switch (current) {
       case lxIntOp:
+      case lxByteArrOp:
+      case lxIntArrOp:
+      case lxShortArrOp:
          return V_INT32;
       case lxLongOp:
          return V_INT64;

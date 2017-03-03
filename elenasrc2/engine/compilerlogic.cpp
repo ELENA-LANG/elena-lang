@@ -1642,6 +1642,11 @@ bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)
    else return true;
 }
 
+bool CompilerLogic :: isPrimitiveArray(ref_t reference)
+{
+   return isPrimitiveStructArrayRef(reference) | isPrimitiveArrayRef(reference);
+}
+
 //bool CompilerLogic :: recognizeNewLocal(SNode& node)
 //{
 //   SNode firstToken = node.firstChild(lxObjectMask);
