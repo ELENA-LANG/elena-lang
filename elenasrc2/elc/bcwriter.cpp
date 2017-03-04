@@ -185,18 +185,18 @@ void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
    tape.write(blDeclare, bsBranch);
 }
 
-//void ByteCodeWriter :: excludeFrame(CommandTape& tape)
-//{
-//   tape.write(bcExclude);
-//   tape.write(bcAllocStack, 1);
-//}
-//
-//void ByteCodeWriter :: includeFrame(CommandTape& tape)
-//{
-//   tape.write(bcInclude);
-//   tape.write(bcSNop);
-//   tape.write(bcFreeStack, 1);
-//}
+void ByteCodeWriter :: excludeFrame(CommandTape& tape)
+{
+   tape.write(bcExclude);
+   tape.write(bcAllocStack, 1);
+}
+
+void ByteCodeWriter :: includeFrame(CommandTape& tape)
+{
+   tape.write(bcInclude);
+   tape.write(bcSNop);
+   tape.write(bcFreeStack, 1);
+}
 
 void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
 {
@@ -4398,15 +4398,15 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
    }
 }
 
-//void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   excludeFrame(tape);
-//
-//   generateCodeBlock(tape, node);
-//
-//   includeFrame(tape);
-//}
-//
+void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node)
+{
+   excludeFrame(tape);
+
+   generateCodeBlock(tape, node);
+
+   includeFrame(tape);
+}
+
 //void ByteCodeWriter :: generateLocking(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   SNode target = node.firstChild(lxObjectMask);
@@ -4921,9 +4921,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             }
             else generateObjectExpression(tape, current);
             break;
-//         case lxExternFrame:
-//            generateExternFrame(tape, current);
-//            break;
+         case lxExternFrame:
+            generateExternFrame(tape, current);
+            break;
 //         case lxReleasing:
 //            releaseObject(tape, current.argument);
 //            break;

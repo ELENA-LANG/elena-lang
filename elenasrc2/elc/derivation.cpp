@@ -475,6 +475,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsDispatchExpression:
       case nsExtension:
       case nsLoop:
+      case nsExtern:
       case nsDefaultGeneric:
       case nsCatchMessageOperation:
       case nsAltMessageOperation:

@@ -225,71 +225,71 @@ sealed embeddable struct $ConsoleReader
         theHandle := aHandle.
     ]
 
-//    stacksafe read &vchar:aChar
-//    [
-//        byte(20) aDump := 0.
-//        int      aNumberRead := 0.
-//        short    anEventType := 0.
-//        int      aKeyDown := 0.
-//        int      aHandle := theHandle.
-//        
-//        bool found := false.
-//        until (found)
-//        [
-//            #extern
-//            [
-//                system'external'KERNEL32 ReadConsoleInputW
-//                    &int           : aHandle
-//                    &bytearray     : aDump
-//                    &int           : 1
-//                    &vint          : aNumberRead.
-//            ].
-//
-//            byteArrayHelper read &bytearray:aDump &int:0 &vshort:anEventType.
-//            (anEventType == 1)
-//                ? [  
-//                    byteArrayHelper read &bytearray:aDump &int:4 &vint:aKeyDown.
-//                    
-//                    found := aKeyDown == 1.
-//                ]
-//                ! [ found := false. ].
-//        ].
-//
-//        byteArrayHelper read &bytearray:aDump &int:14 &vchar:aChar.
-//    ]
-//
-//    stacksafe read &vint:aKey
-//    [
-//        byte(20) aDump := 0.
-//        int      aNumberRead := 0.
-//        short    anEventType := 0.
-//        int      aKeyDown := 0.
-//        
-//        bool found := false.
-//        until (found)
-//        [
-//            #extern
-//            [
-//                system'external'KERNEL32 ReadConsoleInputW
-//                    &int           : theHandle
-//                    &bytearray     : aDump
-//                    &int           : 1
-//                    &vint          : aNumberRead.
-//            ].
-//
-//            byteArrayHelper read &bytearray:aDump &int:0 &vshort:anEventType.
-//            (anEventType == 1)
-//                ? [  
-//                    byteArrayHelper read &bytearray:aDump &int:4 &vint:aKeyDown.
-//                    
-//                    found := aKeyDown == 1.
-//                ]
-//                ! [ found := false. ].
-//        ].
-//                    
-//        byteArrayHelper read &bytearray:aDump &int:8 &vint:aKey.
-//    ]
-//
+    stacksafe read &vchar:aChar
+    [
+        byte(20) aDump := 0.
+        int      aNumberRead := 0.
+        short    anEventType := 0.
+        int      aKeyDown := 0.
+        int      aHandle := theHandle.
+        
+        bool found := false.
+        until (found)
+        [
+            #extern
+            [
+                system'external'KERNEL32 ReadConsoleInputW
+                    &int           : aHandle
+                    &bytearray     : aDump
+                    &int           : 1
+                    &vint          : aNumberRead.
+            ].
+
+            byteArrayHelper read &bytearray:aDump &int:0 &vshort:anEventType.
+            (anEventType == 1)
+                ? [  
+                    byteArrayHelper read &bytearray:aDump &int:4 &vint:aKeyDown.
+                    
+                    found := aKeyDown == 1.
+                ]
+                ! [ found := false. ].
+        ].
+
+        byteArrayHelper read &bytearray:aDump &int:14 &vchar:aChar.
+    ]
+
+    stacksafe read &vint:aKey
+    [
+        byte(20) aDump := 0.
+        int      aNumberRead := 0.
+        short    anEventType := 0.
+        int      aKeyDown := 0.
+        
+        bool found := false.
+        until (found)
+        [
+            #extern
+            [
+                system'external'KERNEL32 ReadConsoleInputW
+                    &int           : theHandle
+                    &bytearray     : aDump
+                    &int           : 1
+                    &vint          : aNumberRead.
+            ].
+
+            byteArrayHelper read &bytearray:aDump &int:0 &vshort:anEventType.
+            (anEventType == 1)
+                ? [  
+                    byteArrayHelper read &bytearray:aDump &int:4 &vint:aKeyDown.
+                    
+                    found := aKeyDown == 1.
+                ]
+                ! [ found := false. ].
+        ].
+                    
+        byteArrayHelper read &bytearray:aDump &int:8 &vint:aKey.
+    ]
+
 //    stacksafe read &shortarray:aBuffer &vint:aRetVal
 //    [
 //        #extern

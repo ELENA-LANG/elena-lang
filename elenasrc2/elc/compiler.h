@@ -820,19 +820,6 @@ private:
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
 
-//   //void insertDebugStep(SNode& node, int stepType)
-//   //{
-//   //   node.insertNode(lxBreakpoint, stepType);
-//   //}
-////   void appendDebugStep(SNode& node, int stepType)
-////   {
-////      node.appendNode(lxBreakpoint, stepType);
-////   }
-////   void setDebugStep(SNode& node, int stepType)
-////   {
-////      node.set(lxBreakpoint, stepType);
-////   }
-
 ////   void raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered = true);
 ////
 ////   void appendObjectInfo(CodeScope& scope, ObjectInfo object);

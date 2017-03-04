@@ -4125,10 +4125,11 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             compileVariable(writer, current, scope);
             break;
-//         case lxExtern:
-//            current = lxExternFrame;
-//            compileCode(current, scope);
-//            break;
+         case lxExtern:
+            writer.newNode(lxExternFrame);
+            compileCode(writer, current, scope);
+            writer.closeNode();
+            break;
          case lxEOF:
             needVirtualEnd = false;
             writer.newNode(lxBreakpoint, dsEOP);
@@ -4984,145 +4985,6 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
 
    writer.closeNode();
 }
-
-////void Compiler :: compileMethod(SNode node, MethodScope& scope)
-////{
-////   int paramCount = getParamCount(scope.message);
-////   int preallocated = 0;
-////
-////   CodeScope codeScope(&scope);
-////
-////   node.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
-////
-////   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
-////   // check if it is a resend
-////   if (body == lxResendExpression) {
-////      compileResendExpression(body, codeScope);
-////      preallocated = 1;
-////   }
-////   // check if it is a dispatch
-////   else if (body == lxDispatchCode) {
-////      compileDispatchExpression(body, codeScope);
-////   }
-////   else {
-////      if (body == lxReturning) {
-////         // HOTFIX : if it is an returning expression, inject returning node
-////         SNode expr = body.findChild(lxExpression);
-////         expr = lxReturning;
-////      }
-////
-////      body = lxNewFrame;
-////      body.setArgument(scope.generic ? -1 : 0u);
-////
-////      // new stack frame
-////      // stack already contains current $self reference
-////      // the original message should be restored if it is a generic method
-////      codeScope.level++;
-////      // declare the current subject for a generic method
-////      if (scope.generic) {
-////         codeScope.level++;
-////         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0, V_MESSAGE, 0);
-////      }
-////
-////      preallocated = codeScope.level;
-////
-////      ObjectInfo retVal = compileCode(body, codeScope);
-////
-////      // if the method returns itself
-////      if(retVal.kind == okUnknown) {
-////         // adding the code loading $self
-////         SNode exprNode = body.appendNode(lxExpression);
-////         SNode localNode = exprNode.appendNode(lxLocal, 1);
-////
-////         ref_t typeAttr = scope.getReturningType(false);
-////         if (typeAttr != 0) {
-////            // HOTFIX : copy EOP coordinates
-////            SNode eop = body.lastChild().prevNode();
-////            if (eop != lxNone)
-////               SyntaxTree::copyNode(eop, localNode);
-////
-////            typecastObject(exprNode, codeScope, typeAttr, ObjectInfo(okThisParam));
-////         }
-////      }
-////
-////   }
-////
-////   node.appendNode(lxParamCount, paramCount + scope.rootToFree);
-////   node.appendNode(lxReserved, scope.reserved);
-////   node.insertNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
-////}
-////
-////void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
-////{
-////   CodeScope codeScope(&scope);
-////
-////   node.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
-////
-////   bool retExpr = false;
-////   bool withFrame = false;
-////   int classFlags = codeScope.getClassFlags();
-////   int preallocated = 0;
-////
-////   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
-////   if (bodyNode == lxDispatchCode) {
-////      compileConstructorDispatchExpression(bodyNode, codeScope);
-////      return;
-////   }
-////   else if (bodyNode == lxResendExpression) {
-////      compileConstructorResendExpression(bodyNode, codeScope, classClassScope, withFrame);
-////
-////      bodyNode = bodyNode.findChild(lxCode);
-////   }
-////   else if (bodyNode == lxReturning) {
-////      retExpr = true;
-////
-////      // HOTFIX : if it is an returning expression, inject returning node
-////      SNode expr = bodyNode.findChild(lxExpression);
-////      expr = lxReturning;
-////   }
-////   // if no redirect statement - call virtual constructor implicitly
-////   else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID))) {
-////      node.insertNode(lxCalling, -1);
-////
-////      // HOTFIX : body node should be found once again
-////      bodyNode = node.findChild(lxCode);
-////   }
-////   // if it is a dynamic object implicit constructor call is not possible
-////   else scope.raiseError(errIllegalConstructor, node);
-////
-////   if (bodyNode != lxNone) {
-////      if (!withFrame) {
-////         withFrame = true;
-////
-////         bodyNode = lxNewFrame;
-////
-////         // new stack frame
-////         // stack already contains $self value
-////         codeScope.level++;
-////      }
-////
-////      if (retExpr) {
-////         SNode expr = bodyNode.findChild(lxReturning);
-//////         recordDebugStep(codeScope, bodyNode.firstChild().FirstTerminal(), dsStep);
-////
-////         ObjectInfo retVal = compileRetExpression(expr, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
-////
-////         if(!convertObject(expr, codeScope, codeScope.getClassRefId(), retVal))
-////            scope.raiseError(errIllegalConstructor, node);
-////      }
-////      else {
-////         preallocated = codeScope.level;
-////
-////         compileCode(bodyNode, codeScope);
-////
-////         // HOT FIX : returning the created object
-////         bodyNode.appendNode(lxLocal, 1);
-////      }
-////   }
-////   node.appendNode(lxParamCount, getParamCount(scope.message) + 1);
-////   node.appendNode(lxReserved, scope.reserved);
-////   node.insertNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
-////}
 
 void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope)
 {
@@ -6986,11 +6848,19 @@ void Compiler :: optimizeExpressionTree(SNode node, ModuleScope& scope, WarningS
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxLooping || current == lxElse || current == lxCode || current == lxIf) {
-         optimizeExpressionTree(current, scope, warningScope);
-      }
-      else if (test(current.type, lxObjectMask)) {
-         optimizeExpression(current, scope, warningScope, mode);
+      switch (current.type) {
+         case lxLooping:
+         case lxElse:
+         case lxCode:
+         case lxIf:
+         case lxExternFrame:
+            optimizeExpressionTree(current, scope, warningScope);
+            break;
+         default:
+            if (test(current.type, lxObjectMask)) {
+               optimizeExpression(current, scope, warningScope, mode);
+            }
+            break;
       }
 
       current = current.nextNode();
@@ -7202,53 +7072,6 @@ void Compiler :: declareSubject(SyntaxWriter& writer, SNode member, ModuleScope&
 ////      }
 ////   }
 ////}
-
-//void Compiler :: declareScope(SyntaxTree& buffer, SNode member, ModuleScope& scope)
-//{
-//   if (_logic->recognizeScope(member)) {
-//      compileDeclaration(buffer, member, scope);
-//   }
-//   else scope.raiseError(errInvalidOperation, member);
-//}
-//
-////void Compiler :: buildDeclaration(SyntaxWriter& writer, SNode current, ModuleScope& scope)
-////{
-////   SNode name = current.findChild(lxIdentifier, lxPrivate);
-////   //ident_t nameStr = name.findChild(lxTerminal).identifier();
-////
-////   switch (current) {
-////      case lxClass:
-////      {
-////         ClassScope classScope(&scope, name == lxNone ? scope.mapNestedExpression() : scope.mapTerminal(name));
-////
-////         writer.newNode(current.type, classScope.reference);
-////
-////         // check for duplicate declaration
-////         if (scope.module->mapSection(classScope.reference | mskSymbolRef, true))
-////            scope.raiseError(errDuplicatedSymbol, name);
-////
-////         scope.module->mapSection(classScope.reference | mskSymbolRef, false);
-////
-////         // build class expression tree
-////         buildClassDeclaration(writer, current, classScope);
-////         classScope.save();
-////
-////         writer.closeNode();
-////
-////         // compile class class if it available
-////         if (classScope.info.header.classRef != classScope.reference) {
-////            ClassScope classClassScope(&scope, classScope.info.header.classRef);
-////            buildClassClassDeclaration(writer, current, classClassScope, classScope);
-////         }
-////
-////         break;
-////      }
-////      case lxSymbol:
-////         //         case lxStatic:
-////      {
-////      }
-////   }
-////}
 //
 //void Compiler :: compileIncludeSection(SNode member, ModuleScope& scope)
 //{
@@ -7334,12 +7157,6 @@ void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
    _writer.generateConstantList(tree.readRoot(), module, reference);
 }
 
-//void Compiler :: compileModule(SNode node, ModuleScope& scope)
-//{
-//   compileIncludeSection(node.firstChild(), scope);
-//
-//}
-
 void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
 {
    SyntaxTree expressionTree; // expression tree is reused
@@ -7368,7 +7185,6 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
             break;
          }
          case lxSymbol:
-//         case lxStatic:
          {
             SymbolScope symbolScope(&scope, current.argument);
             compileSymbolImplementation(expressionTree, current, symbolScope);
@@ -7378,99 +7194,6 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
       current = current.nextNode();
    }
 }
-
-//void Compiler :: compileDeclaration(SyntaxTree& buffer, SNode current, ModuleScope& scope)
-//{
-//   SyntaxWriter writer(buffer);
-//   writer.newNode(lxRoot);
-//
-//   SNode name = current.findChild(lxIdentifier, lxPrivate);
-//
-//   switch (current) {
-//      case lxClass:
-//      {
-//         ClassScope classScope(&scope, name == lxNone ? scope.mapNestedExpression() : scope.mapTerminal(name));
-//
-//         writer.newNode(current.type, classScope.reference);
-//
-//         // check for duplicate declaration
-//         if (scope.module->mapSection(classScope.reference | mskSymbolRef, true))
-//            scope.raiseError(errDuplicatedSymbol, name);
-//         
-//         scope.module->mapSection(classScope.reference | mskSymbolRef, false);
-//         
-//         // build class expression tree
-//         compileClassDeclaration(writer, current, classScope);
-//
-//         writer.closeNode();
-//
-//         // compile class class if it available
-//         if (classScope.info.header.classRef != classScope.reference) {
-//            ClassScope classClassScope(&scope, classScope.info.header.classRef);
-//
-//            writer.newNode(lxClass, classClassScope.reference);
-//            compileClassClassDeclaration(writer, current, classClassScope, classScope);
-//            writer.closeNode();
-//         }
-//         break;
-//      }
-//      case lxTemplate:
-//      {
-//         int count = SyntaxTree::countChild(current, lxMethodParameter);
-//         
-//         IdentifierString templateName(name.findChild(lxTerminal).identifier());
-//         templateName.append('#');
-//         templateName.appendInt(count);
-//      
-//         ref_t templateRef = scope.mapNewSubject(templateName);
-//         
-//         // check for duplicate declaration
-//         if (scope.module->mapSection(templateRef | mskSyntaxTreeRef, true))
-//            scope.raiseError(errDuplicatedSymbol, name);
-//         
-//         // HOTFIX : save the template source path
-//         IdentifierString fullPath(scope.module->Name());
-//         fullPath.append('\'');
-//         fullPath.append(scope.sourcePath);
-//         
-//         current.appendNode(lxSourcePath, fullPath);
-//         
-//         _logic->recognizeNestedScope(current);
-//
-//         SyntaxTree::saveNode(current, scope.module->mapSection(templateRef | mskSyntaxTreeRef, false));
-//         
-//         scope.saveSubject(templateRef, INVALID_REF, false);
-//         
-//         break;
-//      }
-//      case lxSymbol:
-//      //         case lxStatic:
-//      {
-//         SymbolScope symbolScope(&scope, scope.mapTerminal(name));
-//   
-//         writer.newNode(current.type, symbolScope.reference);
-//
-//         // check for duplicate declaration
-//         if (scope.module->mapSection(symbolScope.reference | mskSymbolRef, true))
-//            scope.raiseError(errDuplicatedSymbol, name);
-//            
-//         scope.module->mapSection(symbolScope.reference | mskSymbolRef, false);
-//            
-//         // build symbol expression tree
-//         compileSymbolDeclaration(writer, current, symbolScope);
-//         writer.closeNode();
-//
-//         break;
-//      }
-//   }
-//
-//   writer.closeNode();
-//
-//   // copy the resulted expression tree to the module one
-//   SyntaxWriter moduleWriter(scope.expressionTree);
-//   SyntaxTree::copyNode(moduleWriter, buffer.readRoot());
-//   buffer.clear();
-//}
 
 void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
 {
@@ -7522,20 +7245,6 @@ void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
       current = current.nextNode();
    }
 }
-
-//void Compiler :: buildTree(SyntaxWriter& writer, SNode node, ModuleScope& scope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxScope) {
-//         // COMPILER MAGIC : generic scope
-//         compileScope(writer, current, scope);
-//      }
-//      else buildDeclaration(writer, current, scope);
-//
-//      current = current.nextNode();
-//   }
-//}
 
 void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
 {
@@ -7601,6 +7310,9 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
    //         //   unpackChildren(current);
    //         //   _writer.closeNode();
    //         //   break;
+         case lxExtern:
+            generateCodeTree(writer, current, scope);
+            break;
          case lxCode:
             generateCodeTree(writer, current, scope);
             if (scope.codeMode) {
@@ -7939,7 +7651,7 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
       }
-      else if (current == lxLoop || current == lxCode) {
+      else if (current == lxLoop || current == lxCode || current == lxExtern) {
          generateCodeTree(writer, current, scope);
       }
       else generateObjectTree(writer, current, scope);

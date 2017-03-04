@@ -8,7 +8,52 @@ In development:
 
               xdev - generic development
                  * migrating examples to ELENA 3.0
+                 * fix exception handling
+                 * implement switch statement
+                 * support colection(a, b)
 
+              zdev - cellular automata
+                 * general architecture
+                 * game of life : simple implementation
+                 * game of life : create an engine (time slots)
+
+              zdev 
+                 * fix interpreter sample
+                 * hello world sample
+                 * calc sample : gui
+
+              xdev - general implementation
+                 * gui vm client
+                 * game of life : display 2d map in gui window
+                 * game of life : display 2d map in vm gui window
+
+              sdev - cf parser
+                 * the following grammar rule is not correctly split (code is ignored) :
+                       #define method ::= "method" "(" name code ")";
+                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
+                 * use pattern like in regex for terminal matching
+                 * there should be possibility to save the resulting code in the file
+                 * at least print the token where the parser error is
+                 * CodeScope : after each statement clear the top stack item
+                 * NEW_TAPE_MESSAGE - command to copy the stack into the object
+
+              xdev - generic development
+                 * message string
+                 * several messages can be packed into the message string
+
+              zdev - cellular automata
+                 * game of life : rules should be declared in external file
+                 * game of life : viewer
+------                                 
+Pipeline:
+------                                                                                         
+
+              idev - generic development
+                 * vm client : F8 on the start does not work
+                 * debugging vm client : f7 on start
+                 * fix syntax highlighting
+
+              xdev - generic development
                  * int h := system'external'KERNEL32 GetStdHandle &int:0FFFFFFF5h. - no need for temporal variable - the result should
                    be written directly to the target
                  * external operation : pass constant / local varialbe directly (without presaving)
@@ -150,46 +195,10 @@ In development:
                  * support argument list
                  * exception in static symbol (e.g. $StartUpEvents new - if "new" is not found)
                  * temporal code for declaring uninitialized array - "type(size)var := 0" - should be replaced!?
-
-              zdev - cellular automata
-                 * general architecture
-                 * game of life : simple implementation
-                 * game of life : create an engine (time slots)
-
-              zdev 
-                 * fix interpreter sample
-                 * hello world sample
-                 * calc sample : gui
-
-              xdev - general implementation
-                 * gui vm client
-                 * game of life : display 2d map in gui window
-                 * game of life : display 2d map in vm gui window
-
-              idev - generic development
-                 * vm client : F8 on the start does not work
-                 * debugging vm client : f7 on start
-
-              sdev - cf parser
-                 * the following grammar rule is not correctly split (code is ignored) :
-                       #define method ::= "method" "(" name code ")";
-                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
-                 * use pattern like in regex for terminal matching
-                 * there should be possibility to save the resulting code in the file
-                 * at least print the token where the parser error is
-                 * CodeScope : after each statement clear the top stack item
-                 * NEW_TAPE_MESSAGE - command to copy the stack into the object
-
-              xdev - generic development
-                 * message string
-                 * several messages can be packed into the message string
-
-              zdev - cellular automata
-                 * game of life : rules should be declared in external file
-                 * game of life : viewer
-------                                 
-Pipeline:
-------                                                                                         
+                 * implement gui suppport
+                 * implement lock statement
+                 * implement threading suppport
+                 * implement net suppport
 
               zdev 
                  * script : elena - simple class,one method
