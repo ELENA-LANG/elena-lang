@@ -4066,7 +4066,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       current = current.nextNode();
    }
 
-   if (!directMode && (paramCount > 1/* || unboxMode*/)) {
+   if (!directMode && (paramCount > 1 || unboxMode)) {
       declareArgumentList(tape, paramCount);
    }
    // if message has no arguments - direct mode is allowed

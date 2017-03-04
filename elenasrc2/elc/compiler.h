@@ -458,7 +458,6 @@ private:
    {
       ClassInfo   info;
       ref_t       extensionMode;
-      ref_t       pseudoVar;
 
 //      virtual int getMethodInfo(ref_t message, MethodAttribute attr)
 //      {
@@ -477,9 +476,6 @@ private:
 //         return test(info.header.flags, elClosed);
 //      }
       
-      virtual ref_t mapSubject(SNode terminal, IdentifierString& output);
-      virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true);
-
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
 //      void compileClassAttribute(SyntaxTree::Node hint);
@@ -554,7 +550,6 @@ private:
       bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;
-      bool         templateOne;
 //      bool         extensionTemplateMode;
 ////      bool         sealed;
 

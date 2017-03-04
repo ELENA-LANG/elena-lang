@@ -219,7 +219,6 @@ enum LexicalType
    lxTemplateType    = 0x2002C,
    lxEmbeddableAttr  = 0x2002D,
    lxBoxableAttr     = 0x2002E,
-   lxPseudoVarAttr   = 0x2002F,
    lxClosureMessage  = 0x20030,
    lxExtArgumentType = 0x20031,
 

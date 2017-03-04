@@ -290,46 +290,46 @@ sealed embeddable struct $ConsoleReader
         byteArrayHelper read &bytearray:aDump &int:8 &vint:aKey.
     ]
 
-//    stacksafe read &shortarray:aBuffer &vint:aRetVal
-//    [
-//        #extern
-//        [
-//            system'external'KERNEL32 ReadConsoleW
-//                &int        : theHandle
-//                &shortarray : aBuffer
-//                &int        : aRetVal
-//                &vint       : aRetVal
-//                &int        : 0.
-//        ].            
-//    ]
-//    
-//    read &wide
-//    [
-//        short(127) aBuffer := 0.
-//        int        aLength := 0.
-//        var        anOutput := emptyWideLiteralValue.
-//        
-//        bool continue := true.
-//        while (continue)
-//        [
-//            aLength := 127.
-//            $self read &shortarray:aBuffer &vint:aLength.
-//            
-//            short aShort := aBuffer@(aLength - 1).
-//            (aShort == 0Ah)
-//                ? [
-//                    aLength := aLength - 2.
-//                    
-//                    continue := false.
-//                ].
-//            
-//            var aTemp := WideLiteralValue $new &int:0 &int:aLength &shortarray:aBuffer.
-//            
-//            anOutput := anOutput + aTemp.
-//        ].
-//
-//        ^ anOutput.
-//    ]
+    stacksafe read &shortarray:aBuffer &vint:aRetVal
+    [
+        #extern
+        [
+            system'external'KERNEL32 ReadConsoleW
+                &int        : theHandle
+                &shortarray : aBuffer
+                &int        : aRetVal
+                &vint       : aRetVal
+                &int        : 0.
+        ].            
+    ]
+    
+    read &wide
+    [
+        short(127) aBuffer := 0.
+        int        aLength := 0.
+        var        anOutput := emptyWideLiteralValue.
+        
+        bool continue := true.
+        while (continue)
+        [
+            aLength := 127.
+            $self read &shortarray:aBuffer &vint:aLength.
+            
+            short aShort := aBuffer@(aLength - 1).
+            (aShort == 0Ah)
+                ? [
+                    aLength := aLength - 2.
+                    
+                    continue := false.
+                ].
+            
+            var aTemp := WideLiteralValue $new &int:0 &int:aLength &shortarray:aBuffer.
+            
+            anOutput := anOutput + aTemp.
+        ].
+
+        ^ anOutput.
+    ]
 
     read &literal
         = $self read &wide literal.

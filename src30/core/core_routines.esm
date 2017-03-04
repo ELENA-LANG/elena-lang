@@ -20,7 +20,7 @@ procedure __object.dispatch[1]
   pushb
   pusha
   pushr class : system'MethodNotFoundException
-  pushr const : %new&object&mssg$[2]
+  pushr const : %new&object$&mssg$[2]
   throw
 
 end

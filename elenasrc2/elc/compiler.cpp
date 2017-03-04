@@ -24,18 +24,19 @@ using namespace _ELENA_;
 //}
 
 // --- Hint constants ---
-#define HINT_CLOSURE_MASK     0x80008800
+#define HINT_CLOSURE_MASK     0xC0008800
 
 #define HINT_ROOT             0x80000000
-#define HINT_NOBOXING         0x40000000
-#define HINT_NOUNBOXING       0x20000000
-#define HINT_EXTERNALOP       0x10000000
-#define HINT_NOCONDBOXING     0x08000000
-#define HINT_EXTENSION_MODE   0x04000000
-#define HINT_TRY_MODE         0x02000000
-#define HINT_LOOP             0x01000000
-//#define HINT_SWITCH         0x00800000
-#define HINT_ALT_MODE         0x00400000
+#define HINT_ROOTSYMBOL       0xC0000000
+#define HINT_NOBOXING         0x20000000
+#define HINT_NOUNBOXING       0x10000000
+#define HINT_EXTERNALOP       0x08000000
+#define HINT_NOCONDBOXING     0x04000000
+#define HINT_EXTENSION_MODE   0x02000000
+#define HINT_TRY_MODE         0x01000000
+#define HINT_LOOP             0x00800000
+//#define HINT_SWITCH         0x00400000
+#define HINT_ALT_MODE         0x00200000
 #define HINT_NODEBUGINFO      0x00020000
 ////#define HINT_ACTION           0x00020000
 ////#define HINT_ALTBOXING        0x00010000
@@ -170,6 +171,14 @@ inline void findUninqueName(_Module* module, ReferenceNs& name)
 //      ref = module->mapSubject(name, true);
 //   } while (ref != 0);
 //}
+
+inline SNode goToNode(SNode current, LexicalType type)
+{
+   while (current != lxNone && current != type)
+      current = current.nextNode();
+
+   return current;
+}
 
 inline SNode findParent(SNode node, LexicalType type)
 {
@@ -1001,7 +1010,6 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.packageRef = parent->packageReference;
    info.size = 0;
    
-   pseudoVar = 0;
    extensionMode = 0;
 }
 
@@ -1038,48 +1046,6 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
    }
 }
 
-ref_t Compiler::ClassScope :: mapSubject(SNode terminal, IdentifierString& output)
-{
-   if (pseudoVar != 0) {
-      SNode parent = terminal.parentNode();
-      if (parent.existChild(lxPseudoVarAttr)) {
-         output.append(moduleScope->module->resolveSubject(pseudoVar));
-
-         return pseudoVar;
-      }         
-   }
-   return Scope::mapSubject(terminal, output);
-}
-
-ref_t Compiler::ClassScope :: mapSubject(SNode terminal, bool implicitOnly)
-{
-   if (pseudoVar != 0) {
-      SNode parent = terminal.parentNode();
-      if (parent.existChild(lxPseudoVarAttr))
-         return pseudoVar;
-   }
-   return Scope::mapSubject(terminal, implicitOnly);
-}
-
-//void Compiler::ClassScope :: compileClassAttribute(SNode hint)
-//{
-//   switch (hint.type)
-//   {
-//      case lxClassFlag:
-//         info.header.flags |= hint.argument;
-//         if (test(info.header.flags, elExtension))
-//            extensionMode = INVALID_REF;
-//         break;
-//      case lxType:
-//         if (test(info.header.flags, elExtension)) {
-//            extensionMode = hint.argument;
-//
-//            info.fieldTypes.add(-1, ClassInfo::FieldInfo(0, extensionMode));
-//         }
-//         break;
-//   }
-//}
-
 // --- Compiler::MetodScope ---
 
 Compiler::MethodScope :: MethodScope(ClassScope* parent)
@@ -1094,7 +1060,6 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->withOpenArg = false;
    this->stackSafe = this->classEmbeddable = false;
    this->generic = false;
-   this->templateOne = false;
 ////   this->extensionTemplateMode = false;
 }
 
@@ -1707,25 +1672,8 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
             writer.closeNode();
          }
       }
-      else if (current == lxTemplateParam && current.argument == -1) {
-         pseudoVarRequired = true;
-      }
-      else if (current == lxTemplate) {
-         scope.templateOne = true;
-      }
 
       current = current.nextNode();
-   }
-
-   ClassScope* owner = (ClassScope*)scope.getScope(Scope::slClass);
-   if (!scope.templateOne)
-      owner->pseudoVar = 0;
-
-   if (pseudoVarRequired) {
-      ident_t signature = scope.moduleScope->module->resolveSubject(getSignature(scope.message));
-      IdentifierString customVerb(signature, signature.find('&', getlength(signature)));
-
-      owner->pseudoVar = scope.moduleScope->module->mapSubject(customVerb, false);
    }
 }
 
@@ -3716,7 +3664,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode)
 {
    ref_t nestedRef = 0;
-   if (test(mode, HINT_ROOT)) {
+   if (test(mode, HINT_ROOTSYMBOL)) {
       SymbolScope* owner = (SymbolScope*)ownerScope.getScope(Scope::slSymbol);
       if (owner) 
          nestedRef = owner->reference;
@@ -4031,38 +3979,38 @@ void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
    compileExpression(writer, expr, scope, HINT_LOOP);
 }
 
-////void Compiler :: compileTry(DNode node, CodeScope& scope)
-////{
-//////   scope.writer->newNode(lxTrying);
-//////
-//////   // implement try expression
-//////   compileExpression(node.firstChild(), scope, 0, 0);
-//////
-////////   // implement finally block
-////////   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-////////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-////////   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//////
-//////   DNode catchNode = goToSymbol(node.firstChild(), nsCatchMessageOperation);
-//////   if (catchNode != nsNone) {
-//////      scope.writer->newBookmark();
-//////
-//////      scope.writer->appendNode(lxResult);
-//////
-//////      // implement catch message
-//////      compileMessage(catchNode, scope, ObjectInfo(okObject));
-//////
-//////      scope.writer->removeBookmark();
-//////   }
-////////   // or throw the exception further
-////////   else _writer.throwCurrent(*scope.tape);
-//////
-//////   scope.writer->closeNode();
-//////
+//void Compiler :: compileTry(DNode node, CodeScope& scope)
+//{
+////   scope.writer->newNode(lxTrying);
+////
+////   // implement try expression
+////   compileExpression(node.firstChild(), scope, 0, 0);
+////
 //////   // implement finally block
+//////   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
 //////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-////}
-//
+//////   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+////
+////   DNode catchNode = goToSymbol(node.firstChild(), nsCatchMessageOperation);
+////   if (catchNode != nsNone) {
+////      scope.writer->newBookmark();
+////
+////      scope.writer->appendNode(lxResult);
+////
+////      // implement catch message
+////      compileMessage(catchNode, scope, ObjectInfo(okObject));
+////
+////      scope.writer->removeBookmark();
+////   }
+//////   // or throw the exception further
+//////   else _writer.throwCurrent(*scope.tape);
+////
+////   scope.writer->closeNode();
+////
+////   // implement finally block
+////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
+//}
+
 //void Compiler :: compileLock(SNode node, CodeScope& scope)
 //{
 //   node = lxLocking;
@@ -6304,7 +6252,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    writer.newNode(lxExpression);
    writer.appendNode(lxBreakpoint, dsStep);
    writer.newBookmark();
-   ObjectInfo retVal = compileExpression(writer, expression, codeScope, isSingleStatement(expression) ? HINT_ROOT : 0);
+   ObjectInfo retVal = compileExpression(writer, expression, codeScope, isSingleStatement(expression) ? HINT_ROOTSYMBOL : 0);
    if (scope.typeRef != 0) {
       ModuleScope* moduleScope = scope.moduleScope;
 
@@ -6773,8 +6721,10 @@ ref_t Compiler :: optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& 
    ObjectInfo result = scope.defineObjectInfo(node.argument, true);
    switch (result.kind) {
       case okConstantClass:
-      case okConstantSymbol:
          node = lxConstantClass;
+         break;
+      case okConstantSymbol:
+         node = lxConstantSymbol;
          break;
    }
    
@@ -6819,6 +6769,7 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
          return optimizeExpression(current.firstChild(lxObjectMask), scope, warningScope, mode);
       case lxAltExpression:
       case lxBranching:
+      case lxTrying:
          optimizeExpressionTree(current, scope, warningScope);
          return 0;
       case lxBoxing:
@@ -6882,6 +6833,7 @@ void Compiler :: optimizeCode(SNode node, ModuleScope& scope, WarningScope& warn
             optimizeExpressionTree(current, scope, warningScope, HINT_NOUNBOXING | HINT_NOCONDBOXING);
             break;
          case lxExpression:
+         case lxExternFrame:
             optimizeExpressionTree(current, scope, warningScope);
             break;
       }
@@ -7711,8 +7663,12 @@ void Compiler :: copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope&
                   writer.newNode(lxTemplateParam, current.argument);
                }
                else {
-                  writer.appendNode(lxPseudoVarAttr, -1);
-                  writer.newNode(lxIdentifier, current.findChild(lxIdentifier).identifier());
+                  //writer.appendNode(lxPseudoVarAttr, -1);
+                  SNode nodeAttr = scope.exprNode.firstChild(lxTerminalMask);
+                  if (nodeAttr != lxNone) {
+                     writer.newNode(lxIdentifier, nodeAttr.findChild(lxTerminal).identifier());
+                  }
+                  else writer.newNode(lxIdentifier, current.findChild(lxIdentifier).identifier());
                }
             }
             else {
@@ -7884,6 +7840,9 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
          if (classRef == INVALID_REF) {
             TemplateScope templateScope(&scope, attrRef);
             templateScope.loadAttributeValues(current);
+            if (node == lxClassMethod || node == lxClassField) {
+               templateScope.exprNode = goToNode(attributes, lxNameAttr);
+            }
 
             if (!generateTemplate(writer, templateScope, embeddableMode))
                scope.raiseError(errInvalidHint, current);
@@ -7930,7 +7889,11 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
       writer.appendNode(lxTemplate, scope.templateRef);
 
    if (node == lxDefaultGeneric) {
-      writer.appendNode(lxIdentifier, EVAL_MESSAGE);
+      if (node.existChild(lxMethodParameter)) {
+         writer.appendNode(lxIdentifier, EVAL_MESSAGE);
+      }
+      else writer.appendNode(lxIdentifier, GET_MESSAGE);
+
       writer.appendNode(lxAttribute, V_SEALED);
       writer.appendNode(lxAttribute, V_GENERIC);
    }

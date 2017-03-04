@@ -2458,18 +2458,18 @@ real e_value = realOpController e.
 
 // --- obsolete variables ---
 
-//class Integer =
-//{
-//    #method(vint,w3) new
-//        = 0.
-//        
-//    #method(vint,w3) new &int:n
-//        = n.
-//        
-//    #method(vint,w3) new:n
-//        = n int.
-//}.
-//
+class Integer =
+{
+    vint new
+        = 0.
+        
+    vint new &int:n
+        = n.
+        
+    vint new:n
+        = n int.
+}.
+
 //class Real =
 //{
 //    #method(vreal,w3) new

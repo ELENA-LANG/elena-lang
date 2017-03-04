@@ -1,31 +1,30 @@
-#import system.
 #import extensions.
 
 // --- Prompt ---
 
-#symbol IntSamplePrompt = "Enter the two integer numbers:".
+const IntSamplePrompt = "Enter the two integer numbers:".
 
-#symbol RealSamplePrompt = "Enter the two real numbers:".
+const RealSamplePrompt = "Enter the two real numbers:".
 
 // --- EReader ---
 
-#class(extension) EReader
+extension EReader
 {
-    #method loadFrom : aStream
+    loadFrom : aStream
         = aStream readLine convert &to:self
             | if &FormatError: e
                 [
                     console writeLine:(e message) readChar.
                     
-                    #throw AbortException new.
+                    AbortException new raise.
                 ].
 }
 
-#symbol enteredNumber = 'number new loadFrom:console.
+enteredNumber = 'number new loadFrom:console.
 
 // --- Program ---
 
-#symbol Program =
+Program =
 [
     console
         writeLine:'prompt

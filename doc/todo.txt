@@ -7,8 +7,8 @@ In development:
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
 
               xdev - generic development
-                 * migrating examples to ELENA 3.0
                  * fix exception handling
+                 * migrating examples to ELENA 3.0
                  * implement switch statement
 
               zdev - cellular automata
@@ -197,6 +197,8 @@ Pipeline:
                  * implement lock statement
                  * implement threading suppport
                  * implement net suppport
+                 * implement constant lists
+                 * optimize constant symbols (use directly)
 
               zdev 
                  * script : elena - simple class,one method
