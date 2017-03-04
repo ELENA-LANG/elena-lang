@@ -128,7 +128,7 @@ labFalse:
 
 end
 
-procedure __object.eval&readLength&object&vint$[2]
+procedure __object.eval&readLength&object$&vint$[2]
 
   ecopy 0
   aloadsi 1

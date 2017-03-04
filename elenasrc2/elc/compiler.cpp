@@ -7530,7 +7530,7 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
       case lxMessageReference:
          writer.newNode(lxExpression);
          writer.newNode(current.type);
-         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
          writer.closeNode();
          writer.closeNode();
          break;
@@ -7589,14 +7589,14 @@ void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, Templa
             listMode = true;
 
          if (identifierMode) {
-            if (current.nextNode(lxObjectMask) != lxExpression) {
+            if (!listMode/* && current.nextNode(lxObjectMask) != lxExpression*/) {
                writer.appendNode(lxOperator, -1);
                generateExpressionTree(writer, current, scope, false);
                writer.insert(lxExpression);
                writer.closeNode();
             }
             // !! array mode
-            else generateExpressionTree(writer, current, scope, false);
+            else generateExpressionTree(writer, current, scope, listMode);
          }
          else if (listMode) {
             generateExpressionTree(writer, current, scope, true);

@@ -10,7 +10,6 @@ In development:
                  * migrating examples to ELENA 3.0
                  * fix exception handling
                  * implement switch statement
-                 * support colection(a, b)
 
               zdev - cellular automata
                  * general architecture
