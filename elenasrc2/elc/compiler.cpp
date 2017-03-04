@@ -291,6 +291,12 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    defaultNs.add(module->Name());
 
    loadModuleInfo(module);
+
+   // system module should be included by default
+   if (!module->Name().compare(STANDARD_MODULE)) {
+      defaultNs.add(STANDARD_MODULE);
+      loadModuleInfo(project->loadModule(STANDARD_MODULE, true));
+   }      
 }
 
 ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
@@ -6984,6 +6990,9 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
 void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope)
 {
    ident_t name = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
+   if (name.compare(STANDARD_MODULE))
+      // system module is included automatically - nothing to do in this case
+      return;
 
    // check if the module exists
    _Module* module = scope.project->loadModule(name, true);

@@ -150,7 +150,6 @@ Pipeline:
                  * test local : assign field struct
                  * test implicit convertor with stack allocated local / field
                  * optimize n := n + m.
-                 * system should be included by default
                  * compile n + m * k
                  * compile obj prop := n.
                  * do not box numeric constants
