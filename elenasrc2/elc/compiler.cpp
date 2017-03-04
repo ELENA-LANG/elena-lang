@@ -3360,47 +3360,39 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    int operand = 0;
 
    SNode exprNode = node;
-   SNode operation = node.findChild(/*lxMessage, */lxExpression, lxAssign);
+   SNode operation = node.findChild(lxMessage, lxExpression, lxAssign);
    if (operation == lxExpression) {
       exprNode = operation;
-      operation = exprNode.findChild(/*lxMessage, */lxOperator);
+      operation = exprNode.findChild(lxMessage, lxOperator);
    }
    
-   //if (operation == lxMessage) {
-   //   // try to figure out if it is property assignging or variable declaration
-   //   SNode firstToken = exprNode.firstChild(lxObjectMask);
-   //   ObjectInfo tokenInfo = scope.mapObject(firstToken);
-   //   //ref_t attrRef = scope.mapSubject(firstToken);
-   //   if (tokenInfo.kind != okUnknown) {
-   //      // if it is shorthand property settings
+   if (operation == lxMessage) {
+      // try to figure out if it is property assignging
+      SNode firstToken = exprNode.firstChild(lxObjectMask);
+      ObjectInfo tokenInfo = scope.mapObject(firstToken);
+      //ref_t attrRef = scope.mapSubject(firstToken);
+      if (tokenInfo.kind != okUnknown) {
+         // if it is shorthand property settings
+         SNode name = operation.findChild(lxIdentifier, lxPrivate);
+         ref_t subject = scope.mapSubject(name);
+         //HOTFIX : support lexical subjects
+         if (subject == 0)
+            subject = scope.moduleScope->module->mapSubject(name.identifier(), false);
 
-   //      //if (operation.nextNode() != lxAssign)
-   //      //   scope.raiseError(errInvalidSyntax, operation);
+         ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
 
-   //      SNode name = operation.findChild(lxIdentifier, lxPrivate);
-   //      ref_t subject = scope.mapSubject(name);
-   //      //HOTFIX : support lexical subjects
-   //      if (subject == 0)
-   //         subject = scope.moduleScope->module->mapSubject(name.findChild(lxTerminal).identifier(), false);
+         // compile target
+         // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
+         ObjectInfo target = compileMessageParameters(writer, exprNode, scope);
 
-   //      ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
+         // compile the parameter
+         SNode sourceNode = exprNode.nextNode(lxObjectMask);
+         ObjectInfo source = compileExpression(writer, sourceNode, scope, 0);
 
-   //      // compile target
-   //      writer.newBookmark();
+         retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
 
-   //      // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
-   //      ObjectInfo target = declareMessageParameters(writer, exprNode, scope);
-
-   //      // compile the parameter
-   //      SNode sourceNode = exprNode.nextNode(lxObjectMask);
-   //      ObjectInfo source = declareExpression(writer, sourceNode, scope, 0);
-
-   //      retVal = declareMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
-
-   //      writer.closeNode();
-
-   //      operationType = lxNone;
-   //   }
+         operationType = lxNone;
+      }
    //   else if (_logic->recognizeNewLocal(exprNode)) {
    //      // if it is variable declaration
    //      declareVariable(writer, exprNode, scope);
@@ -3408,10 +3400,10 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
    //      operationType = lxNone;
    //   }
-   //   else scope.raiseError(errUnknownObject, firstToken);
-   //}
+      else scope.raiseError(errUnknownObject, firstToken);
+   }
    // if it setat operator
-   /*else */if (operation == lxOperator) {
+   else if (operation == lxOperator) {
       return compileOperator(writer, node, scope, mode, SET_REFER_MESSAGE_ID);
    }
    else {

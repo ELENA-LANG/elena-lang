@@ -211,24 +211,24 @@ sealed embeddable dispatchable(datetime) struct Date :: BaseNumber
         theValue := aValue.
     ]
   
-//    constructor new &year:aYear &month:aMonth &day:aDay &hour:anHour &minute:aMinute &second:aSecond
-//    [
-//        __time_st aSystemTime := 0.
-//        aSystemTime year        := aYear.
-//        aSystemTime month       := aMonth.
-//        aSystemTime day         := aDay.
-//        aSystemTime hour        := anHour.
-//        aSystemTime minute      := aMinute.
-//        aSystemTime second      := aSecond.
-//        aSystemTime millisecond := 0.
-//
-//        __time aValue := 0l.
-//        aSystemTime read &__vtime:aValue.
-//        theValue := aValue.
-//    ]
+    constructor new &year:aYear &month:aMonth &day:aDay &hour:anHour &minute:aMinute &second:aSecond
+    [
+        __time_st aSystemTime := 0.
+        aSystemTime year        := aYear.
+        aSystemTime month       := aMonth.
+        aSystemTime day         := aDay.
+        aSystemTime hour        := anHour.
+        aSystemTime minute      := aMinute.
+        aSystemTime second      := aSecond.
+        aSystemTime millisecond := 0.
+
+        __time aValue := 0l.
+        aSystemTime read &__vtime:aValue.
+        theValue := aValue.
+    ]
     
-//    constructor new &year:aYear &month:aMonth &day:aDay
-//        <= new &year:aYear &month:aMonth &day:aDay &hour:0 &minute:0 &second:0.
+    constructor new &year:aYear &month:aMonth &day:aDay
+        <= new &year:aYear &month:aMonth &day:aDay &hour:0 &minute:0 &second:0.
   
     __time = SystemTime new &__time:theValue.
 

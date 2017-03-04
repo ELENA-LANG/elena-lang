@@ -2,7 +2,7 @@
 
 // --- Program ---
 
-#symbol Program =
+symbol Program =
 [
     console writeLine:"Hello World - Привет Мир - 你好世界!!".
     
