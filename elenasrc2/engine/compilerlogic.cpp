@@ -551,12 +551,7 @@ bool CompilerLogic :: isReadonly(ClassInfo& info)
    return test(info.header.flags, elReadOnlyRole);
 }
 
-//bool CompilerLogic :: isConvertable(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef)
-//{
-//
-//}
-
-bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t sourceType*/)
+bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType)
 {
    ClassInfo info;
    defineClassInfo(scope, info, targetRef);   
@@ -615,7 +610,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       ClassInfo sourceInfo;
       defineClassInfo(scope, sourceInfo, sourceRef, true);
 
-      ref_t elementRef = sourceRef;
+      ref_t elementRef = scope.subjectHints.get(sourceType);
 
       if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
          compiler.injectBoxing(writer, scope,

@@ -1,27 +1,26 @@
 // --- default namespaces ---
-#import system.
 #import system'routines.
 #import extensions.
 
 // --- Prompter ---
 
-#symbol prompter = (&index:anIndex)
+prompter = (&index:anIndex)
 [
      console writeLiteral:"Enter array[":anIndex:"]:" readLine:(Integer new) int
 ].
 
 // --- bsortOp ---
 
-#class(extension)bsortOp
+extension bsortOp
 {
-    #method bsortRange &from:aStart &to:anEnd
+    bsortRange &int:aStart &int:anEnd
     [
-        #var aCurrent := aStart.
+        int aCurrent := aStart.
         
-        #loop (aCurrent * 2 < anEnd) ?
+        while(aCurrent * 2 < anEnd)
         [
-            #var aMaxChild.
-            #var aChild := (aCurrent * 2) + 1.
+            int aMaxChild := 0.
+            int aChild := (aCurrent * 2) + 1.
     
             ((aChild == anEnd)or:[ (self@aChild) > (self@(aChild + 1))])
                 ? [ aMaxChild := aChild. ]  
@@ -37,31 +36,31 @@
         ].
      ]
      
-     #method bsort
+     bsort
      [
         (self length / 2) to:0 &doEach: anIndex
         [
-            self::bsortOp bsortRange &from:anIndex &to:(self length - 1).
+            self::bsortOp bsortRange &int:anIndex &int:(self length - 1).
         ].
 
         (self length - 1) to:0 &doEach: anIndex
         [
             self exchange:anIndex:0.
             
-            self::bsortOp bsortRange &from:0 &to:(anIndex - 1).
+            self::bsortOp bsortRange &int:0 &int:(anIndex - 1).
         ].
      ]
 }
 
 // === Program ===
 
-#symbol Program =
+Program =
 [
     // 1. Create the array
-    #var aSize := console write:"Enter the array size:" readLine:(Integer new).
+    var aSize := console write:"Enter the array size:" readLine:(Integer new).
 
     // 2. Initialize the array
-    #var anArray := Array new &length:aSize set &every:prompter.
+    var anArray := Array new &length:aSize set &every:prompter.
 
     // 3. Sort the array
     anArray bsort.

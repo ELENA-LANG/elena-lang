@@ -980,7 +980,7 @@ private:
 
    ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t targetType = 0);
 
-   bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef);
+   bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef, ref_t sourceType);
    bool typecastObject(SyntaxWriter& writer, ref_t targetType);
 
    void compileExternalArguments(SNode node, ModuleScope& scope, WarningScope& warningScope);

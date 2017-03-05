@@ -2879,11 +2879,11 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    return retVal;
 }
 
-bool Compiler :: convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef)
+bool Compiler :: convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef, ref_t sourceType)
 {
    if (!_logic->isCompatible(scope, targetRef, sourceRef)) {
       // if it can be boxed / implicitly converted
-      if (!_logic->injectImplicitConversion(writer, scope, *this, targetRef, sourceRef/*, source.type*/))
+      if (!_logic->injectImplicitConversion(writer, scope, *this, targetRef, sourceRef, sourceType))
          return typecastObject(writer, targetType);
    }
    return true;
@@ -2999,7 +2999,7 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
 
             ObjectInfo param = compileExpression(writer, arg, scope, paramMode);
             if (subjectRef != 0)
-               if (!convertObject(writer, *scope.moduleScope, scope.moduleScope->subjectHints.get(subjectRef), subjectRef, resolveObjectReference(scope, param)))
+               if (!convertObject(writer, *scope.moduleScope, scope.moduleScope->subjectHints.get(subjectRef), subjectRef, resolveObjectReference(scope, param), param.type))
                   scope.raiseError(errInvalidOperation, arg);
 
             // HOTFIX : externall operation arguments should be inside expression node
@@ -3182,7 +3182,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          }
          else scope.raiseError(errInvalidOperation, node);
       }
-      else if (!convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, source)))
+      else if (!convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, source), source.type))
          scope.raiseError(errInvalidOperation, node);
 
       writer.removeBookmark();
@@ -3263,7 +3263,7 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
    ObjectInfo object = compileMessageParameters(writer, node, scope);
 
    if (targetRef != 0) {
-      convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, object));
+      convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, object), object.type);
    }
 
    return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
@@ -3531,11 +3531,8 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 
    ObjectInfo info = compileExpression(writer, node, scope, mode);
 
-   //if (typecasting) {
-   //   boxObject(writer, node, scope, info, subjectRef, scope.moduleScope->subjectHints.get(subjectRef));
-   //}
-   /*else */if (converting || typecasting)
-      convertObject(writer, *scope.moduleScope, targetRef, subjectRef, resolveObjectReference(scope, info));
+   if (converting || typecasting)
+      convertObject(writer, *scope.moduleScope, targetRef, subjectRef, resolveObjectReference(scope, info), info.type);
 
    // HOTFIX : implementing closure exit
    if (test(mode, HINT_ROOT)) {
@@ -4494,7 +4491,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 {
    writer.newNode(lxClassMethod, scope.message);
 
-   declareParameterDebugInfo(writer, node, scope, true, /*test(codeScope.getClassFlags(), elRole)*/false);
+   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elRole));
 
    int paramCount = getParamCount(scope.message);
    int preallocated = 0;
@@ -4543,7 +4540,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 //            if (eop != lxNone)
 //               SyntaxTree::copyNode(eop, localNode);
    
-            if (!convertObject(writer, *codeScope.moduleScope, resultRef, resultType, resolveObjectReference(codeScope, ObjectInfo(okThisParam))))
+            if (!convertObject(writer, *codeScope.moduleScope, resultRef, resultType, resolveObjectReference(codeScope, ObjectInfo(okThisParam)), 0))
                scope.raiseError(errInvalidOperation, node);
 
             //boxObject(writer, node, codeScope, ObjectInfo(okThisParam), resultRef, resultType);            
@@ -4616,7 +4613,7 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
          writer.newBookmark();
 
          ObjectInfo retVal = compileRetExpression(writer, bodyNode, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
-         convertObject(writer, *codeScope.moduleScope, codeScope.getClassRefId(), 0, resolveObjectReference(codeScope, retVal));
+         convertObject(writer, *codeScope.moduleScope, codeScope.getClassRefId(), 0, resolveObjectReference(codeScope, retVal), retVal.type);
 
          writer.removeBookmark();
          writer.closeNode();
@@ -5575,7 +5572,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    if (scope.typeRef != 0) {
       ModuleScope* moduleScope = scope.moduleScope;
 
-      convertObject(writer, *moduleScope, moduleScope->subjectHints.get(scope.typeRef), scope.typeRef, resolveObjectReference(codeScope, retVal));
+      convertObject(writer, *moduleScope, moduleScope->subjectHints.get(scope.typeRef), scope.typeRef, resolveObjectReference(codeScope, retVal), retVal.type);
    }
    writer.removeBookmark();
    writer.closeNode();

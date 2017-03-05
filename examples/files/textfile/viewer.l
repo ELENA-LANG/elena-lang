@@ -1,8 +1,7 @@
-#import system.
 #import system'io.
 #import extensions'routines.
 
-#symbol program =
+program =
 [
     ('program'arguments length == 1)?
         [  console writeLine:"Please provide the path to the file to view". #throw AbortException new. ].

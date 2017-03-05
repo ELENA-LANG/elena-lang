@@ -8,6 +8,7 @@ In development:
 
               xdev - generic development
                  * migrating examples to ELENA 3.0
+                 * test bsort
                  * implement switch statement
 
               zdev - cellular automata
