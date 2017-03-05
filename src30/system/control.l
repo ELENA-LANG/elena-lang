@@ -90,7 +90,7 @@ limited dispatchable(func) class BaseFunction
     /// Executes the action while the condition is true
     sealed run &if:aBool
     [
-        while (aBool)
+        while (aBool bool)
         [
             $self eval.
         ].

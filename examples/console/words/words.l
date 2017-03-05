@@ -7,18 +7,18 @@
 
 // --- WordList ---
 
-#class WordList
+class WordList
 {
-    #field theTotal.
-    #field theList.
+    object theTotal.
+    object theList.
 
-    #constructor new
+    constructor new
     [
         theList := ArrayList new.
         theTotal := Integer new &int:0.
     ]
 
-    #method append : aWord
+    append : aWord
     [
         theTotal += 1.
 
@@ -26,22 +26,22 @@
             ! [ theList append:aWord. ].
     ]
 
-    #method total_words = theTotal.
+    total_words = theTotal.
 
-    #method unique_words = theList length.
+    unique_words = theList length.
 
-    #method cast : aVerb &to:aTarget
+    cast : aVerb &to:aTarget
         => theList.
     
-    #method cast : aVerb &to:aTarget &with:aParam
+    cast : aVerb &to:aTarget &with:aParam
         => theList.
         
-    #method => theList.
+    dispatch => theList.
 }
 
-#class(extension)helpOp
+extension helpOp
 {
-    #method saveLine &to:target
+    saveLine &to:target
     [
         target write:self write:'newLine.
         
@@ -51,16 +51,16 @@
 
 // --- Program ---
 
-#symbol Program =
+Program =
 [
     console writeLine:"Enter the text(to stop press enter two times):".
 
-    #var aText := String new.
+    var aText := String new.
 
     // read until the empty string is not entered
     control while:[ console readLine saveLine &to:aText length != 0 ].
 
-    #var aList := WordList new.
+    var aList := WordList new.
 
     aText run &eachWord:anItem [ aList append:anItem ].
 

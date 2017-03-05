@@ -2470,17 +2470,17 @@ class Integer =
         = n int.
 }.
 
-//class Real =
-//{
-//    #method(vreal,w3) new
-//        = 0.0r.
-//        
-//    #method(vreal,w3) new : n
-//        = n real.
-//        
-//    #method(vreal,w3) new &int:n
-//        = n real.
-//        
-//    #method(vreal,w3) new &real:n
-//        = n.
-//}.
+class Real =
+{
+    vreal new
+        = 0.0r.
+        
+    vreal new : n
+        = n real.
+        
+    vreal new &int:n
+        = n real.
+        
+    vreal new &real:n
+        = n.
+}.

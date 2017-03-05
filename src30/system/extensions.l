@@ -1428,7 +1428,7 @@ extension(char) charOp
                     ]
             ].
             
-        ^ false.            
+        ^ false.
     ]
     
     stacksafe bool is &digit

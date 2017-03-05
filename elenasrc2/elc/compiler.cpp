@@ -2666,18 +2666,21 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode,
    SNode thenBody = loperandNode.nextNode(lxObjectMask);
    if (loopMode) {
       writer.newNode(lxElse, ifReference);
-      compileBranching(writer, thenBody, scope);
+
+      compileBranching(writer, thenBody.findSubNode(lxCode), scope);
       writer.closeNode();
    }
    else {
+      SNode thenCode = thenBody.findSubNode(lxCode);
+
       writer.newNode(lxIf, ifReference);
-      compileBranching(writer, thenBody, scope);
+      compileBranching(writer, thenCode, scope);
       writer.closeNode();
 
-      SNode elseBody = thenBody.nextNode(lxObjectMask);
-      if (elseBody != lxNone) {
+      SNode elseCode= thenBody.firstChild().nextNode();
+      if (elseCode != lxNone) {
          writer.newNode(lxElse, 0);
-         compileBranching(writer, elseBody, scope);
+         compileBranching(writer, elseCode, scope);
          writer.closeNode();
       }
    }
@@ -2727,6 +2730,11 @@ ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& nod
          retVal = compileMessage(writer, node, scope, loperand, encodeMessage(0, operator_id, 2), 0);
       }
       else retVal = compileMessage(writer, node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
+
+      if (loopMode) {
+         writer.insert(lxLooping);
+         writer.closeNode();
+      }
    }
 
    writer.removeBookmark();
@@ -3325,7 +3333,7 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
 
 bool Compiler :: declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/)
 {
-   bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
+   bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.findChild(lxCode).firstChild());
 
    methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
 
@@ -3505,7 +3513,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       SNode codeNode = node.findChild(lxCode);
 
       // if it is a closure / lambda function with a parameter
-      compileAction(node, scope, node.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxClosureMessage), mode);
+      compileAction(node, scope, node.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxClosureMessage), mode | HINT_CLOSURE);
 
       // HOTFIX : hide code node because it is no longer required
       codeNode = lxIdle;
@@ -3760,13 +3768,11 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode as
    return objectInfo;
 }
 
-ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope)
+ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, CodeScope& scope)
 {
    CodeScope subScope(&scope);
 
    writer.newNode(lxCode);
-
-   SNode thenCode = thenNode.findSubNode(lxCode);
 
    SNode expr = thenCode.firstChild(lxObjectMask);
    if (expr == lxEOF || expr.nextNode() != lxNone) {
