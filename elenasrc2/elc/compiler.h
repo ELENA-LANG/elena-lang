@@ -896,7 +896,7 @@ private:
    void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileThrow(SNode node, CodeScope& scope, int mode);
+   void compileThrow(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 ////   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(SNode node, CodeScope& scope);
 

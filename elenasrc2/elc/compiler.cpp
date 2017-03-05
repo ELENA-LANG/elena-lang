@@ -3785,10 +3785,12 @@ ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenNode, Co
    return ObjectInfo(okObject);
 }
 
-//void Compiler :: compileThrow(SNode node, CodeScope& scope, int mode)
-//{
-//   ObjectInfo object = compileExpression(node.firstChild(), scope, mode);
-//}
+void Compiler :: compileThrow(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   writer.newNode(lxThrowing);
+   compileExpression(writer, node.firstChild(), scope, mode);
+   writer.closeNode();
+}
 
 void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -3869,9 +3871,9 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
             compileExpression(writer, current, scope, HINT_ROOT);
             writer.closeNode();
             break;
-//         case lxThrowing:
-//            compileThrow(current, scope, 0);
-//            break;
+         case lxThrowing:
+            compileThrow(writer, current, scope, 0);
+            break;
          case lxLoop:
             writer.newNode(lxExpression);
             writer.appendNode(lxBreakpoint, dsStep);
@@ -3925,69 +3927,6 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 
    return retVal;
 }
-
-///*ObjectInfo*/void Compiler::compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   //   ObjectInfo retVal;
-//   //
-//   //   bool needVirtualEnd = true;
-//   SNode current = node.firstChild();
-//
-//   while (current != lxNone) {
-//      switch (current) {
-//         //         case lxExpression:
-//         //            compileExpression(current, scope, HINT_ROOT);
-//         //            insertDebugStep(current, dsStep);
-//         //            break;
-//         //         case lxThrowing:
-//         //            compileThrow(current, scope, 0);
-//         //            break;
-//         //         case lxLoop:
-//         //            insertDebugStep(current, dsStep);
-//         //            compileLoop(current, scope);
-//         //            break;
-//         ////         case nsTry:
-//         ////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//         ////            compileTry(statement, scope);
-//         ////            break;
-//         //         case lxLock:
-//         //            //recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//         //            compileLock(current, scope);
-//         //            break;
-//         //         case lxReturning:
-//         //         {
-//         //            needVirtualEnd = false;
-//         //            insertDebugStep(current, dsStep);
-//         //            retVal = compileRetExpression(current, scope, HINT_ROOT);
-//         //
-//         //            break;
-//         //         }
-//         //         case lxVariable:
-//         ////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//         //            compileVariable(current, scope);
-//         //            break;
-//         //         case lxExtern:
-//         //            current = lxExternFrame;
-//         //            compileCode(current, scope);
-//         //            break;
-//      case lxEOF:
-//         //            needVirtualEnd = false;
-//         //            setDebugStep(current, dsEOP);
-//         writer.appendNode(lxBreakpoint, dsEOP);
-//         break;
-//      }
-//      //
-//      //      scope.freeSpace();
-//
-//      current = current.nextNode();
-//   }
-//
-//   //   if (needVirtualEnd) {
-//   //      appendDebugStep(node, dsVirtualEnd);
-//   //   }
-//   //
-//   //   return retVal;
-//}
 
 void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope, WarningScope& warningScope)
 {
@@ -7420,6 +7359,11 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
             generateCodeTemplateTree(writer, current, scope);
          }
          else generateExpressionTree(writer, current, scope);
+      }
+      else if (current == lxThrowing) {
+         writer.newNode(lxThrowing);
+         generateExpressionTree(writer, current, scope);
+         writer.closeNode();
       }
       else if (current == lxEOF) {
          writer.newNode(lxEOF);

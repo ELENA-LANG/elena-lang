@@ -933,7 +933,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
          attrValue = 0;
          return true;
       case V_SINGLETON:
-         attrValue = elStateless | elNestedClass;
+         attrValue = elRole | elNestedClass;
          return true;
       default:
          return false;

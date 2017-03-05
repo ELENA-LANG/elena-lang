@@ -7,8 +7,6 @@ In development:
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
 
               xdev - generic development
-                 * dispatch, generic, generic wih dispatch
-
                  * migrating examples to ELENA 3.0
                  * implement switch statement
 
