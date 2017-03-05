@@ -1909,53 +1909,6 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
    }
    
 }
-//
-//void Compiler :: declareLocalAttribute(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo& variable, int& size, SNode rootNode)
-//{
-//   int attrValue = 0;
-//   ref_t attrRef = mapAttribute(current, scope, attrValue);
-////         if (attrRef != 0 && attrValue != 0) {
-////            // if it is a primitive array declaration
-////            size = attrValue;
-////            variable.type = attrRef;
-////            variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(attrRef));
-////         }
-//   /*else */if (attrValue != 0) {
-//            // positive value defines the target size
-//      if (attrValue > 0) {
-//         size = attrValue;
-//      }
-//      else if (_logic->validateLocalAttribute(attrValue)) {
-//         // negative value defines the target virtual class
-//         variable.extraparam = attrValue;
-//      }
-//      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//   }
-//   else if (attrRef != 0) {
-//      ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
-//      if (classRef == INVALID_REF) {
-//         //HOTFIX : use object.param as size field
-//         ref_t dummy = variable.param;
-//         variable.param = size;
-//         declareTemplate(writer, rootNode, &scope, attrRef, variable, current);
-//         size = variable.param;
-//         variable.param = dummy;
-////               TemplateScope templateScope(&scope, attrRef);
-////               templateScope.loadParameters(current, _writer);
-////
-////               templateScope.generateClassName();
-////
-////               variable.extraparam = 3(templateScope);
-//      }
-//      else if (variable.extraparam == 0) {
-//         variable.extraparam = classRef;
-//         variable.type = attrRef;
-//         size = _logic->defineStructSize(*scope.moduleScope, classRef, 0, true);
-//      }
-//      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//   }
-//   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-//}
 
 ////void Compiler :: compileSwitch(SNode node, CodeScope& scope)
 ////{
@@ -2946,21 +2899,6 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, ref_t targetType)
    }
    else return false;
 }
-
-//bool Compiler :: boxObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo source, ref_t targetType, ref_t targetRef)
-//{
-//   ref_t sourceRef = resolveObjectReference(scope, source);
-//   if (targetRef != 0 && sourceRef != targetRef) {
-//      writer.appendNode(lxTarget, targetRef);
-//      writer.appendNode(lxType, targetType);
-//
-//      writer.insert(lxBoxing);
-//      writer.closeNode();
-//
-//      return true;
-//   }
-//   else return false;
-//}
 
 ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
@@ -4745,28 +4683,6 @@ void Compiler :: compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodSc
    writer.closeNode();
 }
 
-//void Compiler :: compileTemplateMethods(SNode node, ClassScope& scope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxTemplate && current.existChild(lxClassMethod)) {
-//         TemplateScope templateScope(&scope);
-//         templateScope.loadParameters(current, _writer);
-//
-//         if (node == lxClassMethod || node == lxIdle) {
-//            ident_t signature = scope.moduleScope->module->resolveSubject(getSignature(node.argument));
-//            IdentifierString customVerb(signature, signature.find('&', getlength(signature)));
-//
-//            templateScope.parameters.add(TARGET_PSEUDO_VAR, templateScope.parameters.Count() + 1);
-//            templateScope.subjects.add(templateScope.parameters.Count(), scope.moduleScope->module->mapSubject(customVerb, false));
-//         }
-//
-//         compileVMT(current, templateScope);
-//      }
-//      current = current.nextNode();
-//   }
-//}
-
 void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 {
    SNode current = node.firstChild();
@@ -4786,22 +4702,10 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 //            }
 //
 
-//            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-//               ////               if (test(scope.info.header.flags, elRole))
-//               ////                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-//               //
-//               SNode body = current.findChild(lxDispatchCode);
-//               if (body != lxNone) {
-//                  declareDispatcher(writer, body, methodScope/*, test(scope.info.header.flags, elWithGenerics)*/);
-//               }
-//               else scope.raiseError(errIllegalMethod, current);
-//            }
-//            else declareMethod(writer, current, methodScope);
-
             // if it is a dispatch handler
             if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-//               if (test(scope.info.header.flags, elRole))
-//                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
+               //if (test(scope.info.header.flags, elRole))
+               //   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
 
                initialize(scope, methodScope);
 
@@ -4860,36 +4764,6 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
             MethodScope methodScope(&classScope);
             methodScope.message = current.argument;
 
-            //            //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
-            //            if (scope.getScope(Scope::slTemplate) != NULL) {
-            //               ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
-            //
-            //               methodScope.extensionTemplateMode = (ownerScope != NULL && ownerScope->extensionMode != 0);
-            //            }
-
-            //            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-            //               ////               if (test(scope.info.header.flags, elRole))
-            //               ////                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-            //               //
-            //               SNode body = current.findChild(lxDispatchCode);
-            //               if (body != lxNone) {
-            //                  declareDispatcher(writer, body, methodScope/*, test(scope.info.header.flags, elWithGenerics)*/);
-            //               }
-            //               else scope.raiseError(errIllegalMethod, current);
-            //            }
-            //            else declareMethod(writer, current, methodScope);
-
-            //            // if it is a dispatch handler
-            //            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-            ////               if (test(scope.info.header.flags, elRole))
-            ////                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-            //
-            //               initialize(scope, methodScope);
-            //
-            //               compileDispatcher(current.firstChild(lxCodeScopeMask), methodScope, test(scope.info.header.flags, elWithGenerics));
-            //            }
-            //            // if it is a normal method
-            //            else {
             declareArgumentList(current, methodScope);
 
             initialize(classClassScope, methodScope);
@@ -4948,92 +4822,18 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-//////void Compiler :: compilePreloadedCode(SymbolScope& scope)
-//////{
-//////   _Module* module = scope.moduleScope->module;
-//////
-//////   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
-//////
-//////   CommandTape tape;
-//////   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbol, scope.reference);
-//////
-//////   // create byte code sections
-//////   _writer.save(tape, module, NULL, 0);
-//////}
-//////
-//////inline bool copyConstructors(SyntaxWriter& writer, SNode node)
-//////{
-//////   // copy constructors
-//////   SNode current = node.firstChild();
-//////   bool inheritedConstructors = true;
-//////   while (current != lxNone) {
-//////      if (current == lxConstructor) {
-//////         writer.newNode(lxClassMethod);
-//////         writer.appendNode(lxClassMethodAttr, tpConstructor); // Marking the method as a constructor
-//////         SyntaxTree::copyNode(writer, current);
-//////         writer.closeNode();
-//////
-//////         inheritedConstructors = false;
-//////      }
-//////      current = current.nextNode();
-//////   }
-//////
-//////   return inheritedConstructors;
-//////}
-////
-////void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope)
-////{
-////   //SyntaxTree tree;
-////   //SyntaxWriter writer(tree);
-////
-//////   writer.newNode(lxClass, classClassScope.reference);
-//////
-//////   bool withDefaultConstructor = _logic->isDefaultConstructorEnabled(classScope.info);
-//////   bool inheritedConstructors = copyConstructors(writer, node) && withDefaultConstructor;
-//////
-//////   // if no construtors are defined inherits the default one
-//////   if (inheritedConstructors) {
-//////      if (classScope.info.header.parentRef == 0)
-//////         classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
-//////
-//////      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.moduleScope->superReference));
-//////      classClassParentName.append(CLASSCLASS_POSTFIX);
-//////
-//////      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-//////   }
-//////   compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef, true);
-//////
-//////   // class class is always stateless and sealed
-//////   writer.appendNode(lxClassFlag, elStateless);
-//////   writer.appendNode(lxClassFlag, elSealed);
-//////
-//////   writer.closeNode();
-//////
-//////   SNode member = tree.readRoot();
-//////   declareVMT(member.firstChild(), classClassScope);
-//////
-//////   // add virtual constructor
-//////   if (withDefaultConstructor) {
-//////      member.appendNode(lxClassMethod, encodeVerb(NEWOBJECT_MESSAGE_ID));
-//////   }
-//////
-//////   generateClassDeclaration(member, classClassScope, false);
-//////
-//////   // generate constructor attributes
-//////   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
-//////   while (!it.Eof()) {
-//////      int hints = classClassScope.info.methodHints.get(Attribute(it.key(), maHint));
-//////      if (test(hints, tpConstructor)) {
-//////         classClassScope.info.methodHints.exclude(Attribute(it.key(), maReference));
-//////         classClassScope.info.methodHints.add(Attribute(it.key(), maReference), classScope.reference);
-//////      }
-//////
-//////      it++;
-//////   }
-//////
-//////   // save declaration
-//////   classClassScope.save();
-////}
+//void Compiler :: compilePreloadedCode(SymbolScope& scope)
+//{
+//   _Module* module = scope.moduleScope->module;
+//
+//   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
+//
+//   CommandTape tape;
+//   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbol, scope.reference);
+//
+//   // create byte code sections
+//   _writer.save(tape, module, NULL, 0);
+//}
 
 void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
@@ -5158,43 +4958,6 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
       current = current.nextNode();
    }
 }
-
-////ref_t Compiler :: generateTemplate(TemplateScope& scope)
-////{
-////   if (scope.moduleScope->loadClassInfo(scope.info, scope.reference, true)) {
-////      return scope.reference;
-////   }
-////
-////   SyntaxTree syntaxTree;
-////   SyntaxWriter writer(syntaxTree);
-////   writer.newNode(lxRoot, scope.reference);
-////
-////   compileParentDeclaration(SNode(), scope);
-////
-////   writer.appendNode(lxClassFlag, elSealed);
-////   writer.closeNode();
-////
-////   _Memory* body = scope.moduleScope->loadAttributeInfo(scope.templateRef);
-////
-////   // import the template
-////   SyntaxTree::loadNode(syntaxTree.readRoot(), body);
-////   scope.loadParameters(syntaxTree.readRoot(), _writer);
-////
-////   // declare the template class
-////   compileClassAttributes(syntaxTree.readRoot(), scope, syntaxTree.readRoot());
-////   compileFieldDeclarations(syntaxTree.readRoot(), scope);
-////
-////   declareVMT(syntaxTree.readRoot().firstChild(), scope);
-////
-////   generateClassDeclaration(syntaxTree.readRoot(), scope, false);
-////   scope.save();
-////
-////   // implement the template class
-////   compileVMT(syntaxTree.readRoot(), scope);
-////   generateClassImplementation(syntaxTree.readRoot(), scope);
-////
-////   return scope.reference;
-////}
 
 void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 {
@@ -5515,189 +5278,6 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, classClassMode);
 }
 
-//////bool Compiler :: copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode, SNode currentNode)
-//////{
-//////   bool attrOnly = true;
-//////
-//////   _Memory* body = scope.moduleScope->loadAttributeInfo(attrRef);
-//////   if (body == NULL)
-//////      return false;
-//////
-//////   SyntaxTree tree(body);
-//////   SNode current = tree.readRoot().firstChild();
-//////   while (current != lxNone) {
-//////      if (current == lxAttribute) {
-//////         int attrValue = 0;
-//////         mapAttribute(current, scope, attrValue);
-//////         if (attrValue != 0) {
-//////            if (_logic->validateFieldAttribute(attrValue)) {
-//////               rootNode.appendNode((LexicalType)attrValue);
-//////            }
-//////         }
-//////         else attrOnly = false;
-//////      }
-//////      else if (current == lxClassMethod) {
-//////         SNode classNode = rootNode;
-//////         while (classNode.type != lxClass && classNode != lxNone)
-//////            classNode = classNode.parentNode();
-//////
-//////         if (classNode != lxNone) {
-//////            copyTemplate(classNode, scope, attrRef, currentNode);
-//////
-//////            SNode last = classNode.lastChild();
-//////
-//////            last.appendNode(lxTemplateField, rootNode.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier());
-//////         }
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////
-//////   return attrOnly;
-//////}
-//
-//
-//void Compiler :: declareTemplateParameters(SNode node, TemplateScope& templateScope)
-//{
-//   SNode current = node.firstChild();
-//   // load template parameters
-//   while (current != lxNone) {
-//      if (current == lxMethodParameter) {
-//         ident_t name = current.firstChild(lxTerminalMask).findChild(lxTerminal).identifier();
-//
-//         templateScope.parameters.add(name, templateScope.parameters.Count() + 1);
-//      }
-//      //      else if (current == lxTemplateParam) {
-//      //         subjects.add(subjects.Count() + 1, current.argument);
-//      //      }
-//      //      else if (current == lxAttributeValue) {
-//      //         SNode terminalNode = current.firstChild(lxObjectMask);
-//      //         ref_t subject = mapSubject(terminalNode);
-//      //         if (subject == 0)
-//      //            subject = moduleScope->module->mapSubject(terminalNode.findChild(lxTerminal).identifier(), false);
-//      //
-//      //         subjects.add(subjects.Count() + 1, subject);
-//      //      }
-//      else if (current == lxSourcePath) {
-//         templateScope.sourceRef = _writer.writeString(current.identifier());
-//      }
-//      //      else if (current == lxTemplateField && generationMode) {
-//      //         ClassScope* parentClass = (ClassScope*)parent->getScope(Scope::slClass);
-//      //
-//      //         int offset = parentClass->info.fields.get(current.identifier());
-//      //
-//      //         info.fields.add(TARGET_PSEUDO_VAR, offset);
-//      //         info.fieldTypes.add(offset, parentClass->info.fieldTypes.get(offset));
-//      //      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
-//bool Compiler :: declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object, SNode attributeNode)
-//{
-//   bool withMethods = false;
-//
-//   TemplateScope templateScope(scope);
-//   templateScope.loadAttributeValues(attributeNode);
-//
-//   _Memory* body = scope->moduleScope->loadAttributeInfo(attrRef);
-//   if (body == NULL)
-//      return false;
-//
-//   SyntaxTree templateTree(body);
-//
-//   declareTemplateParameters(templateTree.readRoot(), templateScope);
-//
-//   SNode current = templateTree.readRoot().firstChild();
-//   while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         if (node == lxClassMethod) {
-//            declareMethodAttribute(writer, current, *((MethodScope*)scope), node);
-//         }
-//         else if (node == lxExpression) {
-//            //HOTFIX : use object.param as size element
-//            int size = object.param;
-//            declareLocalAttribute(writer, current, *((CodeScope*)scope), object, size, node);
-//            object.param = size;
-//         }
-//         else if (node == lxClass) {
-//            declareClassAttribute(writer, current, *((ClassScope*)scope), node);
-//         }
-//         else if (node == lxSymbol) {
-//            declareSymbolAttribute(writer, current, *((SymbolScope*)scope), node);
-//         }
-//         else if (node == lxClassField) {
-//            int size = (int)object.extraparam;
-//            declareFieldAttribute(writer, current, *((ClassScope*)scope), node, object.type, object.param, size);
-//            object.extraparam = (pos_t)size;
-//         }
-//      }
-//      else if (current == lxClassMethod) {
-//         withMethods = true;
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   if (withMethods) {
-//      if (node == lxClass) {
-//         declareVMT(writer, templateTree.readRoot().firstChild(), templateScope);
-//      }
-//      else return false;
-//   }
-//
-//
-////   SNode templNode = node.appendNode(lxTemplate);
-////
-////   // copy template attributes
-////   SNode attrValue = attributeNode.firstChild();
-////   while (attrValue != lxNone) {
-////      if (attrValue == lxAttributeValue) {
-////         SNode terminalNode = attrValue.firstChild(lxObjectMask);
-////         ref_t subject = scope.mapSubject(terminalNode);
-////         if (subject == 0)
-////            subject = scope.moduleScope->module->mapSubject(terminalNode.findChild(lxTerminal).identifier(), false);
-////
-////         templNode.appendNode(lxTemplateParam, subject);
-////      }
-////
-////      attrValue = attrValue.nextNode();
-////   }
-////
-////   // copy attribute identifier
-////   SyntaxTree::copyNode(attributeNode.findChild(lxIdentifier), templNode);
-////
-////   // load template body
-////   SyntaxTree::loadNode(templNode, body);
-////
-//   return true;
-//}
-//
-////void Compiler :: recognizeMemebers(SNode node, ClassScope& scope)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == lxScope) {
-////         if (!_logic->recognizeMember(current))
-////            scope.raiseError(errInvalidOperation, current);
-////      }
-////
-////      current = current.nextNode();
-////   }
-////}
-////
-////void Compiler :: readAttributes(SNode node, ClassScope& scope)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == lxClassMethod) {
-////         readMethodAttributes(current, scope);
-////      }
-////
-////      current = current.nextNode();
-////   }
-////}
-
 void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 {
    SNode current = node.firstChild();
@@ -5715,30 +5295,6 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
       current = current.nextNode();
    }
 }
-
-//void Compiler :: declareMethodAttribute(SyntaxWriter& writer, SNode current, MethodScope& scope, SNode rootNode)
-//{
-//   int attrValue = 0;
-//   ref_t attrRef = mapAttribute(current, scope, attrValue);
-//   if (attrValue != 0) {
-//      if (_logic->validateMethodAttribute(attrValue)) {
-//         
-//      }
-//      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//   }
-//   else if (attrRef != 0) {
-//      ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
-//      if (classRef == INVALID_REF) {
-//         if (!declareTemplate(writer, rootNode, &scope, attrRef, current))
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//      }
-//      else {
-//         scope.resultRef = classRef;
-//         scope.resultType = attrRef;
-//      }
-//   }
-//   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-//}
 
 void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 {
@@ -7024,8 +6580,8 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-         //         case nsObject:
          //         case nsExpression:
+         case lxObject:
          case lxMessageParameter:
             generateExpressionTree(writer, current, scope, false);
             break;
@@ -7067,30 +6623,9 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
          case lxIdentifier:
          case lxPrivate:
          case lxReference:
-            //if (!operationMode) {
             writer.newNode(lxMessage);
             scope.copySubject(writer, current);
             writer.closeNode();
-            break;
-            //}
-         case lxObject:
-            generateExpressionTree(writer, current, scope, false);
-   //            if (operationMode && current.existChild(lxTerminal)) {
-   //               //if ((Symbol)node.type == nsNewOperator) {
-   //               //   //HOTFIX : mark new operator
-   //               //   _writer.appendNode(lxOperator, -1);
-   //               //   if (symbol == tsInteger || symbol == tsIdentifier) {
-   //               //      unpackNode(current, 0);
-   //               //   }
-   //               //}
-   //               //else {
-   //                  _writer.newNode(lxOperator);
-   //                  copyChildren(current);
-   //                  _writer.closeNode();
-   //               //}
-   //
-   //               _writer.newBookmark();               
-   //            }
             break;
       }
       current = current.nextNode();
@@ -7204,7 +6739,7 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          break;
       case lxOperator:
          copyOperator(writer, current.firstChild());
-         generateMessageTree(writer, current, scope, true);
+         generateExpressionTree(writer, current, scope, false);
          writer.insert(lxExpression);
          writer.closeNode();
          break;
@@ -7262,7 +6797,10 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          break;
       case lxCode:
          generateCodeTree(writer, current, scope);
-
+         if (scope.codeMode) {
+            writer.insert(lxTemplateParam);
+            writer.closeNode();
+         }
          writer.insert(lxExpression);
          writer.closeNode();
          break;
