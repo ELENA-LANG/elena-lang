@@ -1,4 +1,4 @@
-//#template prop : prop_name
+//#template(-16388) prop : prop_name
 //{
 //    #method set &prop_name : value
 //    [
@@ -8,7 +8,7 @@
 //    #method prop_name = target.
 //}
 //
-//#template outprop : prop_name
+//#template(-16388) outprop : prop_name
 //{
 //    #method prop_name = target.
 //}
@@ -28,7 +28,7 @@
 
 // --- innprop ---
 
-#template innprop (template_subj)
+#template(-16388) innprop (template_subj)
 {
    stacksafe set &template_subj:val
    [
@@ -40,7 +40,7 @@
  
 // --- outlprop ---
 
-#template outlprop (template_subj)
+#template(-16388) outlprop (template_subj)
 {
    stacksafe embeddable long template_subj
    [
@@ -53,7 +53,7 @@
 
 // --- outwprop ---
 
-#template outwprop (template_subj)
+#template(-16388) outwprop (template_subj)
 {
    stacksafe embeddable short template_subj
    [
@@ -66,7 +66,7 @@
 
 // --- nfn ---
 
-#template nfn (template_fn)
+#template(-16388) nfn (template_fn)
 {
     stacksafe embeddable int template_fn &int:n
     [

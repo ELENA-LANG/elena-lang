@@ -2,7 +2,6 @@
 
 #subject __time    = system'calendar'SystemTime.
 #subject __time_st = system'calendar'TimeStruct.
-#subject __vtime   = varof(__time).
 
 const int DATE_SHORTDATE  = 00000001h.
 const int DATE_LONGDATE   = 00000002h.
@@ -257,3 +256,6 @@ sealed embeddable struct TimeStruct
     stacksafe toShortTime
         <= toWide &time_attributes:0.
 }
+
+#subject __vtime   = varof(__time).
+

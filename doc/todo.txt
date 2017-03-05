@@ -199,6 +199,8 @@ Pipeline:
                  * implement constant lists
                  * optimize constant symbols (use directly)
                  * get rid of duplicate source paths in debug info
+                 * declaring varof:type, before declaring type class
+                 * optimize implicit conversion : stacksafe divide &int:anOperand [ real n := anOperand. ] // - no need to create a new object, call conversion with stack allocated variable
 
               zdev 
                  * script : elena - simple class,one method

@@ -5920,7 +5920,7 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
    SNode targetNode = node.firstChild(lxObjectMask);
    SNode sourceNode = targetNode.nextNode(lxObjectMask);
 
-   ref_t sourceRef = optimizeExpression(sourceNode, scope, warningScope, node.argument != 0 ? HINT_NOBOXING : 0);
+   ref_t sourceRef = optimizeExpression(sourceNode, scope, warningScope,node.argument != 0 ? HINT_NOBOXING | HINT_NOUNBOXING : HINT_NOUNBOXING);
 
    if (node.argument != 0) {
       SNode intValue = node.findSubNode(lxConstantInt);
@@ -5961,9 +5961,15 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
                }
             }
          }
-         else if (subNode != lxNone && subNode.existChild(lxEmbeddable)) {
-            if (!_logic->optimizeEmbeddableGet(scope, *this, node)) {
-               _logic->optimizeEmbeddableOp(scope, *this, node);
+         else if (subNode != lxNone) {
+            if (subNode.existChild(lxEmbeddable)) {
+               if (!_logic->optimizeEmbeddableGet(scope, *this, node)) {
+                  _logic->optimizeEmbeddableOp(scope, *this, node);
+               }
+            }
+            else if (subNode.existChild(lxBoxableAttr)) {
+               //// if it is implicit conversion
+               //SNode createNode = subNode.findChild(lxCreatingClass, lxCreatingStruct);
             }
          }
       }
@@ -7065,7 +7071,7 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
    }
 
    if (generatedClass) {
-      scope.generateClassName();
+      scope.generateClassName(true);
       writer.newNode(lxClass, -1);
       writer.appendNode(lxReference, scope.moduleScope->module->resolveReference(scope.reference));
       writer.appendNode(lxAttribute, V_SEALED);
@@ -7605,13 +7611,15 @@ void Compiler :: injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, Lexic
    //}
 }
 
-void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef)
+void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe)
 {
-   writer.appendNode(lxTarget, targetClassRef);
-   writer.insert(createOp, createArg);
-   writer.closeNode();
+   writer.insertChildren(0, createOp, createArg, lxTarget, targetClassRef);
 
    writer.appendNode(lxCallTarget, targetClassRef);
+   writer.appendNode(lxBoxableAttr);
+   if (stacksafe)
+      writer.appendNode(lxStacksafeAttr);
+
    writer.insert(convertOp, convertArg);
    writer.closeNode();
 }

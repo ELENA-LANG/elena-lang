@@ -313,6 +313,13 @@ public:
          insert(end_bookmark, lxEnding, 0);
          insert(start_bookmark, type, argument);
       }
+      void insertChildren(int bookmark, LexicalType type, ref_t argument, LexicalType subType, ref_t subArgument)
+      {
+         insert(bookmark, lxEnding, 0);
+         insert(bookmark, lxEnding, 0);
+         insert(bookmark, subType, subArgument);
+         insert(bookmark, type, argument);
+      }
       void insertChild(int bookmark, LexicalType type, ref_t argument)
       {
          insert(bookmark, lxEnding, 0);

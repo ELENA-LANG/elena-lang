@@ -650,13 +650,14 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
             if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
                ref_t subj = getSignature(implicitMessage);
                if (isCompatible(scope, scope.subjectHints.get(subj), sourceRef)) {
+                  bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
                   if (test(info.header.flags, elStructureRole)) {
-                     compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
+                     compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
                   }
                   else if (test(info.header.flags, elDynamicRole)) {
                      return false;
                   }
-                  else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
+                  else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
 
                   return true;
                }
