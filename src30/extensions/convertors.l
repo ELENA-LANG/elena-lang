@@ -197,8 +197,8 @@ extension convertorOp
     toReal
         = self cast:%convert &to:realConvertor.
 
-//    convert &to : aTarget
-//        = aTarget set:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
+    convert &to : aTarget
+        = aTarget set:(aTarget cast:%eval &to:{ ! x : y = (Variant new:x)::$subject get. } &with:self).
 }
 
 //symbol convertor 

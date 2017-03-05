@@ -1543,6 +1543,11 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
+pos_t Compiler :: saveSourcePath(ModuleScope& scope, ident_t path)
+{
+   return _writer.writeString(path);
+}
+
 ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 {
    if (object.kind == okThisParam) {
@@ -1671,6 +1676,9 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
 
             writer.closeNode();
          }
+      }
+      else if (current == lxSourcePath) {
+         writer.appendNode(lxSourcePath, saveSourcePath(*scope.moduleScope, current.identifier()));
       }
 
       current = current.nextNode();
@@ -1805,76 +1813,6 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
    compileParentDeclaration(node, scope, parentRef);
 }
 
-//ref_t Compiler :: mapAttribute(SNode attribute, Scope& scope, int& attrValue)
-//{
-//   int paramCounter = SyntaxTree::countChild(attribute, lxAttributeValue);
-////   SNode valueNode = attribute.findChild(lxAttributeValue).firstChild(lxTerminalMask);
-////   if (valueNode == lxInteger) {
-////      //HOTFIX : only one dimensional arrays are supported currently
-////      if (paramCounter == 1) {
-////         attrValue = valueNode.findChild(lxTerminal).identifier().toInt();
-////
-////         paramCounter = 0;
-////      }
-////      else return 0;
-////   }
-//
-//   SNode terminal = attribute.findChild(/*lxPrivate, */lxIdentifier, lxInteger/*, lxHexInteger*/);
-//   if (terminal == lxNone)
-//      terminal = attribute;
-//
-//   if (terminal == lxInteger) {
-//      ident_t value = terminal.findChild(lxTerminal).identifier();
-//
-//      attrValue = value.toInt();
-//   }
-////   else if (terminal == lxHexInteger) {
-////      ident_t value = terminal.findChild(lxTerminal).identifier();
-////
-////      attrValue = value.toLong(16);
-////   }
-////   else if (paramCounter > 0) {
-////      IdentifierString attrName(terminal.findChild(lxTerminal).identifier());
-////      attrName.append('#');
-////      attrName.appendInt(paramCounter);
-////
-////      attrRef = scope.moduleScope->resolveAttributeRef(attrName, false);
-////   }
-//   else {
-//      attrRef = scope.mapSubject(terminal);
-//      if (attrRef == 0) {
-//         IdentifierString attrName(terminal.findChild(lxTerminal).identifier());
-//         attrName.append('#');
-//         attrName.appendInt(paramCounter);
-//
-//         attrRef = scope.moduleScope->resolveAttributeRef(attrName, false);
-//      }
-//   }
-//
-//   return attrRef;
-//}
-//
-//void Compiler :: declareClassAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode)
-//{
-//   int attrValue = 0;
-//   ref_t attrRef = mapAttribute(current, scope, attrValue);
-//   if (attrValue != 0) {
-//      if (_logic->validateClassAttribute(attrValue)) {
-//         scope.declaredFlags |= attrValue;
-//      }
-//      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//   }
-//   else if (attrRef != 0) {
-//      ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
-//      if (classRef == INVALID_REF) {
-//         if(!declareTemplate(writer, rootNode, &scope, attrRef, current))
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//      }
-//      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//   }
-//   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-//}
-
 void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
 {
    SNode current = node.firstChild();
@@ -1895,26 +1833,6 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
    }
 }
 
-//void Compiler :: declareSymbolAttribute(SyntaxWriter& writer, SNode current, SymbolScope& scope, SNode rootNode)
-//{
-//   int attrValue = 0;
-//   ref_t attrRef = mapAttribute(current, scope, attrValue);
-//   if (attrValue != 0) {
-//      if (_logic->validateSymbolAttribute(attrValue, scope.constant)) {
-//      }
-//      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//   }
-//   else if (attrRef != 0) {
-//      ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
-//      if (classRef == INVALID_REF) {
-//         if (!declareTemplate(writer, rootNode, &scope, attrRef, current))
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//      }
-//   //   else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//   }
-//   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-//}
-
 void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
 {
    SNode current = node.firstChild();
@@ -1934,68 +1852,6 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
       current = current.nextNode();
    }
 }
-
-////void Compiler :: compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == lxAttribute) {
-////         int attrValue = 0;
-////         ref_t attribute = mapAttribute(current, scope, attrValue);
-////         if (attrValue != 0) {
-////            if (_logic->validateSymbolAttribute(attrValue)) {
-////               rootNode.appendNode((LexicalType)attrValue);
-////            }
-////            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-////         }
-////         else if (attribute) {
-////            ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
-////            if (classRef == INVALID_REF) {
-////               copyTemplate(rootNode, scope, attribute, current);
-////            }
-////            else node.appendNode(lxType, attribute);
-////         }
-////         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-////      }
-////      else if (current == lxTemplate) {
-////         compileSymbolAttributes(current, scope, rootNode);
-////      }
-////
-////      current = current.nextNode();
-////   }
-////}
-
-//void Compiler :: declareFieldAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef, int& size)
-//{
-//   int attrValue = 0;
-//   ref_t attrRef = mapAttribute(current, scope, attrValue);
-//   if (attrValue != 0) {
-//      if (attrValue > 0) {
-//         size = attrValue;
-//      }
-//      else if (_logic->validateFieldAttribute(attrValue)) {
-//         fieldRef = attrValue;
-//      }
-//      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//   }
-//   else if (attrRef != 0) {
-//      ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
-//      if (classRef != INVALID_REF) {
-//         fieldType = attrRef;
-//         fieldRef = classRef;
-//      }
-//      else {
-//         ObjectInfo fieldInfo(okField);
-//         if (declareTemplate(writer, rootNode, &scope, attrRef, fieldInfo, current)) {
-//            fieldType = fieldInfo.type;
-//            fieldRef = fieldInfo.param;
-//            size = (int)fieldInfo.extraparam;
-//         }
-//         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//      }
-//   }
-//   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-//}
 
 void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size)
 {
@@ -2022,39 +1878,6 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
       current = current.nextNode();
    }
 }
-
-//////void Compiler :: compileMethodAttributes(SNode node, MethodScope& scope, SNode rootNode)
-//////{
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      if (current == lxAttribute) {
-//////         int attrValue = 0;
-//////         ref_t attribute = mapAttribute(current, scope, attrValue);
-//////         if (attrValue != 0) {
-//////            if (_logic->validateMethodAttribute(attrValue)) {
-//////               rootNode.appendNode(lxClassMethodAttr, attrValue);
-//////            }
-//////            else if (_logic->validateWarningAttribute(attrValue)) {
-//////               rootNode.appendNode(lxWarningMask, attrValue);
-//////            }
-//////            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//////         }
-//////         else if (attribute) {
-//////            ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
-//////            if (classRef == INVALID_REF) {
-//////               copyTemplate(rootNode, scope, attribute, current);
-//////            }
-//////            else node.appendNode(lxType, attribute);
-//////         }
-//////         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, rootNode);
-//////      }
-//////      else if (current == lxTemplate) {
-//////         compileMethodAttributes(current, scope, rootNode);
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////}
 
 void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
 {
@@ -3528,16 +3351,15 @@ bool Compiler :: declareActionScope(SNode& node, ClassScope& scope, SNode argNod
    return lazyExpression;
 }
 
-void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared*/)
+void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int mode)
 {
    SyntaxTree expressionTree;
    SyntaxWriter writer(expressionTree);
 
    writer.newNode(lxClass, scope.reference);
-   //   writer.appendNode(lxSourcePath, scope.getSourcePathRef()); // the source path
 
    ActionScope methodScope(&scope);
-   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, mode/*, alreadyDeclared*/);
+   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, mode);
 
    scope.include(methodScope.message);
 
@@ -4552,33 +4374,35 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
 
    CodeScope codeScope(&scope);
 
-   writer.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
-
    if (isImportRedirect(node)) {
       importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).identifier(), scope.message);
    }
    else {
+      writer.newNode(lxDispatching);
+
       // if it is generic handler with redirect statement / redirect statement
       if (node != lxNone && node.firstChild(lxObjectMask) != lxNone) {
+         
          if (withGenericMethods) {
-            writer.newNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
+            writer.appendNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
          }
 
          compileDispatchExpression(writer, node, codeScope);
       }
       // if it is generic handler only
       else if (withGenericMethods) {
-         writer.newNode(lxDispatching);
          writer.newNode(lxResending);
+
          writer.appendNode(lxMessage, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
+
          writer.newNode(lxTarget, scope.moduleScope->superReference);
          writer.appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));
          writer.closeNode();
+
          writer.closeNode();
       }
 
-      if (withGenericMethods)
-         writer.closeNode();
+      writer.closeNode();
    }
 
    writer.closeNode();
@@ -4591,8 +4415,6 @@ void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodSco
    declareParameterDebugInfo(writer, node, scope, false, true);
 
    CodeScope codeScope(&scope);
-
-   writer.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
 
    SNode body = node.findChild(lxCode, lxReturning);
 //   if (body == lxReturning) {
@@ -4671,8 +4493,8 @@ void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, Cod
          writer.closeNode();
       }
       else {
-         writer.newNode(lxNewFrame);
          writer.newNode(lxResending, methodScope->message);
+         writer.newNode(lxNewFrame);
 
          target = compileExpression(writer, node, scope, 0);
 
@@ -4796,8 +4618,6 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    
    CodeScope codeScope(&scope);
 
-   writer.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
-
    SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
    // check if it is a resend
    if (body == lxResendExpression) {
@@ -4867,8 +4687,6 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
    declareParameterDebugInfo(writer, node, scope, true, false);
 
    CodeScope codeScope(&scope);
-
-   writer.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
 
    bool retExpr = false;
    bool withFrame = false;
@@ -7765,10 +7583,10 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
       writer.appendNode(lxAttribute, V_SEALED);
    }
 
-   if (embeddableMode && withBody) {
-      // indicate that the method / field has related template-based methods
-      writer.appendNode(lxTemplateParam, -1);
-   }
+   //if (embeddableMode && withBody) {
+   //   // indicate that the method / field has related template-based methods
+   //   writer.appendNode(lxTemplateParam, -1);
+   //}
 
    SNode current = templateTree.readRoot().firstChild();
    while (current != lxNone) {
@@ -7885,8 +7703,10 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
    SyntaxWriter bufferWriter(buffer);
 
    writer.newNode(lxClassMethod);
-   if (templateMode)
+   if (templateMode) {
+      writer.appendNode(lxSourcePath, scope.sourcePath);
       writer.appendNode(lxTemplate, scope.templateRef);
+   }      
 
    if (node == lxDefaultGeneric) {
       if (node.existChild(lxMethodParameter)) {
@@ -8146,10 +7966,9 @@ void Compiler :: saveTemplate(_Memory* target, SNode node, ModuleScope& scope, S
    fullPath.append('\'');
    fullPath.append(scope.sourcePath);
 
-   writer.appendNode(lxSourcePath, fullPath);
-
    TemplateScope rootScope(&scope);
    rootScope.loadParameters(node);
+   rootScope.sourcePath = fullPath;
 
    generateScope(writer, node, rootScope, attributes);
 

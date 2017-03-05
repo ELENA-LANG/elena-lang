@@ -424,14 +424,6 @@ private:
          else return moduleScope->mapSubject(terminal, implicitOnly);
       }
 
-      virtual int getSourcePathRef()
-      {
-         if (parent) {
-            return parent->getSourcePathRef();
-         }
-         else return 0;
-      }
-
       Scope(ModuleScope* moduleScope)
       {
          this->parent = NULL;
@@ -726,6 +718,7 @@ private:
       bool        classMode;
       bool        embeddableMode;
       bool        codeMode;
+      ident_t     sourcePath;
 ////      bool        generationMode;
 //      int         sourceRef;
 
@@ -752,6 +745,7 @@ private:
          classMode = false;
          embeddableMode = false;
          codeMode = false;
+         sourcePath = NULL;
       }
       TemplateScope(ModuleScope* moduleScope)
          : Scope(moduleScope)
@@ -761,6 +755,7 @@ private:
          classMode = false;
          embeddableMode = false;
          codeMode = false;
+         sourcePath = NULL;
       }
    };
 
@@ -823,6 +818,8 @@ private:
    ref_t mapAttribute(SNode attribute, ModuleScope& scope);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
+   pos_t saveSourcePath(ModuleScope& scope, ident_t path);
+
    int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
    {
       _CompilerLogic::ChechMethodInfo dummy;
@@ -842,46 +839,22 @@ private:
    /// NOTE : the method is used to set template pseudo variable
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
 
-//   void declareTemplateParameters(SNode node, TemplateScope& templateScope);
-//   bool declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef, ObjectInfo& object, SNode attributeNode);
-//   bool declareTemplate(SyntaxWriter& writer, SNode node, Scope* scope, ref_t attrRef, SNode attributeNode)
-//   {
-//      ObjectInfo temp;
-//
-//      return declareTemplate(writer, node, scope, attrRef, temp, attributeNode);
-//   }
-//////   bool copyFieldAttribute(Scope& scope, ref_t attrRef, SNode rootNode, SNode currentNode);
-//
 //   int countFields(SNode node);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);
 
-//   void compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode);
-//   void compileSymbolAttributes(SNode node, SymbolScope& scope)
-//   {
-//      compileSymbolAttributes(node, scope, node);
-//   }
-//   void declareSymbolAttribute(SyntaxWriter& writer, SNode hints, SymbolScope& scope, SNode rootNode);
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
-//   void declareClassAttribute(SyntaxWriter& writer, SNode node, ClassScope& scope, SNode rootNode);
    void declareClassAttributes(SNode node, ClassScope& scope);
-//   void declareLocalAttribute(SyntaxWriter& writer, SNode hints, CodeScope& scope, ObjectInfo& variable, int& size, SNode rootNode);
    void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-//   void declareFieldAttribute(SyntaxWriter& writer, SNode current, ClassScope& scope, SNode rootNode, ref_t& fieldType, ref_t& fieldRef, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size);
-//   //void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
    void declareVMT(SNode member, ClassScope& scope);
    void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
-////   void recognizeMemebers(SNode member, ClassScope& scope);
-////   void readAttributes(SNode member, ClassScope& scope);
 //   void declareMethodAttribute(SyntaxWriter& writer, SNode current, MethodScope& scope, SNode rootNode);
    void declareMethodAttributes(SNode member, MethodScope& scope);
    //void includeMethod(SNode member, ClassScope& classScope, MethodScope& scope);
-
-//   void declareTemplateMethods(SNode node, ClassScope& scope);
 
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
@@ -1001,11 +974,6 @@ private:
 //////   void compileForward(SNode node, ModuleScope& scope);
    void declareSubject(SyntaxWriter& writer, SNode member, ModuleScope& scope);
 //   void compileSubject(SNode member, ModuleScope& scope);
-//   void declareScope(SyntaxTree& buffer, SNode member, ModuleScope& scope);
-////   void buildDeclaration(SyntaxWriter& writer, SNode member, ModuleScope& scope);
-////
-////   void compileDeclarations(SyntaxWriter& writer, SNode member, ModuleScope& scope);
-////   void compileImplementations(SNode member, ModuleScope& scope);
 //   void compileIncludeSection(SNode node, ModuleScope& scope);
 
    bool validate(_ProjectManager& project, _Module* module, int reference);

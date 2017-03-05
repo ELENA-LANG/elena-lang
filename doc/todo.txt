@@ -7,7 +7,8 @@ In development:
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
 
               xdev - generic development
-                 * fix exception handling
+                 * dispatch, generic, generic wih dispatch
+
                  * migrating examples to ELENA 3.0
                  * implement switch statement
 
@@ -199,6 +200,7 @@ Pipeline:
                  * implement net suppport
                  * implement constant lists
                  * optimize constant symbols (use directly)
+                 * get rid of duplicate source paths in debug info
 
               zdev 
                  * script : elena - simple class,one method
