@@ -1,4 +1,3 @@
-#import system.
 #import system'routines.
 #import system'collections.
 #import system'dynamic.
@@ -6,17 +5,17 @@
 
 // --- Expression ---
 
-#class ExpressionTree
+class ExpressionTree
 {
-    #field theTree.
+    object theTree.
     
-    #constructor new : aLiteral
+    constructor new : aLiteral
     [
-        #var aLevel := Integer new:0.
+        var aLevel := Integer new:0.
         
         aLiteral run &each: ch
         [
-            #var node := Dynamic new.
+            var node := Dynamic new.
             
             ch =>
                 #43 ? [ node set &level:(aLevel + 1) set &operation:%add. ]       // +
@@ -39,9 +38,9 @@
                             theTree := node.
                         ]
                         ! [
-                            #var aTop := theTree.
-                            #loop (($nil != aTop right)and:[aTop right level < node level] )
-                                ? [ aTop := aTop right. ].
+                            var aTop := theTree.
+                            while (($nil != aTop right)and:[aTop right level < node level] )
+                                [ aTop := aTop right. ].
                             
                             node set &left:(aTop right) set &right:$nil.
                             
@@ -51,25 +50,25 @@
         ].
     ]
     
-    #method eval : aNode
+    eval : aNode
     [
         (aNode if &leaf bool)
             ? [ ^ aNode leaf. ]
             ! [
-                #var aLeft := $self eval:(aNode left).
-                #var aRight := $self eval:(aNode right).
+                var aLeft := $self eval:(aNode left).
+                var aRight := $self eval:(aNode right).
                 
                 ^ aLeft::(aNode operation) eval:aRight.
             ]
     ]
     
-    #method value
+    value
         <= eval:theTree.
         
-    #method readLeaves : aList &at:aNode
+    readLeaves : aList &at:aNode
     [
         ($nil == aNode)
-            ? [ #throw InvalidArgumentException new. ].
+            ? [ InvalidArgumentException new raise. ].
         
         (aNode if &leaf)
             ? [ aList += aNode leaf. ]
@@ -79,22 +78,22 @@
             ].
     ]        
     
-    #method readLeaves : aList
+    readLeaves : aList
         <= readLeaves:aList &at:theTree.
 }
 
 // --- Game ---
 
-#class TwentyFourGame
+class TwentyFourGame
 {
-    #field theNumbers.
+    object theNumbers.
     
-    #constructor new
+    constructor new
     [
         $self newPuzzle.        
     ]
     
-    #method newPuzzle
+    newPuzzle
     [
         theNumbers := (
             1 + randomGenerator eval:9, 
@@ -103,7 +102,7 @@
             1 + randomGenerator eval:9).
     ]
     
-    #method help
+    help
     [
         console 
             writeLine:"------------------------------- Instructions ------------------------------"
@@ -119,24 +118,24 @@
             writeLine:"------------------------------- --------------------------------------------".
     ]
     
-    #method prompt
+    prompt
     [
         theNumbers run &each: n [ console writeLiteral:n:" ". ].
         
         console write:": ".
     ]
     
-    #method resolve : aLine
+    resolve : aLine
     [
-        #var exp := ExpressionTree new:aLine.
+        var exp := ExpressionTree new:aLine.
         
-        #var Leaves := ArrayList new.
+        var Leaves := ArrayList new.
         exp readLeaves:Leaves.
         
         (Leaves ascendant equal &indexable:(theNumbers ascendant))
             ! [ console writeLine:"Invalid input. Enter an equation using all of those four digits. Try again.". ^ $self. ].
             
-        #var aResult := exp value.
+        var aResult := exp value.
         (aResult == 24)
             ? [
                 console writeLine:"Good work. ":aLine:"=":aResult.
@@ -147,9 +146,9 @@
     ]    
 }
 
-#class(extension) gameOp
+extension gameOp
 {
-    #method playRound : aLine
+    playRound : aLine
     [
         (aLine == "q")
             ? [ ^ false. ]
@@ -171,9 +170,9 @@
 
 // --- program ---
 
-#symbol program =
+program =
 [
-    #var aGame := TwentyFourGame new help.
+    var aGame := TwentyFourGame new help.
     
-    #loop (aGame prompt playRound:(console readLine)) ? [].
+    while (aGame prompt playRound:(console readLine)) [].
 ].

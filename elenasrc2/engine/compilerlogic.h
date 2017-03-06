@@ -84,6 +84,7 @@ public:
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
 
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
+   virtual bool isCompatibleWithType(_CompilerScope& scope, ref_t targetRef, ref_t type);
    virtual bool isPrimitiveArray(ref_t reference);
    virtual bool isPrimitiveRef(ref_t reference)
    {

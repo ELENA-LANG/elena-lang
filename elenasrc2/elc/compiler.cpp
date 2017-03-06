@@ -2589,7 +2589,7 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
             SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
             while (!it.Eof()) {
                if (it.key() == messageRef) {
-                  if (scope.moduleScope->subjectHints.exist(*it, classRef)) {
+                  if (_logic->isCompatibleWithType(*scope.moduleScope, classRef, *it)) {
                      type = *it;
 
                      break;
@@ -6684,7 +6684,9 @@ void Compiler :: generateVariableTree(SyntaxWriter& writer, SNode node, Template
    SNode attr = node.findChild(lxIdentifier, lxPrivate);
    int dummy = 0;
    ref_t attrRef = (attr != lxPrivate) ? scope.mapAttribute(attr, dummy) : 0;
-   if (attrRef != 0) {
+   //HOTFIX : there should be at leat two attribute
+   if (attrRef != 0 && attr.nextNode() != lxAssigning) {
+
       // HOTFIX : set already recognized attribute value
       attr.setArgument(attrRef);
 

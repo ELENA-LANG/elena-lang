@@ -1,16 +1,15 @@
-#import system.
 #import system'dynamic.
 #import system'routines.
 #import extensions.
 #import extensions'routines.
 #import extensions'text.
 
-#class(extension)bottleOp
+extension bottleOp
 {
-    #method bottleDescription
+    bottleDescription
         = self literal + (self != 1) iif:" bottles":" bottle".
         
-    #method bottleEnumerator = Variable new:self eval &with:target
+    bottleEnumerator = Variable new:self eval &with:target
     [
         Enumerator
         {
@@ -25,9 +24,9 @@
     ].
 }
 
-#symbol program =
+program =
 [
-    #var bottles := 99.
+    var bottles := 99.
     
     bottles bottleEnumerator run &each:printingLn.
 ].

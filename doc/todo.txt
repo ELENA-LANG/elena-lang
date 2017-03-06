@@ -7,6 +7,8 @@ In development:
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
 
               xdev - generic development
+                 * test 99 bottle
+                 * test 24
                  * test matrix
                  * test bsort
                  * test pi2

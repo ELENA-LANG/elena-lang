@@ -1,12 +1,11 @@
-#import system.
 #import system'routines.
 #import extensions.
 
 // --- program ---
 
-#symbol program=
+program =
 [
-    #var Doors := Array new:100 set &every: (&index:n) [ false ].
+    var Doors := Array new:100 set &every: (&index:n) [ false ].
     
     0 till:100 &doEach: i
     [

@@ -226,21 +226,21 @@ extension indexableOp
         ].
     ]
     
-//    #method(w2) indexOf : anObject
-//    [
-//        #var(iterator)anIndexer := self iterator.
-//        
-//        #loop (anIndexer available)?
-//        [
-//            (anObject == anIndexer get)
-//                ? [ ^ anIndexer index. ].
-//            
-//            anIndexer append &index:1.
-//        ].
-//        
-//        ^ -1.
-//    ]
-//    
+    indexOfElement : anObject
+    [
+        iterator anIndexer := self iterator.
+        
+        while (anIndexer available)
+        [
+            (anObject == anIndexer get)
+                ? [ ^ anIndexer index. ].
+            
+            anIndexer append &index:1.
+        ].
+        
+        ^ -1.
+    ]
+    
 //    #method deepClone
 //    [
 //        #var aCopy := self clone.

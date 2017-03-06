@@ -14,13 +14,12 @@ Given 2 integer numbers, A and B. One needs to find their sum.
     The required output is one integer: the sum of A and B. 
 */
 
-#import system.
 #import extensions.
 
-#symbol program =
+program =
 [
-    #var A := Integer new.
-    #var B := Integer new.
+    var A := Integer new.
+    var B := Integer new.
     
     console readLine:A:B writeLine:(A + B).
 ].

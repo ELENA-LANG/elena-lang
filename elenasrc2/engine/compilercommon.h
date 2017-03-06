@@ -217,6 +217,7 @@ public:
 
    // check if the classes is compatible
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
+   virtual bool isCompatibleWithType(_CompilerScope& scope, ref_t targetRef, ref_t type) = 0;
 
    virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 

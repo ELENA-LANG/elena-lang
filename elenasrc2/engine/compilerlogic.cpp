@@ -423,6 +423,20 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 //   }
 //}
 
+bool CompilerLogic :: isCompatibleWithType(_CompilerScope& scope, ref_t targetRef, ref_t type)
+{
+   while (targetRef != 0) {
+      if (scope.subjectHints.exist(type, targetRef))
+         return true;
+
+      ClassInfo info;
+      defineClassInfo(scope, info, targetRef);
+      targetRef = info.header.parentRef;
+   }
+
+   return false;
+}
+
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
    if (!targetRef)
