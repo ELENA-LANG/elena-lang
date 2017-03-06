@@ -205,114 +205,114 @@ extension(realmatrix) matrixOp
         ^ r.
     ]
     
-//    decomposed
-//    [
-//        // create matrix copy
-//        realmatrix a := self::matrixOp clone.
-//
-//        int  i := 0.
-//        int  j := 0.
-//        int  k := 0.
-//        int  n := 0.
-//        int  m := 0.
-//        real v := 0.0r.
-//        real t := 0.0r.
-//        
-//        a readLengths &vint:n &vint:m.
-//        
-//        (n != m)
-//            ? [ MatrixException new:"Invalid operation" raise. ].
-//        
-//        // toggle tracks row swaps. +1 -> even, -1 -> odd. used by MatrixDeterminant
-//        bool even := true.          
-//
-//        // permutation matrix
-//        intarray pm := IntArray new &int:n.
-//        pm set &nfunc: (&int:i) [ IntNumber new &int:i ].
-//
-//        // each column, j is counter for coulmns
-//        int  max_col := 0.
-//        real max := 0.0r.
-//        
-//        while (j < n)
-//        [
-//            // find largest value in col j
-//            a read &int:j &int:j &vreal:max.
-//            realOpController abs &real:max &vreal:max.
-//            
-//            max_col := j.
-//            i := j + 1.
-//            while (i < n)
-//            [
-//                a read &int:i &int:j &vreal:v.
-//                realOpController abs &real:v &vreal:v.
-//                (v > max)?
-//                [
-//                    max := v.
-//                    max_col := i.
-//                ].
-//                
-//                i += 1.
-//            ].
-//  
-//            // if largest value not on pivot, swap rows
-//            (max_col != j) ?
-//            [
-//                k := 0.
-//                while(k < n)
-//                [
-//                    a read &int:j &int:k &vreal:t.
-//                    a read &int:max_col &int:k &vreal:v.
-//
-//                    a write &int:j &int:k &real:v.
-//                    a write &int:max_col &int:k &real:t.
-//                    
-//                    k := k + 1.
-//                ].
-//
-//                 // switch two rows in permutation matrix
-//                 pm::intArrayOp exchange &int:j &int:max_col.
-//
-//                 even := even not.
-//            ].
-//                        
-//            (0.0r == max)
-//                ? [ MatrixException new:"The matrix is singular!" raise. ].
-//
-//            a read &int:j &int:j &vreal:t.
-//            
-//            i := j + 1.
-//            while (i < n)
-//            [
-//                a read &int:i &int:j &vreal:v.
-//                v := v / t.
-//                
-//                a write &int:i &int:j &real:v.
-//
-//                k := j + 1.
-//                while (k < n)
-//                [
-//                    real c := 0.0r.
-//                    a read &int:i &int:j &vreal:v.
-//                    a read &int:j &int:k &vreal:c.
-//                    v := v * c.
-//
-//                    a read &int:i &int:k &vreal:c.
-//                    v := c - v.
-//                    
-//                    a write &int:i &int:k &real:v.
-//                    
-//                    k := k + 1.
-//                ].
-//                
-//                i := i + 1.
-//            ].
-//            
-//            j := j + 1.
-//        ].
-//
-//        ^ Extension({ Even = even. }, a).
-//    ]
+    decomposed
+    [
+        // create matrix copy
+        realmatrix a := self::matrixOp clone.
+
+        int  i := 0.
+        int  j := 0.
+        int  k := 0.
+        int  n := 0.
+        int  m := 0.
+        real v := 0.0r.
+        real t := 0.0r.
+        
+        a readLengths &vint:n &vint:m.
+        
+        (n != m)
+            ? [ MatrixException new:"Invalid operation" raise. ].
+        
+        // toggle tracks row swaps. +1 -> even, -1 -> odd. used by MatrixDeterminant
+        bool even := true.          
+
+        // permutation matrix
+        intarray pm := IntArray new &int:n.
+        pm set &nfunc: (&int:i) [ IntNumber new &int:i ].
+
+        // each column, j is counter for coulmns
+        int  max_col := 0.
+        real max := 0.0r.
+        
+        while (j < n)
+        [
+            // find largest value in col j
+            a read &int:j &int:j &vreal:max.
+            realOpController abs &real:max &vreal:max.
+            
+            max_col := j.
+            i := j + 1.
+            while (i < n)
+            [
+                a read &int:i &int:j &vreal:v.
+                realOpController abs &real:v &vreal:v.
+                (v > max)?
+                [
+                    max := v.
+                    max_col := i.
+                ].
+                
+                i += 1.
+            ].
+  
+            // if largest value not on pivot, swap rows
+            (max_col != j) ?
+            [
+                k := 0.
+                while(k < n)
+                [
+                    a read &int:j &int:k &vreal:t.
+                    a read &int:max_col &int:k &vreal:v.
+
+                    a write &int:j &int:k &real:v.
+                    a write &int:max_col &int:k &real:t.
+                    
+                    k := k + 1.
+                ].
+
+                 // switch two rows in permutation matrix
+                 pm::intArrayOp exchange &int:j &int:max_col.
+
+                 even := even not.
+            ].
+                        
+            (0.0r == max)
+                ? [ MatrixException new:"The matrix is singular!" raise. ].
+
+            a read &int:j &int:j &vreal:t.
+            
+            i := j + 1.
+            while (i < n)
+            [
+                a read &int:i &int:j &vreal:v.
+                v := v / t.
+                
+                a write &int:i &int:j &real:v.
+
+                k := j + 1.
+                while (k < n)
+                [
+                    real c := 0.0r.
+                    a read &int:i &int:j &vreal:v.
+                    a read &int:j &int:k &vreal:c.
+                    v := v * c.
+
+                    a read &int:i &int:k &vreal:c.
+                    v := c - v.
+                    
+                    a write &int:i &int:k &real:v.
+                    
+                    k := k + 1.
+                ].
+                
+                i := i + 1.
+            ].
+            
+            j := j + 1.
+        ].
+
+        ^ Extension({ Even = even. }, a).
+    ]
 
     determinant
     [

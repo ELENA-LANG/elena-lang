@@ -1,11 +1,10 @@
-#import system.
 #import system'routines.
 #import system'text.
 #import extensions.
 
 // --- RusLatRules ---
 
-#symbol rusLatRules =
+rusLatRules =
 (
     { from = "а". to = "a". },
     { from = "б". to = "b". },
@@ -43,13 +42,13 @@
 
 // === Transliteration ===
 
-#symbol Transliteration = (:aText)
+Transliteration = (:aText)
 [
-    #var anOutput := TextBuffer new.
+    var anOutput := TextBuffer new.
     
     aText run &each: aChar
     [
-        #var aRule := rusLatRules seek &each:
+        var aRule := rusLatRules seek &each:
             x [ x from == aChar literal ].
                 
         ($nil == aRule)
