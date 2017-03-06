@@ -8,8 +8,8 @@ bin\elc examples\console\bsort\bsort.prj
 bin\elc examples\files\textfile\textfile.prj
 bin\elc examples\console\binary\binary.prj
 bin\elc examples\console\replace\replace.prj
-rem bin\elc examples\console\goods\goods.prj
-rem bin\elc examples\console\datetime\dtcalculator.prj
+bin\elc examples\console\goods\goods.prj
+bin\elc examples\console\datetime\dtcalculator.prj
 rem bin\elc examples\console\random\random.prj
 rem bin\elc examples\files\textdb\textdb.prj
 rem bin\elc examples\console\matrix\matrix.prj

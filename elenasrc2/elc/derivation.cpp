@@ -467,6 +467,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsMessageReference:
          _writer.newNode(lxMessageReference);
          break;
+      case nsSwitching:
+         _writer.newNode(lxSwitching);
+         break;
       case nsSubCode:
       case nsScope:
       case nsTemplate:
@@ -479,6 +482,10 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsDefaultGeneric:
       case nsCatchMessageOperation:
       case nsAltMessageOperation:
+      case nsSwitchOption:
+      case nsLastSwitchOption:
+      case nsBiggerSwitchOption:
+      case nsLessSwitchOption:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          break;
       default:

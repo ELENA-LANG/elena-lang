@@ -858,7 +858,7 @@ private:
 
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
-//   void compileSwitch(SNode node, CodeScope& scope);
+   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
@@ -873,9 +873,11 @@ private:
    ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
 
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode);
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
+   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
    ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
 
    ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
@@ -1017,6 +1019,7 @@ private:
    void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool operationMode);
+   void generateSwitchTree(SyntaxWriter& writer, SNode current, TemplateScope& scope);
    void generateObjectTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool explicitOne = true);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);

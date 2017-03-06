@@ -35,6 +35,11 @@ __define THROW_EXPRESSION       4148
 __define IMPORT                 4149
 __define ROOT_EXPRESSION        4152
 __define EXTERN_BLOCK           4153
+__define SWITCHING		4155
+__define OPTION			4156
+__define LAST_OPTION		4157
+__define BIGGER_OPTION          4158
+__define SMALLER_OPTION		4159
 __define L6_OPERATION           4161
 __define L0_OPERATION           4163
 __define DEFAULT                4166
@@ -104,6 +109,7 @@ OPERATIONS ->
 	| L5_OPERATION L5_OPERATIONS L6_OPERATIONS
 	| L6_OPERATION L6_OPERATIONS
         | L7_OPERATION
+	| => SWITCHING
 	| eps
 	
 MESSAGE_OPERATIONS ->
@@ -175,6 +181,7 @@ ROOT_OPERATIONS ->
 	| ASSIGNING
         | || CATCH_MESSAGE
         | \ ALT_MESSAGE
+	| => SWITCHING
 	| eps
 
 ALT_OPERATIONS ->
@@ -313,6 +320,56 @@ MESSAGE_PARAMETER ->
 ASSIGNING ->
 	:= EXPRESSION
 
+SWITCHING ->
+	OPTION NEXT_OPTION
+
+
+OPTION ->
+	identifier OPTION_BODY
+	| literal OPTION_BODY
+	| reference OPTION_BODY
+	| integer OPTION_BODY
+	| hex OPTION_BODY
+	| real OPTION_BODY
+	| character OPTION_BODY
+	| long OPTION_BODY
+	| wide OPTION_BODY
+	
+BIGGER_OPTION ->
+	identifier OPTION_BODY
+	| literal OPTION_BODY
+	| reference OPTION_BODY
+	| integer OPTION_BODY
+	| hex OPTION_BODY
+	| real OPTION_BODY
+	| character OPTION_BODY
+	| long OPTION_BODY
+	| wide OPTION_BODY
+	
+SMALLER_OPTION ->                                                                     
+	identifier OPTION_BODY
+	| literal OPTION_BODY
+	| reference OPTION_BODY
+	| integer OPTION_BODY
+	| hex OPTION_BODY
+	| real OPTION_BODY
+	| character OPTION_BODY
+	| long OPTION_BODY
+	| wide OPTION_BODY
+
+OPTION_BODY ->
+	? CODE_BLOCK
+
+LAST_OPTION ->
+	! CODE_BLOCK
+
+NEXT_OPTION ->
+	OPTION NEXT_OPTION
+	| > BIGGER_OPTION NEXT_OPTION
+	| < SMALLER_OPTION NEXT_OPTION
+	| LAST_OPTION
+	| eps
+
 TEMPLATE_BODY ->
 	{ SCOPES CLOSING_CURLY_BRACKET
 	| CODE_BLOCK DECLARATION_END
@@ -361,6 +418,7 @@ ROOT_BODY ->
 	| L6_OPERATION L6_OPERATIONS L7_OPERATIONS
         | L7_OPERATION
 	| ASSIGNING
+	| => SWITCHING
 	| eps
 
 ROOT_CODE_BODY ->

@@ -35,7 +35,7 @@ using namespace _ELENA_;
 #define HINT_EXTENSION_MODE   0x02000000
 #define HINT_TRY_MODE         0x01000000
 #define HINT_LOOP             0x00800000
-//#define HINT_SWITCH         0x00400000
+#define HINT_SWITCH         0x00400000
 #define HINT_ALT_MODE         0x00200000
 #define HINT_NODEBUGINFO      0x00020000
 ////#define HINT_ACTION           0x00020000
@@ -1910,79 +1910,81 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
    
 }
 
-////void Compiler :: compileSwitch(SNode node, CodeScope& scope)
-////{
-////   SNode targetNode = node.firstChild(lxObjectMask);
-////
-////   bool immMode = true;
-////   int localOffs = 0;
-////   if (targetNode == lxExpression) {
-////      immMode = false;
-////
-////      localOffs = scope.newLocal();
-////
-////      compileExpression(targetNode, scope, 0);
-////
-////      targetNode.refresh();
-////      targetNode.injectNode(targetNode.type, targetNode.argument);
-////      targetNode.set(lxAssigning, 0);
-////      targetNode.insertNode(lxLocal, localOffs);
-////   }
-////
-////   SNode option = node.findChild(lxOption, lxElse);
-////   while (option == lxOption) {
-////      insertDebugStep(option, dsStep);
-////
-////      int operator_id = option.argument;
-////      //HOTFIX : invert operation because the option value is compared with a target
-////      switch (operator_id) {
-////         case GREATER_MESSAGE_ID:
-////            operator_id = LESS_MESSAGE_ID;
-////            break;
-////         case LESS_MESSAGE_ID:
-////            operator_id = GREATER_MESSAGE_ID;
-////            break;
-////      }
-////
-////      SNode expr = option.injectNode(lxExpression);
-////
-////      // find option value
-////      SNode valueNode = expr.firstChild(lxObjectMask);
-////
-////      // inject operation
-////      valueNode.injectNode(valueNode.type);
-////      valueNode = lxExpression;
-////
-////      // inject target
-////      if (immMode) {
-////         SyntaxTree::copyNode(targetNode, valueNode.appendNode(targetNode.type));
-////      }
-////      else valueNode.appendNode(lxLocal, localOffs);
-////
-////      valueNode.appendNode(lxOperator, operator_id);
-////
-////      // inject code expression
-////      SNode codeExpr = expr.findChild(lxCode);
-////      codeExpr.injectNode(lxCode);
-////      codeExpr = lxExpression;
-////
-////      compileBranchingOperator(expr, scope, HINT_SWITCH, IF_MESSAGE_ID);
-////
-////      option = option.nextNode();
-////   }
-////
-////   if (option == lxElse) {
-////      CodeScope subScope(&scope);
-////      SNode thenCode = option.findChild(lxCode);
-////
-////      SNode statement = thenCode.firstChild(lxObjectMask);
-////      if (statement.nextNode() != lxNone || statement == lxEOF) {
-////         compileCode(thenCode, subScope);
-////      }
-////      // if it is inline action
-////      else compileRetExpression(statement, scope, 0);
-////   }
-////}
+void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   SNode targetNode = node.firstChild(lxObjectMask);
+
+   writer.newBookmark();
+
+   bool immMode = true;
+   int localOffs = 0;
+   ObjectInfo loperand;
+   if (targetNode == lxExpression) {
+      immMode = false;
+
+      localOffs = scope.newLocal();
+
+      loperand = compileExpression(writer, targetNode, scope, 0);
+
+      writer.insertChild(0, lxLocal, localOffs);
+      writer.insert(lxAssigning, 0);
+      writer.closeNode();
+   }
+
+   SNode current = node.findChild(lxOption, lxElse);
+   while (current == lxOption) {
+      writer.newNode(lxOption);
+      writer.newNode(lxExpression);
+
+      writer.newBookmark();
+
+      writer.appendNode(lxBreakpoint, dsStep);
+
+      int operator_id = current.argument;
+
+      if (!immMode) {
+         writer.newNode(lxLocal, localOffs);
+         writer.appendNode(lxTarget, resolveObjectReference(scope, loperand));
+         writer.closeNode();         
+      }
+      else loperand = compileExpression(writer, targetNode, scope, 0);
+
+//      SNode expr = option.injectNode(lxExpression);
+
+      // find option value
+      SNode valueNode = current.firstChild(lxObjectMask);
+
+      ObjectInfo roperand = compileExpression(writer, valueNode.firstChild(lxObjectMask), scope, 0);
+
+      ObjectInfo operationInfo = compileOperator(writer, node, scope, operator_id, 1, loperand, roperand, ObjectInfo());
+
+      ObjectInfo retVal;
+      compileBranchingOperand(writer, valueNode, scope, HINT_SWITCH, IF_MESSAGE_ID, operationInfo, retVal);
+
+      writer.removeBookmark();
+      writer.closeNode();
+      writer.closeNode();
+
+      current = current.nextNode();
+   }
+
+//   if (option == lxElse) {
+//      CodeScope subScope(&scope);
+//      SNode thenCode = option.findChild(lxCode);
+//
+//      SNode statement = thenCode.firstChild(lxObjectMask);
+//      if (statement.nextNode() != lxNone || statement == lxEOF) {
+//         compileCode(thenCode, subScope);
+//      }
+//      // if it is inline action
+//      else compileRetExpression(statement, scope, 0);
+//   }
+
+   writer.insert(lxSwitching);
+   writer.closeNode();
+
+   writer.removeBookmark();
+}
 
 void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -2614,9 +2616,8 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
    return extRef;
 }
 
-void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode)
-{
-   SNode thenBody = loperandNode.nextNode(lxObjectMask);
+void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode)
+{   
    if (loopMode) {
       writer.newNode(lxElse, ifReference);
 
@@ -2630,24 +2631,22 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode,
       compileBranching(writer, thenCode, scope);
       writer.closeNode();
 
-      SNode elseCode= thenBody.firstChild().nextNode();
-      if (elseCode != lxNone) {
-         writer.newNode(lxElse, 0);
-         compileBranching(writer, elseCode, scope);
-         writer.closeNode();
+      // HOTFIX : switch mode - ignore else
+      if (!switchMode) {
+         SNode elseCode = thenBody.firstChild().nextNode();
+         if (elseCode != lxNone) {
+            writer.newNode(lxElse, 0);
+            compileBranching(writer, elseCode, scope);
+            writer.closeNode();
+         }
       }
    }
 }
 
-ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id)
+void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal)
 {
    bool loopMode = test(mode, HINT_LOOP);
-   ObjectInfo retVal(okObject);
-
-   writer.newBookmark();
-
-   SNode loperandNode = node.firstChild(lxObjectMask);
-   ObjectInfo loperand = compileExpression(writer, loperandNode, scope, 0);
+   bool switchMode = test(mode, HINT_SWITCH);
 
    // HOTFIX : in loop expression, else node is used to be similar with branching code
    // because of optimization rules
@@ -2661,36 +2660,75 @@ ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& nod
    // try to resolve the branching operator directly
    if (_logic->resolveBranchOperation(*scope.moduleScope, *this, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
       // good luck : we can implement branching directly
-      compileBranchingNodes(writer, loperandNode, scope, ifReference, loopMode);
+      compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
 
-      writer.insert(loopMode ? lxLooping : lxBranching);
-      //if (test(mode, HINT_SWITCH))
-      //   node.setArgument(-1);
+      writer.insert(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
       writer.closeNode();
    }
    else {
       operator_id = original_id;
 
-      // bad luck : we have to create closure
-      SNode roperandNode = loperandNode.nextNode(lxObjectMask);
-
+      // bad luck : we have to create closure      
       compileObject(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
 
       SNode roperand2Node = roperandNode.nextNode(lxObjectMask);
       if (roperand2Node != lxNone) {
          compileObject(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
 
-         retVal = compileMessage(writer, node, scope, loperand, encodeMessage(0, operator_id, 2), 0);
+         retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(0, operator_id, 2), 0);
       }
-      else retVal = compileMessage(writer, node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
+      else retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(0, operator_id, 1), 0);
 
       if (loopMode) {
          writer.insert(lxLooping);
          writer.closeNode();
       }
    }
+}
+
+ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id)
+{
+   ObjectInfo retVal(okObject);
+
+   writer.newBookmark();
+
+   SNode loperandNode = node.firstChild(lxObjectMask);
+   ObjectInfo loperand = compileExpression(writer, loperandNode, scope, 0);
+
+   SNode roperandNode = loperandNode.nextNode(lxObjectMask);
+
+   compileBranchingOperand(writer, roperandNode, scope, mode, operator_id, loperand, retVal);
 
    writer.removeBookmark();
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2)
+{
+   ObjectInfo retVal;
+
+   ref_t loperandRef = resolveObjectReference(scope, loperand);
+   ref_t roperandRef = resolveObjectReference(scope, roperand);
+   ref_t roperand2Ref = 0;
+   ref_t resultClassRef = 0;
+   int operationType = 0;
+
+   if (roperand2.kind != okUnknown) {
+      roperand2Ref = resolveObjectReference(scope, roperand2);
+
+      operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, roperand2Ref, resultClassRef);
+   }
+   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
+
+   if (operationType != 0) {
+      // if it is a primitive operation
+      _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.type);
+
+      retVal = assignResult(writer, scope, resultClassRef);
+   }
+   // if not , replace with appropriate method call
+   else retVal = compileMessage(writer, node, scope, loperand, _logic->defineOperatorMessage(*scope.moduleScope, operator_id, paramCount, loperandRef, roperandRef, roperand2Ref), HINT_NODEBUGINFO);
 
    return retVal;
 }
@@ -2738,26 +2776,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       else */roperand = compileExpression(writer, roperandNode, scope, 0);
    }
 
-   ref_t loperandRef = resolveObjectReference(scope, loperand);
-   ref_t roperandRef = resolveObjectReference(scope, roperand);
-   ref_t roperand2Ref = 0;
-   ref_t resultClassRef = 0;
-   int operationType = 0;
-   if (roperand2.kind != okUnknown) {
-      roperand2Ref = resolveObjectReference(scope, roperand2);
-
-      operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, roperand2Ref, resultClassRef);
-   }
-   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
-
-   if (operationType != 0) {
-      // if it is a primitive operation
-      _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.type);
-
-      retVal = assignResult(writer, scope, resultClassRef);
-   }
-   // if not , replace with appropriate method call
-   else retVal = compileMessage(writer, node, scope, loperand, _logic->defineOperatorMessage(*scope.moduleScope, operator_id, paramCount, loperandRef, roperandRef, roperand2Ref), HINT_NODEBUGINFO);
+   retVal = compileOperator(writer, node, scope, operator_id, paramCount, loperand, roperand, roperand2);
 
    writer.removeBookmark();
 
@@ -3659,7 +3678,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       objectInfo = ObjectInfo(okObject);
    }
    else {
-      SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator/*, lxSwitching*/);
+      SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxSwitching);
       switch (current.type) {
          case lxAssign:
             objectInfo = compileAssigning(writer, node, scope, mode);
@@ -3667,11 +3686,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          case lxMessage:
             objectInfo = compileMessage(writer, node, scope, mode);
             break;
-//      case lxSwitching:
-//         compileSwitch(child, scope);
-//
-//         objectInfo = ObjectInfo(okObject);
-//         break;
+         case lxSwitching:
+            compileSwitch(writer, current, scope);
+
+            objectInfo = ObjectInfo(okObject);
+            break;
          case lxExtension:
             objectInfo = compileExtension(writer, node, scope);
             break;
@@ -6125,7 +6144,9 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxCoreAPICall:
          return optimizeExtCall(current, scope, warningScope);
       case lxLooping:
-      //case lxElse:
+      case lxSwitching:
+      case lxOption:
+      case lxElse:
       //case lxCode:
       //case lxIf:
       //case lxExternFrame:
@@ -6746,12 +6767,48 @@ inline bool isTerminal(LexicalType type)
    }
 }
 
+void Compiler :: generateSwitchTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxSwitchOption:
+         case lxBiggerSwitchOption:
+         case lxLessSwitchOption:
+            if (current.type == lxBiggerSwitchOption) {
+               writer.newNode(lxOption, GREATER_MESSAGE_ID);
+            }
+            else if (current.type == lxLessSwitchOption) {
+               writer.newNode(lxOption, LESS_MESSAGE_ID);
+            }
+            else writer.newNode(lxOption, EQUAL_MESSAGE_ID);
+            generateExpressionTree(writer, current, scope, false);
+            writer.closeNode();
+            break;
+         case lxLastSwitchOption:
+            writer.newNode(lxElse);
+            generateExpressionTree(writer, current, scope, false);
+            writer.closeNode();
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, TemplateScope& scope/*, int mode*/)
 {
    switch (current.type) {
       case lxAssigning:
          writer.appendNode(lxAssign);
          generateExpressionTree(writer, current, scope, false);
+         break;
+      case lxSwitching:
+         generateSwitchTree(writer, current, scope);
+         writer.insert(lxSwitching);
+         writer.closeNode();
          break;
       case lxOperator:
          copyOperator(writer, current.firstChild());

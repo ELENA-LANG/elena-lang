@@ -1,4 +1,3 @@
-#import system.
 #import system'io.
 #import system'routines.
 #import system'collections.
@@ -7,22 +6,22 @@
 #import extensions'text.
 
 // --- Record ---
-#class Record
+class Record
 {
-    #field theName.
-    #field thePrice.
+    object theName.
+    object thePrice.
     
-    #constructor new &Price:aPrice &Name:aName
+    constructor new &Price:aPrice &Name:aName
     [
         theName := aName.
         thePrice := aPrice.
     ]
 
-    #method Name = theName.
+    Name = theName.
     
-    #method Price = thePrice.
+    Price = thePrice.
 
-    #method literal
+    literal
     [
         ^ StringWriter new writeLiteral:"Name:":theName:" Price:":thePrice literal.
     ]
@@ -30,16 +29,16 @@
 
 // --- Adapter ---
 
-#class Adapter
+class Adapter
 {
-    #field theBM.
+    object theBM.
     
-    #constructor new
+    constructor new
     [
         theBM := StringBookmark new.
     ]
 
-    #method write : aLiteral
+    write : aLiteral
     [
         (0 == theBM length)
             ! [ theBM += ";". ].
@@ -47,7 +46,7 @@
         theBM += aLiteral.
     ]
 
-    #method read : aVariable
+    read : aVariable
         = (0 == theBM length)
             ? [ false ]
             ! [
@@ -63,22 +62,22 @@
 
 // --- Program --- 
 
-#symbol program = 
+program = 
 [
     ('program'arguments length == 1)?
         [  console << "Please provide the path to the file to view". #throw AbortException new. ].
 
-    #var aList := List new.
-    #var anAdapter := Adapter new.
+    var aList := List new.
+    var anAdapter := Adapter new.
 
     'program'arguments@1 file_path run &eachLine: aLine
     [
         anAdapter write:aLine.
 
-        #var aName := String new.
-        #var aPrice := Real new.
+        var aName := String new.
+        var aPrice := Real new.
                         
-        #loop (anAdapter read:aName)?
+        while (anAdapter read:aName)
         [
             anAdapter read:aPrice.
         

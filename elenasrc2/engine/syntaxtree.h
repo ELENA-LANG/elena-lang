@@ -54,6 +54,10 @@ enum LexicalType
    lxMessageReference= 0x00033,
 //   lxLock            = 0x00037,
    lxExtern          = 0x00039,
+   lxSwitchOption    = 0x0003C,
+   lxLastSwitchOption = 0x0003D,
+   lxBiggerSwitchOption = 0x0003E,
+   lxLessSwitchOption = 0x0003F,
 
    lxDefaultGeneric  = 0x00046,
    lxSubject         = 0x00047,
@@ -119,7 +123,7 @@ enum LexicalType
    lxAlt             = 0x0C00D,   // alt-catch expression
 //   lxLocking         = 0x0C00E,   // branch expression
    lxBranching       = 0x0C00F,   // branch expression
-//   lxSwitching       = 0x0C010,
+   lxSwitching       = 0x0C010,
    lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,
    lxThrowing        = 0x0C013,
@@ -132,7 +136,7 @@ enum LexicalType
    lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIf              = 0x0C01F,   // optional arg - reference
    lxElse            = 0x0C020,   // optional arg - reference
-//   lxOption          = 0x0C021,
+   lxOption          = 0x0C021,
    lxFieldExpression = 0x0C022,
    lxExternFrame     = 0x04023,
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message

@@ -7,9 +7,9 @@ In development:
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
 
               xdev - generic development
+                 * implement switch statement
                  * migrating examples to ELENA 3.0
                  * test bsort
-                 * implement switch statement
 
               zdev - cellular automata
                  * general architecture

@@ -1,10 +1,9 @@
-#import system.
 #import system'calendar.
 #import extensions.
 
 // --- Control ---
 
-#symbol control =
+control =
 {
     prompt
         = "Please select your option:" + 'newLine +
