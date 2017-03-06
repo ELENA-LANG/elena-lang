@@ -24,5 +24,4 @@ text\words.l
 text\strings.l
 routines\enumerating.l
 routines\combinations.l
-dynamic\json.l
 

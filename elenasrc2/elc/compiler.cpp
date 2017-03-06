@@ -6118,6 +6118,13 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxExternalCall:
       case lxCoreAPICall:
          return optimizeExtCall(current, scope, warningScope);
+      case lxLooping:
+      //case lxElse:
+      //case lxCode:
+      //case lxIf:
+      //case lxExternFrame:
+         optimizeExpressionTree(current, scope, warningScope);
+         return 0;
       default:
          return current.findChild(lxTarget).argument;
    }
