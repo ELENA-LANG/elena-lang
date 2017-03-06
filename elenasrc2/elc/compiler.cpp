@@ -1968,17 +1968,21 @@ void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scop
       current = current.nextNode();
    }
 
-//   if (option == lxElse) {
-//      CodeScope subScope(&scope);
-//      SNode thenCode = option.findChild(lxCode);
-//
-//      SNode statement = thenCode.firstChild(lxObjectMask);
-//      if (statement.nextNode() != lxNone || statement == lxEOF) {
-//         compileCode(thenCode, subScope);
-//      }
-//      // if it is inline action
-//      else compileRetExpression(statement, scope, 0);
-//   }
+   if (current == lxElse) {
+      CodeScope subScope(&scope);
+      SNode thenCode = current.findSubNode(lxCode);
+
+      writer.newNode(lxElse);
+
+      SNode statement = thenCode.firstChild(lxObjectMask);
+      if (statement.nextNode() != lxNone || statement == lxEOF) {
+         compileCode(writer, thenCode, subScope);
+      }
+      // if it is inline action
+      else compileRetExpression(writer, statement, scope, 0);
+
+      writer.closeNode();
+   }
 
    writer.insert(lxSwitching);
    writer.closeNode();
