@@ -3338,7 +3338,7 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
       compileParentDeclaration(node, scope);
 
       declareVMT(node, scope);
-      generateClassDeclaration(node, scope, false);
+      generateClassDeclaration(node, scope, false, true);
 
       scope.save();
    }
@@ -3349,6 +3349,10 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
    compileVMT(writer, node, scope);
 
    writer.closeNode();
+
+   // set flags once again
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, false);
+   scope.save();
 
    generateClassImplementation(expressionTree.readRoot(), scope);
 }
@@ -5244,7 +5248,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
    }
 }
 
-void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode)
+void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool closureDeclarationMode)
 {
    bool closed = test(scope.info.header.flags, elClosed);
 
@@ -5272,7 +5276,9 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    // generate methods
    generateMethodDeclarations(node, scope/*, false*/, closed, classClassMode);
 
-   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, classClassMode);
+   // do not set flags for closure declaration - they will be set later
+   if(!closureDeclarationMode)
+      _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, classClassMode);
 }
 
 void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)

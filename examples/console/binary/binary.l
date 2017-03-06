@@ -1,17 +1,16 @@
-#import system.
 #import system'math.
 #import system'routines.
 #import extensions.
 
 // --- Program --- 
 
-#symbol Program = 
+Program = 
 [ 
     // reading    
-    #var aNumber := console write:"Enter the number you want to convert: " readLine:(Integer new).
+    var aNumber := console write:"Enter the number you want to convert: " readLine:(Integer new).
     
     // converting
-    #var aBinaryStr := aNumber toLiteral &base:2.
+    var aBinaryStr := aNumber toLiteral &base:2.
 
     // printing
     console
