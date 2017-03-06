@@ -172,6 +172,9 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
 
       tape.write(bcPushA);
 
+      if (withPresavedMessage)
+         saveSubject(tape);
+
       if (allocated > 0) {
          tape.write(bcInit, allocated);
          tape.write(bcAllocStack, allocated);
@@ -416,7 +419,7 @@ void ByteCodeWriter :: declareAlt(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated)
+void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage)
 {
    //   open 1
    //   pusha
@@ -428,6 +431,9 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated)
    else tape.write(bcOpen, 1);
 
    tape.write(bcPushA);
+
+   if (withPresavedMessage)
+      saveSubject(tape);
 
    if (allocated > 0) {
       tape.write(bcInit, allocated);
@@ -4648,7 +4654,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
       while (current != lxNone) {
          if (current == lxNewFrame) {
             // new frame
-            newFrame(tape, 0, 0);
+            newFrame(tape, 0, 0, false);
 
             // save message
             pushObject(tape, lxCurrentMessage);
@@ -5102,10 +5108,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                declareMethod(tape, node.argument, sourcePathRef, reserved, allocated, current.argument == -1);
                open = true;
             }
-            else newFrame(tape, reserved, allocated);
-
-            if (current.argument == -1)
-               saveSubject(tape);
+            else newFrame(tape, reserved, allocated, current.argument == -1);
 
             generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
             generateCodeBlock(tape, current);

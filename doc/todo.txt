@@ -12,7 +12,7 @@ In development:
                  * test matrix
                  * test bsort
                  * test pi2
-                 * migrating examples to ELENA 3.0
+                 * migrate rosetta samples
 
               zdev - cellular automata
                  * general architecture
@@ -207,6 +207,7 @@ Pipeline:
                  * optimize implicit conversion : stacksafe divide &int:anOperand [ real n := anOperand. ] // - no need to create a new object, call conversion with stack allocated variable
                  * extension : include json.l file
                  * operation with binary arrays - arrayof(mssg)
+                 * migrate all samples
 
               zdev 
                  * script : elena - simple class,one method

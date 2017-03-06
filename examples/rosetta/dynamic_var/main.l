@@ -1,28 +1,27 @@
 // Create a variable with a user-defined name. The variable name should not be written in the program text, 
 // but should be taken from the user dynamically. 
 
-#import system.
 #import system'dynamic.
 #import extensions.
 
-#class TestClass
+class TestClass
 {
-    #field theVariables.
+    object theVariables.
 
-    #constructor new
+    constructor new
     [
         theVariables := DynamicStruct new.
     ]
     
-    #method eval
+    eval
     [
-        #var(subject) varRef := Signature new &literal:(console write:"Enter the variable name:" readLine).
+        subject varRef := Signature new &literal:(console write:"Enter the variable name:" readLine).
         theVariables::varRef set:42.
         
-        #var v := theVariables::varRef get.
+        var v := theVariables::varRef get.
         
         console writeLine:(varRef literal):"=":(theVariables::varRef get) readChar.
     ]
 }
 
-#symbol program = TestClass new.
+program = TestClass new.

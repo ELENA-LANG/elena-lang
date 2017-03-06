@@ -1,26 +1,25 @@
-#import system.
 #import extensions.
 
-#class Extender :: BaseExtender
+class Extender :: BaseExtender
 {
-    #field theField.
+    object theField.
     
-    #constructor new : anObject
+    constructor new : anObject
     [
         theObject := anObject.
     ]
     
-    #method foo = theField.
+    foo = theField.
     
-    #method set &foo : aValue
+    set &foo : aValue
     [
         theField := aValue.
     ]
 }
 
-#symbol program =
+program =
 [
-    #var anObject := 234.
+    var anObject := 234.
   
     // extending an object with a field
     anObject := Extender new:anObject.

@@ -2675,9 +2675,12 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
       // bad luck : we have to create closure      
       compileObject(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
 
-      SNode roperand2Node = roperandNode.nextNode(lxObjectMask);
+      SNode roperand2Node = roperandNode.firstChild() == lxExpression ? roperandNode.findChild(lxCode) : SNode();
       if (roperand2Node != lxNone) {
-         compileObject(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
+         // HOTFIX : else sub code is located in the first expression, while if one - in second layer expression
+         compileClosure(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
+
+         //compileObject(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
 
          retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(0, operator_id, 2), 0);
       }
@@ -6117,6 +6120,7 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxSDirctCalling:
          return optimizeMessageCall(current, scope, warningScope);
       case lxExpression:
+      case lxReturning:
          return optimizeExpression(current.firstChild(lxObjectMask), scope, warningScope, mode);
       case lxAltExpression:
       case lxBranching:
@@ -6171,6 +6175,7 @@ void Compiler :: optimizeExpressionTree(SNode node, ModuleScope& scope, WarningS
          case lxCode:
          case lxIf:
          case lxExternFrame:
+         case lxBranching:
             optimizeExpressionTree(current, scope, warningScope);
             break;
          default:
