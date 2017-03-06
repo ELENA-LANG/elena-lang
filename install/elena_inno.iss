@@ -16,7 +16,7 @@ AppUpdatesURL=http://github.com/ELENA-LANG/elena-lang
 DefaultDirName={pf}\ELENA
 DefaultGroupName=ELENA Programming Language
 AllowNoIcons=yes
-LicenseFile=..\license.txt
+LicenseFile=..\doc\license
 InfoAfterFile=..\whatsnew.txt
 OutputBaseFilename=elena-setup
 Compression=lzma
@@ -39,7 +39,7 @@ Source: "..\elenasrc2\*"; DestDir: "{app}\elenasrc2"; Flags: ignoreversion recur
 Source: "..\examples\*"; DestDir: "{app}\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\lib30\*"; DestDir: "{app}\lib30"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\src30\*"; DestDir: "{app}\src30"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\license.txt"; DestDir: "{app}";
+Source: "..\doc\license"; DestDir: "{app}";
 Source: "..\readme.txt"; DestDir: "{app}"; Flags: isreadme
 Source: "..\whatsnew.txt"; DestDir: "{app}";
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
