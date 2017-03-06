@@ -1,4 +1,4 @@
-ELENA Language Project V. 2.2, (C)2005-2017  By Alex Rakov
+ELENA Language Project V. 3.0, (C)2005-2017  By Alex Rakov
 ====
 ELENA is a general-purpose, object-oriented language with late binding. The package includes compiler, IDE, ELENA libraries and samples.
 Currently Win32-x86 and Linux-I386 platforms are supported.
@@ -70,6 +70,8 @@ Get started!
 * [ELENA 2.x: messages, types, dispatching...](http://elenalang.blogspot.de/2015/02/elena-2x-messages-types-dispatching.html)
 * [Stack allocated variables in ELENA](http://elenalang.blogspot.de/2015/08/stack-allocated-variables-in-elena.html)
 * [Dynamic code generation in ELENA](http://elenalang.blogspot.de/2016/06/tutorial-dynamic-code-generation-in.html)
+* [ELENA Programming Language : Interactions](https://www.codeproject.com/Articles/1165723/ELENA-Programming-Language-Interactions)
+* [Introduction to ELENA Programming Language](https://www.codeproject.com/Articles/1127103/Introduction-to-ELENA-Programming-Language)
 
 Contribute!
 ---
