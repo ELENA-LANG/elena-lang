@@ -81,15 +81,15 @@ sealed embeddable struct TimeStruct
     short theMinute.
     short theSecond.
     short theMillisecond.
-    
+
+    sealed stacksafe conversion __time:aTime
+    [
+        $self write &__time:aTime.
+    ]
+
     constructor new
     [
         system'core_routines'__timest empty &__time_st:$self.
-    ]
-
-    stacksafe constructor &__time:aTime
-    [
-        $self write &__time:aTime.
     ]
 
     stacksafe constructor new &__time:aTime
@@ -212,43 +212,43 @@ sealed embeddable struct TimeStruct
         system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
     ]
       
-//    stacksafe toWide &date_attributes:Flags
-//    [
-//        short(127) aBuffer := 0.
-//
-//        int aLength := system'external'KERNEL32 GetDateFormatW
-//            &int:0
-//            &int:(Flags int)
-//            &__time_st:$self
-//            &int:0
-//            &shortarray:aBuffer
-//            &int:255
-//            &int:0.
-//            
-//        (aLength == 0)
-//            ? [ FormatException new:"Invalid date" raise. ].
-//
-//        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
-//    ]
+    stacksafe toWide &date_attributes:Flags
+    [
+        short(127) aBuffer := 0.
+
+        int aLength := system'external'KERNEL32 GetDateFormatW
+            &int:0
+            &int:(Flags int)
+            &__time_st:$self
+            &int:0
+            &shortarray:aBuffer
+            &int:255
+            &int:0.
+            
+        (aLength == 0)
+            ? [ FormatException new:"Invalid date" raise. ].
+
+        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
+    ]
     
-//    stacksafe toWide &time_attributes:Flags
-//    [
-//        short(127) aBuffer := 0.
-//
-//        int aLength := system'external'KERNEL32 GetTimeFormatW
-//            &int:0
-//            &int:(Flags int)
-//            &__time_st:$self
-//            &int:0
-//            &shortarray:aBuffer
-//            &int:255
-//            &int:0.
-//            
-//        (aLength == 0)
-//            ? [ FormatException new:"Invalid time" raise. ].
-//
-//        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
-//    ]
+    stacksafe toWide &time_attributes:Flags
+    [
+        short(127) aBuffer := 0.
+
+        int aLength := system'external'KERNEL32 GetTimeFormatW
+            &int:0
+            &int:(Flags int)
+            &__time_st:$self
+            &int:0
+            &shortarray:aBuffer
+            &int:255
+            &int:0.
+            
+        (aLength == 0)
+            ? [ FormatException new:"Invalid time" raise. ].
+
+        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
+    ]
 
     stacksafe toShortDate
         <= toWide &date_attributes:DATE_SHORTDATE.

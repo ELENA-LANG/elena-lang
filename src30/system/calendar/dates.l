@@ -390,8 +390,7 @@ sealed embeddable dispatchable(datetime) struct Date :: BaseNumber
 
     literal
     [
-        __time_st aStruct := 0l.
-        aStruct write &__time:theValue.
+        __time_st aStruct := theValue.
 
         var aTimeValue := aStruct toShortTime literal.
         
@@ -402,8 +401,7 @@ sealed embeddable dispatchable(datetime) struct Date :: BaseNumber
 
     wide
     [
-        __time_st aStruct := 0l.
-        aStruct write &__time:theValue.
+        __time_st aStruct := theValue.
         
         var aTimeValue := aStruct toShortTime wide.
         var aDateValue := aStruct toShortDate wide.
