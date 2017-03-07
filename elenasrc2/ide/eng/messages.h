@@ -8,7 +8,7 @@
 #define messagesH
 
 // --- Common constants ---
-#define APP_NAME                                _T("ELENA IDE 2.2.0")
+#define APP_NAME                                _T("ELENA IDE 3.0.1")
 #define EDITOR_NAME                             _T("ELENA IDE Editor")
 
 // --- UI Messages ---

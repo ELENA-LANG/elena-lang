@@ -1395,7 +1395,7 @@ int Compiler::TemplateScope :: mapAttribute(SNode terminal)
    if (emptystr(identifier))
       identifier = terminal.findChild(lxTerminal).identifier();
 
-   if (identifier.compare(TARGET_PSEUDO_VAR)) {
+   if (identifier.compare(TARGET_PSEUDO_METHOD)) {
       return -1;
    }
    else {
@@ -1431,6 +1431,29 @@ void Compiler::TemplateScope :: copySubject(SyntaxWriter& writer, SNode terminal
       writer.closeNode();
    }
    else copyIdentifier(writer, terminal);
+}
+
+void Compiler::TemplateScope :: copyIdentifier(SyntaxWriter& writer, SNode terminal)
+{
+   if (fieldMode) {
+      ident_t name = terminal.identifier();
+      if (name.compare(TARGET_PSEUDO_FIELD)) {
+         // recognize and replace template target field
+         SNode nodeAttr = exprNode.firstChild(lxTerminalMask);
+         if (nodeAttr != lxNone) {
+            writer.newNode(lxIdentifier, nodeAttr.findChild(lxTerminal).identifier());
+         }
+         else writer.newNode(lxIdentifier, terminal.findChild(lxIdentifier).identifier());
+
+         SyntaxTree::copyNode(writer, lxRow, nodeAttr);
+         SyntaxTree::copyNode(writer, lxCol, nodeAttr);
+         SyntaxTree::copyNode(writer, lxLength, nodeAttr);
+         writer.closeNode();
+
+         return;
+      }
+   }
+   ::copyIdentifier(writer, terminal);
 }
 
 void Compiler::TemplateScope :: generateClassName(bool newName)
@@ -5119,43 +5142,24 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    }
 }
 
-////void Compiler :: generateClassStaticField(ClassScope& scope, SNode current)
-////{
-////   _Module* module = scope.moduleScope->module;
-////
-////   ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
-////   ref_t typeHint = current.findChild(lxType).argument;
-////
-////   if (scope.info.statics.exist(terminal))
-////      scope.raiseError(errDuplicatedField, current);
-////
-////   // generate static reference
-////   ReferenceNs name(module->resolveReference(scope.reference));
-////   name.append(STATICFIELD_POSTFIX);
-////
-////   findUninqueName(module, name);
-////
-////   scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), typeHint));
-////}
-
-//////void Compiler :: generateClassFields(ClassScope& scope, SNode root, bool singleField)
-//////{
-//////   SNode current = root.firstChild();
-//////   while (current != lxNone) {
-//////      if (current == lxClassField/* || current == lxTemplateField*/) {
-//////         bool isStatic = current.existChild(lxStaticAttr);
-//////         if (isStatic) {
-//////            generateClassStaticField(scope, current);
-//////         }
-//////         else generateClassField(scope, current, singleField);
-//////      }
-//////      else if (current == lxTemplate) {
-//////         generateClassFields(scope, current, singleField);
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////}
+//void Compiler :: generateClassStaticField(ClassScope& scope, SNode current)
+//{
+//   _Module* module = scope.moduleScope->module;
+//
+//   ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
+//   ref_t typeHint = current.findChild(lxType).argument;
+//
+//   if (scope.info.statics.exist(terminal))
+//      scope.raiseError(errDuplicatedField, current);
+//
+//   // generate static reference
+//   ReferenceNs name(module->resolveReference(scope.reference));
+//   name.append(STATICFIELD_POSTFIX);
+//
+//   findUninqueName(module, name);
+//
+//   scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), typeHint));
+//}
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message)
 {
@@ -7026,7 +7030,7 @@ void Compiler :: copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope&
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (test(current.type, lxTerminalMask | lxObjectMask)) {
-         copyIdentifier(writer, current);
+         scope.copyIdentifier(writer, current);
       }
       else if (current == lxTemplate) {
          writer.appendNode(lxTemplate, scope.templateRef);
@@ -7230,8 +7234,12 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
          if (classRef == INVALID_REF) {
             TemplateScope templateScope(&scope, attrRef);
             templateScope.loadAttributeValues(current);
-            if (node == lxClassMethod || node == lxClassField) {
+            if (node == lxClassMethod) {
                templateScope.exprNode = goToNode(attributes, lxNameAttr);
+            }
+            else if (node == lxClassField) {
+               templateScope.exprNode = goToNode(attributes, lxNameAttr);
+               templateScope.fieldMode = true;
             }
 
             if (!generateTemplate(writer, templateScope, embeddableMode))

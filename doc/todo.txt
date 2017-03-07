@@ -191,7 +191,6 @@ Pipeline:
                  * exception template : default constructor
                  * reimplement event templates
                  * static fields
-                 * support property template
                  * implement switch
                  * support argument list
                  * exception in static symbol (e.g. $StartUpEvents new - if "new" is not found)
@@ -208,6 +207,7 @@ Pipeline:
                  * extension : include json.l file
                  * operation with binary arrays - arrayof(mssg)
                  * migrate all samples
+                 * support listof template
 
               zdev 
                  * script : elena - simple class,one method

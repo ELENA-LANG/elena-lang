@@ -5,7 +5,7 @@ Ultimate goals
 - maximally reusable code        
 - dynamic code without reflection
 
-Version 2.2.0
+Version 3.1.0
 -------------
 - basic linux version (only console)
 - start the code documentation
@@ -18,7 +18,7 @@ Version 2.2.0
 - gui vm / mt
 - x64 alpha version
 
-Version 2.3.0
+Version 3.2.0
 -------------
 - x64 beta version
 - web
@@ -33,25 +33,25 @@ Version 2.3.0
 - linux version (console & windowsx)
 - vmt-less action                 
 
-Version 2.4.0
+Version 3.3.0
 -------------
 - MVC
 - start migrating all assembler code to c; either dll or import object code
 - gcx, final version
 - x86 native code: optimize with pentium pro commands
 
-Version 2.5.0
+Version 3.4.0
 -------------
 - start work on visualizer
 
-Version 2.6.0
+Version 3.5.0
 -------------
 - lib30 review -> lib31
 - optimize elenavm
 - optimize elenart
 - optimize elenasm
 
-Version 2.x.x
+Version 3.x.x
 -------------
 - system'dynamics'tape optimization, currently every object is checked if it is a message,
   could it be optimized (move the check to the message, the only question how one can

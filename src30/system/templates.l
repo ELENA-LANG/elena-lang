@@ -1,17 +1,17 @@
-//#template(-16388) prop : prop_name
-//{
-//    #method set &prop_name : value
-//    [
-//        target := value.
-//    ]
-//    
-//    #method prop_name = target.
-//}
-//
-//#template(-16388) outprop : prop_name
-//{
-//    #method prop_name = target.
-//}
+#template(-16388) prop (prop_name)
+{
+    set &prop_name : value
+    [
+        $target_field := value.
+    ]
+    
+    prop_name = $target_field.
+}
+
+#template(-16388) outprop (prop_name)
+{
+    prop_name = $target_field.
+}
 
 // --- outnprop ---
 
@@ -20,7 +20,7 @@
    stacksafe embeddable int template_subj
    [
         int val := 0.
-        $self target &vint:val.
+        $self target_method &vint:val.
         
         ^ val.
    ]
@@ -32,7 +32,7 @@
 {
    stacksafe set &template_subj:val
    [
-        $self target &int:val.
+        $self target_method &int:val.
         
         ^ val.
    ]
@@ -45,7 +45,7 @@
    stacksafe embeddable long template_subj
    [
         long val := 0l.
-        $self target &vlong:val.
+        $self target_method &vlong:val.
         
         ^ val.
    ]
@@ -58,7 +58,7 @@
    stacksafe embeddable short template_subj
    [
         short val := 0.
-        $self target &vshort:val.
+        $self target_method &vshort:val.
         
         ^ val.
    ]
@@ -71,7 +71,7 @@
     stacksafe embeddable int template_fn &int:n
     [
         int retVal := 0.
-        $self target &int:n &vint:retVal.
+        $self target_method &int:n &vint:retVal.
         ^ retVal.            
     ]
 }

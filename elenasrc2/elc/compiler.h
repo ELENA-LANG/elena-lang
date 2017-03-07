@@ -718,9 +718,8 @@ private:
       bool        classMode;
       bool        embeddableMode;
       bool        codeMode;
+      bool        fieldMode;
       ident_t     sourcePath;
-////      bool        generationMode;
-//      int         sourceRef;
 
       SNode       exprNode;
       SNode       codeNode;
@@ -731,6 +730,7 @@ private:
       void loadParameters(SNode node);
 
       void copySubject(SyntaxWriter& writer, SNode terminal);
+      void copyIdentifier(SyntaxWriter& writer, SNode terminal);
 
       ref_t mapAttribute(SNode terminal, int& attrValue);
       int mapIdentifier(SNode terminal);
@@ -744,7 +744,7 @@ private:
          reference = 0;
          classMode = false;
          embeddableMode = false;
-         codeMode = false;
+         fieldMode = codeMode = false;
          sourcePath = NULL;
       }
       TemplateScope(ModuleScope* moduleScope)
@@ -754,7 +754,7 @@ private:
          reference = 0;
          classMode = false;
          embeddableMode = false;
-         codeMode = false;
+         fieldMode = codeMode = false;
          sourcePath = NULL;
       }
    };
