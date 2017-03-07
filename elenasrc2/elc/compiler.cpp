@@ -7157,6 +7157,10 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
       writer.newNode(lxClass, -1);
       writer.appendNode(lxReference, scope.moduleScope->module->resolveReference(scope.reference));
       writer.appendNode(lxAttribute, V_SEALED);
+
+      //HOT FIX : generated class should not be assigned with field / method
+      scope.fieldMode = false;
+      scope.exprNode = SNode();
    }
 
    //if (embeddableMode && withBody) {
@@ -7330,8 +7334,6 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
 
 void Compiler :: generateFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode)
 {
-   buffer.clear();
-
    SyntaxWriter bufferWriter(buffer);
 
    writer.newNode(lxClassField, templateMode ? -1 : 0);
