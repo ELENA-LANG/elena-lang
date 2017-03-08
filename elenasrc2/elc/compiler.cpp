@@ -1328,16 +1328,25 @@ ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue, b
       if (nextNode == lxAttributeValue || nextNode == lxExpression) {
          int paramCounter = 0;
          while (nextNode == lxAttributeValue || nextNode == lxExpression) {
+            SNode paramNode = nextNode.findChild(lxObject);
+            if (paramNode == lxObject)
+               paramNode = paramNode.firstChild(lxObjectMask);
+
+            if (paramNode == lxInteger || paramNode == lxHexInteger)
+               break;
+
             paramCounter++;
             nextNode = nextNode.nextNode();
          }
 
          // HOT FIX : if it is variable attribute with parameters
-         IdentifierString attrName(attribute.findChild(lxTerminal).identifier());
-         attrName.append('#');
-         attrName.appendInt(paramCounter);
+         if (paramCounter > 0) {
+            IdentifierString attrName(attribute.findChild(lxTerminal).identifier());
+            attrName.append('#');
+            attrName.appendInt(paramCounter);
 
-         return moduleScope->resolveAttributeRef(attrName, false);
+            return moduleScope->resolveAttributeRef(attrName, false);
+         }
       }
    }
 
@@ -7147,13 +7156,13 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
    
    SyntaxTree templateTree(body);
    
-   bool generatedClass = scope.classMode;
+   bool generatedClass = false;
    bool withBody = false;
-   if (embeddableMode) {
+   if (embeddableMode || scope.classMode) {
       SNode root = templateTree.readRoot();
 
       withBody = root.existChild(lxClassMethod, lxClassField);
-      if (withBody && !templateTree.readRoot().existChild(lxEmbeddable)) {
+      if (withBody && (scope.classMode || !templateTree.readRoot().existChild(lxEmbeddable))) {
          generatedClass = true;
       }
    }
@@ -7255,7 +7264,7 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
             }
 
             if (generateTemplate(writer, templateScope, embeddableMode)) {
-               if (variableMode)
+               if (variableMode && templateScope.reference != 0)
                   writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(templateScope.reference));
             }
             else scope.raiseError(errInvalidHint, current);

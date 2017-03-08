@@ -9,6 +9,7 @@
 
 [ELENA]              
 [+] (re)introducing field templates
+[+] (re)introducing auto-generated local / field attributes
 
 ******************************************************************************
                              What's New in 3.0.0
