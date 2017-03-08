@@ -2,11 +2,12 @@
 In development:
 ------                              
 
-              xdev - usability
-                 * ecv : display class size
-                 * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
-
               xdev - generic development
+                 * should be possible to declare field / local : varof(int). - the class should be reused, if it is already
+                   declared in this module
+
+                 * if arrayof(function) is declared several times - only one should be generated
+
                  * test 99 bottle
                  * test 24
                  * test matrix
@@ -18,6 +19,10 @@ In development:
                  * general architecture
                  * game of life : simple implementation
                  * game of life : create an engine (time slots)
+
+------                                 
+Pipeline:
+------                                                                                         
 
               zdev 
                  * fix interpreter sample
@@ -46,9 +51,10 @@ In development:
               zdev - cellular automata
                  * game of life : rules should be declared in external file
                  * game of life : viewer
-------                                 
-Pipeline:
-------                                                                                         
+
+              xdev - usability
+                 * ecv : display class size
+                 * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
 
               idev - generic development
                  * vm client : F8 on the start does not work
@@ -70,8 +76,6 @@ Pipeline:
 
                  * vint.set&int[1] - do not box the variable before assigning
                  * local attribute : do not allow embeddable templates
-                 * field attribute : if the template marked as embeddable it should be included into the body, otherwise -
-                   generate the new class
                  * method attribute : only embeddable templates should be allowed
 
                  * byte shift operations
@@ -155,7 +159,6 @@ Pipeline:
                  * compile n + m * k
                  * compile obj prop := n.
                  * do not box numeric constants
-                 * get rid of #method, #field, #var, #class and so on - only #import, #subject, #loop, #throw, #lock will be used
                  * compiling : dispatch = theValue. - should be allowed?
                  * test dispatching for the class with generic methods
                  * test dispatching to the expression result
@@ -176,8 +179,6 @@ Pipeline:
                  * test generic arrayof(byte), arrayof(message), arrayof(object), arrayof(enumerator)
                  * new verb : raise
                  * optimization : constant array
-                 * should be possible to declare field / local : varof(int). - the class should be reused, if it is already
-                   declared in this module
                  * test class and className extensions
                  * test is &numeric, is &literal, ...
                  * external function : duplicate assigning
@@ -314,8 +315,8 @@ Pipeline:
                        * real field
                        * structure field
 
-
               idev - generic development
+                       * modify color scheme
                        * allow to opem xml project
                        * allow to create xml project
                        * ini to xml

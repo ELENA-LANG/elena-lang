@@ -550,6 +550,7 @@ struct ClassInfo
 struct SymbolExpressionInfo
 {
    ref_t expressionTypeRef;
+   ref_t expressionClassRef;
    ref_t listRef;
    bool  constant;
 
@@ -558,6 +559,7 @@ struct SymbolExpressionInfo
       writer->writeDWord(expressionTypeRef);
       writer->writeDWord(listRef);
       writer->writeDWord(constant ? -1: 0);
+      writer->writeDWord(expressionClassRef);
    }
 
    void load(StreamReader* reader)
@@ -565,11 +567,12 @@ struct SymbolExpressionInfo
       expressionTypeRef = reader->getDWord();
       listRef = reader->getDWord();
       constant = (reader->getDWord() != 0);
+      expressionClassRef = reader->getDWord();
    }
 
    SymbolExpressionInfo()
    {
-      expressionTypeRef = 0;
+      expressionClassRef = expressionTypeRef = 0;
       listRef = 0;
       constant = false;
    }

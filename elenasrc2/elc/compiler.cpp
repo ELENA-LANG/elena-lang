@@ -520,10 +520,12 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
          if (r) {
             // if it is a constant
             if (symbolInfo.constant) {
+               ref_t classRef = symbolInfo.expressionClassRef != 0 ? symbolInfo.expressionClassRef : subjectHints.get(symbolInfo.expressionTypeRef);
+
                if (symbolInfo.listRef != 0) {
-                  return ObjectInfo(okArrayConst, symbolInfo.listRef, subjectHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
+                  return ObjectInfo(okArrayConst, symbolInfo.listRef, classRef, symbolInfo.expressionTypeRef);
                }
-               else return ObjectInfo(okConstantSymbol, reference, subjectHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
+               else return ObjectInfo(okConstantSymbol, reference, classRef, symbolInfo.expressionTypeRef);
             }
             // if it is a typed symbol
             else if (symbolInfo.expressionTypeRef != 0) {
@@ -707,6 +709,7 @@ ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& in
    if (argModule != module) {
       // import type
       info.expressionTypeRef = importSubject(argModule, info.expressionTypeRef, module);
+      info.expressionClassRef = importReference(argModule, info.expressionClassRef, module);
    }
    return moduleRef;
 }
@@ -987,7 +990,7 @@ Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference)
 Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    : SourceScope(parent, reference)
 {
-   typeRef = 0;
+   outputRef = typeRef = 0;
    constant = false;
    staticOne = false;
 //   preloaded = false;
@@ -1312,12 +1315,31 @@ ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
 
 // --- Compiler::TemplateScope ---
 
-ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue)
+ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue, bool variableMode)
 {   
    if (attribute == lxAttribute && attribute.argument != 0) {
       // HOTFIX : if the attribute was already defined - return it immediately
       return attribute.argument;
    }      
+
+   if (variableMode) {
+      SNode nextNode = attribute.nextNode();
+
+      if (nextNode == lxAttributeValue || nextNode == lxExpression) {
+         int paramCounter = 0;
+         while (nextNode == lxAttributeValue || nextNode == lxExpression) {
+            paramCounter++;
+            nextNode = nextNode.nextNode();
+         }
+
+         // HOT FIX : if it is variable attribute with parameters
+         IdentifierString attrName(attribute.findChild(lxTerminal).identifier());
+         attrName.append('#');
+         attrName.appendInt(paramCounter);
+
+         return moduleScope->resolveAttributeRef(attrName, false);
+      }
+   }
 
    SNode terminal = attribute.firstChild(lxTerminalMask);
 
@@ -1340,16 +1362,13 @@ ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue)
    else return moduleScope->mapAttribute(attribute, attrValue);
 }
 
-void Compiler::TemplateScope :: loadAttributeValues(SNode node)
+void Compiler::TemplateScope :: loadAttributeValues(SNode node, bool variableMode)
 {
-   SNode current = node.firstChild();
+   SNode current = variableMode ? node.nextNode() : node.firstChild();
    // load template parameters
    while (current != lxNone) {
-      //      else if (current == lxTemplateParam) {
-      //         subjects.add(subjects.Count() + 1, current.argument);
-      //      }
       if (current == lxAttributeValue) {
-         SNode terminalNode = current.firstChild(lxObjectMask);
+         SNode terminalNode = variableMode ? current.firstChild().findChild(lxIdentifier) : current.firstChild(lxObjectMask);
          ref_t subject = mapSubject(terminalNode);
          if (subject == 0) {
             ident_t identifier = terminalNode.identifier();
@@ -1358,17 +1377,11 @@ void Compiler::TemplateScope :: loadAttributeValues(SNode node)
 
             subject = moduleScope->module->mapSubject(identifier, false);
          }
-      
+
          subjects.add(subjects.Count() + 1, subject);
       }
-      //      else if (current == lxTemplateField && generationMode) {
-      //         ClassScope* parentClass = (ClassScope*)parent->getScope(Scope::slClass);
-      //
-      //         int offset = parentClass->info.fields.get(current.identifier());
-      //
-      //         info.fields.add(TARGET_PSEUDO_VAR, offset);
-      //         info.fieldTypes.add(offset, parentClass->info.fieldTypes.get(offset));
-      //      }
+      else if (variableMode)
+         break;
 
       current = current.nextNode();
    }
@@ -1645,8 +1658,6 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
 
 void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf)
 {
-   bool pseudoVarRequired = false;
-
    ModuleScope* moduleScope = scope.moduleScope;
 
    // declare built-in variables
@@ -1871,6 +1882,9 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
+      else if (current == lxClassRefAttr) {
+         scope.outputRef = scope.moduleScope->module->mapReference(current.identifier(), false);
+      }
 
       current = current.nextNode();
    }
@@ -1896,7 +1910,13 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
             fieldRef = scope.moduleScope->subjectHints.get(fieldType);
          }
          else scope.raiseError(errInvalidHint, node);
-      }      
+      }
+      else if (current == lxClassRefAttr) {
+         if (fieldRef == 0) {
+            fieldRef = scope.moduleScope->module->mapReference(current.identifier(), false);
+         }
+         else scope.raiseError(errInvalidHint, node);
+      }
 
       current = current.nextNode();
    }
@@ -1921,6 +1941,12 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
          if (variable.extraparam == 0) {
             variable.type = scope.moduleScope->module->mapSubject(current.identifier(), false);
             variable.extraparam = scope.moduleScope->subjectHints.get(variable.type);
+         }
+         else scope.raiseError(errInvalidHint, node);
+      }
+      else if (current == lxClassRefAttr) {
+         if (variable.extraparam == 0) {
+            variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), false);
          }
          else scope.raiseError(errInvalidHint, node);
       }
@@ -5164,6 +5190,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message)
 {
    ref_t outputType = scope.info.methodHints.get(Attribute(message, maType));
+   ref_t outputRef = scope.info.methodHints.get(Attribute(message, maReference));
    bool hintChanged = false;
    int hint = scope.info.methodHints.get(Attribute(message, maHint));
 
@@ -5189,12 +5216,20 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
          hintChanged = true;
       }
       else if (current == lxTypeAttr) {
-         if (outputType == 0) {
+         if (outputType == 0 && outputRef == 0) {
             outputType = scope.moduleScope->module->mapSubject(current.identifier(), false);
             scope.info.methodHints.add(Attribute(message, maType), outputType);
             scope.info.methodHints.add(Attribute(message, maReference), scope.moduleScope->subjectHints.get(outputType));
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnTypeAlreadyDeclared, node);
+      }
+      else if (current == lxClassRefAttr) {
+         if (outputType == 0 && outputRef == 0) {
+            outputRef = scope.moduleScope->module->mapReference(current.identifier(), false);
+
+            scope.info.methodHints.add(Attribute(message, maReference), outputRef);
+         }
+         else scope.raiseError(errInvalidHint, node);
       }
 //      else if (current == lxClassMethodOpt) {
 //         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
@@ -5479,9 +5514,10 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 {
    declareSymbolAttributes(node, scope);
    
-   if ((scope.constant || scope.typeRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == false) {
+   if ((scope.constant || scope.typeRef != 0 || scope.outputRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == false) {
       SymbolExpressionInfo info;
       info.expressionTypeRef = scope.typeRef;
+      info.expressionClassRef = scope.outputRef;
       info.constant = scope.constant;
       
       // save class meta data
@@ -5570,6 +5606,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
       if (root == lxConstantList) {
          SymbolExpressionInfo info;
          info.expressionTypeRef = scope.typeRef;
+         info.expressionClassRef = scope.outputRef;
          info.constant = scope.constant;
          info.listRef = root.argument;
 
@@ -5609,6 +5646,11 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
       ModuleScope* moduleScope = scope.moduleScope;
 
       convertObject(writer, *moduleScope, moduleScope->subjectHints.get(scope.typeRef), scope.typeRef, resolveObjectReference(codeScope, retVal), retVal.type);
+   }
+   else if (scope.outputRef != 0) {
+      ModuleScope* moduleScope = scope.moduleScope;
+
+      convertObject(writer, *moduleScope, scope.outputRef, scope.typeRef, resolveObjectReference(codeScope, retVal), retVal.type);
    }
    writer.removeBookmark();
    writer.closeNode();
@@ -6353,7 +6395,7 @@ void Compiler :: declareSubject(SyntaxWriter& writer, SNode member, ModuleScope&
             if (classRef == INVALID_REF) {
                TemplateScope templateScope(&scope);
                templateScope.templateRef = attrRef;
-               templateScope.loadAttributeValues(classNode);
+               templateScope.loadAttributeValues(classNode, false);
 
                if (generateTemplate(writer, templateScope, true)) {
                   classRef = templateScope.reference;
@@ -6378,45 +6420,6 @@ void Compiler :: declareSubject(SyntaxWriter& writer, SNode member, ModuleScope&
    }
    else scope.raiseError(errInvalidHint, classNode);
 }
-
-////void Compiler :: compileSubject(SNode member, ModuleScope& scope)
-////{
-////   SNode classNode = member.findChild(lxForward);
-////   if (classNode != lxNone) {
-////      SNode terminal = classNode.findChild(lxPrivate, lxIdentifier, lxReference);
-////
-////      SNode option = classNode.findChild(lxAttributeValue);
-////      if (option != lxNone) {
-////         ref_t attrRef = mapAttribute(classNode, scope);
-////         if (!attrRef)
-////            scope.raiseError(errInvalidHint, terminal);
-////
-////         TemplateScope templateScope(&scope, attrRef);
-////         templateScope.loadParameters(classNode, _writer);
-////
-////         templateScope.generateClassName();
-////
-////         ref_t classRef = generateTemplate(templateScope);
-////         if (classRef == 0)
-////            scope.raiseError(errInvalidHint, member);
-////      }
-////   }
-////}
-//
-//void Compiler :: compileIncludeSection(SNode member, ModuleScope& scope)
-//{
-//   while (member != lxNone) {
-//      switch (member) {
-//         case lxImport:
-//            compileIncludeModule(member, scope);
-//            break;
-////         case lxInclude:
-////            compileForward(member, scope);
-////            break;
-//      }
-//      member = member.nextNode();
-//   }
-//}
 
 bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
 {
@@ -6692,10 +6695,9 @@ void Compiler :: generateVariableTree(SyntaxWriter& writer, SNode node, Template
    SNode current = node.firstChild();
    SNode attr = node.findChild(lxIdentifier, lxPrivate);
    int dummy = 0;
-   ref_t attrRef = (attr != lxPrivate) ? scope.mapAttribute(attr, dummy) : 0;
+   ref_t attrRef = (attr != lxPrivate) ? scope.mapAttribute(attr, dummy, true) : 0;
    //HOTFIX : there should be at leat two attribute
    if (attrRef != 0 && attr.nextNode() != lxAssigning) {
-
       // HOTFIX : set already recognized attribute value
       attr.setArgument(attrRef);
 
@@ -6716,7 +6718,11 @@ void Compiler :: generateVariableTree(SyntaxWriter& writer, SNode node, Template
       setIdentifier(node.firstChild());
       SNode ident = node.findChild(lxNameAttr);
 
-      generateAttributes(writer, SNode(), scope, node.firstChild());
+      SyntaxWriter bufferWriter(*scope.autogeneratedTree);
+
+      generateAttributes(bufferWriter, SNode(), scope, node.firstChild(), true);
+      SyntaxTree::moveNodes(writer, *scope.autogeneratedTree, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxClassRefAttr, lxTemplateType);
+
       copyIdentifier(writer, ident.findChild(lxIdentifier, lxPrivate));
 
       writer.closeNode();
@@ -6966,7 +6972,7 @@ void Compiler :: generateSymbolTree(SyntaxWriter& writer, SNode node, TemplateSc
 {
    writer.newNode(lxSymbol);
 
-   generateAttributes(writer, node, scope, attributes);
+   generateAttributes(writer, node, scope, attributes, false);
 
    generateExpressionTree(writer, node.findChild(lxExpression), scope);
 
@@ -7087,7 +7093,7 @@ void Compiler :: copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope&
          SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
          writer.closeNode();
       }
-      else if (current == lxTypeAttr) {
+      else if (current == lxTypeAttr || current == lxClassRefAttr) {
          writer.appendNode(current.type, current.identifier());
       }
       else copyMethodTree(writer, current, scope);
@@ -7141,7 +7147,7 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
    
    SyntaxTree templateTree(body);
    
-   bool generatedClass = false;
+   bool generatedClass = scope.classMode;
    bool withBody = false;
    if (embeddableMode) {
       SNode root = templateTree.readRoot();
@@ -7205,7 +7211,7 @@ bool Compiler :: generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope
 
    SyntaxTree templateTree(body);
 
-   scope.loadAttributeValues(templateTree.readRoot());
+   scope.loadAttributeValues(templateTree.readRoot(), false);
 
    SNode current = templateTree.readRoot().findChild(lxCode).firstChild();
    while (current != lxNone) {
@@ -7218,12 +7224,12 @@ bool Compiler :: generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope
    return true;
 }
 
-void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool embeddableMode)
+void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool variableMode, bool embeddableMode)
 {
    SNode current = attributes;
    while (current == lxAttribute) {
       int attrValue = 0;
-      ref_t attrRef = scope.mapAttribute(current, attrValue);
+      ref_t attrRef = scope.mapAttribute(current, attrValue, variableMode);
       if (attrRef == INVALID_REF) {
          if (attrValue == -1) {
             writer.appendNode(lxEmbeddable);
@@ -7237,7 +7243,9 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
          ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
          if (classRef == INVALID_REF) {
             TemplateScope templateScope(&scope, attrRef);
-            templateScope.loadAttributeValues(current);
+            // HOTFIX : a new class should be generated in the variable mode
+            templateScope.classMode = variableMode;
+            templateScope.loadAttributeValues(current, variableMode);
             if (node == lxClassMethod) {
                templateScope.exprNode = goToNode(attributes, lxNameAttr);
             }
@@ -7246,13 +7254,16 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
                templateScope.fieldMode = true;
             }
 
-            if (!generateTemplate(writer, templateScope, embeddableMode))
-               scope.raiseError(errInvalidHint, current);
+            if (generateTemplate(writer, templateScope, embeddableMode)) {
+               if (variableMode)
+                  writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(templateScope.reference));
+            }
+            else scope.raiseError(errInvalidHint, current);
          }
          else if (classRef != 0) {
             writer.appendNode(lxTypeAttr, scope.moduleScope->module->resolveSubject(attrRef));
             SNode sizeNode = current.findChild(lxAttributeValue);
-            if (sizeNode == lxNone && current.nextNode() == lxAttributeValue) {
+            if (variableMode && current.nextNode() == lxAttributeValue) {
                // HOTFIX : for local variable size attribute
                sizeNode = current.nextNode();
                current = current.nextNode();
@@ -7301,10 +7312,10 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
       writer.appendNode(lxAttribute, V_SEALED);
       writer.appendNode(lxAttribute, V_GENERIC);
    }
-   else generateAttributes(bufferWriter, node, scope, attributes, true);
+   else generateAttributes(bufferWriter, node, scope, attributes, false, true);
 
    // copy attributes
-   SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxTemplateType);
+   SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxClassRefAttr, lxTemplateType);
 
    // copy method arguments
    SNode current = node.firstChild();
@@ -7338,10 +7349,10 @@ void Compiler :: generateFieldTree(SyntaxWriter& writer, SNode node, TemplateSco
 
    writer.newNode(lxClassField, templateMode ? -1 : 0);
 
-   generateAttributes(bufferWriter, node, scope, attributes, true);
+   generateAttributes(bufferWriter, node, scope, attributes, false, true);
 
    // copy attributes
-   SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxTemplateType);
+   SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxClassRefAttr, lxTemplateType);
 
    SNode bodyNode = node.findChild(lxCode, lxExpression, lxDispatchCode, lxReturning, lxResendExpression);
    if (bodyNode != lxNone) {
@@ -7358,7 +7369,7 @@ void Compiler :: generateTemplateTree(SyntaxWriter& writer, SNode node, Template
 {
    SyntaxTree buffer;
 
-   generateAttributes(writer, node, scope, attributes);
+   generateAttributes(writer, node, scope, attributes, false);
 
    SNode current = node.firstChild();
    SNode subAttributes;
@@ -7392,7 +7403,7 @@ void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateSco
    if (!nested) {
       writer.newNode(lxClass);
 
-      generateAttributes(writer, node, scope, attributes);
+      generateAttributes(writer, node, scope, attributes, false);
    }
 
    SNode current = node.firstChild();
@@ -7490,7 +7501,7 @@ bool Compiler :: generateSingletonScope(SyntaxWriter& writer, SNode node, Templa
          writer.closeNode();
       }
 
-      generateAttributes(writer, node, scope, attributes);
+      generateAttributes(writer, node, scope, attributes, false);
 
       // NOTE : generateClassTree closes the class node and copies auto generated classes after it
       generateClassTree(writer, closureNode, scope, SNode(), -2);
@@ -7536,7 +7547,7 @@ void Compiler :: generateScope(SyntaxWriter& writer, SNode node, TemplateScope& 
    }
 }
 
-void Compiler :: saveTemplate(_Memory* target, SNode node, ModuleScope& scope, SNode attributes)
+void Compiler :: saveTemplate(_Memory* target, SNode node, ModuleScope& scope, SNode attributes, SyntaxTree& autogenerated)
 {
    SyntaxTree tree;
    SyntaxWriter writer(tree);
@@ -7549,6 +7560,7 @@ void Compiler :: saveTemplate(_Memory* target, SNode node, ModuleScope& scope, S
    fullPath.append(scope.sourcePath);
 
    TemplateScope rootScope(&scope);
+   rootScope.autogeneratedTree = &autogenerated;
    rootScope.loadParameters(node);
    rootScope.sourcePath = fullPath;
 
@@ -7559,7 +7571,7 @@ void Compiler :: saveTemplate(_Memory* target, SNode node, ModuleScope& scope, S
    SyntaxTree::saveNode(tree.readRoot(), target);
 }
 
-void Compiler :: generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScope& scope)
+void Compiler :: generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScope& scope, SyntaxTree& autogenerated)
 {
    SNode attributes;
    SNode current = node.firstChild();
@@ -7569,8 +7581,12 @@ void Compiler :: generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScop
             compileIncludeModule(current, scope);
             break;
          case lxSubject:
-            declareSubject(writer, current, scope);
+         {
+            SyntaxWriter autogeneratedWriter(autogenerated);
+
+            declareSubject(autogeneratedWriter, current, scope);
             break;
+         }
          case lxAttribute:
             if (attributes == lxNone) {
                attributes = current;
@@ -7579,6 +7595,7 @@ void Compiler :: generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScop
          case lxScope:
          {
             TemplateScope rootScope(&scope);
+            rootScope.autogeneratedTree = &autogenerated;
             generateScope(writer, current, rootScope, attributes);
             attributes = SNode();
             break;
@@ -7599,7 +7616,7 @@ void Compiler :: generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScop
             if (scope.module->mapSection(templateRef | mskSyntaxTreeRef, true))
                scope.raiseError(errDuplicatedSymbol, name);
 
-            saveTemplate(scope.module->mapSection(templateRef | mskSyntaxTreeRef, false), current, scope, attributes);
+            saveTemplate(scope.module->mapSection(templateRef | mskSyntaxTreeRef, false), current, scope, attributes, autogenerated);
             attributes = SNode();
 
             scope.saveSubject(templateRef, INVALID_REF, false);
@@ -7618,10 +7635,14 @@ void Compiler :: compileModule(_ProjectManager& project, ident_t file, SyntaxTre
    project.printInfo("%s", file);
 
    // prepare syntax tree
+   SyntaxTree autogeneratedTree;
    SyntaxTree syntaxTree;
    SyntaxWriter writer(syntaxTree);
    writer.newNode(lxRoot);
-   generateSyntaxTree(writer, derivationTree.readRoot(), scope);
+   generateSyntaxTree(writer, derivationTree.readRoot(), scope, autogeneratedTree);
+
+   SyntaxTree::moveNodes(writer, autogeneratedTree, lxClass);
+
    writer.closeNode();
 
    // compile syntax tree

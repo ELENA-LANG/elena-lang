@@ -223,6 +223,7 @@ enum LexicalType
    lxTemplateType    = 0x2002C,
    lxEmbeddableAttr  = 0x2002D,
    lxBoxableAttr     = 0x2002E,
+   lxClassRefAttr    = 0x2002F,
    lxClosureMessage  = 0x20030,
    lxExtArgumentType = 0x20031,
 
@@ -851,6 +852,7 @@ public:
    static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4);
    static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5);
    static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6);
+   static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7);
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);
