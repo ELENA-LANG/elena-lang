@@ -7283,9 +7283,14 @@ void Compiler :: copyAttributeTree(SyntaxWriter& writer, SNode node, TemplateSco
          else if (attrValue != 0) {
             writer.appendNode(lxAttribute, attrValue);
          }
+         else if (attrRef != 0) {
+            writer.appendNode(lxTypeAttr, scope.moduleScope->module->resolveSubject(attrRef));
+         }
          else {
-            /*else */writer.appendNode(lxTypeAttr, scope.moduleScope->module->resolveSubject(attrRef));
-         }         
+            writer.newNode(lxAttributeValue);
+            copyIdentifier(writer, terminalNode);
+            writer.closeNode();
+         }
       }
       else if (variableMode)
          break;
