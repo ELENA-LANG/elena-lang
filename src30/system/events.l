@@ -34,12 +34,12 @@
     dispatch => system'core_routines'__event.
 }
 
-#template(-16388) event (function,prop)
-{
-    prop &function:func
-    [
-        ($nil == $target_field)
-            ? [ $target_field := func. ]
-            ! [ $target_field append &function:func. ].
-    ]
-}
+//#template(-16388, eventhandler(function)) event (function,prop)
+//{
+//    prop &function:func
+//    [
+//        ($nil == $target_field)
+//            ? [ $target_field := func. ]
+//            ! [ $target_field append &function:func. ].
+//    ]
+//}

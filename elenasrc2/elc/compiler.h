@@ -712,7 +712,7 @@ private:
    // --- TemplateScope ---
    struct TemplateScope : Scope
    {
-      ref_t        templateRef;
+      ref_t        templateRef;  // NOTE : should be zero for template declaration
       ref_t        reference;
       ForwardMap   parameters;
       SubjectMap   subjects;
@@ -738,7 +738,7 @@ private:
       ref_t mapAttribute(SNode terminal, int& attrValue, bool variableMode = false);
       int mapIdentifier(SNode terminal);
 
-      void generateClassName(bool newName = false);
+      bool generateClassName();
 
       TemplateScope(TemplateScope* parent, ref_t attrRef)
          : Scope(parent)
@@ -960,7 +960,6 @@ private:
 //   void generateClassStaticField(ClassScope& scope, SNode current);
 
    void generateClassFlags(ClassScope& scope, SNode node);
-////   void generateClassFields(ClassScope& scope, SyntaxTree::Node root, bool singleField);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
    void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed);
    void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, bool classClassMode);
@@ -1013,6 +1012,7 @@ private:
    void compileDeclarations(SNode node, ModuleScope& scope);
    void compileImplementations(SNode node, ModuleScope& scope);
 
+   void copyAttributeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode);
    void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 
@@ -1021,6 +1021,7 @@ private:
    bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool embeddableMode);
    bool generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope);
    void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool variableMode, bool embeddableMode = false);
+   void copyTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode, bool embeddableMode);
    void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool operationMode);
