@@ -3218,7 +3218,9 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    }
    // if it setat operator
    else if (operation == lxOperator) {
-      return compileOperator(writer, node, scope, mode, SET_REFER_MESSAGE_ID);
+      retVal = compileOperator(writer, node, scope, mode, SET_REFER_MESSAGE_ID);
+
+      operationType = lxNone;
    }
    else {
       SNode targetNode = node.firstChild(lxObjectMask);

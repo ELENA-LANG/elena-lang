@@ -634,6 +634,7 @@ Pipeline:
                        * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
                        * use imm mode for (n) => 1 ? [ now literal. ]
                        * optimize __castover / __event handler
+                       * optimize - arrayof(func1)a := func1(1).
 
               xdev - native code optimization
                        * use rep stos to clear the object after creating      
