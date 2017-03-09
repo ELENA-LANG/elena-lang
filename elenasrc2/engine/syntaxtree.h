@@ -846,6 +846,7 @@ private:
    void refresh(Node& node);
 
 public:
+   static void moveNodes(Writer& writer, SyntaxTree& buffer);
    static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type);
    static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2);
    static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3);

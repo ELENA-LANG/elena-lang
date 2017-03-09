@@ -188,6 +188,25 @@ void SyntaxTree :: loadNode(Node node, _Memory* dump)
    copyNode(tree.readRoot(), node);
 }
 
+void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer)
+{
+   SNode current = buffer.readRoot();
+   while (current != lxNone) {
+      if (current != lxIdle) {
+         if (current.strArgument >= 0) {
+            writer.newNode(current.type, current.identifier());
+         }
+         else writer.newNode(current.type, current.argument);
+
+         SyntaxTree::copyNode(writer, current);
+         writer.closeNode();
+
+         current = lxIdle;
+      }
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type)
 {
    SNode current = buffer.readRoot();

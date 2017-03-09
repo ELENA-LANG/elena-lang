@@ -1013,8 +1013,10 @@ private:
    void compileImplementations(SNode node, ModuleScope& scope);
 
    void copyAttributeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode);
-   void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-   void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void copyTreeNode(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool methodMode = false);
+   void copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer);
+   void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer);
 
    void generateScopeMembers(SNode node, TemplateScope& scope);
 
