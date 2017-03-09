@@ -1394,6 +1394,12 @@ void Compiler::TemplateScope :: loadAttributeValues(SNode node, bool variableMod
 
          subjects.add(subjects.Count() + 1, subject);
       }
+      else if (current == lxTemplateType) {
+         TemplateScope* parentTemplate = (TemplateScope*)parent;
+         ref_t subject = parentTemplate->subjects.get(current.argument);
+
+         subjects.add(subjects.Count() + 1, subject);
+      }
       else if (variableMode)
          break;
 
