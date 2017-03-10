@@ -6016,9 +6016,15 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
                   _logic->optimizeEmbeddableOp(scope, *this, node);
                }
             }
-            else if (subNode.existChild(lxBoxableAttr)) {
-               //// if it is implicit conversion
-               //SNode createNode = subNode.findChild(lxCreatingClass, lxCreatingStruct);
+            else if (subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
+               SNode createNode = subNode.findChild(lxCreatingStruct);
+               if (createNode != lxNone && targetNode == lxLocalAddress) {
+                  // if it is implicit conversion
+                  createNode.set(targetNode.type, targetNode.argument);
+
+                  node = lxExpression;
+                  targetNode = lxIdle;
+               }
             }
          }
       }

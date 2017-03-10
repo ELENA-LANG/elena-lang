@@ -636,6 +636,10 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
 
    // check if there are implicit constructors
    if (test(info.header.flags, elSealed)) {
+      if (isPrimitiveRef(sourceRef))
+         // HOTFIX : recognize primitive data
+         sourceRef = resolvePrimitiveReference(scope, sourceRef);
+
    //   if (sourceType != 0) {
    //      // if the source type is defined we are lucky
    //      int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);

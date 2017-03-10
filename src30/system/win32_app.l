@@ -5,7 +5,6 @@ class $CommandLineFactory =
     new
     [
         dirty_ptr aCommandLinePtr := system'external'KERNEL32 GetCommandLineW.
-//        aCommandLinePtr set &int:(system'external'KERNEL32 GetCommandLineW).
 
         ^ aCommandLinePtr wide.
     ]

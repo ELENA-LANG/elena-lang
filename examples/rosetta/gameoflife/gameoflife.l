@@ -1,10 +1,8 @@
-#import system.
-
-#symbol program =
+program =
 [
-//    console clear.
-        
-//    space print.
-    
-//    #var aSpace := Space new:(Cellular new &x:3 &y:3, Cellular new &x:5 &y:22, Cellular new &x:5 &y:13, Cellular new &x:13 &y:13) &scale:10.
+////    console clear.
+//        
+////    space print.
+//    
+////    #var aSpace := Space new:(Cellular new &x:3 &y:3, Cellular new &x:5 &y:22, Cellular new &x:5 &y:13, Cellular new &x:13 &y:13) &scale:10.
 ].
