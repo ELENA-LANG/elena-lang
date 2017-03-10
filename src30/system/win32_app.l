@@ -18,14 +18,7 @@ symbol commandLine =
 
 class $StartUpEvents
 {
-    object theFinializeEvent.
-    
-    set &onAppEnd:aHandle
-    [
-        ($nil == theFinializeEvent)
-            ? [ theFinializeEvent := aHandle. ]
-            /*! [ theFinializeEvent := Function1Group new &args:(theFinializeEvent,aHandle). ]*/.
-    ]
+    event(func1,onStop) theFinializeEvent.
     
     $onStop : arg
     [
