@@ -116,12 +116,12 @@ sealed struct $ConsoleWriter
         system'external'KERNEL32 SetConsoleCursorPosition &int:theHandle &int:0.
     ]
 
-//    stacksafe setCursorPosition &int:x &int:y
-//    [
-//        int coord := y * 10000h + x.
-//                
-//        system'external'KERNEL32 SetConsoleCursorPosition &int:theHandle &int:coord.
-//    ]
+    stacksafe setCursorPosition &int:x &int:y
+    [
+        int coord := y * 10000h + x.
+                
+        system'external'KERNEL32 SetConsoleCursorPosition &int:theHandle &int:coord.
+    ]
 
     refresh
     [

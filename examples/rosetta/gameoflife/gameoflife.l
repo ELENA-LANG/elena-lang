@@ -2,10 +2,8 @@
 
 program =
 [
-    space s := IntMatrixSpace new &int:5 &int:5.
-    
-    int cell := s getAt &int:0 &int:0.
-    
+    var model := Model new.
+
 //    console clear.        
 //    s print.
     
