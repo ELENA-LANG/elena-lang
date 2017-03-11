@@ -1267,9 +1267,7 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
    if (returningType != 0 && defineStructSize(scope, scope.subjectHints.get(returningType), 0, true) > 0) {
       root = root.findChild(lxNewFrame);
 
-      if (SyntaxTree::matchPattern(root, lxObjectMask, 2,
-         SNodePattern(lxExpression),
-         SNodePattern(lxReturning)))
+      if (root.existChild(lxReturning))
       {
          SNode message = SyntaxTree::findPattern(root, 2,
             SNodePattern(lxExpression),
@@ -1317,9 +1315,8 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
                SNodePattern(lxLocalAddress));
          }
 
-         SNode ret = SyntaxTree::findPattern(root, 4,
+         SNode ret = SyntaxTree::findPattern(root, 3,
             SNodePattern(lxReturning),
-            SNodePattern(lxExpression),
             SNodePattern(lxBoxing),
             SNodePattern(lxLocalAddress));
 
@@ -1349,9 +1346,7 @@ bool CompilerLogic :: recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode roo
    if (returningType != 0 && defineStructSize(scope, scope.subjectHints.get(returningType), 0, true) > 0) {
       root = root.findChild(lxNewFrame);
 
-      if (SyntaxTree::matchPattern(root, lxObjectMask, 2,
-         SNodePattern(lxExpression),
-         SNodePattern(lxReturning)))
+      if (root.existChild(lxReturning))
       {
          SNode message = SyntaxTree::findPattern(root, 2,
             SNodePattern(lxExpression),
@@ -1406,9 +1401,8 @@ bool CompilerLogic :: recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode roo
                SNodePattern(lxLocalAddress));
          }
 
-         SNode ret = SyntaxTree::findPattern(root, 4,
+         SNode ret = SyntaxTree::findPattern(root, 3,
             SNodePattern(lxReturning),
-            SNodePattern(lxExpression),
             SNodePattern(lxBoxing),
             SNodePattern(lxLocalAddress));
 

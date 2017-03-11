@@ -20,6 +20,6 @@ bin\elc src30\extensions\extensions.prj
 rem bin\elc src30\net\net.prj
 rem bin\elc src30\forms\forms.prj
 rem bin\elc src30\sqlite\sqlite.prj
-rem bin\elc src30\cellular\cellular.prj
+bin\elc src30\cellular\cellular.prj
 
 rem bin\elc src30\system\system_64.prj

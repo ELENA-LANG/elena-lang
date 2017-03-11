@@ -100,21 +100,20 @@ sealed struct $ConsoleWriter
     
     clear
     [
-//        console_screen_buffer_info aBuffer := 0.
+        console_screen_buffer_info aBuffer := 0.        
+        int                        aLength := 0.
+        int                        aRetVal := 0.
         
-//        int                        aLength := 0.
-//        int                        aRetVal := 0.
-//        
-//        system'external'KERNEL32 GetConsoleScreenBufferInfo &int:theHandle &console_screen_buffer_info:aBuffer.
-//
-//        short aSizeX := aBuffer SizeX.
-//        short aSizeY := aBuffer SizeY.
-//                
-//        aLength := aSizeX * aSizeY.
-//        
-//        system'external'KERNEL32 FillConsoleOutputCharacterW &int:theHandle &short:32 &int:aLength &int:0 &vint:aRetVal.
-//        
-//        system'external'KERNEL32 SetConsoleCursorPosition &int:theHandle &int:0.
+        system'external'KERNEL32 GetConsoleScreenBufferInfo &int:theHandle &console_screen_buffer_info:aBuffer.
+
+        short aSizeX := aBuffer SizeX.
+        short aSizeY := aBuffer SizeY.
+                
+        aLength := aSizeX * aSizeY.
+        
+        system'external'KERNEL32 FillConsoleOutputCharacterW &int:theHandle &short:32 &int:aLength &int:0 &vint:aRetVal.
+        
+        system'external'KERNEL32 SetConsoleCursorPosition &int:theHandle &int:0.
     ]
 
 //    stacksafe setCursorPosition &int:x &int:y

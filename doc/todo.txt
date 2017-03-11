@@ -24,6 +24,9 @@ In development:
 Pipeline:
 ------                                                                                         
 
+              xdev - native code optimization
+                       * use rep stos to clear the object after creating      
+
               zdev 
                  * fix interpreter sample
                  * hello world sample
@@ -642,7 +645,6 @@ Pipeline:
                        * optimize : structure copying
 
               xdev - native code optimization
-                       * use rep stos to clear the object after creating      
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)
                        * optimize hook / unhook commands
                        * should ret be followed with several nops?
