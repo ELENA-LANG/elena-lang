@@ -86,12 +86,13 @@ struct EmbeddableOp
       this->verb = verb;
    }
 };
-#define EMBEDDABLEOP_MAX 3
+#define EMBEDDABLEOP_MAX 4
 EmbeddableOp embeddableOps[EMBEDDABLEOP_MAX] =
 {
    EmbeddableOp(maEmbeddableGetAt, 2, READ_MESSAGE_ID),
    EmbeddableOp(maEmbeddableGetAt2, 3, READ_MESSAGE_ID),
-   EmbeddableOp(maEmbeddableEval, 2, EVAL_MESSAGE_ID)
+   EmbeddableOp(maEmbeddableEval, 2, EVAL_MESSAGE_ID),
+   EmbeddableOp(maEmbeddableEval2, 3, EVAL_MESSAGE_ID)
 };
 
 // --- CompilerLogic ---
@@ -1331,17 +1332,7 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
    return false;
 }
 
-bool CompilerLogic :: recognizeEmbeddableGetAt(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
-{
-   return recognizeEmbeddableOp(scope, root, extensionRef,  returningType, READ_MESSAGE_ID, subject);
-}
-
-bool CompilerLogic :: recognizeEmbeddableEval(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
-{
-   return recognizeEmbeddableOp(scope, root, extensionRef, returningType, EVAL_MESSAGE_ID, subject);
-}
-
-bool CompilerLogic :: recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
+bool CompilerLogic :: recognizeEmbeddableOp2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, int verb, ref_t& subject)
 {
    if (returningType != 0 && defineStructSize(scope, scope.subjectHints.get(returningType), 0, true) > 0) {
       root = root.findChild(lxNewFrame);
@@ -1353,7 +1344,7 @@ bool CompilerLogic :: recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode roo
             SNodePattern(lxDirectCalling, lxSDirctCalling));
 
          // if it is read&index1&index2&var[2] message
-         if (getParamCount(message.argument) != 3 || getVerb(message.argument) != READ_MESSAGE_ID)
+         if (getParamCount(message.argument) != 3 || getVerb(message.argument) != verb)
             return false;
 
          // check if it is operation with $self
@@ -1415,6 +1406,26 @@ bool CompilerLogic :: recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode roo
    }
 
    return false;
+}
+
+bool CompilerLogic :: recognizeEmbeddableGetAt(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
+{
+   return recognizeEmbeddableOp(scope, root, extensionRef,  returningType, READ_MESSAGE_ID, subject);
+}
+
+bool CompilerLogic :: recognizeEmbeddableEval(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
+{
+   return recognizeEmbeddableOp(scope, root, extensionRef, returningType, EVAL_MESSAGE_ID, subject);
+}
+
+bool CompilerLogic :: recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
+{
+   return recognizeEmbeddableOp2(scope, root, extensionRef, returningType, READ_MESSAGE_ID, subject);
+}
+
+bool CompilerLogic :: recognizeEmbeddableEval2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject)
+{
+   return recognizeEmbeddableOp2(scope, root, extensionRef, returningType, EVAL_MESSAGE_ID, subject);
 }
 
 bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode)

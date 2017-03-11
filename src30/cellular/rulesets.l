@@ -1,9 +1,7 @@
-//#import system.
+/// --- Rule Set ---
+
+//#subject ruleset = BaseRuleSet.
 //
-/////// --- Rule Set ---
-////
-////#subject ruleset = BaseRuleSet.
-////
-////#class(limited) BaseRuleSet
-////{
-////}
+//#class(limited) BaseRuleSet
+//{
+//}

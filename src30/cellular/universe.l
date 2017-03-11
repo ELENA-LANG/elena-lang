@@ -49,6 +49,37 @@ limited dispatchable(space) class BaseSpace
     [
         $self scan:$nil &cellfunc:func.
     ]
+    
+    stacksafe nnfn(getLiveCell) calcLiveCells &int:x &int:y &vint:retVal
+    [
+        int i := -1.
+        int j := -1.
+        int counter := 0.
+        while (i < 2)
+        [
+            j := -1.
+            while (j < 2)
+            [
+                int cell := $self getAt &int:(x + i) &int:(y + j).
+                (cell == 1)
+                    ? [ counter += 1. ].
+                
+                j += 1.
+            ].
+            i += 1.
+        ].
+        
+        retVal := counter.
+    ]
+//    
+//    stacksafe embeddable int getLiveCell &int:x &int:y
+//    [
+//        int retVal := 0.
+//        
+//        $self calcLiveCells &int:x &int:y &vint:retVal.
+//        
+//        ^ retVal.
+//    ]
 }
 
 class IntMatrixSpace :: BaseSpace
@@ -85,11 +116,21 @@ class IntMatrixSpace :: BaseSpace
     stacksafe read &int:y &int:x &vint:retVal
     [
         int i := x.
+        (i < 0)?
+        [
+            i := theN - i.
+        ].
+        
         (i > theN)?
         [
             i := i mod &int:theN.
         ].
+        
         int j := y.
+        (j < 0)?
+        [
+            j := theM - j.
+        ].
         (j > theM)?
         [
             j := j mod &int:theM.

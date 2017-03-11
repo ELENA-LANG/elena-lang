@@ -76,6 +76,18 @@
     ]
 }
 
+// --- nnfn ---
+
+#template(-16388) nnfn (template_fn)
+{
+    stacksafe embeddable int template_fn &int:n &int:m
+    [
+        int retVal := 0.
+        $self target_method &int:n &int:m &vint:retVal.
+        ^ retVal.            
+    ]
+}
+
 // --- while statement ---
 
 #template while (expr)

@@ -6314,6 +6314,13 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
       // HOTFIX : allowing to recognize embeddable get in the class itself
       classScope.save();
    }
+   // Optimization : var = eval&int&int => evald&int&subject&var[2]
+   else if (_logic->recognizeEmbeddableEval2(*classScope.moduleScope, methodNode, classScope.extensionMode != 0 ? classScope.reference : 0, returnType, type)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval2), type);
+
+      // HOTFIX : allowing to recognize embeddable get in the class itself
+      classScope.save();
+   }
 
    // Optimization : subject'get = self
    if (_logic->recognizeEmbeddableIdle(methodNode)) {
