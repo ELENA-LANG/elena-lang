@@ -835,7 +835,7 @@ const literal emptyLiteralValue = "".
 // --- LiteralValue ---
 
 /// A UTF-8 literal value
-sealed dispatchable(literal) dynamic string LiteralValue :: BaseValue
+sealed dispatchable(literal,int,char,wide) dynamic string LiteralValue :: BaseValue
 {
     byte $target.
 
@@ -1055,7 +1055,7 @@ const wide emptyWideLiteralValue = ""w.
 // --- WideLiteralValue ---
 
 /// A UTF-18 literal value
-sealed dispatchable(wide) dynamic string WideLiteralValue :: BaseValue
+sealed dispatchable(wide,int,char,literal) dynamic string WideLiteralValue :: BaseValue
 {
     short $target.
 

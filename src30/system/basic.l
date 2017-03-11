@@ -788,7 +788,7 @@ sealed embeddable dispatchable(short) struct ShortNumber :: IntBaseNumber
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-sealed embeddable dispatchable(int) struct IntNumber :: IntBaseNumber
+sealed embeddable dispatchable(int,long,real,char,literal,wide) struct IntNumber :: IntBaseNumber
 {
     __int32 theValue.
 
@@ -1053,7 +1053,7 @@ sealed embeddable dispatchable(int) struct IntNumber :: IntBaseNumber
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-sealed embeddable dispatchable(long) struct LongNumber :: IntBaseNumber
+sealed embeddable dispatchable(long,int,real,literal,wide) struct LongNumber :: IntBaseNumber
 {
     __int64 theValue.
     
@@ -1312,7 +1312,7 @@ sealed embeddable dispatchable(long) struct LongNumber :: IntBaseNumber
 // --- realNumber ---
 
 /// A 64bit float numeric value
-sealed embeddable dispatchable(real) struct RealNumber :: BaseNumber
+sealed embeddable dispatchable(real,int,long,literal,wide) struct RealNumber :: BaseNumber
 {
     __real64 theValue.
 
@@ -1514,7 +1514,7 @@ sealed embeddable dispatchable(real) struct RealNumber :: BaseNumber
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-sealed const embeddable dispatchable(char) struct CharValue :: BaseValue
+sealed const embeddable dispatchable(char,int,literal,wide) struct CharValue :: BaseValue
 {
     __dword theValue.
 

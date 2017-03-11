@@ -1,4 +1,5 @@
-/lib
+/lib30
+/lib30_64
 *.exe
 *.nl
 *.dnl

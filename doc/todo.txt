@@ -3,11 +3,6 @@ In development:
 ------                              
 
               xdev - generic development
-                 * should be possible to declare field / local : varof(int). - the class should be reused, if it is already
-                   declared in this module
-
-                 * if arrayof(function) is declared several times - only one should be generated
-
                  * test 99 bottle
                  * test 24
                  * test matrix
