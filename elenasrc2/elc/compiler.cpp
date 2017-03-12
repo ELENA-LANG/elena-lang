@@ -5262,6 +5262,14 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 //      }
       current = current.nextNode();
    }
+   
+   if (getVerb(message) == PRIVATE_MESSAGE_ID) {
+      // if it is private message set private hint and save it as EVAL one
+      hintChanged = true;
+      hint |= tpPrivate;
+
+      scope.info.methodHints.add(Attribute(overwriteVerb(message, EVAL_MESSAGE_ID), maHint), hint);
+   }
 
    if (hintChanged) {
       scope.info.methodHints.exclude(Attribute(message, maHint));
@@ -5288,10 +5296,12 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       else scope.raiseError(errDuplicatedMethod, current);
    }
    else {
+      bool privateOne = getVerb(message) == PRIVATE_MESSAGE_ID;
       bool included = scope.include(message);
       bool sealedMethod = (methodHints & tpMask) == tpSealed;
       // if the class is closed, no new methods can be declared
-      if (included && closed)
+      // except private sealed ones (which are declared outside the class VMT)
+      if (included && closed && !privateOne)
          scope.raiseError(errClosedParent, findParent(current, lxClass));
 
       // if the method is sealed, it cannot be overridden

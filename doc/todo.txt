@@ -3,6 +3,12 @@ In development:
 ------                              
 
               xdev - generic development
+                 * it should be possible to declare a new private sealed method for limited class
+
+                 * game of life : simple implementation
+                 * replace $self with self for template in extensions
+                 * move calcLiveCells into an extension
+
                  * test 99 bottle
                  * test 24
                  * test matrix
@@ -12,7 +18,6 @@ In development:
 
               zdev - cellular automata
                  * general architecture
-                 * game of life : simple implementation
                  * game of life : create an engine (time slots)
 
 ------                                 
@@ -175,7 +180,7 @@ Pipeline:
                  * test primitive operations with message / subject
                  * test primitive operations with arrays, int array, short arrays, byte arrays, binary arrays
                  * test generic arrayof(byte), arrayof(message), arrayof(object), arrayof(enumerator)
-                 * new verb : raise
+                 * new verb : update
                  * optimization : constant array
                  * test class and className extensions
                  * test is &numeric, is &literal, ...

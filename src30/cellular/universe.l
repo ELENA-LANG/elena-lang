@@ -1,20 +1,10 @@
-#subject cellfunc = CellFunction.
-#subject space = BaseSpace.
-
-limited dispatchable(cellfunc) CellFunction
-{
-    stacksafe action eval &space:space &int:x &int:y
-    [
-    ]
-    
-    stacksafe action eval:target &space:space &int:x &int:y
-    [
-        $self eval &space:space &int:x &int:y.
-    ]
-}
 
 limited dispatchable(space) class BaseSpace
 {
+    update &ruleset:rs
+    [
+    ]
+    
     stacksafe read &int:x &int:y &vint:retVal
     [        
     ]
@@ -25,29 +15,6 @@ limited dispatchable(space) class BaseSpace
         $self read &int:x &int:y &vint:retVal.
         
         ^ retVal.
-    ]
-    
-    stacksafe setAt &int:x &int:y &int:cell
-    [
-    ]
-
-    /// Returns the space actual number of rows    
-    stacksafe outnprop(rows) readRows &vint:retVal
-    [
-    ]
-    
-    /// Returns the space actual number of columns
-    stacksafe outnprop(columns) readColumns &vint:retVal
-    [
-    ]
-    
-    scan:target &cellfunc:func
-    [
-    ]        
-        
-    scan &cellfunc:func
-    [
-        $self scan:$nil &cellfunc:func.
     ]
     
     stacksafe nnfn(getLiveCell) calcLiveCells &int:x &int:y &vint:retVal
@@ -71,18 +38,19 @@ limited dispatchable(space) class BaseSpace
         
         retVal := counter.
     ]
-//    
-//    stacksafe embeddable int getLiveCell &int:x &int:y
-//    [
-//        int retVal := 0.
-//        
-//        $self calcLiveCells &int:x &int:y &vint:retVal.
-//        
-//        ^ retVal.
-//    ]
+    
+    /// Returns the space actual number of rows    
+    stacksafe outnprop(rows) readRows &vint:retVal
+    [
+    ]
+    
+    /// Returns the space actual number of columns
+    stacksafe outnprop(columns) readColumns &vint:retVal
+    [
+    ]
 }
 
-class IntMatrixSpace :: BaseSpace
+sealed class IntMatrixSpace :: BaseSpace
 {
     intmatrix theMatrix.
     int       theN.
@@ -94,23 +62,58 @@ class IntMatrixSpace :: BaseSpace
         theM := m.
         
         theMatrix := IntMatrix new &int:n &int:m.
-        
-        $self scan &cellfunc:(&space:space &int:i &int:j) [ space setAt &int:i &int:j &int:0. ].
+
+        int i := 0.
+        int j := 0.
+        while (i < theN)
+        [
+            j := 0.            
+            while(j < theM)
+            [
+                theMatrix write &int:i &int:j &int:0.
+                
+                j += 1.
+            ].
+            
+            i += 1.
+        ].                
     ]
 
-    constructor new &int:n &int:m &nnfunc:initFunc    
+    constructor new &int:n &int:m &ruleset:rs
         <= new &int:n &int:m;
     [
-        $self scan:initFunc &cellfunc:
-            (:target &space:space &int:i &int:j)
-                [ space setAt &int:i &int:j &int:(target nnfunc eval &int:i &int:j). ].
+        $self $update &ruleset:rs &intmatrix:theMatrix.
     ]
 
-    constructor new &intmatrix:matrix
+    sealed $update &ruleset:rs &intmatrix:matrix
     [
-        matrix readLengths &vint:theN &vint:theM.
+        int i := 0.
+        int j := 0.
+        while (i < theN)
+        [
+            j := 0.            
+            while(j < theM)
+            [
+                int cell := 0.
+                rs validate &space:$self &int:i &int:j 
+                    ? [ cell := 1. ].
+                    
+                matrix write &int:i &int:j &int:cell.
+                
+                j += 1.
+            ].
+            
+            i += 1.
+        ].
+    ]
+
+    update &ruleset:rs
+    [
+        intmatrix newMatrix := IntMatrix new &int:theN &int:theM.
         
-        theMatrix := matrix.
+        $self $update &ruleset:rs &intmatrix:newMatrix.
+        
+        theMatrix := newMatrix.
     ]
 
     stacksafe read &int:y &int:x &vint:retVal
@@ -139,22 +142,6 @@ class IntMatrixSpace :: BaseSpace
         theMatrix read &int:i &int:j &vint:retVal.
     ]
     
-    stacksafe setAt &int:y &int:x &int:cell
-    [
-        int i := y.
-        (i > theN)?
-        [
-            i := i mod &int:theN.
-        ].
-        int j := x.
-        (j > theM)?
-        [
-            j := j mod &int:theM.
-        ].
-        
-        theMatrix write &int:i &int:j &int:cell.
-    ]
-    
     readRows &vint:retVal
     [
         retVal := theN.
@@ -163,23 +150,5 @@ class IntMatrixSpace :: BaseSpace
     readColumns &vint:retVal
     [
         retVal := theM.
-    ]
-    
-    scan:target &cellfunc:func
-    [
-        int i := 0.
-        int j := 0.
-        while (i < theN)
-        [
-            j := 0.            
-            while(j < theM)
-            [
-                func eval:target &space:$self &int:i &int:j.
-                
-                j += 1.
-            ].
-            
-            i += 1.
-        ].
     ]
 }
