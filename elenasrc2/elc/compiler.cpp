@@ -7125,7 +7125,9 @@ void Compiler :: copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope
    else if (current == lxTemplateParam) {
       if (scope.codeMode && current.argument == 1) {
          // if it is a code template parameter
-         generateExpressionTree(writer, scope.exprNode, scope, true);
+         TemplateScope* parentScope = (TemplateScope*)scope.parent;
+
+         generateExpressionTree(writer, scope.exprNode, *parentScope, true);
       }
       else if (scope.codeMode && current.argument == 0) {
          // if it is a code template parameter

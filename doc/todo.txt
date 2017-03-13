@@ -3,15 +3,13 @@ In development:
 ------                              
 
               xdev - generic development
-                 * replace $self with self for template in extensions
-                 * move calcLiveCells into an extension
-
                  * test 24
                  * test 99 bottle
                  * test matrix
                  * test bsort
                  * test pi2
                  * migrate rosetta samples
+                 * migrate samples
 
               zdev 
                  * fix interpreter sample
@@ -23,9 +21,6 @@ Pipeline:
 
               xdev - native code optimization
                  * use rep stos to clear the object after creating      
-
-              zdev - cellular automata
-                 * load cellular set from the file
 
               zdev 
                  * hello world sample
@@ -219,7 +214,8 @@ Pipeline:
                  * console_screen_buffer_info - implicit conversion : init with zeros
                  * duplicate assigning
                  * check why : bool is &keyAvailable => theReader does not work correctly
-
+                 * replace $self with self for template in extensions
+                 * move calcLiveCells into an extension
 
               zdev 
                  * script : elena - simple class,one method
