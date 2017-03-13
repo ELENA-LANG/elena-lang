@@ -528,7 +528,7 @@ sealed dispatchable(intmatrix) class IntMatrix
     int      theRows.
     int      theColumns.
     
-    constructor new &int:Columns &int:Rows
+    constructor new &int:Rows &int:Columns
     [
         theRows := Rows.
         theColumns := Columns.
@@ -536,14 +536,14 @@ sealed dispatchable(intmatrix) class IntMatrix
         theArray := IntArray new &int:(Columns * Rows).        
     ]
         
-    constructor new : Columns : Rows
-        <= new &int:(Columns int) &int:(Rows int).
+    constructor new : Rows : Columns
+        <= new &int:(Rows int) &int:(Columns int).
         
     /// Reads the matrix lengths to the output parameter
-    stacksafe readLengths &vint:Columns &vint:Rows
+    stacksafe readLengths &vint:Rows &vint:Columns
     [
-        Columns := theColumns.
         Rows := theRows.
+        Columns := theColumns.
     ]
 
     int length = theRows.

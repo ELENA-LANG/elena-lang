@@ -53,6 +53,29 @@ class arrayExConvertor =
     ]
 }.
 
+class intarrayExConvertor =
+{
+    convert &enumerable:aList
+    [
+        array_list alist := ArrayList new.
+
+        aList run &each:anItem [ alist append:anItem ].
+        
+        ^ IntArray new &int:(alist length) set &every:(&int:i) [ alist getAt &int:i toInt ].
+    ]
+}.
+
+class intmatrixExConvertor =
+{
+    convert &array:a
+    [
+        int n := a length.
+        int m := a@0 length.
+        
+        ^ IntMatrix new &int:n &int:m set &every_ij: (&int:i &int:j) [ a getAt &int:i array getAt &int:j toInt ].
+    ]
+}.
+
 // --- convertorOp ---
 
 extension convertorOp
@@ -75,6 +98,32 @@ extension convertorOp
                     
                 void : val
                     = Array min.                    
+            }.
+    
+    toIntArray
+        = self cast:%eval &to:
+            {
+                intarray : anArray
+                    = anArray.
+                
+                array : anArray
+                    = intarrayExConvertor convert &enumerable:anArray.
+                    
+                enumerable : aList
+                    = intarrayExConvertor convert &enumerable:aList.
+                    
+                enumerator : anEnumerator
+                    = intarrayExConvertor convert &enumerable:anEnumerator.
+            }.
+    
+    toIntMatrix
+        = self cast:%eval &to:
+            {
+                intmatrix : anArray
+                    = anArray.
+                
+                array : anArray
+                    = intmatrixExConvertor convert &array:anArray.
             }.
     
     toLiteral

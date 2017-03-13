@@ -678,7 +678,7 @@ extension(real) realOp
         = self <= 0.0r.
 }
 
-// --- arrayOp ---
+// --- intArrayOp ---
 
 extension(intarray) intArrayOp
 {
@@ -870,6 +870,41 @@ extension(array) arrayOp
 //        
 //        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
 //    ]
+}
+
+
+// --- intmatrixOp ---
+
+extension(intmatrix) intmatrixOp
+{
+    set &every_ij:func
+        = self set &nnfunc:(func nnfunc).
+    
+    set &nnfunc:func
+    [
+        int n := 0.
+        int m := 0.
+        self readLengths &vint:n &vint:m.
+        
+        int i := 0.
+        int j := 0.
+        while (i < n)
+        [
+            j := 0.
+            while (j < m)
+            [
+                int v := func eval &int:i &int:j.
+                
+                self write &int:i &int:j &int:v.
+                
+                j += 1.
+            ].
+            
+            i += 1.
+        ].
+        
+        ^ self.
+    ]
 }
 
 // --- literalOp ---
