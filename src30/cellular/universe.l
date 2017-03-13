@@ -124,7 +124,7 @@ sealed class IntMatrixSpace :: BaseSpace
             i := theN - i.
         ].
         
-        (i > theN)?
+        (i >= theN)?
         [
             i := i mod &int:theN.
         ].
@@ -134,7 +134,7 @@ sealed class IntMatrixSpace :: BaseSpace
         [
             j := theM - j.
         ].
-        (j > theM)?
+        (j >= theM)?
         [
             j := j mod &int:theM.
         ].

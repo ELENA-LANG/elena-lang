@@ -2798,7 +2798,42 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    }
    else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
 
+   bool assignMode = false;
    if (operationType != 0) {
+      if (loperand.kind == okField || loperand.kind == okOuter) {
+         // HOTFIX : for fields replace assigning operators with assigning expression
+         switch (operator_id) {
+         case APPEND_MESSAGE_ID:
+            assignMode = true;
+            operator_id = ADD_MESSAGE_ID;
+            break;
+         case REDUCE_MESSAGE_ID:
+            assignMode = true;
+            operator_id = SUB_MESSAGE_ID;
+            break;
+         case INCREASE_MESSAGE_ID:
+            assignMode = true;
+            operator_id = MUL_MESSAGE_ID;
+            break;
+         case SEPARATE_MESSAGE_ID:
+            assignMode = true;
+            operator_id = DIV_MESSAGE_ID;
+            break;
+         default:
+            break;
+         }
+         if (assignMode) {
+            // once again resolve the primitive operator
+            operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
+
+            if (loperand.kind == okOuter) {
+               InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+
+               if (!closure->markAsPresaved(loperand))
+                  scope.raiseError(errInvalidOperation, node);
+            }
+         }
+      }
       // if it is a primitive operation
       _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.type);
 
@@ -2806,6 +2841,14 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    }
    // if not , replace with appropriate method call
    else retVal = compileMessage(writer, node, scope, loperand, _logic->defineOperatorMessage(*scope.moduleScope, operator_id, paramCount, loperandRef, roperandRef, roperand2Ref), HINT_NODEBUGINFO);
+
+   if (assignMode) {
+      if (loperand.kind == okField || loperand.kind == okOuter) {
+         writer.insertChild(0, lxField, loperand.param);
+      }
+      writer.insert(lxAssigning);
+      writer.closeNode();
+   }
 
    return retVal;
 }

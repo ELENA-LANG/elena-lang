@@ -1,8 +1,8 @@
 #import extensions.
 #import cellular.
 
-const int maxX = 48.
-const int maxY = 28.
+const int maxX = /*48*/5.
+const int maxY = /*28*/5.
 
 #subject listener_func = ListenerFunc.
 limited dispatchable(listener_func) class ListenerFunc
@@ -28,6 +28,11 @@ sealed class Model
     [
         ($nil != theListener)
             ? [ theListener eval &space:theSpace ].
+    ]
+    
+    init
+    [
+        $self $onUpdate.
     ]
     
     run

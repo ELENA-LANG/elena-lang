@@ -3,14 +3,16 @@ In development:
 ------                              
 
               xdev - generic development
-                 * it should be possible to declare a new private sealed method for limited class
+                 * implement toIntArray
+                 * implement toIntMatrix
 
-                 * game of life : simple implementation
+                 * use toIntMatrix to create a test set
+                 * game of life : test
                  * replace $self with self for template in extensions
                  * move calcLiveCells into an extension
 
-                 * test 99 bottle
                  * test 24
+                 * test 99 bottle
                  * test matrix
                  * test bsort
                  * test pi2
