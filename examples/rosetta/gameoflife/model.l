@@ -1,8 +1,8 @@
 #import extensions.
 #import cellular.
 
-const int maxX = /*48*/5.
-const int maxY = /*28*/5.
+const int maxX = 48.
+const int maxY = 28.
 
 #subject listener_func = ListenerFunc.
 limited dispatchable(listener_func) class ListenerFunc
@@ -17,7 +17,14 @@ sealed class Model
     
     event(listener_func, onUpdate) theListener.
     
-    constructor new &ruleset:initSet &ruleset:transformSet
+    constructor newRandomset &ruleset:transformSet
+    [
+        theSpace := IntMatrixSpace new &int:maxY &int:maxX &ruleset:randomSet.
+                        
+        theRuleSet := transformSet.
+    ]
+    
+    constructor existing &ruleset:initSet &ruleset:transformSet
     [
         theSpace := IntMatrixSpace new &int:maxY &int:maxX &ruleset:initSet.
                         

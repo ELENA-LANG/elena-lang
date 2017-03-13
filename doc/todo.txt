@@ -220,6 +220,7 @@ Pipeline:
                  * Implicit constructor should not have return statements
                  * stack allocated structures - declaring : console_screen_buffer_info aBuffer := 0 ?
                  * console_screen_buffer_info - implicit conversion : init with zeros
+                 * duplicate assigning
 
               zdev 
                  * script : elena - simple class,one method

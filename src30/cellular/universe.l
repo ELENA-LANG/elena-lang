@@ -5,19 +5,19 @@ limited dispatchable(space) class BaseSpace
     [
     ]
     
-    stacksafe read &int:x &int:y &vint:retVal
+    stacksafe read &int:i &int:j &vint:retVal
     [        
     ]
     
-    embeddable stacksafe int getAt &int:x &int:y
+    embeddable stacksafe int getAt &int:i &int:j
     [
         int retVal := 0.
-        $self read &int:x &int:y &vint:retVal.
+        $self read &int:i &int:j &vint:retVal.
         
         ^ retVal.
     ]
     
-    stacksafe nnfn(getLiveCell) calcLiveCells &int:x &int:y &vint:retVal
+    stacksafe nnfn(getLiveCell) calcLiveCells &int:k &int:l &vint:retVal
     [
         int i := -1.
         int j := -1.
@@ -27,7 +27,7 @@ limited dispatchable(space) class BaseSpace
             j := -1.
             while (j < 2)
             [
-                int cell := $self getAt &int:(x + i) &int:(y + j).
+                int cell := $self getAt &int:(k + i) &int:(l + j).
                 (cell == 1)
                     ? [ counter += 1. ].
                 
@@ -116,12 +116,12 @@ sealed class IntMatrixSpace :: BaseSpace
         theMatrix := newMatrix.
     ]
 
-    stacksafe read &int:y &int:x &vint:retVal
+    stacksafe read &int:k &int:l &vint:retVal
     [
-        int i := x.
+        int i := k.
         (i < 0)?
         [
-            i := theN - i.
+            i := theN + i.
         ].
         
         (i >= theN)?
@@ -129,10 +129,10 @@ sealed class IntMatrixSpace :: BaseSpace
             i := i mod &int:theN.
         ].
         
-        int j := y.
+        int j := l.
         (j < 0)?
         [
-            j := theM - j.
+            j := theM + j.
         ].
         (j >= theM)?
         [

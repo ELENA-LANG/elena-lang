@@ -2803,24 +2803,24 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       if (loperand.kind == okField || loperand.kind == okOuter) {
          // HOTFIX : for fields replace assigning operators with assigning expression
          switch (operator_id) {
-         case APPEND_MESSAGE_ID:
-            assignMode = true;
-            operator_id = ADD_MESSAGE_ID;
-            break;
-         case REDUCE_MESSAGE_ID:
-            assignMode = true;
-            operator_id = SUB_MESSAGE_ID;
-            break;
-         case INCREASE_MESSAGE_ID:
-            assignMode = true;
-            operator_id = MUL_MESSAGE_ID;
-            break;
-         case SEPARATE_MESSAGE_ID:
-            assignMode = true;
-            operator_id = DIV_MESSAGE_ID;
-            break;
-         default:
-            break;
+            case APPEND_MESSAGE_ID:
+               assignMode = true;
+               operator_id = ADD_MESSAGE_ID;
+               break;
+            case REDUCE_MESSAGE_ID:
+               assignMode = true;
+               operator_id = SUB_MESSAGE_ID;
+               break;
+            case INCREASE_MESSAGE_ID:
+               assignMode = true;
+               operator_id = MUL_MESSAGE_ID;
+               break;
+            case SEPARATE_MESSAGE_ID:
+               assignMode = true;
+               operator_id = DIV_MESSAGE_ID;
+               break;
+            default:
+               break;
          }
          if (assignMode) {
             // once again resolve the primitive operator
@@ -6052,14 +6052,13 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
                else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp)
                   && subNode.existChild(lxTempAttr))
                {
-                  ////HOTFIX : exclude arithmetic operations
-                  //if (operationNode != lxIntOp/* && operationNode != lxRealOp && operationNode != lxLongOp*/) {
-                     larg = subNode.findSubNodeMask(lxObjectMask);
+                  larg = subNode.findSubNodeMask(lxObjectMask);
       
+                  if (larg.type == targetNode.type && larg.argument == targetNode.argument) {
                      // remove an extra assignment
                      subNode = lxExpression;
                      larg = lxIdle;
-                  //}
+                  }
                }
             }
          }

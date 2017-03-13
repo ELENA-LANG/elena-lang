@@ -11,6 +11,12 @@
 [+] (re)introducing field templates
 [+] (re)introducing auto-generated local / field attributes
 
+[LIB]
+[+] new system'intarrayOp extension
+[+] new system'intmnatrixOp extension
+[+] new extensions'convertorOp.toIntArray, extensions'convertorOp.toIntMatrix  
+    operations
+
 ******************************************************************************
                              What's New in 3.0.0
 ******************************************************************************
