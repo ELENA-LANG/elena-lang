@@ -1,8 +1,13 @@
 #import system'routines.
+#import system'threading.
 #import extensions.
 #import cellular.
 
-symbol testSet = ((1,0,0,0,0),(0,0,0,0,0),(0,0,0,0,0),(0,0,0,0,0),(0,0,0,0,0)).
+const int DELAY = 50.
+
+symbol testSet = ((0,1,0),
+                  (0,1,0),
+                  (0,1,0)).
 
 class gameOfLifeRuleSet = BaseRuleSet
 {
@@ -23,15 +28,19 @@ class gameOfLifeRuleSet = BaseRuleSet
 
 program =
 [
+    console clear.
+    
     var model := Model newRandomset &ruleset:gameOfLifeRuleSet.
 
     model onUpdate &listener_func:
         (&space:sp) [ sp print ].
 
-    while (true)
+    until (console is &keyAvailable)
     [
         model run.
         
-        console readChar.
-    ].    
+        thread sleep:DELAY.
+    ].
+    
+    console readChar.
 ].

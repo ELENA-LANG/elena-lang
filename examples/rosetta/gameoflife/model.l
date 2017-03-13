@@ -14,6 +14,7 @@ sealed class Model
 {
     space   theSpace.
     ruleset theRuleSet.
+    bool    started.
     
     event(listener_func, onUpdate) theListener.
     
@@ -22,13 +23,17 @@ sealed class Model
         theSpace := IntMatrixSpace new &int:maxY &int:maxX &ruleset:randomSet.
                         
         theRuleSet := transformSet.
+        
+        started := false.
     ]
     
-    constructor existing &ruleset:initSet &ruleset:transformSet
+    constructor newLoaded &ruleset:initSet &ruleset:transformSet
     [
         theSpace := IntMatrixSpace new &int:maxY &int:maxX &ruleset:initSet.
                         
         theRuleSet := transformSet.
+        
+        started := false.
     ]
     
     $onUpdate
@@ -44,7 +49,9 @@ sealed class Model
     
     run
     [
-        theSpace update &ruleset:theRuleSet.
+        started
+            ? [ theSpace update &ruleset:theRuleSet. ]
+            ! [ started := true. ].        
         
         $self $onUpdate.
     ]

@@ -82,6 +82,9 @@ class $Console
     readChar
         = theReader char.
 
+    bool is &keyAvailable
+        = theReader is &keyAvailable.
+
     /// Reads the next key code from the input stream
     readKey
         = theReader int.

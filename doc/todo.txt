@@ -3,11 +3,6 @@ In development:
 ------                              
 
               xdev - generic development
-                 * implement toIntArray
-                 * implement toIntMatrix
-
-                 * use toIntMatrix to create a test set
-                 * game of life : test
                  * replace $self with self for template in extensions
                  * move calcLiveCells into an extension
 
@@ -18,19 +13,21 @@ In development:
                  * test pi2
                  * migrate rosetta samples
 
-              zdev - cellular automata
-                 * general architecture
-                 * game of life : create an engine (time slots)
+              zdev 
+                 * fix interpreter sample
+                 * fix calc sample
 
 ------                                 
 Pipeline:
 ------                                                                                         
 
               xdev - native code optimization
-                       * use rep stos to clear the object after creating      
+                 * use rep stos to clear the object after creating      
+
+              zdev - cellular automata
+                 * load cellular set from the file
 
               zdev 
-                 * fix interpreter sample
                  * hello world sample
                  * calc sample : gui
 
@@ -221,6 +218,8 @@ Pipeline:
                  * stack allocated structures - declaring : console_screen_buffer_info aBuffer := 0 ?
                  * console_screen_buffer_info - implicit conversion : init with zeros
                  * duplicate assigning
+                 * check why : bool is &keyAvailable => theReader does not work correctly
+
 
               zdev 
                  * script : elena - simple class,one method

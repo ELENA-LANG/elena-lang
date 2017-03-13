@@ -17,6 +17,9 @@
 [+] new extensions'convertorOp.toIntArray, extensions'convertorOp.toIntMatrix  
     operations
 
+[Samples]
+[+] conway's game of life 
+
 ******************************************************************************
                              What's New in 3.0.0
 ******************************************************************************

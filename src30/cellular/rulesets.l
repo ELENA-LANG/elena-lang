@@ -30,8 +30,15 @@ class LoadedSet :: BaseRuleSet
     constructor load:list
         <= load &intmatrix:(list toIntMatrix).
     
-    validate &space:s &int:i &int:j
+    validate &space:s &int:i &int:j    
     [
+        int n := 0.
+        int m := 0.        
+        theSet readLengths &vint:n &vint:m.
+        
+        (i >= n) || (j >= m)
+            ? [ ^ false. ].
+        
         int cell := theSet getAt &int:i &int:j.
         
         ^ cell != 0.

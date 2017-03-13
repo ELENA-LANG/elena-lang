@@ -295,6 +295,46 @@ sealed embeddable struct $ConsoleReader
         byteArrayHelper read &bytearray:aDump &int:8 &vint:aKey.
     ]
 
+    bool is &keyAvailable
+    [
+        byte(20) aDump := 0.
+        int      aNumberRead := 1.
+        short    anEventType := 0.
+        int      aKeyDown := 0.
+        
+        while (true)
+        [
+            aNumberRead := 0.
+            
+            system'external'KERNEL32 PeekConsoleInputW 
+                        &int           : theHandle
+                        &bytearray     : aDump
+                        &int           : 1
+                        &vint          : aNumberRead.
+                        
+            (0 == aNumberRead)
+                ? [ ^ false. ].
+                                                                                    
+            byteArrayHelper read &bytearray:aDump &int:0 &vshort:anEventType.
+            (anEventType == 1)
+                ? [ 
+                    byteArrayHelper read &bytearray:aDump &int:4 &vint:aKeyDown.
+                        
+                    (aKeyDown == 1)
+                        ? [ ^ true. ].
+                ].
+
+            system'external'KERNEL32 ReadConsoleInputW
+                &int           : theHandle
+                &bytearray     : aDump
+                &int           : 1
+                &vint          : aNumberRead.                                
+                
+        ].
+        
+        ^ false.                    
+    ]
+
     stacksafe read &shortarray:aBuffer &vint:aRetVal
     [
         #extern
