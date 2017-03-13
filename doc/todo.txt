@@ -3,12 +3,13 @@ In development:
 ------                              
 
               xdev - generic development
-                 * test 24
-                 * test 99 bottle
+                 * private subjects
+
+                 * migrate rosetta samples
+
                  * test matrix
                  * test bsort
                  * test pi2
-                 * migrate rosetta samples
                  * migrate samples
 
               zdev 
@@ -805,6 +806,7 @@ Pipeline:
                        * consoleReader should check if the char is multibyte
                        * read key
                        * port console samples                                                                               
+                       * move expression parsing code into the library
                        
               adev - lib30 optimization
                        * simplify the code using call optimization, set sealed methods if required

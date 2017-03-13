@@ -8,12 +8,11 @@
 // A( 2 , 4 ) =  11
 // A( 3 , 4 ) =  125
 
-#import system.
 #import extensions.
 
 // --- Ackermann function ---
 
-#symbol ackermann = (:m:n)
+ackermann = (:m:n)
 [
     m =>
        0 ? [ n + 1 ]
@@ -23,7 +22,7 @@
            ]
 ].
 
-#symbol program =
+program =
 [
     0 to:3 &doEach: (:i)
     [

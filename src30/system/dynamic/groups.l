@@ -56,8 +56,8 @@ sealed arrayof(object) group Cast
 
 extension dynamicOp
 {
-//    mix &into:role
-//        = Extension(role, self).
+    mix &into:role
+        = Extension(role, self).
         
     group &with:object
     [

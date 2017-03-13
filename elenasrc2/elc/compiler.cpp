@@ -1078,9 +1078,9 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
       }
       else return ObjectInfo(okThisParam, 1);
    }
-//   else if (terminal.compare(METHOD_SELF_VAR)) {
-//      return ObjectInfo(okParam, (size_t)-1);
-//   }
+   else if (terminal.compare(METHOD_SELF_VAR)) {
+      return ObjectInfo(okParam, (size_t)-1);
+   }
    else {
       Parameter param = parameters.get(terminal);
 

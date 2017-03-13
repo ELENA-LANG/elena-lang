@@ -89,7 +89,7 @@ sealed embeddable struct ExtensionMessage
 // --- Signature ---
 
 /// A dynamic signature extender
-sealed embeddable struct Signature
+sealed embeddable dispatchable(subject) struct Signature
 {
     __subj theValue.
     
@@ -124,7 +124,7 @@ sealed embeddable struct Signature
         
         ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
     ]
-        
+
     /// Qualifies incoming messages and redirects to the target
     stacksafe dispatch => system'core_routines'__signature.
 }

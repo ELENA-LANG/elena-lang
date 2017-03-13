@@ -1,14 +1,13 @@
-#import system.
 #import system'routines.
 #import extensions.
 #import extensions'routines.
 
 // --- Joinable --
 
-#symbol joinable = (:aFormer:aLater)
+joinable = (:aFormer:aLater)
     [ (aFormer@(aFormer length - 1)) == (aLater@0) ].
 
-#symbol dispatcher =
+dispatcher =
 {
     eval : anArray &func2:aFunction
     [
@@ -34,16 +33,16 @@
 
 // --- AmbValueCollection ---
 
-#class AmbValueCollection
+class AmbValueCollection
 {
-    #field theCombinator.
+    object theCombinator.
     
-    #constructor new &args:Arguments
+    constructor new &args:Arguments
     [
         theCombinator := SequentialEnumerator new &args:Arguments.
     ]
 
-    #method seek : aCondition
+    seek : aCondition
     [
         theCombinator reset.
 
@@ -53,18 +52,18 @@
         ].
     ]
     
-    #method do : aFunction
+    do : aFunction
     [
-        #var aResult := theCombinator get.
+        var aResult := theCombinator get.
         (nil != aResult)
             ? [ aFunction cast:%eval &to:dispatcher &with:aResult. ]
-            ! [ #throw InvalidArgumentException new. ].
+            ! [ InvalidArgumentException new raise. ].
     ]
 }
 
 // --- ambOperator ---
 
-#symbol ambOperator =
+ambOperator =
 {
     for &args:Arguments
         = AmbValueCollection new &args:Arguments.
@@ -72,7 +71,7 @@
 
 // --- Program ---
 
-#symbol program1 =
+program1 =
 [
     ambOperator for &args:((1,2,4),(4,5,6)) seek: (:a:b) [ a * b == 8 ] do: (:a:b)
         [ console writeLine: a : " * " : b : " = 8" ]
@@ -81,7 +80,7 @@
     console readChar.        
 ].
 
-#symbol program2 =
+program2 =
 [
     ambOperator 
         for &args:(("the","that","a"),("frog", "elephant", "thing"),("walked", "treaded", "grows"),("slowly", "quickly"))
