@@ -1,245 +1,245 @@
-#import system'routines.
-#import extensions.
-
-#subject $strategy = BaseStrategy.
-
-// --- Strategy ---
-
-limited class BaseStrategy
-{
-    getAt : Indexers &int:aLength = $nil.
-    
-    $strategy eval : Indexers &int:aLength = $self.
-    
-    bool result = false.
-}
-
-// --- Combination strategies ---
-
-$strategy combinationEnd = BaseStrategy
-{
-    result = false.
-}.
-
-$strategy sequentialNext = BaseStrategy
-{
-    result = true.
-    
-    eval : Indexers &int:aLength
-    [
-        ($nil == (Indexers seek &each: anIndexer 
-                [
-                    iterator it := anIndexer iterator. 
-                    
-                    (it append &index:1 available)
-                        ! [ it writeIndex &int:0. ^ false. ].
-                        
-                    ^ true.
-                ]))
-            ? [ ^ combinationEnd. ].
-            
-        ^ $self.            
-    ]
-        
-    getAt : Indexers &int:aLength
-    [
-        ^ Array new &int:aLength set &nfunc: (&int:i) [ Indexers array getAt &int:i get ].
-    ]
-}.
-
-$strategy sequentialStart = BaseStrategy
-{
-    eval : Indexers &int:aLength
-    [
-        Indexers run &each: anIndexer [ anIndexer writeIndex &int:0. ].
-        
-        ^ sequentialNext.
-    ]
-}.
-
-// --- Parallel strategies
-
-$strategy parallelNext = BaseStrategy
-{
-    result = true.
-    
-    eval : Indexers &int:aLength
-    [
-        ($nil != Indexers seek &each: anIndexer [ anIndexer append &index:1 available not ])
-            ? [ ^ combinationEnd. ].
-            
-        ^ $self.            
-    ]
-        
-    getAt : Indexers &int:aLength
-    [
-        ^ Array new &int:aLength set &nfunc: (&int:i) [ Indexers array getAt &int:i get ].
-    ]
-}.
-
-$strategy parallelStart = BaseStrategy
-{
-    eval : Indexers &int:aLength
-    [
-        Indexers run &each: anIndexer [ anIndexer writeIndex &int:0. ].
-        
-        ^ parallelNext.
-    ]
-}.
-
-// --- combination strategy ---
-
-$strategy  combinationNext = BaseStrategy
-{
-    result = true.
-
-    getAt : Indexers &int:aLength
-    [
-        ^ Array new &int:aLength set &nfunc: (&int:i) [ Indexers array getAt &int:i get ].
-    ]
-        
-    eval : Indexers &int:aLength
-    [
-        array anArray := Indexers array.
-        int   k := anArray length.
-        int   i := k - 1.
-        
-        iterator aCurrentIndexer := anArray getAt &int:i iterator.
-        
-        (aCurrentIndexer append &index:1 available)
-            ? [ ^ $self. ].
-             
-        while ((i > 0) and:[ anArray getAt &int:(i - 1) iterator index int + k - i + 1 >= aLength ])
-            [ i := i - 1. ].
-        
-        (i == 0)
-            ? [ ^ combinationEnd. ].
-        
-        anArray getAt &int:(i - 1) append &index:1.
-        
-        //i to &int:(k - 1)
-        IntNumber new &int:i to &int:(k - 1)
-            &nfunc: (&int:j) [ anArray getAt &int:j writeIndex &int:(IntNumber new &int:(anArray getAt &int:(j - 1) index int + 1)). ].
-            
-        ^ $self.            
-    ]
-}.
-
-$strategy combinationStart = BaseStrategy
-{
-    eval : Indexers &int:n
-    [
-        array anArray := Indexers array.
-        int aLength := anArray length.
-        
-        0::intLoopOp to &int:(aLength - 1) &nfunc: (&int:i) [ anArray getAt &int:i iterator writeIndex &int:i. ].
-        
-        ^ combinationNext.
-    ]
-}.
-
-// --- BaseRowEnumerator ---
-
-class BaseRowEnumerator :: Enumerator
-{
-    array theIndexers.
-    int   theLength.
-    
-    $strategy theStrategy.
-
-    constructor new &args:Arguments
-    [
-        theLength := Arguments length int.
-        theIndexers := Array new &int:theLength.
-        
-        int i := 0.
-        while (i < theLength)
-        [
-            theIndexers setAt &int:i &object:((Arguments @ i) iterator).
-            
-            i := i + 1.
-        ].
-        
-        $self reset.
-    ]
-    
-    constructor new : Arguments
-    [
-        theLength := Arguments length int.
-        theIndexers := Array new &int:theLength.
-        
-        int i := 0.
-        while (i < theLength)
-        [
-            theIndexers setAt &int:i &object:((Arguments @ (IntNumber new &int:i)) iterator).
-            
-            i := i + 1.
-        ].
-        
-        $self reset.
-    ]
-    
-    next
-    [
-        theStrategy := theStrategy eval : theIndexers &int:theLength.
-
-        ^ theStrategy result.
-    ]
-    
-    get
-        = theStrategy getAt : theIndexers &int:theLength.
-}
-
-// --- SequentialEnumerator ---
-
-class SequentialEnumerator :: BaseRowEnumerator
-{
-    constructor new : Arguments
-        <= new:Arguments.
-    
-    constructor new &args:Arguments    
-        <= new &args:Arguments.
-
-    reset
-    [
-        theStrategy := sequentialStart.
-    ]
-}
-
-// --- ParallelEnumerator ---
-
-class ParallelEnumerator :: BaseRowEnumerator
-{
-    constructor new : Arguments
-        <= new:Arguments.
-    
-    reset
-    [
-        theStrategy := parallelStart.
-    ]
-}
-
-// --- Combinator ---
-
-class Combinator :: BaseRowEnumerator
-{
-    int theTotalLength.
-    
-    constructor new : aSubLength &of:aSet
-        <= new : (Array new &int:(aSubLength int) set &nfunc: (&int:n) [ ^ aSet. ]);
-    [
-        theTotalLength := aSet length int.
-    ]
-    
-    next
-    [
-        theStrategy := theStrategy eval:theIndexers &int:theTotalLength.
-
-        ^ theStrategy result.
-    ]
-    
-    reset
-    [
-        theStrategy := combinationStart.
-    ]
-}
+//#import system'routines.
+//#import extensions.
+//
+//#subject $strategy = BaseStrategy.
+//
+//// --- Strategy ---
+//
+//limited class BaseStrategy
+//{
+//    getAt : Indexers &int:aLength = $nil.
+//    
+//    $strategy eval : Indexers &int:aLength = $self.
+//    
+//    bool result = false.
+//}
+//
+//// --- Combination strategies ---
+//
+//$strategy combinationEnd = BaseStrategy
+//{
+//    result = false.
+//}.
+//
+//$strategy sequentialNext = BaseStrategy
+//{
+//    result = true.
+//    
+//    eval : Indexers &int:aLength
+//    [
+//        ($nil == (Indexers seek &each: anIndexer 
+//                [
+//                    iterator it := anIndexer iterator. 
+//                    
+//                    (it append &index:1 available)
+//                        ! [ it writeIndex &int:0. ^ false. ].
+//                        
+//                    ^ true.
+//                ]))
+//            ? [ ^ combinationEnd. ].
+//            
+//        ^ $self.            
+//    ]
+//        
+//    getAt : Indexers &int:aLength
+//    [
+//        ^ Array new &int:aLength set &nfunc: (&int:i) [ Indexers array getAt &int:i get ].
+//    ]
+//}.
+//
+//$strategy sequentialStart = BaseStrategy
+//{
+//    eval : Indexers &int:aLength
+//    [
+//        Indexers run &each: anIndexer [ anIndexer writeIndex &int:0. ].
+//        
+//        ^ sequentialNext.
+//    ]
+//}.
+//
+//// --- Parallel strategies
+//
+//$strategy parallelNext = BaseStrategy
+//{
+//    result = true.
+//    
+//    eval : Indexers &int:aLength
+//    [
+//        ($nil != Indexers seek &each: anIndexer [ anIndexer append &index:1 available not ])
+//            ? [ ^ combinationEnd. ].
+//            
+//        ^ $self.            
+//    ]
+//        
+//    getAt : Indexers &int:aLength
+//    [
+//        ^ Array new &int:aLength set &nfunc: (&int:i) [ Indexers array getAt &int:i get ].
+//    ]
+//}.
+//
+//$strategy parallelStart = BaseStrategy
+//{
+//    eval : Indexers &int:aLength
+//    [
+//        Indexers run &each: anIndexer [ anIndexer writeIndex &int:0. ].
+//        
+//        ^ parallelNext.
+//    ]
+//}.
+//
+//// --- combination strategy ---
+//
+//$strategy  combinationNext = BaseStrategy
+//{
+//    result = true.
+//
+//    getAt : Indexers &int:aLength
+//    [
+//        ^ Array new &int:aLength set &nfunc: (&int:i) [ Indexers array getAt &int:i get ].
+//    ]
+//        
+//    eval : Indexers &int:aLength
+//    [
+//        array anArray := Indexers array.
+//        int   k := anArray length.
+//        int   i := k - 1.
+//        
+//        iterator aCurrentIndexer := anArray getAt &int:i iterator.
+//        
+//        (aCurrentIndexer append &index:1 available)
+//            ? [ ^ $self. ].
+//             
+//        while ((i > 0) and:[ anArray getAt &int:(i - 1) iterator index int + k - i + 1 >= aLength ])
+//            [ i := i - 1. ].
+//        
+//        (i == 0)
+//            ? [ ^ combinationEnd. ].
+//        
+//        anArray getAt &int:(i - 1) append &index:1.
+//        
+//        //i to &int:(k - 1)
+//        IntNumber new &int:i to &int:(k - 1)
+//            &nfunc: (&int:j) [ anArray getAt &int:j writeIndex &int:(IntNumber new &int:(anArray getAt &int:(j - 1) index int + 1)). ].
+//            
+//        ^ $self.            
+//    ]
+//}.
+//
+//$strategy combinationStart = BaseStrategy
+//{
+//    eval : Indexers &int:n
+//    [
+//        array anArray := Indexers array.
+//        int aLength := anArray length.
+//        
+//        0::intLoopOp to &int:(aLength - 1) &nfunc: (&int:i) [ anArray getAt &int:i iterator writeIndex &int:i. ].
+//        
+//        ^ combinationNext.
+//    ]
+//}.
+//
+//// --- BaseRowEnumerator ---
+//
+//class BaseRowEnumerator :: Enumerator
+//{
+//    array theIndexers.
+//    int   theLength.
+//    
+//    $strategy theStrategy.
+//
+//    constructor new &args:Arguments
+//    [
+//        theLength := Arguments length int.
+//        theIndexers := Array new &int:theLength.
+//        
+//        int i := 0.
+//        while (i < theLength)
+//        [
+//            theIndexers setAt &int:i &object:((Arguments @ i) iterator).
+//            
+//            i := i + 1.
+//        ].
+//        
+//        $self reset.
+//    ]
+//    
+//    constructor new : Arguments
+//    [
+//        theLength := Arguments length int.
+//        theIndexers := Array new &int:theLength.
+//        
+//        int i := 0.
+//        while (i < theLength)
+//        [
+//            theIndexers setAt &int:i &object:((Arguments @ (IntNumber new &int:i)) iterator).
+//            
+//            i := i + 1.
+//        ].
+//        
+//        $self reset.
+//    ]
+//    
+//    next
+//    [
+//        theStrategy := theStrategy eval : theIndexers &int:theLength.
+//
+//        ^ theStrategy result.
+//    ]
+//    
+//    get
+//        = theStrategy getAt : theIndexers &int:theLength.
+//}
+//
+//// --- SequentialEnumerator ---
+//
+//class SequentialEnumerator :: BaseRowEnumerator
+//{
+//    constructor new : Arguments
+//        <= new:Arguments.
+//    
+//    constructor new &args:Arguments    
+//        <= new &args:Arguments.
+//
+//    reset
+//    [
+//        theStrategy := sequentialStart.
+//    ]
+//}
+//
+//// --- ParallelEnumerator ---
+//
+//class ParallelEnumerator :: BaseRowEnumerator
+//{
+//    constructor new : Arguments
+//        <= new:Arguments.
+//    
+//    reset
+//    [
+//        theStrategy := parallelStart.
+//    ]
+//}
+//
+//// --- Combinator ---
+//
+//class Combinator :: BaseRowEnumerator
+//{
+//    int theTotalLength.
+//    
+//    constructor new : aSubLength &of:aSet
+//        <= new : (Array new &int:(aSubLength int) set &nfunc: (&int:n) [ ^ aSet. ]);
+//    [
+//        theTotalLength := aSet length int.
+//    ]
+//    
+//    next
+//    [
+//        theStrategy := theStrategy eval:theIndexers &int:theTotalLength.
+//
+//        ^ theStrategy result.
+//    ]
+//    
+//    reset
+//    [
+//        theStrategy := combinationStart.
+//    ]
+//}
