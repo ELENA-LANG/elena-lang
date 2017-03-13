@@ -942,7 +942,7 @@ ref_t Compiler::ModuleScope :: mapAttribute(SNode attribute, int& attrValue)
    //      else return 0;
    //   }
    
-   SNode terminal = attribute.findChild(/*lxPrivate, */lxIdentifier, lxInteger, lxHexInteger);
+   SNode terminal = attribute.findChild(lxPrivate, lxIdentifier, lxInteger, lxHexInteger);
    if (terminal == lxNone)
       terminal = attribute;
    
