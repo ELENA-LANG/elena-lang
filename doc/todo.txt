@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xdev - generic development
-                 * private subjects
+                 * open argument list
 
                  * migrate amb
                  * migrate rosetta samples

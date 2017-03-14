@@ -19,7 +19,7 @@
 #define ELENAVM_REVISION  5
 
 // --- ELENAVM common constants ---
-#define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2016 by Alex Rakov"
+#define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2017 by Alex Rakov"
 
 namespace _ELENA_
 {

@@ -167,7 +167,7 @@ void runSession()
 
 int main(int argc, char* argv[])
 {
-   print("ELENA command line VM terminal %d.%d.%d (C)2011-2016 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
+   print("ELENA command line VM terminal %d.%d.%d (C)2011-2017 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
    
    executeScript("[[ #config vm_console #start; ]]");
 
