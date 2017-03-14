@@ -24,4 +24,5 @@ text\words.l
 text\strings.l
 routines\enumerating.l
 routines\combinations.l
-
+scripting\interpreter.l
+scripting\assembly.l

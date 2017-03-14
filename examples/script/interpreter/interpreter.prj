@@ -2,7 +2,7 @@
 debug=interpreter.dm
 vmpath=..\..\bin
 executable=interpreter.exe
-arguments=sample1.txt
+arguments=sample3.txt
 namespace=interpreter
 template=vm_console
 debuginfo=-1
@@ -12,5 +12,5 @@ warn:unresolved=-1
 interpreter.l
 
 [forwards]
-'program=interpreter'program4
+'program=interpreter'program2
 

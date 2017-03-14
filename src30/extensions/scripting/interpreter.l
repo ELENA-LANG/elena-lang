@@ -1,19 +1,18 @@
-#import system.
 #import system'text.
 #import extensions.
 #import system'dynamic.
 
 // --- IOException ---
 
-#class(exceptionof:ScriptError) ScriptEngineException
+exceptionof(ScriptError) ScriptEngineException
 {
-    #constructor new
-        <= %new:(scriptEngine $lastScriptError).
+    constructor new
+        <= new:(scriptEngine $lastScriptError).
         
-    #constructor new : aMessage
-        <= %new &literal:(aMessage literal).
+    constructor new : aMessage
+        <= new &literal:(aMessage literal).
         
-    #constructor new &literal:message
+    constructor new &literal:message
     [
         theMessage := message.
         theCallStack := CallStack new.
@@ -22,75 +21,75 @@
 
 // --- scriptEngine ---
 
-#symbol scriptEngine =
+class scriptEngine =
 {
-    #method(stacksafe)$lastScriptError
+    stacksafe $lastScriptError
     [
-        #var(byte:256)aBuffer.
-        #var(int)aLength := system'external'elenasm GetStatus
-            &bytearray:aBuffer
-            &int:255.
+        byte(256) aBuffer := 0.
+        int       aLength := system'external'elenasm GetStatus
+                                &bytearray:aBuffer
+                                &int:255.
             
         ^ UTF8Encoding toLiteral &int:0 &int:aLength &bytearray:aBuffer.  
     ]
     
-    #method(stacksafe)$lastVMError
+    stacksafe $lastVMError
     [
-        #var(dirty_ptr)err := system'external GetVMLastError.
+        dirty_ptr err := system'external GetVMLastError.
             
         ^ err literal.  
     ]
     
-    #method(stacksafe) evaluateTape &dirty_ptr:tape
+    stacksafe evaluateTape &dirty_ptr:tape
         => system'core_routines'__vmtape.
     
-    #method(stacksafe) evaluateScript &literal:aScript
+    stacksafe evaluateScript &literal:aScript
     [
-        #var(dirty_ptr)tape := system'external'elenasm InterpretScript
-            &literal:aScript.
+        dirty_ptr tape := system'external'elenasm InterpretScript
+                                &literal:aScript.
             
         (tape is &empty)
-            ? [ #throw ScriptEngineException new. ].
+            ? [ ScriptEngineException new raise. ].
             
-        #var retVal := $self evaluateTape &dirty_ptr:tape.
+        var retVal := $self evaluateTape &dirty_ptr:tape.
         
         system'external'elenasm Release &dirty_ptr:tape.
         
         ($nil == retVal)
-            ? [ #throw ScriptEngineException new:($self $lastVMError). ].
+            ? [ ScriptEngineException new:($self $lastVMError) raise. ].
             
         ^ retVal.            
     ]
 
-    #method(stacksafe) loadScriptFile &literal:path &int:anEncoding &int:anAutoDetect
+    stacksafe loadScriptFile &literal:path &int:anEncoding &int:anAutoDetect
     [
-        #var(dirty_ptr)tape := system'external'elenasm InterpretFile
-            &literal:path
-            &int:anEncoding
-            &int:anAutoDetect.
+        dirty_ptr tape := system'external'elenasm InterpretFile
+                            &literal:path
+                            &int:anEncoding
+                            &int:anAutoDetect.
             
         (tape is &empty)
-            ? [ #throw ScriptEngineException new. ].
+            ? [ ScriptEngineException new raise. ].
             
         system'external'elenasm Release &dirty_ptr:tape.            
     ]
     
-    #method(stacksafe) evalScriptFile &literal:path &int:anEncoding &int:anAutoDetect
+    stacksafe evalScriptFile &literal:path &int:anEncoding &int:anAutoDetect
     [
-        #var(dirty_ptr)tape := system'external'elenasm InterpretFile
-            &literal:path
-            &int:anEncoding
-            &int:anAutoDetect.
+        dirty_ptr tape := system'external'elenasm InterpretFile
+                            &literal:path
+                            &int:anEncoding
+                            &int:anAutoDetect.
             
         (tape is &empty)
-            ? [ #throw ScriptEngineException new. ].
+            ? [ ScriptEngineException new raise. ].
             
-        #var retVal := $self evaluateTape &dirty_ptr:tape.
+        var retVal := $self evaluateTape &dirty_ptr:tape.
         
         system'external'elenasm Release &dirty_ptr:tape.
         
         ($nil == retVal)
-            ? [ #throw ScriptEngineException new:($self $lastVMError). ].
+            ? [ ScriptEngineException new:($self $lastVMError) raise. ].
             
         ^ retVal.            
     ]
@@ -109,4 +108,4 @@
 
 // --- globlas ---
 
-#static globals = DynamicStruct new.
+static globals = DynamicStruct new.

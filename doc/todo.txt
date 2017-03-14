@@ -5,6 +5,11 @@ In development:
               xdev - generic development
                  * open argument list
 
+              zdev 
+                 * fix interpreter sample
+                 * fix calc sample
+
+              xdev - generic development
                  * migrate amb
                  * migrate rosetta samples
 
@@ -12,10 +17,6 @@ In development:
                  * test bsort
                  * test pi2
                  * migrate samples
-
-              zdev 
-                 * fix interpreter sample
-                 * fix calc sample
 
 ------                                 
 Pipeline:
@@ -218,6 +219,7 @@ Pipeline:
                  * check why : bool is &keyAvailable => theReader does not work correctly
                  * replace $self with self for template in extensions
                  * move calcLiveCells into an extension
+                 * support reference in collection expression : system'dynamic'Tape("Hello World", system'console, %"writeLine[1]").
 
               zdev 
                  * script : elena - simple class,one method
