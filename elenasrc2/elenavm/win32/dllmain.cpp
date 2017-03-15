@@ -265,7 +265,7 @@ EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
       return 0;
 
    try {
-      return instance->getSymbolRef((const char*)referenceName);
+      return instance->getSymbolRef((const char*)referenceName, false);
    }
    catch (JITUnresolvedException& e)
    {

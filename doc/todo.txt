@@ -2,6 +2,11 @@
 In development:
 ------                              
 
+              xdev - generic development
+                 * replace $self with self for template in extensions
+                 * fix :     x := 5 power:2.                                          // power function
+                 * fix :     x := 0Fh shift:-4.                                       // left shift
+
               zdev 
                  * fix calc sample
 
@@ -212,7 +217,6 @@ Pipeline:
                  * console_screen_buffer_info - implicit conversion : init with zeros
                  * duplicate assigning
                  * check why : bool is &keyAvailable => theReader does not work correctly
-                 * replace $self with self for template in extensions
                  * move calcLiveCells into an extension
                  * support reference in collection expression : system'dynamic'Tape("Hello World", system'console, %"writeLine[1]").
                  * boxing / unboxing argument list

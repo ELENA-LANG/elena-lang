@@ -250,8 +250,8 @@ extension convertorOp
         = aTarget set:(aTarget cast:%eval &to:{ ! x : y = (Variant new:x)::$subject get. } &with:self).
 }
 
-//symbol convertor 
-//    = { ! n = Wrap(n, convertorOp)::$subject get. }.
+class convertor 
+    = { ! n = Wrap(n, convertorOp)::$subject get. }.
 
 extension(datetime) dateFormatterOp 
 {

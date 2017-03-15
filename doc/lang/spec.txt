@@ -1,51 +1,35 @@
+# 1. Introduction
 
-1. Introduction
+ELENA is a general-purpose, object-oriented, polymorphic language with late binding. It features message dispatching/manipulation, dynamic object mutation, a script engine / interpreter and group object support.
 
-ELENA  is  a  general-purpose,  object-oriented,  polymorphic language with late 
-binding.  It features message dispatching/manipulation, dynamic object mutation,
-a script engine / interpreter and group object support.
+1.1. Namespaces
+---
 
+Any  ELENA program or library consists of modules ( files with .NL extension ) containing classes and symbols. Every member of the module is referred by its fully qualified name which consists of namespace and a proper name separated by an apostrophe. The namespace itself may contain sub elements separated by apostrophes.
 
-1.1 Namespaces
+All source files (files  with .L extension) located in the same folder are compiled into the corresponding module. A project file ( a file with .PRJ extension ) defines the root namespace and the output type (stand-alone executable, VM executable or a library). The project may produce several modules if it contains the files located in sub folders (the new module namespace consists of the root one and the folder relative path is split by apostrophes).
 
-Any  ELENA  program  or library consists of modules ( files with .NL extension ) 
-containing  classes  and  symbols. Every member of the module is referred by its 
-fully qualified name which consists of namespace and a proper name separated by
-an  apostrophe.  The  namespace  itself  may  contain  sub elements separated by 
-apostrophes.
-
-All  source  files  (files  with .L extension)  located  in  the same folder are 
-compiled  into  the  corresponding  module.  A  project  file ( a file with .PRJ 
-extension )  defines  the  root  namespace  and  the  output  type  (stand-alone 
-executable, VM executable or a library). The project may produce several modules
-if  it  contains  the  files  located  in  sub folders (the new module namespace 
-consists of the root one and the folder relative path is split by apostrophes).
-
-
-1.2 Messaging
+1.2. Messaging
+---
 
 The main way to interact with objects in ELENA is sending a message. The message 
 name  is structured and consists of a verb, a signature and a parameter counter. 
-The  verb  defines a message action, for example eval[uate], add, set, get, run, 
-seek  and  so on. There are only limited set of possible verbs. The signature is 
+The  verb  defines a message action, for example *eval[uate]*, *add*, *set*, *get*, *run*, 
+*seek*  and  so on. There are only limited set of possible verbs. The signature is 
 user defined and describes the message parameters. It can be used to define some 
-custom  action  as well (e.g. writeLine, which in fact is eval&writeLine(1)). If 
+custom  action  as well (e.g. *writeLine*, which in fact is *eval&writeLine(1)*). If 
 the signature is not provided the message is considered to be generic and can be
 qualified (for example by dispatching).
 
-If  the object wants to handle the message it has to contain the method with the 
-same  name.  If  no method mapping was found the flow is considered to be broken 
-and  the  control  goes  to the next alternative flow (exception handler) or the 
-program is stopped.
+If the object wants to handle the message it has to contain the method with the same name. If no method mapping was found the flow is considered to be broken and the control goes to the next alternative flow (exception handler) or the program is stopped.
 
 The simple code to send a message looks like this:
 
     console write:"Hello World".
 
-Note: "write" is a generic message; a literal constant is a parameter. 
+Note: *write* is a generic message; a literal constant is a parameter. A dot is a statement terminator.
 
-Several  messages  can  be  send  in  one statement, the parameter itself may be 
-result of object interactions as well:
+Several messages can be send in one statement, the parameter itself may be result of object interactions as well:
 
     console write "2 + 2 =" write:(2 add:2).
 
@@ -53,105 +37,100 @@ We could use operators to have the shorter code:
 
     console << "2+2=" << 2 + 2.
 
-Note: In most cases "<<" is a synonym to "write" and "+" to "add".
+Note: In most cases *"<<"* is a synonym to *write* and *"+"* to *add*.
 
 Several parameters can be passed in the message as well:
 
     console write:"Hello World" &paddingLeft:10 &with:#32
 
 Ampersand is used to indicate that the signature has several arguments (subjects). The actual 
-message name is write&paddingLeft&with(2).
+message name is *write&paddingLeft&with(2)*.
 
 The generic message can have several parameters as well:
 
     console writeLine:"a+b=":(a + b).
-    
+
 
 1.3. Classes, Symbols, Nested classes and Closures
+---
 
-ELENA  is  an  object-oriented  language. To create a program we have to declare
-new classes and symbols.
+ELENA is an object-oriented language. To create a program we have	 to declare new classes and symbols.
 
-A  class  encapsulates  data  (fields) with code (methods) to access it. In most 
-cases  it  is  not possible to get a direct access to the class content. Usually 
-the  field  refers  to  another  class and so on until we reach "primitive" ones 
-which content are considered as raw data (e.g. numeric or literal values).
+A class encapsulates data (fields) with code (methods) to access it. In most cases it is not possible
+to get a direct access to the class content. Usually the field refers to another class and so on
+until we reach "primitive" ones which content are considered as raw data (e.g. numeric or literal values).
 
-Classes  form  the  inheritance  tree .  There  is  the  common  super  class  -  
-system'Object.  ELENA  does  not  support  multiple  inheritance,  though  it is 
-possible  to inherit the code using a dispatch handler (mixins / group objects). 
-When  the  parent is not provided the class inherits directly system'Object (the 
-super class).
+Classes form the inheritance tree. There is the common super class - system'Object.
+ELENA does not support multiple inheritance, though it is possible to inherit the code using a dispatch handler 
+(mixins / group objects). When the parent is not provided the class inherits directly system'Object 
+(the super class).
 
-A  class  instance  can  be  created  with  the  help  of  the special methods - 
-constructors.  A  constructor  is  used  mostly  to initialize the class fields. 
-There  are  special  types  of classes which do not have constructors and can be 
-used  directly  ( nested classes,  extensions,  closures ).  A  class  itself is 
-considered as a stateless object.
+A class instance can be created with the help of the special methods - constructors. A constructor
+is used mostly to initialize the class fields. There are special types of classes which do not have constructors
+and can be used directly (nested classes, extensions, closures). A class itself is considered as a stateless
+object.
 
-#class BaseClass
-{
-  #field theField1.
-  #field theField2.
-  
-  #method field1 = theField1.
-
-  #method field2 = theField.
-
-}
-
-#class DerivedClass : BaseClass
-{
-  #constructor new &field1:object1 &field2:object2
-  [  
-     theField1 := object1.
-     theField2 := object2.
-  ]
-
-  #method add &field1:object1 &field2:object2
-     = MyClass new &field1:(theField1 + object1) &field2:(theField2 + object1).
-}
-
+    class BaseClass
+    {
+      object theField1.
+      object theField2.
+      
+      field1 = theField1.
+    
+      field2 = theField2.
+    
+    }
+    
+    class DerivedClass :: BaseClass
+    {
+      constructor new &field1:object1 &field2:object2
+      [  
+         theField1 := object1.
+         theField2 := object2.
+      ]
+    
+      add &field1:object1 &field2:object2
+         = MyClass new &field1:(theField1 + object1) &field2:(theField2 + object1).
+    }
+    
 To create a class instance we have to send a message (usually new) to its class.
 
-#var anObject := DerivedClass new &field1:1 &field2:1.
+    var anObject := DerivedClass new &field1:1 &field2:1.
 
-A  symbol  is a named expression and can be used to declare initialized objects, 
-constants, reusable expressions and so on.
+A symbol is a named expression and can be used to declare initialized objects, constants, reusable expressions
+and so on.
 
-#symbol N = 1. 
+    const N = 1. 
  
-#symbol ZeroClass = DerivedClass new &field:0 &field:0.
+    symbol TheClass = DerivedClass new &field1:N &field2:N.
 
-A static symbol is the named expression which state is preserved. There could be 
-only one instance of static symbol.
+A static symbol is the named expression which state is preserved. There could be only one instance of static symbol.
 
-#static SingletonClass = DerivedClass new &field:0 &field:0.
+    static SingletonClass = DerivedClass new &field1:0 &field2:0.
 
 Nested classes can be declared in the code and used directly.
 
-#symbol ClassHelper =
-{
-   sumOf:anObject1:anObject2
-      = anObject1 add &field1::anObject2 &field2::anObject1.
-}.
+    class ClassHelper =
+    {
+       sumOf:object1:object2
+          = anObject1 add &field1:object1 &field2:object2.
+    }.
+    
+    ...
+    
+    var aSum := ClassHelper sumOf:anObject1:anObject2.
 
-...
+Closure is a special case of the nested class and consists of the code enclosed into square brackets
+(with optional parameter declaration)
 
-#var aSum := ClassHelper sumOf:anObject1:anObject2.
+    str run &each:
+       ch [ console write:ch. ].
 
-Closure  is a special case of the nested class and consists of the code enclosed 
-into square brackets (with optional parameter declaration).
-
-str run &each:
-   ch [ console write:ch. ].
-   
 
 1.4. Code blocks
+---
 
-ELENA  code block consists of one or more declarations and statements. The block 
-is  enclosed  in  square  brackets  and  may contain nested sub code blocks. The 
-statement terminator is a dot.
+ELENA code block consists of one or more declarations and statements. The block is enclosed in square brackets and may contain nested sub code blocks. The statement terminator is a dot.
 
     control run &int:0 &int:MAX &every: (&int:i)
     [
@@ -161,8 +140,7 @@ statement terminator is a dot.
     console writeLine:pi.
     console writeLine:"Time elapsed in msec:":(aDiff milliseconds).
 
-When  a  method  should  return  a result (other than $self) return statement is 
-used. It should be the last statement in the block.
+When a method should return a result (other than $self) return statement is used. It should be the last statement in the block.
 
     [
         ...
@@ -170,10 +148,9 @@ used. It should be the last statement in the block.
         ^ aRetVal / anArray length.
     ]
 
-If  the  code  block contains only return statement the simplified syntax can be 
-used:
+If the code block contains only return statement the simplified syntax can be used:
 
-    #method Number = convertor toReal:theValue.    
+    Number = convertor toReal:theValue.    
 
 or there is an alternative block expression
 
@@ -181,98 +158,111 @@ or there is an alternative block expression
 
 Note: it should not end with the terminator symbol
 
-It  is  possible  to declare the block variable and assigns the value to it. The 
-variable name must be unique within the code block scope.
+It is possible to declare the block variable and assigns the value to it. The variable name must be unique within the code block scope.
 
-    #var aRetVal := Integer new:0.
+    var aRetVal := Integer new:0.
 
 
-1.5. Conditional branching / loops
+1.5. Conditional branching
+--
+Conditional branching is implemented with a help of special Boolean symbols (system’true and system’false). All conditional operations should return these symbols as a result.
 
-ELENA like Smalltalk does not support any special language constructs to implement the conditional branching. Instead special Boolean symbols 
-(system’true and system’false) are used. All conditional operations should return these symbols as a result.
+There are three branching methods : _if[1]_ , _if[2]_, _ifnot[1]_
 
-There are three branching methods : then[1] , then&else[2], else[1]
-
-(m == 0) then:
-[
-   n + 1
-]
-&else: [
-   m + n
-].
-
-Note that code in square brackets are in fact nested action classes ( an action class is a class supporting evaluate message). 
-So this code is can be written in this form:
-
-(m == 0) then: 
-{
-   eval
-   [
-      ^ n + 1.
-   ]
-}
-&else: 
-{
-   eval
-   [
-      ^ m + n.
-   ]
-}.
+    (m == 0) if:
+    [
+       r append:(n + 1).
+    ]
+    : [
+       r append:(m + n).
+    ].
 
 This expression can be written using special operators
 
-(m == 0) 
-  ? [ n + 1 ]
-  ! [ m + n ].
-
-Note: the main difference between using explicit messages and conditional operators is that the compiler may optimize the resulting code in the later case.
+    (m == 0) 
+      ? [ r append:(n + 1). ]
+      ! [ r append:(m + n). ].
 
 We could omit true or else part
 
-(m == 0) 
-  ! [ m / n ].
+    (m == 0) 
+       ! [ m / n ].
 
 Boolean symbols supports basic logical operations (AND, OR, XOR and NOT), so several conditions can be checked
 
-        (aChar >= 48) and:(aChar < 58)
-        ? [
-            theToken += aChar.
-        ]
-        ! [
-            #throw Exception new:"Invalid expression".
-        ]
+    ((aChar >= 48) and:(aChar < 58))
+    ? [
+        theToken += aChar.
+    ]
+    ! [
+       Exception new:"Invalid expression" raise.
+    ]
 
-Note that in this case both condition will be evaluated even if the first one is false. If we want to use short-circuit evaluation
-expression brackets should be used
+Note that in this case both condition will be evaluated even if the first one is false. If we want to use short-circuit evaluation, lazy expression should be used:
 
-                (x >= 0)and:[ array@x != 0] ?
-                    [
-                       ...
-                    ]
+    ((x >= 0)and:[ array@x != 0]) ?
+    [
+        ...
+    ]
 
 A switch statement can be implemented using => operator
 
-        ^ aBulls =>
-            -1 ? [ consoleEx writeLine:"Not a valid guess.". ^ true. ]
-             4 ? [ consoleEx writeLine:"Congratulations! You have won!". ^ false. ]
-             ! [
+    ^ aBulls =>
+         -1 ? [ console writeLine:"Not a valid guess.". ^ true. ]
+          4 ? [ 
+                  console writeLine:"Congratulations! You have won!". 
+                  ^ false. 
+              ]
+            ! [
                  theAttempt += 1.
                  
-                 consoleEx writeLine:"Your Score is " : aBulls : " bulls and " : aCows : " cows".
+                 console writeLine:
+                      "Your Score is " : aBulls 
+                      : " bulls and " : aCows : " cows".
                  
                  ^ true.
-             ].
+            ].
 
+1.6. Hello world program
+---
 
-2. Lexical Structure
+To write a simple console application, we have to declare the program main symbol - an object handling _eval[0]_ message. The simplest way is to declare a nested class:
+
+    program =
+    {
+        eval
+        [
+            system'console writeLine:"Hello World" .
+        ] 
+    }.
+
+A nested class containing only one _eval_ method can be declared as a closure:
+
+    program =
+    [
+        system'console writeLine:"Hello World" .
+    ].
+
+Finally we may import system namespace:
+
+    #import system.
+
+    program =
+    [
+        console writeLine:"Hello World" .
+    ].
+
+# 2. Interactions
+
+# 3. Lexical Structure
+--
 
 An ELENA module consists of one or more source files. A source file is an ordered sequence of Unicode characters (usually encoded with the UTF-8 encoding).
 
 There are several sequences of input elements: white space, comments and tokens. The tokens are the identifiers, keywords, literals, operators 
 and punctuators.
 
-The raw input stream of Unicode characters is reduced by ELENA DFA into a sequence of <input elements>. 
+The raw input stream of Unicode characters is reduced by ELENA DFA into a sequence of <nowiki>&lt;</nowiki>input elements<nowiki>&gt;</nowiki>. 
 
 	<input> :
 			{ <input element> }*
@@ -293,7 +283,7 @@ The raw input stream of Unicode characters is reduced by ELENA DFA into a sequen
 Of these basic elements, only tokens are significant in the syntactic grammar of an ELENA program.
 
 2.1. White space
-
+--
 ELENA White space are a space, a horizontal tab and line terminators. They are used to separate tokens.
 
 	<white space> :
@@ -303,6 +293,7 @@ ELENA White space are a space, a horizontal tab and line terminators. They are u
 		LF (new line)
 	
 2.2. Comments	
+--
 
 ELENA uses c++-style comments:
 
@@ -341,6 +332,7 @@ ELENA uses c++-style comments:
 ELENA comments do not nest. Comments do not occur inside string literals
 
 2.3. Identifiers
+--
 
 An identifier is a sequence of letters, underscore and digits starting with letter or underscore. An identifier length is restricted 
 in the current compiler design (maximal 255 characters)
@@ -359,6 +351,7 @@ in the current compiler design (maximal 255 characters)
 ELENA identifiers are case sensitive.
 
 2.4. Full identifiers
+--
 
 A full identifier is a sequence of identifiers separated with "'" characters. It consists of a namespace and a proper name.  
 A full identifier length is restricted in the current compiler design (maximal 255 characters)
@@ -370,6 +363,7 @@ A full identifier length is restricted in the current compiler design (maximal 2
 		<identifier> [ "'" { <identifier> } ]*
 		
 2.5. Local identifiers
+--
 
 A local identifier is a sequence of letters, underscore and digits starting with '$' character. A local identifier length is restricted 
 in the current compiler design (maximal 255 characters)
@@ -378,18 +372,21 @@ in the current compiler design (maximal 255 characters)
 		'$' <identifier>
 		
 2.6. Keywords
+--
 
 A keyword is a sequence of letters starting with '#' character. Currently only following keywords are used though others reserved for future use: 
-#class, #symbol, #static, #field, #method, #constructor, #var, #loop, #define, #type, #throw, #break. Keywords can be placed only in the beginning 
+<nowiki>#class, #symbol, #static, #field, #method, #constructor, #var, #loop, #define, #type, #throw, #break.</nowiki> 
+Keywords can be placed only in the beginning 
 of the statement.
 	
 	<local identifier> :
 		'#' { <letter> }+
 	
 	<letter> :
-		Unicode characters
+		Unicode character
 
 2.7. Literals
+---
 
 A literal is the source code representation of a value.
 
@@ -398,7 +395,8 @@ A literal is the source code representation of a value.
 		<float>
 		<string>
 		
-2.7.1. Integer literals		
+2.7.1. Integer literals
+----
 
 An integer literal may be expressed in decimal (base 10) or hexadecimal(16).
 
@@ -424,6 +422,7 @@ An integer literal may be expressed in decimal (base 10) or hexadecimal(16).
 		one of following character - a b c d e f A B C D E F
 		
 2.7.2. Floating-point literals
+----
 
 A floating-point literal has the following parts: a whole-number part, a decimal point, and fractional part, an exponent.  The exponent, if present, 
 is indicated by the Unicide letter 'e' or 'E' followed by an optionally signed integer.
@@ -453,6 +452,7 @@ At least one digit, in either the whole number or the fraction part, and a decim
 Real literals are represented with 64-bit double-precision binary floating-point formats.
 
 2.7.3. String literal
+----
 
 A string literal consists of zero or more characters enclosed in double quotes. Characters may be represented by escape sequences.
 
@@ -469,6 +469,7 @@ A string literal consists of zero or more characters enclosed in double quotes. 
 		any character except CR or LF or '"'
 		
 2.7.4. String literal escape sequences
+----
 
 The string literal escape sequences allow for the representation of some non-graphic character as well as the double quote and percent character.
 
@@ -485,506 +486,30 @@ The string literal escape sequences allow for the representation of some non-gra
 		
 	<digit> :
 		digit 0-9
-
+    
 	<alert> :
 		'a'
-
+    
 	<backspace> :
 		'b'
-
+    
 	<horizontal tab> :
 		't'
-
+    
 	<carriage return> :
 		'r'
-
+    
 	<new line> :
 		'n'
 		
 2.8. Operators and punctuators
+---
 
-There are several kinds of operators and punctuators. Operators are short-cut form of messages taking one operand. 
-Punctuators are for grouping and separating. 
+There are several kinds of operators and punctuators. Operators are short-cut form of messages taking one operand. Punctuators are for grouping and separating. 
 
 	<operator-or-punctuator> : one of
-		'(', ')', '[', ']', '<', '>', '{', '}', '.', ',', '|', ':', '::', '=', '=>', 
-		 '+', '-', '*', '/', '+=', '-=', '*=', '/=', '||', '&&', '^^', '<<', '>>', ':='
-
-3. Basic Things.
-
-3.1. Operation with objects
-
-Objects interacts with each other by sending messages  
-
-a message:b <=>  a.dispatch(b,message)
-
-
-4. Syntax
-
-ELENA lexical tokens are considered as terminal symbols. Any other are non-terminal symbols. The parsing operation starts with <start> non-terminal.
-
-	<start>	:
-	{ <class declaration> | <symbol declaration> | <static symbol declaration> 
-| <shortcut declaration> }*
-		
-	<class declaration> :
-		'#class' <symbol identifier> [ <super class declaration> ] <class body>
-		
-	<symbol declaration> :
-		'#symbol' <symbol identifier> <symbol body>
-		
-	<static symbol declaration> :
-		'#static' <symbol identifier> <symbol body>
-		
-	<shortcut declaration> :
-		#define <symbol identifier> = < full symbol identifier>
-
-	<class body> :
-		'{' { <field declaration> }* { <property declaration> | <method declaration>  }* '}'
-	
-	<field declaration> :
-		'#field' <variable identifier> { ',' <variable identifier> }* '.'
-		
-	<property declaration> :
-		'#method' ::<variable identifier> = <expression> '.'
-	
-	<method declaration> :
-		'#method' <variable identifier> [ <parameter declaration> ] <method body>
-	
-	<parameter declaration> :
-		: <variable identifier>
-	
-	<method body> :
-		'[' { <code statement> '.' }* ']'
-			
-	<code statement> :
-		<variable declaration>
-		<loop declaration>
-		<expression>
-		<assigning>
-		<returning expression>
-	
-	<variable declaration> :
-		'#var' <variable identifier> ':=' <expression>
-		
-	<loop declaration> :
-		'#loop' <expression>
-
-	<expression> :
-	{<object> | <array >} {'::' <property>}* {<message>}*  [< sub code>]  { '|' { <message>}*  [< sub code>]}*
-
-	<returning expression> :
-		‘^’ <expression>
-
-	<property> :
-		<variable identifier>
-
-	<assigning> :
-		<variable identifier> ':=' <expression>
-
-	<object> :
-		<variable identifier>
-		<full identifier>
-		<integer>
-		<float>
-		<string>
-		<inline class>
-		'(' { <expression>  } ')'
-		<inline code>
-
-	<sub code> :
-		'[' { <code statement> '.' }* ']'
-
-	<inline class> :
-		'{' <inline_member> { ';' <inline_member> }* '}'
-	
-	<array > :
-		<expression> {, < expression > }+
-		
-	<inline_member> :
-		<inline property declaration> 
-		<inline method declaration>		
-		
-	<inline property declaration> :
-		'::' <variable identifier> ‘=’ <expression>
-	
-	<inline method declaration> :
-		<variable identifier> [ <parameter declaration> ] <method body>
-		
-	<message> :
-		<variable identifier> [ <message parameter> ]
-		<operator> {<object> | <array>}
-	
-	<message parameter> :
-		':' {<object> | <array>}
-	
-	<operator> :
-		{ '<<' | '>>' | '+' | '-' | '*' | '/' | '==' | '!=' | '>' | '<' | '>=' | '<=' }
-	
-	<inline code> :
-		‘#’ ‘<’ <alias> ‘:’ <id> ‘(’  <expression> {, < expression > }+ ‘)’ ’>’
-
-	<property body> :
-		= <expression>
-	
-	<symbol body> :
-		'=' <expression> '.'
-
-	<super class declaration> :
-		'<-' <super class identifier>
-
-	<symbol identifier> :
-		<identifier> 
-		<local identifier>
-
-	<super class identifier> :
-		<identifier> 
-		<local identifier>
-		<full identifier>	
-		
-	<variable identifier> :
-		<identifier> 
-		<local identifier>
-
-	<class identifier> :
-		<identifier> 
-		<local identifier>
-		<full identifier>	
-		
-4. Classes, symbols and variables
-
-ELENA is a pure polymorphic language which means that the same part of code may behave differently in different situations. No special techniques like virtual methods and interfaces are exploited to achieve this goal. Virtually any object may react on any message and be part of any pattern.
-
-ELENA is a language with late binding which means that the concrete "type" of object is not known at the compile-time so there is no restriction on possible operations with it. The term "type" have no meaning in ELENA and will be not used at all.
-
-ELENA is a pure object-oriented language which means that any value or variable is an object including literals like numbers and strings. This implies that the approaches used in structural languages hardly could be applied and not always have appropriate analogues.
-
-ELENA is a "framework" language which means that it offers only limited set of programming constructions and operations. In generally ELENA arranges interactions between parts of the code written with external tools. Indeed ELENA can be viewed as a general purpose language while it has the rich standard library of classes which may satisfy wide variety of demands.
-
-4.1. Classes and Symbols
-
-Any object is an instance of one or another _class_. The classes form the hierarchy tree on the principal of inheriting. There is the common super class - Object.
-
-A class is an abstract concept which means that no operations can be done with it except a class declaration. So to create the object its _symbol_ should be referenced. There are explicit and implicit, static and dynamic symbols. 
-
-When a new class is declared simultaneously the appropriate explicit symbol is declared as well. The implicit symbol should be declared implicitly. In general the explicit symbol is the object in the initial state and the explicit one is the object in the particular state.
-
-A static symbol is the class instance which state is preserved. A static symbol is always implicit one. There could be only one instance of static symbol.
-
-4.2. Literals
-
-Literals are the implicit dynamic symbols which internal states are equal to their value.
-In any other aspect the literals are normal objects.
-
-4.3. Variables
-
-A variable is an object storage location which value is changed by assigning with another variable or a symbol. 
-
-Class variables are called fields. The object fields determine its internal state.
-
-5. Names
-
-There are two types of names: identifier and message ones. In many aspects identifier names are similar to the message names but their have different semantic meanings.
-
-Identifier names are used to refer to entities declared in a program. A declared entity is a symbol, variable and class (in special cases).
-
-Message names are used to ask an object to perform some operations. Usually message has an attached parameter. To react on the message the object should have the method with the same name.
-
-5.1. Identifier names
-
-Identifier names are either simple, consisting of a single identifier or qualified, consisting of a sequence of identifiers separated by "'" tokens. Qualified names refer only to symbols or classes (in special cases).
-
-Simple name can be public or private. Qualified name is always public. The private name starts with "$" token.
-
-Every declaration has a scope, which is the part of the code within which the declared entity can be referred to by a simple name. Scopes could be nested. 
-
-Private names can be referred to only within their scope.
-
-Qualified name allows refer to the public symbols and classes (having public name) declared in another scope.
-
-5.2. Message names
-
-Message names can be only simple ones. They can be public or private. 
-
-To react on the private message the object has to have a method declared in the same scope as the message name.
-
-5.3 Modules and packages
-
-Any ELENA program consists of file with extension "l". Every such file is considered as a separate scope called a module. Symbols and classes declared in that file can be referred outside the module only by qualified name specifying the module name.
-
-Modules can be grouped together in a package. Packages may in their turn be grouped in another package and so on.
-
-So the full qualified name of any entity should include module and package names the entity is located in. The module could be located in any package without recompiling.
-
-The packages are used only to resolve name conflicts.
-
-6. Classes
-
-Class declaration defines a new class and an implicit class symbol, and describes how it is implemented.
-
-The class declaration can be named or unnamed (inline declaration) public or private (when the class name is a private name).
-
-Each class (except Object) is a subclass of a single existing class or to put it another way all classes build a hierarchy tree on the principal of inheritance. The class parent may be explicitly declared. When the parent is not specified, the class inherits Object.
-
-The body of a class declares members: fields, properties and methods. Fields have to be declared before the methods and properties. 
-
-Public class fields (including inherited ones) can be referred by simple name. The private fields (which have private names) can be referred only within the class scope (i.e. in subclasses declared in the same module). The member name should be unique.
-
-Methods and properties maybe private or public depending on the method name (message name).
-
-6.1. Named class declaration
-
-	<class declaration> :
-		'#class' <symbol identifier> [ <super class declaration> ] <class body>
-
-	<class body> :
-		'{' { <field declaration> }* { <property declaration> | <method declaration> }* '}'
-
-6.1.1. Symbol Identifier
-
-A symbol identifier is a simple name. It should be unique on the module level.
-
-The symbol identifier could be private or public. The private name means that class is accessible only within the module and is considered to be a private one.
-
-6.1.2. Super class declaration
-
-A super class declaration clause declares the class parent. If it's skipped the class inherits the common super class Object.
-
-	<super class declaration> :
-		'<-' <super class identifier>
-		
-	<super class identifier> :
-		<identifier> 
-		<local identifier>
-		<full identifier>	
-		
-A super class declaration could be a simple or qualified name. The simple name could be private or public. The class with such names should already exist (So no forward declaration is possible).
-
-6.1.3 Field declaration
-
-The object variables are introduced by field declaration.
-
-	<field declaration> :
-		'#field' <variable identifier> { ',' <variable identifier> }* '.'
-
-The field name is always a simple one and may be private or public. A private field is not accessible beyond the module scope.
-
-The public field name should be unique for the current class. This means that there should be no such fields in any parent class. The private field should be unique only in any parent class declared in the same module.
-
-6.1.4 Method declaration
-
-A method declares executable code that can be invoked by sending the message to the object with the same name. The message may contain a parameter.
-
-	<method declaration> :
-		'#method' <variable identifier> [ <parameter declaration> ] <method body>
-		
-	<parameter declaration> :
-		: <variable identifier>
-		
-	<method body> :
-		'[' { <code statement> '.' }* ']'
-			
-Method name (message name) can be private or public. The private method can be invoked only within the module scope. The method name should be unique within the class scope. If the method with such name was already declared in any parent class this method is considered to be overridden.
-
-A parameter is a simple name either public or private. There is no special meaning in declaring the private parameter except resolving the name conflict. If the object already has a variable with the same name as the parameter it cannot be referred.
-
-The native code is a sequence of statements tailing by the dot. If the code is idle only "[ ]" is placed.
-
-6.1.5. Property declaration
-
-A property declares expression which is invoked by sending the message to the object with the property name. In many aspects the only difference between a method and a property is that the property always returns an object and cannot have a parameter.
-
-	<property declaration> :
-		'#method' ::<variable identifier> = <expression> '.'
-
-6.2. Unnamed class declaration
-
-An unnamed class (or inline class) is declared right in the place where it is referred in the executable code.
-
-	<inline_member> :
-		<inline property declaration> 
-		<inline method declaration>		
-		
-	<inline property declaration> :
-		'::' <variable identifier> ‘=’ <expression>
-	
-	<inline method declaration> :
-		<variable identifier> [ <parameter declaration> ] <method body>
-
-The inline class is a normal one except that it cannot have fields and always inherits Object.
-
-In many cases it can be treated as part of the code where it was declared.
-The object and local variables of outer code (outer variables) could be referred by simple name if no local variables with such names were declared. The outer variables cannot be assigned and they values are identical to the corresponding variables only at the moment of object creation.
-
-6.3. Sub code declaration
-
-A sub code is a set of nested statements which are executed if the operation prior to sub code succeeds. If one of the sub code statements fails the control goes to the closest alternative chain.
-
-	<sub code> :
-		'[' { <code statement> '.' }* ']'
-
-6.4. Array declaration
-
-An array is a special case of an inline class which consists of a list of objects.
-
-	<array > :
-		<expression> {, < expression > }+
-
-The class inherits std’basic’Array class.
-
-6.5. Explicit symbol declaration
-
-An explicit symbol is an object in the particular state. There two types of symbols: static and normal ones.
-
-A static symbol is the object which state is preserved. There could be only one instance of static symbol.
-
-	<symbol declaration> :
-		'#symbol' <symbol identifier> <symbol body>
-		
-	<static symbol declaration> :
-		'#static' <symbol identifier> <symbol body>
-		
-	<symbol identifier> :
-		<identifier> 
-		<local identifier>
-
-	<symbol body> :
-		'=' <expression> '.'
-
-7. Execution
-
-An ELENA program starts up by loading a specified symbol. Usually the symbol creates the object and sends the start-up message.
-
-8. Statements
-
-ELENA code block consists of a sequence of statements. A statement may contain another statement and so on. The block is enclosed in square brackets and may contain nested sub code blocks.
-
-	<code statement> :
-		<variable declaration>
-		<loop declaration>
-		<expression>
-		<assigning>
-		<returning expression>
-
-
-There are five types of statements: variable declaration, loop declaration, expression, returning expression and assigning.
-
-8.1. Expression.
-
-An expression is a chain of actions which are performed with an expression object.
-
-	<expression> :
-	<expression object> <action chain>
-
-An expression is broken if one of its actions is unsuccessful. In this case the value of the expression is undefined.
-
-8.1.2. Expression object
-
-	<expression object> :
-		{<object> | <array>} {'::' <property>}*
-		
-	<object> :
-		<variable identifier>
-		<full identifier>
-		<integer>
-		<float>
-		<string>
-		<inline class>
-		'(' { <expression>  } ')'
-		<inline code>
-		
-	<property> :
-		<variable identifier>
-
-An expression object is the object (or the array) the expression returns if the expression is not broken. An expression object could be variable, symbol or another expression enclosed in brackets or a property of these objects.
-
-A property is in fact a message sent to the object (or chain of messages) which returns the message result. If one of messages is not handled the whole expression is considered to be broken.
-
-8.1.2.1. Variable identifier
-
-A variable identifier could be a local variable, a field (a class variable) or symbol.
-
-8.1.2.2. Full identifier
-
-A full identifier could be only a symbol
-
-8.1.2.3. Integer
-
-An integer is a symbol with the value equals to the literal integer value.
-
-8.1.2.4. Float
-
-A float is a symbol with the value equals to the literal float value.
-
-8.1.2.5. String
-
-A string is a symbol with the value equals to the literal string value.
-
-8.1.2.6. Sub code
-
-A sub code is a symbol that is an instance of inline sub code class.
-
-8.1.2.7. Inline class
-
-An inline class is a symbol that is an instance of inline unnamed class.
-
-8.1.2.9. Array class
-
-A sub code is a set of nested statements which are executed if the operation prior to sub code succeeds.
-
-
-8.1.3. Expression action chain.
-
-	<action chain> :
-{<message>}*  [< sub code>]  { '|' { <message>}*  [< sub code>]}*
-
-	<message> :
-		<variable identifier> [ <message parameter> ]
-		<operator> {<object> | <array>}
-	
-	<message parameter> :
-		':' <object>
-	
-	<operator> :
-		{ '<<' | '>>' | '+' | '-' | '*' | '/' | '==' | '!=' | '>' | '<' | '>=' | '<=' }
-	
-An action chain is a chain of messages which are sent to the expression object. If the message is failed to be handled by the object the expression is considered to be broken.
-The message could be accompanied with the parameter which is an expression too. If the parameter expression is broken the message is considered to fail and the whole expression broken. 
-
-If the expression is broken the execution immediately goes to the alternative expression action chain if it's provided or to the end of the current code block. The alternative chains are separated with token "|".
-
-The message is failed to be handled by the object if the object do not have an appropriate method or the method execution was finished unsuccessfully.
-
-In normal case if the object has the method with the same name as the message the operation is considered to be successful if not end-message was encountered.
-
-8.2. Assigning
-
-	<assigning> :
-		<variable identifier> ':=' <expression>
-
-An assigning statement is the operation which assigns the value of right-hand expression to the variable (local or class one). If the right-hand expression is broken the assigning statement is undefined.
-
-
-8.3. Variable declaration
-
-	<variable declaration> :
-		'#var' <variable identifier> ':=' <expression>
-		
-A variable declaration is a statement which declares a new local variable and assigns the value to it. The variable name must be unique within the code block scope.
-
-8.4. Loop declaration
-
-	<loop declaration> :
-		'#loop' <expression>
-
-A loop declaration is an expression which is executed while it's not broken.
-
-
-8.5. Returning expression
-
-	<returning expression> :
-		‘^’ <expression>
-
-A returning expression is an expression which ends the execution of the method and returns the expression object as a result of the method execution.
-
+		'(', ')', '[', ']', '<', '>', '{', '}', 
+		'.', ',', '|', ':', '::', '=', '=>', 
+		'+', '-', '*', '/', '+=', '-=', '*=', '/=', 
+		'||', '&&', '^^', '<<', '>>', ':='
 
