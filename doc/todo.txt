@@ -3,7 +3,6 @@ In development:
 ------                              
 
               zdev 
-                 * fix interpreter sample
                  * fix calc sample
 
               xdev - generic development
@@ -502,7 +501,7 @@ Pipeline:
 
 
               fdev - samples
-                       * reimplement script samples: interpreter, helloworld, vmconsole
+                       * reimplement script samples: helloworld, vmconsole
 
               fdev - eldoc
                        * design

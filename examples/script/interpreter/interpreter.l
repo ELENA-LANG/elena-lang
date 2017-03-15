@@ -63,177 +63,177 @@ class BFTape
     check = theArray@thePointer != 0.
 }
 
-//#class TapeAssembler
-//{    
-//    #field theBrackets.
-//    #field theTape.
-//    
-//    #constructor new
-//    [
-//        theBrackets := Stack new.
-//        theTape := ArrayList new.
-//        
-//        theTape append:(Integer new).
-//    ]
-//    
-//    #method open
-//    [
-//        theBrackets push:(theTape length).
-//    ]
-//    
-//    #method close
-//    [
-//        theTape
-//            append:3
-//            append:%"tapeOp.var[]"
-//            append:2
-//            append:%"tapeOp.var[]"
-//            append:%"getAt[1]"
-//            append:0
-//            append:%"notequal[1]"
-//            append:(theBrackets pop)
-//            append:%"tapeOp.jumpif[1,]".
-//    ]
-//    
-//    #method input
-//    [
-//        theTape
-//            append:console
-//            append:%"readChar[0]"
-//            append:%"convertorOp.toInt[0]"
-//            append:3
-//            append:%"tapeOp.var[]"
-//            append:2
-//            append:%"tapeOp.var[]"
-//            append:%"setAt[2]".
-//    ]
-//    
-//    #method output
-//    [
-//        theTape
-//            append:3
-//            append:%"tapeOp.var[]"
-//            append:2
-//            append:%"tapeOp.var[]"
-//            append:%"getAt[1]"
-//            append:%"convertorOp.toChar[0]"
-//            append:console
-//            append:%"write[1]".
-//    ]
-//    
-//    #method next
-//    [
-//        theTape
-//            append:1
-//            append:3
-//            append:%"tapeOp.var[]"
-//            append:%"append[1]".
-//    ]
-//    
-//    #method previous
-//    [
-//        theTape
-//            append:1
-//            append:3
-//            append:%"tapeOp.var[]"
-//            append:%"reduce[1]".
-//    ]
-//    
-//    #method increase
-//    [
-//        theTape
-//            append:1
-//            append:3
-//            append:%"tapeOp.var[]"
-//            append:2
-//            append:%"tapeOp.var[]"
-//            append:%"getAt[1]"
-//            append:%"add[1]"
-//            append:3
-//            append:%"tapeOp.var[]"
-//            append:2
-//            append:%"tapeOp.var[]"
-//            append:%"setAt[2]".
-//    ]
-//    
-//    #method decrease
-//    [
-//        theTape
-//            append:1
-//            append:3
-//            append:%"tapeOp.var[]"
-//            append:2
-//            append:%"tapeOp.var[]"
-//            append:%"getAt[1]"
-//            append:%"subtract[1]"
-//            append:3
-//            append:%"tapeOp.var[]"
-//            append:2
-//            append:%"tapeOp.var[]"
-//            append:%"setAt[2]".
-//    ]
-//    
-//    #method get
-//        = Tape new &array:theTape.
-//}
-//
-//#class TapeCGenerator
-//{    
-//    #field theOutput.
-//    
-//    #constructor new
-//    [
-//        theOutput := system'text'TextBuilder new.
-//    ]
-//    
-//    #method open
-//    [
-//        theOutput writeLine:"while (*p) {".
-//    ]
-//
-//    #method close
-//    [
-//        theOutput writeLine:"}".
-//    ]
-//    
-//    #method input
-//    [
-//        theOutput writeLine:"*p = getchar();".
-//    ]
-//    
-//    #method output
-//    [
-//        theOutput writeLine:"putchar(*p);".
-//    ]
-//    
-//    #method next
-//    [
-//        theOutput writeLine:"++p;".
-//    ]
-//    
-//    #method previous
-//    [
-//        theOutput writeLine:"--p;".
-//    ]
-//
-//    #method increase
-//    [
-//        theOutput writeLine:"++*p;".
-//    ]
-//    
-//    #method decrease
-//    [
-//        theOutput writeLine:"--*p;".
-//    ]
-//    
-//    #method get
-//    [
-//        theOutput insert:"void execute(char* p) {" &at:0.
-//        theOutput writeLine:"}".
-//        
-//        ^ theOutput literal.
-//    ]
-//}
+class TapeAssembler
+{    
+    object theBrackets.
+    object theTape.
+    
+    constructor new
+    [
+        theBrackets := Stack new.
+        theTape := ArrayList new.
+        
+        theTape append:(Integer new).
+    ]
+    
+    open
+    [
+        theBrackets push:(theTape length).
+    ]
+    
+    close
+    [
+        theTape
+            append:3
+            append:%"tapeOp.var[]"
+            append:2
+            append:%"tapeOp.var[]"
+            append:%"getAt[1]"
+            append:0
+            append:%"notequal[1]"
+            append:(theBrackets pop)
+            append:%"tapeOp.jumpif[1,]".
+    ]
+    
+    input
+    [
+        theTape
+            append:console
+            append:%"readChar[0]"
+            append:%"convertorOp.toInt[0]"
+            append:3
+            append:%"tapeOp.var[]"
+            append:2
+            append:%"tapeOp.var[]"
+            append:%"setAt[2]".
+    ]
+    
+    output
+    [
+        theTape
+            append:3
+            append:%"tapeOp.var[]"
+            append:2
+            append:%"tapeOp.var[]"
+            append:%"getAt[1]"
+            append:%"convertorOp.toChar[0]"
+            append:console
+            append:%"write[1]".
+    ]
+    
+    next
+    [
+        theTape
+            append:1
+            append:3
+            append:%"tapeOp.var[]"
+            append:%"append[1]".
+    ]
+    
+    previous
+    [
+        theTape
+            append:1
+            append:3
+            append:%"tapeOp.var[]"
+            append:%"reduce[1]".
+    ]
+    
+    increase
+    [
+        theTape
+            append:1
+            append:3
+            append:%"tapeOp.var[]"
+            append:2
+            append:%"tapeOp.var[]"
+            append:%"getAt[1]"
+            append:%"add[1]"
+            append:3
+            append:%"tapeOp.var[]"
+            append:2
+            append:%"tapeOp.var[]"
+            append:%"setAt[2]".
+    ]
+    
+    decrease
+    [
+        theTape
+            append:1
+            append:3
+            append:%"tapeOp.var[]"
+            append:2
+            append:%"tapeOp.var[]"
+            append:%"getAt[1]"
+            append:%"subtract[1]"
+            append:3
+            append:%"tapeOp.var[]"
+            append:2
+            append:%"tapeOp.var[]"
+            append:%"setAt[2]".
+    ]
+    
+    get
+        = Tape new &array:theTape.
+}
+
+class TapeCGenerator
+{    
+    object theOutput.
+    
+    constructor new
+    [
+        theOutput := system'text'TextBuilder new.
+    ]
+    
+    open
+    [
+        theOutput writeLine:"while (*p) {".
+    ]
+
+    close
+    [
+        theOutput writeLine:"}".
+    ]
+    
+    input
+    [
+        theOutput writeLine:"*p = getchar();".
+    ]
+    
+    output
+    [
+        theOutput writeLine:"putchar(*p);".
+    ]
+    
+    next
+    [
+        theOutput writeLine:"++p;".
+    ]
+    
+    previous
+    [
+        theOutput writeLine:"--p;".
+    ]
+
+    increase
+    [
+        theOutput writeLine:"++*p;".
+    ]
+    
+    decrease
+    [
+        theOutput writeLine:"--*p;".
+    ]
+    
+    get
+    [
+        theOutput insert:"void execute(char* p) {" &at:0.
+        theOutput writeLine:"}".
+        
+        ^ theOutput literal.
+    ]
+}
 
 symbol program =
 [
@@ -262,44 +262,44 @@ symbol program2 =
     bfProgram eval:(BFTape new:1024).
 ].
 
-//#symbol program3 =
-//[
-//    #var bfProgram := TapeAssembler new
-//        open input output close get.
-//                    
-//    #var bfTape := Array new:1024 set &every:(&int:n) [ 0 ].
-//    
-//    bfProgram eval:bfTape.
-//].
-//
-//#symbol program4 =
-//[
-//    ('program'arguments length == 1) ?
-//        [ console write:"Please provide the path to the file to interpret". #throw AbortException new. ].
-//
-//    #var bfAssemblyProgram := scriptEngine 
-//        load &path:"asmrules.es"
-//        eval &path:('program'arguments@1).
-//
-//    #var bfProgram := bfAssemblyProgram eval:(TapeAssembler new).
-//
-//    #var bfTape := Array new:1024 set &every:(&int:n) [ 0 ].
-//
-//    bfProgram eval:bfTape.
-//].
-//
-//#symbol program5 =
-//[
-//    ('program'arguments length == 1) ?
-//        [ console write:"Please provide the path to the file to interpret". #throw AbortException new. ].
-//
-//    #var bfAssemblyProgram := scriptEngine 
-//        load &path:"asmrules.es"
-//        eval &path:('program'arguments@1).
-//
-//    #var bfProgram := bfAssemblyProgram eval:(TapeCGenerator new).
-//
-//    #var len := bfProgram length.
-//
-//    console writeLine:bfProgram.
-//].
+symbol program3 =
+[
+    var bfProgram := TapeAssembler new
+        open input output close get.
+                    
+    var bfTape := Array new:1024 set &every:(&int:n) [ 0 ].
+    
+    bfProgram eval:bfTape.
+].
+
+symbol program4 =
+[
+    ('program'arguments length == 1) ?
+        [ console write:"Please provide the path to the file to interpret". AbortException new raise. ].
+
+    var bfAssemblyProgram := scriptEngine 
+        load &path:"asmrules.es"
+        eval &path:('program'arguments@1).
+
+    var bfProgram := bfAssemblyProgram eval:(TapeAssembler new).
+
+    var bfTape := Array new:1024 set &every:(&int:n) [ 0 ].
+
+    bfProgram eval:bfTape.
+].
+
+symbol program5 =
+[
+    ('program'arguments length == 1) ?
+        [ console write:"Please provide the path to the file to interpret". #throw AbortException new. ].
+
+    var bfAssemblyProgram := scriptEngine 
+        load &path:"asmrules.es"
+        eval &path:('program'arguments@1).
+
+    var bfProgram := bfAssemblyProgram eval:(TapeCGenerator new).
+
+    var len := bfProgram length.
+
+    console writeLine:bfProgram.
+].
