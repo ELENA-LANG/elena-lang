@@ -2294,7 +2294,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 
    writeTarget(writer, resolveObjectReference(scope, object));
 
-   writeTerminalInfo(writer, terminal);
+   if (!test(mode, HINT_NODEBUGINFO))
+      writeTerminalInfo(writer, terminal);
 
    writer.closeNode();
 }
@@ -3112,11 +3113,7 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
                }
 
                // terminator
-               arg.appendNode(lxNil);
-
-               // HOTFIX : copy the argument list into the call expression
-               SyntaxTree::copyNode(arg, node);
-               arg = lxIdle;
+               writeTerminal(writer, arg, scope, ObjectInfo(okNil), HINT_NODEBUGINFO);
             }
             else {
                ObjectInfo argListParam = compileExpression(writer, arg, scope, paramMode);

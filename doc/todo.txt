@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              xdev - generic development
-                 * open argument list
-
               zdev 
                  * fix interpreter sample
                  * fix calc sample
@@ -193,7 +190,6 @@ Pipeline:
                  * reimplement event templates
                  * static fields
                  * implement switch
-                 * support argument list
                  * exception in static symbol (e.g. $StartUpEvents new - if "new" is not found)
                  * temporal code for declaring uninitialized array - "type(size)var := 0" - should be replaced!?
                  * implement gui suppport
@@ -220,6 +216,7 @@ Pipeline:
                  * replace $self with self for template in extensions
                  * move calcLiveCells into an extension
                  * support reference in collection expression : system'dynamic'Tape("Hello World", system'console, %"writeLine[1]").
+                 * boxing / unboxing argument list
 
               zdev 
                  * script : elena - simple class,one method
