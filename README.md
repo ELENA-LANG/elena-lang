@@ -27,7 +27,7 @@ To acquire the source code clone the git repository:
 
 ### Windows:
 
-The code base is implemented in C++ and does not require external dependencies. You just need Visual Studio 2015.
+The compiler code is implemented in C++ and does not require external dependencies. You just need Visual Studio 2015.
 
 You may need to add a path to BIN folder to the system environment.
 
