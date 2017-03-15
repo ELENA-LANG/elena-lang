@@ -30,7 +30,7 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("identifier", lxIdentifier);
    _tokens.add("numeric", lxInteger);
    _tokens.add("method_param", lxMethodParameter);
-   //_tokens.add("include", lxInclude);
+   _tokens.add("include", lxInclude);
    _tokens.add("forward", lxForward);
    _tokens.add("reference", lxReference);
 }
@@ -49,16 +49,16 @@ void TreeScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& b
 {
    int type = _tokens.get(reader.lookup(bm));
    if (type != 0) {
-      writer.newNode((LexicalType)type);
-
       bm = reader.read();
       if (reader.compare("(")) {
+         writer.newNode((LexicalType)type);
+
          parseScope(reader, bm, writer);
       }
       else if (reader.compare("=")) {
          bm = reader.read();
 
-         writer.appendNode(lxTerminal, reader.lookup(bm));
+         writer.newNode((LexicalType)type, reader.lookup(bm));
       }
       else throw EParseError(bm.column, bm.row);
 

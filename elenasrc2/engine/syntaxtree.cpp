@@ -13,38 +13,7 @@
 
 using namespace _ELENA_;
 
-////SyntaxTree::Node _ELENA_::findSubNode(SyntaxTree::Node node, LexicalType type)
-////{
-////   SyntaxTree::Node child = SyntaxTree::findChild(node, type, lxExpression);
-////   if (child == lxExpression)
-////   {
-////      return SyntaxTree::findChild(child, type);
-////   }
-////   else return child;
-////}
-////
-////SyntaxTree::Node _ELENA_::findSubNode(SyntaxTree::Node node, LexicalType type1, LexicalType type2)
-////{
-////   SyntaxTree::Node child = SyntaxTree::findChild(node, type1, type2, lxExpression);
-////   if (child == lxExpression)
-////   {
-////      return SyntaxTree::findChild(child, type1, type2);
-////   }
-////   else return child;
-////}
-//
 // --- SyntaxWriter ---
-
-//void SyntaxWriter :: set(int bookmark, LexicalType type)
-//{
-//   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
-//
-//   size_t old = _bodyWriter.Position();
-//
-//   _bodyWriter.seek(position);
-//   _bodyWriter.writeDWord(type);
-//   _bodyWriter.seek(old);   
-//}
 
 void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 {

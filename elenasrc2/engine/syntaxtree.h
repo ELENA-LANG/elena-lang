@@ -215,7 +215,7 @@ enum LexicalType
    lxOvreriddenMessage = 0x20024, // arg - message
 //   lxClassRef        = 0x20025,
 //   lxPreloadedAttr   = 0x20026,
-//   lxInclude         = 0x20027,
+   lxInclude         = 0x20027,
 //   lxTemplateField   = 0x20028,
    lxNameAttr        = 0x20029,
    lxTypeAttr        = 0x2002A,
