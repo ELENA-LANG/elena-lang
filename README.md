@@ -29,7 +29,7 @@ To acquire the source code clone the git repository:
 
 The compiler code is implemented in C++ and does not require external dependencies. You just need Visual Studio 2015.
 
-You may need to add a path to BIN folder to the system environment.
+You have to add a path to _BIN_ folder to the system environment or copy elenavm.dll, elenavm.cfg, elenart.dll and elenart.cfg to _Windows\System32_ folder.
 
 To build the compiler you have to go to the root folder and type:
 
