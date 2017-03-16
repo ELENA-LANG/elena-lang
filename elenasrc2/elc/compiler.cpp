@@ -3077,6 +3077,10 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
 
             // HOTFIX : skip the prime message
             arg = arg.nextNode();
+
+            if (arg == lxExtension)
+               // HOTFIX : skip the extension node
+               arg = arg.nextNode();
          }
          else compileExpression(writer, arg, scope, paramMode);
       }
@@ -3398,7 +3402,7 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
 {
    size_t paramCount = 0;
    ref_t  messageRef = mapMessage(node, scope, paramCount);
-   ObjectInfo object = compileMessageParameters(writer, node, scope);
+   ObjectInfo object = compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
 
    if (targetRef != 0) {
       convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, object), object.type);

@@ -1,12 +1,11 @@
-#import system.
 #import system'routines.
 //#import system'dynamic.
 #import extensions'text.
 //#import extensions'scripting.
 
-#class(extension) lexicalOp
+extension lexicalOp
 {
-    #method lexicalType
+    lexicalType
     [
         ((self >= #48)and:(self <= #57))
             ? [ ^ %digit. ].
@@ -28,28 +27,28 @@
     ]
 }
 
-#class DerivationTree
+class DerivationTree
 {
-    #field theRoot.
-    #field theLast.
+    object theRoot.
+    object theLast.
 
-    #method last_node = theLast.
+    last_node = theLast.
     
-    #method value => theRoot.
+    value => theRoot.
 
-    #method append : aNode
+    append : aNode
     [
         theLast := aNode.
 
         theRoot := theRoot + aNode.
     ]
 
-    #method newArgument
+    newArgument
     [
         theLast := theLast newArgument.
     ]
 
-    #constructor new
+    constructor new
     [
         theRoot := BaseTreeNode { level = -1. add : aNode = aNode. }
     ]
@@ -57,14 +56,14 @@
 
 // --- BaseTreeNode ---
 
-#class BaseTreeNode
+class BaseTreeNode
 {
-    #field theStrategy.
-    #field theLevel.
+    object theStrategy.
+    object theLevel.
     
-    #method level = theLevel.
+    level = theLevel.
     
-    #method add : aNode
+    add : aNode
     [
         (self level < aNode level)?
         [
@@ -79,9 +78,9 @@
         ].
     ]
 
-    #method setFunction : function []
+    setFunction : function []
         
-    #constructor new:strategy &baseLevel:baseLevel
+    constructor new:strategy &baseLevel:baseLevel
     [
         theStrategy := strategy.
         theLevel := baseLevel + strategy order.
@@ -90,12 +89,12 @@
 
 // --- TreeNode ---
 
-#class TreeNode :: BaseTreeNode
+class TreeNode :: BaseTreeNode
 {
-    #field theLeft.
-    #field theRight.
+    object theLeft.
+    object theRight.
 
-    #method append : aNode
+    append : aNode
     [
         ($nil == theLeft)
             ? [ theLeft := aNode. ]
@@ -106,52 +105,52 @@
             ].
     ]
     
-    #method value
+    value
     [
         ($nil == theLeft)
-            ? [ #throw InvalidArgumentException new. ].
+            ? [ InvalidArgumentException new raise. ].
         
         ($nil == theRight)
-            ? [ #throw InvalidArgumentException new. ].
+            ? [ InvalidArgumentException new raise. ].
         
         ^ theStrategy evalNode:(theLeft value):(theRight value).
     ]
     
-    #constructor new:aStrategy &baseLevel:baseLevel
-        <= (new:aStrategy &baseLevel:baseLevel)
+    constructor new:aStrategy &baseLevel:baseLevel
+        <= new:aStrategy &baseLevel:baseLevel;
     [
     ]    
 }
 
 // --- TreeLeaf ---
 
-#class TreeLeaf :: BaseTreeNode
+class TreeLeaf :: BaseTreeNode
 {
-    #field theToken.
-    #field theFunction.
+    object theToken.
+    object theFunction.
 
-    #method setFunction : function
+    setFunction : function
     [
         theFunction := function.
     ]
 
-    #method newArgument
+    newArgument
     [
         ($nil == theFunction)
-            ? [ #throw InvalidArgumentException new. ].
+            ? [ InvalidArgumentException new raise. ].
             
         ^ theFunction set.
     ]
 
-    #method appendContent : aChar
+    appendContent : aChar
     [
         theToken += aChar.
     ]
 
-    #method value = theStrategy evalToken:theToken.
+    value = theStrategy evalToken:theToken.
             
-    #constructor new:aStrategy &baseLevel:baseLevel
-        <= (new:aStrategy &baseLevel:baseLevel)
+    constructor new:aStrategy &baseLevel:baseLevel
+        <= new:aStrategy &baseLevel:baseLevel;
     [
         theToken := String new.
     ]
@@ -159,16 +158,16 @@
 
 // --- FunctionNode ---
 
-#class FunctionNode :: TreeLeaf
+class FunctionNode :: TreeLeaf
 {
-    #field theArg1.
-    #field theArg2.
+    object theArg1.
+    object theArg2.
     
-    #field theArgState.
+    object theArgState.
     
-    #method value
+    value
     [
-        #var subj := Signature new &literal:theToken.
+        var subj := Signature new &literal:theToken.
         
         ($nil == theArg1)
             ? [ ^ theStrategy::subj get. ].
@@ -179,38 +178,38 @@
         ^ theStrategy::subj eval:(theArg1 value):(theArg2 value).
     ]
 
-    #method append &first_arg:node
+    append &first_arg:node
     [
         ($nil == theArg1)
             ? [ theArg1 := node setFunction:$self. ]
             ! [ theArg1 := theArg1 + node setFunction:$self. ].
     ]
 
-    #method append &second_arg:node
+    append &second_arg:node
     [
         ($nil == theArg2)
             ? [ theArg2 := node setFunction:$self. ]
             ! [ theArg2 := theArg2 + node setFunction:$self. ].
     ]
 
-    #method set
+    set
         => theArgState.
         
-    #method set &first_arg
+    set &first_arg
     [
         theArgState := %second_arg.
     ]    
         
-    #method set &second_arg
+    set &second_arg
     [
         theArgState := %third_arg.
     ]    
 
-    #method append : aNode
+    append : aNode
         => theArgState.
         
-    #constructor new:aStrategy &baseLevel:baseLevel
-        <= (new:aStrategy &baseLevel:baseLevel)
+    constructor new:aStrategy &baseLevel:baseLevel
+        <= new:aStrategy &baseLevel:baseLevel;
     [
         theArgState := %first_arg.
     ]
@@ -218,65 +217,65 @@
 
 // --- StateMachine ---
 
-#class StateMachine
+class StateMachine
 {
-    #field theStates.
-    #field theCurrentState.
-    #field theDerivationTree.
+    object theStates.
+    object theCurrentState.
+    object theDerivationTree.
     
-    #field(prop:level)theLevel.
+    prop(level) theLevel.
 
-    #constructor new : states
+    constructor new : states
     [
         theDerivationTree := DerivationTree new.
         theStates := states.
         theLevel := 0.
     ]
 
-    #method(generic)seek
+    generic seek
     [
         theCurrentState := theStates::$subject get. 
     ]
 
-    #method opening : ch
+    opening : ch
     [
         theLevel := theLevel + 10.
         
         $self::theCurrentState opening:ch.
     ]
 
-    #method closing : ch
+    closing : ch
     [
         theLevel := theLevel - 10.
         
         (0 > theLevel)
-            ? [ #throw InvalidOperationException new. ].
+            ? [ InvalidOperationException new raise. ].
         
         $self::theCurrentState closing:ch.
     ]
 
-    #method comma : ch
+    comma : ch
     [
         theDerivationTree newArgument.
         
         $self::theCurrentState comma:ch.
     ]
 
-    #method invalidate
+    invalidate
     [
         theDerivationTree := $nil.
     ]
 
-    #method func1 = (:aChar)
+    func1 = (:aChar)
     [
-        #var type := aChar lexicalType.
+        var type := aChar lexicalType.
 
         self::type eval:aChar.
     ].
 
-    #method value
+    value
     [
-        #var aValue := $nil.
+        var aValue := $nil.
         
         ($nil == theDerivationTree)
             ? [ aValue := "Invalid expression". ]
@@ -288,36 +287,36 @@
         ^ aValue.
     ]
 
-    #method newLeaf : strategy
+    newLeaf : strategy
     [
         theDerivationTree append:(TreeLeaf new:strategy &baseLevel:theLevel).
     ]
 
-    #method newNode : strategy
+    newNode : strategy
     [
         theDerivationTree append:(TreeNode new:strategy &baseLevel:theLevel).
     ]
 
-    #method newFunction : strategy
+    newFunction : strategy
     [
         theDerivationTree append:(FunctionNode new:strategy &baseLevel:theLevel).
     ]
     
-    #method addContent : content
+    addContent : content
     [
         theDerivationTree last_node appendContent:content.
     ]
     
-    #method => theCurrentState.
+    dispatch => theCurrentState.
 }
 
 // --- parserOp ---
 
-#class(extension)parserOp
+extension parserOp
 {
-    #method evaluated &with:states
+    evaluated &with:states
     [
-        #var aStateMachine := StateMachine new:states seek &state0.
+        var aStateMachine := StateMachine new:states seek &state0.
         
         self run &each:(aStateMachine func1)
             | if &Error: e [

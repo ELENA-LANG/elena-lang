@@ -1,5 +1,3 @@
-#import system.
-
 #import system'dynamic.
 #import extensions.
 #import extensions'scripting.
@@ -7,36 +5,36 @@
 ////'program=extensions'programLoop
 // --- testCase ---
 
-#static factory
+static factory
     = scriptEngine 
         load &path:"~\scripts\assembly.es" 
         load &path:"~\scripts\eson.es" 
         eval &path:"calc.es".
 
-#symbol dynamicRules = 
+symbol dynamicRules = 
     factory eval:(Library new) first eval.
     
-#symbol staticRules =
+symbol staticRules =
     calc'rules'States.
 
-#class(extension)testOp
+extension testOp
 {
-    #method testEvaluation
+    testEvaluation
     [
-        #var result := self evaluated &with:dynamicRules.
+        var result := self evaluated &with:dynamicRules.
         
         console writeLine:self:" evaluated as ":result.
     ]
     
-    #method testStaticEvaluation
+    testStaticEvaluation
     [
-        #var result := self evaluated &with:staticRules.
+        var result := self evaluated &with:staticRules.
         
         console writeLine:self:" evaluated as ":result.
     ]
 }
 
-#symbol testCases =
+testCases =
 [    
     "22.4" testEvaluation.
 
@@ -53,7 +51,7 @@
     "min(2,3)" testEvaluation.
 ].
 
-#symbol staticTestCases =
+staticTestCases =
 [    
     "22.4" testStaticEvaluation.
 
@@ -70,7 +68,7 @@
 
 // --- controller ---
 
-#symbol control =
+class control =
 {
     greeting = "Enter the expression to evaluate (e.g. 2+2) or -q to exit".
     
