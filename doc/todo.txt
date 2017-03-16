@@ -2,11 +2,6 @@
 In development:
 ------                              
 
-              xdev - generic development
-                 * replace $self with self for template in extensions
-                 * fix :     x := 5 power:2.                                          // power function
-                 * fix :     x := 0Fh shift:-4.                                       // left shift
-
               zdev 
                  * scripting library : language interpreter
 

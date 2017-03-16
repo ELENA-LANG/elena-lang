@@ -3124,18 +3124,17 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
                writeTerminal(writer, arg, scope, ObjectInfo(okNil), HINT_NODEBUGINFO);
             }
             else {
+               writer.newBookmark();
                ObjectInfo argListParam = compileExpression(writer, arg, scope, paramMode);
                if (argListParam.kind == okParams) {
-                  arg.refresh();
-
-                  // unbox param list
-                  arg.injectNode(arg.type, arg.argument);
-                  arg.set(lxArgUnboxing, 0);
+                  writer.insert(lxArgUnboxing);
+                  writer.closeNode();
                }
                else {
                   // treat it like an argument list with one parameter
                   node.appendNode(lxNil);
                }
+               writer.removeBookmark();
             }
          }
          else {
