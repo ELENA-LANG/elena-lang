@@ -1,12 +1,11 @@
 /// Apply a callback to an array
 
-#import system.
 #import system'routines.
 
-#symbol PrintSecondPower =
+PrintSecondPower =
     (:n) [ console writeLine:(n * n) ].
 
-#symbol program =
+program =
 [
     (1, 2, 3, 4, 5, 6, 7, 8, 9, 10) run &each:PrintSecondPower.
 ].

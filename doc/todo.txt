@@ -6,9 +6,11 @@ In development:
                  * scripting library : language interpreter
 
               xdev - generic development
-                 * migrate amb
                  * migrate rosetta samples
 
+                 * test arithmeval
+                 * test arraycallback
+                 * test anonymrec
                  * test matrix
                  * test bsort
                  * test pi2

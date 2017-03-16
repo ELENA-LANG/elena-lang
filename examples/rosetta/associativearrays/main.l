@@ -1,16 +1,15 @@
 /// Shows how to iterate over the key-value pairs of an associative array, and print each pair out. 
 
-#import system.
 #import system'collections.
 #import system'routines.
 #import extensions.
 
 // --- Program ---
 
-#symbol program =
+program =
 [
     // 1. Create
-    #var aMap := Dictionary new.
+    var aMap := Dictionary new.
     aMap@"key" := "foox".
     aMap@"key" := "foo".
     aMap@"key2":= "foo2".

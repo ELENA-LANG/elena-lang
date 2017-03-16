@@ -1,14 +1,13 @@
 /// Anonymous recursion
 
-#import system.
 #import extensions.
 
-#class(extension)mathOp
+extension mathOp
 {
-    #method fib
+    fib
     [
         (self < 0)
-            ? [ #throw InvalidArgumentException new &message:"Must be non negative". ].
+            ? [ InvalidArgumentException new &message:"Must be non negative" raise. ].
             
         ^ control eval:self &for: 
             (:n)
@@ -18,7 +17,7 @@
     ]
 }
 
-#symbol program =
+program =
 [
     -1 to:10 &doEach: (:i)
     [

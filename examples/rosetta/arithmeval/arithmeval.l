@@ -1,125 +1,124 @@
 /// a program which parses and evaluates arithmetic expressions. 
 
-#import system.
 #import system'routines.
 #import extensions.
 #import extensions'text.
 
 // --- Token ---
 
-#class Token
+class Token
 {
-    #field theValue.
-    #field theLevel.
+    object theValue.
+    object theLevel.
     
-    #constructor new &level:aLevel
+    constructor new &level:aLevel
     [
         theValue := StringWriter new.
         theLevel := aLevel + 9.
     ]
     
-    #method level = theLevel.
+    level = theLevel.
     
-    #method append : aChar
+    append : aChar
     [
         theValue << aChar.
     ]
     
-    #method number = theValue get toReal.
+    number = theValue get toReal.
 }
 
 // --- Node ---
 
-#class Node
+class Node
 {
-    #field theLeft.
-    #field theRight.
-    #field theLevel.
+    object theLeft.
+    object theRight.
+    object theLevel.
 
-    #constructor new &level:aLevel
+    constructor new &level:aLevel
     [
         theLevel := aLevel.
     ]
     
-    #method level = theLevel.
+    level = theLevel.
 
-    #method left = theLeft.
+    left = theLeft.
 
-    #method right = theRight.
+    right = theRight.
 
-    #method set &left:anObject [ theLeft := anObject. ]
+    set &left:anObject [ theLeft := anObject. ]
 
-    #method set &right:anObject [ theRight := anObject. ]
+    set &right:anObject [ theRight := anObject. ]
 }
 
 // --- SummaryNode
 
-#class SummaryNode :: Node
+class SummaryNode :: Node
 {
-    #constructor new &level:aLevel
-        <= %new &level:(aLevel + 1).
+    constructor new &level:aLevel
+        <= new &level:(aLevel + 1).
     
-    #method number = theLeft number + theRight number.
+    number = theLeft number + theRight number.
 }
 
 // --- DifferenceNode ---
 
-#class DifferenceNode :: Node
+class DifferenceNode :: Node
 {
-    #constructor new &level:aLevel
-        <= %new &level:(aLevel + 1).
+    constructor new &level:aLevel
+        <= new &level:(aLevel + 1).
     
-    #method number = theLeft number - theRight number.
+    number = theLeft number - theRight number.
 }
 
 // --- ProductNode ---
 
-#class ProductNode :: Node
+class ProductNode :: Node
 {
-    #constructor new &level:aLevel
-        <= %new &level:(aLevel + 2).
+    constructor new &level:aLevel
+        <= new &level:(aLevel + 2).
     
-    #method number = theLeft number * theRight number.
+    number = theLeft number * theRight number.
 }
 
 // --- FractionNode ---
 
-#class FractionNode :: Node
+class FractionNode :: Node
 {
-    #constructor new &level:aLevel
-        <= %new &level:(aLevel + 2).
+    constructor new &level:aLevel
+        <= new &level:(aLevel + 2).
     
-    #method number = theLeft number / theRight number.
+    number = theLeft number / theRight number.
 }
 
 // --- Expression ---
 
-#class Expression
+class Expression
 {
-    #field theLevel.
-    #field theTop.
+    object theLevel.
+    object theTop.
     
-    #constructor new &level:aLevel
+    constructor new &level:aLevel
     [
         theLevel := aLevel.
     ]
     
-    #method top = theTop.
+    top = theTop.
 
-    #method set &top:aNode [ theTop := aNode. ]
+    set &top:aNode [ theTop := aNode. ]
             
-    #method right = theTop.
+    right = theTop.
 
-    #method set &right:aNode [ theTop := aNode. ]
+    set &right:aNode [ theTop := aNode. ]
             
-    #method level = theLevel.
+    level = theLevel.
     
-    #method number => theTop.
+    number => theTop.
 }
 
 // --- States ---
 
-#symbol operatorState = (:ch)
+operatorState = (:ch)
 [
     ch =>
         #40 ? [      // (
@@ -130,7 +129,7 @@
         ].    
 ].
 
-#symbol tokenState = (:ch)
+tokenState = (:ch)
 [
     ch =>
         #41 ? [      // )
@@ -154,7 +153,7 @@
         ].
 ].
 
-#symbol startState = (:ch)
+startState = (:ch)
 [
     ch =>
         #40 ? [      // (
@@ -170,15 +169,15 @@
 
 // --- Scope ---
 
-#class Scope
+class Scope
 {
-    #field theState.
-    #field theLevel.
-    #field theParser.
-    #field theToken.
-    #field theExpression.
+    object theState.
+    object theLevel.
+    object theParser.
+    object theToken.
+    object theExpression.
     
-    #constructor new &parser:aParser
+    constructor new &parser:aParser
     [
         theState := startState.
         theLevel := 0.
@@ -186,40 +185,40 @@
         theParser := aParser.
     ]
                                        
-    #method new &token
+    new &token
     [
         theToken := theParser append &token &expression:theExpression &level:theLevel.
     ]                                                
     
-    #method new &summary
+    new &summary
     [
         theToken := nil.
         
         theParser append &summary &expression:theExpression &level:theLevel.
     ]                                                
     
-    #method new &difference
+    new &difference
     [
         theToken := nil.
         
         theParser append &difference &expression:theExpression &level:theLevel.
     ]                                                
       
-    #method new &product
+    new &product
     [
         theToken := nil.
         
         theParser append &product &expression:theExpression &level:theLevel.
     ]                                                
     
-    #method new &fraction
+    new &fraction
     [
         theToken := nil.
         
         theParser append &fraction &expression:theExpression &level:theLevel.
     ]                                                
 
-    #method new &bracket
+    new &bracket
     [
         theToken := nil.
         
@@ -228,85 +227,85 @@
         theParser append &subexpression &expression:theExpression &level:theLevel.
     ]            
 
-    #method close &bracket
+    close &bracket
     [
         (theLevel < 10)
-            ? [ #throw InvalidArgumentException new &message:"Invalid expression". ].
+            ? [ InvalidArgumentException new &message:"Invalid expression" raise. ].
         
         theLevel := theLevel - 10.
     ]            
                                     
-    #method append:ch
+    append:ch
     [
         ((ch >= #48) and:(ch < #58))
             ? [ theToken append:ch. ]
-            ! [ #throw InvalidArgumentException new &message:"Invalid expression". ].
+            ! [ InvalidArgumentException new &message:"Invalid expression" raise. ].
     ]
             
-    #method append &literal:aLiteral
+    append &literal:aLiteral
     [
         aLiteral run &each: ch [ self append:ch. ].
     ]
                                                          
-    #method goto &start
+    goto &start
     [
         theState := startState.
     ]
                                                                   
-    #method goto &token
+    goto &token
     [
         theState := tokenState.
     ]
                                                                   
-    #method goto &operator
+    goto &operator
     [
         theState := operatorState.
     ]
     
-    #method number => theExpression.
+    number => theExpression.
     
-    #method => theState.
+    dispatch => theState.
 }
 
 // ---- Parser ----
 
-#class Parser
+class Parser
 {
-    #method append &token &expression:anExpression &level:aLevel
+    append &token &expression:anExpression &level:aLevel
     [
-        #var aToken := Token new &level:aLevel.
+        var aToken := Token new &level:aLevel.
         
         anExpression set &top:($self append &last:(anExpression top) &new:aToken).
         
         ^ aToken.
     ]
 
-    #method append &summary &expression:anExpression &level:aLevel
+    append &summary &expression:anExpression &level:aLevel
     [
         anExpression set &top:($self append &last:(anExpression top) &new:(SummaryNode new &level:aLevel)).
     ]
 
-    #method append &difference &expression:anExpression &level:aLevel
+    append &difference &expression:anExpression &level:aLevel
     [
         anExpression set &top:($self append &last:(anExpression top) &new:(DifferenceNode new &level:aLevel)).
     ]
 
-    #method append &product &expression:anExpression &level:aLevel
+    append &product &expression:anExpression &level:aLevel
     [
         anExpression set &top:($self append &last:(anExpression top) &new:(ProductNode new &level:aLevel)).
     ]
 
-    #method append &fraction &expression:anExpression &level:aLevel
+    append &fraction &expression:anExpression &level:aLevel
     [
         anExpression set &top:($self append &last:(anExpression top) &new:(FractionNode new &level:aLevel)).
     ]
 
-    #method append &subexpression &expression:anExpression &level:aLevel
+    append &subexpression &expression:anExpression &level:aLevel
     [
         anExpression set &top:($self append &last:(anExpression top) &new:(Expression new &level:aLevel)).
     ]
 
-    #method append &last:aLastNode &new:aNewNode
+    append &last:aLastNode &new:aNewNode
     [
         ($nil == aLastNode)
             ? [ ^ aNewNode. ].
@@ -314,9 +313,9 @@
         (aNewNode level <= aLastNode level)
             ? [ aNewNode set &left:aLastNode. ^ aNewNode. ].
             
-        #var aParent := aLastNode.
-        #var aCurrent := aLastNode right.
-        #loop (($nil != aCurrent) and:[ aNewNode level > aCurrent level ]) ?
+        var aParent := aLastNode.
+        var aCurrent := aLastNode right.
+        while (($nil != aCurrent) and:[ aNewNode level > aCurrent level ])
             [ aParent := aCurrent. aCurrent := aCurrent right. ].
         
         ($nil == aCurrent)
@@ -326,9 +325,9 @@
         ^ aLastNode.
     ]
     
-    #method run : aText
+    run : aText
     [
-        #var aScope := Scope new &parser:$self.
+        var aScope := Scope new &parser:$self.
 
         aText run &each: ch [ aScope eval:ch. ].
 
@@ -336,10 +335,10 @@
     ]
 }
 
-#symbol program =
+program =
 [
-    #var aText := String new.
-    #var aParser := Parser new.
+    var aText := String new.
+    var aParser := Parser new.
 
     [ console readLine save &to:aText length > 0] doWhile:
     [

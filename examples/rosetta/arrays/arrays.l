@@ -1,24 +1,23 @@
 /// basic array syntax
 
-#import system.
 #import system'collections.
 #import extensions.
 
-#symbol program =
+program =
 [
-    #var aStaticArray := (1, 2, 3).
+    var aStaticArray := (1, 2, 3).
     
-    #var anArray := system'Array new &length:3.
+    var anArray := system'Array new &length:3.
     anArray@0 := 1.
     anArray@1 := 2.
     anArray@2 := 3.
     
-    #var(int:3)aStackAllocatedArray.
+    int(3) aStackAllocatedArray := 0.
     aStackAllocatedArray@0 := 1.
     aStackAllocatedArray@1 := 2.
     aStackAllocatedArray@2 := 3.            
     
-    #var aDynamicArray := ArrayList new.
+    var aDynamicArray := ArrayList new.
     aDynamicArray += 1.
     aDynamicArray += 2.
     aDynamicArray += 4.

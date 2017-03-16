@@ -1,16 +1,15 @@
 /// Get two integers from the user, and then output the sum, difference, product, 
 /// integer quotient and remainder of those numbers. 
 
-#import system.
 #import system'math.
 #import extensions.
 
 // --- Program ---
 
-#symbol program =
+program =
 [
-    #var a := console readLine:(Integer new).
-    #var b := console readLine:(Integer new).
+    var a := console readLine:(Integer new).
+    var b := console readLine:(Integer new).
     
     console writeLine:a:" + ": b:" = ":(a + b).
     console writeLine:a:" - ": b:" = ":(a - b).
