@@ -6,11 +6,7 @@ In development:
                  * scripting library : language interpreter
 
               xdev - generic development 
-                 * migrate rosetta samples : caesar
-
                  * test brackets
-                 * test bitwise
-                 * test binary
                  * test bestshuffle
                  * test arithmeval
                  * test arraycallback

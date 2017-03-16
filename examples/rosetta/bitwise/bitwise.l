@@ -10,8 +10,8 @@ extension testOp
         console writeLine:self:" or ":y:" = ":(self or:y).
         console writeLine:self:" xor ":y:" = ":(self xor:y).
         console writeLine:"not ":self:" = ":(self inverted).
-        console writeLine:self:" shr ":y:" = ":(self shift &index:y).
-        console writeLine:self:" shl ":y:" = ":(self shift &index:(y negative)).
+        console writeLine:self:" shr ":y:" = ":(self shift:y).
+        console writeLine:self:" shl ":y:" = ":(self shift:(y negative)).
     ]
 }
 

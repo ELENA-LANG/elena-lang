@@ -6998,6 +6998,14 @@ void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, Templa
          }
          else generateObjectTree(writer, current, scope);
       }
+      else if (listMode && (current == lxMessage || current == lxOperator)) {
+         // HOTFIX : if it is an operation with a collection
+         listMode = false;
+         writer.insert(lxExpression);
+         writer.closeNode();
+
+         generateObjectTree(writer, current, scope);
+      }
       else generateObjectTree(writer, current, scope);
 
       current = current.nextNode();
