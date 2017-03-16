@@ -537,14 +537,11 @@ private:
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
-//      ref_t        resultType;
-//      ref_t        resultRef;
       bool         withOpenArg;
       bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;
-//      bool         extensionTemplateMode;
-////      bool         sealed;
+      bool         extensionTemplateMode;
 
       virtual Scope* getScope(ScopeLevel level)
       {

@@ -1036,7 +1036,7 @@ sealed embeddable dispatchable(int,long,real,char,literal,wide) struct IntNumber
         (val > 0)
             ? [ ^ theValue >> val. ].
             
-        int neg_val := 0 - val - 1.
+        int neg_val := 0 - val.
             
         ^ theValue << neg_val.
     ]

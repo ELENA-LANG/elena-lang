@@ -8,7 +8,7 @@ In development:
                  * fix :     x := 0Fh shift:-4.                                       // left shift
 
               zdev 
-                 * fix calc sample
+                 * scripting library : language interpreter
 
               xdev - generic development
                  * migrate amb
@@ -222,19 +222,9 @@ Pipeline:
                  * boxing / unboxing argument list
 
               zdev 
-                 * script : elena - simple class,one method
-                 * script : elena - simple class,one method, several statements
-                 * script : elena - simple class,one method, parameters
-                 * script : elena - simple class,one method, fields
-                 * script : elena - simple class,branching
-                 * script : elena - simple class,loop
-                 * script : elena - simple class,constructor
-                 * script : elena - simple program, (e.g. 10-20 lines)
-
-                 * scripting library : vb interpreter
+                 * gui script
                  * scripting library : elena script (both run-time / compile-time)
                  * graph : function declared in the script
-                 * gui script
                  * reg ex
 
               xrev           

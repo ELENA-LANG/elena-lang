@@ -1058,22 +1058,20 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->reserved = 0;
    this->rootToFree = 1;
    this->hints = 0;
-//   this->resultRef = 0;
-//   this->resultType = 0;
    this->withOpenArg = false;
    this->stackSafe = this->classEmbeddable = false;
    this->generic = false;
-////   this->extensionTemplateMode = false;
+   this->extensionTemplateMode = false;
 }
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 {
    if (terminal.compare(THIS_VAR)) {
-//      if (extensionTemplateMode) {
-//         //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
-//         return ObjectInfo(okLocal, -1, ((ClassScope*)getScope(slClass))->reference);          
-//      }
-      /*else */if (stackSafe && classEmbeddable) {
+      if (extensionTemplateMode) {
+         //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
+         return ObjectInfo(okLocal, -1, ((ClassScope*)getScope(slClass))->reference);          
+      }
+      else if (stackSafe && classEmbeddable) {
          return ObjectInfo(okThisParam, 1, -1);
       }
       else return ObjectInfo(okThisParam, 1);
@@ -1734,6 +1732,12 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
       }
       else if (current == lxSourcePath) {
          writer.appendNode(lxSourcePath, saveSourcePath(*scope.moduleScope, current.identifier()));
+      }
+      else if (current == lxTemplate) {
+         //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
+         ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
+         
+         scope.extensionTemplateMode = (ownerScope != NULL && ownerScope->extensionMode != 0);
       }
 
       current = current.nextNode();
@@ -4836,14 +4840,6 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
          {
             MethodScope methodScope(&scope);            
             methodScope.message = current.argument;
-
-//            //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
-//            if (scope.getScope(Scope::slTemplate) != NULL) {
-//               ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
-//               methodScope.extensionTemplateMode = (ownerScope != NULL && ownerScope->extensionMode != 0);
-//            }
-//
 
             // if it is a dispatch handler
             if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
