@@ -1,37 +1,36 @@
-#import system.
 #import system'routines.
 #import system'math.
 #import extensions.
 
 // --- Constants ---
 
-#symbol Letters    = "abcdefghijklmnopqrstuvwxyz".
-#symbol BigLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".
-#symbol TestText   = "Pack my box with five dozen liquor jugs.".
-#symbol Key = 12.
+const Letters    = "abcdefghijklmnopqrstuvwxyz".
+const BigLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".
+const TestText   = "Pack my box with five dozen liquor jugs.".
+const Key = 12.
 
 // --- Encrypt / Decript ---
 
-#class Encrypting :: Enumerator
+class Encrypting :: Enumerator
 {
-    #field theKey.
-    #field theEnumerator.
+    object theKey.
+    object theEnumerator.
     
-    #constructor new &key:aKey &text:aText
+    constructor new &key:aKey &text:aText
     [
         theKey := aKey.
         theEnumerator := aText enumerator.
     ]
     
-    #method next => theEnumerator.
+    next => theEnumerator.
     
-    #method reset => theEnumerator.
+    reset => theEnumerator.
     
-    #method get
+    get
     [
-        #var aChar := theEnumerator get.
+        var aChar := theEnumerator get.
         
-        #var anIndex := Letters indexOf:0:aChar.
+        var anIndex := Letters indexOf:0:aChar.
         
         (-1 < anIndex)
             ? [
@@ -52,26 +51,26 @@
 
 // --- Functions ---
 
-#class(extension)encryptOp
+extension encryptOp
 {
-    #method encrypt : aKey
+    encrypt : aKey
         = Encrypting new &key:aKey &text:self summarize:(String new). 
 
-    #method decrypt :aKey
+    decrypt :aKey
         = Encrypting new &key:(26 - aKey) &text:self summarize:(String new). 
 }
 
 // --- Program ---
 
-#symbol program =
+program =
 [
     console writeLine:"Original text :" :TestText.
         
-    #var anEncryptedText := TestText encrypt:Key.
+    var anEncryptedText := TestText encrypt:Key.
 
     console writeLine:"Encrypted text:" :anEncryptedText.
 
-    #var aDecryptedText := anEncryptedText decrypt:Key.
+    var aDecryptedText := anEncryptedText decrypt:Key.
 
     console writeLine:"Decrypted text:" :aDecryptedText.
 

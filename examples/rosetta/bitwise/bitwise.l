@@ -1,11 +1,10 @@
 /// a routine to perform a bitwise AND, OR, and XOR on two integers, a bitwise NOT on the first integer, a left shift, right
 
-#import system.
 #import extensions.
 
-#class(extension) testOp
+extension testOp
 {
-    #method bitwiseTest : y
+    bitwiseTest : y
     [
         console writeLine:self:" and ":y:" = ":(self and:y).
         console writeLine:self:" or ":y:" = ":(self or:y).
@@ -16,7 +15,7 @@
     ]
 }
 
-#symbol program =
+program =
 [
     console readLine:(Integer new) bitwiseTest:(console readLine:(Integer new)).
 ].

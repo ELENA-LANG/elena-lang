@@ -1,17 +1,16 @@
-#import system.
 #import extensions.
 
-#symbol A = (:k:x1:x2:x3:x4:x5)
+A = (:k:x1:x2:x3:x4:x5)
 [
-    #var m := Integer new:k.
-    #var b := ()[ m -= 1. ^ A eval:m:this:x1:x2:x3:x4. ].
+    var m := Integer new:k.
+    var b := ()[ m -= 1. ^ A eval:m:this:x1:x2:x3:x4. ].
     
     (m int <= 0)
         ? [ ^ x4 eval + x5 eval. ]
         ! [ ^ b eval. ].
 ].
 
-#symbol program =
+program =
 [
     0 to:13 &doEach:n
     [

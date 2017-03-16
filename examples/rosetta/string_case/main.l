@@ -1,9 +1,8 @@
-#import system.
 #import system'culture.
 
-#symbol program =
+program =
 [
-    #var s1 := "alphaBETA".
+    var s1 := "alphaBETA".
     
     // Alternative 1
     console writeLine:(s1::caseLiteralOp lowerCase).

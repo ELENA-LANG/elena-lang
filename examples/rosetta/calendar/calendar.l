@@ -1,4 +1,3 @@
-#import system.
 #import system'text.
 #import system'routines.
 #import system'calendar.
@@ -8,18 +7,18 @@
 
 // --- calendar ---
 
-#symbol MonthNames = ("JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER").
-#symbol DayNames = ("MO", "TU", "WE", "TH", "FR", "SA", "SU").
+const MonthNames = ("JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER").
+const DayNames = ("MO", "TU", "WE", "TH", "FR", "SA", "SU").
 
-#class CalendarMonthPrinter
+class CalendarMonthPrinter
 {
-    #field theDate.
-    #field theLine.
-    #field theMonth.
-    #field theYear.
-    #field theRow.
+    object theDate.
+    object theLine.
+    object theMonth.
+    object theYear.
+    object theRow.
     
-    #constructor new &year:aYear &month:aMonth
+    constructor new &year:aYear &month:aMonth
     [
         theMonth := aMonth.
         theYear := aYear.
@@ -27,7 +26,7 @@
         theRow := Integer new &int:0.
     ]
 
-    #method writeTitle
+    writeTitle
     [        
         theRow set:0.
         theDate := Date new &year:(theYear int) &month:(theMonth int) &day:1.
@@ -35,7 +34,7 @@
             [ theLine writeLiteral:" ":aName ].
     ]
     
-    #method writeLine
+    writeLine
     [
         theLine clear.
         
@@ -52,14 +51,14 @@
                 &until:[(theDate month != theMonth)or:[theDate dayOfWeek == 1]].
             ].
         
-        #var(int) aLength := theLine length.
+        int aLength := theLine length.
         (aLength < 21)
             ? [ theLine write:" " &length:(21 - aLength). ].
             
         theRow += 1.            
     ]
     
-    #method iterator = Iterator
+    iterator = Iterator
     {
         available = theRow < 7.
 
@@ -70,44 +69,44 @@
             (anIndex <= theRow)
                 ? [ self writeTitle. ].
                 
-            #loop (anIndex > theRow) ?
+            while (anIndex > theRow)
                 [ self writeLine. ].
         ]
 
         get = self.
     }.
     
-    #method printTitleTo : anOutput
+    printTitleTo : anOutput
     [
         anOutput write:(MonthNames @(theMonth - 1)) &padding:21 &with:#32.
     ]
    
-    #method printTo : anOutput
+    printTo : anOutput
     [
         anOutput write:(theLine literal).
     ]
 }
 
-#class Calendar
+class Calendar
 {
-    #field(int) theYear.
-    #field(int) theRowLength.
+    int theYear.
+    int theRowLength.
     
-    #constructor new : aYear
+    constructor new : aYear
     [
         theYear := aYear int.
         theRowLength := 3.
     ]
     
-    #method printTo:anOutput
+    printTo:anOutput
     [
         anOutput write:"[SNOOPY]" &padding:(theRowLength * 25) &with:#32. 
         anOutput writeLine.        
         anOutput write:(theYear literal) &padding:(theRowLength * 25) &with:#32. 
         anOutput writeLine writeLine.
         
-        #var aRowCount := 12 / theRowLength.
-        #var Months := Array new &length:aRowCount set &every:(&index:i)
+        var aRowCount := 12 / theRowLength.
+        var Months := Array new &length:aRowCount set &every:(&index:i)
             [ Array new &length:theRowLength set &every:(&index:j)
                 [ CalendarMonthPrinter new &year:(theYear int) &month:((i * theRowLength + j + 1) int) ]].
         
@@ -139,9 +138,9 @@
 
 // --- program ---
 
-#symbol program =
+program =
 [
-    #var aCalender := Calendar new:(console write:"ENTER THE YEAR:" readLine:(Integer new)).
+    var aCalender := Calendar new:(console write:"ENTER THE YEAR:" readLine:(Integer new)).
     
     aCalender printTo:console.
     

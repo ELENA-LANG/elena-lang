@@ -1,8 +1,7 @@
-#import system.
 #import system'math.
 #import extensions.
 
-#symbol program =
+program =
 [
     console writeLine:"Radians:".
     console writeLine:"sin(π/3) = ":((pi_value/3) sin).

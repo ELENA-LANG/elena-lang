@@ -1,12 +1,11 @@
-#import system.
 #import system'routines.
 #import extensions.
 
 // --- Program ---
 
-#symbol program =
+program =
 [
-    #var s :="hello".
+    var s :="hello".
     
     (s startingWith:"hel") ?
     [

@@ -1,23 +1,22 @@
-#import system.
 #import system'routines.
 #import extensions.
 #import extensions'routines.
 
-#symbol(const)M = 3.
-#symbol(const)N = 5. 
+const M = 3.
+const N = 5. 
 
 // --- Numbers ---
 
-#symbol numbers = (:anN)
+numbers = (:anN)
 [
     Array new &length:(anN int) set &every: (&index:n) [ Integer new &int:n ]
 ].
 
 // --- Program ---
 
-#symbol program =
+program =
 [
-    #var aNumbers := numbers eval:N.    
+    var aNumbers := numbers eval:N.    
     Combinator new:M &of:aNumbers run &each: aRow
     [
         console writeLine:aRow.

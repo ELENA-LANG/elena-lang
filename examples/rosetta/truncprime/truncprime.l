@@ -1,14 +1,13 @@
-#import system.
 #import system'calendar.
 #import extensions.
 
-#symbol MAXN = 1000000.
+const MAXN = 1000000.
 
-#class(extension)mathOp
+extension mathOp
 {
-    #method is &prime
+    is &prime
     [
-        #var(int)n := self int.
+        int n := self int.
         
         (n < 2) ? [ ^ false. ].        
         (n < 4) ? [ ^ true. ].        
@@ -16,9 +15,9 @@
         (n < 9) ? [ ^ true. ].        
         (n mod:3 == 0) ? [ ^ false. ].
         
-        #var(int)r := n sqrt.        
-        #var(int)f := 5.
-        #loop (f <= r)?
+        int r := n sqrt.        
+        int f := 5.
+        while (f <= r)
         [
             ((n mod:f == 0) || (n mod:(f + 2) == 0))
                 ? [ ^ false. ].
@@ -30,11 +29,11 @@
         ^ true.
     ]
     
-    #method is &rightTruncatable
+    is &rightTruncatable
     [
-        #var(int)n := self int.
+        int n := self.
         
-        #loop (n != 0)?
+        while (n != 0)
         [
             (n is &prime)
                 ! [ ^ false. ].
@@ -45,15 +44,15 @@
         ^ true.
     ]
 
-    #method is &leftTruncatable
+    is &leftTruncatable
     [
-        #var(int)n := self int.
-        #var(int)tens := 1.
+        int n := self.
+        int tens := 1.
         
-        #loop (tens < n)
-            ? [ tens := tens * 10. ].
+        while (tens < n)
+            [ tens := tens * 10. ].
             
-        #loop (n != 0)?
+        while (n != 0)
         [
             (n is &prime)
                 ! [ ^ false. ].
@@ -66,15 +65,15 @@
     ]
 }
 
-#symbol program =
+program =
 [
-    #var aStart := now.
+    var aStart := now.
     
-    #var n := MAXN.
-    #var max_lt := 0.
-    #var max_rt := 0.
+    var n := MAXN.
+    var max_lt := 0.
+    var max_rt := 0.
 
-    #loop ((max_lt == 0) || (max_rt == 0))?
+    while ((max_lt == 0) || (max_rt == 0))
     [
         (n literal indexOf:"0" == -1) ?
         [
@@ -92,12 +91,12 @@
         n := n - 1.            
     ].
 
-    #var anEnd := now.
+    var anEnd := now.
     
     console writeLine:"Largest truncable left is ":max_lt.    
     console writeLine:"Largest truncable right is ":max_rt.
     
-    #var aDiff := anEnd - aStart.
+    var aDiff := anEnd - aStart.
     console writeLine:"Time elapsed in msec:":(aDiff milliseconds).
     
     console readChar.

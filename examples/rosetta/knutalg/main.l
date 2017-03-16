@@ -1,14 +1,13 @@
-#import system.
 #import system'dynamic.
 #import extensions.
 #import system'routines.
 #import system'collections.
 
-#class(extension)algorithmOp
+extension algorithmOp
 {
-    #method s_of_n
+    s_of_n
     [
-        #var counter := Integer new.
+        var counter := Integer new.
         
         ^ ArrayList new mix &into:
             {
@@ -29,16 +28,16 @@
     ]
 }
 
-#symbol program =
+program =
 [
-    #var bin := Array new:10 set &every:(&index:n) [ Integer new ].
+    var bin := Array new:10 set &every:(&index:n) [ Integer new ].
     0 till:10000 &doEach: trial
     [
-        #var s_of_n := 3 s_of_n.
+        var s_of_n := 3 s_of_n.
         
         0 till:10 &doEach:n
         [
-            #var sample := s_of_n eval:n.
+            var sample := s_of_n eval:n.
             
             (n == 9)
                 ? [ sample run &each: i [ bin@i += 1. ]. ].

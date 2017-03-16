@@ -1,7 +1,6 @@
-#import system.
 
-#symbol program =
+program =
 [    
-    #var s := "Mary had a @@x lamb." replace &literal:"@@x" &literal:"little".
+    var s := "Mary had a @@x lamb." replace &literal:"@@x" &literal:"little".
     console writeLine:s readChar.
 ].

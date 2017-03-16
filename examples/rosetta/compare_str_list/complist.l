@@ -2,20 +2,19 @@
 //   - test if they are all lexically equal
 //   - test if every string is lexically less than the one after it (i.e. whether the list is in strict ascending order) 
 
-#import system.
 #import system'collections.
 #import system'routines.
 #import extensions.
 
-#class(extension)helper
+extension helper
 {
-    #method is &equal
+    is &equal
         = $nil == self seek:(self firstMember) &eachPair:(:n:m) [ m equal:n not ].
         
-    #method is &ascending
+    is &ascending
     [
-        #var former := self enumerator.
-        #var later := self enumerator.
+        var former := self enumerator.
+        var later := self enumerator.
         
         later next.
         
@@ -23,7 +22,7 @@
     ]
 }
 
-#symbol program =
+program =
 [
     (("AA","BB","CC"),("AA","AA","AA"),("AA","CC","BB"),("AA","ACB","BB","CC"),List new += "single_element")
         run &each: list

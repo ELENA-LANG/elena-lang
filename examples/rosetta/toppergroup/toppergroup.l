@@ -1,18 +1,17 @@
-#import system.
 #import system'collections.
 #import system'routines.
 #import extensions.
 #import extensions'routines.
 #import extensions'text.
 
-#class Employee
+class Employee
 {
-    #field theName.
-    #field theID.
-    #field theSalary.
-    #field theDepartment.
+    object theName.
+    object theID.
+    object theSalary.
+    object theDepartment.
     
-    #constructor new &name:name &id:id &salary:salary &department:department
+    constructor new &name:name &id:id &salary:salary &department:department
     [
         theName := name.
         theID := id.
@@ -20,13 +19,13 @@
         theDepartment := department.
     ]
     
-    #method Name = theName.
+    Name = theName.
     
-    #method Salary = theSalary.
+    Salary = theSalary.
     
-    #method Department = theDepartment.
+    Department = theDepartment.
     
-    #method literal
+    literal
         = StringWriter new
             write:theName &paddingRight:25
             write:theID &paddingRight:12
@@ -34,9 +33,9 @@
             write:theDepartment.
 }
                                 
-#class(extension)reportOp
+extension reportOp
 {
-    #method topNPerDepartment &n:n
+    topNPerDepartment &n:n
         = self group &by:x [ x Department ] select &each: x
         [
             ^ {
@@ -48,9 +47,9 @@
         ].
 }
 
-#symbol program =
+program =
 [
-    #var employees :=
+    var employees :=
     (
         Employee new &name:"Tyler Bennett" &id:"E10297" &salary:32000 &department:"D101",
         Employee new &name:"John Rappl" &id:"E21437" &salary:47000 &department:"D050",

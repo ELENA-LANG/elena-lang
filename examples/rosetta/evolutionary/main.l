@@ -1,47 +1,46 @@
-#import system.
 #import system'routines.
 #import extensions.
 
 // --- program ---
 
-#symbol Target = "METHINKS IT IS LIKE A WEASEL".
-#symbol AllowedCharacters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ".
+const Target = "METHINKS IT IS LIKE A WEASEL".
+const AllowedCharacters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ".
 
-#symbol C = 100.
-#symbol P = 0.05r.
+const C = 100.
+const P = 0.05r.
 
-#symbol rnd = randomGenerator.
+rnd = randomGenerator.
 
-#symbol randomChar 
+randomChar 
     = AllowedCharacters @ (rnd nextInt:(AllowedCharacters length)).
 
-#class(extension) evoHelper
+extension evoHelper
 {
-    #method randomString
+    randomString
         = 0 repeat &till:self &each:x [ randomChar ] summarize:(String new) literal.
         
-    #method fitness &of:s
+    fitness &of:s
         = self zip:s &into:(:a:b)[ (a == b)iif:1:0 ] summarize:(Integer new) int.
         
-    #method mutate : p
+    mutate : p
         = self select &each: ch [ (rnd nextReal <= p) iif:randomChar:ch ] summarize:(String new) literal.
 }
 
-#class EvoAlgorithm :: Enumerator
+class EvoAlgorithm :: Enumerator
 {
-    #field theTarget.
-    #field theCurrent.
-    #field theVariantCount.
+    object theTarget.
+    object theCurrent.
+    object theVariantCount.
 
-    #constructor new : s &of:count
+    constructor new : s &of:count
     [
         theTarget := s.
         theVariantCount := count int.
     ]
 
-    #method get = theCurrent.
+    get = theCurrent.
 
-    #method next
+    next
     [
         ($nil == theCurrent)
             ? [ theCurrent := theTarget length randomString. ^ true. ].
@@ -49,7 +48,7 @@
         (theTarget == theCurrent)
             ? [ ^ false. ].
             
-        #var variants := Array new:theVariantCount set &every:(&index:x) [ theCurrent mutate:P ].
+        var variants := Array new:theVariantCount set &every:(&index:x) [ theCurrent mutate:P ].
         
         theCurrent := variants array sort:(:a:b) [ a fitness &of:Target > b fitness &of:Target ] getAt:0.
         
@@ -57,9 +56,9 @@
     ]            
 }
 
-#symbol program =
+program =
 [
-    #var attempt := Integer new.
+    var attempt := Integer new.
     EvoAlgorithm new:Target &of:C run &each:current
     [
         console 

@@ -2,49 +2,49 @@
 #import system'routines.
 #import extensions.
 
-#class GameMaster
+class GameMaster
 {
-    #field theNumbers.
-    #field theAttempt.
+    object theNumbers.
+    object theAttempt.
 
-    #constructor new
+    constructor new
     [
         // generate secret number
-        #var aRandomNumbers := (1,2,3,4,5,6,7,8,9) randomize:9.
+        var aRandomNumbers := (1,2,3,4,5,6,7,8,9) randomize:9.
  
         theNumbers := aRandomNumbers Subarray &index:0 &length:4.
         theAttempt := Integer new:1.
     ]
 
-    #method ask
+    ask
     [
-        #var aRow := console writeLiteral:"Your Guess #":theAttempt:" ?" readLine.
+        var aRow := console writeLiteral:"Your Guess #":theAttempt:" ?" readLine.
         
         ^ aRow toArray.
     ]
 
-    #method proceed : aGuess
+    proceed : aGuess
     [
-        #var aCows := Integer new:0.
-        #var aBulls := Integer new:0.
+        var aCows := Integer new:0.
+        var aBulls := Integer new:0.
 
         (aGuess length != 4)
             ? [ aBulls << -1. ]
             ! [
                 0 to:3 &doEach: (:i)
                 [
-                    #var ch := aGuess@i.
-                    #var aNumber := ch literal toInt.
+                    var ch := aGuess@i.
+                    var aNumber := ch literal toInt.
                     
                     // check range
                     ((aNumber > 0)and:(aNumber < 10))
-                        ! [ #throw InvalidArgumentException new. ].
+                        ! [ InvalidArgumentException new raise. ].
                     
                     // check duplicates
-                    #var duplicate := aGuess seek &each: x [ (x == ch)and:[ x equal &reference:ch not ] ].
+                    var duplicate := aGuess seek &each: x [ (x == ch)and:[ x equal &reference:ch not ] ].
                     (nil != duplicate) ?
                     [
-                        #throw InvalidArgumentException new.
+                        InvalidArgumentException new raise.
                     ].
                     
                     (aNumber == (theNumbers@i))
@@ -73,9 +73,9 @@
     ]
 }
 
-#symbol program =
+program =
 [
-    #var aGameMaster := GameMaster new.
+    var aGameMaster := GameMaster new.
 
     [ aGameMaster proceed:(aGameMaster ask) ] doWhile.
     

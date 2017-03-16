@@ -1,46 +1,45 @@
-#import system.
 #import system'routines.
 #import extensions.
 
-#class Node
+class Node
 {
-    #field theValue.
-    #field theChildren.
+    object theValue.
+    object theChildren.
     
-    #constructor new : value &children:children
+    constructor new : value &children:children
     [
         theValue := value.
                 
         theChildren := children toArray.
     ]
     
-    #constructor new : value
+    constructor new : value
         <= new:value &children:nil.
         
-    #constructor new &children:children
+    constructor new &children:children
         <= new:emptyLiteralValue &children:children.
         
-    #constructor new : value &child:child
+    constructor new : value &child:child
         <= new:value &children:(Array new &object:child).
         
-    #method get = theValue.
+    get = theValue.
     
-    #method children = theChildren.
+    children = theChildren.
 }
 
-#class(extension)treeOp
+extension treeOp
 {
-    #method writeTree:node:prefix &subject:childrenProp
+    writeTree:node:prefix &subject:childrenProp
     [
-        #var children := node::childrenProp get.
-        #var length := children length.
+        var children := node::childrenProp get.
+        var length := children length.
         
         children zip:(RangeEnumerator new &from:1 &to:length) &eachPair:(:child:index)
         [
             self writeLine:prefix:"|".                
             self writeLine:prefix:"+---":(child get).                
             
-            #var nodeLine := prefix + (index==length)iif:"    ":"|   ".
+            var nodeLine := prefix + (index==length)iif:"    ":"|   ".
             
             self writeTree:child:nodeLine &subject:childrenProp.
         ].
@@ -48,13 +47,13 @@
         ^ self.
     ]
     
-    #method writeTree:node &subject:childrenProp
+    writeTree:node &subject:childrenProp
         = self writeTree:node:"" &subject:childrenProp.
 }
 
-#symbol program =
+program =
 [
-    #var tree := Node new &children:
+    var tree := Node new &children:
                  (
                     Node new:"a" &children:
                     (

@@ -1,15 +1,14 @@
-#import system.
 #import system'routines.
 #import extensions.
 
-#class(extension)op
+extension op
 {
-    #method printSolution : bits
+    printSolution : bits
         = self zip:bits &into:
             (:s:b) [ s iif:"T":"F" + (s xor:b) iif:"* ":"  " ] summarize:(String new).
 }
 
-#symbol puzzle =
+puzzle =
 (
     bits [ bits length == 12 ],
     
@@ -38,16 +37,16 @@
     bits [ bits top:11 select &each:x [ x iif:1:0 ] summarize == 4 ]
 ).
 
-#symbol program =
+program =
 [
     console writeLine:"".
     
     0 till:(2 power &int:12) &doEach:n
     [
-        #var bits := BitArray32 new:n top:12 toArray.
-        #var results := puzzle select &each: r [ r eval:bits ] toArray.
+        var bits := BitArray32 new:n top:12 toArray.
+        var results := puzzle select &each: r [ r eval:bits ] toArray.
         
-        #var counts := bits zip:results &into:(:b:r) [ b xor:r iif:1:0 ] summarize.
+        var counts := bits zip:results &into:(:b:r) [ b xor:r iif:1:0 ] summarize.
 
         counts =>
             0  ? [ console writeLine:"Total hit :":(results printSolution:bits). ]

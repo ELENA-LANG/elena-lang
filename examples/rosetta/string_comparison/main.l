@@ -1,7 +1,6 @@
-#import system.
 #import extensions.
 
-#symbol compareStrings = (:val1 :val2)
+compareStrings = (:val1 :val2)
 [
     (val1 == val2)? [ console writeLine:"The strings ":val1:" and ":val2:" are equal". ].
     (val1 != val2)? [ console writeLine:"The strings ":val1:" and ":val2:" are not equal". ].
@@ -11,10 +10,10 @@
     (val1 <= val2)? [ console writeLine:"The string ":val1:" is not lexically after than ":val2. ].
 ].
 
-#symbol program =
+program =
 [
-    #var s1 := "this".
-    #var s2 := "that".
+    var s1 := "this".
+    var s2 := "that".
     compareStrings eval:s1:s2.
     
     console readChar.

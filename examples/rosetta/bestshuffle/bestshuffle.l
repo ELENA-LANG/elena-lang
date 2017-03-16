@@ -1,15 +1,14 @@
 /// Shuffles the characters of a string in such a way that as many of the character values are in a different position as possible.
 
-#import system.
 #import system'routines.
 #import extensions.
 
-#class(extension)op
+extension op
 {
-    #method shuffled
+    shuffled
     [
-        #var anOriginal := self toArray.
-        #var aShuffled := self toArray.
+        var anOriginal := self toArray.
+        var aShuffled := self toArray.
     
         0 to:(anOriginal length - 1) &doEach: (:i)
         [
@@ -25,11 +24,11 @@
         ^ aShuffled summarize:(String new) literal.
     ]
     
-    #method score : anOriginalText
+    score : anOriginalText
     [
-        #var aShuffled := self toArray.
-        #var anOriginal := anOriginalText toArray.
-        #var aScore := Integer new.
+        var aShuffled := self toArray.
+        var anOriginal := anOriginalText toArray.
+        var aScore := Integer new.
 
         0 to:(anOriginal length - 1) &doEach: (:i)
             [ ((anOriginal @ i) == (aShuffled @ i)) ? [ aScore += 1. ]. ].
@@ -40,11 +39,11 @@
 
 // --- Program ---
 
-#symbol program =
+program =
 [
     ("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") run &each: aWord
     [
-        #var aShuffled := aWord shuffled.
+        var aShuffled := aWord shuffled.
 
         console writeLine:"The best shuffle of ":aWord:" is ":aShuffled:"(":(aShuffled score:aWord):")".
     ].

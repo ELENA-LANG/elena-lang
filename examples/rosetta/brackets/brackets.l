@@ -2,19 +2,18 @@
 // Determine whether the generated string is balanced; that is, whether it consists entirely of pairs of opening/closing brackets (in that order),
 // none of which mis-nest. 
 
-#import system.
 #import system'routines.
 #import extensions.
 
 // --- RandomBrackets ---
 
-#symbol randomBrackets =
+randomBrackets =
 {
     new : aLength
         = (0 == aLength)
             ? [ emptyLiteralValue ]
             ! [
-                #var aBrackets := 
+                var aBrackets := 
                     Array new &length:(aLength int) set &every: (&index:i) [ #91 ] 
                     + 
                     Array new &length:(aLength int) set &every: (&index:i)[ #93 ].
@@ -25,11 +24,11 @@
             ].
 }.
 
-#class(extension)op
+extension op
 {
-    #method isBalanced
+    isBalanced
     [
-        #var aCounter := Integer new:0.
+        var aCounter := Integer new:0.
     
         self seek &each:aChar [ (aCounter += (aChar => #91 ? [ 1 ] #93 ? [ -1 ])) < 0 ].
     
@@ -39,11 +38,11 @@
 
 // --- Program ---
 
-#symbol program =                                             
+program =                                             
 [
     0 to:9 &doEach: (:aLength)
     [
-        #var anStr := randomBrackets new:aLength.
+        var anStr := randomBrackets new:aLength.
 
         console writeLine:"""":anStr:"""":((anStr isBalanced) => true ? [ " is balanced" ] false ? [ " is not balanced" ]).
     ].

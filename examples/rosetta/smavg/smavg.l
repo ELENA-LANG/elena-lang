@@ -1,24 +1,23 @@
-#import system.
 #import system'routines.
 #import system'collections.
 #import extensions.
 
-#class SMA
+class SMA
 {
-    #field thePeriod.
-    #field theList.
+    object thePeriod.
+    object theList.
     
-    #constructor new : aPeriod
+    constructor new : aPeriod
     [
         thePeriod := aPeriod.
         theList := List new.
     ]
     
-    #method append : aNumber
+    append : aNumber
     [
         theList += aNumber.
 
-        #var aCount := theList length.
+        var aCount := theList length.
         ^ aCount =>
             0 ?  [ 0.0r ] 
             ! [
@@ -29,7 +28,7 @@
                     aCount := thePeriod.
                 ].
         
-                #var aSum := theList summarize:(Real new &int:0).
+                var aSum := theList summarize:(Real new &int:0).
                 
                 ^ aSum / aCount.
             ].
@@ -38,10 +37,10 @@
 
 // --- Program ---
 
-#symbol program =
+program =
 [
-    #var SMA3 := SMA new:3.
-    #var SMA5 := SMA new:5.
+    var SMA3 := SMA new:3.
+    var SMA5 := SMA new:5.
 
     1 to:5 &doEach: (:i)
     [

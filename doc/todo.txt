@@ -5,16 +5,33 @@ In development:
               zdev 
                  * scripting library : language interpreter
 
-              xdev - generic development
-                 * migrate rosetta samples
+              xdev - generic development 
+                 * migrate rosetta samples : caesar
 
+                 * test brackets
+                 * test bitwise
+                 * test binary
+                 * test bestshuffle
                  * test arithmeval
                  * test arraycallback
                  * test anonymrec
+                 * test bullscows
+                 * test calendar
+                 * test complist
+                 * test firstclass
+                 * test knutalg
+                 * test loopma
+                 * test manboy
+                 * test smavg
+                 * test toppergroup
+                 * test truncprime
+                 * test trigonometrie
+                 * test twelvestats
                  * test matrix
                  * test bsort
                  * test pi2
                  * migrate samples
+                 * migrate gui rosetta samples
 
 ------                                 
 Pipeline:

@@ -1,10 +1,9 @@
-#import system.
 #import system'routines.
 #import extensions.
 
-#symbol program =
+program =
 [
-    #var string := "Hello,How,Are,You,Today".
+    var string := "Hello,How,Are,You,Today".
     
     string split &by:"," run &each:s
     [

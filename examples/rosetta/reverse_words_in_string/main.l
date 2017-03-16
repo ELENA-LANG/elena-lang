@@ -1,9 +1,8 @@
-#import system.
 #import system'routines.
 
-#symbol program =
+program =
 [
-    #var text := ("---------- Ice and Fire ------------",
+    var text := ("---------- Ice and Fire ------------",
                   "",
                   "fire, in end will world the say Some",
                   "ice. in say Some",

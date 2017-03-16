@@ -1,9 +1,8 @@
-#import system.
 #import extensions.
 
-#symbol program =
+program =
 [
-    #var s := "abcd".
+    var s := "abcd".
     
     console writeLine:s:" starts with ab: ":(s startingWith:"ab" literal).
     console writeLine:s:" starts with cd: ":(s startingWith:"cd" literal).

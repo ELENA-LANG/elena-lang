@@ -1,12 +1,11 @@
 /// showing the sequence of binary digits for given numbers
 
-#import system.
 #import system'routines.
 #import extensions.
 
 // --- Program ---
 
-#symbol program =
+program =
 [
     (5,50,9000) run &each: n
     [
