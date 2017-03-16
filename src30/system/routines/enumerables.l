@@ -129,7 +129,7 @@ extension enumerableOp
     safeSeek : aValue
         = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
 
-    seek : aValue
+    seek &value:aValue
         = x [ aValue equal:x ] retrieve &enumerator:(self enumerator).
 
     bool ifExists : aValue
