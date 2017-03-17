@@ -3457,6 +3457,10 @@ bool x86Assembler :: compileCommandC(PrefixInfo& prefix, TokenInfo& token, Proce
 		compileCMPSS(token, info, &writer);
 		return true;
 	}
+   else if (token.check("cmpps")) {
+      compileCMPPS(token, info, &writer);
+      return true;
+   }
    else return false;
 }
 bool x86Assembler :: compileCommandD(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
