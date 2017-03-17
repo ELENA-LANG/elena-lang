@@ -3243,7 +3243,7 @@ void x86Assembler :: compileCMPSS(TokenInfo& token, ProcedureInfo& info, MemoryW
 	token.read();
 
 	if (test(dest.type, x86Helper::otX128) && (test(sour.type, x86Helper::otX128) || test(sour.type, x86Helper::otM32))) {
-		if (imm.offset < 0 && imm.offset > 7) token.raiseErr("imm value too large in asm instruction");
+		if (imm.offset < 0 || imm.offset > 7) token.raiseErr("imm value too large in asm instruction");
 		code->writeByte(0xF3);
 		code->writeByte(0x0F);
 		code->writeByte(0xC2);
@@ -3275,7 +3275,7 @@ void x86Assembler :: compileCMPPS(TokenInfo& token, ProcedureInfo& info, MemoryW
 	token.read();
 
 	if (test(dest.type, x86Helper::otX128) && (test(sour.type, x86Helper::otX128) || test(sour.type, x86Helper::otM32))) {
-		if (imm.offset < 0 && imm.offset > 7) token.raiseErr("imm value too large in asm instruction");
+		if (imm.offset < 0 || imm.offset > 7) token.raiseErr("imm value too large in asm instruction");
 		code->writeByte(0x0F);
 		code->writeByte(0xC2);
 		x86Helper::writeModRM(code, dest, sour);
