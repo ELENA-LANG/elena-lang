@@ -6,10 +6,7 @@ In development:
                  * scripting library : language interpreter
 
               xdev - generic development 
-                 * test bestshuffle
                  * test arithmeval
-                 * test arraycallback
-                 * test anonymrec
                  * test bullscows
                  * test calendar
                  * test complist

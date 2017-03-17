@@ -1110,9 +1110,9 @@ ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
    if (identifier.compare(THIS_VAR)) {
       return parent->mapTerminal(identifier);
    }
-   //else if (identifier.compare(METHOD_SELF_VAR) && subCodeMode) {
-   //   return parent->mapTerminal(identifier);
-   //}
+   else if (identifier.compare(METHOD_SELF_VAR) && subCodeMode) {
+      return parent->mapTerminal(identifier);
+   }
    else if (identifier.compare(RETVAL_VAR) && subCodeMode) {
       ObjectInfo retVar = parent->mapTerminal(identifier);
       if (retVar.kind == okUnknown) {
@@ -2396,7 +2396,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
          if (isCollection(member)) {
             result = compileCollection(writer, objectNode, scope);
          }
-         else result = compileExpression(writer, member, scope, 0);
+         else result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxMessageReference:
          result = compileMessageReference(writer, member, scope, mode);
