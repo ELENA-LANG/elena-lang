@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    WinAPI: Static dialog implementations
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "windialogs.h"
@@ -668,7 +668,7 @@ void EditorSettings :: onOK()
    wchar_t size[12];
    getText(IDC_EDITOR_TABSIZE, (wchar_t**)(&size), 11);
    _model->tabSize = text_str(size).toInt();
-   if (_model->tabSize <= 0 && _model->tabSize > 20) {
+   if (_model->tabSize <= 0 || _model->tabSize > 20) {
       _model->tabSize = 4;
    }
 }
