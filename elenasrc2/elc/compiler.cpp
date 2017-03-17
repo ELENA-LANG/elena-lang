@@ -6878,6 +6878,8 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          generateSwitchTree(writer, current, scope);
          writer.insert(lxSwitching);
          writer.closeNode();
+         writer.insert(lxExpression);
+         writer.closeNode();
          break;
       case lxOperator:
          copyOperator(writer, current.firstChild());
