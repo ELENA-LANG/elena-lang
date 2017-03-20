@@ -2055,6 +2055,9 @@ void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scop
       // if it is inline action
       else compileRetExpression(writer, statement, scope, 0);
 
+      // preserve the allocated space
+      scope.level = subScope.level;
+
       writer.closeNode();
    }
 
@@ -3861,14 +3864,12 @@ ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, Co
    SNode expr = thenCode.firstChild(lxObjectMask);
    if (expr == lxEOF || expr.nextNode() != lxNone) {
       compileCode(writer, thenCode, subScope);
-
-      scope.level = subScope.level;
-      //if (subScope.level > scope.level) {
-      //   thenCode.appendNode(lxReleasing, subScope.level - scope.level);
-      //}
    }
    // if it is inline action
    else compileRetExpression(writer, expr, scope, 0);
+
+   // preserve the allocated space
+   scope.level = subScope.level;
 
    writer.closeNode();
 

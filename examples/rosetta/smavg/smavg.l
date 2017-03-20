@@ -30,6 +30,8 @@ class SMA
         
                 var aSum := theList summarize:(Real new &int:0).
                 
+                var n := aSum / aCount.
+                
                 ^ aSum / aCount.
             ].
     ]
