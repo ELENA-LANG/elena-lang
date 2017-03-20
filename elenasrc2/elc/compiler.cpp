@@ -3705,6 +3705,7 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
       }
       else if (verb == GET_MESSAGE_ID && paramCount == 0) {
          typecasting = true;
+         targetRef = scope.moduleScope->subjectHints.get(subjectRef);
       }
    }
 
