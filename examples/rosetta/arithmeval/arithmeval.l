@@ -126,7 +126,7 @@ operatorState = (:ch)
         ]
         ! [
             self new &token append:ch goto &token.
-        ].    
+        ].
 ].
 
 tokenState = (:ch)
@@ -187,35 +187,35 @@ class Scope
                                        
     new &token
     [
-        theToken := theParser append &token &expression:theExpression &level:theLevel.
+        theToken := theParser appendToken &expression:theExpression &level:theLevel.
     ]                                                
     
     new &summary
     [
         theToken := nil.
         
-        theParser append &summary &expression:theExpression &level:theLevel.
+        theParser appendSummary &expression:theExpression &level:theLevel.
     ]                                                
     
     new &difference
     [
         theToken := nil.
         
-        theParser append &difference &expression:theExpression &level:theLevel.
+        theParser appendDifference &expression:theExpression &level:theLevel.
     ]                                                
       
     new &product
     [
         theToken := nil.
         
-        theParser append &product &expression:theExpression &level:theLevel.
+        theParser appendProduct &expression:theExpression &level:theLevel.
     ]                                                
     
     new &fraction
     [
         theToken := nil.
         
-        theParser append &fraction &expression:theExpression &level:theLevel.
+        theParser appendFraction &expression:theExpression &level:theLevel.
     ]                                                
 
     new &bracket
@@ -224,7 +224,7 @@ class Scope
         
         theLevel := theLevel + 10.
         
-        theParser append &subexpression &expression:theExpression &level:theLevel.
+        theParser appendSubexpression &expression:theExpression &level:theLevel.
     ]            
 
     close &bracket
@@ -271,7 +271,7 @@ class Scope
 
 class Parser
 {
-    append &token &expression:anExpression &level:aLevel
+    appendToken &expression:anExpression &level:aLevel
     [
         var aToken := Token new &level:aLevel.
         
@@ -280,27 +280,27 @@ class Parser
         ^ aToken.
     ]
 
-    append &summary &expression:anExpression &level:aLevel
+    appendSummary &expression:anExpression &level:aLevel
     [
         anExpression set &top:($self append &last:(anExpression top) &new:(SummaryNode new &level:aLevel)).
     ]
 
-    append &difference &expression:anExpression &level:aLevel
+    appendDifference &expression:anExpression &level:aLevel
     [
         anExpression set &top:($self append &last:(anExpression top) &new:(DifferenceNode new &level:aLevel)).
     ]
 
-    append &product &expression:anExpression &level:aLevel
+    appendProduct &expression:anExpression &level:aLevel
     [
         anExpression set &top:($self append &last:(anExpression top) &new:(ProductNode new &level:aLevel)).
     ]
 
-    append &fraction &expression:anExpression &level:aLevel
+    appendFraction &expression:anExpression &level:aLevel
     [
         anExpression set &top:($self append &last:(anExpression top) &new:(FractionNode new &level:aLevel)).
     ]
 
-    append &subexpression &expression:anExpression &level:aLevel
+    appendSubexpression &expression:anExpression &level:aLevel
     [
         anExpression set &top:($self append &last:(anExpression top) &new:(Expression new &level:aLevel)).
     ]

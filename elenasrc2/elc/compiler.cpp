@@ -1076,9 +1076,6 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
       }
       else return ObjectInfo(okThisParam, 1);
    }
-   else if (terminal.compare(METHOD_SELF_VAR)) {
-      return ObjectInfo(okParam, (size_t)-1);
-   }
    else {
       Parameter param = parameters.get(terminal);
 
@@ -1105,13 +1102,19 @@ Compiler::ActionScope :: ActionScope(ClassScope* parent)
 }
 
 ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
-{
-   // HOTFIX : $self : closure should refer to the owner ones
+{   
    if (identifier.compare(THIS_VAR)) {
+      // $self : for closure it should refer to the owner ones
       return parent->mapTerminal(identifier);
    }
-   else if (identifier.compare(METHOD_SELF_VAR) && subCodeMode) {
-      return parent->mapTerminal(identifier);
+   else if (identifier.compare(CLOSURE_THIS_VAR)) {
+      return MethodScope::mapTerminal(THIS_VAR);
+   }
+   else if (identifier.compare(CLOSURE_SELF_VAR)) {
+      if (subCodeMode) {
+         return parent->mapTerminal(identifier);
+      }
+      else return MethodScope::mapTerminal(SELF_VAR);
    }
    else if (identifier.compare(RETVAL_VAR) && subCodeMode) {
       ObjectInfo retVar = parent->mapTerminal(identifier);
@@ -1177,8 +1180,6 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
 
 Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 {
-   //String<char, 10> thisVar(THIS_VAR);
-
    Outer owner = outers.get(THIS_VAR);
    // if owner reference is not yet mapped, add it
    if (owner.outerObject.kind == okUnknown) {
@@ -1201,6 +1202,9 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
 
       // map as an outer field (reference to outer object and outer object field index)
       return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
+   }
+   else if (identifier.compare(SELF_VAR)) {
+      return ObjectInfo(okParam, (size_t)-1);
    }
    else {
       Outer outer = outers.get(identifier);
@@ -2571,18 +2575,13 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
    if (verb_id == 0) {
       ref_t id = scope.mapSubject(name, signature);
 
-      // if followed by argument list - it is EVAL verb
       if (arg.nextNode() != lxNone) {
          // HOT FIX : strong types cannot be used as a custom verb with a parameter
          if (scope.moduleScope->subjectHints.exist(id))
             scope.raiseError(errStrongTypeNotAllowed, arg);
 
-         verb_id = EVAL_MESSAGE_ID;
-
          first = false;
       }
-      // otherwise it is GET message
-      else verb_id = GET_MESSAGE_ID;
    }
 
    arg = arg.nextNode();
@@ -2634,6 +2633,10 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
             arg = arg.nextNode();
          }
       }
+   }
+
+   if (verb_id == 0) {
+      verb_id = paramCount > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID;
    }
 
    // if signature is presented

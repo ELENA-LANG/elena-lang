@@ -10,6 +10,7 @@
 [ELENA]              
 [+] (re)introducing field templates
 [+] (re)introducing auto-generated local / field attributes
+[*] #294 : built-in variable refactoring (this and owner are no longer in use)
 
 [LIB]
 [+] new system'intarrayOp extension

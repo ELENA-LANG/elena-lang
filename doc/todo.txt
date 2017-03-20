@@ -6,7 +6,6 @@ In development:
                  * scripting library : language interpreter
 
               xdev - generic development 
-                 * test twelvestats
                  * test arithmeval
                  * test calendar
                  * test firstclass
