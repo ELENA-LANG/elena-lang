@@ -6,8 +6,6 @@ In development:
                  * scripting library : language interpreter
 
               xdev - generic development 
-                 * test firstclass
-                 * test manboy
                  * test matrix
                  * test bsort
                  * test pi2
