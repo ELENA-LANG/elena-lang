@@ -1195,10 +1195,36 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
    return owner;
 }
 
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapOwner()
+{
+   Outer owner = outers.get(OWNER_VAR);
+   // if owner reference is not yet mapped, add it
+   if (owner.outerObject.kind == okUnknown) {
+      owner.outerObject = parent->mapTerminal(OWNER_VAR);
+      if (owner.outerObject.kind != okUnknown) {
+         owner.reference = info.fields.Count();
+
+         if (owner.outerObject.extraparam == 0)
+            owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
+
+         outers.add(OWNER_VAR, owner);
+         mapKey(info.fields, OWNER_VAR, (int)owner.reference);
+      }
+      else return mapSelf();
+   }
+   return owner;
+}
+
 ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
 {
-   if (identifier.compare(THIS_VAR) || identifier.compare(OWNER_VAR)) {
+   if (identifier.compare(THIS_VAR)) {
       Outer owner = mapSelf();
+
+      // map as an outer field (reference to outer object and outer object field index)
+      return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
+   }
+   else if (identifier.compare(OWNER_VAR)) {
+      Outer owner = mapOwner();
 
       // map as an outer field (reference to outer object and outer object field index)
       return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);

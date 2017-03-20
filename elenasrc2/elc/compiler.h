@@ -688,6 +688,7 @@ private:
       ClassInfo::FieldTypeMap outerFieldTypes;
 
       Outer mapSelf();
+      Outer mapOwner();
 
       ObjectInfo allocateRetVar();
 

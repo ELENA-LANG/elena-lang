@@ -87,6 +87,10 @@ sealed embeddable struct TimeStruct
         $self write &__time:aTime.
     ]
 
+    sealed stacksafe conversion int:dummy
+    [
+    ]
+
     constructor new
     [
         system'core_routines'__timest empty &__time_st:$self.

@@ -67,10 +67,10 @@ class CalendarMonthPrinter
         write &index:anIndex 
         [
             (anIndex <= theRow)
-                ? [ self writeTitle. ].
+                ? [ $owner writeTitle. ].
                 
             while (anIndex > theRow)
-                [ self writeLine. ].
+                [ $owner writeLine. ].
         ]
 
         get = self.
