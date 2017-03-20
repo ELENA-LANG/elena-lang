@@ -94,7 +94,7 @@ enum Symbol
    nsL0Operation                = 0x01043,
    nsDefaultGeneric             = 0x01046,
    nsSubject                    = 0x01047,
-//   nsInlineClosure              = 0x01048,
+   nsInlineClosure              = 0x01048,
 //   nsImplicitConstructor        = 0x0104B,
    nsToken                      = 0x0104C,
    nsScope                      = 0x0104D,

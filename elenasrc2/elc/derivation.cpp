@@ -98,6 +98,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsLastSwitchOption:
       case nsBiggerSwitchOption:
       case nsLessSwitchOption:
+      case nsInlineClosure:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          break;
       default:

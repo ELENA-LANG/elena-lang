@@ -2416,13 +2416,16 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 {
    ObjectInfo result;
 
-   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression);
+   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxInlineClosure);
    switch (member.type)
    {
       case lxNestedClass:
          result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxCode:
+         result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
+         break;
+      case lxInlineClosure:
          result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxExpression:
@@ -3627,6 +3630,16 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    SNode argNode = node.firstChild();
    if (argNode == lxCode) {
       compileAction(node, scope, SNode(), mode);
+   }
+   else if (argNode == lxInlineClosure) {
+      // if it is a closure / lambda function without a parameter
+      SNode exprNode = argNode.findChild(lxCode).firstChild(lxObjectMask);
+      if (exprNode == lxExpression && exprNode.nextNode() == lxNone) {
+         // HOTFIX : recognize returning expression
+         exprNode = lxReturning;
+      }
+
+      compileAction(argNode, scope, SNode(), mode | HINT_CLOSURE);
    }
    else if (node.existChild(lxCode)) {
       SNode codeNode = node.findChild(lxCode);
@@ -6902,6 +6915,13 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
             writer.insert(lxTemplateParam);
             writer.closeNode();
          }
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
+      case lxInlineClosure:
+         generateCodeTree(writer, current.findChild(lxCode), scope);
+         writer.insert(lxInlineClosure);
+         writer.closeNode();
          writer.insert(lxExpression);
          writer.closeNode();
          break;
