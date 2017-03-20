@@ -73,7 +73,7 @@ class CalendarMonthPrinter
                 [ $owner writeLine. ].
         ]
 
-        get = self.
+        get = $owner.
     }.
     
     printTitleTo : anOutput
