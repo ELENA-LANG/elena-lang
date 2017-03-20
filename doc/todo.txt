@@ -6,9 +6,9 @@ In development:
                  * scripting library : language interpreter
 
               xdev - generic development 
+                 * test calendar
                  * test firstclass
                  * test manboy
-                 * test calendar
                  * test matrix
                  * test bsort
                  * test pi2

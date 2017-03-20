@@ -1560,7 +1560,7 @@ end
 
 inline % 52h
 
-  mov  ecx, [edi-8]
+  mov  ecx, [eax-8]
   mov  esi, edi
   add  ecx, 3
   mov  ebx, eax

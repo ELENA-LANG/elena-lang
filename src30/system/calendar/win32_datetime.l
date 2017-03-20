@@ -206,10 +206,10 @@ sealed embeddable struct TimeStruct
         theMillisecond := n.
     ]
 
-//    stacksafe read &__vtime:aRetVal
-//    [
-//        system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__time:aRetVal.
-//    ]    
+    stacksafe read &__vtime:aRetVal
+    [
+        system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__time:aRetVal.
+    ]    
     
     stacksafe write &__time:aFileTime
     [
