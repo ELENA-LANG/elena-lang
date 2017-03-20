@@ -5692,7 +5692,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
       if (isStatic)
          scope.raiseError(errInvalidOperation, expression);
 
-      if (!compileSymbolConstant(expression, scope, retVal))
+      if (!compileSymbolConstant(expressionTree.readRoot(), scope, retVal))
          scope.raiseError(errInvalidOperation, expression);
    }
 
@@ -5865,129 +5865,52 @@ int Compiler :: allocateStructure(SNode node, int& size)
    return offset;
 }
 
-////void Compiler :: optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope)
-////{
-////   if (node == lxNested) {
-////      // check if the nested collection can be treated like constant one
-////      bool constant = true;
-////      SNode current = node.firstChild();
-////      while (constant && current != lxNone) {
-////         if (current == lxMember) {
-////            SNode object = current.findSubNodeMask(lxObjectMask);
-////            switch (object.type) {
-////               case lxConstantChar:
-////               case lxConstantClass:
-////               case lxConstantInt:
-////               case lxConstantLong:
-////               case lxConstantList:
-////               case lxConstantReal:
-////               case lxConstantString:
-////               case lxConstantWideStr:
-////               case lxConstantSymbol:
-////                  break;
-////               default:
-////                  constant = false;
-////                  break;
-////            }
-////         }
-////         else if (current == lxOuterMember) {
-////            // nested class with outer member must not be constant
-////            constant = false;
-////         }
-////         current = current.nextNode();
-////      }
-////
-////      // replace with constant array if possible
-////      if (constant) {
-////         ref_t reference = scope.mapNestedExpression();
-////
-////         node = lxConstantList;
-////         node.setArgument(reference | mskConstArray);
-////
-////         _writer.generateConstantList(node, scope.module, reference);
-////      }
-////   }
-////
-////   optimizeSyntaxExpression(scope, node, warningScope);
-////}
-////
-////void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningScope& warningScope, int mode)
-////{
-////   switch (current.type) {
-////      case lxAssigning:
-////         optimizeAssigning(scope, current, warningScope);
-////         break;
-//////      case lxTypecasting:
-//////         optimizeTypecast(scope, current, warningMask, mode);
-//////         break;
-////      case lxStdExternalCall:
-////      case lxExternalCall:
-////      case lxCoreAPICall:
-////         optimizeExtCall(scope, current, warningScope);
-////         break;
-////      case lxInternalCall:
-////         optimizeInternalCall(scope, current, warningScope);
-////         break;
-////      case lxExpression:
-////      case lxOverridden:
-//////      case lxVariable:
-////         // HOT FIX : to pass the optimization mode into sub expression
-////         optimizeSyntaxExpression(scope, current, warningScope, mode);
-////         break;
-////      case lxReturning:
-////         optimizeSyntaxExpression(scope, current, warningScope, HINT_NOUNBOXING | HINT_NOCONDBOXING);
-////         break;
-////      case lxBoxing:
-////      case lxCondBoxing:
-////      case lxUnboxing:
-////      case lxArgBoxing:
-////         optimizeBoxing(scope, current, warningScope, mode);
-////         break;
-////      case lxIntOp:
-////      case lxLongOp:
-////      case lxRealOp:
-////      case lxIntArrOp:
-////      case lxShortArrOp:
-////      case lxByteArrOp:
-////      case lxArrOp:
-////      case lxBinArrOp:
-////      case lxNewOp:
-////      case lxNilOp:
-////      case lxArgArrOp:
-////         optimizeOp(scope, current, warningScope);
-////         break;
-////      case lxDirectCalling:
-////      case lxSDirctCalling:
-////      case lxCalling:
-////         optimizeCall(scope, current, warningScope);
-////         break;
-////      case lxNested:
-////      case lxMember:
-////         optimizeNestedExpression(scope, current, warningScope);
-////         break;
-////      case lxCode:
-////         optimizeSyntaxExpression(scope, current, warningScope/*, HINT_NOBOXING*/);
-////         break;
-////      case lxArgUnboxing:
-////         optimizeArgUnboxing(scope, current, warningScope);
-////         break;
-////      default:
-////         if (test(current.type, lxCodeScopeMask)) {
-////            optimizeSyntaxExpression(scope, current, warningScope);
-////         }
-////         break;
-////   }
-////}
-//
-//void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      optimizeSyntaxNode(scope, current, warningScope, mode);
-//
-//      current = current.nextNode();
-//   }
-//}
+ref_t Compiler :: optimizeNestedExpression(SNode node, ModuleScope& scope, WarningScope& warningScope)
+{
+   // check if the nested collection can be treated like constant one
+   bool constant = true;
+   SNode current = node.firstChild();
+   while (constant && current != lxNone) {
+      if (current == lxMember) {
+         SNode object = current.findSubNodeMask(lxObjectMask);
+         switch (object.type) {
+            case lxConstantChar:
+            case lxConstantClass:
+            case lxConstantInt:
+            case lxConstantLong:
+            case lxConstantList:
+            case lxConstantReal:
+            case lxConstantString:
+            case lxConstantWideStr:
+            case lxConstantSymbol:
+               break;
+            default:
+               constant = false;
+               optimizeExpression(current, scope, warningScope);
+               break;
+         }
+      }
+      else if (current == lxOuterMember) {
+         // nested class with outer member must not be constant
+         constant = false;
+
+         optimizeExpression(current, scope, warningScope);
+      }
+      current = current.nextNode();
+   }
+
+   // replace with constant array if possible
+   if (constant) {
+      ref_t reference = scope.mapNestedExpression();
+
+      node = lxConstantList;
+      node.setArgument(reference | mskConstArray);
+
+      _writer.generateConstantList(node, scope.module, reference);
+   }
+
+   return node.findChild(lxTarget).argument;
+}
 
 inline void setAttribute(SNode node, LexicalType argType, int argParameter)
 {
@@ -6238,6 +6161,9 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       //case lxExternFrame:
          optimizeExpressionTree(current, scope, warningScope);
          return 0;
+      case lxNested:
+         optimizeNestedExpression(current, scope, warningScope);
+         break;
       default:
          return current.findChild(lxTarget).argument;
    }

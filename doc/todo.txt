@@ -6,7 +6,6 @@ In development:
                  * scripting library : language interpreter
 
               xdev - generic development 
-                 * test arithmeval
                  * test calendar
                  * test firstclass
                  * test manboy
