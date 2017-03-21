@@ -6,8 +6,9 @@ In development:
                  * scripting library : language interpreter
 
               xdev - generic development 
-                 * test bsort
                  * test pi2
+                 * test random
+                 * test textdb
                  * migrate samples
                  * migrate gui rosetta samples
                  * migrate gui samples

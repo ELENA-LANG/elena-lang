@@ -31,7 +31,7 @@
 
    #define sing_item  ::= "method" method;
    #define method     ::= <= > += " %""open&method[0]""" => "(" mth_body <= > += " %""close[0]""" =>;
-   #define mth_body   ::= <= > += " %""new&paramToken[1]""" < += " " """this"""  => mth_name mth_params mth_expr; 
+   #define mth_body   ::= <= > += " %""new&paramToken[1]""" < += " " """self"""  => mth_name mth_params mth_expr; 
    #define mth_name   ::= <= > += " %""new&messageToken[1]""" => "message" name;
    #define mth_params ::= mth_param mth_params;
    #define mth_params ::= $eps;

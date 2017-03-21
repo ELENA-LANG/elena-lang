@@ -16,13 +16,13 @@
     #define rule_body  ::= "=>" add_cont next_state;
     #define rule_body  ::= "=>" next_state;
 
-    #define new_leaf   ::= <= this.newLeaf({ => "(" body ")" <= }); =>;
-    #define new_leaf   ::= <= this.newFunction({ => "<" body ">" <= }); =>;
-    #define new_node   ::= <= this.newNode({ => "[" body "]" <= }); =>;
-    #define add_cont   ::= "+=" <= this.addContent(c); =>;
+    #define new_leaf   ::= <= self.newLeaf({ => "(" body ")" <= }); =>;
+    #define new_leaf   ::= <= self.newFunction({ => "<" body ">" <= }); =>;
+    #define new_node   ::= <= self.newNode({ => "[" body "]" <= }); =>;
+    #define add_cont   ::= "+=" <= self.addContent(c); =>;
 
     #define level        ::= integer; 
-    #define next_state   ::= <= this.seek => "=" out_state <= (); =>;
+    #define next_state   ::= <= self.seek => "=" out_state <= (); =>;
 
     #define in_state     ::= ident <= : { =>;
     #define state        ::= ident <= : function(c) { => ;
