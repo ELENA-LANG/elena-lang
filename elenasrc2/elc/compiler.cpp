@@ -1114,7 +1114,7 @@ ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
       if (subCodeMode) {
          return parent->mapTerminal(identifier);
       }
-      else return MethodScope::mapTerminal(SELF_VAR);
+      else return ObjectInfo(okParam, (size_t)-1);
    }
    else if (identifier.compare(RETVAL_VAR) && subCodeMode) {
       ObjectInfo retVar = parent->mapTerminal(identifier);
@@ -2417,16 +2417,13 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 {
    ObjectInfo result;
 
-   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxInlineClosure);
+   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression);
    switch (member.type)
    {
       case lxNestedClass:
          result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxCode:
-         result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
-         break;
-      case lxInlineClosure:
          result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxExpression:
@@ -3633,18 +3630,6 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       scope.closureMode = true;
 
       compileAction(node, scope, SNode(), mode);
-   }
-   else if (argNode == lxInlineClosure) {
-      scope.closureMode = true;
-
-      // if it is a closure / lambda function without a parameter
-      SNode exprNode = argNode.findChild(lxCode).firstChild(lxObjectMask);
-      if (exprNode == lxExpression && exprNode.nextNode() == lxNone) {
-         // HOTFIX : recognize returning expression
-         exprNode = lxReturning;
-      }
-
-      compileAction(argNode, scope, SNode(), mode | HINT_CLOSURE);
    }
    else if (node.existChild(lxCode)) {
       scope.closureMode = true;
@@ -6925,13 +6910,6 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
             writer.insert(lxTemplateParam);
             writer.closeNode();
          }
-         writer.insert(lxExpression);
-         writer.closeNode();
-         break;
-      case lxInlineClosure:
-         generateCodeTree(writer, current.findChild(lxCode), scope);
-         writer.insert(lxInlineClosure);
-         writer.closeNode();
          writer.insert(lxExpression);
          writer.closeNode();
          break;

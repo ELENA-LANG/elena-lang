@@ -61,7 +61,6 @@ enum LexicalType
 
    lxDefaultGeneric  = 0x00046,
    lxSubject         = 0x00047,
-   lxInlineClosure   = 0x00048,
 //   lxImplicitConstructor = 0x0004B,
    lxScope           = 0x0004D,
    lxMessageParameter= 0x0C04E,
