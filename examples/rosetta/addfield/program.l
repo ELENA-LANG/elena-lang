@@ -2,18 +2,11 @@
 
 class Extender :: BaseExtender
 {
-    object theField.
+    object prop(foo) theField.
     
     constructor new : anObject
     [
         theObject := anObject.
-    ]
-    
-    foo = theField.
-    
-    set &foo : aValue
-    [
-        theField := aValue.
     ]
 }
 

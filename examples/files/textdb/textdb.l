@@ -1,5 +1,4 @@
 // --- default namespaces ---
-#import system.
 #import system'io.
 #import system'routines.
 #import system'collections.
@@ -9,50 +8,50 @@
 
 // --- EField ---
 
-#class(extension) fieldOp
+extension fieldOp
 {
-    #method Unserialized
+    Unserialized
     [
         ^ Signature new &literal:self.
     ]
 }
 
 // --- Record ---
-#class Record
+class Record
 {
-    #field theName.
-    #field theAge.
-    #field thePhone.
+    object theName.
+    object theAge.
+    object thePhone.
     
-    #constructor new
+    constructor new
     [
         theName := String new.
         theAge := Integer new.
         thePhone := String new.
     ]
 
-    #method Name = theName literal.
+    Name = theName literal.
     
-    #method set &Name:aName
+    set &Name:aName
     [
         aName convert &to:theName.
     ]
     
-    #method Age = theAge Number.
+    Age = theAge Number.
     
-    #method set &Age:anAge
+    set &Age:anAge
     [
         anAge convert &to:theAge.
     ]
     
-    #method Phone = thePhone literal.
+    Phone = thePhone literal.
     
-    #method set &Phone:aPhone
+    set &Phone:aPhone
     [
         thePhone set:aPhone.
     ]
 
-    #method literal
+    literal
         = StringWriter new
             writeLine:"Name:":theName
             writeLine:"Age:":theAge
@@ -61,12 +60,12 @@
 
 // --- Program ---
 
-#symbol Program = 
+Program = 
 [
     ('program'arguments length == 1)?
-        [  console << "Please provide the path to the file to view". #throw AbortException new. ].
+        [  console << "Please provide the path to the file to view". AbortException new raise. ].
 
-    #var aDB := List new += Record new.
+    var aDB := List new += Record new.
     
     'program'arguments@1 file_path run &eachLine: aLine
     [
@@ -74,12 +73,12 @@
             ? [ aDB += Record new. ]
             ! [
                 // split record line                    
-                #var aKeyValue := aLine split &by:":".
-                #var aName  := aKeyValue@0.
-                #var aValue := aKeyValue@1.
+                var aKeyValue := aLine split &by:":".
+                var aName  := aKeyValue@0.
+                var aValue := aKeyValue@1.
 
                 // update field
-                #var aSubj := aName Unserialized.
+                var aSubj := aName Unserialized.
                 
                 aDB last :: (aName Unserialized) set:aValue.
             ].

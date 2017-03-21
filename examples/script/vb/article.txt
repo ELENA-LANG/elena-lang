@@ -1,0 +1,10 @@
+ELENA Script Engine : Creating your own script language
+
+In this article we will see how to implement your own script language using ELENA script engine.
+
+We will take several implementations of Bulls and Cows from Rosetta code site (Javascript, BBC Basic and Julia) and will try
+to implement a grammar to run them. We will create a two versions: dynamic interpreter and a statically compiled program.
+
+Of course we are not going to make it 100% compatible with our target languages, our goal is to demonstrate how the script engine
+could be used to customize ELENA language.
+

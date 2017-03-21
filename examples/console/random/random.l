@@ -5,18 +5,18 @@
 
 // --- program ---
 
-#symbol(const,int)rows = 4.
-#symbol(const,int)cols = 6.
+const int rows = 4.
+const int cols = 6.
 
-#symbol(const,int)runCount = 1000000.
-#symbol(const,int)distGroupCount = 20.
+const int runCount = 1000000.
+const int distGroupCount = 20.
 
-#symbol program =
+program =
 [
-    #var intGroupSize := (1.0r + IntNumber max) / distGroupCount.
+    var intGroupSize := (1.0r + IntNumber max) / distGroupCount.
 
-    #var intCounts := IntArray new:distGroupCount.
-    #var realCounts := IntArray new:distGroupCount.
+    var intCounts := IntArray new:distGroupCount.
+    var realCounts := IntArray new:distGroupCount.
 
     console writeLine:"Random reals:".
     0 till:rows &doEach: i
@@ -46,7 +46,7 @@
 
     0 till:runCount &doEach: i
     [
-        #var index := (randomGenerator nextInt / intGroupSize) toInt.
+        var index := (randomGenerator nextInt / intGroupSize) toInt.
         (index < distGroupCount)?
             [ intCounts@index := intCounts@index + 1. ].
         

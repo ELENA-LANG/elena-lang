@@ -2,20 +2,22 @@
 In development:
 ------                              
 
+              sdev - cf parser
+                 * the following grammar rule is not correctly split (code is ignored) :
+                       #define method ::= "method" "(" name code ")";
+                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
+
               zdev 
                  * scripting library : language interpreter
-
-              xdev - generic development 
-                 * test pi2
-                 * test random
-                 * test textdb
-                 * migrate samples
-                 * migrate gui rosetta samples
-                 * migrate gui samples
 
 ------                                 
 Pipeline:
 ------                                                                                         
+
+              xdev - generic development 
+                 * migrate samples
+                 * migrate gui rosetta samples
+                 * migrate gui samples
 
               xdev - native code optimization
                  * use rep stos to clear the object after creating      
@@ -30,9 +32,6 @@ Pipeline:
                  * game of life : display 2d map in vm gui window
 
               sdev - cf parser
-                 * the following grammar rule is not correctly split (code is ignored) :
-                       #define method ::= "method" "(" name code ")";
-                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
                  * use pattern like in regex for terminal matching
                  * there should be possibility to save the resulting code in the file
                  * at least print the token where the parser error is
