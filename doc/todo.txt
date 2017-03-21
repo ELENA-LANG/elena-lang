@@ -6,11 +6,11 @@ In development:
                  * scripting library : language interpreter
 
               xdev - generic development 
-                 * test matrix
                  * test bsort
                  * test pi2
                  * migrate samples
                  * migrate gui rosetta samples
+                 * migrate gui samples
 
 ------                                 
 Pipeline:

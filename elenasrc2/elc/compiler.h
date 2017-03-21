@@ -684,6 +684,7 @@ private:
       };
 
       bool                    returningMode;
+      bool                    closureMode;
       Map<ident_t, Outer>     outers;
       ClassInfo::FieldTypeMap outerFieldTypes;
 

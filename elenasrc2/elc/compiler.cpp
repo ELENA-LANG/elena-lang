@@ -1174,6 +1174,7 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
    : ClassScope(owner->moduleScope, reference), outers(Outer()), outerFieldTypes(ClassInfo::FieldInfo(0, 0))
 {
    this->returningMode = false;
+   this->closureMode = false;
    this->parent = owner;
    info.header.flags |= elNestedClass;
 }
@@ -1229,7 +1230,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
       // map as an outer field (reference to outer object and outer object field index)
       return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
    }
-   else if (identifier.compare(SELF_VAR)) {
+   else if (identifier.compare(SELF_VAR) && !closureMode) {
       return ObjectInfo(okParam, (size_t)-1);
    }
    else {
@@ -3629,9 +3630,13 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    // if it is a lazy expression / multi-statement closure without parameters
    SNode argNode = node.firstChild();
    if (argNode == lxCode) {
+      scope.closureMode = true;
+
       compileAction(node, scope, SNode(), mode);
    }
    else if (argNode == lxInlineClosure) {
+      scope.closureMode = true;
+
       // if it is a closure / lambda function without a parameter
       SNode exprNode = argNode.findChild(lxCode).firstChild(lxObjectMask);
       if (exprNode == lxExpression && exprNode.nextNode() == lxNone) {
@@ -3642,6 +3647,8 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       compileAction(argNode, scope, SNode(), mode | HINT_CLOSURE);
    }
    else if (node.existChild(lxCode)) {
+      scope.closureMode = true;
+
       SNode codeNode = node.findChild(lxCode);
 
       // if it is a closure / lambda function with a parameter
@@ -6243,6 +6250,9 @@ void Compiler :: optimizeCode(SNode node, ModuleScope& scope, WarningScope& warn
             break;
          case lxExpression:
          case lxExternFrame:
+         case lxDirectCalling:
+         case lxSDirctCalling:
+         case lxCalling:
             optimizeExpressionTree(current, scope, warningScope);
             break;
       }
