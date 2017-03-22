@@ -8,3 +8,66 @@ to implement a grammar to run them. We will create a two versions: dynamic inter
 Of course we are not going to make it 100% compatible with our target languages, our goal is to demonstrate how the script engine
 could be used to customize ELENA language.
 
+Let's create a VM console client. We will use a command cycle template. First we have to create a project file (vmconsole.prj):
+
+    [project]
+    executable=vmconsole.exe
+    namespace=vmconsole
+    template=vm_console
+
+    [files]
+    vmconsole.l
+
+    [forwards]
+    'program=extensions'programLoop
+    'program'control=vmconsole'control
+
+Now let's create a simple feedback loop (vmconsole.l):
+
+    control =
+    {
+        prompt
+            = ">".
+        
+        proceed : command
+        [
+            command == "exit"
+                ? [ 'program stop. ^ "leaving...". ]
+                ! [ ^ command ].
+        ]
+    }.
+
+For working with an ELENA script engine and a virtual machine we will need extensions'scripting'scriptEngine singleton.
+
+We will start with predefined elena script grammar:
+
+    #import extensions'scripting.
+    
+    control =
+    {
+        initializing
+        [
+            scriptEngine 
+                load &path:"~\scripts\elena.es".
+        ]
+        
+        prompt
+            = ">".
+        
+        proceed : command
+        [
+            command == "exit"
+                ? [ 'program stop. ^ "leaving...". ]
+                ! [ scriptEngine eval:command. ^ 'newLine. ].
+        ]
+    }.
+
+Now let's compile and run our program. In the console let's type:
+
+   >system'console writeLine:"Hello"
+
+The output will be:
+
+   Hello
+ 
+

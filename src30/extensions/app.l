@@ -11,6 +11,15 @@ class $ProgramLoop
     [
         theActive := true.
         theControl := aControl.
+        
+        // if initializing is not defined - do nothing
+        theControl initializing
+            | on:
+            {
+                Abort = e [ e raise. ].
+                
+                ! = e [].
+            }.
     ]
     
     stop [ theActive := false. ]

@@ -350,9 +350,8 @@ Pipeline:
 
                        * support the following syntax : #throw(exceptionof:MyError)"My message" (using implicit constructors for exceptions)
 
-                       * #250 : embeddable structure : implicit constructor should be called without creating the object
                        * #237 : Multidimensional arrays 
-                       * #250 : Implicit constructor should not have return statements
+                       * Implicit constructor should not have return statements
 
                        * embeddable dispatcher validation : only redirection to the field is allowed
 

@@ -376,11 +376,11 @@ copy %1\examples\console\helloworld\*.l examples\console\helloworld
 copy %1\examples\console\helloworld\*.prj examples\console\helloworld
 rem copy %1\examples\helloworld\*.es examples\helloworld
 
-md examples\interpreter
-copy %1\examples\interpreter\*.l examples\interpreter
-copy %1\examples\interpreter\*.prj examples\interpreter
-copy %1\examples\interpreter\*.txt examples\interpreter
-copy %1\examples\interpreter\*.es examples\interpreter
+md examples\script\interpreter
+copy %1\examples\script\interpreter\*.l examples\interpreter
+copy %1\examples\script\interpreter\*.prj examples\interpreter
+copy %1\examples\script\interpreter\*.txt examples\interpreter
+copy %1\examples\script\interpreter\*.es examples\interpreter
 
 md examples\console\matrix 
 copy %1\examples\console\matrix\*.l examples\console\matrix 
@@ -443,10 +443,6 @@ md examples\console\trans
 copy %1\examples\console\trans\*.l examples\console\trans
 copy %1\examples\console\trans\*.prj examples\console\trans
 
-rem md examples\vmconsole
-rem copy %1\examples\vmconsole\*.l examples\vmconsole
-rem copy %1\examples\vmconsole\*.prj examples\vmconsole
-
 rem md examples\timer
 rem copy %1\examples\timer\*.l examples\timer
 rem copy %1\examples\timer\*.prj examples\timer
@@ -454,6 +450,12 @@ rem copy %1\examples\timer\*.prj examples\timer
 md examples\db\sqlite
 copy %1\examples\db\sqlite\*.l examples\db\sqlite
 copy %1\examples\db\sqlite\*.prj examples\db\sqlite
+
+md examples\script\vb
+copy %1\examples\script\vb\*.l examples\vb
+copy %1\examples\script\vb\*.prj examples\vb
+copy %1\examples\script\vb\*.txt examples\vb
+copy %1\examples\script\vb\*.es examples\vb
 
 echo copying src3 files
 
