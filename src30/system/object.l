@@ -224,3 +224,9 @@ listable dispatchable(bool) class BaseBoolValue
 
     clone = $nil.
 }
+
+extension commonOp
+{
+    then : code
+        = code eval.
+}

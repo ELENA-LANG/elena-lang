@@ -40,7 +40,7 @@ symbol startUp =
                     ! e [ console writeLine:(e literal).  ]
                 }.
     
-            events $onStop:$nil.
+            xevents $onStop:$nil.
         ]        
     }
     start:startUpEvents.

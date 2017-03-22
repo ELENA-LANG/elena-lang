@@ -220,6 +220,10 @@ Pipeline:
                  * move calcLiveCells into an extension
                  * support reference in collection expression : system'dynamic'Tape("Hello World", system'console, %"writeLine[1]").
                  * boxing / unboxing argument list
+                 * #297 if code template : send bool to the expression before branching, if the compiler knows the type of template expression
+                   it should be ignored (i.e. typecast message should be embeddable - replaced by the compiler to the idle operation)
+                 * the following expression should generated an error : try2(n test) { .... }
+                 * the following expression should generated an error : if(n test) { .... }
 
               zdev 
                  * gui script
@@ -634,6 +638,7 @@ Pipeline:
                        * optimize __castover / __event handler
                        * optimize - arrayof(func1)a := func1(1).
                        * optimize : structure copying
+                       * object.then:[ a ] => object.then:a &func1:a [ a ]
 
               xdev - native code optimization
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)

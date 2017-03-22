@@ -4450,7 +4450,7 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (test(current.type, lxExprMask)) {
+      if (test(current.type, lxObjectMask)) {
          generateObjectExpression(tape, current);
 
          if (first) {

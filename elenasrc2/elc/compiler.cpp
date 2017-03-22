@@ -14,14 +14,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 #define HINT_CLOSURE_MASK     0xC0008800
@@ -3741,7 +3741,12 @@ ObjectInfo Compiler :: compileNewOperator(SyntaxWriter& writer, SNode node, Code
 {
    ObjectInfo retVal(okObject);
 
+   if (node.nextNode() != lxNone)
+      scope.raiseError(errInvalidOperation, node);
+
    SNode objectNode = node.firstChild(lxTerminalMask);
+
+   //if (objectNode.nextNode(lxObjectMask))
 
    retVal.type = scope.mapSubject(objectNode);
    if (retVal.type != 0 && scope.moduleScope->subjectHints.get(retVal.type) == 0)
@@ -3770,7 +3775,7 @@ void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scop
    bool catchNode = false;
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (test(current.type, lxExprMask)) {
+      if (test(current.type, lxObjectMask)) {
          compileExpression(writer, current, scope, catchNode ? HINT_TRY_MODE | HINT_RESENDEXPR : 0);
 
          catchNode = true;
@@ -3929,38 +3934,6 @@ void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
    compileExpression(writer, expr, scope, HINT_LOOP);
 }
 
-//void Compiler :: compileTry(DNode node, CodeScope& scope)
-//{
-////   scope.writer->newNode(lxTrying);
-////
-////   // implement try expression
-////   compileExpression(node.firstChild(), scope, 0, 0);
-////
-//////   // implement finally block
-//////   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-//////   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-////
-////   DNode catchNode = goToSymbol(node.firstChild(), nsCatchMessageOperation);
-////   if (catchNode != nsNone) {
-////      scope.writer->newBookmark();
-////
-////      scope.writer->appendNode(lxResult);
-////
-////      // implement catch message
-////      compileMessage(catchNode, scope, ObjectInfo(okObject));
-////
-////      scope.writer->removeBookmark();
-////   }
-//////   // or throw the exception further
-//////   else _writer.throwCurrent(*scope.tape);
-////
-////   scope.writer->closeNode();
-////
-////   // implement finally block
-////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-//}
-
 //void Compiler :: compileLock(SNode node, CodeScope& scope)
 //{
 //   node = lxLocking;
@@ -4006,10 +3979,6 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
             compileLoop(writer, current, scope);
             writer.closeNode();
             break;
-////         case nsTry:
-////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-////            compileTry(statement, scope);
-////            break;
 //         case lxLock:
 //            //recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileLock(current, scope);
@@ -6768,6 +6737,7 @@ void Compiler :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, Temp
             TemplateScope templateScope(&scope, attrRef);
             templateScope.exprNode = node.findChild(lxExpression);
             templateScope.codeNode = node.findChild(lxCode);
+            templateScope.nestedNode = node.findChild(lxNestedClass);
             templateScope.codeMode = true;
             
             if (!generateTemplateCode(writer, templateScope))
@@ -6897,9 +6867,15 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          generateExpressionTree(writer, current, scope, false);
          break;
       case lxNestedClass:
-         generateScopeMembers(current, scope);
+         if (scope.codeMode) {
+            writer.insert(lxTemplateParam, 2);
+            writer.closeNode();
+         }
+         else {
+            generateScopeMembers(current, scope);
 
-         generateClassTree(writer, current, scope, SNode(), -1);
+            generateClassTree(writer, current, scope, SNode(), -1);
+         }
 
          writer.insert(lxExpression);
          writer.closeNode();
@@ -7016,7 +6992,7 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          if (current.existChild(lxAssigning)) {
             generateVariableTree(writer, current, scope);
          }
-         else if (current.existChild(lxCode)) {
+         else if (current.existChild(lxCode) || current.existChild(lxNestedClass)) {
             generateCodeTemplateTree(writer, current, scope);
          }
          else generateExpressionTree(writer, current, scope);
@@ -7108,6 +7084,17 @@ void Compiler :: copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope
          TemplateScope* parentScope = (TemplateScope*)scope.parent;
 
          generateCodeTree(writer, scope.codeNode, *parentScope);
+
+         //writer.insert(lxExpression);
+         //writer.closeNode();
+      }
+      else if (scope.codeMode && current.argument == 2) {
+         // if it is a code template parameter
+         TemplateScope* parentScope = (TemplateScope*)scope.parent;
+
+         writer.newBookmark();
+         generateObjectTree(writer, scope.nestedNode, *parentScope);
+         writer.removeBookmark();
 
          //writer.insert(lxExpression);
          //writer.closeNode();
