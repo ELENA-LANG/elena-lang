@@ -106,4 +106,12 @@
     ].
 ].
 
+// --- if statement ---
+
+#template if (expr)
+[
+    (expr) ?
+    [
+    ].
+].
 
