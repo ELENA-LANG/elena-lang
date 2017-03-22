@@ -13,13 +13,7 @@ class $ProgramLoop
         theControl := aControl.
         
         // if initializing is not defined - do nothing
-        theControl initializing
-            | on:
-            {
-                Abort = e [ e raise. ].
-                
-                ! = e [].
-            }.
+        theControl initializing \ back:$nil.
     ]
     
     stop [ theActive := false. ]
@@ -27,13 +21,7 @@ class $ProgramLoop
     eval
     [
         // if grettings is not defined - do nothing
-        console writeLine:(theControl greeting)
-            | on:
-            {
-                Abort = e [ e raise. ].
-                
-                ! = e [].
-            }.
+        console writeLine:(theControl greeting) \ back:$nil.
         
         var aPrompt := theControl prompt.
         

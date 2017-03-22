@@ -35,9 +35,9 @@ symbol startUp =
             'program eval
                 | on:
                 {
-                    Abort = e [].
+                    Abort : e []
                     
-                    ! = e [ console writeLine:(e literal). ].
+                    ! e [ console writeLine:(e literal).  ]
                 }.
     
             events $onStop:$nil.

@@ -1,3 +1,4 @@
+#import extensions.
 #import extensions'scripting.
 
 // --- Control ---
@@ -6,8 +7,10 @@ control =
 {
     initializing
     [
-        scriptEngine 
-            load &path:"~\scripts\elena.es".
+        1 till:('program'arguments length) &doEach:(:arg) 
+                   [ 
+                      scriptEngine load &path:('program'arguments@arg) 
+                   ].
     ]
     
     prompt

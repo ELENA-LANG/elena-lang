@@ -7,6 +7,12 @@ In development:
                        #define method ::= "method" "(" name code ")";
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
 
+              xdev - generic development 
+                 * if template
+                 * try-catch template
+                 * if-else template
+                 * try-catch-finally template
+
               zdev 
                  * scripting library : language interpreter
 
@@ -16,6 +22,7 @@ Pipeline:
 
               xdev - generic development 
                  * migrate samples
+                 * basic tests
                  * migrate gui rosetta samples
                  * migrate gui samples
 

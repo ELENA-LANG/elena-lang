@@ -44,7 +44,7 @@ We will start with predefined elena script grammar:
     #import extensions'scripting.
     
     control =
-    {
+    {                                                        
         initializing
         [
             scriptEngine 
@@ -70,4 +70,29 @@ The output will be:
 
    Hello
  
+Now let's customize it a little bit - we will provide a grammar in the command line:
+
+    #import extensions.
+    #import extensions'scripting.
+    
+    control =
+    {
+        initializing
+        [
+            1 till:('program'arguments length) &doEach:(:arg) 
+                       [ 
+                          scriptEngine load &path:('program'arguments@arg) 
+                       ].
+        ]
+        
+        prompt
+            = ">".
+        
+        proceed : command
+        [
+            command == "exit"
+                ? [ 'program stop. ^ "leaving...". ]
+                ! [ scriptEngine eval:command. ^ 'newLine. ].
+        ]
+    }.
 

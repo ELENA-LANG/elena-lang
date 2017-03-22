@@ -91,7 +91,7 @@ sealed nonstructural class CallStack
     /// Otherwise goes to the next exception handler
     on : aCatchBlock
     [
-        aCatchBlock subject eval:$self | if &MethodNotFoundError: e [ #throw $self. ].
+        aCatchBlock eval &subject:$self | if &MethodNotFoundError: e [ #throw $self. ].
     ]    
 
     raise
@@ -136,7 +136,7 @@ class Exception
     /// Otherwise goes to the next exception handler
     on : aCatchBlock
     [
-        (aCatchBlock::theError get) eval:$self | if &MethodNotFoundError: e [ #throw $self. ].
+        (aCatchBlock::theError eval:$self) back:$nil | if &MethodNotFoundError: e [ #throw $self. ].
     ]
     
     /// Returns the message and the call stack
