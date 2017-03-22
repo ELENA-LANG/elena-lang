@@ -115,6 +115,15 @@
     ].
 ].
 
+#template if (expr,else)
+[
+    (expr) ?
+    [
+    ]
+    ! [
+    ].
+].
+
 // -- try catch statement ---
 
 #template try (expr)
