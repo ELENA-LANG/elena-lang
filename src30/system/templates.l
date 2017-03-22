@@ -139,7 +139,7 @@
 
 #template try (expr,else)
 [
-    expr | on:[]:
+    expr then:[] | on:[]:
     {
     }.
 ].

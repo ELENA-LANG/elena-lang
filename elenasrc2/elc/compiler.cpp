@@ -6844,6 +6844,10 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          break;
       case lxCatchOperation:
       case lxAltOperation:
+         if (scope.codeMode && scope.templateRef == 0) {
+            // HOTFIX : for try-catch template
+            scope.codeNode = SNode();
+         }
          writer.newBookmark();
       case lxMessage:
          if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
