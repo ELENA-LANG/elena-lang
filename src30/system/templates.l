@@ -115,6 +115,8 @@
     ].
 ].
 
+// --- if-else statement ---
+
 #template if (expr,else)
 [
     (expr) ?
@@ -124,11 +126,20 @@
     ].
 ].
 
-// -- try catch statement ---
+// -- try-catch statement ---
 
 #template try (expr)
 [
     expr | on:
+    {
+    }.
+].
+
+// -- try-finally-catch statement ---
+
+#template try (expr,else)
+[
+    expr | on:[]:
     {
     }.
 ].

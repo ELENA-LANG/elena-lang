@@ -14,14 +14,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 #define HINT_CLOSURE_MASK     0xC0008800
@@ -3115,7 +3115,12 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
             // HOTFIX : skip the prime message
             arg = arg.nextNode();
 
-            if (arg == lxExtension)
+            if (test(mode, HINT_RESENDEXPR)) {
+               // HOTFIX : support several generic arguments for try mode
+               if (arg == lxExpression)
+                  continue;
+            }
+            else if (arg == lxExtension)
                // HOTFIX : skip the extension node
                arg = arg.nextNode();
          }

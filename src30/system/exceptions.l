@@ -94,6 +94,17 @@ sealed nonstructural class CallStack
         aCatchBlock eval &subject:$self | if &MethodNotFoundError: e [ #throw $self. ].
     ]    
 
+    /// Executes the exception handler for the current exception if available.
+    /// Finally code is called before
+    ///
+    /// Otherwise goes to the next exception handler
+    on : aFinallyCode : aCatchBlock
+    [
+        aFinallyCode eval.
+        
+        aCatchBlock eval &subject:$self | if &MethodNotFoundError: e [ #throw $self. ].
+    ]    
+
     raise
     [
         #throw $self.  
