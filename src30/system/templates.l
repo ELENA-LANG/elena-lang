@@ -115,3 +115,12 @@
     ].
 ].
 
+// -- try catch statement ---
+
+#template try (expr)
+[
+    expr | on:
+    {
+    }.
+].
+

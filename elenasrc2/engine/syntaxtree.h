@@ -876,6 +876,21 @@ public:
       return counter;
    }
 
+   static int countChild(Node node, LexicalType type1, LexicalType type2)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (current == type1 || current == type2)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
    static Node findPattern(Node node, int counter, ...);
    static bool matchPattern(Node node, int mask, int counter, ...);
 

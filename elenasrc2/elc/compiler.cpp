@@ -6621,7 +6621,17 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
          case lxCode:
             generateCodeTree(writer, current, scope);
             if (scope.codeMode) {
-               writer.insert(lxTemplateParam);
+               if (scope.parameters.Count() == 2) {
+                  if (scope.codeNode == lxNone) {
+                     writer.insert(lxTemplateParam);
+                     scope.codeNode = current;
+                  }
+                  else {
+                     writer.insert(lxTemplateParam, 3);
+                     scope.codeNode = SNode();
+                  }
+               }
+               else writer.insert(lxTemplateParam);
                writer.closeNode();
             }
 
@@ -6728,7 +6738,7 @@ void Compiler :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, Temp
    if (attr != lxNone) {
       IdentifierString attrName(attr.findChild(lxTerminal).identifier());
       attrName.append('#');
-      attrName.appendInt(1);
+      attrName.appendInt(SyntaxTree::countChild(node, lxCode, lxNestedClass));
 
       ref_t attrRef = scope.moduleScope->resolveAttributeRef(attrName, false);
       if (attrRef != 0) {
@@ -6738,6 +6748,11 @@ void Compiler :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, Temp
             templateScope.exprNode = node.findChild(lxExpression);
             templateScope.codeNode = node.findChild(lxCode);
             templateScope.nestedNode = node.findChild(lxNestedClass);
+            if (templateScope.nestedNode == lxNone || templateScope.codeNode != lxNone) {
+               // if there is else code block
+               templateScope.elseNode = templateScope.codeNode.nextNode();
+            }
+            
             templateScope.codeMode = true;
             
             if (!generateTemplateCode(writer, templateScope))
@@ -6883,7 +6898,17 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
       case lxCode:
          generateCodeTree(writer, current, scope);
          if (scope.codeMode) {
-            writer.insert(lxTemplateParam);
+            if (scope.parameters.Count() == 2) {
+               if (scope.codeNode == lxNone) {
+                  writer.insert(lxTemplateParam);
+                  scope.codeNode = current;
+               }
+               else {
+                  writer.insert(lxTemplateParam, 3);
+                  scope.codeNode = SNode();
+               }
+            }
+            else writer.insert(lxTemplateParam);
             writer.closeNode();
          }
          writer.insert(lxExpression);
@@ -7084,9 +7109,18 @@ void Compiler :: copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope
          TemplateScope* parentScope = (TemplateScope*)scope.parent;
 
          generateCodeTree(writer, scope.codeNode, *parentScope);
+      }
+      else if (scope.codeMode && current.argument == 3) {
+         TemplateScope* parentScope = (TemplateScope*)scope.parent;
 
-         //writer.insert(lxExpression);
-         //writer.closeNode();
+         // if it is an else code template parameter
+         SNode subParam = current.findSubNode(lxTemplateParam);
+         if (subParam == lxTemplateParam && subParam.argument == 0) {
+            // HOTFIX : insert if-else code
+            generateCodeTree(writer, scope.codeNode, *parentScope);
+         }
+
+         generateCodeTree(writer, scope.elseNode, *parentScope);
       }
       else if (scope.codeMode && current.argument == 2) {
          // if it is a code template parameter
@@ -7095,9 +7129,6 @@ void Compiler :: copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope
          writer.newBookmark();
          generateObjectTree(writer, scope.nestedNode, *parentScope);
          writer.removeBookmark();
-
-         //writer.insert(lxExpression);
-         //writer.closeNode();
       }
       else {
          // if it is a target pseudo variable

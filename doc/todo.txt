@@ -8,8 +8,6 @@ In development:
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
 
               xdev - generic development 
-                 * if template
-                 * try-catch template
                  * if-else template
                  * try-catch-finally template
 
@@ -21,6 +19,8 @@ Pipeline:
 ------                                                                                         
 
               xdev - generic development 
+                 * update system'startUp - use try template
+                 * samples : use new branching / try catch code templates
                  * migrate samples
                  * basic tests
                  * migrate gui rosetta samples
@@ -277,7 +277,6 @@ Pipeline:
                  * multy parameter dispatching
                  * create closure outside the loop, so it will be created only once
                  * #236 : Namespace sharing
-                 * #163 : try finally catch statement
                  * #100 : classOp : test if object is subclass of 
                  * #167 : stack allocated variable and $nil
                  * passing vint as int probably should be possible only for embeddable classes
