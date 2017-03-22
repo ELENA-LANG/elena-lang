@@ -72,27 +72,39 @@ The output will be:
  
 Now let's customize it a little bit - we will provide a grammar in the command line:
 
-    #import extensions.
-    #import extensions'scripting.
-    
-    control =
-    {
-        initializing
-        [
-            1 till:('program'arguments length) &doEach:(:arg) 
-                       [ 
-                          scriptEngine load &path:('program'arguments@arg) 
-                       ].
-        ]
-        
-        prompt
-            = ">".
-        
-        proceed : command
-        [
-            command == "exit"
-                ? [ 'program stop. ^ "leaving...". ]
-                ! [ scriptEngine eval:command. ^ 'newLine. ].
-        ]
-    }.
+   #import extensions.
+   #import extensions'scripting.
+   
+   // --- Control ---
+   
+   control =
+   {
+       initializing
+       [
+           1 till:('program'arguments length) &doEach:(:arg) 
+                      [ 
+                         try(scriptEngine load &path:('program'arguments@arg))
+                         {
+                             ! e [ console writeLine:(e message). ]
+                         }
+                      ].
+       ]
+       
+       prompt
+           = ">".
+       
+       proceed : command
+       [
+           if(command == "exit")
+               [ 'program stop. ^ "leaving...". ];
+               [
+                   try(scriptEngine eval:command)
+                   {
+                       ! e [ console writeLine:(e message). ]
+                   }.
+                   
+                   ^ 'newLine.
+               ].
+       ]
+   }.
 

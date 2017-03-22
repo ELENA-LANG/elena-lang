@@ -9,7 +9,10 @@ control =
     [
         1 till:('program'arguments length) &doEach:(:arg) 
                    [ 
-                      scriptEngine load &path:('program'arguments@arg) 
+                      try(scriptEngine load &path:('program'arguments@arg))
+                      {
+                          ! e [ console writeLine:(e message). ]
+                      }
                    ].
     ]
     
@@ -18,8 +21,15 @@ control =
     
     proceed : command
     [
-        command == "exit"
-            ? [ 'program stop. ^ "leaving...". ]
-            ! [ scriptEngine eval:command. ^ 'newLine. ].
+        if(command == "exit")
+            [ 'program stop. ^ "leaving...". ];
+            [
+                try(scriptEngine eval:command)
+                {
+                    ! e [ console writeLine:(e message). ]
+                }.
+                
+                ^ 'newLine.
+            ].
     ]
 }.

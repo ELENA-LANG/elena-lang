@@ -32,8 +32,7 @@ symbol startUp =
     {
         start : events
         [
-            'program eval
-                | on:
+            try('program eval)
                 {
                     Abort : e []
                     

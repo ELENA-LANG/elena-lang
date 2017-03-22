@@ -7,10 +7,6 @@ In development:
                        #define method ::= "method" "(" name code ")";
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
 
-              xdev - generic development 
-                 * if-else template
-                 * try-catch-finally template
-
               zdev 
                  * scripting library : language interpreter
 
@@ -19,7 +15,6 @@ Pipeline:
 ------                                                                                         
 
               xdev - generic development 
-                 * update system'startUp - use try template
                  * samples : use new branching / try catch code templates
                  * migrate samples
                  * basic tests
