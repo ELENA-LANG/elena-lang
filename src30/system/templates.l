@@ -92,7 +92,7 @@
 
 #template while (expr)
 [
-    #loop(expr)?
+    #loop(expr bool)?
     [
     ].
 ].
@@ -101,7 +101,7 @@
 
 #template until (expr)
 [
-    #loop(expr)!
+    #loop(expr bool)!
     [
     ].
 ].

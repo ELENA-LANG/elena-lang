@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * #297 if code template : send bool to the expression before branching
-                 * loop code templates : send bool to the expression before branching
                  * review switch statement
 
               sdev - cf parser
