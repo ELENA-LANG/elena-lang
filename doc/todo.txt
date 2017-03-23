@@ -4,6 +4,7 @@ In development:
 
               xdev - generic development 
                  * review switch statement
+                 * samples review : 24
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
