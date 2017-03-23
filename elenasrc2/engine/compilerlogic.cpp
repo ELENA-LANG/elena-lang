@@ -1428,22 +1428,14 @@ bool CompilerLogic :: recognizeEmbeddableEval2(_CompilerScope& scope, SNode root
    return recognizeEmbeddableOp2(scope, root, extensionRef, returningType, EVAL_MESSAGE_ID, subject);
 }
 
-bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode)
+bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOne)
 {
-   SNode object = SyntaxTree::findPattern(methodNode, 4,
+   SNode object = SyntaxTree::findPattern(methodNode, 3,
       SNodePattern(lxNewFrame),
       SNodePattern(lxReturning),
-      SNodePattern(lxExpression),
-      SNodePattern(lxLocal));
+      SNodePattern(extensionOne ? lxLocal : lxThisLocal));
 
-   if (object == lxNone) {
-      object = SyntaxTree::findPattern(methodNode, 3,
-         SNodePattern(lxNewFrame),
-         SNodePattern(lxReturning),
-         SNodePattern(lxLocal));
-   }
-
-   return (object == lxLocal && object.argument == -1);
+   return extensionOne ? (object == lxLocal && object.argument == -1) : (object == lxThisLocal && object.argument == 1);
 }
 
 bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node)

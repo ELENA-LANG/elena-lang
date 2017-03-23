@@ -6309,9 +6309,11 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
       classScope.save();
    }
 
-   // Optimization : subject'get = self
-   if (_logic->recognizeEmbeddableIdle(methodNode)) {
+   // Optimization : subject'get = self / $self
+   if (_logic->recognizeEmbeddableIdle(methodNode, classScope.extensionMode != 0)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableIdle), INVALID_REF);
+
+      classScope.save();
    }
 }
 

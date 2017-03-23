@@ -2,6 +2,13 @@
 In development:
 ------                              
 
+              xdev - generic development 
+                 * if the compiler knows the type of expression,
+                   typecast message call should be ignored (i.e. typecast message should be embeddable - replaced by the compiler to the idle operation)
+                 * #297 if code template : send bool to the expression before branching
+                 * loop code templates : send bool to the expression before branching
+                 * review switch statement
+
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define method ::= "method" "(" name code ")";
@@ -215,8 +222,6 @@ Pipeline:
                  * move calcLiveCells into an extension
                  * support reference in collection expression : system'dynamic'Tape("Hello World", system'console, %"writeLine[1]").
                  * boxing / unboxing argument list
-                 * #297 if code template : send bool to the expression before branching, if the compiler knows the type of template expression
-                   it should be ignored (i.e. typecast message should be embeddable - replaced by the compiler to the idle operation)
                  * the following expression should generated an error : try2(n test) { .... }
                  * the following expression should generated an error : if(n test) { .... }
 

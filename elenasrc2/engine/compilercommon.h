@@ -267,7 +267,7 @@ public:
    virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
    virtual bool recognizeEmbeddableEval(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
    virtual bool recognizeEmbeddableEval2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject) = 0;
-   virtual bool recognizeEmbeddableIdle(SNode node) = 0;
+   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
    virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope) = 0;
 
 //   virtual void optimizeDuplicateBoxing(SNode node) = 0;

@@ -145,7 +145,7 @@ public:
    virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject);
    virtual bool recognizeEmbeddableEval(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject);
    virtual bool recognizeEmbeddableEval2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject);
-   virtual bool recognizeEmbeddableIdle(SNode node);
+   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
 
    virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope);
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node);
