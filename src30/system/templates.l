@@ -115,6 +115,15 @@
     ].
 ].
 
+// --- ifnot statement ---
+
+#template ifnot (expr)
+[
+    expr bool !
+    [
+    ].
+].
+
 // --- if-else statement ---
 
 #template if (expr,else)

@@ -18,26 +18,26 @@ class ExpressionTree
             var node := Dynamic new.
             
             ch =>
-                #43 ? [ node set &level:(aLevel + 1) set &operation:%add. ]       // +
-                #45 ? [ node set &level:(aLevel + 1) set &operation:%subtract. ]  // -
-                #42 ? [ node set &level:(aLevel + 2) set &operation:%multiply. ]  // *
-                #47 ? [ node set &level:(aLevel + 2) set &operation:%divide. ]    // /
-                #40 ? [ aLevel += 10. ^ $self. ] // (
-                #41 ? [ aLevel -= 10. ^ $self. ] // )
+                #43 [ node set &level:(aLevel + 1) set &operation:%add. ];       // +
+                #45 [ node set &level:(aLevel + 1) set &operation:%subtract. ];  // -
+                #42 [ node set &level:(aLevel + 2) set &operation:%multiply. ];  // *
+                #47 [ node set &level:(aLevel + 2) set &operation:%divide. ];    // /
+                #40 [ aLevel += 10. ^ $self. ]; // (
+                #41 [ aLevel -= 10. ^ $self. ]; // )
                 ! [
                     node set &leaf:(ch literal toReal) set &level:((aLevel + 3)).
                 ].
                     
-            ($nil == theTree)
-                ? [ theTree := node. ]
-                ! [
-                    ((theTree level >= node level) bool)
-                        ? [
+            if ($nil == theTree)
+                [ theTree := node. ];
+                [
+                    if (theTree level >= node level)
+                        [
                             node set &left:theTree set &right:$nil.
                             
                             theTree := node.
-                        ]
-                        ! [
+                        ];
+                        [
                             var aTop := theTree.
                             while (($nil != aTop right)and:[aTop right level < node level] )
                                 [ aTop := aTop right. ].
@@ -52,9 +52,9 @@ class ExpressionTree
     
     eval : aNode
     [
-        (aNode if &leaf bool)
-            ? [ ^ aNode leaf. ]
-            ! [
+        if (aNode if &leaf)
+            [ ^ aNode leaf. ];
+            [
                 var aLeft := $self eval:(aNode left).
                 var aRight := $self eval:(aNode right).
                 
@@ -67,12 +67,12 @@ class ExpressionTree
         
     readLeaves : aList &at:aNode
     [
-        ($nil == aNode)
-            ? [ InvalidArgumentException new raise. ].
+        if ($nil == aNode)
+            [ InvalidArgumentException new raise. ].
         
-        (aNode if &leaf)
-            ? [ aList += aNode leaf. ]
-            ! [
+        if (aNode if &leaf)
+            [ aList += aNode leaf. ];
+            [
                 $self readLeaves:aList &at:(aNode left).
                 $self readLeaves:aList &at:(aNode right).
             ].
@@ -132,17 +132,17 @@ class TwentyFourGame
         var Leaves := ArrayList new.
         exp readLeaves:Leaves.
         
-        (Leaves ascendant equal &indexable:(theNumbers ascendant))
-            ! [ console writeLine:"Invalid input. Enter an equation using all of those four digits. Try again.". ^ $self. ].
+        ifnot (Leaves ascendant equal &indexable:(theNumbers ascendant))
+            [ console writeLine:"Invalid input. Enter an equation using all of those four digits. Try again.". ^ $self. ].
             
         var aResult := exp value.
-        (aResult == 24)
-            ? [
+        if (aResult == 24)
+            [
                 console writeLine:"Good work. ":aLine:"=":aResult.
                 
                 $self newPuzzle.
-            ]
-            ! [ console writeLine:"Incorrect. ":aLine:"=":aResult. ].
+            ];
+            [ console writeLine:"Incorrect. ":aLine:"=":aResult. ].
     ]    
 }
 
@@ -150,17 +150,18 @@ extension gameOp
 {
     playRound : aLine
     [
-        (aLine == "q")
-            ? [ ^ false. ]
-            ! [
-                (aLine == "")
-                    ? [ console writeLine:"Skipping this puzzle". self newPuzzle. ]
-                    ! [
-                        self resolve:aLine
-                            | if &Error: e
-                                [
-                                    console writeLine:"An error occurred.  Check your input and try again.".
-                                ].
+        if (aLine == "q")
+            [ ^ false. ];
+            [
+                if (aLine == "")
+                    [ console writeLine:"Skipping this puzzle". self newPuzzle. ];
+                    [
+                        try(self resolve:aLine)
+                        {
+                            ! e [
+                                   console writeLine:"An error occurred.  Check your input and try again.".
+                                ]
+                        }.
                     ].
                     
                 ^ true.

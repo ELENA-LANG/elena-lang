@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * review switch statement
                  * samples review : 24
 
               sdev - cf parser
