@@ -31,7 +31,7 @@ symbol program =
         var s := aWord.
         var aKey := aWord normalized.
         var anItem := aDictionary@aKey.
-        ($nil == anItem) ?
+        if ($nil == anItem)
         [
             anItem := ArrayList new.
             aDictionary@aKey := anItem.

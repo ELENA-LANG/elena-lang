@@ -55,9 +55,9 @@ class AmbValueCollection
     do : aFunction
     [
         var aResult := theCombinator get.
-        (nil != aResult)
-            ? [ aFunction cast:%eval &to:dispatcher &with:aResult. ]
-            ! [ InvalidArgumentException new raise. ].
+        if (nil != aResult)
+            [ aFunction cast:%eval &to:dispatcher &with:aResult. ];
+            [ InvalidArgumentException new raise. ].
     ]
 }
 
