@@ -192,7 +192,7 @@ class MethodScope :: Scope
     
     new &paramToken : param
     [
-        theParameters += KeyValue new &key:param &object:(theParameters length + 1).
+        theParameters += KeyValue new &key:param &value:(theParameters length + 1).
     ]
     
     open &ret_expr
@@ -214,7 +214,7 @@ class MethodScope :: Scope
         var param := theParameters seek &each:x [ x key equal:literal ].
         ($nil != param)
             ? [
-                list += param object.
+                list += param value.
                 list += %"tapeOp.var[]".
                 
             ]

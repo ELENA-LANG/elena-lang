@@ -624,7 +624,7 @@
     {
         append : anObject &as:aCaption
         [
-            theList append:(KeyValue new &key:aCaption &object:anObject).
+            theList append:(KeyValue new &key:aCaption &value:anObject).
             
             self $appendItem &wide:(aCaption wide).
         ]

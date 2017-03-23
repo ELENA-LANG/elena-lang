@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * if the compiler knows the type of expression,
-                   typecast message call should be ignored (i.e. typecast message should be embeddable - replaced by the compiler to the idle operation)
                  * #297 if code template : send bool to the expression before branching
                  * loop code templates : send bool to the expression before branching
                  * review switch statement
@@ -22,6 +20,7 @@ Pipeline:
 ------                                                                                         
 
               xdev - generic development 
+                 * test dictionary (with all supported types)
                  * samples : use new branching / try catch code templates
                  * migrate samples
                  * basic tests

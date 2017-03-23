@@ -110,7 +110,7 @@
 
 #template if (expr)
 [
-    (expr) ?
+    expr bool ?
     [
     ].
 ].
@@ -119,7 +119,7 @@
 
 #template if (expr,else)
 [
-    (expr) ?
+    expr bool ?
     [
     ]
     ! [

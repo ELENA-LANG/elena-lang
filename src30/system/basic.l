@@ -1713,7 +1713,7 @@ sealed class KeyValue
     object theObject.
     
     /// Creates a new objext
-    constructor new &key:aKey &object:anObject
+    constructor new &key:aKey &value:anObject
     [
         theKey := aKey.
         theObject := anObject.
@@ -1723,9 +1723,9 @@ sealed class KeyValue
     key = theKey.
     
     /// Returns the key
-    object = theObject.
+    value = theObject.
 
-    set &object:anObject
+    set &value:anObject
     [
         theObject := anObject.
     ]

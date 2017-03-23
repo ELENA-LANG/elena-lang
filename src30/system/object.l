@@ -2,7 +2,7 @@
 
 #template dispatchable(template_subj)
 {
-    template_subj = $self.
+    sealed embeddable template_subj = $self.
     
     /// Dispatches the verb to the target with a specified subject
     cast : verb &to:target = target::verb eval &template_subj:$self.
@@ -13,7 +13,7 @@
 
 #template dispatchable(template_subj, extra_subj)
 {
-    template_subj = $self.
+    sealed template_subj = $self.
     
     /// Dispatches the verb to the target with a specified subject
     cast : verb &to:target = target::verb eval &template_subj:$self.
@@ -33,7 +33,7 @@
 
 #template dispatchable(template_subj, extra_subj1, extra_subj2)
 {
-    template_subj = $self.
+    sealed template_subj = $self.
     
     /// Dispatches the verb to the target with a specified subject
     cast : verb &to:target = target::verb eval &template_subj:$self.
@@ -56,7 +56,7 @@
 
 #template dispatchable(template_subj, extra_subj1, extra_subj2, extra_subj3)
 {
-    template_subj = $self.
+    sealed template_subj = $self.
     
     /// Dispatches the verb to the target with a specified subject
     cast : verb &to:target = target::verb eval &template_subj:$self.
@@ -82,7 +82,7 @@
 
 #template dispatchable(template_subj, extra_subj1, extra_subj2, extra_subj3, extra_subj4)
 {
-    template_subj = $self.
+    sealed template_subj = $self.
     
     /// Dispatches the verb to the target with a specified subject
     cast : verb &to:target = target::verb eval &template_subj:$self.
@@ -111,7 +111,7 @@
 
 #template dispatchable(template_subj, extra_subj1, extra_subj2, extra_subj3, extra_subj4, extra_subj5)
 {
-    template_subj = $self.
+    sealed template_subj = $self.
     
     /// Dispatches the verb to the target with a specified subject
     cast : verb &to:target = target::verb eval &template_subj:$self.
@@ -143,7 +143,7 @@
 
 #template dispatchable(template_subj, extra_subj1, extra_subj2, extra_subj3, extra_subj4, extra_subj5, extra_subj6)
 {
-    template_subj = $self.
+    sealed template_subj = $self.
     
     /// Dispatches the verb to the target with a specified subject
     cast : verb &to:target = target::verb eval &template_subj:$self.

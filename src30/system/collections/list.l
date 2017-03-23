@@ -828,7 +828,7 @@ sealed dispatchable(enumerable) class Dictionary
     [
         int aHashCode := aKey hash_code.
         
-        $self $getItem &int:aHashCode &key:aKey set &object:anObject.
+        $self $getItem &int:aHashCode &key:aKey set &value:anObject.
     ]
         
     stacksafe $getItem &int:aCode &key:aKey
@@ -842,7 +842,7 @@ sealed dispatchable(enumerable) class Dictionary
             
             aHashItem write &int:0 &int:1.
             
-            theHashTable setAt &int:aHashCode &object:aHashItem.
+            theHashTable setAt &int:aHashCode &value:aHashItem.
         ].
         
         intarray aBacket := aHashItem intarray.        
@@ -863,7 +863,7 @@ sealed dispatchable(enumerable) class Dictionary
             i := i + 1.
         ].
         
-        var aNewItem := KeyValue new &key:aKey &object:theDefault.
+        var aNewItem := KeyValue new &key:aKey &value:theDefault.
         
         theList readLength &vint:i.
         theList append:aNewItem.
@@ -892,7 +892,7 @@ sealed dispatchable(enumerable) class Dictionary
     [
         int aHashCode := aKey hash_code.
         
-        ^ $self $getItem &int:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey value.
     ]
             
     getAt &int:aKey
@@ -900,7 +900,7 @@ sealed dispatchable(enumerable) class Dictionary
         int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &int:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey value.
     ]
         
     getAt &long:aKey
@@ -908,7 +908,7 @@ sealed dispatchable(enumerable) class Dictionary
         int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &int:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey value.
     ]
         
     getAt &real:aKey
@@ -916,7 +916,7 @@ sealed dispatchable(enumerable) class Dictionary
         int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &int:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey value.
     ]
         
     getAt &char:aKey
@@ -924,7 +924,7 @@ sealed dispatchable(enumerable) class Dictionary
         int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &int:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey value.
     ]
         
     getAt &literal:aKey
@@ -932,7 +932,7 @@ sealed dispatchable(enumerable) class Dictionary
         int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &int:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey value.
     ]
         
     getAt &wide:aKey
@@ -940,7 +940,7 @@ sealed dispatchable(enumerable) class Dictionary
         int aHashCode := 0.
         aKey readHashCode &vint:aHashCode.
         
-        ^ $self $getItem &int:aHashCode &key:aKey object.
+        ^ $self $getItem &int:aHashCode &key:aKey value.
     ]
 
     /// Returns a dictionary enumerator
