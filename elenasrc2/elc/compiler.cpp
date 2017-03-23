@@ -1061,14 +1061,14 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->withOpenArg = false;
    this->stackSafe = this->classEmbeddable = false;
    this->generic = false;
-   this->extensionTemplateMode = false;
+   this->extensionMode = false;
 }
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 {
    if (terminal.compare(THIS_VAR)) {
-      if (extensionTemplateMode) {
-         //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
+      if (extensionMode) {
+         //COMPILER MAGIC : if it is an extension ; replace $self with self
          return ObjectInfo(okLocal, -1, ((ClassScope*)getScope(slClass))->reference);          
       }
       else if (stackSafe && classEmbeddable) {
@@ -1764,15 +1764,13 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
       else if (current == lxSourcePath) {
          writer.appendNode(lxSourcePath, saveSourcePath(*scope.moduleScope, current.identifier()));
       }
-      else if (current == lxTemplate) {
-         //COMPILER MAGIC : if it is a template method inside the extension ; replace $self with self::extension
-         ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
-         
-         scope.extensionTemplateMode = (ownerScope != NULL && ownerScope->extensionMode != 0);
-      }
 
       current = current.nextNode();
    }
+
+   //COMPILER MAGIC : if it is an extension ; replace $self with self
+   ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
+   scope.extensionMode = (ownerScope != NULL && ownerScope->extensionMode != 0);
 }
 
 void Compiler :: importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t function, ref_t message)

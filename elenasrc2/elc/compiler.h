@@ -541,7 +541,7 @@ private:
       bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;
-      bool         extensionTemplateMode;
+      bool         extensionMode;
 
       virtual Scope* getScope(ScopeLevel level)
       {
