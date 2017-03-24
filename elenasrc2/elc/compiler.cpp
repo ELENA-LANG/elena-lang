@@ -993,11 +993,21 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    outputRef = typeRef = 0;
    constant = false;
    staticOne = false;
+   singletonMode = false;
 //   preloaded = false;
 }
 
 ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
 {
+   if (singletonMode) {
+      // COMPILER MAGIC : recognize self / $self in singleton closure
+      if (identifier.compare(SELF_VAR)) {
+         return ObjectInfo(okLocal, (size_t)-1, reference);
+      }
+      else if (identifier.compare(THIS_VAR)) {
+         return ObjectInfo(okThisParam, 1);
+      }
+   }
    return Scope::mapTerminal(identifier);
 }
 
@@ -1108,7 +1118,10 @@ ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
       return parent->mapTerminal(identifier);
    }
    else if (identifier.compare(CLOSURE_THIS_VAR)) {
-      return MethodScope::mapTerminal(THIS_VAR);
+      if (subCodeMode) {
+         return parent->mapTerminal(identifier);
+      }
+      else return MethodScope::mapTerminal(THIS_VAR);
    }
    else if (identifier.compare(CLOSURE_SELF_VAR)) {
       if (subCodeMode) {
@@ -3619,8 +3632,11 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    ref_t nestedRef = 0;
    if (test(mode, HINT_ROOTSYMBOL)) {
       SymbolScope* owner = (SymbolScope*)ownerScope.getScope(Scope::slSymbol);
-      if (owner) 
+      if (owner) {
          nestedRef = owner->reference;
+         // HOTFIX : symbol should refer to self and $self for singleton closure
+         owner->singletonMode = node.existChild(lxCode);
+      }         
    }
    if (!nestedRef)
       nestedRef = ownerScope.moduleScope->mapNestedExpression();

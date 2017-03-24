@@ -8,16 +8,14 @@
 
 class Token
 {
-    object theValue.
-    object theLevel.
+    object                theValue.
+    object outprop(level) theLevel.
     
     constructor new &level:aLevel
     [
         theValue := StringWriter new.
         theLevel := aLevel + 9.
     ]
-    
-    level = theLevel.
     
     append : aChar
     [
@@ -31,24 +29,14 @@ class Token
 
 class Node
 {
-    object theLeft.
-    object theRight.
-    object theLevel.
+    object prop(left)     theLeft.
+    object prop(right)    theRight.
+    object outprop(level) theLevel.
 
     constructor new &level:aLevel
     [
         theLevel := aLevel.
     ]
-    
-    level = theLevel.
-
-    left = theLeft.
-
-    right = theRight.
-
-    set &left:anObject [ theLeft := anObject. ]
-
-    set &right:anObject [ theRight := anObject. ]
 }
 
 // --- SummaryNode
@@ -95,23 +83,17 @@ class FractionNode :: Node
 
 class Expression
 {
-    object theLevel.
-    object theTop.
+    object outprop(level) theLevel.
+    object prop(top)      theTop.
     
     constructor new &level:aLevel
     [
         theLevel := aLevel.
     ]
     
-    top = theTop.
-
-    set &top:aNode [ theTop := aNode. ]
-            
     right = theTop.
 
     set &right:aNode [ theTop := aNode. ]
-            
-    level = theLevel.
     
     number => theTop.
 }
@@ -121,9 +103,9 @@ class Expression
 operatorState = (:ch)
 [
     ch =>
-        #40 ? [      // (
+        #40 [      // (
             self new &bracket goto &start.
-        ]
+        ];
         ! [
             self new &token append:ch goto &token.
         ].
@@ -132,22 +114,21 @@ operatorState = (:ch)
 tokenState = (:ch)
 [
     ch =>
-        #41 ? [      // )
+        #41 [      // )
             self close &bracket goto &token.
-        ]
-        #42 ? [      // *
+        ];
+        #42 [      // *
             self new &product goto &operator.
-        ]
-        #43 ? [      // +
+        ];
+        #43 [      // +
             self new &summary goto &operator.
-        ]
-        #45 ? [      // -
+        ];
+        #45 [      // -
             self new &difference goto &operator.
-        ]
-        #47 ?       // /
-        [
+        ];
+        #47 [      // /
             self new &fraction goto &operator.
-        ]
+        ];
         ! [
             self append:ch.
         ].
@@ -156,12 +137,12 @@ tokenState = (:ch)
 startState = (:ch)
 [
     ch =>
-        #40 ? [      // (
+        #40 [      // (
             self new &bracket goto &start.
-        ]
-        #45 ? [ // -
+        ];
+        #45 [ // -
             self new &token append &literal:"0" new &difference goto &operator.
-        ]
+        ];
         ! [
             self new &token append:ch goto &token.
         ].
@@ -229,17 +210,17 @@ class Scope
 
     close &bracket
     [
-        (theLevel < 10)
-            ? [ InvalidArgumentException new &message:"Invalid expression" raise. ].
+        if (theLevel < 10)
+            [ InvalidArgumentException new &message:"Invalid expression" raise. ].
         
         theLevel := theLevel - 10.
     ]            
                                     
     append:ch
     [
-        ((ch >= #48) and:(ch < #58))
-            ? [ theToken append:ch. ]
-            ! [ InvalidArgumentException new &message:"Invalid expression" raise. ].
+        if((ch >= #48) && (ch < #58))
+            [ theToken append:ch. ];
+            [ InvalidArgumentException new &message:"Invalid expression" raise. ].
     ]
             
     append &literal:aLiteral
@@ -310,17 +291,17 @@ class Parser
         ($nil == aLastNode)
             ? [ ^ aNewNode. ].
         
-        (aNewNode level <= aLastNode level)
-            ? [ aNewNode set &left:aLastNode. ^ aNewNode. ].
+        if (aNewNode level <= aLastNode level)
+            [ aNewNode set &left:aLastNode. ^ aNewNode. ].
             
         var aParent := aLastNode.
         var aCurrent := aLastNode right.
-        while (($nil != aCurrent) and:[ aNewNode level > aCurrent level ])
+        while (($nil != aCurrent) && [ aNewNode level > aCurrent level ])
             [ aParent := aCurrent. aCurrent := aCurrent right. ].
         
-        ($nil == aCurrent)
-            ? [ aParent set &right:aNewNode. ]
-            ! [ aNewNode set &left:aCurrent. aParent set &right:aNewNode. ].
+        if ($nil == aCurrent)
+            [ aParent set &right:aNewNode. ];
+            [ aNewNode set &left:aCurrent. aParent set &right:aNewNode. ].
             
         ^ aLastNode.
     ]
@@ -342,10 +323,12 @@ program =
 
     [ console readLine save &to:aText length > 0] doWhile:
     [
-        console writeLine:"=" :(aParser run:aText)
-            | if &Error:e [
-                    console writeLine:"Invalid Expression".
-                ].
+        try(console writeLine:"=" :(aParser run:aText))
+        {
+            ! e [
+                console writeLine:"Invalid Expression".
+            ]
+        }.
                 
         aText clear.                
     ].

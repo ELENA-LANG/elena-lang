@@ -3,8 +3,7 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * test dictionary
-                 * samples review : anagram
+                 * samples review : arithmeval
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :

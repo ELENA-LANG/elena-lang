@@ -6,13 +6,15 @@ extension mathOp
 {
     fib
     [
-        (self < 0)
-            ? [ InvalidArgumentException new &message:"Must be non negative" raise. ].
+        if (self < 0)
+            [ InvalidArgumentException new &message:"Must be non negative" raise. ].
             
         ^ control eval:self &for: 
             (:n)
                 [
-                    (n > 1) ? [ this eval:(n - 2) + this eval:(n - 1) ] ! [ n ]
+                    if (n > 1)
+                        [ ^ $closure eval:(n - 2) + $closure eval:(n - 1) ];
+                        [ ^ n ].
                 ].
     ]
 }
@@ -23,10 +25,13 @@ program =
     [
         console writeLiteral:"fib(":i:")=".
         
-        console writeLine:(i fib) | if &InvalidArgumentError: e
+        try (console writeLine:(i fib))        
+        {
+            InvalidArgumentError: e
             [
                 console writeLine:"invalid".
-            ].
+            ]
+        }.
     ].
     
     console readChar.

@@ -510,6 +510,7 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
+      bool  singletonMode;  // indicates that the symbol is a singleton closure
       bool  constant;
       bool  staticOne;
 //      bool  preloaded;
