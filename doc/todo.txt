@@ -3,7 +3,8 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * samples review : amb
+                 * test dictionary
+                 * samples review : anagram
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
@@ -16,9 +17,7 @@ In development:
 ------                                 
 Pipeline:
 ------                                                                                         
-
               xdev - generic development 
-                 * test dictionary (with all supported types)
                  * samples : use new branching / try catch code templates
                  * migrate samples
                  * basic tests

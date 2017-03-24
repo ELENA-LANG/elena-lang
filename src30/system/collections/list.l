@@ -842,7 +842,7 @@ sealed dispatchable(enumerable) class Dictionary
             
             aHashItem write &int:0 &int:1.
             
-            theHashTable setAt &int:aHashCode &value:aHashItem.
+            theHashTable setAt &int:aHashCode &object:aHashItem.
         ].
         
         intarray aBacket := aHashItem intarray.        
@@ -959,7 +959,7 @@ sealed dispatchable(enumerable) class Dictionary
         [
             var anItem := it get.
             
-            aList@(anItem key) := anItem object.
+            aList@(anItem key) := anItem value.
         ].
         
         ^ aList.
