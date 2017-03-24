@@ -35,17 +35,12 @@ using namespace _ELENA_;
 #define HINT_EXTENSION_MODE   0x02000000
 #define HINT_TRY_MODE         0x01000000
 #define HINT_LOOP             0x00800000
-#define HINT_SWITCH         0x00400000
+#define HINT_SWITCH           0x00400000
 #define HINT_ALT_MODE         0x00200000
+#define HINT_SINGLETON        0x00100000
 #define HINT_NODEBUGINFO      0x00020000
-////#define HINT_ACTION           0x00020000
-////#define HINT_ALTBOXING        0x00010000
 #define HINT_CLOSURE          0x00008000
-////#define HINT_ASSIGNING        0x00004000
 #define HINT_SUBCODE_CLOSURE  0x00008800
-////#define HINT_CONSTRUCTOR_EPXR 0x00002000
-////#define HINT_VIRTUAL_FIELD    0x00001000
-//#define HINT_SILENTMODE      0x00000800
 #define HINT_RESENDEXPR       0x00000400
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
@@ -993,21 +988,11 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    outputRef = typeRef = 0;
    constant = false;
    staticOne = false;
-   singletonMode = false;
 //   preloaded = false;
 }
 
 ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
 {
-   if (singletonMode) {
-      // COMPILER MAGIC : recognize self / $self in singleton closure
-      if (identifier.compare(SELF_VAR)) {
-         return ObjectInfo(okLocal, (size_t)-1, reference);
-      }
-      else if (identifier.compare(THIS_VAR)) {
-         return ObjectInfo(okThisParam, 1);
-      }
-   }
    return Scope::mapTerminal(identifier);
 }
 
@@ -1109,13 +1094,22 @@ Compiler::ActionScope :: ActionScope(ClassScope* parent)
    : MethodScope(parent)
 {
    subCodeMode = false;
+   singletonMode = false;
 }
 
 ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
 {   
+   if (singletonMode && identifier.compare(SELF_VAR)) {
+      // COMPILER MAGIC : recognize self / $self in singleton closure
+      return ObjectInfo(okParam, (size_t)-1);
+   }
    if (identifier.compare(THIS_VAR)) {
-      // $self : for closure it should refer to the owner ones
-      return parent->mapTerminal(identifier);
+      if (singletonMode) {
+         // COMPILER MAGIC : recognize $self in singleton closure
+         return ObjectInfo(okThisParam, 1);
+      }
+      // otherwise it should refer to the owner ones
+      else return parent->mapTerminal(identifier);
    }
    else if (identifier.compare(CLOSURE_THIS_VAR)) {
       if (subCodeMode) {
@@ -3507,6 +3501,9 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    if (test(mode, HINT_SUBCODE_CLOSURE))
       methodScope.subCodeMode = true;
 
+   if (test(mode, HINT_SINGLETON))
+      methodScope.singletonMode = true;
+
    // if it is single expression
    if (!lazyExpression) {
       compileActionMethod(writer, node, methodScope);
@@ -3630,12 +3627,13 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode)
 {
    ref_t nestedRef = 0;
+   bool singleton = false;
    if (test(mode, HINT_ROOTSYMBOL)) {
       SymbolScope* owner = (SymbolScope*)ownerScope.getScope(Scope::slSymbol);
       if (owner) {
          nestedRef = owner->reference;
          // HOTFIX : symbol should refer to self and $self for singleton closure
-         owner->singletonMode = node.existChild(lxCode);
+         singleton = node.existChild(lxCode);
       }         
    }
    if (!nestedRef)
@@ -3648,7 +3646,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    if (argNode == lxCode) {
       scope.closureMode = true;
 
-      compileAction(node, scope, SNode(), mode);
+      compileAction(node, scope, SNode(), singleton ? mode | HINT_SINGLETON : mode);
    }
    else if (node.existChild(lxCode)) {
       scope.closureMode = true;
@@ -3656,7 +3654,11 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       SNode codeNode = node.findChild(lxCode);
 
       // if it is a closure / lambda function with a parameter
-      compileAction(node, scope, node.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxClosureMessage), mode | HINT_CLOSURE);
+      int actionMode = mode | HINT_CLOSURE;
+      if (singleton)
+         actionMode |= HINT_SINGLETON;
+
+      compileAction(node, scope, node.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxClosureMessage), actionMode);
 
       // HOTFIX : hide code node because it is no longer required
       codeNode = lxIdle;
