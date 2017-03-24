@@ -586,11 +586,11 @@ sealed dispatchable(intmatrix) class IntMatrix
         length = theColumns int.
         
         getAt : j
-            = self getAt:i:j.
+            = $owner getAt:i:j.
         
         setAt : j : aValue
         [
-            self setAt:i:j:aValue.
+            $owner setAt:i:j:aValue.
         ]
     }.
 }
@@ -736,11 +736,11 @@ sealed dispatchable(realmatrix) class RealMatrix
         length = theColumns.
         
         getAt : j
-            = self getAt:i:j.
+            = $owner getAt:i:j.
         
         setAt : j : aValue
         [
-            self setAt:i:j:aValue.
+            $owner setAt:i:j:aValue.
         ]
     }.
 }

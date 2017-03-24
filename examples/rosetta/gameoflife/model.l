@@ -38,8 +38,8 @@ sealed class Model
     
     $onUpdate
     [
-        ($nil != theListener)
-            ? [ theListener eval &space:theSpace ].
+        if ($nil != theListener)
+            [ theListener eval &space:theSpace ].
     ]
     
     init
@@ -49,9 +49,9 @@ sealed class Model
     
     run
     [
-        started
-            ? [ theSpace update &ruleset:theRuleSet. ]
-            ! [ started := true. ].        
+        if (started)
+            [ theSpace update &ruleset:theRuleSet. ];
+            [ started := true. ].        
         
         $self $onUpdate.
     ]

@@ -16,11 +16,11 @@ class gameOfLifeRuleSet = BaseRuleSet
         int cell := s getAt &int:x &int:y.
         int number := s getLiveCell &int:x &int:y. // NOTE : number of living cells around the self includes the cell itself
         
-        ((cell == 0) && (number == 3))
-            ? [ ^ true. ].
+        if ((cell == 0) && (number == 3))
+            [ ^ true. ].
             
-        ((cell == 1) && ((number == 4) || (number == 3)))
-            ? [ ^ true. ].
+        if ((cell == 1) && ((number == 4) || (number == 3)))
+            [ ^ true. ].
             
         ^ false.            
     ]

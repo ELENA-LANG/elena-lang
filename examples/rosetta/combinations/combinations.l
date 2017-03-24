@@ -2,14 +2,14 @@
 #import extensions.
 #import extensions'routines.
 
-const M = 3.
-const N = 5. 
+const int M = 3.
+const int N = 5. 
 
 // --- Numbers ---
 
 numbers = (:anN)
 [
-    Array new &length:(anN int) set &every: (&index:n) [ Integer new &int:n ]
+    Array new &length:anN set &every: (&int:n) [ Integer new &int:n ]
 ].
 
 // --- Program ---

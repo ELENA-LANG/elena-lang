@@ -42,11 +42,11 @@ class EvoAlgorithm :: Enumerator
 
     next
     [
-        ($nil == theCurrent)
-            ? [ theCurrent := theTarget length randomString. ^ true. ].
+        if ($nil == theCurrent)
+            [ theCurrent := theTarget length randomString. ^ true. ].
             
-        (theTarget == theCurrent)
-            ? [ ^ false. ].
+        if (theTarget == theCurrent)
+            [ ^ false. ].
             
         var variants := Array new:theVariantCount set &every:(&index:x) [ theCurrent mutate:P ].
         

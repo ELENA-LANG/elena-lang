@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * samples review : bulls cows
+                 * samples review : Execute Brain****
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
