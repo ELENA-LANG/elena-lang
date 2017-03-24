@@ -32,17 +32,17 @@ class Encrypting :: Enumerator
         
         var anIndex := Letters indexOf:0:aChar.
         
-        (-1 < anIndex)
-            ? [
+        if (-1 < anIndex)
+            [
                 ^ Letters @ ((theKey+anIndex) mod:26).
-            ]
-            ! [
+            ];
+            [
                 anIndex := BigLetters indexOf:0:aChar.
-                (-1 < anIndex)
-                    ? [
+                if (-1 < anIndex)
+                    [
                         ^ BigLetters @ ((theKey+anIndex) mod:26).
-                    ]
-                    ! [
+                    ];
+                    [
                         ^ aChar.
                     ].
             ].

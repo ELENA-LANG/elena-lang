@@ -273,60 +273,60 @@ extension(file_path) fileExtOp
     
     logger = StreamWriter new &path:self &bool:true.
     
-//    bool is &available
-//    [
-//        int ret := system'external'KERNEL32 GetFileAttributesW &wide:(self wide).
-//        
-//        (ret != 0FFFFFFFFh)
-//            ? [
-//                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
-//                
-//                ^ ret == 0.
-//            ].
-//            
-//        ^ false.            
-//    ]
+    bool is &available
+    [
+        int ret := system'external'KERNEL32 GetFileAttributesW &wide:(self wide).
+        
+        (ret != 0FFFFFFFFh)
+            ? [
+                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
+                
+                ^ ret == 0.
+            ].
+            
+        ^ false.            
+    ]
     
-//    delete
-//    [
-//        int ret := system'external'KERNEL32 DeleteFileW &wide:(self wide).
-//        
-//       ^ ret != 0.
-//    ]
+    delete
+    [
+        int ret := system'external'KERNEL32 DeleteFileW &wide:(self wide).
+        
+       ^ ret != 0.
+    ]
 }
 
 // --- directoryExtOp
 
 extension(directory_path)directoryExtOp
 {
-//    bool is &available
-//    [
-//        int ret := system'external'KERNEL32 GetFileAttributesW &wide:(self wide).
-//     
-//        (ret != 0FFFFFFFFh)
-//            ? [
-//                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
-//                
-//                ^ ret != 0.
-//            ].
-//            
-//        ^ false.            
-//    ]    
-//    
-//    create
-//    [
-//        int ret := system'external'KERNEL32 CreateDirectoryW
-//            &wide:(self wide)
-//            &int:0.
-//            
-//        (ret == 0)
-//            ? [ IOException new &literal:"Cannot create a directory" raise. ].
-//    ]
-//    
-//    delete
-//    [
-//        int ret := system'external'KERNEL32 RemoveDirectoryW &wide:(self wide).
-//        
-//       ^ ret != 0.
-//    ]    
+    bool is &available
+    [
+        int ret := system'external'KERNEL32 GetFileAttributesW &wide:(self wide).
+     
+        (ret != 0FFFFFFFFh)
+            ? [
+                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
+                
+                ^ ret != 0.
+            ].
+            
+        ^ false.            
+    ]    
+    
+    create
+    [
+        int ret := system'external'KERNEL32 CreateDirectoryW
+            &wide:(self wide)
+            &int:0.
+            
+        (ret == 0)
+            ? [ IOException new &literal:"Cannot create a directory" raise. ].
+    ]
+    
+    delete
+    [
+        int ret := system'external'KERNEL32 RemoveDirectoryW &wide:(self wide).
+        
+       ^ ret != 0.
+    ]    
 }

@@ -38,9 +38,9 @@ class CalendarMonthPrinter
     [
         theLine clear.
         
-        (theDate month == theMonth)
-            ? [
-                theLine write:"   " &length:(((theDate dayOfWeek) => 0 ? [ 7 ] ! [ theDate dayOfWeek ]) - 1).
+        if (theDate month == theMonth)
+            [
+                theLine write:"   " &length:(((theDate dayOfWeek) => 0 [ 7 ]; ! [ theDate dayOfWeek ]) - 1).
                 
                 control do:
                 [
@@ -52,8 +52,8 @@ class CalendarMonthPrinter
             ].
         
         int aLength := theLine length.
-        (aLength < 21)
-            ? [ theLine write:" " &length:(21 - aLength). ].
+        if (aLength < 21)
+            [ theLine write:" " &length:(21 - aLength). ].
             
         theRow += 1.            
     ]
@@ -66,8 +66,8 @@ class CalendarMonthPrinter
 
         write &index:anIndex 
         [
-            (anIndex <= theRow)
-                ? [ $owner writeTitle. ].
+            if (anIndex <= theRow)
+                [ $owner writeTitle. ].
                 
             while (anIndex > theRow)
                 [ $owner writeLine. ].

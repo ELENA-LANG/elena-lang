@@ -3506,6 +3506,8 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
    // if it is single expression
    if (!lazyExpression) {
+      initialize(scope, methodScope);
+
       compileActionMethod(writer, node, methodScope);
    }
    else compileLazyExpressionMethod(writer, node, methodScope);
@@ -4264,7 +4266,11 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
             scope.raiseError(errDuplicatedLocal, arg);
 
          int index = 1 + scope.parameters.Count();
-         scope.parameters.add(name, Parameter(index, subj_ref));
+         ref_t paramRef = scope.moduleScope->subjectHints.get(subj_ref);
+         int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
+            paramRef, 0, true) : 0;
+
+         scope.parameters.add(name, Parameter(index, subj_ref, paramRef, size));
 
          arg = arg.nextNode();
       }

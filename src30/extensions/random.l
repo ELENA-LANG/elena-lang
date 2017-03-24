@@ -68,6 +68,8 @@ extension randomOp
 {
     randomize : aCount
     [
+        var list := self clone.
+        
         int n := aCount int.
         int i := 0.
         
@@ -77,11 +79,11 @@ extension randomOp
         [
             var j := randomGenerator eval:max.
             
-            self::indexableOp exchange &int:i &int:(j int).
+            list::indexableOp exchange &int:i &int:(j int).
             
             i := i + 1.
         ].
         
-        ^ self.
+        ^ list.
     ]
 }

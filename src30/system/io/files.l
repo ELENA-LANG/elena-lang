@@ -3,11 +3,11 @@
 
 // --- File ---
 
-class File
+sealed class File
 {
     file_path thePath.
     
-    constructor new &path:aPath
+    constructor new &file_path:aPath
     [
         thePath := aPath.
     ]
@@ -99,5 +99,7 @@ extension(file_path) fileOp
         stream close.
         
         ^ fileLen.
-    ]    
+    ]
+    
+    file = File new &file_path:self.
 }

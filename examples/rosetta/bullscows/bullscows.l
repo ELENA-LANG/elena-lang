@@ -28,28 +28,28 @@ class GameMaster
         var aCows := Integer new:0.
         var aBulls := Integer new:0.
 
-        (aGuess length != 4)
-            ? [ aBulls << -1. ]
-            ! [
+        if (aGuess length != 4)
+            [ aBulls << -1. ];
+            [
                 0 to:3 &doEach: (:i)
                 [
                     var ch := aGuess@i.
                     var aNumber := ch literal toInt.
                     
                     // check range
-                    ((aNumber > 0)and:(aNumber < 10))
-                        ! [ InvalidArgumentException new raise. ].
+                    ifnot ((aNumber > 0) && (aNumber < 10))
+                        [ InvalidArgumentException new raise. ].
                     
                     // check duplicates
                     var duplicate := aGuess seek &each: x [ (x == ch)and:[ x equal &reference:ch not ] ].
-                    (nil != duplicate) ?
+                    if (nil != duplicate)
                     [
                         InvalidArgumentException new raise.
                     ].
                     
-                    (aNumber == (theNumbers@i))
-                        ? [ aBulls += 1. ]
-                        ! [
+                    if (aNumber == (theNumbers@i))
+                        [ aBulls += 1. ];
+                        [
                             (theNumbers ifExists:aNumber)
                                 ? [ aCows += 1. ].
                         ].
@@ -61,8 +61,8 @@ class GameMaster
             ].
 
         ^ aBulls =>
-            -1 ? [ console writeLine:"Not a valid guess.". ^ true. ]
-             4 ? [ console writeLine:"Congratulations! You have won!". ^ false. ]
+            -1 [ console writeLine:"Not a valid guess.". ^ true. ];
+             4 [ console writeLine:"Congratulations! You have won!". ^ false. ];
              ! [
                  theAttempt += 1.
                  
