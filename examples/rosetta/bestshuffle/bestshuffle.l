@@ -14,7 +14,7 @@ extension op
         [
             0 to:(anOriginal length - 1) &doEach: (:j)
             [
-                ((i != j)and:[anOriginal@i != (aShuffled@j)]and:[anOriginal@j != (aShuffled@i)]) ?
+                if ((i != j) && [anOriginal@i != (aShuffled@j)] && [anOriginal@j != (aShuffled@i)])
                 [
                     aShuffled exchange:i:j.
                 ].
@@ -31,7 +31,7 @@ extension op
         var aScore := Integer new.
 
         0 to:(anOriginal length - 1) &doEach: (:i)
-            [ ((anOriginal @ i) == (aShuffled @ i)) ? [ aScore += 1. ]. ].
+            [ if ((anOriginal @ i) == (aShuffled @ i)) [ aScore += 1. ]. ].
         
         ^ aScore get.
     ]

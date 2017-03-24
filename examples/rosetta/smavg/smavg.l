@@ -19,9 +19,9 @@ class SMA
 
         var aCount := theList length.
         ^ aCount =>
-            0 ?  [ 0.0r ] 
+            0 [ 0.0r ];
             ! [
-                (aCount > thePeriod)?
+                if (aCount > thePeriod)
                 [
                     theList remove &index:0.
                     

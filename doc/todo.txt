@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * samples review : arithmeval
+                 * samples review : bulls cows
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
@@ -349,6 +349,7 @@ Pipeline:
 	               * Distributed programming
                        * Metaprogramming
                        * Object serialization
+                       * try to use lamda expressin for brackets example
 
               xdev - generic development
                        * test array of structures

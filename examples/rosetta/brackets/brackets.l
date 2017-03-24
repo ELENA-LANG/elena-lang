@@ -10,9 +10,10 @@
 randomBrackets =
 {
     new : aLength
-        = (0 == aLength)
-            ? [ emptyLiteralValue ]
-            ! [
+    [
+        if (0 == aLength)
+            [ ^emptyLiteralValue ];
+            [
                 var aBrackets := 
                     Array new &length:(aLength int) set &every: (&index:i) [ #91 ] 
                     + 
@@ -21,7 +22,8 @@ randomBrackets =
                 aBrackets randomize:(aLength * 2).
 
                 ^ aBrackets summarize:(String new) literal.
-            ].
+            ]
+    ]
 }.
 
 extension op
@@ -30,7 +32,7 @@ extension op
     [
         var aCounter := Integer new:0.
     
-        self seek &each:aChar [ (aCounter += (aChar => #91 ? [ 1 ] #93 ? [ -1 ])) < 0 ].
+        self seek &each:aChar [ (aCounter += (aChar => #91 [ 1 ]; #93 [ -1 ])) < 0 ].
     
         ^ (0 == aCounter).
     ]
@@ -44,7 +46,7 @@ program =
     [
         var anStr := randomBrackets new:aLength.
 
-        console writeLine:"""":anStr:"""":((anStr isBalanced) => true ? [ " is balanced" ] false ? [ " is not balanced" ]).
+        console writeLine:"""":anStr:"""":(anStr isBalanced iif:" is balanced":" is not balanced").
     ].
 
     console readChar.
