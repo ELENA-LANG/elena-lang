@@ -137,8 +137,8 @@ public:
       return (info.header.flags & elDebugMask) != elEnumList;
    }
 
-   bool recognizeEmbeddableOp(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, int verb, ref_t& subject);
-   bool recognizeEmbeddableOp2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, int verb, ref_t& subject);
+   bool recognizeEmbeddableOp(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t verb, ref_t& subject);
+   bool recognizeEmbeddableOp2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t verb, ref_t& subject);
 
    virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject);
    virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject);

@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * samples review : Execute Brain****
+                 * samples review : JSON
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
@@ -219,6 +219,7 @@ Pipeline:
                  * boxing / unboxing argument list
                  * the following expression should generated an error : try2(n test) { .... }
                  * the following expression should generated an error : if(n test) { .... }
+                 * duplicate assigning : mssg(10) properties := 0. mssg message := properties@0.
 
               zdev 
                  * gui script

@@ -5767,6 +5767,7 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
       }
 
       writer.appendNode(lxTarget, targetRef);
+      writer.appendNode(lxBoxableAttr);
       writer.insert(lxBoxing, size);
       writer.closeNode();
 
@@ -6136,6 +6137,8 @@ ref_t Compiler :: optimizeOp(SNode current, ModuleScope& scope, WarningScope& wa
          return V_INT64;
       case lxRealOp:
          return V_REAL64;
+      case lxBinArrOp:
+         return V_BINARY;
       default:
          return 0;
    }
@@ -6190,8 +6193,7 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
          optimizeExpressionTree(current, scope, warningScope);
          return 0;
       case lxNested:
-         optimizeNestedExpression(current, scope, warningScope);
-         break;
+         return optimizeNestedExpression(current, scope, warningScope);
       default:
          return current.findChild(lxTarget).argument;
    }

@@ -26,3 +26,4 @@ routines\enumerating.l
 routines\combinations.l
 scripting\interpreter.l
 scripting\assembly.l
+dynamic\json.l

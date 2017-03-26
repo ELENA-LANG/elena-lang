@@ -1263,7 +1263,7 @@ bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, 
    return false;
 }
 
-bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, int verb, ref_t& subject)
+bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t verb, ref_t& subject)
 {
    if (returningType != 0 && defineStructSize(scope, scope.subjectHints.get(returningType), 0, true) > 0) {
       root = root.findChild(lxNewFrame);
@@ -1332,7 +1332,7 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
    return false;
 }
 
-bool CompilerLogic :: recognizeEmbeddableOp2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, int verb, ref_t& subject)
+bool CompilerLogic :: recognizeEmbeddableOp2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t verb, ref_t& subject)
 {
    if (returningType != 0 && defineStructSize(scope, scope.subjectHints.get(returningType), 0, true) > 0) {
       root = root.findChild(lxNewFrame);

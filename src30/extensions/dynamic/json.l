@@ -57,8 +57,8 @@ class jsonDispatcher =
         output writeLiteral:"""":s:"""".
     ]
     
-//    ! output : object
-//        = output writeLiteral:"""":(object literal):"""".
+    ! output : object
+        = output writeLiteral:"""":(object literal):"""".
 }.
 
 extension(textbuffer) jsonSerializer
@@ -159,48 +159,48 @@ extension(textbuffer) jsonSerializer
 }
 class $helper =
 {
-//    deserializeStruct:target &enumerator:e
-//    [
-//        literal token := $helper $readNext &enumerator:e literal.
-//        bool    eof := false.
-//        until (eof)
-//        [
-//            literal field := $helper $getIdentifier &literal:token.
-//            
-//            ($helper $readNext &enumerator:e == ":")
-//                ! [ JsonException new raise. ].
-//            
-//            var object := $helper deserializeObject &enumerator:e.
-//            
-//            target::(Signature new &literal:field) set:object.
-//            
-//            token := $helper $readNext &enumerator:e literal.
-//            token =>
-//                "," ? [ token := $helper $readNext &enumerator:e literal. ]
-//                "}" ? [ eof := true. ]
-//                ! [ JsonException new raise. ].
-//        ].
-//        
-//        ^ target.
-//    ]
+    deserializeStruct:target &enumerator:e
+    [
+        literal token := $helper $readNext &enumerator:e literal.
+        bool    eof := false.
+        until (eof)
+        [
+            literal field := $helper $getIdentifier &literal:token.
+            
+            ($helper $readNext &enumerator:e == ":")
+                ! [ JsonException new raise. ].
+            
+            var object := $helper deserializeObject &enumerator:e.
+            
+            target::(Signature new &literal:field) set:object.
+            
+            token := $helper $readNext &enumerator:e literal.
+            token =>
+                "," [ token := $helper $readNext &enumerator:e literal. ];
+                "}" [ eof := true. ];
+                ! [ JsonException new raise. ].
+        ].
+        
+        ^ target.
+    ]
     
-//    deserializeArray:target &enumerator:e
-//    [
-//        literal token := $helper $readNext &enumerator:e literal.
-//        bool    eof := false.
-//        until (eof)
-//        [
-//            target += $helper deserializeObject &literal:token &enumerator:e.
-//            
-//            token := $helper $readNext &enumerator:e literal.
-//            token =>
-//                "," ? [ token := $helper $readNext &enumerator:e literal. ]
-//                "]" ? [ eof := true. ]
-//                ! [ JsonException new raise. ].
-//        ].
-//        
-//        ^ target.
-//    ]
+    deserializeArray:target &enumerator:e
+    [
+        literal token := $helper $readNext &enumerator:e literal.
+        bool    eof := false.
+        until (eof)
+        [
+            target += $helper deserializeObject &literal:token &enumerator:e.
+            
+            token := $helper $readNext &enumerator:e literal.
+            token =>
+                "," [ token := $helper $readNext &enumerator:e literal. ];
+                "]" [ eof := true. ];
+                ! [ JsonException new raise. ].
+        ].
+        
+        ^ target.
+    ]
     
     deserializeObject &enumerator:e
         <= deserializeObject &literal:($helper $readNext &enumerator:e literal) &enumerator:e.
