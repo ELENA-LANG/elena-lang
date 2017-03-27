@@ -76,9 +76,9 @@ class control =
     
     proceed : aLine
     [
-        ("-q" == aLine)
-            ? [ 'program stop. ^emptyLiteralValue. ]
-            ! [
+        if ("-q" == aLine)
+            [ 'program stop. ^emptyLiteralValue. ];
+            [
                 ^ aLine evaluated &with:'rules.
             ].
     ]    

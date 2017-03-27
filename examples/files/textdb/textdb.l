@@ -62,16 +62,16 @@ class Record
 
 Program = 
 [
-    ('program'arguments length == 1)?
+    if ('program'arguments length == 1)
         [  console << "Please provide the path to the file to view". AbortException new raise. ].
 
     var aDB := List new += Record new.
     
     'program'arguments@1 file_path run &eachLine: aLine
     [
-        (aLine length == 0)
-            ? [ aDB += Record new. ]
-            ! [
+        if (aLine length == 0)
+            [ aDB += Record new. ];
+            [
                 // split record line                    
                 var aKeyValue := aLine split &by:":".
                 var aName  := aKeyValue@0.

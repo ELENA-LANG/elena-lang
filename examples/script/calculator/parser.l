@@ -7,22 +7,22 @@ extension lexicalOp
 {
     lexicalType
     [
-        ((self >= #48)and:(self <= #57))
-            ? [ ^ %digit. ].
+        if ((self >= #48)and:(self <= #57))
+            [ ^ %digit. ].
 
-        ((self >= #97)and:(self <= #122))
-            ? [ ^ %letter. ].
+        if ((self >= #97)and:(self <= #122))
+            [ ^ %letter. ].
 
         self =>
-            #32 ? [ ^ %whitespace. ]
-            #40 ? [ ^ %opening. ]
-            #41 ? [ ^ %closing. ]
-            #42 ? [ ^ %star. ]
-            #43 ? [ ^ %plus. ]
-            #44 ? [ ^ %comma. ]
-            #45 ? [ ^ %minus. ]
-            #46 ? [ ^ %dot. ]
-            #47 ? [ ^ %slash. ]
+            #32 [ ^ %whitespace. ];
+            #40 [ ^ %opening. ];
+            #41 [ ^ %closing. ];
+            #42 [ ^ %star. ];
+            #43 [ ^ %plus. ];
+            #44 [ ^ %comma. ];
+            #45 [ ^ %minus. ];
+            #46 [ ^ %dot. ];
+            #47 [ ^ %slash. ];
             ! [ ^ %unknown. ].
     ]
 }
@@ -65,13 +65,13 @@ class BaseTreeNode
     
     add : aNode
     [
-        (self level < aNode level)?
+        if (self level < aNode level)
         [
             self += aNode.
             
             ^ self.
-        ]
-        ! [
+        ];
+        [
             aNode += self.
             
             ^ aNode.
@@ -96,22 +96,22 @@ class TreeNode :: BaseTreeNode
 
     append : aNode
     [
-        ($nil == theLeft)
-            ? [ theLeft := aNode. ]
-            ! [
-                ($nil == theRight)
-                    ? [ theRight := aNode. ]
-                    ! [ theRight := theRight + aNode. ].
+        if ($nil == theLeft)
+            [ theLeft := aNode. ];
+            [
+                if ($nil == theRight)
+                    [ theRight := aNode. ];
+                    [ theRight := theRight + aNode. ].
             ].
     ]
     
     value
     [
-        ($nil == theLeft)
-            ? [ InvalidArgumentException new raise. ].
+        if ($nil == theLeft)
+            [ InvalidArgumentException new raise. ].
         
-        ($nil == theRight)
-            ? [ InvalidArgumentException new raise. ].
+        if ($nil == theRight)
+            [ InvalidArgumentException new raise. ].
         
         ^ theStrategy evalNode:(theLeft value):(theRight value).
     ]
@@ -136,8 +136,8 @@ class TreeLeaf :: BaseTreeNode
 
     newArgument
     [
-        ($nil == theFunction)
-            ? [ InvalidArgumentException new raise. ].
+        if ($nil == theFunction)
+            [ InvalidArgumentException new raise. ].
             
         ^ theFunction set.
     ]
@@ -169,27 +169,27 @@ class FunctionNode :: TreeLeaf
     [
         var subj := Signature new &literal:theToken.
         
-        ($nil == theArg1)
-            ? [ ^ theStrategy::subj get. ].
+        if ($nil == theArg1)
+            [ ^ theStrategy::subj get. ].
             
-        ($nil == theArg2)
-            ? [ ^ theStrategy::subj eval:(theArg1 value). ].
+        if ($nil == theArg2)
+            [ ^ theStrategy::subj eval:(theArg1 value). ].
             
         ^ theStrategy::subj eval:(theArg1 value):(theArg2 value).
     ]
 
     append &first_arg:node
     [
-        ($nil == theArg1)
-            ? [ theArg1 := node setFunction:$self. ]
-            ! [ theArg1 := theArg1 + node setFunction:$self. ].
+        if ($nil == theArg1)
+            [ theArg1 := node setFunction:$self. ];
+            [ theArg1 := theArg1 + node setFunction:$self. ].
     ]
 
     append &second_arg:node
     [
-        ($nil == theArg2)
-            ? [ theArg2 := node setFunction:$self. ]
-            ! [ theArg2 := theArg2 + node setFunction:$self. ].
+        if ($nil == theArg2)
+            [ theArg2 := node setFunction:$self. ];
+            [ theArg2 := theArg2 + node setFunction:$self. ].
     ]
 
     set
@@ -248,8 +248,8 @@ class StateMachine
     [
         theLevel := theLevel - 10.
         
-        (0 > theLevel)
-            ? [ InvalidOperationException new raise. ].
+        if (0 > theLevel)
+            [ InvalidOperationException new raise. ].
         
         $self::theCurrentState closing:ch.
     ]
@@ -277,9 +277,9 @@ class StateMachine
     [
         var aValue := $nil.
         
-        ($nil == theDerivationTree)
-            ? [ aValue := "Invalid expression". ]
-            ! [
+        if ($nil == theDerivationTree)
+            [ aValue := "Invalid expression". ];
+            [
                 aValue := theDerivationTree value
                     | back:"Invalid expression".
             ].
@@ -318,12 +318,14 @@ extension parserOp
     [
         var aStateMachine := StateMachine new:states seek &state0.
         
-        self run &each:(aStateMachine func1)
-            | if &Error: e [
+        try (self run &each:(aStateMachine func1))
+        {
+            ! e [
                 console writeLine:e.
                 
                 aStateMachine invalidate.
-            ].
+            ]
+        }.
         
         ^ aStateMachine value.
     ]

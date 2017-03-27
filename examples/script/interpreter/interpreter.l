@@ -274,7 +274,7 @@ symbol program3 =
 
 symbol program4 =
 [
-    ('program'arguments length == 1) ?
+    if ('program'arguments length == 1)
         [ console write:"Please provide the path to the file to interpret". AbortException new raise. ].
 
     var bfAssemblyProgram := scriptEngine 
@@ -290,7 +290,7 @@ symbol program4 =
 
 symbol program5 =
 [
-    ('program'arguments length == 1) ?
+    if ('program'arguments length == 1)
         [ console write:"Please provide the path to the file to interpret". #throw AbortException new. ].
 
     var bfAssemblyProgram := scriptEngine 
