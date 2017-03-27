@@ -1,42 +1,41 @@
-#import system.
 #import system'drawing.
 
 // --- classes ---
-#symbol(wide) StaticClass = "Static"w.
-#symbol(wide) EditClass   = "Edit"w.
-#symbol(wide) ButtonClass = "Button"w.
-#symbol(wide) ComboboxClass = "Combobox"w.
+const wide StaticClass = "Static"w.
+const wide EditClass   = "Edit"w.
+const wide ButtonClass = "Button"w.
+const wide ComboboxClass = "Combobox"w.
 
 // --- WindowHandle ---
 
-#class(sealed,embeddable,const) WindowHandle
+sealed const embeddable struct WindowHandle
 {
-    #field(4,-12)theHandle.
+    __ptr theHandle.
     
-    #constructor new
+    constructor new
     [
         theHandle := 0.
     ]
 
-    #constructor min
+    constructor min
         <= new.
 
-    #constructor(stacksafe) new &hwnd:aHandle
+    stacksafe constructor new &hwnd:aHandle
     [
         theHandle := aHandle.
     ]
 
-    #constructor(stacksafe) new &int:dwExStyle &wide:aClassName &wide:aWindowName &int:aStyle &int:x &int:y &int:width &int:height &hwnd:aParent &hinstance:instance &object:aParam
+    stacksafe constructor new &int:dwExStyle &wide:aClassName &wide:aWindowName &int:aStyle &int:x &int:y &int:width &int:height &hwnd:aParent &hinstance:instance &object:aParam
     [
-        #var(int)aParamIndex := 0.
-        ($nil != aParam) ?
+        int aParamIndex := 0.
+        if ($nil != aParam)
         [
-            #var(rt_ptr)aPointer := RTPointer new:aParam.
+            rt_ptr aPointer := RTPointer new:aParam.
     
             aParamIndex := aPointer.
         ].
                 
-        #var(int)aHandle := 0.                
+        int aHandle := 0.                
         #extern 
         [
             aHandle := system'external'USER32 CreateWindowExW
@@ -54,61 +53,61 @@
                 &int:       aParamIndex.
         ].
 
-        (aHandle==0)
-            ? [ #throw WinFormsException new. ].
+        if (aHandle==0)
+            [ WinFormsException new raise. ].
 
         theHandle := aHandle.
     ]
 
-    #method setVisible &int:aValue
+    setVisible &int:aValue
     [
         system'external'USER32 ShowWindow &int:theHandle &int:aValue.
     ]
     
-    #method(bool,stacksafe) isVisible
+    bool stacksafe isVisible
     [
-        #var(int)visible := system'external'USER32 IsWindowVisible &int:theHandle.
+        int visible := system'external'USER32 IsWindowVisible &int:theHandle.
         
         ^ (visible != 0).
     ]
     
-    #method setEnabled &int:aValue
+    setEnabled &int:aValue
     [
         system'external'USER32 EnableWindow &int:theHandle &int:aValue.
     ]            
     
-    #method isEnabled
+    isEnabled
     [
-        #var(int)visible := system'external'USER32 IsWindowEnabled &int:theHandle.
+        int visible := system'external'USER32 IsWindowEnabled &int:theHandle.
         
         ^ (visible != 0).
     ]
 
-    #method setChecked &int:aValue
+    setChecked &int:aValue
     [
         system'external'USER32 SendMessageW &int:theHandle &int:BM_SETCHECK &int:aValue &int:0.
     ]
 
-    #method(bool) isChecked
+    bool isChecked
     [
-        #var(int)aResult := system'external'USER32 SendMessageW &int:theHandle &int:BM_GETCHECK &int:0 &int:0.
+        int aResult := system'external'USER32 SendMessageW &int:theHandle &int:BM_GETCHECK &int:0 &int:0.
 
 		^ (aResult == BST_CHECKED).
     ]    
             
-    #method setCaption &wide:aValue
+    setCaption &wide:aValue
     [
         system'external'USER32 SendMessageW &int:theHandle &int:WM_SETTEXT &int:0 &wide:aValue.
     ]
     
-    #method getCaption
+    getCaption
     [
-        #var(int)aLength := system'external'USER32 SendMessageW &int:theHandle &int:WM_GETTEXTLENGTH &int:0 &int:0.
+        int aLength := system'external'USER32 SendMessageW &int:theHandle &int:WM_GETTEXTLENGTH &int:0 &int:0.
         
-        (aLength == 0)
-            ? [ ^ emptyWideLiteralValue. ]
-            ! [
-                #var(wide)aCaption := WideLiteralValue new &int:aLength.
+        if (aLength == 0)
+            [ ^ emptyWideLiteralValue. ];
+            [
+                wide aCaption := WideLiteralValue new &int:aLength.
                 aLength := aLength + 1.
                 
                 system'external'USER32 SendMessageW &int:theHandle &int:WM_GETTEXT &int:aLength &wide:aCaption.
@@ -117,14 +116,14 @@
             ].
     ]
 
-    #method sendMessage &int:aMessage &int:aWParam &wide:aLParam
+    sendMessage &int:aMessage &int:aWParam &wide:aLParam
     [
         system'external'USER32 SendMessageW &int:theHandle &int:aMessage &int:aWParam &wide:aLParam.            
     ]
             
-    #method refresh
+    refresh
     [
-        #var(int)handle := theHandle.
+        int handle := theHandle.
         
         #extern 
         [
@@ -133,37 +132,37 @@
         ].
     ]
     
-    #method(stacksafe) setPosition &int:x &int:y &int:cx &int:cy &int:flags
+    stacksafe setPosition &int:x &int:y &int:cx &int:cy &int:flags
     [
         system'external'USER32 SetWindowPos &int:theHandle &int:0 &int:x &int:y &int:cx &int:cy &int:flags.
     ]
 
-    #method(stacksafe) getClientRect &win_rect:aStruct
+    stacksafe getClientRect &win_rect:aStruct
     [
         system'external'USER32 GetClientRect &int:theHandle &win_rect:aStruct.
     ]
   
-    #method(stacksafe) read &vhdc:anHDC
+    stacksafe read &vhdc:anHDC
     [
-        #var(hdc)dc := system'external'USER32 GetDC &int:theHandle.
+        hdc dc := system'external'USER32 GetDC &int:theHandle.
         
         anHDC := dc.
     ]
 
-    #method hdc
+    hdc
     [
-        #var(hdc)aDC.
+        hdc aDC := 0.
         $self read &vhdc:aDC.
 
         ^ HDC new &hdc:aDC.
     ]
 
-    #method(stacksafe) set &hmenu:aMenuHandle
+    stacksafe set &hmenu:aMenuHandle
     [
         system'external'USER32 SetMenu &int:theHandle &int:aMenuHandle.
     ]
             
-    #method(stacksafe) free
+    stacksafe free
     [
         system'external'USER32 DestroyWindow &int:theHandle.
     ]
@@ -171,36 +170,36 @@
 
 // --- PAINTSTRUCT ---
 
-#class(sealed,embeddable)PAINTSTRUCT
+sealed embeddable struct PAINTSTRUCT
 {
-    #field(hdc)      theHDC.
-    #field(int)      theErase.
-    #field(win_rect) theRect. 
-    #field(int)      theRestore.
-    #field(int)      theIncUpdate.
+    hdc      theHDC.
+    int      theErase.
+    win_rect theRect. 
+    int      theRestore.
+    int      theIncUpdate.
     
-    #field(int)      dummy0.
-    #field(int)      dummy1.
-    #field(int)      dummy2.
-    #field(int)      dummy3.
-    #field(int)      dummy4.
-    #field(int)      dummy5.
-    #field(int)      dummy6.
-    #field(int)      dummy7.
+    int      dummy0.
+    int      dummy1.
+    int      dummy2.
+    int      dummy3.
+    int      dummy4.
+    int      dummy5.
+    int      dummy6.
+    int      dummy7.
 
-    #method(stacksafe) read &vhdc:aHandle
+    stacksafe read &vhdc:aHandle
     [
         aHandle := theHDC.
     ]
             
-    #method hdc = HDC new &hdc:theHDC.            
+    hdc = HDC new &hdc:theHDC.            
             
-    #method(stacksafe) begin &hwnd:aHandle
+    stacksafe begin &hwnd:aHandle
     [
         system'external'USER32 BeginPaint &int:aHandle &win_paintstruct:$self.
     ]
     
-    #method(stacksafe) end &hwnd:aHandle
+    stacksafe end &hwnd:aHandle
     [
         system'external'USER32 EndPaint &int:aHandle &win_paintstruct:$self.
     ]

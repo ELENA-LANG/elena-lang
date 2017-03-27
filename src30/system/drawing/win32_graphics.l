@@ -1,5 +1,3 @@
-#import system.
-
 #subject pen    = system'drawing'Pen.
 #subject brush  = system'drawing'Brush.
 #subject canvas = system'drawing'Canvas.
@@ -7,67 +5,67 @@
 
 // --- Pen ---
 
-#class(sealed,dispatchable:pen)Pen
+sealed dispatchable(pen) class Pen
 {
-    #field(int) theColor.
-    #field(hpen)thePen.
+    int  theColor.
+    hpen thePen.
     
-    #constructor new &color:aColor &width:aWidth
+    constructor new &color:aColor &width:aWidth
     [
         theColor := aColor int.
         thePen := HPEN new &int:0 &int:(aWidth int) &int:theColor.
     ]
 
-    #method hpen = thePen.
+    hpen = thePen.
     
-    #method(int) color = theColor.
+    int color = theColor.
 }
 
 // --- Brush ---
 
-#class(sealed,dispatchable:brush)Brush
+sealed dispatchable(brush) class Brush
 {
-    #field(int) theColor.
-    #field(hbrush)theBrush.
+    int    theColor.
+    hbrush theBrush.
     
-    #constructor new &color:aColor
+    constructor new &color:aColor
     [
         theColor := aColor int.
         theBrush := HBRUSH new &int:theColor.
     ]
     
-    #method hbrush = theBrush.
+    hbrush = theBrush.
     
-    #method(int) color = theColor.
+    int color = theColor.
 }
 
 // --- WhitePen ---
 
-#symbol WhitePen = Pen new &color:0FFFFFFh &width:1.
+pen WhitePen = Pen new &color:0FFFFFFh &width:1.
 
 // --- BlackBrush ---
 
-#symbol BlackBrush = Brush new &color:0.
+brush BlackBrush = Brush new &color:0.
 
 // --- Image ---
 
-#class(sealed) Image
+sealed class Image
 {
-    #field(wide)thePath.
-    #field(hdc)theDC.
-    #field(hbitmap)theBitmap.
-    #field(dimension)theSize.
+    wide      thePath.
+    hdc       theDC.
+    hbitmap   theBitmap.
+    dimension theSize.
     
-    #constructor new &path:aPath &dimension:aSize
+    constructor new &path:aPath &dimension:aSize
     [
         thePath := aPath wide.
         theSize := aSize.
     ]
     
-    #method(stacksafe) open &hdc:aParentDC
+    stacksafe open &hdc:aParentDC
     [
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int aWidth := 0.
+        int aHeight := 0.
         theSize read &vint:aWidth &vint:aHeight.
  
         theBitmap := HBITMAP load &wide:thePath &int:aWidth &int:aHeight.
@@ -76,9 +74,9 @@
         theBitmap select &hdc:theDC. 
     ]    
     
-    #method hdc = theDC.
+    hdc = theDC.
 
-    #method free
+    free
     [
         theDC free.
         theBitmap free.
@@ -87,31 +85,31 @@
 
 // --- Canvas ---
 
-#class(sealed,struct) Canvas
+sealed struct Canvas
 {
-    #field(hdc)    theHDC.
-    #field(hbrush) theBrush.
-    #field(hpen)   thePen.
+    hdc    theHDC.
+    hbrush theBrush.
+    hpen   thePen.
     
-    #constructor new
+    constructor new
     [
         theHDC := 0.
         theBrush := 0.
         thePen := 0.
     ]
     
-    #method(stacksafe) open &hdc:aHandle
+    stacksafe open &hdc:aHandle
     [
         theHDC := aHandle.
     ]
     
-    #method set : anObject
+    set : anObject
         = anObject cast:%set &to:$self.
     
-    #method set &pen:aPen
+    set &pen:aPen
     [
-        (0 == thePen)
-            ! [ thePen free. ].
+        ifnot (0 == thePen)
+            [ thePen free. ].
             
         thePen := aPen hpen.            
         
@@ -120,12 +118,12 @@
         theHDC select &hpen:thePen.
     ]    
     
-    #method set &brush:aBrush
+    set &brush:aBrush
     [
-        #var(hbrush) aBrushCopy := theBrush.
+        hbrush aBrushCopy := theBrush.
         
-        (0 == aBrushCopy)
-            ! [ aBrushCopy free. ].
+        ifnot (0 == aBrushCopy)
+            [ aBrushCopy free. ].
             
         aBrushCopy := aBrush hbrush.
         
@@ -136,85 +134,85 @@
         theBrush := aBrushCopy.
     ]    
     
-    #method close
+    close
     [
         theHDC := 0.
     ]
  
-    #method setCaret:p
+    setCaret:p
         <= setCaret &coord:(p coord).
         
-    #method setCaret &int:x &int:y
+    setCaret &int:x &int:y
     [
         theHDC moveTo &int:x &int:y.
     ]
  
-    #method setCaret &x:x &y:y
+    setCaret &x:x &y:y
     [
         theHDC moveTo &int:(x int) &int:(y int).
     ]
  
-    #method setCaret &coord:p
+    setCaret &coord:p
     [
-        #var(int)x.
-        #var(int)y.
+        int x := 0.
+        int y := 0.
         p read &vint:x &vint:y.
         
         theHDC moveTo &int:x &int:y.
     ]
  
-    #method lineCaretTo &int:x &int:y
+    lineCaretTo &int:x &int:y
     [
         theHDC lineTo &int:x &int:y.
     ]
  
-    #method lineCaretTo &x:x &y:y
+    lineCaretTo &x:x &y:y
     [
         theHDC lineTo &int:(x int) &int:(y int).
     ]
  
-    #method lineCaretTo:p
+    lineCaretTo:p
         <= lineCaretTo &coord:(p coord).
         
-    #method lineCaretTo &coord:p
+    lineCaretTo &coord:p
     [
-        #var(int)x.
-        #var(int)y.
+        int x := 0.
+        int y := 0.
         p read &vint:x &vint:y.
         
         theHDC lineTo &int:x &int:y.
     ]
  
-    #method writeText:aText &x:x &y:y        
+    writeText:aText &x:x &y:y        
     [
         theHDC drawText &wide:(aText wide) &int:(x int) &int:(y int).
     ]
  
-    #method(stacksafe) write &wide:aText &int:x &int:y
+    stacksafe write &wide:aText &int:x &int:y
     [
         theHDC drawText &wide:aText &int:x &int:y.
     ]
  
-    #method(stacksafe) write &literal:aText &int:x &int:y
+    stacksafe write &literal:aText &int:x &int:y
     [
         theHDC drawText &wide:(aText wide) &int:x &int:y.
     ]
  
-    #method(stacksafe) write &image:anImage &int:x &int:y &int:aWidth &int:aHeight
+    stacksafe write &image:anImage &int:x &int:y &int:aWidth &int:aHeight
     [
-        #var(hdc)aDC := anImage hdc.
+        hdc aDC := anImage hdc.
         
         theHDC copy &int:x &int:y &int:aWidth &int:aHeight &hdc:aDC &int:0 &int:0 &int:SRCCOPY.
     ] 
  
-    #method free
+    free
     [
-        (0 == thePen)
-            ! [ thePen free. ].
+        ifnot (0 == thePen)
+            [ thePen free. ].
            
-        #var(hbrush) aBrushCopy := theBrush.
-        (0 == aBrushCopy)
-            ! [ aBrushCopy free. ].
+        hbrush aBrushCopy := theBrush.
+        ifnot (0 == aBrushCopy)
+            [ aBrushCopy free. ].
             
         theBrush := 0.
         thePen := 0.

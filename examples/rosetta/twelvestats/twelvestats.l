@@ -49,9 +49,9 @@ program =
         var counts := bits zip:results &into:(:b:r) [ b xor:r iif:1:0 ] summarize.
 
         counts =>
-            0  ? [ console writeLine:"Total hit :":(results printSolution:bits). ]
-            1  ? [ console writeLine:"Near miss :":(results printSolution:bits). ]
-            12 ? [ console writeLine:"Total miss:":(results printSolution:bits). ].
+            0  [ console writeLine:"Total hit :":(results printSolution:bits). ];
+            1  [ console writeLine:"Near miss :":(results printSolution:bits). ];
+            12 [ console writeLine:"Total miss:":(results printSolution:bits). ].
     ].
     
     console readChar.

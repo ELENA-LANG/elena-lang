@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * #286 : Using statement
                  * samples review : JSON
 
               sdev - cf parser
@@ -18,11 +17,12 @@ In development:
 Pipeline:
 ------                                                                                         
               xdev - generic development 
-                 * samples : use new branching / try catch code templates
-                 * migrate samples
+                 * (re)implement byte array field
+                 * uncomment WSADATA structure
                  * basic tests
                  * migrate gui rosetta samples
                  * migrate gui samples
+                 * migrate net samples
 
               xdev - native code optimization
                  * use rep stos to clear the object after creating      

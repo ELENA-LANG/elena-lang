@@ -2,12 +2,12 @@
 
 compareStrings = (:val1 :val2)
 [
-    (val1 == val2)? [ console writeLine:"The strings ":val1:" and ":val2:" are equal". ].
-    (val1 != val2)? [ console writeLine:"The strings ":val1:" and ":val2:" are not equal". ].
-    (val1  > val2)? [ console writeLine:"The string ":val1:" is lexically after than ":val2. ].
-    (val1  < val2)? [ console writeLine:"The string ":val1:" is lexically before than ":val2. ].
-    (val1 >= val2)? [ console writeLine:"The string ":val1:" is not lexically before than ":val2. ].
-    (val1 <= val2)? [ console writeLine:"The string ":val1:" is not lexically after than ":val2. ].
+    if (val1 == val2) [ console writeLine:"The strings ":val1:" and ":val2:" are equal". ].
+    if (val1 != val2) [ console writeLine:"The strings ":val1:" and ":val2:" are not equal". ].
+    if (val1  > val2) [ console writeLine:"The string ":val1:" is lexically after than ":val2. ].
+    if (val1  < val2) [ console writeLine:"The string ":val1:" is lexically before than ":val2. ].
+    if (val1 >= val2) [ console writeLine:"The string ":val1:" is not lexically before than ":val2. ].
+    if (val1 <= val2) [ console writeLine:"The string ":val1:" is not lexically after than ":val2. ].
 ].
 
 program =

@@ -1,29 +1,27 @@
-#import system.
-
 #subject thread = Thread.
 
 // --- Thread ---
 
-#class Thread
+class Thread
 {
-    #field theHandle.
+    object theHandle.
     
-    #constructor new &func:anAction
+    constructor new &func:anAction
     [
         theHandle := ThreadHandle new &func:anAction.
     ]
     
-    #method start
+    start
     [
         theHandle start.
     ]
 
-    #method join
+    join
     [
         theHandle join.
     ]
             
-    #method close
+    close
     [
         theHandle close.
     ]

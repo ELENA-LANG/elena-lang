@@ -1,45 +1,42 @@
-#import system.
-//#import system'drawing.
-
 // --- HInstance ---
 
-#class(sealed,embeddable,const) HInstance
+sealed const embeddable struct HInstance
 {
-    #field(4,-12)theHandle.
+    __ptr theHandle.
     
-    #constructor(stacksafe) new &int:aHandle
+    stacksafe constructor new &int:aHandle
     [
         theHandle := aHandle.
     ]
         
-    #constructor current
+    constructor current
     [
-        #var(int)h := system'external'KERNEL32 GetModuleHandleW &int:0.
+        int h := system'external'KERNEL32 GetModuleHandleW &int:0.
         
         theHandle := h.
     ]
 //        <= new &int:(system'external'KERNEL32 GetModuleHandleW &int:0).
 
-    #method hinstance = $self.
+    hinstance = $self.
 }
 
 // --- HINSTANCE ---
 
-#static(hinstance) CurrentInstance = HInstance current.
+hinstance static CurrentInstance = HInstance current.
 
 // --- MSG ---
 
-#class(sealed,embeddable) MSG 
+sealed embeddable struct MSG 
 {
-    #field(handle)theHWND.
-    #field(int)   theMessage.
-    #field(int)   theWParam.
-    #field(int)   theLParam.
-    #field(int)   theTime.
-    #field(int)   theX.
-    #field(int)   theY.    
+    handle theHWND.
+    int    theMessage.
+    int    theWParam.
+    int    theLParam.
+    int    theTime.
+    int    theX.
+    int    theY.    
     
-    #method(stacksafe) readMessage &vint:aMessage
+    stacksafe readMessage &vint:aMessage
     [
         aMessage := theMessage.
     ]
@@ -47,22 +44,26 @@
 
 // --- CREATESTRUCT ---
 
-#class(sealed,embeddable)CREATESTRUCT
+sealed embeddable struct CREATESTRUCT
 {
-    #field(int)       theCreateParam.
-    #field(hinstance) theInstance.    
-    #field(int)       theMenu.
-    #field(int)       theParent.
-    #field(int)       theHeight.
-    #field(int)       theWidth.
-    #field(int)       theY.
-    #field(int)       theX.
-    #field(int)       theStyle.
-    #field(int)       theNamePtr.
-    #field(int)       theClassPtr.
-    #field(int)       theExStyle.
+    int       theCreateParam.
+    hinstance theInstance.    
+    int       theMenu.
+    int       theParent.
+    int       theHeight.
+    int       theWidth.
+    int       theY.
+    int       theX.
+    int       theStyle.
+    int       theNamePtr.
+    int       theClassPtr.
+    int       theExStyle.
     
-    #method(stacksafe) readCreateParam &vint:aRetVal
+    sealed stacksafe conversion int:n
+    [
+    ]
+    
+    stacksafe readCreateParam &vint:aRetVal
     [
         aRetVal := theCreateParam.
     ]
@@ -70,35 +71,35 @@
 
 // --- HMENU ---
 
-#class(sealed,embeddable,const) HMENU
+sealed const embeddable struct HMENU
 {
-    #field(4,-12)theHandle.
+    __ptr theHandle.
     
-    #constructor new
+    constructor new
     [
-        #var(int)h := system'external'USER32 CreateMenu.
+        int h := system'external'USER32 CreateMenu.
         
         theHandle := h.
     ]
 
-    #constructor newPopup
+    constructor newPopup
     [
-        #var(int)h := system'external'USER32 CreatePopupMenu.
+        int h := system'external'USER32 CreatePopupMenu.
         
         theHandle := h.
     ]
 
-    #method(stacksafe) append &int:Flags &int:anID &wide:aCaption
+    stacksafe append &int:Flags &int:anID &wide:aCaption
     [
         system'external'USER32 AppendMenuW &int:theHandle &int:Flags &int:anID &wide:aCaption.
     ]
             
-    #method(stacksafe) append &int:Flags &handle:aParent &wide:aCaption
+    stacksafe append &int:Flags &handle:aParent &wide:aCaption
     [
         system'external'USER32 AppendMenuW &int:theHandle &int:(Flags || MF_POPUP) &int:aParent &wide:aCaption.
     ]
             
-    #method(stacksafe) free
+    stacksafe free
     [
         system'external'USER32 DestroyMenu &int:theHandle.
     ]

@@ -1,81 +1,79 @@
-#import system.
-
 // --- AddrInfo ---
 
-#class(sealed,embeddable) AddrInfo
+sealed embeddable struct AddrInfo
 {
-    #field(int) ai_flags.
-    #field(int) ai_family.
-    #field(int) ai_socktype.
-    #field(int) ai_protocol.
-    #field(int) ai_addrlen.
-    #field(dirty_ptr) ai_canonname.
-    #field(dirty_ptr) ai_addr.
-    #field(dirty_ptr) ai_next.
+    int       ai_flags.
+    int       ai_family.
+    int       ai_socktype.
+    int       ai_protocol.
+    int       ai_addrlen.
+    dirty_ptr ai_canonname.
+    dirty_ptr ai_addr.
+    dirty_ptr ai_next.
     
-    #method(stacksafe)setFlags &int:aValue
+    stacksafe setFlags &int:aValue
     [
         ai_flags := aValue.
     ]
     
-    #method(stacksafe)setFamily &int:aValue
+    stacksafe setFamily &int:aValue
     [
         ai_family := aValue.
     ]
     
-    #method(stacksafe)setSocketType &int:aValue
+    stacksafe setSocketType &int:aValue
     [
         ai_socktype := aValue.
     ]
     
-    #method(stacksafe)setProtocol &int:aValue
+    stacksafe setProtocol &int:aValue
     [
         ai_protocol := aValue.
     ]
     
-    #method(stacksafe)setAddressLen &int:aValue
+    stacksafe setAddressLen &int:aValue
     [
         ai_addrlen := aValue.
     ]
     
-    #method(stacksafe)readInfo &vint:aFamily &vint:aSocketType &vint:aProtocol
+    stacksafe readInfo &vint:aFamily &vint:aSocketType &vint:aProtocol
     [
         aFamily := ai_family.
         aSocketType := ai_socktype.
         aProtocol := ai_protocol.
     ]
     
-    #method(stacksafe)readAddrPtr &dirty_ptr:ptr &vint:len
+    stacksafe readAddrPtr &dirty_ptr:ptr &vint:len
     [
         ptr set &dirty_ptr:ai_addr.
         len := ai_addrlen.
     ]
 
-    #method(stacksafe)readAddrInfo &literal:aNode &literal:aService &dirty_ptr:addr
+    stacksafe readAddrInfo &literal:aNode &literal:aService &dirty_ptr:addr
     [
-        #var(int)aRetVal := system'external'WS2_32 getaddrinfo
+        int aRetVal := system'external'WS2_32 getaddrinfo
             &literal:aNode
             &literal:aService
             &addrinfo:$self
             &dirty_ptr:addr.
             
-        (0 == aRetVal)
-            ! [ #throw SocketException new:"getaddrinfo failed" &error_code:(IntNumber new &int:aRetVal). ].
+        ifnot (0 == aRetVal)
+            [ SocketException new:"getaddrinfo failed" &error_code:(IntNumber new &int:aRetVal) raise. ].
     ]
             
-    #method(stacksafe)readAddrInfo &literal:aService &dirty_ptr:addr
+    stacksafe readAddrInfo &literal:aService &dirty_ptr:addr
     [
-        #var(int)aRetVal := system'external'WS2_32 getaddrinfo
+        int aRetVal := system'external'WS2_32 getaddrinfo
             &int:0
             &literal:aService
             &addrinfo:$self
             &dirty_ptr:addr.
             
-        (0 == aRetVal)
-            ! [ #throw SocketException new:"getaddrinfo failed" &error_code:(IntNumber new &int:aRetVal). ].        
+        ifnot (0 == aRetVal)
+            [ SocketException new:"getaddrinfo failed" &error_code:(IntNumber new &int:aRetVal) raise. ].        
     ]
             
-    #method(stacksafe) clear
+    stacksafe clear
     [
         ai_flags := 0.
         ai_family := 0.
@@ -92,35 +90,35 @@
 
 #subject addr_reader = AddrInfoReader.
 
-#class(sealed,embeddable) AddrInfoReader
+sealed embeddable struct AddrInfoReader
 {
-    #field(dirty_ptr)paddrinfo.
-    #field(dirty_ptr)prootinfo.
+    dirty_ptr paddrinfo.
+    dirty_ptr prootinfo.
     
-    #constructor(stacksafe) &dirty_ptr:addr
+    sealed stacksafe conversion dirty_ptr:addr
     [
         paddrinfo := addr.
         prootinfo := addr.
     ]
     
-    #constructor(stacksafe) new &dirty_ptr:addr
+    stacksafe constructor new &dirty_ptr:addr
     [
         paddrinfo := addr.
         prootinfo := addr.
     ]
     
-    #method(stacksafe,bool)is &available
+    bool stacksafe is &available
         = paddrinfo is &empty not.
     
-    #method(stacksafe) next
+    stacksafe next
     [
-        #var(dirty_ptr)ptr := paddrinfo.
+        dirty_ptr ptr := paddrinfo.
         ptr offset &int:28.
         
         paddrinfo := ptr.
     ]
     
-    #method(stacksafe)read &addrinfo:anInfo
+    stacksafe read &addrinfo:anInfo
     [
         system'external'KERNEL32 RtlMoveMemory
             &addrinfo:anInfo
@@ -128,73 +126,73 @@
             &int:32. 
     ]
     
-    #method(stacksafe) close
+    stacksafe close
     [
         system'external'WS2_32 freeaddrinfo
             &int:prootinfo.
     ]
     
-    #method addr_reader = $self.
+    addr_reader = $self.
 }
 
 // --- Socket ---
 
-#class(embeddable,sealed,const)Socket
+sealed const embeddable struct Socket
 {
-    #field(4,-12)theHandle.
+    __ptr theHandle.
     
-    #constructor(stacksafe) $new &int:aSocket
+    stacksafe constructor $new &int:aSocket
     [
         theHandle := aSocket.
     ]
     
-    #constructor(stacksafe) new &socket:aSocket
+    stacksafe constructor new &socket:aSocket
     [
         theHandle := aSocket.
     ]
     
-    #constructor(stacksafe) new &int:anAdressFamily &int:aType &int:aProtocol
-        <= ($new &int:(system'external'WS2_32 socket &int:anAdressFamily &int:aType &int:aProtocol))
+    stacksafe constructor new &int:anAdressFamily &int:aType &int:aProtocol
+        <= $new &int:(system'external'WS2_32 socket &int:anAdressFamily &int:aType &int:aProtocol);
     [
-        (INVALID_SOCKET == theHandle)
-            ? [ #throw SocketException new:"Error at socket". ].
+        if (INVALID_SOCKET == theHandle)
+            [ SocketException new:"Error at socket" raise. ].
     ]
     
-    #method(stacksafe) open &dirty_ptr:aSockAddrPtr &int:aNameLen
+    stacksafe open &dirty_ptr:aSockAddrPtr &int:aNameLen
     [
-        #var(int)aRetVal := system'external'WS2_32 connect 
+        int aRetVal := system'external'WS2_32 connect 
             &int:theHandle
             &dirty_ptr:aSockAddrPtr
             &int:aNameLen.
             
-        (SOCKET_ERROR == aRetVal)
-            ? [ #throw SocketException new:"Error at socket". ].
+        if (SOCKET_ERROR == aRetVal)
+            [ SocketException new:"Error at socket" raise. ].
     ]
 
-    #method(stacksafe) bind &dirty_ptr:aSockAddrPtr &int:aNameLen
+    stacksafe bind &dirty_ptr:aSockAddrPtr &int:aNameLen
     [
-        #var(int)aRetVal := system'external'WS2_32 bind 
+        int aRetVal := system'external'WS2_32 bind 
             &int:theHandle
             &int:aSockAddrPtr
             &int:aNameLen.
             
-        (SOCKET_ERROR == aRetVal)
-            ? [ #throw SocketException new:"Error at socket". ].
+        if (SOCKET_ERROR == aRetVal)
+            [ SocketException new:"Error at socket" raise. ].
     ]
 
-    #method(stacksafe) listen &int:aBackLog
+    stacksafe listen &int:aBackLog
     [
-        #var(int)aRetVal := system'external'WS2_32 listen 
+        int aRetVal := system'external'WS2_32 listen 
             &int:theHandle
             &int:aBackLog.
             
-        (SOCKET_ERROR == aRetVal)
-            ? [ #throw SocketException new:"Error at socket". ].
+        if (SOCKET_ERROR == aRetVal)
+            [ SocketException new:"Error at socket" raise. ].
     ]
 
-    #method(stacksafe,bool) tryOpen &dirty_ptr:aSockAddrPtr &int:aNameLen
+    stacksafe bool tryOpen &dirty_ptr:aSockAddrPtr &int:aNameLen
     [
-        #var(int)aRetVal := system'external'WS2_32 connect 
+        int aRetVal := system'external'WS2_32 connect 
             &int:theHandle
             &int:aSockAddrPtr
             &int:aNameLen.
@@ -202,89 +200,89 @@
         ^ (SOCKET_ERROR != aRetVal).
     ]
 
-    #method(stacksafe)write &bytearray:buffer &int:length &int:flags &vint:sent
+    stacksafe write &bytearray:buffer &int:length &int:flags &vint:sent
     [
-        #var(int)retVal := system'external'WS2_32 send 
+        int retVal := system'external'WS2_32 send 
             &int:theHandle
             &bytearray:buffer
             &int:length
             &int:flags.
             
-        (SOCKET_ERROR == retVal)
-            ? [ #throw SocketException new:"Error at socket". ].            
+        if (SOCKET_ERROR == retVal)
+            [ SocketException new:"Error at socket" raise. ].
             
         sent := retVal.            
     ]
 
-    #method(stacksafe) read &bytearray:buffer &int:maxLength &int:flags &vint:received
+    stacksafe read &bytearray:buffer &int:maxLength &int:flags &vint:received
     [
-        #var(int)retVal := system'external'WS2_32 recv
+        int retVal := system'external'WS2_32 recv
             &int:theHandle
             &bytearray:buffer
             &int:maxLength
             &int:flags.
         
-        (SOCKET_ERROR == retVal)?
+        if (SOCKET_ERROR == retVal)
         [
-            #var(int)err := system'external'WS2_32 WSAGetLastError.
-            (err != WSAEWOULDBLOCK)
-                ? [ #throw SocketException new:"Error at socket". ].
+            int err := system'external'WS2_32 WSAGetLastError.
+            if (err != WSAEWOULDBLOCK)
+                [ SocketException new:"Error at socket" raise. ].
         ].
             
         received := retVal.    
     ]
 
-    #method accept  
+    accept  
     [
-        #var(socket)aSocket := system'external'WS2_32 accept
+        socket aSocket := system'external'WS2_32 accept
             &int:theHandle
             &int:0
             &int:0.
             
-        (INVALID_SOCKET != aSocket)
-            ? [
+        if (INVALID_SOCKET != aSocket)
+            [
                 ^ Socket new &socket:aSocket.
-            ]
-            ! [ ^ $nil. ].
+            ];
+            [ ^ $nil. ].
     ]
 
-    #method(stacksafe) shutdown &int:how
+    stacksafe shutdown &int:how
     [
-        #var(int)aRetVal := system'external'WS2_32 shutdown
+        int aRetVal := system'external'WS2_32 shutdown
             &int:theHandle
             &int:how.
             
-        (SOCKET_ERROR == aRetVal)
-            ? [ #throw SocketException new:"Error at socket". ].
+        if (SOCKET_ERROR == aRetVal)
+            [ SocketException new:"Error at socket" raise. ].
     ]
 
-    #method(stacksafe) iocommand &int:aCommand &vint:aParameter
+    stacksafe iocommand &int:aCommand &vint:aParameter
     [
-        #var(int)aRetVal := system'external'WS2_32 ioctlsocket
+        int aRetVal := system'external'WS2_32 ioctlsocket
             &int:theHandle
             &int:aCommand
             &vint:aParameter.
             
-        (SOCKET_ERROR == aRetVal)
-            ? [ #throw SocketException new:"Error at socket". ].
+        if (SOCKET_ERROR == aRetVal)
+            [ SocketException new:"Error at socket" raise. ].
     ]
 
-    #method(stacksafe) option &int:aLevel &int:anOption &bool:aValue
+    stacksafe option &int:aLevel &int:anOption &bool:aValue
     [
-        #var(int)n := aValue iif:1:0.
+        int n := aValue iif:1:0.
         
-        #var(int)aRetVal := system'external'WS2_32 setsockopt
+        int aRetVal := system'external'WS2_32 setsockopt
             &int:theHandle
             &int:aLevel
             &int:anOption
             &vint:n
             &int:1.
             
-        (SOCKET_ERROR == aRetVal)
-            ? [ #throw SocketException new:"Error at socket". ].
+        if (SOCKET_ERROR == aRetVal)
+            [ SocketException new:"Error at socket" raise. ].
     ]
 
-    #method(stacksafe) close
+    stacksafe close
     [
         system'external'WS2_32 closesocket
             &int:theHandle.

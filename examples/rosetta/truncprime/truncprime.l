@@ -9,18 +9,18 @@ extension mathOp
     [
         int n := self int.
         
-        (n < 2) ? [ ^ false. ].        
-        (n < 4) ? [ ^ true. ].        
-        (n mod:2 == 0) ? [ ^ false. ].        
-        (n < 9) ? [ ^ true. ].        
-        (n mod:3 == 0) ? [ ^ false. ].
+        if (n < 2) [ ^ false. ].        
+        if (n < 4) [ ^ true. ].        
+        if (n mod:2 == 0) [ ^ false. ].        
+        if (n < 9) [ ^ true. ].        
+        if (n mod:3 == 0) [ ^ false. ].
         
         int r := n sqrt.        
         int f := 5.
         while (f <= r)
         [
-            ((n mod:f == 0) || (n mod:(f + 2) == 0))
-                ? [ ^ false. ].
+            if ((n mod:f == 0) || (n mod:(f + 2) == 0))
+                [ ^ false. ].
                 
             f := f + 6.
             
@@ -35,8 +35,8 @@ extension mathOp
         
         while (n != 0)
         [
-            (n is &prime)
-                ! [ ^ false. ].
+            ifnot (n is &prime)
+                [ ^ false. ].
             
             n := n / 10.
         ].
@@ -54,8 +54,8 @@ extension mathOp
             
         while (n != 0)
         [
-            (n is &prime)
-                ! [ ^ false. ].
+            ifnot (n is &prime)
+                [ ^ false. ].
 
             tens := tens / 10.
             n := n - (n / tens * tens).
@@ -77,13 +77,13 @@ program =
     [
         (n literal indexOf:"0" == -1) ?
         [
-            ((max_lt == 0) and:[ n is &leftTruncatable ])
-                ? [
+            if ((max_lt == 0) and:[ n is &leftTruncatable ])
+                [
                     max_lt := n.
                 ].
                 
-            ((max_rt == 0) and:[ n is &rightTruncatable ])
-                ? [
+            if ((max_rt == 0) and:[ n is &rightTruncatable ])
+                [
                     max_rt := n.
                 ].
         ].

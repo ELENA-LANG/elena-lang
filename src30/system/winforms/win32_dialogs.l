@@ -1,19 +1,17 @@
-#import system.
+const int OFN_PATHMUSTEXIST = 00000800h.
+const int OFN_EXPLORER      = 00080000h.
+const int OFN_LONGNAMES     = 00200000h.
+const int OFN_HIDEREADONLY  = 00000004h.
 
-#symbol(const,int)OFN_PATHMUSTEXIST = 00000800h.
-#symbol(const,int)OFN_EXPLORER      = 00080000h.
-#symbol(const,int)OFN_LONGNAMES     = 00200000h.
-#symbol(const,int)OFN_HIDEREADONLY  = 00000004h.
-
-#symbol(const,int)DS_CENTER         = 0800h.
+const int DS_CENTER         = 0800h.
 
 // --- messageBox ---
 
-#symbol messageBox =
+class messageBox =
 {
-    #method(stacksafe) open &hwnd:parent &caption:caption &value:message &int:flags
+    stacksafe open &hwnd:parent &caption:caption &value:message &int:flags
     [
-        #var(int)retVal := system'external'USER32 MessageBoxW
+        int retVal := system'external'USER32 MessageBoxW
             &int:parent
             &wide:(message wide)
             &wide:(caption wide)
@@ -22,12 +20,12 @@
         ^ IntNumber new &int:retVal.
     ]
     
-    #method(stacksafe) open &caption:caption &value:message &int:flags
+    stacksafe open &caption:caption &value:message &int:flags
     [
-        #var aHandle := 'program mainWindow hwnd.
+        var aHandle := 'program mainWindow hwnd.
         
-        ($nil == aHandle)
-            ? [ aHandle := WindowHandle new. ].
+        if ($nil == aHandle)
+            [ aHandle := WindowHandle new. ].
                 
         ^ messageBox open 
             &hwnd:(aHandle hwnd)
@@ -39,23 +37,23 @@
 
 // --- BaseFileDialog ---
 
-#class BaseFileDialog
+class BaseFileDialog
 {
-    #field(hwnd)theParent.
-    #field(shortarray)theFilters.
-    #field(shortarray)theFileName.
-    #field(int)theFilterIndex.
-    #field(int)theMaxFile.
-    #field(wide)theCaption.
-    #field(int)theFlags.
+    hwnd       theParent.
+    shortarray theFilters.
+    shortarray theFileName.
+    int        theFilterIndex.
+    int        theMaxFile.
+    wide       theCaption.
+    int        theFlags.
      
-    #constructor new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption &int:Flags
+    constructor new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption &int:Flags
     [
-        #var(array) arr := Filters array.
-        #var(int)   i := 0.
-        #var(int)  length := 0.
-        #var(int)  s_length := 0.
-        #var(int)  buf_size := 0.
+        array arr := Filters array.
+        int   i := 0.
+        int   length := 0.
+        int   s_length := 0.
+        int   buf_size := 0.
         
         theParent := aParent.
         theFilterIndex := aFilterIndex.
@@ -69,9 +67,9 @@
         
         // calculate the filter buffer size
         arr readLength &vint:length.
-        #loop (i < length)?
+        while (i < length)
         [
-            #var(wide)aFilter := arr getAt &int:i wide.
+            wide aFilter := arr getAt &int:i wide.
             aFilter readLength &vint:s_length.
             buf_size := buf_size + s_length.
             buf_size := buf_size + 1.
@@ -84,9 +82,9 @@
         theFilters := ShortArray new &int:buf_size.
         i := 0.
         buf_size := 0.
-        #loop (i < length)?
+        while (i < length)
         [
-            #var(wide)aFilter := arr getAt &int:i wide.
+            wide aFilter := arr getAt &int:i wide.
             aFilter readLength &vint:s_length.
             
             aFilter $save &int:buf_size &shortarray:theFilters &int:s_length.
@@ -102,9 +100,9 @@
         theFilters write &int:(buf_size + 1) &short:0.
     ]    
     
-    #method(stacksafe) $prepare &bytearray:aStruct
+    stacksafe $prepare &bytearray:aStruct
     [
-        #var(dirty_ptr)ptr.
+        dirty_ptr ptr := 0.
         
         aStruct fill &int:0 &int:76 &byte:0.
         
@@ -144,24 +142,24 @@
 
 // --- OpenFileDialog ---
 
-#class(sealed) OpenFileDialog :: BaseFileDialog
+sealed class OpenFileDialog :: BaseFileDialog
 {
-    #constructor new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption
+    constructor new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption
         <= new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption 
             &int:(OFN_PATHMUSTEXIST or:OFN_EXPLORER or:OFN_LONGNAMES or:DS_CENTER or:OFN_HIDEREADONLY int).
     
-    #method select
+    select
     [
-        #var(byte:76)aStruct.
+        byte(76) aStruct := 0.
         
         $self $prepare &bytearray:aStruct.
         // NOTE: !! it should be any object creation between two lines
-        #var(int)aRetVal := system'external'Comdlg32 GetOpenFileNameW &bytearray:aStruct.
+        int aRetVal := system'external'Comdlg32 GetOpenFileNameW &bytearray:aStruct.
         
-        (aRetVal == 0)
-            ? [ ^ nil. ]
-            ! [
-                #var(int)aLength := system'external'KERNEL32 lstrlenW &shortarray:theFileName.
+        if (aRetVal == 0)
+            [ ^ nil. ];
+            [
+                int aLength := system'external'KERNEL32 lstrlenW &shortarray:theFileName.
                 
                 ^ WideLiteralValue $new &int:0 &int:aLength &shortarray:theFileName.
             ].
@@ -170,24 +168,24 @@
 
 // --- SaveFileDialog ---
 
-#class(sealed) SaveFileDialog :: BaseFileDialog
+sealed class SaveFileDialog :: BaseFileDialog
 {
-    #constructor new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption
+    constructor new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption
         <= new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption 
             &int:(OFN_PATHMUSTEXIST or:OFN_EXPLORER or:OFN_LONGNAMES or:DS_CENTER or:OFN_HIDEREADONLY int).
     
-    #method select
+    select
     [
-        #var(byte:76)aStruct.
+        byte(76) aStruct := 0.
         
         $self $prepare &bytearray:aStruct.
         // NOTE: !! it should be any object creation between two lines
-        #var(int)aRetVal := system'external'Comdlg32 GetSaveFileNameW &bytearray:aStruct.
+        int aRetVal := system'external'Comdlg32 GetSaveFileNameW &bytearray:aStruct.
         
-        (aRetVal == 0)
-            ? [ ^ $nil. ]
-            ! [
-                #var(int)aLength := system'external'KERNEL32 lstrlenW &shortarray:theFileName.
+        if (aRetVal == 0)
+            [ ^ $nil. ];
+            [
+                int aLength := system'external'KERNEL32 lstrlenW &shortarray:theFileName.
                 
                 ^ WideLiteralValue $new &int:0 &int:aLength &shortarray:theFileName.
             ].        

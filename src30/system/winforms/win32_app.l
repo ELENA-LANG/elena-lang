@@ -1,42 +1,40 @@
-#import system.
-
 // --- BaseApplication ---
 
-#class BaseApplication
+class BaseApplication
 {
 }
 
 // --- SDIApplication ---
 
-#class SDIApplication :: BaseApplication
+class SDIApplication :: BaseApplication
 {
-    #field       theMainWindow.
+    object       theMainWindow.
     
-    #constructor new
+    constructor new
     [
         RTPointer new:$self.
         
         theMainWindow := 'mainWindow new.
     ]
     
-    #method mainWindow = theMainWindow.
+    mainWindow = theMainWindow.
     
-    #method eval
+    eval
     [
         theMainWindow open.
 
-        #var(win_msg)msg.
-        #var(int)proceeded.
-        #var(int)result.
-        #var(hwnd)handleCopy := theMainWindow hwnd.
+        win_msg msg := 0.
+        int     proceeded := 0.
+        int     result := 0.
+        hwnd    handleCopy := theMainWindow hwnd.
         
         #extern
         [
             result := system'external'USER32 GetMessageW &win_msg:msg &int:0 &int:0 &int:0.
-            #loop (result != 0)?
+            while (result != 0)
             [
                 proceeded := system'external'USER32 IsDialogMessageW &int:handleCopy &win_msg:msg.
-                (proceeded == 0) ?
+                if (proceeded == 0)
                 [
                     system'external'USER32 TranslateMessage &win_msg:msg.
                     system'external'USER32 DispatchMessageW &win_msg:msg.
@@ -47,19 +45,19 @@
         ].
     ]
 
-    #method run &hwnd:handle
+    run &hwnd:handle
     [
-        #var(win_msg)msg.
-        #var(int)proceeded.
-        #var(int)result.
-        #var(hwnd)handleCopy := handle.
+        win_msg msg := 0.
+        int     proceeded := 0.
+        int     result := 0.
+        hwnd    handleCopy := handle.
 
         #extern
         [
-            #loop (handleCopy isVisible)?
+            while (handleCopy isVisible)
             [
                 result := system'external'USER32 PeekMessageW &win_msg:msg &int:0 &int:0 &int:0 &int:1.
-                (result != 0) ?
+                if (result != 0)
                 [
                     proceeded := system'external'USER32 IsDialogMessageW &int:handleCopy &win_msg:msg.
                     (proceeded == 0) ?
@@ -67,36 +65,35 @@
                             system'external'USER32 TranslateMessage &win_msg:msg.
                             system'external'USER32 DispatchMessageW &win_msg:msg.
                         ].
-                ]
-                ! [
+                ];
+                [
                     system'external'USER32 WaitMessage.
                 ].
             ].
         ].
     ]
             
-    #method stop
+    stop
     [
         system'external'USER32 PostQuitMessage &int:0.
     ]
 }
 
-#static program = SDIApplication new.
+static program = SDIApplication new.
 
-#symbol startUp = 
+startUp = 
     {
-        #method start : events
+        start : events
         [
-            'program eval
-                | on:
-                {
-                Abort = e [].
+            try('program eval)
+            {
+                Abort : e []
                 
-                ! = e 
+                ! e 
                     [ 
                         messageBox open &caption:"ELENA" &value:(e message) &int:MB_ICONEXCLAMATION.
-                    ].
-                }.
+                    ]
+            }.
     
             events $onStop:$nil.
         ]        

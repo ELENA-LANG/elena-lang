@@ -1,16 +1,14 @@
-#import system.
-
 // --- $windowClassControl ---
 
-#symbol $windowClassControl =
+class $windowClassControl =
 {
-    #method(stacksafe) $fillWndClass &bytearray:anArray &wide:aName &int:aStyle &hinstance:anInstance &int:aBackground
+    stacksafe $fillWndClass &bytearray:anArray &wide:aName &int:aStyle &hinstance:anInstance &int:aBackground
         => system'core_routines'__hwnd.
     
     createClass &name:aName &hinstance:anInstance &int:aStyle &int:aBackground
     [
-        #var(byte:40)aStruct.
-        #var(wide) aWideName := aName wide.
+        byte(40) aStruct := 0.
+        wide aWideName := aName wide.
         
         $self $fillWndClass &bytearray:aStruct &wide:aWideName &int:aStyle &hinstance:anInstance &int:aBackground.
         
@@ -22,43 +20,43 @@
 
 // --- WindowCallback ---
 
-#class(limited) WindowCallback
+limited class WindowCallback
 {
-    #method win_callback = $self.
+    win_callback = $self.
 
-    #method(stacksafe) onpaint &hwnd:aControl &vint:aRetVal
+    stacksafe onpaint &hwnd:aControl &vint:aRetVal
     [
-        #var(int)result := system'external'USER32 DefWindowProcW &int:aControl &int:WM_PAINT &int:0 &int:0.
+        int result := system'external'USER32 DefWindowProcW &int:aControl &int:WM_PAINT &int:0 &int:0.
         
         aRetVal := result.
     ]
     
-    #method(stacksafe) onclick &hwnd:aControl &vint:aResult
+    stacksafe onclick &hwnd:aControl &vint:aResult
     [
         aResult := 0.
     ]
     
-    #method(stacksafe) onchange &hwnd:aControl &vint:aResult
+    stacksafe onchange &hwnd:aControl &vint:aResult
     [
         aResult := 0.
     ]
     
-    #method(stacksafe) onmenu &int:aCode &vint:aResult
+    stacksafe onmenu &int:aCode &vint:aResult
     [
         aResult := 0.
     ]
     
-    #method(stacksafe) onsize &hwnd:aControl &int:aWidth &int:aHeight &vint:aResult
+    stacksafe onsize &hwnd:aControl &int:aWidth &int:aHeight &vint:aResult
     [
         aResult := 0.
     ]
     
-    #method(stacksafe) ondestroy &hwnd:aControl &vint:aResult
+    stacksafe ondestroy &hwnd:aControl &vint:aResult
     [
-        #var(int)anIndex := system'external'USER32 SetWindowLongW &int:aControl &int:GWL_USERDATA &int:0.
-        (anIndex != 0)?
+        int anIndex := system'external'USER32 SetWindowLongW &int:aControl &int:GWL_USERDATA &int:0.
+        if (anIndex != 0)
             [
-                #var(rt_ptr)ptr := anIndex.
+                rt_ptr ptr := anIndex.
                 
                 ptr free.
             ].
@@ -66,9 +64,9 @@
         aResult := 0.
     ]
         
-    #method(stacksafe) wm_create &hwnd:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct &vint:aRetVal
+    stacksafe wm_create &hwnd:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct &vint:aRetVal
     [
-        #var(int)param.
+        int param := 0.
         aCreateStruct readCreateParam &vint:param.
         
         system'external'USER32 SetWindowLongW &int:anHWND &int:GWL_USERDATA &int:param.
@@ -78,68 +76,68 @@
         aRetVal := 0.
     ]
     
-    #method(stacksafe) eval &hwnd:anHWND &int:aMessage &vint:aRetVal
+    stacksafe eval &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
-        (aMessage == WM_DESTROY)
-            ? [
+        if (aMessage == WM_DESTROY)
+            [
                 $self ondestroy &hwnd:anHWND &vint:aRetVal.                            
                 
                 ^ $self.
             ].                
         
-        #var(int)result := system'external'USER32 DefWindowProcW &int:anHWND &int:aMessage &int:0 &int:0.
+        int result := system'external'USER32 DefWindowProcW &int:anHWND &int:aMessage &int:0 &int:0.
          
         aRetVal := result.
     ]
     
-    #method(stacksafe) eval &hwnd:anHWND &int:aMessage &int:wParam &int:lParam &vint:aRetVal
+    stacksafe eval &hwnd:anHWND &int:aMessage &int:wParam &int:lParam &vint:aRetVal
     [
-        (aMessage == WM_SIZE)
-            ? [
-                #var(int)width := lParam && 0FFFFh.
-                #var(int)height := lParam >> 16.
+        if (aMessage == WM_SIZE)
+            [
+                int width := lParam && 0FFFFh.
+                int height := lParam >> 16.
         
                 $self onsize &hwnd:anHWND &int:width &int:height &vint:aRetVal.
                 
                 ^ $self.
             ].                
                 
-        #var(int)result := system'external'USER32 DefWindowProcW &int:anHWND &int:aMessage &int:wParam &int:lParam.
+        int result := system'external'USER32 DefWindowProcW &int:anHWND &int:aMessage &int:wParam &int:lParam.
         
         aRetVal := result.
     ]
     
-    #method(stacksafe) wm_paint &hwnd:anHWND &int:aMessage &vint:aRetVal
+    stacksafe wm_paint &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
         $self onpaint &hwnd:anHWND &vint:aRetVal.
     ]
     
-    #method(stacksafe) wm_command &hwnd:anHWND &int:aMessage &int:wParam &hwnd:aControl &vint:aRetVal
+    stacksafe wm_command &hwnd:anHWND &int:aMessage &int:wParam &hwnd:aControl &vint:aRetVal
     [
-        (0 == aControl)
-            ? [ $self onmenu &int:wParam &vint:aRetVal. ^ $self. ].
+        if (0 == aControl)
+            [ $self onmenu &int:wParam &vint:aRetVal. ^ $self. ].
 
-        #var(int)aCommand := wParam >> 16.
+        int aCommand := wParam >> 16.
 
-        (aCommand == BN_CLICKED)
-            ? [ $self onclick &hwnd:aControl &vint:aRetVal. ^ $self. ].
+        if (aCommand == BN_CLICKED)
+            [ $self onclick &hwnd:aControl &vint:aRetVal. ^ $self. ].
 
-        (aCommand == EN_CHANGE)
-            ? [ $self onchange &hwnd:aControl &vint:aRetVal. ^ $self. ].
+        if (aCommand == EN_CHANGE)
+            [ $self onchange &hwnd:aControl &vint:aRetVal. ^ $self. ].
 
-        (aCommand == CBN_SELCHANGE)
-            ? [ $self onchange &hwnd:aControl &vint:aRetVal. ^ $self. ].
+        if (aCommand == CBN_SELCHANGE)
+            [ $self onchange &hwnd:aControl &vint:aRetVal. ^ $self. ].
     ]
 
-    #method(stacksafe) eval &hwnd:anHWND &int:aMessage &hwnd:aControl &int:aLParam &vint:aRetVal
+    stacksafe eval &hwnd:anHWND &int:aMessage &hwnd:aControl &int:aLParam &vint:aRetVal
     [
-        (aMessage == WM_SETCURSOR)
-            ? [
-                #var(int)code := aLParam && 0FFFFh.
+        if (aMessage == WM_SETCURSOR)
+            [
+                int code := aLParam && 0FFFFh.
                 
-                (code == HTCLIENT) ?
+                if (code == HTCLIENT)
                 [
-                    #var(int)h := system'external'USER32 LoadCursorW &int:0 &int:IDC_ARROW.
+                    int h := system'external'USER32 LoadCursorW &int:0 &int:IDC_ARROW.
                     system'external'USER32 SetCursor &int:h.
                     
                     aRetVal := -1.
@@ -148,14 +146,14 @@
                 ].
             ].
         
-        #var(int)result := system'external'USER32 DefWindowProcW &int:anHWND &int:aMessage &hwnd:aControl &int:aLParam.
+        int result := system'external'USER32 DefWindowProcW &int:anHWND &int:aMessage &hwnd:aControl &int:aLParam.
         
         aRetVal := result.
     ]
 
-    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
+    eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
     [
-        #var(int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:aWParam &int:aLParam.
+        int result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:aWParam &int:aLParam.
         
         aRetVal := result.
     ]
@@ -163,12 +161,12 @@
 
 // --- SDIWindowCallback ---
 
-#class SDIWindowCallback :: WindowCallback
+class SDIWindowCallback :: WindowCallback
 {
-    #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
+    eval &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
-        (aMessage == WM_CLOSE)
-            ? [
+        if (aMessage == WM_CLOSE)
+            [
                 anHWND free.
                 
                 aRetVal := 0.
@@ -176,8 +174,8 @@
                 ^ $self.
             ].
         
-        (aMessage == WM_DESTROY)
-            ? [
+        if (aMessage == WM_DESTROY)
+            [
                 // NOTE: SDIWindow is the main program window, so closing it means exiting the program
                 'program stop.
                 
@@ -197,12 +195,12 @@
 
 // --- ChildWindowCallback ---
 
-#class ChildWindowCallback :: WindowCallback
+class ChildWindowCallback :: WindowCallback
 {
-    #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
+    eval &hwnd:anHWND &int:aMessage &vint:aRetVal
     [
-        (aMessage == WM_CLOSE)
-            ? [
+        if (aMessage == WM_CLOSE)
+            [
                 anHWND free.
                 
                 aRetVal := 0.
@@ -210,8 +208,8 @@
                 ^ $self.
             ].
         
-        (aMessage == WM_DESTROY)
-            ? [
+        if (aMessage == WM_DESTROY)
+            [
                 $self ondestroy &hwnd:anHWND &vint:aRetVal.
                 
                 ^ $self.
@@ -228,6 +226,6 @@
 
 // --- SDIWindowClass ---
 
-#static(wide) SDIWindowClass = $windowClassControl createClass &name:"ELENA.SDIWINDOW.3.1" &hinstance:CurrentInstance &int:WS_ELENAWINDOW &int:COLOR_BACKGROUND wide.
-#static(wide) PaintboxClass  = $windowClassControl createClass &name:"ELENA.Paintbox.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:0 wide.
-#static(wide) PanelClass     = $windowClassControl createClass &name:"ELENA.PANEL.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:COLOR_BACKGROUND wide.
+wide static SDIWindowClass = $windowClassControl createClass &name:"ELENA.SDIWINDOW.3.1" &hinstance:CurrentInstance &int:WS_ELENAWINDOW &int:COLOR_BACKGROUND wide.
+wide static PaintboxClass  = $windowClassControl createClass &name:"ELENA.Paintbox.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:0 wide.
+wide static PanelClass     = $windowClassControl createClass &name:"ELENA.PANEL.3.1" &hinstance:CurrentInstance &int:(CS_VREDRAW or &int:CS_HREDRAW) &int:COLOR_BACKGROUND wide.
