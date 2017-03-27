@@ -11,6 +11,9 @@ sealed class File
     [
         thePath := aPath.
     ]
+    
+    constructor new &path:aPath
+        <= new &file_path:aPath.
 
     file_path = thePath.
 

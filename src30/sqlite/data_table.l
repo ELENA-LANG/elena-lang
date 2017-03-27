@@ -1,21 +1,20 @@
-#import system.
 #import system'routines.
 #import system'collections.
 
 // --- DBRow ---
 
-#class(sealed) DBRow
+sealed class DBRow
 {
-    #field(array)        theRow.
-    #field(sqlite_table) theTable.
+    array        theRow.
+    sqlite_table theTable.
     
-    #constructor $new &array:aRow &sqlite_table:aTable
+    constructor $new &array:aRow &sqlite_table:aTable
     [
         theRow := aRow.
         theTable := aTable.
     ]
     
-    #method getAt : aSelector
+    getAt : aSelector
         = aSelector cast:%eval &to:
             {
                 eval : aRow &int : anInt = aRow getAt &int:anInt.
@@ -25,17 +24,17 @@
                 eval : aRow &wide : aFieldName = aRow getAt &literal:(aFieldName literal).
             } &with:$self.
 
-    #method(stacksafe) getAt &int:anIndex
+    stacksafe getAt &int:anIndex
         = theRow getAt &int:anIndex.
 
-    #method(stacksafe) getAt &literal:aFieldName
+    stacksafe getAt &literal:aFieldName
     [
-        #var(int)anIndex := -1.
+        int anIndex := -1.
 
         theTable $indexOfField:aFieldName &vint:anIndex.
                         
-        (-1 == anIndex)
-            ? [ #throw DBException new &message:"Field is unknown". ].
+        if (-1 == anIndex)
+            [ DBException new &message:"Field is unknown" raise. ].
             
         ^ theRow getAt &int:anIndex.
     ]
@@ -43,32 +42,32 @@
 
 // --- DBTable ---
 
-#class(sealed) DBTable
+sealed class DBTable
 {
-    #field(array)      theFieldNames.
-    #field(array_list) theRows.
+    array      theFieldNames.
+    array_list theRows.
     
-    #constructor new &sql_field_names:aNames
+    constructor new &sql_field_names:aNames
     [
         theFieldNames := aNames array.
         theRows := ArrayList new.
     ]
 
-    #method $appendRow:aRow
+    $appendRow:aRow
     [
         theRows append:(DBRow $new &array:(aRow array) &sqlite_table:$self).
     ]
 
-    #method(stacksafe) $indexOfField:aFieldName &vint:anIndex
+    stacksafe $indexOfField:aFieldName &vint:anIndex
     [
         theFieldNames indexOf &int:0 &object:aFieldName &vint:anIndex.
     ]
 
-    #method sqlite_table = $self.
+    sqlite_table = $self.
 
-    #method rows = theRows.
+    rows = theRows.
     
-    #method fields = theFieldNames.
+    fields = theFieldNames.
     
-    #method fieldCount = theFieldNames length.
+    fieldCount = theFieldNames length.
 }

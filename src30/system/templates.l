@@ -153,3 +153,20 @@
     }.
 ].
 
+// -- finally statement ---
+
+#template finally (expr)
+[
+    expr then:
+        [
+        ]         
+        | raise:[].
+].
+
+// --- using statement ---
+
+#template using(expr)
+[
+    finally(expr then:[])
+        [ expr close. ].
+].

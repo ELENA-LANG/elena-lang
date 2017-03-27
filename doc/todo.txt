@@ -3,6 +3,7 @@ In development:
 ------                              
 
               xdev - generic development 
+                 * #286 : Using statement
                  * samples review : JSON
 
               sdev - cf parser
@@ -220,6 +221,8 @@ Pipeline:
                  * the following expression should generated an error : try2(n test) { .... }
                  * the following expression should generated an error : if(n test) { .... }
                  * duplicate assigning : mssg(10) properties := 0. mssg message := properties@0.
+                 * #300 : Code template closure 
+                 * finally code template with assigning
 
               zdev 
                  * gui script
@@ -635,6 +638,7 @@ Pipeline:
                        * optimize - arrayof(func1)a := func1(1).
                        * optimize : structure copying
                        * object.then:[ a ] => object.then:a &func1:a [ a ]
+                       * try / finally template code : finally closure should be implemented only once
 
               xdev - native code optimization
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)

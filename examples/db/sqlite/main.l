@@ -1,19 +1,18 @@
-#import system.
 #import system'routines.
 #import system'io.
 #import extensions.
 #import sqlite.
 
-#symbol(const) DBFileName = "data.db".
+const DBFileName = "data.db".
 
 // --- dbTestOp ---
 
-#class(extension)dbTestOp
+extension dbTestOp
 {
-    #method printTable : aTableName
+    printTable : aTableName
     [
         console writeLine:aTableName:":".
-        #var aTable := self executeQuery:("SELECT * FROM " + aTableName).
+        var aTable := self executeQuery:("SELECT * FROM " + aTableName).
         
         // Header
         aTable fields run &each:aFieldName
@@ -39,53 +38,56 @@
 
 // --- program ---
 
-#symbol program =
+program =
 [
-    #var dbFile := File new &path:DBFileName.
+    var dbFile := File new &path:DBFileName.
     
-    #var cnn := DBConnection new &path:dbFile.
+    var cnn := DBConnection new &path:dbFile.
     
-    (dbFile is &available)!
+    ifnot (dbFile is &available)
     [
         cnn open.
-        
-        console write:"Database is being created".
-        
-        cnn executeNonQuery:"CREATE Table Movies (Name TEXT, Director TEXT, Year INTEGER)".
-        console write:".".
+  
+        using (cnn)
+        [
+            console write:"Database is being created".
             
-        cnn executeNonQuery:"INSERT INTO Movies (Name, Director, Year) VALUES ('The Dark Knight', 'Christopher Nolan', 2008)".
-        cnn executeNonQuery:"INSERT INTO Movies (Name, Director, Year) VALUES ('Cloverfield', 'Matt Reeves', 2008)".
-        cnn executeNonQuery:"INSERT INTO Movies (Name, Director, Year) VALUES ('Beverly Hills Chihuahua', 'Raja Gosnell', 2008)".
-        console write:".".
-
-        cnn executeNonQuery:("CREATE TABLE [Users] " +
-                               "([ID] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                               "[client] NVARCHAR(100)  NULL, " +
-                               "[date] DATE  NULL " +
-                               ")").
-        console write:".".
-                               
-        cnn executeNonQuery:"INSERT INTO Users (client, date) VALUES ('Alexandre', '2015-01-01')".
-        cnn executeNonQuery:"INSERT INTO Users (client, date) VALUES ('Alex', '2015-01-01')".        
-        console write:".".
-        
-        cnn close.        
-        console writeLine:"Done".
+            cnn executeNonQuery:"CREATE Table Movies (Name TEXT, Director TEXT, Year INTEGER)".
+            console write:".".
+                
+            cnn executeNonQuery:"INSERT INTO Movies (Name, Director, Year) VALUES ('The Dark Knight', 'Christopher Nolan', 2008)".
+            cnn executeNonQuery:"INSERT INTO Movies (Name, Director, Year) VALUES ('Cloverfield', 'Matt Reeves', 2008)".
+            cnn executeNonQuery:"INSERT INTO Movies (Name, Director, Year) VALUES ('Beverly Hills Chihuahua', 'Raja Gosnell', 2008)".
+            console write:".".
+    
+            cnn executeNonQuery:("CREATE TABLE [Users] " +
+                                   "([ID] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                                   "[client] NVARCHAR(100)  NULL, " +
+                                   "[date] DATE  NULL " +
+                                   ")").
+            console write:".".
+                                   
+            cnn executeNonQuery:"INSERT INTO Users (client, date) VALUES ('Alexandre', '2015-01-01')".
+            cnn executeNonQuery:"INSERT INTO Users (client, date) VALUES ('Alex', '2015-01-01')".        
+            console write:".".
+            
+            console writeLine:"Done".
+        ].                    
     ].
 
     cnn open.
 
-    console writeLine:"Number of table in DB: ":(cnn numberOfTable).
-
-    console writeLine:"Tables:" writeLine.
+    using (cnn)
+    [
+        console writeLine:"Number of table in DB: ":(cnn numberOfTable).
     
-    cnn tables run &each: aTableName 
-        [ 
-            cnn printTable:aTableName.
-        ].
-
-    cnn close.
+        console writeLine:"Tables:" writeLine.
+        
+        cnn tables run &each: aTableName 
+            [ 
+                cnn printTable:aTableName.
+            ].
+    ].
 
     console readChar.
 ].

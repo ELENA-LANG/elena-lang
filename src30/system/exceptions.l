@@ -109,6 +109,13 @@ sealed nonstructural class CallStack
     [
         #throw $self.  
     ]
+    
+    raise : aFinallyCode
+    [
+        aFinallyCode eval.
+        
+        #throw $self.
+    ]
 }
 
 // --- Exception ---

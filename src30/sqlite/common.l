@@ -1,16 +1,15 @@
-#import system.
 #import system'routines.
 #import system'collections.
 #import extensions.
 
-#symbol(const,int)SQLITE_OK = 0.
-#symbol(const,int)SQLITE_ROW = 100.
-#symbol(const,int)SQLITE_DONE = 101.
-#symbol(const,int)SQLITE_INTEGER = 1.
-#symbol(const,int)SQLITE_FLOAT = 2.
-#symbol(const,int)SQLITE_TEXT = 3.
-#symbol(const,int)SQLITE_BLOB = 4.
-#symbol(const,int)SQLITE_NULL = 5.
+const int SQLITE_OK      = 0.
+const int SQLITE_ROW     = 100.
+const int SQLITE_DONE    = 101.
+const int SQLITE_INTEGER = 1.
+const int SQLITE_FLOAT   = 2.
+const int SQLITE_TEXT    = 3.
+const int SQLITE_BLOB    = 4.
+const int SQLITE_NULL    = 5.
 
 #subject sqlite_cnn    = DBConnection.
 #subject sqlite_cmd    = DBCommand.
@@ -20,110 +19,109 @@
 
 // --- DBException ---
 
-#class(exceptionof:DBError) DBException
+exceptionof(DBError) DBException
 {
-    #constructor new &literal:message
+    constructor new &literal:message
     [
         theMessage := message.
         theCallStack := CallStack new.
     ]
     
     /// Creates the exception
-    #constructor new
+    constructor new
         <= new &literal:"The process terminated".
     
     /// Creates the exception
-    #constructor new &message:aMessage
+    constructor new &message:aMessage
         <= new &literal:(aMessage literal).
 }
 
 // --- Connection ---
 
-#class(sealed) DBConnection
+sealed class DBConnection
 {
-    #field(int)     theDBHandle.
-    #field(literal) thePath.
-    #field(bool)    theOpen.
+    int     theDBHandle.
+    literal thePath.
+    bool    theOpen.
     
-    #constructor new &path:aPath
+    constructor new &path:aPath
     [
         thePath := aPath literal.
         theOpen := false.
     ]
     
-    #method int = theDBHandle.
+    int = theDBHandle.
     
-    #method(bool) is &available = theOpen.
+    bool is &available = theOpen.
     
-    #method open
+    open
     [
-        #var(int)aHandle.
-        #var(int) aRetVal := system'external'sqlite3 sqlite3_open &literal:thePath &vint:aHandle.
-        (aRetVal != SQLITE_OK)? [ #throw DBException new &message:"Could not open a database file". ] ! [ theOpen := true. ].
+        int aHandle := 0.
+        int aRetVal := system'external'sqlite3 sqlite3_open &literal:thePath &vint:aHandle.
+        if (aRetVal != SQLITE_OK) [ DBException new &message:"Could not open a database file" raise. ]; [ theOpen := true. ].
 
         theDBHandle := aHandle.
     ]
     
-    #method last_error_message
+    last_error_message
     [
-        #var(dirty_ptr)aPtr := system'external'sqlite3 sqlite3_errmsg &int:theDBHandle.
+        dirty_ptr aPtr := system'external'sqlite3 sqlite3_errmsg &int:theDBHandle.
 
         ^ aPtr literal.
     ]
 
-    #method do &sql:aQuery
-        <= %executeNonQuery:aQuery.
+    do &sql:aQuery
+        <= executeNonQuery:aQuery.
 
-    #method executeNonQuery : aSqlText
+    executeNonQuery : aSqlText
     [
-        theOpen ! [ #throw DBException new &message:"SQLite database is not open.". ].
+        ifnot (theOpen) [ DBException new &message:"SQLite database is not open." raise. ].
 
-        #var(sqlite_cmd)aCommand := DBCommand new &sqlite_cnn:$self &sql:aSqlText.
-        
-        aCommand eval.
-        
-        aCommand free.
+        sqlite_cmd aCommand := DBCommand new &sqlite_cnn:$self &sql:aSqlText.
+        finally (aCommand eval)
+            [ aCommand free. ].
     ]
 
-    #method executeQuery : aSqlText
+    executeQuery : aSqlText
     [
-        theOpen ! [ #throw DBException new &message:"SQLite database is not open.". ].
+        ifnot (theOpen) [ DBException new &message:"SQLite database is not open." raise. ].
 
-        #var(sqlite_cmd)aCommand := DBCommand new &sqlite_cnn:$self &sql:aSqlText.
+        sqlite_cmd aCommand := DBCommand new &sqlite_cnn:$self &sql:aSqlText.
 
-        #var aTable := DBTable new &sql_field_names:(aCommand sql_field_names).
-        #var aReader := DBReader new &sqlite_cmd:aCommand.
+        var aTable := DBTable new &sql_field_names:(aCommand sql_field_names).
+        var aReader := DBReader new &sqlite_cmd:aCommand.
         
-        aReader run:aTable &eachPair:(:aTable:aRow)
-            [ aTable $appendRow:aRow. ].
-
-        aCommand free.
+        finally(aReader run:aTable &eachPair:(:aTable:aRow)
+            [ aTable $appendRow:aRow. ])
+        [
+            aCommand free.
+        ].
 
         ^ aTable.
     ]
         
-    #method numberOfTable
+    numberOfTable
     [
-        theOpen ! [ #throw DBException new &message:"SQLite database is not open.". ].
+        ifnot (theOpen) [ DBException new &message:"SQLite database is not open." raise. ].
 
-        #var(sqlite_cmd)aCommand := DBCommand new &sqlite_cnn:$self &sql:"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';".
+        sqlite_cmd aCommand := DBCommand new &sqlite_cnn:$self &sql:"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';".
 
-        #var aNumberOfTable := aCommand evalScalar.
+        var aNumberOfTable := aCommand evalScalar.
         
         aCommand free.
 
         ^ aNumberOfTable.
     ]
 
-    #method tables
+    tables
     [
-        theOpen ! [ #throw DBException new &message:"SQLite database is not open.". ].
+        ifnot (theOpen) [ DBException new &message:"SQLite database is not open." raise. ].
 
-        #var(sqlite_cmd)aCommand := DBCommand new &sqlite_cnn:$self &sql:"SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';".
+        sqlite_cmd aCommand := DBCommand new &sqlite_cnn:$self &sql:"SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';".
 
-        #var(array_list)nameOfTables := ArrayList new.
+        array_list nameOfTables := ArrayList new.
         
-        #loop (aCommand evalNext)?
+        while (aCommand evalNext)
         [
             nameOfTables += aCommand getAt &int:0.
         ].
@@ -133,142 +131,142 @@
         ^ nameOfTables.
     ]
 
-    #method close
+    close
     [
-        theOpen
-            ? [ system'external'sqlite3 sqlite3_close &int:theDBHandle. ].
+        if (theOpen)
+            [ system'external'sqlite3 sqlite3_close &int:theDBHandle. ].
             
         theOpen := false.
     ]
     
-    #method free <= %close.    
+    free 
+        <= close.    
 }
 
 // --- Commnad ---
 
-#class(sealed) DBCommand
+sealed class DBCommand
 {
-    #field(sqlite_cnn) theConnection.
-    #field(handle)     theCommandHandle.
+    sqlite_cnn theConnection.
+    handle     theCommandHandle.
     
-    #constructor new &sqlite_cnn:aConnection &sql:aText
+    constructor new &sqlite_cnn:aConnection &sql:aText
     [
         theConnection := aConnection.
             
-        theConnection is &available ! [ #throw DBException new &message:"SQLite database is not open.". ].
+        ifnot (theConnection is &available) [ DBException new &message:"SQLite database is not open." raise. ].
 
         $self $prepare &literal:(aText literal).
     ]
     
-    #method sqlite_cmd = $self.
+    sqlite_cmd = $self.
     
-    #method handle = theCommandHandle.
+    handle = theCommandHandle.
     
-    #method $prepare &literal:aText
+    $prepare &literal:aText
     [
-        #var(int) aHandle. 
-        #var(int)aTextLen := aText length.
+        int aHandle := 0. 
+        int aTextLen := aText length.
         
-        #var(int) aRetVal := system'external'sqlite3 sqlite3_prepare_v2
+        int aRetVal := system'external'sqlite3 sqlite3_prepare_v2
                                                 &int:(theConnection int)
                                                 &literal:aText
                                                 &int:aTextLen
                                                 &vint:aHandle
                                                 &int:0.
-        (aRetVal != SQLITE_OK)? [ #throw DBException new &message:(theConnection last_error_message). ].
+        if (aRetVal != SQLITE_OK) [ DBException new &message:(theConnection last_error_message) raise. ].
         
         theCommandHandle := aHandle.
     ]
     
-    #method eval
+    eval
     [
-        #var(int) aRetPrc := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
+        int aRetPrc := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
 
-        (aRetPrc != SQLITE_DONE)? [ #throw DBException new &message:"Could not execute SQL statement.". ].
+        if (aRetPrc != SQLITE_DONE) [ DBException new &message:"Could not execute SQL statement." raise. ].
     ]
     
-    #method(bool) evalNext
+    bool evalNext
     [
-        #var(int) aRetPrc := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
+        int aRetPrc := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
 
         ^ (aRetPrc == SQLITE_ROW).
     ]
     
-    #method(stacksafe) evalScalar
+    stacksafe evalScalar
     [
-        #var(int) aRetPrc := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
+        int aRetPrc := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
 
         (aRetPrc != SQLITE_ROW)? [ ^ $nil. ].
 
         ^ $self getAt &int:0.                
     ]
     
-    #method sqlite_reader = sqlite'DBReader new &sqlite_cmd:$self sqlite_reader.
+    sqlite_reader = sqlite'DBReader new &sqlite_cmd:$self sqlite_reader.
     
-    #method enumerator = sqlite'DBReader new &sqlite_cmd:$self enumerator.
+    enumerator = sqlite'DBReader new &sqlite_cmd:$self enumerator.
     
-    #method(stacksafe) getAt &int:anIndex
+    stacksafe getAt &int:anIndex
     [
-        #var(int) columnType := system'external'sqlite3 sqlite3_column_type &int:theCommandHandle &int:anIndex.
+        int columnType := system'external'sqlite3 sqlite3_column_type &int:theCommandHandle &int:anIndex.
         
-        (columnType == SQLITE_INTEGER)?
-        [
-            #var(int) val := system'external'sqlite3 sqlite3_column_int &int:theCommandHandle &int:anIndex.
-            
-            ^ IntNumber new &int:val.
-        ].
+        columnType =>
+            SQLITE_INTEGER 
+                [
+                    int val := system'external'sqlite3 sqlite3_column_int &int:theCommandHandle &int:anIndex.
+                    
+                    ^ IntNumber new &int:val.
+                ];
+            SQLITE_TEXT
+                [
+                    dirty_ptr aColumnTextPtr := system'external'sqlite3 sqlite3_column_text &int:theCommandHandle &int:anIndex.
         
-        (columnType == SQLITE_TEXT)?
-        [
-            #var(dirty_ptr)aColumnTextPtr := system'external'sqlite3 sqlite3_column_text &int:theCommandHandle &int:anIndex.
-
-            ^ aColumnTextPtr literal.
-        ].
+                    ^ aColumnTextPtr literal.
+                ];
+            SQLITE_FLOAT
+                [
+                    real val := system'external'sqlite3 sqlite3_column_double &int:theCommandHandle &int:anIndex.
+                    
+                    ^ RealNumber new &real:val.
+                ];
+            SQLITE_BLOB
+                [
+                    dirty_ptr blob := system'external'sqlite3  sqlite3_column_blob &int:theCommandHandle &int:anIndex.
+                    int len := system'external'sqlite3 sqlite3_column_bytes &int:theCommandHandle &int:anIndex.
+                    
+                    bytearray arr := ByteArray new &int:len.
         
-        (columnType == SQLITE_FLOAT)?
-        [
-            #var(real) val := system'external'sqlite3 sqlite3_column_double &int:theCommandHandle &int:anIndex.
-            
-            ^ RealNumber new &real:val.
-        ].
-
-        (columnType == SQLITE_BLOB)?
-        [
-            #var(dirty_ptr)blob := system'external'sqlite3  sqlite3_column_blob &int:theCommandHandle &int:anIndex.
-            #var(int)len := system'external'sqlite3 sqlite3_column_bytes &int:theCommandHandle &int:anIndex.
-            
-            #var(bytearray)arr := ByteArray new &int:len.
-
-            blob read &bytearray:arr &int:len.
-
-            ^ arr.            
-        ].
-
-        (columnType == SQLITE_NULL)?
-        [
-            ^ $nil.
-        ].
-
-        #throw DBException new &message:"Unsupported type".
+                    blob read &bytearray:arr &int:len.
+        
+                    ^ arr.
+                ];
+            SQLITE_NULL
+                [
+                    ^ $nil.
+                ];
+            !
+                [
+                    DBException new &message:"Unsupported type" raise.
+                ].
     ]
     
-    #method(stacksafe) readFieldCount &vint:aCount
+    stacksafe readFieldCount &vint:aCount
     [
-        #var(int) ret := system'external'sqlite3 sqlite3_column_count &int:theCommandHandle.
+        int ret := system'external'sqlite3 sqlite3_column_count &int:theCommandHandle.
         
         aCount := ret.
     ]
     
-    #method(array) sql_field_names
+    array sql_field_names
     [
-        #var(int)field_count.
+        int field_count := 0.
         $self readFieldCount &vint:field_count.
         
-        #var(array) names := Array new &int:field_count.
-        #var(int) i := 0.
-        #loop (i < field_count)?
+        array names := Array new &int:field_count.
+        int i := 0.
+        while (i < field_count)
         [
-            #var(dirty_ptr)aColumnNamePtr := system'external'sqlite3 sqlite3_column_origin_name &int:theCommandHandle &int:i.
+            dirty_ptr aColumnNamePtr := system'external'sqlite3 sqlite3_column_origin_name &int:theCommandHandle &int:i.
             
             names setAt &int:i &object:(aColumnNamePtr literal).
             
@@ -278,10 +276,10 @@
         ^ names.
     ]
     
-    #method free
+    free
     [
-        #var(int) aRetVal := system'external'sqlite3 sqlite3_finalize &int:theCommandHandle.
+        int aRetVal := system'external'sqlite3 sqlite3_finalize &int:theCommandHandle.
         
-        (aRetVal != SQLITE_OK) ? [ #throw DBException new &message:"Could not finalize SQL statement.". ].
+        if (aRetVal != SQLITE_OK) [ DBException new &message:"Could not finalize SQL statement." raise. ].
     ]
 }
