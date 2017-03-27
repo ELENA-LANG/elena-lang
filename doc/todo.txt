@@ -11,6 +11,10 @@ In development:
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
 
               zdev 
+                 * js script : print("Hello");
+                 * js script : print('Hello');
+                 * debug tape
+                 * debug script generated code
                  * scripting library : language interpreter
 
 ------                                 

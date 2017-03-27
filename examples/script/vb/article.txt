@@ -108,3 +108,28 @@ Now let's customize it a little bit - we will provide a grammar in the command l
        ]
    }.
 
+
+Let's start with interpreting a simple JavaScript code:
+  
+   print("Hello");
+
+We should turn it into the following code using grammar rules:
+
+root
+(
+   singleton identifier = program
+   (
+       method message = eval
+       (
+          expression
+          (
+             reference = system'console 
+             message = writeLine
+             literal = "Hello World"
+          )  
+       )
+   )
+)   
+
+This script can be compiled as a library or converted into a tape
+
