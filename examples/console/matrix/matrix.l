@@ -60,7 +60,7 @@ control =
     proceed : aChoice
     [
         ^ aChoice =>
-            "1" ? 
+            "1"
             [
                 console write:"Enter the order of matrix: ".
                 var N := console readLine:(Integer new).
@@ -76,8 +76,8 @@ control =
                 var aSum := aMatrixA + aMatrixB.
 
                 ^ aSum literal.
-            ]
-            "2" ? [
+            ];
+            "2" [
                 console write:"Enter the order of matrix: ".
                 var N := console readLine:(Integer new).
                 
@@ -92,8 +92,8 @@ control =
                 var aDiff := aMatrixA - aMatrixB.
 
                 ^ aDiff literal.
-            ]
-            "3" ? [
+            ];
+            "3" [
                 console write:"Enter the order of matrix: ".
                 var N := console readLine:(Integer new).
                 
@@ -108,8 +108,8 @@ control =
                 var aProduct := aMatrixA * aMatrixB.
 
                 ^ aProduct literal.
-            ]
-            "4" ? [
+            ];
+            "4" [
                 console write:"Enter the order of matrix: ".
                 var N := console readLine:(Integer new).
 
@@ -118,16 +118,16 @@ control =
                 console writeLine writeLine:"Output:".
 
                 ^ aMatrixA determinant.
-            ]
-            "5" ? [
+            ];
+            "5" [
                 console write:"Enter the order of matrix: ".
                 var N := console readLine:(Integer new).
 
                 var identity := Matrix newIdentity &n:N.
 
                 ^ identity literal.
-            ]
-            "6" ? [
+            ];
+            "6" [
                 'program stop.
             ].
     ]

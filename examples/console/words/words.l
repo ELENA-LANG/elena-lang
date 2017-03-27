@@ -22,8 +22,8 @@ class WordList
     [
         theTotal += 1.
 
-        (theList ifExists:aWord)
-            ! [ theList append:aWord. ].
+        ifnot (theList ifExists:aWord)
+            [ theList append:aWord. ].
     ]
 
     total_words = theTotal.
@@ -65,8 +65,8 @@ Program =
     aText run &eachWord:anItem [ aList append:anItem ].
 
     console writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
-    (aList total_words > 0)
-        ? [ console writeLine:"the list of unique words:":(aList ascendant). ].
+    if (aList total_words > 0)
+        [ console writeLine:"the list of unique words:":(aList ascendant). ].
 
     console readChar. // wait for any key
 ].

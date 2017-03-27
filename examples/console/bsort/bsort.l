@@ -22,17 +22,17 @@ extension bsortOp
             int aMaxChild := 0.
             int aChild := (aCurrent * 2) + 1.
     
-            ((aChild == anEnd)or:[ (self@aChild) > (self@(aChild + 1))])
-                ? [ aMaxChild := aChild. ]  
-                ! [ aMaxChild := aChild + 1. ].
+            if ((aChild == anEnd)or:[ (self@aChild) > (self@(aChild + 1))])
+                [ aMaxChild := aChild. ];
+                [ aMaxChild := aChild + 1. ].
     
-            ((self@aCurrent) < (self@aMaxChild))
-                ? [
+            if ((self@aCurrent) < (self@aMaxChild))
+                [
                     self exchange:aCurrent:aMaxChild.
     
                     aCurrent := aMaxChild.
-                ]
-                ! [ ^ self. ].
+                ];
+                [ ^ self. ].
         ].
      ]
      

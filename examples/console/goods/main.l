@@ -40,8 +40,8 @@ class Adapter
 
     write : aLiteral
     [
-        (0 == theBM length)
-            ! [ theBM += ";". ].
+        ifnot (0 == theBM length)
+           [ theBM += ";". ].
         
         theBM += aLiteral.
     ]

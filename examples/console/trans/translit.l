@@ -4,7 +4,7 @@
 
 // --- RusLatRules ---
 
-rusLatRules =
+const rusLatRules =
 (
     { from = "а". to = "a". },
     { from = "б". to = "b". },
@@ -51,9 +51,9 @@ Transliteration = (:aText)
         var aRule := rusLatRules seek &each:
             x [ x from == aChar literal ].
                 
-        ($nil == aRule)
-            ? [ anOutput << aChar. ] 
-            ! [ anOutput << aRule to. ].
+        if ($nil == aRule)
+            [ anOutput << aChar. ];
+            [ anOutput << aRule to. ].
     ].
     
     ^ anOutput literal.
