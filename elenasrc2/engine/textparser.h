@@ -149,6 +149,8 @@ public:
    void reset()
    {
       _source->reset();
+      _row = 0;
+      _column = 0;
 
       if (!cacheLine()) {
          _position = 0;

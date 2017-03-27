@@ -17,6 +17,7 @@ bin\elc examples\console\trans\tanslit.prj
 bin\elc examples\script\interpreter\interpreter.prj
 bin\elc examples\script\calculator\calc.xprj
 bin\elc examples\script\calculator\calc.prj
+bin\elc examples\script\vb\test.prj
 rem bin\elc examples\gui\agenda\agenda.prj
 rem bin\elc examples\gui\graphs\graphs.prj
 rem bin\elc examples\gui\c_a_g\c_area_gui.prj
