@@ -8,6 +8,7 @@
 ******************************************************************************
 
 [ELENA]              
+[!] binary incompatible due to implementing issues #301
 [+] #298 : Try / catch / finally code template
 [+] #297 : if-else code template
 [+] finally code template

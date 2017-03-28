@@ -3,7 +3,29 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * samples review : JSON
+                 * if the number of arguments is bigger then 14 - argument list is used automatically
+                   e.g. obj message:a:b:c:..:p.
+
+                 * writeLine &args:args is compiled as %writeLine[] (e.g %writeLine[-1])
+
+                 * argument list should support any number of parameters, if the number of parameters is bigger than 14 it should
+                   be nil terminated
+                 * message param count value equals to 15 - means the argument list is nil terminated
+
+                 * generic handler generic writeLine &args:args - is compiled as generic handler with open argument list ;
+                   so another flag is added - vmt with open argument list generic handler - if both generic and open list
+                   generic handler is available - dispatcher tries to resolve simple generic one, if it fails - resolve
+                   open argument list generic (replacing paramCount with -1)  ; if only open argument list generic is available
+                   do it immediately (replacing paramCount with -1)
+                 * extensions should support open argument list as well : so it should be possible to declare generic extension :
+                   extension myExtension
+                   {
+                       writeLine &args:args
+                       [
+                       ]
+                   }
+                 * make binary incompatible
+                 * reimplement outputOp,intputOp and ambOperator
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
@@ -21,6 +43,7 @@ In development:
 Pipeline:
 ------                                                                                         
               xdev - generic development 
+                 * samples review : JSON
                  * (re)implement byte array field
                  * uncomment WSADATA structure
                  * basic tests
@@ -643,6 +666,8 @@ Pipeline:
                        * optimize : structure copying
                        * object.then:[ a ] => object.then:a &func1:a [ a ]
                        * try / finally template code : finally closure should be implemented only once
+                       * generic handler : if the class is limited or sealed - calling the generic handler should
+                         be direct
 
               xdev - native code optimization
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)
