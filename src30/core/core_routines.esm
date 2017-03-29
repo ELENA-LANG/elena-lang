@@ -3950,7 +3950,7 @@ labDefault:
 
 end
 
-procedure __tape.eval&jump&args$[13]
+procedure __tape.eval&jump[16]
 
   aloadsi 1
   nload
@@ -3960,7 +3960,7 @@ procedure __tape.eval&jump&args$[13]
 
 end
 
-procedure __tape.eval&jumpif&args$[14]
+procedure __tape.eval&jumpif[16]
 
   aloadsi 2
   elser labSkip const : system'true
@@ -3974,7 +3974,7 @@ labSkip:
 
 end
 
-procedure __tape.eval&go&args$[13]
+procedure __tape.eval&go[16]
 
   aloadsi 1
   nload
@@ -3987,7 +3987,7 @@ procedure __tape.eval&go&args$[13]
 
 end
 
-procedure __tape.eval&goif&args$[14]
+procedure __tape.eval&goif[16]
 
   aloadsi 2
   elser labSkip const : system'true
@@ -4004,7 +4004,7 @@ labSkip:
 
 end
 
-procedure __tape.eval&ptr&args$[13]
+procedure __tape.eval&ptr[16]
 
   newn   class : system'IntNumber 4
   bcopya
