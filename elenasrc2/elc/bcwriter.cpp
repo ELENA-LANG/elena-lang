@@ -12,6 +12,11 @@
 
 using namespace _ELENA_;
 
+inline bool isOpenArg(ref_t message)
+{
+   return (message & PARAM_MASK) == OPEN_ARG_COUNT;
+}
+
 // check if the node contains only the simple nodes
 
 bool isSimpleObject(SNode node, bool ignoreFields = false)
@@ -782,6 +787,7 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    // get
    // inc
    // elser labSearch
+   // dec               ; to skip trailing nil
    // acopyr vmt
    // create
 
@@ -805,6 +811,7 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    tape.write(bcElseR, baCurrentLabel, 0);
    tape.releaseLabel();
 
+   tape.write(bcDec);
    tape.write(bcACopyR, vmtReference | mskVMTRef);
    tape.write(bcCreate);
 
@@ -4023,6 +4030,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    bool directMode = true;
    bool argUnboxMode = false;
    bool unboxMode = false;
+   bool openArg = false;
 
    int paramCount = 0;
    int presavedCount = 0;
@@ -4072,6 +4080,12 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       current = current.nextNode();
    }
 
+   if (!argUnboxMode && isOpenArg(node.argument)) {
+      // NOTE : do not add trailing nil for result of unboxing operation
+      pushObject(tape, lxNil);
+      openArg = true;
+   }      
+
    if (!directMode && (paramCount > 1 || unboxMode)) {
       declareArgumentList(tape, paramCount);
    }
@@ -4120,8 +4134,9 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       releaseArgList(tape);
       releaseObject(tape);
    }
-   else if (paramCount > getParamCount(message) + 1) {
-      releaseObject(tape, paramCount - getParamCount(message) - 2);
+   else if (openArg) {
+      // clear open argument list, including trailing nil
+      releaseObject(tape, paramCount);
    }
 
    // unbox the arguments

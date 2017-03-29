@@ -1461,12 +1461,12 @@ sealed dispatchable(array) arrayof(object) Array
         = Array new &array:$self.
 }
 
-// --- ArgArray ---
+// --- $paramsOp ---
 
-sealed arrayof(object) ArgArray
+extension(args) $paramsOp
 {
-    stacksafe readLength &vint:aLength
-        => system'core_routines'__args.
+    stacksafe outnprop(length) readLength &vint:aLength
+        => system'core_routines'__args.            
 }
 
 // === Convertors ===

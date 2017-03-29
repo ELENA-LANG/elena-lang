@@ -33,36 +33,36 @@ dynamic group Tape
 
 extension tapeOp
 {
-    var &args:params
-    [
-        int len := params length.
-        int n := len.
-        n -= self int.
-       
-        ^ params@n.
-    ]
-    
-    stack &args:params
-    [
-        int n := self int.
-       
-        ^ params@n.
-    ]
-        
-    jumpif : offset &args:params
-        => system'core_routines'__tape.
-    
-    jump &args:params
-        => system'core_routines'__tape.
-        
-    goif : offset &args:params
-        => system'core_routines'__tape.
-    
-    go &args:params
-        => system'core_routines'__tape.
-        
-    ptr &args:params
-        => system'core_routines'__tape.
+//    var &args:params
+//    [
+//        int len := params length.
+//        int n := len.
+//        n -= self int.
+//       
+//        ^ params@n.
+//    ]
+//    
+//    stack &args:params
+//    [
+//        int n := self int.
+//       
+//        ^ params@n.
+//    ]
+//        
+//    jumpif : offset &args:params
+//        => system'core_routines'__tape.
+//    
+//    jump &args:params
+//        => system'core_routines'__tape.
+//        
+//    goif : offset &args:params
+//        => system'core_routines'__tape.
+//    
+//    go &args:params
+//        => system'core_routines'__tape.
+//        
+//    ptr &args:params
+//        => system'core_routines'__tape.
 }
 
 // --- Struct ---

@@ -126,7 +126,7 @@ struct _CompilerScope
    ref_t wideReference;
    ref_t charReference;
    ref_t arrayReference;
-   ref_t paramsReference;
+   ref_t paramsSubj;
 
    // list of typified classes which may need get&type message
    SubjectMap  subjectHints;
@@ -144,7 +144,7 @@ struct _CompilerScope
       signatureReference = verbReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
-      paramsReference = 0;
+      paramsSubj = 0;
    }
 };
 

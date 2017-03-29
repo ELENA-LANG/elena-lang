@@ -1154,7 +1154,7 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
       case V_VERB:
          return firstNonZero(scope.verbReference, scope.superReference);
       case V_ARGARRAY:
-         return firstNonZero(scope.paramsReference, scope.superReference);
+         return firstNonZero(scope.arrayReference, scope.superReference);
       default:
          return scope.superReference;
    }

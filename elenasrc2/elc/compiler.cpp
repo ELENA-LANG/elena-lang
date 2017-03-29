@@ -282,9 +282,10 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
    messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
    verbReference = mapReference(project->resolveForward(VERB_FORWARD));
-   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
    arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
    boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
+
+   paramsSubj = module->mapSubject(project->resolveForward(PARAMS_SUBJFORWARD), false);
 
    // HOTFIX : package section should be created if at least literal class is declated
    if (literalReference != 0) {
@@ -1076,7 +1077,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 
       int local = param.offset;
       if (local >= 0) {
-         if (withOpenArg && moduleScope->subjectHints.exist(param.subj_ref, moduleScope->paramsReference)) {
+         if (withOpenArg && param.subj_ref == moduleScope->paramsSubj) {
             return ObjectInfo(okParams, -1 - local, 0, param.subj_ref);
          }
          else if (stackSafe && param.subj_ref != 0 && param.size != 0) {
@@ -1738,7 +1739,7 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
          ident_t name = (current == lxIdentifier) ? current.identifier() : current.findChild(lxIdentifier, lxPrivate).identifier();
          Parameter param = scope.parameters.get(name);
          if (param.offset != -1) {
-            if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->paramsReference)) {
+            if (param.subj_ref == moduleScope->paramsSubj) {
                writer.newNode(lxParamsVariable);
             }
             else if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->intReference)) {
@@ -2320,7 +2321,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okParams:
          writer.newNode(lxArgBoxing, 0);
          writer.appendNode(lxBlockLocalAddr, object.param);
-         writer.appendNode(lxTarget, scope.moduleScope->paramsReference);
+         writer.appendNode(lxTarget, scope.moduleScope->arrayReference);
          break;
       case okObject:
          writer.newNode(lxResult, 0);
@@ -2489,20 +2490,13 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
          else if (message[i] == '[') {
             int len = getlength(message);
             if (message[i+1] == ']') {
-               //HOT FIX : support open argument list
                paramCount = OPEN_ARG_COUNT;
             }
             else if (message[len - 1] == ']') {
-               if (message[len - 2] == ',') {
-                  signature.copy(message + i + 1, len - i - 3);
-                  paramCount = signature.ident().toInt() + OPEN_ARG_COUNT;
-               }
-               else {
-                  signature.copy(message + i + 1, len - i - 2);
-                  paramCount = signature.ident().toInt();
-                  if (paramCount > 12)
-                     scope.raiseError(errInvalidSubject, terminal);
-               }
+               signature.copy(message + i + 1, len - i - 2);
+               paramCount = signature.ident().toInt();
+               if (paramCount >= OPEN_ARG_COUNT)
+                  scope.raiseError(errInvalidSubject, terminal);
             }
             else scope.raiseError(errInvalidSubject, terminal);
 
@@ -2524,15 +2518,6 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
          if (verb_id != 0) {
             signature.clear();
          }
-      }
-
-      if (paramCount >= OPEN_ARG_COUNT) {
-         // HOT FIX : support open argument list
-         ref_t openArgType = retrieveKey(scope.moduleScope->subjectHints.start(), scope.moduleScope->paramsReference, 0);
-         if (!emptystr(signature))
-            signature.append('&');
-
-         signature.append(scope.moduleScope->module->resolveSubject(openArgType));
       }
    }
 
@@ -2587,7 +2572,7 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
    return retVal;
 }
 
-ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*, bool& argsUnboxing*/)
+ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 {
    bool   first = true;
    ref_t  verb_id = 0;
@@ -2622,8 +2607,8 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
    // if message has generic argument list
    while (test(arg.type, lxObjectMask)) {
       paramCount++;
-      if (paramCount > 0x0F)
-         scope.raiseError(errNotApplicable, node);
+      if (paramCount >= OPEN_ARG_COUNT)
+         scope.raiseError(errInvalidOperation, node);
 
       arg = arg.nextNode();
    }
@@ -2643,24 +2628,31 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
       ref_t subjRef = scope.mapSubject(subject, signature);
 //      arg.setArgument(subjRef);
 
+      // skip an argument
       arg = arg.nextNode();
 
-      // HOTFIX : if it was already compiled as open argument list
-      if (arg.type == lxIdle && scope.moduleScope->subjectHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-         paramCount += OPEN_ARG_COUNT;
+      //// HOTFIX : if it was already compiled as open argument list
+      //if (arg.type == lxIdle && scope.moduleScope->subjectHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+      //   paramCount += OPEN_ARG_COUNT;
 
-         break;
-      }
-      // skip an argument
-      else if (test(arg.type, lxObjectMask)) {
+      //   break;
+      //}
+      /*else */if (test(arg.type, lxObjectMask)) {
          // if it is an open argument list
-         if (arg.nextNode() == lxNone && scope.moduleScope->subjectHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-            paramCount += OPEN_ARG_COUNT;
+         if (arg.nextNode() == lxNone && subjRef == scope.moduleScope->paramsSubj) {
+            // if open argument list virtual subject is used - replace it with []
+            if (paramCount > 0)
+               scope.raiseError(errInvalidOperation, node);
+
+            paramCount = OPEN_ARG_COUNT;
+            signature.truncate(signature.ident().findLast('&', 0));
 
             break;
          }
          else {
             paramCount++;
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errInvalidOperation, node);
 
             arg = arg.nextNode();
          }
@@ -3087,10 +3079,6 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
    ObjectInfo target;
 
    int paramMode = 0;
-   //// HOTFIX : if open argument list has to be unboxed
-   //// alternative boxing routine should be used (using a temporal variable)
-   //if (argsUnboxing)
-   //   paramMode |= HINT_ALTBOXING;
 
    SNode arg = node.firstChild();
    if (test(mode, HINT_RESENDEXPR) && (arg == lxMessage && arg.nextNode() != lxMessage)) {
@@ -3154,7 +3142,7 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
       // compile an argument
       if (test(arg.type, lxObjectMask)) {
          // if it is an open argument list
-         if (arg.nextNode() != lxMessage && scope.moduleScope->subjectHints.exist(subjectRef, scope.moduleScope->paramsReference)) {
+         if (arg.nextNode() != lxMessage && subjectRef == scope.moduleScope->paramsSubj) {
             if (arg == lxExpression) {
                SNode argListNode = arg.firstChild();
                while (argListNode != lxNone) {
@@ -3162,9 +3150,6 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
 
                   argListNode = argListNode.nextNode();
                }
-
-               // terminator
-               writeTerminal(writer, arg, scope, ObjectInfo(okNil), HINT_NODEBUGINFO);
             }
             else {
                writer.newBookmark();
@@ -3172,10 +3157,6 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
                if (argListParam.kind == okParams) {
                   writer.insert(lxArgUnboxing);
                   writer.closeNode();
-               }
-               else {
-                  // treat it like an argument list with one parameter
-                  node.appendNode(lxNil);
                }
                writer.removeBookmark();
             }
@@ -3210,7 +3191,6 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 {
    writer.newBookmark();
 
-   //   bool argsUnboxing = false;
    size_t paramCount = 0;
    ObjectInfo retVal;
    ObjectInfo target = compileMessageParameters(writer, node, scope, mode & HINT_RESENDEXPR);
@@ -4297,14 +4277,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    ref_t verb_id = 0;
    ref_t sign_id = 0;
 
-//   if (scope.message != 0) {
-//      verb_id = getVerb(scope.message);
-//   }
-
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
    SNode arg = node.findChild(lxMethodParameter, lxMessage);
    if (verb == lxNone) {
-      if (arg == lxMessage/* && verb_id != PRIVATE_MESSAGE_ID && node != lxImplicitConstructor*/) {
+      if (arg == lxMessage) {
          verb = arg;
          arg = verb.nextNode();
 
@@ -4349,10 +4325,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    // if method has named argument list
    while (arg == lxMessage) {
       SNode subject = arg.findChild(lxIdentifier, lxPrivate, lxReference);
-//      //HOTFIX : to support script
-//      if (subject == lxNone)
-//         subject = arg;
-
       if (!first) {
          signature.append('&');
       }
@@ -4371,7 +4343,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          int index = 1 + scope.parameters.Count();
 
          // if it is an open argument type
-         if (scope.moduleScope->subjectHints.exist(subj_ref, scope.moduleScope->paramsReference)) {
+         if (subj_ref == scope.moduleScope->paramsSubj) {
             scope.parameters.add(name, Parameter(index, subj_ref));
 
             // the generic arguments should be free by the method exit
@@ -4380,8 +4352,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
             // to indicate open argument list
             paramCount += OPEN_ARG_COUNT;
-            if (paramCount > 0xF)
+            if (paramCount > OPEN_ARG_COUNT)
                scope.raiseError(errNotApplicable, arg);
+
+            // to clear virtual open argument subject
+            signature.truncate(signature.ident().findLast('&', 0));
          }
          else {
             paramCount++;
@@ -5803,75 +5778,45 @@ ref_t Compiler :: optimizeInternalCall(SNode node, ModuleScope& scope, WarningSc
    return V_INT32;
 }
 
-//////void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warningScope)
-//////{
-//////   int mode = 0;
-//////
-////////   bool stackSafe = false;
-////////   bool methodNotFound = false;
-//////   SNode target = node.findChild(lxCallTarget);
-//////   if (target.argument != 0) {
-//////
-//////      int hint = checkMethod(scope, target.argument, node.argument);
-//////
-//////      if (test(hint, tpStackSafe))
-//////         mode |= HINT_NOBOXING;
-//////
-//////      if (test(hint, tpEmbeddable)) {
-//////         if (!_logic->optimizeEmbeddable(node, scope))
-//////            node.appendNode(lxEmbeddable);
-//////      }
-//////   }
-//////
-//////   optimizeSyntaxExpression(scope, node, warningScope, mode);
-//////
-//////   //HOTFIX : if the same object boxed two times in the calling expression - only the one copy should be used
-//////   //_logic->optimizeDuplicateBoxing(node);
-//////
-//////   if (node.existChild(lxTypecastAttr)) {
-//////      warningScope.raise(scope, WARNING_LEVEL_2, wrnTypeMismatch, node.firstChild(lxObjectMask));
-//////   }
-//////   else if (node.existChild(lxNotFoundAttr)) {
-//////      warningScope.raise(scope, WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxBreakpoint));
-//////   }
-//////}
-////
-////void Compiler :: optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScope& warningScope)
+////void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warningScope)
 ////{
-////   SNode object = node.firstChild(lxObjectMask);
-////   if (object == lxArgBoxing)
-////      object = lxExpression;
+////   int mode = 0;
 ////
-////   optimizeSyntaxExpression(scope, node, warningScope);
-////}
+//////   bool stackSafe = false;
+//////   bool methodNotFound = false;
+////   SNode target = node.findChild(lxCallTarget);
+////   if (target.argument != 0) {
 ////
-////void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
-////{
-////   SNode target = node.findChild(lxTarget);
-////   if (_logic->isPrimitiveRef(target.argument)) {
-////      target.setArgument(_logic->resolvePrimitiveReference(scope, target.argument));
+////      int hint = checkMethod(scope, target.argument, node.argument);
+////
+////      if (test(hint, tpStackSafe))
+////         mode |= HINT_NOBOXING;
+////
+////      if (test(hint, tpEmbeddable)) {
+////         if (!_logic->optimizeEmbeddable(node, scope))
+////            node.appendNode(lxEmbeddable);
+////      }
 ////   }
 ////
-////   optimizeSyntaxExpression(scope, node, warningScope, HINT_NOBOXING);
+////   optimizeSyntaxExpression(scope, node, warningScope, mode);
 ////
-////   SNode exprNode = node.findSubNodeMask(lxObjectMask);
-////   if (exprNode == lxNewOp) {
-////      exprNode.setArgument(target.argument);
+////   //HOTFIX : if the same object boxed two times in the calling expression - only the one copy should be used
+////   //_logic->optimizeDuplicateBoxing(node);
 ////
-////      node = lxExpression;
+////   if (node.existChild(lxTypecastAttr)) {
+////      warningScope.raise(scope, WARNING_LEVEL_2, wrnTypeMismatch, node.firstChild(lxObjectMask));
 ////   }
-////   else {
-////      bool boxing = !test(mode, HINT_NOBOXING);
-////      // HOTFIX : do not box constant classes
-////      if (exprNode == lxConstantInt && target.argument == scope.intReference) {
-////         boxing = false;
-////      }
-////      else if (exprNode == lxConstantSymbol && target.argument == scope.intReference) {
-////         boxing = false;
-////      }
-////
+////   else if (node.existChild(lxNotFoundAttr)) {
+////      warningScope.raise(scope, WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxBreakpoint));
 ////   }
 ////}
+
+ref_t Compiler :: optimizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
+{
+   optimizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
+
+   return 0;
+}
 
 int Compiler :: allocateStructure(SNode node, int& size)
 {
@@ -6100,6 +6045,15 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
    return targetRef; 
 }
 
+ref_t Compiler :: optimizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
+{
+   bool boxing = !test(mode, HINT_NOBOXING);
+   if (!boxing)
+      node = lxExpression;
+
+   return scope.arrayReference;
+}
+
 ref_t Compiler :: optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope)
 {
    ObjectInfo result = scope.defineObjectInfo(node.argument, true);
@@ -6163,6 +6117,10 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxCondBoxing:
       case lxUnboxing:
          return optimizeBoxing(current, scope, warningScope, mode);
+      case lxArgBoxing:
+         return optimizeArgBoxing(current, scope, warningScope, mode);
+      case lxArgUnboxing:
+         return optimizeArgUnboxing(current, scope, warningScope, mode);
       case lxAssigning:
          return optimizeAssigning(current, scope, warningScope);
       case lxSymbolReference:
@@ -6176,6 +6134,7 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxArrOp:
       case lxBinArrOp:
       case lxNewOp:
+      case lxArgArrOp:
          return optimizeOp(current, scope, warningScope);
       case lxInternalCall:
          return optimizeInternalCall(current, scope, warningScope);

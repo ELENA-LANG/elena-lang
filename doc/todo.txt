@@ -3,16 +3,87 @@ In development:
 ------                              
 
               xdev - generic development 
+                 * generic method with open argument list
+                     - should be injected into class dispatcher
+                     - if class does not contain generic methods:
+                          bsredirect
+                          ; copy the call stack
+                          ; change param count
+                          ; call the method
+                          ; clear parameter list
+
+
+                     - if class contains generic methods, first try to resolve generic methods if not
+                       then replace param count with -1, copy the param list into the stack adding nil
+                       and then call the generic open argument list and release it after the operation
+
+                 * declaring / using:
+                         - generic testWrite &args:args []  // eval&testWrite[] - will be called for any unmapped call
+                         - testWrite &args:args []          // eval&testWrite[]
+
+                      calling
+                         obj testWriter &args:(1,2,3)     // explicit argument list, compiled as testWriter[]
+                         obj testWriter:1:2:3:..:16       // implicit call
+
+                 * implementing:
+                      - if the param count is not -1 - insert nil to the end???
+                      - the same inside generic handler, if there are normal generic handlers - try to
+                        resolve them before injecting nil and convert message
+
+                 * declaring method with open argument list
+                     - vgeneric testWrite:args          - eval&testWrite[]
+                     - generic testWrite &args:args     - eval&testWrite[]
+
+                  //    vgeneric testWrite:args
+                  //    [        
+
+                  //    ]
+                  //    generic testWrite &args:args
+                  //    [        
+
+                  //    ]
+
+                 * support message / extension message with open argument list
+
+                 * declaring argument list : 
+                  //    params testWrite:args
+                  //    [        
+                             // int length := args length.
+
+
+
+                  //    ]
+
+
+    params writeLiteral:Arguments
+    [
+        int aLength := $subject length.
+        int anIndex := 0.
+        while (anIndex < aLength) 
+        [
+            self write:((Arguments @ anIndex)::convertorOp toLiteral).
+            
+            anIndex += 1.
+        ].
+    ]
+
+
+                 * argument list should support any number of parameters, if the number of parameters is bigger than 14 it should
+                   be nil terminated
+
                  * if the number of arguments is bigger then 14 - argument list is used automatically
                    e.g. obj message:a:b:c:..:p.
 
                  * writeLine &args:args is compiled as %writeLine[] (e.g %writeLine[-1])
 
-                 * argument list should support any number of parameters, if the number of parameters is bigger than 14 it should
-                   be nil terminated
                  * message param count value equals to 15 - means the argument list is nil terminated
+                 * method cannot have argument list count which is equal or bigger than 15
+
+                 * test open argument list : implicit and explicit
 
                  * generic handler generic writeLine &args:args - is compiled as generic handler with open argument list ;
+                   generic params writeLine:args
+
                    so another flag is added - vmt with open argument list generic handler - if both generic and open list
                    generic handler is available - dispatcher tries to resolve simple generic one, if it fails - resolve
                    open argument list generic (replacing paramCount with -1)  ; if only open argument list generic is available
@@ -26,6 +97,9 @@ In development:
                    }
                  * make binary incompatible
                  * reimplement outputOp,intputOp and ambOperator
+                 * extension method should not be called implicitly inside itself
+
+                 * uncomment tapeOp
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
@@ -250,6 +324,7 @@ Pipeline:
                  * duplicate assigning : mssg(10) properties := 0. mssg message := properties@0.
                  * #300 : Code template closure 
                  * finally code template with assigning
+                 * args subject should be allowed to be used only in message expression
 
               zdev 
                  * gui script
@@ -668,6 +743,7 @@ Pipeline:
                        * try / finally template code : finally closure should be implemented only once
                        * generic handler : if the class is limited or sealed - calling the generic handler should
                          be direct
+                       * generic handlers for known sealed / limited objects should be resolved immediately
 
               xdev - native code optimization
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)

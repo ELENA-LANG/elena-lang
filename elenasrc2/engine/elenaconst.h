@@ -24,7 +24,7 @@ namespace _ELENA_
    #define SIGN_MASK               0x00FFFFF0u
    #define PARAM_MASK              0x0000000Fu
    #define MESSAGE_MASK            0x80000000u
-   #define OPEN_ARG_COUNT          0x0C
+   #define OPEN_ARG_COUNT          0x0F
 
    #define VERBX_MASK              0x7F00000000000000u
    #define SIGNX_MASK              0x00FFFFFFFFFF0000u
@@ -529,8 +529,9 @@ namespace _ELENA_
    #define SIGNATURE_FORWARD        "'$signature"
    #define VERB_FORWARD             "'$verb"
    #define ARRAY_FORWARD            "'$array"
-   #define PARAMS_FORWARD           "'$params"
    #define BOOL_FORWARD             "'$bool"
+
+   #define PARAMS_SUBJFORWARD       "'$$params"
 
    #define STARTUP_CLASS            "'startUp"
 

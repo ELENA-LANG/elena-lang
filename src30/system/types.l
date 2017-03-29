@@ -78,7 +78,6 @@
 #subject realmatrix = system'RealMatrix.
 #subject chararray  = system'CharArray.
 #subject array      = system'Array.
-#subject args       = system'ArgArray.
 //#subject mssgarray  = system'MessageArray.
 #subject bitarray   = system'BitArray.
 #subject bitset     = system'BitArray32.
@@ -122,3 +121,6 @@
 
 // --- Generic attributes ---
 #subject object.
+
+// --- Virtual subjects ---
+#subject args.

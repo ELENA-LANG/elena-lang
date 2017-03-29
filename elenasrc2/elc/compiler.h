@@ -996,6 +996,8 @@ private:
    ref_t optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
+   ref_t optimizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
+   ref_t optimizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
    ref_t optimizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    ref_t optimizeInternalCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
