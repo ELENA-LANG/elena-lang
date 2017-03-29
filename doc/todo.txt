@@ -3,13 +3,8 @@ In development:
 ------                              
 
               xdev - generic development 
-                 * generic extension with open argument list
-
-                 * support message / extension message with open argument list
-
-                 * reimplement outputOp,intputOp and ambOperator
-                 * extension method should not be called implicitly inside itself
                  * uncomment tapeOp
+                 * test calendar
 
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
@@ -239,6 +234,8 @@ Pipeline:
                    continiue with open arg resending
                  * redirect dispatch method and open argument list generic 
                  * redirect dispatch method generics and open argument list generic 
+                 * extension method should not be called implicitly inside itself
+
               zdev 
                  * gui script
                  * scripting library : elena script (both run-time / compile-time)
@@ -255,6 +252,7 @@ Pipeline:
                  * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray
                  * implement date/time formatting
                  * Struct should support set method
+                 * formatterOp should support padding (like in C#)
 
               xdev - x64 platform
                 * ReferenceMap should be redesigned (introducing )

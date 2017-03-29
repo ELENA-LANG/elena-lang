@@ -65,7 +65,7 @@ class AmbValueCollection
 
 ambOperator =
 {
-    for &args:Arguments
+    generic for &args:Arguments
         = AmbValueCollection new &args:Arguments.
 }.
 
@@ -73,7 +73,7 @@ ambOperator =
 
 program1 =
 [
-    ambOperator for &args:((1,2,4),(4,5,6)) seek: (:a:b) [ a * b == 8 ] do: (:a:b)
+    ambOperator for:(1,2,4):(4,5,6) seek: (:a:b) [ a * b == 8 ] do: (:a:b)
         [ console writeLine: a : " * " : b : " = 8" ]
         | if &InvalidArgumentError: e [ console writeLine:"AMB is angry". ].
         
@@ -83,7 +83,7 @@ program1 =
 program2 =
 [
     ambOperator 
-        for &args:(("the","that","a"),("frog", "elephant", "thing"),("walked", "treaded", "grows"),("slowly", "quickly"))
+        for:("the","that","a"):("frog", "elephant", "thing"):("walked", "treaded", "grows"):("slowly", "quickly")
         seek: (:a:b:c:d) [ (joinable eval:a:b) and:(joinable eval:b:c) and:(joinable eval:c:d) ]
         do: (:a:b:c:d) [ console writeLine:a:" ":b:" ":c:" ":d. ]
         | if &InvalidArgumentError: e [ console writeLine:"AMB is angry". ].
