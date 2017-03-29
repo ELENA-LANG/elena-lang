@@ -728,6 +728,15 @@ inline ref_t overwriteVerb(ref_t message, int verb)
 
 }
 
+inline ref_t overwriteParamCount(ref_t message, int paramCount)
+{
+   message &= ~PARAM_MASK;
+   message |= paramCount;
+
+   return message;
+
+}
+
 inline void decodeMessage(ref_t message, ref_t& signatureRef, ref_t& verbId, int& paramCount)
 {
    verbId = (message & VERB_MASK) >> 24;

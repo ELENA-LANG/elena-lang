@@ -240,7 +240,14 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
       if (test(info.header.flags, elWithCustomDispatcher))
          result.withCustomDispatcher = true;
 
-      return checkMethod(info, message, result);
+      int hint = checkMethod(info, message, result);
+      if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
+         hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT), result);
+         if (hint != tpUnknown)
+            result.withOpenArgDispatcher = true;
+      }
+
+      return hint;
    }
    else return tpUnknown;
 }

@@ -2996,7 +2996,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    }
    else if (callType == tpClosed || callType == tpSealed) {
       operation = callType == tpClosed ? lxSDirctCalling : lxDirectCalling;
-      argument = messageRef;
+      argument = result.withOpenArgDispatcher ? overwriteParamCount(messageRef, OPEN_ARG_COUNT) : messageRef;
 
       if (result.stackSafe)
          writer.appendNode(lxStacksafeAttr);
@@ -5395,6 +5395,13 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       // save extensions if required ; private method should be ignored
       if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
          scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
+         if (isOpenArg(message) && _logic->isMethodGeneric(scope.info, message)) {
+            // if it is an extension with open argument list generic handler
+            // creates the references for all possible number of parameters
+            for (int i = 1; i < 15; i++) {
+               scope.moduleScope->saveExtension(overwriteParamCount(message, i), scope.extensionMode, scope.reference);
+            }
+         }
       }
    }
 }

@@ -181,6 +181,7 @@ public:
       bool  closed;
       bool  stackSafe;
       bool  embeddable;
+      bool  withOpenArgDispatcher;
       ref_t outputReference;
 
       ChechMethodInfo()
@@ -189,6 +190,7 @@ public:
          outputReference = 0;
          withCustomDispatcher = false;
          stackSafe = false;
+         withOpenArgDispatcher = false;
       }
    };
 
