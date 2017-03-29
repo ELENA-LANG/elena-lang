@@ -2606,9 +2606,8 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
    paramCount = 0;
    // if message has generic argument list
    while (test(arg.type, lxObjectMask)) {
-      paramCount++;
-      if (paramCount >= OPEN_ARG_COUNT)
-         scope.raiseError(errInvalidOperation, node);
+      if (paramCount < OPEN_ARG_COUNT)
+         paramCount++;
 
       arg = arg.nextNode();
    }
@@ -4377,10 +4376,17 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
       if (test(scope.hints, tpSealed | tpGeneric)) {
-         if (!emptystr(signature))
-            scope.raiseError(errInvalidHint, verb);
-      
-         signature.copy(GENERIC_PREFIX);
+         if (paramCount == OPEN_ARG_COUNT) {
+            // if it is a generic open argument handler - eval verb should be used
+            if (verb_id == 0)
+               verb_id = EVAL_MESSAGE_ID;
+         }
+         else {
+            if (!emptystr(signature))
+               scope.raiseError(errInvalidHint, verb);
+
+            signature.copy(GENERIC_PREFIX);
+         }
       }
       else if (verb_id == 0)
          verb_id = paramCount > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID;
@@ -4404,7 +4410,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    }
 }
 
-void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods)
+void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
 {
    writer.newNode(lxClassMethod, scope.message);
 
@@ -4418,18 +4424,37 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
 
       // if it is generic handler with redirect statement / redirect statement
       if (node != lxNone && node.firstChild(lxObjectMask) != lxNone) {
-         
+         // !! temporally
+         if (withOpenArgGenerics)
+            scope.raiseError(errInvalidOperation, node);
+
          if (withGenericMethods) {
             writer.appendNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
          }
 
          compileDispatchExpression(writer, node, codeScope);
       }
-      // if it is generic handler only
+      // if it is generic handler without redirect statement
       else if (withGenericMethods) {
+         // !! temporally
+         if (withOpenArgGenerics)
+            scope.raiseError(errInvalidOperation, node);
+
          writer.newNode(lxResending);
 
          writer.appendNode(lxMessage, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
+
+         writer.newNode(lxTarget, scope.moduleScope->superReference);
+         writer.appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));
+         writer.closeNode();
+
+         writer.closeNode();
+      }
+      // if it is open arg generic without redirect statement
+      else if (withOpenArgGenerics) {
+         writer.newNode(lxResending);
+
+         writer.appendNode(lxMessage, encodeMessage(0, DISPATCH_MESSAGE_ID, OPEN_ARG_COUNT));
 
          writer.newNode(lxTarget, scope.moduleScope->superReference);
          writer.appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));
@@ -4854,7 +4879,9 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 
                initialize(scope, methodScope);
 
-               compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope, test(scope.info.header.flags, elWithGenerics));
+               compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope, 
+                  test(scope.info.header.flags, elWithGenerics),
+                  test(scope.info.header.flags, elWithArgGenerics));
             }
             // if it is a normal method
             else {
@@ -4872,7 +4899,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
    }
 
    // if the VMT conatains newly defined generic handlers, overrides default one
-   if (test(scope.info.header.flags, elWithGenerics) && scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), false)) {
+   if (testany(scope.info.header.flags, elWithGenerics | elWithArgGenerics) && scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), false)) {
       MethodScope methodScope(&scope);
       methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
 
@@ -4880,7 +4907,9 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 
       SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
 
-      compileDispatcher(writer, SNode(), methodScope, true);
+      compileDispatcher(writer, SNode(), methodScope,
+         test(scope.info.header.flags, elWithGenerics),
+         test(scope.info.header.flags, elWithArgGenerics));
 
       // overwrite the class info
       scope.save();
@@ -5031,7 +5060,11 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 {
    methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
-   methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
+   methodScope.withOpenArg = isOpenArg(methodScope.message);
+   if (!methodScope.withOpenArg) {
+      // HOTFIX : generic with open argument list is compiled differently
+      methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
+   }   
 }
 
 //void Compiler :: includeMethod(ClassScope& scope, MethodScope& methodScope)
@@ -5330,7 +5363,12 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    generateMethodAttributes(scope, current, message);
 
    int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
-   if (_logic->isMethodGeneric(scope.info, message)) {
+   if (isOpenArg(message)) {
+      if (_logic->isMethodGeneric(scope.info, message)) {
+         scope.info.header.flags |= elWithArgGenerics;
+      }         
+   }
+   else if (_logic->isMethodGeneric(scope.info, message)) {
       scope.info.header.flags |= elWithGenerics;
    }
 

@@ -830,6 +830,11 @@ inline bool IsRealExprOperator(int operator_id)
    }
 }
 
+inline bool isOpenArg(ref_t message)
+{
+   return (message & PARAM_MASK) == OPEN_ARG_COUNT;
+}
+
 } // _ELENA_
 
 #endif // elenaH

@@ -3,15 +3,41 @@ In development:
 ------                              
 
               xdev - generic development 
+                 * default dispatch method and open argument list generic 
+
+                 * default dispatch method, generics and open argument list generic  - temporally not allowed 
+                 * redirect dispatch method and open argument list generic - temporally not allowed
+                 * redirect dispatch method generics and open argument list generic - temporally not allowed
+
                  * generic method with open argument list
                      - should be injected into class dispatcher
                      - if class does not contain generic methods:
-                          bsredirect
-                          ; copy the call stack
-                          ; change param count
-                          ; call the method
-                          ; clear parameter list
+                          pushe
+                          open 1
 
+                          ; copy the call stack
+                          bcopyf -2
+                          dcopycount
+                          inc
+                          ecopyd  
+                          dcopy 0
+                          labNextParam:
+                          get
+                          pusha
+                          next labNextParam
+
+                          ; change param count
+                          dcopyfi -1
+                          orn 0Fh
+                          ecopyd
+
+                          ; call the method
+                          aloadsi 0
+                          acallvi 0
+
+                          close
+                          pope
+                          equit
 
                      - if class contains generic methods, first try to resolve generic methods if not
                        then replace param count with -1, copy the param list into the stack adding nil
@@ -29,6 +55,8 @@ In development:
                       - if the param count is not -1 - insert nil to the end???
                       - the same inside generic handler, if there are normal generic handlers - try to
                         resolve them before injecting nil and convert message
+
+                 * generic extension with open argument list
 
                  * declaring method with open argument list
                      - vgeneric testWrite:args          - eval&testWrite[]
@@ -325,7 +353,10 @@ Pipeline:
                  * #300 : Code template closure 
                  * finally code template with assigning
                  * args subject should be allowed to be used only in message expression
-
+                 * default dispatch method, generics and open argument list generic ; first try to resolve generic, if not found -
+                   continiue with open arg resending
+                 * redirect dispatch method and open argument list generic 
+                 * redirect dispatch method generics and open argument list generic 
               zdev 
                  * gui script
                  * scripting library : elena script (both run-time / compile-time)

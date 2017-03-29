@@ -12,11 +12,6 @@
 
 using namespace _ELENA_;
 
-inline bool isOpenArg(ref_t message)
-{
-   return (message & PARAM_MASK) == OPEN_ARG_COUNT;
-}
-
 // check if the node contains only the simple nodes
 
 bool isSimpleObject(SNode node, bool ignoreFields = false)
@@ -965,6 +960,40 @@ void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
    // bsredirect
 
    tape.write(bcBSRedirect);
+}
+
+void ByteCodeWriter :: unboxMessage(CommandTape& tape)
+{
+   // ; copy the call stack
+   // bcopyf -2
+   // dcopycount
+   // 
+   // inc
+   // pushn 0
+   // labNextParam:
+   // get
+   // pusha
+   // dec
+   // elsen labNextParam 0
+   // ; change param count
+   // dcopyfi - 1
+   // orn 0Fh
+   // ecopyd
+
+   tape.write(bcBCopyF, -2);
+   tape.write(bcDCopyCount);
+   tape.write(bcInc);
+   tape.write(bcPushN, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcGet);
+   tape.write(bcPushA);
+   tape.write(bcDec);
+   tape.write(bcElseN, baCurrentLabel, 0);
+   tape.releaseLabel();
+   tape.write(bcDLoadFI, -1);
+   tape.write(bcOrN, OPEN_ARG_COUNT);
+   tape.write(bcECopyD);
 }
 
 void ByteCodeWriter :: resend(CommandTape& tape)
@@ -4659,10 +4688,23 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
    SNode target = node.findChild(lxTarget);
    if (node.argument == 0) {
       SNode message = node.findChild(lxMessage);
+      if (message.argument == encodeMessage(0, DISPATCH_MESSAGE_ID, OPEN_ARG_COUNT)) {
+         // if it is open argument dispatching
+         pushObject(tape, lxCurrentMessage);
+         tape.write(bcOpen, 1);
 
-      pushObject(tape, lxCurrentMessage);
-      setSubject(tape, message.argument);
-      resendResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument);
+         unboxMessage(tape);
+         callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument, false);
+
+         closeFrame(tape);
+         popObject(tape, lxCurrentMessage);
+         tape.write(bcEQuit);
+      }
+      else {
+         pushObject(tape, lxCurrentMessage);
+         setSubject(tape, message.argument);
+         resendResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument);
+      }
    }
    else {
       SNode current = node.firstChild();

@@ -187,6 +187,7 @@ class ByteCodeWriter
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 
    void doGenericHandler(CommandTape& tape);
+   void unboxMessage(CommandTape& tape);
    void resend(CommandTape& tape);
    void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
