@@ -17,6 +17,8 @@ extension outputOp
             
             i += 1.
         ].
+        
+        ^ self.
     ]
     
     generic writeWide &args:list
@@ -31,6 +33,8 @@ extension outputOp
             
             i += 1.
         ].
+        
+        ^ self.
     ]
 
     generic writeLine &args:list
@@ -46,7 +50,7 @@ extension outputOp
             i += 1.
         ].
         
-        self writeLine.
+        ^ self writeLine.
     ]
 
     generic writeWideLine &args:list
@@ -62,7 +66,7 @@ extension outputOp
             i += 1.
         ].
         
-        self writeLine.
+        ^ self writeLine.
     ]        
 }
 
@@ -117,7 +121,7 @@ extension formatterOp
                     i := i + 1.
                     
                     $helper readIndex &literal:s &vint:i &vint:index.
-                    buffer write:((args@index)::convertorOp toLiteral).
+                    buffer write:((args@(index + 1))::convertorOp toLiteral).
                     
                     chlen := 1.
                 ];

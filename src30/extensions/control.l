@@ -55,22 +55,22 @@ extension loopOp
     ]
 }
 
-//// --- testOp ---
-//
-//#class(extension)testOp
-//{
-//    #method assert &ifTrue
-//    [
-//        self bool
-//            ! [ console writeLine:"Assertion fails!" ].
-//    ]
-//    
-//    #method assert &ifFalse
-//    [
-//        self bool
-//            ? [ console writeLine:"Assertion fails!" ].
-//    ]
-//}
+// --- testOp ---
+
+extension testOp
+{
+    assert &ifTrue
+    [
+        ifnot (self)
+            [ console writeLine:"Assertion fails!" ].
+    ]
+    
+    assert &ifFalse
+    [
+        if(self)
+            [ console writeLine:"Assertion fails!" ].
+    ]
+}
 
 // --- controlOp ---
 

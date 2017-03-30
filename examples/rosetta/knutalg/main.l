@@ -8,21 +8,22 @@ extension algorithmOp
     s_of_n
     [
         var counter := Integer new.
+        var n := self.
         
         ^ ArrayList new mix &into:
             {
-                eval : n
+                eval : i
                 [
                     counter += 1.
                     
-                    (this length < self)
-                        ? [ this += n. ]
-                        ! [ 
-                            ((randomGenerator eval:counter < self) bool)
-                                ? [ this@(randomGenerator eval:self) := n. ].
+                    if (self length < n)
+                        [ self += i. ];
+                        [ 
+                            ((randomGenerator eval:counter < n) bool)
+                                ? [ self@(randomGenerator eval:n) := i. ].
                         ].
                         
-                    ^ this array.                        
+                    ^ self array.                        
                 ]
             }.
     ]
@@ -39,8 +40,8 @@ program =
         [
             var sample := s_of_n eval:n.
             
-            (n == 9)
-                ? [ sample run &each: i [ bin@i += 1. ]. ].
+            if (n == 9)
+                [ sample run &each: i [ bin@i += 1. ]. ].
         ].
     ].    
     

@@ -135,27 +135,27 @@ extension enumerableOp
     bool ifExists : aValue
         = $nil != self::enumerableOp safeSeek:aValue.
 
-//    #method equal &enumerable:list
-//    [
-//        (self length == list length)
-//            ! [ ^ false. ].
-//            
-//        #var(enumerator) it1 := self enumerator.
-//        #var(enumerator) it2 := list enumerator.
-//        
-//        #loop (it1 next)?
-//        [
-//            it2 next.
-//            
-//            (it1 get safeEqual:(it2 get) bool)
-//                ! [ ^ false. ].
-//        ].
-//        
-//        ^ true.
-//    ]
-//             
-//    #method sequenceEqual:list
-//        = self::enumerableOp equal &enumerable:list.
+    equal &enumerable:list
+    [
+        ifnot (self length == list length)
+            [ ^ false. ].
+            
+        enumerator it1 := self enumerator.
+        enumerator it2 := list enumerator.
+        
+        while (it1 next)
+        [
+            it2 next.
+            
+            ifnot (it1 get safeEqual:(it2 get))
+                [ ^ false. ].
+        ].
+        
+        ^ true.
+    ]
+             
+    sequenceEqual:list
+        = self::enumerableOp equal &enumerable:list.
                                                   
     firstMember
     [
