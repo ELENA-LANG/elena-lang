@@ -116,6 +116,16 @@ extension convertorOp
                     = intarrayExConvertor convert &enumerable:anEnumerator.
             }.
     
+    toByteArray        
+        = self cast:%eval &to:
+        {
+            literal : s
+                = UTF8Encoder toByteArray &int:0 &int:(s length) &literal:s.
+            
+            wide : s
+                = UTF16Encoder toByteArray &int:0 &int:(s length) &wide:s.
+        }.
+    
     toIntMatrix
         = self cast:%eval &to:
             {

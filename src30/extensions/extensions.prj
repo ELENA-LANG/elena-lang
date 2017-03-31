@@ -23,6 +23,7 @@ math\functions.l
 math\matrix.l
 text\words.l
 text\strings.l
+text\encoder.l
 routines\enumerating.l
 routines\combinations.l
 scripting\interpreter.l

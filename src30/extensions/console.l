@@ -166,3 +166,32 @@ extension inputOp
         ^ self.
     ]
 }
+
+// --- stringOpEx ---
+
+extension stringOpEx
+{
+    write : anObject1 &paddingRight:aWidth
+    [
+        textbuffer aBuffer := TextBuilder new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingRight:aWidth &with:#32.
+            
+        ^ self.
+    ]
+    
+    write : anObject1 &paddingLeft:aWidth
+    [
+        textbuffer aBuffer := TextBuilder new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingLeft:aWidth &with:#32.
+            
+        ^ self.
+    ]
+}
