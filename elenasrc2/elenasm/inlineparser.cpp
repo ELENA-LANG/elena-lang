@@ -107,7 +107,7 @@ bool VMTapeParser :: parseMessage(ident_t message, IdentifierString& reference)
       if (reference[reference.Length() - 1] == ']') {
          reference.truncate(reference.Length() - 1);
          if (emptystr(reference)) {
-            paramCounter = 12;
+            paramCounter = OPEN_ARG_COUNT;
          }
          else paramCounter = reference.ident().toInt();
 

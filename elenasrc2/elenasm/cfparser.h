@@ -109,6 +109,8 @@ protected:
       return mapKey(_names, name, _names.Count() + 1);
    }
 
+   size_t autonameRule(size_t parentRuleId);
+
    void defineApplyRule(Rule& rule, int terminalType);
 
    size_t writeBodyText(ident_t text);
@@ -118,6 +120,9 @@ protected:
 
    void saveScript(_ScriptReader& reader, Rule& rule, int& mode);
    size_t defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, ref_t ruleId, size_t nonterminal = 0, size_t terminal = 0);
+   void defineIdleGrammarRule(ref_t ruleId);
+   size_t defineStarGrammarRule(ref_t ruleId, size_t nonterminal);
+   size_t definePlusGrammarRule(ref_t ruleId, size_t nonterminal);
    void defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId);
 
    void predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer);

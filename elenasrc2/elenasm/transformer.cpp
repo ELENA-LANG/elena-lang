@@ -55,9 +55,13 @@ Transformer :: Transformer(_Parser* baseParser)
 void Transformer :: writeToken(ident_t token, Scope* scope, ScriptLog& log)
 {
    if (scope && scope->channel != 0) {
-      scope->writeToken(token, log);
+      scope->writeToken(token, log); 
+      scope->writeToken(" ", log);
    }
-   else log.write(token);
+   else {
+      log.write(token);
+      log.write(" ");
+   }
 }
 
 bool Transformer :: parseDirective(_ScriptReader& reader, Scopes& scopes, ScriptLog& log)
@@ -93,11 +97,11 @@ bool Transformer :: parseDirective(_ScriptReader& reader, Scopes& scopes, Script
    else if (reader.compare("-=")) {
       scopes.peek()->counter--;
    }
-   else if (reader.compare("=")) {
+   else if (reader.compare("##")) {
       scopes.peek()->writeLevel(log);
       scopes.peek()->level = 0;
    }
-   else if (reader.compare("==")) {
+   else if (reader.compare("#")) {
       scopes.peek()->writeCounter(log);
       scopes.peek()->counter = 0;
    }

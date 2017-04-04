@@ -117,19 +117,26 @@ We should turn it into the following code using grammar rules:
 
 root
 (
-   singleton identifier = program
+   singleton
    (
-       method message = eval
+       identifier = program
+
+       method
        (
-          expression
+          message = eval
+
+          code
           (
-             reference = system'console 
-             message = writeLine
-             literal = "Hello World"
-          )  
+             expression
+             (
+                reference = system'console 
+                message = writeLine
+                literal = "Hello World"
+             )
+          )
        )
    )
 )   
 
-This script can be compiled as a library or converted into a tape
+This script can be compiled as a library or be converted into a tape
 

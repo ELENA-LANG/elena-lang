@@ -15,6 +15,7 @@ using namespace _ELENA_TOOL_;
 #define IDENTIFIER_KEYWORD    "$identifier"
 #define LITERAL_KEYWORD       "$literal"
 #define NUMERIC_KEYWORD       "$numeric"
+#define TERMINAL_KEYWORD      "$terminal"
 #define EPS_KEYWORD           "$eps"
 #define EOF_KEYWORD           "$eof"
 #define EOL_KEYWORD           "$eol"
@@ -204,7 +205,50 @@ void CFParser :: addRule(int ruleId, Rule& rule)
    _table.add(key, rule);
 }
 
-size_t CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, size_t parentRuleId, size_t nonterminal, size_t terminal)
+void CFParser :: defineIdleGrammarRule(ref_t ruleId)
+{
+   Rule rule;
+   rule.nonterminal = (size_t)-1;
+   rule.terminal = (size_t)-1;
+   rule.type = rtNormal;
+   defineApplyRule(rule, IDLE_MODE);
+   addRule(ruleId, rule);
+}
+
+size_t CFParser :: defineStarGrammarRule(ref_t parentRuleId, size_t nonterminal)
+{
+   size_t ruleId = autonameRule(parentRuleId);
+
+   // define B -> AB
+   Rule recRule;
+   recRule.nonterminal = nonterminal;
+   recRule.terminal = ruleId;
+   recRule.type = rtChomski;
+   defineApplyRule(recRule, 0);
+   addRule(ruleId, recRule);
+
+   // define B -> eps
+   defineIdleGrammarRule(ruleId);
+
+   return ruleId;
+}
+
+size_t CFParser :: definePlusGrammarRule(ref_t parentRuleId, size_t nonterminal)
+{
+   size_t ruleId = autonameRule(parentRuleId);
+
+   // define B -> AB
+   Rule rule;
+   rule.nonterminal = nonterminal;
+   rule.terminal = defineStarGrammarRule(ruleId, nonterminal);
+   rule.type = rtChomski;
+   defineApplyRule(rule, 0);
+   addRule(ruleId, rule);
+
+   return ruleId;
+}
+
+size_t CFParser :: autonameRule(size_t parentRuleId)
 {
    ReferenceNs ns;
    int   index = 0;
@@ -218,7 +262,12 @@ size_t CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, 
 
    } while (true);
 
-   size_t ruleId = mapRuleId(ns);
+   return mapRuleId(ns);
+}
+
+size_t CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, size_t parentRuleId, size_t nonterminal, size_t terminal)
+{
+   size_t ruleId = autonameRule(parentRuleId);
 
    Rule rule;
    rule.nonterminal = nonterminal;
@@ -270,6 +319,9 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
             rule.saveTo = saveReference;
 
             mode = NUMERIC_MODE;
+         }
+         else if (reader.compare(TERMINAL_KEYWORD)) {
+            rule.saveTo = saveReference;
          }
 
          writer.writeChar((char)0);
@@ -325,7 +377,13 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
    while (!reader.compare(";") || bm.state == dfaQuote) {
       if (bm.state == dfaQuote) {
          if (rule.terminal) {
-            rule.nonterminal = defineGrammarRule(reader, bm, ruleId, rule.nonterminal);
+            if (rule.nonterminal != 0) {
+               if (rule.type == rtChomski) {
+                  rule.terminal = defineGrammarRule(reader, bm, ruleId, rule.terminal);
+               }
+               else rule.nonterminal = defineGrammarRule(reader, bm, ruleId, rule.nonterminal);
+            }
+            else rule.nonterminal = defineGrammarRule(reader, bm, ruleId);
             break;
          }
          else if (rule.nonterminal) {
@@ -337,6 +395,21 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
       }
       else if (reader.compare("<=")) {
          saveScript(reader, rule, applyMode);
+      }
+      else if (reader.compare("*") || reader.compare("+")) {
+         if (rule.terminal != 0 && rule.type == rtChomski) {            
+            if (reader.compare("+")) {
+               rule.terminal = definePlusGrammarRule(ruleId, rule.terminal);
+            }
+            else rule.terminal = defineStarGrammarRule(ruleId, rule.terminal);
+         }
+         else if (rule.nonterminal != 0) {
+            if (reader.compare("+")) {
+               rule.nonterminal = definePlusGrammarRule(ruleId, rule.nonterminal);
+            }
+            else rule.nonterminal = defineStarGrammarRule(ruleId, rule.nonterminal);
+         }            
+         else throw EParseError(bm.column, bm.row);
       }
       else if (bm.state == dfaPrivate) {
          if (rule.terminal) {

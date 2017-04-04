@@ -2,9 +2,11 @@
 In development:
 ------                              
 
+              sdev - rosetta samples
+                 * rosetta sample : 9 bil names
+
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
-                       #define method ::= "method" "(" name code ")";
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
 
               zdev 
@@ -18,7 +20,6 @@ In development:
 Pipeline:
 ------                                                                                         
               xdev - generic development 
-                 * samples review : String append
                  * (re)implement byte array field
                  * uncomment WSADATA structure
                  * basic tests
@@ -513,7 +514,7 @@ Pipeline:
                        * implement basic parsing : only classes                       
 
               sdev - samples
-                       * rosetta sample : 9 bil names
+                       * rosetta sample : 2048
                        * rosetta sample : Ethiopian multiplication
                        * rosetta sample : Flipping bits game
                        * rosetta sample : Longest string challenge
@@ -548,6 +549,8 @@ Pipeline:
                        * rosetta sample : Zebra puzzle
                        * rosetta sample : Zeckendorf arithmetic
                        * rosetta sample : Deepcopy 
+                       * rosetta sample : Abundant, deficient and perfect number classifications
+                       * rosetta sample : Active object
                        
                        * refactor cpu_sim : assembler
 
