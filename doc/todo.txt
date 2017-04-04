@@ -2,25 +2,26 @@
 In development:
 ------                              
 
-              sdev - rosetta samples
-                 * rosetta sample : 9 bil names
-
-              sdev - cf parser
-                 * the following grammar rule is not correctly split (code is ignored) :
-                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
-
               zdev 
-                 * js script : print("Hello");
-                 * js script : print('Hello');
                  * debug tape
                  * debug script generated code
+
+                 * js script : print("Hello");
+                 * js script : print('Hello');
                  * scripting library : language interpreter
 
 ------                                 
 Pipeline:
 ------                                                                                         
+              sdev - cf parser
+                 * the following grammar rule is not correctly split (code is ignored) :
+                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
+
+              sdev - rosetta samples
+                 * rosetta sample : 9 bil names
+
               xdev - generic development 
-                 * (re)implement byte array field
+                 * #302 - byte array field : writing / reading / boxing / unboxing
                  * uncomment WSADATA structure
                  * basic tests
                  * migrate gui rosetta samples

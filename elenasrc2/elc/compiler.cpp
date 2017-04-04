@@ -5175,16 +5175,18 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       scope.raiseError(errIllegalField, current);
 
    int size = (classRef != 0) ? _logic->defineStructSize(*moduleScope, classRef) : 0;
+   bool fieldArray = false;
    if (sizeHint != 0) {
-//      if (size < 0) {
-//         size = sizeHint * (-size);
-//      }
-      /*else */if (size == 0) {
-         size = sizeHint;
-      }
-      else if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
+      if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
          // for primitive types size should be specified
          size = sizeHint;
+      }
+      else if (size > 0) {
+         size *= sizeHint;
+
+         // HOTFIX : to recognize the fixed length array
+         fieldArray = true; 
+         classRef = _logic->definePrimitiveArray(*scope.moduleScope, classRef);
       }
       else scope.raiseError(errIllegalField, current);
    }
@@ -5194,7 +5196,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       scope.raiseError(errIllegalField, current);
    }
    // if it is a primitive data wrapper
-   else if (isPrimitiveRef(classRef)) {
+   else if (isPrimitiveRef(classRef) && !fieldArray) {
       if (testany(flags, elNonStructureRole | elDynamicRole))
          scope.raiseError(errIllegalField, current);
 
