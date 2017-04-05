@@ -18,6 +18,7 @@ namespace _ELENA_
 class TreeScriptParser : public _Parser
 {
    Map<ident_t, int> _tokens;
+   Map<ident_t, int> _attributes;
 
    void parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer);
    void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer);

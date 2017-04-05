@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------
 #include "treeparser.h"
 #include "bytecode.h"
+#include "compilercommon.h"
 
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
@@ -19,6 +20,7 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("root", lxRoot);
    _tokens.add("class", lxClass);
    _tokens.add("symbol_decl", lxSymbol);
+   _tokens.add("singleton", lxClass);
    _tokens.add("nested_decl", lxNestedClass);
    _tokens.add("method", lxClassMethod);
    _tokens.add("message", lxMessage);
@@ -33,6 +35,8 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("include", lxInclude);
    _tokens.add("forward", lxForward);
    _tokens.add("reference", lxReference);
+
+   _attributes.add("singleton", V_SINGLETON);
 }
 
 void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer)
@@ -49,9 +53,13 @@ void TreeScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& b
 {
    int type = _tokens.get(reader.lookup(bm));
    if (type != 0) {
+      int attr = _attributes.get(reader.lookup(bm));
+
       bm = reader.read();
       if (reader.compare("(")) {
          writer.newNode((LexicalType)type);
+         if (attr != 0)
+            writer.appendNode(lxAttribute, attr);
 
          parseScope(reader, bm, writer);
       }

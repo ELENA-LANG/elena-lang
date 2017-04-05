@@ -20,3 +20,8 @@ program =
         ]
     }.    
 ].
+
+stat_program =
+[
+    test'stat'program eval.
+].

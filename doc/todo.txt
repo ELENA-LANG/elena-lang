@@ -3,7 +3,6 @@ In development:
 ------                              
 
               zdev 
-                 * execute script : test.es
                  * compile script : test.es
 
                  * debug script generated code
