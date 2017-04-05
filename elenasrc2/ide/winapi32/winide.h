@@ -267,9 +267,9 @@ public:
       _notify(IDE_DEBUGGER_STEP, TextString(ns), TextString(source), HighlightInfo(row, disp, length));
    }
    
-   virtual void onLoadTape(_ELENA_::ident_t name, int tapePtr)
+   virtual void onLoadTape(_ELENA_::ident_t name, int row, int disp, int length)
    {
-      _notify(IDE_DEBUGGER_LOADTEMPMODULE, TextString(name), tapePtr/*, HighlightInfo(row, disp, length)*/);
+      _notify(IDE_DEBUGGER_LOADTEMPMODULE, TextString(name), NULL, HighlightInfo(row, disp, length));
    }
 
    virtual void onDebuggerHook()

@@ -1835,8 +1835,10 @@ void IDEController :: onDebuggerStop(bool broken)
    // close temporal document
    // !! probably more generic solution should be used
    int tempDocIndex = _model->getDocumentIndex(_ELENA_::Path(TAPE_SYMBOL).str());
-   if (tempDocIndex >= 0)
+   if (tempDocIndex >= 0) {
+      _model->removeDocument(tempDocIndex);
       _view->closeDocument(tempDocIndex);
+   }      
 
    onChange();
 }
@@ -1854,9 +1856,16 @@ void IDEController :: onDebuggerStep(text_t ns, text_t source, HighlightInfo inf
    _view->refreshDebugWindows(&_debugController);
 }
 
-void IDEController :: onDebuggerAssemblyStep(text_t name, int param)
+void IDEController :: onDebuggerAssemblyStep(text_t name, HighlightInfo info)
 {
-   loadTemporalModule(name, param);
+   loadTemporalModule(name, info.disp);
+
+   // HOTFIX : disp is a tape buffer offset
+   info.disp = 0;
+
+   addDocumentMarker(-1, info, STYLE_TRACE_LINE, STYLE_TRACE);
+
+   _view->refreshDebugWindows(&_debugController);
 }
 
 void IDEController :: onDebuggerCheckPoint(text_t message)

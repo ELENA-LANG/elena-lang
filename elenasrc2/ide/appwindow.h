@@ -369,7 +369,7 @@ class IDEController : public _Controller
    virtual void onDebuggerStep(text_t ns, text_t source, HighlightInfo info);
    virtual void onDebuggerCheckPoint(text_t message);
    virtual void onDebuggerStop(bool broken);
-   virtual void onDebuggerAssemblyStep(text_t name, int param);
+   virtual void onDebuggerAssemblyStep(text_t name, HighlightInfo info);
 
    void addDocumentMarker(int index, HighlightInfo info, int bandStyle, int style);
    virtual void highlightMessage(MessageBookmark* bookmark, int bandStyle);

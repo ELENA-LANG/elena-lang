@@ -144,6 +144,7 @@ protected:
 
    // class mapping between vmt ptr and debuglineinfo position in debug module
    typedef MemoryMap<size_t, size_t, false> ClassInfoMap;
+   typedef MemoryMap<size_t, int, false>    TapeMap;
 
    Debugger          _debugger;
    DebugEventManager _events;
@@ -221,6 +222,7 @@ protected:
 protected:
    ModuleMap  _modules;
    MemoryDump _tape;
+   TapeMap    _tapeBookmarks;
 
    virtual _ELENA_::_Module* loadDebugModule(ident_t reference);
 
@@ -233,6 +235,7 @@ protected:
       _classNames.clear();
 
       _tape.clear();
+      _tapeBookmarks.clear();
 
       _debugInfoPtr = 0;
       _debugInfoSize = 0;
@@ -297,7 +300,7 @@ public:
    }
 
    DebugController()
-      : _modules(NULL, freeobj)
+      : _modules(NULL, freeobj), _tapeBookmarks(-1)
    {
       _listener = NULL;
       _manager = NULL;

@@ -3,10 +3,8 @@ In development:
 ------                              
 
               zdev 
-                 * debug tape : generating a tape in the temporal window when the special breakpoint is set
-
-                 * debug tape : tape should be generated only once per reference
-                 * debug tape : reading the tape indexer and setting it in the window
+                 * execute script : test.es
+                 * compile script : test.es
 
                  * debug script generated code
 
@@ -74,6 +72,9 @@ Pipeline:
                  * vm client : F8 on the start does not work
                  * debugging vm client : f7 on start
                  * fix syntax highlighting
+                 * watch : recognize messages / extensions
+                 * debug tape : recognize messages / extensions
+
 
               xdev - generic development
                  * int h := system'external'KERNEL32 GetStdHandle &int:0FFFFFFF5h. - no need for temporal variable - the result should
