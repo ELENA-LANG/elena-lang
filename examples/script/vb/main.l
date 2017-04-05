@@ -9,7 +9,7 @@ program =
             load &path:"~\scripts\assembly.es" 
             eval &path:"test.es".
         
-        var obj := factory eval:(Library new) first new.
+        var obj := factory eval:(Library new) first eval.
         
         obj eval.
     ])

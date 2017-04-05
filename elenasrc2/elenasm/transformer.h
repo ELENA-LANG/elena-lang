@@ -22,6 +22,7 @@ protected:
       int                  channel;
       int                  level;
       int                  counter;
+      bool                 appendMode;
       DynamicString<char/*, 2048*/>  buffer1;
       DynamicString<char/*, 2048*/>  buffer2;
       //String<char, 2048>  buffer1;
@@ -53,6 +54,7 @@ protected:
          level = 0;
          channel = 0;
          counter = 0;
+         appendMode = false;
       }
 
       virtual ~Scope()

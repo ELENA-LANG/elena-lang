@@ -16,7 +16,7 @@
    #define symbol      ::= symbol_expr;
    #define symbol      ::= singleton;
 
-   #define symbol_expr ::= <= ( < += "2" > += "%""system'dynamic'tapeOp.var[]""" => 
+   #define symbol_expr ::= <= ( > += "2" += "%""system'dynamic'tapeOp.var[]""" => 
                               "symbol" "(" identifier expression ")" 
                            <= ) > * =>;
 
@@ -31,11 +31,11 @@
    #define expr_member ::= reference;
    #define expr_member ::= literal;
 
-   #define singleton   ::= <=  += "2" > += "%""system'dynamic'tapeOp.var[]""" += "%""open&singleton[0]""" =>
+   #define singleton   ::= <= > += "2" += "%""system'dynamic'tapeOp.var[]""" += "%""open&singleton[0]""" =>
                              "singleton" "(" identifier method* ")"
                             <= > += "%""close[0]""" =>;
 
-   #define method      ::= <= > += "%""open&method[0]""" =>
+   #define method      ::= <= > += "%""open&method[0]""" += "%""new&paramToken[1]""" < += """self""" =>
                              "method" "(" message parameter* meth_body ")"
                            <= > += "%""close[0]""" =>;
 
@@ -51,26 +51,36 @@
                            <=  > += "%""close[0]""" =>;
 
    #define numeric     ::= <= > += "%""new&numericToken[1]""" =>
-                             "numeric" "=" $numeric  
-                           <= < += $terminal =>;
+                             "numeric" "=" num_quote;
 
    #define literal     ::= <= > += "%""new&literalToken[1]""" =>
-                             "literal" "=" $literal
-                           <= < += $terminal =>;
+                             "literal" "=" str_quote;
 
-   #define identifier  ::= <= > += "%""new&numericToken[1]""" =>
-                             "identifier" "=" $identifier
-                           <= < += $terminal =>;
+   #define identifier  ::= <= > += "%""new&identToken[1]""" =>
+                             "identifier" "=" ident_quote;
 
    #define message     ::= <= > += "%""new&messageToken[1]""" =>
-                             "message" "=" $identifier
-                           <= < += $terminal =>;
+                             "message" "=" ident_quote;
 
    #define parameter   ::= <= > += "%""new&paramToken[1]""" =>
-                             "parameter" "=" $identifier
-                           <= < += $terminal =>;
+                             "parameter" "=" ident_quote;
 
    #define reference   ::= <= > += "%""new&referenceToken[1]""" =>
-                             "reference" "=" $reference
-                           <= < += $terminal =>;
+                             "reference" "=" ref_quote;
+
+   #define num_quote   ::= <= << += """ " => num_token  <= " """ =>;
+
+   #define str_quote   ::= <= << += """ " => str_token <= " """ =>;
+
+   #define ident_quote ::= <= << += """ " => ident_token <= " """ =>;
+
+   #define ref_quote   ::= <= << += """ " => ref_token <= " """ =>;
+
+   #define num_token   ::= <= "$numeric" =>;
+
+   #define str_token   ::= <= "$literal" =>;
+
+   #define ident_token ::= <= "$identifier" =>;
+
+   #define ref_token   ::= <= "$reference" =>;
 ]]

@@ -56,11 +56,13 @@ void Transformer :: writeToken(ident_t token, Scope* scope, ScriptLog& log)
 {
    if (scope && scope->channel != 0) {
       scope->writeToken(token, log); 
-      scope->writeToken(" ", log);
+      if (!scope->appendMode)
+         scope->writeToken(" ", log);
    }
    else {
       log.write(token);
-      log.write(" ");
+      if (!scope->appendMode)
+         log.write(" ");
    }
 }
 
@@ -78,11 +80,21 @@ bool Transformer :: parseDirective(_ScriptReader& reader, Scopes& scopes, Script
    }
    else if (reader.compare("<")) {
       scopes.peek()->channel = 1;
+      scopes.peek()->appendMode = false;
    }
    else if (reader.compare(">")) {
       scopes.peek()->channel = 2;
+      scopes.peek()->appendMode = false;
+   }
+   else if (reader.compare("<<")) {
+      scopes.peek()->channel = 1;
+      scopes.peek()->appendMode = true;
    }
    else if (reader.compare(">>")) {
+      scopes.peek()->channel = 2;
+      scopes.peek()->appendMode = true;
+   }
+   else if (reader.compare("~")) {
       scopes.peek()->copyForward();
    }
    else if (reader.compare("+")) {

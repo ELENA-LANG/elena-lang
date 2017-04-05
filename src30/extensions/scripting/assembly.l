@@ -40,6 +40,11 @@ class ExpressionScope :: Scope
         theCallstack push:{ save &array_list:list [ list += literal toInt. ] }.
     ]
         
+    new &literalToken : literal
+    [
+        theCallstack push:{ save &array_list:list [ list += literal toLiteral. ] }.
+    ]
+        
     new &identToken : literal
     [
         theCallstack push:
@@ -58,6 +63,11 @@ class ExpressionScope :: Scope
             ! [ theMessage append:"&". ].
             
         theMessage append:literal.
+    ]
+        
+    new &referenceToken : symbol
+    [
+        theCallstack push:{ save &array_list:list [ list += Symbol new &literal:symbol. ] }.
     ]
         
     open &expression
@@ -251,6 +261,10 @@ class SingletonScope :: BaseClassScope
     [
     ]
     
+    new &identToken:name
+    [
+    ]
+    
     save &array_list:retVal
     [
         retVal += $self eval.
@@ -341,6 +355,15 @@ class Library :: Scope
         ^ symbol.
     ]
     
+    open &singleton
+    [
+        var class := SingletonScope new:$self.
+        
+        theClasses += class.   
+        
+        ^ class.
+    ]
+
 //    #method open &class
 //    [
 //        #var class := ClassScope new:$self.

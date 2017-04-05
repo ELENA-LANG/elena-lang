@@ -15,7 +15,6 @@ using namespace _ELENA_TOOL_;
 #define IDENTIFIER_KEYWORD    "$identifier"
 #define LITERAL_KEYWORD       "$literal"
 #define NUMERIC_KEYWORD       "$numeric"
-#define TERMINAL_KEYWORD      "$terminal"
 #define EPS_KEYWORD           "$eps"
 #define EOF_KEYWORD           "$eof"
 #define EOL_KEYWORD           "$eol"
@@ -293,7 +292,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
    ScriptBookmark bm = reader.read();
    while (!reader.compare("=>") || bm.state == dfaQuote) {
       if (bm.state == dfaPrivate) {
-         if (rule.saveTo != NULL)
+         if (rule.saveTo != NULL || !prefixMode)
             throw EParseError(bm.column, bm.row);
 
          if (reader.compare(REFERENCE_KEYWORD)) {
@@ -319,9 +318,6 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
             rule.saveTo = saveReference;
 
             mode = NUMERIC_MODE;
-         }
-         else if (reader.compare(TERMINAL_KEYWORD)) {
-            rule.saveTo = saveReference;
          }
 
          writer.writeChar((char)0);
@@ -352,6 +348,9 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          mode = NUMERIC_MODE;
       }
       else {
+         if (prefixMode && rule.saveTo != 0)
+            throw EParseError(bm.column, bm.row);
+
          ident_t token = reader.lookup(bm);
 
          if (bm.state == dfaQuote) {
