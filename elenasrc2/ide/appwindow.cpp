@@ -188,54 +188,6 @@ size_t IDEController::IDELexicalStyler :: proceed(size_t position, LexicalInfo& 
    }
 }
 
-//bool IDE :: loadTemporalModule(const tchar_t* name, int param)
-//{
-////!!temporal
-//#ifdef _WIN32
-//   if (!_debugController->isStarted())
-//      return false;
-//
-//   int index = _mainFrame->getDocumentIndex(name);
-//
-//   // if the temporal module is not yet opened - create it
-//   if (index == -1) {
-//      doCreateTempFile(name);
-//
-//      index = _mainFrame->getDocumentIndex(name);
-//   }
-//   Document* doc = _mainFrame->getDocument(index);
-//
-//   // clear all
-//   doc->moveFirst(false);
-//   doc->moveLast(true);
-//   doc->eraseChar(false);
-//
-//   // insert temporal content
-//   const tchar_t* source = _debugController->getTemporalSource(param);
-//   doc->insertLine(source, _ELENA_::getlength(source));
-//
-//   doc->status.modifiedMode = false;
-//#endif
-//   return true;
-//}
-
-//void IDE :: doCreateTempFile(const tchar_t* name)
-//{
-//   _GUI_::Text* text = new _GUI_::Text();
-//   text->create();
-//
-//   Document* doc = _mainFrame->openDocument(name, text,
-//      new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), Settings::defaultEncoding);
-//
-//   doc->status.readOnly = true;
-//   doc->setHighlightMode(false);
-//
-//   _windowList.add(name);
-//
-//   onFileOpen();
-//   onChange();
-//}
-
 // --- IDEController ---
 
 void IDEController::start(_View* view, _DebugListener* listener, Model* model)
@@ -618,7 +570,20 @@ bool IDEController :: replaceText(SearchOption& option)
    else return false;
 }
 
-void IDEController::doCreateFile()
+void IDEController :: doCreateFile(text_t name, _GUI_::Document* doc)
+{
+   int index = _view->newDocument(name, doc);
+
+   _model->mappings.add(_ELENA_::path_t(name), index);
+   _model->documents.add(doc);
+
+   _view->addToWindowList(name);
+
+   onFileOpen();
+   onChange();
+}
+
+void IDEController :: doCreateFile()
 {
    _ELENA_::String<text_c, 30> name(_T("unnamed"));
    name.appendInt(_model->unnamedIndex++);
@@ -634,15 +599,24 @@ void IDEController::doCreateFile()
    _GUI_::Document* doc = new SourceDoc(text, new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), _model->defaultEncoding);
    doc->status.unnamed = true;
 
-   int index = _view->newDocument(name, doc);
+   doCreateFile(name, doc);
+}
 
-   _model->mappings.add(_ELENA_::path_t(name), index);
-   _model->documents.add(doc);
+void IDEController :: doCreateTempFile(text_t name)
+{
+#ifdef _WIN32
+   _GUI_::Text* text = new _GUI_::Text(_GUI_::eolCRLF);
+#else
+   _GUI_::Text* text = new _GUI_::Text(_GUI_::eolLF);
+#endif
 
-   _view->addToWindowList(name);
+   text->create();
+   
+   _GUI_::Document* doc = new SourceDoc(text, new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), _model->defaultEncoding);
+   doc->status.readOnly = true;
+   doc->setHighlightMode(false);
 
-   onFileOpen();
-   onChange();
+   doCreateFile(name, doc);
 }
 
 void IDEController :: doOpenFile()
@@ -1858,11 +1832,11 @@ void IDEController :: onDebuggerStop(bool broken)
 
    _debugController.release();
 
-   //// close temporal document
-   //// !! probably more generic solution should be used
-   //int tempDocIndex = _mainFrame->getDocumentIndex(_ELENA_::ConstantIdentifier(TAPE_SYMBOL));
-   //if (tempDocIndex >= 0)
-   //   _mainFrame->closeDocument(tempDocIndex);
+   // close temporal document
+   // !! probably more generic solution should be used
+   int tempDocIndex = _model->getDocumentIndex(_ELENA_::Path(TAPE_SYMBOL).str());
+   if (tempDocIndex >= 0)
+      _view->closeDocument(tempDocIndex);
 
    onChange();
 }
@@ -1878,6 +1852,11 @@ void IDEController :: onDebuggerStep(text_t ns, text_t source, HighlightInfo inf
    addDocumentMarker(-1, info, STYLE_TRACE_LINE, STYLE_TRACE);
 
    _view->refreshDebugWindows(&_debugController);
+}
+
+void IDEController :: onDebuggerAssemblyStep(text_t name, int param)
+{
+   loadTemporalModule(name, param);
 }
 
 void IDEController :: onDebuggerCheckPoint(text_t message)
@@ -1913,6 +1892,35 @@ bool IDEController :: loadModule(text_t ns, text_t source)
 
       openFile(path.c_str());
    }
+
+   return true;
+}
+
+bool IDEController :: loadTemporalModule(text_t name, int param)
+{
+//   if (!_debugController->isStarted())
+//      return false;
+
+   int index = _model->getDocumentIndex(name);
+
+   // if the temporal module is not yet opened - create it
+   if (index == -1) {
+      doCreateTempFile(name);
+
+      index = _model->getDocumentIndex(name);
+   }
+   Document* doc = _model->getDocument(index);
+
+   // clear all
+   doc->moveFirst(false);
+   doc->moveLast(true);
+   doc->eraseChar(false);
+
+   // insert temporal content
+   text_t source = _debugController.getTemporalSource(param);
+   doc->insertLine(source, _ELENA_::getlength(source));
+
+   doc->status.modifiedMode = false;
 
    return true;
 }

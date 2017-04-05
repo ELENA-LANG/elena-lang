@@ -190,7 +190,7 @@ public:
 
    virtual void onStart() = 0;
    //virtual void onLoadModule(const wchar16_t* name, const wchar16_t* path) = 0;
-   //virtual void onLoadTape(const wchar16_t* name, int tapePtr) = 0;
+   virtual void onLoadTape(_ELENA_::ident_t name, int tapePtr) = 0;
    virtual void onStep(_ELENA_::ident_t ns, _ELENA_::ident_t source, int row, int disp, int length) = 0;
    virtual void onCheckPoint(text_t message) = 0;
    virtual void onNotification(text_t message, size_t address, int code) = 0;
@@ -453,6 +453,7 @@ public:
    virtual void onAutoCompilationEnd() = 0;
    virtual void onDebuggerStart() = 0;
    virtual void onDebuggerStep(text_t ns, text_t source, HighlightInfo info) = 0;
+   virtual void onDebuggerAssemblyStep(text_t name, int param) = 0;
    virtual void onDebuggerCheckPoint(text_t message) = 0;
    virtual void onDebuggerStop(bool broken) = 0;
    virtual void doDebugInspect() = 0;

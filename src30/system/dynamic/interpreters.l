@@ -5,7 +5,7 @@
 
 // --- Tape ---
 
-dynamic group Tape
+dynamic __tape_group Tape
 {
     object $item.
     

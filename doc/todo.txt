@@ -3,7 +3,11 @@ In development:
 ------                              
 
               zdev 
-                 * debug tape
+                 * debug tape : generating a tape in the temporal window when the special breakpoint is set
+
+                 * debug tape : tape should be generated only once per reference
+                 * debug tape : reading the tape indexer and setting it in the window
+
                  * debug script generated code
 
                  * js script : print("Hello");
@@ -17,16 +21,23 @@ Pipeline:
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
 
-              sdev - rosetta samples
-                 * rosetta sample : 9 bil names
-
-              xdev - generic development 
-                 * #302 - byte array field : writing / reading / boxing / unboxing
-                 * uncomment WSADATA structure
+              sdev - samples
+                 * test script samples
                  * basic tests
                  * migrate gui rosetta samples
                  * migrate gui samples
                  * migrate net samples
+
+              sdev - rosetta samples
+                 * rosetta sample : 2048
+                 * rosetta sample : Ethiopian multiplication
+                 * rosetta sample : Flipping bits game
+                 * rosetta sample : Longest string challenge
+                 * rosetta sample : Magic squares of odd order
+
+              xdev - generic development 
+                 * #302 - byte array field : writing / reading / boxing / unboxing
+                 * uncomment WSADATA structure
 
               xdev - native code optimization
                  * use rep stos to clear the object after creating      
@@ -515,11 +526,6 @@ Pipeline:
                        * implement basic parsing : only classes                       
 
               sdev - samples
-                       * rosetta sample : 2048
-                       * rosetta sample : Ethiopian multiplication
-                       * rosetta sample : Flipping bits game
-                       * rosetta sample : Longest string challenge
-                       * rosetta sample : Magic squares of odd order
                        * rosetta sample : Morse code
                        * rosetta sample : Narcissist
                        * rosetta sample : Object serialization
@@ -552,6 +558,7 @@ Pipeline:
                        * rosetta sample : Deepcopy 
                        * rosetta sample : Abundant, deficient and perfect number classifications
                        * rosetta sample : Active object
+                       * rosetta sample : 9 bil names
                        
                        * refactor cpu_sim : assembler
 

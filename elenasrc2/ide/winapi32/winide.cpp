@@ -434,9 +434,9 @@ void IDEWindow :: _onNotify(NMHDR* notification)
       //case IDE_DEBUGGER_LOADMODULE:
       //   _ide->loadModule(((Message3NMHDR*)notification)->message, ((Message3NMHDR*)notification)->param);
       //   break;
-      //case IDE_DEBUGGER_LOADTEMPMODULE:
-      //   _ide->loadTemporalModule(((MessageNMHDR*)notification)->message, ((MessageNMHDR*)notification)->param);
-      //   break;
+      case IDE_DEBUGGER_LOADTEMPMODULE:
+         _controller->onDebuggerAssemblyStep(((MessageNMHDR*)notification)->message, ((MessageNMHDR*)notification)->param);
+         break;
       case IDE_DEBUGGER_START:
          _controller->onDebuggerStart();
          break;

@@ -266,6 +266,7 @@ enum ByteCode
    bdMessage        = 0x8405,
    bdLocalInfo      = 0x8406,
    bdSourcePath     = 0x8407,
+
    bdIntLocal       = 0x8413,
    bdLongLocal      = 0x8423,
    bdRealLocal      = 0x8433,
@@ -554,7 +555,7 @@ struct CommandTape
 //      return command;
 //   }
 
-   void import(_Memory* section, bool withHeader = false);
+   void import(_Memory* section, bool withHeader = false, bool withBreakpoints = false);
 
    static bool optimizeIdleBreakpoints(CommandTape& tape);
    static bool optimizeJumps(CommandTape& tape);

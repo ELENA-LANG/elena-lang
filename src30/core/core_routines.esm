@@ -3890,6 +3890,8 @@ labNextParam:
   bloadfi 1
 
 labNext:
+  breakpoint
+
   count
   dloadfi -2
   if labEnd

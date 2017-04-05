@@ -193,7 +193,7 @@ ByteCodeIterator CommandTape :: find(ByteCode code)
    return tape.end()++;
 }
 
-void CommandTape :: import(_Memory* section, bool withHeader)
+void CommandTape :: import(_Memory* section, bool withHeader, bool withBreakpoints)
 {
    ByteCode code;
    int      argument = 0;
@@ -245,6 +245,12 @@ void CommandTape :: import(_Memory* section, bool withHeader)
          else label = extLabels.get(reader.Position() - 1);
 
          write(blLabel, label);
+      }
+      else if (code == bcBreakpoint) {
+         if (withBreakpoints) {
+            write(code);
+            write(bdBreakpoint, dsAssemblyStep);
+         }
       }
       else write(code, argument, additional);
    }   

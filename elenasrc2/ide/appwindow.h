@@ -278,9 +278,12 @@ class IDEController : public _Controller
    virtual void doInclude();
    virtual void doExclude();
 
+   void doCreateFile(text_t name, _GUI_::Document* doc);
+
    void doHighlightBrackets(Document* doc);
    bool doCloseProject();
    void doCreateFile();
+   void doCreateTempFile(text_t name);
    bool doSave(int docIndex, bool saveAsMode);
    void doExit();
 
@@ -366,6 +369,7 @@ class IDEController : public _Controller
    virtual void onDebuggerStep(text_t ns, text_t source, HighlightInfo info);
    virtual void onDebuggerCheckPoint(text_t message);
    virtual void onDebuggerStop(bool broken);
+   virtual void onDebuggerAssemblyStep(text_t name, int param);
 
    void addDocumentMarker(int index, HighlightInfo info, int bandStyle, int style);
    virtual void highlightMessage(MessageBookmark* bookmark, int bandStyle);
@@ -411,6 +415,7 @@ class IDEController : public _Controller
    virtual void selectProjectFile(int index);
 
    bool loadModule(text_t ns, text_t source);
+   bool loadTemporalModule(text_t name, int param);
 
 public:
    void start(_View* view, _DebugListener* listener, Model* model);

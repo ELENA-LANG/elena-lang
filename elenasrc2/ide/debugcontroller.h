@@ -172,7 +172,7 @@ protected:
    void* unmapDebugPTR32(pos_t position);
 
    bool loadSymbolDebugInfo(ident_t reference, StreamReader& addressReader);
-//   bool loadTapeDebugInfo(StreamReader& reader, size_t size);
+   bool loadTapeDebugInfo(size_t objectPtr);
 
    bool loadDebugData(StreamReader& reader, bool setEntryAddress = false);
 
@@ -210,7 +210,7 @@ protected:
    const char* getValue(size_t address, char* value, size_t length);
    const wide_c* getValue(size_t address, wide_c* value, size_t length);
 
-//   int generateTape(void* tape, StreamReader& reader, int breakpointCount);
+   int generateTape(int* list, int length);
 
    bool start();
 
@@ -220,7 +220,7 @@ protected:
 
 protected:
    ModuleMap  _modules;
-//   MemoryDump _tape;
+   MemoryDump _tape;
 
    virtual _ELENA_::_Module* loadDebugModule(ident_t reference);
 
@@ -232,7 +232,7 @@ protected:
       _modules.clear();
       _classNames.clear();
 
-      //_tape.clear();
+      _tape.clear();
 
       _debugInfoPtr = 0;
       _debugInfoSize = 0;
@@ -243,11 +243,11 @@ public:
 //   {
 //      _debugTape = true;
 //   }
-//
-//   const wchar16_t* getTemporalSource(int param)
-//   {
-//      return (const wchar16_t*)_tape.get(param);
-//   }
+
+   text_t getTemporalSource(int param)
+   {
+      return (text_t)_tape.get(param);
+   }
 
    void toggleBreakpoint(Breakpoint& breakpoint, bool adding);
 

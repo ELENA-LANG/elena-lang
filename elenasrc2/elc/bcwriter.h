@@ -305,7 +305,7 @@ class ByteCodeWriter
    void generateMethod(CommandTape& tape, SyntaxTree::Node node);
    void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
 
-   void importCode(CommandTape& tape, ImportScope& scope);
+   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
 
 //   void generateTemplateMethods(CommandTape& tape, SNode root);
 

@@ -17,8 +17,6 @@
 #include "..\historylist.h"
 #include "..\browser.h"
 
-////#include "debugger.h"
-
 #define TABCHANGED_NOTIFY  1
 #define VIEWCHANGED_NOTIFY 2
 
@@ -269,6 +267,11 @@ public:
       _notify(IDE_DEBUGGER_STEP, TextString(ns), TextString(source), HighlightInfo(row, disp, length));
    }
    
+   virtual void onLoadTape(_ELENA_::ident_t name, int tapePtr)
+   {
+      _notify(IDE_DEBUGGER_LOADTEMPMODULE, TextString(name), tapePtr/*, HighlightInfo(row, disp, length)*/);
+   }
+
    virtual void onDebuggerHook()
    {
       _notify(IDE_DEBUGGER_HOOK);

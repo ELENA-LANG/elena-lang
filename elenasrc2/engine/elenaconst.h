@@ -202,6 +202,7 @@ namespace _ELENA_
       dsVirtualEnd              = 0x0013,    // virtual end of expreession; it should be skipped by debugger
       dsProcedureStep           = 0x0014,    // check the step result
       dsAtomicStep              = 0x0018,    // "step into" is always treated as step over, used for external code
+      dsAssemblyStep            = 0x0110,    // the step requires some "disassemblying"
 
       dsSymbol                  = 0x0001,
       dsClass                   = 0x0002,
@@ -319,6 +320,7 @@ namespace _ELENA_
    const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
    const int elWithCustomDispatcher= 0x00800000;
    const int elWithArgGenerics     = 0x01000000;
+   const int elTapeGroup           = 0x02000200;
 
    const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 

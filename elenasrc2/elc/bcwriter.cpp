@@ -5017,11 +5017,11 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
    }
 }
 
-void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope)
+void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints)
 {
    ByteCodeIterator it = tape.end();
 
-   tape.import(scope.section, true);
+   tape.import(scope.section, true, withBreakpoints);
 
    // goes to the first imported command
    it++;
@@ -5155,7 +5155,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                declareIdleMethod(tape, node.argument, sourcePathRef);
 
             if (current == lxImporting) {
-               importCode(tape, *imports.get(current.argument - 1));
+               importCode(tape, *imports.get(current.argument - 1), true);
             }
             else generateCreating(tape, current);
             break;

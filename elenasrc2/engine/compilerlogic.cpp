@@ -951,6 +951,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_GROUP:
          attrValue = elGroup;
          return true;
+      case V_TAPEGROUP:
+         attrValue = elTapeGroup;
+         return true;
       case V_CLASS:
          attrValue = 0;
          return true;

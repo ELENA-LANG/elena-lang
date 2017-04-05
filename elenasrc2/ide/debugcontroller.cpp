@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //      its helpers
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -337,7 +337,18 @@ void DebugController :: processStep()
       ident_t moduleName = NULL;
       ident_t sourcePath = NULL;
       DebugLineInfo* lineInfo = seekDebugLineInfo((size_t)_debugger.Context()->State(), moduleName, sourcePath);
-      showCurrentModule(lineInfo, moduleName, sourcePath);
+      if (lineInfo->symbol == dsAssemblyStep) {
+         size_t objectPtr = _debugger.Context()->LocalPtr(1);
+         int flags = _debugger.Context()->VMTFlags(_debugger.Context()->ClassVMT(objectPtr));
+         if (test(flags, elTapeGroup)) {
+            loadTapeDebugInfo(objectPtr);
+         }
+         else {
+            // continue debugging if it is not a tape
+            stepInto();
+         }
+      }
+      else showCurrentModule(lineInfo, moduleName, sourcePath);
    }
    if (_debugger.Context()->checkFailed) {
       _listener->onCheckPoint(_T("Operation failed"));
@@ -488,20 +499,26 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
    else return false;
 }
 
-//bool DebugController :: loadTapeDebugInfo(StreamReader& reader, size_t size)
-//{
-//   //// if tape debugging is allowed, debugger should switch to step mode
-//   //_postponed.setStepMode();
-//
-//   //void* tape = (void*)reader.getDWord();
-//   //size -= 4;
-//
-//   //// create temporal document
-//   //int sourcePos = generateTape(tape, reader, size >> 2);
-//   //onLoadTape(_tapeSymbol, sourcePos);
-//
-//   return true;
-//}
+bool DebugController :: loadTapeDebugInfo(size_t selfPtr)
+{
+   //// if tape debugging is allowed, debugger should switch to step mode
+   //_postponed.setStepMode();
+
+   int list[DEBUG_MAX_LIST_LENGTH];
+   int length = 0;
+   getValue(selfPtr - 8, (char*)&length, 4);
+
+   if (length > sizeof(list))
+      length = sizeof(list);
+
+   getValue(selfPtr, (char*)list, length);
+
+   // create temporal document
+   int sourcePos = generateTape(list, length >> 2);
+   _listener->onLoadTape(TAPE_SYMBOL, sourcePos);
+
+   return true;
+}
 
 bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress)
 {
@@ -1037,6 +1054,7 @@ void DebugController::readParams(_DebuggerWatch* watch, size_t address, ident_t 
 
          size_t flags = 0;
          ident_t className = NULL;
+
          DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
          if (item) {
             watch->write(this, memberPtr, ident_t(index), className);
@@ -1297,12 +1315,24 @@ void DebugController :: showCurrentModule(DebugLineInfo* lineInfo, ident_t modul
    }
 }
 
-//inline void writeStatement(MemoryWriter& writer, const wchar16_t* command)
-//{
-//   writer.writeWideLiteral(command, getlength(command));
-//   writer.writeWideChar('\n');
-//}
-//
+inline void writeStatement(MemoryWriter& writer, text_t command)
+{
+   writer.writeLiteral(command, getlength(command));
+   writer.writeChar((text_c)'\n');
+}
+
+#ifdef _WIN32
+
+inline void writeStatement(MemoryWriter& writer, ident_t command)
+{
+   WideString caption(command);
+
+   writer.writeLiteral(caption, getlength(caption));
+   writer.writeChar((text_c)'\n');
+}
+
+#endif // _WIN32
+
 //inline void writeCommand(MemoryWriter& writer, const wchar16_t* command, const wchar16_t* param)
 //{
 //   writer.writeWideLiteral(_T("   "), 3);
@@ -1358,9 +1388,8 @@ void DebugController :: showCurrentModule(DebugLineInfo* lineInfo, ident_t modul
 //   writer.writeWideChar('\n');
 //}
 
-// !! could the code be refactored to reuse part of the code used in ELT as well
-//int DebugController :: generateTape(void* tape, StreamReader& reader, int breakpointCount)
-//{
+int DebugController :: generateTape(int* list, int length)
+{
 //   // load verbs global dictionary
 //   if (_verbs.Count() == 0)
 //      _ELENA_::loadVerbs(_verbs);
@@ -1372,16 +1401,16 @@ void DebugController :: showCurrentModule(DebugLineInfo* lineInfo, ident_t modul
 //
 //   // reserve place for a debug section: number of breakpoints + header + current + previous
 //   _tape.writeBytes(debugPos, 0, (breakpointCount + 3)*sizeof(DebugLineInfo));
-//
-//   int textPos = _tape.Length();
-//
+
+   int textPos = _tape.Length();
+
 //   int row = 0;
 //   MemoryWriter writer(&_tape, debugPos);
-//   MemoryWriter textWriter(&_tape);
-//
-//   // a tape beginning
-//   writeStatement(textWriter, _T("$tape"));
-//
+   MemoryWriter textWriter(&_tape);
+
+   // a tape beginning
+   writeStatement(textWriter, _T("$tape"));
+
 //   DebugLineInfo begin(dsProcedure, 0, 0, row);
 //   writer.write(&begin, sizeof(DebugLineInfo));
 //
@@ -1405,6 +1434,24 @@ void DebugController :: showCurrentModule(DebugLineInfo* lineInfo, ident_t modul
 //   size_t base    = (size_t)tape;
 //   size_t command = _debugger.Context()->readDWord(base);
 //   size_t tapePtr = 0;
+   for (int i = 0; i < length; i++) {
+      size_t memberPtr = list[i];
+      if (memberPtr == 0) {
+         writeStatement(textWriter, _T("$nil"));
+      }
+      else {
+         size_t flags = 0;
+         ident_t className = NULL;
+         DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
+         if (item) {
+            writeStatement(textWriter, className);
+            //writeStatement(textWriter, className);
+            //watch->write(this, memberPtr, ident_t(index), className);
+         }
+         else writeStatement(textWriter, _T("<unknown>"));
+      }
+   }
+
 //   while (command != 0) {
 //      size_t param = _debugger.Context()->readDWord(base + tapePtr + 4);
 //      tapePtr = _debugger.Context()->readDWord(base + tapePtr + 8);         // goes to the next record
@@ -1507,11 +1554,9 @@ void DebugController :: showCurrentModule(DebugLineInfo* lineInfo, ident_t modul
 //   size_t position = writer.Position();
 //   writer.write(&eop, sizeof(DebugLineInfo));
 //   _debugger.addStep(eop.addresses.step.address, (void*)position);
-//
-//   writeStatement(textWriter, _T("end"));
-//   textWriter.writeWideChar(0);
-//
-//   return textPos;
 
-//   return 0; // !! temporal
-//}
+   writeStatement(textWriter, _T("end"));
+   textWriter.writeChar((text_c)0);
+
+   return textPos;
+}

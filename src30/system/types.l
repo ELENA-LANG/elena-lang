@@ -17,6 +17,7 @@
 #template(-8199)         dynamic {}
 #template(-8196)         limited {}
 #template(-8206)         group   {}
+#template(-8209)         __tape_group {}
 #template(-8201)         const   {}
 #template(-8197)         struct  {}
 #template(-8204)         nonstructural {}
