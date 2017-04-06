@@ -67,6 +67,10 @@ void TreeScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& b
          bm = reader.read();
 
          writer.newNode((LexicalType)type, reader.lookup(bm));
+
+         writer.appendNode(lxRow, bm.row);
+         writer.appendNode(lxCol, bm.column);
+         //writer.appendNode(lxLength, getlength(reader.lookup(bm)));
       }
       else throw EParseError(bm.column, bm.row);
 

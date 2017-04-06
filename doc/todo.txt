@@ -3,12 +3,10 @@ In development:
 ------                              
 
               zdev 
-                 * compile script : test.es
 
+                 * js dynamic script : print("Hello");
+                 * js static script : print('Hello');
                  * debug script generated code
-
-                 * js script : print("Hello");
-                 * js script : print('Hello');
                  * scripting library : language interpreter
 
 ------                                 

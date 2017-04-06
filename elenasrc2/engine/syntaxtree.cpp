@@ -312,7 +312,7 @@ void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType typ
 void SyntaxTree :: copyNode(Writer& writer, LexicalType type, Node owner)
 {
    SyntaxTree::Node node = owner.findChild(type);
-   if (type != lxNone) {
+   if (node != lxNone) {
       writer.appendNode(type, node.argument);
    }
 }
