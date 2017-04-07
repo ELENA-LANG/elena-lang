@@ -322,34 +322,52 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
 
          writer.writeChar((char)0);
          rule.postfixPtr = _body.Length();
+         prefixMode = false;
       }
       else if (bm.state == dfaQuote && reader.compare(REFERENCE_KEYWORD)) {
          rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
          mode = REFERENCE_MODE;
+
+         writer.writeChar((char)0);
+         rule.postfixPtr = _body.Length();
+         prefixMode = false;
       }
       else if (bm.state == dfaQuote && reader.compare(IDENTIFIER_KEYWORD)) {
          rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
          mode = IDENTIFIER_MODE;
+
+         writer.writeChar((char)0);
+         rule.postfixPtr = _body.Length();
+         prefixMode = false;
       }
       else if (bm.state == dfaQuote && reader.compare(LITERAL_KEYWORD)) {
          rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
          mode = LITERAL_MODE;
+
+         writer.writeChar((char)0);
+         rule.postfixPtr = _body.Length();
+         prefixMode = false;
       }
       else if (bm.state == dfaQuote && reader.compare(NUMERIC_KEYWORD)) {
          rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
          mode = NUMERIC_MODE;
+
+         writer.writeChar((char)0);
+         rule.postfixPtr = _body.Length();
+         prefixMode = false;
       }
       else {
-         if (prefixMode && rule.saveTo != 0)
+         if (prefixMode && rule.saveTo != 0) {
             throw EParseError(bm.column, bm.row);
+         }
 
          ident_t token = reader.lookup(bm);
 
