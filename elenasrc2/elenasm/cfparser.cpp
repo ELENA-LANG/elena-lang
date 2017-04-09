@@ -232,6 +232,24 @@ size_t CFParser :: defineStarGrammarRule(ref_t parentRuleId, size_t nonterminal)
    return ruleId;
 }
 
+size_t CFParser :: defineOptionalGrammarRule(ref_t parentRuleId, size_t nonterminal)
+{
+   size_t ruleId = autonameRule(parentRuleId);
+
+   // define B -> A
+   Rule recRule;
+   recRule.nonterminal = nonterminal;
+   recRule.terminal = 0;
+   recRule.type = rtNormal;
+   defineApplyRule(recRule, 0);
+   addRule(ruleId, recRule);
+
+   // define B -> eps
+   defineIdleGrammarRule(ruleId);
+
+   return ruleId;
+}
+
 size_t CFParser :: definePlusGrammarRule(ref_t parentRuleId, size_t nonterminal)
 {
    size_t ruleId = autonameRule(parentRuleId);
@@ -413,16 +431,22 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
       else if (reader.compare("<=")) {
          saveScript(reader, rule, applyMode);
       }
-      else if (reader.compare("*") || reader.compare("+")) {
+      else if (reader.compare("*") || reader.compare("+") || reader.compare("?")) {
          if (rule.terminal != 0 && rule.type == rtChomski) {            
             if (reader.compare("+")) {
                rule.terminal = definePlusGrammarRule(ruleId, rule.terminal);
+            }
+            else if (reader.compare("?")) {
+               rule.terminal = defineOptionalGrammarRule(ruleId, rule.terminal);
             }
             else rule.terminal = defineStarGrammarRule(ruleId, rule.terminal);
          }
          else if (rule.nonterminal != 0) {
             if (reader.compare("+")) {
                rule.nonterminal = definePlusGrammarRule(ruleId, rule.nonterminal);
+            }
+            else if (reader.compare("?")) {
+               rule.nonterminal = defineOptionalGrammarRule(ruleId, rule.nonterminal);
             }
             else rule.nonterminal = defineStarGrammarRule(ruleId, rule.nonterminal);
          }            

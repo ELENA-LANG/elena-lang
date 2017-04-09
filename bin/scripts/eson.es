@@ -7,7 +7,7 @@
    #define members    ::= member ";" members;
    #define members    ::= directive ";" members;
    #define members    ::= $eof;
-   #define member     ::= <= symbol_decl ( => s_name "=" expression <= ) =>;
+   #define member     ::= <= symbol ( => s_name "=" expression <= ) =>;
 
    #define directive  ::= <= include ( => "#import" forward alias <= ) =>;
    #define alias      ::= "as" s_name;
@@ -33,7 +33,7 @@
    #define object     ::= identifier;
    #define object     ::= "{" singleton;
 
-   #define singleton  ::= <= nested_decl ( => cls_mmbrs <= ) =>;
+   #define singleton  ::= <= singleton ( => cls_mmbrs <= ) =>;
    #define cls_mmbrs  ::= cls_mmbr ";" cls_mmbrs;
    #define cls_mmbrs  ::= "}";
 
@@ -59,7 +59,7 @@
    #define numeric    ::= <= numeric = $numeric =>;
    #define name       ::= <= message = $identifier =>;
    #define s_name     ::= <= identifier = $identifier =>;
-   #define parameter  ::= <= method_param = $identifier =>;
+   #define parameter  ::= <= parameter = $identifier =>;
    #define identifier ::= <= identifier = $identifier =>;
    #define message    ::= <= message = $identifier =>;
 

@@ -2,8 +2,12 @@
 In development:
 ------                              
 
-              zdev 
 
+              sdev - samples
+                 * Zhang-Suen thinning algorithm
+                 * test script samples
+
+              zdev 
                  * js dynamic script : print("Hello");
                  * js static script : print('Hello');
                  * debug script generated code
@@ -17,7 +21,6 @@ Pipeline:
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
 
               sdev - samples
-                 * test script samples
                  * basic tests
                  * migrate gui rosetta samples
                  * migrate gui samples

@@ -74,6 +74,41 @@ class intmatrixExConvertor =
         
         ^ IntMatrix new &int:n &int:m set &every_ij: (&int:i &int:j) [ a getAt &int:i array getAt &int:j toInt ].
     ]
+    
+    toLiteral &intmatrix:matrix
+    [
+        textbuffer anOutput := TextBuilder new.
+        
+        int i := 0.
+        int j := 0.
+        int n := 0.
+        int m := 0.
+        int l := 0.
+        
+        matrix readLengths &vint:n &vint:m.
+        
+        while (i < n)
+        [
+            j := 0.
+            while (j < m)
+            [
+                int r := 0.
+                matrix read &int:i &int:j &vint:r.
+                
+                anOutput write:r write:",".
+                
+                j := j + 1.
+            ].
+            anOutput readLength &vint:l.            
+            anOutput setLength &int:(l - 1).
+            
+            anOutput write:'newLine.
+            
+            i := i + 1.
+        ].
+        
+        ^ anOutput literal.        
+    ]
 }.
 
 // --- convertorOp ---
@@ -162,6 +197,9 @@ extension convertorOp
                 datetime : aValue = aValue literal.
                     
                 timestamp : aValue = aValue literal.
+                
+                intmatrix : m
+                    = intmatrixExConvertor toLiteral &intmatrix:m.
                 
                 ! anObject = anObject literal.
             }.

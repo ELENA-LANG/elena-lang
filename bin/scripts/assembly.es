@@ -9,16 +9,18 @@
                              "root" "(" include* symbol* ")" 
                            <= > "*system'dynamic'Tape=" # ) =>;
 
-   #define include     ::= <= ( < += "2" > += "%""system'dynamic'tapeOp.var[]""" += "%""include[2]""" => 
-                             "include" "(" reference identifier ")" 
-                           <= ) > * =>;
+   #define include     ::= <= ( < += "2 " > += "%""system'dynamic'tapeOp.var[]""" += "%""include[2]""" => 
+                             "include" "(" forward identifier_v ")" 
+                           <= ) ~ =>;
 
-   #define symbol      ::= symbol_expr;
-   #define symbol      ::= singleton;
+   #define forward     ::= "forward" "(" reference_v ")";
 
-   #define symbol_expr ::= <= ( > += "2" += "%""system'dynamic'tapeOp.var[]""" => 
+   #define symbol      ::= symbol_expr <= ~ =>;
+   #define symbol      ::= singleton <= ~ =>;
+
+   #define symbol_expr ::= <= ( < += "2 " > += "%""system'dynamic'tapeOp.var[]""" => 
                               "symbol" "(" identifier expression ")" 
-                           <= ) > * =>;
+                           <= ) =>;
 
    #define expression  ::= <= > += "%""open&expression[0]""" =>
                              "expression" "(" expr_member+ ")"
@@ -30,10 +32,11 @@
    #define expr_member ::= message;
    #define expr_member ::= reference;
    #define expr_member ::= literal;
+   #define expr_member ::= expression;
 
-   #define singleton   ::= <= > += "2" += "%""system'dynamic'tapeOp.var[]""" += "%""open&singleton[0]""" =>
-                             "singleton" "(" identifier method* ")"
-                            <= > += "%""close[0]""" =>;
+   #define singleton   ::= <= ( < += "2 " > += "%""system'dynamic'tapeOp.var[]""" += "%""open&singleton[0]""" =>
+                             "singleton" "(" identifier? method* ")"
+                            <= > += "%""close[0]""" ) =>;
 
    #define method      ::= <= > += "%""open&method[0]""" += "%""new&paramToken[1]""" < += """self""" =>
                              "method" "(" message parameter* meth_body ")"
@@ -44,7 +47,7 @@
                              "code" "(" code ")"
                            <=  > += "%""close[0]""" =>;
 
-   #define code        ::= expression*;
+   #define code        ::= expression* ret_expr?;
              
    #define ret_expr    ::= <= > += "%""open&ret_expr[0]""" =>
                              "returning" "(" expression ")"
@@ -68,6 +71,10 @@
    #define reference   ::= <= > += "%""new&referenceToken[1]""" =>
                              "reference" "=" ref_quote;
 
+   #define reference_v ::= "reference" "=" ref_quote;
+
+   #define identifier_v::= "identifier" "=" ident_quote;
+
    #define num_quote   ::= <= << += """ " => num_token  <= " """ =>;
 
    #define str_quote   ::= <= << += """ " => str_token <= " """ =>;
@@ -83,4 +90,5 @@
    #define ident_token ::= <= "$identifier" =>;
 
    #define ref_token   ::= <= "$reference" =>;
+
 ]]
