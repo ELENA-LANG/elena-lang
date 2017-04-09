@@ -12,7 +12,9 @@ static factory
         eval &path:"calc.es".
 
 symbol dynamicRules = 
-    factory eval:(Library new) first eval.
+    factory eval:(Library 
+        new) 
+        first eval.
     
 symbol staticRules =
     calc'rules'States.
