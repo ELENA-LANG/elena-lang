@@ -5,7 +5,7 @@ In development:
 
               sdev - samples
                  * Zhang-Suen thinning algorithm
-                 * test script samples
+                 * test script samples : interpreter
 
               zdev 
                  * js dynamic script : print("Hello");

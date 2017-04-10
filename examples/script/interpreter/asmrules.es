@@ -2,7 +2,7 @@
    #grammar transform
    #grammar cf
 
-   #define start      ::= <= ( > += " 2" += " %""system'dynamic'tapeOp.var&args$[]""" => commands <= += " %""get[0]"" " " *" "system'dynamic'Tape" "=" == ) =>;
+   #define start      ::= <= ( > += " 2" += " %""system'dynamic'tapeOp.var[]""" => commands <= += " %""get[0]"" " " *" "system'dynamic'Tape" "=" # ) =>;
 
    #define commands   ::= command commands;
    #define commands   ::= comment commands;

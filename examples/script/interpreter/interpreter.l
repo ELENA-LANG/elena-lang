@@ -92,7 +92,7 @@ class TapeAssembler
             append:0
             append:%"notequal[1]"
             append:(theBrackets pop)
-            append:%"tapeOp.jumpif[1,]".
+            append:%"tapeOp.jumpif[]".
     ]
     
     input
@@ -243,7 +243,7 @@ symbol program =
         Integer new,
         console, %"readChar[0]", %"convertorOp.toInt[0]", 3, %"tapeOp.var[]", 2, %"tapeOp.var[]", %"setAt[2]",            
         3, %"tapeOp.var[]", 2, %"tapeOp.var[]", %"getAt[1]", %"convertorOp.toChar[0]", console, %"write[1]",        
-        3, %"tapeOp.var[]", 2, %"tapeOp.var[]", %"getAt[1]", 0, %"notequal[1]", 1, %"tapeOp.jumpif[1,]").
+        3, %"tapeOp.var[]", 2, %"tapeOp.var[]", %"getAt[1]", 0, %"notequal[1]", 1, %"tapeOp.jumpif[]").
         
     var bfTape := Array new:1024 set &every:(&int:n) [ Integer new ].
     
