@@ -72,7 +72,7 @@ sealed embeddable const struct HDC
 {
     __ptr theHandle.
 
-    sealed stacksafe conversion int:handle
+    sealed stacksafe implicit int:handle
     [
         theHandle := handle.
     ]

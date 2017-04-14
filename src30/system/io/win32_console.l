@@ -13,7 +13,7 @@ embeddable sealed struct CONSOLE_SCREEN_BUFFER_INFO
     win_small_rect srWindow.
     win_coord      dwMaximumWindowSize.
 
-    sealed stacksafe conversion int : n
+    sealed stacksafe implicit int : n
     [
         // !! temporal
     ]

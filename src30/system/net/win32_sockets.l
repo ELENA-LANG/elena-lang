@@ -95,7 +95,7 @@ sealed embeddable struct AddrInfoReader
     dirty_ptr paddrinfo.
     dirty_ptr prootinfo.
     
-    sealed stacksafe conversion dirty_ptr:addr
+    sealed stacksafe implicit dirty_ptr:addr
     [
         paddrinfo := addr.
         prootinfo := addr.

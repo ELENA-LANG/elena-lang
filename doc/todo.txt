@@ -5,6 +5,7 @@ In development:
 
               sdev - samples
                  * Zhang-Suen thinning algorithm
+                 * test script samples : calc
                  * test script samples : interpreter
 
               zdev 
@@ -245,6 +246,14 @@ Pipeline:
                  * redirect dispatch method and open argument list generic 
                  * redirect dispatch method generics and open argument list generic 
                  * extension method should not be called implicitly inside itself
+                 * compile the following code:
+                     sealed implicit object:params
+                     [
+                         theRows := params rows.
+                         theColumns := params columns.
+                         
+                         theArray := template_subj(theRows * theColumns).
+                     ]
 
               zdev 
                  * gui script

@@ -35,7 +35,7 @@ sealed const embeddable struct SystemTime :: BaseValue
 {
     __int64 theValue.
 
-    sealed stacksafe conversion long:value
+    sealed stacksafe implicit long:value
     [
         theValue := value.
     ]
@@ -82,12 +82,12 @@ sealed embeddable struct TimeStruct
     short theSecond.
     short theMillisecond.
 
-    sealed stacksafe conversion __time:aTime
+    sealed stacksafe implicit __time:aTime
     [
         $self write &__time:aTime.
     ]
 
-    sealed stacksafe conversion int:dummy
+    sealed stacksafe implicit int:dummy
     [
     ]
 

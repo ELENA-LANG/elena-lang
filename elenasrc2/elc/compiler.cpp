@@ -6675,18 +6675,6 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
             writer.insert(lxExpression);
             writer.closeNode();
             break;
-   //         //case nsL0Operation:
-   //         //case nsL3Operation:
-   //         //case nsL4Operation:
-   //         //case nsL5Operation:
-   //         //case nsL6Operation:
-   //         //case nsL7Operation:
-   //         //case nsNewOperator:
-   //         case nsMessageOperation:
-   //            copyMessage(current, (symbol != nsMessageOperation));
-   //            _writer.insert(lxExpression);
-   //            _writer.closeNode();
-   //            break;
          case lxMessage:
             writer.newNode(lxMessage);
             scope.copySubject(writer, current.firstChild(lxTerminalMask));
@@ -6983,43 +6971,47 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
 void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool explicitOne)
 {
    writer.newBookmark();
-   
+
    SNode current = node.firstChild();
    bool identifierMode = current.type == lxIdentifier;
    bool listMode = false;
-   while (current != lxNone) {
-      if (current == lxExpression) {
-         if (current.nextNode() == lxExpression)
-            listMode = true;
+   // check if it is new operator
+   if (identifierMode && current.nextNode() == lxExpression && current.nextNode().nextNode() != lxExpression) {
+      scope.copySubject(writer, current);
 
-         if (identifierMode) {
-            if (!listMode/* && current.nextNode(lxObjectMask) != lxExpression*/) {
-               writer.appendNode(lxOperator, -1);
-               generateExpressionTree(writer, current, scope, false);
-               writer.insert(lxExpression);
-               writer.closeNode();
+      writer.appendNode(lxOperator, -1);
+      generateExpressionTree(writer, current.nextNode(), scope, false);
+      writer.insert(lxExpression);
+      writer.closeNode();
+   }
+   else {
+      while (current != lxNone) {
+         if (current == lxExpression) {
+            if (current.nextNode() == lxExpression)
+               listMode = true;
+
+            if (identifierMode) {
+               generateExpressionTree(writer, current, scope, listMode);
             }
-            // !! array mode
-            else generateExpressionTree(writer, current, scope, listMode);
+            else if (listMode) {
+               generateExpressionTree(writer, current, scope, true);
+            }
+            else generateObjectTree(writer, current, scope);
          }
-         else if (listMode) {
-            generateExpressionTree(writer, current, scope, true);
+         else if (listMode && (current == lxMessage || current == lxOperator)) {
+            // HOTFIX : if it is an operation with a collection
+            listMode = false;
+            writer.insert(lxExpression);
+            writer.closeNode();
+
+            generateObjectTree(writer, current, scope);
          }
          else generateObjectTree(writer, current, scope);
-      }
-      else if (listMode && (current == lxMessage || current == lxOperator)) {
-         // HOTFIX : if it is an operation with a collection
-         listMode = false;
-         writer.insert(lxExpression);
-         writer.closeNode();
 
-         generateObjectTree(writer, current, scope);
+         current = current.nextNode();
       }
-      else generateObjectTree(writer, current, scope);
-
-      current = current.nextNode();
    }
-
+   
    if (listMode) {
       writer.insert(lxExpression);
       writer.closeNode();

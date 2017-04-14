@@ -3,7 +3,7 @@
 {
     arrayof(function) theFunctions.
     
-    sealed stacksafe conversion function:func
+    sealed stacksafe implicit function:func
     [
         theFunctions := function(1).
         theFunctions@0 := func.

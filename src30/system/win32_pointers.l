@@ -26,7 +26,7 @@ sealed const embeddable struct RTPointer
 {
     __dword theIndex.
     
-    sealed stacksafe conversion int:n
+    sealed stacksafe implicit int:n
     [
         theIndex := n.
     ]
