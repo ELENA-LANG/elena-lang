@@ -604,9 +604,9 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
    // HOT FIX : trying to typecast primitive structure array
    if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
       ClassInfo sourceInfo;      
-      if (sourceRef == V_BINARYARRAY && sourceRef != 0) {
+      if (sourceRef == V_BINARYARRAY && sourceType != 0) {
          // HOTFIX : for binary array of structures - sourceType  contains the element size
-         ref_t elementRef = sourceRef;
+         ref_t elementRef = scope.subjectHints.get(sourceType);
 
          defineClassInfo(scope, sourceInfo, elementRef, true);
          if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {

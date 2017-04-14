@@ -70,6 +70,79 @@
         <= setAt &int:(index int) &template_subj:value.
 }
 
+
+// --- matrixof ---
+
+#template matrixof(template_subj)
+{
+    arrayof(template_subj) theArray.
+    int                    theRows.
+    int                    theColumns.
+    
+    sealed implicit object:params
+    [
+        theRows := params rows.
+        theColumns := params columns.
+        
+        int len := theRows * theColumns.
+        
+//        theArray := template_subj(/*theRows * theColumns*/len).
+    ]
+    
+    /// Reads the matrix lengths to the output parameter
+    stacksafe readLengths &vint:Rows &vint:Columns
+    [
+        Rows := theRows.
+        Columns := theColumns.
+    ]
+
+    stacksafe outnprop(length) readLength &vint:retVal
+    [
+        retVal := theRows.
+    ]
+
+    stacksafe outnprop(columns) readColumns &vint:retVal
+    [
+        retVal := theColumns.
+    ]
+
+    stacksafe outnprop(rows) readRows &vint:retVal
+    [
+        retVal := theRows.
+    ]
+
+    /// Writes an integer value at the specified position
+    stacksafe setAt &int:i &int:j &template_subj:aValue
+    [
+        theArray setAt &int:(i * theColumns + j) &template_subj:aValue.
+    ]
+
+    embeddable template_subj getAt &int:i &int:j
+        = theArray getAt &int:(i * theColumns + j).
+
+    getAt : i : j
+        = $self getAt &int:i &int:j.
+
+    setAt : i : j : aValue
+    [
+        $self setAt &int:i &int:j &template_subj:aValue.    
+    ]
+
+    /// Returns a row
+    getAt : i =
+    {
+        length = theColumns int.
+        
+        getAt : j
+            = $owner getAt:i:j.
+        
+        setAt : j : aValue
+        [
+            $owner setAt:i:j:aValue.
+        ]
+    }.    
+}
+
 // === basic memory classes ===
 
 // --- ByteArray ---
@@ -522,31 +595,18 @@ sealed embeddable dispatchable(bitset) class BitArray32
 
 // --- IntMatrix ---
 
-sealed dispatchable(intmatrix) class IntMatrix
+sealed dispatchable(intmatrix) matrixof(int) class IntMatrix
 {
-    intarray theArray.
-    int      theRows.
-    int      theColumns.
-    
     constructor new &int:Rows &int:Columns
     [
         theRows := Rows.
         theColumns := Columns.
         
-        theArray := IntArray new &int:(Columns * Rows).        
+        theArray := int(Columns * Rows).
     ]
         
     constructor new : Rows : Columns
         <= new &int:(Rows int) &int:(Columns int).
-        
-    /// Reads the matrix lengths to the output parameter
-    stacksafe readLengths &vint:Rows &vint:Columns
-    [
-        Rows := theRows.
-        Columns := theColumns.
-    ]
-
-    int length = theRows.
 
     /// Writes an integer value at the specified position
     stacksafe write &int:i &int:j &int:aValue
@@ -579,20 +639,6 @@ sealed dispatchable(intmatrix) class IntMatrix
     [
         $self write &int:(i int) &int:(j int) &int:(aValue int).    
     ]
-
-    /// Returns a row
-    getAt : i =
-    {
-        length = theColumns int.
-        
-        getAt : j
-            = $owner getAt:i:j.
-        
-        setAt : j : aValue
-        [
-            $owner setAt:i:j:aValue.
-        ]
-    }.
 }
 
 // --- RealArray ---
@@ -668,15 +714,11 @@ sealed dispatchable(realarray) arrayof(real) RealArray
 
 // --- RealMatrix ---
 
-sealed dispatchable(realmatrix) class RealMatrix
+sealed dispatchable(realmatrix) matrixof(real) class RealMatrix
 {
-    realarray theArray.
-    int       theRows.
-    int       theColumns.
-    
     stacksafe constructor new &int:Rows &int:Columns
     [
-        theArray := RealArray new &int:(Columns * Rows).
+        //theArray := real(Columns * Rows).
         
         theRows := IntNumber new &int:Rows.
         theColumns := IntNumber new &int:Columns.
@@ -684,15 +726,6 @@ sealed dispatchable(realmatrix) class RealMatrix
         
     constructor new : Rows : Columns
         <= new &int:(Columns int) &int:(Rows int).
-
-    /// Reads the matrix lengths to the output parameter
-    stacksafe readLengths &vint:Rows &vint:Columns
-    [
-        Columns := theColumns.
-        Rows := theRows.
-    ]
-
-    int length = theRows.
 
     /// Writes an integer value at the specified position
     stacksafe write &int:i &int:j &real:aValue
@@ -716,33 +749,6 @@ sealed dispatchable(realmatrix) class RealMatrix
         $self read &int:i &int:j &vreal:retVal.
         ^ retVal.
     ]
-
-    getAt : i : j
-    [
-        real aValue := 0.0r.
-        $self read &int:(i int) &int:(j int) &vreal:aValue.
-        
-        ^ RealNumber new &real:aValue.
-    ]
-
-    setAt : i : j : aValue
-    [
-        $self write &int:(i int) &int:(j int) &real:(aValue real).    
-    ]
-
-    /// Returns a row
-    getAt : i =
-    {
-        length = theColumns.
-        
-        getAt : j
-            = $owner getAt:i:j.
-        
-        setAt : j : aValue
-        [
-            $owner setAt:i:j:aValue.
-        ]
-    }.
 }
 
 // --- CharArray ---

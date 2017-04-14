@@ -4,6 +4,8 @@ In development:
 
 
               sdev - samples
+                 * test intmatrix, realmatrix
+
                  * Zhang-Suen thinning algorithm
                  * test script samples : calc
                  * test script samples : interpreter
