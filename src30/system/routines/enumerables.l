@@ -199,7 +199,7 @@ extension indexableOp
         
     stacksafe exchange &int:anIndex1 &int:anIndex2
     [
-        iterator anIndexer := self iterator.
+        indexer anIndexer := self indexer.
         
         anIndexer writeIndex &int:anIndex1.
         
@@ -216,7 +216,7 @@ extension indexableOp
     
     run &every:nfunc
     [
-        iterator it := self iterator.
+        indexer it := self indexer.
         
         while (it available)
         [
@@ -228,7 +228,7 @@ extension indexableOp
     
     indexOfElement : anObject
     [
-        iterator anIndexer := self iterator.
+        indexer anIndexer := self indexer.
         
         while (anIndexer available)
         [
@@ -245,7 +245,7 @@ extension indexableOp
 //    [
 //        #var aCopy := self clone.
 //        
-//        #var(iterator)aIndexer := aCopy iterator.
+//        #var(indexer)aIndexer := aCopy indexer.
 //        
 //        #loop (aIndexer available)?
 //        [
@@ -262,7 +262,7 @@ extension indexableOp
         
     set &nfunc:anIndexFunc
     [
-        iterator aIndexer := self iterator.
+        indexer aIndexer := self indexer.
 
         while (aIndexer available)
         [
@@ -282,8 +282,8 @@ extension indexableOp
     
     sort &func2:aCompareFunc
     [
-        iterator aFormer := self iterator.
-        iterator aLater := self iterator.
+        indexer aFormer := self indexer.
+        indexer aLater := self indexer.
 
         while (aFormer available)
         [
@@ -320,7 +320,7 @@ extension indexableOp
                 
     Subarray &int:anIndex &int:aLength
     [
-        iterator it := self iterator.
+        indexer it := self indexer.
         
         ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
     ]
@@ -330,8 +330,8 @@ extension indexableOp
         (self length != anArray length)
             ? [ ^ false. ].
             
-        iterator a := self iterator.
-        iterator b := anArray iterator.
+        indexer a := self indexer.
+        indexer b := anArray indexer.
         
         while (a available)
         [
@@ -350,7 +350,7 @@ extension indexableOp
             
     reverse:counter &at:index
     [
-        iterator it := self iterator.
+        indexer it := self indexer.
         
         int      i := index int.
         int      j := counter int.

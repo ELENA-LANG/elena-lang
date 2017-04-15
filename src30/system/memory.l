@@ -140,7 +140,12 @@
         [
             $owner setAt:i:j:aValue.
         ]
-    }.    
+    }.
+//    
+//    indexer2d = Indexer2D
+//    {
+//        
+//    }.
 }
 
 // === basic memory classes ===
@@ -524,8 +529,8 @@ sealed dispatchable(bitarray) class BitArray
     /// Returns the array enumerator
     enumerator = BitArrayEnumerator new &bitarray:$self.
 
-    /// Returns the array iterator
-    iterator = BitArrayIterator new &bitarray:$self.    
+    /// Returns the array indexer
+    indexer = BitArrayIndexer new &bitarray:$self.    
 }
 
 // --- BitArray32 ---
@@ -589,8 +594,8 @@ sealed embeddable dispatchable(bitset) class BitArray32
     /// Returns the array enumerator
     enumerator = BitArray32Enumerator new &bitset:$self.
 
-    /// Returns the array iterator
-    iterator = BitArray32Iterator new &bitset:$self.
+    /// Returns the array indexer
+    indexer = BitArray32Indexer new &bitset:$self.
 }
 
 // --- IntMatrix ---
@@ -1135,8 +1140,8 @@ sealed dispatchable(literal,int,char,wide) dynamic string LiteralValue :: BaseVa
     /// Returns the string enumerator
     enumerator = LiteralEnumerator new &literal:$self.
 
-    /// Returns the string iterator
-    iterator = LiteralIterator new &literal:$self.
+    /// Returns the string indexer
+    indexer = LiteralIndexer new &literal:$self.
     
     /// Clones the value
     clone = LiteralValue new &literal:$self.
@@ -1347,8 +1352,8 @@ sealed dispatchable(wide,int,char,literal) dynamic string WideLiteralValue :: Ba
     /// Returns the object enumerator
     enumerator = WideLiteralEnumerator new &wide:$self.
     
-    /// Returns the object iterator
-    iterator = WideLiteralIterator new &wide:$self.
+    /// Returns the object indexer
+    indexer = WideLiteralIndexer new &wide:$self.
     
     /// Clones the value
     clone = WideLiteralValue new &wide:$self.
@@ -1552,8 +1557,8 @@ sealed dispatchable(array) arrayof(object) Array
     /// Returns the array enumerator
     enumerator = ArrayEnumerator new &array:$self.
 
-    /// Returns the array iterator
-    iterator = ArrayIterator new &array:$self.
+    /// Returns the array indexer
+    indexer = ArrayIndexer new &array:$self.
 
     /// Clones the array
     array clone 
@@ -2030,19 +2035,19 @@ class LiteralEnumerator :: Enumerator
     get = theChar.
 }
 
-// --- LiteralIterator ---
+// --- LiteralIndexer ---
 
-/// A literal value iterator
-class LiteralIterator :: Iterator
+/// A literal value indexer
+class LiteralIndexer :: Indexer
 {
     literal theLiteral.
     vint    theIndex.
     
-    /// Creates an iterator
+    /// Creates an indexer
     constructor new : anObject
         <= new &literal:(anObject literal).
     
-    /// Creates an iterator
+    /// Creates an indexer
     constructor new &literal:aLiteral
     [
         theLiteral := aLiteral.
@@ -2147,19 +2152,19 @@ class WideLiteralEnumerator :: Enumerator
     get = theChar.
 }
 
-// --- WideLiteralIterator ---
+// --- WideLiteralInexer ---
 
 /// A wide literal enumerator
-class WideLiteralIterator :: Iterator
+class WideLiteralIndexer :: Indexer
 {
     wide theLiteral.
     vint theIndex.
     
-    /// Creates an iterator
+    /// Creates an indexer
     constructor new : anObject
         <= new &wide:(anObject wide).
     
-    /// Creates an iterator
+    /// Creates an indexer
     constructor new &wide:aLiteral
     [
         theLiteral := aLiteral.
@@ -2200,19 +2205,19 @@ class WideLiteralIterator :: Iterator
         => theLiteral.
 }
 
-// --- ArrayIterator ---
+// --- ArrayIndexer ---
 
-/// An array iterator
-class ArrayIterator :: Iterator
+/// An array indexer
+class ArrayIndexer :: Indexer
 {
     array theArray.
     vint  theIndex.
 
-    /// Returns the parameter iterator
+    /// Returns the parameter indexer
     constructor new : anArray
         <= new &array:(anArray array).
     
-    /// Returns the parameter iterator
+    /// Returns the parameter indexer
     constructor new &array:anArray
     [
         theArray := anArray.
@@ -2332,19 +2337,19 @@ class ArrayEnumerator :: Enumerator
 //    ]
 //}
 
-// --- BitArrayIterator ---
+// --- BitArrayIndexer ---
 
-/// An array iterator
-class BitArrayIterator :: Iterator
+/// An array indexer
+class BitArrayIndexer :: Indexer
 {
     bitarray theArray.
     vint  theIndex.
 
-    /// Returns the parameter iterator
+    /// Returns the parameter indexer
     constructor new : anArray
         <= new &bitarray:(anArray bitarray).
     
-    /// Returns the parameter iterator
+    /// Returns the parameter indexer
     constructor new &bitarray:anArray
     [
         theArray := anArray.
@@ -2426,19 +2431,19 @@ class BitArrayEnumerator :: Enumerator
         = theArray getAt &int:theIndex.
 }
 
-// --- BitArray32Iterator ---
+// --- BitArray32Indexer ---
 
-/// An array iterator
-class BitArray32Iterator :: Iterator
+/// An array indexer
+class BitArray32Indexer :: Indexer
 {
     bitset theArray.
     vint   theIndex.
 
-    /// Returns the parameter iterator
+    /// Returns the parameter indexer
     constructor new : anArray
         <= new &bitset:(anArray bitset).
     
-    /// Returns the parameter iterator
+    /// Returns the parameter indexer
     constructor new &bitset:anArray
     [
         theArray := anArray.

@@ -18,10 +18,10 @@ limited dispatchable(enumerator) class Enumerator
     enumerable = $nil.
 }
 
-// --- Iterator ---
+// --- Indexer ---
 
-/// An iterator prototype
-limited dispatchable(iterator) class Iterator
+/// An indexer prototype
+limited dispatchable(indexer) class Indexer
 {
     /// Returns false if the index out of range
     bool available = $nil.
@@ -49,7 +49,7 @@ limited dispatchable(iterator) class Iterator
     write &index:anIndex []
     
     /// Increaments the index by specified value
-    iterator append &index:anOffset
+    indexer append &index:anOffset
     [
         int anIndex := 0.
         $self readIndex &vint:anIndex.
@@ -76,6 +76,104 @@ limited dispatchable(iterator) class Iterator
     stacksafe outnprop(length) readLength &vint:anOutput
     [
         anOutput := 0. 
+    ]
+}
+
+// --- MatrixIndexer ---
+
+/// An indexer prototype
+limited dispatchable(indexer2d) class Indexer2D
+{
+    /// Returns false if the index out of range
+    bool available = $nil.
+
+    /// Returns the current member
+    get = $nil.
+    
+    /// Sets the current member
+    set : anObject []
+    
+    /// Reads the current i-index into an output parameter
+    stacksafe outnprop(index1) readIndex1 &vint:anIndex []
+    
+    /// Reads the current j-index into an output parameter
+    stacksafe outnprop(index2) readIndex2 &vint:anIndex []
+    
+    /// Sets the i-index by specified value
+    stacksafe writeIndex1 &int:anIndex [ ] 
+    
+    /// Sets the i-index by specified value
+    stacksafe writeIndex2 &int:anIndex [ ] 
+    
+    /// Sets the index by specified value
+    set &index1:anIndex 
+        <= writeIndex1 &int:(anIndex int).
+    
+    /// Sets the index by specified value
+    set &index2:anIndex 
+        <= writeIndex2 &int:(anIndex int).
+    
+    /// Increaments the index by specified value
+    indexer2d append &index1:anOffset
+    [
+        int anIndex := 0.
+        $self readIndex1 &vint:anIndex.
+        
+        anIndex := anIndex + anOffset int.
+        
+        $self writeIndex1 &int:anIndex.
+        
+        ^ $self.
+    ]
+    
+    /// Increaments the index by specified value
+    indexer2d append &index2:anOffset
+    [
+        int anIndex := 0.
+        $self readIndex2 &vint:anIndex.
+        
+        anIndex := anIndex + anOffset int.
+        
+        $self writeIndex2 &int:anIndex.
+        
+        ^ $self.
+    ]
+
+    /// Decreaments the index by specified value
+    reduce &index1:anOffset
+    [
+        int anIndex := 0.
+        $self readIndex1 &vint:anIndex.
+        
+        anIndex := anIndex - anOffset int.
+        
+        $self writeIndex1 &int:anIndex.
+    ]
+
+    /// Decreaments the index by specified value
+    reduce &index2:anOffset
+    [
+        int anIndex := 0.
+        $self readIndex2 &vint:anIndex.
+        
+        anIndex := anIndex - anOffset int.
+        
+        $self writeIndex2 &int:anIndex.
+    ]
+
+    /// Reads the length to the output parameter    
+    stacksafe readSize &vint:n &vint:m
+    [
+    ]
+
+    /// Reads the length to the output parameter    
+    stacksafe outnprop(columns) readColumns &vint:m
+    [
+    ]
+
+    /// Reads the length to the output parameter    
+    stacksafe outnprop(rows) readRowns &vint:n
+    [
     ]
 }
 
@@ -710,3 +808,59 @@ limited dispatchable(n3func) class IndexFunction3
 //    /// Clones the object
 //    #method clone = Boolean new:$value.
 //}
+
+// --- BaseMatrixIndexer ---
+
+class BaseMatrixIndexer :: Indexer2D
+{
+    int theIndex1.
+    int theIndex2.
+    int theLength1.
+    int theLength2.
+    
+    /// Returns false if the index out of range
+    available = (theIndex1 <= theLength1) && (theIndex2 <= theLength2).
+    
+    /// Reads the current i-index into an output parameter
+    readIndex1 &vint:anIndex 
+    [
+        anIndex := theIndex1.
+    ]    
+    
+    /// Reads the current j-index into an output parameter
+    readIndex2 &vint:anIndex 
+    [
+        anIndex := theIndex2.
+    ]
+    
+    /// Sets the i-index by specified value
+    writeIndex1 &int:anIndex 
+    [ 
+        theIndex1 := anIndex.
+    ] 
+    
+    /// Sets the i-index by specified value
+    writeIndex2 &int:anIndex 
+    [
+        theIndex2 := anIndex.
+    ] 
+
+    /// Reads the length to the output parameter    
+    stacksafe readSize &vint:n &vint:m
+    [
+        n := theLength1.
+        m := theLength2.
+    ]
+
+    /// Reads the length to the output parameter    
+    readColumns &vint:m
+    [
+        m := theLength2.
+    ]
+
+    /// Reads the length to the output parameter    
+    readRowns &vint:n
+    [
+        n := theLength1.
+    ]    
+}

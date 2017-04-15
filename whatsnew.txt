@@ -16,6 +16,7 @@
 
 [LIB]
 [+] new system'matrixof template
+[!] iterators are renamed into indexers
 
 ******************************************************************************
                              What's New in 3.0.1

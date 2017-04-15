@@ -4,11 +4,13 @@ In development:
 
 
               sdev - samples
-                 * test intmatrix, realmatrix
+                 * implicit should always be sealed
+                 * implicit nested constructor
 
                  * Zhang-Suen thinning algorithm
                  * test script samples : calc
                  * test script samples : interpreter
+                 * test matrix sample
 
               zdev 
                  * js dynamic script : print("Hello");

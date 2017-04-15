@@ -230,14 +230,14 @@ class ListEnumerator :: Enumerator
 
 // --- ListIndexer ---
 
-/// A list iterator
-class ListIterator :: Iterator
+/// A list indexer
+class ListIndexer :: Indexer
 {
     list      theList.
     list_item theCurrent.
     vint      theIndex.
     
-    /// Creates a list iterator
+    /// Creates a list indexer
     constructor new &list:aList
     [
         theList := aList.
@@ -245,7 +245,7 @@ class ListIterator :: Iterator
         theIndex := 0.
     ]
 
-    /// Creates a list iterator
+    /// Creates a list indexer
     constructor new : anObject
         <= new &list:(anObject list).
     
@@ -456,8 +456,8 @@ sealed dispatchable(enumerable) class List
     /// Returns the list enumerator
     enumerator = ListEnumerator new &list:$self.
 
-    /// Returns the list iterator
-    iterator = ListIterator new &list:$self.
+    /// Returns the list indexer
+    indexer = ListIndexer new &list:$self.
     
     /// Clones the list
     clone 
@@ -678,8 +678,8 @@ sealed dispatchable(enumerable) class ArrayList
     /// Returns the list enumerator
     enumerator = ArrayListEnumerator new &array_list:$self.
     
-    /// Returns the list iterator9
-    iterator = ArrayListIterator new &array_list:$self.
+    /// Returns the list indexer9
+    indexer = ArrayListIndexer new &array_list:$self.
     
     /// Returns a list copy
     array_list clone
@@ -733,20 +733,20 @@ class ArrayListEnumerator :: Enumerator
 
 // --- ArrayListIndexer ---
 
-/// A list iterator
-class ArrayListIterator :: Iterator
+/// A list indexer
+class ArrayListIndexer :: Indexer
 {
     array_list theList.
     vint       theIndex.
     
-    /// Creates a list iterator
+    /// Creates a list indexer
     constructor new &array_list:aList
     [
         theList := aList.
         theIndex := 0.
     ]
 
-    /// Creates a list iterator
+    /// Creates a list indexer
     constructor new : anObject
         <= new &array_list:(anObject array_list).
     

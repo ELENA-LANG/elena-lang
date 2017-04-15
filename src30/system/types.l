@@ -118,7 +118,8 @@
 
 // --- Enumerators / Indexers ---
 #subject enumerator = system'Enumerator.
-#subject iterator   = system'Iterator.
+#subject indexer    = system'Indexer.
+#subject indexer2d  = system'Indexer2D.
 
 // --- Generic attributes ---
 #subject object.

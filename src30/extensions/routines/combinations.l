@@ -29,7 +29,7 @@ class sequentialNext = BaseStrategy
     [
         ($nil == (Indexers seek &each: anIndexer 
                 [
-                    iterator it := anIndexer iterator. 
+                    indexer it := anIndexer indexer. 
                     
                     (it append &index:1 available)
                         ! [ it writeIndex &int:0. ^ false. ].
@@ -104,12 +104,12 @@ class combinationNext = BaseStrategy
         int   k := anArray length.
         int   i := k - 1.
         
-        iterator aCurrentIndexer := anArray getAt &int:i iterator.
+        indexer aCurrentIndexer := anArray getAt &int:i indexer.
         
         (aCurrentIndexer append &index:1 available)
             ? [ ^ $self. ].
              
-        while ((i > 0) and:[ anArray getAt &int:(i - 1) iterator index int + k - i + 1 >= aLength ])
+        while ((i > 0) and:[ anArray getAt &int:(i - 1) indexer index int + k - i + 1 >= aLength ])
             [ i := i - 1. ].
         
         (i == 0)
@@ -132,7 +132,7 @@ class combinationStart = BaseStrategy
         array anArray := Indexers array.
         int aLength := anArray length.
         
-        0::intLoopOp to &int:(aLength - 1) &nfunc: (&int:i) [ anArray getAt &int:i iterator writeIndex &int:i. ].
+        0::intLoopOp to &int:(aLength - 1) &nfunc: (&int:i) [ anArray getAt &int:i indexer writeIndex &int:i. ].
         
         ^ combinationNext.
     ]
@@ -155,7 +155,7 @@ class BaseRowEnumerator :: Enumerator
         int i := 0.
         while (i < theLength)
         [
-            theIndexers setAt &int:i &object:((Arguments @ i) iterator).
+            theIndexers setAt &int:i &object:((Arguments @ i) indexer).
             
             i := i + 1.
         ].
@@ -171,7 +171,7 @@ class BaseRowEnumerator :: Enumerator
         int i := 0.
         while (i < theLength)
         [
-            theIndexers setAt &int:i &object:((Arguments @ (IntNumber new &int:i)) iterator).
+            theIndexers setAt &int:i &object:((Arguments @ (IntNumber new &int:i)) indexer).
             
             i := i + 1.
         ].

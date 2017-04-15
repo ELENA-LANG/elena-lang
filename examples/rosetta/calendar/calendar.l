@@ -58,7 +58,7 @@ class CalendarMonthPrinter
         theRow += 1.            
     ]
     
-    iterator = Iterator
+    indexer = Indexer
     {
         available = theRow < 7.
 
