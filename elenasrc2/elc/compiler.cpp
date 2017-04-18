@@ -3547,8 +3547,8 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    else {
       // dynamic binary symbol
       if (test(scope.info.header.flags, elStructureRole)) {
-         node.set(lxStruct, scope.info.size);
-         node.appendNode(lxTarget, scope.reference);
+         writer.newNode(lxStruct, scope.info.size);
+         writer.appendNode(lxTarget, scope.reference);
 
          if (scope.outers.Count() > 0)
             scope.raiseError(errInvalidInlineClass, node);
@@ -3597,6 +3597,12 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
          writer.closeNode();
          writer.closeNode();
          writer.closeNode();
+      }
+
+      ref_t implicitConstructor = encodeVerb(PRIVATE_MESSAGE_ID);
+      if (scope.info.methods.exist(implicitConstructor, true)) {
+         // if implicit constructor is declared - it should be automatically called
+         writer.appendNode(lxOvreriddenMessage, implicitConstructor);
       }
 
       writer.closeNode();
@@ -4397,10 +4403,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
 
       if (test(scope.hints, tpSealed | tpConversion)) {
-         if (verb_id != EVAL_MESSAGE_ID && paramCount != 1) {
-            scope.raiseError(errIllegalMethod, node);
+         if (verb_id == EVAL_MESSAGE_ID && paramCount == 1) {
+            verb_id = PRIVATE_MESSAGE_ID;
          }
-         else verb_id = PRIVATE_MESSAGE_ID;
+         else if (verb_id == GET_MESSAGE_ID && paramCount == 0 && sign_id != 0 && test(scope.getClassFlags(false), elNestedClass)) {
+            // if it is an implicit nested constructor
+            sign_id = 0;
+            verb_id = PRIVATE_MESSAGE_ID;
+         }
+         else scope.raiseError(errIllegalMethod, node);
       }
       if (test(scope.hints, tpSealed) && verb == lxPrivate) {
          verb_id = PRIVATE_MESSAGE_ID;
@@ -5890,6 +5901,7 @@ ref_t Compiler :: optimizeNestedExpression(SNode node, ModuleScope& scope, Warni
 {
    // check if the nested collection can be treated like constant one
    bool constant = true;
+   int memberCounter = 0;
    SNode current = node.firstChild();
    while (constant && current != lxNone) {
       if (current == lxMember) {
@@ -5910,6 +5922,7 @@ ref_t Compiler :: optimizeNestedExpression(SNode node, ModuleScope& scope, Warni
                optimizeExpression(current, scope, warningScope);
                break;
          }
+         memberCounter++;
       }
       else if (current == lxOuterMember) {
          // nested class with outer member must not be constant
@@ -5917,8 +5930,14 @@ ref_t Compiler :: optimizeNestedExpression(SNode node, ModuleScope& scope, Warni
 
          optimizeExpression(current, scope, warningScope);
       }
+      else if (current == lxOvreriddenMessage) {
+         constant = false;
+      }
       current = current.nextNode();
    }
+
+   if (node.argument != memberCounter)
+      constant = false;
 
    // replace with constant array if possible
    if (constant) {

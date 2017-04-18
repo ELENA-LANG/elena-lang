@@ -30,7 +30,7 @@
 {
     template_subj $value.
     
-    sealed stacksafe implicit template_subj : val
+    stacksafe implicit template_subj : val
     [
         $value := val.
     ]
@@ -290,7 +290,7 @@ sealed embeddable dispatchable(byte) struct ByteNumber :: IntBaseNumber
 {
     __int8 theValue.
 
-    stacksafe sealed implicit int:n
+    stacksafe implicit int:n
     [
         theValue := n && 255.
     ]
@@ -534,7 +534,7 @@ sealed embeddable dispatchable(short) struct ShortNumber :: IntBaseNumber
 {
     __int16 theValue.
 
-    sealed stacksafe implicit int:n
+    stacksafe implicit int:n
     [
         (n < 0)
             ? [ 
@@ -792,12 +792,12 @@ sealed embeddable dispatchable(int,long,real,char,literal,wide) struct IntNumber
 {
     __int32 theValue.
 
-    sealed stacksafe implicit byte:n
+    stacksafe implicit byte:n
     [
         theValue := n.
     ]
     
-    sealed stacksafe implicit short:n
+    stacksafe implicit short:n
     [
         theValue := n.
     ]
@@ -1316,7 +1316,7 @@ sealed embeddable dispatchable(real,int,long,literal,wide) struct RealNumber :: 
 {
     __real64 theValue.
 
-    sealed stacksafe implicit int:n
+    stacksafe implicit int:n
     [
         realConvertor convert &int:n &vreal:$self.
     ]

@@ -13,6 +13,7 @@
 [+] finally code template
 [+] #286 : using  code template
 [+] #301 : generic handler with open argument list
+[+] the nested class implicit constructor
 
 [LIB]
 [+] new system'matrixof template

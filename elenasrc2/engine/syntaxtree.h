@@ -212,7 +212,7 @@ enum LexicalType
    lxOperatorAttr    = 0x20021,
 //   lxNotFoundAttr    = 0x20022,
    lxBinarySelf      = 0x20023, // debug info only
-   lxOvreriddenMessage = 0x20024, // arg - message
+   lxOvreriddenMessage = 0x20024, // arg - message ; used for extension / implicit constructor call
 //   lxClassRef        = 0x20025,
 //   lxPreloadedAttr   = 0x20026,
    lxInclude         = 0x20027,
@@ -227,18 +227,6 @@ enum LexicalType
    lxClosureMessage  = 0x20030,
    lxExtArgumentType = 0x20031,
 
-//   lxFieldAttrMask   = 0x20100,
-//   lxStaticAttr      = 0x20102,
-//   lxClassMethodAttr = 0x20103,
-//   lxDWordAttr       = 0x20104,
-//   lxSignatureAttr   = 0x20105,
-//   lxMessageAttr     = 0x20106,
-//   lxVerbAttr        = 0x20107,
-//   lxPtrAttr         = 0x20108,
-//   lxQWordAttr       = 0x20109,
-//   lxRealAttr        = 0x2010A,
-//   lxExtMessageAttr  = 0x2010B,
-//   lxSymbolAttr      = 0x2010C,
    lxTempAttr        = 0x2010D,
 };
 

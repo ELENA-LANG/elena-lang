@@ -2,7 +2,7 @@
 #template(-16385)        var {}
 #template(-16386)        class {}
 #template(-16384)        constructor {}
-#template(-16387)        implicit {}
+#template(-16387,-8195)  implicit {}
 #template(-16389)        symbol {}
 
 #template(-8194)         static {}

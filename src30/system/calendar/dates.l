@@ -13,7 +13,7 @@ sealed embeddable dispatchable(timespan) struct TimeSpan :: BaseNumber
 
 //    #constructor min <= new &__time:(SystemTime $new &long:0l).
 
-    sealed stacksafe implicit __time:aValue
+    stacksafe implicit __time:aValue
     [
         theValue := aValue.
     ]
@@ -201,7 +201,7 @@ sealed embeddable dispatchable(datetime) struct Date :: BaseNumber
         $systemTimeFactory readUtcNow &__vtime:theValue.
     ]
             
-    sealed stacksafe implicit __time:aValue
+    stacksafe implicit __time:aValue
     [
         theValue := aValue.
     ]

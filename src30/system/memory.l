@@ -79,7 +79,7 @@
     int                    theRows.
     int                    theColumns.
     
-    sealed implicit object:params
+    implicit object:params
     [
         theRows := params rows.
         theColumns := params columns.

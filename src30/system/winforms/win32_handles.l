@@ -59,7 +59,7 @@ sealed embeddable struct CREATESTRUCT
     int       theClassPtr.
     int       theExStyle.
     
-    sealed stacksafe implicit int:n
+    stacksafe implicit int:n
     [
     ]
     

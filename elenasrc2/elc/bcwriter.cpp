@@ -4674,6 +4674,12 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
    }
 
    assignBaseTo(tape, lxResult);
+   
+   SNode callNode = node.findChild(lxOvreriddenMessage);
+   if (callNode != lxNone) {
+      // call implicit constructor
+      callResolvedMethod(tape, target.argument, callNode.argument);
+   }   
 }
 
 void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
