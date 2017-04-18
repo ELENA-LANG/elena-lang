@@ -17,6 +17,7 @@
 
 [LIB]
 [+] new system'matrixof template
+[+] extensions'routines'MatrixSpace
 [!] iterators are renamed into indexers
 
 ******************************************************************************

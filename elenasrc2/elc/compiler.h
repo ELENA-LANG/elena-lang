@@ -468,6 +468,8 @@ private:
 //         return test(info.header.flags, elClosed);
 //      }
       
+      ObjectInfo mapField(ident_t identifier);
+
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
 //      void compileClassAttribute(SyntaxTree::Node hint);

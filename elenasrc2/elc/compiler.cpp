@@ -1012,6 +1012,29 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    extensionMode = 0;
 }
 
+ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
+{
+   int offset = info.fields.get(terminal);
+   if (offset >= 0) {
+      ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
+      if (test(info.header.flags, elStructureRole)) {
+         return ObjectInfo(okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2);
+      }
+      else return ObjectInfo(okField, offset, fieldInfo.value1, fieldInfo.value2);
+   }
+   else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
+      return ObjectInfo(okThisParam, 1, -2, info.fieldTypes.get(-1).value2);
+   }
+   else {
+      ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
+      if (staticInfo.value1 != 0) {
+         return ObjectInfo(okStaticField, staticInfo.value1, 0, staticInfo.value2);
+      }
+      else return ObjectInfo();
+   }
+
+}
+
 ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
 {
    if (terminal.compare(SUPER_VAR)) {
@@ -1024,24 +1047,11 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
       else return ObjectInfo(okParam, (size_t)-1);
    }
    else {
-      int offset = info.fields.get(terminal);
-      if (offset >= 0) {
-         ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
-         if (test(info.header.flags, elStructureRole)) {
-            return ObjectInfo(okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2);
-         }
-         else return ObjectInfo(okField, offset, fieldInfo.value1, fieldInfo.value2);
+      ObjectInfo fieldInfo = mapField(terminal);
+      if (fieldInfo.kind != okUnknown) {
+         return fieldInfo;
       }
-      else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
-         return ObjectInfo(okThisParam, 1, -2, info.fieldTypes.get(-1).value2);
-      }
-      else {
-         ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
-         if (staticInfo.value1 != 0) {
-            return ObjectInfo(okStaticField, staticInfo.value1, 0, staticInfo.value2);
-         }
-         else return Scope::mapTerminal(terminal);
-      }
+      else return Scope::mapTerminal(terminal);
    }
 }
 
@@ -1295,9 +1305,9 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
          // map if the object is outer one
          else if (outer.outerObject.kind == okUnknown) {
             // check if there is inherited fields
-            outer.reference = info.fields.get(identifier);
-            if (outer.reference != INVALID_REF) {
-               return ObjectInfo(okField, outer.reference);
+            ObjectInfo fieldInfo = mapField(identifier);
+            if (fieldInfo.kind != okUnknown) {
+               return fieldInfo;
             }
             else return outer.outerObject;
          }

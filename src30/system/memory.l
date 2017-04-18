@@ -87,6 +87,31 @@
         int len := theRows * theColumns.
         
         theArray := template_subj(/*theRows * theColumns*/len).
+        
+        var it := params indexer2d \ back:$nil.
+        ($nil == it)
+            ! [
+                int i := 0.
+                int j := 0.
+                
+                while (i < theRows)
+                [
+                    j := 0.
+                    while (j < theColumns)
+                    [
+                        it writeIndex1 &int:i.
+                        it writeIndex2 &int:j.
+                        
+                        var val := it get.
+                        
+                        $self setAt &int:i &int:j &template_subj:val.
+                        
+                        j += 1.
+                    ].
+                    
+                    i += 1.
+                ].
+            ].
     ]
     
     /// Reads the matrix lengths to the output parameter

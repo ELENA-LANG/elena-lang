@@ -4,9 +4,6 @@ In development:
 
 
               sdev - samples
-                 * implicit should always be sealed
-                 * implicit nested constructor
-
                  * Zhang-Suen thinning algorithm
                  * test script samples : calc
                  * test script samples : interpreter
@@ -258,7 +255,7 @@ Pipeline:
                          
                          theArray := template_subj(theRows * theColumns).
                      ]
-
+                 * fixing #303 issue : local boxing byref parameter
               zdev 
                  * gui script
                  * scripting library : elena script (both run-time / compile-time)
@@ -841,6 +838,7 @@ Pipeline:
                        * read key
                        * port console samples                                                                               
                        * move expression parsing code into the library
+                       * RealMatrix / IntMatrix should support indexer2d, implicit constructor with initialization
                        
               adev - lib30 optimization
                        * simplify the code using call optimization, set sealed methods if required

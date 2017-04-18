@@ -1,3 +1,5 @@
+//#subject charmatrix = matrixof(char).
+
 const image = (
         "                                                          ",
         " #################                   #############        ",
