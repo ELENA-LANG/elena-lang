@@ -2,9 +2,19 @@
 
 limited class MatrixSpace
 {
-    stacksafe readLength1 &vint:retVal []
+    int rows = $nil.
+
+    int columns = $nil.
+        
+    stacksafe readLength1 &vint:retVal 
+    [
+        retVal := $self rows.
+    ]
     
-    stacksafe readLength2 &vint:retVal []
+    stacksafe readLength2 &vint:retVal
+    [
+        retVal := $self columns.
+    ]
     
     stacksafe getAt &int:i &int:j []
     

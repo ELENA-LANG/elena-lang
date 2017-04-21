@@ -1535,19 +1535,22 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
    return true;
 }
 
-void CompilerLogic :: injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, int& operand, bool paramMode)
+void CompilerLogic :: injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode)
 {
    ClassInfo info;
    defineClassInfo(scope, info, targetRef);
 
    operand = defineStructSize(info, false);
-
-   //HOTFIX : allowing to assign a reference variable
-   if (operand == 0 && paramMode) {
-      // replace the parameter with the field expression
-      compiler.injectFieldExpression(writer);
+   
+   if (paramMode) {
+      if (operand == 0) {
+         //HOTFIX : allowing to assign a reference variable
+         // replace the parameter with the field expression
+         compiler.injectFieldExpression(writer);
+      }
 
       type = info.fieldTypes.get(0).value2;
+      targetRef = info.fieldTypes.get(0).value1;
    }
 }
 

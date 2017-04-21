@@ -242,7 +242,7 @@ public:
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
    virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
-   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t& type, int& operand, bool paramMode) = 0;
+   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;

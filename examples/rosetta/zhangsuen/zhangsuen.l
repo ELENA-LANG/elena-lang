@@ -1,4 +1,8 @@
-//#subject charmatrix = matrixof(char).
+#import system'collections.
+#import extensions.
+#import extensions'routines.
+
+#subject charmatrix = matrixof(char).
 
 const image = (
         "                                                          ",
@@ -20,102 +24,124 @@ const image = (
         " ########     ####### ######         ############# ###### ",
         "                                                          ").
 
-/*
+nbrs = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1),
+        (-1, 1), (-1, 0), (-1, -1), (0, -1)).
 
-    final static int[][] nbrs = {{0, -1}, {1, -1}, {1, 0}, {1, 1}, {0, 1},
-        {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}};
- 
-    final static int[][][] nbrGroups = {{{0, 2, 4}, {2, 4, 6}}, {{0, 2, 6},
-        {0, 4, 6}}};
- 
-    static List<Point> toWhite = new ArrayList<>();
-    static char[][] grid;
- 
-    public static void main(String[] args) {
-    }
- 
-    static void thinImage() {
-        boolean firstStep = false;
-        boolean hasChanged;
- 
-        do {
-            hasChanged = false;
-            firstStep = !firstStep;
- 
-            for (int r = 1; r < grid.length - 1; r++) {
-                for (int c = 1; c < grid[0].length - 1; c++) {
- 
-                    if (grid[r][c] != '#')
-                        continue;
- 
-                    int nn = numNeighbors(r, c);
-                    if (nn < 2 || nn > 6)
-                        continue;
- 
-                    if (numTransitions(r, c) != 1)
-                        continue;
- 
-                    if (!atLeastOneIsWhite(r, c, firstStep ? 0 : 1))
-                        continue;
- 
-                    toWhite.add(new Point(c, r));
-                    hasChanged = true;
-                }
-            }
- 
-            for (Point p : toWhite)
-                grid[p.y][p.x] = ' ';
-            toWhite.clear();
- 
-        } while (firstStep || hasChanged);
- 
-        printResult();
-    }
- 
-    static int numNeighbors(int r, int c) {
-        int count = 0;
-        for (int i = 0; i < nbrs.length - 1; i++)
-            if (grid[r + nbrs[i][1]][c + nbrs[i][0]] == '#')
-                count++;
-        return count;
-    }
- 
-    static int numTransitions(int r, int c) {
-        int count = 0;
-        for (int i = 0; i < nbrs.length - 1; i++)
-            if (grid[r + nbrs[i][1]][c + nbrs[i][0]] == ' ') {
-                if (grid[r + nbrs[i + 1][1]][c + nbrs[i + 1][0]] == '#')
-                    count++;
-            }
-        return count;
-    }
- 
-    static boolean atLeastOneIsWhite(int r, int c, int step) {
-        int count = 0;
-        int[][] group = nbrGroups[step];
-        for (int i = 0; i < 2; i++)
-            for (int j = 0; j < group[i].length; j++) {
-                int[] nbr = nbrs[group[i][j]];
-                if (grid[r + nbr[1]][c + nbr[0]] == ' ') {
-                    count++;
-                    break;
-                }
-            }
-        return count > 1;
-    }
- 
-    static void printResult() {
-        for (char[] row : grid)
-            System.out.println(row);
-    }
+nbrGroups = (((0, 2, 4), (2, 4, 6)), ((0, 2, 6),
+        (0, 4, 6))).
+
+extension(charmatrix) zhangsuenOp
+{
+    $proceed : r : c : toWhite : firstStep
+    [
+        if (self@r@c != #35)
+            [ ^ false ].
+        
+        int nn := self numNeighbors:r:c.                            
+        
+        if ((nn < 2) || (nn > 6))
+            [ ^ false ].
+            
+        if(self numTransitions:r:c != 1)
+            [ ^ false ].
+
+        if (self atLeastOneIsWhite:r:c:(firstStep iif:0:1))
+            [ ^ false ].
+
+        toWhite += { x = c. y = r. }.
+        
+        ^ true.      
+    ]
+    
+    numNeighbors :r : c
+    [
+        int count := 0.
+        
+        0 till:(nbrs length - 1) &doEach:(:i)
+        [
+            if (self@(r + nbrs@i@1)@(c + nbrs@i@0) == #35)
+                [ count := count + 1. ].
+        ].
+                
+        ^ count.
+    ]
+
+    numTransitions : r : c
+    [
+        int count := 0.
+        
+        0 till:(nbrs length - 1) &doEach:(:i)
+        [
+            if (self@(r + nbrs@i@1)@(c + nbrs@i@0) == #32)
+            [
+                if (self@(r + nbrs@(i + 1)@1)@(c + nbrs@(i + 1)@0) == #35)
+                [
+                    count := count + 1.
+                ].
+            ].
+        ].
+                
+        ^ count.
+    ]  
+    
+    atLeastOneIsWhite : r : c : step
+    [
+        int count := 0.
+        var group := nbrGroups@step.
+        0 till:2 &doEach:(:i)
+        [            
+            0 till:(group@i length) &doEach:(:j)
+            [
+                var nbr := nbrs@(group@i@j).
+                
+                if (self@(r + nbr@1)@(c + nbr@0) == #32)
+                    [ count := count + 1. ].
+            ].
+        ].
+        
+        ^ count > 1.
+    ]    
+    
+    thinImage
+    [
+        bool firstStep := false.
+        bool hasChanged := true.
+        var toWhite := List new.
+
+        while (hasChanged || firstStep)
+        [
+            hasChanged := false.
+            firstStep := firstStep not.
+
+            1 till:(self rows - 1) &doEach:(:r) 
+            [
+                1 till:(self columns - 1) &doEach:(:c)
+                [
+                    if (self $proceed:r:c:toWhite:firstStep)
+                        [ hasChanged := true ].
+                ].
+            ].
+            
+            toWhite 
+                run &each:(:p)[ self@(p y)@(p x) := #32. ]
+                clear.
+        ].
+    ]
 }
-*/
 
 program =
 [
-//        grid = new char[image.length][];
-//        for (int r = 0; r < image.length; r++)
-//            grid[r] = image[r].toCharArray();
-// 
-//        thinImage();
+    charmatrix grid := MatrixSpace
+    {
+        rows = image length.
+        
+        columns = image@0 length.
+        
+        getAt &int:i &int:j
+            = image@i@j.
+    }.
+
+    grid thinImage.
+            
+    console writeLine:grid.
 ].

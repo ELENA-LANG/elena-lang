@@ -256,6 +256,10 @@ Pipeline:
                          theArray := template_subj(theRows * theColumns).
                      ]
                  * fixing #303 issue : local boxing byref parameter
+                 * cannot declare the following code:
+                      const nbrs = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1),(-1, 1), (-1, 0), (-1, -1), (0, -1)).
+
+
               zdev 
                  * gui script
                  * scripting library : elena script (both run-time / compile-time)

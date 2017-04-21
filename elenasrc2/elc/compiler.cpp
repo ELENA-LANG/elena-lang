@@ -3311,7 +3311,6 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       retVal = compileExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
 
       ref_t targetRef = resolveObjectReference(scope, retVal);
-      ref_t targetType = retVal.type;
       if (retVal.kind == okLocalAddress) {
          size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
          if (size != 0) {
@@ -3359,7 +3358,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          }
          else scope.raiseError(errInvalidOperation, node);
       }
-      else if (!convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, source), source.type))
+      else if (!convertObject(writer, *scope.moduleScope, targetRef, retVal.type, resolveObjectReference(scope, source), source.type))
          scope.raiseError(errInvalidOperation, node);
 
       writer.removeBookmark();
@@ -7304,6 +7303,9 @@ void Compiler :: copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& 
          copyTemplateTree(bufferWriter, current, templateScope, false, true);
 
          SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxClassRefAttr, lxTemplateType);
+      }
+      else if (current == lxTypeAttr || current == lxClassRefAttr) {
+         writer.appendNode(current.type, current.identifier());
       }
 
       current = current.nextNode();
