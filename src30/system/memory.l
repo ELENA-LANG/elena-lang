@@ -171,6 +171,43 @@
 //    {
 //        
 //    }.
+
+    enumerator 
+    [
+        vint i := 0.
+        vint j := -1.
+        int length1 := theRows.
+        int length2 := theColumns.
+        
+        ^ Enumerator
+          {
+              get = $owner getAt &int:i &int:j.
+              
+              enumerable = $owner.
+              
+              reset [ i := 0. j := -1. ]
+              
+              next
+              [
+                  ifnot (i < length1)
+                  [
+                     ^ false.
+                  ].
+                  
+                  j += 1.
+                  
+                  ifnot (j < length2)
+                  [
+                      j := -1.
+                      i += 1.
+                      
+                      ^ false.
+                  ].
+                  
+                  ^ true.
+              ]
+          }.
+    ]
 }
 
 // === basic memory classes ===

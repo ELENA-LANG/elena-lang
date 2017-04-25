@@ -33,6 +33,9 @@ extension forLoopOp
     to:aMaxValue &seekEach:aFunction
         = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
         
+    till:aMaxValue &seekEach:aFunction
+        = aFunction retrieve &enumerator:(IntervalEnumerator new &from:self &till:aMaxValue).
+        
     to:aMaxValue &by:aStep &seekEach:aFunction
         = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
 }

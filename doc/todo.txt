@@ -3,8 +3,10 @@ In development:
 ------                              
 
 
+              idev - debugger
+                 * debugging Zhangsuen fine tuning
+
               sdev - samples
-                 * Zhang-Suen thinning algorithm
                  * test script samples : calc
                  * test script samples : interpreter
                  * test matrix sample
@@ -18,6 +20,9 @@ In development:
 ------                                 
 Pipeline:
 ------                                                                                         
+              sdev - samples
+                 * Zero to the zero power
+
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start

@@ -1,4 +1,5 @@
 #import system'collections.
+#import system'routines.
 #import extensions.
 #import extensions'routines.
 
@@ -45,7 +46,7 @@ extension(charmatrix) zhangsuenOp
         if(self numTransitions:r:c != 1)
             [ ^ false ].
 
-        if (self atLeastOneIsWhite:r:c:(firstStep iif:0:1))
+        ifnot (self atLeastOneIsWhite:r:c:(firstStep iif:0:1))
             [ ^ false ].
 
         toWhite += { x = c. y = r. }.
@@ -90,12 +91,14 @@ extension(charmatrix) zhangsuenOp
         var group := nbrGroups@step.
         0 till:2 &doEach:(:i)
         [            
-            0 till:(group@i length) &doEach:(:j)
+            0 till:(group@i length) &seekEach:(:j)
             [
                 var nbr := nbrs@(group@i@j).
                 
                 if (self@(r + nbr@1)@(c + nbr@0) == #32)
-                    [ count := count + 1. ].
+                    [ count := count + 1. ^ true. ].
+                    
+                ^ false.                    
             ].
         ].
         
@@ -122,9 +125,21 @@ extension(charmatrix) zhangsuenOp
                 ].
             ].
             
-            toWhite 
-                run &each:(:p)[ self@(p y)@(p x) := #32. ]
-                clear.
+            toWhite run &each:(:p)[ self@(p y)@(p x) := #32. ].                
+            toWhite clear.
+        ].
+    ]
+    
+    print
+    [
+        var it := self enumerator.
+        
+        it run &each:(:ch) [ console writeLiteral:ch:" ". ].
+        while (it next)
+        [
+            console writeLine.
+            
+            it run &each:(:ch) [ console writeLiteral:ch:" ". ].
         ].
     ]
 }
@@ -143,5 +158,7 @@ program =
 
     grid thinImage.
             
-    console writeLine:grid.
+    grid print.
+    
+    console readChar.
 ].
