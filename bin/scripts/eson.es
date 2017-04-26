@@ -33,7 +33,7 @@
    #define object     ::= identifier;
    #define object     ::= "{" singleton;
 
-   #define singleton  ::= <= singleton ( => cls_mmbrs <= ) =>;
+   #define singleton  ::= <= nested ( => cls_mmbrs <= ) =>;
    #define cls_mmbrs  ::= cls_mmbr ";" cls_mmbrs;
    #define cls_mmbrs  ::= "}";
 

@@ -3,11 +3,6 @@ In development:
 ------                              
 
 
-              sdev - samples
-                 * test script samples : interpreter
-                 * test script samples : calc
-                 * test matrix sample
-
               idev - debugger
                  * debugging Zhangsuen fine tuning
 
