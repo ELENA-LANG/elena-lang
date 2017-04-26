@@ -5,7 +5,7 @@
    #define start      ::= statement;
    #define start      ::= $eof;
    #define statement  ::= expression next_expr;
-   #define expression ::= <= ( < " " => object operations <= ) =>;
+   #define expression ::= <= ( < => object operations <= ) =>;
 
    #define object     ::= <= "$reference" =>;
    #define object     ::= <= """" => literal <= """" =>;
@@ -15,11 +15,11 @@
 
    #define operations ::= operation operations;
    #define operations ::= $eps;
-   #define operation  ::= message parameters <= > "[" = "]""" =>;
-   #define message    ::= <= > " ^""" "$identifier" =>;
+   #define operation  ::= message parameters <= >> "[" = "]""" =>;
+   #define message    ::= <= >> " ^ """ "$identifier" =>;
 
    #define parameters ::= parameter parameters;
    #define parameters ::= $eps; 
-   #define parameter  ::=  <= + < " " => ":" object;
+   #define parameter  ::=  <= + << " " => ":" object;
    #define next_expr  ::= $eof;
 ]]

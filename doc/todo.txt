@@ -3,13 +3,13 @@ In development:
 ------                              
 
 
+              sdev - samples
+                 * test script samples : interpreter
+                 * test script samples : calc
+                 * test matrix sample
+
               idev - debugger
                  * debugging Zhangsuen fine tuning
-
-              sdev - samples
-                 * test script samples : calc
-                 * test script samples : interpreter
-                 * test matrix sample
 
               zdev 
                  * js dynamic script : print("Hello");

@@ -109,7 +109,7 @@ bool Transformer :: parseDirective(_ScriptReader& reader, Scopes& scopes, Script
    else if (reader.compare("-=")) {
       scopes.peek()->counter--;
    }
-   else if (reader.compare("##")) {
+   else if (reader.compare("=")) {
       scopes.peek()->writeLevel(log);
       scopes.peek()->level = 0;
    }
