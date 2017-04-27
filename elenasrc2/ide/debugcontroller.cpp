@@ -162,8 +162,14 @@ DebugLineInfo* DebugController :: seekClassInfo(size_t address, ident_t &classNa
 
 DebugLineInfo* DebugController :: getNextStep(DebugLineInfo* step, bool stepOverMode)
 {
+   DebugLineInfo* next = &step[1];
+
+   // HOTFIX : nested brackets
+   if (step->symbol == dsEOP && next->symbol == dsVirtualEnd)
+      step = next;
+
    if (step->symbol != dsEnd && step->symbol != dsEOP) {
-      DebugLineInfo* next = &step[1];
+      next = &step[1];
       while ((next->symbol & dsDebugMask) != dsStep) {
          // step over virtual block if required
          if (next->symbol == dsVirtualBlock && stepOverMode) {

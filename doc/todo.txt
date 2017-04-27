@@ -3,21 +3,18 @@ In development:
 ------                              
 
 
-              idev - debugger
-                 * debugging Zhangsuen fine tuning
-
               zdev 
                  * js dynamic script : print("Hello");
                  * js static script : print('Hello');
                  * debug script generated code
                  * scripting library : language interpreter
 
+              sdev - rosetta samples
+                 * Zero to the zero power
+
 ------                                 
 Pipeline:
 ------                                                                                         
-              sdev - samples
-                 * Zero to the zero power
-
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
@@ -352,6 +349,7 @@ Pipeline:
                        * create a new project with a single new file - the path to the file should be relative
 
               idev - debugger
+                       * debugging fine tuning
                        * real field
                        * structure field
 
@@ -517,6 +515,7 @@ Pipeline:
                          assigning)
                        * primitive array of objec should not be allowed
                        * refactor branching operator implementation
+                       * get rid of double (or tripple) breakpoints : merge them into a single combined one
                        
              xdev - linux
                        * support compiling the project without -c option

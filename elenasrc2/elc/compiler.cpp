@@ -3903,7 +3903,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope)
 {
    writer.newNode(lxExpression);
-   writer.appendNode(lxBreakpoint, dsStep);
+   //writer.appendNode(lxBreakpoint, dsStep);
 
    ObjectInfo objectInfo = compileExpression(writer, assigning, scope, 0);
 

@@ -4297,7 +4297,12 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
 
 void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
 {
-   generateExpression(tape, node);
+   if (translateBreakpoint(tape, node.findSubNode(lxBreakpoint))) {
+      declareBlock(tape);
+      generateExpression(tape, node);
+      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+   }
+   else generateExpression(tape, node);
 
    gotoEnd(tape, baFirstLabel);
 }
@@ -4978,17 +4983,8 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             }
             else generateExpression(tape, current);
             break;
-//         case lxAssigning:
          case lxReturning:
-//         case lxBranching:
-//         case lxTrying:
-//         case lxIntOp:
-            if (translateBreakpoint(tape, current.findSubNode(lxBreakpoint))) {
-               declareBlock(tape);
-               generateObjectExpression(tape, current);
-               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-            }
-            else generateObjectExpression(tape, current);
+            generateObjectExpression(tape, current);
             break;
          case lxExternFrame:
             generateExternFrame(tape, current);
