@@ -989,7 +989,7 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    outputRef = typeRef = 0;
    constant = false;
    staticOne = false;
-//   preloaded = false;
+   preloaded = false;
 }
 
 ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
@@ -1945,7 +1945,7 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateSymbolAttribute(value, scope.constant, scope.staticOne))
+         if (!_logic->validateSymbolAttribute(value, scope.constant, scope.staticOne, scope.preloaded))
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
       else if (current == lxTypeAttr) {
@@ -5016,18 +5016,18 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-//void Compiler :: compilePreloadedCode(SymbolScope& scope)
-//{
-//   _Module* module = scope.moduleScope->module;
-//
-//   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
-//
-//   CommandTape tape;
-//   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbol, scope.reference);
-//
-//   // create byte code sections
-//   _writer.save(tape, module, NULL, 0);
-//}
+void Compiler :: compilePreloadedCode(SymbolScope& scope)
+{
+   _Module* module = scope.moduleScope->module;
+
+   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
+
+   CommandTape tape;
+   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbolReference, scope.reference);
+
+   // create byte code sections
+   _writer.save(tape, module, NULL, 0);
+}
 
 void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
@@ -5766,9 +5766,9 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
          scope.raiseError(errInvalidOperation, expression);
    }
 
-//   if (scope.preloaded) {
-//      compilePreloadedCode(scope);
-//   }
+   if (scope.preloaded) {
+      compilePreloadedCode(scope);
+   }
 
    CommandTape tape;
    _writer.generateSymbol(tape, expressionTree.readRoot(), isStatic);

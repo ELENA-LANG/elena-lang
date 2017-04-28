@@ -115,28 +115,69 @@ Let's start with interpreting a simple JavaScript code:
 
 We should turn it into the following code using grammar rules:
 
-root
-(
-   singleton
+   root
    (
-       identifier = program
-
-       method
-       (
-          message = eval
-
-          code
+      singleton
+      (
+          identifier = program
+   
+          method
           (
-             expression
+             message = eval
+   
+             code
              (
-                reference = system'console 
-                message = writeLine
-                literal = "Hello World"
+                expression
+                (
+                   reference = system'console 
+                   message = writeLine
+                   literal = "Hello"
+                )
              )
           )
-       )
-   )
-)   
+      )
+   )   
 
 This script can be compiled as a library or be converted into a tape
 
+The naive approach would be to implement the following grammar set:
+
+   #define start      ::= 
+   <= 
+   root
+   (
+      singleton
+      (
+          identifier = program
+   
+          method
+          (
+             message = eval
+   
+             code
+             ( 
+   =>
+                command*
+   <= 
+             )
+          )
+      )
+   )   
+   =>;
+   
+      #define command    ::= "print" "(" print ")" ";" ;
+   
+      #define print      ::= 
+   <= 
+                expression
+                (
+                   reference = system'console 
+                   message = writeLine
+   =>
+                   argument
+   <=
+                )
+   =>;
+   
+      #define argument   ::= <= literal = "$literal" =>;
+  

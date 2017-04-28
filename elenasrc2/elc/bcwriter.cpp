@@ -87,11 +87,11 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
    else return 0;
 }
 
-//void ByteCodeWriter :: declareInitializer(CommandTape& tape, ref_t reference)
-//{
-//   // symbol-begin:
-//   tape.write(blBegin, bsInitializer, reference);
-//}
+void ByteCodeWriter :: declareInitializer(CommandTape& tape, ref_t reference)
+{
+   // symbol-begin:
+   tape.write(blBegin, bsInitializer, reference);
+}
 
 void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef)
 {
@@ -1139,11 +1139,11 @@ void ByteCodeWriter :: endSymbol(CommandTape& tape)
    tape.write(blEnd, bsSymbol);
 }
 
-//void ByteCodeWriter :: endInitializer(CommandTape& tape)
-//{
-//   // symbol-end:
-//   tape.write(blEnd, bsInitializer);
-//}
+void ByteCodeWriter :: endInitializer(CommandTape& tape)
+{
+   // symbol-end:
+   tape.write(blEnd, bsInitializer);
+}
 
 void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
 {
@@ -5249,12 +5249,12 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, ref_t reference, Lexica
    endSymbol(tape);
 }
 
-//void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
-//{
-//   declareInitializer(tape, reference);
-//   loadObject(tape, type, argument);
-//   endInitializer(tape);
-//}
+void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
+{
+   declareInitializer(tape, reference);
+   loadObject(tape, type, argument);
+   endInitializer(tape);
+}
 
 void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStatic)
 {

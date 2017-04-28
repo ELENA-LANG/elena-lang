@@ -1053,7 +1053,7 @@ bool CompilerLogic :: validateLocalAttribute(int& attrValue)
    else return false;
 }
 
-bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne)
+bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne)
 {
    if (attrValue == (int)V_CONST) {
       constant = true;
@@ -1068,11 +1068,11 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, boo
 
       return true;
    }
-   //   else if (attrValue == (int)V_PRELOADED) {
-//      attrValue = lxPreloadedAttr;
-//
-//      return true;
-//   }
+   else if (attrValue == (int)V_PRELOADED) {
+      preloadedOne = true;
+
+      return true;
+   }
    else return false;
 }
 

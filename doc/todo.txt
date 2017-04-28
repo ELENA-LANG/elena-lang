@@ -3,6 +3,12 @@ In development:
 ------                              
 
 
+              sdev - cf parser
+                 * start rules should be terminated by eof automatically
+
+              sdev - script engine
+                 * preloaded symbols should be automatically called
+
               zdev 
                  * js dynamic script : print("Hello");
                  * js static script : print('Hello');
@@ -11,6 +17,11 @@ In development:
 
               sdev - rosetta samples
                  * Zero to the zero power
+
+              xdev - generic development
+                 * int h := system'external'KERNEL32 GetStdHandle &int:0FFFFFFF5h. - no need for temporal variable - the result should
+                   be written directly to the target
+                 * external operation : pass constant / local varialbe directly (without presaving)
 
 ------                                 
 Pipeline:
@@ -76,10 +87,6 @@ Pipeline:
 
 
               xdev - generic development
-                 * int h := system'external'KERNEL32 GetStdHandle &int:0FFFFFFF5h. - no need for temporal variable - the result should
-                   be written directly to the target
-                 * external operation : pass constant / local varialbe directly (without presaving)
-
                  * assigning to the primitive array
 
                  * byte array operation - assigning (see streamreader)

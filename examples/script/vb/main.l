@@ -7,7 +7,7 @@ program =
     [
         var factory := scriptEngine 
             load &path:"~\scripts\assembly.es" 
-            eval &path:"test.es".
+            eval &path:"grammar1.es".
         
         var obj := factory eval:(Library new) first eval.
         

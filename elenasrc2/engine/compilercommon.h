@@ -59,7 +59,7 @@
 #define V_NOSTRUCT       (ref_t)-8204
 #define V_ACTION         (ref_t)-8205
 #define V_GROUP          (ref_t)-8206
-//#define V_PRELOADED    (ref_t)-8207
+#define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
 #define V_TAPEGROUP      (ref_t)-8209
 
@@ -255,7 +255,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
-   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne) = 0;
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
 //   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
 
