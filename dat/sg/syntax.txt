@@ -47,6 +47,12 @@ __define TYPE                   4167
 __define TOKEN   		4172
 __define SCOPE   		4173
 
+__define DECLARATION_END_EXPECTED	16384
+__define STATEMENT_END_EXPECTED         16385
+__define BLOCK_CLOSING_EXPECTED         16386
+__define DIRECTIVE_END_EXPECTED         16390
+__define STATEMENT_END2_EXPECTED        16391
+
 __define eof            	12291
 __define literal		12292
 __define identifier		12293

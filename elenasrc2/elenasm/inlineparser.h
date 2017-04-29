@@ -21,9 +21,9 @@ class VMTapeParser : public _Parser
    int mapVerb(ident_t literal);
 
    void writeSubject(TapeWriter& writer, ident_t message);
-   bool writeObject(TapeWriter& writer, char state, ident_t token);
-   bool writeArgument(TapeWriter& writer, char state, ident_t token);
-   bool writeArray(TapeWriter& writer, char state, ident_t token);
+   bool writeObject(TapeWriter& writer, int state, ident_t token);
+   bool writeArgument(TapeWriter& writer, int state, ident_t token);
+   bool writeArray(TapeWriter& writer, int state, ident_t token);
    bool parseMessage(ident_t message, IdentifierString& reference);
    bool writeMessage(TapeWriter& writer, ident_t message, int command);
    bool writeExtension(TapeWriter& writer, ident_t message, int command);

@@ -210,3 +210,45 @@ The output will be:
 
    Hello
 
+Using the same grammar we may generate a stand-alone application:
+
+Let's create a project file:
+
+   <configuration>
+     <project>
+       <namespace>test</namespace>
+       <template>console</template>
+       <executable>test1_static.exe</executable>
+       <debuginfo>-1</debuginfo>
+     </project>
+     <targets>
+         <target name="grammar" type="2">
+            <option>[[ #grammar tree ]]</option>
+            <option>grammar1.es</option>
+         </target>
+     </targets>
+     <files>
+        <module name="stat" target="grammar">
+          <include>script1.es</include>
+        </module>
+        <module>
+          <include>main.l</include>
+        </module>
+     </files>
+     <forwards>
+        <forward key="'program">test'stat_program</forward>
+     </forwards>
+   </configuration>
+
+Let's compile the project:
+
+   elc test1.xprj
+
+And execute the code:
+
+   test1_static.exe
+
+The output will be:
+
+   Hello
+

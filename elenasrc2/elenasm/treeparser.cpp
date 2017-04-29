@@ -27,6 +27,7 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("expression", lxExpression);
    _tokens.add("returning", lxReturning);
    _tokens.add("symbol", lxSymbol);
+   _tokens.add("preloaded_symbol", lxSymbol);
    _tokens.add("literal", lxLiteral);
    _tokens.add("identifier", lxIdentifier);
    _tokens.add("numeric", lxInteger);
@@ -36,6 +37,7 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("reference", lxReference);
 
    _attributes.add("singleton", V_SINGLETON);
+   _attributes.add("preloaded_symbol", V_PRELOADED);
 }
 
 void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer)

@@ -4157,7 +4157,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       }
    }
 
-   ref_t message = generateCall(tape, node);
+   generateCall(tape, node);
 
    if (argUnboxMode) {
       releaseArgList(tape);

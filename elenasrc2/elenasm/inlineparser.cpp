@@ -42,7 +42,7 @@ void VMTapeParser :: writeSubject(TapeWriter& writer, ident_t message)
    writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, reference);
 }
 
-bool VMTapeParser :: writeObject(TapeWriter& writer, char state, ident_t token)
+bool VMTapeParser :: writeObject(TapeWriter& writer, int state, ident_t token)
 {
    if (token.compare(".")) {
       writer.writeCommand(POP_TAPE_MESSAGE_ID);
@@ -74,7 +74,7 @@ bool VMTapeParser :: writeObject(TapeWriter& writer, char state, ident_t token)
    return true;
 }
 
-bool VMTapeParser :: writeArgument(TapeWriter& writer, char state, ident_t token)
+bool VMTapeParser :: writeArgument(TapeWriter& writer, int state, ident_t token)
 {
    if (state == dfaFullIdentifier) {
       writer.writeCommand(ARG_TAPE_MESSAGE_ID, token);
@@ -85,7 +85,7 @@ bool VMTapeParser :: writeArgument(TapeWriter& writer, char state, ident_t token
    //         writer.writeCommand(NEW_TAPE_MESSAGE_ID, counter);
 }
 
-bool VMTapeParser :: writeArray(TapeWriter& writer, char state, ident_t token)
+bool VMTapeParser :: writeArray(TapeWriter& writer, int state, ident_t token)
 {
    if (state == dfaInteger) {
       int value = token.toInt();

@@ -636,8 +636,8 @@ void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptRea
          int next = writeTrailItem(writer, 0, item.next);
 
          if (rule.type == rtEps) {
-            MemoryReader reader(&_body, (pos_t)next);
-            readTailItemAndInsert(reader, writer, queue, offset);
+            MemoryReader nextReader(&_body, (pos_t)next);
+            readTailItemAndInsert(nextReader, writer, queue, offset);
          }
          else if (rule.type != rtNormal) {
             // if it is a chomksi form
@@ -648,8 +648,8 @@ void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptRea
             queue.insert(DerivationItem(rule.nonterminal, offset, next));
          }
          else if (rule.nonterminal == 0) {
-            MemoryReader reader(&_body, (pos_t)next);
-            readTailItemAndPush(reader, writer, queue, offset);
+            MemoryReader nextReader(&_body, (pos_t)next);
+            readTailItemAndPush(nextReader, writer, queue, offset);
          }
          else queue.push(DerivationItem(rule.nonterminal, offset, next));
       }
@@ -707,7 +707,7 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
 
    Stack<size_t> postfixes;
    while (stack.Count() > 0) {
-      TraceItem item = stack.pop();
+      item = stack.pop();
       if (item.ruleKey == 0) {
          size_t ptr = postfixes.pop();
          if (ptr)

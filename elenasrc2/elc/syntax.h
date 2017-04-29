@@ -97,14 +97,14 @@ enum Symbol
    nsToken                      = 0x0104C,
    nsScope                      = 0x0104D,
 
-//   nsDeclarationEndExpected         = 0x04000,               // error-terminals
-//   nsStatementEndExpected           = 0x04001,               
-//   nsErrClosingSBracketExpected     = 0x04002,               // closing square bracket expected
+   nsDeclarationEndExpected         = 0x04000,               // error-terminals
+   nsStatementEndExpected           = 0x04001,               
+   nsErrClosingSBracketExpected     = 0x04002,               // closing square bracket expected
 //   nsErrNestedMemberExpected        = 0x04003,               
 //   nsErrObjectExpected              = 0x04004,
 //   nsErrMessageExpected             = 0x04005,
-//   nsDirectiveEndExpected           = 0x04006,
-//   nsInlineExpressionEndExpected    = 0x04007,
+   nsDirectiveEndExpected           = 0x04006,
+   nsInlineExpressionEndExpected    = 0x04007,
 };
 
 // --- TerminalInfo structure ---

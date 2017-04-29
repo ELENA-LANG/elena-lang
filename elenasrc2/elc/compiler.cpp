@@ -1075,7 +1075,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
    if (terminal.compare(THIS_VAR)) {
       if (extensionMode) {
          //COMPILER MAGIC : if it is an extension ; replace $self with self
-         return ObjectInfo(okLocal, -1, ((ClassScope*)getScope(slClass))->reference);          
+         return ObjectInfo(okLocal, (ref_t)-1, ((ClassScope*)getScope(slClass))->reference);          
       }
       else if (stackSafe && classEmbeddable) {
          return ObjectInfo(okThisParam, 1, -1);
@@ -1647,7 +1647,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
-pos_t Compiler :: saveSourcePath(ModuleScope& scope, ident_t path)
+pos_t Compiler :: saveSourcePath(ModuleScope&, ident_t path)
 {
    return _writer.writeString(path);
 }
@@ -5878,7 +5878,7 @@ ref_t Compiler :: optimizeInternalCall(SNode node, ModuleScope& scope, WarningSc
 ////   }
 ////}
 
-ref_t Compiler :: optimizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
+ref_t Compiler :: optimizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int)
 {
    optimizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
 
@@ -5910,7 +5910,7 @@ ref_t Compiler :: optimizeNestedExpression(SNode node, ModuleScope& scope, Warni
 {
    // check if the nested collection can be treated like constant one
    bool constant = true;
-   int memberCounter = 0;
+   ref_t memberCounter = 0;
    SNode current = node.firstChild();
    while (constant && current != lxNone) {
       if (current == lxMember) {
@@ -6120,7 +6120,7 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
    return targetRef; 
 }
 
-ref_t Compiler :: optimizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
+ref_t Compiler :: optimizeArgBoxing(SNode node, ModuleScope& scope, WarningScope&, int mode)
 {
    bool boxing = !test(mode, HINT_NOBOXING);
    if (!boxing)
@@ -6129,7 +6129,7 @@ ref_t Compiler :: optimizeArgBoxing(SNode node, ModuleScope& scope, WarningScope
    return scope.arrayReference;
 }
 
-ref_t Compiler :: optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope)
+ref_t Compiler :: optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope&)
 {
    ObjectInfo result = scope.defineObjectInfo(node.argument, true);
    switch (result.kind) {
@@ -7689,7 +7689,7 @@ void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateSco
    SyntaxTree::moveNodes(writer, buffer, lxClass);
 }
 
-bool Compiler :: generateMethodScope(SNode node, TemplateScope& scope, SNode attributes)
+bool Compiler :: generateMethodScope(SNode node, TemplateScope&, SNode attributes)
 {
    SNode current = node.findChild(lxCode, lxExpression, lxDispatchCode, lxReturning, lxResendExpression);
    if (current != lxNone) {
@@ -7953,7 +7953,7 @@ ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, 
 //   }
 //}
 
-void Compiler :: injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef)
+void Compiler :: injectBoxing(SyntaxWriter& writer, _CompilerScope&, LexicalType boxingType, int argument, ref_t targetClassRef)
 {
    //bool single = isSingleStatement(node);
    //if (single && checkConstantCompatibility(scope, objectNode, targetClassRef)) {

@@ -3,15 +3,6 @@ In development:
 ------                              
 
 
-              sdev - script engine
-                 * preloaded symbols should be automatically called
-
-              zdev 
-                 * js dynamic script : print("Hello");
-                 * js static script : print('Hello');
-                 * debug script generated code
-                 * scripting library : language interpreter
-
               sdev - rosetta samples
                  * Zero to the zero power
 
@@ -24,8 +15,22 @@ In development:
                  * test mta console
                  * implement lock statement
 
+              zdev 
+                 * scripting library : several statements
+                 * scripting library : variables
+                 * scripting library : branching
+                 * scripting library : loops
+                 * scripting library : procedures
+                 * debug script generated code
+                 * scripting library : language interpreter
+
               zdev - upndown
                  * reimplement chat sample
+
+              xdev - x64
+                 * compile 64 bit IDE without warnings
+                 * x64 debugger : 32bit app
+                 * x64 debugger : 64bit app
 
 ------                                 
 Pipeline:
