@@ -9,9 +9,7 @@ program =
             load &path:"~\scripts\assembly.es" 
             eval &path:"grammar1.es".
         
-        var obj := factory eval:(Library new) first eval.
-        
-        obj eval.
+        factory eval:(Library new).
     ])
     {
         ! e
@@ -23,5 +21,5 @@ program =
 
 stat_program =
 [
-    test'stat'program eval.
+//    test'stat'program eval.
 ].

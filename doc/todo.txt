@@ -20,6 +20,13 @@ In development:
                    be written directly to the target
                  * external operation : pass constant / local varialbe directly (without presaving)
 
+              xdev - generic development
+                 * test mta console
+                 * implement lock statement
+
+              zdev - upndown
+                 * reimplement chat sample
+
 ------                                 
 Pipeline:
 ------                                                                                         

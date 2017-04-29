@@ -7,7 +7,7 @@
 
    #define module      ::= <= ( => 
                              "root" "(" include* symbol* ")" 
-                           <= > "*system'dynamic'Tape=" # ) =>;
+                           <= > += "%""init[0]""" "*system'dynamic'Tape=" # ) =>;
 
    #define include     ::= <= ( < += "2 " > += "%""system'dynamic'tapeOp.var[]""" += "%""include[2]""" => 
                              "include" "(" forward identifier_v ")" 
@@ -22,6 +22,10 @@
 
    #define symbol_expr ::= <= ( < += "2 " > += "%""system'dynamic'tapeOp.var[]""" += "%""open&symbol[0]"""  => 
                               "symbol" "(" identifier expression ")" 
+                           <=  > += "%""close[0]""" ) =>;
+
+   #define symbol_expr ::= <= ( < += "2 " > += "%""system'dynamic'tapeOp.var[]""" += "%""open&preloaded_symbol[0]"""  => 
+                              "preloaded_symbol" "(" identifier expression ")" 
                            <=  > += "%""close[0]""" ) =>;
 
    #define expression  ::= <= > += "%""open&expression[0]""" =>

@@ -344,11 +344,13 @@ class Library :: Scope
 {
     object theClasses.
     object theForwards.
+    object thePreloaded.
     
     constructor new
     [
         theClasses := List new.
         theForwards := Dictionary new.
+        thePreloaded := List new.
     ]
     
     include:ref:symbol
@@ -362,6 +364,15 @@ class Library :: Scope
         
         theClasses += symbol.
         
+        ^ symbol.
+    ]
+    
+    open &preloaded_symbol
+    [
+        var symbol := $self open &symbol.
+
+        thePreloaded += symbol.
+                        
         ^ symbol.
     ]
     
@@ -382,6 +393,14 @@ class Library :: Scope
 //        
 //        ^ class.
 //    ]
+
+    init
+    [
+        thePreloaded run &each:symbol
+        [
+            symbol eval eval.
+        ].
+    ]
 
     save &variable:literal &array_list:list
     [

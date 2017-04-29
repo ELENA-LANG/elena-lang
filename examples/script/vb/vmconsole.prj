@@ -1,6 +1,6 @@
 ﻿[project]
 executable=vmconsole.exe
-arguments=~\scripts\elena2.es
+arguments=~\scripts\assembly.es grammar1.es
 namespace=vmconsole
 template=vm_console
 debuginfo=-1

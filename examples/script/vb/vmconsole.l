@@ -24,7 +24,7 @@ control =
         if(command == "exit")
             [ 'program stop. ^ "leaving...". ];
             [
-                try(scriptEngine eval:command)
+                try(scriptEngine eval:command eval:(Library new))
                 {
                     ! e [ console writeLine:(e message). ]
                 }.

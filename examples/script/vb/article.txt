@@ -175,3 +175,38 @@ The naive approach would be to implement the following grammar set:
    =>;
    
       #define argument   ::= <= literal = "$literal" =>;
+
+This script can be used for both static linked program (using tree grammar) and dynamic one (using assembly grammar).
+For the later one the result will be list of instruction to assembly the code. That's why we have to make another change
+in our vmconsole sample:
+
+       proceed : command
+       [
+           if(command == "exit")
+               [ 'program stop. ^ "leaving...". ];
+               [
+                   try(scriptEngine eval:command eval:(Library new))
+                   {
+                       ! e [ console writeLine:(e message). ]
+                   }.
+                   
+                   ^ 'newLine.
+               ].
+       ]
+
+extensions'scripting'Library factory will use the generated tape to actually assembly the code and execute it
+
+Let's test our code:
+
+   > vmconsole ~\scripts\assembly.es grammar1.es
+
+   ELENA VM 3.0.6 (C)2005-2017 by Alex Rakov
+   Initializing...
+   Debug mode...
+   Done...
+   > print("Hello");
+                  
+The output will be:
+
+   Hello
+
