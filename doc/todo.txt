@@ -3,9 +3,6 @@ In development:
 ------                              
 
 
-              sdev - cf parser
-                 * start rules should be terminated by eof automatically
-
               sdev - script engine
                  * preloaded symbols should be automatically called
 
@@ -26,6 +23,9 @@ In development:
 ------                                 
 Pipeline:
 ------                                                                                         
+              idev - debugger
+                 * fix tape debugging
+
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start

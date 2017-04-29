@@ -117,23 +117,15 @@ We should turn it into the following code using grammar rules:
 
    root
    (
-      singleton
+      symbol
       (
-          identifier = program
+          identifier = printing
    
-          method
+          expression
           (
-             message = eval
-   
-             code
-             (
-                expression
-                (
-                   reference = system'console 
-                   message = writeLine
-                   literal = "Hello"
-                )
-             )
+              reference = system'console 
+              message = writeLine
+              literal = "Hello World"
           )
       )
    )   
@@ -142,7 +134,10 @@ This script can be compiled as a library or be converted into a tape
 
 The naive approach would be to implement the following grammar set:
 
-   #define start      ::= 
+      #define start     ::= code end;
+      #define end       ::= $eof;
+   
+      #define code      ::= 
    <= 
    root
    (
@@ -157,7 +152,7 @@ The naive approach would be to implement the following grammar set:
              code
              ( 
    =>
-                command*
+                command+
    <= 
              )
           )
@@ -180,4 +175,3 @@ The naive approach would be to implement the following grammar set:
    =>;
    
       #define argument   ::= <= literal = "$literal" =>;
-  

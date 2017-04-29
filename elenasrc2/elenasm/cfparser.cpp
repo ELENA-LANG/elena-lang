@@ -742,19 +742,20 @@ void CFParser :: parse(_ScriptReader& reader, MemoryDump* output)
    ScriptLog log;
 
    size_t startId = mapRuleId("start");
-   while (!reader.Eof()) {
-      MemoryWriter writer(&_body);
-      pos_t presaved = writer.Position();
+   MemoryWriter writer(&_body);
 
-      int trace = buildDerivationTree(reader, startId, writer);
-      generateOutput(trace, reader, log);
-
-      IdentifierTextReader logReader((const char*)log.getBody());
-      ScriptReader scriptReader(&logReader);
-      
-      _baseParser->parse(scriptReader, output);
-
-      _body.trim(presaved);
-      log.clear();
+   int trace = buildDerivationTree(reader, startId, writer);
+   if (!reader.Eof()) {
+      ScriptBookmark bm = reader.read();
+      if (bm.state != dfaEOF)
+         throw EParseError(bm.column, bm.row);
    }
+
+   generateOutput(trace, reader, log);
+
+   IdentifierTextReader logReader((const char*)log.getBody());
+   ScriptReader scriptReader(&logReader);
+      
+   _baseParser->parse(scriptReader, output);
+
 }

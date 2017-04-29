@@ -284,7 +284,7 @@ class SingletonScope :: BaseClassScope
     ]
 }
 
-class SymbolBody :: Scope
+class SymbolBody :: ExpressionScope
 {
     object theSingleton.
     
@@ -302,7 +302,17 @@ class SymbolBody :: Scope
     
     eval
     [
-        ^ theSingleton eval.
+        if ($nil != theSingleton)
+        [
+            ^ theSingleton eval.
+        ];
+        [
+            var list := ArrayList new.
+        
+            $self save &array_list:list.
+        
+            ^ Tape new &array:list.            
+        ].
     ]
 }
 
