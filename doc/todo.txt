@@ -3,12 +3,12 @@ In development:
 ------                              
 
 
-              sdev - rosetta samples
-                 * Zero to the zero power
+              sdev - script samples
+                 * fix calc sample
+                 * test calc_static sample
+                 * test interpreter sample
 
               xdev - generic development
-                 * int h := system'external'KERNEL32 GetStdHandle &int:0FFFFFFF5h. - no need for temporal variable - the result should
-                   be written directly to the target
                  * external operation : pass constant / local varialbe directly (without presaving)
 
               xdev - generic development
@@ -26,6 +26,9 @@ In development:
 
               zdev - upndown
                  * reimplement chat sample
+
+              sdev - rosetta samples
+                 * Zeckendorf number representation
 
               xdev - x64
                  * compile 64 bit IDE without warnings
@@ -695,6 +698,8 @@ Pipeline:
                        * generic handler : if the class is limited or sealed - calling the generic handler should
                          be direct
                        * generic handlers for known sealed / limited objects should be resolved immediately
+                       * int h := system'external'KERNEL32 GetStdHandle &int:0FFFFFFF5h. - an extra variable is allocated which is not
+                         used due to optimization
 
               xdev - native code optimization
                        * optimize field assigning code (5 opcodes, could we make them parallel / get rif of some?)

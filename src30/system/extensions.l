@@ -262,6 +262,8 @@ extension(int) intOp
     [
         int x := self.
         int r := 1.
+        if (x == 0)
+            [ r := 0. ].
         
         int i := 0.
         while(i < y)

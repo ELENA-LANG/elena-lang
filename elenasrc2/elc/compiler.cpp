@@ -6005,6 +6005,8 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
       else {
          SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxAssigning);
          if (subNode == lxAssigning) {
+            bool tempAttr = subNode.existChild(lxTempAttr);
+
             // assignment operation
             SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxLongOp, lxIntArrOp, lxByteArrOp, lxShortArrOp);
             if (operationNode != lxNone) {
@@ -6021,9 +6023,7 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
                   target = lxIdle;
                }      
                // if it is an operation with an extra temporal variable
-               else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp)
-                  && subNode.existChild(lxTempAttr))
-               {
+               else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
                   larg = subNode.findSubNodeMask(lxObjectMask);
       
                   if (larg.type == targetNode.type && larg.argument == targetNode.argument) {
@@ -6031,6 +6031,14 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
                      subNode = lxExpression;
                      larg = lxIdle;
                   }
+               }
+            }
+            else if (tempAttr && subNode.argument == node.argument) {
+               SNode larg = subNode.firstChild(lxObjectMask);
+               if (larg == lxLocalAddress) {
+                  // remove an extra assignment
+                  subNode = lxExpression;
+                  larg = lxIdle;
                }
             }
          }
@@ -8020,6 +8028,7 @@ void Compiler :: injectLocalBoxing(SNode node, int size)
    node.set(lxAssigning, size);
 
    node.insertNode(lxLocalAddress, offset);
+   node.insertNode(lxTempAttr, 0);
 }
 
 void Compiler :: injectFieldExpression(SyntaxWriter& writer)
