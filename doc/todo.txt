@@ -2,12 +2,6 @@
 In development:
 ------                              
 
-
-              sdev - script samples
-                 * fix calc sample
-                 * test calc_static sample
-                 * test interpreter sample
-
               xdev - generic development
                  * external operation : pass constant / local varialbe directly (without presaving)
 

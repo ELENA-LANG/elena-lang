@@ -32,7 +32,7 @@
                              "expression" "(" expr_member+ ")"
                            <= > += "%""close[0]""" =>;
 
-   #define expr_member ::= singleton;
+   #define expr_member ::= nested;
    #define expr_member ::= numeric;
    #define expr_member ::= identifier;
    #define expr_member ::= message;
@@ -42,6 +42,10 @@
 
    #define singleton   ::= <= > += "%""open&singleton[0]""" =>
                              "singleton" "(" identifier? method* ")"
+                            <= > += "%""close[0]""" =>;
+
+   #define nested      ::= <= > += "%""open&singleton[0]""" =>
+                             "nested" "(" identifier? method* ")"
                             <= > += "%""close[0]""" =>;
 
    #define method      ::= <= > += "%""open&method[0]""" += "%""new&paramToken[1]""" < += """self""" =>
