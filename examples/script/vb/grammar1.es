@@ -1,8 +1,7 @@
 [[
    #grammar cf
 
-   #define start     ::= code;
-   #define start     ::= $eof;
+   #define start     ::= code? $eof;
 
    #define code      ::= 
 <= 
@@ -12,9 +11,27 @@ root
    (
        identifier = printing
 
+       expression
+       (
+          expression
+          (
+             nested
+             (
+                method
+                (
+                   message = eval
+
+                   code
+                   (
 =>
-             command
+                   command+
 <= 
+                   )
+                )
+             ) 
+          )
+          message = eval
+       ) 
    )
 )   
 =>;

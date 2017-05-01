@@ -2,15 +2,14 @@
 In development:
 ------                              
 
-              xdev - generic development
-                 * external operation : pass constant / local varialbe directly (without presaving)
+              zdev 
+                 * scripting library : several statements - static code
 
               xdev - generic development
                  * test mta console
                  * implement lock statement
 
               zdev 
-                 * scripting library : several statements
                  * scripting library : variables
                  * scripting library : branching
                  * scripting library : loops

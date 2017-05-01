@@ -252,3 +252,91 @@ The output will be:
 
    Hello
 
+Let's make our code a little bit more complicated : we will support several statements. So we will replace an expression
+with a closure:
+
+   root
+   (
+      preloaded_symbol
+      (
+          identifier = printing
+   
+          expression
+          (
+             expression
+             (
+                 nested
+                 (
+                    method
+                    (
+                       message = eval
+   
+                       code
+                       (
+                          expression
+                          (
+                             reference = system'console 
+                             message = writeLine
+                             literal = "Hello World"
+                          )
+                       )
+                    ) 
+                 )
+              )
+              message = eval
+          )
+      )
+   )   
+
+It can be generated using the following grammar rules:
+
+      #define start     ::= code? $eof;
+   
+      #define code      ::= 
+   <= 
+   root
+   (
+      preloaded_symbol
+      (
+          identifier = printing
+      
+          expression
+          (
+             expression
+             (
+                nested
+                (
+                   method
+                   (
+                      message = eval
+     
+                      code
+                      (
+   =>
+                      command+
+   <= 
+                      )
+                   )
+                ) 
+             )
+             message = eval
+          ) 
+      )
+   )   
+   =>;
+   
+      #define command    ::= "print" "(" print ")" ";" ;
+   
+      #define print      ::= 
+   <= 
+                expression
+                (
+                   reference = system'console 
+                   message = writeLine
+   =>
+                   argument
+   <=
+                )
+   =>;
+   
+      #define argument   ::= <= literal = "$literal" =>;
