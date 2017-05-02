@@ -15,6 +15,9 @@
 [+] #301 : generic handler with open argument list
 [+] the nested class implicit constructor
 
+[ELC]
+[-] fixing scores of bugs
+
 [LIB]
 [+] new system'matrixof template
 [+] extensions'routines'MatrixSpace

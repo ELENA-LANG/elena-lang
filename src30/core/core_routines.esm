@@ -4907,7 +4907,7 @@ labEnd2:
   
 end
 
-procedure __rtptr.new&object&object[2]
+procedure __rtptr.new&object$&object$[2]
 
   callr system'rt_sync
   pusha

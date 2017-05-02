@@ -3895,7 +3895,7 @@ int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
    while (current != lxNone) {
       if (current == lxExtInteranlRef) {
          // HOTFIX : ignore call operation
-         SNode ref = current.findChild(lxReference);
+         SNode ref = current.findSubNode(lxInternalRef);
          loadInternalReference(tape, ref.argument);
          pushObject(tape, lxResult);
 

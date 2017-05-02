@@ -2,12 +2,9 @@
 In development:
 ------                              
 
-              zdev 
-                 * scripting library : several statements - static code
-
               xdev - generic development
-                 * test mta console
                  * implement lock statement
+                 * test mta console
 
               zdev 
                  * scripting library : variables

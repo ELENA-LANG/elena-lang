@@ -2342,7 +2342,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okExternal:
          return;
       case okInternal:
-         terminal.setArgument(object.param);
+         writer.appendNode(lxInternalRef, object.param);
          return;
    }
 
@@ -4063,8 +4063,13 @@ void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope, 
                   current.set(_logic->isVariable(classInfo) ? lxExtArgument : lxIntExtArgument, 0);
                   break;
                case V_SYMBOL:
+               {
                   current.set(lxExtInteranlRef, 0);
+                  // HOTFIX : ignore call operation
+                  SNode callNode = current.findChild(lxCalling);
+                  callNode.set(lxExpression, 0);
                   break;
+               }
                default:
                   if (test(classInfo.header.flags, elStructureRole)) {
                      current.set(lxExtArgument, 0);

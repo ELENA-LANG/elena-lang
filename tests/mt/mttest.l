@@ -1,4 +1,3 @@
-#import system.
 #import extensions.
 
 #import system'routines.
@@ -107,88 +106,91 @@
 ////    aThread2 wait &stopped.   
 //]. 
 
-#symbol NewThreadTest =
-[
-    console writeLine:"Main thread started".
-    #var aThread := threadControl start &func:
-        [ 
-            console writeLine:"New thread started. Press any key".
+//#symbol NewThreadTest =
+//[
+//    console writeLine:"Main thread started".
+//    #var aThread := threadControl start &func:
+//        [ 
+//            console writeLine:"New thread started. Press any key".
+//
+//            console readChar.
+//
+//            console writeLine:"New thread ended".
+//        ].
+//    
+//    aThread join.
+//    console writeLine:"Main thread ended".
+//].
+//
+//#symbol _program =
+//[
+//    system'console writeLine:"mt testing...".
+//    
+//    NewThreadTest eval.
+//].
 
-            console readChar.
-
-            console writeLine:"New thread ended".
-        ].
-    
-    aThread join.
-    console writeLine:"Main thread ended".
-].
-
-#symbol _program =
-[
-    system'console writeLine:"mt testing...".
-    
-    NewThreadTest eval.
-].
-
-#class GCXTester
+class GCXTester
 {
-    #field theSync.
+    object theSync.
     
-    #constructor new
+    constructor new
     [
         theSync := Object new.
     ]
     
-    #method proceed1
+    proceed1
     [
         ("thread 1 line1", "thread 1 line2", "thread 1 line3", "thread 1 line4", "thread 1 line5", "thread 1 line6") run &each:word
         [
-            #lock (theSync)
-            [
+//            #lock (theSync)
+//            [
                 console writeLine:word.
-            ].
+//            ].
         ].
         
         ^ true.
     ]
     
-    #method proceed2
+//    #method proceed2
+//    [
+//        ("thread 2 line1", "thread 2 line2", "thread 2 line3", "thread 2 line4", "thread 2 line5", "thread 2 line6") run &each:word
+//        [
+//            #lock (theSync)
+//            [
+//                console writeLine:word.
+//            ].
+//        ].
+//        
+//        ^ true.
+//    ]
+    
+    start1
     [
-        ("thread 2 line1", "thread 2 line2", "thread 2 line3", "thread 2 line4", "thread 2 line5", "thread 2 line6") run &each:word
+        var handle := Thread new &func:
         [
-            #lock (theSync)
+            while (true)
             [
-                console writeLine:word.
+                $self proceed1.
             ].
         ].
         
-        ^ true.
-    ]
-    
-    #method start1
-    [
-        #var handle := Thread new &func:
-        [
-            #loop $self proceed1.
-        ].
-        
         handle start.
     ]
-    
-    #method start2
-    [
-        #var handle := Thread new &func:
-        [
-            #loop $self proceed2.
-        ].
-        
-        handle start.
-    ]
+
+//    #method start2
+//    [
+//        #var handle := Thread new &func:
+//        [
+//            #loop $self proceed2.
+//        ].
+//        
+//        handle start.
+//    ]
 }
 
-#symbol program =
+program =
 [
-    GCXTester new start1 start2.
+    GCXTester new start1/* start2*/.
     
     console readChar.
 ].
