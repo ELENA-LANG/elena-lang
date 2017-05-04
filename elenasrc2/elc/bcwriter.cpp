@@ -3921,6 +3921,17 @@ int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
             if (value == lxConstantInt) {
                declareVariable(tape, value.findChild(lxIntValue).argument);
             }
+            else if (object.type == lxFieldAddress) {
+               if (testany(object.argument, 3)) {
+                  // dcopy index
+                  // bread
+                  // pushe
+                  tape.write(bcDCopy, object.argument);
+                  tape.write(bcBRead);
+                  tape.write(bcPushE);
+               }
+               else pushObject(tape, lxResultField, object.argument >> 2);
+            }
             else pushObject(tape, lxResultField);
          }
          else if (current == lxExtArgument) {
@@ -4462,35 +4473,6 @@ void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node n
    includeFrame(tape);
 }
 
-//void ByteCodeWriter :: generateLocking(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SNode target = node.firstChild(lxObjectMask);
-//   SNode block = node.findChild(lxCode);
-//
-//   generateObjectExpression(tape, target);
-//   pushObject(tape, lxResult);
-//
-//   tryLock(tape);
-//   declareTry(tape);
-//
-//   generateCodeBlock(tape, block);
-//
-//   // finally block - should free the lock if the exception was thrown
-//   declareCatch(tape);
-//
-//   loadBase(tape, lxResult);
-//   popObject(tape, lxResult);
-//   freeLock(tape);
-//   tape.write(bcPushB);
-//
-//   throwCurrent(tape);
-//
-//   endCatch(tape);
-//
-//   popObject(tape, lxResult);
-//   freeLock(tape);
-//}
-
 void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
 {
    bool first = true;
@@ -4803,9 +4785,6 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxLooping:
          generateLooping(tape, node);
          break;
-//      case lxLocking:
-//         generateLocking(tape, node);
-//         break;
       case lxStruct:
          generateStructExpression(tape, node);
          break;

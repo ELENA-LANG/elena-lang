@@ -908,7 +908,6 @@ private:
    void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileThrow(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   void compileLock(SNode node, CodeScope& scope);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(SNode node, int& size);

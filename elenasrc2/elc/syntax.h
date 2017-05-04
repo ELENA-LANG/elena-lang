@@ -78,7 +78,6 @@ enum Symbol
    nsThrow                      = 0x01034,
    nsImport                     = 0x01035,
 //   nsDispatchHandler            = 0x01036,
-//   nsLock                       = 0x01037,
    nsRootExpression             = 0x01038,
    nsExtern                     = 0x01039,
 //   nsNewOperator                = 0x0103A,

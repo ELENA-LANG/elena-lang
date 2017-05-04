@@ -55,3 +55,12 @@ class thread =
         ].
     ]
 }.
+
+extension threadOp
+{
+    enterCriticalSection
+        => system'core_routines'__thread. 
+        
+    leaveCriticalSection
+        => system'core_routines'__thread. 
+} 

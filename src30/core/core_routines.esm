@@ -5125,3 +5125,26 @@ labEnd:
   equit
 
 end
+
+procedure __thread.get&enterCriticalSection[1]
+
+  aloadsi 1
+  pusha
+labWait:
+  snop
+  trylock
+  elsen labWait 0
+
+  pop
+  quitn 1
+  
+end
+
+procedure __thread.get&leaveCriticalSection[1]
+
+  aloadsi 1
+  freelock
+
+  quitn 1
+  
+end

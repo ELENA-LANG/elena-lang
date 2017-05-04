@@ -52,7 +52,6 @@ enum LexicalType
    lxLoop            = 0x00030,
 //   lxInlineExpression= 0x00032,
    lxMessageReference= 0x00033,
-//   lxLock            = 0x00037,
    lxExtern          = 0x00039,
    lxSwitchOption    = 0x0003C,
    lxLastSwitchOption = 0x0003D,
@@ -121,7 +120,6 @@ enum LexicalType
    lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
    lxTrying          = 0x0C00C,   // try-catch expression
    lxAlt             = 0x0C00D,   // alt-catch expression
-//   lxLocking         = 0x0C00E,   // branch expression
    lxBranching       = 0x0C00F,   // branch expression
    lxSwitching       = 0x0C010,
    lxLooping         = 0x0C011,

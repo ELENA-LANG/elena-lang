@@ -3951,27 +3951,6 @@ void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
    compileExpression(writer, expr, scope, HINT_LOOP);
 }
 
-//void Compiler :: compileLock(SNode node, CodeScope& scope)
-//{
-//   node = lxLocking;
-//
-//   // implement the expression to be locked
-//   ObjectInfo object = compileExpression(node.findChild(lxExpression), scope, 0);
-//
-//   // implement critical section
-//   CodeScope subScope(&scope);
-//   subScope.level += 4; // HOT FIX : reserve place for the lock variable and exception info
-//
-//   SNode code = node.findChild(lxCode);
-//
-//   compileCode(code, subScope);
-//
-//   // HOT FIX : clear the sub block local variables
-//   if (subScope.level - 4 > scope.level) {
-//      code.appendNode(lxReleasing, subScope.level - scope.level - 4);
-//   }
-//}
-
 ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
    ObjectInfo retVal;
@@ -3996,10 +3975,6 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
             compileLoop(writer, current, scope);
             writer.closeNode();
             break;
-//         case lxLock:
-//            //recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileLock(current, scope);
-//            break;
          case lxReturning:
          {
             needVirtualEnd = false;

@@ -2,10 +2,6 @@
 In development:
 ------                              
 
-              xdev - generic development
-                 * implement lock statement
-                 * test mta console
-
               zdev 
                  * scripting library : variables
                  * scripting library : branching
@@ -222,7 +218,6 @@ Pipeline:
                  * exception in static symbol (e.g. $StartUpEvents new - if "new" is not found)
                  * temporal code for declaring uninitialized array - "type(size)var := 0" - should be replaced!?
                  * implement gui suppport
-                 * implement lock statement
                  * implement threading suppport
                  * implement net suppport
                  * implement constant lists
