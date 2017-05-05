@@ -129,7 +129,10 @@ class CodeScope :: Scope
     [
         theStatements := List new.
     ]
-    
+
+    new &variableToken : param
+        => theParent.
+            
     save &array_list:retVal
     [
         theStatements run &each:statement
@@ -162,12 +165,16 @@ class MethodScope :: Scope
     object theSubject.
     object theCode.
     object theParameters.
+    vint   theParamCounter.
+    vint   theVarCounter.
     
     constructor new : aParent
         <= new : aParent;
     [
         theSubject := TextBuilder new.
         theParameters := List new.
+        theParamCounter := 0.
+        theVarCounter := 0.
     ]
         
     subject
@@ -177,7 +184,7 @@ class MethodScope :: Scope
     [
         theSubject 
             append:"["
-            append:(theParameters length subtract:1 literal)
+            append:(theParamCounter literal)
             append:"]".
 
         ^ Message new &literal:theSubject.            
@@ -186,6 +193,14 @@ class MethodScope :: Scope
     code
     [
         var list := ArrayList new.
+        
+        int counter := theVarCounter.
+        while (counter > 0)
+        [
+            list += $nil.
+            
+            counter -= 1.
+        ].
         
         theCode save &array_list:list.
         
@@ -203,6 +218,15 @@ class MethodScope :: Scope
     new &paramToken : param
     [
         theParameters += KeyValue new &key:param &value:(theParameters length + 1).
+        
+        theParamCounter += 1.
+    ]
+    
+    new &variableToken : param
+    [
+        theParameters += KeyValue new &key:param &value:(theParameters length + 1).
+        
+        theVarCounter += 1.
     ]
     
     open &ret_expr

@@ -2,13 +2,12 @@
 In development:
 ------                              
 
+              idev - debugger
+                 * fix tape debugging
+
               zdev 
                  * scripting library : variables
-                 * scripting library : branching
-                 * scripting library : loops
-                 * scripting library : procedures
-                 * debug script generated code
-                 * scripting library : language interpreter
+                 * test calc / interpreter
 
               zdev - upndown
                  * reimplement chat sample
@@ -21,12 +20,16 @@ In development:
                  * x64 debugger : 32bit app
                  * x64 debugger : 64bit app
 
+              zdev 
+                 * scripting library : branching
+                 * scripting library : loops
+                 * scripting library : procedures
+                 * debug script generated code
+                 * scripting library : language interpreter
+
 ------                                 
 Pipeline:
 ------                                                                                         
-              idev - debugger
-                 * fix tape debugging
-
               sdev - cf parser
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start

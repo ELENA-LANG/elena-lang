@@ -8,7 +8,8 @@ program =
         var factory := scriptEngine 
             load &path:"~\scripts\assembly.es" 
 //            eval &path:"test.es".
-            eval &path:"grammar1.es".
+            load &path:"grammar1.es"
+            eval:"print(""Hello World"");".
         
         factory eval:(Library new).
     ])
