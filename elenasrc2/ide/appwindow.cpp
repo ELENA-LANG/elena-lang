@@ -1918,6 +1918,8 @@ bool IDEController :: loadTemporalModule(text_t name, int param)
 
       index = _model->getDocumentIndex(name);
    }
+   else _view->selectDocument(index);
+
    Document* doc = _model->getDocument(index);
 
    // clear all

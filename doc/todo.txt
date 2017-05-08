@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              idev - debugger
-                 * fix tape debugging
-
               zdev 
                  * scripting library : variables
                  * test calc / interpreter
@@ -34,6 +31,9 @@ Pipeline:
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
 
+              zdev 
+                 * partial-evaluation
+
               sdev - samples
                  * basic tests
                  * migrate gui rosetta samples
@@ -46,6 +46,9 @@ Pipeline:
                  * rosetta sample : Flipping bits game
                  * rosetta sample : Longest string challenge
                  * rosetta sample : Magic squares of odd order
+
+              idev - debugger
+                 * fix tape debugging : step over
 
               xdev - generic development 
                  * #302 - byte array field : writing / reading / boxing / unboxing
