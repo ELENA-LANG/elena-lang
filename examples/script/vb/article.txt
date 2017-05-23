@@ -340,3 +340,54 @@ It can be generated using the following grammar rules:
    =>;
    
       #define argument   ::= <= literal = "$literal" =>;
+
+Now let's introduce the variables. So our test code will look like this:
+
+var s = "Hello";
+
+print(s);
+
+We will have to generate the following syntax tree:
+
+   root
+   (
+      preloaded_symbol
+      (
+          identifier = printing
+   
+          expression
+          (
+              expression
+              (
+                  nested
+                  (
+                     method
+                     (
+                        message = eval
+    
+                        code
+                        (
+                           variable (identifier = s)
+    
+                           expression
+                           (
+                               assign = 0
+                               identifier = s
+                               literal = "Hello World"
+                           )
+    
+                           expression
+                           (
+                              reference = system'console 
+                              message = writeLine
+                              identifier = s
+                           )
+                        )
+                     ) 
+                  )
+              )
+              message = eval
+          )
+      )
+   )   
+

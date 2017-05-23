@@ -24,7 +24,7 @@ root
                    code
                    (
 =>
-                   command+
+                   statement+
 <= 
                    )
                 )
@@ -36,7 +36,11 @@ root
 )   
 =>;
 
-   #define command    ::= "print" "(" print ")" ";" ;
+   #define statement  ::= expression ";" ;
+   #define statement  ::= "var" variable ";" ;
+
+   #define expression ::= "print" "(" print ")";
+   #define expression ::= object;
 
    #define print      ::= 
 <= 
@@ -45,10 +49,29 @@ root
                 reference = system'console 
                 message = writeLine
 =>
-                argument
+                object
 <=
              )
 =>;
 
-   #define argument   ::= <= literal = "$literal" =>;
+   #define variable   ::= 
+                            var_ident "=" expression ";"
+<=
+             )
+=>;
+
+   #define var_ident  ::= 
+<=
+             variable
+             (
+                identifier = $identifier
+             )
+             expression 
+             (
+                assign = 0
+                identifier = $identifier
+=>;
+
+   #define object     ::= <= literal = "$literal" =>;
+   #define object     ::= <= identifier = "$identifier" =>;
 ]]

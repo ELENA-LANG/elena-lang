@@ -35,6 +35,8 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("include", lxInclude);
    _tokens.add("forward", lxForward);
    _tokens.add("reference", lxReference);
+   _tokens.add("variable", lxVariable);
+   _tokens.add("assign", lxAssign);
 
    _attributes.add("singleton", V_SINGLETON);
    _attributes.add("preloaded_symbol", V_PRELOADED);

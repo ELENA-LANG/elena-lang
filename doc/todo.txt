@@ -2,15 +2,16 @@
 In development:
 ------                              
 
+              sdev - rosetta samples
+                 * Zeckendorf number representation
+
               zdev 
+                 * support $current for nonterminal rule
                  * scripting library : variables
                  * test calc / interpreter
 
               zdev - upndown
                  * reimplement chat sample
-
-              sdev - rosetta samples
-                 * Zeckendorf number representation
 
               xdev - x64
                  * compile 64 bit IDE without warnings
@@ -18,11 +19,16 @@ In development:
                  * x64 debugger : 64bit app
 
               zdev 
+                 * currently nested expression should be enclosed into another epxression (expression expression nested ...)
+                 * debug script generated code
                  * scripting library : branching
                  * scripting library : loops
                  * scripting library : procedures
-                 * debug script generated code
                  * scripting library : language interpreter
+
+              zdev - gui
+                 * reimplement forms library
+                 * test gui samples
 
 ------                                 
 Pipeline:

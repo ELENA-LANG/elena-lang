@@ -173,7 +173,7 @@ class MethodScope :: Scope
     [
         theSubject := TextBuilder new.
         theParameters := List new.
-        theParamCounter := 0.
+        theParamCounter := -1.
         theVarCounter := 0.
     ]
         
