@@ -134,6 +134,8 @@ extension formatterOp
         ].
         
         self write:buffer.
+        
+        ^ self.
     ]
     
     generic writeLineFormatted &args:args

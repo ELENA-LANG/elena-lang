@@ -1,0 +1,8 @@
+﻿[project]
+executable=zeckendorf.exe
+namespace=zeckendorf
+template=console
+debuginfo=-1
+
+[files]
+zeckendorf.l

@@ -3,7 +3,9 @@ In development:
 ------                              
 
               sdev - rosetta samples
+                 * implement list of template
                  * Zeckendorf number representation
+                 * Zeckendorf arithmetic
 
               zdev 
                  * support $current for nonterminal rule

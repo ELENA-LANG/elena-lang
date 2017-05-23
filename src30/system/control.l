@@ -809,6 +809,29 @@ limited dispatchable(n3func) class IndexFunction3
 //    #method clone = Boolean new:$value.
 //}
 
+// --- BaseIndexer ---
+
+class BaseIndexer :: Indexer
+{
+    int theIndex.
+    int theLength.
+    
+    /// Returns false if the index out of range
+    available = (theIndex <= theLength).
+    
+    /// Reads the current i-index into an output parameter
+    readIndex &vint:anIndex 
+    [
+        anIndex := theIndex.
+    ]    
+    
+    /// Sets the i-index by specified value
+    writeIndex &int:anIndex 
+    [ 
+        theIndex := anIndex.
+    ] 
+}
+
 // --- BaseMatrixIndexer ---
 
 class BaseMatrixIndexer :: Indexer2D

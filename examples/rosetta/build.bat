@@ -52,3 +52,4 @@
 ..\..\bin\elc treeview\treeview.prj
 ..\..\bin\elc gameoflife\gameoflife.prj
 ..\..\bin\elc zahngsuen\zahngsuen.prj
+..\..\bin\elc zeckendorf\zeckendorf.prj

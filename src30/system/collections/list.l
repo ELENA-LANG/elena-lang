@@ -145,7 +145,28 @@
               ]
           }.
     ]
-        
+
+    indexer = BaseIndexer
+    {
+        implicit object
+        [
+            theIndex := 0.
+
+            int len := 0.                                    
+            $owner readLength &vint:len.
+            
+            theLength := len.
+        ]
+
+        get
+            = $owner getAt &int:theIndex.
+            
+        set : o
+        [
+            $owner setAt &int:theIndex &type:o.
+        ]                
+    }.
+                        
     stacksafe outnprop(length) readLength &vint:retVal
     [
         retVal := theLength.
