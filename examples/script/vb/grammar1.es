@@ -78,5 +78,5 @@ root
 =>;
 
    #define object     ::= <= literal = "$literal" =>;
-   #define object     ::= <= identifier = "$identifier" =>;
+   #define object     ::= <= identifier = $identifier =>;
 ]]

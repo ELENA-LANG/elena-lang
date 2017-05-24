@@ -3,15 +3,19 @@ In development:
 ------                              
 
               zdev 
-                 * support $current for nonterminal rule
                  * scripting library : variables
+
+              sdev - rosetta samples
+                 * Zeckendorf arithmetic
+
+              zdev 
                  * test calc / interpreter
 
               zdev - upndown
                  * reimplement chat sample
 
               sdev - rosetta samples
-                 * Zeckendorf arithmetic
+                 * Zebra puzzle
 
               xdev - x64
                  * compile 64 bit IDE without warnings

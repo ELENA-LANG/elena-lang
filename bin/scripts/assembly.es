@@ -90,7 +90,7 @@
                              "reference" "=" ref_quote;
 
    #define assign      ::= <= > += "%""new&AssignToken[1]""" =>
-                             "assign" "=" num_token;
+                             "assign" "=" num_quote;
 
    #define reference_v ::= "reference" "=" ref_quote;
 

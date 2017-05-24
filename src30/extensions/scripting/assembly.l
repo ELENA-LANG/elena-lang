@@ -225,7 +225,7 @@ class MethodScope :: Scope
         int counter := theVarCounter.
         while (counter > 0)
         [
-            list += $nil.
+            list += nil.
             
             counter -= 1.
         ].

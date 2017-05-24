@@ -4022,7 +4022,7 @@ end
 
 procedure __tape.eval&assign[16]
 
-  aloadsi 1
+  acopys 1
   bcopya
   dcopy 0
 labSearch:
@@ -4030,6 +4030,7 @@ labSearch:
   inc
   elser labSearch 0
   dec
+  aloadsi 1
   ecopyd
   nload
 
@@ -4037,8 +4038,9 @@ labSearch:
   sub
   aloadsi 2
   xset
+  aloadsi 3
 
-  quitn 2
+  quitn 3
 
 end
 
