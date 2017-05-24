@@ -39,6 +39,7 @@
    #define expr_member ::= reference;
    #define expr_member ::= literal;
    #define expr_member ::= expression;
+   #define expr_member ::= assign;
 
    #define singleton   ::= <= > += "%""open&singleton[0]""" =>
                              "singleton" "(" identifier? method* ")"
@@ -57,7 +58,14 @@
                              "code" "(" code ")"
                            <=  > += "%""close[0]""" =>;
 
-   #define code        ::= expression* ret_expr?;
+   #define code        ::= statement* ret_expr?;
+
+   #define statement   ::= expression;
+   #define statement   ::= "variable" "(" variable ")";
+
+   #define variable    ::= <= > += "%""open&variable[0]""" =>
+                              identifier
+                           <=  > += "%""close[0]""" =>;
              
    #define ret_expr    ::= <= > += "%""open&ret_expr[0]""" =>
                              "returning" "(" expression ")"
@@ -80,6 +88,9 @@
 
    #define reference   ::= <= > += "%""new&referenceToken[1]""" =>
                              "reference" "=" ref_quote;
+
+   #define assign      ::= <= > += "%""new&AssignToken[1]""" =>
+                             "assign" "=" num_token;
 
    #define reference_v ::= "reference" "=" ref_quote;
 

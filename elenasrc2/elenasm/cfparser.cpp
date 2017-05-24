@@ -19,6 +19,7 @@ using namespace _ELENA_TOOL_;
 #define EOF_KEYWORD           "$eof"
 #define EOL_KEYWORD           "$eol"
 #define ANYCHR_KEYWORD        "$chr" // > 32
+#define CURRENT_KEYWORD       "$current"
 
 #define REFERENCE_MODE        1
 #define IDENTIFIER_MODE       2
@@ -336,6 +337,9 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
             rule.saveTo = saveReference;
 
             mode = NUMERIC_MODE;
+         }
+         if (reader.compare(CURRENT_KEYWORD)) {
+            rule.saveTo = saveReference;
          }
 
          writer.writeChar((char)0);

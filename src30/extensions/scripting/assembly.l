@@ -17,7 +17,10 @@ class Scope
     [
         theParent save &variable:literal &array_list:list.
     ]
-            
+
+    assign &variable:literal &array_list:list
+        => theParent.
+                        
     close = theParent.        
 }
 
@@ -26,6 +29,7 @@ class ExpressionScope :: Scope
     stack      theCallstack.
     textbuffer theMessage.
     bool       theCallExpr.
+    bool       theAssignExpr.
     
     constructor new : aParent
         <= new : aParent;
@@ -33,6 +37,7 @@ class ExpressionScope :: Scope
         theCallstack := Stack new.
         theMessage := TextBuilder new.
         theCallExpr := false.
+        theAssignExpr := false.
     ]
 
     new &numericToken : literal
@@ -52,7 +57,12 @@ class ExpressionScope :: Scope
             save &array_list:list 
             [ 
                 theParent save &variable:literal &array_list:list.
-            ] 
+            ]
+            
+            assign &array_list:list
+            [
+                theParent assign &variable:literal &array_list:list.
+            ]
         }.
     ]        
         
@@ -68,6 +78,11 @@ class ExpressionScope :: Scope
     new &referenceToken : symbol
     [
         theCallstack push:{ save &array_list:list [ list += Symbol new &literal:symbol. ] }.
+    ]
+    
+    new &AssignToken : token
+    [
+        theAssignExpr := true.
     ]
         
     open &expression
@@ -108,6 +123,11 @@ class ExpressionScope :: Scope
         ]
         ! [
             theCallstack pop save &array_list:retVal.
+            
+            if (theAssignExpr)
+            [
+                theCallstack pop assign &array_list:retVal.
+            ].
         ].
     ]    
 }
@@ -130,9 +150,6 @@ class CodeScope :: Scope
         theStatements := List new.
     ]
 
-    new &variableToken : param
-        => theParent.
-            
     save &array_list:retVal
     [
         theStatements run &each:statement
@@ -158,6 +175,17 @@ class CodeScope :: Scope
         
         ^ expr.
     ]
+    
+    open &variable
+        = 
+        {
+            new &identToken:token
+            [
+                theParent new &variableToken:token.
+            ]
+            
+            close = $owner.
+        }.
 }
 
 class MethodScope :: Scope
@@ -255,6 +283,20 @@ class MethodScope :: Scope
             ! [
                 $super save &variable:literal &array_list:list.
             ].
+    ]
+    
+    assign &variable:literal &array_list:list
+    [
+        var param := theParameters seek &each:x [ x key equal:literal ].
+        ($nil != param)
+            ? [
+                list += param value.
+                list += %"tapeOp.assign[]".                
+            ]
+            ! [
+                $super save &variable:literal &array_list:list.
+            ].
+        
     ]
 }
 

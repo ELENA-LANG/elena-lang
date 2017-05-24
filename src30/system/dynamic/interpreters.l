@@ -42,6 +42,9 @@ extension tapeOp
         ^ params@n.
     ]
     
+    assign &args:params
+        => system'core_routines'__tape.
+    
     stack &args:params
     [
         int n := self int.

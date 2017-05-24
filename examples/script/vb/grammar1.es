@@ -55,16 +55,21 @@ root
 =>;
 
    #define variable   ::= 
-                            var_ident "=" expression ";"
+                            var_decl "=" expression
 <=
              )
 =>;
 
-   #define var_ident  ::= 
+   #define var_decl  ::= 
 <=
              variable
              (
-                identifier = $identifier
+                identifier = $current
+=>
+             assign_var;
+      
+  #define assign_var ::=
+<=  
              )
              expression 
              (

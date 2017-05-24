@@ -9,7 +9,9 @@ program =
             load &path:"~\scripts\assembly.es" 
 //            eval &path:"test.es".
             load &path:"grammar1.es"
-            eval:"print(""Hello World"");".
+            eval &path:"test_js.es".
+            
+//            eval:"print(""Hello World"");".
         
         factory eval:(Library new).
     ])

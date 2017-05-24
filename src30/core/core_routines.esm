@@ -4020,6 +4020,28 @@ procedure __tape.eval&ptr[16]
 
 end
 
+procedure __tape.eval&assign[16]
+
+  aloadsi 1
+  bcopya
+  dcopy 0
+labSearch:
+  get
+  inc
+  elser labSearch 0
+  dec
+  ecopyd
+  nload
+
+  eswap
+  sub
+  aloadsi 2
+  xset
+
+  quitn 2
+
+end
+
 procedure __struct.dispatch[1]
 
   bsredirect

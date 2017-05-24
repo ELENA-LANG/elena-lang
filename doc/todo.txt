@@ -2,11 +2,6 @@
 In development:
 ------                              
 
-              sdev - rosetta samples
-                 * implement list of template
-                 * Zeckendorf number representation
-                 * Zeckendorf arithmetic
-
               zdev 
                  * support $current for nonterminal rule
                  * scripting library : variables
@@ -14,6 +9,9 @@ In development:
 
               zdev - upndown
                  * reimplement chat sample
+
+              sdev - rosetta samples
+                 * Zeckendorf arithmetic
 
               xdev - x64
                  * compile 64 bit IDE without warnings
