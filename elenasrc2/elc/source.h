@@ -32,9 +32,12 @@ const char dfaOperator       = 'h';
 const char dfaDblOperator    = 'm';
 const char dfaInteger        = 'n';
 const char dfaDotStart       = 'o';
+const char dfaExplicitConst  = 's';
+
+const char dfaLong = 'r';              // !! obsolete
+const char dfaHexInteger = 't';
+
 const char dfaReal           = 'q';
-const char dfaLong           = 'r';
-const char dfaHexInteger     = 't';
 const char dfaSignStart      = 'u';
 const char dfaQuote          = 'w';
 const char dfaPrivate        = 'x';

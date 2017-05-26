@@ -76,6 +76,7 @@ enum LexicalType
    lxCharacter       = 0x1800B,
    lxLong            = 0x1800C,
    lxWide            = 0x1800D,
+   lxExplicitConst   = 0x1800E,
 
    lxImporting       = 0x08101,
    lxNested          = 0x08102, // arg - count

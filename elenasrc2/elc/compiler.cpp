@@ -2418,6 +2418,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 
       object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s));
    }
+   else if (terminal == lxExplicitConst) {
+      //ref_t constRef = scope.moduleScope->actionHints.get(methodScope.message);
+   }
 //   else if (terminal == lxResult) {
 //      object = ObjectInfo(okObject);
 //   }

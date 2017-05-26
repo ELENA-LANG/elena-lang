@@ -38,6 +38,7 @@ enum Symbol
    tsCharacter                  = 0x0300B,
    tsLong                       = 0x0300C,
    tsWide                       = 0x0300D,
+   tsExplicitConst              = 0x0300E,
 
    nsClass                      = 0x0100E,               // non-terminals
    nsTemplate                   = 0x0100F,

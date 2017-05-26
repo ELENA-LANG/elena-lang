@@ -14,6 +14,7 @@
 [+] #286 : using  code template
 [+] #301 : generic handler with open argument list
 [+] the nested class implicit constructor
+[+] #307 : Explicit literal constants
 
 [ELC]
 [-] fixing scores of bugs

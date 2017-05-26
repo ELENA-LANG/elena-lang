@@ -2,17 +2,16 @@
 In development:
 ------                              
 
-              zdev 
-                 * scripting library : variables
-
-              sdev - rosetta samples
-                 * Zeckendorf arithmetic
-
-              zdev 
-                 * test calc / interpreter
+              xdev - generic development
+                 * explicit literal constants
+                 * test constants: 2, 0ffh, 123l, 23.3r, 23o
+                 * test constants: "abc", "abc"w, "abc"d
 
               zdev - upndown
                  * reimplement chat sample
+
+              sdev - rosetta samples
+                 * Zeckendorf arithmetic
 
               sdev - rosetta samples
                  * Zebra puzzle
@@ -23,8 +22,6 @@ In development:
                  * x64 debugger : 64bit app
 
               zdev 
-                 * currently nested expression should be enclosed into another epxression (expression expression nested ...)
-                 * debug script generated code
                  * scripting library : branching
                  * scripting library : loops
                  * scripting library : procedures
@@ -38,6 +35,8 @@ In development:
 Pipeline:
 ------                                                                                         
               sdev - cf parser
+                 * currently nested expression should be enclosed into another epxression (expression expression nested ...)
+                 * debug script generated code
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
 
@@ -339,6 +338,7 @@ Pipeline:
                  * for wrapper classes generate virutal set method
                  * use bool lamda expression for seek operations
                  * not ebeddable structure should not be embedded into another structure
+                 * use explicit literal constants for declaring int, hex, signed, unsigned, long, real, literal, wide
 
               adev - linux
                  * migrate LIB30
