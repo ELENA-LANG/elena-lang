@@ -2419,7 +2419,14 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
       object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s));
    }
    else if (terminal == lxExplicitConst) {
-      //ref_t constRef = scope.moduleScope->actionHints.get(methodScope.message);
+      // try to resolve explicit constant
+      size_t len = getlength(token);
+
+      ref_t postfixRef = scope.moduleScope->module->mapSubject(token + len - 1, false);
+
+      IdentifierString constant(token, len - 1);
+
+      object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(constant), postfixRef);
    }
 //   else if (terminal == lxResult) {
 //      object = ObjectInfo(okObject);
@@ -2427,7 +2434,23 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
    else if (!emptystr(token))
       object = scope.mapObject(terminal);
 
-   writeTerminal(writer, terminal, scope, object, mode);
+   if (object.kind == okExplicitConstant) {
+      // replace an explicit constant with the appropriate object
+      writer.newBookmark();
+      writeTerminal(writer, terminal, scope, ObjectInfo(okLiteralConstant, object.param) , mode);
+
+      ref_t constRef = scope.moduleScope->actionHints.get(encodeMessage(object.extraparam, PRIVATE_MESSAGE_ID, 1));
+      if (constRef != 0) {
+         if (!convertObject(writer, *scope.moduleScope, constRef, 0, V_STRCONSTANT, object.extraparam))
+            scope.raiseError(errInvalidConstant, terminal);
+      }
+      else scope.raiseError(errInvalidConstant, terminal);
+
+      object = ObjectInfo(okObject, constRef);
+
+      writer.removeBookmark();
+   }
+   else writeTerminal(writer, terminal, scope, object, mode);
 
    return object;
 }
@@ -5353,6 +5376,16 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       hint |= tpPrivate;
 
       scope.info.methodHints.add(Attribute(overwriteVerb(message, EVAL_MESSAGE_ID), maHint), hint);
+
+      // if it is an explicit constant conversion
+      ident_t signature = scope.moduleScope->module->resolveSubject(getSignature(message));
+      size_t pos = signature.find('&');
+      if (test(hint, tpConversion) && pos != NOTFOUND_POS && getParamCount(message) == 1) {
+         // add it to the action list
+         IdentifierString postfix(signature, pos);
+
+         scope.moduleScope->saveAction(encodeMessage(scope.moduleScope->module->mapSubject(postfix, false), PRIVATE_MESSAGE_ID, 1), scope.reference);
+      }
    }
 
    if (hintChanged) {
@@ -6831,6 +6864,7 @@ inline bool isTerminal(LexicalType type)
       case lxReference:
       case lxCharacter:
       case lxWide:
+      case lxExplicitConst:
          return true;
       default:
          return false;

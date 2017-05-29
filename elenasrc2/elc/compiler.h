@@ -152,6 +152,7 @@ public:
       okParams,                       // param - local offset
 //      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
+      okExplicitConstant,             // param - reference, extraparam - subject
 
       okExternal,
       okInternal,

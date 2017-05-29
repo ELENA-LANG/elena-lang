@@ -64,6 +64,7 @@ __define real			12298
 __define character		12299
 __define long                   12300
 __define wide                   12301
+__define constant               12302
 
 START ->
 	INCLUDE_DECLARATION INCLUDE_DECLARATIONS DECLARATIONS eof
@@ -340,6 +341,7 @@ OPTION ->
 	| character OPTION_BODY
 	| long OPTION_BODY
 	| wide OPTION_BODY
+	| constant OPTION_BODY
 	
 BIGGER_OPTION ->
 	identifier OPTION_BODY
@@ -351,6 +353,7 @@ BIGGER_OPTION ->
 	| character OPTION_BODY
 	| long OPTION_BODY
 	| wide OPTION_BODY
+	| constant OPTION_BODY
 	
 SMALLER_OPTION ->                                                                     
 	identifier OPTION_BODY
@@ -362,6 +365,7 @@ SMALLER_OPTION ->
 	| character OPTION_BODY
 	| long OPTION_BODY
 	| wide OPTION_BODY
+	| constant OPTION_BODY
 
 OPTION_BODY ->
 	CODE_BLOCK
@@ -495,6 +499,7 @@ ROOT_EXPRESSION ->
 	| literal ROOT_OPERATIONS
 	| wide ROOT_OPERATIONS
 	| character ROOT_OPERATIONS
+	| constant ROOT_OPERATIONS
 	| ( SUB_EXPRESSION ROOT_SUBBODY
 	| % MESSAGE_REFERENCE ROOT_OPERATIONS
 	| NESTED_CLASS ROOT_OPERATIONS
@@ -616,6 +621,7 @@ OBJECT ->
 	| real
 	| literal
 	| wide
+	| constant
 	| character
 	| ( SUB_EXPRESSION
 	| % MESSAGE_REFERENCE

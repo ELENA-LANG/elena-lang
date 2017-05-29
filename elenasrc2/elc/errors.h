@@ -70,6 +70,7 @@ namespace _ELENA_
    #define errNoConstructorDefined  "%s(%d:%d): error 151: Class '%s' has no implicit or explicit constructors\n"
    #define errIllegalMethod         "%s(%d:%d): error 152: Illegal method declaration\n"
    #define errIllegalOperation      "%s(%d:%d): error 152: Illegal operation\n"
+   #define errInvalidConstant       "%s(%d:%d): error 153: Invalid constant '%s'\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"

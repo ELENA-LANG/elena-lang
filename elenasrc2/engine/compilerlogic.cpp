@@ -645,8 +645,9 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
    // check if there are implicit constructors
    if (test(info.header.flags, elSealed)) {
       if (isPrimitiveRef(sourceRef))
-         // HOTFIX : recognize primitive data
-         sourceRef = resolvePrimitiveReference(scope, sourceRef);
+         // HOTFIX : recognize primitive data except of a constant literal
+         if (sourceRef != V_STRCONSTANT)
+            sourceRef = resolvePrimitiveReference(scope, sourceRef);
 
    //   if (sourceType != 0) {
    //      // if the source type is defined we are lucky
@@ -670,7 +671,28 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
             pos_t implicitMessage = it.key();
             if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
                ref_t subj = getSignature(implicitMessage);
-               if (isCompatible(scope, scope.subjectHints.get(subj), sourceRef)) {
+               bool compatible = false;
+               if (sourceRef == V_STRCONSTANT) {
+                  // try to resolve explicit constant conversion routine
+                  ident_t signature = scope.module->resolveSubject(subj);
+                  size_t index = signature.find('&');
+                  if (index != NOTFOUND_POS) {
+                     IdentifierString postfix(signature, index);
+                     ref_t postfixRef = scope.module->mapSubject(postfix, true);
+                     if (sourceType == postfixRef) {
+                        ref_t subjRef = scope.subjectHints.get(scope.module->mapSubject(signature + index + 1, false));
+
+                        compatible = subjRef != 0 && isCompatible(scope, subjRef, scope.literalReference);
+                     }
+                  }
+               }
+               else {
+                  ref_t subjRef = scope.subjectHints.get(subj);
+
+                  compatible = subjRef != 0 && isCompatible(scope, subjRef, sourceRef);
+               }
+
+               if (compatible) {
                   bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
                   if (test(info.header.flags, elStructureRole)) {
                      compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
