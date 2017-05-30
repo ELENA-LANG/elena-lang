@@ -5378,13 +5378,15 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       scope.info.methodHints.add(Attribute(overwriteVerb(message, EVAL_MESSAGE_ID), maHint), hint);
 
       // if it is an explicit constant conversion
-      ident_t signature = scope.moduleScope->module->resolveSubject(getSignature(message));
-      size_t pos = signature.find('&');
-      if (test(hint, tpConversion) && pos != NOTFOUND_POS && getParamCount(message) == 1) {
-         // add it to the action list
-         IdentifierString postfix(signature, pos);
+      if (getSignature(message) != 0) {
+         ident_t signature = scope.moduleScope->module->resolveSubject(getSignature(message));
+         size_t pos = signature.find('&');
+         if (test(hint, tpConversion) && pos != NOTFOUND_POS && getParamCount(message) == 1) {
+            // add it to the action list
+            IdentifierString postfix(signature, pos);
 
-         scope.moduleScope->saveAction(encodeMessage(scope.moduleScope->module->mapSubject(postfix, false), PRIVATE_MESSAGE_ID, 1), scope.reference);
+            scope.moduleScope->saveAction(encodeMessage(scope.moduleScope->module->mapSubject(postfix, false), PRIVATE_MESSAGE_ID, 1), scope.reference);
+         }
       }
    }
 

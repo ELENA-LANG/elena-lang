@@ -2,24 +2,8 @@
 In development:
 ------                              
 
-              xdev - generic development
-                 * explicit literal constants
-                 * test constants: 2, 0ffh, 123l, 23.3r, 23o
-                 * test constants: "abc", "abc"w, "abc"d
-
-              zdev - upndown
-                 * reimplement chat sample
-
               sdev - rosetta samples
                  * Zeckendorf arithmetic
-
-              sdev - rosetta samples
-                 * Zebra puzzle
-
-              xdev - x64
-                 * compile 64 bit IDE without warnings
-                 * x64 debugger : 32bit app
-                 * x64 debugger : 64bit app
 
               zdev 
                  * scripting library : branching
@@ -27,9 +11,20 @@ In development:
                  * scripting library : procedures
                  * scripting library : language interpreter
 
+              xdev - x64
+                 * compile 64 bit IDE without warnings
+                 * x64 debugger : 32bit app
+                 * x64 debugger : 64bit app
+
+              sdev - rosetta samples
+                 * Zebra puzzle
+
               zdev - gui
                  * reimplement forms library
                  * test gui samples
+
+              zdev - upndown
+                 * reimplement chat sample
 
 ------                                 
 Pipeline:

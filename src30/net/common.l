@@ -5,9 +5,9 @@
 #subject tcp_remoteclient = net'TcpRemoteClient.
 #subject tcp_server       = net'TcpServer.
 
-#class(exceptionof:TcpClientError) TcpClientException
+exceptionof(TcpClientError) TcpClientException
 {
-    #constructor(stacksafe) new:message
+    constructor new:message
     [
         theMessage := message literal.
         theCallStack := CallStack new.
