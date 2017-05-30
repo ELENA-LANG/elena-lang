@@ -1,6 +1,11 @@
+#import extensions.
+
 #subject zeckendorf = ZeckendorfNumber.
 
-sealed struct ZeckendorfNumber
+const dig = ("00","01","10").
+const dig1 = ("","1","10").
+
+sealed dispatchable(zeckendorf) struct ZeckendorfNumber :: BaseNumber
 {
     int dVal.
     int dLen.
@@ -43,7 +48,7 @@ sealed struct ZeckendorfNumber
                 0 [ ^ $self. ];
                 1 [ ^ $self. ];
                 2 [
-                    ifnot (dVal shift:(i + 1 * 2) testAll:1)
+                    ifnot (dVal shift:(i + 1 * 2) allMask:1)
                     [
                         ^ $self.
                     ].
@@ -61,7 +66,7 @@ sealed struct ZeckendorfNumber
         ].
     ]
     
-    sealed $b &int:pos
+    $b &int:pos
     [
         if (pos == 0)
         [
@@ -71,9 +76,9 @@ sealed struct ZeckendorfNumber
             ^ $self.
         ].
         
-        ifnot (dVal shift:pos testAll:1)
+        ifnot (dVal shift:pos allMask:1)
         [
-            dVal += 1 shift:pos.
+            dVal := dVal + 1 shift:pos.
             
             $self $a &int:(pos / 2).
             if (pos > 1) [ $self $a &int:(pos / 2 - 1). ];
@@ -98,10 +103,30 @@ sealed struct ZeckendorfNumber
         [
             if (mVal shift:GN allMask:1)
             [
-                $self $b &int:GN
+                $self $b &int:GN.
             ].
         ].
     ]
+    
+    literal
+    [
+        if (dVal == 0)
+            [ ^ "0". ].
+            
+        literal s := dig1@(dVal shift:(dLen * 2) and:3).
+        int i := dLen - 1.
+        while (i >= 0)
+        [
+            s := s + dig@(dVal shift:(dLen * 2) and:3)
+            
+            i-=1.
+        ].
+        
+        ^ s.
+    ]
+    
+    add &zeckendorf:n
+        = ZeckendorfNumber $sum &zeckendorf:$self &zeckendorf:n.
 }
 
 program =
