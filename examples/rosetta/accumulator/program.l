@@ -20,9 +20,9 @@
 //    accumulator &of:func
 //        = Variable new:self mix &into:func.
 //}
-//
-//program =
-//[
+
+program =
+[
 //    var x := 1 accumulator &of:Function.
 //    
 //    x eval:5.
@@ -30,4 +30,4 @@
 //    var y := 3 accumulator &of:Function.
 //    
 //    console write:(x eval:2.3r).
-//].
+].

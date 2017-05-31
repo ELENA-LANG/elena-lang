@@ -1,6 +1,6 @@
 /// Attributes
 //#16390      type.
-////#template(-16385)        var {}
+#16385      var.
 #16386      class.
 #16384      constructor.
 //#template(-16387,-8195)  implicit {}

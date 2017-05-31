@@ -857,7 +857,7 @@ private:
 
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
-//   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
+   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size);
    void declareVMT(SNode member, ClassScope& scope);
 //   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
@@ -869,7 +869,7 @@ private:
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
@@ -897,12 +897,12 @@ private:
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0, ref_t targetType = 0);
 //
 //   ObjectInfo compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
-//   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
-//
+   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
+
 //   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
    void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -1025,7 +1025,7 @@ private:
 //   bool generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope);
    void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes/*, bool variableMode, bool embeddableMode = false*/);
 //   void copyTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode, bool embeddableMode);
-//   void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 //   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, bool operationMode*/);
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, TemplateScope& scope);
