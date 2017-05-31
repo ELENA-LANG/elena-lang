@@ -67,9 +67,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsL7Operation:
 //         _writer.newNode(lxOperator);
 //         break;
-//      case nsMessageOperation:
-//         _writer.newNode(lxMessage);
-//         break;
+      case nsMessageOperation:
+         _writer.newNode(lxMessage);
+         break;
 //      case nsSubjectArg:
 //         _writer.newNode(lxMessage, -1);
 //         break;

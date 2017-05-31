@@ -586,16 +586,16 @@ private:
       MethodScope(ClassScope* parent);
    };
 
-//   // - ActionScope -
-//   struct ActionScope : public MethodScope
-//   {
-//      bool subCodeMode;
-//      bool  singletonMode;  // indicates that the symbol is a singleton closure
-//
-//      ActionScope(ClassScope* parent);
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//   };
+   // - ActionScope -
+   struct ActionScope : public MethodScope
+   {
+      bool subCodeMode;
+      bool  singletonMode;  // indicates that the symbol is a singleton closure
+
+      ActionScope(ClassScope* parent);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
+   };
 
    // - CodeScope -
    struct CodeScope : public Scope
@@ -665,52 +665,52 @@ private:
       CodeScope(CodeScope* parent);
    };
 
-//   // - InlineClassScope -
-//   struct InlineClassScope : public ClassScope
-//   {
-//      struct Outer
-//      {
-//         ref_t      reference;
-//         bool       preserved;
-//         ObjectInfo outerObject;
-//
-//         Outer()
-//         {
-//            reference = INVALID_REF;
-//            preserved = false;
-//         }
-//         Outer(int reference, ObjectInfo outerObject)
-//         {
-//            this->reference = reference;
-//            this->outerObject = outerObject;
-//            this->preserved = false;
-//         }
-//      };
-//
-//      bool                    returningMode;
-//      bool                    closureMode;
-//      Map<ident_t, Outer>     outers;
-//      ClassInfo::FieldTypeMap outerFieldTypes;
-//
-//      Outer mapSelf();
-//      Outer mapOwner();
-//
-//      ObjectInfo allocateRetVar();
-//
+   // - InlineClassScope -
+   struct InlineClassScope : public ClassScope
+   {
+      struct Outer
+      {
+         ref_t      reference;
+         bool       preserved;
+         ObjectInfo outerObject;
+
+         Outer()
+         {
+            reference = INVALID_REF;
+            preserved = false;
+         }
+         Outer(int reference, ObjectInfo outerObject)
+         {
+            this->reference = reference;
+            this->outerObject = outerObject;
+            this->preserved = false;
+         }
+      };
+
+      bool                    returningMode;
+      bool                    closureMode;
+      Map<ident_t, Outer>     outers;
+      ClassInfo::FieldTypeMap outerFieldTypes;
+
+      Outer mapSelf();
+      Outer mapOwner();
+
+      ObjectInfo allocateRetVar();
+
 //      bool markAsPresaved(ObjectInfo object);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      InlineClassScope(CodeScope* owner, ref_t reference);
-//   };
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
+
+      InlineClassScope(CodeScope* owner, ref_t reference);
+   };
 
    // --- TemplateScope ---
    struct TemplateScope : Scope
@@ -870,9 +870,9 @@ private:
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
 //
@@ -925,15 +925,15 @@ private:
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    void declareArgumentList(SNode node, MethodScope& scope);
-//   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
-//   bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
-//
+   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
+   /*bool*/void declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
+
 //   void declareSingletonClass(SNode node, ClassScope& scope);
 ////   void compileSingletonClass(SNode member, ClassScope& scope, SNode hints);
 //
 ////   void declareSingletonAction(ClassScope& scope, SNode objNode);
-//
-//   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+
+   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
 //   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
@@ -948,8 +948,8 @@ private:
    void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ClassScope& scope);
 ////   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
-//
-//   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
+
+   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
 //   void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
@@ -1027,7 +1027,7 @@ private:
 //   void copyTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode, bool embeddableMode);
 //   void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 //   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-//   void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool operationMode);
+   void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, bool operationMode*/);
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, TemplateScope& scope);
    void generateObjectTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool explicitOne = true);
