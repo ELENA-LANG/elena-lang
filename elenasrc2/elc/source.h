@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef sourceH
@@ -24,7 +24,7 @@ const char dfaWhitespace     = '*';
 const char dfaBack           = '!';
 const char dfaDotLookahead   = '$';
 const char dfaMinusLookahead = '-';  // indicates that if minus is preceeded by the operator it may be part of the digit
-const char dfaKeyword        = 'b';
+const char dfaAttribute      = 'b';
 const char dfaIdentifier     = 'd';
 const char dfaFullIdentifier = 'f';
 const char dfaWildcard       = 'g';
@@ -33,10 +33,8 @@ const char dfaDblOperator    = 'm';
 const char dfaInteger        = 'n';
 const char dfaDotStart       = 'o';
 const char dfaExplicitConst  = 's';
-
-const char dfaLong = 'r';              // !! obsolete
-const char dfaHexInteger = 't';
-
+const char dfaLong           = 'r';              
+const char dfaHexInteger     = 't'; // should be kept for compatibility
 const char dfaReal           = 'q';
 const char dfaSignStart      = 'u';
 const char dfaQuote          = 'w';

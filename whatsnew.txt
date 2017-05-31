@@ -1,13 +1,14 @@
 ﻿
                                 ELENA Language 
 
-                                Version 3.0.2
+                                Version 3.1.0
  
 ******************************************************************************
-                             What's New in 3.0.2
+                             What's New in 3.1.0
 ******************************************************************************
 
 [ELENA]              
+[!] Major syntax refactoring
 [+] #298 : Try / catch / finally code template
 [+] #297 : if-else code template
 [+] finally code template

@@ -240,10 +240,10 @@ private:
    struct ModuleScope : _CompilerScope
    {
       _ProjectManager* project;
-      _Module*       debugModule;
+      _Module*         debugModule;
 
-      ident_t        sourcePath;
-      ref_t          sourcePathRef;
+      ident_t          sourcePath;
+      ref_t            sourcePathRef;
 
       // default namespaces
       List<ident_t> defaultNs;
@@ -256,7 +256,7 @@ private:
       SubjectMap        extensionHints;
       ExtensionMap      extensions;
 
-      // type hints
+      // type / attribute hints
       MessageMap        attributes;
 
       // action hints
@@ -306,7 +306,7 @@ private:
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-      virtual _Module* loadReferenceModule(ref_t& reference);
+//      virtual _Module* loadReferenceModule(ref_t& reference);
 
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
       virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
@@ -315,11 +315,11 @@ private:
       }
       ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
-      _Memory* loadAttributeInfo(ref_t reference/*, _Module* &argModule*/)
-      {
-         return loadAttributeInfo(module->resolveSubject(reference)/*, argModule*/);
-      }
-      _Memory* loadAttributeInfo(ident_t attribute/*, _Module* &argModule*/);
+//      _Memory* loadAttributeInfo(ref_t reference/*, _Module* &argModule*/)
+//      {
+//         return loadAttributeInfo(module->resolveSubject(reference)/*, argModule*/);
+//      }
+//      _Memory* loadAttributeInfo(ident_t attribute/*, _Module* &argModule*/);
 
       void loadAttributes(_Module* module);
       void loadExtensions(_Module* module, bool& duplicateExtensions);
@@ -331,7 +331,7 @@ private:
 
       void validateReference(SNode terminal, ref_t reference);
 
-      ref_t getBaseLazyExpressionClass();
+//      ref_t getBaseLazyExpressionClass();
 
       void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
 
@@ -349,12 +349,12 @@ private:
 
       ref_t mapNestedExpression();
 
-      bool defineForward(ident_t forward, ident_t referenceName)
-      {
-         ObjectInfo info = mapReferenceInfo(referenceName, false);
-      
-         return forwards.add(forward, info.param, true);
-      }
+//      bool defineForward(ident_t forward, ident_t referenceName)
+//      {
+//         ObjectInfo info = mapReferenceInfo(referenceName, false);
+//      
+//         return forwards.add(forward, info.param, true);
+//      }
 
       ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
@@ -468,7 +468,7 @@ private:
 //      {
 //         return test(info.header.flags, elClosed);
 //      }
-      
+
       ObjectInfo mapField(ident_t identifier);
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
@@ -586,16 +586,16 @@ private:
       MethodScope(ClassScope* parent);
    };
 
-   // - ActionScope -
-   struct ActionScope : public MethodScope
-   {
-      bool subCodeMode;
-      bool  singletonMode;  // indicates that the symbol is a singleton closure
-
-      ActionScope(ClassScope* parent);
-
-      virtual ObjectInfo mapTerminal(ident_t identifier);
-   };
+//   // - ActionScope -
+//   struct ActionScope : public MethodScope
+//   {
+//      bool subCodeMode;
+//      bool  singletonMode;  // indicates that the symbol is a singleton closure
+//
+//      ActionScope(ClassScope* parent);
+//
+//      virtual ObjectInfo mapTerminal(ident_t identifier);
+//   };
 
    // - CodeScope -
    struct CodeScope : public Scope
@@ -615,10 +615,10 @@ private:
          return level;
       }
 
-//      void mapLocal(ident_t local, int level/*, ref_t type*/)
-//      {
-//         locals.add(local, Parameter(level/*, type*/));
-//      }
+      void mapLocal(ident_t local, int level/*, ref_t type*/)
+      {
+         locals.add(local, Parameter(level/*, type*/));
+      }
       void mapLocal(ident_t local, int level, ref_t type, ref_t class_ref, int size)
       {
          locals.add(local, Parameter(level, type, class_ref, size));
@@ -665,107 +665,107 @@ private:
       CodeScope(CodeScope* parent);
    };
 
-   // - InlineClassScope -
-   struct InlineClassScope : public ClassScope
-   {
-      struct Outer
-      {
-         ref_t      reference;
-         bool       preserved;
-         ObjectInfo outerObject;
-
-         Outer()
-         {
-            reference = INVALID_REF;
-            preserved = false;
-         }
-         Outer(int reference, ObjectInfo outerObject)
-         {
-            this->reference = reference;
-            this->outerObject = outerObject;
-            this->preserved = false;
-         }
-      };
-
-      bool                    returningMode;
-      bool                    closureMode;
-      Map<ident_t, Outer>     outers;
-      ClassInfo::FieldTypeMap outerFieldTypes;
-
-      Outer mapSelf();
-      Outer mapOwner();
-
-      ObjectInfo allocateRetVar();
-
-      bool markAsPresaved(ObjectInfo object);
-
-      virtual Scope* getScope(ScopeLevel level)
-      {
-         if (level == slClass) {
-            return this;
-         }
-         else return Scope::getScope(level);
-      }
-
-      virtual ObjectInfo mapTerminal(ident_t identifier);
-
-      InlineClassScope(CodeScope* owner, ref_t reference);
-   };
+//   // - InlineClassScope -
+//   struct InlineClassScope : public ClassScope
+//   {
+//      struct Outer
+//      {
+//         ref_t      reference;
+//         bool       preserved;
+//         ObjectInfo outerObject;
+//
+//         Outer()
+//         {
+//            reference = INVALID_REF;
+//            preserved = false;
+//         }
+//         Outer(int reference, ObjectInfo outerObject)
+//         {
+//            this->reference = reference;
+//            this->outerObject = outerObject;
+//            this->preserved = false;
+//         }
+//      };
+//
+//      bool                    returningMode;
+//      bool                    closureMode;
+//      Map<ident_t, Outer>     outers;
+//      ClassInfo::FieldTypeMap outerFieldTypes;
+//
+//      Outer mapSelf();
+//      Outer mapOwner();
+//
+//      ObjectInfo allocateRetVar();
+//
+//      bool markAsPresaved(ObjectInfo object);
+//
+//      virtual Scope* getScope(ScopeLevel level)
+//      {
+//         if (level == slClass) {
+//            return this;
+//         }
+//         else return Scope::getScope(level);
+//      }
+//
+//      virtual ObjectInfo mapTerminal(ident_t identifier);
+//
+//      InlineClassScope(CodeScope* owner, ref_t reference);
+//   };
 
    // --- TemplateScope ---
    struct TemplateScope : Scope
    {
-      ref_t        templateRef;  // NOTE : should be zero for template declaration
-      ref_t        reference;
-      ForwardMap   parameters;
-      SubjectMap   subjects;
-      bool         classMode;
-      bool         embeddableMode;
-      bool         codeMode;
-      bool         fieldMode;
-      ident_t      sourcePath;
-
-      SNode        exprNode;     // used for code template
-      SNode        codeNode;
-      SNode        elseNode;
-      SNode        nestedNode;
-
-      SyntaxTree* autogeneratedTree;
-
-      int mapAttribute(SNode terminal);
-
-      void loadAttributeValues(SNode node, bool variableMode);
-      void loadParameters(SNode node);
+//      ref_t        templateRef;  // NOTE : should be zero for template declaration
+//      ref_t        reference;
+//      ForwardMap   parameters;
+//      SubjectMap   subjects;
+//      bool         classMode;
+//      bool         embeddableMode;
+//      bool         codeMode;
+//      bool         fieldMode;
+//      ident_t      sourcePath;
+//
+//      SNode        exprNode;     // used for code template
+//      SNode        codeNode;
+//      SNode        elseNode;
+//      SNode        nestedNode;
+//
+//      SyntaxTree* autogeneratedTree;
+//
+//      int mapAttribute(SNode terminal);
+//
+//      void loadAttributeValues(SNode node, bool variableMode);
+//      void loadParameters(SNode node);
 
       void copySubject(SyntaxWriter& writer, SNode terminal);
-      void copyIdentifier(SyntaxWriter& writer, SNode terminal);
+//      void copyIdentifier(SyntaxWriter& writer, SNode terminal);
 
-      ref_t mapAttribute(SNode terminal, int& attrValue, bool variableMode = false);
-      int mapIdentifier(SNode terminal);
-
-      bool generateClassName();
-
-      TemplateScope(TemplateScope* parent, ref_t attrRef)
-         : Scope(parent)
-      {
-         templateRef = attrRef;
-         reference = 0;
-         classMode = false;
-         embeddableMode = false;
-         fieldMode = codeMode = false;
-         sourcePath = NULL;
-         autogeneratedTree = parent->autogeneratedTree;
-      }
+      ref_t mapAttribute(SNode terminal, int& attrValue/*, bool variableMode = false*/);
+//      int mapIdentifier(SNode terminal);
+//
+//      bool generateClassName();
+//
+//      TemplateScope(TemplateScope* parent, ref_t attrRef)
+//         : Scope(parent)
+//      {
+//         templateRef = attrRef;
+//         reference = 0;
+//         classMode = false;
+//         embeddableMode = false;
+//         fieldMode = codeMode = false;
+//         sourcePath = NULL;
+//         autogeneratedTree = parent->autogeneratedTree;
+//      }
       TemplateScope(ModuleScope* moduleScope)
          : Scope(moduleScope)
       {
-         templateRef = 0;
-         reference = 0;
-         classMode = false;
-         embeddableMode = false;
-         fieldMode = codeMode = false;
-         sourcePath = NULL;
-         autogeneratedTree = NULL;
+//         templateRef = 0;
+//         reference = 0;
+//         classMode = false;
+//         embeddableMode = false;
+//         fieldMode = codeMode = false;
+//         sourcePath = NULL;
+//         autogeneratedTree = NULL;
       }
    };
 
@@ -807,7 +807,7 @@ private:
    ByteCodeWriter _writer;
 
    MessageMap     _verbs;                            // list of verbs
-   MessageMap     _operators;                        // list of operators
+//   MessageMap     _operators;                        // list of operators
 
    int            _optFlag;
 
@@ -824,8 +824,8 @@ private:
 ////
 ////   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
    void writeMessageInfo(SyntaxWriter& writer, ModuleScope& scope, ref_t messageRef);
-//   ref_t mapAttribute(SNode attribute, Scope& scope, int& attrValue);
-   ref_t mapAttribute(SNode attribute, ModuleScope& scope);
+////   ref_t mapAttribute(SNode attribute, Scope& scope, int& attrValue);
+//   ref_t mapAttribute(SNode attribute, ModuleScope& scope);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
    pos_t saveSourcePath(ModuleScope& scope, ident_t path);
@@ -849,7 +849,7 @@ private:
    /// NOTE : the method is used to set template pseudo variable
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
 
-//   int countFields(SNode node);
+////   int countFields(SNode node);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
@@ -857,58 +857,58 @@ private:
 
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
-   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
+//   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size);
    void declareVMT(SNode member, ClassScope& scope);
-   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
-
-//   void declareMethodAttribute(SyntaxWriter& writer, SNode current, MethodScope& scope, SNode rootNode);
+//   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
+//
+////   void declareMethodAttribute(SyntaxWriter& writer, SNode current, MethodScope& scope, SNode rootNode);
    void declareMethodAttributes(SNode member, MethodScope& scope);
-   //void includeMethod(SNode member, ClassScope& classScope, MethodScope& scope);
+//   //void includeMethod(SNode member, ClassScope& classScope, MethodScope& scope);
 
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
-   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
-
-   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
-   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
-   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
-   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
-
-   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+//   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//
+//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
+//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+//   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
+//   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
+//
+//   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
    ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
 
-   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
-   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
-   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
-   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
-   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
+//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
+//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
+//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+//   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
+//   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
+//   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
 
    ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
-   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0, ref_t targetType = 0);
-
-   ObjectInfo compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
-   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0, ref_t targetType = 0);
+//
+//   ObjectInfo compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
+//   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+//   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
-
-   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+//   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
+//
+//   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
    void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   void compileThrow(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+//   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//   void compileThrow(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(SNode node, int& size);
@@ -925,16 +925,16 @@ private:
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    void declareArgumentList(SNode node, MethodScope& scope);
-   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
-   bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
-
-   void declareSingletonClass(SNode node, ClassScope& scope);
-//   void compileSingletonClass(SNode member, ClassScope& scope, SNode hints);
-
-//   void declareSingletonAction(ClassScope& scope, SNode objNode);
-
-   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+//   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
+//   bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
+//
+//   void declareSingletonClass(SNode node, ClassScope& scope);
+////   void compileSingletonClass(SNode member, ClassScope& scope, SNode hints);
+//
+////   void declareSingletonAction(ClassScope& scope, SNode objNode);
+//
+//   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+//   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
@@ -942,22 +942,22 @@ private:
 
    void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
    void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
-//   void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
-//   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
+////   void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
+////   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
    void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ClassScope& scope);
-//   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
-
-   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
-   void compileNestedVMT(SNode node, InlineClassScope& scope);
+////   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
+//
+//   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
+//   void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileTemplateMethods(SNode node, ClassScope& scope);
-
-//   void declareVirtualMethods(ClassScope& scope);
-
+////   void compileTemplateMethods(SNode node, ClassScope& scope);
+//
+////   void declareVirtualMethods(ClassScope& scope);
+//
    void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef, int sizeHint, bool singleField);
 //   void generateClassStaticField(ClassScope& scope, SNode current);
 
@@ -971,19 +971,18 @@ private:
 
    void compileClassDeclaration(SNode node, ClassScope& scope);
    void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
-//   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
    bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
-   void compileIncludeModule(SNode node, ModuleScope& scope);
-   void compileForward(SNode node, ModuleScope& scope);
-   void declareSubject(SyntaxTree& autogenerated, SNode member, ModuleScope& scope);
+//   void compileIncludeModule(SNode node, ModuleScope& scope);
+//   void compileForward(SNode node, ModuleScope& scope);
+//   void declareSubject(SyntaxTree& autogenerated, SNode member, ModuleScope& scope);
 
    bool validate(_ProjectManager& project, _Module* module, int reference);
 
-   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t targetType = 0);
+//   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t targetType = 0);
 
    bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef, ref_t sourceType);
    bool typecastObject(SyntaxWriter& writer, ref_t targetType);
@@ -1014,39 +1013,42 @@ private:
    void compileDeclarations(SNode node, ModuleScope& scope);
    void compileImplementations(SNode node, ModuleScope& scope);
 
-   void copyAttributeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode);
-   void copyTreeNode(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool methodMode = false);
-   void copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-   void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer);
-   void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer);
+//   void copyAttributeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode);
+//   void copyTreeNode(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool methodMode = false);
+//   void copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+//   void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer);
+//   void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer);
 
    void generateScopeMembers(SNode node, TemplateScope& scope);
 
-   bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool embeddableMode);
-   bool generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope);
-   void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, bool variableMode, bool embeddableMode = false);
-   void copyTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode, bool embeddableMode);
-   void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-   void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool operationMode);
-   void generateSwitchTree(SyntaxWriter& writer, SNode current, TemplateScope& scope);
+//   bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool embeddableMode);
+//   bool generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope);
+   void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes/*, bool variableMode, bool embeddableMode = false*/);
+//   void copyTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode, bool embeddableMode);
+//   void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+//   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+//   void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool operationMode);
+//   void generateSwitchTree(SyntaxWriter& writer, SNode current, TemplateScope& scope);
    void generateObjectTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool explicitOne = true);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
-   void generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-   void generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
-   void generateFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
+//   void generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+//   void generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
+//   void generateFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
    // nested = -1 - nested class, -2 - singleton
-   void generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, int nested = 0);
+   void generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes/*, int nested = 0*/);
    bool generateMethodScope(SNode node, TemplateScope& scope, SNode attributes);
-   bool generateSingletonScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
+   bool generateSingletonScope(SyntaxWriter& writer, SNode node, /*TemplateScope& scope, */SNode attributes);
    void generateScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
+
+//   void generateDeclaration(SNode node, TemplateScope& scope, SNode attributes);
 
    void compileSyntaxTree(SyntaxTree& tree, ModuleScope& scope);
 
-   void saveTemplate(_Memory* target, SNode node, ModuleScope& scope, SNode attributes, SyntaxTree& autogenerated);
-   void generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScope& scope, SyntaxTree& autogenerated);
+//   void saveTemplate(_Memory* target, SNode node, ModuleScope& scope, SNode attributes, SyntaxTree& autogenerated);
+   void generateNewAttribute(SNode node, ModuleScope& scope, SNode attributes);
+   void generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScope& scope/*, SyntaxTree& autogenerated*/);
 
 public:
    void loadRules(StreamReader* optimization);
@@ -1062,8 +1064,8 @@ public:
 
    void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 
-   // _Compiler interface implementation
-//   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
+//   // _Compiler interface implementation
+////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef);
    virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
@@ -1071,7 +1073,7 @@ public:
    virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
    virtual void injectFieldExpression(SyntaxWriter& writer);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
-   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
+//   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
    Compiler(_CompilerLogic* logic);
 };

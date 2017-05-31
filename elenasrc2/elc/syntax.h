@@ -39,6 +39,7 @@ enum Symbol
    tsLong                       = 0x0300C,
    tsWide                       = 0x0300D,
    tsExplicitConst              = 0x0300E,
+   tsAttribute                  = 0x0300F,
 
    nsClass                      = 0x0100E,               // non-terminals
    nsTemplate                   = 0x0100F,
@@ -96,6 +97,7 @@ enum Symbol
 //   nsImplicitConstructor        = 0x0104B,
    nsToken                      = 0x0104C,
    nsScope                      = 0x0104D,
+   nsAttribute                  = 0x0104E,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

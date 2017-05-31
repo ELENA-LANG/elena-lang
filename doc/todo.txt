@@ -2,14 +2,26 @@
 In development:
 ------                              
 
+              xdev - refactoring
+                 * uncomment generateSingletonScope
+                 * check attribute duplicates
+
+                 * review rosetta samples
+                 * review console samples
+                 * review forms samples
+                 * review net samples
+
+------                                 
+Pipeline:
+------                                                                                         
+              sdev - rosetta samples
+                 * Zeckendorf arithmetic
+
               zdev 
                  * scripting library : branching
                  * scripting library : loops
                  * scripting library : procedures
                  * scripting library : language interpreter
-
-              sdev - rosetta samples
-                 * Zeckendorf arithmetic
 
               xdev - x64
                  * compile 64 bit IDE without warnings
@@ -26,9 +38,6 @@ In development:
               zdev - upndown
                  * reimplement chat sample
 
-------                                 
-Pipeline:
-------                                                                                         
               sdev - cf parser
                  * currently nested expression should be enclosed into another epxression (expression expression nested ...)
                  * debug script generated code

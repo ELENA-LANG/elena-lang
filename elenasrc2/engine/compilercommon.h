@@ -15,7 +15,7 @@
 #define INVALID_REF      (ref_t)-1
 
 // virtual objects
-#define V_FLAG           (ref_t)-03
+//#define V_FLAG           (ref_t)-03
 #define V_NIL            (ref_t)-04
 
 #define V_BINARY         (ref_t)-10
@@ -31,7 +31,7 @@
 
 #define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
 
-#define V_OBJECT         (ref_t)-28
+//#define V_OBJECT         (ref_t)-28
 
 #define V_OBJARRAY      (ref_t)-30
 #define V_INT32ARRAY    (ref_t)-31
@@ -66,11 +66,12 @@
 #define V_TAPEGROUP      (ref_t)-8209
 
 #define V_CONSTRUCTOR    (ref_t)-16384
-#define V_VARIABLE       (ref_t)-16385
+//#define V_VARIABLE       (ref_t)-16385
 #define V_CLASS          (ref_t)-16386
 #define V_CONVERSION     (ref_t)-16387
-#define V_EMBEDDABLETMPL (ref_t)-16388
+//#define V_EMBEDDABLETMPL (ref_t)-16388
 #define V_SYMBOLEXPR     (ref_t)-16389
+//#define V_TYPETEMPL      (ref_t)-16390
 
 namespace _ELENA_
 {
@@ -138,7 +139,7 @@ struct _CompilerScope
    BranchingInfo branchingInfo;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
+//   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
    _CompilerScope()
    {
@@ -156,7 +157,7 @@ struct _CompilerScope
 class _Compiler
 {
 public:
-//   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument) = 0;
+////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument) = 0;
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe) = 0;
    virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
@@ -169,7 +170,7 @@ public:
 
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 
-   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
+//   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };
 
 // --- _CompilerLogic ---
@@ -209,13 +210,13 @@ public:
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
 
-   // retrieve the operation type
-   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
-   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
-   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
-
-   // retrieve the branching operation type
-   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
+//   // retrieve the operation type
+//   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+//   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
+//   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+//
+//   // retrieve the branching operation type
+//   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
    virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
@@ -226,7 +227,7 @@ public:
 
    virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 
-   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
+//   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
    virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
@@ -237,33 +238,34 @@ public:
    virtual bool isRole(ClassInfo& info) = 0;          
 
    virtual bool isPrimitiveRef(ref_t reference) = 0;
-   virtual bool isPrimitiveArray(ref_t reference) = 0;
-
-   // auto generate virtual methods / fields
+//   virtual bool isPrimitiveArray(ref_t reference) = 0;
+//
+//   // auto generate virtual methods / fields
    virtual void injectVirtualCode(_CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
-   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
+//   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
-   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
-   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
+//   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
+//   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
    virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
-//   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
+////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue) = 0;
-   virtual bool validateLocalAttribute(int& attrValue) = 0;
+//   virtual bool validateLocalAttribute(int& attrValue) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
-//   virtual bool validateWarningAttribute(int& attrValue) = 0;
+//   virtual bool validateDeclarationAttribute(int attrValue, bool& type) = 0;
+////   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
-   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
+//   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
 
    // optimization
    virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool assingingMode) = 0;
@@ -275,15 +277,15 @@ public:
    virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
    virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope) = 0;
 
-//   virtual void optimizeDuplicateBoxing(SNode node) = 0;
+////   virtual void optimizeDuplicateBoxing(SNode node) = 0;
 
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
-   
-//   virtual bool recognizeNestedScope(SNode& node) = 0;
-//   virtual bool recognizeScope(SNode& node) = 0;
-//   virtual bool recognizeNewLocal(SNode& node) = 0;
-//   virtual bool recognizeNewField(SNode& node) = 0;
+
+////   virtual bool recognizeNestedScope(SNode& node) = 0;
+////   virtual bool recognizeScope(SNode& node) = 0;
+////   virtual bool recognizeNewLocal(SNode& node) = 0;
+////   virtual bool recognizeNewField(SNode& node) = 0;
 };
    
 }  // _ELENA_

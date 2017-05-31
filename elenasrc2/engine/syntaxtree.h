@@ -35,6 +35,7 @@ enum LexicalType
    lxRoot            = 0x00001,
    lxIdle            = 0x00002,
    lxObject          = 0x00003,
+   lxAttributeDecl   = 0x00004,
    lxClass           = 0x0000E,
    lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
@@ -59,7 +60,7 @@ enum LexicalType
    lxLessSwitchOption = 0x0003F,
 
    lxDefaultGeneric  = 0x00046,
-   lxSubject         = 0x00047,
+   lxSubject         = 0x00047,     // !! obsolete??
 //   lxImplicitConstructor = 0x0004B,
    lxScope           = 0x0004D,
    lxMessageParameter= 0x0C04E,
@@ -77,6 +78,7 @@ enum LexicalType
    lxLong            = 0x1800C,
    lxWide            = 0x1800D,
    lxExplicitConst   = 0x1800E,
+   lxExplicitAttr    = 0x1800F,
 
    lxImporting       = 0x08101,
    lxNested          = 0x08102, // arg - count

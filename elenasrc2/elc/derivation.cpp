@@ -19,9 +19,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 {
    switch (symbol)
    {
-      case nsImport:
-         _writer.newNode(lxImport);
-         break;
+//      case nsImport:
+//         _writer.newNode(lxImport);
+//         break;
       case nsToken:
          _writer.newNode(lxAttribute);
          break;
@@ -29,77 +29,80 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsRootExpression:
          _writer.newNode(lxExpression);
          break;
-      case nsCodeEnd:
-         _writer.newNode(lxEOF);
-         break;
-      case nsMethodParameter:
-         _writer.newNode(lxMethodParameter);
-         break;
-      case nsForward:
-         _writer.newNode(lxForward);
-         break;
-      case nsMessageParameter:
-         _writer.newNode(lxMessageParameter);
-         break;
-      case nsNestedClass:
-         _writer.newNode(lxNestedClass);
-         break;
-      case nsAssigning:
-         _writer.newNode(lxAssigning);
-         break;
-      case nsResendExpression:
-         _writer.newNode(lxResendExpression);
-         break;
+//      case nsCodeEnd:
+//         _writer.newNode(lxEOF);
+//         break;
+//      case nsMethodParameter:
+//         _writer.newNode(lxMethodParameter);
+//         break;
+//      case nsForward:
+//         _writer.newNode(lxForward);
+//         break;
+//      case nsMessageParameter:
+//         _writer.newNode(lxMessageParameter);
+//         break;
+//      case nsNestedClass:
+//         _writer.newNode(lxNestedClass);
+//         break;
+//      case nsAssigning:
+//         _writer.newNode(lxAssigning);
+//         break;
+//      case nsResendExpression:
+//         _writer.newNode(lxResendExpression);
+//         break;
       case nsObject:
          _writer.newNode(lxObject);
          break;
-      case nsBaseClass:
-         _writer.newNode(lxBaseParent);
-         break;
-      case nsThrow:
-         _writer.newNode(lxThrowing);
-         break;
-      case nsL0Operation:
-      case nsL3Operation:
-      case nsL4Operation:
-      case nsL5Operation:
-      case nsL6Operation:
-      case nsL7Operation:
-         _writer.newNode(lxOperator);
-         break;
-      case nsMessageOperation:
-         _writer.newNode(lxMessage);
-         break;
-      case nsSubjectArg:
-         _writer.newNode(lxMessage, -1);
-         break;
-      case nsRetStatement:
-         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
-         break;
-      case nsMessageReference:
-         _writer.newNode(lxMessageReference);
-         break;
-      case nsSwitching:
-         _writer.newNode(lxSwitching);
-         break;
-      case nsSubCode:
+//      case nsBaseClass:
+//         _writer.newNode(lxBaseParent);
+//         break;
+//      case nsThrow:
+//         _writer.newNode(lxThrowing);
+//         break;
+//      case nsL0Operation:
+//      case nsL3Operation:
+//      case nsL4Operation:
+//      case nsL5Operation:
+//      case nsL6Operation:
+//      case nsL7Operation:
+//         _writer.newNode(lxOperator);
+//         break;
+//      case nsMessageOperation:
+//         _writer.newNode(lxMessage);
+//         break;
+//      case nsSubjectArg:
+//         _writer.newNode(lxMessage, -1);
+//         break;
+//      case nsRetStatement:
+//         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
+//         break;
+//      case nsMessageReference:
+//         _writer.newNode(lxMessageReference);
+//         break;
+//      case nsSwitching:
+//         _writer.newNode(lxSwitching);
+//         break;
+//      case nsSubCode:
       case nsScope:
       case nsTemplate:
-      case nsTokenParam:
-      case nsSubject:
-      case nsDispatchExpression:
-      case nsExtension:
-      case nsLoop:
-      case nsExtern:
-      case nsDefaultGeneric:
-      case nsCatchMessageOperation:
-      case nsAltMessageOperation:
-      case nsSwitchOption:
-      case nsLastSwitchOption:
-      case nsBiggerSwitchOption:
-      case nsLessSwitchOption:
-      case nsInlineClosure:
+//      case nsTokenParam:
+//      case nsSubject:
+//      case nsDispatchExpression:
+//      case nsExtension:
+//      case nsLoop:
+//      case nsExtern:
+//      case nsDefaultGeneric:
+//      case nsCatchMessageOperation:
+//      case nsAltMessageOperation:
+//      case nsSwitchOption:
+//      case nsLastSwitchOption:
+//      case nsBiggerSwitchOption:
+//      case nsLessSwitchOption:
+//      case nsInlineClosure:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
+         break;
+      case nsAttribute:
+         _writer.newNode(lxAttributeDecl);
          break;
       default:
          _writer.newNode((LexicalType)symbol);
@@ -122,7 +125,10 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
       terminal.symbol = tsLiteral;
    }
 
-   _writer.newNode((LexicalType)(terminal.symbol & ~mskAnySymbolMask | lxTerminalMask | lxObjectMask));
+//   if (terminal.symbol == tsAttribute) {
+//      _writer.newNode(lxExplicitAttr);
+//   }
+   /*else */_writer.newNode((LexicalType)(terminal.symbol & ~mskAnySymbolMask | lxTerminalMask | lxObjectMask));
 
    if (terminal==tsLiteral || terminal==tsCharacter || terminal==tsWide) {
       // try to use local storage if the quote is not too big

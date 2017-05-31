@@ -118,6 +118,8 @@ struct TokenInfo
 	ident_t read()
 	{
 		terminal = reader->read(value, 50);
+      if (terminal.state == dfaExplicitConst && value[getlength(value) - 1] == 'h')
+         terminal.state = dfaHexInteger;
 
 		return value;
 	}
