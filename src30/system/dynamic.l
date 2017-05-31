@@ -1,180 +1,180 @@
-//#subject vmssg = varof:mssg.
-
-// --- Symbol ---
-
-/// A dynamic symbol
-sealed embeddable struct Symbol
-{
-    __symbol theValue.
-    
-    /// Loads a symbol
-    constructor new &literal:name
-    [
-        system'core_routines'__symbol load &symbol_ref:$self &literal:name.
-    ]
-        
-    /// Redirects incoming messages to the symbol
-    dispatch => system'core_routines'__symbol.
-}
-
-// --- Verb ---
-
-/// A dynamic verb extender
-sealed embeddable struct Verb
-{
-    __verb theValue.
-
-    /// Loads a dynamic verb
-    constructor new &verb:aVerb
-        = aVerb.
-    
-    /// Dispatches incoming messages and redirects to the target
-    dispatch => system'core_routines'__verb.
-}
+////#subject vmssg = varof:mssg.
+//
+//// --- Symbol ---
+//
+///// A dynamic symbol
+//sealed embeddable struct Symbol
+//{
+//    __symbol theValue.
+//    
+//    /// Loads a symbol
+//    constructor new &literal:name
+//    [
+//        system'core_routines'__symbol load &symbol_ref:$self &literal:name.
+//    ]
+//        
+//    /// Redirects incoming messages to the symbol
+//    dispatch => system'core_routines'__symbol.
+//}
+//
+//// --- Verb ---
+//
+///// A dynamic verb extender
+//sealed embeddable struct Verb
+//{
+//    __verb theValue.
+//
+//    /// Loads a dynamic verb
+//    constructor new &verb:aVerb
+//        = aVerb.
+//    
+//    /// Dispatches incoming messages and redirects to the target
+//    dispatch => system'core_routines'__verb.
+//}
 
 // --- Message ---
 
 /// A message constant
 sealed embeddable struct Message
 {
-    __mssg theValue.
-
-    constructor new &literal:name
-    [
-        system'core_routines'__message load &mssg:$self &literal:name.
-    ]
-    
-    /// Loads a message
-    constructor new &mssg:message
-        = message.
-
-    stacksafe subject
-        => system'core_routines'__message.
-
-    stacksafe literal
-    [
-        mssg val:= $self.
-        
-        byte(256) aBuffer := 0.
-        int       aLength := system'external LoadMessageName &mssg:$self &bytearray:aBuffer &int:255.
-        
-        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-    ]
-
-    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-    dispatch => system'core_routines'__message.
-}
-
-// --- ExtensionMessage ---
-
-/// An extended message constant
-sealed embeddable struct ExtensionMessage
-{
-    __extmssg theValue.
-    
-    /// Loads a message
-    stacksafe constructor new &ext_mssg:message
-        = message.
-
-    stacksafe subject
-        => system'core_routines'__message.
-
-    stacksafe equal &ext_mssg : aSubject    
-        => system'core_routines'__extmessage.
-
-    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-    dispatch => system'core_routines'__extmessage.
-}
-
-// --- Signature ---
-
-/// A dynamic signature extender
-sealed embeddable dispatchable(subject) struct Signature
-{
-    __subj theValue.
-    
-    /// Creates a dynamic signature
-    stacksafe constructor new &mssg:message
-    [
-        system'core_routines'__signature load &subject:$self &mssg:message.
-    ]
-        
-    /// Creates a dynamic signature
-    stacksafe constructor new &subject:subject
-        = subject.
-
-    /// Creates a dynamic signature
-    constructor new &literal:aSubjectName
-    [
-        system'core_routines'__signature load &subject:$self &literal:aSubjectName.
-    ]
-
-    /// Creates a dynamic signature
-    constructor new &wide:aSubjectName
-        <= new &literal:(aSubjectName literal).
-
-    /// Compares the values
-    stacksafe bool equal &subject : subject
-        = theValue == subject.
-
-    stacksafe literal
-    [
-        byte(256) aBuffer := 0.
-        int       aLength := system'external LoadSubjectName &subject:$self &bytearray:aBuffer &int:255.
-        
-        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-    ]
-
-    /// Qualifies incoming messages and redirects to the target
-    stacksafe dispatch => system'core_routines'__signature.
-}
-
-//// --- MessageArray ---
+//    __mssg theValue.
 //
-//#class(sealed,arrayof:mssg,dispatchable:mssgarray)MessageArray
-//{
-//    #constructor(stacksafe) new &int : aLength
-//        = mssg:aLength.
+//    constructor new &literal:name
+//    [
+//        system'core_routines'__message load &mssg:$self &literal:name.
+//    ]
+//    
+//    /// Loads a message
+//    constructor new &mssg:message
+//        = message.
+//
+//    stacksafe subject
+//        => system'core_routines'__message.
+//
+//    stacksafe literal
+//    [
+//        mssg val:= $self.
 //        
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
+//        byte(256) aBuffer := 0.
+//        int       aLength := system'external LoadMessageName &mssg:$self &bytearray:aBuffer &int:255.
+//        
+//        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+//    ]
 //
-//    #method(stacksafe) read &int:anIndex &vmssg:anInt
-//        => system'core_routines'__msgarray.
+//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+//    dispatch => system'core_routines'__message.
+}
+
+//// --- ExtensionMessage ---
 //
-//    #method iterator = MessageArrayIterator new &mssgarray:$self.
+///// An extended message constant
+//sealed embeddable struct ExtensionMessage
+//{
+//    __extmssg theValue.
+//    
+//    /// Loads a message
+//    stacksafe constructor new &ext_mssg:message
+//        = message.
+//
+//    stacksafe subject
+//        => system'core_routines'__message.
+//
+//    stacksafe equal &ext_mssg : aSubject    
+//        => system'core_routines'__extmessage.
+//
+//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+//    dispatch => system'core_routines'__extmessage.
 //}
 //
-//// --- MessageArrayIterator ---
+//// --- Signature ---
 //
-//#class MessageArrayIterator :: Iterator
+///// A dynamic signature extender
+//sealed embeddable dispatchable(subject) struct Signature
 //{
-//    #field(mssgarray) theArray.
-//    #field(vint)  theIndex.
-//
-//    #constructor(w3) new &mssgarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
+//    __subj theValue.
 //    
-//    #method available
+//    /// Creates a dynamic signature
+//    stacksafe constructor new &mssg:message
 //    [
-//        #var(int)aLength := theArray length.
+//        system'core_routines'__signature load &subject:$self &mssg:message.
+//    ]
 //        
-//        ^ theIndex < aLength.
+//    /// Creates a dynamic signature
+//    stacksafe constructor new &subject:subject
+//        = subject.
+//
+//    /// Creates a dynamic signature
+//    constructor new &literal:aSubjectName
+//    [
+//        system'core_routines'__signature load &subject:$self &literal:aSubjectName.
 //    ]
 //
-//    #method get
-//        = theArray getAt &int:theIndex.
-//    
-//    #method readIndex  &vint:anIndex
+//    /// Creates a dynamic signature
+//    constructor new &wide:aSubjectName
+//        <= new &literal:(aSubjectName literal).
+//
+//    /// Compares the values
+//    stacksafe bool equal &subject : subject
+//        = theValue == subject.
+//
+//    stacksafe literal
 //    [
-//        anIndex := theIndex.
+//        byte(256) aBuffer := 0.
+//        int       aLength := system'external LoadSubjectName &subject:$self &bytearray:aBuffer &int:255.
+//        
+//        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
 //    ]
-//    
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex set &int:anIndex.
-//    ]
+//
+//    /// Qualifies incoming messages and redirects to the target
+//    stacksafe dispatch => system'core_routines'__signature.
 //}
+//
+////// --- MessageArray ---
+////
+////#class(sealed,arrayof:mssg,dispatchable:mssgarray)MessageArray
+////{
+////    #constructor(stacksafe) new &int : aLength
+////        = mssg:aLength.
+////        
+////    #constructor new : aLength
+////        <= new &int:(aLength int).
+////
+////    #method(stacksafe) read &int:anIndex &vmssg:anInt
+////        => system'core_routines'__msgarray.
+////
+////    #method iterator = MessageArrayIterator new &mssgarray:$self.
+////}
+////
+////// --- MessageArrayIterator ---
+////
+////#class MessageArrayIterator :: Iterator
+////{
+////    #field(mssgarray) theArray.
+////    #field(vint)  theIndex.
+////
+////    #constructor(w3) new &mssgarray:anArray
+////    [
+////        theArray := anArray.
+////        theIndex := 0.
+////    ]
+////    
+////    #method available
+////    [
+////        #var(int)aLength := theArray length.
+////        
+////        ^ theIndex < aLength.
+////    ]
+////
+////    #method get
+////        = theArray getAt &int:theIndex.
+////    
+////    #method readIndex  &vint:anIndex
+////    [
+////        anIndex := theIndex.
+////    ]
+////    
+////    #method writeIndex &int:anIndex 
+////    [
+////        theIndex set &int:anIndex.
+////    ]
+////}

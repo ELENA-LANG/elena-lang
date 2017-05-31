@@ -176,24 +176,24 @@
 //        = target::verb eval &extra_subj6:param &template_subj:$self.
 //}
 
-//// --- super object ---
-//
-///// a common ancestor
-///*dispatchable(object)*/ class Object
-//{
-//    /// Creates the object
-//    constructor new []
-//    
+// --- super object ---
+
+/// a common ancestor
+/*dispatchable(object)*/ class Object
+{
+    /// Creates the object
+    constructor new []
+    
 ////    /// Returns true if the specified object is equal to the current object; otherwise, false.
 ////    ///
 ////    /// By default compares the object references.
 ////    bool equal : anObject => system'core_routines'__object.
 ////    
 ////    bool notequal : anObject = $self equal:anObject inverted.
-//                
-//    /// Implements a message dispatching in VMT
-//    dispatch => system'core_routines'__object.
-//}
+                
+    /// Implements a message dispatching in VMT
+    dispatch => system'core_routines'__object.
+}
 
 ///// A common boolean value
 //listable dispatchable(bool) class BaseBoolValue

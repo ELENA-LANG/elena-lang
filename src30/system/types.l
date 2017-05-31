@@ -2,7 +2,7 @@
 //#16390      type.
 ////#template(-16385)        var {}
 #16386      class.
-//#16384      constructor.
+#16384      constructor.
 //#template(-16387,-8195)  implicit {}
 #16389      symbol.
 
@@ -14,17 +14,17 @@
 //////#template(-4099) w1 {}
 //////#template(-4100) w2 {}
 //////#template(-4101) w3 {}
-//#8195       sealed.
-//#8199       dynamic.
+#8195       sealed.
+#8199       dynamic.
 ////#template(-8196)         limited {}
 ////#template(-8206)         group   {}
 ////#template(-8209)         __tape_group {}
 ////#template(-8201)         const   {}
-//#8197       struct.
+#8197       struct.
 ////#template(-8204)         nonstructural {}
 ////#template(-8198)         listable {}
-//#8200       string.
-//#8193       embeddable.
+#8200       string.
+#8193       embeddable.
 ////#template(-8203)         extension {}
 ////#template(-8203,subject) extension(subject) {}
 ////

@@ -29,9 +29,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsRootExpression:
          _writer.newNode(lxExpression);
          break;
-//      case nsCodeEnd:
-//         _writer.newNode(lxEOF);
-//         break;
+      case nsCodeEnd:
+         _writer.newNode(lxEOF);
+         break;
 //      case nsMethodParameter:
 //         _writer.newNode(lxMethodParameter);
 //         break;
@@ -82,12 +82,12 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsSwitching:
 //         _writer.newNode(lxSwitching);
 //         break;
-//      case nsSubCode:
+      case nsSubCode:
       case nsScope:
       case nsTemplate:
 //      case nsTokenParam:
 //      case nsSubject:
-//      case nsDispatchExpression:
+      case nsDispatchExpression:
 //      case nsExtension:
 //      case nsLoop:
 //      case nsExtern:

@@ -1032,8 +1032,8 @@ private:
    void generateObjectTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool explicitOne = true);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
-//   void generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-//   void generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
+   void generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer/*, bool templateMode = false*/);
 //   void generateFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
    // nested = -1 - nested class, -2 - singleton
