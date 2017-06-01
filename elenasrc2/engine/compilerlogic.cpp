@@ -1023,7 +1023,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
    }
 }
 
-bool CompilerLogic :: validateDeclarationAttribute(int attrValue, bool& typeDecl, bool& classDecl)
+bool CompilerLogic :: validateDeclarationAttribute(int attrValue, bool& typeDecl, bool& classDecl, bool& templateDecl)
 {
    switch ((size_t)attrValue) {
       case V_TYPETEMPL:
@@ -1031,10 +1031,14 @@ bool CompilerLogic :: validateDeclarationAttribute(int attrValue, bool& typeDecl
          return true;
       case V_CLASS:
       case V_STRUCT:
+      case V_STRING:
          classDecl = true;
          return true;
+      case V_TEMPLATE:
+         templateDecl = true;
+         return true;
       default:
-         return false;
+         return true;
    }
 
 }

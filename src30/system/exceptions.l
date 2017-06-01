@@ -276,7 +276,7 @@
 
 // --- MethodNotFound ---
 
-/*exceptionof(MethodNotFoundError)*/ MethodNotFoundException
+/*exceptionof(MethodNotFoundError)*/ class MethodNotFoundException
 {
 //    constructor new &literal:message
 //    [

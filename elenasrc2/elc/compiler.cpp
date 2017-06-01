@@ -1036,22 +1036,22 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
 
 ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
 {
-   if (terminal.compare(SUPER_VAR)) {
-      return ObjectInfo(okSuper, info.header.parentRef);
-   }
-   else if (terminal.compare(SELF_VAR)) {
-      if (extensionMode != 0 && extensionMode != -1) {
-         return ObjectInfo(okParam, (size_t)-1, 0, extensionMode);
-      }
-      else return ObjectInfo(okParam, (size_t)-1);
-   }
-   else {
+   //if (terminal.compare(SUPER_VAR)) {
+   //   return ObjectInfo(okSuper, info.header.parentRef);
+   //}
+   //else if (terminal.compare(SELF_VAR)) {
+   //   if (extensionMode != 0 && extensionMode != -1) {
+   //      return ObjectInfo(okParam, (size_t)-1, 0, extensionMode);
+   //   }
+   //   else return ObjectInfo(okParam, (size_t)-1);
+   //}
+   //else {
       ObjectInfo fieldInfo = mapField(terminal);
       if (fieldInfo.kind != okUnknown) {
          return fieldInfo;
       }
       else return Scope::mapTerminal(terminal);
-   }
+   //}
 }
 
 // --- Compiler::MetodScope ---
@@ -1071,17 +1071,17 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 {
-   if (terminal.compare(THIS_VAR)) {
-      if (extensionMode) {
-         //COMPILER MAGIC : if it is an extension ; replace $self with self
-         return ObjectInfo(okLocal, (ref_t)-1, ((ClassScope*)getScope(slClass))->reference);          
-      }
-      else if (stackSafe && classEmbeddable) {
-         return ObjectInfo(okThisParam, 1, -1);
-      }
-      else return ObjectInfo(okThisParam, 1);
-   }
-   else {
+   //if (terminal.compare(THIS_VAR)) {
+   //   if (extensionMode) {
+   //      //COMPILER MAGIC : if it is an extension ; replace $self with self
+   //      return ObjectInfo(okLocal, (ref_t)-1, ((ClassScope*)getScope(slClass))->reference);          
+   //   }
+   //   else if (stackSafe && classEmbeddable) {
+   //      return ObjectInfo(okThisParam, 1, -1);
+   //   }
+   //   else return ObjectInfo(okThisParam, 1);
+   //}
+   //else {
       Parameter param = parameters.get(terminal);
 
       int local = param.offset;
@@ -1095,7 +1095,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
          return ObjectInfo(okParam, -1 - local, 0, param.subj_ref);
       }
       else return Scope::mapTerminal(terminal);
-   }
+   //}
 }
 
 // --- Compiler::ActionScope ---
@@ -1109,31 +1109,31 @@ Compiler::ActionScope :: ActionScope(ClassScope* parent)
 
 ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
 {   
-   if (singletonMode && identifier.compare(SELF_VAR)) {
-      // COMPILER MAGIC : recognize self / $self in singleton closure
-      return ObjectInfo(okParam, (size_t)-1);
-   }
-   if (identifier.compare(THIS_VAR)) {
-      if (singletonMode) {
-         // COMPILER MAGIC : recognize $self in singleton closure
-         return ObjectInfo(okThisParam, 1);
-      }
-      // otherwise it should refer to the owner ones
-      else return parent->mapTerminal(identifier);
-   }
-   else if (identifier.compare(CLOSURE_THIS_VAR)) {
-      if (subCodeMode) {
-         return parent->mapTerminal(identifier);
-      }
-      else return MethodScope::mapTerminal(THIS_VAR);
-   }
-   else if (identifier.compare(CLOSURE_SELF_VAR)) {
-      if (subCodeMode) {
-         return parent->mapTerminal(identifier);
-      }
-      else return ObjectInfo(okParam, (size_t)-1);
-   }
-   else if (identifier.compare(RETVAL_VAR) && subCodeMode) {
+   //if (singletonMode && identifier.compare(SELF_VAR)) {
+   //   // COMPILER MAGIC : recognize self / $self in singleton closure
+   //   return ObjectInfo(okParam, (size_t)-1);
+   //}
+   //if (identifier.compare(THIS_VAR)) {
+   //   if (singletonMode) {
+   //      // COMPILER MAGIC : recognize $self in singleton closure
+   //      return ObjectInfo(okThisParam, 1);
+   //   }
+   //   // otherwise it should refer to the owner ones
+   //   else return parent->mapTerminal(identifier);
+   //}
+   //else if (identifier.compare(CLOSURE_THIS_VAR)) {
+   //   if (subCodeMode) {
+   //      return parent->mapTerminal(identifier);
+   //   }
+   //   else return MethodScope::mapTerminal(THIS_VAR);
+   //}
+   //else if (identifier.compare(CLOSURE_SELF_VAR)) {
+   //   if (subCodeMode) {
+   //      return parent->mapTerminal(identifier);
+   //   }
+   //   else return ObjectInfo(okParam, (size_t)-1);
+   //}
+   /*else */if (identifier.compare(RETVAL_VAR) && subCodeMode) {
       ObjectInfo retVar = parent->mapTerminal(identifier);
       if (retVar.kind == okUnknown) {
          InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
@@ -1174,10 +1174,10 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      if (identifier.compare(SUBJECT_VAR)) {
-         return ObjectInfo(okSubject, local.offset);
-      }
-      else if (local.size != 0) {
+      //if (identifier.compare(SUBJECT_VAR)) {
+      //   return ObjectInfo(okSubject, local.offset);
+      //}
+      /*else */if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.subj_ref);
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.subj_ref);
@@ -1196,61 +1196,61 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
    info.header.flags |= elNestedClass;
 }
 
-Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
-{
-   Outer owner = outers.get(THIS_VAR);
-   // if owner reference is not yet mapped, add it
-   if (owner.outerObject.kind == okUnknown) {
-      owner.reference = info.fields.Count();
-
-      owner.outerObject = parent->mapTerminal(THIS_VAR);
-      if (owner.outerObject.extraparam == 0)
-         owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
-
-      outers.add(THIS_VAR, owner);
-      mapKey(info.fields, THIS_VAR, (int)owner.reference);
-   }
-   return owner;
-}
-
-Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapOwner()
-{
-   Outer owner = outers.get(OWNER_VAR);
-   // if owner reference is not yet mapped, add it
-   if (owner.outerObject.kind == okUnknown) {
-      owner.outerObject = parent->mapTerminal(OWNER_VAR);
-      if (owner.outerObject.kind != okUnknown) {
-         owner.reference = info.fields.Count();
-
-         if (owner.outerObject.extraparam == 0)
-            owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
-
-         outers.add(OWNER_VAR, owner);
-         mapKey(info.fields, OWNER_VAR, (int)owner.reference);
-      }
-      else return mapSelf();
-   }
-   return owner;
-}
+//Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
+//{
+//   Outer owner = outers.get(THIS_VAR);
+//   // if owner reference is not yet mapped, add it
+//   if (owner.outerObject.kind == okUnknown) {
+//      owner.reference = info.fields.Count();
+//
+//      owner.outerObject = parent->mapTerminal(THIS_VAR);
+//      if (owner.outerObject.extraparam == 0)
+//         owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
+//
+//      outers.add(THIS_VAR, owner);
+//      mapKey(info.fields, THIS_VAR, (int)owner.reference);
+//   }
+//   return owner;
+//}
+//
+//Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapOwner()
+//{
+//   Outer owner = outers.get(OWNER_VAR);
+//   // if owner reference is not yet mapped, add it
+//   if (owner.outerObject.kind == okUnknown) {
+//      owner.outerObject = parent->mapTerminal(OWNER_VAR);
+//      if (owner.outerObject.kind != okUnknown) {
+//         owner.reference = info.fields.Count();
+//
+//         if (owner.outerObject.extraparam == 0)
+//            owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
+//
+//         outers.add(OWNER_VAR, owner);
+//         mapKey(info.fields, OWNER_VAR, (int)owner.reference);
+//      }
+//      else return mapSelf();
+//   }
+//   return owner;
+//}
 
 ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
 {
-   if (identifier.compare(THIS_VAR)) {
-      Outer owner = mapSelf();
+   //if (identifier.compare(THIS_VAR)) {
+   //   Outer owner = mapSelf();
 
-      // map as an outer field (reference to outer object and outer object field index)
-      return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
-   }
-   else if (identifier.compare(OWNER_VAR)) {
-      Outer owner = mapOwner();
+   //   // map as an outer field (reference to outer object and outer object field index)
+   //   return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
+   //}
+   //else if (identifier.compare(OWNER_VAR)) {
+   //   Outer owner = mapOwner();
 
-      // map as an outer field (reference to outer object and outer object field index)
-      return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
-   }
-   else if (identifier.compare(SELF_VAR) && !closureMode) {
-      return ObjectInfo(okParam, (size_t)-1);
-   }
-   else {
+   //   // map as an outer field (reference to outer object and outer object field index)
+   //   return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
+   //}
+   //else if (identifier.compare(SELF_VAR) && !closureMode) {
+   //   return ObjectInfo(okParam, (size_t)-1);
+   //}
+   //else {
       Outer outer = outers.get(identifier);
 
       // if object already mapped
@@ -1263,22 +1263,22 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
       else {
          outer.outerObject = parent->mapTerminal(identifier);
          // handle outer fields in a special way: save only self
-         if (outer.outerObject.kind == okField || outer.outerObject.kind == okOuterField) {
-            Outer owner = mapSelf();
+         //if (outer.outerObject.kind == okField || outer.outerObject.kind == okOuterField) {
+         //   Outer owner = mapSelf();
 
-            // save the outer field type if provided
-            if (outer.outerObject.extraparam != 0) {
-               outerFieldTypes.add(outer.outerObject.param, ClassInfo::FieldInfo(outer.outerObject.extraparam, outer.outerObject.type), true);
-            }
+         //   // save the outer field type if provided
+         //   if (outer.outerObject.extraparam != 0) {
+         //      outerFieldTypes.add(outer.outerObject.param, ClassInfo::FieldInfo(outer.outerObject.extraparam, outer.outerObject.type), true);
+         //   }
 
-            // map as an outer field (reference to outer object and outer object field index)
-            if (outer.outerObject.kind == okOuterField) {
-               return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.type);
-            }
-            else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
-         }
+         //   // map as an outer field (reference to outer object and outer object field index)
+         //   if (outer.outerObject.kind == okOuterField) {
+         //      return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.type);
+         //   }
+         //   else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
+         //}
          // map if the object is outer one
-         else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal
+         /*else */if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal
             || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
             || outer.outerObject.kind == okLocalAddress)
          {
@@ -1312,7 +1312,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
          }
          else return outer.outerObject;
       }
-   }
+   //}
 }
 
 //bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
@@ -1396,7 +1396,7 @@ ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue/*,
 //      }
 //   }
 
-//   SNode terminal = attribute.firstChild(lxTerminalMask);
+   SNode terminal = attribute.firstChild(lxTerminalMask);
 //   if (variableMode && terminal == lxNone) {
 //      SNode paramNode = attribute.findChild(lxObject);
 //      if (paramNode == lxObject)
@@ -1412,34 +1412,44 @@ ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue/*,
 //   //      return INVALID_REF;
 //   //   }
 //   //}
-//
-//   int index = mapAttribute(terminal);
-//   if (index) {
-//      attrValue = index;
-//
-//      return INVALID_REF;
-//   }
-   /*else */return moduleScope->mapAttribute(attribute, attrValue);
+
+   int index = mapAttribute(terminal);
+   if (index) {
+      attrValue = index;
+
+      return INVALID_REF;
+   }
+   else return moduleScope->mapAttribute(attribute, attrValue);
 }
 
-//void Compiler::TemplateScope :: loadAttributeValues(SNode node, bool variableMode)
-//{
-//   SNode current = variableMode ? node.nextNode() : node.firstChild();
-//   // load template parameters
-//   while (current != lxNone) {
-//      if (current == lxAttributeValue) {
-//         SNode terminalNode = variableMode ? current.firstChild().findChild(lxIdentifier) : current.firstChild(lxObjectMask);
-//         ref_t subject = mapSubject(terminalNode);
-//         if (subject == 0) {
-//            ident_t identifier = terminalNode.identifier();
-//            if (emptystr(identifier))
-//               identifier = terminalNode.findChild(lxTerminal).identifier();
-//
-//            subject = moduleScope->module->mapSubject(identifier, false);
-//         }
-//
-//         subjects.add(subjects.Count() + 1, subject);
-//      }
+ref_t Compiler::TemplateScope :: mapTemplate(SNode terminal)
+{
+   int paramCounter = SyntaxTree::countChild(terminal, lxAttributeValue);
+   IdentifierString attrName(terminal.findChild(lxIdentifier).findChild(lxTerminal).identifier());
+   attrName.append('#');
+   attrName.appendInt(paramCounter);
+   
+   return moduleScope->resolveAttributeRef(attrName, false);
+}
+
+void Compiler::TemplateScope :: loadAttributeValues(SNode node/*, bool variableMode*/)
+{
+   SNode current = /*variableMode ? node.nextNode() : */node.firstChild();
+   // load template parameters
+   while (current != lxNone) {
+      if (current == lxAttributeValue) {
+         SNode terminalNode = /*variableMode ? current.firstChild().findChild(lxIdentifier) : */current.firstChild(lxObjectMask);
+         ref_t subject = mapSubject(terminalNode);
+         if (subject == 0) {
+            ident_t identifier = terminalNode.identifier();
+            if (emptystr(identifier))
+               identifier = terminalNode.findChild(lxTerminal).identifier();
+
+            subject = moduleScope->module->mapSubject(identifier, false);
+         }
+
+         subjects.add(subjects.Count() + 1, subject);
+      }
 //      else if (current == lxTypeAttr) {
 //         ref_t subject = subject = moduleScope->module->mapSubject(current.identifier(), false);
 //
@@ -1453,47 +1463,47 @@ ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue/*,
 //      }
 //      else if (variableMode)
 //         break;
-//
-//      current = current.nextNode();
-//   }
-//}
-//
-//void Compiler::TemplateScope :: loadParameters(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   // load template parameters
-//   while (current != lxNone) {
-//      if (current == lxMethodParameter) {
-//         ident_t name = current.firstChild(lxTerminalMask).findChild(lxTerminal).identifier();
-//      
-//         parameters.add(name, parameters.Count() + 1);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
-//int Compiler::TemplateScope :: mapAttribute(SNode terminal)
-//{
-//   ident_t identifier = terminal.identifier();
-//   if (emptystr(identifier))
-//      identifier = terminal.findChild(lxTerminal).identifier();
-//
-//   if (identifier.compare(TARGET_PSEUDO_METHOD)) {
-//      return -1;
-//   }
-//   else {
-//      int index = parameters.get(identifier);
-//      if (!index) {
-//         if (parent != NULL) {
-//            return ((TemplateScope*)parent)->mapAttribute(terminal);
-//         }
-//         else return 0;
-//      }
-//      else return index;
-//   }
-//}
-//
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler::TemplateScope :: loadParameters(SNode node)
+{
+   SNode current = node.firstChild();
+   // load template parameters
+   while (current != lxNone) {
+      if (current == lxBaseParent) {
+         ident_t name = current.firstChild(lxTerminalMask).findChild(lxTerminal).identifier();
+      
+         parameters.add(name, parameters.Count() + 1);
+      }
+
+      current = current.nextNode();
+   }
+}
+
+int Compiler::TemplateScope :: mapAttribute(SNode terminal)
+{
+   ident_t identifier = terminal.identifier();
+   if (emptystr(identifier))
+      identifier = terminal.findChild(lxTerminal).identifier();
+
+   /*if (identifier.compare(TARGET_PSEUDO_METHOD)) {
+      return -1;
+   }
+   else {*/
+      int index = parameters.get(identifier);
+      if (!index) {
+         if (parent != NULL) {
+            return ((TemplateScope*)parent)->mapAttribute(terminal);
+         }
+         else return 0;
+      }
+      else return index;
+   //}
+}
+
 //int Compiler::TemplateScope :: mapIdentifier(SNode terminal)
 //{
 //   if (codeMode) {
@@ -1508,17 +1518,17 @@ ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue/*,
 
 void Compiler::TemplateScope :: copySubject(SyntaxWriter& writer, SNode terminal)
 {
-//   int index = mapAttribute(terminal);
-//   if (index) {
-//      writer.newNode(lxTemplateParam, index);
-//      copyIdentifier(writer, terminal);
-//      writer.closeNode();
-//   }
-   /*else */copyIdentifier(writer, terminal);
+   int index = mapAttribute(terminal);
+   if (index) {
+      writer.newNode(lxTemplateParam, index);
+      copyIdentifier(writer, terminal);
+      writer.closeNode();
+   }
+   else copyIdentifier(writer, terminal);
 }
 
-//void Compiler::TemplateScope :: copyIdentifier(SyntaxWriter& writer, SNode terminal)
-//{
+void Compiler::TemplateScope :: copyIdentifier(SyntaxWriter& writer, SNode terminal)
+{
 //   if (fieldMode) {
 //      ident_t name = terminal.identifier();
 //      if (name.compare(TARGET_PSEUDO_FIELD)) {
@@ -1542,9 +1552,9 @@ void Compiler::TemplateScope :: copySubject(SyntaxWriter& writer, SNode terminal
 //         return;
 //      }
 //   }
-//   ::copyIdentifier(writer, terminal);
-//}
-//
+   ::copyIdentifier(writer, terminal);
+}
+
 //bool Compiler::TemplateScope :: generateClassName()
 //{
 //   ReferenceNs name;
@@ -7150,152 +7160,152 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
    writer.closeNode();
 }
 
-//void Compiler :: copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer)
-//{
-//   writer.newNode(node.type, node.argument);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxAttribute && current.argument == INVALID_REF) {
-//         SyntaxWriter bufferWriter(buffer);
-//
-//         TemplateScope templateScope(&scope, scope.moduleScope->module->mapSubject(current.findChild(lxReference).identifier(), false));
-//         templateScope.exprNode = node.findChild(lxIdentifier, lxPrivate);
-//
-//         copyTemplateTree(bufferWriter, current, templateScope, false, true);
-//
-//         SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxClassRefAttr, lxTemplateType);
-//      }
-//      else copyTreeNode(writer, current, scope, true);
-//
-//      current = current.nextNode();
-//   }
-//
-//   writer.closeNode();
-//
-//   SyntaxTree::moveNodes(writer, buffer, lxClassMethod);
-//}
-//
-//void Compiler :: copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope& scope, bool methodMode)
-//{
-//   if (test(current.type, lxTerminalMask | lxObjectMask)) {
-//      scope.copyIdentifier(writer, current);
-//   }
-//   else if (current == lxTemplate) {
-//      writer.appendNode(lxTemplate, scope.templateRef);
-//   }
-//   else if (current == lxAttribute && current.argument == INVALID_REF) {
-//      SyntaxTree buffer;
-//      SyntaxWriter bufferWriter(buffer);
-//
-//      TemplateScope templateScope(&scope, scope.moduleScope->module->mapSubject(current.findChild(lxReference).identifier(), false));
-//      templateScope.classMode = true;
-//
-//      copyTemplateTree(bufferWriter, current, templateScope, false, false);
-//
-//      if (scope.autogeneratedTree)
-//         copyAutogeneratedClass(buffer, *scope.autogeneratedTree);
-//
-//      SyntaxTree::moveNodes(writer, buffer);
-//   }
-//   else if (current == lxTemplateParam) {
-//      if (scope.codeMode && current.argument == 1) {
-//         // if it is a code template parameter
-//         TemplateScope* parentScope = (TemplateScope*)scope.parent;
-//
-//         generateExpressionTree(writer, scope.exprNode, *parentScope, true);
-//      }
-//      else if (scope.codeMode && current.argument == 0) {
-//         // if it is a code template parameter
-//         TemplateScope* parentScope = (TemplateScope*)scope.parent;
-//
-//         generateCodeTree(writer, scope.codeNode, *parentScope);
-//      }
-//      else if (scope.codeMode && current.argument == 3) {
-//         TemplateScope* parentScope = (TemplateScope*)scope.parent;
-//
-//         // if it is an else code template parameter
-//         SNode subParam = current.findSubNode(lxTemplateParam);
-//         if (subParam == lxTemplateParam && subParam.argument == 0) {
-//            // HOTFIX : insert if-else code
-//            generateCodeTree(writer, scope.codeNode, *parentScope);
-//         }
-//
-//         generateCodeTree(writer, scope.elseNode, *parentScope);
-//      }
-//      else if (scope.codeMode && current.argument == 2) {
-//         // if it is a code template parameter
-//         TemplateScope* parentScope = (TemplateScope*)scope.parent;
-//
-//         writer.newBookmark();
-//         generateObjectTree(writer, scope.nestedNode, *parentScope);
-//         writer.removeBookmark();
-//      }
-//      else {
-//         // if it is a target pseudo variable
-//         if (current.argument == INVALID_REF) {
-//            if (methodMode) {
-//               // HOTFIX : if it is a method attribute - copy it as is
-//               writer.newNode(lxTemplateParam, current.argument);
-//            }
-//            else {
-//               if (scope.exprNode == lxIdentifier) {
-//                  writer.newNode(lxIdentifier, scope.exprNode.identifier());
-//               }
-//               else {
-//                  SNode nodeAttr = scope.exprNode.firstChild(lxTerminalMask);
-//                  if (nodeAttr != lxNone) {
-//                     writer.newNode(lxIdentifier, nodeAttr.findChild(lxTerminal).identifier());
-//                  }
-//                  else writer.newNode(lxIdentifier, current.findChild(lxIdentifier).identifier());
-//               }
-//            }
-//         }
-//         else {
-//            // if it is a template parameter
-//            ref_t subjRef = scope.subjects.get(current.argument);
-//            ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
-//            if (subjName.find('$') != NOTFOUND_POS) {
-//               writer.newNode(lxReference, subjName);
-//            }
-//            else writer.newNode(lxIdentifier, subjName);
-//         }
-//
-//         SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-//         writer.closeNode();
-//      }
-//   }
-//   else if (current == lxTemplateType) {
-//      ref_t subjRef = scope.subjects.get(current.argument);
-//      ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
-//      writer.newNode(lxTypeAttr, subjName);
-//
-//      SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-//      writer.closeNode();
-//   }
-//   else if (current == lxTypeAttr || current == lxClassRefAttr) {
-//      writer.appendNode(current.type, current.identifier());
-//   }
-//   else copyExpressionTree(writer, current, scope);
-//}
-//
-//void Compiler :: copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
-//{
-//   if (node.strArgument != -1) {
-//      writer.newNode(node.type, node.identifier());
-//   }
-//   else writer.newNode(node.type, node.argument);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      copyTreeNode(writer, current, scope);
-//
-//      current = current.nextNode();
-//   }
-//
-//   writer.closeNode();
-//}
-//
+void Compiler :: copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer)
+{
+   writer.newNode(node.type, node.argument);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      /*if (current == lxAttribute && current.argument == INVALID_REF) {
+         SyntaxWriter bufferWriter(buffer);
+
+         TemplateScope templateScope(&scope, scope.moduleScope->module->mapSubject(current.findChild(lxReference).identifier(), false));
+         templateScope.exprNode = node.findChild(lxIdentifier, lxPrivate);
+
+         copyTemplateTree(bufferWriter, current, templateScope, false, true);
+
+         SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxClassRefAttr, lxTemplateType);
+      }
+      else */copyTreeNode(writer, current, scope/*, true*/);
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+
+   SyntaxTree::moveNodes(writer, buffer, lxClassMethod);
+}
+
+void Compiler :: copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope& scope/*, bool methodMode*/)
+{
+   if (test(current.type, lxTerminalMask | lxObjectMask)) {
+      scope.copyIdentifier(writer, current);
+   }
+   //else if (current == lxTemplate) {
+   //   writer.appendNode(lxTemplate, scope.templateRef);
+   //}
+   //else if (current == lxAttribute && current.argument == INVALID_REF) {
+   //   SyntaxTree buffer;
+   //   SyntaxWriter bufferWriter(buffer);
+
+   //   TemplateScope templateScope(&scope, scope.moduleScope->module->mapSubject(current.findChild(lxReference).identifier(), false));
+   //   templateScope.classMode = true;
+
+   //   copyTemplateTree(bufferWriter, current, templateScope, false, false);
+
+   //   if (scope.autogeneratedTree)
+   //      copyAutogeneratedClass(buffer, *scope.autogeneratedTree);
+
+   //   SyntaxTree::moveNodes(writer, buffer);
+   //}
+   else if (current == lxTemplateParam) {
+   //   if (scope.codeMode && current.argument == 1) {
+   //      // if it is a code template parameter
+   //      TemplateScope* parentScope = (TemplateScope*)scope.parent;
+
+   //      generateExpressionTree(writer, scope.exprNode, *parentScope, true);
+   //   }
+   //   else if (scope.codeMode && current.argument == 0) {
+   //      // if it is a code template parameter
+   //      TemplateScope* parentScope = (TemplateScope*)scope.parent;
+
+   //      generateCodeTree(writer, scope.codeNode, *parentScope);
+   //   }
+   //   else if (scope.codeMode && current.argument == 3) {
+   //      TemplateScope* parentScope = (TemplateScope*)scope.parent;
+
+   //      // if it is an else code template parameter
+   //      SNode subParam = current.findSubNode(lxTemplateParam);
+   //      if (subParam == lxTemplateParam && subParam.argument == 0) {
+   //         // HOTFIX : insert if-else code
+   //         generateCodeTree(writer, scope.codeNode, *parentScope);
+   //      }
+
+   //      generateCodeTree(writer, scope.elseNode, *parentScope);
+   //   }
+   //   else if (scope.codeMode && current.argument == 2) {
+   //      // if it is a code template parameter
+   //      TemplateScope* parentScope = (TemplateScope*)scope.parent;
+
+   //      writer.newBookmark();
+   //      generateObjectTree(writer, scope.nestedNode, *parentScope);
+   //      writer.removeBookmark();
+   //   }
+      //else {
+      //   // if it is a target pseudo variable
+      //   if (current.argument == INVALID_REF) {
+      //      if (methodMode) {
+      //         // HOTFIX : if it is a method attribute - copy it as is
+      //         writer.newNode(lxTemplateParam, current.argument);
+      //      }
+      //      else {
+      //         if (scope.exprNode == lxIdentifier) {
+      //            writer.newNode(lxIdentifier, scope.exprNode.identifier());
+      //         }
+      //         else {
+      //            SNode nodeAttr = scope.exprNode.firstChild(lxTerminalMask);
+      //            if (nodeAttr != lxNone) {
+      //               writer.newNode(lxIdentifier, nodeAttr.findChild(lxTerminal).identifier());
+      //            }
+      //            else writer.newNode(lxIdentifier, current.findChild(lxIdentifier).identifier());
+      //         }
+      //      }
+      //   }
+      //   else {
+            // if it is a template parameter
+            ref_t subjRef = scope.subjects.get(current.argument);
+            ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
+            if (subjName.find('$') != NOTFOUND_POS) {
+               writer.newNode(lxReference, subjName);
+            }
+            else writer.newNode(lxIdentifier, subjName);
+      //   }
+
+         SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+         writer.closeNode();
+      //}
+   }
+   //else if (current == lxTemplateType) {
+   //   ref_t subjRef = scope.subjects.get(current.argument);
+   //   ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
+   //   writer.newNode(lxTypeAttr, subjName);
+
+   //   SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+   //   writer.closeNode();
+   //}
+   //else if (current == lxTypeAttr || current == lxClassRefAttr) {
+   //   writer.appendNode(current.type, current.identifier());
+   //}
+   else copyExpressionTree(writer, current, scope);
+}
+
+void Compiler :: copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
+{
+   if (node.strArgument != -1) {
+      writer.newNode(node.type, node.identifier());
+   }
+   else writer.newNode(node.type, node.argument);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      copyTreeNode(writer, current, scope);
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
 //void Compiler :: copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer)
 //{
 //   writer.newNode(node.type, node.argument);
@@ -7350,7 +7360,7 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
 
 void Compiler :: copyTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, bool variableMode, bool embeddableMode*/)
 {
-   //scope.loadAttributeValues(node, variableMode);
+   scope.loadAttributeValues(node/*, variableMode*/);
 
    if (generateTemplate(writer, scope/*, embeddableMode*/)) {
       //if (/*variableMode && */scope.reference != 0)
@@ -7417,9 +7427,9 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope/*, 
 //         SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
 //         writer.closeNode();
 //      }
-//      else if (current == lxClassMethod) {
-//         copyMethodTree(writer, current, scope, buffer);
-//      }
+      else if (current == lxClassMethod) {
+         copyMethodTree(writer, current, scope, buffer);
+      }
 //      else if (current == lxClassField) {
 //         copyFieldTree(writer, current, scope, buffer);
 //      }
@@ -7664,21 +7674,21 @@ void Compiler :: generateFieldTree(SyntaxWriter& writer, SNode node, TemplateSco
 
 void Compiler :: generateTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes)
 {
-//   SyntaxTree buffer;
+   SyntaxTree buffer;
 
    generateAttributes(writer, node, scope, attributes/*, false*/);
 
-//   SNode current = node.firstChild();
-//   SNode subAttributes;
-//   while (current != lxNone) {
-//      if (current == lxAttribute || current == lxNameAttr) {
-//         if (subAttributes == lxNone)
-//            subAttributes = current;
-//      }
-//      else if (current == lxClassMethod) {
-//         generateMethodTree(writer, current, scope, subAttributes, buffer, true);
-//         subAttributes = SNode();
-//      }
+   SNode current = node.firstChild();
+   SNode subAttributes;
+   while (current != lxNone) {
+      if (current == lxAttribute || current == lxNameAttr) {
+         if (subAttributes == lxNone)
+            subAttributes = current;
+      }
+      else if (current == lxClassMethod) {
+         generateMethodTree(writer, current, scope, subAttributes, buffer/*, true*/);
+         subAttributes = SNode();
+      }
 //      else if (current == lxClassField) {
 //         generateFieldTree(writer, current, scope, subAttributes, buffer, true);
 //         subAttributes = SNode();
@@ -7688,9 +7698,9 @@ void Compiler :: generateTemplateTree(SyntaxWriter& writer, SNode node, Template
 //
 //         generateCodeTree(writer, current, scope);
 //      }
-//
-//      current = current.nextNode();
-//   }
+
+      current = current.nextNode();
+   }
 }
 
 void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes/*, int nested*/)
@@ -7711,9 +7721,27 @@ void Compiler :: generateClassTree(SyntaxWriter& writer, SNode node, TemplateSco
             subAttributes = current;
       }
       else if (current == lxBaseParent) {
-         writer.newNode(lxBaseParent);
-         copyIdentifier(writer, current.firstChild(lxTerminalMask));
-         writer.closeNode();
+         if (current.existChild(lxAttributeValue)) {
+            ref_t attrRef = scope.mapTemplate(current);
+
+            TemplateScope templateScope(&scope, attrRef);
+            //               // HOTFIX : a new class should be generated in the variable mode
+            //               templateScope.classMode = variableMode;
+            //               if (node == lxClassMethod) {
+            //                  templateScope.exprNode = goToNode(attributes, lxNameAttr);
+            //               }
+            //               else if (node == lxClassField) {
+            //                  templateScope.exprNode = goToNode(attributes, lxNameAttr);
+            //                  templateScope.fieldMode = true;
+            //               }
+            //
+            copyTemplateTree(writer, current, templateScope/*, variableMode, embeddableMode*/);
+         }
+         else {
+            writer.newNode(lxBaseParent);
+            copyIdentifier(writer, current.firstChild(lxTerminalMask));
+            writer.closeNode();
+         }
       }
       else if (current == lxClassMethod) {
          generateMethodTree(writer, current, scope, subAttributes, buffer);
@@ -7827,6 +7855,8 @@ bool Compiler :: generateSingletonScope(SyntaxWriter& writer, SNode node, /*Temp
 
 bool Compiler :: generateDeclaration(SNode node, TemplateScope& scope, SNode attributes)
 {
+   ModuleScope* moduleScope = scope.moduleScope;
+
    SyntaxTree tree;
    SyntaxWriter writer(tree);
 
@@ -7839,10 +7869,11 @@ bool Compiler :: generateDeclaration(SNode node, TemplateScope& scope, SNode att
    // recognize the declaration type
    bool typeDecl = false;
    bool classDecl = false;
+   bool templateDecl = false;
    SNode current = tree.readRoot().firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         if (!_logic->validateDeclarationAttribute(current.argument, typeDecl, classDecl))
+         if (!_logic->validateDeclarationAttribute(current.argument, typeDecl, classDecl, templateDecl))
             scope.raiseError(errInvalidHint, attributes);
       }
 
@@ -7850,21 +7881,38 @@ bool Compiler :: generateDeclaration(SNode node, TemplateScope& scope, SNode att
    }
 
    if (typeDecl) {
-      declareSubject(/**scope.autogeneratedTree, */goToNode(attributes, lxNameAttr), *scope.moduleScope);
+      declareSubject(/**scope.autogeneratedTree, */goToNode(attributes, lxNameAttr), *moduleScope);
+
+      return true;
+   }
+   else if (templateDecl) {
+      setIdentifier(attributes);
+      node = lxTemplate;
+
+      SNode name = goToNode(attributes, lxNameAttr);
+
+      int count = SyntaxTree::countChild(node, lxBaseParent);
+
+      IdentifierString templateName(name.findChild(lxIdentifier).findChild(lxTerminal).identifier());
+      templateName.append('#');
+      templateName.appendInt(count);
+
+      ref_t templateRef = moduleScope->mapNewSubject(templateName);
+
+      // check for duplicate declaration
+      if (moduleScope->module->mapSection(templateRef | mskSyntaxTreeRef, true))
+         scope.raiseError(errDuplicatedSymbol, name);
+
+      saveTemplate(moduleScope->module->mapSection(templateRef | mskSyntaxTreeRef, false), node, *moduleScope, attributes/*, autogenerated*/);
+
+      moduleScope->saveSubject(templateRef, INVALID_REF, false);
 
       return true;
    }
    else if (classDecl) {
       return false;
    }
-}
-
-inline bool isGeneralDeclaration(SNode node)
-{
-   if (node.firstChild() != lxNone) {
-      return (node.existChild(lxBaseParent) && !node.existChild(lxScope));
-   }
-   else return true;
+   else return false;
 }
 
 void Compiler :: generateScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes)
@@ -7887,14 +7935,14 @@ void Compiler :: generateScope(SyntaxWriter& writer, SNode node, TemplateScope& 
    else {
       // it is is a template
       if (node == lxTemplate) {
-         //generateScopeMembers(node, scope);
+         generateScopeMembers(node, scope);
 
          generateTemplateTree(writer, node, scope, attributes);
       }
       else {
          setIdentifier(attributes);
          // try to recognize general declaration
-         if (!isGeneralDeclaration(node) || !generateDeclaration(node, scope, attributes)) {
+         if (!generateDeclaration(node, scope, attributes)) {
             // otherwise it will be compiled as a class
             node = lxClass;
             attributes.refresh();
@@ -7907,29 +7955,29 @@ void Compiler :: generateScope(SyntaxWriter& writer, SNode node, TemplateScope& 
    }
 }
 
-//void Compiler :: saveTemplate(_Memory* target, SNode node, ModuleScope& scope, SNode attributes/*, SyntaxTree& autogenerated*/)
-//{
-//   SyntaxTree tree;
-//   SyntaxWriter writer(tree);
-//
-//   writer.newNode(lxTemplate);
-//
-//   // HOTFIX : save the template source path
-//   IdentifierString fullPath(scope.module->Name());
-//   fullPath.append('\'');
-//   fullPath.append(scope.sourcePath);
-//
-//   TemplateScope rootScope(&scope);
-//   //rootScope.autogeneratedTree = &autogenerated;
-//   //rootScope.loadParameters(node);
-//   //rootScope.sourcePath = fullPath;
-//
-//   generateScope(writer, node, rootScope, attributes);
-//
-//   writer.closeNode();
-//
-//   SyntaxTree::saveNode(tree.readRoot(), target);
-//}
+void Compiler :: saveTemplate(_Memory* target, SNode node, ModuleScope& scope, SNode attributes/*, SyntaxTree& autogenerated*/)
+{
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxTemplate);
+
+   // HOTFIX : save the template source path
+   IdentifierString fullPath(scope.module->Name());
+   fullPath.append('\'');
+   fullPath.append(scope.sourcePath);
+
+   TemplateScope rootScope(&scope);
+   //rootScope.autogeneratedTree = &autogenerated;
+   rootScope.loadParameters(node);
+   //rootScope.sourcePath = fullPath;
+
+   generateScope(writer, node, rootScope, attributes);
+
+   writer.closeNode();
+
+   SyntaxTree::saveNode(tree.readRoot(), target);
+}
 
 void Compiler :: generateNewAttribute(SNode node, ModuleScope& scope, SNode attributes)
 {

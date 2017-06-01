@@ -85,7 +85,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsSubCode:
       case nsScope:
       case nsTemplate:
-//      case nsTokenParam:
+      case nsTokenParam:
 //      case nsSubject:
       case nsDispatchExpression:
 //      case nsExtension:

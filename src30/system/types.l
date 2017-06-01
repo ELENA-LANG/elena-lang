@@ -1,5 +1,6 @@
 /// Attributes
 #16390      type.
+#16391      template.
 #16385      var.
 #16386      class.
 #16384      constructor.

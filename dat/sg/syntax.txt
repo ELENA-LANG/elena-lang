@@ -63,8 +63,8 @@ TOKEN_PARAMS ->
 	| )
 
 TOKEN ->
-	identifier TOKEN_BODY
-	| private TOKEN_BODY
+	identifier
+	| private 
 
 TEMPLATE ->
 	identifier
@@ -86,8 +86,8 @@ METHOD_BODY ->
 	CODE_BLOCK
 	
 BASE_CLASS ->
-	identifier
-	| reference
+	identifier TOKEN_BODY
+	| reference 
 
 TOKEN_BODY ->
 	( TOKEN_PARAM TOKEN_PARAMS

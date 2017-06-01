@@ -467,11 +467,11 @@ namespace _ELENA_
   // --- ELENA explicit variables ---
    #define SELF_VAR                "self"             // the current method target / closure owner method target
    #define THIS_VAR                "$self"            // the current method class reference / closure owner class reference
-   #define OWNER_VAR               "$owner"           // the nested class owner
-   #define CLOSURE_THIS_VAR        "$closure"         // the closure class reference
-   #define CLOSURE_SELF_VAR        "closure"          // the closure target
+   //#define OWNER_VAR               "$owner"           // the nested class owner
+   //#define CLOSURE_THIS_VAR        "$closure"         // the closure class reference
+   //#define CLOSURE_SELF_VAR        "closure"          // the closure target
 
-   #define SUPER_VAR               "$super"           // the predecessor class
+   //#define SUPER_VAR               "$super"           // the predecessor class
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
    #define RETVAL_VAR              "$$ret"            // the closure returning value
