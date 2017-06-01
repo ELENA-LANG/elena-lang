@@ -127,8 +127,8 @@ public:
    virtual bool validateFieldAttribute(int& attrValue);
    virtual bool validateLocalAttribute(int& attrValue);
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
-//   virtual bool validateDeclarationAttribute(int attrValue, bool& type);
-//////   virtual bool validateWarningAttribute(int& attrValue);
+   virtual bool validateDeclarationAttribute(int attrValue, bool& typeDecl, bool& classDecl);
+//   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(ref_t message, bool isClassClass);
 //
 //   virtual bool validateClassFlag(ClassInfo& info, int flag);

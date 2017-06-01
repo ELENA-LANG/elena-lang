@@ -1003,7 +1003,7 @@
 /// A UTF-8 literal value
 sealed /*dispatchable(literal,int,char,wide)*/ dynamic string LiteralValue //:: BaseValue
 {
-//    byte $target.
+    byte $target.
 
 //    /// Creates the empty literal
 //    constructor min

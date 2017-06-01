@@ -1023,17 +1023,21 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
    }
 }
 
-//bool CompilerLogic :: validateDeclarationAttribute(int attrValue, bool& type)
-//{
-//   switch ((size_t)attrValue) {
-//      case V_TYPETEMPL:
-//         type = true;
-//         return true;
-//      default:
-//         return false;
-//   }
-//
-//}
+bool CompilerLogic :: validateDeclarationAttribute(int attrValue, bool& typeDecl, bool& classDecl)
+{
+   switch ((size_t)attrValue) {
+      case V_TYPETEMPL:
+         typeDecl = true;
+         return true;
+      case V_CLASS:
+      case V_STRUCT:
+         classDecl = true;
+         return true;
+      default:
+         return false;
+   }
+
+}
 
 bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 {

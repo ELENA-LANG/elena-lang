@@ -71,7 +71,7 @@
 #define V_CONVERSION     (ref_t)-16387
 //#define V_EMBEDDABLETMPL (ref_t)-16388
 #define V_SYMBOLEXPR     (ref_t)-16389
-//#define V_TYPETEMPL      (ref_t)-16390
+#define V_TYPETEMPL      (ref_t)-16390
 
 namespace _ELENA_
 {
@@ -259,8 +259,8 @@ public:
    virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
-//   virtual bool validateDeclarationAttribute(int attrValue, bool& type) = 0;
-////   virtual bool validateWarningAttribute(int& attrValue) = 0;
+   virtual bool validateDeclarationAttribute(int attrValue, bool& typeDecl, bool& classDecl) = 0;
+//   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
