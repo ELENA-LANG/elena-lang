@@ -25,9 +25,8 @@
 //#template(-8198)         listable {}
 #8200       string.
 #8193       embeddable.
-//#template(-8203)         extension {}
-//#template(-8203,subject) extension(subject) {}
-//
+#8203       extension.
+
 //#template(-4097)  __ifoperator {}
 //#template(-4098)  __ifnotoperator {}
 //#template(-19,4)  __mssg  {}

@@ -32,15 +32,15 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsCodeEnd:
          _writer.newNode(lxEOF);
          break;
-//      case nsMethodParameter:
-//         _writer.newNode(lxMethodParameter);
-//         break;
+      case nsMethodParameter:
+         _writer.newNode(lxMethodParameter);
+         break;
 //      case nsForward:
 //         _writer.newNode(lxForward);
 //         break;
-//      case nsMessageParameter:
-//         _writer.newNode(lxMessageParameter);
-//         break;
+      case nsMessageParameter:
+         _writer.newNode(lxMessageParameter);
+         break;
 //      case nsNestedClass:
 //         _writer.newNode(lxNestedClass);
 //         break;
@@ -70,9 +70,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsMessageOperation:
          _writer.newNode(lxMessage);
          break;
-//      case nsSubjectArg:
-//         _writer.newNode(lxMessage, -1);
-//         break;
+      case nsSubjectArg:
+         _writer.newNode(lxMessage, -1);
+         break;
 //      case nsRetStatement:
 //         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
 //         break;
