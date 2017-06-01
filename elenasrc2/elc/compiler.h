@@ -692,7 +692,7 @@ private:
       Map<ident_t, Outer>     outers;
       ClassInfo::FieldTypeMap outerFieldTypes;
 
-      //Outer mapSelf();
+      Outer mapSelf();
       //Outer mapOwner();
 
       ObjectInfo allocateRetVar();
@@ -876,8 +876,8 @@ private:
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
-//
-//   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+
+   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
@@ -895,11 +895,11 @@ private:
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
-//   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0, ref_t targetType = 0);
-//
+   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0, ref_t targetType = 0);
+
 //   ObjectInfo compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);

@@ -31,7 +31,7 @@
 //#template(-4097)  __ifoperator {}
 //#template(-4098)  __ifnotoperator {}
 //#template(-19,4)  __mssg  {}
-//#template(-20,4)  __verb  {}
+#20 #262144 __verb.
 //#template(-22,4)  __symbol{}
 //#template(-21,8)  __extmssg{}
 //#template(-18,4)  __subj{}

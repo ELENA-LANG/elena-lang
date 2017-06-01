@@ -16,21 +16,21 @@
 //    /// Redirects incoming messages to the symbol
 //    dispatch => system'core_routines'__symbol.
 //}
-//
-//// --- Verb ---
-//
-///// A dynamic verb extender
-//sealed embeddable struct Verb
-//{
-//    __verb theValue.
-//
+
+// --- Verb ---
+
+/// A dynamic verb extender
+sealed embeddable struct Verb
+{
+    __verb theValue.
+
 //    /// Loads a dynamic verb
 //    constructor new &verb:aVerb
 //        = aVerb.
-//    
-//    /// Dispatches incoming messages and redirects to the target
-//    dispatch => system'core_routines'__verb.
-//}
+    
+    /// Dispatches incoming messages and redirects to the target
+    dispatch => system'core_routines'__verb.
+}
 
 // --- Message ---
 
@@ -60,9 +60,9 @@ sealed embeddable struct Message
 //        
 //        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
 //    ]
-//
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    dispatch => system'core_routines'__message.
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    dispatch => system'core_routines'__message.
 }
 
 //// --- ExtensionMessage ---

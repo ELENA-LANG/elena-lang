@@ -73,12 +73,12 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsSubjectArg:
          _writer.newNode(lxMessage, -1);
          break;
-//      case nsRetStatement:
-//         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
-//         break;
-//      case nsMessageReference:
-//         _writer.newNode(lxMessageReference);
-//         break;
+      case nsRetStatement:
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
+         break;
+      case nsMessageReference:
+         _writer.newNode(lxMessageReference);
+         break;
 //      case nsSwitching:
 //         _writer.newNode(lxSwitching);
 //         break;
@@ -88,7 +88,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsTokenParam:
 //      case nsSubject:
       case nsDispatchExpression:
-//      case nsExtension:
+      case nsExtension:
 //      case nsLoop:
 //      case nsExtern:
 //      case nsDefaultGeneric:

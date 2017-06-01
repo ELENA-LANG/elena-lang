@@ -238,18 +238,18 @@ class BaseValue
 /// A base numeric value
 class BaseNumber :: BaseValue
 {
-//    /// Adds the value
-//    add : anObject = anObject cast:%add &to:$self.
-//
-//    /// Subtracts the value
-//    subtract : anObject = anObject cast:%subtract &to:$self.
-//
-//    /// Multiply by the value
-//    multiply : anObject = anObject cast:%multiply &to:$self.
-//
-//    /// Divides into the value
-//    divide : anObject = anObject cast:%divide &to:$self.
-//    
+    /// Adds the value
+    add : anObject = anObject cast:%add to:$self.
+
+    /// Subtracts the value
+    subtract : anObject = anObject cast:%subtract to:$self.
+
+    /// Multiply by the value
+    multiply : anObject = anObject cast:%multiply to:$self.
+
+    /// Divides into the value
+    divide : anObject = anObject cast:%divide to:$self.
+    
 //    negative
 //        = 0 - self.
 }

@@ -1071,17 +1071,17 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 {
-   //if (terminal.compare(THIS_VAR)) {
-   //   if (extensionMode) {
-   //      //COMPILER MAGIC : if it is an extension ; replace $self with self
-   //      return ObjectInfo(okLocal, (ref_t)-1, ((ClassScope*)getScope(slClass))->reference);          
-   //   }
-   //   else if (stackSafe && classEmbeddable) {
-   //      return ObjectInfo(okThisParam, 1, -1);
-   //   }
-   //   else return ObjectInfo(okThisParam, 1);
-   //}
-   //else {
+   if (terminal.compare(THIS_VAR)) {
+      if (extensionMode) {
+         //COMPILER MAGIC : if it is an extension ; replace $self with self
+         return ObjectInfo(okLocal, (ref_t)-1, ((ClassScope*)getScope(slClass))->reference);          
+      }
+      else if (stackSafe && classEmbeddable) {
+         return ObjectInfo(okThisParam, 1, -1);
+      }
+      else return ObjectInfo(okThisParam, 1);
+   }
+   else {
       Parameter param = parameters.get(terminal);
 
       int local = param.offset;
@@ -1095,7 +1095,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
          return ObjectInfo(okParam, -1 - local, 0, param.subj_ref);
       }
       else return Scope::mapTerminal(terminal);
-   //}
+   }
 }
 
 // --- Compiler::ActionScope ---
@@ -1113,14 +1113,14 @@ ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
    //   // COMPILER MAGIC : recognize self / $self in singleton closure
    //   return ObjectInfo(okParam, (size_t)-1);
    //}
-   //if (identifier.compare(THIS_VAR)) {
-   //   if (singletonMode) {
-   //      // COMPILER MAGIC : recognize $self in singleton closure
-   //      return ObjectInfo(okThisParam, 1);
-   //   }
-   //   // otherwise it should refer to the owner ones
-   //   else return parent->mapTerminal(identifier);
-   //}
+   if (identifier.compare(THIS_VAR)) {
+      if (singletonMode) {
+         // COMPILER MAGIC : recognize $self in singleton closure
+         return ObjectInfo(okThisParam, 1);
+      }
+      // otherwise it should refer to the owner ones
+      else return parent->mapTerminal(identifier);
+   }
    //else if (identifier.compare(CLOSURE_THIS_VAR)) {
    //   if (subCodeMode) {
    //      return parent->mapTerminal(identifier);
@@ -1196,23 +1196,23 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
    info.header.flags |= elNestedClass;
 }
 
-//Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
-//{
-//   Outer owner = outers.get(THIS_VAR);
-//   // if owner reference is not yet mapped, add it
-//   if (owner.outerObject.kind == okUnknown) {
-//      owner.reference = info.fields.Count();
-//
-//      owner.outerObject = parent->mapTerminal(THIS_VAR);
-//      if (owner.outerObject.extraparam == 0)
-//         owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
-//
-//      outers.add(THIS_VAR, owner);
-//      mapKey(info.fields, THIS_VAR, (int)owner.reference);
-//   }
-//   return owner;
-//}
-//
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
+{
+   Outer owner = outers.get(THIS_VAR);
+   // if owner reference is not yet mapped, add it
+   if (owner.outerObject.kind == okUnknown) {
+      owner.reference = info.fields.Count();
+
+      owner.outerObject = parent->mapTerminal(THIS_VAR);
+      if (owner.outerObject.extraparam == 0)
+         owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
+
+      outers.add(THIS_VAR, owner);
+      mapKey(info.fields, THIS_VAR, (int)owner.reference);
+   }
+   return owner;
+}
+
 //Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapOwner()
 //{
 //   Outer owner = outers.get(OWNER_VAR);
@@ -1235,12 +1235,12 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
 
 ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
 {
-   //if (identifier.compare(THIS_VAR)) {
-   //   Outer owner = mapSelf();
+   if (identifier.compare(THIS_VAR)) {
+      Outer owner = mapSelf();
 
-   //   // map as an outer field (reference to outer object and outer object field index)
-   //   return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
-   //}
+      // map as an outer field (reference to outer object and outer object field index)
+      return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
+   }
    //else if (identifier.compare(OWNER_VAR)) {
    //   Outer owner = mapOwner();
 
@@ -1250,7 +1250,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
    //else if (identifier.compare(SELF_VAR) && !closureMode) {
    //   return ObjectInfo(okParam, (size_t)-1);
    //}
-   //else {
+   else {
       Outer outer = outers.get(identifier);
 
       // if object already mapped
@@ -1263,22 +1263,22 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
       else {
          outer.outerObject = parent->mapTerminal(identifier);
          // handle outer fields in a special way: save only self
-         //if (outer.outerObject.kind == okField || outer.outerObject.kind == okOuterField) {
-         //   Outer owner = mapSelf();
+         if (outer.outerObject.kind == okField || outer.outerObject.kind == okOuterField) {
+            Outer owner = mapSelf();
 
-         //   // save the outer field type if provided
-         //   if (outer.outerObject.extraparam != 0) {
-         //      outerFieldTypes.add(outer.outerObject.param, ClassInfo::FieldInfo(outer.outerObject.extraparam, outer.outerObject.type), true);
-         //   }
+            // save the outer field type if provided
+            if (outer.outerObject.extraparam != 0) {
+               outerFieldTypes.add(outer.outerObject.param, ClassInfo::FieldInfo(outer.outerObject.extraparam, outer.outerObject.type), true);
+            }
 
-         //   // map as an outer field (reference to outer object and outer object field index)
-         //   if (outer.outerObject.kind == okOuterField) {
-         //      return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.type);
-         //   }
-         //   else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
-         //}
+            // map as an outer field (reference to outer object and outer object field index)
+            if (outer.outerObject.kind == okOuterField) {
+               return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.type);
+            }
+            else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
+         }
          // map if the object is outer one
-         /*else */if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal
+         else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal
             || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
             || outer.outerObject.kind == okLocalAddress)
          {
@@ -1312,7 +1312,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
          }
          else return outer.outerObject;
       }
-   //}
+   }
 }
 
 //bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
@@ -2483,9 +2483,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
          //}
          /*else */result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
          break;
-      //case lxMessageReference:
-      //   result = compileMessageReference(writer, member, scope, mode);
-      //   break;
+      case lxMessageReference:
+         result = compileMessageReference(writer, member, scope, mode);
+         break;
       default:
          result = compileTerminal(writer, objectNode, scope, mode);
    }
@@ -2493,129 +2493,129 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
    return result;
 }
 
-//ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-//   SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
-//   IdentifierString signature;
-//   ref_t verb_id = 0;
-//   int paramCount = -1;
-//   ref_t extensionRef = 0;
-//   if (terminal == lxIdentifier || terminal == lxPrivate) {
-//      ident_t name = terminal.identifier();
-//      verb_id = _verbs.get(name);
-//      if (verb_id == 0) {
-//         signature.copy(name);
-//      }
-//   }
-//   else {
-//      ident_t message = terminal.identifier();
-//
-//      int subject = 0;
-//      int param = 0;
-//      bool firstSubj = true;
-//      for (size_t i = 0; i < getlength(message); i++) {
-//         if (message[i] == '&') {
-//            if (firstSubj) {
-//               signature.copy(message + subject, i - subject);
-//               verb_id = _verbs.get(signature);
-//               if (verb_id != 0) {
-//                  subject = i + 1;
-//               }
-//               firstSubj = false;
-//            }
-//         }
-//         else if (message[i] == '.' && extensionRef == 0) {
-//            signature.copy(message + subject, i - subject);
-//            subject = i + 1;
-//
-//            extensionRef = scope.moduleScope->resolveIdentifier(signature);
-//            if (extensionRef == 0)
-//               scope.raiseError(errInvalidSubject, terminal);
-//         }
-//         else if (message[i] == '[') {
-//            int len = getlength(message);
-//            if (message[i+1] == ']') {
-//               paramCount = OPEN_ARG_COUNT;
-//            }
-//            else if (message[len - 1] == ']') {
-//               signature.copy(message + i + 1, len - i - 2);
-//               paramCount = signature.ident().toInt();
-//               if (paramCount >= OPEN_ARG_COUNT)
-//                  scope.raiseError(errInvalidSubject, terminal);
-//            }
-//            else scope.raiseError(errInvalidSubject, terminal);
-//
-//            param = i;
-//            break;
-//         }
-//         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-//         }
-//         else scope.raiseError(errInvalidSubject, terminal);
-//      }
-//
-//      if (param != 0) {
-//         signature.copy(message + subject, param - subject);
-//      }
-//      else signature.copy(message + subject);
-//
-//      if (subject == 0 && paramCount != -1) {
-//         verb_id = _verbs.get(signature);
-//         if (verb_id != 0) {
-//            signature.clear();
-//         }
-//      }
-//   }
-//
-//   if (verb_id == 0 && paramCount != -1) {
-//      if (paramCount == 0) {
-//         verb_id = GET_MESSAGE_ID;
-//      }
-//      else verb_id = EVAL_MESSAGE_ID;
-//   }
-//
-//   ObjectInfo retVal;
-//   IdentifierString message;
-//   if (extensionRef != 0) {
-//      if (verb_id == 0) {
-//         scope.raiseError(errInvalidSubject, terminal);
-//      }
-//
-//      message.append(scope.moduleScope->module->resolveReference(extensionRef));
-//      message.append('.');
-//   }
-//
-//   if (paramCount == -1) {
-//      message.append('0');
-//   }
-//   else message.append('0' + (char)paramCount);
-//   message.append('#');
-//   if (verb_id != 0) {
-//      message.append((char)(0x20 + verb_id));
-//   }
-//   else message.append(0x20);
-//
-//   if (!emptystr(signature)) {
-//      message.append('&');
-//      message.append(signature);
-//   }
-//
-//   if (verb_id != 0) {
-//      if (extensionRef != 0) {
-//         retVal.kind = okExtMessageConstant;
-//      }
-//      else if (paramCount == -1 && emptystr(signature)) {
-//         retVal.kind = okVerbConstant;
-//      }
-//      else retVal.kind = okMessageConstant;
-//   }
-//   else retVal.kind = okSignatureConstant;
-//
-//   retVal.param = scope.moduleScope->module->mapReference(message);
-//
-//   writeTerminal(writer, node, scope, retVal, mode);
-//
-//   return retVal;
-//}
+ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
+   IdentifierString signature;
+   ref_t verb_id = 0;
+   int paramCount = -1;
+   ref_t extensionRef = 0;
+   if (terminal == lxIdentifier || terminal == lxPrivate) {
+      ident_t name = terminal.identifier();
+      verb_id = _verbs.get(name);
+      if (verb_id == 0) {
+         signature.copy(name);
+      }
+   }
+   else {
+      ident_t message = terminal.identifier();
+
+      int subject = 0;
+      int param = 0;
+      bool firstSubj = true;
+      for (size_t i = 0; i < getlength(message); i++) {
+         if (message[i] == '&') {
+            if (firstSubj) {
+               signature.copy(message + subject, i - subject);
+               verb_id = _verbs.get(signature);
+               if (verb_id != 0) {
+                  subject = i + 1;
+               }
+               firstSubj = false;
+            }
+         }
+         else if (message[i] == '.' && extensionRef == 0) {
+            signature.copy(message + subject, i - subject);
+            subject = i + 1;
+
+            extensionRef = scope.moduleScope->resolveIdentifier(signature);
+            if (extensionRef == 0)
+               scope.raiseError(errInvalidSubject, terminal);
+         }
+         else if (message[i] == '[') {
+            int len = getlength(message);
+            if (message[i+1] == ']') {
+               paramCount = OPEN_ARG_COUNT;
+            }
+            else if (message[len - 1] == ']') {
+               signature.copy(message + i + 1, len - i - 2);
+               paramCount = signature.ident().toInt();
+               if (paramCount >= OPEN_ARG_COUNT)
+                  scope.raiseError(errInvalidSubject, terminal);
+            }
+            else scope.raiseError(errInvalidSubject, terminal);
+
+            param = i;
+            break;
+         }
+         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+         }
+         else scope.raiseError(errInvalidSubject, terminal);
+      }
+
+      if (param != 0) {
+         signature.copy(message + subject, param - subject);
+      }
+      else signature.copy(message + subject);
+
+      if (subject == 0 && paramCount != -1) {
+         verb_id = _verbs.get(signature);
+         if (verb_id != 0) {
+            signature.clear();
+         }
+      }
+   }
+
+   if (verb_id == 0 && paramCount != -1) {
+      if (paramCount == 0) {
+         verb_id = GET_MESSAGE_ID;
+      }
+      else verb_id = EVAL_MESSAGE_ID;
+   }
+
+   ObjectInfo retVal;
+   IdentifierString message;
+   if (extensionRef != 0) {
+      if (verb_id == 0) {
+         scope.raiseError(errInvalidSubject, terminal);
+      }
+
+      message.append(scope.moduleScope->module->resolveReference(extensionRef));
+      message.append('.');
+   }
+
+   if (paramCount == -1) {
+      message.append('0');
+   }
+   else message.append('0' + (char)paramCount);
+   message.append('#');
+   if (verb_id != 0) {
+      message.append((char)(0x20 + verb_id));
+   }
+   else message.append(0x20);
+
+   if (!emptystr(signature)) {
+      message.append('&');
+      message.append(signature);
+   }
+
+   if (verb_id != 0) {
+      if (extensionRef != 0) {
+         retVal.kind = okExtMessageConstant;
+      }
+      else if (paramCount == -1 && emptystr(signature)) {
+         retVal.kind = okVerbConstant;
+      }
+      else retVal.kind = okMessageConstant;
+   }
+   else retVal.kind = okSignatureConstant;
+
+   retVal.param = scope.moduleScope->module->mapReference(message);
+
+   writeTerminal(writer, node, scope, retVal, mode);
+
+   return retVal;
+}
 
 ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 {
@@ -3409,76 +3409,76 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   ref_t extensionRef = 0;
-//   ref_t extensionType = 0;
-//
-//   writer.newBookmark();
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//   ObjectInfo   role;
-//
-//   SNode roleNode = node.findChild(lxExtension);
-//   // check if the extension can be used as a static role (it is constant)
-//   SNode roleTerminal = roleNode.firstChild(lxTerminalMask);
-//   if (roleTerminal != lxNone) {
-//      int flags = 0;
-//
-//      role = scope.mapObject(roleTerminal);
-//      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
-//         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
-//
-//         // if the symbol is used inside itself
-//         if (classRef == scope.getClassRefId()) {
-//            flags = scope.getClassFlags();
-//         }
-//         // otherwise
-//         else {
-//            ClassInfo roleClass;
-//            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
-//
-//            flags = roleClass.header.flags;
-//            //HOTFIX : typecast the extension target if required
-//            if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
-//               extensionRef = roleClass.fieldTypes.get(-1).value1;
-//               extensionType = roleClass.fieldTypes.get(-1).value2;
-//            }
-//         }
-//      }
-//      // if the symbol VMT can be used as an external role
-//      if (test(flags, elStateless)) {
-//         role = ObjectInfo(okConstantRole, role.param);
-//      }
-//   }
-//
-//   // if it is a generic role
-//   if (role.kind != okConstantRole && role.kind != okSubject) {
-//      writer.newNode(lxOverridden);
-//      role = compileExpression(writer, roleNode, scope, 0);
-//      writer.closeNode();
-//   }
-//   
-//   ObjectInfo retVal = compileExtensionMessage(writer, node, scope, role, extensionRef, extensionType);
-//
-//   writer.removeBookmark();
-//
-//   return retVal;
-//}
-//
-//// NOTE : targetRef refers to the type for the typified extension method
-//ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef, ref_t targetType)
-//{
-//   size_t paramCount = 0;
-//   ref_t  messageRef = mapMessage(node, scope, paramCount);
-//   ObjectInfo object = compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
-//
-//   if (targetRef != 0) {
-//      convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, object), object.type);
-//   }
-//
-//   return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
-//}
+ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ref_t extensionRef = 0;
+   ref_t extensionType = 0;
+
+   writer.newBookmark();
+
+   ModuleScope* moduleScope = scope.moduleScope;
+   ObjectInfo   role;
+
+   SNode roleNode = node.findChild(lxExtension);
+   // check if the extension can be used as a static role (it is constant)
+   SNode roleTerminal = roleNode.firstChild(lxTerminalMask);
+   if (roleTerminal != lxNone) {
+      int flags = 0;
+
+      role = scope.mapObject(roleTerminal);
+      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
+         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
+
+         // if the symbol is used inside itself
+         if (classRef == scope.getClassRefId()) {
+            flags = scope.getClassFlags();
+         }
+         // otherwise
+         else {
+            ClassInfo roleClass;
+            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
+
+            flags = roleClass.header.flags;
+            //HOTFIX : typecast the extension target if required
+            if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
+               extensionRef = roleClass.fieldTypes.get(-1).value1;
+               extensionType = roleClass.fieldTypes.get(-1).value2;
+            }
+         }
+      }
+      // if the symbol VMT can be used as an external role
+      if (test(flags, elStateless)) {
+         role = ObjectInfo(okConstantRole, role.param);
+      }
+   }
+
+   // if it is a generic role
+   if (role.kind != okConstantRole && role.kind != okSubject) {
+      writer.newNode(lxOverridden);
+      role = compileExpression(writer, roleNode, scope, 0);
+      writer.closeNode();
+   }
+   
+   ObjectInfo retVal = compileExtensionMessage(writer, node, scope, role, extensionRef, extensionType);
+
+   writer.removeBookmark();
+
+   return retVal;
+}
+
+// NOTE : targetRef refers to the type for the typified extension method
+ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef, ref_t targetType)
+{
+   size_t paramCount = 0;
+   ref_t  messageRef = mapMessage(node, scope, paramCount);
+   ObjectInfo object = compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
+
+   if (targetRef != 0) {
+      convertObject(writer, *scope.moduleScope, targetRef, targetType, resolveObjectReference(scope, object), object.type);
+   }
+
+   return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
+}
 
 /*bool*/void Compiler :: declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/)
 {
@@ -3912,9 +3912,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //
 //            objectInfo = ObjectInfo(okObject);
 //            break;
-//         case lxExtension:
-//            objectInfo = compileExtension(writer, node, scope);
-//            break;
+         case lxExtension:
+            objectInfo = compileExtension(writer, node, scope);
+            break;
 //         case lxOperator:
 //            objectInfo = compileOperator(writer, node, scope, mode);
 //            break;
@@ -4010,17 +4010,17 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 //            compileLoop(writer, current, scope);
 //            writer.closeNode();
 //            break;
-//         case lxReturning:
-//         {
-//            needVirtualEnd = false;
-//
-//            writer.newNode(lxReturning);
-//            writer.appendNode(lxBreakpoint, dsStep);
-//            retVal = compileRetExpression(writer, current, scope, HINT_ROOT);
-//            writer.closeNode();
-//
-//            break;
-//         }
+         case lxReturning:
+         {
+            needVirtualEnd = false;
+
+            writer.newNode(lxReturning);
+            writer.appendNode(lxBreakpoint, dsStep);
+            retVal = compileRetExpression(writer, current, scope, HINT_ROOT);
+            writer.closeNode();
+
+            break;
+         }
          case lxVariable:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             compileVariable(writer, current, scope);
@@ -6969,21 +6969,21 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
 //            writer.closeNode();
 //         }
          break;
-//      case lxExtension:
-//         writer.newNode(current.type, current.argument);
-//         generateExpressionTree(writer, current, scope, false);
-//         writer.closeNode();
-//         break;
+      case lxExtension:
+         writer.newNode(current.type, current.argument);
+         generateExpressionTree(writer, current, scope, false);
+         writer.closeNode();
+         break;
       case lxExpression:
          generateExpressionTree(writer, current, scope, false);
          break;
-//      case lxMessageReference:
-//         writer.newNode(lxExpression);
-//         writer.newNode(current.type);
-//         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
-//         writer.closeNode();
-//         writer.closeNode();
-//         break;
+      case lxMessageReference:
+         writer.newNode(lxExpression);
+         writer.newNode(current.type);
+         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
+         writer.closeNode();
+         writer.closeNode();
+         break;
       case lxObject:
          generateExpressionTree(writer, current, scope, false);
          break;
@@ -7416,6 +7416,9 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope/*, 
             TemplateScope templateScope(&scope, scope.moduleScope->module->mapSubject(current.findChild(lxReference).identifier(), false));
 
             copyTemplateTree(writer, current, templateScope/*, false, embeddableMode*/);
+         }
+         else if (current.argument == V_TEMPLATE) {
+            // ignore template attributes
          }
          else writer.appendNode(current.type, current.argument);
       }
