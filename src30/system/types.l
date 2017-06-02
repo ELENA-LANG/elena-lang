@@ -17,7 +17,7 @@
 ////#template(-4101) w3 {}
 #8195           sealed.
 #8199           dynamic.
-//#template(-8196)         limited {}
+#8196           limited.
 //#template(-8206)         group   {}
 //#template(-8209)         __tape_group {}
 #8201           const.
