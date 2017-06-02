@@ -40,6 +40,8 @@ __define private	        12294
 __define reference		12295
 __define integer		12296
 __define hex			12297
+__define real			12298
+__define long                   12300
 __define wide                   12301
 __define attribute		12303
 
@@ -183,6 +185,8 @@ OBJECT ->
 	| private
 	| integer
 	| hex
+	| long
+	| real
 	| literal
 	| wide
 	| % MESSAGE_REFERENCE
@@ -199,12 +203,8 @@ MESSAGE ->
 	| private MESSAGE_BODY
 
 MESSAGE_BODY ->
-	SUBJECT_ARG NEXT_SUBJECT_ARG
+	SUBJECT_ARG : MESSAGE_PARAMETER NEXT_SUBJECT
 	| : MESSAGE_PARAMETER NEXT_SUBJECT
-	| eps
-
-NEXT_SUBJECT_ARG ->
-	: MESSAGE_PARAMETER
 	| eps
 
 NEXT_SUBJECT ->

@@ -40,8 +40,8 @@
 #11 #262144     __int32.
 //#template(-12,4)  __dword {}
 //#template(-12,4)  __ptr {}
-//#template(-13,8)  __int64 {}
-//#template(-14,8)  __real64{}
+#13 #524288     __int64.
+#14 #524288     __real64.
 
 /// Provides classes that describe the basic functionality
 

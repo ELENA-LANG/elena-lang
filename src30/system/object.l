@@ -11,170 +11,170 @@ template dispatchable :: template_subj
     cast : aVerb to:aTarget with:aParam = aTarget::aVerb eval:aParam template_subj:$self.
 }
 
-//#template dispatchable(template_subj, extra_subj)
-//{
-//    sealed template_subj = $self.
-//    
-//    /// Dispatches the verb to the target with a specified subject
-//    cast : verb &to:target = target::verb eval &template_subj:$self.
-//
-//    /// Dispatches the verb to the target with a specified subject providing a parameter
-//    cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
-//    
-//    cast : aVerb &and:extra &to:aTarget
-//        = extra cast:aVerb &template_subj:$self &to:aTarget.
-//        
-//    cast : verb &template_subj:param &to:target
-//        = target::verb eval &template_subj:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj:para  m &to:target
-//        = target::verb eval &extra_subj:param &template_subj:$self.
-//}
-//
-//#template dispatchable(template_subj, extra_subj1, extra_subj2)
-//{
-//    sealed template_subj = $self.
-//    
-//    /// Dispatches the verb to the target with a specified subject
-//    cast : verb &to:target = target::verb eval &template_subj:$self.
-//
-//    /// Dispatches the verb to the target with a specified subject providing a parameter
-//    cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
-//    
-//    cast : aVerb &and:extra &to:aTarget
-//        = extra cast:aVerb &template_subj:$self &to:aTarget.
-//        
-//    cast : verb &template_subj:param &to:target
-//        = target::verb eval &template_subj:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj1:param &to:target
-//        = target::verb eval &extra_subj1:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj2:param &to:target
-//        = target::verb eval &extra_subj2:param &template_subj:$self.
-//}
-//
-//#template dispatchable(template_subj, extra_subj1, extra_subj2, extra_subj3)
-//{
-//    sealed template_subj = $self.
-//    
-//    /// Dispatches the verb to the target with a specified subject
-//    cast : verb &to:target = target::verb eval &template_subj:$self.
-//
-//    /// Dispatches the verb to the target with a specified subject providing a parameter
-//    cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
-//    
-//    cast : aVerb &and:extra &to:aTarget
-//        = extra cast:aVerb &template_subj:$self &to:aTarget.
-//        
-//    cast : verb &template_subj:param &to:target
-//        = target::verb eval &template_subj:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj1:param &to:target
-//        = target::verb eval &extra_subj1:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj2:param &to:target
-//        = target::verb eval &extra_subj2:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj3:param &to:target
-//        = target::verb eval &extra_subj3:param &template_subj:$self.
-//}
-//
-//#template dispatchable(template_subj, extra_subj1, extra_subj2, extra_subj3, extra_subj4)
-//{
-//    sealed template_subj = $self.
-//    
-//    /// Dispatches the verb to the target with a specified subject
-//    cast : verb &to:target = target::verb eval &template_subj:$self.
-//
-//    /// Dispatches the verb to the target with a specified subject providing a parameter
-//    cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
-//    
-//    cast : aVerb &and:extra &to:aTarget
-//        = extra cast:aVerb &template_subj:$self &to:aTarget.
-//        
-//    cast : verb &template_subj:param &to:target
-//        = target::verb eval &template_subj:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj1:param &to:target
-//        = target::verb eval &extra_subj1:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj2:param &to:target
-//        = target::verb eval &extra_subj2:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj3:param &to:target
-//        = target::verb eval &extra_subj3:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj4:param &to:target
-//        = target::verb eval &extra_subj4:param &template_subj:$self.
-//}
-//
-//#template dispatchable(template_subj, extra_subj1, extra_subj2, extra_subj3, extra_subj4, extra_subj5)
-//{
-//    sealed template_subj = $self.
-//    
-//    /// Dispatches the verb to the target with a specified subject
-//    cast : verb &to:target = target::verb eval &template_subj:$self.
-//
-//    /// Dispatches the verb to the target with a specified subject providing a parameter
-//    cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
-//    
-//    cast : aVerb &and:extra &to:aTarget
-//        = extra cast:aVerb &template_subj:$self &to:aTarget.
-//        
-//    cast : verb &template_subj:param &to:target
-//        = target::verb eval &template_subj:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj1:param &to:target
-//        = target::verb eval &extra_subj1:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj2:param &to:target
-//        = target::verb eval &extra_subj2:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj3:param &to:target
-//        = target::verb eval &extra_subj3:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj4:param &to:target
-//        = target::verb eval &extra_subj4:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj5:param &to:target
-//        = target::verb eval &extra_subj5:param &template_subj:$self.
-//}
-//
-//#template dispatchable(template_subj, extra_subj1, extra_subj2, extra_subj3, extra_subj4, extra_subj5, extra_subj6)
-//{
-//    sealed template_subj = $self.
-//    
-//    /// Dispatches the verb to the target with a specified subject
-//    cast : verb &to:target = target::verb eval &template_subj:$self.
-//
-//    /// Dispatches the verb to the target with a specified subject providing a parameter
-//    cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
-//    
-//    cast : aVerb &and:extra &to:aTarget
-//        = extra cast:aVerb &template_subj:$self &to:aTarget.
-//        
-//    cast : verb &template_subj:param &to:target
-//        = target::verb eval &template_subj:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj1:param &to:target
-//        = target::verb eval &extra_subj1:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj2:param &to:target
-//        = target::verb eval &extra_subj2:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj3:param &to:target
-//        = target::verb eval &extra_subj3:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj4:param &to:target
-//        = target::verb eval &extra_subj4:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj5:param &to:target
-//        = target::verb eval &extra_subj5:param &template_subj:$self.
-//        
-//    cast : verb &extra_subj6:param &to:target
-//        = target::verb eval &extra_subj6:param &template_subj:$self.
-//}
+template dispatchable :: template_subj, extra_subj
+{
+    sealed template_subj = $self.
+    
+    /// Dispatches the verb to the target with a specified subject
+    cast : verb to:target = target::verb eval template_subj:$self.
+
+    /// Dispatches the verb to the target with a specified subject providing a parameter
+    cast : aVerb to:aTarget with:aParam = aTarget::aVerb eval:aParam template_subj:$self.
+    
+    cast : aVerb and:extra to:aTarget
+        = extra cast:aVerb template_subj:$self to:aTarget.
+        
+    cast : verb template_subj:param to:target
+        = target::verb eval template_subj:param template_subj:$self.
+        
+    cast : verb extra_subj:param to:target
+        = target::verb eval extra_subj:param template_subj:$self.
+}
+
+template dispatchable :: template_subj, extra_subj1, extra_subj2
+{
+    sealed template_subj = $self.
+    
+    /// Dispatches the verb to the target with a specified subject
+    cast : verb to:target = target::verb eval template_subj:$self.
+
+    /// Dispatches the verb to the target with a specified subject providing a parameter
+    cast : aVerb to:aTarget with:aParam = aTarget::aVerb eval:aParam template_subj:$self.
+    
+    cast : aVerb and:extra to:aTarget
+        = extra cast:aVerb template_subj:$self to:aTarget.
+        
+    cast : verb template_subj:param to:target
+        = target::verb eval template_subj:param template_subj:$self.
+        
+    cast : verb extra_subj1:param to:target
+        = target::verb eval extra_subj1:param template_subj:$self.
+        
+    cast : verb extra_subj2:param to:target
+        = target::verb eval extra_subj2:param template_subj:$self.
+}
+
+template dispatchable :: template_subj, extra_subj1, extra_subj2, extra_subj3
+{
+    sealed template_subj = $self.
+    
+    /// Dispatches the verb to the target with a specified subject
+    cast : verb to:target = target::verb eval template_subj:$self.
+
+    /// Dispatches the verb to the target with a specified subject providing a parameter
+    cast : aVerb to:aTarget with:aParam = aTarget::aVerb eval:aParam template_subj:$self.
+    
+    cast : aVerb and:extra to:aTarget
+        = extra cast:aVerb template_subj:$self to:aTarget.
+        
+    cast : verb template_subj:param to:target
+        = target::verb eval template_subj:param template_subj:$self.
+        
+    cast : verb extra_subj1:param to:target
+        = target::verb eval extra_subj1:param template_subj:$self.
+        
+    cast : verb extra_subj2:param to:target
+        = target::verb eval extra_subj2:param template_subj:$self.
+        
+    cast : verb extra_subj3:param to:target
+        = target::verb eval extra_subj3:param template_subj:$self.
+}
+
+template dispatchable :: template_subj, extra_subj1, extra_subj2, extra_subj3, extra_subj4
+{
+    sealed template_subj = $self.
+    
+    /// Dispatches the verb to the target with a specified subject
+    cast : verb to:target = target::verb eval template_subj:$self.
+
+    /// Dispatches the verb to the target with a specified subject providing a parameter
+    cast : aVerb to:aTarget with:aParam = aTarget::aVerb eval:aParam template_subj:$self.
+    
+    cast : aVerb and:extra to:aTarget
+        = extra cast:aVerb template_subj:$self to:aTarget.
+        
+    cast : verb template_subj:param to:target
+        = target::verb eval template_subj:param template_subj:$self.
+        
+    cast : verb extra_subj1:param to:target
+        = target::verb eval extra_subj1:param template_subj:$self.
+        
+    cast : verb extra_subj2:param to:target
+        = target::verb eval extra_subj2:param template_subj:$self.
+        
+    cast : verb extra_subj3:param to:target
+        = target::verb eval extra_subj3:param template_subj:$self.
+        
+    cast : verb extra_subj4:param to:target
+        = target::verb eval extra_subj4:param template_subj:$self.
+}
+
+template dispatchable :: template_subj, extra_subj1, extra_subj2, extra_subj3, extra_subj4, extra_subj5
+{
+    sealed template_subj = $self.
+    
+    /// Dispatches the verb to the target with a specified subject
+    cast : verb to:target = target::verb eval template_subj:$self.
+
+    /// Dispatches the verb to the target with a specified subject providing a parameter
+    cast : aVerb to:aTarget with:aParam = aTarget::aVerb eval:aParam template_subj:$self.
+    
+    cast : aVerb and:extra to:aTarget
+        = extra cast:aVerb template_subj:$self to:aTarget.
+        
+    cast : verb template_subj:param to:target
+        = target::verb eval template_subj:param template_subj:$self.
+        
+    cast : verb extra_subj1:param to:target
+        = target::verb eval extra_subj1:param template_subj:$self.
+        
+    cast : verb extra_subj2:param to:target
+        = target::verb eval extra_subj2:param template_subj:$self.
+        
+    cast : verb extra_subj3:param to:target
+        = target::verb eval extra_subj3:param template_subj:$self.
+        
+    cast : verb extra_subj4:param to:target
+        = target::verb eval extra_subj4:param template_subj:$self.
+        
+    cast : verb extra_subj5:param to:target
+        = target::verb eval extra_subj5:param template_subj:$self.
+}
+
+template dispatchable :: template_subj, extra_subj1, extra_subj2, extra_subj3, extra_subj4, extra_subj5, extra_subj6
+{
+    sealed template_subj = $self.
+    
+    /// Dispatches the verb to the target with a specified subject
+    cast : verb to:target = target::verb eval template_subj:$self.
+
+    /// Dispatches the verb to the target with a specified subject providing a parameter
+    cast : aVerb to:aTarget with:aParam = aTarget::aVerb eval:aParam template_subj:$self.
+    
+    cast : aVerb and:extra to:aTarget
+        = extra cast:aVerb template_subj:$self to:aTarget.
+        
+    cast : verb template_subj:param to:target
+        = target::verb eval template_subj:param template_subj:$self.
+        
+    cast : verb extra_subj1:param to:target
+        = target::verb eval extra_subj1:param template_subj:$self.
+        
+    cast : verb extra_subj2:param to:target
+        = target::verb eval extra_subj2:param template_subj:$self.
+        
+    cast : verb extra_subj3:param to:target
+        = target::verb eval extra_subj3:param template_subj:$self.
+        
+    cast : verb extra_subj4:param to:target
+        = target::verb eval extra_subj4:param template_subj:$self.
+        
+    cast : verb extra_subj5:param to:target
+        = target::verb eval extra_subj5:param template_subj:$self.
+        
+    cast : verb extra_subj6:param to:target
+        = target::verb eval extra_subj6:param template_subj:$self.
+}
 
 // --- super object ---
 
