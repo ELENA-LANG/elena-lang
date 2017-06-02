@@ -1156,7 +1156,7 @@ sealed /*dispatchable(literal,int,char,wide)*/ dynamic string LiteralValue //:: 
 //
 //    /// Inserts a character into and returns the new one
 //    stacksafe literal insert &int:anIndex &char:aChar
-//        = $self insert &int:anIndex &literal:(literalConvertor convert &char:aChar).
+//        = $self insert &int:anIndex &literal:(3 convert &char:aChar).
 //
 //    /// Inserts an object into and returns the new one
 //    insert : anObject &at:anIndex
@@ -1634,14 +1634,14 @@ sealed /*dispatchable(wide,int,char,literal)*/ dynamic string WideLiteralValue :
 //    stacksafe outnprop(length) readLength &vint:aLength
 //        => system'core_routines'__args.            
 //}
-//
-//// === Convertors ===
-//
-//// --- literalConvertor ---
-//
-///// A literal convertor
-//class literalConvertor =
-//{
+
+// === Convertors ===
+
+// --- literalConvertor ---
+
+/// A literal convertor
+class literalConvertor =
+{
 //    /// Converts the parameter to the literal value
 //    stacksafe convert &char:aValue &bytearray:buffer &vint:length
 //        => system'core_routines'__literalconvertor.
@@ -1832,16 +1832,16 @@ sealed /*dispatchable(wide,int,char,literal)*/ dynamic string WideLiteralValue :
 //    stacksafe literal convert : anObject
 //        = anObject literal.
 //
-//    /// Returns a parameter                
-//    stacksafe literal convert &literal:aLiteral
-//        = aLiteral.
-//}.
-//
-//// --- wideConvertor ---
-//
-///// A wide literal convertor
-//class wideConvertor =
-//{
+    /// Returns a parameter                
+    stacksafe literal convert literal:aLiteral
+        = aLiteral.
+}.
+
+// --- wideConvertor ---
+
+/// A wide literal convertor
+class wideConvertor =
+{
 //    /// Converts the parameter to the literal value
 //    stacksafe convert &char:aValue &shortarray:buffer &vint:length
 //        => system'core_routines'__wideconvertor.
@@ -2033,12 +2033,12 @@ sealed /*dispatchable(wide,int,char,literal)*/ dynamic string WideLiteralValue :
 //    /// Returns the literal presentation of the parameter
 //    stacksafe wide convert : anObject
 //        = anObject wide.
-//        
-//    /// Returns a parameter
-//    stacksafe wide convert &wide:aLiteral
-//        = aLiteral.
-//}.
-//
+        
+    /// Returns a parameter
+    stacksafe wide convert wide:aLiteral
+        = aLiteral.
+}.
+
 //// === Enumerators / Indexers
 //
 //// --- LiteralEnumerator ---

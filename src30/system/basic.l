@@ -1,104 +1,104 @@
-//
-//#template varof(template_subj)
-//{
-//    template_subj $value.
-//
-//    set : val
-//    [
-//        $value := val template_subj.
-//    ]
-//    
-//    stacksafe set &template_subj:val
-//    [
-//        $value := val.
-//    ]
-//
-//    get = $value.
-//    
-//    cast : verb &to:target => $value.
-//
-//    /// Dispatches the verb to the target object with generic subject
-//    cast : aVerb &to:aTarget &with:aParam => $value.
-//    
-//    equal : anObject
-//        => $value.
-//
-//    embeddable dispatch => $value.
-//}
-//
-//#template nvarof(template_subj)
-//{
-//    template_subj $value.
-//    
-//    stacksafe implicit template_subj : val
-//    [
-//        $value := val.
-//    ]
-//    
-//    set : val
-//    [
-//        $value := val template_subj.
-//    ]
-//    
-//    stacksafe set &template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
-//    append : val
-//    [
-//        $value := $value + val template_subj.
-//    ]
-//    
-//    reduce : val
-//    [
-//        $value := $value - val template_subj.
-//    ]
-//
-//    multiplyBy : val
-//    [
-//        $value := $value * val template_subj.
-//    ]
-//    
-//    /// Divides into the value
-//    divideInto : val
-//    [
-//        $value := $value / val template_subj.
-//    ]
-//    
-//    stacksafe append &template_subj:val
-//    [
-//        $value := $value + val.
-//    ]
-//    
-//    stacksafe reduce &template_subj:val
-//    [
-//        $value := $value - val.
-//    ]
-//
-//    stacksafe multiplyBy &template_subj:val
-//    [
-//        $value := $value * val.
-//    ]
-//    
-//    /// Divides into the value
-//    stacksafe divideInto &template_subj:val
-//    [
-//        $value := $value / val.
-//    ]
-//
-//    get = $value.
-//    
-//    cast : verb &to:target => $value.
-//
-//    /// Dispatches the verb to the target object with generic subject
-//    cast : aVerb &to:aTarget &with:aParam => $value.
-//    
-//    equal : anObject
-//        => $value.
-//
-//    embeddable dispatch => $value.
-//}
+
+template varof :: template_subj
+{
+    template_subj $value.
+
+    set : val
+    [
+        $value := val template_subj.
+    ]
+    
+    stacksafe set template_subj:val
+    [
+        $value := val.
+    ]
+
+    get = $value.
+    
+    cast : verb to:target => $value.
+
+    /// Dispatches the verb to the target object with generic subject
+    cast : aVerb to:aTarget with:aParam => $value.
+    
+    equal : anObject
+        => $value.
+
+    embeddable dispatch => $value.
+}
+
+template nvarof :: template_subj
+{
+    template_subj $value.
+    
+    stacksafe implicit template_subj : val
+    [
+        $value := val.
+    ]
+    
+    set : val
+    [
+        $value := val template_subj.
+    ]
+    
+    stacksafe set template_subj:val
+    [
+        $value := val.
+    ]
+    
+    append : val
+    [
+        $value := $value + val template_subj.
+    ]
+    
+    reduce : val
+    [
+        $value := $value - val template_subj.
+    ]
+
+    multiplyBy : val
+    [
+        $value := $value * val template_subj.
+    ]
+    
+    /// Divides into the value
+    divideInto : val
+    [
+        $value := $value / val template_subj.
+    ]
+    
+    stacksafe append template_subj:val
+    [
+        $value := $value + val.
+    ]
+    
+    stacksafe reduce template_subj:val
+    [
+        $value := $value - val.
+    ]
+
+    stacksafe multiplyBy template_subj:val
+    [
+        $value := $value * val.
+    ]
+    
+    /// Divides into the value
+    stacksafe divideInto template_subj:val
+    [
+        $value := $value / val.
+    ]
+
+    get = $value.
+    
+    cast : verb to:target => $value.
+
+    /// Dispatches the verb to the target object with generic subject
+    cast : aVerb to:aTarget with:aParam => $value.
+    
+    equal : anObject
+        => $value.
+
+    embeddable dispatch => $value.
+}
 
 // === Boolean values ===
 
@@ -505,26 +505,26 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
     stacksafe byte inverted
         => system'core_routines'__byte.
         
-//    /// Returns the literal presentation
-//    literal = system'literalConvertor convert byte:$self.
-//
-//    /// Returns the literal presentation
-//    wide = system'wideConvertor convert byte:$self.
-//
+    /// Returns the literal presentation
+    literal = system'literalConvertor convert byte:$self.
+
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert byte:$self.
+
     /// Clones the value
     clone = ByteNumber new byte:$self.
 
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCode &vint:aCode 
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ aCode.
-//    ]
+    // Reads the object hash code into the output parameter
+    stacksafe readHashCode vint:aCode 
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        $self readHashCode vint:aCode.
+        
+        ^ aCode
+    ]
 }
 
 // --- ShortNumber ---
@@ -553,9 +553,9 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable(short)
     constructor max
         = 32767.
 
-//    /// Creates the object with specified value
-//    stacksafe constructor new &byte:value
-//        = shortConvertor convert &byte:value.
+    /// Creates the object with specified value
+    stacksafe constructor new byte:value
+        = shortConvertor convert byte:value.
         
     /// Creates the object with specified value
     stacksafe constructor new short:value
@@ -569,8 +569,8 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable(short)
     constructor new : anObject
         <= new short:anObject.
 
-//    /// Returns the byte value        
-//    byte = byteConvertor convert &short:$self.
+    /// Returns the byte value        
+    byte = byteConvertor convert short:$self.
     
     /// Returns the integer value
     int = IntNumber new short:$self.
@@ -763,26 +763,26 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable(short)
     stacksafe short inverted
         => system'core_routines'__short.  
 
-//    /// Returns the literal presentation
-//    literal = system'literalConvertor convert &short:$self.
-//
-//    /// Returns the literal presentation
-//    wide = system'wideConvertor convert &short:$self.
+    /// Returns the literal presentation
+    literal = system'literalConvertor convert short:$self.
+
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert short:$self.
 
     /// Clones the value
     clone = ShortNumber new short:$self.    
 
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCode &vint:aCode 
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ aCode.
-//    ]        
+    // Reads the object hash code into the output parameter
+    stacksafe readHashCode vint:aCode 
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        $self readHashCode vint:aCode.
+        
+        ^ aCode.
+    ]        
 }
 
 // --- IntNumber ---
@@ -814,13 +814,13 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable(int,long,real,
     stacksafe constructor new int:value
         = value.
 
-//    /// Creates the object with specified value
-//    stacksafe constructor new &short:value
-//        = intConvertor convert &short:value.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new &byte:value
-//        = intConvertor convert &byte:value.
+    /// Creates the object with specified value
+    stacksafe constructor new short:value
+        = intConvertor convert short:value.
+
+    /// Creates the object with specified value
+    stacksafe constructor new byte:value
+        = intConvertor convert byte:value.
 
     /// Creates the object with a default value (0)
     constructor new
@@ -830,11 +830,11 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable(int,long,real,
     constructor new : anObject
         <= new int:anObject.
 
-//    /// Returns the value as a short integer    
-//    stacksafe short = shortConvertor convert &int:$self.
-//
-//    /// Returns the byte value    
-//    byte = byteConvertor convert &int:$self.
+    /// Returns the value as a short integer    
+    stacksafe short = shortConvertor convert int:$self.
+
+    /// Returns the byte value    
+    byte = byteConvertor convert int:$self.
 
     /// Returns the long integer
     long = LongNumber new int:$self.
@@ -1019,18 +1019,18 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable(int,long,real,
     /// Clones the value
     clone = IntNumber new int:$self.
 
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCode &vint:aCode 
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ aCode.
-//    ]        
-//
+    // Reads the object hash code into the output parameter
+    stacksafe readHashCode vint:aCode 
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        $self readHashCode vint:aCode.
+        
+        ^ aCode.
+    ]        
+
 //    stacksafe int shift &int:val
 //    [
 //        (val > 0)
@@ -1073,30 +1073,30 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable(long,int,real
     stacksafe constructor new long:value
         = value.
 
-//    /// Creates the object with specified value
-//    stacksafe constructor new &int:value
-//        = longConvertor convert &int:value.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new &short:value 
-//        = longConvertor convert &short:value.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new &byte:value 
-//        = longConvertor convert &byte:value.
+    /// Creates the object with specified value
+    stacksafe constructor new int:value
+        = longConvertor convert int:value.
+
+    /// Creates the object with specified value
+    stacksafe constructor new short:value 
+        = longConvertor convert short:value.
+
+    /// Creates the object with specified value
+    stacksafe constructor new byte:value 
+        = longConvertor convert byte:value.
 
     /// Creates the object with specified value
     constructor new : anObject
         <= new long:anObject.
 
-//    /// Returns an integer value
-//    int = intConvertor convert &long:$self.
-//
-//    /// Returns the value as a short integer    
-//    short = shortConvertor convert &long:$self.
-//    
-//    /// Returns the byte value
-//    byte = byteConvertor convert &long:$self.
+    /// Returns an integer value
+    int = intConvertor convert long:$self.
+
+    /// Returns the value as a short integer    
+    short = shortConvertor convert long:$self.
+    
+    /// Returns the byte value
+    byte = byteConvertor convert long:$self.
 
     /// Returns a real value
     real = RealNumber new long:$self.
@@ -1269,27 +1269,27 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable(long,int,real
     stacksafe xor byte:anOperand
         = $self xor long:(LongNumber new byte:anOperand).
 
-//    /// Returns the literal presentation
-//    literal = system'literalConvertor convert &long:$self.
-//
-//    /// Returns the literal presentation
-//    wide = system'wideConvertor convert &long:$self.
+    /// Returns the literal presentation
+    literal = system'literalConvertor convert long:$self.
+
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert long:$self.
 
     /// Clones the value
     clone = LongNumber new long:$self.
     
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCode &vint:aCode
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ aCode.
-//    ]
-//
+    // Reads the object hash code into the output parameter
+    stacksafe readHashCode vint:aCode
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        $self readHashCode vint:aCode.
+        
+        ^ aCode.
+    ]
+
 //    stacksafe long shift &int:val
 //    [
 //        (val > 0)
@@ -1316,10 +1316,10 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
 {
     __real64 theValue.
 
-//    stacksafe implicit int:n
-//    [
-//        realConvertor convert &int:n &vreal:$self.
-//    ]
+    stacksafe implicit int:n
+    [
+        realConvertor convert int:n vreal:$self.
+    ]
             
     /// Returns the minimal value
     constructor min
@@ -1337,21 +1337,21 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
     stacksafe constructor new real:value
         = value.
   
-//    /// Creates the object with specified value
-//    stacksafe constructor new &int:value 
-//        = realConvertor convert &int:value.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new &short:value 
-//        = realConvertor convert &short:value.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new &byte:value 
-//        = realConvertor convert &byte:value.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new &long:value
-//        = realConvertor convert &long:value.
+    /// Creates the object with specified value
+    stacksafe constructor new int:value 
+        = realConvertor convert int:value.
+
+    /// Creates the object with specified value
+    stacksafe constructor new short:value 
+        = realConvertor convert short:value.
+
+    /// Creates the object with specified value
+    stacksafe constructor new byte:value 
+        = realConvertor convert byte:value.
+
+    /// Creates the object with specified value
+    stacksafe constructor new long:value
+        = realConvertor convert long:value.
         
     /// Creates the object with specified value
     constructor new : anObject
@@ -1485,30 +1485,30 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
     stacksafe divide long:anOperand
         = $self divide real:(RealNumber new long:anOperand).
 
-//    /// Returns the literal presentation
-//    literal = system'literalConvertor convert &real:$self.
-//    
-//    /// Returns the literal presentation
-//    wide = system'wideConvertor convert &real:$self.
-//
-//    /// Clones the value    
-//    clone = RealNumber new &real:$self.
-//    
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCode &vint:aCode
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ aCode.
-//    ]
-//        
-////    /// Negates the value
-////    stacksafe negative
-////        = 0.0r - theValue.
+    /// Returns the literal presentation
+    literal = system'literalConvertor convert real:$self.
+    
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert real:$self.
+
+    /// Clones the value    
+    clone = RealNumber new real:$self.
+    
+    // Reads the object hash code into the output parameter
+    stacksafe readHashCode vint:aCode
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        $self readHashCode vint:aCode.
+        
+        ^ aCode.
+    ]
+        
+//    /// Negates the value
+//    stacksafe negative
+//        = 0.0r - theValue.
 }
 
 //// --- CharValue ---
@@ -1745,14 +1745,14 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
 //dispatchable(dto) class DTO
 //{
 //}
-//
-//// === Basic Convertors ===
-//
-//// --- convertor helpers ---
-//
-///// A byte convertor
-//class byteConvertor =
-//{
+
+// === Basic Convertors ===
+
+// --- convertor helpers ---
+
+/// A byte convertor
+class byteConvertor =
+{
 //    /// Converts a character into a byte value and saves the result into an output parameter
 //    stacksafe convert &char:aValue &vbyte:aRetVal
 //        => system'core_routines'__byteconvertor.
@@ -1847,14 +1847,14 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
 //        
 //        ^ ByteNumber new &byte:aValue.
 //    ]
-//        
-//    byte convert : anObject
-//        = anObject cast:%convert &to:$self byte.
-//}.
-//
-///// A 16bit integer convertor
-//class shortConvertor =
-//{
+        
+    byte convert : anObject
+        = anObject cast:%convert to:$self.
+}.
+
+/// A 16bit integer convertor
+class shortConvertor =
+{
 //    /// Converts a character into a short integer value and saves the result into an output parameter
 //    stacksafe convert &char:aValue &vshort:aRetVal
 //        => system'core_routines'__shortconvertor.
@@ -1949,11 +1949,11 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
 //        
 //        ^ ShortNumber new &short:aRetVal.
 //    ]
-//        
-//    short convert : anObject
-//        = anObject cast:%convert &to:$self short.
-//}.
-//
+        
+    short convert : anObject
+        = anObject cast:%convert to:$self.
+}.
+
 ///// An Unicode character convertor
 //class charConvertor =
 //{
@@ -2053,10 +2053,10 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
 //    char convert : anObject
 //        = anObject cast:%convert &to:$self char.
 //}.
-//
-///// An integer convertor
-//class intConvertor =
-//{
+
+/// An integer convertor
+class intConvertor =
+{
 //    /// Converts a literal string into an integer and saves the result into an output parameter
 //    stacksafe convert &literal:aValue &vint:aRetVal
 //        => system'core_routines'__intconvertor.
@@ -2177,14 +2177,14 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
 //    /// Returns a parameter                                    
 //    stacksafe int convert &int:anInt
 //        = IntNumber new &int:anInt.
-//        
-//    int convert : anObject
-//        = anObject cast:%convert &to:$self int.
-//}.
-//
-///// A long integer convertor
-//class longConvertor =
-//{
+        
+    int convert : anObject
+        = anObject cast:%convert to:$self.
+}.
+
+/// A long integer convertor
+class longConvertor =
+{
 //    /// Converts a literal string into a long integer and saves the result into an output parameter
 //    stacksafe convert &literal:aValue &vlong:aRetVal
 //        => system'core_routines'__longconvertor.
@@ -2298,14 +2298,14 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
 //    /// Returns a parameter
 //    stacksafe long convert &long:aLong
 //        = LongNumber new &long:aLong.
-//        
-//    long convert : anObject
-//        = anObject cast:%convert &to:$self long.
-//}.
-//
-///// A real number convertor
-//class realConvertor =
-//{
+        
+    long convert : anObject
+        = anObject cast:%convert to:$self.
+}.
+
+/// A real number convertor
+class realConvertor =
+{
 //    /// Converts an integer into a real number and saves the result into an output parameter
 //    stacksafe convert &int:aValue &vreal:aRetVal
 //        => system'core_routines'__realconvertor.
@@ -2387,11 +2387,11 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
 //        
 //        ^ RealNumber new &real:aRetVal.
 //    ]
-//        
-//    real convert : anObject
-//        = anObject cast:%convert &to:$self real.
-//}.
-//
+        
+    real convert : anObject
+        = anObject cast:%convert to:$self.
+}.
+
 //// --- realOpController ---
 //
 //class realOpController =
@@ -2446,16 +2446,16 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
 //real pi_value = realOpController pi.
 //
 //real e_value = realOpController e.
-//
-//// === Numeric Variables ===
-//
-//#subject vbyte  = nvarof(byte).
-//#subject vshort = nvarof(short).
-//#subject vint   = nvarof(int).
-//#subject vlong  = nvarof(long).
-//#subject vreal  = nvarof(real).
+
+// === Numeric Variables ===
+
+type vbyte  :: nvarof(byte).
+type vshort :: nvarof(short).
+type vint   :: nvarof(int).
+type vlong  :: nvarof(long).
+type vreal  :: nvarof(real).
 //#subject vchar  = varof(char).
-//
+
 //// --- obsolete variables ---
 //
 //class Integer =
