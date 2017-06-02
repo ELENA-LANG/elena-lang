@@ -3,8 +3,9 @@ In development:
 ------                              
 
               xdev - refactoring
-                 * uncomment generateSingletonScope
                  * check attribute duplicates
+                 * introduce method attribute
+                 * review shift operations
 
                  * review rosetta samples
                  * review console samples

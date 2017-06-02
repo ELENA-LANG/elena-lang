@@ -15,7 +15,7 @@
 #define INVALID_REF      (ref_t)-1
 
 // virtual objects
-//#define V_FLAG           (ref_t)-03
+#define V_FLAG           (ref_t)-03
 #define V_NIL            (ref_t)-04
 
 #define V_BINARY         (ref_t)-10
@@ -31,7 +31,7 @@
 
 #define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
 
-//#define V_OBJECT         (ref_t)-28
+#define V_OBJECT         (ref_t)-28
 
 #define V_OBJARRAY      (ref_t)-30
 #define V_INT32ARRAY    (ref_t)-31
@@ -140,7 +140,7 @@ struct _CompilerScope
    BranchingInfo branchingInfo;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-//   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
+   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
    _CompilerScope()
    {
@@ -171,7 +171,7 @@ public:
 
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 
-//   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
+   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };
 
 // --- _CompilerLogic ---
@@ -211,13 +211,13 @@ public:
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
 
-//   // retrieve the operation type
-//   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+   // retrieve the operation type
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
-//
-//   // retrieve the branching operation type
-//   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
+
+   // retrieve the branching operation type
+   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
    virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
@@ -243,7 +243,7 @@ public:
 //
 //   // auto generate virtual methods / fields
    virtual void injectVirtualCode(_CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
-//   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
+   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
 //   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
 //   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
@@ -266,7 +266,7 @@ public:
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
-//   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
+   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
 
    // optimization
    virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool assingingMode) = 0;

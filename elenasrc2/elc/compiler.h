@@ -306,7 +306,7 @@ private:
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-//      virtual _Module* loadReferenceModule(ref_t& reference);
+      virtual _Module* loadReferenceModule(ref_t& reference);
 
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
       virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
@@ -417,12 +417,12 @@ private:
          else return moduleScope->mapSubject(terminal, output);
       }
 
-      virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true)
+      virtual ref_t mapSubject(SNode terminal, bool explicitOnly = true)
       {
          if (parent) {
-            return parent->mapSubject(terminal, implicitOnly);
+            return parent->mapSubject(terminal, explicitOnly);
          }
-         else return moduleScope->mapSubject(terminal, implicitOnly);
+         else return moduleScope->mapSubject(terminal, explicitOnly);
       }
 
       Scope(ModuleScope* moduleScope)
@@ -697,7 +697,7 @@ private:
 
       ObjectInfo allocateRetVar();
 
-//      bool markAsPresaved(ObjectInfo object);
+      bool markAsPresaved(ObjectInfo object);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -808,7 +808,7 @@ private:
    ByteCodeWriter _writer;
 
    MessageMap     _verbs;                            // list of verbs
-//   MessageMap     _operators;                        // list of operators
+   MessageMap     _operators;                        // list of operators
 
    int            _optFlag;
 
@@ -884,12 +884,12 @@ private:
    ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
 
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
-//   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
-//   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand/*, ObjectInfo roperand2*/);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
+   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
+   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
 
    ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
 
@@ -904,7 +904,7 @@ private:
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
 
-//   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
    void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -983,7 +983,7 @@ private:
 
    bool validate(_ProjectManager& project, _Module* module, int reference);
 
-//   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t targetType = 0);
+   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t targetType = 0);
 
    bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef, ref_t sourceType);
    bool typecastObject(SyntaxWriter& writer, ref_t targetType);
@@ -1038,9 +1038,9 @@ private:
    void generateFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
    // nested = -1 - nested class, -2 - singleton
-   void generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes/*, int nested = 0*/);
+   void generateClassTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, int nested = 0);
    bool generateMethodScope(SNode node, TemplateScope& scope, SNode attributes);
-   bool generateSingletonScope(SyntaxWriter& writer, SNode node, /*TemplateScope& scope, */SNode attributes);
+   bool generateSingletonScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
    void generateScope(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
 
    bool generateDeclaration(SNode node, TemplateScope& scope, SNode attributes);
@@ -1074,7 +1074,7 @@ public:
    virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
    virtual void injectFieldExpression(SyntaxWriter& writer);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
-//   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
+   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
    Compiler(_CompilerLogic* logic);
 };

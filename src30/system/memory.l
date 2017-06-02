@@ -1217,14 +1217,14 @@ sealed /*dispatchable(literal,int,char,wide)*/ dynamic string LiteralValue //:: 
 //
 ///// An empty wide literal value
 //const wide emptyWideLiteralValue = ""w.
-//
-//// --- WideLiteralValue ---
-//
-///// A UTF-18 literal value
-//sealed dispatchable(wide,int,char,literal) dynamic string WideLiteralValue :: BaseValue
-//{
-//    short $target.
-//
+
+// --- WideLiteralValue ---
+
+/// A UTF-18 literal value
+sealed /*dispatchable(wide,int,char,literal)*/ dynamic string WideLiteralValue :: BaseValue
+{
+    short $target.
+
 //    /// Creates the empty literal
 //    constructor min
 //        = emptyWideLiteralValue.
@@ -1423,8 +1423,8 @@ sealed /*dispatchable(literal,int,char,wide)*/ dynamic string LiteralValue //:: 
 //    // Reads the object hash code into the output parameter
 //    stacksafe outnprop(hash_code) readHashCode &vint:aCode 
 //        => system'core_routines'__wide.
-//}
-//
+}
+
 //// --- Variant ---
 //
 ///// A basic type variant class

@@ -41,15 +41,15 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsMessageParameter:
          _writer.newNode(lxMessageParameter);
          break;
-//      case nsNestedClass:
-//         _writer.newNode(lxNestedClass);
-//         break;
+      case nsNestedClass:
+         _writer.newNode(lxNestedClass);
+         break;
       case nsAssigning:
          _writer.newNode(lxAssigning);
          break;
-//      case nsResendExpression:
-//         _writer.newNode(lxResendExpression);
-//         break;
+      case nsResendExpression:
+         _writer.newNode(lxResendExpression);
+         break;
       case nsObject:
          _writer.newNode(lxObject);
          break;
@@ -60,13 +60,13 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //         _writer.newNode(lxThrowing);
 //         break;
 //      case nsL0Operation:
-//      case nsL3Operation:
-//      case nsL4Operation:
-//      case nsL5Operation:
-//      case nsL6Operation:
-//      case nsL7Operation:
-//         _writer.newNode(lxOperator);
-//         break;
+      case nsL3Operation:
+      case nsL4Operation:
+      case nsL5Operation:
+      case nsL6Operation:
+      case nsL7Operation:
+         _writer.newNode(lxOperator);
+         break;
       case nsMessageOperation:
          _writer.newNode(lxMessage);
          break;

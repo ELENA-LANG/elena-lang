@@ -1,43 +1,43 @@
 /// Attributes
-#16390      type.
-#16391      template.
-#16385      var.
-#16386      class.
-#16384      constructor.
-//#template(-16387,-8195)  implicit {}
-#16389      symbol.
+#16390          type.
+#16391          template.
+#16385          var.
+#16386          class.
+#16384          constructor.
+#16387 #8195    implicit.
+#16389          symbol.
 
 //#template(-8194)         static {}
 //#template(-8207)         preloaded {}
 //#template(-8202,-8195)   generic {}
-//#template(-8192)         stacksafe {}
+#8192           stacksafe.
 //#template(-8205)         action {}
 ////#template(-4099) w1 {}
 ////#template(-4100) w2 {}
 ////#template(-4101) w3 {}
-#8195       sealed.
-#8199       dynamic.
+#8195           sealed.
+#8199           dynamic.
 //#template(-8196)         limited {}
 //#template(-8206)         group   {}
 //#template(-8209)         __tape_group {}
 //#template(-8201)         const   {}
-#8197       struct.
+#8197           struct.
 //#template(-8204)         nonstructural {}
-//#template(-8198)         listable {}
-#8200       string.
-#8193       embeddable.
-#8203       extension.
+#8198           listable.
+#8200           string.
+#8193           embeddable.
+#8203           extension.
 
-//#template(-4097)  __ifoperator {}
-//#template(-4098)  __ifnotoperator {}
+#4097           __ifoperator.
+#4098           __ifnotoperator.
 //#template(-19,4)  __mssg  {}
-#20 #262144 __verb.
+#20 #262144     __verb.
 //#template(-22,4)  __symbol{}
 //#template(-21,8)  __extmssg{}
 //#template(-18,4)  __subj{}
-#11 #65536  __int8.
-//#template(-11,2)  __int16 {}
-#11 #262144 __int32.
+#11 #65536      __int8.
+#11 #131072     __int16.
+#11 #262144     __int32.
 //#template(-12,4)  __dword {}
 //#template(-12,4)  __ptr {}
 //#template(-13,8)  __int64 {}
@@ -46,19 +46,19 @@
 /// Provides classes that describe the basic functionality
 
 // === basic logical types ===
-//#subject bool       = system'BaseBoolValue.
+type bool    :: system'BaseBoolValue.
 
 // === basic primitive types ===
 
 //#subject keyvalue   = system'KeyValue.
 //
 //#subject ref        = system'Variable.
-//
-type byte    :: system'ByteNumber.
-//#subject short      = system'ShortNumber.
-type int     :: system'IntNumber.
-//#subject long       = system'LongNumber.
-//#subject real       = system'RealNumber.
+
+type byte       :: system'ByteNumber.
+type short      :: system'ShortNumber.
+type int        :: system'IntNumber.
+type long       :: system'LongNumber.
+type real       :: system'RealNumber.
 //#subject char       = system'CharValue.
 //#subject mssg       = system'Message.
 //#subject ext_mssg   = system'ExtensionMessage.
@@ -87,8 +87,8 @@ type int     :: system'IntNumber.
 /// An instance of system'LiteralValue class. 
 type literal :: system'LiteralValue.
 
-//#subject wide       = system'WideLiteralValue.
-//
+type wide    :: system'WideLiteralValue.
+
 //// === function types ===
 //#subject func       = system'BaseFunction.
 //

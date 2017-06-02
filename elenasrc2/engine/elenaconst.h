@@ -471,7 +471,7 @@ namespace _ELENA_
    //#define CLOSURE_THIS_VAR        "$closure"         // the closure class reference
    //#define CLOSURE_SELF_VAR        "closure"          // the closure target
 
-   //#define SUPER_VAR               "$super"           // the predecessor class
+   #define SUPER_VAR               "$super"           // the predecessor class
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
    #define RETVAL_VAR              "$$ret"            // the closure returning value
