@@ -9,7 +9,7 @@
 
 //#template(-8194)         static {}
 //#template(-8207)         preloaded {}
-//#template(-8202,-8195)   generic {}
+#8202 #8195     generic.
 #8192           stacksafe.
 //#template(-8205)         action {}
 ////#template(-4099) w1 {}
@@ -20,13 +20,14 @@
 //#template(-8196)         limited {}
 //#template(-8206)         group   {}
 //#template(-8209)         __tape_group {}
-//#template(-8201)         const   {}
+#8201           const.
 #8197           struct.
 //#template(-8204)         nonstructural {}
 #8198           listable.
 #8200           string.
 #8193           embeddable.
 #8203           extension.
+#8208           singleton.
 
 #4097           __ifoperator.
 #4098           __ifnotoperator.
@@ -38,7 +39,7 @@
 #11 #65536      __int8.
 #11 #131072     __int16.
 #11 #262144     __int32.
-//#template(-12,4)  __dword {}
+#12 #262144     __dword.
 //#template(-12,4)  __ptr {}
 #13 #524288     __int64.
 #14 #524288     __real64.
@@ -59,7 +60,7 @@ type short      :: system'ShortNumber.
 type int        :: system'IntNumber.
 type long       :: system'LongNumber.
 type real       :: system'RealNumber.
-//#subject char       = system'CharValue.
+type char       :: system'CharValue.
 //#subject mssg       = system'Message.
 //#subject ext_mssg   = system'ExtensionMessage.
 //
@@ -70,10 +71,10 @@ type real       :: system'RealNumber.
 //
 //#subject subject    = system'Signature.
 //#subject symbol_ref = system'Symbol.
-//
-//// === basic dynamic types ===
-//#subject bytearray  = system'ByteArray.
-//#subject shortarray = system'ShortArray.
+
+// === basic dynamic types ===
+type bytearray  :: system'ByteArray.
+type shortarray :: system'ShortArray.
 //#subject intarray   = system'IntArray.
 //#subject intmatrix  = system'IntMatrix.
 //#subject realarray  = system'RealArray.
@@ -85,9 +86,9 @@ type real       :: system'RealNumber.
 //#subject bitset     = system'BitArray32.
 
 /// An instance of system'LiteralValue class. 
-type literal :: system'LiteralValue.
+type literal    :: system'LiteralValue.
 
-type wide    :: system'WideLiteralValue.
+type wide       :: system'WideLiteralValue.
 
 //// === function types ===
 //#subject func       = system'BaseFunction.
@@ -121,9 +122,9 @@ type wide    :: system'WideLiteralValue.
 //#subject enumerator = system'Enumerator.
 //#subject indexer    = system'Indexer.
 //#subject indexer2d  = system'Indexer2D.
-//
-//// --- Generic attributes ---
-//#subject object.
-//
+
+// --- Generic attributes ---
+type object.
+
 //// --- Virtual subjects ---
 //#subject args.

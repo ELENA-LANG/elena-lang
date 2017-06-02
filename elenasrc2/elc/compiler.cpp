@@ -3300,40 +3300,40 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    }
    
    if (operation == lxMessage) {
-//      // try to figure out if it is property assignging
-//      SNode firstToken = exprNode.firstChild(lxObjectMask);
-//      ObjectInfo tokenInfo = scope.mapObject(firstToken);
-//      //ref_t attrRef = scope.mapSubject(firstToken);
-//      if (tokenInfo.kind != okUnknown) {
-//         // if it is shorthand property settings
-//         SNode name = operation.findChild(lxIdentifier, lxPrivate);
-//         ref_t subject = scope.mapSubject(name);
-//         //HOTFIX : support lexical subjects
-//         if (subject == 0)
-//            subject = scope.moduleScope->module->mapSubject(name.identifier(), false);
-//
-//         ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
-//
-//         // compile target
-//         // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
-//         ObjectInfo target = compileMessageParameters(writer, exprNode, scope);
-//
-//         // compile the parameter
-//         SNode sourceNode = exprNode.nextNode(lxObjectMask);
-//         ObjectInfo source = compileExpression(writer, sourceNode, scope, 0);
-//
-//         retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
-//
-//         operationType = lxNone;
-//      }
-//   //   else if (_logic->recognizeNewLocal(exprNode)) {
-//   //      // if it is variable declaration
-//   //      declareVariable(writer, exprNode, scope);
-//   //      declareExpression(writer, node, scope, 0);
-//
-//   //      operationType = lxNone;
-//   //   }
-//      else scope.raiseError(errUnknownObject, firstToken);
+      // try to figure out if it is property assignging
+      SNode firstToken = exprNode.firstChild(lxObjectMask);
+      ObjectInfo tokenInfo = scope.mapObject(firstToken);
+      //ref_t attrRef = scope.mapSubject(firstToken);
+      if (tokenInfo.kind != okUnknown) {
+         // if it is shorthand property settings
+         SNode name = operation.findChild(lxIdentifier, lxPrivate);
+         ref_t subject = scope.mapSubject(name);
+         //HOTFIX : support lexical subjects
+         if (subject == 0)
+            subject = scope.moduleScope->module->mapSubject(name.identifier(), false);
+
+         ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
+
+         // compile target
+         // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
+         ObjectInfo target = compileMessageParameters(writer, exprNode, scope);
+
+         // compile the parameter
+         SNode sourceNode = exprNode.nextNode(lxObjectMask);
+         ObjectInfo source = compileExpression(writer, sourceNode, scope, 0);
+
+         retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
+
+         operationType = lxNone;
+      }
+   //   else if (_logic->recognizeNewLocal(exprNode)) {
+   //      // if it is variable declaration
+   //      declareVariable(writer, exprNode, scope);
+   //      declareExpression(writer, node, scope, 0);
+
+   //      operationType = lxNone;
+   //   }
+      else scope.raiseError(errUnknownObject, firstToken);
    }
    // if it setat operator
 //   else if (operation == lxOperator) {
@@ -7589,15 +7589,15 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
    }
 }
 
-void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer/*, bool templateMode*/)
+void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode)
 {
    SyntaxWriter bufferWriter(buffer);
 
    writer.newNode(lxClassMethod);
-   //if (templateMode) {
-   //   writer.appendNode(lxSourcePath, scope.sourcePath);
-   //   writer.appendNode(lxTemplate, scope.templateRef);
-   //}      
+   if (templateMode) {
+      writer.appendNode(lxSourcePath, scope.sourcePath);
+      writer.appendNode(lxTemplate, scope.templateRef);
+   }      
 
    if (node == lxDefaultGeneric) {
       if (node.existChild(lxMethodParameter)) {
@@ -7687,7 +7687,7 @@ void Compiler :: generateTemplateTree(SyntaxWriter& writer, SNode node, Template
             subAttributes = current;
       }
       else if (current == lxClassMethod) {
-         generateMethodTree(writer, current, scope, subAttributes, buffer/*, true*/);
+         generateMethodTree(writer, current, scope, subAttributes, buffer, true);
          subAttributes = SNode();
       }
       else if (current == lxClassField) {
@@ -7780,7 +7780,7 @@ bool Compiler :: generateMethodScope(SNode node, TemplateScope& scope, SNode att
       if (node.firstChild(lxExprMask) == lxMethodParameter) {
          // try to resolve the message name if the scope starts with a method parameter
          current = lastAttr.prevNode();
-         if (current == lxAttribute && scope.mapSubject(current.findChild(lxIdentifier)) == 0) {
+         if (current == lxAttribute && scope.mapSubject(current.findChild(lxIdentifier, lxPrivate)) == 0) {
             lastAttr = lxMessage;
             lastAttr = current;
          }
@@ -7969,7 +7969,7 @@ void Compiler :: saveTemplate(_Memory* target, SNode node, ModuleScope& scope, S
    TemplateScope rootScope(&scope);
    //rootScope.autogeneratedTree = &autogenerated;
    rootScope.loadParameters(node);
-   //rootScope.sourcePath = fullPath;
+   rootScope.sourcePath = fullPath;
 
    generateScope(writer, node, rootScope, attributes);
 
@@ -7993,15 +7993,15 @@ void Compiler :: generateNewAttribute(SNode node, ModuleScope& scope, SNode attr
    
    writer.newNode(lxTemplate);
    
-   //   // HOTFIX : save the template source path
-   //   IdentifierString fullPath(scope.module->Name());
-   //   fullPath.append('\'');
-   //   fullPath.append(scope.sourcePath);
+   // HOTFIX : save the template source path
+   IdentifierString fullPath(scope.module->Name());
+   fullPath.append('\'');
+   fullPath.append(scope.sourcePath);
    
    TemplateScope rootScope(&scope);
    //   rootScope.autogeneratedTree = &autogenerated;
    //   rootScope.loadParameters(node);
-   //   rootScope.sourcePath = fullPath;
+   rootScope.sourcePath = fullPath;
    
    generateScope(writer, node, rootScope, attributes);
    

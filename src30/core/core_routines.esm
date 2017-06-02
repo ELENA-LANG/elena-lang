@@ -358,7 +358,7 @@ procedure __lazyexpression.dispatch[1]
 
 end
 
-procedure __int.eval&readHashCode&vint$[2]
+procedure __int.eval&readHashCodeTo&vint$[2]
 
   bloadsi 2
   ncopy
@@ -781,7 +781,7 @@ labEmpty:
 
 end
 
-procedure __literal.eval&readHashCode&vint$[2]
+procedure __literal.eval&readHashCodeTo&vint$[2]
 
   bloadsi 2
   ncopy
@@ -1286,7 +1286,7 @@ labEmpty:
 
 end
 
-procedure __wide.eval&readHashCode&vint$[2]
+procedure __wide.eval&readHashCodeTo&vint$[2]
 
   bloadsi 2
   ncopy
@@ -1724,7 +1724,7 @@ procedure __wideconvertor.convert&long$&int$&shortarray$&vint$[5]
 
 end
 
-procedure __char.eval&readLength&vint$[2]
+procedure __char.eval&readLengthTo&vint$[2]
 
   bloadsi 2
   nload

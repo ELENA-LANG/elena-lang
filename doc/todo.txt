@@ -48,6 +48,9 @@ Pipeline:
               zdev 
                  * partial-evaluation
 
+              xdev - general optimization  
+                 * replace "vint int := int" with direct assinging
+
               sdev - samples
                  * basic tests
                  * migrate gui rosetta samples
