@@ -119,10 +119,10 @@ type wide       :: system'WideLiteralValue.
 //#subject handle     = system'Handle.
 //#subject rt_ptr     = system'RTPointer.
 //#subject dirty_ptr  = system'UnsafePointer.
-//
-//// --- Enumerators / Indexers ---
-//#subject enumerator = system'Enumerator.
-//#subject indexer    = system'Indexer.
+
+// --- Enumerators / Indexers ---
+type enumerator :: system'Enumerator.
+type indexer    :: system'Indexer.
 //#subject indexer2d  = system'Indexer2D.
 
 // --- Generic attributes ---

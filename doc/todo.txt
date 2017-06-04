@@ -4,8 +4,7 @@ In development:
 
               xdev - refactoring
                  * check attribute duplicates
-                 * introduce method attribute
-                 * review shift operations
+                 * test if outnprop works correctly with optimization
 
                  * review rosetta samples
                  * review console samples

@@ -1,31 +1,34 @@
-//#template(-16388) prop (prop_name)
-//{
-//    set &prop_name : value
-//    [
-//        $target_field := value.
-//    ]
-//    
-//    prop_name = $target_field.
-//}
+field template prop :: type, prop_name
+{
+    type field.
+    
+    set prop_name:val
+    [
+        field := val
+    ]
+    
+    type prop_name = field.
+}
+
 //
 //#template(-16388) outprop (prop_name)
 //{
 //    prop_name = $target_field.
 //}
-//
-//// --- outnprop ---
-//
-//#template(-16388) outnprop(template_subj)
-//{
-//   stacksafe embeddable int template_subj
-//   [
-//        int val := 0.
-//        $self target_method &vint:val.
-//        
-//        ^ val.
-//   ]
-//}
-//
+
+// --- outnprop ---
+
+method template outnprop :: type,prop_name,target_method
+{
+    stacksafe embeddable type prop_name
+    [
+        int val := 0.        
+        $self target_method vint:val.
+        
+        ^ val.
+    ]
+}
+
 //// --- innprop ---
 //
 //#template(-16388) innprop (template_subj)

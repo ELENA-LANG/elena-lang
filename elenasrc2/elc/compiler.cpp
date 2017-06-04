@@ -7459,6 +7459,21 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
          else if (current.argument == V_FIELD) {
             // ignore template attributes
          }
+         else if (current.argument == V_METHOD) {
+            if (scope.type == TemplateScope::Type::ttFieldTemplate) {
+               // HOTFIX : is it is a method template, consider the field name as a message subject
+               scope.type = TemplateScope::Type::ttMethodTemplate;
+
+               ForwardMap::Iterator it = scope.fields.start();
+               while (!it.Eof()) {
+                  scope.subjects.add(scope.subjects.Count() + 1, scope.moduleScope->module->mapSubject(it.key(), false));
+
+                  it++;
+               }
+
+               //scope.subjects.add()
+            }
+         }
          else writer.appendNode(current.type, current.argument);
       }
 //      else if (current == lxTemplateType) {
@@ -7986,10 +8001,11 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
    bool classDecl = false;
    bool templateDecl = false;
    bool fieldDecl = false;
+   bool methodDecl = false;
    SNode current = tree.readRoot().firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         if (!_logic->validateDeclarationAttribute(current.argument, typeDecl, classDecl, templateDecl, fieldDecl))
+         if (!_logic->validateDeclarationAttribute(current.argument, typeDecl, classDecl, templateDecl, fieldDecl, methodDecl))
             scope.raiseError(errInvalidHint, attributes);
       }
 
@@ -8014,6 +8030,14 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
 
          scope.type = TemplateScope::Type::ttFieldTemplate;
       }
+      else if (methodDecl) {
+         templateName.append("#1");
+
+         scope.type = TemplateScope::Type::ttMethodTemplate;
+
+         count--; // !! HOTFIX : the trailing parameter is the target method
+      }
+
       templateName.append('#');
       templateName.appendInt(count);
 

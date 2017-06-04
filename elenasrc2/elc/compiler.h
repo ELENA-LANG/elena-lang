@@ -717,8 +717,9 @@ private:
    {
       enum Type
       {
-         ttNone          = 0,
-         ttFieldTemplate = 1
+         ttNone           = 0,
+         ttFieldTemplate  = 1,
+         ttMethodTemplate = 2
       };
 
 

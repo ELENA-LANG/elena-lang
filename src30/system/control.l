@@ -32,51 +32,52 @@ limited class Indexer :: dispatchable(indexer)
     /// Sets the current member
     set : anObject []
     
-//    /// Reads the current index into an output parameter
-//    stacksafe outnprop(index) readIndex &vint:anIndex []
-//    
-//    /// Sets the index by specified value
-//    ///
-//    /// Default implementation for compatibility calls obsolete write&index method
-//    stacksafe writeIndex &int:anIndex 
-//        [ $self write &index:(IntNumber new &int:anIndex). ] 
-//    
-//    /// Sets the index by specified value
-//    set &index:anIndex 
-//        <= writeIndex &int:(anIndex int).
-//    
-//    /// obsolete
-//    write &index:anIndex []
-//    
-//    /// Increaments the index by specified value
-//    indexer append &index:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndex &vint:anIndex.
-//        
-//        anIndex := anIndex + anOffset int.
-//        
-//        $self writeIndex &int:anIndex.
-//        
-//        ^ $self.
-//    ]
-//
-//    /// Decreaments the index by specified value
-//    reduce &index:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndex &vint:anIndex.
-//        
-//        anIndex := anIndex - anOffset int.
-//        
-//        $self writeIndex &int:anIndex.
-//    ]
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe outnprop(length) readLength &vint:anOutput
-//    [
-//        anOutput := 0. 
-//    ]
+    /// Reads the current index into an output parameter
+    stacksafe readIndexTo vint:retVal []
+
+    int index :: outnprop(readIndexTo).
+    
+    /// Sets the index by specified value
+    ///
+    /// Default implementation for compatibility calls obsolete write&index method
+    stacksafe writeIndex int:anIndex 
+        [ $self write index:(IntNumber new int:anIndex) ] 
+    
+    /// Sets the index by specified value
+    set index:anIndex 
+        <= writeIndex int:anIndex.
+    
+    /// Increaments the index by specified value
+    indexer append index:anOffset
+    [
+        int anIndex := 0.
+        $self readIndexTo vint:anIndex.
+        
+        anIndex := anIndex + anOffset int.
+        
+        $self writeIndex int:anIndex.
+        
+        ^ $self
+    ]
+
+    /// Decreaments the index by specified value
+    reduce index:anOffset
+    [
+        int anIndex := 0.
+        $self readIndexTo vint:anIndex.
+        
+        anIndex := anIndex - anOffset int.
+        
+        $self writeIndex int:anIndex.
+    ]
+
+    /// Reads the length to the output parameter    
+    stacksafe readLengthTo vint:retVal 
+    [
+        retVal int := 0
+    ]
+    
+    int length :: outnprop(readLengthTo).
 }
 
 //// --- MatrixIndexer ---

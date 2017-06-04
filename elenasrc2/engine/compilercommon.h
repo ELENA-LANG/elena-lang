@@ -262,7 +262,7 @@ public:
    virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
-   virtual bool validateDeclarationAttribute(int attrValue, bool& typeDecl, bool& classDecl, bool& templateDecl, bool& fieldDecl) = 0;
+   virtual bool validateDeclarationAttribute(int attrValue, bool& typeDecl, bool& classDecl, bool& templateDecl, bool& fieldDecl, bool& methodDecl) = 0;
 //   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
 
