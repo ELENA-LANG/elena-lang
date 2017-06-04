@@ -3922,16 +3922,16 @@ template<class Key, class T, class Iterator> Key retrieveKey(Iterator it, T valu
    return defaultKey;
 }
 
-//template<class Iterator> Iterator retrieveIt(Iterator it, int value)
-//{
-//   while (!it.Eof()) {
-//      if (*it == value)
-//         return it;
-//
-//      it++;
-//   }
-//   return it;
-//}
+template<class Iterator> Iterator retrieveIt(Iterator it, int value)
+{
+   while (!it.Eof()) {
+      if (*it == value)
+         return it;
+
+      it++;
+   }
+   return it;
+}
 
 template<class Iterator> const char* retrieve(Iterator it, const char* value, const char* defaultValue)
 {

@@ -6,6 +6,8 @@
 #16384          constructor.
 #16387 #8195    implicit.
 #16389          symbol.
+#16393          method.
+#16392          field.
 
 //#template(-8194)         static {}
 //#template(-8207)         preloaded {}
