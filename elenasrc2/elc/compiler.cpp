@@ -1529,8 +1529,11 @@ int Compiler::TemplateScope :: mapIdentifier(SNode terminal)
    if (emptystr(identifier))
       identifier = terminal.findChild(lxTerminal).identifier();
 
-   if (type == Type::ttFieldTemplate) {
+   if (type == TemplateScope::ttFieldTemplate) {
       return fields.get(identifier);
+   }
+   else if (type == TemplateScope::ttCodeTemplate) {
+      return parameters.get(identifier);
    }
    else return 0;
 }
@@ -3993,17 +3996,17 @@ ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, Co
 //   compileExpression(writer, node.firstChild(), scope, mode);
 //   writer.closeNode();
 //}
-//
-//void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   // find inner expression
-//   SNode expr = node;
-//   while (expr.findChild(lxMessage, lxAssign, lxOperator) == lxNone) {
-//      expr = expr.findChild(lxExpression);
-//   }
-//
-//   compileExpression(writer, expr, scope, HINT_LOOP);
-//}
+
+void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   // find inner expression
+   SNode expr = node;
+   while (expr.findChild(lxMessage, lxAssign, lxOperator) == lxNone) {
+      expr = expr.findChild(lxExpression);
+   }
+
+   compileExpression(writer, expr, scope, HINT_LOOP);
+}
 
 ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -4023,12 +4026,12 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 //         case lxThrowing:
 //            compileThrow(writer, current, scope, 0);
 //            break;
-//         case lxLoop:
-//            writer.newNode(lxExpression);
-//            writer.appendNode(lxBreakpoint, dsStep);
-//            compileLoop(writer, current, scope);
-//            writer.closeNode();
-//            break;
+         case lxLoop:
+            writer.newNode(lxExpression);
+            writer.appendNode(lxBreakpoint, dsStep);
+            compileLoop(writer, current, scope);
+            writer.closeNode();
+            break;
          case lxReturning:
          {
             needVirtualEnd = false;
@@ -6748,26 +6751,26 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
 //         case lxExtern:
 //            generateCodeTree(writer, current, scope);
 //            break;
-//         case lxCode:
-//            generateCodeTree(writer, current, scope);
-//            if (scope.codeMode) {
-//               if (scope.parameters.Count() == 2) {
-//                  if (scope.codeNode == lxNone) {
-//                     writer.insert(lxTemplateParam);
-//                     scope.codeNode = current;
-//                  }
-//                  else {
-//                     writer.insert(lxTemplateParam, 3);
-//                     scope.codeNode = SNode();
-//                  }
-//               }
-//               else writer.insert(lxTemplateParam);
-//               writer.closeNode();
-//            }
-//
-//            writer.insert(lxExpression);
-//            writer.closeNode();
-//            break;
+         case lxCode:
+            generateCodeTree(writer, current, scope);
+            if (scope.type == TemplateScope::ttCodeTemplate) {
+               if (scope.parameters.Count() == 2) {
+                  if (scope.codeNode == lxNone) {
+                     writer.insert(lxTemplateParam);
+                     scope.codeNode = current;
+                  }
+                  else {
+                     writer.insert(lxTemplateParam, 3);
+                     scope.codeNode = SNode();
+                  }
+               }
+               else writer.insert(lxTemplateParam);
+               writer.closeNode();
+            }
+
+            writer.insert(lxExpression);
+            writer.closeNode();
+            break;
          case lxMessage:
             writer.newNode(lxMessage);
             scope.copySubject(writer, current.firstChild(lxTerminalMask));
@@ -6848,41 +6851,41 @@ void Compiler :: generateVariableTree(SyntaxWriter& writer, SNode node, Template
    else generateExpressionTree(writer, node, scope);
 }
 
-//void Compiler :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
-//{
-//   // check if the first token is attribute
-//   SNode loperand = node.firstChild();
-//   SNode attr = node.findChild(lxIdentifier);
-//   if (attr != lxNone) {
-//      IdentifierString attrName(attr.findChild(lxTerminal).identifier());
-//      attrName.append('#');
-//      attrName.appendInt(SyntaxTree::countChild(node, lxCode, lxNestedClass));
-//
-//      ref_t attrRef = scope.moduleScope->resolveAttributeRef(attrName, false);
-//      if (attrRef != 0) {
-//         ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
-//         if (classRef == INVALID_REF) {
-//            TemplateScope templateScope(&scope, attrRef);
-//            templateScope.exprNode = node.findChild(lxExpression);
-//            templateScope.codeNode = node.findChild(lxCode);
-//            templateScope.nestedNode = node.findChild(lxNestedClass);
-//            if (templateScope.nestedNode == lxNone || templateScope.codeNode != lxNone) {
-//               // if there is else code block
-//               templateScope.elseNode = templateScope.codeNode.nextNode();
-//            }
-//            
-//            templateScope.codeMode = true;
-//            
-//            if (!generateTemplateCode(writer, templateScope))
-//               scope.raiseError(errInvalidHint, node);
-//         }
-//
-//         return;
-//      }
-//   }
-//
-//   generateExpressionTree(writer, node, scope);
-//}
+void Compiler :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
+{
+   // check if the first token is attribute
+   SNode loperand = node.firstChild();
+   SNode attr = node.findChild(lxIdentifier);
+   if (attr != lxNone) {
+      IdentifierString attrName(attr.findChild(lxTerminal).identifier());
+      attrName.append('#');
+      attrName.appendInt(SyntaxTree::countChild(node, lxCode, lxNestedClass));
+
+      ref_t attrRef = scope.moduleScope->resolveAttributeRef(attrName, false);
+      if (attrRef != 0) {
+         ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
+         if (classRef == INVALID_REF) {
+            TemplateScope templateScope(&scope, attrRef);
+            templateScope.exprNode = node.findChild(lxExpression);
+            templateScope.codeNode = node.findChild(lxCode);
+            templateScope.nestedNode = node.findChild(lxNestedClass);
+            if (templateScope.nestedNode == lxNone || templateScope.codeNode != lxNone) {
+               // if there is else code block
+               templateScope.elseNode = templateScope.codeNode.nextNode();
+            }
+            
+            templateScope.type = TemplateScope::ttCodeTemplate;
+            
+            if (!generateTemplateCode(writer, templateScope))
+               scope.raiseError(errInvalidHint, node);
+         }
+
+         return;
+      }
+   }
+
+   generateExpressionTree(writer, node, scope);
+}
 
 inline bool isTerminal(LexicalType type)
 {
@@ -7020,20 +7023,20 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
 //         break;
       case lxCode:
          generateCodeTree(writer, current, scope);
-//         if (scope.codeMode) {
-//            if (scope.parameters.Count() == 2) {
-//               if (scope.codeNode == lxNone) {
-//                  writer.insert(lxTemplateParam);
-//                  scope.codeNode = current;
-//               }
-//               else {
-//                  writer.insert(lxTemplateParam, 3);
-//                  scope.codeNode = SNode();
-//               }
-//            }
-//            else writer.insert(lxTemplateParam);
-//            writer.closeNode();
-//         }
+         if (scope.type == TemplateScope::ttCodeTemplate) {
+            if (scope.parameters.Count() == 2) {
+               if (scope.codeNode == lxNone) {
+                  writer.insert(lxTemplateParam);
+                  scope.codeNode = current;
+               }
+               else {
+                  writer.insert(lxTemplateParam, 3);
+                  scope.codeNode = SNode();
+               }
+            }
+            else writer.insert(lxTemplateParam);
+            writer.closeNode();
+         }
          writer.insert(lxExpression);
          writer.closeNode();
          break;
@@ -7045,7 +7048,7 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
       default:
       {
          if (isTerminal(current.type)) {
-            if (scope.type == TemplateScope::Type::ttFieldTemplate) {
+            if (scope.type == TemplateScope::ttFieldTemplate) {
                int index = scope.mapIdentifier(current);
                if (index != 0) {
                   writer.newNode(lxTemplateField, index);
@@ -7053,6 +7056,11 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
                   writer.closeNode();
                }
                else copyIdentifier(writer, current);
+            }
+            else if (scope.type == TemplateScope::ttCodeTemplate && scope.mapIdentifier(current)) {
+               writer.newNode(lxTemplateParam, 1);
+               copyIdentifier(writer, current);
+               writer.closeNode();
             }
             else copyIdentifier(writer, current);
          }               
@@ -7148,9 +7156,9 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          if (current.existChild(lxAssigning)) {
             generateVariableTree(writer, current, scope);
          }
-         //else if (current.existChild(lxCode) || current.existChild(lxNestedClass)) {
-         //   generateCodeTemplateTree(writer, current, scope);
-         //}
+         else if (current.existChild(lxCode) || current.existChild(lxNestedClass)) {
+            generateCodeTemplateTree(writer, current, scope);
+         }
          else generateExpressionTree(writer, current, scope);
       }
       //else if (current == lxThrowing) {
@@ -7167,9 +7175,9 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
       }
-      //else if (current == lxLoop || current == lxCode || current == lxExtern) {
-      //   generateCodeTree(writer, current, scope);
-      //}
+      else if (current == lxLoop /*|| current == lxCode || current == lxExtern*/) {
+         generateCodeTree(writer, current, scope);
+      }
       else generateObjectTree(writer, current, scope);
 
       current = current.nextNode();
@@ -7230,67 +7238,67 @@ void Compiler::copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope& 
    //   SyntaxTree::moveNodes(writer, buffer);
    //}
    else if (current == lxTemplateParam) {
-      //   if (scope.codeMode && current.argument == 1) {
-      //      // if it is a code template parameter
-      //      TemplateScope* parentScope = (TemplateScope*)scope.parent;
+      if (scope.type == TemplateScope::ttCodeTemplate && current.argument == 1) {
+         // if it is a code template parameter
+         TemplateScope* parentScope = (TemplateScope*)scope.parent;
 
-      //      generateExpressionTree(writer, scope.exprNode, *parentScope, true);
-      //   }
-      //   else if (scope.codeMode && current.argument == 0) {
-      //      // if it is a code template parameter
-      //      TemplateScope* parentScope = (TemplateScope*)scope.parent;
-
-      //      generateCodeTree(writer, scope.codeNode, *parentScope);
-      //   }
-      //   else if (scope.codeMode && current.argument == 3) {
-      //      TemplateScope* parentScope = (TemplateScope*)scope.parent;
-
-      //      // if it is an else code template parameter
-      //      SNode subParam = current.findSubNode(lxTemplateParam);
-      //      if (subParam == lxTemplateParam && subParam.argument == 0) {
-      //         // HOTFIX : insert if-else code
-      //         generateCodeTree(writer, scope.codeNode, *parentScope);
-      //      }
-
-      //      generateCodeTree(writer, scope.elseNode, *parentScope);
-      //   }
-      //   else if (scope.codeMode && current.argument == 2) {
-      //      // if it is a code template parameter
-      //      TemplateScope* parentScope = (TemplateScope*)scope.parent;
-
-      //      writer.newBookmark();
-      //      generateObjectTree(writer, scope.nestedNode, *parentScope);
-      //      writer.removeBookmark();
-      //   }
-         //else {
-         //   // if it is a target pseudo variable
-         //   if (current.argument == INVALID_REF) {
-         //      if (methodMode) {
-         //         // HOTFIX : if it is a method attribute - copy it as is
-         //         writer.newNode(lxTemplateParam, current.argument);
-         //      }
-         //      else {
-         //         if (scope.exprNode == lxIdentifier) {
-         //            writer.newNode(lxIdentifier, scope.exprNode.identifier());
-         //         }
-         //         else {
-         //            SNode nodeAttr = scope.exprNode.firstChild(lxTerminalMask);
-         //            if (nodeAttr != lxNone) {
-         //               writer.newNode(lxIdentifier, nodeAttr.findChild(lxTerminal).identifier());
-         //            }
-         //            else writer.newNode(lxIdentifier, current.findChild(lxIdentifier).identifier());
-         //         }
-         //      }
-         //   }
-         //   else {
-               // if it is a template parameter
-      ref_t subjRef = scope.subjects.get(current.argument);
-      ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
-      if (subjName.find('$') != NOTFOUND_POS) {
-         writer.newNode(lxReference, subjName);
+         generateExpressionTree(writer, scope.exprNode, *parentScope, true);
       }
-      else writer.newNode(lxIdentifier, subjName);
+      else if (scope.type == TemplateScope::ttCodeTemplate && current.argument == 0) {
+         // if it is a code template parameter
+         TemplateScope* parentScope = (TemplateScope*)scope.parent;
+
+         generateCodeTree(writer, scope.codeNode, *parentScope);
+      }
+      else if (scope.type == TemplateScope::ttCodeTemplate && current.argument == 3) {
+         TemplateScope* parentScope = (TemplateScope*)scope.parent;
+
+         // if it is an else code template parameter
+         SNode subParam = current.findSubNode(lxTemplateParam);
+         if (subParam == lxTemplateParam && subParam.argument == 0) {
+            // HOTFIX : insert if-else code
+            generateCodeTree(writer, scope.codeNode, *parentScope);
+         }
+
+         generateCodeTree(writer, scope.elseNode, *parentScope);
+      }
+      else if (scope.type == TemplateScope::ttCodeTemplate && current.argument == 2) {
+         // if it is a code template parameter
+         TemplateScope* parentScope = (TemplateScope*)scope.parent;
+
+         writer.newBookmark();
+         generateObjectTree(writer, scope.nestedNode, *parentScope);
+         writer.removeBookmark();
+      }
+      else {
+      //   // if it is a target pseudo variable
+      //   if (current.argument == INVALID_REF) {
+      //      if (methodMode) {
+      //         // HOTFIX : if it is a method attribute - copy it as is
+      //         writer.newNode(lxTemplateParam, current.argument);
+      //      }
+      //      else {
+      //         if (scope.exprNode == lxIdentifier) {
+      //            writer.newNode(lxIdentifier, scope.exprNode.identifier());
+      //         }
+      //         else {
+      //            SNode nodeAttr = scope.exprNode.firstChild(lxTerminalMask);
+      //            if (nodeAttr != lxNone) {
+      //               writer.newNode(lxIdentifier, nodeAttr.findChild(lxTerminal).identifier());
+      //            }
+      //            else writer.newNode(lxIdentifier, current.findChild(lxIdentifier).identifier());
+      //         }
+      //      }
       //   }
+      //   else {
+         // if it is a template parameter
+         ref_t subjRef = scope.subjects.get(current.argument);
+         ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
+         if (subjName.find('$') != NOTFOUND_POS) {
+            writer.newNode(lxReference, subjName);
+         }
+         else writer.newNode(lxIdentifier, subjName);
+      }
 
       SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
       writer.closeNode();
@@ -7453,13 +7461,13 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
 
             copyTemplateTree(writer, current, templateScope, current.firstChild()/*, false, embeddableMode*/);
          }
-         else if (current.argument == V_TEMPLATE) {
+         else if (current.argument == V_TEMPLATE && scope.type != TemplateScope::ttAttrTemplate) {
             // ignore template attributes
          }
-         else if (current.argument == V_FIELD) {
+         else if (current.argument == V_FIELD && scope.type != TemplateScope::ttAttrTemplate) {
             // ignore template attributes
          }
-         else if (current.argument == V_METHOD) {
+         else if (current.argument == V_METHOD && scope.type != TemplateScope::ttAttrTemplate) {
             if (scope.type == TemplateScope::Type::ttFieldTemplate) {
                // HOTFIX : is it is a method template, consider the field name as a message subject
                scope.type = TemplateScope::Type::ttMethodTemplate;
@@ -7503,27 +7511,27 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
    return true;
 }
 
-//bool Compiler :: generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope)
-//{
-//   _Memory* body = scope.moduleScope->loadAttributeInfo(scope.templateRef);
-//   if (body == NULL)
-//      return false;
-//
-//   SyntaxTree templateTree(body);
-//
-//   scope.loadAttributeValues(templateTree.readRoot(), false);
-//
-//   SNode current = templateTree.readRoot().findChild(lxCode).firstChild();
-//   while (current != lxNone) {
-//      if (current.type == lxLoop || current.type == lxExpression)
-//         copyExpressionTree(writer, current, scope);
-//
-//      current = current.nextNode();
-//   }
-//
-//   return true;
-//}
-//
+bool Compiler :: generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope)
+{
+   _Memory* body = scope.moduleScope->loadAttributeInfo(scope.templateRef);
+   if (body == NULL)
+      return false;
+
+   SyntaxTree templateTree(body);
+
+   scope.loadAttributeValues(templateTree.readRoot()/*, false*/);
+
+   SNode current = templateTree.readRoot().findChild(lxCode).firstChild();
+   while (current != lxNone) {
+      if (current.type == lxLoop || current.type == lxExpression)
+         copyExpressionTree(writer, current, scope);
+
+      current = current.nextNode();
+   }
+
+   return true;
+}
+
 //void Compiler :: copyAttributeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode)
 //{
 //   // copy coordinate
@@ -7597,6 +7605,9 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
 //            }
 //            else {
                TemplateScope templateScope(&scope, attrRef);
+               if (scope.type == TemplateScope::ttAttrTemplate)
+                  templateScope.type = scope.type;
+
 //               // HOTFIX : a new class should be generated in the variable mode
 //               templateScope.classMode = variableMode;
 //               if (node == lxClassMethod) {
@@ -7816,11 +7827,11 @@ void Compiler :: generateTemplateTree(SyntaxWriter& writer, SNode node, Template
          generateFieldTree(writer, current, scope, subAttributes, buffer, true);
          subAttributes = SNode();
       }
-//      else if (current == lxCode) {
-//         scope.codeMode = true;
-//
-//         generateCodeTree(writer, current, scope);
-//      }
+      else if (current == lxCode) {
+         scope.type = TemplateScope::ttCodeTemplate;
+
+         generateCodeTree(writer, current, scope);
+      }
 
       current = current.nextNode();
    }
@@ -7992,6 +8003,7 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
 
    bufferWriter.newNode(lxTemplate);
 
+   scope.type = TemplateScope::ttAttrTemplate;
    generateAttributes(bufferWriter, node, scope, attributes/*, false*/);
 
    bufferWriter.closeNode();
@@ -8002,10 +8014,11 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
    bool templateDecl = false;
    bool fieldDecl = false;
    bool methodDecl = false;
+   bool loopDecl = false;
    SNode current = tree.readRoot().firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         if (!_logic->validateDeclarationAttribute(current.argument, typeDecl, classDecl, templateDecl, fieldDecl, methodDecl))
+         if (!_logic->validateDeclarationAttribute(current.argument, typeDecl, classDecl, templateDecl, fieldDecl, methodDecl, loopDecl))
             scope.raiseError(errInvalidHint, attributes);
       }
 
@@ -8033,9 +8046,21 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
       else if (methodDecl) {
          templateName.append("#1");
 
-         scope.type = TemplateScope::Type::ttMethodTemplate;
+         scope.type = TemplateScope::ttMethodTemplate;
 
          count--; // !! HOTFIX : the trailing parameter is the target method
+      }
+      else if (node.existChild(lxExpression)) {
+         scope.type = TemplateScope::ttCodeTemplate;
+
+         // HOTFIX : mark the expression as a code
+         SNode exprNode = node.findChild(lxExpression);
+         exprNode.injectNode(lxExpression);
+         if (loopDecl) {
+            exprNode.injectNode(lxLoop);
+         }
+
+         exprNode = lxCode;
       }
 
       templateName.append('#');
@@ -8068,8 +8093,12 @@ void Compiler :: generateScope(SyntaxWriter& writer, SNode node, TemplateScope& 
       if (setIdentifier(attributes)) {
          attributes.refresh();
 
+         // check if it is a code template
+         if (node.findChild(lxBaseParent)) {
+            generateDeclaration(writer, node, scope, attributes);
+         }
          // check if it could be compiled as a singleton
-         if (!generateSingletonScope(writer, node, scope, attributes)) {
+         else if (!generateSingletonScope(writer, node, scope, attributes)) {
             node = lxSymbol;
             attributes.refresh();
 

@@ -1,6 +1,7 @@
 /// Attributes
 #16390          type.
 #16391          template.
+#16391 #16394   loop_template.
 #16385          var.
 #16386          class.
 #16384          constructor.
@@ -13,7 +14,7 @@
 //#template(-8207)         preloaded {}
 #8202 #8195     generic.
 #8192           stacksafe.
-//#template(-8205)         action {}
+#8205           action.
 ////#template(-4099) w1 {}
 ////#template(-4100) w2 {}
 ////#template(-4101) w3 {}
@@ -92,29 +93,29 @@ type literal    :: system'LiteralValue.
 
 type wide       :: system'WideLiteralValue.
 
-//// === function types ===
-//#subject func       = system'BaseFunction.
-//
-///// An anonymous function with a generic parameter.
-/////
-///// An instance of system'BaseFunction1
-//#subject func1      = system'BaseFunction1.
-//
-//#subject func2      = system'BaseFunction2.
-//#subject func3      = system'BaseFunction3.
-//#subject func4      = system'BaseFunction4.
-//#subject func5      = system'BaseFunction5.
-//#subject func6      = system'BaseFunction6.
-//#subject func7      = system'BaseFunction7.
-//#subject func8      = system'BaseFunction8.
-//#subject func9      = system'BaseFunction9.
-//#subject func10     = system'BaseFunction10.
-//#subject func11     = system'BaseFunction11.
-//
-//#subject nfunc      = system'IndexFunction1.
-//#subject nnfunc     = system'IndexFunction2.
-//#subject n3func     = system'IndexFunction3.
-//
+// === function types ===
+type func       :: system'BaseFunction.
+
+/// An anonymous function with a generic parameter.
+///
+/// An instance of system'BaseFunction1
+type func1      :: system'BaseFunction1.
+
+type func2      :: system'BaseFunction2.
+type func3      :: system'BaseFunction3.
+type func4      :: system'BaseFunction4.
+type func5      :: system'BaseFunction5.
+type func6      :: system'BaseFunction6.
+type func7      :: system'BaseFunction7.
+type func8      :: system'BaseFunction8.
+type func9      :: system'BaseFunction9.
+type func10     :: system'BaseFunction10.
+type func11     :: system'BaseFunction11.
+
+type nfunc      :: system'IndexFunction1.
+type nnfunc     :: system'IndexFunction2.
+type n3func     :: system'IndexFunction3.
+
 //// === system handles ===
 //#subject handle     = system'Handle.
 //#subject rt_ptr     = system'RTPointer.
@@ -123,7 +124,7 @@ type wide       :: system'WideLiteralValue.
 // --- Enumerators / Indexers ---
 type enumerator :: system'Enumerator.
 type indexer    :: system'Indexer.
-//#subject indexer2d  = system'Indexer2D.
+type indexer2d  :: system'Indexer2D.
 
 // --- Generic attributes ---
 type object.

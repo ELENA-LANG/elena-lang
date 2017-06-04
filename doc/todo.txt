@@ -5,6 +5,7 @@ In development:
               xdev - refactoring
                  * check attribute duplicates
                  * test if outnprop works correctly with optimization
+                 * test if action attribute works
 
                  * review rosetta samples
                  * review console samples
@@ -518,6 +519,7 @@ Pipeline:
                          with Memory32Map, Memory32HashTable
 
               xdev - general implementation     
+                       * refactore - validateDeclarationAttribute - too many out parameters
                        * replace all operation with StringHelper with some built-in operators
 
                        * rename console to STA, consolex to MTO, consolevm to STA VM Client, gui to STAGUI, guix to MTAGUI

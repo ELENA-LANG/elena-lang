@@ -90,54 +90,44 @@ method template outnprop :: type,prop_name,target_method
 //        ^ retVal.            
 //    ]
 //}
-//
-//// --- while statement ---
-//
-//#template while (expr)
-//[
-//    #loop(expr bool)?
-//    [
-//    ].
-//].
-//
-//// --- until statement ---
-//
-//#template until (expr)
-//[
-//    #loop(expr bool)!
-//    [
-//    ].
-//].
-//
-//// --- if statement ---
-//
-//#template if (expr)
-//[
-//    expr bool ?
-//    [
-//    ].
-//].
-//
-//// --- ifnot statement ---
-//
-//#template ifnot (expr)
-//[
-//    expr bool !
-//    [
-//    ].
-//].
-//
-//// --- if-else statement ---
-//
-//#template if (expr,else)
-//[
-//    expr bool ?
-//    [
-//    ]
-//    ! [
-//    ].
-//].
-//
+
+// --- while statement ---
+
+loop_template while :: expr =
+    expr bool ?
+    [
+    ].
+
+// --- until statement ---
+
+loop_template until :: expr =
+    expr bool !
+    [
+    ].
+
+// --- if statement ---
+
+template if :: expr = 
+    expr bool ?
+    [
+    ].
+
+// --- ifnot statement ---
+
+template ifnot :: expr =
+    expr bool !
+    [
+    ].
+
+// --- if-else statement ---
+
+template if :: expr,else =
+    expr bool ?
+    [
+    ]
+    ! [
+    ].
+
 //// -- try-catch statement ---
 //
 //#template try (expr)
