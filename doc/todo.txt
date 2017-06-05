@@ -3,9 +3,13 @@ In development:
 ------                              
 
               xdev - refactoring
+                 * get rid of +=, -=, *=, /= operators (and divideInto, multiplyBy)
+                 * get rid of wide (the object should exists but no wide literal constant or supporting by objects)
+
                  * check attribute duplicates
                  * test if outnprop works correctly with optimization
                  * test if action attribute works
+
 
                  * review rosetta samples
                  * review console samples

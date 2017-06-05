@@ -220,8 +220,6 @@ listable class BaseBoolValue :: dispatchable(bool)
 
     literal = $nil.
 
-    wide = $nil.
-
     clone = $nil.
 }
 

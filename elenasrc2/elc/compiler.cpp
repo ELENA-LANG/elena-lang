@@ -7799,7 +7799,6 @@ void Compiler :: generateFieldTemplateTree(SyntaxWriter& writer, SNode node, Tem
    //
    copyTemplateTree(writer, node, templateScope, attributes/*, variableMode, embeddableMode*/);
 
-
    //writer.closeNode();
 
    //// copy methods
@@ -7825,6 +7824,10 @@ void Compiler :: generateTemplateTree(SyntaxWriter& writer, SNode node, Template
       }
       else if (current == lxClassField) {
          generateFieldTree(writer, current, scope, subAttributes, buffer, true);
+         subAttributes = SNode();
+      }
+      else if (current == lxFieldTemplate) {
+         generateFieldTemplateTree(writer, current, scope, subAttributes/*, buffer, true*/);
          subAttributes = SNode();
       }
       else if (current == lxCode) {

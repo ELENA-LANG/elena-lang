@@ -1,75 +1,76 @@
-//// --- arrayof ---
-//
-//#template(dynamic) arrayof(template_subj)
-//{
-//    template_subj $target.
-//
-//    enumerator 
-//    [
-//        vint index := -1.
-//        int length := 0.
-//        $target >> length.
-//        
-//        ^ Enumerator
-//          {
-//              get = $owner getAt &int:index.
-//              
-//              enumerable = $owner.
-//              
-//              reset [ index := -1. ]
-//              
-//              next
-//              [
-//                  index += 1.
-//                  
-//                  ^ index < length.
-//              ]
-//          }.
-//    ]
-//        
-//    stacksafe outnprop(length) readLength &vint:retVal
-//    [
-//        int len := 0.
-//        $target >> len.
-//        
-//        retVal := len.
-//    ]
-//
-//    stacksafe template_subj getAt &int:n
-//    [
-//        (n < 0)
-//            ? [ InvalidArgumentException new raise. ].
-//        
-//        int len := 0.
-//        $target >> len.
-//
-//        (n < len)
-//            ? [ ^ $target @ n. ]
-//            ! [ InvalidArgumentException new raise. ].
-//    ]
-//
-//    stacksafe setAt &int:n &template_subj:item
-//    [
-//        (n < 0)
-//            ? [ InvalidArgumentException new raise. ].
-//        
-//        int len := 0.
-//        $target >> len.
-//
-//        (n < len)
-//            ? [ $target @ n := item. ]
-//            ! [ InvalidArgumentException new raise. ].
-//    ]
-//                
-//    /// Returns the item at the specified index
-//    template_subj getAt : aParam
-//        <= getAt &int:(aParam int).
-//        
-//    /// Returns the item at the specified index
-//    setAt : index : value
-//        <= setAt &int:(index int) &template_subj:value.
-//}
-//
+// --- arrayof ---
+
+dynamic template arrayof :: template_subj
+{
+    template_subj $target.
+
+    enumerator 
+    [
+        vint index := -1.
+        int length := 0.
+        $target >> length.
+        
+        ^ Enumerator
+          {
+              get = $owner getAt int:index.
+              
+              enumerable = $owner.
+              
+              reset [ index := -1 ]
+              
+              next
+              [
+                  index append int:1.
+                  
+                  ^ index < length
+              ]
+          }
+    ]
+        
+    stacksafe readLengthTo vint:retVal
+    [
+        int len := 0.
+        $target >> len.
+        
+        retVal int := len
+    ]
+    
+    int length :: outnprop(readLengthTo).
+
+    stacksafe template_subj getAt int:n
+    [
+        if (n < 0)
+            [ InvalidArgumentException new; raise ].
+        
+        int len := 0.
+        $target >> len.
+
+        if (n < len)
+            [ ^ $target @ n ];
+            [ InvalidArgumentException new; raise ]
+    ]
+
+    stacksafe setAt int:n template_subj:item
+    [
+        if (n < 0)
+            [ InvalidArgumentException new; raise ].
+        
+        int len := 0.
+        $target >> len.
+
+        if (n < len)
+            [ $target @ n := item ];
+            [ InvalidArgumentException new; raise ]
+    ]
+                
+    /// Returns the item at the specified index
+    template_subj getAt : aParam
+        <= getAt int:aParam.
+        
+    /// Returns the item at the specified index
+    setAt : index : value
+        <= setAt int:index template_subj:value.
+}
 //
 //// --- matrixof ---
 //
@@ -209,14 +210,14 @@
 //          }.
 //    ]
 //}
-//
-//// === basic memory classes ===
-//
-//// --- ByteArray ---
-//
-///// A byte array
-//sealed dispatchable(bytearray) arrayof(byte) ByteArray
-//{
+
+// === basic memory classes ===
+
+// --- ByteArray ---
+
+/// A byte array
+sealed ByteArray :: dispatchable(bytearray), arrayof(byte)
+{
 //    /// Creates the byte array with the specified length
 //    stacksafe constructor new &int:len
 //        = byte(len).
@@ -361,8 +362,8 @@
 //
 //    /// Creates the object copy
 //    clone = ByteArray new &bytearray:$self.
-//}
-//
+}
+
 //// --- ShortArray ---
 //
 ///// A short integer array

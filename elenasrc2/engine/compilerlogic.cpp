@@ -114,10 +114,10 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 
-   operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
-   operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
-   operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
-   operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+   //operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+   //operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+   //operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+   //operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
 
    operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
@@ -141,10 +141,10 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(READ_MESSAGE_ID,  V_INT64, V_INT32, lxLongOp, V_INT64));
    operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT64, V_INT32, lxLongOp, V_INT64));
 
-   operators.add(OperatorInfo(APPEND_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, 0));
-   operators.add(OperatorInfo(REDUCE_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, 0));
-   operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
-   operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
+   //operators.add(OperatorInfo(APPEND_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, 0));
+   //operators.add(OperatorInfo(REDUCE_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, 0));
+   //operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
+   //operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
 
    operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
@@ -159,10 +159,10 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(MUL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
    operators.add(OperatorInfo(DIV_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
 
-   operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
-   operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
-   operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
-   operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+   //operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+   //operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+   //operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+   //operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
 
    operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
