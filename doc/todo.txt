@@ -9,7 +9,8 @@ In development:
                  * check attribute duplicates
                  * test if outnprop works correctly with optimization
                  * test if action attribute works
-
+                 * test if returning type attribute works
+                 * optimize: theDiff int := theDiff / 2.
 
                  * review rosetta samples
                  * review console samples

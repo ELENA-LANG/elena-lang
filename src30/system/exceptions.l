@@ -227,11 +227,11 @@
 ////    #constructor new:aMessage
 ////        <= new &literal:(aMessage literal).
 ////}
-//
-//// --- InvalidArgumentException ---
-//
-//exceptionof(InvalidArgumentError) InvalidArgumentException
-//{
+
+// --- InvalidArgumentException ---
+
+/*exceptionof(InvalidArgumentError)*/class InvalidArgumentException
+{
 //    constructor new &literal:message
 //    [
 //        theMessage := message.
@@ -249,8 +249,8 @@
 //    /// obsolete
 //    constructor new &message:aMessage
 //        <= new &literal:(aMessage literal).
-//}
-//
+}
+
 //// --- InvalidOperationException ---
 //
 //exceptionof(InvalidOperationError) InvalidOperationException
@@ -295,10 +295,10 @@
 //        <= new &literal:(object className add &literal:" : Method " add &literal:(missingMessage literal) add &literal:" not found").
 }
 
-//// --- MethodNotSupported ---
-//
-//exceptionof(NotSupportedError) NotSupportedException
-//{
+// --- MethodNotSupported ---
+
+/*exceptionof(NotSupportedError)*/ class NotSupportedException
+{
 //    constructor new &literal:message
 //    [
 //        theMessage := message.
@@ -312,8 +312,8 @@
 //    /// Creates the exception
 //    constructor new :aMessage
 //        <= new &literal:(aMessage literal).
-//}
-//
+}
+
 //// --- AbortException ---
 //
 ///// An abort exception 

@@ -1213,25 +1213,25 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
    return owner;
 }
 
-//Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapOwner()
-//{
-//   Outer owner = outers.get(OWNER_VAR);
-//   // if owner reference is not yet mapped, add it
-//   if (owner.outerObject.kind == okUnknown) {
-//      owner.outerObject = parent->mapTerminal(OWNER_VAR);
-//      if (owner.outerObject.kind != okUnknown) {
-//         owner.reference = info.fields.Count();
-//
-//         if (owner.outerObject.extraparam == 0)
-//            owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
-//
-//         outers.add(OWNER_VAR, owner);
-//         mapKey(info.fields, OWNER_VAR, (int)owner.reference);
-//      }
-//      else return mapSelf();
-//   }
-//   return owner;
-//}
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapOwner()
+{
+   Outer owner = outers.get(OWNER_VAR);
+   // if owner reference is not yet mapped, add it
+   if (owner.outerObject.kind == okUnknown) {
+      owner.outerObject = parent->mapTerminal(OWNER_VAR);
+      if (owner.outerObject.kind != okUnknown) {
+         owner.reference = info.fields.Count();
+
+         if (owner.outerObject.extraparam == 0)
+            owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
+
+         outers.add(OWNER_VAR, owner);
+         mapKey(info.fields, OWNER_VAR, (int)owner.reference);
+      }
+      else return mapSelf();
+   }
+   return owner;
+}
 
 ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
 {
@@ -1241,12 +1241,12 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
       // map as an outer field (reference to outer object and outer object field index)
       return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
    }
-   //else if (identifier.compare(OWNER_VAR)) {
-   //   Outer owner = mapOwner();
+   else if (identifier.compare(OWNER_VAR)) {
+      Outer owner = mapOwner();
 
-   //   // map as an outer field (reference to outer object and outer object field index)
-   //   return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
-   //}
+      // map as an outer field (reference to outer object and outer object field index)
+      return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
+   }
    else if (identifier.compare(SELF_VAR) && !closureMode) {
       return ObjectInfo(okParam, (size_t)-1);
    }
@@ -2493,9 +2493,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
    SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression);
    switch (member.type)
    {
-      //case lxNestedClass:
-      //   result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
-      //   break;
+      case lxNestedClass:
+         result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
+         break;
       case lxCode:
          result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
          break;
@@ -3566,34 +3566,34 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    generateClassImplementation(expressionTree.readRoot(), scope/*, test(scope.info.header.flags, elClosed)*/);
 }
 
-//void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
-//{
-//   SyntaxTree expressionTree;
-//   SyntaxWriter writer(expressionTree);
-//
-//   // check if the class was already compiled
-//   if (!node.argument) {
-//      compileParentDeclaration(node, scope);
-//
-//      declareVMT(node, scope);
-//      generateClassDeclaration(node, scope, false, true);
-//
-//      scope.save();
-//   }
-//   else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
-//
-//   writer.newNode(lxClass, scope.reference);
-//
-//   compileVMT(writer, node, scope);
-//
-//   writer.closeNode();
-//
-//   // set flags once again
-//   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, false);
-//   scope.save();
-//
-//   generateClassImplementation(expressionTree.readRoot(), scope);
-//}
+void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
+{
+   SyntaxTree expressionTree;
+   SyntaxWriter writer(expressionTree);
+
+   // check if the class was already compiled
+   if (!node.argument) {
+      compileParentDeclaration(node, scope);
+
+      declareVMT(node, scope);
+      generateClassDeclaration(node, scope, false, true);
+
+      scope.save();
+   }
+   else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
+
+   writer.newNode(lxClass, scope.reference);
+
+   compileVMT(writer, node, scope);
+
+   writer.closeNode();
+
+   // set flags once again
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, false);
+   scope.save();
+
+   generateClassImplementation(expressionTree.readRoot(), scope);
+}
 
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope)
 {
@@ -3716,8 +3716,8 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       // HOTFIX : hide code node because it is no longer required
       codeNode = lxIdle;
    }
-   //// if it is a nested class
-   //else compileNestedVMT(node, scope);
+   // if it is a nested class
+   else compileNestedVMT(node, scope);
 
    return compileClosure(writer, node, ownerScope, scope);
 }
@@ -7007,20 +7007,20 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
       case lxObject:
          generateExpressionTree(writer, current, scope, false);
          break;
-//      case lxNestedClass:
-//         if (scope.codeMode) {
-//            writer.insert(lxTemplateParam, 2);
-//            writer.closeNode();
-//         }
-//         else {
-//            generateScopeMembers(current, scope);
-//
-//            generateClassTree(writer, current, scope, SNode(), -1);
-//         }
-//
-//         writer.insert(lxExpression);
-//         writer.closeNode();
-//         break;
+      case lxNestedClass:
+         /*if (scope.codeMode) {
+            writer.insert(lxTemplateParam, 2);
+            writer.closeNode();
+         }
+         else {*/
+            generateScopeMembers(current, scope);
+
+            generateClassTree(writer, current, scope, SNode(), -1);
+         //}
+
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
       case lxCode:
          generateCodeTree(writer, current, scope);
          if (scope.type == TemplateScope::ttCodeTemplate) {
@@ -7298,11 +7298,11 @@ void Compiler::copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope& 
             writer.newNode(lxReference, subjName);
          }
          else writer.newNode(lxIdentifier, subjName);
-      }
-
-      SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-      writer.closeNode();
       //}
+
+         SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+         writer.closeNode();
+      }
    }
    else if (current == lxTemplateField) {
       ident_t fieldName = retrieveIt(scope.fields.start(), current.argument).key();

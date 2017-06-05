@@ -10,7 +10,7 @@
 #16393          method.
 #16392          field.
 
-//#template(-8194)         static {}
+#8194           static.
 //#template(-8207)         preloaded {}
 #8202 #8195     generic.
 #8192           stacksafe.
@@ -129,5 +129,5 @@ type indexer2d  :: system'Indexer2D.
 // --- Generic attributes ---
 type object.
 
-//// --- Virtual subjects ---
-//#subject args.
+// --- Virtual subjects ---
+type args.
