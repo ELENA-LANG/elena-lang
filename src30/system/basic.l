@@ -105,7 +105,7 @@ template nvarof :: template_subj
 // --- true ---
 
 /// A true value symbol
-class true = BaseBoolValue
+class true = BaseBoolValue::
 {
     /// Executes the action
     __ifoperator if : aTrueAction = aTrueAction eval.
@@ -153,7 +153,7 @@ class true = BaseBoolValue
 // --- false ---
 
 /// A false value symbol
-class false = BaseBoolValue
+class false = BaseBoolValue::
 {
     /// Always returns nil
     __ifnotoperator if : anAction = $nil.

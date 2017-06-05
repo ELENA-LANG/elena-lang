@@ -3085,7 +3085,7 @@ procedure __timest.eval&empty&__time_st$calendar[1]
 
 end
 
-procedure __bytearray.eval&readLength&vint$[2]
+procedure __bytearray.eval&readLengthTo&vint$[2]
 
   blen
   bloadsi 2

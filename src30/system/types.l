@@ -78,15 +78,15 @@ type char       :: system'CharValue.
 // === basic dynamic types ===
 type bytearray  :: system'ByteArray.
 type shortarray :: system'ShortArray.
-//#subject intarray   = system'IntArray.
+type intarray   :: system'IntArray.
 //#subject intmatrix  = system'IntMatrix.
 //#subject realarray  = system'RealArray.
 //#subject realmatrix = system'RealMatrix.
 //#subject chararray  = system'CharArray.
 //#subject array      = system'Array.
 ////#subject mssgarray  = system'MessageArray.
-//#subject bitarray   = system'BitArray.
-//#subject bitset     = system'BitArray32.
+type bitarray   :: system'BitArray.
+type bitset     :: system'BitArray32.
 
 /// An instance of system'LiteralValue class. 
 type literal    :: system'LiteralValue.

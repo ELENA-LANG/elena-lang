@@ -297,33 +297,33 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
    return 0;
 }
 
-//int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
-//{
-//   if (loperand == 0 || roperand == 0 || (roperand2 == 0 && loperand != V_OBJARRAY))
-//      return 0;
-//
-//   OperatorList::Iterator it = operators.start();
-//   while (!it.Eof()) {
-//      OperatorInfo info = *it;
-//
-//      if (info.operatorId == operatorId) {
-//         if (info.loperand == V_NIL) {
-//            // skip operation with NIL
-//         }
-//         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)
-//            && isCompatible(scope, info.roperand2, roperand2)) 
-//         {
-//            result = info.result;
-//
-//            return info.operationType;
-//         }
-//
-//      }
-//      it++;
-//   }
-//
-//   return 0;
-//}
+int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
+{
+   if (loperand == 0 || roperand == 0 || (roperand2 == 0 && loperand != V_OBJARRAY))
+      return 0;
+
+   OperatorList::Iterator it = operators.start();
+   while (!it.Eof()) {
+      OperatorInfo info = *it;
+
+      if (info.operatorId == operatorId) {
+         if (info.loperand == V_NIL) {
+            // skip operation with NIL
+         }
+         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)
+            && isCompatible(scope, info.roperand2, roperand2)) 
+         {
+            result = info.result;
+
+            return info.operationType;
+         }
+
+      }
+      it++;
+   }
+
+   return 0;
+}
 
 bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
 {
@@ -395,16 +395,16 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& c
    return true;
 }
 
-//int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
-//{
-//   if (isCompatible(scope, V_INT32, roperand)) {
-//      result = definePrimitiveArray(scope, loperand);
-//      if (result != 0)
-//         return lxNewOp;
-//   }
-//
-//   return 0;
-//}
+int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
+{
+   if (isCompatible(scope, V_INT32, roperand)) {
+      result = definePrimitiveArray(scope, loperand);
+      if (result != 0)
+         return lxNewOp;
+   }
+
+   return 0;
+}
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {
@@ -713,15 +713,15 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
    return false;
 }
 
-//void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef)
-//{
-//   int size = defineStructSize(scope, targetRef, elementType, false);
-//   if (size != 0)
-//      writer.appendNode(lxSize, size);
-//
-//   writer.insert((LexicalType)operation, targetRef);
-//   writer.closeNode();
-//}
+void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef)
+{
+   int size = defineStructSize(scope, targetRef, elementType, false);
+   if (size != 0)
+      writer.appendNode(lxSize, size);
+
+   writer.insert((LexicalType)operation, targetRef);
+   writer.closeNode();
+}
 
 bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
 {
