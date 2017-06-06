@@ -2,9 +2,9 @@
 //#import system'text.
 //
 //#subject console_screen_buffer_info = CONSOLE_SCREEN_BUFFER_INFO.
-//
-//const int FILE_TYPE_CHAR = 2.
-//
+
+const int FILE_TYPE_CHAR = 2.
+
 //embeddable sealed struct CONSOLE_SCREEN_BUFFER_INFO
 //{
 //    win_coord      dwSize.    
@@ -46,58 +46,58 @@
 //        aCoord write &short:x &short:y.
 //    ]
 //}
-//
-//// --- $ConsoleHandleFactory --
-//
-//class $ConsoleHandleFactory =
-//{
-//    handle new &attributes:anAttributes
-//    [ 
-//        handle aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
-//        
-//        ^ aHandle.
-//    ]
-//    
-//    newWriter
-//    [
-//        handle handle := $ConsoleHandleFactory new &attributes:0FFFFFFF5h.
-//        int    dwMode := system'external'KERNEL32 GetFileType &int:handle.
-//        (dwMode == FILE_TYPE_CHAR)
-//            ? [ ^ $ConsoleWriter new &handle:handle. ]
-//            ! [ ^ $FileWriter new &handle:handle. ].
-//    ]
-//}.
-//
-//// --- ConsoleWriter ---
-//
-//sealed struct $ConsoleWriter
-//{
-//    handle theHandle.
-//
-//    stacksafe constructor new &handle:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-//
-//    write &literal:aLiteral
-//    [
-//        $self write &wide:(aLiteral wide).
-//    ]
-//
-//    write &wide : s
-//    [
-//        int len := s length.
-//
-//        system'external'KERNEL32 WriteConsoleW
-//            &int  :  theHandle
-//            &wide :  s
-//            &int  :  len
-//            &int  :  0                       // !! temporally we do not use it
-//            &int  :  0.             
-//
-//        // !!check the result of the operation
-//    ]
-//    
+
+// --- $ConsoleHandleFactory --
+
+class $ConsoleHandleFactory =
+{
+    handle new attributes:anAttributes
+    [ 
+        handle aHandle := system'external'KERNEL32 GetStdHandle int:anAttributes.
+        
+        ^ aHandle.
+    ]
+    
+    newWriter
+    [
+        handle handle := $ConsoleHandleFactory new attributes:0FFFFFFF5h.
+        int    dwMode := system'external'KERNEL32 GetFileType int:handle.
+        if (dwMode == FILE_TYPE_CHAR)
+            [ ^ $ConsoleWriter new handle:handle ];
+            [ ^ $FileWriter new handle:handle ]
+    ]
+}.
+
+// --- ConsoleWriter ---
+
+sealed struct $ConsoleWriter
+{
+    handle theHandle.
+
+    stacksafe constructor new handle:aHandle
+    [
+        theHandle := aHandle.
+    ]
+
+    write literal:aLiteral
+    [
+        $self write wide:aLiteral.
+    ]
+
+    write wide : s
+    [
+        int len := s length.
+
+        system'external'KERNEL32 WriteConsoleW
+            int  :  theHandle
+            wide :  s
+            int  :  len
+            int  :  0                       // !! temporally we do not use it
+            int  :  0.             
+
+        // !!check the result of the operation
+    ]
+    
 //    clear
 //    [
 //        console_screen_buffer_info aBuffer := 0.        
@@ -122,40 +122,40 @@
 //                
 //        system'external'KERNEL32 SetConsoleCursorPosition &int:theHandle &int:coord.
 //    ]
-//
-//    refresh
-//    [
-//    ]
-//
-//    free
-//    [
-//        system'external'KERNEL32 CloseHandle
-//            &int:theHandle.
-//    ]
-//}
-//
-//// --- $FileWriter ---
-//
-//sealed embeddable class $FileWriter
-//{
-//    handle theHandle.
-//
-//    stacksafe constructor new &handle:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-//
-//    stacksafe write &bytearray:buffer &int:length
-//    [
-//        int written := 0.
-//        system'external'KERNEL32 WriteFile
-//            &int       : theHandle
-//            &bytearray : buffer
-//            &int       : length
-//            &vint      : written
-//            &int       : 0.
-//    ]
-//
+
+    refresh
+    [
+    ]
+
+    free
+    [
+        system'external'KERNEL32 CloseHandle
+            int:theHandle.
+    ]
+}
+
+// --- $FileWriter ---
+
+sealed embeddable class $FileWriter
+{
+    handle theHandle.
+
+    stacksafe constructor new handle:aHandle
+    [
+        theHandle := aHandle
+    ]
+
+    stacksafe write bytearray:buffer int:length
+    [
+        int written := 0.
+        system'external'KERNEL32 WriteFile
+            int       : theHandle
+            bytearray : buffer
+            int       : length
+            vint      : written
+            int       : 0.
+    ]
+
 //    write &wide : literal
 //    [
 //        byte(256) buffer := 0.
@@ -203,22 +203,22 @@
 //            length -= subs_len.
 //        ].
 //    ]
-//    
-//    clear
-//    [
-//    ]
-//
-//    refresh
-//    [
-//    ]
-//
-//    free
-//    [
-//        system'external'KERNEL32 CloseHandle
-//            &int:theHandle.
-//    ]
-//}
-//
+    
+    clear
+    [
+    ]
+
+    refresh
+    [
+    ]
+
+    free
+    [
+        system'external'KERNEL32 CloseHandle
+            int:theHandle.
+    ]
+}
+
 //// --- ConsoleReader ---
 //
 //sealed embeddable struct $ConsoleReader
@@ -404,6 +404,6 @@
 
 // --- Console Standard Symbols
 
-symbol stdConsoleWriter = /*$ConsoleHandleFactory newWriter*/$nil.
+symbol stdConsoleWriter = $ConsoleHandleFactory newWriter.
 
 symbol stdConsoleReader = /*$ConsoleReader new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF6h)*/$nil.

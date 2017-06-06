@@ -43,7 +43,7 @@
 #11 #131072     __int16.
 #11 #262144     __int32.
 #12 #262144     __dword.
-//#template(-12,4)  __ptr {}
+#12 #262144     __ptr.
 #13 #524288     __int64.
 #14 #524288     __real64.
 
@@ -116,8 +116,8 @@ type nfunc      :: system'IndexFunction1.
 type nnfunc     :: system'IndexFunction2.
 type n3func     :: system'IndexFunction3.
 
-//// === system handles ===
-//#subject handle     = system'Handle.
+// === system handles ===
+type handle     :: system'Handle.
 //#subject rt_ptr     = system'RTPointer.
 //#subject dirty_ptr  = system'UnsafePointer.
 

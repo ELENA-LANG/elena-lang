@@ -89,7 +89,7 @@ enum Symbol
    nsBiggerSwitchOption         = 0x0103E,
    nsLessSwitchOption           = 0x0103F,
    nsL6Operation                = 0x01041,
-//   //nsSizeValue                  = 0x01042,
+   nsSizeValue                  = 0x01042,
    nsL0Operation                = 0x01043,
    nsDefaultGeneric             = 0x01046,
    nsSubject                    = 0x01047,
@@ -98,6 +98,7 @@ enum Symbol
    nsToken                      = 0x0104C,
    nsScope                      = 0x0104D,
    nsAttribute                  = 0x0104E,
+   nsRootMessage                = 0x0104F,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

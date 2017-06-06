@@ -1041,6 +1041,7 @@ private:
    void generateAttributes(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes/*, bool variableMode, bool embeddableMode = false*/);
    void copyTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributeValues/*, bool variableMode, bool embeddableMode*/);
    void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, bool operationMode*/);
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, TemplateScope& scope);

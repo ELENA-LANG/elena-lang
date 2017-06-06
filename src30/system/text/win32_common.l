@@ -1,6 +1,6 @@
 //import system.
-//
-//// --- LRLN ---
-//
-//const newLine
-//    = $13$10.
+
+// --- LRLN ---
+
+const newLine
+    = $13$10.

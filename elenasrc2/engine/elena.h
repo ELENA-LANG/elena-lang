@@ -403,7 +403,7 @@ public:
                if (string[i]=='"') {
                   mode = 1;
                }
-               else if (string[i]=='#') {
+               else if (string[i]=='$') {
                   mode = 2;
                   index = i + 1;
                }
@@ -435,7 +435,7 @@ public:
                   if(string[i] == '"') {
                      mode = 1;
                   }
-                  else if(string[i] == '#') {
+                  else if(string[i] == '$') {
                      index = i + 1;
                      mode = 2;
                   }

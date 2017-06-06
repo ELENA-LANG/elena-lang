@@ -12,15 +12,15 @@ class $Console
     [
         theWriter := aWriter.
         theReader := aReader.
-        theNewLineConstant := 'newLine literal.
+        theNewLineConstant := 'newLine.
     ]
 
     /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
     writeLine : anObject
     [
-//        theWriter write &literal:(anObject literal).
-//        
-//        theWriter write &literal:theNewLineConstant.
+        theWriter write literal:anObject.
+        
+        theWriter write literal:theNewLineConstant
     ]
 
 //    /// Writes the specified literal value to the standard output stream.

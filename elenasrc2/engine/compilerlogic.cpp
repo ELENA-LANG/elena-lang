@@ -475,10 +475,10 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
    return false;
 }
 
-//bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
-//{
-//   return test(info.header.flags, elDynamicRole | elEmbeddable | elStructureRole);
-//}
+bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
+{
+   return test(info.header.flags, elDynamicRole | elEmbeddable | elStructureRole);
+}
 
 bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
 {
