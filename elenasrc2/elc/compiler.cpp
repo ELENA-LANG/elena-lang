@@ -14,14 +14,14 @@
 
 using namespace _ELENA_;
 
-////void test2(SNode node)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      test2(current);
-////      current = current.nextNode();
-////   }
-////}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 #define HINT_CLOSURE_MASK     0xC0008800
@@ -6998,13 +6998,13 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          writer.insert(lxExpression);
          writer.closeNode();
          break;
-//      case lxCatchOperation:
-//      case lxAltOperation:
-//         if (scope.codeMode && scope.templateRef == 0) {
-//            // HOTFIX : for try-catch template
-//            scope.codeNode = SNode();
-//         }
-//         writer.newBookmark();
+      case lxCatchOperation:
+      case lxAltOperation:
+         if (scope.type == TemplateScope::ttCodeTemplate && scope.templateRef == 0) {
+            // HOTFIX : for try-catch template
+            scope.codeNode = SNode();
+         }
+         writer.newBookmark();
       case lxMessage:
 //         if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
 //            writer.newNode(lxClosureMessage);
@@ -7017,16 +7017,16 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
             writer.insert(lxExpression);
             writer.closeNode();
 //         }
-//         if (current == lxCatchOperation) {
-//            writer.removeBookmark();
-//            writer.insert(lxTrying);
-//            writer.closeNode();
-//         }
-//         else if (current == lxAltOperation) {
-//            writer.removeBookmark();
-//            writer.insert(lxAlt);
-//            writer.closeNode();
-//         }
+         if (current == lxCatchOperation) {
+            writer.removeBookmark();
+            writer.insert(lxTrying);
+            writer.closeNode();
+         }
+         else if (current == lxAltOperation) {
+            writer.removeBookmark();
+            writer.insert(lxAlt);
+            writer.closeNode();
+         }
          break;
       case lxExtension:
          writer.newNode(current.type, current.argument);
@@ -7119,7 +7119,7 @@ void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, Templa
 
    SNode current = node.firstChild();
    bool identifierMode = current.type == lxIdentifier;
-//   bool listMode = false;
+   bool listMode = false;
    // check if it is new operator
    if (identifierMode && current.nextNode() == lxExpression && current.nextNode().nextNode() != lxExpression) {
       scope.copySubject(writer, current);
@@ -7134,14 +7134,14 @@ void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, Templa
          if (current == lxExpression) {
 //            if (current.nextNode() == lxExpression)
 //               listMode = true;
-//
-//            if (identifierMode) {
-//               generateExpressionTree(writer, current, scope, listMode);
-//            }
+
+            if (identifierMode) {
+               generateExpressionTree(writer, current, scope, listMode);
+            }
 //            else if (listMode) {
 //               generateExpressionTree(writer, current, scope, true);
 //            }
-            /*else */generateObjectTree(writer, current, scope);
+            else generateObjectTree(writer, current, scope);
          }
 //         else if (listMode && (current == lxMessage || current == lxOperator)) {
 //            // HOTFIX : if it is an operation with a collection

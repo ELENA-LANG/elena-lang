@@ -27,7 +27,7 @@
 //#template(-8209)         __tape_group {}
 #8201           const.
 #8197           struct.
-//#template(-8204)         nonstructural {}
+#8204           nonstructural.
 #8198           listable.
 #8200           string.
 #8193           embeddable.
@@ -57,8 +57,8 @@ type bool    :: system'BaseBoolValue.
 // === basic primitive types ===
 
 //#subject keyvalue   = system'KeyValue.
-//
-//#subject ref        = system'Variable.
+
+type ref        :: system'Variable.
 
 type byte       :: system'ByteNumber.
 type short      :: system'ShortNumber.
@@ -66,15 +66,15 @@ type int        :: system'IntNumber.
 type long       :: system'LongNumber.
 type real       :: system'RealNumber.
 type char       :: system'CharValue.
-//#subject mssg       = system'Message.
+type mssg       :: system'Message.
 //#subject ext_mssg   = system'ExtensionMessage.
-//
-///// A verb symbol
-//
-///// An instance of system'Verb class. 
-//#subject verb       = system'Verb.
-//
-//#subject subject    = system'Signature.
+
+/// A verb symbol
+
+/// An instance of system'Verb class. 
+type verb       :: system'Verb.
+
+type subject    :: system'Signature.
 //#subject symbol_ref = system'Symbol.
 
 // === basic dynamic types ===

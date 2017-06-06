@@ -3,8 +3,12 @@ In development:
 ------                              
 
               xdev - refactoring
+                 * short cut syntax for (:e) [] , &e [] or e => []
+
                  * get rid of +=, -=, *=, /= operators (and divideInto, multiplyBy)
                  * uncomment matrixof template
+
+                 * generic handler - { ... generic eval : anObject = false. } can it be replaced with { ... generic : anObject = false. }?
 
                  * check attribute duplicates
                  * test if outnprop works correctly with optimization
@@ -525,6 +529,9 @@ Pipeline:
                          with Memory32Map, Memory32HashTable
 
               xdev - general implementation     
+                       * var o := 2 object \ back:$nil. - the following code should not be optimized (e.g. object operation
+                         should not be optimized because of alternative branch)
+
                        * refactore - validateDeclarationAttribute - too many out parameters
                        * replace all operation with StringHelper with some built-in operators
 

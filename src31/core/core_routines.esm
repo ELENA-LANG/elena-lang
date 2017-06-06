@@ -103,7 +103,7 @@ labErr:
   
 end
 
-procedure __object.get&class[1]
+procedure __object.get&class_ref[1]
 
   bloadsi 1
   class
@@ -5172,3 +5172,12 @@ procedure __thread.get&leaveCriticalSection[1]
   quitn 1
   
 end
+
+procedure __object.get&throw[1]
+
+  pop
+  aloadsi 0
+  throw
+  
+end
+

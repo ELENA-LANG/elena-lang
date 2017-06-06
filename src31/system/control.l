@@ -38,10 +38,7 @@ limited class Indexer :: dispatchable(indexer)
     int index :: outnprop(readIndexTo).
     
     /// Sets the index by specified value
-    ///
-    /// Default implementation for compatibility calls obsolete write&index method
-    stacksafe writeIndex int:anIndex 
-        [ $self write index:(IntNumber new int:anIndex) ] 
+    stacksafe writeIndex int:anIndex [ ] 
     
     /// Sets the index by specified value
     set index:anIndex 
@@ -583,9 +580,6 @@ limited class IndexFunction1 :: dispatchable(nfunc)
     stacksafe action eval int:n 
         = $self eval index:(IntNumber new int:n).
 
-    /// Obsolete
-    stacksafe action eval index:n []
-
     /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
     sealed stacksafe rewind int:aStart int:n int:dx
     [
@@ -641,9 +635,6 @@ limited class IndexFunction2 :: dispatchable(nnfunc)
     /// Default implementation calls eval&index&index for compatibility with old code
     stacksafe action eval int:i int:j
         = $self eval index:(IntNumber new int:i) index:(IntNumber new int:j).
-
-    /// Obsolete
-    action eval index:i index:j []
 
     /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
     sealed rewind int:i int:j int:n int:m int:dx

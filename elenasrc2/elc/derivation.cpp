@@ -98,8 +98,8 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsLoop:
 //      case nsExtern:
 //      case nsDefaultGeneric:
-//      case nsCatchMessageOperation:
-//      case nsAltMessageOperation:
+      case nsCatchMessageOperation:
+      case nsAltMessageOperation:
 //      case nsSwitchOption:
 //      case nsLastSwitchOption:
 //      case nsBiggerSwitchOption:
