@@ -77,6 +77,7 @@
 #define V_METHOD         (ref_t)-16393
 #define V_LOOP           (ref_t)-16394
 #define V_IMPORT         (ref_t)-16395
+#define V_EXTERN         (ref_t)-16396
 
 namespace _ELENA_
 {
@@ -112,7 +113,8 @@ enum DeclarationAttr
    daField    = 0x08,
    daMethod   = 0x10, 
    daLoop     = 0x20,
-   daImport   = 0x40
+   daImport   = 0x40,
+   daExtern   = 0x80
 };
 
 // --- _CompileScope ---

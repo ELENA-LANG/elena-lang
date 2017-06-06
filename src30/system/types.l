@@ -3,6 +3,7 @@
 #16395          import.
 #16391          template.
 #16391 #16394   loop_template.
+#16391 #16396   extern_template.
 #16385          var.
 #16386          class.
 #16384          constructor.

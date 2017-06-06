@@ -4050,11 +4050,11 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             compileVariable(writer, current, scope);
             break;
-//         case lxExtern:
-//            writer.newNode(lxExternFrame);
-//            compileCode(writer, current, scope);
-//            writer.closeNode();
-//            break;
+         case lxExtern:
+            writer.newNode(lxExternFrame);
+            compileCode(writer, current.findSubNode(lxCode), scope);
+            writer.closeNode();
+            break;
          case lxEOF:
             needVirtualEnd = false;
             writer.newNode(lxBreakpoint, dsEOP);
@@ -6751,9 +6751,9 @@ void Compiler :: generateMessageTree(SyntaxWriter& writer, SNode node, TemplateS
    //         //   unpackChildren(current);
    //         //   _writer.closeNode();
    //         //   break;
-//         case lxExtern:
-//            generateCodeTree(writer, current, scope);
-//            break;
+         case lxExtern:
+            generateCodeTree(writer, current, scope);
+            break;
          case lxCode:
             generateCodeTree(writer, current, scope);
             if (scope.type == TemplateScope::ttCodeTemplate) {
@@ -7224,7 +7224,7 @@ void Compiler :: generateCodeTree(SyntaxWriter& writer, SNode node, TemplateScop
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
       }
-      else if (current == lxLoop || current == lxCode/* || current == lxExtern*/) {
+      else if (current == lxLoop || current == lxCode || current == lxExtern) {
          generateCodeTree(writer, current, scope);
       }
       else generateObjectTree(writer, current, scope);
@@ -7572,7 +7572,7 @@ bool Compiler :: generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope
 
    SNode current = templateTree.readRoot().findChild(lxCode).firstChild();
    while (current != lxNone) {
-      if (current.type == lxLoop || current.type == lxExpression)
+      if (current.type == lxLoop || current.type == lxExpression || current.type == lxExtern)
          copyExpressionTree(writer, current, scope);
 
       current = current.nextNode();
@@ -8112,6 +8112,9 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
          if (test(declType, daLoop)) {
             exprNode.injectNode(lxLoop);
          }
+         else if (test(declType, daExtern)) {
+            exprNode.injectNode(lxExtern);
+         }
 
          exprNode = lxCode;
       }
@@ -8147,15 +8150,14 @@ void Compiler :: generateScope(SyntaxWriter& writer, SNode node, TemplateScope& 
          attributes.refresh();
 
          // check if it is a code template
-         if (node.findChild(lxBaseParent)) {
-            generateDeclaration(writer, node, scope, attributes);
-         }
-         // check if it could be compiled as a singleton
-         else if (!generateSingletonScope(writer, node, scope, attributes)) {
-            node = lxSymbol;
-            attributes.refresh();
+         if (!generateDeclaration(writer, node, scope, attributes)) {
+            // check if it could be compiled as a singleton
+            if (!generateSingletonScope(writer, node, scope, attributes)) {
+               node = lxSymbol;
+               attributes.refresh();
 
-            generateSymbolTree(writer, node, scope, attributes);
+               generateSymbolTree(writer, node, scope, attributes);
+            }
          }
       }
    }

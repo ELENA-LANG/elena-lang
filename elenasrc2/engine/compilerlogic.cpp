@@ -1024,34 +1024,40 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 
 bool CompilerLogic :: validateDeclarationAttribute(int attrValue, DeclarationAttr& declType)
 {
+   DeclarationAttr attr = daNone;
    switch ((size_t)attrValue) {
       case V_TYPETEMPL:
-         declType = (DeclarationAttr)(declType | daType);
-         return true;
+         attr = daType;
+         break;
       case V_CLASS:
       case V_STRUCT:
       case V_STRING:
-         declType = (DeclarationAttr)(declType | daClass);
-         return true;
+         attr = daClass;
+         break;
       case V_TEMPLATE:
-         declType = (DeclarationAttr)(declType | daTemplate);
-         return true;
+         attr = daTemplate;
+         break;
       case V_FIELD:
-         declType = (DeclarationAttr)(declType | daField);
-         return true;
+         attr = daField;
+         break;
       case V_METHOD:
-         declType = (DeclarationAttr)(declType | daMethod);
-         return true;
+         attr = daMethod;
+         break;
       case V_LOOP:
-         declType = (DeclarationAttr)(declType | daLoop);
-         return true;
+         attr = daLoop;
+         break;
       case V_IMPORT:
-         declType = (DeclarationAttr)(declType | daImport);
-         return true;
+         attr = daImport;
+         break;
+      case V_EXTERN:
+         attr = daExtern;
+         break;
       default:
          return true;
    }
 
+   declType = (DeclarationAttr)(declType | attr);
+   return true;
 }
 
 bool CompilerLogic :: validateFieldAttribute(int& attrValue)

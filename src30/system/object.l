@@ -1,3 +1,12 @@
+
+// --- while statement ---
+
+loop_template xwhile :: expr =
+    expr bool ?
+    [
+    ].
+
+
 // === basic templates ===
 
 template dispatchable :: template_subj

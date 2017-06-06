@@ -222,191 +222,191 @@ sealed embeddable class $FileWriter
     ]
 }
 
-//// --- ConsoleReader ---
-//
-//sealed embeddable struct $ConsoleReader
-//{
-//    handle theHandle.
-//    
-//    constructor new &handle:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-//
-//    stacksafe read &vchar:aChar
-//    [
-//        byte(20) aDump := 0.
-//        int      aNumberRead := 0.
-//        short    anEventType := 0.
-//        int      aKeyDown := 0.
-//        int      aHandle := theHandle.
-//        
-//        bool found := false.
-//        until (found)
-//        [
-//            #extern
-//            [
-//                system'external'KERNEL32 ReadConsoleInputW
-//                    &int           : aHandle
-//                    &bytearray     : aDump
-//                    &int           : 1
-//                    &vint          : aNumberRead.
-//            ].
-//
-//            byteArrayHelper read &bytearray:aDump &int:0 &vshort:anEventType.
-//            (anEventType == 1)
-//                ? [  
-//                    byteArrayHelper read &bytearray:aDump &int:4 &vint:aKeyDown.
-//                    
-//                    found := aKeyDown == 1.
-//                ]
-//                ! [ found := false. ].
-//        ].
-//
-//        byteArrayHelper read &bytearray:aDump &int:14 &vchar:aChar.
-//    ]
-//
-//    stacksafe read &vint:aKey
-//    [
-//        byte(20) aDump := 0.
-//        int      aNumberRead := 0.
-//        short    anEventType := 0.
-//        int      aKeyDown := 0.
-//        
-//        bool found := false.
-//        until (found)
-//        [
-//            #extern
-//            [
-//                system'external'KERNEL32 ReadConsoleInputW
-//                    &int           : theHandle
-//                    &bytearray     : aDump
-//                    &int           : 1
-//                    &vint          : aNumberRead.
-//            ].
-//
-//            byteArrayHelper read &bytearray:aDump &int:0 &vshort:anEventType.
-//            (anEventType == 1)
-//                ? [  
-//                    byteArrayHelper read &bytearray:aDump &int:4 &vint:aKeyDown.
-//                    
-//                    found := aKeyDown == 1.
-//                ]
-//                ! [ found := false. ].
-//        ].
-//                    
-//        byteArrayHelper read &bytearray:aDump &int:8 &vint:aKey.
-//    ]
-//
-//    bool is &keyAvailable
-//    [
-//        byte(20) aDump := 0.
-//        int      aNumberRead := 1.
-//        short    anEventType := 0.
-//        int      aKeyDown := 0.
-//        
-//        while (true)
-//        [
-//            aNumberRead := 0.
-//            
-//            system'external'KERNEL32 PeekConsoleInputW 
-//                        &int           : theHandle
-//                        &bytearray     : aDump
-//                        &int           : 1
-//                        &vint          : aNumberRead.
-//                        
-//            (0 == aNumberRead)
-//                ? [ ^ false. ].
-//                                                                                    
-//            byteArrayHelper read &bytearray:aDump &int:0 &vshort:anEventType.
-//            (anEventType == 1)
-//                ? [ 
-//                    byteArrayHelper read &bytearray:aDump &int:4 &vint:aKeyDown.
-//                        
-//                    (aKeyDown == 1)
-//                        ? [ ^ true. ].
-//                ].
-//
-//            system'external'KERNEL32 ReadConsoleInputW
-//                &int           : theHandle
-//                &bytearray     : aDump
-//                &int           : 1
-//                &vint          : aNumberRead.                                
-//                
-//        ].
-//        
-//        ^ false.                    
-//    ]
-//
-//    stacksafe read &shortarray:aBuffer &vint:aRetVal
-//    [
-//        #extern
-//        [
-//            system'external'KERNEL32 ReadConsoleW
-//                &int        : theHandle
-//                &shortarray : aBuffer
-//                &int        : aRetVal
-//                &vint       : aRetVal
-//                &int        : 0.
-//        ].            
-//    ]
-//    
-//    read &wide
-//    [
-//        short(127) aBuffer := 0.
-//        int        aLength := 0.
-//        var        anOutput := emptyWideLiteralValue.
-//        
-//        bool continue := true.
-//        while (continue)
-//        [
-//            aLength := 127.
-//            $self read &shortarray:aBuffer &vint:aLength.
-//            
-//            short aShort := aBuffer@(aLength - 1).
-//            (aShort == 0Ah)
-//                ? [
-//                    aLength := aLength - 2.
-//                    
-//                    continue := false.
-//                ].
-//            
-//            var aTemp := WideLiteralValue $new &int:0 &int:aLength &shortarray:aBuffer.
-//            
-//            anOutput := anOutput + aTemp.
-//        ].
-//
-//        ^ anOutput.
-//    ]
-//
-//    read &literal
-//        = $self read &wide literal.
-//
-//    int
-//    [
-//        int aRetVal := 0.
-//        $self read &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//            
-//    char
-//    [
-//        char aRetVal := #0.
-//        $self read &vchar:aRetVal.
-//        
-//        ^ CharValue new &char:aRetVal.
-//    ]
-//
-//    free
-//    [
-//        system'external'KERNEL32 CloseHandle
-//            &int:theHandle.
-//    ]
-//}
+// --- ConsoleReader ---
+
+sealed embeddable struct $ConsoleReader
+{
+    handle theHandle.
+    
+    constructor new handle:aHandle
+    [
+        theHandle := aHandle.
+    ]
+
+    stacksafe read vchar:aChar
+    [
+        byte  aDump(20).
+        int   aNumberRead := 0.
+        short anEventType := 0.
+        int   aKeyDown := 0.
+        int   aHandle := theHandle.
+        
+        bool found := false.
+        until (found)
+        [
+            extern
+            [
+                system'external'KERNEL32 ReadConsoleInputW
+                    int           : aHandle
+                    bytearray     : aDump
+                    int           : 1
+                    vint          : aNumberRead.
+            ].
+
+            byteArrayHelper read bytearray:aDump int:0 vshort:anEventType.
+            if (anEventType == 1)
+                [  
+                    byteArrayHelper read bytearray:aDump int:4 vint:aKeyDown.
+                    
+                    found := aKeyDown == 1
+                ];
+                [ found := false ]
+        ].
+
+        byteArrayHelper read bytearray:aDump int:14 vchar:aChar.
+    ]
+
+    stacksafe read vint:aKey
+    [
+        byte  aDump(20).
+        int   aNumberRead := 0.
+        short anEventType := 0.
+        int   aKeyDown := 0.
+        
+        bool found := false.
+        until (found)
+        [
+            extern
+            [
+                system'external'KERNEL32 ReadConsoleInputW
+                    int           : theHandle
+                    bytearray     : aDump
+                    int           : 1
+                    vint          : aNumberRead
+            ].
+
+            byteArrayHelper read bytearray:aDump int:0 vshort:anEventType.
+            if (anEventType == 1)
+                [  
+                    byteArrayHelper read bytearray:aDump int:4 vint:aKeyDown.
+                    
+                    found := aKeyDown == 1
+                ];
+                [ found := false ]
+        ].
+                    
+        byteArrayHelper read bytearray:aDump int:8 vint:aKey
+    ]
+
+    bool is keyAvailable
+    [
+        byte  aDump(20).
+        int   aNumberRead := 1.
+        short anEventType := 0.
+        int   aKeyDown := 0.
+        
+        while (true)
+        [
+            aNumberRead := 0.
+            
+            system'external'KERNEL32 PeekConsoleInputW 
+                        int           : theHandle
+                        bytearray     : aDump
+                        int           : 1
+                        vint          : aNumberRead.
+                        
+            if (0 == aNumberRead)
+                [ ^ false ].
+                                                                                    
+            byteArrayHelper read bytearray:aDump int:0 vshort:anEventType.
+            if (anEventType == 1)
+                [ 
+                    byteArrayHelper read bytearray:aDump int:4 vint:aKeyDown.
+                        
+                    if (aKeyDown == 1)
+                        [ ^ true ]
+                ].
+
+            system'external'KERNEL32 ReadConsoleInputW
+                int           : theHandle
+                bytearray     : aDump
+                int           : 1
+                vint          : aNumberRead
+                
+        ].
+        
+        ^ false.                   
+    ]
+
+    stacksafe read shortarray:aBuffer vint:aRetVal
+    [
+        extern
+        [
+            system'external'KERNEL32 ReadConsoleW
+                int        : theHandle
+                shortarray : aBuffer
+                int        : aRetVal
+                vint       : aRetVal
+                int        : 0
+        ].            
+    ]
+    
+    read wide
+    [
+        short aBuffer(127).
+        int   aLength := 0.
+        var   anOutput := emptyWideLiteralValue.
+        
+        bool continue := true.
+        while (continue)
+        [
+            aLength := 127.
+            $self read shortarray:aBuffer vint:aLength.
+            
+            short aShort := aBuffer@(aLength - 1).
+            if (aShort == 0Ah)
+                [
+                    aLength := aLength - 2.
+                    
+                    continue := false
+                ].
+            
+            var aTemp := WideLiteralValue $new int:0 int:aLength shortarray:aBuffer.
+            
+            anOutput := anOutput + aTemp.
+        ].
+
+        ^ anOutput
+    ]
+
+    read literal
+        = $self read wide; literal.
+
+    int
+    [
+        int aRetVal := 0.
+        $self read vint:aRetVal.
+        
+        ^ IntNumber new int:aRetVal
+    ]
+            
+    char
+    [
+        char aRetVal := $0.
+        $self read vchar:aRetVal.
+        
+        ^ CharValue new char:aRetVal
+    ]
+
+    free
+    [
+        system'external'KERNEL32 CloseHandle
+            int:theHandle.
+    ]
+}
 
 // --- Console Standard Symbols
 
 symbol stdConsoleWriter = $ConsoleHandleFactory newWriter.
 
-symbol stdConsoleReader = /*$ConsoleReader new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF6h)*/$nil.
+symbol stdConsoleReader = $ConsoleReader new handle:($ConsoleHandleFactory new attributes:0FFFFFFF6h).

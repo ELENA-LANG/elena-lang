@@ -104,6 +104,12 @@ loop_template until :: expr =
     expr bool !
     [
     ].
+    
+// --- extern statement ---
+
+extern_template extern :: dummy =
+    [
+    ].
 
 // --- if statement ---
 
