@@ -1,51 +1,54 @@
-//#import system.
-//#import system'text.
-//
-//#subject console_screen_buffer_info = CONSOLE_SCREEN_BUFFER_INFO.
+import system'text.
+
+type console_screen_buffer_info :: CONSOLE_SCREEN_BUFFER_INFO.
 
 const int FILE_TYPE_CHAR = 2.
 
-//embeddable sealed struct CONSOLE_SCREEN_BUFFER_INFO
-//{
-//    win_coord      dwSize.    
-//    win_coord      dwCursorPosition.    
-//    short          wAttributes.
-//    win_small_rect srWindow.
-//    win_coord      dwMaximumWindowSize.
-//
-//    stacksafe implicit int : n
-//    [
-//        // !! temporal
-//    ]
-//
-//    stacksafe outwprop(SizeX) readSizeX &vshort:aRetVal
-//    [
-//        dwSize readX &vshort:aRetVal.
-//    ]
-//
-//    stacksafe outwprop(SizeY) readSizeY &vshort:aRetVal
-//    [
-//        dwSize readY &vshort:aRetVal.
-//    ]
-//
-//    stacksafe readSize &win_coord:aCoord
-//    [
-//        short x := dwSize X.
-//        short y := dwSize Y.
-//        
-//        aCoord write &short:x &short:y.
-//    ]
-//
-//    stacksafe readCursorPosition &win_coord:aCoord
-//    [
-//        win_coord aCopy := dwCursorPosition.
-//        
-//        short x := aCopy X.
-//        short y := aCopy Y.
-//        
-//        aCoord write &short:x &short:y.
-//    ]
-//}
+embeddable sealed struct CONSOLE_SCREEN_BUFFER_INFO
+{
+    win_coord      dwSize.    
+    win_coord      dwCursorPosition.    
+    short          wAttributes.
+    win_small_rect srWindow.
+    win_coord      dwMaximumWindowSize.
+
+    stacksafe implicit int : n
+    [
+        // !! temporal
+    ]
+
+    short SizeX :: outwprop(readSizeXTo).
+    
+    short SizeY :: outwprop(readSizeYTo).
+
+    stacksafe readSizeXTo vshort:aRetVal
+    [
+        dwSize readX vshort:aRetVal.
+    ]
+
+    stacksafe readSizeYTo vshort:aRetVal
+    [
+        dwSize readY vshort:aRetVal.
+    ]
+
+    stacksafe readSizeTo win_coord:aCoord
+    [
+        short x := dwSize X.
+        short y := dwSize Y.
+        
+        aCoord write short:x short:y.
+    ]
+
+    stacksafe readCursorPositionTo win_coord:aCoord
+    [
+        win_coord aCopy := dwCursorPosition.
+        
+        short x := aCopy X.
+        short y := aCopy Y.
+        
+        aCoord write short:x short:y.
+    ]
+}
 
 // --- $ConsoleHandleFactory --
 
@@ -98,30 +101,30 @@ sealed struct $ConsoleWriter
         // !!check the result of the operation
     ]
     
-//    clear
-//    [
-//        console_screen_buffer_info aBuffer := 0.        
-//        int                        aLength := 0.
-//        int                        aRetVal := 0.
-//        
-//        system'external'KERNEL32 GetConsoleScreenBufferInfo &int:theHandle &console_screen_buffer_info:aBuffer.
-//
-//        short aSizeX := aBuffer SizeX.
-//        short aSizeY := aBuffer SizeY.
-//                
-//        aLength := aSizeX * aSizeY.
-//        
-//        system'external'KERNEL32 FillConsoleOutputCharacterW &int:theHandle &short:32 &int:aLength &int:0 &vint:aRetVal.
-//        
-//        system'external'KERNEL32 SetConsoleCursorPosition &int:theHandle &int:0.
-//    ]
-//
-//    stacksafe setCursorPosition &int:x &int:y
-//    [
-//        int coord := y * 10000h + x.
-//                
-//        system'external'KERNEL32 SetConsoleCursorPosition &int:theHandle &int:coord.
-//    ]
+    clear
+    [
+        console_screen_buffer_info aBuffer := 0.        
+        int                        aLength := 0.
+        int                        aRetVal := 0.
+        
+        system'external'KERNEL32 GetConsoleScreenBufferInfo int:theHandle console_screen_buffer_info:aBuffer.
+
+        short aSizeX := aBuffer SizeX.
+        short aSizeY := aBuffer SizeY.
+                
+        aLength := aSizeX * aSizeY.
+        
+        system'external'KERNEL32 FillConsoleOutputCharacterW int:theHandle short:32 int:aLength int:0 vint:aRetVal.
+        
+        system'external'KERNEL32 SetConsoleCursorPosition int:theHandle int:0.
+    ]
+
+    stacksafe setCursorPosition int:x int:y
+    [
+        int coord := y * 10000h + x.
+                
+        system'external'KERNEL32 SetConsoleCursorPosition int:theHandle int:coord.
+    ]
 
     refresh
     [
@@ -156,53 +159,53 @@ sealed embeddable class $FileWriter
             int       : 0.
     ]
 
-//    write wide : literal
-//    [
-//        byte buffer(256).
-//        int  length := literal length.
-//        int  index := 0.
-//        int  buf_len := 256.
-//        int  subs_len := 256.
-//        while (length > 0)
-//        [
-//            buf_len := 256.
-//            
-//            if (length < 128)
-//                [ subs_len := length ] ;
-//                [ subs_len := 128 ].
-//            
-//            OEMEncoder convert int:index vint:subs_len wide:literal bytearray:buffer vint:buf_len.
-//            
-//            $self write bytearray:buffer int:buf_len.
-//            
-//            index := index + subs_len.
-//            length := length - subs_len.
-//        ].
-//    ]
+    write wide : literal
+    [
+        byte buffer(256).
+        int  length := literal length.
+        int  index := 0.
+        int  buf_len := 256.
+        int  subs_len := 256.
+        while (length > 0)
+        [
+            buf_len := 256.
+            
+            if (length < 128)
+                [ subs_len := length ] ;
+                [ subs_len := 128 ].
+            
+            OEMEncoder convert int:index vint:subs_len wide:literal bytearray:buffer vint:buf_len.
+            
+            $self write bytearray:buffer int:buf_len.
+            
+            index := index + subs_len.
+            length := length - subs_len.
+        ].
+    ]
     
-//    write &literal : literal
-//    [
-//        byte(256) buffer := 0.
-//        int       length := literal length.
-//        int       index := 0.
-//        int       buf_len := 256.
-//        int       subs_len := 256.
-//        while (length > 0)
-//        [
-//            buf_len := 256.
-//            
-//            (length < 128)
-//                ? [ subs_len := length. ]  
-//                ! [ subs_len := 128. ].
-//            
-//            OEMEncoder convert &int:index &vint:subs_len &literal:literal &bytearray:buffer &vint:buf_len.
-//            
-//            $self write &bytearray:buffer &int:buf_len.
-//            
-//            index += subs_len.
-//            length -= subs_len.
-//        ].
-//    ]
+    write literal : literal
+    [
+        byte buffer(256).
+        int  length := literal length.
+        int  index := 0.
+        int  buf_len := 256.
+        int  subs_len := 256.
+        while (length > 0)
+        [
+            buf_len := 256.
+            
+            if (length < 128)
+                [ subs_len := length ];
+                [ subs_len := 128 ].
+            
+            OEMEncoder convert int:index vint:subs_len literal:literal bytearray:buffer vint:buf_len.
+            
+            $self write bytearray:buffer int:buf_len.
+            
+            index := index + subs_len.
+            length := length - subs_len
+        ].
+    ]
     
     clear
     [

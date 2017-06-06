@@ -53,20 +53,20 @@ method template outnprop :: type,prop_name,target_method
 //        ^ val.
 //   ]
 //}
-//
-//// --- outwprop ---
-//
-//#template(-16388) outwprop (template_subj)
-//{
-//   stacksafe embeddable short template_subj
-//   [
-//        short val := 0.
-//        $self target_method &vshort:val.
-//        
-//        ^ val.
-//   ]
-//}
-//
+
+// --- outwprop ---
+
+method template outwprop :: type,prop_name,target_method
+{
+   stacksafe embeddable type prop_name
+   [
+        short val := 0.
+        $self target_method vshort:val.
+        
+        ^ val
+   ]
+}
+
 //// --- nfn ---
 //
 //#template(-16388) nfn (template_fn)

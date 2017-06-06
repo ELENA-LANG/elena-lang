@@ -1,5 +1,6 @@
 /// Attributes
 #16390          type.
+#16395          import.
 #16391          template.
 #16391 #16394   loop_template.
 #16385          var.
@@ -119,7 +120,7 @@ type n3func     :: system'IndexFunction3.
 // === system handles ===
 type handle     :: system'Handle.
 //#subject rt_ptr     = system'RTPointer.
-//#subject dirty_ptr  = system'UnsafePointer.
+type dirty_ptr  :: system'UnsafePointer.
 
 // --- Enumerators / Indexers ---
 type enumerator :: system'Enumerator.

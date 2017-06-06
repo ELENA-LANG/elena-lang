@@ -991,7 +991,7 @@ private:
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
    bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
-//   void compileIncludeModule(SNode node, ModuleScope& scope);
+   void compileIncludeModule(SNode node, ModuleScope& scope);
 //   void compileForward(SNode node, ModuleScope& scope);
    void declareSubject(SyntaxWriter& writer, SNode member, ModuleScope& scope);
 

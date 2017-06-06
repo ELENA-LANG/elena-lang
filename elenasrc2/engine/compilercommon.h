@@ -76,6 +76,7 @@
 #define V_FIELD          (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
 #define V_LOOP           (ref_t)-16394
+#define V_IMPORT         (ref_t)-16395
 
 namespace _ELENA_
 {
@@ -100,6 +101,18 @@ enum MethodHint
    tpIfNotBranch = 0x200,
    tpConstructor = 0x400,
    tpConversion  = 0x800
+};
+
+enum DeclarationAttr
+{
+   daNone     = 0x00,
+   daType     = 0x01,
+   daClass    = 0x02,
+   daTemplate = 0x04,
+   daField    = 0x08,
+   daMethod   = 0x10, 
+   daLoop     = 0x20,
+   daImport   = 0x40
 };
 
 // --- _CompileScope ---
@@ -263,7 +276,7 @@ public:
    virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
-   virtual bool validateDeclarationAttribute(int attrValue, bool& typeDecl, bool& classDecl, bool& templateDecl, bool& fieldDecl, bool& methodDecl, bool& loopDecl) = 0;
+   virtual bool validateDeclarationAttribute(int attrValue, DeclarationAttr& declType) = 0;
 //   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
 

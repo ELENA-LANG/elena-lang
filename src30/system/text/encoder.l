@@ -1,70 +1,41 @@
-#import system. 
-
 // === basic interfaces ===
-#subject encoder = system'text'Encoder.
+type encoder :: system'text'Encoder.
 
 // --- Encoder ---
 
 limited class Encoder
 {
-    stacksafe convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength [] 
+    stacksafe convert int:anIndex vint:aLength bytearray:aByteArray chararray:anOutput vint:anOutputLength [] 
 
-    stacksafe convert &int:anIndex &vint:aLength &chararray:aCharArray &bytearray:anOutput &vint:anOutputLength []
+    stacksafe convert int:anIndex vint:aLength chararray:aCharArray bytearray:anOutput vint:anOutputLength []
     
-    stacksafe convert &int:anIndex &vint:aLength &literal:aLiteral &bytearray:anOutput &vint:anOutputLength
+    stacksafe convert int:anIndex vint:aLength literal:aLiteral bytearray:anOutput vint:anOutputLength
     [
-        char(64)temp := 0.
-        int     temp_len := 64.
-        (temp_len > aLength)
-            ? [ temp_len := aLength. ]
-            ! [ aLength := temp_len. ].
+        char temp(64).
+        int  temp_len := 64.
+        if (temp_len > aLength)
+            [ temp_len := aLength ];
+            [ aLength int := temp_len ].
         
-        aLiteral Substring &int:anIndex &int:aLength save &int:0 &chararray:temp &vint:temp_len.
+        aLiteral Substring int:anIndex int:aLength; save int:0 chararray:temp vint:temp_len.
         
-        $self convert &int:0 &vint:temp_len &chararray:temp &bytearray:anOutput &vint:anOutputLength.
+        $self convert int:0 vint:temp_len chararray:temp bytearray:anOutput vint:anOutputLength.
     ]
     
-    stacksafe convert &int:anIndex &vint:aLength &wide:aLiteral &bytearray:anOutput &vint:anOutputLength
+    stacksafe convert int:anIndex vint:aLength wide:aLiteral bytearray:anOutput vint:anOutputLength
     [
-        char(64) temp := 0.
-        int      temp_len := 64.
-        (temp_len > aLength)
-            ? [ temp_len := aLength. ]
-            ! [ aLength := temp_len. ].
+        char temp(64).
+        int  temp_len := 64.
+        if (temp_len > aLength)
+            [ temp_len := aLength ];
+            [ aLength int := temp_len ].
         
-        aLiteral Substring &int:anIndex &int:aLength save &int:0 &chararray:temp &vint:temp_len.
+        aLiteral Substring int:anIndex int:aLength; save int:0 chararray:temp vint:temp_len.
         
-        $self convert &int:0 &vint:temp_len &chararray:temp &bytearray:anOutput &vint:anOutputLength.
+        $self convert int:0 vint:temp_len chararray:temp bytearray:anOutput vint:anOutputLength.
     ]
     
-    stacksafe toByteArray &int:anIndex &int:aLength &literal:aLiteral
-    [
-        int       i := anIndex.
-        bytearray aRetVal := $nil.
-        int       remaining := aLength.
-        
-        while (i < aLength)
-        [
-            byte(64) tmp := 0.
-            int      tmp_len := 64.
-            int      len := remaining.
-            (len > tmp_len)
-                ? [ len := tmp_len. ].
-             
-            $self convert &int:i &vint:len &literal:aLiteral &bytearray:tmp &vint:tmp_len.
-            
-            ($nil == aRetVal)
-                ? [ aRetVal := ByteArray new &int:0 &int:tmp_len &bytearray:tmp. ]
-                ! [ aRetVal := aRetVal add &int:tmp_len &bytearray:tmp ].
-            
-            i += len.
-            remaining -= len.
-        ].
-        
-        ^ aRetVal.
-    ]
-    
-    stacksafe toByteArray &int:anIndex &int:aLength &wide:aLiteral
+    stacksafe toByteArray int:anIndex int:aLength literal:aLiteral
     [
         int       i := anIndex.
         bytearray aRetVal := $nil.
@@ -72,26 +43,53 @@ limited class Encoder
         
         while (i < aLength)
         [
-            byte(64) tmp := 0.
-            int      tmp_len := 64.
-            int      len := remaining.
-            (len > tmp_len)
-                ? [ len := tmp_len. ].
+            byte tmp(64).
+            int  tmp_len := 64.
+            int  len := remaining.
+            if (len > tmp_len)
+                [ len := tmp_len ].
              
-            $self convert &int:i &vint:len &wide:aLiteral &bytearray:tmp &vint:tmp_len.
+            $self convert int:i vint:len literal:aLiteral bytearray:tmp vint:tmp_len.
             
-            ($nil == aRetVal)
-                ? [ aRetVal := ByteArray new &int:0 &int:tmp_len &bytearray:tmp. ]
-                ! [ aRetVal := aRetVal add &int:tmp_len &bytearray:tmp ].
+            if ($nil == aRetVal)
+                [ aRetVal := ByteArray new int:0 int:tmp_len bytearray:tmp ];
+                [ aRetVal := aRetVal add int:tmp_len bytearray:tmp ].
             
-            i += len.
-            remaining -= len.
+            i := i + len.
+            remaining := remaining - len
         ].
         
-        ^ aRetVal.
+        ^ aRetVal
     ]
     
-    stacksafe toLiteral &int:anIndex &int:aLength &bytearray:anArray
+    stacksafe toByteArray int:anIndex int:aLength wide:aLiteral
+    [
+        int       i := anIndex.
+        bytearray aRetVal := $nil.
+        int       remaining := aLength.
+        
+        while (i < aLength)
+        [
+            byte tmp(64).
+            int  tmp_len := 64.
+            int  len := remaining.
+            if (len > tmp_len)
+                [ len := tmp_len ].
+             
+            $self convert int:i vint:len wide:aLiteral bytearray:tmp vint:tmp_len.
+            
+            if ($nil == aRetVal)
+                [ aRetVal := ByteArray new int:0 int:tmp_len bytearray:tmp ];
+                [ aRetVal := aRetVal add int:tmp_len bytearray:tmp ].
+            
+            i := i + len.
+            remaining := remaining - len
+        ].
+        
+        ^ aRetVal
+    ]
+    
+    stacksafe toLiteral int:anIndex int:aLength bytearray:anArray
     [
         int     i := anIndex.
         literal aRetVal := $nil.
@@ -99,26 +97,26 @@ limited class Encoder
         
         while (i < aLength)
         [
-            char(64) tmp := 0.
-            int      tmp_len := 64.
-            int      len := remaining.
-            (len > tmp_len)
-                ? [ len := tmp_len. ].
+            char tmp(64).
+            int  tmp_len := 64.
+            int  len := remaining.
+            if (len > tmp_len)
+                [ len := tmp_len ].
              
-            $self convert &int:i &vint:len &bytearray:anArray &chararray:tmp &vint:tmp_len.
+            $self convert int:i vint:len bytearray:anArray chararray:tmp vint:tmp_len.
             
-            ($nil == aRetVal)
-               ? [ aRetVal := LiteralValue new &int:0 &int:tmp_len &chararray:tmp. ]
-               ! [ aRetVal := aRetVal add &literal:(LiteralValue new &int:0 &int:tmp_len &chararray:tmp). ].
+            if ($nil == aRetVal)
+               [ aRetVal := LiteralValue new int:0 int:tmp_len chararray:tmp ];
+               [ aRetVal := aRetVal add literal:(LiteralValue new int:0 int:tmp_len chararray:tmp) ].
             
-            i += len.
-            remaining -= len.
+            i := i + len.
+            remaining := remaining - len.
         ].
         
         ^ aRetVal.
     ]
     
-    stacksafe toWide &int:anIndex &int:aLength &bytearray:anArray
+    stacksafe toWide int:anIndex int:aLength bytearray:anArray
     [
         int  i := anIndex.
         wide aRetVal := $nil.
@@ -126,45 +124,45 @@ limited class Encoder
         
         while (i < aLength)
         [
-            char(64) tmp := 0.
-            int      tmp_len := 64.
-            int      len := remaining.
-            (len > tmp_len)
-                ? [ len := tmp_len. ].
+            char tmp(64).
+            int  tmp_len := 64.
+            int  len := remaining.
+            if (len > tmp_len)
+                [ len := tmp_len ].
              
-            $self convert &int:i &vint:len &bytearray:anArray &chararray:tmp &vint:tmp_len.
+            $self convert int:i vint:len bytearray:anArray chararray:tmp vint:tmp_len.
             
-            ($nil == aRetVal)
-               ? [ aRetVal := WideLiteralValue new &int:0 &int:tmp_len &chararray:tmp. ]
-               ! [ aRetVal := aRetVal add &wide:(WideLiteralValue new &int:0 &int:tmp_len &chararray:tmp). ].
+            if ($nil == aRetVal)
+               [ aRetVal := WideLiteralValue new int:0 int:tmp_len chararray:tmp ];
+               [ aRetVal := aRetVal add wide:(WideLiteralValue new int:0 int:tmp_len chararray:tmp) ].
             
-            i += len.
-            remaining -= len.
+            i := i + len.
+            remaining := remaining - len
         ].
         
-        ^ aRetVal.
+        ^ aRetVal
     ]
 }
 
 // --- UTF8Encoder ---
 
-class UTF8Encoder = Encoder
+class UTF8Encoder = Encoder::
 {
-    convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
+    convert int:anIndex vint:aLength bytearray:aByteArray chararray:anOutput vint:anOutputLength
         => system'core_routines'__utf8encoder.
     
-    convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength
+    convert int:anIndex vint:aLength chararray:aByteArray bytearray:anOutput vint:anOutputLength
         => system'core_routines'__utf8encoder.
     
-    stacksafe convert &int:anIndex &vint:aLength &literal:aLiteral &bytearray:anOutput &vint:anOutputLength
+    stacksafe convert int:anIndex vint:aLength literal:aLiteral bytearray:anOutput vint:anOutputLength
     [
-        aLiteral $save &int:anIndex &bytearray:anOutput &int:aLength.
+        aLiteral $save int:anIndex bytearray:anOutput int:aLength.
 
-        anOutputLength := aLength.
+        anOutputLength int := aLength
     ]
     
-    stacksafe toLiteral &int:anIndex &int:aLength &bytearray:anArray
-        = UTF8Encoding toLiteral &int:anIndex &int:aLength &bytearray:anArray.
+    stacksafe toLiteral int:anIndex int:aLength bytearray:anArray
+        = UTF8Encoding toLiteral int:anIndex int:aLength bytearray:anArray.
 }.
 
 // --- UTF8Encoding ---
@@ -173,32 +171,32 @@ class UTF8Encoding =
 {
     encoder = UTF8Encoder.
     
-    stacksafe charCount &literal:aLiteral &vint:aRetVal
+    stacksafe charCount literal:aLiteral vint:aRetVal
         => system'core_routines'__utf8encoder.
         
-    stacksafe convert &int:anIndex &int:aLength &literal:aLiteral &bytearray:anArray
+    stacksafe convert int:anIndex int:aLength literal:aLiteral bytearray:anArray
     [
-        aLiteral $save &int:anIndex &bytearray:anArray &int:aLength.
+        aLiteral $save int:anIndex bytearray:anArray int:aLength.
     ]
         
-    stacksafe toLiteral &int:anIndex &int:aLength &bytearray:anArray
-        = LiteralValue $new &int:anIndex &int:aLength &bytearray:anArray.
+    stacksafe toLiteral int:anIndex int:aLength bytearray:anArray
+        = LiteralValue $new int:anIndex int:aLength bytearray:anArray.
         
-    stacksafe convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
+    stacksafe convert int:anIndex vint:aLength bytearray:aByteArray chararray:anOutput vint:anOutputLength
         => system'core_routines'__utf8encoder.
         
-    stacksafe convert &int:anIndex &vint:aLength &literal:aByteArray &chararray:anOutput &vint:anOutputLength
+    stacksafe convert int:anIndex vint:aLength literal:aByteArray chararray:anOutput vint:anOutputLength
         => system'core_routines'__utf8encoder.
 }.
 
 // --- UTF16Encoder ---
 
-class UTF16Encoder = Encoder
+class UTF16Encoder = Encoder::
 {
-    convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
+    convert int:anIndex vint:aLength bytearray:aByteArray chararray:anOutput vint:anOutputLength
         => system'core_routines'__utf16encoder.
     
-    convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength
+    convert int:anIndex vint:aLength chararray:aByteArray bytearray:anOutput vint:anOutputLength
         => system'core_routines'__utf16encoder.
 }.
 
@@ -208,39 +206,39 @@ class UTF16Encoding =
 {
     encoder = UTF16Encoder.
     
-    stacksafe charCount &wide:aLiteral &vint:aRetVal
+    stacksafe charCount wide:aLiteral vint:aRetVal
         => system'core_routines'__utf16encoder.
         
-    stacksafe convert &int:anIndex &int:aLength &wide:aLiteral &shortarray:anArray
+    stacksafe convert int:anIndex int:aLength wide:aLiteral shortarray:anArray
     [
-        aLiteral $save &int:anIndex &shortarray:anArray &int:aLength.
+        aLiteral $save int:anIndex shortarray:anArray int:aLength.
     ]
 
-    stacksafe convert &int:anIndex &int:aSize &shortarray:aByteArray &chararray:anOutput &vint:anOutputLength
+    stacksafe convert int:anIndex int:aSize shortarray:aByteArray chararray:anOutput vint:anOutputLength
         => system'core_routines'__utf16encoder.
         
-    stacksafe convert &int:anIndex &int:aSize &chararray:aByteArray &shortarray:anOutput &vint:anOutputLength
+    stacksafe convert int:anIndex int:aSize chararray:aByteArray shortarray:anOutput vint:anOutputLength
         => system'core_routines'__utf16encoder.
         
-    stacksafe convert &int:anIndex &vint:aSize &literal:aLiteral &shortarray:anOutput &vint:anOutputLength
+    stacksafe convert int:anIndex vint:aSize literal:aLiteral shortarray:anOutput vint:anOutputLength
     [
-        char(64) temp := 0.
-        int      temp_len := 64.
-        (temp_len < aSize)
-            ? [ aSize := temp_len. ].
+        char temp(64).
+        int  temp_len := 64.
+        if (temp_len < aSize)
+            [ aSize int := temp_len ].
         
-        UTF8Encoding convert &int:anIndex &vint:aSize &literal:aLiteral &chararray:temp &vint:temp_len.
+        UTF8Encoding convert int:anIndex vint:aSize literal:aLiteral chararray:temp vint:temp_len.
         
-        $self convert &int:0 &int:temp_len &chararray:temp &shortarray:anOutput &vint:anOutputLength.            
+        $self convert int:0 int:temp_len chararray:temp shortarray:anOutput vint:anOutputLength
     ]
         
-    stacksafe literal toLiteral &int:anIndex &int:aSize &shortarray:anInput
+    stacksafe literal toLiteral int:anIndex int:aSize shortarray:anInput
     [
-        char(64) temp := 0.
-        int      temp_len := 64.
+        char temp(64).
+        int  temp_len := 64.
         
-        $self convert &int:anIndex &int:aSize &shortarray:anInput &chararray:temp &vint:temp_len.
+        $self convert int:anIndex int:aSize shortarray:anInput chararray:temp vint:temp_len.
         
-        ^ LiteralValue new &int:0 &int:temp_len &chararray:temp.
+        ^ LiteralValue new int:0 int:temp_len chararray:temp
     ]
 }.

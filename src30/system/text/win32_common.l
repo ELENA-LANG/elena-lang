@@ -1,5 +1,3 @@
-//import system.
-
 // --- LRLN ---
 
 const newLine

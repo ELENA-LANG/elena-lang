@@ -6443,29 +6443,29 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
 //   if (!scope.defineForward(shortcut, reference))
 //      scope.raiseError(errDuplicatedDefinition, ns);
 //}
-//
-//void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope)
-//{
-//   ident_t name = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
-//   if (name.compare(STANDARD_MODULE))
-//      // system module is included automatically - nothing to do in this case
-//      return;
-//
-//   // check if the module exists
-//   _Module* module = scope.project->loadModule(name, true);
-//   if (module) {
-//      ident_t value = retrieve(scope.defaultNs.start(), name, NULL);
-//      if (value == NULL) {
-//         scope.defaultNs.add(module->Name());
-//
-//         bool duplicateExtensions = false;
-//         scope.loadModuleInfo(module, duplicateExtensions);
-//         if (duplicateExtensions)
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
-//      }
-//   }
-//   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
-//}
+
+void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope)
+{
+   ident_t name = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
+   if (name.compare(STANDARD_MODULE))
+      // system module is included automatically - nothing to do in this case
+      return;
+
+   // check if the module exists
+   _Module* module = scope.project->loadModule(name, true);
+   if (module) {
+      ident_t value = retrieve(scope.defaultNs.start(), name, NULL);
+      if (value == NULL) {
+         scope.defaultNs.add(module->Name());
+
+         bool duplicateExtensions = false;
+         scope.loadModuleInfo(module, duplicateExtensions);
+         if (duplicateExtensions)
+            scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
+      }
+   }
+   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
+}
 
 void Compiler :: declareSubject(SyntaxWriter& writer, SNode member, ModuleScope& scope)
 {
@@ -8059,28 +8059,31 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
    bufferWriter.closeNode();
 
    // recognize the declaration type
-   bool typeDecl = false;
-   bool classDecl = false;
-   bool templateDecl = false;
-   bool fieldDecl = false;
-   bool methodDecl = false;
-   bool loopDecl = false;
+
+   DeclarationAttr declType = daNone;
    SNode current = tree.readRoot().firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         if (!_logic->validateDeclarationAttribute(current.argument, typeDecl, classDecl, templateDecl, fieldDecl, methodDecl, loopDecl))
+         if (!_logic->validateDeclarationAttribute(current.argument, declType))
             scope.raiseError(errInvalidHint, attributes);
       }
 
       current = current.nextNode();
    }
 
-   if (typeDecl) {
+   if (declType == daType) {
       declareSubject(writer, goToNode(attributes, lxNameAttr), *moduleScope);
 
       return true;
    }
-   else if (templateDecl) {
+   if (declType == daImport) {
+      SNode name = goToNode(attributes, lxNameAttr);
+
+      compileIncludeModule(name, *scope.moduleScope);
+
+      return true;
+   }
+   else if (test(declType, daTemplate)) {
       node = lxTemplate;
 
       SNode name = goToNode(attributes, lxNameAttr);
@@ -8088,12 +8091,12 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
       int count = SyntaxTree::countChild(node, lxBaseParent);
 
       IdentifierString templateName(name.findChild(lxIdentifier).findChild(lxTerminal).identifier());
-      if (fieldDecl) {
+      if (test(declType, daField)) {
          templateName.append("#1");
 
          scope.type = TemplateScope::Type::ttFieldTemplate;
       }
-      else if (methodDecl) {
+      else if (test(declType, daMethod)) {
          templateName.append("#1");
 
          scope.type = TemplateScope::ttMethodTemplate;
@@ -8106,7 +8109,7 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
          // HOTFIX : mark the expression as a code
          SNode exprNode = node.findChild(lxExpression);
          exprNode.injectNode(lxExpression);
-         if (loopDecl) {
+         if (test(declType, daLoop)) {
             exprNode.injectNode(lxLoop);
          }
 
@@ -8129,7 +8132,7 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
 
       return true;
    }
-   else if (classDecl) {
+   else if (test(declType, daClass)) {
       return false;
    }
    else return false;
@@ -8251,9 +8254,6 @@ void Compiler :: generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScop
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-//         case lxImport:
-//            compileIncludeModule(current, scope);
-//            break;
          case lxAttribute:
          case lxAttributeDecl:
             if (attributes == lxNone) {
