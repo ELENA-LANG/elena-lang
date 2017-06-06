@@ -7966,13 +7966,11 @@ bool Compiler :: generateMethodScope(SNode node, TemplateScope& scope, SNode att
    SNode current = node.findChild(lxCode, lxExpression, lxDispatchCode, lxReturning, lxResendExpression);
    if (current != lxNone) {
       SNode lastAttr = findLastAttribute(attributes);
-      if (node.firstChild(lxExprMask) == lxMethodParameter) {
-         // try to resolve the message name if the scope starts with a method parameter
-         current = lastAttr.prevNode();
-         if (current == lxAttribute && scope.mapSubject(current.findChild(lxIdentifier, lxPrivate)) == 0) {
-            lastAttr = lxMessage;
-            lastAttr = current;
-         }
+      // try to resolve the message name if the scope starts with a method parameter
+      current = lastAttr.prevNode();
+      if (current == lxAttribute && scope.mapSubject(current.findChild(lxIdentifier, lxPrivate)) == 0) {
+         lastAttr = lxMessage;
+         lastAttr = current;
       }
 
       // mark the last message as a name

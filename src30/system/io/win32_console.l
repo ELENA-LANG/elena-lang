@@ -156,30 +156,30 @@ sealed embeddable class $FileWriter
             int       : 0.
     ]
 
-//    write &wide : literal
+//    write wide : literal
 //    [
-//        byte(256) buffer := 0.
-//        int       length := literal length.
-//        int       index := 0.
-//        int       buf_len := 256.
-//        int       subs_len := 256.
+//        byte buffer(256).
+//        int  length := literal length.
+//        int  index := 0.
+//        int  buf_len := 256.
+//        int  subs_len := 256.
 //        while (length > 0)
 //        [
 //            buf_len := 256.
 //            
-//            (length < 128)
-//                ? [ subs_len := length. ]  
-//                ! [ subs_len := 128. ].
+//            if (length < 128)
+//                [ subs_len := length ] ;
+//                [ subs_len := 128 ].
 //            
-//            OEMEncoder convert &int:index &vint:subs_len &wide:literal &bytearray:buffer &vint:buf_len.
+//            OEMEncoder convert int:index vint:subs_len wide:literal bytearray:buffer vint:buf_len.
 //            
-//            $self write &bytearray:buffer &int:buf_len.
+//            $self write bytearray:buffer int:buf_len.
 //            
-//            index += subs_len.
-//            length -= subs_len.
+//            index := index + subs_len.
+//            length := length - subs_len.
 //        ].
 //    ]
-//    
+    
 //    write &literal : literal
 //    [
 //        byte(256) buffer := 0.
