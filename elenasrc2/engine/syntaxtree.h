@@ -229,6 +229,7 @@ enum LexicalType
    lxClosureMessage  = 0x20030,
    lxExtArgumentType = 0x20031,
    lxInternalRef     = 0x20032,
+   lxTemplateVar     = 0x20033,
 
    lxTempAttr        = 0x2010D,
 };

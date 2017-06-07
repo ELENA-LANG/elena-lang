@@ -3,6 +3,8 @@ In development:
 ------                              
 
               xdev - refactoring
+                 * allow to initialize template based variable : arrayof numbers(int) := int(3).
+
                  * test using templates
 
                  * short cut syntax for (:e) [] , &e [] or e => []
