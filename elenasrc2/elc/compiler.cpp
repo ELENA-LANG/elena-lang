@@ -1425,6 +1425,14 @@ ref_t Compiler::TemplateScope :: mapAttribute(SNode attribute, int& attrValue/*,
    else return moduleScope->mapAttribute(attribute, attrValue);
 }
 
+bool Compiler::TemplateScope :: isAttribute(SNode terminal)
+{
+   int dummy = 0;
+   ref_t ref = mapAttribute(terminal, dummy);
+
+   return (ref != 0 && isPrimitiveRef(moduleScope->subjectHints.get(ref)));
+}
+
 ref_t Compiler::TemplateScope :: mapTemplate(SNode terminal, int prefixCounter)
 {
    int paramCounter = SyntaxTree::countChild(terminal, lxAttributeValue);
@@ -4443,7 +4451,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             signature.copy(GENERIC_PREFIX);
          }
       }
-      else if (verb_id == 0)
+      if (verb_id == 0)
          verb_id = paramCount > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID;
 
       // if signature is presented
@@ -7047,16 +7055,15 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          generateExpressionTree(writer, current, scope, false);
          break;
       case lxNestedClass:
-         /*if (scope.codeMode) {
+         if (scope.type == TemplateScope::ttCodeTemplate) {
             writer.insert(lxTemplateParam, 2);
             writer.closeNode();
          }
-         else {*/
+         else {
             generateScopeMembers(current, scope);
 
             generateClassTree(writer, current, scope, SNode(), -1);
-         //}
-
+         }
          writer.insert(lxExpression);
          writer.closeNode();
          break;
@@ -7965,16 +7972,22 @@ bool Compiler :: generateMethodScope(SNode node, TemplateScope& scope, SNode att
 {
    SNode current = node.findChild(lxCode, lxExpression, lxDispatchCode, lxReturning, lxResendExpression);
    if (current != lxNone) {
+      // try to resolve the message name
       SNode lastAttr = findLastAttribute(attributes);
-      // try to resolve the message name if the scope starts with a method parameter
-      current = lastAttr.prevNode();
-      if (current == lxAttribute && scope.mapSubject(current.findChild(lxIdentifier, lxPrivate)) == 0) {
-         lastAttr = lxMessage;
-         lastAttr = current;
-      }
 
-      // mark the last message as a name
-      lastAttr = lxNameAttr;
+      // HOTFIX : recognize generic attribute      
+      if (!scope.isAttribute(lastAttr)) {
+         current = lastAttr.prevNode();
+
+         if (current == lxAttribute && scope.mapSubject(current.findChild(lxIdentifier, lxPrivate)) == 0) {
+            lastAttr = lxMessage;
+            lastAttr = current;
+         }
+
+         // mark the last message as a name
+         lastAttr = lxNameAttr;
+      }
+      
       node = lxClassMethod;
 
       // !! HOTFIX : the node should be once again found

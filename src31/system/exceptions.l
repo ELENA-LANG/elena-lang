@@ -47,7 +47,7 @@ sealed nonstructural class CallStack
                 int:512.
             
             if (aBufferLength > 0)
-                [ aCallStackText := aCallStackText add literal:(LiteralValue new int:0 int:aBufferLength bytearray:aBuffer); add literal:'newLine ].
+                [ aCallStackText := aCallStackText add literal:(LiteralValue $new int:0 int:aBufferLength bytearray:aBuffer); add literal:'newLine ].
             
             anIndex := anIndex + 1.
         ].

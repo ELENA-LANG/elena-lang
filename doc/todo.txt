@@ -3,6 +3,8 @@ In development:
 ------                              
 
               xdev - refactoring
+                 * test try-catch-finally, try-finally, using templates
+
                  * short cut syntax for (:e) [] , &e [] or e => []
 
                  * get rid of +=, -=, *=, /= operators (and divideInto, multiplyBy)

@@ -134,38 +134,30 @@ template if :: expr,else =
     ! [
     ].
 
-//// -- try-catch statement ---
-//
-//#template try (expr)
-//[
-//    expr | on:
-//    {
-//    }.
-//].
-//
-//// -- try-finally-catch statement ---
-//
-//#template try (expr,else)
-//[
-//    expr then:[] | on:[]:
-//    {
-//    }.
-//].
-//
-//// -- finally statement ---
-//
-//#template finally (expr)
-//[
-//    expr then:
-//        [
-//        ]         
-//        | raise:[].
-//].
-//
+// -- try-catch statement ---
+
+template try :: expr =
+    expr | on:
+    {
+    }.
+
+// -- try-finally-catch statement ---
+
+template try :: expr,else =
+    expr then:[] | on:[]:
+    {
+    }.
+
+// -- finally statement ---
+
+template finally :: expr =
+    expr then:
+        [
+        ]         
+        | raise:[].
+
 //// --- using statement ---
 //
-//#template using(expr)
-//[
+//template using :: expr =
 //    finally(expr then:[])
 //        [ expr close. ].
-//].

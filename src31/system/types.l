@@ -36,11 +36,11 @@
 
 #4097           __ifoperator.
 #4098           __ifnotoperator.
-//#template(-19,4)  __mssg  {}
+#19 #262144     __mssg .
 #20 #262144     __verb.
 //#template(-22,4)  __symbol{}
 //#template(-21,8)  __extmssg{}
-//#template(-18,4)  __subj{}
+#18 #262144     __subj.
 #11 #65536      __int8.
 #11 #131072     __int16.
 #11 #262144     __int32.
@@ -86,7 +86,7 @@ type realarray  :: system'RealArray.
 type realmatrix :: system'RealMatrix.
 type chararray  :: system'CharArray.
 type array      :: system'Array.
-////#subject mssgarray  = system'MessageArray.
+//#subject mssgarray  = system'MessageArray.
 type bitarray   :: system'BitArray.
 type bitset     :: system'BitArray32.
 
