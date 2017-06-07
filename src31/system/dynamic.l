@@ -1,21 +1,19 @@
-////#subject vmssg = varof:mssg.
-//
-//// --- Symbol ---
-//
-///// A dynamic symbol
-//sealed embeddable struct Symbol
-//{
-//    __symbol theValue.
-//    
-//    /// Loads a symbol
-//    constructor new &literal:name
-//    [
-//        system'core_routines'__symbol load &symbol_ref:$self &literal:name.
-//    ]
-//        
-//    /// Redirects incoming messages to the symbol
-//    dispatch => system'core_routines'__symbol.
-//}
+// --- Symbol ---
+
+/// A dynamic symbol
+sealed embeddable struct Symbol
+{
+    __symbol theValue.
+    
+    /// Loads a symbol
+    constructor new literal:name
+    [
+        system'core_routines'__symbol load symbol_ref:$self literal:name
+    ]
+        
+    /// Redirects incoming messages to the symbol
+    dispatch => system'core_routines'__symbol.
+}
 
 // --- Verb ---
 
@@ -65,26 +63,26 @@ sealed embeddable struct Message
     dispatch => system'core_routines'__message.
 }
 
-//// --- ExtensionMessage ---
-//
-///// An extended message constant
-//sealed embeddable struct ExtensionMessage
-//{
-//    __extmssg theValue.
-//    
-//    /// Loads a message
-//    stacksafe constructor new &ext_mssg:message
-//        = message.
-//
-//    stacksafe subject
-//        => system'core_routines'__message.
-//
-//    stacksafe equal &ext_mssg : aSubject    
-//        => system'core_routines'__extmessage.
-//
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    dispatch => system'core_routines'__extmessage.
-//}
+// --- ExtensionMessage ---
+
+/// An extended message constant
+sealed embeddable struct ExtensionMessage
+{
+    __extmssg theValue.
+    
+    /// Loads a message
+    stacksafe constructor new ext_mssg:message
+        = message.
+
+    stacksafe subject
+        => system'core_routines'__message.
+
+    stacksafe equal ext_mssg : aSubject    
+        => system'core_routines'__extmessage.
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    dispatch => system'core_routines'__extmessage.
+}
 
 // --- Signature ---
 
@@ -128,53 +126,3 @@ sealed embeddable struct Signature :: dispatchable(subject)
     /// Qualifies incoming messages and redirects to the target
     stacksafe dispatch => system'core_routines'__signature.
 }
-
-//// --- MessageArray ---
-//
-//#class(sealed,arrayof:mssg,dispatchable:mssgarray)MessageArray
-//{
-//    #constructor(stacksafe) new &int : aLength
-//        = mssg:aLength.
-//        
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//
-//    #method(stacksafe) read &int:anIndex &vmssg:anInt
-//        => system'core_routines'__msgarray.
-//
-//    #method iterator = MessageArrayIterator new &mssgarray:$self.
-//}
-//
-//// --- MessageArrayIterator ---
-//
-//#class MessageArrayIterator :: Iterator
-//{
-//    #field(mssgarray) theArray.
-//    #field(vint)  theIndex.
-//
-//    #constructor(w3) new &mssgarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    #method available
-//    [
-//        #var(int)aLength := theArray length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    #method get
-//        = theArray getAt &int:theIndex.
-//    
-//    #method readIndex  &vint:anIndex
-//    [
-//        anIndex := theIndex.
-//    ]
-//    
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex set &int:anIndex.
-//    ]
-//}

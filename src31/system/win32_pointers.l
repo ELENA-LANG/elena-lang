@@ -18,35 +18,37 @@ sealed embeddable struct Handle :: dispatchable(handle)
         = theHandle == anOperand.
 }
 
-//// --- RTPointer ---
-//
-//static rt_sync = Object new.
-//
-//sealed const embeddable struct RTPointer
-//{
-//    __dword theIndex.
-//    
-//    stacksafe implicit int:n
-//    [
-//        theIndex := n.
-//    ]
-//    
-//    constructor new : anObject
-//    [
-//        system'core_routines'__rtptr new &object:$self &object:anObject.
-//    ]
-//
-//    stacksafe outnprop(index) readIndex &vint:aRetVal
-//    [
-//        aRetVal := theIndex.
-//    ]
-//        
-//    stacksafe get
-//        => system'core_routines'__rtptr.
-//
-//    stacksafe  free
-//        => system'core_routines'__rtptr.
-//}
+// --- RTPointer ---
+
+static rt_sync = Object new.
+
+sealed const embeddable struct RTPointer
+{
+    __dword theIndex.
+    
+    stacksafe implicit int:n
+    [
+        theIndex := n.
+    ]
+    
+    constructor new : anObject
+    [
+        system'core_routines'__rtptr new object:$self object:anObject.
+    ]
+
+    int index :: outnprop(readIndexTo).
+
+    stacksafe readIndexTo vint:aRetVal
+    [
+        aRetVal int := theIndex.
+    ]
+        
+    stacksafe get
+        => system'core_routines'__rtptr.
+
+    stacksafe  free
+        => system'core_routines'__rtptr.
+}
 
 // --- UnsafePointer ---
 

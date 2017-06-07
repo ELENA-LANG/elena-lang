@@ -6,7 +6,6 @@ extension $op
         => system'core_routines'__object.
 }
 
-
 // --- CallStack ---
 
 /// A call stack

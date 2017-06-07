@@ -38,8 +38,8 @@
 #4098           __ifnotoperator.
 #19 #262144     __mssg .
 #20 #262144     __verb.
-//#template(-22,4)  __symbol{}
-//#template(-21,8)  __extmssg{}
+#22 #262144     __symbol.
+#21 #524288     __extmssg.
 #18 #262144     __subj.
 #11 #65536      __int8.
 #11 #131072     __int16.
@@ -67,7 +67,7 @@ type long       :: system'LongNumber.
 type real       :: system'RealNumber.
 type char       :: system'CharValue.
 type mssg       :: system'Message.
-//#subject ext_mssg   = system'ExtensionMessage.
+type ext_mssg   :: system'ExtensionMessage.
 
 /// A verb symbol
 
@@ -75,7 +75,7 @@ type mssg       :: system'Message.
 type verb       :: system'Verb.
 
 type subject    :: system'Signature.
-//#subject symbol_ref = system'Symbol.
+type symbol_ref :: system'Symbol.
 
 // === basic dynamic types ===
 type bytearray  :: system'ByteArray.
@@ -120,7 +120,7 @@ type n3func     :: system'IndexFunction3.
 
 // === system handles ===
 type handle     :: system'Handle.
-//#subject rt_ptr     = system'RTPointer.
+type rt_ptr     :: system'RTPointer.
 type dirty_ptr  :: system'UnsafePointer.
 
 // --- Enumerators / Indexers ---

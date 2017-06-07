@@ -67,18 +67,18 @@ method template outwprop :: type,prop_name,target_method
    ]
 }
 
-//// --- nfn ---
-//
-//#template(-16388) nfn (template_fn)
-//{
-//    stacksafe embeddable int template_fn &int:n
-//    [
-//        int retVal := 0.
-//        $self target_method &int:n &vint:retVal.
-//        ^ retVal.            
-//    ]
-//}
-//
+// --- nfn ---
+
+method template nfn :: type,template_fn,target_method
+{
+    stacksafe embeddable type template_fn type:n
+    [
+        type retVal := 0.
+        $self target_method type:n vint:retVal.
+        ^ retVal.            
+    ]
+}
+
 //// --- nnfn ---
 //
 //#template(-16388) nnfn (template_fn)
@@ -156,8 +156,16 @@ template finally :: expr =
         ]         
         | raise:[].
 
-//// --- using statement ---
-//
-//template using :: expr =
-//    finally(expr then:[])
-//        [ expr close. ].
+// --- using statement ---
+
+extension $usingOp
+{
+    doAndClose : code
+    [
+        self close after:code
+            | raise:[ self close ].
+    ]
+}
+
+template using :: expr =
+    expr doAndClose:[].

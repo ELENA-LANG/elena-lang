@@ -236,4 +236,11 @@ extension commonOp
 {
     then : code
         = code eval.
+        
+    close after:code
+    [
+        code eval.
+        
+        self close
+    ]
 }

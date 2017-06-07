@@ -866,14 +866,14 @@ sealed class RealMatrix :: dispatchable(realmatrix)
         retVal int := theColumns.
     ]
     
-    int length :: outnprop(readColumnsTo).
+    int columns :: outnprop(readColumnsTo).
 
     stacksafe readRowsTo vint:retVal
     [
         retVal int := theRows
     ]
     
-    int length :: outnprop(readRowsTo).
+    int rows :: outnprop(readRowsTo).
 
     /// Writes an integer value at the specified position
     stacksafe write int:i int:j real:aValue

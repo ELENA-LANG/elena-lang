@@ -1470,12 +1470,12 @@ void Compiler::TemplateScope :: loadAttributeValues(SNode attributes/*, bool var
 //
 //         subjects.add(subjects.Count() + 1, subject);
 //      }
-//      else if (current == lxTemplateType) {
-//         TemplateScope* parentTemplate = (TemplateScope*)parent;
-//         ref_t subject = parentTemplate->subjects.get(current.argument);
-//
-//         subjects.add(subjects.Count() + 1, subject);
-//      }
+      else if (current == lxTemplateType) {
+         TemplateScope* parentTemplate = (TemplateScope*)parent;
+         ref_t subject = parentTemplate->subjects.get(current.argument);
+
+         subjects.add(subjects.Count() + 1, subject);
+      }
 //      else if (variableMode)
 //         break;
 
@@ -5207,22 +5207,29 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
 
 void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 {
+   ref_t extensionClassRef = 0;
+
    SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == lxClassFlag) {
          scope.info.header.flags |= current.argument;
       }
       else if (current == lxType) {
-         if (test(scope.info.header.flags, elExtension)) {
-            scope.extensionMode = current.argument;
-
-            scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(0, scope.extensionMode));
-
-         }
-         else scope.raiseError(errInvalidHint, current);
+         extensionClassRef = current.argument;
       }
 
       current = current.nextNode();
+   }
+
+   // check if extension is qualified
+   if (extensionClassRef != 0) {
+      if (test(scope.info.header.flags, elExtension)) {
+         scope.extensionMode = current.argument;
+
+         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(0, scope.extensionMode));
+
+      }
+      else scope.raiseError(errInvalidHint, root);
    }
 }
 
@@ -6819,11 +6826,14 @@ void Compiler :: generateVariableTree(SyntaxWriter& writer, SNode node, Template
    ref_t attrRef = (attr != lxPrivate) ? scope.mapAttribute(attr, dummy/*, true*/) : 0;
    //HOTFIX : there should be at leat two attribute
    if (attrRef != 0 && attr.nextNode() != lxAssigning) {
-      // HOTFIX : set already recognized attribute value
-      attr.setArgument(attrRef);
+      // HOTFIX : set already recognized attribute value if it is not a template parameter
+      if (attrRef != INVALID_REF) {
+         attr.setArgument(attrRef);
+      }
 
       while (current != lxAssigning) {
          current = lxAttribute;
+
 //         SNode option = current.nextNode(lxObjectMask);
 //         if (option == lxExpression) {
 //            // HOTFIX : recognize size attribute
@@ -7368,14 +7378,14 @@ void Compiler::copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope& 
       SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
       writer.closeNode();
    }
-   //else if (current == lxTemplateType) {
-   //   ref_t subjRef = scope.subjects.get(current.argument);
-   //   ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
-   //   writer.newNode(lxTypeAttr, subjName);
+   else if (current == lxTemplateType) {
+      ref_t subjRef = scope.subjects.get(current.argument);
+      ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
+      writer.newNode(lxTypeAttr, subjName);
 
-   //   SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-   //   writer.closeNode();
-   //}
+      SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+      writer.closeNode();
+   }
    else if (current == lxTypeAttr/* || current == lxClassRefAttr*/) {
       writer.appendNode(current.type, current.identifier());
    }

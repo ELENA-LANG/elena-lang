@@ -3,12 +3,14 @@ In development:
 ------                              
 
               xdev - refactoring
-                 * test try-catch-finally, try-finally, using templates
+                 * test using templates
 
                  * short cut syntax for (:e) [] , &e [] or e => []
 
                  * get rid of +=, -=, *=, /= operators (and divideInto, multiplyBy)
+                 * get rid of lxDefaultGeneric
                  * uncomment matrixof template
+                 * uncomment arrayof enumerator method
 
                  * generic handler - { ... generic eval : anObject = false. } can it be replaced with { ... generic : anObject = false. }?
 
@@ -22,6 +24,10 @@ In development:
                  * review console samples
                  * review forms samples
                  * review net samples
+
+                 * it is possible to declare duplicate property:
+                      int length :: outnprop(readLengthTo).
+                      int length :: outnprop(readColumnsTo).
 
 ------                                 
 Pipeline:

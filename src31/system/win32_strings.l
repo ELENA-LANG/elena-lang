@@ -3,155 +3,155 @@
 class $characterController =
 {
     // !! should be corrected
-    isUpperCase &char:aValue
+    isUpperCase char:aValue
     [
-        int aRetVal := system'external'USER32 IsCharUpperW &char:aValue.
+        int aRetVal := system'external'USER32 IsCharUpperW char:aValue.
         
-        ^ (aRetVal != 0).
+        ^ (aRetVal != 0)
     ]
     
-    isLowerCase &char:aValue
+    isLowerCase char:aValue
     [
-        int aRetVal := system'external'USER32 IsCharLowerW &char:aValue.
+        int aRetVal := system'external'USER32 IsCharLowerW char:aValue.
         
-        ^ (aRetVal != 0).
+        ^ (aRetVal != 0)
     ]
     
-    stacksafe toUpperCase &char:aChar &vchar:aRetVal
+    stacksafe toUpperCase char:aChar vchar:aRetVal
     [
-        int      aLength := 0.
-        short(3) aBuffer := 0.
+        int   aLength := 0.
+        short aBuffer(3).
 
-        charConvertor $save &char:aChar &int:0 &shortarray:aBuffer &vint:aLength.
+        charConvertor $save char:aChar int:0 shortarray:aBuffer vint:aLength.
 
         aBuffer@aLength := 0.
         
-        system'external'USER32 CharUpperW &shortarray:aBuffer.
+        system'external'USER32 CharUpperW shortarray:aBuffer.
         
-        charConvertor $convert &int:0 &shortarray:aBuffer &vchar:aRetVal.
+        charConvertor $convert int:0 shortarray:aBuffer vchar:aRetVal
     ]
     
-    stacksafe toLowerCase &char:aChar &vchar:aRetVal
+    stacksafe toLowerCase char:aChar vchar:aRetVal
     [
-        int      aLength := 0.
-        short(3) aBuffer := 0.
+        int   aLength := 0.
+        short aBuffer(3).
 
-        charConvertor $save &char:aChar &int:0 &shortarray:aBuffer &vint:aLength.
+        charConvertor $save char:aChar int:0 shortarray:aBuffer vint:aLength.
         
         aBuffer@aLength := 0.
         
-        system'external'USER32 CharLowerW &shortarray:aBuffer.
+        system'external'USER32 CharLowerW shortarray:aBuffer.
         
-        charConvertor $convert &int:0 &shortarray:aBuffer &vchar:aRetVal.
+        charConvertor $convert int:0 shortarray:aBuffer vchar:aRetVal
     ]
 }.
 
 // --- caseLitrealOp ---
 
-extension(literal) caseLiteralOp
+literal extension caseLiteralOp
 {
     upperCase
     [
         literal aRetVal := emptyLiteralValue.        
         int     anIndex := 0.
-        char    aCurrent := #0.
-        char    aConverted := #0.
+        char    aCurrent := $0.
+        char    aConverted := $0.
         int     aCurrentLen := 0.
         
         int     aLength := self length.
         
         while (anIndex < aLength)
         [
-            self read &int:anIndex &vchar:aCurrent.
+            self read int:anIndex vchar:aCurrent.
             aCurrentLen := aCurrent length.
             
-            $characterController toUpperCase &char:aCurrent &vchar:aConverted.
+            $characterController toUpperCase char:aCurrent vchar:aConverted.
             
-            aRetVal := aRetVal add &char:aConverted.
+            aRetVal := aRetVal add char:aConverted.
             
-            anIndex := anIndex + aCurrentLen.
+            anIndex := anIndex + aCurrentLen
         ].
             
-        ^ aRetVal.
+        ^ aRetVal
     ]
 
     lowerCase
     [
         literal aRetVal := emptyLiteralValue.        
         int     anIndex := 0.
-        char    aCurrent := #0.
-        char    aConverted := #0.
+        char    aCurrent := $0.
+        char    aConverted := $0.
         int     aCurrentLen := 0.
         
         int     aLength := self length.
         
         while (anIndex < aLength)
         [
-            self read &int:anIndex &vchar:aCurrent.
+            self read int:anIndex vchar:aCurrent.
             aCurrentLen := aCurrent length.
             
-            $characterController toLowerCase &char:aCurrent &vchar:aConverted.
+            $characterController toLowerCase char:aCurrent vchar:aConverted.
             
-            aRetVal := aRetVal add &char:aConverted.
+            aRetVal := aRetVal add char:aConverted.
             
-            anIndex := anIndex + aCurrentLen.
+            anIndex := anIndex + aCurrentLen
         ].
             
-        ^ aRetVal.
+        ^ aRetVal
     ]    
 }
 
 // --- caseLitrealOp ---
 
-extension(wide) caseWideOp
+wide extension caseWideOp
 {
     upperCase
     [
         wide aRetVal := emptyWideLiteralValue.        
         int  anIndex := 0.
-        char aCurrent := #0.
-        char aConverted := #0.
+        char aCurrent := $0.
+        char aConverted := $0.
         int  aCurrentLen := 0.
 
         int  aLength := self length.
                 
         while (anIndex < aLength)
         [
-            self read &int:anIndex &vchar:aCurrent.
+            self read int:anIndex vchar:aCurrent.
             aCurrentLen := aCurrent length.
             
-            $characterController toUpperCase &char:aCurrent &vchar:aConverted.
+            $characterController toUpperCase char:aCurrent vchar:aConverted.
             
-            aRetVal := aRetVal add &char:aConverted.
+            aRetVal := aRetVal add char:aConverted.
             
-            anIndex := anIndex + aCurrentLen.
+            anIndex := anIndex + aCurrentLen
         ].
             
-        ^ aRetVal.
+        ^ aRetVal
     ]
 
     lowerCase
     [
         wide aRetVal := emptyWideLiteralValue.        
         int  anIndex := 0.
-        char aCurrent := #0.
-        char aConverted := #0.
+        char aCurrent := $0.
+        char aConverted := $0.
         int  aCurrentLen := 0.
         
         int  aLength := self length.
         
         while (anIndex < aLength)
         [
-            self read &int:anIndex &vchar:aCurrent.
+            self read int:anIndex vchar:aCurrent.
             aCurrentLen := aCurrent length.
             
-            $characterController toLowerCase &char:aCurrent &vchar:aConverted.
+            $characterController toLowerCase char:aCurrent vchar:aConverted.
             
-            aRetVal := aRetVal add &char:aConverted.
+            aRetVal := aRetVal add char:aConverted.
             
-            anIndex := anIndex + aCurrentLen.
+            anIndex := anIndex + aCurrentLen
         ].
             
-        ^ aRetVal.
+        ^ aRetVal
     ]
 }
