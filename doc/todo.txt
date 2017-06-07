@@ -29,6 +29,8 @@ In development:
                       int length :: outnprop(readLengthTo).
                       int length :: outnprop(readColumnsTo).
 
+                 * no need to copy to the buffer field / variable / method attributes
+
 ------                                 
 Pipeline:
 ------                                                                                         
