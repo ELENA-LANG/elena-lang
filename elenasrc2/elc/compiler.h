@@ -1030,7 +1030,7 @@ private:
    void compileDeclarations(SNode node, ModuleScope& scope);
    void compileImplementations(SNode node, ModuleScope& scope);
 
-//   void copyAttributeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool variableMode);
+   void copyAttributeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, bool variableMode*/);
    void copyTreeNode(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, bool methodMode = false*/);
    void copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer);
