@@ -7666,7 +7666,18 @@ bool Compiler :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bo
 
          writer.newNode(lxClassField);
          writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(templateScope.reference));
-         copyIdentifier(writer, current.findChild(lxIdentifier));
+         if (scope.type == TemplateScope::ttFieldTemplate) {
+            SNode field = current.findChild(lxTemplateField);
+            if (field != lxNone) {
+               ident_t fieldName = retrieveIt(scope.fields.start(), field.argument).key();
+
+               writer.newNode(lxIdentifier, fieldName);
+               SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+               writer.closeNode();
+            }
+            else copyIdentifier(writer, current.findChild(lxIdentifier));
+         }
+         else copyIdentifier(writer, current.findChild(lxIdentifier));
          writer.closeNode();
       }
       current = current.nextNode();
@@ -7959,7 +7970,16 @@ void Compiler :: generateFieldTemplateTree(SyntaxWriter& writer, SNode node, Tem
          writer.newNode(lxTemplateField, -1);
          writer.appendNode(lxReference, scope.moduleScope->module->resolveSubject(attrRef));
          copyAttributeTree(writer, node.firstChild(), scope);
-         copyIdentifier(writer, ident.findChild(lxPrivate, lxIdentifier));
+         if (scope.type == TemplateScope::ttFieldTemplate) {
+            SNode name = ident.findChild(lxIdentifier, lxPrivate);
+
+            scope.fields.add(name.findChild(lxTerminal).identifier(), scope.fields.Count() + 1);
+
+            writer.newNode(lxTemplateField, scope.fields.Count());
+            copyIdentifier(writer, name);
+            writer.closeNode();
+         }
+         else copyIdentifier(writer, ident.findChild(lxPrivate, lxIdentifier));
          writer.closeNode();
       }
       else {
