@@ -107,7 +107,7 @@ class control =
         = $self while:anExpr do:[].
 
     while:anExpr do:anAction
-        = anAction run if:anExpr.
+        = anAction run while:anExpr.
 
     run int:aStart int:anEnd every:aFunction
         = (aStart < anEnd)

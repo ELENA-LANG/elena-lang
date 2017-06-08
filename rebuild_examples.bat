@@ -5,7 +5,7 @@ bin\elc examples\console\sum\realsum.prj
 bin\elc examples\console\words\words.prj
 bin\elc examples\console\pi\pi.prj
 bin\elc examples\console\bsort\bsort.prj
-rem bin\elc examples\files\textfile\textfile.prj
+bin\elc examples\files\textfile\textfile.prj
 rem bin\elc examples\console\binary\binary.prj
 rem bin\elc examples\console\replace\replace.prj
 rem bin\elc examples\console\goods\goods.prj

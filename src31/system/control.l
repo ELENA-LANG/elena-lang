@@ -192,7 +192,7 @@ limited class BaseFunction :: dispatchable(func)
     action eval []
     
     /// Executes the action while the condition is true
-    sealed run if:aBool
+    sealed run while:aBool
     [
         while (aBool)
         [

@@ -476,9 +476,6 @@ namespace _ELENA_
    #define NIL_VAR                 "$nil"             // the nil symbol
    #define RETVAL_VAR              "$$ret"            // the closure returning value
 
-   #define TARGET_PSEUDO_METHOD    "target_method"
-   #define TARGET_PSEUDO_FIELD     "$target_field"
-
   // --- ELENA special sections ---
    #define ATTRIBUTE_SECTION        "#attributes"
    #define EXTENSION_SECTION        "#extensions"

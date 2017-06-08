@@ -151,7 +151,7 @@ extension formatterOp
 
 extension inputOp
 {
-    readLine:var
+    readTo:var
     [
         var aLine := self read literal.
         

@@ -8184,11 +8184,14 @@ bool Compiler :: generateMethodScope(SNode node, TemplateScope& scope, SNode att
 
       // HOTFIX : recognize generic attribute      
       if (!scope.isAttribute(lastAttr)) {
-         current = lastAttr.prevNode();
+         // HOTFIX : recognize the verb
+         if (!_verbs.exist(lastAttr.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier())) {
+            current = lastAttr.prevNode();
 
-         if (current == lxAttribute && scope.mapSubject(current.findChild(lxIdentifier, lxPrivate)) == 0) {
-            lastAttr = lxMessage;
-            lastAttr = current;
+            if (current == lxAttribute && scope.mapSubject(current.findChild(lxIdentifier, lxPrivate)) == 0) {
+               lastAttr = lxMessage;
+               lastAttr = current;
+            }
          }
 
          // mark the last message as a name

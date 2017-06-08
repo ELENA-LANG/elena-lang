@@ -6,7 +6,7 @@ import extensions.
 
 prompter = (&int:anIndex)
 [
-     ^ console writeLiteral:"Enter array[":anIndex:"]:"; readLine:(Integer new); int
+     ^ console writeLiteral:"Enter array[":anIndex:"]:"; readTo:(Integer new); int
 ].
 
 // --- bsortOp ---
@@ -57,7 +57,7 @@ extension bsortOp
 Program =
 [
     // 1. Create the array
-    var aSize := console write:"Enter the array size:"; readLine:(Integer new).
+    var aSize := console write:"Enter the array size:"; readTo:(Integer new).
 
     // 2. Initialize the array
     var anArray := Array new length:aSize; set every:prompter.

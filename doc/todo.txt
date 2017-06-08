@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xdev - refactoring
-                 * fix duplicate extension warning (for extension module)
                  * fix pi sample
                  * migrating console sample
 
