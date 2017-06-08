@@ -151,6 +151,15 @@ extension formatterOp
 
 extension inputOp
 {
+    readLine:var
+    [
+        var aLine := self read literal.
+        
+        aLine~convertorOp convert to:var.
+        
+        ^var.
+    ]
+    
     generic readLine args:Arguments
     [
         var aLine := self read literal.

@@ -1,155 +1,153 @@
-#import system.
-
 // --- mathOp ---
 
 class mathOpDispatcher =
 {
-    eval &byte:aValue = byteOp.
+    eval byte:aValue = byteOp.
     
-    eval &short:aValue = shortOp.
+    eval short:aValue = shortOp.
     
-    eval &int:aValue = intOp.
+    eval int:aValue = intOp.
     
-    eval &long:aValue = longOp.
+    eval long:aValue = longOp.
     
-    eval &real:aValue = realOp.
+    eval real:aValue = realOp.
 }.
 
 extension mathOp
 {
     absolute
     [
-        var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval to:mathOpDispatcher.
         
-        ^ self::dispatcher absolute.
+        ^ self~dispatcher absolute.
     ]
     
     mod : anOperand
     [
-        var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval to:mathOpDispatcher.
         
-        ^ self::dispatcher mod:anOperand.
+        ^ self~dispatcher mod:anOperand.
     ]
     
-    is &odd
+    is odd
     [
-        var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval to:mathOpDispatcher.
         
-        ^ self::dispatcher is &odd.
+        ^ self~dispatcher is odd.
     ]
         
-    is &even
+    is even
     [
-        var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval to:mathOpDispatcher.
         
-        ^ self::dispatcher is &even.
+        ^ self~dispatcher is even.
     ]
         
-    is &zero
+    is zero
     [
-        var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval to:mathOpDispatcher.
         
-        ^ self::dispatcher is &zero.
+        ^ self~dispatcher is zero.
     ]
         
-    is &positive
+    is positive
     [
-        var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval to:mathOpDispatcher.
         
-        ^ self::dispatcher is &positive.
+        ^ self~dispatcher is positive.
     ]
         
-    is &negative
+    is negative
     [
-        var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval to:mathOpDispatcher.
         
-        ^ self::dispatcher is &negative.
+        ^ self~dispatcher is negative.
     ]
         
-    is &nonnegative
+    is nonnegative
     [
-        var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval to:mathOpDispatcher.
         
-        ^ self::dispatcher is &nonnegative.
+        ^ self~dispatcher is nonnegative.
     ]
     
     exp
-        = (self real)::realOp exp.
+        = (self real)~realOp exp.
     
     real ln
-        = self real ln.
+        = self real; ln.
     
     sqrt
-        = self real sqrt.
+        = self real; sqrt.
 
-    power &int:aPower
+    power int:aPower
     [
-        var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval to:mathOpDispatcher.
         
-        ^ self::dispatcher power &int:aPower.
+        ^ self~dispatcher power int:aPower.
     ]
 
     power : aPower
-        = aPower cast:%eval &to:
+        = aPower cast:%eval to:
         {
-            eval:target &int:n
+            eval:target int:n
             [
-                var dispatcher := self cast:%eval &to:mathOpDispatcher.
+                var dispatcher := self cast:%eval to:mathOpDispatcher.
                 
-                ^ self::dispatcher power : aPower.                
+                ^ self~dispatcher power : aPower.                
             ]
                 
-            eval:target &real:n
-                = target real power &real:n.
+            eval:target real:n
+                = target real; power real:n.
         }
-        &with:self.
+        with:self.
 
     sqr
     [
-        var dispatcher := self cast:%eval &to:mathOpDispatcher.
+        var dispatcher := self cast:%eval to:mathOpDispatcher.
         
-        ^ self::dispatcher sqr.
+        ^ self~dispatcher sqr.
     ]
 
     rounded
-        = self real rounded.
+        = self real; rounded.
 
     roundedInt
-        = intConvertor convert &real:(self real rounded).
+        = intConvertor convert real:(self real; rounded).
 
     integer
-        = (self real)::realOp integer.
+        = (self real)~realOp integer.
 
     integerInt
-        = intConvertor convert &real:((self real)::realOp integer).
+        = intConvertor convert real:((self real)~realOp integer).
 
     frac
-        = (self real)::realOp frac.
+        = (self real)~realOp frac.
 
     sin
-        = (self real)::realOp sin.
+        = (self real)~realOp sin.
 
     cos
-        = (self real)::realOp cos.
+        = (self real)~realOp cos.
 
     tan
-        = (self real)::realOp tan.
+        = (self real)~realOp tan.
 
     arctan
-        = (self real)::realOp arctan.
+        = (self real)~realOp arctan.
             
     arcsin
-        = (self real)::realOp arcsin.
+        = (self real)~realOp arcsin.
             
     arccos
-        = (self real)::realOp arccos.
+        = (self real)~realOp arccos.
             
     radian
-        = (self real)::realOp radian.
+        = (self real)~realOp radian.
             
     degree
-        = (self real)::realOp degree.
+        = (self real)~realOp degree.
             
     reciprocal
-        = (self real)::realOp reciprocal.
+        = (self real)~realOp reciprocal.
 }

@@ -3,7 +3,9 @@ In development:
 ------                              
 
               xdev - refactoring
-                 * migrsting words sample
+                 * fix duplicate extension warning (for extension module)
+                 * fix pi sample
+                 * migrating console sample
 
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
 
