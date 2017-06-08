@@ -76,6 +76,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsRootMessage:
          _writer.newNode(lxMessage, -2);
          break;
+      case nsLazyExpression:
+         _writer.newNode(lxLazyExpression);
+         break;
       case nsRetStatement:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
          break;

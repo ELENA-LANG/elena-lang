@@ -305,6 +305,6 @@ extension convertorOp
 //    toShortTimeLiteral
 //        = self __time_st toShortTime literal.
 //}
-//
-///// obsolete
-//symbol String = extensions'text'StringWriter.
+
+/// obsolete
+symbol String = extensions'text'StringWriter.

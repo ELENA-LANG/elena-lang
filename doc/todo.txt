@@ -3,6 +3,8 @@ In development:
 ------                              
 
               xdev - refactoring
+                 * migrsting words sample
+
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
 
                  * test using templates

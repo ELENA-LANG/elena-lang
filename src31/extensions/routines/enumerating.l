@@ -1,95 +1,94 @@
-#import system.
-#import system'io.
-#import system'text.
-#import extensions'text.
+//#import system'io.
+//import system'text.
+import extensions'text.
 
-// --- ReaderEnumerator ---
-
-class ReaderEnumerator :: Enumerator
-{
-    textreader theReader.
-    object     theLine.
-
-    constructor new
-    [ 
-    ]
-
-    constructor new : source
-        <= new;
-    [
-        theReader := source textreader.
-    ]
-
-    constructor new &stream:aStream &encoder:anEncoder
-        <= new;
-    [
-        theReader := StreamReader new &stream:aStream &encoder:anEncoder.
-    ]        
-                        
-    constructor new &path:aPath
-        <= new;
-    [
-        theReader := StreamReader new &path:aPath.
-    ]
-    
-    constructor new &path:aPath &encoder:anEncoder
-        <= new;
-    [
-        theReader := StreamReader new &path:aPath &encoder:anEncoder.
-    ]
-    
-    reset 
-    [
-        NotSupportedException new raise.
-    ]
-    
-    next
-    [
-        (theReader available)
-            ? [
-                theLine := theReader read &literal.
-                
-                ^ true.            
-            ].
-        
-        theReader close.
-        
-        ^ false.
-    ]
-    
-    get = theLine.
-}
-
-// --- fileExOp ---
-
-extension(file_path) fileExOp
-{
-    run &eachLine:anAction
-        = anAction run &enumerator:(ReaderEnumerator new &path:self).
-        
-    run &for:anEncoder &eachLine:anAction
-        = anAction run &enumerator:(ReaderEnumerator new &path:self &encoder:(anEncoder encoder)).
-}
+//// --- ReaderEnumerator ---
+//
+//class ReaderEnumerator :: Enumerator
+//{
+//    textreader theReader.
+//    object     theLine.
+//
+//    constructor new
+//    [ 
+//    ]
+//
+//    constructor new : source
+//        <= new;
+//    [
+//        theReader := source textreader.
+//    ]
+//
+//    constructor new stream:aStream encoder:anEncoder
+//        <= new;
+//    [
+//        theReader := StreamReader new &stream:aStream &encoder:anEncoder.
+//    ]        
+//                        
+//    constructor new &path:aPath
+//        <= new;
+//    [
+//        theReader := StreamReader new &path:aPath.
+//    ]
+//    
+//    constructor new &path:aPath &encoder:anEncoder
+//        <= new;
+//    [
+//        theReader := StreamReader new &path:aPath &encoder:anEncoder.
+//    ]
+//    
+//    reset 
+//    [
+//        NotSupportedException new raise.
+//    ]
+//    
+//    next
+//    [
+//        (theReader available)
+//            ? [
+//                theLine := theReader read &literal.
+//                
+//                ^ true.            
+//            ].
+//        
+//        theReader close.
+//        
+//        ^ false.
+//    ]
+//    
+//    get = theLine.
+//}
+//
+//// --- fileExOp ---
+//
+//extension(file_path) fileExOp
+//{
+//    run &eachLine:anAction
+//        = anAction run &enumerator:(ReaderEnumerator new &path:self).
+//        
+//    run &for:anEncoder &eachLine:anAction
+//        = anAction run &enumerator:(ReaderEnumerator new &path:self &encoder:(anEncoder encoder)).
+//}
 
 // --- stringExOp ---
 
 extension stringExOp
 {
-    run &eachWord:aFunction
-        = aFunction run &enumerator:(TokenEnumerator new &literal:(self literal)).
+    run eachWord:aFunction
+        = aFunction run enumerator:(TokenEnumerator new literal:self).
         
-    run &token_dfa:aStatemachine &each:aFunction
-        = aFunction run &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:aStatemachine).
+    run token_dfa:aStatemachine each:aFunction
+        = aFunction run enumerator:(TokenEnumerator new literal:self token_dfa:aStatemachine).
 }
 
 // --- printingLn ---
 
-symbol printingLn = aLine [ 'program'output writeLine:aLine ].
+symbol printingLn = (:aLine)[ 'program'output writeLine:aLine ].
 
-// --- func1Op ---
-
-extension(func1) func1Op
-{
-    asComparer
-        = { equal : object = $owner eval:object bool. }.
-}
+//// --- func1Op ---
+//
+//extension(func1) func1Op
+//{
+//    asComparer
+//        = { equal : object = $owner eval:object bool. }.
+//}

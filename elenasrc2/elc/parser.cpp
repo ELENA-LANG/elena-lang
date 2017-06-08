@@ -78,7 +78,11 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
          terminal.symbol = tsReference;
          break;
 	   case dfaPrivate:
-         terminal.symbol = tsPrivate;
+         if (terminal.value[1] == 0) {
+            //HOTFIX : if it is $ symbol
+            terminal.symbol = (Symbol)table.defineSymbol(terminal);
+         }
+         else terminal.symbol = tsPrivate;
          break;
       case dfaInteger:
          terminal.symbol = tsInteger;

@@ -1,15 +1,14 @@
-#import system.
-#import system'text.
+import system'text.
 
 // --- Statemachine ---
 
-#subject token_dfa = Statemachine.
+type token_dfa :: Statemachine.
 
 limited class Statemachine
 {
-    stacksafe bool proceed &char:aChar = $nil.
+    stacksafe bool proceed char:aChar = $nil.
     
-    bool is &whitespace = $nil.
+    bool is whitespace = $nil.
     
     token_dfa = $self.
     
@@ -25,21 +24,21 @@ class SimpleStatemachine :: Statemachine
         theSpaceMode := true.
     ]
     
-    proceed &char:aChar
+    proceed char:aChar
     [
-        (aChar is &whitespace)
-            ? [
-                theSpaceMode
-                    ! [ theSpaceMode := true. ^ true. ].
-            ]
-            ! [
-                theSpaceMode := false.
+        if (aChar is whitespace)
+            [
+                ifnot (theSpaceMode)
+                    [ theSpaceMode := true. ^ true ]
+            ];
+            [
+                theSpaceMode := false
             ].
             
-        ^ false.            
+        ^ false
     ]
     
-    is &whitespace = theSpaceMode.
+    is whitespace = theSpaceMode.
 }
 
 class ExpressionStatemachine :: Statemachine
@@ -57,61 +56,61 @@ class ExpressionStatemachine :: Statemachine
         theOperatorMode := false.
     ]
     
-    proceed &char:aChar
+    proceed char:aChar
     [
-        theQuoteMode?
+        if (theQuoteMode)
             [
-                (aChar == #22h)
-                    ? [ theQuoteMode := false. theSpaceMode := false. theNewToken := false. theOperatorMode := true. ].
+                if (aChar == $22h)
+                    [ theQuoteMode := false. theSpaceMode := false. theNewToken := false. theOperatorMode := true ].
                     
-                ^ false.                
+                ^ false
             ].
         
-        bool whitespace := aChar is &whitespace.
-        bool digit := aChar is &digit.
-        bool letter := aChar is &ltoken.
-        whitespace
-            ? [
-                theSpaceMode
-                    ! [ theSpaceMode := true. theNewToken := true. ^ true. ].
-            ]
-            ! [
-                (aChar == #22h)
-                    ? [
-                        theNewToken
-                            ! [ theNewToken := true. ^ true. ].
+        bool whitespace := aChar is whitespace.
+        bool digit := aChar is digit.
+        bool letter := aChar is ltoken.
+        if (whitespace)
+            [
+                ifnot(theSpaceMode)
+                    [ theSpaceMode := true. theNewToken := true. ^ true ]
+            ];
+            [
+                if (aChar == $22h)
+                    [
+                        ifnot(theNewToken)
+                            [ theNewToken := true. ^ true ].
                         
                         theQuoteMode := true.
                         theSpaceMode := false.
                         
-                        ^ false.
-                      ].
+                        ^ false
+                    ].
                                       
-                theNewToken
-                    ? [ 
+                if (theNewToken)
+                    [ 
                         theNewToken := false.
                         theSpaceMode := false. 
-                        (letter or:digit)
-                            ? [ theOperatorMode := false. ]
-                            ! [ theOperatorMode := true. ].
-                      ]
-                    ! [                
-                        (letter or:digit)
-                            ? [
-                                theOperatorMode
-                                    ? [ theNewToken := true. theOperatorMode := false. ^ true. ].
-                            ]
-                            ! [ 
+                        if (letter or:digit)
+                            [ theOperatorMode := false ];
+                            [ theOperatorMode := true ].
+                    ];
+                    [                
+                        if (letter or:digit)
+                            [
+                                if(theOperatorMode)
+                                    [ theNewToken := true. theOperatorMode := false. ^ true ]
+                            ];
+                            [ 
                                 theOperatorMode := true.
-                                theNewToken := true. ^ true.
-                            ].
-                    ].
+                                theNewToken := true. ^ true
+                            ]
+                    ]
             ].
         
-        ^ false.
+        ^ false
     ]
     
-    is &whitespace = theSpaceMode.    
+    is whitespace = theSpaceMode.    
 }
 
 /// obosolet
@@ -125,7 +124,7 @@ class TokenEnumerator :: Enumerator
     
     token_dfa  theDFA.
     
-    constructor new &literal:aLiteral &token_dfa:dfa
+    constructor new literal:aLiteral token_dfa:dfa
     [
         theLiteral := aLiteral.
         theIndex := 0.
@@ -133,12 +132,12 @@ class TokenEnumerator :: Enumerator
         theDFA := dfa.
     ]    
     
-    constructor new &literal:aLiteral
-        <= new &literal:aLiteral &token_dfa:(SimpleStatemachine new).
+    constructor new literal:aLiteral
+        <= new literal:aLiteral token_dfa:(SimpleStatemachine new).
     
     reset 
     [
-        theIndex set &int:0.
+        theIndex int := 0.
     ]
     
     next
@@ -147,33 +146,33 @@ class TokenEnumerator :: Enumerator
 
         int  aLength := 0.
         int  aCurrent := theIndex.
-        char aChar := #0.
+        char aChar := $0.
         int  aCharLen := 0.
         
-        theLiteral readLength &vint:aLength.
+        theLiteral readLengthTo vint:aLength.
         
         while (aCurrent < aLength)
         [
-            theLiteral read &int:aCurrent &vchar:aChar.
+            theLiteral read int:aCurrent vchar:aChar.
             
-            (theDFA proceed &char:aChar)
-                ? [
-                    theIndex set &int:aCurrent.
+            if (theDFA proceed char:aChar)
+                [
+                    theIndex int := aCurrent.
                     
-                    ^ true.
-                ]
-                ! [
-                    (theDFA is &whitespace)
-                        ! [ theBuffer write &char:aChar. ].
+                    ^ true
+                ];
+                [
+                    ifnot (theDFA is whitespace)
+                        [ theBuffer write char:aChar ]
                 ].
                 
-            aChar readLength &vint:aCharLen.
-            aCurrent := aCurrent + aCharLen.
+            aChar readLengthTo vint:aCharLen.
+            aCurrent := aCurrent + aCharLen
         ].
 
-        theIndex set &int:aCurrent.
+        theIndex int := aCurrent.
 
-        ^ theBuffer is &nonempty.
+        ^ theBuffer is nonempty
     ]
     
     get = theBuffer literal.

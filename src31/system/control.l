@@ -560,14 +560,14 @@ limited class BaseFunction11 :: dispatchable(func11)
     ]
 }
 
-//// --- base lazy expression ---
-//
-//limited class BaseLazyExpression
-//{
-//    eval []
-//    
-//    dispatch => system'core_routines'__lazyexpression.
-//}
+// --- base lazy expression ---
+
+limited class BaseLazyExpression
+{
+    eval []
+    
+    dispatch => system'core_routines'__lazyexpression.
+}
 
 // --- IndexFunction ---
 

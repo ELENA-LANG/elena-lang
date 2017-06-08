@@ -99,6 +99,7 @@ enum Symbol
    nsScope                      = 0x0104D,
    nsAttribute                  = 0x0104E,
    nsRootMessage                = 0x0104F,
+   nsLazyExpression             = 0x01050,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

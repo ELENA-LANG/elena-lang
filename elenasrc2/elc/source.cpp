@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Source Reader class implementation.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"

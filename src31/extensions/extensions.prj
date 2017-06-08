@@ -12,5 +12,9 @@ version=3.1.0
 author=Alex Rakov
 
 [files]
+control.l
 convertors.l
 console.l
+text\words.l
+text\strings.l
+routines\enumerating.l

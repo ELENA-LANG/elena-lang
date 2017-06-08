@@ -42,6 +42,7 @@ using namespace _ELENA_;
 //#define HINT_CLOSURE          0x00008000
 #define HINT_SUBCODE_CLOSURE  0x00008800
 #define HINT_RESENDEXPR       0x00000400
+#define HINT_LAZY_EXPR        0x00000200
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
@@ -304,10 +305,10 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    }      
 }
 
-//ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
-//{
-//   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
-//}
+ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
+{
+   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
+}
 
 ObjectInfo Compiler::ModuleScope :: mapObject(SNode identifier)
 {
@@ -2501,10 +2502,11 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 {
    ObjectInfo result;
 
-   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression);
+   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression);
    switch (member.type)
    {
       case lxNestedClass:
+      case lxLazyExpression:
          result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxCode:
@@ -3513,9 +3515,9 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
    return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
 }
 
-/*bool*/void Compiler :: declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/)
+bool Compiler :: declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/)
 {
-//   bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.findChild(lxCode).firstChild());
+   bool lazyExpression = test(mode, HINT_LAZY_EXPR);
 
    methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
 
@@ -3527,18 +3529,18 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
    }
 
    ref_t parentRef = scope.info.header.parentRef;
-//   if (lazyExpression) {
-//      parentRef = scope.moduleScope->getBaseLazyExpressionClass();
-//   }
-//   else {
+   if (lazyExpression) {
+      parentRef = scope.moduleScope->getBaseLazyExpressionClass();
+   }
+   else {
       ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
       if (actionRef)
          parentRef = actionRef;
-//   }
+   }
 
    compileParentDeclaration(SNode(), scope, parentRef);
 
-//   return lazyExpression;
+   return lazyExpression;
 }
 
 void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int mode)
@@ -3549,7 +3551,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    writer.newNode(lxClass, scope.reference);
 
    ActionScope methodScope(&scope);
-/*   bool lazyExpression = */declareActionScope(node, scope, argNode, methodScope, mode);
+   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, mode);   
 
    scope.include(methodScope.message);
 
@@ -3559,14 +3561,14 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 //
 //   if (test(mode, HINT_SINGLETON))
 //      methodScope.singletonMode = true;
-//
-//   // if it is single expression
-//   if (!lazyExpression) {
+
+   // if it is single expression
+   if (!lazyExpression) {
       initialize(scope, methodScope);
 
       compileActionMethod(writer, node, methodScope);
-//   }
-//   else compileLazyExpressionMethod(writer, node, methodScope);
+   }
+   else compileLazyExpressionMethod(writer, node, methodScope);
 
    generateClassDeclaration(SNode(), scope, false);
 
@@ -3707,7 +3709,12 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 
    // if it is a lazy expression / multi-statement closure without parameters
    SNode argNode = node.firstChild();
-   if (argNode == lxCode) {
+   if (node == lxLazyExpression) {
+      scope.closureMode = true;
+
+      compileAction(node, scope, SNode(), HINT_LAZY_EXPR);
+   }
+   else if (argNode == lxCode) {
       scope.closureMode = true;
 
       compileAction(node, scope, SNode(), singleton ? mode | HINT_SINGLETON : mode);
@@ -4569,32 +4576,30 @@ void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodSco
    writer.closeNode();
 }
 
-//void Compiler :: compileLazyExpressionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
-//{
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   declareParameterDebugInfo(writer, node, scope, false, false);
-//
-//   CodeScope codeScope(&scope);
-//
-//   SNode body = node.findChild(lxCode);
-//
-//   writer.newNode(lxNewFrame);
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   codeScope.level++;
-//
-//   compileRetExpression(writer, body.findChild(lxExpression), codeScope, 0);
-//
-//   writer.closeNode();
-//
-//   writer.appendNode(lxParamCount, scope.parameters.Count() + 1);
-//   writer.appendNode(lxReserved, scope.reserved);
-//   writer.appendNode(lxAllocated, codeScope.level - 1);  // allocate the space for the local variables excluding "this" one
-//
-//   writer.closeNode();
-//}
+void Compiler :: compileLazyExpressionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   declareParameterDebugInfo(writer, node, scope, false, false);
+
+   CodeScope codeScope(&scope);
+
+   writer.newNode(lxNewFrame);
+
+   // new stack frame
+   // stack already contains previous $self value
+   codeScope.level++;
+
+   compileRetExpression(writer, node.findChild(lxExpression), codeScope, 0);
+
+   writer.closeNode();
+
+   writer.appendNode(lxParamCount, scope.parameters.Count() + 1);
+   writer.appendNode(lxReserved, scope.reserved);
+   writer.appendNode(lxAllocated, codeScope.level - 1);  // allocate the space for the local variables excluding "this" one
+
+   writer.closeNode();
+}
 
 void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -7104,9 +7109,13 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          generateExpressionTree(writer, current, scope, false);
          break;
       case lxMessageReference:
+      case lxLazyExpression:
          writer.newNode(lxExpression);
          writer.newNode(current.type);
-         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
+         if (current == lxLazyExpression) {
+            generateExpressionTree(writer, current, scope, false);
+         }
+         else copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
          writer.closeNode();
          writer.closeNode();
          break;
