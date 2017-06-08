@@ -4,6 +4,7 @@ In development:
 
               xdev - refactoring
                  * fix pi sample
+
                  * migrating console sample
 
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).

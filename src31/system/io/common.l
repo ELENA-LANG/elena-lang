@@ -1,14 +1,12 @@
-#import system. 
-
 // === basic interfaces ===
-#subject stream       = system'io'Stream.
-#subject textreader   = system'io'TextReader.
-#subject binaryreader = system'io'BinaryReader.
-#subject textwriter   = system'io'TextWriter.
-#subject binarywriter = system'io'BinaryWriter.
+type stream       :: system'io'Stream.
+type textreader   :: system'io'TextReader.
+type binaryreader :: system'io'BinaryReader.
+type textwriter   :: system'io'TextWriter.
+type binarywriter :: system'io'BinaryWriter.
 
-#subject file_path.
-#subject directory_path.
+type file_path.
+type directory_path.
 
 extension ioTypeOp
 {
@@ -23,38 +21,42 @@ limited class Stream
 {
     stream = $self.
     
-    stacksafe innprop(length) writeLength &int:aLength [ ] // !! default implementation
-        
-    stacksafe outnprop(length) readLength &vint:aLength [ aLength := 0. ] // !! default implementation
+    int length :: nprop(readLengthTo,writeLength).
     
-    stacksafe outnprop(index) readIndex &vint:anIndex []
+    int index :: nprop(readIndexTo,writeIndex).
+    
+    stacksafe writeLength int:aLength [ ] // !! default implementation
+        
+    stacksafe readLengthTo vint:aLength [ aLength int := 0. ] // !! default implementation
+    
+    stacksafe readIndexTo vint:anIndex []
+    
+    stacksafe writeIndex int:anIndex []
 
-    appendIndex &int:anIndex 
+    appendIndex int:anIndex 
     [
         int aNewIndex := $self index.
         
-        aNewIndex += anIndex.
+        aNewIndex := aNewIndex + anIndex.
         
-        $self writeIndex &int:aNewIndex.
+        $self writeIndex int:aNewIndex.
     ]
 
-    reduce &index:anIndex 
-        <= reduceIndex &int:(anIndex int).
+    reduce index:anIndex 
+        <= reduceIndex int:anIndex.
         
-    stacksafe reduceIndex &int:anIndex 
+    stacksafe reduceIndex int:anIndex 
     [
         int aNewIndex := $self index.
         
-        aNewIndex -= anIndex.
+        aNewIndex := aNewIndex - anIndex.
         
-        $self writeIndex &int:aNewIndex.
+        $self writeIndex int:aNewIndex.
     ]
-
-    stacksafe innprop(index) writeIndex &int:anIndex []
         
-    stacksafe read &bytearray:aDump &vint:aLength []
+    stacksafe read bytearray:aDump vint:aLength []
     
-    stacksafe write &bytearray:aDump &int:aLength []
+    stacksafe write bytearray:aDump int:aLength []
     
     close []
 }

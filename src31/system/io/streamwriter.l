@@ -1,5 +1,4 @@
-#import system.
-#import system'text.
+import system'text.
 
 // --- BinaryWriter ---
 
@@ -7,7 +6,7 @@ limited class BinaryWriter
 {
     stream theStream.
     
-    constructor new &stream:aStream
+    constructor new stream:aStream
     [
         theStream := aStream.
     ]
@@ -16,63 +15,63 @@ limited class BinaryWriter
 
     close => theStream.
     
-    stacksafe write &bytearray:anArray &int:aLength
+    stacksafe write bytearray:anArray int:aLength
     [
-        theStream write &bytearray:anArray &int:aLength.
+        theStream write bytearray:anArray int:aLength.
     ]
 
-    write &byte:anInt
+    write byte:anInt
     [
-        byte(4) aBuffer := 0.
+        byte aBuffer(4).
         
         aBuffer@0 := anInt.
                 
-        $self write &bytearray:aBuffer &int:1.
+        $self write bytearray:aBuffer int:1.
     ]
 
-    write &short:anInt
+    write short:anInt
     [
-        byte(4) aBuffer := 0.
+        byte aBuffer(4).
         
-        byteArrayHelper write &bytearray:aBuffer &int:0 &short:anInt.
+        byteArrayHelper write bytearray:aBuffer int:0 short:anInt.
                 
-        $self write &bytearray:aBuffer &int:2.
+        $self write bytearray:aBuffer int:2.
     ]
 
-    write &char:anInt
+    write char:anInt
     [
-        byte(4) aBuffer := 0.
+        byte aBuffer(4).
         
-        byteArrayHelper write &bytearray:aBuffer &int:0 &char:anInt.
+        byteArrayHelper write bytearray:aBuffer int:0 char:anInt.
                 
-        $self write &bytearray:aBuffer &int:2.
+        $self write bytearray:aBuffer int:2
     ]
 
-    write &int:anInt
+    write int:anInt
     [
-        byte(4) aBuffer := 0.
+        byte aBuffer(4).
         
-        byteArrayHelper write &bytearray:aBuffer &int:0 &int:anInt.
+        byteArrayHelper write bytearray:aBuffer int:0 int:anInt.
                 
-        $self write &bytearray:aBuffer &int:4.
+        $self write bytearray:aBuffer int:4.
     ]
 
-    write &long:aLong
+    write long:aLong
     [
-        byte(8) aBuffer := 0.
+        byte aBuffer(8).
         
-        byteArrayHelper write &bytearray:aBuffer &int:0 &long:aLong.
+        byteArrayHelper write bytearray:aBuffer int:0 long:aLong.
                 
-        $self write &bytearray:aBuffer &int:8.
+        $self write bytearray:aBuffer int:8.
     ]
 
-    write &real:aLong
+    write real:aLong
     [
-        byte(8) aBuffer := 0.
+        byte aBuffer(8).
         
-        byteArrayHelper write &bytearray:aBuffer &int:0 &real:aLong.
+        byteArrayHelper write bytearray:aBuffer int:0 real:aLong.
                 
-        $self write &bytearray:aBuffer &int:8.
+        $self write bytearray:aBuffer int:8
     ]
 }
 
@@ -90,42 +89,42 @@ limited class TextWriter
     
     textwriter = $self.
 
-    stream [ NotSupportedException new raise. ]
+    stream [ NotSupportedException new; raise ]
 
-    encoder [ NotSupportedException new raise. ]
+    encoder [ NotSupportedException new; raise ]
 
     close [ ]    
     
-    stacksafe write &chararray:anArray &int:aLength
+    stacksafe write chararray:anArray int:aLength
     [
     ]
     
     writeLine : aLine
     [
-        $self write:aLine write &literal:theNewLineConstant.
+        $self write:aLine; write literal:theNewLineConstant.
     ]
     
     write : anObject
     [
-        anObject cast:%write &to:$self.
+        anObject cast:%write to:$self.
     ]
     
-    write &literal:aLine
+    write literal:aLine
     [
-        theBuffer clear write &literal:aLine.
+        theBuffer clear; write literal:aLine.
         
         int aLength := theBuffer length.
         
-        $self write &chararray:(theBuffer chararray) &int:aLength.
+        $self write chararray:theBuffer int:aLength.
     ]
     
-    write &wide:aLine
+    write wide:aLine
     [
-        theBuffer clear write &wide:aLine.
+        theBuffer clear; write wide:aLine.
         
         int aLength := theBuffer length.
         
-        $self write &chararray:(theBuffer chararray) &int:aLength.
+        $self write chararray:theBuffer int:aLength.
     ]
     
     writeLine

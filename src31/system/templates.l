@@ -47,18 +47,6 @@ method template nprop :: type,prop_name,get_method,set_method
     ]
 }
 
-//// --- innprop ---
-//
-//#template(-16388) innprop (template_subj)
-//{
-//   stacksafe set &template_subj:val
-//   [
-//        $self target_method &int:val.
-//        
-//        ^ val.
-//   ]
-//}
- 
 // --- outlprop ---
 
 method template outlprop :: type,prop_name,target_method
