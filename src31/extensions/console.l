@@ -1,11 +1,11 @@
-#import system'routines.
-#import system'text.
+import system'routines.
+import system'text.
 
 // --- outputOp ---
 
 extension outputOp
 {
-    generic writeLiteral &args:list
+    generic writeLiteral args:list
     [
         int len := list length.
         int i := 0.
@@ -13,15 +13,15 @@ extension outputOp
         [
             object obj := list@i.
             
-            self write:(obj::convertorOp toLiteral).
+            self write:(obj~convertorOp toLiteral).
             
-            i += 1.
+            i := i + 1
         ].
         
-        ^ self.
+        ^ self
     ]
     
-    generic writeWide &args:list
+    generic writeWide args:list
     [
         int len := list length.
         int i := 0.
@@ -29,15 +29,15 @@ extension outputOp
         [
             object obj := list@i.
             
-            self write:(obj::convertorOp toWide).
+            self write:(obj~convertorOp toWide).
             
-            i += 1.
+            i := i + 1
         ].
         
-        ^ self.
+        ^ self
     ]
 
-    generic writeLine &args:list
+    generic writeLine args:list
     [
         int len := list length.
         int i := 0.
@@ -45,15 +45,15 @@ extension outputOp
         [
             object obj := list@i.
             
-            self write:(obj::convertorOp toLiteral).
+            self write:(obj~convertorOp toLiteral).
             
-            i += 1.
+            i := i + 1
         ].
         
-        ^ self writeLine.
+        ^ self writeLine
     ]
 
-    generic writeWideLine &args:list
+    generic writeWideLine args:list
     [
         int len := list length.
         int i := 0.
@@ -61,12 +61,12 @@ extension outputOp
         [
             object obj := list@i.
             
-            self write:(obj::convertorOp toWide).
+            self write:(obj~convertorOp toWide).
             
-            i += 1.
+            i := i + 1
         ].
         
-        ^ self writeLine.
+        ^ self writeLine
     ]        
 }
 
@@ -74,73 +74,75 @@ extension outputOp
 
 class $helper =
 {
-    stacksafe readIndex &literal:s &vint:i &vint:retVal
+    stacksafe readIndex literal:s vint:i vint:retVal
     [
-        char ch := #0.
+        char ch := $0.
         int  n := 0.
+        int  v := 0.
         
-        retVal := 0.
-        s read &int:i &vchar:ch.
-        while (ch != #125)
+        s read int:i vchar:ch.
+        while (ch != $125)
         [
-            intConvertor convert &char:ch &vint:n.
-            ((n >= 30h)and:(n <= 39h))?
+            intConvertor convert char:ch vint:n.
+            if((n >= 30h)and:(n <= 39h))
             [                
                 n := n - 30h.
                 
-                retVal *= 10.
-                retVal += n.
-            ]
-            ! [ InvalidArgumentException new raise. ].
+                v := v * 10.
+                v := v + n.
+            ];
+            [ InvalidArgumentException new; raise ].
                 
-            i += 1.
-            s read &int:i &vchar:ch.   
+            i append int:1.
+            s read int:i vchar:ch
         ].
+        
+        retVal int := v
     ]
 }.
 
 extension formatterOp
 {
-    generic writeFormatted &args:args
+    generic writeFormatted args:args
     [
         literal    s := args@0.
         textbuffer buffer := TextBuilder new.
         
         int  len := s length.
         int  i := 0.
-        char ch := #0.
+        char ch := $0.
         int  chlen := 0.
         int  index := 0.
         
         while (i < len)
         [
-            s read &int:i &vchar:ch.
+            s read int:i vchar:ch.
             
-            if (ch == #123)
+            if (ch == $123)
                 [ 
                     i := i + 1.
                     
-                    $helper readIndex &literal:s &vint:i &vint:index.
-                    buffer write:((args@(index + 1))::convertorOp toLiteral).
+                    $helper readIndex literal:s vint:i vint:index.
+                    buffer write:((args@(index + 1))~convertorOp toLiteral).
                     
                     chlen := 1.
                 ];
                 [ 
-                    buffer write &char:ch. 
-                    ch readLength &vint:chlen.
+                    buffer write char:ch. 
+                    ch readLengthTo vint:chlen
                 ].            
             
-            i := i + chlen.
+            i := i + chlen
         ].
         
         self write:buffer.
         
-        ^ self.
+        ^ self
     ]
     
-    generic writeLineFormatted &args:args
+    generic writeLineFormatted args:args
     [
-        self::formatterOp writeFormatted &args:args.
+        self~formatterOp writeFormatted args:args.
         self writeLine.
     ]
 }
@@ -149,23 +151,23 @@ extension formatterOp
 
 extension inputOp
 {
-    generic readLine &args:Arguments
+    generic readLine args:Arguments
     [
-        var aLine := self read &literal.
+        var aLine := self read literal.
         
-        array aParams := aLine split &char:#32 array.
+        array aParams := aLine split char:$32.
         
         int aLength := Arguments length.
         
         int anIndex := 0.
         while (anIndex < aLength)
         [
-            (aParams getAt &int:anIndex)::convertorOp convert &to:(Arguments @ anIndex).
+            (aParams getAt int:anIndex)~convertorOp convert to:(Arguments @ anIndex).
             
-            anIndex += 1.
+            anIndex := anIndex + 1
         ].
             
-        ^ self.
+        ^ self
     ]
 }
 
@@ -173,27 +175,27 @@ extension inputOp
 
 extension stringOpEx
 {
-    write : anObject1 &paddingRight:aWidth
+    write : anObject1 paddingRight:aWidth
     [
         textbuffer aBuffer := TextBuilder new.
         
         aBuffer
-            write:(anObject1::convertorOp toLiteral).
+            write:(anObject1~convertorOp toLiteral).
         
-        self write:(aBuffer literal) &paddingRight:aWidth &with:#32.
+        self write:(aBuffer literal) paddingRight:aWidth with:$32.
             
-        ^ self.
+        ^ self
     ]
     
-    write : anObject1 &paddingLeft:aWidth
+    write : anObject1 paddingLeft:aWidth
     [
         textbuffer aBuffer := TextBuilder new.
         
         aBuffer
-            write:(anObject1::convertorOp toLiteral).
+            write:(anObject1~convertorOp toLiteral).
         
-        self write:(aBuffer literal) &paddingLeft:aWidth &with:#32.
+        self write:(aBuffer literal) paddingLeft:aWidth with:$32.
             
-        ^ self.
+        ^ self
     ]
 }

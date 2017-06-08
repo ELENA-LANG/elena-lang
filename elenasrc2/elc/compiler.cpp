@@ -1174,10 +1174,10 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      //if (identifier.compare(SUBJECT_VAR)) {
-      //   return ObjectInfo(okSubject, local.offset);
-      //}
-      /*else */if (local.size != 0) {
+      if (identifier.compare(SUBJECT_VAR)) {
+         return ObjectInfo(okSubject, local.offset);
+      }
+      else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.subj_ref);
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.subj_ref);
@@ -5224,10 +5224,9 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
    // check if extension is qualified
    if (extensionClassRef != 0) {
       if (test(scope.info.header.flags, elExtension)) {
-         scope.extensionMode = current.argument;
+         scope.extensionMode = extensionClassRef;
 
          scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(0, scope.extensionMode));
-
       }
       else scope.raiseError(errInvalidHint, root);
    }

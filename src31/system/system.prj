@@ -26,6 +26,7 @@ events.l
 console.l
 win32_pointers.l
 win32_app.l
+collections\list.l
 routines\enumerables.l
 text\win32_common.l
 text\encoder.l
