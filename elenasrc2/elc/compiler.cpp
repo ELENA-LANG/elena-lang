@@ -4286,37 +4286,37 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
 
       arg = arg.nextNode();
    }
-//   bool first = true;
-//   while (arg == lxMessage || arg == lxClosureMessage) {
-//      SNode subject = arg.findChild(lxIdentifier, lxPrivate);
-//
-//      if (!first) {
-//         signature.append('&');
-//      }
-//      else first = false;
-//
-//      ref_t subj_ref = scope.mapSubject(subject, signature);
-//
-//      // declare method parameter
-//      arg = arg.nextNode();
-//
-//      if (arg == lxMethodParameter) {
-//         ident_t name = arg.findChild(lxIdentifier, lxPrivate).identifier();
-//
-//         // !! check duplicates
-//         if (scope.parameters.exist(name))
-//            scope.raiseError(errDuplicatedLocal, arg);
-//
-//         int index = 1 + scope.parameters.Count();
-//         ref_t paramRef = scope.moduleScope->subjectHints.get(subj_ref);
-//         int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
-//            paramRef, 0, true) : 0;
-//
-//         scope.parameters.add(name, Parameter(index, subj_ref, paramRef, size));
-//
-//         arg = arg.nextNode();
-//      }
-//   }
+   bool first = true;
+   while (arg == lxMessage || arg == lxClosureMessage) {
+      SNode subject = arg.findChild(lxIdentifier, lxPrivate);
+
+      if (!first) {
+         signature.append('&');
+      }
+      else first = false;
+
+      ref_t subj_ref = scope.mapSubject(subject, signature);
+
+      // declare method parameter
+      arg = arg.nextNode();
+
+      if (arg == lxMethodParameter) {
+         ident_t name = arg.findChild(lxIdentifier, lxPrivate).identifier();
+
+         // !! check duplicates
+         if (scope.parameters.exist(name))
+            scope.raiseError(errDuplicatedLocal, arg);
+
+         int index = 1 + scope.parameters.Count();
+         ref_t paramRef = scope.moduleScope->subjectHints.get(subj_ref);
+         int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
+            paramRef, 0, true) : 0;
+
+         scope.parameters.add(name, Parameter(index, subj_ref, paramRef, size));
+
+         arg = arg.nextNode();
+      }
+   }
 
    if (!emptystr(signature))
       sign_id = scope.moduleScope->module->mapSubject(signature, false);
@@ -7074,17 +7074,17 @@ void Compiler :: generateObjectTree(SyntaxWriter& writer, SNode current, Templat
          }
          writer.newBookmark();
       case lxMessage:
-//         if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
-//            writer.newNode(lxClosureMessage);
-//            copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
-//            writer.closeNode();
-//         }
-//         else {
+         if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
+            writer.newNode(lxClosureMessage);
+            copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+            writer.closeNode();
+         }
+         else {
             generateMessageTree(writer, current, scope/*, false*/);
 
             writer.insert(lxExpression);
             writer.closeNode();
-//         }
+         }
          if (current == lxCatchOperation) {
             writer.removeBookmark();
             writer.insert(lxTrying);

@@ -1,4 +1,4 @@
-#import extensions.
+import extensions.
 
 // --- Prompt ---
 
@@ -11,25 +11,25 @@ const RealSamplePrompt = "Enter the two real numbers:".
 extension EReader
 {
     loadFrom : aStream
-        = aStream readLine convert &to:self
-            | if &FormatError: e
+        = aStream readLine; convert to:self
+            | if FormatError: (:e)
                 [
-                    console writeLine:(e message) readChar.
+                    console writeLine:(e message); readChar.
                     
-                    AbortException new raise.
+                    AbortException new; raise.
                 ].
 }
 
-enteredNumber = 'number new loadFrom:console.
+enteredNumber = 'number new; loadFrom:console.
 
 // --- Program ---
 
 Program =
 [
     console
-        writeLine:'prompt
-        writeLine:"The sum is ":(enteredNumber + enteredNumber)
-        readChar.
+        writeLine:'prompt;
+        writeLine:"The sum is ":(enteredNumber + enteredNumber);
+        readChar
 ].
 
 

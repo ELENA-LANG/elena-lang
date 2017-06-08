@@ -1,5 +1,5 @@
 [project]
-output=/usr/lib/elena/lib30
+output=/usr/lib/elena/lib31
 namespace=system
 template=lib
 debuginfo=-1
@@ -8,7 +8,7 @@ options=-w4
 
 [manifest]
 name=ELENA Standard Library
-version=3.1.4
+version=3.1.0
 author=Alex Rakov
 
 [files]

@@ -1,8 +1,6 @@
-#import system. 
-
 const int $TextPageSize = 128.
 
-#subject textbuffer = system'text'TextBuilder.
+type textbuffer :: system'text'TextBuilder.
 
 // --- TextBuffer ---
 
@@ -13,39 +11,41 @@ sealed nonstructural class TextBuilder
 
     constructor new
     [
-        theBuffer := CharArray new &int:$TextPageSize.
+        theBuffer := CharArray new int:$TextPageSize.
         theLength := 0.
     ]
 
+    int length :: outnprop(readLengthTo).
+
     clear
     [
-        theLength set &int:0.
+        theLength set int:0.
     ]
 
-    stacksafe outnprop(length) readLength &vint:aRetVal
+    stacksafe readLengthTo vint:aRetVal
     [
-        aRetVal set &int:theLength.
+        aRetVal int := theLength.
     ]
 
-    stacksafe setLength &int:aLength
+    stacksafe setLength int:aLength
     [
-        theLength set &int:aLength.
+        theLength int := aLength.
     ]
 
-    set &length:aLength
-        <= setLength &int:(aLength int).
+    set length:aLength
+        <= setLength int:aLength.
 
     chararray = theBuffer.
 
     literal
-        = LiteralValue new &int:0 &int:theLength &chararray:theBuffer.
+        = LiteralValue new int:0 int:theLength chararray:theBuffer.
 
     wide
-        = WideLiteralValue new &int:0 &int:theLength &chararray:theBuffer.
+        = WideLiteralValue new int:0 int:theLength chararray:theBuffer.
 
     write : aLine
     [
-        aLine cast:%write &to:$self.
+        aLine cast:%write to:$self.
     ]
 
     writeLine
@@ -58,7 +58,7 @@ sealed nonstructural class TextBuilder
         $self write:aLine.
     ]
                                     
-    stacksafe reserve &int:aLength
+    stacksafe reserve int:aLength
     [
         int aNewLength := aLength.
         
@@ -66,310 +66,310 @@ sealed nonstructural class TextBuilder
         
         int aBufferLength := theBuffer length.
         
-        (aNewLength >= aBufferLength) ?
+        if (aNewLength >= aBufferLength)
         [
             //aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
-            aNewLength /= $TextPageSize.
-            aNewLength += 1.
-            aNewLength *= $TextPageSize.            
+            aNewLength := aNewLength / $TextPageSize.
+            aNewLength := aNewLength + 1.
+            aNewLength := aNewLength * $TextPageSize.            
             
-            chararray aNewBuffer := CharArray new &int:aNewLength.
+            chararray aNewBuffer := CharArray new int:aNewLength.
             
-            aNewBuffer write &int:0 &int:aBufferLength &chararray:theBuffer.
+            aNewBuffer write int:0 int:aBufferLength chararray:theBuffer.
             
             theBuffer := aNewBuffer.
         ].
     ]
 
-    write &literal:aLiteral
+    write literal:aLiteral
     [
         int aLength := aLiteral length.
         
-        (0 == aLength) !
+        ifnot (0 == aLength)
         [
-            $self reserve &int:aLength.
+            $self reserve int:aLength.
             
-            aLiteral save &int:theLength &chararray:theBuffer &vint:aLength.
+            aLiteral save int:theLength chararray:theBuffer vint:aLength.
             
-            theLength += aLength.
+            theLength append int:aLength.
         ].
     ]
 
-    write &wide:aLiteral
+    write wide:aLiteral
     [
         int aLength := aLiteral length.
         
-        (0 == aLength) !
+        ifnot (0 == aLength)
         [
-            $self reserve &int:aLength.
+            $self reserve int:aLength.
             
-            aLiteral save &int:theLength &chararray:theBuffer &vint:aLength.
+            aLiteral save int:theLength chararray:theBuffer vint:aLength.
             
-            theLength += aLength.
+            theLength append int:aLength.
         ].
     ]
 
-    stacksafe write &char:aChar
+    stacksafe write char:aChar
     [
-        $self reserve &int:1.
+        $self reserve int:1.
         
-        theBuffer write &int:theLength &char:aChar.
+        theBuffer write int:theLength char:aChar.
         
-        theLength += 1.
+        theLength append int:1.
     ]
 
-    stacksafe write &int:n
+    stacksafe write int:n
     [
-        byte(16) tmp := 0.
-        char(16) ch_tmp := 0.
-        int      len := 16.
+        byte tmp(16).
+        char ch_tmp(16).
+        int  len := 16.
         
-        literalConvertor convert &int:n &bytearray:tmp &vint:len.
+        literalConvertor convert int:n bytearray:tmp vint:len.
         
-        UTF8Encoding convert &int:0 &vint:len &bytearray:tmp &chararray:ch_tmp &vint:len.
+        UTF8Encoding convert int:0 vint:len bytearray:tmp chararray:ch_tmp vint:len.
         
-        $self write &chararray:ch_tmp &int:len.
+        $self write chararray:ch_tmp int:len.
     ]
 
     generic write : anObject
     [
-        $self write &literal:(anObject literal).
+        $self write literal:anObject.
     ]
 
-    stacksafe write &chararray:anArray &int:aLength
+    stacksafe write chararray:anArray int:aLength
     [
-        (0 == aLength) !
+        ifnot (0 == aLength)
         [
-            $self reserve &int:aLength.
+            $self reserve int:aLength.
             
-            theBuffer write &int:theLength &int:aLength &chararray:anArray.
+            theBuffer write int:theLength int:aLength chararray:anArray.
             
-            theLength += aLength.
+            theLength append int:aLength.
         ].
     ]
 
-    insert &int:anIndex &int:aLength &chararray:anArray
+    insert int:anIndex int:aLength chararray:anArray
     [
-        $self reserve &int:aLength.
+        $self reserve int:aLength.
         
-        theBuffer move &int:anIndex &int:theLength &int:aLength.
+        theBuffer move int:anIndex int:theLength int:aLength.
         
-        theBuffer write &int:anIndex &int:aLength &chararray:anArray.
+        theBuffer write int:anIndex int:aLength chararray:anArray.
         
-        theLength += aLength.
+        theLength append int:aLength.
     ]
 
-    insert &int:anIndex &literal:aLiteral
+    insert int:anIndex literal:aLiteral
     [
         int aLength := 0.
-        UTF8Encoding charCount &literal:aLiteral &vint:aLength.
+        UTF8Encoding charCount literal:aLiteral vint:aLength.
 
-        $self reserve &int:aLength.
+        $self reserve int:aLength.
         
-        theBuffer move &int:anIndex &int:theLength &int:aLength.
+        theBuffer move int:anIndex int:theLength int:aLength.
         
-        aLiteral save &int:anIndex &chararray:theBuffer &vint:aLength.
+        aLiteral save int:anIndex chararray:theBuffer vint:aLength.
         
-        theLength += aLength.
+        theLength append int:aLength.
     ]
 
-    insert &int:anIndex &wide:aLiteral
+    insert int:anIndex wide:aLiteral
     [
         int aLength := 0.
-        UTF16Encoding charCount &wide:aLiteral &vint:aLength.
+        UTF16Encoding charCount wide:aLiteral vint:aLength.
 
-        $self reserve &int:aLength.
+        $self reserve int:aLength.
         
-        theBuffer move &int:anIndex &int:theLength &int:aLength.
+        theBuffer move int:anIndex int:theLength int:aLength.
         
-        aLiteral save &int:anIndex &chararray:theBuffer &vint:aLength.
+        aLiteral save int:anIndex chararray:theBuffer vint:aLength.
         
-        theLength += aLength.
+        theLength append int:aLength.
     ]
     
-    insert &int:anIndex &char:aChar
+    insert int:anIndex char:aChar
     [
-        $self reserve &int:1.
+        $self reserve int:1.
         
-        theBuffer move &int:anIndex &int:theLength &int:1.
+        theBuffer move int:anIndex int:theLength int:1.
         
-        theBuffer write &int:anIndex &char:aChar.
+        theBuffer write int:anIndex char:aChar.
         
-        theLength += 1.
+        theLength append int:1.
     ]
 
-    insert : anObject &at:anIndex
-        = anObject cast:%eval &to:
+    insert : anObject at:anIndex
+        = anObject cast:%eval to:
             {
-               eval:target &literal:aLiteral
-                  = target insert &int:(anIndex int) &literal:aLiteral.
+               eval:target literal:aLiteral
+                  = target insert int:anIndex literal:aLiteral.
     
-               eval:target &wide:aLiteral
-                  = target insert &int:(anIndex int) &literal:(aLiteral literal).
+               eval:target wide:aLiteral
+                  = target insert int:anIndex literal:aLiteral.
     
-               eval:target &char:aChar
-                  = target insert &int:(anIndex int) &char:aChar.
-            } &with:$self.
+               eval:target char:aChar
+                  = target insert int:anIndex char:aChar.
+            } with:$self.
 
-    stacksafe indexOf &int:aPosition &char:aValue &vint:aRetVal
+    stacksafe indexOf int:aPosition char:aValue vint:aRetVal
     [
         int  anIndex := 0.
-        char aCurrent := #0.
+        char aCurrent := $0.
         
         while (anIndex < theLength)
         [
-            theBuffer read &int:anIndex &vchar:aCurrent.
+            theBuffer read int:anIndex vchar:aCurrent.
             
-            (aCurrent == aValue)
-                ? [ aRetVal := anIndex. ^$self. ].
+            if (aCurrent == aValue)
+                [ aRetVal int := anIndex. ^$self ].
                 
-            anIndex += 1.
+            anIndex append int:1
         ].
         
-        aRetVal := -1.
+        aRetVal int := -1
     ]
 
-    stacksafe indexOf &int:aPosition &literal:aLiteral &vint:aRetVal
+    stacksafe indexOf int:aPosition literal:aLiteral vint:aRetVal
     [
         int  aLiteralLength := 0.
         int  anIndex := 0.
         int  aFirstCharLen := 0.
-        char aCurrent := #0.
-        char aFirstChar := #0.
-        char aNextChar := #0.
+        char aCurrent := $0.
+        char aFirstChar := $0.
+        char aNextChar := $0.
         
-        aLiteral readLength &vint:aLiteralLength.
+        aLiteral readLength vint:aLiteralLength.
         
-        aLiteral read &int:0 &vchar:aFirstChar.
-        aFirstChar readLength &vint:aFirstCharLen.
+        aLiteral read int:0 vchar:aFirstChar.
+        aFirstChar readLengthTo vint:aFirstCharLen.
         
         int aMaxIndex := theLength.
-        aMaxIndex -= aLiteralLength.
+        aMaxIndex := aMaxIndex - aLiteralLength.
         
         while (anIndex < aMaxIndex)
         [
-            theBuffer read &int:anIndex &vchar:aCurrent.
+            theBuffer read int:anIndex vchar:aCurrent.
             
-            (aCurrent == aFirstChar) ?
+            if (aCurrent == aFirstChar)
             [ 
                 int j := aFirstCharLen.
                 int chLen := 0.
                 while (j < aLiteralLength)
                 [
-                    theBuffer read &int:(anIndex + j) &vchar:aCurrent.
-                    aLiteral read &int:j &vchar:aNextChar.
+                    theBuffer read int:(anIndex + j) vchar:aCurrent.
+                    aLiteral read int:j vchar:aNextChar.
                     
-                    (aNextChar == aCurrent)
-                        ? [ aNextChar readLength &vint:chLen. ]
-                        ! [ j := aLiteralLength. chLen := 1. ].
+                    if (aNextChar == aCurrent)
+                        [ aNextChar readLength vint:chLen ];
+                        [ j := aLiteralLength. chLen := 1 ].
                     
-                    j := j + chLen.
+                    j := j + chLen
                 ].
                 
-                (j == aLiteralLength)
-                    ? [ aRetVal := anIndex. ^ $self. ].
+                if (j == aLiteralLength)
+                    [ aRetVal int := anIndex. ^ $self ]
             ].
                 
-            anIndex := anIndex + 1.
+            anIndex := anIndex + 1
         ].
         
-        aRetVal := -1.
+        aRetVal int := -1
     ]
 
-    stacksafe indexOf &int:aPosition &wide:aLiteral &vint:aRetVal
+    stacksafe indexOf int:aPosition wide:aLiteral vint:aRetVal
     [
         int  aLiteralLength := 0.
         int  anIndex := 0.
         int  aFirstCharLen := 0.
-        char aCurrent := #0.
-        char aFirstChar := #0.
-        char aNextChar := #0.
+        char aCurrent := $0.
+        char aFirstChar := $0.
+        char aNextChar := $0.
         
-        aLiteral readLength &vint:aLiteralLength.
+        aLiteral readLengthTo vint:aLiteralLength.
         
-        aLiteral read &int:0 &vchar:aFirstChar.
-        aFirstChar readWideLength &vint:aFirstCharLen.
+        aLiteral read int:0 vchar:aFirstChar.
+        aFirstChar readWideLengthTo vint:aFirstCharLen.
         
         while (anIndex < theLength)
         [
-            theBuffer read &int:anIndex &vchar:aCurrent.
+            theBuffer read int:anIndex vchar:aCurrent.
             
-            (aCurrent == aFirstChar) ?
+            if (aCurrent == aFirstChar)
             [ 
                 int j := aFirstCharLen.
                 int chLen := 0.
                 while (j < aLiteralLength)
                 [
-                    theBuffer read &int:(anIndex + j) &vchar:aCurrent.
-                    aLiteral read &int:j &vchar:aNextChar.
+                    theBuffer read int:(anIndex + j) vchar:aCurrent.
+                    aLiteral read int:j vchar:aNextChar.
                     
-                    (aNextChar == aCurrent)
-                        ? [ aNextChar readWideLength &vint:chLen. ]
-                        ! [ j := aLiteralLength. chLen := 1. ].
+                    if (aNextChar == aCurrent)
+                        [ aNextChar readWideLengthTo vint:chLen ];
+                        [ j := aLiteralLength. chLen := 1 ].
                     
-                    j := j + chLen.
+                    j := j + chLen
                 ].
                 
-                (j > aLiteralLength)
-                    ? [ aRetVal := anIndex. ^ $self. ].
+                if (j > aLiteralLength)
+                    [ aRetVal int := anIndex. ^ $self ]
             ].
                 
-            anIndex := anIndex + 1.
+            anIndex := anIndex + 1
         ].
         
-        aRetVal := -1.
+        aRetVal int := -1
     ]
 
-    indexOf &int:aPosition &char:aValue    
+    indexOf int:aPosition char:aValue    
     [
         int aRetVal := 0.
-        $self indexOf &int:aPosition &char:aValue &vint:aRetVal.
+        $self indexOf int:aPosition char:aValue vint:aRetVal.
         
-        ^ IntNumber new &int:aRetVal.
+        ^ IntNumber new int:aRetVal
     ]
     
-    indexOf &int:aPosition &literal:aValue
+    indexOf int:aPosition literal:aValue
     [
         int aRetVal := 0.
-        $self indexOf &int:aPosition &literal:aValue &vint:aRetVal.
+        $self indexOf int:aPosition literal:aValue vint:aRetVal.
         
-        ^ IntNumber new &int:aRetVal.
+        ^ IntNumber new int:aRetVal
     ]
     
-    indexOf &int:aPosition &wide:aValue
+    indexOf int:aPosition wide:aValue
     [
         int aRetVal := 0.
-        $self indexOf &int:aPosition &wide:aValue &vint:aRetVal.
+        $self indexOf int:aPosition wide:aValue vint:aRetVal.
         
-        ^ IntNumber new &int:aRetVal.
+        ^ IntNumber new int:aRetVal
     ]
 
-    stacksafe literal Substring &int:anIndex &int:aLength
+    stacksafe literal Substring int:anIndex int:aLength
     [
-        (aLength == 0)
-            ? [ ^ emptyLiteralValue. ].
+        if (aLength == 0)
+            [ ^ emptyLiteralValue ].
             
-        ^ LiteralValue new &int:anIndex &int:aLength &chararray:theBuffer.
+        ^ LiteralValue new int:anIndex int:aLength chararray:theBuffer
     ]
 
-    stacksafe wide WideSubstring &int:anIndex &int:aLength
+    stacksafe wide WideSubstring int:anIndex int:aLength
     [
-        (aLength == 0)
-            ? [ ^ emptyWideLiteralValue. ].
+        if (aLength == 0)
+            [ ^ emptyWideLiteralValue ].
             
-        ^ WideLiteralValue new &int:anIndex &int:aLength &chararray:theBuffer.
+        ^ WideLiteralValue new int:anIndex int:aLength chararray:theBuffer
     ]
 
-    stacksafe delete &int:anIndex &int:aLength
+    stacksafe delete int:anIndex int:aLength
     [
         int n := 0 - aLength.
         int l := theLength.
         l := l - anIndex.
         l := l - aLength.
         
-        theBuffer move &int:(anIndex + aLength) &int:l &int:n.
+        theBuffer move int:(anIndex + aLength) int:l int:n.
         
-        theLength -= aLength.
+        theLength reduce int:aLength
     ]
 }
 

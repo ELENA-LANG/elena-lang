@@ -1,5 +1,5 @@
 [project]
-output=/usr/lib/elena/lib30
+output=/usr/lib/elena/lib31
 namespace=extensions
 template=lib
 debuginfo=-1
@@ -7,7 +7,7 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA Extension Library
-version=3.0.1
+version=3.1.0
 author=Alex Rakov
 
 [files]

@@ -26,7 +26,9 @@ events.l
 console.l
 win32_pointers.l
 win32_app.l
+routines\enumerables.l
 text\win32_common.l
 text\encoder.l
 text\win32_encoder.l
+text\textbuffer.l
 io\win32_console.l
