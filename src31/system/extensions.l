@@ -1466,7 +1466,7 @@ char extension charOp
                             [ ^ true ];
                             [
                                 if (self == $13)
-                                    [ true ];
+                                    [ ^ true ];
                                     [
                                         ^ self == $12
                                     ]

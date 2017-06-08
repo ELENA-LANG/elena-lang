@@ -5212,7 +5212,7 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
 
 void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 {
-   ref_t extensionClassRef = 0;
+   ref_t extensionTypeRef = 0;
 
    SNode current = root.firstChild();
    while (current != lxNone) {
@@ -5220,16 +5220,16 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
          scope.info.header.flags |= current.argument;
       }
       else if (current == lxType) {
-         extensionClassRef = current.argument;
+         extensionTypeRef = current.argument;
       }
 
       current = current.nextNode();
    }
 
    // check if extension is qualified
-   if (extensionClassRef != 0) {
+   if (extensionTypeRef != 0) {
       if (test(scope.info.header.flags, elExtension)) {
-         scope.extensionMode = extensionClassRef;
+         scope.extensionMode = extensionTypeRef;
 
          scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(0, scope.extensionMode));
       }
@@ -7814,7 +7814,7 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
          else if (_logic->isPrimitiveRef(classRef)) {
             writer.appendNode(lxAttribute, classRef);
          }
-         else if (classRef != 0) {
+         else /*if (classRef != 0) */{
             writer.appendNode(lxTypeAttr, scope.moduleScope->module->resolveSubject(attrRef));
 //            SNode sizeNode = current.findChild(lxAttributeValue);
 //            if (variableMode && current.nextNode() == lxAttributeValue) {
