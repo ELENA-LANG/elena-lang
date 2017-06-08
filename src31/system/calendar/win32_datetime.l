@@ -1,33 +1,33 @@
-#import system.
-
-#subject __time    = system'calendar'SystemTime.
-#subject __time_st = system'calendar'TimeStruct.
+type __time    :: system'calendar'SystemTime.
+type __time_st :: system'calendar'TimeStruct.
 
 const int DATE_SHORTDATE  = 00000001h.
 const int DATE_LONGDATE   = 00000002h.
+
+type __vtime   :: varof(__time).
 
 // --- SystemTime ---
 
 class $systemTimeFactory =
 {
-    stacksafe readUtcNow &__vtime:retVal
+    stacksafe readUtcNow __vtime:retVal
     [
         __time aTime := 0l.        
-        system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
+        system'external'KERNEL32 GetSystemTimeAsFileTime __time:aTime.
         
-        retVal := aTime.
+        retVal __time := aTime.
     ]
     
-    stacksafe readNow &__vtime:retVal
+    stacksafe readNow __vtime:retVal
     [
         __time aTime := 0l.
         __time aLocalTime := 0l.
         
-        system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
+        system'external'KERNEL32 GetSystemTimeAsFileTime __time:aTime.
 
-        system'external'KERNEL32 FileTimeToLocalFileTime &__time:aTime &__time:aLocalTime.
+        system'external'KERNEL32 FileTimeToLocalFileTime __time:aTime __time:aLocalTime.
         
-        retVal := aLocalTime.
+        retVal __time := aLocalTime.
     ]
 }.
 
@@ -40,32 +40,41 @@ sealed const embeddable struct SystemTime :: BaseValue
         theValue := value.
     ]
             
-    stacksafe constructor new &__time:value
+    stacksafe constructor new __time:value
         = value.
 
-    stacksafe bool equal &__time:anOperand
+    stacksafe bool equal __time:anOperand
         = theValue == anOperand.
 
-    stacksafe bool less &__time:anOperand
+    stacksafe bool less __time:anOperand
         = theValue < anOperand.
 
-    stacksafe outlprop(long) readValue &vlong:retVal
+    //long :: outlprop(readValueTo).
+    stacksafe embeddable long
     [
-        retVal := theValue.
+        long val := 0.        
+        $self readValueTo vlong:val.
+        
+        ^ val.
+    ]    
+
+    stacksafe readValueTo vlong:retVal
+    [
+        retVal long := theValue.
     ]
 
-    stacksafe __time subtract &__time:anOperand
+    stacksafe __time subtract __time:anOperand
     [
         __time result := theValue - anOperand.
         
-        ^ SystemTime new &__time:result.
+        ^ SystemTime new __time:result.
     ]
 
-    stacksafe __time add &__time:anOperand
+    stacksafe __time add __time:anOperand
     [
         __time result := theValue + anOperand.
         
-        ^ SystemTime new &__time:result.
+        ^ SystemTime new __time:result.
     ]
 }
 
@@ -84,182 +93,186 @@ sealed embeddable struct TimeStruct
 
     stacksafe implicit __time:aTime
     [
-        $self write &__time:aTime.
-    ]
-
-    stacksafe implicit int:dummy
-    [
+        $self write __time:aTime.
     ]
 
     constructor new
     [
-        system'core_routines'__timest empty &__time_st:$self.
+        system'core_routines'__timest empty __time_st:$self.
     ]
 
-    stacksafe constructor new &__time:aTime
+    stacksafe constructor new __time:aTime
     [
-        $self write &__time:aTime.
+        $self write __time:aTime.
     ]
 
-    stacksafe outnprop(year) readYear &vint:aRetVal
+    int year        :: nprop(readYearTo,writeYear).    
+    int month       :: nprop(readMonthTo,writeMonth).    
+    int dayOfWeek   :: nprop(readDayOfWeekTo,writeDayOfWeek).
+    int day         :: nprop(readDayTo,writeDay).    
+    int hour        :: nprop(readHourTo,writeHour).    
+    int minute      :: nprop(readMinuteTo,writeMinute).
+    int second      :: nprop(readSecondTo,writeSecond).
+    int millisecond :: nprop(readMillisecondTo,writeMillisecond).
+
+    stacksafe readYearTo vint:aRetVal
     [
         int val := theYear.
         
-        aRetVal := val.
+        aRetVal int := val.
     ]
 
-    stacksafe outnprop(month) readMonth &vint:aRetVal
+    stacksafe readMonthTo vint:aRetVal
     [
         int val := theMonth.
         
-        aRetVal := val.
+        aRetVal int := val.
     ]
 
-    stacksafe outnprop(dayOfWeek) readDayOfWeek &vint:aRetVal
+    stacksafe readDayOfWeekTo vint:aRetVal
     [
         int val := theDayOfWeek.
         
-        aRetVal := val.
+        aRetVal int := val.
     ]
 
-    stacksafe outnprop(day) readDay &vint:aRetVal
+    stacksafe readDayTo vint:aRetVal
     [
         int val := theDay.
         
-        aRetVal := val.
+        aRetVal int := val.
     ]
 
-    stacksafe outnprop(hour) readHour &vint:aRetVal
+    stacksafe readHourTo vint:aRetVal
     [
         int val := theHour.
         
-        aRetVal := val.
+        aRetVal int := val.
     ]
 
-    stacksafe outnprop(minute) readMinute &vint:aRetVal
+    stacksafe readMinuteTo vint:aRetVal
     [
         int val := theMinute.
         
-        aRetVal := val.
+        aRetVal int := val.
     ]
 
-    stacksafe outnprop(second) readSecond &vint:aRetVal
+    stacksafe readSecondTo vint:aRetVal
     [
         int val := theSecond.
         
-        aRetVal := val.
+        aRetVal int := val.
     ]
 
-    stacksafe outnprop(millisecond) readMillisecond &vint:aRetVal
+    stacksafe readMillisecondTo vint:aRetVal
     [
         int val := theMillisecond.
         
-        aRetVal := val.
+        aRetVal int := val.
     ]
 
-    stacksafe innprop(year) writeYear &int:aValue
+    stacksafe writeYear int:aValue
     [
         short n := aValue.
 
         theYear := n.
     ]
 
-    stacksafe innprop(month) writeMonth &int:aValue 
+    stacksafe writeMonth int:aValue 
     [ 
         short n := aValue.
             
         theMonth := n.
     ]
 
-    stacksafe innprop(day) writeDay &int:aValue 
+    stacksafe writeDay int:aValue 
     [ 
         short n := aValue.
             
         theDay := n.
     ]
 
-    stacksafe innprop(hour) writeHour &int:aValue 
+    stacksafe writeHour int:aValue 
     [ 
         short n := aValue.
             
         theHour := n.
     ]
 
-    stacksafe innprop(minute) writeMinute &int:aValue 
+    stacksafe writeMinute int:aValue 
     [ 
         short n := aValue.
             
         theMinute := n.
     ]
 
-    stacksafe innprop(second) writeSecond &int:aValue 
+    stacksafe writeSecond int:aValue 
     [ 
         short n := aValue.
             
         theSecond := n.
     ]
 
-    stacksafe innprop(millisecond) writeMillisecond &int:aValue 
+    stacksafe writeMillisecond int:aValue 
     [ 
         short n := aValue.
             
         theMillisecond := n.
     ]
 
-    stacksafe read &__vtime:aRetVal
+    stacksafe read __vtime:aRetVal
     [
-        system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__time:aRetVal.
+        system'external'KERNEL32 SystemTimeToFileTime __time_st:$self __time:aRetVal.
     ]    
     
-    stacksafe write &__time:aFileTime
+    stacksafe write __time:aFileTime
     [
-        system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
+        system'external'KERNEL32 FileTimeToSystemTime __time:aFileTime __time_st:$self.
     ]
       
-    stacksafe toWide &date_attributes:Flags
+    stacksafe toWide date_attributes:Flags
     [
-        short(127) aBuffer := 0.
+        short aBuffer(127).
 
         int aLength := system'external'KERNEL32 GetDateFormatW
-            &int:0
-            &int:(Flags int)
-            &__time_st:$self
-            &int:0
-            &shortarray:aBuffer
-            &int:255
-            &int:0.
+            int:0
+            int:(Flags int)
+            __time_st:$self
+            int:0
+            shortarray:aBuffer
+            int:255
+            int:0.
             
-        (aLength == 0)
-            ? [ FormatException new:"Invalid date" raise. ].
+        if (aLength == 0)
+            [ FormatException new:"Invalid date"; raise ].
 
-        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
+        ^ WideLiteralValue $new int:0 int:(aLength - 1) shortarray:aBuffer.                
     ]
     
-    stacksafe toWide &time_attributes:Flags
+    stacksafe toWide time_attributes:Flags
     [
-        short(127) aBuffer := 0.
+        short aBuffer(127).
 
         int aLength := system'external'KERNEL32 GetTimeFormatW
-            &int:0
-            &int:(Flags int)
-            &__time_st:$self
-            &int:0
-            &shortarray:aBuffer
-            &int:255
-            &int:0.
+            int:0
+            int:(Flags int)
+            __time_st:$self
+            int:0
+            shortarray:aBuffer
+            int:255
+            int:0.
             
-        (aLength == 0)
-            ? [ FormatException new:"Invalid time" raise. ].
+        if (aLength == 0)
+            [ FormatException new:"Invalid time"; raise ].
 
-        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
+        ^ WideLiteralValue $new int:0 int:(aLength - 1) shortarray:aBuffer.                
     ]
 
     stacksafe toShortDate
-        <= toWide &date_attributes:DATE_SHORTDATE.
+        <= toWide date_attributes:DATE_SHORTDATE.
 
     stacksafe toShortTime
-        <= toWide &time_attributes:0.
+        <= toWide time_attributes:0.
 }
 
-#subject __vtime   = varof(__time).
 

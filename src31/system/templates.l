@@ -29,6 +29,24 @@ method template outnprop :: type,prop_name,target_method
     ]
 }
 
+// --- nprop ---
+
+method template nprop :: type,prop_name,get_method,set_method
+{
+    stacksafe embeddable type prop_name
+    [
+        int val := 0.        
+        $self get_method vint:val.
+        
+        ^ val.
+    ]
+    
+    stacksafe set prop_name:val
+    [
+        $self set_method type:val
+    ]
+}
+
 //// --- innprop ---
 //
 //#template(-16388) innprop (template_subj)
@@ -40,19 +58,20 @@ method template outnprop :: type,prop_name,target_method
 //        ^ val.
 //   ]
 //}
-// 
-//// --- outlprop ---
-//
-//#template(-16388) outlprop (template_subj)
-//{
-//   stacksafe embeddable long template_subj
-//   [
-//        long val := 0l.
-//        $self target_method &vlong:val.
-//        
-//        ^ val.
-//   ]
-//}
+ 
+// --- outlprop ---
+
+method template outlprop :: type,prop_name,target_method
+{
+    stacksafe embeddable type prop_name
+    [
+        long val := 0.        
+        $self target_method vlong:val.
+        
+        ^ val.
+    ]
+}
+
 
 // --- outwprop ---
 

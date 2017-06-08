@@ -1,4 +1,2 @@
-#import system.
-
-#subject datetime = system'calendar'Date.
-#subject timespan = system'calendar'TimeSpan.
+type datetime :: system'calendar'Date.
+type timespan :: system'calendar'TimeSpan.

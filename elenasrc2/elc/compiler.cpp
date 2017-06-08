@@ -1438,12 +1438,12 @@ ref_t Compiler::TemplateScope :: mapTemplate(SNode terminal, int prefixCounter)
 {
    int paramCounter = SyntaxTree::countChild(terminal, lxAttributeValue);
    IdentifierString attrName(terminal.findChild(lxIdentifier).findChild(lxTerminal).identifier());
-   attrName.append('#');
-   attrName.appendInt(paramCounter);
    if (prefixCounter != 0) {
       attrName.append('#');
-      attrName.appendInt(prefixCounter);
+      //attrName.appendInt(prefixCounter);
    }
+   attrName.append('#');
+   attrName.appendInt(paramCounter + prefixCounter);
    
    return moduleScope->resolveAttributeRef(attrName, false);
 }
@@ -8036,7 +8036,7 @@ void Compiler :: generateFieldTemplateTree(SyntaxWriter& writer, SNode node, Tem
 
       ref_t attrRef = scope.mapTemplate(node.findChild(lxBaseParent), prefixCounter);
       if (!attrRef || scope.moduleScope->subjectHints.get(attrRef) != INVALID_REF)
-         scope.raiseError(errInvalidHint, node);
+         scope.raiseError(errInvalidHint, baseNode);
 
       TemplateScope templateScope(&scope, attrRef);
       templateScope.type = TemplateScope::Type::ttFieldTemplate;
@@ -8316,16 +8316,15 @@ bool Compiler :: generateDeclaration(SyntaxWriter& writer, SNode node, TemplateS
 
       IdentifierString templateName(name.findChild(lxIdentifier).findChild(lxTerminal).identifier());
       if (test(declType, daField)) {
-         templateName.append("#1");
+         templateName.append("#");
 
          scope.type = TemplateScope::Type::ttFieldTemplate;
+         count++; // HOTFIX : to include the field itself
       }
       else if (test(declType, daMethod)) {
-         templateName.append("#1");
+         templateName.append("#");
 
          scope.type = TemplateScope::ttMethodTemplate;
-
-         count--; // !! HOTFIX : the trailing parameter is the target method
       }
       else if (node.existChild(lxExpression)) {
          scope.type = TemplateScope::ttCodeTemplate;
