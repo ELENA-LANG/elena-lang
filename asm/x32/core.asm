@@ -2011,10 +2011,10 @@ inline % 7Bh
   jmp  short lEnd
 
 LL32:
-  mov  edx, ebx
-  xor  ebx, ebx
-  and  cl, 1Fh
-  shl  edx, cl 
+  mov  ebx, edx
+  xor  edx, edx
+  sub  cl, 20h
+  shl  ebx, cl 
   jmp  short lEnd
 
 LR:
@@ -2024,15 +2024,15 @@ LR:
 
   cmp  cl, 32
   jae  short LR32
-  shrd ebx, edx, cl
-  sar  edx, cl
+  shrd edx, ebx, cl
+  sar  ebx, cl
   jmp  short lEnd
 
 LR32:
-  mov  ebx, edx
-  sar  edx, 31
-  and  cl, 31
-  sar  ebx, cl
+  mov  edx, ebx
+  xor  ebx, ebx
+  sub  cl, 20h
+  shr  edx, cl 
   jmp  short lEnd
   
 lErr:
