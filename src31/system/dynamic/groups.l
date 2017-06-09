@@ -1,8 +1,6 @@
-#import system.
-
 // --- Wrap ---
 
-dynamic group Wrap
+dynamic mixin Wrap
 {
     object $item.
     
@@ -11,7 +9,7 @@ dynamic group Wrap
 
 // --- Extension ---
 
-dynamic group Extension
+dynamic mixin Extension
 {
     object $item.
     
@@ -20,17 +18,17 @@ dynamic group Extension
 
 // --- Group ---
 
-dynamic group Group
+dynamic mixin Group
 {
     object $item.
     
-    stacksafe constructor $new &int:aLength
+    stacksafe constructor $new int:aLength
         = object(aLength).
         
-    constructor new &args:objects
-        <= $new &int:(objects length);
+    constructor new args:objects
+        <= $new int:(objects length);
     [
-        $self setFields &args:objects.
+        $self setFields args:objects.
     ]
     
     dispatch => system'core_routines'__group.
@@ -38,15 +36,15 @@ dynamic group Group
 
 // --- Cast ---
 
-sealed arrayof(object) group Cast
+sealed mixin Cast :: arrayof(object)
 {
-    stacksafe constructor $new &int:aLength
+    stacksafe constructor $new int:aLength
         = object(aLength).
         
-    constructor new &args:objects
-        <= $new &int:(objects length);
+    constructor new args:objects
+        <= $new int:(objects length);
     [
-        $self setFields &args:objects.
+        $self setFields args:objects.
     ]
     
     dispatch => system'core_routines'__castover.
@@ -56,102 +54,102 @@ sealed arrayof(object) group Cast
 
 extension dynamicOp
 {
-    mix &into:role
-        = Extension(role, self).
-        
-    group &with:object
-    [
-        ($nil == object)
-            ? [ ^ self. ].
-        
-        (Group == self class)
-            ? [ 
-                int length := self fieldCount.
-            
-                var retVal := Group $new &int:(length + 1).
-                                
-                int i := 0.
-                
-                while (i < length)
-                [
-                    retVal setField &int:i &object:(self getField &int:i).
-                    
-                    i += 1.
-                ].
-                
-                retVal setField &int:length &object:object.
-                
-                ^ retVal.
-            ]
-            ! [ 
-                (Group == object class)
-                    ? [
-                        int length := object fieldCount.
-                    
-                        var retVal := Group $new &int:(length + 1).
-                                        
-                        int i := 0.
-                        
-                        while (i < length)
-                        [
-                            retVal setField &int:(i + 1) &object:(self getField &int:i).
-                            
-                            i += 1.
-                        ].
-                        
-                        retVal setField &int:0 &object:object.
-                        
-                        ^ retVal.
-                    ]
-                    ! [ ^ Group new &args:(self,object). ].            
-            ].
-    ]        
-        
-    cast &with:object
-    [
-        ($nil == object)
-            ? [ ^ self. ].
-        
-        (self class == Cast)
-            ? [ 
-                int length := self fieldCount.
-            
-                var retVal := Cast $new &int:(length + 1).
-                                
-                int i := 0.
-                
-                while (i < length)
-                [
-                    retVal setField &int:i &object:(self getField &int:i).
-                    
-                    i += 1.
-                ].
-                
-                retVal setField &int:length &object:object.
-                
-                ^ retVal.
-            ]
-            ! [ 
-                (object class == Cast)
-                    ? [
-                        int length := object fieldCount.
-                    
-                        var retVal := Cast $new &int:(length + 1).
-                                        
-                        int i := 0.
-                        
-                        while (i < length)
-                        [
-                            retVal setField &int:(i + 1) &object:(self getField &int:i).
-                            
-                            i += 1.
-                        ].
-                        
-                        retVal setField &int:0 &object:object.
-                        
-                        ^ retVal.
-                    ]
-                    ! [ ^ Cast new &args:(self,object). ].            
-            ].
-    ]        
+//    mix &into:role
+//        = Extension(role, self).
+//        
+//    group &with:object
+//    [
+//        ($nil == object)
+//            ? [ ^ self. ].
+//        
+//        (Group == self class)
+//            ? [ 
+//                int length := self fieldCount.
+//            
+//                var retVal := Group $new &int:(length + 1).
+//                                
+//                int i := 0.
+//                
+//                while (i < length)
+//                [
+//                    retVal setField &int:i &object:(self getField &int:i).
+//                    
+//                    i += 1.
+//                ].
+//                
+//                retVal setField &int:length &object:object.
+//                
+//                ^ retVal.
+//            ]
+//            ! [ 
+//                (Group == object class)
+//                    ? [
+//                        int length := object fieldCount.
+//                    
+//                        var retVal := Group $new &int:(length + 1).
+//                                        
+//                        int i := 0.
+//                        
+//                        while (i < length)
+//                        [
+//                            retVal setField &int:(i + 1) &object:(self getField &int:i).
+//                            
+//                            i += 1.
+//                        ].
+//                        
+//                        retVal setField &int:0 &object:object.
+//                        
+//                        ^ retVal.
+//                    ]
+//                    ! [ ^ Group new &args:(self,object). ].            
+//            ].
+//    ]        
+//        
+//    cast &with:object
+//    [
+//        ($nil == object)
+//            ? [ ^ self. ].
+//        
+//        (self class == Cast)
+//            ? [ 
+//                int length := self fieldCount.
+//            
+//                var retVal := Cast $new &int:(length + 1).
+//                                
+//                int i := 0.
+//                
+//                while (i < length)
+//                [
+//                    retVal setField &int:i &object:(self getField &int:i).
+//                    
+//                    i += 1.
+//                ].
+//                
+//                retVal setField &int:length &object:object.
+//                
+//                ^ retVal.
+//            ]
+//            ! [ 
+//                (object class == Cast)
+//                    ? [
+//                        int length := object fieldCount.
+//                    
+//                        var retVal := Cast $new &int:(length + 1).
+//                                        
+//                        int i := 0.
+//                        
+//                        while (i < length)
+//                        [
+//                            retVal setField &int:(i + 1) &object:(self getField &int:i).
+//                            
+//                            i += 1.
+//                        ].
+//                        
+//                        retVal setField &int:0 &object:object.
+//                        
+//                        ^ retVal.
+//                    ]
+//                    ! [ ^ Cast new &args:(self,object). ].            
+//            ].
+//    ]        
 }

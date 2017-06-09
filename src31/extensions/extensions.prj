@@ -18,6 +18,8 @@ console.l
 app.l
 win32_args.l
 random.l
+math\functions.l
+math\matrix.l
 text\words.l
 text\strings.l
 routines\enumerating.l

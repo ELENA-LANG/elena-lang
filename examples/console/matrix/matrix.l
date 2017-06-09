@@ -1,9 +1,9 @@
 // based on http://cboard.cprogramming.com/cplusplus-programming/30001-determinant-calculation.html prelude sample
 
 // --- default namespaces ---
-#import system'dynamic.
-#import extensions.
-#import extensions'math.
+import system'dynamic.
+import extensions.
+import extensions'math.
 
 // --- factory ---
 
@@ -11,36 +11,30 @@ class Matrix
 {
     realmatrix theMatrix.
     
-    constructor new &realmatrix:aMatrix
+    constructor new realmatrix:aMatrix
     [
         theMatrix := aMatrix.
     ]
     
-    constructor new &n:anN &name:aName
-        <= new &realmatrix:(RealMatrix new:anN:anN set &every_ij: (&index:i &index:j)
+    constructor new n:anN name:aName
+        <= new realmatrix:(RealMatrix new:anN:anN; set every_ij: (&index:i &index:j)
             [  
-                console writeLiteral:"Enter ":aName:"[":i:",":j:"]=" readLine:(Real new)
+                ^ console writeLiteral:"Enter ":aName:"[":i:",":j:"]="; readLine:(Real new)
             ]).
     
-    constructor newIdentity &n:anN
-        <= new &realmatrix:(RealMatrix new:anN:anN set &every_ij: (&index:i &index:j)
-            [ (i == j) ? [ 1 ] ! [ 0 ] ]).
+    constructor newIdentity n:anN
+        <= new realmatrix:(RealMatrix new:anN:anN; set every_ij: (&index:i &index:j)
+            [  ^(i == j)iif:1:0 ]).
     
     add : aMatrix
-        = Matrix new &realmatrix:(theMatrix add:aMatrix).
+        = Matrix new realmatrix:(theMatrix add:aMatrix).
 
     subtract : aMatrix
-        = Matrix new &realmatrix:(theMatrix subtract:aMatrix).
+        = Matrix new realmatrix:(theMatrix subtract:aMatrix).
 
     multiply : aMatrix
-        = Matrix new &realmatrix:(theMatrix multiply:aMatrix).
+        = Matrix new realmatrix:(theMatrix multiply:aMatrix).
     
-    literal
-        = theMatrix literal.
-
-    determinant
-        = theMatrix determinant.
-            
     dispatch => theMatrix.
 }
 
@@ -59,76 +53,76 @@ control =
     
     proceed : aChoice
     [
-        ^ aChoice =>
+        aChoice =>
             "1"
             [
                 console write:"Enter the order of matrix: ".
-                var N := console readLine:(Integer new).
+                var N := console readLineTo:(Integer new).
                 
-                var aMatrixA := Matrix new &n:N &name:"A".
+                var aMatrixA := Matrix new n:N name:"A".
                 
                 console writeLine.
                 
-                var aMatrixB := Matrix new &n:N &name:"B".
+                var aMatrixB := Matrix new n:N name:"B".
                 
-                console writeLine writeLine:"Output:".
+                console writeLine; writeLine:"Output:".
 
                 var aSum := aMatrixA + aMatrixB.
 
-                ^ aSum literal.
+                ^ aSum literal
             ];
             "2" [
                 console write:"Enter the order of matrix: ".
-                var N := console readLine:(Integer new).
+                var N := console readLineTo:(Integer new).
                 
-                var aMatrixA := Matrix new &n:N &name:"A".
+                var aMatrixA := Matrix new n:N name:"A".
                 
                 console writeLine.
                 
-                var aMatrixB := Matrix new &n:N &name:"B".
+                var aMatrixB := Matrix new n:N name:"B".
                 
-                console writeLine writeLine:"Output:".
+                console writeLine; writeLine:"Output:".
 
                 var aDiff := aMatrixA - aMatrixB.
 
-                ^ aDiff literal.
+                ^ aDiff literal
             ];
             "3" [
                 console write:"Enter the order of matrix: ".
-                var N := console readLine:(Integer new).
+                var N := console readLineTo:(Integer new).
                 
-                var aMatrixA := Matrix new &n:N &name:"A".
+                var aMatrixA := Matrix new n:N name:"A".
                 
                 console writeLine.
                 
-                var aMatrixB := Matrix new &n:N &name:"B".
+                var aMatrixB := Matrix new n:N name:"B".
                 
-                console writeLine writeLine:"Output:".
+                console writeLine; writeLine:"Output:".
 
                 var aProduct := aMatrixA * aMatrixB.
 
-                ^ aProduct literal.
+                ^ aProduct literal
             ];
             "4" [
                 console write:"Enter the order of matrix: ".
-                var N := console readLine:(Integer new).
+                var N := console readLineTo:(Integer new).
 
-                var aMatrixA := Matrix new &n:N &name:"A".
+                var aMatrixA := Matrix new n:N name:"A".
                                 
                 console writeLine writeLine:"Output:".
 
-                ^ aMatrixA determinant.
+                ^ aMatrixA determinant
             ];
             "5" [
                 console write:"Enter the order of matrix: ".
-                var N := console readLine:(Integer new).
+                var N := console readLineTo:(Integer new).
 
-                var identity := Matrix newIdentity &n:N.
+                var identity := Matrix newIdentity n:N.
 
-                ^ identity literal.
+                ^ identity literal
             ];
             "6" [
-                'program stop.
+                'program stop
             ].
     ]
 }.

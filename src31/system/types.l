@@ -17,13 +17,13 @@
 #8202 #8195     generic.
 #8192           stacksafe.
 #8205           action.
-////#template(-4099) w1 {}
-////#template(-4100) w2 {}
-////#template(-4101) w3 {}
+//#template(-4099) w1 {}
+//#template(-4100) w2 {}
+//#template(-4101) w3 {}
 #8195           sealed.
 #8199           dynamic.
 #8196           limited.
-//#template(-8206)         group   {}
+#8206           mixin.
 //#template(-8209)         __tape_group {}
 #8201           const.
 #8197           struct.

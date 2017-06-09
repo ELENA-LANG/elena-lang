@@ -45,3 +45,6 @@ io\win32_console.l
 io\win32_files.l
 io\files.l
 io\memorystream.l
+dynamic\reflection.l
+dynamic\groups.l
+dynamic\interpreters.l
