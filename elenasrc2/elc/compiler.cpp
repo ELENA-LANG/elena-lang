@@ -47,35 +47,35 @@ using namespace _ELENA_;
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
 
-//// --- Auxiliary routines ---
-//
-////inline bool isConstant(ObjectInfo object)
-////{
-////   switch (object.kind) {
-////      case Compiler::okConstantSymbol:
-////      case Compiler::okConstantClass:
-////      case Compiler::okLiteralConstant:
-////      case Compiler::okWideLiteralConstant:
-////      case Compiler::okCharConstant:
-////      case Compiler::okIntConstant:
-////      case Compiler::okLongConstant:
-////      case Compiler::okRealConstant:
-////      case Compiler::okMessageConstant:
-////      case Compiler::okExtMessageConstant:
-////      case Compiler::okSignatureConstant:
-////      case Compiler::okVerbConstant:
-////      case Compiler::okArrayConst:
-////         return true;
-////      default:
-////         return false;
-////   }
-////}
-//
-//inline bool isCollection(SNode node)
+// --- Auxiliary routines ---
+
+//inline bool isConstant(ObjectInfo object)
 //{
-//   return (node == lxExpression && node.nextNode() == lxExpression);
+//   switch (object.kind) {
+//      case Compiler::okConstantSymbol:
+//      case Compiler::okConstantClass:
+//      case Compiler::okLiteralConstant:
+//      case Compiler::okWideLiteralConstant:
+//      case Compiler::okCharConstant:
+//      case Compiler::okIntConstant:
+//      case Compiler::okLongConstant:
+//      case Compiler::okRealConstant:
+//      case Compiler::okMessageConstant:
+//      case Compiler::okExtMessageConstant:
+//      case Compiler::okSignatureConstant:
+//      case Compiler::okVerbConstant:
+//      case Compiler::okArrayConst:
+//         return true;
+//      default:
+//         return false;
+//   }
 //}
-//
+
+inline bool isCollection(SNode node)
+{
+   return (node == lxExpression && node.nextNode() == lxExpression);
+}
+
 //inline bool isReturnExpression(SNode expr)
 //{
 //   return (expr == lxExpression && expr.nextNode() == lxNone);
@@ -2513,10 +2513,10 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
          result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxExpression:
-         //if (isCollection(member)) {
-         //   result = compileCollection(writer, objectNode, scope);
-         //}
-         /*else */result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
+         if (isCollection(member)) {
+            result = compileCollection(writer, objectNode, scope);
+         }
+         else result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxMessageReference:
          result = compileMessageReference(writer, member, scope, mode);
@@ -3740,47 +3740,47 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    return compileClosure(writer, node, ownerScope, scope);
 }
 
-//ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   ref_t parentRef = scope.moduleScope->arrayReference;
-//   SNode parentNode = node.findChild(lxIdentifier, lxPrivate, lxReference);
-//   if (parentNode != lxNone) {
-//      parentRef = scope.moduleScope->mapTerminal(parentNode, true);
-//      if (parentRef == 0)
-//         scope.raiseError(errUnknownObject, node);
-//   }
-//
-//   return compileCollection(writer, node, scope, parentRef);
-//}
-//
-//ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t vmtReference)
-//{
-//   if (vmtReference == 0)
-//      vmtReference = scope.moduleScope->superReference;
-//
-//   int counter = 0;
-//
-//   writer.newBookmark();
-//
-//   // all collection memebers should be created before the collection itself
-//   SNode current = node.findChild(lxExpression);
-//   while (current != lxNone) {
-//      writer.newNode(lxMember, counter);
-//      compileExpression(writer, current, scope, 0);
-//      writer.closeNode();
-//
-//      current = current.nextNode();
-//      counter++;
-//   }
-//
-//   writer.appendNode(lxTarget, vmtReference);
-//   writer.insert(lxNested, counter);
-//   writer.closeNode();
-//
-//   writer.removeBookmark();
-//
-//   return ObjectInfo(okObject, vmtReference);
-//}
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ref_t parentRef = scope.moduleScope->arrayReference;
+   SNode parentNode = node.findChild(lxIdentifier, lxPrivate, lxReference);
+   if (parentNode != lxNone) {
+      parentRef = scope.moduleScope->mapTerminal(parentNode, true);
+      if (parentRef == 0)
+         scope.raiseError(errUnknownObject, node);
+   }
+
+   return compileCollection(writer, node, scope, parentRef);
+}
+
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t vmtReference)
+{
+   if (vmtReference == 0)
+      vmtReference = scope.moduleScope->superReference;
+
+   int counter = 0;
+
+   writer.newBookmark();
+
+   // all collection memebers should be created before the collection itself
+   SNode current = node.findChild(lxExpression);
+   while (current != lxNone) {
+      writer.newNode(lxMember, counter);
+      compileExpression(writer, current, scope, 0);
+      writer.closeNode();
+
+      current = current.nextNode();
+      counter++;
+   }
+
+   writer.appendNode(lxTarget, vmtReference);
+   writer.insert(lxNested, counter);
+   writer.closeNode();
+
+   writer.removeBookmark();
+
+   return ObjectInfo(okObject, vmtReference);
+}
 
 ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
@@ -7207,15 +7207,15 @@ void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, Templa
    else {
       while (current != lxNone) {
          if (current == lxExpression) {
-//            if (current.nextNode() == lxExpression)
-//               listMode = true;
+            if (current.nextNode() == lxExpression)
+               listMode = true;
 
             if (identifierMode) {
                generateExpressionTree(writer, current, scope, listMode);
             }
-//            else if (listMode) {
-//               generateExpressionTree(writer, current, scope, true);
-//            }
+            else if (listMode) {
+               generateExpressionTree(writer, current, scope, true);
+            }
             else generateObjectTree(writer, current, scope);
          }
 //         else if (listMode && (current == lxMessage || current == lxOperator)) {
@@ -7232,10 +7232,10 @@ void Compiler :: generateExpressionTree(SyntaxWriter& writer, SNode node, Templa
       }
    }
 
-//   if (listMode) {
-//      writer.insert(lxExpression);
-//      writer.closeNode();
-//   }
+   if (listMode) {
+      writer.insert(lxExpression);
+      writer.closeNode();
+   }
 
    if (explicitOne) {
       writer.insert(node.type);
