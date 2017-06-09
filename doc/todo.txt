@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xdev - refactoring
-                 * migrating rosetta samples
+                 * migrating rosetta samples : amb
                  * migrating script samples
                  * migrating pi2 sample
 
@@ -90,6 +90,7 @@ Pipeline:
                  * rosetta sample : Magic squares of odd order
 
               idev - debugger
+                 * Make possible to provide alternative path to lib #188
                  * fix tape debugging : step over
 
               xdev - generic development 

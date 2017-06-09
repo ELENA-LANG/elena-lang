@@ -85,10 +85,10 @@ extension stringExOp
 
 symbol printingLn = (:aLine)[ 'program'output writeLine:aLine ].
 
-//// --- func1Op ---
-//
-//extension(func1) func1Op
-//{
-//    asComparer
-//        = { equal : object = $owner eval:object bool. }.
-//}
+// --- func1Op ---
+
+func1 extension func1Op
+{
+    asComparer
+        = { equal : object = $owner eval:object. }.
+}
