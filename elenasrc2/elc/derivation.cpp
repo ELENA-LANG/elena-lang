@@ -19,9 +19,6 @@ void DerivationWriter :: writeNode(Symbol symbol)
 {
    switch (symbol)
    {
-//      case nsImport:
-//         _writer.newNode(lxImport);
-//         break;
       case nsToken:
          _writer.newNode(lxAttribute);
          break;
@@ -35,9 +32,6 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsMethodParameter:
          _writer.newNode(lxMethodParameter);
          break;
-//      case nsForward:
-//         _writer.newNode(lxForward);
-//         break;
       case nsMessageParameter:
          _writer.newNode(lxMessageParameter);
          break;
@@ -56,9 +50,6 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsBaseClass:
          _writer.newNode(lxBaseParent);
          break;
-//      case nsThrow:
-//         _writer.newNode(lxThrowing);
-//         break;
       case nsL0Operation:
       case nsL3Operation:
       case nsL4Operation:
@@ -98,9 +89,6 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsSubject:
       case nsDispatchExpression:
       case nsExtension:
-//      case nsLoop:
-//      case nsExtern:
-//      case nsDefaultGeneric:
       case nsCatchMessageOperation:
       case nsAltMessageOperation:
       case nsSwitchOption:
