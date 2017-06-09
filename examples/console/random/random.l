@@ -1,7 +1,6 @@
 // based on msdn random sample
 
-#import system.
-#import extensions.
+import extensions.
 
 // --- program ---
 
@@ -19,11 +18,11 @@ program =
     var realCounts := IntArray new:distGroupCount.
 
     console writeLine:"Random reals:".
-    0 till:rows &doEach: i
+    0 till:rows doEach: (:i)
     [
-        0 to:cols &doEach: j
+        0 to:cols doEach: (:j)
         [
-            console write:(randomGenerator nextReal) &paddingRight:12.
+            console print:(randomGenerator nextReal) paddingRight:12.
         ].
         
         console writeLine.
@@ -31,11 +30,11 @@ program =
 
     console writeLine.
     console writeLine:"Random integers:".
-    0 till:rows &doEach: i
+    0 till:rows doEach: (:i)
     [
-        0 to:cols &doEach: j
+        0 to:cols doEach: (:j)
         [
-            console write:(randomGenerator nextInt) &paddingRight:12.
+            console print:(randomGenerator nextInt) paddingRight:12.
         ].
         
         console writeLine.
@@ -44,26 +43,26 @@ program =
     console writeLine.
     console writeLine:"Distribution".
 
-    0 till:runCount &doEach: i
+    0 till:runCount doEach: (:i)
     [
         var index := (randomGenerator nextInt / intGroupSize) toInt.
-        (index < distGroupCount)?
+        if(index < distGroupCount)
             [ intCounts@index := intCounts@index + 1. ].
         
         index := (randomGenerator nextReal * distGroupCount) toInt.
-        (index < distGroupCount)?
+        if(index < distGroupCount)
             [ realCounts@index := realCounts@index + 1. ].
     ].    
 
-    0 till:distGroupCount &doEach: i
+    0 till:distGroupCount doEach: (:i)
     [
-        console write:((i * intGroupSize) toInt literal):"-" &paddingLeft:12 &with:#32.
-        console write:(((i + 1) * intGroupSize - 1) toInt literal) &paddingLeft:12 &with:#32.        
-        console write:(intCounts@i literal) &paddingLeft:12 &with:#32.
+        console print:((i * intGroupSize) toInt; literal):"-" paddingLeft:12.
+        console print:(((i + 1) * intGroupSize - 1) toInt; literal) paddingLeft:12.
+        console print:(intCounts@i literal) paddingLeft:12.
 
-        console write:((i real / distGroupCount) literal):"-" &paddingLeft:14 &with:#32.
-        console write:(((i + 1) real / distGroupCount) literal) &paddingLeft:12 &with:#32.        
-        console write:(realCounts@i literal) &paddingLeft:12 &with:#32.
+        console print:((i real / distGroupCount) literal):"-" paddingLeft:14.
+        console print:(((i + 1) real / distGroupCount) literal) paddingLeft:12.
+        console print:(realCounts@i literal) paddingLeft:12.
                 
         console writeLine.
     ].

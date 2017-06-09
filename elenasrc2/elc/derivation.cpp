@@ -88,9 +88,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsSizeValue:
          _writer.newNode(lxSize);
          break;
-//      case nsSwitching:
-//         _writer.newNode(lxSwitching);
-//         break;
+      case nsSwitching:
+         _writer.newNode(lxSwitching);
+         break;
       case nsSubCode:
       case nsScope:
       case nsTemplate:
@@ -103,8 +103,8 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsDefaultGeneric:
       case nsCatchMessageOperation:
       case nsAltMessageOperation:
-//      case nsSwitchOption:
-//      case nsLastSwitchOption:
+      case nsSwitchOption:
+      case nsLastSwitchOption:
 //      case nsBiggerSwitchOption:
 //      case nsLessSwitchOption:
 //      case nsInlineClosure:

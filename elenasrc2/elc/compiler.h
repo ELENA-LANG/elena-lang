@@ -885,7 +885,7 @@ private:
 
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
-//   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
@@ -1047,7 +1047,7 @@ private:
    void generateTemplateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool templateMode);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, bool operationMode*/);
-//   void generateSwitchTree(SyntaxWriter& writer, SNode current, TemplateScope& scope);
+   void generateSwitchTree(SyntaxWriter& writer, SNode current, TemplateScope& scope);
    void generateObjectTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool explicitOne = true);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);

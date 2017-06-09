@@ -1,6 +1,6 @@
 import system'collections.
 import system'routines.
-//#import system'calendar.
+import system'calendar.
 import system'text.
 //#import system'dynamic.
 
@@ -299,12 +299,12 @@ extension convertorOp
 
 //class convertor 
 //    = { ! n = Wrap(n, convertorOp)::$subject get. }.
-//
-//extension(datetime) dateFormatterOp 
-//{
-//    toShortTimeLiteral
-//        = self __time_st toShortTime literal.
-//}
+
+datetime extension dateFormatterOp 
+{
+    toShortTimeLiteral
+        = self __time_st; toShortTime; literal.
+}
 
 /// obsolete
 symbol String = extensions'text'StringWriter.

@@ -1,9 +1,9 @@
-#import system'io.
-#import system'routines.
-#import system'collections.
-#import extensions.
-#import extensions'routines.
-#import extensions'text.
+import system'io.
+import system'routines.
+import system'collections.
+import extensions.
+import extensions'routines.
+import extensions'text.
 
 // --- Record ---
 class Record
@@ -11,7 +11,7 @@ class Record
     object theName.
     object thePrice.
     
-    constructor new &Price:aPrice &Name:aName
+    constructor new Price:aPrice Name:aName
     [
         theName := aName.
         thePrice := aPrice.
@@ -23,7 +23,7 @@ class Record
 
     literal
     [
-        ^ StringWriter new writeLiteral:"Name:":theName:" Price:":thePrice literal.
+        ^ StringWriter new; writeLiteral:"Name:":theName:" Price:":thePrice.
     ]
 }
 
@@ -41,23 +41,25 @@ class Adapter
     write : aLiteral
     [
         ifnot (0 == theBM length)
-           [ theBM += ";". ].
+           [ theBM append:";". ].
         
-        theBM += aLiteral.
+        theBM append:aLiteral.
     ]
 
     read : aVariable
-        = (0 == theBM length)
-            ? [ false ]
-            ! [
+    [
+        if(0 == theBM length)
+            [ ^false ];
+            [
                 theBM find:";".
                 
-                theBM Marked convert &to:aVariable.
+                theBM Marked; convert to:aVariable.
                 
                 theBM mark.
                 
-                ^ true.
-            ].
+                ^ true
+            ]
+    ]
 }
 
 // --- Program --- 
@@ -65,12 +67,12 @@ class Adapter
 program = 
 [
     ('program'arguments length == 1)?
-        [  console << "Please provide the path to the file to view". #throw AbortException new. ].
+        [  console writeLine:"Please provide the path to the file to view". AbortException new; raise. ].
 
     var aList := List new.
     var anAdapter := Adapter new.
 
-    'program'arguments@1 file_path run &eachLine: aLine
+    'program'arguments@1 file_path; run eachLine: (:aLine)
     [
         anAdapter write:aLine.
 
@@ -81,11 +83,11 @@ program =
         [
             anAdapter read:aPrice.
         
-            aList append:(Record new &Price:(aPrice get) &Name:(aName get)).
+            aList append:(Record new Price:(aPrice get) Name:(aName get)).
         ].
     ].
 
-    aList run &each:printingLn.
+    aList run each:printingLn.
 
-    console readChar.
+    console readChar
 ].

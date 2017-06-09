@@ -1,5 +1,5 @@
-#import system'calendar.
-#import extensions.
+import system'calendar.
+import extensions.
 
 // --- Control ---
 
@@ -16,12 +16,12 @@ control =
     
     proceed : aChoice
     [
-        ^ (aChoice toInt) =>
-            1 [ now literal. ];
-            2 [ utcNow literal ];
-            3 [ now year literal ];
-            4 [ now toShortTimeLiteral ];
-            7 [ 'program stop. ^ emptyLiteralValue. ];
-            ! [ "Invalid choice" ].
+        (aChoice toInt) =>
+            1 [ ^now literal. ];
+            2 [ ^utcNow literal ];
+            3 [ ^now year; literal ];
+            4 [ ^now toShortTimeLiteral ];
+            7 [ 'program stop. ^ emptyLiteralValue ];
+            ! [ ^"Invalid choice" ].
     ]
 }.

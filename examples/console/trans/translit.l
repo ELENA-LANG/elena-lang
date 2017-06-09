@@ -1,6 +1,6 @@
-#import system'routines.
-#import system'text.
-#import extensions.
+import system'routines.
+import system'text.
+import extensions.
 
 // --- RusLatRules ---
 

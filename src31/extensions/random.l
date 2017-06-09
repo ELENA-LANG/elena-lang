@@ -1,5 +1,4 @@
-#import system.
-#import system'routines.
+import system'routines.
 
 // --- RandomGenerator ---
 
@@ -9,17 +8,17 @@ sealed struct RandomGenerator
     
     constructor new
     [
-        system'external core_rnd_init &vlong:theSeed.
+        system'external core_rnd_init vlong:theSeed.
     ]
 
-    stacksafe eval &int:aMaxValue &vint:aRetVal
+    stacksafe eval int:aMaxValue vint:aRetVal
     [
-        system'external core_rnd_next &long:theSeed &int:aMaxValue &vint:aRetVal.
+        system'external core_rnd_next long:theSeed int:aMaxValue vint:aRetVal.
     ]
 
-    stacksafe eval &vint:aRetVal
+    stacksafe eval vint:aRetVal
     [
-        system'external core_rnd_nextint &long:theSeed &vint:aRetVal.
+        system'external core_rnd_nextint long:theSeed vint:aRetVal.
     ]
 
     eval : minValue : maxValue
@@ -28,17 +27,17 @@ sealed struct RandomGenerator
     eval : aMaxValue
     [
         int aNextValue := 0.
-        $self eval &int:(aMaxValue int) &vint:aNextValue.
+        $self eval int:(aMaxValue int) vint:aNextValue.
         
-        ^ IntNumber new &int:aNextValue.
+        ^ IntNumber new int:aNextValue.
     ]
     
     nextInt
     [
         int aNextValue := 0.
-        $self eval &vint:aNextValue.
+        $self eval vint:aNextValue.
         
-        ^ IntNumber new &int:aNextValue.
+        ^ IntNumber new int:aNextValue.
     ]
 
     nextInt : aValue
@@ -47,14 +46,14 @@ sealed struct RandomGenerator
     nextReal
     [
         int next := 0.
-        $self eval &int:1000000 &vint:next.
+        $self eval int:1000000 vint:next.
         
         real retVal := 0.0r.
-        realConvertor convert &int:next &vreal:retVal.
+        realConvertor convert int:next vreal:retVal.
         
         retVal := retVal / 1000000.0r.
         
-        ^ RealNumber new &real:retVal.
+        ^ RealNumber new real:retVal.
     ]
 }
 
@@ -79,11 +78,11 @@ extension randomOp
         [
             var j := randomGenerator eval:max.
             
-            list::indexableOp exchange &int:i &int:(j int).
+            list~indexableOp exchange int:i int:(j int).
             
-            i := i + 1.
+            i := i + 1
         ].
         
-        ^ list.
+        ^ list
     ]
 }

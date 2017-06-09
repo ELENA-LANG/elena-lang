@@ -238,7 +238,7 @@ sealed nonstructural class TextBuilder
         char aFirstChar := $0.
         char aNextChar := $0.
         
-        aLiteral readLength vint:aLiteralLength.
+        aLiteral readLengthTo vint:aLiteralLength.
         
         aLiteral read int:0 vchar:aFirstChar.
         aFirstChar readLengthTo vint:aFirstCharLen.
@@ -260,7 +260,7 @@ sealed nonstructural class TextBuilder
                     aLiteral read int:j vchar:aNextChar.
                     
                     if (aNextChar == aCurrent)
-                        [ aNextChar readLength vint:chLen ];
+                        [ aNextChar readLengthTo vint:chLen ];
                         [ j := aLiteralLength. chLen := 1 ].
                     
                     j := j + chLen

@@ -1,5 +1,3 @@
-#import system.
-
 // --- ProgramLoop ---
 
 class $ProgramLoop

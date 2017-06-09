@@ -4,8 +4,6 @@ type __time_st :: system'calendar'TimeStruct.
 const int DATE_SHORTDATE  = 00000001h.
 const int DATE_LONGDATE   = 00000002h.
 
-type __vtime   :: varof(__time).
-
 // --- SystemTime ---
 
 class $systemTimeFactory =
@@ -274,5 +272,7 @@ sealed embeddable struct TimeStruct
     stacksafe toShortTime
         <= toWide time_attributes:0.
 }
+
+type __vtime   :: varof(__time).
 
 
