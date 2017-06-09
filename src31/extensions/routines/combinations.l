@@ -1,140 +1,140 @@
-#import system'routines.
-#import extensions.
+import system'routines.
+import extensions.
 
-#subject $strategy = BaseStrategy.
+type $strategy :: BaseStrategy.
 
 // --- Strategy ---
 
 limited class BaseStrategy
 {
-    getAt : Indexers &int:aLength = $nil.
+    getAt : Indexers int:aLength = $nil.
     
-    $strategy eval : Indexers &int:aLength = $self.
+    $strategy eval : Indexers int:aLength = $self.
     
     bool result = false.
 }
 
 // --- Combination strategies ---
 
-class combinationEnd = BaseStrategy
+class combinationEnd = BaseStrategy::
 {
     result = false.
 }.
 
-class sequentialNext = BaseStrategy
+class sequentialNext = BaseStrategy::
 {
     result = true.
     
-    eval : Indexers &int:aLength
+    eval : Indexers int:aLength
     [
-        ($nil == (Indexers seek &each: anIndexer 
+        if($nil == (Indexers seek each: (:anIndexer)
                 [
                     indexer it := anIndexer indexer. 
                     
-                    (it append &index:1 available)
-                        ! [ it writeIndex &int:0. ^ false. ].
+                    ifnot(it append index:1; available)
+                        [ it writeIndex int:0. ^ false ].
                         
-                    ^ true.
+                    ^ true
                 ]))
-            ? [ ^ combinationEnd. ].
+            [ ^ combinationEnd ].
             
-        ^ $self.            
+        ^ $self          
     ]
         
-    getAt : Indexers &int:aLength
+    getAt : Indexers int:aLength
     [
-        ^ Array new &int:aLength set &nfunc: (&int:i) [ Indexers array getAt &int:i get ].
+        ^ Array new int:aLength; set nfunc: (&int:i) [ ^Indexers array; getAt int:i; get ]
     ]
 }.
 
-class sequentialStart = BaseStrategy
+class sequentialStart = BaseStrategy::
 {
-    eval : Indexers &int:aLength
+    eval : Indexers int:aLength
     [
-        Indexers run &each: anIndexer [ anIndexer writeIndex &int:0. ].
+        Indexers run each: (:anIndexer) [ anIndexer writeIndex int:0 ].
         
-        ^ sequentialNext.
+        ^ sequentialNext
     ]
 }.
 
 // --- Parallel strategies
 
-class parallelNext = BaseStrategy
+class parallelNext = BaseStrategy::
 {
     result = true.
     
-    eval : Indexers &int:aLength
+    eval : Indexers int:aLength
     [
-        ($nil != Indexers seek &each: anIndexer [ anIndexer append &index:1 available not ])
-            ? [ ^ combinationEnd. ].
+        if($nil != Indexers seek each: (:anIndexer)[ ^anIndexer append index:1; available; not ])
+            [ ^ combinationEnd ].
             
-        ^ $self.            
+        ^ $self       
     ]
         
-    getAt : Indexers &int:aLength
+    getAt : Indexers int:aLength
     [
-        ^ Array new &int:aLength set &nfunc: (&int:i) [ Indexers array getAt &int:i get ].
+        ^ Array new int:aLength; set nfunc: (&int:i) [ ^Indexers array; getAt int:i; get ].
     ]
 }.
 
-class parallelStart = BaseStrategy
+class parallelStart = BaseStrategy::
 {
-    eval : Indexers &int:aLength
+    eval : Indexers int:aLength
     [
-        Indexers run &each: anIndexer [ anIndexer writeIndex &int:0. ].
+        Indexers run each: (:anIndexer)[ anIndexer writeIndex int:0 ].
         
-        ^ parallelNext.
+        ^ parallelNext
     ]
 }.
 
 // --- combination strategy ---
 
-class combinationNext = BaseStrategy
+class combinationNext = BaseStrategy::
 {
     result = true.
 
-    getAt : Indexers &int:aLength
+    getAt : Indexers int:aLength
     [
-        ^ Array new &int:aLength set &nfunc: (&int:i) [ Indexers array getAt &int:i get ].
+        ^ Array new int:aLength; set nfunc: (&int:i) [ ^Indexers array; getAt int:i; get ]
     ]
         
-    eval : Indexers &int:aLength
+    eval : Indexers int:aLength
     [
         array anArray := Indexers array.
         int   k := anArray length.
         int   i := k - 1.
         
-        indexer aCurrentIndexer := anArray getAt &int:i indexer.
+        indexer aCurrentIndexer := anArray getAt int:i; indexer.
         
-        (aCurrentIndexer append &index:1 available)
-            ? [ ^ $self. ].
+        if(aCurrentIndexer append index:1; available)
+            [ ^ $self ].
              
-        while ((i > 0) and:[ anArray getAt &int:(i - 1) indexer index int + k - i + 1 >= aLength ])
-            [ i := i - 1. ].
+        while ((i > 0) and:$(anArray getAt int:(i - 1); indexer; index; int + k - i + 1 >= aLength))
+            [ i := i - 1 ].
         
-        (i == 0)
-            ? [ ^ combinationEnd. ].
+        if(i == 0)
+            [ ^ combinationEnd ].
         
-        anArray getAt &int:(i - 1) append &index:1.
+        anArray getAt int:(i - 1); append index:1.
         
         //i to &int:(k - 1)
-        IntNumber new &int:i to &int:(k - 1)
-            &nfunc: (&int:j) [ anArray getAt &int:j writeIndex &int:(IntNumber new &int:(anArray getAt &int:(j - 1) index int + 1)). ].
+        IntNumber new int:i; to int:(k - 1)
+            nfunc: (&int:j) [ anArray getAt int:j; writeIndex int:(IntNumber new int:(anArray getAt int:(j - 1); index; int + 1)) ].
             
-        ^ $self.            
+        ^ $self          
     ]
 }.
 
-class combinationStart = BaseStrategy
+class combinationStart = BaseStrategy::
 {
-    eval : Indexers &int:n
+    eval : Indexers int:n
     [
         array anArray := Indexers array.
         int aLength := anArray length.
         
-        0::intLoopOp to &int:(aLength - 1) &nfunc: (&int:i) [ anArray getAt &int:i indexer writeIndex &int:i. ].
+        0~intLoopOp to int:(aLength - 1) nfunc: (&int:i) [ anArray getAt int:i; indexer; writeIndex int:i ].
         
-        ^ combinationNext.
+        ^ combinationNext
     ]
 }.
 
@@ -147,17 +147,17 @@ class BaseRowEnumerator :: Enumerator
     
     $strategy theStrategy.
 
-    constructor new &args:Arguments
+    constructor new args:Arguments
     [
-        theLength := Arguments length int.
-        theIndexers := Array new &int:theLength.
+        theLength := Arguments length.
+        theIndexers := Array new int:theLength.
         
         int i := 0.
         while (i < theLength)
         [
-            theIndexers setAt &int:i &object:((Arguments @ i) indexer).
+            theIndexers setAt int:i object:((Arguments @ i) indexer).
             
-            i := i + 1.
+            i := i + 1
         ].
         
         $self reset.
@@ -165,29 +165,29 @@ class BaseRowEnumerator :: Enumerator
     
     constructor new : Arguments
     [
-        theLength := Arguments length int.
-        theIndexers := Array new &int:theLength.
+        theLength := Arguments length.
+        theIndexers := Array new int:theLength.
         
         int i := 0.
         while (i < theLength)
         [
-            theIndexers setAt &int:i &object:((Arguments @ (IntNumber new &int:i)) indexer).
+            theIndexers setAt int:i object:((Arguments @ (IntNumber new int:i)) indexer).
             
-            i := i + 1.
+            i := i + 1
         ].
         
-        $self reset.
+        $self reset
     ]
     
     next
     [
-        theStrategy := theStrategy eval : theIndexers &int:theLength.
+        theStrategy := theStrategy eval : theIndexers int:theLength.
 
-        ^ theStrategy result.
+        ^ theStrategy result
     ]
     
     get
-        = theStrategy getAt : theIndexers &int:theLength.
+        = theStrategy getAt : theIndexers int:theLength.
 }
 
 // --- SequentialEnumerator ---
@@ -197,8 +197,8 @@ class SequentialEnumerator :: BaseRowEnumerator
     constructor new : Arguments
         <= new:Arguments.
     
-    constructor new &args:Arguments    
-        <= new &args:Arguments.
+    constructor new args:Arguments    
+        <= new args:Arguments.
 
     reset
     [
@@ -225,21 +225,21 @@ class Combinator :: BaseRowEnumerator
 {
     int theTotalLength.
     
-    constructor new : aSubLength &of:aSet
-        <= new : (Array new &int:(aSubLength int) set &nfunc: (&int:n) [ ^ aSet. ]);
+    constructor new : aSubLength of:aSet
+        <= new : (Array new int:(aSubLength int); set nfunc: (&int:n) [ ^ aSet ]);
     [
-        theTotalLength := aSet length int.
+        theTotalLength := aSet length.
     ]
     
     next
     [
-        theStrategy := theStrategy eval:theIndexers &int:theTotalLength.
+        theStrategy := theStrategy eval:theIndexers int:theTotalLength.
 
-        ^ theStrategy result.
+        ^ theStrategy result
     ]
     
     reset
     [
-        theStrategy := combinationStart.
+        theStrategy := combinationStart
     ]
 }
