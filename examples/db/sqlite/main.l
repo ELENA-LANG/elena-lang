@@ -1,7 +1,7 @@
-#import system'routines.
-#import system'io.
-#import extensions.
-#import sqlite.
+import system'routines.
+import system'io.
+import extensions.
+import sqlite.
 
 const DBFileName = "data.db".
 
@@ -15,20 +15,20 @@ extension dbTestOp
         var aTable := self executeQuery:("SELECT * FROM " + aTableName).
         
         // Header
-        aTable fields run &each:aFieldName
+        aTable fields; run each: (:aFieldName)
         [
-            console write:aFieldName &paddingRight:25.
+            console print:aFieldName paddingRight:25.
         ].
         console writeLine.
-        console write:"-" &paddingRight:(25 * aTable fieldCount) &with:#45.
+        console print:"-" paddingRight:(25 * aTable fieldCount) with:$45.
         console writeLine.
         
         // Rows
-        aTable rows run &each:aRow
+        aTable rows; run each: (:aRow)
         [
-            aTable fields run &each:aFieldName
+            aTable fields; run each: (:aFieldName)
             [
-                console write:(aRow@aFieldName) &paddingRight:25.
+                console print:(aRow@aFieldName) paddingRight:25.
             ].
             console writeLine.
         ].
@@ -40,11 +40,11 @@ extension dbTestOp
 
 program =
 [
-    var dbFile := File new &path:DBFileName.
+    var dbFile := File new path:DBFileName.
     
-    var cnn := DBConnection new &path:dbFile.
+    var cnn := DBConnection new path:dbFile.
     
-    ifnot (dbFile is &available)
+    ifnot (dbFile is available)
     [
         cnn open.
   
@@ -81,9 +81,9 @@ program =
     [
         console writeLine:"Number of table in DB: ":(cnn numberOfTable).
     
-        console writeLine:"Tables:" writeLine.
+        console writeLine:"Tables:"; writeLine.
         
-        cnn tables run &each: aTableName 
+        cnn tables; run each: (:aTableName)
             [ 
                 cnn printTable:aTableName.
             ].

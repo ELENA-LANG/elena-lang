@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xdev - refactoring
-                 * migrating db samples
                  * migrating rosetta samples
                  * migrating script samples
                  * migrating pi2 sample
