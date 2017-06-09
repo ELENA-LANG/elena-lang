@@ -17,14 +17,14 @@ class Matrix
     ]
     
     constructor new n:anN name:aName
-        <= new realmatrix:(RealMatrix new:anN:anN; set every_ij: (&index:i &index:j)
+        <= new realmatrix:(RealMatrix new:anN:anN; set every_ij: (&int:i &int:j)
             [  
-                ^ console writeLiteral:"Enter ":aName:"[":i:",":j:"]="; readLine:(Real new)
+                ^ console writeLiteral:"Enter ":aName:"[":i:",":j:"]="; readLineTo:(Real new)
             ]).
     
     constructor newIdentity n:anN
-        <= new realmatrix:(RealMatrix new:anN:anN; set every_ij: (&index:i &index:j)
-            [  ^(i == j)iif:1:0 ]).
+        <= new realmatrix:(RealMatrix new:anN:anN; set every_ij: (&int:i &int:j)
+            [ ^(i == j)iif:1:0 ]).
     
     add : aMatrix
         = Matrix new realmatrix:(theMatrix add:aMatrix).
@@ -67,7 +67,7 @@ control =
                 
                 console writeLine; writeLine:"Output:".
 
-                var aSum := aMatrixA + aMatrixB.
+                realmatrix aSum := aMatrixA + aMatrixB.
 
                 ^ aSum literal
             ];
@@ -83,7 +83,7 @@ control =
                 
                 console writeLine; writeLine:"Output:".
 
-                var aDiff := aMatrixA - aMatrixB.
+                realmatrix aDiff := aMatrixA - aMatrixB.
 
                 ^ aDiff literal
             ];
@@ -99,7 +99,7 @@ control =
                 
                 console writeLine; writeLine:"Output:".
 
-                var aProduct := aMatrixA * aMatrixB.
+                realmatrix aProduct := aMatrixA * aMatrixB.
 
                 ^ aProduct literal
             ];
@@ -107,9 +107,9 @@ control =
                 console write:"Enter the order of matrix: ".
                 var N := console readLineTo:(Integer new).
 
-                var aMatrixA := Matrix new n:N name:"A".
+                realmatrix aMatrixA := Matrix new n:N name:"A".
                                 
-                console writeLine writeLine:"Output:".
+                console writeLine; writeLine:"Output:".
 
                 ^ aMatrixA determinant
             ];
@@ -117,7 +117,7 @@ control =
                 console write:"Enter the order of matrix: ".
                 var N := console readLineTo:(Integer new).
 
-                var identity := Matrix newIdentity n:N.
+                realmatrix identity := Matrix newIdentity n:N.
 
                 ^ identity literal
             ];

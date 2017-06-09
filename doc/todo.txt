@@ -3,10 +3,10 @@ In development:
 ------                              
 
               xdev - refactoring
-                 * migrating console sample
                  * migrating db samples
                  * migrating rosetta samples
                  * migrating script samples
+                 * migrating pi2 sample
 
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
 
