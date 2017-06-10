@@ -73,7 +73,7 @@ ambOperator =
 
 program1 =
 [
-    try(ambOperator for:(1,2,4):(4,5,6) seek: (:a:b) [ ^a * b == 8 ] do: (:a:b)
+    try(ambOperator for:(1,2,4):(4,5,6); seek: (:a:b) [ ^a * b == 8 ]; do: (:a:b)
         [ console writeLine: a : " * " : b : " = 8" ])
     {
         generic : e
@@ -89,7 +89,7 @@ program2 =
 [
     try(ambOperator 
         for:("the","that","a"):("frog", "elephant", "thing"):("walked", "treaded", "grows"):("slowly", "quickly");
-        seek: (:a:b:c:d) [ ^(joinable eval:a:b) and:(joinable eval:b:c) and:(joinable eval:c:d) ];
+        seek: (:a:b:c:d) [ ^ joinable eval:a:b && joinable eval:b:c && joinable eval:c:d ];
         do: (:a:b:c:d) [ console writeLine:a:" ":b:" ":c:" ":d ])
     {
         generic : e

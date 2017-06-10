@@ -842,7 +842,7 @@ sealed  class Dictionary :: dispatchable(enumerable)
             size := size << 1.
         ].
         
-        size reduce int:1.
+        size := size - 1.
         theHashMask := IntNumber new int:size.
         
         theHashTable := Array new int:aHashLength.
