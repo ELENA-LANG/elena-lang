@@ -74,6 +74,13 @@ extension objectOp
         
     stacksafe reallocate int:aNewLength
         => system'core_routines'__array.
+        
+    shift : n
+    [
+        if (n < 0)
+            [ ^ self shiftLeft int:(n int; negative) ];
+            [ ^ self shiftRight int:(n int) ].
+    ]        
 }
 
 // --- Operations ---
@@ -348,6 +355,13 @@ int extension intOp
         
         ^ shortConvertor convert int:aWord
     ]
+    
+    shift : n
+    [
+        if (n < 0)
+            [ ^ self shiftLeft int:(n int; negative) ];
+            [ ^ self shiftRight int:(n int) ].
+    ]            
 }
 
 // --- longOp ---

@@ -10,7 +10,7 @@ In development:
                  * scripting library : language interpreter
 
               xdev - refactoring
-                 * migrating rosetta samples : Balanced brackets
+                 * migrating rosetta samples : bulls and cows
                  * migrating pi2 sample
 
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
