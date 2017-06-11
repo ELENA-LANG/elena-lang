@@ -1,6 +1,6 @@
-#import system'routines.
-#import system'collections.
-#import extensions.
+import system'routines.
+import system'collections.
+import extensions.
 
 class SMA
 {
@@ -15,25 +15,23 @@ class SMA
     
     append : aNumber
     [
-        theList += aNumber.
+        theList append:aNumber.
 
         var aCount := theList length.
-        ^ aCount =>
-            0 [ 0.0r ];
+        aCount =>
+            0 [ ^0.0r ];
             ! [
                 if (aCount > thePeriod)
                 [
-                    theList remove &index:0.
+                    theList remove index:0.
                     
-                    aCount := thePeriod.
+                    aCount := thePeriod
                 ].
         
-                var aSum := theList summarize:(Real new &int:0).
+                var aSum := theList summarize:(Real new int:0).
                 
-                var n := aSum / aCount.
-                
-                ^ aSum / aCount.
-            ].
+                ^ aSum / aCount
+            ]
     ]
 }
 
@@ -44,16 +42,16 @@ program =
     var SMA3 := SMA new:3.
     var SMA5 := SMA new:5.
 
-    1 to:5 &doEach: (:i)
+    1 to:5 doEach: (:i)
     [
-        console write:"sma3 + " :i :" = ": (SMA3 += i) &paddingRight:30 &with:#32.
-        console writeLine:"sma5 + " :i :" = ": (SMA5 += i).
+        console print:"sma3 + " :i :" = ": (SMA3 append:i) paddingRight:30 with:$32.
+        console printLine:"sma5 + " :i :" = ": (SMA5 append:i)
     ].
 
-    5 to:1 &doEach: (:i)
+    5 to:1 doEach: (:i)
     [
-        console write:"sma3 + " :i :" = ": (SMA3 += i) &paddingRight:30 &with:#32.
-        console writeLine:"sma5 + " :i :" = ": (SMA5 += i).
+        console print:"sma3 + " :i :" = ": (SMA3 append:i) paddingRight:30 with:$32.
+        console printLine:"sma5 + " :i :" = ": (SMA5 append:i)
     ].
     
     console readChar.

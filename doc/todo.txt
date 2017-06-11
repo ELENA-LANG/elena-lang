@@ -2,9 +2,15 @@
 In development:
 ------                              
 
-              xdev - refactoring
-                 * migrating rosetta samples : amb
+              zdev 
                  * migrating script samples
+                 * scripting library : branching
+                 * scripting library : loops
+                 * scripting library : procedures
+                 * scripting library : language interpreter
+
+              xdev - refactoring
+                 * migrating rosetta samples : Balanced brackets
                  * migrating pi2 sample
 
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
@@ -36,18 +42,13 @@ In development:
                       int length :: outnprop(readColumnsTo).
 
                  * no need to copy to the buffer field / variable / method attributes
+                 * cannot declare the following method : goto starting []
 
 ------                                 
 Pipeline:
 ------                                                                                         
               sdev - rosetta samples
                  * Zeckendorf arithmetic
-
-              zdev 
-                 * scripting library : branching
-                 * scripting library : loops
-                 * scripting library : procedures
-                 * scripting library : language interpreter
 
               xdev - x64
                  * compile 64 bit IDE without warnings

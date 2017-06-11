@@ -10,11 +10,12 @@ field template prop :: type, prop_name
     type prop_name = field.
 }
 
-//
-//#template(-16388) outprop (prop_name)
-//{
-//    prop_name = $target_field.
-//}
+field template rprop :: type, prop_name
+{
+    type field.
+    
+    type prop_name = field.
+}
 
 // --- outnprop ---
 

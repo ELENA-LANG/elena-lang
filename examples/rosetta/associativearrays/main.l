@@ -1,8 +1,8 @@
 /// Shows how to iterate over the key-value pairs of an associative array, and print each pair out. 
 
-#import system'collections.
-#import system'routines.
-#import extensions.
+import system'collections.
+import system'routines.
+import extensions.
 
 // --- Program ---
 
@@ -17,6 +17,6 @@ program =
     aMap@"key4":= "foo4".
 
     // Enumerate
-    aMap run &each: aKeyValue
-        [ console writeLine:(aKeyValue key):" : ":aKeyValue ].
+    aMap run each: 
+        (:aKeyValue)[ console printLine:(aKeyValue key):" : ":aKeyValue ].
 ].
