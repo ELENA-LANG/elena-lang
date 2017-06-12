@@ -41,6 +41,9 @@
    #define expr_member ::= expression;
    #define expr_member ::= assign;
    #define expr_member ::= operator;
+   #define expr_member ::= <= > += "%""open&Code[0]""" =>
+                             "code" "(" code ")"
+                           <=  > += "%""close[0]""" =>;
 
    #define singleton   ::= <= > += "%""open&Singleton[0]""" =>
                              "singleton" "(" identifier? method* ")"
@@ -89,6 +92,9 @@
 
    #define operator_quote ::= <= << += """equal""" =>
                              "==";
+
+   #define operator_quote ::= <= << += """if""" =>
+                             "?";
 
    #define parameter   ::= <= > += "%""new&ParamToken[1]""" =>
                              "parameter" "=" ident_quote;

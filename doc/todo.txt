@@ -7,6 +7,7 @@ In development:
                  * scripting library : loops
                  * scripting library : procedures
                  * scripting library : implement fibonacci algorithm
+                 * scripting library : static code - branching ; typecast the expression to the bool
                  * scripting library : language interpreter
 
               xdev - refactoring

@@ -102,7 +102,16 @@ class ExpressionScope :: Scope
         
         ^ expr.
     ]
-                
+
+    open Code
+    [
+        var expr := ClosureScope new:$self.
+        
+        theCallstack push:expr.
+        
+        ^ expr.
+    ]
+
     save array_list:retVal
     [
         if(theCallExpr)
@@ -377,6 +386,59 @@ class SymbolBody :: ExpressionScope
         
             ^ Tape new array:list
         ].
+    ]
+}
+
+class ClosureScope :: CodeScope
+{
+    object theParameters.
+    vint   theVarCounter.
+    
+    constructor new : parent
+        <= new:parent;
+    [
+        theVarCounter := 0.
+        theParameters := List new.
+    ]
+    
+    save array_list:retVal
+    [
+        retVal append:($self eval)
+    ]
+    
+    new VariableToken : param
+    [
+        theParameters append:(KeyValue new key:param value:(theParameters length + 1)).
+        
+        theVarCounter append int:1
+    ]
+    
+    open Variable
+        = 
+        {
+            new IdentToken:token
+            [
+                $owner new VariableToken:token
+            ]
+            
+            close = $owner.
+        }.
+            
+    eval
+    [
+        var list := ArrayList new.
+        
+        int counter := theVarCounter.
+        while (counter > 0)
+        [
+            list append:nil.
+            
+            counter := counter - 1
+        ].
+        
+        $super save array_list:list.
+        
+        ^ Tape new array:list        
     ]
 }
 

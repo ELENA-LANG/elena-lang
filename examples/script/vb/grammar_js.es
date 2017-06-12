@@ -38,6 +38,28 @@ root
 
    #define statement  ::= expression ";" ;
    #define statement  ::= "var" variable ";" ;
+   #define statement  ::= 
+<= 
+             expression
+             (
+                 operator = "?"
+=>
+         "if" "(" expression ")" code_brackets
+<=
+             )
+=>;
+
+   #define code_brackets ::= 
+<=
+
+                 expression (
+                    code (
+=>
+                  "{" statement* "}"
+<=
+                    )
+                 )
+=>;
 
    #define expression ::= "print" "(" print ")";
    #define expression ::= 
