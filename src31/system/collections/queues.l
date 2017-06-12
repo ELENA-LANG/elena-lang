@@ -1,12 +1,10 @@
-#import system.
-
 // === types ===
-#subject stack = system'collections'Stack.
-#subject queue = system'collections'Queue.
+type stack :: system'collections'Stack.
+type queue :: system'collections'Queue.
 
 // --- Stack
 
-sealed dispatchable(enumerable) class Stack
+sealed class Stack :: dispatchable(enumerable)
 {
     array_list theList.
     vint       theTop.
@@ -19,58 +17,60 @@ sealed dispatchable(enumerable) class Stack
     
     array_list = theList.
     
-    enumerator = StackEnumerator new &stack:$self.
+    enumerator = StackEnumerator new stack:$self.
     
-    stacksafe outnprop(length) readLength &vint:aLength
+    int length :: outnprop(readLengthTo).
+    
+    stacksafe readLengthTo vint:aLength
     [
-        aLength := theTop.
+        aLength int := theTop.
     ]
     
-    bool is &empty
+    bool is empty
         = 0 == theTop.
     
     push : anObject
     [
         int aCapacity := theList length.
         
-        (theTop < aCapacity)
-            ? [ theList setAt &int:theTop &object:anObject. ]
-            ! [ theList append:anObject. ].
+        if (theTop < aCapacity)
+            [ theList setAt int:theTop object:anObject ];
+            [ theList append:anObject ].
             
-        theTop += 1.
+        theTop append int:1
     ]
     
     peek
     [
-        (0 == theTop)
-            ? [ InvalidOperationException new &message:"Stack is empty" raise. ].
+        if (0 == theTop)
+            [ InvalidOperationException new:"Stack is empty"; raise ].
             
-        ^ theList getAt &int:(theTop - 1).
+        ^ theList getAt int:(theTop - 1)
     ]        
     
     pop
     [
-        (0 == theTop)
-            ? [ InvalidOperationException new &message:"Stack is empty" raise. ].
+        if (0 == theTop)
+            [ InvalidOperationException new:"Stack is empty"; raise ].
             
-        theTop -= 1.
+        theTop reduce int:1.
         
-        var item := theList getAt &int:theTop.                        
-        theList setAt &int:theTop &object:$nil.
+        var item := theList getAt int:theTop.                        
+        theList setAt int:theTop object:$nil.
         
-        ^ item.
+        ^ item
     ]
     
     clear
     [
         theList clear.
-        theTop set &int:0.
+        theTop int := 0.
     ]
 }
 
 // --- Queue ---
 
-sealed dispatchable(enumerable) class Queue
+sealed class Queue :: dispatchable(enumerable)
 {
     array_list theList.
     vint       theTop.
@@ -85,59 +85,61 @@ sealed dispatchable(enumerable) class Queue
     
     array_list = theList.
     
-    enumerator = QueueEnumerator new &queue:$self.
+    enumerator = QueueEnumerator new queue:$self.
+    
+    int length :: outnprop(readLengthTo).
     
     push : anObject
     [
         int aCapacity := theList length.
         
-        (theTale < aCapacity)
-            ? [ theList setAt &int:theTale &object:anObject. ]
-            ! [ theList append:anObject. ].
+        if (theTale < aCapacity)
+            [ theList setAt int:theTale object:anObject ];
+            [ theList append:anObject ].
             
-        theTale += 1.
+        theTale append int:1.
     ]
     
     peek
     [
-        (theTale == theTop)
-            ? [ InvalidOperationException new &message:"Queue is empty" raise. ].
+        if (theTale == theTop)
+            [ InvalidOperationException new:"Queue is empty"; raise ].
             
-        ^ theList getAt &int:theTop.  
+        ^ theList getAt int:theTop
     ]
     
     pop
     [
-        (theTale == theTop)
-            ? [ InvalidOperationException new &message:"Queue is empty" raise. ].
+        if(theTale == theTop)
+            [ InvalidOperationException new:"Queue is empty"; raise ].
 
-        var item := theList getAt &int:theTop.
+        var item := theList getAt int:theTop.
                                     
-        theList setAt &int:theTop &object:$nil.
-        theTop += 1.
+        theList setAt int:theTop object:$nil.
+        theTop append int:1.
         
         // reuse the space if the queue is empty
-        (theTale == theTop)
-            ? [
-                theTop set &int:0.
-                theTale set &int:0.
+        if(theTale == theTop)
+            [
+                theTop  int := 0.
+                theTale int := 0.
             ].
             
-        ^ item.            
+        ^ item
     ]
     
-    stacksafe outnprop(length) readLength &vint:aRetVal
+    stacksafe readLengthTo vint:aRetVal
     [
         int n := theTale - theTop.
         
-        aRetVal := n.
+        aRetVal int := n.
     ]
     
     clear
     [
         theList clear.
-        theTop set &int:0.
-        theTale set &int:0.
+        theTop int :=0.
+        theTale int:=0
     ]
     
     shift : offset
@@ -145,16 +147,16 @@ sealed dispatchable(enumerable) class Queue
         int i := theTop.
         int n := theTale - 1.
         
-        var topItem := theList getAt &int:i.
+        var topItem := theList getAt int:i.
         
         while (i < n)
         [
-            theList setAt &int:i &object:(theList getAt &int:(i + 1)).
+            theList setAt int:i object:(theList getAt int:(i + 1)).
             
-            i += 1.
+            i := i + 1
         ].
         
-        theList setAt &int:i &object:topItem.
+        theList setAt int:i object:topItem
     ]
 }
 
@@ -165,10 +167,10 @@ class StackEnumerator :: Enumerator
     stack      theStack.
     enumerator theEnumerator.
     
-    constructor new &stack:aStack
+    constructor new stack:aStack
     [
         theStack := aStack.
-        theEnumerator := aStack array_list enumerator.
+        theEnumerator := aStack array_list; enumerator.
     ]
     
     next 
@@ -190,10 +192,10 @@ class QueueEnumerator :: Enumerator
     queue      theQueue.
     enumerator theEnumerator.
     
-    constructor new &queue:aQueue
+    constructor new queue:aQueue
     [
         theQueue := aQueue.
-        theEnumerator := aQueue array_list enumerator.
+        theEnumerator := aQueue array_list; enumerator.
     ]
     
     next 

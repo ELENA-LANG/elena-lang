@@ -8,7 +8,7 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA Extension Library
-version=3.1.1
+version=3.1.2
 author=Alex Rakov
 
 [files]
@@ -24,3 +24,4 @@ text\words.l
 text\strings.l
 routines\enumerating.l
 routines\combinations.l
+scripting\interpreter.l
