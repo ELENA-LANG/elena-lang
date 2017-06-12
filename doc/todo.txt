@@ -3,10 +3,10 @@ In development:
 ------                              
 
               zdev 
-                 * migrating script samples
                  * scripting library : branching
                  * scripting library : loops
                  * scripting library : procedures
+                 * scripting library : implement fibonacci algorithm
                  * scripting library : language interpreter
 
               xdev - refactoring
@@ -43,6 +43,8 @@ In development:
 
                  * no need to copy to the buffer field / variable / method attributes
                  * cannot declare the following method : goto starting []
+
+                 * operator << should be used to add a list item
 
 ------                                 
 Pipeline:

@@ -6199,6 +6199,15 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
    }
 }
 
+void Compiler :: compileForward(SNode ns, ModuleScope& scope)
+{
+   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).identifier();
+   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).identifier();
+
+   if (!scope.defineForward(shortcut, reference))
+      scope.raiseError(errDuplicatedDefinition, ns);
+}
+
 void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope)
 {
    ident_t name = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
@@ -6395,6 +6404,9 @@ void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
       SNode name = current.findChild(lxIdentifier, lxPrivate, lxReference);
 
       switch (current) {
+         case lxInclude:
+            compileForward(current, scope);
+            break;
          case lxClass:
          {
             current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapTerminal(name));

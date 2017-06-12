@@ -1,8 +1,8 @@
-#import system'routines.
-#import system'collections.
-#import system'text.
-#import system'dynamic.
-#import extensions.
+import system'routines.
+import system'collections.
+import system'text.
+import system'dynamic.
+import extensions.
 
 class Scope
 {
@@ -13,12 +13,12 @@ class Scope
         theParent := parent.
     ]
 
-    save &variable:literal &array_list:list
+    save variable:literal array_list:list
     [
-        theParent save &variable:literal &array_list:list.
+        theParent save variable:literal array_list:list.
     ]
 
-    assign &variable:literal &array_list:list
+    assign variable:literal array_list:list
         => theParent.
                         
     close = theParent.        
@@ -40,61 +40,61 @@ class ExpressionScope :: Scope
         theAssignExpr := false.
     ]
 
-    new &numericToken : literal
+    new NumericToken : literal
     [
-        theCallstack push:{ save &array_list:list [ list += literal toInt. ] }.
+        theCallstack push:{ save array_list:list [ list append:(literal toInt) ] }.
     ]
         
-    new &literalToken : literal
+    new LiteralToken : literal
     [
-        theCallstack push:{ save &array_list:list [ list += literal toLiteral. ] }.
+        theCallstack push:{ save array_list:list [ list append:(literal toLiteral) ] }.
     ]
         
-    new &identToken : literal
+    new IdentToken : literal
     [
         theCallstack push:
         { 
-            save &array_list:list 
+            save array_list:list 
             [ 
-                theParent save &variable:literal &array_list:list.
+                theParent save variable:literal array_list:list
             ]
             
-            assign &array_list:list
+            assign array_list:list
             [
-                theParent assign &variable:literal &array_list:list.
+                theParent assign variable:literal array_list:list
             ]
         }.
     ]        
         
-    new &messageToken : literal
+    new MessageToken : literal
     [
         theCallExpr := true.
-        (0 == theMessage length)
-            ! [ theMessage append:"&". ].
+        ifnot(0 == theMessage length)
+            [ theMessage append:"&" ].
             
-        theMessage append:literal.
+        theMessage append:literal
     ]
         
-    new &referenceToken : symbol
+    new ReferenceToken : symbol
     [
-        theCallstack push:{ save &array_list:list [ list += Symbol new &literal:symbol. ] }.
+        theCallstack push:{ save array_list:list [ list append:(Symbol new literal:symbol) ] }.
     ]
     
-    new &AssignToken : token
+    new AssignToken : token
     [
         theAssignExpr := true.
     ]
         
-    open &expression
+    open Expression
     [
         var expr := ExpressionScope new:$self.
         
         theCallstack push:expr.
         
-        ^ expr.
+        ^ expr
     ]
 
-    open &singleton
+    open Singleton
     [
         var expr := SingletonScope new:$self.
         
@@ -103,30 +103,30 @@ class ExpressionScope :: Scope
         ^ expr.
     ]
                 
-    save &array_list:retVal
+    save array_list:retVal
     [
-        theCallExpr
-        ? [
+        if(theCallExpr)
+        [
             int length := theCallstack length.
-            length -= 1.
+            length := length - 1.
             
-            theMessage write &literal:"[".
-            theMessage write &int:length.
-            theMessage write &literal:"]".
+            theMessage write literal:"[".
+            theMessage write int:length.
+            theMessage write literal:"]".
             
-            until (theCallstack is &empty)
+            until (theCallstack is empty)
             [
-                theCallstack pop save &array_list:retVal.
+                theCallstack pop; save array_list:retVal
             ].
             
-            retVal += Message new &literal:(theMessage literal).
-        ]
-        ! [
-            theCallstack pop save &array_list:retVal.
+            retVal append:(Message new literal:theMessage)
+        ];
+        [
+            theCallstack pop; save array_list:retVal.
             
             if (theAssignExpr)
             [
-                theCallstack pop assign &array_list:retVal.
+                theCallstack pop; assign array_list:retVal
             ].
         ].
     ]    
@@ -150,38 +150,38 @@ class CodeScope :: Scope
         theStatements := List new.
     ]
 
-    save &array_list:retVal
+    save array_list:retVal
     [
-        theStatements run &each:statement
+        theStatements run each: (:statement)
         [
-            statement save &array_list:retVal.
+            statement save array_list:retVal
         ].
     ]
 
-    open &ret_expr
+    open Ret_expr
     [
         var expr := RetExpressionScope new:$self.
         
-        theStatements += expr.
+        theStatements append:expr.
         
-        ^ expr.
+        ^ expr
     ]
         
-    open &expression
+    open Expression
     [
         var expr := ExpressionScope new:$self.
         
-        theStatements += expr.
+        theStatements append:expr.
         
-        ^ expr.
+        ^ expr
     ]
     
-    open &variable
+    open Variable
         = 
         {
-            new &identToken:token
+            new identToken:token
             [
-                theParent new &variableToken:token.
+                theParent new variableToken:token
             ]
             
             close = $owner.
@@ -206,16 +206,16 @@ class MethodScope :: Scope
     ]
         
     subject
-        = Signature new &literal:theSubject.
+        = Signature new literal:theSubject.
 
     message
     [
         theSubject 
-            append:"["
-            append:(theParamCounter literal)
+            append:"[";
+            append:(theParamCounter literal);
             append:"]".
 
-        ^ Message new &literal:theSubject.            
+        ^ Message new literal:theSubject         
     ]
 
     code
@@ -225,78 +225,76 @@ class MethodScope :: Scope
         int counter := theVarCounter.
         while (counter > 0)
         [
-            list += nil.
+            list append:nil.
             
-            counter -= 1.
+            counter := counter - 1
         ].
         
-        theCode save &array_list:list.
+        theCode save array_list:list.
         
-        ^ Tape new &array:list.
+        ^ Tape new array:list
     ]    
         
-    new &messageToken : message
+    new MessageToken : message
     [
-        (theSubject is &empty)
-            ! [ theSubject write:"&". ].
+        ifnot(theSubject is empty)
+            [ theSubject write:"&" ].
         
-        theSubject write:message.
+        theSubject write:message
     ]    
     
-    new &paramToken : param
+    new ParamToken : param
     [
-        theParameters += KeyValue new &key:param &value:(theParameters length + 1).
+        theParameters append:(KeyValue new key:param value:(theParameters length + 1)).
         
-        theParamCounter += 1.
+        theParamCounter append int:1
     ]
     
-    new &variableToken : param
+    new VariableToken : param
     [
-        theParameters += KeyValue new &key:param &value:(theParameters length + 1).
+        theParameters append:(KeyValue new key:param value:(theParameters length + 1)).
         
-        theVarCounter += 1.
+        theVarCounter append int:1
     ]
     
-    open &ret_expr
+    open Ret_expr
     [
         theCode := RetExpressionScope new:$self.
         
-        ^ theCode.
+        ^ theCode
     ]
     
-    open &code
+    open Code
     [
         theCode := CodeScope new:$self.
         
-        ^ theCode.
+        ^ theCode
     ]
     
-    save &variable:literal &array_list:list
+    save variable:literal array_list:list
     [
-        var param := theParameters seek &each:x [ x key equal:literal ].
-        ($nil != param)
-            ? [
-                list += param value.
-                list += %"tapeOp.var[]".
-                
-            ]
-            ! [
-                $super save &variable:literal &array_list:list.
+        var param := theParameters seek each: (:x)[  x key; equal:literal ].
+        if($nil != param)
+            [
+                list append:(param value).
+                list append:%"tapeOp.tape_var[]"
+            ];
+            [
+                $super save variable:literal array_list:list
             ].
     ]
     
-    assign &variable:literal &array_list:list
+    assign variable:literal array_list:list
     [
-        var param := theParameters seek &each:x [ x key equal:literal ].
-        ($nil != param)
-            ? [
-                list += param value.
-                list += %"tapeOp.assign[]".                
-            ]
-            ! [
-                $super save &variable:literal &array_list:list.
-            ].
-        
+        var param := theParameters seek each: (:x)[ ^x key; equal:literal ].
+        if($nil != param)
+            [
+                list append:(param value).
+                list append:%"tapeOp.tape_assign[]"
+            ];
+            [
+                $super save variable:literal array_list:list
+            ]        
     ]
 }
 
@@ -310,13 +308,13 @@ class BaseClassScope :: Scope
         theMethods := List new.
     ]
 
-    open &method
+    open Method
     [
         var method := MethodScope new:$self.
         
-        theMethods += method.
+        theMethods append:method.
         
-        ^ method.
+        ^ method
     ]        
 }
 
@@ -327,26 +325,26 @@ class SingletonScope :: BaseClassScope
     [
     ]
     
-    new &identToken:name
+    new IdentToken:name
     [
     ]
     
-    save &array_list:retVal
+    save array_list:retVal
     [
-        retVal += $self eval.
+        retVal append:($self eval)
     ]
     
     eval
     [
         var list := List new.
         
-        theMethods run &each:method
+        theMethods run each: (:method)
         [
-            list += method message.
-            list += method code.
+            list append:(method message).
+            list append:(method code)
         ].
         
-        ^ Class new &array:(list toArray).        
+        ^ Class new array:(list toArray)
     ]
 }
 
@@ -359,25 +357,25 @@ class SymbolBody :: ExpressionScope
     [
     ]
     
-    open &singleton
+    open Singleton
     [
         theSingleton := SingletonScope new:$self.
         
-        ^ theSingleton.
+        ^ theSingleton
     ]
     
     eval
     [
         if ($nil != theSingleton)
         [
-            ^ theSingleton eval.
+            ^ theSingleton eval
         ];
         [
             var list := ArrayList new.
         
-            $self save &array_list:list.
+            $self save array_list:list.
         
-            ^ Tape new &array:list.            
+            ^ Tape new array:list
         ].
     ]
 }
@@ -391,15 +389,15 @@ class SymbolScope :: Scope
     [
     ]
     
-    new &identToken:name
+    new IdentToken:name
     [
     ]
     
-    open &expression
+    open Expression
     [
         theBody := SymbolBody new:$self.
         
-        ^ theBody.
+        ^ theBody
     ]
     
     eval
@@ -424,31 +422,31 @@ class Library :: Scope
         theForwards@symbol := ref.
     ]
     
-    open &symbol
+    open Symbol
     [
         var symbol := SymbolScope new:$self.
         
-        theClasses += symbol.
+        theClasses append:symbol.
         
-        ^ symbol.
+        ^ symbol
     ]
     
-    open &preloaded_symbol
+    open Preloaded_symbol
     [
-        var symbol := $self open &symbol.
+        var symbol := $self open symbol.
 
-        thePreloaded += symbol.
+        thePreloaded append:symbol.
                         
-        ^ symbol.
+        ^ symbol
     ]
     
-    open &singleton
+    open Singleton
     [
         var class := SingletonScope new:$self.
         
-        theClasses += class.   
+        theClasses append:class.   
         
-        ^ class.
+        ^ class
     ]
 
 //    #method open &class
@@ -462,19 +460,18 @@ class Library :: Scope
 
     init
     [
-        thePreloaded run &each:symbol
+        thePreloaded run each: (:symbol)
         [
-            symbol eval eval.
+            symbol eval; eval.
         ].
     ]
 
-    save &variable:literal &array_list:list
+    save variable:literal array_list:list
     [
         var ref := theForwards@literal.
-        ($nil == ref)
-            ? [ InvalidArgumentException new:("Variable cannot be resolved - " + literal) raise. ]
-            ! [ list += Symbol new &literal:ref. ].
-        
+        if ($nil == ref)
+            [ InvalidArgumentException new:("Variable cannot be resolved - " + literal); raise ];
+            [ list append:(Symbol new literal:ref) ]        
     ]
         
     first

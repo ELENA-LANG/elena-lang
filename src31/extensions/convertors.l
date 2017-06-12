@@ -2,7 +2,7 @@ import system'collections.
 import system'routines.
 import system'calendar.
 import system'text.
-//#import system'dynamic.
+import system'dynamic.
 
 // --- convertors ---
 
@@ -297,8 +297,8 @@ extension convertorOp
         = aTarget set:(aTarget cast:%eval to:{ generic : x : y = (Variant new:x)~$subject get. } with:self).
 }
 
-//class convertor 
-//    = { ! n = Wrap(n, convertorOp)::$subject get. }.
+class convertor 
+    = { generic : n = Wrap::(n, convertorOp)~$subject get. }.
 
 datetime extension dateFormatterOp 
 {

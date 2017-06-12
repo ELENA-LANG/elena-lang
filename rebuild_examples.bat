@@ -14,9 +14,9 @@ bin\elc examples\console\random\random.prj
 bin\elc examples\files\textdb\textdb.prj
 bin\elc examples\console\matrix\matrix.prj
 bin\elc examples\console\trans\tanslit.prj
-rem bin\elc examples\script\interpreter\interpreter.prj
-rem bin\elc examples\script\calculator\calc.xprj
-rem bin\elc examples\script\calculator\calc.prj
+bin\elc examples\script\interpreter\interpreter.prj
+bin\elc examples\script\calculator\calc.xprj
+bin\elc examples\script\calculator\calc.prj
 rem bin\elc examples\script\vb\test.prj
 rem bin\elc examples\gui\agenda\agenda.prj
 rem bin\elc examples\gui\graphs\graphs.prj
