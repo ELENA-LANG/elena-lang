@@ -40,7 +40,21 @@ root
    #define statement  ::= "var" variable ";" ;
 
    #define expression ::= "print" "(" print ")";
-   #define expression ::= object;
+   #define expression ::= 
+<=
+             expression
+             (
+=>
+                 object operation?
+<=
+	     )
+=>;
+
+   #define operation  ::= 
+<=
+                operator = "=="
+=>
+                "==" object;
 
    #define print      ::= 
 <= 
@@ -79,4 +93,5 @@ root
 
    #define object     ::= <= literal = "$literal" =>;
    #define object     ::= <= identifier = $identifier =>;
+   #define object     ::= <= numeric = $numeric =>;
 ]]

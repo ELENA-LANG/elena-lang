@@ -179,9 +179,9 @@ class CodeScope :: Scope
     open Variable
         = 
         {
-            new identToken:token
+            new IdentToken:token
             [
-                theParent new variableToken:token
+                theParent new VariableToken:token
             ]
             
             close = $owner.
@@ -433,7 +433,7 @@ class Library :: Scope
     
     open Preloaded_symbol
     [
-        var symbol := $self open symbol.
+        var symbol := $self open Symbol.
 
         thePreloaded append:symbol.
                         
