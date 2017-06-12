@@ -908,7 +908,7 @@ void x86Assembler :: compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		x86Helper::writeModRM(code, dest, sour);
 	}
    else if ((test(sour.type, x86Helper::otR8) || test(sour.type, x86Helper::otM8)) && test(dest.type, x86Helper::otR8)) {
-      code->writeByte(0x22);
+      code->writeByte(0x20);
       x86Helper::writeModRM(code, dest, sour);
    }
    else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && dest.type==x86Helper::otDD) {

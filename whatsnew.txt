@@ -9,6 +9,7 @@
 
 [ELC]
 [-] #308 : Invalid lshift opcode when arg >= 32
+[-] #310 : wrong result with equals and not equals operator for long numbers
 
 [LIB]
 [+] migrating remaining classes from LIB30
