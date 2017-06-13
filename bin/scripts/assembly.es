@@ -66,6 +66,9 @@
 
    #define statement   ::= expression;
    #define statement   ::= "variable" "(" variable ")";
+   #define statement   ::= <= > += "%""open&Loop[0]""" =>
+                             "loop" "(" expression ")"
+                           <=  > += "%""close[0]""" =>;
 
    #define variable    ::= <= > += "%""open&Variable[0]""" =>
                               identifier
@@ -95,6 +98,9 @@
 
    #define operator_quote ::= <= << += """equal""" =>
                              "==";
+
+   #define operator_quote ::= <= << += """less""" =>
+                             "<";
 
    #define operator_quote ::= <= << += """add""" =>
                              "+";

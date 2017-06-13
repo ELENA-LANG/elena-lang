@@ -67,6 +67,36 @@ class IfExpression :: Scope
     ]                
 }
 
+class LoopExpression :: IfExpression
+{
+    constructor new : aParent
+        <= new:aParent;
+    [
+    ]
+    
+    eval If []
+    
+    save array_list:retVal
+    [
+        int loopLabel := retVal length.
+        
+        theCondExpr save array_list:retVal.
+        
+        int jumpLabel := retVal length.
+        
+        retVal append:$nil.
+        retVal append:%"tapeOp.tape_jumpifnot[]".
+        
+        theIfClosure save array_list:retVal.
+        retVal append:loopLabel.
+        retVal append:%"tapeOp.tape_jump[]".
+        
+        retVal@jumpLabel := retVal length.
+    ]
+    
+    close = { close = theParent. }.
+}
+
 class ExpressionScope :: Scope
 {
     stack      theCallstack.
@@ -253,6 +283,15 @@ class CodeScope :: Scope
         theStatements append:expr.
         
         ^ expr
+    ]
+    
+    open Loop
+    [
+        var loop := LoopExpression new:$self.
+        
+        theStatements append:loop.
+        
+        ^ { open Expression = loop. }
     ]
     
     open Variable
