@@ -3976,6 +3976,20 @@ labSkip:
 
 end
 
+procedure __tape.eval&tape_jumpifnot[16]
+
+  aloadsi 2
+  elser labSkip const : system'false
+  aloadsi 1
+  nload
+  dsavefi -2  
+
+labSkip:
+  aloadsi 3
+  quitn 3
+
+end
+
 procedure __tape.eval&tape_go[16]
 
   aloadsi 1

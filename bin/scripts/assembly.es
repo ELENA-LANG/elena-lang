@@ -90,11 +90,17 @@
    #define operator    ::= <= > += "%""new&MessageToken[1]""" =>
                              "operator" "=" operator_quote;
 
+   #define operator    ::= <= > += "%""eval&If[0]""" =>
+                             "operator" "=" "?";
+
    #define operator_quote ::= <= << += """equal""" =>
                              "==";
 
-   #define operator_quote ::= <= << += """if""" =>
-                             "?";
+   #define operator_quote ::= <= << += """add""" =>
+                             "+";
+
+   #define operator_quote ::= <= << += """subtract""" =>
+                             "-";
 
    #define parameter   ::= <= > += "%""new&ParamToken[1]""" =>
                              "parameter" "=" ident_quote;

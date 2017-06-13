@@ -38,6 +38,7 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("variable", lxVariable);
    _tokens.add("assign", lxAssign);
    _tokens.add("operator", lxOperator);
+   _tokens.add("loop", lxLoop);
 
    _attributes.add("singleton", V_SINGLETON);
    _attributes.add("preloaded_symbol", V_PRELOADED);

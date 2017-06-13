@@ -3252,22 +3252,22 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       }
       else if (retVal.kind == okLocal || retVal.kind == okField || retVal.kind == okOuterField || retVal.kind == okStaticField) {
       }
-//      else if (retVal.kind == okParam || retVal.kind == okOuter) {
+      else if (/*retVal.kind == okParam || */retVal.kind == okOuter) {
 //         // Compiler magic : allowing to assign byref / variable parameter
 //         if (_logic->isVariable(*scope.moduleScope, targetRef)) {
 //            _logic->injectVariableAssigning(writer, *scope.moduleScope, *this, targetRef, retVal.type, operand, retVal.kind == okParam);
 //
 //            retVal.kind = (retVal.kind == okParam) ? okParamField : okOuterField;
 //         }
-//         // Compiler magic : allowing to assign outer local variables
+         // Compiler magic : allowing to assign outer local variables
 //         else if (retVal.kind == okOuter) {
-//            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
-//
-//            if (!closure->markAsPresaved(retVal))
-//               scope.raiseError(errInvalidOperation, node);
+            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+
+            if (!closure->markAsPresaved(retVal))
+               scope.raiseError(errInvalidOperation, node);
 //         }
 //         else scope.raiseError(errInvalidOperation, node);
-//      }
+      }
       else scope.raiseError(errInvalidOperation, node);
 
       writer.newBookmark();

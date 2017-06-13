@@ -52,6 +52,9 @@ extension tapeOp
     tape_jumpif args:params
         => system'core_routines'__tape.
     
+    tape_jumpifnot args:params
+        => system'core_routines'__tape.
+    
     tape_jump args:params
         => system'core_routines'__tape.
         

@@ -11,6 +11,7 @@ program =
             load path:"grammar_js.es";
 //            eval &path:"test_js1.es".
             eval path:"test_js2.es".
+//            eval path:"test_js3.es".
             
 //            eval:"print(""Hello World"");".
         

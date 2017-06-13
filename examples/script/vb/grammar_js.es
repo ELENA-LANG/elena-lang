@@ -49,6 +49,20 @@ root
              )
 =>;
 
+   #define statement  ::= 
+<= 
+          loop
+          (
+             expression
+             (
+                 operator = "?"
+=>
+         "while" "(" expression ")" code_brackets
+<=
+             )
+          )
+=>;
+
    #define code_brackets ::= 
 <=
 
@@ -77,6 +91,30 @@ root
                 operator = "=="
 =>
                 "==" object;
+
+   #define operation  ::= 
+<=
+                operator = "<"
+=>
+                "<" object;
+
+   #define operation  ::= 
+<=
+                operator = "+"
+=>
+                "+" object;
+
+   #define operation  ::= 
+<=
+                operator = "-"
+=>
+                "-" object;
+
+   #define operation  ::= 
+<=
+                assign = 0
+=>
+                "=" expression;
 
    #define print      ::= 
 <= 

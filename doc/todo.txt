@@ -3,12 +3,9 @@ In development:
 ------                              
 
               zdev 
-                 * scripting library : branching
                  * scripting library : loops
                  * scripting library : procedures
                  * scripting library : implement fibonacci algorithm
-                 * scripting library : static code - branching ; typecast the expression to the bool
-                 * scripting library : language interpreter
 
               xdev - refactoring
                  * migrating rosetta samples : bulls and cows
@@ -46,6 +43,10 @@ In development:
                  * cannot declare the following method : goto starting []
 
                  * operator << should be used to add a list item
+
+              zdev 
+                 * scripting library : static code - branching ; typecast the expression to the bool
+                 * scripting library : language interpreter
 
 ------                                 
 Pipeline:

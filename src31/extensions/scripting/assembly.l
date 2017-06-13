@@ -24,13 +24,57 @@ class Scope
     close = theParent.        
 }
 
+class IfExpression :: Scope
+{
+    object theCondExpr.
+    object theIfClosure.
+    
+    constructor new : aParent
+        <= new:aParent;
+    [
+    ]
+    
+    open Expression
+    [
+        if ($nil == theCondExpr)
+        [
+            theCondExpr := ExpressionScope new:$self.
+            
+            ^ theCondExpr
+        ];
+        [
+           theIfClosure := ExpressionScope newIfExpr:$self.
+           
+           ^ theIfClosure
+        ]        
+    ]
+    
+    close
+        = theParent close.
+        
+    save array_list:retVal
+    [
+        theCondExpr save array_list:retVal.
+        
+        int jumpLabel := retVal length.
+        
+        retVal append:$nil.
+        retVal append:%"tapeOp.tape_jumpifnot[]".
+        
+        theIfClosure save array_list:retVal.
+        
+        retVal@jumpLabel := retVal length.
+    ]                
+}
+
 class ExpressionScope :: Scope
 {
     stack      theCallstack.
     textbuffer theMessage.
     bool       theCallExpr.
     bool       theAssignExpr.
-    
+    bool       theIfExpr.
+        
     constructor new : aParent
         <= new : aParent;
     [
@@ -38,7 +82,14 @@ class ExpressionScope :: Scope
         theMessage := TextBuilder new.
         theCallExpr := false.
         theAssignExpr := false.
+        theIfExpr := false.
     ]
+    
+    constructor newIfExpr : aParent
+        <= new : aParent;
+    [
+        theIfExpr := true.
+    ]        
 
     new NumericToken : literal
     [
@@ -105,7 +156,26 @@ class ExpressionScope :: Scope
 
     open Code
     [
-        var expr := ClosureScope new:$self.
+        var expr := $nil.
+        
+        if (theIfExpr)
+        [
+            expr := CodeScope new:$self.
+        ];
+        [
+            expr := ClosureScope new:$self.
+        ].
+            
+        theCallstack push:expr.
+        
+        ^ expr
+    ]
+
+    eval If
+    [
+        theIfExpr := true.
+        
+        var expr := IfExpression new:$self.
         
         theCallstack push:expr.
         
@@ -423,7 +493,7 @@ class ClosureScope :: CodeScope
             
             close = $owner.
         }.
-            
+
     eval
     [
         var list := ArrayList new.
