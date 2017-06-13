@@ -29,6 +29,8 @@ using namespace _ELENA_TOOL_;
 #define IDLE_MODE             6
 #define EOL_MODE              7
 #define LETTER_MODE           8
+#define MULTI_MODE            9
+#define EXCLUDE_MODE          10
 
 const char* dfaSymbolic[4] =
 {
@@ -48,6 +50,16 @@ inline size_t createKey(size_t id, int index)
 bool normalApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
 {
    return bm.state != dfaEOF && parser->compareToken(reader, bm, rule.terminal);
+}
+
+bool multiselectApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+{
+   return bm.state != dfaEOF && parser->compareTokenWithList(reader, bm, rule.terminal);
+}
+
+bool excludeApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+{
+   return bm.state == dfaEOF || !parser->compareTokenWithList(reader, bm, rule.terminal);
 }
 
 bool normalEOFApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader&, CFParser*)
@@ -132,6 +144,40 @@ size_t CFParser :: writeBodyText(ident_t text)
    return position;
 }
 
+size_t CFParser :: writeRegExprBodyText(_ScriptReader& reader, int& mode)
+{
+   MemoryWriter writer(&_body);
+
+   size_t position = writer.Position();
+   bool inversionMode = false;
+
+   ScriptBookmark bm = reader.read();
+   if (reader.compare("!")) {
+      bm = reader.read();
+      inversionMode = true;
+   }
+
+   bool tokenExpected = true;
+   while (!reader.compare(")") || bm.state == dfaQuote) {
+      if (bm.state == dfaQuote && tokenExpected) {
+         writer.writeLiteral(reader.lookup(bm));
+
+         tokenExpected = false;
+      }
+      else if (!tokenExpected && reader.compare("|")) {
+         tokenExpected = true;
+      }
+      else throw EParseError(bm.column, bm.row);
+
+      bm = reader.read();
+   }
+   writer.writeChar((char)0);
+
+   mode = inversionMode ? EXCLUDE_MODE : MULTI_MODE;
+
+   return position;
+}
+
 const char* CFParser :: getBodyText(size_t ptr)
 {
    return (const char*)_body.get(ptr);
@@ -143,6 +189,21 @@ bool CFParser :: compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rul
    ident_t ruleTerminal = getBodyText(rule);
 
    return terminal.compare(ruleTerminal);
+}
+
+bool CFParser :: compareTokenWithList(_ScriptReader& reader, ScriptBookmark& bm, int rule)
+{
+   ident_t terminal = reader.lookup(bm);
+   ident_t ruleTerminal = getBodyText(rule);
+   do {
+      if (!terminal.compare(ruleTerminal))
+         return false;
+
+      rule += getlength(ruleTerminal) + 1;
+      ruleTerminal = getBodyText(rule);
+   } while (!emptystr(ruleTerminal));
+
+   return true;
 }
 
 void CFParser :: defineApplyRule(Rule& rule, int mode)
@@ -183,6 +244,12 @@ void CFParser :: defineApplyRule(Rule& rule, int mode)
                break;
             case LETTER_MODE:
                rule.apply = normalLetterApplyRule;
+               break;
+            case MULTI_MODE:
+               rule.apply = multiselectApplyRule;
+               break;
+            case EXCLUDE_MODE:
+               rule.apply = excludeApplyRule;
                break;
             default:
                rule.apply = normalApplyRule;
@@ -414,7 +481,7 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
    int applyMode = 0;
 
    while (!reader.compare(";") || bm.state == dfaQuote) {
-      if (bm.state == dfaQuote) {
+      if (bm.state == dfaQuote || reader.compare("(")) {
          if (rule.terminal) {
             if (rule.nonterminal != 0) {
                if (rule.type == rtChomski) {
@@ -429,6 +496,9 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
             rule.type = rtChomski;
             rule.terminal = defineGrammarRule(reader, bm, ruleId);
             break;
+         }
+         else if (reader.compare("(")) {
+            rule.terminal = writeRegExprBodyText(reader, applyMode);
          }
          else rule.terminal = writeBodyText(reader.lookup(bm));
       }

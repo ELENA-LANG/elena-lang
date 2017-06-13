@@ -36,6 +36,45 @@ root
 )   
 =>;
 
+   #define code      ::= 
+<= 
+root
+(
+   nested
+   (
+      method
+      (
+=>
+      "function" function_name "(" function_params? ")" function_body
+<=
+      )
+   )
+=>;
+
+   #define function_params ::= function_param next_function_param*;
+
+   #define next_function_param ::= "," function_param
+
+   #define function_body  ::=
+<=
+                   code
+                   (
+=>
+                   statement* ret_statement?
+<= 
+                   )
+=>;
+
+   #define ret_statement  ::= 
+<= 
+             ret_expression
+             (
+=>
+                 "return" expression ";"
+<=
+             )
+=>;
+
    #define statement  ::= expression ";" ;
    #define statement  ::= "var" variable ";" ;
    #define statement  ::= 
@@ -85,6 +124,25 @@ root
 <=
 	     )
 =>;
+
+   #define expression ::= 
+<=
+             expression
+             (
+=>                
+                (!"print" | "if" | "loop") "(" function_name parameter? next_parameter* ")"
+<=
+	     )
+=>;
+
+   #define function_name ::=
+		<= message = $current =>;
+
+   #define parameter  ::=
+                expression;
+
+   #define next_parameter  ::=
+                "," expression;
 
    #define operation  ::= 
 <=
@@ -154,4 +212,6 @@ root
    #define object     ::= <= literal = "$literal" =>;
    #define object     ::= <= identifier = $identifier =>;
    #define object     ::= <= numeric = $numeric =>;
+
+   #define function_param ::= <= identifier = $identifier =>;
 ]]

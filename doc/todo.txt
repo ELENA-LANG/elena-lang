@@ -3,7 +3,7 @@ In development:
 ------                              
 
               zdev 
-                 * scripting library : loops
+                 * grammar_js : notkeyword ::= (!"while" | "if" | "print");
                  * scripting library : procedures
                  * scripting library : implement fibonacci algorithm
 
