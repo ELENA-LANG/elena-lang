@@ -6425,7 +6425,11 @@ void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
          }
          case lxSymbol:
          {
-            current.setArgument(scope.mapTerminal(name));
+            if (name == lxNone) {
+               // HOTFIX : for script generated anonymous symbol
+               current.setArgument(scope.mapNestedExpression());
+            }
+            else current.setArgument(scope.mapTerminal(name));
 
             SymbolScope symbolScope(&scope, current.argument);
             

@@ -135,7 +135,7 @@ public:
    void readScriptBookmark(size_t ptr, ScriptBookmark& bm);
 
    bool compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rule);
-   bool compareTokenWithList(_ScriptReader& reader, ScriptBookmark& bm, int rule);
+   bool compareTokenWithAny(_ScriptReader& reader, ScriptBookmark& bm, int rule);
 
    virtual bool parseGrammarRule(_ScriptReader& reader);
 

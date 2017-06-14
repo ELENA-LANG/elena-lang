@@ -1,22 +1,48 @@
 [[
    #grammar cf
 
-   #define start     ::= code? $eof;
-
-   #define code      ::= 
-<= 
+   #define start     ::= 
+<=
 root
 (
+=>
+   scope $eof
+<=
+)
+=>;
+
+   #define scope ::= 
+<= 
    preloaded_symbol
    (
-       identifier = printing
-
        expression
        (
           expression
           (
              nested
              (
+=>
+                fun_decl* code
+<=
+             ) 
+          )
+          message = eval
+       ) 
+   )
+=>;
+
+   #define fun_decl  ::= 
+<= 
+      method
+      (
+=>
+      "function" function_name "(" function_params? ")" "{" function_body "}"
+<=
+      )
+=>;
+
+   #define code      ::= 
+<= 
                 method
                 (
                    message = eval
@@ -28,32 +54,11 @@ root
 <= 
                    )
                 )
-             ) 
-          )
-          message = eval
-       ) 
-   )
-)   
-=>;
-
-   #define code      ::= 
-<= 
-root
-(
-   nested
-   (
-      method
-      (
-=>
-      "function" function_name "(" function_params? ")" function_body
-<=
-      )
-   )
 =>;
 
    #define function_params ::= function_param next_function_param*;
 
-   #define next_function_param ::= "," function_param
+   #define next_function_param ::= "," function_param;
 
    #define function_body  ::=
 <=
@@ -67,7 +72,7 @@ root
 
    #define ret_statement  ::= 
 <= 
-             ret_expression
+             returning
              (
 =>
                  "return" expression ";"
@@ -129,14 +134,15 @@ root
 <=
              expression
              (
+                identifier = self
 =>                
-                (!"print" | "if" | "loop") "(" function_name parameter? next_parameter* ")"
-<=
+                function_name "(" parameter? next_parameter* ")"
+<=                                           
 	     )
 =>;
 
    #define function_name ::=
-		<= message = $current =>;
+		<= message = $current =>  (!"print" | "if" | "loop" | "var" | "while");
 
    #define parameter  ::=
                 expression;
@@ -213,5 +219,5 @@ root
    #define object     ::= <= identifier = $identifier =>;
    #define object     ::= <= numeric = $numeric =>;
 
-   #define function_param ::= <= identifier = $identifier =>;
+   #define function_param ::= <= parameter = $identifier =>;
 ]]

@@ -54,12 +54,12 @@ bool normalApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& re
 
 bool multiselectApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
 {
-   return bm.state != dfaEOF && parser->compareTokenWithList(reader, bm, rule.terminal);
+   return bm.state == dfaIdentifier && parser->compareTokenWithAny(reader, bm, rule.terminal);
 }
 
 bool excludeApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
 {
-   return bm.state == dfaEOF || !parser->compareTokenWithList(reader, bm, rule.terminal);
+   return bm.state == dfaIdentifier && !parser->compareTokenWithAny(reader, bm, rule.terminal);
 }
 
 bool normalEOFApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader&, CFParser*)
@@ -191,19 +191,19 @@ bool CFParser :: compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rul
    return terminal.compare(ruleTerminal);
 }
 
-bool CFParser :: compareTokenWithList(_ScriptReader& reader, ScriptBookmark& bm, int rule)
+bool CFParser :: compareTokenWithAny(_ScriptReader& reader, ScriptBookmark& bm, int rule)
 {
    ident_t terminal = reader.lookup(bm);
    ident_t ruleTerminal = getBodyText(rule);
    do {
-      if (!terminal.compare(ruleTerminal))
-         return false;
+      if (terminal.compare(ruleTerminal))
+         return true;
 
       rule += getlength(ruleTerminal) + 1;
       ruleTerminal = getBodyText(rule);
    } while (!emptystr(ruleTerminal));
 
-   return true;
+   return false;
 }
 
 void CFParser :: defineApplyRule(Rule& rule, int mode)
@@ -497,7 +497,7 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
             rule.terminal = defineGrammarRule(reader, bm, ruleId);
             break;
          }
-         else if (reader.compare("(")) {
+         else if (bm.state != dfaQuote) {
             rule.terminal = writeRegExprBodyText(reader, applyMode);
          }
          else rule.terminal = writeBodyText(reader.lookup(bm));
@@ -741,12 +741,17 @@ int CFParser :: buildDerivationTree(_ScriptReader& reader, size_t startRuleId, M
    while (predictions.Count() > 0) {
       predictions.push(DerivationItem(0));
 
+      DerivationItem current = predictions.pop();
+      if (reader.Eof()) {
+         if (current.ruleId == -1) {
+            return current.trace;
+         }
+         else throw EParseError(bm.column, bm.row);
+      }         
+
       bm = reader.read();
       int terminalOffset = writer.Position();
       writer.write(&bm, sizeof(ScriptBookmark));
-
-      DerivationItem current = predictions.pop();
-      
       while (current.ruleId != 0) {
          if (current.ruleId == -1) {
             return current.trace;
