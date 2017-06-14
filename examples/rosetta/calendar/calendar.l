@@ -1,9 +1,9 @@
-#import system'text.
-#import system'routines.
-#import system'calendar.
-#import extensions.
-#import extensions'math.
-#import extensions'routines.
+import system'text.
+import system'routines.
+import system'calendar.
+import extensions.
+import extensions'math.
+import extensions'routines.
 
 // --- calendar ---
 
@@ -18,20 +18,20 @@ class CalendarMonthPrinter
     object theYear.
     object theRow.
     
-    constructor new &year:aYear &month:aMonth
+    constructor new year:aYear month:aMonth
     [
         theMonth := aMonth.
         theYear := aYear.
         theLine := TextBuffer new.
-        theRow := Integer new &int:0.
+        theRow := Integer new int:0.
     ]
 
     writeTitle
     [        
         theRow set:0.
-        theDate := Date new &year:(theYear int) &month:(theMonth int) &day:1.
-        DayNames run &each: aName
-            [ theLine writeLiteral:" ":aName ].
+        theDate := Date new year:(theYear int) month:(theMonth int) day:1.
+        DayNames run each: (:aName)
+            [ theLine writeLiteral:" ":aName ]
     ]
     
     writeLine
@@ -40,37 +40,37 @@ class CalendarMonthPrinter
         
         if (theDate month == theMonth)
             [
-                theLine write:"   " &length:(((theDate dayOfWeek) => 0 [ 7 ]; ! [ theDate dayOfWeek ]) - 1).
+                theLine write:"   " length:(((theDate dayOfWeek) => 0 [ 7 ]; ! [ theDate dayOfWeek ]) - 1).
                 
                 control do:
                 [
-                    theLine write:(theDate day literal) &paddingLeft:3 &with:#32.
+                    theLine write:(theDate day; literal) paddingLeft:3 with:$32.
                     
-                    theDate := theDate add &days:1.
+                    theDate := theDate add days:1.
                 ]         
-                &until:[(theDate month != theMonth)or:[theDate dayOfWeek == 1]].
+                until:$((theDate month != theMonth)or:$(theDate dayOfWeek == 1)).
             ].
         
         int aLength := theLine length.
         if (aLength < 21)
-            [ theLine write:" " &length:(21 - aLength). ].
+            [ theLine write:" " length:(21 - aLength). ].
             
-        theRow += 1.            
+        theRow append int:1.            
     ]
     
-    indexer = Indexer
+    indexer = Indexer::
     {
         available = theRow < 7.
 
-        readIndex &vint:anIndex [ anIndex set:theRow. ]
+        readIndexTo vint:anIndex [ anIndex int := theRow ]
 
-        write &index:anIndex 
+        set index:anIndex 
         [
             if (anIndex <= theRow)
-                [ $owner writeTitle. ].
+                [ $owner writeTitle ].
                 
             while (anIndex > theRow)
-                [ $owner writeLine. ].
+                [ $owner writeLine ]
         ]
 
         get = $owner.
@@ -78,7 +78,7 @@ class CalendarMonthPrinter
     
     printTitleTo : anOutput
     [
-        anOutput write:(MonthNames @(theMonth - 1)) &padding:21 &with:#32.
+        anOutput write:(MonthNames @(theMonth - 1)) padding:21 with:$32.
     ]
    
     printTo : anOutput
@@ -100,19 +100,19 @@ class Calendar
     
     printTo:anOutput
     [
-        anOutput write:"[SNOOPY]" &padding:(theRowLength * 25) &with:#32. 
+        anOutput write:"[SNOOPY]" padding:(theRowLength * 25) with:$32. 
         anOutput writeLine.        
-        anOutput write:(theYear literal) &padding:(theRowLength * 25) &with:#32. 
-        anOutput writeLine writeLine.
+        anOutput write:(theYear literal) padding:(theRowLength * 25) with:$32. 
+        anOutput writeLine; writeLine.
         
         var aRowCount := 12 / theRowLength.
-        var Months := Array new &length:aRowCount set &every:(&index:i)
-            [ Array new &length:theRowLength set &every:(&index:j)
-                [ CalendarMonthPrinter new &year:(theYear int) &month:((i * theRowLength + j + 1) int) ]].
+        var Months := Array new length:aRowCount; set every:(&int:i)
+            [ ^ Array new length:theRowLength; set every:(&int:j)
+                [ ^ CalendarMonthPrinter new year:(theYear int) month:((i * theRowLength + j + 1) int) ]].
         
-        Months run &each: aRow
+        Months run each: (:aRow)
         [
-            aRow run &each: aMonth
+            aRow run each: (:aMonth)
             [
                 aMonth printTitleTo:anOutput.
                     
@@ -121,16 +121,16 @@ class Calendar
             
             anOutput writeLine.
             
-            ParallelEnumerator new:aRow run &each: aLine
+            ParallelEnumerator new:aRow; run each: (:aLine)
             [
-                aLine run &each: aPrinter
+                aLine run each: (:aPrinter)
                 [
                     aPrinter printTo:anOutput.
 
-                    anOutput write:"   ".
+                    anOutput write:"   "
                 ].
 
-                anOutput writeLine.
+                anOutput writeLine
             ].
         ].        
     ]
@@ -140,7 +140,7 @@ class Calendar
 
 program =
 [
-    var aCalender := Calendar new:(console write:"ENTER THE YEAR:" readLine:(Integer new)).
+    var aCalender := Calendar new:(console write:"ENTER THE YEAR:"; readLineTo:(Integer new)).
     
     aCalender printTo:console.
     

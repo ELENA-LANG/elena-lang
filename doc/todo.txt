@@ -2,13 +2,8 @@
 In development:
 ------                              
 
-              zdev 
-                 * compile-time : implement fibonacci algorithm
-                 * run-time : implement fibonacci algorithm
-                 * reddit post
-
               xdev - refactoring
-                 * migrating rosetta samples : bulls and cows
+                 * migrating rosetta samples : Conway's Game of Life
                  * migrating pi2 sample
 
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).

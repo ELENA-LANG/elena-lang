@@ -1,6 +1,6 @@
-#import system'routines.
-#import extensions.
-#import extensions'routines.
+import system'routines.
+import extensions.
+import extensions'routines.
 
 const int M = 3.
 const int N = 5. 
@@ -9,7 +9,7 @@ const int N = 5.
 
 numbers = (:anN)
 [
-    Array new &length:anN set &every: (&int:n) [ Integer new &int:n ]
+    ^ Array new length:anN; set every: (&int:n)[ ^n ]
 ].
 
 // --- Program ---
@@ -17,9 +17,9 @@ numbers = (:anN)
 program =
 [
     var aNumbers := numbers eval:N.    
-    Combinator new:M &of:aNumbers run &each: aRow
+    Combinator new:M of:aNumbers; run each: (:aRow)
     [
-        console writeLine:aRow.
+        console writeLine:aRow
     ].
     
     console readChar.

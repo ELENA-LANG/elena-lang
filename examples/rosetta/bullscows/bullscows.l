@@ -78,7 +78,7 @@ program =
 [
     var aGameMaster := GameMaster new.
 
-    [ aGameMaster proceed:(aGameMaster ask) ] doWhile.
+    $(aGameMaster proceed:(aGameMaster ask)) doWhile.
     
     console readChar.
 ].

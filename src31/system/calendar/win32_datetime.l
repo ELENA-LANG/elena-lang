@@ -89,6 +89,10 @@ sealed embeddable struct TimeStruct
     short theSecond.
     short theMillisecond.
 
+    stacksafe implicit int:dummy
+    [
+    ]
+    
     stacksafe implicit __time:aTime
     [
         $self write __time:aTime.
