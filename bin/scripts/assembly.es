@@ -25,7 +25,7 @@
                            <=  > += "%""close[0]""" ) =>;
 
    #define symbol_expr ::= <= ( < += "2 " > += "%""system'dynamic'tapeOp.tape_var[]""" += "%""open&Preloaded_symbol[0]"""  => 
-                              "preloaded_symbol" "(" identifier expression ")" 
+                              "preloaded_symbol" "(" identifier? expression ")" 
                            <=  > += "%""close[0]""" ) =>;
 
    #define expression  ::= <= > += "%""open&Expression[0]""" =>
