@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Script Engine Parser class implementation.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -26,12 +26,30 @@ ScriptParser :: ScriptParser()
 #endif
 }
 
-void ScriptParser :: setOption(ident_t option)
+bool ScriptParser :: setOption(ident_t option, ident_t projectPath)
 {
-   if (option.startsWith("[[")) {
-      _InterpretScript(option);
+   if (!option.startsWith("[[")) {
+      if (option[0] == '~') {
+         // if it is a standart grammar
+         _InterpretFile(option, _encoding, false);
+      }
+      else {         
+         if (!emptystr(projectPath)) {
+            IdentifierString grammarPath(projectPath);
+
+            grammarPath.append('\\');
+            grammarPath.append(option);
+
+            _InterpretFile(grammarPath, _encoding, false);
+         }
+         else _InterpretFile(option, _encoding, false);
+      }
    }
-   else _InterpretFile(option, _encoding, false);
+   else _InterpretScript(option) != 0;
+
+   int length = _GetStatus(NULL, 0);
+
+   return length == 0;
 }
 
 void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)

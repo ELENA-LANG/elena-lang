@@ -21,18 +21,18 @@ inline ident_t getLoadError(LoadResult result)
 {
    switch(result)
    {
-   case lrDuplicate:
-      return errDuplicatedModule;
-   case lrNotFound:
-      return errUnknownModule;
-   case lrWrongStructure:
-      return errInvalidModule;
-   case lrWrongVersion:
-      return errInvalidModuleVersion;
-   case lrCannotCreate:
-      return errCannotCreate;
-   default:
-      return NULL;
+      case lrDuplicate:
+         return errDuplicatedModule;
+      case lrNotFound:
+         return errUnknownModule;
+      case lrWrongStructure:
+         return errInvalidModule;
+      case lrWrongVersion:
+         return errInvalidModuleVersion;
+      case lrCannotCreate:
+         return errCannotCreate;
+      default:
+         return NULL;
    }
 }
 

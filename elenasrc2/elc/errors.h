@@ -90,6 +90,7 @@ namespace _ELENA_
    #define errInvalidModuleVersion  "linker: error 210: Obsolete module file '%s'\n"
    #define errConstantExpectedLink  "linker: error 211: Symbol '%s' cannot be constant\n"
    #define errEmptyTarget           "linker: error 212: Target is not specified\n"
+   #define errInvalidTargetOption   "linker: error 213: Invalid target option '%s'\n"
 
   // --- Compiler internal error messages ---
 //   #define errReferenceOverflow     "error 301: The section reference overflow\n"

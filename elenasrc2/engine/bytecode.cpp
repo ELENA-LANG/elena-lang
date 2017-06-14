@@ -697,8 +697,6 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, REFER_MESSAGE,      REFER_MESSAGE_ID);
    addVerb(verbs, APPEND_MESSAGE,     APPEND_MESSAGE_ID);
    addVerb(verbs, REDUCE_MESSAGE,     REDUCE_MESSAGE_ID);
-   addVerb(verbs, INCREASE_MESSAGE,   INCREASE_MESSAGE_ID);
-   addVerb(verbs, SEPARATE_MESSAGE,   SEPARATE_MESSAGE_ID);
    addVerb(verbs, SET_REFER_MESSAGE,  SET_REFER_MESSAGE_ID);
    addVerb(verbs, SET_MESSAGE,        SET_MESSAGE_ID);
    addVerb(verbs, READ_MESSAGE,       READ_MESSAGE_ID);
@@ -760,8 +758,6 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    addVerb(operators, REFER_OPERATOR, REFER_MESSAGE_ID);
    addVerb(operators, APPEND_OPERATOR, APPEND_MESSAGE_ID);
    addVerb(operators, REDUCE_OPERATOR, REDUCE_MESSAGE_ID);
-   addVerb(operators, INCREASE_OPERATOR, INCREASE_MESSAGE_ID);
-   addVerb(operators, SEPARATE_OPERATOR, SEPARATE_MESSAGE_ID);
    addVerb(operators, WRITE_OPERATOR, WRITE_MESSAGE_ID);
    addVerb(operators, READ_OPERATOR, READ_MESSAGE_ID);
 }

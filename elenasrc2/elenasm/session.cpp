@@ -157,8 +157,6 @@ void* Session :: translate(TextReader* source)
    parseMetaScript(_tape, scriptReader);
    parseScript(_tape, scriptReader);
 
-   _lastError.copy("done");
-
    return _tape.get(offset);
 }
 

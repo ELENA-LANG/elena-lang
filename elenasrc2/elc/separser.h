@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Script Engine Parser class declaration.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef separserH
@@ -51,7 +51,7 @@ class ScriptParser
    int _encoding;
 
 public:
-   void setOption(ident_t option);
+   bool setOption(ident_t option, ident_t projectPath);
 
    void parse(path_t filePath, SyntaxTree& tree);
 

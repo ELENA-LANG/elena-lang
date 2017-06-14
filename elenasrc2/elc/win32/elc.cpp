@@ -561,7 +561,9 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
 
          _ELENA_::TargetIterator option_it = targetInfo->getIt(ELC_OPTION);
          while (!option_it.Eof()) {
-            scriptParser.setOption(*option_it);
+            if (!scriptParser.setOption(*option_it, StrSetting(_ELENA_::opProjectPath))) {
+               raiseError(errInvalidTargetOption, *option_it);
+            }
 
             option_it = targetInfo->nextIt(ELC_OPTION, option_it);
          }

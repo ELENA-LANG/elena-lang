@@ -55,8 +55,6 @@ namespace _ELENA_
    #define REFER_MESSAGE_ID        0x0017
    #define APPEND_MESSAGE_ID       0x0018
    #define REDUCE_MESSAGE_ID       0x0019
-   #define INCREASE_MESSAGE_ID     0x001A
-   #define SEPARATE_MESSAGE_ID     0x001B
    #define SET_REFER_MESSAGE_ID    0x001C
    #define SET_MESSAGE_ID          0x001D
    #define READ_MESSAGE_ID         0x001E
@@ -397,8 +395,6 @@ namespace _ELENA_
    #define REFER_MESSAGE            "getAt"
    #define APPEND_MESSAGE           "append"
    #define REDUCE_MESSAGE           "reduce"
-   #define INCREASE_MESSAGE         "multiplyBy"
-   #define SEPARATE_MESSAGE         "divideInto"
    #define SET_REFER_MESSAGE        "setAt"
    #define SET_MESSAGE              "set"
    #define READ_MESSAGE             "read"

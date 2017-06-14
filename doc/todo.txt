@@ -8,33 +8,20 @@ In development:
 
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
 
-                 * test using templates
-
                  * short cut syntax for (:e) [] , &e [] or e => []
 
-                 * get rid of +=, -=, *=, /= operators (and divideInto, multiplyBy)
                  * get rid of lxDefaultGeneric
                  * uncomment matrixof template
                  * uncomment arrayof enumerator method
 
-                 * generic handler - { ... generic eval : anObject = false. } can it be replaced with { ... generic : anObject = false. }?
-
                  * check attribute duplicates
                  * test if outnprop works correctly with optimization
-                 * test if action attribute works
-                 * test if returning type attribute works
                  * optimize: theDiff int := theDiff / 2.
-
-                 * review rosetta samples
-                 * review console samples
-                 * review forms samples
-                 * review net samples
 
                  * it is possible to declare duplicate property:
                       int length :: outnprop(readLengthTo).
                       int length :: outnprop(readColumnsTo).
 
-                 * no need to copy to the buffer field / variable / method attributes
                  * cannot declare the following method : goto starting []
 
                  * operator << should be used to add a list item
@@ -92,6 +79,7 @@ Pipeline:
               xdev - generic development 
                  * #302 - byte array field : writing / reading / boxing / unboxing
                  * uncomment WSADATA structure
+                 * no need to copy to the buffer field / variable / method attributes
 
               xdev - native code optimization
                  * use rep stos to clear the object after creating      

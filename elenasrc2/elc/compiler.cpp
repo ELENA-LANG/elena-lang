@@ -2780,14 +2780,6 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
                assignMode = true;
                operator_id = SUB_MESSAGE_ID;
                break;
-            case INCREASE_MESSAGE_ID:
-               assignMode = true;
-               operator_id = MUL_MESSAGE_ID;
-               break;
-            case SEPARATE_MESSAGE_ID:
-               assignMode = true;
-               operator_id = DIV_MESSAGE_ID;
-               break;
             default:
                break;
          }
