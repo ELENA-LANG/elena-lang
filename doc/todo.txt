@@ -2,13 +2,18 @@
 In development:
 ------                              
 
+              zdev - gui
+                 * reimplement forms library
+                 * migrate gui rosetta samples
+                 * migrate gui samples
+                 * gui script
+                 * graph : function declared in the script
+
               xdev - refactoring
                  * migrating rosetta samples : Conway's Game of Life
                  * migrating pi2 sample
 
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
-
-                 * short cut syntax for (:e) [] , &e [] or e => []
 
                  * get rid of lxDefaultGeneric
                  * uncomment matrixof template
@@ -17,10 +22,6 @@ In development:
                  * check attribute duplicates
                  * test if outnprop works correctly with optimization
                  * optimize: theDiff int := theDiff / 2.
-
-                 * it is possible to declare duplicate property:
-                      int length :: outnprop(readLengthTo).
-                      int length :: outnprop(readColumnsTo).
 
                  * cannot declare the following method : goto starting []
 
@@ -40,9 +41,6 @@ Pipeline:
               sdev - rosetta samples
                  * Zebra puzzle
 
-              zdev - gui
-                 * reimplement forms library
-                 * test gui samples
 
               zdev - upndown
                  * reimplement chat sample
@@ -61,8 +59,6 @@ Pipeline:
 
               sdev - samples
                  * basic tests
-                 * migrate gui rosetta samples
-                 * migrate gui samples
                  * migrate net samples
 
               sdev - rosetta samples
@@ -300,9 +296,7 @@ Pipeline:
 
 
               zdev 
-                 * gui script
                  * scripting library : elena script (both run-time / compile-time)
-                 * graph : function declared in the script
                  * reg ex
 
               xrev           

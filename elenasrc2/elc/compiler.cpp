@@ -5242,6 +5242,21 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 {
    ref_t message = current.argument;
 
+   if (scope.info.methods.exist(message, true) && hideDuplicates) {
+      // HOTFIX : check if duplicate template methods are declared
+      SNode prev = current.prevNode();
+      while (prev != lxNone) {
+         if (prev == lxClassMethod && prev.argument == message)
+            scope.raiseError(errDuplicatedMethod, current);
+
+         prev = prev.prevNode();
+      }
+
+      current = lxIdle;
+
+      return;
+   }
+
    generateMethodAttributes(scope, current, message);
 
    int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
@@ -5256,10 +5271,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
    // check if there is no duplicate method
    if (scope.info.methods.exist(message, true)) {
-      if (hideDuplicates) {
-         current = lxIdle;
-      }
-      else scope.raiseError(errDuplicatedMethod, current);
+      scope.raiseError(errDuplicatedMethod, current);
    }
    else {
       bool privateOne = getVerb(message) == PRIVATE_MESSAGE_ID;
