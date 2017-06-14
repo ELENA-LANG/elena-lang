@@ -3,9 +3,9 @@ In development:
 ------                              
 
               zdev 
-                 * grammar_js : notkeyword ::= (!"while" | "if" | "print");
-                 * scripting library : procedures
-                 * scripting library : implement fibonacci algorithm
+                 * compile-time : implement fibonacci algorithm
+                 * run-time : implement fibonacci algorithm
+                 * reddit post
 
               xdev - refactoring
                  * migrating rosetta samples : bulls and cows
@@ -43,10 +43,6 @@ In development:
                  * cannot declare the following method : goto starting []
 
                  * operator << should be used to add a list item
-
-              zdev 
-                 * scripting library : static code - branching ; typecast the expression to the bool
-                 * scripting library : language interpreter
 
 ------                                 
 Pipeline:
@@ -952,3 +948,8 @@ Pipeline:
 
               xrev - refactoring
                        * DerivationWriter : try to get rid of big switch statement
+
+              zdev 
+                 * scripting library : static code - branching ; typecast the expression to the bool
+                 * scripting library : language interpreter
+

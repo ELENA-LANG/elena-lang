@@ -113,7 +113,7 @@ root
                  expression (
                     code (
 =>
-                  "{" statement* "}"
+                  "{" statement* ret_statement? "}"
 <=
                     )
                  )
@@ -127,17 +127,6 @@ root
 =>
                  object operation?
 <=
-	     )
-=>;
-
-   #define expression ::= 
-<=
-             expression
-             (
-                identifier = self
-=>                
-                function_name "(" parameter? next_parameter* ")"
-<=                                           
 	     )
 =>;
 
@@ -161,6 +150,12 @@ root
                 operator = "<"
 =>
                 "<" object;
+
+   #define operation  ::= 
+<=
+                operator = "<="
+=>
+                "<=" object;
 
    #define operation  ::= 
 <=
@@ -213,6 +208,17 @@ root
              (
                 assign = 0
                 identifier = $identifier
+=>;
+
+   #define object ::= 
+<=
+             expression
+             (
+                identifier = self
+=>                
+                function_name "(" parameter? next_parameter* ")"
+<=                                           
+	     )
 =>;
 
    #define object     ::= <= literal = "$literal" =>;

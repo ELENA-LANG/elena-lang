@@ -18,6 +18,11 @@ class Scope
         theParent save variable:literal array_list:list.
     ]
 
+    add retPoint:label
+    [
+        theParent add retPoint:label.
+    ]
+
     assign variable:literal array_list:list
         => theParent.
                         
@@ -247,6 +252,17 @@ class RetExpressionScope :: ExpressionScope
         <= new : aParent;
     [
     ]
+    
+    save array_list:retVal
+    [
+        $super save array_list:retVal.
+        
+        int jumpLabel := retVal length.
+        theParent add retPoint:jumpLabel.
+        
+        retVal append:$nil.
+        retVal append:%"tapeOp.tape_jump[]".
+    ]
 }
 
 class CodeScope :: Scope
@@ -311,14 +327,16 @@ class MethodScope :: Scope
     object theSubject.
     object theCode.
     object theParameters.
+    object theRetPoints.
     vint   theParamCounter.
-    vint   theVarCounter.
+    vint   theVarCounter.    
     
     constructor new : aParent
         <= new : aParent;
     [
         theSubject := TextBuilder new.
         theParameters := List new.
+        theRetPoints := ArrayList new.
         theParamCounter := -1.
         theVarCounter := 0.
     ]
@@ -336,6 +354,11 @@ class MethodScope :: Scope
         ^ Message new literal:theSubject         
     ]
 
+    add retPoint:label
+    [
+        theRetPoints append:label.
+    ]
+
     code
     [
         var list := ArrayList new.
@@ -350,8 +373,21 @@ class MethodScope :: Scope
         
         theCode save array_list:list.
         
+        int eopLabel := list length.
+        int retPointLen := theRetPoints length.
+        int i := 0.
+        while (i < retPointLen)
+        [
+            var retPoint := theRetPoints@i.
+            
+            //list@retPoint := eopLabel.
+            list setAt:retPoint:eopLabel.
+            
+            i := i + 1.
+        ].
+        
         ^ Tape new array:list
-    ]    
+    ]
         
     new MessageToken : message
     [

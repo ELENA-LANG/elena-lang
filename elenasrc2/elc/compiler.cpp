@@ -3410,10 +3410,10 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
    scope.include(methodScope.message);
 
-//   // HOTFIX : if the clousre emulates code brackets
-//   if (test(mode, HINT_SUBCODE_CLOSURE))
-//      methodScope.subCodeMode = true;
-//
+   // HOTFIX : if the clousre emulates code brackets
+   if (test(mode, HINT_SUBCODE_CLOSURE))
+      methodScope.subCodeMode = true;
+
 //   if (test(mode, HINT_SINGLETON))
 //      methodScope.singletonMode = true;
 

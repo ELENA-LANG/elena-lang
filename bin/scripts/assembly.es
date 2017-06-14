@@ -102,6 +102,9 @@
    #define operator_quote ::= <= << += """less""" =>
                              "<";
 
+   #define operator_quote ::= <= << += """notgreater""" =>
+                             "<=";
+
    #define operator_quote ::= <= << += """add""" =>
                              "+";
 

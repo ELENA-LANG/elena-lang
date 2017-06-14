@@ -3,19 +3,16 @@ import extensions'scripting.
 
 program =
 [
+    if ('program'arguments length == 1)
+        [  console << "Please provide the path to the file to interpret". AbortException new; raise ].
+
     try(control do:
     [
         var factory := scriptEngine 
             load path:"~\scripts\assembly.es";
-//            eval &path:"test.es".
             load path:"grammar_js.es";
-//            eval &path:"test_js1.es".
-//            eval path:"test_js2.es".
-//            eval path:"test_js3.es".
-            eval path:"test_js4.es".
+            eval path:('program'arguments@1).
             
-//            eval:"print(""Hello World"");".
-        
         factory eval:(Library new).
     ])
     {
@@ -28,5 +25,5 @@ program =
 
 stat_program =
 [
-//    test'stat'program eval.
+   console writeLine:"Javascript code executed"
 ].
