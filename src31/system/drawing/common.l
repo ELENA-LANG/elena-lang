@@ -1,11 +1,11 @@
 // --- common types ---
-#subject coord     = system'drawing'Point.
-#subject dimension = system'drawing'Dimension.
-#subject region    = system'drawing'Region.
+type coord     :: system'drawing'Point.
+type dimension :: system'drawing'Dimension.
+type region    :: system'drawing'Region.
 
 // --- Point ---
 
-sealed embeddable dispatchable(coord) struct Point :: BaseNumber
+sealed embeddable struct Point :: BaseNumber, dispatchable(coord)
 {
     int theX.
     int theY.
@@ -16,94 +16,97 @@ sealed embeddable dispatchable(coord) struct Point :: BaseNumber
         theY := 0.
     ]
     
-    constructor new &x:anX &y:anY
+    constructor new x:anX y:anY
     [
         theX := anX int.
         theY := anY int.
     ]
     
-    stacksafe constructor new &int:anX &int:anY
+    stacksafe constructor new int:anX int:anY
     [
         theX := anX.
         theY := anY.
     ]
     
-    clone = Point new &int:theX &int:theY.
+    int x :: nprop(readXTo, writeX).
+    int y :: nprop(readYTo, writeY).
     
-    stacksafe write &int:anX &int:anY
+    clone = Point new int:theX int:theY.
+    
+    stacksafe write int:anX int:anY
     [
         theX := anX.
-        theY := anY.
+        theY := anY
     ]
     
-    stacksafe innprop(x) writeX &int:aValue
+    stacksafe writeX int:aValue
     [
         theX := aValue.
     ]
     
-    stacksafe innprop(y) writeY &int:aValue
+    stacksafe writeY int:aValue
     [
         theY := aValue.
     ]
     
-    stacksafe outnprop(x) readX &vint:aValue
+    stacksafe readXTo vint:aValue
     [
-        aValue := theX.
+        aValue int := theX.
     ]
     
-    stacksafe outnprop(y) readY &vint:aValue
+    stacksafe readYTo vint:aValue
     [
-        aValue := theY.
+        aValue int := theY.
     ]
     
-    stacksafe read &vint:anX &vint:anY
+    stacksafe read vint:anX vint:anY
     [
-        anX := theX.
-        anY := theY.
+        anX int := theX.
+        anY int := theY
     ]
     
-    bool equal &coord:aPoint
+    bool equal coord:aPoint
     [
         int anX := aPoint x.
         int anY := aPoint y.
         
-        ^ (theX == anX) and:(theY == anY).
+        ^ (theX == anX) and:(theY == anY)
     ]
     
-    bool less &coord:aPoint
+    bool less coord:aPoint
     [
         int anX := aPoint x.
         int anY := aPoint y.
         
         if (theY < anY)
-            [ ^ true. ].
+            [ ^ true ].
             
         if (theY == anY)
-            [ ^ theX < anX. ].
+            [ ^ theX < anX ].
 
-        ^ false.            
+        ^ false  
     ]
     
-    add &coord:aPoint
+    add coord:aPoint
     [
         int anX := aPoint x.
         int anY := aPoint y.
         
-        ^ Point new &int:(theX + anX) &int:(theY + anY).
+        ^ Point new int:(theX + anX) int:(theY + anY).
     ] 
     
-    subtract &coord:aPoint
+    subtract coord:aPoint
     [
         int anX := aPoint x.
         int anY := aPoint y.
         
-        ^ Point new &int:(theX - anX) &int:(theY - anY).
+        ^ Point new int:(theX - anX) int:(theY - anY)
     ] 
 }
 
 // --- Dimension ---
 
-sealed embeddable dispatchable(dimension) struct Dimension :: BaseValue
+sealed embeddable struct Dimension :: BaseValue, dispatchable(dimension)
 {
     int theWidth.
     int theHeight.
@@ -114,66 +117,69 @@ sealed embeddable dispatchable(dimension) struct Dimension :: BaseValue
         theHeight := 0.
     ]
     
-    constructor new &width:aWidth &height:aHeight
+    constructor new width:aWidth height:aHeight
     [
         theWidth := aWidth int.
         theHeight := aHeight int.
     ]
     
-    stacksafe constructor new &int:aWidth &int:aHeight
+    stacksafe constructor new int:aWidth int:aHeight
     [
         theWidth := aWidth.
         theHeight := aHeight.
     ]
     
-    stacksafe innprop(width) writeWidth &int:aValue
+    int width  :: nprop(readWidthTo, writeWidth).
+    int height :: nprop(readHeightTo, writeHeight).    
+    
+    stacksafe writeWidth int:aValue
     [
-        theWidth := aValue.
+        theWidth := aValue
     ]
     
-    stacksafe innprop(height) writeHeight &int:aValue
+    stacksafe writeHeight int:aValue
     [
-        theHeight := aValue.
+        theHeight := aValue
     ]
     
-    stacksafe write &int:aWidth &int:aHeight
+    stacksafe write int:aWidth int:aHeight
     [
         theWidth := aWidth.
-        theHeight := aHeight.
+        theHeight := aHeight
     ]
     
-    stacksafe outnprop(width) readWidth &vint:aValue
+    stacksafe readWidthTo vint:aValue
     [
-        aValue := theWidth.
+        aValue int := theWidth.
     ]
     
-    stacksafe outnprop(height) readHeight &vint:aValue
+    stacksafe readHeightTo vint:aValue
     [
-        aValue := theHeight.
+        aValue int := theHeight.
     ]
     
-    stacksafe read &vint:aWidth &vint:aHeight
+    stacksafe read vint:aWidth vint:aHeight
     [
-        aWidth := theWidth.
-        aHeight := theHeight.
+        aWidth int := theWidth.
+        aHeight int := theHeight
     ]
     
-    clone = Dimension new &int:theWidth &int:theHeight.
+    clone = Dimension new int:theWidth int:theHeight.
     
-    bool equal &dimension:aDimension
+    bool equal dimension:aDimension
     [
         int aWidth := 0.
         int aHeight := 0.
         
-        aDimension read &vint:aWidth &vint:aHeight.
+        aDimension read vint:aWidth vint:aHeight.
         
-        ^ (theWidth == aWidth) and:(theHeight == aHeight).
+        ^ (theWidth == aWidth) and:(theHeight == aHeight)
     ]
 }
 
 // --- Region ---
 
-sealed embeddable dispatchable(region) struct Region :: BaseValue
+sealed embeddable struct Region :: BaseValue, dispatchable(region)
 {
     int theX.
     int theY.
@@ -188,7 +194,7 @@ sealed embeddable dispatchable(region) struct Region :: BaseValue
         theHeight := 0.
     ]
     
-    constructor new &x:anX &y:anY &width:aWidth &height:aHeight
+    constructor new x:anX y:anY width:aWidth height:aHeight
     [
         theX := anX int.
         theY := anY int.
@@ -196,7 +202,22 @@ sealed embeddable dispatchable(region) struct Region :: BaseValue
         theHeight := aHeight int.
     ]
     
-    stacksafe constructor new &int:anX &int:anY &int:aWidth &int:aHeight
+    stacksafe constructor new int:anX int:anY int:aWidth int:aHeight
+    [
+        theX := anX.
+        theY := anY.
+        theWidth := aWidth.
+        theHeight := aHeight.
+    ]
+
+    int x      :: nprop(readXTo, writeX).
+    int y      :: nprop(readYTo, writeY).
+    int width  :: nprop(readWidthTo, writeWidth).
+    int height :: nprop(readHeightTo, writeHeight).    
+        
+    clone = Region new int:theX int:theY int:theWidth int:theHeight.
+    
+    write int:anX int:anY int:aWidth int:aHeight
     [
         theX := anX.
         theY := anY.
@@ -204,103 +225,93 @@ sealed embeddable dispatchable(region) struct Region :: BaseValue
         theHeight := aHeight.
     ]
     
-    clone = Region new &int:theX &int:theY &int:theWidth &int:theHeight.
-    
-    write &int:anX &int:anY &int:aWidth &int:aHeight
+    stacksafe read vint:anX vint:anY vint:aWidth vint:aHeight
     [
-        theX := anX.
-        theY := anY.
-        theWidth := aWidth.
-        theHeight := aHeight.
-    ]
-    
-    stacksafe read &vint:anX &vint:anY &vint:aWidth &vint:aHeight
-    [
-        anX := theX.
-        anY := theY.
-        aWidth := theWidth.
-        aHeight := theHeight.
+        anX int := theX.
+        anY int := theY.
+        aWidth int := theWidth.
+        aHeight int := theHeight.
     ]
         
-    stacksafe outnprop(x) readX &vint:anX
+    stacksafe readXTo vint:anX
     [
-        anX := theX.
+        anX int := theX.
     ]
         
-    stacksafe outnprop(y) readY &vint:anY
+    stacksafe readYTo vint:anY
     [
-        anY := theY.
+        anY int := theY.
     ]
         
-    stacksafe outnprop(width) readWidth &vint:aWidth
+    stacksafe readWidthTo vint:aWidth
     [
-        aWidth := theWidth.
+        aWidth int := theWidth.
     ]
         
-    stacksafe outnprop(height) readHeight &vint:aHeight
+    stacksafe readHeightTo vint:aHeight
     [
-        aHeight := theHeight.
+        aHeight int := theHeight.
     ]
         
-    stacksafe innprop(x) writeX &int:aValue
+    stacksafe writeX int:aValue
     [
         theX := aValue.
     ]
     
-    stacksafe innprop(y) writeY &int:aValue
+    stacksafe writeY int:aValue
     [
         theY := aValue.
     ]
     
-    stacksafe innprop(width) writeWidth &int:aValue
+    stacksafe writeWidth int:aValue
     [
         theWidth := aValue.
     ]
     
-    stacksafe innprop(height) writeHeight &int:aValue
+    stacksafe writeHeight int:aValue
     [
         theHeight := aValue.
     ]
     
-    stacksafe writeLocation &int:anX &int:anY
+    stacksafe writeLocation int:anX int:anY
     [
         theX := anX.
         theY := anY.
     ]
     
-    stacksafe writeDimension &int:aWidth &int:aHeight
+    stacksafe writeDimension int:aWidth int:aHeight
     [
         theWidth := aWidth.
         theHeight := aHeight.
     ]
     
-    stacksafe readLocation &vint:anX &vint:anY
+    stacksafe readLocationTo vint:anX vint:anY
     [
-        anX := theX.
-        anY := theY.
+        anX int := theX.
+        anY int := theY.
     ]
     
-    stacksafe readDimension &vint:aWidth &vint:aHeight
+    stacksafe readDimensionTo vint:aWidth vint:aHeight
     [
-        aWidth := theWidth.
-        aHeight := theHeight.
+        aWidth int := theWidth.
+        aHeight int := theHeight.
     ]
     
     point
-        = Point new &int:theX &int:theY.
+        = Point new int:theX int:theY.
     
     dimension
-        = Dimension new &int:theWidth &int:theHeight.
+        = Dimension new int:theWidth int:theHeight.
     
-    bool equal &region:aRegion
+    bool equal region:aRegion
     [
         int aWidth := 0.
         int aHeight := 0.
         int anX := 0.
         int anY := 0.
         
-        aRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        aRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        ^ (theWidth == aWidth) and:(theHeight == aHeight) and:(theX == anX) and:(theY == anY).
+        ^ (theWidth == aWidth) and:(theHeight == aHeight) and:(theX == anX) and:(theY == anY)
     ]
 }

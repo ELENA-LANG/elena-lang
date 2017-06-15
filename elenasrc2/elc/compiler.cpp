@@ -7461,7 +7461,7 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
       writer.appendNode(lxTemplate, scope.templateRef);
    }      
 
-   if (node == lxDefaultGeneric) {
+   /*if (node == lxDefaultGeneric) {
       if (node.existChild(lxMethodParameter)) {
          writer.appendNode(lxIdentifier, EVAL_MESSAGE);
       }
@@ -7470,7 +7470,7 @@ void Compiler :: generateMethodTree(SyntaxWriter& writer, SNode node, TemplateSc
       writer.appendNode(lxAttribute, V_SEALED);
       writer.appendNode(lxAttribute, V_GENERIC);
    }
-   else generateAttributes(bufferWriter, node, scope, attributes/*, false, true*/);
+   else */generateAttributes(bufferWriter, node, scope, attributes/*, false, true*/);
 
    // copy attributes
    SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxClassRefAttr, lxTemplateType);

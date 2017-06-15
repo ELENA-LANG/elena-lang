@@ -61,8 +61,8 @@ enum LexicalType
    lxLessSwitchOption = 0x0003F,
    lxLazyExpression  = 0x00040,
 
-   lxDefaultGeneric  = 0x00046,
-   lxSubject         = 0x00047,     // !! obsolete??
+   //lxDefaultGeneric  = 0x00046,
+   lxSubject         = 0x00047,
 //   lxImplicitConstructor = 0x0004B,
    lxScope           = 0x0004D,
    lxMessageParameter= 0x0C04E,

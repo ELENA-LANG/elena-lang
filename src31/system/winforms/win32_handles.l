@@ -4,14 +4,14 @@ sealed const embeddable struct HInstance
 {
     __ptr theHandle.
     
-    stacksafe constructor new &int:aHandle
+    stacksafe constructor new int:aHandle
     [
         theHandle := aHandle.
     ]
         
     constructor current
     [
-        int h := system'external'KERNEL32 GetModuleHandleW &int:0.
+        int h := system'external'KERNEL32 GetModuleHandleW int:0.
         
         theHandle := h.
     ]
@@ -36,9 +36,9 @@ sealed embeddable struct MSG
     int    theX.
     int    theY.    
     
-    stacksafe readMessage &vint:aMessage
+    stacksafe readMessageTo vint:aMessage
     [
-        aMessage := theMessage.
+        aMessage int := theMessage.
     ]
 }
 
@@ -63,9 +63,9 @@ sealed embeddable struct CREATESTRUCT
     [
     ]
     
-    stacksafe readCreateParam &vint:aRetVal
+    stacksafe readCreateParamTo vint:aRetVal
     [
-        aRetVal := theCreateParam.
+        aRetVal int := theCreateParam.
     ]
 }
 
@@ -89,18 +89,18 @@ sealed const embeddable struct HMENU
         theHandle := h.
     ]
 
-    stacksafe append &int:Flags &int:anID &wide:aCaption
+    stacksafe append int:Flags int:anID wide:aCaption
     [
-        system'external'USER32 AppendMenuW &int:theHandle &int:Flags &int:anID &wide:aCaption.
+        system'external'USER32 AppendMenuW int:theHandle int:Flags int:anID wide:aCaption.
     ]
             
-    stacksafe append &int:Flags &handle:aParent &wide:aCaption
+    stacksafe append int:Flags handle:aParent wide:aCaption
     [
-        system'external'USER32 AppendMenuW &int:theHandle &int:(Flags || MF_POPUP) &int:aParent &wide:aCaption.
+        system'external'USER32 AppendMenuW int:theHandle int:(Flags || MF_POPUP) int:aParent wide:aCaption.
     ]
             
     stacksafe free
     [
-        system'external'USER32 DestroyMenu &int:theHandle.
+        system'external'USER32 DestroyMenu int:theHandle.
     ]
 }

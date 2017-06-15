@@ -1,11 +1,11 @@
 // --- IOException ---
 
-exceptionof(WinFormsError) WinFormsException
+class WinFormsException :: exceptionof(WinFormsError)
 {
     constructor new
-        <= new &literal:"WinForms error".
+        <= new literal:"WinForms error".
         
-    constructor new &literal:message
+    constructor new literal:message
     [
         theMessage := message.
         theCallStack := CallStack new.

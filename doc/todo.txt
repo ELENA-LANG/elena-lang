@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              xdev - refactoring
-                 * get rid of lxDefaultGeneric
-
               zdev - gui
                  * reimplement forms library
                  * migrate gui rosetta samples
@@ -13,6 +10,13 @@ In development:
                  * graph : function declared in the script
 
               xdev - refactoring
+                 * optimize : aResult int := 0.
+                 * nshift should be replaced with nshiftl, nshiftr
+                 * optimize shift implementation
+                 * check subject duplicates
+                 * check attribute duplicates
+                 * method duplicates
+
                  * migrating rosetta samples : Conway's Game of Life
                  * migrating pi2 sample
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
@@ -20,12 +24,8 @@ In development:
                  * uncomment matrixof template
                  * uncomment arrayof enumerator method
 
-                 * check attribute duplicates
                  * test if outnprop works correctly with optimization
-                 * optimize: theDiff int := theDiff / 2.
-
-
-                 * operator << should be used to add a list item
+                 * review the structure declaration : win_msg msg := 0.
 
 ------                                 
 Pipeline:
@@ -153,7 +153,6 @@ Pipeline:
                  * singleton classes / roles / extensions should not have a class class
                  * should not be allowed to provide returning type for constructors
                  * type / sealed hint should not be overridden
-                 * method duplicates
                  * support local template
                  * uncomment compileClassDeclaration
                  * uncomment compileClassClassDeclaration
@@ -437,8 +436,6 @@ Pipeline:
 
                        * embeddable dispatcher validation : only redirection to the field is allowed
 
-                       * nshift should be replaced with nshiftl, nshiftr
-
                        * optimize #var(dirty_ptr)aPtr := system'external'sqlite3 sqlite3_errmsg &int:1. - assigning is done three times!!
 
                        * implicit boxing (int to vint) should be possible only for stack allocated local variable, structure fields
@@ -453,7 +450,6 @@ Pipeline:
                                          	
                        * check template type before applying (i.e. method template should be declared only for the method declaration)
 
-                       * check subject duplicates
 
                        * array of long
                        * support #var(real)r := 2. // assigning int to real by constant
@@ -478,7 +474,6 @@ Pipeline:
                        * optimize intnumeric.shift implementation
                        * optimize intnumeric.not implementation
                        * optimize charvalue#class.new&char$[1]
-                       * optimize shift implementation
                        * optimize varof.append / varof.reduce / ...
                        * optimize ($nil != a) ? [ ... ]
                        * optimite #var(int)last_index := theLength - 1. // where theLength is vint
@@ -571,7 +566,7 @@ Pipeline:
               adev - lib30     
                        * use implicit constructors in LIB30
                        * implement #33 (tcp/ip socket)
-
+                       * operator << should be used to add a list item
 
               fdev - samples
                        * reimplement script samples: helloworld, vmconsole
