@@ -1,926 +1,928 @@
-#import system.
-#import system'collections.
-#import system'drawing.
-#import system'winforms.
+import system'collections.
+import system'drawing.
+import system'winforms.
 
 // --- IControl ---
 
-#class(limited) IControl
+limited class IControl
 {
-    #method control = $self.
+    control = $self.
     
-    #method object = $nil.
+    control_object = $nil.
     
-    #method(stacksafe) retrieve &hwnd:aHandle = $nil.
+    stacksafe retrieve hwnd:aHandle = $nil.
     
-    #method(stacksafe) readDimension &vint:aWidth &vint:aHeight []
+    stacksafe readDimensionTo vint:aWidth vint:aHeight []
     
-    #method(stacksafe) readLocation &vint:x &vint:y []
+    stacksafe readLocationTo vint:x vint:y []
     
-    #method(stacksafe) setDimension &int:aWidth &int:aHeight []
+    stacksafe setDimension int:aWidth int:aHeight []
     
-    #method(stacksafe) setLocation &int:x &int:y []
+    stacksafe setLocation int:x int:y []
     
-    #method open []
+    open []
 
-    #method change []
+    change []
         
-    #method close []
+    close []
 }
 
-#template icontrolof : type
+template icontrolof :: type
 {
-    #method control = IControl
+    control = IControl::
     {
-        object = $owner.
+        control_object = $owner.
         
-        open [ $owner open. ]
+        open [ $owner open ]
     
-        change [ $owner change. ]
+        change [ $owner change ]
     
-        close [ $owner close. ]
+        close [ $owner close ]
     
-        retrieve &hwnd:aHandle = $owner retrieve &hwnd:aHandle.
+        retrieve hwnd:aHandle = $owner retrieve hwnd:aHandle.
     
-        setDimension &int:aWidth &int:aHeight [ $owner setDimension &int:aWidth &int:aHeight. ]
+        setDimension int:aWidth int:aHeight [ $owner setDimension int:aWidth int:aHeight ]
     
-        setLocation &int:aWidth &int:aHeight [ $owner setLocation &int:aWidth &int:aHeight. ]
+        setLocation int:aWidth int:aHeight [ $owner setLocation int:aWidth int:aHeight. ]
     
-        readDimension &vint:aWidth &vint:aHeight [ $owner readDimension &vint:aWidth &vint:aHeight. ]
+        readDimensionTo vint:aWidth vint:aHeight [ $owner readDimensionTo vint:aWidth vint:aHeight ]
     
-        readLocation &vint:aWidth &vint:aHeight [ $owner readLocation &vint:aWidth &vint:aHeight. ]
+        readLocationTo vint:aWidth vint:aHeight [ $owner readLocationTo vint:aWidth vint:aHeight ]
     }.
 }
 
 // --- BaseWindowControl ---
 
-#class BaseWinControl :: BaseControl
+class BaseWinControl :: BaseControl
 {
-    #field(hwnd)theHandle.
+    hwnd theHandle.
 
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
     ]
     
-    #method(stacksafe) retrieve &hwnd:aHandle
+    stacksafe retrieve hwnd:aHandle
     [
-        ($nil == theHandle)
-            ? [ ^ $nil. ].
+        if($nil == theHandle)
+            [ ^ $nil ].
             
-        (theHandle == aHandle)
-            ? [ ^ $self. ].
+        if(theHandle == aHandle)
+            [ ^ $self ].
             
-        ^ $nil.            
+        ^ $nil 
     ]
 
-    #method $createHandle []            
+    $createHandle []            
 
-    #method $onCreate
+    $onCreate
     [
-        theEnabled 
-            ! [ theHandle setEnabled &int:0. ].
+        ifnot(theEnabled )
+            [ theHandle setEnabled int:0 ].
     ]
 
-    #method click []
+    click []
     
-    #method change []
+    change []
     
-    #method close []    
+    close []    
 
-    #method open
+    open
     [
-        ($nil != theHandle)
-            ? [ #throw InvalidOperationException new:"The form is already open". ].
+        if($nil != theHandle)
+            [ InvalidOperationException new:"The form is already open"; raise ].
             
         $self $createHandle.
         
         $self $onCreate.
     ]
 
-    #method is &opened = ($nil != theHandle).
+    is opened = ($nil != theHandle).
     
-    #method hwnd = theHandle.
+    hwnd = theHandle.
 
-    #method set &visible : aValue
+    set visible : aValue
     [
-        $super set &visible:aValue.
+        $super set visible:aValue.
         
-        ($nil == theHandle)
-            ! [
-                theVisible
-                    ? [ theHandle setVisible &int:5. ]
-                    ! [ theHandle setVisible &int:0. ].
+        ifnot($nil == theHandle)
+            [
+                if(theVisible)
+                    [ theHandle setVisible int:5 ];
+                    [ theHandle setVisible int:0 ]
             ].
     ]
                                                 
-    #method set &enabled : aValue
+    set enabled : aValue
     [
-        $super set &enabled:aValue.
+        $super set enabled:aValue.
         
-        ($nil == theHandle)
-            ! [
-                theEnabled
-                    ? [ theHandle setEnabled &int:-1. ]
-                    ! [ theHandle setEnabled &int:0. ].
+        ifnot($nil == theHandle)
+            [
+                if(theEnabled)
+                    [ theHandle setEnabled int:-1 ];
+                    [ theHandle setEnabled int:0 ]
             ].
     ]
     
-    #method set &caption : aCaption
+    set caption : aCaption
     [
-        $super set &caption:aCaption.
+        $super set caption:aCaption.
         
-        ($nil == theHandle)
-            ! [
-                theHandle setCaption &wide:(aCaption wide).
+        ifnot($nil == theHandle)
+            [
+                theHandle setCaption wide:(aCaption wide).
             ].
     ]
     
-    #method append &caption : aValue
+    append caption : aValue
     [    
-        $self set &caption:($self caption + aValue wide).
+        $self set caption:($self caption + aValue wide)
     ]
 
-    #method caption
+    caption
     [
-        ($nil == theHandle)
-            ! [
-                theCaption := theHandle getCaption.
+        ifnot($nil == theHandle)
+            [
+                theCaption := theHandle getCaption
             ].
             
-        ^ theCaption.            
+        ^ theCaption
     ]
 
-    #method setLocation &int:x &int:y
+    setLocation int:x int:y
     [
-        theRegion writeLocation &int:x &int:y.
+        theRegion writeLocation int:x int:y.
         
-        ($nil == theHandle)
-            ! [
-                theHandle setPosition &int:x &int:y &int:0 &int:0 &int:SWP_NOSIZE.
-            ].
+        ifnot($nil == theHandle)
+            [
+                theHandle setPosition int:x int:y int:0 int:0 int:SWP_NOSIZE
+            ]
     ]
     
-    #method(stacksafe) setDimension &int:aWidth &int:aHeight
+    stacksafe setDimension int:aWidth int:aHeight
     [
-        theRegion writeDimension &int:aWidth &int:aHeight.
+        theRegion writeDimension int:aWidth int:aHeight.
         
-        ($nil == theHandle)
-            ! [
-                theHandle setPosition &int:0 &int:0 &int:aWidth &int:aHeight &int:SWP_NOMOVE.
-            ].
+        ifnot($nil == theHandle)
+            [
+                theHandle setPosition int:0 int:0 int:aWidth int:aHeight int:SWP_NOMOVE
+            ]
     ]
     
-    #method refresh
+    refresh
     [
-        ($nil != theHandle)
-            ? [ theHandle refresh. ].
+        if($nil != theHandle)
+            [ theHandle refresh ]
     ]
     
-    #method(stacksafe) $resize &int:aWidth &int:aHeight
+    stacksafe $resize int:aWidth int:aHeight
     [
-        theRegion writeDimension &int:aWidth &int:aHeight.
+        theRegion writeDimension int:aWidth int:aHeight
     ]  
 }    
 
 // --- ControlCollection ---
 
-#class(sealed) ControlCollection :: BaseControlCollection
+sealed class ControlCollection :: BaseControlCollection
 {
-    #field theParent.
+    object theParent.
     
-    #constructor new : aParent
-        <= (new)
+    constructor new : aParent
+        <= new;
     [
-        theParent := aParent.
+        theParent := aParent
     ]
     
-    #method append : aControl
+    append : aControl
     [
         $super append:(aControl control).
         
-        aControl $set &parent:theParent.
+        aControl $set parent:theParent.
         
-        (theParent is &opened)?
+        if(theParent is opened)
         [
-            aControl open.
-        ].
+            aControl open
+        ]
     ]
 }
 
 // --- BaseWinContainer ---
 
-#class BaseWinContainer :: BaseWinControl
+class BaseWinContainer :: BaseWinControl
 {
-    #field(controls) theControls.
-    #field(func1)    theResize.
+    controls theControls.
+    func1    theResize.
     
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
-        theControls := ControlCollection new:$self.
+        theControls := ControlCollection new:$self
     ]
 
-    #method set &onResize:anAction
+    set onResize:anAction
     [
         theResize := anAction func1.
     ]
 
-    #method retrieve &hwnd:aHandle
+    retrieve hwnd:aHandle
     [
-        (theHandle == aHandle)
-            ? [ ^ $self. ].
+        if(theHandle == aHandle)
+            [ ^ $self ].
 
-        #var(control)aCurrent.
-        #var(enumerator)it := theControls enumerator.
-        #var aRetVal := $nil.
-        #loop (it next)?
+        control    aCurrent := $nil.
+        enumerator it := theControls enumerator.
+        var        aRetVal := $nil.
+        while (it next)
         [ 
-            aCurrent := it get control.
+            aCurrent := it get.
         
-            aRetVal := aCurrent retrieve &hwnd:aHandle.
-            ($nil != aRetVal)
-                ? [ ^ aRetVal. ].
+            aRetVal := aCurrent retrieve hwnd:aHandle.
+            if($nil != aRetVal)
+                [ ^ aRetVal ]
         ].
                                     
-        ^ $nil.            
+        ^ $nil
     ]
         
-    #method open
+    open
     [
         $super open.
         
-        #var(enumerator)it := theControls enumerator.
-        #loop (it next)?
-            [ it get open. ].
+        enumerator it := theControls enumerator.
+        while (it next)
+            [ it get; open ]
     ]
         
-    #method close
+    close
     [
-        #var(enumerator)it := theControls enumerator.
-        #loop (it next)?
-            [ it get close. ].
+        enumerator it := theControls enumerator.
+        while (it next)
+            [ it get; close ]
     ]
     
-    #method(stacksafe) $resize &int:aWidth &int:aHeight
+    stacksafe $resize int:aWidth int:aHeight
     [
-        $super $resize &int:aWidth &int:aHeight.
+        $super $resize int:aWidth int:aHeight.
         
-        ($nil == theResize)
-            ! [ theResize eval:$self. ].
+        ifnot($nil == theResize)
+            [ theResize eval:$self ]
     ]  
 }
 
 // --- Frame ---
 
-#class(sealed,icontrolof:frame) Frame :: BaseWinControl
+sealed class Frame :: BaseWinControl, icontrolof(frame)
 {
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
     ]
     
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
+        hwnd aParent := theParent hwnd.
         
-        #var(int)Styles := WS_CHILD || BS_GROUPBOX.
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
+        int Styles := WS_CHILD || BS_GROUPBOX.
+        if(theVisible)
+            [ Styles := Styles || WS_VISIBLE ].
         
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:WS_EX_TRANSPARENT
-                        &wide:ButtonClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+        theHandle := WindowHandle new int:WS_EX_TRANSPARENT
+                        wide:ButtonClass wide:(theCaption wide) int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:$nil.
     ]
 }
 
 // --- Label ---
 
-#class(limited,icontrolof:label) Label :: BaseWinControl
+limited class Label :: BaseWinControl, icontrolof(label)
 {
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
     ]
     
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
+        hwnd aParent := theParent hwnd.
         
-        #var(int)Styles := WS_CHILD.
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
+        int Styles := WS_CHILD.
+        if(theVisible)
+            [ Styles := Styles || WS_VISIBLE ].
         
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:0
-                        &wide:StaticClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+        theHandle := WindowHandle new int:0
+                        wide:StaticClass wide:(theCaption wide) int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:$nil.
     ]
 }
 
 // --- Label ---
 
-#class StaticLabel :: Label
+class StaticLabel :: Label
 {
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
     ]
     
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
-        (0 == aParent)
-            ? [ #throw InvalidOperationException new:"The parent window is closed". ].
+        hwnd aParent := theParent hwnd.
+        if(0 == aParent)
+            [ InvalidOperationException new:"The parent window is closed"; raise ].
         
-        #var(int)Styles := WS_CHILD || SS_SIMPLE.
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
+        int Styles := WS_CHILD || SS_SIMPLE.
+        if(theVisible)
+            [ Styles := Styles || WS_VISIBLE ].
         
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:0
-                        &wide:StaticClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+        theHandle := WindowHandle new int:0
+                        wide:StaticClass wide:(theCaption wide) int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:$nil
     ]
 }
 
 // --- BaseEdit ---
 
-#class BaseEdit :: BaseWinControl
+class BaseEdit :: BaseWinControl
 {
-    #field(func1)theChanged.
+    func1 theChanged.
     
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
     ]
     
-    #method set &onChange:aFunction
+    set onChange:aFunction
     [
         theChanged := aFunction func1.
     ]
     
-    #method wide = $self caption wide.
+    wide = $self caption.
           
-    #method literal = $self caption literal.
+    literal = $self caption.
           
-    #method value = $self caption.
+    value = $self caption.
     
-    #method append : aValue
+    append : aValue
     [
-        $self set &caption:($self caption + aValue wide).
+        $self set caption:($self caption + aValue wide).
     ]
     
-    #method write : aValue
+    write : aValue
     [
-        $self set &caption:(aValue wide).
+        $self set caption:(aValue wide).
     ]          
     
-    #method(stacksafe) $updateStyles &vint:aRetVal
+    stacksafe $updateStyles vint:aRetVal
     [
-        #var(int)Styles := 0.
+        int Styles := aRetVal.
         
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
-        theTabStop
-            ? [ Styles := Styles || WS_TABSTOP. ].
+        if(theVisible)
+            [ Styles := Styles || WS_VISIBLE ].
+        if(theTabStop)
+            [ Styles := Styles || WS_TABSTOP ].
             
-        aRetVal := (aRetVal || Styles).
+        aRetVal int := Styles.
     ]
     
-    #method change 
+    change 
     [
-        ($nil != theChanged)
-            ? [ theChanged eval:$self. ].
+        if($nil != theChanged)
+            [ theChanged eval:$self ]
     ]
 }
 
 // --- Edit ---
 
-#class(sealed,icontrolof:edit) Edit ::  BaseEdit
+sealed class Edit :: BaseEdit, icontrolof(edit)
 {
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
-        theTabStop := true.
+        theTabStop := true
     ]
     
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
+        hwnd aParent := theParent hwnd.
         
-        #var(int)Styles := WS_CHILD || WS_BORDER.
-        $self $updateStyles &vint:Styles.
+        int Styles := WS_CHILD || WS_BORDER.
+        $self $updateStyles vint:Styles.
         
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:WS_EX_CLIENTEDGE
-                        &wide:EditClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+        theHandle := WindowHandle new int:WS_EX_CLIENTEDGE
+                        wide:EditClass wide:(theCaption wide) int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:$nil.
     ]
 }
 
 // --- Memo ---
 
-#class(sealed,icontrolof:memo) Memo :: BaseEdit
+sealed class Memo :: BaseEdit, icontrolof(memo)
 {
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
-        theTabStop := true.
+        theTabStop := true
     ]
  
-    #method wide = $self caption wide.
+    wide = $self caption.
           
-    #method literal = $self caption literal.
+    literal = $self caption.
     
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
+        hwnd aParent := theParent hwnd.
         
-        #var(int)Styles := WS_CHILD || WS_BORDER || ES_MULTILINE || ES_WANTRETURN || ES_AUTOHSCROLL || ES_AUTOVSCROLL || WS_VSCROLL || WS_HSCROLL.
-        $self $updateStyles &vint:Styles.
+        int Styles := WS_CHILD || WS_BORDER || ES_MULTILINE || ES_WANTRETURN || ES_AUTOHSCROLL || ES_AUTOVSCROLL || WS_VSCROLL || WS_HSCROLL.
+        $self $updateStyles vint:Styles.
         
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:WS_EX_CLIENTEDGE
-                        &wide:EditClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+        theHandle := WindowHandle new int:WS_EX_CLIENTEDGE
+                        wide:EditClass wide:(theCaption wide) int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:$nil.
     ]
 }
 
 // --- BaseButton ---
 
-#class BaseButton :: BaseWinControl
+class BaseButton :: BaseWinControl
 {
-    #field(func1)theClick.
+    func1 theClick.
     
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
         theTabStop := true.
     ]
     
-    #method set &onClick:aFunction
+    set onClick:aFunction
     [
-        theClick := aFunction func1.
+        theClick := aFunction func1
     ]
     
-    #method(stacksafe) $updateStyles &vint:aRetVal
+    stacksafe $updateStyles vint:aRetVal
     [
-        #var(int)Styles := 0.
+        int Styles := aRetVal.
         
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
-        theTabStop
-            ? [ Styles := Styles || WS_TABSTOP. ].
+        if(theVisible)
+            [ Styles := Styles || WS_VISIBLE ].
+        if(theTabStop)
+            [ Styles := Styles || WS_TABSTOP ].
             
-        aRetVal := (aRetVal || Styles).
+        aRetVal int := Styles
     ]
     
-    #method click 
+    click 
     [
-        ($nil != theClick)
-            ? [ theClick eval:$self. ].
+        if($nil != theClick)
+            [ theClick eval:$self ]
     ]
 }
 
 // --- Button ---
 
-#class(sealed,icontrolof:button) Button :: BaseButton
+sealed class Button :: BaseButton, icontrolof(button)
 {
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
     ]
     
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
+        hwnd aParent := theParent hwnd.
         
-        #var(int)Styles := 0.
+        int Styles := 0.
         Styles := (WS_CHILD || BS_PUSHBUTTON).
-        $self $updateStyles &vint:Styles.
+        $self $updateStyles vint:Styles.
                 
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:0
-                        &wide:ButtonClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+        theHandle := WindowHandle new int:0
+                        wide:ButtonClass wide:(theCaption wide) int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:$nil
     ]
 }
 
 // --- RadioButton ---
 
-#class(limited,icontrolof:radiobutton) RadioButton :: BaseButton
+limited class RadioButton :: BaseButton, icontrolof(radiobutton)
 {
-    #field(bool) theChecked.
+    bool theChecked.
     
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
         theChecked := false.
     ]
     
-    #method is &checked
+    is checked
     [
-        ($nil == theHandle)
-            ! [ theChecked := theHandle isChecked. ].
+        ifnot($nil == theHandle)
+            [ theChecked := theHandle isChecked ].
             
-        ^ theChecked.            
+        ^ theChecked
     ]
  
-    #method set &checked:aValue
+    set checked:aValue
     [
         theChecked := aValue bool.
         
-        ($nil == theHandle)!
+        ifnot($nil == theHandle)
         [
-            theChecked
-                ? [ theHandle setChecked &int:BST_CHECKED. ]
-                ! [ theHandle setChecked &int:BST_UNCHECKED. ].
+            if(theChecked)
+                [ theHandle setChecked int:BST_CHECKED ];
+                [ theHandle setChecked int:BST_UNCHECKED ]
         ].
     ]
 
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
+        hwnd aParent := theParent hwnd.
         
-        #var(int)Styles := 0.
+        int Styles := 0.
         Styles := (WS_CHILD || BS_AUTORADIOBUTTON).
-        $self $updateStyles &vint:Styles.
+        $self $updateStyles vint:Styles.
                 
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:0
-                        &wide:ButtonClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+        theHandle := WindowHandle new int:0
+                        wide:ButtonClass wide:(theCaption wide) int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:$nil.
                         
-        theChecked
-            ? [ $self set &checked:true. ].
+        if(theChecked)
+            [ $self set checked:true ]
     ]
 }
 
 // --- BaseList ---
 
-#class BaseList :: BaseWinControl
+class BaseList :: BaseWinControl
 {
-    #field(array_list)theList.
-    #field(index_changed,event:index_changed)theChangeAction.
+    array_list theList.
     
-    #constructor new
-        <= (new)
+    index_changed index_changed :: event(theChangeAction).
+    
+    constructor new
+        <= new;
     [
-        theList := ArrayList new.
+        theList := ArrayList new
     ]
     
-    #method items =
+    items =
     {
-        append : anObject &as:aCaption
+        append : anObject as:aCaption
         [
-            theList append:(KeyValue new &key:aCaption &value:anObject).
+            theList append:(KeyValue new key:aCaption value:anObject).
             
-            self $appendItem &wide:(aCaption wide).
+            self $appendItem wide:(aCaption wide)
         ]
     }.
     
-    #method(stacksafe) $updateStyles &vint:aRetVal
+    stacksafe $updateStyles vint:aRetVal
     [
-        #var(int)Styles := 0.
+        int Styles := aRetVal.
         
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
-        theTabStop
-            ? [ Styles := Styles || WS_TABSTOP. ].
+        if(theVisible)
+            [ Styles := Styles || WS_VISIBLE ].
+        if(theTabStop)
+            [ Styles := Styles || WS_TABSTOP ].
             
-        aRetVal := (aRetVal || Styles).
+        aRetVal int := Styles.
     ]
 }
 
 // --- Combobox ---
 
-#class(sealed,icontrolof:combobox) Combobox :: BaseList
+sealed class Combobox :: BaseList, icontrolof(combobox)
 {
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
     ]
     
-    #method(stacksafe,outnprop:selected_index) readSelectedIndex &vint:retVal
+    int selected_index :: nprop(readSelectedIndexTo, setSelectedIndex).
+    
+    stacksafe readSelectedIndexTo vint:retVal
     [
-        #var(int)index := system'external'USER32 SendMessageW &int:theHandle &int:CB_GETCURSEL &int:0 &int:0.
+        int index := system'external'USER32 SendMessageW int:theHandle int:CB_GETCURSEL int:0 int:0.
         
-        retVal := index.
+        retVal int := index
     ]
     
-    #method(stacksafe,innprop:selected_index) setSelectedIndex &int:index
+    stacksafe setSelectedIndex int:index
     [
-        system'external'USER32 SendMessageW &int:theHandle &int:CB_SETCURSEL &int:index &int:0.
+        system'external'USER32 SendMessageW int:theHandle int:CB_SETCURSEL int:index int:0.
         
-        $self change.
+        $self change
     ]
     
-    #method selected 
+    selected 
     [
-        #var(int)index := $self selected_index.
+        int index := $self selected_index.
             
-        ^ theList getAt &int:index.
+        ^ theList getAt int:index.
     ]
     
-    #method change 
+    change 
     [
-        ($nil != theChangeAction)?
+        if($nil != theChangeAction)
         [
-            #var(int)index := $self selected_index.
+            int index := $self selected_index.
             
-            theChangeAction onIndexChange:$self &int:index.
+            theChangeAction onIndexChange:$self int:index.
         ].
     ]
     
-    #method $appendItem &wide:aCaption
+    $appendItem wide:aCaption
     [
-        ($nil == theHandle)
-            ? [ ^ $self. ].
+        if($nil == theHandle)
+            [ ^ $self ].
         
-        theHandle sendMessage &int:CB_ADDSTRING &int:0 &wide:aCaption.
+        theHandle sendMessage int:CB_ADDSTRING int:0 wide:aCaption.
     ]
     
-    #method $loadStrings
+    $loadStrings
     [
-        #var(int)aLength := theList length.
+        int aLength := theList length.
         
-        #var(int)i := 0.
-        #loop (i < aLength)?
+        int i := 0.
+        while(i < aLength)
         [
-            #var aKeyValue := theList getAt &int:i.
+            var aKeyValue := theList getAt int:i.
             
-            theHandle sendMessage &int:CB_ADDSTRING &int:0 &wide:(aKeyValue key wide).
+            theHandle sendMessage int:CB_ADDSTRING int:0 wide:(aKeyValue key).
             
-            i += 1.
-        ].
+            i := i + 1
+        ]
     ]
     
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
+        hwnd aParent := theParent hwnd.
         
-        #var(int)Styles := 0.
+        int Styles := 0.
         Styles := (WS_CHILD || CBS_DROPDOWNLIST).
-        $self $updateStyles &vint:Styles.
+        $self $updateStyles vint:Styles.
                 
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:0
-                        &wide:ComboboxClass &wide:emptyWideLiteralValue &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:$nil.
+        theHandle := WindowHandle new int:0
+                        wide:ComboboxClass wide:emptyWideLiteralValue int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:$nil.
                         
-        $self $loadStrings.                        
+        $self $loadStrings
     ]
 }
 
 // --- Paintbox ---
 
-#class PaintboxListener :: WindowCallback
+class PaintboxListener :: WindowCallback
 {
-    #field(paintbox)theOwner.
+    paintbox theOwner.
     
-    #constructor new &paintbox:anOwner
+    constructor new paintbox:anOwner
     [
         theOwner := anOwner.
     ]
     
-    #method onpaint &hwnd:aControl &vint:aResult
+    onpaint hwnd:aControl vint:aResult
     [
         theOwner $paint.
         
-        aResult := 0.
+        aResult int := 0.
     ]
     
-    #method onsize &hwnd:aControl &int:width &int:height &vint:aResult
+    onsize hwnd:aControl int:width int:height vint:aResult
     [
-        theOwner $resize &hwnd:aControl &int:width &int:height.
+        theOwner $resize hwnd:aControl int:width int:height.
         
-        aResult := 0.
+        aResult int := 0.
     ]
     
-    #method ondestroy &hwnd:aControl &vint:aResult
+    ondestroy hwnd:aControl vint:aResult
     [
         theOwner $destroy.
         
-        $super ondestroy &hwnd:aControl &vint:aResult.
+        $super ondestroy hwnd:aControl vint:aResult
     ]
 }
 
-#class(limited) PaintAction
+limited class PaintAction
 {
-    #method(action)eval:sender &canvas:canvas []
+    action eval sender:sender canvas:canvas []
 }
 
-#class(limited,icontrolof:paintbox) Paintbox :: BaseWinControl
+limited class Paintbox :: BaseWinControl, icontrolof(paintbox)
 {
-    #field(canvas)    theCanvas.
-    #field(paintfunc) thePaint.
+    canvas    theCanvas.
+    paintfunc thePaint.
     
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
-        theCanvas := Canvas new.
+        theCanvas := Canvas new
     ]
 
-    #method set &onPaint:aFunction
+    set onPaint:aFunction
     [
         thePaint := aFunction paintfunc.
     ]
    
-    #method $destroy
+    $destroy
     [
-        theCanvas free.
+        theCanvas free
     ]
  
-    #method $paint
+    $paint
     [
-        #var(win_paintstruct)struct.
-        #var(hdc)dc.
+        win_paintstruct struct := 0.
+        hdc dc := 0.
         
-        struct begin &hwnd:theHandle.
-        struct read &vhdc:dc.
+        struct begin hwnd:theHandle.
+        struct read vhdc:dc.
         
-        theCanvas open &hdc:dc.
+        theCanvas open hdc:dc.
         
-        ($nil == thePaint)
-            ! [ thePaint eval:$self &canvas:theCanvas. ].
+        ifnot($nil == thePaint)
+            [ thePaint eval:$self canvas:theCanvas ].
         
         theCanvas close.
 
-        struct end &hwnd:theHandle.
+        struct end hwnd:theHandle
     ]
  
-    #method(stacksafe) $resize &hwnd:aControl &int:aWidth &int:aHeight
+    stacksafe $resize hwnd:aControl int:aWidth int:aHeight
     [
     ]
  
-    #method $resize &int:aWidth &int:aHeight
+    $resize int:aWidth int:aHeight
     [
-        $self $resize &hwnd:theHandle &int:aWidth &int:aHeight.
+        $self $resize hwnd:theHandle int:aWidth int:aHeight.
     ]
  
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
+        hwnd aParent := theParent hwnd.
 
-        #var(int)Styles := WS_CHILD.
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
+        int Styles := WS_CHILD.
+        if(theVisible)
+            [ Styles := Styles || WS_VISIBLE ].
                         
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:WS_EX_TRANSPARENT
-                        &wide:PaintboxClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:(PaintboxListener new &paintbox:$self).
+        theHandle := WindowHandle new int:WS_EX_TRANSPARENT
+                        wide:PaintboxClass wide:(theCaption wide) int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:(PaintboxListener new paintbox:$self)
     ]
 }
 
-#class Imagebox :: Paintbox
+class Imagebox :: Paintbox
 {
-    #field(hbitmap)  theImage.
-    #field(hdc)      theImageDC.
-    #field(bool)     theNeedToRefresh.
+    hbitmap  theImage.
+    hdc      theImageDC.
+    bool     theNeedToRefresh.
     
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
-        theNeedToRefresh := false.
+        theNeedToRefresh := false
     ]
 
-    #method $destroy
+    $destroy
     [
         $super $destroy.
         
         theImage free.
-        theImageDC free.
+        theImageDC free
     ]
     
-    #method $paint
+    $paint
     [
-        (theNeedToRefresh)
-            ? [ $self refresh. ].
+        if(theNeedToRefresh)
+            [ $self refresh ].
         
-        #var(win_paintstruct)struct.
+        win_paintstruct struct := 0.
         
-        struct begin &hwnd:theHandle.
+        struct begin hwnd:theHandle.
         
-        #var(int)aWidth.
-        #var(int)aHeight.
-        theRegion readDimension &vint:aWidth &vint:aHeight.
+        int aWidth := 0.
+        int aHeight := 0.
+        theRegion readDimension vint:aWidth vint:aHeight.
         
-        #var(hdc)dc.
-        struct read &vhdc:dc.
+        hdc dc := 0.
+        struct read vhdc:dc.
         
-        dc copy &int:0 &int:0 &int:aWidth &int:aHeight &hdc:theImageDC &int:0 &int:0 &int:SRCCOPY.
-        #var(int)err := system'external'KERNEL32 GetLastError.
+        dc copy int:0 int:0 int:aWidth int:aHeight hdc:theImageDC int:0 int:0 int:SRCCOPY.
+//        int err := system'external'KERNEL32 GetLastError.
                 
-        struct end &hwnd:theHandle.
+        struct end hwnd:theHandle.
     ]
  
-    #method refresh
+    refresh
     [
-        ($nil == theHandle)
-            ? [ ^ $self. ].
+        if($nil == theHandle)
+            [ ^ $self ].
         
-        ($nil == thePaint)
-            ! [ thePaint eval:$self &canvas:theCanvas. ].
+        ifnot($nil == thePaint)
+            [ thePaint eval:$self canvas:theCanvas ].
 
         $super refresh.
-        theNeedToRefresh := false.
+        theNeedToRefresh := false
     ]
  
-    #method $resize &hwnd:aHandle &int:aWidth &int:aHeight
+    $resize hwnd:aHandle int:aWidth int:aHeight
     [
-        ($nil == theImage)
-            ! [
+        ifnot($nil == theImage)
+            [
                 theImage free.
-                theImageDC free.
+                theImageDC free
             ].
             
-        #var(hdc)dc.
-        aHandle read &vhdc:dc.
+        hdc dc := 0.
+        aHandle read vhdc:dc.
             
-        theImage := HBITMAP new &hdc:dc &int:aWidth &int:aHeight.
-        theImageDC := HDC newCompatible &hdc:dc.
-        theImage select &hdc:theImageDC.
+        theImage := HBITMAP new hdc:dc int:aWidth int:aHeight.
+        theImageDC := HDC newCompatible hdc:dc.
+        theImage select hdc:theImageDC.
 
-        theCanvas open &hdc:theImageDC.
+        theCanvas open hdc:theImageDC.
 
-        theNeedToRefresh := true.
+        theNeedToRefresh := true
     ]
 }
 
 // --- BasePanel ---
 
-#class BasePanel :: BaseWinContainer
+class BasePanel :: BaseWinContainer
 {
-    #field(frame) theFrame.
+    frame theFrame.
     
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
         theFrame := Frame new.
         
@@ -928,506 +930,506 @@
         theControls append:theFrame.
     ]
     
-    #method setDimension &int:aWidth &int:aHeight
+    setDimension int:aWidth int:aHeight
     [
-        $super setDimension &int:aWidth &int:aHeight.
+        $super setDimension int:aWidth int:aHeight.
         
-        theFrame setDimension &int:aWidth &int:aHeight.
+        theFrame setDimension int:aWidth int:aHeight.
     ]
     
-    #method set &caption:aCaption
+    set caption:aCaption
     [
-        theFrame set &caption:aCaption.
+        theFrame set caption:aCaption.
     ]
     
-    #method $resize &int:aWidth &int:aHeight
+    $resize int:aWidth int:aHeight
     [
-        #var(dimension)aSize.
-        aSize write &int:aWidth &int:aHeight.
+        dimension aSize := 0.
+        aSize write int:aWidth int:aHeight.
         
-        theFrame setDimension &int:aWidth &int:aHeight.
+        theFrame setDimension int:aWidth int:aHeight
     ]    
 }
 
 // --- Panel ---
 
-#class PanelListener :: WindowCallback
+class PanelListener :: WindowCallback
 {
-    #field(panel)theOwner.
+    panel theOwner.
     
-    #constructor new &panel:anOwner
+    constructor new panel:anOwner
     [
-        theOwner := anOwner.
+        theOwner := anOwner
     ]
     
-    #method onsize &hwnd:aControl &int:width &int:height &vint:aResult
+    onsize hwnd:aControl int:width int:height vint:aResult
     [
-        theOwner $resize &int:width &int:height.
+        theOwner $resize int:width int:height.
         
-        aResult := 0.
+        aResult int := 0.
     ]
     
-    #method onclick &hwnd:aHandle &vint:aResult
+    onclick hwnd:aHandle vint:aResult
     [
-        #var aControl := theOwner retrieve &hwnd:aHandle.
-        ($nil != aControl)
-            ? [ aControl click. ].
+        var aControl := theOwner retrieve hwnd:aHandle.
+        if($nil != aControl)
+            [ aControl click ].
         
-        $super onclick &hwnd:aHandle &vint:aResult.
+        $super onclick hwnd:aHandle vint:aResult.
     ]
     
-    #method onchange &hwnd:aHandle &vint:aResult
+    onchange hwnd:aHandle vint:aResult
     [
-        #var aControl := theOwner retrieve &hwnd:aHandle.
-        ($nil != aControl)
-            ? [ aControl change. ].
+        var aControl := theOwner retrieve hwnd:aHandle.
+        if($nil != aControl)
+            [ aControl change ].
         
-        $super onchange &hwnd:aHandle &vint:aResult.
+        $super onchange hwnd:aHandle vint:aResult.
     ]
 }
 
-#class(sealed,icontrolof:panel) Panel :: BasePanel
+sealed class Panel :: BasePanel, icontrolof(panel)
 {
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
     ]
     
-    #method controls = theControls.
+    controls = theControls.
             
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
+        hwnd aParent := theParent hwnd.
 
-        #var(int)Styles := WS_CHILD || WS_CLIPSIBLINGS.
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
+        int Styles := WS_CHILD || WS_CLIPSIBLINGS.
+        if(theVisible)
+            [ Styles := Styles || WS_VISIBLE ].
                         
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:WS_EX_CONTROLPARENT
-                        &wide:PanelClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:(PanelListener new &panel:$self).
+        theHandle := WindowHandle new int:WS_EX_CONTROLPARENT
+                        wide:PanelClass wide:(theCaption wide) int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:(PanelListener new panel:$self)
     ]
 }
 
 // --- RadioButtonGroup ---
 
-#class RadioButtonGroupListener :: WindowCallback
+class RadioButtonGroupListener :: WindowCallback
 {
-    #field(radiogroup)theOwner.
+    radiogroup theOwner.
     
-    #method onclick &hwnd:aHandle &vint:aResult
+    onclick hwnd:aHandle vint:aResult
     [
-        theOwner $onClick &hwnd:aHandle.
+        theOwner $onClick hwnd:aHandle.
         
-        aResult := 0.
+        aResult int := 0.
     ]
     
-    #method onsize &hwnd:aControl &int:width &int:height &vint:aResult
+    onsize hwnd:aControl int:width int:height vint:aResult
     [
-        theOwner $resize &int:width &int:height.
+        theOwner $resize int:width int:height.
         
-        aResult := 0.
+        aResult int := 0.
     ]
     
-    #constructor new &radiogroup:anOwner
+    constructor new radiogroup:anOwner
     [
-        theOwner := anOwner.
+        theOwner := anOwner
     ]
 }
 
-#class(sealed,icontrolof:radiogroup) RadioButtonGroup :: BasePanel
+sealed class RadioButtonGroup :: BasePanel, icontrolof(radiogroup)
 {
-    #field(int)theSelected.
-    #field(func1)theIndexChanged.
+    int   theSelected.
+    func1 theIndexChanged.
     
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
-        theSelected := -1.
+        theSelected := -1
     ]
 
-    #method selected_index = theSelected.
+    selected_index = theSelected.
 
-    #method $setChecked : aValue
+    $setChecked : aValue
     [
-        #var(int)anIndex := -1. // !! to skip a frame
+        int anIndex := -1. // !! to skip a frame
         
-        #var aCurrent.
-        #var(enumerator)it := theControls enumerator.
-        #loop (it next)?
+        var aCurrent := $nil.
+        enumerator it := theControls enumerator.
+        while (it next)
         [ 
             aCurrent := it get.
         
-            (theSelected == anIndex)
-                ? [
-                    aCurrent object set &checked:aValue.
+            if(theSelected == anIndex)
+                [
+                    aCurrent control_object; set checked:aValue.
                     
-                    ^ $self.
+                    ^ $self
                 ].
                 
-            anIndex := anIndex + 1.                
-        ].
+            anIndex := anIndex + 1  
+        ]
     ]
 
-    #method set &selected_index : anIndex
+    set selected_index : anIndex
     [
-        (-1 == theSelected)
-            ! [ $self $setChecked:false. ].
+        ifnot(-1 == theSelected)
+            [ $self $setChecked:false ].
         
         theSelected := anIndex int.
         
         $self $setChecked:true.
         
-        ($nil != theIndexChanged)?
-            [ theIndexChanged eval:$self. ].
+        if($nil != theIndexChanged)
+            [ theIndexChanged eval:$self ]
     ]
     
-    #method set &onIndexChanged:aFunction
+    set onIndexChanged:aFunction
     [
         theIndexChanged := aFunction func1.
     ]
 
-    #method items =
+    items =
     {
         append : anItem
         [
-            theControls append:(RadioButton new set &caption:anItem).
+            theControls append:(RadioButton new; set caption:anItem).
             
-            self $resize.
+            self $resize
         ]
     }.
 
-    #method setDimension &int:aWidth &int:aHeight
+    setDimension int:aWidth int:aHeight
     [
-        $super setDimension &int:aWidth &int:aHeight.
+        $super setDimension int:aWidth int:aHeight.
         
-        $self $resize.
+        $self $resize
     ]
 
-    #method(stacksafe) $onClick &hwnd:aHandle
+    stacksafe $onClick hwnd:aHandle
     [
-        #var(int)anIndex := -1. // !! to skip a frame
+        int anIndex := -1. // !! to skip a frame
         
-        #var aRetVal := $nil.
-        #var(control)aCurrent.
-        #var(enumerator)it := theControls enumerator.
-        #loop (it next)?
+        var aRetVal := $nil.
+        control aCurrent := $nil.
+        enumerator it := theControls enumerator.
+        while(it next)
         [ 
-            aCurrent := it get control.
+            aCurrent := it get; control.
         
-            aRetVal := aCurrent retrieve &hwnd:aHandle.
-            ($nil != aRetVal) ?
+            aRetVal := aCurrent retrieve hwnd:aHandle.
+            if($nil != aRetVal) 
             [
-                theSelected := IntNumber new &int:anIndex.
+                theSelected := IntNumber new int:anIndex.
                 
-                ($nil != theIndexChanged)?
-                    [ theIndexChanged eval:$self. ].
+                if($nil != theIndexChanged)
+                    [ theIndexChanged eval:$self ].
                     
-                ^ $self.                    
+                ^ $self
             ].
                 
-            anIndex := anIndex + 1.                
-        ].
+            anIndex := anIndex + 1
+        ]
     ]
 
-    #method $resize
+    $resize
     [
-        #var(int)aWidth.
-        #var(int)aHeight.
-        theRegion readDimension &vint:aWidth &vint:aHeight.
+        int aWidth := 0.
+        int aHeight := 0.
+        theRegion readDimensionTo vint:aWidth vint:aHeight.
         
-        $self $resize &int:aWidth &int:aHeight.
+        $self $resize int:aWidth int:aHeight
     ]
             
-    #method $resize &int:aWidth &int:aHeight
+    $resize int:aWidth int:aHeight
     [
-        #var(control)aCurrent.
-        #var(enumerator)it := theControls enumerator.
-        #var(int)i := 0.
+        control aCurrent := $nil.
+        enumerator it := theControls enumerator.
+        int i := 0.
         
         it next. // NOTE : skip the frame
         
-        #loop (it next)?
+        while (it next)
         [ 
-            aCurrent := it get control.
+            aCurrent := it get; control.
         
-            aCurrent setLocation &int:4 &int:(18 + i * 20).
-            aCurrent setDimension &int:(aWidth - 6) &int:20.
+            aCurrent setLocation int:4 int:(18 + i * 20).
+            aCurrent setDimension int:(aWidth - 6) int:20.
         
-            i :=  i + 1.
+            i :=  i + 1
         ].
         
-        $super $resize &int:aWidth &int:aHeight.
+        $super $resize int:aWidth int:aHeight
     ]
     
-    #method $createHandle
+    $createHandle
     [
-        #var(hwnd)aParent := theParent hwnd.
+        hwnd aParent := theParent hwnd.
 
-        #var(int)Styles := WS_CHILD || WS_CLIPSIBLINGS.
-        theVisible
-            ? [ Styles := Styles || WS_VISIBLE. ].
+        int Styles := WS_CHILD || WS_CLIPSIBLINGS.
+        if(theVisible)
+            [ Styles := Styles || WS_VISIBLE ].
                         
-        #var(int)anX.
-        #var(int)anY.
-        #var(int)aWidth.
-        #var(int)aHeight.
+        int anX := 0.
+        int anY := 0.
+        int aWidth := 0.
+        int aHeight := 0.
         
-        theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
+        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        theHandle := WindowHandle new &int:WS_EX_CONTROLPARENT
-                        &wide:PanelClass &wide:(theCaption wide) &int:Styles
-                        &int:anX &int:anY &int:aWidth &int:aHeight 
-                        &hwnd:aParent &hinstance:CurrentInstance &object:(RadioButtonGroupListener new &radiogroup:$self).
+        theHandle := WindowHandle new int:WS_EX_CONTROLPARENT
+                        wide:PanelClass wide:(theCaption wide) int:Styles
+                        int:anX int:anY int:aWidth int:aHeight 
+                        hwnd:aParent hinstance:CurrentInstance object:(RadioButtonGroupListener new radiogroup:$self).
                         
-        ((theSelected != -1)and:($nil != theIndexChanged))?
-            [ theIndexChanged eval:$self. ].
+        if((theSelected != -1)and:($nil != theIndexChanged))
+            [ theIndexChanged eval:$self ]
     ]
 }
 
 // --- ImageList ---
 
-#class(sealed) ImageList
+sealed class ImageList
 {
-    #field(dimension)theSize.
-    #field theParent.
-    #field theImages.
-    #field(int)theIndex.
+    dimension theSize.
+    object    theParent.
+    object    theImages.
+    int       theIndex.
  
-    #constructor new
+    constructor new
     [
         theIndex := 0.
         theImages := List new.
         
-        theSize :=  Dimension new &width:50 &height:50.
+        theSize :=  Dimension new width:50 height:50.
     ]
  
-    #method assign : aControl
-       <= assign &paintbox:(aControl paintbox).
+    assign : aControl
+       <= assign paintbox:(aControl paintbox).
  
-    #method assign &paintbox:aPaintbox
+    assign paintbox:aPaintbox
     [
-        aPaintbox set &onPaint:(:sender &canvas:aCanvas)
+        aPaintbox set onPaint:(&sender:sender&canvas:aCanvas)
         [
-            #var(int)aWidth.
-            #var(int)aHeight.
-            theSize dimension read &vint:aWidth &vint:aHeight.
+            int aWidth := 0.
+            int aHeight := 0.
+            theSize dimension; read vint:aWidth vint:aHeight.
             
-            #var anImage := theImages getAt &int:(theIndex int).
+            var anImage := theImages getAt int:(theIndex int).
             
-            aCanvas write &image:(anImage image) &int:0 &int:0 &int:aWidth &int:aHeight.
+            aCanvas write image:(anImage image) int:0 int:0 int:aWidth int:aHeight
         ].
     ]
 
-    #method selected_index = theIndex.
+    selected_index = theIndex.
 
-    #method set &selected_index : anIndex
+    set selected_index : anIndex
     [
         theIndex := anIndex int.
     ] 
    
-    #method control = IControl 
+    control = IControl::
     {
-        #method object = $owner.
+        control_object = $owner.
  
-        #method open [ $owner open. ]
+        open [ $owner open ]
           
-        #method close [ $owner close. ]
+        close [ $owner close ]
           
-        #method retrieve &hwnd:aHandle = $nil.
+        retrieve hwnd:aHandle = $nil.
     
-        #method setDimension &int:aWidth &int:aHeight [ $owner setDimension &int:aWidth &int:aHeight. ]
+        setDimension int:aWidth int:aHeight [ $owner setDimension int:aWidth int:aHeight ]
     }.
  
-    #method $set &parent:aParent
+    $set parent:aParent
     [
         theParent := aParent.
     ]
           
-    #method dimension = theSize.
+    dimension = theSize.
     
-    #method(stacksafe) setDimension &int:aWidth &int:aHeight
+    stacksafe setDimension int:aWidth int:aHeight
     [
-        theSize write &int:aWidth &int:aHeight.
+        theSize write int:aWidth int:aHeight.
     ]
     
-    #method set &width:aWidth &height:aHeight
+    set width:aWidth height:aHeight
     [
-        theSize set &width:aWidth.
-        theSize set &height:aHeight.
+        theSize set width:aWidth.
+        theSize set height:aHeight.
     ]
     
-    #method append &path:aPath
+    append path:aPath
     [        
-        theImages append:(Image new &path:aPath &dimension:theSize).
+        theImages append:(Image new path:aPath dimension:theSize).
     ]
     
-    #method open
+    open
     [
-        #var(hdc)aParentDC := theParent hwnd hdc.        
+        hdc aParentDC := theParent hwnd; hdc.        
         
-        #var(enumerator)it := theImages enumerator.
-        #loop (it next)? [
-            it get image open &hdc:aParentDC.
+        enumerator it := theImages enumerator.
+        while(it next) [
+            it get; image; open hdc:aParentDC
         ].
     ]
     
-    #method close
+    close
     [
-        #var(enumerator)it := theImages enumerator.
-        #loop (it next)? [
-            it get free.
+        enumerator it := theImages enumerator.
+        while(it next) [
+            it get; free
         ].
     ]    
 }
 
 // --- DockingBox ---
 
-#class(sealed) DockingBox
+sealed class DockingBox
 {
-    #field theParent.
-    #field(control)theLeft.
-    #field(control)theRight.
-    #field(control)theTop.
-    #field(control)theBottom.
-    #field(control)theClient.
+    object  theParent.
+    control theLeft.
+    control theRight.
+    control theTop.
+    control theBottom.
+    control theClient.
 
-    #constructor new
+    constructor new
     [
     ]
  
-    #method assign &client:aControl
+    assign client:aControl
     [
         theClient := aControl control.
     ]
 
-    #method assign &left:aControl
+    assign left:aControl
     [
         theLeft := aControl control.
     ]
 
-    #method assign &right:aControl
+    assign right:aControl
     [
         theRight := aControl control.
     ]
 
-    #method assign &top:aControl
+    assign top:aControl
     [
         theTop := aControl control.
     ]
 
-    #method assign &bottom:aControl
+    assign bottom:aControl
     [
         theBottom := aControl control.
     ]
    
-    #method control = IControl 
+    control = IControl::
     {
-        #method object = $owner.
+        control_object = $owner.
  
-        #method open [ $owner open. ]
+        open [ $owner open ]
           
-        #method close [ $owner close. ]
+        close [ $owner close ]
           
-        #method retrieve &hwnd:aHandle = $nil.
+        retrieve hwnd:aHandle = $nil.
     }.
  
-    #method $set &parent:aParent
+    $set parent:aParent
     [
         theParent := aParent.
         
-        theParent set &onResize: control 
+        theParent set onResize: (:control)
         [
-            self refresh.
+            self refresh
         ].
     ]
 
-    #method open
+    open
     [
         $self refresh.
     ]
      
-    #method close
+    close
     [
     ]        
               
-    #method refresh
+    refresh
     [
-        #var(int)tmp.
+        int tmp := 0.
         
-        #var(dimension)theSize := theParent dimension.
+        dimension theSize := theParent dimension.
 
-        #var(int)height := 0.
-        #var(int)width := 0.
-        #var(int)x := 0.
-        #var(int)y := 0.
-        #var(int)aTotalWidth.
-        #var(int)aTotalHeight.
-        theSize read &vint:aTotalWidth &vint:aTotalHeight.
+        int height := 0.
+        int width := 0.
+        int x := 0.
+        int y := 0.
+        int aTotalWidth := 0.
+        int aTotalHeight := 0.
+        theSize read vint:aTotalWidth vint:aTotalHeight.
 
         // Bottom
-        ($nil != theBottom)?
+        if($nil != theBottom)
         [
-            theBottom readDimension &vint:tmp &vint:height.
-            theBottom setDimension &int:aTotalWidth &int:height.
+            theBottom readDimensionTo vint:tmp vint:height.
+            theBottom setDimension int:aTotalWidth int:height.
             
-            aTotalHeight := aTotalHeight - height.
+            aTotalHeight := aTotalHeight - height
         ].
         
         // Top
-        ($nil != theTop)?
+        if($nil != theTop)
         [
             
-            theTop readDimension &vint:tmp &vint:height.
-            theTop setDimension &int:aTotalWidth &int:height.
+            theTop readDimensionTo vint:tmp vint:height.
+            theTop setDimension int:aTotalWidth int:height.
             
             aTotalHeight := aTotalHeight - height.
             
-            y := height.
+            y := height
         ].
         
         // Left
-        ($nil != theLeft)?
+        if($nil != theLeft)
         [
-            theLeft readDimension &vint:width &vint:tmp.
-            theLeft setDimension &int:width &int:aTotalHeight.
+            theLeft readDimensionTo vint:width vint:tmp.
+            theLeft setDimension int:width int:aTotalHeight.
             
             aTotalWidth := aTotalWidth - width.
             
-            x := width.
+            x := width
         ].
         
         // Right
-        ($nil != theRight)?
+        if($nil != theRight)
         [
-            theRight readDimension &vint:width &vint:tmp.
-            theRight setDimension &int:width &int:aTotalHeight.
+            theRight readDimensionTo vint:width vint:tmp.
+            theRight setDimension int:width int:aTotalHeight.
             
-            aTotalWidth := aTotalWidth - width.
+            aTotalWidth := aTotalWidth - width
         ].
 
         // Client
-        ($nil != theClient)?
+        if($nil != theClient)
         [
-            theClient setDimension &int:aTotalWidth &int:aTotalHeight.
-            theClient setLocation &int:x &int:y.            
+            theClient setDimension int:aTotalWidth int:aTotalHeight.
+            theClient setLocation int:x int:y.            
         ].
         
         x := x + aTotalWidth.
         y := y + aTotalHeight.
 
-        ($nil != theRight)        
-            ? [ theRight setLocation &int:x &int:height. ].
+        if($nil != theRight)        
+            [ theRight setLocation int:x int:height ].
             
-        ($nil != theBottom)
-            ? [ theBottom setLocation &int:0 &int:y. ].
+        if($nil != theBottom)
+            [ theBottom setLocation int:0 int:y ].
     ]    
 }

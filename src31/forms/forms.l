@@ -1,21 +1,20 @@
-#import system.
-#import system'collections.
+import system'collections.
 
 // --- BaseControlCollection ---
 
-#class BaseControlCollection
+class BaseControlCollection
 {
-    #field(list) theList.
+    list theList.
     
-    #constructor new
+    constructor new
     [
         theList := List new.
     ]
 
-    #method enumerator => theList.
+    enumerator => theList.
             
-    #method append : aControl
+    append : aControl
     [
-        theList append:aControl.
+        theList append:aControl
     ]
 }

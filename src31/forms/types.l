@@ -1,22 +1,20 @@
-#import system.
-
 // --- control types ---
-#subject control     = forms'IControl.
+type control     :: forms'IControl.
 
-#subject frame       = forms'Frame.
-#subject label       = forms'Label.
-#subject edit        = forms'Edit.
-#subject memo        = forms'Memo.
-#subject button      = forms'Button.
-#subject radiobutton = forms'RadioButton.
-#subject combobox    = forms'Combobox.
-#subject paintbox    = forms'Paintbox.
-#subject panel       = forms'Panel.
-#subject radiogroup  = forms'RadioButtonGroup.
-#subject imagelist   = forms'ImageList.
-#subject sdiform     = forms'SDIForm.
-#subject form        = forms'ChildForm.
+type frame       :: forms'Frame.
+type label       :: forms'Label.
+type edit        :: forms'Edit.
+type memo        :: forms'Memo.
+type button      :: forms'Button.
+type radiobutton :: forms'RadioButton.
+type combobox    :: forms'Combobox.
+type paintbox    :: forms'Paintbox.
+type panel       :: forms'Panel.
+type radiogroup  :: forms'RadioButtonGroup.
+type imagelist   :: forms'ImageList.
+type sdiform     :: forms'SDIForm.
+type form        :: forms'ChildForm.
 
-#subject controls    = forms'ControlCollection.
+type controls    :: forms'ControlCollection.
 
-#subject paintfunc   = forms'PaintAction.
+type paintfunc   :: forms'PaintAction.

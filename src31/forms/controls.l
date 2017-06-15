@@ -1,38 +1,29 @@
-#import system.
-#import system'drawing.
+import system'drawing.
 
 // --- Events ---
 
-#template event : prop_name
-{
-    #method set &prop_name : value
-    [
-        target := value.
-    ]
-}
+type index_changed :: IndexChangedAction.
 
-#subject index_changed = IndexChangedAction.
-
-#class(limited,dispatchable:index_changed) IndexChangedAction
+limited class IndexChangedAction :: dispatchable(index_changed)
 {
-    #method(action,stacksafe)onIndexChange:sender &int:index
+    action stacksafe onIndexChange:sender int:index
     [
     ]
 }
 
 // --- BaseControl ---
 
-#class BaseControl
+class BaseControl
 {
-    #field(bool)   theVisible.
-    #field(bool)   theEnabled.
-    #field(region) theRegion.
-    #field(bool)   theTabStop.
+    bool   theVisible.
+    bool   theEnabled.
+    region theRegion.
+    bool   theTabStop.
     
-    #field theCaption.
-    #field theParent.
+    object theCaption.
+    object theParent.
     
-    #constructor new
+    constructor new
     [
         theVisible := true.
         theEnabled := true.
@@ -41,95 +32,95 @@
         theCaption := emptyWideLiteralValue.
     ]
     
-    #method is &visible = theVisible.
+    is visible = theVisible.
     
-    #method set &visible:aValue
+    set visible:aValue
     [
         theVisible := aValue bool.
     ]
     
-    #method is &enabled = theEnabled.
+    is enabled = theEnabled.
     
-    #method set &enabled : aValue
+    set enabled : aValue
     [
         theEnabled := aValue bool.
     ]
     
-    #method parent = theParent.
+    parent = theParent.
     
-    #method $set &parent:aParent
+    $set parent:aParent
     [
-        ($nil == aParent)
-            ? [
-                ($nil == theParent)
-                    ? [ #throw InvalidOperationException new:"A control already unbound". ].
+        if($nil == aParent)
+            [
+                if($nil == theParent)
+                    [ InvalidOperationException new:"A control already unbound"; raise ].
                 
-                theParent := $nil.
+                theParent := $nil
+            ];
+            [
+                if($nil != theParent)
+                    [ InvalidOperationException new:"A control already bound"; raise ].
+                
+                theParent := aParent
             ]
-            ! [
-                ($nil != theParent)
-                    ? [ #throw InvalidOperationException new:"A control already bound". ].
-                
-                theParent := aParent.
-            ].
     ]
     
-    #method set &caption : aValue
+    set caption : aValue
     [
         theCaption := aValue.
     ]
     
-    #method append &caption : aValue
+    append caption : aValue
     [    
-        $self set &caption:($self caption + aValue).
+        $self set caption:($self caption + aValue).
     ]
     
-    #method caption = theCaption.
+    caption = theCaption.
     
-    #method(stacksafe) setLocation &int:x &int:y
+    stacksafe setLocation int:x int:y
     [
-        theRegion writeLocation &int:x &int:y.
+        theRegion writeLocation int:x int:y.
     ]
     
-    #method set &x:aValue
-        <= set &x:aValue &y:(theRegion y).
+    set x:aValue
+        <= set x:aValue y:(theRegion y).
     
-    #method set &y:aValue
-        <= set &x:(theRegion x) &y:aValue.
+    set y:aValue
+        <= set x:(theRegion x) y:aValue.
     
-    #method set &x:x &y:y
+    set x:x y:y
     [
-        $self setLocation &int:(x int) &int:(y int).
+        $self setLocation int:(x int) int:(y int).
     ]
     
-    #method location = theRegion point.
+    location = theRegion point.
 
-    #method dimension = theRegion dimension.
+    dimension = theRegion dimension.
     
-    #method(stacksafe) setDimension &int:aWidth &int:aHeight
+    stacksafe setDimension int:aWidth int:aHeight
     [
-        theRegion writeDimension &int:aWidth &int:aHeight.
+        theRegion writeDimension int:aWidth int:aHeight.
     ]
     
-    #method set &width:aWidth &height:aHeight
+    set width:aWidth height:aHeight
     [
-        $self setDimension &int:(aWidth int) &int:(aHeight int).
+        $self setDimension int:(aWidth int) int:(aHeight int)
     ]
 
-    #method set &width:aWidth
-        <= set &width:aWidth &height:(theRegion height).
+    set width:aWidth
+        <= set width:aWidth height:(theRegion height).
     
-    #method set &height:aHeight
-        <= set &width:(theRegion width) &height:aHeight.
+    set height:aHeight
+        <= set width:(theRegion width) height:aHeight.
             
-    #method(stacksafe) readDimension &vint:aWidth &vint:aHeight
+    stacksafe readDimensionTo vint:aWidth vint:aHeight
     [
-        theRegion readDimension &vint:aWidth &vint:aHeight.        
+        theRegion readDimensionTo vint:aWidth vint:aHeight.        
     ]
     
-    #method(stacksafe) readLocation &vint:x &vint:y
+    stacksafe readLocationTo vint:x vint:y
     [
-        theRegion readLocation&vint:x &vint:y.        
+        theRegion readLocationTo vint:x vint:y
     ]
     
 //    #method is &tabstop = theTabStop.
