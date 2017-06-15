@@ -1,23 +1,28 @@
 
-limited dispatchable(space) class BaseSpace
+limited class BaseSpace :: dispatchable(space)
 {
-    update &ruleset:rs
+    int getLiveCell :: nnfn(calcLiveCells).
+    
+    int rows        :: outnprop(readRowsTo).
+    int columns     :: outnprop(readColumnsTo).
+    
+    update ruleset:rs
     [
     ]
     
-    stacksafe read &int:i &int:j &vint:retVal
+    stacksafe read int:i int:j vint:retVal
     [        
     ]
     
-    embeddable stacksafe int getAt &int:i &int:j
+    embeddable stacksafe int getAt int:i int:j
     [
         int retVal := 0.
-        $self read &int:i &int:j &vint:retVal.
+        $self read int:i int:j vint:retVal.
         
-        ^ retVal.
+        ^ retVal
     ]
     
-    stacksafe nnfn(getLiveCell) calcLiveCells &int:k &int:l &vint:retVal
+    stacksafe calcLiveCells int:k int:l vint:retVal
     [
         int i := -1.
         int j := -1.
@@ -27,25 +32,25 @@ limited dispatchable(space) class BaseSpace
             j := -1.
             while (j < 2)
             [
-                int cell := $self getAt &int:(k + i) &int:(l + j).
-                (cell == 1)
-                    ? [ counter += 1. ].
+                int cell := $self getAt int:(k + i) int:(l + j).
+                if (cell == 1)
+                    [ counter := counter + 1 ].
                 
-                j += 1.
+                j := j + 1
             ].
-            i += 1.
+            i := i + 1
         ].
         
-        retVal := counter.
+        retVal int := counter
     ]
     
     /// Returns the space actual number of rows    
-    stacksafe outnprop(rows) readRows &vint:retVal
+    stacksafe readRowsTo vint:retVal
     [
     ]
     
     /// Returns the space actual number of columns
-    stacksafe outnprop(columns) readColumns &vint:retVal
+    stacksafe readColumnsTo vint:retVal
     [
     ]
 }
@@ -56,12 +61,12 @@ sealed class IntMatrixSpace :: BaseSpace
     int       theN.
     int       theM.
     
-    constructor new &int:n &int:m
+    constructor new int:n int:m
     [
         theN := n.
         theM := m.
         
-        theMatrix := IntMatrix new &int:n &int:m.
+        theMatrix := IntMatrix new int:n int:m.
 
         int i := 0.
         int j := 0.
@@ -70,22 +75,22 @@ sealed class IntMatrixSpace :: BaseSpace
             j := 0.            
             while(j < theM)
             [
-                theMatrix write &int:i &int:j &int:0.
+                theMatrix write int:i int:j int:0.
                 
-                j += 1.
+                j := j + 1
             ].
             
-            i += 1.
-        ].                
+            i := i + 1
+        ]         
     ]
 
-    constructor new &int:n &int:m &ruleset:rs
-        <= new &int:n &int:m;
+    constructor new int:n int:m ruleset:rs
+        <= new int:n int:m;
     [
-        $self $update &ruleset:rs &intmatrix:theMatrix.
+        $self $update ruleset:rs intmatrix:theMatrix.
     ]
 
-    sealed $update &ruleset:rs &intmatrix:matrix
+    sealed $update ruleset:rs intmatrix:matrix
     [
         int i := 0.
         int j := 0.
@@ -95,28 +100,28 @@ sealed class IntMatrixSpace :: BaseSpace
             while(j < theM)
             [
                 int cell := 0.
-                rs validate &space:$self &int:i &int:j 
-                    ? [ cell := 1. ].
+                if(rs validate space:$self int:i int:j )
+                    [ cell := 1 ].
                     
-                matrix write &int:i &int:j &int:cell.
+                matrix write int:i int:j int:cell.
                 
-                j += 1.
+                j := j + 1
             ].
             
-            i += 1.
+            i := i + 1
         ].
     ]
 
-    update &ruleset:rs
+    update ruleset:rs
     [
-        intmatrix newMatrix := IntMatrix new &int:theN &int:theM.
+        intmatrix newMatrix := IntMatrix new int:theN int:theM.
         
-        $self $update &ruleset:rs &intmatrix:newMatrix.
+        $self $update ruleset:rs intmatrix:newMatrix.
         
         theMatrix := newMatrix.
     ]
 
-    stacksafe read &int:k &int:l &vint:retVal
+    stacksafe read int:k int:l vint:retVal
     [
         int i := k.
         (i < 0)?
@@ -126,7 +131,7 @@ sealed class IntMatrixSpace :: BaseSpace
         
         (i >= theN)?
         [
-            i := i mod &int:theN.
+            i := i mod int:theN.
         ].
         
         int j := l.
@@ -136,19 +141,19 @@ sealed class IntMatrixSpace :: BaseSpace
         ].
         (j >= theM)?
         [
-            j := j mod &int:theM.
+            j := j mod int:theM.
         ].
         
-        theMatrix read &int:i &int:j &vint:retVal.
+        theMatrix read int:i int:j vint:retVal.
     ]
     
-    readRows &vint:retVal
+    readRowsTo vint:retVal
     [
-        retVal := theN.
+        retVal int := theN.
     ]
     
-    readColumns &vint:retVal
+    readColumnsTo vint:retVal
     [
-        retVal := theM.
+        retVal int := theM.
     ]
 }

@@ -1,14 +1,14 @@
 /// showing the sequence of binary digits for given numbers
 
-#import system'routines.
-#import extensions.
+import system'routines.
+import extensions.
 
 // --- Program ---
 
 program =
 [
-    (5,50,9000) run &each: n
+    (5,50,9000) run each: (:n)
     [
-        console writeLine:(n toLiteral &base:2).
+        console printLine:(n toLiteral base:2).
     ].
 ].

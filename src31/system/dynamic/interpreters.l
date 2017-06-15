@@ -1,28 +1,25 @@
-#import system.
-//#import system'routines.
-
-#subject structure   = system'dynamic'Struct.
+type tape_structure :: system'dynamic'Struct.
 
 // --- Tape ---
 
-dynamic __tape_group Tape
+dynamic __tape_mixin Tape
 {
     object $item.
     
-    constructor $new &int:n
+    constructor $new int:n
         = object(n).
     
-    constructor new &array:list
-        <= $new &int:(list length);
+    constructor new array:list
+        <= $new int:(list length);
     [
         int i := 0.
         int n := list length.
         
         while(i < n)
         [
-            $self setField &int:i &object:(list getAt &int:i).
+            $self setField int:i object:(list getAt int:i).
             
-            i += 1.
+            i := i + 1
         ].
     ]    
     
@@ -33,62 +30,65 @@ dynamic __tape_group Tape
 
 extension tapeOp
 {
-    var &args:params
+    tape_var args:params
     [
         int len := params length.
         int n := len.
-        n -= self int.
+        n := n - self int.
        
-        ^ params@n.
+        ^ params@n
     ]
     
-    assign &args:params
+    tape_assign args:params
         => system'core_routines'__tape.
     
-    stack &args:params
+    tape_stack args:params
     [
         int n := self int.
        
-        ^ params@n.
+        ^ params@n
     ]
         
-    jumpif &args:params
+    tape_jumpif args:params
         => system'core_routines'__tape.
     
-    jump &args:params
-        => system'core_routines'__tape.
-        
-    goif &args:params
+    tape_jumpifnot args:params
         => system'core_routines'__tape.
     
-    go &args:params
+    tape_jump args:params
         => system'core_routines'__tape.
         
-    ptr &args:params
+    tape_goif args:params
+        => system'core_routines'__tape.
+    
+    tape_go args:params
+        => system'core_routines'__tape.
+        
+    tape_ptr args:params
         => system'core_routines'__tape.
 }
 
 // --- Struct ---
 
-dynamic dispatchable(structure) group Struct
+dynamic mixin Struct :: dispatchable(tape_structure)
 {
     object $item.
     
-    constructor new &int:n
+    constructor new int:n
         = object(n).
     
-    constructor new &array:list
-        <= new &int:(list length);
+    constructor new array:list
+        <= new int:(list length);
     [
         int i := 0.
         int n := list length.
         
         while(i < n)
         [
-            $self setField &int:i &object:(list getAt &int:i).
+            $self setField int:i object:(list getAt int:i).
             
-            i += 1.
-        ].
+            i := i + 1
+        ]
     ]    
     
     dispatch => system'core_routines'__struct.
@@ -98,25 +98,25 @@ dynamic dispatchable(structure) group Struct
 
 class Dynamic
 {
-    structure theStruct.
+    tape_structure theStruct.
     
     constructor new
     [
-        theStruct := Struct new &int:0.
+        theStruct := Struct new int:0.
     ]
     
     constructor new : aStruct
     [
-        theStruct := aStruct struct.
+        theStruct := aStruct tape_structure.
     ]
 
     value = theStruct.
             
     /// Dispatches the verb to the target object with generic subject
-    cast : aVerb &to:aTarget = aTarget::aVerb eval &struct:theStruct.
+    cast : aVerb to:aTarget = aTarget~aVerb eval tape_structure:theStruct.
     
     /// Dispatches the verb to the target object with generic subject
-    cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &struct:theStruct.
+    cast : aVerb to:aTarget with:aParam = aTarget~aVerb eval:aParam tape_structure:theStruct.
     
     generic set : anObject
     [
@@ -125,26 +125,26 @@ class Dynamic
         int  aLength := 0.
         bool aNotFound := true.
         
-        theStruct readFieldCount &vint:aLength.
+        theStruct readFieldCountTo vint:aLength.
         while ((anIndex < aLength)and:aNotFound)
         [
-            var aCurrent := theStruct::classROp getField &int:anIndex.
+            var aCurrent := theStruct~classROp getField int:anIndex.
             
-            ($subject equal &subject:(aCurrent subject))
-                ? [ aNotFound := false. ]
-                ! [ anIndex := anIndex + 2. ].
+            if($subject equal subject:(aCurrent subject))
+                [ aNotFound := false ];
+                [ anIndex := anIndex + 2 ]
         ].
                 
         // if not found extend the structure
-        (anIndex == aLength) ?
+        if(anIndex == aLength)
         [                                    
-            theStruct := theStruct reallocate &int:(aLength + 2).
+            theStruct := theStruct reallocate int:(aLength + 2).
 
-            theStruct::classROp setField &int:anIndex &object:(Signature new &subject:$subject).
+            theStruct~classROp setField int:anIndex object:(Signature new subject:$subject).
         ].
 
         // set the content for the appropriate field
-        theStruct::classROp setField &int:(anIndex + 1) &object:anObject.
+        theStruct~classROp setField int:(anIndex + 1) object:anObject.
     ]
     
     generic if
@@ -152,18 +152,18 @@ class Dynamic
         int anIndex := 0.
         int aLength := 0.
         
-        theStruct readFieldCount &vint:aLength.
+        theStruct readFieldCountTo vint:aLength.
         while (anIndex < aLength)
         [
-            var aCurrent := theStruct::classROp getField &int:anIndex.
+            var aCurrent := theStruct~classROp getField int:anIndex.
             
-            ($subject equal &subject:(aCurrent subject))
-                ? [ ^ true. ].
+            if($subject equal subject:(aCurrent subject))
+                [ ^ true ].
                 
             anIndex := anIndex + 2.                
         ].
         
-        ^ false.
+        ^ false
     ]
     
     dispatch => theStruct.
@@ -171,30 +171,29 @@ class Dynamic
 
 // --- Class ---
 
-dynamic group Class
+dynamic mixin Class
 {
     object $item.
     
-    constructor $new &int:n
+    constructor $new int:n
         = object(n).
     
-    constructor new &array:list
-        <= $new &int:(list length);
+    constructor new array:list
+        <= $new int:(list length);
     [
         int i := 0.
         int n := list length.
         
         while (i < n)
         [
-            $self setField &int:i &object:(list getAt &int:i).
+            $self setField int:i object:(list getAt int:i).
             
-            i += 1.
-        ].
+            i := i + 1
+        ]
     ]    
     
     dispatch => system'core_routines'__class.
 }
-
 
 // --- obsolete ---
 

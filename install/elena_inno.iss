@@ -7,8 +7,8 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{3CAA69D3-0F98-44B1-A73E-E864BA51D5BD}
 AppName=ELENA Programming Language
-AppVersion=2.1.0
-;AppVerName=ELENA Programming Language 1.9.18
+AppVersion=3.1.0
+;AppVerName=ELENA Programming Language 3.1.0
 AppPublisher=Alexey Rakov
 AppPublisherURL=http://github.com/ELENA-LANG/elena-lang
 AppSupportURL=http://github.com/ELENA-LANG/elena-lang
@@ -37,8 +37,8 @@ Source: "..\dat\*"; DestDir: "{app}\dat"; Flags: ignoreversion recursesubdirs cr
 Source: "..\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\elenasrc2\*"; DestDir: "{app}\elenasrc2"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\examples\*"; DestDir: "{app}\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\lib30\*"; DestDir: "{app}\lib30"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\src30\*"; DestDir: "{app}\src30"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\lib31\*"; DestDir: "{app}\lib31"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\src31\*"; DestDir: "{app}\src31"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\doc\license"; DestDir: "{app}";
 Source: "..\readme.txt"; DestDir: "{app}"; Flags: isreadme
 Source: "..\whatsnew.txt"; DestDir: "{app}";

@@ -1,8 +1,8 @@
-#import extensions.
+import extensions.
 
 class Extender :: BaseExtender
 {
-    object prop(foo) theField.
+    object foo :: prop(theField).
     
     constructor new : anObject
     [
@@ -17,9 +17,9 @@ program =
     // extending an object with a field
     anObject := Extender new:anObject.
 
-    anObject set &foo:"bar".
+    anObject foo := "bar".
 
-    console writeLine:anObject:".foo=":(anObject foo).
+    console printLine:anObject:".foo=":(anObject foo).
 
     console readChar.
 ].

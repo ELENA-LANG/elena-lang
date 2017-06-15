@@ -51,10 +51,12 @@ EXTERN_DLL_EXPORT int GetStatus(char* buffer, int maxLength)
    if (session) {
       _ELENA_::ident_t error = session->getLastError();
       size_t length = _ELENA_::getlength(error);
-      if ((int)length > maxLength)
-         length = maxLength;
+      if (buffer != NULL) {
+         if ((int)length > maxLength)
+            length = maxLength;
 
-      _ELENA_::Convertor::copy(buffer, error, length, length);
+         _ELENA_::Convertor::copy(buffer, error, length, length);
+      }
 
       return length;
    }

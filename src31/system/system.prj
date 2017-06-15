@@ -8,7 +8,7 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA Standard Library
-version=3.1.0
+version=3.1.4
 author=Alex Rakov
 
 [files]
@@ -27,6 +27,7 @@ console.l
 win32_pointers.l
 win32_app.l
 collections\list.l
+collections\queues.l
 routines\enumerables.l
 routines\patterns.l
 math\math.l
@@ -45,3 +46,6 @@ io\win32_console.l
 io\win32_files.l
 io\files.l
 io\memorystream.l
+dynamic\reflection.l
+dynamic\groups.l
+dynamic\interpreters.l

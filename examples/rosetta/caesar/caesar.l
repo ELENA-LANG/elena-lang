@@ -1,6 +1,6 @@
-#import system'routines.
-#import system'math.
-#import extensions.
+import system'routines.
+import system'math.
+import extensions.
 
 // --- Constants ---
 
@@ -16,7 +16,7 @@ class Encrypting :: Enumerator
     object theKey.
     object theEnumerator.
     
-    constructor new &key:aKey &text:aText
+    constructor new key:aKey text:aText
     [
         theKey := aKey.
         theEnumerator := aText enumerator.
@@ -34,16 +34,16 @@ class Encrypting :: Enumerator
         
         if (-1 < anIndex)
             [
-                ^ Letters @ ((theKey+anIndex) mod:26).
+                ^ Letters @ ((theKey+anIndex) mod:26)
             ];
             [
                 anIndex := BigLetters indexOf:0:aChar.
                 if (-1 < anIndex)
                     [
-                        ^ BigLetters @ ((theKey+anIndex) mod:26).
+                        ^ BigLetters @ ((theKey+anIndex) mod:26)
                     ];
                     [
-                        ^ aChar.
+                        ^ aChar
                     ].
             ].
     ]
@@ -54,25 +54,25 @@ class Encrypting :: Enumerator
 extension encryptOp
 {
     encrypt : aKey
-        = Encrypting new &key:aKey &text:self summarize:(String new). 
+        = Encrypting new key:aKey text:self; summarize:(String new). 
 
     decrypt :aKey
-        = Encrypting new &key:(26 - aKey) &text:self summarize:(String new). 
+        = Encrypting new key:(26 - aKey) text:self; summarize:(String new). 
 }
 
 // --- Program ---
 
 program =
 [
-    console writeLine:"Original text :" :TestText.
+    console printLine:"Original text :" :TestText.
         
     var anEncryptedText := TestText encrypt:Key.
 
-    console writeLine:"Encrypted text:" :anEncryptedText.
+    console printLine:"Encrypted text:" :anEncryptedText.
 
     var aDecryptedText := anEncryptedText decrypt:Key.
 
-    console writeLine:"Decrypted text:" :aDecryptedText.
+    console printLine:"Decrypted text:" :aDecryptedText.
 
     console readChar.
 ].

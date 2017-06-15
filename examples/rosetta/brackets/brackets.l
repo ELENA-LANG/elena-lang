@@ -2,8 +2,8 @@
 // Determine whether the generated string is balanced; that is, whether it consists entirely of pairs of opening/closing brackets (in that order),
 // none of which mis-nest. 
 
-#import system'routines.
-#import extensions.
+import system'routines.
+import extensions.
 
 // --- RandomBrackets ---
 
@@ -15,13 +15,13 @@ randomBrackets =
             [ ^emptyLiteralValue ];
             [
                 var aBrackets := 
-                    Array new &length:(aLength int) set &every: (&index:i) [ #91 ] 
+                    Array new length:(aLength int); set every: (&int:i) [ ^$91 ] 
                     + 
-                    Array new &length:(aLength int) set &every: (&index:i)[ #93 ].
+                    Array new length:(aLength int); set every: (&int:i)[ ^$93 ].
         
-                aBrackets randomize:(aLength * 2).
+                aBrackets := aBrackets randomize:(aLength * 2).
 
-                ^ aBrackets summarize:(String new) literal.
+                ^ aBrackets summarize:(String new); literal
             ]
     ]
 }.
@@ -32,9 +32,9 @@ extension op
     [
         var aCounter := Integer new:0.
     
-        self seek &each:aChar [ (aCounter += (aChar => #91 [ 1 ]; #93 [ -1 ])) < 0 ].
+        self seek each: (:aChar)[ ^(aCounter append:(aChar => $91 [ 1 ]; $93 [ -1 ])) < 0 ].
     
-        ^ (0 == aCounter).
+        ^ (0 == aCounter)
     ]
 }
 
@@ -42,12 +42,12 @@ extension op
 
 program =                                             
 [
-    0 to:9 &doEach: (:aLength)
+    0 to:9 doEach: (:aLength)
     [
         var anStr := randomBrackets new:aLength.
 
-        console writeLine:"""":anStr:"""":(anStr isBalanced iif:" is balanced":" is not balanced").
+        console printLine:"""":anStr:"""":(anStr isBalanced; iif:" is balanced":" is not balanced")
     ].
 
-    console readChar.
+    console readChar
 ].

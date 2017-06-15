@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2011-2016, by Alexei Rakov
+//                                             (C)2011-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef cfparserH
@@ -114,12 +114,13 @@ protected:
    void defineApplyRule(Rule& rule, int terminalType);
 
    size_t writeBodyText(ident_t text);
+   size_t writeRegExprBodyText(_ScriptReader& reader, int& mode);
    const char* getBodyText(size_t ptr);
 
    void addRule(int id, Rule& rule);
 
    void saveScript(_ScriptReader& reader, Rule& rule, int& mode);
-   size_t defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, ref_t ruleId, size_t nonterminal = 0, size_t terminal = 0);
+   size_t defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, ref_t ruleId, size_t nonterminal = 0, size_t terminal = 0);   
    void defineIdleGrammarRule(ref_t ruleId);
    size_t defineOptionalGrammarRule(ref_t ruleId, size_t nonterminal);
    size_t defineStarGrammarRule(ref_t ruleId, size_t nonterminal);
@@ -134,6 +135,7 @@ public:
    void readScriptBookmark(size_t ptr, ScriptBookmark& bm);
 
    bool compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rule);
+   bool compareTokenWithAny(_ScriptReader& reader, ScriptBookmark& bm, int rule);
 
    virtual bool parseGrammarRule(_ScriptReader& reader);
 

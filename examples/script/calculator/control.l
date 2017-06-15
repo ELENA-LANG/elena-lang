@@ -1,20 +1,21 @@
-#import system'dynamic.
-#import extensions.
-#import extensions'scripting.
+import system'dynamic.
+import extensions.
+import extensions'scripting.
 
 ////'program=extensions'programLoop
 // --- testCase ---
 
 static factory
     = scriptEngine 
-        load &path:"~\scripts\assembly.es" 
-        load &path:"~\scripts\eson.es" 
-        eval &path:"calc.es".
+        load path:"~\scripts\assembly.es";
+        load path:"~\scripts\eson.es";
+        eval path:"calc.es".
 
 symbol dynamicRules = 
-    factory eval:(Library 
-        new) 
-        first eval.
+    factory 
+        eval:(Library new);
+        first; 
+        eval.
     
 symbol staticRules =
     calc'rules'States.
@@ -23,16 +24,19 @@ extension testOp
 {
     testEvaluation
     [
-        var result := self evaluated &with:dynamicRules.
+        var result := self evaluated with:dynamicRules.
         
-        console writeLine:self:" evaluated as ":result.
-    ]
-    
+        console printLine:self:" evaluated as ":result.
+    ]    
+}
+
+extension staticTestOp
+{
     testStaticEvaluation
     [
-        var result := self evaluated &with:staticRules.
+        var result := self evaluated with:staticRules.
         
-        console writeLine:self:" evaluated as ":result.
+        console printLine:self:" evaluated as ":result
     ]
 }
 
@@ -79,9 +83,9 @@ class control =
     proceed : aLine
     [
         if ("-q" == aLine)
-            [ 'program stop. ^emptyLiteralValue. ];
+            [ 'program stop. ^emptyLiteralValue ];
             [
-                ^ aLine evaluated &with:'rules.
+                ^ aLine evaluated with:'rules
             ].
     ]    
 }.

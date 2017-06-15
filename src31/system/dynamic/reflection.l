@@ -1,5 +1,3 @@
-#import system.
-
 //#symbol $classControl =
 //{
 //    #method(stacksafe) readLength : anObject &vint:aLength        
@@ -13,26 +11,26 @@ extension classROp
     int fieldCount
     [
         int aLength := 0.
-        system'core_routines'__object readLength &object:self &vint:aLength.
+        system'core_routines'__object readLength object:self vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength
     ]     
 
-    stacksafe readFieldCount &vint:retVal
+    stacksafe readFieldCountTo vint:retVal
     [
-        system'core_routines'__object readLength &object:self &vint:retVal.
+        system'core_routines'__object readLength object:self vint:retVal
     ]
 
-    stacksafe setField &int:anIndex &object:anObject        
+    stacksafe setField int:anIndex object:anObject        
         => system'core_routines'__object.
         
-    stacksafe getField &int:anIndex
+    stacksafe getField int:anIndex
         => system'core_routines'__object.
         
     getFieldAt : anIndex
-        = self::classROp getField &int:(anIndex int).
+        = self~classROp getField int:anIndex.
 
-    stacksafe respondTo &mssg:aMessage
+    stacksafe respondTo mssg:aMessage
         => system'core_routines'__object.
 
 //    stacksafe readMatchedEntries &mssg:aMask &int:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
@@ -49,19 +47,19 @@ extension classROp
 //        aResultLength := retVal.
 //    ]
     
-    setFields &args:objects
+    setFields args:objects
     [
         int i := 0.
         int l := objects length.
         
         while (i < l)
         [
-            self setField &int:i &object:(objects@i).
+            self setField int:i object:(objects@i).
             
-            i += 1.
+            i := i + 1
         ].
         
-        ^ self.
+        ^ self
     ]
 }
 

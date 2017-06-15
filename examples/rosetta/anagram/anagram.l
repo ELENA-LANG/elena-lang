@@ -3,19 +3,19 @@
 // http://www.puzzlers.org/pub/wordlists/unixdict.txt, find the sets of words 
 // that share the same characters that contain the most words in them. 
 
-#import system'routines.
-#import system'calendar.
-#import system'io.
-#import system'collections.
-#import extensions.
-#import extensions'routines.
+import system'routines.
+import system'calendar.
+import system'io.
+import system'collections.
+import extensions.
+import extensions'routines.
 
 // --- Normalized ---
 
 extension op
 {
      normalized
-         = self toArray ascendant summarize:(String new) literal.
+         = self toArray; ascendant; summarize:(String new); literal.
 }
 
 // --- Program ---
@@ -26,7 +26,7 @@ symbol program =
 
     var aDictionary := Dictionary new.
 
-    "unixdict.txt" file_path run &eachLine: aWord
+    "unixdict.txt" file_path; run eachLine: (:aWord)
     [    
         var s := aWord.
         var aKey := aWord normalized.
@@ -37,12 +37,12 @@ symbol program =
             aDictionary@aKey := anItem.
         ].
     
-        anItem += aWord.
+        anItem append:aWord.
     ].
 
-    aDictionary array_list
-        sort: (:aFormer:aLater) [ aFormer length > aLater length ]
-        top:20 run &each: aPair [ console writeLine:aPair ].
+    aDictionary array_list;
+        sort: (:aFormer:aLater)[ ^aFormer length > aLater length ];
+        top:20; run each: (:aPair)[ console writeLine:aPair ].
     
     var anEnd := now.
    

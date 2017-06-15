@@ -1,5 +1,5 @@
 ﻿[project]
-output=..\..\lib30
+output=..\..\lib31
 options=-w3
 namespace=sqlite
 template=lib
@@ -8,7 +8,7 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA SQLite Provider Library
-version=3.5.0
+version=3.1.0
 author=Alex Rakov
 
 [files]

@@ -8,7 +8,7 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA Extension Library
-version=3.1.0
+version=3.1.5
 author=Alex Rakov
 
 [files]
@@ -18,6 +18,11 @@ console.l
 app.l
 win32_args.l
 random.l
+math\functions.l
+math\matrix.l
 text\words.l
 text\strings.l
 routines\enumerating.l
+routines\combinations.l
+scripting\interpreter.l
+scripting\assembly.l

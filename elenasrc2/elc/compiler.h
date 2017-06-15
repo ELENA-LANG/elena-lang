@@ -349,12 +349,12 @@ private:
 
       ref_t mapNestedExpression();
 
-//      bool defineForward(ident_t forward, ident_t referenceName)
-//      {
-//         ObjectInfo info = mapReferenceInfo(referenceName, false);
-//      
-//         return forwards.add(forward, info.param, true);
-//      }
+      bool defineForward(ident_t forward, ident_t referenceName)
+      {
+         ObjectInfo info = mapReferenceInfo(referenceName, false);
+      
+         return forwards.add(forward, info.param, true);
+      }
 
       ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
@@ -994,7 +994,7 @@ private:
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
    bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
    void compileIncludeModule(SNode node, ModuleScope& scope);
-//   void compileForward(SNode node, ModuleScope& scope);
+   void compileForward(SNode node, ModuleScope& scope);
    void declareSubject(SyntaxWriter& writer, SNode member, ModuleScope& scope);
 
    bool validate(_ProjectManager& project, _Module* module, int reference);

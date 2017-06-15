@@ -38,9 +38,16 @@ limited class Indexer :: dispatchable(indexer)
     int index :: outnprop(readIndexTo).
     
     /// Sets the index by specified value
-    stacksafe writeIndex int:anIndex [ ] 
+    ///
+    /// Should be overidden(or set&index)
+    stacksafe writeIndex int:anIndex 
+    [ 
+        $self set index:anIndex.
+    ] 
     
     /// Sets the index by specified value
+    ///
+    /// Should be overidden (or writeIndex&int)
     set index:anIndex 
         <= writeIndex int:anIndex.
     

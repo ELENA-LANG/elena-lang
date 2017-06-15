@@ -451,11 +451,13 @@ md examples\db\sqlite
 copy %1\examples\db\sqlite\*.l examples\db\sqlite
 copy %1\examples\db\sqlite\*.prj examples\db\sqlite
 
-md examples\script\vb
-copy %1\examples\script\vb\*.l examples\vb
-copy %1\examples\script\vb\*.prj examples\vb
-copy %1\examples\script\vb\*.txt examples\vb
-copy %1\examples\script\vb\*.es examples\vb
+md examples\script\js
+copy %1\examples\script\js\*.l examples\js
+copy %1\examples\script\js\*.prj examples\js
+copy %1\examples\script\js\*.xprj examples\js
+copy %1\examples\script\js\*.txt examples\js
+copy %1\examples\script\js\*.es examples\js
+copy %1\examples\script\js\*.js examples\js
 
 echo copying src3 files
 

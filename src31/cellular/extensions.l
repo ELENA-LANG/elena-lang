@@ -1,4 +1,4 @@
-extension(space) spaceOp
+space extension spaceOp
 {
 //    run &ruleset:set
 //    [

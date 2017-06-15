@@ -2445,11 +2445,9 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
          tape.write(bcNSub);
          break;
       case MUL_MESSAGE_ID:
-      case INCREASE_MESSAGE_ID:
          tape.write(bcNMul);
          break;
       case DIV_MESSAGE_ID:
-      case SEPARATE_MESSAGE_ID:
          tape.write(bcNDiv);
          break;
       case AND_MESSAGE_ID:
@@ -2510,7 +2508,6 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
          tape.write(bcNSave);
          break;
       case MUL_MESSAGE_ID:
-      case INCREASE_MESSAGE_ID:
          tape.write(bcNLoad);
          tape.write(bcMulN, immArg);
          tape.write(bcNSave);
@@ -2586,7 +2583,6 @@ void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, i
          tape.write(bcBWrite);
          break;
       case MUL_MESSAGE_ID:
-      case INCREASE_MESSAGE_ID:
          tape.write(bcDCopy, offset);
          tape.write(bcBRead);
          tape.write(bcESwap);
@@ -2650,11 +2646,9 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
          tape.write(bcLSub);
          break;
       case MUL_MESSAGE_ID:
-      case INCREASE_MESSAGE_ID:
          tape.write(bcLMul);
          break;
       case DIV_MESSAGE_ID:
-      case SEPARATE_MESSAGE_ID:
          tape.write(bcLDiv);
          break;
       case AND_MESSAGE_ID:
@@ -2692,11 +2686,9 @@ void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
          tape.write(bcRSub);
          break;
       case MUL_MESSAGE_ID:
-      case INCREASE_MESSAGE_ID:
          tape.write(bcRMul);
          break;
       case DIV_MESSAGE_ID:
-      case SEPARATE_MESSAGE_ID:
          tape.write(bcRDiv);
          break;
       case EQUAL_MESSAGE_ID:
@@ -3703,7 +3695,6 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
          break;
       case APPEND_MESSAGE_ID:
       case REDUCE_MESSAGE_ID:
-      case INCREASE_MESSAGE_ID:
          immOp = true;
          break;
    }
