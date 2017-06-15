@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              xdev - refactoring
+                 * get rid of lxDefaultGeneric
+
               zdev - gui
                  * reimplement forms library
                  * migrate gui rosetta samples
@@ -12,10 +15,8 @@ In development:
               xdev - refactoring
                  * migrating rosetta samples : Conway's Game of Life
                  * migrating pi2 sample
-
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
 
-                 * get rid of lxDefaultGeneric
                  * uncomment matrixof template
                  * uncomment arrayof enumerator method
 
@@ -23,7 +24,6 @@ In development:
                  * test if outnprop works correctly with optimization
                  * optimize: theDiff int := theDiff / 2.
 
-                 * cannot declare the following method : goto starting []
 
                  * operator << should be used to add a list item
 
@@ -116,7 +116,7 @@ Pipeline:
                  * debug tape : recognize messages / extensions
 
 
-              xdev - generic development
+              xdev - generic development                                            
                  * probably compiler may replace a += b to a := a + b automatically 
                  * assigning to the primitive array
 
@@ -293,7 +293,7 @@ Pipeline:
                  * fixing #303 issue : local boxing byref parameter
                  * cannot declare the following code:
                       const nbrs = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1),(-1, 1), (-1, 0), (-1, -1), (0, -1)).
-
+                 * check attribute name if it is equal to verb / another predefined attribute
 
               zdev 
                  * scripting library : elena script (both run-time / compile-time)

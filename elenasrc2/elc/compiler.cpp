@@ -7446,8 +7446,8 @@ void Compiler :: generateAttributes(SyntaxWriter& writer, SNode node, TemplateSc
 
    if (node != lxNone) {
       SNode nameNode = current == lxNameAttr ? current.findChild(lxIdentifier, lxPrivate) : node.findChild(lxIdentifier, lxPrivate);
-
-      scope.copySubject(writer, nameNode);
+      if (nameNode != lxNone)
+         scope.copySubject(writer, nameNode);
    }
 }
 
@@ -7730,14 +7730,11 @@ bool Compiler :: generateMethodScope(SNode node, TemplateScope& scope, SNode att
 
       // HOTFIX : recognize generic attribute      
       if (!scope.isAttribute(lastAttr)) {
-         // HOTFIX : recognize the verb
-         if (!_verbs.exist(lastAttr.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier())) {
-            current = lastAttr.prevNode();
-
-            if (current == lxAttribute && scope.mapSubject(current.findChild(lxIdentifier, lxPrivate)) == 0) {
-               lastAttr = lxMessage;
-               lastAttr = current;
-            }
+         current = lastAttr.prevNode();
+         // HOTFIX : recognize attribute / type
+         if (current == lxAttribute && !scope.isAttribute(current) && scope.mapSubject(current.findChild(lxIdentifier, lxPrivate)) == 0) {
+            lastAttr = lxMessage;
+            lastAttr = current;
          }
 
          // mark the last message as a name

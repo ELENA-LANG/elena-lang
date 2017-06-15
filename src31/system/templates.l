@@ -87,17 +87,17 @@ method template nfn :: type,template_fn,target_method
     ]
 }
 
-//// --- nnfn ---
-//
-//#template(-16388) nnfn (template_fn)
-//{
-//    stacksafe embeddable int template_fn &int:n &int:m
-//    [
-//        int retVal := 0.
-//        $self target_method &int:n &int:m &vint:retVal.
-//        ^ retVal.            
-//    ]
-//}
+// --- nnfn ---
+
+method template nnfn :: type,template_fn,target_method
+{
+    stacksafe embeddable type template_fn type:n type:m
+    [
+        type retVal := 0.
+        $self target_method type:n type:m vint:retVal.
+        ^ retVal.            
+    ]
+}
 
 // --- while statement ---
 

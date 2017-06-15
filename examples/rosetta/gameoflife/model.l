@@ -1,5 +1,5 @@
-#import extensions.
-#import cellular.
+import extensions.
+import cellular.
 
 const int maxX = 48.
 const int maxY = 28.
