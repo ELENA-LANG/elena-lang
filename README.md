@@ -13,7 +13,7 @@ This is the GitHub repository of ELENA source code including compiler, IDE, ELEN
 - **Homepage:** <http://elenalang.sourceforge.net/>
 - **Blog:** <http://elenalang.blogspot.com/>
 - **Binaries mirror:** <https://sourceforge.net/projects/elenalang/files/>
-- **Slack** <elenalang.slack.com>
+- **Slack** <https://elenalang.slack.com/>
 
 ## Currently Supported Platforms
 
