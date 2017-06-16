@@ -2,6 +2,18 @@
 In development:
 ------                              
 
+              xdev - refactoring
+                 * review the structure declaration : win_msg msg := 0.                
+                 * replace "xregion r := XRegion new" with optimized operation ; an embeddable struture default constructor 
+                   should be replaced with a private message call
+
+                 * fix operations with structure fields
+                 * test assigning structure fields
+
+                 * #215 : Operations with structure fields
+                 * optimize : aResult int := 0.
+                 * test local : assign field struct
+
               zdev - gui
                  * reimplement forms library
                  * migrate gui rosetta samples
@@ -10,7 +22,7 @@ In development:
                  * graph : function declared in the script
 
               xdev - refactoring
-                 * optimize : aResult int := 0.
+                 * fix bsort example
                  * nshift should be replaced with nshiftl, nshiftr
                  * optimize shift implementation
                  * check subject duplicates
@@ -25,7 +37,6 @@ In development:
                  * uncomment arrayof enumerator method
 
                  * test if outnprop works correctly with optimization
-                 * review the structure declaration : win_msg msg := 0.
 
 ------                                 
 Pipeline:
@@ -204,7 +215,6 @@ Pipeline:
                  * test field : copy var
                  * test field : box
                  * test field : pass as a parameter
-                 * test local : assign field struct
                  * test implicit convertor with stack allocated local / field
                  * optimize n := n + m.
                  * compile n + m * k
@@ -512,7 +522,6 @@ Pipeline:
                        * probably any stand-alone external cal should be declared in implicit extern block. If the operation
                          does not affect GC, a special hint should be used to skip external block declaration
                        * #238 : Manifest - store the manifest info into the resource
-                       * #215 : Operations with structure fields
                        * ByteNumber.get&min - could we return the constant object?
                        * support abstract attribute                       
                        * probably we could get rid of conditional branching? (what about unboxing?)

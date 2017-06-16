@@ -36,6 +36,11 @@ sealed embeddable struct MSG
     int    theX.
     int    theY.    
     
+    /// Dummy initializer
+    stacksafe implicit int:n
+    [
+    ]
+    
     stacksafe readMessageTo vint:aMessage
     [
         aMessage int := theMessage.

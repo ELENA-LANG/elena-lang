@@ -1,5 +1,5 @@
 ﻿[project]
-output=..\..\lib30
+output=..\..\lib31
 namespace=net
 template=lib
 debuginfo=-1

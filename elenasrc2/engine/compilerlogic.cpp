@@ -1532,7 +1532,7 @@ bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& com
    return false;
 }
 
-bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool assingingMode)
+bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef)
 {
    SNode exprNode = node.findSubNodeMask(lxObjectMask);   
 
@@ -1555,12 +1555,10 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
 
    bool localBoxing = false;
    bool variable = false;
-   if (exprNode == lxFieldAddress && exprNode.argument > 0 && !assingingMode) {
-      variable = !isReadonly(scope, targetRef);
+   if (exprNode == lxFieldAddress && exprNode.argument > 0) {
       localBoxing = true;
    }
    else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
-      variable = !isReadonly(scope, targetRef) && !assingingMode;
       localBoxing = true;
    }
    else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {

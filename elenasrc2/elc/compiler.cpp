@@ -5936,12 +5936,12 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
          node.findChild(lxTarget).setArgument(targetRef);
       }
 
-      if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef, !boxing)) {
+      if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef)) {
          scope.raiseError(errIllegalOperation, node);
       }
    }
 
-   if (!boxing) {
+   if (!boxing && node != lxLocalUnboxing) {
       node = lxExpression;
    }
 
