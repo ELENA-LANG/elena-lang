@@ -2,18 +2,6 @@
 In development:
 ------                              
 
-              xdev - refactoring
-                 * review the structure declaration : win_msg msg := 0.                
-                 * replace "xregion r := XRegion new" with optimized operation ; an embeddable struture default constructor 
-                   should be replaced with a private message call
-
-                 * fix operations with structure fields
-                 * test assigning structure fields
-
-                 * #215 : Operations with structure fields
-                 * optimize : aResult int := 0.
-                 * test local : assign field struct
-
               zdev - gui
                  * reimplement forms library
                  * migrate gui rosetta samples
@@ -37,6 +25,10 @@ In development:
                  * uncomment arrayof enumerator method
 
                  * test if outnprop works correctly with optimization
+
+                 * #215 : Operations with structure fields
+                 * optimize : aResult int := 0.
+                 * test local : assign field struct
 
 ------                                 
 Pipeline:

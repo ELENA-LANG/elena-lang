@@ -231,6 +231,7 @@ enum LexicalType
    lxExtArgumentType = 0x20031,
    lxInternalRef     = 0x20032,
    lxTemplateVar     = 0x20033,
+   lxEmbeddableMssg  = 0x20034,
 
    lxTempAttr        = 0x2010D,
 };

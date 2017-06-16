@@ -113,7 +113,7 @@ public:
       return isReadonly(info);
    }
 
-   virtual void injectVirtualCode(_CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler);
+   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type);
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType);
    virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef);
@@ -147,6 +147,7 @@ public:
    virtual bool recognizeEmbeddableEval(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningType, ref_t& subject);
    virtual bool recognizeEmbeddableEval2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningType, ref_t& subject);
    virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
+   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef);
 
    virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope);
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node);
@@ -157,11 +158,6 @@ public:
 ////   virtual void optimizeDuplicateBoxing(SNode node);
 
    virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2);
-
-//   virtual bool recognizeNestedScope(SNode& node);
-//   virtual bool recognizeScope(SNode& node);
-//   virtual bool recognizeNewLocal(SNode& node);
-//   virtual bool recognizeNewField(SNode& node);
 
    CompilerLogic();
 };

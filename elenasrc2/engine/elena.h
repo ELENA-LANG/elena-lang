@@ -480,6 +480,7 @@ enum MethodAttribute
 {
    maSubjectMask        = 0x100,
    maRefefernceMask     = 0x200,
+   maVerb               = 0x400,
 
    maNone               = 0x000,
    maHint               = 0x001,
@@ -491,6 +492,7 @@ enum MethodAttribute
    maEmbeddableGetAt    = 0x106,
    maEmbeddableGetAt2   = 0x107,
    maEmbeddableEval2    = 0x108,
+   maEmbeddableNew      = 0x409,
 };
 
 struct ClassInfo

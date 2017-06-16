@@ -76,7 +76,7 @@ inline bool IsInvertedOperator(int& operator_id)
 struct EmbeddableOp
 {
    int attribute;
-   int paramCount;
+   int paramCount;   // -1 indicates that operation should be done with the assigning target
    int verb;
 
    EmbeddableOp(int attr, int count, int verb)
@@ -86,13 +86,14 @@ struct EmbeddableOp
       this->verb = verb;
    }
 };
-#define EMBEDDABLEOP_MAX 4
+#define EMBEDDABLEOP_MAX 5
 EmbeddableOp embeddableOps[EMBEDDABLEOP_MAX] =
 {
    EmbeddableOp(maEmbeddableGetAt, 2, READ_MESSAGE_ID),
    EmbeddableOp(maEmbeddableGetAt2, 3, READ_MESSAGE_ID),
    EmbeddableOp(maEmbeddableEval, 2, EVAL_MESSAGE_ID),
-   EmbeddableOp(maEmbeddableEval2, 3, EVAL_MESSAGE_ID)
+   EmbeddableOp(maEmbeddableEval2, 3, EVAL_MESSAGE_ID),
+   EmbeddableOp(maEmbeddableNew, -1, 0) 
 };
 
 // --- CompilerLogic ---
@@ -498,13 +499,39 @@ bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
 }
 
-void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, ref_t classRef, ClassInfo& info, _Compiler& compiler)
+void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
 {
 //   SNode templateNode = node.appendNode(lxTemplate);
 
    // generate enumeration list
    if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
       compiler.generateEnumListMember(scope, info.header.parentRef, classRef);
+   }
+
+   // generate structure embeddable constructor
+   if (test(info.header.flags, elSealed | elStructureRole)) {
+      bool found = false;
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         if (current == lxConstructor && current.argument == encodeVerb(NEW_MESSAGE_ID)) {
+            SNode attr = current.firstChild();
+            while (attr != lxNone) {
+               if (attr == lxAttribute && attr.argument == tpEmbeddable) {
+                  current.set(lxClassMethod, encodeVerb(PRIVATE_MESSAGE_ID));
+                  attr.argument = tpPrivate;
+
+                  found = true;
+                  break;
+               }
+               attr = attr.nextNode();
+            }
+            break;
+         }
+         current = current.nextNode();
+      }
+      if (found) {
+         compiler.injectEmbeddableConstructor(node, encodeVerb(NEW_MESSAGE_ID), encodeVerb(PRIVATE_MESSAGE_ID));
+      }
    }
 }
 
@@ -1492,6 +1519,17 @@ bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOn
    return extensionOne ? (object == lxLocal && object.argument == -1) : (object == lxThisLocal && object.argument == 1);
 }
 
+bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, ref_t& messageRef)
+{
+   SNode attr = methodNode.findChild(lxEmbeddableMssg);
+   if (attr != lxNone) {
+      messageRef = attr.argument;
+
+      return true;
+   }
+   else return false;
+}
+
 bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node)
 {
    SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
@@ -1521,6 +1559,7 @@ bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& com
    for (int i = 0; i < EMBEDDABLEOP_MAX; i++) {
       EmbeddableOp op = embeddableOps[i];
       ref_t subject = info.methodHints.get(Attribute(callNode.argument, op.attribute));
+
       // if it is possible to replace get&subject operation with eval&subject2:local
       if (subject != 0) {
          compiler.injectEmbeddableOp(node, callNode, subject, op.paramCount, op.verb);
@@ -1712,70 +1751,3 @@ bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)
 //{
 //   return isPrimitiveStructArrayRef(reference) | isPrimitiveArrayRef(reference);
 //}
-//
-////bool CompilerLogic :: recognizeNewLocal(SNode& node)
-////{
-////   SNode firstToken = node.firstChild(lxObjectMask);
-////   if (firstToken == lxIdentifier) {
-////      firstToken = lxAttribute;
-////
-////      SNode identifier = firstToken.nextNode();
-////      if (identifier == lxMessage) {
-////         identifier = lxExpression;
-////
-////         return true;
-////      }
-////
-////      //SNode token = identifier.findChild(lxIdentifier, lxPrivate);
-////      //if (token != lxNone) {
-////      //   identifier = token.type;
-////
-////      //   SyntaxTree::copyNode(token, identifier);
-////      //   token = lxIdle;
-////
-////      //   return true;
-////      //}
-////   }
-////   return false;
-////}
-////
-////bool CompilerLogic :: recognizeNewField(SNode& node)
-////{
-////   SNode body = node.findChild(lxCode, lxExpression, lxDispatchCode, lxReturning, lxResendExpression);
-////   if (body == lxNone) {
-////      if (setTokenIdentifier(node.lastChild())) {
-////         node = lxClassField;
-////
-////         return true;
-////      }
-////   }
-////   return false;
-////}
-////
-////bool CompilerLogic :: recognizeNestedScope(SNode& node)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) { 
-////      if (current == lxScope) {
-////         SNode codeNode = current.findChild(lxCode, lxExpression, lxDispatchCode, lxReturning, lxResendExpression);
-////         if (codeNode != lxNone) {
-////            if (setIdentifier(codeNode)) {
-////               current = lxClassMethod;
-////
-////               // !! HOTFIX : the node should be once again found
-////               codeNode = current.findChild(lxCode, lxExpression, lxDispatchCode, lxReturning, lxResendExpression);
-////
-////               if (codeNode == lxExpression)
-////                  codeNode = lxReturning;
-////            }
-////         }
-////         else if (setTokenIdentifier(current.lastChild())) {
-////            current = lxClassField;
-////         }
-////      }
-////
-////      current = current.nextNode();
-////   }
-////
-////   return true;
-////}
