@@ -8,7 +8,7 @@ const wide ComboboxClass = "Combobox"w.
 
 // --- WindowHandle ---
 
-sealed const embeddable struct WindowHandle
+sealed const embeddable struct WindowHandle :: dispatchable(hwnd)
 {
     __ptr theHandle.
     
