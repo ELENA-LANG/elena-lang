@@ -765,7 +765,7 @@ class PaintboxListener :: WindowCallback
     ]
 }
 
-limited class PaintAction
+limited class PaintAction :: dispatchable(paintfunc)
 {
     action eval sender:sender canvas:canvas []
 }
@@ -793,7 +793,7 @@ limited class Paintbox :: BaseWinControl, icontrolof(paintbox)
  
     $paint
     [
-        win_paintstruct struct := 0.
+        win_paintstruct struct := PAINTSTRUCT new.
         hdc dc := 0.
         
         struct begin hwnd:theHandle.
@@ -865,13 +865,13 @@ class Imagebox :: Paintbox
         if(theNeedToRefresh)
             [ $self refresh ].
         
-        win_paintstruct struct := 0.
+        win_paintstruct struct := PAINTSTRUCT new.
         
         struct begin hwnd:theHandle.
         
         int aWidth := 0.
         int aHeight := 0.
-        theRegion readDimension vint:aWidth vint:aHeight.
+        theRegion readDimensionTo vint:aWidth vint:aHeight.
         
         hdc dc := 0.
         struct read vhdc:dc.
@@ -888,7 +888,7 @@ class Imagebox :: Paintbox
             [ ^ $self ].
         
         ifnot($nil == thePaint)
-            [ thePaint eval:$self canvas:theCanvas ].
+            [ thePaint eval sender:$self canvas:theCanvas ].
 
         $super refresh.
         theNeedToRefresh := false

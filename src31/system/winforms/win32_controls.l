@@ -187,6 +187,10 @@ sealed embeddable struct PAINTSTRUCT
     int      dummy6.
     int      dummy7.
 
+    embeddable constructor new
+    [
+    ]
+
     stacksafe read vhdc:aHandle
     [
         aHandle hdc := theHDC.

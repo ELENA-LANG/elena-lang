@@ -4,8 +4,6 @@ type hbitmap  :: system'drawing'HBITMAP.
 type hpen     :: system'drawing'HPEN.
 type hbrush   :: system'drawing'HBRUSH.
 
-type vhdc     :: varof(hdc).
-
 type win_rect :: system'drawing'RECT.
 
 // --- Raster Operation Codes ---
@@ -237,3 +235,5 @@ sealed const embeddable struct HBRUSH
         system'external'GDI32 DeleteObject int:theHandle.
     ]
 }
+
+type vhdc     :: varof(hdc).

@@ -18,7 +18,7 @@ class FileDialog
         theTitle := aTitle.
     ]
     
-    addFilter caption:aCaption extension:aMask
+    addFilter caption:aCaption extension_mask:aMask
     [
         if($nil == theFilters)
             [ theFilters := (aCaption wide, aMask wide) ];

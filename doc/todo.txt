@@ -29,6 +29,10 @@ In development:
                  * #215 : Operations with structure fields
                  * optimize : aResult int := 0.
                  * test local : assign field struct
+                 * invalid error message for the code:
+                       symbol plotter = { .. }.
+                 * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
+                   (e.g. vhdc), it should be declared when it is used
 
 ------                                 
 Pipeline:

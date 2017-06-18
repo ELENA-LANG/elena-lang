@@ -146,6 +146,9 @@ class true = BaseBoolValue::
     /// Returns literal representation.
     literal = "true".
 
+    /// Returns literal representation.
+    wide = "true"w.
+
     /// Returns itself.
     clone = $self.
 }.
@@ -201,6 +204,9 @@ class false = BaseBoolValue::
 
     /// Returns literal representation
     literal = "false".
+    
+    /// Returns literal representation
+    wide = "false"w.
     
     /// Returns itself
     clone = $self.
@@ -495,6 +501,9 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
         
     /// Returns the literal presentation
     literal = system'literalConvertor convert byte:$self.
+        
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert byte:$self.
 
     /// Clones the value
     clone = ByteNumber new byte:$self.
@@ -751,6 +760,9 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable(short)
     /// Returns the literal presentation
     literal = system'literalConvertor convert short:$self.
 
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert short:$self.
+
     /// Clones the value
     clone = ShortNumber new short:$self.    
 
@@ -994,6 +1006,9 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable(int,long,real,
 
     /// Returns the literal presentation
     literal = system'literalConvertor convert int:$self.
+
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert int:$self.
 
     /// Clones the value
     clone = IntNumber new int:$self.
@@ -1251,6 +1266,9 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable(long,int,real
     /// Returns the literal presentation
     literal = system'literalConvertor convert long:$self.
 
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert long:$self.
+
     /// Clones the value
     clone = LongNumber new long:$self.
     
@@ -1463,6 +1481,9 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
 
     /// Returns the literal presentation
     literal = system'literalConvertor convert real:$self.
+
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert real:$self.
 
     /// Clones the value    
     clone = RealNumber new real:$self.
