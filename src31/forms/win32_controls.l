@@ -770,7 +770,7 @@ limited class PaintAction :: dispatchable(paintfunc)
     action eval sender:sender canvas:canvas []
 }
 
-limited class Paintbox :: BaseWinControl, icontrolof(paintbox)
+limited class Paintbox :: BaseWinControl, icontrolof(paintbox), dispatchable(paintbox)
 {
     canvas    theCanvas.
     paintfunc thePaint.
@@ -944,7 +944,7 @@ class BasePanel :: BaseWinContainer
     
     $resize int:aWidth int:aHeight
     [
-        dimension aSize := 0.
+        dimension aSize := Dimension new.
         aSize write int:aWidth int:aHeight.
         
         theFrame setDimension int:aWidth int:aHeight
@@ -1103,7 +1103,7 @@ sealed class RadioButtonGroup :: BasePanel, icontrolof(radiogroup)
         [
             theControls append:(RadioButton new; set caption:anItem).
             
-            self $resize
+            $owner $resize
         ]
     }.
 

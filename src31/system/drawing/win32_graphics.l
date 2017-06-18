@@ -49,7 +49,7 @@ brush BlackBrush = Brush new color:0.
 
 // --- Image ---
 
-sealed class Image
+sealed class Image :: dispatchable(image)
 {
     wide      thePath.
     hdc       theDC.

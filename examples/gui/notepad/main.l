@@ -1,5 +1,4 @@
-#define system.
-#define forms.
+import forms.
 
 //#symbol TextFile : aPath =
 //{
@@ -37,30 +36,30 @@
 
 // --- OpenFile ---
 
-#class Window :: SDIForm
+class Window :: SDIForm
 {
 //    #field theStatusBar.
-    #field theTextField.
+    object theTextField.
 
-    #field theBox.
+    object theBox.
     
-    #constructor new
-        <= (new)
+    constructor new
+        <= new;
     [
-        #var aMenu := Menu new.
-        aMenu items
-            append &caption:"File".
+        var aMenu := Menu new.
+        aMenu items;
+            append caption:"File".
             
-        ((aMenu items) @ 0) items
-            append &caption:"Open" &onClick:x 
+        ((aMenu items) @ 0) items;
+            append caption:"Open" onClick: (:x)
                 [
 //                #var aDialog := OpenDialog::self.
 //                #if aDialog open &forms'modal
 //                [
 //                    TextFile::(aDialog path) read:theTextField.
 //                ].
-                ]
-            append &caption:"Save" &onClick:x 
+                ];
+            append caption:"Save" onClick: (:x)
                 [
 //                #var aDialog := SaveDialog::self.
 //                #if aDialog open &forms'modal
@@ -77,9 +76,9 @@
         theControls append:theTextField.
         theControls append:theBox.
 
-        $self set &x:200 &y:200.
-        $self set &width:700 &height:600.
-        $self set &caption:"Notepad".
+        $self set x:200 y:200.
+        $self set width:700 height:600.
+        $self set caption:"Notepad".
 //
 //        theStatusBar
 //            set &x:0 &y:300 
@@ -94,7 +93,7 @@
 //                       
 //        theStatusBar open.
 //
-        theBox assign &client:theTextField.
+        theBox assign client:theTextField.
 //        theLayoutManager set &controls'dock_center:theTextField &controls'dock_bottom:theStatusBar.
 
 //        theTextField~gui'eevents +=

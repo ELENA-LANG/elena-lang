@@ -1,19 +1,18 @@
 // --- default namespaces ---
-#import system.
-#import forms.
+import forms.
 
-#class InfoForm :: ChildForm
+class InfoForm :: ChildForm
 {
-    #field infoLabel.
-    #field BtmOk.
+    object infoLabel.
+    object BtmOk.
 
-    #constructor new &parent:aParent
-        <= (new &parent:aParent)
+    constructor new parent:aParent
+        <= new parent:aParent;
     [
         // Form ------------------------------------------------------------------------
-        $self set &x:320 &y:320.
-        $self set &width:400 &height:230.
-        $self set &caption:"About the program".
+        $self set x:320 y:320.
+        $self set width:400 height:230.
+        $self set caption:"About the program".
         
         BtmOk := Button new.
         theControls append:BtmOk.
@@ -22,17 +21,16 @@
         infoLabel := Label new.
         theControls append:infoLabel.
 
-        infoLabel set &x:20 &y:20.
-        infoLabel set &width:320 &height:20.
-        infoLabel set &caption:"Special thanks to Alex Rakov, for the support.".            
+        infoLabel set x:20 y:20.
+        infoLabel set width:320 height:20.
+        infoLabel set caption:"Special thanks to Alex Rakov, for the support.".            
         
-        BtmOk set &x:30 &y:175.
-        BtmOk set &width:50 & height:22.
-        BtmOk set &caption:"OK".            
+        BtmOk set x:30 y:175.
+        BtmOk set width:50 height:22.
+        BtmOk set caption:"OK".            
         
-        #var aForm := $self.
-        BtmOk set &onClick:args
-            [ aForm close. ].        
+        BtmOk set onClick: (:args)
+            [ $self close ].
     ]
 }
 

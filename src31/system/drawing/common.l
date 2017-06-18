@@ -10,7 +10,7 @@ sealed embeddable struct Point :: BaseNumber, dispatchable(coord)
     int theX.
     int theY.
     
-    constructor new
+    embeddable constructor new
     [
         theX := 0.
         theY := 0.
@@ -111,7 +111,7 @@ sealed embeddable struct Dimension :: BaseValue, dispatchable(dimension)
     int theWidth.
     int theHeight.
     
-    constructor new
+    embeddable constructor new
     [
         theWidth := 0.
         theHeight := 0.
@@ -186,7 +186,7 @@ sealed embeddable struct Region :: BaseValue, dispatchable(region)
     int theWidth.
     int theHeight.
     
-    constructor new
+    embeddable constructor new
     [
         theX := 0.
         theY := 0.
