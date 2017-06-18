@@ -1320,6 +1320,16 @@ bool Compiler::TemplateScope :: isAttribute(SNode terminal)
    return (ref != 0 && isPrimitiveRef(moduleScope->subjectHints.get(ref)));
 }
 
+bool Compiler::TemplateScope :: isTypeAttribute(SNode terminal, bool followedByVerb)
+{
+   int dummy = 0;
+   ref_t ref = mapAttribute(terminal, dummy);
+   if (ref == INVALID_REF) {
+      return followedByVerb;
+   }
+   else return mapSubject(terminal.findChild(lxIdentifier, lxPrivate)) != 0;
+}
+
 ref_t Compiler::TemplateScope :: mapTemplate(SNode terminal, int prefixCounter)
 {
    int paramCounter = SyntaxTree::countChild(terminal, lxAttributeValue);
@@ -7751,9 +7761,11 @@ bool Compiler :: generateMethodScope(SNode node, TemplateScope& scope, SNode att
 
       // HOTFIX : recognize generic attribute      
       if (!scope.isAttribute(lastAttr)) {
+         bool isVerb = _verbs.exist(lastAttr.findChild(lxIdentifier).findChild(lxTerminal).identifier());
+
          current = lastAttr.prevNode();
          // HOTFIX : recognize attribute / type
-         if (current == lxAttribute && !scope.isAttribute(current) && scope.mapSubject(current.findChild(lxIdentifier, lxPrivate)) == 0) {
+         if (current == lxAttribute && !scope.isAttribute(current) && !scope.isTypeAttribute(current, isVerb)) {
             lastAttr = lxMessage;
             lastAttr = current;
          }

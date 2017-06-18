@@ -8,7 +8,7 @@ class BaseMenu
     object theParent.
     list   theItems.
     
-    method items =
+    items =
     {
         getAt : anIndex = $owner getAt int:(anIndex int).
         

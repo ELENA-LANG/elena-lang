@@ -7,21 +7,21 @@ field template prop :: type, prop_name
         field := val
     ]
     
-    type prop_name = field.
+    type get prop_name = field.
 }
 
 field template rprop :: type, prop_name
 {
     type field.
     
-    type prop_name = field.
+    type get prop_name = field.
 }
 
 // --- outnprop ---
 
 method template outnprop :: type,prop_name,target_method
 {
-    stacksafe embeddable type prop_name
+    stacksafe embeddable type get prop_name
     [
         int val := 0.        
         $self target_method vint:val.
@@ -34,7 +34,7 @@ method template outnprop :: type,prop_name,target_method
 
 method template nprop :: type,prop_name,get_method,set_method
 {
-    stacksafe embeddable type prop_name
+    stacksafe embeddable type get prop_name
     [
         int val := 0.        
         $self get_method vint:val.
@@ -52,7 +52,7 @@ method template nprop :: type,prop_name,get_method,set_method
 
 method template outlprop :: type,prop_name,target_method
 {
-    stacksafe embeddable type prop_name
+    stacksafe embeddable type get prop_name
     [
         long val := 0.        
         $self target_method vlong:val.
@@ -66,7 +66,7 @@ method template outlprop :: type,prop_name,target_method
 
 method template outwprop :: type,prop_name,target_method
 {
-   stacksafe embeddable type prop_name
+   stacksafe embeddable type get prop_name
    [
         short val := 0.
         $self target_method vshort:val.
