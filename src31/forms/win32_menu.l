@@ -10,7 +10,7 @@ class BaseMenu
     
     items =
     {
-        getAt : anIndex = $owner getAt int:(anIndex int).
+        getAt : anIndex = $self getAt int:(anIndex int).
         
         getAt int:anIndex => theItems.        
         
@@ -24,7 +24,7 @@ class BaseMenu
         
         append caption:aCaption
         [
-            $owner append caption:aCaption onClick:$nil.
+            $self append caption:aCaption onClick:$nil.
         ]
     }.
     
@@ -99,7 +99,7 @@ class MenuItem :: BaseMenu
     
     click 
     [
-        if($nil != theClick)
+        if($nil != theClick)   
             [ theClick eval:$self ].
     ]
     
@@ -115,7 +115,7 @@ class MenuItem :: BaseMenu
             ];
             [
                 theMenuHandle := HMENU new.
-                hmenu append int:MF_STRING int:theMenuHandle wide:theCaption.
+                hmenu append int:MF_STRING handle:theMenuHandle wide:theCaption.
                 
                 $super open.
             ].

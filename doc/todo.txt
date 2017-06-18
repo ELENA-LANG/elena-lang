@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              xdev - refactoring
-                 * test notepad sample
-
               zdev - gui
                  * gui script
                  * graph : function declared in the script

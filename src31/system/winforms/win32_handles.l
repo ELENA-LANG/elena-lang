@@ -49,7 +49,7 @@ sealed embeddable struct MSG
 
 // --- CREATESTRUCT ---
 
-sealed embeddable struct CREATESTRUCT
+sealed embeddable struct CREATESTRUCT :: dispatchable(win_createstruct)
 {
     int       theCreateParam.
     hinstance theInstance.    
@@ -76,7 +76,7 @@ sealed embeddable struct CREATESTRUCT
 
 // --- HMENU ---
 
-sealed const embeddable struct HMENU
+sealed const embeddable struct HMENU :: dispatchable(hmenu)
 {
     __ptr theHandle.
     
@@ -97,6 +97,8 @@ sealed const embeddable struct HMENU
     stacksafe append int:Flags int:anID wide:aCaption
     [
         system'external'USER32 AppendMenuW int:theHandle int:Flags int:anID wide:aCaption.
+        
+        int err := system'external'KERNEL32 GetLastError.
     ]
             
     stacksafe append int:Flags handle:aParent wide:aCaption
