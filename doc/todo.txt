@@ -3,6 +3,7 @@ In development:
 ------                              
 
               zdev - gui
+                 * simple direct x application
                  * gui script
                  * graph : function declared in the script
 

@@ -8,7 +8,7 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA Standard Library
-version=3.1.10
+version=3.1.11
 author=Alex Rakov
 
 [files]
@@ -60,3 +60,4 @@ winforms\win32_controls.l
 winforms\win32_windows.l
 winforms\win32_dialogs.l
 winforms\win32_app.l
+winforms\win32_xwindows.l

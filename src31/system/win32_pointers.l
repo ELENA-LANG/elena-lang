@@ -61,6 +61,11 @@ sealed embeddable struct UnsafePointer :: dispatchable(dirty_ptr)
 //        $self set:anObject.
 //    ]
     
+    stacksafe implicit object:ref
+    [
+        $self set:ref.
+    ]
+    
     stacksafe set : anObject
         => system'core_routines'__dptr.
                 
@@ -116,6 +121,11 @@ sealed embeddable struct UnsafePointer :: dispatchable(dirty_ptr)
     ]
     
     stacksafe saveTo bytearray:target int:offs
+    [
+        target write int:offs int:thePointer.
+    ]
+    
+    stacksafe saveTo intarray:target int:offs
     [
         target write int:offs int:thePointer.
     ]

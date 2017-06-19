@@ -4724,6 +4724,15 @@ procedure __hwnd.eval&system$fillWndClass&bytearray$&wide$&int$&hinstance$winfor
 
 end
 
+procedure __hwnd.eval&system$readXWndProc&vint$[2]
+
+  acopyr intern : system'core_routines'win_XWndProc
+  bloadsi 1
+  axsavebi 0
+  quitn 2
+
+end
+
 // ; win32 constants
 define WM_CREATE            1
 define WM_DESTROY           2
@@ -4731,6 +4740,8 @@ define WM_SIZE              5
 define WM_PAINT             000Fh
 define WM_CLOSE             0010h
 define WM_SETCURSOR         0020h
+define WM_KEYDOWN           0100h
+define WM_KEYUP             0101h
 define WM_COMMAND           0111h
 define GWL_USERDATA         0FFFFFFEBh
 
@@ -4933,6 +4944,118 @@ labSize:
   pusha  
   xindexrm system'winforms'WindowCallback %eval&hwnd$winforms&int$&int$&int$&vint$[5]  
   acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+
+labEnd2:
+  callextr api : closeframe
+  jump  labEnd
+  
+end
+
+procedure win_XWndProc
+
+  dloadsi 2
+  ifn labCreate WM_CREATE
+  ifn labEvent WM_KEYDOWN
+  ifn labEvent WM_KEYUP
+  ifn labPaint WM_PAINT
+  ifn labEvent WM_DESTROY
+
+labEnd:
+  eloadsi 4
+  pushe
+  eloadsi 4
+  pushe
+  pushd
+  eloadsi 4
+  pushe
+  callextr extern : 'dlls'USER32.DefWindowProcW
+  quitn 4
+  
+labCreate:
+  callextr api : openframe
+
+  pushn 0
+  bcopys 0
+  
+  pushb
+  aloadfi -7
+  pusha
+  acopyf -6
+  pusha
+  acopyf -5
+  pusha
+  acopyf -4
+  pusha
+
+  aloadfi -7
+  pusha
+  callextr api : resolve_index  
+
+  pusha  
+  xcallrm system'winforms'XWindowCallback %eval&wm_create&hwnd$winforms&int$&int$&win_createstruct$winforms&vint$[5]
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labPaint:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xcallrm system'winforms'XWindowCallback %eval&wm_paint&hwnd$winforms&int$&vint$[3]
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labEvent:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -7
+  pushb
+  bcopyf -6
+  pushb
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xcallrm system'winforms'XWindowCallback %eval&hwnd$winforms&int$&int$&int$&vint$[5]  
   popa
 
   callextr api : closeframe
