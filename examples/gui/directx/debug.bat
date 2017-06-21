@@ -1,0 +1,1 @@
+D:\Install\Bcc55\bin\TD32.EXE %1

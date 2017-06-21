@@ -26,10 +26,18 @@ sealed class Form :: iform(object)
 {
     hwnd theHandle.
     
+    /// events
+    func onInit :: event(theInitFunc).
+
+    /// properties
     int width  :: nprop(readWidthTo,writeWidth).
     int height :: nprop(readHeightTo,writeHeight).
     
     constructor new
+    [
+    ]
+    
+    create
     [
         int width := $self width.
         int height := $self height.
@@ -53,7 +61,10 @@ sealed class Form :: iform(object)
                         int:height
                         hwnd:0
                         hinstance:CurrentInstance 
-                        object:(XWindowCallback new xwindow:$self ).
+                        object:(XWindowCallback new xwindow:$self).
+                        
+        if ($nil != theInitFunc)
+            [ theInitFunc eval ].                                
     ]
     
     stacksafe $on_destroy vint:aRetVal

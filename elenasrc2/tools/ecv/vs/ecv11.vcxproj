@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>ecv</ProjectName>
-    <ProjectGuid>{831A107C-C3C1-4090-87F4-60179ABA83D4}</ProjectGuid>
+    <ProjectGuid>{A4214A73-6967-43D7-88F9-DF45826EB4E5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>

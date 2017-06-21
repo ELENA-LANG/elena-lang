@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{895D3762-6397-468A-8984-779C1A9E5C0D}</ProjectGuid>
+    <ProjectGuid>{191F5360-84B0-43D7-BA23-C9AA254A19B8}</ProjectGuid>
     <RootNamespace>elenart</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
