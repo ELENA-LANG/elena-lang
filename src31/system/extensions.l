@@ -1598,4 +1598,19 @@ class byteArrayHelper =
     [
         array write int:offset char:retVal
     ]
+    
+    stacksafe fill bytearray:array int:offset int:length byte:val
+    [
+        array fill int:offset int:length byte:val.
+    ]
+}.
+
+// --- intArrayHelper ---
+
+singleton intArrayHelper =
+{    
+    stacksafe fill intarray:array int:offset int:length int:val
+    [
+        array fill int:offset int:length int:val.
+    ]
 }.

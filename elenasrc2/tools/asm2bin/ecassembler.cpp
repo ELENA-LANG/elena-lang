@@ -499,6 +499,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             compileRRCommand(opcode, token, writer, binary);
             break;
          case bcXIndexRM:
+         case bcXCallRM:
             compileRMCommand(opcode, token, writer, binary);
             break;
          default:

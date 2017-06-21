@@ -1,0 +1,13 @@
+﻿[project]
+executable=directx_hellowindow.exe
+namespace=directx_hellowindow
+template=gui
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+hellowindow.l
+
+[forwards]
+'program=system'winforms'xprogram
+'mainWindow=$elena'@rootnamespace'helloWindow

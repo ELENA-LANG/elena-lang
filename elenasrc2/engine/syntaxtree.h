@@ -232,6 +232,7 @@ enum LexicalType
    lxInternalRef     = 0x20032,
    lxTemplateVar     = 0x20033,
    lxEmbeddableMssg  = 0x20034,
+   lxBoxingRequired  = 0x20035,
 
    lxTempAttr        = 0x2010D,
 };

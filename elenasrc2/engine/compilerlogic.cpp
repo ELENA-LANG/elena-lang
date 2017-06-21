@@ -699,8 +699,10 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
                }
                else {
                   ref_t subjRef = scope.subjectHints.get(subj);
-
-                  compatible = subjRef != 0 && isCompatible(scope, subjRef, sourceRef);
+                  if (subjRef != 0) {
+                     compatible = isCompatible(scope, subjRef, sourceRef);
+                  }
+                  else compatible = true;
                }
 
                if (compatible) {
@@ -1304,6 +1306,13 @@ bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, 
             SNodePattern(lxExpression),
             SNodePattern(lxDirectCalling, lxSDirctCalling),
             SNodePattern(lxThisLocal, lxLocal));
+         if (target == lxNone) {
+            target = SyntaxTree::findPattern(root, 4,
+               SNodePattern(lxExpression),
+               SNodePattern(lxDirectCalling, lxSDirctCalling),
+               SNodePattern(lxExpression),
+               SNodePattern(lxThisLocal, lxLocal));
+         }
 
          if (target == lxLocal && target.argument == -1 && extensionRef != 0) {            
             if (message.findChild(lxCallTarget).argument != extensionRef)

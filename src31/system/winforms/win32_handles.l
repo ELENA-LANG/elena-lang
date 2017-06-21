@@ -36,10 +36,12 @@ sealed embeddable struct MSG
     int    theX.
     int    theY.    
     
-    /// Dummy initializer
-    stacksafe implicit int:n
+    embeddable constructor new    
     [
+        theMessage := 0.
     ]
+    
+    int message :: outnprop(readMessageTo).
     
     stacksafe readMessageTo vint:aMessage
     [

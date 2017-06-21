@@ -3,6 +3,7 @@ In development:
 ------                              
 
               zdev - gui
+                 * simple direct x application
                  * gui script
                  * graph : function declared in the script
 
@@ -59,6 +60,7 @@ Pipeline:
 
               xdev - general optimization  
                  * replace "vint int := int" with direct assinging
+                 * map isEmbeddable results, to reuse them
 
               sdev - samples
                  * basic tests

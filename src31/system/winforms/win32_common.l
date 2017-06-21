@@ -1,5 +1,7 @@
 const int GWL_USERDATA            = -21.
 
+const int CW_USEDEFAULT           = 80000000h.
+
 // --- styles ---
 const int WS_OVERLAPPEDWINDOW     = 00CF0000h.
 const int WS_DIALOGWINDOW         = 00C80000h.
@@ -54,6 +56,7 @@ const int WM_GETTEXTLENGTH = 0Eh.
 const int WM_PAINT         = 0Fh.
 const int WM_CLOSE         = 10h.
 const int WM_SETCURSOR     = 20h.
+const int WM_QUIT          = 12h.
 
 const int SWP_NOSIZE       = 0001h.
 const int SWP_NOMOVE       = 0002h.
