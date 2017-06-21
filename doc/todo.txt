@@ -60,6 +60,7 @@ Pipeline:
 
               xdev - general optimization  
                  * replace "vint int := int" with direct assinging
+                 * map isEmbeddable results, to reuse them
 
               sdev - samples
                  * basic tests

@@ -23,10 +23,20 @@ sealed embeddable struct RECT
     int       theRight.
     int       theBottom.
     
+    embeddable constructor new
+    [
+        theLeft := 0.
+        theTop := 0.
+        theRight := 0.
+        theBottom := 0.
+    ]
+    
     int left   :: nprop(readLeftTo, setLeft).
     int top    :: nprop(readToTo, setTop).
     int right  :: nprop(readRightTo, setRight).
     int bottom :: nprop(readBottomTo, setBottom).
+    int width  :: outnprop(readWidthTo).
+    int height :: outnprop(readHeightTo).
     
     stacksafe setLeft int:aValue
     [
@@ -66,6 +76,24 @@ sealed embeddable struct RECT
     stacksafe readBottomTo vint:aRetVal
     [
         aRetVal int := theBottom.
+    ]
+    
+    stacksafe readWidthTo vint:aRetVal
+    [
+        int x2 := theRight.
+        int x1 := theLeft.
+        int w := x2 - x1.
+        
+        aRetVal int := w.
+    ]
+    
+    stacksafe readHeightTo vint:aRetVal
+    [
+        int y2 := theBottom.
+        int y1 := theTop.
+        int h := y2 - y1.
+        
+        aRetVal int := h.
     ]
 }
 

@@ -43,6 +43,7 @@ using namespace _ELENA_;
 #define HINT_SUBCODE_CLOSURE  0x00008800
 #define HINT_RESENDEXPR       0x00000400
 #define HINT_LAZY_EXPR        0x00000200
+#define HINT_DYNAMIC_OBJECT   0x00000100  // indicates that the structure MUST be boxed
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
@@ -1177,6 +1178,9 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
       // map as an outer field (reference to outer object and outer object field index)
       return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam, owner.outerObject.type);
    }
+   else if (identifier.compare(SUPER_VAR)) {
+      return ObjectInfo(okSuper, info.header.parentRef);
+   }
    else if (identifier.compare(OWNER_VAR)) {
       Outer owner = mapOwner();
 
@@ -2203,18 +2207,22 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          writer.appendNode(lxTarget, scope.moduleScope->signatureReference);
          break;
       case okLocalAddress:
-         if (!test(mode, HINT_NOBOXING)) {
+         if (!test(mode, HINT_NOBOXING) || test(mode, HINT_DYNAMIC_OBJECT)) {
             writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, object.extraparam));
             writer.appendNode(lxLocalAddress, object.param);
+            if (test(mode, HINT_DYNAMIC_OBJECT))
+               writer.appendNode(lxBoxingRequired);
          }
          else writer.newNode(lxLocalAddress, object.param);
          break;
       case okFieldAddress:
-         if (!test(mode, HINT_NOBOXING)) {
+         if (!test(mode, HINT_NOBOXING) || test(mode, HINT_DYNAMIC_OBJECT)) {
             ref_t target = resolveObjectReference(scope, object);
 
             writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, target));
             writer.appendNode(lxFieldAddress, object.param);
+            if (test(mode, HINT_DYNAMIC_OBJECT))
+               writer.appendNode(lxBoxingRequired);
          }
          else writer.newNode(lxFieldAddress, object.param);
          break;
@@ -3108,9 +3116,15 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
          else {
             writer.newBookmark();
 
-            ObjectInfo param = compileExpression(writer, arg, scope, paramMode);
+            int exprMode = paramMode;
+            ref_t subjClassRef = subjectRef != 0 ? scope.moduleScope->subjectHints.get(subjectRef) : 0;
+            // HOTFIX : generic parameter object MUST be boxed
+            if (subjClassRef == 0)
+               exprMode |= HINT_DYNAMIC_OBJECT;
+
+            ObjectInfo param = compileExpression(writer, arg, scope, exprMode);
             if (subjectRef != 0)
-               if (!convertObject(writer, *scope.moduleScope, scope.moduleScope->subjectHints.get(subjectRef), subjectRef, resolveObjectReference(scope, param), param.type))
+               if (!convertObject(writer, *scope.moduleScope, subjClassRef, subjectRef, resolveObjectReference(scope, param), param.type))
                   scope.raiseError(errInvalidOperation, arg);
 
             // HOTFIX : externall operation arguments should be inside expression node
@@ -3220,7 +3234,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
          // compile the parameter
          SNode sourceNode = exprNode.nextNode(lxObjectMask);
-         ObjectInfo source = compileExpression(writer, sourceNode, scope, 0);
+         ObjectInfo source = compileExpression(writer, sourceNode, scope, HINT_DYNAMIC_OBJECT);
 
          retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
 
@@ -5919,6 +5933,10 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
    ref_t targetRef = node.findChild(lxTarget).argument;
    ref_t sourceRef = 0;
    bool boxing = !test(mode, HINT_NOBOXING);
+
+   // HOTFIX : override the stacksafe attribute if the object must be boxed
+   if (!boxing && node.existChild(lxBoxingRequired))
+      boxing = true;
 
    SNode sourceNode = node.findSubNodeMask(lxObjectMask);
    if (sourceNode == lxBoxing) {

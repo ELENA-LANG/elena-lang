@@ -4727,7 +4727,7 @@ end
 procedure __hwnd.eval&system$readXWndProc&vint$[2]
 
   acopyr intern : system'core_routines'win_XWndProc
-  bloadsi 1
+  bloadsi 2
   axsavebi 0
   quitn 2
 
