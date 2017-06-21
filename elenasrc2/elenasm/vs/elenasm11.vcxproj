@@ -99,7 +99,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <OutputFile>..\..\..\bin\elenasm.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)elenavm.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>..\..\..\bin\elenasm.lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
