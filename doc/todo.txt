@@ -13,7 +13,6 @@ In development:
                  * check subject duplicates
                  * check attribute duplicates
                  * method duplicates
-
                  * migrating rosetta samples : Conway's Game of Life
                  * migrating pi2 sample
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
