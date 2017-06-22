@@ -10,15 +10,15 @@ You just need Visual Studio 2015 or 2017. Do not forget to include a path to BIN
 
 To build the compiler under VS2015 you have to go to the root folder and type:
 
-   recompile.bat
+    recompile.bat
 
 If you use VS2017 type the following:
 
-   recompile15.bat
+    recompile15.bat
 
 To build the ELENA libraries type the following command:
 
-   rebuild_lib.bat
+    rebuild_lib.bat
 
 ## Contributing
 
