@@ -45,7 +45,7 @@ bool ScriptParser :: setOption(ident_t option, ident_t projectPath)
          else _InterpretFile(option, _encoding, false);
       }
    }
-   else _InterpretScript(option) != 0;
+   else _InterpretScript(option);
 
    int length = _GetStatus(NULL, 0);
 
