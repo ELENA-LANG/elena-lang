@@ -12,7 +12,7 @@ template iform :: type
         
         stacksafe on_paint hwnd:anHWND vint:aRetVal
         [
-            $super on_paint hwnd:anHWND vint:aRetVal.
+            $owner $on_paint vint:aRetVal.
         ]
         
         stacksafe on_destroy hwnd:anHWND vint:aRetVal
@@ -27,8 +27,9 @@ sealed class Form :: iform(object)
     hwnd theHandle.
     
     /// events
-    func onInit :: event(theInitFunc).
+    func onInit    :: event(theInitFunc).
     func onDestroy :: event(theDestroyFunc).
+    func onPaint   :: event(thePaintFunc).
 
     /// properties
     int width  :: nprop(readWidthTo,writeWidth).
@@ -67,7 +68,15 @@ sealed class Form :: iform(object)
         if ($nil != theInitFunc)
             [ theInitFunc eval ].                                
     ]
-    
+
+    stacksafe $on_paint vint:aRetVal
+    [
+        if ($nil != thePaintFunc)
+            [ thePaintFunc eval ].
+
+        aRetVal int := 0.
+    ]
+                
     stacksafe $on_destroy vint:aRetVal
     [
         if ($nil != theDestroyFunc)
@@ -77,6 +86,8 @@ sealed class Form :: iform(object)
         
         aRetVal int := 0.
     ]
+
+    hwnd = theHandle.
 
     stacksafe readWidthTo vint:retVal
     [
