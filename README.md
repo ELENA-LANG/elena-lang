@@ -48,6 +48,23 @@ To build the ELENA libraries type the following command:
 
     rebuild_lib.bat
 
+## Contribute!
+
+ELENA Project looks for programmers interested in learning the language and providing feedback.
+
+### 1. Bugs, questions, suggestions?
+
+If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new)!
+
+### 2. Implement "up for grab" issues
+
+You may implement one of the open [issues](https://github.com/ELENA-LANG/elena-lang/labels/up%20for%20grabs).
+
+### 3. Rosetta code
+
+You may try to implementing some of [Rosetta code tasks](http://rosettacode.org/wiki/Category:Programming_Tasks) 
+which are not yet implemented
+
 ## Source Code Organization
 
 ### Windows:
@@ -74,23 +91,6 @@ The ELENA source code is organized as follows:
 
 The compiler and executables distributed in this package fall under MIT License, 
 for more information read the file LICENSE.
-
-## Contribute!
-
-ELENA Project looks for programmers interested in learning the language and providing feedback.
-
-### 1. Bugs, questions, suggestions?
-
-If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new)!
-
-### 2. Implement "up for grab" issues
-
-You may implement one of the open [issues](https://github.com/ELENA-LANG/elena-lang/labels/up%20for%20grabs).
-
-### 3. Rosetta code
-
-You may try to implementing some of [Rosetta code tasks](http://rosettacode.org/wiki/Category:Programming_Tasks) 
-which are not yet implemented
 
 ## Questions?
 
