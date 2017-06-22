@@ -79,9 +79,18 @@ for more information read the file LICENSE.
 
 ELENA Project looks for programmers interested in learning the language and providing feedback.
 
-Some of the best ways to contribute are to try things out, file bugs, and join in design conversations. 
+### 1. Bugs, questions, suggestions?
 
-You may try to implementing some of [Rosetta code tasks](http://rosettacode.org/wiki/Category:Elena)
+If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new)!
+
+### 2. Implement "up for grab" issues
+
+You may implement one of the open [issues](https://github.com/ELENA-LANG/elena-lang/labels/up%20for%20grabs).
+
+### 3. Rosetta code
+
+You may try to implementing some of [Rosetta code tasks](http://rosettacode.org/wiki/Category:Programming_Tasks) 
+which are not yet implemented
 
 ## Questions?
 
