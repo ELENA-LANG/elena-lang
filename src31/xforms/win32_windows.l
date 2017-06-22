@@ -28,6 +28,7 @@ sealed class Form :: iform(object)
     
     /// events
     func onInit :: event(theInitFunc).
+    func onDestroy :: event(theDestroyFunc).
 
     /// properties
     int width  :: nprop(readWidthTo,writeWidth).
@@ -69,6 +70,9 @@ sealed class Form :: iform(object)
     
     stacksafe $on_destroy vint:aRetVal
     [
+        if ($nil != theDestroyFunc)
+            [ theDestroyFunc eval ].
+
         system'external'USER32 PostQuitMessage int:0.
         
         aRetVal int := 0.

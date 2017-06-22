@@ -12,14 +12,21 @@ sealed class HelloWindow
         theForm := Form new.
         
         theForm onInit func:[ $self onInit ].
+        theForm OnDestroy func:[ $self onDestroy ].
         
         theForm create.
     ]
 
     onInit
     [
+        system'external'elenagm InitD3D hwnd:theForm.
     ]
-            
+
+    onDestroy
+    [
+        system'external'elenagm CleanD3D.
+    ]
+
     dispatch => theForm.
 }
 
