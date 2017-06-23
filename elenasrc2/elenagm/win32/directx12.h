@@ -11,7 +11,9 @@
 #include "win32_common.h"
 
 using namespace DirectX;
-using namespace _ELENA_;
+
+namespace _ELENA_
+{
 
 class D3D12Platform : public GraphicPlatform
 {
@@ -77,8 +79,13 @@ public:
 
 	virtual void Init(HWND hWnd);
 
+	virtual void* NewWidget(void* parent, int type) { return NULL; }
+	virtual int CloseWidget(void* handle) { return 0; }
+
 	void OnRender(HWND hWnd);
 	void OnDestroy();
 };
+
+} // _ELENA_
 
 #endif // elenagm_d12H

@@ -4,7 +4,7 @@
 #include "directx12.h"
 #include "d2platform.h"
 
-//using namespace _ELENA_;
+using namespace _ELENA_;
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
@@ -56,6 +56,16 @@ EXTERN_DLL_EXPORT void CleanD3D(HWND hWnd)
 	delete platform;
 
 	platform = nullptr;
+}
+
+EXTERN_DLL_EXPORT void* NewWidget(void* parent, int type)
+{
+	return platform->NewWidget(parent, type);
+}
+
+EXTERN_DLL_EXPORT int CloseWidget(void* handle)
+{
+	return platform->CloseWidget(handle);
 }
 
 // --- dllmain ---

@@ -18,6 +18,8 @@
 
 #include "d2platform.h"
 
+using namespace _ELENA_;
+
 D2Platform :: D2Platform()
 {
 }
@@ -75,94 +77,96 @@ void D2Platform :: OnRender(HWND hWnd)
 
 	_renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Aqua));
 
-	static const WCHAR text[] = L"11On12";
+	RenderWidget(_model.First());
 
-	D2D1_SIZE_F rtSize = _renderTarget->GetSize();
+	//static const WCHAR text[] = L"11On12";
 
-	D2D1_RECT_F textRect = D2D1::RectF(0, 0, rtSize.width, rtSize.height);
+	//D2D1_SIZE_F rtSize = _renderTarget->GetSize();
 
-	ComPtr<ID2D1SolidColorBrush>		textBrush;
-	ComPtr<IDWriteTextFormat>			textFormat;
+	//D2D1_RECT_F textRect = D2D1::RectF(0, 0, rtSize.width, rtSize.height);
 
-	// Create a blue brush.
-	ThrowIfFailed(_renderTarget->CreateSolidColorBrush(
-		D2D1::ColorF(D2D1::ColorF::Black),
-		&textBrush
-	));
+	//ComPtr<ID2D1SolidColorBrush>		textBrush;
+	//ComPtr<IDWriteTextFormat>			textFormat;
 
-	ThrowIfFailed(_dWriteFactory->CreateTextFormat(
-		L"Verdana",
-		NULL,
-		DWRITE_FONT_WEIGHT_NORMAL,
-		DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL,
-		50,
-		L"en-us",
-		&textFormat
-	));
+	//// Create a blue brush.
+	//ThrowIfFailed(_renderTarget->CreateSolidColorBrush(
+	//	D2D1::ColorF(D2D1::ColorF::Black),
+	//	&textBrush
+	//));
 
-	_renderTarget->DrawText(
-		text,
-		_countof(text) - 1,
-		textFormat.Get(),
-		&textRect,
-		textBrush.Get()
-	);
+	//ThrowIfFailed(_dWriteFactory->CreateTextFormat(
+	//	L"Verdana",
+	//	NULL,
+	//	DWRITE_FONT_WEIGHT_NORMAL,
+	//	DWRITE_FONT_STYLE_NORMAL,
+	//	DWRITE_FONT_STRETCH_NORMAL,
+	//	50,
+	//	L"en-us",
+	//	&textFormat
+	//));
 
-	// Draw a grid background.
-	int width = static_cast<int>(rtSize.width);
-	int height = static_cast<int>(rtSize.height);
+	//_renderTarget->DrawText(
+	//	text,
+	//	_countof(text) - 1,
+	//	textFormat.Get(),
+	//	&textRect,
+	//	textBrush.Get()
+	//);
 
-	ComPtr<ID2D1SolidColorBrush> lightSlateGrayBrush;
-	ComPtr<ID2D1SolidColorBrush> cornflowerBlueBrush;
+	//// Draw a grid background.
+	//int width = static_cast<int>(rtSize.width);
+	//int height = static_cast<int>(rtSize.height);
 
-	// Create a gray brush.
-	ThrowIfFailed(_renderTarget->CreateSolidColorBrush(
-		D2D1::ColorF(D2D1::ColorF::LightSlateGray),
-		&lightSlateGrayBrush
-	));
-	// Create a blue brush.
-	ThrowIfFailed(_renderTarget->CreateSolidColorBrush(
-		D2D1::ColorF(D2D1::ColorF::CornflowerBlue),
-		&cornflowerBlueBrush
-	));
+	//ComPtr<ID2D1SolidColorBrush> lightSlateGrayBrush;
+	//ComPtr<ID2D1SolidColorBrush> cornflowerBlueBrush;
 
-	D2D1_RECT_F rectangle1 = D2D1::RectF(
-		rtSize.width / 2 - 50.0f,
-		rtSize.height / 2 - 50.0f,
-		rtSize.width / 2 + 50.0f,
-		rtSize.height / 2 + 50.0f
-	);
+	//// Create a gray brush.
+	//ThrowIfFailed(_renderTarget->CreateSolidColorBrush(
+	//	D2D1::ColorF(D2D1::ColorF::LightSlateGray),
+	//	&lightSlateGrayBrush
+	//));
+	//// Create a blue brush.
+	//ThrowIfFailed(_renderTarget->CreateSolidColorBrush(
+	//	D2D1::ColorF(D2D1::ColorF::CornflowerBlue),
+	//	&cornflowerBlueBrush
+	//));
 
-	D2D1_RECT_F rectangle2 = D2D1::RectF(
-		rtSize.width / 2 - 100.0f,
-		rtSize.height / 2 - 100.0f,
-		rtSize.width / 2 + 100.0f,
-		rtSize.height / 2 + 100.0f
-	);
+	//D2D1_RECT_F rectangle1 = D2D1::RectF(
+	//	rtSize.width / 2 - 50.0f,
+	//	rtSize.height / 2 - 50.0f,
+	//	rtSize.width / 2 + 50.0f,
+	//	rtSize.height / 2 + 50.0f
+	//);
 
-	_renderTarget->FillRectangle(&rectangle1, lightSlateGrayBrush.Get());
-	_renderTarget->DrawRectangle(&rectangle2, cornflowerBlueBrush.Get());
+	//D2D1_RECT_F rectangle2 = D2D1::RectF(
+	//	rtSize.width / 2 - 100.0f,
+	//	rtSize.height / 2 - 100.0f,
+	//	rtSize.width / 2 + 100.0f,
+	//	rtSize.height / 2 + 100.0f
+	//);
 
-	for (int x = 0; x < width; x += 10)
-	{
-		_renderTarget->DrawLine(
-			D2D1::Point2F(static_cast<FLOAT>(x), 0.0f),
-			D2D1::Point2F(static_cast<FLOAT>(x), rtSize.height),
-			lightSlateGrayBrush.Get(),
-			0.5f
-		);
-	}
+	//_renderTarget->FillRectangle(&rectangle1, lightSlateGrayBrush.Get());
+	//_renderTarget->DrawRectangle(&rectangle2, cornflowerBlueBrush.Get());
 
-	for (int y = 0; y < height; y += 10)
-	{
-		_renderTarget->DrawLine(
-			D2D1::Point2F(0.0f, static_cast<FLOAT>(y)),
-			D2D1::Point2F(rtSize.width, static_cast<FLOAT>(y)),
-			lightSlateGrayBrush.Get(),
-			0.5f
-		);
-	}
+	//for (int x = 0; x < width; x += 10)
+	//{
+	//	_renderTarget->DrawLine(
+	//		D2D1::Point2F(static_cast<FLOAT>(x), 0.0f),
+	//		D2D1::Point2F(static_cast<FLOAT>(x), rtSize.height),
+	//		lightSlateGrayBrush.Get(),
+	//		0.5f
+	//	);
+	//}
+
+	//for (int y = 0; y < height; y += 10)
+	//{
+	//	_renderTarget->DrawLine(
+	//		D2D1::Point2F(0.0f, static_cast<FLOAT>(y)),
+	//		D2D1::Point2F(rtSize.width, static_cast<FLOAT>(y)),
+	//		lightSlateGrayBrush.Get(),
+	//		0.5f
+	//	);
+	//}
 
 	HRESULT hr = _renderTarget->EndDraw();
 	if (hr == D2DERR_RECREATE_TARGET) {
@@ -172,6 +176,89 @@ void D2Platform :: OnRender(HWND hWnd)
 	ThrowIfFailed(hr);
 }
 
+void D2Platform :: RenderWidget(BaseWidget* widget)
+{
+	if (!widget)
+		return;
+
+	WidgetType type = widget->Type();
+	switch (type)
+	{
+		case _ELENA_::wtRectangle:
+		{
+			D2D1_SIZE_F rtSize = _renderTarget->GetSize();
+
+			ComPtr<ID2D1SolidColorBrush> lightSlateGrayBrush;
+			D2D1_RECT_F rectangle1 = D2D1::RectF(
+				rtSize.width / 2 - 50.0f,
+				rtSize.height / 2 - 50.0f,
+				rtSize.width / 2 + 50.0f,
+				rtSize.height / 2 + 50.0f
+			);
+
+			ThrowIfFailed(_renderTarget->CreateSolidColorBrush(
+				D2D1::ColorF(D2D1::ColorF::CornflowerBlue),
+				&lightSlateGrayBrush
+			));
+
+			_renderTarget->FillRectangle(&rectangle1, lightSlateGrayBrush.Get());
+			break;
+		}
+		case _ELENA_::wtText:
+		{
+			static const WCHAR text[] = L"11On12";
+
+			D2D1_SIZE_F rtSize = _renderTarget->GetSize();
+			D2D1_RECT_F textRect = D2D1::RectF(0, 0, rtSize.width, rtSize.height);
+
+			ComPtr<ID2D1SolidColorBrush>		textBrush;
+			ComPtr<IDWriteTextFormat>			textFormat;
+
+			// Create a blue brush.
+			ThrowIfFailed(_renderTarget->CreateSolidColorBrush(
+				D2D1::ColorF(D2D1::ColorF::Black),
+				&textBrush
+			));
+
+			ThrowIfFailed(_dWriteFactory->CreateTextFormat(
+				L"Verdana",
+				NULL,
+				DWRITE_FONT_WEIGHT_NORMAL,
+				DWRITE_FONT_STYLE_NORMAL,
+				DWRITE_FONT_STRETCH_NORMAL,
+				50,
+				L"en-us",
+				&textFormat
+			));
+
+			_renderTarget->DrawText(
+				text,
+				_countof(text) - 1,
+				textFormat.Get(),
+				&textRect,
+				textBrush.Get()
+			);
+
+			break;
+		}
+		default:
+			break;
+	}
+
+	for (WidgetList::Iterator it = widget->Children(); !it.Eof(); it++) {
+		RenderWidget(*it);
+	}
+}
+
+void* D2Platform :: NewWidget(void* parent, int type)
+{
+	return _model.NewWidget(parent, type);
+}
+
+int D2Platform :: CloseWidget(void* handle)
+{
+	return _model.CloseWidget(handle);
+}
 
 void D2Platform :: OnDestroy()
 {

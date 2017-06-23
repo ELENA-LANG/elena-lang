@@ -24,6 +24,9 @@ sealed class HelloWindow
     onInit
     [
         system'external'elenagm InitD3D int:(theForm hwnd).
+        
+        int parent := system'external'elenagm NewWidget int:0 int:1.
+        system'external'elenagm NewWidget int:parent int:2.
     ]
 
     onDestroy

@@ -18,6 +18,9 @@
 
 #include "directx12.h"
 
+using namespace _ELENA_;
+
+
 D3D12Platform :: D3D12Platform(path_t rootPath, int width, int height) :
 	_frameIndex(0),	
 	_viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)),
