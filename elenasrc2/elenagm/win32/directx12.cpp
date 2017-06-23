@@ -18,7 +18,7 @@
 
 #include "directx12.h"
 
-D12Platform :: D12Platform(path_t rootPath, int width, int height) : 
+D3D12Platform :: D3D12Platform(path_t rootPath, int width, int height) :
 	_frameIndex(0),	
 	_viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)),
 	_scissorRect(0, 0, static_cast<LONG>(width), static_cast<LONG>(height)),
@@ -32,7 +32,7 @@ D12Platform :: D12Platform(path_t rootPath, int width, int height) :
 	_aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 }
 
-void D12Platform :: Init(HWND hWnd, int sampleCount)
+void D3D12Platform :: Init(HWND hWnd)
 {
 	UINT dxgiFactoryFlags = 0;
 	UINT d3d11DeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -65,7 +65,7 @@ void D12Platform :: Init(HWND hWnd, int sampleCount)
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChainDesc.SampleDesc.Count = sampleCount;
+	swapChainDesc.SampleDesc.Count = 1;
 
 	ComPtr<IDXGISwapChain1> swapChain;
 	ThrowIfFailed(factory->CreateSwapChainForHwnd(
@@ -181,7 +181,7 @@ void D12Platform :: Init(HWND hWnd, int sampleCount)
 	InitPipeline();
 }
 
-void D12Platform :: InitPipeline()
+void D3D12Platform :: InitPipeline()
 {
 	// Create an empty root signature.
 	{
@@ -332,7 +332,7 @@ void D12Platform :: InitPipeline()
 }
 
 // Render text over D3D12 using D2D via the 11On12 device.
-void D12Platform :: RenderUI()
+void D3D12Platform :: RenderUI()
 {
 	D2D1_SIZE_F rtSize = _d2dRenderTargets[_frameIndex]->GetSize();
 	D2D1_RECT_F textRect = D2D1::RectF(0, 0, rtSize.width, rtSize.height);
@@ -363,7 +363,7 @@ void D12Platform :: RenderUI()
 	_d3d11DeviceContext->Flush();
 }
 
-void D12Platform :: OnRender()
+void D3D12Platform :: OnRender(HWND hWnd)
 {
 	PIXBeginEvent(_commandQueue.Get(), 0, L"Render 3D");
 
@@ -385,7 +385,7 @@ void D12Platform :: OnRender()
 	MoveToNextFrame();
 }
 
-void D12Platform :: PopulateCommandList()
+void D3D12Platform :: PopulateCommandList()
 {
 	// Command list allocators can only be reset when the associated 
 	// command lists have finished execution on the GPU; apps should use 
@@ -423,7 +423,7 @@ void D12Platform :: PopulateCommandList()
 }
 
 // Prepare to render the next frame.
-void D12Platform :: MoveToNextFrame()
+void D3D12Platform :: MoveToNextFrame()
 {
 	// Schedule a Signal command in the queue.
 	const UINT64 currentFenceValue = _fenceValues[_frameIndex];
@@ -444,7 +444,7 @@ void D12Platform :: MoveToNextFrame()
 }
 
 // Wait for pending GPU work to complete.
-void D12Platform :: WaitForGpu()
+void D3D12Platform :: WaitForGpu()
 {
 	// Schedule a Signal command in the queue.
 	ThrowIfFailed(_commandQueue->Signal(_fence.Get(), _fenceValues[_frameIndex]));
@@ -457,7 +457,7 @@ void D12Platform :: WaitForGpu()
 	_fenceValues[_frameIndex]++;
 }
 
-void D12Platform :: OnDestroy()
+void D3D12Platform :: OnDestroy()
 {
 	// Ensure that the GPU is no longer referencing resources that are about to be
 	// cleaned up by the destructor.

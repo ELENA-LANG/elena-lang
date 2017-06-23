@@ -13,7 +13,7 @@
 using namespace DirectX;
 using namespace _ELENA_;
 
-class D12Platform
+class D3D12Platform : public GraphicPlatform
 {
 	static const UINT FrameCount = 3;
 
@@ -69,13 +69,15 @@ class D12Platform
 
 	void WaitForGpu();
 
-public:
-	D12Platform(path_t rootPath, int width, int height);
-
-	void Init(HWND hWnd, int sampleCount);
 	void InitPipeline();
 
-	void OnRender();
+public:
+	D3D12Platform(path_t rootPath, int width, int height);
+	virtual ~D3D12Platform() {}
+
+	virtual void Init(HWND hWnd);
+
+	void OnRender(HWND hWnd);
 	void OnDestroy();
 };
 

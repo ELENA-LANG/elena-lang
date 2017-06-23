@@ -19,6 +19,8 @@
 #include <D3Dcompiler.h>
 #include <pix.h>
 
+#include "gplatform.h"
+
 using Microsoft::WRL::ComPtr;
 
 // --- Exception base class ---

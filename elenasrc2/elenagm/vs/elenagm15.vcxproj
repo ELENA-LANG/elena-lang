@@ -105,6 +105,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\common\altstrings.cpp" />
     <ClCompile Include="..\..\common\files.cpp" />
+    <ClCompile Include="..\win32\d2platform.cpp" />
     <ClCompile Include="..\win32\directx12.cpp" />
     <ClCompile Include="..\win32\dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -120,8 +121,10 @@
     <ClInclude Include="..\..\common\common.h" />
     <ClInclude Include="..\..\common\files.h" />
     <ClInclude Include="..\..\common\tools.h" />
+    <ClInclude Include="..\win32\d2platform.h" />
     <ClInclude Include="..\win32\d3dx12.h" />
     <ClInclude Include="..\win32\directx12.h" />
+    <ClInclude Include="..\win32\gplatform.h" />
     <ClInclude Include="..\win32\win32_common.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
