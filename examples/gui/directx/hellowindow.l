@@ -11,6 +11,9 @@ sealed class HelloWindow
     [
         theForm := Form new.
         
+        theForm width := 1280.
+        theForm height := 720.
+        
         theForm onInit func:[ $self onInit ].
         theForm onDestroy func:[ $self onDestroy ].
         theForm onPaint func:[ $self onPaint ].

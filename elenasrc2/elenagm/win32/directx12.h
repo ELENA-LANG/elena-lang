@@ -7,9 +7,11 @@
 #ifndef elenagm_d12H
 #define elenagm_d12H 1
 
+#include "elena.h"
 #include "win32_common.h"
 
 using namespace DirectX;
+using namespace _ELENA_;
 
 class D12Platform
 {
@@ -21,12 +23,14 @@ class D12Platform
 		XMFLOAT4 color;
 	};
 
+	path_t  _rootPath;
 	int		_width;
 	int		_height;
 	float	_aspectRatio;
 
 	// Pipeline objects.
 	CD3DX12_VIEWPORT					_viewport;
+	CD3DX12_RECT						_scissorRect;
 	ComPtr<ID3D12Device>				_d3d12Device;
 	ComPtr<ID3D11On12Device>			_d3d11On12Device;
 	ComPtr<ID3D11DeviceContext>			_d3d11DeviceContext;
@@ -66,10 +70,10 @@ class D12Platform
 	void WaitForGpu();
 
 public:
-	D12Platform(int width, int height);
+	D12Platform(path_t rootPath, int width, int height);
 
 	void Init(HWND hWnd, int sampleCount);
-	void LoadAssets();
+	void InitPipeline();
 
 	void OnRender();
 	void OnDestroy();

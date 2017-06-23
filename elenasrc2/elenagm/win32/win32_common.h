@@ -16,6 +16,8 @@
 #include "d3dx12.h"
 #include <dwrite.h>
 #include <DirectXMath.h>
+#include <D3Dcompiler.h>
+#include <pix.h>
 
 using Microsoft::WRL::ComPtr;
 

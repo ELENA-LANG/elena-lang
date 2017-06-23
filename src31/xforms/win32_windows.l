@@ -25,6 +25,8 @@ template iform :: type
 sealed class Form :: iform(object)
 {
     hwnd theHandle.
+    int  theWidth.
+    int  theHeight.
     
     /// events
     func onInit    :: event(theInitFunc).
@@ -91,20 +93,22 @@ sealed class Form :: iform(object)
 
     stacksafe readWidthTo vint:retVal
     [
-        retVal int := 300.
+        retVal int := theWidth.
     ]
     
     stacksafe writeWidth int:val
     [
+        theWidth := val.
     ]
     
     stacksafe readHeightTo vint:retVal
     [
-        retVal int := 300.
+        retVal int := theHeight.
     ]
     
     stacksafe writeHeight int:val
     [
+        theHeight := val.
     ]
         
     set visible:value

@@ -3,9 +3,12 @@ In development:
 ------                              
 
               zdev - gui
-                 * simple direct x application
+                 * simple form with several labels
+                 * simple form with several labels : fonts, sizes
                  * gui script
+                 * use directx to build UI
                  * graph : function declared in the script
+                 * directx : create 3D sample
 
               xdev - refactoring
                  * nshift should be replaced with nshiftl, nshiftr
