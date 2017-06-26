@@ -32,7 +32,46 @@ void* Model :: NewWidget(void* parentRef, int type)
 	return widget;
 }
 
+int Model :: SetLocation(void* handle, int x, int y)
+{
+	BaseWidget* widget = static_cast<BaseWidget*>(handle);
+
+	int left, right, top, bottom;
+	widget->readRect(left, top, right, bottom);
+	right = x + right - left;
+	bottom = y + bottom - top;
+	left = x;
+	top = y;
+
+	widget->setRect(left, top, right, bottom);
+
+	return 0;
+}
+
+int Model :: SetSize(void* handle, int width, int height)
+{
+	BaseWidget* widget = static_cast<BaseWidget*>(handle);
+
+	int left, right, top, bottom;
+	widget->readRect(left, top, right, bottom);
+	right = left + width;
+	bottom = top + height;
+
+	widget->setRect(left, top, right, bottom);
+
+	return 0;
+}
+
+int Model :: SetText(void* handle, const wchar_t* text)
+{
+	BaseWidget* widget = static_cast<BaseWidget*>(handle);
+
+	widget->setText(text);
+
+	return 0;
+}
+
 int Model :: CloseWidget(void* handle)
 {
-	return 0;
+	return -1;
 }

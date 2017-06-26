@@ -7,15 +7,17 @@
 #ifndef elenagm_graphicsH
 #define elenagm_graphicsH 1
 
+#include "model.h"
+
 namespace _ELENA_
 {
 
 class GraphicPlatform
 {
-public:
-	virtual void* NewWidget(void* parent, int type) = 0;
-	virtual int CloseWidget(void* handle) = 0;
+protected:
+	Model* _model;
 
+public:
 	virtual ~GraphicPlatform() {}
 
 	virtual void Init(HWND hWnd) = 0;

@@ -23,6 +23,10 @@ public:
 	void* NewWidget(void* parent, int type);
 	int CloseWidget(void* handle);
 
+	int SetLocation(void* handle, int x, int y);
+	int SetSize(void* handle, int width, int height);
+	int SetText(void* handle, const wchar_t* text);
+
 	Model() { _root = NULL; }
 	virtual ~Model() { freeobj(_root); }
 };

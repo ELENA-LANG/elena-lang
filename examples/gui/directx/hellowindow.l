@@ -26,7 +26,12 @@ sealed class HelloWindow
         system'external'elenagm InitD3D int:(theForm hwnd).
         
         int parent := system'external'elenagm NewWidget int:0 int:1.
-        system'external'elenagm NewWidget int:parent int:2.
+        
+        system'external'elenagm SetLocation int:parent int:30 int:30.
+        system'external'elenagm SetSize int:parent int:70 int:15.
+        
+        int text := system'external'elenagm NewWidget int:parent int:2.
+        system'external'elenagm SetText int:text wide:"Hello Label"w.
     ]
 
     onDestroy

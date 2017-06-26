@@ -29,6 +29,21 @@ class BaseWidget
 	WidgetList	_children;
 
 public:
+	virtual void readRect(int& left, int& top, int& right, int& bottom)
+	{
+		if (_parent) {
+			_parent->readRect(left, top, right, bottom);
+		}		
+	}
+	virtual int setRect(int left, int top, int right, int bottom)
+	{
+		return -1;
+	}
+	virtual int setText(const wchar_t* text)
+	{
+		return -1;
+	}
+
 	virtual WidgetType Type() const { return wtNone; }
 
 	WidgetList::Iterator Children() { return _children.start(); }
@@ -47,24 +62,68 @@ public:
 	}
 };
 
-class RectangleWidget : public BaseWidget
+class BaseRectangleWidget : public BaseWidget
+{
+	int left, top;
+	int right, bottom;
+
+protected:
+	BaseRectangleWidget(BaseWidget* parent)
+		: BaseWidget(parent)
+	{
+		left = top = 0;
+		right = bottom = 50;
+	}
+public:
+	virtual void readRect(int& left, int& top, int& right, int& bottom)
+	{
+		left = this->left;
+		top = this->top;
+		right = this->right;
+		bottom = this->bottom;
+	}
+	virtual int setRect(int left, int top, int right, int bottom)
+	{
+		this->left = left;
+		this->top = top;
+		this->right = right;
+		this->bottom = bottom;
+
+		return 0;
+	}
+};
+
+class RectangleWidget : public BaseRectangleWidget
 {
 public:
 	virtual WidgetType Type() const { return wtRectangle; }
 
 	RectangleWidget(BaseWidget* parent)
-		: BaseWidget(parent)
+		: BaseRectangleWidget(parent)
 	{
 	}
 };
 
+typedef DynamicString<wchar_t> TextStr;
+
 class TextWidget : public BaseWidget
 {
+	TextStr _text;
+
 public:
 	virtual WidgetType Type() const { return wtText; }
 
+	const wchar_t* Text() const { return _text; }
+
+	virtual int setText(const wchar_t* text)
+	{
+		_text.copy(text);
+
+		return 0;
+	}
+
 	TextWidget(BaseWidget* parent)
-		: BaseWidget(parent)
+		: BaseWidget(parent), _text(L"Label")
 	{
 	}
 };

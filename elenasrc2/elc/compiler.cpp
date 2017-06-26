@@ -3007,7 +3007,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
 bool Compiler :: convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef, ref_t sourceType)
 {
-   if (!_logic->isCompatible(scope, targetRef, sourceRef)) {
+   if (!_logic->isCompatible(scope, (targetRef == 0 && targetType != 0) ? scope.subjectHints.get(targetType) : targetRef, sourceRef)) {
       // if it can be boxed / implicitly converted
       if (!_logic->injectImplicitConversion(writer, scope, *this, targetRef, sourceRef, sourceType))
          return typecastObject(writer, targetType);

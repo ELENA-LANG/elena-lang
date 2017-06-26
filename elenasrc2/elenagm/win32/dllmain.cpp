@@ -10,6 +10,7 @@ using namespace _ELENA_;
 
 //Path			rootPath;
 GraphicPlatform*	platform = NULL;
+Model               model;
 
 //void loadDLLPath(HMODULE hModule, Path& rootPath)
 //{
@@ -31,7 +32,7 @@ EXTERN_DLL_EXPORT int InitD3D(HWND hWnd)
 		RECT rect;
 		GetWindowRect(hWnd, &rect);
 
-		platform = new D2Platform();
+		platform = new D2Platform(&model);
 
 		platform->Init(hWnd);
 
@@ -60,12 +61,27 @@ EXTERN_DLL_EXPORT void CleanD3D(HWND hWnd)
 
 EXTERN_DLL_EXPORT void* NewWidget(void* parent, int type)
 {
-	return platform->NewWidget(parent, type);
+	return model.NewWidget(parent, type);
 }
 
 EXTERN_DLL_EXPORT int CloseWidget(void* handle)
 {
-	return platform->CloseWidget(handle);
+	return model.CloseWidget(handle);
+}
+
+EXTERN_DLL_EXPORT int SetLocation(void* handle, int x, int y)
+{
+	return model.SetLocation(handle, x, y);
+}
+
+EXTERN_DLL_EXPORT int SetSize(void* handle, int width, int height)
+{
+	return model.SetSize(handle, width, height);
+}
+
+EXTERN_DLL_EXPORT int SetText(void* handle, const wchar_t* text)
+{
+	return model.SetText(handle, text);
 }
 
 // --- dllmain ---

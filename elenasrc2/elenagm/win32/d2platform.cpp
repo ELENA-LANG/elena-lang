@@ -20,8 +20,9 @@
 
 using namespace _ELENA_;
 
-D2Platform :: D2Platform()
+D2Platform :: D2Platform(Model* model)
 {
+	_model = model;
 }
 
 void D2Platform:: Init(HWND hWnd)
@@ -77,7 +78,7 @@ void D2Platform :: OnRender(HWND hWnd)
 
 	_renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Aqua));
 
-	RenderWidget(_model.First());
+	RenderWidget();
 
 	//static const WCHAR text[] = L"11On12";
 
@@ -176,7 +177,19 @@ void D2Platform :: OnRender(HWND hWnd)
 	ThrowIfFailed(hr);
 }
 
-void D2Platform :: RenderWidget(BaseWidget* widget)
+void D2Platform :: RenderWidget()
+{
+	D2D1_SIZE_F rtSize = _renderTarget->GetSize();
+	D2D1_RECT_F rect = D2D1::RectF(
+		0, 0,
+		rtSize.width,
+		rtSize.height
+	);
+
+	RenderWidget(_model->First(), rect);
+}
+
+void D2Platform :: RenderWidget(BaseWidget* widget, D2D1_RECT_F parentRect)
 {
 	if (!widget)
 		return;
@@ -186,30 +199,27 @@ void D2Platform :: RenderWidget(BaseWidget* widget)
 	{
 		case _ELENA_::wtRectangle:
 		{
-			D2D1_SIZE_F rtSize = _renderTarget->GetSize();
+			int left, top, right, bottom;
+			widget->readRect(left, top, right, bottom);
+
+			parentRect.left += left;
+			parentRect.top += top;
+			parentRect.right = parentRect.left + right;
+			parentRect.bottom = parentRect.top + bottom;
 
 			ComPtr<ID2D1SolidColorBrush> lightSlateGrayBrush;
-			D2D1_RECT_F rectangle1 = D2D1::RectF(
-				rtSize.width / 2 - 50.0f,
-				rtSize.height / 2 - 50.0f,
-				rtSize.width / 2 + 50.0f,
-				rtSize.height / 2 + 50.0f
-			);
 
 			ThrowIfFailed(_renderTarget->CreateSolidColorBrush(
 				D2D1::ColorF(D2D1::ColorF::CornflowerBlue),
 				&lightSlateGrayBrush
 			));
 
-			_renderTarget->FillRectangle(&rectangle1, lightSlateGrayBrush.Get());
+			_renderTarget->FillRectangle(&parentRect, lightSlateGrayBrush.Get());
 			break;
 		}
 		case _ELENA_::wtText:
 		{
-			static const WCHAR text[] = L"11On12";
-
-			D2D1_SIZE_F rtSize = _renderTarget->GetSize();
-			D2D1_RECT_F textRect = D2D1::RectF(0, 0, rtSize.width, rtSize.height);
+			const WCHAR* text = dynamic_cast<TextWidget*>(widget)->Text();
 
 			ComPtr<ID2D1SolidColorBrush>		textBrush;
 			ComPtr<IDWriteTextFormat>			textFormat;
@@ -226,16 +236,16 @@ void D2Platform :: RenderWidget(BaseWidget* widget)
 				DWRITE_FONT_WEIGHT_NORMAL,
 				DWRITE_FONT_STYLE_NORMAL,
 				DWRITE_FONT_STRETCH_NORMAL,
-				50,
+				15,
 				L"en-us",
 				&textFormat
 			));
 
 			_renderTarget->DrawText(
 				text,
-				_countof(text) - 1,
+				getlength(text),
 				textFormat.Get(),
-				&textRect,
+				&parentRect,
 				textBrush.Get()
 			);
 
@@ -246,18 +256,8 @@ void D2Platform :: RenderWidget(BaseWidget* widget)
 	}
 
 	for (WidgetList::Iterator it = widget->Children(); !it.Eof(); it++) {
-		RenderWidget(*it);
+		RenderWidget(*it, parentRect);
 	}
-}
-
-void* D2Platform :: NewWidget(void* parent, int type)
-{
-	return _model.NewWidget(parent, type);
-}
-
-int D2Platform :: CloseWidget(void* handle)
-{
-	return _model.CloseWidget(handle);
 }
 
 void D2Platform :: OnDestroy()
