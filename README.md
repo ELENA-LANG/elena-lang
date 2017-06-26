@@ -8,6 +8,7 @@ This is the GitHub repository of ELENA source code including compiler, IDE, ELEN
 ## Resources
 - **Wiki:** <https://github.com/ELENA-LANG/elena-lang/wiki/>
 - **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
+- **Gitter** <https://gitter.im/ELENA-LANG/>
 - **Source code:** <https://github.com/ELENA-LANG/elena-lang>
 - **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
 - **Twitter:** <https://twitter.com/elena_language>
@@ -15,7 +16,6 @@ This is the GitHub repository of ELENA source code including compiler, IDE, ELEN
 - **Homepage:** <http://elenalang.sourceforge.net/>
 - **Blog:** <http://elenalang.blogspot.com/>
 - **Binaries mirror:** <https://sourceforge.net/projects/elenalang/files/>
-- **Gitter** <https://gitter.im/ELENA-LANG/>
 
 ## Currently Supported Platforms
 
