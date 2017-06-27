@@ -62,7 +62,7 @@ If you've noticed a bug or have a question go ahead and [make one](https://githu
 
 ### 3. Rosetta code
 
-You may try to implementing some of [Rosetta code tasks](http://rosettacode.org/wiki/Category:Programming_Tasks) 
+You may try to implement some of [Rosetta code tasks](http://rosettacode.org/wiki/Category:Programming_Tasks) 
 which are not yet implemented
 
 ## Source Code Organization
