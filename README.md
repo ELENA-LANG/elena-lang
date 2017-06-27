@@ -1,8 +1,8 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/qc5dvs5lueubivuo?svg=true)](https://ci.appveyor.com/project/arakov/elena-lang)
 
-# ELENA Programming Language
-
 [![Join the chat at https://gitter.im/ELENA-LANG/elena-lang](https://badges.gitter.im/ELENA-LANG/elena-lang.svg)](https://gitter.im/ELENA-LANG/elena-lang?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+# ELENA Programming Language
 
 ELENA is a general-purpose, object-oriented language with late binding. It features message dispatching, mixins and a script engine.
 This is the GitHub repository of ELENA source code including compiler, IDE, ELENA libraries and samples.
@@ -10,7 +10,7 @@ This is the GitHub repository of ELENA source code including compiler, IDE, ELEN
 ## Resources
 - **Wiki:** <https://github.com/ELENA-LANG/elena-lang/wiki/>
 - **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
-- **Gitter:** <https://gitter.im/ELENA-LANG/>
+- **Gitter:** <https://gitter.im/ELENA-LANG/elena-lang>
 - **Source code:** <https://github.com/ELENA-LANG/elena-lang>
 - **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
 - **Twitter:** <https://twitter.com/elena_language>
