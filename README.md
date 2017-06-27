@@ -1,5 +1,6 @@
-Windows: [![Build status](https://ci.appveyor.com/api/projects/status/qc5dvs5lueubivuo?svg=true)](https://ci.appveyor.com/project/arakov/elena-lang)
-Gitter: [![Join the chat at https://gitter.im/ELENA-LANG/elena-lang](https://badges.gitter.im/ELENA-LANG/elena-lang.svg)](https://gitter.im/ELENA-LANG/elena-lang?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+Windows : [![Build status](https://ci.appveyor.com/api/projects/status/qc5dvs5lueubivuo?svg=true)](https://ci.appveyor.com/project/arakov/elena-lang)
+
+Gitter : [![Join the chat at https://gitter.im/ELENA-LANG/elena-lang](https://badges.gitter.im/ELENA-LANG/elena-lang.svg)](https://gitter.im/ELENA-LANG/elena-lang?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 # ELENA Programming Language
 
