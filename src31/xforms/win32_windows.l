@@ -28,6 +28,8 @@ sealed class Form :: iform(object)
     int  theWidth.
     int  theHeight.
     
+    xwindow theWindow.
+    
     /// events
     func onInit    :: event(theInitFunc).
     func onDestroy :: event(theDestroyFunc).
@@ -39,7 +41,10 @@ sealed class Form :: iform(object)
     
     constructor new
     [
+        theWindow := Window new.
     ]
+    
+    xcontainer = theWindow.
     
     create
     [

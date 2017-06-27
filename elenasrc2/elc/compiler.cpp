@@ -1365,11 +1365,11 @@ void Compiler::TemplateScope :: loadAttributeValues(SNode attributes, bool prefi
 
          subjects.add(subjects.Count() + 1, subject);
       }
-//      else if (current == lxTypeAttr) {
-//         ref_t subject = subject = moduleScope->module->mapSubject(current.identifier(), false);
-//
-//         subjects.add(subjects.Count() + 1, subject);
-//      }
+      else if (current == lxTypeAttr) {
+         ref_t subject = subject = moduleScope->module->mapSubject(current.identifier(), false);
+
+         subjects.add(subjects.Count() + 1, subject);
+      }
       else if (current == lxTemplateType) {
          TemplateScope* parentTemplate = (TemplateScope*)parent;
          ref_t subject = parentTemplate->subjects.get(current.argument);

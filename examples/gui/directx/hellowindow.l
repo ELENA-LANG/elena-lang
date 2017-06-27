@@ -18,6 +18,13 @@ sealed class HelloWindow
         theForm onDestroy func:[ $self onDestroy ].
         theForm onPaint func:[ $self onPaint ].
         
+        var label1 := Label new:theForm.
+        label1 x := 10.
+        label1 y := 10.
+        label1 width := 200.
+        label1 height := 15.
+        label1 caption := "Label".
+        
         theForm create.
     ]
 

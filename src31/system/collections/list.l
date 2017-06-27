@@ -34,7 +34,7 @@ template listof :: type
     implicit int:capacity
     [
         theCapacity := capacity.
-        theLength int := 0.
+        theLength := 0.
         theArray := type(capacity).
     ]
     
