@@ -432,7 +432,7 @@ bool CompilerLogic :: isCompatibleWithType(_CompilerScope& scope, ref_t targetRe
 
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
-   if (!targetRef)
+   if (!targetRef && !isPrimitiveRef(sourceRef))
       return true;
 
    if (sourceRef == V_NIL)
@@ -586,6 +586,11 @@ bool CompilerLogic :: isReadonly(ClassInfo& info)
 
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType)
 {
+   if (targetRef == 0 && isPrimitiveArrayRef(sourceRef)) {
+      // HOTFIX : replace generic object with a generic array
+      targetRef = scope.arrayReference;
+   }
+
    ClassInfo info;
    defineClassInfo(scope, info, targetRef);   
 
@@ -612,7 +617,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       }
    }
 
-   // HOT FIX : trying to typecast primitive structure array
+   // HOTFIX : trying to typecast primitive structure array
    if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
       ClassInfo sourceInfo;      
       if (sourceRef == V_BINARYARRAY && sourceType != 0) {

@@ -254,6 +254,22 @@ Finally we may import system namespace:
 
 # 2. Interactions
 
+2.1. Message
+---
+
+2.2. Sending
+---
+
+2.3. Receiving
+---
+
+2.4. Manipulating
+---
+
+2.5. Exceptions handling
+---
+
+
 # 3. Lexical Structure
 --
 
