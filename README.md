@@ -58,7 +58,7 @@ If you've noticed a bug or have a question go ahead and [make one](https://githu
 
 ### 2. Implement "up for grab" issues
 
-You may implement one of the open [issues](https://github.com/ELENA-LANG/elena-lang/labels/up%20for%20grabs).
+[Up for grab list](https://github.com/ELENA-LANG/elena-lang/labels/up%20for%20grabs) is good starting point for a first-time contributors.
 
 ### 3. Rosetta code
 
