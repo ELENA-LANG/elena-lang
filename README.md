@@ -2,6 +2,8 @@
 
 # ELENA Programming Language
 
+[![Join the chat at https://gitter.im/ELENA-LANG/elena-lang](https://badges.gitter.im/ELENA-LANG/elena-lang.svg)](https://gitter.im/ELENA-LANG/elena-lang?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ELENA is a general-purpose, object-oriented language with late binding. It features message dispatching, mixins and a script engine.
 This is the GitHub repository of ELENA source code including compiler, IDE, ELENA libraries and samples.
 
