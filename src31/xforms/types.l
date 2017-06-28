@@ -1,6 +1,6 @@
-type xcontrol   :: xforms'IControl.
-type xcontainer :: xforms'IContainer.
+type control    :: xforms'IControl.
+type container  :: xforms'IContainer.
 
-type xform      :: xforms'Form.
-//type xlabel   :: xforms'Label.
-type xwindow    :: xforms'Window.
+type form       :: xforms'Form.
+type label      :: xforms'Label.
+type window     :: xforms'Window.

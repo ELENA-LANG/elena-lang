@@ -24,11 +24,11 @@ template iform :: type
 
 sealed class Form :: iform(object)
 {
-    hwnd theHandle.
-    int  theWidth.
-    int  theHeight.
+    hwnd   theHandle.
+    int    theWidth.
+    int    theHeight.
     
-    xwindow theWindow.
+    window theWindow.
     
     /// events
     func onInit    :: event(theInitFunc).
@@ -39,14 +39,14 @@ sealed class Form :: iform(object)
     int width  :: nprop(readWidthTo,writeWidth).
     int height :: nprop(readHeightTo,writeHeight).
     
-    int xhandle = 0.
-    
     constructor new
     [
         theWindow := Window new.
     ]
     
-    xcontainer = theWindow.
+    int xhandle => theWindow.
+    
+    container = theWindow.
     
     create
     [
@@ -60,7 +60,7 @@ sealed class Form :: iform(object)
         
         width := reg width.
         height := reg height.
-                                          
+                                  
         theHandle := WindowHandle new 
                         int:0
                         wide:XWindowClass 

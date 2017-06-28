@@ -10,14 +10,14 @@ limited class IControl
 
 limited class IContainer
 {
-    append xcontrol:control []
+    append control:control []
 }
 
 template icontrolof :: type
 {
     type = $self.
     
-    xcontrol = IControl::
+    control = IControl::
     {
         
     }.
@@ -25,11 +25,13 @@ template icontrolof :: type
 
 template icontainerof :: type
 {    
-    xcontainer = IContainer::
+    type = $self.
+    
+    container = IContainer::
     {
-        append xcontrol:control
+        append control:control
         [
-            theControls append xcontrol:control.
+            theControls append control:control.
         ]
     }.
 }
@@ -45,6 +47,8 @@ class BaseControl
     int y      :: nprop(readXTo,writeY).
     int width  :: nprop(readWidthTo,writeWidth).
     int height :: nprop(readHeightTo,writeHeight).
+    
+    int xhandle = theHandle.
     
     stacksafe readXTo vint:retVal
     [
@@ -108,7 +112,7 @@ class BaseControl
 
 class BaseContainer :: BaseControl
 {
-    listof theControls(xcontrol).
+    listof theControls(control).
     
     constructor new
     [
@@ -118,13 +122,11 @@ class BaseContainer :: BaseControl
 
 // --- Label ---
 
-sealed class Label :: BaseControl, icontrolof(xlabel)
+sealed class Label :: BaseControl, icontrolof(label)
 {
-    constructor new xcontainer:parent
+    constructor new container:container int:hParent 
     [
-        parent append xcontrol:$self.
-        
-        int hParent := parent xhandle.
+        container append control:$self.
         
         int hRect := system'external'elenagm NewWidget int:hParent int:widgRect.
         int hText := system'external'elenagm NewWidget int:hRect int:widgText.
@@ -133,17 +135,20 @@ sealed class Label :: BaseControl, icontrolof(xlabel)
     ]
     
     constructor new : parent
-        <= new xcontainer:parent;
+        <= new container:parent int:(parent xhandle);
     [
     ]
 }
 
 // --- Window ---
 
-sealed class Window :: BaseContainer, icontainerof(xwindow)
+sealed class Window :: BaseContainer, icontainerof(window)
 {
     constructor new
         <= new;
     [
+        int hRect := system'external'elenagm NewWidget int:0 int:widgRect.
+        
+        theHandle := hRect.
     ]
 }

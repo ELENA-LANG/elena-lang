@@ -5,7 +5,7 @@ import system'winforms.
 
 sealed class HelloWindow
 {
-    xform theForm.
+    form theForm.
 
     constructor new
     [

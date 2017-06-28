@@ -2175,6 +2175,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
             ref_t targetRef = resolveObjectReference(scope, object);
             writer.newNode(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef));
             writer.appendNode(lxLocal, object.param);
+            if (test(mode, HINT_DYNAMIC_OBJECT))
+               writer.appendNode(lxBoxingRequired);
          }
          else writer.newNode(lxLocal, object.param);
          break;
