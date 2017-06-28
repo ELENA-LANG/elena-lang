@@ -509,7 +509,7 @@ protected:
 
    void assignOrCopy(const T* value, T* &ptr, size_t& size)
    {
-      ptr = value;
+      ptr = (T*)value;
       size = 0;
    }
 

@@ -325,6 +325,12 @@ public:
       combine(subPath);
    }
 
+   Path(path_t rootPath, path_t subPath)
+	   : _path(rootPath)
+   {
+	   combine(subPath);
+   }
+
    Path(ident_t path)
    {
       size_t length = LOCAL_PATH_LENGTH;

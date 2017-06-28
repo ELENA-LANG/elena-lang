@@ -12,7 +12,7 @@ template iform :: type
         
         stacksafe on_paint hwnd:anHWND vint:aRetVal
         [
-            $super on_paint hwnd:anHWND vint:aRetVal.
+            $owner $on_paint vint:aRetVal.
         ]
         
         stacksafe on_destroy hwnd:anHWND vint:aRetVal
@@ -24,10 +24,16 @@ template iform :: type
 
 sealed class Form :: iform(object)
 {
-    hwnd theHandle.
+    hwnd   theHandle.
+    int    theWidth.
+    int    theHeight.
+    
+    window theWindow.
     
     /// events
-    func onInit :: event(theInitFunc).
+    func onInit    :: event(theInitFunc).
+    func onDestroy :: event(theDestroyFunc).
+    func onPaint   :: event(thePaintFunc).
 
     /// properties
     int width  :: nprop(readWidthTo,writeWidth).
@@ -35,7 +41,12 @@ sealed class Form :: iform(object)
     
     constructor new
     [
+        theWindow := Window new.
     ]
+    
+    int xhandle => theWindow.
+    
+    container = theWindow.
     
     create
     [
@@ -49,7 +60,7 @@ sealed class Form :: iform(object)
         
         width := reg width.
         height := reg height.
-                                          
+                                  
         theHandle := WindowHandle new 
                         int:0
                         wide:XWindowClass 
@@ -66,30 +77,49 @@ sealed class Form :: iform(object)
         if ($nil != theInitFunc)
             [ theInitFunc eval ].                                
     ]
-    
+
+    stacksafe $on_paint vint:aRetVal
+    [
+        if ($nil != thePaintFunc)
+            [ thePaintFunc eval ].
+
+        aRetVal int := 0.
+    ]
+                
     stacksafe $on_destroy vint:aRetVal
     [
+        if ($nil != theDestroyFunc)
+            [ theDestroyFunc eval ].
+
         system'external'USER32 PostQuitMessage int:0.
         
         aRetVal int := 0.
     ]
 
+    hwnd = theHandle.
+
     stacksafe readWidthTo vint:retVal
     [
-        retVal int := 300.
+        retVal int := theWidth.
     ]
     
     stacksafe writeWidth int:val
     [
+        theWidth := val.
+        
+        theWindow width := val.
     ]
     
     stacksafe readHeightTo vint:retVal
     [
-        retVal int := 300.
+        retVal int := theHeight.
     ]
     
     stacksafe writeHeight int:val
     [
+        theHeight := val.
+        
+        theWindow height := val.
     ]
         
     set visible:value
