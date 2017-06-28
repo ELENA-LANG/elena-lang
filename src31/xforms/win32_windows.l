@@ -73,13 +73,17 @@ sealed class Form :: iform(object)
                         hwnd:0
                         hinstance:CurrentInstance 
                         object:(XWindowCallback new xwindow:$self).
-                        
+
+        system'external'elenagm InitD3D int:theHandle.
+                                                
         if ($nil != theInitFunc)
             [ theInitFunc eval ].                                
     ]
 
     stacksafe $on_paint vint:aRetVal
     [
+        system'external'elenagm Render3D int:theHandle.
+        
         if ($nil != thePaintFunc)
             [ thePaintFunc eval ].
 
@@ -92,7 +96,9 @@ sealed class Form :: iform(object)
             [ theDestroyFunc eval ].
 
         system'external'USER32 PostQuitMessage int:0.
-        
+
+        system'external'elenagm CleanD3D int:theHandle.
+                        
         aRetVal int := 0.
     ]
 
