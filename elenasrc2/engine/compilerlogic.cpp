@@ -423,7 +423,9 @@ bool CompilerLogic :: isCompatibleWithType(_CompilerScope& scope, ref_t targetRe
          return true;
 
       ClassInfo info;
-      defineClassInfo(scope, info, targetRef);
+      if (!defineClassInfo(scope, info, targetRef))
+         return false;
+
       targetRef = info.header.parentRef;
    }
 
@@ -444,7 +446,8 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
    while (sourceRef != 0) {
       if (targetRef != sourceRef) {
          ClassInfo info;
-         defineClassInfo(scope, info, sourceRef);
+         if (!defineClassInfo(scope, info, sourceRef))
+            return false;
 
          // if it is a structure wrapper
          if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
@@ -469,7 +472,8 @@ bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
 bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
 {
    ClassInfo info;
-   defineClassInfo(scope, info, classReference);
+   if (!defineClassInfo(scope, info, classReference))
+      return false;
 
    return isVariable(info);
 }
@@ -592,7 +596,8 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
    }
 
    ClassInfo info;
-   defineClassInfo(scope, info, targetRef);   
+   if (!defineClassInfo(scope, info, targetRef))
+      return false;
 
    // if the target class is wrapper around the source
    if (test(info.header.flags, elWrapper)) {
@@ -624,29 +629,31 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
          // HOTFIX : for binary array of structures - sourceType  contains the element size
          ref_t elementRef = scope.subjectHints.get(sourceType);
 
-         defineClassInfo(scope, sourceInfo, elementRef, true);
-         if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
-            compiler.injectBoxing(writer, scope, 
-               test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+         if (defineClassInfo(scope, sourceInfo, elementRef, true)) {
+            if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+               compiler.injectBoxing(writer, scope,
+                  test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
 
-            return true;
+               return true;
+            }
          }
       }
       else {
-         defineClassInfo(scope, sourceInfo, sourceRef, true);
-         if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
-            compiler.injectBoxing(writer, scope,
-               test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+         if (defineClassInfo(scope, sourceInfo, sourceRef, true)) {
+            if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
+               compiler.injectBoxing(writer, scope,
+                  test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
 
-            return true;
+               return true;
+            }
          }
       }
    }
 
    // HOTFIX : trying to typecast primitive array
    if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
-      ClassInfo sourceInfo;
-      defineClassInfo(scope, sourceInfo, sourceRef, true);
+      //ClassInfo sourceInfo;
+      //defineClassInfo(scope, sourceInfo, sourceRef, true);
 
       ref_t elementRef = scope.subjectHints.get(sourceType);
 
@@ -842,9 +849,10 @@ int CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, re
    }
    else {
       ClassInfo classInfo;
-      defineClassInfo(scope, classInfo, reference);
-
-      return defineStructSize(classInfo, embeddableOnly);
+      if (defineClassInfo(scope, classInfo, reference)) {
+         return defineStructSize(classInfo, embeddableOnly);
+      }
+      else return 0;      
    }
 }
 
@@ -894,8 +902,7 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
          ClassInfo::FieldInfo field = *info.fieldTypes.start();
 
          ClassInfo fieldInfo;
-         defineClassInfo(scope, fieldInfo, field.value1, true);
-         if (isEmbeddable(fieldInfo)) {
+         if (defineClassInfo(scope, fieldInfo, field.value1, true) && isEmbeddable(fieldInfo)) {
             // wrapper around embeddable object should be marked as embeddable wrapper
             info.header.flags |= elEmbeddableWrapper;
 
@@ -1262,7 +1269,8 @@ ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& in
 ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)
 {
    ClassInfo info;
-   defineClassInfo(scope, info, elementRef, true);
+   if (!defineClassInfo(scope, info, elementRef, true))
+      return 0;
 
    if (isEmbeddable(info)) {
       if (isCompatible(scope, V_INT32, elementRef)) {
@@ -1550,7 +1558,8 @@ bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& co
    SNode callTarget = callNode.findChild(lxCallTarget);
 
    ClassInfo info;
-   defineClassInfo(scope, info, callTarget.argument);
+   if (!defineClassInfo(scope, info, callTarget.argument))
+      return false;
 
    ref_t subject = info.methodHints.get(Attribute(callNode.argument, maEmbeddableGet));
    // if it is possible to replace get&subject operation with eval&subject2:local
@@ -1568,7 +1577,8 @@ bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& com
    SNode callTarget = callNode.findChild(lxCallTarget);
 
    ClassInfo info;
-   defineClassInfo(scope, info, callTarget.argument);
+   if(!defineClassInfo(scope, info, callTarget.argument))
+      return false;
 
    for (int i = 0; i < EMBEDDABLEOP_MAX; i++) {
       EmbeddableOp op = embeddableOps[i];
@@ -1656,8 +1666,7 @@ bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
       SNode callTarget = node.findChild(lxCallTarget);
 
       ClassInfo info;
-      defineClassInfo(scope, info, callTarget.argument);
-      if (info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == -1) {
+      if (defineClassInfo(scope, info, callTarget.argument) && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == -1) {
          // if it is an idle call, remove it
          node = lxExpression;
 
@@ -1707,41 +1716,41 @@ ref_t CompilerLogic :: defineOperatorMessage(_CompilerScope& scope, ref_t operat
 
    if (loperand != 0 && roperand != 0 && (paramCount == 1 || roperand2 != 0)) {
       ClassInfo info;
-      defineClassInfo(scope, info, loperand);
+      if (defineClassInfo(scope, info, loperand)) {
+         // search for appropriate methods
+         ClassInfo::MethodMap::Iterator it = info.methods.start();
+         while (!it.Eof()) {
+            ref_t message = it.key();
 
-      // search for appropriate methods
-      ClassInfo::MethodMap::Iterator it = info.methods.start();
-      while (!it.Eof()) {
-         ref_t message = it.key();
+            ref_t messageSubj = getSignature(message);
+            if (getVerb(message) == operatorId && getParamCount(message) == paramCount && messageSubj != 0) {
+               if (paramCount == 2) {
+                  // if the signature contains the two subjects
+                  ident_t signature(scope.module->resolveSubject(messageSubj));
+                  size_t index = signature.find('&');
+                  if (index != NOTFOUND_POS) {
+                     IdentifierString subj1(signature, index);
+                     IdentifierString subj2(signature.c_str() + index + 1);
 
-         ref_t messageSubj = getSignature(message);
-         if (getVerb(message) == operatorId && getParamCount(message) == paramCount && messageSubj != 0) {
-            if (paramCount == 2) {
-               // if the signature contains the two subjects
-               ident_t signature(scope.module->resolveSubject(messageSubj));
-               size_t index = signature.find('&');
-               if (index != NOTFOUND_POS) {
-                  IdentifierString subj1(signature, index);
-                  IdentifierString subj2(signature.c_str() + index + 1);
+                     ref_t subj1Ref = scope.module->mapSubject(subj1, true);
+                     ref_t subj2Ref = scope.module->mapSubject(subj2, true);
 
-                  ref_t subj1Ref = scope.module->mapSubject(subj1, true);
-                  ref_t subj2Ref = scope.module->mapSubject(subj2, true);
+                     if (isCompatible(scope, roperand, scope.subjectHints.get(subj1Ref)) && isCompatible(scope, roperand2, scope.subjectHints.get(subj2Ref))) {
+                        foundSubjRef = messageSubj;
 
-                  if (isCompatible(scope, roperand, scope.subjectHints.get(subj1Ref)) && isCompatible(scope, roperand2, scope.subjectHints.get(subj2Ref))) {
-                     foundSubjRef = messageSubj;
-
-                     break;
+                        break;
+                     }
                   }
                }
-            }
-            else if (isCompatible(scope, roperand, scope.subjectHints.get(messageSubj))) {
-               foundSubjRef = messageSubj;
+               else if (isCompatible(scope, roperand, scope.subjectHints.get(messageSubj))) {
+                  foundSubjRef = messageSubj;
 
-               break;
+                  break;
+               }
             }
+
+            it++;
          }
-
-         it++;
       }
    }
 
