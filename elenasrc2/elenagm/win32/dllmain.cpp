@@ -84,6 +84,16 @@ EXTERN_DLL_EXPORT int SetText(void* handle, const wchar_t* text)
 	return model.SetText(handle, text);
 }
 
+EXTERN_DLL_EXPORT int SetNProperty(void* handle, int property, int value)
+{
+   return model.SetNProperty(handle, property, value);
+}
+
+EXTERN_DLL_EXPORT int GetNProperty(void* handle, int property, int defValue)
+{
+   return model.GetNProperty(handle, property, defValue);
+}
+
 // --- dllmain ---
 
 extern "C"

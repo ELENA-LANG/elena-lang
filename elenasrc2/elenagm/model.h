@@ -26,6 +26,8 @@ public:
 	int SetLocation(void* handle, int x, int y);
 	int SetSize(void* handle, int width, int height);
 	int SetText(void* handle, const wchar_t* text);
+   int SetNProperty(void* handle, int prop, int value);
+   int GetNProperty(void* handle, int prop, int defValue);
 
 	Model() { _root = NULL; }
 	virtual ~Model() { freeobj(_root); }

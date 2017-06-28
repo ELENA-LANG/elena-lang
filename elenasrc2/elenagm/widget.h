@@ -19,12 +19,21 @@ enum WidgetType
 	wtText = 2
 };
 
+enum WidgetProperty
+{
+   wprX      = 0x00001,
+   wprY      = 0x00002,
+   wprWidth  = 0x00003,
+   wprHeight = 0x00004,
+};
+
 class BaseWidget;
 
 typedef List<BaseWidget*> WidgetList;
 
 class BaseWidget
 {
+protected:
 	BaseWidget*	_parent;
 	WidgetList	_children;
 
@@ -43,6 +52,20 @@ public:
 	{
 		return -1;
 	}
+   virtual int setNProperty(WidgetProperty prop, int value)
+   {
+      if (_parent) {
+         _parent->setNProperty(prop, value);
+      }
+      else return -1;
+   }
+   virtual int getNProperty(WidgetProperty prop, int defValue)
+   {
+      if (_parent) {
+         _parent->getNProperty(prop, defValue);
+      }
+      else return defValue;
+   }
 
 	virtual WidgetType Type() const { return wtNone; }
 
@@ -75,7 +98,46 @@ protected:
 		right = bottom = 50;
 	}
 public:
-	virtual void readRect(int& left, int& top, int& right, int& bottom)
+   virtual int setNProperty(WidgetProperty prop, int value)
+   {
+      switch (prop)
+      {
+         case wprX:
+            left = value;
+            break;
+         case wprY:
+            top = value;
+            break;
+         case wprWidth:
+            right = left + value;
+            break;
+         case wprHeight:
+            bottom = top + value;
+            break;
+         default:
+            return BaseWidget::setNProperty(prop, value);
+      }
+
+      return 0;
+   }
+   virtual int getNProperty(WidgetProperty prop, int defValue)
+   {
+      switch (prop)
+      {
+         case wprX:
+            return left;
+         case wprY:
+            return top;
+         case wprWidth:
+            return right - left;
+         case wprHeight:
+            return bottom - top;
+         default:
+            return BaseWidget::getNProperty(prop, defValue);
+      }
+   }
+
+   virtual void readRect(int& left, int& top, int& right, int& bottom)
 	{
 		left = this->left;
 		top = this->top;

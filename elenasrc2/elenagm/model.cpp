@@ -71,6 +71,21 @@ int Model :: SetText(void* handle, const wchar_t* text)
 	return 0;
 }
 
+int Model :: SetNProperty(void* handle, int prop, int value)
+{
+   BaseWidget* widget = static_cast<BaseWidget*>(handle);
+
+   return widget->setNProperty((WidgetProperty)prop, value);
+}
+
+int Model :: GetNProperty(void* handle, int prop, int defValue)
+{
+   BaseWidget* widget = static_cast<BaseWidget*>(handle);
+
+   return widget->getNProperty((WidgetProperty)prop, defValue);
+}
+
+
 int Model :: CloseWidget(void* handle)
 {
 	return -1;

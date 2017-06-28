@@ -39,6 +39,8 @@ sealed class Form :: iform(object)
     int width  :: nprop(readWidthTo,writeWidth).
     int height :: nprop(readHeightTo,writeHeight).
     
+    int xhandle = 0.
+    
     constructor new
     [
         theWindow := Window new.
@@ -104,6 +106,8 @@ sealed class Form :: iform(object)
     stacksafe writeWidth int:val
     [
         theWidth := val.
+        
+        theWindow width := val.
     ]
     
     stacksafe readHeightTo vint:retVal
@@ -114,6 +118,8 @@ sealed class Form :: iform(object)
     stacksafe writeHeight int:val
     [
         theHeight := val.
+        
+        theWindow height := val.
     ]
         
     set visible:value

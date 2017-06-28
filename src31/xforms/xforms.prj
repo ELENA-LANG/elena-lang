@@ -13,6 +13,7 @@ author=Alex Rakov
 
 [files]
 types.l
+consts.l
 win32_controls.l
 win32_windows.l
 
