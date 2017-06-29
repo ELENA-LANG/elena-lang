@@ -110,6 +110,16 @@ class ExpressionScope :: Scope
     bool       theAssignExpr.
     bool       theIfExpr.
         
+    constructor $clone parent:parent stack:callstack textbuffer:message bool:callExpr bool:assignExpr bool:ifExpr
+        <= new : parent;
+    [
+        theCallstack := callstack.
+        theMessage := message.
+        theCallExpr := callExpr.
+        theAssignExpr := assignExpr.
+        theIfExpr := ifExpr.
+    ]
+        
     constructor new : aParent
         <= new : aParent;
     [
@@ -204,6 +214,26 @@ class ExpressionScope :: Scope
         theCallstack push:expr.
         
         ^ expr
+    ]
+
+    eval Nest
+    [
+        var nestedExpr := ExpressionScope 
+                            $clone
+                                parent:$self
+                                stack:theCallstack 
+                                textbuffer:theMessage 
+                                bool:theCallExpr 
+                                bool:theAssignExpr 
+                                bool:theIfExpr.
+        
+        theCallstack := Stack new.
+        theMessage := TextBuilder new.
+        theCallExpr := false.
+        theAssignExpr := false.
+        theIfExpr := false.
+        
+        theCallstack push:nestedExpr.
     ]
 
     eval If

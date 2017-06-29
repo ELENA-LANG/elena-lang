@@ -41,6 +41,8 @@
    #define expr_member ::= expression;
    #define expr_member ::= assign;
    #define expr_member ::= operator;
+   #define expr_member ::= <= > += "%""eval&Nest[0]""" =>
+                             ";";
    #define expr_member ::= <= > += "%""open&Code[0]""" =>
                              "code" "(" code ")"
                            <=  > += "%""close[0]""" =>;

@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              idev - debugger
+                 * debug tape : recognize messages / extensions
+
               idev - generic development
                  * fix setting xml project options
                  * allow to opem xml project
@@ -42,6 +45,9 @@ In development:
               xdev - general optimization  
                  * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                  * optimize listof.$expand
+
+              idev - debugger
+                 * fix tape debugging : step over
 
 ------                                 
 Pipeline:
@@ -87,7 +93,6 @@ Pipeline:
 
               idev - debugger
                  * Make possible to provide alternative path to lib #188
-                 * fix tape debugging : step over
 
               xdev - generic development 
                  * #302 - byte array field : writing / reading / boxing / unboxing
@@ -130,8 +135,6 @@ Pipeline:
                  * debugging vm client : f7 on start
                  * fix syntax highlighting
                  * watch : recognize messages / extensions
-                 * debug tape : recognize messages / extensions
-
 
               xdev - generic development                                            
                  * probably compiler may replace a += b to a := a + b automatically 
