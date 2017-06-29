@@ -10,6 +10,9 @@
 [ELC]
 [+] fixing template routines
 
+[IDE]
+[+] #14 : switch to xml config files 
+
 [LIB]
 [+] #315 : GUI markup script / library
 

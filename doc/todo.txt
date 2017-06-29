@@ -2,10 +2,11 @@
 In development:
 ------                              
 
-              xdev - general optimization  
-                 * support listof template
-                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
-                 * optimize listof.$expand
+              idev - generic development
+                 * fix setting xml project options
+                 * allow to opem xml project
+                 * allow to create xml project
+                 * switch to xml config files #14
 
               zdev - gui
                  * simple form with several labels
@@ -37,6 +38,10 @@ In development:
                        symbol plotter = { .. }.
                  * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
                    (e.g. vhdc), it should be declared when it is used
+
+              xdev - general optimization  
+                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
+                 * optimize listof.$expand
 
 ------                                 
 Pipeline:
@@ -401,8 +406,6 @@ Pipeline:
 
               idev - generic development
                        * modify color scheme
-                       * allow to opem xml project
-                       * allow to create xml project
                        * ini to xml
 
                        * xml to ini not allowed

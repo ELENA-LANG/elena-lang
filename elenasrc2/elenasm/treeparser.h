@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2011-2016, by Alexei Rakov
+//                                             (C)2011-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef treearserH
@@ -20,7 +20,7 @@ class TreeScriptParser : public _Parser
    Map<ident_t, int> _tokens;
    Map<ident_t, int> _attributes;
 
-   void parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer);
+   void parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer, LexicalType type);
    void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer);
 
 public:
