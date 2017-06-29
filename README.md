@@ -57,6 +57,10 @@ ELENA Project looks for programmers interested in learning the language and prov
 
 If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new)!
 
+[Join design discussions](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3A%22Design+Idea%22).
+
+[Take part in general talks](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3ADiscussion).
+
 ### 2. Implement "up for grab" issues
 
 [Up for grab list](https://github.com/ELENA-LANG/elena-lang/labels/up%20for%20grabs) is good starting point for a first-time contributors.
