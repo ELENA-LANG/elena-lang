@@ -770,6 +770,11 @@ int Instance::interprete(void* tape, ident_t interpreter)
    if (tapeArray[tapeReader.Position()] == 0)
       return -1;
 
+   // remove subject list from the debug section
+   _Memory* debugSection = getTargetDebugSection();
+   if ((*debugSection)[0] > 0)
+      debugSection->trim((*debugSection)[0]);
+
    // get dynamic symbol vaddress
 
    // !! probably, it is better to use jitlinker reference helper class
@@ -799,6 +804,10 @@ int Instance::interprete(void* tape, ident_t interpreter)
       _Memory* debugSection = getTargetDebugSection();
 
       (*debugSection)[0] = debugSection->Length();
+
+      // add subject list to the debug section
+      _ELENA_::MemoryWriter debugWriter(debugSection);
+      saveSubject(&debugWriter);
    }
 
    resumeVM();

@@ -10,6 +10,7 @@
 
 #include "elena.h"
 #include "idecommon.h"
+#include "bytecode.h"
 
 #ifdef _WIN64
 
@@ -153,6 +154,7 @@ protected:
    SymbolMap         _classNames;
 
    ReferenceMap      _subjects;
+   MessageMap        _verbs;
 
    bool              _started;
    bool              _running;
@@ -204,15 +206,17 @@ protected:
    void readIntArray(_DebuggerWatch* watch, size_t address, ident_t name);
    void readObject(_DebuggerWatch* watch, size_t selfPtr, ident_t name);
    void readObject(_DebuggerWatch* watch, size_t address, ident_t className, ident_t name);
-   void readMessage(_DebuggerWatch* watch, ref_t reference);
    void readPString(size_t address, IdentifierString& string);
    void readLocalInt(_DebuggerWatch* watch, size_t selfPtr, ident_t name);
    void readLocalLong(_DebuggerWatch* watch, size_t selfPtr, ident_t name);
    void readLocalReal(_DebuggerWatch* watch, size_t selfPtr, ident_t name);
    void readParams(_DebuggerWatch* watch, size_t selfPtr, ident_t name, bool ignoreInline);
+   void readMessage(_DebuggerWatch* watch, size_t selfPtr, ref_t message);
 
    const char* getValue(size_t address, char* value, size_t length);
    const wide_c* getValue(size_t address, wide_c* value, size_t length);
+
+   void parseMessage(IdentifierString& messageValue, ref_t message);
 
    int generateTape(int* list, int length);
 
@@ -303,7 +307,7 @@ public:
    }
 
    DebugController()
-      : _modules(NULL, freeobj), _tapeBookmarks(-1), _subjects(0)
+      : _modules(NULL, freeobj), _tapeBookmarks(-1), _subjects(0), _verbs(0)
    {
       _listener = NULL;
       _manager = NULL;
@@ -315,6 +319,8 @@ public:
       _debugInfoPtr = 0;
       _debugInfoSize = 0;
       _debugTape = false;
+
+      ByteCodeCompiler::loadVerbs(_verbs);
    }
 
    virtual ~DebugController() {}

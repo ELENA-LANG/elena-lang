@@ -936,6 +936,36 @@ void DebugController::readByteArray(_DebuggerWatch* watch, size_t address, ident
    watch->write(this, address, name, list, length);
 }
 
+void DebugController :: parseMessage(IdentifierString& messageValue, ref_t message)
+{
+   messageValue.append(retrieveKey(_verbs.start(), getVerb(message), DEFAULT_STR));
+
+   ref_t sign_ref = getSignature(message);
+   if (sign_ref != 0) {
+      messageValue.append('&');
+
+      ident_t subject = retrieveKey(_subjects.start(), sign_ref, DEFAULT_STR);
+      if (emptystr(subject)) {
+         messageValue.append("?<");
+         messageValue.appendHex(getSignature(message));
+         messageValue.append('>');
+      }
+      else messageValue.append(subject);
+   }
+   messageValue.append('[');
+   messageValue.appendInt(getParamCount(message));
+   messageValue.append("]");
+}
+
+void DebugController :: readMessage(_DebuggerWatch* watch, size_t address, ref_t message)
+{
+   IdentifierString messageValue("%");
+
+   parseMessage(messageValue, message);
+
+   watch->write(this, messageValue.str());
+}
+
 void DebugController::readShortArray(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    short list[DEBUG_MAX_ARRAY_LENGTH];
@@ -970,15 +1000,6 @@ void DebugController::readIntArray(_DebuggerWatch* watch, size_t address, ident_
    getValue(address, (char*)list, length << 2);
 
    watch->write(this, address, name, list, length);
-}
-
-void DebugController :: readMessage(_DebuggerWatch* watch, ref_t reference)
-{
-   String<char, 20> messageValue("<");
-   messageValue.appendHex(reference);
-   messageValue.append('>');
-
-   watch->write(this, reference, "$message", (const char*)messageValue);
 }
 
 void DebugController :: readObject(_DebuggerWatch* watch, size_t address, ident_t className, ident_t name)
@@ -1183,11 +1204,6 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
 
             readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
-         //else if (lineInfo[index].symbol == dsMessage) {
-         //   // write local variable
-         //   int message = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-         //   readMessage(watch, message);
-         //}
          else if (lineInfo[index].symbol == dsStructPtr) {
             size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
             ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef));
@@ -1261,6 +1277,12 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
             getValue(selfPtr, value, 4);
 
             watch->write(this, *(int*)value);
+         }
+         else if (type == elDebugMessage) {
+            char value[4];
+            getValue(selfPtr, value, 4);
+
+            readMessage(watch, selfPtr, *(int*)value);
          }
          else if (type==elDebugReal64) {
             char value[8];
@@ -1376,18 +1398,11 @@ inline void writeStatement(MemoryWriter& writer, ident_t command, ident_t value)
    writer.writeChar((text_c)'\n');
 }
 
-inline void writeMessage(MemoryWriter& writer, ident_t command, ref_t subjectRef, ReferenceMap& subjects)
+inline void writeMessage(MemoryWriter& writer, ident_t command, ident_t message)
 {
    WideString caption(command);
-   caption.append('<');
-   caption.appendHex(subjectRef);
-   ident_t name = retrieveKey(subjects.start(), subjectRef, DEFAULT_STR);
-   if (!emptystr(name))
-   {
-      caption.append('=');
-      caption.append(WideString(name));
-   }   
-   
+   caption.append(L"<");
+   caption.append(WideString(message));   
    caption.append('>');   
 
    writer.writeLiteral(caption, getlength(caption));
@@ -1439,7 +1454,11 @@ int DebugController :: generateTape(int* list, int length)
                }
                case elDebugMessage:
                {
-                  writeMessage(textWriter, className, _debugger.Context()->readDWord(memberPtr), _subjects);
+                  IdentifierString messageValue("%");
+
+                  parseMessage(messageValue, _debugger.Context()->readDWord(memberPtr));
+
+                  writeMessage(textWriter, className, messageValue.str());
                   break;
                }
                default:

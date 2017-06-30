@@ -3,7 +3,6 @@ In development:
 ------                              
 
               idev - debugger
-                 * debug tape : recognize messages / extensions
                  * fix tape debugging : step over
 
               idev - generic development
@@ -132,7 +131,6 @@ Pipeline:
                  * vm client : F8 on the start does not work
                  * debugging vm client : f7 on start
                  * fix syntax highlighting
-                 * watch : recognize messages / extensions
 
               xdev - generic development                                            
                  * probably compiler may replace a += b to a := a + b automatically 

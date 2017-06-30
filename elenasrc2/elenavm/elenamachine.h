@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  6
+#define ELENAVM_REVISION  7
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2017 by Alex Rakov"
@@ -231,12 +231,17 @@ protected:
 
    //void* findDebugEntryPoint(ByteArray& tape);
 
-   void printInfo(const wide_c* s, ...);
+   void printInfo(const wchar_t* s, ...);
 
    virtual void resumeVM() = 0;
    virtual void stopVM() = 0;
 
    int parseMessage(ident_t message);
+
+   void saveSubject(MemoryWriter* writer)
+   {
+      _subjects.write(writer);
+   }
 
 public:
    ident_t getStatus() { return emptystr(_status) ? NULL : (const char*)_status; }
