@@ -152,6 +152,8 @@ protected:
    ClassInfoMap      _classes;
    SymbolMap         _classNames;
 
+   ReferenceMap      _subjects;
+
    bool              _started;
    bool              _running;
    bool              _debugTape;
@@ -173,6 +175,7 @@ protected:
    void* unmapDebugPTR32(pos_t position);
 
    bool loadSymbolDebugInfo(ident_t reference, StreamReader& addressReader);
+   void loadSubjectInfo(StreamReader& addressReader);
    bool loadTapeDebugInfo(size_t objectPtr);
 
    bool loadDebugData(StreamReader& reader, bool setEntryAddress = false);
@@ -300,7 +303,7 @@ public:
    }
 
    DebugController()
-      : _modules(NULL, freeobj), _tapeBookmarks(-1)
+      : _modules(NULL, freeobj), _tapeBookmarks(-1), _subjects(0)
    {
       _listener = NULL;
       _manager = NULL;

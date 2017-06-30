@@ -4,6 +4,7 @@ In development:
 
               idev - debugger
                  * debug tape : recognize messages / extensions
+                 * fix tape debugging : step over
 
               idev - generic development
                  * fix setting xml project options
@@ -45,9 +46,6 @@ In development:
               xdev - general optimization  
                  * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                  * optimize listof.$expand
-
-              idev - debugger
-                 * fix tape debugging : step over
 
 ------                                 
 Pipeline:

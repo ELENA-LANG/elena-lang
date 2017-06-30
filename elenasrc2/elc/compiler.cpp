@@ -3301,15 +3301,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       SNode sourceNode = targetNode.nextNode(lxObjectMask);
       ObjectInfo source = compileAssigningExpression(writer, sourceNode, scope);
 
-//      // assigning primitive array
-//      if (_logic->isPrimitiveArray(targetRef)) {
-//         // HOTFIX : allowing to declare the primitive array 
-//         if (source.kind == okIntConstant && source.extraparam == 0) {
-//            operationType = lxIdle;
-//         }
-//         else scope.raiseError(errInvalidOperation, node);
-//      }
-      /*else */if (!convertObject(writer, *scope.moduleScope, targetRef, retVal.type, resolveObjectReference(scope, source), source.type))
+      if (!convertObject(writer, *scope.moduleScope, targetRef, retVal.type, resolveObjectReference(scope, source), source.type))
          scope.raiseError(errInvalidOperation, node);
 
       writer.removeBookmark();

@@ -15,8 +15,8 @@ sealed class HelloWindow
         theForm height := 720.
         
         var label1 := Label new:theForm.
-        label1 x := 10.
-        label1 y := 10.
+        label1 x := 40.
+        label1 y := 40.
         label1 width := 200.
         label1 height := 15.
         label1 caption := "Hello World!".

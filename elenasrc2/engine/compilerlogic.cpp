@@ -434,7 +434,7 @@ bool CompilerLogic :: isCompatibleWithType(_CompilerScope& scope, ref_t targetRe
 
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
-   if (!targetRef && !isPrimitiveRef(sourceRef))
+   if (!targetRef && !isPrimitiveStructArrayRef(sourceRef))
       return true;
 
    if (sourceRef == V_NIL)

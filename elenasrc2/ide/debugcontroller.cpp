@@ -420,6 +420,8 @@ void DebugController :: onInitBreakpoint()
 
       _debugInfoSize = reader.Position();
 
+      loadSubjectInfo(reader);
+
       // continue debugging
       if (_postponed.stepMode) {
          if (starting) {
@@ -437,7 +439,7 @@ void DebugController :: onInitBreakpoint()
    // otherwise continue
    else _events.setEvent(DEBUG_RESUME);
 }
-//
+
 bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  addressReader)
 {
    bool isClass = true;
@@ -503,6 +505,13 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
       return true;
    }
    else return false;
+}
+
+void DebugController :: loadSubjectInfo(StreamReader& addressReader)
+{
+   _subjects.clear();
+
+   _subjects.read(&addressReader);
 }
 
 bool DebugController :: loadTapeDebugInfo(size_t selfPtr)
@@ -573,7 +582,7 @@ bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress
 
       reader.seek(nextPosition);
    }
-
+   
    return true;
 }
 
@@ -1367,6 +1376,24 @@ inline void writeStatement(MemoryWriter& writer, ident_t command, ident_t value)
    writer.writeChar((text_c)'\n');
 }
 
+inline void writeMessage(MemoryWriter& writer, ident_t command, ref_t subjectRef, ReferenceMap& subjects)
+{
+   WideString caption(command);
+   caption.append('<');
+   caption.appendHex(subjectRef);
+   ident_t name = retrieveKey(subjects.start(), subjectRef, DEFAULT_STR);
+   if (!emptystr(name))
+   {
+      caption.append('=');
+      caption.append(WideString(name));
+   }   
+   
+   caption.append('>');   
+
+   writer.writeLiteral(caption, getlength(caption));
+   writer.writeChar((text_c)'\n');
+}
+
 #endif // _WIN32
 
 int DebugController :: generateTape(int* list, int length)
@@ -1411,8 +1438,10 @@ int DebugController :: generateTape(int* list, int length)
                   break;
                }
                case elDebugMessage:
-                  writeStatement(textWriter, className, _debugger.Context()->readDWord(memberPtr));
+               {
+                  writeMessage(textWriter, className, _debugger.Context()->readDWord(memberPtr), _subjects);
                   break;
+               }
                default:
                   writeStatement(textWriter, className);
                   break;
