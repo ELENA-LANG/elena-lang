@@ -573,12 +573,12 @@ bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress
          setEntryAddress = false;
       }
 
-   //   // if it is a VM temporal symbol and tape debugging as allowed
-   //   if (ConstantIdentifier::compare(reference, TAPE_SYMBOL) && _debugTape) {
-   //      loadTapeDebugInfo(reader, size);
-   //   }
+      // if it is a VM temporal symbol - skip it
+      if (reference.compare(TAPE_SYMBOL)/* && _debugTape*/) {
+      //      loadTapeDebugInfo(reader, size);
+      }
       // otherwise load standard debug info
-   /*   else */loadSymbolDebugInfo(reference, reader);
+      else loadSymbolDebugInfo(reference, reader);
 
       reader.seek(nextPosition);
    }

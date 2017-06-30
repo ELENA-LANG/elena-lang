@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  7
+#define ELENAVM_REVISION  8
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2017 by Alex Rakov"
@@ -346,8 +346,26 @@ public:
    //}
 
    virtual void* getSymbolRef(ident_t referenceName, bool silentMode)
-   {
-      return loadSymbol(referenceName, mskSymbolRef, silentMode);
+   {      
+      if (_debugMode) {
+         // remove subject list from the debug section
+         _Memory* debugSection = getTargetDebugSection();
+         if ((*debugSection)[0] > 0)
+            debugSection->trim((*debugSection)[0]);
+
+         void* ref = loadSymbol(referenceName, mskSymbolRef, silentMode);
+
+         (*debugSection)[0] = debugSection->Length();
+
+         // add subject list to the debug section
+         _ELENA_::MemoryWriter debugWriter(debugSection);
+         saveSubject(&debugWriter);
+
+         raiseBreakpoint();
+
+         return ref;
+      }
+      else return loadSymbol(referenceName, mskSymbolRef, silentMode);
    }
 
    virtual ref_t getSubjectRef(ident_t subjectName)

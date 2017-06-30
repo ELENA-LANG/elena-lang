@@ -158,7 +158,7 @@ protected:
 
    bool              _started;
    bool              _running;
-   bool              _debugTape;
+   //bool              _debugTape;
    Path              _debuggee;
    Path              _arguments;
 
@@ -318,7 +318,7 @@ public:
       _running = false;
       _debugInfoPtr = 0;
       _debugInfoSize = 0;
-      _debugTape = false;
+      //_debugTape = false;
 
       ByteCodeCompiler::loadVerbs(_verbs);
    }

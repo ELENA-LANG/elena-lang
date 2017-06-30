@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              idev - debugger
-                 * fix tape debugging : step over
-
               idev - generic development
                  * fix setting xml project options
                  * allow to opem xml project

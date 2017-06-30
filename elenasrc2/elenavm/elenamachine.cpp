@@ -770,10 +770,12 @@ int Instance::interprete(void* tape, ident_t interpreter)
    if (tapeArray[tapeReader.Position()] == 0)
       return -1;
 
-   // remove subject list from the debug section
-   _Memory* debugSection = getTargetDebugSection();
-   if ((*debugSection)[0] > 0)
-      debugSection->trim((*debugSection)[0]);
+   if (_debugMode) {
+      // remove subject list from the debug section
+      _Memory* debugSection = getTargetDebugSection();
+      if ((*debugSection)[0] > 0)
+         debugSection->trim((*debugSection)[0]);
+   }
 
    // get dynamic symbol vaddress
 
