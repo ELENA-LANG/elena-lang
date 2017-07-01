@@ -9,6 +9,7 @@
 
 [ELC]
 [+] fixing template routines
+[+] new project template : vm_gui
 
 [IDE]
 [+] #14 : switch to xml config files 

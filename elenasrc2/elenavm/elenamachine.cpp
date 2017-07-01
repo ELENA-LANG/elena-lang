@@ -719,7 +719,13 @@ void Instance :: configurate(MemoryReader& reader, int terminator)
                throw EAbortException();
 
             break;
+         case OPEN_VM_CONSOLE:
+            if (_debugMode)
+               createConsole();
+            break;
          case START_VM_MESSAGE_ID:
+            createConsole();
+
             if(!restart(_debugMode))
                throw EAbortException();
 

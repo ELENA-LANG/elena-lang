@@ -1,13 +1,21 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2015, by Alexei Rakov
+//                                              (C)2009-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "x86elenamachine.h"
 #include "x86jitcompiler.h"
+
+#include <fcntl.h>
+#include <io.h>
+
+#include <iostream>
+#include <fstream>
+
+static const WORD MAX_CONSOLE_LINES = 500;
 
 using namespace _ELENA_;
 
@@ -139,6 +147,19 @@ bool x86Instance :: restart(bool debugMode)
    _linker = new JITLinker(this, _compiler, false, _codeProcess.get(0)/*, _config.maxThread*/);
 
    return Instance::restart(debugMode);
+}
+
+void x86Instance :: createConsole()
+{
+   int hConHandle;
+   long lStdHandle;
+   CONSOLE_SCREEN_BUFFER_INFO coninfo;
+   FILE *fp;
+
+   // allocate a console for this app
+   AllocConsole();
+   AttachConsole(GetCurrentProcessId());
+   freopen("CON", "w", stdout);
 }
 
 // --- x86ELENAMachine ---

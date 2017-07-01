@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              xdev - general implementation
+                 * gui vm client : create a console, should be possible to turn off
+
               idev - generic development
                  * fix setting xml project options
                  * allow to opem xml project
@@ -101,7 +104,6 @@ Pipeline:
                  * calc sample : gui
 
               xdev - general implementation
-                 * gui vm client
                  * game of life : display 2d map in gui window
                  * game of life : display 2d map in vm gui window
 

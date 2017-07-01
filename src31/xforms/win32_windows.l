@@ -130,6 +130,11 @@ sealed class Form :: iform(object)
         
     set visible:value
     [
+        if ($nil == theHandle)
+        [
+            $self create.
+        ].
+        
         if(value)
             [ theHandle setVisible int:5 ];
             [ theHandle setVisible int:0 ]        

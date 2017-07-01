@@ -107,6 +107,7 @@ namespace _ELENA_
    #define MAP_VM_MESSAGE_ID       0x06F2             // map forward reference
    #define USE_VM_MESSAGE_ID       0x06F3             // set current package
    #define LOAD_VM_MESSAGE_ID      0x06F4             // load template
+   #define OPEN_VM_CONSOLE         0x02F5             // open console
 
    // ---- ELENAVM interpreter commands ---
    #define CALL_TAPE_MESSAGE_ID    0x05E0             // call symbol
@@ -279,6 +280,7 @@ namespace _ELENA_
       ptVMWin32Console   = 0x00101,
       ptWin32ConsoleX    = 0x10001,
       ptWin32GUIX        = 0x11001,
+      ptVMWin32GUI       = 0x01101,
       ptLinux32Console   = 0x00002,
    };
 

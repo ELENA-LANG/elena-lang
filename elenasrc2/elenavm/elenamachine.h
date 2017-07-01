@@ -257,6 +257,8 @@ public:
       _status.append(emptystr(s2) ? "(null)" : s2);
    }
 
+   virtual void createConsole() = 0;
+
    virtual void raiseBreakpoint() = 0;
 
    void setDebugMode(bool isActive = true)

@@ -27,6 +27,16 @@ class BaseWinForm :: BaseWinContainer
             [ theOpenEvent eval:self ]
     ]
     
+    set visible : aValue
+    [
+        $super set visible:aValue.
+        
+        if($nil == theHandle)
+        [
+            $self open.
+        ].
+    ]
+    
     close
     [
         $super close.

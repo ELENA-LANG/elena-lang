@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2015, by Alexei Rakov
+//                                              (C)2009-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef x86elenamachineH
@@ -37,6 +37,8 @@ protected:
    virtual void stopVM();
 
 public:
+   virtual void createConsole();
+
    virtual void* loadDebugSection();
 
    virtual void raiseBreakpoint();
