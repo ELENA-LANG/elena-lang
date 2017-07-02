@@ -45,6 +45,9 @@ In development:
                  * xml : format the xml on save
                  * switch to xml config files #14
 
+              sdev - script engine
+                 * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
+
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -91,6 +94,7 @@ Pipeline:
                  * Make possible to provide alternative path to lib #188
 
               xdev - generic development 
+                 * bug : extensions in template - are not fully resolved
                  * #302 - byte array field : writing / reading / boxing / unboxing
                  * uncomment WSADATA structure
                  * no need to copy to the buffer field / variable / method attributes

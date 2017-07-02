@@ -1,0 +1,26 @@
+<configuration>
+  <project>
+    <namespace>helloworld</namespace>
+    <template>xforms</template>
+    <executable>helloworld_static.exe</executable>
+    <debuginfo>-1</debuginfo>
+  
+<warn>
+<unresolved>0</unresolved></warn></project>
+  <targets>
+      <target name="grammar" type="2">
+         <option>[[ #grammar tree ]]</option>
+      </target>
+  </targets>
+  <files>
+     <module name="stat" target="grammar">
+       <include>helloworld.xs</include>
+     </module>
+     <module>
+       <include>hellowindow.l</include>
+     </module>
+  </files>
+  <forwards>
+    <forward key="'form">helloworld'staticForm</forward>
+  </forwards>
+</configuration>

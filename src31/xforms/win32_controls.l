@@ -1,3 +1,4 @@
+import extensions.
 import system'collections.
 
 // --- IControl ---
@@ -43,10 +44,10 @@ class BaseControl
     int    theHandle.
     
     /// properties
-    int x      :: nprop(readXTo,writeX).
-    int y      :: nprop(readXTo,writeY).
-    int width  :: nprop(readWidthTo,writeWidth).
-    int height :: nprop(readHeightTo,writeHeight).
+    int x      :: nxprop(readXTo,writeX).
+    int y      :: nxprop(readXTo,writeY).
+    int width  :: nxprop(readWidthTo,writeWidth).
+    int height :: nxprop(readHeightTo,writeHeight).
     
     int xhandle = theHandle.
     
