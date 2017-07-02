@@ -615,7 +615,7 @@ public:
 
    void cut(size_t index, size_t length)
    {
-      StrHelper::move(_string + index, _string + index + length, length);
+      StrHelper::move(_string + index, _string + index + length, getlength(_string) - index - length + 1);
    }
 
    void lower()

@@ -2,22 +2,11 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * gui vm client : create a console, should be possible to turn off
-
-              idev - generic development
-                 * fix setting xml project options
-                 * allow to opem xml project
-                 * allow to create xml project
-                 * switch to xml config files #14
-
               zdev - gui
                  * simple form with several labels
                  * simple form with several labels : fonts, sizes
                  * gui script
-                 * use directx to build UI
                  * graph : function declared in the script
-                 * directx : create 3D sample
 
               xdev - refactoring
                  * nshift should be replaced with nshiftl, nshiftr
@@ -45,6 +34,16 @@ In development:
               xdev - general optimization  
                  * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                  * optimize listof.$expand
+
+              zdev - remoting
+              zdev - workflow
+
+              idev - generic development
+                 * xml : include / exclude
+                 * allow to opem xml project
+                 * allow to create xml project
+                 * xml : format the xml on save
+                 * switch to xml config files #14
 
 ------                                 
 Pipeline:
@@ -407,8 +406,6 @@ Pipeline:
                        * ini to xml
 
                        * xml to ini not allowed
-                       * xml : include / exclude
-                       * xml : forwards
                        * xmlreader : after deleting / changing presaved settings should be remove, problably ProjectManager
                          should keep the string copies or be reloaded every time
                        * #14 : switch to xml config files (.xprj project)
@@ -932,3 +929,5 @@ Pipeline:
                  * scripting library : static code - branching ; typecast the expression to the bool
                  * scripting library : language interpreter
 
+              zdev - gui
+                 * directx : create 3D sample
