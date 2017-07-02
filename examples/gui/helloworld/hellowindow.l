@@ -16,6 +16,7 @@ dynamicForm = Library new; evalSelf:
                 (:l) [
                     scriptEngine 
                         load path:"~\scripts\assembly.es";
+                        load path:"xforms.es";
                         eval path:"helloworld.xs";
                         eval:l
                 ];

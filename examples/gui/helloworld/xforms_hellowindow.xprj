@@ -10,6 +10,7 @@
   <targets>
       <target name="grammar" type="2">
          <option>[[ #grammar tree ]]</option>
+         <option>xforms.es</option>
       </target>
   </targets>
   <files>
