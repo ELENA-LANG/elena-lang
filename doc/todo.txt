@@ -2,18 +2,17 @@
 In development:
 ------                              
 
-              xdev - general optimization  
-                 * support listof template
-                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
-                 * optimize listof.$expand
+              sdev - refactoring
+                 * review assembly script : the parameter order
+
+              zdev - upndown
+                 * reimplement chat sample
 
               zdev - gui
                  * simple form with several labels
                  * simple form with several labels : fonts, sizes
                  * gui script
-                 * use directx to build UI
                  * graph : function declared in the script
-                 * directx : create 3D sample
 
               xdev - refactoring
                  * nshift should be replaced with nshiftl, nshiftr
@@ -38,6 +37,29 @@ In development:
                  * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
                    (e.g. vhdc), it should be declared when it is used
 
+              xdev - general optimization  
+                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
+                 * optimize listof.$expand
+
+              zdev - remoting
+              zdev - workflow
+
+              idev - generic development
+                 * xml : include / exclude
+                 * allow to opem xml project
+                 * allow to create xml project
+                 * xml : format the xml on save
+                 * switch to xml config files #14
+
+              sdev - script engine
+                 * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
+
+              xdev - general optimization  
+                 * hexadecimal - uint32
+                 * uint64 
+                 * postfix - ul
+                 * uint16
+
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -51,10 +73,6 @@ Pipeline:
 
               sdev - rosetta samples
                  * Zebra puzzle
-
-
-              zdev - upndown
-                 * reimplement chat sample
 
               sdev - cf parser
                  * currently nested expression should be enclosed into another epxression (expression expression nested ...)
@@ -82,9 +100,9 @@ Pipeline:
 
               idev - debugger
                  * Make possible to provide alternative path to lib #188
-                 * fix tape debugging : step over
 
               xdev - generic development 
+                 * bug : extensions in template - are not fully resolved
                  * #302 - byte array field : writing / reading / boxing / unboxing
                  * uncomment WSADATA structure
                  * no need to copy to the buffer field / variable / method attributes
@@ -97,7 +115,6 @@ Pipeline:
                  * calc sample : gui
 
               xdev - general implementation
-                 * gui vm client
                  * game of life : display 2d map in gui window
                  * game of life : display 2d map in vm gui window
 
@@ -124,9 +141,6 @@ Pipeline:
                  * vm client : F8 on the start does not work
                  * debugging vm client : f7 on start
                  * fix syntax highlighting
-                 * watch : recognize messages / extensions
-                 * debug tape : recognize messages / extensions
-
 
               xdev - generic development                                            
                  * probably compiler may replace a += b to a := a + b automatically 
@@ -401,13 +415,9 @@ Pipeline:
 
               idev - generic development
                        * modify color scheme
-                       * allow to opem xml project
-                       * allow to create xml project
                        * ini to xml
 
                        * xml to ini not allowed
-                       * xml : include / exclude
-                       * xml : forwards
                        * xmlreader : after deleting / changing presaved settings should be remove, problably ProjectManager
                          should keep the string copies or be reloaded every time
                        * #14 : switch to xml config files (.xprj project)
@@ -931,3 +941,5 @@ Pipeline:
                  * scripting library : static code - branching ; typecast the expression to the bool
                  * scripting library : language interpreter
 
+              zdev - gui
+                 * directx : create 3D sample

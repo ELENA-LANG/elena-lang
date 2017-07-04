@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Image class declarations
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef imageH
@@ -131,7 +131,7 @@ class VirtualMachineClientImage : public Image
       return mapKey(_exportReferences, function, mskImportRef | (_exportReferences.Count() + 1));
    }
 
-   ref_t createTape(MemoryWriter& data, Project* project);
+   ref_t createTape(MemoryWriter& data, Project* project, bool withNewConsole);
 
 public:
    virtual ReferenceMap::Iterator getExternalIt()
@@ -149,7 +149,7 @@ public:
       return 0; // !! temporal
    }
 
-   VirtualMachineClientImage(Project* project, _JITCompiler* compiler);
+   VirtualMachineClientImage(Project* project, _JITCompiler* compiler, bool guiMode = false);
 };
 
 } // _ELENA_

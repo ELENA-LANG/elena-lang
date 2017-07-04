@@ -23,7 +23,7 @@ class SDIApplication :: BaseApplication
     [
         theMainWindow open.
 
-        win_msg msg := 0.
+        win_msg msg := MSG new.
         int     proceeded := 0.
         int     result := 0.
         hwnd    handleCopy := theMainWindow hwnd.
@@ -46,7 +46,7 @@ class SDIApplication :: BaseApplication
 
     run hwnd:handle
     [
-        win_msg msg := 0.
+        win_msg msg := MSG new.
         int     proceeded := 0.
         int     result := 0.
         hwnd    handleCopy := handle.
@@ -88,7 +88,7 @@ class SDIXApplication :: BaseApplication
     [
         RTPointer new:$self.
         
-        theMainWindow := 'mainWindow.
+        theMainWindow := 'MainWindow new.
     ]
     
     mainWindow = theMainWindow.

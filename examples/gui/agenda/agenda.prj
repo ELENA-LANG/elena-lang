@@ -10,5 +10,4 @@ warn:unresolved=0
 form.l
 
 [forwards]
-'mainWindow=agenda'Window
-
+'mainWindow=agenda'MainWindow

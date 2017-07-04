@@ -1,30 +1,26 @@
-import xforms.
+import extensions'scripting.
 
-import system'drawing.
-import system'winforms.
-
-sealed class HelloWindow
+class MainWindow
 {
-    form theForm.
-
+    object theForm.
+    
     constructor new
     [
-        theForm := Form new.
-        
-        theForm width := 1280.
-        theForm height := 720.
-        
-        var label1 := Label new:theForm.
-        label1 x := 10.
-        label1 y := 10.
-        label1 width := 200.
-        label1 height := 15.
-        label1 caption := "Hello World!".
-        
-        theForm create.
+        theForm := 'form.
     ]
-
+    
     dispatch => theForm.
 }
 
-helloWindow = HelloWindow new.
+dynamicForm = Library new; evalSelf:
+                (:l) [
+                    scriptEngine 
+                        load path:"~\scripts\assembly.es";
+                        load path:"xforms.es";
+                        eval path:"helloworld.xs";
+                        eval:l
+                ];
+                first; eval; 
+                eval.
+
+staticForm =    helloworld'stat'mainForm.

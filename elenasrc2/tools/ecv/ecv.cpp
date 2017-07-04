@@ -1142,7 +1142,7 @@ void printManifest(_Module* module)
          if (currentMask == mskLiteralRef) {
             //printf(manifestParameters[i]);
             ident_t value = module->resolveConstant(currentRef);
-            printf("%s : %s\n", manifestParameters[i], value);
+            printf("%s : %s\n", manifestParameters[i], value.c_str());
          }
          it++;
       }

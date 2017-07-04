@@ -629,6 +629,9 @@ const char* showPlatform(int platform)
    else if (platform == _ELENA_::ptWin32GUI) {
       return ELC_WIN32GUI;
    }
+   else if (platform == _ELENA_::ptVMWin32GUI) {
+      return ELC_WIN32VMGUI;
+   }
    else if (platform == _ELENA_::ptWin32GUIX) {
       return ELC_WIN32GUIX;
    }
@@ -766,6 +769,17 @@ int main()
          ImageHelper helper(&linker);
          _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
          linker.run(project, image, helper.tls_directory);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
+      else if (platform == _ELENA_::ptVMWin32GUI) {
+         print(ELC_LINKING);
+
+         _ELENA_::VirtualMachineClientImage image(
+            &project, project.createJITCompiler(), true);
+
+         _ELENA_::Linker linker;
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
 
          print(ELC_SUCCESSFUL_LINKING);
       }

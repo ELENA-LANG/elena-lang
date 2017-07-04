@@ -1596,6 +1596,7 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
       case okLocalAddress:
          return object.extraparam;
       case okIntConstant:
+      case okUIntConstant:
          return V_INT32;
       case okLongConstant:
          return V_INT64;
@@ -2157,6 +2158,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          writer.newNode(lxConstantChar, object.param);
          break;
       case okIntConstant:
+      case okUIntConstant:
          writer.newNode(lxConstantInt, object.param);
          writer.appendNode(lxIntValue, object.extraparam);
          break;
@@ -2321,7 +2323,7 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
       // convert back to string as a decimal integer
       s.appendHex(integer);
 
-      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
+      object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
    }
    else if (terminal == lxReal) {
       String<char, 30> s(token, getlength(token) - 1);
@@ -3301,15 +3303,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       SNode sourceNode = targetNode.nextNode(lxObjectMask);
       ObjectInfo source = compileAssigningExpression(writer, sourceNode, scope);
 
-//      // assigning primitive array
-//      if (_logic->isPrimitiveArray(targetRef)) {
-//         // HOTFIX : allowing to declare the primitive array 
-//         if (source.kind == okIntConstant && source.extraparam == 0) {
-//            operationType = lxIdle;
-//         }
-//         else scope.raiseError(errInvalidOperation, node);
-//      }
-      /*else */if (!convertObject(writer, *scope.moduleScope, targetRef, retVal.type, resolveObjectReference(scope, source), source.type))
+      if (!convertObject(writer, *scope.moduleScope, targetRef, retVal.type, resolveObjectReference(scope, source), source.type))
          scope.raiseError(errInvalidOperation, node);
 
       writer.removeBookmark();
@@ -5526,7 +5520,7 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 
 bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal)
 {
-   if (retVal.kind == okIntConstant) {
+   if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
       _Module* module = scope.moduleScope->module;
       MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 

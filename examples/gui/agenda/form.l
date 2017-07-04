@@ -4,7 +4,7 @@ import system'io.
 
 // --- Main window ---
 
-class Window :: SDIDialog
+class MainWindow :: SDIDialog
 {
     // All Text Box's
     object Name.

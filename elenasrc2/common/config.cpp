@@ -278,6 +278,18 @@ bool XmlConfigFile :: load(path_t path, int encoding)
    return false;
 }
 
+bool XmlConfigFile :: save(path_t path, int encoding)
+{
+   try
+   {
+      return _tree.save(path, encoding);
+   }
+   catch (XMLException&)
+   {
+   }
+   return false;
+}
+
 size_t XmlConfigFile :: find(XMLNode& node, ident_t key)
 {
    size_t length = getlength(key);
@@ -407,15 +419,26 @@ void XmlConfigFile :: setSetting(ident_t key, const char* value)
    }
    else {
       size_t length = getlength(key);
-      size_t end = key.find('/', length);
+      size_t end = key.findLast('/', length);
+      if (end != NOTFOUND_POS) {
+         String<char, 255> subCategory(key, end);
+         position = find(_tree, subCategory.str());
+         if (position == NOTFOUND_POS) {
+            setSetting(subCategory.str(), DEFAULT_STR);
+            position = find(_tree, subCategory.str());
+         }
 
-      String<char, 255> category(key, end);
-      position = find(_tree, category.str());
+         XMLNode parent(position, &_tree);
+         XMLNode newNode = parent.appendNode(key + end + 1);
 
-      XMLNode parent(position, &_tree);
-      XMLNode newNode = parent.appendNode(key);
+         newNode.writeContent(value);
+      }
+      else {
+         XMLNode parent(0, &_tree);
+         XMLNode newNode = parent.appendNode(key);
 
-      newNode.writeContent(value);
+         newNode.writeContent(value);
+      }
    }
 }
 
@@ -432,6 +455,28 @@ void XmlConfigFile :: setSetting(ident_t key, size_t value)
 void XmlConfigFile :: setSetting(ident_t key, bool value)
 {
 
+}
+
+void XmlConfigFile  :: appendSetting(ident_t key, ident_t attribute, const char* value)
+{
+   size_t length = getlength(key);
+   size_t end = key.findLast('/', length);
+   if (end != NOTFOUND_POS) {
+      String<char, 255> subCategory(key, end);
+      size_t position = find(_tree, subCategory.str());
+      if (position == NOTFOUND_POS) {
+         setSetting(subCategory.str(), DEFAULT_STR);
+         position = find(_tree, subCategory.str());
+      }
+
+      XMLNode parent(position, &_tree);
+      XMLNode newNode = parent.appendNode(key + end + 1);
+
+      newNode.writeAttribute("key", attribute);
+      newNode.writeContent(value);
+   }
+   else {
+   }
 }
 
 void XmlConfigFile :: clear()

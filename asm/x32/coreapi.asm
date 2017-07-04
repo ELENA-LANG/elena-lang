@@ -257,7 +257,6 @@ procedure coreapi'longtoreal
 
 end
 
-// ; rcopyl (eax:src, ecx : base, esi - result)
 procedure coreapi'strtoint
 
   mov  ebx, ecx                     // ; radix
@@ -297,6 +296,42 @@ lab11:
   jz   short Lab5
   neg  eax
 Lab5:
+  mov  ebx, eax
+  mov  eax, edi
+  jmp  short Lab3
+Lab2:
+  add  esp, 4
+  xor  eax, eax
+Lab3:
+  ret
+
+end
+
+procedure coreapi'strtouint
+
+  mov  ebx, ecx                     // ; radix
+  mov  esi, eax                     // ; get str
+  mov  ecx, [esi-8]
+  and  ecx, 0FFFFFh
+  xor  eax, eax
+  lea  ecx, [ecx-1]                 // ; to skip zero
+Lab1:
+  mov  edx, ebx
+  mul  edx
+  mov  edx, eax
+  xor  eax, eax
+  lodsb
+  cmp  eax, 3Ah
+  jl   short lab11
+  sub  al, 7
+lab11:
+  sub  al, 30h
+  jb   short Lab2
+  cmp  eax, ebx
+  ja   short Lab2
+  add  eax, edx
+  sub  ecx, 1
+  jnz  short Lab1
   mov  ebx, eax
   mov  eax, edi
   jmp  short Lab3
@@ -1419,6 +1454,48 @@ Lab8:
 
 end
 
+procedure coreapi'uinttostr
+
+   mov  esi, ebx
+   push ebp
+   mov  eax, [eax]
+   mov  ebp, esp
+   xor  ecx, ecx
+   cmp  eax, esi
+   jb   short Lab5
+Lab1:
+   xor  edx, edx
+   idiv esi
+   push edx
+   add  ecx, 1
+   cmp  eax, esi
+   jae  short Lab1
+Lab5:   
+   add  ecx, 2
+   push eax
+   sub  ecx, 1
+   mov  esi, edi
+   mov  edx, 0FFh
+Lab2:
+   pop  eax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, edx
+   mov  byte ptr [esi], al
+   add  esi, 1
+   sub  ecx, 1
+   jnz  short Lab2
+   mov  ecx, esi
+   sub  ecx, edi
+   pop  ebp
+
+   ret
+
+end
+
 procedure coreapi'inttowstr
 
    push ebp
@@ -1467,6 +1544,48 @@ Lab8:
    sub  ecx, edi
    shr  ecx, 1
    lea  esp, [esp+4]
+   pop  ebp
+
+   ret
+   
+end
+
+procedure coreapi'uinttowstr
+
+   push ebp
+   mov  eax, [eax]
+   mov  ebp, esp
+   xor  ecx, ecx
+   cmp  eax, ebx
+   jb   short Lab5
+Lab1:
+   xor  edx, edx
+   idiv ebx
+   push edx
+   add  ecx, 2
+   cmp  eax, ebx
+   jae  short Lab1
+Lab5:   
+   add  ecx, 4
+   push eax
+   mov  esi, edi
+   mov  edx, 0FFh
+   sub  ecx, 2             // to skip zero
+Lab2:
+   pop  eax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, edx
+   mov  word ptr [esi], ax
+   add  esi, 2
+   sub  ecx, 2
+   jnz  short Lab2
+   mov  ecx, esi
+   sub  ecx, edi
+   shr  ecx, 1
    pop  ebp
 
    ret

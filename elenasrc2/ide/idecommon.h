@@ -50,6 +50,10 @@ namespace _GUI_
 #define IDE_WARNON_UNRESOLVED                   "project/warn/unresolved"
 
 #define IDE_FILES_XMLSECTION                    "files/*"
+#define IDE_FORWARDS_XMLSECTION                 "forwards/*"
+
+#define IDE_FORWARDS_ELEMENT                    "forwards/forward"
+
 
 // --- ELENA IDE Styles ---
 #define SCHEME_COUNT                            2

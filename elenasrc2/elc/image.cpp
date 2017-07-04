@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image class implementations
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -278,7 +278,7 @@ inline void writeTapeRecord(MemoryWriter& tape, size_t command, ident_t value1, 
    else tape.writeChar((char)0);
 }
 
-VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCompiler* compiler)
+VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCompiler* compiler, bool guiMode)
    : Image(false), _exportReferences((size_t)-1)
 {
    _project = project;
@@ -309,13 +309,13 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    ReferenceMap consts((size_t)-1);
    VMClientHelper helper(this, &consts, &data, module);
 
-   consts.add(VM_TAPE, createTape(data, project));
+   consts.add(VM_TAPE, createTape(data, project, guiMode));
    consts.add(VM_HOOK, vmHook);
 
    compiler->loadNativeCode(helper, code, module, section);
 }
 
-ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* project)
+ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* project, bool withNewConsole)
 {
    size_t tapeRef = data.Position();
 
@@ -333,6 +333,10 @@ ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* proje
       writeTapeRecord(data, MAP_VM_MESSAGE_ID, it.key(), *it);
 
       it++;
+   }
+
+   if (withNewConsole) {
+      writeTapeRecord(data, OPEN_VM_CONSOLE);
    }
 
    // START_VM_MESSAGE_ID debugMode ??

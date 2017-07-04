@@ -1,5 +1,6 @@
 import system'winforms.
 import system'drawing.
+import extensions.
 
 template iform :: type
 {
@@ -36,8 +37,8 @@ sealed class Form :: iform(object)
     func onPaint   :: event(thePaintFunc).
 
     /// properties
-    int width  :: nprop(readWidthTo,writeWidth).
-    int height :: nprop(readHeightTo,writeHeight).
+    int width  :: nxprop(readWidthTo,writeWidth).
+    int height :: nxprop(readHeightTo,writeHeight).
     
     constructor new
     [
@@ -130,6 +131,11 @@ sealed class Form :: iform(object)
         
     set visible:value
     [
+        if ($nil == theHandle)
+        [
+            $self create.
+        ].
+        
         if(value)
             [ theHandle setVisible int:5 ];
             [ theHandle setVisible int:0 ]        

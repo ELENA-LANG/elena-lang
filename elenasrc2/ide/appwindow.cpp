@@ -2245,15 +2245,13 @@ void IDEController::ProjectManager :: reloadForwardsIni()
 void IDEController::ProjectManager :: reloadForwardsXml()
 {
    _ELENA_::Map<_ELENA_::ident_t, _ELENA_::_ConfigFile::Node> list;
-   _model->project.xmlConfig.select(IDE_FILES_XMLSECTION, list);
+   _model->project.xmlConfig.select(IDE_FORWARDS_XMLSECTION, list);
 
    for (_ELENA_::_ConfigFile::Nodes::Iterator it = list.start(); !it.Eof(); it++) {
-      _ELENA_::_ConfigFile::Nodes files;
-      (*it).select(ELC_INCLUDE, files);
+      _ELENA_::ident_t key = (*it).Attribute("key");
+      _ELENA_::ident_t content = (*it).Content();
 
-      for (_ELENA_::_ConfigFile::Nodes::Iterator file_it = files.start(); !file_it.Eof(); file_it++) {
-         _sources.add((*file_it).Content());
-      }
+      _forwards.add(key, content);
    }
 }
 
@@ -2314,9 +2312,12 @@ bool IDEController::ProjectManager :: openXml(_ELENA_::path_t path)
    _model->project.type = ctXml;
    _model->project.xmlConfig.clear();
 
-   if (!_model->project.xmlConfig.load(path, _ELENA_::feUTF8))
-      return false;
+   if (!_model->project.xmlConfig.load(path, _ELENA_::feUTF8)) {
+      _model->project.type = ctIni; // to reset default
 
+      return false;
+   }
+      
    rename(path);
    refresh();
 
@@ -2351,7 +2352,12 @@ void IDEController::ProjectManager::save(_ELENA_::path_t extension)
    cfgPath.combine(_model->project.name.str());
    cfgPath.appendExtension(extension);
 
-   _model->project.config.save(cfgPath.c_str(), _ELENA_::feUTF8);
+   if (_model->project.type == ctXml) {
+      _model->project.xmlConfig.save(cfgPath.c_str(), _ELENA_::feUTF8);
+   }
+   else _model->project.config.save(cfgPath.c_str(), _ELENA_::feUTF8);
+
+   
 
    _model->project.changed = false;
 }
@@ -2451,7 +2457,10 @@ void IDEController::ProjectManager::excludeSource(_ELENA_::path_t path)
 
 void IDEController::ProjectManager::clearForwards()
 {
-   _model->project.config.clear(IDE_FORWARDS_SECTION);
+   if (_model->project.type == ctXml) {
+      _model->project.xmlConfig.setSetting(IDE_FORWARDS_SECTION, DEFAULT_STR);
+   }
+   else _model->project.config.clear(IDE_FORWARDS_SECTION);
 
    _model->project.changed = true;
 }
@@ -2459,6 +2468,7 @@ void IDEController::ProjectManager::clearForwards()
 void IDEController::ProjectManager::addForward(const char* name, const char* reference)
 {
    if (_model->project.type == ctXml) {
+      _model->project.xmlConfig.appendSetting(IDE_FORWARDS_ELEMENT, name, reference);
    }
    else _model->project.config.setSetting(IDE_FORWARDS_SECTION, name, reference);
 

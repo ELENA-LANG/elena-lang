@@ -49,9 +49,14 @@ protected:
       _parent->setContent(position, value);
    }
 
-   virtual void insertNode(size_t position, ident_t name)
+   virtual void setAttribute(size_t start, ident_t name, ident_t s)
    {
-      _parent->insertNode(position, name);
+      _parent->setAttribute(start, name, s);
+   }
+
+   virtual size_t insertNode(size_t position, ident_t name)
+   {
+      return _parent->insertNode(position, name);
    }
 
    // recognize opening tag and parse it starting from start, return value - the node content position
@@ -75,6 +80,7 @@ public:
    virtual void readTag(XMLNodeTag& s);
 
    virtual void writeContent(ident_t s);
+   virtual void writeAttribute(ident_t name, ident_t s);
 
    virtual XMLNode appendNode(ident_t name);
 
@@ -102,8 +108,10 @@ class XMLTree : public XMLNode
       return (const char*)_content;
    }
 
-   virtual void setContent(int position, ident_t value);
-   virtual void insertNode(int position, ident_t name);
+   virtual void setContent(size_t position, ident_t value);
+   virtual size_t insertNode(size_t position, ident_t name);
+
+   virtual void setAttribute(size_t start, ident_t name, ident_t s);
 
 public:
    void clear()
@@ -111,14 +119,9 @@ public:
       _content.clear();
    }
 
-   //void assign(const char* s);
    bool load(path_t path, int encoding);
-   //   //void XMLS_saveFile(const char* path);
+   bool save(path_t path, int encoding);
 
-   //   virtual int getContent(int id, DynamicString<char>& s);
-   //   //virtual int setContent(int id, const char* s);
-   //
-   //   XMLTree(ident_t tag);
    XMLTree();
 };
 

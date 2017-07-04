@@ -1,3 +1,4 @@
+import extensions.
 import system'collections.
 
 // --- IControl ---
@@ -34,6 +35,11 @@ template icontainerof :: type
             theControls append control:control.
         ]
     }.
+    
+    appendControl : control
+    [
+        control $create container:$self int:($self xhandle)
+    ]
 }
 
 // --- BaseControl ---
@@ -43,10 +49,10 @@ class BaseControl
     int    theHandle.
     
     /// properties
-    int x      :: nprop(readXTo,writeX).
-    int y      :: nprop(readXTo,writeY).
-    int width  :: nprop(readWidthTo,writeWidth).
-    int height :: nprop(readHeightTo,writeHeight).
+    int x      :: nxprop(readXTo,writeX).
+    int y      :: nxprop(readXTo,writeY).
+    int width  :: nxprop(readWidthTo,writeWidth).
+    int height :: nxprop(readHeightTo,writeHeight).
     
     int xhandle = theHandle.
     
@@ -126,17 +132,26 @@ sealed class Label :: BaseControl, icontrolof(label)
 {
     constructor new container:container int:hParent 
     [
+        $self $create container:container int:hParent.
+    ]
+    
+    constructor new : parent
+        <= new container:parent int:(parent xhandle);
+    [
+    ]
+    
+    constructor new
+    [
+    ]
+    
+    $create container:container int:hParent
+    [
         container append control:$self.
         
         int hRect := system'external'elenagm NewWidget int:hParent int:widgRect.
         int hText := system'external'elenagm NewWidget int:hRect int:widgText.
         
         theHandle := hText.
-    ]
-    
-    constructor new : parent
-        <= new container:parent int:(parent xhandle);
-    [
     ]
 }
 

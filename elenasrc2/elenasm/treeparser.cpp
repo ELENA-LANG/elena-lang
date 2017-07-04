@@ -44,11 +44,15 @@ TreeScriptParser :: TreeScriptParser()
    _attributes.add("preloaded_symbol", V_PRELOADED);
 }
 
-void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer)
+void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer, LexicalType type)
 {
    bm = reader.read();
    while (!reader.Eof() && !reader.compare(")")) {
-      parseStatement(reader, bm, writer);
+      if (reader.compare(";")) {
+         writer.closeNode();
+         writer.insert(type);
+      }
+      else parseStatement(reader, bm, writer);
 
       bm = reader.read();
    }
@@ -62,11 +66,13 @@ void TreeScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& b
 
       bm = reader.read();
       if (reader.compare("(")) {
+         writer.newBookmark();
          writer.newNode((LexicalType)type);
          if (attr != 0)
             writer.appendNode(lxAttribute, attr);
 
-         parseScope(reader, bm, writer);
+         parseScope(reader, bm, writer, (LexicalType)type);
+         writer.removeBookmark();
       }
       else if (reader.compare("=")) {
          bm = reader.read();

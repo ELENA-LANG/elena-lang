@@ -166,9 +166,7 @@ XMLNode XMLNode :: appendNode(ident_t name)
    loadTag(content, _position, tag, NULL);
    size_t end = parse(content, _position, getlength(content), NULL) - tag.Length() - 3;
 
-   insertNode(end, name);
-
-   return XMLNode(end, this);
+   return XMLNode(insertNode(end, name), this);
 }
 
 bool XMLNode :: readAttribute(ident_t name, DynamicString<char>& s)
@@ -186,6 +184,11 @@ bool XMLNode :: readAttribute(ident_t name, DynamicString<char>& s)
       return true;
    }
    else return false;
+}
+
+void XMLNode :: writeAttribute(ident_t name, ident_t s)
+{
+   setAttribute(_position, name, s);
 }
 
 void XMLNode :: readTag(XMLNodeTag& tag)
@@ -268,17 +271,93 @@ bool XMLTree :: load(path_t path, int encoding)
    return true;
 }
 
-void XMLTree :: setContent(int, ident_t value)
+bool XMLTree :: save(path_t path, int encoding)
+{
+   TextFileWriter  writer(path, encoding, false);
+
+   if (!writer.isOpened())
+      return false;
+
+   writer.writeLiteral(_content);
+
+   return true;
+}
+
+void XMLTree :: setContent(size_t position, ident_t value)
 {
    XMLNodeTag tag;
-   size_t start = loadTag(_content.str(), _position, tag, NULL);
-   size_t end = parse(_content.str(), _position, _content.Length(), NULL) - tag.Length() - 3;
+   size_t start = loadTag(_content.str(), position, tag, NULL);
+   size_t end = parse(_content.str(), position, _content.Length(), NULL) - tag.Length() - 3;
 
    _content.cut(start, end - start);
    _content.insert(value.c_str(), start);
 }
 
-void XMLTree :: insertNode(int position, ident_t name)
+void XMLTree :: setAttribute(size_t start, ident_t name, ident_t s)
+{
+   ident_t content = getContent();
+   size_t position = start;
+
+   // read tag name
+   while (!isWhitespace(content[position]) && content[position] != '>') {
+      if (content[position] == 0)
+         throw XMLException(position);
+
+      position++;
+   }
+
+   // read attributes
+   size_t length = 0;
+   while (content[position] != '>') {
+      position++;
+      start = position;
+
+      while (!isWhitespace(content[position]) && content[position] != '=') {
+         if (content[position] == 0)
+            throw XMLException(position);
+
+         position++;
+      }
+
+      XMLNodeTag attr;
+      attr.copy(content + start, position - start);
+
+      if (content[position] == '=') {
+         position++;
+         if (content[position] != '\"')
+            throw XMLException(position);
+
+         position++;
+         start = position;
+         while (content[position] != '\"') {
+            if (content[position] == 0)
+               throw XMLException(position);
+
+            position++;
+         }
+
+         if (name.compare(attr.str())) {
+            length = position - start;
+         }
+
+         position++;
+      }
+   }
+   if (length != 0) {
+      _content.cut(start, length);
+      _content.insert("\"\"", start);
+      _content.insert(s, start + 1);
+   }
+   else {
+      _content.insert("\"\"", position);
+      _content.insert(s, position + 1);
+      _content.insert(name, position);
+      _content.insert("=", position + getlength(name));
+      _content.insert(" ", position);
+   }
+}
+
+size_t XMLTree :: insertNode(size_t  position, ident_t name)
 {
    _content.insert(">", position);
    _content.insert(name, position);
@@ -286,4 +365,6 @@ void XMLTree :: insertNode(int position, ident_t name)
    _content.insert(">", position);
    _content.insert(name, position);
    _content.insert("\n<", position);
+
+   return position + 1;
 }

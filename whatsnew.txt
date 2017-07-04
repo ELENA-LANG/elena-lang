@@ -9,9 +9,14 @@
 
 [ELC]
 [+] fixing template routines
+[+] new project template : vm_gui
+
+[IDE]
+[+] #14 : switch to xml config files 
 
 [LIB]
 [+] #315 : GUI markup script / library
+[+] #328 : unsingned int / long
 
 ******************************************************************************
                              What's New in 3.1.1

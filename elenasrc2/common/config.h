@@ -104,6 +104,8 @@ public:
 
    //ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL);
 
+   void appendSetting(ident_t key, ident_t attribute, const char* value);
+
    void setSetting(ident_t key, const char* value);
    void setSetting(ident_t key, int value);
    void setSetting(ident_t key, size_t value);
@@ -112,7 +114,7 @@ public:
    void clear();
 
    virtual bool load(path_t path, int encoding);
-   //virtual bool save(path_t path, int encoding);
+   virtual bool save(path_t path, int encoding);
 
    XmlConfigFile();
    virtual ~XmlConfigFile() { }

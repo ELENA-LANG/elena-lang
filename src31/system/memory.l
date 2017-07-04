@@ -1685,6 +1685,9 @@ class literalConvertor =
     stacksafe convert int:aNumber bytearray:buffer vint:length
         => system'core_routines'__literalconvertor.
     
+    stacksafe convert uint:aNumber bytearray:buffer vint:length
+        => system'core_routines'__literalconvertor.
+    
     /// Converts the parameter to the literal value
     stacksafe literal convert int:aNumber
     [
@@ -1692,6 +1695,17 @@ class literalConvertor =
         int  length := 0.
         
         $self convert int:aNumber bytearray:buffer vint:length.
+        
+        ^ LiteralValue $new int:0 int:length bytearray:buffer
+    ]
+    
+    /// Converts the parameter to the literal value
+    stacksafe literal convert uint:aNumber
+    [
+        byte buffer(12).
+        int  length := 0.
+        
+        $self convert uint:aNumber bytearray:buffer vint:length.
         
         ^ LiteralValue $new int:0 int:length bytearray:buffer
     ]
@@ -1746,12 +1760,27 @@ class literalConvertor =
         => system'core_routines'__literalconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
+    stacksafe convert uint:aNumber int:aRadix bytearray:buffer vint:length
+        => system'core_routines'__literalconvertor.
+
+    /// Converts the parameter to the literal value with the provided radix
     stacksafe literal convert int:aNumber int:aRadix
     [
         byte buffer(48).
         int  length := 0.
         
         $self convert int:aNumber int:aRadix bytearray:buffer vint:length.
+        
+        ^ LiteralValue $new int:0 int:length bytearray:buffer
+    ]
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe literal convert uint:aNumber int:aRadix
+    [
+        byte buffer(48).
+        int  length := 0.
+        
+        $self convert uint:aNumber int:aRadix bytearray:buffer vint:length.
         
         ^ LiteralValue $new int:0 int:length bytearray:buffer
     ]
@@ -1887,12 +1916,27 @@ class wideConvertor =
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value
+    stacksafe convert uint:aNumber shortarray:buffer vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value
     stacksafe wide convert int:aNumber
     [
         short buffer(12).
         int   length := 0.
         
         $self convert int:aNumber shortarray:buffer vint:length.
+        
+        ^ WideLiteralValue $new int:0 int:length shortarray:buffer
+    ]
+
+    /// Converts the parameter to the literal value
+    stacksafe wide convert uint:aNumber
+    [
+        short buffer(12).
+        int   length := 0.
+        
+        $self convert uint:aNumber shortarray:buffer vint:length.
         
         ^ WideLiteralValue $new int:0 int:length shortarray:buffer
     ]
@@ -1947,12 +1991,27 @@ class wideConvertor =
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
+    stacksafe convert uint:aNumber int:aRadix shortarray:buffer vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value with the provided radix
     stacksafe wide convert int:aNumber int:aRadix
     [
         short buffer(32).
         int   length := 0.
         
         $self convert int:aNumber int:aRadix shortarray:buffer vint:length.
+        
+        ^ WideLiteralValue $new int:0 int:length shortarray:buffer
+    ]
+
+    /// Converts the parameter to the literal value with the provided radix
+    stacksafe wide convert uint:aNumber int:aRadix
+    [
+        short buffer(32).
+        int   length := 0.
+        
+        $self convert uint:aNumber int:aRadix shortarray:buffer vint:length.
         
         ^ WideLiteralValue $new int:0 int:length shortarray:buffer
     ]
