@@ -35,6 +35,11 @@ template icontainerof :: type
             theControls append control:control.
         ]
     }.
+    
+    appendControl : control
+    [
+        control $create container:$self int:($self xhandle)
+    ]
 }
 
 // --- BaseControl ---
@@ -127,17 +132,26 @@ sealed class Label :: BaseControl, icontrolof(label)
 {
     constructor new container:container int:hParent 
     [
+        $self $create container:container int:hParent.
+    ]
+    
+    constructor new : parent
+        <= new container:parent int:(parent xhandle);
+    [
+    ]
+    
+    constructor new
+    [
+    ]
+    
+    $create container:container int:hParent
+    [
         container append control:$self.
         
         int hRect := system'external'elenagm NewWidget int:hParent int:widgRect.
         int hText := system'external'elenagm NewWidget int:hRect int:widgText.
         
         theHandle := hText.
-    ]
-    
-    constructor new : parent
-        <= new container:parent int:(parent xhandle);
-    [
     ]
 }
 

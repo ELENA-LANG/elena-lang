@@ -53,6 +53,7 @@ __define real			12298
 __define character		12299
 __define long                   12300
 __define wide                   12301
+__define constant               12302
 __define attribute		12303
 
 START ->
@@ -227,6 +228,7 @@ OBJECT ->
 	| literal
 	| wide
 	| character
+	| constant
 	| % MESSAGE_REFERENCE
 	| CODE_BLOCK	
 	| ( SUB_EXPRESSION

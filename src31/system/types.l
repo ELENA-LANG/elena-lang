@@ -63,6 +63,7 @@ type ref        :: system'Variable.
 type byte       :: system'ByteNumber.
 type short      :: system'ShortNumber.
 type int        :: system'IntNumber.
+type uint       :: system'UIntNumber.
 type long       :: system'LongNumber.
 type real       :: system'RealNumber.
 type char       :: system'CharValue.

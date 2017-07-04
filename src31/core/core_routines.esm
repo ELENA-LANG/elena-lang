@@ -1396,6 +1396,21 @@ procedure __literalconvertor.convert&int$&bytearray$&vint$[4]
 
 end
 
+procedure __literalconvertor.convert&uint$&bytearray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : uinttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
 procedure __literalconvertor.convert&wide$&bytearray$&vint$[4]
 
   aloadsi 2
@@ -1415,6 +1430,22 @@ procedure __literalconvertor.convert&int$&int$&bytearray$&vint$[5]
   aloadsi 2
   
   callextr api : inttostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __literalconvertor.convert&uint$&int$&bytearray$&vint$[5]
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : uinttostr
 
   bloadsi 5
   nwritei 0
@@ -1580,6 +1611,22 @@ procedure __wideconvertor.convert&int$&int$&shortarray$&vint$[5]
 
 end
 
+procedure __wideconvertor.convert&uint$&int$&shortarray$&vint$[5]
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : uinttowstr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
 procedure __wideconvertor.convert&int$&shortarray$&vint$[4]
 
   bloadsi 3
@@ -1587,6 +1634,21 @@ procedure __wideconvertor.convert&int$&shortarray$&vint$[4]
   dcopy 10
   
   callextr api : inttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor.convert&uint$&shortarray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : uinttowstr
 
   bloadsi 4
   nwritei 0
@@ -2163,6 +2225,25 @@ labCopy:
 
 end
 
+procedure __byteconvertor.convert&uint$&vbyte$[3]
+
+  aloadsi 2
+  nload  
+
+  lessn labCopy 100h
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
 procedure __byteconvertor.convert&long$&vbyte$[3]
 
   aloadsi 2
@@ -2341,6 +2422,25 @@ labCopyNeg:
   not
   nsave
   quitn 3  
+
+end
+
+procedure __shortconvertor.convert&uint$&vshort$[3]
+
+  bloadsi 3
+  aloadsi 2
+
+  nload
+
+  lessn labCopy 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  nsave
+  quitn 3
 
 end
 
@@ -2737,12 +2837,51 @@ labErr:
 
 end
 
+procedure __uintconvertor.convert&long$&vint$[3]
+
+  aloadsi 2
+  dcopy 4
+  bread
+  dcopye
+
+  elsen labErr 0  
+
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+end
+
 procedure __intconvertor.convert&literal$&vint$[3]
   
   bloadsi  3
   ecopy    10
   aloadsi  2
   callextr api : strtoint
+  nsave
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor.eval&convertUnsigned&literal$&vint$[3]
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : strtouint
   nsave
   ifr      labErr 0
   quitn    3
@@ -2836,6 +2975,26 @@ procedure __intconvertor.convert&real$&vint$[3]
 end
 
 procedure __longconvertor.convert&int$&vlong$[3]
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  nsave
+  lessn labNegative 0
+  dcopy 0
+  nsavei 1
+  acopyb
+  quitn 3
+
+labNegative:
+  dcopy 0FFFFFFFFh
+  nsavei 1
+  acopyb
+  quitn 3
+
+end
+
+procedure __longconvertor.convert&uint$&vlong$[3]
   
   bloadsi 3
   aloadsi 2
@@ -2972,6 +3131,18 @@ procedure __longconvertor.convert&real$&vlong$[3]
 end
 
 procedure __realconvertor.convert&int$&vreal$[3]
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor.convert&uint$&vreal$[3]
   
   bloadsi 3
   aloadsi 2

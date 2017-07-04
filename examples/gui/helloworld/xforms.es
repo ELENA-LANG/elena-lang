@@ -21,17 +21,31 @@ root
 =>;
 
    #define form_closing_tag ::= 
-    ">" body "<" "/" "Form" ">";
+    ">" member* "<" "/" "Form" ">";
 
-   #define body           ::=
-        $eps;
+   #define label_closing_tag ::= 
+    ">" member* "<" "/" "Label" ">";
+
+   #define member         ::=
+<=
+    message=appendControl
+    expression
+    (
+      reference=xforms'Label
+      message=new;
+=>
+         "<" "Label" property* label_closing_tag
+<=
+    );
+=>;
 
    #define property       ::=
 <=
       message=set
       message=
 =>
-        identifier "=" value <= ; => ;
+      identifier "=" value 
+<=    ; => ;
 
    #define identifier ::= <= $identifier =>;
 

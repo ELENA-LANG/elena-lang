@@ -2312,9 +2312,12 @@ bool IDEController::ProjectManager :: openXml(_ELENA_::path_t path)
    _model->project.type = ctXml;
    _model->project.xmlConfig.clear();
 
-   if (!_model->project.xmlConfig.load(path, _ELENA_::feUTF8))
-      return false;
+   if (!_model->project.xmlConfig.load(path, _ELENA_::feUTF8)) {
+      _model->project.type = ctIni; // to reset default
 
+      return false;
+   }
+      
    rename(path);
    refresh();
 

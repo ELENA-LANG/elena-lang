@@ -2,6 +2,12 @@
 In development:
 ------                              
 
+              sdev - refactoring
+                 * review assembly script : the parameter order
+
+              zdev - upndown
+                 * reimplement chat sample
+
               zdev - gui
                  * simple form with several labels
                  * simple form with several labels : fonts, sizes
@@ -48,6 +54,12 @@ In development:
               sdev - script engine
                  * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
 
+              xdev - general optimization  
+                 * hexadecimal - uint32
+                 * uint64 
+                 * postfix - ul
+                 * uint16
+
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -61,10 +73,6 @@ Pipeline:
 
               sdev - rosetta samples
                  * Zebra puzzle
-
-
-              zdev - upndown
-                 * reimplement chat sample
 
               sdev - cf parser
                  * currently nested expression should be enclosed into another epxression (expression expression nested ...)

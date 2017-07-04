@@ -315,6 +315,9 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
     /// Returns the value as an integer
     int = IntNumber new byte:$self.
 
+    /// Returns the value as an integer
+    uint = UIntNumber new byte:$self.
+
     /// Returns the value as a long integer
     long = LongNumber new byte:$self.
 
@@ -568,6 +571,9 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable(short)
     
     /// Returns the integer value
     int = IntNumber new short:$self.
+    
+    /// Returns the integer value
+    uint = UIntNumber new short:$self.
     
     /// Returns the long integer value
     long = LongNumber new short:$self.
@@ -835,6 +841,9 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable(int,long,real,
 
     /// Returns the real number
     real = RealNumber new int:$self.
+
+    /// Returns the real number
+    uint = UIntNumber new int:$self.
     
     /// Compares the value
     stacksafe bool equal int:anOperand 
@@ -1044,6 +1053,322 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable(int,long,real,
         = 0 - theValue.
 }
 
+
+// --- UIntNumber ---
+
+/// A unsigned 32 bit integer
+
+sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable(int,long,real,char,literal,wide)
+{
+    __int32 theValue.
+
+    stacksafe implicit byte:n
+    [
+        theValue := n.
+    ]
+    
+    stacksafe implicit short:n
+    [
+        theValue := n.
+    ]
+    
+    stacksafe implicit int:n
+    [
+        theValue := n.
+    ]
+    
+    implicit u literal:s
+    [
+        theValue := intConvertor convertUnsigned literal:s.
+    ]
+    
+    /// Creates the object with the minimal value
+    constructor min
+        = 0.
+
+    /// Creates the object with the maximal value
+    constructor max
+        = 0FFFFFFFFh.
+        
+    constructor new int:n
+    [
+        theValue := n.
+    ]        
+        
+    constructor new byte:n
+    [
+        theValue := n.
+    ]        
+        
+    constructor new short:n
+    [
+        theValue := n.
+    ]        
+        
+    constructor new uint:n
+    [
+        theValue := n.
+    ]        
+        
+    constructor new
+    [
+        theValue := 0.
+    ]        
+
+    /// Returns the literal presentation
+    literal = system'literalConvertor convert uint:$self.
+
+    /// Returns the literal presentation
+    wide = system'wideConvertor convert uint:$self.
+        
+    uint = $self.            
+
+    /// Returns the value as a short integer    
+    stacksafe short = shortConvertor convert uint:$self.
+
+    /// Returns the byte value    
+    byte = byteConvertor convert uint:$self.
+
+    /// Returns the long integer
+    long = LongNumber new uint:$self.
+
+    /// Returns the real number
+    real = RealNumber new uint:$self.
+
+    /// Compares the value
+    stacksafe bool equal int:anOperand 
+        = theValue == anOperand.
+        
+    /// Compares the value
+    stacksafe bool less int:anOperand
+        = theValue < anOperand.
+        
+    /// Returns the sum
+    stacksafe int add int:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    stacksafe int subtract int:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    stacksafe int multiply int:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    stacksafe int divide int:anOperand
+        = theValue / anOperand.
+
+    /// Returns the result of bitwise AND operation
+    stacksafe int and int:anOperand
+        = theValue && anOperand.
+
+    /// Returns the result of bitwise OR operation
+    stacksafe int or int:anOperand
+        = theValue || anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    stacksafe int xor int:anOperand
+        = theValue ^^ anOperand.
+
+    /// Compares the value
+    stacksafe bool equal uint:anOperand 
+        = theValue == anOperand.
+        
+    /// Compares the value
+    stacksafe bool less uint:anOperand
+        = theValue < anOperand.
+        
+    /// Returns the sum
+    stacksafe uint add uint:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    stacksafe uint subtract uint:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    stacksafe uint multiply uint:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    stacksafe uint divide uint:anOperand
+        = theValue / anOperand.
+
+    /// Returns the result of bitwise AND operation
+    stacksafe uint and uint:anOperand
+        = theValue && anOperand.
+
+    /// Returns the result of bitwise OR operation
+    stacksafe uint or uint:anOperand
+        = theValue || anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    stacksafe uint xor uint:anOperand
+        = theValue ^^ anOperand.
+
+    /// Compares the integer value
+    stacksafe bool equal short:value 
+        = $self equal uint:value.
+
+    /// Compares the integer value
+    stacksafe bool equal byte:value
+        = $self equal uint:value.
+        
+    /// Compares the integer value
+    stacksafe bool equal long:anOperand 
+        = LongNumber new uint:$self; equal long:anOperand.
+
+    /// Compares the integer value
+    stacksafe bool equal real:anOperand 
+        = RealNumber new uint:$self; equal real:anOperand.
+
+    /// Compares the integer value
+    stacksafe bool less short:value
+        = $self equal uint:value.
+
+    /// Compares the integer value
+    stacksafe bool less byte:value
+        = $self less uint:value.
+        
+    /// Compares the integer value
+    stacksafe bool less long:anOperand 
+        = LongNumber new uint:$self; less long:anOperand.
+
+    /// Compares the integer value
+    stacksafe bool less real:anOperand 
+        = RealNumber new uint:$self; less real:anOperand.
+
+    /// Returns the sum of integers
+    stacksafe add short:value
+        = $self add uint:value.
+
+    /// Returns the sum of integers
+    stacksafe add byte:value
+        = $self add uint:value.
+
+    /// Returns the sum of integers
+    stacksafe add long:anOperand
+        = LongNumber new uint:$self; add long:anOperand.
+
+    /// Returns the sum of integers
+    stacksafe add real:anOperand
+        = RealNumber new uint:$self; add real:anOperand.
+
+    /// Returns the difference of integers
+    stacksafe subtract short:value
+        = $self subtract uint:value.
+
+    /// Returns the difference of integers
+    stacksafe subtract byte:value
+        = $self subtract uint:value.
+
+    /// Returns the difference of integers
+    stacksafe subtract long:anOperand
+        = LongNumber new uint:$self; subtract long:anOperand.
+
+    /// Returns the difference of integers
+    stacksafe subtract real:anOperand
+        = RealNumber new uint:$self; subtract real:anOperand.
+
+    /// Returns the product of integers
+    stacksafe multiply short:value
+        = $self multiply uint:value.
+
+    /// Returns the product of integers
+    stacksafe multiply byte:value
+        = $self multiply uint:value.
+
+    /// Returns the product of integers
+    stacksafe multiply long:anOperand
+        = LongNumber new uint:$self; multiply long:anOperand.
+
+    /// Returns the product of integers
+    stacksafe multiply real:anOperand
+        = RealNumber new uint:$self; multiply real:anOperand.
+
+    /// Returns the result of integer division
+    stacksafe divide short:value
+        = $self divide uint:value.
+
+    /// Returns the result of integer division
+    stacksafe divide byte:value
+        = $self divide uint:value.
+
+    /// Returns the result of integer division
+    stacksafe divide long:anOperand
+        = LongNumber new uint:$self; divide long:anOperand.
+
+    /// Returns the result of integer division
+    stacksafe divide real:anOperand
+        = RealNumber new uint:$self; divide real:anOperand.
+
+    /// Returns the result of bitwise AND operation
+    stacksafe and short:anOperand
+        = $self and uint:anOperand.
+
+    /// Returns the result of bitwise AND operation
+    stacksafe and byte:anOperand
+        = $self and uint:anOperand.
+
+    /// Returns the result of bitwise AND operation
+    stacksafe and long:anOperand
+        = LongNumber new uint:$self; and long:anOperand.
+
+    /// Returns the result of bitwise OR operation
+    stacksafe or short:anOperand
+        = $self or uint:anOperand.
+
+    /// Returns the result of bitwise OR operation
+    stacksafe or byte:anOperand
+        = $self or uint:anOperand.
+
+    /// Returns the result of bitwise OR operation
+    stacksafe or long:anOperand
+        = LongNumber new uint:$self; or long:anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    stacksafe xor short:anOperand
+        = $self xor uint:anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    stacksafe xor byte:anOperand
+        = $self xor uint:anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    stacksafe xor long:anOperand
+        = LongNumber new uint:$self; xor long:anOperand.
+
+    /// Clones the value
+    clone = UIntNumber new uint:$self.
+
+    // Reads the object hash code into the output parameter
+    stacksafe readHashCodeTo vint:aCode 
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        $self readHashCodeTo vint:aCode.
+        
+        ^ aCode.
+    ]        
+
+    stacksafe uint shiftLeft int:val
+    [
+        ^ theValue << val
+    ]
+
+    stacksafe uint shiftRight int:val
+    [
+        ^ theValue >> val
+    ]
+    
+    /// Bitwise inversion
+    stacksafe uint inverted
+        => system'core_routines'__int.  
+}
+
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
@@ -1072,6 +1397,10 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable(long,int,real
         = longConvertor convert int:value.
 
     /// Creates the object with specified value
+    stacksafe constructor new uint:value
+        = longConvertor convert uint:value.
+
+    /// Creates the object with specified value
     stacksafe constructor new short:value 
         = longConvertor convert short:value.
 
@@ -1085,6 +1414,9 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable(long,int,real
 
     /// Returns an integer value
     int = intConvertor convert long:$self.
+
+    /// Returns an integer value
+    uint = uintConvertor convert long:$self.
 
     /// Returns the value as a short integer    
     short = shortConvertor convert long:$self.
@@ -1334,6 +1666,10 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,li
     /// Creates the object with specified value
     stacksafe constructor new int:value 
         = realConvertor convert int:value.
+  
+    /// Creates the object with specified value
+    stacksafe constructor new uint:value 
+        = realConvertor convert uint:value.
 
     /// Creates the object with specified value
     stacksafe constructor new short:value 
@@ -1768,6 +2104,10 @@ class byteConvertor =
     stacksafe byte convert int:aValue vbyte:aRetVal
         => system'core_routines'__byteconvertor.
 
+    /// Converts an integer into a byte value and saves the result into an output parameter
+    stacksafe byte convert uint:aValue vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+
     /// Converts a long integer into a byte value and saves the result into an output parameter
     stacksafe convert long:aValue vbyte:aRetVal
         => system'core_routines'__byteconvertor.
@@ -1811,6 +2151,15 @@ class byteConvertor =
     [
         byte aRetVal := 0.
         $self convert int:aValue vbyte:aRetVal.
+        
+        ^ ByteNumber new byte:aRetVal
+    ]
+        
+    /// Converts an integer into a byte value
+    stacksafe byte convert uint:aValue
+    [
+        byte aRetVal := 0.
+        $self convert uint:aValue vbyte:aRetVal.
         
         ^ ByteNumber new byte:aRetVal
     ]
@@ -1870,6 +2219,10 @@ class shortConvertor =
     stacksafe convert int:aValue vshort:aRetVal
         => system'core_routines'__shortconvertor.
         
+    /// Converts an integer into a short integer value and saves the result into an output parameter
+    stacksafe convert uint:aValue vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
     /// Converts a long integer into a short integer value and saves the result into an output parameter
     stacksafe convert long:aValue vshort:aRetVal
         => system'core_routines'__shortconvertor.
@@ -1904,6 +2257,15 @@ class shortConvertor =
     [
         short aRetVal := 0.
         $self convert int:aValue vshort:aRetVal.
+        
+        ^ ShortNumber new short:aRetVal
+    ]
+
+    /// Converts an integer into a short integer value
+    stacksafe short convert uint:aValue
+    [
+        short aRetVal := 0.
+        $self convert uint:aValue vshort:aRetVal.
         
         ^ ShortNumber new short:aRetVal
     ]
@@ -2065,6 +2427,10 @@ class intConvertor =
         => system'core_routines'__intconvertor.
 
     /// Converts a literal string into an integer and saves the result into an output parameter
+    stacksafe convertUnsigned literal:aValue vint:aRetVal
+        => system'core_routines'__intconvertor.
+
+    /// Converts a literal string into an integer and saves the result into an output parameter
     stacksafe convert literal:value int:base vint:retVal
         => system'core_routines'__intconvertor.
 
@@ -2101,6 +2467,15 @@ class intConvertor =
     [
         int aRetVal := 0.
         $self convert literal:aLiteral vint:aRetVal.
+        
+        ^ IntNumber new int:aRetVal
+    ]
+        
+    /// Converts a literal string into an integer
+    stacksafe int convertUnsigned literal:aLiteral
+    [
+        int aRetVal := 0.
+        $self convertUnsigned literal:aLiteral vint:aRetVal.
         
         ^ IntNumber new int:aRetVal
     ]
@@ -2180,9 +2555,32 @@ class intConvertor =
     /// Returns a parameter                                    
     stacksafe int convert int:anInt
         = IntNumber new int:anInt.
-        
+
+    stacksafe int convert uint:anInt
+        = IntNumber new int:anInt.        
+                        
     int convert : anObject
         = anObject cast:%convert to:$self.
+}.
+
+/// A unsigned integer convertor
+class uintConvertor =
+{
+    uint convert int:val
+        = UIntNumber new int:val.
+        
+    /// Converts a long integer into an integer and saves the result into an output parameter
+    stacksafe convert long:aValue vint:aRetVal
+        => system'core_routines'__uintconvertor.
+        
+    /// Converts a long integer value into an integer and saves the result into an output parameter
+    stacksafe uint convert long:aValue
+    [
+        int aRetVal := 0.
+        $self convert long:aValue vint:aRetVal.
+        
+        ^ UIntNumber new int:aRetVal
+    ]        
 }.
 
 /// A long integer convertor
@@ -2206,7 +2604,10 @@ class longConvertor =
 
     stacksafe convert int:aValue vlong:aRetVal
         => system'core_routines'__longconvertor.
-
+        
+    stacksafe convert uint:aValue vlong:aRetVal
+        => system'core_routines'__longconvertor.
+        
     stacksafe convert short:aValue vlong:aRetVal
         => system'core_routines'__longconvertor.
 
@@ -2222,6 +2623,15 @@ class longConvertor =
     [
         long n := 0l.
         $self convert int:aValue vlong:n.
+        
+        ^ LongNumber new long:n
+    ]
+
+    /// Converts an integer value into a long integer
+    stacksafe long convert uint:aValue
+    [
+        long n := 0l.
+        $self convert uint:aValue vlong:n.
         
         ^ LongNumber new long:n
     ]
@@ -2314,6 +2724,28 @@ class realConvertor =
         => system'core_routines'__realconvertor.
 
     /// Converts an integer into a real number and saves the result into an output parameter
+    stacksafe convert uint:aValue vreal:aRetVal
+    [
+        (aValue < 0)?
+        [
+            // If the number is bigger than 2^31
+            // than we are unlucky
+            int odd := aValue && 1.            
+            int halfed := aValue >> 1.
+            
+            real r := 0.
+            $self convert int:halfed vreal:r.
+            r := r * 2.0r.
+            r := r + odd.
+            
+            aRetVal real := r.
+        ]
+        ! [ $self convert int:aValue vreal:aRetVal. ]
+    ]    
+    
+    //    => system'core_routines'__realconvertor.
+
+    /// Converts an integer into a real number and saves the result into an output parameter
     stacksafe convert long:aValue vreal:aRetVal
         => system'core_routines'__realconvertor.
 
@@ -2360,6 +2792,15 @@ class realConvertor =
     [
         real aRetVal := 0.0r.
         $self convert int:anInt vreal:aRetVal.
+        
+        ^ RealNumber new real:aRetVal
+    ]
+        
+    /// Converts an integer into a real number
+    stacksafe real convert uint:anInt
+    [
+        real aRetVal := 0.0r.
+        $self convert uint:anInt vreal:aRetVal.
         
         ^ RealNumber new real:aRetVal
     ]
