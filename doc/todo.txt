@@ -2,7 +2,18 @@
 In development:
 ------                              
 
+              xdev - refactoring
+                 * declaring type with the class?
+
+                 * review cellular library
+
+              xdev - refactoring
+                 * migrating rosetta samples : Conway's Game of Life
+                 * nshift should be replaced with nshiftl, nshiftr
+                 * optimize shift implementation
+
               sdev - refactoring
+                 * refactor extensions'scripting'Library ...
                  * review assembly script : the parameter order
 
               zdev - upndown
@@ -15,12 +26,9 @@ In development:
                  * graph : function declared in the script
 
               xdev - refactoring
-                 * nshift should be replaced with nshiftl, nshiftr
-                 * optimize shift implementation
                  * check subject duplicates
                  * check attribute duplicates
                  * method duplicates
-                 * migrating rosetta samples : Conway's Game of Life
                  * migrating pi2 sample
                  * allow to initialize template based variable : arrayof numbers(int) := int(3).
 

@@ -823,7 +823,7 @@ bool IDEController :: doSave(bool saveAsMode)
    if (_model->isDocumentReadOnly() || !_model->currentDoc)
       return false;
 
-   if (_model->project.name.isEmpty() && _model->currentDoc->status.included) {
+   if (_model->project.name.isEmpty()) {
       if (!doSaveProject(false))
          return false;
 
