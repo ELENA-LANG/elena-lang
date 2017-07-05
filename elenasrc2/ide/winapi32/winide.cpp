@@ -1554,13 +1554,15 @@ void IDEWindow :: reloadProjectView(_ProjectManager* project)
    _ELENA_::wide_c buffer[0x100];
    while (!it.Eof()) {
       _ELENA_::ident_t name = *it;
+      if(name.find(":\\") != -1)  // remove the disk letter name
+        name = _ELENA_::ident_t(name + 3);
 
       TreeViewItem parent = root;
       size_t start = 0;
       while (true) {
          size_t end = _ELENA_::ident_t(name + start).find(PATH_SEPARATOR);
 
-         _ELENA_::WideString nodeName(name + start, (end == -1 ? _ELENA_::getlength(name) : end) - start);
+         _ELENA_::WideString nodeName(name + start, (end == -1 ? _ELENA_::getlength(name) : end));
 
          TreeViewItem current = projectView->getChild(parent);
          while (current != NULL) {
@@ -1578,7 +1580,7 @@ void IDEWindow :: reloadProjectView(_ProjectManager* project)
          parent = current;
 
          if (end != -1) {
-            start = end + 1;
+            start += end + 1;
          }
          else break;
       }
