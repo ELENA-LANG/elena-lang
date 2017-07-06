@@ -13,8 +13,8 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     3                 // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     1
-   #define ENGINE_RELEASE_VERSION   2
+   #define ENGINE_MINOR_VERSION     2
+   #define ENGINE_RELEASE_VERSION   0
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -95,6 +95,7 @@ namespace _ELENA_
    #define ROLLBACK_MESSAGE_ID     0x0041
    #define REPLACE_MESSAGE_ID      0x0043  
 
+   #define MULTI_MESSAGE_ID        0x007D             // multimethod message
    #define VALUES_MESSAGE_ID       0x007E             // virtual method returning the list of enum values
    #define PRIVATE_MESSAGE_ID      0x007F
 

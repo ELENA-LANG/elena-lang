@@ -5005,13 +5005,77 @@ void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool wi
    }
 }
 
+void ByteCodeWriter :: doMultiDispatch(CommandTape& tape)
+{
+   // ; 5 - message
+   // ; 4 - overload_list index
+   // ; 3 - param list
+   // ; 2 - type list
+   // ; 1 - param count
+   // ; 0 - param index
+
+   // pushe
+   // init 4
+   // dcopy 0
+   // dsavesi 4
+   // acopys -2
+   // asavesi 3
+
+   // labNext:
+   // acopyr overload_list
+   // dloadsi 4
+   // nread
+   // inc
+   // dsavesi 4
+   // ifm labEnd 0
+
+   // esavesi 5
+
+   // ; resolve message table
+   // dcopysubj
+   // bcopyr message_table
+   // get
+   // asavesi 2
+   // blen
+   // dsavesi 1
+   // dcopy 0
+   // dsavesi 0
+
+   // labCheckParam:
+   // bloadsi 2
+   // get
+   // inc
+   // dsavesi 0
+   // pusha
+   // bloadsi 3
+   // get
+   // popb
+   // <ifsubclassof>
+   // ifn labNext 0
+   // dloadsi 0
+   // eloadsi 1
+   // next labCheckParam   
+
+   // labEnd:
+   // eloadsi 5
+   // popi 5
+   // aloadsi 0
+   // ajumpvi 0
+}
+
 void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node)
 {
    if (node.argument != 0) {
-      pushObject(tape, lxCurrentMessage);
-      setSubject(tape, node.argument);
-      doGenericHandler(tape);
-      popObject(tape, lxCurrentMessage);
+      if (getVerb(node.argument) == MULTI_MESSAGE_ID) {
+
+      }
+      else {
+         // obsolete : old-style dispatching
+         pushObject(tape, lxCurrentMessage);
+         setSubject(tape, node.argument);
+         doGenericHandler(tape);
+         popObject(tape, lxCurrentMessage);
+      }
    }
    else doGenericHandler(tape);
 

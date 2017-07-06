@@ -2,9 +2,32 @@
 In development:
 ------                              
 
-              xdev - refactoring
+              xdev - multimethod
                  * declaring type with the class?
 
+                 * new command : check if the object is subclass of a class
+                 * #100 : classOp : test if object is subclass of 
+                 * reimplement static field
+                 * every multi-method will have a static field associated with it. It contains the list of classes and the resulting
+                   message. Algorithm will check it class or its parent matches
+                 * multi-method will go through the list and try to find the matching value
+                 * if the match is found - redirects to it, if not the default implementation is executed
+                 * it should be possible to declare multimethod which will call the correct method
+                 * implementing new style method : 
+                      validate::s:BaseRulSet, i:IntNumber, j:IntNumber
+                      [
+                      ]
+                      validate::(s:BaseRulSet, i:IntNumber, j:IntNumber)
+                      [
+                      ]
+                   which will automatically create a multi-method declaration;
+                   to call it o validate:a:b:c.
+
+
+                 * compiler should replace generic call with a direct call if the target is known and the parameters
+                   are known
+
+              xdev - refactoring
                  * review cellular library
 
               xdev - refactoring
@@ -377,7 +400,6 @@ Pipeline:
                  * multy parameter dispatching
                  * create closure outside the loop, so it will be created only once
                  * #236 : Namespace sharing
-                 * #100 : classOp : test if object is subclass of 
                  * #167 : stack allocated variable and $nil
                  * passing vint as int probably should be possible only for embeddable classes
                  * for wrapper classes generate virutal set method

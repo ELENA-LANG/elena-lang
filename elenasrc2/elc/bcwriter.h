@@ -186,6 +186,7 @@ class ByteCodeWriter
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 
+   void doMultiDispatch(CommandTape& tape);
    void doGenericHandler(CommandTape& tape);
    void unboxMessage(CommandTape& tape);
    void resend(CommandTape& tape);
