@@ -16,6 +16,7 @@
 #include "ecassembler.h"
 #include "source.h"
 #include "asm2binx.h"
+#include "assemblerException.h"
 
 int main(int argc, char* argv[])
 {
@@ -67,7 +68,7 @@ int main(int argc, char* argv[])
    _ELENA_::Path source(amd64Mode ? argv[2] : argv[1]);
    _ELENA_::TextFileReader reader(source.c_str(), _ELENA_::feUTF8, true);
    if (!reader.isOpened()) {
-      printf("Cannot open the file");
+      printf("Cannot open the file %s", argv[1]);
       return -1;
    }
 
@@ -91,9 +92,16 @@ int main(int argc, char* argv[])
    }
    catch(_ELENA_::InvalidChar& e) {
       printf("(%d): Invalid char %c\n", e.row, e.ch);
+	  return -1;
    }
    catch(_ELENA_::AssemblerException& e) {
-      printf(e.message, e.row);
+	   if (e.messageArguments == NULL)
+		   printf(e.message, e.row);
+	   else if (e.procedureName == NULL)
+		   printf(e.message, e.messageArguments.c_str(), e.procedureNumber);
+	   else
+		   printf(e.message, e.messageArguments.c_str(), e.procedureName.c_str());
+	   return -1;
    }
    return 0;
 }

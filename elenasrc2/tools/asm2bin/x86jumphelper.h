@@ -40,6 +40,8 @@ public:
 
    bool addLabel(ident_t label);
 
+   bool checkAllUsedLabels(ident_t errorMessage, int procedureNumber);
+
 	x86JumpHelper(MemoryWriter* code)
       : _helper(code)
 	{

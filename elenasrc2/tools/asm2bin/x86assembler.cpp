@@ -10,6 +10,7 @@
 //---------------------------------------------------------------------------
 #include "x86assembler.h"
 #include "module.h"
+#include "assemblerException.h"
 
 #include <float.h>
 
@@ -4252,43 +4253,47 @@ bool x86Assembler :: compileCommand(PrefixInfo& prefix, TokenInfo& token, Proced
    return recognized;
 }
 
-void x86Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned)
+void x86Assembler::compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned)
 {
 	ProcedureInfo info(binary, inlineMode);
 
 	token.read();
-   if (token.check("%")) {
-      info.reference = token.readInteger(constants);
+	if (token.check("%")) {
+		info.reference = token.readInteger(constants);
 
-      token.read();
-   }
-   else {
-      ReferenceNs refName(NATIVE_MODULE, token.value);
+		token.read();
+	}
+	else {
+		ReferenceNs refName(NATIVE_MODULE, token.value);
 
-      token.read();
-	   if (token.check("(")) {
-	      readParameterList(token, info, refName);
-	      token.read();
-	   }
+		token.read();
+		if (token.check("(")) {
+			readParameterList(token, info, refName);
+			token.read();
+		}
 
-      info.reference = binary->mapReference(refName) | mskNativeCodeRef;
-   }
-	if (binary->mapSection(info.reference, true)!=NULL) {
+		info.reference = binary->mapReference(refName) | mskNativeCodeRef;
+	}
+	if (binary->mapSection(info.reference, true) != NULL) {
 		throw AssemblerException("Procedure already exists (%d)\n", token.terminal.row);
 	}
 
-   _Memory* code = binary->mapSection(info.reference, false);
+	_Memory* code = binary->mapSection(info.reference, false);
 	MemoryWriter writer(code);
 
 	x86JumpHelper helper(&writer);
 
-   PrefixInfo prefix;
+	PrefixInfo prefix;
 
 	while (!token.check("end")) {
-      compileCommand(prefix, token, info, writer, helper);
+		compileCommand(prefix, token, info, writer, helper);
 	}
-   if (aligned)
-	   writer.align(4, 0x90);
+
+	// Check if all used labels are defined!
+	helper.checkAllUsedLabels("Used label ( %s ) not declared in procedure %xh\n", info.reference);
+
+	if (aligned)
+		writer.align(4, 0x90);
 }
 
 void x86Assembler :: compile(TextReader* source, path_t outputPath)

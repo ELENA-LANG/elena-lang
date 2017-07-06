@@ -9,25 +9,13 @@
 #ifndef assemblerH
 #define assemblerH
 
+#include "assemblerException.h"
+
 namespace _ELENA_
 {
 
 #define ARGUMENT1           "__arg1"
 #define ARGUMENT2           "__arg2"
-
-// --- AssemblerException ---
-
-struct AssemblerException
-{
-	const char* message;
-	int         row;
-
-	AssemblerException(const char* message, int row)
-	{
-		this->message = message;
-		this->row = row;
-	}
-};
 
 // --- TokenInfo ---
 

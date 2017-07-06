@@ -9,6 +9,7 @@
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include "x86jumphelper.h"
+#include "assemblerException.h"
 
 using namespace _ELENA_;
 
@@ -106,4 +107,19 @@ bool x86JumpHelper::addLabel(ident_t labelName)
    _helper.setLabel(label);
 
    return true;
+}
+
+bool x86JumpHelper::checkAllUsedLabels(ident_t errorMessage, int procedureNumber)
+{
+	auto it = _labels.start();
+	while (!it.Eof())
+	{
+		ident_t label = it._item()->key;
+
+		// Check if label is declared
+		if (_declaredLabels.get(label) == NULL)
+			throw AssemblerException(errorMessage, label, procedureNumber);
+		it++;
+	}
+	return false;
 }
