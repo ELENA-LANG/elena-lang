@@ -123,3 +123,18 @@ bool x86JumpHelper::checkAllUsedLabels(ident_t errorMessage, int procedureNumber
 	}
 	return false;
 }
+
+bool x86JumpHelper::checkAllUsedLabels(ident_t errorMessage, ident_t procedureName)
+{
+   auto it = _labels.start();
+   while (!it.Eof())
+   {
+      ident_t label = it._item()->key;
+
+      // Check if label is declared
+      if (_declaredLabels.get(label) == NULL)
+         throw AssemblerException(errorMessage, label, procedureName);
+      it++;
+   }
+   return false;
+}

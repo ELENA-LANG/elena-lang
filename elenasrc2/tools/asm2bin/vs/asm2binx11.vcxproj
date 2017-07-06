@@ -139,6 +139,7 @@
     <ClInclude Include="..\..\..\elc\source.h" />
     <ClInclude Include="..\..\..\common\streams.h" />
     <ClInclude Include="..\..\..\common\tools.h" />
+    <ClInclude Include="..\assemblerException.h" />
     <ClInclude Include="..\ecassembler.h" />
     <ClInclude Include="..\amd64assembler.h" />
     <ClInclude Include="..\x86assembler.h" />

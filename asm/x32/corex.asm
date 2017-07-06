@@ -2754,7 +2754,7 @@ labSave:
   mov   ebx, 1
   jmp   short labEnd
   
-lErr:
+labErr:
   ffree st(1)
   
 labEnd:

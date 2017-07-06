@@ -41,6 +41,7 @@ public:
    bool addLabel(ident_t label);
 
    bool checkAllUsedLabels(ident_t errorMessage, int procedureNumber);
+   bool checkAllUsedLabels(ident_t errorMessage, ident_t procedureName); // duplication??
 
 	x86JumpHelper(MemoryWriter* code)
       : _helper(code)

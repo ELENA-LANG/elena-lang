@@ -37,13 +37,15 @@ struct AssemblerException
 		this->messageArguments = textArgument.clone();
 		this->procedureNumber = procedureNumber;
 		this->procedureName = NULL;
+      this->row = 0;
 	}
 
 	AssemblerException(const char* message, ident_t textArgument, ident_t procedureName)
 	{
 		this->message = message;
 		this->messageArguments = textArgument.clone();
-		this->procedureName = procedureName.clone();;
+		this->procedureName = procedureName.clone();
+      this->row = 0;
 	}
 };
 }

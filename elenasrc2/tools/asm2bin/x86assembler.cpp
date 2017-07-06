@@ -4256,6 +4256,7 @@ bool x86Assembler :: compileCommand(PrefixInfo& prefix, TokenInfo& token, Proced
 void x86Assembler::compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned)
 {
 	ProcedureInfo info(binary, inlineMode);
+   ReferenceNs refName;
 
 	token.read();
 	if (token.check("%")) {
@@ -4264,7 +4265,8 @@ void x86Assembler::compileProcedure(TokenInfo& token, _Module* binary, bool inli
 		token.read();
 	}
 	else {
-		ReferenceNs refName(NATIVE_MODULE, token.value);
+      refName.copy(NATIVE_MODULE);
+      refName.combine(token.value);
 
 		token.read();
 		if (token.check("(")) {
@@ -4290,7 +4292,10 @@ void x86Assembler::compileProcedure(TokenInfo& token, _Module* binary, bool inli
 	}
 
 	// Check if all used labels are defined!
-	helper.checkAllUsedLabels("Used label ( %s ) not declared in procedure %xh\n", info.reference);
+   if (emptystr(refName)) {
+      helper.checkAllUsedLabels("Used label ( %s ) not declared in procedure %xh\n", info.reference);
+   }
+   else helper.checkAllUsedLabels("Used label ( %s ) not declared in procedure %s\n", refName.str());
 
 	if (aligned)
 		writer.align(4, 0x90);
