@@ -514,6 +514,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
 
       fixJump(token.value, writer, info);
 
+	  info.declareLabel(token.value);
+
       writeCommand(ByteCommand(bcNop), writer);
 
       token.read(":", "':' expected (%d)\n");
@@ -524,7 +526,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
 void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned)
 {
    LabelInfo info;
-
+   
    token.read();
 
    IdentifierString method;
@@ -558,6 +560,8 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
 	while (!token.check("end")) {
       compileCommand(token, writer, info, binary);
 	}
+
+	info.checkAllUsedLabels("Used label ( %s ) not declared in procedure %s\n", method);
 
    (*code)[0] = writer.Position() - 4;
 

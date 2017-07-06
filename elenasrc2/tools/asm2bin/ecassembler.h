@@ -27,6 +27,33 @@ class ECodesAssembler : public Assembler
    {
       Map<ident_t, int> labels;
       Map<ident_t, int> fwdJumps;
+
+	  Map<ident_t, size_t> declaredLabels;
+
+	  bool declareLabel(ident_t label)
+	  {
+		  if (declaredLabels.get(label) == 0)
+		  {
+			  declaredLabels.add(label, declaredLabels.Count() + 1);
+			  return true;
+		  }
+		  return false;
+	  }
+
+	  bool checkAllUsedLabels(ident_t errorMessage, ident_t procedureName)
+	  {
+		  auto it = labels.start();
+		  while (!it.Eof())
+		  {
+			  ident_t label = it._item()->key;
+
+			  // Check if label is declared
+			  if (declaredLabels.get(label) == NULL)
+				  throw AssemblerException(errorMessage, label, procedureName);
+			  it++;
+		  }
+		  return false;
+	  }
    };
 
    int mapVerb(ident_t literal);
