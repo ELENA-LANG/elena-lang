@@ -531,12 +531,16 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
 
       // load class class
       void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
-      void* packageVAddress = NULL;
-      if (header.packageRef != 0)
-         packageVAddress = resolve(sectionInfo.module->resolveReference(header.packageRef), mskConstArray, true);
+      void* packageParentVAddress = NULL;
+      if (test(header.flags, elClassClass)) {
+         if (header.packageRef != 0)
+            packageParentVAddress = resolve(sectionInfo.module->resolveReference(header.packageRef), mskConstArray, true);
+      }
+      else if (header.parentRef != 0)
+         packageParentVAddress = resolve(sectionInfo.module->resolveReference(header.parentRef), mskVMTRef, true);
 
       // fix VMT
-      _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)packageVAddress, count, _virtualMode);
+      _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)packageParentVAddress, count, _virtualMode);
    }
 
    return vaddress;

@@ -14,6 +14,12 @@ extension objectOp
     class_ref
         => system'core_routines'__object.
 
+    parent_ref
+        => system'core_routines'__object.
+
+    bool is instanceOf:type
+        => system'core_routines'__object.        
+
     literal className
     [
         var c := self~objectOp class_ref.

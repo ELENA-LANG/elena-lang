@@ -67,10 +67,10 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 139;
+const int gcCommandNumber = 140;
 const int gcCommands[gcCommandNumber] =
 {
-   bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcPackage,
+   bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcParent,
    bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
    bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
    bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,
@@ -98,7 +98,8 @@ const int gcCommands[gcCommandNumber] =
    bcAddress, bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
    bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
    bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
-   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit
+   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit,
+   bcCheck
 };
 
 // command table
@@ -114,7 +115,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteOp, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,

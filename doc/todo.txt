@@ -3,10 +3,14 @@ In development:
 ------                              
 
               xdev - multimethod
+                 * #100 : classOp : test if object is subclass of 
+                 * subclass opcode
+                 * check package functionality
+                 * check class functionality
+
                  * declaring type with the class?
 
                  * new command : check if the object is subclass of a class
-                 * #100 : classOp : test if object is subclass of 
                  * reimplement static field
                  * every multi-method will have a static field associated with it. It contains the list of classes and the resulting
                    message. Algorithm will check it class or its parent matches
@@ -26,6 +30,7 @@ In development:
 
                  * compiler should replace generic call with a direct call if the target is known and the parameters
                    are known
+                 * make incompatible with previous versions
 
               xdev - refactoring
                  * review cellular library

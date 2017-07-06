@@ -7,10 +7,14 @@
                              What's New in 3.2.0
 ******************************************************************************
 
+[ELENA]
+[!] binary incompatible due to implementing issues #100 and #333
+[+] #100 : classOp : test if object is subclass of
+[+] #333 : multimethods
+
 [ELC]
 [+] fixing template routines
 [+] new project template : vm_gui
-[+] #100 : classOp : test if object is subclass of
 
 [IDE]
 [+] #14  : switch to xml config files 

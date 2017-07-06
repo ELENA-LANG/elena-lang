@@ -244,7 +244,7 @@ void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t 
    alignCode(&vmtWriter, VA_ALIGNMENT, false);   
 
    // create VMT header:
-   //   dummy package reference
+   //   dummy parent / package (if VMT flag elClassClass is set) reference
    vmtWriter.writeDWord(0);
 
    //   vmt length
@@ -308,19 +308,19 @@ void JITCompiler32 :: addVMTEntry(ref_t message, size_t codePosition, VMTEntry* 
    entries[index].address = codePosition;
 }
 
-void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageVAddress, int count, bool virtualMode)
+void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode)
 {
    _Memory* image = vmtWriter.Memory();   
 
    // update class package reference if available
-   if (packageVAddress != NULL) {
+   if (packageParentVAddress != NULL) {
       int position = vmtWriter.Position();
       vmtWriter.seek(position - 0x10);
 
       if (virtualMode) {
-         vmtWriter.writeRef((ref_t)packageVAddress, 0);
+         vmtWriter.writeRef((ref_t)packageParentVAddress, 0);
       }
-      else vmtWriter.writeDWord((int)packageVAddress);
+      else vmtWriter.writeDWord((int)packageParentVAddress);
 
       vmtWriter.seek(position);
    }
@@ -656,19 +656,19 @@ void JITCompiler64 :: addVMTXEntry(ref64_t message, size_t codePosition, VMTXEnt
    entries[index].address = codePosition;
 }
 
-void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageVAddress, int count, bool virtualMode)
+void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode)
 {
    _Memory* image = vmtWriter.Memory();
 
    // update class package reference if available
-   if (packageVAddress != NULL) {
+   if (packageParentVAddress != NULL) {
       int position = vmtWriter.Position();
       vmtWriter.seek(position - 0x20);
 
       if (virtualMode) {
-         vmtWriter.writeRef((ref_t)packageVAddress, 0);
+         vmtWriter.writeRef((ref_t)packageParentVAddress, 0);
       }
-      else vmtWriter.writeDWord(packageVAddress);
+      else vmtWriter.writeDWord(packageParentVAddress);
 
       vmtWriter.seek(position);
    }

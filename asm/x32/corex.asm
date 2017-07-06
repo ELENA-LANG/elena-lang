@@ -1777,12 +1777,11 @@ inline % 34h
   
 end
 
-// ; package
+// ; parent
 
 inline % 35h
 
-  mov eax, [edi - elVMTOffset]
-  mov eax, [eax - elPackageOffset]
+  mov eax, [edi - elPackageOffset]
 
 end
 
@@ -1822,6 +1821,22 @@ labStart:
 labEnd:
 labFound:
   pop  edi  
+
+end
+
+// ; check
+inline % 38h
+
+  mov  esi, [eax-4]
+  xor  ebx, ebx
+labNext:
+  mov  eax, 0
+  cmp  esi, edi
+  mov  esi, [esi - elPackageOffset]
+  setz bl
+  cmovnz eax, esi
+  and eax, eax
+  jnz  short labNext
 
 end
 

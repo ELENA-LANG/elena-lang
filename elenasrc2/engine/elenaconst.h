@@ -322,6 +322,7 @@ namespace _ELENA_
    const int elWithCustomDispatcher= 0x00800000;
    const int elWithArgGenerics     = 0x01000000;
    const int elTapeGroup           = 0x02000200;
+   const int elClassClass          = 0x04000000;
 
    const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 

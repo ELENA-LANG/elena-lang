@@ -67,9 +67,10 @@ enum ByteCode
    bcWLen            = 0x32,
    bcFlag            = 0x33, 
    bcNLen            = 0x34,
-   bcPackage         = 0x35,
+   bcParent          = 0x35,
    bcClass           = 0x36,
    bcMIndex          = 0x37,
+   bcCheck           = 0x38,
    bcACallVD         = 0x39,
    bcValidate        = 0x3A,
    // 0x3F should be reserved for command

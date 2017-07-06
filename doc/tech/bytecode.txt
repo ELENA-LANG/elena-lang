@@ -289,7 +289,9 @@ ELENA byte codes (or ecodes)
 
  class                      - base::VMT >> acc 
  
- package                    - base::Package >> acc 
+ check                      - acc is-instance-of base ? -1 : 0
+ 
+ parent                     - base::Parent >> acc ; returns parent or package depending on the class flag
  
  create                     - create the object with length=index and vmt=acc, out : acc   (*index and ext affected)
  

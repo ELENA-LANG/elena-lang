@@ -86,7 +86,7 @@ public:
 
    virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count) = 0;
 
-   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageVAddress, int count, bool virtualMode) = 0;
+   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode) = 0;
 
    virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
 
@@ -128,7 +128,7 @@ public:
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength);
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
-   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageVAddress, int count, bool virtualMode);
+   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode);
 
    virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateProgramEnd(MemoryDump& tape);
@@ -168,7 +168,7 @@ public:
    virtual int copyParentVMTX(void* parentVMT, VMTXEntry* entries);
    virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
    virtual void addVMTXEntry(ref64_t message, size_t codePosition, VMTXEntry* entries, size_t& entryCount);
-   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageVAddress, int count, bool virtualMode);
+   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode);
 
    virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateProgramEnd(MemoryDump& tape);

@@ -5455,6 +5455,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    // compile class class if it available
    if (scope.info.header.classRef != scope.reference) {
       ClassScope classClassScope(scope.moduleScope, scope.info.header.classRef);
+      classClassScope.info.header.flags |= elClassClass; // !! IMPORTANT : classclass flag should be set
 
       compileClassClassDeclaration(node, classClassScope, scope);
    }
