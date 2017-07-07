@@ -165,21 +165,21 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& verb_id)
 {
-   SectionInfo info;
    bool strongSignature = paramCount > 0 && verb_id == EVAL_MESSAGE_ID;
-   if (strongSignature) {
-      SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
-
-      ref_t reference = info.module->mapSubject(signature, true);
-      if (reference)
-         return reference;
-
-      MemoryWriter writer(info.section);
-      reference = writer.Position();
-
-      size_t len = getlength(signature);
+   if (strongSignature) {      
       size_t index = signature.find('&');
       if (index != NOTFOUND_POS) {
+         SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
+         MemoryWriter writer(info.section);
+
+         ref_t reference = info.module->mapSubject(signature, true);
+         if (reference)
+            return reference;
+
+         reference = writer.Position();
+
+         size_t len = getlength(signature);
+
          IdentifierString content(signature, index);
          if (ident_t(content.str()).find('$') == NOTFOUND_POS) {
             writer.writeDWord((ref_t)_loader->resolveReference(content, 0));
@@ -209,19 +209,18 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& ve
             } while (index < len);
          }
          else strongSignature = false;
+
+         if (strongSignature) {
+            info.module->mapPredefinedSubject(signature, reference | STRONG_SIGN_MASK);
+
+            _loader->mapReference(signature, (void*)(reference | STRONG_SIGN_MASK), 0);
+
+            //verb_id = 0; // HOTFIX : the verb is already part of the signature
+
+            return reference | STRONG_SIGN_MASK;
+         }
+         else info.section->trim(reference);
       }
-      else strongSignature = false;
-
-      if (strongSignature) {
-         info.module->mapPredefinedSubject(signature, reference | STRONG_SIGN_MASK);
-
-         _loader->mapReference(signature, (void*)(reference | STRONG_SIGN_MASK), 0);
-
-         //verb_id = 0; // HOTFIX : the verb is already part of the signature
-
-         return reference | STRONG_SIGN_MASK;
-      }
-      else info.section->trim(reference);
    }
    return (ref_t)_loader->resolveReference(signature, 0);
 }
