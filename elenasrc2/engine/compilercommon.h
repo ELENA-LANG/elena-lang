@@ -12,8 +12,6 @@
 #include "elena.h"
 #include "syntaxtree.h"
 
-#define INVALID_REF      (ref_t)-1
-
 // virtual objects
 #define V_FLAG           (ref_t)-03
 #define V_NIL            (ref_t)-04

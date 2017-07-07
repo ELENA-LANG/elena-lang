@@ -34,6 +34,7 @@ public:
    virtual ref_t mapConstant(ident_t reference) = 0;
 
    virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
+   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 
@@ -81,8 +82,8 @@ public:
    virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
    virtual void raiseWarning(ident_t msg, ident_t path) = 0;
 
-   virtual _Module* createModule(ident_t name) = 0;      // !! obsolete
-   virtual _Module* createDebugModule(ident_t name) = 0 ; // !! obsolete
+   virtual _Module* createModule(ident_t name) = 0;      
+   virtual _Module* createDebugModule(ident_t name) = 0 ;
 
    virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
    virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete

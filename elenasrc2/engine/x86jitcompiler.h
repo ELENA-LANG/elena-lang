@@ -183,6 +183,7 @@ public:
    virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section);
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
+   virtual void setStaticVariable(_JITLoader* loader, void* vaddress, void* value, bool virtualMode);
 
    virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateSymbolCall(MemoryDump& tape, void* address);

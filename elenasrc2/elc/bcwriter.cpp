@@ -5050,7 +5050,7 @@ void ByteCodeWriter :: doMultiDispatch(CommandTape& tape)
    // bloadsi 3
    // get
    // popb
-   // <ifsubclassof>
+   // check
    // ifn labNext 0
    // dloadsi 0
    // eloadsi 1
@@ -5066,16 +5066,16 @@ void ByteCodeWriter :: doMultiDispatch(CommandTape& tape)
 void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node)
 {
    if (node.argument != 0) {
-      if (getVerb(node.argument) == MULTI_MESSAGE_ID) {
+      /*if (getVerb(node.argument) == MULTI_MESSAGE_ID) {
 
       }
-      else {
+      else {*/
          // obsolete : old-style dispatching
          pushObject(tape, lxCurrentMessage);
          setSubject(tape, node.argument);
          doGenericHandler(tape);
          popObject(tape, lxCurrentMessage);
-      }
+      //}
    }
    else doGenericHandler(tape);
 

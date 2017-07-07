@@ -22,6 +22,7 @@ namespace _ELENA_
   // --- ELENA Standart message constants ---
    #define VERB_MASK               0x7F000000u
    #define SIGN_MASK               0x00FFFFF0u
+   #define STRONG_SIGN_MASK        0x00080000u
    #define PARAM_MASK              0x0000000Fu
    #define MESSAGE_MASK            0x80000000u
    #define OPEN_ARG_COUNT          0x0F
@@ -29,6 +30,8 @@ namespace _ELENA_
    #define VERBX_MASK              0x7F00000000000000u
    #define SIGNX_MASK              0x00FFFFFFFFFF0000u
    #define PARAMX_MASK             0x000000000000FFFFu
+
+   #define INVALID_REF      (ref_t)-1
 
    #define DISPATCH_MESSAGE_ID     0x0001             // NOTE : verb id should not be bigger than 0xE0 due to message constant implementation
    #define NEWOBJECT_MESSAGE_ID    0x0002             // NOTE : verb id should not be equal to 7, due to message reference constant implementation
@@ -95,7 +98,6 @@ namespace _ELENA_
    #define ROLLBACK_MESSAGE_ID     0x0041
    #define REPLACE_MESSAGE_ID      0x0043  
 
-   #define MULTI_MESSAGE_ID        0x007D             // multimethod message
    #define VALUES_MESSAGE_ID       0x007E             // virtual method returning the list of enum values
    #define PRIVATE_MESSAGE_ID      0x007F
 
@@ -160,6 +162,7 @@ namespace _ELENA_
       mskPreloadDataRef      = 0xAC000000u,
       mskNativeVariable      = 0xAD000000u,
       mskLockVariable        = 0xAE000000u,   // HOTFIX : used to fool trylock opcode, adding virtual offset
+      mskReferenceTable      = 0x4E000000u,
 
       mskInternalRef         = 0x13000000u,   // internal code
       mskInternalRelRef      = 0x33000000u,   // internal code
@@ -507,6 +510,9 @@ namespace _ELENA_
    #define INTERNAL_MASK            "system'core_"                   // primitive module mask
 
    #define NATIVE_MODULE            "$native"
+
+   #define MESSAGE_TABLE_MODULE     "$messages"
+   #define MESSAGE_TABLE            "$messages'$table"
 
   // VM temporal code
    #define TAPE_SYMBOL              "$tape"

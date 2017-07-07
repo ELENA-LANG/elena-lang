@@ -67,6 +67,13 @@ void Module :: mapPredefinedReference(ident_t name, ref_t reference)
    _references.add(name, reference);
 }
 
+void Module :: mapPredefinedSubject(ident_t name, ref_t reference)
+{
+   _resolvedSubjects.clear();
+
+   _subjects.add(name, reference);
+}
+
 ref_t Module :: mapReference(ident_t reference)
 {
    ref_t nextId = _references.Count() + 1;

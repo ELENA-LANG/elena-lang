@@ -101,8 +101,9 @@ class JITLinker : _JITLoaderListener
       }
    };
 
-   typedef Pair<void*, int>                  MethodInfo;
-   typedef MemoryMap<MethodInfo, int, false> MethodMap;
+   typedef Pair<void*, int>                                       MethodInfo;
+   typedef MemoryMap<MethodInfo, int, false>                      MethodMap;
+   typedef Memory32HashTable<ident_t, void*, mapReferenceKey, 29> StrongTypeMap;
 
    _JITLoader*    _loader;
    _JITCompiler*  _compiler; 
@@ -113,6 +114,9 @@ class JITLinker : _JITLoaderListener
    int            _statLength;
    MethodMap      _staticMethods;
    ModuleList     _loadedModules;
+
+   //_Module*       _messageModle;
+
 //   int            _uniqueID;           // used for dynamic subject
 
    void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
@@ -132,6 +136,7 @@ class JITLinker : _JITLoaderListener
 
    size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
+   ref_t resolveSignature(ident_t signature, int paramCount, ref_t& verb_id);
    ref_t resolveMessage(_Module* module, ref_t reference);
 
    void* resolveNativeVariable(ident_t  reference, int mask);
@@ -141,7 +146,7 @@ class JITLinker : _JITLoaderListener
    void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
    void* resolveConstant(ident_t reference, int mask);
    void* resolveStaticVariable(ident_t reference, int mask);
-//   void* resolveDump(const wchar16_t*  reference, int size, int mask);
+   void* resolveDump(ident_t reference, int mask);
    void* resolveMessage(ident_t reference, ident_t vmt);
    void* resolveExtensionMessage(ident_t reference, ident_t vmt);
 //   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
@@ -154,6 +159,8 @@ public:
    void* resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);
 
    void* resolveEntry(void* programEntry);
+
+   void loadModuleInfo(_Module* module);
 
    void generateInitTape(MemoryDump& tape);
 

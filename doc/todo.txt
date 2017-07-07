@@ -3,10 +3,7 @@ In development:
 ------                              
 
               xdev - multimethod
-                 * #100 : classOp : test if object is subclass of 
-                 * subclass opcode
                  * check package functionality
-                 * check class functionality
 
                  * declaring type with the class?
 
@@ -31,6 +28,9 @@ In development:
                  * compiler should replace generic call with a direct call if the target is known and the parameters
                    are known
                  * make incompatible with previous versions
+                 * introduce new advanced syntax
+                 * remove obsolete dispatching code
+                 * private subjects??
 
               xdev - refactoring
                  * review cellular library

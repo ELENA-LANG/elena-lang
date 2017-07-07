@@ -1510,6 +1510,20 @@ void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, 
    }
 }
 
+void x86JITCompiler :: setStaticVariable(_JITLoader* loader, void* vaddress, void* value, bool virtualMode)
+{
+   if (virtualMode) {
+      _Memory* data = loader->getTargetSection(mskRDataRef);
+
+      size_t offset = ((size_t)vaddress) & ~mskAnyRef;
+
+      (*data)[offset] = (size_t)value;
+   }
+   else {
+      *(int*)vaddress = (size_t)value;
+   }
+}
+
 void* x86JITCompiler :: getPreloadedReference(ref_t reference)
 {
    return (void*)_preloaded.get(reference);
