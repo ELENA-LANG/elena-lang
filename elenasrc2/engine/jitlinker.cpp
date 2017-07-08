@@ -634,13 +634,18 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
       currentMask = it.key() & mskAnyRef;
       currentRef = it.key() & ~mskAnyRef;
 
-      void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
-
-      if (*it == -4) {
-         // resolve the constant vmt reference
-         vmtVAddress = refVAddress;
+      if (currentMask == 0) {
+         (*image)[*it + position] = resolveMessage(sectionInfo.module, (*sectionInfo.section)[*it]);
       }
-      else resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
+      else {
+         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+
+         if (*it == -4) {
+            // resolve the constant vmt reference
+            vmtVAddress = refVAddress;
+         }
+         else resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
+      }
 
       it++;
    }
@@ -723,6 +728,7 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
       SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
       _compiler->compileCollection(&writer, sectionInfo.section);
 
+      vmtVAddress = NULL; // !! to support dump array
       fixSectionReferences(sectionInfo, image, position, vmtVAddress);
       constantValue = true;
    }

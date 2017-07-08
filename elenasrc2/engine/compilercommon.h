@@ -76,6 +76,7 @@
 #define V_LOOP           (ref_t)-16394
 #define V_IMPORT         (ref_t)-16395
 #define V_EXTERN         (ref_t)-16396
+#define V_MULTI          (ref_t)-16397
 
 namespace _ELENA_
 {
@@ -84,22 +85,23 @@ namespace _ELENA_
 
 enum MethodHint
 {
-   tpMask        = 0x00F,
+   tpMask        = 0x000F,
 
-   tpUnknown     = 0x000,
-   tpSealed      = 0x001,
-   tpClosed      = 0x002,
-   tpNormal      = 0x003,
+   tpUnknown     = 0x0000,
+   tpSealed      = 0x0001,
+   tpClosed      = 0x0002,
+   tpNormal      = 0x0003,
 //      tpDispatcher = 0x04,
-   tpPrivate     = 0x005,
-   tpStackSafe   = 0x010,
-   tpEmbeddable  = 0x020,
-   tpGeneric     = 0x040,
-   tpAction      = 0x080,
-   tpIfBranch    = 0x100,
-   tpIfNotBranch = 0x200,
-   tpConstructor = 0x400,
-   tpConversion  = 0x800
+   tpPrivate     = 0x0005,
+   tpStackSafe   = 0x0010,
+   tpEmbeddable  = 0x0020,
+   tpGeneric     = 0x0040,
+   tpAction      = 0x0080,
+   tpIfBranch    = 0x0100,
+   tpIfNotBranch = 0x0200,
+   tpConstructor = 0x0400,
+   tpConversion  = 0x0800,
+   tpMultimethod = 0x1000
 };
 
 enum DeclarationAttr
@@ -187,6 +189,7 @@ public:
 //   //virtual int injectTempLocal(SNode node) = 0;
 
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
+   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };
@@ -251,6 +254,7 @@ public:
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          
@@ -264,6 +268,7 @@ public:
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
    virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
 //   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
+   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;

@@ -5005,7 +5005,7 @@ void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool wi
    }
 }
 
-void ByteCodeWriter :: doMultiDispatch(CommandTape& tape)
+void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList)
 {
    // ; 5 - message
    // ; 4 - overload_list index
@@ -5061,21 +5061,23 @@ void ByteCodeWriter :: doMultiDispatch(CommandTape& tape)
    // popi 5
    // aloadsi 0
    // ajumpvi 0
+
+   tape.write(bcACopyR, operationList | mskConstArray);
+}
+
+void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node)
+{
+   doMultiDispatch(tape, node.argument);
 }
 
 void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node)
 {
    if (node.argument != 0) {
-      /*if (getVerb(node.argument) == MULTI_MESSAGE_ID) {
-
-      }
-      else {*/
-         // obsolete : old-style dispatching
-         pushObject(tape, lxCurrentMessage);
-         setSubject(tape, node.argument);
-         doGenericHandler(tape);
-         popObject(tape, lxCurrentMessage);
-      //}
+      // obsolete : old-style dispatching
+      pushObject(tape, lxCurrentMessage);
+      setSubject(tape, node.argument);
+      doGenericHandler(tape);
+      popObject(tape, lxCurrentMessage);
    }
    else doGenericHandler(tape);
 
@@ -5212,6 +5214,14 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                declareIdleMethod(tape, node.argument, sourcePathRef);
 
             generateDispatching(tape, current);
+            break;
+         case lxMultiDispatching:
+            if (!open) {
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+               open = true;
+            }               
+
+            generateMultiDispatching(tape, current);
             break;
          default:
             if (test(current.type, lxExprMask)) {

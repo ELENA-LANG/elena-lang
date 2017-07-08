@@ -1004,6 +1004,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->stackSafe = this->classEmbeddable = false;
    this->generic = false;
    this->extensionMode = false;
+   this->multiMethod = false;
 }
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
@@ -4628,6 +4629,13 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
       compileDispatchExpression(writer, body, codeScope);
    }
    else {
+      if (scope.multiMethod) {
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+         writer.appendNode(lxMultiDispatching, classScope->info.methodHints.get(Attribute(scope.message, maOverloadlist)));
+      }
+         
+
       writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
    
       // new stack frame
@@ -5004,6 +5012,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
    methodScope.withOpenArg = isOpenArg(methodScope.message);
+   methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    if (!methodScope.withOpenArg) {
       // HOTFIX : generic with open argument list is compiled differently
       methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
@@ -5330,6 +5339,13 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
             }
          }
       }
+
+      // create overloadlist if required
+      if (test(methodHints, tpMultimethod) && included) {
+         scope.info.methodHints.add(Attribute(message, maOverloadlist), scope.moduleScope->mapNestedExpression());
+
+         scope.info.header.flags |= elWithMuti;
+      }
    }
 }
 
@@ -5463,6 +5479,10 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 {
+   // generation operation list if required
+   if (test(scope.info.header.flags, elWithMuti))
+      _logic->injectOverloadList(*scope.moduleScope, scope.info, *this);
+
    WarningScope warningScope(scope.moduleScope->warningMask);
 
    optimizeClassTree(node, scope, warningScope);
@@ -8135,6 +8155,13 @@ void Compiler :: generateEnumListMember(_CompilerScope& scope, ref_t enumRef, re
    MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskConstArray, false));
 
    metaWriter.writeDWord(memberRef | mskConstantRef);
+}
+
+void Compiler :: generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t messageRef)
+{
+   MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskRDataRef, false));
+
+   metaWriter.writeRef(0, messageRef);
 }
 
 ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader)

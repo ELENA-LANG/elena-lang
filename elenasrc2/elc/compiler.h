@@ -546,6 +546,7 @@ private:
       bool         classEmbeddable;
       bool         generic;
       bool         extensionMode;
+      bool         multiMethod;
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -1086,6 +1087,7 @@ public:
    virtual void injectFieldExpression(SyntaxWriter& writer);
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
+   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
    Compiler(_CompilerLogic* logic);
