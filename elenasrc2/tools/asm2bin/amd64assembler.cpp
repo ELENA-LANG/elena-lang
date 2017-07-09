@@ -4304,6 +4304,12 @@ bool AMD64Assembler :: compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, 
 //   else if (token.value[0]=='z') {
 //      recognized = compileCommandZ(token);
 //   }
+   else if (token.value[0] == '#') {
+	   token.read();
+	   token.read();
+	   token.read();
+	   recognized = true;
+   }
 
    if (!recognized) {
       if (token.Eof()) {
@@ -4397,6 +4403,12 @@ void AMD64Assembler :: compile(TextReader* source, path_t outputPath)
 //
 //			token.read();
 //      }
+	  else if (token.value[0] == '#')
+	  {
+		  token.read();
+		  token.read();
+		  token.read();
+	  }
 		else token.raiseErr("Invalid statement (%d)\n");
 
 	} while (!token.Eof());
