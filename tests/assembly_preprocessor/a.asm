@@ -1,7 +1,7 @@
 defmacro #callTest(a,b)
   mov  esi, [esp + a]
   mov  edx, [esi]
-  mov  ebx, [stat : "$elena'@referencetable"]
+  mov  ebx, [stat : b]
   mov  eax, [ebx + edx * a]
   
   ret a
