@@ -507,6 +507,11 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             break;
       }
    }
+   else if (token.value[0] == '#') {
+	   token.read();
+	   token.read();
+	   recognized = true;
+   }
    else recognized = false;
 
    if (!recognized) {

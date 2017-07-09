@@ -22,15 +22,24 @@ namespace _ELENA_
 struct TokenInfo
 {
    SourceReader* reader;
-   char          value[50];
+   char          value[100];
    LineInfo      terminal;
 
    bool Eof() const { return terminal.state == dfaEOF; }
 
    void raiseErr(const char* err)
    {
-      if (!emptystr(err))
-         throw AssemblerException(err, terminal.row);
+	   if (!emptystr(err))
+	   {
+		   int rowNumber;
+
+		   // get the real line number...
+		   while (!check("#") && !Eof())
+			   read();
+		   read();
+		   rowNumber = ident_t(read()).toInt();
+		   throw AssemblerException(err, rowNumber);
+	   }
    }
 
 	bool getInteger(int& integer, Map<ident_t, size_t>& constants)
@@ -105,7 +114,7 @@ struct TokenInfo
 
 	ident_t read()
 	{
-		terminal = reader->read(value, 50);
+		terminal = reader->read(value, 100);
       if (terminal.state == dfaExplicitConst && value[getlength(value) - 1] == 'h')
          terminal.state = dfaHexInteger;
 

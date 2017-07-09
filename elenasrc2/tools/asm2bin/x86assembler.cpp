@@ -4240,6 +4240,12 @@ bool x86Assembler :: compileCommand(PrefixInfo& prefix, TokenInfo& token, Proced
    else if (token.value[0]=='z') {
       recognized = compileCommandZ(token);
    }
+   else if (token.value[0] == '#') {
+	   token.read();
+	   token.read();
+	   token.read();
+	   recognized = true;
+   }
 
    if (!recognized) {
       if (token.Eof()) {
@@ -4342,6 +4348,12 @@ void x86Assembler :: compile(TextReader* source, path_t outputPath)
 
 			token.read();
       }
+	  else if (token.value[0] == '#')
+	  {
+		  token.read();
+		  token.read();
+		  token.read();
+	  }
 		else token.raiseErr("Invalid statement (%d)\n");
 
 	} while (!token.Eof());
