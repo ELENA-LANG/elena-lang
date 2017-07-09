@@ -4301,7 +4301,7 @@ void x86Assembler::compileProcedure(TokenInfo& token, _Module* binary, bool inli
    if (emptystr(refName)) {
       helper.checkAllUsedLabels("Used label ( %s ) not declared in procedure %xh\n", info.reference);
    }
-   else helper.checkAllUsedLabels("Used label ( %s ) not declared in procedure %s\n", refName.str());
+   else helper.checkAllUsedLabels("Used label ( %s ) not declared in procedure %s\n", refName.c_str());
 
 	if (aligned)
 		writer.align(4, 0x90);

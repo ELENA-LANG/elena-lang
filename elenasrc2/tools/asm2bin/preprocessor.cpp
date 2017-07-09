@@ -10,9 +10,6 @@
 // ----------------------------------------
 #include "preProcessorException.h"
 
-// temporal fix ??
-#include <string>
-
 namespace _ELENA_
 {
 	PreProcessor::PreProcessor(ident_t sourceFile)
@@ -41,7 +38,13 @@ namespace _ELENA_
 		do
 		{
 			token.read();
-			if (token.check("defmacro")) {
+         if (token.terminal.state == dfaQuote) {
+            BufferString temp;
+            preProcessString(token, temp);
+
+            writeToken(temp.c_str(), token.terminal.row);
+         }
+         else if (token.check("defmacro")) {
 				preProcessDefMacro(token);
 			}
 			else if (token.check("import")) {
@@ -50,12 +53,8 @@ namespace _ELENA_
 			else if (token.check("#")) { // Calling a macro definition inside procedure or some other part of assembly code...
 				convertMacroCall(token);
 			}
-			else if (token.terminal.state == dfaQuote) {
-				ident_t literalValue = preProcessString(token);
-				writeToken(literalValue, token.terminal.row);
-			}
-			else
-				writeToken(token.value, token.terminal.row);
+         else writeToken(token.value, token.terminal.row);
+
 		} while (!token.Eof());
 
 		closeOutputFile();
@@ -105,15 +104,17 @@ namespace _ELENA_
 
 		// Parse all macro
 		token.read();
+      BufferString temp;
 		while (!token.check("endmacro") && !token.Eof())
 		{
-			ident_t value;
-			if (token.terminal.state == dfaQuote)
-				value = preProcessString(token);
-			else
-				value = token.value;
+         if (token.terminal.state == dfaQuote) {
+            temp.clear();
+            preProcessString(token, temp);
 
-			mc->insertCommand(value, token.terminal.row);
+            mc->insertCommand(temp.c_str(), token.terminal.row);
+         }
+         else mc->insertCommand(token.value, token.terminal.row);
+			
 			token.read();
 		}
 
@@ -138,29 +139,24 @@ namespace _ELENA_
 			throw PreProcessorException("Expected '%s' on macro calling, in line %d\n", "(", token.terminal.row);
 
 		// parse all parameters
-		Map<size_t, ident_t> parameters;
-		std::string parameter; // ??? Temporal ??
+		Map<size_t, char*> parameters(NULL, freestr); // NOTE : we have to proper release the cloned strings
+      BufferString parameter;
 
 		token.read();
 		while(true)
 		{
-			if (token.check(",") || token.check(")"))
-			{
+         if (token.terminal.state == dfaQuote) {
+            preProcessString(token, parameter);
+         }
+			else if (token.check(",") || token.check(")")) {
 				parameters.add(parameters.Count() + 1, ident_t(parameter.c_str()).clone());
 				parameter.clear();
 
 				if (token.check(")") || token.Eof())
 					break;
 			}
-			else
-			{
-				ident_t value;
-				if (token.terminal.state == dfaQuote)
-					value = preProcessString(token);
-				else
-					value = token.value;
-				parameter += value.c_str();
-			}
+			else parameter.append(token.value);
+
 			token.read();
 		}
 
@@ -190,15 +186,13 @@ namespace _ELENA_
 		fprintf(_output, "%s ", token.c_str());
 	}
 
-	ident_t PreProcessor::preProcessString(TokenInfo token)
+	void PreProcessor :: preProcessString(TokenInfo token, BufferString& string)
 	{
-		ident_t literalValue = token.terminal.line;
-		size_t subStringSize = literalValue.findLast('"') + 1;
+      QuoteTemplate<BufferString> quote(token.terminal.line);
 
-		char tmp[100] = { 0 };
-		memcpy(tmp, literalValue.c_str(), subStringSize);
-
-		return ident_t(tmp).clone(); // I just clone the ident_t to the system not lost the pointer to the string
+      string.append('"');      
+      string.append(quote.ident());
+      string.append('"');
 	}
 
 	MacroDefinition* PreProcessor::searchForMacroDefinition(ident_t macroName, int currentLine)

@@ -161,6 +161,7 @@ namespace _ELENA_
       mskPreloadRelCodeRef   = 0x3C000000u,
       mskPreloadDataRef      = 0xAC000000u,
       mskNativeVariable      = 0xAD000000u,
+      mskConstVariable       = 0x4D000000u,
       mskLockVariable        = 0xAE000000u,   // HOTFIX : used to fool trylock opcode, adding virtual offset
       mskReferenceTable      = 0x4E000000u,
 

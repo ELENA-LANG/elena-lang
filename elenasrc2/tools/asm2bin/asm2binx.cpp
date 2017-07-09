@@ -68,6 +68,10 @@ int main(int argc, char* argv[])
    else target.changeExtension("bin");
 
    _ELENA_::PreProcessor pp(amd64Mode ? argv[2] : argv[1]);
+   if (!pp.isOpened()) {
+      printf("Cannot open the file %s", amd64Mode ? argv[2] : argv[1]);
+      return -1;
+   }
    try
    {
 	   pp.preProcess();
@@ -88,7 +92,7 @@ int main(int argc, char* argv[])
    _ELENA_::Path source(pp.getTempFileName());
    _ELENA_::TextFileReader reader(source.c_str(), _ELENA_::feUTF8, true);
    if (!reader.isOpened()) {
-      printf("Cannot open the file %s", argv[1]);
+      printf("Cannot open the temporal file %s", source.c_str());
       return -1;
    }
 

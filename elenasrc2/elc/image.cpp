@@ -68,7 +68,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
 
   // fixup message table variable
    compiler->setStaticVariable(this, 
-      linker.resolve(MESSAGE_TABLE, mskNativeVariable, true),
+      linker.resolve(MESSAGE_TABLE, mskConstVariable, true),
       linker.resolve(MESSAGE_TABLE, mskReferenceTable, true), true);
 
    helper.afterLoad(*this);

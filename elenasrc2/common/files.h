@@ -82,7 +82,7 @@ public:
 
    void changeExtension(path_t extension)
    {
-      path_t path(_path.str());
+      path_t path(_path.c_str());
       size_t namepos = path.findLast(PATH_SEPARATOR) + 1;
       size_t index = path.findLast(namepos, '.', NOTFOUND_POS);
       if (index != NOTFOUND_POS) {

@@ -34,14 +34,14 @@ protected:
          IdentifierString number;
          number.copyInt(level);
 
-         writeToken(number.str(), log);
+         writeToken(number.c_str(), log);
       }
       void writeCounter(ScriptLog& log)
       {
          IdentifierString number;
          number.copyInt(counter);
 
-         writeToken(number.str(), log);
+         writeToken(number.c_str(), log);
       }
 
       void flush(Scope* parent, ScriptLog& log);

@@ -963,7 +963,7 @@ void DebugController :: readMessage(_DebuggerWatch* watch, size_t address, ref_t
 
    parseMessage(messageValue, message);
 
-   watch->write(this, messageValue.str());
+   watch->write(this, messageValue.c_str());
 }
 
 void DebugController::readShortArray(_DebuggerWatch* watch, size_t address, ident_t name)
@@ -1458,7 +1458,7 @@ int DebugController :: generateTape(int* list, int length)
 
                   parseMessage(messageValue, _debugger.Context()->readDWord(memberPtr));
 
-                  writeMessage(textWriter, className, messageValue.str());
+                  writeMessage(textWriter, className, messageValue.c_str());
                   break;
                }
                default:

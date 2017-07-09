@@ -67,6 +67,8 @@ public:
 
 class PreProcessor
 {
+   typedef String<char, 0x1000>  BufferString;
+
 private:
 	int _outputRowCounter;
 	ident_t _outPutFileName;
@@ -78,6 +80,8 @@ private:
 	List<MacroDefinition*> _macros; // Can't use MAP :(  --- Map<ident_t, MacroDefinition> _macros;
 
 public:
+   bool isOpened() { return _reader.isOpened(); }
+
 	PreProcessor(ident_t sourceFile);
 	~PreProcessor();
 	void preProcess();
@@ -97,7 +101,7 @@ private:
 	void preProcessImport();
 	void convertMacroCall(TokenInfo token);
 	void writeToken(ident_t line, int row);
-	ident_t preProcessString(TokenInfo token);
+	void preProcessString(TokenInfo token, BufferString& string);
 
 	MacroDefinition* searchForMacroDefinition(ident_t macroName, int currentLine);
 };

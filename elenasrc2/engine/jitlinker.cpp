@@ -181,7 +181,7 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& ve
          size_t len = getlength(signature);
 
          IdentifierString content(signature, index);
-         if (ident_t(content.str()).find('$') == NOTFOUND_POS) {
+         if (ident_t(content.c_str()).find('$') == NOTFOUND_POS) {
             writer.writeDWord((ref_t)_loader->resolveReference(content, 0));
 
             index++;
@@ -189,7 +189,7 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& ve
                size_t end = signature.find(index, '&', len);
                content.copy(signature.c_str() + index, end - index);
 
-               ident_t subj(content.str());
+               ident_t subj(content.c_str());
                if (subj.find('$') != NOTFOUND_POS) {
                   ref_t typeClassRef = info.module->mapSubject(subj, true);
                   if (typeClassRef != 0) {
@@ -466,6 +466,21 @@ void* JITLinker :: resolveNativeVariable(ident_t reference, int mask)
 {
    // get target image & resolve virtual address
    _Memory* image = _loader->getTargetSection((ref_t)mskDataRef);
+   MemoryWriter writer(image);
+
+   void* vaddress = calculateVAddress(&writer, mskDataRef, 4);
+
+   _compiler->allocateVariable(writer);
+
+   _loader->mapReference(reference, vaddress, mask);
+
+   return vaddress;
+}
+
+void* JITLinker :: resolveConstVariable(ident_t reference, int mask)
+{
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection((ref_t)mskRDataRef);
    MemoryWriter writer(image);
 
    void* vaddress = calculateVAddress(&writer, mskDataRef, 4);
@@ -1143,6 +1158,9 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
          case mskNativeVariable:
          case mskLockVariable:
             vaddress = resolveNativeVariable(reference, mask);
+            break;
+         case mskConstVariable:
+            vaddress = resolveConstVariable(reference, mask);
             break;
          case mskReferenceTable:
             vaddress = resolveDump(reference, mskRDataRef);

@@ -188,9 +188,9 @@ void IniConfigFile :: setSetting(ident_t key, const char* value)
          String<char, 50> temp(settingName);
          temp[index] = ':';
 
-         _settings.add(category.str(), temp.str(), ((ident_t)value).clone());
+         _settings.add(category.c_str(), temp.c_str(), ((ident_t)value).clone());
       }
-      else _settings.add(category.str(), settingName, ((ident_t)value).clone());
+      else _settings.add(category.c_str(), settingName, ((ident_t)value).clone());
    }
 }
 
@@ -200,7 +200,7 @@ void IniConfigFile::setSetting(ident_t key, int value)
       String<char, 15> string;
       string.appendInt(value);
 
-      setSetting(key, string.str());
+      setSetting(key, string.c_str());
    }
    else clearSetting(key);
 }
@@ -210,7 +210,7 @@ void IniConfigFile::setSetting(ident_t key, unsigned int value)
    String<char, 15> string;
    string.appendInt(value);
 
-   setSetting(key, string.str());
+   setSetting(key, string.c_str());
 }
 
 void IniConfigFile::setSetting(ident_t key, bool value)
@@ -236,9 +236,9 @@ void IniConfigFile :: clearSetting(ident_t key)
          String<char, 50> temp(settingName);
          temp[index] = ':';
 
-         _settings.clear(category.str(), temp.str());
+         _settings.clear(category.c_str(), temp.c_str());
       }
-      else _settings.clear(category.str(), settingName);
+      else _settings.clear(category.c_str(), settingName);
    }
 }
 
@@ -341,7 +341,7 @@ bool XmlConfigFile :: select(ident_t key, Map<ident_t, _ConfigFile::Node>& list)
          position = (*it).Position();
          (*it).readTag(tag);
 
-         list.add(tag.str(), _ConfigFile::Node(this, (void*)position));
+         list.add(tag.c_str(), _ConfigFile::Node(this, (void*)position));
       }
 
       return true;
@@ -365,7 +365,7 @@ bool XmlConfigFile :: select(Node root, ident_t key, Map<ident_t, _ConfigFile::N
          if ((*it).compareTag(key)) {
             found = true;
 
-            list.add(tag.str(), _ConfigFile::Node(this, (void*)position));
+            list.add(tag.c_str(), _ConfigFile::Node(this, (void*)position));
          }         
       }
    }
@@ -422,10 +422,10 @@ void XmlConfigFile :: setSetting(ident_t key, const char* value)
       size_t end = key.findLast('/', length);
       if (end != NOTFOUND_POS) {
          String<char, 255> subCategory(key, end);
-         position = find(_tree, subCategory.str());
+         position = find(_tree, subCategory.c_str());
          if (position == NOTFOUND_POS) {
-            setSetting(subCategory.str(), DEFAULT_STR);
-            position = find(_tree, subCategory.str());
+            setSetting(subCategory.c_str(), DEFAULT_STR);
+            position = find(_tree, subCategory.c_str());
          }
 
          XMLNode parent(position, &_tree);
@@ -463,10 +463,10 @@ void XmlConfigFile  :: appendSetting(ident_t key, ident_t attribute, const char*
    size_t end = key.findLast('/', length);
    if (end != NOTFOUND_POS) {
       String<char, 255> subCategory(key, end);
-      size_t position = find(_tree, subCategory.str());
+      size_t position = find(_tree, subCategory.c_str());
       if (position == NOTFOUND_POS) {
-         setSetting(subCategory.str(), DEFAULT_STR);
-         position = find(_tree, subCategory.str());
+         setSetting(subCategory.c_str(), DEFAULT_STR);
+         position = find(_tree, subCategory.c_str());
       }
 
       XMLNode parent(position, &_tree);

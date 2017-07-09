@@ -4632,7 +4632,9 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
       if (scope.multiMethod) {
          ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-         writer.appendNode(lxMultiDispatching, classScope->info.methodHints.get(Attribute(scope.message, maOverloadlist)));
+         writer.newNode(lxMultiDispatching, classScope->info.methodHints.get(Attribute(scope.message, maOverloadlist)));
+         writer.appendNode(lxTarget, scope.moduleScope->module->mapReference(MESSAGE_TABLE));
+         writer.closeNode();
       }
          
 
@@ -8160,8 +8162,12 @@ void Compiler :: generateEnumListMember(_CompilerScope& scope, ref_t enumRef, re
 void Compiler :: generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t messageRef)
 {
    MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskRDataRef, false));
+   if (metaWriter.Position() > 4) {
+      metaWriter.seek(metaWriter.Position() - 4);
+   }
 
    metaWriter.writeRef(0, messageRef);
+   metaWriter.writeDWord(0);
 }
 
 ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader)

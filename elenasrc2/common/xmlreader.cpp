@@ -336,7 +336,7 @@ void XMLTree :: setAttribute(size_t start, ident_t name, ident_t s)
             position++;
          }
 
-         if (name.compare(attr.str())) {
+         if (name.compare(attr.c_str())) {
             length = position - start;
          }
 

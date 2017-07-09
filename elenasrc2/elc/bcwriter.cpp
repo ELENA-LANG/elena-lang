@@ -5005,7 +5005,7 @@ void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool wi
    }
 }
 
-void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList)
+void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t messageTable)
 {
    // ; 5 - message
    // ; 4 - overload_list index
@@ -5014,11 +5014,13 @@ void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList)
    // ; 1 - param count
    // ; 0 - param index
 
+   int labEnd = tape.newLabel();
+
    // pushe
    // init 4
    // dcopy 0
    // dsavesi 4
-   // acopys -2
+   // acopys 7
    // asavesi 3
 
    // labNext:
@@ -5027,9 +5029,8 @@ void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList)
    // nread
    // inc
    // dsavesi 4
-   // ifm labEnd 0
-
    // esavesi 5
+   // ifm labEnd 0
 
    // ; resolve message table
    // dcopysubj
@@ -5062,12 +5063,63 @@ void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList)
    // aloadsi 0
    // ajumpvi 0
 
+   tape.write(bcPushE);
+   tape.write(bcInit, 4);
+   tape.write(bcDCopy);
+   tape.write(bcDSaveSI, 4);
+   tape.write(bcACopyS, 7);
+   tape.write(bcASaveSI, 3);
+
+   int labNext = tape.newLabel();
+   tape.setLabel(true);
    tape.write(bcACopyR, operationList | mskConstArray);
+   tape.write(bcDLoadSI, 4);
+   tape.write(bcNRead);
+   tape.write(bcInc);
+   tape.write(bcDSaveSI, 4);
+   tape.write(bcESaveSI, 5);
+   tape.write(bcIfM, labEnd, 0);
+
+   tape.write(bcDCopySubj, 5);
+   tape.write(bcBCopyR, messageTable | mskConstVariable);
+   tape.write(bcGet);
+   tape.write(bcASaveSI, 2);
+   tape.write(bcBLen);
+   tape.write(bcDSaveSI, 1);
+   tape.write(bcCopy);
+   tape.write(bcDSaveSI, 0);
+
+   int labCheckParam = tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcBLoadSI, 2);
+   tape.write(bcGet);
+   tape.write(bcInc);
+   tape.write(bcDSaveSI, 0);
+   tape.write(bcPushA);
+   tape.write(bcBLoadSI, 3);
+   tape.write(bcGet);
+   tape.write(bcPopB);
+   tape.write(bcCheck);
+   tape.write(bcIfN, labNext, 0);
+   tape.releaseLabel();
+   tape.write(bcDLoadSI, 0);
+   tape.write(bcELoadSI, 1);
+   tape.write(bcNext, baCurrentLabel);
+   tape.releaseLabel();
+
+   // labEnd:
+   tape.setLabel();
+
+   tape.write(bcELoadSI, 5);
+   tape.write(bcPopI, 5);
+   tape.write(bcALoadSI, 0);
+
+   doGenericHandler(tape);
 }
 
-void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node)
+void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t messageTable)
 {
-   doMultiDispatch(tape, node.argument);
+   doMultiDispatch(tape, node.argument, messageTable);
 }
 
 void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node)
@@ -5221,7 +5273,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                open = true;
             }               
 
-            generateMultiDispatching(tape, current);
+            generateMultiDispatching(tape, current, current.findChild(lxTarget).argument);
             break;
          default:
             if (test(current.type, lxExprMask)) {

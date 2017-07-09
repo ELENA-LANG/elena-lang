@@ -313,7 +313,7 @@ public:
 
    operator T*() { return _string; }
 
-   const T* str() const { return _string; }
+   const T* c_str() const { return _string; }
 
    T& operator[](size_t index)
    {

@@ -521,7 +521,7 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
             if (index != NOTFOUND_POS) {
                IdentifierString content(messageName, index);
 
-               ref_t actionRef = scope.module->mapSubject(content.str(), true);
+               ref_t actionRef = scope.module->mapSubject(content.c_str(), true);
                if (actionRef != 0) {
                   ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, EVAL_MESSAGE_ID, getParamCount(message)), maOverloadlist));
                   if (listRef != 0)

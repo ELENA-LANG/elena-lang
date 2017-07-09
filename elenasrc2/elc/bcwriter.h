@@ -186,7 +186,7 @@ class ByteCodeWriter
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 
-   void doMultiDispatch(CommandTape& tape, ref_t operationList);
+   void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t messageTable);
    void doGenericHandler(CommandTape& tape);
    void unboxMessage(CommandTape& tape);
    void resend(CommandTape& tape);
@@ -276,7 +276,7 @@ class ByteCodeWriter
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
-   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node);
+   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t messageTable);
    void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
    void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
