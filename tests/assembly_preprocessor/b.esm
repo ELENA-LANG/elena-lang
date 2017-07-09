@@ -1,0 +1,17 @@
+defmacro #obj(a)
+  bsredirect  
+
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pusha
+  pushr class : a
+  pushr const : %new&object$&mssg$[2]
+  throw
+endmacro
+
+procedure __object.dispatch[1]
+  #obj(system'MethodNotFoundException)
+end

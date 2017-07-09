@@ -602,6 +602,11 @@ void ECodesAssembler :: compile(TextReader* source, path_t outputPath)
 
          token.read();
 		}
+		else if (token.value[0] == '#') {
+			token.read();
+			token.read();
+			token.read();
+		}
 		else token.raiseErr("Invalid statement (%d)\n");
 
 	} while (!token.Eof());
