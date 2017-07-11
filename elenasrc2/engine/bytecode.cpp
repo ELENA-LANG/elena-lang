@@ -716,7 +716,6 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, INSERT_MESSAGE,     INSERT_MESSAGE_ID);
    addVerb(verbs, SAVE_MESSAGE,       SAVE_MESSAGE_ID);
    addVerb(verbs, RESET_MESSAGE,      RESET_MESSAGE_ID);
-   addVerb(verbs, CONVERT_MESSAGE,    CONVERT_MESSAGE_ID);
    addVerb(verbs, FILL_MESSAGE,       FILL_MESSAGE_ID);
    addVerb(verbs, LOAD_MESSAGE,       LOAD_MESSAGE_ID);
    addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);

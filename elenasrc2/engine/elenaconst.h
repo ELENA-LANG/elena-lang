@@ -82,7 +82,6 @@ namespace _ELENA_
    #define SAVE_MESSAGE_ID         0x002D
    #define RESET_MESSAGE_ID        0x002E
    #define SPLIT_MESSAGE_ID        0x002F
-   #define CONVERT_MESSAGE_ID      0x0030
    #define FILL_MESSAGE_ID         0x0031
    #define LOAD_MESSAGE_ID         0x0032
    #define SHIFT_MESSAGE_ID        0x0033
@@ -428,7 +427,6 @@ namespace _ELENA_
    #define SAVE_MESSAGE             "save"
    #define RESET_MESSAGE            "reset"
    #define SPLIT_MESSAGE            "split"
-   #define CONVERT_MESSAGE          "convert"
    #define FILL_MESSAGE             "fill"
    #define LOAD_MESSAGE             "load"
    #define SHIFT_MESSAGE            "shift"

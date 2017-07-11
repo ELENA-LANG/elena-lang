@@ -143,10 +143,10 @@ public:
 //      okOuter,                        // param - field offset, extraparam - class reference
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
 //      okLocal,                        // param - local / out parameter offset, extraparam : class reference
-//      okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
+      okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
 //      okParamField,
 //      okSubject,                      // param - parameter offset
-//      okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
+      okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
 //      okSuper,
 //      okLocalAddress,                 // param - local offset, extraparam - class reference
@@ -296,10 +296,10 @@ private:
       ref_t resolveIdentifier(ident_t name);
 
 //      ref_t mapNewSubject(ident_t terminal);
-//
-//      // NOTE : the function returns 0 for implicit subjects
-//      // in any case output is set (for explicit one - the namespace is copied as well)
-//      ref_t mapSubject(SNode terminal, IdentifierString& output);
+
+      // NOTE : the function returns 0 for implicit subjects
+      // in any case output is set (for explicit one - the namespace is copied as well)
+      /*ref_t*/void mapSubject(SNode terminal, IdentifierString& output);
 //      ref_t mapSubject(SNode terminal, bool explicitOnly = true);
 //      ref_t resolveAttributeRef(ident_t name, bool explicitOnly = true);
 
@@ -411,14 +411,14 @@ private:
          else return NULL;
       }
 
-//      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
-//      {
-//         if (parent) {
-//            return parent->mapSubject(terminal, output);
-//         }
-//         else return moduleScope->mapSubject(terminal, output);
-//      }
-//
+      virtual /*ref_t*/void mapSubject(SNode terminal, IdentifierString& output)
+      {
+         /*if (parent) {
+            return parent->mapSubject(terminal, output);
+         }
+         else return*/ moduleScope->mapSubject(terminal, output);
+      }
+
 //      virtual ref_t mapSubject(SNode terminal, bool explicitOnly = true)
 //      {
 //         if (parent) {
@@ -632,12 +632,12 @@ private:
          return scope ? scope->message : 0;
       }
 
-//      ref_t getClassRefId(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
+      ref_t getClassRefId(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
+      }
 
       ref_t getClassFlags(bool ownerClass = true)
       {

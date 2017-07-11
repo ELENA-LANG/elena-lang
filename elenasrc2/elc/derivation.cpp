@@ -495,11 +495,11 @@ void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, De
          //   writer.insert(lxExpression);
          //   writer.closeNode();
          //   break;
-         //case lxMessage:
-         //   writer.newNode(lxMessage);
-         //   scope.copySubject(writer, current.firstChild(lxTerminalMask));
-         //   writer.closeNode();
-         //   break;
+         case lxMessage:
+            writer.newNode(lxMessage);
+            scope.copySubject(writer, current.firstChild(lxTerminalMask));
+            writer.closeNode();
+            break;
          case lxIdentifier:
          case lxPrivate:
          case lxReference:

@@ -351,11 +351,11 @@ ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
 //
 //   return resolveAttributeRef(identifier, explicitOnly);
 //}
-//
-//ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& output)
-//{
-//   ident_t identifier = terminal.identifier();
-//
+
+/*ref_t*/void Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& output)
+{
+   ident_t identifier = terminal.identifier();
+
 //   // add a namespace for the private message
 //   if (terminal.type == lxPrivate) {
 //      output.append(project->Namespace());
@@ -369,12 +369,12 @@ ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
 //      output.append(module->resolveSubject(subjRef));
 //   }
 //   else if (terminal.type != lxReference) {
-//      output.append(identifier);
+      output.append(identifier);
 //   }
 //   else raiseError(errInvalidSubject, terminal);
 //
 //   return subjRef;
-//}
+}
 
 ref_t Compiler::ModuleScope :: mapTerminal(SNode terminal, bool existing)
 {
@@ -1017,7 +1017,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 {
-//   if (terminal.compare(THIS_VAR)) {
+   if (terminal.compare(THIS_VAR)) {
 //      if (extensionMode) {
 //         //COMPILER MAGIC : if it is an extension ; replace $self with self
 //         return ObjectInfo(okLocal, (ref_t)-1, ((ClassScope*)getScope(slClass))->reference);          
@@ -1025,23 +1025,23 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 //      else if (stackSafe && classEmbeddable) {
 //         return ObjectInfo(okThisParam, 1, -1);
 //      }
-//      else return ObjectInfo(okThisParam, 1);
-//   }
-//   else {
-//      Parameter param = parameters.get(terminal);
-//
-//      int local = param.offset;
-//      if (local >= 0) {
+      /*else */return ObjectInfo(okThisParam, 1);
+   }
+   else {
+      Parameter param = parameters.get(terminal);
+
+      int local = param.offset;
+      if (local >= 0) {
 //         if (withOpenArg && param.subj_ref == moduleScope->paramsSubj) {
 //            return ObjectInfo(okParams, -1 - local, 0, param.subj_ref);
 //         }
 //         else if (stackSafe && param.subj_ref != 0 && param.size != 0) {
 //            return ObjectInfo(okParam, -1 - local, -1, param.subj_ref);
 //         }
-//         return ObjectInfo(okParam, -1 - local, 0, param.subj_ref);
-//      }
-      /*else */return Scope::mapTerminal(terminal);
-   //}
+         return ObjectInfo(okParam, -1 - local/*, 0, param.subj_ref*/);
+      }
+      else return Scope::mapTerminal(terminal);
+   }
 }
 
 //// --- Compiler::ActionScope ---
@@ -1392,13 +1392,13 @@ pos_t Compiler :: saveSourcePath(ModuleScope&, ident_t path)
 
 ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 {
-   /*if (object.kind == okThisParam) {
-      if (object.extraparam == -2) {
+   if (object.kind == okThisParam) {
+      /*if (object.extraparam == -2) {
          return _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->subjectHints.get(object.type));
       }
-      else return scope.getClassRefId(false);
+      else */return scope.getClassRefId(false);
    }
-   else */return resolveObjectReference(*scope.moduleScope, object);
+   else return resolveObjectReference(*scope.moduleScope, object);
 }
 
 ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
@@ -1453,7 +1453,7 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
 //         if (object.extraparam != 0) {
 //            return object.extraparam;
 //         }
-//      case okParam:
+      case okParam:
       default:
          if (object.kind == okObject && object.param != 0) {
             return object.param;
@@ -1995,7 +1995,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //         writer.newNode(lxConstantList, object.param);
 //         break;
 //      case okLocal:
-//      case okParam:
+      case okParam:
 //         if (object.extraparam == -1) {
 //            ref_t targetRef = resolveObjectReference(scope, object);
 //            writer.newNode(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef));
@@ -2003,16 +2003,16 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //            if (test(mode, HINT_DYNAMIC_OBJECT))
 //               writer.appendNode(lxBoxingRequired);
 //         }
-//         else writer.newNode(lxLocal, object.param);
-//         break;
-//      case okThisParam:
+         /*else */writer.newNode(lxLocal, object.param);
+         break;
+      case okThisParam:
 //         if (object.extraparam == -1) {
 //            ref_t targetRef = resolveObjectReference(scope, object);
 //            writer.newNode(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef));
 //            writer.appendNode(lxThisLocal, object.param);
 //         }
-//         else writer.newNode(lxThisLocal, object.param);
-//         break;
+         /*else */writer.newNode(lxThisLocal, object.param);
+         break;
 //      case okSuper:
 //         writer.newNode(lxLocal, 1);
 //         break;
@@ -2354,10 +2354,10 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 
 ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 {
-//   bool   first = true;
+   bool   first = true;
    ref_t  verb_id = 0;
 
-//   IdentifierString signature;
+   IdentifierString signature;
    SNode arg = node.findChild(lxMessage);
    if (arg.argument != 0)
       return arg.argument;
@@ -2371,17 +2371,17 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
       scope.raiseError(errInvalidOperation, node);
 
    verb_id = _verbs.get(name.identifier());
-//   if (verb_id == 0) {
-//      ref_t id = scope.mapSubject(name, signature);
-//
-//      if (arg.nextNode() != lxNone) {
+   if (verb_id == 0) {
+      /*ref_t id = */scope.mapSubject(name, signature);
+
+      if (arg.nextNode() != lxNone) {
 //         // HOT FIX : strong types cannot be used as a custom verb with a parameter
 //         if (scope.moduleScope->subjectHints.exist(id))
 //            scope.raiseError(errStrongTypeNotAllowed, arg);
-//
-//         first = false;
-//      }
-//   }
+
+         first = false;
+      }
+   }
 
    arg = arg.nextNode();
 
@@ -2394,24 +2394,24 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
       arg = arg.nextNode();
    }
 
-//   // if message has named argument list
-//   while (arg == lxMessage) {
-//      SNode subject = arg.findChild(lxPrivate, lxIdentifier, lxReference);
-//      //HOTFIX : if generated by a script
-//      if (subject == lxNone)
-//         subject = arg;
-//
-//      if (!first) {
-//         signature.append('&');
-//      }
-//      else first = false;
-//
-//      ref_t subjRef = scope.mapSubject(subject, signature);
-////      arg.setArgument(subjRef);
-//
-//      // skip an argument
-//      arg = arg.nextNode();
-//
+   // if message has named argument list
+   while (arg == lxMessage) {
+      SNode subject = arg.findChild(lxPrivate, lxIdentifier, lxReference);
+      //HOTFIX : if generated by a script
+      if (subject == lxNone)
+         subject = arg;
+
+      if (!first) {
+         signature.append('&');
+      }
+      else first = false;
+
+      /*ref_t subjRef = */scope.mapSubject(subject, signature);
+//      arg.setArgument(subjRef);
+
+      // skip an argument
+      arg = arg.nextNode();
+
 //      //// HOTFIX : if it was already compiled as open argument list
 //      //if (arg.type == lxIdle && scope.moduleScope->subjectHints.exist(subjRef, scope.moduleScope->paramsReference)) {
 //      //   paramCount += OPEN_ARG_COUNT;
@@ -2431,14 +2431,14 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 //            break;
 //         }
 //         else {
-//            paramCount++;
-//            if (paramCount >= OPEN_ARG_COUNT)
-//               scope.raiseError(errInvalidOperation, node);
-//
-//            arg = arg.nextNode();
+            paramCount++;
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errInvalidOperation, node);
+
+            arg = arg.nextNode();
 //         }
 //      }
-//   }
+   }
 
    if (verb_id == 0) {
       verb_id = paramCount > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID;
@@ -2446,9 +2446,9 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 
    // if signature is presented
    ref_t sign_id = 0;
-//   if (!emptystr(signature)) {
-//      sign_id = scope.moduleScope->module->mapSubject(signature, false);
-//   }
+   if (!emptystr(signature)) {
+      sign_id = scope.moduleScope->module->mapSubject(signature, false);
+   }
 
    // create a message id
    return encodeMessage(sign_id, verb_id, paramCount);
@@ -4033,31 +4033,25 @@ inline SNode findTerminal(SNode node)
 
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 {
-//   IdentifierString signature;
+   IdentifierString signature;
    ref_t verb_id = 0;
    ref_t sign_id = 0;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
    SNode arg = node.findChild(lxMethodParameter, lxMessage);
-//   if (verb == lxNone) {
-//      if (arg == lxMessage) {
-//         verb = arg;
-//         arg = verb.nextNode();
-//
-//         verb_id = _verbs.get(verb.identifier());
-//         if (verb_id == 0) {
-//            sign_id = scope.mapSubject(verb, signature);
-//         }
-//      }
-//   }
-//   else {
-      verb_id = _verbs.get(verb.identifier());
-//      if (verb_id == 0) {
-//         sign_id = scope.mapSubject(verb, signature);
-//      }
-//   }
-//
-//   bool first = signature.Length() == 0;
+   if (verb == lxNone) {
+      if (arg == lxMessage) {
+         verb = arg;
+         arg = verb.nextNode();
+      }
+   }
+
+   verb_id = _verbs.get(verb.identifier());
+   if (verb_id == 0) {
+      /*ref_t sign_id = */scope.mapSubject(verb, signature);
+   }
+
+   bool first = signature.Length() == 0;
    int paramCount = 0;
    // if method has generic (unnamed) argument list
    while (arg == lxMethodParameter) {
@@ -4082,26 +4076,26 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       arg = arg.nextNode();
    }
 
-//   // if method has named argument list
-//   while (arg == lxMessage) {
-//      SNode subject = arg.findChild(lxIdentifier, lxPrivate, lxReference);
-//      if (!first) {
-//         signature.append('&');
-//      }
-//      else first = false;
-//
-//      ref_t subj_ref = scope.mapSubject(subject, signature);
-//
-//      arg = arg.nextNode();
-//
-//      if (arg == lxMethodParameter) {
-//         ident_t name = arg.findChild(lxIdentifier, lxPrivate).identifier();
-//
-//         if (scope.parameters.exist(name))
-//            scope.raiseError(errDuplicatedLocal, arg);
-//
-//         int index = 1 + scope.parameters.Count();
-//
+   // if method has named argument list
+   while (arg == lxMessage) {
+      SNode subject = arg.findChild(lxIdentifier, lxPrivate, lxReference);
+      if (!first) {
+         signature.append('&');
+      }
+      else first = false;
+
+      /*ref_t subj_ref = */scope.mapSubject(subject, signature);
+
+      arg = arg.nextNode();
+
+      if (arg == lxMethodParameter) {
+         ident_t name = arg.findChild(lxIdentifier, lxPrivate).identifier();
+
+         if (scope.parameters.exist(name))
+            scope.raiseError(errDuplicatedLocal, arg);
+
+         int index = 1 + scope.parameters.Count();
+
 //         // if it is an open argument type
 //         if (subj_ref == scope.moduleScope->paramsSubj) {
 //            scope.parameters.add(name, Parameter(index, subj_ref));
@@ -4119,20 +4113,20 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //            signature.truncate(signature.ident().findLast('&', 0));
 //         }
 //         else {
-//            paramCount++;
-//            if (paramCount >= OPEN_ARG_COUNT)
-//               scope.raiseError(errTooManyParameters, verb);
-//
+            paramCount++;
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errTooManyParameters, verb);
+
 //            ref_t paramRef = scope.moduleScope->subjectHints.get(subj_ref);
 //            int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
 //               paramRef, 0, true) : 0;
-//
-//            scope.parameters.add(name, Parameter(index, subj_ref, paramRef, size));
-//
-//            arg = arg.nextNode();
+
+            scope.parameters.add(name, Parameter(index/*, subj_ref, paramRef, size*/));
+
+            arg = arg.nextNode();
 //         }
-//      }
-//   }
+      }
+   }
 
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
@@ -4149,14 +4143,14 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //            signature.copy(GENERIC_PREFIX);
 //         }
 //      }
-//      if (verb_id == 0)
-//         verb_id = paramCount > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID;
-//
-//      // if signature is presented
-//      if (!emptystr(signature)) {
-//         sign_id = scope.moduleScope->module->mapSubject(signature, false);
-//      }
-//
+      if (verb_id == 0)
+         verb_id = paramCount > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID;
+
+      // if signature is presented
+      if (!emptystr(signature)) {
+         sign_id = scope.moduleScope->module->mapSubject(signature, false);
+      }
+
 //      if (test(scope.hints, tpSealed | tpConversion)) {
 //         if (verb_id == EVAL_MESSAGE_ID && paramCount == 1) {
 //            verb_id = PRIVATE_MESSAGE_ID;
