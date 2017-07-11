@@ -55,10 +55,10 @@ public:
       _packagePaths.add(package, NULL);
    }
 
-//   void addPackage(ident_t package, path_t path)
-//   {
-//      _packagePaths.add(package, IdentifierString::clonePath(path));
-//   }
+   void addPackage(ident_t package, path_t path)
+   {
+      _packagePaths.add(package, IdentifierString::clonePath(path));
+   }
 
    void addPackage(ident_t package, ident_t path)
    {

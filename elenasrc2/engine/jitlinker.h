@@ -161,7 +161,7 @@ public:
 
    void* resolveEntry(void* programEntry);
 
-   void loadModuleInfo(_Module* module);
+   //void loadModuleInfo(_Module* module);
 
    void generateInitTape(MemoryDump& tape);
 

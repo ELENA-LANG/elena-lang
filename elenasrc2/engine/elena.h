@@ -86,13 +86,13 @@ public:
    virtual _Module* createDebugModule(ident_t name) = 0 ;
 
    virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
-   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
+//   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
 
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
 
    virtual ident_t resolveForward(ident_t forward) = 0;
 
-   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
+//   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
 // --- SectionInfo ---

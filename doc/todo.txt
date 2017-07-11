@@ -3,6 +3,23 @@ In development:
 ------                              
 
               xdev - multimethod
+                 * uncomment ModuleScope::ModuleScope
+                 * uncomment writeMessageInfo
+                 * uncomment defineClassInfo
+                 * uncomment declareParameterDebugInfo
+                 * uncomment compileConstructor
+                 * uncomment defineObjectInfo
+                 * uncomment mapReferenceInfo
+                 * uncomment generateMethodDeclaration
+                 * uncomment compileDispatchExpression
+                 * uncomment generateClassDeclaration
+                 * uncomment optimizeClassTree
+                 * uncomment validateBoxing
+                 * uncomment optimizeEmbeddableOp, optimizeEmbeddableGet, optimizeEmbeddable
+                 * uncomment optimizeOp
+                 * uncomment compileExternalArguments
+                 * uncomment optimizeSymbol
+
                  * check package functionality
 
                  * declaring type with the class?

@@ -130,10 +130,10 @@ public:
       return (_settings.get(key, 0) != 0);
    }
 
-//   virtual bool testSetting(ProjectSetting key)
-//   {
-//      return _settings.exist(key);
-//   }
+   virtual bool testSetting(ProjectSetting key)
+   {
+      return _settings.exist(key);
+   }
 
    ForwardIterator getForwardIt()
    {
@@ -151,7 +151,7 @@ public:
    virtual void addModule(_ConfigFile::Node moduleNode) = 0;
    virtual void addTarget(_ConfigFile::Node moduleNode) = 0;
 
-//   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
+   //virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, path_t configPath);
 
    virtual void initLoader()

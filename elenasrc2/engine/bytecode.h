@@ -377,10 +377,8 @@ public:
    static void loadOperators(MessageMap& operators);
 
    static ByteCode code(ident_t s);
-//   static FunctionCode codeFunction(const wchar16_t* s);
 
    static ident_t decode(ByteCode code, char* s);
-//   static const wchar16_t* decodeFunction(FunctionCode code, wchar16_t* s);
 
    static bool IsJump(ByteCode code)
    {

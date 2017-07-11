@@ -165,7 +165,7 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& verb_id)
 {
-   bool strongSignature = paramCount > 0 && verb_id == EVAL_MESSAGE_ID;
+/*   bool strongSignature = paramCount > 0 && verb_id == EVAL_MESSAGE_ID;
    if (strongSignature) {      
       size_t index = signature.find('&');
       if (index != NOTFOUND_POS) {
@@ -221,7 +221,7 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& ve
          }
          else info.section->trim(reference);
       }
-   }
+   }*/
    return (ref_t)_loader->resolveReference(signature, 0);
 }
 
@@ -1030,29 +1030,29 @@ void JITLinker :: onModuleLoad(_Module* module)
 {
    _loadedModules.add(module);
 
-   loadModuleInfo(module);
+   //loadModuleInfo(module);
 }
 
-void JITLinker :: loadModuleInfo(_Module* module)
-{
-   SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
-
-   // load registered types
-   ReferenceNs sectionName(module->Name(), ATTRIBUTE_SECTION);
-   ref_t typeSectionRef = module->mapReference(sectionName, true);
-   if (typeSectionRef != 0) {
-      MemoryReader metaReader(module->mapSection(typeSectionRef | mskMetaRDataRef, true));
-      while (!metaReader.Eof()) {
-         ref_t typeRef = metaReader.getDWord();
-         ref_t classRef = metaReader.getDWord();
-         if (((int)classRef > 0)) {
-            info.module->mapPredefinedSubject(
-               module->resolveSubject(typeRef),
-               info.module->mapReference(module->resolveReference(classRef)));
-         }
-      }
-   }
-}
+//void JITLinker :: loadModuleInfo(_Module* module)
+//{
+//   SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
+//
+//   // load registered types
+//   ReferenceNs sectionName(module->Name(), ATTRIBUTE_SECTION);
+//   ref_t typeSectionRef = module->mapReference(sectionName, true);
+//   if (typeSectionRef != 0) {
+//      MemoryReader metaReader(module->mapSection(typeSectionRef | mskMetaRDataRef, true));
+//      while (!metaReader.Eof()) {
+//         ref_t typeRef = metaReader.getDWord();
+//         ref_t classRef = metaReader.getDWord();
+//         if (((int)classRef > 0)) {
+//            info.module->mapPredefinedSubject(
+//               module->resolveSubject(typeRef),
+//               info.module->mapReference(module->resolveReference(classRef)));
+//         }
+//      }
+//   }
+//}
 
 void JITLinker :: generateInitTape(MemoryDump& tape)
 {
