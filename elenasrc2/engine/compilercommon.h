@@ -69,14 +69,14 @@
 //#define V_CONVERSION     (ref_t)-16387
 ////#define V_EMBEDDABLETMPL (ref_t)-16388
 #define V_SYMBOLEXPR     (ref_t)-16389
-//#define V_TYPETEMPL      (ref_t)-16390
+#define V_TYPETEMPL      (ref_t)-16390
 //#define V_TEMPLATE       (ref_t)-16391
 //#define V_FIELD          (ref_t)-16392
 //#define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
 //#define V_EXTERN         (ref_t)-16396
-//#define V_MULTI          (ref_t)-16397
+#define V_MULTI          (ref_t)-16397
 
 namespace _ELENA_
 {
@@ -101,21 +101,8 @@ enum MethodHint
 //   tpIfNotBranch = 0x0200,
    tpConstructor = 0x0400,
 //   tpConversion  = 0x0800,
-//   tpMultimethod = 0x1000
+   tpMultimethod = 0x1000
 };
-
-//enum DeclarationAttr
-//{
-//   daNone     = 0x00,
-//   daType     = 0x01,
-//   daClass    = 0x02,
-//   daTemplate = 0x04,
-//   daField    = 0x08,
-//   daMethod   = 0x10, 
-//   daLoop     = 0x20,
-//   daImport   = 0x40,
-//   daExtern   = 0x80
-//};
 
 // --- _CompileScope ---
 
@@ -151,21 +138,25 @@ struct _CompilerScope
    ref_t arrayReference;
    ref_t paramsSubj;
 
-//   // list of typified classes which may need get&type message
-//   SubjectMap  subjectHints;
-//
+   // list of typified classes which may need get&type message
+   TypeMap  typeHints;
+
 //   // cached bool values
 //   BranchingInfo branchingInfo;
 
    virtual void raiseError(const char* message, SNode terminal) = 0;
 
    virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/) = 0;
+   virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
+
    virtual void saveAttribute(ident_t name, ref_t attr) = 0;
+   virtual void saveType(ident_t typeName, ref_t classReference, bool internalType) = 0;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 //   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
    _CompilerScope()
+      : typeHints(0)
    {
       module = NULL;
       intReference = boolReference = superReference = 0;
@@ -194,8 +185,8 @@ public:
 ////   //virtual int injectTempLocal(SNode node) = 0;
 //
 //   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
-//   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
-//
+   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
+
 //   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };
 
@@ -267,7 +258,7 @@ public:
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          
@@ -281,8 +272,8 @@ public:
 //   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
 //   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
 ////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
-//   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
-//
+   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
+
 //   // auto generate class flags
 //   virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
@@ -295,7 +286,6 @@ public:
 //   virtual bool validateFieldAttribute(int& attrValue) = 0;
 //   virtual bool validateLocalAttribute(int& attrValue) = 0;
    virtual bool validateSymbolAttribute(int attrValue/*, bool& constant, bool& staticOne, bool& preloadedOne*/) = 0;
-//   virtual bool validateDeclarationAttribute(int attrValue, DeclarationAttr& declType) = 0;
 ////   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
 

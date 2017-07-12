@@ -1,17 +1,20 @@
 /// Attributes
-//#16390          type.
+type        = #16390.
+class       = #16386.
+symbol      = #16389.
+constructor = #16384.
+multi       = #16397.
+
+
 //#16395          import.
 //#16391          template.
 //#16391 #16394   loop_template.
 //#16391 #16396   extern_template.
 //#16385          var.
-class       = #16386.
-constructor = #16384.
 //#16387 #8195    implicit.
-symbol      = #16389.
 //#16393          method.
 //#16392          field.
-//
+
 //#8194           static.
 ////#template(-8207)         preloaded {}
 //#8202 #8195     generic.

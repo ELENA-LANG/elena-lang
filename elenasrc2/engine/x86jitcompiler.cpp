@@ -49,6 +49,7 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define CORE_TLS_INDEX       0x20007
 #define CORE_THREADTABLE     0x20008
 #define CORE_OS_TABLE        0x20009
+#define CORE_MESSAGE_TABLE   0x2000A
 
 // preloaded gc routines
 const int coreVariableNumber = 3;
@@ -67,7 +68,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 140;
+const int gcCommandNumber = 141;
 const int gcCommands[gcCommandNumber] =
 {
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcParent,
@@ -99,7 +100,7 @@ const int gcCommands[gcCommandNumber] =
    bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
    bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
    bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit,
-   bcCheck
+   bcCheck, bcMTRedirect
 };
 
 // command table
@@ -145,7 +146,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
    &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileDOrN,
-   &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &compileNop, &compileNop,
+   &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &loadROp, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -1465,6 +1466,10 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
    rdataWriter.writeDWord(helper.getLinkerConstant(lnThreadCount));
 
+   // MESSAGE TABLE POINTER
+   _preloaded.add(CORE_MESSAGE_TABLE, helper.getVAddress(rdataWriter, mskRDataRef));
+   rdataWriter.writeDWord(0);
+
    // load GC static root
    _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
 
@@ -1510,17 +1515,18 @@ void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, 
    }
 }
 
-void x86JITCompiler :: setStaticVariable(_JITLoader* loader, void* vaddress, void* value, bool virtualMode)
+void x86JITCompiler :: setMessageTablePtr(_JITLoader* loader, void* vaddress, bool virtualMode)
 {
    if (virtualMode) {
       _Memory* data = loader->getTargetSection(mskRDataRef);
 
-      size_t offset = ((size_t)vaddress) & ~mskAnyRef;
-
-      (*data)[offset] = (size_t)value;
+      size_t offset = ((size_t)_preloaded.get(CORE_MESSAGE_TABLE) & ~mskAnyRef);
+      (*data)[offset] = ((size_t)vaddress) & ~mskAnyRef;
+      data->addReference(((size_t)vaddress) & mskImageMask, offset);
    }
    else {
-      *(int*)vaddress = (size_t)value;
+      size_t offset = (size_t)_preloaded.get(CORE_MESSAGE_TABLE);
+      *(int*)offset = (size_t)vaddress;
    }
 }
 

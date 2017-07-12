@@ -65,7 +65,7 @@ public:
    struct Parameter
    {
       int    offset;
-//      ref_t  class_ref;
+      ref_t  class_ref;
 //      ref_t  subj_ref;
 //      int    size;
 
@@ -73,14 +73,14 @@ public:
       {
          offset = -1;
 //         subj_ref = 0;
-//         class_ref = 0;
+         class_ref = 0;
 //         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
 //         this->subj_ref = 0;
-//         this->class_ref = 0;
+         this->class_ref = 0;
 //         this->size = 0;
       }
 //      Parameter(int offset, ref_t subj_ref)
@@ -90,13 +90,13 @@ public:
 //         this->class_ref = 0;
 //         this->size = 0;
 //      }
-//      Parameter(int offset, ref_t subj_ref, ref_t class_ref)
-//      {
-//         this->offset = offset;
-//         this->subj_ref = subj_ref;
-//         this->class_ref = class_ref;
-//         this->size = 0;
-//      }
+      Parameter(int offset, /*ref_t subj_ref, */ref_t class_ref)
+      {
+         this->offset = offset;
+         //this->subj_ref = subj_ref;
+         this->class_ref = class_ref;
+         //this->size = 0;
+      }
 //      Parameter(int offset, ref_t subj_ref, ref_t class_ref, int size)
 //      {
 //         this->offset = offset;
@@ -143,7 +143,7 @@ public:
 //      okOuter,                        // param - field offset, extraparam - class reference
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
 //      okLocal,                        // param - local / out parameter offset, extraparam : class reference
-      okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
+      okParam,                        // param - parameter offset, extraparam = class reference
 //      okParamField,
 //      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
@@ -163,21 +163,21 @@ public:
    {
       ObjectKind kind;
       ref_t      param;
-//      ref_t      extraparam;
+      ref_t      extraparam;
 //      ref_t      type;
 
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
 //      ObjectInfo(ObjectKind kind, ObjectInfo copy)
@@ -191,30 +191,30 @@ public:
       {
          this->kind = kind;
          this->param = param;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
       ObjectInfo(ObjectKind kind, int param)
       {
          this->kind = kind;
          this->param = (ref_t)param;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
-//         this->type = 0;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = (ref_t)extraparam;
-//         this->type = 0;
-//      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
+         //this->type = 0;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = (ref_t)extraparam;
+         //this->type = 0;
+      }
 //      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
 //      {
 //         this->kind = kind;
@@ -295,15 +295,15 @@ private:
 
       ref_t resolveIdentifier(ident_t name);
 
-//      ref_t mapNewSubject(ident_t terminal);
+      ref_t mapNewSubject(ident_t terminal);
 
       // NOTE : the function returns 0 for implicit subjects
       // in any case output is set (for explicit one - the namespace is copied as well)
-      /*ref_t*/void mapSubject(SNode terminal, IdentifierString& output);
-//      ref_t mapSubject(SNode terminal, bool explicitOnly = true);
+      ref_t mapSubject(SNode terminal, IdentifierString& output);
+      //ref_t mapSubject(SNode terminal, bool explicitOnly = true);
 //      ref_t resolveAttributeRef(ident_t name, bool explicitOnly = true);
 
-      ref_t mapTerminal(SNode terminal, bool existing = false);
+      virtual ref_t mapTerminal(SNode terminal, bool existing = false);
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
@@ -323,11 +323,12 @@ private:
 //      _Memory* loadAttributeInfo(ident_t attribute/*, _Module* &argModule*/);
 
       void loadAttributes(_Module* module);
+      void loadTypes(_Module* module);
 //      void loadExtensions(_Module* module, bool& duplicateExtensions);
 //      void loadActions(_Module* module);
 //
       virtual void saveAttribute(ident_t name, ref_t attr);
-//      void saveSubject(ref_t attrRef, ref_t classReference, bool internalType);
+      virtual void saveType(ident_t typeName, ref_t classReference, bool internalType);
 //      bool saveExtension(ref_t message, ref_t type, ref_t role);
 //      void saveAction(ref_t message, ref_t reference);
 
@@ -345,6 +346,7 @@ private:
       void loadModuleInfo(_Module* extModule, bool& duplicateExtensions)
       {
          loadAttributes(extModule);
+         loadTypes(extModule);
 //         loadExtensions(extModule, duplicateExtensions);
 //         loadActions(extModule);
       }
@@ -411,12 +413,12 @@ private:
          else return NULL;
       }
 
-      virtual /*ref_t*/void mapSubject(SNode terminal, IdentifierString& output)
+      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
       {
          /*if (parent) {
             return parent->mapSubject(terminal, output);
          }
-         else return*/ moduleScope->mapSubject(terminal, output);
+         else */return moduleScope->mapSubject(terminal, output);
       }
 
 //      virtual ref_t mapSubject(SNode terminal, bool explicitOnly = true)
@@ -530,7 +532,7 @@ private:
       bool         classEmbeddable;
 //      bool         generic;
       bool         extensionMode;
-//      bool         multiMethod;
+      bool         multiMethod;
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -904,7 +906,6 @@ private:
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
 //   void compileIncludeModule(SNode node, ModuleScope& scope);
 //   void compileForward(SNode node, ModuleScope& scope);
-//   void declareSubject(SyntaxWriter& writer, SNode member, ModuleScope& scope, SyntaxTree& autogenerated);
 
    bool validate(_ProjectManager& project, _Module* module, int reference);
 
@@ -988,7 +989,7 @@ public:
 //   virtual void injectFieldExpression(SyntaxWriter& writer);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
 //   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
-//   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
+   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
 //   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
    Compiler(_CompilerLogic* logic);

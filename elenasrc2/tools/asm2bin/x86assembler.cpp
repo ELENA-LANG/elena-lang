@@ -175,10 +175,17 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
 		else if (token.check("rdata")) {
          token.read(":", err);
          token.read();
-         IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
+         if (token.check("%")) {
+            operand.type = x86Helper::otDD;
+            operand.reference = token.readInteger(constants) | mskPreloadDataRef;
+            operand.offset = 0x0;
+         }
+         else {
+            IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
 
-         operand.type = x86Helper::otDD;
-         operand.reference = info.binary->mapReference(structRef) | mskNativeRDataRef;
+            operand.type = x86Helper::otDD;
+            operand.reference = info.binary->mapReference(structRef) | mskNativeRDataRef;
+         }
       }
 		else if (token.check("stat")) {
          token.read(":", err);

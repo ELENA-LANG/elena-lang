@@ -93,7 +93,7 @@ public:
    virtual void* getPreloadedReference(ref_t reference) = 0;
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode) = 0;
-   virtual void setStaticVariable(_JITLoader* loader, void* vaddress, void* value, bool virtualMode) = 0;
+   virtual void setMessageTablePtr(_JITLoader* loader, void* vaddress, bool virtualMode) = 0;
 
    virtual void generateProgramStart(MemoryDump& tape) = 0;
    virtual void generateSymbolCall(MemoryDump& tape, void* address) = 0;

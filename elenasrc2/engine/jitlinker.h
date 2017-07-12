@@ -115,8 +115,6 @@ class JITLinker : _JITLoaderListener
    MethodMap      _staticMethods;
    ModuleList     _loadedModules;
 
-   //_Module*       _messageModle;
-
 //   int            _uniqueID;           // used for dynamic subject
 
    void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);

@@ -502,37 +502,37 @@ bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
 //}
-//
-//bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
-//}
-//
-//void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler)
-//{
-//   for (auto it = info.methods.start(); !it.Eof(); it++) {
-//      // if the method included
-//      if (*it) {
-//         ref_t message = it.key();
-//         if (getParamCount(message) > 0 && getVerb(message) == EVAL_MESSAGE_ID) {
-//            ident_t messageName = scope.module->resolveSubject(getSignature(it.key()));
-//
-//            int index = messageName.find('&');
-//            if (index != NOTFOUND_POS) {
-//               IdentifierString content(messageName, index);
-//
-//               ref_t actionRef = scope.module->mapSubject(content.c_str(), true);
-//               if (actionRef != 0) {
-//                  ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, EVAL_MESSAGE_ID, getParamCount(message)), maOverloadlist));
-//                  if (listRef != 0)
-//                     compiler.generateOverloadListMember(scope, listRef, message);
-//               }
-//            }
-//         }         
-//      }
-//   }
-//}
-//
+
+bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
+}
+
+void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler)
+{
+   for (auto it = info.methods.start(); !it.Eof(); it++) {
+      // if the method included
+      if (*it) {
+         ref_t message = it.key();
+         if (getParamCount(message) > 0) {
+            ident_t messageName = scope.module->resolveSubject(getSignature(it.key()));
+
+            int index = messageName.find('$');
+            if (index != NOTFOUND_POS) {
+               IdentifierString content(messageName, index);
+
+               ref_t actionRef = scope.module->mapSubject(content.c_str(), true);
+               if (actionRef != 0) {
+                  ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getVerb(message), getParamCount(message)), maOverloadlist));
+                  if (listRef != 0)
+                     compiler.generateOverloadListMember(scope, listRef, message);
+               }
+            }
+         }         
+      }
+   }
+}
+
 //void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
 //{
 ////   SNode templateNode = node.appendNode(lxTemplate);
@@ -1073,51 +1073,13 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       //case V_CONVERSION:
       //   attrValue = tpConversion;
       //   return true;
-      //case V_MULTI:
-      //   attrValue = tpMultimethod;
-      //   return true;
+      case V_MULTI:
+         attrValue = tpMultimethod;
+         return true;
       default:
          return false;
    }
 }
-
-//bool CompilerLogic :: validateDeclarationAttribute(int attrValue, DeclarationAttr& declType)
-//{
-//   DeclarationAttr attr = daNone;
-//   switch ((size_t)attrValue) {
-//      case V_TYPETEMPL:
-//         attr = daType;
-//         break;
-//      case V_CLASS:
-//      case V_STRUCT:
-//      case V_STRING:
-//         attr = daClass;
-//         break;
-//      case V_TEMPLATE:
-//         attr = daTemplate;
-//         break;
-//      case V_FIELD:
-//         attr = daField;
-//         break;
-//      case V_METHOD:
-//         attr = daMethod;
-//         break;
-//      case V_LOOP:
-//         attr = daLoop;
-//         break;
-//      case V_IMPORT:
-//         attr = daImport;
-//         break;
-//      case V_EXTERN:
-//         attr = daExtern;
-//         break;
-//      default:
-//         return true;
-//   }
-//
-//   declType = (DeclarationAttr)(declType | attr);
-//   return true;
-//}
 //
 //bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 //{

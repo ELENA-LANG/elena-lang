@@ -26,6 +26,7 @@ define CORE_GC_SIZE         20003h
 define CORE_STAT_COUNT      20004h
 define CORE_STATICROOT      20005h
 define CORE_OS_TABLE        20009h
+define CORE_MESSAGE_TABLE   2000Ah
 
 // CORE GC SIZE OFFSETS
 define gcs_MGSize	0000h
@@ -2664,6 +2665,59 @@ inline %0DDh
   xor  eax, eax
   mov  edi, esp
   rep  stos
+
+end
+
+// ; mtresolve
+
+inline % 0DEh
+
+  push eax
+  xor  edx, edx
+  push ecx
+  add  ecx, 1
+  lea  eax, [esp + 12]
+  and  ecx, 0Fh
+  mov  esi, __arg1
+  push ecx
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+
+labNextOverloadlist:
+  mov  ecx, [esp]              // ; param count
+  mov  edi, [rdata : % CORE_MESSAGE_TABLE]
+  shr  ebx, 4
+  and  ebx, 0007FFFFh
+  lea  ebx, [edi + ebx]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  mov  esi, __arg1
+  lea  esp, [esp + 8]
+  mov  ecx, [esi + edx * 8]
+  pop  eax
+  mov  ebx, [esi + edx * 8 + 4]
+  mov  edx, [eax - 4]
+  jmp  [edx + ebx * 8 + 4]
+
+labMatching:
+  mov  edi, [eax + ecx * 4]
+  mov  edi, [edi - 4]
+  mov  esi, [ebx + ecx * 4]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  esi, [esi - elPackageOffset]
+  and  esi, esi
+  jnz  short labNextBaseClass
+
+  mov  esi, __arg1
+  add  edx, 1
+  mov  ebx, [esi + edx * 4] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
 
 end
 

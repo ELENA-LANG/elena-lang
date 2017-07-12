@@ -104,7 +104,7 @@ public:
    virtual bool isRole(ClassInfo& info);
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
-//   virtual bool isMultiMethod(ClassInfo& info, ref_t message);
+   virtual bool isMultiMethod(ClassInfo& info, ref_t message);
 //   virtual bool isReadonly(ClassInfo& info);
 //   virtual bool isReadonly(_CompilerScope& scope, ref_t reference)
 //   {
@@ -119,8 +119,8 @@ public:
 //   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType);
 //   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef);
 ////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode);
-//   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
-//
+   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
+
 //   virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 //
@@ -129,7 +129,6 @@ public:
 //   virtual bool validateFieldAttribute(int& attrValue);
 //   virtual bool validateLocalAttribute(int& attrValue);
    virtual bool validateSymbolAttribute(int attrValue/*, bool& constant, bool& staticOne, bool& preloadedOne*/);
-//   virtual bool validateDeclarationAttribute(int attrValue, DeclarationAttr& declType);
 ////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(ref_t message, bool isClassClass);
 //

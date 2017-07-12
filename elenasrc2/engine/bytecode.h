@@ -223,6 +223,7 @@ enum ByteCode
    bcDivN            = 0xDB,
    bcBLoadR          = 0xDC,
    bcInit            = 0xDD,
+   bcMTRedirect      = 0xDE,
 
    bcNew             = 0xF0,
    bcNewN            = 0xF1,

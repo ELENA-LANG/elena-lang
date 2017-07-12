@@ -1491,7 +1491,7 @@ void AMD64JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter
    //}
 }
 
-void AMD64JITCompiler :: setStaticVariable(_JITLoader* loader, void* vaddress, void* value, bool virtualMode)
+void AMD64JITCompiler :: setMessageTablePtr(_JITLoader* loader, void* vaddress, bool virtualMode)
 {
 
 }

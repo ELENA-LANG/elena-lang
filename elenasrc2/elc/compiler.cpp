@@ -282,22 +282,22 @@ ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
    return 0;
 }
 
-//ref_t Compiler::ModuleScope :: mapNewSubject(ident_t terminal)
-//{
-//   IdentifierString fullName(terminal);
-//   fullName.append('$');
-//
-//   ident_t ns = module->Name();
-//   if (ns.compare(STANDARD_MODULE)) {
-//   }
-//   else if (ns.compare(STANDARD_MODULE, STANDARD_MODULE_LEN)) {
-//      fullName.append(ns + STANDARD_MODULE_LEN + 1);
-//   }
-//   else fullName.append(ns);
-//
-//   return module->mapSubject(fullName, false);
-//}
-//
+ref_t Compiler::ModuleScope :: mapNewSubject(ident_t terminal)
+{
+   IdentifierString fullName(terminal);
+   fullName.append('$');
+
+   ident_t ns = module->Name();
+   if (ns.compare(STANDARD_MODULE)) {
+   }
+   else if (ns.compare(STANDARD_MODULE, STANDARD_MODULE_LEN)) {
+      fullName.append(ns + STANDARD_MODULE_LEN + 1);
+   }
+   else fullName.append(ns);
+
+   return module->mapSubject(fullName, false);
+}
+
 //ref_t Compiler::ModuleScope :: resolveAttributeRef(ident_t identifier, bool explicitOnly)
 //{
 //   ref_t subj_ref = attributes.get(identifier);
@@ -331,7 +331,7 @@ ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
 //
 //   return 0;
 //}
-//
+
 //ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, bool explicitOnly)
 //{
 //   ident_t identifier = NULL;
@@ -340,21 +340,26 @@ ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
 //      if (emptystr(identifier))
 //         identifier = terminal.findChild(lxTerminal).identifier();
 //   }
-//   else if (terminal.type == lxReference) {
-//      identifier = terminal.identifier();
-//      if (emptystr(identifier))
-//         identifier = terminal.findChild(lxTerminal).identifier();
-//
-//      return module->mapSubject(identifier, explicitOnly);
-//   }
+////   else if (terminal.type == lxReference) {
+////      identifier = terminal.identifier();
+////      if (emptystr(identifier))
+////         identifier = terminal.findChild(lxTerminal).identifier();
+////
+////      return module->mapSubject(identifier, explicitOnly);
+////   }
 //   else raiseError(errInvalidSubject, terminal);
 //
 //   return resolveAttributeRef(identifier, explicitOnly);
 //}
 
-/*ref_t*/void Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& output)
+ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& output)
 {
    ident_t identifier = terminal.identifier();
+
+   ref_t classRef = 0;
+   if (terminal.type == lxIdentifier) {
+      classRef = typeHints.get(identifier);
+   }
 
 //   // add a namespace for the private message
 //   if (terminal.type == lxPrivate) {
@@ -364,16 +369,19 @@ ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
 //      return 0;
 //   }
 //
+   if (classRef == 0) {
+      output.append(identifier);
+   }
 //   ref_t subjRef = mapSubject(terminal);
 //   if (subjRef != 0) {
 //      output.append(module->resolveSubject(subjRef));
 //   }
 //   else if (terminal.type != lxReference) {
-      output.append(identifier);
+//      output.append(identifier);
 //   }
 //   else raiseError(errInvalidSubject, terminal);
-//
-//   return subjRef;
+
+   return classRef;
 }
 
 ref_t Compiler::ModuleScope :: mapTerminal(SNode terminal, bool existing)
@@ -718,7 +726,9 @@ void Compiler::ModuleScope :: raiseWarning(int level, const char* message, SNode
 
    int col = terminal.findChild(lxCol).argument;
    int row = terminal.findChild(lxRow).argument;
-   ident_t identifier = terminal.findChild(lxTerminal).identifier();
+   ident_t identifier = terminal.identifier();
+   if (emptystr(identifier))
+      identifier = terminal.findChild(lxTerminal).identifier();
 
    raiseWarning(level, message, row, col, identifier);
 }
@@ -772,28 +782,29 @@ void Compiler::ModuleScope :: loadAttributes(_Module* extModule)
    }
 }
 
-//void Compiler::ModuleScope :: loadSubjects(_Module* extModule)
-//{
-//   if (extModule) {
-//      //bool owner = module == extModule;
-//
-//      ReferenceNs sectionName(extModule->Name(), ATTRIBUTE_SECTION);
-//
-//      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
-//      if (section) {
-//         MemoryReader metaReader(section);
-//         while (!metaReader.Eof()) {
-//            ref_t subj_ref = importSubject(extModule, metaReader.getDWord(), module);
-//            ref_t class_ref = metaReader.getDWord();
-//            if (class_ref != INVALID_REF) {
-//               class_ref = importReference(extModule, class_ref, module);
-//            }
-//
-//            subjectHints.add(subj_ref, class_ref);
-//         }
-//      }
-//   }
-//}
+void Compiler::ModuleScope :: loadTypes(_Module* extModule)
+{
+   if (extModule) {
+      //bool owner = module == extModule;
+
+      ReferenceNs sectionName(extModule->Name(), TYPE_SECTION);
+
+      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
+      if (section) {
+         MemoryReader metaReader(section);
+         while (!metaReader.Eof()) {
+            ref_t class_ref = metaReader.getDWord();
+            if (class_ref != INVALID_REF) {
+               class_ref = importReference(extModule, class_ref, module);
+            }
+
+            ident_t typeName = metaReader.getLiteral(DEFAULT_STR);
+
+            typeHints.add(typeName, class_ref);
+         }
+      }
+   }
+}
 
 //void Compiler::ModuleScope :: loadExtensions(_Module* extModule, bool& duplicateExtensions)
 //{
@@ -825,21 +836,21 @@ void Compiler::ModuleScope :: loadAttributes(_Module* extModule)
 //      }
 //   }
 //}
-//
-//void Compiler::ModuleScope :: saveSubject(ref_t attrRef, ref_t classReference, bool internalType)
-//{
-//   if (!internalType) {
-//      ReferenceNs sectionName(module->Name(), ATTRIBUTE_SECTION);
-//
-//      MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//      metaWriter.writeDWord(attrRef);
-//      metaWriter.writeDWord(classReference);
-//   }
-//
-//   subjectHints.add(attrRef, classReference, true);
-//}
-//
+
+void Compiler::ModuleScope :: saveType(ident_t typeName, ref_t classReference, bool internalType)
+{
+   if (!internalType) {
+      ReferenceNs sectionName(module->Name(), TYPE_SECTION);
+
+      MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+      metaWriter.writeDWord(classReference);
+      metaWriter.writeLiteral(typeName);
+   }
+
+   typeHints.add(typeName, classReference);
+}
+
 //bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
 //{
 //   if (type == -1)
@@ -1012,7 +1023,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->stackSafe = this->classEmbeddable = false;
 //   this->generic = false;
    this->extensionMode = false;
-//   this->multiMethod = false;
+   this->multiMethod = false;
 }
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
@@ -1038,7 +1049,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 //         else if (stackSafe && param.subj_ref != 0 && param.size != 0) {
 //            return ObjectInfo(okParam, -1 - local, -1, param.subj_ref);
 //         }
-         return ObjectInfo(okParam, -1 - local/*, 0, param.subj_ref*/);
+         return ObjectInfo(okParam, -1 - local, param.class_ref/*, param.subj_ref*/);
       }
       else return Scope::mapTerminal(terminal);
    }
@@ -1454,6 +1465,7 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
 //            return object.extraparam;
 //         }
       case okParam:
+         return object.extraparam;
       default:
          if (object.kind == okObject && object.param != 0) {
             return object.param;
@@ -1683,8 +1695,10 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateSymbolAttribute(value/*, scope.constant, scope.staticOne, scope.preloaded*/))
+         if (!_logic->validateSymbolAttribute(value/*, scope.constant, scope.staticOne, scope.preloaded*/)) {
+            current = lxIdle; // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }            
       }
       //else if (current == lxTypeAttr) {
       //   if (scope.typeRef == 0) {
@@ -4048,9 +4062,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    verb_id = _verbs.get(verb.identifier());
    if (verb_id == 0) {
-      /*ref_t sign_id = */scope.mapSubject(verb, signature);
+      if(scope.mapSubject(verb, signature))
+         scope.raiseError(errInvalidSubject, arg);
    }
 
+   bool overloadList = false;
    bool first = signature.Length() == 0;
    int paramCount = 0;
    // if method has generic (unnamed) argument list
@@ -4084,7 +4100,18 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
       else first = false;
 
-      /*ref_t subj_ref = */scope.mapSubject(subject, signature);
+      ref_t class_ref = scope.mapSubject(subject, signature);
+      if (class_ref) {
+         if (!overloadList) {
+            signature[signature.Length() - 1] = '$';
+            overloadList = true;
+         }
+         else signature.append('$');
+
+         signature.append(scope.moduleScope->module->resolveReference(class_ref));
+      }
+      else if (overloadList)
+         scope.raiseError(errInvalidSubject, arg);
 
       arg = arg.nextNode();
 
@@ -4121,7 +4148,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //            int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
 //               paramRef, 0, true) : 0;
 
-            scope.parameters.add(name, Parameter(index/*, subj_ref, paramRef, size*/));
+            scope.parameters.add(name, Parameter(index, class_ref/*, paramRef, size*/));
 
             arg = arg.nextNode();
 //         }
@@ -4448,13 +4475,11 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    //   compileDispatchExpression(writer, body, codeScope);
    //}
    //else {
-   //   if (scope.multiMethod) {
-   //      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+      if (scope.multiMethod) {
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-   //      writer.newNode(lxMultiDispatching, classScope->info.methodHints.get(Attribute(scope.message, maOverloadlist)));
-   //      writer.appendNode(lxTarget, scope.moduleScope->module->mapReference(MESSAGE_TABLE));
-   //      writer.closeNode();
-   //   }         
+         writer.appendNode(lxMultiDispatching, classScope->info.methodHints.get(Attribute(scope.message, maOverloadlist)));
+      }         
 
       writer.newNode(lxNewFrame, /*scope.generic ? -1 : */0);
    
@@ -4831,7 +4856,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
 //   methodScope.withOpenArg = isOpenArg(methodScope.message);
-//   methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
+   methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
 //   if (!methodScope.withOpenArg) {
 //      // HOTFIX : generic with open argument list is compiled differently
 //      methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
@@ -5158,13 +5183,13 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 //            }
 //         }
 //      }
-//
-//      // create overloadlist if required
-//      if (test(methodHints, tpMultimethod) && included) {
-//         scope.info.methodHints.add(Attribute(message, maOverloadlist), scope.moduleScope->mapNestedExpression());
-//
-//         scope.info.header.flags |= elWithMuti;
-//      }
+
+      // create overloadlist if required
+      if (test(methodHints, tpMultimethod) && included) {
+         scope.info.methodHints.add(Attribute(message, maOverloadlist), scope.moduleScope->mapAnonymous());
+
+         scope.info.header.flags |= elWithMuti;
+      }
    }
 }
 
@@ -5298,9 +5323,9 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 {
-   //// generation operation list if required
-   //if (test(scope.info.header.flags, elWithMuti))
-   //   _logic->injectOverloadList(*scope.moduleScope, scope.info, *this);
+   // generation operation list if required
+   if (test(scope.info.header.flags, elWithMuti))
+      _logic->injectOverloadList(*scope.moduleScope, scope.info, *this);
 
    WarningScope warningScope(scope.moduleScope->warningMask);
 
@@ -6118,60 +6143,6 @@ void Compiler :: optimizeSymbolTree(SNode node, SourceScope& scope, int warningM
 //      }
 //   }
 //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
-//}
-//
-//void Compiler :: declareSubject(SyntaxWriter& writer, SNode member, ModuleScope& scope, SyntaxTree& autogenerated)
-//{
-//   SNode name = member.findChild(lxIdentifier, lxPrivate);
-//
-//   bool internalSubject = name == lxPrivate;
-//   bool invalid = true;
-//
-//   // map a full type name
-//   ref_t subjRef = scope.mapNewSubject(name.findChild(lxTerminal).identifier());
-//   ref_t classRef = 0;
-//
-//   SNode classNode = member.nextNode().findChild(lxBaseParent);
-//   if (classNode != lxNone) {
-//      SNode option = classNode.findChild(lxAttributeValue);
-//      if (option != lxNone) {
-//         TemplateScope templateScope(&scope);
-//         templateScope.templateRef = templateScope.mapTemplate(classNode);
-//         if (templateScope.templateRef != 0) {
-//            classRef = scope.subjectHints.get(templateScope.templateRef);
-//            if (classRef == INVALID_REF) {
-//               templateScope.loadAttributeValues(classNode.firstChild()/*, false*/);
-//               templateScope.autogeneratedTree = &autogenerated;
-//
-//               SyntaxTree buffer;
-//               SyntaxWriter bufferWriter(buffer);
-//               if (generateTemplate(bufferWriter, templateScope, true/*, true*/)) {
-//                  //SyntaxWriter writer(autogenerated);
-//      
-//                  SyntaxTree::moveNodes(writer, buffer);
-//      
-//                  classRef = templateScope.reference;
-//      
-//                  invalid = false;
-//               }
-//            }
-//         }
-//      }
-//      else {
-//         SNode terminal = classNode.findChild(lxPrivate, lxIdentifier, lxReference);
-//
-//         classRef = scope.mapTerminal(terminal);
-//
-//         invalid = false;
-//
-//      }
-//   }
-//   else invalid = false;
-//
-//   if (!invalid) {
-//      scope.saveSubject(subjRef, classRef, internalSubject);
-//   }
-//   else scope.raiseError(errInvalidHint, name);
 //}
 
 bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
@@ -7177,18 +7148,19 @@ ModuleInfo Compiler :: createModule(ident_t name, _ProjectManager& project, bool
 //
 //   metaWriter.writeDWord(memberRef | mskConstantRef);
 //}
-//
-//void Compiler :: generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t messageRef)
-//{
-//   MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskRDataRef, false));
-//   if (metaWriter.Position() > 4) {
-//      metaWriter.seek(metaWriter.Position() - 4);
-//   }
-//
-//   metaWriter.writeRef(0, messageRef);
-//   metaWriter.writeDWord(0);
-//}
-//
+
+void Compiler :: generateOverloadListMember(_CompilerScope& scope, ref_t listRef, ref_t messageRef)
+{
+   MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
+   if (metaWriter.Position() > 4) {
+      // HOTFIX : to overwrite the ending zero
+      metaWriter.seek(metaWriter.Position() - 4);
+   }
+
+   metaWriter.writeRef(0, messageRef);
+   metaWriter.writeDWord(0);
+}
+
 //ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader)
 //{
 //   ref_t memberRef = reader.getDWord() & ~mskAnyRef;

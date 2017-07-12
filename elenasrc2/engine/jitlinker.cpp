@@ -165,64 +165,42 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& verb_id)
 {
-/*   bool strongSignature = paramCount > 0 && verb_id == EVAL_MESSAGE_ID;
-   if (strongSignature) {      
-      size_t index = signature.find('&');
-      if (index != NOTFOUND_POS) {
-         SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
+   size_t overloadIndex = signature.find('$');
+   if (overloadIndex != NOTFOUND_POS) {
+      SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
+
+      ref_t tableOffs = info.module->mapSubject(signature, true);
+      if (tableOffs == 0) {
          MemoryWriter writer(info.section);
 
-         ref_t reference = info.module->mapSubject(signature, true);
-         if (reference)
-            return reference;
+         writer.writeDWord(paramCount);
 
-         reference = writer.Position();
+         tableOffs = writer.Position();
+         ref_t sign_ref = 0;
+
+         IdentifierString content(signature, overloadIndex);
+         sign_ref = (ref_t)_loader->resolveReference(content, 0);
+         writer.writeDWord(sign_ref);
 
          size_t len = getlength(signature);
+         size_t start = overloadIndex + 1;
+         while (start < len) {
+            size_t end = signature.find('$', start, len);
 
-         IdentifierString content(signature, index);
-         if (ident_t(content.c_str()).find('$') == NOTFOUND_POS) {
-            writer.writeDWord((ref_t)_loader->resolveReference(content, 0));
+            content.copy(signature.c_str() + start, end - start);
 
-            index++;
-            do {
-               size_t end = signature.find(index, '&', len);
-               content.copy(signature.c_str() + index, end - index);
+            ref_t typeClassRef = info.module->mapReference(content.c_str(), false);
+            writer.writeRef(typeClassRef | mskVMTRef, 0);
 
-               ident_t subj(content.c_str());
-               if (subj.find('$') != NOTFOUND_POS) {
-                  ref_t typeClassRef = info.module->mapSubject(subj, true);
-                  if (typeClassRef != 0) {
-                     writer.writeRef(typeClassRef | mskVMTRef, 0);
-                  }
-                  else {
-                     strongSignature = false;
-                     break;
-                  }
-               }
-               else {
-                  strongSignature = false;
-                  break;
-               }
-
-               index = end + 1;
-            } while (index < len);
+            start = end + 1;
          }
-         else strongSignature = false;
 
-         if (strongSignature) {
-            info.module->mapPredefinedSubject(signature, reference | STRONG_SIGN_MASK);
-
-            _loader->mapReference(signature, (void*)(reference | STRONG_SIGN_MASK), 0);
-
-            //verb_id = 0; // HOTFIX : the verb is already part of the signature
-
-            return reference | STRONG_SIGN_MASK;
-         }
-         else info.section->trim(reference);
+         info.module->mapPredefinedSubject(signature, tableOffs);
       }
-   }*/
-   return (ref_t)_loader->resolveReference(signature, 0);
+
+      return tableOffs | STRONG_SIGN_MASK;
+   }
+   else return (ref_t)_loader->resolveReference(signature, 0);
 }
 
 ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
@@ -483,7 +461,7 @@ void* JITLinker :: resolveConstVariable(ident_t reference, int mask)
    _Memory* image = _loader->getTargetSection((ref_t)mskRDataRef);
    MemoryWriter writer(image);
 
-   void* vaddress = calculateVAddress(&writer, mskDataRef, 4);
+   void* vaddress = calculateVAddress(&writer, mskRDataRef, 4);
 
    _compiler->allocateVariable(writer);
 
@@ -1029,30 +1007,7 @@ void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReade
 void JITLinker :: onModuleLoad(_Module* module)
 {
    _loadedModules.add(module);
-
-   //loadModuleInfo(module);
 }
-
-//void JITLinker :: loadModuleInfo(_Module* module)
-//{
-//   SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
-//
-//   // load registered types
-//   ReferenceNs sectionName(module->Name(), ATTRIBUTE_SECTION);
-//   ref_t typeSectionRef = module->mapReference(sectionName, true);
-//   if (typeSectionRef != 0) {
-//      MemoryReader metaReader(module->mapSection(typeSectionRef | mskMetaRDataRef, true));
-//      while (!metaReader.Eof()) {
-//         ref_t typeRef = metaReader.getDWord();
-//         ref_t classRef = metaReader.getDWord();
-//         if (((int)classRef > 0)) {
-//            info.module->mapPredefinedSubject(
-//               module->resolveSubject(typeRef),
-//               info.module->mapReference(module->resolveReference(classRef)));
-//         }
-//      }
-//   }
-//}
 
 void JITLinker :: generateInitTape(MemoryDump& tape)
 {

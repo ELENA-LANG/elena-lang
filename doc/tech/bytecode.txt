@@ -71,6 +71,8 @@ ELENA byte codes (or ecodes)
  setverb m                  - ext.verb << m
  
  xselectr r1, r2            - acc = (acc = 0 ? r1 : r2)
+
+ 
  
 
  Memory operations:
@@ -286,6 +288,8 @@ ELENA byte codes (or ecodes)
 
  bsredirect                 - search acc::VMT for the message in ext;
                               if found jumps to it; binary search is used ; index, ext, acc presaved
+
+ mtredirect r               - search in message table r the message in ext and provided parameter list; if found jumps to it;
 
  class                      - base::VMT >> acc 
  

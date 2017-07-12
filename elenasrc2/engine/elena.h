@@ -670,14 +670,26 @@ inline ref_t mapReferenceKey(ident_t key)
    return position;
 }
 
+inline ref_t mapIdentifierKey(ident_t key)
+{
+   int position = key[0] - 'a';
+   if (position > 26)
+      position = 26;
+   else if (position < 0)
+      position = 0;
+
+   return position;
+}
+
 // --- Common type definitions ---
 
 typedef Map<ident_t, _Module*> ModuleMap;
 typedef List<_Module*>         ModuleList;
 
 // --- Reference mapping types ---
-typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29> ReferenceMap;
-typedef Map<ref_t, ref_t>                                      SubjectMap;
+typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
+typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
+typedef Map<ref_t, ref_t>                                       SubjectMap;
 
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> MessageMap;
