@@ -197,16 +197,16 @@ class Object /*:: dispatchable(object)*/
 //    ///
 //    /// By default compares the object references.
 //    bool equal : anObject => system'core_routines'__object.
-//    
+    
 //    bool notequal : anObject = $self equal:anObject; inverted.
                 
     /// Implements a message dispatching in VMT
     dispatch => system'core_routines'__object.
 }
 
-///// A common boolean value
-//listable class BaseBoolValue :: dispatchable(bool)
-//{
+/// A common boolean value
+/*listable*/ class BaseBoolValue //:: dispatchable(bool)
+{
 //    if : aTrueAction = $nil.
 //
 //    if : aTrueAction : aFalseAction = $nil.
@@ -232,8 +232,8 @@ class Object /*:: dispatchable(object)*/
 //    wide = $nil.
 //
 //    clone = $nil.
-//}
-//
+}
+
 //extension commonOp
 //{
 //    then : code

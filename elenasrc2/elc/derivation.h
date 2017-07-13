@@ -74,11 +74,9 @@ class DerivationReader : public _DerivationReader
          moduleScope->raiseError(message, terminal);
       }
 
-//      bool isAttribute(SNode terminal);
       bool isTypeAttribute(SNode terminal);
+      ref_t mapTypeAttribute(SNode terminal);
 
-//      int mapAttribute(SNode terminal);
-//
 //      void loadAttributeValues(SNode node, bool prefixMode = false);
 //      void loadParameters(SNode node);
 //      void loadFields(SNode node);

@@ -5015,6 +5015,15 @@ void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::N
    doMultiDispatch(tape, node.argument);
 }
 
+void ByteCodeWriter :: generateResending(CommandTape& tape, SyntaxTree::Node node)
+{
+   if (node.argument != 0) {
+      setSubject(tape, node.argument);
+
+      resend(tape);
+   }
+}
+
 void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node)
 {
    if (node.argument != 0) {
@@ -5159,6 +5168,12 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                declareIdleMethod(tape, node.argument, sourcePathRef);
 
             generateDispatching(tape, current);
+            break;
+         case lxResending:
+            if (!open)
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+
+            generateResending(tape, current);
             break;
          case lxMultiDispatching:
             if (!open) {

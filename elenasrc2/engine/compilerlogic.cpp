@@ -431,39 +431,39 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
 //
 //   return false;
 //}
-//
-//bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
-//{
-//   if (!targetRef && !isPrimitiveStructArrayRef(sourceRef))
-//      return true;
-//
-//   if (sourceRef == V_NIL)
-//      return true;
-//
-//   if (isPrimitiveCompatible(targetRef, sourceRef))
-//      return true;
-//
-//   while (sourceRef != 0) {
-//      if (targetRef != sourceRef) {
-//         ClassInfo info;
-//         if (!defineClassInfo(scope, info, sourceRef))
-//            return false;
-//
-//         // if it is a structure wrapper
-//         if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
-//            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-//            if (isCompatible(scope, targetRef, inner.value1))
-//               return true;
-//         }
-//
-//         sourceRef = info.header.parentRef;
-//      }
-//      else return true;
-//   }
-//
-//   return false;
-//}
-//
+
+bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
+{
+   //if (!targetRef && !isPrimitiveStructArrayRef(sourceRef))
+   //   return true;
+
+   //if (sourceRef == V_NIL)
+   //   return true;
+
+   //if (isPrimitiveCompatible(targetRef, sourceRef))
+   //   return true;
+
+   while (sourceRef != 0) {
+      if (targetRef != sourceRef) {
+         ClassInfo info;
+         if (!defineClassInfo(scope, info, sourceRef))
+            return false;
+
+         // if it is a structure wrapper
+         if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
+            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+            if (isCompatible(scope, targetRef, inner.value1))
+               return true;
+         }
+
+         sourceRef = info.header.parentRef;
+      }
+      else return true;
+   }
+
+   return false;
+}
+
 //bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
 //{
 //   return test(info.header.flags, elDynamicRole | elEmbeddable | elStructureRole);
@@ -533,10 +533,8 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
    }
 }
 
-//void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
-//{
-////   SNode templateNode = node.appendNode(lxTemplate);
-//
+void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
+{
 //   // generate enumeration list
 //   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
 //      compiler.generateEnumListMember(scope, info.header.parentRef, classRef);
@@ -567,8 +565,17 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
 //         compiler.injectEmbeddableConstructor(node, encodeVerb(NEW_MESSAGE_ID), encodeVerb(PRIVATE_MESSAGE_ID));
 //      }
 //   }
-//}
-//
+}
+
+void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods)
+{
+   // generate implicit mutli methods
+   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
+      compiler.injectVirtualMultimethod(scope, node, *it);
+      info.header.flags |= elWithMuti;
+   }
+}
+
 //void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t elementType)
 //{
 //   int size = 0;
@@ -612,163 +619,146 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
 //   writer.insert((LexicalType)operationType, operator_id);
 //   writer.closeNode();
 //}
-//
-//bool CompilerLogic :: isReadonly(ClassInfo& info)
-//{
-//   return test(info.header.flags, elReadOnlyRole);
-//}
-//
-//bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType)
-//{
-//   if (targetRef == 0 && isPrimitiveArrayRef(sourceRef)) {
-//      // HOTFIX : replace generic object with a generic array
-//      targetRef = scope.arrayReference;
-//   }
-//
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, targetRef))
-//      return false;
-//
-//   // if the target class is wrapper around the source
-//   if (test(info.header.flags, elWrapper)) {
-//      ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-//
-//      bool compatible = false;
-//      if (test(info.header.flags, elStructureWrapper)) {
-//         if (isPrimitiveRef(sourceRef)) {
-//            compatible = isCompatible(scope, sourceRef, inner.value1);
-//         }
-//         // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
-//         else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef);
-//      }
-//      else compatible = isCompatible(scope, inner.value1, sourceRef);
-//
-//      if (compatible) {
-//         compiler.injectBoxing(writer, scope, 
-//            isReadonly(info) ? lxBoxing : lxUnboxing,
-//            test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
-//
-//         return true;
-//      }
-//   }
-//
-//   // HOTFIX : trying to typecast primitive structure array
-//   if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
-//      ClassInfo sourceInfo;      
-//      if (sourceRef == V_BINARYARRAY && sourceType != 0) {
-//         // HOTFIX : for binary array of structures - sourceType  contains the element size
-//         ref_t elementRef = scope.subjectHints.get(sourceType);
-//
-//         if (defineClassInfo(scope, sourceInfo, elementRef, true)) {
-//            if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
-//               compiler.injectBoxing(writer, scope,
-//                  test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
-//
-//               return true;
-//            }
-//         }
-//      }
-//      else {
-//         if (defineClassInfo(scope, sourceInfo, sourceRef, true)) {
-//            if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
-//               compiler.injectBoxing(writer, scope,
-//                  test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
-//
-//               return true;
-//            }
-//         }
-//      }
-//   }
-//
-//   // HOTFIX : trying to typecast primitive array
-//   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
-//      //ClassInfo sourceInfo;
-//      //defineClassInfo(scope, sourceInfo, sourceRef, true);
-//
-//      ref_t elementRef = scope.subjectHints.get(sourceType);
-//
-//      if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
-//         compiler.injectBoxing(writer, scope,
-//            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef);
-//
-//         return true;
-//      }
-//   }
-//
-//   // check if there are implicit constructors
-//   if (test(info.header.flags, elSealed)) {
-//      if (isPrimitiveRef(sourceRef))
-//         // HOTFIX : recognize primitive data except of a constant literal
-//         if (sourceRef != V_STRCONSTANT)
-//            sourceRef = resolvePrimitiveReference(scope, sourceRef);
-//
-//   //   if (sourceType != 0) {
-//   //      // if the source type is defined we are lucky
-//   //      int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
-//   //      if (info.methods.exist(implicitMessage)) {
-//   //         if (test(info.header.flags, elStructureRole)) {
-//   //            compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
-//   //         }
-//   //         else if (test(info.header.flags, elDynamicRole)) {
-//   //            return false;
-//   //         }
-//   //         else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
-//
-//   //         return true;
-//   //      }
-//   //   }
-//   //   else {
-//         // otherwise we have to go through the list
-//         ClassInfo::MethodMap::Iterator it = info.methods.start();
-//         while (!it.Eof()) {
-//            pos_t implicitMessage = it.key();
-//            if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
-//               ref_t subj = getSignature(implicitMessage);
-//               bool compatible = false;
-//               if (sourceRef == V_STRCONSTANT) {
-//                  // try to resolve explicit constant conversion routine
-//                  ident_t signature = scope.module->resolveSubject(subj);
-//                  size_t index = signature.find('&');
-//                  if (index != NOTFOUND_POS) {
-//                     IdentifierString postfix(signature, index);
-//                     ref_t postfixRef = scope.module->mapSubject(postfix, true);
-//                     if (sourceType == postfixRef) {
-//                        ref_t subjRef = scope.subjectHints.get(scope.module->mapSubject(signature + index + 1, false));
-//
-//                        compatible = subjRef != 0 && isCompatible(scope, subjRef, scope.literalReference);
-//                     }
-//                  }
-//               }
-//               else {
-//                  ref_t subjRef = scope.subjectHints.get(subj);
-//                  if (subjRef != 0) {
-//                     compatible = isCompatible(scope, subjRef, sourceRef);
-//                  }
-//                  else compatible = true;
-//               }
-//
-//               if (compatible) {
-//                  bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
-//                  if (test(info.header.flags, elStructureRole)) {
-//                     compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
-//                  }
-//                  else if (test(info.header.flags, elDynamicRole)) {
-//                     return false;
-//                  }
-//                  else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
-//
-//                  return true;
-//               }
-//            }
-//
-//            it++;
-//         }
-//   //   }
-//   }
-//
-//   return false;
-//}
-//
+
+bool CompilerLogic :: isReadonly(ClassInfo& info)
+{
+   return test(info.header.flags, elReadOnlyRole);
+}
+
+bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef)
+{
+   //if (targetRef == 0 && isPrimitiveArrayRef(sourceRef)) {
+   //   // HOTFIX : replace generic object with a generic array
+   //   targetRef = scope.arrayReference;
+   //}
+
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, targetRef))
+      return false;
+
+   // if the target class is wrapper around the source
+   if (test(info.header.flags, elWrapper)) {
+      ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+
+      bool compatible = false;
+      if (test(info.header.flags, elStructureWrapper)) {
+         if (isPrimitiveRef(sourceRef)) {
+            compatible = isCompatible(scope, sourceRef, inner.value1);
+         }
+         // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
+         else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef);
+      }
+      else compatible = isCompatible(scope, inner.value1, sourceRef);
+
+      if (compatible) {
+         compiler.injectBoxing(writer, scope, 
+            isReadonly(info) ? lxBoxing : lxUnboxing,
+            test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
+
+         return true;
+      }
+   }
+
+   //// HOTFIX : trying to typecast primitive structure array
+   //if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
+   //   ClassInfo sourceInfo;      
+   //   if (sourceRef == V_BINARYARRAY && sourceType != 0) {
+   //      // HOTFIX : for binary array of structures - sourceType  contains the element size
+   //      ref_t elementRef = scope.subjectHints.get(sourceType);
+
+   //      if (defineClassInfo(scope, sourceInfo, elementRef, true)) {
+   //         if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+   //            compiler.injectBoxing(writer, scope,
+   //               test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+
+   //            return true;
+   //         }
+   //      }
+   //   }
+   //   else {
+   //      if (defineClassInfo(scope, sourceInfo, sourceRef, true)) {
+   //         if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
+   //            compiler.injectBoxing(writer, scope,
+   //               test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+
+   //            return true;
+   //         }
+   //      }
+   //   }
+   //}
+
+   //// HOTFIX : trying to typecast primitive array
+   //if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
+   //   //ClassInfo sourceInfo;
+   //   //defineClassInfo(scope, sourceInfo, sourceRef, true);
+
+   //   ref_t elementRef = scope.subjectHints.get(sourceType);
+
+   //   if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+   //      compiler.injectBoxing(writer, scope,
+   //         test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef);
+
+   //      return true;
+   //   }
+   //}
+
+   //// check if there are implicit constructors
+   //if (test(info.header.flags, elSealed)) {
+   //   if (isPrimitiveRef(sourceRef))
+   //   // HOTFIX : recognize primitive data except of a constant literal
+   //   //if (sourceRef != V_STRCONSTANT)
+   //   //   sourceRef = resolvePrimitiveReference(scope, sourceRef);
+
+   //   // otherwise we have to go through the list
+   //   ClassInfo::MethodMap::Iterator it = info.methods.start();
+   //   while (!it.Eof()) {
+   //      pos_t implicitMessage = it.key();
+   //      if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
+   //         ref_t subj = getSignature(implicitMessage);
+   //         bool compatible = false;
+   //         //if (sourceRef == V_STRCONSTANT) {
+   //         //   // try to resolve explicit constant conversion routine
+   //         //   ident_t signature = scope.module->resolveSubject(subj);
+   //         //   size_t index = signature.find('&');
+   //         //   if (index != NOTFOUND_POS) {
+   //         //      IdentifierString postfix(signature, index);
+   //         //      ref_t postfixRef = scope.module->mapSubject(postfix, true);
+   //         //      if (sourceType == postfixRef) {
+   //         //         ref_t subjRef = scope.subjectHints.get(scope.module->mapSubject(signature + index + 1, false));
+
+   //         //         compatible = subjRef != 0 && isCompatible(scope, subjRef, scope.literalReference);
+   //         //      }
+   //         //   }
+   //         //}
+   //         //else {
+   //            ref_t subjRef = scope.subjectHints.get(subj);
+   //            if (subjRef != 0) {
+   //               compatible = isCompatible(scope, subjRef, sourceRef);
+   //            }
+   //            else compatible = true;
+   //         //}
+
+   //         if (compatible) {
+   //            bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
+   //            if (test(info.header.flags, elStructureRole)) {
+   //               compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
+   //            }
+   //            else if (test(info.header.flags, elDynamicRole)) {
+   //               return false;
+   //            }
+   //            else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
+
+   //            return true;
+   //         }
+   //      }
+
+   //      it++;
+   //   }
+   //}
+
+   return false;
+}
+
 //void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef)
 //{
 //   int size = defineStructSize(scope, targetRef, elementType, false);
@@ -869,35 +859,35 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
    return true;
 }
 
-//int CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementType, bool embeddableOnly)
-//{
-//   if (reference == V_BINARYARRAY && elementType != 0) {
-//      // HOTFIX : binary array of structures
-//      ref_t elementRef = scope.subjectHints.get(elementType);
-//
-//      return -defineStructSize(scope, elementRef, 0, false);
-//   }
-//   else {
-//      ClassInfo classInfo;
-//      if (defineClassInfo(scope, classInfo, reference)) {
-//         return defineStructSize(classInfo, embeddableOnly);
-//      }
-//      else return 0;      
-//   }
-//}
-//
-//int CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
-//{
-//   //   variable = !test(classInfo.header.flags, elReadOnlyRole);
-//   
-//   if (test(info.header.flags, elStructureRole)) {
-//      if (!embeddableOnly || isEmbeddable(info))
-//         return info.size;
-//   }
-//
-//   return 0;
-//}
-//
+int CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementType, bool embeddableOnly)
+{
+   //if (reference == V_BINARYARRAY && elementType != 0) {
+   //   // HOTFIX : binary array of structures
+   //   ref_t elementRef = scope.subjectHints.get(elementType);
+
+   //   return -defineStructSize(scope, elementRef, 0, false);
+   //}
+   //else {
+      ClassInfo classInfo;
+      if (defineClassInfo(scope, classInfo, reference)) {
+         return defineStructSize(classInfo, embeddableOnly);
+      }
+      else return 0;      
+   //}
+}
+
+int CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
+{
+   //   variable = !test(classInfo.header.flags, elReadOnlyRole);
+   
+   if (test(info.header.flags, elStructureRole)) {
+      if (!embeddableOnly || isEmbeddable(info))
+         return info.size;
+   }
+
+   return 0;
+}
+
 //void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode)
 //{
 //   if (classClassMode) {

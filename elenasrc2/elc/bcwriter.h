@@ -276,6 +276,7 @@ class ByteCodeWriter
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
+   void generateResending(CommandTape& tape, SyntaxTree::Node node);
    void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node);
    void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);

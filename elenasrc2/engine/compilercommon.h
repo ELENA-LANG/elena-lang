@@ -173,13 +173,14 @@ class _Compiler
 {
 public:
 ////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument) = 0;
-//   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
+   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
 //   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe) = 0;
 //   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 //
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef) = 0;
+   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message) = 0;
 //
 //   virtual void injectLocalBoxing(SNode node, int size) = 0;
 ////   //virtual int injectTempLocal(SNode node) = 0;
@@ -227,9 +228,9 @@ public:
 
    // retrieve the class info / size
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-//   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false) = 0;
-//   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
-//
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false) = 0;
+   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
+
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
 
    // retrieve the call type
@@ -247,7 +248,7 @@ public:
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
 //
 //   // check if the classes is compatible
-//   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
+   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 //   virtual bool isCompatibleWithType(_CompilerScope& scope, ref_t targetRef, ref_t type) = 0;
 //
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
@@ -267,9 +268,10 @@ public:
 //   virtual bool isPrimitiveArray(ref_t reference) = 0;
 //
 //   // auto generate virtual methods / fields
-//   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
-//   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
-//   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
+   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
+   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods) = 0;
+   //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
+   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef) = 0;
 //   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
 ////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
    virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;

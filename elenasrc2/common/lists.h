@@ -3955,19 +3955,19 @@ template<class Iterator> const wide_c* retrieve(Iterator it, const wide_c* value
    return defaultValue;
 }
 
-//template<class Iterator, class T> int retrieveIndex(Iterator it, T value)
-//{
-//   int index = 0;
-//   while (!it.Eof()) {
-//      if (*it == value)
-//         return index;
-//
-//      index++;
-//      it++;
-//   }
-//
-//   return -1;
-//}
+template<class Iterator, class T> int retrieveIndex(Iterator it, T value)
+{
+   int index = 0;
+   while (!it.Eof()) {
+      if (*it == value)
+         return index;
+
+      index++;
+      it++;
+   }
+
+   return -1;
+}
 
 } // _ELENA_
 

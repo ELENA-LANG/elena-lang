@@ -260,6 +260,15 @@ bool DerivationReader::DerivationScope :: isTypeAttribute(SNode terminal)
    else return false;
 }
 
+ref_t DerivationReader::DerivationScope :: mapTypeAttribute(SNode terminal)
+{
+   ident_t name = terminal.identifier();
+   if (emptystr(name))
+      name = terminal.findChild(lxTerminal).identifier();
+
+   return moduleScope->typeHints.get(name);
+}
+
 //ref_t Compiler::TemplateScope :: mapTemplate(SNode terminal, int prefixCounter)
 //{
 //   int paramCounter = SyntaxTree::countChild(terminal, lxAttributeValue);
@@ -420,6 +429,13 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
       if (attrRef != 0) {
          writer.newNode(lxAttribute, attrRef);
          copyIdentifier(writer, current.findChild(lxIdentifier));
+         writer.closeNode();
+      }
+      else if (scope.isTypeAttribute(current.findChild(lxIdentifier, lxPrivate))) {
+         ref_t classRef = scope.mapTypeAttribute(current.findChild(lxIdentifier, lxPrivate));
+
+         writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(classRef));
+         copyIdentifier(writer, current.firstChild(lxTerminalMask));
          writer.closeNode();
       }
       //   else if (attrRef == INVALID_REF) {
@@ -819,6 +835,13 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
             scope.copySubject(writer, current.firstChild(lxTerminalMask));
          }
          else copyIdentifier(writer, current.firstChild(lxTerminalMask));
+         writer.closeNode();
+      }
+      else if (current == lxAttributeValue) {
+         // if it is an explicit type declaration
+         ref_t ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference));
+         writer.newNode(lxParamRefAttr, scope.moduleScope->module->resolveReference(ref));
+         copyIdentifier(writer, current.firstChild(lxTerminalMask));
          writer.closeNode();
       }
 

@@ -70,9 +70,9 @@ public:
    virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
 
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
-//   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false);
-//   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly);
-//
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false);
+   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly);
+
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
@@ -83,7 +83,7 @@ public:
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
 
-//   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
+   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
 //   virtual bool isCompatibleWithType(_CompilerScope& scope, ref_t targetRef, ref_t type);
 ////   virtual bool isPrimitiveArray(ref_t reference);
    virtual bool isPrimitiveRef(ref_t reference)
@@ -105,18 +105,19 @@ public:
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
-//   virtual bool isReadonly(ClassInfo& info);
-//   virtual bool isReadonly(_CompilerScope& scope, ref_t reference)
-//   {
-//      ClassInfo info;
-//      defineClassInfo(scope, info, reference, true);
-//
-//      return isReadonly(info);
-//   }
-//
-//   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
+   virtual bool isReadonly(ClassInfo& info);
+   virtual bool isReadonly(_CompilerScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      defineClassInfo(scope, info, reference, true);
+
+      return isReadonly(info);
+   }
+
+   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
+   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods);
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type);
-//   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType);
+   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef);
 //   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef);
 ////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode);
    virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler);

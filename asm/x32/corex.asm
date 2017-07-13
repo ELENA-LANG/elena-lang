@@ -3188,6 +3188,9 @@ labNextBaseClass:
   and  ebx, ebx
   jnz  labNextOverloadlist
 
+  lea  esp, [esp + 8]
+  pop  eax
+
 end
 
 // ; new (ebx - size, __arg1 - length)

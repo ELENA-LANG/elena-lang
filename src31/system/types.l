@@ -5,7 +5,6 @@ symbol      = #16389.
 constructor = #16384.
 multi       = #16397.
 
-
 //#16395          import.
 //#16391          template.
 //#16391 #16394   loop_template.
@@ -51,12 +50,12 @@ multi       = #16397.
 //#12 #262144     __ptr.
 //#13 #524288     __int64.
 //#14 #524288     __real64.
-//
-///// Provides classes that describe the basic functionality
-//
-//// === basic logical types ===
-//type bool    :: system'BaseBoolValue.
-//
+
+/// Provides classes that describe the basic functionality
+
+// === basic logical types ===
+type bool    = system'BaseBoolValue.
+
 //// === basic primitive types ===
 //
 //type keyvalue   :: system'KeyValue.

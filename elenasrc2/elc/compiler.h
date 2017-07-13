@@ -300,7 +300,7 @@ private:
       // NOTE : the function returns 0 for implicit subjects
       // in any case output is set (for explicit one - the namespace is copied as well)
       ref_t mapSubject(SNode terminal, IdentifierString& output);
-      //ref_t mapSubject(SNode terminal, bool explicitOnly = true);
+      ref_t mapSubject(SNode terminal);
 //      ref_t resolveAttributeRef(ident_t name, bool explicitOnly = true);
 
       virtual ref_t mapTerminal(SNode terminal, bool existing = false);
@@ -421,13 +421,10 @@ private:
          else */return moduleScope->mapSubject(terminal, output);
       }
 
-//      virtual ref_t mapSubject(SNode terminal, bool explicitOnly = true)
-//      {
-//         if (parent) {
-//            return parent->mapSubject(terminal, explicitOnly);
-//         }
-//         else return moduleScope->mapSubject(terminal, explicitOnly);
-//      }
+      virtual ref_t mapSubject(SNode terminal)
+      {
+         return moduleScope->mapSubject(terminal);
+      }
 
       Scope(ModuleScope* moduleScope)
       {
@@ -533,7 +530,7 @@ private:
 //      bool         generic;
       bool         extensionMode;
       bool         multiMethod;
-
+      
       virtual Scope* getScope(ScopeLevel level)
       {
          if (level == slMethod) {
@@ -542,19 +539,12 @@ private:
          else return parent->getScope(level);
       }
 
-//      ref_t getReturningRef(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope->info.methodHints.get(ClassInfo::Attribute(message, maReference));
-//      }
-//
-//      ref_t getReturningType(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope->info.methodHints.get(ClassInfo::Attribute(message, maType));
-//      }
+      ref_t getReturningRef(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope->info.methodHints.get(ClassInfo::Attribute(message, maReference));
+      }
 
       ref_t getClassFlags(bool ownerClass = true)
       {
@@ -848,12 +838,12 @@ private:
 //
 //   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   void declareArgumentList(SNode node, MethodScope& scope);
+   void declareArgumentList(SNode node, MethodScope& scope, List<ref_t>* implicitMultimethods = NULL);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
 //   bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
 //
@@ -910,9 +900,9 @@ private:
    bool validate(_ProjectManager& project, _Module* module, int reference);
 
 //   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t targetType = 0);
-//
-//   bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t targetType, ref_t sourceRef, ref_t sourceType);
-//   bool typecastObject(SyntaxWriter& writer, ref_t targetType);
+
+   bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
+   bool typecastObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef);
 
    void compileExternalArguments(SNode node, ModuleScope& scope, WarningScope& warningScope);
 
@@ -981,13 +971,14 @@ public:
 
 ////   // _Compiler interface implementation
 //////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
-//   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef);
+   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef);
 //   virtual void injectLocalBoxing(SNode node, int size);
 //   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 //   virtual void injectFieldExpression(SyntaxWriter& writer);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
+   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message);
 //   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
 //   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
