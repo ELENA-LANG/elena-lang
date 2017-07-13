@@ -4,6 +4,7 @@ class       = #16386.
 symbol      = #16389.
 constructor = #16384.
 multi       = #16397.
+listable    = #8198.
 
 //#16395          import.
 //#16391          template.
@@ -30,7 +31,6 @@ multi       = #16397.
 //#8201           const.
 //#8197           struct.
 //#8204           nonstructural.
-//#8198           listable.
 //#8200           string.
 //#8193           embeddable.
 //#8203           extension.

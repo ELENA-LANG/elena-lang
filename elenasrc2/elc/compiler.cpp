@@ -1677,15 +1677,15 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         int value = current.argument;
-//         if (!_logic->validateClassAttribute(value)) {
-//            current = lxIdle;
-//
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//         }
-//         else current.set(lxClassFlag, value);
-//      }
+      if (current == lxAttribute) {
+         int value = current.argument;
+         if (!_logic->validateClassAttribute(value)) {
+            current = lxIdle;
+
+            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+         else current.set(lxClassFlag, value);
+      }
 //      else if (current == lxTypeAttr) {
 //         current.set(lxType, scope.moduleScope->module->mapSubject(current.identifier(), false));
 //      }
@@ -2223,10 +2223,10 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
    SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression);
    switch (member.type)
    {
-//      case lxNestedClass:
+      case lxNestedClass:
 //      case lxLazyExpression:
-//         result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
-//         break;
+         result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
+         break;
       case lxCode:
          result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
          break;
@@ -3306,34 +3306,34 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    generateClassImplementation(expressionTree.readRoot(), scope/*, test(scope.info.header.flags, elClosed)*/);
 }
 
-//void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
-//{
-//   SyntaxTree expressionTree;
-//   SyntaxWriter writer(expressionTree);
-//
-//   // check if the class was already compiled
-//   if (!node.argument) {
-//      compileParentDeclaration(node, scope);
-//
-//      declareVMT(node, scope);
-//      generateClassDeclaration(node, scope, false, true);
-//
-//      scope.save();
-//   }
-//   else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
-//
-//   writer.newNode(lxClass, scope.reference);
-//
-//   compileVMT(writer, node, scope);
-//
-//   writer.closeNode();
-//
-//   // set flags once again
-//   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, false);
-//   scope.save();
-//
-//   generateClassImplementation(expressionTree.readRoot(), scope);
-//}
+void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
+{
+   SyntaxTree expressionTree;
+   SyntaxWriter writer(expressionTree);
+
+   // check if the class was already compiled
+   if (!node.argument) {
+      compileParentDeclaration(node, scope);
+
+      declareVMT(node, scope);
+      generateClassDeclaration(node, scope, false, true);
+
+      scope.save();
+   }
+   else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
+
+   writer.newNode(lxClass, scope.reference);
+
+   compileVMT(writer, node, scope);
+
+   writer.closeNode();
+
+   // set flags once again
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, false);
+   scope.save();
+
+   generateClassImplementation(expressionTree.readRoot(), scope);
+}
 
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope)
 {
@@ -3434,18 +3434,18 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 
    InlineClassScope scope(&ownerScope, nestedRef);
 
-//   // if it is a lazy expression / multi-statement closure without parameters
-//   SNode argNode = node.firstChild();
+   // if it is a lazy expression / multi-statement closure without parameters
+   SNode argNode = node.firstChild();
 //   if (node == lxLazyExpression) {
 //      scope.closureMode = true;
 //
 //      compileAction(node, scope, SNode(), HINT_LAZY_EXPR);
 //   }
-//   else if (argNode == lxCode) {
+   /*else */if (argNode == lxCode) {
       scope.closureMode = true;
 
       compileAction(node, scope, SNode(), singleton ? mode | HINT_SINGLETON : mode);
-//   }
+   }
 //   else if (node.existChild(lxCode)) {
 //      scope.closureMode = true;
 //
@@ -3461,8 +3461,8 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 //      // HOTFIX : hide code node because it is no longer required
 //      codeNode = lxIdle;
 //   }
-//   // if it is a nested class
-//   else compileNestedVMT(node, scope);
+   // if it is a nested class
+   else compileNestedVMT(node, scope);
 
    return compileClosure(writer, node, ownerScope, scope);
 }
@@ -4540,10 +4540,10 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
       compileResendExpression(writer, body, codeScope, scope.multiMethod);
       preallocated = 1;
    }
-   //// check if it is a dispatch
-   //else if (body == lxDispatchCode) {
-   //   compileDispatchExpression(writer, body, codeScope);
-   //}
+   // check if it is a dispatch
+   else if (body == lxDispatchCode) {
+      compileDispatchExpression(writer, body, codeScope);
+   }
    else {
       if (scope.multiMethod) {
          ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
@@ -4963,19 +4963,19 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
 void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 {
 //   ref_t extensionTypeRef = 0;
-//
-//   SNode current = root.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassFlag) {
-//         scope.info.header.flags |= current.argument;
-//      }
-//      else if (current == lxType) {
-//         extensionTypeRef = current.argument;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
+
+   SNode current = root.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassFlag) {
+         scope.info.header.flags |= current.argument;
+      }
+      /*else if (current == lxType) {
+         extensionTypeRef = current.argument;
+      }*/
+
+      current = current.nextNode();
+   }
+
 //   // check if extension is qualified
 //   if (extensionTypeRef != 0) {
 //      if (test(scope.info.header.flags, elExtension)) {
@@ -7217,12 +7217,12 @@ ModuleInfo Compiler :: createModule(ident_t name, _ProjectManager& project, bool
    return info;
 }
 
-//void Compiler :: generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)
-//{
-//   MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskConstArray, false));
-//
-//   metaWriter.writeDWord(memberRef | mskConstantRef);
-//}
+void Compiler :: generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)
+{
+   MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskConstArray, false));
+
+   metaWriter.writeDWord(memberRef | mskConstantRef);
+}
 
 void Compiler :: generateOverloadListMember(_CompilerScope& scope, ref_t listRef, ref_t messageRef)
 {

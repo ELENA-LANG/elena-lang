@@ -536,11 +536,11 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
 
 void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
 {
-//   // generate enumeration list
-//   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
-//      compiler.generateEnumListMember(scope, info.header.parentRef, classRef);
-//   }
-//
+   // generate enumeration list
+   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
+      compiler.generateEnumListMember(scope, info.header.parentRef, classRef);
+   }
+
 //   // generate structure embeddable constructor
 //   if (test(info.header.flags, elSealed | elStructureRole)) {
 //      bool found = false;
@@ -982,10 +982,10 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
    }
 }
 
-//bool CompilerLogic :: validateClassAttribute(int& attrValue)
-//{
-//   switch ((size_t)attrValue)
-//   {
+bool CompilerLogic :: validateClassAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
 //      case V_SEALED:
 //         attrValue = elSealed;
 //         return true;
@@ -995,9 +995,9 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 //      case V_STRUCT:
 //         attrValue = elStructureRole;
 //         return true;
-//      case V_ENUMLIST:
-//         attrValue = elStateless | elEnumList | elClosed;
-//         return true;
+      case V_ENUMLIST:
+         attrValue = elStateless | elEnumList | elClosed;
+         return true;
 //      case V_EMBEDDABLE:
 //         attrValue = elEmbeddable;
 //         return true;
@@ -1022,16 +1022,16 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 //      case V_TAPEGROUP:
 //         attrValue = elTapeGroup;
 //         return true;
-//      case V_CLASS:
-//         attrValue = 0;
-//         return true;
-//      case V_SINGLETON:
-//         attrValue = elRole | elNestedClass;
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+      case V_CLASS:
+         attrValue = 0;
+         return true;
+      case V_SINGLETON:
+         attrValue = elRole | elNestedClass;
+         return true;
+      default:
+         return false;
+   }
+}
 
 bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 {

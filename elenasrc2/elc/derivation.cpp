@@ -608,19 +608,19 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
       case lxObject:
          generateExpressionTree(writer, current, scope, 0);
          break;
-//      case lxNestedClass:
-//         if (scope.type == TemplateScope::ttCodeTemplate) {
-//            writer.insert(lxTemplateParam, 2);
-//            writer.closeNode();
-//         }
-//         else {
-//            generateScopeMembers(current, scope);
-//
-//            generateClassTree(writer, current, scope, SNode(), -1);
-//         }
-//         writer.insert(lxExpression);
-//         writer.closeNode();
-//         break;
+      case lxNestedClass:
+         /*if (scope.type == TemplateScope::ttCodeTemplate) {
+            writer.insert(lxTemplateParam, 2);
+            writer.closeNode();
+         }
+         else {*/
+            generateScopeMembers(current, scope);
+
+            generateClassTree(writer, current, scope, SNode(), -1);
+         //}
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
       case lxCode:
          generateCodeTree(writer, current, scope);
          /*if (scope.type == TemplateScope::ttCodeTemplate) {
@@ -1049,33 +1049,33 @@ bool DerivationReader :: generateDeclaration(SyntaxWriter& writer, SNode node, D
    /*else */return false;
 }
 
-bool DerivationReader :: generateSingletonScope(SyntaxWriter& writer, SNode node, /*TemplateScope& scope, */SNode attributes)
+bool DerivationReader :: generateSingletonScope(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes)
 {
-//   SNode expr = node.findChild(lxExpression);
-//   SNode object = expr.findChild(lxObject);
-//   SNode closureNode = object.findChild(lxNestedClass);
-//   if (closureNode != lxNone && isSingleStatement(expr)) {
-//      generateScopeMembers(closureNode, scope);
-//
-//      SNode terminal = object.firstChild(lxTerminalMask);
-//
-//      writer.newNode(lxClass);
-//      writer.appendNode(lxAttribute, V_SINGLETON);
-//
-//      if (terminal != lxNone) {
-//         writer.newNode(lxBaseParent);
-//         copyIdentifier(writer, terminal);
-//         writer.closeNode();
-//      }
-//
-//      generateAttributes(writer, node, scope, attributes/*, false*/);
-//
-//      // NOTE : generateClassTree closes the class node and copies auto generated classes after it
-//      generateClassTree(writer, closureNode, scope, SNode(), -2);
-//
-//      return true;
-//   }
-   /*else */return false;
+   SNode expr = node.findChild(lxExpression);
+   SNode object = expr.findChild(lxObject);
+   SNode closureNode = object.findChild(lxNestedClass);
+   if (closureNode != lxNone && isSingleStatement(expr)) {
+      generateScopeMembers(closureNode, scope);
+
+      SNode terminal = object.firstChild(lxTerminalMask);
+
+      writer.newNode(lxClass);
+      writer.appendNode(lxAttribute, V_SINGLETON);
+
+      if (terminal != lxNone) {
+         writer.newNode(lxBaseParent);
+         copyIdentifier(writer, terminal);
+         writer.closeNode();
+      }
+
+      generateAttributes(writer, node, scope, attributes/*, false*/);
+
+      // NOTE : generateClassTree closes the class node and copies auto generated classes after it
+      generateClassTree(writer, closureNode, scope, SNode(), -2);
+
+      return true;
+   }
+   else return false;
 }
 
 bool DerivationReader :: generateMethodScope(SNode node, DerivationScope& scope, SNode attributes)
@@ -1217,7 +1217,7 @@ void DerivationReader :: generateScope(SyntaxWriter& writer, SNode node, Derivat
          // check if it is a code template
          if (!generateDeclaration(writer, node, scope, attributes)) {
             // check if it could be compiled as a singleton
-            if (!generateSingletonScope(writer, node, /*scope, */attributes)) {
+            if (!generateSingletonScope(writer, node, scope, attributes)) {
                node = lxSymbol;
                attributes.refresh();
 

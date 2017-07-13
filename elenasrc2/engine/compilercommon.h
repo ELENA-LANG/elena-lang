@@ -50,7 +50,7 @@
 //#define V_SEALED         (ref_t)-8195
 //#define V_LIMITED        (ref_t)-8196
 //#define V_STRUCT         (ref_t)-8197
-//#define V_ENUMLIST       (ref_t)-8198
+#define V_ENUMLIST       (ref_t)-8198
 //#define V_DYNAMIC        (ref_t)-8199
 //#define V_STRING         (ref_t)-8200
 //#define V_CONST          (ref_t)-8201
@@ -60,12 +60,12 @@
 //#define V_ACTION         (ref_t)-8205
 //#define V_GROUP          (ref_t)-8206
 //#define V_PRELOADED      (ref_t)-8207
-//#define V_SINGLETON      (ref_t)-8208
+#define V_SINGLETON      (ref_t)-8208
 //#define V_TAPEGROUP      (ref_t)-8209
 
 #define V_CONSTRUCTOR    (ref_t)-16384
 //#define V_VARIABLE       (ref_t)-16385
-//#define V_CLASS          (ref_t)-16386
+#define V_CLASS          (ref_t)-16386
 //#define V_CONVERSION     (ref_t)-16387
 ////#define V_EMBEDDABLETMPL (ref_t)-16388
 #define V_SYMBOLEXPR     (ref_t)-16389
@@ -184,8 +184,8 @@ public:
 //
 //   virtual void injectLocalBoxing(SNode node, int size) = 0;
 ////   //virtual int injectTempLocal(SNode node) = 0;
-//
-//   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
+
+   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 
 //   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
@@ -279,11 +279,11 @@ public:
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
-//
-//////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
-//
-//   // attribute validations
-//   virtual bool validateClassAttribute(int& attrValue) = 0;
+
+////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
+
+   // attribute validations
+   virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue) = 0;
 //   virtual bool validateLocalAttribute(int& attrValue) = 0;
