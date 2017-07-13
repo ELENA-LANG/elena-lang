@@ -2077,9 +2077,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //      case okVerbConstant:
 //         writer.newNode(lxVerbConstant, object.param);
 //         break;
-//      case okMessageConstant:
-//         writer.newNode(lxMessageConstant, object.param);
-//         break;
+      case okMessageConstant:
+         writer.newNode(lxMessageConstant, object.param);
+         break;
 //      case okExtMessageConstant:
 //         writer.newNode(lxExtMessageConstant, object.param);
 //         break;
@@ -2236,9 +2236,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 //         }
 //         else result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
 //         break;
-//      case lxMessageReference:
-//         result = compileMessageReference(writer, member, scope, mode);
-//         break;
+      case lxMessageReference:
+         result = compileMessageReference(writer, member, scope, mode);
+         break;
       default:
          result = compileTerminal(writer, objectNode, scope, mode);
    }
@@ -2246,129 +2246,129 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
    return result;
 }
 
-//ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-//   SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
-//   IdentifierString signature;
-//   ref_t verb_id = 0;
-//   int paramCount = -1;
-//   ref_t extensionRef = 0;
-//   if (terminal == lxIdentifier || terminal == lxPrivate) {
-//      ident_t name = terminal.identifier();
-//      verb_id = _verbs.get(name);
-//      if (verb_id == 0) {
-//         signature.copy(name);
-//      }
-//   }
-//   else {
-//      ident_t message = terminal.identifier();
-//
-//      int subject = 0;
-//      int param = 0;
-//      bool firstSubj = true;
-//      for (size_t i = 0; i < getlength(message); i++) {
-//         if (message[i] == '&') {
-//            if (firstSubj) {
-//               signature.copy(message + subject, i - subject);
-//               verb_id = _verbs.get(signature);
-//               if (verb_id != 0) {
-//                  subject = i + 1;
-//               }
-//               firstSubj = false;
-//            }
-//         }
-//         else if (message[i] == '.' && extensionRef == 0) {
-//            signature.copy(message + subject, i - subject);
-//            subject = i + 1;
-//
-//            extensionRef = scope.moduleScope->resolveIdentifier(signature);
-//            if (extensionRef == 0)
-//               scope.raiseError(errInvalidSubject, terminal);
-//         }
-//         else if (message[i] == '[') {
-//            int len = getlength(message);
-//            if (message[i+1] == ']') {
-//               paramCount = OPEN_ARG_COUNT;
-//            }
-//            else if (message[len - 1] == ']') {
-//               signature.copy(message + i + 1, len - i - 2);
-//               paramCount = signature.ident().toInt();
-//               if (paramCount >= OPEN_ARG_COUNT)
-//                  scope.raiseError(errInvalidSubject, terminal);
-//            }
-//            else scope.raiseError(errInvalidSubject, terminal);
-//
-//            param = i;
-//            break;
-//         }
-//         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-//         }
-//         else scope.raiseError(errInvalidSubject, terminal);
-//      }
-//
-//      if (param != 0) {
-//         signature.copy(message + subject, param - subject);
-//      }
-//      else signature.copy(message + subject);
-//
-//      if (subject == 0 && paramCount != -1) {
-//         verb_id = _verbs.get(signature);
-//         if (verb_id != 0) {
-//            signature.clear();
-//         }
-//      }
-//   }
-//
-//   if (verb_id == 0 && paramCount != -1) {
-//      if (paramCount == 0) {
-//         verb_id = GET_MESSAGE_ID;
-//      }
-//      else verb_id = EVAL_MESSAGE_ID;
-//   }
-//
-//   ObjectInfo retVal;
-//   IdentifierString message;
-//   if (extensionRef != 0) {
-//      if (verb_id == 0) {
-//         scope.raiseError(errInvalidSubject, terminal);
-//      }
-//
-//      message.append(scope.moduleScope->module->resolveReference(extensionRef));
-//      message.append('.');
-//   }
-//
-//   if (paramCount == -1) {
-//      message.append('0');
-//   }
-//   else message.append('0' + (char)paramCount);
-//   message.append('#');
-//   if (verb_id != 0) {
-//      message.append((char)(0x20 + verb_id));
-//   }
-//   else message.append(0x20);
-//
-//   if (!emptystr(signature)) {
-//      message.append('&');
-//      message.append(signature);
-//   }
-//
-//   if (verb_id != 0) {
-//      if (extensionRef != 0) {
-//         retVal.kind = okExtMessageConstant;
-//      }
-//      else if (paramCount == -1 && emptystr(signature)) {
-//         retVal.kind = okVerbConstant;
-//      }
-//      else retVal.kind = okMessageConstant;
-//   }
-//   else retVal.kind = okSignatureConstant;
-//
-//   retVal.param = scope.moduleScope->module->mapReference(message);
-//
-//   writeTerminal(writer, node, scope, retVal, mode);
-//
-//   return retVal;
-//}
+ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
+   IdentifierString signature;
+   ref_t verb_id = 0;
+   int paramCount = -1;
+   //ref_t extensionRef = 0;
+   if (terminal == lxIdentifier || terminal == lxPrivate) {
+   //   ident_t name = terminal.identifier();
+   //   verb_id = _verbs.get(name);
+   //   if (verb_id == 0) {
+   //      signature.copy(name);
+   //   }
+   }
+   else {
+      ident_t message = terminal.identifier();
+
+      int subject = 0;
+      int param = 0;
+      bool firstSubj = true;
+      for (size_t i = 0; i < getlength(message); i++) {
+         if (message[i] == '&') {
+            if (firstSubj) {
+               signature.copy(message + subject, i - subject);
+               verb_id = _verbs.get(signature);
+               if (verb_id != 0) {
+                  subject = i + 1;
+               }
+               firstSubj = false;
+            }
+         }
+   //      else if (message[i] == '.' && extensionRef == 0) {
+   //         signature.copy(message + subject, i - subject);
+   //         subject = i + 1;
+
+   //         extensionRef = scope.moduleScope->resolveIdentifier(signature);
+   //         if (extensionRef == 0)
+   //            scope.raiseError(errInvalidSubject, terminal);
+   //      }
+         else if (message[i] == '[') {
+            int len = getlength(message);
+            if (message[i+1] == ']') {
+               paramCount = OPEN_ARG_COUNT;
+            }
+            else if (message[len - 1] == ']') {
+               signature.copy(message + i + 1, len - i - 2);
+               paramCount = signature.ident().toInt();
+               if (paramCount >= OPEN_ARG_COUNT)
+                  scope.raiseError(errInvalidSubject, terminal);
+            }
+            else scope.raiseError(errInvalidSubject, terminal);
+
+            param = i;
+            break;
+         }
+         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+         }
+         else scope.raiseError(errInvalidSubject, terminal);
+      }
+
+      if (param != 0) {
+         signature.copy(message + subject, param - subject);
+      }
+      else signature.copy(message + subject);
+
+      if (subject == 0 && paramCount != -1) {
+         verb_id = _verbs.get(signature);
+         if (verb_id != 0) {
+            signature.clear();
+         }
+      }
+   }
+
+   if (verb_id == 0 && paramCount != -1) {
+      if (paramCount == 0) {
+         verb_id = GET_MESSAGE_ID;
+      }
+      else verb_id = EVAL_MESSAGE_ID;
+   }
+
+   ObjectInfo retVal;
+   IdentifierString message;
+   //if (extensionRef != 0) {
+   //   if (verb_id == 0) {
+   //      scope.raiseError(errInvalidSubject, terminal);
+   //   }
+
+   //   message.append(scope.moduleScope->module->resolveReference(extensionRef));
+   //   message.append('.');
+   //}
+
+   if (paramCount == -1) {
+      message.append('0');
+   }
+   else message.append('0' + (char)paramCount);
+   message.append('#');
+   if (verb_id != 0) {
+      message.append((char)(0x20 + verb_id));
+   }
+   else message.append(0x20);
+
+   if (!emptystr(signature)) {
+      message.append('&');
+      message.append(signature);
+   }
+
+   if (verb_id != 0) {
+      /*if (extensionRef != 0) {
+         retVal.kind = okExtMessageConstant;
+      }
+      else if (paramCount == -1 && emptystr(signature)) {
+         retVal.kind = okVerbConstant;
+      }
+      else*/ retVal.kind = okMessageConstant;
+   }
+   //else retVal.kind = okSignatureConstant;
+
+   retVal.param = scope.moduleScope->module->mapReference(message);
+
+   writeTerminal(writer, node, scope, retVal, mode);
+
+   return retVal;
+}
 
 ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 {

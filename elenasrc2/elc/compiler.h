@@ -132,7 +132,7 @@ public:
 //      okUIntConstant,                 // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference
 //      okRealConstant,                 // param - reference
-//      okMessageConstant,              // param - reference
+      okMessageConstant,              // param - reference
 //      okExtMessageConstant,           // param - reference
 //      okSignatureConstant,            // param - reference
 //      okVerbConstant,                 // param - reference
@@ -794,8 +794,8 @@ private:
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
-//
-//   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+
+   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 

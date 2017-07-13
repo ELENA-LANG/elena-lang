@@ -26,6 +26,7 @@ In development:
                  * uncomment optimizeOp
                  * uncomment compileExternalArguments
                  * uncomment optimizeSymbol
+                 * test primitive operation with message
 
                  * check package functionality
 

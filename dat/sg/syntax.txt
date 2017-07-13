@@ -12,6 +12,7 @@ __define MESSAGE_PARAMETER	4124
 __define BLOCK_END		4125
 __define DISPATCH               4128
 __define RET_STATEMENT		4135
+__define MESSAGE_REFERENCE	4147
 __define TOKEN   		4172
 __define SCOPE   		4173
 __define ATTRIBUTE   		4174
@@ -21,6 +22,7 @@ __define STATEMENT_END_EXPECTED         16385
 __define BLOCK_CLOSING_EXPECTED         16386
 
 __define eof            	12291
+__define literal		12292
 __define identifier		12293
 __define private	        12294
 __define reference		12295
@@ -111,6 +113,7 @@ OBJECT ->
 	identifier
 	| private
 	| reference
+	| % MESSAGE_REFERENCE
 	| CODE_BLOCK	
 
 OPERATIONS ->
@@ -173,6 +176,10 @@ PARAMETER ->
 TOKEN_PARAM ->
 	identifier
 	| reference
+
+MESSAGE_REFERENCE ->
+	identifier
+	| literal
 
 TERMINATOR ->
 	.

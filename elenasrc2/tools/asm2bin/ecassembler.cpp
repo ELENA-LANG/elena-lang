@@ -55,7 +55,40 @@ void ECodesAssembler :: compileICommand(ByteCode code, TokenInfo& token, MemoryW
    writeCommand(ByteCommand(code, offset), writer);
 }
 
-void ECodesAssembler :: readMessage(TokenInfo& token, int& verbId, IdentifierString& subject, int& paramCount)
+bool ECodesAssembler :: readMessage(ident_t quote, int& verbId, IdentifierString& subject, int& paramCount)
+{
+   size_t len = getlength(quote);
+   size_t param_index = quote.find('[');
+   if (len == 0 || param_index == NOTFOUND_POS || quote[len - 1] != ']')
+      return false;
+
+   size_t index = quote.find('&');
+   if (index == NOTFOUND_POS) {
+      index = quote.find('$');
+      if (index == NOTFOUND_POS) {
+         index = param_index;
+      }
+   }
+
+   IdentifierString content;
+   size_t subj_index = 0;
+   if (index != NOTFOUND_POS) {
+      content.copy(quote, index);
+
+      verbId = mapVerb(content);
+      if (verbId == 0)
+         index = 0;
+   }
+   else return false;
+
+   subject.copy(quote + index, param_index - index);
+
+   content.copy(quote + param_index + 1, len - param_index - 2);
+
+   paramCount = content.ident().toInt();
+}
+
+void ECodesAssembler::readMessage(TokenInfo& token, int& verbId, IdentifierString& subject, int& paramCount)
 {
    verbId = mapVerb(token.value);
    if (verbId == 0) {
@@ -86,13 +119,19 @@ void ECodesAssembler :: readMessage(TokenInfo& token, int& verbId, IdentifierStr
 }
 
 void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& message)
-{
+{   
    IdentifierString subject;
 
    int paramCount = 0;
    int verbId = 0;
 
-   readMessage(token, verbId, subject, paramCount);
+   if (token.terminal.state == dfaQuote) {
+      QuoteTemplate<IdentifierString> quote(token.terminal.line);
+
+      if (!readMessage(quote.ident(), verbId, subject, paramCount))
+         token.raiseErr("Invalid operand (%d)");
+   }
+   else readMessage(token, verbId, subject, paramCount);
 
    // reserve place for param counter
    message.append('0');
@@ -124,11 +163,13 @@ ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
 
 ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
 {
+   QuoteTemplate<IdentifierString> quote(token.terminal.line);
+
    IdentifierString subject;
    int paramCount = 0;
    int verbId = 0;
 
-   readMessage(token, verbId, subject, paramCount);
+   readMessage(quote.ident(), verbId, subject, paramCount);
 
    if (subject.Length() > 0) {
       return encodeMessage(binary->mapSubject(subject + 1, false), verbId, paramCount);
