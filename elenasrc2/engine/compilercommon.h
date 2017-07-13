@@ -276,8 +276,8 @@ public:
 ////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
    virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
 
-//   // auto generate class flags
-//   virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
+   // auto generate class flags
+   virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 //
 //////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;

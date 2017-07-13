@@ -621,25 +621,25 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //         writer.insert(lxExpression);
 //         writer.closeNode();
 //         break;
-//      case lxCode:
-//         generateCodeTree(writer, current, scope);
-//         if (scope.type == TemplateScope::ttCodeTemplate) {
-//            if (scope.parameters.Count() == 2) {
-//               if (scope.codeNode == lxNone) {
-//                  writer.insert(lxTemplateParam);
-//                  scope.codeNode = current;
-//               }
-//               else {
-//                  writer.insert(lxTemplateParam, 3);
-//                  scope.codeNode = SNode();
-//               }
-//            }
-//            else writer.insert(lxTemplateParam);
-//            writer.closeNode();
-//         }
-//         writer.insert(lxExpression);
-//         writer.closeNode();
-//         break;
+      case lxCode:
+         generateCodeTree(writer, current, scope);
+         /*if (scope.type == TemplateScope::ttCodeTemplate) {
+            if (scope.parameters.Count() == 2) {
+               if (scope.codeNode == lxNone) {
+                  writer.insert(lxTemplateParam);
+                  scope.codeNode = current;
+               }
+               else {
+                  writer.insert(lxTemplateParam, 3);
+                  scope.codeNode = SNode();
+               }
+            }
+            else writer.insert(lxTemplateParam);
+            writer.closeNode();
+         }*/
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
 //      case lxMethodParameter:
 //         writer.newNode(lxMethodParameter);
 //         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));

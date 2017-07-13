@@ -123,8 +123,8 @@ public:
 
       okObject,                       // param - class reference
       okSymbol,                       // param - reference
-//      okConstantSymbol,               // param - reference, extraparam - class reference
-//      okConstantClass,                // param - reference, extraparam - class reference
+      okConstantSymbol,               // param - reference, extraparam - class reference
+      okConstantClass,                // param - reference, extraparam - class reference
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
@@ -564,16 +564,16 @@ private:
       MethodScope(ClassScope* parent);
    };
 
-//   // - ActionScope -
-//   struct ActionScope : public MethodScope
-//   {
-//      bool subCodeMode;
-//      bool  singletonMode;  // indicates that the symbol is a singleton closure
-//
-//      ActionScope(ClassScope* parent);
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//   };
+   // - ActionScope -
+   struct ActionScope : public MethodScope
+   {
+      bool subCodeMode;
+      bool  singletonMode;  // indicates that the symbol is a singleton closure
+
+      ActionScope(ClassScope* parent);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
+   };
 
    // - CodeScope -
    struct CodeScope : public Scope
@@ -643,9 +643,9 @@ private:
       CodeScope(CodeScope* parent);
    };
 
-//   // - InlineClassScope -
-//   struct InlineClassScope : public ClassScope
-//   {
+   // - InlineClassScope -
+   struct InlineClassScope : public ClassScope
+   {
 //      struct Outer
 //      {
 //         ref_t      reference;
@@ -666,7 +666,7 @@ private:
 //      };
 //
 //      bool                    returningMode;
-//      bool                    closureMode;
+      bool                    closureMode;
 //      Map<ident_t, Outer>     outers;
 //      ClassInfo::FieldTypeMap outerFieldTypes;
 //
@@ -676,19 +676,19 @@ private:
 //      ObjectInfo allocateRetVar();
 //
 //      bool markAsPresaved(ObjectInfo object);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      InlineClassScope(CodeScope* owner, ref_t reference);
-//   };
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
+
+      InlineClassScope(CodeScope* owner, ref_t reference);
+   };
 
    struct WarningScope
    {
@@ -789,9 +789,9 @@ private:
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
 //
@@ -845,14 +845,14 @@ private:
 
    void declareArgumentList(SNode node, MethodScope& scope, List<ref_t>* implicitMultimethods = NULL);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
-//   bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
+   bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
+
+//   void declareSingletonClass(SNode node, ClassScope& scope);
+////   void compileSingletonClass(SNode member, ClassScope& scope, SNode hints);
 //
-////   void declareSingletonClass(SNode node, ClassScope& scope);
-//////   void compileSingletonClass(SNode member, ClassScope& scope, SNode hints);
-////
-//////   void declareSingletonAction(ClassScope& scope, SNode objNode);
-//
-//   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+////   void declareSingletonAction(ClassScope& scope, SNode objNode);
+
+   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
 //   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
@@ -867,7 +867,7 @@ private:
    void compileSymbolCode(ClassScope& scope);
 ////   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 
-//   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
+   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
 //   void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);

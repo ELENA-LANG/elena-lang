@@ -3,6 +3,9 @@ In development:
 ------                              
 
               xdev - multimethod
+                 * uncomment tweakClassFlags
+                 * uncomment mapTerminal
+                 * uncomment compileClosure
                  * uncomment compileResendExpression
                  * uncomment compileMethod
                  * uncomment compileConstructor

@@ -14,3 +14,4 @@ author=Alex Rakov
 [files]
 types.l
 object.l
+win32_app.l

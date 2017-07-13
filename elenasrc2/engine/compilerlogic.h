@@ -122,7 +122,7 @@ public:
 ////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode);
    virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
 
-//   virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
+   virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 //
 //   virtual bool validateClassAttribute(int& attrValue);

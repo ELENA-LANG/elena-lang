@@ -1,3 +1,4 @@
+
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
@@ -888,28 +889,28 @@ int CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
    return 0;
 }
 
-//void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode)
-//{
-//   if (classClassMode) {
-//      // class class is always stateless and sealed
-//      info.header.flags |= elStateless;
-//      info.header.flags |= elSealed;
-//   }
-//
-//   if (test(info.header.flags, elNestedClass)) {
-//      // stateless inline class
-//      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
-//         info.header.flags |= elStateless;
-//
-//         // stateless inline class is its own class class
-//         info.header.classRef = classRef;
-//      }
-//      else info.header.flags &= ~elStateless;
-//
-//      // nested class is sealed
-//      info.header.flags |= elSealed;
-//   }
-//
+void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode)
+{
+   if (classClassMode) {
+      // class class is always stateless and sealed
+      info.header.flags |= elStateless;
+      info.header.flags |= elSealed;
+   }
+
+   if (test(info.header.flags, elNestedClass)) {
+      // stateless inline class
+      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
+         info.header.flags |= elStateless;
+
+         // stateless inline class is its own class class
+         info.header.classRef = classRef;
+      }
+      else info.header.flags &= ~elStateless;
+
+      // nested class is sealed
+      info.header.flags |= elSealed;
+   }
+
 //   if (test(info.header.flags, elExtension)) {
 //      info.header.flags |= elSealed;
 //   }
@@ -974,13 +975,13 @@ int CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
 //         else info.header.flags |= elDebugBytes;
 //      }
 //   }
-//
-//   // adjust objects with custom dispatch handler
-//   if (info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
-//      info.header.flags |= elWithCustomDispatcher;
-//   }
-//}
-//
+
+   // adjust objects with custom dispatch handler
+   if (info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
+      info.header.flags |= elWithCustomDispatcher;
+   }
+}
+
 //bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //{
 //   switch ((size_t)attrValue)
