@@ -75,7 +75,6 @@ class DerivationReader : public _DerivationReader
       }
 
       bool isTypeAttribute(SNode terminal);
-      ref_t mapTypeAttribute(SNode terminal);
 
 //      void loadAttributeValues(SNode node, bool prefixMode = false);
 //      void loadParameters(SNode node);

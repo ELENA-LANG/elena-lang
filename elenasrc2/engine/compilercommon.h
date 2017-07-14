@@ -138,8 +138,8 @@ struct _CompilerScope
    ref_t arrayReference;
    ref_t paramsSubj;
 
-   // list of typified classes which may need get&type message
-   TypeMap  typeHints;
+   // list of attributes / types
+   MessageMap attributes;
 
 //   // cached bool values
 //   BranchingInfo branchingInfo;
@@ -149,14 +149,13 @@ struct _CompilerScope
    virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/) = 0;
    virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
 
-   virtual void saveAttribute(ident_t name, ref_t attr) = 0;
-   virtual void saveType(ident_t typeName, ref_t classReference, bool internalType) = 0;
+   virtual bool saveAttribute(ident_t name, ref_t attr, bool internalAttr) = 0;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 //   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
    _CompilerScope()
-      : typeHints(0)
+      : attributes(0)
    {
       module = NULL;
       intReference = boolReference = superReference = 0;

@@ -223,6 +223,11 @@ inline SNode goToNode(SNode current, LexicalType type)
    return current;
 }
 
+inline bool isAttribute(ref_t attr)
+{
+   return (int)attr < 0;
+}
+
 // --- DerivationReader::DerivationScope ---
 
 ref_t DerivationReader::DerivationScope :: mapAttribute(SNode attribute/*, int& attrValue*/)
@@ -254,19 +259,9 @@ bool DerivationReader::DerivationScope :: isTypeAttribute(SNode terminal)
    if (emptystr(name))
       name = terminal.findChild(lxTerminal).identifier();
 
-   if (moduleScope->typeHints.exist(name)) {
-      return true;
-   }
-   else return false;
-}
+   ref_t attr = moduleScope->attributes.get(name);
 
-ref_t DerivationReader::DerivationScope :: mapTypeAttribute(SNode terminal)
-{
-   ident_t name = terminal.identifier();
-   if (emptystr(name))
-      name = terminal.findChild(lxTerminal).identifier();
-
-   return moduleScope->typeHints.get(name);
+   return attr != 0 && !isAttribute(attr);
 }
 
 //ref_t Compiler::TemplateScope :: mapTemplate(SNode terminal, int prefixCounter)
@@ -426,15 +421,13 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
       if (!attrRef)
          attrRef = scope.mapAttribute(current);
 
-      if (attrRef != 0) {
+      if (isAttribute(attrRef)) {
          writer.newNode(lxAttribute, attrRef);
          copyIdentifier(writer, current.findChild(lxIdentifier));
          writer.closeNode();
       }
-      else if (scope.isTypeAttribute(current.findChild(lxIdentifier, lxPrivate))) {
-         ref_t classRef = scope.mapTypeAttribute(current.findChild(lxIdentifier, lxPrivate));
-
-         writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(classRef));
+      else if (attrRef != 0) {
+         writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(attrRef));
          copyIdentifier(writer, current.firstChild(lxTerminalMask));
          writer.closeNode();
       }
@@ -915,7 +908,7 @@ bool DerivationReader :: declareType(SNode node, DerivationScope& scope, SNode a
    }
 
    if (!invalid) {
-      scope.moduleScope->saveType(typeName, classRef, internalSubject);
+      scope.moduleScope->saveAttribute(typeName, classRef, internalSubject);
    }
 
    return !invalid;
@@ -1235,7 +1228,8 @@ void DerivationReader :: generateScope(SyntaxWriter& writer, SNode node, Derivat
 
          ref_t attrRef = scope.mapAttribute(body);
 
-         scope.moduleScope->saveAttribute(name, attrRef);
+         if(!scope.moduleScope->saveAttribute(name, attrRef, false))
+            scope.raiseError(errDuplicatedDefinition, nameAttr);
       }
    }
    else {

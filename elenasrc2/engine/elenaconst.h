@@ -485,7 +485,6 @@ namespace _ELENA_
 
   // --- ELENA special sections ---
    #define ATTRIBUTE_SECTION        "#attributes"
-   #define TYPE_SECTION             "#types"
    #define EXTENSION_SECTION        "#extensions"
    #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"

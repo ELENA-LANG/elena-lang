@@ -351,7 +351,9 @@ ref_t Compiler::ModuleScope :: mapSubject(SNode terminal)
 
    ref_t classRef = 0;
    if (terminal.type == lxIdentifier) {
-      classRef = typeHints.get(identifier);
+      classRef = attributes.get(identifier);
+      if (isPrimitiveRef(classRef))
+         raiseError(errInvalidSubject, terminal);
    }
 
    return classRef;
@@ -764,8 +766,9 @@ void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, 
 //   }
 //}
 
-void Compiler::ModuleScope :: loadAttributes(_Module* extModule)
+bool Compiler::ModuleScope :: loadAttributes(_Module* extModule)
 {
+   bool duplicates = false;
    if (extModule) {
       //bool owner = module == extModule;
 
@@ -776,36 +779,18 @@ void Compiler::ModuleScope :: loadAttributes(_Module* extModule)
          MemoryReader metaReader(section);
          while (!metaReader.Eof()) {
             ref_t attrRef = metaReader.getDWord();
-            ident_t attrName = metaReader.getLiteral(DEFAULT_STR);
-
-            attributes.add(attrName, attrRef);
-         }
-      }
-   }
-}
-
-void Compiler::ModuleScope :: loadTypes(_Module* extModule)
-{
-   if (extModule) {
-      //bool owner = module == extModule;
-
-      ReferenceNs sectionName(extModule->Name(), TYPE_SECTION);
-
-      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
-      if (section) {
-         MemoryReader metaReader(section);
-         while (!metaReader.Eof()) {
-            ref_t class_ref = metaReader.getDWord();
-            if (class_ref != INVALID_REF) {
-               class_ref = importReference(extModule, class_ref, module);
+            if (!isPrimitiveRef(attrRef)) {
+               attrRef = importReference(extModule, attrRef, module);
             }
 
-            ident_t typeName = metaReader.getLiteral(DEFAULT_STR);
+            ident_t attrName = metaReader.getLiteral(DEFAULT_STR);
 
-            typeHints.add(typeName, class_ref);
+            if (!attributes.add(attrName, attrRef, true))
+               duplicates = true;
          }
       }
    }
+   return duplicates;
 }
 
 //void Compiler::ModuleScope :: loadExtensions(_Module* extModule, bool& duplicateExtensions)
@@ -838,20 +823,6 @@ void Compiler::ModuleScope :: loadTypes(_Module* extModule)
 //      }
 //   }
 //}
-
-void Compiler::ModuleScope :: saveType(ident_t typeName, ref_t classReference, bool internalType)
-{
-   if (!internalType) {
-      ReferenceNs sectionName(module->Name(), TYPE_SECTION);
-
-      MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
-
-      metaWriter.writeDWord(classReference);
-      metaWriter.writeLiteral(typeName);
-   }
-
-   typeHints.add(typeName, classReference);
-}
 
 //bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
 //{
@@ -895,15 +866,17 @@ void Compiler::ModuleScope :: saveType(ident_t typeName, ref_t classReference, b
 //   actionHints.add(mssg_ref, reference);
 //}
 
-void Compiler::ModuleScope :: saveAttribute(ident_t name, ref_t attr)
+bool Compiler::ModuleScope :: saveAttribute(ident_t name, ref_t attr, bool internalType)
 {
-   ReferenceNs sectionName(module->Name(), ATTRIBUTE_SECTION);
-   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+   if (!internalType) {
+      ReferenceNs sectionName(module->Name(), ATTRIBUTE_SECTION);
+      MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
 
-   metaWriter.writeDWord(attr);
-   metaWriter.writeLiteral(name);
+      metaWriter.writeDWord(attr);
+      metaWriter.writeLiteral(name);
+   }
 
-   attributes.add(name, attr);
+   return attributes.add(name, attr, true);
 }
 
 ref_t Compiler::ModuleScope :: mapAttribute(SNode attribute)

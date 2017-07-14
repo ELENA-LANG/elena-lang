@@ -257,9 +257,6 @@ private:
 //      SubjectMap        extensionHints;
 //      ExtensionMap      extensions;
 
-      // attribute hints
-      MessageMap        attributes;
-
 //      // action hints
 //      SubjectMap        actionHints;
 
@@ -322,13 +319,11 @@ private:
 //      }
 //      _Memory* loadAttributeInfo(ident_t attribute/*, _Module* &argModule*/);
 
-      void loadAttributes(_Module* module);
-      void loadTypes(_Module* module);
+      bool loadAttributes(_Module* module);
 //      void loadExtensions(_Module* module, bool& duplicateExtensions);
 //      void loadActions(_Module* module);
 //
-      virtual void saveAttribute(ident_t name, ref_t attr);
-      virtual void saveType(ident_t typeName, ref_t classReference, bool internalType);
+      virtual bool saveAttribute(ident_t typeName, ref_t classReference, bool internalAttr);
 //      bool saveExtension(ref_t message, ref_t type, ref_t role);
 //      void saveAction(ref_t message, ref_t reference);
 
@@ -340,13 +335,12 @@ private:
 
       void loadModuleInfo(_Module* extModule)
       {
-         bool dummy;
-         loadModuleInfo(extModule, dummy);
+         bool dummy1, dummy2;
+         loadModuleInfo(extModule, dummy1, dummy2);
       }
-      void loadModuleInfo(_Module* extModule, bool& duplicateExtensions)
+      void loadModuleInfo(_Module* extModule, bool& duplicateExtensions, bool& duplicateAttributes)
       {
-         loadAttributes(extModule);
-         loadTypes(extModule);
+         duplicateAttributes = loadAttributes(extModule);
 //         loadExtensions(extModule, duplicateExtensions);
 //         loadActions(extModule);
       }
