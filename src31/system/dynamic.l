@@ -14,29 +14,29 @@
 //    /// Redirects incoming messages to the symbol
 //    dispatch => system'core_routines'__symbol.
 //}
-//
-//// --- Verb ---
-//
-///// A dynamic verb extender
-//sealed embeddable struct Verb
-//{
-//    __verb theValue.
-//
+
+// --- Verb ---
+
+/// A dynamic verb extender
+sealed embeddable struct Verb
+{
+    __verb theValue(4).
+
 //    /// Loads a dynamic verb
 //    constructor new verb:aVerb
 //        = aVerb.
-//    
-//    /// Dispatches incoming messages and redirects to the target
-//    dispatch => system'core_routines'__verb.
-//}
+    
+    /// Dispatches incoming messages and redirects to the target
+    dispatch => system'core_routines'__verb.
+}
 
 // --- Message ---
 
 /// A message constant
-/*sealed embeddable struct*/ Message
+sealed embeddable struct Message
 {
-//    __mssg theValue.
-//
+    __mssg theValue(4).
+
 //    constructor new literal:name
 //    [
 //        system'core_routines'__message load mssg:$self literal:name
@@ -83,14 +83,14 @@
 //    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
 //    dispatch => system'core_routines'__extmessage.
 //}
-//
-//// --- Signature ---
-//
-///// A dynamic signature extender
-//sealed embeddable struct Signature :: dispatchable(subject)
-//{
-//    __subj theValue.
-//    
+
+// --- Signature ---
+
+/// A dynamic signature extender
+sealed embeddable struct Signature //:: dispatchable(subject)
+{
+    __subj theValue(4).
+    
 //    /// Creates a dynamic signature
 //    stacksafe constructor new mssg:message
 //    [
@@ -125,4 +125,4 @@
 //
 //    /// Qualifies incoming messages and redirects to the target
 //    stacksafe dispatch => system'core_routines'__signature.
-//}
+}

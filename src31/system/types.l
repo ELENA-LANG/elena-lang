@@ -1,10 +1,17 @@
 /// Attributes
 type        = #16390.
 class       = #16386.
+struct      = #8197.
 symbol      = #16389.
 constructor = #16384.
 multi       = #16397.
 listable    = #8198.
+sealed      = #8195.
+embeddable  = #8193.
+
+__verb      = #20.
+__mssg      = #19.
+__subj      = #18.
 
 //#16395          import.
 //#16391          template.
@@ -23,26 +30,21 @@ listable    = #8198.
 ////#template(-4099) w1 {}
 ////#template(-4100) w2 {}
 ////#template(-4101) w3 {}
-//#8195           sealed.
 //#8199           dynamic.
 //#8196           limited.
 //#8206           mixin.
 //#8209           __tape_mixin.
 //#8201           const.
-//#8197           struct.
 //#8204           nonstructural.
 //#8200           string.
-//#8193           embeddable.
 //#8203           extension.
 //#8208           singleton.
 //
 //#4097           __ifoperator.
 //#4098           __ifnotoperator.
-//#19 #262144     __mssg .
-//#20 #262144     __verb.
+
 //#22 #262144     __symbol.
 //#21 #524288     __extmssg.
-//#18 #262144     __subj.
 //#11 #65536      __int8.
 //#11 #131072     __int16.
 //#11 #262144     __int32.
@@ -52,6 +54,8 @@ listable    = #8198.
 //#14 #524288     __real64.
 
 /// Provides classes that describe the basic functionality
+
+type object  = system'Object.
 
 // === basic logical types ===
 type bool    = system'BaseBoolValue.
@@ -130,9 +134,6 @@ type bool    = system'BaseBoolValue.
 //type enumerator :: system'Enumerator.
 //type indexer    :: system'Indexer.
 //type indexer2d  :: system'Indexer2D.
-//
-//// --- Generic attributes ---
-//type object.
-//
+
 //// --- Virtual subjects ---
 //type args.

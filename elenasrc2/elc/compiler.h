@@ -134,8 +134,8 @@ public:
 //      okRealConstant,                 // param - reference
       okMessageConstant,              // param - reference
 //      okExtMessageConstant,           // param - reference
-//      okSignatureConstant,            // param - reference
-//      okVerbConstant,                 // param - reference
+      okSignatureConstant,            // param - reference
+      okVerbConstant,                 // param - reference
 //      okArrayConst,
 //      okField,                        // param - field offset, extraparam - class reference
 //      okStaticField,                  // param - reference
@@ -152,7 +152,7 @@ public:
 //      okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset
-//      okConstantRole,                 // param - role reference
+      okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
 //
 //      okExternal,
@@ -766,12 +766,12 @@ private:
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
-//   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
+   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
 
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-//   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldType, ref_t& fieldRef, int& size);
+   void declareFieldAttributes(SNode member, ClassScope& scope, /*ref_t& fieldType, */ref_t& fieldRef, int& size);
    void declareVMT(SNode member, ClassScope& scope);
 //   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 //
@@ -807,15 +807,15 @@ private:
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
-//   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0, ref_t targetType = 0);
-//
+   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
+
 //   ObjectInfo compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
 //   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
-//
+
 //   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 //
 //   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -866,11 +866,11 @@ private:
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
-////   void compileTemplateMethods(SNode node, ClassScope& scope);
-//
-////   void declareVirtualMethods(ClassScope& scope);
-//
-//   void generateClassField(ClassScope& scope, SNode node, ref_t typeRef, ref_t fieldRef, int sizeHint, bool singleField);
+//   void compileTemplateMethods(SNode node, ClassScope& scope);
+
+//   void declareVirtualMethods(ClassScope& scope);
+
+   void generateClassField(ClassScope& scope, SNode node, /*ref_t typeRef, */ref_t fieldRef, int sizeHint, bool singleField);
 ////   void generateClassStaticField(ClassScope& scope, SNode current);
 
    void generateClassFlags(ClassScope& scope, SNode node);
@@ -938,7 +938,6 @@ private:
 //   void generateTemplateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool templateMode);
 //   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, TemplateScope& scope);
-//   void generateFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
 //   void generateFieldTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
 //   void generateTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes);
 //   // nested = -1 - nested class, -2 - singleton

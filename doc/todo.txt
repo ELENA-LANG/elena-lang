@@ -27,6 +27,8 @@ In development:
                  * uncomment compileExternalArguments
                  * uncomment optimizeSymbol
                  * test primitive operation with message
+                 * implicit conversions
+                 * private methods
 
                  * check package functionality
 

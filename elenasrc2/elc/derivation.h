@@ -130,6 +130,7 @@ class DerivationReader : public _DerivationReader
    void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool operationMode*/);
    void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
+   void generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = EXPRESSION_EXPLICIT_MODE);
    void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);

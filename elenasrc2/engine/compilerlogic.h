@@ -123,11 +123,11 @@ public:
    virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
 
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
-//   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
+   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool validateClassAttribute(int& attrValue);
    virtual bool validateMethodAttribute(int& attrValue);
-//   virtual bool validateFieldAttribute(int& attrValue);
+   virtual bool validateFieldAttribute(int& attrValue);
 //   virtual bool validateLocalAttribute(int& attrValue);
    virtual bool validateSymbolAttribute(int attrValue/*, bool& constant, bool& staticOne, bool& preloadedOne*/);
 ////   virtual bool validateWarningAttribute(int& attrValue);

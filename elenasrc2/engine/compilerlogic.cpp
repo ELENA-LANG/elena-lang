@@ -778,11 +778,11 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 
    switch (reference)
    {
-      //case V_INT32:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugDWORD | elStructureRole | elEmbeddable;
-      //   info.size = 4;
-      //   break;
+      case V_INT32:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugDWORD | elStructureRole | elEmbeddable;
+         info.size = 4;
+         break;
       //case V_INT64:
       //   info.header.parentRef = scope.superReference;
       //   info.header.flags = elDebugQWORD | elStructureRole | elEmbeddable;
@@ -798,17 +798,17 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
       //   info.header.flags = elDebugPTR | elStructureRole | elEmbeddable;
       //   info.size = 4;
       //   break;
-      //case V_SIGNATURE:
-      //case V_VERB:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugSubject | elStructureRole | elEmbeddable;
-      //   info.size = 4;
-      //   break;
-      //case V_MESSAGE:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
-      //   info.size = 4;
-      //   break;
+      case V_SIGNATURE:
+      case V_VERB:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugSubject | elStructureRole | elEmbeddable;
+         info.size = 4;
+         break;
+      case V_MESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
+         info.size = 4;
+         break;
       //case V_EXTMESSAGE:
       //   info.header.parentRef = scope.superReference;
       //   info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
@@ -986,21 +986,21 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 {
    switch ((size_t)attrValue)
    {
-//      case V_SEALED:
-//         attrValue = elSealed;
-//         return true;
+      case V_SEALED:
+         attrValue = elSealed;
+         return true;
 //      case V_LIMITED:
 //         attrValue = elClosed;
 //         return true;
-//      case V_STRUCT:
-//         attrValue = elStructureRole;
-//         return true;
+      case V_STRUCT:
+         attrValue = elStructureRole;
+         return true;
       case V_ENUMLIST:
          attrValue = elStateless | elEnumList | elClosed;
          return true;
-//      case V_EMBEDDABLE:
-//         attrValue = elEmbeddable;
-//         return true;
+      case V_EMBEDDABLE:
+         attrValue = elEmbeddable;
+         return true;
 //      case V_DYNAMIC:
 //         attrValue = elDynamicRole;
 //         return true;
@@ -1072,16 +1072,16 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
    }
 }
 //
-//bool CompilerLogic :: validateFieldAttribute(int& attrValue)
-//{
-//   switch ((size_t)attrValue)
-//   {
-////      case V_STATIC:
-////         attrValue = lxStaticAttr;
-////         return true;
-//      case V_INT32:
-//         attrValue = 0;
+bool CompilerLogic :: validateFieldAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
+//      case V_STATIC:
+//         attrValue = lxStaticAttr;
 //         return true;
+      case V_INT32:
+         attrValue = 0;
+         return true;
 //      case V_INT64:
 //         attrValue = 0;
 //         return true;
@@ -1091,26 +1091,26 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 //      case V_PTR32:
 //         attrValue = 0;
 //         return true;
-//      case V_SIGNATURE:
-//         attrValue = 0;
-//         return true;
+      case V_SIGNATURE:
+         attrValue = 0;
+         return true;
 //      case V_SYMBOL:
 //         attrValue = 0;
 //         return true;
-//      case V_MESSAGE:
-//         attrValue = 0;
-//         return true;
+      case V_MESSAGE:
+         attrValue = 0;
+         return true;
 //      case V_EXTMESSAGE:
 //         attrValue = 0;
 //         return true;
-//      case V_VERB:
-//         attrValue = 0;
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+      case V_VERB:
+         attrValue = 0;
+         return true;
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 //{
 //   if (attrValue == (int)V_INT32) {
@@ -1165,75 +1165,75 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant, b
 ////   }
 ////}
 
-//bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
-//{
-//   // if it is a primitive field
-//   if (info.fields.Count() == 1) {
-//      switch (classRef) {
-//         case V_INT32:
-//            info.header.flags |= (elDebugDWORD | elReadOnlyRole | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
-//            return true;
-//         case V_INT64:
-//            info.header.flags |= (elDebugQWORD | elReadOnlyRole | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT64, 0));
-//            return true;
-//         case V_REAL64:
-//            info.header.flags |= (elDebugReal64 | elReadOnlyRole | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_REAL64, 0));
-//            return true;
-//         case V_PTR32:
-//            info.header.flags |= (elDebugPTR | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR32, 0));
-//            return info.size == 4;
-//         case V_SIGNATURE:
-//            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
-//            return info.size == 4;
-//         case V_VERB:
-//            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_VERB, 0));
-//            return info.size == 4;
-//         case V_MESSAGE:
-//            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
-//            return info.size == 4;
-//         case V_EXTMESSAGE:
-//            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_EXTMESSAGE, 0));
-//            return info.size == 8;
-//         case V_SYMBOL:
-//            info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
-//            return info.size == 4;
-//         default:
-//            break;
-//      }
-//   }
-//
-//   return false;
-//}
-//
-//inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
-//{
-//   return ref1 ? ref1 : ref2;
-//}
+bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
+{
+   // if it is a primitive field
+   if (info.fields.Count() == 1) {
+      switch (classRef) {
+         case V_INT32:
+            info.header.flags |= (elDebugDWORD | elReadOnlyRole | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
+            return true;
+         //case V_INT64:
+         //   info.header.flags |= (elDebugQWORD | elReadOnlyRole | elWrapper);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT64, 0));
+         //   return true;
+         //case V_REAL64:
+         //   info.header.flags |= (elDebugReal64 | elReadOnlyRole | elWrapper);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_REAL64, 0));
+         //   return true;
+         //case V_PTR32:
+         //   info.header.flags |= (elDebugPTR | elWrapper);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR32, 0));
+         //   return info.size == 4;
+         case V_SIGNATURE:
+            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
+            return info.size == 4;
+         case V_VERB:
+            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_VERB, 0));
+            return info.size == 4;
+         case V_MESSAGE:
+            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
+            return info.size == 4;
+         //case V_EXTMESSAGE:
+         //   info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_EXTMESSAGE, 0));
+         //   return info.size == 8;
+         //case V_SYMBOL:
+         //   info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
+         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
+         //   return info.size == 4;
+         default:
+            break;
+      }
+   }
+
+   return false;
+}
+
+inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
+{
+   return ref1 ? ref1 : ref2;
+}
 
 ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
 {
    switch (reference) {
-//      case V_INT32:
-//         return firstNonZero(scope.intReference, scope.superReference);
+      case V_INT32:
+         return firstNonZero(scope.intReference, scope.superReference);
 //      case V_INT64:
 //         return firstNonZero(scope.longReference, scope.superReference);
 //      case V_REAL64:
 //         return firstNonZero(scope.realReference, scope.superReference);
-//      case V_SIGNATURE:
-//         return firstNonZero(scope.signatureReference, scope.superReference);
-//      case V_MESSAGE:
-//         return firstNonZero(scope.messageReference, scope.superReference);
-//      case V_VERB:
-//         return firstNonZero(scope.verbReference, scope.superReference);
+      case V_SIGNATURE:
+         return firstNonZero(scope.signatureReference, scope.superReference);
+      case V_MESSAGE:
+         return firstNonZero(scope.messageReference, scope.superReference);
+      case V_VERB:
+         return firstNonZero(scope.verbReference, scope.superReference);
 //      case V_ARGARRAY:
 //         return firstNonZero(scope.arrayReference, scope.superReference);
       default:
