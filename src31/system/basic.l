@@ -254,41 +254,41 @@ class BaseNumber :: BaseValue
         = 0 - self.
 }
 
-//// --- IntBaseNumber ---
-//
-///// A base integer value
-//class IntBaseNumber :: BaseNumber
-//{
-//    /// Execute bitwise AND operation
-//    and : anObject = anObject cast:%and to:$self.
-//
-//    /// Execute bitwise OR operation
-//    or : anObject = anObject cast:%or to:$self.
-//    
-//    /// Execute bitwise XOR operation
-//    xor : anObject = anObject cast:%xor to:$self.
-//    
-//    /// Returns true if all the mask bits are set
-//    bool allMask : anOperand
-//        = $self and:anOperand == anOperand.
-//        
-//    /// Returns true if any of the mask bits are set    
-//    bool anyMask : anOperand
-//        = 0 != $self and:anOperand.
-//}
-//
-//// --- ByteNumber ---
-//
-///// An unsigned 8 bit integer
-//sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
-//{
-//    __int8 theValue.
-//
-//    stacksafe implicit int:n
-//    [
+// --- IntBaseNumber ---
+
+/// A base integer value
+class IntBaseNumber :: BaseNumber
+{
+    /// Execute bitwise AND operation
+    and : anObject = anObject cast:%and to:$self.
+
+    /// Execute bitwise OR operation
+    or : anObject = anObject cast:%or to:$self.
+    
+    /// Execute bitwise XOR operation
+    xor : anObject = anObject cast:%xor to:$self.
+    
+    /// Returns true if all the mask bits are set
+    bool allMask : anOperand
+        = $self and:anOperand == anOperand.
+        
+    /// Returns true if any of the mask bits are set    
+    bool anyMask : anOperand
+        = 0 != $self and:anOperand.
+}
+
+// --- ByteNumber ---
+
+/// An unsigned 8 bit integer
+sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
+{
+    __int8 theValue(1).
+
+    stacksafe implicit int:n
+    [
 //        theValue := n && 255.
-//    ]
-//
+    ]
+
 //    /// Creates the object with a default value (0)
 //    constructor new
 //        = 0.
@@ -300,7 +300,7 @@ class BaseNumber :: BaseValue
 //    /// Returns the maxial value (255)
 //    constructor max
 //        = 255.
-//    
+    
 //    /// Creates the object with a specified value
 //    stacksafe constructor new byte:value
 //        = value.
@@ -522,8 +522,8 @@ class BaseNumber :: BaseValue
 //        
 //        ^ aCode
 //    ]
-//}
-//
+}
+
 //// --- ShortNumber ---
 //
 ///// A signed 16 bit integer

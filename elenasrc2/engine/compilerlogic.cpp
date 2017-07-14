@@ -1043,9 +1043,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_IFNOTBRANCH:
          attrValue = tpIfNotBranch;
          return true;
-      //case V_STATCKSAFE:
-      //   attrValue = tpStackSafe;
-      //   return true;
+      case V_STATCKSAFE:
+         attrValue = tpStackSafe;
+         return true;
       case V_EMBEDDABLE:
          attrValue = tpEmbeddable;
          return true;
@@ -1061,9 +1061,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_CONSTRUCTOR:
          attrValue = tpConstructor;
          return true;
-      //case V_CONVERSION:
-      //   attrValue = tpConversion;
-      //   return true;
+      case V_CONVERSION:
+         attrValue = (tpConversion | tpSealed);
+         return true;
       case V_MULTI:
          attrValue = tpMultimethod;
          return true;

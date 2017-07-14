@@ -40,11 +40,11 @@
 
 #define V_IFBRANCH      (ref_t)-4097
 #define V_IFNOTBRANCH   (ref_t)-4098
-////#define V_WARNING1    (ref_t)-4099
-////#define V_WARNING2    (ref_t)-4100
-////#define V_WARNING3    (ref_t)-4101
-//
-//#define V_STATCKSAFE     (ref_t)-8192
+//#define V_WARNING1    (ref_t)-4099
+//#define V_WARNING2    (ref_t)-4100
+//#define V_WARNING3    (ref_t)-4101
+
+#define V_STATCKSAFE     (ref_t)-8192
 #define V_EMBEDDABLE     (ref_t)-8193
 //#define V_STATIC         (ref_t)-8194
 #define V_SEALED         (ref_t)-8195
@@ -66,7 +66,7 @@
 #define V_CONSTRUCTOR    (ref_t)-16384
 //#define V_VARIABLE       (ref_t)-16385
 #define V_CLASS          (ref_t)-16386
-//#define V_CONVERSION     (ref_t)-16387
+#define V_CONVERSION     (ref_t)-16387
 ////#define V_EMBEDDABLETMPL (ref_t)-16388
 #define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
@@ -100,7 +100,7 @@ enum MethodHint
    tpIfBranch    = 0x0100,
    tpIfNotBranch = 0x0200,
    tpConstructor = 0x0400,
-//   tpConversion  = 0x0800,
+   tpConversion  = 0x0800,
    tpMultimethod = 0x1000
 };
 

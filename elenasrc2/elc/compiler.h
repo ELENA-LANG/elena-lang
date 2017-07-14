@@ -802,11 +802,11 @@ private:
    ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
 
 //   ObjectInfo compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
-//   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
+   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
 
    ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
@@ -920,7 +920,6 @@ private:
 //   void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer);
 //
 //   bool generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope);
-//   void generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 //   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 //   void generateTemplateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool templateMode);
 //   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);

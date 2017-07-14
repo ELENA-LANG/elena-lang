@@ -10,7 +10,10 @@ sealed          = #8195.
 embeddable      = #8193.
 template        = #16391.
 extension       = #8203.
+stacksafe       = #8192.
+implicit        = #16387/*#8195*/.
 
+__int8          = #11.
 __verb          = #20.
 __mssg          = #19.
 __subj          = #18.
@@ -23,14 +26,12 @@ __ifnotoperator = #4098.
 //#16391 #16394   loop_template.
 //#16391 #16396   extern_template.
 //#16385          var.
-//#16387 #8195    implicit.
 //#16393          method.
 //#16392          field.
 
 //#8194           static.
 ////#template(-8207)         preloaded {}
 //#8202 #8195     generic.
-//#8192           stacksafe.
 //#8205           action.
 ////#template(-4099) w1 {}
 ////#template(-4100) w2 {}
@@ -46,7 +47,6 @@ __ifnotoperator = #4098.
 //
 //#22 #262144     __symbol.
 //#21 #524288     __extmssg.
-//#11 #65536      __int8.
 //#11 #131072     __int16.
 //#11 #262144     __int32.
 //#12 #262144     __dword.
@@ -66,8 +66,8 @@ type bool    = system'BaseBoolValue.
 //type keyvalue   :: system'KeyValue.
 //
 //type ref        :: system'Variable.
-//
-//type byte       :: system'ByteNumber.
+
+type byte    = system'ByteNumber.
 //type short      :: system'ShortNumber.
 //type int        :: system'IntNumber.
 //type uint       :: system'UIntNumber.

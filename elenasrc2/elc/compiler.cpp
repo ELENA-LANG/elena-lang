@@ -2989,122 +2989,122 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-//   writer.newBookmark();
+ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   writer.newBookmark();
+
+   ObjectInfo retVal;
+   LexicalType operationType = lxAssigning;
+   int operand = 0;
+
+   SNode exprNode = node;
+   SNode operation = node.findChild(lxMessage, lxExpression, lxAssign);
+   if (operation == lxExpression) {
+      exprNode = operation;
+      operation = exprNode.findChild(lxMessage, lxOperator);
+   }
+   
+   if (operation == lxMessage) {
+      // try to figure out if it is property assignging
+      SNode firstToken = exprNode.firstChild(lxObjectMask);
+      ObjectInfo tokenInfo = scope.mapObject(firstToken);
+      //ref_t attrRef = scope.mapSubject(firstToken);
+      if (tokenInfo.kind != okUnknown) {
+         // if it is shorthand property settings
+         SNode name = operation.findChild(lxIdentifier, lxPrivate);
+         ref_t subject = scope.mapSubject(name);
+         //HOTFIX : support lexical subjects
+         if (subject == 0)
+            subject = scope.moduleScope->module->mapSubject(name.identifier(), false);
+
+         ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
+
+         // compile target
+         // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
+         ObjectInfo target = compileMessageParameters(writer, exprNode, scope);
+
+         // compile the parameter
+         SNode sourceNode = exprNode.nextNode(lxObjectMask);
+         ObjectInfo source = compileExpression(writer, sourceNode, scope, HINT_DYNAMIC_OBJECT);
+
+         retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
+
+         operationType = lxNone;
+      }
+   //   else if (_logic->recognizeNewLocal(exprNode)) {
+   //      // if it is variable declaration
+   //      declareVariable(writer, exprNode, scope);
+   //      declareExpression(writer, node, scope, 0);
+
+   //      operationType = lxNone;
+   //   }
+      else scope.raiseError(errUnknownObject, firstToken);
+   }
+   // if it setat operator
+   else if (operation == lxOperator) {
+      retVal = compileOperator(writer, node, scope, mode, SET_REFER_MESSAGE_ID);
+
+      operationType = lxNone;
+   }
+   else {
+      SNode targetNode = node.firstChild(lxObjectMask);
+      retVal = compileExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
+
+      ref_t targetRef = resolveObjectReference(scope, retVal);
+      if (retVal.kind == okLocalAddress) {
+         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
+         if (size != 0) {
+            operand = size;
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
+      else if (retVal.kind == okFieldAddress) {
+         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
+         if (size != 0) {
+            operand = size;
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
+      else if (retVal.kind == okLocal || retVal.kind == okField || retVal.kind == okOuterField || retVal.kind == okStaticField) {
+      }
+      else if (/*retVal.kind == okParam || */retVal.kind == okOuter) {
+//         // Compiler magic : allowing to assign byref / variable parameter
+//         if (_logic->isVariable(*scope.moduleScope, targetRef)) {
+//            _logic->injectVariableAssigning(writer, *scope.moduleScope, *this, targetRef, retVal.type, operand, retVal.kind == okParam);
 //
-//   ObjectInfo retVal;
-//   LexicalType operationType = lxAssigning;
-//   int operand = 0;
-//
-//   SNode exprNode = node;
-//   SNode operation = node.findChild(lxMessage, lxExpression, lxAssign);
-//   if (operation == lxExpression) {
-//      exprNode = operation;
-//      operation = exprNode.findChild(lxMessage, lxOperator);
-//   }
-//   
-//   if (operation == lxMessage) {
-//      // try to figure out if it is property assignging
-//      SNode firstToken = exprNode.firstChild(lxObjectMask);
-//      ObjectInfo tokenInfo = scope.mapObject(firstToken);
-//      //ref_t attrRef = scope.mapSubject(firstToken);
-//      if (tokenInfo.kind != okUnknown) {
-//         // if it is shorthand property settings
-//         SNode name = operation.findChild(lxIdentifier, lxPrivate);
-//         ref_t subject = scope.mapSubject(name);
-//         //HOTFIX : support lexical subjects
-//         if (subject == 0)
-//            subject = scope.moduleScope->module->mapSubject(name.identifier(), false);
-//
-//         ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
-//
-//         // compile target
-//         // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
-//         ObjectInfo target = compileMessageParameters(writer, exprNode, scope);
-//
-//         // compile the parameter
-//         SNode sourceNode = exprNode.nextNode(lxObjectMask);
-//         ObjectInfo source = compileExpression(writer, sourceNode, scope, HINT_DYNAMIC_OBJECT);
-//
-//         retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
-//
-//         operationType = lxNone;
-//      }
-//   //   else if (_logic->recognizeNewLocal(exprNode)) {
-//   //      // if it is variable declaration
-//   //      declareVariable(writer, exprNode, scope);
-//   //      declareExpression(writer, node, scope, 0);
-//
-//   //      operationType = lxNone;
-//   //   }
-//      else scope.raiseError(errUnknownObject, firstToken);
-//   }
-//   // if it setat operator
-//   else if (operation == lxOperator) {
-//      retVal = compileOperator(writer, node, scope, mode, SET_REFER_MESSAGE_ID);
-//
-//      operationType = lxNone;
-//   }
-//   else {
-//      SNode targetNode = node.firstChild(lxObjectMask);
-//      retVal = compileExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
-//
-//      ref_t targetRef = resolveObjectReference(scope, retVal);
-//      if (retVal.kind == okLocalAddress) {
-//         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
-//         if (size != 0) {
-//            operand = size;
+//            retVal.kind = (retVal.kind == okParam) ? okParamField : okOuterField;
+//         }
+         // Compiler magic : allowing to assign outer local variables
+//         else if (retVal.kind == okOuter) {
+            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+
+            if (!closure->markAsPresaved(retVal))
+               scope.raiseError(errInvalidOperation, node);
 //         }
 //         else scope.raiseError(errInvalidOperation, node);
-//      }
-//      else if (retVal.kind == okFieldAddress) {
-//         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
-//         if (size != 0) {
-//            operand = size;
-//         }
-//         else scope.raiseError(errInvalidOperation, node);
-//      }
-//      else if (retVal.kind == okLocal || retVal.kind == okField || retVal.kind == okOuterField || retVal.kind == okStaticField) {
-//      }
-//      else if (/*retVal.kind == okParam || */retVal.kind == okOuter) {
-////         // Compiler magic : allowing to assign byref / variable parameter
-////         if (_logic->isVariable(*scope.moduleScope, targetRef)) {
-////            _logic->injectVariableAssigning(writer, *scope.moduleScope, *this, targetRef, retVal.type, operand, retVal.kind == okParam);
-////
-////            retVal.kind = (retVal.kind == okParam) ? okParamField : okOuterField;
-////         }
-//         // Compiler magic : allowing to assign outer local variables
-////         else if (retVal.kind == okOuter) {
-//            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
-//
-//            if (!closure->markAsPresaved(retVal))
-//               scope.raiseError(errInvalidOperation, node);
-////         }
-////         else scope.raiseError(errInvalidOperation, node);
-//      }
-//      else scope.raiseError(errInvalidOperation, node);
-//
-//      writer.newBookmark();
-//
-//      SNode sourceNode = targetNode.nextNode(lxObjectMask);
-//      ObjectInfo source = compileAssigningExpression(writer, sourceNode, scope);
-//
-//      if (!convertObject(writer, *scope.moduleScope, targetRef, retVal.type, resolveObjectReference(scope, source), source.type))
-//         scope.raiseError(errInvalidOperation, node);
-//
-//      writer.removeBookmark();
-//   }
-//
-//   if (operationType != lxNone) {
-//      writer.insert(operationType, operand);
-//      writer.closeNode();
-//   }
-//
-//   writer.removeBookmark();
-//
-//   return retVal;
-//}
+      }
+      else scope.raiseError(errInvalidOperation, node);
+
+      writer.newBookmark();
+
+      SNode sourceNode = targetNode.nextNode(lxObjectMask);
+      ObjectInfo source = compileAssigningExpression(writer, sourceNode, scope);
+
+      if (!convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, source)/*, source.type*/))
+         scope.raiseError(errInvalidOperation, node);
+
+      writer.removeBookmark();
+   }
+
+   if (operationType != lxNone) {
+      writer.insert(operationType, operand);
+      writer.closeNode();
+   }
+
+   writer.removeBookmark();
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -3606,9 +3606,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //   else {
       SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxSwitching);
       switch (current.type) {
-         //         case lxAssign:
-         //            objectInfo = compileAssigning(writer, node, scope, mode);
-         //            break;
+         case lxAssign:
+            objectInfo = compileAssigning(writer, node, scope, mode);
+            break;
          case lxMessage:
             objectInfo = compileMessage(writer, node, scope, mode);
             break;
@@ -3643,17 +3643,17 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    return objectInfo;
 }
 
-//ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope)
-//{
-//   writer.newNode(lxExpression);
-//   //writer.appendNode(lxBreakpoint, dsStep);
-//
-//   ObjectInfo objectInfo = compileExpression(writer, assigning, scope, 0);
-//
-//   writer.closeNode();
-//
-//   return objectInfo;
-//}
+ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope)
+{
+   writer.newNode(lxExpression);
+   //writer.appendNode(lxBreakpoint, dsStep);
+
+   ObjectInfo objectInfo = compileExpression(writer, assigning, scope, 0);
+
+   writer.closeNode();
+
+   return objectInfo;
+}
 
 ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, CodeScope& scope)
 {
@@ -4596,26 +4596,26 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
          codeScope.level++;
       }
 
-//      if (retExpr) {
-////         recordDebugStep(codeScope, bodyNode.firstChild().FirstTerminal(), dsStep);
-//
-//         writer.newNode(lxReturning);         
-//         writer.newBookmark();
-//
-//         ObjectInfo retVal = compileRetExpression(writer, bodyNode, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
-//         convertObject(writer, *codeScope.moduleScope, codeScope.getClassRefId(), 0, resolveObjectReference(codeScope, retVal), retVal.type);
-//
-//         writer.removeBookmark();
-//         writer.closeNode();
-//      }
-//      else {
+      if (retExpr) {
+//         recordDebugStep(codeScope, bodyNode.firstChild().FirstTerminal(), dsStep);
+
+         writer.newNode(lxReturning);         
+         writer.newBookmark();
+
+         ObjectInfo retVal = compileRetExpression(writer, bodyNode, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
+         convertObject(writer, *codeScope.moduleScope, codeScope.getClassRefId(), resolveObjectReference(codeScope, retVal));
+
+         writer.removeBookmark();
+         writer.closeNode();
+      }
+      else {
          preallocated = codeScope.level;
 
          compileCode(writer, bodyNode, codeScope);
 
          // HOT FIX : returning the created object
          writer.appendNode(lxLocal, 1);
-      //}
+      }
    }
 
    if (withFrame)
@@ -6358,54 +6358,6 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
 //   SyntaxWriter writer(destionationTree);
 //
 //   SyntaxTree::moveNodes(writer, sourceTree, lxClass);
-//}
-//
-//void Compiler :: generateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
-//{
-//   // check if the first token is attribute
-//   SNode current = node.firstChild();
-//   SNode attr = node.findChild(lxIdentifier, lxPrivate);
-//   int dummy = 0;
-//   ref_t attrRef = (attr != lxPrivate) ? scope.mapAttribute(attr, dummy/*, true*/) : 0;
-//   //HOTFIX : there should be at leat two attribute
-//   if (attrRef != 0 && attr.nextNode() != lxAssigning) {
-//      // HOTFIX : set already recognized attribute value if it is not a template parameter
-//      if (attrRef != INVALID_REF) {
-//         attr.setArgument(attrRef);
-//      }
-//
-//      while (current != lxAssigning) {
-//         current = lxAttribute;
-//
-//         current = current.nextNode();
-//      }
-//
-//      writer.newNode(lxVariable);
-//
-//      setIdentifier(node.firstChild());
-//      SNode ident = node.findChild(lxNameAttr);
-//
-//      SyntaxTree buffer;
-//      SyntaxWriter bufferWriter(buffer);
-//
-//      generateAttributes(bufferWriter, SNode(), scope, node.firstChild()/*, true*/);
-//      SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxClassRefAttr, lxTemplateType);
-//
-////      copyAutogeneratedClass(buffer, *scope.autogeneratedTree);
-//
-//      copyIdentifier(writer, ident.findChild(lxIdentifier, lxPrivate));
-//
-//      writer.closeNode();
-//
-//      writer.newNode(lxExpression);
-//
-//      copyIdentifier(writer, ident.findChild(lxIdentifier, lxPrivate));
-//      writer.appendNode(lxAssign);
-//      generateExpressionTree(writer, current, scope, false);
-//
-//      writer.closeNode();
-//   }
-//   else generateExpressionTree(writer, node, scope);
 //}
 //
 //void Compiler :: generateArrayVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
