@@ -8,13 +8,13 @@ multi       = #16397.
 listable    = #8198.
 sealed      = #8195.
 embeddable  = #8193.
+template    = #16391.
 
 __verb      = #20.
 __mssg      = #19.
 __subj      = #18.
 
 //#16395          import.
-//#16391          template.
 //#16391 #16394   loop_template.
 //#16391 #16396   extern_template.
 //#16385          var.

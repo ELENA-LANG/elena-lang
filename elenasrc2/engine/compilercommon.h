@@ -70,7 +70,7 @@
 ////#define V_EMBEDDABLETMPL (ref_t)-16388
 #define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
-//#define V_TEMPLATE       (ref_t)-16391
+#define V_TEMPLATE       (ref_t)-16391
 //#define V_FIELD          (ref_t)-16392
 //#define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
@@ -81,7 +81,7 @@
 namespace _ELENA_
 {
 
-////typedef Map<ref_t, ref_t> ClassMap;
+typedef Map<ident_t, ref_t> ForwardMap;
 
 enum MethodHint
 {
@@ -121,6 +121,8 @@ struct _CompilerScope
 //      }
 //   };
 
+   ident_t  sourcePath;
+
    _Module* module;
 
 //   // cached references
@@ -152,11 +154,12 @@ struct _CompilerScope
    virtual bool saveAttribute(ident_t name, ref_t attr, bool internalAttr) = 0;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-//   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
+   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
    _CompilerScope()
       : attributes(0)
    {
+      sourcePath = NULL;
       module = NULL;
       intReference = boolReference = superReference = 0;
       signatureReference = verbReference = messageReference = 0;

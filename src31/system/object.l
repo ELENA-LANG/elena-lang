@@ -6,24 +6,24 @@
 //    [
 //    ].
 //
-//
-//// === basic templates ===
-//
-//template dispatchable :: template_subj
-//{
-//    sealed embeddable template_subj = $self.
-//    
-//    /// Dispatches the verb to the target with a specified subject
-//    cast : verb to:target = target~verb eval template_subj:$self.
-//
+
+// === basic templates ===
+
+template dispatchable :: template_subj
+{
+    sealed embeddable template_subj = $self.
+    
+    /// Dispatches the verb to the target with a specified subject
+    cast : verb to:target = target~verb eval template_subj:$self.
+
 //    /// Dispatches the verb to the target with a specified subject providing a parameter
 //    cast : aVerb to:aTarget with:aParam = aTarget~aVerb eval:aParam template_subj:$self.
-//}
+}
 
 // --- super object ---
 
 /// a common ancestor
-class Object /*:: dispatchable(object)*/
+class Object :: dispatchable(object)
 {
     /// Creates the object
     constructor new []
