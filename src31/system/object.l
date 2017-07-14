@@ -1,11 +1,3 @@
-//
-//// --- while statement ---
-//
-//loop_template xwhile :: expr =
-//    expr bool ?
-//    [
-//    ].
-//
 
 // === basic templates ===
 
@@ -16,8 +8,8 @@ template dispatchable :: template_subj
     /// Dispatches the verb to the target with a specified subject
     cast : verb to:target = target~verb eval template_subj:$self.
 
-//    /// Dispatches the verb to the target with a specified subject providing a parameter
-//    cast : aVerb to:aTarget with:aParam = aTarget~aVerb eval:aParam template_subj:$self.
+    /// Dispatches the verb to the target with a specified subject providing a parameter
+    cast : aVerb to:aTarget with:aParam = aTarget~aVerb eval:aParam template_subj:$self.
 }
 
 // --- super object ---
@@ -40,7 +32,7 @@ class Object :: dispatchable(object)
 }
 
 /// A common boolean value
-listable class BaseBoolValue //:: dispatchable(bool)
+listable class BaseBoolValue :: dispatchable(bool)
 {
     if : aTrueAction = $nil.
 
@@ -69,15 +61,15 @@ listable class BaseBoolValue //:: dispatchable(bool)
     clone = $nil.
 }
 
-//extension commonOp
-//{
-//    then : code
-//        = code eval.
-//        
-//    close after:code
-//    [
-//        code eval.
-//        
-//        self close
-//    ]
-//}
+extension commonOp
+{
+    then : code
+        = code eval.
+        
+    thenClose:code
+    [
+        code eval.
+        
+        self close
+    ]
+}

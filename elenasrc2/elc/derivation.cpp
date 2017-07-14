@@ -237,6 +237,23 @@ inline int readSizeValue(SNode node, int radix)
    return val.toLong(radix);
 }
 
+inline void copyOperator(SyntaxWriter& writer, SNode ident)
+{
+   if (emptystr(ident.identifier())) {
+      SNode terminal = ident.findChild(lxTerminal);
+      if (terminal != lxNone) {
+         writer.newNode(lxOperator, terminal.identifier());
+      }
+      else writer.newNode(ident.type);
+   }
+   else writer.newNode(lxOperator, ident.identifier());
+
+   SyntaxTree::copyNode(writer, lxRow, ident);
+   SyntaxTree::copyNode(writer, lxCol, ident);
+   SyntaxTree::copyNode(writer, lxLength, ident);
+   writer.closeNode();
+}
+
 // --- DerivationReader::DerivationScope ---
 
 ref_t DerivationReader::DerivationScope :: mapNewReference(ident_t identifier)
@@ -810,12 +827,12 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //         writer.insert(lxExpression);
 //         writer.closeNode();
 //         break;
-//      case lxOperator:
-//         copyOperator(writer, current.firstChild());
-//         generateExpressionTree(writer, current, scope, 0);
-//         writer.insert(lxExpression);
-//         writer.closeNode();
-//         break;
+      case lxOperator:
+         copyOperator(writer, current.firstChild());
+         generateExpressionTree(writer, current, scope, 0);
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
 //      case lxCatchOperation:
 //      case lxAltOperation:
 //         if (scope.type == TemplateScope::ttCodeTemplate && scope.templateRef == 0) {

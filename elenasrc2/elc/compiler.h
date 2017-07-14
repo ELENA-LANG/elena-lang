@@ -67,21 +67,21 @@ public:
       int    offset;
       ref_t  class_ref;
 //      ref_t  subj_ref;
-//      int    size;
+      int    size;
 
       Parameter()
       {
          offset = -1;
 //         subj_ref = 0;
          class_ref = 0;
-//         size = 0;
+         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
 //         this->subj_ref = 0;
          this->class_ref = 0;
-//         this->size = 0;
+         this->size = 0;
       }
 //      Parameter(int offset, ref_t subj_ref)
 //      {
@@ -95,7 +95,7 @@ public:
          this->offset = offset;
          //this->subj_ref = subj_ref;
          this->class_ref = class_ref;
-         //this->size = 0;
+         this->size = 0;
       }
 //      Parameter(int offset, ref_t subj_ref, ref_t class_ref, int size)
 //      {
@@ -125,31 +125,31 @@ public:
       okSymbol,                       // param - reference
       okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
-//      okLiteralConstant,              // param - reference
-//      okWideLiteralConstant,          // param - reference
+      okLiteralConstant,              // param - reference
+      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
-//      okIntConstant,                  // param - reference, extraparam - imm argument
-//      okUIntConstant,                 // param - reference, extraparam - imm argument
-//      okLongConstant,                 // param - reference
-//      okRealConstant,                 // param - reference
+      okIntConstant,                  // param - reference, extraparam - imm argument
+      okUIntConstant,                 // param - reference, extraparam - imm argument
+      okLongConstant,                 // param - reference
+      okRealConstant,                 // param - reference
       okMessageConstant,              // param - reference
 //      okExtMessageConstant,           // param - reference
       okSignatureConstant,            // param - reference
       okVerbConstant,                 // param - reference
 //      okArrayConst,
-//      okField,                        // param - field offset, extraparam - class reference
-//      okStaticField,                  // param - reference
-//      okFieldAddress,                 // param - field offset, extraparam - class reference
-//      okOuter,                        // param - field offset, extraparam - class reference
-//      okOuterField,                   // param - field offset, extraparam - outer field offset
-//      okLocal,                        // param - local / out parameter offset, extraparam : class reference
+      okField,                        // param - field offset, extraparam - class reference
+      okStaticField,                  // param - reference
+      okFieldAddress,                 // param - field offset, extraparam - class reference
+      okOuter,                        // param - field offset, extraparam - class reference
+      okOuterField,                   // param - field offset, extraparam - outer field offset
+      okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
 //      okParamField,
-//      okSubject,                      // param - parameter offset
+      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
-//      okSuper,
-//      okLocalAddress,                 // param - local offset, extraparam - class reference
+      okSuper,
+      okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
@@ -232,8 +232,8 @@ public:
    };
 
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
-////   typedef MemoryMap<int, ref_t>          RoleMap;
-//   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
+//   typedef MemoryMap<int, ref_t>          RoleMap;
+   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
 private:
    // - ModuleScope -
@@ -250,10 +250,10 @@ private:
 
 //      // symbol hints
 //      Map<ref_t, ref_t> constantHints;
-//
-//      // extensions
-//      SubjectMap        extensionHints;
-//      ExtensionMap      extensions;
+
+      // extensions
+      SubjectMap        extensionHints;
+      ExtensionMap      extensions;
 
 //      // action hints
 //      SubjectMap        actionHints;
@@ -312,7 +312,7 @@ private:
 //      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 //
       bool loadAttributes(_Module* module);
-//      void loadExtensions(_Module* module, bool& duplicateExtensions);
+      void loadExtensions(_Module* module, bool& duplicateExtensions);
 //      void loadActions(_Module* module);
 //
       virtual bool saveAttribute(ident_t typeName, ref_t classReference, bool internalAttr);
@@ -333,7 +333,7 @@ private:
       void loadModuleInfo(_Module* extModule, bool& duplicateExtensions, bool& duplicateAttributes)
       {
          duplicateAttributes = loadAttributes(extModule);
-//         loadExtensions(extModule, duplicateExtensions);
+         loadExtensions(extModule, duplicateExtensions);
 //         loadActions(extModule);
       }
 
@@ -439,7 +439,7 @@ private:
       ClassInfo   info;
       ref_t       extensionMode;
 
-//      ObjectInfo mapField(ident_t identifier);
+      ObjectInfo mapField(ident_t identifier);
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -593,7 +593,7 @@ private:
          reserved = saved;
       }
 
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
+      virtual ObjectInfo mapTerminal(ident_t identifier);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -632,36 +632,36 @@ private:
    // - InlineClassScope -
    struct InlineClassScope : public ClassScope
    {
-//      struct Outer
-//      {
-//         ref_t      reference;
-//         bool       preserved;
-//         ObjectInfo outerObject;
-//
-//         Outer()
-//         {
-//            reference = INVALID_REF;
-//            preserved = false;
-//         }
-//         Outer(int reference, ObjectInfo outerObject)
-//         {
-//            this->reference = reference;
-//            this->outerObject = outerObject;
-//            this->preserved = false;
-//         }
-//      };
-//
-//      bool                    returningMode;
+      struct Outer
+      {
+         ref_t      reference;
+         bool       preserved;
+         ObjectInfo outerObject;
+
+         Outer()
+         {
+            reference = INVALID_REF;
+            preserved = false;
+         }
+         Outer(int reference, ObjectInfo outerObject)
+         {
+            this->reference = reference;
+            this->outerObject = outerObject;
+            this->preserved = false;
+         }
+      };
+
+      bool                    returningMode;
       bool                    closureMode;
-//      Map<ident_t, Outer>     outers;
-//      ClassInfo::FieldTypeMap outerFieldTypes;
-//
-//      Outer mapSelf();
-//      Outer mapOwner();
-//
-//      ObjectInfo allocateRetVar();
-//
-//      bool markAsPresaved(ObjectInfo object);
+      Map<ident_t, Outer>     outers;
+      ClassInfo::FieldTypeMap outerFieldTypes;
+
+      Outer mapSelf();
+      Outer mapOwner();
+
+      ObjectInfo allocateRetVar();
+
+      bool markAsPresaved(ObjectInfo object);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -714,7 +714,7 @@ private:
    ByteCodeWriter _writer;
 
    MessageMap     _verbs;                            // list of verbs
-//   MessageMap     _operators;                        // list of operators
+   MessageMap     _operators;                        // list of operators
 
    int            _optFlag;
 
@@ -737,17 +737,17 @@ private:
 
    pos_t saveSourcePath(ModuleScope& scope, ident_t path);
 
-//   int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
-//   {
-//      _CompilerLogic::ChechMethodInfo dummy;
-//
-//      return _logic->checkMethod(scope, reference, message, dummy);
-//   }
+   int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
+   {
+      _CompilerLogic::ChechMethodInfo dummy;
+
+      return _logic->checkMethod(scope, reference, message, dummy);
+   }
 
    ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
-//   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
+   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
    void importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 
@@ -788,12 +788,12 @@ private:
    ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
 
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
-//   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
-//   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
+   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
+   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
 
    ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
 
@@ -808,17 +808,17 @@ private:
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
 
-//   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
-//
+   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+
 //   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 ////   void compileThrow(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//
-//   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-//   int allocateStructure(SNode node, int& size);
-//   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
-//
+
+   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
+   int allocateStructure(SNode node, int& size);
+   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
+
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 //
@@ -885,7 +885,7 @@ private:
 
    bool validate(_ProjectManager& project, _Module* module, int reference);
 
-//   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t targetType = 0);
+   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef/*, ref_t targetType = 0*/);
 
    bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
    bool typecastObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef);
@@ -959,7 +959,7 @@ public:
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
-//   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
+   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
    Compiler(_CompilerLogic* logic);
 };

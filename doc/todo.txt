@@ -3,6 +3,7 @@ In development:
 ------                              
 
               xdev - multimethod
+                 * uncomment compileOperator
                  * uncomment tweakClassFlags
                  * uncomment mapTerminal
                  * uncomment compileClosure
@@ -26,6 +27,7 @@ In development:
                  * uncomment optimizeOp
                  * uncomment compileExternalArguments
                  * uncomment optimizeSymbol
+                 * uncomment defineOperatorMessage
                  * test primitive operation with message
                  * implicit conversions
                  * private methods

@@ -1,18 +1,23 @@
 /// Attributes
-type        = #16390.
-class       = #16386.
-struct      = #8197.
-symbol      = #16389.
-constructor = #16384.
-multi       = #16397.
-listable    = #8198.
-sealed      = #8195.
-embeddable  = #8193.
-template    = #16391.
+type            = #16390.
+class           = #16386.
+struct          = #8197.
+symbol          = #16389.
+constructor     = #16384.
+multi           = #16397.
+listable        = #8198.
+sealed          = #8195.
+embeddable      = #8193.
+template        = #16391.
+extension       = #8203.
 
-__verb      = #20.
-__mssg      = #19.
-__subj      = #18.
+__verb          = #20.
+__mssg          = #19.
+__subj          = #18.
+
+__ifoperator    = #4097.
+__ifnotoperator = #4098.
+
 
 //#16395          import.
 //#16391 #16394   loop_template.
@@ -37,12 +42,8 @@ __subj      = #18.
 //#8201           const.
 //#8204           nonstructural.
 //#8200           string.
-//#8203           extension.
 //#8208           singleton.
 //
-//#4097           __ifoperator.
-//#4098           __ifnotoperator.
-
 //#22 #262144     __symbol.
 //#21 #524288     __extmssg.
 //#11 #65536      __int8.

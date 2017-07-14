@@ -107,47 +107,47 @@
 /// A true value symbol
 class true = BaseBoolValue::
 {
-//    /// Executes the action
-//    __ifoperator if : aTrueAction = aTrueAction eval.
-//
-//    /// Executes then-action
-//    if : aTrueAction : aFalseAction = aTrueAction eval.
-//
-//    /// Always returns nil.
-//    __ifnotoperator ifnot : aTrueAction = $nil.
-//
-//    iif:aTrueValue:aFalseValue = aTrueValue.
-//    
-//    /// Executes logical OR operation
-//    ///
-//    /// Always return true
-//    or : anExpr = $self.
-//
-//    /// Executes logical AND operation
-//    and : anExpr = anExpr bool.
-//
-//    /// Executes logical XOR operation
-//    xor : aBool
-//    [
-//        aBool bool ? [ ^ false ].
-//        
-//        ^ $self
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    equal : anExpr = anExpr bool.
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    equal bool:aBool = aBool.
-//
-//    /// Always returns false.
-//    inverted = false.
-//
-//    /// Returns literal representation.
-//    literal = "true".
-//
-//    /// Returns literal representation.
-//    wide = "true"w.
+    /// Executes the action
+    __ifoperator if : aTrueAction = aTrueAction eval.
+
+    /// Executes then-action
+    if : aTrueAction : aFalseAction = aTrueAction eval.
+
+    /// Always returns nil.
+    __ifnotoperator ifnot : aTrueAction = $nil.
+
+    iif:aTrueValue:aFalseValue = aTrueValue.
+    
+    /// Executes logical OR operation
+    ///
+    /// Always return true
+    or : anExpr = $self.
+
+    /// Executes logical AND operation
+    and : anExpr = anExpr bool.
+
+    /// Executes logical XOR operation
+    xor : aBool
+    [
+        aBool bool ? [ ^ false ].
+        
+        ^ $self
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    equal : anExpr = anExpr bool.
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    equal bool:aBool = aBool.
+
+    /// Always returns false.
+    inverted = false.
+
+    /// Returns literal representation.
+    literal = "true".
+
+    /// Returns literal representation.
+    wide = "true"w.
 
     /// Returns itself.
     clone = $self.
@@ -158,102 +158,102 @@ class true = BaseBoolValue::
 /// A false value symbol
 class false = BaseBoolValue::
 {
-//    /// Always returns nil
-//    __ifnotoperator if : anAction = $nil.
-//    
-//    /// Executes else-action
-//    if : aTrueAction : aFalseAction = aFalseAction eval.
-//
-//    /// Executes the action
-//    __ifoperator ifnot : aFalseAction = aFalseAction eval.
-//
-//    iif:aTrueValue:aFalseValue = aFalseValue.
-//
-//    /// Executes logical OR operation
-//    or : anExpr = anExpr bool.
-//
-//    /// Executes logical AND operation
-//    ///
-//    /// Always return false
-//    and : anExpr = $self.
-//
-//    /// Executes logical XOR operation
-//    xor : anExpr 
-//    [
-//        anExpr bool ? [ ^ true ].
-//        
-//        ^ $self
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    equal : anExpr
-//    [
-//        anExpr bool ? [ ^ $self ].
-//        
-//        ^ true
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    equal bool:anExpr
-//    [
-//        ^ anExpr inverted
-//    ]
-//
-//    /// Always returns true
-//    inverted = true.
-//
-//    /// Returns literal representation
-//    literal = "false".
-//    
-//    /// Returns literal representation
-//    wide = "false"w.
+    /// Always returns nil
+    __ifnotoperator if : anAction = $nil.
+    
+    /// Executes else-action
+    if : aTrueAction : aFalseAction = aFalseAction eval.
+
+    /// Executes the action
+    __ifoperator ifnot : aFalseAction = aFalseAction eval.
+
+    iif:aTrueValue:aFalseValue = aFalseValue.
+
+    /// Executes logical OR operation
+    or : anExpr = anExpr bool.
+
+    /// Executes logical AND operation
+    ///
+    /// Always return false
+    and : anExpr = $self.
+
+    /// Executes logical XOR operation
+    xor : anExpr 
+    [
+        anExpr bool ? [ ^ true ].
+        
+        ^ $self
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    equal : anExpr
+    [
+        anExpr bool ? [ ^ $self ].
+        
+        ^ true
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    equal bool:anExpr
+    [
+        ^ anExpr inverted
+    ]
+
+    /// Always returns true
+    inverted = true.
+
+    /// Returns literal representation
+    literal = "false".
+    
+    /// Returns literal representation
+    wide = "false"w.
     
     /// Returns itself
     clone = $self.
 }.
 
-//// === basic data classes ===
-//
-//// --- BaseValue ---
-//
-//// A base value
-//class BaseValue
-//{
-//    /// Compares the values
-//    equal : anObject = anObject cast:%equal to:$self.
-//
-//    /// Compares the values
-//    bool less : anObject = anObject cast:%less to:$self.
-//
-//    /// Compares the values
-//    bool greater : anObject = anObject less:$self.
-//
-//    bool notless : anObject = $self less:anObject; inverted.
-//
-//    bool notgreater : anObject = $self greater:anObject; inverted.
-//}
-//
-//// --- BaseNumber ---
-//
-///// A base numeric value
-//class BaseNumber :: BaseValue
-//{
-//    /// Adds the value
-//    add : anObject = anObject cast:%add to:$self.
-//
-//    /// Subtracts the value
-//    subtract : anObject = anObject cast:%subtract to:$self.
-//
-//    /// Multiply by the value
-//    multiply : anObject = anObject cast:%multiply to:$self.
-//
-//    /// Divides into the value
-//    divide : anObject = anObject cast:%divide to:$self.
-//    
-//    negative
-//        = 0 - self.
-//}
-//
+// === basic data classes ===
+
+// --- BaseValue ---
+
+// A base value
+class BaseValue
+{
+    /// Compares the values
+    equal : anObject = anObject cast:%equal to:$self.
+
+    /// Compares the values
+    bool less : anObject = anObject cast:%less to:$self.
+
+    /// Compares the values
+    bool greater : anObject = anObject less:$self.
+
+    bool notless : anObject = $self less:anObject; inverted.
+
+    bool notgreater : anObject = $self greater:anObject; inverted.
+}
+
+// --- BaseNumber ---
+
+/// A base numeric value
+class BaseNumber :: BaseValue
+{
+    /// Adds the value
+    add : anObject = anObject cast:%add to:$self.
+
+    /// Subtracts the value
+    subtract : anObject = anObject cast:%subtract to:$self.
+
+    /// Multiply by the value
+    multiply : anObject = anObject cast:%multiply to:$self.
+
+    /// Divides into the value
+    divide : anObject = anObject cast:%divide to:$self.
+    
+    negative
+        = 0 - self.
+}
+
 //// --- IntBaseNumber ---
 //
 ///// A base integer value

@@ -12,15 +12,15 @@
 #include "elena.h"
 #include "syntaxtree.h"
 
-//// virtual objects
-//#define V_FLAG           (ref_t)-03
-//#define V_NIL            (ref_t)-04
+// virtual objects
+#define V_FLAG           (ref_t)-03
+#define V_NIL            (ref_t)-04
 
 //#define V_BINARY         (ref_t)-10
 #define V_INT32          (ref_t)-11
-//#define V_PTR32          (ref_t)-12
-//#define V_INT64          (ref_t)-13
-//#define V_REAL64         (ref_t)-14
+#define V_PTR32          (ref_t)-12
+#define V_INT64          (ref_t)-13
+#define V_REAL64         (ref_t)-14
 #define V_SIGNATURE      (ref_t)-18
 #define V_MESSAGE        (ref_t)-19
 #define V_VERB           (ref_t)-20
@@ -37,9 +37,9 @@
 //#define V_BINARYARRAY   (ref_t)-35
 //#define V_INT16ARRAY    (ref_t)-38
 //#define V_INT8ARRAY     (ref_t)-39
-//
-//#define V_IFBRANCH      (ref_t)-4097
-//#define V_IFNOTBRANCH   (ref_t)-4098
+
+#define V_IFBRANCH      (ref_t)-4097
+#define V_IFNOTBRANCH   (ref_t)-4098
 ////#define V_WARNING1    (ref_t)-4099
 ////#define V_WARNING2    (ref_t)-4100
 ////#define V_WARNING3    (ref_t)-4101
@@ -55,7 +55,7 @@
 //#define V_STRING         (ref_t)-8200
 //#define V_CONST          (ref_t)-8201
 //#define V_GENERIC        (ref_t)-8202
-//#define V_EXTENSION      (ref_t)-8203
+#define V_EXTENSION      (ref_t)-8203
 //#define V_NOSTRUCT       (ref_t)-8204
 //#define V_ACTION         (ref_t)-8205
 //#define V_GROUP          (ref_t)-8206
@@ -97,8 +97,8 @@ enum MethodHint
    tpEmbeddable  = 0x0020,
 //   tpGeneric     = 0x0040,
 //   tpAction      = 0x0080,
-//   tpIfBranch    = 0x0100,
-//   tpIfNotBranch = 0x0200,
+   tpIfBranch    = 0x0100,
+   tpIfNotBranch = 0x0200,
    tpConstructor = 0x0400,
 //   tpConversion  = 0x0800,
    tpMultimethod = 0x1000
@@ -108,18 +108,18 @@ enum MethodHint
 
 struct _CompilerScope
 {
-//   struct BranchingInfo
-//   {
-//      ref_t reference;
-//      ref_t trueRef;
-//      ref_t falseRef;
-//
-//      BranchingInfo()
-//      {
-//         reference = 0;
-//         trueRef = falseRef = 0;
-//      }
-//   };
+   struct BranchingInfo
+   {
+      ref_t reference;
+      ref_t trueRef;
+      ref_t falseRef;
+
+      BranchingInfo()
+      {
+         reference = 0;
+         trueRef = falseRef = 0;
+      }
+   };
 
    ident_t  sourcePath;
 
@@ -143,8 +143,8 @@ struct _CompilerScope
    // list of attributes / types
    MessageMap attributes;
 
-//   // cached bool values
-//   BranchingInfo branchingInfo;
+   // cached bool values
+   BranchingInfo branchingInfo;
 
    virtual void raiseError(const char* message, SNode terminal) = 0;
 
@@ -190,7 +190,7 @@ public:
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 
-//   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
+   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };
 
 // --- _DerivationReader ---
@@ -238,13 +238,13 @@ public:
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
 
-//   // retrieve the operation type
-//   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
-//   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
+   // retrieve the operation type
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
-//
-//   // retrieve the branching operation type
-//   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
+
+   // retrieve the branching operation type
+   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
@@ -272,7 +272,7 @@ public:
 //   // auto generate virtual methods / fields
    virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
    virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods) = 0;
-   //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
+   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference/*, ref_t type*/) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef) = 0;
 //   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
 ////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
@@ -295,7 +295,7 @@ public:
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
-//   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
+   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
 
    // optimization
    virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef) = 0;
