@@ -572,21 +572,21 @@ private:
       int          reserved;  // allocated for the current statement
       int          saved;     // permanently allocated
 
-//      int newLocal()
-//      {
-//         level++;
-//
-//         return level;
-//      }
-//
-//      void mapLocal(ident_t local, int level/*, ref_t type*/)
-//      {
-//         locals.add(local, Parameter(level/*, type*/));
-//      }
-//      void mapLocal(ident_t local, int level, ref_t type, ref_t class_ref, int size)
-//      {
-//         locals.add(local, Parameter(level, type, class_ref, size));
-//      }
+      int newLocal()
+      {
+         level++;
+
+         return level;
+      }
+
+      void mapLocal(ident_t local, int level/*, ref_t type*/)
+      {
+         locals.add(local, Parameter(level/*, type*/));
+      }
+      void mapLocal(ident_t local, int level, /*ref_t type, */ref_t class_ref/*, int size*/)
+      {
+         locals.add(local, Parameter(level, /*type, */class_ref/*, size*/));
+      }
 
       void freeSpace()
       {
@@ -762,7 +762,7 @@ private:
 
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
-//   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
+   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, /*ref_t& fieldType, */ref_t& fieldRef, int& size);
    void declareVMT(SNode member, ClassScope& scope);
 //   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
@@ -774,7 +774,7 @@ private:
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);

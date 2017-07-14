@@ -435,8 +435,8 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& c
 
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
-   //if (!targetRef && !isPrimitiveStructArrayRef(sourceRef))
-   //   return true;
+   if (!targetRef/* && !isPrimitiveStructArrayRef(sourceRef)*/)
+      return true;
 
    if (sourceRef == V_NIL)
       return true;
@@ -1111,18 +1111,18 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
    }
 }
 
-//bool CompilerLogic :: validateLocalAttribute(int& attrValue)
-//{
-//   if (attrValue == (int)V_INT32) {
-//      return true;
-//   }
-//   else if (attrValue == (int)V_VARIABLE) {
-//      attrValue = 0;
-//
-//      return true;
-//   }
-//   else return false;
-//}
+bool CompilerLogic :: validateLocalAttribute(int& attrValue)
+{
+   if (attrValue == (int)V_INT32) {
+      return true;
+   }
+   else if (attrValue == (int)V_VARIABLE) {
+      attrValue = 0;
+
+      return true;
+   }
+   else return false;
+}
 
 bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant, bool& staticOne, bool& preloadedOne*/)
 {

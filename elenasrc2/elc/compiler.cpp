@@ -1679,43 +1679,43 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, /*ref_t& 
    }
 }
 
-//void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
-//{
-//   SNode current = node.firstChild(lxAttribute);
-//   while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         int value = current.argument;
-//         if (value > 0 && size == 0) {
-//            size = value;
-//         }
-//         else if (_logic->validateLocalAttribute(value) && variable.extraparam == 0) {
-//            // negative value defines the target virtual class
-//            variable.extraparam = value;
-//         }
-//         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//      }
-//      else if (current == lxTypeAttr) {
-//         if (variable.extraparam == 0) {
-//            variable.type = scope.moduleScope->module->mapSubject(current.identifier(), false);
-//            variable.extraparam = scope.moduleScope->subjectHints.get(variable.type);
-//         }
-//         else scope.raiseError(errInvalidHint, node);
-//      }
-//      else if (current == lxClassRefAttr) {
-//         if (variable.extraparam == 0) {
-//            variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), false);
-//         }
-//         else scope.raiseError(errInvalidHint, node);
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   if (size != 0 && variable.type != 0) {
-//      variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, variable.extraparam);
-//   }
-//   
-//}
-//
+void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
+{
+   SNode current = node.firstChild(lxAttribute);
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         int value = current.argument;
+         if (value > 0 && size == 0) {
+            size = value;
+         }
+         else if (_logic->validateLocalAttribute(value) && variable.extraparam == 0) {
+            // negative value defines the target virtual class
+            variable.extraparam = value;
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      }
+      //else if (current == lxTypeAttr) {
+      //   if (variable.extraparam == 0) {
+      //      variable.type = scope.moduleScope->module->mapSubject(current.identifier(), false);
+      //      variable.extraparam = scope.moduleScope->subjectHints.get(variable.type);
+      //   }
+      //   else scope.raiseError(errInvalidHint, node);
+      //}
+      //else if (current == lxClassRefAttr) {
+      //   if (variable.extraparam == 0) {
+      //      variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), false);
+      //   }
+      //   else scope.raiseError(errInvalidHint, node);
+      //}
+      current = current.nextNode();
+   }
+
+   //if (size != 0 && variable.type != 0) {
+   //   variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, variable.extraparam);
+   //}
+   
+}
+
 //void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope)
 //{
 //   SNode targetNode = node.firstChild(lxObjectMask);
@@ -1796,97 +1796,97 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, /*ref_t& 
 //
 //   writer.removeBookmark();
 //}
-//
-//void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   SNode terminal = node.findChild(lxIdentifier, lxPrivate, lxExpression);
-//   if (terminal == lxExpression)
-//      terminal = terminal.findChild(lxIdentifier, lxPrivate);
-//
-//   ident_t identifier = terminal.identifier();
-//
-//   if (!scope.locals.exist(identifier)) {
-//      LexicalType variableType = lxVariable;
-//      int variableArg = 0;
-//      int size = 0;
-//      ident_t className = NULL;
-//
-//      ObjectInfo variable(okLocal);
-//      declareLocalAttributes(node, scope, variable, size);
-//
-//      ClassInfo localInfo;
-//      bool bytearray = false;
-//      _logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam);
-//      if (_logic->isEmbeddableArray(localInfo)) {
-//         bytearray = true;
-//         size = size * (-((int)localInfo.size));
-//      }
-//      else if (_logic->isEmbeddable(localInfo))
-//         size = _logic->defineStructSize(localInfo);
-//
-//      if (size > 0) {
-//         if (!allocateStructure(scope, size, bytearray, variable))
-//            scope.raiseError(errInvalidOperation, terminal);
-//
-//         // make the reservation permanent
-//         scope.saved = scope.reserved;
-//
-//         switch (localInfo.header.flags & elDebugMask)
-//         {
-//            case elDebugDWORD:
-//               variableType = lxIntVariable;
-//               break;
-//            case elDebugQWORD:
-//               variableType = lxLongVariable;
-//               break;
-//            case elDebugReal64:
-//               variableType = lxReal64Variable;
-//               break;
-//            case elDebugIntegers:
-//               variableType = lxIntsVariable;
-//               variableArg = size;
-//               break;
-//            case elDebugShorts:
-//               variableType = lxShortsVariable;
-//               variableArg = size;
-//               break;
-//            case elDebugBytes:
-//               variableType = lxBytesVariable;
-//               variableArg = size;
-//               break;
-//            default:
-//               if (isPrimitiveRef(variable.extraparam)) {
-//                  variableType = lxBytesVariable;
-//                  variableArg = size;
-//               }
-//               else {
-//                  variableType = lxBinaryVariable;
-//                  // HOTFIX : size should be provide only for dynamic variables
-//                  if (bytearray)
-//                     variableArg = size;
-//
-//                  if (variable.extraparam != 0) {
-//                     className = scope.moduleScope->module->resolveReference(variable.extraparam);
-//                  }
-//               }
-//               break;
-//         }
-//      }
-//      else variable.param = scope.newLocal();
-//
-//      writer.newNode(variableType, variableArg);
-//
-//      writer.appendNode(lxLevel, variable.param);
-//      writer.appendNode(lxIdentifier, identifier);
-//      if (!emptystr(className))
-//         writer.appendNode(lxClassName, className);
-//
-//      writer.closeNode();
-//
-//      scope.mapLocal(identifier, variable.param, variable.type, variable.extraparam, size);
-//   }
-//   else scope.raiseError(errDuplicatedLocal, terminal);
-//}
+
+void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   SNode terminal = node.findChild(lxIdentifier, lxPrivate, lxExpression);
+   if (terminal == lxExpression)
+      terminal = terminal.findChild(lxIdentifier, lxPrivate);
+
+   ident_t identifier = terminal.identifier();
+
+   if (!scope.locals.exist(identifier)) {
+      LexicalType variableType = lxVariable;
+      int variableArg = 0;
+      int size = 0;
+      ident_t className = NULL;
+
+      ObjectInfo variable(okLocal);
+      declareLocalAttributes(node, scope, variable, size);
+
+      ClassInfo localInfo;
+      bool bytearray = false;
+      _logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam);
+      //if (_logic->isEmbeddableArray(localInfo)) {
+      //   bytearray = true;
+      //   size = size * (-((int)localInfo.size));
+      //}
+      /*else */if (_logic->isEmbeddable(localInfo))
+         size = _logic->defineStructSize(localInfo);
+
+      if (size > 0) {
+         if (!allocateStructure(scope, size, bytearray, variable))
+            scope.raiseError(errInvalidOperation, terminal);
+
+         // make the reservation permanent
+         scope.saved = scope.reserved;
+
+         switch (localInfo.header.flags & elDebugMask)
+         {
+            case elDebugDWORD:
+               variableType = lxIntVariable;
+               break;
+            case elDebugQWORD:
+               variableType = lxLongVariable;
+               break;
+            case elDebugReal64:
+               variableType = lxReal64Variable;
+               break;
+            case elDebugIntegers:
+               variableType = lxIntsVariable;
+               variableArg = size;
+               break;
+            case elDebugShorts:
+               variableType = lxShortsVariable;
+               variableArg = size;
+               break;
+            case elDebugBytes:
+               variableType = lxBytesVariable;
+               variableArg = size;
+               break;
+            default:
+               if (isPrimitiveRef(variable.extraparam)) {
+                  variableType = lxBytesVariable;
+                  variableArg = size;
+               }
+               else {
+                  variableType = lxBinaryVariable;
+                  // HOTFIX : size should be provide only for dynamic variables
+                  if (bytearray)
+                     variableArg = size;
+
+                  if (variable.extraparam != 0) {
+                     className = scope.moduleScope->module->resolveReference(variable.extraparam);
+                  }
+               }
+               break;
+         }
+      }
+      else variable.param = scope.newLocal();
+
+      writer.newNode(variableType, variableArg);
+
+      writer.appendNode(lxLevel, variable.param);
+      writer.appendNode(lxIdentifier, identifier);
+      if (!emptystr(className))
+         writer.appendNode(lxClassName, className);
+
+      writer.closeNode();
+
+      scope.mapLocal(identifier, variable.param, /*variable.type, */variable.extraparam/*, size*/);
+   }
+   else scope.raiseError(errDuplicatedLocal, terminal);
+}
 
 void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
 {
@@ -3719,10 +3719,10 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 
             break;
          }
-//         case lxVariable:
-////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileVariable(writer, current, scope);
-//            break;
+         case lxVariable:
+//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileVariable(writer, current, scope);
+            break;
 //         case lxExtern:
 //            writer.newNode(lxExternFrame);
 //            compileCode(writer, current.findSubNode(lxCode), scope);

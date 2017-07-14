@@ -28,6 +28,7 @@ In development:
                  * uncomment compileExternalArguments
                  * uncomment optimizeSymbol
                  * uncomment defineOperatorMessage
+                 * uncomment isCompatible
                  * test primitive operation with message
                  * implicit conversions
                  * private methods
