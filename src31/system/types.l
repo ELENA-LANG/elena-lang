@@ -11,9 +11,10 @@ embeddable      = #8193.
 template        = #16391.
 extension       = #8203.
 stacksafe       = #8192.
-implicit        = #16387/*#8195*/.
+explicit        = #16387.
 
-__int8          = #11.
+__int           = #11.
+__real          = #14.
 __verb          = #20.
 __mssg          = #19.
 __subj          = #18.
@@ -47,12 +48,8 @@ __ifnotoperator = #4098.
 //
 //#22 #262144     __symbol.
 //#21 #524288     __extmssg.
-//#11 #131072     __int16.
-//#11 #262144     __int32.
 //#12 #262144     __dword.
 //#12 #262144     __ptr.
-//#13 #524288     __int64.
-//#14 #524288     __real64.
 
 /// Provides classes that describe the basic functionality
 
@@ -68,11 +65,11 @@ type bool    = system'BaseBoolValue.
 //type ref        :: system'Variable.
 
 type byte    = system'ByteNumber.
-//type short      :: system'ShortNumber.
-//type int        :: system'IntNumber.
-//type uint       :: system'UIntNumber.
-//type long       :: system'LongNumber.
-//type real       :: system'RealNumber.
+type short   = system'ShortNumber.
+type int     = system'IntNumber.
+type uint    = system'UIntNumber.
+type long    = system'LongNumber.
+type real    = system'RealNumber.
 //type char       :: system'CharValue.
 //type mssg       :: system'Message.
 //type ext_mssg   :: system'ExtensionMessage.

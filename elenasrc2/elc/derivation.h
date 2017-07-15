@@ -76,6 +76,7 @@ class DerivationReader : public _DerivationReader
       }
 
       bool isTypeAttribute(SNode terminal);
+      bool isAttribute(SNode terminal);
 
       void loadAttributeValues(SNode node, bool prefixMode = false);
       void loadParameters(SNode node);

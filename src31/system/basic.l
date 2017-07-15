@@ -282,36 +282,36 @@ class IntBaseNumber :: BaseNumber
 /// An unsigned 8 bit integer
 sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
 {
-    __int8 theValue(1).
+    __int theValue(1).
 
-    stacksafe implicit int:n
-    [
+//    stacksafe implicit int:n
+//    [
 //        theValue := n && 255.
-    ]
+//    ]
 
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        = 0.
-//
-//    /// Returns the minimal value (0)
-//    constructor min
-//        = 0.
-//
-//    /// Returns the maxial value (255)
-//    constructor max
-//        = 255.
+    /// Creates the object with a default value (0)
+    constructor new
+        = 0.
+
+    /// Returns the minimal value (0)
+    constructor min
+        = 0.
+
+    /// Returns the maxial value (255)
+    constructor max
+        = 255.
     
-//    /// Creates the object with a specified value
-//    stacksafe constructor new byte:value
-//        = value.
-//
-//    /// Creates the object with a specified value
-//    constructor new : aValue
-//        <= new byte:aValue.
-//
+    /// Creates the object with a specified value
+    stacksafe constructor new byte:value
+        = value.
+
+    /// Creates the object with a specified value
+    constructor new : aValue
+        <= new byte:aValue.
+
 //    /// Returns the value as a short integer
 //    short = ShortNumber new byte:$self.
-//
+
 //    /// Returns the value as an integer
 //    int = IntNumber new byte:$self.
 //
@@ -524,13 +524,13 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
 //    ]
 }
 
-//// --- ShortNumber ---
-//
-///// A signed 16 bit integer
-//sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable(short)
-//{
-//    __int16 theValue.
-//
+// --- ShortNumber ---
+
+/// A signed 16 bit integer
+sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable(short)
+{
+    __int theValue(2).
+
 //    stacksafe implicit int:n
 //    [
 //        (n < 0)
@@ -783,15 +783,15 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
 //        
 //        ^ aCode.
 //    ]        
-//}
-//
-//// --- IntNumber ---
-//
-///// A signed 32 bit integer
-//sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable(int,long,real,char,literal,wide)
-//{
-//    __int32 theValue.
-//
+}
+
+// --- IntNumber ---
+
+/// A signed 32 bit integer
+sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable(int)
+{
+    __int theValue(4).
+
 //    stacksafe implicit byte:n
 //    [
 //        theValue := n.
@@ -1051,17 +1051,17 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
 //    /// Negates the value
 //    stacksafe negative
 //        = 0 - theValue.
-//}
-//
-//
-//// --- UIntNumber ---
-//
-///// A unsigned 32 bit integer
-//
-//sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable(int,long,real,char,literal,wide)
-//{
-//    __int32 theValue.
-//
+}
+
+
+// --- UIntNumber ---
+
+/// A unsigned 32 bit integer
+
+sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable(int)
+{
+    __int theValue(4).
+
 //    stacksafe implicit byte:n
 //    [
 //        theValue := n.
@@ -1367,15 +1367,15 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
 //    /// Bitwise inversion
 //    stacksafe uint inverted
 //        => system'core_routines'__int.  
-//}
-//
-//// --- LongNumber ---
-//
-///// A signed 64 bit integer value
-//sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable(long,int,real,literal,wide)
-//{
-//    __int64 theValue.
-//    
+}
+
+// --- LongNumber ---
+
+/// A signed 64 bit integer value
+sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable(long)
+{
+//    __int theValue(8).
+    
 //    /// Returns the minimal value
 //    constructor min
 //        = -9223372036854775808l.
@@ -1633,15 +1633,15 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
 //    /// Negates the value
 //    stacksafe negative
 //        = 0l - theValue.
-//}
-//
-//// --- realNumber ---
-//
-///// A 64bit float numeric value
-//sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real,int,long,literal,wide)
-//{
-//    __real64 theValue.
-//
+}
+
+// --- realNumber ---
+
+/// A 64bit float numeric value
+sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real)
+{
+    __real theValue(8).
+
 //    stacksafe implicit int:n
 //    [
 //        realConvertor convert int:n vreal:$self.
@@ -1835,12 +1835,12 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
 //        
 //        ^ aCode
 //    ]
-//        
-////    /// Negates the value
-////    stacksafe negative
-////        = 0.0r - theValue.
-//}
-//
+        
+//    /// Negates the value
+//    stacksafe negative
+//        = 0.0r - theValue.
+}
+
 //// --- CharValue ---
 //
 ///// An UTF-32 character symbol

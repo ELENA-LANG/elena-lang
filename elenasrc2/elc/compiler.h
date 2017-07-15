@@ -821,9 +821,9 @@ private:
 
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
-//
-//   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-//   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+
+   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 

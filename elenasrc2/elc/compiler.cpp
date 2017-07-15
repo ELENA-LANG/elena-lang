@@ -4003,28 +4003,32 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, List<ref_t>
    IdentifierString signature;
    ref_t verb_id = 0;
    ref_t sign_id = 0;
+   bool strongSignature = false;
+   bool overloadList = false;
 
    SNode arg = node.findChild(lxMethodParameter, lxMessage, lxParamRefAttr);
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
 
    if (verb == lxNone) {
-      if (arg == lxMessage || arg == lxParamRefAttr) {
+      if (arg == lxMessage) {
          verb = arg;
          arg = verb.nextNode();
       }
    }
 
+   ref_t verbRef = 0;
    if (scope.message == 0) {
-      verb_id = _verbs.get(verb.identifier());
-      if (verb_id == 0) {
-         if (verb == lxReference) {
-            signature.append('$');
-            signature.append(verb.identifier());
-         }
-         else {
-            ref_t verbRef = scope.mapSubject(verb, signature);
+      if (verb == lxReference) {
+         strongSignature = true;
+         signature.append('$');
+         signature.append(verb.identifier());
+      }
+      else if (verb != lxNone) {
+         verb_id = _verbs.get(verb.identifier());
+         if (verb_id == 0) {
+            verbRef = scope.mapSubject(verb, signature);
             if (verbRef) {
-               if (arg == lxNone) {
+               if (arg == lxMethodParameter || arg == lxNone) {
                   signature.append('$');
                   signature.append(scope.moduleScope->module->resolveReference(verbRef));
                }
@@ -4035,8 +4039,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, List<ref_t>
    }
    else verb_id = getVerb(scope.message);
 
-   bool strongSignature = false;
-   bool overloadList = false;
    bool first = signature.Length() == 0;
    int paramCount = 0;
    // if method has generic (unnamed) argument list
@@ -4047,15 +4049,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, List<ref_t>
       if (scope.parameters.exist(terminal))
          scope.raiseError(errDuplicatedLocal, arg);
 
-//      // if it is typified argument
-//      if (verb_id == 0 && sign_id != 0 && paramCount == 0 && arg.nextNode() != lxMethodParameter) {
-//         ref_t paramRef = scope.moduleScope->subjectHints.get(sign_id);
-//         int size = sign_id != 0 ? _logic->defineStructSize(*scope.moduleScope,
-//            paramRef, 0, true) : 0;
-//
-//         scope.parameters.add(terminal, Parameter(index, sign_id, paramRef, size));
-//      }
-      /*else */scope.parameters.add(terminal, Parameter(index));
+      // if it is typified argument
+      if (verb_id == 0 && verbRef) {
+         //int size = sign_id != 0 ? _logic->defineStructSize(*scope.moduleScope,
+         //   paramRef, 0, true) : 0;
+
+         scope.parameters.add(terminal, Parameter(index, verbRef /*paramRef, size*/));
+         verbRef = 0;
+      }
+      else scope.parameters.add(terminal, Parameter(index));
 
       paramCount++;
 
@@ -4183,7 +4185,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, List<ref_t>
    }
 
    //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-   if (strongSignature && implicitMultimethods != NULL) {
+   if (strongSignature && implicitMultimethods != NULL && paramCount > 0) {
       ident_t messageName = scope.moduleScope->module->resolveSubject(getSignature(scope.message));
 
       int index = messageName.find('$');
@@ -4353,90 +4355,90 @@ void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, Cod
    }
 }
 
-//void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
-//{
-//   SNode expr = node.findChild(lxExpression);
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//   // find where the target constructor is declared in the current class
-//   size_t count = 0;
-//   ref_t messageRef = mapMessage(expr, scope, count);
-//
-//   ref_t classRef = classClassScope.reference;
-//   bool found = false;
-//
-//   // find where the target constructor is declared in the current class
-//   // but it is not equal to the current method
-//   if (methodScope->message != messageRef && classClassScope.info.methods.exist(messageRef)) {
-//      found = true;
-//   }
-//   // otherwise search in the parent class constructors
-//   else {
-//      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//      ref_t parent = classScope->info.header.parentRef;
-//      ClassInfo info;
-//      while (parent != 0) {
-//         moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(parent));
-//
-//         if (checkMethod(*moduleScope, info.header.classRef, messageRef) != tpUnknown) {
-//            classRef = info.header.classRef;
-//            found = true;
-//
-//            break;
-//         }
-//         else parent = info.header.parentRef;
-//      }
-//   }
-//   if (found) {
-//      if ((count != 0 && methodScope->parameters.Count() != 0) || node.existChild(lxCode)) {
-//         withFrame = true;
-//
-//         // new stack frame
-//         // stack already contains $self value
-//         writer.newNode(lxNewFrame);
-//         scope.level++;
-//      }
-//      else writer.newNode(lxExpression);
-//
-//      writer.newBookmark();
-//
-//      if (withFrame) {
-//         writer.appendNode(lxThisLocal, 1);
-//      }
-//      else writer.appendNode(lxResult);
-//
-//      writer.appendNode(lxCallTarget, classRef);
-//
-//      compileMessageParameters(writer, expr, scope, HINT_RESENDEXPR);
-//
-//      compileMessage(writer, expr, scope, ObjectInfo(okObject, classRef), messageRef, HINT_RESENDEXPR);
-//
-//      writer.removeBookmark();
-//      
-//      if (withFrame) {
-//         // HOT FIX : inject saving of the created object
-//         SNode codeNode = node.findChild(lxCode);
-//         if (codeNode != lxNone) {
-//            writer.newNode(lxAssigning);
-//            writer.appendNode(lxLocal, 1);
-//            writer.appendNode(lxResult);
-//            writer.closeNode();
-//         }
-//      }
-//      else writer.closeNode();
-//   }
-//   else scope.raiseError(errUnknownMessage, node);
-//}
-//
-//void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   if (isImportRedirect(node)) {
-//      importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).identifier(), scope.getMessageID());
-//   }
-//   else scope.raiseError(errInvalidOperation, node);
-//}
+void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
+{
+   SNode expr = node.findChild(lxExpression);
+
+   ModuleScope* moduleScope = scope.moduleScope;
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+   // find where the target constructor is declared in the current class
+   size_t count = 0;
+   ref_t messageRef = mapMessage(expr, scope, count);
+
+   ref_t classRef = classClassScope.reference;
+   bool found = false;
+
+   // find where the target constructor is declared in the current class
+   // but it is not equal to the current method
+   if (methodScope->message != messageRef && classClassScope.info.methods.exist(messageRef)) {
+      found = true;
+   }
+   // otherwise search in the parent class constructors
+   else {
+      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+      ref_t parent = classScope->info.header.parentRef;
+      ClassInfo info;
+      while (parent != 0) {
+         moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(parent));
+
+         if (checkMethod(*moduleScope, info.header.classRef, messageRef) != tpUnknown) {
+            classRef = info.header.classRef;
+            found = true;
+
+            break;
+         }
+         else parent = info.header.parentRef;
+      }
+   }
+   if (found) {
+      if ((count != 0 && methodScope->parameters.Count() != 0) || node.existChild(lxCode)) {
+         withFrame = true;
+
+         // new stack frame
+         // stack already contains $self value
+         writer.newNode(lxNewFrame);
+         scope.level++;
+      }
+      else writer.newNode(lxExpression);
+
+      writer.newBookmark();
+
+      if (withFrame) {
+         writer.appendNode(lxThisLocal, 1);
+      }
+      else writer.appendNode(lxResult);
+
+      writer.appendNode(lxCallTarget, classRef);
+
+      compileMessageParameters(writer, expr, scope, HINT_RESENDEXPR);
+
+      compileMessage(writer, expr, scope, ObjectInfo(okObject, classRef), messageRef, HINT_RESENDEXPR);
+
+      writer.removeBookmark();
+      
+      if (withFrame) {
+         // HOT FIX : inject saving of the created object
+         SNode codeNode = node.findChild(lxCode);
+         if (codeNode != lxNone) {
+            writer.newNode(lxAssigning);
+            writer.appendNode(lxLocal, 1);
+            writer.appendNode(lxResult);
+            writer.closeNode();
+         }
+      }
+      else writer.closeNode();
+   }
+   else scope.raiseError(errUnknownMessage, node);
+}
+
+void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   if (isImportRedirect(node)) {
+      importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).identifier(), scope.getMessageID());
+   }
+   else scope.raiseError(errInvalidOperation, node);
+}
 
 void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod)
 {
@@ -4564,18 +4566,18 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
    int preallocated = 0;
 
    SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
-   //if (bodyNode == lxDispatchCode) {
-   //   compileConstructorDispatchExpression(writer, bodyNode, codeScope);
+   if (bodyNode == lxDispatchCode) {
+      compileConstructorDispatchExpression(writer, bodyNode, codeScope);
 
-   //   writer.closeNode();
-   //   return;
-   //}
-   //else if (bodyNode == lxResendExpression) {
-   //   compileConstructorResendExpression(writer, bodyNode, codeScope, classClassScope, withFrame);
+      writer.closeNode();
+      return;
+   }
+   else if (bodyNode == lxResendExpression) {
+      compileConstructorResendExpression(writer, bodyNode, codeScope, classClassScope, withFrame);
 
-   //   bodyNode = bodyNode.findChild(lxCode);
-   //}
-   /*else */if (bodyNode == lxReturning) {
+      bodyNode = bodyNode.findChild(lxCode);
+   }
+   else if (bodyNode == lxReturning) {
       retExpr = true;
    }
    // if no redirect statement - call virtual constructor implicitly

@@ -294,7 +294,18 @@ bool DerivationReader::DerivationScope :: isTypeAttribute(SNode terminal)
 
    ref_t attr = moduleScope->attributes.get(name);
 
-   return attr != 0 && !isAttribute(attr);
+   return attr != 0 && !::isAttribute(attr);
+}
+
+bool DerivationReader::DerivationScope :: isAttribute(SNode terminal)
+{
+   ident_t name = terminal.identifier();
+   if (emptystr(name))
+      name = terminal.findChild(lxTerminal).identifier();
+
+   ref_t attr = moduleScope->attributes.get(name);
+
+   return attr != 0 && ::isAttribute(attr);
 }
 
 ref_t DerivationReader::DerivationScope :: mapTemplate(SNode terminal, int prefixCounter)
@@ -1481,26 +1492,24 @@ bool DerivationReader :: generateMethodScope(SNode node, DerivationScope& scope,
    if (current != lxNone) {
       // try to resolve the message name
       SNode lastAttr = findLastAttribute(attributes);
+      SNode firstMember = node.findChild(lxMethodParameter, lxAttribute, lxAttributeValue);
 
-      if (node.firstChild(lxExprMask) == lxMethodParameter) {
-         // HOTFIX : recognize type
-         current = lastAttr.prevNode();
-         if (current == lxAttribute && scope.isTypeAttribute(lastAttr.findChild(lxIdentifier, lxPrivate))) {
-            lastAttr = lxMessage;
-            lastAttr = current;
-         }
-
+      if (scope.isAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) && firstMember == lxAttributeValue) {
+         // HOTFIX : recognize explicit / generic attributes
       }
-
-      //// HOTFIX : recognize generic attribute      
-      //if (!scope.isAttribute(lastAttr)) {
-      //   bool isVerb = _verbs.exist(lastAttr.findChild(lxIdentifier).findChild(lxTerminal).identifier());
-
-      //   
+      else {
+         if (node.firstChild(lxExprMask) == lxMethodParameter) {
+            // HOTFIX : recognize type
+            current = lastAttr.prevNode();
+            if (current == lxAttribute && scope.isTypeAttribute(lastAttr.findChild(lxIdentifier, lxPrivate))) {
+               lastAttr = lxMessage;
+               lastAttr = current;
+            }
+         }
 
          // mark the last message as a name
          lastAttr = lxNameAttr;
-      //}
+      }
       
       node = lxClassMethod;
 
