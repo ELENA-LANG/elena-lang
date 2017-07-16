@@ -67,3 +67,44 @@ procedure __byte.get&inverted[1]
   quitn 1
   
 end
+
+procedure __short.get&inverted[1]
+
+  newn   class : system'ShortNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
+procedure __int.get&inverted[1]
+
+  newn   class : system'IntNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
+procedure __int."eval&readHashCodeTo$system@system@varof#1&IntNumber[2]"
+
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+
+procedure __long.get&inverted[1]
+
+  newn   class : system'LongNumber 8
+  bcopya
+  aloadsi 1    // ; load source
+  lnot         // ; invert
+  acopyb
+  quitn 1
+  
+end

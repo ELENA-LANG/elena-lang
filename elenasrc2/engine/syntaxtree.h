@@ -225,7 +225,7 @@ enum LexicalType
    lxNameAttr        = 0x20029,
    lxTypeAttr        = 0x2002A,
    lxStacksafeAttr   = 0x2002B,
-   lxTemplateType    = 0x2002C,
+   lxTemplateAttribute = 0x2002C,
    lxEmbeddableAttr  = 0x2002D,
    lxBoxableAttr     = 0x2002E,
    lxClassRefAttr    = 0x2002F,

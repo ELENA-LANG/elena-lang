@@ -34,6 +34,9 @@ In development:
                  * test primitive operation with message
                  * implicit conversions
                  * private methods
+                 * test operation with wrapper 
+                 * no need for template class class
+                 * explicit constant
 
                  * check package functionality
 

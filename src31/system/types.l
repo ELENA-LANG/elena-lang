@@ -12,8 +12,10 @@ template        = #16391.
 extension       = #8203.
 stacksafe       = #8192.
 explicit        = #16387.
+const           = #8201.
 
 __int           = #11.
+__dword         = #12.
 __real          = #14.
 __verb          = #20.
 __mssg          = #19.
@@ -41,14 +43,12 @@ __ifnotoperator = #4098.
 //#8196           limited.
 //#8206           mixin.
 //#8209           __tape_mixin.
-//#8201           const.
 //#8204           nonstructural.
 //#8200           string.
 //#8208           singleton.
 //
 //#22 #262144     __symbol.
 //#21 #524288     __extmssg.
-//#12 #262144     __dword.
 //#12 #262144     __ptr.
 
 /// Provides classes that describe the basic functionality
@@ -70,7 +70,7 @@ type int     = system'IntNumber.
 type uint    = system'UIntNumber.
 type long    = system'LongNumber.
 type real    = system'RealNumber.
-//type char       :: system'CharValue.
+type char    = system'CharValue.
 //type mssg       :: system'Message.
 //type ext_mssg   :: system'ExtensionMessage.
 //
@@ -94,12 +94,12 @@ type real    = system'RealNumber.
 ////#subject mssgarray  = system'MessageArray.
 //type bitarray   :: system'BitArray.
 //type bitset     :: system'BitArray32.
-//
-///// An instance of system'LiteralValue class. 
-//type literal    :: system'LiteralValue.
-//
-//type wide       :: system'WideLiteralValue.
-//
+
+/// An instance of system'LiteralValue class. 
+type literal = system'LiteralValue.
+
+type wide    = system'WideLiteralValue.
+
 //// === function types ===
 //type func       :: system'BaseFunction.
 //

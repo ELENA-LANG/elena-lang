@@ -15,11 +15,11 @@ using namespace _ELENA_;
 
 typedef ClassInfo::Attribute Attribute;
 
-//inline bool isWrappable(int flags)
-//{
-//   return !test(flags, elWrapper) && test(flags, elSealed);
-//}
-//
+inline bool isWrappable(int flags)
+{
+   return !test(flags, elWrapper) && test(flags, elSealed);
+}
+
 //inline bool isPrimitiveStructArrayRef(ref_t classRef)
 //{
 //   switch (classRef)
@@ -515,8 +515,8 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
       // if the method included
       if (*it) {
          ref_t message = it.key();
-         if (getParamCount(message) > 0) {
-            ident_t messageName = scope.module->resolveSubject(getSignature(it.key()));
+         if (getParamCount(message) > 0 && getSignature(message) != 0) {
+            ident_t messageName = scope.module->resolveSubject(getSignature(message));
 
             int index = messageName.find('$');
             if (index != NOTFOUND_POS) {
@@ -914,26 +914,26 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 //   if (test(info.header.flags, elExtension)) {
 //      info.header.flags |= elSealed;
 //   }
-//
-//   // verify if the class may be a wrapper
-//   if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
-//      test(info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
-//   {
-//      if (test(info.header.flags, elStructureRole)) {
-//         ClassInfo::FieldInfo field = *info.fieldTypes.start();
-//
-//         ClassInfo fieldInfo;
-//         if (defineClassInfo(scope, fieldInfo, field.value1, true) && isEmbeddable(fieldInfo)) {
-//            // wrapper around embeddable object should be marked as embeddable wrapper
-//            info.header.flags |= elEmbeddableWrapper;
-//
-//            if ((info.header.flags & elDebugMask) == 0)
-//               info.header.flags |= fieldInfo.header.flags & elDebugMask;
-//         }
-//      }
-//      else info.header.flags |= elWrapper;
-//   }
-//
+
+   // verify if the class may be a wrapper
+   if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
+      test(info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
+   {
+      if (test(info.header.flags, elStructureRole)) {
+         ClassInfo::FieldInfo field = *info.fieldTypes.start();
+
+         ClassInfo fieldInfo;
+         if (defineClassInfo(scope, fieldInfo, field.value1, true) && isEmbeddable(fieldInfo)) {
+            // wrapper around embeddable object should be marked as embeddable wrapper
+            info.header.flags |= elEmbeddableWrapper;
+
+            if ((info.header.flags & elDebugMask) == 0)
+               info.header.flags |= fieldInfo.header.flags & elDebugMask;
+         }
+      }
+      else info.header.flags |= elWrapper;
+   }
+
 //   // adjust literal wrapper
 //   if ((info.header.flags & elDebugMask) == elDebugLiteral) {
 //      info.header.flags &= ~elDebugMask;
@@ -1007,9 +1007,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //      case V_STRING:
 //         attrValue = elDebugLiteral;
 //         return true;
-//      case V_CONST:
-//         attrValue = elReadOnlyRole;
-//         return true;
+      case V_CONST:
+         attrValue = elReadOnlyRole;
+         return true;
       case V_EXTENSION:
          attrValue = elExtension;
          return true;

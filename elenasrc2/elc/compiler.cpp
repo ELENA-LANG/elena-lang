@@ -1483,6 +1483,7 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope
    // HOTFIX : include self as a parameter
    paramCount++;
 
+   size_t signIndex = virtualReference.Length();
    virtualReference.append('0' + (char)paramCount);
    virtualReference.append('#');
    virtualReference.append(0x20 + (char)verb_id);
@@ -1490,6 +1491,8 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope
    if (sign_ref != 0) {
       virtualReference.append('&');
       virtualReference.append(scope.module->resolveSubject(sign_ref));
+
+      virtualReference.replaceAll('\'','@', signIndex);
    }
 
    ref_t reference = 0;
@@ -4093,7 +4096,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, List<ref_t>
          overloadList = true;
          strongSignature = true;
 
-         class_ref = scope.moduleScope->mapReference(arg.identifier());
+         if (arg == lxParamRefAttr) {
+            class_ref = scope.moduleScope->mapReference(arg.identifier());
+         }
+         else class_ref = scope.moduleScope->mapReference(subject.identifier());
          if (!class_ref)
             scope.raiseError(errInvalidSubject, arg);
 
@@ -4956,6 +4962,11 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
          // for primitive types size should be specified
          size = sizeHint;
+      }
+      else if (sizeHint == 8 && classRef == V_INT32) {
+         // HOTFIX : turn int32 flag into int64
+         classRef = V_INT64;
+         size = 8;
       }
    //   else if (size > 0) {
    //      size *= sizeHint;
@@ -6516,54 +6527,6 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
 //   SNode current = node.findChild(lxMessage);
 //
 //   return current.existChild(lxAttributeValue);
-//}
-//
-//void Compiler :: copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer)
-//{
-//   writer.newNode(node.type, node.argument);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxIdentifier || current == lxPrivate || current == lxReference) {
-//         copyIdentifier(writer, current);
-//      }
-////      else if (current == lxTemplateParam) {
-////         ref_t subjRef = scope.subjects.get(current.argument);
-////         ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
-////         if (subjName.find('$') != NOTFOUND_POS) {
-////            writer.newNode(lxReference, subjName);
-////         }
-////         else writer.newNode(lxIdentifier, subjName);
-////
-////         SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-////         writer.closeNode();
-////      }
-//      else if (current == lxTemplateField && current.argument >= 0) {
-//         ident_t fieldName = retrieveIt(scope.fields.start(), current.argument).key();
-//
-//         writer.newNode(lxIdentifier, fieldName);
-//
-//         SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-//         writer.closeNode();
-//      }
-//      else if (current == lxTemplateType) {
-//         ref_t subjRef = scope.subjects.get(current.argument);
-//         ident_t subjName = scope.moduleScope->module->resolveSubject(subjRef);
-//         writer.newNode(lxTypeAttr, subjName);
-//
-//         SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-//         writer.closeNode();
-//      }
-//      else if (current == lxTypeAttr || current == lxClassRefAttr) {
-//         writer.appendNode(current.type, current.identifier());
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   writer.closeNode();
-//
-//   SyntaxTree::moveNodes(writer, buffer, lxClassMethod, lxClassField);
 //}
 //
 //bool Compiler :: generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope)

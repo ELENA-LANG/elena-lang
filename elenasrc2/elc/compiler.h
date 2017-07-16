@@ -917,7 +917,6 @@ private:
    void compileImplementations(SNode node, ModuleScope& scope);
 
 //   void copyAttributeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, bool variableMode*/);
-//   void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SyntaxTree& buffer);
 //
 //   bool generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope);
 //   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
