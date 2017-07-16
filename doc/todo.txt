@@ -3,6 +3,8 @@ In development:
 ------                              
 
               xdev - multimethod
+                 * explicit conversion
+
                  * uncomment compileOperator
                  * uncomment tweakClassFlags
                  * uncomment mapTerminal

@@ -255,8 +255,8 @@ private:
       SubjectMap        extensionHints;
       ExtensionMap      extensions;
 
-//      // action hints
-//      SubjectMap        actionHints;
+      // action hints
+      SubjectMap        actionHints;
 
       ref_t packageReference;
 
@@ -313,11 +313,11 @@ private:
 //
       bool loadAttributes(_Module* module);
       void loadExtensions(_Module* module, bool& duplicateExtensions);
-//      void loadActions(_Module* module);
-//
+      void loadActions(_Module* module);
+
       virtual bool saveAttribute(ident_t typeName, ref_t classReference, bool internalAttr);
 //      bool saveExtension(ref_t message, ref_t type, ref_t role);
-//      void saveAction(ref_t message, ref_t reference);
+      void saveAction(ref_t message, ref_t reference);
 
       void validateReference(SNode terminal, ref_t reference);
 
@@ -334,7 +334,7 @@ private:
       {
          duplicateAttributes = loadAttributes(extModule);
          loadExtensions(extModule, duplicateExtensions);
-//         loadActions(extModule);
+         loadActions(extModule);
       }
 
       ref_t mapAnonymous();

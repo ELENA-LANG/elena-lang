@@ -14,14 +14,14 @@
 
 using namespace _ELENA_;
 
-////void test2(SNode node)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      test2(current);
-////      current = current.nextNode();
-////   }
-////}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 #define HINT_CLOSURE_MASK     0xC0008800
@@ -702,23 +702,23 @@ void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, 
    project->raiseError(message, sourcePath, row, col, terminal);
 }
 
-//void Compiler::ModuleScope :: loadActions(_Module* extModule)
-//{
-//   if (extModule) {
-//      ReferenceNs sectionName(extModule->Name(), ACTION_SECTION);
-//
-//      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
-//      if (section) {
-//         MemoryReader metaReader(section);
-//         while (!metaReader.Eof()) {
-//            ref_t mssg_ref = importMessage(extModule, metaReader.getDWord(), module);
-//            ref_t class_ref = importReference(extModule, metaReader.getDWord(), module);
-//
-//            actionHints.add(mssg_ref, class_ref);
-//         }
-//      }
-//   }
-//}
+void Compiler::ModuleScope :: loadActions(_Module* extModule)
+{
+   if (extModule) {
+      ReferenceNs sectionName(extModule->Name(), ACTION_SECTION);
+
+      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
+      if (section) {
+         MemoryReader metaReader(section);
+         while (!metaReader.Eof()) {
+            ref_t mssg_ref = importMessage(extModule, metaReader.getDWord(), module);
+            ref_t class_ref = importReference(extModule, metaReader.getDWord(), module);
+
+            actionHints.add(mssg_ref, class_ref);
+         }
+      }
+   }
+}
 
 bool Compiler::ModuleScope :: loadAttributes(_Module* extModule)
 {
@@ -807,18 +807,18 @@ void Compiler::ModuleScope :: loadExtensions(_Module* extModule, bool& duplicate
 //   }
 //   else return false;
 //}
-//
-//void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
-//{
-//   ReferenceNs sectionName(module->Name(), ACTION_SECTION);
-//
-//   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//   metaWriter.writeDWord(mssg_ref);
-//   metaWriter.writeDWord(reference);
-//
-//   actionHints.add(mssg_ref, reference);
-//}
+
+void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
+{
+   ReferenceNs sectionName(module->Name(), ACTION_SECTION);
+
+   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+   metaWriter.writeDWord(mssg_ref);
+   metaWriter.writeDWord(reference);
+
+   actionHints.add(mssg_ref, reference);
+}
 
 bool Compiler::ModuleScope :: saveAttribute(ident_t name, ref_t attr, bool internalType)
 {
@@ -4166,17 +4166,17 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, List<ref_t>
          sign_id = scope.moduleScope->module->mapSubject(signature, false);
       }
 
-//      if (test(scope.hints, tpSealed | tpConversion)) {
-//         if (verb_id == EVAL_MESSAGE_ID && paramCount == 1) {
-//            verb_id = PRIVATE_MESSAGE_ID;
-//         }
+      if (test(scope.hints, tpSealed | tpConversion)) {
+         if (verb_id == EVAL_MESSAGE_ID && paramCount == 1) {
+            verb_id = PRIVATE_MESSAGE_ID;
+         }
 //         else if (verb_id == GET_MESSAGE_ID && paramCount == 0 && sign_id != 0 && test(scope.getClassFlags(false), elNestedClass)) {
 //            // if it is an implicit nested constructor
 //            sign_id = 0;
 //            verb_id = PRIVATE_MESSAGE_ID;
 //         }
-//         else scope.raiseError(errIllegalMethod, node);
-//      }
+         else scope.raiseError(errIllegalMethod, node);
+      }
 //      if (test(scope.hints, tpSealed) && verb == lxPrivate) {
 //         verb_id = PRIVATE_MESSAGE_ID;
 //      }
@@ -4185,7 +4185,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, List<ref_t>
    }
 
    //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-   if (strongSignature && implicitMultimethods != NULL && paramCount > 0) {
+   if (strongSignature && implicitMultimethods != NULL && paramCount > 0 && verb_id != PRIVATE_MESSAGE_ID) {
       ident_t messageName = scope.moduleScope->module->resolveSubject(getSignature(scope.message));
 
       int index = messageName.find('$');
@@ -5120,25 +5120,20 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       current = current.nextNode();
    }
    
-//   if (getVerb(message) == PRIVATE_MESSAGE_ID) {
-//      // if it is private message set private hint and save it as EVAL one
-//      hintChanged = true;
-//      hint |= tpPrivate;
-//
-//      scope.info.methodHints.add(Attribute(overwriteVerb(message, EVAL_MESSAGE_ID), maHint), hint);
-//
-//      // if it is an explicit constant conversion
-//      if (getSignature(message) != 0) {
-//         ident_t signature = scope.moduleScope->module->resolveSubject(getSignature(message));
-//         size_t pos = signature.find('&');
-//         if (test(hint, tpConversion) && pos != NOTFOUND_POS && getParamCount(message) == 1) {
-//            // add it to the action list
-//            IdentifierString postfix(signature, pos);
-//
-//            scope.moduleScope->saveAction(encodeMessage(scope.moduleScope->module->mapSubject(postfix, false), PRIVATE_MESSAGE_ID, 1), scope.reference);
-//         }
-//      }
-//   }
+   if (getVerb(message) == PRIVATE_MESSAGE_ID) {
+      // if it is private message set private hint and save it as EVAL one
+      hintChanged = true;
+      hint |= tpPrivate;
+
+      scope.info.methodHints.add(Attribute(overwriteVerb(message, EVAL_MESSAGE_ID), maHint), hint);
+
+      // if it is an explicit constant conversion
+      if (getSignature(message) != 0) {
+         if (test(hint, tpConversion) && getParamCount(message) == 1) {
+            scope.moduleScope->saveAction(message, scope.reference);
+         }
+      }
+   }
 
    if (hintChanged) {
       scope.info.methodHints.exclude(Attribute(message, maHint));
@@ -6245,7 +6240,7 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
       switch (current) {
          case lxClass:
          {
-            //ident_t name = scope.module->resolveReference(current.argument);
+            ident_t name = scope.module->resolveReference(current.argument);
 
             // compile class
             ClassScope classScope(&scope, current.argument);

@@ -59,7 +59,7 @@
 //#define V_NOSTRUCT       (ref_t)-8204
 //#define V_ACTION         (ref_t)-8205
 //#define V_GROUP          (ref_t)-8206
-//#define V_PRELOADED      (ref_t)-8207
+#define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
 //#define V_TAPEGROUP      (ref_t)-8209
 
@@ -91,8 +91,8 @@ enum MethodHint
    tpSealed      = 0x0001,
    tpClosed      = 0x0002,
    tpNormal      = 0x0003,
-////      tpDispatcher = 0x04,
-//   tpPrivate     = 0x0005,
+//      tpDispatcher = 0x04,
+   tpPrivate     = 0x0005,
    tpStackSafe   = 0x0010,
    tpEmbeddable  = 0x0020,
 //   tpGeneric     = 0x0040,

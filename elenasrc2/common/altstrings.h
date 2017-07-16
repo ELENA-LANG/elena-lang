@@ -325,13 +325,13 @@ public:
       return *(_string + index);
    }
 
-//   void replaceAll(T oldCh, T newCh, int index)
-//   {
-//      for (size_t i = index ; i < getlength(_string) ; i++) {
-//         if (_string[i] == oldCh)
-//            _string[i] = newCh;
-//      }
-//   }
+   void replaceAll(T oldCh, T newCh, size_t index)
+   {
+      for (size_t i = index ; i < getlength(_string) ; i++) {
+         if (_string[i] == oldCh)
+            _string[i] = newCh;
+      }
+   }
 
    void copy(const T* s, size_t length)
    {
