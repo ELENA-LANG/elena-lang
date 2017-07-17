@@ -1660,14 +1660,14 @@
 //        
 //    int length :: outnprop(readLengthTo).
 //}
-//
-//// === Convertors ===
-//
-//// --- literalConvertor ---
-//
-///// A literal convertor
-//class literalConvertor =
-//{
+
+// === Convertors ===
+
+// --- literalConvertor ---
+
+/// A literal convertor
+class literalConvertor =
+{
 //    /// Converts the parameter to the literal value
 //    stacksafe convert char:aValue bytearray:buffer vint:length
 //        => system'core_routines'__literalconvertor.
@@ -1890,13 +1890,13 @@
 //    /// Returns a parameter                
 //    stacksafe literal convert literal:aLiteral
 //        = aLiteral.
-//}.
-//
-//// --- wideConvertor ---
-//
-///// A wide literal convertor
-//class wideConvertor =
-//{
+}.
+
+// --- wideConvertor ---
+
+/// A wide literal convertor
+class wideConvertor =
+{
 //    /// Converts the parameter to the literal value
 //    stacksafe convert char:aValue shortarray:buffer vint:length
 //        => system'core_routines'__wideconvertor.
@@ -2122,8 +2122,8 @@
 //    /// Returns a parameter
 //    stacksafe wide convert wide:aLiteral
 //        = aLiteral.
-//}.
-//
+}.
+
 //// === Enumerators / Indexers
 //
 //// --- LiteralEnumerator ---

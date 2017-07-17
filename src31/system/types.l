@@ -13,6 +13,8 @@ extension       = #8203.
 stacksafe       = #8192.
 explicit        = #16387.
 const           = #8201.
+singleton       = #8208.
+generic         = #8202.
 
 __int           = #11.
 __dword         = #12.
@@ -34,7 +36,6 @@ __ifnotoperator = #4098.
 
 //#8194           static.
 ////#template(-8207)         preloaded {}
-//#8202 #8195     generic.
 //#8205           action.
 ////#template(-4099) w1 {}
 ////#template(-4100) w2 {}
@@ -45,7 +46,6 @@ __ifnotoperator = #4098.
 //#8209           __tape_mixin.
 //#8204           nonstructural.
 //#8200           string.
-//#8208           singleton.
 //
 //#22 #262144     __symbol.
 //#21 #524288     __extmssg.

@@ -127,7 +127,7 @@ public:
       okConstantClass,                // param - reference, extraparam - class reference
       okLiteralConstant,              // param - reference
       okWideLiteralConstant,          // param - reference
-//      okCharConstant,                 // param - reference
+      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
       okUIntConstant,                 // param - reference, extraparam - imm argument
       okLongConstant,                 // param - reference
@@ -239,10 +239,7 @@ private:
    // - ModuleScope -
    struct ModuleScope : _CompilerScope
    {
-      _ProjectManager* project;
-      _Module*         debugModule;
-
-      ref_t            sourcePathRef;
+      _ProjectManager* project;      
 
       // default namespaces
       List<ident_t> defaultNs;
@@ -270,7 +267,7 @@ private:
 
       ObjectInfo mapObject(SNode identifier);
 
-      ref_t mapReference(ident_t reference, bool existing = false);
+      virtual ref_t mapReference(ident_t reference, bool existing = false);
       virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/);
 
       ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
@@ -339,12 +336,34 @@ private:
 
       ref_t mapAnonymous();
 
+      virtual ref_t mapTemplateClass(ident_t templateName);
+
 //      bool defineForward(ident_t forward, ident_t referenceName)
 //      {
 //         ObjectInfo info = mapReferenceInfo(referenceName, false);
 //      
 //         return forwards.add(forward, info.param, true);
 //      }
+
+      virtual ident_t resolveFullName(ref_t reference)
+      {
+         ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
+         if (isTemplateWeakReference(referenceName)) {
+            return project->resolveForward(referenceName);
+         }
+         else return referenceName;
+      }
+
+      virtual _Memory* mapSection(ref_t reference, bool existing)
+      {
+         ref_t mask = reference & mskAnyRef;
+
+         ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
+         if (isTemplateWeakReference(referenceName)) {
+            return module->mapSection(module->mapReference(project->resolveForward(referenceName)) | mask, existing);
+         }
+         else return module->mapSection(reference, existing);
+      }
 
       ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
@@ -456,7 +475,7 @@ private:
       void save()
       {
          // save class meta data
-         MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
+         MemoryWriter metaWriter(moduleScope->mapSection(reference | mskMetaRDataRef, false), 0);
          metaWriter.Memory()->trim(0);
          info.save(&metaWriter);
       }
@@ -513,7 +532,7 @@ private:
 //      bool         withOpenArg;
       bool         stackSafe;
       bool         classEmbeddable;
-//      bool         generic;
+      bool         generic;
       bool         extensionMode;
       bool         multiMethod;
       

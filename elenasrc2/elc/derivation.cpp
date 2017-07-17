@@ -498,10 +498,8 @@ bool DerivationReader::DerivationScope :: generateClassName()
    ident_t templateName = moduleScope->module->resolveReference(templateRef);
 
    NamespaceName rootNs(templateName);
-   ReferenceNs name;
-   name.copy(moduleScope->module->Name());
-   size_t index = name.Length();
-   name.combine(templateName);
+   IdentifierString name;
+   name.append(templateName);
 
    SubjectMap::Iterator it = attributes.start();
    while (!it.Eof()) {
@@ -515,15 +513,11 @@ bool DerivationReader::DerivationScope :: generateClassName()
 
       it++;
    }
-   name.replaceAll('\'', '@', index + 1);
+   name.replaceAll('\'', '@', 0);
 
-   reference = moduleScope->module->mapReference(name, true);
-   if (!reference) {
-      reference = moduleScope->module->mapReference(name, false);
+   reference = moduleScope->mapTemplateClass(name);
 
-      return true;
-   }
-   else return false;
+   return moduleScope->mapSection(reference | mskVMTRef, true) == NULL;
 }
 
 _Memory* DerivationReader::DerivationScope :: loadTemplateTree()
@@ -1616,7 +1610,9 @@ bool DerivationReader :: generateMethodScope(SNode node, DerivationScope& scope,
          if (node.firstChild(lxExprMask) == lxMethodParameter) {
             // HOTFIX : recognize type
             current = lastAttr.prevNode();
-            if (current == lxAttribute && scope.isTypeAttribute(lastAttr.findChild(lxIdentifier, lxPrivate))) {
+            if (current == lxAttribute && (scope.isTypeAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) 
+               || scope.isSubject(current.findChild(lxIdentifier, lxPrivate)))) 
+            {
                lastAttr = lxMessage;
                lastAttr = current;
             }

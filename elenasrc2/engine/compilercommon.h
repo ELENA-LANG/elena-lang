@@ -54,7 +54,7 @@
 //#define V_DYNAMIC        (ref_t)-8199
 //#define V_STRING         (ref_t)-8200
 #define V_CONST          (ref_t)-8201
-//#define V_GENERIC        (ref_t)-8202
+#define V_GENERIC        (ref_t)-8202
 #define V_EXTENSION      (ref_t)-8203
 //#define V_NOSTRUCT       (ref_t)-8204
 //#define V_ACTION         (ref_t)-8205
@@ -95,7 +95,7 @@ enum MethodHint
    tpPrivate     = 0x0005,
    tpStackSafe   = 0x0010,
    tpEmbeddable  = 0x0020,
-//   tpGeneric     = 0x0040,
+   tpGeneric     = 0x0040,
 //   tpAction      = 0x0080,
    tpIfBranch    = 0x0100,
    tpIfNotBranch = 0x0200,
@@ -122,8 +122,10 @@ struct _CompilerScope
    };
 
    ident_t  sourcePath;
+   ref_t    sourcePathRef;
 
    _Module* module;
+   _Module* debugModule;
 
 //   // cached references
    ref_t superReference;
@@ -150,17 +152,22 @@ struct _CompilerScope
 
    virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/) = 0;
    virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
+   virtual ref_t mapReference(ident_t reference, bool existing = false) = 0;
+   virtual ref_t mapTemplateClass(ident_t templateName) = 0;
 
    virtual bool saveAttribute(ident_t name, ref_t attr, bool internalAttr) = 0;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
    virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
+   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
+
    _CompilerScope()
       : attributes(0)
    {
       sourcePath = NULL;
-      module = NULL;
+      sourcePathRef = 0;
+      debugModule = module = NULL;
       intReference = boolReference = superReference = 0;
       signatureReference = verbReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
@@ -260,7 +267,7 @@ public:
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated

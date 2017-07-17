@@ -173,11 +173,11 @@
 //        $self throw.  
 //    ]
 //}
-//
-//// --- FormatException ---
-//
-//class FormatException :: exceptionof(FormatError)
-//{
+
+// --- FormatException ---
+
+class FormatException //:: exceptionof(FormatError)
+{
 //    constructor new
 //    [
 //        theMessage := "A number is not in the correct format".
@@ -190,12 +190,12 @@
 //        theMessage := aMessage literal.
 //        theCallStack := CallStack new.
 //    ]
-//}
-//
-//// --- OutOfRangeException ---
-//
-//class OutOfRangeException :: exceptionof(OutOfRangeError)
-//{
+}
+
+// --- OutOfRangeException ---
+
+class OutOfRangeException //:: exceptionof(OutOfRangeError)
+{
 //    constructor new literal:message
 //    [
 //        theMessage := message.
@@ -209,8 +209,8 @@
 //    /// Creates the exception
 //    constructor new:aMessage
 //        <= new literal:aMessage.
-//}
-//
+}
+
 ////// --- IndexOutOfRangeException ---
 ////
 ////#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
@@ -229,11 +229,11 @@
 ////    #constructor new:aMessage
 ////        <= new &literal:(aMessage literal).
 ////}
-//
-//// --- InvalidArgumentException ---
-//
-//class InvalidArgumentException :: exceptionof(InvalidArgumentError)
-//{
+
+// --- InvalidArgumentException ---
+
+class InvalidArgumentException //:: exceptionof(InvalidArgumentError)
+{
 //    constructor new literal:message
 //    [
 //        theMessage := message.
@@ -247,8 +247,8 @@
 //    /// Creates the exception
 //    constructor new:aMessage
 //        <= new literal:aMessage.
-//}
-//
+}
+
 //// --- InvalidOperationException ---
 //
 //class InvalidOperationException :: exceptionof(InvalidOperationError)

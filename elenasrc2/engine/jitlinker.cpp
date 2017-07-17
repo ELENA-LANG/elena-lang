@@ -185,7 +185,7 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& ve
          size_t len = getlength(signature);
          size_t start = overloadIndex + 1;
          while (start < len) {
-            size_t end = signature.find('$', start, len);
+            size_t end = signature.find(start, '$', len);
 
             content.copy(signature.c_str() + start, end - start);
 

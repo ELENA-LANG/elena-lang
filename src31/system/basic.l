@@ -3,19 +3,17 @@ template ref :: template_subj
 {
     template_subj $value.
 
-//    set : val
-//    [
-//        $value := val template_subj.
-//    ]
-    
-//    get = $value.
-    
     stacksafe set template_subj:val
     [
         $value := val.
     ]
 
-    template_subj = $value.
+    template_subj value = $value.
+
+    set value:val
+    [
+        $value := val template_subj.
+    ]
 
     cast : verb to:target => $value.
 
@@ -34,7 +32,7 @@ template varof :: template_subj
     
     stacksafe explicit(template_subj val)
     [
-        $value := val.
+//        $value := val.
     ]
     
 //    set : val
@@ -44,10 +42,10 @@ template varof :: template_subj
     
     stacksafe set template_subj:val
     [
-        $value := val.
+  //      $value := val.
     ]
     
-    template_subj = $value.
+//    template_subj value = $value.
     
 //    append : val
 //    [
@@ -93,15 +91,15 @@ template varof :: template_subj
 //
 //    get = $value.
     
-    cast : verb to:target => $value.
+//    cast : verb to:target => $value.
 
     /// Dispatches the verb to the target object with generic subject
-    cast : aVerb to:aTarget with:aParam => $value.
-    
-    equal : anObject
-        => $value.
-
-    embeddable dispatch => $value.
+//    cast : aVerb to:aTarget with:aParam => $value.
+//    
+//    equal : anObject
+//        => $value.
+//
+//    embeddable dispatch => $value.
 }
 
 // === Numeric Variables ===
@@ -1861,173 +1859,173 @@ sealed const embeddable struct CharValue :: BaseValue, dispatchable(char)
 {
     __dword theValue(4).
 
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        <= new char:$0.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new char:value
-//        = value.
-//
-//    /// Creates the object with specified value
-//    constructor new : anOperand
-//        <= new char:(anOperand cast:%convert to:3).
-//
-//    /// Creates the object with specified numeric value
-//    stacksafe constructor new int:anOperand
-//        <= new char:(charConvertor convert int:anOperand).
-//
-//    /// Returns the minimal possible character value (0)
-//    constructor min
-//        = $0.
-//
-//    /// Returns the maximal possible character value (010FFFFh)
-//    constructor max
-//        = $010FFFFh.
-//
-//    stacksafe bool equal int:val
-//        = theValue == val.
-//
-//    /// Clones the value
-//    clone = CharValue new char:$self.
-//
-//    /// Returns the literal value
-//    stacksafe literal = system'literalConvertor convert char:$self.
-//
-//    /// Returns the wide literal value
-//    wide = system'wideConvertor convert char:$self.
-//    
-//    /// Reads the number of bytes to represent the symbol
-//    stacksafe readLengthTo vint:aLength
-//        => system'core_routines'__char.
-//
-//    /// Reads the number of bytes to represent the symbol
-//    stacksafe readWideLength vint:aRetVal
-//    [
-//        int aLength := 0.
-//        $self readLengthTo vint:aLength.
-//        
-//        aLength := aLength + 1.
-//        aLength := aLength / 2.
-//
-//        aRetVal int := aLength
-//    ]
-//        
-//    /// Retuns the number of bytes to represent the symbol        
-//    stacksafe embeddable int length
-//    [
-//        int aLength := 0.
-//        $self readLengthTo vint:aLength.
-//        
-//        ^ aLength
-//    ]
-//    
-//    /// Retuns the number of short integers to represent the symbol
-//    stacksafe embeddable int wideLength
-//    [
-//        int aLength := 0.
-//        $self readWideLengthTo vint:aLength.
-//        
-//        ^ aLength.
-//    ]
-//
-//    /// Compares values
-//    stacksafe bool equal char:anOperand 
-//        = theValue == anOperand.
-//
-//    /// Compares values
-//    stacksafe bool less char:anOperand 
-//        = theValue < anOperand.
-//        
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCodeTo vint:aCode 
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCodeTo vint:aCode.
-//        
-//        ^ aCode.
-//    ]
+    /// Creates the object with a default value (0)
+    constructor new
+        <= new char:$0.
+
+    /// Creates the object with specified value
+    stacksafe constructor new char:value
+        = value.
+
+    /// Creates the object with specified value
+    constructor new : anOperand
+        <= new char:(anOperand cast:%convert to:3).
+
+    /// Creates the object with specified numeric value
+    stacksafe constructor new int:anOperand
+        <= new char:(charConvertor convert int:anOperand).
+
+    /// Returns the minimal possible character value (0)
+    constructor min
+        = $0.
+
+    /// Returns the maximal possible character value (010FFFFh)
+    constructor max
+        = $010FFFFh.
+
+    stacksafe bool equal int:val
+        = theValue == val.
+
+    /// Clones the value
+    clone = CharValue new char:$self.
+
+    /// Returns the literal value
+    stacksafe literal = system'literalConvertor convert char:$self.
+
+    /// Returns the wide literal value
+    wide = system'wideConvertor convert char:$self.
+    
+    /// Reads the number of bytes to represent the symbol
+    stacksafe readLengthTo vint:aLength
+        => system'core_routines'__char.
+
+    /// Reads the number of bytes to represent the symbol
+    stacksafe readWideLength vint:aRetVal
+    [
+        int aLength := 0.
+        $self readLengthTo vint:aLength.
+        
+        aLength := aLength + 1.
+        aLength := aLength / 2.
+
+        aRetVal int := aLength
+    ]
+        
+    /// Retuns the number of bytes to represent the symbol        
+    stacksafe embeddable int length
+    [
+        int aLength := 0.
+        $self readLengthTo vint:aLength.
+        
+        ^ aLength
+    ]
+    
+    /// Retuns the number of short integers to represent the symbol
+    stacksafe embeddable int wideLength
+    [
+        int aLength := 0.
+        $self readWideLengthTo vint:aLength.
+        
+        ^ aLength.
+    ]
+
+    /// Compares values
+    stacksafe bool equal char:anOperand 
+        = theValue == anOperand.
+
+    /// Compares values
+    stacksafe bool less char:anOperand 
+        = theValue < anOperand.
+        
+    // Reads the object hash code into the output parameter
+    stacksafe readHashCodeTo vint:aCode 
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        $self readHashCodeTo vint:aCode.
+        
+        ^ aCode.
+    ]
 }
 
-//// --- nil constant ---
-//
-///// A nil value
-//singleton nil :: dispatchable(void)
-//{
-//    /// Returns true if the specified object is nil.
-//    equal : anObject 
-//    [
-//        ($nil == anObject)
-//            ? [ ^ true. ].
-//        
-//        ($super equal:anObject)
-//            ? [ ^ true. ].
-//        
-//        ^ false.
-//    ]
-//    
-//    /// Returns nil
-//    ///
-//    /// Any typecasting message will be handled and nil value returned
-//    generic get = $nil.
-//}
+// --- nil constant ---
 
-//// === Basic Factory symbols ==
-//
-//class BaseExtender
-//{
-//    object theObject.
-//    
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    equal : anObject
-//        => theObject.
-//      
-//    /// Dispatches the verb to the target object
-//    cast : aVerb to:aTarget => theObject.
-//    
-//    /// Dispatches the verb to the target object
-//    cast : aVerb to:aTarget with:aParam => theObject.
-//    
-//    dispatch => theObject.
-//}
-//
-///// A generic variable. 
-/////
-///// Extends an assigned value
-//sealed class Variable :: nvarof(object)
-//{
-//    /// Creates the empty variable
-//    constructor new
-//    [
-//    ]        
-//        
-//    /// Creates the variable
-//    constructor new : value
-//    [
-//        $value := value.
-//    ]
-//    
-//    set : value
-//    [
-//        $value := value.
-//    ]
-//    
-//    append : val
-//    [
-//        ($nil == $value)
-//            ? [ $value := val ]
-//            ! [ $value := $value + val ]
-//    ]
-//    
-//    reduce : val
-//    [
-//        ($nil == $value)
-//            ? [ system'InvalidOperationException new; raise ]
-//            ! [ $value := $value - val ]
-//    ]
+/// A nil value
+singleton nil //:: dispatchable(void)
+{
+    /// Returns true if the specified object is nil.
+    equal : anObject 
+    [
+        ($nil == anObject)
+            ? [ ^ true. ].
+        
+        ($super equal:anObject)
+            ? [ ^ true. ].
+        
+        ^ false.
+    ]
+    
+    /// Returns nil
+    ///
+    /// Any typecasting message will be handled and nil value returned
+    generic get = $nil.
+}
+
+// === Basic Factory symbols ==
+
+class BaseExtender
+{
+    object theObject.
+    
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    equal : anObject
+        => theObject.
+      
+    /// Dispatches the verb to the target object
+    cast : aVerb to:aTarget => theObject.
+    
+    /// Dispatches the verb to the target object
+    cast : aVerb to:aTarget with:aParam => theObject.
+    
+    dispatch => theObject.
+}
+
+/// A generic variable. 
+///
+/// Extends an assigned value
+sealed class Variable :: varof(object)
+{
+    /// Creates the empty variable
+    constructor new
+    [
+    ]        
+        
+    /// Creates the variable
+    constructor new : value
+    [
+        $value := value.
+    ]
+    
+    set : value
+    [
+        $value := value.
+    ]
+    
+    append : val
+    [
+        ($nil == $value)
+            ? [ $value := val ]
+            ! [ $value := $value + val ]
+    ]
+    
+    reduce : val
+    [
+        ($nil == $value)
+            ? [ system'InvalidOperationException new; raise ]
+            ! [ $value := $value - val ]
+    ]
 //
 //    multiplyBy : val
 //    [
@@ -2043,46 +2041,46 @@ sealed const embeddable struct CharValue :: BaseValue, dispatchable(char)
 //            ? [ system'InvalidOperationException new; raise ]
 //            ! [ $value := $value / val ]
 //    ]    
-//}
-//
-//// --- KeyValue ---
-//
-///// A key - object pair
-/////
-///// Extends the object with a key property
-//sealed class KeyValue
-//{
-//    object theKey.
-//    object theObject.
-//    
-//    /// Creates a new objext
-//    constructor new key:aKey value:anObject
-//    [
-//        theKey := aKey.
-//        theObject := anObject.
-//    ]
-//    
-//    /// Returns the key
-//    key = theKey.
-//    
-//    /// Returns the key
-//    value = theObject.
-//
-//    set value:anObject
-//    [
-//        theObject := anObject.
-//    ]
-//    
-//    /// Dispatches the verb to the target object
-//    cast : aVerb to:aTarget => theObject.
-//    
-//    /// Dispatches the verb to the target object
-//    cast : aVerb to:aTarget with:aParam => theObject.
-//            
-//    /// Redirects the incoming messages to the object
-//    dispatch => theObject.
-//}
-//
+}
+
+// --- KeyValue ---
+
+/// A key - object pair
+///
+/// Extends the object with a key property
+sealed class KeyValue
+{
+    object theKey.
+    object theObject.
+    
+    /// Creates a new objext
+    constructor new key:aKey value:anObject
+    [
+        theKey := aKey.
+        theObject := anObject.
+    ]
+    
+    /// Returns the key
+    key = theKey.
+    
+    /// Returns the key
+    value = theObject.
+
+    set value:anObject
+    [
+        theObject := anObject.
+    ]
+    
+    /// Dispatches the verb to the target object
+    cast : aVerb to:aTarget => theObject.
+    
+    /// Dispatches the verb to the target object
+    cast : aVerb to:aTarget with:aParam => theObject.
+            
+    /// Redirects the incoming messages to the object
+    dispatch => theObject.
+}
+
 //// --- DTO ---
 //
 //class DTO :: dispatchable(dto)
@@ -2096,255 +2094,255 @@ sealed const embeddable struct CharValue :: BaseValue, dispatchable(char)
 /// A byte convertor
 class byteConvertor =
 {
-//    /// Converts a character into a byte value and saves the result into an output parameter
-//    stacksafe convert char:aValue vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//        
-//    /// Converts a short integer into a byte value and saves the result into an output parameter
-//    stacksafe byte convert short:aValue vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//        
-//    /// Converts an integer into a byte value and saves the result into an output parameter
-//    stacksafe byte convert int:aValue vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//
-//    /// Converts an integer into a byte value and saves the result into an output parameter
-//    stacksafe byte convert uint:aValue vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//
-//    /// Converts a long integer into a byte value and saves the result into an output parameter
-//    stacksafe convert long:aValue vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//        
-//    /// Converts a real number into a byte value and saves the result into an output parameter
-//    stacksafe convert real:aValue vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//        
-//    /// Converts a literal value into a byte value and saves the result into an output parameter
-//    stacksafe convert literal:aValue vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//
-//    /// Converts a wide literal value into a byte value and saves the result into an output parameter
-//    stacksafe convert wide:aValue vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//        
-//    /// Returns the parameter        
-//    stacksafe byte convert byte:anInt
-//        = ByteNumber new byte:anInt.
-//        
-//    /// Converts a character into a byte value
-//    stacksafe byte convert char:aValue
-//    [
-//        byte aRetVal := 0.
-//        $self convert char:aValue vbyte:aRetVal.
-//        
-//        ^ ByteNumber new byte:aRetVal
-//    ]
-//
-//    /// Converts a short integer into a byte value
-//    stacksafe byte convert short:aValue
-//    [
-//        byte aRetVal := 0.
-//        $self convert short:aValue vbyte:aRetVal.
-//        
-//        ^ ByteNumber new byte:aRetVal
-//    ]
-//        
-//    /// Converts an integer into a byte value
-//    stacksafe byte convert int:aValue
-//    [
-//        byte aRetVal := 0.
-//        $self convert int:aValue vbyte:aRetVal.
-//        
-//        ^ ByteNumber new byte:aRetVal
-//    ]
-//        
-//    /// Converts an integer into a byte value
-//    stacksafe byte convert uint:aValue
-//    [
-//        byte aRetVal := 0.
-//        $self convert uint:aValue vbyte:aRetVal.
-//        
-//        ^ ByteNumber new byte:aRetVal
-//    ]
-//
-//    /// Converts a long integer into a byte value
-//    stacksafe byte convert long:aValue
-//    [
-//        byte aRetVal := 0.
-//        $self convert long:aValue vbyte:aRetVal.
-//        
-//        ^ ByteNumber new byte:aRetVal
-//    ]
-//
-//    /// Converts a real number into a byte value
-//    stacksafe byte convert real:aValue
-//    [
-//        byte aRetVal := 0.
-//        $self convert real:aValue vbyte:aRetVal.
-//        
-//        ^ ByteNumber new byte:aRetVal
-//    ]
-//
-//    /// Converts a literal value into a byte value
-//    stacksafe byte convert literal:aLiteral
-//    [
-//        byte aValue := 0.
-//        $self convert literal:aLiteral vbyte:aValue.
-//        
-//        ^ ByteNumber new byte:aValue
-//    ]
-//                
-//    /// Converts a wide literal value into a byte value
-//    stacksafe byte convert wide:aLiteral
-//    [
-//        byte aValue := 0. 
-//        $self convert wide:aLiteral vbyte:aValue.
-//        
-//        ^ ByteNumber new byte:aValue
-//    ]
-//        
-//    byte convert : anObject
-//        = anObject cast:%convert to:$self.
+    /// Converts a character into a byte value and saves the result into an output parameter
+    stacksafe convert char:aValue vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+        
+    /// Converts a short integer into a byte value and saves the result into an output parameter
+    stacksafe byte convert short:aValue vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+        
+    /// Converts an integer into a byte value and saves the result into an output parameter
+    stacksafe byte convert int:aValue vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+
+    /// Converts an integer into a byte value and saves the result into an output parameter
+    stacksafe byte convert uint:aValue vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+
+    /// Converts a long integer into a byte value and saves the result into an output parameter
+    stacksafe convert long:aValue vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+        
+    /// Converts a real number into a byte value and saves the result into an output parameter
+    stacksafe convert real:aValue vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+        
+    /// Converts a literal value into a byte value and saves the result into an output parameter
+    stacksafe convert literal:aValue vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+
+    /// Converts a wide literal value into a byte value and saves the result into an output parameter
+    stacksafe convert wide:aValue vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+        
+    /// Returns the parameter        
+    stacksafe byte convert byte:anInt
+        = ByteNumber new byte:anInt.
+        
+    /// Converts a character into a byte value
+    stacksafe byte convert char:aValue
+    [
+        byte aRetVal := 0.
+        $self convert char:aValue vbyte:aRetVal.
+        
+        ^ ByteNumber new byte:aRetVal
+    ]
+
+    /// Converts a short integer into a byte value
+    stacksafe byte convert short:aValue
+    [
+        byte aRetVal := 0.
+        $self convert short:aValue vbyte:aRetVal.
+        
+        ^ ByteNumber new byte:aRetVal
+    ]
+        
+    /// Converts an integer into a byte value
+    stacksafe byte convert int:aValue
+    [
+        byte aRetVal := 0.
+        $self convert int:aValue vbyte:aRetVal.
+        
+        ^ ByteNumber new byte:aRetVal
+    ]
+        
+    /// Converts an integer into a byte value
+    stacksafe byte convert uint:aValue
+    [
+        byte aRetVal := 0.
+        $self convert uint:aValue vbyte:aRetVal.
+        
+        ^ ByteNumber new byte:aRetVal
+    ]
+
+    /// Converts a long integer into a byte value
+    stacksafe byte convert long:aValue
+    [
+        byte aRetVal := 0.
+        $self convert long:aValue vbyte:aRetVal.
+        
+        ^ ByteNumber new byte:aRetVal
+    ]
+
+    /// Converts a real number into a byte value
+    stacksafe byte convert real:aValue
+    [
+        byte aRetVal := 0.
+        $self convert real:aValue vbyte:aRetVal.
+        
+        ^ ByteNumber new byte:aRetVal
+    ]
+
+    /// Converts a literal value into a byte value
+    stacksafe byte convert literal:aLiteral
+    [
+        byte aValue := 0.
+        $self convert literal:aLiteral vbyte:aValue.
+        
+        ^ ByteNumber new byte:aValue
+    ]
+                
+    /// Converts a wide literal value into a byte value
+    stacksafe byte convert wide:aLiteral
+    [
+        byte aValue := 0. 
+        $self convert wide:aLiteral vbyte:aValue.
+        
+        ^ ByteNumber new byte:aValue
+    ]
+        
+    byte convert : anObject
+        = anObject cast:%convert to:$self.
 }.
 
 /// A 16bit integer convertor
 class shortConvertor =
 {
-//    /// Converts a character into a short integer value and saves the result into an output parameter
-//    stacksafe convert char:aValue vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts a byte value into a short integer value and saves the result into an output parameter
-//    stacksafe convert byte:aValue vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts an integer into a short integer value and saves the result into an output parameter
-//    stacksafe convert int:aValue vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts an integer into a short integer value and saves the result into an output parameter
-//    stacksafe convert uint:aValue vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts a long integer into a short integer value and saves the result into an output parameter
-//    stacksafe convert long:aValue vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts a real number into a short integer value and saves the result into an output parameter
-//    stacksafe convert real:aValue vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//
-//    /// Converts a literal string into a short integer value and saves the result into an output parameter
-//    stacksafe convert literal:aValue vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts a wide literal string into a short integer value and saves the result into an output parameter
-//    stacksafe convert wide:aValue vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Returns a short integer value        
-//    stacksafe short convert short:anInt
-//        = ShortNumber new short:anInt.
-//        
-//    /// Converts a byte value into a short integer value
-//    stacksafe short convert byte:aValue
-//    [
-//        short aRetVal := 0.
-//        $self convert byte:aValue vshort:aRetVal.
-//        
-//        ^ ShortNumber new short:aRetVal
-//    ]
-//
-//    /// Converts an integer into a short integer value
-//    stacksafe short convert int:aValue
-//    [
-//        short aRetVal := 0.
-//        $self convert int:aValue vshort:aRetVal.
-//        
-//        ^ ShortNumber new short:aRetVal
-//    ]
-//
-//    /// Converts an integer into a short integer value
-//    stacksafe short convert uint:aValue
-//    [
-//        short aRetVal := 0.
-//        $self convert uint:aValue vshort:aRetVal.
-//        
-//        ^ ShortNumber new short:aRetVal
-//    ]
-//
-//    /// Converts a long integer into a short integer value
-//    stacksafe short convert long:aValue
-//    [
-//        short aRetVal := 0.
-//        $self convert long:aValue vshort:aRetVal.
-//        
-//        ^ ShortNumber new short:aRetVal
-//    ]
-//        
-//    /// Converts a real number into a short integer value
-//    stacksafe short convert real:aValue
-//    [
-//        short aRetVal := 0.
-//        $self convert real:aValue vshort:aRetVal.
-//        
-//        ^ ShortNumber new short:aRetVal
-//    ]
-//        
-//    /// Converts a character into a short integer value
-//    stacksafe short convert char:aValue
-//    [
-//        short aRetVal := 0.
-//        $self convert char:aValue vshort:aRetVal.
-//        
-//        ^ ShortNumber new short:aRetVal
-//    ]
-//        
-//    /// Converts a literal string into a short integer value
-//    stacksafe short convert literal:aValue
-//    [
-//        short aRetVal := 0.
-//        $self convert literal:aValue vshort:aRetVal.
-//        
-//        ^ ShortNumber new short:aRetVal
-//    ]
-//        
-//    /// Converts a wide literal string into a short integer value
-//    stacksafe short convert wide:aValue
-//    [
-//        short aRetVal := 0.
-//        $self convert wide:aValue vshort:aRetVal.
-//        
-//        ^ ShortNumber new short:aRetVal
-//    ]
-//        
-//    short convert : anObject
-//        = anObject cast:%convert to:$self.
+    /// Converts a character into a short integer value and saves the result into an output parameter
+    stacksafe convert char:aValue vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts a byte value into a short integer value and saves the result into an output parameter
+    stacksafe convert byte:aValue vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts an integer into a short integer value and saves the result into an output parameter
+    stacksafe convert int:aValue vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts an integer into a short integer value and saves the result into an output parameter
+    stacksafe convert uint:aValue vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts a long integer into a short integer value and saves the result into an output parameter
+    stacksafe convert long:aValue vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts a real number into a short integer value and saves the result into an output parameter
+    stacksafe convert real:aValue vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+
+    /// Converts a literal string into a short integer value and saves the result into an output parameter
+    stacksafe convert literal:aValue vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts a wide literal string into a short integer value and saves the result into an output parameter
+    stacksafe convert wide:aValue vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Returns a short integer value        
+    stacksafe short convert short:anInt
+        = ShortNumber new short:anInt.
+        
+    /// Converts a byte value into a short integer value
+    stacksafe short convert byte:aValue
+    [
+        short aRetVal := 0.
+        $self convert byte:aValue vshort:aRetVal.
+        
+        ^ ShortNumber new short:aRetVal
+    ]
+
+    /// Converts an integer into a short integer value
+    stacksafe short convert int:aValue
+    [
+        short aRetVal := 0.
+        $self convert int:aValue vshort:aRetVal.
+        
+        ^ ShortNumber new short:aRetVal
+    ]
+
+    /// Converts an integer into a short integer value
+    stacksafe short convert uint:aValue
+    [
+        short aRetVal := 0.
+        $self convert uint:aValue vshort:aRetVal.
+        
+        ^ ShortNumber new short:aRetVal
+    ]
+
+    /// Converts a long integer into a short integer value
+    stacksafe short convert long:aValue
+    [
+        short aRetVal := 0.
+        $self convert long:aValue vshort:aRetVal.
+        
+        ^ ShortNumber new short:aRetVal
+    ]
+        
+    /// Converts a real number into a short integer value
+    stacksafe short convert real:aValue
+    [
+        short aRetVal := 0.
+        $self convert real:aValue vshort:aRetVal.
+        
+        ^ ShortNumber new short:aRetVal
+    ]
+        
+    /// Converts a character into a short integer value
+    stacksafe short convert char:aValue
+    [
+        short aRetVal := 0.
+        $self convert char:aValue vshort:aRetVal.
+        
+        ^ ShortNumber new short:aRetVal
+    ]
+        
+    /// Converts a literal string into a short integer value
+    stacksafe short convert literal:aValue
+    [
+        short aRetVal := 0.
+        $self convert literal:aValue vshort:aRetVal.
+        
+        ^ ShortNumber new short:aRetVal
+    ]
+        
+    /// Converts a wide literal string into a short integer value
+    stacksafe short convert wide:aValue
+    [
+        short aRetVal := 0.
+        $self convert wide:aValue vshort:aRetVal.
+        
+        ^ ShortNumber new short:aRetVal
+    ]
+        
+    short convert : anObject
+        = anObject cast:%convert to:$self.
 }.
 
-///// An Unicode character convertor
-//class charConvertor =
-//{
-//    /// Converts a byte value into a character and saves the result into an output parameter
-//    stacksafe convert byte:aValue vchar:aRetVal
-//        => system'core_routines'__charconvertor.
-//
-//    /// Converts a short integer into a character and saves the result into an output parameter
-//    stacksafe convert short:aValue vchar:aRetVal
-//        => system'core_routines'__charconvertor.
-//
-//    /// Converts an integer into a character and saves the result into an output parameter
-//    stacksafe convert int:aValue vchar:aRetVal
-//        => system'core_routines'__charconvertor.
-//        
-//    /// Returns a parameter        
-//    stacksafe char convert char:aChar
-//        = CharValue new char:aChar.
-//  
+/// An Unicode character convertor
+class charConvertor =
+{
+    /// Converts a byte value into a character and saves the result into an output parameter
+    stacksafe convert byte:aValue vchar:aRetVal
+        => system'core_routines'__charconvertor.
+
+    /// Converts a short integer into a character and saves the result into an output parameter
+    stacksafe convert short:aValue vchar:aRetVal
+        => system'core_routines'__charconvertor.
+
+    /// Converts an integer into a character and saves the result into an output parameter
+    stacksafe convert int:aValue vchar:aRetVal
+        => system'core_routines'__charconvertor.
+        
+    /// Returns a parameter        
+    stacksafe char convert char:aChar
+        = CharValue new char:aChar.
+  
 //    stacksafe $convert int:anIndex literal:aLiteral vchar:char
 //        => system'core_routines'__charconvertor.
-//        
+        
 //    stacksafe $convert int:anIndex bytearray:aLiteral vchar:char
 //        => system'core_routines'__charconvertor.
 //  
@@ -2421,7 +2419,7 @@ class shortConvertor =
 //        
 //    char convert : anObject
 //        = anObject cast:%convert to:$self.
-//}.
+}.
 
 /// An integer convertor
 class intConvertor =

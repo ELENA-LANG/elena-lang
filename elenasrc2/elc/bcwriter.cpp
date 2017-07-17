@@ -1414,39 +1414,39 @@ void ByteCodeWriter :: writeDebugInfoStopper(MemoryWriter* debug)
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: save(CommandTape& tape, _Module* module, _Module* debugModule, int sourcePathRef)
+void ByteCodeWriter :: save(CommandTape& tape, _CompilerScope& scope)
 {
    ByteCodeIterator it = tape.start();
    while (!it.Eof()) {
       if (*it == blBegin) {
          ref_t reference = (*it).additional;
          if ((*it).Argument() == bsClass) {
-            writeClass(reference, ++it, module, debugModule, sourcePathRef);
+            writeClass(reference, ++it, scope);
          }
          else if ((*it).Argument() == bsSymbol) {
-            writeSymbol(reference, ++it, module, debugModule, sourcePathRef, false);
+            writeSymbol(reference, ++it, scope.module, scope.debugModule, scope.sourcePathRef, false);
          }
          else if ((*it).Argument() == bsInitializer) {
-            writeSymbol(reference, ++it, module, debugModule, sourcePathRef, true);
+            writeSymbol(reference, ++it, scope.module, scope.debugModule, scope.sourcePathRef, true);
          }
       }
       it++;
    }
 }
 
-void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef)
+void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _CompilerScope& compilerScope)
 {
    // initialize bytecode writer
-   MemoryWriter codeWriter(module->mapSection(reference | mskClassRef, false));
+   MemoryWriter codeWriter(compilerScope.mapSection(reference | mskClassRef, false));
 
    // initialize vmt section writers
-   MemoryWriter vmtWriter(module->mapSection(reference | mskVMTRef, false));
+   MemoryWriter vmtWriter(compilerScope.mapSection(reference | mskVMTRef, false));
 
    vmtWriter.writeDWord(0);                              // save size place holder
    size_t classPosition = vmtWriter.Position();
 
    // copy class meta data header + vmt size
-   MemoryReader reader(module->mapSection(reference | mskMetaRDataRef, true));
+   MemoryReader reader(compilerScope.mapSection(reference | mskMetaRDataRef, true));
    ClassInfo info;
    info.load(&reader);
 
@@ -1466,16 +1466,16 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
    scope.vmt = &vmtWriter;
 
    // create debug info if debugModule available
-   if (debugModule) {
-      MemoryWriter debugWriter(debugModule->mapSection(DEBUG_LINEINFO_ID, false));
-      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
+   if (compilerScope.debugModule) {
+      MemoryWriter debugWriter(compilerScope.debugModule->mapSection(DEBUG_LINEINFO_ID, false));
+      MemoryWriter debugStringWriter(compilerScope.debugModule->mapSection(DEBUG_STRINGS_ID, false));
 
       scope.debugStrings = &debugStringWriter;
       scope.debug = &debugWriter;
-      scope.defaultNameRef = sourcePathRef;
+      scope.defaultNameRef = compilerScope.sourcePathRef;
 
      // save class debug info
-      writeClassDebugInfo(debugModule, &debugWriter, &debugStringWriter, module->resolveReference(reference & ~mskAnyRef), info.header.flags);
+      writeClassDebugInfo(compilerScope.debugModule, &debugWriter, &debugStringWriter, compilerScope.module->resolveReference(reference & ~mskAnyRef), info.header.flags);
       writeFieldDebugInfo(info, &debugWriter, &debugStringWriter);
 
       writeVMT(classPosition, it, scope);

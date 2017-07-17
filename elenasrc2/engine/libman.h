@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of the base class implementing
 //      ELENA Library manager.
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef libmanH
@@ -112,6 +112,7 @@ public:
    _Module* resolveNative(ident_t referenceName, LoadResult& result, ref_t& reference);
    _Module* resolveCore(ref_t reference, LoadResult& result);
    virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
+   virtual _Module* resolveWeakModule(ident_t weakName, LoadResult& result, ref_t& reference);
    virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference);
 
    void addListener(_JITLoaderListener* listener)

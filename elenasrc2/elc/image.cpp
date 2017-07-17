@@ -246,6 +246,20 @@ ident_t ExecutableImage :: retrieveReference(_Module* module, ref_t reference, r
          if (!emptystr(resolvedName))  {
             referenceName = resolvedName;
          }
+         else if (isTemplateWeakReference(referenceName)) {
+            // COMPILER MAGIC : try to find a template implementation
+            ref_t resolvedRef = 0;
+            _Module* refModule = _project->resolveWeakModule(referenceName, resolvedRef, true);
+            if (refModule != nullptr) {
+               _project->addForward(referenceName, refModule->resolveReference(resolvedRef));
+            }
+
+            resolvedName = _project->resolveForward(referenceName);
+            if (!emptystr(resolvedName)) {
+               referenceName = resolvedName;
+            }
+            else throw JITUnresolvedException(referenceName);
+         }
          else throw JITUnresolvedException(referenceName);
       }
       return referenceName;

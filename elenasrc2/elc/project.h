@@ -180,10 +180,12 @@ public:
    }
 
    virtual ident_t resolveForward(ident_t forward);
+   virtual bool addForward(ident_t forward, ident_t reference);
 
    // loader
    virtual _Module* loadModule(ident_t package, bool silentMode);
 
+   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false);
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
    virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
 

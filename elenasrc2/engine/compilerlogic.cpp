@@ -499,10 +499,10 @@ bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
 }
 
-//bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
-//}
+bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
+}
 
 bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
 {
@@ -1049,9 +1049,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_EMBEDDABLE:
          attrValue = tpEmbeddable;
          return true;
-      //case V_GENERIC:
-      //   attrValue = tpGeneric;
-      //   return true;
+      case V_GENERIC:
+         attrValue = (tpGeneric | tpSealed);
+         return true;
       case V_SEALED:
          attrValue = tpSealed;
          return true;

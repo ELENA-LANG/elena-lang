@@ -10,7 +10,7 @@
 #define bcwriterH 1
 
 #include "bytecode.h"
-#include "syntaxtree.h"
+#include "compilercommon.h"
 
 namespace _ELENA_
 {
@@ -113,7 +113,7 @@ class ByteCodeWriter
    void writeProcedure(ByteCodeIterator& it, Scope& scope);
    void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
    void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef, bool appendMode);
-   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef);
+   void writeClass(ref_t reference, ByteCodeIterator& it, _CompilerScope& scope);
 
    void declareInitializer(CommandTape& tape, ref_t reference);
    void declareClass(CommandTape& tape, ref_t reference);
@@ -321,7 +321,7 @@ public:
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic);
    void generateConstantList(SyntaxTree::Node node, _Module* module, ref_t reference);
 
-   void save(CommandTape& tape, _Module* module, _Module* debugModule, int sourcePathRef);
+   void save(CommandTape& tape, _CompilerScope& scope);
 
    int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
    {
