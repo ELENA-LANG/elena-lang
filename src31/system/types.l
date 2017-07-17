@@ -15,6 +15,8 @@ explicit        = #16387.
 const           = #8201.
 singleton       = #8208.
 generic         = #8202.
+static          = #8194.
+dynamic         = #8199.
 
 __int           = #11.
 __dword         = #12.
@@ -34,13 +36,11 @@ __ifnotoperator = #4098.
 //#16393          method.
 //#16392          field.
 
-//#8194           static.
 ////#template(-8207)         preloaded {}
 //#8205           action.
 ////#template(-4099) w1 {}
 ////#template(-4100) w2 {}
 ////#template(-4101) w3 {}
-//#8199           dynamic.
 //#8196           limited.
 //#8206           mixin.
 //#8209           __tape_mixin.
@@ -81,16 +81,16 @@ type char    = system'CharValue.
 //
 //type subject    :: system'Signature.
 //type symbol_ref :: system'Symbol.
-//
-//// === basic dynamic types ===
-//type bytearray  :: system'ByteArray.
-//type shortarray :: system'ShortArray.
+
+// === basic dynamic types ===
+type bytearray  = system'ByteArray.
+type shortarray = system'ShortArray.
 //type intarray   :: system'IntArray.
 //type intmatrix  :: system'IntMatrix.
 //type realarray  :: system'RealArray.
 //type realmatrix :: system'RealMatrix.
 //type chararray  :: system'CharArray.
-//type array      :: system'Array.
+type array      = system'Array.
 ////#subject mssgarray  = system'MessageArray.
 //type bitarray   :: system'BitArray.
 //type bitset     :: system'BitArray32.

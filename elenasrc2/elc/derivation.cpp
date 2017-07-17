@@ -62,6 +62,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsL7Operation:
          _writer.newNode(lxOperator);
          break;
+      case nsArrayOperation:
+         _writer.newNode(lxOperator, REFER_MESSAGE_ID);
+         break;
       case nsMessageOperation:
          _writer.newNode(lxMessage);
          break;
@@ -241,9 +244,12 @@ inline int readSizeValue(SNode node, int radix)
    return val.toLong(radix);
 }
 
-inline void copyOperator(SyntaxWriter& writer, SNode ident)
+inline void copyOperator(SyntaxWriter& writer, SNode ident, int operator_id)
 {
-   if (emptystr(ident.identifier())) {
+   if (operator_id != 0) {
+      writer.newNode(lxOperator, operator_id);
+   }
+   else if (emptystr(ident.identifier())) {
       SNode terminal = ident.findChild(lxTerminal);
       if (terminal != lxNone) {
          writer.newNode(lxOperator, terminal.identifier());
@@ -762,7 +768,11 @@ bool DerivationReader :: generateTemplate(SyntaxWriter& writer, DerivationScope&
 //               //scope.subjects.add()
 //            }
 //         }
-         else writer.appendNode(current.type, current.argument);
+         else {
+            writer.newNode(current.type, current.argument);
+            SyntaxTree::copyNode(writer, current);
+            writer.closeNode();
+         }
       }
 ////      else if (current == lxTemplateType) {
 ////         ref_t subjRef = scope.subjects.get(current.argument);
@@ -947,7 +957,7 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //         writer.closeNode();
 //         break;
       case lxOperator:
-         copyOperator(writer, current.firstChild());
+         copyOperator(writer, current.firstChild(), current.argument);
          generateExpressionTree(writer, current, scope, 0);
          writer.insert(lxExpression);
          writer.closeNode();
@@ -1316,7 +1326,10 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
       }
       else if (current == lxAttributeValue) {
          // if it is an explicit type declaration
-         ref_t ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference));
+         ref_t ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference), true);
+         if (!ref)
+            scope.raiseError(errInvalidHint, current);
+
          writer.newNode(lxParamRefAttr, scope.moduleScope->module->resolveReference(ref));
          copyIdentifier(writer, current.firstChild(lxTerminalMask));
          writer.closeNode();

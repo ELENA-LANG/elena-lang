@@ -520,14 +520,16 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
 
             int index = messageName.find('$');
             if (index != NOTFOUND_POS) {
-               IdentifierString content(messageName, index);
+               ref_t actionRef = 0;
+               if (index > 0) {
+                  IdentifierString content(messageName, index);
 
-               ref_t actionRef = scope.module->mapSubject(content.c_str(), true);
-               if (actionRef != 0) {
-                  ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getVerb(message), getParamCount(message)), maOverloadlist));
-                  if (listRef != 0)
-                     compiler.generateOverloadListMember(scope, listRef, message);
+                  actionRef = scope.module->mapSubject(content.c_str(), true);
                }
+
+               ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getVerb(message), getParamCount(message)), maOverloadlist));
+               if (listRef != 0)
+                  compiler.generateOverloadListMember(scope, listRef, message);
             }
          }         
       }
@@ -944,16 +946,16 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
 //         info.header.flags |= elDebugLiteral;
 //      }
 //   }
-//
-//   // adjust array
-//   if (test(info.header.flags, elDynamicRole) && !testany(info.header.flags, elStructureRole | elNonStructureRole)) {
-//      info.header.flags |= elNonStructureRole;
-//
-//      if ((info.header.flags & elDebugMask) == 0) {
-//         info.header.flags |= elDebugArray;
-//      }
-//   }
-//
+
+   // adjust array
+   if (test(info.header.flags, elDynamicRole) && !testany(info.header.flags, elStructureRole | elNonStructureRole)) {
+      info.header.flags |= elNonStructureRole;
+
+      if ((info.header.flags & elDebugMask) == 0) {
+         info.header.flags |= elDebugArray;
+      }
+   }
+
 //   // adjust binary array
 //   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
 //      if ((info.header.flags & elDebugMask) == 0) {
@@ -1001,9 +1003,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_EMBEDDABLE:
          attrValue = elEmbeddable;
          return true;
-//      case V_DYNAMIC:
-//         attrValue = elDynamicRole;
-//         return true;
+      case V_DYNAMIC:
+         attrValue = elDynamicRole;
+         return true;
 //      case V_STRING:
 //         attrValue = elDebugLiteral;
 //         return true;

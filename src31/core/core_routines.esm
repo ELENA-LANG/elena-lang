@@ -608,7 +608,7 @@ labCopy:
 
 end
 
-procedure __charconvertor."eval&system$convert$system@IntNumber$system@LiteralValue$@system@ref#1&CharValue[4]"
+procedure __charconvertor."eval&system#convert$system@IntNumber$system@LiteralValue$@system@ref#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -631,7 +631,7 @@ labErr:
 
 end
 
-procedure __charconvertor.eval&system$convert&int$&bytearray$&vchar$[4]
+procedure __charconvertor."eval&system#convert$system@IntNumber$system@ByteArray$@system@ref#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -654,7 +654,7 @@ labErr:
 
 end
 
-procedure __charconvertor.eval&system$convert&int$&wide$&vchar$[4]
+procedure __charconvertor."eval&system#convert$system@IntNumber$system@WideLiteralValue$@system@ref#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -677,7 +677,7 @@ labErr:
 
 end
 
-procedure __charconvertor.eval&system$convert&int$&shortarray$&vchar$[4]
+procedure __charconvertor."eval&system#convert$system@IntNumber$system@ShortArray$@system@ref#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -700,7 +700,7 @@ labErr:
 
 end
 
-procedure __charconvertor.eval&system$save&char$&int$&shortarray$&vint$[5]
+procedure __charconvertor."eval&system#save$system@CharValue$system@IntNumber$system@ShortArray$@system@varof#1&IntNumber[5]"
 
   aloadsi 2
   nload
@@ -717,7 +717,7 @@ procedure __charconvertor.eval&system$save&char$&int$&shortarray$&vint$[5]
 
 end
 
-procedure __charconvertor.eval&system$save&char$&int$&bytearray$&vint$[5]
+procedure __charconvertor."eval&system#save$system@CharValue$system@IntNumber$system@ByteArray$@system@varof#1&IntNumber[5]"
 
   aloadsi 2
   nload
@@ -731,5 +731,441 @@ procedure __charconvertor.eval&system$save&char$&int$&bytearray$&vint$[5]
   nsave
   
   quitn 5
+
+end
+
+procedure __intconvertor."convert$system@ShortNumber$@system@varof#1&IntNumber[3]"
+
+  aloadsi 2
+  nload
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __intconvertor."convert$system@ByteNumber$@system@varof#1&IntNumber[3]"
+
+  aloadsi 2
+  nload
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __intconvertor."convert$system@LongNumber$@system@varof#1&IntNumber[3]"
+
+  aloadsi 2
+  dcopy 4
+  bread
+  dcopye
+  lessn labNegative 0  
+  elsen labErr 0  
+
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+labNegative:
+  elsen labErr 0FFFFFFFFh
+
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+end
+
+procedure __uintconvertor."convert$system@LongNumber$@system@varof#1&IntNumber[3]"
+
+  aloadsi 2
+  dcopy 4
+  bread
+  dcopye
+
+  elsen labErr 0  
+
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+end
+
+procedure __intconvertor."convert$system@LiteralValue$@system@varof#1&IntNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : strtoint
+  nsave
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor."eval&convertUnsigned$system@LiteralValue$@system@varof#1&IntNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : strtouint
+  nsave
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor."convert$system@LiteralValue$system@IntNumber$@system@varof#1&IntNumber[4]"
+  
+  bloadsi  4
+  aloadsi  3
+  nload
+  ecopyd   
+  aloadsi  2
+  callextr api : strtoint
+  nsave
+  ifr      labErr 0
+  quitn    4
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor."convert$system@WideLiteralValue$@system@varof#1&IntNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : wstrtoint
+  nsave
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor."convert$system@WideLiteralValue$system@IntNumber$@system@varof#1&IntNumber[4]"
+  
+  bloadsi  4
+  aloadsi  3
+  nload
+  ecopyd   
+  aloadsi  2
+  callextr api : wstrtoint
+  nsave
+  ifr      labErr 0
+  quitn    4
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor."convert$system@CharValue$@system@varof#1&IntNumber[3]"
+
+  aloadsi 2
+  nload
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __intconvertor."convert$system@RealNumber$@system@varof#1&IntNumber[3]"
+
+  aloadsi 2
+  bloadsi 3  
+  rload
+  dcopyr
+  nsave
+  aloadsi 1
+  quitn 3
+
+end
+
+
+procedure __longconvertor."convert$system@IntNumber$@system@varof#1&LongNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  nsave
+  lessn labNegative 0
+  dcopy 0
+  nsavei 1
+  acopyb
+  quitn 3
+
+labNegative:
+  dcopy 0FFFFFFFFh
+  nsavei 1
+  acopyb
+  quitn 3
+
+end
+
+procedure __longconvertor."convert$system@UIntNumber$@system@varof#1&LongNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  nsave
+  dcopy 0
+  nsavei 1
+  acopyb
+  quitn 3
+
+end
+
+procedure __longconvertor."convert$system@ShortNumber$@system@varof#1&LongNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  nsave
+  dcopy 0
+  nsavei 1
+  acopyb
+  quitn 3
+
+end
+
+procedure __longconvertor."convert$system@ByteNumber$@system@varof#1&LongNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  nsave
+  dcopy 0
+  nsavei 1
+  acopyb
+  quitn 3
+
+end
+
+procedure __longconvertor."convert$system@LiteralValue$@system@varof#1&LongNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : strtolong
+  nsave
+  dcopye
+  nsavei   1
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __longconvertor."convert$system@LiteralValue$system@IntNumber$@system@varof#1&LongNumber[4]"
+  
+  bloadsi  4
+  aloadsi  3
+  nload
+  ecopyd   
+  aloadsi  2
+  callextr api : strtolong
+  nsave
+  dcopye
+  nsavei   1
+  ifr      labErr 0
+  quitn    4
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __longconvertor."convert$system@WideLiteralValue$@system@varof#1&LongNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : wstrtolong
+  nsave
+  dcopye
+  nsavei   1
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __longconvertor."convert$system@WideLiteralValue$system@IntNumber$@system@varof#1&LongNumber[4]"
+  
+  bloadsi  4
+  aloadsi  3
+  nload
+  ecopyd   
+  aloadsi  2
+  callextr api : wstrtolong
+  nsave
+  dcopye
+  nsavei   1
+  ifr      labErr 0
+  quitn    4
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __longconvertor."convert$system@RealNumber$@system@varof#1&LongNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rload
+  nsave
+  dcopy 0
+  nsavei 1
+  aloadsi 1
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@IntNumber$@system@varof#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@UIntNumber$@system@varof#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@ByteNumber$@system@varof#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@ShortNumber$@system@varof#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@LongNumber$@system@varof#1&RealNumber[3]"
+  
+  bcopya
+  aloadsi 2
+  callextr api : longtoreal
+  acopyb
+  quitn 3
+
+end
+
+
+procedure __realconvertor."convert$system@LiteralValue$@system@varof#1&RealNumber[3]"
+  
+  bloadsi  3
+  dcopy    10
+  aloadsi  2
+  callextr api : strtoreal
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __realconvertor."convert$system@WideLiteralValue$@system@varof#1&RealNumber[3]"
+  
+  bloadsi  3
+  dcopy    10
+  aloadsi  2
+  callextr api : wstrtoreal
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
 
 end

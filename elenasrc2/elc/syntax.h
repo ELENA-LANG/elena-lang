@@ -96,6 +96,7 @@ enum Symbol
    nsLazyExpression             = 0x01050,
    nsAngleOperator              = 0x01051,
    nsAngleObject                = 0x01052,
+   nsArrayOperation             = 0x01053,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

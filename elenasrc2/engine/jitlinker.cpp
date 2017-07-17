@@ -166,7 +166,7 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& verb_id)
 {
    size_t overloadIndex = signature.find('$');
-   if (overloadIndex != NOTFOUND_POS) {
+   if (overloadIndex != NOTFOUND_POS && paramCount > 0) {
       SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
 
       ref_t tableOffs = info.module->mapSubject(signature, true);

@@ -2662,7 +2662,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    ObjectInfo loperand;
    ObjectInfo roperand;
    ObjectInfo roperand2;
-   /*if (operator_id == SET_REFER_MESSAGE_ID) {
+   if (operator_id == SET_REFER_MESSAGE_ID) {
       SNode exprNode = node.firstChild(lxObjectMask);
 
       // HOTFIX : inject the third parameter to the first two ones
@@ -2682,7 +2682,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
 
       paramCount++;
    }
-   else {*/
+   else {
       SNode loperandNode = node.firstChild(lxObjectMask);
       loperand = compileExpression(writer, loperandNode, scope, 0);
 
@@ -2692,7 +2692,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
          roperand = ObjectInfo(okLocal, roperandNode.argument);
       }
       else */roperand = compileExpression(writer, roperandNode, scope, 0);
-   //}
+   }
 
    retVal = compileOperator(writer, node, scope, operator_id, paramCount, loperand, roperand, roperand2);
 
@@ -2715,8 +2715,6 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       return compileBranchingOperator(writer, node, scope, mode, operator_id);
    }
    else return compileOperator(writer, node, scope, mode, operator_id);
-
-   return ObjectInfo(); // !! temporal
 }
 
 ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode)
@@ -4216,8 +4214,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, List<ref_t>
 
       int index = messageName.find('$');
       if (index != NOTFOUND_POS) {
-         IdentifierString content(messageName, index);
-         ref_t actionRef = scope.moduleScope->module->mapSubject(content.c_str(), false);
+         ref_t actionRef = 0;
+         if (index > 0) {
+            IdentifierString content(messageName, index);
+            actionRef = scope.moduleScope->module->mapSubject(content.c_str(), false);
+         }
 
          ref_t genericMessage = encodeMessage(actionRef, verb_id, paramCount);
 
@@ -5016,20 +5017,20 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       if (!_logic->tweakPrimitiveClassFlags(classRef, scope.info))
          scope.raiseError(errIllegalField, current);
    }
-   //// a class with a dynamic length structure must have no fields
-   //else if (test(scope.info.header.flags, elDynamicRole)) {
-   //   if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
-   //      // compiler magic : turn a field declaration into an array or string one
-   //      if (size != 0) {
-   //         scope.info.header.flags |= elStructureRole;
-   //         scope.info.size = -size;
-   //      }
+   // a class with a dynamic length structure must have no fields
+   else if (test(scope.info.header.flags, elDynamicRole)) {
+      if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
+         // compiler magic : turn a field declaration into an array or string one
+         if (size != 0) {
+            scope.info.header.flags |= elStructureRole;
+            scope.info.size = -size;
+         }
 
-   //      scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classRef, typeRef));
-   //      scope.info.fields.add(terminal, -2);
-   //   }
-   //   else scope.raiseError(errIllegalField, current);
-   //}
+         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
+         scope.info.fields.add(terminal, -2);
+      }
+      else scope.raiseError(errIllegalField, current);
+   }
    else {
       if (scope.info.fields.exist(terminal))
          scope.raiseError(errDuplicatedField, current);
