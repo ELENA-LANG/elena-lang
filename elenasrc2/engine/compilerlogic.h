@@ -70,7 +70,7 @@ public:
    virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
 
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
-   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false);
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef = 0, bool embeddableOnly = false);
    virtual int defineStructSize(ClassInfo& info, bool embeddableOnly);
 
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
@@ -78,9 +78,9 @@ public:
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
-//   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result);
+   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result);
    virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference);
-//   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
+   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
 
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
@@ -116,10 +116,10 @@ public:
 
    virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods);
-   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference/*, ref_t type*/);
-   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef);
-//   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef);
-////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode);
+   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef);
+   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
+   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef);
+//   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode);
    virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
 
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
@@ -129,7 +129,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue);
    virtual bool validateFieldAttribute(int& attrValue);
    virtual bool validateLocalAttribute(int& attrValue);
-   virtual bool validateSymbolAttribute(int attrValue/*, bool& constant, bool& staticOne, bool& preloadedOne*/);
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
 ////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(ref_t message, bool isClassClass);
 //

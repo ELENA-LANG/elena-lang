@@ -30,20 +30,20 @@ template varof :: template_subj
 {
     template_subj $value.
     
-    stacksafe explicit(template_subj val)
-    [
-        $value := val.
-    ]
+//    stacksafe explicit(template_subj val)
+//    [
+//        $value := val.
+//    ]
     
 //    set : val
 //    [
 //        $value := val template_subj.
 //    ]
     
-    stacksafe set template_subj:val
-    [
-        $value := val.
-    ]
+//    stacksafe set template_subj:val
+//    [
+//        $value := val.
+//    ]
     
 //    template_subj value = $value.
     

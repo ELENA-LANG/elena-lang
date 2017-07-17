@@ -136,7 +136,7 @@ public:
 //      okExtMessageConstant,           // param - reference
       okSignatureConstant,            // param - reference
       okVerbConstant,                 // param - reference
-//      okArrayConst,
+      okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
       okFieldAddress,                 // param - field offset, extraparam - class reference
@@ -164,21 +164,21 @@ public:
       ObjectKind kind;
       ref_t      param;
       ref_t      extraparam;
-//      ref_t      type;
+      ref_t      element;
 
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
          this->extraparam = 0;
-//         this->type = 0;
+         this->element = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
          this->extraparam = 0;
-//         this->type = 0;
+         this->element = 0;
       }
 //      ObjectInfo(ObjectKind kind, ObjectInfo copy)
 //      {
@@ -192,43 +192,43 @@ public:
          this->kind = kind;
          this->param = param;
          this->extraparam = 0;
-//         this->type = 0;
+         this->element = 0;
       }
       ObjectInfo(ObjectKind kind, int param)
       {
          this->kind = kind;
          this->param = (ref_t)param;
          this->extraparam = 0;
-//         this->type = 0;
+         this->element = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = extraparam;
-         //this->type = 0;
+         this->element = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = (ref_t)extraparam;
-         //this->type = 0;
+         this->element = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
-//         this->type = type;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t type)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = (ref_t)extraparam;
-//         this->type = type;
-//      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t element)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
+         this->element = element;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t element)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = (ref_t)extraparam;
+         this->element = element;
+      }
    };
 
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
@@ -245,8 +245,8 @@ private:
       List<ident_t> defaultNs;
       ForwardMap    forwards;       // forward declarations
 
-//      // symbol hints
-//      Map<ref_t, ref_t> constantHints;
+      // symbol hints
+      Map<ref_t, ref_t> constantHints;
 
       // extensions
       SubjectMap        extensionHints;
@@ -272,10 +272,10 @@ private:
 
       ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 
-//      void defineConstantSymbol(ref_t reference, ref_t classReference)
-//      {
-//         constantHints.add(reference, classReference);
-//      }
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
+      {
+         constantHints.add(reference, classReference);
+      }
 
       void raiseError(const char* message, int row, int col, ident_t terminal);
       void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
@@ -306,8 +306,8 @@ private:
       {
          return loadClassInfo(info, module->resolveReference(reference), headerOnly);
       }
-//      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
-//
+      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
+
       bool loadAttributes(_Module* module);
       void loadExtensions(_Module* module, bool& duplicateExtensions);
       void loadActions(_Module* module);
@@ -502,11 +502,10 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-//      bool  constant;
+      bool  constant;
       bool  staticOne;
-//      bool  preloaded;
-//      ref_t typeRef;
-//      ref_t outputRef;
+      bool  preloaded;
+      ref_t outputRef;
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -820,7 +819,7 @@ private:
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
 
-//   ObjectInfo compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
+   ObjectInfo compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
@@ -868,7 +867,7 @@ private:
    void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 ////   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
-//   void compilePreloadedCode(SymbolScope& scope);
+   void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ClassScope& scope);
 ////   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 
@@ -898,21 +897,21 @@ private:
    void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
-//   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
+   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
 //   void compileIncludeModule(SNode node, ModuleScope& scope);
 //   void compileForward(SNode node, ModuleScope& scope);
 
    bool validate(_ProjectManager& project, _Module* module, int reference);
 
-   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef/*, ref_t targetType = 0*/);
+   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
 
-   bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
+   bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
    bool typecastObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef);
 
    void compileExternalArguments(SNode node, ModuleScope& scope, WarningScope& warningScope);
 
-//   ref_t optimizeOp(SNode current, ModuleScope& scope, WarningScope& warningScope);
-   //ref_t optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
+   ref_t optimizeOp(SNode current, ModuleScope& scope, WarningScope& warningScope);
+   ref_t optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
    ref_t optimizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
@@ -967,7 +966,7 @@ public:
 ////   // _Compiler interface implementation
 //////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef);
-//   virtual void injectLocalBoxing(SNode node, int size);
+   virtual void injectLocalBoxing(SNode node, int size);
 //   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);

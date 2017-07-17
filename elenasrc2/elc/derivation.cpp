@@ -1085,18 +1085,18 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
    writer.newBookmark();
 
    SNode current = node.firstChild();
-//   bool identifierMode = current.type == lxIdentifier;
+   bool identifierMode = current.type == lxIdentifier;
 //   bool listMode = false;
-//   // check if it is new operator
-//   if (identifierMode && current.nextNode() == lxExpression && current.nextNode().nextNode() != lxExpression) {
-//      scope.copySubject(writer, current);
-//
-//      writer.appendNode(lxOperator, -1);
-//      generateExpressionTree(writer, current.nextNode(), scope, 0);
-//      writer.insert(lxExpression);
-//      writer.closeNode();
-//   }
-//   else {
+   // check if it is new operator
+   if (identifierMode && current.nextNode() == lxExpression && current.nextNode().nextNode() != lxExpression) {
+      scope.copySubject(writer, current);
+
+      writer.appendNode(lxOperator, -1);
+      generateExpressionTree(writer, current.nextNode(), scope, 0);
+      writer.insert(lxExpression);
+      writer.closeNode();
+   }
+   else {
       while (current != lxNone) {
          if (current == lxExpression) {
 //            if (current.nextNode() == lxExpression && !test(mode, EXPRESSION_MESSAGE_MODE))
@@ -1122,8 +1122,8 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
 
          current = current.nextNode();
       }
-//   }
-//
+   }
+
 //   if (listMode) {
 //      writer.insert(lxExpression);
 //      writer.closeNode();

@@ -7,6 +7,9 @@ In development:
                  * code templates
                  * support type<class>
                  * support var
+                 * test primitive operations with numbers
+                 * test primitive operations with arrays
+                 * test list<type>
 
                  * explicit conversion
 
@@ -29,11 +32,8 @@ In development:
                  * uncomment compileDispatchExpression
                  * uncomment generateClassDeclaration
                  * uncomment optimizeClassTree
-                 * uncomment validateBoxing
                  * uncomment optimizeEmbeddableOp, optimizeEmbeddableGet, optimizeEmbeddable
-                 * uncomment optimizeOp
                  * uncomment compileExternalArguments
-                 * uncomment optimizeSymbol
                  * uncomment defineOperatorMessage
                  * uncomment isCompatible
                  * test primitive operation with message
