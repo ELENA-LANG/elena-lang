@@ -847,7 +847,7 @@ private:
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   void declareArgumentList(SNode node, MethodScope& scope, List<ref_t>* implicitMultimethods = NULL);
+   void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
    bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
 
@@ -972,7 +972,7 @@ public:
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 //   virtual void injectFieldExpression(SyntaxWriter& writer);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
-   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message);
+   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);

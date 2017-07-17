@@ -10,6 +10,7 @@ In development:
                  * test primitive operations with numbers
                  * test primitive operations with arrays
                  * test list<type>
+                 * uncomment get&hash_code
 
                  * explicit conversion
 

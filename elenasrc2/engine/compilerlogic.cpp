@@ -435,7 +435,7 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
-   if (!targetRef && !isPrimitiveStructArrayRef(sourceRef))
+   if (!targetRef && !isPrimitiveRef(sourceRef))
       return true;
 
    if (sourceRef == V_NIL)
@@ -570,11 +570,11 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
 //   }
 }
 
-void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods)
+void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-      compiler.injectVirtualMultimethod(scope, node, *it);
+      compiler.injectVirtualMultimethod(scope, node, *it, methodType);
       info.header.flags |= elWithMuti;
    }
 }

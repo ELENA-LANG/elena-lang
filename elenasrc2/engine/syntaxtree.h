@@ -236,6 +236,7 @@ enum LexicalType
    lxEmbeddableMssg  = 0x20034,
    lxBoxingRequired  = 0x20035,
    lxParamRefAttr    = 0x20036,
+   lxMultiMethodAttr = 0x20037,
 
    lxTempAttr        = 0x2010D,
 };

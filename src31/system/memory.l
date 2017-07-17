@@ -1560,7 +1560,7 @@ dynamic template arrayof :: template_subj
 // --- Array ---
 
 /// An array
-sealed Array :: dispatchable(array)//, arrayof(object)
+sealed Array :: dispatchable(array), arrayof(object)
 {
 //    /// Creates an empty array
 //    constructor min

@@ -189,7 +189,7 @@ public:
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef) = 0;
-   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message) = 0;
+   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 
    virtual void injectLocalBoxing(SNode node, int size) = 0;
 //   //virtual int injectTempLocal(SNode node) = 0;
@@ -278,7 +278,7 @@ public:
 //
 //   // auto generate virtual methods / fields
    virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
-   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods) = 0;
+   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef) = 0;
    virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;

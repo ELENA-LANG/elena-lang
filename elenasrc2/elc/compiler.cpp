@@ -1451,24 +1451,24 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
             //if (param.subj_ref == moduleScope->paramsSubj) {
             //   writer.newNode(lxParamsVariable);
             //}
-            //else if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->intReference)) {
-            //   writer.newNode(lxIntVariable);
-            //}
-            //else if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->longReference)) {
-            //   writer.newNode(lxLongVariable);
-            //}
-            //else if (scope.moduleScope->subjectHints.exist(param.subj_ref, moduleScope->realReference)) {
-            //   writer.newNode(lxReal64Variable);
-            //}
-            //else if (scope.stackSafe && param.subj_ref != 0) {
-            //   ref_t classRef = scope.moduleScope->subjectHints.get(param.subj_ref);
-            //   if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
-            //      writer.newNode(lxBinaryVariable);
-            //      writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
-            //   }
-            //   else writer.newNode(lxVariable);
-            //}
-            /*else */writer.newNode(lxVariable);
+            /*else */if (param.class_ref == moduleScope->intReference) {
+               writer.newNode(lxIntVariable);
+            }
+            else if (param.class_ref = moduleScope->longReference) {
+               writer.newNode(lxLongVariable);
+            }
+            else if (param.class_ref = moduleScope->realReference) {
+               writer.newNode(lxReal64Variable);
+            }
+            else if (scope.stackSafe && param.class_ref != 0) {
+               ref_t classRef = param.class_ref;
+               if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
+                  writer.newNode(lxBinaryVariable);
+                  writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+               }
+               else writer.newNode(lxVariable);
+            }
+            else writer.newNode(lxVariable);
 
             writer.appendNode(lxLevel, -1 - param.offset);
             writer.newNode(lxIdentifier);
@@ -3526,7 +3526,7 @@ ObjectInfo Compiler :: compileNewOperator(SyntaxWriter& writer, SNode node, Code
       // if it is a primitive operation
       _logic->injectNewOperation(writer, *scope.moduleScope, operationType, targetRef, elementRef);
 
-      retVal = assignResult(writer, scope, elementRef);
+      retVal = assignResult(writer, scope, targetRef, elementRef);
    }
    else scope.raiseError(errInvalidOperation, node);
 
@@ -4006,7 +4006,7 @@ inline SNode findTerminal(SNode node)
    return ident;
 }
 
-void Compiler :: declareArgumentList(SNode node, MethodScope& scope, List<ref_t>* implicitMultimethods)
+void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 {
    IdentifierString signature;
    ref_t verb_id = 0;
@@ -4193,24 +4193,22 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, List<ref_t>
 //      }
 
       scope.message = encodeMessage(sign_id, verb_id, paramCount);
-   }
 
-   //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-   if (strongSignature && implicitMultimethods != NULL && paramCount > 0 && verb_id != PRIVATE_MESSAGE_ID) {
-      ident_t messageName = scope.moduleScope->module->resolveSubject(getSignature(scope.message));
+      //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
+      if (strongSignature && paramCount > 0 && verb_id != PRIVATE_MESSAGE_ID) {
+         ident_t messageName = scope.moduleScope->module->resolveSubject(getSignature(scope.message));
 
-      int index = messageName.find('$');
-      if (index != NOTFOUND_POS) {
-         ref_t actionRef = 0;
-         if (index > 0) {
-            IdentifierString content(messageName, index);
-            actionRef = scope.moduleScope->module->mapSubject(content.c_str(), false);
-         }
+         int index = messageName.find('$');
+         if (index != NOTFOUND_POS) {
+            ref_t actionRef = 0;
+            if (index > 0) {
+               IdentifierString content(messageName, index);
+               actionRef = scope.moduleScope->module->mapSubject(content.c_str(), false);
+            }
 
-         ref_t genericMessage = encodeMessage(actionRef, verb_id, paramCount);
+            ref_t genericMessage = encodeMessage(actionRef, verb_id, paramCount);
 
-         if (retrieveIndex(implicitMultimethods->start(), genericMessage) == -1) {
-            implicitMultimethods->add(genericMessage);
+            node.appendNode(lxMultiMethodAttr, genericMessage);
          }
       }
    }
@@ -4587,9 +4585,16 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
       return;
    }
    else if (bodyNode == lxResendExpression) {
-      compileConstructorResendExpression(writer, bodyNode, codeScope, classClassScope, withFrame);
+      if (scope.multiMethod && bodyNode.argument != 0) {
+         writer.appendNode(lxMultiDispatching, classClassScope.info.methodHints.get(Attribute(scope.message, maOverloadlist)));
 
-      bodyNode = bodyNode.findChild(lxCode);
+         bodyNode = lxNone;
+      }
+      else {
+         compileConstructorResendExpression(writer, bodyNode, codeScope, classClassScope, withFrame);
+
+         bodyNode = bodyNode.findChild(lxCode);
+      }
    }
    else if (bodyNode == lxReturning) {
       retExpr = true;
@@ -4895,8 +4900,6 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 
 void Compiler :: declareVMT(SNode node, ClassScope& scope)
 {
-   List<ref_t> implicitMultimethods;
-
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
@@ -4904,7 +4907,7 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
 
          declareMethodAttributes(current, methodScope);
 
-         declareArgumentList(current, methodScope, &implicitMultimethods);
+         declareArgumentList(current, methodScope);
          current.setArgument(methodScope.message);
 
          if (test(methodScope.hints, tpConstructor))
@@ -4914,10 +4917,6 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
             scope.raiseError(errIllegalMethod, current);
       }
       current = current.nextNode();
-   }
-   //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-   if (implicitMultimethods.Count() > 0) {
-      _logic->injectVirtualMultimethods(*scope.moduleScope, node, scope.info, *this, implicitMultimethods);
    }
 }
 
@@ -5232,11 +5231,20 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool closed, bool classClassMode)
 {
    bool templateMethods = false;
+   List<ref_t> implicitMultimethods;
+
+   LexicalType methodType = classClassMode ? lxConstructor : lxClassMethod;
 
    // first pass - ignore template based methods
    SNode current = root.firstChild();
    while (current != lxNone) {
-      if ((current == lxClassMethod && !classClassMode) || (classClassMode && current == lxConstructor)) {
+      if (current == methodType) {
+         SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
+         if (multiMethAttr != lxNone) {
+            implicitMultimethods.add(multiMethAttr.argument);
+            templateMethods = true;
+         }
+
          if (!classClassMode) {
             if (!current.existChild(lxTemplate)) {
                generateMethodDeclaration(current, scope, false, closed);
@@ -5248,11 +5256,16 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
       current = current.nextNode();
    }
 
+   //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
+   if (implicitMultimethods.Count() > 0) {
+      _logic->injectVirtualMultimethods(*scope.moduleScope, root, scope.info, *this, implicitMultimethods, methodType);
+   }
+
    if (templateMethods) {
-      // second pass - do not include overwritten template-based methods
+      // third pass - do not include overwritten template-based methods
       current = root.firstChild();
       while (current != lxNone) {
-         if (current == lxClassMethod && current.existChild(lxTemplate)) {
+         if (current.existChild(lxTemplate) && (current == methodType)) {
             generateMethodDeclaration(current, scope, true, closed);
          }
          current = current.nextNode();
@@ -6859,7 +6872,7 @@ void Compiler :: injectLocalBoxing(SNode node, int size)
 //   exprNode.appendNode(lxMessage, embeddedMessageRef);
 //}
 
-void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message)
+void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType)
 {
    int paramCount = getParamCount(message);
    IdentifierString sign(scope.module->resolveSubject(getSignature(message)));
@@ -6869,8 +6882,11 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
    }
    ref_t signRef = scope.module->mapSubject(sign, false);
 
-   SNode methNode = classNode.appendNode(lxClassMethod, message);
+   SNode methNode = classNode.appendNode(methodType, message);
    methNode.appendNode(lxTemplate); // !! HOTFIX : add a template attribute to enable explicit method declaration
    methNode.appendNode(lxAttribute, tpMultimethod);
+   if (methodType == lxConstructor)
+      methNode.appendNode(lxAttribute, tpConstructor);      
+
    SNode codeNode = methNode.appendNode(lxResendExpression, encodeMessage(signRef, getVerb(message), paramCount));
 }
