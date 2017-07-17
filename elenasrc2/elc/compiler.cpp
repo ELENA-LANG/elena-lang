@@ -6765,13 +6765,14 @@ void Compiler :: generateEnumListMember(_CompilerScope& scope, ref_t enumRef, re
 void Compiler :: generateOverloadListMember(_CompilerScope& scope, ref_t listRef, ref_t messageRef)
 {
    MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
-   if (metaWriter.Position() > 4) {
-      // HOTFIX : to overwrite the ending zero
-      metaWriter.seek(metaWriter.Position() - 4);
+   if (metaWriter.Position() == 0) {
+      metaWriter.writeRef(0, messageRef);
+      metaWriter.writeDWord(0);
    }
-
-   metaWriter.writeRef(0, messageRef);
-   metaWriter.writeDWord(0);
+   else {
+      metaWriter.insertDWord(0, messageRef);
+      metaWriter.Memory()->addReference(0, 0);
+   }
 }
 
 ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader)

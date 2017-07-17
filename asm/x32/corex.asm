@@ -3178,8 +3178,8 @@ labMatching:
 labNextBaseClass:
   cmp  esi, edi
   jz   labNextParam
-  mov  esi, [esi - elPackageOffset]
-  and  esi, esi
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
   jnz  short labNextBaseClass
 
   mov  esi, __arg1
