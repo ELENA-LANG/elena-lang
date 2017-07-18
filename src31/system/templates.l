@@ -121,18 +121,18 @@
 
 // --- if statement ---
 
-//template if :: expr = 
-//    expr bool ?
-//    [
-//    ].
-//
-//// --- ifnot statement ---
-//
-//template ifnot :: expr =
-//    expr bool !
-//    [
-//    ].
-//
+template if :: expr = 
+    expr bool ?
+    [
+    ].
+
+// --- ifnot statement ---
+
+template ifnot :: expr =
+    expr bool !
+    [
+    ].
+
 //// --- if-else statement ---
 //
 //template if :: expr,else =

@@ -6408,42 +6408,6 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
 //}
 //
 //
-//void Compiler :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
-//{
-//   // check if the first token is attribute
-//   SNode loperand = node.firstChild();
-//   SNode attr = node.findChild(lxIdentifier);
-//   if (attr != lxNone) {
-//      IdentifierString attrName(attr.findChild(lxTerminal).identifier());
-//      attrName.append('#');
-//      attrName.appendInt(SyntaxTree::countChild(node, lxCode, lxNestedClass));
-//
-//      ref_t attrRef = scope.moduleScope->resolveAttributeRef(attrName, false);
-//      if (attrRef != 0) {
-//         ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
-//         if (classRef == INVALID_REF) {
-//            TemplateScope templateScope(&scope, attrRef);
-//            templateScope.exprNode = node.findChild(lxExpression);
-//            templateScope.codeNode = node.findChild(lxCode);
-//            templateScope.nestedNode = node.findChild(lxNestedClass);
-//            if (templateScope.nestedNode == lxNone || templateScope.codeNode != lxNone) {
-//               // if there is else code block
-//               templateScope.elseNode = templateScope.codeNode.nextNode();
-//            }
-//            
-//            templateScope.type = TemplateScope::ttCodeTemplate;
-//            
-//            if (!generateTemplateCode(writer, templateScope))
-//               scope.raiseError(errInvalidHint, node);
-//         }
-//
-//         return;
-//      }
-//   }
-//
-//   generateExpressionTree(writer, node, scope);
-//}
-//
 //void Compiler :: generateSwitchTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
 //{
 //   SNode current = node.firstChild();
@@ -6480,27 +6444,6 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
 //   SNode current = node.findChild(lxMessage);
 //
 //   return current.existChild(lxSize);
-//}
-//
-//bool Compiler :: generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope)
-//{
-//   _Memory* body = scope.moduleScope->loadAttributeInfo(scope.templateRef);
-//   if (body == NULL)
-//      return false;
-//
-//   SyntaxTree templateTree(body);
-//
-//   scope.loadAttributeValues(templateTree.readRoot()/*, false*/);
-//
-//   SNode current = templateTree.readRoot().findChild(lxCode).firstChild();
-//   while (current != lxNone) {
-//      if (current.type == lxLoop || current.type == lxExpression || current.type == lxExtern)
-//         copyExpressionTree(writer, current, scope);
-//
-//      current = current.nextNode();
-//   }
-//
-//   return true;
 //}
 //
 //void Compiler :: generateFieldTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode)
