@@ -49,7 +49,7 @@ dynamic template arrayof :: template_subj
 //            [ ^ $target @ n ];
 //            [ InvalidArgumentException new; raise ]
 //    ]
-
+//
 //    stacksafe setAt int:n template_subj:item
 //    [
 //        if (n < 0)
@@ -62,14 +62,10 @@ dynamic template arrayof :: template_subj
 //            [ $target @ n := item ];
 //            [ InvalidArgumentException new; raise ]
 //    ]
-//                
+                
 //    /// Returns the item at the specified index
-//    template_subj getAt : aParam
+//    multi template_subj getAt : aParam
 //        <= getAt int:aParam.
-//        
-//    /// Returns the item at the specified index
-//    setAt : index : value
-//        <= setAt int:index template_subj:value.
 }
 
 //// --- matrixof ---

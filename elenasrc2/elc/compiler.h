@@ -923,11 +923,9 @@ private:
    void compileDeclarations(SNode node, ModuleScope& scope);
    void compileImplementations(SNode node, ModuleScope& scope);
 
-//   void copyAttributeTree(SyntaxWriter& writer, SNode node, TemplateScope& scope/*, bool variableMode*/);
 //
 //   bool generateTemplateCode(SyntaxWriter& writer, TemplateScope& scope);
 //   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-//   void generateTemplateVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, bool templateMode);
 //   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, TemplateScope& scope);
 //   void generateFieldTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
