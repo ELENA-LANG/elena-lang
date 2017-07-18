@@ -55,9 +55,11 @@ void DerivationWriter :: writeNode(Symbol symbol)
          break;
       case nsObject:
       case nsAngleObject:
+      case nsRootAngleObject:
          _writer.newNode(lxObject);
          break;
       case nsAngleOperator:
+      case nsRootAngleOperator:
          _writer.newNode(lxAngleOperator);
          break;
       case nsBaseClass:
@@ -69,6 +71,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsL5Operation:
       case nsL6Operation:
       case nsL7Operation:
+      case nsRootL6Operation:
          _writer.newNode(lxOperator);
          break;
       case nsArrayOperation:
@@ -297,9 +300,9 @@ ref_t DerivationReader::DerivationScope :: mapAttribute(SNode attribute, int& pa
    else return moduleScope->mapAttribute(attribute);
 }
 
-ref_t DerivationReader::DerivationScope :: mapTerminal(SNode terminal)
+ref_t DerivationReader::DerivationScope :: mapTerminal(SNode terminal, bool existing)
 {
-   return moduleScope->mapTerminal(terminal);
+   return moduleScope->mapTerminal(terminal, existing);
 }
 
 //bool Compiler::TemplateScope :: isAttribute(SNode terminal)
@@ -1162,10 +1165,35 @@ void DerivationReader :: generateVariableTree(SyntaxWriter& writer, SNode node, 
    // check if the first token is attribute
    SNode current = node.firstChild();
    SNode attr = node.findChild(lxIdentifier, lxPrivate);
+   SNode nextNode = attr.nextNode();
    int dummy = 0;
    ref_t attrRef = (attr != lxPrivate) ? scope.mapAttribute(attr/*, true*/) : 0;
    //HOTFIX : there should be at leat two attribute
-   if (attrRef != 0 && attr.nextNode() != lxAssigning) {
+   if (attrRef == V_TYPETEMPL && nextNode == lxOperator && nextNode.findChild(lxObject).existChild(lxAngleOperator)) {
+      writer.newNode(lxVariable);
+
+      SNode typeNode = nextNode.findChild(lxObject);
+      SNode operatorNode = typeNode.findChild(lxAngleOperator);
+      SNode nameNode = operatorNode.findChild(lxIdentifier, lxPrivate);
+
+      ref_t typeRef = scope.mapTerminal(typeNode.findChild(lxIdentifier, lxPrivate, lxReference), true);
+      if (typeRef == 0)
+         scope.raiseError(errInvalidHint, typeNode);
+
+      copyIdentifier(writer, nameNode);
+      writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(typeRef));
+
+      writer.closeNode();
+
+      writer.newNode(lxExpression);
+
+      copyIdentifier(writer, nameNode);
+      writer.appendNode(lxAssign);
+      generateObjectTree(writer, operatorNode.findChild(lxAssigning), scope);
+
+      writer.closeNode();
+   }
+   else if (attrRef != 0 && nextNode != lxAssigning) {
       // HOTFIX : set already recognized attribute value if it is not a template parameter
       if (attrRef != INVALID_REF) {
          attr.setArgument(attrRef);
@@ -1198,7 +1226,7 @@ void DerivationReader :: generateVariableTree(SyntaxWriter& writer, SNode node, 
 
       copyIdentifier(writer, ident.findChild(lxIdentifier, lxPrivate));
       writer.appendNode(lxAssign);
-      generateExpressionTree(writer, current, scope, false);
+      generateExpressionTree(writer, current, scope, 0);
 
       writer.closeNode();
    }
@@ -1216,7 +1244,7 @@ void DerivationReader :: generateCodeTree(SyntaxWriter& writer, SNode node, Deri
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxExpression || current == lxReturning) {
-         if (current.existChild(lxAssigning)) {
+         if (current.existChild(lxAssigning, lxOperator)) {
             generateVariableTree(writer, current, scope);
          }
          //else if (isArrayDeclaration(current)) {

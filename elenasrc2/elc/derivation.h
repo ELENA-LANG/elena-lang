@@ -101,7 +101,7 @@ class DerivationReader : public _DerivationReader
 
       ref_t mapTemplate(SNode terminal, int prefixCounter = 0);
       ref_t mapClassTemplate(SNode terminal);
-      ref_t mapTerminal(SNode terminal);
+      ref_t mapTerminal(SNode terminal, bool existing = false);
       //int mapIdentifier(SNode terminal);
 
       bool generateClassName();
