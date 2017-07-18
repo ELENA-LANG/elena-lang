@@ -465,11 +465,11 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
    return false;
 }
 
-//bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
-//{
-//   return test(info.header.flags, elDynamicRole | elEmbeddable | elStructureRole);
-//}
-//
+bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
+{
+   return test(info.header.flags, elDynamicRole | elEmbeddable | elStructureRole);
+}
+
 //bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
 //{
 //   ClassInfo info;
@@ -574,7 +574,11 @@ void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode nod
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-      compiler.injectVirtualMultimethod(scope, node, *it, methodType);
+      if (info.methods.exist(*it)) {
+         compiler.injectVirtualMultimethod(scope, node, *it, methodType, info.header.parentRef);
+      }
+      else compiler.injectVirtualMultimethod(scope, node, *it, methodType);
+
       info.header.flags |= elWithMuti;
    }
 }
@@ -630,9 +634,23 @@ bool CompilerLogic :: isReadonly(ClassInfo& info)
 
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
 {
-   if (targetRef == 0 && isPrimitiveArrayRef(sourceRef)) {
-      // HOTFIX : replace generic object with a generic array
-      targetRef = scope.arrayReference;
+   if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
+      if (isPrimitiveArrayRef(sourceRef)) {
+         // HOTFIX : replace generic object with a generic array
+         targetRef = scope.arrayReference;
+      }
+      else if (sourceRef == V_INT32) {
+         // HOTFIX : replace generic object with an integer constant
+         targetRef = scope.intReference;
+      }
+      else if (sourceRef == V_INT64) {
+         // HOTFIX : replace generic object with an integer constant
+         targetRef = scope.longReference;
+      }
+      else if (sourceRef == V_REAL64) {
+         // HOTFIX : replace generic object with an integer constant
+         targetRef = scope.realReference;
+      }
    }
 
    ClassInfo info;
@@ -700,59 +718,58 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       }
    }
 
-   //// check if there are implicit constructors
-   //if (test(info.header.flags, elSealed)) {
-   //   if (isPrimitiveRef(sourceRef))
-   //   // HOTFIX : recognize primitive data except of a constant literal
-   //   //if (sourceRef != V_STRCONSTANT)
-   //   //   sourceRef = resolvePrimitiveReference(scope, sourceRef);
+   // check if there are implicit constructors
+   if (test(info.header.flags, elSealed)) {
+      // HOTFIX : recognize primitive data except of a constant literal
+      if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
+         sourceRef = resolvePrimitiveReference(scope, sourceRef);
 
-   //   // otherwise we have to go through the list
-   //   ClassInfo::MethodMap::Iterator it = info.methods.start();
-   //   while (!it.Eof()) {
-   //      pos_t implicitMessage = it.key();
-   //      if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
-   //         ref_t subj = getSignature(implicitMessage);
-   //         bool compatible = false;
-   //         //if (sourceRef == V_STRCONSTANT) {
-   //         //   // try to resolve explicit constant conversion routine
-   //         //   ident_t signature = scope.module->resolveSubject(subj);
-   //         //   size_t index = signature.find('&');
-   //         //   if (index != NOTFOUND_POS) {
-   //         //      IdentifierString postfix(signature, index);
-   //         //      ref_t postfixRef = scope.module->mapSubject(postfix, true);
-   //         //      if (sourceType == postfixRef) {
-   //         //         ref_t subjRef = scope.subjectHints.get(scope.module->mapSubject(signature + index + 1, false));
+      // otherwise we have to go through the list
+      ClassInfo::MethodMap::Iterator it = info.methods.start();
+      while (!it.Eof()) {
+         pos_t implicitMessage = it.key();
+         if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
+            ref_t subj = getSignature(implicitMessage);
+            bool compatible = false;
+            if (sourceRef == V_STRCONSTANT) {
+               // try to resolve explicit constant conversion routine
+               ident_t signature = scope.module->resolveSubject(subj);
+               size_t index = signature.find('&');
+               if (index != NOTFOUND_POS) {
+                  //IdentifierString postfix(signature, index);
+                  //ref_t postfixRef = scope.module->mapSubject(postfix, true);
+                  //if (sourceType == postfixRef) {
+                  //   ref_t subjRef = scope.subjectHints.get(scope.module->mapSubject(signature + index + 1, false));
 
-   //         //         compatible = subjRef != 0 && isCompatible(scope, subjRef, scope.literalReference);
-   //         //      }
-   //         //   }
-   //         //}
-   //         //else {
-   //            ref_t subjRef = scope.subjectHints.get(subj);
-   //            if (subjRef != 0) {
-   //               compatible = isCompatible(scope, subjRef, sourceRef);
-   //            }
-   //            else compatible = true;
-   //         //}
+                  //   compatible = subjRef != 0 && isCompatible(scope, subjRef, scope.literalReference);
+                  //}
+               }
+            }
+            else {
+               ref_t subjRef = scope.module->mapReference(scope.module->resolveSubject(subj).c_str() + 1);
+               if (subjRef != 0) {
+                  compatible = isCompatible(scope, subjRef, sourceRef);
+               }
+               else compatible = true;
+            }
 
-   //         if (compatible) {
-   //            bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
-   //            if (test(info.header.flags, elStructureRole)) {
-   //               compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
-   //            }
-   //            else if (test(info.header.flags, elDynamicRole)) {
-   //               return false;
-   //            }
-   //            else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
+            if (compatible) {
+               bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
+               if (test(info.header.flags, elStructureRole)) {
+                  compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
+               }
+               else if (test(info.header.flags, elDynamicRole)) {
+                  return false;
+               }
+               else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
 
-   //            return true;
-   //         }
-   //      }
+               return true;
+            }
+         }
 
-   //      it++;
-   //   }
-   //}
+         it++;
+      }
+   }
 
    return false;
 }

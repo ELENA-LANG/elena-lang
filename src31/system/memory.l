@@ -36,7 +36,7 @@ dynamic template arrayof :: template_subj
 //    ]
 //    
 //    int length :: outnprop(readLengthTo).
-//
+
 //    stacksafe template_subj getAt int:n
 //    [
 //        if (n < 0)
@@ -49,7 +49,7 @@ dynamic template arrayof :: template_subj
 //            [ ^ $target @ n ];
 //            [ InvalidArgumentException new; raise ]
 //    ]
-//
+
 //    stacksafe setAt int:n template_subj:item
 //    [
 //        if (n < 0)
@@ -1560,7 +1560,7 @@ dynamic template arrayof :: template_subj
 // --- Array ---
 
 /// An array
-sealed Array :: dispatchable(array), arrayof(object)
+sealed Array :: dispatchable(array)//, arrayof(object)
 {
 //    /// Creates an empty array
 //    constructor min

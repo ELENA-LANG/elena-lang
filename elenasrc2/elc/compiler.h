@@ -66,44 +66,32 @@ public:
    {
       int    offset;
       ref_t  class_ref;
-//      ref_t  subj_ref;
       int    size;
 
       Parameter()
       {
          offset = -1;
-//         subj_ref = 0;
          class_ref = 0;
          size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
-//         this->subj_ref = 0;
          this->class_ref = 0;
          this->size = 0;
       }
-//      Parameter(int offset, ref_t subj_ref)
-//      {
-//         this->offset = offset;
-//         this->subj_ref = subj_ref;
-//         this->class_ref = 0;
-//         this->size = 0;
-//      }
-      Parameter(int offset, /*ref_t subj_ref, */ref_t class_ref)
+      Parameter(int offset, ref_t class_ref)
       {
          this->offset = offset;
-         //this->subj_ref = subj_ref;
          this->class_ref = class_ref;
          this->size = 0;
       }
-//      Parameter(int offset, ref_t subj_ref, ref_t class_ref, int size)
-//      {
-//         this->offset = offset;
-//         this->subj_ref = subj_ref;
-//         this->class_ref = class_ref;
-//         this->size = size;
-//      }
+      Parameter(int offset, ref_t class_ref, int size)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
+         this->size = size;
+      }
    };
 
    // InheritResult
@@ -597,13 +585,13 @@ private:
          return level;
       }
 
-      void mapLocal(ident_t local, int level/*, ref_t type*/)
+      void mapLocal(ident_t local, int level)
       {
-         locals.add(local, Parameter(level/*, type*/));
+         locals.add(local, Parameter(level));
       }
-      void mapLocal(ident_t local, int level, /*ref_t type, */ref_t class_ref/*, int size*/)
+      void mapLocal(ident_t local, int level, ref_t class_ref, int size)
       {
-         locals.add(local, Parameter(level, /*type, */class_ref/*, size*/));
+         locals.add(local, Parameter(level, class_ref, size));
       }
 
       void freeSpace()
@@ -844,6 +832,7 @@ private:
    void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
@@ -967,12 +956,12 @@ public:
 //////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef);
    virtual void injectLocalBoxing(SNode node, int size);
-//   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 //   virtual void injectFieldExpression(SyntaxWriter& writer);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
-   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
+   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);

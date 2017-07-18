@@ -13,6 +13,15 @@
 
 using namespace _ELENA_;
 
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
+
 // --- DerivationWriter ---
 
 void DerivationWriter :: writeNode(Symbol symbol)
@@ -726,7 +735,7 @@ bool DerivationReader :: generateTemplate(SyntaxWriter& writer, DerivationScope&
       return false;
    
    SyntaxTree templateTree(body);
-   
+
    if (declaringClass) {
       // HOTFIX : exiting if the class was already declared in this module
       if (!scope.generateClassName())
@@ -1626,8 +1635,10 @@ bool DerivationReader :: generateMethodScope(SNode node, DerivationScope& scope,
             if (current == lxAttribute && (scope.isTypeAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) 
                || scope.isSubject(current.findChild(lxIdentifier, lxPrivate)))) 
             {
-               lastAttr = lxMessage;
-               lastAttr = current;
+               if (!scope.isAttribute(current.findChild(lxIdentifier, lxPrivate))) {
+                  lastAttr = lxMessage;
+                  lastAttr = current;
+               }
             }
          }
 
@@ -1843,7 +1854,7 @@ void DerivationReader :: saveTemplate(_Memory* target, SNode node, _CompilerScop
    generateScope(writer, node, rootScope, attributes);
 
    writer.closeNode();
-
+   
    SyntaxTree::saveNode(tree.readRoot(), target);
 }
 

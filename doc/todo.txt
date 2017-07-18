@@ -11,6 +11,7 @@ In development:
                  * test primitive operations with arrays
                  * test list<type>
                  * uncomment get&hash_code
+                 * option not to generate multimethod
 
                  * explicit conversion
 

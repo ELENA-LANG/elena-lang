@@ -5020,7 +5020,11 @@ void ByteCodeWriter :: generateResending(CommandTape& tape, SyntaxTree::Node nod
    if (node.argument != 0) {
       setSubject(tape, node.argument);
 
-      resend(tape);
+      SNode target = node.findChild(lxTarget);
+      if (target == lxTarget) {
+         resendResolvedMethod(tape, target.argument, node.argument);
+      }
+      else resend(tape);
    }
 }
 
