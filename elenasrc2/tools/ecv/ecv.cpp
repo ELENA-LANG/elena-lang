@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   6
+#define REVISION_VERSION   7
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -671,6 +671,46 @@ void printByteCodes(_Module* module, _Memory* code, ref_t address, int indent, i
    }
 }
 
+ref_t resolveMessageByIndex(_Module* module, ident_t className, int index)
+{
+   // find class VMT
+   ReferenceNs reference(module->Name(), className);
+   _Memory* vmt = findClassVMT(module, reference);
+   if (vmt == NULL) {
+      return 0;
+   }
+
+   // list methods
+   MemoryReader vmtReader(vmt);
+   // read tape record size
+   size_t size = vmtReader.getDWord();
+
+   // read VMT header
+   ClassHeader header;
+   vmtReader.read((void*)&header, sizeof(ClassHeader));
+
+   VMTEntry        entry;
+
+   size -= sizeof(ClassHeader);
+   IdentifierString temp;
+   int row = 0;
+   while (size > 0) {
+      vmtReader.read((void*)&entry, sizeof(VMTEntry));
+
+      index--;
+      if (index == 0) {
+         IdentifierString temp;
+         printMessage(temp, module, entry.message);
+
+         return resolveMessage(module, temp.c_str());
+      }
+
+      size -= sizeof(VMTEntry);
+   }
+
+   return 0;
+}
+
 void printMethod(_Module* module, ident_t methodReference, int pageSize)
 {
    methodReference = trim(methodReference);
@@ -685,9 +725,14 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
    IdentifierString className(methodReference, separator);
 
    ident_t methodName = methodReference + separator + 1;
+   ref_t message = 0;
 
    // resolve method
-   ref_t message = resolveMessage(module, methodName);
+   if (methodName[0] == '$') {
+      message = resolveMessageByIndex(module, className.ident(), methodName.toInt(1));
+   }
+   else message = resolveMessage(module, methodName);
+   
    if (message == 0)
       return;
 
@@ -721,7 +766,12 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
       if (entry.message == message) {
          found = true;
 
-         printLine("@method ", methodReference);
+         IdentifierString temp;
+         temp.copy(className);
+         temp.append('.');
+         printMessage(temp, module, entry.message);
+         printLine("@method ", temp);
+
          printByteCodes(module, code, entry.address, 4, pageSize);
          print("@end\n");
 

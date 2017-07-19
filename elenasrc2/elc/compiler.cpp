@@ -576,6 +576,23 @@ _Module* Compiler::ModuleScope :: loadReferenceModule(ref_t& reference)
    return project->resolveModule(module->resolveReference(reference), reference);
 }
 
+ident_t Compiler::ModuleScope :: resolveWeakTemplateReference(ident_t referenceName)
+{
+   ident_t resolvedName = project->resolveForward(referenceName);
+   if (emptystr(resolvedName)) {
+      // COMPILER MAGIC : try to find a template implementation
+      ref_t resolvedRef = 0;
+      _Module* refModule = project->resolveWeakModule(referenceName, resolvedRef, true);
+      if (refModule != nullptr) {
+         resolvedName = refModule->resolveReference(resolvedRef);
+
+         project->addForward(referenceName, resolvedName);
+      }
+   }
+
+   return resolvedName;
+}
+
 ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
 {
    _Module* argModule;
@@ -583,33 +600,39 @@ ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, b
    if (emptystr(vmtName))
       return 0;
 
-   // load class meta data
-   ref_t moduleRef = 0;
-   argModule = project->resolveModule(vmtName, moduleRef, true);
-
-   if (argModule == NULL || moduleRef == 0)
-      return 0;
-
-   // load argument VMT meta data
-   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
-   if (metaData == NULL || metaData->Length() == sizeof(SymbolExpressionInfo))
-      return 0;
-
-   MemoryReader reader(metaData);
-
-   if (argModule != module) {
-      ClassInfo copy;
-      copy.load(&reader, headerOnly);
-
-      importClassInfo(copy, info, argModule, headerOnly);
+   if (isTemplateWeakReference(vmtName)) {
+      // COMPILER MAGIC : try to find a template implementation
+      return loadClassInfo(info, resolveWeakTemplateReference(vmtName), headerOnly);
    }
-   else info.load(&reader, headerOnly);
+   else {
+      // load class meta data
+      ref_t moduleRef = 0;
+      argModule = project->resolveModule(vmtName, moduleRef, true);
 
-   if (argModule != module) {
-      // import reference
-      importReference(argModule, moduleRef, module);
+      if (argModule == NULL || moduleRef == 0)
+         return 0;
+
+      // load argument VMT meta data
+      _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
+      if (metaData == NULL || metaData->Length() == sizeof(SymbolExpressionInfo))
+         return 0;
+
+      MemoryReader reader(metaData);
+
+      if (argModule != module) {
+         ClassInfo copy;
+         copy.load(&reader, headerOnly);
+
+         importClassInfo(copy, info, argModule, headerOnly);
+      }
+      else info.load(&reader, headerOnly);
+
+      if (argModule != module) {
+         // import reference
+         importReference(argModule, moduleRef, module);
+      }
+      return moduleRef;
    }
-   return moduleRef;
 }
 
 ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
@@ -3018,14 +3041,18 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       ObjectInfo tokenInfo = scope.mapObject(firstToken);
       //ref_t attrRef = scope.mapSubject(firstToken);
       if (tokenInfo.kind != okUnknown) {
+         IdentifierString signature;
+
          // if it is shorthand property settings
          SNode name = operation.findChild(lxIdentifier, lxPrivate);
-         ref_t subject = scope.mapSubject(name);
-         //HOTFIX : support lexical subjects
-         if (subject == 0)
-            subject = scope.moduleScope->module->mapSubject(name.identifier(), false);
 
-         ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
+         ref_t classRef = scope.mapSubject(name, signature);
+         if (classRef) {
+            signature.append('$');
+            signature.append(scope.moduleScope->module->resolveReference(classRef));
+         }
+
+         ref_t messageRef = encodeMessage(scope.moduleScope->module->mapSubject(signature, false), SET_MESSAGE_ID, 1);
 
          // compile target
          // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
@@ -4134,9 +4161,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             if (paramCount >= OPEN_ARG_COUNT)
                scope.raiseError(errTooManyParameters, verb);
 
-//            ref_t paramRef = scope.moduleScope->subjectHints.get(subj_ref);
-//            int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
-//               paramRef, 0, true) : 0;
+            int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
+               class_ref, 0, true) : 0;
 
             scope.parameters.add(name, Parameter(index, class_ref/*, paramRef, size*/));
 

@@ -89,6 +89,7 @@ public:
 //   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
 
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
+   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
 
    virtual ident_t resolveForward(ident_t forward) = 0;
 

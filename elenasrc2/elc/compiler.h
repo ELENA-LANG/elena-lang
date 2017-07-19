@@ -342,13 +342,15 @@ private:
          else return referenceName;
       }
 
+      ident_t resolveWeakTemplateReference(ident_t referenceName);
+
       virtual _Memory* mapSection(ref_t reference, bool existing)
       {
          ref_t mask = reference & mskAnyRef;
 
          ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
          if (isTemplateWeakReference(referenceName)) {
-            return module->mapSection(module->mapReference(project->resolveForward(referenceName)) | mask, existing);
+            return module->mapSection(module->mapReference(resolveWeakTemplateReference(referenceName)) | mask, existing);
          }
          else return module->mapSection(reference, existing);
       }

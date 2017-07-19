@@ -3,11 +3,7 @@ In development:
 ------                              
 
               xdev - multimethod
-                 * debugger : fix template based class name
-
-                 * arrays
-                 * code templates
-                 * support type<class>
+                 * support a x := b.
                  * support var
                  * test primitive operations with numbers
                  * test primitive operations with arrays
