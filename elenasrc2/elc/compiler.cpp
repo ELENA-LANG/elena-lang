@@ -1719,10 +1719,9 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
       current = current.nextNode();
    }
 
-   //if (size != 0 && variable.type != 0) {
-   //   variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, variable.extraparam);
-   //}
-   
+   if (size != 0 && variable.extraparam != 0) {
+      variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, variable.extraparam);
+   }   
 }
 
 //void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope)
@@ -6377,36 +6376,6 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
 //   compileSyntaxTree(syntaxTree, scope);
 //}
 //
-//void Compiler :: generateArrayVariableTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
-//{
-//   // check if the first token is attribute
-//   SNode attr = node.findChild(lxIdentifier, lxPrivate);
-//   int dummy = 0;
-//   ref_t attrRef = (attr != lxPrivate) ? scope.mapAttribute(attr, dummy/*, true*/) : 0;
-//   if (!attrRef)
-//      scope.raiseError(errInvalidHint, attr);
-//
-//   // HOTFIX : set already recognized attribute value
-//   attr.setArgument(attrRef);
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      current = lxAttribute;
-//
-//      current = current.nextNode();
-//   }
-//
-//   writer.newNode(lxVariable);
-//
-//   setIdentifier(node.findChild(lxAttribute));
-//   SNode ident = node.findChild(lxNameAttr);
-//
-//   generateAttributes(writer, SNode(), scope, node.firstChild()/*, true*/);
-//
-//   copyIdentifier(writer, ident.findChild(lxIdentifier, lxPrivate));
-//
-//   writer.closeNode();
-//}
-//
 //
 //void Compiler :: generateSwitchTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
 //{
@@ -6438,14 +6407,7 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
 //      current = current.nextNode();
 //   }
 //}
-//
-//inline bool isArrayDeclaration(SNode node)
-//{
-//   SNode current = node.findChild(lxMessage);
-//
-//   return current.existChild(lxSize);
-//}
-//
+
 //void Compiler :: generateFieldTemplateTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode)
 //{
 //   if (node == lxClassField && node.argument == INVALID_REF) {

@@ -160,6 +160,7 @@ class DerivationReader : public _DerivationReader
    bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool operationMode*/);
    void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
