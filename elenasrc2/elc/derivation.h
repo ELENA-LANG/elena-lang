@@ -152,7 +152,7 @@ class DerivationReader : public _DerivationReader
    void copyTreeNode(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool methodMode = false*/);
    void copyMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer);
    void copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues);
-   void copyAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool variableMode*/);
+   void copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool variableMode*/);
 
    bool generateTemplate(SyntaxWriter& writer, DerivationScope& scope, bool declaringClass/*, bool embeddableMode*/);
 

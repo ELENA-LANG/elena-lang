@@ -3,6 +3,8 @@ In development:
 ------                              
 
               xdev - multimethod
+                 * debugger : fix template based class name
+
                  * arrays
                  * code templates
                  * support type<class>
