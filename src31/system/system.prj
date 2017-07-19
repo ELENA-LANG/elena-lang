@@ -16,6 +16,7 @@ types.l
 object.l
 basic.l
 templates.l
+control.l
 memory.l
 dynamic.l
 exceptions.l

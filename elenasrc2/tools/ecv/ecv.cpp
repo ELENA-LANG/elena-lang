@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   5
+#define REVISION_VERSION   6
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1035,13 +1035,14 @@ void listClasses(_Module* module, int pageSize)
          ReferenceName name(it.key());
          if (module->mapSection(*it | mskVMTRef, true)) {
             printLine("class ", name);
+            row++;
          }
          else if (module->mapSection(*it | mskSymbolRef, true)) {
             printLine("symbol ", name);
+            row++;
          }
-
-         row++;
-         if (row == pageSize) {
+         
+         if (row == pageSize - 1) {
             printf("Press any key to continue...");
             _fgetchar();
             printf("\n");

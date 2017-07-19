@@ -1014,41 +1014,41 @@ Compiler::ActionScope :: ActionScope(ClassScope* parent)
 
 ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
 {   
-//   if (singletonMode && identifier.compare(SELF_VAR)) {
-//      // COMPILER MAGIC : recognize self / $self in singleton closure
-//      return ObjectInfo(okParam, (size_t)-1);
-//   }
-//   if (identifier.compare(THIS_VAR)) {
-//      if (singletonMode) {
-//         // COMPILER MAGIC : recognize $self in singleton closure
-//         return ObjectInfo(okThisParam, 1);
-//      }
-//      // otherwise it should refer to the owner ones
-//      else return parent->mapTerminal(identifier);
-//   }
-//   else if (identifier.compare(CLOSURE_THIS_VAR)) {
-//      if (subCodeMode) {
-//         return parent->mapTerminal(identifier);
-//      }
-//      else return MethodScope::mapTerminal(THIS_VAR);
-//   }
-//   else if (identifier.compare(CLOSURE_SELF_VAR)) {
-//      if (subCodeMode) {
-//         return parent->mapTerminal(identifier);
-//      }
-//      else return ObjectInfo(okParam, (size_t)-1);
-//   }
-//   else if (identifier.compare(RETVAL_VAR) && subCodeMode) {
-//      ObjectInfo retVar = parent->mapTerminal(identifier);
-//      if (retVar.kind == okUnknown) {
-//         InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
-//
-//         retVar = closure->allocateRetVar();
-//      }
-//
-//      return retVar;
-//   }
-   /*else */return MethodScope::mapTerminal(identifier);
+   if (singletonMode && identifier.compare(SELF_VAR)) {
+      // COMPILER MAGIC : recognize self / $self in singleton closure
+      return ObjectInfo(okParam, (size_t)-1);
+   }
+   if (identifier.compare(THIS_VAR)) {
+      if (singletonMode) {
+         // COMPILER MAGIC : recognize $self in singleton closure
+         return ObjectInfo(okThisParam, 1);
+      }
+      // otherwise it should refer to the owner ones
+      else return parent->mapTerminal(identifier);
+   }
+   else if (identifier.compare(CLOSURE_THIS_VAR)) {
+      if (subCodeMode) {
+         return parent->mapTerminal(identifier);
+      }
+      else return MethodScope::mapTerminal(THIS_VAR);
+   }
+   else if (identifier.compare(CLOSURE_SELF_VAR)) {
+      if (subCodeMode) {
+         return parent->mapTerminal(identifier);
+      }
+      else return ObjectInfo(okParam, (size_t)-1);
+   }
+   else if (identifier.compare(RETVAL_VAR) && subCodeMode) {
+      ObjectInfo retVar = parent->mapTerminal(identifier);
+      if (retVar.kind == okUnknown) {
+         InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
+
+         retVar = closure->allocateRetVar();
+      }
+
+      return retVar;
+   }
+   else return MethodScope::mapTerminal(identifier);
 }
 
 // --- Compiler::CodeScope ---
@@ -1824,7 +1824,9 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
 
       ClassInfo localInfo;
       bool bytearray = false;
-      _logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam);
+      if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam))
+         scope.raiseError(errUnknownClass, node.findChild(lxClassRefAttr));
+
       if (_logic->isEmbeddableArray(localInfo)) {
          bytearray = true;
          size = size * (-((int)localInfo.size));

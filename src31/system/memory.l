@@ -4,37 +4,37 @@ dynamic template arrayof :: template_subj
 {
     template_subj $target.
     
-//    enumerator 
-//    [
-//        vint index := -1.
-//        int length := 0.
-//        $target >> length.
-//        
-//        ^ Enumerator::
-//          {
-//              get = $owner getAt int:index.
-//              
-//              enumerable = $owner.
-//              
-//              reset [ index int := -1 ]
-//              
-//              next
-//              [
-//                  index append int:1.
-//                  
-//                  ^ index < length
-//              ]
-//          }
-//    ]
-//        
-//    stacksafe readLengthTo vint:retVal
-//    [
-//        int len := 0.
-//        $target >> len.
-//        
-//        retVal int := len
-//    ]
-//    
+    enumerator 
+    [
+        vint index := -1.
+        int length := 0.
+        $target >> length.
+        
+        ^ Enumerator::
+          {
+              get = $owner getAt int:index.
+              
+              enumerable = $owner.
+              
+              reset [ index int := -1 ]
+              
+              next
+              [
+                  index append int:1.
+                  
+                  ^ index < length
+              ]
+          }
+    ]
+        
+    stacksafe readLengthTo vint:retVal
+    [
+        int len := 0.
+        $target >> len.
+        
+        retVal int := len
+    ]
+    
 //    int length :: outnprop(readLengthTo).
 
 //    stacksafe template_subj getAt int:n

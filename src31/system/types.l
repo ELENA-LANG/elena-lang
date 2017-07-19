@@ -18,6 +18,7 @@ generic         = #8202.
 static          = #8194.
 dynamic         = #8199.
 var             = #16385.
+limited         = #8196.
 
 __int           = #11.
 __dword         = #12.
@@ -41,7 +42,6 @@ __ifnotoperator = #4098.
 ////#template(-4099) w1 {}
 ////#template(-4100) w2 {}
 ////#template(-4101) w3 {}
-//#8196           limited.
 //#8206           mixin.
 //#8209           __tape_mixin.
 //#8204           nonstructural.
@@ -53,10 +53,10 @@ __ifnotoperator = #4098.
 
 /// Provides classes that describe the basic functionality
 
-type object  = system'Object.
+type object     = system'Object.
 
 // === basic logical types ===
-type bool    = system'BaseBoolValue.
+type bool       = system'BaseBoolValue.
 
 //// === basic primitive types ===
 //
@@ -64,13 +64,13 @@ type bool    = system'BaseBoolValue.
 //
 //type ref        :: system'Variable.
 
-type byte    = system'ByteNumber.
-type short   = system'ShortNumber.
-type int     = system'IntNumber.
-type uint    = system'UIntNumber.
-type long    = system'LongNumber.
-type real    = system'RealNumber.
-type char    = system'CharValue.
+type byte       = system'ByteNumber.
+type short      = system'ShortNumber.
+type int        = system'IntNumber.
+type uint       = system'UIntNumber.
+type long       = system'LongNumber.
+type real       = system'RealNumber.
+type char       = system'CharValue.
 //type mssg       :: system'Message.
 //type ext_mssg   :: system'ExtensionMessage.
 //
@@ -96,9 +96,9 @@ type array      = system'Array.
 //type bitset     :: system'BitArray32.
 
 /// An instance of system'LiteralValue class. 
-type literal = system'LiteralValue.
+type literal    = system'LiteralValue.
 
-type wide    = system'WideLiteralValue.
+type wide       = system'WideLiteralValue.
 
 //// === function types ===
 //type func       :: system'BaseFunction.
@@ -127,9 +127,9 @@ type wide    = system'WideLiteralValue.
 //type handle     :: system'Handle.
 //type rt_ptr     :: system'RTPointer.
 //type dirty_ptr  :: system'UnsafePointer.
-//
-//// --- Enumerators / Indexers ---
-//type enumerator :: system'Enumerator.
+
+// --- Enumerators / Indexers ---
+type enumerator = system'Enumerator.
 //type indexer    :: system'Indexer.
 //type indexer2d  :: system'Indexer2D.
 

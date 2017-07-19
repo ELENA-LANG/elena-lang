@@ -1324,7 +1324,7 @@ void DerivationReader :: generateTemplateVariableTree(SyntaxWriter& writer, SNod
       if (scope.mapAttribute(attr/*, true*/) == V_TYPETEMPL && prefixCounter == 1) {
          attrRef = V_TYPETEMPL;
 
-         current = current.findChild(lxObject);
+         current = typeNode;
       }
       else {
          IdentifierString attrName(attr.findChild(lxTerminal).identifier());
@@ -1378,9 +1378,11 @@ void DerivationReader :: generateTemplateVariableTree(SyntaxWriter& writer, SNod
       return;
    }
    else if (attrRef == V_TYPETEMPL) {
-      typeRef = scope.mapTerminal(current.findChild(lxIdentifier, lxPrivate, lxReference), true);
+      attr = current.findChild(lxIdentifier, lxPrivate, lxReference);
+
+      typeRef = scope.mapTerminal(attr, true);
       if (typeRef == 0)
-         scope.raiseError(errInvalidHint, node);
+         typeRef = scope.mapTerminal(attr);
    }
    else {
       DerivationScope templateScope(&scope, attrRef);
@@ -1398,7 +1400,9 @@ void DerivationReader :: generateTemplateVariableTree(SyntaxWriter& writer, SNod
       typeRef = templateScope.reference;
    }
    writer.newNode(lxVariable);
-   writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(typeRef));
+   writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(typeRef));
+   copyIdentifier(writer, attr);
+   writer.closeNode();
 
    copyIdentifier(writer, ident);
 
