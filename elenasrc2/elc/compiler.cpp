@@ -1477,10 +1477,10 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
             /*else */if (param.class_ref == moduleScope->intReference) {
                writer.newNode(lxIntVariable);
             }
-            else if (param.class_ref = moduleScope->longReference) {
+            else if (param.class_ref == moduleScope->longReference) {
                writer.newNode(lxLongVariable);
             }
-            else if (param.class_ref = moduleScope->realReference) {
+            else if (param.class_ref == moduleScope->realReference) {
                writer.newNode(lxReal64Variable);
             }
             else if (scope.stackSafe && param.class_ref != 0) {
@@ -3060,7 +3060,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
          // compile the parameter
          SNode sourceNode = exprNode.nextNode(lxObjectMask);
-         ObjectInfo source = compileExpression(writer, sourceNode, scope, HINT_DYNAMIC_OBJECT);
+         ObjectInfo source = compileExpression(writer, sourceNode, scope, (classRef != 0) ? 0 : HINT_DYNAMIC_OBJECT);
 
          retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
 
@@ -4164,7 +4164,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
                class_ref, 0, true) : 0;
 
-            scope.parameters.add(name, Parameter(index, class_ref/*, paramRef, size*/));
+            scope.parameters.add(name, Parameter(index, class_ref, size));
 
             arg = arg.nextNode();
 //         }
