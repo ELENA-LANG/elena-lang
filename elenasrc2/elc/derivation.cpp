@@ -751,6 +751,14 @@ void DerivationReader :: copyTreeNode(SyntaxWriter& writer, SNode current, Deriv
       copyIdentifier(writer, current.findChild(lxIdentifier));
       writer.closeNode();
    }
+   else if (current == lxTemplateAttribute) {
+      ref_t classRef = scope.attributes.get(current.argument);
+      ident_t subjName = scope.moduleScope->module->resolveReference(classRef);
+      writer.newNode(lxClassRefAttr, subjName);
+
+      SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+      writer.closeNode();
+   }
    else copyExpressionTree(writer, current, scope);
 }
 

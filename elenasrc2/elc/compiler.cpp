@@ -60,28 +60,6 @@ inline bool isPrimitiveRef(ref_t reference)
    return (int)reference < 0;
 }
 
-inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
-{
-   ref_t verbId = 0;
-   ref_t signRef = 0;
-   int paramCount = 0;
-
-   decodeMessage(exportRef, signRef, verbId, paramCount);
-
-   // if it is generic message
-   if (signRef == 0) {
-      return exportRef;
-   }
-
-   // otherwise signature and custom verb should be imported
-   if (signRef != 0) {
-      ident_t subject = exporter->resolveSubject(signRef);
-
-      signRef = importer->mapSubject(subject, false);
-   }
-   return encodeMessage(signRef, verbId, paramCount);
-}
-
 inline ref_t importSubject(_Module* exporter, ref_t exportRef, _Module* importer)
 {
    // otherwise signature and custom verb should be imported
@@ -2783,6 +2761,9 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //      if (result.found && !result.withCustomDispatcher && callType == tpUnknown)
 //         node.appendNode(lxNotFoundAttr);
 //   }
+
+   if (result.multi)
+      writer.appendNode(lxMultiAttr);
 
    if (classReference)
       writer.appendNode(lxCallTarget, classReference);
@@ -5762,6 +5743,24 @@ ref_t Compiler :: optimizeMessageCall(SNode node, ModuleScope& scope, WarningSco
 
    if (node.existChild(lxStacksafeAttr)) {
       mode |= HINT_NOBOXING;
+   }
+   bool multi = false;
+   if (node.existChild(lxMultiAttr)) {
+      multi = true;
+   }
+
+   SNode targetNode = node.findChild(lxCallTarget);
+   if (targetNode != lxNone && multi) {
+      ref_t message = _logic->resolveMultimethod(scope, node.argument, targetNode.argument, node);
+      if (message != 0) {
+         node.setArgument(message);
+
+         _CompilerLogic::ChechMethodInfo result;
+         _logic->resolveCallType(scope, targetNode.argument, message, result);
+
+         if (result.stackSafe)
+            mode |= HINT_NOBOXING;
+      }
    }
 
    if (node.existChild(lxEmbeddableAttr)) {

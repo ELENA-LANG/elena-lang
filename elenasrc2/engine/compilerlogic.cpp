@@ -198,6 +198,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       result.outputReference = info.methodHints.get(Attribute(message, maReference));
 
       result.embeddable = test(hint, tpEmbeddable);
+      result.multi = test(hint, tpMultimethod);
 
       if ((hint & tpMask) == tpSealed) {
          return hint;
@@ -1703,6 +1704,63 @@ bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
 //      }
 //   }
 //}
+
+ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, targetRef)) {
+      ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
+      if (listRef) {
+         _Module* argModule = scope.loadReferenceModule(listRef);
+
+         _Memory* section = argModule->mapSection(listRef | mskRDataRef, false);
+         MemoryReader reader(section);
+         pos_t position = section->Length() - 4;
+         while (position != 0) {
+            reader.seek(position - 8);
+            ref_t message = importMessage(scope.module, reader.getDWord(), argModule);
+
+            ident_t signature = scope.module->resolveSubject(getSignature(message));
+            int start = signature.find('$') + 1;
+            int end = signature.find(start, '$', getlength(signature));
+            IdentifierString temp(signature.c_str() + start, end - start);
+            SNode current = node.firstChild();
+            bool first = true;
+            ref_t argRef = scope.module->mapReference(temp);
+            while (current != lxNone) {
+               if (test(current.type, lxObjectMask)) {
+                  // skip the message target
+                  if (!first) {
+                     SNode opTarget = current.findChild(lxTarget);
+                     if (opTarget != lxNone) {
+                        ref_t sourRef = opTarget.argument;
+                        if (isPrimitiveRef(sourRef))
+                           sourRef = resolvePrimitiveReference(scope, sourRef);
+                        
+                        if (isCompatible(scope, argRef, sourRef)) {
+                           start = end + 1;
+                           if (start < getlength(signature)) {
+                              signature.find(start, '$', getlength(signature));
+                              temp.copy(signature.c_str() + start, end - start);
+                              argRef = scope.module->mapReference(temp);
+                           }
+                           else return message;
+                        }
+                        else break;
+                     }
+                     else return 0;
+                  }
+                  else first = false;
+               }
+               current = current.nextNode();
+            }
+            position -= 8;
+         }
+      }
+   }
+
+   return 0;
+}
 
 // defineOperatorMessage tries to find the best match for the operator
 ref_t CompilerLogic :: defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2)

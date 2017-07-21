@@ -3,8 +3,10 @@ In development:
 ------                              
 
               xdev - multimethod
-                 * support a x := b.
-                 * support var
+                 * replace generic multi method call with one from the overload list if the arguments are known
+                 * replace $self get_method(val) with $self get_method vint:val, where val is an integer
+                 * modify outprop template to support different output type (get rid of explicit vint)
+
                  * test primitive operations with numbers
                  * test primitive operations with arrays
                  * test list<type>
@@ -64,6 +66,7 @@ In development:
                  * optimize multimethod implementation for sealed / limited classes (resolve message index)
                  * optimize multimethod implementation for sealed class containing only one overload class
                  * no need for template class class?
+                 * get rid of defineOperatorMessage, resolveMultimethod does the job
 
               xdev - refactoring
                  * review cellular library

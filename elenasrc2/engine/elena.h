@@ -865,6 +865,28 @@ inline bool isOpenArg(ref_t message)
    return (message & PARAM_MASK) == OPEN_ARG_COUNT;
 }
 
+inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   ref_t verbId = 0;
+   ref_t signRef = 0;
+   int paramCount = 0;
+
+   decodeMessage(exportRef, signRef, verbId, paramCount);
+
+   // if it is generic message
+   if (signRef == 0) {
+      return exportRef;
+   }
+
+   // otherwise signature and custom verb should be imported
+   if (signRef != 0) {
+      ident_t subject = exporter->resolveSubject(signRef);
+
+      signRef = importer->mapSubject(subject, false);
+   }
+   return encodeMessage(signRef, verbId, paramCount);
+}
+
 } // _ELENA_
 
 #endif // elenaH

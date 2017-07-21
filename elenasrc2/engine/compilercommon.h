@@ -221,6 +221,7 @@ public:
       bool  stackSafe;
       bool  embeddable;
       bool  withOpenArgDispatcher;
+      bool  multi;
       ref_t outputReference;
 
       ChechMethodInfo()
@@ -230,6 +231,7 @@ public:
          withCustomDispatcher = false;
          stackSafe = false;
          withOpenArgDispatcher = false;
+         multi = false;
       }
    };
 
@@ -319,6 +321,8 @@ public:
 
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
+
+   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node) = 0;
 };
    
 }  // _ELENA_

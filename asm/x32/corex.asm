@@ -3183,8 +3183,8 @@ labNextBaseClass:
   jnz  short labNextBaseClass
 
   mov  esi, __arg1
-  add  edx, 2
-  mov  ebx, [esi + edx * 4] // ; message from overload list
+  add  edx, 1
+  mov  ebx, [esi + edx * 8] // ; message from overload list
   and  ebx, ebx
   jnz  labNextOverloadlist
 
