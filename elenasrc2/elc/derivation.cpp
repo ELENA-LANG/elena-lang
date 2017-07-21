@@ -557,6 +557,19 @@ void DerivationReader::DerivationScope :: copySubject(SyntaxWriter& writer, SNod
       copyIdentifier(writer, terminal);
       writer.closeNode();
    }
+   else if (type == DerivationScope::ttMethodTemplate) {
+      ident_t identifier = terminal.identifier();
+      if (emptystr(identifier))
+         identifier = terminal.findChild(lxTerminal).identifier();
+
+      int index = fields.get(identifier);
+      if (index != 0) {
+         writer.newNode(lxTemplateMethod, parameters.Count() + index);
+         copyIdentifier(writer, terminal);
+         writer.closeNode();
+      }
+      else copyIdentifier(writer, terminal);
+   }
    else copyIdentifier(writer, terminal);
 }
 
@@ -679,6 +692,9 @@ void DerivationReader :: copyTreeNode(SyntaxWriter& writer, SNode current, Deriv
       else if (scope.type == DerivationScope::ttFieldTemplate && current.argument == 2) {
          copyIdentifier(writer, scope.identNode.firstChild(lxTerminalMask));
       }
+      else if (scope.type == DerivationScope::ttMethodTemplate && current.argument == 2) {
+         copyIdentifier(writer, scope.identNode.firstChild(lxTerminalMask));
+      }
       else {
          // if it is a template parameter
          ref_t attrRef = scope.attributes.get(current.argument);
@@ -696,6 +712,14 @@ void DerivationReader :: copyTreeNode(SyntaxWriter& writer, SNode current, Deriv
       ident_t fieldName = retrieveIt(scope.fields.start(), current.argument).key();
 
       writer.newNode(lxIdentifier, fieldName);
+
+      SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+      writer.closeNode();
+   }
+   else if (current == lxTemplateMethod && current.argument >= 0) {
+      ident_t methodName = retrieveIt(scope.fields.start(), current.argument - scope.attributes.Count()).key();
+
+      writer.newNode(lxIdentifier, methodName);
 
       SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
       writer.closeNode();
@@ -872,21 +896,21 @@ bool DerivationReader :: generateTemplate(SyntaxWriter& writer, DerivationScope&
          else if (current.argument == V_FIELD/* && scope.type != TemplateScope::ttAttrTemplate*/) {
             // ignore template attributes
          }
-//         else if (current.argument == V_METHOD && scope.type != TemplateScope::ttAttrTemplate) {
-//            if (scope.type == TemplateScope::Type::ttFieldTemplate) {
-//               // HOTFIX : is it is a method template, consider the field name as a message subject
-//               scope.type = TemplateScope::Type::ttMethodTemplate;
-//
-//               ForwardMap::Iterator it = scope.fields.start();
-//               while (!it.Eof()) {
-//                  scope.subjects.add(scope.subjects.Count() + 1, scope.moduleScope->module->mapSubject(it.key(), false));
-//
-//                  it++;
-//               }
-//
-//               //scope.subjects.add()
-//            }
-//         }
+         else if (current.argument == V_METHOD) {
+            if (scope.type == DerivationScope::ttFieldTemplate) {
+               // HOTFIX : is it is a method template, consider the field name as a message subject
+               scope.type = DerivationScope::ttMethodTemplate;
+
+               //ForwardMap::Iterator it = scope.fields.start();
+               //while (!it.Eof()) {
+               //   scope.subjects.add(scope.subjects.Count() + 1, scope.moduleScope->module->mapSubject(it.key(), false));
+
+               //   it++;
+               //}
+
+               //scope.subjects.add()
+            }
+         }
          else {
             writer.newNode(current.type, current.argument);
             SyntaxTree::copyNode(writer, current);
@@ -905,7 +929,10 @@ bool DerivationReader :: generateTemplate(SyntaxWriter& writer, DerivationScope&
          copyMethodTree(writer, current, scope, buffer);
       }
       else if (current == lxClassField) {
-         copyFieldTree(writer, current, scope, buffer);
+         if (current.argument == -1 && current.existChild(lxTemplateMethod)) {
+            // ignore virtual method declaration
+         }
+         else copyFieldTree(writer, current, scope, buffer);
       }
 //      else if (current == lxTemplateField && current.argument == INVALID_REF) {
 //         ref_t attrRef = scope.moduleScope->module->mapSubject(current.findChild(lxReference).identifier(), false);
@@ -1670,6 +1697,13 @@ void DerivationReader :: generateFieldTree(SyntaxWriter& writer, SNode node, Der
 
       generateAttributes(bufferWriter, SNode(), scope, attributes/*, false, true*/);
    }
+   else if (scope.type == DerivationScope::ttMethodTemplate) {
+      SNode name = goToNode(attributes, lxNameAttr).findChild(lxIdentifier, lxPrivate);
+
+      scope.fields.add(name.findChild(lxTerminal).identifier(), scope.fields.Count() + 1);
+
+      writer.appendNode(lxTemplateMethod, scope.fields.Count());
+   }
    else generateAttributes(bufferWriter, node, scope, attributes/*, false, true*/);
 
    // copy attributes
@@ -1848,9 +1882,9 @@ bool DerivationReader :: generateDeclaration(SyntaxWriter& writer, SNode node, D
             case V_FIELD:
                attr = daField;
                break;
-            //case V_METHOD:
-            //   attr = daMethod;
-            //   break;
+            case V_METHOD:
+               attr = daMethod;
+               break;
             //case V_LOOP:
             //   attr = daLoop;
             //   break;
@@ -1895,11 +1929,11 @@ bool DerivationReader :: generateDeclaration(SyntaxWriter& writer, SNode node, D
          scope.type = DerivationScope::ttFieldTemplate;
          //count++; // HOTFIX : to include the field itself
       }
-//      else if (test(declType, daMethod)) {
-//         templateName.append("#");
-//
-//         scope.type = TemplateScope::ttMethodTemplate;
-//      }
+      else if (test(declType, daMethod)) {
+         templateName.append("#");
+
+         scope.type = DerivationScope::ttMethodTemplate;
+      }
       else if (node.existChild(lxExpression)) {
          scope.type = DerivationScope::ttCodeTemplate;
 
@@ -2134,6 +2168,8 @@ void DerivationReader :: generateScopeMembers(SNode node, DerivationScope& scope
                if (current.existChild(lxAttributeValue)) {
                   current.setArgument(-1);
                }
+               else if (scope.type == DerivationScope::ttMethodTemplate)
+                  current.setArgument(V_METHOD);
             }
          }
          subAttributes = SNode();

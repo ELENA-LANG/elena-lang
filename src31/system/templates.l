@@ -1,22 +1,23 @@
-//field template prop :: type, prop_name
-//{
-//    type field.
-//    
-//    set prop_name:val
-//    [
-//        field := val
-//    ]
-//    
-//    type get prop_name = field.
-//}
-//
-//field template rprop :: type, prop_name
-//{
-//    type field.
-//    
-//    type get prop_name = field.
-//}
-//
+
+field template prop :: type, prop_name
+{
+    type field.
+    
+    set prop_name type:val
+    [
+        field := val
+    ]
+    
+    type prop_name = field.
+}
+
+field template rprop :: type, prop_name
+{
+    type field.
+    
+    type prop_name = field.
+}
+
 //// --- outnprop ---
 //
 //method template outnprop :: type,prop_name,target_method
