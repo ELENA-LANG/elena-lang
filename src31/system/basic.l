@@ -1,31 +1,4 @@
 
-template ref :: template_subj
-{
-    template_subj $value.
-
-    stacksafe set template_subj:val
-    [
-        $value := val.
-    ]
-
-    template_subj value = $value.
-
-//    set value:val
-//    [
-//        $value := val template_subj.
-//    ]
-
-    cast : verb to:target => $value.
-
-    /// Dispatches the verb to the target object with generic subject
-    cast : aVerb to:aTarget with:aParam => $value.
-    
-    equal : anObject
-        => $value.
-
-    embeddable dispatch => $value.
-}
-
 template var :: template_subj
 {
     template_subj $value.
@@ -35,17 +8,17 @@ template var :: template_subj
         $value := val.
     ]
     
-//    set : val
-//    [
-//        $value := val template_subj.
-//    ]
-    
     stacksafe set template_subj:val
     [
         $value := val.
     ]
     
     template_subj value = $value.
+    
+//    set : val
+//    [
+//        $value := val template_subj.
+//    ]
     
 //    append : val
 //    [
@@ -109,7 +82,7 @@ type vshort = var(short).
 type vint   = var(int).
 type vlong  = var(long).
 type vreal  = var(real).
-type vchar  = ref(char).
+type vchar  = var(char).
 
 // === Boolean values ===
 

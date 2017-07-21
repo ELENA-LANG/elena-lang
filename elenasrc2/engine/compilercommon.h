@@ -71,7 +71,7 @@
 #define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
-//#define V_FIELD          (ref_t)-16392
+#define V_FIELD          (ref_t)-16392
 //#define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395

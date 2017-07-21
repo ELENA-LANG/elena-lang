@@ -19,6 +19,7 @@ static          = #8194.
 dynamic         = #8199.
 var             = #16385.
 limited         = #8196.
+field           = #16392.
 
 __int           = #11.
 __dword         = #12.
@@ -35,7 +36,6 @@ __ifnotoperator = #4098.
 //#16391 #16394   loop_template.
 //#16391 #16396   extern_template.
 //#16393          method.
-//#16392          field.
 
 ////#template(-8207)         preloaded {}
 //#8205           action.

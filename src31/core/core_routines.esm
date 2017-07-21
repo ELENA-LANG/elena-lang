@@ -539,7 +539,7 @@ labErr:
 
 end
 
-procedure __charconvertor."convert$system@ByteNumber$@system@ref#1&CharValue[3]"
+procedure __charconvertor."convert$system@ByteNumber$@system@var#1&CharValue[3]"
   
   bloadsi 3
   aloadsi 2
@@ -562,7 +562,7 @@ labCopy:
 
 end
 
-procedure __charconvertor."convert$system@ShortNumber$@system@ref#1&CharValue[3]"
+procedure __charconvertor."convert$system@ShortNumber$@system@var#1&CharValue[3]"
   
   bloadsi 3
   aloadsi 2
@@ -585,7 +585,7 @@ labCopy:
 
 end
 
-procedure __charconvertor."convert$system@IntNumber$@system@ref#1&CharValue[3]"
+procedure __charconvertor."convert$system@IntNumber$@system@var#1&CharValue[3]"
   
   bloadsi 3
   aloadsi 2
@@ -608,7 +608,7 @@ labCopy:
 
 end
 
-procedure __charconvertor."eval&system#convert$system@IntNumber$system@LiteralValue$@system@ref#1&CharValue[4]"
+procedure __charconvertor."eval&system#convert$system@IntNumber$system@LiteralValue$@system@var#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -631,7 +631,7 @@ labErr:
 
 end
 
-procedure __charconvertor."eval&system#convert$system@IntNumber$system@ByteArray$@system@ref#1&CharValue[4]"
+procedure __charconvertor."eval&system#convert$system@IntNumber$system@ByteArray$@system@var#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -654,7 +654,7 @@ labErr:
 
 end
 
-procedure __charconvertor."eval&system#convert$system@IntNumber$system@WideLiteralValue$@system@ref#1&CharValue[4]"
+procedure __charconvertor."eval&system#convert$system@IntNumber$system@WideLiteralValue$@system@var#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -677,7 +677,7 @@ labErr:
 
 end
 
-procedure __charconvertor."eval&system#convert$system@IntNumber$system@ShortArray$@system@ref#1&CharValue[4]"
+procedure __charconvertor."eval&system#convert$system@IntNumber$system@ShortArray$@system@var#1&CharValue[4]"
   
   aloadsi 2
   nload
