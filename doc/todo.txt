@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xdev - multimethod
-                 * replace generic multi method call with one from the overload list if the arguments are known
-                 * replace $self get_method(val) with $self get_method vint:val, where val is an integer
                  * modify outprop template to support different output type (get rid of explicit vint)
 
                  * test primitive operations with numbers

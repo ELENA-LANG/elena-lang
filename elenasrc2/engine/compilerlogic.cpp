@@ -1746,6 +1746,7 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
                            }
                            else return message;
                         }
+                        //else if ()
                         else break;
                      }
                      else return 0;

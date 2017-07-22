@@ -17,30 +17,30 @@ namespace _ELENA_
 // --- ELENA DFA Constants ---
 const char dfaMaxChar        = 127;
 
-const char dfaStart          = 'a';
+const char dfaStart          = 'A';
 const char dfaError          = '?';
 const char dfaEOF            = '.';
 const char dfaWhitespace     = '*';
 const char dfaBack           = '!';
 const char dfaDotLookahead   = '$';
 const char dfaMinusLookahead = '-';  // indicates that if minus is preceeded by the operator it may be part of the digit
-const char dfaAttribute      = 'b';
-const char dfaIdentifier     = 'd';
-const char dfaFullIdentifier = 'f';
-const char dfaWildcard       = 'g';
-const char dfaOperator       = 'h';
-const char dfaDblOperator    = 'm';
-const char dfaInteger        = 'n';
-const char dfaDotStart       = 'o';
-const char dfaExplicitConst  = 's';
-const char dfaLong           = 'r';              
-const char dfaHexInteger     = 't'; // should be kept for compatibility
-const char dfaReal           = 'q';
-const char dfaSignStart      = 'u';
-const char dfaQuote          = 'w';
-const char dfaPrivate        = 'x';
-const char dfaCharacter      = '}';
-const char dfaWideQuote      = '~';
+const char dfaAttribute      = 'B';
+const char dfaIdentifier     = 'D';
+const char dfaFullIdentifier = 'F';
+const char dfaWildcard       = 'G';
+const char dfaOperator       = 'H';
+const char dfaDblOperator    = 'M';
+const char dfaInteger        = 'N';
+const char dfaDotStart       = 'O';
+const char dfaExplicitConst  = 'S';
+const char dfaLong           = 'R';              
+const char dfaHexInteger     = 'T'; // should be kept for compatibility
+const char dfaReal           = 'Q';
+const char dfaSignStart      = 'U';
+const char dfaQuote          = 'W';
+const char dfaPrivate        = 'X';
+const char dfaCharacter      = '[';
+const char dfaWideQuote      = ']';
 
 class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LINE_LEN>
 {
