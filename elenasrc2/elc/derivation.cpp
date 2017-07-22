@@ -475,12 +475,11 @@ void DerivationReader::DerivationScope :: loadAttributeValues(SNode attributes, 
 
       //   subjects.add(subjects.Count() + 1, subject);
       //}
-      //else if (current == lxTemplateType) {
-      //   TemplateScope* parentTemplate = (TemplateScope*)parent;
-      //   ref_t subject = parentTemplate->subjects.get(current.argument);
+      else if (current == lxTemplateAttribute) {
+         ref_t subject = parent->attributes.get(current.argument);
 
-      //   subjects.add(subjects.Count() + 1, subject);
-      //}
+         this->attributes.add(this->attributes.Count() + 1, subject);
+      }
       //else if (prefixMode && current == lxNameAttr)
       //   break;
 

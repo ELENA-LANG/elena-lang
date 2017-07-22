@@ -918,7 +918,7 @@ private:
    void optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);
    void optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask);
 
-//   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
+   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 
    void createPackageInfo(_Module* module, _ProjectManager& project);
 
@@ -946,15 +946,15 @@ public:
 
    void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 
-////   // _Compiler interface implementation
-//////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
+//   // _Compiler interface implementation
+////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef);
    virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
-//   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
-//   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
+   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
+   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 //   virtual void injectFieldExpression(SyntaxWriter& writer);
-//   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
+   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
