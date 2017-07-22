@@ -18,19 +18,21 @@ field template rprop :: type, prop_name
     type prop_name = field.
 }
 
-//// --- outnprop ---
-//
-//method template outnprop :: type,prop_name,target_method
-//{
-//    stacksafe embeddable type get prop_name
-//    [
-//        int val := 0.        
-//        $self target_method vint:val.
-//        
-//        ^ val.
-//    ]
-//}
-//
+// --- outprop ---
+
+method template outprop :: type,prop_name
+{
+    method get_method.
+    
+    stacksafe embeddable type prop_name
+    [
+        type val := 0.        
+        $self get_method var<type>:val.
+
+        ^ val.
+    ]
+}
+
 //// --- nprop ---
 //
 //method template nprop :: type,prop_name,get_method,set_method

@@ -1714,6 +1714,9 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
          _Module* argModule = scope.loadReferenceModule(listRef);
 
          _Memory* section = argModule->mapSection(listRef | mskRDataRef, false);
+         if (section->Length() < 4)
+            return 0;
+
          MemoryReader reader(section);
          pos_t position = section->Length() - 4;
          while (position != 0) {
