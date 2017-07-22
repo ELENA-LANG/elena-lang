@@ -1,6 +1,6 @@
 // --- arrayof ---
 
-dynamic template arrayof :: template_subj
+dynamic template array :: template_subj
 {
     template_subj $target.
     
@@ -35,21 +35,21 @@ dynamic template arrayof :: template_subj
         retVal int := len
     ]
     
-//    int length :: outnprop(readLengthTo).
+    //int outprop length :: readLengthTo.
 
-//    stacksafe template_subj getAt int:n
-//    [
-//        if (n < 0)
-//            [ InvalidArgumentException new; raise ].
-//        
-//        int len := 0.
-//        $target >> len.
-//
-//        if (n < len)
-//            [ ^ $target @ n ];
-//            [ InvalidArgumentException new; raise ]
-//    ]
-//
+    stacksafe template_subj getAt int:n
+    [
+        if (n < 0)
+            [ InvalidArgumentException new; raise ].
+        
+        int len := 0.
+        $target >> len.
+
+        if (n < len)
+            [ ^ $target @ n ];
+            [ InvalidArgumentException new; raise ]
+    ]
+
 //    stacksafe setAt int:n template_subj:item
 //    [
 //        if (n < 0)
@@ -1556,7 +1556,7 @@ dynamic template arrayof :: template_subj
 // --- Array ---
 
 /// An array
-sealed Array :: dispatchable(array)//, arrayof(object)
+sealed Array :: dispatchable<array>//, arrayof(object)
 {
 //    /// Creates an empty array
 //    constructor min

@@ -3,7 +3,7 @@
 // --- Enumerator ---
 
 /// An enumerator prototype
-limited class Enumerator :: dispatchable(enumerator)
+limited class Enumerator :: dispatchable<enumerator>
 {
     /// Returns the current object
     get = $nil.

@@ -15,7 +15,7 @@ template dispatchable :: template_subj
 // --- super object ---
 
 /// a common ancestor
-class Object :: dispatchable(object)
+class Object :: dispatchable<object>
 {
     /// Creates the object
     constructor new []
@@ -32,7 +32,7 @@ class Object :: dispatchable(object)
 }
 
 /// A common boolean value
-listable class BaseBoolValue :: dispatchable(bool)
+listable class BaseBoolValue :: dispatchable<bool>
 {
     if : aTrueAction = $nil.
 

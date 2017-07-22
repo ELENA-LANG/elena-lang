@@ -264,7 +264,7 @@ class IntBaseNumber :: BaseNumber
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
+sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable<byte>
 {
     __int theValue(1).
 
@@ -511,7 +511,7 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable(byte)
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable(short)
+sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable<short>
 {
     __int theValue(2).
 
@@ -772,7 +772,7 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable(short)
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable(int)
+sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable<int>
 {
     __int theValue(4).
 
@@ -1042,7 +1042,7 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable(int)
 
 /// A unsigned 32 bit integer
 
-sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable(int)
+sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable<int>
 {
     __int theValue(4).
 
@@ -1356,7 +1356,7 @@ sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable(int)
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable(long)
+sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable<long>
 {
     __int theValue(8).
     
@@ -1622,7 +1622,7 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable(long)
 // --- realNumber ---
 
 /// A 64bit float numeric value
-sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real)
+sealed embeddable struct RealNumber :: BaseNumber, dispatchable<real>
 {
     __real theValue(8).
 
@@ -1828,7 +1828,7 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable(real)
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-sealed const embeddable struct CharValue :: BaseValue, dispatchable(char)
+sealed const embeddable struct CharValue :: BaseValue, dispatchable<char>
 {
     __dword theValue(4).
 
@@ -1968,7 +1968,7 @@ class BaseExtender
 /// A generic variable. 
 ///
 /// Extends an assigned value
-sealed class Variable :: var(object)
+sealed class Variable :: var<object>
 {
     /// Creates the empty variable
     constructor new
