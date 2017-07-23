@@ -52,7 +52,7 @@
 #define V_STRUCT         (ref_t)-8197
 #define V_ENUMLIST       (ref_t)-8198
 #define V_DYNAMIC        (ref_t)-8199
-//#define V_STRING         (ref_t)-8200
+#define V_STRING         (ref_t)-8200
 #define V_CONST          (ref_t)-8201
 #define V_GENERIC        (ref_t)-8202
 #define V_EXTENSION      (ref_t)-8203
@@ -73,7 +73,7 @@
 #define V_TEMPLATE       (ref_t)-16391
 #define V_FIELD          (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
-//#define V_LOOP           (ref_t)-16394
+#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
 //#define V_EXTERN         (ref_t)-16396
 #define V_MULTI          (ref_t)-16397

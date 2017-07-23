@@ -1860,8 +1860,11 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
       else if (current == lxAttributeValue) {
          // if it is an explicit type declaration
          ref_t ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference), true);
-         if (!ref)
-            scope.raiseError(errInvalidHint, current);
+         if (!ref) {
+            ref = scope.mapAttribute(current.findChild(lxIdentifier, lxReference));
+            if ((int)ref <= 0)
+               scope.raiseError(errInvalidHint, current);
+         }            
 
          writer.newNode(lxParamRefAttr, scope.moduleScope->module->resolveReference(ref));
          copyIdentifier(writer, current.firstChild(lxTerminalMask));
@@ -1975,9 +1978,9 @@ bool DerivationReader :: generateDeclaration(SyntaxWriter& writer, SNode node, D
             case V_METHOD:
                attr = daMethod;
                break;
-            //case V_LOOP:
-            //   attr = daLoop;
-            //   break;
+            case V_LOOP:
+               attr = (DeclarationAttr)(daLoop | daTemplate);
+               break;
             //case V_IMPORT:
             //   attr = daImport;
             //   break;

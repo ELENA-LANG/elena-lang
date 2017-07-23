@@ -144,7 +144,7 @@ public:
 //      okExplicitConstant,             // param - reference, extraparam - subject
 //
 //      okExternal,
-//      okInternal,
+      okInternal,
    };
 
    struct ObjectInfo
@@ -828,7 +828,7 @@ private:
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
+   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
    void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);

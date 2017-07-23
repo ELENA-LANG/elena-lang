@@ -21,6 +21,8 @@ var             = #16385.
 limited         = #8196.
 field           = #16392.
 method          = #16393.
+loop_template   = #16394.
+__string        = #8200.
 
 __int           = #11.
 __dword         = #12.
@@ -34,7 +36,6 @@ __ifnotoperator = #4098.
 
 
 //#16395          import.
-//#16391 #16394   loop_template.
 //#16391 #16396   extern_template.
 
 ////#template(-8207)         preloaded {}
@@ -45,7 +46,6 @@ __ifnotoperator = #4098.
 //#8206           mixin.
 //#8209           __tape_mixin.
 //#8204           nonstructural.
-//#8200           string.
 //
 //#22 #262144     __symbol.
 //#21 #524288     __extmssg.
@@ -85,15 +85,15 @@ type char       = system'CharValue.
 // === basic dynamic types ===
 type bytearray  = system'ByteArray.
 type shortarray = system'ShortArray.
-//type intarray   :: system'IntArray.
-//type intmatrix  :: system'IntMatrix.
-//type realarray  :: system'RealArray.
-//type realmatrix :: system'RealMatrix.
-//type chararray  :: system'CharArray.
+type intarray   = system'IntArray.
+type intmatrix  = system'IntMatrix.
+type realarray  = system'RealArray.
+type realmatrix = system'RealMatrix.
+type chararray  = system'CharArray.
 type array      = system'Array.
-////#subject mssgarray  = system'MessageArray.
-//type bitarray   :: system'BitArray.
-//type bitset     :: system'BitArray32.
+//#subject mssgarray  = system'MessageArray.
+type bitarray   = system'BitArray.
+type bitset     = system'BitArray32.
 
 /// An instance of system'LiteralValue class. 
 type literal    = system'LiteralValue.
@@ -130,7 +130,7 @@ type wide       = system'WideLiteralValue.
 
 // --- Enumerators / Indexers ---
 type enumerator = system'Enumerator.
-//type indexer    :: system'Indexer.
+type indexer    = system'Indexer.
 //type indexer2d  :: system'Indexer2D.
 
 //// --- Virtual subjects ---

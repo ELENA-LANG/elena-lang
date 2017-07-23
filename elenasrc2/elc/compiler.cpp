@@ -473,10 +473,10 @@ ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool exi
    //   if (ch == '\'' || ch == 0)
    //      return ObjectInfo(okExternal);
    //}
-   //// To tell apart primitive modules, the name convention is used
-   //else if (reference.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
-   //   return ObjectInfo(okInternal, module->mapReference(reference));
-   //}
+   // To tell apart primitive modules, the name convention is used
+   /*else */if (reference.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
+      return ObjectInfo(okInternal, module->mapReference(reference));
+   }
 
    ref_t referenceID = mapReference(reference, existing);
 
@@ -2042,9 +2042,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          break;
 //      case okExternal:
 //         return;
-//      case okInternal:
-//         writer.appendNode(lxInternalRef, object.param);
-//         return;
+      case okInternal:
+         writer.appendNode(lxInternalRef, object.param);
+         return;
    }
 
    writeTarget(writer, resolveObjectReference(scope, object));
@@ -2838,9 +2838,9 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
    int paramMode = 0;
 
    SNode arg = node.firstChild();
-//   if (test(mode, HINT_RESENDEXPR) && (arg == lxMessage && arg.nextNode() != lxMessage)) {
-//      arg = arg.nextNode();
-//   }
+   if (test(mode, HINT_RESENDEXPR) && (arg == lxMessage && arg.nextNode() != lxMessage)) {
+      arg = arg.nextNode();
+   }
 
    // compile the message target and generic argument list
    while (arg != lxMessage && arg != lxNone) {
@@ -2865,14 +2865,14 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
             // HOTFIX : skip the prime message
             arg = arg.nextNode();
 
-//            if (test(mode, HINT_RESENDEXPR)) {
-//               // HOTFIX : support several generic arguments for try mode
-//               if (arg == lxExpression)
-//                  continue;
-//            }
-//            else if (arg == lxExtension)
-//               // HOTFIX : skip the extension node
-//               arg = arg.nextNode();
+            if (test(mode, HINT_RESENDEXPR)) {
+               // HOTFIX : support several generic arguments for try mode
+               if (arg == lxExpression)
+                  continue;
+            }
+            else if (arg == lxExtension)
+               // HOTFIX : skip the extension node
+               arg = arg.nextNode();
          }
          else compileExpression(writer, arg, scope, paramMode);
       }
@@ -2880,9 +2880,9 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
       arg = arg.nextNode();
    }
 
-//   // resend expression starts with the message, so it should be skipped
-//   if (test(mode, HINT_RESENDEXPR))
-//      arg = arg.nextNode();
+   // resend expression starts with the message, so it should be skipped
+   if (test(mode, HINT_RESENDEXPR))
+      arg = arg.nextNode();
 
    // if message has named argument list
    while (arg == lxMessage) {
@@ -2966,12 +2966,12 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //
 //      target = ObjectInfo(okObject);
 //   }
-//   else if (test(mode, HINT_RESENDEXPR)) {
-//      writer.insertChild(0, lxThisLocal, 1);
-//
-//      target = ObjectInfo(okThisParam, 1);
-//   }      
-//
+/*   else */if (test(mode, HINT_RESENDEXPR)) {
+      writer.insertChild(0, lxThisLocal, 1);
+
+      target = ObjectInfo(okThisParam, 1);
+   }      
+
 //   //   bool externalMode = false;
 //   if (target.kind == okExternal) {
 //      retVal = compileExternalCall(writer, node, scope);
@@ -2979,10 +2979,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //   else {
       ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
 
-//      if (target.kind == okInternal) {
-//         retVal = compileInternalCall(writer, node, scope, messageRef, target);
-//      }
-//      else {
+      if (target.kind == okInternal) {
+         retVal = compileInternalCall(writer, node, scope, messageRef, target);
+      }
+      else {
          ref_t extensionRef = mapExtension(scope, messageRef, target);
 
          if (extensionRef != 0) {
@@ -2993,7 +2993,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          }
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode);
-//      }
+      }
 //   }
 
    writer.removeBookmark();
@@ -3868,36 +3868,39 @@ void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope, 
 //
 //   return retVal;
 //}
-//
-//ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo routine)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
-//   virtualReference.append('.');
-//
-//   int paramCount;
-//   ref_t sign_ref, verb_id;
-//   decodeMessage(message, sign_ref, verb_id, paramCount);
-//
-//   virtualReference.append('0' + (char)paramCount);
-//   virtualReference.append('#');
-//   virtualReference.append((char)(0x20 + verb_id));
-//
-//   if (sign_ref != 0) {
-//      virtualReference.append('&');
-//      virtualReference.append(moduleScope->module->resolveSubject(sign_ref));
-//   }
-//
-//   writer.insert(lxInternalCall, moduleScope->module->mapReference(virtualReference));
-//   writer.closeNode();
-//
-//   SNode targetNode = node.firstChild(lxTerminalMask);
-//   // HOTFIX : comment out dll reference
-//   targetNode = lxIdle;
-//
-//   return ObjectInfo(okObject);
-//}
+
+ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo routine)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
+   virtualReference.append('.');
+
+   int paramCount;
+   ref_t sign_ref, verb_id;
+   decodeMessage(message, sign_ref, verb_id, paramCount);
+
+   size_t signIndex = virtualReference.Length();
+   virtualReference.append('0' + (char)paramCount);
+   virtualReference.append('#');
+   virtualReference.append((char)(0x20 + verb_id));
+
+   if (sign_ref != 0) {
+      virtualReference.append('&');
+      virtualReference.append(moduleScope->module->resolveSubject(sign_ref));
+   }
+
+   virtualReference.replaceAll('\'', '@', signIndex);
+
+   writer.insert(lxInternalCall, moduleScope->module->mapReference(virtualReference));
+   writer.closeNode();
+
+   SNode targetNode = node.firstChild(lxTerminalMask);
+   // HOTFIX : comment out dll reference
+   targetNode = lxIdle;
+
+   return ObjectInfo(okObject);
+}
 
 int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reserved)
 {
@@ -4010,10 +4013,10 @@ inline SNode findTerminal(SNode node)
 
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 {
+   IdentifierString messageStr;
    IdentifierString signature;
    ref_t verb_id = 0;
    ref_t sign_id = 0;
-   bool overloadList = false;
 
    SNode arg = node.findChild(lxMethodParameter, lxMessage, lxParamRefAttr);
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
@@ -4034,7 +4037,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       else if (verb != lxNone) {
          verb_id = _verbs.get(verb.identifier());
          if (verb_id == 0) {
-            verbRef = scope.mapSubject(verb, signature);
+            verbRef = scope.mapSubject(verb, messageStr);
             if (verbRef) {
                if (arg == lxMethodParameter || arg == lxNone) {
                   signature.append('$');
@@ -4047,7 +4050,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    }
    else verb_id = getVerb(scope.message);
 
-   bool first = signature.Length() == 0;
+   bool first = messageStr.Length() == 0;
    int paramCount = 0;
    // if method has generic (unnamed) argument list
    while (arg == lxMethodParameter) {
@@ -4078,28 +4081,23 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       ref_t class_ref = 0;
 
       if (arg == lxMessage && subject != lxReference) {
-         if (!first) {
-            signature.append('&');
+         if (arg == lxMessage) {
+            if (!first) {
+               messageStr.append('&');
+            }
+         }
+
+         class_ref = scope.mapSubject(subject, messageStr);
+         if (class_ref) {
+            signature.append('$');
+            signature.append(scope.moduleScope->module->resolveReference(class_ref));
+
+            if(!first)
+               messageStr.truncate(messageStr.Length() - 1);
          }
          else first = false;
-
-         class_ref = scope.mapSubject(subject, signature);
-         if (class_ref) {
-            size_t len = signature.Length();
-            if (len == 0) {
-               signature.append('$');
-            }
-            else signature[len - 1] = '$';
-            overloadList = true;
-
-            signature.append(scope.moduleScope->module->resolveReference(class_ref));
-         }
-         else if (overloadList)
-            scope.raiseError(errInvalidSubject, arg);
       }
       else {
-         overloadList = true;
-
          if (arg == lxParamRefAttr) {
             class_ref = scope.moduleScope->mapReference(arg.identifier());
          }
@@ -4170,45 +4168,41 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       if (verb_id == 0)
          verb_id = paramCount > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID;
 
-      // if signature is presented
-      if (!emptystr(signature)) {
-         sign_id = scope.moduleScope->module->mapSubject(signature, false);
-      }
-
       if (test(scope.hints, tpSealed | tpConversion)) {
          if (verb_id == EVAL_MESSAGE_ID && paramCount == 1) {
             verb_id = PRIVATE_MESSAGE_ID;
          }
-//         else if (verb_id == GET_MESSAGE_ID && paramCount == 0 && sign_id != 0 && test(scope.getClassFlags(false), elNestedClass)) {
-//            // if it is an implicit nested constructor
-//            sign_id = 0;
-//            verb_id = PRIVATE_MESSAGE_ID;
-//         }
+         //         else if (verb_id == GET_MESSAGE_ID && paramCount == 0 && sign_id != 0 && test(scope.getClassFlags(false), elNestedClass)) {
+         //            // if it is an implicit nested constructor
+         //            sign_id = 0;
+         //            verb_id = PRIVATE_MESSAGE_ID;
+         //         }
          else scope.raiseError(errIllegalMethod, node);
       }
-//      if (test(scope.hints, tpSealed) && verb == lxPrivate) {
-//         verb_id = PRIVATE_MESSAGE_ID;
-//      }
-
-      scope.message = encodeMessage(sign_id, verb_id, paramCount);
+      //      if (test(scope.hints, tpSealed) && verb == lxPrivate) {
+      //         verb_id = PRIVATE_MESSAGE_ID;
+      //      }
 
       //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-      if (overloadList && paramCount > 0 && verb_id != PRIVATE_MESSAGE_ID) {
-         ident_t messageName = scope.moduleScope->module->resolveSubject(getSignature(scope.message));
-
-         int index = messageName.find('$');
-         if (index != NOTFOUND_POS) {
-            ref_t actionRef = 0;
-            if (index > 0) {
-               IdentifierString content(messageName, index);
-               actionRef = scope.moduleScope->module->mapSubject(content.c_str(), false);
-            }
-
-            ref_t genericMessage = encodeMessage(actionRef, verb_id, paramCount);
-
-            node.appendNode(lxMultiMethodAttr, genericMessage);
+      if (paramCount > 0 && !emptystr(signature) && verb_id != PRIVATE_MESSAGE_ID) {
+         ref_t actionRef = 0;
+         if (!emptystr(messageStr)) {
+            actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
          }
+
+         ref_t genericMessage = encodeMessage(actionRef, verb_id, paramCount);
+
+         node.appendNode(lxMultiMethodAttr, genericMessage);
       }
+
+      messageStr.append(signature);
+
+      // if signature is presented
+      if (!emptystr(messageStr)) {
+         sign_id = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
+      }
+
+      scope.message = encodeMessage(sign_id, verb_id, paramCount);
    }
 }
    
@@ -4473,20 +4467,20 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
       compileMultidispatch(writer, node, scope, *classScope);
    }
    else {
-      //writer.newNode(lxNewFrame);
+      writer.newNode(lxNewFrame);
 
-      //// new stack frame
-      //// stack already contains current $self reference
-      //scope.level++;
+      // new stack frame
+      // stack already contains current $self reference
+      scope.level++;
 
-      //writer.newNode(lxExpression);
-      ////writer.appendNode(lxThisLocal, 1);
-      //compileMessage(writer, node.firstChild(lxObjectMask), scope, HINT_RESENDEXPR);
-      //writer.closeNode();
+      writer.newNode(lxExpression);
+      //writer.appendNode(lxThisLocal, 1);
+      compileMessage(writer, node.firstChild(lxObjectMask), scope, HINT_RESENDEXPR);
+      writer.closeNode();
 
-      //scope.freeSpace();
+      scope.freeSpace();
 
-      //writer.closeNode();
+      writer.closeNode();
    }
 }
 
@@ -4595,11 +4589,7 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
    }
    else if (bodyNode == lxResendExpression) {
       if (scope.multiMethod && bodyNode.argument != 0) {
-         ref_t overloadRef = classClassScope.info.methodHints.get(Attribute(scope.message, maOverloadlist));
-         if (overloadRef) {
-            writer.appendNode(lxMultiDispatching, overloadRef);
-         }
-         else scope.raiseError(errIllegalOperation, node.parentNode());
+         compileMultidispatch(writer, bodyNode, codeScope, classClassScope);
 
          bodyNode = lxNone;
       }

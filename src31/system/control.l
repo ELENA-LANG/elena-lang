@@ -18,38 +18,38 @@ limited class Enumerator :: dispatchable<enumerator>
     enumerable = $nil.
 }
 
-//// --- Indexer ---
-//
-///// An indexer prototype
-//limited class Indexer :: dispatchable(indexer)
-//{
-//    /// Returns false if the index out of range
-//    bool available = $nil.
-//
-//    /// Returns the current member
-//    get = $nil.
-//    
-//    /// Sets the current member
-//    set : anObject []
-//    
-//    /// Reads the current index into an output parameter
-//    stacksafe readIndexTo vint:retVal []
-//
-//    int index :: outnprop(readIndexTo).
-//    
-//    /// Sets the index by specified value
-//    ///
-//    /// Should be overidden(or set&index)
-//    stacksafe writeIndex int:anIndex 
-//    [ 
-//        $self set index:anIndex.
-//    ] 
-//    
-//    /// Sets the index by specified value
-//    ///
-//    /// Should be overidden (or writeIndex&int)
-//    set index:anIndex 
-//        <= writeIndex int:anIndex.
+// --- Indexer ---
+
+/// An indexer prototype
+limited class Indexer :: dispatchable<indexer>
+{
+    /// Returns false if the index out of range
+    bool available = $nil.
+
+    /// Returns the current member
+    get = $nil.
+    
+    /// Sets the current member
+    set : anObject []
+    
+    /// Reads the current index into an output parameter
+    stacksafe readIndexTo vint:retVal []
+
+    int outprop index :: readIndexTo.
+    
+    /// Sets the index by specified value
+    ///
+    /// Should be overidden(or set&index)
+    stacksafe writeIndex int:anIndex 
+    [ 
+        $self set index:anIndex.
+    ] 
+    
+    /// Sets the index by specified value
+    ///
+    /// Should be overidden (or writeIndex&int)
+    set index:anIndex 
+        <= writeIndex int:anIndex.
 //    
 //    /// Increaments the index by specified value
 //    indexer append index:anOffset
@@ -74,16 +74,16 @@ limited class Enumerator :: dispatchable<enumerator>
 //        
 //        $self writeIndex int:anIndex.
 //    ]
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe readLengthTo vint:retVal 
-//    [
-//        retVal int := 0
-//    ]
-//    
-//    int length :: outnprop(readLengthTo).
-//}
-//
+
+    /// Reads the length to the output parameter    
+    stacksafe readLengthTo vint:retVal 
+    [
+        retVal int := 0
+    ]
+    
+    int outprop length :: readLengthTo.
+}
+
 //// --- MatrixIndexer ---
 //
 ///// An indexer prototype

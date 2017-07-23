@@ -101,21 +101,21 @@ method template outprop :: type,prop_name
 //        ^ retVal.            
 //    ]
 //}
-//
-//// --- while statement ---
-//
-//loop_template while :: expr =
-//    expr bool ?
-//    [
-//    ].
-//
-//// --- until statement ---
-//
-//loop_template until :: expr =
-//    expr bool !
-//    [
-//    ].
-//    
+
+// --- while statement ---
+
+loop_template while :: expr =
+    expr bool ?
+    [
+    ].
+
+// --- until statement ---
+
+loop_template until :: expr =
+    expr bool !
+    [
+    ].
+    
 //// --- extern statement ---
 //
 //extern_template extern :: dummy =
@@ -136,15 +136,15 @@ template ifnot :: expr =
     [
     ].
 
-//// --- if-else statement ---
-//
-//template if :: expr,else =
-//    expr bool ?
-//    [
-//    ]
-//    ! [
-//    ].
-//
+// --- if-else statement ---
+
+template if :: expr,else =
+    expr bool ?
+    [
+    ]
+    ! [
+    ].
+
 //// -- try-catch statement ---
 //
 //template try :: expr =
