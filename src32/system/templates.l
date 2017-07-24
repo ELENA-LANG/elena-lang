@@ -77,19 +77,21 @@ method template outprop :: type,prop_name
 //        ^ val
 //   ]
 //}
-//
-//// --- nfn ---
-//
-//method template nfn :: type,template_fn,target_method
-//{
-//    stacksafe embeddable type template_fn type:n
-//    [
-//        type retVal := 0.
-//        $self target_method type:n vint:retVal.
-//        ^ retVal.            
-//    ]
-//}
-//
+
+// --- fnprop ---
+
+method template fnprop :: type,template_fn
+{
+    method target_method.
+    
+    stacksafe embeddable type template_fn type:n
+    [
+        type retVal := 0.
+        $self target_method type:n var<type>:retVal.
+        ^ retVal.            
+    ]
+}
+
 //// --- nnfn ---
 //
 //method template nnfn :: type,template_fn,target_method

@@ -22,6 +22,7 @@
 [-] #332 : IDE not save the file with relative path
 
 [LIB]
+[!] moving to LIB32
 [+] #315 : GUI markup script / library
 [+] #328 : unsingned int / long
 

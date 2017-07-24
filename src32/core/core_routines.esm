@@ -3614,3 +3614,102 @@ procedure __wideconvertor."convert$system@LongNumber$system@IntNumber$system@Sho
   quitn 5
 
 end
+
+procedure __real."eval&exp$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rexp
+
+  quitn 3
+
+end
+
+procedure __real."eval&ln$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  rln
+
+  quitn 3
+
+end
+
+procedure __real."eval&round$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  rround
+  
+  quitn 3
+
+end
+
+procedure __real."eval&truncate$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  rint
+  
+  quitn 3
+
+end
+
+procedure __real."eval&sin$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rsin
+  
+  quitn 3
+
+end
+
+procedure __real."eval&cos$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rcos
+  
+  quitn 3
+
+end
+
+procedure __real."eval&arctan$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rarctan
+  
+  quitn 3
+  
+end
+
+procedure __real."eval&pi$@system@var#1&RealNumber[2]"
+
+  bloadsi 2
+  callextr api : rpi
+  
+  quitn 2
+  
+end
+
+procedure __real."eval&sqrt$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  callextr api : rsqrt
+
+  quitn 3
+
+end
+
+procedure __real."eval&abs$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rabs
+
+  quitn 3
+
+end

@@ -1,5 +1,5 @@
 ﻿[project]
-output=..\..\lib31
+output=..\..\lib32
 options=-w3
 namespace=system
 template=lib

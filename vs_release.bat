@@ -70,8 +70,8 @@ move %1\dat\sg\syntax.dat %1\bin
 %1\bin\og %1\dat\og\rules.txt
 move %1\dat\og\rules.dat %1\bin
 
-md lib31
-%1\bin\asm2binx %1\src31\core\core_routines.esm lib31\system
+md lib32
+%1\bin\asm2binx %1\src32\core\core_routines.esm lib32\system
 
 %1\bin\asm2binx %1\asm\x32\commands.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\core.asm %1\bin\x32
@@ -461,33 +461,33 @@ copy %1\examples\script\js\*.js examples\js
 
 echo copying src3 files
 
-md src31
-copy %1\src31\*.l src27
+md src32
+copy %1\src32\*.l src27
 
 md asm
 md asm\x32
 copy %1\asm\x32\*.asm asm\x32
 copy %1\asm\*.esm asm
 
-md src31\system
-xcopy %1\src31\system\*.l src31\system /s
-xcopy %1\src31\system\*.prj src31\system /s
+md src32\system
+xcopy %1\src32\system\*.l src32\system /s
+xcopy %1\src32\system\*.prj src32\system /s
 
-md src31\extensions
-xcopy %1\src31\extensions\*.l src31\extensions /s
-xcopy %1\src31\extensions\*.prj src31\extensions /s
+md src32\extensions
+xcopy %1\src32\extensions\*.l src32\extensions /s
+xcopy %1\src32\extensions\*.prj src32\extensions /s
 
-md src31\net
-xcopy %1\src31\net\*.l src31\net /s
-xcopy %1\src31\net\*.prj src31\net /s
+md src32\net
+xcopy %1\src32\net\*.l src32\net /s
+xcopy %1\src32\net\*.prj src32\net /s
 
-md src31\forms
-xcopy %1\src31\forms\*.l src31\forms /s
-xcopy %1\src31\forms\*.prj src31\forms /s
+md src32\forms
+xcopy %1\src32\forms\*.l src32\forms /s
+xcopy %1\src32\forms\*.prj src32\forms /s
 
-md src31\sqlite
-xcopy %1\src31\sqlite\*.l src31\sqlite /s
-xcopy %1\src31\sqlite\*.prj src31\sqlite /s
+md src32\sqlite
+xcopy %1\src32\sqlite\*.l src32\sqlite /s
+xcopy %1\src32\sqlite\*.prj src32\sqlite /s
 
 copy %1\rebuild_lib.bat 
 copy %1\rebuild_examples.bat 
@@ -709,11 +709,11 @@ md examples\net\chat
 copy %1\examples\net\chat\*.l examples\net\chat
 copy %1\examples\net\chat\*.prj examples\net\chat
 
-bin\elc -csrc31\system\system.prj
-bin\elc -csrc31\extensions\extensions.prj
-bin\elc -csrc31\forms\forms.prj
-bin\elc -csrc31\sqlite\sqlite.prj
-bin\elc -csrc31\net\net.prj
+bin\elc -csrc32\system\system.prj
+bin\elc -csrc32\extensions\extensions.prj
+bin\elc -csrc32\forms\forms.prj
+bin\elc -csrc32\sqlite\sqlite.prj
+bin\elc -csrc32\net\net.prj
 
 goto:eof
 ::ERRORS

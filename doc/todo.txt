@@ -3,7 +3,8 @@ In development:
 ------                              
 
               xdev - multimethod
-                 * modify outprop template to support different output type (get rid of explicit vint)
+                 * qualified extensions
+                 * generic handler
 
                  * test primitive operations with numbers
                  * test primitive operations with arrays
@@ -41,7 +42,7 @@ In development:
                  * private methods
                  * test operation with wrapper 
                  * explicit constant
-                 * lib31 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
+                 * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
 
                  * check package functionality
 
@@ -53,11 +54,9 @@ In development:
                    message. Algorithm will check it class or its parent matches
                  * multi-method will go through the list and try to find the matching value
                  * if the match is found - redirects to it, if not the default implementation is executed
-                 * it should be possible to declare multimethod which will call the correct method
                  * compiler should replace generic call with a direct call if the target is known and the parameters
                    are known
                  * make incompatible with previous versions
-                 * introduce new advanced syntax
                  * remove obsolete dispatching code
                  * private subjects??
                  * var n := 2 <=> int n := 2

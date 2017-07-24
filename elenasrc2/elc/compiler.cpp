@@ -1635,9 +1635,9 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
          }
          else current.set(lxClassFlag, value);
       }
-//      else if (current == lxTypeAttr) {
-//         current.set(lxType, scope.moduleScope->module->mapSubject(current.identifier(), false));
-//      }
+      else if (current == lxClassRefAttr) {
+         current.set(lxTarget, scope.moduleScope->module->mapReference(current.identifier(), false));
+      }
       current = current.nextNode();
    }
 }
@@ -4912,29 +4912,29 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
 
 void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 {
-//   ref_t extensionTypeRef = 0;
+   ref_t extensionTypeRef = 0;
 
    SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == lxClassFlag) {
          scope.info.header.flags |= current.argument;
       }
-      /*else if (current == lxType) {
+      else if (current == lxTarget) {
          extensionTypeRef = current.argument;
-      }*/
+      }
 
       current = current.nextNode();
    }
 
-//   // check if extension is qualified
-//   if (extensionTypeRef != 0) {
-//      if (test(scope.info.header.flags, elExtension)) {
-//         scope.extensionMode = extensionTypeRef;
-//
-//         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(0, scope.extensionMode));
-//      }
-//      else scope.raiseError(errInvalidHint, root);
-//   }
+   // check if extension is qualified
+   if (extensionTypeRef != 0) {
+      if (test(scope.info.header.flags, elExtension)) {
+         scope.extensionMode = extensionTypeRef;
+
+         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(scope.extensionMode, 0));
+      }
+      else scope.raiseError(errInvalidHint, root);
+   }
 }
 
 void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, /*ref_t typeRef, */ref_t classRef, int sizeHint, bool singleField)
@@ -5274,7 +5274,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
       generateClassFlags(scope, node);
 
       if (test(scope.info.header.flags, elExtension)) {
-         scope.extensionMode = scope.info.fieldTypes.get(-1).value2;
+         scope.extensionMode = scope.info.fieldTypes.get(-1).value1;
          if (scope.extensionMode == 0)
             scope.extensionMode = INVALID_REF;
       }

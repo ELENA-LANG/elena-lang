@@ -74,642 +74,642 @@ extension objectOp
 //    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
 //    bool safeEqual : anObject
 //        = anObject cast:%eval to:{ generic eval:aTarget:anObject = aTarget~$subject equal:anObject \ back:false. } with:self.
-//
+
 //    eval with:action
 //        = action eval:self.
 //        
 //    stacksafe reallocate int:aNewLength
 //        => system'core_routines'__array.
-//        
+        
 //    shift : n
 //    [
 //        if (n < 0)
 //            [ ^ self shiftLeft int:(n int; negative) ];
 //            [ ^ self shiftRight int:(n int) ].
-//    ]        
+//    ]
 }
 
-//// --- Operations ---
-//
-//// --- byteOp ---
-//
-//byte extension byteOp
-//{
-//    stacksafe byte absolute
-//    [
-//        byte n := self.
-//        if (n < 0)
-//            [ n := n * -1 ].
-//                
-//        ^ ByteNumber new byte:n
-//    ]
-//    
-//    byte mod : anOperand
-//    [
-//        var retVal := self / anOperand * anOperand.
-//        
-//        ^ retVal cast:%convertor to:byteConvertor
-//    ]    
-//    
-//    stacksafe byte power byte:y
-//    [
-//        byte x := self.
-//        
-//        byte i := 0.
-//        while (i < y)
-//        [
-//            x := x * x.
-//        ].
-//        
-//        ^ ByteNumber new byte:x
-//    ]
-//    
-//    stacksafe byte sqr
-//    [
-//        byte aRetVal := 0.
-//        
-//        aRetVal := self * self.
-//        
-//        ^ ByteNumber new byte:aRetVal
-//    ]
-//
-//    power : aPower
-//        = self~byteOp power byte:aPower.
-//                
-//    bool is odd
-//        = self~byteOp mod:2 != 0.
-//        
-//    bool is even
-//        = self~byteOp mod:2 == 0.
-//        
-//    stacksafe bool is zero
-//        = self equal int:0.
-//        
-//    stacksafe bool is positive
-//        = self > 0.
-//        
-//    stacksafe bool is negative
-//        = self < 0.
-//        
-//    stacksafe bool is nonnegative
-//        = self <= 0.
-//}
-//
-//// --- shortOp ---
-//
-//short extension shortOp
-//{
-//    stacksafe short absolute
-//    [
-//        short n := self.
-//        if (n < 0)
-//            [ n := n * -1 ].
-//                
-//        ^ ShortNumber new short:n
-//    ]
-//    
-//    short mod : anOperand
-//    [
-//        var retVal := self / anOperand * anOperand.
-//        
-//        ^ retVal cast:%convertor to:shortConvertor
-//    ]
-//    
-//    stacksafe short power short:y
-//    [
-//        short x := self.
-//        
-//        short i := 0.
-//        while (i < y)
-//        [
-//            x := x * x
-//        ].
-//        
-//        ^ ShortNumber new short:x
-//    ]
-//    
-//    stacksafe short sqr
-//    [
-//        short n := self.
-//        short aRetVal := 0.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ ShortNumber new short:aRetVal
-//    ]
-//
-//    power : aPower
-//        = self~shortOp power short:aPower.
-//                
-//    bool is odd
-//        = self~shortOp mod:2 != 0.
-//        
-//    bool is even
-//        = self~shortOp mod:2 == 0.
-//        
-//    stacksafe bool is zero
-//        = self equal int:0.
-//        
-//    stacksafe bool is positive
-//        = self > 0.
-//        
-//    stacksafe bool is negative
-//        = self < 0.
-//        
-//    stacksafe bool is nonnegative
-//        = self <= 0.
-//    
-//    stacksafe byte high
-//    [
-//        short aWord := self.
-//        aWord := aWord && 0FF00h.
-//        aWord := aWord shiftRight int:8.
-//        
-//        ^ byteConvertor convert short:aWord
-//    ]
-//        
-//    stacksafe byte low
-//    [
-//        short aWord := self.
-//        aWord := aWord && 0FFh.
-//        
-//        ^ byteConvertor convert short:aWord
-//    ]
-//}
-//
-//// --- intOp ---
-//
-//int extension intOp
-//{
-//    int absolute :: outnprop(absolute).
-//    
-//    int mod      :: nfn(mod).
-//    
-//    int power    :: nfn(power).
-//    
-//    int sqr      :: outnprop(sqr).
-//    
-//    int sqrt     :: outnprop(sqrt).
-//    
-//    stacksafe absolute vint:retVal
-//    [
-//        int n := self.
-//
-//        if (n < 0)
-//            [ n := n * -1 ].
-//
-//        retVal int := n
-//    ]
-//    
-//    stacksafe mod int:y vint:retVal
-//    [
-//        int x := self.
-//        
-//        int z := x / y.
-//        z := z * y.
-//        
-//        retVal int := (x - z)
-//    ]
-//    
-//    int mod : anOperand
-//    [
-//        int retVal := self mod int:anOperand.
-//        
-//        ^ retVal
-//    ]
-//    
-//    real realDiv : anOperand
-//        = RealNumber new int:self; divide:anOperand.
-//    
-//    stacksafe power int:y vint:retVal
-//    [
-//        int x := self.
-//        int r := 1.
-//        if (x == 0)
-//            [ r := 0 ].
-//        
-//        int i := 0.
-//        while(i < y)
-//        [
-//            r := r * x.
-//            
-//            i := i + 1
-//        ].
-//        
-//        retVal int := r
-//    ]
-//    
-//    stacksafe sqr vint:retVal
-//    [
-//        int n := self.        
-//        
-//        retVal int := n * n.
-//    ]
-//    
-//    stacksafe sqrt vint:retVal
-//    [
-//        int num := self.
-//        
-//        if (num == 0)
-//            [ ^ 0 ].
-//            
-//        int n := num / 2 + 1.
-//        int n1 := (n + (num / n)) / 2.
-//        while (n1 < n)
-//        [
-//            n := n1.
-//            n1 := (n + (num / n)) / 2
-//        ].
-//        
-//        retVal int := n
-//    ]
-//
-//    power : aPower
-//        = self~intOp power int:aPower.
-//                
-//    stacksafe bool is odd
-//        = self and int:1 != 0.
-//        
-//    stacksafe bool is even
-//        = self and int:1 == 0.
-//        
-//    stacksafe bool is zero
-//        = self equal int:0.
-//        
-//    stacksafe bool is positive
-//        = self > 0.
-//        
-//    stacksafe bool is negative
-//        = self < 0.
-//        
-//    stacksafe bool is nonnegative
-//        = self <= 0.
-//
-//    high
-//    [
-//        int aWord := self.
-//        aWord := aWord && 0FFFF0000h.
-//        aWord := aWord >> 16.
-//        
-//        ^ shortConvertor convert int:aWord
-//    ]
-//
-//    low
-//    [
-//        int aWord := self.
-//        aWord := aWord && 0FFFFh.
-//        
-//        ^ shortConvertor convert int:aWord
-//    ]
-//    
-//    shift : n
-//    [
-//        if (n < 0)
-//            [ ^ self shiftLeft int:(n int; negative) ];
-//            [ ^ self shiftRight int:(n int) ].
-//    ]            
-//}
-//
-//// --- longOp ---
-//
-//long extension longOp
-//{
-//    stacksafe long absolute
-//    [
-//        long n := self.
-//
-//        if (n < 0l)
-//            [ n := n * -1l ].
-//                
-//        ^ LongNumber new long:n
-//    ]
-//    
-//    long mod : anOperand
-//    [
-//        long x := self.
-//        long y := anOperand long.
-//        
-//        long z := x / y.
-//        z := z * y.
-//        
-//        ^ LongNumber new long:(x - z)
-//    ]
-//    
-//    stacksafe long power long:y
-//    [
-//        long x := self.
-//        
-//        long i := 0l.
-//        while (i < y)
-//        [
-//            x := x * x.
-//        ].
-//        
-//        ^ LongNumber new long:x
-//    ]
-//    
-//    stacksafe long sqr
-//    [
-//        long n := self.        
-//        long aRetVal := 0l.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ LongNumber new long:aRetVal
-//    ]
-//
-//    power : aPower
-//        = self~longOp power long:aPower.
-//                
-//    bool is odd
-//        = self~longOp mod:2l != 0.
-//        
-//    bool is even
-//        = self~longOp mod:2l == 0.
-//        
-//    stacksafe bool is zero
-//        = self equal long:0l.
-//        
-//    stacksafe bool is positive
-//        = self > 0l.
-//        
-//    stacksafe bool is negative
-//        = self < 0l.
-//        
-//    stacksafe bool is nonnegative
-//        = self <= 0l.
-//
-//    stacksafe int high
-//    [
-//        long aWord := self.
-//        aWord := aWord && -4294967296l.
-//        aWord := aWord >> 32.
-//        
-//        ^ intConvertor convert long:aWord
-//    ]
-//
-//    stacksafe int low
-//    [
-//        long aWord := self.
-//        aWord := aWord && 4294967295l.
-//        
-//        ^ intConvertor convert long:aWord
-//    ]
-//}
-//
-//// --- realOp ---
-//
-//real extension realOp
-//{        
-//    stacksafe real absolute
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController abs real:n vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//        
-//    stacksafe real exp
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController exp real:n vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal.
-//    ]
-//    
-//    stacksafe real ln
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController ln real:n vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//    
-//    stacksafe real sqrt
-//    [
-//        real n := self.      
-//        real aRetVal := 0.0r.
-//        
-//        realOpController sqrt real:n vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//
-//    stacksafe real power real:y
-//    [
-//        real x := self.
-//        
-//        (x == 0.0r)
-//            ? [ ^ 0.0r ].
-//                        
-//        (y == 0.0r)
-//            ? [ ^ 1.0r ].
-//            
-//        realOpController ln real:x vreal:x.
-//        
-//        x := x multiply real:y.
-//        
-//        realOpController exp real:x vreal:x.
-//            
-//        ^ RealNumber new real:x         
-//            
-//    ]
-//
-//    stacksafe real power int:y
-//    [
-//        real x := self.
-//
-//        (x == 0.0r)
-//            ? [ ^ 0.0r ].
-//                        
-//        (y == 0)
-//            ? [ ^ 1.0r ].
-//                        
-//        if (x < 0.0r)
-//            [
-//                x := x * -1.0r.
-//                
-//                realOpController ln real:x vreal:x.
-//                
-//                x := x multiply int:y.
-//                
-//                realOpController exp real:x vreal:x.
-//                
-//                (y~intOp is odd)
-//                    ? [ x := x * -1.0r ].
-//            ];
-//            [
-//                realOpController ln real:x vreal:x.
-//                
-//                x := x multiply int:y.
-//                
-//                realOpController exp real:x vreal:x
-//            ].
-//        
-//        ^ RealNumber new real:x
-//    ]
-//
-//    power : aPower
-//        = self~realOp power int:aPower.
-//
-//    stacksafe real sqr
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//
-//    stacksafe real rounded
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController round real:n vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//
-//    stacksafe real integer
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//
-//        realOpController truncate real:n vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//
-//    stacksafe real frac
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController abs real:n vreal:aRetVal.
-//        
-//        ^ RealNumber new real:(n - aRetVal)
-//    ]
-//
-//    stacksafe real sin
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController sin real:n vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//
-//    stacksafe real cos
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController cos real:n vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//
-//    stacksafe real tan
-//    [
-//        real n := self.        
-//        real aSinVal := 0.0r.
-//        real aCosVal := 0.0r.
-//        
-//        realOpController sin real:n vreal:aSinVal.
-//        realOpController cos real:n vreal:aCosVal.
-//        
-//        ^ RealNumber new real:(aSinVal / aCosVal)
-//    ]
-//
-//    stacksafe real arctan
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController arctan real:n vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//            
-//    stacksafe real arcsin
-//    [
-//        real n := self.        
-//        real arg := 0.0r.
-//        real retVal := 0.0r.
-//        
-//        retVal := n * n.        
-//        retVal := 1.0r - retVal.        
-//        realOpController sqrt real:retVal vreal:arg.
-//        
-//        arg := n / arg.        
-//        realOpController arctan real:arg vreal:retVal.
-//        
-//        ^ RealNumber new real:retVal
-//    ]
-//            
-//    stacksafe real arccos
-//    [
-//        real n := self.        
-//        real arg := 0.0r.
-//        real retVal := 0.0r.
-//        
-//        retVal := n * n.        
-//        retVal := 1.0r - retVal.        
-//        realOpController sqrt real:retVal vreal:arg.
-//        
-//        arg := arg / n.        
-//        realOpController arctan real:arg vreal:retVal.
-//        
-//        ^ RealNumber new real:retVal
-//    ]
-//            
-//    stacksafe real radian
-//    [
-//        real aValue := self.
-//        
-//        aValue := aValue * pi_value.
-//        
-//        ^ RealNumber new real:(aValue / 180.0r)
-//    ]
-//            
-//    stacksafe real degree
-//    [
-//        real aValue := self.
-//        
-//        aValue := aValue * 180.0r.
-//        
-//        ^ RealNumber new real:(aValue / pi_value)
-//    ]
-//            
-//    stacksafe real reciprocal
-//    [
-//        real aValue := self.
-//        
-//        ^ RealNumber new real:(1.0r / aValue)
-//    ]    
-//            
-//    stacksafe bool is zero
-//        = self == 0.0r.
-//        
-//    stacksafe bool is positive
-//        = self > 0.0r.
-//        
-//    stacksafe bool is negative
-//        = self < 0.0r.
-//        
-//    stacksafe bool is nonnegative
-//        = self <= 0.0r.
-//}
-//
+// --- Operations ---
+
+// --- byteOp ---
+
+byte extension byteOp
+{
+    stacksafe byte absolute
+    [
+        byte n := self.
+        if (n < 0)
+            [ n := n * -1 ].
+                
+        ^ ByteNumber new byte:n
+    ]
+    
+    byte mod : anOperand
+    [
+        var retVal := self / anOperand * anOperand.
+        
+        ^ retVal cast:%convertor to:byteConvertor
+    ]    
+    
+    stacksafe byte power byte:y
+    [
+        byte x := self.
+        
+        byte i := 0.
+        while (i < y)
+        [
+            x := x * x.
+        ].
+        
+        ^ ByteNumber new byte:x
+    ]
+    
+    stacksafe byte sqr
+    [
+        byte aRetVal := 0.
+        
+        aRetVal := self * self.
+        
+        ^ ByteNumber new byte:aRetVal
+    ]
+
+    power : aPower
+        = self~byteOp power byte:aPower.
+                
+    bool isOdd
+        = self~byteOp mod:2 != 0.
+        
+    bool isEven
+        = self~byteOp mod:2 == 0.
+        
+    stacksafe bool isZero
+        = self equal int:0.
+        
+    stacksafe bool isPositive
+        = self > 0.
+        
+    stacksafe bool isNegative
+        = self < 0.
+        
+    stacksafe bool isNonnegative
+        = self <= 0.
+}
+
+// --- shortOp ---
+
+short extension shortOp
+{
+    stacksafe short absolute
+    [
+        short n := self.
+        if (n < 0)
+            [ n := n * -1 ].
+                
+        ^ ShortNumber new short:n
+    ]
+    
+    short mod : anOperand
+    [
+        var retVal := self / anOperand * anOperand.
+        
+        ^ retVal cast:%convertor to:shortConvertor
+    ]
+    
+    stacksafe short power short:y
+    [
+        short x := self.
+        
+        short i := 0.
+        while (i < y)
+        [
+            x := x * x
+        ].
+        
+        ^ ShortNumber new short:x
+    ]
+    
+    stacksafe short sqr
+    [
+        short n := self.
+        short aRetVal := 0.
+        
+        aRetVal := n * n.
+        
+        ^ ShortNumber new short:aRetVal
+    ]
+
+    power : aPower
+        = self~shortOp power short:aPower.
+                
+    bool isOdd
+        = self~shortOp mod:2 != 0.
+        
+    bool isEven
+        = self~shortOp mod:2 == 0.
+        
+    stacksafe bool isZero
+        = self equal int:0.
+        
+    stacksafe bool isPositive
+        = self > 0.
+        
+    stacksafe bool isNegative
+        = self < 0.
+        
+    stacksafe bool isNonnegative
+        = self <= 0.
+    
+    stacksafe byte high
+    [
+        short aWord := self.
+        aWord := aWord && 0FF00h.
+        aWord := aWord shiftRight int:8.
+        
+        ^ byteConvertor convert short:aWord
+    ]
+        
+    stacksafe byte low
+    [
+        short aWord := self.
+        aWord := aWord && 0FFh.
+        
+        ^ byteConvertor convert short:aWord
+    ]
+}
+
+// --- intOp ---
+
+int extension intOp
+{
+    int outprop absolute :: absolute.
+    
+    int fnprop  mod      :: mod.
+    
+    int fnprop  power    :: power.
+    
+    int outprop sqr      :: sqr.
+    
+    int outprop sqrt     :: sqrt.
+    
+    stacksafe absolute vint:retVal
+    [
+        int n := self.
+
+        if (n < 0)
+            [ n := n * -1 ].
+
+        retVal int := n
+    ]
+    
+    stacksafe mod int:y vint:retVal
+    [
+        int x := self.
+        
+        int z := x / y.
+        z := z * y.
+        
+        retVal int := (x - z)
+    ]
+    
+    int mod : anOperand
+    [
+        int retVal := self mod int:anOperand.
+        
+        ^ retVal
+    ]
+    
+    real realDiv : anOperand
+        = RealNumber new int:self; divide:anOperand.
+    
+    stacksafe power int:y vint:retVal
+    [
+        int x := self.
+        int r := 1.
+        if (x == 0)
+            [ r := 0 ].
+        
+        int i := 0.
+        while(i < y)
+        [
+            r := r * x.
+            
+            i := i + 1
+        ].
+        
+        retVal int := r
+    ]
+    
+    stacksafe sqr vint:retVal
+    [
+        int n := self.        
+        
+        retVal int := n * n.
+    ]
+    
+    stacksafe sqrt vint:retVal
+    [
+        int num := self.
+        
+        if (num == 0)
+            [ ^ 0 ].
+            
+        int n := num / 2 + 1.
+        int n1 := (n + (num / n)) / 2.
+        while (n1 < n)
+        [
+            n := n1.
+            n1 := (n + (num / n)) / 2
+        ].
+        
+        retVal int := n
+    ]
+
+    power : aPower
+        = self~intOp power int:aPower.
+                
+    stacksafe bool isOdd
+        = self and int:1 != 0.
+        
+    stacksafe bool isEven
+        = self and int:1 == 0.
+        
+    stacksafe bool isZero
+        = self equal int:0.
+        
+    stacksafe bool isPositive
+        = self > 0.
+        
+    stacksafe bool isNegative
+        = self < 0.
+        
+    stacksafe bool isNonnegative
+        = self <= 0.
+
+    high
+    [
+        int aWord := self.
+        aWord := aWord && 0FFFF0000h.
+        aWord := aWord >> 16.
+        
+        ^ shortConvertor convert int:aWord
+    ]
+
+    low
+    [
+        int aWord := self.
+        aWord := aWord && 0FFFFh.
+        
+        ^ shortConvertor convert int:aWord
+    ]
+    
+    shift : n
+    [
+        if (n < 0)
+            [ ^ self shiftLeft int:(n int; negative) ];
+            [ ^ self shiftRight int:(n int) ].
+    ]            
+}
+
+// --- longOp ---
+
+long extension longOp
+{
+    stacksafe long absolute
+    [
+        long n := self.
+
+        if (n < 0l)
+            [ n := n * -1l ].
+                
+        ^ LongNumber new long:n
+    ]
+    
+    long mod : anOperand
+    [
+        long x := self.
+        long y := anOperand long.
+        
+        long z := x / y.
+        z := z * y.
+        
+        ^ LongNumber new long:(x - z)
+    ]
+    
+    stacksafe long power long:y
+    [
+        long x := self.
+        
+        long i := 0l.
+        while (i < y)
+        [
+            x := x * x.
+        ].
+        
+        ^ LongNumber new long:x
+    ]
+    
+    stacksafe long sqr
+    [
+        long n := self.        
+        long aRetVal := 0l.
+        
+        aRetVal := n * n.
+        
+        ^ LongNumber new long:aRetVal
+    ]
+
+    power : aPower
+        = self~longOp power long:aPower.
+                
+    bool isOdd
+        = self~longOp mod:2l != 0.
+        
+    bool isEven
+        = self~longOp mod:2l == 0.
+        
+    stacksafe bool isZero
+        = self equal long:0l.
+        
+    stacksafe bool isPositive
+        = self > 0l.
+        
+    stacksafe bool isNegative
+        = self < 0l.
+        
+    stacksafe bool isNonnegative
+        = self <= 0l.
+
+    stacksafe int high
+    [
+        long aWord := self.
+        aWord := aWord && -4294967296l.
+        aWord := aWord >> 32.
+        
+        ^ intConvertor convert long:aWord
+    ]
+
+    stacksafe int low
+    [
+        long aWord := self.
+        aWord := aWord && 4294967295l.
+        
+        ^ intConvertor convert long:aWord
+    ]
+}
+
+// --- realOp ---
+
+real extension realOp
+{        
+    stacksafe real absolute
+    [
+        real n := self.        
+        real aRetVal := 0.0r.
+        
+        realOpController abs real:n vreal:aRetVal.
+        
+        ^ RealNumber new real:aRetVal
+    ]
+        
+    stacksafe real exp
+    [
+        real n := self.        
+        real aRetVal := 0.0r.
+        
+        realOpController exp real:n vreal:aRetVal.
+        
+        ^ RealNumber new real:aRetVal.
+    ]
+    
+    stacksafe real ln
+    [
+        real n := self.        
+        real aRetVal := 0.0r.
+        
+        realOpController ln real:n vreal:aRetVal.
+        
+        ^ RealNumber new real:aRetVal
+    ]
+    
+    stacksafe real sqrt
+    [
+        real n := self.      
+        real aRetVal := 0.0r.
+        
+        realOpController sqrt real:n vreal:aRetVal.
+        
+        ^ RealNumber new real:aRetVal
+    ]
+
+    stacksafe real power real:y
+    [
+        real x := self.
+        
+        (x == 0.0r)
+            ? [ ^ 0.0r ].
+                        
+        (y == 0.0r)
+            ? [ ^ 1.0r ].
+            
+        realOpController ln real:x vreal:x.
+        
+        x := x multiply real:y.
+        
+        realOpController exp real:x vreal:x.
+            
+        ^ RealNumber new real:x         
+            
+    ]
+
+    stacksafe real power int:y
+    [
+        real x := self.
+
+        (x == 0.0r)
+            ? [ ^ 0.0r ].
+                        
+        (y == 0)
+            ? [ ^ 1.0r ].
+                        
+        if (x < 0.0r)
+            [
+                x := x * -1.0r.
+                
+                realOpController ln real:x vreal:x.
+                
+                x := x multiply int:y.
+                
+                realOpController exp real:x vreal:x.
+                
+                (y~intOp isOdd)
+                    ? [ x := x * -1.0r ].
+            ];
+            [
+                realOpController ln real:x vreal:x.
+                
+                x := x multiply int:y.
+                
+                realOpController exp real:x vreal:x
+            ].
+        
+        ^ RealNumber new real:x
+    ]
+
+    power : aPower
+        = self~realOp power int:aPower.
+
+    stacksafe real sqr
+    [
+        real n := self.        
+        real aRetVal := 0.0r.
+        
+        aRetVal := n * n.
+        
+        ^ RealNumber new real:aRetVal
+    ]
+
+    stacksafe real rounded
+    [
+        real n := self.        
+        real aRetVal := 0.0r.
+        
+        realOpController round real:n vreal:aRetVal.
+        
+        ^ RealNumber new real:aRetVal
+    ]
+
+    stacksafe real integer
+    [
+        real n := self.        
+        real aRetVal := 0.0r.
+
+        realOpController truncate real:n vreal:aRetVal.
+        
+        ^ RealNumber new real:aRetVal
+    ]
+
+    stacksafe real frac
+    [
+        real n := self.        
+        real aRetVal := 0.0r.
+        
+        realOpController abs real:n vreal:aRetVal.
+        
+        ^ RealNumber new real:(n - aRetVal)
+    ]
+
+    stacksafe real sin
+    [
+        real n := self.        
+        real aRetVal := 0.0r.
+        
+        realOpController sin real:n vreal:aRetVal.
+        
+        ^ RealNumber new real:aRetVal
+    ]
+
+    stacksafe real cos
+    [
+        real n := self.        
+        real aRetVal := 0.0r.
+        
+        realOpController cos real:n vreal:aRetVal.
+        
+        ^ RealNumber new real:aRetVal
+    ]
+
+    stacksafe real tan
+    [
+        real n := self.        
+        real aSinVal := 0.0r.
+        real aCosVal := 0.0r.
+        
+        realOpController sin real:n vreal:aSinVal.
+        realOpController cos real:n vreal:aCosVal.
+        
+        ^ RealNumber new real:(aSinVal / aCosVal)
+    ]
+
+    stacksafe real arctan
+    [
+        real n := self.        
+        real aRetVal := 0.0r.
+        
+        realOpController arctan real:n vreal:aRetVal.
+        
+        ^ RealNumber new real:aRetVal
+    ]
+            
+    stacksafe real arcsin
+    [
+        real n := self.        
+        real arg := 0.0r.
+        real retVal := 0.0r.
+        
+        retVal := n * n.        
+        retVal := 1.0r - retVal.        
+        realOpController sqrt real:retVal vreal:arg.
+        
+        arg := n / arg.        
+        realOpController arctan real:arg vreal:retVal.
+        
+        ^ RealNumber new real:retVal
+    ]
+            
+    stacksafe real arccos
+    [
+        real n := self.        
+        real arg := 0.0r.
+        real retVal := 0.0r.
+        
+        retVal := n * n.        
+        retVal := 1.0r - retVal.        
+        realOpController sqrt real:retVal vreal:arg.
+        
+        arg := arg / n.        
+        realOpController arctan real:arg vreal:retVal.
+        
+        ^ RealNumber new real:retVal
+    ]
+            
+    stacksafe real radian
+    [
+        real aValue := self.
+        
+        aValue := aValue * pi_value.
+        
+        ^ RealNumber new real:(aValue / 180.0r)
+    ]
+            
+    stacksafe real degree
+    [
+        real aValue := self.
+        
+        aValue := aValue * 180.0r.
+        
+        ^ RealNumber new real:(aValue / pi_value)
+    ]
+            
+    stacksafe real reciprocal
+    [
+        real aValue := self.
+        
+        ^ RealNumber new real:(1.0r / aValue)
+    ]    
+            
+    stacksafe bool isZero
+        = self == 0.0r.
+        
+    stacksafe bool isPositive
+        = self > 0.0r.
+        
+    stacksafe bool isNegative
+        = self < 0.0r.
+        
+    stacksafe bool isNonnegative
+        = self <= 0.0r.
+}
+
 //// --- intArrayOp ---
 //
 //intarray extension intArrayOp
