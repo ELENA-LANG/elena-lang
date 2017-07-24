@@ -95,7 +95,7 @@ public:
 
    virtual bool addForward(ident_t forward, ident_t reference) = 0;
 
-//   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
+   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
 // --- SectionInfo ---

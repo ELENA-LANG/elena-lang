@@ -61,8 +61,8 @@ type bool       = system'BaseBoolValue.
 //// === basic primitive types ===
 //
 //type keyvalue   :: system'KeyValue.
-//
-//type ref        :: system'Variable.
+
+type ref        = system'Variable.
 
 type byte       = system'ByteNumber.
 type short      = system'ShortNumber.

@@ -418,22 +418,6 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 //   }
 //}
 
-//bool CompilerLogic :: isCompatibleWithType(_CompilerScope& scope, ref_t targetRef, ref_t type)
-//{
-//   while (targetRef != 0) {
-//      if (scope.subjectHints.exist(type, targetRef))
-//         return true;
-//
-//      ClassInfo info;
-//      if (!defineClassInfo(scope, info, targetRef))
-//         return false;
-//
-//      targetRef = info.header.parentRef;
-//   }
-//
-//   return false;
-//}
-
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
    if (!targetRef && !isPrimitiveRef(sourceRef))
@@ -474,19 +458,19 @@ bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
    return test(info.header.flags, elDynamicRole | elEmbeddable | elStructureRole);
 }
 
-//bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, classReference))
-//      return false;
-//
-//   return isVariable(info);
-//}
-//
-//bool CompilerLogic :: isVariable(ClassInfo& info)
-//{
-//   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
-//}
+bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference))
+      return false;
+
+   return isVariable(info);
+}
+
+bool CompilerLogic :: isVariable(ClassInfo& info)
+{
+   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
+}
 
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 {
@@ -832,11 +816,11 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
       //   info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
       //   info.size = 8;
       //   break;
-      //case V_SYMBOL:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugReference | elStructureRole | elEmbeddable;
-      //   info.size = 4;
-      //   break;
+      case V_SYMBOL:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugReference | elStructureRole | elEmbeddable;
+         info.size = 4;
+         break;
       case V_INT32ARRAY:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
@@ -1109,9 +1093,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
       case V_SIGNATURE:
          attrValue = 0;
          return true;
-//      case V_SYMBOL:
-//         attrValue = 0;
-//         return true;
+      case V_SYMBOL:
+         attrValue = 0;
+         return true;
       case V_MESSAGE:
          attrValue = 0;
          return true;
@@ -1217,10 +1201,10 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
          //   info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
          //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_EXTMESSAGE, 0));
          //   return info.size == 8;
-         //case V_SYMBOL:
-         //   info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
-         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
-         //   return info.size == 4;
+         case V_SYMBOL:
+            info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
+            return info.size == 4;
          default:
             break;
       }
@@ -1256,16 +1240,16 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
    }
 }
 
-//ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
-//{
-//   if (test(info.header.flags, elStructureWrapper)) {
-//      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
-//      if (isPrimitiveRef(field.value1))
-//         return field.value1;
-//   }
-//
-//   return 0;
-//}
+ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
+{
+   if (test(info.header.flags, elStructureWrapper)) {
+      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
+      if (isPrimitiveRef(field.value1))
+         return field.value1;
+   }
+
+   return 0;
+}
 
 ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)
 {

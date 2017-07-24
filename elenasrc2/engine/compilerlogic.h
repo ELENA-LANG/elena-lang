@@ -73,7 +73,7 @@ public:
    virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef = 0, bool embeddableOnly = false);
    virtual int defineStructSize(ClassInfo& info, bool embeddableOnly);
 
-//   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
+   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
@@ -84,15 +84,14 @@ public:
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
 
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
-//   virtual bool isCompatibleWithType(_CompilerScope& scope, ref_t targetRef, ref_t type);
 ////   virtual bool isPrimitiveArray(ref_t reference);
    virtual bool isPrimitiveRef(ref_t reference)
    {
       return (int)reference < 0;
    }
    virtual bool isEmbeddableArray(ClassInfo& info);
-//   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
-//   virtual bool isVariable(ClassInfo& info);
+   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
+   virtual bool isVariable(ClassInfo& info);
    virtual bool isEmbeddable(ClassInfo& info);
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference)
    {

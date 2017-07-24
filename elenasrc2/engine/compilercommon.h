@@ -25,7 +25,7 @@
 #define V_MESSAGE        (ref_t)-19
 #define V_VERB           (ref_t)-20
 //#define V_EXTMESSAGE     (ref_t)-21
-//#define V_SYMBOL         (ref_t)-22
+#define V_SYMBOL         (ref_t)-22
 
 #define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
 
@@ -256,16 +256,15 @@ public:
    virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
-//   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
-//
-//   // check if the classes is compatible
+   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
+
+   // check if the classes is compatible
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
-//   virtual bool isCompatibleWithType(_CompilerScope& scope, ref_t targetRef, ref_t type) = 0;
-//
-//   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
+
+   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 
    virtual bool isEmbeddableArray(ClassInfo& info) = 0;
-//   virtual bool isVariable(ClassInfo& info) = 0;
+   virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;

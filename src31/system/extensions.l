@@ -20,21 +20,21 @@ extension objectOp
     bool instanceOf:type
         => system'core_routines'__object.        
 
-//    literal className
-//    [
-//        var c := self~objectOp class_ref.
-//        
-//        byte aBuffer(256).
-//        int  aLength := system'external LoadClassName 
-//                                ref:c
-//                                bytearray:aBuffer
-//                                int:255.
-//         
-//        if (aLength == 0)
-//            [ ^ "Unknown class" ].
-//        
-//        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
-//    ]    
+    literal className
+    [
+        var c := self~objectOp class_ref.
+        
+        byte aBuffer(256).
+        int  aLength := system'external LoadClassName 
+                                ref:c
+                                bytearray:aBuffer
+                                int:255.
+         
+        if (aLength == 0)
+            [ ^ "Unknown class" ].
+        
+        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
+    ]    
     
     /// Returns true if the specified object instances are equal; otherwise, false.
     bool equal reference:anObject

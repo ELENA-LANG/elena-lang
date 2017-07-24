@@ -142,8 +142,8 @@ public:
 ////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
-//
-//      okExternal,
+
+      okExternal,
       okInternal,
    };
 
@@ -820,14 +820,14 @@ private:
 
 //   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 ////   void compileThrow(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
-//   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);

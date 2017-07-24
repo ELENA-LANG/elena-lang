@@ -30,7 +30,7 @@ using namespace _ELENA_;
 #define HINT_ROOTSYMBOL       0xC0000000
 #define HINT_NOBOXING         0x20000000
 #define HINT_NOUNBOXING       0x10000000
-//#define HINT_EXTERNALOP       0x08000000
+#define HINT_EXTERNALOP       0x08000000
 #define HINT_NOCONDBOXING     0x04000000
 #define HINT_EXTENSION_MODE   0x02000000
 //#define HINT_TRY_MODE         0x01000000
@@ -468,13 +468,13 @@ ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing
 
 ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool existing)
 {
-   //if (reference.compare(EXTERNAL_MODULE, strlen(EXTERNAL_MODULE))) {
-   //   char ch = reference[strlen(EXTERNAL_MODULE)];
-   //   if (ch == '\'' || ch == 0)
-   //      return ObjectInfo(okExternal);
-   //}
+   if (reference.compare(EXTERNAL_MODULE, strlen(EXTERNAL_MODULE))) {
+      char ch = reference[strlen(EXTERNAL_MODULE)];
+      if (ch == '\'' || ch == 0)
+         return ObjectInfo(okExternal);
+   }
    // To tell apart primitive modules, the name convention is used
-   /*else */if (reference.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
+   else if (reference.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
       return ObjectInfo(okInternal, module->mapReference(reference));
    }
 
@@ -1401,8 +1401,8 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
 //         return object.extraparam;
 //      case okParams:
 //         return V_ARGARRAY;
-//      case okExternal:
-//         return V_INT32;
+      case okExternal:
+         return V_INT32;
       case okMessageConstant:
          return V_MESSAGE;
       case okNil:
@@ -2040,8 +2040,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okConstantRole:
          writer.newNode(lxConstantSymbol, object.param);
          break;
-//      case okExternal:
-//         return;
+      case okExternal:
+         return;
       case okInternal:
          writer.appendNode(lxInternalRef, object.param);
          return;
@@ -2846,21 +2846,21 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
    while (arg != lxMessage && arg != lxNone) {
       if (test(arg.type, lxObjectMask)) {
          if (target.kind == okUnknown) {
-//            // HOTFIX : to handle alt expression
-//            if (arg.type == lxLocal) {
-//               target = ObjectInfo(okLocal, arg.argument);
-//               writeTerminal(writer, arg, scope, target, 0);
-//            }
-//            // HOTFIX : to handle resend expression
-//            else if (arg.type == lxResult) {
-//               target = ObjectInfo(okObject);
-//            }
-            /*else */target = compileExpression(writer, arg, scope, paramMode);
-//
-//            // HOTFIX : recognize external operation
-//            if (target.kind == okExternal) {
-//               paramMode |= HINT_EXTERNALOP;
-//            }
+            // HOTFIX : to handle alt expression
+            if (arg.type == lxLocal) {
+               target = ObjectInfo(okLocal, arg.argument);
+               writeTerminal(writer, arg, scope, target, 0);
+            }
+            // HOTFIX : to handle resend expression
+            else if (arg.type == lxResult) {
+               target = ObjectInfo(okObject);
+            }
+            else target = compileExpression(writer, arg, scope, paramMode);
+
+            // HOTFIX : recognize external operation
+            if (target.kind == okExternal) {
+               paramMode |= HINT_EXTERNALOP;
+            }
 
             // HOTFIX : skip the prime message
             arg = arg.nextNode();
@@ -2930,13 +2930,13 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
                if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param), param.element))
                   scope.raiseError(errInvalidOperation, arg);
 
-            //// HOTFIX : externall operation arguments should be inside expression node
-            //if (test(paramMode, HINT_EXTERNALOP)) {
-            //   writer.appendNode(lxExtArgumentType, subjectRef);
+            // HOTFIX : externall operation arguments should be inside expression node
+            if (test(paramMode, HINT_EXTERNALOP)) {
+               writer.appendNode(lxExtArgumentRef, classRef);
 
-            //   writer.insert(lxExpression);
-            //   writer.closeNode();
-            //}
+               writer.insert(lxExpression);
+               writer.closeNode();
+            }
 
             writer.removeBookmark();
 
@@ -2972,11 +2972,11 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       target = ObjectInfo(okThisParam, 1);
    }      
 
-//   //   bool externalMode = false;
-//   if (target.kind == okExternal) {
-//      retVal = compileExternalCall(writer, node, scope);
-//   }
-//   else {
+   //   bool externalMode = false;
+   if (target.kind == okExternal) {
+      retVal = compileExternalCall(writer, node, scope);
+   }
+   else {
       ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
 
       if (target.kind == okInternal) {
@@ -2994,7 +2994,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode);
       }
-//   }
+   }
 
    writer.removeBookmark();
 
@@ -3084,20 +3084,10 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       else if (retVal.kind == okLocal || retVal.kind == okField || retVal.kind == okOuterField || retVal.kind == okStaticField) {
       }
       else if (/*retVal.kind == okParam || */retVal.kind == okOuter) {
-//         // Compiler magic : allowing to assign byref / variable parameter
-//         if (_logic->isVariable(*scope.moduleScope, targetRef)) {
-//            _logic->injectVariableAssigning(writer, *scope.moduleScope, *this, targetRef, retVal.type, operand, retVal.kind == okParam);
-//
-//            retVal.kind = (retVal.kind == okParam) ? okParamField : okOuterField;
-//         }
-         // Compiler magic : allowing to assign outer local variables
-//         else if (retVal.kind == okOuter) {
-            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+         InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
 
-            if (!closure->markAsPresaved(retVal))
-               scope.raiseError(errInvalidOperation, node);
-//         }
-//         else scope.raiseError(errInvalidOperation, node);
+         if (!closure->markAsPresaved(retVal))
+            scope.raiseError(errInvalidOperation, node);
       }
       else scope.raiseError(errInvalidOperation, node);
 
@@ -3686,16 +3676,16 @@ ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, Co
    return ObjectInfo(okObject);
 }
 
-//void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   // find inner expression
-//   SNode expr = node;
-//   while (expr.findChild(lxMessage, lxAssign, lxOperator) == lxNone) {
-//      expr = expr.findChild(lxExpression);
-//   }
-//
-//   compileExpression(writer, expr, scope, HINT_LOOP);
-//}
+void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   // find inner expression
+   SNode expr = node;
+   while (expr.findChild(lxMessage, lxAssign, lxOperator) == lxNone) {
+      expr = expr.findChild(lxExpression);
+   }
+
+   compileExpression(writer, expr, scope, HINT_LOOP);
+}
 
 ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -3712,12 +3702,12 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
             compileExpression(writer, current, scope, HINT_ROOT);
             writer.closeNode();
             break;
-//         case lxLoop:
-//            writer.newNode(lxExpression);
-//            writer.appendNode(lxBreakpoint, dsStep);
-//            compileLoop(writer, current, scope);
-//            writer.closeNode();
-//            break;
+         case lxLoop:
+            writer.newNode(lxExpression);
+            writer.appendNode(lxBreakpoint, dsStep);
+            compileLoop(writer, current, scope);
+            writer.closeNode();
+            break;
          case lxReturning:
          {
             needVirtualEnd = false;
@@ -3730,14 +3720,13 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
             break;
          }
          case lxVariable:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             compileVariable(writer, current, scope);
             break;
-//         case lxExtern:
-//            writer.newNode(lxExternFrame);
-//            compileCode(writer, current.findSubNode(lxCode), scope);
-//            writer.closeNode();
-//            break;
+         case lxExtern:
+            writer.newNode(lxExternFrame);
+            compileCode(writer, current.findSubNode(lxCode), scope);
+            writer.closeNode();
+            break;
          case lxEOF:
             needVirtualEnd = false;
             writer.newNode(lxBreakpoint, dsEOP);
@@ -3760,114 +3749,112 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 
 void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope, WarningScope& warningScope)
 {
-   //SNode current = node.firstChild();
-   //while (current != lxNone) {
-   //   if (test(current.type, lxObjectMask)) {
-   //      optimizeExpressionTree(current, moduleScope, warningScope, HINT_NOBOXING);
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         optimizeExpressionTree(current, moduleScope, warningScope, HINT_NOBOXING);
 
-   //      ref_t argType = current.findChild(lxExtArgumentType).argument;
+         ref_t classReference = current.findChild(lxExtArgumentRef).argument;
+         if (classReference) {
+            ClassInfo classInfo;
+            _logic->defineClassInfo(moduleScope, classInfo, classReference);
 
-   //      ref_t classReference = moduleScope.subjectHints.get(argType);
-   //      if (classReference) {
-   //         ClassInfo classInfo;
-   //         _logic->defineClassInfo(moduleScope, classInfo, classReference);
+            ref_t primitiveRef = _logic->retrievePrimitiveReference(moduleScope, classInfo);
+            switch (primitiveRef) {
+               case V_INT32:
+               case V_SIGNATURE:
+               case V_MESSAGE:
+               case V_VERB:
+                  current.set(_logic->isVariable(classInfo) ? lxExtArgument : lxIntExtArgument, 0);
+                  break;
+               case V_SYMBOL:
+               {
+                  current.set(lxExtInteranlRef, 0);
+                  // HOTFIX : ignore call operation
+                  SNode callNode = current.findChild(lxCalling);
+                  callNode.set(lxExpression, 0);
+                  break;
+               }
+               default:
+                  if (test(classInfo.header.flags, elStructureRole)) {
+                     current.set(lxExtArgument, 0);
+                  }
+                  else if (test(classInfo.header.flags, elWrapper)) {
+                     //HOTFIX : allow to pass a normal object
+                     current.set(lxExtArgument, 0);
+                  }
+                  else moduleScope.raiseError(errInvalidOperation, current);
+                  break;
+            }
+         }
+         else moduleScope.raiseError(errInvalidOperation, current);
+      }
 
-   //         ref_t primitiveRef = _logic->retrievePrimitiveReference(moduleScope, classInfo);
-   //         switch (primitiveRef) {
-   //            case V_INT32:
-   //            case V_SIGNATURE:
-   //            case V_MESSAGE:
-   //            case V_VERB:
-   //               current.set(_logic->isVariable(classInfo) ? lxExtArgument : lxIntExtArgument, 0);
-   //               break;
-   //            case V_SYMBOL:
-   //            {
-   //               current.set(lxExtInteranlRef, 0);
-   //               // HOTFIX : ignore call operation
-   //               SNode callNode = current.findChild(lxCalling);
-   //               callNode.set(lxExpression, 0);
-   //               break;
-   //            }
-   //            default:
-   //               if (test(classInfo.header.flags, elStructureRole)) {
-   //                  current.set(lxExtArgument, 0);
-   //               }
-   //               else if (test(classInfo.header.flags, elWrapper)) {
-   //                  //HOTFIX : allow to pass a normal object
-   //                  current.set(lxExtArgument, 0);
-   //               }
-   //               else moduleScope.raiseError(errInvalidOperation, current);
-   //               break;
-   //         }
-   //      }
-   //      else moduleScope.raiseError(errInvalidOperation, current);
-   //   }
-
-   //   current = current.nextNode();
-   //}
+      current = current.nextNode();
+   }
 }
 
-//ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   ObjectInfo retVal(okExternal);
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-////   bool rootMode = test(mode, HINT_ROOT);
-//   bool stdCall = false;
-//   bool apiCall = false;
-//
-//   SNode targetNode = node.firstChild(lxTerminalMask);
-//   // HOTFIX : comment out dll reference
-//   targetNode = lxIdle;
-//
-//   //SNode messageNode = node.findChild(lxMessage);
-//   writer.appendNode(lxBreakpoint, dsAtomicStep);
-//
-//   ident_t dllAlias = targetNode.identifier();
-//   ident_t functionName = node.findChild(lxMessage).firstChild(lxTerminalMask).identifier();
-//
-//   ident_t dllName = NULL;
-//   if (dllAlias.compare(EXTERNAL_MODULE)) {
-//      // if run time dll is used
-//      dllName = RTDLL_FORWARD;
-//
-//      if (functionName.compare(COREAPI_MASK, COREAPI_MASK_LEN))
-//         apiCall = true;
-//   }
-//   else dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
-//
-//   // legacy : if dll is not mapped, use the name directly
-//   if (emptystr(dllName))
-//      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
-//
-//   ReferenceNs name;
-//   if (!apiCall) {
-//      name.copy(DLL_NAMESPACE);
-//      name.combine(dllName);
-//      name.append(".");
-//      name.append(functionName);
-//   }
-//   else {
-//      name.copy(NATIVE_MODULE);
-//      name.combine(CORE_MODULE);
-//      name.combine(functionName);
-//   }
-//
-//   ref_t reference = moduleScope->module->mapReference(name);
-//
-////   if (!rootMode)
-////      scope.writer->appendNode(lxTarget, -1);
-//
-//   // To tell apart coreapi calls, the name convention is used
-//   if (apiCall) {
-//      writer.insert(lxCoreAPICall, reference);
-//   }
-//   else writer.insert(stdCall ? lxStdExternalCall : lxExternalCall, reference);
-//   writer.closeNode();
-//
-//   return retVal;
-//}
+ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ObjectInfo retVal(okExternal);
+
+   ModuleScope* moduleScope = scope.moduleScope;
+
+//   bool rootMode = test(mode, HINT_ROOT);
+   bool stdCall = false;
+   bool apiCall = false;
+
+   SNode targetNode = node.firstChild(lxTerminalMask);
+   // HOTFIX : comment out dll reference
+   targetNode = lxIdle;
+
+   //SNode messageNode = node.findChild(lxMessage);
+   writer.appendNode(lxBreakpoint, dsAtomicStep);
+
+   ident_t dllAlias = targetNode.identifier();
+   ident_t functionName = node.findChild(lxMessage).firstChild(lxTerminalMask).identifier();
+
+   ident_t dllName = NULL;
+   if (dllAlias.compare(EXTERNAL_MODULE)) {
+      // if run time dll is used
+      dllName = RTDLL_FORWARD;
+
+      if (functionName.compare(COREAPI_MASK, COREAPI_MASK_LEN))
+         apiCall = true;
+   }
+   else dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
+
+   // legacy : if dll is not mapped, use the name directly
+   if (emptystr(dllName))
+      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
+
+   ReferenceNs name;
+   if (!apiCall) {
+      name.copy(DLL_NAMESPACE);
+      name.combine(dllName);
+      name.append(".");
+      name.append(functionName);
+   }
+   else {
+      name.copy(NATIVE_MODULE);
+      name.combine(CORE_MODULE);
+      name.combine(functionName);
+   }
+
+   ref_t reference = moduleScope->module->mapReference(name);
+
+//   if (!rootMode)
+//      scope.writer->appendNode(lxTarget, -1);
+
+   // To tell apart coreapi calls, the name convention is used
+   if (apiCall) {
+      writer.insert(lxCoreAPICall, reference);
+   }
+   else writer.insert(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+   writer.closeNode();
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo routine)
 {
@@ -5619,29 +5606,16 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
 
 ref_t Compiler :: optimizeExtCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
 {
-   //SNode parentNode = node.parentNode();
-   //while (parentNode == lxExpression)
-   //   parentNode = parentNode.parentNode();
-
-   //if (parentNode == lxAssigning) {
-   //   if (parentNode.argument != 4) {
-   //      boxPrimitive(scope, node, -1, warningMask, mode);
-   //   }
-   //}
-   //else if (parentNode == lxTypecasting) {
-   //   boxPrimitive(scope, node, -1, warningMask, mode);
-   //}
-
    compileExternalArguments(node, scope, warningScope);
 
-   return /*V_INT32*/0;
+   return V_INT32;
 }
 
 ref_t Compiler :: optimizeInternalCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
 {
    optimizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
 
-   return /*V_INT32*/0;
+   return V_INT32;
 }
 
 ref_t Compiler :: optimizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int)
@@ -6010,9 +5984,6 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
       case lxSwitching:
       case lxOption:
       case lxElse:
-      //case lxCode:
-      //case lxIf:
-      //case lxExternFrame:
          optimizeExpressionTree(current, scope, warningScope);
          return 0;
       case lxNested:
