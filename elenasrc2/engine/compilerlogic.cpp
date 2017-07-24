@@ -445,6 +445,9 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
    if (isPrimitiveCompatible(targetRef, sourceRef))
       return true;
 
+   if (targetRef == scope.superReference && !isPrimitiveRef(sourceRef))
+      return true;
+
    while (sourceRef != 0) {
       if (targetRef != sourceRef) {
          ClassInfo info;
@@ -923,9 +926,9 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
       info.header.flags |= elSealed;
    }
 
-//   if (test(info.header.flags, elExtension)) {
-//      info.header.flags |= elSealed;
-//   }
+   if (test(info.header.flags, elExtension)) {
+      info.header.flags |= elSealed;
+   }
 
    // verify if the class may be a wrapper
    if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&

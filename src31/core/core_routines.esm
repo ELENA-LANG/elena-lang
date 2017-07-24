@@ -33,6 +33,48 @@ labTrue:
   
 end
 
+procedure __object.get&class_ref[1]
+
+  bloadsi 1
+  class
+  quitn 1
+
+end
+
+procedure __object.get&parent_ref[1]
+
+  bloadsi 1
+  class
+  bcopya
+  parent
+  quitn 1
+
+end
+
+procedure __object.eval&instanceOf[2]
+
+  bloadsi 2
+  aloadsi 1
+  check
+  selectr const : system'false const : system'true
+  quitn 2
+
+end
+
+procedure __object.equal&reference[2]
+
+  aloadsi 1
+  bloadsi 2
+  ifb     labTrue
+  acopyr  const : system'false
+  quitn   2
+  
+labTrue:
+  acopyr const : system'true
+  quitn 2
+  
+end
+
 procedure __verb.dispatch[1]
 
   bloadsi 1

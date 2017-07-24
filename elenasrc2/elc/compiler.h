@@ -301,7 +301,7 @@ private:
       void loadActions(_Module* module);
 
       virtual bool saveAttribute(ident_t typeName, ref_t classReference, bool internalAttr);
-//      bool saveExtension(ref_t message, ref_t type, ref_t role);
+      bool saveExtension(ref_t message, ref_t type, ref_t role);
       void saveAction(ref_t message, ref_t reference);
 
       void validateReference(SNode terminal, ref_t reference);

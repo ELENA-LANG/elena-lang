@@ -758,18 +758,18 @@ void Compiler::ModuleScope :: loadExtensions(_Module* extModule, bool& duplicate
       if (section) {
          MemoryReader metaReader(section);
          while (!metaReader.Eof()) {
-            //ref_t type_ref = importSubject(extModule, metaReader.getDWord(), module);
+            ref_t type_ref = importReference(extModule, metaReader.getDWord(), module);
             ref_t message = importMessage(extModule, metaReader.getDWord(), module);
             ref_t role_ref = importReference(extModule, metaReader.getDWord(), module);
 
-            if(!extensionHints.exist(message, /*type_ref*/0)) {
-               extensionHints.add(message, /*type_ref*/0);
+            if(!extensionHints.exist(message, type_ref)) {
+               extensionHints.add(message, type_ref);
 
-               SubjectMap* typeExtensions = extensions.get(/*type_ref*/0);
+               SubjectMap* typeExtensions = extensions.get(type_ref);
                if (!typeExtensions) {
                   typeExtensions = new SubjectMap();
 
-                  extensions.add(/*type_ref*/0, typeExtensions);
+                  extensions.add(role_ref, typeExtensions);
                }
 
                typeExtensions->add(message, role_ref);
@@ -780,35 +780,35 @@ void Compiler::ModuleScope :: loadExtensions(_Module* extModule, bool& duplicate
    }
 }
 
-//bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
-//{
-//   if (type == -1)
-//      type = 0;
-//
-//   ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
-//
-//   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//   metaWriter.writeDWord(type);
-//   metaWriter.writeDWord(message);
-//   metaWriter.writeDWord(role);
-//
-//   if (!extensionHints.exist(message, type)) {
-//      extensionHints.add(message, type);
-//
-//      SubjectMap* typeExtensions = extensions.get(type);
-//      if (!typeExtensions) {
-//         typeExtensions = new SubjectMap();
-//
-//         extensions.add(type, typeExtensions);
-//      }
-//
-//      typeExtensions->add(message, role);
-//
-//      return true;
-//   }
-//   else return false;
-//}
+bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t typeRef, ref_t role)
+{
+   if (typeRef == INVALID_REF)
+      typeRef = 0;
+
+   ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
+
+   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+   metaWriter.writeDWord(typeRef);
+   metaWriter.writeDWord(message);
+   metaWriter.writeDWord(role);
+
+   if (!extensionHints.exist(message, typeRef)) {
+      extensionHints.add(message, typeRef);
+
+      SubjectMap* typeExtensions = extensions.get(typeRef);
+      if (!typeExtensions) {
+         typeExtensions = new SubjectMap();
+
+         extensions.add(typeRef, typeExtensions);
+      }
+
+      typeExtensions->add(message, role);
+
+      return true;
+   }
+   else return false;
+}
 
 void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
 {
@@ -945,10 +945,10 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
       return ObjectInfo(okSuper, info.header.parentRef);
    }
    else if (terminal.compare(SELF_VAR)) {
-      /*if (extensionMode != 0 && extensionMode != -1) {
-         return ObjectInfo(okParam, (size_t)-1, 0, extensionMode);
+      if (extensionMode != 0 && extensionMode != -1) {
+         return ObjectInfo(okParam, (size_t)-1, extensionMode);
       }
-      else*/ return ObjectInfo(okParam, (size_t)-1);
+      else return ObjectInfo(okParam, (size_t)-1);
    }
    else {
       ObjectInfo fieldInfo = mapField(terminal);
@@ -2429,51 +2429,51 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
 {
    // check typed extension if the type available
-   //ref_t type = 0;
+   ref_t typeRef = 0;
    ref_t extRef = 0;
 
-   //if (object.type != 0 && scope.moduleScope->extensionHints.exist(messageRef, object.type)) {
-   //   type = object.type;
-   //}
-   //else {
-      //if (scope.moduleScope->extensionHints.exist(messageRef)) {
-      //   ref_t classRef = resolveObjectReference(scope, object);
-      //   if (_logic->isPrimitiveRef(classRef)) {
-      //      classRef = _logic->resolvePrimitiveReference(*scope.moduleScope, classRef);
-      //   }
+   ref_t objectRef = resolveObjectReference(scope, object);
+   if (_logic->isPrimitiveRef(objectRef)) {
+      objectRef = _logic->resolvePrimitiveReference(*scope.moduleScope, objectRef);
+   }
 
-      //   // if class reference available - select the possible type
-      //   if (classRef != 0) {
-      //      SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
-      //      while (!it.Eof()) {
-      //         if (it.key() == messageRef) {
-      //            if (_logic->isCompatibleWithType(*scope.moduleScope, classRef, *it)) {
-      //               type = *it;
+   if (objectRef != 0 && scope.moduleScope->extensionHints.exist(messageRef, objectRef)) {
+      typeRef = objectRef;
+   }
+   else {
+      if (scope.moduleScope->extensionHints.exist(messageRef)) {
+         // if class reference available - select the possible type
+         if (objectRef != 0) {
+            SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
+            while (!it.Eof()) {
+               if (it.key() == messageRef) {
+                  if (_logic->isCompatible(*scope.moduleScope, objectRef, *it)) {
+                     typeRef = *it;
 
-      //               break;
-      //            }
-      //         }
+                     break;
+                  }
+               }
 
-      //         it++;
-      //      }
-      //   }
-      //}
-   //}
+               it++;
+            }
+         }
+      }
+   }
 
-   //if (type != 0) {
-   //   SubjectMap* typeExtensions = scope.moduleScope->extensions.get(type);
+   if (typeRef != 0) {
+      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(typeRef);
 
-   //   if (typeExtensions)
-   //      extRef = typeExtensions->get(messageRef);
-   //}
+      if (typeExtensions)
+         extRef = typeExtensions->get(messageRef);
+   }
 
    // check generic extension
-   //if (extRef == 0) {
+   if (extRef == 0) {
       SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
 
       if (typeExtensions)
          extRef = typeExtensions->get(messageRef);
-   //}
+   }
 
    return extRef;
 }
@@ -2724,12 +2724,12 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       retVal.param = result.outputReference;
    }
 
-   //if (target.kind == okThisParam && callType == tpPrivate) {
-   //   messageRef = overwriteVerb(messageRef, PRIVATE_MESSAGE_ID);
+   if (target.kind == okThisParam && callType == tpPrivate) {
+      messageRef = overwriteVerb(messageRef, PRIVATE_MESSAGE_ID);
 
-   //   callType = tpSealed;
-   //}
-   /*else */if (classReference == scope.moduleScope->signatureReference) {
+      callType = tpSealed;
+   }
+   else if (classReference == scope.moduleScope->signatureReference) {
       dispatchCall = test(mode, HINT_EXTENSION_MODE);
    }
    else if (classReference == scope.moduleScope->messageReference) {
@@ -5206,9 +5206,9 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       if (!included && sealedMethod)
          scope.raiseError(errClosedMethod, findParent(current, lxClass));
 
-//      // save extensions if required ; private method should be ignored
-//      if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
-//         scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
+      // save extensions if required ; private method should be ignored
+      if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
+         scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
 //         if (isOpenArg(message) && _logic->isMethodGeneric(scope.info, message)) {
 //            // if it is an extension with open argument list generic handler
 //            // creates the references for all possible number of parameters
@@ -5216,7 +5216,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 //               scope.moduleScope->saveExtension(overwriteParamCount(message, i), scope.extensionMode, scope.reference);
 //            }
 //         }
-//      }
+      }
 
       // create overloadlist if required
       if (test(methodHints, tpMultimethod)) {

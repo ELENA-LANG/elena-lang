@@ -289,10 +289,10 @@ class MethodNotFoundException //:: exceptionof(MethodNotFoundError)
 //        <= new literal:(object className; add literal:" : Method "; add literal:missingMessage; add literal:" not found").
 }
 
-//// --- MethodNotSupported ---
-//
-//class NotSupportedException :: exceptionof(NotSupportedError)
-//{
+// --- MethodNotSupported ---
+
+class NotSupportedException //:: exceptionof(NotSupportedError)
+{
 //    constructor new literal:message
 //    [
 //        theMessage := message.
@@ -306,8 +306,8 @@ class MethodNotFoundException //:: exceptionof(MethodNotFoundError)
 //    /// Creates the exception
 //    constructor new :aMessage
 //        <= new literal:aMessage.
-//}
-//
+}
+
 //// --- AbortException ---
 //
 ///// An abort exception 

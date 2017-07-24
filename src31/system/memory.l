@@ -2086,55 +2086,55 @@ class wideConvertor =
 /// A literal enumerator
 class LiteralEnumerator :: Enumerator
 {
-//    literal theLiteral.
-//    vint    theIndex.
-//    vint    theDiff.
-//    char    theChar.
-//    
-//    /// Creates an enumerator
-//    constructor new : anObject
-//        <= new literal:anObject.
-//    
-//    /// Creates an enumerator
-//    constructor new literal:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := -1.
-//        theDiff := 1.
-//        theChar := $0.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex := -1.
-//        theDiff := 1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    next
-//    [
-//        int aLength := theLiteral length.
-//        
-//        theIndex append int:theDiff.
-//        
-//        if (theIndex < aLength)
-//            [
-//                theChar := theLiteral getAt int:theIndex.                
-//                
-//                theChar readLengthTo vint:theDiff.
-//                
-//                ^ true
-//            ].
-//
-//        theDiff := 0.
-//        theChar := $0.
-//
-//        ^ false
-//    ]
-//    
-//    /// Returns the current character
-//    get = theChar.
+    literal theLiteral.
+    vint    theIndex.
+    vint    theDiff.
+    char    theChar.
+    
+    /// Creates an enumerator
+    constructor new : anObject
+        <= new literal:anObject.
+    
+    /// Creates an enumerator
+    constructor new literal:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := -1.
+        theDiff := 1.
+        theChar := $0.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex := -1.
+        theDiff := 1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        int aLength := theLiteral length.
+        
+        theIndex append int:theDiff.
+        
+        if (theIndex < aLength)
+            [
+                theChar := theLiteral getAt int:theIndex.                
+                
+                theChar readLengthTo vint:theDiff.
+                
+                ^ true
+            ].
+
+        theDiff := 0.
+        theChar := $0.
+
+        ^ false
+    ]
+    
+    /// Returns the current character
+    get = theChar.
 }
 
 // --- LiteralIndexer ---
@@ -2142,58 +2142,58 @@ class LiteralEnumerator :: Enumerator
 /// A literal value indexer
 class LiteralIndexer :: Indexer
 {
-//    literal theLiteral.
-//    vint    theIndex.
-//    
-//    /// Creates an indexer
-//    constructor new : anObject
-//        <= new literal:anObject.
-//    
-//    /// Creates an indexer
-//    constructor new literal:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    available
-//    [
-//        int aLength := theLiteral length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current character
-//    get
-//    [
-//        char aChar := $0.
-//        theLiteral read int:theIndex vchar:aChar.
-//        
-//        ^ CharValue new char:aChar.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    set : anObject 
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theLiteral.
+    literal theLiteral.
+    vint    theIndex.
+    
+    /// Creates an indexer
+    constructor new : anObject
+        <= new literal:anObject.
+    
+    /// Creates an indexer
+    constructor new literal:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    available
+    [
+        int aLength := theLiteral length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current character
+    get
+    [
+        char aChar := $0.
+        theLiteral read int:theIndex vchar:aChar.
+        
+        ^ CharValue new char:aChar.
+    ]
+    
+    /// Sets the index by specified value
+    set : anObject 
+    [
+        system'NotSupportedException new; raise.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex 
+    [
+        theIndex set int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo vint:anOutput
+        => theLiteral.
 }
 
 // --- WideLiteralEnumerator ---
@@ -2201,57 +2201,57 @@ class LiteralIndexer :: Indexer
 /// A literal enumerator
 class WideLiteralEnumerator :: Enumerator
 {
-//    wide theLiteral.
-//    vint theIndex.
-//    vint theDiff.
-//    char theChar.
-//    
-//    /// Creates an enumerator
-//    constructor new : anObject
-//        <= new wide:anObject.
-//    
-//    /// Creates an enumerator
-//    constructor new wide:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := -1.
-//        theDiff := 1.
-//        theChar := $0.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex set int:-1.
-//        theDiff set int:1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    next
-//    [
-//        int aLength := theLiteral length.
-//
-//        theIndex append int:theDiff.
-//        
-//        if (theIndex < aLength)
-//            [
-//                theChar := theLiteral getAt int:theIndex.
-//                
-//                theChar readLengthTo vint:theDiff.
-//                theDiff append int:1.
-//                theDiff int := theDiff / 2.
-//                
-//                ^ true
-//            ].
-//
-//        theDiff set int:0.
-//        theChar := $0.
-//
-//        ^ false
-//    ]
-//    
-//    /// Returns the current character
-//    get = theChar.
+    wide theLiteral.
+    vint theIndex.
+    vint theDiff.
+    char theChar.
+    
+    /// Creates an enumerator
+    constructor new : anObject
+        <= new wide:anObject.
+    
+    /// Creates an enumerator
+    constructor new wide:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := -1.
+        theDiff := 1.
+        theChar := $0.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex set int:-1.
+        theDiff set int:1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        int aLength := theLiteral length.
+
+        theIndex append int:theDiff.
+        
+        if (theIndex < aLength)
+            [
+                theChar := theLiteral getAt int:theIndex.
+                
+                theChar readLengthTo vint:theDiff.
+                theDiff append int:1.
+                theDiff int := theDiff / 2.
+                
+                ^ true
+            ].
+
+        theDiff set int:0.
+        theChar := $0.
+
+        ^ false
+    ]
+    
+    /// Returns the current character
+    get = theChar.
 }
 
 // --- WideLiteralInexer ---
@@ -2259,52 +2259,52 @@ class WideLiteralEnumerator :: Enumerator
 /// A wide literal enumerator
 class WideLiteralIndexer :: Indexer
 {
-//    wide theLiteral.
-//    vint theIndex.
-//    
-//    /// Creates an indexer
-//    constructor new : anObject
-//        <= new wide:anObject.
-//    
-//    /// Creates an indexer
-//    constructor new wide:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := 0.
-//    ]
-//
-//    /// Returns false if the index out of range    
-//    available
-//    [
-//        int aLength := theLiteral length.
-//        
-//        ^ theIndex < aLength
-//    ]
-//
-//    /// Returns the current character
-//    get
-//        = theLiteral getAt int:theIndex.
-//    
-//    set : anObject 
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theLiteral.
+    wide theLiteral.
+    vint theIndex.
+    
+    /// Creates an indexer
+    constructor new : anObject
+        <= new wide:anObject.
+    
+    /// Creates an indexer
+    constructor new wide:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := 0.
+    ]
+
+    /// Returns false if the index out of range    
+    available
+    [
+        int aLength := theLiteral length.
+        
+        ^ theIndex < aLength
+    ]
+
+    /// Returns the current character
+    get
+        = theLiteral getAt int:theIndex.
+    
+    set : anObject 
+    [
+        system'NotSupportedException new; raise.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex 
+    [
+        theIndex set int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo vint:anOutput
+        => theLiteral.
 }
 
 // --- ArrayIndexer ---
@@ -2312,54 +2312,54 @@ class WideLiteralIndexer :: Indexer
 /// An array indexer
 class ArrayIndexer :: Indexer
 {
-//    array theArray.
-//    vint  theIndex.
-//
-//    /// Returns the parameter indexer
-//    constructor new : anArray
-//        <= new array:anArray.
-//    
-//    /// Returns the parameter indexer
-//    constructor new array:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    available
-//    [
-//        int aLength := 0.
-//        theArray readLengthTo vint:aLength.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    get
-//        = theArray getAt int:theIndex.
-//    
-//    /// Sets the current member
-//    set : anObject
-//    [
-//        theArray setAt int:theIndex object:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theArray.
+    array theArray.
+    vint  theIndex.
+
+    /// Returns the parameter indexer
+    constructor new : anArray
+        <= new array:anArray.
+    
+    /// Returns the parameter indexer
+    constructor new array:anArray
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    available
+    [
+        int aLength := 0.
+        theArray readLengthTo vint:aLength.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current member
+    get
+        = theArray getAt int:theIndex.
+    
+    /// Sets the current member
+    set : anObject
+    [
+        theArray setAt int:theIndex object:anObject.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex 
+    [
+        theIndex set int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo vint:anOutput
+        => theArray.
 }
 
 // --- ArrayEnumerator ---
@@ -2367,39 +2367,39 @@ class ArrayIndexer :: Indexer
 /// An array enumerator
 class ArrayEnumerator :: Enumerator
 {
-//    array theArray.
-//    vint  theIndex.
-//    
-//    /// Creates an array enumerator
-//    constructor new : anArray
-//        <= new array:anArray.
-//    
-//    /// Creates an array enumerator
-//    constructor new array:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex set int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    next
-//    [
-//        int aLength := theArray length.
-//        
-//        theIndex append int:1.
-//
-//        ^ theIndex < aLength.
-//    ]
-//    
-//    /// Returns the current object
-//    get
-//        = theArray getAt int:theIndex.
+    array theArray.
+    vint  theIndex.
+    
+    /// Creates an array enumerator
+    constructor new : anArray
+        <= new array:anArray.
+    
+    /// Creates an array enumerator
+    constructor new array:anArray
+    [
+        theArray := anArray.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex set int:-1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        int aLength := theArray length.
+        
+        theIndex append int:1.
+
+        ^ theIndex < aLength.
+    ]
+    
+    /// Returns the current object
+    get
+        = theArray getAt int:theIndex.
 }
 
 // --- BitArrayIndexer ---
@@ -2407,53 +2407,53 @@ class ArrayEnumerator :: Enumerator
 /// An array indexer
 class BitArrayIndexer :: Indexer
 {
-//    bitarray theArray.
-//    vint  theIndex.
-//
-//    /// Returns the parameter indexer
-//    constructor new : anArray
-//        <= new bitarray:anArray.
-//    
-//    /// Returns the parameter indexer
-//    constructor new bitarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    available
-//    [
-//        int aLength := theArray length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    bool get
-//        = theArray getAt int:theIndex.
-//    
-//    /// Sets the current member
-//    set : anObject
-//    [
-//        theArray setAt int:theIndex bool:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theArray.
+    bitarray theArray.
+    vint  theIndex.
+
+    /// Returns the parameter indexer
+    constructor new : anArray
+        <= new bitarray:anArray.
+    
+    /// Returns the parameter indexer
+    constructor new bitarray:anArray
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    available
+    [
+        int aLength := theArray length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current member
+    bool get
+        = theArray getAt int:theIndex.
+    
+    /// Sets the current member
+    set : anObject
+    [
+        theArray setAt int:theIndex bool:anObject.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex 
+    [
+        theIndex set int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo vint:anOutput
+        => theArray.
 }
 
 // --- BitArrayEnumerator ---
@@ -2461,39 +2461,39 @@ class BitArrayIndexer :: Indexer
 /// An array enumerator
 class BitArrayEnumerator :: Enumerator
 {
-//    bitarray theArray.
-//    vint     theIndex.
-//    
-//    /// Creates an array enumerator
-//    constructor new : anArray
-//        <= new bitarray:anArray.
-//    
-//    /// Creates an array enumerator
-//    constructor new bitarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex set int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    next
-//    [
-//        int aLength := theArray length.
-//        
-//        theIndex append int:1.
-//
-//        ^ theIndex < aLength.
-//    ]
-//    
-//    /// Returns the current object
-//    bool get
-//        = theArray getAt int:theIndex.
+    bitarray theArray.
+    vint     theIndex.
+    
+    /// Creates an array enumerator
+    constructor new : anArray
+        <= new bitarray:anArray.
+    
+    /// Creates an array enumerator
+    constructor new bitarray:anArray
+    [
+        theArray := anArray.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex set int:-1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        int aLength := theArray length.
+        
+        theIndex append int:1.
+
+        ^ theIndex < aLength.
+    ]
+    
+    /// Returns the current object
+    bool get
+        = theArray getAt int:theIndex.
 }
 
 // --- BitArray32Indexer ---
@@ -2501,51 +2501,51 @@ class BitArrayEnumerator :: Enumerator
 /// An array indexer
 class BitArray32Indexer :: Indexer
 {
-//    bitset theArray.
-//    vint   theIndex.
-//
-//    /// Returns the parameter indexer
-//    constructor new : anArray
-//        <= new bitset:anArray.
-//    
-//    /// Returns the parameter indexer
-//    constructor new bitset:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    available
-//    [
-//        ^ theIndex < 32
-//    ]
-//
-//    /// Returns the current member
-//    bool get
-//        = theArray getAt int:theIndex.
-//    
-//    /// Sets the current member
-//    set : anObject
-//    [
-//        theArray setAt int:theIndex bool:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo  vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theArray.
+    bitset theArray.
+    vint   theIndex.
+
+    /// Returns the parameter indexer
+    constructor new : anArray
+        <= new bitset:anArray.
+    
+    /// Returns the parameter indexer
+    constructor new bitset:anArray
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    available
+    [
+        ^ theIndex < 32
+    ]
+
+    /// Returns the current member
+    bool get
+        = theArray getAt int:theIndex.
+    
+    /// Sets the current member
+    set : anObject
+    [
+        theArray setAt int:theIndex bool:anObject.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo  vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex 
+    [
+        theIndex set int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo vint:anOutput
+        => theArray.
 }
 
 // --- BitArray32Enumerator ---
@@ -2553,35 +2553,35 @@ class BitArray32Indexer :: Indexer
 /// An array enumerator
 class BitArray32Enumerator :: Enumerator
 {
-//    bitset theArray.
-//    vint   theIndex.
-//    
-//    /// Creates an array enumerator
-//    constructor new : anArray
-//        <= new bitset:anArray.
-//    
-//    /// Creates an array enumerator
-//    constructor new bitset:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex set int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    next
-//    [
-//        theIndex append int:1.
-//
-//        ^ theIndex < 32.
-//    ]
-//    
-//    /// Returns the current object
-//    get
-//        = theArray getAt int:theIndex.
+    bitset theArray.
+    vint   theIndex.
+    
+    /// Creates an array enumerator
+    constructor new : anArray
+        <= new bitset:anArray.
+    
+    /// Creates an array enumerator
+    constructor new bitset:anArray
+    [
+        theArray := anArray.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex set int:-1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        theIndex append int:1.
+
+        ^ theIndex < 32.
+    ]
+    
+    /// Returns the current object
+    get
+        = theArray getAt int:theIndex.
 }
