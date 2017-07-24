@@ -64,6 +64,7 @@ In development:
                  * optimize multimethod implementation for sealed class containing only one overload class
                  * no need for template class class?
                  * get rid of defineOperatorMessage, resolveMultimethod does the job
+                 * test nested exception handling
 
               xdev - refactoring
                  * review cellular library

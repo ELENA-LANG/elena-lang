@@ -1125,7 +1125,7 @@ void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, De
 //   }
 }
 
-void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current, DerivationScope& scope/*, int mode*/)
+void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current, DerivationScope& scope)
 {
    switch (current.type) {
       case lxAssigning:
@@ -1164,16 +1164,16 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
             writer.insert(lxExpression);
             writer.closeNode();
 //         }
-//         if (current == lxCatchOperation) {
-//            writer.removeBookmark();
-//            writer.insert(lxTrying);
-//            writer.closeNode();
-//         }
-//         else if (current == lxAltOperation) {
-//            writer.removeBookmark();
-//            writer.insert(lxAlt);
-//            writer.closeNode();
-//         }
+         if (current == lxCatchOperation) {
+            writer.removeBookmark();
+            writer.insert(lxTrying);
+            writer.closeNode();
+         }
+         else if (current == lxAltOperation) {
+            writer.removeBookmark();
+            writer.insert(lxAlt);
+            writer.closeNode();
+         }
          break;
       case lxExtension:
          writer.newNode(current.type, current.argument);
@@ -1229,11 +1229,11 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
          writer.insert(lxExpression);
          writer.closeNode();
          break;
-//      case lxMethodParameter:
-//         writer.newNode(lxMethodParameter);
-//         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
-//         writer.closeNode();
-//         break;
+      case lxMethodParameter:
+         writer.newNode(lxMethodParameter);
+         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+         writer.closeNode();
+         break;
       default:
       {
          if (isTerminal(current.type)) {
@@ -1256,11 +1256,6 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
          break;
       }
    }
-   //
-   //   if (mode == 1 && exprCounter > 1) {
-   //      _writer.insert(lxExpression);
-   //      _writer.closeNode();
-   //   }
 }
 
 void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode)

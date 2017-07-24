@@ -446,7 +446,7 @@ private:
    struct ClassScope : public SourceScope
    {
       ClassInfo   info;
-      ref_t       extensionMode;
+      ref_t       extensionClassRef;
 
       ObjectInfo mapField(ident_t identifier);
 
@@ -786,8 +786,8 @@ private:
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
-//   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
-//   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
+   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
+   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
 
    ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
@@ -818,10 +818,9 @@ private:
 
    ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
-//   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
-////   void compileThrow(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(SNode node, int& size);
@@ -839,7 +838,7 @@ private:
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    void declareArgumentList(SNode node, MethodScope& scope);
-//   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
+   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
    bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
 
 //   void declareSingletonClass(SNode node, ClassScope& scope);

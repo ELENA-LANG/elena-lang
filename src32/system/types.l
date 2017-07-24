@@ -22,8 +22,9 @@ limited         = #8196.
 field           = #16392.
 method          = #16393.
 loop_template   = #16394.
-__string        = #8200.
+nonstructural   = #8204.
 
+__string        = #8200.
 __int           = #11.
 __dword         = #12.
 __real          = #14.
@@ -45,7 +46,6 @@ __ifnotoperator = #4098.
 ////#template(-4101) w3 {}
 //#8206           mixin.
 //#8209           __tape_mixin.
-//#8204           nonstructural.
 //
 //#22 #262144     __symbol.
 //#21 #524288     __extmssg.
@@ -78,8 +78,8 @@ type char       = system'CharValue.
 //
 ///// An instance of system'Verb class. 
 //type verb       :: system'Verb.
-//
-//type subject    :: system'Signature.
+
+type subject    = system'Signature.
 //type symbol_ref :: system'Symbol.
 
 // === basic dynamic types ===

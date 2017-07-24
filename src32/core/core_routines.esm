@@ -75,6 +75,14 @@ labTrue:
   
 end
 
+procedure __object.get&throw[1]
+
+  pop
+  aloadsi 0
+  throw
+  
+end
+
 procedure __verb.dispatch[1]
 
   bloadsi 1

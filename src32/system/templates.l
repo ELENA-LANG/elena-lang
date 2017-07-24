@@ -147,20 +147,20 @@ template if :: expr,else =
     ! [
     ].
 
-//// -- try-catch statement ---
-//
-//template try :: expr =
-//    expr | on:
-//    {
-//    }.
-//
-//// -- try-finally-catch statement ---
-//
-//template try :: expr,else =
-//    expr then:[] | on:[]:
-//    {
-//    }.
-//
+// -- try-catch statement ---
+
+template try :: expr =
+    expr | catch:
+    {
+    }.
+
+// -- try-finally-catch statement ---
+
+template try :: expr,else =
+    expr then:[] | catch:[]:
+    {
+    }.
+
 //// -- finally statement ---
 //
 //template finally :: expr =

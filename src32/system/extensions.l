@@ -43,8 +43,8 @@ extension objectOp
     /// Returns the parameter        
     back : anObject = anObject.
 
-    evalSelf func1:aFunction
-        = aFunction eval:self.
+//    evalSelf func1:aFunction
+//        = aFunction eval:self.
 
     evalSelf:aFunction
         = aFunction eval:self.
