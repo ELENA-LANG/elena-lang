@@ -316,6 +316,7 @@ OBJECT_BODY ->
 
 ROOT_SUB_EXPRESSION ->
 	EXPRESSION CLOSING_BRACKET
+	| CLOSING_BRACKET
 
 OBJECT_EXT ->
 	NESTED_CLASS
@@ -483,6 +484,7 @@ DECLARATION_END ->
 TOKEN ->
 	identifier
 	| private 
+	| reference
 
 ATTRIBUTE ->
 	attribute

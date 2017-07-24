@@ -74,8 +74,8 @@
 #define V_FIELD          (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
 #define V_LOOP           (ref_t)-16394
-//#define V_IMPORT         (ref_t)-16395
-//#define V_EXTERN         (ref_t)-16396
+#define V_IMPORT         (ref_t)-16395
+#define V_EXTERN         (ref_t)-16396
 #define V_MULTI          (ref_t)-16397
 
 namespace _ELENA_
@@ -149,6 +149,7 @@ struct _CompilerScope
    BranchingInfo branchingInfo;
 
    virtual void raiseError(const char* message, SNode terminal) = 0;
+   virtual void raiseWarning(int level, const char* message, SNode terminal) = 0;
 
    virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/) = 0;
    virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
@@ -161,6 +162,8 @@ struct _CompilerScope
    virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
+
+   virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes) = 0;
 
    _CompilerScope()
       : attributes(0)

@@ -880,6 +880,23 @@ ref_t Compiler::ModuleScope :: mapTemplateClass(ident_t templateName)
    return module->mapReference(forwardName);
 }
 
+bool Compiler::ModuleScope :: includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes)
+{
+   // check if the module exists
+   _Module* module = project->loadModule(name, true);
+   if (module) {
+      ident_t value = retrieve(defaultNs.start(), name, NULL);
+      if (value == NULL) {
+         defaultNs.add(module->Name());
+
+         loadModuleInfo(module, duplicateExtensions, duplicateAttributes);
+
+         return true;
+      }
+   }
+   return false;
+}
+
 // --- Compiler::SourceScope ---
 
 Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference)
@@ -6153,29 +6170,6 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
 //
 //   if (!scope.defineForward(shortcut, reference))
 //      scope.raiseError(errDuplicatedDefinition, ns);
-//}
-//
-//void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope)
-//{
-//   ident_t name = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
-//   if (name.compare(STANDARD_MODULE))
-//      // system module is included automatically - nothing to do in this case
-//      return;
-//
-//   // check if the module exists
-//   _Module* module = scope.project->loadModule(name, true);
-//   if (module) {
-//      ident_t value = retrieve(scope.defaultNs.start(), name, NULL);
-//      if (value == NULL) {
-//         scope.defaultNs.add(module->Name());
-//
-//         bool duplicateExtensions = false;
-//         scope.loadModuleInfo(module, duplicateExtensions);
-//         if (duplicateExtensions)
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
-//      }
-//   }
-//   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
 //}
 
 bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)

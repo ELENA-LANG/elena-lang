@@ -3721,3 +3721,336 @@ procedure __real."eval&abs$system@RealNumber$@system@var#1&RealNumber[3]"
   quitn 3
 
 end
+
+procedure __utf8encoder."convert$system@IntNumber$@system@var#1&IntNumber$system@ByteArray$system@CharArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf8encoder."convert$system@IntNumber$@system@var#1&IntNumber$system@CharArray$system@ByteArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_decode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+  
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf8encoder."eval&charCount$system@LiteralValue$@system@var#1&IntNumber[3]"
+
+  bcopya
+  aloadsi 2
+  blen
+  dec
+  ecopyd
+  callextr api : strcharlen
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __utf8encoder."convert$system@IntNumber$@system@var#1&IntNumber$system@LiteralValue$system@CharArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf16encoder."convert$system@IntNumber$@system@var#1&IntNumber$system@ByteArray$system@CharArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __utf16encoder."convert$system@IntNumber$@system@var#1&IntNumber$system@CharArray$system@ByteArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_decode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf16encoder."eval&charCount$system@WideLiteralValue$@system@var#1&IntNumber[3]"
+
+  bcopya
+  aloadsi 2
+  wlen
+  dec
+  ecopyd
+  callextr api : wstrcharlen
+  bloadsi 3
+  nsave
+
+end
+
+procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$system@ShortArray$system@CharArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  shiftn -1
+  ecopyd
+  aloadsi 2
+  nload
+  shiftn -1
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_encode
+  ifr labErr 0
+
+  dcopye  
+  bloadsi 6
+  nsave
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$system@CharArray$system@ShortArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_decode
+  ifr labErr 0
+
+  dcopye  
+  bloadsi 6
+  nsave
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __dptr.set[2]
+
+  bcopya
+  dloadsi 2
+  nsave
+  acopyb
+  quitn 2
+
+end
+
+procedure __dptr."set&$system@UnsafePointer[2]"
+
+  bcopya
+  aloadsi 2
+  ncopy
+  acopyb
+  quitn 2
+
+end
+
+procedure __dptr."write&$system@IntNumber[2]"
+
+  nload
+  pushd
+  popb
+  aloadsi 2
+  nload
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
+procedure __dptr."read&$@system@var#1&IntNumber[2]"
+
+  nload
+  pushd
+  popa
+  nload
+  bloadsi 2
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
+procedure __dptr."read&$system@ByteArray$system@IntNumber[3]"
+
+  bloadsi 2
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 1
+
+  callextr api : subcopy  
+  
+  quitn 3
+
+end

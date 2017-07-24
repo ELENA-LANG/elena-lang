@@ -23,6 +23,8 @@ field           = #16392.
 method          = #16393.
 loop_template   = #16394.
 nonstructural   = #8204.
+import          = #16395.
+extern_template = #16396.
 
 __string        = #8200.
 __int           = #11.
@@ -36,9 +38,6 @@ __ifoperator    = #4097.
 __ifnotoperator = #4098.
 
 
-//#16395          import.
-//#16391 #16396   extern_template.
-
 ////#template(-8207)         preloaded {}
 //#8205           action.
 ////#template(-4099) w1 {}
@@ -49,7 +48,6 @@ __ifnotoperator = #4098.
 //
 //#22 #262144     __symbol.
 //#21 #524288     __extmssg.
-//#12 #262144     __ptr.
 
 /// Provides classes that describe the basic functionality
 
@@ -122,11 +120,11 @@ type wide       = system'WideLiteralValue.
 //type nfunc      :: system'IndexFunction1.
 //type nnfunc     :: system'IndexFunction2.
 //type n3func     :: system'IndexFunction3.
-//
-//// === system handles ===
-//type handle     :: system'Handle.
+
+// === system handles ===
+type handle     = system'Handle.
 //type rt_ptr     :: system'RTPointer.
-//type dirty_ptr  :: system'UnsafePointer.
+type dirty_ptr  = system'UnsafePointer.
 
 // --- Enumerators / Indexers ---
 type enumerator = system'Enumerator.

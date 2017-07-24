@@ -1942,6 +1942,22 @@ bool DerivationReader :: declareType(SyntaxWriter& writer, SNode node, Derivatio
    return !invalid;
 }
 
+void DerivationReader :: includeModule(SNode ns, _CompilerScope& scope)
+{
+   ident_t name = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
+   if (name.compare(STANDARD_MODULE))
+      // system module is included automatically - nothing to do in this case
+      return;
+
+   bool duplicateExtensions = false;
+   bool duplicateAttributes = false;
+   if (scope.includeModule(name, duplicateExtensions, duplicateAttributes)) {
+      if (duplicateExtensions)
+         scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
+   }
+   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
+}
+
 bool DerivationReader :: generateDeclaration(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes)
 {
    // recognize the declaration type
@@ -1976,12 +1992,12 @@ bool DerivationReader :: generateDeclaration(SyntaxWriter& writer, SNode node, D
             case V_LOOP:
                attr = (DeclarationAttr)(daLoop | daTemplate);
                break;
-            //case V_IMPORT:
-            //   attr = daImport;
-            //   break;
-            //case V_EXTERN:
-            //   attr = daExtern;
-            //   break;
+            case V_IMPORT:
+               attr = daImport;
+               break;
+            case V_EXTERN:
+               attr = (DeclarationAttr)(daExtern | daTemplate);
+               break;
             default:
                break;
          }         
@@ -1996,13 +2012,13 @@ bool DerivationReader :: generateDeclaration(SyntaxWriter& writer, SNode node, D
 
       return declareType(bufferWriter, node, scope, attributes);
    }
-//   if (declType == daImport) {
-//      SNode name = goToNode(attributes, lxNameAttr);
-//
-//      compileIncludeModule(name, *scope.moduleScope);
-//
-//      return true;
-//   }
+   if (declType == daImport) {
+      SNode name = goToNode(attributes, lxNameAttr);
+
+      includeModule(name, *scope.moduleScope);
+
+      return true;
+   }
    else if (test(declType, daTemplate)) {
       node = lxTemplate;
 

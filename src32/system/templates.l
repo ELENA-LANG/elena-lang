@@ -33,51 +33,6 @@ method template outprop :: type,prop_name
     ]
 }
 
-//// --- nprop ---
-//
-//method template nprop :: type,prop_name,get_method,set_method
-//{
-//    stacksafe embeddable type get prop_name
-//    [
-//        int val := 0.        
-//        $self get_method vint:val.
-//        
-//        ^ val.
-//    ]
-//    
-//    stacksafe set prop_name:val
-//    [
-//        $self set_method type:val
-//    ]
-//}
-//
-//// --- outlprop ---
-//
-//method template outlprop :: type,prop_name,target_method
-//{
-//    stacksafe embeddable type get prop_name
-//    [
-//        long val := 0.        
-//        $self target_method vlong:val.
-//        
-//        ^ val.
-//    ]
-//}
-//
-//
-//// --- outwprop ---
-//
-//method template outwprop :: type,prop_name,target_method
-//{
-//   stacksafe embeddable type get prop_name
-//   [
-//        short val := 0.
-//        $self target_method vshort:val.
-//        
-//        ^ val
-//   ]
-//}
-
 // --- fnprop ---
 
 method template fnprop :: type,template_fn
@@ -118,11 +73,11 @@ loop_template until :: expr =
     [
     ].
     
-//// --- extern statement ---
-//
-//extern_template extern :: dummy =
-//    [
-//    ].
+// --- extern statement ---
+
+extern_template extern :: dummy =
+    [
+    ].
 
 // --- if statement ---
 

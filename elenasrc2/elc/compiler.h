@@ -269,7 +269,7 @@ private:
       void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
 
       virtual void raiseError(const char* message, SNode terminal);
-      void raiseWarning(int level, const char* message, SNode terminal);
+      virtual void raiseWarning(int level, const char* message, SNode terminal);
 
       bool checkReference(ident_t referenceName);
 
@@ -354,6 +354,8 @@ private:
          }
          else return module->mapSection(reference, existing);
       }
+
+      virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes);
 
       ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };

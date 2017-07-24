@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xdev - multimethod
-                 * qualified extensions
                  * generic handler
 
                  * test primitive operations with numbers
@@ -65,6 +64,7 @@ In development:
                  * no need for template class class?
                  * get rid of defineOperatorMessage, resolveMultimethod does the job
                  * test nested exception handling
+                 * check console exception handling
 
               xdev - refactoring
                  * review cellular library

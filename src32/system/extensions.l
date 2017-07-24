@@ -1550,67 +1550,67 @@ real extension realOp
 //        ^ ch == 39
 //    ]
 //}
-//
-//// --- byteArrayHelper ---
-//
-//class byteArrayHelper =
-//{
-//    stacksafe read bytearray:array int:offset vshort:retVal
-//    [
-//        array read int:offset vshort:retVal
-//    ]
-//    
-//    stacksafe read bytearray:array int:offset vint:retVal
-//    [
-//        array read int:offset vint:retVal
-//    ]
-//    
-//    stacksafe read bytearray:array int:offset vlong:retVal
-//    [
-//        array read int:offset vlong:retVal
-//    ]
-//    
-//    stacksafe read bytearray:array int:offset vreal:retVal
-//    [
-//        array read int:offset vreal:retVal
-//    ]
-//    
-//    stacksafe read bytearray:array int:offset vchar:retVal
-//    [
-//        array read int:offset vchar:retVal
-//    ]
-//    
-//    stacksafe write bytearray:array int:offset short:retVal
-//    [
-//        array write int:offset short:retVal
-//    ]
-//    
-//    stacksafe write bytearray:array int:offset int:retVal
-//    [
-//        array write int:offset int:retVal
-//    ]
-//    
-//    stacksafe write bytearray:array int:offset long:retVal
-//    [
-//        array write int:offset long:retVal.
-//    ]
-//    
-//    stacksafe write bytearray:array int:offset real:retVal
-//    [
-//        array write int:offset real:retVal
-//    ]
-//    
-//    stacksafe write bytearray:array int:offset char:retVal
-//    [
-//        array write int:offset char:retVal
-//    ]
-//    
-//    stacksafe fill bytearray:array int:offset int:length byte:val
-//    [
-//        array fill int:offset int:length byte:val.
-//    ]
-//}.
-//
+
+// --- byteArrayHelper ---
+
+class byteArrayHelper =
+{
+    stacksafe read bytearray:array int:offset vshort:retVal
+    [
+        array read int:offset vshort:retVal
+    ]
+    
+    stacksafe read bytearray:array int:offset vint:retVal
+    [
+        array read int:offset vint:retVal
+    ]
+    
+    stacksafe read bytearray:array int:offset vlong:retVal
+    [
+        array read int:offset vlong:retVal
+    ]
+    
+    stacksafe read bytearray:array int:offset vreal:retVal
+    [
+        array read int:offset vreal:retVal
+    ]
+    
+    stacksafe read bytearray:array int:offset vchar:retVal
+    [
+        array read int:offset vchar:retVal
+    ]
+    
+    stacksafe write bytearray:array int:offset short:retVal
+    [
+        array write int:offset short:retVal
+    ]
+    
+    stacksafe write bytearray:array int:offset int:retVal
+    [
+        array write int:offset int:retVal
+    ]
+    
+    stacksafe write bytearray:array int:offset long:retVal
+    [
+        array write int:offset long:retVal.
+    ]
+    
+    stacksafe write bytearray:array int:offset real:retVal
+    [
+        array write int:offset real:retVal
+    ]
+    
+    stacksafe write bytearray:array int:offset char:retVal
+    [
+        array write int:offset char:retVal
+    ]
+    
+    stacksafe fill bytearray:array int:offset int:length byte:val
+    [
+        array fill int:offset int:length byte:val.
+    ]
+}.
+
 //// --- intArrayHelper ---
 //
 //singleton intArrayHelper =

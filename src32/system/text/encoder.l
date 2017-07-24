@@ -1,5 +1,5 @@
 // === basic interfaces ===
-type encoder :: system'text'Encoder.
+type encoder = system'text'Encoder.
 
 // --- Encoder ---
 
