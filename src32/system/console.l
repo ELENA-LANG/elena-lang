@@ -24,18 +24,10 @@ class $Console
     ]
 
     /// Writes the specified literal value to the standard output stream.
-    write : anObject
+    write object:anObject
     [
-        anObject cast:%write to:$self.
+        $self write literal:anObject.
     ]
-
-//    /// Writes the object literal presentation to the standard output stream.
-//    generic write : anObject
-//    [
-//        theWriter write literal:anObject.
-//        
-//        theWriter refresh.
-//    ]
 
     /// Writes the specified literal value to the standard output stream.
     write literal:aLiteral

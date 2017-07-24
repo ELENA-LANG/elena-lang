@@ -28,18 +28,18 @@
 //
 //static startUpEvents = $StartUpEvents new.
 
-symbol startUp = 'program eval. // !! temporal
-//    {
-//        start : events
-//        [
-//            try('program eval)
-//                {
-//                    Abort : e []
-//                    
-//                    generic : e [ console writeLine:(e literal) ]
-//                }.
-//    
+symbol startUp =
+    {
+        start //: events
+        [
+            try('program eval)
+                {
+                    on(AbortException e) []
+                    
+                    on(Exception e) [ console writeLine:(e literal) ]
+                }.
+    
 //            events $onStop:$nil
-//        ]        
-//    }
-//    start:startUpEvents.
+        ]        
+    }
+    start/*:startUpEvents*/.

@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xdev - multimethod
-                 * generic handler
-
                  * test primitive operations with numbers
                  * test primitive operations with arrays
                  * test list<type>
@@ -65,6 +63,10 @@ In development:
                  * get rid of defineOperatorMessage, resolveMultimethod does the job
                  * test nested exception handling
                  * check console exception handling
+                 * private sealed methods
+                 * custom verb generic handler
+                 * reimplement event handlers
+                 * uncomment win32_app.l
 
               xdev - refactoring
                  * review cellular library

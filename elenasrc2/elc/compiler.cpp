@@ -4157,19 +4157,19 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
-//      if (test(scope.hints, tpSealed | tpGeneric)) {
+      if (test(scope.hints, tpSealed | tpGeneric)) {
 //         if (paramCount == OPEN_ARG_COUNT) {
 //            // if it is a generic open argument handler - eval verb should be used
 //            if (verb_id == 0)
 //               verb_id = EVAL_MESSAGE_ID;
 //         }
 //         else {
-//            if (!emptystr(signature))
-//               scope.raiseError(errInvalidHint, verb);
-//
-//            signature.copy(GENERIC_PREFIX);
+            if (!emptystr(signature))
+               scope.raiseError(errInvalidHint, verb);
+
+            messageStr.copy(GENERIC_PREFIX);
 //         }
-//      }
+      }
       if (verb_id == 0)
          verb_id = paramCount > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID;
 
@@ -4177,16 +4177,16 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          if (verb_id == EVAL_MESSAGE_ID && paramCount == 1) {
             verb_id = PRIVATE_MESSAGE_ID;
          }
-         //         else if (verb_id == GET_MESSAGE_ID && paramCount == 0 && sign_id != 0 && test(scope.getClassFlags(false), elNestedClass)) {
-         //            // if it is an implicit nested constructor
-         //            sign_id = 0;
-         //            verb_id = PRIVATE_MESSAGE_ID;
-         //         }
+         else if (verb_id == GET_MESSAGE_ID && paramCount == 0 && sign_id != 0 && test(scope.getClassFlags(false), elNestedClass)) {
+            // if it is an implicit nested constructor
+            sign_id = 0;
+            verb_id = PRIVATE_MESSAGE_ID;
+         }
          else scope.raiseError(errIllegalMethod, node);
       }
-      //      if (test(scope.hints, tpSealed) && verb == lxPrivate) {
-      //         verb_id = PRIVATE_MESSAGE_ID;
-      //      }
+      if (test(scope.hints, tpSealed) && verb == lxPrivate) {
+         verb_id = PRIVATE_MESSAGE_ID;
+      }
 
       //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
       if (paramCount > 0 && !emptystr(signature) && verb_id != PRIVATE_MESSAGE_ID) {
