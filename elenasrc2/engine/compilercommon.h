@@ -33,7 +33,7 @@
 
 #define V_OBJARRAY      (ref_t)-30
 #define V_INT32ARRAY    (ref_t)-31
-//#define V_ARGARRAY      (ref_t)-32
+#define V_ARGARRAY      (ref_t)-32
 #define V_BINARYARRAY   (ref_t)-35
 #define V_INT16ARRAY    (ref_t)-38
 #define V_INT8ARRAY     (ref_t)-39
@@ -140,7 +140,6 @@ struct _CompilerScope
    ref_t wideReference;
    ref_t charReference;
    ref_t arrayReference;
-   ref_t paramsSubj;
 
    // list of attributes / types
    MessageMap attributes;
@@ -175,7 +174,6 @@ struct _CompilerScope
       signatureReference = verbReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
-      paramsSubj = 0;
    }
 };
 

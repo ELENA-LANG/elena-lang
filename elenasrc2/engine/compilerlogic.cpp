@@ -183,10 +183,10 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
    operators.add(OperatorInfo(READ_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
 
-   //// array of arg list
-   //operators.add(OperatorInfo(REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
-   //operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
-   ////operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
+   // array of arg list
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
+   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
@@ -1233,8 +1233,8 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
          return firstNonZero(scope.messageReference, scope.superReference);
       case V_VERB:
          return firstNonZero(scope.verbReference, scope.superReference);
-//      case V_ARGARRAY:
-//         return firstNonZero(scope.arrayReference, scope.superReference);
+      case V_ARGARRAY:
+         return firstNonZero(scope.arrayReference, scope.superReference);
       default:
          return scope.superReference;
    }

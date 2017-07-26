@@ -541,8 +541,6 @@ namespace _ELENA_
    #define ARRAY_FORWARD            "'$array"
    #define BOOL_FORWARD             "'$bool"
 
-   #define PARAMS_SUBJFORWARD       "'$$params"
-
    #define STARTUP_CLASS            "'startUp"
 
 } // _ELENA_

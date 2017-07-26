@@ -1027,22 +1027,6 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
          copyIdentifier(writer, current.firstChild(lxTerminalMask));
          writer.closeNode();
       }
-   //   else if (attrRef != 0) {
-   //      ref_t classRef = scope.moduleScope->subjectHints.get(attrRef);
-   //      if (classRef == INVALID_REF) {
-   //            TemplateScope templateScope(&scope, attrRef);
-   //            if (scope.type == TemplateScope::ttAttrTemplate)
-   //               templateScope.type = scope.type;
-
-   //            copyTemplateTree(writer, current, templateScope, current.firstChild());
-   //      }
-   //      else if (_logic->isPrimitiveRef(classRef)) {
-   //         writer.appendNode(lxAttribute, classRef);
-   //      }
-   //      else {
-   //         writer.appendNode(lxTypeAttr, scope.moduleScope->module->resolveSubject(attrRef));
-   //      }            
-   //   }
       else scope.raiseError(errInvalidHint, current);
 
       current = current.nextNode();
@@ -1063,24 +1047,21 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
    }
 }
 
-void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool operationMode*/)
+void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
-//   if (operationMode)
-//      writer.newBookmark();
-
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-         //case lxObject:
+         case lxObject:
          case lxMessageParameter:
             generateExpressionTree(writer, current, scope, EXPRESSION_MESSAGE_MODE);
             break;
          case lxExpression:
             generateExpressionTree(writer, current, scope, EXPRESSION_EXPLICIT_MODE | EXPRESSION_MESSAGE_MODE);
             break;
-         //case lxExtern:
-         //   generateCodeTree(writer, current, scope);
-         //   break;
+         case lxExtern:
+            generateCodeTree(writer, current, scope);
+            break;
          case lxCode:
             generateCodeTree(writer, current, scope);
             if (scope.type == DerivationScope::ttCodeTemplate) {
@@ -1119,10 +1100,6 @@ void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, De
       }
       current = current.nextNode();
    }
-   
-//   if (operationMode) {
-//      writer.removeBookmark();
-//   }
 }
 
 void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current, DerivationScope& scope)
@@ -1264,7 +1241,7 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
 
    SNode current = node.firstChild();
    bool identifierMode = current.type == lxIdentifier;
-//   bool listMode = false;
+   bool listMode = false;
    // check if it is new operator
    if (identifierMode && current.nextNode() == lxExpression && current.nextNode().nextNode() != lxExpression) {
       scope.copySubject(writer, current);
@@ -1277,35 +1254,35 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
    else {
       while (current != lxNone) {
          if (current == lxExpression) {
-//            if (current.nextNode() == lxExpression && !test(mode, EXPRESSION_MESSAGE_MODE))
-//               listMode = true;
-//
-//            if (identifierMode) {
-//               generateExpressionTree(writer, current, scope, listMode ? EXPRESSION_EXPLICIT_MODE : 0);
-//            }
-//            else if (listMode) {
-//               generateExpressionTree(writer, current, scope, EXPRESSION_EXPLICIT_MODE);
-//            }
-            /*else */generateObjectTree(writer, current, scope);
+            if (current.nextNode() == lxExpression && !test(mode, EXPRESSION_MESSAGE_MODE))
+               listMode = true;
+
+            if (identifierMode) {
+               generateExpressionTree(writer, current, scope, listMode ? EXPRESSION_EXPLICIT_MODE : 0);
+            }
+            else if (listMode) {
+               generateExpressionTree(writer, current, scope, EXPRESSION_EXPLICIT_MODE);
+            }
+            else generateObjectTree(writer, current, scope);
          }
-//         else if (listMode && (current == lxMessage || current == lxOperator)) {
-//            // HOTFIX : if it is an operation with a collection
-//            listMode = false;
-//            writer.insert(lxExpression);
-//            writer.closeNode();
-//
-//            generateObjectTree(writer, current, scope);
-//         }
+         else if (listMode && (current == lxMessage || current == lxOperator)) {
+            // HOTFIX : if it is an operation with a collection
+            listMode = false;
+            writer.insert(lxExpression);
+            writer.closeNode();
+
+            generateObjectTree(writer, current, scope);
+         }
          else generateObjectTree(writer, current, scope);
 
          current = current.nextNode();
       }
    }
 
-//   if (listMode) {
-//      writer.insert(lxExpression);
-//      writer.closeNode();
-//   }
+   if (listMode) {
+      writer.insert(lxExpression);
+      writer.closeNode();
+   }
 
    if (test(mode, EXPRESSION_EXPLICIT_MODE)) {
       writer.insert(node.type);
@@ -1815,16 +1792,7 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
       writer.appendNode(lxTemplate, scope.templateRef);
    }      
 
-   /*if (node == lxDefaultGeneric) {
-      if (node.existChild(lxMethodParameter)) {
-         writer.appendNode(lxIdentifier, EVAL_MESSAGE);
-      }
-      else writer.appendNode(lxIdentifier, GET_MESSAGE);
-
-      writer.appendNode(lxAttribute, V_SEALED);
-      writer.appendNode(lxAttribute, V_GENERIC);
-   }
-   else */generateAttributes(bufferWriter, node, scope, attributes/*, false, true*/);
+   generateAttributes(bufferWriter, node, scope, attributes/*, false, true*/);
 
    // copy attributes
    SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxTypeAttr, lxClassRefAttr, lxTemplateAttribute);

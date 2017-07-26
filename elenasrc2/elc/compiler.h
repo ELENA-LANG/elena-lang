@@ -138,8 +138,8 @@ public:
       okNil,
       okSuper,
       okLocalAddress,                 // param - local offset, extraparam - class reference
-//      okParams,                       // param - local offset
-////      okBlockLocal,                   // param - local offset
+      okParams,                       // param - local offset
+//      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
 
@@ -520,7 +520,7 @@ private:
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
-//      bool         withOpenArg;
+      bool         withOpenArg;
       bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;

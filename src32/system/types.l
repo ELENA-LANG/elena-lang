@@ -26,6 +26,8 @@ nonstructural   = #8204.
 import          = #16395.
 extern_template = #16396.
 
+args            = #32. 
+
 __string        = #8200.
 __int           = #11.
 __dword         = #12.
@@ -131,5 +133,3 @@ type enumerator = system'Enumerator.
 type indexer    = system'Indexer.
 //type indexer2d  :: system'Indexer2D.
 
-//// --- Virtual subjects ---
-//type args.

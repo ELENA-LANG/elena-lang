@@ -67,6 +67,7 @@ In development:
                  * custom verb generic handler
                  * reimplement event handlers
                  * uncomment win32_app.l
+                 * either generic or multi method can be declared, not both
 
               xdev - refactoring
                  * review cellular library

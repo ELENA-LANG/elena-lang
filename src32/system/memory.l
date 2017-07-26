@@ -1606,15 +1606,15 @@ sealed Array :: dispatchable<array>, array<object>
         = Array new array:$self.
 }
 
-//// --- $paramsOp ---
-//
-//args extension $paramsOp
-//{
-//    stacksafe readLengthTo vint:aLength
-//        => system'core_routines'__args.            
-//        
-//    int length :: outnprop(readLengthTo).
-//}
+// --- $paramsOp ---
+
+args extension paramsOp
+{
+    stacksafe readLengthTo vint:aLength
+        => system'core_routines'__args.            
+        
+    int outprop length :: readLengthTo.
+}
 
 // === Convertors ===
 
