@@ -112,7 +112,6 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
 	   case dfaHexInteger:
          terminal.symbol = tsHexInteger;
          break;
-
 	   case dfaReal:
          terminal.symbol = tsReal;
          break;

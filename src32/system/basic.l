@@ -15,42 +15,16 @@ template var :: template_subj
     
     template_subj value = $value.
     
-//    set : val
-//    [
-//        $value := val template_subj.
-//    ]
+    stacksafe append template_subj:val
+    [
+        $value := $value + val.
+    ]
     
-//    append : val
-//    [
-//        $value := $value + val template_subj.
-//    ]
-//    
-//    reduce : val
-//    [
-//        $value := $value - val template_subj.
-//    ]
+    stacksafe reduce template_subj:val
+    [
+        $value := $value - val.
+    ]
 
-//    multiplyBy : val
-//    [
-//        $value := $value * val template_subj.
-//    ]
-//    
-//    /// Divides into the value
-//    divideInto : val
-//    [
-//        $value := $value / val template_subj.
-//    ]
-//    
-//    stacksafe append template_subj:val
-//    [
-//        $value := $value + val.
-//    ]
-//    
-//    stacksafe reduce template_subj:val
-//    [
-//        $value := $value - val.
-//    ]
-//
 //    stacksafe multiplyBy template_subj:val
 //    [
 //        $value := $value * val.
@@ -63,6 +37,33 @@ template var :: template_subj
 //    ]
 //
 //    get = $value.
+    
+    cast : verb to:target => $value.
+
+    /// Dispatches the verb to the target object with generic subject
+    cast : aVerb to:aTarget with:aParam => $value.
+    
+    equal : anObject
+        => $value.
+
+    embeddable dispatch => $value.
+}
+
+template ref :: template_subj
+{
+    template_subj $value.
+    
+    stacksafe explicit template_subj:val
+    [
+        $value := val.
+    ]
+    
+    stacksafe set template_subj:val
+    [
+        $value := val.
+    ]
+    
+    template_subj value = $value.
     
     cast : verb to:target => $value.
 
@@ -2534,8 +2535,8 @@ class intConvertor =
     stacksafe int convert uint:anInt
         = IntNumber new int:anInt.        
                         
-    int convert : anObject
-        = anObject cast:%convert to:$self.
+//    int multi convert : anObject
+//        = anObject int.
 }.
 
 /// A unsigned integer convertor
@@ -2866,20 +2867,20 @@ real pi_value = realOpController pi.
 
 real e_value = realOpController e.
 
-//// --- obsolete variables ---
-//
-//class Integer =
-//{
-//    vint new
-//        = 0.
-//        
-//    vint new int:n
-//        = n.
-//        
-//    vint new:n
-//        = n int.
-//}.
-//
+// --- obsolete variables ---
+
+class Integer =
+{
+    vint new
+        = 0.
+        
+    vint new int:n
+        = n.
+        
+    vint new:n
+        = n int.
+}.
+
 //class Real =
 //{
 //    vreal new

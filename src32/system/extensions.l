@@ -937,11 +937,11 @@ real extension realOp
 //        ^ self
 //    ]
 //}
-//
-//// --- literalOp ---
-//
-//literal extension literalOp
-//{
+
+// --- literalOp ---
+
+literal extension literalOp
+{
 //    indexOf : anObject
 //        = self indexOf:anObject at:0.
 //
@@ -950,19 +950,19 @@ real extension realOp
 //
 //    indexOf char:aChar
 //        = self indexOf char:aChar at:0.
-//        
-//    literal Substring at:anIndex
-//        = self~literalOp Substring int:anIndex.
-//        
-//    stacksafe literal Substring int:anIndex
-//    [
-//        int aLength := self length.
-//        
-//        aLength := aLength - anIndex.
-//        
-//        ^ self Substring int:anIndex int:aLength
-//    ]        
-//    
+        
+    literal Substring at:anIndex
+        = self~literalOp Substring int:anIndex.
+        
+    stacksafe literal Substring int:anIndex
+    [
+        int aLength := self length.
+        
+        aLength := aLength - anIndex.
+        
+        ^ self Substring int:anIndex int:aLength
+    ]        
+    
 //    trimLeft char:aChar
 //    [
 //        int  anIndex := 0.
@@ -1116,19 +1116,19 @@ real extension realOp
 //            ? [ ^ aTarget add literal:(self~literalOp Substring int:aStart) ]
 //            ! [ ^ self ]
 //    ]
-//    
-//    bool is empty
-//    [
-//        int aLength := self length.
-//        
-//        ^ aLength == 0
-//    ]    
-//}
-//
-//// --- wideOp ---
-//
-//wide extension wideOp
-//{
+    
+    bool isEmpty
+    [
+        int aLength := self length.
+        
+        ^ aLength == 0
+    ]    
+}
+
+// --- wideOp ---
+
+wide extension wideOp
+{
 //    indexOf : anObject
 //        = self indexOf:anObject at:0.
 //        
@@ -1137,19 +1137,19 @@ real extension realOp
 //
 //    indexOf char:aChar
 //        = self indexOf int:0 char:aChar.
-//                
-//    wide Substring at:anIndex
-//        = self~wideOp Substring int:anIndex.
-//        
-//    stacksafe wide Substring int:anIndex
-//    [
-//        int aLength := self length.
-//        
-//        aLength := aLength - anIndex.
-//        
-//        ^ self Substring int:anIndex int:aLength
-//    ]
-//     
+                
+    wide Substring at:anIndex
+        = self~wideOp Substring int:anIndex.
+        
+    stacksafe wide Substring int:anIndex
+    [
+        int aLength := self length.
+        
+        aLength := aLength - anIndex.
+        
+        ^ self Substring int:anIndex int:aLength
+    ]
+     
 //    trimLeft char:aChar
 //    [
 //        int  anIndex := 0.
@@ -1298,15 +1298,15 @@ real extension realOp
 //            [ ^ aTarget add wide:(self~wideOp Substring int:aStart) ];
 //            [ ^ self ].
 //    ]
-//
-//    bool is empty
-//    [
-//        int aLength := self length.
-//        
-//        ^ aLength == 0
-//    ]
-//}
-//
+
+    bool isEmpty
+    [
+        int aLength := self length.
+        
+        ^ aLength == 0
+    ]
+}
+
 //// --- stringOp ---
 //
 //class stringOpDispatcher =

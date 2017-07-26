@@ -71,7 +71,7 @@ type uint       = system'UIntNumber.
 type long       = system'LongNumber.
 type real       = system'RealNumber.
 type char       = system'CharValue.
-//type mssg       :: system'Message.
+type mssg       = system'Message.
 //type ext_mssg   :: system'ExtensionMessage.
 //
 ///// A verb symbol

@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xdev - multimethod
-                 * test primitive operations with numbers
-                 * test primitive operations with arrays
                  * test list<type>
                  * uncomment get&hash_code
                  * option not to generate multimethod
@@ -61,13 +59,16 @@ In development:
                  * optimize multimethod implementation for sealed class containing only one overload class
                  * no need for template class class?
                  * get rid of defineOperatorMessage, resolveMultimethod does the job
-                 * test nested exception handling
-                 * check console exception handling
                  * private sealed methods
                  * custom verb generic handler
                  * reimplement event handlers
                  * uncomment win32_app.l
                  * either generic or multi method can be declared, not both
+                 * message cannot have type signature
+                 * fixing multidispatching with class : e.g.: try(Object fail) {}
+                 * test nested exception handling
+                 * extension resend - literal extension literalListOp { array split <= split char:$32. /*...*/ } - self should points to 
+                   the incoming message
 
               xdev - refactoring
                  * review cellular library

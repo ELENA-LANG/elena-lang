@@ -348,8 +348,8 @@
 
 // --- inputOp ---
 
-//extension inputOp
-//{
+extension inputOp
+{
 //    readLineTo:var
 //    [
 //        var aLine := self read literal.
@@ -358,23 +358,23 @@
 //        
 //        ^var.
 //    ]
-//    
-//    generic readLine args:Arguments
-//    [
-//        var aLine := self read literal.
-//        
-//        array aParams := aLine split char:$32.
-//        
-//        int aLength := Arguments length.
-//        
-//        int anIndex := 0.
-//        while (anIndex < aLength)
-//        [
-//            (aParams getAt int:anIndex)~convertorOp convert to:(Arguments @ anIndex).
-//            
-//            anIndex := anIndex + 1
-//        ].
-//            
-//        ^ self
-//    ]
-//}
+    
+    generic readLine args:Arguments
+    [
+        var aLine := self readLiteral.
+        
+        array aParams := aLine split char:$32.
+        
+        int aLength := Arguments length.
+        
+        int anIndex := 0.
+        while (anIndex < aLength)
+        [
+            (aParams getAt int:anIndex)~convertorOp convert to:(Arguments @ anIndex).
+            
+            anIndex := anIndex + 1
+        ].
+            
+        ^ self
+    ]
+}

@@ -63,11 +63,11 @@ class $Console
         = theReader literal.
 
     /// Reads the next line of characters from the standard input stream.
-    readLiteral
+    literal readLiteral
         = theReader literal.
 
     /// Reads the next line of characters from the standard input stream.
-    readWide
+    wide readWide
         = theReader wide.
 
     /// Reads the next character from the input stream
