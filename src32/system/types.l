@@ -35,6 +35,7 @@ __real          = #14.
 __verb          = #20.
 __mssg          = #19.
 __subj          = #18.
+__extmssg       = #21.
 
 __ifoperator    = #4097.
 __ifnotoperator = #4098.
@@ -49,7 +50,6 @@ __ifnotoperator = #4098.
 //#8209           __tape_mixin.
 //
 //#22 #262144     __symbol.
-//#21 #524288     __extmssg.
 
 /// Provides classes that describe the basic functionality
 
@@ -72,12 +72,12 @@ type long       = system'LongNumber.
 type real       = system'RealNumber.
 type char       = system'CharValue.
 type mssg       = system'Message.
-//type ext_mssg   :: system'ExtensionMessage.
-//
-///// A verb symbol
-//
-///// An instance of system'Verb class. 
-//type verb       :: system'Verb.
+type ext_mssg   = system'ExtensionMessage.
+
+/// A verb symbol
+
+/// An instance of system'Verb class. 
+type verb       = system'Verb.
 
 type subject    = system'Signature.
 //type symbol_ref :: system'Symbol.
@@ -100,14 +100,14 @@ type literal    = system'LiteralValue.
 
 type wide       = system'WideLiteralValue.
 
-//// === function types ===
-//type func       :: system'BaseFunction.
-//
-///// An anonymous function with a generic parameter.
-/////
-///// An instance of system'BaseFunction1
-//type func1      :: system'BaseFunction1.
-//
+// === function types ===
+type func       = system'BaseFunction.
+
+/// An anonymous function with a generic parameter.
+///
+/// An instance of system'BaseFunction1
+type func1      = system'BaseFunction1.
+
 //type func2      :: system'BaseFunction2.
 //type func3      :: system'BaseFunction3.
 //type func4      :: system'BaseFunction4.

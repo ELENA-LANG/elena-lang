@@ -24,7 +24,7 @@
 #define V_SIGNATURE      (ref_t)-18
 #define V_MESSAGE        (ref_t)-19
 #define V_VERB           (ref_t)-20
-//#define V_EXTMESSAGE     (ref_t)-21
+#define V_EXTMESSAGE     (ref_t)-21
 #define V_SYMBOL         (ref_t)-22
 
 #define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations

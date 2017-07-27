@@ -924,6 +924,17 @@ ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
    return Scope::mapTerminal(identifier);
 }
 
+void Compiler::SymbolScope :: save()
+{
+   SymbolExpressionInfo info;
+   info.expressionClassRef = outputRef;
+   info.constant = constant;
+
+   // save class meta data
+   MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
+   info.save(&metaWriter);
+}
+
 // --- Compiler::ClassScope ---
 
 Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
@@ -1438,6 +1449,7 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
             return object.extraparam;
          }
       case okParam:
+      case okSymbol:
          return object.extraparam;
       default:
          if (object.kind == okObject && object.param != 0) {
@@ -2048,9 +2060,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okMessageConstant:
          writer.newNode(lxMessageConstant, object.param);
          break;
-//      case okExtMessageConstant:
-//         writer.newNode(lxExtMessageConstant, object.param);
-//         break;
+      case okExtMessageConstant:
+         writer.newNode(lxExtMessageConstant, object.param);
+         break;
       case okSignatureConstant:
          writer.newNode(lxSignatureConstant, object.param);
          break;
@@ -2222,7 +2234,7 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
    IdentifierString signature;
    ref_t verb_id = 0;
    int paramCount = -1;
-   //ref_t extensionRef = 0;
+   ref_t extensionRef = 0;
    if (terminal == lxIdentifier || terminal == lxPrivate) {
       ident_t name = terminal.identifier();
       verb_id = _verbs.get(name);
@@ -2247,14 +2259,14 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
                firstSubj = false;
             }
          }
-   //      else if (message[i] == '.' && extensionRef == 0) {
-   //         signature.copy(message + subject, i - subject);
-   //         subject = i + 1;
+         else if (message[i] == '.' && extensionRef == 0) {
+            signature.copy(message + subject, i - subject);
+            subject = i + 1;
 
-   //         extensionRef = scope.moduleScope->resolveIdentifier(signature);
-   //         if (extensionRef == 0)
-   //            scope.raiseError(errInvalidSubject, terminal);
-   //      }
+            extensionRef = scope.moduleScope->resolveIdentifier(signature);
+            if (extensionRef == 0)
+               scope.raiseError(errInvalidSubject, terminal);
+         }
          else if (message[i] == '[') {
             int len = getlength(message);
             if (message[i+1] == ']') {
@@ -2298,14 +2310,14 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
 
    ObjectInfo retVal;
    IdentifierString message;
-   //if (extensionRef != 0) {
-   //   if (verb_id == 0) {
-   //      scope.raiseError(errInvalidSubject, terminal);
-   //   }
+   if (extensionRef != 0) {
+      if (verb_id == 0) {
+         scope.raiseError(errInvalidSubject, terminal);
+      }
 
-   //   message.append(scope.moduleScope->module->resolveReference(extensionRef));
-   //   message.append('.');
-   //}
+      message.append(scope.moduleScope->module->resolveReference(extensionRef));
+      message.append('.');
+   }
 
    if (paramCount == -1) {
       message.append('0');
@@ -2323,10 +2335,10 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
    }
 
    if (verb_id != 0) {
-      /*if (extensionRef != 0) {
+      if (extensionRef != 0) {
          retVal.kind = okExtMessageConstant;
       }
-      else */if (paramCount == -1 && emptystr(signature)) {
+      else if (paramCount == -1 && emptystr(signature)) {
          retVal.kind = okVerbConstant;
       }
       else retVal.kind = okMessageConstant;
@@ -5438,13 +5450,7 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
    declareSymbolAttributes(node, scope);
 
    if ((scope.constant || scope.outputRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == false) {
-      SymbolExpressionInfo info;
-      info.expressionClassRef = scope.outputRef;
-      info.constant = scope.constant;
-      
-      // save class meta data
-      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-      info.save(&metaWriter);
+      scope.save();
    }
 }
 
@@ -5568,6 +5574,12 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 
       convertObject(writer, *moduleScope, scope.outputRef, resolveObjectReference(codeScope, retVal), retVal.element);
    }
+   else if (resolveObjectReference(*scope.moduleScope, retVal) != 0) {
+      // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
+      scope.outputRef = resolveObjectReference(*scope.moduleScope, retVal);
+      scope.save();
+   }
+
    writer.removeBookmark();
    writer.closeNode();
    writer.closeNode();

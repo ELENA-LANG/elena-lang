@@ -189,71 +189,71 @@ limited class Indexer :: dispatchable<indexer>
 //    
 //    int rows :: outnprop(readRownsTo).
 //}
-//
-//// --- base functions ---
-//
-///// A base action
-//limited class BaseFunction :: dispatchable(func)
-//{
+
+// --- base functions ---
+
+/// A base action
+limited class BaseFunction :: dispatchable<func>
+{
 //    /// Executes the action
 //    action eval []
-//    
-//    /// Executes the action while the condition is true
-//    sealed run while:aBool
-//    [
-//        while (aBool)
-//        [
-//            $self eval
-//        ]
-//    ]
-//
-//    /// Executes the action while the condition is false
-//    ///
-//    /// Executes at least once
-//    sealed run until:aBool
-//    [
-//        bool flag := false.
-//        
-//        until (flag)
-//        [
-//            $self eval.
-//            
-//            flag := aBool bool
-//        ].
-//    ]
-//}
-//
-///// A base function
-//limited class BaseFunction1 :: dispatchable(func1)
-//{
+    
+    /// Executes the action while the condition is true
+    sealed run while:aBool
+    [
+        while (aBool)
+        [
+            $self eval
+        ]
+    ]
+
+    /// Executes the action while the condition is false
+    ///
+    /// Executes at least once
+    sealed run until:aBool
+    [
+        bool flag := false.
+        
+        until (flag)
+        [
+            $self eval.
+            
+            flag := aBool bool
+        ].
+    ]
+}
+
+/// A base function
+limited class BaseFunction1 :: dispatchable<func1>
+{
 //    /// Executes the function
 //    action eval : aParam []
-//
-//    /// Executes the function for every enumeration item
-//    run enumerator:anEnumerator
-//    [
-//        while(anEnumerator next)
-//        [
-//            $self eval:(anEnumerator get)
-//        ].        
-//    ]
-//    
-//    /// Executes the function for every enumeration item until it returns true
-//    sealed retrieve enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//
-//            if($self eval:anItem)
-//                [ ^ anItem ]
-//        ].
-//        
-//        ^ $nil.
-//    ]
-//}
-//
+
+    /// Executes the function for every enumeration item
+    run enumerator:anEnumerator
+    [
+        while(anEnumerator next)
+        [
+            $self eval:(anEnumerator get)
+        ].        
+    ]
+    
+    /// Executes the function for every enumeration item until it returns true
+    sealed retrieve enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+
+            if($self eval:anItem)
+                [ ^ anItem ]
+        ].
+        
+        ^ $nil.
+    ]
+}
+
 ///// A base two variable function
 //limited class BaseFunction2 :: dispatchable(func2)
 //{

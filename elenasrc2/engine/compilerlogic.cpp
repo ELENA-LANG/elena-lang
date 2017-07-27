@@ -811,11 +811,11 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
          info.size = 4;
          break;
-      //case V_EXTMESSAGE:
-      //   info.header.parentRef = scope.superReference;
-      //   info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
-      //   info.size = 8;
-      //   break;
+      case V_EXTMESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
+         info.size = 8;
+         break;
       case V_SYMBOL:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugReference | elStructureRole | elEmbeddable;
@@ -1099,9 +1099,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
       case V_MESSAGE:
          attrValue = 0;
          return true;
-//      case V_EXTMESSAGE:
-//         attrValue = 0;
-//         return true;
+      case V_EXTMESSAGE:
+         attrValue = 0;
+         return true;
       case V_VERB:
          attrValue = 0;
          return true;
@@ -1197,10 +1197,10 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
             info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
             return info.size == 4;
-         //case V_EXTMESSAGE:
-         //   info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
-         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_EXTMESSAGE, 0));
-         //   return info.size == 8;
+         case V_EXTMESSAGE:
+            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_EXTMESSAGE, 0));
+            return info.size == 8;
          case V_SYMBOL:
             info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));

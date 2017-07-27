@@ -59,7 +59,7 @@ class $Console
         => theWriter.
 
     /// Reads the next line of characters from the standard input stream.
-    readLine
+    literal readLine
         = theReader literal.
 
     /// Reads the next line of characters from the standard input stream.

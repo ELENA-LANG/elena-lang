@@ -121,7 +121,7 @@ public:
       okLongConstant,                 // param - reference
       okRealConstant,                 // param - reference
       okMessageConstant,              // param - reference
-//      okExtMessageConstant,           // param - reference
+      okExtMessageConstant,           // param - reference
       okSignatureConstant,            // param - reference
       okVerbConstant,                 // param - reference
       okArrayConst,
@@ -508,6 +508,8 @@ private:
          }
          else return Scope::getScope(level);
       }
+
+      void save();
 
       SymbolScope(ModuleScope* parent, ref_t reference);
    };
