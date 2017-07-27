@@ -306,7 +306,7 @@ private:
 
       void validateReference(SNode terminal, ref_t reference);
 
-//      ref_t getBaseLazyExpressionClass();
+      ref_t getBaseLazyExpressionClass();
 
       void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
 
@@ -851,7 +851,7 @@ private:
 ////   void declareSingletonAction(ClassScope& scope, SNode objNode);
 
    void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-//   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);

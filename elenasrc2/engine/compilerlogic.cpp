@@ -1054,9 +1054,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_SEALED:
          attrValue = tpSealed;
          return true;
-      //case V_ACTION:
-      //   attrValue = tpAction;
-      //   return true;
+      case V_ACTION:
+         attrValue = tpAction;
+         return true;
       case V_CONSTRUCTOR:
          attrValue = tpConstructor;
          return true;

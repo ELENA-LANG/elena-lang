@@ -348,23 +348,29 @@
 
 class Selector :: Enumerator
 {
-//    func1      theSelector.
-//    enumerator theEnumerator.
-//    
-//    constructor new each:aSelector enumerator:anEnumerator
-//    [
-//        theSelector := aSelector func1.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theSelector eval:(theEnumerator get).
-//    
-//    next = theEnumerator next.
-//    
-//    reset 
-//    [
-//        theEnumerator reset.
-//    ]    
+    func1      theSelector.
+    enumerator theEnumerator.
+    
+    constructor new func1:aSelector enumerator:anEnumerator
+    [
+        theSelector := aSelector.
+        theEnumerator := anEnumerator.
+    ]
+    
+    constructor new ext_mssg:anExtension enumerator:anEnumerator
+    [
+        theSelector := (:x)[ ^ x~anExtension eval ].
+        theEnumerator := anEnumerator.
+    ]
+    
+    get = theSelector eval:(theEnumerator get).
+    
+    next = theEnumerator next.
+    
+    reset 
+    [
+        theEnumerator reset.
+    ]    
 }
 
 //// --- Repeater ---
@@ -615,35 +621,35 @@ class Selector :: Enumerator
 //    next
 //        = theListEnumerator next.
 //}
-//
-//// === patterns ===
-//
-//// --- BasePattern ---
-//
-//class BasePattern :: BaseFunction1
-//{
-//    object theResult.
-//    
-//    run enumerator:anEnumerator
-//    [
-//        $super run enumerator:anEnumerator.
-//        
-//        ^ theResult
-//    ]
-//}
-//
-//// --- Summing ---
-//
-//class Summing :: BasePattern
-//{
-//    constructor new : aVariable
-//    [
-//        theResult := aVariable.
-//    ]
-//
-//    eval : aParam [ theResult append:aParam. ]
-//}
-//
+
+// === patterns ===
+
+// --- BasePattern ---
+
+class BasePattern :: BaseFunction1
+{
+    object theResult.
+    
+    run enumerator:anEnumerator
+    [
+        $super run enumerator:anEnumerator.
+        
+        ^ theResult
+    ]
+}
+
+// --- Summing ---
+
+class Summing :: BasePattern
+{
+    constructor new : aVariable
+    [
+        theResult := aVariable.
+    ]
+
+    eval : aParam [ theResult append:aParam. ]
+}
+
 //// --- Accumulating ---
 //
 //class Accumulating :: BasePattern
@@ -663,16 +669,16 @@ class Selector :: Enumerator
 
 extension patternOp
 {
-//    summarize : aVariable
-//    [
-//        Summing new:aVariable; run enumerator:(self enumerator).
-//        
-//        ^ aVariable get.
-//    ]
-//    
-//    summarize
-//        = self~patternOp summarize:(Variable new).
-//        
+    summarize : aVariable
+    [
+        Summing new:aVariable; run enumerator:(self enumerator).
+        
+        ^ aVariable value.
+    ]
+    
+    summarize
+        = self~patternOp summarize:(Variable new).
+        
 //    accumulate : aVariable with:operation
 //    [
 //        Accumulating new:aVariable with:operation; run enumerator:(self enumerator).
@@ -692,8 +698,8 @@ extension patternOp
 //    filter each:aFilter
 //        = Filter new each:aFilter enumerator:(self enumerator).
 
-    select each:aSelector
-        = Selector new(aSelector, self).
+    select:aSelector
+        = Selector new(aSelector, self enumerator).
 
 //    zip:anEnumerable into:aZipper
 //        = ZipEnumerator new:aZipper enumerator:(self enumerator) enumerator:(anEnumerable enumerator).

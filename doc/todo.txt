@@ -69,6 +69,7 @@ In development:
                  * test nested exception handling
                  * extension resend - literal extension literalListOp { array split <= split char:$32. /*...*/ } - self should points to 
                    the incoming message
+                 * multi constructor - raise an error if not found
 
               xdev - refactoring
                  * review cellular library

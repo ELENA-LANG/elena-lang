@@ -57,7 +57,7 @@
 #define V_GENERIC        (ref_t)-8202
 #define V_EXTENSION      (ref_t)-8203
 #define V_NOSTRUCT       (ref_t)-8204
-//#define V_ACTION         (ref_t)-8205
+#define V_ACTION         (ref_t)-8205
 //#define V_GROUP          (ref_t)-8206
 #define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
@@ -96,7 +96,7 @@ enum MethodHint
    tpStackSafe   = 0x0010,
    tpEmbeddable  = 0x0020,
    tpGeneric     = 0x0040,
-//   tpAction      = 0x0080,
+   tpAction      = 0x0080,
    tpIfBranch    = 0x0100,
    tpIfNotBranch = 0x0200,
    tpConstructor = 0x0400,

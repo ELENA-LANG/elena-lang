@@ -195,8 +195,8 @@ limited class Indexer :: dispatchable<indexer>
 /// A base action
 limited class BaseFunction :: dispatchable<func>
 {
-//    /// Executes the action
-//    action eval []
+    /// Executes the action
+    action eval []
     
     /// Executes the action while the condition is true
     sealed run while:aBool
@@ -226,8 +226,8 @@ limited class BaseFunction :: dispatchable<func>
 /// A base function
 limited class BaseFunction1 :: dispatchable<func1>
 {
-//    /// Executes the function
-//    action eval : aParam []
+    /// Executes the function
+    action eval : aParam []
 
     /// Executes the function for every enumeration item
     run enumerator:anEnumerator
