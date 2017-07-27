@@ -87,7 +87,7 @@ sealed embeddable struct Message
 // --- Signature ---
 
 /// A dynamic signature extender
-sealed embeddable struct Signature //:: dispatchable(subject)
+sealed embeddable struct Signature :: dispatchable<subject>
 {
     __subj theValue(4).
     
@@ -114,15 +114,15 @@ sealed embeddable struct Signature //:: dispatchable(subject)
 //    /// Compares the values
 //    stacksafe bool equal subject : subject
 //        = theValue == subject.
-//
-//    stacksafe literal
-//    [
-//        byte aBuffer(256).
-//        int  aLength := system'external LoadSubjectName subject:$self bytearray:aBuffer int:255.
-//        
-//        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
-//    ]
-//
-//    /// Qualifies incoming messages and redirects to the target
-//    stacksafe dispatch => system'core_routines'__signature.
+
+    stacksafe literal
+    [
+        byte aBuffer(256).
+        int  aLength := system'external LoadSubjectName subject:$self bytearray:aBuffer int:255.
+        
+        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
+    ]
+
+    /// Qualifies incoming messages and redirects to the target
+    stacksafe dispatch => system'core_routines'__signature.
 }

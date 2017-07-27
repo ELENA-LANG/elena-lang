@@ -5013,6 +5013,10 @@ void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList)
 void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node)
 {
    doMultiDispatch(tape, node.argument);
+
+   SNode current = node.findChild(lxDispatching);
+   if (current != lxNone)
+      generateResending(tape, current);
 }
 
 void ByteCodeWriter :: generateResending(CommandTape& tape, SyntaxTree::Node node)
@@ -5161,8 +5165,10 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                declareMethod(tape, node.argument, sourcePathRef, reserved, allocated, current.argument == -1);
                open = true;
             }
-            else newFrame(tape, reserved, allocated, current.argument == -1);
-
+            else {
+               newFrame(tape, reserved, allocated, current.argument == -1);
+               tape.newLabel();     // declare exit point
+            }
             generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
             generateCodeBlock(tape, current);
             break;
@@ -5172,12 +5178,6 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                declareIdleMethod(tape, node.argument, sourcePathRef);
 
             generateDispatching(tape, current);
-            break;
-         case lxResending:
-            if (!open)
-               declareIdleMethod(tape, node.argument, sourcePathRef);
-
-            generateResending(tape, current);
             break;
          case lxMultiDispatching:
             if (!open) {

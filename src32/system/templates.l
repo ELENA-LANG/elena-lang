@@ -1,14 +1,14 @@
 
-field template prop :: type, prop_name
+field template prop :: prop_type, prop_name
 {
-    type field.
+    prop_type field.
     
-    set prop_name type:val
+    set prop_name prop_type:val
     [
         field := val
     ]
     
-    type prop_name = field.
+    prop_type prop_name = field.
 }
 
 field template rprop :: type, prop_name

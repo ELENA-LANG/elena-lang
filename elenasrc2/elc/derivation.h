@@ -77,6 +77,7 @@ class DerivationReader : public _DerivationReader
 
       bool isTypeAttribute(SNode terminal);
       bool isAttribute(SNode terminal);
+      bool isImplicitAttribute(SNode terminal);
       bool isSubject(SNode terminal)
       {
          return !(isTypeAttribute(terminal) || isAttribute(terminal));

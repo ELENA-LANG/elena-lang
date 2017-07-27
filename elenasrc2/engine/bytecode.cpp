@@ -688,8 +688,6 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, AND_MESSAGE,        AND_MESSAGE_ID);
    addVerb(verbs, OR_MESSAGE,         OR_MESSAGE_ID);
    addVerb(verbs, XOR_MESSAGE,        XOR_MESSAGE_ID);
-   addVerb(verbs, DO_MESSAGE,         DO_MESSAGE_ID);
-   addVerb(verbs, STOP_MESSAGE,       STOP_MESSAGE_ID);
    addVerb(verbs, ADD_MESSAGE,        ADD_MESSAGE_ID);
    addVerb(verbs, SUB_MESSAGE,        SUB_MESSAGE_ID);
    addVerb(verbs, MUL_MESSAGE,        MUL_MESSAGE_ID);
@@ -701,40 +699,9 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, SET_MESSAGE,        SET_MESSAGE_ID);
    addVerb(verbs, READ_MESSAGE,       READ_MESSAGE_ID);
    addVerb(verbs, WRITE_MESSAGE,      WRITE_MESSAGE_ID);
-   addVerb(verbs, RAISE_MESSAGE,      RAISE_MESSAGE_ID);
    addVerb(verbs, IF_MESSAGE,         IF_MESSAGE_ID);
    addVerb(verbs, IFNOT_MESSAGE,      IFNOT_MESSAGE_ID);
-   addVerb(verbs, FIND_MESSAGE,       FIND_MESSAGE_ID);
-   addVerb(verbs, SEEK_MESSAGE,       SEEK_MESSAGE_ID);
-   addVerb(verbs, REWIND_MESSAGE,     REWIND_MESSAGE_ID);
-   addVerb(verbs, EXCHANGE_MESSAGE,   EXCHANGE_MESSAGE_ID);
-   addVerb(verbs, INDEXOF_MESSAGE,    INDEXOF_MESSAGE_ID);
-   addVerb(verbs, CLOSE_MESSAGE,      CLOSE_MESSAGE_ID);
-   addVerb(verbs, CLEAR_MESSAGE,      CLEAR_MESSAGE_ID);
-   addVerb(verbs, DELETE_MESSAGE,     DELETE_MESSAGE_ID);
-   addVerb(verbs, RUN_MESSAGE,        RUN_MESSAGE_ID);
-   addVerb(verbs, INSERT_MESSAGE,     INSERT_MESSAGE_ID);
-   addVerb(verbs, SAVE_MESSAGE,       SAVE_MESSAGE_ID);
-   addVerb(verbs, RESET_MESSAGE,      RESET_MESSAGE_ID);
-   addVerb(verbs, FILL_MESSAGE,       FILL_MESSAGE_ID);
-   addVerb(verbs, LOAD_MESSAGE,       LOAD_MESSAGE_ID);
    addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);
-   addVerb(verbs, NOT_MESSAGE,        NOT_MESSAGE_ID);
-   addVerb(verbs, VALIDATE_MESSAGE,   VALIDATE_MESSAGE_ID);
-   addVerb(verbs, INC_MESSAGE,        INC_MESSAGE_ID);
-   addVerb(verbs, START_MESSAGE,      START_MESSAGE_ID);
-   addVerb(verbs, RETRIEVE_MESSAGE,   RETRIEVE_MESSAGE_ID);
-   addVerb(verbs, CAST_MESSAGE,       CAST_MESSAGE_ID);
-   addVerb(verbs, RESUME_MESSAGE,     RESUME_MESSAGE_ID);
-   addVerb(verbs, OPEN_MESSAGE,       OPEN_MESSAGE_ID);
-   addVerb(verbs, EXIT_MESSAGE,       EXIT_MESSAGE_ID);
-   addVerb(verbs, SHOW_MESSAGE,       SHOW_MESSAGE_ID);
-   addVerb(verbs, HIDE_MESSAGE,       HIDE_MESSAGE_ID);
-   addVerb(verbs, CREATE_MESSAGE,     CREATE_MESSAGE_ID);
-   addVerb(verbs, IS_MESSAGE,         IS_MESSAGE_ID);
-   addVerb(verbs, ROLLBACK_MESSAGE,   ROLLBACK_MESSAGE_ID);
-   addVerb(verbs, SELECT_MESSAGE,     SELECT_MESSAGE_ID);
-   addVerb(verbs, REPLACE_MESSAGE,    REPLACE_MESSAGE_ID);
 }
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)

@@ -1700,15 +1700,15 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
       if (listRef) {
          _Module* argModule = scope.loadReferenceModule(listRef);
 
-         _Memory* section = argModule->mapSection(listRef | mskRDataRef, false);
-         if (section->Length() < 4)
+         _Memory* section = argModule->mapSection(listRef | mskRDataRef, true);
+         if (!section || section->Length() < 4)
             return 0;
 
          MemoryReader reader(section);
          pos_t position = section->Length() - 4;
          while (position != 0) {
             reader.seek(position - 8);
-            ref_t message = importMessage(scope.module, reader.getDWord(), argModule);
+            ref_t message = importMessage(argModule, reader.getDWord(), scope.module);
 
             ident_t signature = scope.module->resolveSubject(getSignature(message));
             int start = signature.find('$') + 1;

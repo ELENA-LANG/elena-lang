@@ -344,14 +344,6 @@ ref_t DerivationReader::DerivationScope :: mapTerminal(SNode terminal, bool exis
    return moduleScope->mapTerminal(terminal, existing);
 }
 
-//bool Compiler::TemplateScope :: isAttribute(SNode terminal)
-//{
-//   int dummy = 0;
-//   ref_t ref = mapAttribute(terminal, dummy);
-//
-//   return (ref != 0 && isPrimitiveRef(moduleScope->subjectHints.get(ref)));
-//}
-
 bool DerivationReader::DerivationScope :: isTypeAttribute(SNode terminal)
 {
    ident_t name = terminal.identifier();
@@ -375,6 +367,17 @@ bool DerivationReader::DerivationScope :: isAttribute(SNode terminal)
    ref_t attr = moduleScope->attributes.get(name);
 
    return attr != 0 && ::isAttribute(attr);
+}
+
+bool DerivationReader::DerivationScope :: isImplicitAttribute(SNode terminal)
+{
+   ident_t name = terminal.identifier();
+   if (emptystr(name))
+      name = terminal.findChild(lxTerminal).identifier();
+
+   ref_t attr = moduleScope->attributes.get(name);
+
+   return attr == V_GENERIC || attr == V_CONVERSION;
 }
 
 ref_t DerivationReader::DerivationScope :: mapTemplate(SNode terminal, int prefixCounter)
@@ -2119,7 +2122,7 @@ bool DerivationReader :: generateMethodScope(SNode node, DerivationScope& scope,
       SNode lastAttr = findLastAttribute(attributes);
       SNode firstMember = node.findChild(lxMethodParameter, lxAttribute, lxAttributeValue);
 
-      if (scope.isAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) && firstMember == lxAttributeValue) {
+      if (scope.isImplicitAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) && (firstMember == lxAttributeValue || firstMember == lxMethodParameter)) {
          // HOTFIX : recognize explicit / generic attributes
       }
       else {

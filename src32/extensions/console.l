@@ -1,6 +1,6 @@
-//import system'routines.
+import system'routines.
 //import system'text.
-//
+
 //// --- outputOp ---
 //
 //extension outputOp
@@ -361,7 +361,7 @@ extension inputOp
     
     generic readLine args:Arguments
     [
-        var aLine := self readLiteral.
+        literal aLine := self readLiteral.
         
         array aParams := aLine split char:$32.
         

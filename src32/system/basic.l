@@ -2535,8 +2535,8 @@ class intConvertor =
     stacksafe int convert uint:anInt
         = IntNumber new int:anInt.        
                         
-//    int multi convert : anObject
-//        = anObject int.
+    int multi convert : anObject
+        = anObject int.
 }.
 
 /// A unsigned integer convertor

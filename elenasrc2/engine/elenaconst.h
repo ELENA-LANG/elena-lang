@@ -50,7 +50,6 @@ namespace _ELENA_
    #define OR_MESSAGE_ID           0x000B
    #define XOR_MESSAGE_ID          0x000C
    #define IFNOT_MESSAGE_ID        0x000D
-   #define RUN_MESSAGE_ID          0x000E
    #define NOTEQUAL_MESSAGE_ID     0x000F
    #define NOTLESS_MESSAGE_ID      0x0010
    #define NOTGREATER_MESSAGE_ID   0x0011
@@ -66,40 +65,7 @@ namespace _ELENA_
    #define SET_MESSAGE_ID          0x001D
    #define READ_MESSAGE_ID         0x001E
    #define WRITE_MESSAGE_ID        0x001F
-   #define RAISE_MESSAGE_ID        0x0020
-   #define SELECT_MESSAGE_ID       0x0021
-   #define FIND_MESSAGE_ID         0x0022
-   #define SEEK_MESSAGE_ID         0x0023
-   #define STOP_MESSAGE_ID         0x0024
-   #define REWIND_MESSAGE_ID       0x0025
-   #define EXCHANGE_MESSAGE_ID     0x0026
-   #define INDEXOF_MESSAGE_ID      0x0027
-   #define CLOSE_MESSAGE_ID        0x0028
-   #define CLEAR_MESSAGE_ID        0x0029
-   #define DELETE_MESSAGE_ID       0x002A
-   #define DO_MESSAGE_ID           0x002B
-   #define INSERT_MESSAGE_ID       0x002C
-   #define SAVE_MESSAGE_ID         0x002D
-   #define RESET_MESSAGE_ID        0x002E
-   #define SPLIT_MESSAGE_ID        0x002F
-   #define FILL_MESSAGE_ID         0x0031
-   #define LOAD_MESSAGE_ID         0x0032
    #define SHIFT_MESSAGE_ID        0x0033
-   #define NOT_MESSAGE_ID          0x0034
-   #define VALIDATE_MESSAGE_ID     0x0035
-   #define INC_MESSAGE_ID          0x0036
-   #define START_MESSAGE_ID        0x0037
-   #define RETRIEVE_MESSAGE_ID     0x0038
-   #define CAST_MESSAGE_ID         0x0039
-   #define RESUME_MESSAGE_ID       0x003A
-   #define OPEN_MESSAGE_ID         0x003B
-   #define EXIT_MESSAGE_ID         0x003C
-   #define SHOW_MESSAGE_ID         0x003D
-   #define HIDE_MESSAGE_ID         0x003E
-   #define CREATE_MESSAGE_ID       0x003F
-   #define IS_MESSAGE_ID           0x0040
-   #define ROLLBACK_MESSAGE_ID     0x0041
-   #define REPLACE_MESSAGE_ID      0x0043  
 
    #define VALUES_MESSAGE_ID       0x007E             // virtual method returning the list of enum values
    #define PRIVATE_MESSAGE_ID      0x007F
@@ -395,8 +361,6 @@ namespace _ELENA_
    #define AND_MESSAGE              "and"
    #define OR_MESSAGE               "or"
    #define XOR_MESSAGE              "xor"
-   #define DO_MESSAGE               "do"
-   #define STOP_MESSAGE             "stop"
    #define GREATER_MESSAGE          "greater"
    #define NOTLESS_MESSAGE          "notless"
    #define NOTGREATER_MESSAGE       "notgreater"
@@ -411,41 +375,9 @@ namespace _ELENA_
    #define SET_MESSAGE              "set"
    #define READ_MESSAGE             "read"
    #define WRITE_MESSAGE            "write"
-   #define RAISE_MESSAGE            "raise"
    #define IF_MESSAGE               "if"
    #define IFNOT_MESSAGE            "ifnot"
-   #define FIND_MESSAGE             "find"
-   #define SEEK_MESSAGE             "seek"
-   #define REWIND_MESSAGE           "rewind"
-   #define EXCHANGE_MESSAGE         "exchange"
-   #define INDEXOF_MESSAGE          "indexOf"
-   #define CLOSE_MESSAGE            "close"
-   #define CLEAR_MESSAGE            "clear"
-   #define DELETE_MESSAGE           "delete"
-   #define RUN_MESSAGE              "run"
-   #define INSERT_MESSAGE           "insert"
-   #define SAVE_MESSAGE             "save"
-   #define RESET_MESSAGE            "reset"
-   #define SPLIT_MESSAGE            "split"
-   #define FILL_MESSAGE             "fill"
-   #define LOAD_MESSAGE             "load"
    #define SHIFT_MESSAGE            "shift"
-   #define NOT_MESSAGE              "invert"
-   #define VALIDATE_MESSAGE         "validate"
-   #define INC_MESSAGE              "next"
-   #define START_MESSAGE            "start"
-   #define RETRIEVE_MESSAGE         "retrieve"
-   #define CAST_MESSAGE             "cast"
-   #define RESUME_MESSAGE           "resume"
-   #define OPEN_MESSAGE             "open"
-   #define EXIT_MESSAGE             "exit"
-   #define SHOW_MESSAGE             "show"
-   #define HIDE_MESSAGE             "hide"
-   #define CREATE_MESSAGE           "create"
-   #define IS_MESSAGE               "is"
-   #define ROLLBACK_MESSAGE         "rollback"
-   #define SELECT_MESSAGE           "select"
-   #define REPLACE_MESSAGE          "replace"
 
    // ELENA verb operators
    #define EQUAL_OPERATOR		      "=="

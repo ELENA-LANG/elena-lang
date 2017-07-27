@@ -1408,113 +1408,121 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
     int outprop hash_code :: readHashCodeTo.
 }
 
-//// --- Variant ---
-//
-///// A basic type variant class
-//class Variant
-//{
-//    object theValue.
-//    
-//    constructor new : object
-//    [
-//        theValue := object.
-//    ]
-//    
-//    /// Tries to convert the value to a byte number
-//    byte
-//        = byteConvertor convert:theValue.
-//
-//    /// Tries to convert the value to a short integer number
-//    short
-//        = shortConvertor convert:theValue.
-//
-//    /// Tries to convert the value to a character
-//    char
-//        = charConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the integer number
-//    int
-//        = intConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the long integer number
-//    long
-//        = longConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the real number
-//    real
-//        = realConvertor convert:theValue.
-//
-//    /// Returns a literal value
-//    literal 
-//        = literalConvertor convert:theValue.
-//    
-//    /// Returns a wide literal value
-//    wide 
-//        = wideConvertor convert:theValue.
-//
-//    /// Converts the parameter into a literal string
-//    set int:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    set short:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    write byte:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    write long:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    write real:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    cast : aVerb to:aTarget
-//    [
-//        var aValue := aTarget cast:%eval to:
-//        {
-//            eval : aVariant int:aValue
-//                = aVariant int.
-//                
-//            eval : aVariant byte:aValue
-//                = aVariant byte.
-//                
-//            eval : aVariant short:aValue
-//                = aVariant short.
-//                
-//            eval : aVariant long:aValue
-//                = aVariant long.
-//                
-//            eval : aVariant real:aValue
-//                = aVariant real.
-//                
-//            eval : aVariant literal:aValue
-//                = aVariant literal.
-//                
-//            eval : aVariant wide:aValue
-//                = aVariant wide.
-//        }
-//        with:$self.
-//        
-//        ^ aValue cast:aVerb to:aTarget.
-//    ]
-//
-//    equal : anObject
-//        = anObject equal:$self.
-//}
+// --- Variant ---
+
+/// A basic type variant class
+class Variant
+{
+    object theValue.
+    
+    constructor new : object
+    [
+        theValue := object.
+    ]
+    
+    /// Tries to convert the value to a byte number
+    byte
+        = byteConvertor convert:theValue.
+
+    /// Tries to convert the value to a short integer number
+    short
+        = shortConvertor convert:theValue.
+
+    /// Tries to convert the value to a character
+    char
+        = charConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the integer number
+    int
+        = intConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the long integer number
+    long
+        = longConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the real number
+    real
+        = realConvertor convert:theValue.
+
+    /// Returns a literal value
+    literal 
+        = literalConvertor convert:theValue.
+    
+    /// Returns a wide literal value
+    wide 
+        = wideConvertor convert:theValue.
+
+    /// Converts the parameter into a literal string
+    set int:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    set short:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    set byte:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    set long:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    set real:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    sealed $castValueTo:aTarget
+        = aTarget cast:%eval to:
+        {
+            eval : aVariant int:aValue
+                = aVariant int.
+                
+            eval : aVariant byte:aValue
+                = aVariant byte.
+                
+            eval : aVariant short:aValue
+                = aVariant short.
+                
+            eval : aVariant long:aValue
+                = aVariant long.
+                
+            eval : aVariant real:aValue
+                = aVariant real.
+                
+            eval : aVariant literal:aValue
+                = aVariant literal.
+                
+            eval : aVariant wide:aValue
+                = aVariant wide.
+        }
+        with:$self.
+
+    cast : aVerb to:aTarget
+    [
+        var aValue := $self $castValueTo:aTarget.
+        
+        ^ aValue cast:aVerb to:aTarget.
+    ]
+
+    saveTo : aTarget
+    [
+        aTarget set($self $castValueTo:aTarget).
+    ]
+
+    equal : anObject
+        = anObject equal:$self.
+}
 
 // --- Array ---
 

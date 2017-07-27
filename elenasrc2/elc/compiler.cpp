@@ -2828,7 +2828,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    writer.closeNode();   
 
    // the result of get&type message should be typed
-   if (retVal.param == 0 && paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
+   if (retVal.param == 0 && paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID && signRef != 0) {
       ident_t sign = scope.moduleScope->module->resolveSubject(signRef);
 
       retVal.param = scope.moduleScope->module->mapReference(sign.c_str() + 1);
@@ -4464,15 +4464,16 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
 {
    ref_t overloadRef = classScope.info.methodHints.get(Attribute(scope.getMessageID(), maOverloadlist));
    if (overloadRef) {
-      writer.appendNode(lxMultiDispatching, overloadRef);
+      writer.newNode(lxMultiDispatching, overloadRef);
    }
    else scope.raiseError(errIllegalOperation, node);
 
    if (node == lxResendExpression) {
-      writer.newNode(lxResending, node.argument);
+      writer.newNode(lxDispatching, node.argument);
       SyntaxTree::copyNode(writer, lxTarget, node);
       writer.closeNode();
    }
+   writer.closeNode();
 }
 
 void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod)

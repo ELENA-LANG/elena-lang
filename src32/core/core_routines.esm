@@ -2260,7 +2260,7 @@ labErr:
 
 end
 
-procedure __literal."indexOf&$system@IntNumber$system@LiteralValue$@system@var#1&IntNumber[4]"
+procedure __literal."eval&indexOf$system@IntNumber$system@LiteralValue$@system@var#1&IntNumber[4]"
 
   bcopya
   aloadsi 2                 // ; load index
@@ -2274,7 +2274,7 @@ procedure __literal."indexOf&$system@IntNumber$system@LiteralValue$@system@var#1
 
 end
 
-procedure __literal."indexOf&$system@IntNumber$system@CharValue$@system@var#1&IntNumber[4]"
+procedure __literal."eval&indexOf$system@IntNumber$system@CharValue$@system@var#1&IntNumber[4]"
 
   pusha
   aloadsi 4
@@ -2299,7 +2299,7 @@ procedure __literal."indexOf&$system@IntNumber$system@CharValue$@system@var#1&In
 
 end
 
-procedure __literal."insert&$system@IntNumber$system@LiteralValue[3]"
+procedure __literal."eval&insert$system@IntNumber$system@LiteralValue[3]"
 
   // ; calculate length
   blen
@@ -2343,7 +2343,7 @@ procedure __literal."insert&$system@IntNumber$system@LiteralValue[3]"
   
 end
 
-procedure __literal."delete&$system@IntNumber$system@IntNumber[3]"
+procedure __literal."eval&delete$system@IntNumber$system@IntNumber[3]"
 
   bcopya
 
@@ -2382,7 +2382,7 @@ procedure __literal."delete&$system@IntNumber$system@IntNumber[3]"
   
 end
 
-procedure __literal."save&$system@IntNumber$system@CharArray$@system@var#1&IntNumber[4]"
+procedure __literal."eval&save$system@IntNumber$system@CharArray$@system@var#1&IntNumber[4]"
 
   pusha
   bloadsi 4
@@ -2765,7 +2765,7 @@ labErr:
   
 end
 
-procedure __wide."indexOf&$system@IntNumber$system@WideLiteralValue$@system@var#1&IntNumber[4]"
+procedure __wide."eval&indexOf$system@IntNumber$system@WideLiteralValue$@system@var#1&IntNumber[4]"
 
   bcopya
   aloadsi 2                 // ; load index
@@ -2779,7 +2779,7 @@ procedure __wide."indexOf&$system@IntNumber$system@WideLiteralValue$@system@var#
 
 end
 
-procedure __wide."indexOf&$system@IntNumber$system@CharValue$@system@var#1&IntNumber[4]"
+procedure __wide."eval&indexOf$system@IntNumber$system@CharValue$@system@var#1&IntNumber[4]"
 
   pusha
   aloadsi 4
@@ -2803,7 +2803,7 @@ procedure __wide."indexOf&$system@IntNumber$system@CharValue$@system@var#1&IntNu
   
 end
 
-procedure __wide."insert&$system@IntNumber$system@WideLiteralValue[3]"
+procedure __wide."eval&insert$system@IntNumber$system@WideLiteralValue[3]"
 
   // ; calculate length
   wlen
@@ -2847,7 +2847,7 @@ procedure __wide."insert&$system@IntNumber$system@WideLiteralValue[3]"
   
 end
 
-procedure __wide."delete&$system@IntNumber$system@IntNumber[3]"
+procedure __wide."eval&delete$system@IntNumber$system@IntNumber[3]"
 
   bcopya
 
@@ -2886,7 +2886,7 @@ procedure __wide."delete&$system@IntNumber$system@IntNumber[3]"
   
 end
 
-procedure __wide."save&$system@IntNumber$system@CharArray$@system@var#1&IntNumber[4]"
+procedure __wide."eval&save$system@IntNumber$system@CharArray$@system@var#1&IntNumber[4]"
 
   pusha
   bloadsi 4
@@ -4055,5 +4055,66 @@ procedure __dptr."read&$system@ByteArray$system@IntNumber[3]"
   callextr api : subcopy  
   
   quitn 3
+
+end
+
+procedure __signature.dispatch[1]
+
+  bloadsi 1
+  ifb labDefault
+
+  setsubj 0
+  nload
+  or
+  aloadsi 1
+  ecopyd
+  ajumpvi 0
+  
+labDefault:
+  bsredirect  
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+  
+end
+
+procedure __signature.load&subject$&literal$[2]
+
+  aloadsi 2
+  pusha
+  callextr extern : LoadSubject
+  pop
+  ifn labErr 0
+  bloadsi 1
+  nsave
+  acopyb
+
+  quitn 2
+ 
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
+
+  quitn 2
+
+end
+
+procedure __signature.load&subject$&mssg$[2]
+
+  bloadsi 1
+  aloadsi 2
+  nload
+  ecopyd
+  dcopysubj
+  nsave
+  acopyb
+  quitn 2
 
 end
