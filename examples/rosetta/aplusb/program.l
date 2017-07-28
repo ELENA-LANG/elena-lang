@@ -14,12 +14,18 @@ Given 2 integer numbers, A and B. One needs to find their sum.
     The required output is one integer: the sum of A and B. 
 */
 
+import system'routines.
 import extensions.
 
 program =
 [
+    console writeLine(console readLine;split;select(%"convertorOp.toInt[0]");summarize).
+].
+
+program_alt =
+[
     var A := Integer new.
     var B := Integer new.
     
-    console readLine:A:B; writeLine:(A + B).
+    console readLine(A,B); writeLine(A + B).
 ].

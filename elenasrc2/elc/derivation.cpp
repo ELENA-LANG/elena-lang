@@ -1055,6 +1055,16 @@ void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, De
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
+         case lxMethodParameter:
+            // COMPILER MAGIC : advanced closure syntax
+            writer.newBookmark();
+            generateExpressionTree(writer, current, scope, 0);
+            if (current.nextNode().compare(lxCode, lxReturning)) {
+               current = current.nextNode();
+               generateObjectTree(writer, current, scope);
+            }
+            writer.removeBookmark();
+            break;
          case lxObject:
          case lxMessageParameter:
             generateExpressionTree(writer, current, scope, EXPRESSION_MESSAGE_MODE);
@@ -1190,9 +1200,14 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
          writer.insert(lxExpression);
          writer.closeNode();
          break;
+      case lxReturning:
+         writer.newNode(lxCode);
       case lxCode:
          generateCodeTree(writer, current, scope);
-         if (scope.type == DerivationScope::ttCodeTemplate) {
+         if (current == lxReturning) {
+            writer.closeNode();
+         }
+         else if (scope.type == DerivationScope::ttCodeTemplate) {
             if (scope.parameters.Count() == 2) {
                if (scope.codeNode == lxNone) {
                   writer.insert(lxTemplateParam);

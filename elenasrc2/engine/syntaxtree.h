@@ -807,6 +807,11 @@ public:
          return findChild(type1, type2) != lxNone;
       }
 
+      bool compare(LexicalType type1, LexicalType type2)
+      {
+         return (this->type = type1) || (this->type == type2);
+      }
+
       Node()
       {
          type = lxNone;

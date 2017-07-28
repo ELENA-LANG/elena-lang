@@ -112,22 +112,22 @@ wide extension wideListOp
     ]
 }
 
-//// --- enumerableOp ---
-//
-//extension enumerableOp
-//{
-//    run each:aFunction
-//      = aFunction run enumerator:(self enumerator).
-//      
+// --- enumerableOp ---
+
+extension enumerableOp
+{
+    run each:aFunction
+      = aFunction run enumerator:(self enumerator).
+      
 //    run eachPair:aFunction
 //      = aFunction run:self enumerator:(self enumerator).
 //
 //    run:aParam eachPair:aFunction
 //      = aFunction run:aParam enumerator:(self enumerator).
-//
-//    seek each:aFunction
-//      = aFunction retrieve enumerator:(self enumerator).
-//
+
+    seek each:aFunction
+      = aFunction retrieve enumerator:(self enumerator).
+
 //    seek:param eachPair:function
 //      = function retrieve:param enumerator:(self enumerator).
 //
@@ -193,8 +193,8 @@ wide extension wideListOp
 //        
 //        ^ counter
 //    ]
-//}
-//
+}
+
 //// --- indexableOp ---
 //
 //extension indexableOp

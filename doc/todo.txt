@@ -70,6 +70,7 @@ In development:
                  * extension resend - literal extension literalListOp { array split <= split char:$32. /*...*/ } - self should points to 
                    the incoming message
                  * multi constructor - raise an error if not found
+                 * multi method extension should be resolved on run-time
 
               xdev - refactoring
                  * review cellular library
