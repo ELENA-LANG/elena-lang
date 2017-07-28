@@ -809,7 +809,7 @@ public:
 
       bool compare(LexicalType type1, LexicalType type2)
       {
-         return (this->type = type1) || (this->type == type2);
+         return (this->type == type1) || (this->type == type2);
       }
 
       Node()

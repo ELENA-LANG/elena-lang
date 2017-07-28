@@ -3,6 +3,8 @@ In development:
 ------                              
 
               xdev - multimethod
+                 * simplify nfunc expression : set every(&int:n)( false ) - take into consideration the known target?.
+
                  * test list<type>
                  * uncomment get&hash_code
                  * option not to generate multimethod

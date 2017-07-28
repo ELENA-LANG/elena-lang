@@ -1051,6 +1051,37 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
    }
 }
 
+void DerivationReader :: generateClosureTree(SyntaxWriter& writer, SNode& current, DerivationScope& scope)
+{
+   // COMPILER MAGIC : advanced closure syntax
+   writer.newBookmark();
+
+   do {
+      bool closureMode = false;
+      if (current == lxMessage) {
+         closureMode = true;
+
+         writer.newNode(lxClosureMessage);
+         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+         writer.closeNode();
+
+         current = current.nextNode();
+      }
+
+      if (closureMode) {
+         generateObjectTree(writer, current, scope);
+      }
+      else generateExpressionTree(writer, current, scope, 0);
+
+      current = current.nextNode();
+   } while (current.compare(lxMessage, lxMethodParameter));
+
+   if (current.compare(lxCode, lxReturning)) {
+      generateObjectTree(writer, current, scope);
+   }
+   writer.removeBookmark();
+}
+
 void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
    SNode current = node.firstChild();
@@ -1058,13 +1089,7 @@ void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, De
       switch (current.type) {
          case lxMethodParameter:
             // COMPILER MAGIC : advanced closure syntax
-            writer.newBookmark();
-            generateExpressionTree(writer, current, scope, 0);
-            if (current.nextNode().compare(lxCode, lxReturning)) {
-               current = current.nextNode();
-               generateObjectTree(writer, current, scope);
-            }
-            writer.removeBookmark();
+            generateClosureTree(writer, current, scope);
             break;
          case lxObject:
          case lxMessageParameter:
@@ -1097,12 +1122,18 @@ void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, De
             writer.closeNode();
             break;
          case lxMessage:
-            writer.newNode(lxMessage);
-            if (!current.existChild(lxAttributeValue)) {
-               scope.copySubject(writer, current.firstChild(lxTerminalMask));
+            if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
+               // COMPILER MAGIC : advanced closure syntax
+               generateClosureTree(writer, current, scope);
             }
-            else generateMessageTemplate(writer, current, scope, scope.reference == INVALID_REF);
-            writer.closeNode();
+            else {
+               writer.newNode(lxMessage);
+               if (!current.existChild(lxAttributeValue)) {
+                  scope.copySubject(writer, current.firstChild(lxTerminalMask));
+               }
+               else generateMessageTemplate(writer, current, scope, scope.reference == INVALID_REF);
+               writer.closeNode();
+            }
             break;
          case lxIdentifier:
          case lxPrivate:
