@@ -18,9 +18,71 @@ field template rprop :: type, prop_name
     type prop_name = field.
 }
 
-// --- outprop ---
+// --- vprop ---
 
-method template outprop :: type,prop_name
+method template vprop :: prop_type,prop_name
+{
+    method get_method.
+    method set_method.
+    
+    stacksafe embeddable prop_type prop_name
+    [
+        prop_type val := 0.        
+        $self get_method var<prop_type>:val.
+
+        ^ val.
+    ]
+    
+    stacksafe embeddable set prop_name prop_type:val
+    [
+        $self set_method prop_type:val.
+    ]
+}
+
+// --- vvprop ---
+
+method template vvprop :: prop_type,prop_name
+{
+    method get_method.
+    method set_method.
+    
+    stacksafe embeddable prop_type prop_name
+    [
+        prop_type val := 0.        
+        $self get_method var<prop_type>:val.
+
+        ^ val.
+    ]
+    
+    stacksafe embeddable set prop_name prop_type:val
+    [
+        $self set_method prop_type:val.
+    ]
+    
+    stacksafe embeddable append prop_name prop_type:val
+    [
+        prop_type newVal := 0.        
+        $self get_method var<prop_type>:newVal.
+        
+        newVal := newVal + val.
+        
+        $self set_method prop_type:newVal.
+    ]
+    
+    stacksafe embeddable reduce prop_name prop_type:val
+    [
+        prop_type newVal := 0.        
+        $self get_method var<prop_type>:newVal.
+        
+        newVal := newVal - val.
+        
+        $self set_method prop_type:newVal.
+    ]    
+}
+
+// --- rvprop ---
+
+method template rvprop :: type,prop_name
 {
     method get_method.
     

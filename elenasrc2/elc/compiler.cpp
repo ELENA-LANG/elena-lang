@@ -3973,6 +3973,7 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, bool bytearray, O
 ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
 {
    IdentifierString signature;
+   IdentifierString messageStr;
 
    ref_t sign_id = 0;
 
@@ -3989,40 +3990,34 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
 
       arg = arg.nextNode();
    }
-   //bool first = true;
-   //while (arg == lxMessage || arg == lxClosureMessage) {
-   //   SNode subject = arg.findChild(lxIdentifier, lxPrivate);
+   bool first = true;
+   while (arg == lxMessage || arg == lxClosureMessage) {
+      ref_t class_ref = declareArgumentSubject(arg, *scope.moduleScope, first, messageStr, signature);
 
-   //   if (!first) {
-   //      signature.append('&');
-   //   }
-   //   else first = false;
+      // declare method parameter
+      arg = arg.nextNode();
 
-   //   ref_t subj_ref = scope.mapSubject(subject, signature);
+      if (arg == lxMethodParameter) {
+         ident_t name = arg.findChild(lxIdentifier, lxPrivate).identifier();
 
-   //   // declare method parameter
-   //   arg = arg.nextNode();
+         // !! check duplicates
+         if (scope.parameters.exist(name))
+            scope.raiseError(errDuplicatedLocal, arg);
 
-   //   if (arg == lxMethodParameter) {
-   //      ident_t name = arg.findChild(lxIdentifier, lxPrivate).identifier();
+         int index = 1 + scope.parameters.Count();
+         int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
+            class_ref, 0, true) : 0;
 
-   //      // !! check duplicates
-   //      if (scope.parameters.exist(name))
-   //         scope.raiseError(errDuplicatedLocal, arg);
+         scope.parameters.add(name, Parameter(index, class_ref, size));
 
-   //      int index = 1 + scope.parameters.Count();
-   //      ref_t paramRef = scope.moduleScope->subjectHints.get(subj_ref);
-   //      int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
-   //         paramRef, 0, true) : 0;
+         arg = arg.nextNode();
+      }
+   }
 
-   //      scope.parameters.add(name, Parameter(index, subj_ref, paramRef, size));
+   messageStr.append(signature);
 
-   //      arg = arg.nextNode();
-   //   }
-   //}
-
-   if (!emptystr(signature))
-      sign_id = scope.moduleScope->module->mapSubject(signature, false);
+   if (!emptystr(messageStr))
+      sign_id = scope.moduleScope->module->mapSubject(messageStr, false);
 
    return encodeMessage(sign_id, EVAL_MESSAGE_ID, scope.parameters.Count());
 }
@@ -4034,6 +4029,49 @@ inline SNode findTerminal(SNode node)
       ident = node;
 
    return ident;
+}
+
+ref_t Compiler :: declareArgumentSubject(SNode arg, ModuleScope& scope, bool& first, IdentifierString& messageStr, IdentifierString& signature)
+{
+   SNode subject = arg.findChild(lxIdentifier, lxPrivate, lxReference);
+   ref_t class_ref = 0;
+
+   if (arg.compare(lxMessage, lxClosureMessage) && subject != lxReference) {
+      if (arg == lxMessage) {
+         if (!first) {
+            messageStr.append('&');
+         }
+      }
+
+      class_ref = scope.mapSubject(subject, messageStr);
+      if (class_ref) {
+         if (class_ref == V_ARGARRAY) {
+            if (!emptystr(signature))
+               scope.raiseError(errNotApplicable, arg);
+         }
+         else {
+            signature.append('$');
+            signature.append(scope.module->resolveReference(class_ref));
+         }
+
+         if (!first)
+            messageStr.truncate(messageStr.Length() - 1);
+      }
+      else first = false;
+   }
+   else {
+      if (arg == lxParamRefAttr) {
+         class_ref = scope.mapReference(arg.identifier());
+      }
+      else class_ref = scope.mapReference(subject.identifier());
+      if (!class_ref)
+         scope.raiseError(errInvalidSubject, arg);
+
+      signature.append('$');
+      signature.append(scope.module->resolveReference(class_ref));
+   }
+
+   return class_ref;
 }
 
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
@@ -4102,43 +4140,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    // if method has named argument list
    while (arg == lxMessage || arg == lxParamRefAttr) {
-      SNode subject = arg.findChild(lxIdentifier, lxPrivate, lxReference);
-      ref_t class_ref = 0;
-
-      if (arg == lxMessage && subject != lxReference) {
-         if (arg == lxMessage) {
-            if (!first) {
-               messageStr.append('&');
-            }
-         }
-
-         class_ref = scope.mapSubject(subject, messageStr);
-         if (class_ref) {
-            if (class_ref == V_ARGARRAY) {
-               if (!emptystr(signature))
-                  scope.raiseError(errNotApplicable, arg);
-            }
-            else {
-               signature.append('$');
-               signature.append(scope.moduleScope->module->resolveReference(class_ref));
-            }
-
-            if(!first)
-               messageStr.truncate(messageStr.Length() - 1);
-         }
-         else first = false;
-      }
-      else {
-         if (arg == lxParamRefAttr) {
-            class_ref = scope.moduleScope->mapReference(arg.identifier());
-         }
-         else class_ref = scope.moduleScope->mapReference(subject.identifier());
-         if (!class_ref)
-            scope.raiseError(errInvalidSubject, arg);
-
-         signature.append('$');
-         signature.append(scope.moduleScope->module->resolveReference(class_ref));
-      }
+      ref_t class_ref = declareArgumentSubject(arg, *scope.moduleScope, first, messageStr, signature);
 
       arg = arg.nextNode();
 

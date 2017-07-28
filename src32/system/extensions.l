@@ -241,15 +241,15 @@ short extension shortOp
 
 int extension intOp
 {
-    int outprop absolute :: absolute.
+    int rvprop absolute :: absolute.
     
     int fnprop  mod      :: mod.
     
     int fnprop  power    :: power.
     
-    int outprop sqr      :: sqr.
+    int rvprop sqr      :: sqr.
     
-    int outprop sqrt     :: sqrt.
+    int rvprop sqrt     :: sqrt.
     
     stacksafe absolute vint:retVal
     [

@@ -35,8 +35,8 @@ limited class Indexer :: dispatchable<indexer>
     /// Reads the current index into an output parameter
     stacksafe readIndexTo vint:retVal []
 
-    int outprop index :: readIndexTo.
-    
+    int vvprop index :: readIndexTo, writeIndex.
+
     /// Sets the index by specified value
     ///
     /// Should be overidden(or set&index)
@@ -44,36 +44,6 @@ limited class Indexer :: dispatchable<indexer>
     [ 
         $self set index:anIndex.
     ] 
-    
-    /// Sets the index by specified value
-    ///
-    /// Should be overidden (or writeIndex&int)
-    set index:anIndex 
-        <= writeIndex int:anIndex.
-//    
-//    /// Increaments the index by specified value
-//    indexer append index:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndexTo vint:anIndex.
-//        
-//        anIndex := anIndex + anOffset int.
-//        
-//        $self writeIndex int:anIndex.
-//        
-//        ^ $self
-//    ]
-//
-//    /// Decreaments the index by specified value
-//    reduce index:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndexTo vint:anIndex.
-//        
-//        anIndex := anIndex - anOffset int.
-//        
-//        $self writeIndex int:anIndex.
-//    ]
 
     /// Reads the length to the output parameter    
     stacksafe readLengthTo vint:retVal 
@@ -81,7 +51,7 @@ limited class Indexer :: dispatchable<indexer>
         retVal int := 0
     ]
     
-    int outprop length :: readLengthTo.
+    int rvprop length :: readLengthTo.
 }
 
 //// --- MatrixIndexer ---
@@ -566,71 +536,71 @@ limited class BaseFunction1 :: dispatchable<func1>
 //        ^ $nil
 //    ]
 //}
-//
-//// --- base lazy expression ---
-//
-//limited class BaseLazyExpression
-//{
-//    eval []
-//    
-//    dispatch => system'core_routines'__lazyexpression.
-//}
-//
-//// --- IndexFunction ---
-//
-///// A base index function
-//limited class IndexFunction1 :: dispatchable(nfunc)
-//{
-//    /// Executes the function
-//    stacksafe action eval int:n []
-//
-//    /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
-//    sealed stacksafe rewind int:aStart int:n int:dx
-//    [
-//        int i := aStart.
-//        
-//        while (i >= n)
-//        [
-//            $self eval int:i.
-//            
-//            i := i - dx
-//        ].
-//        
-//        ^ $nil
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting value, ending value, step)
-//    sealed stacksafe run int:aStart int:n int:dx
-//    [
-//        int i := aStart.
-//        
-//        while (i <= n)
-//        [
-//            $self eval int:i.
-//            
-//            i := i + dx
-//        ].
-//        
-//        ^ $nil
-//    ]
-//
-//    /// Executes the function for every value in the specified range (starting value, ending value, step) until it returns true    
-//    sealed stacksafe retrieve int:aStart int:n int:dx
-//    [
-//        int i := aStart.
-//        
-//        while(i <= n)
-//        [
-//            if ($self eval int:i)
-//                [ ^ IntNumber new int:i ].
-//            
-//            i := i + dx
-//        ].
-//        
-//        ^ $nil
-//    ]
-//}
-//
+
+// --- base lazy expression ---
+
+limited class BaseLazyExpression
+{
+    eval []
+    
+    dispatch => system'core_routines'__lazyexpression.
+}
+
+// --- IndexFunction ---
+
+/// A base index function
+limited class IndexFunction1 :: dispatchable<nfunc>
+{
+    /// Executes the function
+    stacksafe action eval int:n []
+
+    /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
+    sealed stacksafe rewind int:aStart int:n int:dx
+    [
+        int i := aStart.
+        
+        while (i >= n)
+        [
+            $self eval int:i.
+            
+            i := i - dx
+        ].
+        
+        ^ $nil
+    ]          
+    
+    /// Executes the function for every value in the specified range (starting value, ending value, step)
+    sealed stacksafe run int:aStart int:n int:dx
+    [
+        int i := aStart.
+        
+        while (i <= n)
+        [
+            $self eval int:i.
+            
+            i := i + dx
+        ].
+        
+        ^ $nil
+    ]
+
+    /// Executes the function for every value in the specified range (starting value, ending value, step) until it returns true    
+    sealed stacksafe retrieve int:aStart int:n int:dx
+    [
+        int i := aStart.
+        
+        while(i <= n)
+        [
+            if ($self eval int:i)
+                [ ^ IntNumber new int:i ].
+            
+            i := i + dx
+        ].
+        
+        ^ $nil
+    ]
+}
+
 ///// A base two variable index function
 //limited class IndexFunction2 :: dispatchable(nnfunc)
 //{

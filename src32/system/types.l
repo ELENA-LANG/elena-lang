@@ -42,10 +42,10 @@ __ifoperator    = #4097.
 __ifnotoperator = #4098.
 
 
-////#template(-8207)         preloaded {}
-////#template(-4099) w1 {}
-////#template(-4100) w2 {}
-////#template(-4101) w3 {}
+//#template(-8207)         preloaded {}
+//#template(-4099) w1 {}
+//#template(-4100) w2 {}
+//#template(-4101) w3 {}
 //#8206           mixin.
 //#8209           __tape_mixin.
 //
@@ -107,6 +107,7 @@ type func       = system'BaseFunction.
 ///
 /// An instance of system'BaseFunction1
 type func1      = system'BaseFunction1.
+type each       = system'BaseFunction1.
 
 //type func2      :: system'BaseFunction2.
 //type func3      :: system'BaseFunction3.
@@ -118,8 +119,9 @@ type func1      = system'BaseFunction1.
 //type func9      :: system'BaseFunction9.
 //type func10     :: system'BaseFunction10.
 //type func11     :: system'BaseFunction11.
-//
-//type nfunc      :: system'IndexFunction1.
+
+type nfunc      = system'IndexFunction1.
+type every      = system'IndexFunction1.
 //type nnfunc     :: system'IndexFunction2.
 //type n3func     :: system'IndexFunction3.
 

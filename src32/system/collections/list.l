@@ -557,9 +557,9 @@ sealed class ArrayList //:: dispatchable(enumerable)
         theArray := anArray clone.
     ]
     
-    int outprop length :: readLengthTo.
+    int rvprop length :: readLengthTo.
     
-    int outprop capacity :: readCapacityTo.
+    int rvprop capacity :: readCapacityTo.
     
     /// Returns the object at the specified position
     stacksafe getAt int:anIndex

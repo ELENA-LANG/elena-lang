@@ -195,10 +195,10 @@ extension enumerableOp
 //    ]
 }
 
-//// --- indexableOp ---
-//
-//extension indexableOp
-//{
+// --- indexableOp ---
+
+extension indexableOp
+{
 //    exchange : anIndex1 : anIndex2
 //        = self~indexableOp exchange int:anIndex1 int:anIndex2.
 //        
@@ -261,27 +261,24 @@ extension enumerableOp
 ////        
 ////        ^ aCopy.
 ////    ]
-//    
-//    set every:anIndexFunc
-//        = self~indexableOp set nfunc:(anIndexFunc nfunc).
-//        
-//    set nfunc:anIndexFunc
-//    [
-//        indexer aIndexer := self indexer.
-//
-//        while (aIndexer available)
-//        [
-//            int anIndex := 0.
-//            aIndexer readIndexTo vint:anIndex.
-//            
-//            aIndexer set:(anIndexFunc eval int:anIndex).
-//            
-//            aIndexer append index:1
-//        ].
-//        
-//        ^ self
-//    ]    
-//
+        
+    set every:anIndexFunc
+    [
+        indexer aIndexer := self indexer.
+
+        while (aIndexer available)
+        [
+            int anIndex := 0.
+            aIndexer readIndexTo vint:anIndex.
+            
+            aIndexer set:(anIndexFunc eval int:anIndex).
+            
+            aIndexer append index:1
+        ].
+        
+        ^ self
+    ]    
+
 //    sort : aCompareFunc
 //        = self~indexableOp sort func2:(aCompareFunc func2).
 //    
@@ -378,8 +375,8 @@ extension enumerableOp
 //        
 //        ^ self
 //    ]    
-//}
-//
+}
+
 //// --- stringListOp ---
 //
 //class stringListOpDispatcher =

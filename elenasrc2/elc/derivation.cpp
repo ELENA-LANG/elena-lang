@@ -507,13 +507,14 @@ void DerivationReader::DerivationScope :: loadParameters(SNode node)
 
 void DerivationReader::DerivationScope :: loadFields(SNode node)
 {
-   SNode current = node.firstChild();
+   SNode current = node;
    // load template parameters
    while (current != lxNone) {
-      if (current == lxIdentifier) {
-         ident_t name = current.findChild(lxTerminal).identifier();
+      if (current == lxBaseParent) {
+         SNode ident = current.findChild(lxIdentifier);
+         ident_t name = ident.findChild(lxTerminal).identifier();
 
-         fields.add(name, parameters.Count() + 1);
+         fields.add(name, fields.Count() + 1);
       }
 
       current = current.nextNode();
@@ -1143,17 +1144,17 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
          }
          writer.newBookmark();
       case lxMessage:
-//         if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
-//            writer.newNode(lxClosureMessage);
-//            copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
-//            writer.closeNode();
-//         }
-//         else {
+         if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
+            writer.newNode(lxClosureMessage);
+            copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+            writer.closeNode();
+         }
+         else {
             generateMessageTree(writer, current, scope/*, false*/);
 
             writer.insert(lxExpression);
             writer.closeNode();
-//         }
+         }
          if (current == lxCatchOperation) {
             writer.removeBookmark();
             writer.insert(lxTrying);

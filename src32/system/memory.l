@@ -35,7 +35,7 @@ dynamic template array :: template_subj
         retVal int := len
     ]
     
-    int outprop length :: readLengthTo.
+    int rvprop length :: readLengthTo.
 
     stacksafe template_subj getAt int:n
     [
@@ -537,7 +537,7 @@ sealed class BitArray :: dispatchable<bitarray>
         retVal int := theLength.
     ]
     
-    int outprop length :: readLengthTo.
+    int rvprop length :: readLengthTo.
     
 //    getAt:index
 //        = $self getAt int:index.
@@ -690,21 +690,21 @@ sealed class IntMatrix :: dispatchable<intmatrix>
         retVal int := theRows
     ]
     
-    int outprop length :: readLengthTo.
+    int rvprop length :: readLengthTo.
 
     stacksafe readColumnsTo vint:retVal
     [
         retVal int := theColumns
     ]
     
-    int outprop columns :: readColumnsTo.
+    int rvprop columns :: readColumnsTo.
 
     stacksafe readRowsTo vint:retVal
     [
         retVal int := theRows
     ]
     
-    int outprop rows :: readRowsTo.
+    int rvprop rows :: readRowsTo.
 
     /// Writes an integer value at the specified position
     stacksafe write int:i int:j int:aValue
@@ -855,21 +855,21 @@ sealed class RealMatrix :: dispatchable<realmatrix>
         retVal int := theRows.
     ]
     
-    int outprop length :: readLengthTo.
+    int rvprop length :: readLengthTo.
 
     stacksafe readColumnsTo vint:retVal
     [
         retVal int := theColumns.
     ]
     
-    int outprop columns :: readColumnsTo.
+    int rvprop columns :: readColumnsTo.
 
     stacksafe readRowsTo vint:retVal
     [
         retVal int := theRows
     ]
     
-    int outprop rows :: readRowsTo.
+    int rvprop rows :: readRowsTo.
 
     /// Writes an integer value at the specified position
     stacksafe write int:i int:j real:aValue
@@ -1180,7 +1180,7 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
     stacksafe readLengthTo vint:aLength
         => system'core_routines'__literal.
         
-    int outprop length :: readLengthTo.
+    int rvprop length :: readLengthTo.
 
     /// Saves the literal into a UTF-32 character array
     stacksafe save int:anIndex chararray:anArray vint:aRetVal
@@ -1202,7 +1202,7 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
     stacksafe readHashCodeTo vint:aCode 
         => system'core_routines'__literal.
         
-    int outprop hash_code :: readHashCodeTo.
+    int rvprop hash_code :: readHashCodeTo.
 }
 
 // --- emptyWideLiteralValue ---
@@ -1383,7 +1383,7 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
     stacksafe readLengthTo vint:aLength
         => system'core_routines'__wide.
         
-    int outprop length :: readLengthTo.
+    int rvprop length :: readLengthTo.
 
     /// Saves the literal into a UTF-32 character array
     stacksafe save int:anIndex chararray:anArray vint:aLength
@@ -1405,7 +1405,7 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
     stacksafe readHashCodeTo vint:aCode 
         => system'core_routines'__wide.
         
-    int outprop hash_code :: readHashCodeTo.
+    int rvprop hash_code :: readHashCodeTo.
 }
 
 // --- Variant ---
@@ -1621,7 +1621,7 @@ args extension paramsOp
     stacksafe readLengthTo vint:aLength
         => system'core_routines'__args.            
         
-    int outprop length :: readLengthTo.
+    int rvprop length :: readLengthTo.
 }
 
 // === Convertors ===
