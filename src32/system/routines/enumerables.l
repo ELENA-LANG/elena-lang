@@ -262,7 +262,7 @@ extension indexableOp
 ////        ^ aCopy.
 ////    ]
         
-    set every:anIndexFunc
+    set every(IndexFunction1 anIndexFunc)
     [
         indexer aIndexer := self indexer.
 
@@ -278,6 +278,15 @@ extension indexableOp
         
         ^ self
     ]    
+
+    set every(ExtensionMessage anExtMessage)
+        = self~indexableOp set every(&int:n)[ ^n~anExtMessage get ].
+
+    set every(BaseFunction1 aFunction)
+        = self~indexableOp set every(&int:n)[ ^aFunction eval:n ].
+
+    multi set every : anAction
+        = self~indexableOp set every(&int:n)[ ^anAction eval:n ].
 
 //    sort : aCompareFunc
 //        = self~indexableOp sort func2:(aCompareFunc func2).
