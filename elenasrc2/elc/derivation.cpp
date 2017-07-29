@@ -83,8 +83,8 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsArrayOperation:
          _writer.newNode(lxOperator, REFER_MESSAGE_ID);
          break;
-      case nTemplateOperator:
-         _writer.newNode(lxOperator, -2);
+      case nXInlineClosure:
+         _writer.newNode(lxInlineClosure);
          break;
       case nsMessageOperation:
          _writer.newNode(lxMessage);
@@ -1051,8 +1051,10 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
    }
 }
 
-void DerivationReader :: generateClosureTree(SyntaxWriter& writer, SNode& current, DerivationScope& scope)
+void DerivationReader :: generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
+   SNode current = node.firstChild();
+
    // COMPILER MAGIC : advanced closure syntax
    writer.newBookmark();
 
@@ -1087,10 +1089,6 @@ void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, De
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-         case lxMethodParameter:
-            // COMPILER MAGIC : advanced closure syntax
-            generateClosureTree(writer, current, scope);
-            break;
          case lxObject:
          case lxMessageParameter:
             generateExpressionTree(writer, current, scope, EXPRESSION_MESSAGE_MODE);
@@ -1121,19 +1119,17 @@ void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, De
             writer.insert(lxExpression);
             writer.closeNode();
             break;
+         case lxInlineClosure:
+            // COMPILER MAGIC : advanced closure syntax
+            generateClosureTree(writer, current, scope);
+            break;
          case lxMessage:
-            if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
-               // COMPILER MAGIC : advanced closure syntax
-               generateClosureTree(writer, current, scope);
+            writer.newNode(lxMessage);
+            if (!current.existChild(lxAttributeValue)) {
+               scope.copySubject(writer, current.firstChild(lxTerminalMask));
             }
-            else {
-               writer.newNode(lxMessage);
-               if (!current.existChild(lxAttributeValue)) {
-                  scope.copySubject(writer, current.firstChild(lxTerminalMask));
-               }
-               else generateMessageTemplate(writer, current, scope, scope.reference == INVALID_REF);
-               writer.closeNode();
-            }
+            else generateMessageTemplate(writer, current, scope, scope.reference == INVALID_REF);
+            writer.closeNode();
             break;
          case lxIdentifier:
          case lxPrivate:

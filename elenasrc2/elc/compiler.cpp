@@ -178,6 +178,7 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    charReference = mapReference(project->resolveForward(CHAR_FORWARD));
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
    messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
+   extMessageReference = mapReference(project->resolveForward(EXT_MESSAGE_FORWARD));
    verbReference = mapReference(project->resolveForward(VERB_FORWARD));
    arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
    boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
@@ -785,7 +786,7 @@ void Compiler::ModuleScope :: loadExtensions(_Module* extModule, bool& duplicate
 
 bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t typeRef, ref_t role)
 {
-   if (typeRef == INVALID_REF)
+   if (typeRef == INVALID_REF || typeRef ==superReference)
       typeRef = 0;
 
    ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
@@ -1429,6 +1430,8 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
       case okSubject:
       case okSignatureConstant:
          return V_SIGNATURE;
+      case okExtMessageConstant:
+         return scope.extMessageReference;
       case okSuper:
          return object.param;
 //      case okTemplateLocal:

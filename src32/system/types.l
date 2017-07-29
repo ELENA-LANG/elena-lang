@@ -107,8 +107,6 @@ type func       = system'BaseFunction.
 ///
 /// An instance of system'BaseFunction1
 type func1      = system'BaseFunction1.
-type each       = system'BaseFunction1.
-
 //type func2      :: system'BaseFunction2.
 //type func3      :: system'BaseFunction3.
 //type func4      :: system'BaseFunction4.
@@ -121,7 +119,6 @@ type each       = system'BaseFunction1.
 //type func11     :: system'BaseFunction11.
 
 type nfunc      = system'IndexFunction1.
-type every      = system'IndexFunction1.
 //type nnfunc     :: system'IndexFunction2.
 //type n3func     :: system'IndexFunction3.
 

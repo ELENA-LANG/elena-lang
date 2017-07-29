@@ -1721,9 +1721,16 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
                if (test(current.type, lxObjectMask)) {
                   // skip the message target
                   if (!first) {
-                     SNode opTarget = current.findChild(lxTarget);
-                     if (opTarget != lxNone) {
-                        ref_t sourRef = opTarget.argument;
+                     ref_t sourRef = 0;
+                     if (current == lxConstantSymbol) {
+                        sourRef = current.argument;
+                     }
+                     else {
+                        SNode opTarget = current.findChild(lxTarget);
+                        if (opTarget != lxNone)
+                           sourRef = opTarget.argument;
+                     }
+                     if (sourRef != 0) {
                         if (isPrimitiveRef(sourRef))
                            sourRef = resolvePrimitiveReference(scope, sourRef);
                         

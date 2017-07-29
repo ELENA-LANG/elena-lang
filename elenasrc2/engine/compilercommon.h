@@ -134,6 +134,7 @@ struct _CompilerScope
    ref_t realReference;
    ref_t signatureReference;
    ref_t messageReference;
+   ref_t extMessageReference;
    ref_t verbReference;
    ref_t boolReference;
    ref_t literalReference;
@@ -174,6 +175,7 @@ struct _CompilerScope
       signatureReference = verbReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
+      extMessageReference = 0;
    }
 };
 
