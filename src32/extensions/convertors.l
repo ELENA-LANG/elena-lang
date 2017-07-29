@@ -169,8 +169,9 @@ extension convertorOp
 //                array : anArray
 //                    = intmatrixExConvertor convert array:anArray.
 //            }.
-//    
-//    toLiteral
+    
+    toLiteral
+        = literalConvertor convert:self.
 //        = self cast:%eval to:
 //            {
 //                literal : aLiteral = aLiteral.

@@ -440,109 +440,109 @@ class Selector :: Enumerator
 //        theEnumerator2 reset.
 //    ]
 //}
-//
-//// --- RangeEnumerator ---
-//
-//class RangeEnumerator :: Enumerator
-//{
-//    object theVariable.
-//    object theStart.
-//    object theEnd.
-//    object theStep.
-//    
-//    bool   theForward.
-//    
-//    constructor new for:aVariable from:aStart to:anEnd by:aStep
-//    [
-//        theVariable := aVariable.
-//        theStart := aStart.
-//        theEnd := anEnd.
-//        theStep := aStep.
-//        
-//        theForward := (aStart < anEnd).
-//        
-//        $self reset.
-//    ]
-//
-//    constructor new from:aStart to:anEnd by:aStep
-//        <= new for:(Variable new) from:aStart to:anEnd by:aStep.
-//
-//    constructor new from:aStart to:anEnd
-//        <= new for:(Variable new) from:aStart to:anEnd by:1.
-//        
-//    reset 
-//    [
-//        theVariable set:theStart.
-//
-//        if(theForward)
-//            [ theVariable reduce:theStep ];
-//            [ theVariable append:theStep ]
-//    ]    
-//    
-//    get = theVariable get.
-//    
-//    next
-//    [
-//        if(theForward)
-//            [ theVariable append:theStep. ^ (theVariable <= theEnd) ].
-//        
-//        theVariable reduce:theStep. 
-//        
-//        ^ (theVariable >= theEnd)
-//    ]
-//}
-//
-//// --- IntervalEnumerator ---
-//
-//class IntervalEnumerator :: Enumerator
-//{
-//    object theVariable.
-//    object theStart.
-//    object theEnd.
-//    object theStep.
-//    
-//    bool   theForward.
-//    
-//    constructor new for:aVariable from:aStart till:anEnd by:aStep
-//    [
-//        theVariable := aVariable.
-//        theStart := aStart.
-//        theEnd := anEnd.
-//        theStep := aStep.
-//        
-//        theForward := (aStart < anEnd).
-//        
-//        $self reset.
-//    ]
-//
-//    constructor new from:aStart till:anEnd by:aStep
-//        <= new for:(Variable new) from:aStart till:anEnd by:aStep.
-//
-//    constructor new from:aStart till:anEnd
-//        <= new for:(Variable new) from:aStart till:anEnd by:1.
-//        
-//    reset 
-//    [
-//        theVariable set:theStart.
-//
-//        if(theForward)
-//            [ theVariable reduce:theStep ];
-//            [ theVariable append:theStep ]
-//    ]    
-//    
-//    get = theVariable get.
-//    
-//    next
-//    [
-//        if(theForward )
-//            [ theVariable append:theStep. ^ (theVariable < theEnd) ].
-//        
-//        theVariable reduce:theStep. 
-//        
-//        ^ (theVariable > theEnd)
-//    ]
-//}
-//
+
+// --- RangeEnumerator ---
+
+class RangeEnumerator :: Enumerator
+{
+    object theVariable.
+    object theStart.
+    object theEnd.
+    object theStep.
+    
+    bool   theForward.
+    
+    constructor new for:aVariable from:aStart to:anEnd by:aStep
+    [
+        theVariable := aVariable.
+        theStart := aStart.
+        theEnd := anEnd.
+        theStep := aStep.
+        
+        theForward := (aStart < anEnd).
+        
+        $self reset.
+    ]
+
+    constructor new from:aStart to:anEnd by:aStep
+        <= new for:(Variable new) from:aStart to:anEnd by:aStep.
+
+    constructor new from:aStart to:anEnd
+        <= new for:(Variable new) from:aStart to:anEnd by:1.
+        
+    reset 
+    [
+        theVariable set:theStart.
+
+        if(theForward)
+            [ theVariable reduce:theStep ];
+            [ theVariable append:theStep ]
+    ]    
+    
+    get = theVariable get.
+    
+    next
+    [
+        if(theForward)
+            [ theVariable append:theStep. ^ (theVariable <= theEnd) ].
+        
+        theVariable reduce:theStep. 
+        
+        ^ (theVariable >= theEnd)
+    ]
+}
+
+// --- IntervalEnumerator ---
+
+class IntervalEnumerator :: Enumerator
+{
+    object theVariable.
+    object theStart.
+    object theEnd.
+    object theStep.
+    
+    bool   theForward.
+    
+    constructor new for:aVariable from:aStart till:anEnd by:aStep
+    [
+        theVariable := aVariable.
+        theStart := aStart.
+        theEnd := anEnd.
+        theStep := aStep.
+        
+        theForward := (aStart < anEnd).
+        
+        $self reset.
+    ]
+
+    constructor new from:aStart till:anEnd by:aStep
+        <= new for:(Variable new) from:aStart till:anEnd by:aStep.
+
+    constructor new from:aStart till:anEnd
+        <= new for:(Variable new) from:aStart till:anEnd by:1.
+        
+    reset 
+    [
+        theVariable set:theStart.
+
+        if(theForward)
+            [ theVariable reduce:theStep ];
+            [ theVariable append:theStep ]
+    ]    
+    
+    get = theVariable value.
+    
+    next
+    [
+        if(theForward )
+            [ theVariable append:theStep. ^ (theVariable < theEnd) ].
+        
+        theVariable reduce:theStep. 
+        
+        ^ (theVariable > theEnd)
+    ]
+}
+
 //// --- GroupingEnumerator ---
 //
 //class GroupingEnumerator :: Enumerator

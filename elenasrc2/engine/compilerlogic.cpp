@@ -1737,7 +1737,7 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
                         if (isCompatible(scope, argRef, sourRef)) {
                            start = end + 1;
                            if (start < getlength(signature)) {
-                              signature.find(start, '$', getlength(signature));
+                              end = signature.find(start, '$', getlength(signature));
                               temp.copy(signature.c_str() + start, end - start);
                               argRef = scope.module->mapReference(temp);
                            }

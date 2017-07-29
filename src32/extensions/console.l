@@ -1,10 +1,10 @@
 import system'routines.
 //import system'text.
 
-//// --- outputOp ---
-//
-//extension outputOp
-//{
+// --- outputOp ---
+
+extension outputOp
+{
 //    /// obosolete
 //    generic writeLiteral args:list
 //    [
@@ -72,23 +72,23 @@ import system'routines.
 //        
 //        ^ self writeLine
 //    ]
-//
-//    generic printLine args:list
-//    [
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list@i.
-//            
-//            self write:(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self writeLine
-//    ]    
-//
+
+    generic printLine args:list
+    [
+        int len := list length.
+        int i := 0.
+        while (i < len)
+        [
+            object obj := list@i.
+            
+            self write:(obj~convertorOp toLiteral).
+            
+            i := i + 1
+        ].
+        
+        ^ self writeLine
+    ]    
+
 //    /// obsolete
 //    generic writeWideLine args:list
 //    [
@@ -267,8 +267,8 @@ import system'routines.
 //            
 //        ^ self
 //    ]
-//}
-//
+}
+
 //// --- formatterOp ---
 //
 //class $helper =

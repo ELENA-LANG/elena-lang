@@ -73,6 +73,7 @@ In development:
                    the incoming message
                  * multi constructor - raise an error if not found
                  * multi method extension should be resolved on run-time
+                 * reimplement package info
 
               xdev - refactoring
                  * review cellular library
