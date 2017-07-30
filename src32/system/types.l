@@ -26,6 +26,7 @@ nonstructural   = #8204.
 import          = #16395.
 extern_template = #16396.
 action          = #8205.
+mixin           = #8206.
 
 args            = #32. 
 
@@ -46,7 +47,6 @@ __ifnotoperator = #4098.
 //#template(-4099) w1 {}
 //#template(-4100) w2 {}
 //#template(-4101) w3 {}
-//#8206           mixin.
 //#8209           __tape_mixin.
 //
 //#22 #262144     __symbol.

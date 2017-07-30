@@ -2,8 +2,10 @@
 //      inline system library
 
 define elStructure          000000008h
+define elSubject            000002000h
 
 define EVAL_MESSAGE_ID      085000000h
+define GET_MESSAGE_ID       086000000h
 
 procedure __object.dispatch[1]
 
@@ -86,6 +88,73 @@ procedure __object.get&throw[1]
   aloadsi 0
   throw
   
+end
+
+procedure __object."eval&setField$system@IntNumber$system@Object[3]"
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  len
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+  aloadsi 3
+  set
+  bcopya
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __object."eval&getField$system@IntNumber[2]"
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  len
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+  get
+  quitn 2
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __object."eval&readLength$system@Object@system@var#1&IntNumber[2]"
+
+  ecopy 0
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labSkip 0
+  len
+  ecopyd 
+labSkip:
+  dcopye
+  bloadsi 2
+  nsave
+  quitn 2
+
 end
 
 procedure __verb.dispatch[1]
@@ -4254,5 +4323,58 @@ procedure __lazyexpression.dispatch[1]
   pope
   asavesi 1
   ajumpvi 0
+
+end
+
+procedure __struct.dispatch[1]
+
+  bsredirect
+
+  pushe
+  dcopysubj
+  pushd
+  bcopya
+  pushn 0
+
+labNext:
+  count
+  dloadsi 0
+  if labEnd
+  get
+  inc
+  dsavesi 0
+
+  flag
+  andn elSubject
+  ifn  labNext 0
+
+  nload
+  ecopyd
+  dloadsi 1
+  else labNext
+
+labCall:
+  dloadsi 0
+  get
+  popi 2
+  pope
+  setsubj 0
+  ifm labQuit GET_MESSAGE_ID
+  ajumpvi 0
+
+labQuit:
+  quitn 1
+  
+labEnd:
+  popi 2
+  pope
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
 
 end
