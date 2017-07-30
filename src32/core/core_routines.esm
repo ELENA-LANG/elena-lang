@@ -140,7 +140,7 @@ labErr:
   
 end
 
-procedure __object."eval&readLength$system@Object@system@var#1&IntNumber[2]"
+procedure __object."eval&readLength$system@Object$@system@var#1&IntNumber[2]"
 
   ecopy 0
   aloadsi 1
@@ -3218,7 +3218,7 @@ procedure __array."eval&copy$system@Array$system@IntNumber$system@IntNumber$syst
   
 end
 
-procedure __array.eval&reallocate&int$[2]
+procedure __array."eval&reallocate$system@IntNumber[2]"
 
   aloadsi 1
   flag

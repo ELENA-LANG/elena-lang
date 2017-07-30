@@ -147,24 +147,24 @@ class Dynamic
         theStruct~classROp setField int:(anIndex + 1) object:anObject.
     ]
     
-//    generic if
-//    [
-//        int anIndex := 0.
-//        int aLength := 0.
-//        
-//        theStruct readFieldCountTo vint:aLength.
-//        while (anIndex < aLength)
-//        [
-//            var aCurrent := theStruct~classROp getField int:anIndex.
-//            
-//            if($subject equal subject:(aCurrent subject))
-//                [ ^ true ].
-//                
-//            anIndex := anIndex + 2.                
-//        ].
-//        
-//        ^ false
-//    ]
+    containsField subject:subj
+    [
+        int anIndex := 0.
+        int aLength := 0.
+        
+        theStruct readFieldCountTo vint:aLength.
+        while (anIndex < aLength)
+        [
+            var aCurrent := theStruct~classROp getField int:anIndex.
+            
+            if(subj equal subject:(aCurrent subject))
+                [ ^ true ].
+                
+            anIndex := anIndex + 2.                
+        ].
+        
+        ^ false
+    ]
     
     dispatch => theStruct.
 }

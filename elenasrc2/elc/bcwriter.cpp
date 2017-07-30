@@ -5134,6 +5134,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
    bool withNewFrame = false;
    bool open = false;
    bool exit = false;
+   bool exitLabel = true;
    SyntaxTree::Node current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
@@ -5167,21 +5168,24 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
             }
             else {
                newFrame(tape, reserved, allocated, current.argument == -1);
-               tape.newLabel();     // declare exit point
+               if (!exitLabel)
+                  tape.newLabel();     // declare exit point
             }
             generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
             generateCodeBlock(tape, current);
             break;
          case lxDispatching:
             exit = true;
-            if (!open)
+            if (!open) {
+               exitLabel = false;
                declareIdleMethod(tape, node.argument, sourcePathRef);
-
+            }
             generateDispatching(tape, current);
             break;
          case lxMultiDispatching:
             if (!open) {
                declareIdleMethod(tape, node.argument, sourcePathRef);
+               exitLabel = false;
                open = true;
             }               
 

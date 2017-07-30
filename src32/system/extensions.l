@@ -77,9 +77,9 @@ extension objectOp
 
 //    eval with:action
 //        = action eval:self.
-//        
-//    stacksafe reallocate int:aNewLength
-//        => system'core_routines'__array.
+        
+    stacksafe reallocate int:aNewLength
+        => system'core_routines'__array.
         
 //    shift : n
 //    [
