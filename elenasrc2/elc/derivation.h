@@ -159,6 +159,8 @@ class DerivationReader : public _DerivationReader
    bool generateTemplate(SyntaxWriter& writer, DerivationScope& scope, bool declaringClass/*, bool embeddableMode*/);
 
    void generateScopeMembers(SNode node, DerivationScope& scope);   
+
+   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
    bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);

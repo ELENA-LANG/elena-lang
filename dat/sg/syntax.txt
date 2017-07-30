@@ -25,6 +25,9 @@ __define CATCH_MESSAGE          4143
 __define RESEND                 4145
 __define MESSAGE_REFERENCE	4147
 __define ROOT_EXPRESSION        4152
+__define SWITCHING		4155
+__define OPTION			4156
+__define LAST_OPTION		4157
 __define L6_OPERATION           4161
 __define SIZE_PARAM             4162
 __define TOKEN   		4172
@@ -173,6 +176,35 @@ RET_STATEMENT ->
 EXTENSION ->
 	~ OBJECT
 
+SWITCHING ->
+	OPTION OPTIONS
+
+OPTION ->
+	identifier OPTION_BODY
+	| literal OPTION_BODY
+	| reference OPTION_BODY
+	| integer OPTION_BODY
+	| hex OPTION_BODY
+	| real OPTION_BODY
+	| character OPTION_BODY
+	| long OPTION_BODY
+	| wide OPTION_BODY
+	| constant OPTION_BODY
+
+OPTIONS ->
+	; NEXT_OPTION
+	| eps
+
+NEXT_OPTION ->
+	OPTION OPTIONS
+	| LAST_OPTION
+
+LAST_OPTION ->
+	! CODE_BLOCK
+
+OPTION_BODY ->
+	CODE_BLOCK
+
 ASSIGNING ->
 	:= EXPRESSION
 
@@ -223,6 +255,7 @@ ROOT_OPERATIONS ->
 	| ROOT_L6_OPERATION
 	| L7_OPERATION
 	| ARRAY_OPERATION ARRAY_OPERATION_BODY
+	| => SWITCHING
 	| eps
 
 ROOT_CODE_BODY ->
@@ -280,6 +313,7 @@ ROOT_BODY ->
 	ASSIGNING
         | || CATCH_MESSAGE
         | \ ALT_MESSAGE
+	| => SWITCHING
 	| eps
 
 ARRAY_OPERATION_BODY ->

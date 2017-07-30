@@ -1768,86 +1768,86 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
    }   
 }
 
-//void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   SNode targetNode = node.firstChild(lxObjectMask);
-//
-//   writer.newBookmark();
-//
-//   bool immMode = true;
-//   int localOffs = 0;
-//   ObjectInfo loperand;
-//   if (targetNode == lxExpression) {
-//      immMode = false;
-//
-//      localOffs = scope.newLocal();
-//
-//      loperand = compileExpression(writer, targetNode, scope, 0);
-//
-//      writer.insertChild(0, lxLocal, localOffs);
-//      writer.insert(lxAssigning, 0);
-//      writer.closeNode();
-//   }
-//
-//   SNode current = node.findChild(lxOption, lxElse);
-//   while (current == lxOption) {
-//      writer.newNode(lxOption);
-//      writer.newNode(lxExpression);
-//
-//      writer.newBookmark();
-//
-//      writer.appendNode(lxBreakpoint, dsStep);
-//
-//      int operator_id = current.argument;
-//
-//      if (!immMode) {
-//         writer.newNode(lxLocal, localOffs);
-//         writer.appendNode(lxTarget, resolveObjectReference(scope, loperand));
-//         writer.closeNode();         
-//      }
-//      else loperand = compileExpression(writer, targetNode, scope, 0);
-//
-//      // find option value
-//      SNode valueNode = current.firstChild(lxObjectMask);
-//
-//      ObjectInfo roperand = compileExpression(writer, valueNode.firstChild(lxObjectMask), scope, 0);
-//
-//      ObjectInfo operationInfo = compileOperator(writer, node, scope, operator_id, 1, loperand, roperand, ObjectInfo());
-//
-//      ObjectInfo retVal;
-//      compileBranchingOperand(writer, valueNode, scope, HINT_SWITCH, IF_MESSAGE_ID, operationInfo, retVal);
-//
-//      writer.removeBookmark();
-//      writer.closeNode();
-//      writer.closeNode();
-//
-//      current = current.nextNode();
-//   }
-//
-//   if (current == lxElse) {
-//      CodeScope subScope(&scope);
-//      SNode thenCode = current.findSubNode(lxCode);
-//
-//      writer.newNode(lxElse);
-//
-//      SNode statement = thenCode.firstChild(lxObjectMask);
-//      if (statement.nextNode() != lxNone || statement == lxEOF) {
-//         compileCode(writer, thenCode, subScope);
-//      }
-//      // if it is inline action
-//      else compileRetExpression(writer, statement, scope, 0);
-//
-//      // preserve the allocated space
-//      scope.level = subScope.level;
-//
-//      writer.closeNode();
-//   }
-//
-//   writer.insert(lxSwitching);
-//   writer.closeNode();
-//
-//   writer.removeBookmark();
-//}
+void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   SNode targetNode = node.firstChild(lxObjectMask);
+
+   writer.newBookmark();
+
+   bool immMode = true;
+   int localOffs = 0;
+   ObjectInfo loperand;
+   if (targetNode == lxExpression) {
+      immMode = false;
+
+      localOffs = scope.newLocal();
+
+      loperand = compileExpression(writer, targetNode, scope, 0);
+
+      writer.insertChild(0, lxLocal, localOffs);
+      writer.insert(lxAssigning, 0);
+      writer.closeNode();
+   }
+
+   SNode current = node.findChild(lxOption, lxElse);
+   while (current == lxOption) {
+      writer.newNode(lxOption);
+      writer.newNode(lxExpression);
+
+      writer.newBookmark();
+
+      writer.appendNode(lxBreakpoint, dsStep);
+
+      int operator_id = current.argument;
+
+      if (!immMode) {
+         writer.newNode(lxLocal, localOffs);
+         writer.appendNode(lxTarget, resolveObjectReference(scope, loperand));
+         writer.closeNode();         
+      }
+      else loperand = compileExpression(writer, targetNode, scope, 0);
+
+      // find option value
+      SNode valueNode = current.firstChild(lxObjectMask);
+
+      ObjectInfo roperand = compileExpression(writer, valueNode.firstChild(lxObjectMask), scope, 0);
+
+      ObjectInfo operationInfo = compileOperator(writer, node, scope, operator_id, 1, loperand, roperand, ObjectInfo());
+
+      ObjectInfo retVal;
+      compileBranchingOperand(writer, valueNode, scope, HINT_SWITCH, IF_MESSAGE_ID, operationInfo, retVal);
+
+      writer.removeBookmark();
+      writer.closeNode();
+      writer.closeNode();
+
+      current = current.nextNode();
+   }
+
+   if (current == lxElse) {
+      CodeScope subScope(&scope);
+      SNode thenCode = current.findSubNode(lxCode);
+
+      writer.newNode(lxElse);
+
+      SNode statement = thenCode.firstChild(lxObjectMask);
+      if (statement.nextNode() != lxNone || statement == lxEOF) {
+         compileCode(writer, thenCode, subScope);
+      }
+      // if it is inline action
+      else compileRetExpression(writer, statement, scope, 0);
+
+      // preserve the allocated space
+      scope.level = subScope.level;
+
+      writer.closeNode();
+   }
+
+   writer.insert(lxSwitching);
+   writer.closeNode();
+
+   writer.removeBookmark();
+}
 
 void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -3653,11 +3653,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          case lxMessage:
             objectInfo = compileMessage(writer, node, scope, mode);
             break;
-         //         case lxSwitching:
-         //            compileSwitch(writer, current, scope);
-         //
-         //            objectInfo = ObjectInfo(okObject);
-         //            break;
+         case lxSwitching:
+            compileSwitch(writer, current, scope);
+         
+            objectInfo = ObjectInfo(okObject);
+            break;
          case lxExtension:
             objectInfo = compileExtension(writer, node, scope);
             break;
@@ -6395,84 +6395,11 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
 //   compileSyntaxTree(syntaxTree, scope);
 //}
 //
-//
-//void Compiler :: generateSwitchTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type) {
-//         case lxSwitchOption:
-//         case lxBiggerSwitchOption:
-//         case lxLessSwitchOption:
-//            if (current.type == lxBiggerSwitchOption) {
-//               writer.newNode(lxOption, GREATER_MESSAGE_ID);
-//            }
-//            else if (current.type == lxLessSwitchOption) {
-//               writer.newNode(lxOption, LESS_MESSAGE_ID);
-//            }
-//            else writer.newNode(lxOption, EQUAL_MESSAGE_ID);
-//            generateExpressionTree(writer, current, scope, false);
-//            writer.closeNode();
-//            break;
-//         case lxLastSwitchOption:
-//            writer.newNode(lxElse);
-//            generateExpressionTree(writer, current, scope, false);
-//            writer.closeNode();
-//            break;
-//         default:
-//            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
 //inline bool isAttribute(_CompilerScope& scope, ref_t subjRef)
 //{
 //   return (subjRef != 0 && isPrimitiveRef(scope.subjectHints.get(subjRef)));
 //}
-//
-//void Compiler :: generateNewAttribute(SNode node, ModuleScope& scope, SNode attributes)
-//{
-//   SNode name = node.findChild(lxIdentifier);
-//
-//   ref_t templateRef = scope.mapNewSubject(name.findChild(lxTerminal).identifier());
-//
-//   //// check for duplicate declaration
-//   //if (scope.module->mapSection(templateRef | mskSyntaxTreeRef, true))
-//   //   scope.raiseError(errDuplicatedSymbol, name);
-//
-//   SyntaxTree tree;
-//   SyntaxWriter writer(tree);
-//   
-//   writer.newNode(lxTemplate);
-//   
-//   // HOTFIX : save the template source path
-//   IdentifierString fullPath(scope.module->Name());
-//   fullPath.append('\'');
-//   fullPath.append(scope.sourcePath);
-//   
-//   TemplateScope rootScope(&scope);
-//   //   rootScope.autogeneratedTree = &autogenerated;
-//   //   rootScope.loadParameters(node);
-//   rootScope.sourcePath = fullPath;
-//   
-//   generateScope(writer, node, rootScope, attributes);
-//   
-//   writer.closeNode();   
-//   
-//   SNode attr = tree.readRoot().findChild(lxAttribute);
-//   if (SyntaxTree::countChild(tree.readRoot(), lxAttribute) != 1 || !_logic->isPrimitiveRef(attr.argument)) {
-//      SyntaxTree::saveNode(tree.readRoot(), scope.module->mapSection(templateRef | mskSyntaxTreeRef, false));
-//
-//      //saveTemplate(scope.module->mapSection(templateRef | mskSyntaxTreeRef, false), node, scope, attributes/*, autogenerated*/);
-//
-//      scope.saveSubject(templateRef, INVALID_REF, false);
-//   }
-//   // if there are only one attribute it could be saved directly
-//   else scope.saveSubject(templateRef, attr.argument, false);
-//}
-//
+
 void Compiler :: compileModule(_ProjectManager& project, ident_t file, _DerivationReader& reader, ModuleInfo& info, Unresolveds& unresolveds)
 {
    ModuleScope scope(&project, file, info.codeModule, info.debugModule, &unresolveds);

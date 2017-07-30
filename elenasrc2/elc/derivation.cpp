@@ -1051,6 +1051,37 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
    }
 }
 
+void DerivationReader :: generateSwitchTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxSwitchOption:
+         case lxBiggerSwitchOption:
+         case lxLessSwitchOption:
+            if (current.type == lxBiggerSwitchOption) {
+               writer.newNode(lxOption, GREATER_MESSAGE_ID);
+            }
+            else if (current.type == lxLessSwitchOption) {
+               writer.newNode(lxOption, LESS_MESSAGE_ID);
+            }
+            else writer.newNode(lxOption, EQUAL_MESSAGE_ID);
+            generateExpressionTree(writer, current, scope, false);
+            writer.closeNode();
+            break;
+         case lxLastSwitchOption:
+            writer.newNode(lxElse);
+            generateExpressionTree(writer, current, scope, false);
+            writer.closeNode();
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void DerivationReader :: generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
    SNode current = node.firstChild();
@@ -1150,13 +1181,13 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
          writer.appendNode(lxAssign);
          generateExpressionTree(writer, current, scope, 0);
          break;
-//      case lxSwitching:
-//         generateSwitchTree(writer, current, scope);
-//         writer.insert(lxSwitching);
-//         writer.closeNode();
-//         writer.insert(lxExpression);
-//         writer.closeNode();
-//         break;
+      case lxSwitching:
+         generateSwitchTree(writer, current, scope);
+         writer.insert(lxSwitching);
+         writer.closeNode();
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
       case lxOperator:
          copyOperator(writer, current.firstChild(), current.argument);
          generateExpressionTree(writer, current, scope, 0);
