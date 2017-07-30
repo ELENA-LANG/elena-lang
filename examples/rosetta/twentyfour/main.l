@@ -13,19 +13,19 @@ class ExpressionTree
     [
         var aLevel := Integer new:0.
         
-        aLiteral run each: (:ch)
+        aLiteral run each(:ch)
         [
             var node := Dynamic new.
             
             ch =>
-                $43 [ node set level:(aLevel + 1); set operation:%add ];       // +
-                $45 [ node set level:(aLevel + 1); set operation:%subtract ];  // -
-                $42 [ node set level:(aLevel + 2); set operation:%multiply ];  // *
-                $47 [ node set level:(aLevel + 2); set operation:%divide ];    // /
+                $43 [ node set level(aLevel + 1); set operation:%add ];       // +
+                $45 [ node set level(aLevel + 1); set operation:%subtract ];  // -
+                $42 [ node set level(aLevel + 2); set operation:%multiply ];  // *
+                $47 [ node set level(aLevel + 2); set operation:%divide ];    // /
                 $40 [ aLevel append int:10. ^ $self ]; // (
                 $41 [ aLevel reduce int:10. ^ $self ]; // )
                 ! [
-                    node set leaf:(ch literal; toReal); set level:(aLevel + 3).
+                    node set leaf(ch literal; toReal); set level(aLevel + 3).
                 ].
                     
             if ($nil == theTree)
@@ -42,7 +42,7 @@ class ExpressionTree
                             while (($nil != aTop right)and:$(aTop right; level < node level))
                                 [ aTop := aTop right ].
                             
-                            node set left:(aTop right); set right:$nil.
+                            node set left(aTop right); set right:$nil.
                             
                             aTop set right:node
                         ]
@@ -71,10 +71,10 @@ class ExpressionTree
             [ InvalidArgumentException new; raise ].
         
         if (aNode if leaf)
-            [ aList append:(aNode leaf) ];
+            [ aList append(aNode leaf) ];
             [
-                $self readLeaves:aList at:(aNode left).
-                $self readLeaves:aList at:(aNode right).
+                $self readLeaves:aList at(aNode left).
+                $self readLeaves:aList at(aNode right).
             ].
     ]        
     
@@ -120,7 +120,7 @@ class TwentyFourGame
     
     prompt
     [
-        theNumbers run each: (:n) [ console print:n:" " ].
+        theNumbers run each(:n) [ console print:n:" " ].
         
         console print:": "
     ]
@@ -132,17 +132,17 @@ class TwentyFourGame
         var Leaves := ArrayList new.
         exp readLeaves:Leaves.
         
-        ifnot (Leaves ascendant; equal indexable:(theNumbers ascendant))
+        ifnot (Leaves ascendant; equal indexable(theNumbers ascendant))
             [ console printLine:"Invalid input. Enter an equation using all of those four digits. Try again.". ^ $self ].
             
         var aResult := exp value.
         if (aResult == 24)
             [
-                console printLine:"Good work. ":aLine:"=":aResult.
+                console printLine("Good work. ",aLine,"=",aResult).
                 
                 $self newPuzzle.
             ];
-            [ console printLine:"Incorrect. ":aLine:"=":aResult ]
+            [ console printLine("Incorrect. ",aLine,"=",aResult) ]
     ]    
 }
 
@@ -158,7 +158,7 @@ extension gameOp
                     [
                         try(self resolve:aLine)
                         {
-                            generic : e [
+                            on(Exception e) [
                                    console writeLine:"An error occurred.  Check your input and try again."
                                 ]
                         }
@@ -175,5 +175,5 @@ program =
 [
     var aGame := TwentyFourGame new; help.
     
-    while (aGame prompt; playRound:(console readLine)) [].
+    while (aGame prompt; playRound(console readLine)) [].
 ].
