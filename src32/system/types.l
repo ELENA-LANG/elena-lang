@@ -38,6 +38,7 @@ __verb          = #20.
 __mssg          = #19.
 __subj          = #18.
 __extmssg       = #21.
+__tape_mixin    = #8209.
 
 __ifoperator    = #4097.
 __ifnotoperator = #4098.
@@ -47,7 +48,6 @@ __ifnotoperator = #4098.
 //#template(-4099) w1 {}
 //#template(-4100) w2 {}
 //#template(-4101) w3 {}
-//#8209           __tape_mixin.
 //
 //#22 #262144     __symbol.
 

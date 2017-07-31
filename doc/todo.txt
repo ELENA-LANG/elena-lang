@@ -2,11 +2,12 @@
 In development:
 ------                              
 
-              xdev - multimethod                 
-                 * reimplement static field
-                 * fix class name
+              zdev - script engine
+                 * migrate Tape
+                 * optimize dynamic code building
+                 * migrate script samples
 
-                 * test operation with wrapper 
+              xdev - multimethod                 
                  * explicit constant
                  * var n := 2 <=> int n := 2
                  * optimize multimethod implementation for sealed / limited classes (resolve message index)
@@ -14,7 +15,6 @@ In development:
                  * no need for template class class?
                  * get rid of defineOperatorMessage, resolveMultimethod does the job
                  * custom verb generic handler
-                 * reimplement event handlers
                  * either generic or multi method can be declared, not both
                  * message cannot have type signature
                  * fixing multidispatching with class : e.g.: try(Object fail) {}
@@ -36,6 +36,9 @@ In development:
                  * uncomment compileOperator
                  * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
                  * private subjects??
+
+              zdev - script engine
+                 * migrate xforms
 
               xdev - refactoring
                  * review cellular library

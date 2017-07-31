@@ -1,31 +1,31 @@
 type tape_structure = system'dynamic'Struct.
 
-//// --- Tape ---
-//
-//dynamic __tape_mixin Tape
-//{
-//    object $item.
-//    
-//    constructor $new int:n
-//        = object(n).
-//    
-//    constructor new array:list
-//        <= $new int:(list length);
-//    [
-//        int i := 0.
-//        int n := list length.
-//        
-//        while(i < n)
-//        [
-//            $self setField int:i object:(list getAt int:i).
-//            
-//            i := i + 1
-//        ].
-//    ]    
-//    
-//    dispatch => system'core_routines'__tape.
-//}
-//
+// --- Tape ---
+
+dynamic __tape_mixin Tape
+{
+    object $item.
+    
+    constructor $new int:n
+        = object(n).
+    
+    constructor new array:list
+        <= $new int:(list length);
+    [
+        int i := 0.
+        int n := list length.
+        
+        while(i < n)
+        [
+            $self setField int:i object:(list getAt int:i).
+            
+            i := i + 1
+        ].
+    ]    
+    
+    dispatch => system'core_routines'__tape.
+}
+
 //// --- tapeControl ---
 //
 //extension tapeOp

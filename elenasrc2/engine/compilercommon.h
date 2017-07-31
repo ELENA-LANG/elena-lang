@@ -61,7 +61,7 @@
 #define V_GROUP          (ref_t)-8206
 #define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
-//#define V_TAPEGROUP      (ref_t)-8209
+#define V_TAPEGROUP      (ref_t)-8209
 
 #define V_CONSTRUCTOR    (ref_t)-16384
 #define V_VARIABLE       (ref_t)-16385
