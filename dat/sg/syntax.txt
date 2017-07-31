@@ -348,7 +348,7 @@ MESSAGE_PARAMETER ->
 OBJECT ->
 	identifier OBJECT_BODY
 	| private
-	| reference
+	| reference REFERENCE_BODY
 	| literal
 	| wide
 	| integer
@@ -365,6 +365,10 @@ OBJECT ->
 OBJECT_BODY ->
 	:: OBJECT_EXT
 	| ( ROOT_SUB_EXPRESSION
+	| eps
+
+REFERENCE_BODY ->
+	:: OBJECT_EXT
 	| eps
 
 ROOT_SUB_EXPRESSION ->

@@ -26,19 +26,19 @@ dynamic __tape_mixin Tape
     dispatch => system'core_routines'__tape.
 }
 
-//// --- tapeControl ---
-//
-//extension tapeOp
-//{
-//    tape_var args:params
-//    [
-//        int len := params length.
-//        int n := len.
-//        n := n - self int.
-//       
-//        ^ params@n
-//    ]
-//    
+// --- tapeControl ---
+
+extension tapeOp
+{
+    tape_var args:params
+    [
+        int len := params length.
+        int n := len.
+        n := n - self int.
+       
+        ^ params@n
+    ]
+    
 //    tape_assign args:params
 //        => system'core_routines'__tape.
 //    
@@ -66,7 +66,7 @@ dynamic __tape_mixin Tape
 //        
 //    tape_ptr args:params
 //        => system'core_routines'__tape.
-//}
+}
 
 // --- Struct ---
 
