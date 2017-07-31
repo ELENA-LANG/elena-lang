@@ -953,27 +953,27 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
       }
    }
 
-//   // adjust binary array
-//   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
-//      if ((info.header.flags & elDebugMask) == 0) {
-//         ref_t itemRef = info.fieldTypes.get(-1).value1;
-//         if (isCompatible(scope, V_INT32, itemRef)) {
-//            switch (info.size) {
-//               case -4:
-//                  info.header.flags |= elDebugIntegers;
-//                  break;
-//               case -2:
-//                  info.header.flags |= elDebugShorts;
-//                  break;
-//               case -1:
-//               default:
-//                  info.header.flags |= elDebugBytes;
-//                  break;
-//            }
-//         }
-//         else info.header.flags |= elDebugBytes;
-//      }
-//   }
+   // adjust binary array
+   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
+      if ((info.header.flags & elDebugMask) == 0) {
+         ref_t itemRef = info.fieldTypes.get(-1).value1;
+         if (isCompatible(scope, V_INT32, itemRef)) {
+            switch (info.size) {
+               case -4:
+                  info.header.flags |= elDebugIntegers;
+                  break;
+               case -2:
+                  info.header.flags |= elDebugShorts;
+                  break;
+               case -1:
+               default:
+                  info.header.flags |= elDebugBytes;
+                  break;
+            }
+         }
+         else info.header.flags |= elDebugBytes;
+      }
+   }
 
    // adjust objects with custom dispatch handler
    if (info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {

@@ -2,42 +2,15 @@
 In development:
 ------                              
 
-              xdev - multimethod
-                 * uncomment compileOperator
-                 * uncomment tweakClassFlags
-                 * uncomment mapTerminal
-                 * uncomment compileClosure
-                 * uncomment compileResendExpression
-                 * uncomment compileMethod
-                 * uncomment compileConstructor
-                 * uncomment injectImplicitConversion
-                 * uncomment ModuleScope::ModuleScope
-                 * uncomment writeMessageInfo
-                 * uncomment defineClassInfo
-                 * uncomment declareParameterDebugInfo
-                 * uncomment compileConstructor
-                 * uncomment defineObjectInfo
-                 * uncomment mapReferenceInfo
-                 * uncomment generateMethodDeclaration
-                 * uncomment compileDispatchExpression
-                 * uncomment generateClassDeclaration
-                 * uncomment optimizeClassTree
-                 * uncomment optimizeEmbeddableOp, optimizeEmbeddableGet, optimizeEmbeddable
-                 * uncomment compileExternalArguments
-                 * uncomment defineOperatorMessage
-                 * uncomment isCompatible
-                 * test primitive operation with message
-                 * implicit conversions
+              xdev - multimethod                 
                  * private methods
+                 * private sealed methods
+
                  * test operation with wrapper 
                  * explicit constant
-                 * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
-
-                 * check package functionality
 
                  * declaring type with the class?
 
-                 * new command : check if the object is subclass of a class
                  * reimplement static field
                  * every multi-method will have a static field associated with it. It contains the list of classes and the resulting
                    message. Algorithm will check it class or its parent matches
@@ -53,7 +26,6 @@ In development:
                  * optimize multimethod implementation for sealed class containing only one overload class
                  * no need for template class class?
                  * get rid of defineOperatorMessage, resolveMultimethod does the job
-                 * private sealed methods
                  * custom verb generic handler
                  * reimplement event handlers
                  * uncomment win32_app.l
@@ -71,7 +43,12 @@ In development:
                  * option not to generate multimethod
                  * explicit conversion
                  * test vm console operations in IDE
+                 * test primitive operation with message
+                 * implicit conversions
+                 * check package functionality
                  * simplify nfunc expression : set every(&int:n)( false ) - take into consideration the known target?.
+                 * uncomment compileOperator
+                 * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
 
               xdev - refactoring
                  * review cellular library

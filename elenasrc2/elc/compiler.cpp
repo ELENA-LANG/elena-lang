@@ -1318,20 +1318,20 @@ Compiler :: Compiler(_CompilerLogic* logic)
 
 void Compiler :: writeMessageInfo(SyntaxWriter& writer, ModuleScope& scope, ref_t messageRef)
 {
-//   ref_t subjectRef, verb;
-//   int paramCount;
-//   decodeMessage(messageRef, subjectRef, verb, paramCount);
-//
-//   IdentifierString name(retrieveKey(_verbs.start(), verb, DEFAULT_STR));
-//   if (subjectRef != 0) {
-//      name.append('&');
-//      name.append(scope.module->resolveSubject(subjectRef));
-//   }
-//   name.append('[');
-//   name.appendInt(paramCount);
-//   name.append(']');
-//
-//   writer.appendNode(lxMessageVariable, name);
+   ref_t subjectRef, verb;
+   int paramCount;
+   decodeMessage(messageRef, subjectRef, verb, paramCount);
+
+   IdentifierString name(retrieveKey(_verbs.start(), verb, DEFAULT_STR));
+   if (subjectRef != 0) {
+      name.append('&');
+      name.append(scope.module->resolveSubject(subjectRef));
+   }
+   name.append('[');
+   name.appendInt(paramCount);
+   name.append(']');
+
+   writer.appendNode(lxMessageVariable, name);
 }
 
 void Compiler :: loadRules(StreamReader* optimization)
@@ -3319,7 +3319,6 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 {
    if (test(scope.info.header.flags, elStateless)) {
       writer.appendNode(lxConstantSymbol, scope.reference);
-      //ownerScope.writer->appendNode(lxTarget, scope.reference);
 
       // if it is a stateless class
       return ObjectInfo(okConstantSymbol, scope.reference, scope.reference/*, scope.moduleScope->defineType(scope.reference)*/);
@@ -3349,8 +3348,6 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       //int toFree = 0;
       while(!outer_it.Eof()) {
          ObjectInfo info = (*outer_it).outerObject;
-
-         //SNode member = node.appendNode().appendNode(lxIdle);
 
          writer.newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
          writeTerminal(writer, node, ownerScope, info, 0);
@@ -4128,10 +4125,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
       // if it is typified argument
       if (verb_id == 0 && verbRef) {
-         //int size = sign_id != 0 ? _logic->defineStructSize(*scope.moduleScope,
-         //   paramRef, 0, true) : 0;
+         int size = sign_id != 0 ? _logic->defineStructSize(*scope.moduleScope,
+            verbRef, 0, true) : 0;
 
-         scope.parameters.add(terminal, Parameter(index, verbRef /*paramRef, size*/));
+         scope.parameters.add(terminal, Parameter(index, verbRef, size));
          verbRef = 0;
       }
       else scope.parameters.add(terminal, Parameter(index));
@@ -4508,7 +4505,6 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
       scope.level++;
 
       writer.newNode(lxExpression);
-      //writer.appendNode(lxThisLocal, 1);
       compileMessage(writer, node.firstChild(lxObjectMask), scope, HINT_RESENDEXPR);
       writer.closeNode();
 
@@ -4571,15 +4567,8 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
          ref_t resultRef = scope.getReturningRef(false);
          if (resultRef != 0) {
-//            // HOTFIX : copy EOP coordinates
-//            SNode eop = body.lastChild().prevNode();
-//            if (eop != lxNone)
-//               SyntaxTree::copyNode(eop, localNode);
-   
             if (!convertObject(writer, *codeScope.moduleScope, resultRef, resolveObjectReference(codeScope, ObjectInfo(okThisParam)), 0))
                scope.raiseError(errInvalidOperation, node);
-
-            //boxObject(writer, node, codeScope, ObjectInfo(okThisParam), resultRef, resultType);            
          }
 
          writer.removeBookmark();
@@ -4655,8 +4644,6 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
       }
 
       if (retExpr) {
-//         recordDebugStep(codeScope, bodyNode.firstChild().FirstTerminal(), dsStep);
-
          writer.newNode(lxReturning);         
          writer.newBookmark();
 
@@ -5182,7 +5169,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       hintChanged = true;
       hint |= tpPrivate;
 
-      scope.info.methodHints.add(Attribute(overwriteVerb(message, EVAL_MESSAGE_ID), maHint), hint);
+      scope.info.methodHints.add(Attribute(overwriteVerb(message, getParamCount(message) > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID), maHint), hint);
 
       // if it is an explicit constant conversion
       if (getSignature(message) != 0) {
