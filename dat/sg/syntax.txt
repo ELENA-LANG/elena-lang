@@ -551,7 +551,7 @@ DECLARATION_END ->
 	| DECLARATION_END_EXPECTED
 
 TOKEN ->
-	identifier
+	identifier TOKEN_BODY 
 	| private 
 	| reference
 

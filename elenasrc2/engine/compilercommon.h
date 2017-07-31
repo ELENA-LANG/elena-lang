@@ -77,6 +77,7 @@
 #define V_IMPORT         (ref_t)-16395
 #define V_EXTERN         (ref_t)-16396
 #define V_MULTI          (ref_t)-16397
+#define V_ATTRTEMPLATE   (ref_t)-16398
 
 namespace _ELENA_
 {
