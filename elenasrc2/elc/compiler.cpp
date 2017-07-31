@@ -538,7 +538,7 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
       while (!static_it.Eof()) {
          ClassInfo::FieldInfo info(
             importReference(exporter, (*static_it).value2, module),
-            importSubject(exporter, (*static_it).value2, module));
+            importReference(exporter, (*static_it).value2, module));
 
          target.statics.add(static_it.key(), info);
 
@@ -967,7 +967,7 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
    else {
       ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
       if (staticInfo.value1 != 0) {
-         return ObjectInfo(okStaticField, staticInfo.value1, 0/*, staticInfo.value2*/);
+         return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2);
       }
       else return ObjectInfo();
    }
@@ -1453,6 +1453,7 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
          }
       case okParam:
       case okSymbol:
+      case okStaticField:
          return object.extraparam;
       default:
          if (object.kind == okObject && object.param != 0) {
@@ -1704,14 +1705,20 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
    }
 }
 
-void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, /*ref_t& fieldType, */ref_t& fieldRef, int& size)
+void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, int& size, bool& isStaticField)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (_logic->validateFieldAttribute(value) && fieldRef == 0) {
-            fieldRef = current.argument;
+         if (_logic->validateFieldAttribute(value)) {
+            if (value == lxStaticAttr) {
+               isStaticField = true;
+            }
+            else if (fieldRef == 0) {
+               fieldRef = current.argument;
+            }
+            else scope.raiseError(errInvalidHint, node);
          }
          else scope.raiseError(errInvalidHint, node);
       }
@@ -4827,11 +4834,14 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
    while (current != lxNone) {
       if (current == lxClassField) {
          ref_t fieldRef = 0;
-         //ref_t fieldType = 0;
+         bool isStatic = false;
          int sizeHint = 0;
-         declareFieldAttributes(current, scope, /*fieldType, */fieldRef, sizeHint);
+         declareFieldAttributes(current, scope, fieldRef, sizeHint, isStatic);
 
-         generateClassField(scope, current, /*fieldType, */fieldRef, sizeHint, singleField);
+         if (isStatic) {
+            generateClassStaticField(scope, current, fieldRef);
+         }
+         else generateClassField(scope, current, fieldRef, sizeHint, singleField);
       }
       current = current.nextNode();
    }
@@ -5096,24 +5106,23 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    }
 }
 
-////void Compiler :: generateClassStaticField(ClassScope& scope, SNode current)
-////{
-////   _Module* module = scope.moduleScope->module;
-////
-////   ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
-////   ref_t typeHint = current.findChild(lxType).argument;
-////
-////   if (scope.info.statics.exist(terminal))
-////      scope.raiseError(errDuplicatedField, current);
-////
-////   // generate static reference
-////   ReferenceNs name(module->resolveReference(scope.reference));
-////   name.append(STATICFIELD_POSTFIX);
-////
-////   findUninqueName(module, name);
-////
-////   scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), typeHint));
-////}
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef)
+{
+   _Module* module = scope.moduleScope->module;
+
+   ident_t terminal = current.findChild(lxIdentifier, lxPrivate).identifier();
+
+   if (scope.info.statics.exist(terminal))
+      scope.raiseError(errDuplicatedField, current);
+
+   // generate static reference
+   ReferenceNs name(module->resolveReference(scope.reference));
+   name.append(STATICFIELD_POSTFIX);
+
+   findUninqueName(module, name);
+
+   scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), fieldRef));
+}
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message)
 {

@@ -11,6 +11,7 @@
 [!] binary incompatible due to implementing issues #100 and #333
 [+] #100 : classOp : test if object is subclass of
 [+] #333 : multimethods
+[*] #266 : static fields
 
 [ELC]
 [+] fixing template routines

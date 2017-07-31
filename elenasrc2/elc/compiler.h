@@ -775,7 +775,7 @@ private:
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
    void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-   void declareFieldAttributes(SNode member, ClassScope& scope, /*ref_t& fieldType, */ref_t& fieldRef, int& size);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, int& size, bool& isStaticField);
    void declareVMT(SNode member, ClassScope& scope);
 //   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 //
@@ -876,7 +876,7 @@ private:
 //   void declareVirtualMethods(ClassScope& scope);
 
    void generateClassField(ClassScope& scope, SNode node, /*ref_t typeRef, */ref_t fieldRef, int sizeHint, bool singleField);
-////   void generateClassStaticField(ClassScope& scope, SNode current);
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef);
 
    void generateClassFlags(ClassScope& scope, SNode node);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);

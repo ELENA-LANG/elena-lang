@@ -1075,9 +1075,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 {
    switch ((size_t)attrValue)
    {
-//      case V_STATIC:
-//         attrValue = lxStaticAttr;
-//         return true;
+      case V_STATIC:
+         attrValue = lxStaticAttr;
+         return true;
       case V_INT32:
          attrValue = 0;
          return true;
