@@ -35,8 +35,6 @@ namespace _ELENA_
 
    #define DISPATCH_MESSAGE_ID     0x0001             // NOTE : verb id should not be bigger than 0xE0 due to message constant implementation
 
-
-
    // obsolete
    #define NEWOBJECT_MESSAGE_ID    0x0002             // NOTE : verb id should not be equal to 7, due to message reference constant implementation
 

@@ -28,6 +28,7 @@ using namespace _ELENA_;
 //#define SYSTEM_MAXTHREAD            _T("maxthread")
 #define LINKER_MGSIZE               "linker/mgsize"
 #define LINKER_YGSIZE               "linker/ygsize"
+#define SYSTEM_PLATFORM             "system/platform"
 #define LIBRARY_PATH                "path"
 
 // --- InstanceConfig ---
@@ -115,6 +116,7 @@ void InstanceConfig :: init(path_t configPath, IniConfigFile& config)
    //maxThread = config.getIntSetting(SYSTEM_CATEGORY, SYSTEM_MAXTHREAD, maxThread);
    mgSize = config.getHexSetting(LINKER_MGSIZE, mgSize);
    ygSize = config.getHexSetting(LINKER_YGSIZE, ygSize);
+   platform = config.getHexSetting(SYSTEM_PLATFORM, platform);
 
    const char* path = config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL);
    if (!emptystr(path)) {
@@ -179,6 +181,14 @@ Instance :: Instance(ELENAMachine* machine)
 
    // init loader based on default machine config
    initLoader(_machine->config);
+
+   // create message table module
+   LoadResult result = lrSuccessful;
+   _Module* messages = _loader.createModule(MESSAGE_TABLE_MODULE, result);
+   if (result == lrSuccessful) {
+      messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false);
+   }
+   else throw EAbortException();
 
    ByteCodeCompiler::loadVerbs(_verbs);
 }
@@ -258,6 +268,20 @@ ident_t Instance :: retrieveReference(_Module* module, ref_t reference, ref_t ma
          if (!emptystr(resolvedName)) {
             referenceName = resolvedName;
          }
+         else if (isTemplateWeakReference(referenceName)) {
+            // COMPILER MAGIC : try to find a template implementation
+            ref_t resolvedRef = 0;
+            _Module* refModule = resolveWeakModule(referenceName, resolvedRef);
+            if (refModule != nullptr) {
+               addForward(referenceName, refModule->resolveReference(resolvedRef));
+            }
+
+            resolvedName = resolveForward(referenceName);
+            if (!emptystr(resolvedName)) {
+               referenceName = resolvedName;
+            }
+            else throw JITUnresolvedException(referenceName);
+         }
          else throw JITUnresolvedException(referenceName);
       }
       return referenceName;
@@ -290,6 +314,16 @@ _Module* Instance::resolveModule(ident_t referenceName, LoadResult& result, ref_
       return NULL;
    }
    return _loader.resolveModule(referenceName, result, reference);
+}
+
+_Module* Instance :: resolveWeakModule(ident_t weakReferenceName, ref_t& reference)
+{
+   LoadResult result = lrNotFound;
+   _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
+   if (result != lrSuccessful) {
+      return NULL;
+   }
+   else return module;
 }
 
 SectionInfo Instance::getSectionInfo(ident_t reference, size_t mask, bool silentMode)
@@ -414,6 +448,8 @@ bool Instance :: restart(bool debugMode)
    printInfo(L"Initializing...");
 
    clearReferences();
+
+   //TODO: clea message table?
 
    _literalClass.copy(_config.forwards.get(STR_FORWARD));
    _wideLiteralClass.copy(_config.forwards.get(WIDESTR_FORWARD));

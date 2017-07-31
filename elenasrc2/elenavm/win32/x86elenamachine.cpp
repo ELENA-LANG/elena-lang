@@ -151,15 +151,16 @@ bool x86Instance :: restart(bool debugMode)
 
 void x86Instance :: createConsole()
 {
-   int hConHandle;
-   long lStdHandle;
-   CONSOLE_SCREEN_BUFFER_INFO coninfo;
-   FILE *fp;
+   // HOTFIX : create a console only for GUI application 
+   if (test(_config.platform, mtGUI)) {
+      CONSOLE_SCREEN_BUFFER_INFO coninfo;
+      FILE *fp;
 
-   // allocate a console for this app
-   AllocConsole();
-   AttachConsole(GetCurrentProcessId());
-   freopen("CON", "w", stdout);
+      // allocate a console for this app
+      AllocConsole();
+      AttachConsole(GetCurrentProcessId());
+      freopen("CON", "w", stdout);
+   }
 }
 
 // --- x86ELENAMachine ---

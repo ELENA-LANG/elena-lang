@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  8
+#define ELENAVM_REVISION  9
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2017 by Alex Rakov"
@@ -48,6 +48,8 @@ typedef Map<ident_t, char*> ForwardMap;
 
 struct InstanceConfig
 {
+   int platform;
+
    // options
 //   int maxThread;
    int mgSize;
@@ -73,6 +75,7 @@ struct InstanceConfig
       //maxThread = 1;
       mgSize = 20000;
       ygSize = 4000;
+      platform = 0;
    }
    InstanceConfig(InstanceConfig& parent)
       : primitives(NULL, freestr), forwards(NULL, freestr), moduleForwards(NULL, freestr)
@@ -177,6 +180,7 @@ protected:
    };
 
    bool            _debugMode;
+   int             _platform;
 
    bool            _initialized;
 //   bool       _traceMode;
@@ -209,6 +213,7 @@ protected:
    virtual ident_t retrieveReference(void* address, ref_t mask);
 
    _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
+   _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference);
 
    virtual SectionInfo getSectionInfo(ident_t reference, size_t mask, bool silentMode);
    virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode);

@@ -3,14 +3,6 @@ In development:
 ------                              
 
               xdev - multimethod
-                 * simplify nfunc expression : set every(&int:n)( false ) - take into consideration the known target?.
-
-                 * test list<type>
-                 * uncomment get&hash_code
-                 * option not to generate multimethod
-
-                 * explicit conversion
-
                  * uncomment compileOperator
                  * uncomment tweakClassFlags
                  * uncomment mapTerminal
@@ -74,6 +66,12 @@ In development:
                  * multi constructor - raise an error if not found
                  * multi method extension should be resolved on run-time
                  * reimplement package info
+                 * test list<type>
+                 * uncomment get&hash_code
+                 * option not to generate multimethod
+                 * explicit conversion
+                 * test vm console operations in IDE
+                 * simplify nfunc expression : set every(&int:n)( false ) - take into consideration the known target?.
 
               xdev - refactoring
                  * review cellular library
