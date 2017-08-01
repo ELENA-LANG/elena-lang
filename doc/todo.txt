@@ -8,6 +8,8 @@ In development:
                  * migrate script samples
 
               xdev - multimethod                 
+                 * multi dispatch with $nil
+                 * uncomment Array.setAt[2] amd Array.getAt[1]
                  * explicit constant
                  * var n := 2 <=> int n := 2
                  * optimize multimethod implementation for sealed / limited classes (resolve message index)

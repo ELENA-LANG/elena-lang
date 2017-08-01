@@ -62,10 +62,13 @@ dynamic template array :: template_subj
             [ $target @ n := item ];
             [ InvalidArgumentException new; raise ]
     ]
-                
-//    /// Returns the item at the specified index
-//    multi template_subj getAt : aParam
-//        <= getAt int:aParam.
+               
+    multi setAt:n:object
+        <= setAt int:n object:object.                
+                  
+    /// Returns the item at the specified index
+    multi template_subj getAt : aParam
+        <= getAt int:aParam.
 }
 
 //// --- matrixof ---
@@ -1602,7 +1605,14 @@ sealed Array :: dispatchable<array>, array<object>
     /// Returns the specified array member
     stacksafe getAt int:anIndex
         => system'core_routines'__array.
-        
+ 
+//    multi setAt:n:object
+//        <= setAt int:n object:object.                
+//                  
+//    /// Returns the item at the specified index
+//    multi template_subj getAt : aParam
+//        <= getAt int:aParam.
+               
     /// Returns the array enumerator
     enumerator = ArrayEnumerator new array:$self.
 

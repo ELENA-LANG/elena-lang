@@ -259,12 +259,12 @@ extension convertorOp
 //                      eval : aBase long : anInt = wideConvertor convert long:anInt int:aBase.
 //                      
 //                   } with:aBase.
-//            
-//    toByte
-//        = self cast:%convert to:byteConvertor.
-//
-//    toShort
-//        = self cast:%convert to:shortConvertor.
+            
+    toByte
+        = byteConvertor convert:self.
+
+    toShort
+        = shortConvertor convert:self.
 
     toInt
         = intConvertor convert:self.
@@ -276,10 +276,10 @@ extension convertorOp
 //                
 //                wide : l = intConvertor convert wide:l base:16.
 //            }.
-//
-//    toLong
-//        = self cast:%convert to:longConvertor.
-//        
+
+    toLong
+        = longConvertor convert:self.
+
 //    toHexLong
 //        = self cast:%eval to:
 //            {
@@ -287,12 +287,12 @@ extension convertorOp
 //                
 //                wide : l = longConvertor convert wide:l base:16.
 //            }.
-//    
-//    toChar
-//        = self cast:%convert to:charConvertor.
-//    
-//    toReal
-//        = self cast:%convert to:realConvertor.
+    
+    toChar
+        = charConvertor convert:self.
+
+    toReal
+        = realConvertor convert:self.
 
     convert to : aTarget
         = Variant new:self; saveTo:aTarget.

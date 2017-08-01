@@ -2391,8 +2391,8 @@ class charConvertor =
         ^ CharValue new char:aRetVal
     ]
         
-    char convert : anObject
-        = anObject cast:%convert to:$self.
+    char multi convert : anObject
+        = anObject char.
 }.
 
 /// An integer convertor

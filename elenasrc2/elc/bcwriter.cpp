@@ -5022,7 +5022,7 @@ void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::N
 void ByteCodeWriter :: generateResending(CommandTape& tape, SyntaxTree::Node node)
 {
    if (node.argument != 0) {
-      setSubject(tape, node.argument);
+      tape.write(bcCopyM, node.argument);
 
       SNode target = node.findChild(lxTarget);
       if (target == lxTarget) {

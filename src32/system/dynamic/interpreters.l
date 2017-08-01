@@ -39,33 +39,33 @@ extension tapeOp
         ^ params@n
     ]
     
-//    tape_assign args:params
-//        => system'core_routines'__tape.
-//    
-//    tape_stack args:params
-//    [
-//        int n := self int.
-//       
-//        ^ params@n
-//    ]
-//        
-//    tape_jumpif args:params
-//        => system'core_routines'__tape.
-//    
-//    tape_jumpifnot args:params
-//        => system'core_routines'__tape.
-//    
-//    tape_jump args:params
-//        => system'core_routines'__tape.
-//        
-//    tape_goif args:params
-//        => system'core_routines'__tape.
-//    
-//    tape_go args:params
-//        => system'core_routines'__tape.
-//        
-//    tape_ptr args:params
-//        => system'core_routines'__tape.
+    tape_assign args:params
+        => system'core_routines'__tape.
+    
+    tape_stack args:params
+    [
+        int n := self int.
+       
+        ^ params@n
+    ]
+        
+    tape_jumpif args:params
+        => system'core_routines'__tape.
+    
+    tape_jumpifnot args:params
+        => system'core_routines'__tape.
+    
+    tape_jump args:params
+        => system'core_routines'__tape.
+        
+    tape_goif args:params
+        => system'core_routines'__tape.
+    
+    tape_go args:params
+        => system'core_routines'__tape.
+        
+    tape_ptr args:params
+        => system'core_routines'__tape.
 }
 
 // --- Struct ---
