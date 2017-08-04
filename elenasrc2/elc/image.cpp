@@ -66,9 +66,8 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
   // fix up static table size
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
 
-  // fixup message table variable
-   compiler->setMessageTablePtr(this,
-      linker.resolve(MESSAGE_TABLE, mskReferenceTable, true), true);
+  // resolve message table
+   linker.resolve(MESSAGE_TABLE, mskMessageTableRef, true);
 
    helper.afterLoad(*this);
 }
@@ -99,7 +98,10 @@ _Memory* ExecutableImage :: getTargetSection(ref_t mask)
       case mskTLSRef:
          return &_tls;
       case mskDebugRef:
-         return &_debug;
+         if (mask == mskMessageTableRef) {
+            return &_mdata;
+         }
+         else return &_debug;
       default:
          return NULL;
    }

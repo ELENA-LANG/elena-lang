@@ -1491,11 +1491,6 @@ void AMD64JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter
    //}
 }
 
-void AMD64JITCompiler :: setMessageTablePtr(_JITLoader* loader, void* vaddress, bool virtualMode)
-{
-
-}
-
 void* AMD64JITCompiler :: getPreloadedReference(ref_t reference)
 {
    return (void*)_preloaded.get(reference);

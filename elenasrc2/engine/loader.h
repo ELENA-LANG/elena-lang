@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Image Loader class declarations
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef loaderH
@@ -63,7 +63,7 @@ class Image
 {
 protected:
    Section _text, _data, _bss, _stat, _import, _tls;
-   Section _debug;
+   Section _debug, _mdata;
 
 public:
    virtual Section* getTextSection()   { return &_text; }
@@ -73,6 +73,7 @@ public:
    virtual Section* getImportSection() { return &_import; }
    virtual Section* getDebugSection()  { return &_debug; }
    virtual Section* getTLSSection()    { return &_tls; }
+   virtual Section* getMDataSection()  { return &_mdata; }
 
    virtual ReferenceMap::Iterator getExternalIt() = 0;
 

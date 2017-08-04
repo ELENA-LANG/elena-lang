@@ -69,6 +69,12 @@ public:
       section->_references.write(writer);
    }
 
+   virtual void clear()
+   {
+      MemoryDump::clear();
+      _references.clear();
+   }
+
    Section()
    {
    }

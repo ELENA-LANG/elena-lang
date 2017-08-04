@@ -768,7 +768,7 @@ void* JITLinker :: resolveStaticVariable(ident_t reference, int mask)
    return (void*)vaddress;
 }
 
-void* JITLinker :: resolveDump(ident_t reference, int mask)
+void* JITLinker :: resolveMessageTable(ident_t reference, int mask)
 {
    References      references(RefInfo(0, NULL));
 
@@ -777,10 +777,7 @@ void* JITLinker :: resolveDump(ident_t reference, int mask)
 
    pos_t position = writer.Position();
 
-   void* vaddress = calculateVAddress(&writer, mask);
-   _loader->mapReference(reference, vaddress, mask);
-
-   SectionInfo sectionInfo = _loader->getSectionInfo(reference, mask, false);
+   SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
 
    // load section into target image
    MemoryReader reader(sectionInfo.section);
@@ -799,7 +796,7 @@ void* JITLinker :: resolveDump(ident_t reference, int mask)
    // fix not loaded references
    fixReferences(references, _loader->getTargetSection(mask));
 
-   return vaddress;
+   return NULL; // !! should be resolved only once
 }
 
 ref_t JITLinker :: parseMessage(ident_t reference)
@@ -1117,8 +1114,8 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
          case mskConstVariable:
             vaddress = resolveConstVariable(reference, mask);
             break;
-         case mskReferenceTable:
-            vaddress = resolveDump(reference, mskRDataRef);
+         case mskMessageTableRef:
+            vaddress = resolveMessageTable(reference, mskMessageTableRef);
             break;
       }
    }

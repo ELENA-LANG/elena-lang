@@ -157,6 +157,13 @@ void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, void
    writer.writeDWord(address + disp);
 }
 
+void Instance::ImageReferenceHelper :: writeMTReference(MemoryWriter& writer)
+{
+   _Memory* section = _instance->getMessageSection();
+
+   writer.writeDWord((ref_t)section->get(0));
+}
+
 void Instance::ImageReferenceHelper :: addBreakpoint(size_t position)
 {
    MemoryWriter writer(_instance->getTargetDebugSection());
@@ -186,7 +193,7 @@ Instance :: Instance(ELENAMachine* machine)
    LoadResult result = lrSuccessful;
    _Module* messages = _loader.createModule(MESSAGE_TABLE_MODULE, result);
    if (result == lrSuccessful) {
-      messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false);
+      _messageTable = (Section*)messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false);
    }
    else throw EAbortException();
 
@@ -408,6 +415,11 @@ void Instance::addForward(ident_t line)
    }
 }
 
+void Instance :: onNewCode()
+{
+   resolveMessageTable();
+}
+
 void* Instance :: loadSymbol(ident_t reference, int mask, bool silentMode)
 {
    // reference should not be a forward one
@@ -442,6 +454,15 @@ bool Instance :: initLoader(InstanceConfig& config)
    return true;
 }
 
+void Instance :: resolveMessageTable()
+{
+   if (_messageTable->Length() > 0) {
+      _linker->resolve(MESSAGE_TABLE, mskMessageTableRef, true);
+
+      _messageTable->clear();
+   }
+}
+
 bool Instance :: restart(bool debugMode)
 {
    printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION);
@@ -472,6 +493,9 @@ bool Instance :: restart(bool debugMode)
 
    // HOTFIX : literal constant is refered in the object, so it should be preloaded
    _linker->resolve(_literalClass, mskVMTRef, true);
+
+   // HOTFIX : resolve message table
+   resolveMessageTable();
 
    // initialize GC
    _Entry entry;

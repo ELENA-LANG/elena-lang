@@ -130,7 +130,6 @@ namespace _ELENA_
       mskNativeVariable      = 0xAD000000u,
       mskConstVariable       = 0x4D000000u,
       mskLockVariable        = 0xAE000000u,   // HOTFIX : used to fool trylock opcode, adding virtual offset
-      mskReferenceTable      = 0x4E000000u,
 
       mskInternalRef         = 0x13000000u,   // internal code
       mskInternalRelRef      = 0x33000000u,   // internal code
@@ -160,7 +159,9 @@ namespace _ELENA_
       mskVerb                = 0x0A000000u,   // message verb constant
       mskExtMessage          = 0x0B000000u,   // external message verb constant
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
-      mskConstArray          = 0x0D000000u    // constant array
+      mskConstArray          = 0x0D000000u,   // constant array
+
+      mskMessageTableRef     = 0x60FFFFFFu    // message table reference, a special case of debug reference
    };
 
    // --- ELENA Debug symbol constants ---

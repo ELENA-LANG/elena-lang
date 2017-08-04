@@ -3,6 +3,7 @@ In development:
 ------                              
 
               zdev - script engine
+                 * fix message table
                  * migrate Tape
                  * optimize dynamic code building
                  * migrate script samples
@@ -38,6 +39,7 @@ In development:
                  * uncomment compileOperator
                  * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
                  * private subjects??
+                 * fix message table implementation in VM (currently the space is reserved, but it should use virtual space allocation)
 
               zdev - script engine
                  * migrate xforms

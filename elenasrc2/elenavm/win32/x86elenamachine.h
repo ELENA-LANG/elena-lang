@@ -21,13 +21,14 @@ class x86Instance : public Instance
 {
    path_t _rootPath;
 
-   x86Process     _codeProcess, _dataProcess, _bssProcess, _statProcess, _debugProcess;
+   x86Process     _codeProcess, _dataProcess, _bssProcess, _statProcess, _debugProcess, _messageProcess;
 
    virtual ref_t resolveExternal(ident_t reference);
 
 protected:
    virtual _Memory* getTargetSection(size_t mask);
    virtual _Memory* getTargetDebugSection();
+   virtual _Memory* getMessageSection();
 
    virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
 

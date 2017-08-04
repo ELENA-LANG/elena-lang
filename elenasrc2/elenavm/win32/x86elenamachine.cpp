@@ -26,6 +26,7 @@ x86Instance :: x86Instance(ELENAMachine* machine)
      _debugProcess(0x200000, true, false),
      _codeProcess(0x500000, false, true),
      _dataProcess(0x500000, false, false),
+     _messageProcess(0x1000, false, false),
      _bssProcess(0x1000, true, false),
      _statProcess(0x10000, true, false)  // !! temporal
 {
@@ -62,9 +63,18 @@ _Memory* x86Instance :: getTargetSection(size_t mask)
          return &_bssProcess;
       case mskStatRef:
          return &_statProcess;
+      case mskDebugRef:
+         if (mask == mskMessageTableRef) {
+            return getMessageSection();
+         }
       default:
          return NULL;
    }
+}
+
+_Memory* x86Instance :: getMessageSection()
+{
+   return &_messageProcess;
 }
 
 void x86Instance :: mapReference(ident_t reference, void* vaddress, size_t mask)

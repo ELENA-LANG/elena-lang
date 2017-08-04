@@ -2684,7 +2684,7 @@ inline % 0DEh
 
 labNextOverloadlist:
   mov  ecx, [esp]              // ; param count
-  mov  edi, [rdata : % CORE_MESSAGE_TABLE]
+  mov  edi, rdata : % CORE_MESSAGE_TABLE
   shr  ebx, 4
   and  ebx, 0007FFFFh
   lea  ebx, [edi + ebx]

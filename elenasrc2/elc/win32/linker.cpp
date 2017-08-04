@@ -27,6 +27,7 @@
 
 #define TEXT_SECTION       ".text"
 #define RDATA_SECTION      ".rdata"
+#define MDATA_SECTION      ".mdata"
 #define DATA_SECTION       ".data"
 #define BSS_SECTION        ".bss"
 #define IMPORT_SECTION     ".import"
@@ -82,7 +83,11 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
          }
       }
       case mskDebugRef:
-         return ((ImageBaseMap*)map)->debug + base + disp;
+         // HOTFIX : mskDebugRef is used for the message table reference
+         if (key == mskMessageTableRef) {
+            return ((ImageBaseMap*)map)->mdata + ((ImageBaseMap*)map)->base;
+         }
+         else return ((ImageBaseMap*)map)->debug + base + disp;
       default:
          return disp;
    }
@@ -106,7 +111,8 @@ void Linker :: mapImage(ImageInfo& info)
 
    info.map.code = 0x1000;               // code section should always be first
    info.map.rdata = align(info.map.code + getSize(info.image->getTextSection()), alignment);
-   info.map.bss = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
+   info.map.mdata = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
+   info.map.bss = align(info.map.mdata + getSize(info.image->getMDataSection()), alignment);
    info.map.stat = align(info.map.bss + getSize(info.image->getBSSSection()), alignment);
    info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
    info.map.import = align(info.map.tls + getSize(info.image->getTLSSection()), alignment);
@@ -256,6 +262,7 @@ void Linker :: fixImage(ImageInfo& info)
 {
    Section* text = info.image->getTextSection();
    Section* rdata = info.image->getRDataSection();
+   Section* mdata = info.image->getMDataSection();
    Section* bss = info.image->getBSSSection();
    Section* stat = info.image->getStatSection();
    Section* tls = info.image->getTLSSection();
@@ -266,6 +273,9 @@ void Linker :: fixImage(ImageInfo& info)
 
   // fix up rdata section
    rdata->fixupReferences(&info.map, reallocate);
+
+   // fix up mdata section
+   mdata->fixupReferences(&info.map, reallocate);
 
   // fix up bss section
    bss->fixupReferences(&info.map, reallocate);
@@ -295,6 +305,9 @@ int Linker :: countSections(Image* image)
       count++;
 
    if (getSize(image->getRDataSection()))
+      count++;
+
+   if (getSize(image->getMDataSection()))
       count++;
 
    if (getSize(image->getBSSSection()))
@@ -556,6 +569,13 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
          info.map.rdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
    }
 
+   // mdata section header
+   int mdataSize = getSize(info.image->getMDataSection());
+   if (mdataSize > 0) {
+      writeSectionHeader(file, MDATA_SECTION, info.image->getMDataSection(), tblOffset, alignment, sectionAlignment,
+         info.map.mdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
+   }
+
    // bss section header
    int bssSize = getSize(info.image->getBSSSection());
    if (bssSize > 0) {
@@ -596,6 +616,10 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
    // rdata section
    if (rdataSize > 0)
       writeSection(file, info.image->getRDataSection(), alignment);
+
+   // rdata section
+   if (mdataSize > 0)
+      writeSection(file, info.image->getMDataSection(), alignment);
 
    // tls section
    if (tlsSize > 0)

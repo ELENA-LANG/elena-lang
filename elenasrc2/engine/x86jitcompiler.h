@@ -72,6 +72,7 @@ protected:
    friend void loadNOp(int opcode, x86JITScope& scope);
    friend void loadFPOp(int opcode, x86JITScope& scope);
    friend void loadROp(int opcode, x86JITScope& scope);
+   friend void loadMTOp(int opcode, x86JITScope& scope);
 
    // commands
    friend void compileNop(int opcode, x86JITScope& scope);
@@ -183,7 +184,6 @@ public:
    virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section);
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
-   virtual void setMessageTablePtr(_JITLoader* loader, void* vaddress, bool virtualMode);
 
    virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateSymbolCall(MemoryDump& tape, void* address);
@@ -206,6 +206,7 @@ void loadVMTIndexOp(int opcode, x86JITScope& scope);
 void loadNOp(int opcode, x86JITScope& scope);
 void loadFPOp(int opcode, x86JITScope& scope);
 void loadROp(int opcode, x86JITScope& scope);
+void loadMTOp(int opcode, x86JITScope& scope);
 void compileNop(int opcode, x86JITScope& scope);
 void compileBreakpoint(int opcode, x86JITScope& scope);
 void compilePop(int opcode, x86JITScope& scope);

@@ -27,6 +27,7 @@ public:
 
    virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module = NULL) = 0;
    virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp) = 0;
+   virtual void writeMTReference(MemoryWriter& writer) = 0;
 
    // used for 64bit programming, currently only for mskVMTXMethodAddress and mskVMTXEntryOffset
    virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module = NULL) = 0;
@@ -93,7 +94,6 @@ public:
    virtual void* getPreloadedReference(ref_t reference) = 0;
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode) = 0;
-   virtual void setMessageTablePtr(_JITLoader* loader, void* vaddress, bool virtualMode) = 0;
 
    virtual void generateProgramStart(MemoryDump& tape) = 0;
    virtual void generateSymbolCall(MemoryDump& tape, void* address) = 0;

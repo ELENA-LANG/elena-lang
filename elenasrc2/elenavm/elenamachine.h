@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  9
+#define ELENAVM_REVISION  11
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2017 by Alex Rakov"
@@ -157,6 +157,7 @@ protected:
 
       virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
       virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
+      virtual void writeMTReference(MemoryWriter& writer);
 
       virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
       {
@@ -186,6 +187,8 @@ protected:
 //   bool       _traceMode;
    _JITCompiler*   _compiler;
    JITLinker*      _linker;
+
+   Section*       _messageTable;
 
    IdentifierString _literalClass;
    IdentifierString _wideLiteralClass;
@@ -219,6 +222,8 @@ protected:
    virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode);
    virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
 
+   virtual _Memory* getMessageSection() = 0;
+
    bool initLoader(InstanceConfig& config);
 
    void setPackagePath(ident_t package, path_t path);
@@ -233,6 +238,9 @@ protected:
 
    void translate(MemoryReader& reader, ImageReferenceHelper& helper, MemoryDump& dump, int terminator);
    void configurate(MemoryReader& reader, int terminator);
+   void resolveMessageTable();
+
+   void onNewCode();
 
    //void* findDebugEntryPoint(ByteArray& tape);
 
@@ -354,13 +362,14 @@ public:
 
    virtual void* getSymbolRef(ident_t referenceName, bool silentMode)
    {      
+      void* ref = NULL;
       if (_debugMode) {
          // remove subject list from the debug section
          _Memory* debugSection = getTargetDebugSection();
          if ((*debugSection)[0] > 0)
             debugSection->trim((*debugSection)[0]);
 
-         void* ref = loadSymbol(referenceName, mskSymbolRef, silentMode);
+         ref = loadSymbol(referenceName, mskSymbolRef, silentMode);
 
          (*debugSection)[0] = debugSection->Length();
 
@@ -369,10 +378,12 @@ public:
          saveSubject(&debugWriter);
 
          raiseBreakpoint();
-
-         return ref;
       }
-      else return loadSymbol(referenceName, mskSymbolRef, silentMode);
+      else ref = loadSymbol(referenceName, mskSymbolRef, silentMode);
+
+      onNewCode();
+
+      return ref;
    }
 
    virtual ref_t getSubjectRef(ident_t subjectName)

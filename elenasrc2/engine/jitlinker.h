@@ -89,6 +89,17 @@ class JITLinker : _JITLoaderListener
 //      virtual void writeMethodReference(SectionWriter& writer, size_t tapeDisp);
       virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
       virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
+      virtual void writeMTReference(MemoryWriter& writer)
+      {
+         if (_owner->_virtualMode) {
+            writer.writeRef(mskMessageTableRef, 0);
+         }
+         else {
+            _Memory* section = _owner->_loader->getTargetSection(mskMessageTableRef);
+
+            writer.writeDWord((ref_t)section->get(0));
+         }
+      }
 
       virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module);
 
@@ -145,7 +156,7 @@ class JITLinker : _JITLoaderListener
    void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
    void* resolveConstant(ident_t reference, int mask);
    void* resolveStaticVariable(ident_t reference, int mask);
-   void* resolveDump(ident_t reference, int mask);
+   void* resolveMessageTable(ident_t reference, int mask);
    void* resolveMessage(ident_t reference, ident_t vmt);
    void* resolveExtensionMessage(ident_t reference, ident_t vmt);
 //   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);

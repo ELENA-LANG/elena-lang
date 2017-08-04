@@ -20,14 +20,14 @@ namespace _ELENA_
 struct ImageBaseMap
 {
    int base;
-   int code, rdata, bss, stat, tls, debug, import;
+   int code, rdata, mdata, bss, stat, tls, debug, import;
 
    RelocationFixMap importMapping;
 
    ImageBaseMap()
       : importMapping((size_t)-1)
    {
-      base = code = rdata = bss = stat = tls = import = debug = 0;
+      base = code = rdata = mdata = bss = stat = tls = import = debug = 0;
    }
 };
 
