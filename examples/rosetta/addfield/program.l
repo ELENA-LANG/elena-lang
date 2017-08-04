@@ -2,7 +2,7 @@ import extensions.
 
 class Extender :: BaseExtender
 {
-    object foo :: prop(theField).
+    object prop foo :: theField.
     
     constructor new : anObject
     [
@@ -19,7 +19,7 @@ program =
 
     anObject foo := "bar".
 
-    console printLine:anObject:".foo=":(anObject foo).
+    console printLine(anObject,".foo=",anObject foo).
 
     console readChar.
 ].

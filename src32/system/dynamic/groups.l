@@ -6,16 +6,16 @@
 //    
 //    dispatch => system'core_routines'__wrap.
 //}
-//
-//// --- Extension ---
-//
-//dynamic mixin Extension
-//{
-//    object $item.
-//    
-//    dispatch => system'core_routines'__extension.
-//}
-//
+
+// --- Extension ---
+
+dynamic mixin Extension
+{
+    object $item.
+    
+    dispatch => system'core_routines'__extension.
+}
+
 //// --- Group ---
 //
 //dynamic mixin Group
@@ -49,14 +49,14 @@
 //    
 //    dispatch => system'core_routines'__castover.
 //}
-//
-//// --- extensions ---
-//
-//extension dynamicOp
-//{
-//    mix into:role
-//        = Extension::(role, self).
-//        
+
+// --- extensions ---
+
+extension dynamicOp
+{
+    mix into:role
+        = Extension::(role, self).
+        
 //    group with:object
 //    [
 //        if($nil == object)
@@ -152,4 +152,4 @@
 //                    [ ^ Cast new args:(self,object) ]
 //            ].
 //    ]        
-//}
+}

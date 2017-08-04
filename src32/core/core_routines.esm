@@ -4652,3 +4652,26 @@ procedure __vmtape."eval&evaluateTape$system@UnsafePointer[2]"
   quitn 2
 
 end
+
+procedure __extension.dispatch[1]
+
+  asavesi 1
+  pushe
+  bcopya
+  dcopy 1
+
+labNext:
+  pope
+  get
+  bsredirect
+  pushe
+  bloadsi 2
+  inc
+  count
+  less labNext
+  
+  pope
+  aloadbi 0
+  ajumpvi 0
+
+end

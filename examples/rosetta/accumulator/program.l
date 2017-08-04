@@ -13,7 +13,7 @@ ELENA is OO language, so a function is in fact an object
 import system'dynamic.
 
 Function = 
-    (:x) [ ^closure append:x ].
+    (:x)(closure append:x).
 
 extension op
 {
@@ -29,5 +29,5 @@ program =
     
     var y := 3 accumulator of:Function.
     
-    console write:(x eval:2.3r).
+    console write(x eval:2.3r).
 ].
