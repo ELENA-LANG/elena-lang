@@ -1,10 +1,10 @@
 // === types ===
-type stack :: system'collections'Stack.
-type queue :: system'collections'Queue.
+type stack = system'collections'Stack.
+type queue = system'collections'Queue.
 
 // --- Stack
 
-sealed class Stack :: dispatchable(enumerable)
+sealed class Stack //:: dispatchable(enumerable)
 {
     array_list theList.
     vint       theTop.
@@ -19,14 +19,14 @@ sealed class Stack :: dispatchable(enumerable)
     
     enumerator = StackEnumerator new stack:$self.
     
-    int length :: outnprop(readLengthTo).
+    int rvprop length :: readLengthTo.
     
     stacksafe readLengthTo vint:aLength
     [
         aLength int := theTop.
     ]
     
-    bool is empty
+    bool isEmpty
         = 0 == theTop.
     
     push : anObject
@@ -70,7 +70,7 @@ sealed class Stack :: dispatchable(enumerable)
 
 // --- Queue ---
 
-sealed class Queue :: dispatchable(enumerable)
+sealed class Queue //:: dispatchable(enumerable)
 {
     array_list theList.
     vint       theTop.
@@ -87,7 +87,7 @@ sealed class Queue :: dispatchable(enumerable)
     
     enumerator = QueueEnumerator new queue:$self.
     
-    int length :: outnprop(readLengthTo).
+    int rvprop length :: readLengthTo.
     
     push : anObject
     [

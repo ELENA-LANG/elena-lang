@@ -1,6 +1,6 @@
 const int $TextPageSize = 128.
 
-type textbuffer :: system'text'TextBuilder.
+type textbuffer = system'text'TextBuilder.
 
 // --- TextBuffer ---
 
@@ -15,7 +15,7 @@ sealed nonstructural class TextBuilder
         theLength := 0.
     ]
 
-    int length :: outnprop(readLengthTo).
+    int rvprop length :: readLengthTo.
 
     clear
     [
@@ -42,11 +42,6 @@ sealed nonstructural class TextBuilder
 
     wide
         = WideLiteralValue new int:0 int:theLength chararray:theBuffer.
-
-    write : aLine
-    [
-        aLine cast:%write to:$self.
-    ]
 
     writeLine
     [
@@ -131,7 +126,7 @@ sealed nonstructural class TextBuilder
         $self write chararray:ch_tmp int:len.
     ]
 
-    generic write : anObject
+    multi write : anObject
     [
         $self write literal:anObject.
     ]
@@ -199,17 +194,7 @@ sealed nonstructural class TextBuilder
     ]
 
     insert : anObject at:anIndex
-        = anObject cast:%eval to:
-            {
-               eval:target literal:aLiteral
-                  = target insert int:anIndex literal:aLiteral.
-    
-               eval:target wide:aLiteral
-                  = target insert int:anIndex literal:aLiteral.
-    
-               eval:target char:aChar
-                  = target insert int:anIndex char:aChar.
-            } with:$self.
+        <= insert(anIndex int, anObject).
 
     stacksafe indexOf int:aPosition char:aValue vint:aRetVal
     [

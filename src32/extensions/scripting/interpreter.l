@@ -4,19 +4,10 @@ import system'dynamic.
 
 // --- IOException ---
 
-class ScriptEngineException :: exceptionof(ScriptError)
+class ScriptEngineException :: Exception
 {
     constructor new
-        <= new:(scriptEngine $lastScriptError).
-        
-    constructor new : aMessage
-        <= new literal:(aMessage literal).
-        
-    constructor new literal:message
-    [
-        theMessage := message.
-        theCallStack := CallStack new.
-    ]    
+        <= new(scriptEngine $lastScriptError).
 }
 
 // --- scriptEngine ---
@@ -48,7 +39,7 @@ class scriptEngine =
         dirty_ptr tape := system'external'elenasm InterpretScript
                                 literal:aScript.
             
-        if (tape is empty)
+        if (tape isEmpty)
             [ ScriptEngineException new; raise ].
             
         var retVal := $self evaluateTape dirty_ptr:tape.
@@ -68,7 +59,7 @@ class scriptEngine =
                             int:anEncoding
                             int:anAutoDetect.
             
-        if (tape is empty)
+        if (tape isEmpty)
             [ ScriptEngineException new; raise ].
             
         system'external'elenasm Release dirty_ptr:tape.            
@@ -81,7 +72,7 @@ class scriptEngine =
                             int:anEncoding
                             int:anAutoDetect.
             
-        if (tape is empty)
+        if (tape isEmpty)
             [ ScriptEngineException new; raise ].
             
         var retVal := $self evaluateTape dirty_ptr:tape.

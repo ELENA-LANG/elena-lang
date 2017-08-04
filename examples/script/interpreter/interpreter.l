@@ -1,68 +1,68 @@
-//import system'collections.
+import system'collections.
 import system'routines.
 import system'dynamic.
 
 import extensions.
-//import extensions'scripting.
+import extensions'scripting.
 
-//// --- Tape ---
-//
-//class BFTape
-//{
-//    object theArray.
-//    object thePointer.
-//    object theBrackets.
-//
-//    constructor new:aLength
-//    [
-//        theArray := Array new:aLength; set every: (&int:n) [ ^Integer new:0 ].
-//        
-//        thePointer := Integer new:0.
-//        
-//        theBrackets := Stack new.
-//    ]
-//
-//    append
-//    [
-//         (theArray@thePointer) append:1.
-//    ]
-//    
-//    reduce
-//    [
-//         (theArray@thePointer) reduce:1.
-//    ]
-//    
-//    next
-//    [
-//        thePointer append:1.
-//    ]
-//
-//    previous
-//    [
-//        thePointer reduce:1.
-//    ]
-//    
-//    push : bookmark
-//    [
-//        theBrackets push:bookmark.
-//    ]
-//    
-//    pop
-//        => theBrackets.
-//    
-//    input
-//    [
-//        theArray@thePointer := console readChar; toInt.
-//    ]
-//    
-//    output
-//    [
-//        console write:((theArray@thePointer) toChar).
-//    ]
-//
-//    check = theArray@thePointer != 0.
-//}
-//
+// --- Tape ---
+
+class BFTape
+{
+    object theArray.
+    object thePointer.
+    object theBrackets.
+
+    constructor new:aLength
+    [
+        theArray := Array new:aLength; set every(&int:n)(Integer new:0).
+        
+        thePointer := Integer new:0.
+        
+        theBrackets := Stack new.
+    ]
+
+    append
+    [
+         theArray[thePointer] append:1.
+    ]
+    
+    reduce
+    [
+         theArray[thePointer] reduce:1.
+    ]
+    
+    next
+    [
+        thePointer append:1.
+    ]
+
+    previous
+    [
+        thePointer reduce:1.
+    ]
+    
+    push : bookmark
+    [
+        theBrackets push:bookmark.
+    ]
+    
+    pop
+        => theBrackets.
+    
+    input
+    [
+        theArray[thePointer] := console readChar; toInt.
+    ]
+    
+    output
+    [
+        console write(theArray[thePointer] toChar).
+    ]
+
+    check = theArray[thePointer] != 0.
+}
+
 //class TapeAssembler
 //{    
 //    object theBrackets.
@@ -239,35 +239,29 @@ symbol program =
 [
     // [,.]
     
-    var s := "2".
-    var n := intConvertor convert:s.
+    var bfProgram := Tape::(
+        Integer new,
+        console, %"readChar[0]", %"convertorOp.toInt[0]", 3, %"tapeOp.tape_var[]", 2, %"tapeOp.tape_var[]", %"setAt[2]",            
+        3, %"tapeOp.tape_var[]", 2, %"tapeOp.tape_var[]", %"getAt[1]", %"convertorOp.toChar[0]", console, %"write[1]",        
+        3, %"tapeOp.tape_var[]", 2, %"tapeOp.tape_var[]", %"getAt[1]", 0, %"notequal[1]", 1, %"tapeOp.tape_jumpif[]").
+        
+    var bfTape := Array new:1024; set every(:n)(Integer new).
     
-//    var bfProgram := Tape::(
-//        Integer new,
-//        console, %"readChar[0]", %"convertorOp.toInt[0]", 3, %"tapeOp.tape_var[]", 2, %"tapeOp.tape_var[]", %"setAt[2]",            
-//        3, %"tapeOp.tape_var[]", 2, %"tapeOp.tape_var[]", %"getAt[1]", %"convertorOp.toChar[0]", console, %"write[1]",        
-//        3, %"tapeOp.tape_var[]", 2, %"tapeOp.tape_var[]", %"getAt[1]", 0, %"notequal[1]", 1, %"tapeOp.tape_jumpif[]").
-//        
-//    var bfTape := Array new:1024; set every(:n)(Integer new).
-    
-//    s := "2".
-//    n := intConvertor convert:s.
-    
-//    bfProgram eval:bfTape.    
+    bfProgram eval:bfTape.    
 ].
 
-//symbol program2 =
-//[
-//    if ('program'arguments length == 1)
-//        [ console write:"Please provide the path to the file to interpret". AbortException new; raise ].
-//
-//    var bfProgram := scriptEngine 
-//        load path:"rules.es";
-//        eval path:('program'arguments@1).
-//
-//    bfProgram eval:(BFTape new:1024).
-//].
-//
+symbol program2 =
+[
+    if ('program'arguments length == 1)
+        [ console write:"Please provide the path to the file to interpret". AbortException new; raise ].
+
+    var bfProgram := scriptEngine 
+        load path:"rules.es";
+        eval path:('program'arguments@1).
+
+    bfProgram eval:(BFTape new:1024).
+].
+
 //symbol program3 =
 //[
 //    var bfProgram := TapeAssembler new;

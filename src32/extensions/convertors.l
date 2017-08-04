@@ -110,13 +110,14 @@
 //    ]
 //}.
 
-// --- convertorOp ---
+// --- arrayConvertorEx ---
 
-extension convertorOp
+arrayConvertorEx =
 {
-//    toArray
-//        = self cast:%eval to:
-//            {
+    convert array:anArray
+        = anArray.
+
+//    convert literal:anArray                
 //                literal : aLiteral = arrayExConvertor convert enumerable:aLiteral.
 //                
 //                wide : aWide = arrayExConvertor convert enumerable:aWide.
@@ -132,8 +133,16 @@ extension convertorOp
 //                    
 //                void : val
 //                    = Array min.                    
-//            }.
-//    
+    
+}.
+
+// --- convertorOp ---
+
+extension convertorOp
+{
+    toArray
+        = arrayConvertorEx convert:self.
+
 //    toIntArray
 //        = self cast:%eval to:
 //            {

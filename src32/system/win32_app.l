@@ -1,17 +1,17 @@
-//// --- CommandLine ---
-//
-//class $CommandLineFactory =
-//{
-//    new
-//    [
-//        dirty_ptr aCommandLinePtr := system'external'KERNEL32 GetCommandLineW.
-//
-//        ^ aCommandLinePtr wide.
-//    ]
-//}.
-//
-//symbol commandLine = 
-//    $CommandLineFactory new.
+// --- CommandLine ---
+
+class $CommandLineFactory =
+{
+    new
+    [
+        dirty_ptr aCommandLinePtr := system'external'KERNEL32 GetCommandLineW.
+
+        ^ aCommandLinePtr wide.
+    ]
+}.
+
+symbol commandLine = 
+    $CommandLineFactory new.
 
 // --- startUp ---
 

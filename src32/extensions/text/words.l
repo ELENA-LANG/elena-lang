@@ -2,13 +2,13 @@ import system'text.
 
 // --- Statemachine ---
 
-type token_dfa :: Statemachine.
+type token_dfa = Statemachine.
 
 limited class Statemachine
 {
     stacksafe bool proceed char:aChar = $nil.
     
-    bool is whitespace = $nil.
+    bool isWhitespace = $nil.
     
     token_dfa = $self.
     
@@ -26,7 +26,7 @@ class SimpleStatemachine :: Statemachine
     
     proceed char:aChar
     [
-        if (aChar is whitespace)
+        if (aChar isWhitespace)
             [
                 ifnot (theSpaceMode)
                     [ theSpaceMode := true. ^ true ]
@@ -38,7 +38,7 @@ class SimpleStatemachine :: Statemachine
         ^ false
     ]
     
-    is whitespace = theSpaceMode.
+    isWhitespace = theSpaceMode.
 }
 
 class ExpressionStatemachine :: Statemachine
@@ -66,9 +66,9 @@ class ExpressionStatemachine :: Statemachine
                 ^ false
             ].
         
-        bool whitespace := aChar is whitespace.
-        bool digit := aChar is digit.
-        bool letter := aChar is ltoken.
+        bool whitespace := aChar isWhitespace.
+        bool digit := aChar isDigit.
+        bool letter := aChar isLToken.
         if (whitespace)
             [
                 ifnot(theSpaceMode)
@@ -110,7 +110,7 @@ class ExpressionStatemachine :: Statemachine
         ^ false
     ]
     
-    is whitespace = theSpaceMode.    
+    isWhitespace = theSpaceMode.    
 }
 
 /// obosolet
@@ -162,7 +162,7 @@ class TokenEnumerator :: Enumerator
                     ^ true
                 ];
                 [
-                    ifnot (theDFA is whitespace)
+                    ifnot (theDFA isWhitespace)
                         [ theBuffer write char:aChar ]
                 ].
                 
@@ -172,7 +172,7 @@ class TokenEnumerator :: Enumerator
 
         theIndex int := aCurrent.
 
-        ^ theBuffer is nonempty
+        ^ theBuffer isNonempty
     ]
     
     get = theBuffer literal.

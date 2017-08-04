@@ -29,53 +29,31 @@ class StringBookmark :: BaseValue
     equal wide:aValue
         => theValue.
 
-    find : anObject
-        = anObject cast:%eval to:
-        {
-            eval:aBookmark int : anIndex = aBookmark find index:anIndex.
-            
-            eval:aBookmark literal : aLiteral = aBookmark find value:aLiteral.
-            
-            eval:aBookmark wide : aLiteral = aBookmark find value:aLiteral.
-        } with:self.
+    multi find : anObject
+        <= find int:anObject.
 
-    append : anObject
-        = anObject cast:%eval to:
-        {
-            eval:aBookmark int : anIndex = aBookmark append index:anIndex.
-            
-            eval:aBookmark literal : aLiteral = aBookmark append value:aLiteral.
-            
-            eval:aBookmark wide : aLiteral = aBookmark append value:aLiteral.
-            
-        } with:self.
+    multi append : anObject
+        <= append int:anObject.
 
-    insert : anObject
-        = anObject cast:%eval to:
-        {
-            eval:aBookmark literal : aLiteral = aBookmark insert value:aLiteral.
-            
-            eval:aBookmark wide : aLiteral = aBookmark insert value:aLiteral.
-            
-        } with:self.
+    multi insert : anObject
+        <= insert(anObject literal).
 
-    delete : anObject
-        = anObject cast:%eval to:
-        {
-            eval:aBookmark int : aValue = aBookmark delete length:aValue.
-            
-            eval:aBookmark literal : aLiteral = aBookmark delete length:(aLiteral length).
-            
-            eval:aBookmark wide : aLiteral = aBookmark delete length:(aLiteral length).
-            
-        } with:self.
+    multi delete : anObject
+        <= delete int:anObject.
 
-    find index:anIndex
+    find int:anIndex
     [
         theIndex := anIndex.
     ]
 
-    find value:aValue
+    find literal:aValue
+    [
+        theIndex := theValue indexOf:aValue at:theIndex.
+        
+        ^ (-1 != theIndex)
+    ]
+    
+    find wide:aValue
     [
         theIndex := theValue indexOf:aValue at:theIndex.
         
@@ -95,24 +73,36 @@ class StringBookmark :: BaseValue
         
     ]
     
-    append value:aValue 
+    append literal:aValue 
     [
         theValue := theValue + aValue.
     ]
     
-    append index:aValue 
+    append wide:aValue 
+    [
+        theValue := theValue + aValue.
+    ]
+    
+    append int:aValue 
     [
         theIndex := theIndex + aValue.
     ]
     
-    insert value:aValue
+    insert literal:aValue
     [
         theValue := theValue insert:aValue at:theIndex.
         
         theIndex := theIndex + aValue length.
     ]
     
-    delete length:aLength
+    insert wide:aValue
+    [
+        theValue := theValue insert:aValue at:theIndex.
+        
+        theIndex := theIndex + aValue length.
+    ]
+    
+    delete int:aLength
     [
         theValue := theValue delete:aLength at:theIndex.
     ]

@@ -1469,87 +1469,76 @@ wide extension wideOp
 //        ^ self
 //    ]    
 //}
-//
-//// --- charOp ---
-//
-//char extension charOp
-//{
-//    stacksafe bool is whitespace
-//    [
-//        if (self == $9)
-//            [ ^ true ];
-//            [
-//                if (self == $32)
-//                    [ ^ true ];
-//                    [
-//                        if (self == $10)
-//                            [ ^ true ];
-//                            [
-//                                if (self == $13)
-//                                    [ ^ true ];
-//                                    [
-//                                        ^ self == $12
-//                                    ]
-//                            ]
-//                    ]
-//            ].
-//            
-//        ^ false
-//    ]
-//    
-//    stacksafe bool is digit
-//    [
-//        int ch := 0.
-//        intConvertor convert char:self vint:ch.
-//        
-//        ^ (ch >= 30h) and: (ch <= 39h)
-//    ]
-//    
-//    stacksafe bool is newLine
-//    [
-//        ^ self == $10
-//    ]
-//    
-//    stacksafe bool is letter
-//    [
-//        int ch := 0.
-//        intConvertor convert char:self vint:ch.
-//        
-//        if ((ch >= 41h) and: (ch <= 5Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 61h) and: (ch <= 7Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 3ACh) and: (ch <= 3CEh))
-//            [ ^ true ].
-//            
-//        if ((ch >= 400h) and: (ch <= 42Fh))
-//            [ ^ true ].
-//            
-//        ^ false
-//    ]
-//    
-//    stacksafe bool is ltoken
-//    [
-//        int ch := 0.
-//        intConvertor convert char:self vint:ch.
-//        
-//        if ((ch >= 41h) and: (ch <= 5Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 61h) and: (ch <= 7Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 3ACh) and: (ch <= 3CEh))
-//            [ ^ true ].
-//            
-//        if ((ch >= 400h) and: (ch <= 42Fh))
-//            [ ^ true ].
-//            
-//        ^ ch == 39
-//    ]
-//}
+
+// --- charOp ---
+
+char extension charOp
+{
+    stacksafe bool isWhitespace
+    [
+        self =>
+            $9  [ ^ true ];
+            $32 [ ^ true ];
+            $10 [ ^ true ];
+            $13 [ ^ true ];
+            $12 [ ^ true ].
+            
+        ^ false
+    ]
+    
+    stacksafe bool isDigit
+    [
+        int ch := 0.
+        intConvertor convert char:self vint:ch.
+        
+        ^ (ch >= 30h) and: (ch <= 39h)
+    ]
+    
+    stacksafe bool isNewLine
+    [
+        ^ self == $10
+    ]
+    
+    stacksafe bool isLetter
+    [
+        int ch := 0.
+        intConvertor convert char:self vint:ch.
+        
+        if ((ch >= 41h) and: (ch <= 5Ah))
+            [ ^ true ].
+        
+        if ((ch >= 61h) and: (ch <= 7Ah))
+            [ ^ true ].
+        
+        if ((ch >= 3ACh) and: (ch <= 3CEh))
+            [ ^ true ].
+            
+        if ((ch >= 400h) and: (ch <= 42Fh))
+            [ ^ true ].
+            
+        ^ false
+    ]
+    
+    stacksafe bool isLToken
+    [
+        int ch := 0.
+        intConvertor convert char:self vint:ch.
+        
+        if ((ch >= 41h) and: (ch <= 5Ah))
+            [ ^ true ].
+        
+        if ((ch >= 61h) and: (ch <= 7Ah))
+            [ ^ true ].
+        
+        if ((ch >= 3ACh) and: (ch <= 3CEh))
+            [ ^ true ].
+            
+        if ((ch >= 400h) and: (ch <= 42Fh))
+            [ ^ true ].
+            
+        ^ ch == 39
+    ]
+}
 
 // --- byteArrayHelper ---
 

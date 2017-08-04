@@ -194,7 +194,7 @@ class Dynamic
 //    
 //    dispatch => system'core_routines'__class.
 //}
-//
-//// --- obsolete ---
-//
-//symbol DynamicStruct = Dynamic.
+
+// --- obsolete ---
+
+symbol DynamicStruct = Dynamic.

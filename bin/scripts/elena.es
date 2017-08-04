@@ -15,11 +15,11 @@
 
    #define operations ::= operation operations;
    #define operations ::= $eps;
-   #define operation  ::= message parameters <= >> "[" = "]""" =>;
+   #define operation  ::= message "(" parameters ")" <= >> "[" = "]""" =>;
    #define message    ::= <= >> " ^ """ "$identifier" =>;
 
    #define parameters ::= parameter parameters;
    #define parameters ::= $eps; 
-   #define parameter  ::=  <= + << " " => ":" object;
+   #define parameter  ::=  <= + << " " => object;
    #define next_expr  ::= $eof;
 ]]

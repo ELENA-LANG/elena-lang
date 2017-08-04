@@ -3,10 +3,13 @@ In development:
 ------                              
 
               zdev - script engine
-                 * fix message table
                  * migrate Tape
                  * optimize dynamic code building
                  * migrate script samples
+                 * test vm console operations in IDE
+
+              xdev - general implementation
+                 * if else if ...
 
               xdev - multimethod                 
                  * multi dispatch with $nil
@@ -31,7 +34,6 @@ In development:
                  * uncomment get&hash_code
                  * option not to generate multimethod
                  * explicit conversion
-                 * test vm console operations in IDE
                  * test primitive operation with message
                  * implicit conversions
                  * check package functionality

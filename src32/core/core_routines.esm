@@ -4639,3 +4639,16 @@ labSearch:
   quitn 3
 
 end
+
+procedure __vmtape."eval&evaluateTape$system@UnsafePointer[2]"
+
+  aloadsi 2
+  nload
+  pushd
+  callextr extern : EvaluateTape
+  pop
+  pushd
+  popa
+  quitn 2
+
+end
