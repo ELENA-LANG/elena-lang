@@ -292,7 +292,7 @@ _Module* Project :: createModule(ident_t name)
    LoadResult result = lrNotFound;
    _Module* module = _loader.createModule(name, result);
 
-   if (result != lrSuccessful && result != lrDuplicate) {
+   if (result != lrSuccessful/* && result != lrDuplicate*/) {
       raiseError(getLoadError(lrCannotCreate), name);
 
       return NULL;

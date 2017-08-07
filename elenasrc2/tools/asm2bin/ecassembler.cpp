@@ -55,7 +55,7 @@ void ECodesAssembler :: compileICommand(ByteCode code, TokenInfo& token, MemoryW
    writeCommand(ByteCommand(code, offset), writer);
 }
 
-bool ECodesAssembler :: readMessage(ident_t quote, int& verbId, IdentifierString& subject, int& paramCount)
+bool ECodesAssembler :: readMessage(ident_t quote, IdentifierString& subject, int& paramCount)
 {
    size_t len = getlength(quote);
    size_t param_index = quote.find('[');
@@ -74,10 +74,6 @@ bool ECodesAssembler :: readMessage(ident_t quote, int& verbId, IdentifierString
    size_t subj_index = 0;
    if (index != NOTFOUND_POS) {
       content.copy(quote, index);
-
-      verbId = mapVerb(content);
-      if (verbId == 0)
-         index = 0;
    }
    else return false;
 
@@ -88,22 +84,11 @@ bool ECodesAssembler :: readMessage(ident_t quote, int& verbId, IdentifierString
    paramCount = content.ident().toInt();
 }
 
-void ECodesAssembler::readMessage(TokenInfo& token, int& verbId, IdentifierString& subject, int& paramCount)
+void ECodesAssembler::readMessage(TokenInfo& token, IdentifierString& subject, int& paramCount)
 {
-   verbId = mapVerb(token.value);
-   if (verbId == 0) {
-      if (token.check("dispatch")) {
-         verbId = DISPATCH_MESSAGE_ID;
-      }
-      else verbId = EVAL_MESSAGE_ID;
-   }
-
-   token.read();
-   while (token.value[0] == '&') {
+   while (token.value[0] != '[') {
       subject.append(token.value);
 
-      token.read();
-      subject.append(token.value);
       token.read();
       if (token.value[0] == '$') {
          subject.append(token.value);
@@ -123,31 +108,17 @@ void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& messa
    IdentifierString subject;
 
    int paramCount = 0;
-   int verbId = 0;
 
    if (token.terminal.state == dfaQuote) {
       QuoteTemplate<IdentifierString> quote(token.terminal.line);
 
-      if (!readMessage(quote.ident(), verbId, subject, paramCount))
+      if (!readMessage(quote.ident(), subject, paramCount))
          token.raiseErr("Invalid operand (%d)");
    }
-   else readMessage(token, verbId, subject, paramCount);
+   else readMessage(token, subject, paramCount);
 
    // reserve place for param counter
    message.append('0');
-
-   // if it is not a verb - by default it is EVAL message
-   if (verbId == 0) {
-      message.append('#');
-      message.append(EVAL_MESSAGE_ID + 0x20);
-      message.append('&');
-      message.append(verbId);
-   }
-   else {
-      message.append('#');
-      message.append(verbId + 0x20);
-   }
-
    message.append(subject);
 
    message[0] = message[0] + paramCount;
@@ -167,14 +138,10 @@ ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
 
    IdentifierString subject;
    int paramCount = 0;
-   int verbId = 0;
 
-   readMessage(quote.ident(), verbId, subject, paramCount);
+   readMessage(quote.ident(), subject, paramCount);
 
-   if (subject.Length() > 0) {
-      return encodeMessage(binary->mapSubject(subject + 1, false), verbId, paramCount);
-   }
-   else return encodeMessage(0, verbId, paramCount);
+   return encodeMessage(0, binary->mapSubject(subject + 1, false), paramCount);
 }
 
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
@@ -288,7 +255,7 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
 
       ref_t subj = binary->mapSubject(subject, false);
 
-      writeCommand(ByteCommand(code, encodeMessage(subj, verbId, paramCount)), writer);
+      writeCommand(ByteCommand(code, encodeMessage(0, subj, paramCount)), writer);
    }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
@@ -499,7 +466,6 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcDCopy:
          case bcECopy:
          case bcSetVerb:
-         case bcSetSubj:
          case bcAndN:
          case bcOrN:
          case bcPushN:

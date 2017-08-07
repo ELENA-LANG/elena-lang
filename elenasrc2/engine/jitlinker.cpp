@@ -163,7 +163,7 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 // --- JITLinker ---
 
-ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& verb_id)
+ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& flags)
 {
    size_t overloadIndex = signature.find('$');
    if (overloadIndex != NOTFOUND_POS && paramCount > 0) {
@@ -198,28 +198,29 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& ve
          info.module->mapPredefinedSubject(signature, tableOffs);
       }
 
-      return tableOffs | STRONG_SIGN_MASK;
+      flags |= SIGNATURE_FLAG;
+
+      return tableOffs;
    }
    else return (ref_t)_loader->resolveReference(signature, 0);
 }
 
 ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
 {
-   ref_t verbId = 0;
-   ref_t signRef = 0;
+   ref_t actionRef = 0;
+   ref_t flags = 0;
    int paramCount = 0;
-   decodeMessage(message, signRef, verbId, paramCount);
+   decodeMessage(message, flags, actionRef, paramCount);
 
-   // if it is generic message
-   if (signRef == 0) {
-      return message | MESSAGE_MASK;
+   // if it is a predefined message
+   if (actionRef <= PREDEFINED_MESSAGE_ID) {
+      return message;
    }
 
    // otherwise signature and custom verb should be imported
-   if (signRef != 0) {
-      signRef = resolveSignature(module->resolveSubject(signRef), paramCount, verbId);
-   }
-   return encodeMessage(signRef, verbId, paramCount) | MESSAGE_MASK;
+   actionRef = resolveSignature(module->resolveSubject(actionRef), paramCount, flags);
+
+   return encodeMessage(flags, actionRef, paramCount);
 }
 
 void* JITLinker :: calculateVAddress(MemoryWriter* writer, int mask)
@@ -570,7 +571,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
          methodPosition = loadMethod(refHelper, codeReader, codeWriter);
          
          // NOTE : private message is not added to VMT
-         if (getVerb(entry.message) == PRIVATE_MESSAGE_ID) {
+         if (test(getMessageFlags(entry.message), STATIC_MSG_FLAG)) {
             _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
          }
          else _compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
@@ -801,47 +802,14 @@ void* JITLinker :: resolveMessageTable(ident_t reference, int mask)
 
 ref_t JITLinker :: parseMessage(ident_t reference)
 {
-   // message constant: nverb&signature
+   IdentifierString text;
 
-   int verbId = 0;
-   int signatureId = 0;
-
-   // read the param counter
    int count = reference[0] - '0';
-   
-   // skip the param counter
-   reference+=1;
+   ref_t flags = 0;
 
-   int index = reference.find('&');
-   //HOTFIX: for generic GET message we have to ignore ampresand
-   if (reference[index + 1] == 0)
-      index = -1;
+   ref_t actionRef = resolveSignature(reference + 1, count, flags);
 
-   if (index != -1) {
-      //HOTFIX: for GET message we have &&, so the second ampersand should be used
-      if (reference[index + 1] == 0 || reference[index + 1]=='&')
-         index++;
-      
-      IdentifierString verb(reference, index);
-      ident_t signature = reference + index + 1;
-
-      // if it is a predefined verb
-      if (verb[0] == '#') {
-         verbId = verb[1] - 0x20;
-      }
-
-      // resolve signature
-      signatureId = (int)_loader->resolveReference(signature, 0);
-   }
-   else {
-      // if it is a predefined verb
-      if (reference[0] == '#') {
-         verbId = reference[1] - 0x20;
-      }
-      else signatureId = (int)_loader->resolveReference(reference, 0);
-   }
-
-   return MESSAGE_MASK | encodeMessage(signatureId, verbId, count);
+   return encodeMessage(flags, actionRef, count);
 }
 
 void* JITLinker :: resolveExtensionMessage(ident_t reference, ident_t vmt)
@@ -1125,10 +1093,15 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
    return vaddress;
 }
 
-void JITLinker :: prepareCompiler()
+void JITLinker :: prepareCompiler(MessageMap& verbs)
 {
    References      references(RefInfo(0, NULL));
    ReferenceHelper helper(this, NULL, &references);
+
+   // load predefine messages
+   for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
+      _loader->mapPredefinedSubject(it.key(), *it);
+   }
 
    _compiler->prepareCore(helper, _loader);
 

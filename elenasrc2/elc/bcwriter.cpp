@@ -912,8 +912,8 @@ void ByteCodeWriter :: releaseArgList(CommandTape& tape)
 
 void ByteCodeWriter::setSubject(CommandTape& tape, ref_t subject)
 {
-   // setsubj subj
-   tape.write(bcSetSubj, subject);
+   // setverb subj
+   tape.write(bcSetVerb, subject);
 }
 
 void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
@@ -1454,7 +1454,7 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Compil
    info.header.count = 0;
    for (ClassInfo::MethodMap::Iterator m_it = info.methods.start(); !m_it.Eof(); m_it++) {
       //NOTE : ingnore private methods
-      if (getVerb(m_it.key()) != PRIVATE_MESSAGE_ID)
+      if (!test(getMessageFlags(m_it.key()), STATIC_MSG_FLAG))
          info.header.count++;
    }
 
@@ -2408,10 +2408,10 @@ void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
 
 void ByteCodeWriter :: saveSubject(CommandTape& tape)
 {
-   // dcopysubj
+   // dcopyverb
    // pushd
 
-   tape.write(bcDCopySubj);
+   tape.write(bcDCopyVerb);
    tape.write(bcPushD);
 }
 

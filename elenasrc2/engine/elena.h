@@ -171,6 +171,8 @@ public:
 
    virtual void* resolveReference(ident_t reference, ref_t mask) = 0;
 
+   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
+
    virtual void mapReference(ident_t reference, void* vaddress, ref_t mask) = 0;
 
    virtual void addListener(_JITLoaderListener* listener) = 0;
@@ -712,17 +714,17 @@ inline bool isTemplateWeakReference(ident_t referenceName)
    return (referenceName != NULL && referenceName[0] != 0 && referenceName[0] == '\'' && referenceName.find('#') != NOTFOUND_POS);
 }
 
-inline ref_t encodeMessage(ref_t signatureRef, ref_t verbId, int paramCount)
+inline ref_t encodeMessage(ref_t flags, ref_t actionRef, int paramCount)
 {
-   return (verbId << 24) + (signatureRef << 4) + paramCount;
+   return ((actionRef | flags) << 4) + paramCount;
 }
 
-inline ref64_t encodeMessage64(ref_t signatureRef, ref_t verbId, int paramCount)
+inline ref64_t encodeMessage64(ref_t flags, ref_t actionRef, int paramCount)
 {
-   ref64_t message = verbId;
-   message <<= 56;
+   ref64_t message = actionRef | flags;
+   message <<= 16;
 
-   message += (signatureRef << 16) + paramCount;
+   message += paramCount;
 
    return message;
 }
@@ -732,21 +734,25 @@ inline ref_t encodeVerb(int verbId)
    return encodeMessage(0, verbId, 0);
 }
 
-inline ref_t overwriteSubject(ref_t message, ref_t subject)
+inline void decodeMessage(ref_t message, ref_t& flags, ref_t& actionRef, int& paramCount)
 {
-   message &= ~SIGN_MASK;
-   message |= (subject << 4);
+   actionRef = message >> 4;
 
-   return message;
+   flags = actionRef & MESSAGE_FLAGS_MASK;
+   actionRef &= ~MESSAGE_FLAGS_MASK;
+
+   paramCount = message & PARAM_MASK;
 }
 
-inline ref_t overwriteVerb(ref_t message, int verb)
+inline ref_t overwriteMessageFlag(ref_t message, int newFlag)
 {
-   message &= ~VERB_MASK;
-   message |= (verb << 24);
+   ref_t flags, action;
+   int paramCount;
 
-   return message;
+   decodeMessage(message, flags, action, paramCount);
+   flags = newFlag;
 
+   return encodeMessage(flags, action, paramCount);
 }
 
 inline ref_t overwriteParamCount(ref_t message, int paramCount)
@@ -755,28 +761,23 @@ inline ref_t overwriteParamCount(ref_t message, int paramCount)
    message |= paramCount;
 
    return message;
-
 }
 
-inline void decodeMessage(ref_t message, ref_t& signatureRef, ref_t& verbId, int& paramCount)
+inline void decodeMessage64(ref64_t message, ref_t& flags, ref_t& actionRef, int& paramCount)
 {
-   verbId = (message & VERB_MASK) >> 24;
-   signatureRef = (message & SIGN_MASK) >> 4;
-   paramCount = message & PARAM_MASK;
-}
+   actionRef = (ref_t)(message >> 16);
 
-inline void decodeMessage64(ref64_t message, ref_t& signatureRef, ref_t& verbId, int& paramCount)
-{
-   verbId = (message & VERBX_MASK) >> 56;
-   signatureRef = (ref_t)((message & SIGNX_MASK) >> 16);
+   flags = actionRef & MESSAGE_FLAGS_MASK;
+   actionRef &= ~MESSAGE_FLAGS_MASK;
+
    paramCount = message & PARAMX_MASK;
 }
 
 inline int getParamCount(ref_t message)
 {
    int   paramCount;
-   ref_t verb, signature;
-   decodeMessage(message, signature, verb, paramCount);
+   ref_t action, flags;
+   decodeMessage(message, flags, action, paramCount);
 
    if (paramCount == OPEN_ARG_COUNT)
       return 0;
@@ -784,40 +785,49 @@ inline int getParamCount(ref_t message)
    return paramCount;
 }
 
-inline ref_t getVerb(ref_t message)
+inline ref_t getAction(ref_t message)
 {
    int   paramCount;
-   ref_t verb, signature;
-   decodeMessage(message, signature, verb, paramCount);
+   ref_t action, flags;
+   decodeMessage(message, flags, action, paramCount);
 
-   return verb;
+   return action;
 }
 
-inline ref_t getSignature(ref_t message)
+inline ref_t getMessageFlags(ref_t message)
 {
    int   paramCount;
-   ref_t verb, signature;
-   decodeMessage(message, signature, verb, paramCount);
+   ref_t action, flags;
+   decodeMessage(message, flags, action, paramCount);
 
-   return signature;
+   return flags;
 }
+
+//inline ref_t getSignature(ref_t message)
+//{
+//   int   paramCount;
+//   ref_t verb, signature;
+//   decodeMessage(message, signature, verb, paramCount);
+//
+//   return signature;
+//}
 
 inline ref64_t toMessage64(ref_t message)
 {
    int   paramCount;
-   ref_t verb, signature;
-   decodeMessage(message, signature, verb, paramCount);
+   ref_t actionRef, flags;
+   decodeMessage(message, flags, actionRef, paramCount);
 
-   return encodeMessage64(signature, verb, paramCount);
+   return encodeMessage64(flags, actionRef, paramCount);
 }
 
 inline ref_t fromMessage64(ref64_t message)
 {
    int   paramCount;
-   ref_t verb, signature;
-   decodeMessage64(message, signature, verb, paramCount);
+   ref_t actionRef, flags;
+   decodeMessage64(message, flags, actionRef, paramCount);
 
-   return encodeMessage(signature, verb, paramCount);
+   return encodeMessage(flags, actionRef, paramCount);
 }
 
 inline bool IsExprOperator(int operator_id)
@@ -867,24 +877,23 @@ inline bool isOpenArg(ref_t message)
 
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
-   ref_t verbId = 0;
-   ref_t signRef = 0;
+   ref_t actionRef = 0;
+   ref_t flags = 0;
    int paramCount = 0;
 
-   decodeMessage(exportRef, signRef, verbId, paramCount);
+   decodeMessage(exportRef, flags, actionRef, paramCount);
 
    // if it is generic message
-   if (signRef == 0) {
+   if (actionRef <= PREDEFINED_MESSAGE_ID) {
       return exportRef;
    }
 
    // otherwise signature and custom verb should be imported
-   if (signRef != 0) {
-      ident_t subject = exporter->resolveSubject(signRef);
+   ident_t subject = exporter->resolveSubject(actionRef);
 
-      signRef = importer->mapSubject(subject, false);
-   }
-   return encodeMessage(signRef, verbId, paramCount);
+   actionRef = importer->mapSubject(subject, false);
+
+   return encodeMessage(flags, actionRef, paramCount);
 }
 
 } // _ELENA_

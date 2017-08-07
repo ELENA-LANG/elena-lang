@@ -2,6 +2,105 @@
 In development:
 ------                              
 
+              xdev - general implementation
+
+                 * method : attribute type predicate name
+
+                 * eval writeLine:n
+                 * eval writeLine(IntNumber n)
+
+                 * message : verb [subject:param]*
+                 * message : verb [subject<type>:param]*
+
+                 * method argument list : verb [subj:param]*, [subj:param]+
+                 * closure argument list
+                 * message argument list
+
+                 * message : changing structure
+                 * predefined verb: test sending generic message 
+                 * predefined verb: multi method
+                 * predefined verb: test sending qualified message 
+                 * custom verb: test sending generic message 
+                 * custom verb: multi method
+                 * custom verb: test sending qualified message 
+                 * predefined verb: generic message handler
+                 * custom verb: generic message handler
+                 * predefined verb: signature
+                 * predefined verb: message
+                 * custom verb: signature
+                 * custom verb: message
+                 * private messages
+                 * private sealed messages
+
+                 * message : verb custom-verb signature
+                 * test embeddable optimization
+                 * test implicit conversion
+                 * test multi method
+                 * test generic
+
+
+                 * message structure redesign (message+signature,param count) : action[param-count], action$signature[param-count]
+
+                   special message, eval, eval with signature, get, get with signature, set, set with signature
+
+message                                                    - supported
+verb                                                       - supported
+signature                                                  - not supported
+generic message   -> qualified message (o~verb eval int:2) - not supported
+qualified message -> generic message                       - supported
+
+
+
+qualifying  -  does not supported
+dispatching - supported
+
+b31     : 1  - signature
+b30,b29 : 00 - special
+          01 - get
+          10 - set
+          11 - eval
+
+
+                   set should have only one parameter, get no parameter, any other will be written as eval&set&x eval&get&x
+
+                   message - action + signature + param-count
+
+                   action : writeLine, copyTo
+                   signature : $int, $int$int
+
+
+                   generic writeLine  $subject - writeLine
+                   generic set        $subject - x
+
+
+                   writeLine(n)  -> 80000011
+                   set x(n)      -> 40000021
+                   get x         -> 40000020
+
+                   set x(int n) - action x, signature - $int
+                   get x
+
+
+                   verb : writeLine, copy&to
+                   signature : writeLine
+
+                   writeLine(..) writeLine int:n ,  copy:a to:b,  
+
+                   - structure 1 000000 0 -> DISPATCH_MESSAGE_ID
+
+                   - generic handler
+
+                       writeLine int:2  -> writeLine
+                       get x, set x, eval x
+
+                   - signature / message dispatching
+                   - built-in messages
+
+                 * reimplement message and signature, get rid of verb
+                 * reimplement generic method handlers
+                 * reimplement multi dispatching to fix the short circuit (infinit loop)
+                    multi convert : n <= convert(n value)
+
               zdev - script engine
                  * migrate Tape
                  * optimize dynamic code building

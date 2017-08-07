@@ -121,7 +121,7 @@ int Instance::loadSubjectName(size_t subjectRef, char* buffer, size_t length)
 
       ref_t verb, subject;
       int count;
-      decodeMessage(subjectRef, subject, verb, count);
+      decodeMessage(subjectRef, subject, count);
 
       return manager.readSubjectName(reader, subject, buffer, length);
    }
@@ -138,11 +138,11 @@ int Instance :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
    if (initSubjectSection(subjectSection)) {
       MemoryReader reader(&subjectSection);
 
-      ref_t verb, subject;
+      ref_t subject;
       int count;
-      decodeMessage(subjectRef, subject, verb, count);
+      decodeMessage(subjectRef, subject, count);
 
-      ident_t verbName = retrieveKey(_verbs.start(), verb, DEFAULT_STR);
+      ident_t verbName = retrieveKey(_verbs.start(), subject, DEFAULT_STR);
       size_t used = length;
       verbName.copyTo(buffer, used);
       

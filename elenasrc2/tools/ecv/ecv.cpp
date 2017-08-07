@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   7
+#define REVISION_VERSION   8
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -178,56 +178,43 @@ bool loadClassInfo(_Module* module, ident_t className, ClassInfo& info)
 ref_t resolveMessage(_Module* module, ident_t method)
 {
    int paramCount = 0;
+   ref_t actionRef = 0;
+   ref_t flags = 0;
 
-   int subjIndex = method.find('&', -1);
+   IdentifierString actionName;
    int paramIndex = method.find('[', -1);
-
-   IdentifierString verbName;
-   IdentifierString subjectName;
-
-   if (subjIndex != -1) {
-      verbName.copy(method, subjIndex);
-      if (paramIndex != -1) {
-         subjectName.copy(method + subjIndex + 1, paramIndex - subjIndex - 1);
-      }
-      else subjectName.copy(method + subjIndex + 1);
-   }
-   else if (paramIndex != -1) {
-      verbName.copy(method, paramIndex);
-   }
-   else verbName.copy(method);
-
    if (paramIndex != -1) {
+      if (method.find("get&") == 0) {
+         actionName.copy(method + 4, paramIndex);
+         flags = PROPERTY_FLAG;
+      }
+      else actionName.copy(method, paramIndex);
+
       IdentifierString countStr(method + paramIndex + 1, getlength(method) - paramIndex - 2);
       paramCount = countStr.ident().toInt();
    }
+   else if (method.find("get&") == 0) {
+      actionName.copy(method + 4);
+      flags = PROPERTY_FLAG;
+   }
+   else actionName.copy(method);
 
-   ref_t verb = _verbs.get(verbName);
-   if (verb == 0) {
-      if (verbName.compare("dispatch")) {
-         verb = DISPATCH_MESSAGE_ID;
-      }
-      else if (verbName.compare("#new")) {
-         verb = NEWOBJECT_MESSAGE_ID;
-      }
-      else if (verbName.compare("#private")) {
-         verb = PRIVATE_MESSAGE_ID;
-      }
-      else {
-         printLine("Unknown verb ", verbName);
+   if (actionName.compare("dispatch")) {
+      actionRef = DISPATCH_MESSAGE_ID;
+   }
+   else if (actionName.compare("#new")) {
+      actionRef = NEWOBJECT_MESSAGE_ID;
+   }
+   else {
+      actionRef = module->mapSubject(actionName, true);
+      if (actionRef == 0) {
+         printLine("Unknown subject", actionName);
 
          return 0;
       }
    }
 
-   ref_t subject = emptystr(subjectName) ? 0 : module->mapSubject(subjectName, true);
-   if (subject == 0 && !emptystr(subjectName)) {
-      printLine("Unknown subject", subjectName);
-
-      return 0;
-   }
-
-   return encodeMessage(subject, verb, paramCount);
+   return encodeMessage(flags, actionRef, paramCount);
 }
 
 inline void appendHex32(IdentifierString& command, unsigned int hex)
@@ -393,28 +380,30 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
 
 void printMessage(IdentifierString& command, _Module* module, size_t reference)
 {
-   size_t signRef = 0;
-   size_t verb = 0;
+   ref_t actionRef = 0;
+   ref_t flags = 0;
    int paramCount = 0;
-   decodeMessage(reference, signRef, verb, paramCount);
+   decodeMessage(reference, flags, actionRef, paramCount);
 
-   if (verb == DISPATCH_MESSAGE_ID) {
+   if (actionRef == DISPATCH_MESSAGE_ID) {
       command.append("dispatch");
    }
-   else if (verb == PRIVATE_MESSAGE_ID) {
-      command.append("#private");
-   }
-   else if (verb == NEWOBJECT_MESSAGE_ID) {
+   //else if (verb == PRIVATE_MESSAGE_ID) {
+   //   command.append("#private");
+   //}
+   else if (actionRef == NEWOBJECT_MESSAGE_ID) {
       command.append("#new");
    }
-   else {
-      ident_t verbName = retrieveKey(_verbs.start(), verb, DEFAULT_STR);
+   else if (actionRef <= PREDEFINED_MESSAGE_ID) {
+      ident_t verbName = retrieveKey(_verbs.start(), actionRef, DEFAULT_STR);
       command.append(verbName);
    }
+   else {
+      if (test(flags, PROPERTY_FLAG)) {
+         command.append("get&");
+      }
 
-   if (signRef != 0) {
-      ident_t subjectName = module->resolveSubject(signRef);
-      command.append('&');
+      ident_t subjectName = module->resolveSubject(actionRef);
       command.append(subjectName);
    }
 
@@ -617,7 +606,6 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       case bcCopyM:
       case bcSetVerb:
-      case bcSetSubj:
          command.append(opcode);
          command.append(' ');
          printMessage(command, module, argument);

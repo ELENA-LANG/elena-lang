@@ -96,7 +96,7 @@ ref_t Module :: mapSubject(ident_t subject, bool existing)
    if (existing)
       return _subjects.get(subject);
    else {
-      ref_t nextId = _subjects.Count() + 1;
+      ref_t nextId = _subjects.Count();
 
       ref_t refId = mapKey(_subjects, subject, nextId);
 

@@ -8,33 +8,14 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA Standard Library
-version=3.2.2
+version=3.2.3
 author=Alex Rakov
 
 [files]
 types.l
 object.l
 basic.l
-templates.l
-control.l
 memory.l
 dynamic.l
-win32_strings.l
-extensions.l
 exceptions.l
-events.l
-console.l
-win32_pointers.l
 win32_app.l
-collections\list.l
-collections\queues.l
-routines\enumerables.l
-routines\patterns.l
-text\win32_common.l
-text\encoder.l
-text\win32_encoder.l
-text\textbuffer.l
-io\win32_console.l
-dynamic\reflection.l
-dynamic\groups.l
-dynamic\interpreters.l

@@ -1,21 +1,8 @@
 
-// === basic templates ===
-
-template dispatchable :: template_subj
-{
-    sealed embeddable template_subj = $self.
-    
-    /// Dispatches the verb to the target with a specified subject
-    cast : verb to:target = target~verb eval template_subj:$self.
-
-    /// Dispatches the verb to the target with a specified subject providing a parameter
-    cast : aVerb to:aTarget with:aParam = aTarget~aVerb eval:aParam template_subj:$self.
-}
-
 // --- super object ---
 
 /// a common ancestor
-class Object :: dispatchable<object>
+class Object
 {
     /// Creates the object
     constructor new []
@@ -32,8 +19,10 @@ class Object :: dispatchable<object>
 }
 
 /// A common boolean value
-listable class BaseBoolValue :: dispatchable<bool>
+listable class BaseBoolValue
 {
+    bool = $self.
+    
     if : aTrueAction = $nil.
 
     if : aTrueAction : aFalseAction = $nil.
@@ -61,15 +50,15 @@ listable class BaseBoolValue :: dispatchable<bool>
     clone = $nil.
 }
 
-extension commonOp
-{
-    then : code
-        = code eval.
-        
-    thenClose:code
-    [
-        code eval.
-        
-        self close
-    ]
-}
+//extension commonOp
+//{
+//    then : code
+//        = code eval.
+//        
+//    thenClose:code
+//    [
+//        code eval.
+//        
+//        self close
+//    ]
+//}

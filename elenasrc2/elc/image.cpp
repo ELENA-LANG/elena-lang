@@ -52,7 +52,9 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    helper.beforeLoad(compiler, *this);
 
   // initialize compiler inline code
-   linker.prepareCompiler();
+   MessageMap verbs;
+   ByteCodeCompiler::loadVerbs(verbs);
+   linker.prepareCompiler(verbs);
 
   // create the image
    ident_t startUpClass = project->resolveForward(STARTUP_CLASS);

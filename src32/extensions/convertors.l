@@ -1,5 +1,5 @@
-//import system'collections.
-//import system'routines.
+import system'collections.
+import system'routines.
 //import system'calendar.
 //import system'text.
 //import system'dynamic.
@@ -37,18 +37,6 @@
 //            [ anOutput setLength int:(-1 + aLength) ].
 //        
 //        ^ anOutput wide
-//    ]
-//}.
-//
-//class arrayExConvertor =
-//{
-//    convert enumerable:aList
-//    [
-//        array_list aRetVal := ArrayList new.
-//
-//        aList run each: (:anItem)[ aRetVal append:anItem ].
-//
-//        ^ aRetVal array
 //    ]
 //}.
 //
@@ -114,23 +102,21 @@
 
 arrayConvertorEx =
 {
+    multi convert : anObject
+        = arrayConvertorEx convert enumerable:anObject.
+    
     convert array:anArray
         = anArray.
 
-//    convert literal:anArray                
-//                literal : aLiteral = arrayExConvertor convert enumerable:aLiteral.
-//                
-//                wide : aWide = arrayExConvertor convert enumerable:aWide.
-//                
-//                array : anArray
-//                    = anArray.
-//                    
-//                enumerable : aList
-//                    = arrayExConvertor convert enumerable:aList.
-//                    
-//                enumerator : anEnumerator
-//                    = arrayExConvertor convert enumerable:anEnumerator.
-//                    
+    convert enumerable:aList
+    [
+        array_list aRetVal := ArrayList new.
+
+        aList run each(:anItem)[ aRetVal append:anItem ].
+
+        ^ aRetVal array
+    ]
+
 //                void : val
 //                    = Array min.                    
     

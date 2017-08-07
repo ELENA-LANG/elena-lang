@@ -15,7 +15,7 @@
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", "pushb", "pop", "snop", "pushe", "dcopyverb", "throw",
-   "dcopycount", "or", "pusha", "popa", "acopyb", "pope", "bsredirect", "dcopysubj",
+   "dcopycount", "or", "pusha", "popa", "acopyb", "pope", "bsredirect", "unknown",
 
    "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
    "get", "set", "inc", "equit", "count", "unhook", "add", "create",
@@ -53,7 +53,7 @@ const char* _fnOpcodes[256] =
    "asavebi", "nwritei", "aswapsi", "asavesi", "asavefi", "bswapsi", "eswapsi", "dswapsi",
    "bloadfi", "bloadsi", "nloadi", "nsavei", "asaver", "aloadai", "aloadbi", "axsavebi",
 
-   "popi", "nreadi", "scopyf", "setverb", "setsubj", "andn", "addn", "orn",
+   "popi", "nreadi", "scopyf", "setverb", "unknown", "andn", "addn", "orn",
    "eaddn", "shiftn", "muln", "divn", "bloadr", "init", "mtredirect", "unknown",
 
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
@@ -675,7 +675,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
 {
    // load verbs
    addVerb(verbs, DISPATCH_MESSAGE,   DISPATCH_MESSAGE_ID); // NOTE : dispatch verb should not be used explicitly
-   addVerb(verbs, NEW_MESSAGE,        NEW_MESSAGE_ID);
+   addVerb(verbs, "#new",             NEWOBJECT_MESSAGE_ID);
    addVerb(verbs, GET_MESSAGE,        GET_MESSAGE_ID);
    addVerb(verbs, EVAL_MESSAGE,       EVAL_MESSAGE_ID);
    addVerb(verbs, EVALUATE_MESSAGE,   EVAL_MESSAGE_ID);
@@ -702,6 +702,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, IF_MESSAGE,         IF_MESSAGE_ID);
    addVerb(verbs, IFNOT_MESSAGE,      IFNOT_MESSAGE_ID);
    addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);
+   addVerb(verbs, "#values", VALUES_MESSAGE_ID);
 }
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)

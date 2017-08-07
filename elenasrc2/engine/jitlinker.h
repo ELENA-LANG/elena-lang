@@ -145,7 +145,7 @@ class JITLinker : _JITLoaderListener
 
    size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
-   ref_t resolveSignature(ident_t signature, int paramCount, ref_t& verb_id);
+   ref_t resolveSignature(ident_t signature, int paramCount, ref_t& flags);
    ref_t resolveMessage(_Module* module, ref_t reference);
 
    void* resolveNativeVariable(ident_t  reference, int mask);
@@ -162,7 +162,7 @@ class JITLinker : _JITLoaderListener
 //   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:
-   void prepareCompiler();
+   void prepareCompiler(MessageMap& verbs);
 
    void* resolve(ident_t reference, int mask, bool silentMode);
 

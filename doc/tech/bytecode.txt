@@ -52,8 +52,6 @@ ELENA byte codes (or ecodes)
  
  dcopyr                     - index << real index
  
- dcopysubj                  - index << ext.subj
- 
  dcopyverb                  - index << ext.verb
  
  ecopy i                    - i => ext
@@ -66,8 +64,6 @@ ELENA byte codes (or ecodes)
  
  selectr r1, r2             - acc = (index = 0 ? r1 : r2)
  
- setsubj m                  - ext.subject << m
-
  setverb m                  - ext.verb << m
  
  xselectr r1, r2            - acc = (acc = 0 ? r1 : r2)

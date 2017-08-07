@@ -78,8 +78,9 @@ define elVMTFlagOffset       0008h
 define elVMTSizeOffset       000Ch
 define elPackageOffset       0010h
 
-define subj_mask         80FFFFF0h
 define page_align_mask   000FFFF0h
+
+define SUBJ_MASK          0FFFFFFh
 
 // --- System Core Preloaded Routines --
 
@@ -1472,6 +1473,18 @@ inline % 4
   call code : %THREAD_WAIT            // ; waits until the GC is stopped
 
 labConinue:
+
+end
+
+// ; dcopyverb
+inline % 6
+
+  mov   ebx, ecx
+  shr   ebx, 4
+  mov   edx, rdata : % CORE_MESSAGE_TABLE
+  and   ebx, SUBJ_MASK
+  test  ecx, ecx
+  cmovs ebx, [edx + ebx]
 
 end
 
@@ -3155,7 +3168,7 @@ labNextOverloadlist:
   mov  ecx, [esp]              // ; param count
   mov  edi, rdata : % CORE_MESSAGE_TABLE
   shr  ebx, 4
-  and  ebx, 0007FFFFh
+  and  ebx, 003FFFFFh
   lea  ebx, [edi + ebx]
 
 labNextParam:

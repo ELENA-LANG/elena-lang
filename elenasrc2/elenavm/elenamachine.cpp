@@ -489,7 +489,7 @@ bool Instance :: restart(bool debugMode)
    }
 
    // load predefined code
-   _linker->prepareCompiler();
+   _linker->prepareCompiler(_verbs);
 
    // HOTFIX : literal constant is refered in the object, so it should be preloaded
    _linker->resolve(_literalClass, mskVMTRef, true);
@@ -966,7 +966,7 @@ int Instance :: parseMessage(ident_t message)
       else verb_id = EVAL_MESSAGE_ID;
    }
 
-   return encodeMessage(signatureId, verb_id, paramCount) | MESSAGE_MASK;
+   return encodeMessage(signatureId, paramCount);
 }
 
 // --- ELENAMachine::Config ---

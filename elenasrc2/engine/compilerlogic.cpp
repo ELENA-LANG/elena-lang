@@ -503,8 +503,8 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
       // if the method included
       if (*it) {
          ref_t message = it.key();
-         if (getParamCount(message) > 0 && getSignature(message) != 0) {
-            ident_t messageName = scope.module->resolveSubject(getSignature(message));
+         if (getParamCount(message) > 0 && getAction(message) != 0) {
+            ident_t messageName = scope.module->resolveSubject(getAction(message));
 
             int index = messageName.find('$');
             if (index != NOTFOUND_POS) {
@@ -515,7 +515,7 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
                   actionRef = scope.module->mapSubject(content.c_str(), true);
                }
 
-               ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getVerb(message), getParamCount(message)), maOverloadlist));
+               ref_t listRef = info.methodHints.get(Attribute(encodeMessage(0, actionRef, getParamCount(message)), maOverloadlist));
                if (listRef != 0)
                   compiler.generateOverloadListMember(scope, listRef, message);
             }
@@ -536,11 +536,11 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
       bool found = false;
       SNode current = node.firstChild();
       while (current != lxNone) {
-         if (current == lxConstructor && current.argument == encodeVerb(NEW_MESSAGE_ID)) {
+         if (current == lxConstructor && current.argument == encodeVerb(NEWOBJECT_MESSAGE_ID)) {
             SNode attr = current.firstChild();
             while (attr != lxNone) {
                if (attr == lxAttribute && attr.argument == tpEmbeddable) {
-                  current.set(lxClassMethod, encodeVerb(PRIVATE_MESSAGE_ID));
+                  current.set(lxClassMethod, encodeMessage(STATIC_MSG_FLAG, NEWOBJECT_MESSAGE_ID, 0));
                   attr.argument = tpPrivate;
 
                   found = true;
@@ -553,7 +553,7 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
          current = current.nextNode();
       }
       if (found) {
-         compiler.injectEmbeddableConstructor(node, encodeVerb(NEW_MESSAGE_ID), encodeVerb(PRIVATE_MESSAGE_ID));
+         compiler.injectEmbeddableConstructor(node, encodeVerb(NEWOBJECT_MESSAGE_ID), encodeMessage(STATIC_MSG_FLAG, NEWOBJECT_MESSAGE_ID, 0));
       }
    }
 }
@@ -716,8 +716,8 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       ClassInfo::MethodMap::Iterator it = info.methods.start();
       while (!it.Eof()) {
          pos_t implicitMessage = it.key();
-         if (getVerb(implicitMessage) == PRIVATE_MESSAGE_ID && getParamCount(implicitMessage) == 1) {
-            ref_t subj = getSignature(implicitMessage);
+         if (test(getMessageFlags(implicitMessage), STATIC_MSG_FLAG) && getParamCount(implicitMessage) == 1) {
+            ref_t subj = getAction(implicitMessage);
             bool compatible = false;
             if (sourceRef == V_STRCONSTANT) {
                // try to resolve explicit constant conversion routine
@@ -1339,7 +1339,7 @@ bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, 
             SNodePattern(lxLocalAddress));
 
          if (arg != lxNone && ret != lxNone && arg.argument == ret.argument) {
-            subject = getSignature(message.argument);
+            subject = getAction(message.argument);
 
             return true;
          }
@@ -1361,7 +1361,7 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
             SNodePattern(lxDirectCalling, lxSDirctCalling));
 
          // if it is read&subject&var[2] message
-         if (getParamCount(message.argument) != 2 || getVerb(message.argument) != (ref_t)verb)
+         if (getParamCount(message.argument) != 2 || getAction(message.argument) != (ref_t)verb)
             return false;
 
          // check if it is operation with $self
@@ -1408,7 +1408,7 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
             SNodePattern(lxLocalAddress));
 
          if (arg != lxNone && ret != lxNone && arg.argument == ret.argument) {
-            subject = getSignature(message.argument);
+            subject = getAction(message.argument);
 
             return true;
          }
@@ -1430,7 +1430,7 @@ bool CompilerLogic :: recognizeEmbeddableOp2(_CompilerScope& scope, SNode root, 
             SNodePattern(lxDirectCalling, lxSDirctCalling));
 
          // if it is read&index1&index2&var[2] message
-         if (getParamCount(message.argument) != 3 || getVerb(message.argument) != verb)
+         if (getParamCount(message.argument) != 3 || getAction(message.argument) != verb)
             return false;
 
          // check if it is operation with $self
@@ -1484,7 +1484,7 @@ bool CompilerLogic :: recognizeEmbeddableOp2(_CompilerScope& scope, SNode root, 
             SNodePattern(lxLocalAddress));
 
          if (arg != lxNone && ret != lxNone && arg.argument == ret.argument) {
-            subject = getSignature(message.argument);
+            subject = getAction(message.argument);
 
             return true;
          }
@@ -1645,7 +1645,7 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
 bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
 {
    // check if it is a virtual call
-   if (node == lxDirectCalling && getVerb(node.argument) == GET_MESSAGE_ID && getParamCount(node.argument) == 0) {
+   if (node == lxDirectCalling && getAction(node.argument) == GET_MESSAGE_ID && getParamCount(node.argument) == 0) {
       SNode callTarget = node.findChild(lxCallTarget);
 
       ClassInfo info;
@@ -1710,7 +1710,7 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
             reader.seek(position - 8);
             ref_t message = importMessage(argModule, reader.getDWord(), scope.module);
 
-            ident_t signature = scope.module->resolveSubject(getSignature(message));
+            ident_t signature = scope.module->resolveSubject(getAction(message));
             int start = signature.find('$') + 1;
             int end = signature.find(start, '$', getlength(signature));
             IdentifierString temp(signature.c_str() + start, end - start);
@@ -1805,17 +1805,17 @@ ref_t CompilerLogic :: defineOperatorMessage(_CompilerScope& scope, ref_t operat
    //   }
    //}
 
-   return encodeMessage(foundSubjRef, operatorId, paramCount);
+   return encodeMessage(0, operatorId, paramCount);
 }
 
 bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)
 {
-   bool dispatchOne = getVerb(message) == DISPATCH_MESSAGE_ID;
+   bool dispatchOne = getAction(message) == DISPATCH_MESSAGE_ID;
 
    if (isClassClass && dispatchOne) {
       return false;
    }
-   else if (!isClassClass && dispatchOne && (getSignature(message) != 0 || getParamCount(message) != 0)) {
+   else if (!isClassClass && dispatchOne && getParamCount(message) != 0) {
       return false;
    }
    else return true;

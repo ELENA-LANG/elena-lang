@@ -288,7 +288,7 @@ void* RTManager :: loadSubject(StreamReader& reader, ident_t name)
    ReferenceMap subjects(0);
    subjects.read(&reader);
 
-   return (void*)(encodeMessage(subjects.get(name), 0, 0) | MESSAGE_MASK);
+   return (void*)(encodeMessage(0, subjects.get(name), 0));
 }
 
 void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap& verbs)
@@ -357,5 +357,5 @@ void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap
       else verb_id = EVAL_MESSAGE_ID;
    }
 
-   return (void*)(encodeMessage(signatureId, verb_id, paramCount) | MESSAGE_MASK);
+   return (void*)(encodeMessage(0, signatureId, paramCount));
 }

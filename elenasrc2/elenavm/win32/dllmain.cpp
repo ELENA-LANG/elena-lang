@@ -111,9 +111,9 @@ EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, char* buffer, int maxLen
       return 0;
 
    try {
-      size_t verb_id, subj_id;
+      size_t subj_id;
       int param_count;
-      decodeMessage((size_t)subjectRef, subj_id, verb_id, param_count);
+      decodeMessage((size_t)subjectRef, subj_id, param_count);
 
       ident_t subjectName = instance->getSubject((ref_t)subj_id);
       size_t length = getlength(subjectName);
@@ -153,7 +153,7 @@ EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
    try {
       ref_t subj_id = instance->getSubjectRef((const char*)subjectName);
 
-      return (void*)(MESSAGE_MASK | encodeMessage(subj_id, 0, 0));
+      return (void*)(encodeMessage(subj_id, 0));
    }
    catch (JITUnresolvedException& e)
    {
@@ -180,11 +180,11 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength
       return 0;
 
    try {
-      size_t verb_id, subj_id;
+      size_t subj_id;
       int param_count;
-      decodeMessage((size_t)message, subj_id, verb_id, param_count);
+      decodeMessage((size_t)message, subj_id, param_count);
 
-      ident_t verbName = instance->getVerb(verb_id);
+      ident_t verbName = instance->getVerb(subj_id);
       size_t used = getlength(verbName);
       Convertor::copy(buffer, verbName, used, used);
 
@@ -238,7 +238,7 @@ EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
       return 0;
 
    try {
-      return (void*)(MESSAGE_MASK | instance->getMessageRef((const char*)messageName));
+      return (void*)(instance->getMessageRef((const char*)messageName));
    }
    catch (JITUnresolvedException& e)
    {

@@ -20,53 +20,47 @@ namespace _ELENA_
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
 
   // --- ELENA Standart message constants ---
-   #define VERB_MASK               0x7F000000u
-   #define SIGN_MASK               0x00FFFFF0u
-   #define STRONG_SIGN_MASK        0x00080000u
+   #define MESSAGE_FLAGS_MASK      0x06000000u
+   #define STATIC_MSG_FLAG         0x02000000u
+   #define SIGNATURE_FLAG          0x08000000u
+   #define PROPERTY_FLAG           0x04000000u
+
    #define PARAM_MASK              0x0000000Fu
-   #define MESSAGE_MASK            0x80000000u
    #define OPEN_ARG_COUNT          0x0F
 
-   #define VERBX_MASK              0x7F00000000000000u
-   #define SIGNX_MASK              0x00FFFFFFFFFF0000u
    #define PARAMX_MASK             0x000000000000FFFFu
 
-   #define INVALID_REF      (ref_t)-1
+   #define INVALID_REF             (ref_t)-1
 
-   #define DISPATCH_MESSAGE_ID     0x0001             // NOTE : verb id should not be bigger than 0xE0 due to message constant implementation
-
-   // obsolete
-   #define NEWOBJECT_MESSAGE_ID    0x0002             // NOTE : verb id should not be equal to 7, due to message reference constant implementation
-
-   #define NEW_MESSAGE_ID          0x0003
-   #define EQUAL_MESSAGE_ID        0x0004
-   #define EVAL_MESSAGE_ID         0x0005
-   #define GET_MESSAGE_ID          0x0006
-   #define LESS_MESSAGE_ID         0x0008
-   #define IF_MESSAGE_ID           0x0009
-   #define AND_MESSAGE_ID          0x000A
-   #define OR_MESSAGE_ID           0x000B
-   #define XOR_MESSAGE_ID          0x000C
-   #define IFNOT_MESSAGE_ID        0x000D
-   #define NOTEQUAL_MESSAGE_ID     0x000F
-   #define NOTLESS_MESSAGE_ID      0x0010
-   #define NOTGREATER_MESSAGE_ID   0x0011
-   #define GREATER_MESSAGE_ID      0x0012
-   #define ADD_MESSAGE_ID          0x0013
-   #define SUB_MESSAGE_ID          0x0014
-   #define MUL_MESSAGE_ID          0x0015
-   #define DIV_MESSAGE_ID          0x0016
-   #define REFER_MESSAGE_ID        0x0017
-   #define APPEND_MESSAGE_ID       0x0018
-   #define REDUCE_MESSAGE_ID       0x0019
-   #define SET_REFER_MESSAGE_ID    0x001C
-   #define SET_MESSAGE_ID          0x001D
-   #define READ_MESSAGE_ID         0x001E
-   #define WRITE_MESSAGE_ID        0x001F
-   #define SHIFT_MESSAGE_ID        0x0033
-
-   #define VALUES_MESSAGE_ID       0x007E             // virtual method returning the list of enum values
-   #define PRIVATE_MESSAGE_ID      0x007F
+   #define DISPATCH_MESSAGE_ID     0x0001
+   #define NEWOBJECT_MESSAGE_ID    0x0002
+   #define EQUAL_MESSAGE_ID        0x0003
+   #define EVAL_MESSAGE_ID         0x0004
+   #define GET_MESSAGE_ID          0x0005
+   #define SET_MESSAGE_ID          0x0006
+   #define LESS_MESSAGE_ID         0x0007
+   #define IF_MESSAGE_ID           0x0008
+   #define AND_MESSAGE_ID          0x0009
+   #define OR_MESSAGE_ID           0x000A
+   #define XOR_MESSAGE_ID          0x000B
+   #define IFNOT_MESSAGE_ID        0x000C
+   #define NOTEQUAL_MESSAGE_ID     0x000D
+   #define NOTLESS_MESSAGE_ID      0x000E
+   #define NOTGREATER_MESSAGE_ID   0x000F
+   #define GREATER_MESSAGE_ID      0x0010
+   #define ADD_MESSAGE_ID          0x0011
+   #define SUB_MESSAGE_ID          0x0012
+   #define MUL_MESSAGE_ID          0x0013
+   #define DIV_MESSAGE_ID          0x0014
+   #define REFER_MESSAGE_ID        0x0015
+   #define APPEND_MESSAGE_ID       0x0016
+   #define REDUCE_MESSAGE_ID       0x0017
+   #define SET_REFER_MESSAGE_ID    0x0018
+   #define READ_MESSAGE_ID         0x0019
+   #define WRITE_MESSAGE_ID        0x001A
+   #define SHIFT_MESSAGE_ID        0x001B
+   #define VALUES_MESSAGE_ID       0x001C             // virtual method returning the list of enum values
+   #define PREDEFINED_MESSAGE_ID   0x001C
 
    // ---- ELENAVM command masks ---
    #define VM_MASK                 0x0200             // vm command mask
@@ -350,7 +344,6 @@ namespace _ELENA_
   
   // --- ELENA verb messages ---
    #define DISPATCH_MESSAGE         "dispatch"
-   #define NEW_MESSAGE              "new"
    #define GET_MESSAGE              "get"
    #define EVAL_MESSAGE             "eval"
    #define EVALUATE_MESSAGE         "evaluate"
