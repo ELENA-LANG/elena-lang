@@ -2,14 +2,14 @@
 
 type exception = Exception.
 
-//// --- helper ---
-//
-//extension $op
-//{
-//    throw
-//        => system'core_routines'__object.
-//}
-//
+// --- helper ---
+
+extension $op
+{
+    throw
+        => system'core_routines'__object.
+}
+
 //// --- CallStack ---
 //
 ///// A call stack
@@ -58,11 +58,12 @@ type exception = Exception.
 //        ^ aCallStackText.
 //    ]
 //}
-//
-//// --- exceptionof ---
-//
-//template exception :: subject
-//{
+
+// --- Exception ---
+
+/// A basic exception
+class Exception
+{
 //    literal theMessage.
 //    object  theCallStack.
 //    
@@ -95,12 +96,12 @@ type exception = Exception.
 //        
 //        aCatchBlock on:$self \ evalSelf((:e) [ $self throw ]).
 //    ]
-//
-//    raise
-//    [
-//        $self throw.  
-//    ]
-//    
+
+    raise
+    [
+        $self throw.  
+    ]
+    
 //    raise : aFinallyCode
 //    [
 //        aFinallyCode eval.
@@ -109,13 +110,7 @@ type exception = Exception.
 //    ]
 //    
 //    subject = $self.
-//}
-
-// --- Exception ---
-
-/// A basic exception
-class Exception //:: exception<exception>
-{
+        
 //    /// Creates the exception with the provided message and error type
 //    constructor new literal:aMessage
 //    [
@@ -208,10 +203,10 @@ class MethodNotFoundException :: Exception
 //        <= new literal:(object className; add literal:" : Method "; add literal:missingMessage; add literal:" not found").
 }
 
-//// --- MethodNotSupported ---
-//
-//class NotSupportedException :: Exception
-//{
+// --- MethodNotSupported ---
+
+class NotSupportedException :: Exception
+{
 //    /// Creates the exception
 //    constructor new
 //        <= new literal:"Operation is not supported".
@@ -219,8 +214,8 @@ class MethodNotFoundException :: Exception
 //    /// Creates the exception
 //    constructor new :aMessage
 //        <= new literal:aMessage.
-//}
-//
+}
+
 //// --- AbortException ---
 //
 ///// An abort exception 

@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   8
+#define REVISION_VERSION   9
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -378,9 +378,6 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    if (actionRef == DISPATCH_MESSAGE_ID) {
       command.append("dispatch");
    }
-   //else if (verb == PRIVATE_MESSAGE_ID) {
-   //   command.append("#private");
-   //}
    else if (actionRef == NEWOBJECT_MESSAGE_ID) {
       command.append("#new");
    }
@@ -389,6 +386,9 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       command.append(verbName);
    }
    else {
+      if (test(reference, SEALED_MESSAGE)) {
+         command.append("#private");
+      }  
       ident_t subjectName = module->resolveSubject(actionRef);
       command.append(subjectName);
    }

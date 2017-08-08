@@ -3,7 +3,7 @@
 // --- Enumerator ---
 
 /// An enumerator prototype
-limited class Enumerator :: dispatchable<enumerator>
+limited class Enumerator
 {
     /// Returns the current object
     get = $nil.
@@ -16,12 +16,15 @@ limited class Enumerator :: dispatchable<enumerator>
     
     /// returns the enumerator owner
     enumerable = $nil.
+    
+    /// returnd the enumerator
+    enumerator = $self.
 }
 
 // --- Indexer ---
 
 /// An indexer prototype
-limited class Indexer :: dispatchable<indexer>
+limited class Indexer
 {
     /// Returns false if the index out of range
     bool available = $nil.
@@ -52,6 +55,9 @@ limited class Indexer :: dispatchable<indexer>
     ]
     
     int rvprop length :: readLengthTo.
+    
+    /// returnd the enumerator
+    indexer = $self.
 }
 
 //// --- MatrixIndexer ---
@@ -163,8 +169,10 @@ limited class Indexer :: dispatchable<indexer>
 // --- base functions ---
 
 /// A base action
-limited class BaseFunction :: dispatchable<func>
+limited class BaseFunction
 {
+    func = $self.
+    
     /// Executes the action
     action eval []
     
@@ -194,8 +202,10 @@ limited class BaseFunction :: dispatchable<func>
 }
 
 /// A base function
-limited class BaseFunction1 :: dispatchable<func1>
+limited class BaseFunction1
 {
+    func1 = $self.
+    
     /// Executes the function
     action eval : aParam []
 
@@ -549,8 +559,10 @@ limited class BaseLazyExpression
 // --- IndexFunction ---
 
 /// A base index function
-limited class IndexFunction1 :: dispatchable<nfunc>
+limited class IndexFunction1
 {
+    nfunc = $self.
+    
     /// Executes the function
     stacksafe action eval int:n []
 

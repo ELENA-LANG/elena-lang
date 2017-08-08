@@ -3,25 +3,8 @@ In development:
 ------                              
 
               xdev - general implementation
-
-                 * method : attribute type predicate name
-
-                 * eval writeLine:n
-                 * eval writeLine(IntNumber n)
-
-                 * message : verb [subject:param]*
-                 * message : verb [subject<type>:param]*
-
-                 * method argument list : verb [subj:param]*, [subj:param]+
-                 * closure argument list
-                 * message argument list
-
-                 * message : changing structure
-                 * predefined verb: test sending generic message 
-                 * predefined verb: multi method
                  * predefined verb: test sending qualified message 
                  * custom verb: test sending generic message 
-                 * custom verb: multi method
                  * custom verb: test sending qualified message 
                  * predefined verb: generic message handler
                  * custom verb: generic message handler
@@ -31,6 +14,7 @@ In development:
                  * custom verb: message
                  * private messages
                  * private sealed messages
+                 * generic get - see nil
 
                  * message : verb custom-verb signature
                  * test embeddable optimization
@@ -113,7 +97,7 @@ b30,b29 : 00 - special
               xdev - multimethod                 
                  * multi dispatch with $nil
                  * uncomment Array.setAt[2] amd Array.getAt[1]
-                 * explicit constant
+                 * explicit constant (uncomment generateMethodAttributes)
                  * var n := 2 <=> int n := 2
                  * optimize multimethod implementation for sealed / limited classes (resolve message index)
                  * optimize multimethod implementation for sealed class containing only one overload class

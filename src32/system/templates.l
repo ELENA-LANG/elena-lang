@@ -174,9 +174,9 @@ template try :: expr =
 // -- try-finally-catch statement ---
 
 template try :: expr,else =
-    expr then:[] | catch:[]:
+    expr then:[] | catch([],
     {
-    }.
+    }).
 
 //// -- finally statement ---
 //

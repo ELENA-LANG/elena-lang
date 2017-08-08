@@ -1545,6 +1545,8 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope
 
    virtualReference.append(scope.module->resolveSubject(actionRef));
 
+   virtualReference.replaceAll('\'', '@', signIndex);
+
    ref_t reference = 0;
    _Module* api = scope.project->resolveModule(virtualReference, reference);
 
@@ -4058,6 +4060,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    ref_t actionRef = 0;
    ref_t verbRef = 0;
    bool propMode = false;
+   bool privateSealedMode = false;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
    SNode arg = node.findChild(lxMethodParameter, lxMessage, lxParamRefAttr);
@@ -4069,7 +4072,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
    }
 
-   if (verb != lxNone || node.argument == 0)
+   if (verb != lxNone)
       verbRef = scope.mapSubject(verb, messageStr);
 
    if (node.argument == 0) {
@@ -4168,27 +4171,25 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    //         messageStr.copy(GENERIC_PREFIX);
    //      }
    //   }
-   //   if (verb_id == 0)
-   //      verb_id = paramCount > 0 ? EVAL_MESSAGE_ID : GET_MESSAGE_ID;
 
-   //   if (test(scope.hints, tpSealed | tpConversion)) {
-   //      if (verb_id == EVAL_MESSAGE_ID && paramCount == 1) {
-   //         verb_id = PRIVATE_MESSAGE_ID;
-   //      }
+      if (test(scope.hints, tpSealed | tpConversion)) {
+         if (paramCount == 1 && emptystr(messageStr)) {
+            privateSealedMode = true;
+         }
    //      else if (verb_id == GET_MESSAGE_ID && paramCount == 0 && sign_id != 0 && test(scope.getClassFlags(false), elNestedClass)) {
    //         // if it is an implicit nested constructor
    //         sign_id = 0;
    //         verb_id = PRIVATE_MESSAGE_ID;
    //      }
-   //      else scope.raiseError(errIllegalMethod, node);
-   //   }
+         else scope.raiseError(errIllegalMethod, node);
+      }
    //   if (test(scope.hints, tpSealed) && verb == lxPrivate) {
    //      verb_id = PRIVATE_MESSAGE_ID;
    //   }
 
 
       //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-      if (paramCount > 0 && !emptystr(signature)/* && verb_id != PRIVATE_MESSAGE_ID*/) {
+      if (paramCount > 0 && !emptystr(signature) && !privateSealedMode) {
          if (!emptystr(messageStr)) {
             actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
          }
@@ -4220,6 +4221,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
 
       scope.message = encodeMessage(actionRef, paramCount);
+      if (privateSealedMode)
+         scope.message |= SEALED_MESSAGE;
    }
 }
    
@@ -5134,14 +5137,6 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 
          hintChanged = true;
       }
-//      else if (current == lxTypeAttr) {
-//         if (outputType == 0 && outputRef == 0) {
-//            outputType = scope.moduleScope->module->mapSubject(current.identifier(), false);
-//            scope.info.methodHints.add(Attribute(message, maType), outputType);
-//            scope.info.methodHints.add(Attribute(message, maReference), scope.moduleScope->subjectHints.get(outputType));
-//         }
-//         else scope.raiseWarning(WARNING_LEVEL_1, wrnTypeAlreadyDeclared, node);
-//      }
       else if (current == lxClassRefAttr) {
          if (outputRef == 0) {
             outputRef = scope.moduleScope->module->mapReference(current.identifier(), false);
@@ -5150,12 +5145,12 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
          }
          else scope.raiseError(errInvalidHint, node);
       }
-////      else if (current == lxClassMethodOpt) {
-////         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
-////         if (mssgAttr != lxNone) {
-////            scope.info.methodHints.add(Attribute(message, current.argument), getSignature(mssgAttr.argument));
-////         }
-////      }
+//      else if (current == lxClassMethodOpt) {
+//         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
+//         if (mssgAttr != lxNone) {
+//            scope.info.methodHints.add(Attribute(message, current.argument), getSignature(mssgAttr.argument));
+//         }
+//      }
       current = current.nextNode();
    }
    
@@ -5170,12 +5165,12 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 
       scope.info.methodHints.add(Attribute(encodeMessage(actionRef, paramCount), maHint), hint);
 
-      // if it is an explicit constant conversion
-      if (getAction(message) != 0) {
-         if (test(hint, tpConversion) && getParamCount(message) == 1) {
-            scope.moduleScope->saveAction(message, scope.reference);
-         }
-      }
+      //// if it is an explicit constant conversion
+      //if (getAction(message) != 0) {
+      //   if (test(hint, tpConversion) && getParamCount(message) == 1) {
+      //      scope.moduleScope->saveAction(message, scope.reference);
+      //   }
+      //}
    }
 
    if (hintChanged) {
