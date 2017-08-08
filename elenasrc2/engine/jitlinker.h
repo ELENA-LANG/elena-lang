@@ -145,7 +145,7 @@ class JITLinker : _JITLoaderListener
 
    size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
-   ref_t resolveSignature(ident_t signature, int paramCount, ref_t& flags);
+   ref_t resolveSignature(ident_t signature, int paramCount);
    ref_t resolveMessage(_Module* module, ref_t reference);
 
    void* resolveNativeVariable(ident_t  reference, int mask);

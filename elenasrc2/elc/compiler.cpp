@@ -1318,14 +1318,11 @@ Compiler :: Compiler(_CompilerLogic* logic)
 
 void Compiler :: writeMessageInfo(SyntaxWriter& writer, ModuleScope& scope, ref_t messageRef)
 {
-   ref_t actionRef, flags;
+   ref_t actionRef;
    int paramCount;
-   decodeMessage(messageRef, flags, actionRef, paramCount);
+   decodeMessage(messageRef, actionRef, paramCount);
 
    IdentifierString name;
-   if (test(flags, PROPERTY_FLAG))
-      name.append("get&");
-
    name.append(scope.module->resolveSubject(actionRef));
 
    name.append('[');
@@ -1537,16 +1534,14 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope
    virtualReference.append('.');
 
    int paramCount;
-   ref_t actionRef, flags;
-   decodeMessage(message, flags, actionRef, paramCount);
+   ref_t actionRef;
+   decodeMessage(message, actionRef, paramCount);
 
    // HOTFIX : include self as a parameter
    paramCount++;
 
    size_t signIndex = virtualReference.Length();
    virtualReference.append('0' + (char)paramCount);
-   if (test(flags, PROPERTY_FLAG))
-      virtualReference.append("get&");
 
    virtualReference.append(scope.module->resolveSubject(actionRef));
 
@@ -2437,17 +2432,15 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
    // if signature is presented
    ref_t actionRef = scope.moduleScope->module->mapSubject(messageStr, false);
    if (paramCount == 0) {
-      if (actionRef == EVAL_MESSAGE_ID) {
-
+      if (actionRef > PREDEFINED_MESSAGE_ID && emptystr(signature)) {
+         // COMPILER MAGIC : get property
+         messageStr.append('$');
+         actionRef = scope.moduleScope->module->mapSubject(messageStr, false);
       }
-      else if (actionRef >= PREDEFINED_MESSAGE_ID) {
-         actionFlags |= PROPERTY_FLAG;
-      }
-      else scope.raiseError(errInvalidOperation, node);
    }
 
    // create a message id
-   return encodeMessage(actionFlags, actionRef, paramCount);
+   return encodeMessage(actionRef, paramCount);
 }
 
 ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
@@ -2568,9 +2561,9 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
 
          //compileObject(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
 
-         retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(0, operator_id, 2), 0);
+         retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(operator_id, 2), 0);
       }
-      else retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(0, operator_id, 1), 0);
+      else retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(operator_id, 1), 0);
 
       if (loopMode) {
          writer.insert(lxLooping);
@@ -2740,9 +2733,9 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    LexicalType operation = lxCalling;
    int argument = messageRef;
 
-   ref_t actionRef, flags;
+   ref_t actionRef;
    int paramCount;
-   decodeMessage(messageRef, flags, actionRef, paramCount);
+   decodeMessage(messageRef, actionRef, paramCount);
 
    // try to recognize the operation
    ref_t classReference = resolveObjectReference(scope, target);
@@ -2754,7 +2747,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    }
 
    if (target.kind == okThisParam && callType == tpPrivate) {
-      messageRef = overwriteMessageFlag(messageRef, STATIC_MSG_FLAG);
+      messageRef |= SEALED_MESSAGE;
 
       callType = tpSealed;
    }
@@ -2826,7 +2819,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    writer.closeNode();   
 
    // the result of get&type message should be typed
-   if (retVal.param == 0 && paramCount == 0 && test(flags, PROPERTY_FLAG) && actionRef != 0) {
+   if (retVal.param == 0 && paramCount == 0 && test(messageRef, SEALED_MESSAGE) && actionRef != 0) {
       ident_t sign = scope.moduleScope->module->resolveSubject(actionRef);
       if (!emptystr(sign))
          retVal.param = scope.moduleScope->module->mapReference(sign.c_str() + 1);
@@ -2852,7 +2845,7 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, ModuleScope& scope, ref_t 
       sign.append('$');
       sign.append(scope.module->resolveReference(targetRef));
 
-      writer.insert(lxCalling, encodeMessage(PROPERTY_FLAG, scope.module->mapSubject(sign, false), 0));
+      writer.insert(lxCalling, encodeMessage(scope.module->mapSubject(sign, false), 0));
       writer.closeNode();
 
       return true;
@@ -3061,8 +3054,9 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
             signature.append('$');
             signature.append(scope.moduleScope->module->resolveReference(classRef));
          }
+         else signature.append('$');
 
-         ref_t messageRef = encodeMessage(PROPERTY_FLAG, scope.moduleScope->module->mapSubject(signature, false), 1);
+         ref_t messageRef = encodeMessage(scope.moduleScope->module->mapSubject(signature, false), 1);
 
          // compile target
          // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
@@ -3365,7 +3359,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
          writer.closeNode();
       }
 
-      ref_t implicitConstructor = encodeMessage(STATIC_MSG_FLAG, NEWOBJECT_MESSAGE_ID, 0);
+      ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | SEALED_MESSAGE;
       if (scope.info.methods.exist(implicitConstructor, true)) {
          // if implicit constructor is declared - it should be automatically called
          writer.appendNode(lxOvreriddenMessage, implicitConstructor);
@@ -3480,16 +3474,16 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
    if (test(mode, HINT_ROOT)) {
       // type cast returning value if required
       int paramCount;
-      ref_t flags;
-      decodeMessage(scope.getMessageID(), flags, signature, paramCount);
+      decodeMessage(scope.getMessageID(), signature, paramCount);
       if (classScope->info.methodHints.exist(Attribute(scope.getMessageID(), maReference))) {
          targetRef = classScope->info.methodHints.get(Attribute(scope.getMessageID(), maReference));
          converting = true;
       }
-      else if (test(flags, PROPERTY_FLAG) && paramCount == 0 && signature != 0) {
+      else if (paramCount == 0 && signature != 0) {
          ident_t signName = scope.moduleScope->module->resolveSubject(signature);
          int index = signName.find('$');
-         if (index != NOTFOUND_POS) {
+         // if it is a qualified message and is not a property
+         if (index != NOTFOUND_POS && signName[index + 1] != 0) {
             IdentifierString className(signName.c_str() + index + 1);
 
             typecasting = true;
@@ -4002,7 +3996,7 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
    if (!emptystr(messageStr))
       sign_id = scope.moduleScope->module->mapSubject(messageStr, false);
 
-   return encodeMessage(0, sign_id, scope.parameters.Count());
+   return encodeMessage(sign_id, scope.parameters.Count());
 }
 
 inline SNode findTerminal(SNode node)
@@ -4062,7 +4056,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    IdentifierString messageStr;
    IdentifierString signature;
    ref_t actionRef = 0;
-   ref_t actionFlags = 0;
+   bool propMode = false;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
    SNode arg = node.findChild(lxMethodParameter, lxMessage, lxParamRefAttr);
@@ -4081,6 +4075,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          signature.append(scope.moduleScope->module->resolveReference(verbRef));
       }
       else scope.raiseError(errInvalidSubject, verb);
+   }
+   else {
+      // COMPILER MAGIC : recognize set property
+      int verb_id = _verbs.get(messageStr.c_str());
+      propMode = verb_id == SET_MESSAGE_ID;
    }
 
    bool first = messageStr.Length() == 0;
@@ -4201,16 +4200,21 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             scope.raiseError(errIllegalMethod, node);
       }
       else if (paramCount == 0) {
-         if (actionRef == EVAL_MESSAGE_ID) {
-            // allow to call eval without parameters
+         if (actionRef >= PREDEFINED_MESSAGE_ID && emptystr(signature)) {
+            // COMPILER MAGIC : get property
+            messageStr.append('$');
+
+            actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
          }
-         else if (actionRef >= PREDEFINED_MESSAGE_ID) {
-            actionFlags |= PROPERTY_FLAG;
-         }
-         else scope.raiseError(errIllegalMethod, node);
+      }
+      else if (propMode && paramCount == 1) {
+         // COMPILER MAGIC : set property
+         messageStr.cut(0, 4);
+         messageStr.append('$');
+         actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
       }
 
-      scope.message = encodeMessage(actionFlags, actionRef, paramCount);
+      scope.message = encodeMessage(actionRef, paramCount);
    }
 }
    
@@ -4233,7 +4237,7 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
             scope.raiseError(errInvalidOperation, node);
 
          if (withGenericMethods) {
-            writer.appendNode(lxDispatching, encodeMessage(0, codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0));
+            writer.appendNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0));
          }
 
          compileDispatchExpression(writer, node, codeScope);
@@ -4246,7 +4250,7 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
 
          writer.newNode(lxResending);
 
-         writer.appendNode(lxMessage, encodeMessage(0, codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0));
+         writer.appendNode(lxMessage, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0));
 
          writer.newNode(lxTarget, scope.moduleScope->superReference);
          writer.appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));
@@ -4258,7 +4262,7 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
       else if (withOpenArgGenerics) {
          writer.newNode(lxResending);
 
-         writer.appendNode(lxMessage, encodeMessage(0, DISPATCH_MESSAGE_ID, OPEN_ARG_COUNT));
+         writer.appendNode(lxMessage, encodeMessage(DISPATCH_MESSAGE_ID, OPEN_ARG_COUNT));
 
          writer.newNode(lxTarget, scope.moduleScope->superReference);
          writer.appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));
@@ -5150,16 +5154,16 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       current = current.nextNode();
    }
    
-   ref_t actionRef, flags;
+   ref_t actionRef;
    int paramCount;
-   decodeMessage(message, flags, actionRef, paramCount);
+   decodeMessage(message, actionRef, paramCount);
 
-   if (test(flags, STATIC_MSG_FLAG)) {
+   if (test(message, SEALED_MESSAGE)) {
       // if it is private message set private hint and save it as EVAL one
       hintChanged = true;
       hint |= tpPrivate;
 
-      scope.info.methodHints.add(Attribute(encodeMessage(0, actionRef, paramCount), maHint), hint);
+      scope.info.methodHints.add(Attribute(encodeMessage(actionRef, paramCount), maHint), hint);
 
       // if it is an explicit constant conversion
       if (getAction(message) != 0) {
@@ -5214,7 +5218,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       scope.raiseError(errDuplicatedMethod, current);
    }
    else {
-      bool privateOne = test(getMessageFlags(message), STATIC_MSG_FLAG);
+      bool privateOne = test(message, SEALED_MESSAGE);
       bool included = scope.include(message);
       bool sealedMethod = (methodHints & tpMask) == tpSealed;
       // if the class is closed, no new methods can be declared
@@ -6474,7 +6478,7 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t sub
    if (assignTarget != lxNone) {
       callNode.appendNode(assignTarget.type, assignTarget.argument);
       assignTarget = lxIdle;
-      callNode.setArgument(encodeMessage(0, subject, 1));
+      callNode.setArgument(encodeMessage(subject, 1));
    }
 }
 
@@ -6498,7 +6502,7 @@ void Compiler :: injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subj
       if (assignTarget != lxNone) {
          callNode.appendNode(assignTarget.type, assignTarget.argument);
          assignTarget = lxIdle;
-         callNode.setArgument(encodeMessage(0, subject, paramCount));
+         callNode.setArgument(encodeMessage(subject, paramCount));
       }
    }
 }
@@ -6550,7 +6554,7 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
       }
       ref_t signRef = scope.module->mapSubject(sign, false);
 
-      resendMessage = encodeMessage(0, signRef, paramCount);
+      resendMessage = encodeMessage(signRef, paramCount);
    }
 
    SNode methNode = classNode.appendNode(methodType, message);

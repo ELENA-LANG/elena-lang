@@ -1454,7 +1454,7 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Compil
    info.header.count = 0;
    for (ClassInfo::MethodMap::Iterator m_it = info.methods.start(); !m_it.Eof(); m_it++) {
       //NOTE : ingnore private methods
-      if (!test(getMessageFlags(m_it.key()), STATIC_MSG_FLAG))
+      if (!test(m_it.key(), SEALED_MESSAGE))
          info.header.count++;
    }
 
@@ -4672,7 +4672,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
    SNode target = node.findChild(lxTarget);
    if (node.argument == 0) {
       SNode message = node.findChild(lxMessage);
-      if (message.argument == encodeMessage(0, DISPATCH_MESSAGE_ID, OPEN_ARG_COUNT)) {
+      if (message.argument == encodeMessage(DISPATCH_MESSAGE_ID, OPEN_ARG_COUNT)) {
          // if it is open argument dispatching
          pushObject(tape, lxCurrentMessage);
          tape.write(bcOpen, 1);

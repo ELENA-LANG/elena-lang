@@ -179,23 +179,14 @@ ref_t resolveMessage(_Module* module, ident_t method)
 {
    int paramCount = 0;
    ref_t actionRef = 0;
-   ref_t flags = 0;
 
    IdentifierString actionName;
    int paramIndex = method.find('[', -1);
    if (paramIndex != -1) {
-      if (method.find("get&") == 0) {
-         actionName.copy(method + 4, paramIndex);
-         flags = PROPERTY_FLAG;
-      }
-      else actionName.copy(method, paramIndex);
+      actionName.copy(method, paramIndex);
 
       IdentifierString countStr(method + paramIndex + 1, getlength(method) - paramIndex - 2);
       paramCount = countStr.ident().toInt();
-   }
-   else if (method.find("get&") == 0) {
-      actionName.copy(method + 4);
-      flags = PROPERTY_FLAG;
    }
    else actionName.copy(method);
 
@@ -214,7 +205,7 @@ ref_t resolveMessage(_Module* module, ident_t method)
       }
    }
 
-   return encodeMessage(flags, actionRef, paramCount);
+   return encodeMessage(actionRef, paramCount);
 }
 
 inline void appendHex32(IdentifierString& command, unsigned int hex)
@@ -381,9 +372,8 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
 void printMessage(IdentifierString& command, _Module* module, size_t reference)
 {
    ref_t actionRef = 0;
-   ref_t flags = 0;
    int paramCount = 0;
-   decodeMessage(reference, flags, actionRef, paramCount);
+   decodeMessage(reference, actionRef, paramCount);
 
    if (actionRef == DISPATCH_MESSAGE_ID) {
       command.append("dispatch");
@@ -399,10 +389,6 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       command.append(verbName);
    }
    else {
-      if (test(flags, PROPERTY_FLAG)) {
-         command.append("get&");
-      }
-
       ident_t subjectName = module->resolveSubject(actionRef);
       command.append(subjectName);
    }

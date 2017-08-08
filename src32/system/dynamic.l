@@ -63,8 +63,8 @@ sealed embeddable struct Message
 //    dispatch => system'core_routines'__message.
 }
 
-//// --- ExtensionMessage ---
-//
+// --- ExtensionMessage ---
+
 ///// An extended message constant
 //sealed embeddable struct ExtensionMessage
 //{

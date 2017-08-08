@@ -346,7 +346,7 @@ bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compil
 
             ClassInfo memberInfo;
             scope.loadClassInfo(memberInfo, memberRef);
-            int attribute = checkMethod(memberInfo, encodeMessage(0, IF_MESSAGE_ID, 1));
+            int attribute = checkMethod(memberInfo, encodeMessage(IF_MESSAGE_ID, 1));
             if (attribute == (tpIfBranch | tpSealed)) {
                trueRef = memberRef;
             }
@@ -515,7 +515,7 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
                   actionRef = scope.module->mapSubject(content.c_str(), true);
                }
 
-               ref_t listRef = info.methodHints.get(Attribute(encodeMessage(0, actionRef, getParamCount(message)), maOverloadlist));
+               ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getParamCount(message)), maOverloadlist));
                if (listRef != 0)
                   compiler.generateOverloadListMember(scope, listRef, message);
             }
@@ -536,11 +536,11 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
       bool found = false;
       SNode current = node.firstChild();
       while (current != lxNone) {
-         if (current == lxConstructor && current.argument == encodeVerb(NEWOBJECT_MESSAGE_ID)) {
+         if (current == lxConstructor && current.argument == encodeVerb(NEW_MESSAGE_ID)) {
             SNode attr = current.firstChild();
             while (attr != lxNone) {
                if (attr == lxAttribute && attr.argument == tpEmbeddable) {
-                  current.set(lxClassMethod, encodeMessage(STATIC_MSG_FLAG, NEWOBJECT_MESSAGE_ID, 0));
+                  current.set(lxClassMethod, encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
                   attr.argument = tpPrivate;
 
                   found = true;
@@ -553,7 +553,7 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
          current = current.nextNode();
       }
       if (found) {
-         compiler.injectEmbeddableConstructor(node, encodeVerb(NEWOBJECT_MESSAGE_ID), encodeMessage(STATIC_MSG_FLAG, NEWOBJECT_MESSAGE_ID, 0));
+         compiler.injectEmbeddableConstructor(node, encodeVerb(NEW_MESSAGE_ID), encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
       }
    }
 }
@@ -716,7 +716,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       ClassInfo::MethodMap::Iterator it = info.methods.start();
       while (!it.Eof()) {
          pos_t implicitMessage = it.key();
-         if (test(getMessageFlags(implicitMessage), STATIC_MSG_FLAG) && getParamCount(implicitMessage) == 1) {
+         if (test(implicitMessage, SEALED_MESSAGE) && getParamCount(implicitMessage) == 1) {
             ref_t subj = getAction(implicitMessage);
             bool compatible = false;
             if (sourceRef == V_STRCONSTANT) {
@@ -1805,7 +1805,7 @@ ref_t CompilerLogic :: defineOperatorMessage(_CompilerScope& scope, ref_t operat
    //   }
    //}
 
-   return encodeMessage(0, operatorId, paramCount);
+   return encodeMessage(operatorId, paramCount);
 }
 
 bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)

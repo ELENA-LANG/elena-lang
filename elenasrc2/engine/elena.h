@@ -714,14 +714,14 @@ inline bool isTemplateWeakReference(ident_t referenceName)
    return (referenceName != NULL && referenceName[0] != 0 && referenceName[0] == '\'' && referenceName.find('#') != NOTFOUND_POS);
 }
 
-inline ref_t encodeMessage(ref_t flags, ref_t actionRef, int paramCount)
+inline ref_t encodeMessage(ref_t actionRef, int paramCount)
 {
-   return ((actionRef | flags) << 4) + paramCount;
+   return (actionRef << 4) + paramCount;
 }
 
-inline ref64_t encodeMessage64(ref_t flags, ref_t actionRef, int paramCount)
+inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
 {
-   ref64_t message = actionRef | flags;
+   ref64_t message = actionRef;
    message <<= 16;
 
    message += paramCount;
@@ -731,28 +731,14 @@ inline ref64_t encodeMessage64(ref_t flags, ref_t actionRef, int paramCount)
 
 inline ref_t encodeVerb(int verbId)
 {
-   return encodeMessage(0, verbId, 0);
+   return encodeMessage(verbId, 0);
 }
 
-inline void decodeMessage(ref_t message, ref_t& flags, ref_t& actionRef, int& paramCount)
+inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
 {
-   actionRef = message >> 4;
-
-   flags = actionRef & MESSAGE_FLAGS_MASK;
-   actionRef &= ~MESSAGE_FLAGS_MASK;
+   actionRef = (message >> 4) & ACTION_MASK;
 
    paramCount = message & PARAM_MASK;
-}
-
-inline ref_t overwriteMessageFlag(ref_t message, int newFlag)
-{
-   ref_t flags, action;
-   int paramCount;
-
-   decodeMessage(message, flags, action, paramCount);
-   flags = newFlag;
-
-   return encodeMessage(flags, action, paramCount);
 }
 
 inline ref_t overwriteParamCount(ref_t message, int paramCount)
@@ -763,12 +749,11 @@ inline ref_t overwriteParamCount(ref_t message, int paramCount)
    return message;
 }
 
-inline void decodeMessage64(ref64_t message, ref_t& flags, ref_t& actionRef, int& paramCount)
+inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
 {
    actionRef = (ref_t)(message >> 16);
 
-   flags = actionRef & MESSAGE_FLAGS_MASK;
-   actionRef &= ~MESSAGE_FLAGS_MASK;
+   actionRef &= ACTION_MASK;
 
    paramCount = message & PARAMX_MASK;
 }
@@ -776,8 +761,8 @@ inline void decodeMessage64(ref64_t message, ref_t& flags, ref_t& actionRef, int
 inline int getParamCount(ref_t message)
 {
    int   paramCount;
-   ref_t action, flags;
-   decodeMessage(message, flags, action, paramCount);
+   ref_t action;
+   decodeMessage(message, action, paramCount);
 
    if (paramCount == OPEN_ARG_COUNT)
       return 0;
@@ -788,19 +773,10 @@ inline int getParamCount(ref_t message)
 inline ref_t getAction(ref_t message)
 {
    int   paramCount;
-   ref_t action, flags;
-   decodeMessage(message, flags, action, paramCount);
+   ref_t action;
+   decodeMessage(message, action, paramCount);
 
    return action;
-}
-
-inline ref_t getMessageFlags(ref_t message)
-{
-   int   paramCount;
-   ref_t action, flags;
-   decodeMessage(message, flags, action, paramCount);
-
-   return flags;
 }
 
 //inline ref_t getSignature(ref_t message)
@@ -815,19 +791,19 @@ inline ref_t getMessageFlags(ref_t message)
 inline ref64_t toMessage64(ref_t message)
 {
    int   paramCount;
-   ref_t actionRef, flags;
-   decodeMessage(message, flags, actionRef, paramCount);
+   ref_t actionRef;
+   decodeMessage(message, actionRef, paramCount);
 
-   return encodeMessage64(flags, actionRef, paramCount);
+   return encodeMessage64(actionRef, paramCount);
 }
 
 inline ref_t fromMessage64(ref64_t message)
 {
    int   paramCount;
-   ref_t actionRef, flags;
-   decodeMessage64(message, flags, actionRef, paramCount);
+   ref_t actionRef;
+   decodeMessage64(message, actionRef, paramCount);
 
-   return encodeMessage(flags, actionRef, paramCount);
+   return encodeMessage(actionRef, paramCount);
 }
 
 inline bool IsExprOperator(int operator_id)
@@ -878,10 +854,9 @@ inline bool isOpenArg(ref_t message)
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
    ref_t actionRef = 0;
-   ref_t flags = 0;
    int paramCount = 0;
 
-   decodeMessage(exportRef, flags, actionRef, paramCount);
+   decodeMessage(exportRef, actionRef, paramCount);
 
    // if it is generic message
    if (actionRef <= PREDEFINED_MESSAGE_ID) {
@@ -893,7 +868,7 @@ inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer
 
    actionRef = importer->mapSubject(subject, false);
 
-   return encodeMessage(flags, actionRef, paramCount);
+   return encodeMessage(actionRef, paramCount);
 }
 
 } // _ELENA_

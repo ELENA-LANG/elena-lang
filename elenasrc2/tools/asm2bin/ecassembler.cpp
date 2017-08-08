@@ -62,23 +62,9 @@ bool ECodesAssembler :: readMessage(ident_t quote, IdentifierString& subject, in
    if (len == 0 || param_index == NOTFOUND_POS || quote[len - 1] != ']')
       return false;
 
-   size_t index = quote.find('&');
-   if (index == NOTFOUND_POS) {
-      index = quote.find('$');
-      if (index == NOTFOUND_POS) {
-         index = param_index;
-      }
-   }
+   subject.copy(quote, param_index);
 
    IdentifierString content;
-   size_t subj_index = 0;
-   if (index != NOTFOUND_POS) {
-      content.copy(quote, index);
-   }
-   else return false;
-
-   subject.copy(quote + index, param_index - index);
-
    content.copy(quote + param_index + 1, len - param_index - 2);
 
    paramCount = content.ident().toInt();
@@ -141,7 +127,7 @@ ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
 
    readMessage(quote.ident(), subject, paramCount);
 
-   return encodeMessage(0, binary->mapSubject(subject + 1, false), paramCount);
+   return encodeMessage(binary->mapSubject(subject + 1, false), paramCount);
 }
 
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
@@ -255,7 +241,7 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
 
       ref_t subj = binary->mapSubject(subject, false);
 
-      writeCommand(ByteCommand(code, encodeMessage(0, subj, paramCount)), writer);
+      writeCommand(ByteCommand(code, encodeMessage(subj, paramCount)), writer);
    }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }

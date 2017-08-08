@@ -163,10 +163,10 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 // --- JITLinker ---
 
-ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& flags)
+ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount)
 {
    size_t overloadIndex = signature.find('$');
-   if (overloadIndex != NOTFOUND_POS && paramCount > 0) {
+   if (overloadIndex != NOTFOUND_POS) {
       SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
 
       ref_t tableOffs = info.module->mapSubject(signature, true);
@@ -198,9 +198,7 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& fl
          info.module->mapPredefinedSubject(signature, tableOffs);
       }
 
-      flags |= SIGNATURE_FLAG;
-
-      return tableOffs;
+      return tableOffs | SIGNATURE_FLAG;
    }
    else return (ref_t)_loader->resolveReference(signature, 0);
 }
@@ -208,9 +206,9 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount, ref_t& fl
 ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
 {
    ref_t actionRef = 0;
-   ref_t flags = 0;
+   ref_t flags = message & MESSAGE_FLAG_MASK;
    int paramCount = 0;
-   decodeMessage(message, flags, actionRef, paramCount);
+   decodeMessage(message, actionRef, paramCount);
 
    // if it is a predefined message
    if (actionRef <= PREDEFINED_MESSAGE_ID) {
@@ -218,9 +216,9 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
    }
 
    // otherwise signature and custom verb should be imported
-   actionRef = resolveSignature(module->resolveSubject(actionRef), paramCount, flags);
+   actionRef = resolveSignature(module->resolveSubject(actionRef), paramCount);
 
-   return encodeMessage(flags, actionRef, paramCount);
+   return encodeMessage(actionRef, paramCount) | flags;
 }
 
 void* JITLinker :: calculateVAddress(MemoryWriter* writer, int mask)
@@ -571,7 +569,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
          methodPosition = loadMethod(refHelper, codeReader, codeWriter);
          
          // NOTE : private message is not added to VMT
-         if (test(getMessageFlags(entry.message), STATIC_MSG_FLAG)) {
+         if (test(entry.message, SEALED_MESSAGE)) {
             _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
          }
          else _compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
@@ -805,11 +803,9 @@ ref_t JITLinker :: parseMessage(ident_t reference)
    IdentifierString text;
 
    int count = reference[0] - '0';
-   ref_t flags = 0;
+   ref_t actionRef = resolveSignature(reference + 1, count);
 
-   ref_t actionRef = resolveSignature(reference + 1, count, flags);
-
-   return encodeMessage(flags, actionRef, count);
+   return encodeMessage(actionRef, count);
 }
 
 void* JITLinker :: resolveExtensionMessage(ident_t reference, ident_t vmt)

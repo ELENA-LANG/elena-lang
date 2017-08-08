@@ -466,6 +466,11 @@ public:
       return getlength(_string);
    }
 
+   void cut(size_t index, size_t length)
+   {
+      StrHelper::move(_string + index, _string + index + length, getlength(_string) - index - length + 1);
+   }
+
    String()
    {
       _string[0] = 0;
