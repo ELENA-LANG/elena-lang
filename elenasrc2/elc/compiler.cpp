@@ -4056,6 +4056,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    IdentifierString messageStr;
    IdentifierString signature;
    ref_t actionRef = 0;
+   ref_t verbRef = 0;
    bool propMode = false;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
@@ -4068,18 +4069,22 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
    }
 
-   ref_t verbRef = scope.mapSubject(verb, messageStr);
-   if (verbRef) {
-      if (arg == lxMethodParameter || arg == lxNone) {
-         signature.append('$');
-         signature.append(scope.moduleScope->module->resolveReference(verbRef));
+   if (verb != lxNone || node.argument == 0)
+      verbRef = scope.mapSubject(verb, messageStr);
+
+   if (node.argument == 0) {
+      if (verbRef) {
+         if (arg == lxMethodParameter || arg == lxNone) {
+            signature.append('$');
+            signature.append(scope.moduleScope->module->resolveReference(verbRef));
+         }
+         else scope.raiseError(errInvalidSubject, verb);
       }
-      else scope.raiseError(errInvalidSubject, verb);
-   }
-   else {
-      // COMPILER MAGIC : recognize set property
-      int verb_id = _verbs.get(messageStr.c_str());
-      propMode = verb_id == SET_MESSAGE_ID;
+      else {
+         // COMPILER MAGIC : recognize set property
+         int verb_id = _verbs.get(messageStr.c_str());
+         propMode = verb_id == SET_MESSAGE_ID;
+      }
    }
 
    bool first = messageStr.Length() == 0;
@@ -4181,17 +4186,17 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    //      verb_id = PRIVATE_MESSAGE_ID;
    //   }
 
-   //   //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-   //   if (paramCount > 0 && !emptystr(signature) && verb_id != PRIVATE_MESSAGE_ID) {
-   //      ref_t actionRef = 0;
-   //      if (!emptystr(messageStr)) {
-   //         actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
-   //      }
 
-   //      ref_t genericMessage = encodeMessage(actionRef, verb_id, paramCount);
+      //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
+      if (paramCount > 0 && !emptystr(signature)/* && verb_id != PRIVATE_MESSAGE_ID*/) {
+         if (!emptystr(messageStr)) {
+            actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
+         }
 
-   //      node.appendNode(lxMultiMethodAttr, genericMessage);
-   //   }
+         ref_t genericMessage = encodeMessage(actionRef, paramCount);
+
+         node.appendNode(lxMultiMethodAttr, genericMessage);
+      }
 
       messageStr.append(signature);
       actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);

@@ -194,6 +194,7 @@ Instance :: Instance(ELENAMachine* machine)
    _Module* messages = _loader.createModule(MESSAGE_TABLE_MODULE, result);
    if (result == lrSuccessful) {
       _messageTable = (Section*)messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false);
+      _messageTable->writeDWord(0, 0); // dummy place holder
    }
    else throw EAbortException();
 

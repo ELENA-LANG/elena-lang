@@ -29,7 +29,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
 
   // create message table module
    _Module* messages = _project->createModule(MESSAGE_TABLE_MODULE);
-   messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false);
+   messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
 
   // load default forwards
    _literal = project->resolveForward(STR_FORWARD);

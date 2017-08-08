@@ -173,13 +173,13 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount)
       if (tableOffs == 0) {
          MemoryWriter writer(info.section);
 
-         writer.writeDWord(paramCount);
-
          tableOffs = writer.Position();
          ref_t sign_ref = 0;
 
          IdentifierString content(signature, overloadIndex);
-         sign_ref = (ref_t)_loader->resolveReference(content, 0);
+         if (!emptystr(content))
+            sign_ref = (ref_t)_loader->resolveReference(content, 0);
+
          writer.writeDWord(sign_ref);
 
          size_t len = getlength(signature);
