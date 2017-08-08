@@ -1,6 +1,6 @@
 // --- Handler ---
 
-sealed embeddable struct Handle :: dispatchable<handle>
+sealed embeddable struct Handle
 {
     __dword theHandle(4).
     
@@ -13,6 +13,8 @@ sealed embeddable struct Handle :: dispatchable<handle>
     [
         theHandle := aHandle
     ]
+
+    handle = $self.
 
     stacksafe bool equal handle:anOperand 
         = theHandle == anOperand.
@@ -52,7 +54,7 @@ sealed embeddable struct Handle :: dispatchable<handle>
 
 // --- UnsafePointer ---
 
-sealed embeddable struct UnsafePointer :: dispatchable<dirty_ptr>
+sealed embeddable struct UnsafePointer
 {
     __dword thePointer(4).
 
@@ -66,8 +68,10 @@ sealed embeddable struct UnsafePointer :: dispatchable<dirty_ptr>
         $self set:ref.
     ]
     
-    stacksafe set : anObject
-        => system'core_routines'__dptr.
+    dirty_ptr = $self.
+    
+//    stacksafe set : anObject
+//        => system'core_routines'__dptr.
                 
     stacksafe set int:aValue
     [
@@ -79,8 +83,8 @@ sealed embeddable struct UnsafePointer :: dispatchable<dirty_ptr>
         thePointer := thePointer + offs.
     ]
 
-    stacksafe set dirty_ptr:anObject
-        => system'core_routines'__dptr.
+//    stacksafe set dirty_ptr:anObject
+//        => system'core_routines'__dptr.
                 
     stacksafe write int:anObject
         => system'core_routines'__dptr.

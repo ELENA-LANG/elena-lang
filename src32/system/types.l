@@ -15,15 +15,15 @@ explicit        = #16387.
 const           = #8201.
 singleton       = #8208.
 //generic         = #8202.
-//static          = #8194.
+static          = #8194.
 dynamic         = #8199.
 var             = #16385.
 limited         = #8196.
 field           = #16392.
 method          = #16393.
 loop_template   = #16394.
-//nonstructural   = #8204.
-//import          = #16395.
+nonstructural   = #8204.
+import          = #16395.
 extern_template = #16396.
 action          = #8205.
 //mixin           = #8206.
@@ -34,9 +34,9 @@ __string        = #8200.
 __int           = #11.
 __dword         = #12.
 __real          = #14.
-//__verb          = #20.
+__verb          = #20.
 __mssg          = #19.
-//__subj          = #18.
+__subj          = #18.
 //__extmssg       = #21.
 //__tape_mixin    = #8209.
 
@@ -125,10 +125,10 @@ type nfunc      = system'IndexFunction1.
 //type nnfunc     :: system'IndexFunction2.
 //type n3func     :: system'IndexFunction3.
 
-//// === system handles ===
-//type handle     = system'Handle.
-////type rt_ptr     :: system'RTPointer.
-//type dirty_ptr  = system'UnsafePointer.
+// === system handles ===
+type handle     = system'Handle.
+//type rt_ptr     :: system'RTPointer.
+type dirty_ptr  = system'UnsafePointer.
 
 // --- Enumerators / Indexers ---
 type enumerator = system'Enumerator.

@@ -26,36 +26,36 @@ limited class Enumerator
 /// An indexer prototype
 limited class Indexer
 {
-    /// Returns false if the index out of range
-    bool available = $nil.
-
-    /// Returns the current member
-    get = $nil.
-    
-    /// Sets the current member
-    set : anObject []
-    
-    /// Reads the current index into an output parameter
-    stacksafe readIndexTo vint:retVal []
-
-    int vvprop index :: readIndexTo, writeIndex.
-
-    /// Sets the index by specified value
-    ///
-    /// Should be overidden(or set&index)
-    stacksafe writeIndex int:anIndex 
-    [ 
-        $self set index:anIndex.
-    ] 
-
-    /// Reads the length to the output parameter    
-    stacksafe readLengthTo vint:retVal 
-    [
-        retVal int := 0
-    ]
-    
-    int rvprop length :: readLengthTo.
-    
+//    /// Returns false if the index out of range
+//    bool available = $nil.
+//
+//    /// Returns the current member
+//    get = $nil.
+//    
+//    /// Sets the current member
+//    set : anObject []
+//    
+//    /// Reads the current index into an output parameter
+//    stacksafe readIndexTo vint:retVal []
+//
+//    int vvprop index :: readIndexTo, writeIndex.
+//
+//    /// Sets the index by specified value
+//    ///
+//    /// Should be overidden(or set&index)
+//    stacksafe writeIndex int:anIndex 
+//    [ 
+//        $self set index:anIndex.
+//    ] 
+//
+//    /// Reads the length to the output parameter    
+//    stacksafe readLengthTo vint:retVal 
+//    [
+//        retVal int := 0
+//    ]
+//    
+//    int rvprop length :: readLengthTo.
+//    
     /// returnd the enumerator
     indexer = $self.
 }

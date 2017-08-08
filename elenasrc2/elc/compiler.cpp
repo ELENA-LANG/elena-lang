@@ -3880,19 +3880,13 @@ ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, Cod
    IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
    virtualReference.append('.');
 
-   //int paramCount;
-   //ref_t actionRef;
-   //decodeMessage(message, actionRef, paramCount);
+   int paramCount;
+   ref_t actionRef;
+   decodeMessage(message, actionRef, paramCount);
 
    size_t signIndex = virtualReference.Length();
-   //virtualReference.append('0' + (char)paramCount);
-   //virtualReference.append('#');
-   //virtualReference.append((char)(0x20 + verb_id));
-
-   //if (sign_ref != 0) {
-   //   virtualReference.append('&');
-   //   virtualReference.append(moduleScope->module->resolveSubject(sign_ref));
-   //}
+   virtualReference.append('0' + (char)paramCount);
+   virtualReference.append(moduleScope->module->resolveSubject(actionRef));
 
    virtualReference.replaceAll('\'', '@', signIndex);
 
@@ -4200,6 +4194,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
 
       messageStr.append(signature);
+
       actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
       if (actionRef == DISPATCH_MESSAGE_ID) {
          if (paramCount != 0)

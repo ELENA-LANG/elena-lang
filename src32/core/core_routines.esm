@@ -49,6 +49,115 @@ procedure __object."throw$[1]"
   
 end
 
+procedure __object."class_ref$[1]"
+
+  bloadsi 1
+  class
+  quitn 1
+
+end
+
+procedure __object."parent_ref$[1]"
+
+  bloadsi 1
+  class
+  bcopya
+  parent
+  quitn 1
+
+end
+
+procedure __object.instanceOf[2]
+
+  bloadsi 2
+  aloadsi 1
+  check
+  selectr const : system'false const : system'true
+  quitn 2
+
+end
+
+procedure __object.equal&reference[2]
+
+  aloadsi 1
+  bloadsi 2
+  ifb     labTrue
+  acopyr  const : system'false
+  quitn   2
+  
+labTrue:
+  acopyr const : system'true
+  quitn 2
+  
+end
+
+procedure __object."setField$system@IntNumber$system@Object[3]"
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  len
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+  aloadsi 3
+  set
+  bcopya
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __object."getField$system@IntNumber[2]"
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  len
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+  get
+  quitn 2
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __object."readLength$system@Object$@system@var#1&IntNumber[2]"
+
+  ecopy 0
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labSkip 0
+  len
+  ecopyd 
+labSkip:
+  dcopye
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
 procedure __byte."inverted$[1]"
 
   newn   class : system'ByteNumber 4
@@ -3557,5 +3666,495 @@ procedure __wideconvertor."convert$system@LongNumber$system@IntNumber$system@Sho
   nwritei 0
 
   quitn 5
+
+end
+
+procedure __dptr.set[2]
+
+  bcopya
+  dloadsi 2
+  nsave
+  acopyb
+  quitn 2
+
+end
+
+procedure __dptr."set$system@UnsafePointer[2]"
+
+  bcopya
+  aloadsi 2
+  ncopy
+  acopyb
+  quitn 2
+
+end
+
+procedure __dptr."write$system@IntNumber[2]"
+
+  nload
+  pushd
+  popb
+  aloadsi 2
+  nload
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
+procedure __dptr."read$@system@var#1&IntNumber[2]"
+
+  nload
+  pushd
+  popa
+  nload
+  bloadsi 2
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
+procedure __dptr."read$system@ByteArray$system@IntNumber[3]"
+
+  bloadsi 2
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 1
+
+  callextr api : subcopy  
+  
+  quitn 3
+
+end
+
+procedure __event.dispatch[1]
+
+  bsredirect  
+
+  open 5
+  reserve 2
+
+  dcopye
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+
+  aloadai 0 // ; get the first field !! better to define a special array (like castover group object)
+  pusha
+  bcopya
+
+labNext:
+  count
+  dloadfi -2
+  if labEnd
+
+// ; define the message length
+  dloadfi -3
+  ecopyd
+  dcopycount
+  inc
+  
+// ; copy message
+  bcopyf -5
+labNextParam:
+  get
+  pusha
+  dec
+  elsen labNextParam 0
+
+  bloadfi 1
+  dloadfi -2
+  get
+  inc
+  dsavefi -2
+
+  dloadfi -3
+  ecopyd
+  acallvi 0
+  
+  bloadfi 1
+  jump labNext
+
+labEnd:
+  dloadfi -3
+  ecopyd
+  restore 4
+  close
+
+  equit
+
+end
+
+procedure __utf8encoder."convert$system@IntNumber$@system@var#1&IntNumber$system@ByteArray$system@CharArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf8encoder."convert$system@IntNumber$@system@var#1&IntNumber$system@CharArray$system@ByteArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_decode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+  
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf8encoder."charCount$system@LiteralValue$@system@var#1&IntNumber[3]"
+
+  bcopya
+  aloadsi 2
+  blen
+  dec
+  ecopyd
+  callextr api : strcharlen
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __utf8encoder."convert$system@IntNumber$@system@var#1&IntNumber$system@LiteralValue$system@CharArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf16encoder."convert$system@IntNumber$@system@var#1&IntNumber$system@ByteArray$system@CharArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __utf16encoder."convert$system@IntNumber$@system@var#1&IntNumber$system@CharArray$system@ByteArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_decode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf16encoder."charCount$system@WideLiteralValue$@system@var#1&IntNumber[3]"
+
+  bcopya
+  aloadsi 2
+  wlen
+  dec
+  ecopyd
+  callextr api : wstrcharlen
+  bloadsi 3
+  nsave
+
+end
+
+procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$system@ShortArray$system@CharArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  shiftn -1
+  ecopyd
+  aloadsi 2
+  nload
+  shiftn -1
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_encode
+  ifr labErr 0
+
+  dcopye  
+  bloadsi 6
+  nsave
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$system@CharArray$system@ShortArray$@system@var#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_decode
+  ifr labErr 0
+
+  dcopye  
+  bloadsi 6
+  nsave
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __real."exp$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rexp
+
+  quitn 3
+
+end
+
+procedure __real."ln$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  rln
+
+  quitn 3
+
+end
+
+procedure __real."round$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  rround
+  
+  quitn 3
+
+end
+
+procedure __real."truncate$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  rint
+  
+  quitn 3
+
+end
+
+procedure __real."sin$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rsin
+  
+  quitn 3
+
+end
+
+procedure __real."cos$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rcos
+  
+  quitn 3
+
+end
+
+procedure __real."arctan$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rarctan
+  
+  quitn 3
+  
+end
+
+procedure __real."pi$@system@var#1&RealNumber[2]"
+
+  bloadsi 2
+  callextr api : rpi
+  
+  quitn 2
+  
+end
+
+procedure __real."sqrt$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  callextr api : rsqrt
+
+  quitn 3
+
+end
+
+procedure __real."abs$system@RealNumber$@system@var#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rabs
+
+  quitn 3
 
 end

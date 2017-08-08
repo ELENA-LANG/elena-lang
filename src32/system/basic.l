@@ -3,32 +3,32 @@ template var :: template_subj
 {
     template_subj $value.
     
-    template_subj = $value.
-    
-    stacksafe explicit template_subj:val
-    [
-        $value := val.
-    ]
-    
-    stacksafe set template_subj:val
-    [
-        $value := val.
-    ]
-    
-    stacksafe append template_subj:val
-    [
-        $value := $value + val.
-    ]
-    
-    stacksafe reduce template_subj:val
-    [
-        $value := $value - val.
-    ]
-    
-    equal : anObject
-        => $value.
-
-    embeddable dispatch => $value.
+//    template_subj = $value.
+//    
+//    stacksafe explicit template_subj:val
+//    [
+//        $value := val.
+//    ]
+//    
+//    stacksafe set template_subj:val
+//    [
+//        $value := val.
+//    ]
+//    
+//    stacksafe append template_subj:val
+//    [
+//        $value := $value + val.
+//    ]
+//    
+//    stacksafe reduce template_subj:val
+//    [
+//        $value := $value - val.
+//    ]
+//    
+//    equal : anObject
+//        => $value.
+//
+//    embeddable dispatch => $value.
 }
 
 template ref :: template_subj
@@ -3031,59 +3031,59 @@ class realConvertor =
 
 // --- realOpController ---
 
-//class realOpController =
-//{
-//    stacksafe exp real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe abs real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe ln real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe round real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe truncate real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe sin real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe cos real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe arctan real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//                
-//    stacksafe sqrt real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe pi vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe embeddable real pi
-//    [
-//        real aRetVal := 0.0r.
-//        $self pi vreal:aRetVal.
-//        
-//        ^ aRetVal
-//    ]        
-//    
-//    stacksafe embeddable real e
-//    [
-//        real aRetVal := 0.0r.
-//        $self exp real:1.0r vreal:aRetVal.
-//        
-//        ^ aRetVal
-//    ]        
-//}.
+class realOpController =
+{
+    stacksafe exp real:aReal vreal:aRetVal
+        => system'core_routines'__real.
+        
+    stacksafe abs real:aReal vreal:aRetVal
+        => system'core_routines'__real.
+        
+    stacksafe ln real:aReal vreal:aRetVal
+        => system'core_routines'__real.
+        
+    stacksafe round real:aReal vreal:aRetVal
+        => system'core_routines'__real.
+        
+    stacksafe truncate real:aReal vreal:aRetVal
+        => system'core_routines'__real.
+        
+    stacksafe sin real:aReal vreal:aRetVal
+        => system'core_routines'__real.
+        
+    stacksafe cos real:aReal vreal:aRetVal
+        => system'core_routines'__real.
+        
+    stacksafe arctan real:aReal vreal:aRetVal
+        => system'core_routines'__real.
+                
+    stacksafe sqrt real:aReal vreal:aRetVal
+        => system'core_routines'__real.
+        
+    stacksafe pi vreal:aRetVal
+        => system'core_routines'__real.
+        
+    stacksafe embeddable real pi
+    [
+        real aRetVal := 0.0r.
+        $self pi vreal:aRetVal.
+        
+        ^ aRetVal
+    ]        
+    
+    stacksafe embeddable real e
+    [
+        real aRetVal := 0.0r.
+        $self exp real:1.0r vreal:aRetVal.
+        
+        ^ aRetVal
+    ]        
+}.
 
-//real pi_value = realOpController pi.
-//
-//real e_value = realOpController e.
-//
+real pi_value = realOpController pi.
+
+real e_value = realOpController e.
+
 //// --- obsolete variables ---
 //
 //class Integer =
