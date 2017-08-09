@@ -39,6 +39,7 @@ In development:
                  * if else if ...
 
               xdev - multimethod                 
+                 * compile time multi method resolution : o x := 2.
                  * multi dispatch with $nil
                  * uncomment Array.setAt[2] amd Array.getAt[1]
                  * explicit constant (uncomment generateMethodAttributes)

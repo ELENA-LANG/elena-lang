@@ -215,7 +215,7 @@ dynamic template array :: template_subj
 // --- ByteArray ---
 
 /// A byte array
-sealed ByteArray :: array<byte>
+sealed ByteArray :: array<byte>, dispatchable<bytearray>
 {
     /// Creates the byte array with the specified length
     stacksafe constructor new int:len
@@ -277,8 +277,6 @@ sealed ByteArray :: array<byte>
     /// Reads a byte value at the specified position and saves it into an output variable
     stacksafe read int:anIndex vbyte:anInt
         => system'core_routines'__bytearray.
-
-    bytearray = $self.
 
     embeddable getAt int:n
     [
@@ -368,7 +366,7 @@ sealed ByteArray :: array<byte>
 // --- ShortArray ---
 
 /// A short integer array
-sealed ShortArray :: array<short>
+sealed ShortArray :: array<short>, dispatchable<shortarray>
 {
     /// Creates the short array with the specified length
     stacksafe constructor new int:aLength
@@ -442,14 +440,12 @@ sealed ShortArray :: array<short>
 
     /// Creates the object copy
     clone = ShortArray new shortarray:$self.
-    
-    shortarray = $self.
 }
 
 // --- IntArray ---
 
 /// An array of integers
-sealed IntArray :: array<int>
+sealed IntArray :: array<int>, dispatchable<intarray>
 {
     /// Creates the array with the specified length
     stacksafe constructor new int : aLength
@@ -523,13 +519,11 @@ sealed IntArray :: array<int>
 
     /// Creates the object copy
     clone = IntArray new intarray:$self.
-    
-    intarray = $self.
 }
 
 // --- BitArray ---
 
-sealed class BitArray
+sealed class BitArray :: dispatchable<bitarray>
 {
     intarray theArray.
     int      theLength.
@@ -601,13 +595,11 @@ sealed class BitArray
 
     /// Returns the array indexer
     indexer = BitArrayIndexer new bitarray:$self.    
-
-    bitarray = $self.
 }
 
 // --- BitArray32 ---
 
-sealed embeddable class BitArray32
+sealed embeddable class BitArray32 :: dispatchable<bitset>
 {
     int theValue.
     
@@ -668,13 +660,11 @@ sealed embeddable class BitArray32
 
     /// Returns the array indexer
     indexer = BitArray32Indexer new bitset:$self.
-    
-    bitset = $self.
 }
 
 // --- IntMatrix ---
 
-sealed class IntMatrix
+sealed class IntMatrix :: dispatchable<intmatrix>
 {
     intarray theArray.
     int      theRows.
@@ -764,14 +754,12 @@ sealed class IntMatrix
             $owner setAt(i,j,aValue).
         ]
     }.
-
-    intmatrix = $self.
 }
 
 // --- RealArray ---
 
 /// An array of real numbers
-sealed RealArray :: array<real>
+sealed RealArray :: array<real>, dispatchable<realarray>
 {
     /// Creates the array with the specified length
     stacksafe constructor new int:aLength
@@ -837,13 +825,11 @@ sealed RealArray :: array<real>
 
     /// Creates the object copy
     clone = RealArray new realarray:$self.
-    
-    realarray = $self.
 }
 
 // --- RealMatrix ---
 
-sealed class RealMatrix
+sealed class RealMatrix :: dispatchable<realmatrix>
 {
     realarray theArray.
     int       theRows.
@@ -938,14 +924,12 @@ sealed class RealMatrix
             $owner setAt(i,j,aValue)
         ]
     }.
-    
-    realmatrix = $self.
 }
 
 // --- CharArray ---
 
 /// An array of unicode characters (UTF-32)
-sealed CharArray :: array<char>
+sealed CharArray :: array<char>, dispatchable<chararray>
 {
     /// Creates the new array with a specified length
     stacksafe constructor new int : len
@@ -1022,8 +1006,6 @@ sealed CharArray :: array<char>
 
     /// Creates the object copy
     clone = CharArray new chararray:$self.
-    
-    chararray = $self.
 }
         
 // --- emptyliteralvalue ---
@@ -1034,7 +1016,7 @@ const literal emptyLiteralValue = "".
 // --- LiteralValue ---
 
 /// A UTF-8 literal value
-sealed dynamic __string LiteralValue :: BaseValue
+sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
 {
     byte $target.
 
@@ -1071,8 +1053,6 @@ sealed dynamic __string LiteralValue :: BaseValue
         system'core_routines'__literal copy literal:$self int:anIndex int:aSize bytearray:anArray.
     ]
     
-    literal = $self.
-
     /// Converts to UTF-16 literal
     wide = wideConvertor convert literal:$self.
 
@@ -1242,7 +1222,7 @@ const wide emptyWideLiteralValue = ""w.
 // --- WideLiteralValue ---
 
 /// A UTF-18 literal value
-sealed dynamic __string WideLiteralValue :: BaseValue
+sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
 {
     short $target.
 
@@ -1278,8 +1258,6 @@ sealed dynamic __string WideLiteralValue :: BaseValue
     [
         system'core_routines'__wide copy wide:$self int:anIndex int:aSize shortarray:anArray.
     ]
-
-    wide = $self.
 
     /// Converts to UTF-8 literal
     literal = literalConvertor convert wide:$self.
@@ -1564,7 +1542,7 @@ sealed dynamic __string WideLiteralValue :: BaseValue
 // --- Array ---
 
 /// An array
-sealed Array :: array<object>
+sealed Array :: array<object>, dispatchable<array>
 {
     /// Creates an empty array
     constructor min
@@ -1656,8 +1634,6 @@ sealed Array :: array<object>
     /// Clones the array
     array clone 
         = Array new array:$self.
-        
-    array = $self.
 }
 
 //// --- $paramsOp ---

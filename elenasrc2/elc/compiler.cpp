@@ -2821,10 +2821,12 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    writer.closeNode();   
 
    // the result of get&type message should be typed
-   if (retVal.param == 0 && paramCount == 0 && test(messageRef, SEALED_MESSAGE) && actionRef != 0) {
+
+   if (retVal.param == 0 && paramCount == 0 && actionRef != 0) {
       ident_t sign = scope.moduleScope->module->resolveSubject(actionRef);
-      if (!emptystr(sign))
-         retVal.param = scope.moduleScope->module->mapReference(sign.c_str() + 1);
+      size_t index = sign.find('$');
+      if (index != NOTFOUND_POS && sign[index+1] != 0)
+         retVal.param = scope.moduleScope->module->mapReference(sign.c_str() + index + 1);
    }
 
    return retVal;
@@ -4181,19 +4183,28 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    //      verb_id = PRIVATE_MESSAGE_ID;
    //   }
 
+      if (propMode && paramCount == 1 && messageStr.Length() > 3) {
+         // COMPILER MAGIC : set&x => x$
+         messageStr.cut(0, 4);
+         messageStr.append('$');
+
+         propMode = false;
+      }
 
       //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
       if (paramCount > 0 && !emptystr(signature) && !privateSealedMode) {
-         if (!emptystr(messageStr)) {
-            actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
-         }
+         actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
 
          ref_t genericMessage = encodeMessage(actionRef, paramCount);
 
          node.appendNode(lxMultiMethodAttr, genericMessage);
       }
 
-      messageStr.append(signature);
+      if (propMode && paramCount == 1 && !emptystr(signature)) {
+         // COMPILER MAGIC : set$int => $int
+         messageStr.copy(signature);
+      }
+      else messageStr.append(signature);
 
       actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
       if (actionRef == DISPATCH_MESSAGE_ID) {
@@ -4207,12 +4218,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
             actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
          }
-      }
-      else if (propMode && paramCount == 1) {
-         // COMPILER MAGIC : set property
-         messageStr.cut(0, 4);
-         messageStr.append('$');
-         actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
       }
 
       scope.message = encodeMessage(actionRef, paramCount);

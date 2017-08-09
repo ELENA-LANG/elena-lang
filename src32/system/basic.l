@@ -3,32 +3,32 @@ template var :: template_subj
 {
     template_subj $value.
     
-//    template_subj = $value.
-//    
-//    stacksafe explicit template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
-//    stacksafe set template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
-//    stacksafe append template_subj:val
-//    [
-//        $value := $value + val.
-//    ]
-//    
-//    stacksafe reduce template_subj:val
-//    [
-//        $value := $value - val.
-//    ]
-//    
-//    equal : anObject
-//        => $value.
-//
-//    embeddable dispatch => $value.
+    sealed embeddable template_subj = $self.
+    
+    stacksafe explicit template_subj:val
+    [
+        $value := val.
+    ]
+    
+    stacksafe set template_subj:val
+    [
+        $value := val.
+    ]
+    
+    stacksafe append template_subj:val
+    [
+        $value := $value + val.
+    ]
+    
+    stacksafe reduce template_subj:val
+    [
+        $value := $value - val.
+    ]
+    
+    equal : anObject
+        => $value.
+
+    embeddable dispatch => $value.
 }
 
 template ref :: template_subj
@@ -179,10 +179,8 @@ class false = BaseBoolValue::
 // --- BaseValue ---
 
 // A base value
-class BaseValue
+class BaseValue :: dispatchable<value>
 {
-    value = $self.
-    
     equal value:anObject
     [
         system'NotSupportedException new; raise.
@@ -211,10 +209,8 @@ class BaseValue
 // --- BaseNumber ---
 
 /// A base numeric value
-class BaseNumber :: BaseValue
+class BaseNumber :: BaseValue, dispatchable<numeric>
 {
-    numeric = $self.
-    
     add numeric:anObject
     [
         system'NotSupportedException new; raise.
@@ -254,10 +250,8 @@ class BaseNumber :: BaseValue
 // --- IntBaseNumber ---
 
 /// A base integer value
-class IntBaseNumber :: BaseNumber
+class IntBaseNumber :: BaseNumber, dispatchable<int_numeric>
 {
-    int_numeric = $self.
-    
     and int_numeric:anObject
     [
         system'NotSupportedException new; raise.
@@ -294,7 +288,7 @@ class IntBaseNumber :: BaseNumber
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-sealed embeddable struct ByteNumber :: IntBaseNumber
+sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable<byte>
 {
     __int theValue(1).
 
@@ -322,8 +316,6 @@ sealed embeddable struct ByteNumber :: IntBaseNumber
     /// Creates the object with a specified value
     constructor new : aValue
         <= new byte:aValue.
-
-    byte = $self.
 
     /// Returns the value as a short integer
     short = ShortNumber new byte:$self.
@@ -570,7 +562,7 @@ sealed embeddable struct ByteNumber :: IntBaseNumber
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-sealed embeddable struct ShortNumber :: IntBaseNumber
+sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable<short>
 {
     __int theValue(2).
 
@@ -608,8 +600,6 @@ sealed embeddable struct ShortNumber :: IntBaseNumber
     /// Creates the object with specified value
     constructor new : anObject
         <= new short:anObject.
-
-    short = $self.
 
     /// Returns the byte value        
     byte = byteConvertor convert short:$self.
@@ -860,7 +850,7 @@ sealed embeddable struct ShortNumber :: IntBaseNumber
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-sealed embeddable struct IntNumber :: IntBaseNumber
+sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable<int>
 {
     __int theValue(4).
 
@@ -901,8 +891,6 @@ sealed embeddable struct IntNumber :: IntBaseNumber
     /// Creates the object with specified value
     constructor new : anObject
         <= new int:anObject.
-
-    int = $self.
 
     /// Returns the value as a short integer    
     stacksafe short = shortConvertor convert int:$self.
@@ -1158,7 +1146,7 @@ sealed embeddable struct IntNumber :: IntBaseNumber
 
 /// A unsigned 32 bit integer
 
-sealed embeddable struct UIntNumber :: IntBaseNumber
+sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable<uint>
 {
     __int theValue(4).
 
@@ -1221,13 +1209,13 @@ sealed embeddable struct UIntNumber :: IntBaseNumber
     /// Returns the literal presentation
     wide = system'wideConvertor convert uint:$self.
         
-    uint = $self. 
-
     /// Returns the value as a short integer    
     stacksafe short = shortConvertor convert uint:$self.
 
     /// Returns the byte value    
     byte = byteConvertor convert uint:$self.
+
+    int = $self.
 
     /// Returns the long integer
     long = LongNumber new uint:$self.
@@ -1499,7 +1487,7 @@ sealed embeddable struct UIntNumber :: IntBaseNumber
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-sealed embeddable struct LongNumber :: IntBaseNumber
+sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable<long>
 {
     __int theValue(8).
     
@@ -1538,8 +1526,6 @@ sealed embeddable struct LongNumber :: IntBaseNumber
     /// Creates the object with specified value
     constructor new : anObject
         <= new long:anObject.
-
-    long = $self.
 
     /// Returns an integer value
     int = intConvertor convert long:$self.
@@ -1794,7 +1780,7 @@ sealed embeddable struct LongNumber :: IntBaseNumber
 // --- realNumber ---
 
 /// A 64bit float numeric value
-sealed embeddable struct RealNumber :: BaseNumber
+sealed embeddable struct RealNumber :: BaseNumber, dispatchable<real>
 {
     __real theValue(8).
 
@@ -1989,8 +1975,6 @@ sealed embeddable struct RealNumber :: BaseNumber
     stacksafe divide long:anOperand
         = $self divide real:(RealNumber new long:anOperand).
 
-    real = $self.
-
     /// Returns the literal presentation
     literal = system'literalConvertor convert real:$self.
 
@@ -2020,7 +2004,7 @@ sealed embeddable struct RealNumber :: BaseNumber
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-sealed const embeddable struct CharValue :: BaseValue
+sealed const embeddable struct CharValue :: BaseValue, dispatchable<char>
 {
     __dword theValue(4).
 
@@ -2062,8 +2046,6 @@ sealed const embeddable struct CharValue :: BaseValue
 
     /// Returns the literal value
     stacksafe literal = system'literalConvertor convert char:$self.
-
-    char = $self.
 
     /// Returns the wide literal value
     wide = system'wideConvertor convert char:$self.

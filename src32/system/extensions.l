@@ -8,86 +8,86 @@
 
 // --- common methods ---
 
-/// A generic extender
-extension objectOp
-{
-    class_ref
-        => system'core_routines'__object.
-
-    parent_ref
-        => system'core_routines'__object.
-
-    bool instanceOf:type
-        => system'core_routines'__object.        
-
-//    literal className
-//    [
-//        var c := self~objectOp class_ref.
+///// A generic extender
+//extension objectOp
+//{
+//    class_ref
+//        => system'core_routines'__object.
+//
+//    parent_ref
+//        => system'core_routines'__object.
+//
+//    bool instanceOf:type
+//        => system'core_routines'__object.        
+//
+////    literal className
+////    [
+////        var c := self~objectOp class_ref.
+////        
+////        byte aBuffer(256).
+////        int  aLength := system'external LoadClassName 
+////                                ref:c
+////                                bytearray:aBuffer
+////                                int:255.
+////         
+////        if (aLength == 0)
+////            [ ^ "Unknown class" ].
+////        
+////        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
+////    ]    
+//    
+//    /// Returns true if the specified object instances are equal; otherwise, false.
+//    bool equal reference:anObject
+//        => system'core_routines'__object.
 //        
-//        byte aBuffer(256).
-//        int  aLength := system'external LoadClassName 
-//                                ref:c
-//                                bytearray:aBuffer
-//                                int:255.
-//         
-//        if (aLength == 0)
-//            [ ^ "Unknown class" ].
-//        
-//        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
-//    ]    
-    
-    /// Returns true if the specified object instances are equal; otherwise, false.
-    bool equal reference:anObject
-        => system'core_routines'__object.
-        
-    /// Returns the parameter        
-    back : anObject = anObject.
-
-//    evalSelf func1:aFunction
+//    /// Returns the parameter        
+//    back : anObject = anObject.
+//
+////    evalSelf func1:aFunction
+////        = aFunction eval:self.
+//
+//    evalSelf:aFunction
 //        = aFunction eval:self.
-
-    evalSelf:aFunction
-        = aFunction eval:self.
-
-    /// Returns true if the object is nil
-    bool isNil
-        = nil == self.
-        
-    /// Returns true if the object is literal or character
-    isLiteral
-        = self cast:%eval to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. generic eval : anObject = false. }.
-        
-    /// Returns true if the object is integer numereric
-    isInteger
-        = self cast:%eval to:{ int : x = true. long : x = true. short : x = true. byte : x = true. generic eval : anObject = false. }.
-        
-    /// Returns true if the object is numereric
-    isNumeric
-        = self cast:%eval to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. generic eval : anObject = false. }.
-        
-    bool isEmpty
-        = self length == 0.
-        
-    bool isNonempty
-        = self length != 0.
-        
-//    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
-//    bool safeEqual : anObject
-//        = anObject cast:%eval to:{ generic eval:aTarget:anObject = aTarget~$subject equal:anObject \ back:false. } with:self.
-
-//    eval with:action
-//        = action eval:self.
-        
-    stacksafe reallocate int:aNewLength
-        => system'core_routines'__array.
-        
-//    shift : n
-//    [
-//        if (n < 0)
-//            [ ^ self shiftLeft int:(n int; negative) ];
-//            [ ^ self shiftRight int:(n int) ].
-//    ]
-}
+//
+//    /// Returns true if the object is nil
+//    bool isNil
+//        = nil == self.
+//        
+//    /// Returns true if the object is literal or character
+//    isLiteral
+//        = self cast:%eval to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. generic eval : anObject = false. }.
+//        
+//    /// Returns true if the object is integer numereric
+//    isInteger
+//        = self cast:%eval to:{ int : x = true. long : x = true. short : x = true. byte : x = true. generic eval : anObject = false. }.
+//        
+//    /// Returns true if the object is numereric
+//    isNumeric
+//        = self cast:%eval to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. generic eval : anObject = false. }.
+//        
+//    bool isEmpty
+//        = self length == 0.
+//        
+//    bool isNonempty
+//        = self length != 0.
+//        
+////    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
+////    bool safeEqual : anObject
+////        = anObject cast:%eval to:{ generic eval:aTarget:anObject = aTarget~$subject equal:anObject \ back:false. } with:self.
+//
+////    eval with:action
+////        = action eval:self.
+//        
+//    stacksafe reallocate int:aNewLength
+//        => system'core_routines'__array.
+//        
+////    shift : n
+////    [
+////        if (n < 0)
+////            [ ^ self shiftLeft int:(n int; negative) ];
+////            [ ^ self shiftRight int:(n int) ].
+////    ]
+//}
 
 // --- Operations ---
 

@@ -1,3 +1,7 @@
+template dispatchable :: template_subj
+{
+    sealed embeddable template_subj = $self.
+}
 
 // --- super object ---
 
@@ -19,10 +23,8 @@ class Object
 }
 
 /// A common boolean value
-listable class BaseBoolValue
+listable class BaseBoolValue :: dispatchable<bool>
 {
-    bool = $self.
-    
     if : aTrueAction = $nil.
 
     if : aTrueAction : aFalseAction = $nil.

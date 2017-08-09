@@ -510,10 +510,15 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
             if (index != NOTFOUND_POS) {
                ref_t actionRef = 0;
                if (index > 0) {
+                  // HOTFIX : recognize x$$int
+                  if (messageName[index + 1] == '$')
+                     index++;
+
                   IdentifierString content(messageName, index);
 
                   actionRef = scope.module->mapSubject(content.c_str(), true);
                }
+               else actionRef = SET_MESSAGE_ID;
 
                ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getParamCount(message)), maOverloadlist));
                if (listRef != 0)
@@ -1645,7 +1650,11 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
 bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
 {
    // check if it is a virtual call
-   if (node == lxDirectCalling && getAction(node.argument) == GET_MESSAGE_ID && getParamCount(node.argument) == 0) {
+   if (node == lxDirectCalling && getParamCount(node.argument) == 0) {
+      ident_t actionName = scope.module->resolveSubject(getAction(node.argument));
+      if (actionName.find('$') == NOTFOUND_POS)
+         return false;
+
       SNode callTarget = node.findChild(lxCallTarget);
 
       ClassInfo info;

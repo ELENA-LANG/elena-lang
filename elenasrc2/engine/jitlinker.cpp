@@ -182,6 +182,10 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount)
 
          writer.writeDWord(sign_ref);
 
+         // HOTFIX to deal with qualified property : x$$int
+         if (signature[overloadIndex + 1] == '$')
+            overloadIndex++;
+
          size_t len = getlength(signature);
          size_t start = overloadIndex + 1;
          while (start < len) {
