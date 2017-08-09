@@ -20,42 +20,42 @@ sealed nonstructural class CallStack
     /// Creates a current call stack
     constructor new
     [
-//        int aStack(64).
-//        int aLength := 0.
-//        
-//        aLength := system'external core_callstack_load
-//            intarray:aStack
-//            int:64.
-//            
-//        theStack := IntArray new int:0 int:aLength intarray:aStack
+        int aStack(64).
+        int aLength := 0.
+        
+        aLength := system'external core_callstack_load
+            intarray:aStack
+            int:64.
+            
+        theStack := IntArray new int:0 int:aLength intarray:aStack
     ]
     
     /// Generates the call stack literal representation
     literal
     [
-//        int     anIndex := 0.
-//        int     aLength := theStack length.
-//        int     aBufferLength := 0.
-//        int     address := 0.
-//
-//        byte    aBuffer(512).
-//        literal aCallStackText := emptyLiteralValue.
-//        while (anIndex < aLength)
-//        [
-//            theStack read int:anIndex vint:address.
-//            
-//            aBufferLength := system'external LoadAddressInfo
-//                int:address 
-//                bytearray:aBuffer
-//                int:512.
-//            
-//            if (aBufferLength > 0)
-//                [ aCallStackText := aCallStackText add literal:(LiteralValue $new int:0 int:aBufferLength bytearray:aBuffer); add literal:'newLine ].
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        ^ aCallStackText.
+        int     anIndex := 0.
+        int     aLength := theStack length.
+        int     aBufferLength := 0.
+        int     address := 0.
+
+        byte    aBuffer(512).
+        literal aCallStackText := emptyLiteralValue.
+        while (anIndex < aLength)
+        [
+            theStack read int:anIndex vint:address.
+            
+            aBufferLength := system'external LoadAddressInfo
+                int:address 
+                bytearray:aBuffer
+                int:512.
+            
+            if (aBufferLength > 0)
+                [ aCallStackText := aCallStackText add literal:(LiteralValue $new int:0 int:aBufferLength bytearray:aBuffer); add literal:'newLine ].
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ aCallStackText.
     ]
 }
 
@@ -197,10 +197,10 @@ class MethodNotFoundException :: Exception
         <= new literal:"Method not found".
 
     stacksafe constructor new mssg:missingMessage
-        <= new literal:("Method " add literal:missingMessage; add literal:" not found").
+        <= new literal("Method " add literal:missingMessage; add literal:" not found").
         
     stacksafe constructor new object:object mssg:missingMessage
-        <= new literal:(object className; add literal:" : Method "; add literal:missingMessage; add literal:" not found").
+        <= new literal(object className; add literal:" : Method "; add literal:missingMessage; add literal:" not found").
 }
 
 // --- MethodNotSupported ---

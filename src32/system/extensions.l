@@ -8,34 +8,34 @@
 
 // --- common methods ---
 
-///// A generic extender
-//extension objectOp
-//{
-//    class_ref
-//        => system'core_routines'__object.
-//
-//    parent_ref
-//        => system'core_routines'__object.
-//
-//    bool instanceOf:type
-//        => system'core_routines'__object.        
-//
-////    literal className
-////    [
-////        var c := self~objectOp class_ref.
-////        
-////        byte aBuffer(256).
-////        int  aLength := system'external LoadClassName 
-////                                ref:c
-////                                bytearray:aBuffer
-////                                int:255.
-////         
-////        if (aLength == 0)
-////            [ ^ "Unknown class" ].
-////        
-////        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
-////    ]    
-//    
+/// A generic extender
+extension objectOp
+{
+    class_ref
+        => system'core_routines'__object.
+
+    parent_ref
+        => system'core_routines'__object.
+
+    bool instanceOf:type
+        => system'core_routines'__object.        
+
+    literal className
+    [
+        var c := self~objectOp class_ref.
+        
+        byte aBuffer(256).
+        int  aLength := system'external LoadClassName 
+                                ref:c
+                                bytearray:aBuffer
+                                int:255.
+         
+        if (aLength == 0)
+            [ ^ "Unknown class" ].
+        
+        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
+    ]    
+    
 //    /// Returns true if the specified object instances are equal; otherwise, false.
 //    bool equal reference:anObject
 //        => system'core_routines'__object.
@@ -87,7 +87,7 @@
 ////            [ ^ self shiftLeft int:(n int; negative) ];
 ////            [ ^ self shiftRight int:(n int) ].
 ////    ]
-//}
+}
 
 // --- Operations ---
 

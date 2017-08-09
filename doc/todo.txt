@@ -3,9 +3,7 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * extension with generic handler open argument list
                  * implicit conversion
-                 * exception handling - call stack
                  * private message
                  * private sealed message
                  * test loops
@@ -43,6 +41,8 @@ In development:
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]
+                 * elenart : correctly display strong typed message names
+                 * elenavm : correctly display strong typed message names
 
               zdev - script engine
                  * migrate Tape

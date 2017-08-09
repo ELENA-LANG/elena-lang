@@ -942,12 +942,8 @@ void DebugController::readByteArray(_DebuggerWatch* watch, size_t address, ident
 
 void DebugController :: parseMessage(IdentifierString& messageValue, ref_t message)
 {
-   messageValue.append(retrieveKey(_verbs.start(), getAction(message), DEFAULT_STR));
-
    ref_t sign_ref = getAction(message);
    if (sign_ref != 0) {
-      messageValue.append('&');
-
       ident_t subject = retrieveKey(_subjects.start(), sign_ref, DEFAULT_STR);
       if (emptystr(subject)) {
          messageValue.append("?<");

@@ -60,11 +60,12 @@ bool Instance :: loadConfig(path_t configFile)
    return true;
 }
 
-void Instance :: init(void* debugSection, path_t configPath)
+void Instance :: init(void* debugSection, void* messageTable, path_t configPath)
 {
    IdentifierString package;
 
    _debugOffset = _debugSection.init(debugSection, package);
+   _messageSection = messageTable;
 
    loadConfig(configPath);
    _loader.setNamespace(package);
@@ -138,18 +139,19 @@ int Instance :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
    if (initSubjectSection(subjectSection)) {
       MemoryReader reader(&subjectSection);
 
-      ref_t subject;
+      ref_t action;
       int count;
-      decodeMessage(subjectRef, subject, count);
+      decodeMessage(subjectRef, action, count);
 
-      ident_t verbName = retrieveKey(_verbs.start(), subject, DEFAULT_STR);
-      size_t used = length;
-      verbName.copyTo(buffer, used);
-      
-      if (subject > 0) {
-         buffer[used++] = '&';
-         used += manager.readSubjectName(reader, subject, buffer + used, length - used);
-      }      
+      size_t used = 0;
+      if (test(subjectRef, encodeVerb(SIGNATURE_FLAG))) {
+         ImageSection messageSection;
+         messageSection.init(_messageSection, 0x10000); // !! dummy size
+
+         ref_t verb = messageSection[action];
+         used += manager.readSubjectName(reader, verb, buffer + used, length - used);
+      }
+      else used += manager.readSubjectName(reader, action, buffer + used, length - used);
 
       if (count > 0) {
          size_t dummy = 10;

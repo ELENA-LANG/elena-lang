@@ -644,6 +644,9 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
          // HOTFIX : replace generic object with an integer constant
          targetRef = scope.realReference;
       }
+      else if (sourceRef == V_MESSAGE) {
+         targetRef = scope.messageReference;
+      }
    }
 
    ClassInfo info;

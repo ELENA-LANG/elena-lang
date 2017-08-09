@@ -4175,3 +4175,24 @@ labSearch:
   quitn 2
 
 end
+
+procedure __message."load$system@Message$system@LiteralValue[2]"
+
+  aloadsi 2   // ; read aName parameter
+  pusha
+  callextr extern : LoadMessage
+  pop
+  ifn labError 0
+  bloadsi 1
+  nsave
+  acopyb
+  quitn 2
+
+labError:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
+
+end

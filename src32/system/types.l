@@ -63,9 +63,9 @@ type value      = system'BaseValue.
 type numeric    = system'BaseNumber.
 type int_numeric= system'IntBaseNumber.
 
-////type keyvalue   :: system'KeyValue.
-//
-//type ref        = system'Variable.
+//type keyvalue   :: system'KeyValue.
+
+type ref        = system'Variable.
 
 type byte       = system'ByteNumber.
 type short      = system'ShortNumber.
@@ -74,7 +74,7 @@ type uint       = system'UIntNumber.
 type long       = system'LongNumber.
 type real       = system'RealNumber.
 type char       = system'CharValue.
-//type mssg       = system'Message.
+type mssg       = system'Message.
 //type ext_mssg   = system'ExtensionMessage.
 //
 ///// A verb symbol

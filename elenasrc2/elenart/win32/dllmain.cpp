@@ -32,6 +32,7 @@ void init(HMODULE hModule)
    instance = new Instance(rootPath.c_str());
 
    void* debugSection = NULL;
+   void* messageSection = NULL;
    Instance::ImageSection section;
    section.init((void*)0x400000, 0x1000);
 
@@ -39,8 +40,11 @@ void init(HMODULE hModule)
    PEHelper::seekSection(MemoryReader(&section), ".debug", ptr);
    debugSection = (void*)ptr;
 
+   PEHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
+   messageSection = (void*)ptr;
+
    Path configPath(CONFIG_PATH);
-   instance->init(debugSection, configPath.c_str());
+   instance->init(debugSection, messageSection, configPath.c_str());
 }
 
 EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)

@@ -2235,15 +2235,11 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
 {
    SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
    IdentifierString signature;
-   ref_t verb_id = 0;
    int paramCount = -1;
    ref_t extensionRef = 0;
    if (terminal == lxIdentifier || terminal == lxPrivate) {
       ident_t name = terminal.identifier();
-      verb_id = _verbs.get(name);
-      if (verb_id == 0) {
-         signature.copy(name);
-      }
+      signature.copy(name);
    }
    else {
       ident_t message = terminal.identifier();
@@ -2252,23 +2248,15 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
       int param = 0;
       bool firstSubj = true;
       for (size_t i = 0; i < getlength(message); i++) {
-         if (message[i] == '&') {
-            if (firstSubj) {
-               signature.copy(message + subject, i - subject);
-               verb_id = _verbs.get(signature);
-               if (verb_id != 0) {
-                  subject = i + 1;
-               }
-               firstSubj = false;
-            }
-         }
-         else if (message[i] == '.' && extensionRef == 0) {
+         if (message[i] == '.' && extensionRef == 0) {
             signature.copy(message + subject, i - subject);
             subject = i + 1;
 
             extensionRef = scope.moduleScope->resolveIdentifier(signature);
             if (extensionRef == 0)
                scope.raiseError(errInvalidSubject, terminal);
+         }
+         else if (message[i] == '&') {
          }
          else if (message[i] == '[') {
             int len = getlength(message);
@@ -2295,29 +2283,11 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
          signature.copy(message + subject, param - subject);
       }
       else signature.copy(message + subject);
-
-      if (subject == 0 && paramCount != -1) {
-         verb_id = _verbs.get(signature);
-         if (verb_id != 0) {
-            signature.clear();
-         }
-      }
-   }
-
-   if (verb_id == 0 && paramCount != -1) {
-      if (paramCount == 0) {
-         verb_id = GET_MESSAGE_ID;
-      }
-      else verb_id = EVAL_MESSAGE_ID;
    }
 
    ObjectInfo retVal;
    IdentifierString message;
    if (extensionRef != 0) {
-      if (verb_id == 0) {
-         scope.raiseError(errInvalidSubject, terminal);
-      }
-
       message.append(scope.moduleScope->module->resolveReference(extensionRef));
       message.append('.');
    }
@@ -2326,27 +2296,15 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
       message.append('0');
    }
    else message.append('0' + (char)paramCount);
-   message.append('#');
-   if (verb_id != 0) {
-      message.append((char)(0x20 + verb_id));
-   }
-   else message.append(0x20);
+   message.append(signature);
 
-   if (!emptystr(signature)) {
-      message.append('&');
-      message.append(signature);
+   if (extensionRef != 0) {
+      retVal.kind = okExtMessageConstant;
    }
-
-   if (verb_id != 0) {
-      if (extensionRef != 0) {
-         retVal.kind = okExtMessageConstant;
-      }
-      else if (paramCount == -1 && emptystr(signature)) {
-         retVal.kind = okVerbConstant;
-      }
-      else retVal.kind = okMessageConstant;
+   else if (paramCount == -1) {
+      retVal.kind = okVerbConstant;
    }
-   else retVal.kind = okSignatureConstant;
+   else retVal.kind = okMessageConstant;
 
    retVal.param = scope.moduleScope->module->mapReference(message);
 
@@ -5888,6 +5846,9 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
          boxing = false;
       }
       else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
+         boxing = false;
+      }
+      else if (sourceNode == lxMessageConstant && targetRef == scope.messageReference) {
          boxing = false;
       }
       else sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);

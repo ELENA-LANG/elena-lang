@@ -2146,23 +2146,23 @@ singleton nil
 //    
 //    dispatch => theObject.
 //}
-//
-///// A generic variable. 
-/////
-///// Extends an assigned value
-//sealed class Variable :: var<object>
-//{
-//    /// Creates the empty variable
-//    constructor new
-//    [
-//    ]        
-//        
-//    /// Creates the variable
-//    constructor new : value
-//    [
-//        $value := value.
-//    ]
-//    
+
+/// A generic variable. 
+///
+/// Extends an assigned value
+sealed class Variable :: var<object>
+{
+    /// Creates the empty variable
+    constructor new
+    [
+    ]        
+        
+    /// Creates the variable
+    constructor new : value
+    [
+        $value := value.
+    ]
+    
 //    set : value
 //    [
 //        $value := value.
@@ -2196,8 +2196,8 @@ singleton nil
 ////            ? [ system'InvalidOperationException new; raise ]
 ////            ! [ $value := $value / val ]
 ////    ]    
-//}
-//
+}
+
 //// --- KeyValue ---
 //
 ///// A key - object pair

@@ -37,28 +37,28 @@ sealed embeddable struct Message
 {
     __mssg theValue(4).
 
-//    constructor new literal:name
-//    [
-//        system'core_routines'__message load mssg:$self literal:name
-//    ]
-//    
-//    /// Loads a message
-//    constructor new mssg:message
-//        = message.
-//
+    constructor new literal:name
+    [
+        system'core_routines'__message load mssg:$self literal:name
+    ]
+    
+    /// Loads a message
+    constructor new mssg:message
+        = message.
+
 //    stacksafe subject
 //        => system'core_routines'__message.
-//
-//    stacksafe literal
-//    [
-//        mssg val:= $self.
-//        
-//        byte aBuffer(256).
-//        int  aLength := system'external LoadMessageName mssg:$self bytearray:aBuffer int:255.
-//        
-//        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
-//    ]
-//
+
+    stacksafe literal
+    [
+        mssg val:= $self.
+        
+        byte aBuffer(256).
+        int  aLength := system'external LoadMessageName mssg:$self bytearray:aBuffer int:255.
+        
+        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
+    ]
+
 //    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
 //    dispatch => system'core_routines'__message.
 }
