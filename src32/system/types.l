@@ -26,7 +26,7 @@ nonstructural   = #8204.
 import          = #16395.
 extern_template = #16396.
 action          = #8205.
-//mixin           = #8206.
+mixin           = #8206.
 
 args            = #32. 
 
@@ -38,17 +38,17 @@ __verb          = #20.
 __mssg          = #19.
 __subj          = #18.
 __extmssg       = #21.
-//__tape_mixin    = #8209.
+__tape_mixin    = #8209.
 
 __ifoperator    = #4097.
 __ifnotoperator = #4098.
 
-////#template(-8207)         preloaded {}
-////#template(-4099) w1 {}
-////#template(-4100) w2 {}
-////#template(-4101) w3 {}
-////
-////#22 #262144     __symbol.
+//#template(-8207)         preloaded {}
+//#template(-4099) w1 {}
+//#template(-4100) w2 {}
+//#template(-4101) w3 {}
+//
+//#22 #262144     __symbol.
 
 /// Provides classes that describe the basic functionality
 

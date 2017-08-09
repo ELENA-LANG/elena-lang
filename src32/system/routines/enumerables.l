@@ -111,14 +111,20 @@
 //        ^ aList array.
 //    ]
 //}
-//
-//// --- enumerableOp ---
-//
-//extension enumerableOp
-//{
-//    run each:aFunction
-//      = aFunction run enumerator:(self enumerator).
-//      
+
+// --- enumerableOp ---
+
+extension enumerableOp
+{
+    forEach(BaseFunction1 aFunction)
+        = aFunction run enumerator:(self enumerator).
+
+    forEach(ExtensionMessage anExtMessage)
+        = self~enumerableOp forEach(:n)(n~anExtMessage get).
+        
+    multi forEach:fn
+        = self~enumerableOp forEach(:n)[ fn eval:n ].
+    
 ////    run eachPair:aFunction
 ////      = aFunction run:self enumerator:(self enumerator).
 ////
@@ -193,7 +199,7 @@
 ////        
 ////        ^ counter
 ////    ]
-//}
+}
 
 // --- indexableOp ---
 

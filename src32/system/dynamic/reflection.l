@@ -1,8 +1,8 @@
-//#symbol $classControl =
-//{
-//    #method(stacksafe) readLength : anObject &vint:aLength        
-//        => system'core_routines'arrptr_getLen.        
-//}.
+////#symbol $classControl =
+////{
+////    #method(stacksafe) readLength : anObject &vint:aLength        
+////        => system'core_routines'arrptr_getLen.        
+////}.
 
 // --- classOp ---
 
@@ -27,37 +27,37 @@ extension classROp
     stacksafe getField int:anIndex
         => system'core_routines'__object.
         
-//    stacksafe respondTo mssg:aMessage
-//        => system'core_routines'__object.
-//
-////    stacksafe readMatchedEntries &mssg:aMask &int:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
-////    [
-////        var class := self::objectOp class.
-////
-////        int retVal := system'external core_filtervmt
-////           &mssg:aMask
-////           &ref:class
-////           &int:aVMTOffset
-////           &int:aResultLength
-////           &mssgarray:aResultArray.
-////
-////        aResultLength := retVal.
-////    ]
-//    
-//    setFields args:objects
+    stacksafe respondTo mssg:aMessage
+        => system'core_routines'__object.
+
+//    stacksafe readMatchedEntries &mssg:aMask &int:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
 //    [
-//        int i := 0.
-//        int l := objects length.
-//        
-//        while (i < l)
-//        [
-//            self setField int:i object:(objects@i).
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self
+//        var class := self::objectOp class.
+//
+//        int retVal := system'external core_filtervmt
+//           &mssg:aMask
+//           &ref:class
+//           &int:aVMTOffset
+//           &int:aResultLength
+//           &mssgarray:aResultArray.
+//
+//        aResultLength := retVal.
 //    ]
+    
+    setFields args:objects
+    [
+        int i := 0.
+        int l := objects length.
+        
+        while (i < l)
+        [
+            self setField int:i object:(objects@i).
+            
+            i := i + 1
+        ].
+        
+        ^ self
+    ]
 }
 
 //// --- manifestOp ---

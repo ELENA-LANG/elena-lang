@@ -16,6 +16,7 @@ control.l
 convertors.l
 console.l
 win32_args.l
+random.l
 text\words.l
 text\strings.l
 scripting\interpreter.l

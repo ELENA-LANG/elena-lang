@@ -5,17 +5,17 @@ import extensions.
 
 program =
 [
-    var Doors := Array new:100; set every(:n)( false ).
+    var Doors := Array new:100; populate(:n)( false ).
     
-    0 till:100 doEach(:i)
+    0 till:100 do(:i)
     [
-        i till:100 by(i + 1) doEach(:j)
+        i till:100 by(i + 1) do(:j)
         [  
             Doors[j] := Doors[j] not
         ]
     ].
             
-    0 till:100 doEach(:i)
+    0 till:100 do(:i)
     [
         console printLine("Door #",i + 1," :",Doors@i iif("Open","Closed"))
     ].

@@ -7,6 +7,7 @@ define elMessage            000008000h
 define elExtMessage         000200000h
 
 define EVAL_MESSAGE_ID      050h
+define EVAL_ACTION          005h
 
 procedure __object.dispatch[1]
 
@@ -154,6 +155,23 @@ labSkip:
   dcopye
   bloadsi 2
   nsave
+  quitn 2
+
+end
+
+procedure __object."respondTo$system@Message[2]"
+
+  bloadsi 1
+  aloadsi 2 // ; get message
+  nload     // ; load message id
+  acopyb
+  mindex
+  ifn labFalse 0FFFFFFFFh
+  acopyr const : system'true
+  quitn 2
+
+labFalse:
+  acopyr const : system'false
   quitn 2
 
 end
@@ -4231,4 +4249,96 @@ labDefault:
   pushr const : %new[1]
   throw
   
+end
+
+procedure __tape.dispatch[1]
+
+  dcopyverb
+  elsen labDefault EVAL_ACTION
+
+  dcopycount
+  inc
+  ecopyd  
+
+  open 5
+  reserve 2
+  pusha
+  
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+  
+  pushn 0
+  
+  bcopyf -6
+  
+// ; copy message + self
+labNextParam:
+  get
+  pusha
+  next labNextParam
+
+  bloadfi 1
+
+labNext:
+  breakpoint
+
+  count
+  dloadfi -2
+  if labEnd
+  get
+  inc
+  dsavefi -2
+
+  flag
+  ecopyd
+  andn elMessage
+  elsen labMessage 0
+  pusha
+  jump labNext
+
+labMessage:
+  dcopye
+  andn elExtMessage
+  elsen labExtMessage 0
+
+  nload
+  ecopyd
+  aloadsi 0  
+  acallvi 0
+  pusha
+  bloadfi 1
+  jump labNext
+
+labExtMessage:
+  nload
+  ecopyd
+  acalli 1
+  pusha
+  bloadfi 1
+  jump labNext
+
+labEnd:
+  popa
+
+  dloadfi -3
+  dec
+  ecopyd
+  restore 4
+  close
+
+  equit
+
+labDefault:
+  ecopyd
+  bsredirect  
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+
 end
