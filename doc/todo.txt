@@ -43,6 +43,7 @@ In development:
                  * embeddable eval[2]
                  * elenart : correctly display strong typed message names
                  * elenavm : correctly display strong typed message names
+                 * support alternative property setting syntax : a set b:c <=> a b := c.
 
               zdev - script engine
                  * migrate Tape

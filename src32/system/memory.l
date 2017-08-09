@@ -2186,44 +2186,44 @@ class LiteralIndexer :: Indexer
         theIndex := 0.
     ]
     
-//    /// Returns false if the index out of range
-//    available
-//    [
-//        int aLength := theLiteral length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current character
-//    get
-//    [
-//        char aChar := $0.
-//        theLiteral read int:theIndex vchar:aChar.
-//        
-//        ^ CharValue new char:aChar.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    set : anObject 
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theLiteral.
+    /// Returns false if the index out of range
+    available
+    [
+        int aLength := theLiteral length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current character
+    get
+    [
+        char aChar := $0.
+        theLiteral read int:theIndex vchar:aChar.
+        
+        ^ CharValue new char:aChar.
+    ]
+    
+    /// Sets the index by specified value
+    set : anObject 
+    [
+        system'NotSupportedException new; raise.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex 
+    [
+        theIndex set int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo vint:anOutput
+        => theLiteral.
 }
 
 // --- WideLiteralEnumerator ---
@@ -2303,38 +2303,38 @@ class WideLiteralIndexer :: Indexer
         theIndex := 0.
     ]
 
-//    /// Returns false if the index out of range    
-//    available
-//    [
-//        int aLength := theLiteral length.
-//        
-//        ^ theIndex < aLength
-//    ]
-//
-//    /// Returns the current character
-//    get
-//        = theLiteral getAt int:theIndex.
-//    
-//    set : anObject 
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theLiteral.
+    /// Returns false if the index out of range    
+    available
+    [
+        int aLength := theLiteral length.
+        
+        ^ theIndex < aLength
+    ]
+
+    /// Returns the current character
+    get
+        = theLiteral getAt int:theIndex.
+    
+    set : anObject 
+    [
+        system'NotSupportedException new; raise.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex 
+    [
+        theIndex set int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo vint:anOutput
+        => theLiteral.
 }
 
 // --- ArrayIndexer ---
@@ -2356,40 +2356,40 @@ class ArrayIndexer :: Indexer
         theIndex := 0.
     ]
     
-//    /// Returns false if the index out of range
-//    available
-//    [
-//        int aLength := 0.
-//        theArray readLengthTo vint:aLength.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    get
-//        = theArray getAt int:theIndex.
-//    
-//    /// Sets the current member
-//    set : anObject
-//    [
-//        theArray setAt int:theIndex object:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theArray.
+    /// Returns false if the index out of range
+    available
+    [
+        int aLength := 0.
+        theArray readLengthTo vint:aLength.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current member
+    get
+        = theArray getAt int:theIndex.
+    
+    /// Sets the current member
+    set : anObject
+    [
+        theArray setAt int:theIndex object:anObject.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex 
+    [
+        theIndex int := anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo vint:anOutput
+        => theArray.
 }
 
 // --- ArrayEnumerator ---
@@ -2451,39 +2451,39 @@ class BitArrayIndexer :: Indexer
         theIndex := 0.
     ]
     
-//    /// Returns false if the index out of range
-//    available
-//    [
-//        int aLength := theArray length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    bool get
-//        = theArray getAt int:theIndex.
-//    
-//    /// Sets the current member
-//    set : anObject
-//    [
-//        theArray setAt int:theIndex bool:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theArray.
+    /// Returns false if the index out of range
+    available
+    [
+        int aLength := theArray length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current member
+    bool get
+        = theArray getAt int:theIndex.
+    
+    /// Sets the current member
+    set : anObject
+    [
+        theArray setAt int:theIndex bool:anObject.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex 
+    [
+        theIndex set int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo vint:anOutput
+        => theArray.
 }
 
 // --- BitArrayEnumerator ---
@@ -2545,37 +2545,37 @@ class BitArray32Indexer :: Indexer
         theIndex := 0.
     ]
     
-//    /// Returns false if the index out of range
-//    available
-//    [
-//        ^ theIndex < 32
-//    ]
-//
-//    /// Returns the current member
-//    bool get
-//        = theArray getAt int:theIndex.
-//    
-//    /// Sets the current member
-//    set : anObject
-//    [
-//        theArray setAt int:theIndex bool:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo  vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theArray.
+    /// Returns false if the index out of range
+    available
+    [
+        ^ theIndex < 32
+    ]
+
+    /// Returns the current member
+    bool get
+        = theArray getAt int:theIndex.
+    
+    /// Sets the current member
+    set : anObject
+    [
+        theArray setAt int:theIndex bool:anObject.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo  vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex 
+    [
+        theIndex set int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo vint:anOutput
+        => theArray.
 }
 
 // --- BitArray32Enumerator ---

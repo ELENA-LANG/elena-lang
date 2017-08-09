@@ -37,7 +37,7 @@ __real          = #14.
 __verb          = #20.
 __mssg          = #19.
 __subj          = #18.
-//__extmssg       = #21.
+__extmssg       = #21.
 //__tape_mixin    = #8209.
 
 __ifoperator    = #4097.
@@ -75,10 +75,10 @@ type long       = system'LongNumber.
 type real       = system'RealNumber.
 type char       = system'CharValue.
 type mssg       = system'Message.
-//type ext_mssg   = system'ExtensionMessage.
-//
-///// A verb symbol
-//
+type ext_mssg   = system'ExtensionMessage.
+
+/// A verb symbol
+
 ///// An instance of system'Verb class. 
 //type verb       = system'Verb.
 //

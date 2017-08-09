@@ -3908,7 +3908,7 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
    IdentifierString signature;
    IdentifierString messageStr;
 
-   ref_t sign_id = 0;
+   ref_t actionRef = 0;
 
    // if method has generic (unnamed) argument list
    while (arg == lxMethodParameter || arg == lxIdentifier || arg == lxPrivate) {
@@ -3947,12 +3947,14 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
       }
    }
 
+   if (emptystr(messageStr)) {
+      messageStr.copy(EVAL_MESSAGE);
+   }
    messageStr.append(signature);
 
-   if (!emptystr(messageStr))
-      sign_id = scope.moduleScope->module->mapSubject(messageStr, false);
+   actionRef = scope.moduleScope->module->mapSubject(messageStr, false);
 
-   return encodeMessage(sign_id, scope.parameters.Count());
+   return encodeMessage(actionRef, scope.parameters.Count());
 }
 
 inline SNode findTerminal(SNode node)

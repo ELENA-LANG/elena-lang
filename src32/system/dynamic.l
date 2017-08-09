@@ -65,24 +65,24 @@ sealed embeddable struct Message
 
 // --- ExtensionMessage ---
 
-///// An extended message constant
-//sealed embeddable struct ExtensionMessage
-//{
-//    __extmssg theValue(8).
-//    
-//    /// Loads a message
-//    stacksafe constructor new ext_mssg:message
-//        = message.
-//
+/// An extended message constant
+sealed embeddable struct ExtensionMessage
+{
+    __extmssg theValue(8).
+    
+    /// Loads a message
+    stacksafe constructor new ext_mssg:message
+        = message.
+
 //    stacksafe subject
 //        => system'core_routines'__message.
 //
 //    stacksafe equal ext_mssg : aSubject    
 //        => system'core_routines'__extmessage.
-//
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    dispatch => system'core_routines'__extmessage.
-//}
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    dispatch => system'core_routines'__extmessage.
+}
 
 // --- Signature ---
 
