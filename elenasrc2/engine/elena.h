@@ -854,6 +854,7 @@ inline bool isOpenArg(ref_t message)
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
    ref_t actionRef = 0;
+   ref_t flags = exportRef & MESSAGE_FLAG_MASK;
    int paramCount = 0;
 
    decodeMessage(exportRef, actionRef, paramCount);
@@ -868,7 +869,7 @@ inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer
 
    actionRef = importer->mapSubject(subject, false);
 
-   return encodeMessage(actionRef, paramCount);
+   return encodeMessage(actionRef, paramCount) | flags;
 }
 
 } // _ELENA_

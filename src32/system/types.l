@@ -14,7 +14,7 @@ stacksafe       = #8192.
 explicit        = #16387.
 const           = #8201.
 singleton       = #8208.
-//generic         = #8202.
+generic         = #8202.
 static          = #8194.
 dynamic         = #8199.
 var             = #16385.
@@ -27,8 +27,8 @@ import          = #16395.
 extern_template = #16396.
 action          = #8205.
 //mixin           = #8206.
-//
-//args            = #32. 
+
+args            = #32. 
 
 __string        = #8200.
 __int           = #11.

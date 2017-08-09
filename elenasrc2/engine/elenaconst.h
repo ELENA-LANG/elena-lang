@@ -20,11 +20,12 @@ namespace _ELENA_
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
 
   // --- ELENA Standart message constants ---
-   #define ACTION_MASK             0x03FFFFFFu
+   #define ACTION_MASK             0x01FFFFFFu
    #define SIGNATURE_FLAG          0x08000000u
 
-   #define MESSAGE_FLAG_MASK       0xC0000000u
+   #define MESSAGE_FLAG_MASK       0xE0000000u
    #define SEALED_MESSAGE          0x40000000u
+   #define CONVERSION_MESSAGE      0x60000000u
    #define PARAM_MASK              0x0000000Fu
    #define OPEN_ARG_COUNT          0x0F
 

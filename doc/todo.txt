@@ -3,7 +3,19 @@ In development:
 ------                              
 
               xdev - general implementation
+                 * extension with generic handler open argument list
+                 * implicit conversion
                  * exception handling - call stack
+                 * private message
+                 * private sealed message
+                 * test loops
+                 * test try catch
+                 * test try finally catch
+                 * test using
+                 * test generic handler
+                 * test generic handler with redirect
+                 * test redirect class
+                 * test redirect class with open arg generic handler
 
                  * predefined verb: test sending qualified message 
                  * custom verb: test sending generic message 
@@ -28,6 +40,9 @@ In development:
                  * reimplement generic method handlers
                  * reimplement multi dispatching to fix the short circuit (infinit loop)
                     multi convert : n <= convert(n value)
+                 * embeddable eval[1]
+                 * embeddable get[1]
+                 * embeddable eval[2]
 
               zdev - script engine
                  * migrate Tape

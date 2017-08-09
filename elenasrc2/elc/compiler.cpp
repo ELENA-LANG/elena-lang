@@ -4056,7 +4056,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    ref_t actionRef = 0;
    ref_t verbRef = 0;
    bool propMode = false;
-   bool privateSealedMode = false;
+   bool conversionMode = false;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
    SNode arg = node.findChild(lxMethodParameter, lxMessage, lxParamRefAttr);
@@ -4170,7 +4170,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
       if (test(scope.hints, tpSealed | tpConversion)) {
          if (paramCount == 1 && emptystr(messageStr)) {
-            privateSealedMode = true;
+            conversionMode = true;
          }
    //      else if (verb_id == GET_MESSAGE_ID && paramCount == 0 && sign_id != 0 && test(scope.getClassFlags(false), elNestedClass)) {
    //         // if it is an implicit nested constructor
@@ -4192,7 +4192,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
 
       //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-      if (paramCount > 0 && !emptystr(signature) && !privateSealedMode) {
+      if (paramCount > 0 && !emptystr(signature) && !conversionMode) {
          actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
 
          ref_t genericMessage = encodeMessage(actionRef, paramCount);
@@ -4221,8 +4221,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
 
       scope.message = encodeMessage(actionRef, paramCount);
-      if (privateSealedMode)
-         scope.message |= SEALED_MESSAGE;
+      if (conversionMode)
+         scope.message |= CONVERSION_MESSAGE;
    }
 }
    
@@ -5154,16 +5154,12 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       current = current.nextNode();
    }
    
-   ref_t actionRef;
-   int paramCount;
-   decodeMessage(message, actionRef, paramCount);
-
    if (test(message, SEALED_MESSAGE)) {
       // if it is private message set private hint and save it as EVAL one
       hintChanged = true;
       hint |= tpPrivate;
 
-      scope.info.methodHints.add(Attribute(encodeMessage(actionRef, paramCount), maHint), hint);
+      scope.info.methodHints.add(Attribute(message & ~SEALED_MESSAGE, maHint), hint);
 
       //// if it is an explicit constant conversion
       //if (getAction(message) != 0) {

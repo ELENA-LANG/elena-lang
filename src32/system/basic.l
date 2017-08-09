@@ -3,7 +3,7 @@ template var :: template_subj
 {
     template_subj $value.
     
-    sealed embeddable template_subj = $self.
+    sealed embeddable template_subj = $value.
     
     stacksafe explicit template_subj:val
     [

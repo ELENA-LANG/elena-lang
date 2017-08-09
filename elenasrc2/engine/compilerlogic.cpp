@@ -721,7 +721,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       ClassInfo::MethodMap::Iterator it = info.methods.start();
       while (!it.Eof()) {
          pos_t implicitMessage = it.key();
-         if (test(implicitMessage, SEALED_MESSAGE) && getParamCount(implicitMessage) == 1) {
+         if (test(implicitMessage, CONVERSION_MESSAGE) && getParamCount(implicitMessage) == 1) {
             ref_t subj = getAction(implicitMessage);
             bool compatible = false;
             if (sourceRef == V_STRCONSTANT) {
