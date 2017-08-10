@@ -6,7 +6,6 @@ In development:
                  * reimplement message and signature, get rid of verb
                  * test signature / verb?
 
-
                  * test extension message
 
                  * implicit conversion

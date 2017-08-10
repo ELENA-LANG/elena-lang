@@ -5102,7 +5102,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       current = current.nextNode();
    }
    
-   if (test(message, SEALED_MESSAGE)) {
+   if ((message & MESSAGE_FLAG_MASK) == SEALED_MESSAGE) {
       // if it is private message set private hint and save it as EVAL one
       hintChanged = true;
       hint |= tpPrivate;
