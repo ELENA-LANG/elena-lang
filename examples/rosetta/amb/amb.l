@@ -4,29 +4,28 @@ import extensions'routines.
 
 // --- Joinable --
 
-joinable = (:aFormer:aLater)
-    [ ^ aFormer@(aFormer length - 1) == aLater@0 ].
+joinable = (:aFormer:aLater)(aFormer[aFormer length - 1] == aLater[0]).
 
 dispatcher =
 {
-    eval : anArray func2:aFunction
+    eval object:anArray func2:aFunction
     [
-        ^ aFunction eval:(anArray@0):(anArray@1).
+        ^ aFunction eval(anArray[0],anArray[1]).
     ]
 
-    eval : anArray func3:aFunction
+    eval object:anArray func3:aFunction
     [
-        ^ aFunction eval:(anArray@0):(anArray@1):(anArray@2).
+        ^ aFunction eval(anArray[0], anArray[1],anArray[2]).
     ]
     
-    eval : anArray func4:aFunction
+    eval object:anArray func4:aFunction
     [
-        ^ aFunction eval:(anArray@0):(anArray@1):(anArray@2):(anArray@3).
+        ^ aFunction eval(anArray[0],anArray[1],anArray[2],anArray[3]).
     ]
     
-    eval : anArray func5:aFunction
+    eval object:anArray func5:aFunction
     [
-        ^ aFunction eval:(anArray@0):(anArray@1):(anArray@2):(anArray@3):(anArray@4).
+        ^ aFunction eval(anArray[0],anArray[1],anArray[2],anArray[3],anArray[4]).
     ]
 
 }.
@@ -46,17 +45,14 @@ class AmbValueCollection
     [
         theCombinator reset.
 
-        theCombinator seek each: (:v)
-        [
-            ^ aCondition cast:%eval to:dispatcher with:v.
-        ].
+        theCombinator seekEach(:v)(dispatcher eval(v,aCondition))
     ]
     
     do : aFunction
     [
         var aResult := theCombinator get.
         if (nil != aResult)
-            [ aFunction cast:%eval to:dispatcher with:aResult ];
+            [ dispatcher eval(aResult,aFunction) ];
             [ InvalidArgumentException new; raise ]
     ]
 }
@@ -73,10 +69,10 @@ ambOperator =
 
 program1 =
 [
-    try(ambOperator for:(1,2,4):(4,5,6); seek: (:a:b) [ ^a * b == 8 ]; do: (:a:b)
-        [ console writeLine: a : " * " : b : " = 8" ])
+    try(ambOperator for((1,2,4),(4,5,6)); seek(:a:b)(a * b == 8); do(:a:b)
+        [ console printLine(a," * ",b," = 8") ])
     {
-        generic : e
+        on(Exception e)
         [
             console writeLine:"AMB is angry"
         ]
@@ -88,11 +84,11 @@ program1 =
 program2 =
 [
     try(ambOperator 
-        for:("the","that","a"):("frog", "elephant", "thing"):("walked", "treaded", "grows"):("slowly", "quickly");
-        seek: (:a:b:c:d) [ ^ joinable eval:a:b && joinable eval:b:c && joinable eval:c:d ];
-        do: (:a:b:c:d) [ console writeLine:a:" ":b:" ":c:" ":d ])
+        for(("the","that","a"),("frog", "elephant", "thing"),("walked", "treaded", "grows"),("slowly", "quickly"));
+        seek(:a:b:c:d) ( joinable eval(a,b) && joinable eval(b,c) && joinable eval(c,d) );
+        do(:a:b:c:d) [ console printLine(a," ",b," ",c," ",d) ])
     {
-        generic : e
+        on(Exception e)
         [
             console writeLine:"AMB is angry"
         ]        

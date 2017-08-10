@@ -19,4 +19,6 @@ win32_args.l
 random.l
 text\words.l
 text\strings.l
+routines\enumerating.l
+routines\combinations.l
 scripting\interpreter.l

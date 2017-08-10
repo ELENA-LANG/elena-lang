@@ -1,5 +1,5 @@
-//import system'routines.
-////import system'text.
+import system'routines.
+//import system'text.
 
 // --- outputOp ---
 
@@ -343,36 +343,36 @@ extension outputOp
 ////        self writeLine.
 ////    ]
 ////}
-//
-//// --- inputOp ---
-//
-//extension inputOp
-//{
-////    readLineTo:var
-////    [
-////        var aLine := self read literal.
-////        
-////        aLine~convertorOp convert to:var.
-////        
-////        ^var.
-////    ]
-//    
-//    generic readLine args:Arguments
+
+// --- inputOp ---
+
+extension inputOp
+{
+//    readLineTo:var
 //    [
-//        literal aLine := self readLiteral.
+//        var aLine := self read literal.
 //        
-//        array aParams := aLine split char:$32.
+//        aLine~convertorOp convert to:var.
 //        
-//        int aLength := Arguments length.
-//        
-//        int anIndex := 0.
-//        while (anIndex < aLength)
-//        [
-//            (aParams getAt int:anIndex)~convertorOp convert to:(Arguments @ anIndex).
-//            
-//            anIndex := anIndex + 1
-//        ].
-//            
-//        ^ self
+//        ^var.
 //    ]
-//}
+    
+    generic readLine args:Arguments
+    [
+        literal aLine := self readLiteral.
+        
+        array aParams := aLine split char:$32.
+        
+        int aLength := Arguments length.
+        
+        int anIndex := 0.
+        while (anIndex < aLength)
+        [
+            (aParams getAt int:anIndex)~convertorOp convert to:(Arguments @ anIndex).
+            
+            anIndex := anIndex + 1
+        ].
+            
+        ^ self
+    ]
+}

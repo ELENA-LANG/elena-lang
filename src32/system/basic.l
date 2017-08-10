@@ -2128,24 +2128,18 @@ singleton nil
 //    generic get = $nil.
 }
 
-//// === Basic Factory symbols ==
-//
-//class BaseExtender
-//{
-//    object theObject.
-//    
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    equal : anObject
-//        => theObject.
-//      
-//    /// Dispatches the verb to the target object
-//    cast : aVerb to:aTarget => theObject.
-//    
-//    /// Dispatches the verb to the target object
-//    cast : aVerb to:aTarget with:aParam => theObject.
-//    
-//    dispatch => theObject.
-//}
+// === Basic Factory symbols ==
+
+class BaseExtender
+{
+    object theObject.
+    
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    equal : anObject
+        => theObject.
+      
+    dispatch => theObject.
+}
 
 /// A generic variable. 
 ///
@@ -2167,35 +2161,35 @@ sealed class Variable :: var<object>
 //    [
 //        $value := value.
 //    ]
-//    
-//    append : val
-//    [
-//        ($nil == $value)
-//            ? [ $value := val ]
-//            ! [ $value := $value + val ]
-//    ]
-//    
-//    reduce : val
+    
+    append : val
+    [
+        ($nil == $value)
+            ? [ $value := val ]
+            ! [ $value := $value + val ]
+    ]
+    
+    reduce : val
+    [
+        ($nil == $value)
+            ? [ system'InvalidOperationException new; raise ]
+            ! [ $value := $value - val ]
+    ]
+//
+//    multiplyBy : val
 //    [
 //        ($nil == $value)
 //            ? [ system'InvalidOperationException new; raise ]
-//            ! [ $value := $value - val ]
+//            ! [ $value := $value * val ]
 //    ]
-////
-////    multiplyBy : val
-////    [
-////        ($nil == $value)
-////            ? [ system'InvalidOperationException new; raise ]
-////            ! [ $value := $value * val ]
-////    ]
-////    
-////    /// Divides into the value
-////    divideInto : val
-////    [
-////        ($nil == $value)
-////            ? [ system'InvalidOperationException new; raise ]
-////            ! [ $value := $value / val ]
-////    ]    
+//    
+//    /// Divides into the value
+//    divideInto : val
+//    [
+//        ($nil == $value)
+//            ? [ system'InvalidOperationException new; raise ]
+//            ! [ $value := $value / val ]
+//    ]    
 }
 
 //// --- KeyValue ---

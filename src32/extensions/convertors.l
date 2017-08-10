@@ -256,15 +256,15 @@ extension convertorOp
 //                      
 //                   } with:aBase.
             
-//    toByte
-//        = byteConvertor convert:self.
-//
-//    toShort
-//        = shortConvertor convert:self.
-//
-//    toInt
-//        = intConvertor convert:self.
-//        
+    toByte
+        = byteConvertor convert:self.
+
+    toShort
+        = shortConvertor convert:self.
+
+    toInt
+        = intConvertor convert:self.
+        
 ////    toHexInt
 ////        = self cast:%eval to:
 ////            {
@@ -290,8 +290,8 @@ extension convertorOp
     toReal
         = realConvertor convert:self.
 
-//    convert to : aTarget
-//        = Variant new:self; saveTo:aTarget.
+    convert to : aTarget
+        = Variant new:self; saveTo:aTarget.
 }
 
 //class convertor 

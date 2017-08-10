@@ -129,67 +129,63 @@
 //    
 //    index = theIndex int.
 //}
-//
-//// --- StringWriter ---
-//
-//class StringWriter
-//{    
-//    literal theValue.
-//    
-//    constructor new
-//    [
-//        theValue := emptyLiteralValue.
-//    ]
-//    
-//    constructor new : aText
-//    [
-//        theValue := aText literal.
-//    ]
-//    
-//    write : aText
-//    [
-//        theValue := theValue add:aText.
-//    ]
-//    
-//    writeLine : aText
-//    [
-//        $self write:aText; write:'newLine.
-//    ]
-//   
-//    writeLine
-//    [
-//        $self write:'newLine.
-//    ]    
-//
-//    set : aText
-//    [
-//        theValue := aText.
-//    ]
-//
-//    append : aText
-//    [
-//        theValue := theValue add:aText.
-//    ]
-//    
-//    insert:s at:index
-//    [
-//        theValue := theValue insert:s at:index.
-//    ]
-//    
-//    get = theValue.
-//
-//    clear
-//    [
-//        theValue := emptyLiteralValue.
-//    ]
-//
-//    wide => theValue.
-//
-//    /// Dispatches the verb to the target object
-//    cast : aVerb to:aTarget => theValue.
-//    
-//    /// Dispatches the verb to the target object
-//    cast : aVerb to:aTarget with:aParam => theValue.
-//
-//    dispatch => theValue.
-//}
+
+// --- StringWriter ---
+
+class StringWriter
+{    
+    literal theValue.
+    
+    constructor new
+    [
+        theValue := emptyLiteralValue.
+    ]
+    
+    constructor new : aText
+    [
+        theValue := aText literal.
+    ]
+    
+    write : aText
+    [
+        theValue := theValue add:aText.
+    ]
+    
+    writeLine : aText
+    [
+        $self write:aText; write:'newLine.
+    ]
+   
+    writeLine
+    [
+        $self write:'newLine.
+    ]    
+
+    set : aText
+    [
+        theValue := aText.
+    ]
+
+    append : aText
+    [
+        theValue := theValue add:aText.
+    ]
+    
+    insert:s at:index
+    [
+        theValue := theValue insert:s at:index.
+    ]
+    
+    get = theValue.
+
+    clear
+    [
+        theValue := emptyLiteralValue.
+    ]
+
+    literal = theValue.
+
+    wide => theValue.
+
+    dispatch => theValue.
+}

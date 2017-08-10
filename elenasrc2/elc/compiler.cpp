@@ -2436,7 +2436,7 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
             SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
             while (!it.Eof()) {
                if (it.key() == messageRef) {
-                  if (_logic->isCompatible(*scope.moduleScope, objectRef, *it)) {
+                  if (_logic->isCompatible(*scope.moduleScope, *it, objectRef)) {
                      typeRef = *it;
 
                      break;

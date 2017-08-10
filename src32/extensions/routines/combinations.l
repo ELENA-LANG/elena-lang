@@ -1,15 +1,15 @@
 import system'routines.
 import extensions.
 
-type $strategy :: BaseStrategy.
+type $strategy = BaseStrategy.
 
 // --- Strategy ---
 
 limited class BaseStrategy
 {
-    getAt : Indexers int:aLength = $nil.
+    getAt object:Indexers int:aLength = $nil.
     
-    $strategy eval : Indexers int:aLength = $self.
+    $strategy eval object:Indexers int:aLength = $self.
     
     bool result = false.
 }
@@ -25,9 +25,9 @@ class sequentialNext = BaseStrategy::
 {
     result = true.
     
-    eval : Indexers int:aLength
+    eval object:Indexers int:aLength
     [
-        if($nil == (Indexers seek each: (:anIndexer)
+        if($nil == (Indexers seekEach(:anIndexer)
                 [
                     indexer it := anIndexer indexer. 
                     
@@ -41,17 +41,17 @@ class sequentialNext = BaseStrategy::
         ^ $self          
     ]
         
-    getAt : Indexers int:aLength
+    getAt object:Indexers int:aLength
     [
-        ^ Array new int:aLength; set nfunc: (&int:i) [ ^Indexers array; getAt int:i; get ]
+        ^ Array new int:aLength; populate(&int:i) (Indexers array; getAt int:i; get)
     ]
 }.
 
 class sequentialStart = BaseStrategy::
 {
-    eval : Indexers int:aLength
+    eval object:Indexers int:aLength
     [
-        Indexers run each: (:anIndexer) [ anIndexer writeIndex int:0 ].
+        Indexers forEach(:anIndexer) [ anIndexer writeIndex int:0 ].
         
         ^ sequentialNext
     ]
@@ -63,25 +63,25 @@ class parallelNext = BaseStrategy::
 {
     result = true.
     
-    eval : Indexers int:aLength
+    eval object:Indexers int:aLength
     [
-        if($nil != Indexers seek each: (:anIndexer)[ ^anIndexer append index:1; available; not ])
+        if($nil != Indexers seekEach(:anIndexer)(anIndexer append index:1; available; not ))
             [ ^ combinationEnd ].
             
         ^ $self       
     ]
         
-    getAt : Indexers int:aLength
+    getAt object:Indexers int:aLength
     [
-        ^ Array new int:aLength; set nfunc: (&int:i) [ ^Indexers array; getAt int:i; get ].
+        ^ Array new int:aLength; populate(&int:i)(Indexers array; getAt int:i; get ).
     ]
 }.
 
 class parallelStart = BaseStrategy::
 {
-    eval : Indexers int:aLength
+    eval object:Indexers int:aLength
     [
-        Indexers run each: (:anIndexer)[ anIndexer writeIndex int:0 ].
+        Indexers forEach(:anIndexer)[ anIndexer writeIndex int:0 ].
         
         ^ parallelNext
     ]
@@ -93,12 +93,12 @@ class combinationNext = BaseStrategy::
 {
     result = true.
 
-    getAt : Indexers int:aLength
+    getAt object:Indexers int:aLength
     [
-        ^ Array new int:aLength; set nfunc: (&int:i) [ ^Indexers array; getAt int:i; get ]
+        ^ Array new int:aLength; populate(&int:i)(Indexers array; getAt int:i; get)
     ]
         
-    eval : Indexers int:aLength
+    eval object:Indexers int:aLength
     [
         array anArray := Indexers array.
         int   k := anArray length.
@@ -127,12 +127,12 @@ class combinationNext = BaseStrategy::
 
 class combinationStart = BaseStrategy::
 {
-    eval : Indexers int:n
+    eval object:Indexers int:n
     [
         array anArray := Indexers array.
         int aLength := anArray length.
         
-        0~intLoopOp to int:(aLength - 1) nfunc: (&int:i) [ anArray getAt int:i; indexer; writeIndex int:i ].
+        0~intLoopOp to int(aLength - 1) nfunc(&int:i) [ anArray getAt int:i; indexer; writeIndex int:i ].
         
         ^ combinationNext
     ]
@@ -226,7 +226,7 @@ class Combinator :: BaseRowEnumerator
     int theTotalLength.
     
     constructor new : aSubLength of:aSet
-        <= new : (Array new int:(aSubLength int); set nfunc: (&int:n) [ ^ aSet ]);
+        <= new : (Array new int:(aSubLength int); populate(&int:n)(aSet));
     [
         theTotalLength := aSet length.
     ]

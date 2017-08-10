@@ -15,7 +15,7 @@ program =
     var anObject := 234.
   
     // extending an object with a field
-    anObject := Extender new:anObject.
+    anObject := Extender new(anObject).
 
     anObject foo := "bar".
 

@@ -75,8 +75,8 @@ extension objectOp
 //    bool safeEqual : anObject
 //        = anObject cast:%eval to:{ generic eval:aTarget:anObject = aTarget~$subject equal:anObject \ back:false. } with:self.
 
-//    eval with:action
-//        = action eval:self.
+    doWith:action
+        = action eval:self.
         
     stacksafe reallocate int:aNewLength
         => system'core_routines'__array.

@@ -17,17 +17,17 @@ Function =
 
 extension op
 {
-    accumulator of:func
-        = Variable new:self; mix into:func.
+    accumulatorOf:func
+        = Variable new(self); mixInto(func).
 }
 
 program =
 [
-    var x := 1 accumulator of:Function.
+    var x := 1 accumulatorOf(Function).
     
-    x eval:5.
+    x eval(5).
     
-    var y := 3 accumulator of:Function.
+    var y := 3 accumulatorOf(Function).
     
-    console write(x eval:2.3r).
+    console write(x eval(2.3r)).
 ].

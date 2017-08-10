@@ -542,9 +542,7 @@ sealed class ArrayList :: dispatchable<array_list>
     ]
     
     constructor new array:a
-        <= new int:(a length);
-    [
-    ]
+        <= $new array:a int:(a length).
     
     /// Creates the list
     stacksafe constructor $new array:anArray int:aLength
@@ -647,29 +645,26 @@ sealed class ArrayList :: dispatchable<array_list>
 //
 //    insert : anObject at:anIndex
 //        <= insert int:anIndex object:anObject.
-//        
-//    /// Removes an object at the specified position
-//    stacksafe remove int:anIndex
-//    [
-//        if (anIndex >= theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theLength reduce int:1.
-//        
-//        int i := anIndex.
-//        while (i < theLength)
-//        [
-//            theArray setAt int:i object:(theArray getAt int:(i + 1)).
-//            
-//            i := i + 1
-//        ]
-//    ]
-//        
-//    remove index:anIndex
-//        <= remove int:anIndex.
-//
-//    remove at:anIndex
-//        <= remove int:anIndex.
+        
+    /// Removes an object at the specified position
+    stacksafe remove int:anIndex
+    [
+        if (anIndex >= theLength)
+            [ OutOfRangeException new; raise ].
+        
+        theLength reduce int:1.
+        
+        int i := anIndex.
+        while (i < theLength)
+        [
+            theArray setAt int:i object:(theArray getAt int:(i + 1)).
+            
+            i := i + 1
+        ]
+    ]
+        
+    remove at:anIndex
+        <= remove int:anIndex.
     
     /// Reads the number of list item to the output parameter
     stacksafe readLengthTo vint:aLength

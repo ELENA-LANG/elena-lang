@@ -9,5 +9,5 @@ warn:unresolved=0
 program.l
 
 [forwards]
-'program=aplusb'program
+'program=aplusb'program_alt
 

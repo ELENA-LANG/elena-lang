@@ -1,116 +1,116 @@
-//import system'collections.
-//
-//// --- literalSplitOp ---
-//
-//literal extension literalListOp
-//{
-//    array split
-//        = self~literalListOp split char:$32.
-//    
-//    array split char:aChar
-//    [
-//        array_list aList := ArrayList new.
-//        int        aStart := 0.
-//        int        anIndex := 0.
-//        int        aCharLen := aChar length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self indexOf int:aStart char:aChar vint:anIndex.
-//            if (-1 != anIndex)
-//            [
-//                aList append:(self Substring int:aStart int:(anIndex - aStart)).
-//                aStart := anIndex + aCharLen.
-//            ];
-//            [
-//                aList append:(self~literalOp Substring int:aStart)
-//            ]
-//        ].
-//        
-//        ^ aList array
-//    ]
-//    
-//    split literal:aValue
-//    [
-//        array_list aList := ArrayList new.
-//        int        aStart := 0.
-//        int        anIndex := 0.
-//        int        aValueLen := aValue length.
-//        int        aLiteralLen := self length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self indexOf int:aStart literal:aValue vint:anIndex.
-//            if (-1 != anIndex)
-//            [
-//                aList append:(self Substring int:aStart int:(anIndex - aStart)).
-//                aStart := anIndex + aValueLen
-//            ];
-//            [
-//                aList append:(self Substring int:aStart int:(aLiteralLen - aStart))
-//            ]
-//        ].
-//        
-//        ^ aList array
-//    ]
-//}
-//
-//// --- wideListOp ---
-//
-//wide extension wideListOp
-//{
-//    array split
-//        <= split char:$32.
-//    
-//    array split char:aChar
-//    [
-//        array_list aList := ArrayList new.
-//        int        aStart := 0.
-//        int        anIndex := 0.
-//        int        aCharLen := aChar length.
-//
-//        int        aLiteralLen := self length.
-//                
-//        while (anIndex >= 0)
-//        [
-//            self indexOf int:aStart char:aChar vint:anIndex.
-//            if (-1 != anIndex)
-//            [
-//                aList append:(self Substring int:aStart int:(anIndex - aStart)).
-//                aStart := anIndex + aCharLen
-//            ];
-//            [
-//                aList append:(self Substring int:aStart int:(aLiteralLen - aStart))
-//            ]
-//        ].
-//        
-//        ^ aList array
-//    ]
-//    
-//    split wide:aValue
-//    [
-//        array_list aList := ArrayList new.
-//        int        aStart := 0.
-//        int        anIndex := 0.
-//        int        aLiteralLen := self length.
-//        int        aValueLen := aValue length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self indexOf int:aStart wide:aValue vint:anIndex.
-//            if (-1 != anIndex)
-//            [
-//                aList append:(self Substring int:aStart int:(anIndex - aStart)).
-//                aStart := anIndex + aValueLen
-//            ];
-//            [
-//                aList append:(self Substring int:aStart int:(aLiteralLen - aStart))
-//            ]
-//        ].
-//        
-//        ^ aList array.
-//    ]
-//}
+import system'collections.
+
+// --- literalSplitOp ---
+
+literal extension literalListOp
+{
+    array split
+        = self~literalListOp split char:$32.
+    
+    array split char:aChar
+    [
+        array_list aList := ArrayList new.
+        int        aStart := 0.
+        int        anIndex := 0.
+        int        aCharLen := aChar length.
+        
+        while (anIndex >= 0)
+        [
+            self indexOf int:aStart char:aChar vint:anIndex.
+            if (-1 != anIndex)
+            [
+                aList append:(self Substring int:aStart int:(anIndex - aStart)).
+                aStart := anIndex + aCharLen.
+            ];
+            [
+                aList append:(self~literalOp Substring int:aStart)
+            ]
+        ].
+        
+        ^ aList array
+    ]
+    
+    split literal:aValue
+    [
+        array_list aList := ArrayList new.
+        int        aStart := 0.
+        int        anIndex := 0.
+        int        aValueLen := aValue length.
+        int        aLiteralLen := self length.
+        
+        while (anIndex >= 0)
+        [
+            self indexOf int:aStart literal:aValue vint:anIndex.
+            if (-1 != anIndex)
+            [
+                aList append:(self Substring int:aStart int:(anIndex - aStart)).
+                aStart := anIndex + aValueLen
+            ];
+            [
+                aList append:(self Substring int:aStart int:(aLiteralLen - aStart))
+            ]
+        ].
+        
+        ^ aList array
+    ]
+}
+
+// --- wideListOp ---
+
+wide extension wideListOp
+{
+    array split
+        <= split char:$32.
+    
+    array split char:aChar
+    [
+        array_list aList := ArrayList new.
+        int        aStart := 0.
+        int        anIndex := 0.
+        int        aCharLen := aChar length.
+
+        int        aLiteralLen := self length.
+                
+        while (anIndex >= 0)
+        [
+            self indexOf int:aStart char:aChar vint:anIndex.
+            if (-1 != anIndex)
+            [
+                aList append:(self Substring int:aStart int:(anIndex - aStart)).
+                aStart := anIndex + aCharLen
+            ];
+            [
+                aList append:(self Substring int:aStart int:(aLiteralLen - aStart))
+            ]
+        ].
+        
+        ^ aList array
+    ]
+    
+    split wide:aValue
+    [
+        array_list aList := ArrayList new.
+        int        aStart := 0.
+        int        anIndex := 0.
+        int        aLiteralLen := self length.
+        int        aValueLen := aValue length.
+        
+        while (anIndex >= 0)
+        [
+            self indexOf int:aStart wide:aValue vint:anIndex.
+            if (-1 != anIndex)
+            [
+                aList append:(self Substring int:aStart int:(anIndex - aStart)).
+                aStart := anIndex + aValueLen
+            ];
+            [
+                aList append:(self Substring int:aStart int:(aLiteralLen - aStart))
+            ]
+        ].
+        
+        ^ aList array.
+    ]
+}
 
 // --- enumerableOp ---
 
@@ -120,85 +120,91 @@ extension enumerableOp
         = aFunction run enumerator:(self enumerator).
 
     forEach(ExtensionMessage anExtMessage)
-        = self~enumerableOp forEach(:n)(n~anExtMessage get).
+        = self~enumerableOp forEach(:n)(n~anExtMessage eval).
         
     multi forEach:fn
         = self~enumerableOp forEach(:n)[ fn eval:n ].
     
-////    run eachPair:aFunction
-////      = aFunction run:self enumerator:(self enumerator).
-////
-////    run:aParam eachPair:aFunction
-////      = aFunction run:aParam enumerator:(self enumerator).
+//    run eachPair:aFunction
+//      = aFunction run:self enumerator:(self enumerator).
 //
-//    seek each:aFunction
-//      = aFunction retrieve enumerator:(self enumerator).
+//    run:aParam eachPair:aFunction
+//      = aFunction run:aParam enumerator:(self enumerator).
+
+    seekEach(BaseFunction1 aFunction)
+        = aFunction retrieve enumerator:(self enumerator).
+
+    seekEach(ExtensionMessage anExtMessage)
+        = self~enumerableOp seekEach(:n)(n~anExtMessage eval).
+        
+    multi seekEach:fn
+        = self~enumerableOp seekEach(:n)[ fn eval:n ].
+
+//    seek:param eachPair:function
+//      = function retrieve:param enumerator:(self enumerator).
 //
-////    seek:param eachPair:function
-////      = function retrieve:param enumerator:(self enumerator).
-////
-////    safeSeek : aValue
-////        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
-////
-////    seek value:aValue
-////        = (:x)[ ^aValue equal:x ] retrieve enumerator:(self enumerator).
-////
-////    bool ifExists : aValue
-////        = $nil != self~enumerableOp safeSeek:aValue.
-////
-////    equal enumerable:list
-////    [
-////        ifnot (self length == list length)
-////            [ ^ false ].
-////            
-////        enumerator it1 := self enumerator.
-////        enumerator it2 := list enumerator.
-////        
-////        while (it1 next)
-////        [
-////            it2 next.
-////            
-////            ifnot (it1 get safeEqual:(it2 get))
-////                [ ^ false ]
-////        ].
-////        
-////        ^ true
-////    ]
-////             
-////    sequenceEqual:list
-////        = self~enumerableOp equal enumerable:list.
-////                                                  
-////    firstMember
-////    [
-////        enumerator anEnumerator := self enumerator.
-////        
-////        if (anEnumerator next) 
-////            [ ^ anEnumerator get ];
-////            [ ^ $nil ]
-////    ]
-////
-////    lastMember
-////    [
-////        enumerator anEnumerator := self enumerator.
-////        object     aLastItem := $nil.
-////        
-////        while (anEnumerator next)
-////            [ aLastItem := anEnumerator get ].
-////            
-////        ^ aLastItem
-////    ]
-////    
-////    int count
-////    [
-////        enumerator en := self enumerator.
-////        int        counter := 0.
-////        while (en next)
-////        [
-////            counter := counter + 1
-////        ].
-////        
-////        ^ counter
-////    ]
+//    safeSeek : aValue
+//        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
+//
+//    seek value:aValue
+//        = (:x)[ ^aValue equal:x ] retrieve enumerator:(self enumerator).
+//
+//    bool ifExists : aValue
+//        = $nil != self~enumerableOp safeSeek:aValue.
+//
+//    equal enumerable:list
+//    [
+//        ifnot (self length == list length)
+//            [ ^ false ].
+//            
+//        enumerator it1 := self enumerator.
+//        enumerator it2 := list enumerator.
+//        
+//        while (it1 next)
+//        [
+//            it2 next.
+//            
+//            ifnot (it1 get safeEqual:(it2 get))
+//                [ ^ false ]
+//        ].
+//        
+//        ^ true
+//    ]
+//             
+//    sequenceEqual:list
+//        = self~enumerableOp equal enumerable:list.
+//                                                  
+//    firstMember
+//    [
+//        enumerator anEnumerator := self enumerator.
+//        
+//        if (anEnumerator next) 
+//            [ ^ anEnumerator get ];
+//            [ ^ $nil ]
+//    ]
+//
+//    lastMember
+//    [
+//        enumerator anEnumerator := self enumerator.
+//        object     aLastItem := $nil.
+//        
+//        while (anEnumerator next)
+//            [ aLastItem := anEnumerator get ].
+//            
+//        ^ aLastItem
+//    ]
+//    
+//    int count
+//    [
+//        enumerator en := self enumerator.
+//        int        counter := 0.
+//        while (en next)
+//        [
+//            counter := counter + 1
+//        ].
+//        
+//        ^ counter
+//    ]
 }
 
 // --- indexableOp ---
@@ -236,37 +242,37 @@ extension indexableOp
 //            it append index:1.
 //        ].
 //    ]
-//    
-//    indexOfElement : anObject
+    
+    indexOfElement : anObject
+    [
+        indexer anIndexer := self indexer.
+        
+        while (anIndexer available)
+        [
+            if (anObject == anIndexer get)
+                [ ^ anIndexer index ].
+            
+            anIndexer append index:1.
+        ].
+        
+        ^ -1
+    ]
+    
+//    #method deepClone
 //    [
-//        indexer anIndexer := self indexer.
+//        #var aCopy := self clone.
 //        
-//        while (anIndexer available)
+//        #var(indexer)aIndexer := aCopy indexer.
+//        
+//        #loop (aIndexer available)?
 //        [
-//            if (anObject == anIndexer get)
-//                [ ^ anIndexer index ].
+//            aIndexer set:(aIndexer get clone).
 //            
-//            anIndexer append index:1.
+//            aIndexer append &index:1.
 //        ].
 //        
-//        ^ -1
+//        ^ aCopy.
 //    ]
-//    
-////    #method deepClone
-////    [
-////        #var aCopy := self clone.
-////        
-////        #var(indexer)aIndexer := aCopy indexer.
-////        
-////        #loop (aIndexer available)?
-////        [
-////            aIndexer set:(aIndexer get clone).
-////            
-////            aIndexer append &index:1.
-////        ].
-////        
-////        ^ aCopy.
-////    ]
         
     populate(IndexFunction1 anIndexFunc)
     [

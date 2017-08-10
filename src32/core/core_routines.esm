@@ -4231,6 +4231,43 @@ procedure __message."$system@Signature[1]"
 
 end
 
+procedure __message.dispatch[1]
+
+  bloadsi 1
+  ifb labDefault
+
+  nload
+  eswap
+  setverb EVAL_ACTION
+  else labEnd
+  nload
+  ecopyd
+  aloadsi 1
+  ajumpvi 0
+
+labEnd:
+  open    4
+  reserve 1
+  dsavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[1]
+  throw
+
+labDefault:
+  bsredirect  
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[1]
+  throw
+  
+end
+
 procedure __extmessage.dispatch[1]
 
   bloadsi 1
@@ -4238,7 +4275,7 @@ procedure __extmessage.dispatch[1]
 
   nload
   eswap
-  setverb EVAL_MESSAGE_ID
+  setverb EVAL_ACTION
   else labEnd
   nload
   ecopyd
@@ -4354,46 +4391,9 @@ labDefault:
   bcopys  -2
   pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new&mssg$[1]
-  throw
-
-end
-
-procedure __message.dispatch[1]
-
-  bloadsi 1
-  ifb labDefault
-
-  nload
-  eswap
-  setverb EVAL_ACTION
-  else labEnd
-  nload
-  ecopyd
-  aloadsi 1
-  ajumpvi 0
-
-labEnd:
-  open    4
-  reserve 1
-  dsavesi 2
-  bcopys  -2
-  pushb
-  pushr class : system'MethodNotFoundException
   pushr const : %new[1]
   throw
 
-labDefault:
-  bsredirect  
-  open    4
-  reserve 1
-  esavesi 2
-  bcopys  -2
-  pushb
-  pushr class : system'MethodNotFoundException
-  pushr const : %new[1]
-  throw
-  
 end
 
 procedure __signature.dispatch[1]
@@ -4509,5 +4509,28 @@ labEnd:
   aloadsi 0
   pushr const : %"new[2]"
   throw
+
+end
+
+procedure __extension.dispatch[1]
+
+  asavesi 1
+  pushe
+  bcopya
+  dcopy 1
+
+labNext:
+  pope
+  get
+  bsredirect
+  pushe
+  bloadsi 2
+  inc
+  count
+  less labNext
+  
+  pope
+  aloadbi 0
+  ajumpvi 0
 
 end

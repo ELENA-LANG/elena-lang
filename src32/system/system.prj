@@ -19,6 +19,7 @@ templates.l
 control.l
 memory.l
 dynamic.l
+win32_strings.l
 extensions.l
 exceptions.l
 events.l
