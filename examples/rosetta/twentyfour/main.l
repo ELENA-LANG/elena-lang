@@ -1,6 +1,6 @@
 import system'routines.
 import system'collections.
-//import system'dynamic.
+import system'dynamic.
 import extensions.
 
 // --- Expression ---
@@ -11,71 +11,71 @@ class ExpressionTree
     
     constructor new : aLiteral
     [
-//        var aLevel := Integer new:0.
-//        
-//        aLiteral run each(:ch)
-//        [
-//            var node := Dynamic new.
-//            
-//            ch =>
-//                $43 [ node set level(aLevel + 1); set operation:%add ];       // +
-//                $45 [ node set level(aLevel + 1); set operation:%subtract ];  // -
-//                $42 [ node set level(aLevel + 2); set operation:%multiply ];  // *
-//                $47 [ node set level(aLevel + 2); set operation:%divide ];    // /
-//                $40 [ aLevel append int:10. ^ $self ]; // (
-//                $41 [ aLevel reduce int:10. ^ $self ]; // )
-//                ! [
-//                    node set leaf(ch literal; toReal); set level(aLevel + 3).
-//                ].
-//                    
-//            if ($nil == theTree)
-//                [ theTree := node ];
-//                [
-//                    if (theTree level >= node level)
-//                        [
-//                            node set left:theTree; set right:$nil.
-//                            
-//                            theTree := node
-//                        ];
-//                        [
-//                            var aTop := theTree.
-//                            while (($nil != aTop right)and:$(aTop right; level < node level))
-//                                [ aTop := aTop right ].
-//                            
-//                            node set left(aTop right); set right:$nil.
-//                            
-//                            aTop set right:node
-//                        ]
-//                ]
-//        ]
+        var aLevel := Integer new:0.
+        
+        aLiteral forEach(:ch)
+        [
+            var node := DynamicStruct new.
+            
+            ch =>
+                $43 [ node set level(aLevel + 1); set operation:%add ];       // +
+                $45 [ node set level(aLevel + 1); set operation:%subtract ];  // -
+                $42 [ node set level(aLevel + 2); set operation:%multiply ];  // *
+                $47 [ node set level(aLevel + 2); set operation:%divide ];    // /
+                $40 [ aLevel append int:10. ^ $self ]; // (
+                $41 [ aLevel reduce int:10. ^ $self ]; // )
+                ! [
+                    node set leaf(ch literal; toReal); set level(aLevel + 3).
+                ].
+                    
+            if ($nil == theTree)
+                [ theTree := node ];
+                [
+                    if (theTree level >= node level)
+                        [
+                            node set left:theTree; set right:$nil.
+                            
+                            theTree := node
+                        ];
+                        [
+                            var aTop := theTree.
+                            while (($nil != aTop right)and:$(aTop right; level < node level))
+                                [ aTop := aTop right ].
+                            
+                            node set left(aTop right); set right:$nil.
+                            
+                            aTop set right:node
+                        ]
+                ]
+        ]
     ]
     
-//    eval : aNode
-//    [
-//        if (aNode if leaf)
-//            [ ^ aNode leaf ];
-//            [
-//                var aLeft := $self eval:(aNode left).
-//                var aRight := $self eval:(aNode right).
-//                
-//                ^ aLeft~(aNode operation) eval:aRight
-//            ]
-//    ]
-//    
-//    value
-//        <= eval:theTree.
+    eval : aNode
+    [
+        if (aNode containsProperty:%leaf)
+            [ ^ aNode leaf ];
+            [
+                var aLeft := $self eval:(aNode left).
+                var aRight := $self eval:(aNode right).
+                
+                ^ aLeft~(aNode operation) eval:aRight
+            ]
+    ]
+    
+    value
+        <= eval:theTree.
         
     readLeaves : aList at:aNode
     [
         if ($nil == aNode)
             [ InvalidArgumentException new; raise ].
         
-//        if (aNode if leaf)
-//            [ aList append(aNode leaf) ];
-//            [
-//                $self readLeaves:aList at(aNode left).
-//                $self readLeaves:aList at(aNode right).
-//            ].
+        if (aNode containsProperty:%leaf)
+            [ aList append(aNode leaf) ];
+            [
+                $self readLeaves:aList at(aNode left).
+                $self readLeaves:aList at(aNode right).
+            ].
     ]        
     
     readLeaves : aList
@@ -132,7 +132,7 @@ class TwentyFourGame
         var Leaves := ArrayList new.
         exp readLeaves:Leaves.
         
-        ifnot (Leaves ascendant; equal indexable(theNumbers ascendant))
+        ifnot (Leaves ascendant; sequenceEqual(theNumbers ascendant))
             [ console printLine:"Invalid input. Enter an equation using all of those four digits. Try again.". ^ $self ].
             
         var aResult := exp value.

@@ -224,45 +224,45 @@ limited class BaseFunction1 :: dispatchable<func1>
     ]
 }
 
-///// A base two variable function
-//limited class BaseFunction2 :: dispatchable(func2)
-//{
-//    /// Dispatches the verb to the target with func2 subject
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run : aParam enumerator:anEnumerator
-//    [
-//        while(anEnumerator next)
-//        [
-//            $self eval:aParam:(anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true
-//    sealed retrieve : aParam enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            // !! temporal
-//            if ($self eval:aParam:anItem)
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base three variable function
-//limited class BaseFunction3 :: dispatchable(func3)
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 []
-//    
+/// A base two variable function
+limited class BaseFunction2 :: dispatchable<func2>
+{
+    /// Dispatches the verb to the target with func2 subject
+    /// Executes the function
+    action eval : aParam1 : aParam2 []
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run : aParam enumerator:anEnumerator
+    [
+        while(anEnumerator next)
+        [
+            $self eval(aParam,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true
+    sealed retrieve : aParam enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            // !! temporal
+            if ($self eval(aParam,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
+/// A base three variable function
+limited class BaseFunction3 :: dispatchable<func3>
+{
+    /// Executes the function
+    action eval : aParam1 : aParam2 : aParam3 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run : aParam1 : aParam2 enumerator:anEnumerator
 //    [
@@ -286,14 +286,14 @@ limited class BaseFunction1 :: dispatchable<func1>
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base four variable function
-//limited class BaseFunction4 :: dispatchable(func4)
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 []
-//    
+}
+
+/// A base four variable function
+limited class BaseFunction4 :: dispatchable<func4>
+{
+    /// Executes the function
+    action eval : aParam1 : aParam2 : aParam3 : aParam4 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run : aParam1 : aParam2 : aParam3 enumerator:anEnumerator
 //    [
@@ -318,14 +318,14 @@ limited class BaseFunction1 :: dispatchable<func1>
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base five variable function
-//limited class BaseFunction5 :: dispatchable(func5)
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
-//    
+}
+
+/// A base five variable function
+limited class BaseFunction5 :: dispatchable<func5>
+{
+    /// Executes the function
+    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run : aParam1 : aParam2 : aParam3 : aParam4 enumerator:anEnumerator
 //    [
@@ -349,14 +349,14 @@ limited class BaseFunction1 :: dispatchable<func1>
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base six variable function
-//limited class BaseFunction6 :: dispatchable(func6)
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
-//    
+}
+
+/// A base six variable function
+limited class BaseFunction6 :: dispatchable<func6>
+{
+    /// Executes the function
+    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 enumerator:anEnumerator
 //    [
@@ -380,14 +380,14 @@ limited class BaseFunction1 :: dispatchable<func1>
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base seven variable function
-//limited class BaseFunction7 :: dispatchable(func7)
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
-//    
+}
+
+/// A base seven variable function
+limited class BaseFunction7 :: dispatchable<func7>
+{
+    /// Executes the function
+    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 enumerator:anEnumerator
 //    [
@@ -411,14 +411,14 @@ limited class BaseFunction1 :: dispatchable<func1>
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base eight variable function
-//limited class BaseFunction8 :: dispatchable(func8)
-//{
-//    /// Executes the function    
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
-//    
+}
+
+/// A base eight variable function
+limited class BaseFunction8 :: dispatchable<func8>
+{
+    /// Executes the function    
+    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 enumerator:anEnumerator
 //    [
@@ -442,14 +442,14 @@ limited class BaseFunction1 :: dispatchable<func1>
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base nine variable function
-//limited class BaseFunction9 :: dispatchable(func9)
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
-//    
+}
+
+/// A base nine variable function
+limited class BaseFunction9 :: dispatchable<func9>
+{
+    /// Executes the function
+    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 enumerator:anEnumerator
 //    [
@@ -473,14 +473,14 @@ limited class BaseFunction1 :: dispatchable<func1>
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base ten variable function
-//limited class BaseFunction10 :: dispatchable(func10)
-//{
-//    /// Executes the function    
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
-//    
+}
+
+/// A base ten variable function
+limited class BaseFunction10 :: dispatchable<func10>
+{
+    /// Executes the function    
+    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 enumerator:anEnumerator
 //    [
@@ -504,14 +504,14 @@ limited class BaseFunction1 :: dispatchable<func1>
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base eleven variable functions
-//limited class BaseFunction11 :: dispatchable(func11)
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
-//    
+}
+
+/// A base eleven variable functions
+limited class BaseFunction11 :: dispatchable<func11>
+{
+    /// Executes the function
+    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 enumerator:anEnumerator
 //    [
@@ -535,7 +535,7 @@ limited class BaseFunction1 :: dispatchable<func1>
 //        
 //        ^ $nil
 //    ]
-//}
+}
 
 // --- base lazy expression ---
 
@@ -601,176 +601,176 @@ limited class IndexFunction1 :: dispatchable<nfunc>
     ]
 }
 
-///// A base two variable index function
-//limited class IndexFunction2 :: dispatchable(nnfunc)
+/// A base two variable index function
+limited class IndexFunction2 :: dispatchable<nnfunc>
+{
+    /// Executes the function
+    stacksafe action eval int:i int:j []
+
+    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
+    sealed rewind int:i int:j int:n int:m int:dx
+    [
+        int x := i.
+        int y := j.
+        
+        while(x >= n)
+        [
+            y := j.
+            
+            while (y >= m)
+            [
+                $self eval int:x int:y.
+                
+                y := y - dx
+            ].
+                        
+            x := x - dx
+        ].
+        
+        ^ $nil
+    ]          
+    
+    /// Executes the function for every value in the specified range (starting x-value, starting y-value, ending x-value, ending y-value, step)
+    sealed run int:i int:j int:n int:m int:dx
+    [
+        int x := i.
+        int y := j.
+        
+        while(x <= n)
+        [
+            y := j.
+            
+            while (y <= m)
+            [
+                $self eval int:x int:y.
+                
+                y := y + dx
+            ].
+                        
+            x := x + dx
+        ].
+        
+        ^ $nil
+    ]
+}
+
+/// A base three variable index function
+limited class IndexFunction3 :: dispatchable<n3func>
+{
+    /// Executes the function
+    stacksafe action eval int:i int:j int:k []
+
+    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
+    sealed rewind int:i int:j int:k int:n int:m int:p int:dx
+    [
+        int x := i.
+        int y := j.
+        int z := k.
+        
+        while(x >= n)
+        [
+            y := j.
+            
+            while(y >= m)
+            [
+                z := k.
+                
+                while(z >= p)
+                [
+                    $self eval int:x int:y int:z.
+                    
+                    z := z - dx
+                ].                
+                
+                y := y - dx
+            ].
+                        
+            x := x - dx
+        ].
+        
+        ^ $nil
+    ]          
+    
+    /// Executes the function for every value in the specified range (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, step)
+    sealed run int:i int:j int:k int:n int:m int:p int:dx
+    [
+        int x := i.
+        int y := j.
+        int z := k.
+        
+        while(x <= n)
+        [
+            y := j.
+            
+            while(y <= m)
+            [
+                z := k.
+                
+                while(z <= p)
+                [
+                    $self eval int:x int:y int:z.
+                    
+                    z := z + dx
+                ].                
+                
+                y := y + dx
+            ].
+                        
+            x := x + dx
+        ].
+        
+        ^ $nil
+    ]
+}
+
+//// --- Boolean ---
+//
+///// A boolean variable. 
+//#class(varof:bool) Boolean :: BaseValue
 //{
-//    /// Executes the function
-//    stacksafe action eval int:i int:j []
-//
-//    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
-//    sealed rewind int:i int:j int:n int:m int:dx
-//    [
-//        int x := i.
-//        int y := j.
-//        
-//        while(x >= n)
-//        [
-//            y := j.
-//            
-//            while (y >= m)
-//            [
-//                $self eval int:x int:y.
-//                
-//                y := y - dx
-//            ].
-//                        
-//            x := x - dx
-//        ].
-//        
-//        ^ $nil
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting x-value, starting y-value, ending x-value, ending y-value, step)
-//    sealed run int:i int:j int:n int:m int:dx
-//    [
-//        int x := i.
-//        int y := j.
-//        
-//        while(x <= n)
-//        [
-//            y := j.
-//            
-//            while (y <= m)
-//            [
-//                $self eval int:x int:y.
-//                
-//                y := y + dx
-//            ].
-//                        
-//            x := x + dx
-//        ].
-//        
-//        ^ $nil
+//    /// Creates a boolean variable with an initial value (false)
+//    #constructor new
+//    [        
+//        $value := false.
 //    ]
-//}
 //
-///// A base three variable index function
-//limited class IndexFunction3 :: dispatchable(n3func)
-//{
-//    /// Executes the function
-//    stacksafe action eval int:i int:j int:k []
-//
-//    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
-//    sealed rewind int:i int:j int:k int:n int:m int:p int:dx
-//    [
-//        int x := i.
-//        int y := j.
-//        int z := k.
-//        
-//        while(x >= n)
-//        [
-//            y := j.
-//            
-//            while(y >= m)
-//            [
-//                z := k.
-//                
-//                while(z >= p)
-//                [
-//                    $self eval int:x int:y int:z.
-//                    
-//                    z := z - dx
-//                ].                
-//                
-//                y := y - dx
-//            ].
-//                        
-//            x := x - dx
-//        ].
-//        
-//        ^ $nil
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, step)
-//    sealed run int:i int:j int:k int:n int:m int:p int:dx
-//    [
-//        int x := i.
-//        int y := j.
-//        int z := k.
-//        
-//        while(x <= n)
-//        [
-//            y := j.
-//            
-//            while(y <= m)
-//            [
-//                z := k.
-//                
-//                while(z <= p)
-//                [
-//                    $self eval int:x int:y int:z.
-//                    
-//                    z := z + dx
-//                ].                
-//                
-//                y := y + dx
-//            ].
-//                        
-//            x := x + dx
-//        ].
-//        
-//        ^ $nil
+//    /// Creates a boolean variable with specified value
+//    #constructor new : aValue
+//    [        
+//        $value := true equal &bool:(aValue bool).
 //    ]
+//    
+//    /// Creates a boolean variable with specified value
+//    #constructor new &bool:aValue
+//    [        
+//        $value := aValue.
+//    ]
+//
+//    /// Returns the boolean value
+//    #method bool = $value.
+//
+//    /// Executes logical OR operation
+//    #method append : aValue
+//    [
+//        $value := $value or:aValue.
+//    ]
+//
+//    /// Executes logical AND operation            
+//    #method multiplyBy : aValue
+//    [
+//        $value := $value and:aValue.
+//    ]
+//            
+//    /// Inverts the boolean value
+//    #method invert
+//    [
+//        $value := $value not bool.
+//    ]            
+//
+//    /// Clones the object
+//    #method clone = Boolean new:$value.
 //}
-//
-////// --- Boolean ---
-////
-/////// A boolean variable. 
-////#class(varof:bool) Boolean :: BaseValue
-////{
-////    /// Creates a boolean variable with an initial value (false)
-////    #constructor new
-////    [        
-////        $value := false.
-////    ]
-////
-////    /// Creates a boolean variable with specified value
-////    #constructor new : aValue
-////    [        
-////        $value := true equal &bool:(aValue bool).
-////    ]
-////    
-////    /// Creates a boolean variable with specified value
-////    #constructor new &bool:aValue
-////    [        
-////        $value := aValue.
-////    ]
-////
-////    /// Returns the boolean value
-////    #method bool = $value.
-////
-////    /// Executes logical OR operation
-////    #method append : aValue
-////    [
-////        $value := $value or:aValue.
-////    ]
-////
-////    /// Executes logical AND operation            
-////    #method multiplyBy : aValue
-////    [
-////        $value := $value and:aValue.
-////    ]
-////            
-////    /// Inverts the boolean value
-////    #method invert
-////    [
-////        $value := $value not bool.
-////    ]            
-////
-////    /// Clones the object
-////    #method clone = Boolean new:$value.
-////}
-//
+
 //// --- BaseIndexer ---
 //
 //class BaseIndexer :: Indexer

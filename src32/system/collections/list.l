@@ -506,7 +506,7 @@ type array_list = system'collections'ArrayList.
 // --- ArrayList ---
 
 /// An array list object
-sealed class ArrayList //:: dispatchable(enumerable)
+sealed class ArrayList :: dispatchable<array_list>
 {
     array theArray.
     vint  theLength.
@@ -546,58 +546,68 @@ sealed class ArrayList //:: dispatchable(enumerable)
     [
     ]
     
-//    /// Creates the list
-//    stacksafe constructor $new array:anArray int:aLength
-//    [
-//        int capacity := anArray length.
-//        
-//        theCapacity := capacity.
-//        theLength := aLength.
-//        
-//        theArray := anArray clone.
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//    
-//    int rvprop capacity :: readCapacityTo.
-//    
-//    /// Returns the object at the specified position
-//    stacksafe getAt int:anIndex
-//    [
-//        ifnot (theLength > anIndex)
-//            [ OutOfRangeException new; raise ].
-//
-//        ^ theArray getAt int:anIndex
-//    ]
-//    
-//    /// Returns the object at the specified position
-//    stacksafe setAt int:anIndex object:anObject
-//    [
-//        ifnot (theLength > anIndex)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theArray setAt int:anIndex object:anObject
-//    ]
-//    
-//    $expand
-//    [
-//        if (theCapacity <= theLength)
-//        [
-//            theCapacity append int:32.
-//            
-//            array aNewArray := Array new int:theCapacity.
-//            int   i := 0.
-//            while (i < theLength)
-//            [
-//                aNewArray setAt int:i object:(theArray getAt int:i).
-//                
-//                i := i + 1
-//            ].
-//            
-//            theArray := aNewArray
-//        ]
-//    ]
-//    
+    /// Creates the list
+    stacksafe constructor $new array:anArray int:aLength
+    [
+        int capacity := anArray length.
+        
+        theCapacity := capacity.
+        theLength := aLength.
+        
+        theArray := anArray clone.
+    ]
+    
+    int rvprop length :: readLengthTo.
+    
+    int rvprop capacity :: readCapacityTo.
+    
+    /// Returns the object at the specified position
+    stacksafe getAt int:anIndex
+    [
+        ifnot (theLength > anIndex)
+            [ OutOfRangeException new; raise ].
+
+        ^ theArray getAt int:anIndex
+    ]
+    
+    /// Returns the object at the specified position
+    stacksafe setAt int:anIndex object:anObject
+    [
+        ifnot (theLength > anIndex)
+            [ OutOfRangeException new; raise ].
+        
+        theArray setAt int:anIndex object:anObject
+    ]
+    
+    $expand
+    [
+        if (theCapacity <= theLength)
+        [
+            theCapacity append int:32.
+            
+            array aNewArray := Array new int:theCapacity.
+            int   i := 0.
+            while (i < theLength)
+            [
+                aNewArray setAt int:i object:(theArray getAt int:i).
+                
+                i := i + 1
+            ].
+            
+            theArray := aNewArray
+        ]
+    ]
+    
+    /// Appends a new object to the end of the list
+    append:anObject
+    [
+        $self $expand.
+        
+        theArray setAt int:theLength object:anObject.
+        
+        theLength append int:1.
+    ]
+    
 //    append array:subarray
 //    [
 //        if ($nil != subarray)
@@ -612,85 +622,72 @@ sealed class ArrayList //:: dispatchable(enumerable)
 //        ]     
 //    ]
 //        
-//    /// Appends a new object to the end of the list
-//    append object:anObject
+//    /// Inserts a new object to the specified position
+//    insert int:anIndex object:anObject
 //    [
+//        if (anIndex >= theLength)
+//            [ OutOfRangeException new; raise ].
+//        
 //        $self $expand.
 //        
-//        theArray setAt int:theLength object:anObject.
+//        int i := theLength.
+//        while (i > anIndex)
+//        [
+//            theArray setAt int:i object:(theArray getAt int:(i - 1)).
+//            
+//            i := i - 1
+//        ].
 //        
-//        theLength append int:1.
-//    ]
+//        theArray setAt int:anIndex object:anObject
+//    ]    
 //    
-////    /// Inserts a new object to the specified position
-////    insert int:anIndex object:anObject
-////    [
-////        if (anIndex >= theLength)
-////            [ OutOfRangeException new; raise ].
-////        
-////        $self $expand.
-////        
-////        int i := theLength.
-////        while (i > anIndex)
-////        [
-////            theArray setAt int:i object:(theArray getAt int:(i - 1)).
-////            
-////            i := i - 1
-////        ].
-////        
-////        theArray setAt int:anIndex object:anObject
-////    ]    
-////    
-////    /// Inserts a new object to the beginning of the list
-////    insert : anObject
-////        <= insert int:0 object:anObject.
-////
-////    insert : anObject at:anIndex
-////        <= insert int:anIndex object:anObject.
-////        
-////    /// Removes an object at the specified position
-////    stacksafe remove int:anIndex
-////    [
-////        if (anIndex >= theLength)
-////            [ OutOfRangeException new; raise ].
-////        
-////        theLength reduce int:1.
-////        
-////        int i := anIndex.
-////        while (i < theLength)
-////        [
-////            theArray setAt int:i object:(theArray getAt int:(i + 1)).
-////            
-////            i := i + 1
-////        ]
-////    ]
-////        
-////    remove index:anIndex
-////        <= remove int:anIndex.
-////
-////    remove at:anIndex
-////        <= remove int:anIndex.
+//    /// Inserts a new object to the beginning of the list
+//    insert : anObject
+//        <= insert int:0 object:anObject.
 //
-//    /// Returns itself
-//    array_list = $self.
-//    
-//    /// Reads the number of list item to the output parameter
-//    stacksafe readLengthTo vint:aLength
+//    insert : anObject at:anIndex
+//        <= insert int:anIndex object:anObject.
+//        
+//    /// Removes an object at the specified position
+//    stacksafe remove int:anIndex
 //    [
-//        aLength int := theLength.
+//        if (anIndex >= theLength)
+//            [ OutOfRangeException new; raise ].
+//        
+//        theLength reduce int:1.
+//        
+//        int i := anIndex.
+//        while (i < theLength)
+//        [
+//            theArray setAt int:i object:(theArray getAt int:(i + 1)).
+//            
+//            i := i + 1
+//        ]
 //    ]
-//    
-//    stacksafe readCapacityTo vint:aCapacity
-//    [
-//        aCapacity int := theCapacity.
-//    ]
-//    
-//    /// Clears the list
-//    clear 
-//    [
-//        theLength int := 0
-//    ]
-//    
+//        
+//    remove index:anIndex
+//        <= remove int:anIndex.
+//
+//    remove at:anIndex
+//        <= remove int:anIndex.
+    
+    /// Reads the number of list item to the output parameter
+    stacksafe readLengthTo vint:aLength
+    [
+        aLength int := theLength.
+    ]
+    
+    stacksafe readCapacityTo vint:aCapacity
+    [
+        aCapacity int := theCapacity.
+    ]
+    
+    /// Clears the list
+    clear 
+    [
+        theLength int := 0
+    ]
+    
 //    /// Returns the top object
 //    first = theArray getAt int:0.
 //
@@ -701,22 +698,22 @@ sealed class ArrayList //:: dispatchable(enumerable)
 //        
 //        ^ theArray getAt int:(len - 1)
 //    ]
-//    
-//    /// Returns the list enumerator
-//    enumerator = ArrayListEnumerator new array_list:$self.
-//    
-//    /// Returns the list indexer9
-//    indexer = ArrayListIndexer new array_list:$self.
-//    
-//    /// Returns a list copy
-//    array_list clone
-//        = ArrayList $new array:theArray int:theLength.
-//        
-//    array
-//        = Array new int:0 int:theLength array:theArray.
-//        
-////    get
-////        <= array.
+    
+    /// Returns the list enumerator
+    enumerator = ArrayListEnumerator new array_list:$self.
+    
+    /// Returns the list indexer9
+    indexer = ArrayListIndexer new array_list:$self.
+    
+    /// Returns a list copy
+    array_list clone
+        = ArrayList $new array:theArray int:theLength.
+        
+    array
+        = Array new int:0 int:theLength array:theArray.
+        
+//    get
+//        <= array.
 }
 
 // --- ArrayListEnumerator ---
@@ -724,38 +721,38 @@ sealed class ArrayList //:: dispatchable(enumerable)
 /// A list enumerator
 class ArrayListEnumerator :: Enumerator
 {
-//    array_list theList.
-//    vint       theIndex.
-//    
-//    /// Creates a list enumerator
-//    constructor new array_list:aList
-//    [
-//        theList := aList.
-//        theIndex := -1.
-//    ]
-//
-//    /// Creates a list enumerator
-//    constructor new : anObject
-//        <= new array_list:anObject.
-//
-//    /// Returns the current object
-//    get = theList getAt int:theIndex.
-//    
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex int := -1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    next
-//    [
-//        theIndex append int:1.
-//        
-//        int aLength := theList length.
-//        
-//        ^ (aLength > theIndex)
-//    ]
+    array_list theList.
+    vint       theIndex.
+    
+    /// Creates a list enumerator
+    constructor new array_list:aList
+    [
+        theList := aList.
+        theIndex := -1.
+    ]
+
+    /// Creates a list enumerator
+    constructor new : anObject
+        <= new array_list:anObject.
+
+    /// Returns the current object
+    get = theList getAt int:theIndex.
+    
+    /// Resets the enumerator
+    reset
+    [
+        theIndex int := -1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    next
+    [
+        theIndex append int:1.
+        
+        int aLength := theList length.
+        
+        ^ (aLength > theIndex)
+    ]
 }
 
 // --- ArrayListIndexer ---
@@ -763,48 +760,48 @@ class ArrayListEnumerator :: Enumerator
 /// A list indexer
 class ArrayListIndexer :: Indexer
 {
-//    array_list theList.
-//    vint       theIndex.
-//    
-//    /// Creates a list indexer
-//    constructor new array_list:aList
-//    [
-//        theList := aList.
-//        theIndex := 0.
-//    ]
-//
-//    /// Creates a list indexer
-//    constructor new : anObject
-//        <= new array_list:anObject.
-//    
-//    /// Returns false if the index out of range
-//    available
-//    [
-//        int aLength := theList length.
-//        
-//        ^ (aLength > theIndex)
-//    ]
-//
-//    /// Returns the current member
-//    get = theList getAt int:theIndex.
-//    
-//    /// Sets the current member
-//    set : anObject 
-//    [
-//        theList setAt int:theIndex object:anObject.
-//    ]
-//    
-//    /// Reads the current index into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex
-//    [
-//        theIndex set int:anIndex.
-//    ]
+    array_list theList.
+    vint       theIndex.
+    
+    /// Creates a list indexer
+    constructor new array_list:aList
+    [
+        theList := aList.
+        theIndex := 0.
+    ]
+
+    /// Creates a list indexer
+    constructor new : anObject
+        <= new array_list:anObject.
+    
+    /// Returns false if the index out of range
+    available
+    [
+        int aLength := theList length.
+        
+        ^ (aLength > theIndex)
+    ]
+
+    /// Returns the current member
+    get = theList getAt int:theIndex.
+    
+    /// Sets the current member
+    set : anObject 
+    [
+        theList setAt int:theIndex object:anObject.
+    ]
+    
+    /// Reads the current index into an output parameter
+    readIndexTo vint:anIndex
+    [
+        anIndex int := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex int:anIndex
+    [
+        theIndex set int:anIndex.
+    ]
 }
 
 //// --- Dictionary ---

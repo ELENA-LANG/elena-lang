@@ -2884,7 +2884,7 @@ class longConvertor =
     stacksafe long convert long:aLong
         = LongNumber new long:aLong.
         
-    long convert : anObject
+    long multi convert : anObject
         <= convert value:anObject.
 }.
 
@@ -3007,7 +3007,7 @@ class realConvertor =
         ^ RealNumber new real:aRetVal
     ]
         
-    real convert : anObject
+    real multi convert : anObject
         <= convert value:anObject.
 }.
 
@@ -3066,31 +3066,31 @@ real pi_value = realOpController pi.
 
 real e_value = realOpController e.
 
-//// --- obsolete variables ---
-//
-//class Integer =
+// --- obsolete variables ---
+
+class Integer =
+{
+    vint new
+        = 0.
+        
+    vint new int:n
+        = n.
+        
+    vint new:n
+        = n int.
+}.
+
+//class Real =
 //{
-//    vint new
-//        = 0.
+//    vreal new
+//        = 0.0r.
 //        
-//    vint new int:n
+//    vreal new : n
+//        = n real.
+//        
+//    vreal new int:n
+//        = n real.
+//        
+//    vreal new real:n
 //        = n.
-//        
-//    vint new:n
-//        = n int.
 //}.
-//
-////class Real =
-////{
-////    vreal new
-////        = 0.0r.
-////        
-////    vreal new : n
-////        = n real.
-////        
-////    vreal new int:n
-////        = n real.
-////        
-////    vreal new real:n
-////        = n.
-////}.

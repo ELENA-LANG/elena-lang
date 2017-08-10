@@ -286,10 +286,10 @@ extension convertorOp
 //    
 //    toChar
 //        = charConvertor convert:self.
-//
-//    toReal
-//        = realConvertor convert:self.
-//
+
+    toReal
+        = realConvertor convert:self.
+
 //    convert to : aTarget
 //        = Variant new:self; saveTo:aTarget.
 }

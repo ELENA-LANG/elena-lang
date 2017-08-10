@@ -296,38 +296,38 @@ extension indexableOp
 
 //    sort : aCompareFunc
 //        = self~indexableOp sort func2:(aCompareFunc func2).
-//    
-//    sort func2:aCompareFunc
-//    [
-//        indexer aFormer := self indexer.
-//        indexer aLater := self indexer.
-//
-//        while (aFormer available)
-//        [
-//            int i := aFormer index.
-//            
-//            aLater writeIndex int:(i + 1).
-//            
-//            while (aLater available)
-//            [
-//                ifnot (aCompareFunc eval:(aFormer get):(aLater get))
-//                    [
-//                        var aTmp := aFormer get.
-//                        aFormer set:(aLater get).
-//                        aLater set:aTmp.
-//                    ].
-//                    
-//                aLater append index:1
-//            ].
-//            aFormer append index:1
-//        ].
-//        
-//        ^ self
-//    ]
-//    
-//    ascendant
-//        = (self clone)~indexableOp sort:ifOrdered.
-//
+    
+    orderBy func2:aCompareFunc
+    [
+        indexer aFormer := self indexer.
+        indexer aLater := self indexer.
+
+        while (aFormer available)
+        [
+            int i := aFormer index.
+            
+            aLater writeIndex int:(i + 1).
+            
+            while (aLater available)
+            [
+                ifnot (aCompareFunc eval(aFormer get, aLater get))
+                    [
+                        var aTmp := aFormer get.
+                        aFormer set(aLater get).
+                        aLater set:aTmp.
+                    ].
+                    
+                aLater append index:1
+            ].
+            aFormer append index:1
+        ].
+        
+        ^ self
+    ]
+    
+    ascendant
+        = (self clone)~indexableOp orderBy:ifOrdered.
+
 //    Subarray : aLength at:anIndex
 //        = self~indexableOp Subarray int:anIndex int:aLength.
 //                
@@ -341,27 +341,27 @@ extension indexableOp
 //        
 //        ^ Array new int:aLength; set nfunc: (&int:i)[ ^it writeIndex int:(anIndex + i); get ]
 //    ]
-//    
-//    equal indexable:anArray
-//    [
-//        if (self length != anArray length)
-//            [ ^ false ].
-//            
-//        indexer a := self indexer.
-//        indexer b := anArray indexer.
-//        
-//        while (a available)
-//        [
-//            ifnot (a get == b get)
-//                [ ^ false ].
-//                
-//            a append index:1.
-//            b append index:1
-//        ].
-//          
-//        ^ true                
-//    ]
-//            
+    
+    sequenceEqual:anArray
+    [
+        if (self length != anArray length)
+            [ ^ false ].
+            
+        indexer a := self indexer.
+        indexer b := anArray indexer.
+        
+        while (a available)
+        [
+            ifnot (a get == b get)
+                [ ^ false ].
+                
+            a append index:1.
+            b append index:1
+        ].
+          
+        ^ true                
+    ]
+            
 //    reverse
 //        = self~indexableOp reverse:(self length) at:0.
 //            

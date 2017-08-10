@@ -104,20 +104,20 @@ type func       = system'BaseFunction.
 ///
 /// An instance of system'BaseFunction1
 type func1      = system'BaseFunction1.
-//type func2      :: system'BaseFunction2.
-//type func3      :: system'BaseFunction3.
-//type func4      :: system'BaseFunction4.
-//type func5      :: system'BaseFunction5.
-//type func6      :: system'BaseFunction6.
-//type func7      :: system'BaseFunction7.
-//type func8      :: system'BaseFunction8.
-//type func9      :: system'BaseFunction9.
-//type func10     :: system'BaseFunction10.
-//type func11     :: system'BaseFunction11.
+type func2      = system'BaseFunction2.
+type func3      = system'BaseFunction3.
+type func4      = system'BaseFunction4.
+type func5      = system'BaseFunction5.
+type func6      = system'BaseFunction6.
+type func7      = system'BaseFunction7.
+type func8      = system'BaseFunction8.
+type func9      = system'BaseFunction9.
+type func10     = system'BaseFunction10.
+type func11     = system'BaseFunction11.
 
 type nfunc      = system'IndexFunction1.
-//type nnfunc     :: system'IndexFunction2.
-//type n3func     :: system'IndexFunction3.
+type nnfunc     = system'IndexFunction2.
+type n3func     = system'IndexFunction3.
 
 // === system handles ===
 type handle     = system'Handle.

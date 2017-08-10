@@ -2392,6 +2392,16 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
       }
    }
 
+   if (actionFlags == PROPSET_MESSAGE && paramCount == 1) {
+      // COMPILER MAGIC : set&x => x
+      if (messageStr.Length() > 3) {
+         messageStr.cut(0, 4);
+      }
+      else if (messageStr.compare(SET_MESSAGE) && !emptystr(signature)) {
+         messageStr.clear();
+      }      
+   }
+
    messageStr.append(signature);
 
    // if signature is presented
@@ -4114,10 +4124,12 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
       if (test(scope.hints, tpSealed | tpGeneric)) {
-         if (!emptystr(signature) || !emptystr(messageStr))
+         if (paramCount != OPEN_ARG_COUNT) {
+            if (!emptystr(signature) || !emptystr(messageStr))
                scope.raiseError(errInvalidHint, verb);
 
-         messageStr.copy(GENERIC_PREFIX);
+            messageStr.copy(GENERIC_PREFIX);
+         }
       }
 
       if (test(scope.hints, tpSealed | tpConversion)) {
