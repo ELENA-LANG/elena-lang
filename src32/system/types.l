@@ -34,7 +34,6 @@ __string        = #8200.
 __int           = #11.
 __dword         = #12.
 __real          = #14.
-__verb          = #20.
 __mssg          = #19.
 __subj          = #18.
 __extmssg       = #21.
@@ -77,13 +76,8 @@ type char       = system'CharValue.
 type mssg       = system'Message.
 type ext_mssg   = system'ExtensionMessage.
 
-/// A verb symbol
-
-///// An instance of system'Verb class. 
-//type verb       = system'Verb.
-//
-//type subject    = system'Signature.
-////type symbol_ref :: system'Symbol.
+type subject    = system'Signature.
+//type symbol_ref :: system'Symbol.
 
 // === basic dynamic types ===
 type bytearray  = system'ByteArray.

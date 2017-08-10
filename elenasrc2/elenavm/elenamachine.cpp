@@ -482,7 +482,6 @@ bool Instance :: restart(bool debugMode)
    _msgClass.copy(_config.forwards.get(MESSAGE_FORWARD));
    _extMsgClass.copy(_config.forwards.get(EXT_MESSAGE_FORWARD));
    _signClass.copy(_config.forwards.get(SIGNATURE_FORWARD));
-   _verbClass.copy(_config.forwards.get(VERB_FORWARD));
 
    // init debug section
    if (_linker->getDebugMode()) {
@@ -647,7 +646,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             //pusha
 
             ecodes.writeByte(bcCopyM);
-            ecodes.writeDWord(_linker->parseMessage(arg));
+            ecodes.writeDWord(_linker->parseMessage(arg, false));
             ecodes.writeByte(bcALoadSI);
             ecodes.writeDWord(0);
             ecodes.writeByte(bcACallVI);

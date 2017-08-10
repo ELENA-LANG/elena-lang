@@ -30,9 +30,9 @@ ackermann = (:m:n)
 
 program =
 [
-    0 to:3 doEach(:i)
+    0 to:3 do(:i)
     [
-        0 to:5 doEach(:j)
+        0 to:5 do(:j)
         [
             console printLine("A(",i,",",j,")=",ackermann eval(i,j))
         ]

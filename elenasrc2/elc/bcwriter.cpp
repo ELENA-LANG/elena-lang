@@ -3227,8 +3227,6 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskExtMessage;
       case lxSignatureConstant:
          return mskSignature;
-      case lxVerbConstant:
-         return mskVerb;
       case lxConstantList:
          return mskConstArray;
       default:
@@ -3290,7 +3288,6 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxMessageConstant:
       case lxExtMessageConstant:
       case lxSignatureConstant:
-      case lxVerbConstant:
       case lxConstantList:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
@@ -3369,7 +3366,6 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxMessageConstant:
       case lxExtMessageConstant:
       case lxSignatureConstant:
-      case lxVerbConstant:
       case lxConstantList:
          // pushr reference
          tape.write(bcACopyR, argument | defineConstantMask(type));

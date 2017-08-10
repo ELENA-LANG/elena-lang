@@ -23,7 +23,6 @@
 #define V_REAL64         (ref_t)-14
 #define V_SIGNATURE      (ref_t)-18
 #define V_MESSAGE        (ref_t)-19
-#define V_VERB           (ref_t)-20
 #define V_EXTMESSAGE     (ref_t)-21
 #define V_SYMBOL         (ref_t)-22
 
@@ -136,7 +135,6 @@ struct _CompilerScope
    ref_t signatureReference;
    ref_t messageReference;
    ref_t extMessageReference;
-   ref_t verbReference;
    ref_t boolReference;
    ref_t literalReference;
    ref_t wideReference;
@@ -173,7 +171,7 @@ struct _CompilerScope
       sourcePathRef = 0;
       debugModule = module = NULL;
       intReference = boolReference = superReference = 0;
-      signatureReference = verbReference = messageReference = 0;
+      signatureReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
       extMessageReference = 0;

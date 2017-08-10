@@ -123,7 +123,6 @@ public:
       okMessageConstant,              // param - reference
       okExtMessageConstant,           // param - reference
       okSignatureConstant,            // param - reference
-      okVerbConstant,                 // param - reference
       okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
       okStaticField,                  // param - reference

@@ -65,7 +65,7 @@ define elPackageOffset       0010h
 
 define page_align_mask   000FFFF0h
 
-define SUBJ_MASK          0FFFFFFh
+define SUBJ_MASK          1FFFFFFh                          
 
 // --- System Core Preloaded Routines --
 

@@ -182,10 +182,6 @@ ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount)
 
          writer.writeDWord(sign_ref);
 
-         // HOTFIX to deal with qualified property : x$$int
-         if (signature[overloadIndex + 1] == '$')
-            overloadIndex++;
-
          size_t len = getlength(signature);
          size_t start = overloadIndex + 1;
          while (start < len) {
@@ -802,14 +798,17 @@ void* JITLinker :: resolveMessageTable(ident_t reference, int mask)
    return NULL; // !! should be resolved only once
 }
 
-ref_t JITLinker :: parseMessage(ident_t reference)
+ref_t JITLinker :: parseMessage(ident_t reference, bool actionMode)
 {
-   IdentifierString text;
+   if (actionMode) {
+      return resolveSignature(reference, 0);
+   }
+   else {
+      int count = reference[0] - '0';
+      ref_t actionRef = resolveSignature(reference + 1, count);
 
-   int count = reference[0] - '0';
-   ref_t actionRef = resolveSignature(reference + 1, count);
-
-   return encodeMessage(actionRef, count);
+      return encodeMessage(actionRef, count);
+   }
 }
 
 void* JITLinker :: resolveExtensionMessage(ident_t reference, ident_t vmt)
@@ -817,7 +816,7 @@ void* JITLinker :: resolveExtensionMessage(ident_t reference, ident_t vmt)
    int dotPos = reference.find('.');
 
    IdentifierString extensionName(reference, dotPos);
-   ref_t messageID = parseMessage(reference + dotPos + 1);
+   ref_t messageID = parseMessage(reference + dotPos + 1, false);
 
    void* vmtExtVAddress = resolve(extensionName, mskVMTRef, false);
    int entryOffset = getVMTMethodAddress(vmtExtVAddress, messageID);;
@@ -847,7 +846,7 @@ void* JITLinker :: resolveExtensionMessage(ident_t reference, ident_t vmt)
    return vaddress;
 }
 
-void* JITLinker :: resolveMessage(ident_t reference, ident_t vmt)
+void* JITLinker :: resolveMessage(ident_t reference, ident_t vmt, bool actionMode)
 {
    // get target image & resolve virtual address
    _Memory* image = _loader->getTargetSection(mskRDataRef);
@@ -860,7 +859,7 @@ void* JITLinker :: resolveMessage(ident_t reference, ident_t vmt)
 
    _loader->mapReference(reference, vaddress, mskMessage);
 
-   _compiler->compileInt32(&writer, parseMessage(reference));
+   _compiler->compileInt32(&writer, parseMessage(reference, actionMode));
 
    // get constant VMT reference
    void* vmtVAddress = resolve(vmt, mskVMTRef, false);
@@ -1064,13 +1063,10 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
             vaddress = resolveStaticVariable(reference, mskStatRef);
             break;
          case mskMessage:
-            vaddress = resolveMessage(reference, _loader->getMessageClass());
+            vaddress = resolveMessage(reference, _loader->getMessageClass(), false);
             break;
          case mskSignature:
-            vaddress = resolveMessage(reference, _loader->getSignatureClass());
-            break;
-         case mskVerb:
-            vaddress = resolveMessage(reference, _loader->getVerbClass());
+            vaddress = resolveMessage(reference, _loader->getSignatureClass(), true);
             break;
          case mskExtMessage:
             vaddress = resolveExtensionMessage(reference, _loader->getExtMessageClass());

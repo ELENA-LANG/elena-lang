@@ -41,7 +41,6 @@ private:
    ident_t _message;
    ident_t _ext_message;
    ident_t _signature;
-   ident_t _verb;
 
 public:
    virtual ref_t getEntryPoint()
@@ -78,7 +77,6 @@ public:
    virtual ident_t getMessageClass();
    virtual ident_t getExtMessageClass();
    virtual ident_t getSignatureClass();
-   virtual ident_t getVerbClass();
    virtual ident_t getNamespace();
 
    virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask);

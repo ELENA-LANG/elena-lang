@@ -199,7 +199,6 @@ protected:
    IdentifierString _msgClass;
    IdentifierString _extMsgClass;
    IdentifierString _signClass;
-   IdentifierString _verbClass;
 
    LibraryManager  _loader;
    ELENAMachine*   _machine;
@@ -328,11 +327,6 @@ public:
    virtual ident_t getExtMessageClass()
    {
       return _extMsgClass;
-   }
-
-   virtual ident_t getVerbClass()
-   {
-      return _verbClass;
    }
 
    virtual ident_t getNamespace()

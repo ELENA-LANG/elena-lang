@@ -179,7 +179,6 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
    messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
    extMessageReference = mapReference(project->resolveForward(EXT_MESSAGE_FORWARD));
-   verbReference = mapReference(project->resolveForward(VERB_FORWARD));
    arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
    boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
 
@@ -2057,9 +2056,6 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okNil:
          writer.newNode(lxNil, object.param);
          break;
-      case okVerbConstant:
-         writer.newNode(lxVerbConstant, object.param);
-         break;
       case okMessageConstant:
          writer.newNode(lxMessageConstant, object.param);
          break;
@@ -2235,11 +2231,13 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
 {
    SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
    IdentifierString signature;
-   int paramCount = -1;
+   int paramCount = 0;
    ref_t extensionRef = 0;
    if (terminal == lxIdentifier || terminal == lxPrivate) {
       ident_t name = terminal.identifier();
       signature.copy(name);
+
+      paramCount = -1;
    }
    else {
       ident_t message = terminal.identifier();
@@ -2292,17 +2290,17 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
       message.append('.');
    }
 
-   if (paramCount == -1) {
-      message.append('0');
+   if (paramCount != -1) {
+      message.append('0' + (char)paramCount);
+      message.append(signature);
    }
-   else message.append('0' + (char)paramCount);
-   message.append(signature);
+   else message.copy(signature);
 
    if (extensionRef != 0) {
       retVal.kind = okExtMessageConstant;
    }
    else if (paramCount == -1) {
-      retVal.kind = okVerbConstant;
+      retVal.kind = okSignatureConstant;
    }
    else retVal.kind = okMessageConstant;
 
@@ -2339,6 +2337,13 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
          signature.append(scope.moduleScope->module->resolveReference(verbRef));
       }
       else scope.raiseError(errInvalidSubject, name);
+   }
+   else {
+      // COMPILER MAGIC : recognize set property
+      int verb_id = _verbs.get(messageStr.c_str());
+      if (verb_id == SET_MESSAGE_ID) {
+         actionFlags = PROPSET_MESSAGE;
+      }
    }
 
    arg = arg.nextNode();
@@ -2391,16 +2396,9 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 
    // if signature is presented
    ref_t actionRef = scope.moduleScope->module->mapSubject(messageStr, false);
-   if (paramCount == 0) {
-      if (actionRef > PREDEFINED_MESSAGE_ID && emptystr(signature)) {
-         // COMPILER MAGIC : get property
-         messageStr.append('$');
-         actionRef = scope.moduleScope->module->mapSubject(messageStr, false);
-      }
-   }
 
    // create a message id
-   return encodeMessage(actionRef, paramCount);
+   return encodeMessage(actionRef, paramCount) | actionFlags;
 }
 
 ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
@@ -3016,9 +3014,8 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
             signature.append('$');
             signature.append(scope.moduleScope->module->resolveReference(classRef));
          }
-         else signature.append('$');
 
-         ref_t messageRef = encodeMessage(scope.moduleScope->module->mapSubject(signature, false), 1);
+         ref_t messageRef = encodeMessage(scope.moduleScope->module->mapSubject(signature, false), 1) | PROPSET_MESSAGE;
 
          // compile target
          // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
@@ -3741,7 +3738,6 @@ void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope, 
                case V_INT32:
                case V_SIGNATURE:
                case V_MESSAGE:
-               case V_VERB:
                   current.set(_logic->isVariable(classInfo) ? lxExtArgument : lxIntExtArgument, 0);
                   break;
                case V_SYMBOL:
@@ -4016,7 +4012,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    ref_t actionRef = 0;
    ref_t verbRef = 0;
    bool propMode = false;
-   bool conversionMode = false;
+   ref_t flags = 0;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
    SNode arg = node.findChild(lxMethodParameter, lxMessage, lxParamRefAttr);
@@ -4042,7 +4038,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       else {
          // COMPILER MAGIC : recognize set property
          int verb_id = _verbs.get(messageStr.c_str());
-         propMode = verb_id == SET_MESSAGE_ID;
+         if (verb_id == SET_MESSAGE_ID) {
+            propMode = true;
+            flags |= PROPSET_MESSAGE;
+         }
       }
    }
 
@@ -4130,7 +4129,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
       if (test(scope.hints, tpSealed | tpConversion)) {
          if (paramCount == 1 && emptystr(messageStr)) {
-            conversionMode = true;
+            flags |= CONVERSION_MESSAGE;
          }
    //      else if (verb_id == GET_MESSAGE_ID && paramCount == 0 && sign_id != 0 && test(scope.getClassFlags(false), elNestedClass)) {
    //         // if it is an implicit nested constructor
@@ -4144,18 +4143,17 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    //   }
 
       if (propMode && paramCount == 1 && messageStr.Length() > 3) {
-         // COMPILER MAGIC : set&x => x$
+         // COMPILER MAGIC : set&x => x
          messageStr.cut(0, 4);
-         messageStr.append('$');
 
          propMode = false;
       }
 
       //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-      if (paramCount > 0 && !emptystr(signature) && !conversionMode) {
+      if (paramCount > 0 && !emptystr(signature) && flags != CONVERSION_MESSAGE) {
          actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
 
-         ref_t genericMessage = encodeMessage(actionRef, paramCount);
+         ref_t genericMessage = encodeMessage(actionRef, paramCount) | flags;
 
          node.appendNode(lxMultiMethodAttr, genericMessage);
       }
@@ -4171,18 +4169,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          if (paramCount != 0)
             scope.raiseError(errIllegalMethod, node);
       }
-      else if (paramCount == 0) {
-         if (actionRef >= PREDEFINED_MESSAGE_ID && emptystr(signature)) {
-            // COMPILER MAGIC : get property
-            messageStr.append('$');
 
-            actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
-         }
-      }
-
-      scope.message = encodeMessage(actionRef, paramCount);
-      if (conversionMode)
-         scope.message |= CONVERSION_MESSAGE;
+      scope.message = encodeMessage(actionRef, paramCount) | flags;
    }
 }
    
@@ -5851,6 +5839,9 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
          boxing = false;
       }
       else if (sourceNode == lxMessageConstant && targetRef == scope.messageReference) {
+         boxing = false;
+      }
+      else if (sourceNode == lxSignatureConstant && targetRef == scope.signatureReference) {
          boxing = false;
       }
       else sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);

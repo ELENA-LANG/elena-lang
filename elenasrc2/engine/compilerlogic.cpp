@@ -510,17 +510,14 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
             if (index != NOTFOUND_POS) {
                ref_t actionRef = 0;
                if (index > 0) {
-                  // HOTFIX : recognize x$$int
-                  if (messageName[index + 1] == '$')
-                     index++;
-
                   IdentifierString content(messageName, index);
 
                   actionRef = scope.module->mapSubject(content.c_str(), true);
                }
                else actionRef = SET_MESSAGE_ID;
 
-               ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getParamCount(message)), maOverloadlist));
+               ref_t flags = message & MESSAGE_FLAG_MASK;
+               ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getParamCount(message) | flags), maOverloadlist));
                if (listRef != 0)
                   compiler.generateOverloadListMember(scope, listRef, message);
             }
@@ -646,6 +643,9 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       }
       else if (sourceRef == V_MESSAGE) {
          targetRef = scope.messageReference;
+      }
+      else if (sourceRef == V_SIGNATURE) {
+         targetRef = scope.signatureReference;
       }
    }
 
@@ -809,7 +809,6 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.size = 4;
          break;
       case V_SIGNATURE:
-      case V_VERB:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugSubject | elStructureRole | elEmbeddable;
          info.size = 4;
@@ -1110,9 +1109,6 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
       case V_EXTMESSAGE:
          attrValue = 0;
          return true;
-      case V_VERB:
-         attrValue = 0;
-         return true;
       default:
          return false;
    }
@@ -1197,10 +1193,6 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
             info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
             return info.size == 4;
-         case V_VERB:
-            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper);
-            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_VERB, 0));
-            return info.size == 4;
          case V_MESSAGE:
             info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
@@ -1239,8 +1231,6 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
          return firstNonZero(scope.signatureReference, scope.superReference);
       case V_MESSAGE:
          return firstNonZero(scope.messageReference, scope.superReference);
-      case V_VERB:
-         return firstNonZero(scope.verbReference, scope.superReference);
       case V_ARGARRAY:
          return firstNonZero(scope.arrayReference, scope.superReference);
       default:

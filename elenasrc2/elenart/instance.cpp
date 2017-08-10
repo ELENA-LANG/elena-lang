@@ -120,7 +120,7 @@ int Instance::loadSubjectName(size_t subjectRef, char* buffer, size_t length)
    if (initSubjectSection(subjectSection)) {
       MemoryReader reader(&subjectSection);
 
-      ref_t verb, subject;
+      ref_t subject;
       int count;
       decodeMessage(subjectRef, subject, count);
 

@@ -107,7 +107,7 @@ const int gcCommands[gcCommandNumber] =
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
    &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &loadOneByteOp, &compilePushE, &loadMTOp, &loadOneByteOp,
-   &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileNop,
+   &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileDSetVerb,
 
    &compileNot, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileDSub, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
@@ -986,11 +986,24 @@ void _ELENA_::compileEAddN(int, x86JITScope& scope)
 
 void _ELENA_::compileDCopyCount(int, x86JITScope& scope)
 {
-   // mov ebx, ecx
    // and ebx, VERB_MASK
    scope.code->writeWord(0xD98B);
    scope.code->writeWord(0xE381);
    scope.code->writeDWord(PARAM_MASK);
+}
+
+void _ELENA_::compileDSetVerb(int, x86JITScope& scope)
+{
+   // and ecx, PARAM_MASK | MESSAGE_FLAG_MASK
+   // mov edx, ebx
+   // shl edx, 4
+   // or  ecx, edx
+   scope.code->writeWord(0xE181);
+   scope.code->writeDWord(PARAM_MASK | MESSAGE_FLAG_MASK);
+   scope.code->writeWord(0xD38B);
+   scope.code->writeWord(0xE2C1);
+   scope.code->writeByte(4);
+   scope.code->writeWord(0xCA0B);
 }
 
 //void _ELENA_::compileLoad(int opcode, x86JITScope& scope)
@@ -1265,9 +1278,12 @@ void _ELENA_::compileLessN(int, x86JITScope& scope)
 
 void _ELENA_::compileSetVerb(int, x86JITScope& scope)
 {
+   // and ecx, PARAM_MASK
    // or  ecx, m
+   scope.code->writeWord(0xE181);
+   scope.code->writeDWord(PARAM_MASK);
    scope.code->writeWord(0xC981);
-   scope.code->writeDWord(scope.argument);
+   scope.code->writeDWord(encodeVerb(scope.argument));
 }
 
 void _ELENA_::compilePopB(int, x86JITScope& scope)

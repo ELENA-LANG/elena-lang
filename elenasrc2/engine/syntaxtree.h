@@ -104,7 +104,6 @@ enum LexicalType
    lxMessageConstant = 0x0A113, // arg - rererence
    lxExtMessageConstant = 0x0A114, // arg -reference
    lxSignatureConstant  = 0x0A115, // arg - reference
-   lxVerbConstant    = 0x0A116, // arg - reference
    lxNil             = 0x0A117,
    lxCurrent         = 0x0A118, // arg -offset
    lxResult          = 0x0A119, // arg -offset

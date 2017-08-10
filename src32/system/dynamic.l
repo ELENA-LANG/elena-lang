@@ -1,39 +1,24 @@
-////// --- Symbol ---
-////
-/////// A dynamic symbol
-////sealed embeddable struct Symbol
-////{
-////    __symbol theValue.
-////    
-////    /// Loads a symbol
-////    constructor new literal:name
-////    [
-////        system'core_routines'__symbol load symbol_ref:$self literal:name
-////    ]
-////        
-////    /// Redirects incoming messages to the symbol
-////    dispatch => system'core_routines'__symbol.
-////}
-
-// --- Verb ---
-
-/// A dynamic verb extender
-sealed embeddable struct Verb
-{
-    __verb theValue(4).
-
-//    /// Loads a dynamic verb
-//    constructor new verb:aVerb
-//        = aVerb.
+//// --- Symbol ---
+//
+///// A dynamic symbol
+//sealed embeddable struct Symbol
+//{
+//    __symbol theValue.
 //    
-//    /// Dispatches incoming messages and redirects to the target
-//    dispatch => system'core_routines'__verb.
-}
+//    /// Loads a symbol
+//    constructor new literal:name
+//    [
+//        system'core_routines'__symbol load symbol_ref:$self literal:name
+//    ]
+//        
+//    /// Redirects incoming messages to the symbol
+//    dispatch => system'core_routines'__symbol.
+//}
 
 // --- Message ---
 
 /// A message constant
-sealed embeddable struct Message
+sealed embeddable struct Message :: dispatchable<mssg>
 {
     __mssg theValue(4).
 
@@ -59,8 +44,8 @@ sealed embeddable struct Message
         ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
     ]
 
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    dispatch => system'core_routines'__message.
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    dispatch => system'core_routines'__message.
 }
 
 // --- ExtensionMessage ---
@@ -87,7 +72,7 @@ sealed embeddable struct ExtensionMessage
 // --- Signature ---
 
 /// A dynamic signature extender
-sealed embeddable struct Signature //:: dispatchable<subject>
+sealed embeddable struct Signature :: dispatchable<subject>
 {
     __subj theValue(4).
     
@@ -122,7 +107,7 @@ sealed embeddable struct Signature //:: dispatchable<subject>
 //        
 //        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
 //    ]
-//
-//    /// Qualifies incoming messages and redirects to the target
-//    stacksafe dispatch => system'core_routines'__signature.
+
+    /// Qualifies incoming messages and redirects to the target
+    stacksafe dispatch => system'core_routines'__signature.
 }

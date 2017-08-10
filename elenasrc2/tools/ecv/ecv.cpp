@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   9
+#define REVISION_VERSION   10
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -179,6 +179,7 @@ ref_t resolveMessage(_Module* module, ident_t method)
 {
    int paramCount = 0;
    ref_t actionRef = 0;
+   ref_t flags = 0;
 
    IdentifierString actionName;
    int paramIndex = method.find('[', -1);
@@ -197,6 +198,14 @@ ref_t resolveMessage(_Module* module, ident_t method)
       actionRef = NEWOBJECT_MESSAGE_ID;
    }
    else {
+      if (method.find("set&") != NOTFOUND_POS) {
+         actionName.cut(0, 4);
+         flags = PROPSET_MESSAGE;
+      }
+      else if (actionName.compare("set")) {
+         flags = PROPSET_MESSAGE;
+      }
+
       actionRef = module->mapSubject(actionName, true);
       if (actionRef == 0) {
          printLine("Unknown subject", actionName);
@@ -205,7 +214,7 @@ ref_t resolveMessage(_Module* module, ident_t method)
       }
    }
 
-   return encodeMessage(actionRef, paramCount);
+   return encodeMessage(actionRef, paramCount) | flags;
 }
 
 inline void appendHex32(IdentifierString& command, unsigned int hex)
@@ -343,12 +352,6 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
    if (emptystr(referenceName)) {
       command.append("unknown");
    }
-   else if (mask == mskVerb) {
-      command.append("verb:");
-      IdentifierString message;
-      parseMessageConstant(message, referenceName);
-      command.append(message);
-   }
    else {
       command.append(referenceName);
       if (literalConstant) {
@@ -389,6 +392,9 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       if (test(reference, SEALED_MESSAGE)) {
          command.append("#private");
       }  
+      if (test(reference, PROPSET_MESSAGE)) {
+         command.append("set&");
+      }
       ident_t subjectName = module->resolveSubject(actionRef);
       command.append(subjectName);
    }

@@ -26,6 +26,7 @@ namespace _ELENA_
    #define MESSAGE_FLAG_MASK       0xE0000000u
    #define SEALED_MESSAGE          0x40000000u
    #define CONVERSION_MESSAGE      0x60000000u
+   #define PROPSET_MESSAGE         0x20000000u
    #define PARAM_MASK              0x0000000Fu
    #define OPEN_ARG_COUNT          0x0F
 
@@ -152,7 +153,6 @@ namespace _ELENA_
       mskCharRef             = 0x07000000u,   // reference to character constant
       mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
       mskSignature           = 0x09000000u,   // message signature constant
-      mskVerb                = 0x0A000000u,   // message verb constant
       mskExtMessage          = 0x0B000000u,   // external message verb constant
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
       mskConstArray          = 0x0D000000u,   // constant array
@@ -464,7 +464,6 @@ namespace _ELENA_
    #define MESSAGE_FORWARD          "'$message"
    #define EXT_MESSAGE_FORWARD      "'$ext_message"
    #define SIGNATURE_FORWARD        "'$signature"
-   #define VERB_FORWARD             "'$verb"
    #define ARRAY_FORWARD            "'$array"
    #define BOOL_FORWARD             "'$bool"
 

@@ -30,6 +30,7 @@ enum ByteCode
    bcACopyB          = 0x0C,
    bcPopE            = 0x0D,
    bcBSRedirect      = 0x0E,
+   bcDSetVerb        = 0x0F,
 
    bcNot             = 0x10,
    bcLen             = 0x11,

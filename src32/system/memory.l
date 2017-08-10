@@ -1090,7 +1090,8 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
     literal add literal : aLiteral
         => system'core_routines'__literal.
 
-    add : anObject = anObject cast:%add to:$self.
+    add : anObject 
+        <= add(anObject value).
 
     /// Returns the character at the specified index
     stacksafe char getAt int:anIndex
@@ -1100,7 +1101,10 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
         
         ^ CharValue new char:aChar.
     ]
-    
+
+    stacksafe literal add value:v
+        = v literal.
+        
     /// Concatinates the values
     stacksafe literal add char:aChar
         = $self add literal:aChar.
@@ -1284,7 +1288,8 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
     bool less char : aChar
         <= less wide:aChar.
 
-    add : anObject = anObject cast:%add to:$self.
+    multi add : anObject 
+        <= add(anObject value).
 
     /// Returns the character at the specified index
     getAt : aParam
@@ -1299,6 +1304,10 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
         ^ CharValue new char:aChar
     ]
 
+    /// Concatinates the values
+    wide add value : v
+        = v wide.
+    
     /// Concatinates the values
     stacksafe wide add wide : aLiteral
         => system'core_routines'__wide.

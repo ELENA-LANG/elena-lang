@@ -145,6 +145,7 @@ protected:
    friend void compileDMulN(int opcode, x86JITScope& scope);
    friend void compileEAddN(int opcode, x86JITScope& scope);
    friend void compileDCopyCount(int opcode, x86JITScope& scope);
+   friend void compileDSetVerb(int opcode, x86JITScope& scope);
    friend void compileIndexInc(int opcode, x86JITScope& scope);
    friend void compileIndexDec(int opcode, x86JITScope& scope);
    friend void compileDShiftN(int opcode, x86JITScope& scope);
@@ -273,6 +274,7 @@ void compileDAddN(int opcode, x86JITScope& scope);
 void compileDMulN(int opcode, x86JITScope& scope);
 void compileEAddN(int opcode, x86JITScope& scope);
 void compileDCopyCount(int opcode, x86JITScope& scope);
+void compileDSetVerb(int opcode, x86JITScope& scope);
 void compileIndexInc(int opcode, x86JITScope& scope);
 void compileIndexDec(int opcode, x86JITScope& scope);
 void compileDShiftN(int opcode, x86JITScope& scope);

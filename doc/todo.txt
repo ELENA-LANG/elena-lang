@@ -3,6 +3,12 @@ In development:
 ------                              
 
               xdev - general implementation
+                 * reimplement message and signature, get rid of verb
+                 * test signature / verb?
+
+
+                 * test extension message
+
                  * implicit conversion
                  * private message
                  * private sealed message
@@ -28,13 +34,11 @@ In development:
                  * private sealed messages
                  * generic get - see nil
 
-                 * message : verb custom-verb signature
                  * test embeddable optimization
                  * test implicit conversion
                  * test multi method
                  * test generic
 
-                 * reimplement message and signature, get rid of verb
                  * reimplement generic method handlers
                  * reimplement multi dispatching to fix the short circuit (infinit loop)
                     multi convert : n <= convert(n value)
@@ -44,6 +48,7 @@ In development:
                  * elenart : correctly display strong typed message names
                  * elenavm : correctly display strong typed message names
                  * support alternative property setting syntax : a set b:c <=> a b := c.
+                 * Signature should support only get, set, eval
 
               zdev - script engine
                  * migrate Tape
