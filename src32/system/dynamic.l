@@ -31,8 +31,8 @@ sealed embeddable struct Message :: dispatchable<mssg>
     constructor new mssg:message
         = message.
 
-//    stacksafe subject
-//        => system'core_routines'__message.
+    stacksafe subject
+        => system'core_routines'__message.
 
     stacksafe literal
     [
@@ -76,37 +76,37 @@ sealed embeddable struct Signature :: dispatchable<subject>
 {
     __subj theValue(4).
     
-//    /// Creates a dynamic signature
-//    stacksafe constructor new mssg:message
-//    [
-//        system'core_routines'__signature load subject:$self mssg:message
-//    ]
-//        
-//    /// Creates a dynamic signature
-//    stacksafe constructor new subject:subject
-//        = subject.
-//
-//    /// Creates a dynamic signature
-//    constructor new literal:aSubjectName
-//    [
-//        system'core_routines'__signature load subject:$self literal:aSubjectName
-//    ]
-//
-//    /// Creates a dynamic signature
-//    constructor new wide:aSubjectName
-//        <= new literal:aSubjectName.
-//
-//    /// Compares the values
-//    stacksafe bool equal subject : subject
-//        = theValue == subject.
-//
-//    stacksafe literal
-//    [
-//        byte aBuffer(256).
-//        int  aLength := system'external LoadSubjectName subject:$self bytearray:aBuffer int:255.
-//        
-//        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
-//    ]
+    /// Creates a dynamic signature
+    stacksafe constructor new mssg:message
+    [
+        system'core_routines'__signature load subject:$self mssg:message
+    ]
+        
+    /// Creates a dynamic signature
+    stacksafe constructor new subject:subject
+        = subject.
+
+    /// Creates a dynamic signature
+    constructor new literal:aSubjectName
+    [
+        system'core_routines'__signature load subject:$self literal:aSubjectName
+    ]
+
+    /// Creates a dynamic signature
+    constructor new wide:aSubjectName
+        <= new literal:aSubjectName.
+
+    /// Compares the values
+    stacksafe bool equal subject : subject
+        = theValue == subject.
+
+    stacksafe literal
+    [
+        byte aBuffer(256).
+        int  aLength := system'external LoadSubjectName subject:$self bytearray:aBuffer int:255.
+        
+        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
+    ]
 
     /// Qualifies incoming messages and redirects to the target
     stacksafe dispatch => system'core_routines'__signature.

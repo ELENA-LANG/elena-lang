@@ -913,7 +913,7 @@ void ByteCodeWriter :: releaseArgList(CommandTape& tape)
 void ByteCodeWriter::setSubject(CommandTape& tape, ref_t subject)
 {
    // setverb subj
-   tape.write(bcSetVerb, subject);
+   tape.write(bcSetVerb, getAction(subject));
 }
 
 void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)

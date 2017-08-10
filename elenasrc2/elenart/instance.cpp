@@ -110,7 +110,7 @@ bool Instance :: initSubjectSection(ImageSection& subjectSection)
    else return false;
 }
 
-int Instance::loadSubjectName(size_t subjectRef, char* buffer, size_t length)
+int Instance::loadSubjectName(size_t subject, char* buffer, size_t length)
 {
    RTManager manager;
 
@@ -119,10 +119,6 @@ int Instance::loadSubjectName(size_t subjectRef, char* buffer, size_t length)
    ImageSection subjectSection;
    if (initSubjectSection(subjectSection)) {
       MemoryReader reader(&subjectSection);
-
-      ref_t subject;
-      int count;
-      decodeMessage(subjectRef, subject, count);
 
       return manager.readSubjectName(reader, subject, buffer, length);
    }

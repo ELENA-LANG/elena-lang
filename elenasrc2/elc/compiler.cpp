@@ -4035,7 +4035,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          }
          else scope.raiseError(errInvalidSubject, verb);
       }
-      else {
+      else if (verb != lxNone) {
          // COMPILER MAGIC : recognize set property
          int verb_id = _verbs.get(messageStr.c_str());
          if (verb_id == SET_MESSAGE_ID) {
@@ -4113,19 +4113,12 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
-   //   if (test(scope.hints, tpSealed | tpGeneric)) {
-   //      if (paramCount == OPEN_ARG_COUNT) {
-   //         // if it is a generic open argument handler - eval verb should be used
-   //         if (verb_id == 0)
-   //            verb_id = EVAL_MESSAGE_ID;
-   //      }
-   //      else {
-   //         if (!emptystr(signature))
-   //            scope.raiseError(errInvalidHint, verb);
+      if (test(scope.hints, tpSealed | tpGeneric)) {
+         if (!emptystr(signature) || !emptystr(messageStr))
+               scope.raiseError(errInvalidHint, verb);
 
-   //         messageStr.copy(GENERIC_PREFIX);
-   //      }
-   //   }
+         messageStr.copy(GENERIC_PREFIX);
+      }
 
       if (test(scope.hints, tpSealed | tpConversion)) {
          if (paramCount == 1 && emptystr(messageStr)) {

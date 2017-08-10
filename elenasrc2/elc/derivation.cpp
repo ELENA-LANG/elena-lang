@@ -2216,7 +2216,7 @@ bool DerivationReader :: generateMethodScope(SNode node, DerivationScope& scope,
       SNode lastAttr = findLastAttribute(attributes);
       SNode firstMember = node.findChild(lxMethodParameter, lxAttribute, lxAttributeValue);
 
-      if (scope.isImplicitAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) && (firstMember == lxAttributeValue || firstMember == lxMethodParameter)) {
+      if (scope.isImplicitAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) && (firstMember == lxAttributeValue || firstMember == lxMethodParameter || firstMember == lxNone)) {
          // HOTFIX : recognize explicit / generic attributes
       }
       else {

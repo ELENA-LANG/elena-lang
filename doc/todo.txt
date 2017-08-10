@@ -3,9 +3,12 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * reimplement message and signature, get rid of verb
-                 * test signature / verb?
+                 * reimplement generic method handlers
+                 * generic
+                 * generic get - see nil
+                 * test generic
 
+                 * test signature
                  * test extension message
 
                  * implicit conversion
@@ -31,14 +34,10 @@ In development:
                  * custom verb: message
                  * private messages
                  * private sealed messages
-                 * generic get - see nil
 
                  * test embeddable optimization
                  * test implicit conversion
-                 * test multi method
-                 * test generic
 
-                 * reimplement generic method handlers
                  * reimplement multi dispatching to fix the short circuit (infinit loop)
                     multi convert : n <= convert(n value)
                  * embeddable eval[1]

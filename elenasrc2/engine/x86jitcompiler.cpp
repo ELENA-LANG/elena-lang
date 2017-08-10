@@ -1283,7 +1283,7 @@ void _ELENA_::compileSetVerb(int, x86JITScope& scope)
    scope.code->writeWord(0xE181);
    scope.code->writeDWord(PARAM_MASK);
    scope.code->writeWord(0xC981);
-   scope.code->writeDWord(encodeVerb(scope.argument));
+   scope.code->writeDWord(scope.resolveMessage(encodeVerb(scope.argument)));
 }
 
 void _ELENA_::compilePopB(int, x86JITScope& scope)
