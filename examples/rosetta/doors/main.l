@@ -17,7 +17,7 @@ program =
             
     0 till:100 do(:i)
     [
-        console printLine("Door #",i + 1," :",Doors@i iif("Open","Closed"))
+        console printLine("Door #",i + 1," :",Doors[i] iif("Open","Closed"))
     ].
     
     console readChar.

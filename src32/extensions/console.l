@@ -11,7 +11,7 @@ extension outputOp
         int i := 0.
         while (i < len)
         [
-            object obj := list@i.
+            object obj := list[i].
             
             self write(obj~convertorOp toLiteral).
             
@@ -27,7 +27,7 @@ extension outputOp
         int i := 0.
         while (i < len)
         [
-            object obj := list@i.
+            object obj := list[i].
             
             self write(obj~convertorOp toWide).
             
@@ -77,7 +77,7 @@ extension outputOp
         int i := 0.
         while (i < len)
         [
-            object obj := list@i.
+            object obj := list[i].
             
             self write:(obj~convertorOp toLiteral).
             
@@ -368,7 +368,7 @@ extension inputOp
         int anIndex := 0.
         while (anIndex < aLength)
         [
-            (aParams getAt int:anIndex)~convertorOp convert to:(Arguments @ anIndex).
+            (aParams getAt int:anIndex)~convertorOp convert to(Arguments[anIndex]).
             
             anIndex := anIndex + 1
         ].

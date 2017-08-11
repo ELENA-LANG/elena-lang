@@ -6,7 +6,7 @@ template eventhandler :: function
     stacksafe explicit function:func
     [
         theFunctions := function(1).
-        theFunctions@0 := func.
+        theFunctions[0] := func.
     ]
 
     append function:func
@@ -18,12 +18,12 @@ template eventhandler :: function
         int i := 0.
         while (i < len)
         [
-            functions@i := theFunctions@i.
+            functions[i] := theFunctions[i].
             
             i := i + 1.
         ].
         
-        functions@len := func.
+        functions[len] := func.
         
         theFunctions := functions.
     ]

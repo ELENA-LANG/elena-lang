@@ -24,8 +24,8 @@ extension objectOp
     [
         var c := self~objectOp class_ref.
         
-        byte aBuffer(256).
-        int  aLength := system'external LoadClassName 
+        byte[] aBuffer(256).
+        int    aLength := system'external LoadClassName 
                                 ref:c
                                 bytearray:aBuffer
                                 int:255.

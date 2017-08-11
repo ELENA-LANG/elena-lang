@@ -16,9 +16,9 @@ struct WinEncoder :: Encoder
         if (aLength > 127)
             [ InvalidArgumentException new; raise ].
         
-        short temp_buf(127).
-        int   aConverted := aLength.
-        int   n := aLength.                
+        short[] temp_buf(127).
+        int     aConverted := aLength.
+        int     n := aLength.                
         
         if (anIndex != 0)
             [
@@ -44,8 +44,8 @@ struct WinEncoder :: Encoder
 
     convert int:anIndex vint:aLength chararray:aByteArray bytearray:anOutput vint:anOutputLength 
     [
-        short temp_buf(127).
-        int   temp_len := 127.
+        short[] temp_buf(127).
+        int     temp_len := 127.
 
         UTF16Encoding convert int:anIndex int:aLength chararray:aByteArray shortarray:temp_buf vint:temp_len.
         

@@ -36,7 +36,7 @@ extension tapeOp
         int n := len.
         n := n - self int.
        
-        ^ params@n
+        ^ params[n]
     ]
     
 //    tape_assign args:params

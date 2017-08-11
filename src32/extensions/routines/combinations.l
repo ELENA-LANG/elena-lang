@@ -155,7 +155,7 @@ class BaseRowEnumerator :: Enumerator
         int i := 0.
         while (i < theLength)
         [
-            theIndexers setAt int:i object:((Arguments @ i) indexer).
+            theIndexers setAt int:i object(Arguments[i] indexer).
             
             i := i + 1
         ].
@@ -171,7 +171,7 @@ class BaseRowEnumerator :: Enumerator
         int i := 0.
         while (i < theLength)
         [
-            theIndexers setAt int:i object:((Arguments @ (IntNumber new int:i)) indexer).
+            theIndexers setAt int:i object(Arguments[IntNumber new int:i] indexer).
             
             i := i + 1
         ].

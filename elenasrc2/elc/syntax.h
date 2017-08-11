@@ -100,7 +100,8 @@ enum Symbol
    nsRootAngleOperator          = 0x01054,
    nsRootAngleObject            = 0x01055,
    nsRootL6Operation            = 0x01056,
-   nXInlineClosure              = 0x01057,
+   nsXInlineClosure             = 0x01057,
+   nsArrayBrackets              = 0x01058,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

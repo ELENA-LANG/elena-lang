@@ -51,7 +51,7 @@ extension classROp
         
         while (i < l)
         [
-            self setField int:i object:(objects@i).
+            self setField int:i object(objects[i]).
             
             i := i + 1
         ].

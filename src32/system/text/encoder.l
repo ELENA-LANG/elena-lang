@@ -11,8 +11,8 @@ limited class Encoder
     
     stacksafe convert int:anIndex vint:aLength literal:aLiteral bytearray:anOutput vint:anOutputLength
     [
-        char temp(64).
-        int  temp_len := 64.
+        char[] temp(64).
+        int    temp_len := 64.
         if (temp_len > aLength)
             [ temp_len := aLength ];
             [ aLength int := temp_len ].
@@ -24,8 +24,8 @@ limited class Encoder
     
     stacksafe convert int:anIndex vint:aLength wide:aLiteral bytearray:anOutput vint:anOutputLength
     [
-        char temp(64).
-        int  temp_len := 64.
+        char[] temp(64).
+        int    temp_len := 64.
         if (temp_len > aLength)
             [ temp_len := aLength ];
             [ aLength int := temp_len ].
@@ -43,9 +43,9 @@ limited class Encoder
         
         while (i < aLength)
         [
-            byte tmp(64).
-            int  tmp_len := 64.
-            int  len := remaining.
+            byte[] tmp(64).
+            int    tmp_len := 64.
+            int    len := remaining.
             if (len > tmp_len)
                 [ len := tmp_len ].
              
@@ -70,9 +70,9 @@ limited class Encoder
         
         while (i < aLength)
         [
-            byte tmp(64).
-            int  tmp_len := 64.
-            int  len := remaining.
+            byte[] tmp(64).
+            int    tmp_len := 64.
+            int    len := remaining.
             if (len > tmp_len)
                 [ len := tmp_len ].
              
@@ -97,9 +97,9 @@ limited class Encoder
         
         while (i < aLength)
         [
-            char tmp(64).
-            int  tmp_len := 64.
-            int  len := remaining.
+            char[] tmp(64).
+            int    tmp_len := 64.
+            int    len := remaining.
             if (len > tmp_len)
                 [ len := tmp_len ].
              
@@ -124,9 +124,9 @@ limited class Encoder
         
         while (i < aLength)
         [
-            char tmp(64).
-            int  tmp_len := 64.
-            int  len := remaining.
+            char[] tmp(64).
+            int    tmp_len := 64.
+            int    len := remaining.
             if (len > tmp_len)
                 [ len := tmp_len ].
              
@@ -222,8 +222,8 @@ class UTF16Encoding =
         
     stacksafe convert int:anIndex vint:aSize literal:aLiteral shortarray:anOutput vint:anOutputLength
     [
-        char temp(64).
-        int  temp_len := 64.
+        char[] temp(64).
+        int    temp_len := 64.
         if (temp_len < aSize)
             [ aSize int := temp_len ].
         
@@ -234,8 +234,8 @@ class UTF16Encoding =
         
     stacksafe literal toLiteral int:anIndex int:aSize shortarray:anInput
     [
-        char temp(64).
-        int  temp_len := 64.
+        char[] temp(64).
+        int    temp_len := 64.
         
         $self convert int:anIndex int:aSize shortarray:anInput chararray:temp vint:temp_len.
         
