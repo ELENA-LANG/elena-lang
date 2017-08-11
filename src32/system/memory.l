@@ -219,7 +219,7 @@ sealed ByteArray :: array<byte>, dispatchable<bytearray>
 {
     /// Creates the byte array with the specified length
     stacksafe constructor new int:len
-        = byte(len).
+        = byte[](len).
 
 //    /// Creates the byte array with the specified length
 //    constructor new : aLength
@@ -370,7 +370,7 @@ sealed ShortArray :: array<short>, dispatchable<shortarray>
 {
     /// Creates the short array with the specified length
     stacksafe constructor new int:aLength
-        = short(aLength).
+        = short[](aLength).
     
 //    /// Creates the short array with the specified length
 //    constructor new : aLength
@@ -449,7 +449,7 @@ sealed IntArray :: array<int>, dispatchable<intarray>
 {
     /// Creates the array with the specified length
     stacksafe constructor new int : aLength
-        = int(aLength).
+        = int[](aLength).
 
 //    /// Creates the array with the specified length
 //    constructor new : aLength
@@ -763,7 +763,7 @@ sealed RealArray :: array<real>, dispatchable<realarray>
 {
     /// Creates the array with the specified length
     stacksafe constructor new int:aLength
-        = real(aLength).
+        = real[](aLength).
 
 //    /// Creates the array with the specified length
 //    constructor new : aLength
@@ -933,7 +933,7 @@ sealed CharArray :: array<char>, dispatchable<chararray>
 {
     /// Creates the new array with a specified length
     stacksafe constructor new int : len
-        = char(len).
+        = char[](len).
 
 //    /// Creates the new array with a specified length
 //    constructor new : aLength
@@ -1555,7 +1555,7 @@ sealed Array :: array<object>, dispatchable<array>
 {
     /// Creates an empty array
     constructor min
-        = object(0).
+        = object[](0).
     
     /// Creates the array with the specified length
     constructor new : aLength
@@ -1569,7 +1569,7 @@ sealed Array :: array<object>, dispatchable<array>
     
     /// Creates the array with the specified length
     stacksafe constructor new int:aLength
-        = object(aLength).
+        = object[](aLength).
 
     /// Creates a copy of the provided array
     constructor new array:anArray

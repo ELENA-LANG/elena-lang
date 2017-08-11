@@ -7,7 +7,7 @@ dynamic __tape_mixin Tape
     object $item.
     
     constructor $new int:n
-        = object(n).
+        = object[](n).
     
     constructor new array:list
         <= $new int:(list length);
@@ -75,7 +75,7 @@ dynamic mixin Struct :: dispatchable<tape_structure>
     object $item.
     
     constructor $new int:n
-        = object(n).
+        = object[](n).
     
     constructor new array:list
         <= $new int:(list length);

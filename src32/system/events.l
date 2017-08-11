@@ -5,7 +5,7 @@ template eventhandler :: function
     
     stacksafe explicit function:func
     [
-        theFunctions := function(1).
+        theFunctions := function[](1).
         theFunctions[0] := func.
     ]
 
@@ -13,7 +13,7 @@ template eventhandler :: function
     [
         int len := theFunctions length.
         
-        array<function> functions := function(len + 1).
+        array<function> functions := function[](len + 1).
 
         int i := 0.
         while (i < len)

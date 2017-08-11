@@ -1326,21 +1326,35 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
    }
 }
 
+inline bool checkNode(SNode node, LexicalType type, ref_t argument)
+{
+   return node == type && node.argument == argument;
+}
+
+void DerivationReader :: generateNewOperator(SyntaxWriter& writer, SNode current, DerivationScope& scope)
+{
+   SNode terminal = current.firstChild(lxObjectMask);
+   if (!test(terminal.type, lxTerminalMask))
+      scope.raiseError(errInvalidSyntax, current);
+
+   scope.copySubject(writer, terminal);
+
+   writer.appendNode(lxOperator, -1);
+   generateExpressionTree(writer, current.nextNode().nextNode(), scope, 0);
+   writer.insert(lxExpression);
+   writer.closeNode();
+}
+
 void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode)
 {
    writer.newBookmark();
 
    SNode current = node.firstChild();
    bool identifierMode = current.type == lxIdentifier;
-   bool listMode = false;
-   // check if it is new operator
-   if (identifierMode && current.nextNode() == lxExpression && current.nextNode().nextNode() != lxExpression) {
-      scope.copySubject(writer, current);
-
-      writer.appendNode(lxOperator, -1);
-      generateExpressionTree(writer, current.nextNode(), scope, 0);
-      writer.insert(lxExpression);
-      writer.closeNode();
+   bool listMode = false;   
+   if (current == lxObject && checkNode(current.nextNode(), lxOperator, -3) && current.nextNode().nextNode() != lxAttributeValue) {
+      // check if it is new operator
+      generateNewOperator(writer, current, scope);
    }
    else {
       while (current != lxNone) {
@@ -1755,6 +1769,14 @@ void DerivationReader :: generateCodeTree(SyntaxWriter& writer, SNode node, Deri
       }
       else if (current == lxLoop || current == lxCode || current == lxExtern) {
          generateCodeTree(writer, current, scope);
+      }
+      else if (current == lxObject && checkNode(current.nextNode(), lxOperator, -3) && current.nextNode().nextNode() != lxAttributeValue) {
+         // check if it is new operator
+         writer.newBookmark();
+         generateNewOperator(writer, current, scope);
+         writer.removeBookmark();
+
+         break;
       }
       else generateObjectTree(writer, current, scope);
 

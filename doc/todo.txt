@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * assigning an array variable : array<IntNumber> n := int[](8).
                  * assigning a template : var n := var<IntNumber>(3).
                  * declaring an array field
                  * declaring an array : // array<Field> fieldArray.
