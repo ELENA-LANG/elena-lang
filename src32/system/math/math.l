@@ -1,76 +1,276 @@
-// --- mathOp ---
+//class mathOpDispatcher =
+//{
+//    eval byte:aValue = byteOp.
+//    
+//    eval short:aValue = shortOp.
+//    
+//    eval int:aValue = intOp.
+//    
+//    eval long:aValue = longOp.
+//    
+//    eval real:aValue = realOp.
+//}.
 
-class mathOpDispatcher =
+// --- mathController ---
+
+$mathController =
 {
-    eval byte:aValue = byteOp.
+    absolute value:n
+    [
+        system'NotSupportedException new; raise
+    ]
     
-    eval short:aValue = shortOp.
+    absolute byte:n
+        = n~byteOp absolute.
+        
+    absolute short:n
+        = n~shortOp absolute.
+        
+    absolute int:n
+        = n~intOp absolute.
+        
+    absolute long:n
+        = n~longOp absolute.
+        
+    absolute real:n 
+        = n~realOp absolute.
+        
+    multi absolute : n
+        <= absolute(n value).
+        
+    mod value:n object:m
+    [
+        system'NotSupportedException new; raise
+    ]
     
-    eval int:aValue = intOp.
+    mod byte:n object:m
+        = n~byteOp mod:m.
+        
+    mod short:n object:m
+        = n~shortOp mod:m.
+        
+    mod int:n object:m
+        = n~intOp mod:m.
+        
+    mod long:n object:m
+        = n~longOp mod:m.
+        
+    mod real:n object:m
+        = n~realOp mod:m.
+
+    multi mod : n : m
+        <= mod(n value, m).
+                
+    isOdd value:n
+    [
+        system'NotSupportedException new; raise
+    ]
     
-    eval long:aValue = longOp.
+    bool isOdd byte:n
+        = n~byteOp isOdd.
+        
+    bool isOdd short:n
+        = n~shortOp isOdd.
+        
+    bool isOdd int:n
+        = n~intOp isOdd.
+        
+    bool isOdd long:n
+        = n~longOp isOdd.
+
+    bool multi isOdd:n
+        <= isOdd(n value).
+                        
+    isEven value:n
+    [
+        system'NotSupportedException new; raise
+    ]
     
-    eval real:aValue = realOp.
+    bool isEven byte:n
+        = n~byteOp isEven.
+        
+    bool isEven short:n
+        = n~shortOp isEven.
+        
+    bool isEven int:n
+        = n~intOp isEven.
+        
+    bool isEven long:n
+        = n~longOp isEven.
+
+    bool multi isEven:n
+        <= isEven(n value).
+                
+    isZero value:n
+    [
+        system'NotSupportedException new; raise
+    ]
+    
+    bool isZero byte:n
+        = n~byteOp isZero.
+        
+    bool isZero short:n
+        = n~shortOp isZero.
+        
+    bool isZero int:n
+        = n~intOp isZero.
+        
+    bool isZero long:n
+        = n~longOp isZero.
+        
+    bool isZero real:n 
+        = n~realOp isZero.
+        
+    bool multi isZero:n
+        <= isZero(n value).
+        
+    isPositive value:n
+    [
+        system'NotSupportedException new; raise
+    ]
+    
+    bool isPositive byte:n
+        = n~byteOp isPositive.
+        
+    bool isPositive short:n
+        = n~shortOp isPositive.
+        
+    bool isPositive int:n
+        = n~intOp isPositive.
+        
+    bool isPositive long:n
+        = n~longOp isPositive.
+        
+    bool isPositive real:n 
+        = n~realOp isPositive.
+        
+    bool multi isPositive:n
+        <= isPositive(n value).
+        
+    isNegative value:n
+    [
+        system'NotSupportedException new; raise
+    ]
+    
+    bool isNegative byte:n
+        = n~byteOp isNegative.
+        
+    bool isNegative short:n
+        = n~shortOp isNegative.
+        
+    bool isNegative int:n
+        = n~intOp isNegative.
+        
+    bool isNegative long:n
+        = n~longOp isNegative.
+        
+    bool isNegative real:n 
+        = n~realOp isNegative.
+
+    bool multi isNegative:n
+        <= isNegative(n value).
+                
+    isNonnegative value:n
+    [
+        system'NotSupportedException new; raise
+    ]
+    
+    bool isNonnegative byte:n
+        = n~byteOp isNonnegative.
+        
+    bool isNonnegative short:n
+        = n~shortOp isNonnegative.
+        
+    bool isNonnegative int:n
+        = n~intOp isNonnegative.
+        
+    bool isNonnegative long:n
+        = n~longOp isNonnegative.
+        
+    bool isNonnegative real:n 
+        = n~realOp isNonnegative.
+
+    bool multi isNonnegative:n
+        <= isNonnegative(n value).
+                
+    power value:n object:m
+    [
+        system'NotSupportedException new; raise
+    ]
+    
+    real power real:n int:m
+        = n~realOp power int:m.        
+        
+    real power real:n real:m
+        = n~realOp power real:m.        
+        
+    power byte:n int:m
+        = n~byteOp power int:m.        
+        
+    power short:n int:m
+        = n~shortOp power int:m.        
+        
+    power int:n int:m
+        = n~intOp power int:m.        
+        
+    power long:n int:m
+        = n~longOp power int:m.        
+        
+    multi power:n:m
+        <= power(n value, m).
+        
+    sqr byte:n
+        = n~byteOp sqr.
+        
+    sqr value:n
+    [
+        system'NotSupportedException new; raise
+    ]
+    
+    sqr short:n
+        = n~shortOp sqr.
+        
+    sqr int:n
+        = n~intOp sqr.
+        
+    sqr long:n
+        = n~longOp sqr.
+        
+    sqr real:n 
+        = n~realOp sqr.
+        
+    multi sqr:n
+        <= sqr(n value).
 }.
+
+// --- mathOp ---
 
 extension mathOp
 {
     absolute
-    [
-        var dispatcher := self cast:%eval to:mathOpDispatcher.
-        
-        ^ self~dispatcher absolute.
-    ]
-    
+        = $mathController absolute:self.
+
     mod : anOperand
-    [
-        var dispatcher := self cast:%eval to:mathOpDispatcher.
-        
-        ^ self~dispatcher mod:anOperand.
-    ]
-    
-    is odd
-    [
-        var dispatcher := self cast:%eval to:mathOpDispatcher.
-        
-        ^ self~dispatcher is odd.
-    ]
-        
-    is even
-    [
-        var dispatcher := self cast:%eval to:mathOpDispatcher.
-        
-        ^ self~dispatcher is even.
-    ]
-        
-    is zero
-    [
-        var dispatcher := self cast:%eval to:mathOpDispatcher.
-        
-        ^ self~dispatcher is zero.
-    ]
-        
-    is positive
-    [
-        var dispatcher := self cast:%eval to:mathOpDispatcher.
-        
-        ^ self~dispatcher is positive.
-    ]
-        
-    is negative
-    [
-        var dispatcher := self cast:%eval to:mathOpDispatcher.
-        
-        ^ self~dispatcher is negative.
-    ]
-        
-    is nonnegative
-    [
-        var dispatcher := self cast:%eval to:mathOpDispatcher.
-        
-        ^ self~dispatcher is nonnegative.
-    ]
-    
+        = $mathController mod(self, anOperand).
+
+    bool isOdd
+        = $mathController isOdd(self).
+
+    bool isEven
+        = $mathController isEven(self).
+
+    bool isZero
+        = $mathController isZero(self).
+
+    bool isPositive
+        = $mathController Positive(self).
+
+    bool isNegative
+        = $mathController isNegative(self).
+
+    bool isNonnegative
+        = $mathController isNonnegative(self).
+
     exp
         = (self real)~realOp exp.
     
@@ -80,35 +280,12 @@ extension mathOp
     sqrt
         = self real; sqrt.
 
-    power int:aPower
-    [
-        var dispatcher := self cast:%eval to:mathOpDispatcher.
-        
-        ^ self~dispatcher power int:aPower.
-    ]
-
     power : aPower
-        = aPower cast:%eval to:
-        {
-            eval:target int:n
-            [
-                var dispatcher := self cast:%eval to:mathOpDispatcher.
-                
-                ^ self~dispatcher power : aPower.                
-            ]
-                
-            eval:target real:n
-                = target real; power real:n.
-        }
-        with:self.
+        = $mathController power(self, aPower).
 
     sqr
-    [
-        var dispatcher := self cast:%eval to:mathOpDispatcher.
+        = $mathController sqr(self).
         
-        ^ self~dispatcher sqr.
-    ]
-
     rounded
         = self real; rounded.
 

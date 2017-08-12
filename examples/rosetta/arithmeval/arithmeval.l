@@ -10,7 +10,7 @@ class Token
 {
     object                theValue.
     
-    object level :: rprop(theLevel).
+    object rprop level :: theLevel.
     
     constructor new level:aLevel
     [
@@ -30,9 +30,9 @@ class Token
 
 class Node
 {
-    object left  :: prop(theLeft).
-    object right :: prop(theRight).
-    object level :: rprop(theLevel).
+    object prop  left  :: theLeft.
+    object prop  right :: theRight.
+    object rprop level :: theLevel.
 
     constructor new level:aLevel
     [
@@ -45,7 +45,7 @@ class Node
 class SummaryNode :: Node
 {
     constructor new level:aLevel
-        <= new level:(aLevel + 1).
+        <= new level(aLevel + 1).
     
     number = theLeft number + theRight number.
 }
@@ -55,7 +55,7 @@ class SummaryNode :: Node
 class DifferenceNode :: Node
 {
     constructor new level:aLevel
-        <= new level:(aLevel + 1).
+        <= new level(aLevel + 1).
     
     number = theLeft number - theRight number.
 }
@@ -65,7 +65,7 @@ class DifferenceNode :: Node
 class ProductNode :: Node
 {
     constructor new level:aLevel
-        <= new level:(aLevel + 2).
+        <= new level(aLevel + 2).
     
     number = theLeft number * theRight number.
 }
@@ -75,7 +75,7 @@ class ProductNode :: Node
 class FractionNode :: Node
 {
     constructor new level:aLevel
-        <= new level:(aLevel + 2).
+        <= new level(aLevel + 2).
     
     number = theLeft number / theRight number.
 }
@@ -84,17 +84,17 @@ class FractionNode :: Node
 
 class Expression
 {
-    object level :: rprop(theLevel).
-    object top   :: prop(theTop).
+    object rprop level :: theLevel.
+    object prop  top   :: theTop.
     
     constructor new level:aLevel
     [
         theLevel := aLevel
     ]
     
-    right = theTop.
-
-    set right:aNode [ theTop := aNode ]
+//    right = theTop.
+//
+//    set right:aNode [ theTop := aNode ]
     
     number => theTop.
 }
@@ -105,10 +105,10 @@ operatorState = (:ch)
 [
     ch =>
         $40 [      // (
-            closure new bracket; goto starting
+            closure newBracket; gotoStarting
         ];
         ! [
-            closure new token; append:ch; goto token
+            closure newToken; append:ch; gotoToken
         ].
 ].
 
@@ -116,19 +116,19 @@ tokenState = (:ch)
 [
     ch =>
         $41 [      // )
-            closure close bracket; goto token
+            closure closeBracket; gotoToken
         ];
         $42 [      // *
-            closure new product; goto operator
+            closure newProduct; gotoOperator
         ];
         $43 [      // +
-            closure new summary; goto operator
+            closure newSummary; gotoOperator
         ];
         $45 [      // -
-            closure new difference; goto operator
+            closure newDifference; gotoOperator
         ];
         $47 [      // /
-            closure new fraction; goto operator
+            closure newFraction; gotoOperator
         ];
         ! [
             closure append:ch
@@ -139,13 +139,13 @@ startState = (:ch)
 [
     ch =>
         $40 [      // (
-            closure new bracket; goto starting
+            closure newBracket; gotoStarting
         ];
         $45 [ // -
-            closure new token; append literal:"0"; new difference; goto operator
+            closure newToken; append literal:"0"; newDifference; gotoOperator
         ];
         ! [
-            closure new token; append:ch; goto token
+            closure newToken; append:ch; gotoToken
         ].
 ].
 
@@ -226,7 +226,7 @@ class Scope
             
     append literal:aLiteral
     [
-        aLiteral run each: (:ch)[ self append:ch ]
+        aLiteral forEach(:ch)[ self append:ch ]
     ]
                                                          
     goto starting
@@ -257,34 +257,34 @@ class Parser
     [
         var aToken := Token new level:aLevel.
         
-        anExpression set top:($self append last:(anExpression top) new:aToken).
+        anExpression set top:($self append last(anExpression top) new:aToken).
         
         ^ aToken
     ]
 
     appendSummary expression:anExpression level:aLevel
     [
-        anExpression set top:($self append last:(anExpression top) new:(SummaryNode new level:aLevel)).
+        anExpression set top($self append last(anExpression top) new(SummaryNode new level:aLevel)).
     ]
 
     appendDifference expression:anExpression level:aLevel
     [
-        anExpression set top:($self append last:(anExpression top) new:(DifferenceNode new level:aLevel)).
+        anExpression set top($self append last(anExpression top) new(DifferenceNode new level:aLevel)).
     ]
 
     appendProduct expression:anExpression level:aLevel
     [
-        anExpression set top:($self append last:(anExpression top) new:(ProductNode new level:aLevel)).
+        anExpression set top($self append last(anExpression top) new(ProductNode new level:aLevel)).
     ]
 
     appendFraction expression:anExpression level:aLevel
     [
-        anExpression set top:($self append last:(anExpression top) new:(FractionNode new level:aLevel))
+        anExpression set top($self append last(anExpression top) new(FractionNode new level:aLevel))
     ]
 
     appendSubexpression expression:anExpression level:aLevel
     [
-        anExpression set top:($self append last:(anExpression top) new:(Expression new level:aLevel)).
+        anExpression set top($self append last(anExpression top) new(Expression new level:aLevel)).
     ]
 
     append last:aLastNode new:aNewNode
@@ -311,7 +311,7 @@ class Parser
     [
         var aScope := Scope new parser:$self.
 
-        aText run each: (:ch)[ aScope eval:ch ].
+        aText forEach(:ch)[ aScope eval:ch ].
 
         ^ aScope number
     ]
@@ -324,9 +324,10 @@ program =
 
     $(console readLine; save to:aText; length > 0) doWhile:
     [
-        try(console writeLine:"=" :(aParser run:aText))
+        try(console writeLine("=",aParser run:aText))
         {
-            generic : e [
+            on(Exception e)
+            [
                 console writeLine:"Invalid Expression"
             ]
         }.

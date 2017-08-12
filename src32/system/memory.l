@@ -1026,7 +1026,7 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
         
     /// Creates the literal string with specified length        
     stacksafe constructor new int:size
-        = byte(size + 1).
+        = byte[](size + 1).
 
     /// Creates the literal string with specified length and copies the parameter value
     stacksafe constructor new int:aSize literal:aLiteral
@@ -1236,7 +1236,7 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
         
     /// Creates the literal string with specified length
     stacksafe constructor new int:size
-        = short(size + 1).
+        = short[](size + 1).
 
     /// Creates the literal string with specified length and copies the parameter value
     stacksafe constructor new int:aSize wide:aLiteral
@@ -1662,6 +1662,9 @@ args extension paramsOp
 /// A literal convertor
 class literalConvertor =
 {
+    literal convert value:anObject
+        = anObject literal.
+    
     /// Converts the parameter to the literal value
     stacksafe convert char:aValue bytearray:buffer vint:length
         => system'core_routines'__literalconvertor.
@@ -1877,13 +1880,14 @@ class literalConvertor =
         ^ retVal
     ]
 
-    /// Returns the literal presentation of the parameter
-    stacksafe literal convert : anObject
-        = anObject literal.
-
     /// Returns a parameter                
     stacksafe literal convert literal:aLiteral
         = aLiteral.
+        
+    /// Returns the literal presentation of the parameter
+    literal multi convert : anObject
+        <= convert(anObject value).
+
 }.
 
 // --- wideConvertor ---
@@ -1891,6 +1895,9 @@ class literalConvertor =
 /// A wide literal convertor
 class wideConvertor =
 {
+    wide convert value:anObject
+        = anObject wide.
+    
     /// Converts the parameter to the literal value
     stacksafe convert char:aValue shortarray:buffer vint:length
         => system'core_routines'__wideconvertor.
@@ -2108,14 +2115,14 @@ class wideConvertor =
         
         ^ retVal
     ]        
-
-    /// Returns the literal presentation of the parameter
-    stacksafe wide convert : anObject
-        = anObject wide.
         
     /// Returns a parameter
     stacksafe wide convert wide:aLiteral
         = aLiteral.
+
+    /// Returns the literal presentation of the parameter
+    wide multi convert : anObject
+        <= convert(anObject value).
 }.
 
 // === Enumerators / Indexers

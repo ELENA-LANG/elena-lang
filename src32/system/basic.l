@@ -55,12 +55,12 @@ template ref :: template_subj
 
 // === Numeric Variables ===
 
-type vbyte  = var(byte).
-type vshort = var(short).
-type vint   = var(int).
-type vlong  = var(long).
-type vreal  = var(real).
-type vchar  = var(char).
+type vbyte  = var<ByteNumber>.
+type vshort = var<ShortNumber>.
+type vint   = var<IntNumber>.
+type vlong  = var<LongNumber>.
+type vreal  = var<RealNumber>.
+type vchar  = var<CharValue>.
 
 // === Boolean values ===
 

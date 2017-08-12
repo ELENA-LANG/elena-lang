@@ -8,12 +8,12 @@ import extensions.
 
 program =
 [
-    var a := console readLineTo:(Integer new).
-    var b := console readLineTo:(Integer new).
+    var a := console readLineTo(Integer new).
+    var b := console readLineTo(Integer new).
     
-    console writeLine:a:" + ": b:" = ":(a + b).
-    console writeLine:a:" - ": b:" = ":(a - b).
-    console writeLine:a:" * ": b:" = ":(a * b).
-    console writeLine:a:" / ": b:" = ":(a / b).   // truncates towards 0
-    console writeLine:a:" % ":b:" = ":(a mod:b). // matches sign of first operand
+    console printLine(a," + ",b," = ",a + b).
+    console printLine(a," - ",b," = ",a - b).
+    console printLine(a," * ",b," = ",a * b).
+    console printLine(a," / ",b," = ",a / b).   // truncates towards 0
+    console printLine(a," % ",b," = ",a mod:b). // matches sign of first operand
 ].

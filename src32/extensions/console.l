@@ -348,14 +348,14 @@ extension outputOp
 
 extension inputOp
 {
-//    readLineTo:var
-//    [
-//        var aLine := self read literal.
-//        
-//        aLine~convertorOp convert to:var.
-//        
-//        ^var.
-//    ]
+    readLineTo:var
+    [
+        var aLine := self readLiteral.
+        
+        aLine~convertorOp convert to:var.
+        
+        ^var.
+    ]
     
     generic readLine args:Arguments
     [

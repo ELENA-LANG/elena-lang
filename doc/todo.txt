@@ -93,6 +93,9 @@ In development:
                  * review cellular library
 
               xdev - refactoring
+                 * reimplement arithmeval
+                 * migrate amb
+                 * migrate anagram
                  * test twentyfour sample
                  * migrating rosetta samples : Conway's Game of Life
                  * nshift should be replaced with nshiftl, nshiftr

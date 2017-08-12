@@ -9,11 +9,11 @@ extension mathOp
         if (self < 0)
             [ InvalidArgumentException new:"Must be non negative"; raise ].
             
-        ^ control eval:self for: 
+        ^ control do:self with
             (:n)
                 [
                     if (n > 1)
-                        [ ^ $closure eval:(n - 2) + $closure eval:(n - 1) ];
+                        [ ^ $closure eval(n - 2) + $closure eval(n - 1) ];
                         [ ^ n ]
                 ].
     ]
@@ -21,13 +21,13 @@ extension mathOp
 
 program =
 [
-    -1 to:10 doEach: (:i)
+    -1 to:10 do(:i)
     [
-        console print:"fib(":i:")=".
+        console print("fib(",i,")=").
         
-        try (console printLine:(i fib))        
+        try (console printLine(i fib))        
         {
-            InvalidArgumentError: e
+            on(Exception e)
             [
                 console printLine:"invalid"
             ]
