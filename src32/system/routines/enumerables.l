@@ -125,8 +125,14 @@ extension enumerableOp
     multi forEach:fn
         = self~enumerableOp forEach(:n)[ fn eval:n ].
     
-//    run eachPair:aFunction
-//      = aFunction run:self enumerator:(self enumerator).
+    forEachPair(object object, ext_mssg anExtMessage)
+        = self~enumerableOp forEachPair(object, (:o:n)(o~anExtMessage eval:n)).
+    
+    forEachPair(object anObject, func2 aFunction)
+      = aFunction run object:anObject enumerator:(self enumerator).
+    
+    multi forEachPair:object:fn
+        = self~enumerableOp forEachPair(object, (:o:n)[ fn eval(o,n) ]).
 //
 //    run:aParam eachPair:aFunction
 //      = aFunction run:aParam enumerator:(self enumerator).

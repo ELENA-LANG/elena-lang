@@ -232,7 +232,7 @@ limited class BaseFunction2 :: dispatchable<func2>
     action eval : aParam1 : aParam2 []
     
     /// Executes the function for parameters and every enumeration item
-    sealed run : aParam enumerator:anEnumerator
+    sealed run object:aParam enumerator:anEnumerator
     [
         while(anEnumerator next)
         [
@@ -241,7 +241,7 @@ limited class BaseFunction2 :: dispatchable<func2>
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true
-    sealed retrieve : aParam enumerator:anEnumerator
+    sealed retrieve object:aParam enumerator:anEnumerator
     [
         object anItem := $nil.
         while (anEnumerator next)
@@ -263,29 +263,29 @@ limited class BaseFunction3 :: dispatchable<func3>
     /// Executes the function
     action eval : aParam1 : aParam2 : aParam3 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run : aParam1 : aParam2 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval:aParam1:aParam2:(anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve : aParam1 : aParam2 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self eval:aParam1:aParam2:anItem)
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self eval(aParam1,aParam2,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if ($self eval(aParam1,aParam2,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
 }
 
 /// A base four variable function
@@ -294,30 +294,30 @@ limited class BaseFunction4 :: dispatchable<func4>
     /// Executes the function
     action eval : aParam1 : aParam2 : aParam3 : aParam4 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run : aParam1 : aParam2 : aParam3 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval:aParam1:aParam2:aParam3:(anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve : aParam1 : aParam2 : aParam3 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            // !! temporal
-//            if ($self eval:aParam1:aParam2:aParam3:anItem)
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 object:aParam3 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self eval(aParam1,aParam2,aParam3,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 object:aParam3 enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            // !! temporal
+            if ($self eval(aParam1,aParam2,aParam3,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
 }
 
 /// A base five variable function
@@ -326,29 +326,29 @@ limited class BaseFunction5 :: dispatchable<func5>
     /// Executes the function
     action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run : aParam1 : aParam2 : aParam3 : aParam4 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:(anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve : aParam1 : aParam2 : aParam3 : aParam4 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self eval:aParam1:aParam2:aParam3:aParam4:anItem)
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self eval(aParam1,aParam2,aParam3,aParam4,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if ($self eval(aParam1,aParam2,aParam3,aParam4,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
 }
 
 /// A base six variable function

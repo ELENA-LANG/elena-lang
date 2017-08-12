@@ -1,28 +1,69 @@
-//import system'collections.
-//import system'routines.
-////import system'calendar.
-////import system'text.
-////import system'dynamic.
-////
-////// --- convertors ---
-////
-////class literalExConvertor =
-////{
-////    convert enumerable:aList
-////    [
-////        textbuffer anOutput := TextBuilder new.
-////
-////        aList run:anOutput eachPair: (:aParam:anItem)[ aParam write:(anItem~convertorOp toLiteral); write:"," ].
-////        
-////        int aLength := anOutput length.
-////
-////        if (0 < aLength)
-////            [ anOutput setLength int:(-1 + aLength) ].
-////        
-////        ^ anOutput literal
-////    ]
-////}.
-////
+import system'collections.
+import system'routines.
+//import system'calendar.
+import system'text.
+//import system'dynamic.
+
+// --- convertors ---
+
+class literalExConvertor =
+{
+    literal convert enumerator:aList
+    [
+        textbuffer anOutput := TextBuilder new.
+
+        aList forEachPair(anOutput,(:aParam:anItem)[ aParam write:(anItem~convertorOp toLiteral); write:"," ]).
+        
+        int aLength := anOutput length.
+
+        if (0 < aLength)
+            [ anOutput setLength int:(-1 + aLength) ].
+        
+        ^ anOutput literal
+    ]
+
+    literal convert int:s
+        => literalConvertor.
+
+    literal convert short:s
+        => literalConvertor.
+
+    literal convert byte:s
+        => literalConvertor.
+
+    literal convert real:s
+        => literalConvertor.
+
+    literal convert uint:s
+        => literalConvertor.
+
+    literal convert char:s
+        => literalConvertor.
+
+    literal convert literal:s
+        = s.
+
+    literal convert wide:s
+        => literalConvertor.
+        
+//                array : anArray
+//                    = literalExConvertor convert enumerable:anArray.
+//                
+//                enumerable : aList
+//                    = literalExConvertor convert enumerable:aList.
+//                    
+//                datetime : aValue = aValue literal.
+//                    
+//                timestamp : aValue = aValue literal.
+//                
+//                intmatrix : m
+//                    = intmatrixExConvertor toLiteral intmatrix:m.
+//                
+
+    literal multi convert:o
+        = literalExConvertor convert(o enumerator \ literal).
+}.
+
 ////class wideExConvertor =
 ////{
 ////    convert enumerable:aList
@@ -166,38 +207,7 @@ extension convertorOp
 //            }.
     
     toLiteral
-        = literalConvertor convert:self.
-//        = self cast:%eval to:
-//            {
-//                literal : aLiteral = aLiteral.
-//                
-//                wide : aWide = aWide literal.
-//                
-//                array : anArray
-//                    = literalExConvertor convert enumerable:anArray.
-//                
-//                enumerable : aList
-//                    = literalExConvertor convert enumerable:aList.
-//                    
-//                int : aValue = aValue literal.
-//                    
-//                short : aValue = aValue literal.
-//                    
-//                byte : aValue = aValue literal.
-//                    
-//                long : aValue = aValue literal.
-//                    
-//                real : aValue = aValue literal.
-//                    
-//                datetime : aValue = aValue literal.
-//                    
-//                timestamp : aValue = aValue literal.
-//                
-//                intmatrix : m
-//                    = intmatrixExConvertor toLiteral intmatrix:m.
-//                
-//                generic : anObject = anObject literal.
-//            }.
+        = literalExConvertor convert:self.
     
     toWide
         = wideConvertor convert:self.
