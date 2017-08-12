@@ -3574,6 +3574,22 @@ void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope
    writer.removeBookmark();
 }
 
+ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   writer.newBookmark();
+
+   ref_t targetRef = scope.moduleScope->module->mapReference(node.findChild(lxClassRefAttr).identifier(), false);
+
+   ObjectInfo object = compileExpression(writer, node.findChild(lxExpression), scope, mode);
+
+   if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
+      scope.raiseError(errIllegalOperation, node);
+
+   writer.removeBookmark();
+
+   return ObjectInfo(okObject, targetRef);
+}
+
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    ObjectInfo objectInfo;
@@ -3586,6 +3602,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       compileTrying(writer, node, scope);
 
       objectInfo = ObjectInfo(okObject);
+   }
+   else if (node == lxBoxing) {
+      objectInfo = compileBoxingExpression(writer, node, scope, mode);
    }
    else {
       SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxSwitching);

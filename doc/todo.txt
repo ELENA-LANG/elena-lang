@@ -4,8 +4,6 @@ In development:
 
               xdev - general implementation
                  * assigning a template : var n := var<IntNumber>(3).
-                 * declaring an array field
-                 * declaring an array : // array<Field> fieldArray.
 
 
                  * implicit conversion
@@ -52,7 +50,8 @@ In development:
                  * test vm console operations in IDE
 
               xdev - general implementation
-                 * if else if ...
+                 * declaring an array field
+                 * declaring an array : // array<Field> fieldArray.
 
               xdev - multimethod                 
                  * compile time multi method resolution : o x := 2.
@@ -154,6 +153,9 @@ In development:
                  * uint64 
                  * postfix - ul
                  * uint16
+
+              xdev - general implementation
+                 * if else if ...
 
 ------                                 
 Pipeline:
