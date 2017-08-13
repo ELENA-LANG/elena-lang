@@ -52,15 +52,18 @@ listable class BaseBoolValue :: dispatchable<bool>
     clone = $nil.
 }
 
-//extension commonOp
-//{
-//    then : code
-//        = code eval.
-//        
-//    thenClose:code
-//    [
-//        code eval.
-//        
-//        self close
-//    ]
-//}
+extension commonOp
+{
+    /// Returns the parameter        
+    back : anObject = anObject.
+    
+    then : code
+        = code eval.
+        
+    thenClose:code
+    [
+        code eval.
+        
+        self close
+    ]
+}

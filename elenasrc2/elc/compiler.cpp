@@ -2954,7 +2954,11 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       target = ObjectInfo(okObject);
    }
    else if (test(mode, HINT_ALT_MODE)) {
-      writer.insertChild(0, lxCurrent, 0);
+      SNode targetNode = node.parentNode().firstChild(lxObjectMask).firstChild(lxObjectMask);
+      if (targetNode == lxLocal) {
+         writer.insertChild(0, targetNode.type, targetNode.argument);
+      }
+      else writer.insertChild(0, lxCurrent, 0);
 
       target = ObjectInfo(okObject);
    }

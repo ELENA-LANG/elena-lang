@@ -51,39 +51,45 @@
 //        theEnumerator reset.
 //    ]    
 //}
-//
-//// --- Filtering ---
-//
-//class Filter :: Enumerator
-//{
-//    func1      theFilter.
-//    enumerator theEnumerator.
-//    
-//    constructor new each:aFilter enumerator:anEnumerator
-//    [
-//        theFilter := aFilter func1.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    next
-//    [
-//        while (theEnumerator next)
-//        [
-//            if (theFilter eval:(theEnumerator get))
-//                [ ^ true ]
-//        ].
-//        
-//        ^ false
-//    ]
-//    
-//    reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//}
-//
+
+// --- Filtering ---
+
+class Filter :: Enumerator
+{
+    func1      theFilter.
+    enumerator theEnumerator.
+
+    constructor new func1:aSelector enumerator:anEnumerator
+    [
+        theFilter := aSelector.
+        theEnumerator := anEnumerator.
+    ]
+    
+    constructor new ext_mssg:anExtension enumerator:anEnumerator
+    [
+        theFilter := (:x)[ ^ x~anExtension eval ].
+        theEnumerator := anEnumerator.
+    ]
+    
+    get = theEnumerator get.
+    
+    next
+    [
+        while (theEnumerator next)
+        [
+            if (theFilter eval(theEnumerator get))
+                [ ^ true ]
+        ].
+        
+        ^ false
+    ]
+    
+    reset 
+    [
+        theEnumerator reset.
+    ]    
+}
+
 //// --- PatternFilter2 ---
 //
 //class PatternFilter2 :: Enumerator
@@ -694,10 +700,10 @@ extension patternOp
 //
 //    last:counter
 //        = TopFilter new:counter skipping:(self length - counter) enumerator:(self enumerator).
-//
-//    filter each:aFilter
-//        = Filter new each:aFilter enumerator:(self enumerator).
 
+    filterEach:aSelector
+        = Filter new(aSelector, self enumerator).
+        
     selectEach:aSelector
         = Selector new(aSelector, self enumerator).
 

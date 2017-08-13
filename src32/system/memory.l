@@ -1057,7 +1057,16 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
     wide = wideConvertor convert literal:$self.
 
     stacksafe bool equal value:n
-        <= equal literal:n.
+    [
+        var l := n literal \ back:$nil.
+        if ($nil == l)
+        [
+            ^ false.
+        ];
+        [
+            ^ self equal literal:l.
+        ]
+    ]
 
     stacksafe bool less value:n
         <= less literal:n.
@@ -1267,7 +1276,16 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
     literal = literalConvertor convert wide:$self.
 
     stacksafe bool equal value:n
-        <= equal wide:n.
+    [
+        var l := n wide \ back:$nil.
+        if ($nil == l)
+        [
+            ^ false.
+        ];
+        [
+            ^ self equal wide:l.
+        ]
+    ]
 
     stacksafe bool less value:n
         <= less wide:n.

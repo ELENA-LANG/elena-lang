@@ -20,10 +20,16 @@ template var :: template_subj
         $value := $value + val.
     ]
     
+    multi append:val
+        <= append template_subj:val.
+    
     stacksafe reduce template_subj:val
     [
         $value := $value - val.
     ]
+    
+    multi reduce:val
+        <= reduce template_subj:val.
     
     equal : anObject
         => $value.
@@ -183,7 +189,7 @@ class BaseValue :: dispatchable<value>
 {
     equal value:anObject
     [
-        system'NotSupportedException new; raise.
+        ^ false
     ]
     
     less value:anObject
@@ -332,8 +338,13 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable<byte>
     /// Returns the value as a real number
     real = RealNumber new byte:$self.
 
-    stacksafe bool equal value:n
-        <= equal byte:n.
+    stacksafe bool equal value:o
+    [
+        var n := o byte \ back:$nil.
+        ($nil == n)
+            ? [ ^ false ]
+            ! [ ^ $self equal byte:n ]
+    ]
 
     stacksafe bool equal byte:anOperand
         = theValue == anOperand.
@@ -616,8 +627,13 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable<short>
     /// Returns the value as a real number
     real = RealNumber new short:$self.
 
-    stacksafe bool equal value:n
-        <= equal short:n.
+    stacksafe bool equal value:o
+    [
+        var n := o short \ back:$nil.
+        ($nil == n)
+            ? [ ^ false ]
+            ! [ ^ $self equal short:n ]
+    ]
 
     stacksafe bool less value:n
         <= less short:n.
@@ -907,8 +923,13 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable<int>
     /// Returns the real number
     uint = UIntNumber new int:$self.
     
-    stacksafe bool equal value:n
-        <= equal int:n.
+    stacksafe bool equal value:o
+    [
+        var n := o int \ back:$nil.
+        ($nil == n)
+            ? [ ^ false ]
+            ! [ ^ $self equal int:n ]
+    ]
 
     stacksafe bool less value:n
         <= less int:n.
@@ -1223,8 +1244,13 @@ sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable<uint>
     /// Returns the real number
     real = RealNumber new uint:$self.
 
-    stacksafe bool equal value:n
-        <= equal int:n.
+    stacksafe bool equal value:o
+    [
+        var n := o int \ back:$nil.
+        ($nil == n)
+            ? [ ^ false ]
+            ! [ ^ $self equal int:n ]
+    ]
 
     stacksafe bool less value:n
         <= less int:n.
@@ -1542,8 +1568,13 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable<long>
     /// Returns a real value
     real = RealNumber new long:$self.
     
-    stacksafe bool equal value:n
-        <= equal long:n.
+    stacksafe bool equal value:o
+    [
+        var n := o long \ back:$nil.
+        ($nil == n)
+            ? [ ^ false ]
+            ! [ ^ $self equal long:n ]
+    ]
 
     stacksafe bool less value:n
         <= less long:n.
@@ -1829,8 +1860,13 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable<real>
     constructor new : anObject
         <= new real:anObject.
         
-    stacksafe bool equal value:n
-        <= equal real:n.
+    stacksafe bool equal value:o
+    [
+        var n := o real \ back:$nil.
+        ($nil == n)
+            ? [ ^ false ]
+            ! [ ^ $self equal real:n ]
+    ]
 
     stacksafe bool less value:n
         <= less real:n.
@@ -2032,8 +2068,13 @@ sealed const embeddable struct CharValue :: BaseValue, dispatchable<char>
     constructor max
         = $010FFFFh.
 
-    stacksafe bool equal value:n
-        <= equal char:n.
+    stacksafe bool equal value:o
+    [
+        var n := o char \ back:$nil.
+        ($nil == n)
+            ? [ ^ false ]
+            ! [ ^ $self equal char:n ]
+    ]
 
     stacksafe bool less value:n
         <= less char:n.
@@ -2192,43 +2233,42 @@ sealed class Variable :: var<object>
 //    ]    
 }
 
-//// --- KeyValue ---
-//
-///// A key - object pair
-/////
-///// Extends the object with a key property
-//sealed class KeyValue
-//{
-//    object theKey.
-//    object theObject.
-//    
-//    /// Creates a new objext
-//    constructor new key:aKey value:anObject
-//    [
-//        theKey := aKey.
-//        theObject := anObject.
-//    ]
-//    
-//    /// Returns the key
-//    key = theKey.
-//    
-//    /// Returns the key
-//    value = theObject.
-//
-//    set value:anObject
-//    [
-//        theObject := anObject.
-//    ]
-//    
-//    /// Dispatches the verb to the target object
-//    cast : aVerb to:aTarget => theObject.
-//    
-//    /// Dispatches the verb to the target object
-//    cast : aVerb to:aTarget with:aParam => theObject.
-//            
-//    /// Redirects the incoming messages to the object
-//    dispatch => theObject.
-//}
+// --- KeyValue ---
+
+/// A key - object pair
+///
+/// Extends the object with a key property
+sealed class KeyValue
+{
+    object theKey.
+    object theObject.
+    
+    /// Creates a new objext
+    constructor new key:aKey content:anObject
+    [
+        theKey := aKey.
+        theObject := anObject.
+    ]
+    
+    /// Returns the key
+    key = theKey.
+    
+    /// Returns the key
+    content = theObject.
+
+    set content:anObject
+    [
+        theObject := anObject.
+    ]
+
+    value => theObject.
+           
+    equal : o
+        => theObject.
+                                                                                      
+    /// Redirects the incoming messages to the object
+    dispatch => theObject.
+}
 
 //// --- DTO ---
 //
@@ -3074,17 +3114,17 @@ class Integer =
         = n int.
 }.
 
-//class Real =
-//{
-//    vreal new
-//        = 0.0r.
-//        
-//    vreal new : n
-//        = n real.
-//        
-//    vreal new int:n
-//        = n real.
-//        
-//    vreal new real:n
-//        = n.
-//}.
+class Real =
+{
+    vreal new
+        = 0.0r.
+        
+    vreal new : n
+        = n real.
+        
+    vreal new int:n
+        = n real.
+        
+    vreal new real:n
+        = n.
+}.

@@ -179,38 +179,38 @@ extension enumerableOp
 //             
 //    sequenceEqual:list
 //        = self~enumerableOp equal enumerable:list.
-//                                                  
-//    firstMember
-//    [
-//        enumerator anEnumerator := self enumerator.
-//        
-//        if (anEnumerator next) 
-//            [ ^ anEnumerator get ];
-//            [ ^ $nil ]
-//    ]
-//
-//    lastMember
-//    [
-//        enumerator anEnumerator := self enumerator.
-//        object     aLastItem := $nil.
-//        
-//        while (anEnumerator next)
-//            [ aLastItem := anEnumerator get ].
-//            
-//        ^ aLastItem
-//    ]
-//    
-//    int count
-//    [
-//        enumerator en := self enumerator.
-//        int        counter := 0.
-//        while (en next)
-//        [
-//            counter := counter + 1
-//        ].
-//        
-//        ^ counter
-//    ]
+                                                  
+    firstMember
+    [
+        enumerator anEnumerator := self enumerator.
+        
+        if (anEnumerator next) 
+            [ ^ anEnumerator get ];
+            [ ^ $nil ]
+    ]
+
+    lastMember
+    [
+        enumerator anEnumerator := self enumerator.
+        object     aLastItem := $nil.
+        
+        while (anEnumerator next)
+            [ aLastItem := anEnumerator get ].
+            
+        ^ aLastItem
+    ]
+    
+    int countMembers
+    [
+        enumerator en := self enumerator.
+        int        counter := 0.
+        while (en next)
+        [
+            counter := counter + 1
+        ].
+        
+        ^ counter
+    ]
 }
 
 // --- indexableOp ---

@@ -1,5 +1,5 @@
 ///  a program to find the mean (arithmetic average) of a numeric vector. 
-#import extensions.
+import extensions.
 
 // --- Average ---
 
@@ -14,8 +14,8 @@ extension op
         
         while (anEnumerator next)
         [
-            aSum += anEnumerator get.
-            aCount += 1.
+            aSum append(anEnumerator get).
+            aCount append(1).
         ].
         
         ^ aSum / aCount.
@@ -26,5 +26,5 @@ extension op
 program =
 [
     var anArray := (1, 2, 3, 4, 5, 6, 7, 8).
-    console writeLine:"Arithmetic mean of {":anArray:"} is ":(anArray average) readChar.
+    console printLine("Arithmetic mean of {",anArray,"} is ",anArray average); readChar.
 ]. 

@@ -28,7 +28,7 @@ class SMA
                     aCount := thePeriod
                 ].
         
-                var aSum := theList summarize:(Real new int:0).
+                var aSum := theList summarize(Real new int:0).
                 
                 ^ aSum / aCount
             ]
@@ -42,7 +42,7 @@ program =
     var SMA3 := SMA new:3.
     var SMA5 := SMA new:5.
 
-    1 to:5 doEach: (:i)
+    1 to:5 do(:i)
     [
         console print:"sma3 + " :i :" = ": (SMA3 append:i) paddingRight:30 with:$32.
         console printLine:"sma5 + " :i :" = ": (SMA5 append:i)

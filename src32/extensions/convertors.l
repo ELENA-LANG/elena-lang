@@ -61,114 +61,114 @@ class literalExConvertor =
 //                
 
     literal multi convert:o
-        = literalExConvertor convert(o enumerator \ literal).
+        = literalExConvertor convert(o literal \ enumerator).
 }.
 
-////class wideExConvertor =
-////{
-////    convert enumerable:aList
-////    [
-////        textbuffer anOutput := TextBuilder new.
-////
-////        aList run:anOutput eachPair: (:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:"," ].
-////        
-////        int aLength := anOutput length.
-////
-////        if (0 < aLength)
-////            [ anOutput setLength int:(-1 + aLength) ].
-////        
-////        ^ anOutput wide
-////    ]
-////}.
-////
-////class intarrayExConvertor =
-////{
-////    convert enumerable:aList
-////    [
-////        array_list alist := ArrayList new.
-////
-////        aList run each: (:anItem)[ alist append:anItem ].
-////        
-////        ^ IntArray new int:(alist length); set every: (&int:i)[ alist getAt int:i; toInt ]
-////    ]
-////}.
-////
-////class intmatrixExConvertor =
-////{
-////    convert array:a
-////    [
-////        int n := a length.
-////        int m := a@0 length.
-////        
-////        ^ IntMatrix new int:n int:m; set every_ij: (&int:i&int:j)[ a getAt int:i; array; getAt int:j; toInt ].
-////    ]
-////    
-////    toLiteral intmatrix:matrix
-////    [
-////        textbuffer anOutput := TextBuilder new.
-////        
-////        int i := 0.
-////        int j := 0.
-////        int n := 0.
-////        int m := 0.
-////        int l := 0.
-////        
-////        matrix readLengthsTo vint:n vint:m.
-////        
-////        while (i < n)
-////        [
-////            j := 0.
-////            while (j < m)
-////            [
-////                int r := 0.
-////                matrix read int:i int:j vint:r.
-////                
-////                anOutput write:r; write:",".
-////                
-////                j := j + 1
-////            ].
-////            anOutput readLengthTo vint:l.            
-////            anOutput setLength int:(l - 1).
-////            
-////            anOutput write:'newLine.
-////            
-////            i := i + 1
-////        ].
-////        
-////        ^ anOutput literal
-////    ]
-////}.
-//
-//// --- arrayConvertorEx ---
-//
-//arrayConvertorEx =
+//class wideExConvertor =
 //{
-//    multi convert : anObject
-//        = arrayConvertorEx convert enumerable:anObject.
-//    
-//    convert array:anArray
-//        = anArray.
-//
 //    convert enumerable:aList
 //    [
-//        array_list aRetVal := ArrayList new.
+//        textbuffer anOutput := TextBuilder new.
 //
-//        aList run each(:anItem)[ aRetVal append:anItem ].
+//        aList run:anOutput eachPair: (:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:"," ].
+//        
+//        int aLength := anOutput length.
 //
-//        ^ aRetVal array
+//        if (0 < aLength)
+//            [ anOutput setLength int:(-1 + aLength) ].
+//        
+//        ^ anOutput wide
 //    ]
-//
-////                void : val
-////                    = Array min.                    
-//    
 //}.
+//
+//class intarrayExConvertor =
+//{
+//    convert enumerable:aList
+//    [
+//        array_list alist := ArrayList new.
+//
+//        aList run each: (:anItem)[ alist append:anItem ].
+//        
+//        ^ IntArray new int:(alist length); set every: (&int:i)[ alist getAt int:i; toInt ]
+//    ]
+//}.
+//
+//class intmatrixExConvertor =
+//{
+//    convert array:a
+//    [
+//        int n := a length.
+//        int m := a@0 length.
+//        
+//        ^ IntMatrix new int:n int:m; set every_ij: (&int:i&int:j)[ a getAt int:i; array; getAt int:j; toInt ].
+//    ]
+//    
+//    toLiteral intmatrix:matrix
+//    [
+//        textbuffer anOutput := TextBuilder new.
+//        
+//        int i := 0.
+//        int j := 0.
+//        int n := 0.
+//        int m := 0.
+//        int l := 0.
+//        
+//        matrix readLengthsTo vint:n vint:m.
+//        
+//        while (i < n)
+//        [
+//            j := 0.
+//            while (j < m)
+//            [
+//                int r := 0.
+//                matrix read int:i int:j vint:r.
+//                
+//                anOutput write:r; write:",".
+//                
+//                j := j + 1
+//            ].
+//            anOutput readLengthTo vint:l.            
+//            anOutput setLength int:(l - 1).
+//            
+//            anOutput write:'newLine.
+//            
+//            i := i + 1
+//        ].
+//        
+//        ^ anOutput literal
+//    ]
+//}.
+
+// --- arrayConvertorEx ---
+
+arrayConvertorEx =
+{
+    multi convert : anObject
+        = arrayConvertorEx convert enumerator:anObject.
+    
+    convert array:anArray
+        = anArray.
+
+    convert enumerator:anEnumerator
+    [
+        array_list aRetVal := ArrayList new.
+
+        anEnumerator forEach(:anItem)[ aRetVal append:anItem ].
+
+        ^ aRetVal array
+    ]
+
+//                void : val
+//                    = Array min.                    
+    
+}.
 
 // --- convertorOp ---
 
 extension convertorOp
 {
-//    toArray
-//        = arrayConvertorEx convert:self.
+    toArray
+        = arrayConvertorEx convert:self.
 
 //    toIntArray
 //        = self cast:%eval to:

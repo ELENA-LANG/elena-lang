@@ -36,16 +36,13 @@ extension objectOp
         ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
     ]    
     
-//    /// Returns true if the specified object instances are equal; otherwise, false.
-//    bool equal reference:anObject
-//        => system'core_routines'__object.
-//        
-//    /// Returns the parameter        
-//    back : anObject = anObject.
-//
-////    evalSelf func1:aFunction
-////        = aFunction eval:self.
-//
+    /// Returns true if the specified object instances are equal; otherwise, false.
+    bool equal reference:anObject
+        => system'core_routines'__object.
+        
+//    evalSelf func1:aFunction
+//        = aFunction eval:self.
+
 //    evalSelf:aFunction
 //        = aFunction eval:self.
 //
@@ -71,7 +68,7 @@ extension objectOp
     bool isNonempty
         = self length != 0.
         
-//    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
+    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
 //    bool safeEqual : anObject
 //        = anObject cast:%eval to:{ generic eval:aTarget:anObject = aTarget~$subject equal:anObject \ back:false. } with:self.
 
