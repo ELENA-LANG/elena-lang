@@ -86,6 +86,8 @@ In development:
                  * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
                  * private subjects??
                  * fix message table implementation in VM (currently the space is reserved, but it should use virtual space allocation)
+                 * validate rprop (two message should be applied)
+                 *duplicate method templates
 
               zdev - script engine
                  * migrate xforms

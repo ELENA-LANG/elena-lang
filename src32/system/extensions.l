@@ -1017,27 +1017,27 @@ literal extension literalOp
 //    
 //    trim
 //        = self~literalOp trimLeft char:$32; trimRight char:$32.        
-//    
-//    padLeft char:aChar int:aLength
-//    [
-//        int aCurrentLength := self length.
-//        
-//        if (aCurrentLength < aLength)
-//            [ ^ LiteralValue new int:(aLength - aCurrentLength) char:aChar; add literal:self ].
-//            
-//        ^ self
-//    ]
-//    
-//    padRight char:aChar int:aLength
-//    [
-//        int aCurrentLength := self length.
-//
-//        if (aCurrentLength < aLength)
-//            [ ^ self add literal:(LiteralValue new int:(aLength - aCurrentLength) char:aChar) ].
-//            
-//        ^ self
-//    ]
-//
+    
+    padLeft char:aChar int:aLength
+    [
+        int aCurrentLength := self length.
+        
+        if (aCurrentLength < aLength)
+            [ ^ LiteralValue new int(aLength - aCurrentLength) char(aChar); add literal:self ].
+            
+        ^ self
+    ]
+    
+    padRight char:aChar int:aLength
+    [
+        int aCurrentLength := self length.
+
+        if (aCurrentLength < aLength)
+            [ ^ self add literal(LiteralValue new int(aLength - aCurrentLength) char(aChar)) ].
+            
+        ^ self
+    ]
+
 //    startingWith:s
 //        = self~literalOp startingWith literal:s.
 //        
@@ -1200,27 +1200,27 @@ wide extension wideOp
 //    
 //    trim
 //        = self~wideOp trimLeft char:$32; trimRight char:$32.
-//    
-//    padLeft char:aChar int:aLength
-//    [
-//        int aCurrentLength := self length.
-//        
-//        if (aCurrentLength < aLength)
-//            [ ^ WideLiteralValue new int:(aLength - aCurrentLength) char:aChar; add wide:self ].
-//            
-//        ^ self
-//    ]
-//    
-//    padRight char:aChar int:aLength
-//    [
-//        int aCurrentLength := self length.
-//
-//        if (aCurrentLength < aLength)
-//            [ ^ self add wide:(WideLiteralValue new int:(aLength - aCurrentLength) char:aChar) ].
-//            
-//        ^ self
-//    ]
-//
+    
+    padLeft char:aChar int:aLength
+    [
+        int aCurrentLength := self length.
+        
+        if (aCurrentLength < aLength)
+            [ ^ WideLiteralValue new int(aLength - aCurrentLength) char(aChar); add wide:self ].
+            
+        ^ self
+    ]
+    
+    padRight char:aChar int:aLength
+    [
+        int aCurrentLength := self length.
+
+        if (aCurrentLength < aLength)
+            [ ^ self add wide(WideLiteralValue new int(aLength - aCurrentLength) char(aChar)) ].
+            
+        ^ self
+    ]
+
 //    startingWith wide:s
 //    [
 //        int n := 0.
@@ -1304,17 +1304,25 @@ wide extension wideOp
     ]
 }
 
-//// --- stringOp ---
-//
-//class stringOpDispatcher =
-//{
-//    eval literal:aLiteral = literalOp.
-//    
-//    eval wide:aLiteral = wideOp.
-//}.
-//
-//extension stringOp
-//{
+// --- stringOp ---
+
+class $stringOpDispatcher =
+{
+    padRight literal:s char:ch int:len
+        = s~literalOp padRight char:ch int:len.
+    
+    padRight wide:s char:ch int:len
+        = s~wideOp padRight char:ch int:len.
+        
+    padLeft literal:s char:ch int:len
+        = s~literalOp padLeft char:ch int:len.
+    
+    padLeft wide:s char:ch int:len
+        = s~wideOp padLeft char:ch int:len.
+}.
+
+extension stringOp
+{
 //    Substring : anIndex
 //        = self Substring:(self length - anIndex) at:anIndex.
 //            
@@ -1363,20 +1371,12 @@ wide extension wideOp
 //        ^ self~dispatcher trimRight
 //    ]
 //    
-//    padLeft char:aChar length:aLength
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher padLeft char:aChar int:aLength
-//    ]
-//    
-//    padRight char:aChar length:aLength
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher padRight char:aChar int:aLength
-//    ]
-//    
+    padLeft : padSymbol : len
+        = $stringOpDispatcher padLeft(self, padSymbol, len).
+        
+    padRight : padSymbol : len
+        = $stringOpDispatcher padRight(self, padSymbol, len).
+
 //    startingWith : s
 //    [
 //        var dispatcher := self cast:%eval to:stringOpDispatcher.
@@ -1428,25 +1428,25 @@ wide extension wideOp
 //            
 //        ^ self
 //    ]
-//    
-//    write : aLine paddingLeft:aWidth with:aChar
-//    [
-//        var aPaddedStr := aLine padLeft char:aChar length:aWidth.
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self
-//    ]
-//
-//    write : aLine paddingRight:aWidth with:aChar
-//    [
-//        var aPaddedStr := aLine padRight char:aChar length:aWidth.
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self
-//    ]
-//    
+    
+    write : aLine paddingLeft:aWidth with:aChar
+    [
+        var aPaddedStr := aLine padLeft(aChar, aWidth).
+
+        self write:aPaddedStr.
+            
+        ^ self
+    ]
+
+    write : aLine paddingRight:aWidth with:aChar
+    [
+        var aPaddedStr := aLine padRight(aChar, aWidth).
+
+        self write:aPaddedStr.
+            
+        ^ self
+    ]
+    
 //    write : aLine padding:aWidth with:aChar
 //    [
 //        int aWidthInt := aWidth int.
@@ -1465,7 +1465,7 @@ wide extension wideOp
 //            
 //        ^ self
 //    ]    
-//}
+}
 
 // --- charOp ---
 

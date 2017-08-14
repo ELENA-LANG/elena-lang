@@ -23,7 +23,7 @@ class SMA
             ! [
                 if (aCount > thePeriod)
                 [
-                    theList remove index:0.
+                    theList remove at:0.
                     
                     aCount := thePeriod
                 ].
@@ -44,14 +44,14 @@ program =
 
     1 to:5 do(:i)
     [
-        console print:"sma3 + " :i :" = ": (SMA3 append:i) paddingRight:30 with:$32.
-        console printLine:"sma5 + " :i :" = ": (SMA5 append:i)
+        console printPaddingRight(30, "sma3 + ", i, " = ", SMA3 append:i).
+        console printLine("sma5 + ", i, " = ", SMA5 append:i)
     ].
 
-    5 to:1 doEach: (:i)
+    5 to:1 do(:i)
     [
-        console print:"sma3 + " :i :" = ": (SMA3 append:i) paddingRight:30 with:$32.
-        console printLine:"sma5 + " :i :" = ": (SMA5 append:i)
+        console printPaddingRight(30, "sma3 + ", i, " = ", SMA3 append:i).
+        console printLine("sma5 + ", i, " = ", SMA5 append:i)
     ].
     
     console readChar.

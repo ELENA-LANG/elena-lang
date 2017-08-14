@@ -1,5 +1,5 @@
 import system'routines.
-//import system'text.
+import system'text.
 
 // --- outputOp ---
 
@@ -37,40 +37,6 @@ extension outputOp
         ^ self
     ]
     
-//    /// obsolete
-//    generic writeWide args:list
-//    [
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list@i.
-//            
-//            self write:(obj~convertorOp toWide).
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self
-//    ]
-//
-//    /// obsolete
-//    generic writeLine args:list
-//    [
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list@i.
-//            
-//            self write:(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self writeLine
-//    ]
-
     generic printLine args:list
     [
         int len := list length.
@@ -79,7 +45,7 @@ extension outputOp
         [
             object obj := list[i].
             
-            self write:(obj~convertorOp toLiteral).
+            self write(obj~convertorOp toLiteral).
             
             i := i + 1
         ].
@@ -87,131 +53,28 @@ extension outputOp
         ^ self writeLine
     ]    
 
-//    /// obsolete
-//    generic writeWideLine args:list
-//    [
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list@i.
-//            
-//            self write:(obj~convertorOp toWide).
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self writeLine
-//    ]
-//    
-//    print : anObject1 paddingRight:aWidth
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingRight:aWidth with:$32.
-//            
-//        ^ self
-//    ]
-//    
-//    print : anObject1 : anObject2 paddingRight:aWidth
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral);
-//            write:(anObject2~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingRight:aWidth with:$32.
-//            
-//        ^ self
-//    ]
-//    
-//    print : anObject1 : anObject2 : anObject3 paddingRight:aWidth
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral);
-//            write:(anObject2~convertorOp toLiteral);
-//            write:(anObject3~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingRight:aWidth with:$32.
-//            
-//        ^ self
-//    ]
-//    
-//    print : anObject1 : anObject2 : anObject3 : anObject4 paddingRight:aWidth
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral);
-//            write:(anObject2~convertorOp toLiteral);
-//            write:(anObject3~convertorOp toLiteral);
-//            write:(anObject4~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingRight:aWidth with:$32.
-//            
-//        ^ self
-//    ]
-//    
-//    print : anObject1 paddingRight:aWidth with:ch
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingRight:aWidth with:ch.
-//            
-//        ^ self
-//    ]
-//    
-//    print : anObject1 : anObject2 paddingRight:aWidth with:ch
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral);
-//            write:(anObject2~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingRight:aWidth with:ch.
-//            
-//        ^ self
-//    ]
-//    
-//    print : anObject1 : anObject2 : anObject3 paddingRight:aWidth with:ch
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral);
-//            write:(anObject2~convertorOp toLiteral);
-//            write:(anObject3~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingRight:aWidth with:ch.
-//            
-//        ^ self
-//    ]
-//    
-//    print : anObject1 : anObject2 : anObject3 : anObject4 paddingRight:aWidth with:ch
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral);
-//            write:(anObject2~convertorOp toLiteral);
-//            write:(anObject3~convertorOp toLiteral);
-//            write:(anObject4~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingRight:aWidth with:ch.
-//            
-//        ^ self
-//    ]
-//    
+    generic printPaddingRight args:list
+    [
+        textbuffer aBuffer := TextBuilder new.
+        
+        int len := list length.
+        int i := 1.
+        while (i < len)
+        [
+            object obj := list[i].
+            
+            aBuffer write(obj~convertorOp toLiteral).
+            
+            i := i + 1
+        ].
+        
+        var aWidth := list[0].
+        
+        self write(aBuffer literal) paddingRight:aWidth with:$32.
+            
+        ^ self
+    ]
+    
 //    print : anObject1 paddingLeft:aWidth
 //    [
 //        textbuffer aBuffer := TextBuilder new.
