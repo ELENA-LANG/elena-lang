@@ -1,19 +1,9 @@
 // === basic interfaces ===
-type stream       :: system'io'Stream.
-type textreader   :: system'io'TextReader.
-type binaryreader :: system'io'BinaryReader.
-type textwriter   :: system'io'TextWriter.
-type binarywriter :: system'io'BinaryWriter.
-
-type file_path.
-type directory_path.
-
-extension ioTypeOp
-{
-    embeddable file_path = self.
-    
-    embeddable directory_path = self.
-}
+type stream       = system'io'Stream.
+type textreader   = system'io'TextReader.
+type binaryreader = system'io'BinaryReader.
+type textwriter   = system'io'TextWriter.
+type binarywriter = system'io'BinaryWriter.
 
 // --- Stream ---
 
@@ -21,9 +11,9 @@ limited class Stream
 {
     stream = $self.
     
-    int length :: nprop(readLengthTo,writeLength).
+    int vprop length :: readLengthTo,writeLength.
     
-    int index :: nprop(readIndexTo,writeIndex).
+    int vprop index :: readIndexTo,writeIndex.
     
     stacksafe writeLength int:aLength [ ] // !! default implementation
         
@@ -41,9 +31,6 @@ limited class Stream
         
         $self writeIndex int:aNewIndex.
     ]
-
-    reduce index:anIndex 
-        <= reduceIndex int:anIndex.
         
     stacksafe reduceIndex int:anIndex 
     [

@@ -660,7 +660,10 @@ void DerivationReader :: copyTreeNode(SyntaxWriter& writer, SNode current, Deriv
          // if it is a code template parameter
          DerivationScope* parentScope = scope.parent;
 
-         generateExpressionTree(writer, scope.exprNode, *parentScope, true);
+         /*if (scope.exprNode == lxNone) {
+            writer.appendNode(lxNil);
+         }
+         else */generateExpressionTree(writer, scope.exprNode, *parentScope, true);
       }
       else if (scope.type == DerivationScope::ttCodeTemplate && current.argument == 0) {
          // if it is a code template parameter

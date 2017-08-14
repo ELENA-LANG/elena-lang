@@ -30,16 +30,6 @@ sealed class DBReader
         ^ aResult == SQLITE_ROW
     ]
     
-    getAt : aSelector
-        = aSelector cast:%eval to:
-            {
-                eval : aReader int : anInt = aReader getAt int:anInt.
-                
-                eval : aReader literal : aFieldName = aReader getAt literal:aFieldName.
-                
-                eval : aReader wide : aFieldName = aReader getAt literal:(aFieldName literal).
-            } with:$self.
-    
     stacksafe getAt int:anIndex
         = theCommand getAt int:anIndex.
     

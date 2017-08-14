@@ -707,8 +707,8 @@ real extension realOp
         = self <= 0.0r.
 }
 
-//// --- intArrayOp ---
-//
+// --- intArrayOp ---
+
 //intarray extension intArrayOp
 //{
 //    stacksafe exchange int:anIndex1 int:anIndex2
@@ -741,52 +741,52 @@ real extension realOp
 //        ^ self
 //    ]
 //}
-//
-//// --- arrayOp ---
-//
-//array extension arrayOp
-//{
-//    exchange : anIndex1 : anIndex2
-//        = self~arrayOp exchange int:anIndex1 int:anIndex2.
-//        
-//    exchange int:anIndex1 int:anIndex2
-//    [
-//        var aTemp := self getAt int:anIndex1.
-//        
-//        self setAt int:anIndex1 object:(self getAt int:anIndex2).
-//        self setAt int:anIndex2 object:aTemp.
-//    ]
-//    
-//    stacksafe indexOf int:anIndex object:anObject vint:aRetVal
-//    [
-//        aRetVal int := -1.
-//        
-//        int aLength := self length.
-//        
-//        int i := anIndex.
-//        while(i < aLength)
-//        [
-//            var anArrayItem := self getAt int:i.
-//            
-//            if (anObject == anArrayItem)
-//                [ aRetVal int := i ].
-//            
-//            i := i + 1
-//        ]
-//    ]        
-//        
-//    stacksafe indexOf int:anIndex object:anObject
-//    [
-//        int aRetVal := 0.
-//        
-//        self~arrayOp indexOf int:anIndex object:anObject vint:aRetVal.
-//        
-//        ^ IntNumber new int:aRetVal
-//    ]
-//    
-//    indexOf : anObject
-//        = self~arrayOp indexOf int:0 object:anObject.
-//        
+
+// --- arrayOp ---
+
+array extension arrayOp
+{
+    exchange : anIndex1 : anIndex2
+        = self~arrayOp exchange int:anIndex1 int:anIndex2.
+        
+    exchange int:anIndex1 int:anIndex2
+    [
+        var aTemp := self getAt int:anIndex1.
+        
+        self setAt int:anIndex1 object:(self getAt int:anIndex2).
+        self setAt int:anIndex2 object:aTemp.
+    ]
+    
+    stacksafe indexOf int:anIndex object:anObject vint:aRetVal
+    [
+        aRetVal int := -1.
+        
+        int aLength := self length.
+        
+        int i := anIndex.
+        while(i < aLength)
+        [
+            var anArrayItem := self getAt int:i.
+            
+            if (anObject == anArrayItem)
+                [ aRetVal int := i ].
+            
+            i := i + 1
+        ]
+    ]        
+        
+    stacksafe indexOf int:anIndex object:anObject
+    [
+        int aRetVal := 0.
+        
+        self~arrayOp indexOf int:anIndex object:anObject vint:aRetVal.
+        
+        ^ IntNumber new int:aRetVal
+    ]
+    
+    indexOf : anObject
+        = self~arrayOp indexOf int:0 object:anObject.
+        
 //    safeSeek : aValue
 //    [
 //        int aLength := self length.
@@ -804,103 +804,103 @@ real extension realOp
 //        
 //        ^ $nil
 //    ]
+        
+//    #method deepClone
+//    [
+//        #var(int)aLength := self length.
 //        
-////    #method deepClone
-////    [
-////        #var(int)aLength := self length.
-////        
-////        #var(array)aCopy := Array new &int:aLength.
-////                
-////        #var(int)anIndex := 0.
-////        #loop (anIndex < aLength) ?
-////        [
-////            aCopy setAt &int:anIndex &object:(self getAt &int:anIndex clone).
-////            
-////            anIndex += 1.
-////        ].
-////        
-////        ^ self.
-////    ]
-////    
-////    #method set &every:anIndexFunc
-////        = self::arrayOp set &nfunc:(anIndexFunc nfunc).
-////    
-////    #method set &nfunc:anIndexFunc
-////    [
-////        #var(int)anIndex := 0.
-////        #var(int)aLength := self length.
-////        
-////        #loop (anIndex < aLength) ?
-////        [            
-////            self setAt &int:anIndex &object:(anIndexFunc eval &int:anIndex).
-////            
-////            anIndex += 1.
-////        ].
-////        
-////        ^ self.
-////    ]
-////    
-////    #method sort : aCompareFunc
-////        = self::arrayOp sort &func2:(aCompareFunc func2).
-////    
-////    #method(w2) sort &func2:aCompareFunc
-////    [
-////        #var(int)i := 0.
-////        #var(int)j := 0.
-////        #var(int)aLength := self length.
-////        #var aCurrent := $nil.
-////        #var aNext := $nil.
-////        
-////        #loop (i < aLength) ?
-////        [
-////            aCurrent := self getAt &int:i.
-////            
-////            j := i + 1.
-////            #loop (j < aLength) ?
-////            [
-////                aNext := self getAt &int:j.
-////                (aCompareFunc eval:aCurrent:aNext)
-////                    ! [                        
-////                        self setAt &int:i &object:aNext.
-////                        self setAt &int:j &object:aCurrent.
-////                        
-////                        aCurrent := aNext.
-////                    ].
-////                    
-////                j += 1.
-////            ].
-////            
-////            i += 1.
-////        ].
-////        
-////        ^ self.
-////    ]
-////    
-////    #method ascendant
-////        = (self clone)::arrayOp sort:ifOrdered.
-////    
-////    #method(bool) is &empty
-////    [
-////        #var(int)aLength := self length.
-////        
-////        ^ aLength == 0.
-////    ]
-////    
-////    #method Subarray : aLength &at:anIndex
-////        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
-////    
-////    /// obsolete
-////    #method Subarray &index:anIndex &length:aLength
-////        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
-////    
-////    #method Subarray &int:anIndex &int:aLength
-////    [
-////        #var(iterator) it := self iterator.
-////        
-////        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
-////    ]
-//}
-//
+//        #var(array)aCopy := Array new &int:aLength.
+//                
+//        #var(int)anIndex := 0.
+//        #loop (anIndex < aLength) ?
+//        [
+//            aCopy setAt &int:anIndex &object:(self getAt &int:anIndex clone).
+//            
+//            anIndex += 1.
+//        ].
+//        
+//        ^ self.
+//    ]
+//    
+//    #method set &every:anIndexFunc
+//        = self::arrayOp set &nfunc:(anIndexFunc nfunc).
+//    
+//    #method set &nfunc:anIndexFunc
+//    [
+//        #var(int)anIndex := 0.
+//        #var(int)aLength := self length.
+//        
+//        #loop (anIndex < aLength) ?
+//        [            
+//            self setAt &int:anIndex &object:(anIndexFunc eval &int:anIndex).
+//            
+//            anIndex += 1.
+//        ].
+//        
+//        ^ self.
+//    ]
+//    
+//    #method sort : aCompareFunc
+//        = self::arrayOp sort &func2:(aCompareFunc func2).
+//    
+//    #method(w2) sort &func2:aCompareFunc
+//    [
+//        #var(int)i := 0.
+//        #var(int)j := 0.
+//        #var(int)aLength := self length.
+//        #var aCurrent := $nil.
+//        #var aNext := $nil.
+//        
+//        #loop (i < aLength) ?
+//        [
+//            aCurrent := self getAt &int:i.
+//            
+//            j := i + 1.
+//            #loop (j < aLength) ?
+//            [
+//                aNext := self getAt &int:j.
+//                (aCompareFunc eval:aCurrent:aNext)
+//                    ! [                        
+//                        self setAt &int:i &object:aNext.
+//                        self setAt &int:j &object:aCurrent.
+//                        
+//                        aCurrent := aNext.
+//                    ].
+//                    
+//                j += 1.
+//            ].
+//            
+//            i += 1.
+//        ].
+//        
+//        ^ self.
+//    ]
+//    
+//    #method ascendant
+//        = (self clone)::arrayOp sort:ifOrdered.
+//    
+//    #method(bool) is &empty
+//    [
+//        #var(int)aLength := self length.
+//        
+//        ^ aLength == 0.
+//    ]
+//    
+//    #method Subarray : aLength &at:anIndex
+//        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
+//    
+//    /// obsolete
+//    #method Subarray &index:anIndex &length:aLength
+//        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
+//    
+//    #method Subarray &int:anIndex &int:aLength
+//    [
+//        #var(iterator) it := self iterator.
+//        
+//        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
+//    ]
+}
+
 //// --- intmatrixOp ---
 //
 //intmatrix extension intmatrixOp

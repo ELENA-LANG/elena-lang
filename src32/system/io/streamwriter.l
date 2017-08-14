@@ -22,16 +22,16 @@ limited class BinaryWriter
 
     write byte:anInt
     [
-        byte aBuffer(4).
+        byte[] aBuffer(4).
         
-        aBuffer@0 := anInt.
+        aBuffer[0] := anInt.
                 
         $self write bytearray:aBuffer int:1.
     ]
 
     write short:anInt
     [
-        byte aBuffer(4).
+        byte[] aBuffer(4).
         
         byteArrayHelper write bytearray:aBuffer int:0 short:anInt.
                 
@@ -40,7 +40,7 @@ limited class BinaryWriter
 
     write char:anInt
     [
-        byte aBuffer(4).
+        byte[] aBuffer(4).
         
         byteArrayHelper write bytearray:aBuffer int:0 char:anInt.
                 
@@ -49,7 +49,7 @@ limited class BinaryWriter
 
     write int:anInt
     [
-        byte aBuffer(4).
+        byte[] aBuffer(4).
         
         byteArrayHelper write bytearray:aBuffer int:0 int:anInt.
                 
@@ -58,7 +58,7 @@ limited class BinaryWriter
 
     write long:aLong
     [
-        byte aBuffer(8).
+        byte[] aBuffer(8).
         
         byteArrayHelper write bytearray:aBuffer int:0 long:aLong.
                 
@@ -67,7 +67,7 @@ limited class BinaryWriter
 
     write real:aLong
     [
-        byte aBuffer(8).
+        byte[] aBuffer(8).
         
         byteArrayHelper write bytearray:aBuffer int:0 real:aLong.
                 
@@ -104,10 +104,8 @@ limited class TextWriter
         $self write:aLine; write literal:theNewLineConstant.
     ]
     
-    write : anObject
-    [
-        anObject cast:%write to:$self.
-    ]
+    multi write : anObject
+        <= write literal:anObject.
     
     write literal:aLine
     [

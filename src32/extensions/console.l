@@ -36,7 +36,12 @@ extension outputOp
         
         ^ self
     ]
-    
+
+    printLine
+    [
+        self writeLine.
+    ]
+            
     generic printLine args:list
     [
         int len := list length.
@@ -71,6 +76,29 @@ extension outputOp
         var aWidth := list[0].
         
         self write(aBuffer literal) paddingRight:aWidth with:$32.
+            
+        ^ self
+    ]
+
+    generic printPaddingRightChar args:list
+    [
+        textbuffer aBuffer := TextBuilder new.
+        
+        int len := list length.
+        int i := 2.
+        while (i < len)
+        [
+            object obj := list[i].
+            
+            aBuffer write(obj~convertorOp toLiteral).
+            
+            i := i + 1
+        ].
+        
+        var aWidth := list[0].
+        var ch := list[1].
+        
+        self write(aBuffer literal) paddingRight:aWidth with:ch.
             
         ^ self
     ]

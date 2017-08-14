@@ -3,38 +3,9 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * assigning a template : var n := var<IntNumber>(3).
+                 * migrate rosetta code samples
+                 * migrate samples
 
-
-                 * implicit conversion
-                 * private message
-                 * private sealed message
-                 * test loops
-                 * test try catch
-                 * test try finally catch
-                 * test using
-                 * test generic handler
-                 * test generic handler with redirect
-                 * test redirect class
-                 * test redirect class with open arg generic handler
-
-                 * predefined verb: test sending qualified message 
-                 * custom verb: test sending generic message 
-                 * custom verb: test sending qualified message 
-                 * predefined verb: generic message handler
-                 * custom verb: generic message handler
-                 * predefined verb: signature
-                 * predefined verb: message
-                 * custom verb: signature
-                 * custom verb: message
-                 * private messages
-                 * private sealed messages
-
-                 * test embeddable optimization
-                 * test implicit conversion
-
-                 * reimplement multi dispatching to fix the short circuit (infinit loop)
-                    multi convert : n <= convert(n value)
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]
@@ -43,6 +14,10 @@ In development:
                  * support alternative property setting syntax : a set b:c <=> a b := c.
                  * Signature should support only get, set, eval
                  * raise an error if code template is not recognized
+                 * fix the bug : sealed class File { literal thePath. } - should not be declared as structured
+                 * fix the bug : duplciate methods are not recognized:
+                      stacksafe literal add value:v = v literal.
+                      literal add literal : aLiteral => system'core_routines'__literal.
 
               zdev - script engine
                  * migrate Tape
@@ -87,7 +62,7 @@ In development:
                  * private subjects??
                  * fix message table implementation in VM (currently the space is reserved, but it should use virtual space allocation)
                  * validate rprop (two message should be applied)
-                 *duplicate method templates
+                 * duplicate method templates
 
               zdev - script engine
                  * migrate xforms
@@ -138,6 +113,7 @@ In development:
                    (e.g. vhdc), it should be declared when it is used
 
               xdev - general optimization  
+                 * optimize using, finally, try template implementations (get rid of dynamic closures)
                  * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                  * optimize listof.$expand
 
@@ -161,6 +137,7 @@ In development:
                  * uint16
 
               xdev - general implementation
+                 * should multi geneated private method be static as well or should not be generated at all?
                  * if else if ...
 
 ------                                 
@@ -415,6 +392,9 @@ Pipeline:
                  * cannot declare the following code:
                       const nbrs = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1),(-1, 1), (-1, 0), (-1, -1), (0, -1)).
                  * check attribute name if it is equal to verb / another predefined attribute
+                 * test generic handler
+                 * test generic handler with redirect
+                 * test redirect class with open arg generic handler
 
               zdev 
                  * scripting library : elena script (both run-time / compile-time)

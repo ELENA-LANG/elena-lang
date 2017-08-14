@@ -25,16 +25,16 @@ struct FileStream :: Stream
 {
     handle theHandle.
     
-    constructor openForRead path:aPath
+    constructor openForRead:aPath
         <= new wide:aPath int:$FILE_GENERIC_READ int:$FILE_SHARE_READ int:$OPEN_EXISTING int:0.
     
-    constructor openForReWrite path:aPath
+    constructor openForReWrite:aPath
         <= new wide:aPath int:$FILE_GENERIC_WRITE int:$FILE_SHARE_READ int:$CREATE_ALWAYS int:0.
     
-    constructor openForAppend path:aPath
+    constructor openForAppend:aPath
         <= new wide:aPath int:$FILE_APPEND_DATA int:$FILE_SHARE_READ int:$OPEN_ALWAYS int:0.
     
-    constructor openForEdit path:aPath
+    constructor openForEdit:aPath
         <= new wide:aPath int:$FILE_GENERIC_WRITE int:$FILE_SHARE_READ int:$OPEN_EXISTING int:0.
     
     constructor new wide:aPath int:dwDesiredAccess int:dwShareMode int:dwCreationDisposition int:dwFlagsAndAttributes
@@ -124,7 +124,7 @@ struct FileStream :: Stream
 
 class $fileStreamHelper =
 {
-    stream openForWrite path:aPath bool:anAppendMode
+    stream openForWrite literal:aPath bool:anAppendMode
     [
         if(anAppendMode) [ ^ FileStream openForAppend path:aPath ].
         
@@ -148,11 +148,11 @@ class StreamWriter :: TextWriter
         theNewLineConstant := system'text'newLine literal.
     ]
 
-    constructor new path:aPath
-        <= new stream:(FileStream openForReWrite path:aPath) encoder:UTF8Encoder.
+    constructor new:aPath
+        <= new stream:(FileStream openForReWrite:aPath) encoder:UTF8Encoder.
         
-    constructor new path:aPath bool:anAppendMode
-        <= new stream:($fileStreamHelper openForWrite path:aPath bool:anAppendMode) encoder:UTF8Encoder.
+    constructor new literal:aPath bool:anAppendMode
+        <= new stream:($fileStreamHelper openForWrite:aPath bool:anAppendMode) encoder:UTF8Encoder.
         
     stream = theStream.        
         
@@ -160,11 +160,11 @@ class StreamWriter :: TextWriter
         
     write chararray:anInput int:aLength
     [
-        int  aTotal := aLength.
-        byte aBuffer(64).
-        int  aBlockLength := 0.
-        int  aBufferLength := 0.
-        int  anOffset := 0.
+        int    aTotal := aLength.
+        byte[] aBuffer(64).
+        int    aBlockLength := 0.
+        int    aBufferLength := 0.
+        int    anOffset := 0.
         
         while (aTotal > 0)
         [
@@ -203,11 +203,11 @@ class StreamReader :: TextReader
         theOpen := true.
     ]
 
-    constructor new path:aPath
-        <= new stream:(FileStream openForRead path:aPath) encoder:UTF8Encoder.
+    constructor new:aPath
+        <= new stream:(FileStream openForRead:aPath) encoder:UTF8Encoder.
 
     constructor new path:aPath encoder:anEncoder
-        <= new stream:(FileStream openForRead path:aPath) encoder:anEncoder.
+        <= new stream:(FileStream openForRead:aPath) encoder:anEncoder.
 
     available = theOpen.
 
@@ -217,8 +217,8 @@ class StreamReader :: TextReader
 
     read chararray:anOutput vint:aLength
     [
-        int  aBufferLength := 64.
-        byte aBuffer(64).
+        int    aBufferLength := 64.
+        byte[] aBuffer(64).
         theStream read bytearray:aBuffer vint:aBufferLength.
         if(aBufferLength == 0)
             [ theOpen := false. aLength int := 0 ];
@@ -243,38 +243,38 @@ class StreamReader :: TextReader
 sealed BinaryFileReader :: BinaryReader
 {
     constructor new path:aPath
-        <= new stream:(FileStream openForRead path:aPath).
+        <= new stream:(FileStream openForRead:aPath).
 }
 
 // --- BinaryFileWriter ---
 
 sealed BinaryFileWriter :: BinaryWriter
 {
-    constructor new path:aPath
-        <= new stream:(FileStream openForReWrite path:aPath).
+    constructor new:aPath
+        <= new stream:(FileStream openForReWrite:aPath).
 }
 
 // --- fileOp ---
 
-file_path extension fileExtOp
+singleton fileControl =
 {
-    openForRead = FileStream openForRead path:self.
+    openForRead : path = FileStream openForRead:path.
     
-    openForReWrite = FileStream openForReWrite path:self.
+    openForReWrite : path = FileStream openForReWrite:path.
     
-    openForEdit = FileStream openForEdit path:self.
+    openForEdit : path = FileStream openForEdit:path.
     
-    openForAppend = FileStream openForAppend path:self.    
+    openForAppend : path = FileStream openForAppend:path.
         
-    textreader = StreamReader new path:self.
+    textreader reader : path = StreamReader new:path.
     
-    textwriter = StreamWriter new path:self.
+    textwriter writer : path = StreamWriter new:path.
     
-    logger = StreamWriter new path:self bool:true.
+    textwriter logger :path = StreamWriter new(path, true).
     
-    bool is available
+    bool isAvailable:path
     [
-        int ret := system'external'KERNEL32 GetFileAttributesW wide:(self wide).
+        int ret := system'external'KERNEL32 GetFileAttributesW wide:(path wide).
         
         if(ret != 0FFFFFFFFh)
             [
@@ -286,21 +286,21 @@ file_path extension fileExtOp
         ^ false
     ]
     
-    delete
+    delete : path
     [
-        int ret := system'external'KERNEL32 DeleteFileW wide:(self wide).
+        int ret := system'external'KERNEL32 DeleteFileW wide:(path wide).
         
        ^ ret != 0
     ]
-}
+}.
 
 // --- directoryExtOp
 
-directory_path extension directoryExtOp
+singleton directoryControl =
 {
-    bool is available
+    bool isAvailable:path
     [
-        int ret := system'external'KERNEL32 GetFileAttributesW wide:(self wide).
+        int ret := system'external'KERNEL32 GetFileAttributesW wide:(path wide).
      
         if(ret != 0FFFFFFFFh)
             [
@@ -312,20 +312,20 @@ directory_path extension directoryExtOp
         ^ false
     ]    
     
-    create
+    create : path
     [
         int ret := system'external'KERNEL32 CreateDirectoryW
-            wide:(self wide)
+            wide:(path wide)
             int:0.
             
         if(ret == 0)
             [ IOException new literal:"Cannot create a directory"; raise ]
     ]
     
-    delete
+    delete : path
     [
-        int ret := system'external'KERNEL32 RemoveDirectoryW wide:(self wide).
+        int ret := system'external'KERNEL32 RemoveDirectoryW wide:(path wide).
         
        ^ ret != 0
     ]    
-}
+}.

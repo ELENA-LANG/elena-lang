@@ -11,22 +11,16 @@ const int SQLITE_TEXT    = 3.
 const int SQLITE_BLOB    = 4.
 const int SQLITE_NULL    = 5.
 
-type sqlite_cnn    :: DBConnection.
-type sqlite_cmd    :: DBCommand.
-type sqlite_reader :: DBReader.
-type sqlite_table  :: DBTable.
-type sqlite_row    :: DBRow.
+type sqlite_cnn    = DBConnection.
+type sqlite_cmd    = DBCommand.
+type sqlite_reader = DBReader.
+type sqlite_table  = DBTable.
+type sqlite_row    = DBRow.
 
 // --- DBException ---
 
-class DBException :: exceptionof(DBError)
+class DBException :: Exception
 {
-    constructor new literal:message
-    [
-        theMessage := message.
-        theCallStack := CallStack new.
-    ]
-    
     /// Creates the exception
     constructor new
         <= new literal:"The process terminated".
@@ -52,7 +46,7 @@ sealed class DBConnection
     
     int = theDBHandle.
     
-    bool is available = theOpen.
+    bool isAvailable = theOpen.
     
     open
     [
@@ -91,8 +85,8 @@ sealed class DBConnection
         var aTable := DBTable new sql_field_names:(aCommand sql_field_names).
         var aReader := DBReader new sqlite_cmd:aCommand.
         
-        finally(aReader run:aTable eachPair:(:aTable:aRow)
-            [ aTable $appendRow:aRow ])
+        finally(aReader forEachPair(aTable,(:aTable:aRow)
+            [ aTable $appendRow:aRow ]))
         [
             aCommand free
         ].
@@ -154,7 +148,7 @@ sealed class DBCommand
     [
         theConnection := aConnection.
             
-        ifnot (theConnection is available) [ DBException new message:"SQLite database is not open."; raise ].
+        ifnot (theConnection isAvailable) [ DBException new message:"SQLite database is not open."; raise ].
 
         $self $prepare literal:(aText literal)
     ]

@@ -2,49 +2,58 @@ import system'text.
 
 // --- File ---
 
-sealed class File
+sealed nonstructural class File
 {
-    file_path thePath.
+    literal thePath.
     
-    constructor new file_path:aPath
+    constructor new:aPath
     [
         thePath := aPath.
     ]
-    
-    constructor new path:aPath
-        <= new file_path:aPath.
 
-    file_path = thePath.
-
-    literal = thePath literal.
+    literal = thePath.
     
     wide = thePath wide.
     
-    textreader = thePath~fileExtOp textreader.
+    textreader = fileControl reader:thePath.
     
-    textwriter = thePath~fileExtOp textwriter.
+    textwriter = fileControl writer:thePath.
     
-    bool is available
-        = thePath~fileExtOp is available.
+    bool isAvailable
+        = fileControl isAvailable:thePath.
     
-    literal literalContent
-        = thePath~fileOp literalContent.
+    literal content
+    [
+        textbuffer anOutput := TextBuilder new.
+        
+        $self read textbuffer:anOutput.
+        
+        ^ anOutput literal
+    ]
     
     wide wideContent
-        = thePath~fileOp wideContent.
+    [
+        textbuffer anOutput := TextBuilder new.
+        
+        $self read textbuffer:anOutput.
+        
+        ^ anOutput wide.
+    ]
     
     int length
-        = thePath~fileOp length.
-}
+    [
+        stream stream := FileStream openForRead:thePath.
+        int    fileLen := stream length.        
+        
+        stream close.
+        
+        ^ fileLen
+    ]
 
-// --- fileOp ---
-
-file_path extension fileOp
-{
     read textbuffer:anOutput
     [
-        textreader aReader := self~fileExtOp textreader.
-        char       buffer(128).
+        textreader aReader := fileControl reader:thePath.
+        char[]     buffer(128).
         int        read := 0.
         while (aReader available)
         [
@@ -56,52 +65,22 @@ file_path extension fileOp
         
         aReader close
     ]
- 
-    saveContent:content
+    
+    saveContent literal:content
     [
-        textwriter aWriter := self~fileExtOp textwriter.
+        textwriter aWriter := fileControl writer:thePath.
         
         aWriter write literal:content.
         
         aWriter close
-    ]
- 
-    saveWideContent:content
+    ]    
+    
+    saveContent wide:content
     [
-        textwriter aWriter := self~fileExtOp textwriter.
+        textwriter aWriter := fileControl writer:thePath.
         
         aWriter write wide:content.
         
         aWriter close
-    ]
-          
-    literal literalContent
-    [
-        textbuffer anOutput := TextBuilder new.
-        
-        self~fileOp read textbuffer:anOutput.
-        
-        ^ anOutput literal
-    ]
-    
-    wide wideContent
-    [
-        textbuffer anOutput := TextBuilder new.
-        
-        self~fileOp read textbuffer:anOutput.
-        
-        ^ anOutput wide.
-    ]
-    
-    int length
-    [
-        stream stream := FileStream openForRead path:self.
-        int    fileLen := stream length.        
-        
-        stream close.
-        
-        ^ fileLen
-    ]
-    
-    file = File new file_path:self.
+    ]    
 }

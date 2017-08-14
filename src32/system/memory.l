@@ -1107,9 +1107,6 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
     multi add : anObject 
         <= add(anObject value).
 
-    stacksafe literal add value:v
-        = v literal.
-        
     /// Concatinates the values
     literal add literal : aLiteral
         => system'core_routines'__literal.

@@ -178,24 +178,33 @@ template try :: expr,else =
     {
     }).
 
-//// -- finally statement ---
-//
-//template finally :: expr =
-//    expr then:
-//        [
-//        ]         
-//        | raise:[].
-//
-//// --- using statement ---
-//
-//extension $usingOp
-//{
-//    doAndClose : code
-//    [
-//        self close after:code
-//            | raise:[ self close ].
-//    ]
-//}
-//
-//template using :: expr =
-//    expr doAndClose:[].
+// -- finally statement ---
+
+template finally :: expr =
+    expr then:
+        [
+        ]                 
+        | raise:[].
+        
+extension $templateOp =
+{
+    doFinally func:c1 func:c2
+    [
+        c1 eval; then:c2
+            | raise:c2.
+    ]
+    
+    doAndClose : code
+    [
+        self thenClose:code
+            | raise:[ self close ].
+    ]
+}.
+
+template finally :: dummy, else =
+    true doFinally([],[]).
+
+// --- using statement ---
+
+template using :: expr =
+    expr doAndClose:[].

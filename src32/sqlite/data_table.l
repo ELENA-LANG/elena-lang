@@ -14,16 +14,6 @@ sealed class DBRow
         theTable := aTable.
     ]
     
-    getAt : aSelector
-        = aSelector cast:%eval to:
-            {
-                eval : aRow int : anInt = aRow getAt int:anInt.
-                
-                eval : aRow literal : aFieldName = aRow getAt literal:aFieldName.
-                
-                eval : aRow wide : aFieldName = aRow getAt literal:(aFieldName literal).
-            } with:$self.
-
     stacksafe getAt int:anIndex
         = theRow getAt int:anIndex.
 

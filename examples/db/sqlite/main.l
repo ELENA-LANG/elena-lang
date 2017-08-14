@@ -11,28 +11,28 @@ extension dbTestOp
 {
     printTable : aTableName
     [
-        console writeLine:aTableName:":".
-        var aTable := self executeQuery:("SELECT * FROM " + aTableName).
+        console printLine(aTableName,":").
+        var aTable := self executeQuery("SELECT * FROM " + aTableName).
         
         // Header
-        aTable fields; run each: (:aFieldName)
+        aTable fields; forEach(:aFieldName)
         [
-            console print:aFieldName paddingRight:25.
+            console printPaddingRight(25, aFieldName).
         ].
-        console writeLine.
-        console print:"-" paddingRight:(25 * aTable fieldCount) with:$45.
-        console writeLine.
+        console printLine.
+        console printPaddingRightChar(25 * aTable fieldCount, $45, "-").
+        console printLine.
         
         // Rows
-        aTable rows; run each: (:aRow)
+        aTable rows; forEach(:aRow)
         [
-            aTable fields; run each: (:aFieldName)
+            aTable fields; forEach(:aFieldName)
             [
-                console print:(aRow@aFieldName) paddingRight:25.
+                console printPaddingRight(25, aRow[aFieldName]).
             ].
-            console writeLine.
+            console printLine.
         ].
-        console writeLine.
+        console printLine.
     ]
 }
 
@@ -40,11 +40,11 @@ extension dbTestOp
 
 program =
 [
-    var dbFile := File new path:DBFileName.
+    var dbFile := File new:DBFileName.
     
     var cnn := DBConnection new path:dbFile.
     
-    ifnot (dbFile is available)
+    ifnot (dbFile isAvailable)
     [
         cnn open.
   
@@ -60,7 +60,7 @@ program =
             cnn executeNonQuery:"INSERT INTO Movies (Name, Director, Year) VALUES ('Beverly Hills Chihuahua', 'Raja Gosnell', 2008)".
             console write:".".
     
-            cnn executeNonQuery:("CREATE TABLE [Users] " +
+            cnn executeNonQuery("CREATE TABLE [Users] " +
                                    "([ID] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                                    "[client] NVARCHAR(100)  NULL, " +
                                    "[date] DATE  NULL " +
@@ -79,11 +79,11 @@ program =
 
     using (cnn)
     [
-        console writeLine:"Number of table in DB: ":(cnn numberOfTable).
+        console printLine("Number of table in DB: ",cnn numberOfTable).
     
         console writeLine:"Tables:"; writeLine.
         
-        cnn tables; run each: (:aTableName)
+        cnn tables; forEach(:aTableName)
             [ 
                 cnn printTable:aTableName.
             ].

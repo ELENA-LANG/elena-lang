@@ -2,7 +2,7 @@
 
 const int $TextPageSize = 128.
 
-type membuffer :: MemoryBuffer.
+type membuffer = MemoryBuffer.
 
 sealed class MemoryBuffer
 {
@@ -38,10 +38,10 @@ sealed class MemoryBuffer
     
     stacksafe $write int:index int:length bytearray:array
     [        
-        byte temp(64).
-        int  n := index.
-        int  len := length.
-        int  temp_len := 64.
+        byte[] temp(64).
+        int    n := index.
+        int    len := length.
+        int    temp_len := 64.
         
         while (len > 0)
         [
@@ -95,7 +95,7 @@ sealed class MemoryBuffer
         theUsed := theUsed - aLength.
     ]
     
-    int length :: outnprop(readLengthTo).
+    int rvprop length :: readLengthTo.
     
     stacksafe readLengthTo vint:retVal
     [

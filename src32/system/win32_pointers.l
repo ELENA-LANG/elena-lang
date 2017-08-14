@@ -54,7 +54,7 @@ sealed embeddable struct Handle
 
 // --- UnsafePointer ---
 
-sealed embeddable struct UnsafePointer
+sealed embeddable struct UnsafePointer :: dispatchable<dirty_ptr>
 {
     __dword thePointer(4).
 
@@ -67,12 +67,10 @@ sealed embeddable struct UnsafePointer
 //    [
 //        $self set:ref.
 //    ]
-//    
-//    dirty_ptr = $self.
-//    
-////    stacksafe set : anObject
-////        => system'core_routines'__dptr.
-//                
+    
+//    stacksafe set : anObject
+//        => system'core_routines'__dptr.
+                
 //    stacksafe set int:aValue
 //    [
 //        thePointer := aValue.
@@ -82,60 +80,60 @@ sealed embeddable struct UnsafePointer
 //    [
 //        thePointer := thePointer + offs.
 //    ]
-//
-////    stacksafe set dirty_ptr:anObject
-////        => system'core_routines'__dptr.
-//                
-//    stacksafe write int:anObject
+
+//    stacksafe set dirty_ptr:anObject
 //        => system'core_routines'__dptr.
-//                
-//    stacksafe read vint:aPointer
-//        => system'core_routines'__dptr.
-//
-//    stacksafe read bytearray:arr int:len
-//        => system'core_routines'__dptr.
-//
-//    // unsafe code
-//    stacksafe int
-//    [
-//        int aValue := 0.
-//        $self read vint:aValue.
-//        
-//        ^ IntNumber new int:aValue
-//    ]
-//
-//    // unsafe code
-//    stacksafe literal
-//    [
-//        int     aLen := system'external'KERNEL32 lstrlenA int:thePointer.
-//        literal aLiteral := LiteralValue new int:aLen.
-//        system'external'KERNEL32 lstrcpyA literal:aLiteral int:thePointer.
-//        
-//        ^ aLiteral
-//    ]        
-//
-//    // unsafe code
-//    stacksafe wide
-//    [
-//        int  aLen := system'external'KERNEL32 lstrlenW int:thePointer.
-//        wide aLiteral := WideLiteralValue new int:aLen.
-//        system'external'KERNEL32 lstrcpyW wide:aLiteral int:thePointer.
-//        
-//        ^ aLiteral
-//    ]
-//    
-//    stacksafe saveTo bytearray:target int:offs
-//    [
-//        target write int:offs int:thePointer.
-//    ]
-//    
-//    stacksafe saveTo intarray:target int:offs
-//    [
-//        target write int:offs int:thePointer.
-//    ]
-//    
-//    stacksafe bool isEmpty
-//        = 0 == thePointer.
+                
+    stacksafe write int:anObject
+        => system'core_routines'__dptr.
+                
+    stacksafe read vint:aPointer
+        => system'core_routines'__dptr.
+
+    stacksafe read bytearray:arr int:len
+        => system'core_routines'__dptr.
+
+    // unsafe code
+    stacksafe int
+    [
+        int aValue := 0.
+        $self read vint:aValue.
+        
+        ^ IntNumber new int:aValue
+    ]
+
+    // unsafe code
+    stacksafe literal
+    [
+        int     aLen := system'external'KERNEL32 lstrlenA int:thePointer.
+        literal aLiteral := LiteralValue new int:aLen.
+        system'external'KERNEL32 lstrcpyA literal:aLiteral int:thePointer.
+        
+        ^ aLiteral
+    ]        
+
+    // unsafe code
+    stacksafe wide
+    [
+        int  aLen := system'external'KERNEL32 lstrlenW int:thePointer.
+        wide aLiteral := WideLiteralValue new int:aLen.
+        system'external'KERNEL32 lstrcpyW wide:aLiteral int:thePointer.
+        
+        ^ aLiteral
+    ]
+    
+    stacksafe saveTo bytearray:target int:offs
+    [
+        target write int:offs int:thePointer.
+    ]
+    
+    stacksafe saveTo intarray:target int:offs
+    [
+        target write int:offs int:thePointer.
+    ]
+    
+    stacksafe bool isEmpty
+        = 0 == thePointer.
 }
 
 //// --- COORD ---

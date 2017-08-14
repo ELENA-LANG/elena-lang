@@ -41,25 +41,25 @@ limited class BinaryReader
             [ IOException new; raise ]
     ]
 
-//    read &vbyte:anInt
-//    [
-//        byte(4) aBuffer := 0.
-//        int     aRead := 1.
-//        
-//        $self read &bytearray:aBuffer &vint:aRead.
-//        
-//        (aRead < 1)
-//            ? [ IOException new raise. ].
-//     
-//        byte b := aBuffer@0.
-//                          
-//        anInt := b.
-//    ]
+    read vbyte:anInt
+    [
+        byte[] aBuffer(4).
+        int    aRead := 1.
+        
+        $self read bytearray:aBuffer vint:aRead.
+        
+        if (aRead < 1)
+            [ IOException new; raise ].
+     
+        byte b := aBuffer[0].
+                          
+        anInt byte := b.
+    ]
 
     read vshort:anInt
     [
-        byte aBuffer(4).
-        int  aRead := 2.
+        byte[] aBuffer(4).
+        int    aRead := 2.
         
         $self read bytearray:aBuffer vint:aRead.
         
@@ -71,8 +71,8 @@ limited class BinaryReader
 
     read vchar:anInt
     [
-        byte aBuffer(4).
-        int  aRead := 4.
+        byte[] aBuffer(4).
+        int    aRead := 4.
         
         $self read bytearray:aBuffer vint:aRead.
         
@@ -84,8 +84,8 @@ limited class BinaryReader
 
     read vint:anInt
     [
-        byte aBuffer(4).
-        int  aRead := 4.
+        byte[] aBuffer(4).
+        int    aRead := 4.
         
         $self read bytearray:aBuffer int:aRead.
         
@@ -97,8 +97,8 @@ limited class BinaryReader
 
     read vlong:aLong
     [
-        byte aBuffer(8).
-        int  aRead := 8.
+        byte[] aBuffer(8).
+        int    aRead := 8.
         
         $self read bytearray:aBuffer vint:aRead.
         
@@ -110,8 +110,8 @@ limited class BinaryReader
 
     read vreal:aReal
     [
-        byte aBuffer(8).
-        int  aRead := 8.
+        byte[] aBuffer(8).
+        int    aRead := 8.
         
         $self read bytearray:aBuffer vint:aRead.
         
@@ -150,7 +150,7 @@ limited class TextReader
     
     bool available = false.
             
-    literal read literal
+    literal readLiteral
     [
         literal aLine := emptyLiteralValue.
         
@@ -161,8 +161,8 @@ limited class TextReader
             
             if(aLength == -1)
                 [
-                    char aBuffer(64).
-                    int   aBufferLength := 64.
+                    char[] aBuffer(64).
+                    int    aBufferLength := 64.
                     
                     $self read chararray:aBuffer vint:aBufferLength.
                     if(aBufferLength == 0)
@@ -184,7 +184,7 @@ limited class TextReader
         ^ aLine.
     ]
     
-    wide read wide
+    wide readWide
     [
         wide aLine := emptyWideLiteralValue.
         wide nl := theNewLineConstant wide.
@@ -198,9 +198,9 @@ limited class TextReader
             
             if(aLength == -1)
                 [
-                    char aBuffer(64).
-                    int  aBufferLength := 64.
-                    
+                    char[] aBuffer(64).
+                    int    aBufferLength := 64.
+                     
                     $self read chararray:aBuffer vint:aBufferLength.
                     if(aBufferLength == 0)
                         [ aLength := -2 ];  // !! to indicate the eof

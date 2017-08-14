@@ -3610,6 +3610,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    else if (node == lxBoxing) {
       objectInfo = compileBoxingExpression(writer, node, scope, mode);
    }
+   //else if (node == lxNil) {
+   //   writer.appendNode(lxNil);
+   //}
    else {
       SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxSwitching);
       switch (current.type) {
