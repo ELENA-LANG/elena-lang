@@ -1,2 +1,2 @@
-type datetime :: system'calendar'Date.
-type timespan :: system'calendar'TimeSpan.
+type datetime = system'calendar'Date.
+type timespan = system'calendar'TimeSpan.

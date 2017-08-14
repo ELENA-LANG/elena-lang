@@ -7,9 +7,9 @@ type $strategy = BaseStrategy.
 
 limited class BaseStrategy
 {
-    getAt object:Indexers int:aLength = $nil.
+    getAt array:Indexers int:aLength = $nil.
     
-    $strategy eval object:Indexers int:aLength = $self.
+    $strategy eval array:Indexers int:aLength = $self.
     
     bool result = false.
 }
@@ -25,7 +25,7 @@ class sequentialNext = BaseStrategy::
 {
     result = true.
     
-    eval object:Indexers int:aLength
+    eval array:Indexers int:aLength
     [
         if($nil == (Indexers seekEach(:anIndexer)
                 [
@@ -41,15 +41,15 @@ class sequentialNext = BaseStrategy::
         ^ $self          
     ]
         
-    getAt object:Indexers int:aLength
+    getAt array:Indexers int:aLength
     [
-        ^ Array new int:aLength; populate(&int:i) (Indexers array; getAt int:i; get)
+        ^ Array new int:aLength; populate(&int:i) (Indexers getAt int:i; get)
     ]
 }.
 
 class sequentialStart = BaseStrategy::
 {
-    eval object:Indexers int:aLength
+    eval array:Indexers int:aLength
     [
         Indexers forEach(:anIndexer) [ anIndexer writeIndex int:0 ].
         
@@ -63,7 +63,7 @@ class parallelNext = BaseStrategy::
 {
     result = true.
     
-    eval object:Indexers int:aLength
+    eval array:Indexers int:aLength
     [
         if($nil != Indexers seekEach(:anIndexer)(anIndexer append index:1; available; not ))
             [ ^ combinationEnd ].
@@ -71,7 +71,7 @@ class parallelNext = BaseStrategy::
         ^ $self       
     ]
         
-    getAt object:Indexers int:aLength
+    getAt array:Indexers int:aLength
     [
         ^ Array new int:aLength; populate(&int:i)(Indexers array; getAt int:i; get ).
     ]
@@ -79,7 +79,7 @@ class parallelNext = BaseStrategy::
 
 class parallelStart = BaseStrategy::
 {
-    eval object:Indexers int:aLength
+    eval array:Indexers int:aLength
     [
         Indexers forEach(:anIndexer)[ anIndexer writeIndex int:0 ].
         
@@ -93,12 +93,12 @@ class combinationNext = BaseStrategy::
 {
     result = true.
 
-    getAt object:Indexers int:aLength
+    getAt array:Indexers int:aLength
     [
         ^ Array new int:aLength; populate(&int:i)(Indexers array; getAt int:i; get)
     ]
         
-    eval object:Indexers int:aLength
+    eval array:Indexers int:aLength
     [
         array anArray := Indexers array.
         int   k := anArray length.
@@ -127,7 +127,7 @@ class combinationNext = BaseStrategy::
 
 class combinationStart = BaseStrategy::
 {
-    eval object:Indexers int:n
+    eval array:Indexers int:n
     [
         array anArray := Indexers array.
         int aLength := anArray length.
@@ -181,13 +181,13 @@ class BaseRowEnumerator :: Enumerator
     
     next
     [
-        theStrategy := theStrategy eval : theIndexers int:theLength.
+        theStrategy := theStrategy eval array:theIndexers int:theLength.
 
         ^ theStrategy result
     ]
     
     get
-        = theStrategy getAt : theIndexers int:theLength.
+        = theStrategy getAt array:theIndexers int:theLength.
 }
 
 // --- SequentialEnumerator ---
@@ -233,7 +233,7 @@ class Combinator :: BaseRowEnumerator
     
     next
     [
-        theStrategy := theStrategy eval:theIndexers int:theTotalLength.
+        theStrategy := theStrategy eval array:theIndexers int:theTotalLength.
 
         ^ theStrategy result
     ]

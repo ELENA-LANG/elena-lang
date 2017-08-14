@@ -1,5 +1,5 @@
-type __time    :: system'calendar'SystemTime.
-type __time_st :: system'calendar'TimeStruct.
+type __time    = system'calendar'SystemTime.
+type __time_st = system'calendar'TimeStruct.
 
 const int DATE_SHORTDATE  = 00000001h.
 const int DATE_LONGDATE   = 00000002h.
@@ -31,9 +31,9 @@ class $systemTimeFactory =
 
 sealed const embeddable struct SystemTime :: BaseValue
 {
-    __int64 theValue.
+    __int theValue(8).
 
-    stacksafe implicit long:value
+    stacksafe explicit long:value
     [
         theValue := value.
     ]
@@ -89,11 +89,11 @@ sealed embeddable struct TimeStruct
     short theSecond.
     short theMillisecond.
 
-    stacksafe implicit int:dummy
+    stacksafe explicit int:dummy
     [
     ]
     
-    stacksafe implicit __time:aTime
+    stacksafe explicit __time:aTime
     [
         $self write __time:aTime.
     ]
@@ -108,14 +108,14 @@ sealed embeddable struct TimeStruct
         $self write __time:aTime.
     ]
 
-    int year        :: nprop(readYearTo,writeYear).    
-    int month       :: nprop(readMonthTo,writeMonth).    
-    int dayOfWeek   :: nprop(readDayOfWeekTo,writeDayOfWeek).
-    int day         :: nprop(readDayTo,writeDay).    
-    int hour        :: nprop(readHourTo,writeHour).    
-    int minute      :: nprop(readMinuteTo,writeMinute).
-    int second      :: nprop(readSecondTo,writeSecond).
-    int millisecond :: nprop(readMillisecondTo,writeMillisecond).
+    int vprop year        :: readYearTo,writeYear.
+    int vprop month       :: readMonthTo,writeMonth.
+    int vprop dayOfWeek   :: readDayOfWeekTo,writeDayOfWeek.
+    int vprop day         :: readDayTo,writeDay.
+    int vprop hour        :: readHourTo,writeHour.
+    int vprop minute      :: readMinuteTo,writeMinute.
+    int vprop second      :: readSecondTo,writeSecond.
+    int vprop millisecond :: readMillisecondTo,writeMillisecond.
 
     stacksafe readYearTo vint:aRetVal
     [
@@ -234,7 +234,7 @@ sealed embeddable struct TimeStruct
       
     stacksafe toWide date_attributes:Flags
     [
-        short aBuffer(127).
+        short[] aBuffer(127).
 
         int aLength := system'external'KERNEL32 GetDateFormatW
             int:0
@@ -253,7 +253,7 @@ sealed embeddable struct TimeStruct
     
     stacksafe toWide time_attributes:Flags
     [
-        short aBuffer(127).
+        short[] aBuffer(127).
 
         int aLength := system'external'KERNEL32 GetTimeFormatW
             int:0
@@ -277,6 +277,6 @@ sealed embeddable struct TimeStruct
         <= toWide time_attributes:0.
 }
 
-type __vtime   :: varof(__time).
+type __vtime   = var<SystemTime>.
 
 

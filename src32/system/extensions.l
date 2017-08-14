@@ -805,100 +805,96 @@ array extension arrayOp
 //        ^ $nil
 //    ]
         
-//    #method deepClone
-//    [
-//        #var(int)aLength := self length.
-//        
-//        #var(array)aCopy := Array new &int:aLength.
-//                
-//        #var(int)anIndex := 0.
-//        #loop (anIndex < aLength) ?
-//        [
-//            aCopy setAt &int:anIndex &object:(self getAt &int:anIndex clone).
-//            
-//            anIndex += 1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
-//    #method set &every:anIndexFunc
-//        = self::arrayOp set &nfunc:(anIndexFunc nfunc).
-//    
-//    #method set &nfunc:anIndexFunc
-//    [
-//        #var(int)anIndex := 0.
-//        #var(int)aLength := self length.
-//        
-//        #loop (anIndex < aLength) ?
-//        [            
-//            self setAt &int:anIndex &object:(anIndexFunc eval &int:anIndex).
-//            
-//            anIndex += 1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
-//    #method sort : aCompareFunc
-//        = self::arrayOp sort &func2:(aCompareFunc func2).
-//    
-//    #method(w2) sort &func2:aCompareFunc
-//    [
-//        #var(int)i := 0.
-//        #var(int)j := 0.
-//        #var(int)aLength := self length.
-//        #var aCurrent := $nil.
-//        #var aNext := $nil.
-//        
-//        #loop (i < aLength) ?
-//        [
-//            aCurrent := self getAt &int:i.
-//            
-//            j := i + 1.
-//            #loop (j < aLength) ?
-//            [
-//                aNext := self getAt &int:j.
-//                (aCompareFunc eval:aCurrent:aNext)
-//                    ! [                        
-//                        self setAt &int:i &object:aNext.
-//                        self setAt &int:j &object:aCurrent.
-//                        
-//                        aCurrent := aNext.
-//                    ].
-//                    
-//                j += 1.
-//            ].
-//            
-//            i += 1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
-//    #method ascendant
-//        = (self clone)::arrayOp sort:ifOrdered.
-//    
-//    #method(bool) is &empty
-//    [
-//        #var(int)aLength := self length.
-//        
-//        ^ aLength == 0.
-//    ]
-//    
-//    #method Subarray : aLength &at:anIndex
-//        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
-//    
-//    /// obsolete
-//    #method Subarray &index:anIndex &length:aLength
-//        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
-//    
-//    #method Subarray &int:anIndex &int:aLength
-//    [
-//        #var(iterator) it := self iterator.
-//        
-//        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
-//    ]
+    deepClone
+    [
+        int aLength := self length.
+        
+        array aCopy := Array new int:aLength.
+                
+        int anIndex := 0.
+        while(anIndex < aLength)
+        [
+            aCopy setAt int:anIndex object:(self getAt int:anIndex; clone).
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ self.
+    ]
+    
+    populate nfunc:anIndexFunc
+    [
+        int anIndex := 0.
+        int aLength := self length.
+        
+        while(anIndex < aLength)
+        [            
+            self setAt int:anIndex object:(anIndexFunc eval int:anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ self
+    ]
+    
+    populate(BaseFunction1 aFunction)
+        = self~arrayOp populate(&int:n)[ ^aFunction eval:n ].
+
+    multi populate : anAction
+        = self~arrayOp populate(&int:n)[ ^anAction eval:n ].    
+    
+    sort func2:aCompareFunc
+    [
+        int i := 0.
+        int j := 0.
+        int aLength := self length.
+        var aCurrent := $nil.
+        var aNext := $nil.
+        
+        while(i < aLength)
+        [
+            aCurrent := self getAt int:i.
+            
+            j := i + 1.
+            while (j < aLength)
+            [
+                aNext := self getAt int:j.
+                ifnot(aCompareFunc eval(aCurrent,aNext))
+                    [                        
+                        self setAt int:i object:aNext.
+                        self setAt int:j object:aCurrent.
+                        
+                        aCurrent := aNext
+                    ].
+                    
+                j := j + 1
+            ].
+            
+            i := i + 1
+        ].
+        
+        ^ self
+    ]
+    
+    ascendant
+        = (self clone)~arrayOp sort:ifOrdered.
+    
+    bool isEmpty
+    [
+        int aLength := self length.
+        
+        ^ aLength == 0.
+    ]
+    
+    array Subarray : aLength at:anIndex
+        = self~arrayOp Subarray int:anIndex int:aLength.
+    
+    array Subarray int:anIndex int:aLength
+    [
+        indexer it := self indexer.
+        
+        ^ Array new int:aLength; populate(&int:i) (it writeIndex int(anIndex + i); get).
+    ]
 }
 
 //// --- intmatrixOp ---
@@ -1323,12 +1319,12 @@ class $stringOpDispatcher =
 
 extension stringOp
 {
-//    Substring : anIndex
-//        = self Substring:(self length - anIndex) at:anIndex.
-//            
-//    Substring : anIndex : aLength
-//        = self Substring:aLength at:anIndex.
-//            
+    Substring : anIndex
+        = self Substring:(self length - anIndex) at:anIndex.
+            
+    Substring : anIndex : aLength
+        = self Substring:aLength at:anIndex.
+            
 //    trimLeft char:aChar
 //    [
 //        var dispatcher := self cast:%eval to:stringOpDispatcher.
@@ -1411,24 +1407,24 @@ extension stringOp
 //        
 //        ^ self~dispatcher replace literal:aReplacee literal:aReplacer
 //    ]
-//    
-//    write : aLiteral length:aCounter
-//        = self~stringOp write : aLiteral int:aCounter.
-//            
-//    stacksafe write : aLiteral int:aCounter
-//    [
-//        int aNumber := aCounter.
-//        
-//        while (aNumber > 0)
-//        [
-//            self write:aLiteral. 
-//            
-//            aNumber := aNumber - 1
-//        ].
-//            
-//        ^ self
-//    ]
     
+    stacksafe write object:aLiteral int:aCounter
+    [
+        int aNumber := aCounter.
+        
+        while (aNumber > 0)
+        [
+            self write:aLiteral. 
+            
+            aNumber := aNumber - 1
+        ].
+            
+        ^ self
+    ]
+
+    write : aLine length:aCounter
+        = self~stringOp write object:aLine int:aCounter.
+        
     write : aLine paddingLeft:aWidth with:aChar
     [
         var aPaddedStr := aLine padLeft(aChar, aWidth).
@@ -1447,24 +1443,24 @@ extension stringOp
         ^ self
     ]
     
-//    write : aLine padding:aWidth with:aChar
-//    [
-//        int aWidthInt := aWidth int.
-//        int aLength := aLine length.        
-//        
-//        if (aLength < aWidthInt)
-//            [
-//                int aLen := aWidthInt - aLength.
-//                int aLeftLen := aLen / 2.
-//                
-//                self~stringOp write:aChar int:aLeftLen.
-//                self write:aLine.
-//                self~stringOp write:aChar int:(aLen - aLeftLen)
-//            ];
-//            [ self write:aLine ].
-//            
-//        ^ self
-//    ]    
+    write : aLine padding:aWidth with:aChar
+    [
+        int aWidthInt := aWidth int.
+        int aLength := aLine length.        
+        
+        if (aLength < aWidthInt)
+            [
+                int aLen := aWidthInt - aLength.
+                int aLeftLen := aLen / 2.
+                
+                self~stringOp write object:aChar int:aLeftLen.
+                self write:aLine.
+                self~stringOp write object:aChar int:(aLen - aLeftLen)
+            ];
+            [ self write:aLine ].
+            
+        ^ self
+    ]    
 }
 
 // --- charOp ---

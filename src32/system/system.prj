@@ -8,7 +8,7 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA Standard Library
-version=3.2.5
+version=3.2.6
 author=Alex Rakov
 
 [files]
@@ -30,6 +30,9 @@ collections\list.l
 routines\enumerables.l
 routines\patterns.l
 math\math.l
+calendar\types.l
+calendar\win32_datetime.l
+calendar\dates.l
 text\win32_common.l
 text\encoder.l
 text\win32_encoder.l

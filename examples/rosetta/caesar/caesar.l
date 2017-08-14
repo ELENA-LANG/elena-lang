@@ -30,17 +30,17 @@ class Encrypting :: Enumerator
     [
         var aChar := theEnumerator get.
         
-        var anIndex := Letters indexOf:0:aChar.
+        var anIndex := Letters indexOf:aChar at:0.
         
         if (-1 < anIndex)
             [
-                ^ Letters @ ((theKey+anIndex) mod:26)
+                ^ Letters[(theKey+anIndex) mod:26]
             ];
             [
-                anIndex := BigLetters indexOf:0:aChar.
+                anIndex := BigLetters indexOf:aChar at:0.
                 if (-1 < anIndex)
                     [
-                        ^ BigLetters @ ((theKey+anIndex) mod:26)
+                        ^ BigLetters[(theKey+anIndex) mod:26]
                     ];
                     [
                         ^ aChar
@@ -54,25 +54,25 @@ class Encrypting :: Enumerator
 extension encryptOp
 {
     encrypt : aKey
-        = Encrypting new key:aKey text:self; summarize:(String new). 
+        = Encrypting new key:aKey text:self; summarize(String new). 
 
     decrypt :aKey
-        = Encrypting new key:(26 - aKey) text:self; summarize:(String new). 
+        = Encrypting new key(26 - aKey) text:self; summarize(String new). 
 }
 
 // --- Program ---
 
 program =
 [
-    console printLine:"Original text :" :TestText.
+    console printLine("Original text :",TestText).
         
     var anEncryptedText := TestText encrypt:Key.
 
-    console printLine:"Encrypted text:" :anEncryptedText.
+    console printLine("Encrypted text:",anEncryptedText).
 
     var aDecryptedText := anEncryptedText decrypt:Key.
 
-    console printLine:"Decrypted text:" :aDecryptedText.
+    console printLine("Decrypted text:",aDecryptedText).
 
     console readChar.
 ].

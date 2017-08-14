@@ -274,7 +274,7 @@ class IntBaseNumber :: BaseNumber, dispatchable<int_numeric>
     ]
     
     /// Execute bitwise AND operation
-    multi and : anObject <= add int_numeric:anObject.
+    multi and : anObject <= and int_numeric:anObject.
 
     /// Execute bitwise OR operation
     multi or : anObject <= or int_numeric:anObject.
@@ -289,6 +289,12 @@ class IntBaseNumber :: BaseNumber, dispatchable<int_numeric>
     /// Returns true if any of the mask bits are set    
     bool anyMask : anOperand
         = 0 != $self and:anOperand.
+        
+    stacksafe shiftLeft:n
+        <= shiftLeft int:n.        
+        
+    stacksafe shiftRight:n
+        <= shiftRight int:n.        
 }
 
 // --- ByteNumber ---

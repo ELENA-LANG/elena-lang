@@ -6,16 +6,16 @@ extension testOp
 {
     bitwiseTest : y
     [
-        console printLine:self:" and ":y:" = ":(self and:y).
-        console printLine:self:" or ":y:" = ":(self or:y).
-        console printLine:self:" xor ":y:" = ":(self xor:y).
-        console printLine:"not ":self:" = ":(self inverted).
-        console printLine:self:" shr ":y:" = ":(self shift:y).
-        console printLine:self:" shl ":y:" = ":(self shift:(y negative)).
+        console printLine(self," and ",y," = ",self and:y).
+        console printLine(self," or ",y," = ",self or:y).
+        console printLine(self," xor ",y," = ",self xor:y).
+        console printLine("not ",self," = ",self inverted).
+        console printLine(self," shr ",y," = ",self shiftRight:y).
+        console printLine(self," shl ",y," = ",self shiftLeft:y).
     ]
 }
 
 program =
 [
-    console readLineTo:(Integer new); bitwiseTest:(console readLineTo:(Integer new)).
+    console readLineTo(Integer new); bitwiseTest(console readLineTo(Integer new)).
 ].

@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * migrate rosetta code samples
+                 * migrate rosetta code samples : binary digits
                  * migrate samples
 
                  * embeddable eval[1]

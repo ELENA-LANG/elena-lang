@@ -143,6 +143,9 @@ extension enumerableOp
     seekEach(ExtensionMessage anExtMessage)
         = self~enumerableOp seekEach(:n)(n~anExtMessage eval).
         
+    seekEach value:v
+        = (:x)(v equal:x) retrieve enumerator:(self enumerator).        
+        
     multi seekEach:fn
         = self~enumerableOp seekEach(:n)[ fn eval:n ].
 
@@ -154,10 +157,10 @@ extension enumerableOp
 //
 //    seek value:aValue
 //        = (:x)[ ^aValue equal:x ] retrieve enumerator:(self enumerator).
-//
-//    bool ifExists : aValue
-//        = $nil != self~enumerableOp safeSeek:aValue.
-//
+
+    bool ifExists : aValue
+        = $nil != self~enumerableOp seekEach:aValue.
+
 //    equal enumerable:list
 //    [
 //        ifnot (self length == list length)
@@ -340,19 +343,15 @@ extension indexableOp
     ascendant
         = (self clone)~indexableOp orderBy:ifOrdered.
 
-//    Subarray : aLength at:anIndex
-//        = self~indexableOp Subarray int:anIndex int:aLength.
-//                
-//    /// obsolete
-//    Subarray index:anIndex length:aLength
-//        = self~indexableOp Subarray int:anIndex int:aLength.
-//                
-//    Subarray int:anIndex int:aLength
-//    [
-//        indexer it := self indexer.
-//        
-//        ^ Array new int:aLength; set nfunc: (&int:i)[ ^it writeIndex int:(anIndex + i); get ]
-//    ]
+    Subarray : aLength at:anIndex
+        = self~indexableOp Subarray int:anIndex int:aLength.
+                
+    Subarray int:anIndex int:aLength
+    [
+        indexer it := self indexer.
+        
+        ^ Array new int:aLength; populate(&int:i)(it writeIndex int(anIndex + i); get)
+    ]
     
     sequenceEqual:anArray
     [

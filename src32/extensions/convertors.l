@@ -58,10 +58,96 @@ class literalExConvertor =
 //                
 //                intmatrix : m
 //                    = intmatrixExConvertor toLiteral intmatrix:m.
-//                
 
     literal multi convert:o
         = literalExConvertor convert(o literal \ enumerator).
+
+    literal convert(int n) base(int r)
+        = literalConvertor convert int:n int:r.
+
+    literal convert(short n) base(int r)
+        = literalConvertor convert short:n int:r.
+
+    literal convert(byte n) base(int r)
+        = literalConvertor convert byte:n int:r.
+
+    literal convert(long n) base(int r)
+        = literalConvertor convert long:n int:r.
+
+    literal multi convert:o base:b
+        = literalConvertor convert(o value, b int).
+}.
+
+class wideExConvertor =
+{
+    wide convert enumerator:aList
+    [
+        textbuffer anOutput := TextBuilder new.
+
+        aList forEachPair(anOutput,(:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:"," ]).
+        
+        int aLength := anOutput length.
+
+        if (0 < aLength)
+            [ anOutput setLength int:(-1 + aLength) ].
+        
+        ^ anOutput wide
+    ]
+
+    wide convert int:s
+        => wideConvertor.
+
+    wide convert short:s
+        => wideConvertor.
+
+    wide convert byte:s
+        => wideConvertor.
+
+    wide convert real:s
+        => wideConvertor.
+
+    wide convert uint:s
+        => wideConvertor.
+
+    wide convert char:s
+        => wideConvertor.
+
+    wide convert wide:s
+        = s.
+
+    wide convert literal:s
+        => wideConvertor.
+        
+//                array : anArray
+//                    = literalExConvertor convert enumerable:anArray.
+//                
+//                enumerable : aList
+//                    = literalExConvertor convert enumerable:aList.
+//                    
+//                datetime : aValue = aValue literal.
+//                    
+//                timestamp : aValue = aValue literal.
+//                
+//                intmatrix : m
+//                    = intmatrixExConvertor toLiteral intmatrix:m.
+
+    wide convert:o
+        = wideConvertor convert(o literal \ enumerator).
+
+    wide convert(int n) base(int r)
+        = wideConvertor convert int:n int:r.
+
+    wide convert(short n) base(int r)
+        = wideConvertor convert short:n int:r.
+
+    wide convert(byte n) base(int r)
+        = wideConvertor convert byte:n int:r.
+
+    wide convert(long n) base(int r)
+        = wideConvertor convert long:n int:r.
+
+    wide multi convert:o base:b
+        = wideConvertor convert(o value, b int).
 }.
 
 //class wideExConvertor =
@@ -210,61 +296,13 @@ extension convertorOp
         = literalExConvertor convert:self.
     
     toWide
-        = wideConvertor convert:self.
-//        = self cast:%eval to:
-//            {
-//                literal : aLiteral = aLiteral wide.
-//                
-//                wide : aWide = aWide.
-//                
-//                array : anArray
-//                    = wideExConvertor convert enumerable:anArray.
-//                
-//                enumerable : aList
-//                    = wideExConvertor convert enumerable:aList.
-//                    
-//                int : aValue = aValue wide.
-//                    
-//                short : aValue = aValue wide.
-//                    
-//                byte : aValue = aValue wide.
-//                    
-//                long : aValue = aValue wide.
-//                    
-//                real : aValue = aValue wide.
-//                    
-//                datetime : aValue = aValue wide.
-//                    
-//                timestamp : aValue = aValue wide.
-//                
-//                generic : anObject = anObject wide.
-//            }.
-//
-//     toLiteral base:aBase
-//        = self cast:%eval to:
-//                   { 
-//                      eval : aBase byte : anInt = literalConvertor convert byte:anInt int:aBase.
-//                      
-//                      eval : aBase short : anInt = literalConvertor convert short:anInt int:aBase.
-//                      
-//                      eval : aBase int : anInt = literalConvertor convert int:anInt int:aBase.
-//                      
-//                      eval : aBase long : anInt = literalConvertor convert long:anInt int:aBase.
-//                      
-//                   } with:aBase.
-//
-//     toWide base:aBase
-//        = self cast:%eval to:
-//                   { 
-//                      eval : aBase byte : anInt = wideConvertor convert byte:anInt int:aBase.
-//                      
-//                      eval : aBase short : anInt = wideConvertor convert short:anInt int:aBase.
-//                      
-//                      eval : aBase int : anInt = wideConvertor convert int:anInt int:aBase.
-//                      
-//                      eval : aBase long : anInt = wideConvertor convert long:anInt int:aBase.
-//                      
-//                   } with:aBase.
+        = wideExConvertor convert:self.
+
+    toLiteral base:aBase
+        = literalExConvertor convert:self base:aBase.
+        
+    toWide base:aBase
+        = wideExConvertor convert:self base:aBase.
             
     toByte
         = byteConvertor convert:self.

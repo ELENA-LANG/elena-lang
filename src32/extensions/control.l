@@ -66,24 +66,24 @@ extension forLoopOp
 //        = aFunction retrieve enumerator:(RangeEnumerator new from:self to:aMaxValue by:aStep).
 }
 
-//extension loopOp
-//{
-//    doWhile:anAction
-//    [
-//        while (self bool)
-//        [
-//            anAction eval.
-//        ].
-//    ]
-//    
-//    doWhile
-//    [
-//        while (self bool)
-//        [
-//        ].
-//    ]
-//}
-//
+extension loopOp
+{
+    doWhile:anAction
+    [
+        while (self bool)
+        [
+            anAction eval.
+        ].
+    ]
+    
+    doWhile
+    [
+        while (self bool)
+        [
+        ].
+    ]
+}
+
 //// --- testOp ---
 //
 //extension testOp
@@ -125,17 +125,17 @@ class control =
     do:object with:action
         = action eval:object.
     
-//    do:anAction = anAction eval.
-//    
-//    do:anAction until:anExpr
-//        = anAction run until:anExpr.
-//
-//    while:anExpr
-//        = $self while:anExpr do:[].
-//
-//    while:anExpr do:anAction
-//        = anAction run while:anExpr.
-//
+    do:anAction = anAction eval.
+    
+    do:anAction until:anExpr
+        = anAction run until:anExpr.
+
+    while:anExpr
+        = $self while:anExpr do:[].
+
+    while:anExpr do:anAction
+        = anAction run while:anExpr.
+
 //    run int:aStart int:anEnd every:aFunction
 //        = (aStart < anEnd)
 //            ? [ aFunction run int:aStart int:anEnd int:1 ]

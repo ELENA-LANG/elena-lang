@@ -4534,3 +4534,19 @@ labNext:
   ajumpvi 0
 
 end
+
+procedure __timest."empty$system@calendar@TimeStruct[1]"
+
+  bloadsi 1
+  ecopy 0
+  dcopy 0
+  nwrite
+  dcopy 1
+  nwrite
+  dcopy 2
+  nwrite
+  dcopy 3
+  nwrite
+  quitn 1
+
+end
