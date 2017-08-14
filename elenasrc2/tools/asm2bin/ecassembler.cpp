@@ -68,6 +68,8 @@ bool ECodesAssembler :: readMessage(ident_t quote, IdentifierString& subject, in
    content.copy(quote + param_index + 1, len - param_index - 2);
 
    paramCount = content.ident().toInt();
+
+   return true;
 }
 
 void ECodesAssembler::readMessage(TokenInfo& token, IdentifierString& subject, int& paramCount)
@@ -127,7 +129,7 @@ ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
 
    readMessage(quote.ident(), subject, paramCount);
 
-   return encodeMessage(binary->mapSubject(subject + 1, false), paramCount);
+   return encodeMessage(binary->mapSubject(subject, false), paramCount);
 }
 
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
@@ -572,6 +574,12 @@ void ECodesAssembler :: compile(TextReader* source, path_t outputPath)
    ReferenceNs name("system", IdentifierString(moduleName));
 
    Module       binary(name);
+
+   // load predefine messages
+   for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
+      binary.mapPredefinedSubject(it.key(), *it);
+   }
+
    SourceReader reader(4, source);
 
    TokenInfo    token(&reader);

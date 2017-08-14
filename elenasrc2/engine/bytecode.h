@@ -444,6 +444,17 @@ public:
       }
    }
 
+   static bool IsM2Code(ByteCode code)
+   {
+      switch (code) {
+         case bcXIndexRM:
+         case bcXCallRM:
+            return true;
+         default:
+            return false;
+      }
+   }
+
    static bool IsPush(ByteCode code)
    {
       switch(code) {

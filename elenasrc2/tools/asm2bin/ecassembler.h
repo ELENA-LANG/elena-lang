@@ -21,7 +21,7 @@ namespace _ELENA_
 class ECodesAssembler : public Assembler
 {
    Map<ident_t, size_t> constants;
-   MessageMap                    verbs;
+   MessageMap           verbs;
 
    struct LabelInfo
    {
@@ -94,6 +94,7 @@ public:
 
 	ECodesAssembler()
 	{
+      ByteCodeCompiler::loadVerbs(verbs);
 	}
 	virtual ~ECodesAssembler() {}
 };

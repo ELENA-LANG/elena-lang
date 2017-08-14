@@ -10,18 +10,18 @@ extension op
         var anOriginal := self toArray.
         var aShuffled := self toArray.
     
-        0 to:(anOriginal length - 1) doEach: (:i)
+        0 to:(anOriginal length - 1) do(:i)
         [
-            0 to:(anOriginal length - 1) doEach: (:j)
+            0 to:(anOriginal length - 1) do(:j)
             [
-                if ((i != j) && $(anOriginal@i != (aShuffled@j)) && $(anOriginal@j != (aShuffled@i)))
+                if ((i != j) && $(anOriginal[i] != aShuffled[j]) && $(anOriginal[j] != aShuffled[i]))
                 [
-                    aShuffled exchange:i:j
+                    aShuffled exchange(i,j)
                 ].
             ].
         ].
     
-        ^ aShuffled summarize:(String new); literal
+        ^ aShuffled summarize(String new); literal
     ]
     
     score : anOriginalText
@@ -30,10 +30,10 @@ extension op
         var anOriginal := anOriginalText toArray.
         var aScore := Integer new.
 
-        0 to:(anOriginal length - 1) doEach: (:i)
-            [ if ((anOriginal @ i) == (aShuffled @ i)) [ aScore append int:1 ] ].
+        0 to(anOriginal length - 1) do(:i)
+            [ if (anOriginal[i] == aShuffled[i]) [ aScore append:1 ] ].
         
-        ^ aScore get.
+        ^ aScore value.
     ]
 }
 
@@ -41,11 +41,11 @@ extension op
 
 program =
 [
-    ("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") run each: (:aWord)
+    ("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") forEach(:aWord)
     [
         var aShuffled := aWord shuffled.
 
-        console printLine:"The best shuffle of ":aWord:" is ":aShuffled:"(":(aShuffled score:aWord):")".
+        console printLine("The best shuffle of ",aWord," is ",aShuffled,"(",aShuffled score:aWord,")").
     ].
 
     console readChar.

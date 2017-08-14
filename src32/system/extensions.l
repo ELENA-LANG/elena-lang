@@ -709,20 +709,20 @@ real extension realOp
 
 // --- intArrayOp ---
 
-//intarray extension intArrayOp
-//{
-//    stacksafe exchange int:anIndex1 int:anIndex2
-//    [
-//        int n1 := 0.
-//        int n2 := 0.
-//
-//        self read int:anIndex1 vint:n1.
-//        self read int:anIndex2 vint:n2.
-//        
-//        self write int:anIndex1 int:n2.
-//        self write int:anIndex2 int:n1.
-//    ]
-//
+intarray extension intArrayOp
+{
+    stacksafe exchange int:anIndex1 int:anIndex2
+    [
+        int n1 := 0.
+        int n2 := 0.
+
+        self read int:anIndex1 vint:n1.
+        self read int:anIndex2 vint:n2.
+        
+        self write int:anIndex1 int:n2.
+        self write int:anIndex2 int:n1.
+    ]
+
 //    set every:anIndexFunc
 //        = self~intArrayOp set nfunc:anIndexFunc.
 //        
@@ -740,7 +740,7 @@ real extension realOp
 //        
 //        ^ self
 //    ]
-//}
+}
 
 // --- arrayOp ---
 

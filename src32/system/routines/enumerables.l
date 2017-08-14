@@ -217,37 +217,37 @@ extension enumerableOp
 
 extension indexableOp
 {
-//    exchange : anIndex1 : anIndex2
-//        = self~indexableOp exchange int:anIndex1 int:anIndex2.
-//        
-//    stacksafe exchange int:anIndex1 int:anIndex2
-//    [
-//        indexer anIndexer := self indexer.
-//        
-//        anIndexer writeIndex int:anIndex1.
-//        
-//        var anObject1 := anIndexer get.
-//        
-//        anIndexer writeIndex int:anIndex2.
-//        var anObject2 := anIndexer get.
-//        
-//        anIndexer set:anObject1.
-//        
-//        anIndexer writeIndex int:anIndex1.
-//        anIndexer set:anObject2
-//    ]
-//    
-//    run every:nfunc
-//    [
-//        indexer it := self indexer.
-//        
-//        while (it available)
-//        [
-//            nfunc eval int:(it index).
-//            
-//            it append index:1.
-//        ].
-//    ]
+    exchange : anIndex1 : anIndex2
+        = self~indexableOp exchange int:anIndex1 int:anIndex2.
+        
+    stacksafe exchange int:anIndex1 int:anIndex2
+    [
+        indexer anIndexer := self indexer.
+        
+        anIndexer writeIndex int:anIndex1.
+        
+        var anObject1 := anIndexer get.
+        
+        anIndexer writeIndex int:anIndex2.
+        var anObject2 := anIndexer get.
+        
+        anIndexer set:anObject1.
+        
+        anIndexer writeIndex int:anIndex1.
+        anIndexer set:anObject2
+    ]
+    
+    forEvery nfunc:fn
+    [
+        indexer it := self indexer.
+        
+        while (it available)
+        [
+            fn eval int:(it index).
+            
+            it append index:1.
+        ].
+    ]
     
     indexOfElement : anObject
     [
