@@ -687,9 +687,9 @@ sealed class ArrayList :: BaseIndexable, dispatchable<array_list>
         
     array
         = Array new int:0 int:theLength array:theArray.
-        
-//    get
-//        <= array.
+
+    value 
+        <= array.
 }
 
 // --- ArrayListEnumerator ---

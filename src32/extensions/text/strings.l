@@ -186,6 +186,8 @@ class StringWriter
     literal = theValue.
 
     wide => theValue.
+    
+    value = theValue.
 
     dispatch => theValue.
 }

@@ -2,7 +2,7 @@ import system'routines.
 
 int extension intLoopOp
 {
-    stacksafe to(int anEnd) do(nfunc aFunction)
+    stacksafe runIntLoop int:anEnd nfunc:aFunction
     [
        int aStart := self.
 
@@ -11,14 +11,17 @@ int extension intLoopOp
             [ ^ aFunction rewind int:aStart int:anEnd int:1 ]
     ]
 
+    stacksafe to(int anEnd) do(nfunc aFunction)
+        = self~intLoopOp runIntLoop int:anEnd nfunc:aFunction.
+            
     stacksafe to(int anEnd) do(func aFunction)
-        = self~intLoopOp to:anEnd do(&int:n)[ aFunction eval:n ].
+        = self~intLoopOp runIntLoop int:anEnd nfunc(&int:n)[ aFunction eval:n ].
             
     stacksafe to(int anEnd) do(ext_mssg anExtension)
-        = self~intLoopOp to:anEnd do(&int:n)[ n~anExtension get ].
+        = self~intLoopOp runIntLoop int:anEnd nfunc(&int:n)[ n~anExtension get ].
             
     multi to:anEnd do:anAction
-        = self~intLoopOp to:anEnd do(&int:n)[ anAction eval:n ].
+        = self~intLoopOp runIntLoop int(anEnd int) nfunc(&int:n)[ anAction eval:n ].
 }
 
 extension forLoopOp

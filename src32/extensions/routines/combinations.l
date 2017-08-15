@@ -132,7 +132,7 @@ class combinationStart = BaseStrategy::
         array anArray := Indexers array.
         int aLength := anArray length.
         
-        0~intLoopOp to int(aLength - 1) nfunc(&int:i) [ anArray getAt int:i; indexer; writeIndex int:i ].
+        0~intLoopOp to(aLength - 1) do(&int:i) [ anArray getAt int:i; indexer; writeIndex int:i ].
         
         ^ combinationNext
     ]

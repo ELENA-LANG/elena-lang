@@ -84,3 +84,22 @@ sealed nonstructural class File
         aWriter close
     ]    
 }
+
+// --- Directory ---
+
+sealed nonstructural class Directory
+{
+    literal thePath.
+    
+    constructor new:aPath
+    [
+        thePath := aPath.
+    ]
+
+    literal = thePath.
+    
+    wide = thePath wide.
+    
+    bool isAvailable
+        = directoryControl isAvailable:thePath.    
+}

@@ -2857,7 +2857,7 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
                target = ObjectInfo(okLocal, arg.argument);
                writeTerminal(writer, arg, scope, target, 0);
             }
-            // HOTFIX : to handle resend expression
+            // HOTFIX : to handle resend expression / explcit strong extension
             else if (arg.type == lxResult) {
                target = ObjectInfo(okObject);
             }
@@ -3182,11 +3182,23 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
 {
    size_t paramCount = 0;
    ref_t  messageRef = mapMessage(node, scope, paramCount);
-   ObjectInfo object = compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
 
+   ObjectInfo object;
    if (targetRef != 0) {
+      //HOTFIX : to compile strong typed explicit extension
+      writer.newBookmark();
+      SNode targetNode = node.firstChild(lxObjectMask);
+
+      object = compileExpression(writer, targetNode, scope, 0);
+
       convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, object), object.element);
+      writer.removeBookmark();
+
+      // the target node already compiler so it should be skipped
+      targetNode = lxResult;
+      compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
    }
+   else object = compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
 
    return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
 }

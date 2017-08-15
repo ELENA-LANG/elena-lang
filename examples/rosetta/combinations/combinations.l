@@ -9,7 +9,7 @@ const int N = 5.
 
 numbers = (:anN)
 [
-    ^ Array new length:anN; set every: (&int:n)[ ^n ]
+    ^ Array new length:anN; populate(:n)( n )
 ].
 
 // --- Program ---
@@ -17,9 +17,9 @@ numbers = (:anN)
 program =
 [
     var aNumbers := numbers eval:N.    
-    Combinator new:M of:aNumbers; run each: (:aRow)
+    Combinator new:M of:aNumbers; forEach(:aRow)
     [
-        console writeLine:aRow
+        console printLine:aRow
     ].
     
     console readChar.
