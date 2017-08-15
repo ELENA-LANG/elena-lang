@@ -71,6 +71,7 @@ namespace _ELENA_
    #define errIllegalMethod         "%s(%d:%d): error 152: Illegal method declaration\n"
    #define errIllegalOperation      "%s(%d:%d): error 152: Illegal operation\n"
    #define errInvalidConstant       "%s(%d:%d): error 153: Invalid constant '%s'\n"
+   #define errInvalidMultimethod    "%s(%d:%d): error 154: Invalid multimethod declararion in the class '%s'\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
@@ -113,7 +114,7 @@ namespace _ELENA_
    #define wrnBoxingCheck           "%s(%d:%d): warning 417: The object may be boxed\n"
    #define wrnDuplicateExtension    "%s(%d:%d): warning 418: '%s': duplicate extension\n"
 //   #define wrnUnboxinging           "%s(%d:%d): warning 419: '%s' will be unboxed\n"
-   #define wrnTypeAlreadyDeclared   "%s(%d:%d): warning 420: Subject attribute cannot be overridden\n"
+   #define wrnTypeAlreadyDeclared   "%s(%d:%d): warning 420: Type attribute cannot be overridden\n"
 
 } // _ELENA_
 

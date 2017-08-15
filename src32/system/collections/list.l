@@ -3,9 +3,15 @@ type list       = system'collections'List.
 type array_list = system'collections'ArrayList.
 type dictionary = system'collections'Dictionary.
 
+class BaseEnumerable
+{
+    // should be overridden
+    enumerator = $nil.
+}
+
 //// --- listof ---
 //
-//template list :: type
+//template<BaseEnumerable> list :: type
 //{
 //    arrayof theArray(type).
 //    vint    theLength.
@@ -321,7 +327,7 @@ class ListIndexer :: Indexer
 // --- List ---
 
 /// A list object
-sealed class List :: dispatchable<list>
+sealed class List :: BaseEnumerable, dispatchable<list>
 {
     vint      theCount.
     list_item theTop.
@@ -481,7 +487,7 @@ sealed class List :: dispatchable<list>
 // --- ArrayList ---
 
 /// An array list object
-sealed class ArrayList :: dispatchable<array_list>
+sealed class ArrayList :: BaseIndexable, dispatchable<array_list>
 {
     array theArray.
     vint  theLength.
@@ -777,7 +783,7 @@ class ArrayListIndexer :: Indexer
 // --- Dictionary ---
 
 /// Dictionary class
-sealed  class Dictionary :: dispatchable<dictionary>
+sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
 {
     array_list theList.
     array      theHashTable.

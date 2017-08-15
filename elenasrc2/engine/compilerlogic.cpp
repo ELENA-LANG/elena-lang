@@ -503,7 +503,7 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
       // if the method included
       if (*it) {
          ref_t message = it.key();
-         if (getParamCount(message) > 0 && getAction(message) != 0) {
+         if (getParamCount(message) > 0 && getAction(message) != 0 && !test(message, CONVERSION_MESSAGE)) {
             ident_t messageName = scope.module->resolveSubject(getAction(message));
 
             int index = messageName.find('$');
@@ -518,8 +518,9 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
 
                ref_t flags = message & MESSAGE_FLAG_MASK;
                ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getParamCount(message) | flags), maOverloadlist));
-               if (listRef != 0)
+               if (listRef != 0) {
                   compiler.generateOverloadListMember(scope, listRef, message);
+               }
             }
          }         
       }
@@ -663,7 +664,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
             compatible = isCompatible(scope, sourceRef, inner.value1);
          }
          // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
-         else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef);
+         else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef, 0u);
       }
       else compatible = isCompatible(scope, inner.value1, sourceRef);
 
@@ -869,23 +870,23 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
    return true;
 }
 
-int CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool embeddableOnly)
+int CompilerLogic :: defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable, bool embeddableOnly)
 {
    if (reference == V_BINARYARRAY && elementRef != 0) {
-      return -defineStructSize(scope, elementRef, 0, false);
+      return -defineStructSizeVariable(scope, elementRef, 0, variable, false);
    }
    else {
       ClassInfo classInfo;
       if (defineClassInfo(scope, classInfo, reference)) {
-         return defineStructSize(classInfo, embeddableOnly);
+         return defineStructSize(classInfo, variable, embeddableOnly);
       }
       else return 0;      
    }
 }
 
-int CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
+int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable, bool embeddableOnly)
 {
-   //   variable = !test(classInfo.header.flags, elReadOnlyRole);
+   variable = !test(info.header.flags, elReadOnlyRole);
    
    if (test(info.header.flags, elStructureRole)) {
       if (!embeddableOnly || isEmbeddable(info))

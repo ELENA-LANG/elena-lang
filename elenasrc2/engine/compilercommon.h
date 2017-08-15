@@ -241,8 +241,10 @@ public:
 
    // retrieve the class info / size
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false) = 0;
-   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
+
+   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable, bool embeddableOnly = false) = 0;
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool embeddableOnly = false) = 0;
+   virtual int defineStructSize(ClassInfo& info, bool& variable, bool embeddableOnly = false) = 0;
 
    virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
 

@@ -134,6 +134,19 @@ inline bool isImportRedirect(SNode node)
    return false;
 }
 
+inline bool existChildWithArg(SNode node, LexicalType type, ref_t arg)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current.type == type && current.argument == arg)
+         return true;
+
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
 SNode findTerminalInfo(SNode node)
 {
    if (node.existChild(lxRow))
@@ -1874,8 +1887,10 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
          bytearray = true;
          size = size * (-((int)localInfo.size));
       }
-      else if (_logic->isEmbeddable(localInfo))
-         size = _logic->defineStructSize(localInfo);
+      else if (_logic->isEmbeddable(localInfo)) {
+         bool dummy = false;
+         size = _logic->defineStructSize(localInfo, dummy);
+      }         
 
       if (size > 0) {
          if (!allocateStructure(scope, size, bytearray, variable))
@@ -1998,7 +2013,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okParam:
          if (object.element == -1) {
             ref_t targetRef = resolveObjectReference(scope, object);
-            writer.newNode(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef));
+            writer.newNode(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef, 0u));
             writer.appendNode(lxLocal, object.param);
             if (test(mode, HINT_DYNAMIC_OBJECT))
                writer.appendNode(lxBoxingRequired);
@@ -2008,7 +2023,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okThisParam:
          if (object.element == -1) {
             ref_t targetRef = resolveObjectReference(scope, object);
-            writer.newNode(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef));
+            writer.newNode(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef, 0u));
             writer.appendNode(lxThisLocal, object.param);
          }
          else writer.newNode(lxThisLocal, object.param);
@@ -2029,30 +2044,27 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          writer.appendNode(lxResultField, object.extraparam);
          break;
       case okSubject:
-         writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->signatureReference));
+         writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->signatureReference, 0u));
          writer.appendNode(lxLocalAddress, object.param);
          writer.appendNode(lxTarget, scope.moduleScope->signatureReference);
          break;
       case okLocalAddress:
-         if (!test(mode, HINT_NOBOXING) || test(mode, HINT_DYNAMIC_OBJECT)) {
-            writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, object.extraparam));
-            writer.appendNode(lxLocalAddress, object.param);
-            if (test(mode, HINT_DYNAMIC_OBJECT))
-               writer.appendNode(lxBoxingRequired);
-         }
-         else writer.newNode(lxLocalAddress, object.param);
-         break;
       case okFieldAddress:
+      {
+         LexicalType type = object.kind == okLocalAddress ? lxLocalAddress : lxFieldAddress;
          if (!test(mode, HINT_NOBOXING) || test(mode, HINT_DYNAMIC_OBJECT)) {
-            ref_t target = resolveObjectReference(scope, object);
 
-            writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, target));
-            writer.appendNode(lxFieldAddress, object.param);
+            bool variable = false;
+            int size = _logic->defineStructSizeVariable(*scope.moduleScope, resolveObjectReference(scope, object), 0u, variable);
+            writer.newNode(variable ? lxUnboxing : lxBoxing, size);
+
+            writer.appendNode(type, object.param);
             if (test(mode, HINT_DYNAMIC_OBJECT))
                writer.appendNode(lxBoxingRequired);
          }
-         else writer.newNode(lxFieldAddress, object.param);
+         else writer.newNode(type, object.param);
          break;
+      }
       case okNil:
          writer.newNode(lxNil, object.param);
          break;
@@ -2782,10 +2794,6 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       writer.closeNode();
    }
 
-   // inserting calling expression
-   writer.insert(operation, argument);
-   writer.closeNode();   
-
    // the result of get&type message should be typed
 
    if (retVal.param == 0 && paramCount == 0 && actionRef != 0) {
@@ -2793,7 +2801,13 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       size_t index = sign.find('$');
       if (index != NOTFOUND_POS && sign[index+1] != 0)
          retVal.param = scope.moduleScope->module->mapReference(sign.c_str() + index + 1);
+
+      writer.appendNode(lxTarget, retVal.param);
    }
+
+   // inserting calling expression
+   writer.insert(operation, argument);
+   writer.closeNode();
 
    return retVal;
 }
@@ -3064,14 +3078,14 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
       ref_t targetRef = resolveObjectReference(scope, retVal);
       if (retVal.kind == okLocalAddress) {
-         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
+         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
          if (size != 0) {
             operand = size;
          }
          else scope.raiseError(errInvalidOperation, node);
       }
       else if (retVal.kind == okFieldAddress) {
-         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
+         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
          if (size != 0) {
             operand = size;
          }
@@ -4971,7 +4985,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    if (test(flags, elStateless))
       scope.raiseError(errIllegalField, current);
 
-   int size = (classRef != 0) ? _logic->defineStructSize(*moduleScope, classRef) : 0;
+   int size = (classRef != 0) ? _logic->defineStructSize(*moduleScope, classRef, 0u) : 0;
    bool fieldArray = false;
    if (sizeHint != 0) {
       if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
@@ -5122,7 +5136,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 
             scope.info.methodHints.add(Attribute(message, maReference), outputRef);
          }
-         else scope.raiseError(errInvalidHint, node);
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnTypeAlreadyDeclared, node);
       }
 //      else if (current == lxClassMethodOpt) {
 //         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
@@ -5325,6 +5339,12 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 {
    SNode baseNode = node.findChild(lxBaseParent);
    if (baseNode!=lxNone) {
+      if (baseNode.argument == -1 && existChildWithArg(node, lxBaseParent, 0u)) {
+         // HOTFIX : allow to override the template parent
+         baseNode = lxIdle;
+         baseNode = node.findChild(lxBaseParent);
+      }
+
       compileParentDeclaration(baseNode, scope);
    }
    else compileParentDeclaration(SNode(), scope);
@@ -5369,8 +5389,9 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 {
    // generation operation list if required
-   if (test(scope.info.header.flags, elWithMuti))
+   if (test(scope.info.header.flags, elWithMuti)) {
       _logic->injectOverloadList(*scope.moduleScope, scope.info, *this);
+   }
 
    WarningScope warningScope(scope.moduleScope->warningMask);
 

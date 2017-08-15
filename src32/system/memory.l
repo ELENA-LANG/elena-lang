@@ -1,6 +1,12 @@
+class BaseIndexable
+{
+    // should be overridden
+    indexer = $self.
+}
+
 // --- arrayof ---
 
-dynamic template array :: template_subj
+dynamic template<BaseIndexable> array :: template_subj
 {
     template_subj $target.
     
@@ -1056,7 +1062,7 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
     /// Converts to UTF-16 literal
     wide = wideConvertor convert literal:$self.
 
-    stacksafe bool equal value:n
+    multi equal:n
     [
         var l := n literal \ back:$nil.
         if ($nil == l)
@@ -1068,8 +1074,14 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
         ]
     ]
 
-    stacksafe bool less value:n
-        <= less literal:n.
+    multi less:o
+        <= less literal:o.
+        
+    stacksafe bool equal(BaseVariable v)
+        <= equal(v value).
+        
+    stacksafe bool less(BaseVariable v)
+        <= less(v value).
         
     /// Compares the values
     bool equal literal : aLiteral
@@ -1104,9 +1116,13 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
         ^ CharValue new char:aChar.
     ]
 
-    multi add : anObject 
-        <= add(anObject value).
+    literal multi add : anObject 
+        <= add literal:anObject.
 
+    /// Concatinates the values
+    literal add(BaseVariable v)
+        <= add(v value).
+        
     /// Concatinates the values
     literal add literal : aLiteral
         => system'core_routines'__literal.
@@ -1272,7 +1288,7 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
     /// Converts to UTF-8 literal
     literal = literalConvertor convert wide:$self.
 
-    stacksafe bool equal value:n
+    multi equal:n
     [
         var l := n wide \ back:$nil.
         if ($nil == l)
@@ -1284,8 +1300,14 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
         ]
     ]
 
-    stacksafe bool less value:n
+    multi less:n
         <= less wide:n.
+        
+    stacksafe bool equal(BaseVariable v)
+        <= equal(v value).
+        
+    stacksafe bool less(BaseVariable v)
+        <= less(v value).
 
     /// Compares the values
     bool equal wide : aLiteral
@@ -1316,12 +1338,12 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
         ^ CharValue new char:aChar
     ]
 
-    multi add : anObject 
-        <= add(anObject value).
+    wide multi add : anObject 
+        <= add literal:anObject.
 
     /// Concatinates the values
-    wide add value : v
-        = v wide.
+    wide add(BaseVariable v)
+        <= add(v value).
     
     /// Concatinates the values
     stacksafe wide add wide : aLiteral
@@ -1522,15 +1544,12 @@ class Variant
     ]    
 
     sealed $castValueTo:aTarget
-        =
-        {
+        = {
             multi eval:o
-                <= eval(o value).
+                = o literal.
             
-            eval value:o
-            [
-                system'NotSupportedException new; raise.
-            ]
+            eval(BaseVariable v)
+                <= eval(v value).
             
             eval int:aValue
                 = $owner int.
@@ -1677,8 +1696,8 @@ args extension paramsOp
 /// A literal convertor
 class literalConvertor =
 {
-    literal convert value:anObject
-        = anObject literal.
+    literal convert(BaseVariable v)
+        <= convert(v value).
     
     /// Converts the parameter to the literal value
     stacksafe convert char:aValue bytearray:buffer vint:length
@@ -1901,8 +1920,7 @@ class literalConvertor =
         
     /// Returns the literal presentation of the parameter
     literal multi convert : anObject
-        <= convert(anObject value).
-
+        = anObject literal.
 }.
 
 // --- wideConvertor ---
@@ -1910,8 +1928,8 @@ class literalConvertor =
 /// A wide literal convertor
 class wideConvertor =
 {
-    wide convert value:anObject
-        = anObject wide.
+    wide convert(BaseVariable v)
+        <= convert(v value).
     
     /// Converts the parameter to the literal value
     stacksafe convert char:aValue shortarray:buffer vint:length
@@ -2137,7 +2155,7 @@ class wideConvertor =
 
     /// Returns the literal presentation of the parameter
     wide multi convert : anObject
-        <= convert(anObject value).
+        = anObject wide.
 }.
 
 // === Enumerators / Indexers

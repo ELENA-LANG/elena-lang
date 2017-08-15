@@ -77,12 +77,12 @@ class CalendarMonthPrinter
     
     printTitleTo : anOutput
     [
-        anOutput write:(MonthNames[theMonth - 1]) padding:21 with:$32.
+        anOutput write(MonthNames[theMonth - 1]) padding:21 with:$32.
     ]
    
     printTo : anOutput
     [
-        anOutput write:(theLine literal).
+        anOutput write(theLine literal).
     ]
 }
 

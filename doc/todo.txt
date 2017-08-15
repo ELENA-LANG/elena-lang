@@ -3,21 +3,24 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * migrate rosetta code samples : binary digits
+                 * test median
+
+                 * migrate rosetta code samples : calendar
                  * migrate samples
 
-                 * embeddable eval[1]
-                 * embeddable get[1]
-                 * embeddable eval[2]
-                 * elenart : correctly display strong typed message names
-                 * elenavm : correctly display strong typed message names
-                 * support alternative property setting syntax : a set b:c <=> a b := c.
-                 * Signature should support only get, set, eval
                  * raise an error if code template is not recognized
                  * fix the bug : sealed class File { literal thePath. } - should not be declared as structured
                  * fix the bug : duplciate methods are not recognized:
                       stacksafe literal add value:v = v literal.
                       literal add literal : aLiteral => system'core_routines'__literal.
+
+                 * support alternative property setting syntax : a set b:c <=> a b := c.
+                 * embeddable eval[1]
+                 * embeddable get[1]
+                 * embeddable eval[2]
+                 * elenart : correctly display strong typed message names
+                 * elenavm : correctly display strong typed message names
+                 * Signature should support only get, set, eval
 
               zdev - script engine
                  * migrate Tape
@@ -137,8 +140,10 @@ In development:
                  * uint16
 
               xdev - general implementation
+                 * check if the overload list was created
                  * should multi geneated private method be static as well or should not be generated at all?
                  * if else if ...
+                 * unboxing primitive arrays?
 
 ------                                 
 Pipeline:

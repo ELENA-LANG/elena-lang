@@ -1,9 +1,17 @@
+// base variable mixin
+class BaseVariable
+{
+    // should be overridden
+    value = $nil.
+}
 
-template var :: template_subj
+template<BaseVariable> var :: template_subj
 {
     template_subj $value.
     
     sealed embeddable template_subj = $value.
+    
+    value = $value.
     
     stacksafe explicit template_subj:val
     [
@@ -37,7 +45,7 @@ template var :: template_subj
     embeddable dispatch => $value.
 }
 
-template ref :: template_subj
+template<BaseVariable> ref :: template_subj
 {
     template_subj $value.
     
@@ -51,7 +59,9 @@ template ref :: template_subj
         $value := val.
     ]
     
-    template_subj = $value.
+    value = $value.
+    
+    sealed embeddable template_subj = $value.
     
     equal : anObject
         => $value.
@@ -185,24 +195,23 @@ class false = BaseBoolValue::
 // --- BaseValue ---
 
 // A base value
-class BaseValue :: dispatchable<value>
+class BaseValue
 {
-    equal value:anObject
-    [
-        ^ false
-    ]
+    equal(BaseVariable var)
+        <= equal(var value).
     
-    less value:anObject
+    less(BaseVariable var)
+        <= equal(var value).
+    
+    /// Compares the values
+    multi equal : anObject
+        = false.
+
+    /// Compares the values
+    bool multi less : anObject
     [
         system'NotSupportedException new; raise.
     ]
-    
-    /// Compares the values
-    multi equal : anObject 
-        <= equal value:anObject.
-
-    /// Compares the values
-    bool multi less : anObject <= less value:anObject.
 
     /// Compares the values
     bool greater : anObject = anObject less:$self.
@@ -215,39 +224,43 @@ class BaseValue :: dispatchable<value>
 // --- BaseNumber ---
 
 /// A base numeric value
-class BaseNumber :: BaseValue, dispatchable<numeric>
+class BaseNumber :: BaseValue
 {
-    add numeric:anObject
-    [
-        system'NotSupportedException new; raise.
-    ]
+    add(BaseVariable var)
+        <= add(var value).
+
+    subtract(BaseVariable var)
+        <= subtract(var value).
     
-    subtract numeric:anObject
-    [
-        system'NotSupportedException new; raise.
-    ]
-    
-    multiply numeric:anObject
-    [
-        system'NotSupportedException new; raise.
-    ]
-    
-    divide numeric:anObject
-    [
-        system'NotSupportedException new; raise.
-    ]
+    multiply(BaseVariable var)
+        <= multiply(var value).
+
+    divide(BaseVariable var)
+        <= divide(var value).
     
     /// Adds the value
-    multi add : anObject <= add numeric:anObject.
+    multi add : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
 
     /// Subtracts the value
-    multi subtract : anObject <= subtract numeric:anObject.
+    multi subtract : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
 
     /// Multiply by the value
-    multi multiply : anObject <= multiply numeric:anObject.
+    multi multiply : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
 
     /// Divides into the value
-    multi divide : anObject <= divide numeric:anObject.
+    multi divide : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
     
     negative
         = 0 - self.
@@ -256,31 +269,34 @@ class BaseNumber :: BaseValue, dispatchable<numeric>
 // --- IntBaseNumber ---
 
 /// A base integer value
-class IntBaseNumber :: BaseNumber, dispatchable<int_numeric>
+class IntBaseNumber :: BaseNumber
 {
-    and int_numeric:anObject
-    [
-        system'NotSupportedException new; raise.
-    ]
-    
-    or int_numeric:anObject
-    [
-        system'NotSupportedException new; raise.
-    ]
-    
-    xor int_numeric:anObject
-    [
-        system'NotSupportedException new; raise.
-    ]
+    and(BaseVariable var)
+        <= and(var value).
+        
+    or(BaseVariable var)
+        <= or(var value).
+        
+    xor(BaseVariable var)
+        <= xor(var value).
     
     /// Execute bitwise AND operation
-    multi and : anObject <= and int_numeric:anObject.
+    multi and : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
 
     /// Execute bitwise OR operation
-    multi or : anObject <= or int_numeric:anObject.
+    multi or : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
     
     /// Execute bitwise XOR operation
-    multi xor : anObject <= xor int_numeric:anObject.
+    multi xor : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
     
     /// Returns true if all the mask bits are set
     bool allMask : anOperand
@@ -344,7 +360,24 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable<byte>
     /// Returns the value as a real number
     real = RealNumber new byte:$self.
 
-    stacksafe bool equal value:o
+    stacksafe bool equal(BaseVariable v)
+        <= equal(v value).
+
+    stacksafe bool equal byte:anOperand
+        = theValue == anOperand.
+
+    stacksafe bool equal short:anOperand
+        = ShortNumber new byte:$self; equal short:anOperand.
+        
+    /// Compares the value
+    stacksafe bool equal int:anOperand
+        = IntNumber new byte:$self; less int:anOperand.
+        
+    /// Compares the value
+    stacksafe bool equal real:anOperand
+        = RealNumber new byte:$self; equal real:anOperand.
+        
+    multi equal : o
     [
         var n := o byte \ back:$nil.
         ($nil == n)
@@ -352,14 +385,11 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable<byte>
             ! [ ^ $self equal byte:n ]
     ]
 
-    stacksafe bool equal byte:anOperand
-        = theValue == anOperand.
+    multi less : n
+        <= less byte:n.                
 
-    stacksafe bool equal short:anOperand
-        = ShortNumber new byte:$self; equal short:anOperand.
-
-    stacksafe bool less value:n
-        <= less byte:n.
+    stacksafe bool less(BaseVariable v)
+        <= less(v value).
 
     stacksafe bool less byte:anOperand
         = theValue < anOperand.
@@ -368,13 +398,9 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable<byte>
         = ShortNumber new byte:$self; less short:anOperand.
 
     /// Compares the value
-    stacksafe bool equal int:anOperand
-        = IntNumber new byte:$self; less int:anOperand.
-        
-    /// Compares the value
     stacksafe bool less int:anOperand
         = IntNumber new byte:$self; less int:anOperand.
-
+        
     /// Compares the value
     stacksafe bool equal long:anOperand
         = LongNumber new byte:$self; equal long:anOperand.
@@ -384,24 +410,32 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable<byte>
         = LongNumber new byte:$self; less long:anOperand.
 
     /// Compares the value
-    stacksafe bool equal real:anOperand
-        = RealNumber new byte:$self; equal real:anOperand.
-
-    /// Compares the value
     stacksafe bool less real:anOperand
         = RealNumber new byte:$self; less real:anOperand.
 
-    stacksafe byte add numeric:n
+    multi add:n
         <= add byte:n.
 
-    stacksafe byte subtract numeric:n
+    multi subtract:n
         <= subtract byte:n.
 
-    stacksafe byte multiply numeric:n
+    multi multiply:n
         <= multiply byte:n.
 
-    stacksafe byte divide numeric:n
-        <= divide byte:n.
+    multi divide:n
+        <= add divide:n.
+
+    stacksafe byte add(BaseVariable v)
+        <= add(v value).
+
+    stacksafe byte subtract(BaseVariable v)
+        <= subtract(v value).
+
+    stacksafe byte multiply(BaseVariable v)
+        <= multiply(v value).
+
+    stacksafe byte divide(BaseVariable v)
+        <= divide(v value).
 
     /// Returns the sum
     stacksafe byte add byte:anOperand
@@ -483,14 +517,23 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable<byte>
     stacksafe real divide real:anOperand
         = RealNumber new byte:$self; divide real:anOperand.
 
-    stacksafe byte and int_numeric:n
+    byte multi and:n
         <= and byte:n.
         
-    stacksafe byte or int_numeric:n
+    byte multi or:n
         <= or byte:n.
         
-    stacksafe byte xor int_numeric:n
+    byte multi xor:n
         <= xor byte:n.
+        
+    stacksafe byte and(BaseVariable v)
+        <= and(v value).
+        
+    stacksafe byte or(BaseVariable v)
+        <= or(v value).
+        
+    stacksafe byte xor(BaseVariable v)
+        <= xor(v value).
         
     /// Returns the result of bitwise AND operation
     stacksafe byte and byte:anOperand
@@ -633,7 +676,7 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable<short>
     /// Returns the value as a real number
     real = RealNumber new short:$self.
 
-    stacksafe bool equal value:o
+    multi equal:o
     [
         var n := o short \ back:$nil.
         ($nil == n)
@@ -641,8 +684,14 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable<short>
             ! [ ^ $self equal short:n ]
     ]
 
-    stacksafe bool less value:n
+    multi less:n
         <= less short:n.
+
+    stacksafe bool equal(BaseVariable v)
+        <= equal(v value).
+                
+    stacksafe bool less(BaseVariable v)
+        <= equal(v value).
 
     /// Compares the value
     stacksafe bool equal short:anOperand 
@@ -684,17 +733,29 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable<short>
     stacksafe bool less real:anOperand
         = RealNumber new short:$self; less real:anOperand.
 
-    stacksafe short add numeric:n
+    short multi add:n
         <= add short:n.
 
-    stacksafe short subtract numeric:n
+    short multi subtract:n
         <= subtract short:n.
 
-    stacksafe short multiply numeric:n
+    short multi multiply:n
         <= multiply short:n.
 
-    stacksafe short divide numeric:n
+    short multi divide:n
         <= divide short:n.
+
+    stacksafe short add(BaseVariable v)
+        <= add(v value).
+
+    stacksafe short subtract(BaseVariable v)
+        <= subtract(v value).
+
+    stacksafe short multiply(BaseVariable v)
+        <= multiply(v value).
+
+    stacksafe short divide(BaseVariable v)
+        <= divide(v value).
 
     /// Returns the sum
     stacksafe short add short:anOperand
@@ -776,14 +837,23 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable<short>
     stacksafe divide real:anOperand
         = RealNumber new short:$self; divide real:anOperand.
 
-    stacksafe short and int_numeric:n
+    short multi and:n
         <= and short:n.
         
-    stacksafe short or int_numeric:n
+    short multi or:n
         <= divide short:n.
         
-    stacksafe short xor int_numeric:n
+    short multi xor:n
         <= xor short:n.
+        
+    stacksafe short and(BaseVariable v)
+        <= and(v value).
+        
+    stacksafe short or(BaseVariable v)
+        <= divide(v value).
+        
+    stacksafe short xor(BaseVariable v)
+        <= xor(v value).
         
     /// Returns the result of bitwise AND operation
     stacksafe short and short:anOperand
@@ -929,7 +999,7 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable<int>
     /// Returns the real number
     uint = UIntNumber new int:$self.
     
-    stacksafe bool equal value:o
+    multi equal:o
     [
         var n := o int \ back:$nil.
         ($nil == n)
@@ -937,8 +1007,14 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable<int>
             ! [ ^ $self equal int:n ]
     ]
 
-    stacksafe bool less value:n
+    multi less:n
         <= less int:n.
+        
+    stacksafe bool equal(BaseVariable v)
+        <= equal(v value).
+        
+    stacksafe bool less(BaseVariable v)
+        <= less(v value).
         
     /// Compares the value
     stacksafe bool equal int:anOperand 
@@ -948,17 +1024,29 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable<int>
     stacksafe bool less int:anOperand
         = theValue < anOperand.
         
-    stacksafe int add numeric:n
+    multi int add:n
         <= add int:n.
 
-    stacksafe int subtract numeric:n
+    int multi subtract:n
         <= subtract int:n.
 
-    stacksafe int multiply numeric:n
+    int multi multiply:n
         <= multiply int:n.
 
-    stacksafe int divide numeric:n
+    int multi divide:n
         <= divide int:n.
+        
+    stacksafe int add(BaseVariable v)
+        <= add(v value).
+
+    stacksafe int subtract(BaseVariable v)
+        <= subtract(v value).
+
+    stacksafe int multiply(BaseVariable v)
+        <= multiply(v value).
+
+    stacksafe int divide(BaseVariable v)
+        <= divide(v value).
         
     /// Returns the sum
     stacksafe int add int:anOperand
@@ -976,14 +1064,23 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable<int>
     stacksafe int divide int:anOperand
         = theValue / anOperand.
 
-    stacksafe int and int_numeric:n
+    int multi and:n
         <= and int:n.
         
-    stacksafe int or int_numeric:n
+    int multi or:n
         <= divide int:n.
         
-    stacksafe int xor int_numeric:n
+    int multi xor:n
         <= xor int:n.
+        
+    stacksafe int and(BaseVariable v)
+        <= and(v value).
+        
+    stacksafe int or(BaseVariable v)
+        <= divide(v value).
+        
+    stacksafe int xor(BaseVariable v)
+        <= xor(v value).
         
     /// Returns the result of bitwise AND operation
     stacksafe int and int:anOperand
@@ -1250,7 +1347,7 @@ sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable<uint>
     /// Returns the real number
     real = RealNumber new uint:$self.
 
-    stacksafe bool equal value:o
+    multi equal:o
     [
         var n := o int \ back:$nil.
         ($nil == n)
@@ -1258,8 +1355,14 @@ sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable<uint>
             ! [ ^ $self equal int:n ]
     ]
 
-    stacksafe bool less value:n
+    multi less:n
         <= less int:n.
+        
+    stacksafe bool equal(BaseVariable v)
+        <= equal(v value).
+        
+    stacksafe bool less(BaseVariable v)
+        <= less(v value).
         
     /// Compares the value
     stacksafe bool equal int:anOperand 
@@ -1269,17 +1372,29 @@ sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable<uint>
     stacksafe bool less int:anOperand
         = theValue < anOperand.
         
-    stacksafe int add numeric:n
+    int multi add:n
         <= add int:n.
 
-    stacksafe int subtract numeric:n
+    int multi subtract:n
         <= subtract int:n.
 
-    stacksafe int multiply numeric:n
+    int multi multiply:n
         <= multiply int:n.
 
-    stacksafe int divide numeric:n
+    int multi divide:n
         <= divide int:n.
+        
+    stacksafe int add(BaseVariable v)
+        <= add(v value).
+
+    stacksafe int subtract(BaseVariable v)
+        <= subtract(v value).
+
+    stacksafe int multiply(BaseVariable v)
+        <= multiply(v value).
+
+    stacksafe int divide(BaseVariable v)
+        <= divide(v value).
         
     /// Returns the sum
     stacksafe int add int:anOperand
@@ -1297,14 +1412,23 @@ sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable<uint>
     stacksafe int divide int:anOperand
         = theValue / anOperand.
 
-    stacksafe int and int_numeric:n
+    int multi and:n
         <= and int:n.
         
-    stacksafe int or int_numeric:n
+    int multi or:n
         <= divide int:n.
         
-    stacksafe int xor int_numeric:n
+    int multi xor:n
         <= xor int:n.
+        
+    stacksafe int and(BaseVariable v)
+        <= and(v value).
+        
+    stacksafe int or(BaseVariable v)
+        <= or(v value).
+        
+    stacksafe int xor(BaseVariable v)
+        <= xor(v value).
         
     /// Returns the result of bitwise AND operation
     stacksafe int and int:anOperand
@@ -1574,7 +1698,7 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable<long>
     /// Returns a real value
     real = RealNumber new long:$self.
     
-    stacksafe bool equal value:o
+    multi equal:o
     [
         var n := o long \ back:$nil.
         ($nil == n)
@@ -1582,8 +1706,14 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable<long>
             ! [ ^ $self equal long:n ]
     ]
 
-    stacksafe bool less value:n
+    multi less:n
         <= less long:n.
+        
+    stacksafe bool equal(BaseVariable v)
+        <= equal(v value).
+        
+    stacksafe bool less(BaseVariable v)
+        <= less(v value).
         
     /// Compares the value
     stacksafe bool equal long:anOperand 
@@ -1593,17 +1723,29 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable<long>
     stacksafe bool less long:anOperand
         = theValue < anOperand.
         
-    stacksafe long add numeric:n
+    long multi add:n
         <= add long:n.
 
-    stacksafe long subtract numeric:n
+    long multi subtract:n
         <= subtract long:n.
 
-    stacksafe long multiply numeric:n
+    long multi multiply:n
         <= multiply long:n.
 
-    stacksafe long divide numeric:n
+    long multi divide:n
         <= divide long:n.
+        
+    stacksafe long add(BaseVariable v)
+        <= add(v value).
+
+    stacksafe long subtract(BaseVariable v)
+        <= subtract(v value).
+
+    stacksafe long multiply(BaseVariable v)
+        <= multiply(v value).
+
+    stacksafe long divide(BaseVariable v)
+        <= divide(v value).
         
     /// Returns the sum
     stacksafe long add long:anOperand
@@ -1621,14 +1763,23 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable<long>
     stacksafe long divide long:anOperand
         = theValue / anOperand.
 
-    stacksafe long and int_numeric:n
+    long multi and:n
         <= and long:n.
         
-    stacksafe long or int_numeric:n
+    long multi or:n
         <= divide long:n.
         
-    stacksafe long xor int_numeric:n
+    long multi xor:n
         <= xor long:n.
+        
+    stacksafe long and(BaseVariable v)
+        <= and(v value).
+        
+    stacksafe long or(BaseVariable v)
+        <= divide(v value).
+        
+    stacksafe long xor(BaseVariable v)
+        <= xor(v value).
         
     /// Returns the result of bitwise AND operation
     stacksafe long and long:anOperand
@@ -1866,7 +2017,7 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable<real>
     constructor new : anObject
         <= new real:anObject.
         
-    stacksafe bool equal value:o
+    multi equal:o
     [
         var n := o real \ back:$nil.
         ($nil == n)
@@ -1874,8 +2025,14 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable<real>
             ! [ ^ $self equal real:n ]
     ]
 
-    stacksafe bool less value:n
+    multi less:n
         <= less real:n.
+        
+    stacksafe bool equal(BaseVariable v)
+        <= equal(v value).
+        
+    stacksafe bool less(BaseVariable v)
+        <= less(v value).
         
     /// Compares the value
     stacksafe bool equal real:anOperand 
@@ -1885,17 +2042,29 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable<real>
     stacksafe bool less real:anOperand
         = theValue < anOperand.
         
-    stacksafe real add numeric:n
+    real multi add :n
         <= add real:n.
 
-    stacksafe real subtract numeric:n
+    real multi subtract:n
         <= subtract real:n.
 
-    stacksafe real multiply numeric:n
+    real multi multiply:n
         <= multiply real:n.
 
-    stacksafe real divide numeric:n
+    real multi divide:n
         <= divide real:n.
+        
+    stacksafe real add(BaseVariable v)
+        <= add(v value).
+
+    stacksafe real subtract(BaseVariable v)
+        <= subtract(v value).
+
+    stacksafe real multiply(BaseVariable v)
+        <= multiply(v value).
+
+    stacksafe real divide(BaseVariable v)
+        <= divide(v value).
         
     /// Returns the sum
     stacksafe real add real:anOperand
@@ -2074,7 +2243,7 @@ sealed const embeddable struct CharValue :: BaseValue, dispatchable<char>
     constructor max
         = $010FFFFh.
 
-    stacksafe bool equal value:o
+    multi equal:o
     [
         var n := o char \ back:$nil.
         ($nil == n)
@@ -2082,8 +2251,14 @@ sealed const embeddable struct CharValue :: BaseValue, dispatchable<char>
             ! [ ^ $self equal char:n ]
     ]
 
-    stacksafe bool less value:n
+    multi less:n
         <= less char:n.
+        
+    stacksafe bool equal(BaseVariable v)
+        <= equal(v value).
+        
+    stacksafe bool less(BaseVariable v)
+        <= less(v value).
         
     stacksafe bool equal int:val
         = theValue == val.
@@ -2168,11 +2343,11 @@ singleton nil
 //        
 //        ^ false.
 //    ]
-//    
-//    /// Returns nil
-//    ///
-//    /// Any typecasting message will be handled and nil value returned
-//    generic get = $nil.
+    
+    /// Returns nil
+    ///
+    /// Any typecasting message will be handled and nil value returned
+    generic = $nil.
 }
 
 // === Basic Factory symbols ==
@@ -2321,8 +2496,8 @@ class byteConvertor =
     stacksafe convert wide:aValue vbyte:aRetVal
         => system'core_routines'__byteconvertor.
         
-    byte convert value:anObject
-        = anObject byte.
+    byte convert(BaseVariable v)
+        <= convert(v value).
                         
     /// Returns the parameter        
     stacksafe byte convert byte:anInt
@@ -2401,7 +2576,7 @@ class byteConvertor =
     ]
 
     byte multi convert : anObject
-        <= convert(anObject value).
+        = anObject byte.
 }.
 
 /// A 16bit integer convertor
@@ -2439,8 +2614,8 @@ class shortConvertor =
     stacksafe convert wide:aValue vshort:aRetVal
         => system'core_routines'__shortconvertor.
         
-    short convert value:anObject
-        = anObject short.
+    short convert(BaseVariable v)
+        <= convert(v value).
                         
     /// Returns a short integer value        
     stacksafe short convert short:anInt
@@ -2519,7 +2694,7 @@ class shortConvertor =
     ]
         
     short multi convert : anObject
-        <= convert(anObject value).
+        = anObject short.
 }.
 
 /// An Unicode character convertor
@@ -2537,8 +2712,8 @@ class charConvertor =
     stacksafe convert int:aValue vchar:aRetVal
         => system'core_routines'__charconvertor.
         
-    char convert value:anObject
-        = anObject char.
+    char convert(BaseVariable v)
+        <= convert(v value).
         
     /// Returns a parameter        
     stacksafe char convert char:aChar
@@ -2622,7 +2797,7 @@ class charConvertor =
     ]
         
     char multi convert : anObject
-        <= convert(anObject value).
+        = anObject char.
 }.
 
 /// An integer convertor
@@ -2668,8 +2843,8 @@ class intConvertor =
     stacksafe convert real:aReal vint:aRetVal
         => system'core_routines'__intconvertor.
 
-    int convert value:anObject
-        = anObject int.
+    int convert(BaseVariable v)
+        <= convert(v value).
         
     /// Converts a literal string into an integer
     stacksafe int convert literal:aLiteral
@@ -2769,7 +2944,7 @@ class intConvertor =
         = IntNumber new int:anInt.        
                         
     int multi convert : anObject
-        <= convert value:anObject.
+        = anObject int.
 }.
 
 /// A unsigned integer convertor
@@ -2827,8 +3002,8 @@ class longConvertor =
     stacksafe convert real:aValue vlong:aRetVal
         => system'core_routines'__longconvertor.
 
-    long convert value:anObject
-        = anObject long.
+    long convert(BaseVariable v)
+        <= convert(v value).
         
     /// Converts an integer value into a long integer
     stacksafe long convert int:aValue
@@ -2925,7 +3100,7 @@ class longConvertor =
         = LongNumber new long:aLong.
         
     long multi convert : anObject
-        <= convert value:anObject.
+        = anObject long.
 }.
 
 /// A real number convertor
@@ -2977,8 +3152,8 @@ class realConvertor =
     stacksafe convert wide:aValue vreal:aRetVal
         => system'core_routines'__realconvertor.
         
-    real convert value:anObject
-        = anObject real.
+    real convert(BaseVariable v)
+        <= convert(v value).
         
     /// Converts a literal string into a real number
     stacksafe real convert literal:aLiteral
@@ -3048,7 +3223,7 @@ class realConvertor =
     ]
         
     real multi convert : anObject
-        <= convert value:anObject.
+        = anObject real.
 }.
 
 // --- realOpController ---

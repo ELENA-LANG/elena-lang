@@ -58,11 +58,7 @@ type bool       = system'BaseBoolValue.
 
 // === basic primitive types ===
 
-type value      = system'BaseValue.
-type numeric    = system'BaseNumber.
-type int_numeric= system'IntBaseNumber.
-
-//type keyvalue   :: system'KeyValue.
+type keyvalue   = system'KeyValue.
 
 type ref        = system'Variable.
 
