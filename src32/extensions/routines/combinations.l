@@ -118,7 +118,7 @@ class combinationNext = BaseStrategy::
         anArray getAt int:(i - 1); append index:1.
         
         //i to &int:(k - 1)
-        IntNumber new int:i; to int:(k - 1)
+        IntNumber new int:i; runIntLoop int:(k - 1)
             nfunc: (&int:j) [ anArray getAt int:j; writeIndex int:(IntNumber new int:(anArray getAt int:(j - 1); index; int + 1)) ].
             
         ^ $self          

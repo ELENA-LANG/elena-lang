@@ -6084,6 +6084,11 @@ void Compiler :: optimizeCode(SNode node, ModuleScope& scope, WarningScope& warn
          case lxCalling:
             optimizeExpressionTree(current, scope, warningScope);
             break;
+         default:
+            if (test(current.type, lxObjectMask)) {
+               optimizeExpression(current, scope, warningScope, 0);
+            }
+            break;
       }
       current = current.nextNode();
    }
