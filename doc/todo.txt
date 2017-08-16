@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * migrating rosetta samples
+                 * migrating rosetta samples : delegates
 
                  * embeddable eval[1]
                  * embeddable get[1]

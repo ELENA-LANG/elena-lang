@@ -849,8 +849,8 @@ sealed class RealMatrix :: dispatchable<realmatrix>
         theColumns := IntNumber new int:Columns.
     ]
         
-//    constructor new : Rows : Columns
-//        <= new int:Columns int:Rows.
+    constructor multi new : Rows : Columns
+        <= new int:Columns int:Rows.
 
     /// Reads the matrix lengths to the output parameter
     stacksafe readLengthsTo vint:Rows vint:Columns
@@ -904,18 +904,18 @@ sealed class RealMatrix :: dispatchable<realmatrix>
         ^ retVal
     ]
 
-//    getAt : i : j
-//    [
-//        real aValue := 0.0r.
-//        $self read int:i int:j vreal:aValue.
-//        
-//        ^ RealNumber new real:aValue
-//    ]
-//
-//    setAt : i : j : aValue
-//    [
-//        $self write int:i int:j real:aValue
-//    ]
+    getAt : i : j
+    [
+        real aValue := 0.0r.
+        $self read int:i int:j vreal:aValue.
+        
+        ^ RealNumber new real:aValue
+    ]
+
+    setAt : i : j : aValue
+    [
+        $self write int:i int:j real:aValue
+    ]
 
     /// Returns a row
     getAt : i =

@@ -102,4 +102,14 @@ sealed nonstructural class Directory
     
     bool isAvailable
         = directoryControl isAvailable:thePath.    
+        
+    create
+    [
+        directoryControl create:thePath.
+    ]     
+       
+    delete
+    [
+        directoryControl delete:thePath.
+    ]        
 }
