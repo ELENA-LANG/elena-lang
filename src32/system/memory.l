@@ -1038,7 +1038,7 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
     stacksafe constructor new int:aSize literal:aLiteral
         <= new int:aSize;
     [
-        system'core_routines'__literal copy literal:$self literal:aLiteral.
+        system'core_routines'__literal copy literal:aLiteral literal:$self.
     ]
 
     /// Creates the literal string with specified length fills with spciefied character value        
@@ -1264,7 +1264,7 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
     stacksafe constructor new int:aSize wide:aLiteral
         <= new int:aSize;
     [
-        system'core_routines'__wide copy wide:$self wide:aLiteral.
+        system'core_routines'__wide copy wide:aLiteral wide:$self.
     ]
 
     /// Creates the literal string with specified length fills with spciefied character value

@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   10
+#define REVISION_VERSION   11
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -390,7 +390,7 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    }
    else {
       if (test(reference, SEALED_MESSAGE)) {
-         command.append("#private");
+         command.append("#private&");
       }  
       if (test(reference, PROPSET_MESSAGE)) {
          command.append("set&");

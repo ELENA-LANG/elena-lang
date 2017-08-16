@@ -4195,9 +4195,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    //      }
          else scope.raiseError(errIllegalMethod, node);
       }
-   //   if (test(scope.hints, tpSealed) && verb == lxPrivate) {
-   //      verb_id = PRIVATE_MESSAGE_ID;
-   //   }
+      else if (test(scope.hints, tpSealed) && verb == lxPrivate) {
+         flags |= SEALED_MESSAGE;
+      }
 
       if (propMode && paramCount == 1 && messageStr.Length() > 3) {
          // COMPILER MAGIC : set&x => x

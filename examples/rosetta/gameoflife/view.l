@@ -1,11 +1,11 @@
-#import cellular.
-#import system'text.
+import cellular.
+import system'text.
 
-extension(space) presenterOp
+extension space presenterOp
 {
     print
     [
-        console setCursorPosition &int:0 &int:0.
+        console setCursorPosition int:0 int:0.
         
         int columns := self columns.
         int rows := self rows.
@@ -18,14 +18,14 @@ extension(space) presenterOp
             
             while (j < columns)
             [
-                int cell := self getAt &int:i &int:j.
+                int cell := self getAt int:i int:j.
                 
-                console write:((cell == 0)iif:" ":"o").
+                console write((cell == 0)iif(" ","o")).
                 
-                j += 1.
+                j := j + 1.
             ].
             
-            i += 1.
+            i := i + 1.
             console writeLine.
         ].
     ]

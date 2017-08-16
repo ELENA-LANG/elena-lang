@@ -2682,7 +2682,7 @@ procedure __literal."copy$system@LiteralValue$system@LiteralValue[2]"
 
   aloadsi 2
   bcopya
-  aloadsi 3
+  aloadsi 1
   copy
   acopyb
   quitn 2
@@ -3141,15 +3141,9 @@ end
 
 procedure __wide."copy$system@WideLiteralValue$system@WideLiteralValue[2]"
 
-  bcopya
   aloadsi 2
-  nload
-  inc
-  acopyb
-  acallvi 1
-
   bcopya
-  aloadsi 3
+  aloadsi 1
   copy
   acopyb
   quitn 2

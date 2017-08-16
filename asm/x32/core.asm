@@ -1267,7 +1267,7 @@ labCopy:
   lea  esi, [esi+4]
   lea  ebx, [ebx+4]
   sub  ecx, 4
-  js   short labCopy
+  ja   short labCopy
 
 end
 

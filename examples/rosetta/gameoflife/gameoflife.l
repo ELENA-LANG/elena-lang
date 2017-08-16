@@ -1,7 +1,7 @@
-#import system'routines.
-#import system'threading.
-#import extensions.
-#import cellular.
+import system'routines.
+import system'threading.
+import extensions.
+import cellular.
 
 const int DELAY = 50.
 
@@ -9,12 +9,12 @@ symbol testSet = ((0,1,0),
                   (0,1,0),
                   (0,1,0)).
 
-class gameOfLifeRuleSet = BaseRuleSet
+class gameOfLifeRuleSet = BaseRuleSet::
 {
-    validate &space:s &int:x &int:y 
+    validate space:s int:x int:y 
     [
-        int cell := s getAt &int:x &int:y.
-        int number := s getLiveCell &int:x &int:y. // NOTE : number of living cells around the self includes the cell itself
+        int cell := s getAt int:x int:y.
+        int number := s getLiveCell int:x int:y. // NOTE : number of living cells around the self includes the cell itself
         
         if ((cell == 0) && (number == 3))
             [ ^ true. ].
@@ -30,12 +30,11 @@ program =
 [
     console clear.
     
-    var model := Model newRandomset &ruleset:gameOfLifeRuleSet.
+    var model := Model newRandomset ruleset:gameOfLifeRuleSet.
 
-    model onUpdate &listener_func:
-        (&space:sp) [ sp print ].
+    model onUpdate listener_func(&space:sp)[ sp print ].
 
-    until (console is &keyAvailable)
+    until (console isKeyAvailable)
     [
         model run.
         

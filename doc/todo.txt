@@ -3,13 +3,14 @@ In development:
 ------                              
 
               xdev - general implementation
+                 * migrating rosetta samples
+
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]
 
-                 * migrating rosetta samples : Conway's Game of Life
-
                  * migrate samples
+                 * migrating rosetta samples : Conway's Game of Life
                  * raise an error if code template is not recognized
                  * fix the bug : sealed class File { literal thePath. } - should not be declared as structured
                  * fix the bug : duplciate methods are not recognized:

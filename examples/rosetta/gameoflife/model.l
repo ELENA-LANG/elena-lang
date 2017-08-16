@@ -4,10 +4,11 @@ import cellular.
 const int maxX = 48.
 const int maxY = 28.
 
-#subject listener_func = ListenerFunc.
-limited dispatchable(listener_func) class ListenerFunc
+type listener_func = ListenerFunc.
+
+limited class ListenerFunc :: dispatchable<listener_func>
 {
-    action eval &space:space []
+    action eval space:space []
 }
 
 sealed class Model
@@ -16,20 +17,20 @@ sealed class Model
     ruleset theRuleSet.
     bool    started.
     
-    event(listener_func, onUpdate) theListener.
+    listener_func event onUpdate :: theListener.
     
-    constructor newRandomset &ruleset:transformSet
+    constructor newRandomset ruleset:transformSet
     [
-        theSpace := IntMatrixSpace new &int:maxY &int:maxX &ruleset:randomSet.
+        theSpace := IntMatrixSpace new int:maxY int:maxX ruleset:randomSet.
                         
         theRuleSet := transformSet.
         
         started := false.
     ]
     
-    constructor newLoaded &ruleset:initSet &ruleset:transformSet
+    constructor newLoaded ruleset:initSet ruleset:transformSet
     [
-        theSpace := IntMatrixSpace new &int:maxY &int:maxX &ruleset:initSet.
+        theSpace := IntMatrixSpace new int:maxY int:maxX ruleset:initSet.
                         
         theRuleSet := transformSet.
         
@@ -39,7 +40,7 @@ sealed class Model
     $onUpdate
     [
         if ($nil != theListener)
-            [ theListener eval &space:theSpace ].
+            [ theListener eval space:theSpace ].
     ]
     
     init
@@ -50,7 +51,7 @@ sealed class Model
     run
     [
         if (started)
-            [ theSpace update &ruleset:theRuleSet. ];
+            [ theSpace update ruleset:theRuleSet. ];
             [ started := true. ].        
         
         $self $onUpdate.
