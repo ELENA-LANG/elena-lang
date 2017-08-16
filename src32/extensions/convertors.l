@@ -194,7 +194,7 @@ class wideExConvertor =
 arrayConvertorEx =
 {
     multi convert : anObject
-        = arrayConvertorEx convert enumerator:anObject.
+        = anObject array.
     
     convert array:anArray
         = anArray.
@@ -208,6 +208,24 @@ arrayConvertorEx =
         ^ aRetVal array
     ]
 
+    convert indexer:it
+    [
+        array_list aRetVal := ArrayList new.
+        while (it available)
+        [
+            aRetVal append(it get).
+            
+            it append index:1
+        ].
+
+        ^ aRetVal array
+    ]
+
+    convert(BaseEnumerable v)
+        <= convert(v enumerator).
+        
+    convert(BaseIndexable v)
+        <= convert(v indexer).
 //                void : val
 //                    = Array min.                    
     

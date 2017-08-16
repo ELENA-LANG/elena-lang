@@ -109,17 +109,19 @@ method template fnprop :: type,template_fn
     ]
 }
 
-//// --- nnfn ---
-//
-//method template nnfn :: type,template_fn,target_method
-//{
-//    stacksafe embeddable type template_fn type:n type:m
-//    [
-//        type retVal := 0.
-//        $self target_method type:n type:m vint:retVal.
-//        ^ retVal.            
-//    ]
-//}
+// --- fn2prop ---
+
+method template fn2prop :: type,template_fn
+{
+    method target_method.
+    
+    stacksafe embeddable type template_fn type:n type:m
+    [
+        type retVal := 0.
+        $self target_method type:n type:m var<type>:retVal.
+        ^ retVal.            
+    ]
+}
 
 // --- while statement ---
 

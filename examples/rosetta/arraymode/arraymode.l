@@ -16,13 +16,13 @@ extension op
             aCountMap[anItem] := aCountMap[anItem] + 1
         ].
     
-        aCountMap := aCountMap array_list; orderBy(:p:n)(p > n).
+        aCountMap := aCountMap array_list; sort(:p:n)(p > n).
     
         var aMax := aCountMap firstMember.
     
         ^ aCountMap
-            filterEach(:kv)(aMax equal:kv);
-            selectEach(:kv)(kv key);
+            filterBy(:kv)(aMax equal:kv);
+            selectBy(:kv)(kv key);
             toArray.
     ]
 }

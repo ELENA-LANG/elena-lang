@@ -17,7 +17,7 @@ randomChar
 extension evoHelper
 {
     randomString
-        = 0 repeat &till:self &each:x [ randomChar ] summarize:(String new) literal.
+        = 0 till:self repeat(:x) [ randomChar ] summarize:(String new) literal.
         
     fitness &of:s
         = self zip:s &into:(:a:b)[ (a == b)iif:1:0 ] summarize:(Integer new) int.

@@ -2,12 +2,12 @@ import extensions.
 
 // --- Basic types ---
 
-type space   :: BaseSpace.
-type ruleset :: BaseRuleSet.
+type space   = BaseSpace.
+type ruleset = BaseRuleSet.
 
 // --- Rule Set ---
 
-limited class BaseRuleSet :: dispatchable(ruleset)
+limited class BaseRuleSet :: dispatchable<ruleset>
 {
     stacksafe bool validate space:s int:i int:j []
 }
@@ -15,7 +15,7 @@ limited class BaseRuleSet :: dispatchable(ruleset)
 class randomSet = BaseRuleSet::
 {
     validate space:s int:i int:j
-        = 1 == randomGenerator eval:0:2.
+        = 1 == randomGenerator eval(0,2).
 }.
 
 class LoadedSet :: BaseRuleSet

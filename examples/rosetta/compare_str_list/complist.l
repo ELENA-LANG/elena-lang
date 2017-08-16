@@ -9,7 +9,7 @@ import extensions.
 extension helper
 {
     isEqual
-        = $nil == self seek:(self firstMember) eachPair:(:n:m) [ ^m equal:n; not ].
+        = $nil == self seekFor(self firstMember) eachPair(:n:m)( m equal:n; not ).
         
     isAscending
     [
@@ -18,17 +18,17 @@ extension helper
         
         later next.
         
-        ^ $nil == former zip:later into:(:prev:next)[ ^next <= prev ]; seek each: (:b)[ ^b ]
+        ^ $nil == former zip:later by(:prev:next)( next <= prev ); seekEach(:b)( b )
     ]
 }
 
 program =
 [
     (("AA","BB","CC"),("AA","AA","AA"),("AA","CC","BB"),("AA","ACB","BB","CC"),List new; append:"single_element")
-        run each: (:list)
+        forEach(:list)
         [
-            console writeLine:list:" all equal - ":(list isEqual).
-            console writeLine:list:" ascending - ":(list isAscending)
+            console printLine(list," all equal - ",list isEqual).
+            console printLine(list," ascending - ",list isAscending)
         ].
         
     console readChar.            

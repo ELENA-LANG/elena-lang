@@ -1,10 +1,10 @@
 
-limited class BaseSpace :: dispatchable(space)
+limited class BaseSpace :: dispatchable<space>
 {
-    int getLiveCell :: nnfn(calcLiveCells).
+    int fn2prop getLiveCell :: calcLiveCells.
     
-    int rows        :: outnprop(readRowsTo).
-    int columns     :: outnprop(readColumnsTo).
+    int rvprop rows         :: readRowsTo.
+    int rvprop columns      :: readColumnsTo.
     
     update ruleset:rs
     [
@@ -32,7 +32,7 @@ limited class BaseSpace :: dispatchable(space)
             j := -1.
             while (j < 2)
             [
-                int cell := $self getAt int:(k + i) int:(l + j).
+                int cell := $self getAt int(k + i) int(l + j).
                 if (cell == 1)
                     [ counter := counter + 1 ].
                 

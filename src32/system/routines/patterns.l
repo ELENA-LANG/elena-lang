@@ -420,33 +420,36 @@ class Repeater :: Enumerator
     ]
 }
 
-//// --- ZipEnumerator ---
-//
-//class ZipEnumerator :: Enumerator
-//{
-//    enumerator theEnumerator1.
-//    enumerator theEnumerator2.
-//    
-//    func2      theZipper.
-//    
-//    constructor new:combinator enumerator:enum1 enumerator:enum2
-//    [
-//        theZipper := combinator func2.
-//        
-//        theEnumerator1 := enum1.
-//        theEnumerator2 := enum2.
-//    ]
-//    
-//    get = theZipper eval:(theEnumerator1 get):(theEnumerator2 get).
-//    
-//    next = theEnumerator1 next && theEnumerator2 next.
-//    
-//    reset
-//    [
-//        theEnumerator1 reset.
-//        theEnumerator2 reset.
-//    ]
-//}
+// --- ZipEnumerator ---
+
+class ZipEnumerator :: Enumerator
+{
+    enumerator theEnumerator1.
+    enumerator theEnumerator2.
+    
+    func2      theZipper.
+    
+    constructor new(BaseFunction2 fn, Enumerator enum1, Enumerator enum2)
+    [
+        theZipper := fn.
+        
+        theEnumerator1 := enum1.
+        theEnumerator2 := enum2.
+    ]
+    
+    constructor new(ExtensionMessage ext, Enumerator enum1, Enumerator enum2)
+        <= new func2:(:n:m)(n~ext eval:m) enumerator:enum1 enumerator:enum2.
+    
+    get = theZipper eval(theEnumerator1 get, theEnumerator2 get).
+    
+    next = theEnumerator1 next && theEnumerator2 next.
+    
+    reset
+    [
+        theEnumerator1 reset.
+        theEnumerator2 reset.
+    ]
+}
 
 // --- RangeEnumerator ---
 
@@ -694,7 +697,7 @@ extension patternOp
         
     accumulate : aVariable with:operation
     [
-        Accumulating new(aVariable, operation); run enumerator:(self enumerator).
+        Accumulating new(aVariable, operation); run enumerator:self.
         
         ^ aVariable value.
     ]
@@ -708,22 +711,22 @@ extension patternOp
 //    last:counter
 //        = TopFilter new:counter skipping:(self length - counter) enumerator:(self enumerator).
 
-    filterEach:aSelector
+    filterBy:aSelector
         = Filter new(aSelector, self enumerator).
         
-    selectEach:aSelector
+    selectBy:aSelector
         = Selector new(aSelector, self enumerator).
 
-//    zip:anEnumerable into:aZipper
-//        = ZipEnumerator new:aZipper enumerator:(self enumerator) enumerator:(anEnumerable enumerator).
-//
+    zip:anEnumerable by:aZipper
+        = ZipEnumerator new(aZipper, self enumerator, anEnumerable enumerator).
+
 //    zip:anEnumerable eachPair:func2
 //        = ZipEnumerator new:(:x:y)[ func2 eval:x:y ] enumerator:(self enumerator) enumerator:(anEnumerable enumerator); run each:idleFunc1.
 //
-//    group by:groupFunc
+//    groupBy:groupFunc
 //        = GroupingEnumerator new func1:(groupFunc func1) enumerator:(self enumerator).                                       
 //
-//    order by:orderFunc
+//    orderBy:orderFunc
 //        = OrderingEnumerator new func2:(orderFunc func2) enumerator:(self enumerator).                                       
 //
 //    filter pattern:patternFun
@@ -749,7 +752,7 @@ extension patternOp
 //
 //        } with:self.
         
-    repeat till:max each:aRepeater
+    till:max repeat:aRepeater
         = Repeater new(self, max, aRepeater).
         
 //    counting

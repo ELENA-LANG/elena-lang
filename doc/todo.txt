@@ -3,11 +3,13 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * test median
+                 * embeddable eval[1]
+                 * embeddable get[1]
+                 * embeddable eval[2]
 
-                 * migrate rosetta code samples : calendar
+                 * migrating rosetta samples : Conway's Game of Life
+
                  * migrate samples
-
                  * raise an error if code template is not recognized
                  * fix the bug : sealed class File { literal thePath. } - should not be declared as structured
                  * fix the bug : duplciate methods are not recognized:
@@ -15,9 +17,6 @@ In development:
                       literal add literal : aLiteral => system'core_routines'__literal.
 
                  * support alternative property setting syntax : a set b:c <=> a b := c.
-                 * embeddable eval[1]
-                 * embeddable get[1]
-                 * embeddable eval[2]
                  * elenart : correctly display strong typed message names
                  * elenavm : correctly display strong typed message names
                  * Signature should support only get, set, eval
@@ -78,7 +77,6 @@ In development:
                  * migrate amb
                  * migrate anagram
                  * test twentyfour sample
-                 * migrating rosetta samples : Conway's Game of Life
                  * nshift should be replaced with nshiftl, nshiftr
                  * optimize shift implementation
 

@@ -19,7 +19,7 @@ import extensions.
 
 program =
 [
-    console writeLine(console readLine;split;selectEach(%"convertorOp.toInt[0]");summarize).
+    console writeLine(console readLine;split;selectBy(%"convertorOp.toInt[0]");summarize).
 ].
 
 program_alt =

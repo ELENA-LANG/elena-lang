@@ -149,9 +149,15 @@ extension enumerableOp
     multi seekEach:fn
         = self~enumerableOp seekEach(:n)[ fn eval:n ].
 
-//    seek:param eachPair:function
-//      = function retrieve:param enumerator:(self enumerator).
-//
+    seekFor(Object param) eachPair(BaseFunction2 aFunction)
+        = aFunction retrieve object:param enumerator:self.
+
+    seekFor(Object param) eachPair(ExtensionMessage ext)
+        = self~enumerableOp seek:param eachPair(:n:m)( n~ext eval(m) ).
+
+    multi seekFor:param eachPair:fn
+        = self~enumerableOp seekFor:param eachPair(:n:m)( fn eval(n,m) ).
+
 //    safeSeek : aValue
 //        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
 //
@@ -252,6 +258,9 @@ extension indexableOp
         ].
     ]
     
+    forEvery(BaseFunction1 aFunction)
+        = self~indexableOp forEvery(&int:n)(aFunction eval:n).
+    
     indexOfElement : anObject
     [
         indexer anIndexer := self indexer.
@@ -309,10 +318,7 @@ extension indexableOp
     multi populate : anAction
         = self~indexableOp populate(&int:n)[ ^anAction eval:n ].
 
-//    sort : aCompareFunc
-//        = self~indexableOp sort func2:(aCompareFunc func2).
-    
-    orderBy func2:aCompareFunc
+    sort func2:aCompareFunc
     [
         indexer aFormer := self indexer.
         indexer aLater := self indexer.
@@ -341,7 +347,7 @@ extension indexableOp
     ]
     
     ascendant
-        = (self clone)~indexableOp orderBy:ifOrdered.
+        = (self clone)~indexableOp sort:ifOrdered.
 
     Subarray : aLength at:anIndex
         = self~indexableOp Subarray int:anIndex int:aLength.
@@ -403,40 +409,40 @@ extension indexableOp
 //    ]    
 }
 
-////// --- stringListOp ---
-////
-////class stringListOpDispatcher =
-////{
-////    eval literal:aLiteral = literalListOp.
-////    
-////    eval wide:aLiteral = wideListOp.
-////}.
-////
-////extension stringListOp
-////{
-////    array split char:aChar
-////    [
-////        var dispatcher := self cast:%eval to:stringListOpDispatcher.
-////        
-////        ^ self~dispatcher split char:aChar.
-////    ]
-////    
-////    split literal:aValue
-////    [
-////        var dispatcher := self cast:%eval to:stringListOpDispatcher.
-////        
-////        ^ self~dispatcher split literal:aValue.
-////    ]
-////    
-////    split by:aSplitter
-////    [
-////        literal aLiteral := self literal.
-////        
-////        ^ aSplitter cast:%eval to:
-////            {
-////                eval char:aChar = aLiteral~stringListOp split char:aChar.
-////                
-////                eval literal:aSplitter = aLiteral~stringListOp split literal:aSplitter.
-////          }.
-////    ]
-////}
+//// --- stringListOp ---
+//
+//class stringListOpDispatcher =
+//{
+//    eval literal:aLiteral = literalListOp.
+//    
+//    eval wide:aLiteral = wideListOp.
+//}.
+//
+//extension stringListOp
+//{
+//    array split char:aChar
+//    [
+//        var dispatcher := self cast:%eval to:stringListOpDispatcher.
+//        
+//        ^ self~dispatcher split char:aChar.
+//    ]
+//    
+//    split literal:aValue
+//    [
+//        var dispatcher := self cast:%eval to:stringListOpDispatcher.
+//        
+//        ^ self~dispatcher split literal:aValue.
+//    ]
+//    
+//    split by:aSplitter
+//    [
+//        literal aLiteral := self literal.
+//        
+//        ^ aSplitter cast:%eval to:
+//            {
+//                eval char:aChar = aLiteral~stringListOp split char:aChar.
+//                
+//                eval literal:aSplitter = aLiteral~stringListOp split literal:aSplitter.
+//          }.
+//    ]
+//}
