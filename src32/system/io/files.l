@@ -83,6 +83,9 @@ sealed nonstructural class File
         
         aWriter close
     ]    
+    
+    delete
+        = fileControl delete:thePath.
 }
 
 // --- Directory ---
@@ -109,7 +112,5 @@ sealed nonstructural class Directory
     ]     
        
     delete
-    [
-        directoryControl delete:thePath.
-    ]        
+        = directoryControl delete:thePath.
 }

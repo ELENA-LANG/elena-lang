@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * migrating rosetta samples : delegates
+                 * migrating rosetta samples : dynamic variable
 
                  * embeddable eval[1]
                  * embeddable get[1]
@@ -115,6 +115,9 @@ In development:
                    (e.g. vhdc), it should be declared when it is used
 
               xdev - general optimization  
+                 * opimized alt operator implementation : resolve it in compile-time if the operand is known
+                 * opimized alt operator implementation : if the object has no custom dispatch handler check it before
+                   otherwise use try catch statement ; check $nil?
                  * optimize using, finally, try template implementations (get rid of dynamic closures)
                  * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                  * optimize listof.$expand

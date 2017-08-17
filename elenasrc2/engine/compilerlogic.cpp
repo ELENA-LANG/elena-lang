@@ -1733,7 +1733,8 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
                         if (opTarget != lxNone)
                            sourRef = opTarget.argument;
                      }
-                     if (sourRef != 0) {
+                     if (sourRef != 0 && sourRef != scope.superReference) {
+                        // HOTFIX : exclude a super object from compile-time resolving
                         if (isPrimitiveRef(sourRef))
                            sourRef = resolvePrimitiveReference(scope, sourRef);
                         
@@ -1746,7 +1747,6 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
                            }
                            else return message;
                         }
-                        //else if ()
                         else break;
                      }
                      else return 0;

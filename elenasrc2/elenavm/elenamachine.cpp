@@ -190,6 +190,7 @@ Instance :: Instance(ELENAMachine* machine)
    initLoader(_machine->config);
 
    // create message table module
+   _ConvertedMTSize = 0;
    LoadResult result = lrSuccessful;
    _Module* messages = _loader.createModule(MESSAGE_TABLE_MODULE, result);
    if (result == lrSuccessful) {
@@ -457,10 +458,13 @@ bool Instance :: initLoader(InstanceConfig& config)
 
 void Instance :: resolveMessageTable()
 {
-   if (_messageTable->Length() > 0) {
-      _linker->resolve(MESSAGE_TABLE, mskMessageTableRef, true);
+   while (_messageTable->Length() > _ConvertedMTSize) {
+      // !! HOTFIX : the message section should be overwritten
+      getMessageSection()->trim(0);
 
-      _messageTable->clear();
+      _ConvertedMTSize = _messageTable->Length();
+
+      _linker->resolve(MESSAGE_TABLE, mskMessageTableRef, true);
    }
 }
 
@@ -877,6 +881,8 @@ int Instance::interprete(void* tape, ident_t interpreter)
       _ELENA_::MemoryWriter debugWriter(debugSection);
       saveSubject(&debugWriter);
    }
+
+   onNewCode();
 
    resumeVM();
 
