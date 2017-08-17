@@ -59,6 +59,7 @@ type bool       = system'BaseBoolValue.
 // === basic primitive types ===
 
 type keyvalue   = system'KeyValue.
+type dto        = system'DTO.  
 
 type ref        = system'Variable.
 

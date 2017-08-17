@@ -1,64 +1,64 @@
-//import system'io.
+import system'io.
 //import system'text.
 //import extensions'text.
-//
-//// --- ReaderEnumerator ---
-//
-//class ReaderEnumerator :: Enumerator
-//{
-//    textreader theReader.
-//    object     theLine.
-//
-//    constructor new
-//    [ 
-//    ]
-//
-//    constructor new : source
-//        <= new;
-//    [
-//        theReader := source textreader.
-//    ]
-//
-//    constructor new stream:aStream encoder:anEncoder
-//        <= new;
-//    [
-//        theReader := StreamReader new stream:aStream encoder:anEncoder.
-//    ]        
-//                        
-//    constructor new path:aPath
-//        <= new;
-//    [
-//        theReader := StreamReader new path:aPath.
-//    ]
-//    
-//    constructor new path:aPath encoder:anEncoder
-//        <= new;
-//    [
-//        theReader := StreamReader new path:aPath encoder:anEncoder
-//    ]
-//    
-//    reset 
-//    [
-//        NotSupportedException new; raise.
-//    ]
-//    
-//    next
-//    [
-//        if(theReader available)
-//            [
-//                theLine := theReader read literal.
-//                
-//                ^ true
-//            ].
-//        
-//        theReader close.
-//        
-//        ^ false
-//    ]
-//    
-//    get = theLine.
-//}
-//
+
+// --- ReaderEnumerator ---
+
+class ReaderEnumerator :: Enumerator
+{
+    textreader theReader.
+    object     theLine.
+
+    constructor new
+    [ 
+    ]
+
+    multi constructor new : source
+        <= new;
+    [
+        theReader := source textreader.
+    ]
+
+    constructor new stream:aStream encoder:anEncoder
+        <= new;
+    [
+        theReader := StreamReader new stream:aStream encoder:anEncoder.
+    ]        
+                        
+    constructor new literal:aPath
+        <= new;
+    [
+        theReader := StreamReader new:aPath.
+    ]
+    
+    constructor new literal:aPath encoder:anEncoder
+        <= new;
+    [
+        theReader := StreamReader new literal:aPath encoder:anEncoder
+    ]
+    
+    reset 
+    [
+        NotSupportedException new; raise.
+    ]
+    
+    next
+    [
+        if(theReader available)
+            [
+                theLine := theReader readLiteral.
+                
+                ^ true
+            ].
+        
+        theReader close.
+        
+        ^ false
+    ]
+    
+    get = theLine.
+}
+
 //// --- fileExOp ---
 //
 //file_path extension fileExOp

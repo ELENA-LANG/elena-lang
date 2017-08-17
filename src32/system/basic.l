@@ -2451,11 +2451,11 @@ sealed class KeyValue
     dispatch => theObject.
 }
 
-//// --- DTO ---
-//
-//class DTO :: dispatchable(dto)
-//{
-//}
+// --- DTO ---
+
+class DTO :: dispatchable<dto>
+{
+}
 
 // === Basic Convertors ===
 

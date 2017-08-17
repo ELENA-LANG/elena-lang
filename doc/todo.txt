@@ -78,6 +78,9 @@ In development:
                  * migrate amb
                  * migrate anagram
                  * test twentyfour sample
+                 * migrate execute brainf***
+                 * GUI component interaction
+                 * Hello world/Graphical
                  * nshift should be replaced with nshiftl, nshiftr
                  * optimize shift implementation
 

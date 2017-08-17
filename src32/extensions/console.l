@@ -80,11 +80,38 @@ extension outputOp
         ^ self
     ]
 
+    generic printPaddingLeft args:list
+    [
+        textbuffer aBuffer := TextBuilder new.
+        
+        int len := list length.
+        int i := 1.
+        while (i < len)
+        [
+            object obj := list[i].
+            
+            aBuffer write(obj~convertorOp toLiteral).
+            
+            i := i + 1
+        ].
+        
+        var aWidth := list[0].
+        
+        self write(aBuffer literal) paddingLeft:aWidth with:$32.
+            
+        ^ self
+    ]
+
     generic printPaddingRightChar args:list
     [
         textbuffer aBuffer := TextBuilder new.
         
         int len := list length.
+        if (len < 2)
+        [
+            InvalidArgumentException new; raise
+        ].
+        
         int i := 2.
         while (i < len)
         [
@@ -102,60 +129,34 @@ extension outputOp
             
         ^ self
     ]
-    
-//    print : anObject1 paddingLeft:aWidth
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingLeft:aWidth with:$32.
-//            
-//        ^ self
-//    ]
-//    
-//    print : anObject1: anObject2 paddingLeft:aWidth
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral);
-//            write:(anObject2~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingLeft:aWidth with:$32.
-//            
-//        ^ self
-//    ]
-//    
-//    print : anObject1 : anObject2 : anObject3 paddingLeft:aWidth
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral);
-//            write:(anObject2~convertorOp toLiteral);
-//            write:(anObject3~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingLeft:aWidth with:$32.
-//            
-//        ^ self
-//    ]
-//    
-//    print : anObject1 : anObject2 : anObject3 : anObject4 paddingLeft:aWidth
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        aBuffer
-//            write:(anObject1~convertorOp toLiteral);
-//            write:(anObject2~convertorOp toLiteral);
-//            write:(anObject3~convertorOp toLiteral);
-//            write:(anObject4~convertorOp toLiteral).
-//        
-//        self write:(aBuffer literal) paddingLeft:aWidth with:$32.
-//            
-//        ^ self
-//    ]
+
+    generic printPaddingLeftChar args:list
+    [
+        textbuffer aBuffer := TextBuilder new.
+        
+        int len := list length.
+        if (len < 2)
+        [
+            InvalidArgumentException new; raise
+        ].
+        
+        int i := 2.
+        while (i < len)
+        [
+            object obj := list[i].
+            
+            aBuffer write(obj~convertorOp toLiteral).
+            
+            i := i + 1
+        ].
+        
+        var aWidth := list[0].        
+        var ch := list[1].
+        
+        self write(aBuffer literal) paddingLeft:aWidth with:ch.
+            
+        ^ self
+    ]    
 }
 
 ////// --- formatterOp ---

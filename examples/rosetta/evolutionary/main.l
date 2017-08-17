@@ -1,5 +1,5 @@
-#import system'routines.
-#import extensions.
+import system'routines.
+import extensions.
 
 // --- program ---
 
@@ -12,18 +12,18 @@ const P = 0.05r.
 rnd = randomGenerator.
 
 randomChar 
-    = AllowedCharacters @ (rnd nextInt:(AllowedCharacters length)).
+    = AllowedCharacters[rnd nextInt(AllowedCharacters length)].
 
 extension evoHelper
 {
     randomString
-        = 0 till:self repeat(:x) [ randomChar ] summarize:(String new) literal.
+        = 0 till:self repeat(:x)( randomChar ); summarize:(String new); literal.
         
-    fitness &of:s
-        = self zip:s &into:(:a:b)[ (a == b)iif:1:0 ] summarize:(Integer new) int.
+    fitnessOf:s
+        = self zip:s by(:a:b)( (a == b)iif(1,0) ); summarize(Integer new); int.
         
     mutate : p
-        = self select &each: ch [ (rnd nextReal <= p) iif:randomChar:ch ] summarize:(String new) literal.
+        = self selectBy(:ch)( (rnd nextReal <= p) iif(randomChar,ch) ); summarize(String new); literal.
 }
 
 class EvoAlgorithm :: Enumerator
@@ -32,7 +32,7 @@ class EvoAlgorithm :: Enumerator
     object theCurrent.
     object theVariantCount.
 
-    constructor new : s &of:count
+    constructor new : s of:count
     [
         theTarget := s.
         theVariantCount := count int.
@@ -43,14 +43,14 @@ class EvoAlgorithm :: Enumerator
     next
     [
         if ($nil == theCurrent)
-            [ theCurrent := theTarget length randomString. ^ true. ].
+            [ theCurrent := theTarget length; randomString. ^ true ].
             
         if (theTarget == theCurrent)
-            [ ^ false. ].
+            [ ^ false ].
             
-        var variants := Array new:theVariantCount set &every:(&index:x) [ theCurrent mutate:P ].
+        var variants := Array new:theVariantCount; populate(:x)( theCurrent mutate:P ).
         
-        theCurrent := variants array sort:(:a:b) [ a fitness &of:Target > b fitness &of:Target ] getAt:0.
+        theCurrent := variants array; sort(:a:b)( a fitnessOf:Target > b fitnessOf:Target ); getAt:0.
         
         ^ true.
     ]            
@@ -59,11 +59,11 @@ class EvoAlgorithm :: Enumerator
 program =
 [
     var attempt := Integer new.
-    EvoAlgorithm new:Target &of:C run &each:current
+    EvoAlgorithm new:Target of:C; forEach(:current)
     [
         console 
-            writeLiteral:"#":(attempt += 1) &paddingLeft:10
-            writeLine:" ":current:" fitness: ":(current fitness &of:Target).
+            printPaddingLeft(10,"#",attempt append:1);
+            printLine(" ",current," fitness: ",current fitnessOf:Target).
     ].
     
     console readChar.
