@@ -824,7 +824,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; set content:anObject
+        ^ $self $getItem int:aHashCode key:aKey; set value:anObject
     ]
         
     setAt long:aKey object:anObject
@@ -832,7 +832,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; set content:anObject
+        ^ $self $getItem int:aHashCode key:aKey; set value:anObject
     ]
         
     setAt real:aKey object:anObject
@@ -840,7 +840,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; set content:anObject
+        ^ $self $getItem int:aHashCode key:aKey; set value:anObject
     ]
         
     setAt char:aKey object:anObject
@@ -848,7 +848,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; set content:anObject
+        ^ $self $getItem int:aHashCode key:aKey; set value:anObject
     ]
         
     setAt literal:aKey object:anObject
@@ -856,7 +856,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; set content:anObject
+        ^ $self $getItem int:aHashCode key:aKey; set value:anObject
     ]
         
     setAt wide:aKey object:anObject
@@ -864,7 +864,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; set content:anObject.
+        ^ $self $getItem int:aHashCode key:aKey; set value:anObject.
     ]
     
     /// Sets a dictionary item with the specified key
@@ -872,7 +872,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
     [
         int aHashCode := aKey hash_code.
         
-        $self $getItem int:aHashCode key:aKey; set content:anObject.
+        $self $getItem int:aHashCode key:aKey; set value:anObject.
     ]
         
     stacksafe $getItem int:aCode key:aKey
@@ -907,7 +907,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
             i := i + 1
         ].
         
-        var aNewItem := KeyValue new key:aKey content:theDefault.
+        var aNewItem := KeyValue new key:aKey value:theDefault.
         
         theList readLengthTo vint:i.
         theList append:aNewItem.
@@ -936,7 +936,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
     [
         int aHashCode := aKey hash_code.
         
-        ^ $self $getItem int:aHashCode key:aKey; content.
+        ^ $self $getItem int:aHashCode key:aKey; value.
     ]
             
     getAt int:aKey
@@ -944,7 +944,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; content.
+        ^ $self $getItem int:aHashCode key:aKey; value.
     ]
         
     getAt long:aKey
@@ -952,7 +952,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; content.
+        ^ $self $getItem int:aHashCode key:aKey; value.
     ]
         
     getAt real:aKey
@@ -960,7 +960,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; content.
+        ^ $self $getItem int:aHashCode key:aKey; value.
     ]
         
     getAt char:aKey
@@ -968,7 +968,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; content.
+        ^ $self $getItem int:aHashCode key:aKey; value.
     ]
         
     getAt literal:aKey
@@ -976,7 +976,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; content.
+        ^ $self $getItem int:aHashCode key:aKey; value.
     ]
         
     getAt wide:aKey
@@ -984,7 +984,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode key:aKey; content.
+        ^ $self $getItem int:aHashCode key:aKey; value.
     ]
 
     /// Returns a dictionary enumerator
@@ -1003,7 +1003,7 @@ sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
         [
             var anItem := it get.
             
-            aList[anItem key] := anItem content.
+            aList[anItem key] := anItem value.
         ].
         
         ^ aList.

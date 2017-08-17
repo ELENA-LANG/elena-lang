@@ -151,11 +151,11 @@ textbuffer extension jsonSerializer
 
     $serialize dto:object
     [
-        self write:"{".
-                
-        mssg(10) properties := 0.
-        int      len := 10.
-        int      offs := 0.
+//        self write:"{".
+//                
+//        mssg(10) properties := 0.
+//        int      len := 10.
+//        int      offs := 0.
 
 //        object readMatchedEntries &mssg:%"get[0]" &int:0 &mssgarray:properties &vint:len.
 //        while (len > 0)

@@ -1,7 +1,7 @@
-#import system'routines.
-#import system'collections.
-#import system'text.
-#import extensions.
+import system'routines.
+import system'collections.
+import system'text.
+import extensions.
 
 extension op
 {
@@ -9,7 +9,7 @@ extension op
     [
         if (self < 2)
         [ 
-            ^ self.
+            ^ self
         ];
         [
             ^ (self - 1) fibonacci + (self - 2) fibonacci.

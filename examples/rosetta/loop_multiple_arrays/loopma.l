@@ -1,4 +1,7 @@
-#import system'routines.
+// Loop over multiple arrays (or lists or tuples or whatever they're called in your language) and display the <i>th element of each. 
+
+import system'routines.
+import extensions.
 
 program = 
 [  
@@ -6,11 +9,9 @@ program =
     var a2 := ("A","B","C").
     var a3 := (1,2,3).
     
-    var i := Integer new:0.
-    while (i < a1 length)
+    0 till(a1 length) do(:i)
     [
-        console writeLine:(a1@i + a2@i + (a3@i) literal).
-        i := i + 1.
+        console printLine(a1[i], a2[i], a3[i]).
     ].
     
     console readChar.    
@@ -26,10 +27,10 @@ programUsingZip =
     var a1 := ("a","b","c").
     var a2 := ("A","B","C").
     var a3 := (1,2,3).
-    var zipped := (a1 zip: a2 &into:(:first:second) [ first + second ]) 
-                       zip: a3 &into:(:first:second) [ first + (second literal)].
+    var zipped := a1 zip:a2 by(:first:second)( first + second );
+                       zip:a3 by(:first:second)( first + second literal ).
     
-    zipped run &each: e 
+    zipped forEach(:e)
         [ console writeLine:e. ].
         
     console readChar.            

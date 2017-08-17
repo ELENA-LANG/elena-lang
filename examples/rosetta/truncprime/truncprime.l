@@ -1,11 +1,11 @@
-#import system'calendar.
-#import extensions.
+import system'calendar.
+import extensions.
 
 const MAXN = 1000000.
 
 extension mathOp
 {
-    is &prime
+    isPrime
     [
         int n := self int.
         
@@ -20,31 +20,30 @@ extension mathOp
         while (f <= r)
         [
             if ((n mod:f == 0) || (n mod:(f + 2) == 0))
-                [ ^ false. ].
+                [ ^ false ].
                 
-            f := f + 6.
-            
+            f := f + 6            
         ].
         
-        ^ true.
+        ^ true
     ]
     
-    is &rightTruncatable
+    isRightTruncatable
     [
         int n := self.
         
         while (n != 0)
         [
-            ifnot (n is &prime)
-                [ ^ false. ].
+            ifnot (n isPrime)
+                [ ^ false ].
             
-            n := n / 10.
+            n := n / 10
         ].
         
         ^ true.
     ]
 
-    is &leftTruncatable
+    isLeftTruncatable
     [
         int n := self.
         int tens := 1.
@@ -54,14 +53,14 @@ extension mathOp
             
         while (n != 0)
         [
-            ifnot (n is &prime)
-                [ ^ false. ].
+            ifnot (n isPrime)
+                [ ^ false ].
 
             tens := tens / 10.
-            n := n - (n / tens * tens).
+            n := n - (n / tens * tens)
         ].
         
-        ^ true.
+        ^ true
     ]
 }
 
@@ -75,14 +74,14 @@ program =
 
     while ((max_lt == 0) || (max_rt == 0))
     [
-        (n literal indexOf:"0" == -1) ?
+        if(n literal; indexOf:"0" == -1)
         [
-            if ((max_lt == 0) and:[ n is &leftTruncatable ])
+            if ((max_lt == 0) && $(n isLeftTruncatable))
                 [
                     max_lt := n.
                 ].
                 
-            if ((max_rt == 0) and:[ n is &rightTruncatable ])
+            if ((max_rt == 0) && $(n isRightTruncatable))
                 [
                     max_rt := n.
                 ].
@@ -93,11 +92,11 @@ program =
 
     var anEnd := now.
     
-    console writeLine:"Largest truncable left is ":max_lt.    
-    console writeLine:"Largest truncable right is ":max_rt.
+    console printLine("Largest truncable left is ",max_lt).    
+    console printLine("Largest truncable right is ",max_rt).
     
     var aDiff := anEnd - aStart.
-    console writeLine:"Time elapsed in msec:":(aDiff milliseconds).
+    console printLine("Time elapsed in msec:",aDiff milliseconds).
     
     console readChar.
 ].

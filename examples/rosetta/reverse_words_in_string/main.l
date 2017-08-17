@@ -1,4 +1,5 @@
-#import system'routines.
+import extensions.
+import system'routines.
 
 program =
 [
@@ -13,11 +14,11 @@ program =
                   "",
                   "Frost Robert -----------------------").
                  
-    text run &each: line 
+    text forEach(:line)
     [ 
-        line split &by:" " reverse run &each: word
+        line split by:" "; sequenceReverse; forEach(:word)
         [
-            console write:word write:" ".
+            console print(word," ")
         ].
         console writeLine.
     ].

@@ -1,7 +1,7 @@
-#import system'dynamic.
-#import extensions.
-#import system'routines.
-#import system'collections.
+import system'dynamic.
+import extensions.
+import system'routines.
+import system'collections.
 
 extension algorithmOp
 {
@@ -10,20 +10,20 @@ extension algorithmOp
         var counter := Integer new.
         var n := self.
         
-        ^ ArrayList new mix &into:
+        ^ ArrayList new; mixInto:
             {
                 eval : i
                 [
-                    counter += 1.
+                    counter append:1.
                     
                     if (self length < n)
-                        [ self += i. ];
+                        [ self append:i ];
                         [ 
-                            ((randomGenerator eval:counter < n) bool)
-                                ? [ self@(randomGenerator eval:n) := i. ].
+                            if(randomGenerator eval:counter < n)
+                                [ self[randomGenerator eval:n] := i ].
                         ].
                         
-                    ^ self array.                        
+                    ^ self array
                 ]
             }.
     ]
@@ -31,19 +31,19 @@ extension algorithmOp
 
 program =
 [
-    var bin := Array new:10 set &every:(&index:n) [ Integer new ].
-    0 till:10000 &doEach: trial
+    var bin := Array new:10; populate(:n)( Integer new ).
+    0 till:10000 do(:trial)
     [
         var s_of_n := 3 s_of_n.
         
-        0 till:10 &doEach:n
+        0 till:10 do(:n)
         [
             var sample := s_of_n eval:n.
             
             if (n == 9)
-                [ sample run &each: i [ bin@i += 1. ]. ].
-        ].
+                [ sample forEach(:i) [ bin[i] append:1 ] ]
+        ]
     ].    
     
-    console writeLine:bin readChar.
+    console printLine:bin; readChar.
 ].

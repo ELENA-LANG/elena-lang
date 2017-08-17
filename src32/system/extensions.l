@@ -935,14 +935,14 @@ array extension arrayOp
 
 literal extension literalOp
 {
-//    indexOf : anObject
-//        = self indexOf:anObject at:0.
-//
-//    indexOf literal:aLiteral
-//        = self indexOf literal:aLiteral at:0.
-//
-//    indexOf char:aChar
-//        = self indexOf char:aChar at:0.
+    indexOf : anObject
+        = self indexOf:anObject at:0.
+
+    indexOf literal:aLiteral
+        = self indexOf literal:aLiteral at:0.
+
+    indexOf char:aChar
+        = self indexOf char:aChar at:0.
         
     literal Substring at:anIndex
         = self~literalOp Substring int:anIndex.
@@ -1034,45 +1034,36 @@ literal extension literalOp
         ^ self
     ]
 
-//    startingWith:s
-//        = self~literalOp startingWith literal:s.
-//        
-//    startingWith literal:s
-//    [
-//        int n := 0.
-//        self indexOf int:0 literal:s vint:n.
-//        
-//        ^ 0 == n
-//    ]
-//        
-//    endingWith literal:s
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//
-//        int n := 0.
-//        self indexOf int:(l1 - l2) literal:s vint:n.
-//        
-//        ^ n != -1
-//    ]
-//
-//    endingWith:s
-//        = self~literalOp endingWith literal:s.
-//        
-//    containing literal:s
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//
-//        int n := 0.
-//        self indexOf int:0 literal:s vint:n.
-//        
-//        ^ n != -1
-//    ]
-//
-//    containing:s
-//        = self~literalOp containing literal:s.
-//    
+    startingWith literal:s
+    [
+        int n := 0.
+        self indexOf int:0 literal:s vint:n.
+        
+        ^ 0 == n
+    ]
+        
+    endingWith literal:s
+    [
+        int l1 := self length.
+        int l2 := s length.
+
+        int n := 0.
+        self indexOf int:(l1 - l2) literal:s vint:n.
+        
+        ^ n != -1
+    ]
+        
+    containing literal:s
+    [
+        int l1 := self length.
+        int l2 := s length.
+
+        int n := 0.
+        self indexOf int:0 literal:s vint:n.
+        
+        ^ n != -1
+    ]
+
 //    replaceFirst literal:aReplacee literal:aReplacer
 //    [
 //        int aReplaceeLen := aReplacee length.
@@ -1122,14 +1113,14 @@ literal extension literalOp
 
 wide extension wideOp
 {
-//    indexOf : anObject
-//        = self indexOf:anObject at:0.
-//        
-//    indexOf wide:aLiteral
-//        = self indexOf int:0 wide:aLiteral.
-//
-//    indexOf char:aChar
-//        = self indexOf int:0 char:aChar.
+    indexOf : anObject
+        = self indexOf:anObject at:0.
+        
+    indexOf wide:aLiteral
+        = self indexOf int:0 wide:aLiteral.
+
+    indexOf char:aChar
+        = self indexOf int:0 char:aChar.
                 
     wide Substring at:anIndex
         = self~wideOp Substring int:anIndex.
@@ -1217,44 +1208,35 @@ wide extension wideOp
         ^ self
     ]
 
-//    startingWith wide:s
-//    [
-//        int n := 0.
-//        self indexOf int:0 wide:s vint:n.
-//        
-//        ^ 0 == n
-//    ]
-//    
-//    startingWith:s
-//        = self~wideOp startingWith wide:s.
-//
-//    endingWith wide:s
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//        int n := 0.
-//        self indexOf int:(l1 - l2) wide:s vint:n.
-//        
-//        ^ n != -1
-//    ]
-//    
-//    endingWith:s
-//        = self~wideOp endingWith wide:s.
-//
-//    containing wide:s
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//        int n := 0.
-//        
-//        self indexOf int:0 wide:s vint:n.
-//        
-//        ^ n != -1
-//    ]
-//    
-//    containing:s
-//        = self~wideOp containing wide:s.
-//
+    startingWith wide:s
+    [
+        int n := 0.
+        self indexOf int:0 wide:s vint:n.
+        
+        ^ 0 == n
+    ]
+    
+    endingWith wide:s
+    [
+        int l1 := self length.
+        int l2 := s length.
+        int n := 0.
+        self indexOf int:(l1 - l2) wide:s vint:n.
+        
+        ^ n != -1
+    ]
+    
+    containing wide:s
+    [
+        int l1 := self length.
+        int l2 := s length.
+        int n := 0.
+        
+        self indexOf int:0 wide:s vint:n.
+        
+        ^ n != -1
+    ]
+    
 //    replaceFirst wide:aReplacee wide:aReplacer
 //    [
 //        int aReplaceeLen := aReplacee length.
@@ -1315,6 +1297,24 @@ class $stringOpDispatcher =
     
     padLeft wide:s char:ch int:len
         = s~wideOp padLeft char:ch int:len.
+        
+    startingWith literal:s literal:subs
+        = s~literalOp startingWith literal:subs.
+
+    startingWith wide:s wide:subs
+        = s~wideOp startingWith wide:subs.
+
+    endingWith literal:s literal:subs
+        = s~literalOp endingWith literal:subs.
+
+    endingWith wide:s wide:subs
+        = s~wideOp endingWith wide:subs.
+        
+    containing literal:s literal:subs
+        = s~literalOp containing literal:subs.
+
+    containing wide:s wide:subs
+        = s~wideOp containing wide:subs.
 }.
 
 extension stringOp
@@ -1373,27 +1373,15 @@ extension stringOp
     padRight : padSymbol : len
         = $stringOpDispatcher padRight(self, padSymbol, len).
 
-//    startingWith : s
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher startingWith:s
-//    ]
-//    
-//    endingWith : s
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher endingWith:s
-//    ]
-//    
-//    containing : s
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher containing:s
-//    ]
-//    
+    startingWith : s
+        = $stringOpDispatcher startingWith(self, s).
+
+    endingWith : s
+        = $stringOpDispatcher endingWith(self, s).
+
+    containing : s
+        = $stringOpDispatcher containing(self, s).
+
 //    replaceFirst literal:aReplacee literal:aReplacer
 //    [
 //        var dispatcher := self cast:%eval to:stringOpDispatcher.
@@ -1425,6 +1413,9 @@ extension stringOp
     write : aLine length:aCounter
         = self~stringOp write object:aLine int:aCounter.
         
+    write : aLine paddingLeft:aWidth
+        = self~stringOp write:aLine paddingLeft:aWidth with:$32.
+
     write : aLine paddingLeft:aWidth with:aChar
     [
         var aPaddedStr := aLine padLeft(aChar, aWidth).
@@ -1433,6 +1424,9 @@ extension stringOp
             
         ^ self
     ]
+
+    write : aLine paddingRight:aWidth
+        = self~stringOp write:aLine paddingRight:aWidth with:$32.
 
     write : aLine paddingRight:aWidth with:aChar
     [

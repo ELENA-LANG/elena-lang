@@ -27,7 +27,7 @@ int extension intLoopOp
 extension forLoopOp
 {
     to(object aMaxValue) do(func1 aFunction)
-        = aFunction run enumerator:(RangeEnumerator new from:self to:aMaxValue).
+        = aFunction run enumerator(RangeEnumerator new from:self to:aMaxValue).
 
     to(object aMaxValue) do(ExtensionMessage aMessage)
         = self~forLoopOp to:aMaxValue do(:n)[ n~aMessage get ].
@@ -35,8 +35,14 @@ extension forLoopOp
     multi to:aMaxValue do:anAction
         = self~forLoopOp to:aMaxValue do(:n)[ anAction eval:n ].
 
-//    to:aMaxValue by:aStep doEach:aFunction
-//        = aFunction run enumerator:(RangeEnumerator new from:self to:aMaxValue by:aStep).
+    to(object aMaxValue) by(object aStep) do(func1 aFunction)
+        = aFunction run enumerator(RangeEnumerator new from:self to:aMaxValue by:aStep).
+
+    to(object aMaxValue) by(object aStep) do(ExtensionMessage aMessage)
+        = self~forLoopOp to:aMaxValue by:aStep do(:n)[ n~aMessage get ].
+
+    multi to:aMaxValue by:aStep do:anAction
+        = self~forLoopOp to:aMaxValue by:aStep do(:n)[ anAction eval:n ].
 
     till(object aMaxValue) do(func1 aFunction)
         = aFunction run enumerator:(IntervalEnumerator new from:self till:aMaxValue).
@@ -87,23 +93,23 @@ extension loopOp
     ]
 }
 
-//// --- testOp ---
-//
-//extension testOp
-//{
-//    assert ifTrue
-//    [
-//        ifnot (self)
-//            [ console writeLine:"Assertion fails!" ].
-//    ]
-//    
-//    assert ifFalse
-//    [
-//        if(self)
-//            [ console writeLine:"Assertion fails!" ].
-//    ]
-//}
-//
+// --- testOp ---
+
+extension testOp
+{
+    assertTrue
+    [
+        ifnot (self)
+            [ console writeLine:"Assertion fails!" ].
+    ]
+    
+    assertFalse
+    [
+        if(self)
+            [ console writeLine:"Assertion fails!" ].
+    ]
+}
+
 //// --- controlOp ---
 //
 //extension controlOp

@@ -97,6 +97,11 @@ class Exception
         aCatchBlock on:$self \ evalSelf((:e) [ $self throw ]).
     ]
 
+    if : aCatchblock
+    [
+        aCatchblock eval:$self.
+    ]
+
     raise
     [
         $self throw.  

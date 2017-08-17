@@ -153,7 +153,7 @@ EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
    try {
       ref_t subj_id = instance->getSubjectRef((const char*)subjectName);
 
-      return (void*)(encodeMessage(subj_id, 0));
+      return (void*)subj_id;
    }
    catch (JITUnresolvedException& e)
    {

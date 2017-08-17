@@ -385,70 +385,77 @@ extension indexableOp
         ^ true                
     ]
             
-//    reverse
-//        = self~indexableOp reverse:(self length) at:0.
-//            
-//    reverse:counter at:index
-//    [
-//        indexer it := self indexer.
-//        
-//        int      i := index int.
-//        int      j := counter int.
-//        j := j + i.
-//        j := j - 1.
-//        
-//        while (i < j)
-//        [
-//            it writeIndex int:i.
-//            var temp1 := it get.
-//            it writeIndex int:j.
-//            var temp2 := it get.
-//            it set:temp1.
-//            it writeIndex int:i.
-//            it set:temp2.
-//            
-//            i := i + 1.
-//            j := j - 1
-//        ].
-//        
-//        ^ self
-//    ]    
+    sequenceReverse
+        = self~indexableOp sequenceReverse(self length) at:0.
+            
+    sequenceReverse:counter at:index
+    [
+        indexer it := self indexer.
+        
+        int      i := index int.
+        int      j := counter int.
+        j := j + i.
+        j := j - 1.
+        
+        while (i < j)
+        [
+            it writeIndex int:i.
+            var temp1 := it get.
+            it writeIndex int:j.
+            var temp2 := it get.
+            it set:temp1.
+            it writeIndex int:i.
+            it set:temp2.
+            
+            i := i + 1.
+            j := j - 1
+        ].
+        
+        ^ self
+    ]    
 }
 
-//// --- stringListOp ---
-//
+// --- stringListOp ---
+
 //class stringListOpDispatcher =
 //{
 //    eval literal:aLiteral = literalListOp.
 //    
 //    eval wide:aLiteral = wideListOp.
 //}.
-//
-//extension stringListOp
-//{
+
+singleton $stringController =
+{
+    split literal:l char:ch
+        = l~literalListOp split char:ch.
+        
+    split literal:l literal:sp_l
+        = l~literalListOp split literal:sp_l.
+        
+    split wide:l char:ch
+        = l~wideListOp split char:ch.
+        
+    split wide:l wide:sp_l
+        = l~wideListOp split wide:sp_l.
+        
+}.
+
+extension stringListOp
+{
 //    array split char:aChar
 //    [
 //        var dispatcher := self cast:%eval to:stringListOpDispatcher.
 //        
 //        ^ self~dispatcher split char:aChar.
 //    ]
-//    
+    
 //    split literal:aValue
 //    [
 //        var dispatcher := self cast:%eval to:stringListOpDispatcher.
 //        
 //        ^ self~dispatcher split literal:aValue.
 //    ]
-//    
-//    split by:aSplitter
-//    [
-//        literal aLiteral := self literal.
-//        
-//        ^ aSplitter cast:%eval to:
-//            {
-//                eval char:aChar = aLiteral~stringListOp split char:aChar.
-//                
-//                eval literal:aSplitter = aLiteral~stringListOp split literal:aSplitter.
-//          }.
-//    ]
-//}
+    
+    split by:aSplitter
+        = $stringController split(self, aSplitter).
+}

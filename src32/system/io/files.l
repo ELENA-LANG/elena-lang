@@ -1,5 +1,7 @@
 import system'text.
 
+type file_info = File.
+
 // --- File ---
 
 sealed nonstructural class File

@@ -288,7 +288,7 @@ void* RTManager :: loadSubject(StreamReader& reader, ident_t name)
    ReferenceMap subjects(0);
    subjects.read(&reader);
 
-   return (void*)(encodeMessage(subjects.get(name), 0));
+   return (void*)subjects.get(name);
 }
 
 void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap& verbs)

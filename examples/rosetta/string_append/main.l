@@ -1,9 +1,9 @@
-#import extensions.
+import extensions.
 
 program =
 [
     var s := String new:"Hello".
-    s += " World".
+    s append:" World".
     
-    console writeLine:s readChar.
+    console writeLine:s; readChar.
 ].

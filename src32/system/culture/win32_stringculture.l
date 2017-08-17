@@ -1,11 +1,10 @@
-#import system.
-#import system'text.
+import system'text.
 
 // --- literalCultureOp ---
 
-extension(literal) literalCultureOp
+literal extension literalCultureOp
 {
-    literal toUpper &locale:aLocale
+    literal toUpper locale:aLocale
     [
         literal aRetVal := $nil.
         
@@ -15,31 +14,31 @@ extension(literal) literalCultureOp
         while (len > 0)
         [
             int s_len := 32.
-            (s_len > len)
-                ? [ s_len := len. ].
+            if(s_len > len)
+                [ s_len := len ].
             
-            short(32) src_tmp := 0.
-            int       src_len := 32.
+            short[] src_tmp(32).
+            int     src_len := 32.
             
-            short(32) dst_tmp := 0.
-            int       dst_len := 64.
+            short[] dst_tmp(32).
+            int     dst_len := 64.
 
-            UTF16Encoding convert &int:i &vint:s_len &literal:self &shortarray:src_tmp &vint:src_len.
+            UTF16Encoding convert int:i vint:s_len literal:self shortarray:src_tmp vint:src_len.
                                     
-            aLocale strToUpper &shortarray:src_tmp &int:src_len &shortarray:dst_tmp &vint:dst_len.
+            aLocale strToUpper shortarray:src_tmp int:src_len shortarray:dst_tmp vint:dst_len.
 
-            ($nil == aRetVal)
-                ? [ aRetVal := UTF16Encoding toLiteral &int:0 &int:dst_len &shortarray:dst_tmp. ]
-                ! [ aRetVal := aRetVal add &literal:(UTF16Encoding toLiteral &int:0 &int:dst_len &shortarray:dst_tmp). ].
+            if($nil == aRetVal)
+                [ aRetVal := UTF16Encoding toLiteral int:0 int:dst_len shortarray:dst_tmp ];
+                [ aRetVal := aRetVal add literal(UTF16Encoding toLiteral int:0 int:dst_len shortarray:dst_tmp) ].
                 
             i := i + s_len.
-            len := len - s_len.          
+            len := len - s_len
         ].
         
         ^ aRetVal.
     ]
     
-    literal toLower &locale:aLocale
+    literal toLower locale:aLocale
     [
         literal aRetVal := $nil.
         
@@ -52,22 +51,22 @@ extension(literal) literalCultureOp
             (s_len > len)
                 ? [ s_len := len. ].
             
-            short(32) src_tmp := 0.
-            int       src_len := 32.
+            short[] src_tmp(32).
+            int     src_len := 32.
             
-            short(32) dst_tmp := 0.
-            int       dst_len := 64.
+            short[] dst_tmp(32).
+            int     dst_len := 64.
 
-            UTF16Encoding convert &int:i &vint:s_len &literal:self &shortarray:src_tmp &vint:src_len.
+            UTF16Encoding convert int:i vint:s_len literal:self shortarray:src_tmp vint:src_len.
                                     
-            aLocale strToLower &shortarray:src_tmp &int:src_len &shortarray:dst_tmp &vint:dst_len.
+            aLocale strToLower shortarray:src_tmp int:src_len shortarray:dst_tmp vint:dst_len.
 
-            ($nil == aRetVal)
-                ? [ aRetVal := UTF16Encoding toLiteral &int:0 &int:dst_len &shortarray:dst_tmp. ]
-                ! [ aRetVal := aRetVal add &literal:(UTF16Encoding toLiteral &int:0 &int:dst_len &shortarray:dst_tmp). ].
+            if($nil == aRetVal)
+                [ aRetVal := UTF16Encoding toLiteral int:0 int:dst_len shortarray:dst_tmp ];
+                [ aRetVal := aRetVal add literal(UTF16Encoding toLiteral int:0 int:dst_len shortarray:dst_tmp) ].
                 
             i := i + s_len.
-            len := len - s_len.          
+            len := len - s_len
         ].
         
         ^ aRetVal.
@@ -76,9 +75,9 @@ extension(literal) literalCultureOp
 
 // --- wideCultureOp ---
 
-extension(wide) wideCultureOp
+wide extension wideCultureOp
 {
-    wide toUpper &locale:aLocale
+    wide toUpper locale:aLocale
     [
         wide aRetVal := $nil.
         
@@ -87,30 +86,30 @@ extension(wide) wideCultureOp
         
         while (len > 0)
         [
-            short(32) src_tmp := 0.
-            int       src_len := 32.
-            (src_len > len)
-                ? [ src_len := len. ].
+            short[] src_tmp(32).
+            int     src_len := 32.
+            if(src_len > len)
+                [ src_len := len ].
             
-            short(32) dst_tmp := 0.
-            int       dst_len := 64.
+            short[] dst_tmp(32).
+            int     dst_len := 64.
             
-            self $save &int:i &shortarray:src_tmp &int:src_len.
+            self $save int:i shortarray:src_tmp int:src_len.
             
-            aLocale strToUpper &shortarray:src_tmp &int:src_len &shortarray:dst_tmp &vint:dst_len.
+            aLocale strToUpper shortarray:src_tmp int:src_len shortarray:dst_tmp vint:dst_len.
             
-            ($nil == aRetVal)
-                ? [ aRetVal := WideLiteralValue $new &int:0 &int:dst_len &shortarray:dst_tmp. ]
-                ! [ aRetVal := aRetVal add &wide:(WideLiteralValue $new &int:0 &int:dst_len &shortarray:dst_tmp). ].
+            if($nil == aRetVal)
+                [ aRetVal := WideLiteralValue $new int:0 int:dst_len shortarray:dst_tmp ];
+                [ aRetVal := aRetVal add wide(WideLiteralValue $new int:0 int:dst_len shortarray:dst_tmp) ].
                 
             i := i + src_len.
-            len := len - src_len.          
+            len := len - src_len
         ].
         
-        ^ aRetVal.
+        ^ aRetVal
     ]
     
-    wide toLower &locale:aLocale
+    wide toLower locale:aLocale
     [
         wide aRetVal := $nil.
         
@@ -119,24 +118,24 @@ extension(wide) wideCultureOp
         
         while (len > 0)
         [
-            short(32) src_tmp := 0.
-            int       src_len := 32.
-            (src_len > len)
-                ? [ src_len := len. ].
+            short[] src_tmp(32).
+            int     src_len := 32.
+            if(src_len > len)
+                [ src_len := len ].
             
-            short(32) dst_tmp := 0.
-            int       dst_len := 64.
+            short[] dst_tmp(32).
+            int     dst_len := 64.
             
-            self $save &int:i &shortarray:src_tmp &int:src_len.
+            self $save int:i shortarray:src_tmp int:src_len.
             
-            aLocale strToLower &shortarray:src_tmp &int:src_len &shortarray:dst_tmp &vint:dst_len.
+            aLocale strToLower shortarray:src_tmp int:src_len shortarray:dst_tmp vint:dst_len.
             
-            ($nil == aRetVal)
-                ? [ aRetVal := WideLiteralValue $new &int:0 &int:dst_len &shortarray:dst_tmp. ]
-                ! [ aRetVal := aRetVal add &wide:(WideLiteralValue $new &int:0 &int:dst_len &shortarray:dst_tmp). ].
+            if($nil == aRetVal)
+                [ aRetVal := WideLiteralValue $new int:0 int:dst_len shortarray:dst_tmp ];
+                [ aRetVal := aRetVal add wide(WideLiteralValue $new int:0 int:dst_len shortarray:dst_tmp) ].
                 
             i := i + src_len.
-            len := len - src_len.          
+            len := len - src_len
         ].
         
         ^ aRetVal.
@@ -145,26 +144,26 @@ extension(wide) wideCultureOp
 
 // --- stringCultureOp ---
 
-class stringCultureDispatcher =
+class $stringCultureDispatcher =
 {
-    eval &literal:aLiteral = literalCultureOp.
-    
-    eval &wide:aLiteral = wideCultureOp.
+    upperCase literal:l locale:aLocale
+        = l~literalCultureOp toUpper locale:aLocale.
+
+    lowerCase literal:l locale:aLocale
+        = l~literalCultureOp toLower locale:aLocale.
+
+    upperCase wide:l locale:aLocale
+        = l~wideCultureOp toUpper locale:aLocale.
+
+    lowerCase wide:l locale:aLocale
+        = l~wideCultureOp toUpper locale:aLocale.
 }.
 
 extension stringCultureOp
 {
-    toUpper &locale:aLocale
-    [
-        var dispatcher := self cast:%eval &to:stringCultureDispatcher.
-        
-        ^ self::dispatcher toUpper &locale:aLocale.
-    ]
+    toUpper locale:aLocale
+        = $stringCultureDispatcher upperCase(self, aLocale).
     
-    toLower &locale:aLocale
-    [
-        var dispatcher := self cast:%eval &to:stringCultureDispatcher.
-        
-        ^ self::dispatcher toLower &locale:aLocale.
-    ]
+    toLower locale:aLocale
+        = $stringCultureDispatcher lowerCase(self, aLocale).
 }

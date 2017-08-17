@@ -1,12 +1,12 @@
-#import system'routines.
-#import extensions.
+import system'routines.
+import extensions.
 
 program =
 [
     var string := "Hello,How,Are,You,Today".
     
-    string split &by:"," run &each:s
+    string split by:","; forEach(:s)
     [
-        console writeLiteral:s:".".
-    ].
+        console print(s,".")
+    ]
 ].

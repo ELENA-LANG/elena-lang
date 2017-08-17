@@ -1,12 +1,12 @@
-#import system'routines.
-#import extensions.
+import system'routines.
+import extensions.
 
 class Node
 {
     object theValue.
     object theChildren.
     
-    constructor new : value &children:children
+    constructor new : value children:children
     [
         theValue := value.
                 
@@ -14,12 +14,12 @@ class Node
     ]
     
     constructor new : value
-        <= new:value &children:nil.
+        <= new:value children:nil.
         
-    constructor new &children:children
+    constructor new children:children
         <= new:emptyLiteralValue &children:children.
         
-    constructor new : value &child:child
+    constructor new : value child:child
         <= new:value &children:(Array new &object:child).
         
     get = theValue.

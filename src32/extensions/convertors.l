@@ -8,6 +8,9 @@ import system'text.
 
 class literalExConvertor =
 {
+    literal convert intmatrix:a
+        = intmatrixExConvertor toLiteral intmatrix:a.
+
     literal convert indexer:it
     [
         textbuffer anOutput := TextBuilder new.
@@ -43,9 +46,6 @@ class literalExConvertor =
 //                datetime : aValue = aValue literal.
 //                    
 //                timestamp : aValue = aValue literal.
-//                
-//                intmatrix : m
-//                    = intmatrixExConvertor toLiteral intmatrix:m.
 
     literal convert(BaseEnumerable o)
         <= convert enumerator:o.
@@ -130,7 +130,16 @@ class wideExConvertor =
 //        ^ anOutput wide
 //    ]
 //}.
-//
+
+class byteArrayExConvertor =
+{
+    convert literal : s
+        = UTF8Encoder toByteArray int:0 int:(s length) literal:s.
+    
+    convert wide : s
+        = UTF16Encoder toByteArray int:0 int:(s length) wide:s.
+}.
+
 //class intarrayExConvertor =
 //{
 //    convert enumerable:aList
@@ -142,9 +151,9 @@ class wideExConvertor =
 //        ^ IntArray new int:(alist length); set every: (&int:i)[ alist getAt int:i; toInt ]
 //    ]
 //}.
-//
-//class intmatrixExConvertor =
-//{
+
+class intmatrixExConvertor =
+{
 //    convert array:a
 //    [
 //        int n := a length.
@@ -152,42 +161,42 @@ class wideExConvertor =
 //        
 //        ^ IntMatrix new int:n int:m; set every_ij: (&int:i&int:j)[ a getAt int:i; array; getAt int:j; toInt ].
 //    ]
-//    
-//    toLiteral intmatrix:matrix
-//    [
-//        textbuffer anOutput := TextBuilder new.
-//        
-//        int i := 0.
-//        int j := 0.
-//        int n := 0.
-//        int m := 0.
-//        int l := 0.
-//        
-//        matrix readLengthsTo vint:n vint:m.
-//        
-//        while (i < n)
-//        [
-//            j := 0.
-//            while (j < m)
-//            [
-//                int r := 0.
-//                matrix read int:i int:j vint:r.
-//                
-//                anOutput write:r; write:",".
-//                
-//                j := j + 1
-//            ].
-//            anOutput readLengthTo vint:l.            
-//            anOutput setLength int:(l - 1).
-//            
-//            anOutput write:'newLine.
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ anOutput literal
-//    ]
-//}.
+    
+    toLiteral intmatrix:matrix
+    [
+        textbuffer anOutput := TextBuilder new.
+        
+        int i := 0.
+        int j := 0.
+        int n := 0.
+        int m := 0.
+        int l := 0.
+        
+        matrix readLengthsTo vint:n vint:m.
+        
+        while (i < n)
+        [
+            j := 0.
+            while (j < m)
+            [
+                int r := 0.
+                matrix read int:i int:j vint:r.
+                
+                anOutput write:r; write:",".
+                
+                j := j + 1
+            ].
+            anOutput readLengthTo vint:l.            
+            anOutput setLength int:(l - 1).
+            
+            anOutput write:'newLine.
+            
+            i := i + 1
+        ].
+        
+        ^ anOutput literal
+    ]
+}.
 
 // --- arrayConvertorEx ---
 
@@ -198,6 +207,12 @@ arrayConvertorEx =
     
     convert array:anArray
         = anArray.
+
+    convert literal:l
+        <= convert enumerator:l.
+
+    convert wide:l
+        <= convert enumerator:l.
 
     convert enumerator:anEnumerator
     [
@@ -253,16 +268,9 @@ extension convertorOp
 //                enumerator : anEnumerator
 //                    = intarrayExConvertor convert enumerable:anEnumerator.
 //            }.
-//    
-//    toByteArray        
-//        = self cast:%eval to:
-//        {
-//            literal : s
-//                = UTF8Encoder toByteArray int:0 int:(s length) literal:s.
-//            
-//            wide : s
-//                = UTF16Encoder toByteArray int:0 int:(s length) wide:s.
-//        }.
+    
+    toByteArray        
+        = byteArrayExConvertor convert:self.
 //    
 //    toIntMatrix
 //        = self cast:%eval to:

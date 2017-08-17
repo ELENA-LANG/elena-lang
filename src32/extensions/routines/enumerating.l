@@ -59,17 +59,17 @@ class ReaderEnumerator :: Enumerator
     get = theLine.
 }
 
-//// --- fileExOp ---
-//
-//file_path extension fileExOp
-//{
-//    run eachLine:anAction
-//        = anAction run enumerator:(ReaderEnumerator new path:self).
-//        
+// --- fileExOp ---
+
+file_info extension fileExOp
+{
+    forEachLine:anAction
+        = anAction run enumerator(ReaderEnumerator new:self).
+        
 //    run for:anEncoder eachLine:anAction
 //        = anAction run enumerator:(ReaderEnumerator new path:self encoder:anEncoder).
-//}
-//
+}
+
 //// --- stringExOp ---
 //
 //extension stringExOp

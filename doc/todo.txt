@@ -3,7 +3,11 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * migrating rosetta samples : dynamic variable
+                 * migrating rosetta samples : Zeckendorf number representation
+                 * migrating rosetta samples : Zhang-Suen thinning algorithm
+                 * migrating rosetta samples : Visualize a tree
+                 * migrating rosetta samples : twelve statements
+                 * migrating rosetta samples : json
 
                  * embeddable eval[1]
                  * embeddable get[1]
@@ -81,6 +85,7 @@ In development:
                  * migrate execute brainf***
                  * GUI component interaction
                  * Hello world/Graphical
+                 * Simple windowed application
                  * nshift should be replaced with nshiftl, nshiftr
                  * optimize shift implementation
 
@@ -149,6 +154,7 @@ In development:
                  * should multi geneated private method be static as well or should not be generated at all?
                  * if else if ...
                  * unboxing primitive arrays?
+                 * why this code is compiled without errors - example::(Signature new literal:methodSignature) eval:5.
 
 ------                                 
 Pipeline:

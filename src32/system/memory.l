@@ -1181,19 +1181,9 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
     stacksafe literal insert int:anIndex char:aChar
         = $self insert int:anIndex literal:aChar.
 
-//    /// Inserts an object into and returns the new one
-//    insert : anObject at:anIndex
-//        = anObject cast:%eval to:
-//            {
-//               eval:target literal:aLiteral
-//                  = target insert int:anIndex literal:aLiteral.
-//    
-//               eval:target wide:aLiteral
-//                  = target insert int:anIndex literal:aLiteral.
-//    
-//               eval:target char:aChar
-//                  = target insert int:anIndex char:aChar.
-//            } with:$self.
+    /// Inserts an object into and returns the new one
+    insert : anObject at:anIndex
+        = $self insert(anIndex, anObject).
 
     /// Deletes the substring from the object and returns the new one
     delete:aLength at:anIndex
@@ -1411,19 +1401,9 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
     stacksafe wide insert int:anIndex char:aChar
         = $self insert int:anIndex wide:(wideConvertor convert char:aChar).
 
-//    /// Inserts an object into and returns the new one
-//    insert : anObject at:anIndex
-//        = anObject cast:%eval to:
-//            {
-//               eval:target wide:aLiteral
-//                  = target insert int:anIndex wide:aLiteral.
-//    
-//               eval:target literal:aLiteral
-//                  = target insert int:anIndex wide:aLiteral.
-//    
-//               eval:target char:aChar
-//                  = target insert int:anIndex char:aChar.
-//            } with:$self.
+    /// Inserts an object into and returns the new one
+    insert : anObject at:anIndex
+        = $self insert(anIndex, anObject).
 
     /// Deletes the substring from the object and returns the new one
     delete:aLength at:anIndex

@@ -4,7 +4,7 @@ type queue = system'collections'Queue.
 
 // --- Stack
 
-sealed class Stack //:: dispatchable(enumerable)
+sealed class Stack :: BaseEnumerable
 {
     array_list theList.
     vint       theTop.
@@ -70,7 +70,7 @@ sealed class Stack //:: dispatchable(enumerable)
 
 // --- Queue ---
 
-sealed class Queue //:: dispatchable(enumerable)
+sealed class Queue :: BaseEnumerable
 {
     array_list theList.
     vint       theTop.

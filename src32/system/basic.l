@@ -2397,7 +2397,7 @@ sealed class Variable :: var<object>
             ? [ system'InvalidOperationException new; raise ]
             ! [ $value := $value - val ]
     ]
-//
+    
 //    multiplyBy : val
 //    [
 //        ($nil == $value)
@@ -2425,7 +2425,7 @@ sealed class KeyValue
     object theObject.
     
     /// Creates a new objext
-    constructor new key:aKey content:anObject
+    constructor new key:aKey value:anObject
     [
         theKey := aKey.
         theObject := anObject.
@@ -2435,14 +2435,12 @@ sealed class KeyValue
     key = theKey.
     
     /// Returns the key
-    content = theObject.
+    value = theObject.
 
-    set content:anObject
+    set value:anObject
     [
         theObject := anObject.
     ]
-
-    value => theObject.
            
     equal : o
         => theObject.
