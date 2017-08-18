@@ -761,3 +761,12 @@
     
     #var ori := json fromJson.
 ].
+
+subExpressionTest =
+[
+    var a := Array::(2,3).
+    var b := Array::(2).
+    var c := (2).
+    var d := (2,3).
+    var e := (1+2)*3.
+].

@@ -3671,6 +3671,10 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
                // if it is a nested expression
                objectInfo = compileExpression(writer, current, scope, mode);
             }
+            else if (test(current.type, lxTerminalMask) && nextChild == lxExpression) {
+               //HOTFIX : to compile the collection 
+               objectInfo = compileCollection(writer, node, scope);
+            }
             else if (test(current.type, lxTerminalMask) && nextChild == lxNone) {
                objectInfo = compileObject(writer, current, scope, mode);
             }

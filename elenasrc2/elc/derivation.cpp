@@ -1495,7 +1495,8 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
    else {
       while (current != lxNone) {
          if (current == lxExpression) {
-            if (current.nextNode() == lxExpression && !test(mode, EXPRESSION_MESSAGE_MODE))
+            // HOTFIX : to supper collection of one element
+            if ((current.nextNode() == lxExpression || (identifierMode && current.nextNode() == lxNone)) && !test(mode, EXPRESSION_MESSAGE_MODE))
                listMode = true;
 
             if (identifierMode) {

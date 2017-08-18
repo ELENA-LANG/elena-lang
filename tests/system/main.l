@@ -41,4 +41,5 @@
     SuperTest eval.
     //EmbedConstTest eval.
     jsonTest eval.
+    subExpressionTest eval.
 ].
