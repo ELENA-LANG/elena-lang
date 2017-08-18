@@ -5065,14 +5065,10 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
 
       // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
       if (!test(scope.info.header.flags, elNonStructureRole) && singleField
-         && test(scope.info.header.flags, elSealed) && size != 0 && scope.info.fields.Count() == 0)
+         && test(scope.info.header.flags, elSealed) && size > 0 && scope.info.fields.Count() == 0)
       {
          scope.info.header.flags |= elStructureRole;
          scope.info.size = size;
-
-         //if (size < 0) {
-         //   scope.info.header.flags |= elDynamicRole;
-         //}
 
          scope.info.fields.add(terminal, 0);
          scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
@@ -5094,8 +5090,8 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       // if it is a normal field
       else {
          // primitive / virtual classes cannot be declared
-         //if (size != 0 && _logic->isPrimitiveRef(classRef))
-         //   scope.raiseError(errIllegalField, current);
+         if (size != 0 && _logic->isPrimitiveRef(classRef))
+            scope.raiseError(errIllegalField, current);
 
          scope.info.header.flags |= elNonStructureRole;
 

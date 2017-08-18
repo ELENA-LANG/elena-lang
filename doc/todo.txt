@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * fix the bug : sealed class File { literal thePath. } - should not be declared as structured
                  * why this code is compiled without errors - example::(Signature new literal:methodSignature) eval:5.
 
                  * migrating rosetta samples : Zhang-Suen thinning algorithm
