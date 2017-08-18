@@ -3,6 +3,9 @@ In development:
 ------                              
 
               xdev - general implementation
+                 * fix the bug : sealed class File { literal thePath. } - should not be declared as structured
+                 * why this code is compiled without errors - example::(Signature new literal:methodSignature) eval:5.
+
                  * migrating rosetta samples : Zhang-Suen thinning algorithm
                  * migrating rosetta samples : json
 
@@ -13,15 +16,10 @@ In development:
                  * migrate samples
                  * migrating rosetta samples : Conway's Game of Life
                  * raise an error if code template is not recognized
-                 * fix the bug : sealed class File { literal thePath. } - should not be declared as structured
                  * fix the bug : duplciate methods are not recognized:
                       stacksafe literal add value:v = v literal.
                       literal add literal : aLiteral => system'core_routines'__literal.
 
-                 * arrayof newArray(type) - should raise an error
-                 * why this code is compiled without errors - example::(Signature new literal:methodSignature) eval:5.
-
-                 * support alternative property setting syntax : a set b:c <=> a b := c.
                  * elenart : correctly display strong typed message names
                  * elenavm : correctly display strong typed message names
                  * Signature should support only get, set, eval

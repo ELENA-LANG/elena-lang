@@ -2213,7 +2213,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 {
    ObjectInfo result;
 
-   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression);
+   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing);
    switch (member.type)
    {
       case lxNestedClass:
@@ -2228,6 +2228,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
             result = compileCollection(writer, objectNode, scope);
          }
          else result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
+         break;
+      case lxBoxing:
+         result = compileExpression(writer, member, scope, mode);
          break;
       case lxMessageReference:
          result = compileMessageReference(writer, member, scope, mode);
