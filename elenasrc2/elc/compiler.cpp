@@ -3358,7 +3358,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
          writer.closeNode();
       }
 
-      ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | SEALED_MESSAGE;
+      ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
       if (scope.info.methods.exist(implicitConstructor, true)) {
          // if implicit constructor is declared - it should be automatically called
          writer.appendNode(lxOvreriddenMessage, implicitConstructor);
@@ -4188,11 +4188,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          if (paramCount == 1 && emptystr(messageStr)) {
             flags |= CONVERSION_MESSAGE;
          }
-   //      else if (verb_id == GET_MESSAGE_ID && paramCount == 0 && sign_id != 0 && test(scope.getClassFlags(false), elNestedClass)) {
-   //         // if it is an implicit nested constructor
-   //         sign_id = 0;
-   //         verb_id = PRIVATE_MESSAGE_ID;
-   //      }
+         else if (emptystr(messageStr) && paramCount == 0 && test(scope.getClassFlags(false), elNestedClass)) {
+            // if it is an implicit nested constructor
+            flags |= CONVERSION_MESSAGE;
+            actionRef = NEWOBJECT_MESSAGE_ID;
+         }
          else scope.raiseError(errIllegalMethod, node);
       }
       else if (test(scope.hints, tpSealed) && verb == lxPrivate) {
@@ -4221,10 +4221,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
       else messageStr.append(signature);
 
-      actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
-      if (actionRef == DISPATCH_MESSAGE_ID) {
-         if (paramCount != 0)
-            scope.raiseError(errIllegalMethod, node);
+      if (actionRef == NEWOBJECT_MESSAGE_ID) {
+         // HOTFIX : for implicit constructor
+      }
+      else {
+         actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
+         if (actionRef == DISPATCH_MESSAGE_ID) {
+            if (paramCount != 0)
+               scope.raiseError(errIllegalMethod, node);
+         }
       }
 
       scope.message = encodeMessage(actionRef, paramCount) | flags;

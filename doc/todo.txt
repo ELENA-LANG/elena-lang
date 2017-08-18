@@ -150,6 +150,7 @@ In development:
                  * uint16
 
               xdev - general implementation
+                 * arrayof newArray(type) - should raise an error
                  * check if the overload list was created
                  * should multi geneated private method be static as well or should not be generated at all?
                  * if else if ...

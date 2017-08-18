@@ -18,7 +18,7 @@ extension op
     
     zeckendorf
     [
-        listof(int) fibonacciNumbers  := 10.
+        list<int> fibonacciNumbers := 10.
         
         int num := self.
         int fibPosition := 2.
@@ -26,16 +26,16 @@ extension op
         
         while (currentFibonaciNum <= num)
         [
-            fibonacciNumbers += currentFibonaciNum.
+            fibonacciNumbers append:currentFibonaciNum.
             
-            fibPosition += 1.
+            fibPosition append:1.
             currentFibonaciNum := fibPosition fibonacci.
         ].
         
         textbuffer output := TextBuilder new.
         int temp := num.
         
-        fibonacciNumbers reverse run &each:item
+        fibonacciNumbers sequenceReverse; forEach(:item)
         [
             if (item <= temp)
             [
@@ -53,11 +53,11 @@ extension op
                 
 program =
 [
-    1 to:20 &doEach:i
+    1 to:20 do(:i)
     [
         var zeckendorfRepresentation := i zeckendorf.
         
-        console writeFormatted:"{0} : {1}":i:zeckendorfRepresentation writeLine.
+        console printFormatted("{0} : {1}",i,i zeckendorf); writeLine.
     ].
     
     console readChar.

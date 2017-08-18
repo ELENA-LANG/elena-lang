@@ -9,182 +9,181 @@ class BaseEnumerable
     enumerator = $nil.
 }
 
-//// --- listof ---
-//
-//template<BaseEnumerable> list :: type
-//{
-//    arrayof theArray(type).
-//    vint    theLength.
-//    vint    theCapacity.
-//
-//    implicit array:list
-//    [
-//        int len := list length.
-//        int size := len / 32.
-//        size := size + 1.
-//        size := size * 32.
-//        
-//        theLength := len.
-//        theCapacity := size.
-//        theArray := type[](size).
-//        
-//        int i := 0.
-//        while(i < len)
-//        [
-//            theArray[i] := list[i].
-//            
-//            i := i + 1.
-//        ].
-//    ]
-//    
-//    implicit int:capacity
-//    [
-//        theCapacity := capacity.
-//        theLength := 0.
-//        theArray := type[](capacity).
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//
-//    $expand
-//    [
-//        if (theCapacity <= theLength)
-//        [
-//            theCapacity append int:32.
-//            
-//            arrayof newArray(type).
-//            newArray := type[](theCapacity).
-//
-//            int i := 0.
-//            while (i < theLength)
-//            [
-//                newArray setAt int:i type:(theArray getAt int:i).
-//                
-//                i := i + 1.
-//            ].
-//            
-//            theArray := newArray.
-//        ].
-//    ]
-//    
-//    /// Returns the object at the specified position
-//    type getAt : anIndex
-//        = $self getAt int:anIndex.
-//
-//    /// Returns the object at the specified position
-//    type stacksafe getAt int:index
-//    [
-//        ifnot(index < theLength)
-//            [ OutOfRangeException new raise ].
-//            
-//        ^ theArray getAt int:index
-//    ]
-//
-//    /// Returns the object at the specified position
-//    stacksafe setAt int:index type:object
-//    [
-//        ifnot(index < theLength)
-//            [ OutOfRangeException new raise ].
-//        
-//        theArray setAt int:index type:object.
-//    ]
-//
-//    /// Returns the object at the specified position
-//    setAt : anIndex : anObject
-//        = $self setAt int:anIndex type:anObject.
-//
-//    append : object
-//        <= append type:object.
-//
-//    /// Appends a new object to the end of the list
-//    append type:object
-//    [
-//        $self $expand.
-//        
-//        theArray setAt int:theLength type:object.
-//        
-//        theLength append int:1.
-//    ]
-//
-//    /// Removes an object at the specified position
-//    stacksafe remove int:anIndex
-//    [
-//        ifnot (anIndex < theLength)
-//            [ OutOfRangeException new raise ].
-//        
-//        theLength reduce int:1.
-//        
-//        int i := anIndex.
-//        while(i < theLength)
-//        [
-//            theArray setAt int:i type:(theArray getAt int:(i + 1)).
-//            
-//            i := i + 1
-//        ]
-//    ]
-//        
-//    /// Clears the list
-//    clear 
-//    [
-//        theLength int := 0.        
-//    ]
-//    
-//    enumerator 
-//    [
-//        vint index := -1.
-//        int length := theLength.
-//        
-//        ^ Enumerator::
-//          {
-//              get = $owner getAt int:index.
-//              
-//              enumerable = $owner.
-//              
-//              reset [ index int := -1. ]
-//              
-//              next
-//              [
-//                  index append int:1.
-//                  
-//                  ^ index < length
-//              ]
-//          }.
-//    ]
-//
-//    indexer = BaseIndexer::
-//    {
-//        implicit object
-//        [
-//            theIndex int := 0.
-//
-//            int len := 0.                                    
-//            $owner readLengthTo vint:len.
-//            
-//            theLength int := len.
-//        ]
-//
-//        get
-//            = $owner getAt int:theIndex.
-//            
-//        set : o
-//        [
-//            $owner setAt int:theIndex type:o.
-//        ]                
-//    }.
-//                       
-//    stacksafe readLengthTo vint:retVal
-//    [
-//        retVal int := theLength.
-//    ]    
-//}
+// --- listof ---
+
+template<BaseEnumerable> list :: type
+{
+    array<type> theArray.
+    vint        theLength.
+    vint        theCapacity.
+
+    explicit array:list
+    [
+        int len := list length.
+        int size := len / 32.
+        size := size + 1.
+        size := size * 32.
+        
+        theLength := len.
+        theCapacity := size.
+        theArray := type[](size).
+        
+        int i := 0.
+        while(i < len)
+        [
+            theArray[i] := list[i].
+            
+            i := i + 1.
+        ].
+    ]
+    
+    explicit int:capacity
+    [
+        theCapacity := capacity.
+        theLength := 0.
+        theArray := type[](capacity).
+    ]
+    
+    int rvprop length :: readLengthTo.
+
+    $expand
+    [
+        if (theCapacity <= theLength)
+        [
+            theCapacity append int:32.
+            
+            array<type> newArray := type[](theCapacity).
+
+            int i := 0.
+            while (i < theLength)
+            [
+                newArray setAt int:i type:(theArray getAt int:i).
+                
+                i := i + 1.
+            ].
+            
+            theArray := newArray.
+        ].
+    ]
+    
+    /// Returns the object at the specified position
+    type getAt : anIndex
+        = $self getAt int:anIndex.
+
+    /// Returns the object at the specified position
+    type stacksafe getAt int:index
+    [
+        ifnot(index < theLength)
+            [ OutOfRangeException new; raise ].
+            
+        ^ theArray getAt int:index
+    ]
+
+    /// Returns the object at the specified position
+    stacksafe setAt int:index type:object
+    [
+        ifnot(index < theLength)
+            [ OutOfRangeException new; raise ].
+        
+        theArray setAt int:index type:object.
+    ]
+
+    /// Returns the object at the specified position
+    setAt : anIndex : anObject
+        = $self setAt int:anIndex type:anObject.
+
+    append : object
+        <= append type:object.
+
+    /// Appends a new object to the end of the list
+    append type:object
+    [
+        $self $expand.
+        
+        theArray setAt int:theLength type:object.
+        
+        theLength append int:1.
+    ]
+
+    /// Removes an object at the specified position
+    stacksafe remove int:anIndex
+    [
+        ifnot (anIndex < theLength)
+            [ OutOfRangeException new; raise ].
+        
+        theLength reduce int:1.
+        
+        int i := anIndex.
+        while(i < theLength)
+        [
+            theArray setAt int:i type:(theArray getAt int:(i + 1)).
+            
+            i := i + 1
+        ]
+    ]
+        
+    /// Clears the list
+    clear 
+    [
+        theLength int := 0.        
+    ]
+    
+    enumerator 
+    [
+        vint index := -1.
+        int length := theLength.
+        
+        ^ Enumerator::
+          {
+              get = $owner getAt int:index.
+              
+              enumerable = $owner.
+              
+              reset [ index int := -1. ]
+              
+              next
+              [
+                  index append int:1.
+                  
+                  ^ index < length
+              ]
+          }.
+    ]
+
+    indexer = BaseIndexer::
+    {
+        explicit
+        [
+            theIndex int := 0.
+
+            int len := 0.                                    
+            $owner readLengthTo vint:len.
+            
+            theLength int := len.
+        ]
+
+        get
+            = $owner getAt int:theIndex.
+            
+        set : o
+        [
+            $owner setAt int:theIndex type:o.
+        ]                
+    }.
+                       
+    stacksafe readLengthTo vint:retVal
+    [
+        retVal int := theLength.
+    ]    
+}
 
 // --- ObjectList ---
 
-//#class(listof:object,sealed) ObjectList
+//sealed class ObjectList :: list<object>
 //{
-//    #constructor(w3) new
+//    constructor new
 //    [
-//        theArray := object:32.
+//        theArray := object[](32).
 //        theLength := 0.
 //        theCapacity := 32.
 //    ]
