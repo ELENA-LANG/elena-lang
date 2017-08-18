@@ -241,9 +241,9 @@ arrayConvertorEx =
         
     convert(BaseIndexable v)
         <= convert(v indexer).
-//                void : val
-//                    = Array min.                    
-    
+        
+    convert void:val
+        = Array min.                        
 }.
 
 // --- convertorOp ---

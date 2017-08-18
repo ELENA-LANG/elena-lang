@@ -124,5 +124,6 @@ type dirty_ptr  = system'UnsafePointer.
 // --- Enumerators / Indexers ---
 type enumerator = system'Enumerator.
 type indexer    = system'Indexer.
-////type indexer2d  :: system'Indexer2D.
-//
+type indexer2d  = system'Indexer2D.
+
+type void       = nil.

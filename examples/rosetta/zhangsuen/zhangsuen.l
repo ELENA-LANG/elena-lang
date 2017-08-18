@@ -1,9 +1,9 @@
-#import system'collections.
-#import system'routines.
-#import extensions.
-#import extensions'routines.
+import system'collections.
+import system'routines.
+import extensions.
+import extensions'routines.
 
-#subject charmatrix = matrixof(char).
+type charmatrix = matrix<CharValue>.
 
 const image = (
         "                                                          ",
@@ -31,25 +31,25 @@ nbrs = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1),
 nbrGroups = (((0, 2, 4), (2, 4, 6)), ((0, 2, 6),
         (0, 4, 6))).
 
-extension(charmatrix) zhangsuenOp
+charmatrix extension zhangsuenOp
 {
     $proceed : r : c : toWhite : firstStep
     [
-        if (self@r@c != #35)
+        if (self[r][c] != $35)
             [ ^ false ].
         
-        int nn := self numNeighbors:r:c.                            
+        int nn := self numNeighbors(r,c).
         
         if ((nn < 2) || (nn > 6))
             [ ^ false ].
             
-        if(self numTransitions:r:c != 1)
+        if(self numTransitions(r,c) != 1)
             [ ^ false ].
 
-        ifnot (self atLeastOneIsWhite:r:c:(firstStep iif:0:1))
+        ifnot (self atLeastOneIsWhite(r,c,firstStep iif(0,1)))
             [ ^ false ].
 
-        toWhite += { x = c. y = r. }.
+        toWhite append:{ x = c. y = r. }.
         
         ^ true.      
     ]
@@ -58,9 +58,9 @@ extension(charmatrix) zhangsuenOp
     [
         int count := 0.
         
-        0 till:(nbrs length - 1) &doEach:(:i)
+        0 till(nbrs length - 1) do(:i)
         [
-            if (self@(r + nbrs@i@1)@(c + nbrs@i@0) == #35)
+            if (self[r + nbrs[i][1]][c + nbrs[i][0]] == $35)
                 [ count := count + 1. ].
         ].
                 
@@ -71,11 +71,11 @@ extension(charmatrix) zhangsuenOp
     [
         int count := 0.
         
-        0 till:(nbrs length - 1) &doEach:(:i)
+        0 till(nbrs length - 1) do(:i)
         [
-            if (self@(r + nbrs@i@1)@(c + nbrs@i@0) == #32)
+            if (self[r + nbrs[i][1]][c + nbrs[i][0]] == $32)
             [
-                if (self@(r + nbrs@(i + 1)@1)@(c + nbrs@(i + 1)@0) == #35)
+                if (self[r + nbrs[i + 1][1]][c + nbrs[i + 1][0]] == $35)
                 [
                     count := count + 1.
                 ].
@@ -88,15 +88,15 @@ extension(charmatrix) zhangsuenOp
     atLeastOneIsWhite : r : c : step
     [
         int count := 0.
-        var group := nbrGroups@step.
-        0 till:2 &doEach:(:i)
+        var group := nbrGroups[step].
+        0 till:2 do(:i)
         [            
-            0 till:(group@i length) &seekEach:(:j)
+            0 till(group[i] length) seek(:j)
             [
-                var nbr := nbrs@(group@i@j).
+                var nbr := nbrs[group[i][j]].
                 
-                if (self@(r + nbr@1)@(c + nbr@0) == #32)
-                    [ count := count + 1. ^ true. ].
+                if (self[r + nbr[1]][c + nbr[0]] == $32)
+                    [ count := count + 1. ^ true ].
                     
                 ^ false.                    
             ].
@@ -116,16 +116,16 @@ extension(charmatrix) zhangsuenOp
             hasChanged := false.
             firstStep := firstStep not.
 
-            1 till:(self rows - 1) &doEach:(:r) 
+            1 till(self rows - 1) do(:r) 
             [
-                1 till:(self columns - 1) &doEach:(:c)
+                1 till(self columns - 1) do(:c)
                 [
-                    if (self $proceed:r:c:toWhite:firstStep)
+                    if (self $proceed(r,c,toWhite,firstStep))
                         [ hasChanged := true ].
                 ].
             ].
             
-            toWhite run &each:(:p)[ self@(p y)@(p x) := #32. ].                
+            toWhite forEach(:p)[ self[p y][p x] := $32. ].                
             toWhite clear.
         ].
     ]
@@ -134,26 +134,26 @@ extension(charmatrix) zhangsuenOp
     [
         var it := self enumerator.
         
-        it run &each:(:ch) [ console writeLiteral:ch:" ". ].
+        it forEach(:ch) [ console print(ch," ") ].
         while (it next)
         [
             console writeLine.
             
-            it run &each:(:ch) [ console writeLiteral:ch:" ". ].
+            it forEach(:ch) [ console print(ch," ") ].
         ].
     ]
 }
 
 program =
 [
-    charmatrix grid := MatrixSpace
+    charmatrix grid := MatrixSpace::
     {
         rows = image length.
         
-        columns = image@0 length.
+        columns = image[0] length.
         
-        getAt &int:i &int:j
-            = image@i@j.
+        getAt int:i int:j
+            = image[i][j].
     }.
 
     grid thinImage.

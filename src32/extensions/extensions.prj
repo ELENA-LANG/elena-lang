@@ -22,5 +22,6 @@ text\words.l
 text\strings.l
 routines\enumerating.l
 routines\combinations.l
+routines\patterns.l
 scripting\interpreter.l
 dynamic\json.l

@@ -1,3 +1,5 @@
+/// a program to produce a visual representation of some tree. 
+
 import system'routines.
 import extensions.
 
@@ -17,10 +19,10 @@ class Node
         <= new:value children:nil.
         
     constructor new children:children
-        <= new:emptyLiteralValue &children:children.
+        <= new:emptyLiteralValue children:children.
         
     constructor new : value child:child
-        <= new:value &children:(Array new &object:child).
+        <= new:value children(Array new object:child).
         
     get = theValue.
     
@@ -29,39 +31,39 @@ class Node
 
 extension treeOp
 {
-    writeTree:node:prefix &subject:childrenProp
+    writeTree : node : prefix : childrenProp
     [
-        var children := node::childrenProp get.
+        var children := node~childrenProp get.
         var length := children length.
         
-        children zip:(RangeEnumerator new &from:1 &to:length) &eachPair:(:child:index)
+        children zip(RangeEnumerator new from:1 to:length) forEach(:child:index)
         [
-            self writeLine:prefix:"|".                
-            self writeLine:prefix:"+---":(child get).                
+            self printLine(prefix,"|").
+            self printLine(prefix,"+---",child get).                
             
-            var nodeLine := prefix + (index==length)iif:"    ":"|   ".
+            var nodeLine := prefix + (index==length)iif("    ","|   ").
             
-            self writeTree:child:nodeLine &subject:childrenProp.
+            self writeTree(child,nodeLine,childrenProp).
         ].
         
         ^ self.
     ]
     
-    writeTree:node &subject:childrenProp
-        = self writeTree:node:"" &subject:childrenProp.
+    writeTree : node : childrenProp  
+        = self~treeOp writeTree(node,"",childrenProp).
 }
 
 program =
 [
-    var tree := Node new &children:
+    var tree := Node new children:
                  (
-                    Node new:"a" &children:
+                    Node new:"a" children:
                     (
-                        Node new:"b" &child:(Node new:"c"),
+                        Node new:"b" child:(Node new:"c"),
                         Node new:"d"
                     ),
                     Node new:"e"
                  ).
                  
-    console writeTree:tree &subject:%children readChar.
+    console writeTree(tree, %children); readChar.
 ].

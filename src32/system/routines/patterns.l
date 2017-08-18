@@ -1,6 +1,6 @@
 import system'collections.
 
-//symbol idleFunc1 = (:x) [].
+symbol idleFunc1 = (:x) [].
 
 // === pattern enumerators ==
 
@@ -741,8 +741,8 @@ extension patternOp
     zip:anEnumerable by:aZipper
         = ZipEnumerator new(aZipper, self enumerator, anEnumerable enumerator).
 
-//    zip:anEnumerable eachPair:func2
-//        = ZipEnumerator new:(:x:y)[ func2 eval:x:y ] enumerator:(self enumerator) enumerator:(anEnumerable enumerator); run each:idleFunc1.
+    zip:anEnumerable forEach:func2
+        = self~patternOp zip:anEnumerable by:func2; forEach:idleFunc1.
 
     groupBy:groupFunc
         = GroupingEnumerator new(groupFunc, self enumerator).                                       

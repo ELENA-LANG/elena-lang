@@ -62,17 +62,14 @@ extension forLoopOp
     multi till:aMaxValue by:aStep do:anAction
         = self~forLoopOp to:aMaxValue by:aStep do(:n)[ anAction eval:n ].
 
-//    till:aMaxValue by:aStep doEach:aFunction
-//        = aFunction run enumerator:(IntervalEnumerator new from:self till:aMaxValue by:aStep).
-//        
-//    to:aMaxValue seekEach:aFunction
-//        = aFunction retrieve enumerator:(RangeEnumerator new from:self to:aMaxValue).
-//        
-//    till:aMaxValue seekEach:aFunction
-//        = aFunction retrieve enumerator:(IntervalEnumerator new from:self till:aMaxValue).
-//        
-//    to:aMaxValue by:aStep seekEach:aFunction
-//        = aFunction retrieve enumerator:(RangeEnumerator new from:self to:aMaxValue by:aStep).
+    to:aMaxValue seek:aFunction
+        = aFunction retrieve enumerator(RangeEnumerator new from:self to:aMaxValue).
+        
+    till:aMaxValue seek:aFunction
+        = aFunction retrieve enumerator(IntervalEnumerator new from:self till:aMaxValue).
+        
+    to:aMaxValue by:aStep seek:aFunction
+        = aFunction retrieve enumerator(RangeEnumerator new from:self to:aMaxValue by:aStep).
 }
 
 extension loopOp

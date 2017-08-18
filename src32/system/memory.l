@@ -77,144 +77,148 @@ dynamic template<BaseIndexable> array :: template_subj
         <= getAt int:aParam.
 }
 
-//// --- matrixof ---
-//
-//#template matrixof(template_subj)
-//{
-//    arrayof(template_subj) theArray.
-//    int                    theRows.
-//    int                    theColumns.
+// --- matrixof ---
+
+template matrix :: template_subj
+{
+    array<template_subj> theArray.
+    int                  theRows.
+    int                  theColumns.
+    
+    explicit object:params
+    [
+        theRows := params rows.
+        theColumns := params columns.
+        
+        int len := theRows * theColumns.
+        
+        theArray := template_subj[](/*theRows * theColumns*/len).
+        
+        var it := params indexer2d \ back:$nil.
+        ifnot($nil == it)
+            [
+                int i := 0.
+                int j := 0.
+                
+                while (i < theRows)
+                [
+                    j := 0.
+                    while (j < theColumns)
+                    [
+                        it writeIndex1 int:i.
+                        it writeIndex2 int:j.
+                        
+                        var val := it get.
+                        
+                        $self setAt int:i int:j template_subj:val.
+                        
+                        j := j + 1
+                    ].
+                    
+                    i := i + 1
+                ]
+            ]
+    ]
+    
+    /// Reads the matrix lengths to the output parameter
+    stacksafe readLengths vint:Rows vint:Columns
+    [
+        Rows int := theRows.
+        Columns int := theColumns.
+    ]
+
+    int rvprop length  :: readLength.    
+    int rvprop columns :: readColumns.
+    int rvprop rows    :: readRows.
+
+    stacksafe readLength vint:retVal
+    [
+        retVal int := theRows.
+    ]
+
+    stacksafe readColumns vint:retVal
+    [
+        retVal int := theColumns.
+    ]
+
+    stacksafe readRows vint:retVal
+    [
+        retVal int := theRows.
+    ]
+
+    /// Writes an integer value at the specified position
+    stacksafe setAt int:i int:j template_subj:aValue
+    [
+        theArray setAt int(i * theColumns + j) template_subj:aValue.
+    ]
+
+    embeddable template_subj getAt int:i int:j
+        = theArray getAt int(i * theColumns + j).
+
+    getAt : i : j
+        = $self getAt int:i int:j.
+
+    setAt : i : j : aValue
+    [
+        $self setAt int:i int:j template_subj:aValue.    
+    ]
+
+    /// Returns a row
+    getAt : i =
+    {
+        length = theColumns int.
+        
+        getAt : j
+            = $owner getAt(i,j).
+        
+        setAt : j : aValue
+        [
+            $owner setAt(i,j,aValue).
+        ]
+    }.
 //    
-//    implicit object:params
-//    [
-//        theRows := params rows.
-//        theColumns := params columns.
-//        
-//        int len := theRows * theColumns.
-//        
-//        theArray := template_subj(/*theRows * theColumns*/len).
-//        
-//        var it := params indexer2d \ back:$nil.
-//        ($nil == it)
-//            ! [
-//                int i := 0.
-//                int j := 0.
-//                
-//                while (i < theRows)
-//                [
-//                    j := 0.
-//                    while (j < theColumns)
-//                    [
-//                        it writeIndex1 &int:i.
-//                        it writeIndex2 &int:j.
-//                        
-//                        var val := it get.
-//                        
-//                        $self setAt &int:i &int:j &template_subj:val.
-//                        
-//                        j += 1.
-//                    ].
-//                    
-//                    i += 1.
-//                ].
-//            ].
-//    ]
-//    
-//    /// Reads the matrix lengths to the output parameter
-//    stacksafe readLengths &vint:Rows &vint:Columns
-//    [
-//        Rows := theRows.
-//        Columns := theColumns.
-//    ]
-//
-//    stacksafe outnprop(length) readLength &vint:retVal
-//    [
-//        retVal := theRows.
-//    ]
-//
-//    stacksafe outnprop(columns) readColumns &vint:retVal
-//    [
-//        retVal := theColumns.
-//    ]
-//
-//    stacksafe outnprop(rows) readRows &vint:retVal
-//    [
-//        retVal := theRows.
-//    ]
-//
-//    /// Writes an integer value at the specified position
-//    stacksafe setAt &int:i &int:j &template_subj:aValue
-//    [
-//        theArray setAt &int:(i * theColumns + j) &template_subj:aValue.
-//    ]
-//
-//    embeddable template_subj getAt &int:i &int:j
-//        = theArray getAt &int:(i * theColumns + j).
-//
-//    getAt : i : j
-//        = $self getAt &int:i &int:j.
-//
-//    setAt : i : j : aValue
-//    [
-//        $self setAt &int:i &int:j &template_subj:aValue.    
-//    ]
-//
-//    /// Returns a row
-//    getAt : i =
+//    indexer2d = Indexer2D
 //    {
-//        length = theColumns int.
 //        
-//        getAt : j
-//            = $owner getAt:i:j.
-//        
-//        setAt : j : aValue
-//        [
-//            $owner setAt:i:j:aValue.
-//        ]
 //    }.
-////    
-////    indexer2d = Indexer2D
-////    {
-////        
-////    }.
-//
-//    enumerator 
-//    [
-//        vint i := 0.
-//        vint j := -1.
-//        int length1 := theRows.
-//        int length2 := theColumns.
-//        
-//        ^ Enumerator
-//          {
-//              get = $owner getAt &int:i &int:j.
-//              
-//              enumerable = $owner.
-//              
-//              reset [ i := 0. j := -1. ]
-//              
-//              next
-//              [
-//                  ifnot (i < length1)
-//                  [
-//                     ^ false.
-//                  ].
-//                  
-//                  j += 1.
-//                  
-//                  ifnot (j < length2)
-//                  [
-//                      j := -1.
-//                      i += 1.
-//                      
-//                      ^ false.
-//                  ].
-//                  
-//                  ^ true.
-//              ]
-//          }.
-//    ]
-//}
+
+    enumerator 
+    [
+        vint i := 0.
+        vint j := -1.
+        int length1 := theRows.
+        int length2 := theColumns.
+        
+        ^ Enumerator::
+          {
+              get = $owner getAt int:i int:j.
+              
+              enumerable = $owner.
+              
+              reset [ i := 0. j := -1. ]
+              
+              next
+              [
+                  ifnot (i < length1)
+                  [
+                     ^ false.
+                  ].
+                  
+                  j := j + 1.
+                  
+                  ifnot (j < length2)
+                  [
+                      j := -1.
+                      i := i + 1.
+                      
+                      ^ false
+                  ].
+                  
+                  ^ true
+              ]
+          }.
+    ]
+}
 
 // === basic memory classes ===
 

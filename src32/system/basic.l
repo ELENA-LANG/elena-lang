@@ -2332,17 +2332,17 @@ sealed const embeddable struct CharValue :: BaseValue, dispatchable<char>
 /// A nil value
 singleton nil
 {
-//    /// Returns true if the specified object is nil.
-//    equal : anObject 
-//    [
-//        ($nil == anObject)
-//            ? [ ^ true. ].
-//        
-//        ($super equal:anObject)
-//            ? [ ^ true. ].
-//        
-//        ^ false.
-//    ]
+    /// Returns true if the specified object is nil.
+    equal : anObject 
+    [
+        ($nil == anObject)
+            ? [ ^ true. ].
+        
+        ($super equal:anObject)
+            ? [ ^ true. ].
+        
+        ^ false.
+    ]
     
     /// Returns nil
     ///

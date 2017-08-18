@@ -6,23 +6,23 @@ limited class MatrixSpace
 
     int columns = $nil.
         
-    stacksafe readLength1 &vint:retVal 
+    stacksafe readLength1 vint:retVal 
     [
-        retVal := $self rows.
+        retVal int := $self rows.
     ]
     
-    stacksafe readLength2 &vint:retVal
+    stacksafe readLength2 vint:retVal
     [
-        retVal := $self columns.
+        retVal int := $self columns.
     ]
     
-    stacksafe getAt &int:i &int:j []
+    stacksafe getAt int:i int:j []
     
-    stacksafe setAt &int:i &int:j &object:o []
+    stacksafe setAt int:i int:j object:o []
     
-    indexer2d = BaseMatrixIndexer
+    indexer2d = BaseMatrixIndexer::
     {
-        implicit object
+        explicit
         [
             theIndex1 := 0.
             theIndex2 := 0.            
@@ -30,19 +30,19 @@ limited class MatrixSpace
             int len1 := 0.
             int len2 := 0.
                                     
-            $owner readLength1 &vint:len1.
-            $owner readLength2 &vint:len2.
+            $owner readLength1 vint:len1.
+            $owner readLength2 vint:len2.
             
             theLength1 := len1.
             theLength2 := len2.
         ]
         
         get
-            = $owner getAt &int:theIndex1 &int:theIndex2.
+            = $owner getAt int:theIndex1 int:theIndex2.
             
         set : o
         [
-            $owner setAt &int:theIndex1 &int:theIndex2 &object:o.
+            $owner setAt int:theIndex1 int:theIndex2 object:o.
         ]            
     }.
 }
