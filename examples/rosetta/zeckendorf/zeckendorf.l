@@ -18,7 +18,7 @@ extension op
     
     zeckendorf
     [
-        list<int> fibonacciNumbers := 10.
+        var fibonacciNumbers := list<IntNumber>(10).
         
         int num := self.
         int fibPosition := 2.
@@ -28,7 +28,7 @@ extension op
         [
             fibonacciNumbers append:currentFibonaciNum.
             
-            fibPosition append:1.
+            fibPosition := fibPosition + 1.
             currentFibonaciNum := fibPosition fibonacci.
         ].
         

@@ -154,12 +154,12 @@ template<BaseEnumerable> list :: type
     {
         explicit
         [
-            theIndex int := 0.
+            theIndex := 0.
 
             int len := 0.                                    
             $owner readLengthTo vint:len.
             
-            theLength int := len.
+            theBaseIndexerLength := len.
         ]
 
         get

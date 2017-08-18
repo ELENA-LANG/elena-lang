@@ -776,10 +776,10 @@ limited class IndexFunction3 :: dispatchable<n3func>
 class BaseIndexer :: Indexer
 {
     int theIndex.
-    int theLength.
+    int theBaseIndexerLength.
     
     /// Returns false if the index out of range
-    available = (theIndex <= theLength).
+    available = (theIndex <= theBaseIndexerLength).
     
     /// Reads the current i-index into an output parameter
     readIndexTo vint:retVal
