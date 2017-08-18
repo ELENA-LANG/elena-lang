@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * migrating rosetta samples : Visualize a tree
-                 * migrating rosetta samples : twelve statements
                  * migrating rosetta samples : Zhang-Suen thinning algorithm
                  * migrating rosetta samples : json
 
@@ -19,6 +17,9 @@ In development:
                  * fix the bug : duplciate methods are not recognized:
                       stacksafe literal add value:v = v literal.
                       literal add literal : aLiteral => system'core_routines'__literal.
+
+                 * arrayof newArray(type) - should raise an error
+                 * why this code is compiled without errors - example::(Signature new literal:methodSignature) eval:5.
 
                  * support alternative property setting syntax : a set b:c <=> a b := c.
                  * elenart : correctly display strong typed message names
@@ -149,12 +150,10 @@ In development:
                  * uint16
 
               xdev - general implementation
-                 * arrayof newArray(type) - should raise an error
                  * check if the overload list was created
                  * should multi geneated private method be static as well or should not be generated at all?
                  * if else if ...
                  * unboxing primitive arrays?
-                 * why this code is compiled without errors - example::(Signature new literal:methodSignature) eval:5.
 
 ------                                 
 Pipeline:
