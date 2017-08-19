@@ -86,7 +86,7 @@ int Model :: GetNProperty(void* handle, int prop, int defValue)
 }
 
 
-int Model :: CloseWidget(void* handle)
+int Model :: CloseWidget(void* /*handle*/)
 {
 	return -1;
 }

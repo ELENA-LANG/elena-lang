@@ -5,25 +5,29 @@ VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elc", "elc\vs\elc15.vcxproj", "{18637822-DE06-457E-86CD-5EB1A2C38776}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenasm11", "elenasm\vs\elenasm11.vcxproj", "{895D3762-6397-468A-8984-779C1A9E5C0D}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenart", "elenart\vs\elenart.vcxproj", "{191F5360-84B0-43D7-BA23-C9AA254A19B8}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenavm11", "elenavm\vs\elenavm11.vcxproj", "{7D64C701-DDAA-467C-96BA-513438A1DE42}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elide", "ide\vs\elide11.vcxproj", "{B0C65195-DB0F-4965-BDFF-B0CB5C19C72D}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asm2binx", "tools\asm2bin\vs\asm2binx11.vcxproj", "{831A107C-C3C1-4090-87F4-60179ABA83D4}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ecv", "tools\ecv\vs\ecv11.vcxproj", "{A4214A73-6967-43D7-88F9-DF45826EB4E5}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elt11", "tools\elt\vs\elt11.vcxproj", "{6341FE03-441A-45F9-86B5-EEEFC2CE6DFE}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "og", "tools\og\vs\og11.vcxproj", "{106C7025-E6C5-484F-A46A-56F09354039C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sg", "tools\sg\vs\sg10.vcxproj", "{C827D32F-1A64-4C98-B959-9BBDF8F0B438}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenavm15", "elenavm\vs\elenavm15.vcxproj", "{7D64C701-DDAA-467C-96BA-513438A1DE42}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenagm15", "elenagm\vs\elenagm15.vcxproj", "{B806786A-BFCB-4251-A0DF-304DA62FBBBF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenart15", "elenart\vs\elenart15.vcxproj", "{191F5360-84B0-43D7-BA23-C9AA254A19B8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenasm15", "elenasm\vs\elenasm15.vcxproj", "{895D3762-6397-468A-8984-779C1A9E5C0D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elide", "ide\vs\elide15.vcxproj", "{B0C65195-DB0F-4965-BDFF-B0CB5C19C72D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asm2binx", "tools\asm2bin\vs\asm2binx15.vcxproj", "{831A107C-C3C1-4090-87F4-60179ABA83D4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ecv", "tools\ecv\vs\ecv15.vcxproj", "{A4214A73-6967-43D7-88F9-DF45826EB4E5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elt15", "tools\elt\vs\elt15.vcxproj", "{6341FE03-441A-45F9-86B5-EEEFC2CE6DFE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7D64C701-DDAA-467C-96BA-513438A1DE42} = {7D64C701-DDAA-467C-96BA-513438A1DE42}
+		{895D3762-6397-468A-8984-779C1A9E5C0D} = {895D3762-6397-468A-8984-779C1A9E5C0D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "og", "tools\og\vs\og15.vcxproj", "{106C7025-E6C5-484F-A46A-56F09354039C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sg", "tools\sg\vs\sg15.vcxproj", "{C827D32F-1A64-4C98-B959-9BBDF8F0B438}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,18 +39,22 @@ Global
 		{18637822-DE06-457E-86CD-5EB1A2C38776}.Debug|x86.Build.0 = Debug|Win32
 		{18637822-DE06-457E-86CD-5EB1A2C38776}.Release|x86.ActiveCfg = Release|Win32
 		{18637822-DE06-457E-86CD-5EB1A2C38776}.Release|x86.Build.0 = Release|Win32
-		{895D3762-6397-468A-8984-779C1A9E5C0D}.Debug|x86.ActiveCfg = Debug|Win32
-		{895D3762-6397-468A-8984-779C1A9E5C0D}.Debug|x86.Build.0 = Debug|Win32
-		{895D3762-6397-468A-8984-779C1A9E5C0D}.Release|x86.ActiveCfg = Release|Win32
-		{895D3762-6397-468A-8984-779C1A9E5C0D}.Release|x86.Build.0 = Release|Win32
-		{191F5360-84B0-43D7-BA23-C9AA254A19B8}.Debug|x86.ActiveCfg = Debug|Win32
-		{191F5360-84B0-43D7-BA23-C9AA254A19B8}.Debug|x86.Build.0 = Debug|Win32
-		{191F5360-84B0-43D7-BA23-C9AA254A19B8}.Release|x86.ActiveCfg = Release|Win32
-		{191F5360-84B0-43D7-BA23-C9AA254A19B8}.Release|x86.Build.0 = Release|Win32
 		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Debug|x86.ActiveCfg = Debug|Win32
 		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Debug|x86.Build.0 = Debug|Win32
 		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Release|x86.ActiveCfg = Release|Win32
 		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Release|x86.Build.0 = Release|Win32
+		{B806786A-BFCB-4251-A0DF-304DA62FBBBF}.Debug|x86.ActiveCfg = Debug|Win32
+		{B806786A-BFCB-4251-A0DF-304DA62FBBBF}.Debug|x86.Build.0 = Debug|Win32
+		{B806786A-BFCB-4251-A0DF-304DA62FBBBF}.Release|x86.ActiveCfg = Release|Win32
+		{B806786A-BFCB-4251-A0DF-304DA62FBBBF}.Release|x86.Build.0 = Release|Win32
+		{191F5360-84B0-43D7-BA23-C9AA254A19B8}.Debug|x86.ActiveCfg = Debug|Win32
+		{191F5360-84B0-43D7-BA23-C9AA254A19B8}.Debug|x86.Build.0 = Debug|Win32
+		{191F5360-84B0-43D7-BA23-C9AA254A19B8}.Release|x86.ActiveCfg = Release|Win32
+		{191F5360-84B0-43D7-BA23-C9AA254A19B8}.Release|x86.Build.0 = Release|Win32
+		{895D3762-6397-468A-8984-779C1A9E5C0D}.Debug|x86.ActiveCfg = Debug|Win32
+		{895D3762-6397-468A-8984-779C1A9E5C0D}.Debug|x86.Build.0 = Debug|Win32
+		{895D3762-6397-468A-8984-779C1A9E5C0D}.Release|x86.ActiveCfg = Release|Win32
+		{895D3762-6397-468A-8984-779C1A9E5C0D}.Release|x86.Build.0 = Release|Win32
 		{B0C65195-DB0F-4965-BDFF-B0CB5C19C72D}.Debug|x86.ActiveCfg = Debug|Win32
 		{B0C65195-DB0F-4965-BDFF-B0CB5C19C72D}.Debug|x86.Build.0 = Debug|Win32
 		{B0C65195-DB0F-4965-BDFF-B0CB5C19C72D}.Release|x86.ActiveCfg = Release|Win32
@@ -71,14 +79,11 @@ Global
 		{C827D32F-1A64-4C98-B959-9BBDF8F0B438}.Debug|x86.Build.0 = Debug|Win32
 		{C827D32F-1A64-4C98-B959-9BBDF8F0B438}.Release|x86.ActiveCfg = Release|Win32
 		{C827D32F-1A64-4C98-B959-9BBDF8F0B438}.Release|x86.Build.0 = Release|Win32
-		{B806786A-BFCB-4251-A0DF-304DA62FBBBF}.Debug|x86.ActiveCfg = Debug|Win32
-		{B806786A-BFCB-4251-A0DF-304DA62FBBBF}.Debug|x86.Build.0 = Debug|Win32
-		{B806786A-BFCB-4251-A0DF-304DA62FBBBF}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {5F6E729E-5665-403D-9E40-59BAD65861BE}
+		SolutionGuid = {115B0A78-7F9A-4978-9E20-13F79027AD16}
 	EndGlobalSection
 EndGlobal

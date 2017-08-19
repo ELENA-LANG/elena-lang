@@ -163,8 +163,8 @@ void x86Instance :: createConsole()
 {
    // HOTFIX : create a console only for GUI application 
    if (test(_config.platform, mtGUI)) {
-      CONSOLE_SCREEN_BUFFER_INFO coninfo;
-      FILE *fp;
+      //CONSOLE_SCREEN_BUFFER_INFO coninfo;
+      //FILE *fp;
 
       // allocate a console for this app
       AllocConsole();

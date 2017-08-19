@@ -1484,7 +1484,7 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
    SNode next = current.nextNode();
    bool identifierMode = current.type == lxIdentifier;
    bool listMode = false;   
-   if (current == lxObject && checkNode(next, lxOperator, -3) && next.nextNode() != lxAttributeValue) {
+   if (current == lxObject && checkNode(next, lxOperator, (ref_t)-3) && next.nextNode() != lxAttributeValue) {
       // check if it is new operator
       generateNewOperator(writer, current, scope);
    }
@@ -1907,7 +1907,7 @@ void DerivationReader :: generateCodeTree(SyntaxWriter& writer, SNode node, Deri
       else if (current == lxLoop || current == lxCode || current == lxExtern) {
          generateCodeTree(writer, current, scope);
       }
-      else if (current == lxObject && checkNode(current.nextNode(), lxOperator, -3) && current.nextNode().nextNode() != lxAttributeValue) {
+      else if (current == lxObject && checkNode(current.nextNode(), lxOperator, (ref_t)-3) && current.nextNode().nextNode() != lxAttributeValue) {
          // check if it is new operator
          writer.newBookmark();
          generateNewOperator(writer, current, scope);
@@ -1926,7 +1926,7 @@ void DerivationReader :: generateCodeTree(SyntaxWriter& writer, SNode node, Deri
    writer.closeNode();
 }
 
-void DerivationReader :: generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode)
+void DerivationReader :: generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree&/* buffer*/, bool/* templateMode*/)
 {
 //   if (node == lxClassField && node.argument == INVALID_REF) {
 //      SNode ident = goToNode(attributes, lxNameAttr);
@@ -2184,7 +2184,7 @@ void DerivationReader :: includeModule(SNode ns, _CompilerScope& scope)
    else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
 }
 
-bool DerivationReader :: generateDeclaration(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes)
+bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope, SNode attributes)
 {
    // recognize the declaration type
    DeclarationAttr declType = daNone;
@@ -2534,7 +2534,7 @@ void DerivationReader :: generateScope(SyntaxWriter& writer, SNode node, Derivat
          attributes.refresh();
 
          // check if it is a code template
-         if (!generateDeclaration(writer, node, scope, attributes)) {
+         if (!generateDeclaration(node, scope, attributes)) {
             // check if it could be compiled as a singleton
             if (!generateSingletonScope(writer, node, scope, attributes)) {
                node = lxSymbol;
@@ -2568,7 +2568,7 @@ void DerivationReader :: generateScope(SyntaxWriter& writer, SNode node, Derivat
       else {
          setIdentifier(attributes);
          // try to recognize general declaration
-         if (!generateDeclaration(writer, node, scope, attributes)) {
+         if (!generateDeclaration(node, scope, attributes)) {
             // otherwise it will be compiled as a class
             node = lxClass;
             attributes.refresh();

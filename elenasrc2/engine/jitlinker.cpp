@@ -166,7 +166,7 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 ref_t JITLinker :: resolveSignature(ident_t signature, int paramCount)
 {
    size_t overloadIndex = signature.find('$');
-   if (overloadIndex != NOTFOUND_POS) {
+   if (overloadIndex != NOTFOUND_POS && paramCount > 0) {
       SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
 
       ref_t tableOffs = info.module->mapSubject(signature, true);
@@ -784,8 +784,6 @@ void* JITLinker :: resolveMessageTable(ident_t reference, int mask)
 
    // resolve section references
    _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
-   ref_t currentMask = 0;
-   ref_t currentRef = 0;
    while (!it.Eof()) {
       references.add(position + *it, RefInfo(it.key(), sectionInfo.module));
 

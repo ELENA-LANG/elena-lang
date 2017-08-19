@@ -11,19 +11,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>elc</ProjectName>
-    <ProjectGuid>{18637822-DE06-457E-86CD-5EB1A2C38776}</ProjectGuid>
+    <ProjectGuid>{7D64C701-DDAA-467C-96BA-513438A1DE42}</ProjectGuid>
+    <RootNamespace>elenavm</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
@@ -32,152 +33,135 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\temp\elc\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\temp\elenavm\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\bin\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\temp\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>elenavm</TargetName>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>elenavm</TargetName>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;..\..\common;..\..\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;UNICODE;_UNICODE;_WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..;..\win32;..\..\common;..\..\engine;..\..\engine\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;EVM_EXPORTS;UNICODE;_WIN32;_UNICODE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <PrecompiledHeaderFile>elena.h</PrecompiledHeaderFile>
-      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeaderFile>common.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)elc.exe</OutputFile>
+      <OutputFile>..\..\..\bin\elenavm.dll</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(OutDir)elc.pdb</ProgramDatabaseFile>
-      <SubSystem>Console</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
+      <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..;..\..\common;..\..\engine</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\engine</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;UNICODE;_UNICODE;_WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;EVM_EXPORTS;UNICODE;_WIN32;_UNICODE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..;..\..\common;..\..\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\win32;..\..\common;..\..\engine;..\..\engine\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>elena.h</PrecompiledHeaderFile>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)elc.exe</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <OutputFile>..\..\..\bin\elenavm.dll</OutputFile>
+      <EnableUAC>false</EnableUAC>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..;..\..\common;..\..\engine</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\engine</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\common\dump.cpp" />
-    <ClCompile Include="..\..\common\files.cpp" />
     <ClCompile Include="..\..\common\altstrings.cpp" />
-    <ClCompile Include="..\..\common\xmlreader.cpp" />
-    <ClCompile Include="..\..\common\config.cpp" />
     <ClCompile Include="..\..\engine\bytecode.cpp" />
-    <ClCompile Include="..\..\engine\compilerlogic.cpp" />
-    <ClCompile Include="..\..\engine\amd64jitcompiler.cpp" />
+    <ClCompile Include="..\..\common\config.cpp" />
+    <ClCompile Include="..\..\engine\rtman.cpp" />
+    <ClCompile Include="..\..\engine\x86jitcompiler.cpp" />
+    <ClCompile Include="..\win32\dllmain.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="..\..\common\xmlreader.cpp" />
+    <ClCompile Include="..\..\common\dump.cpp" />
+    <ClCompile Include="..\elenamachine.cpp" />
+    <ClCompile Include="..\..\common\files.cpp" />
     <ClCompile Include="..\..\engine\jitcompiler.cpp" />
     <ClCompile Include="..\..\engine\jitlinker.cpp" />
     <ClCompile Include="..\..\engine\libman.cpp" />
     <ClCompile Include="..\..\engine\loader.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
+    <ClCompile Include="..\win32\x86elenamachine.cpp" />
     <ClCompile Include="..\..\engine\x86helper.cpp" />
-    <ClCompile Include="..\..\engine\x86jitcompiler.cpp" />
-    <ClCompile Include="..\..\engine\syntaxtree.cpp" />
-    <ClCompile Include="..\image.cpp" />
-    <ClCompile Include="..\separser.cpp" />
-    <ClCompile Include="..\win32\elc.cpp" />
-    <ClCompile Include="..\compiler.cpp" />
-    <ClCompile Include="..\project.cpp" />
-    <ClCompile Include="..\..\engine\parsertable.cpp" />
-    <ClCompile Include="..\source.cpp" />
-    <ClCompile Include="..\parser.cpp" />
-    <ClCompile Include="..\derivation.cpp" />
-    <ClCompile Include="..\bcwriter.cpp" />
-    <ClCompile Include="..\win32\linker.cpp" />
-    <ClCompile Include="..\win32\syslibloader.cpp" />
+    <ClCompile Include="..\win32\x86process.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\common\common.h" />
-    <ClInclude Include="..\..\common\tools.h" />
-    <ClInclude Include="..\..\common\streams.h" />
-    <ClInclude Include="..\..\common\files.h" />
-    <ClInclude Include="..\..\common\dump.h" />
-    <ClInclude Include="..\..\common\lists.h" />
     <ClInclude Include="..\..\common\altstrings.h" />
+    <ClInclude Include="..\..\engine\bytecode.h" />
+    <ClInclude Include="..\..\common\common.h" />
     <ClInclude Include="..\..\common\xmlreader.h" />
     <ClInclude Include="..\..\common\config.h" />
-    <ClInclude Include="..\..\engine\bytecode.h" />
-    <ClInclude Include="..\..\engine\compilercommon.h" />
-    <ClInclude Include="..\..\engine\compilerlogic.h" />
+    <ClInclude Include="..\..\common\dump.h" />
     <ClInclude Include="..\..\engine\elena.h" />
     <ClInclude Include="..\..\engine\elenaconst.h" />
-    <ClInclude Include="..\..\engine\amd64jitcompiler.h" />
+    <ClInclude Include="..\..\engine\rtman.h" />
+    <ClInclude Include="..\..\engine\x86jitcompiler.h" />
+    <ClInclude Include="..\elenamachine.h" />
+    <ClInclude Include="..\..\common\files.h" />
     <ClInclude Include="..\..\engine\jitcompiler.h" />
     <ClInclude Include="..\..\engine\jitlinker.h" />
     <ClInclude Include="..\..\engine\libman.h" />
+    <ClInclude Include="..\..\common\lists.h" />
     <ClInclude Include="..\..\engine\loader.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\section.h" />
+    <ClInclude Include="..\..\common\streams.h" />
+    <ClInclude Include="..\..\common\tools.h" />
+    <ClInclude Include="..\win32\x86elenamachine.h" />
     <ClInclude Include="..\..\engine\x86helper.h" />
-    <ClInclude Include="..\..\engine\x86jitcompiler.h" />
-    <ClInclude Include="..\..\engine\syntaxtree.h" />
-    <ClInclude Include="..\compiler.h" />
-    <ClInclude Include="..\elc.h" />
-    <ClInclude Include="..\image.h" />
-    <ClInclude Include="..\project.h" />
-    <ClInclude Include="..\..\engine\parsertable.h" />
-    <ClInclude Include="..\parser.h" />
-    <ClInclude Include="..\derivation.h" />
-    <ClInclude Include="..\errors.h" />
-    <ClInclude Include="..\separser.h" />
-    <ClInclude Include="..\source.h" />
-    <ClInclude Include="..\syntax.h" />
-    <ClInclude Include="..\bcwriter.h" />
-    <ClInclude Include="..\win32\syslibloader.h" />
-    <ClInclude Include="..\win32\linker.h" />
+    <ClInclude Include="..\win32\x86process.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="elc.rc" />
+    <ResourceCompile Include="elenavm11.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

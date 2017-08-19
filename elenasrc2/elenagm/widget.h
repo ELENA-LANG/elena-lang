@@ -44,25 +44,25 @@ public:
 			_parent->readRect(left, top, right, bottom);
 		}		
 	}
-	virtual int setRect(int left, int top, int right, int bottom)
+	virtual int setRect(int/* left*/, int/* top*/, int/* right*/, int/* bottom*/)
 	{
 		return -1;
 	}
-	virtual int setText(const wchar_t* text)
+	virtual int setText(const wchar_t* /*text*/)
 	{
 		return -1;
 	}
    virtual int setNProperty(WidgetProperty prop, int value)
    {
       if (_parent) {
-         _parent->setNProperty(prop, value);
+         return _parent->setNProperty(prop, value);
       }
       else return -1;
    }
    virtual int getNProperty(WidgetProperty prop, int defValue)
    {
       if (_parent) {
-         _parent->getNProperty(prop, defValue);
+         return _parent->getNProperty(prop, defValue);
       }
       else return defValue;
    }

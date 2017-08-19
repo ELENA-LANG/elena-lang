@@ -181,7 +181,7 @@ class DerivationReader : public _DerivationReader
 
    bool generateMethodScope(SNode node, DerivationScope& scope, SNode attributes);
    bool generateSingletonScope(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);
-   bool generateDeclaration(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);
+   bool generateDeclaration(SNode node, DerivationScope& scope, SNode attributes);
    void generateTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);
    void generateTemplateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
    void generateAttributeTemplate(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);

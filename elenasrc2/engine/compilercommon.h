@@ -307,8 +307,6 @@ public:
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
-   virtual ref_t defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2) = 0;
-
    // optimization
    virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef) = 0;
    virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;

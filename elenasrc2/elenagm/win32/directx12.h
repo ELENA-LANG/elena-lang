@@ -79,8 +79,8 @@ public:
 
 	virtual void Init(HWND hWnd);
 
-	virtual void* NewWidget(void* parent, int type) { return NULL; }
-	virtual int CloseWidget(void* handle) { return -1; }
+	virtual void* NewWidget(void* /* parent*/, int/* type*/) { return NULL; }
+	virtual int CloseWidget(void* /* handle*/) { return -1; }
 
 	void OnRender(HWND hWnd);
 	void OnDestroy();

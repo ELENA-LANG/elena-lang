@@ -1714,8 +1714,8 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
             ref_t message = importMessage(argModule, reader.getDWord(), scope.module);
 
             ident_t signature = scope.module->resolveSubject(getAction(message));
-            int start = signature.find('$') + 1;
-            int end = signature.find(start, '$', getlength(signature));
+            size_t start = signature.find('$') + 1;
+            size_t end = signature.find(start, '$', getlength(signature));
             IdentifierString temp(signature.c_str() + start, end - start);
             SNode current = node.firstChild();
             bool first = true;
@@ -1761,54 +1761,6 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
    }
 
    return 0;
-}
-
-// defineOperatorMessage tries to find the best match for the operator
-ref_t CompilerLogic :: defineOperatorMessage(_CompilerScope& scope, ref_t operatorId, int paramCount, ref_t loperand, ref_t roperand, ref_t roperand2)
-{
-   ref_t foundSubjRef = 0;
-
-   //if (loperand != 0 && roperand != 0 && (paramCount == 1 || roperand2 != 0)) {
-   //   ClassInfo info;
-   //   if (defineClassInfo(scope, info, loperand)) {
-   //      // search for appropriate methods
-   //      ClassInfo::MethodMap::Iterator it = info.methods.start();
-   //      while (!it.Eof()) {
-   //         ref_t message = it.key();
-
-   //         ref_t messageSubj = getSignature(message);
-   //         if (getVerb(message) == operatorId && getParamCount(message) == paramCount && messageSubj != 0) {
-   //            if (paramCount == 2) {
-   //               // if the signature contains the two subjects
-   //               ident_t signature(scope.module->resolveSubject(messageSubj));
-   //               size_t index = signature.find('&');
-   //               if (index != NOTFOUND_POS) {
-   //                  IdentifierString subj1(signature, index);
-   //                  IdentifierString subj2(signature.c_str() + index + 1);
-
-   //                  ref_t subj1Ref = scope.module->mapSubject(subj1, true);
-   //                  ref_t subj2Ref = scope.module->mapSubject(subj2, true);
-
-   //                  if (isCompatible(scope, roperand, scope.subjectHints.get(subj1Ref)) && isCompatible(scope, roperand2, scope.subjectHints.get(subj2Ref))) {
-   //                     foundSubjRef = messageSubj;
-
-   //                     break;
-   //                  }
-   //               }
-   //            }
-   //            else if (isCompatible(scope, roperand, scope.subjectHints.get(messageSubj))) {
-   //               foundSubjRef = messageSubj;
-
-   //               break;
-   //            }
-   //         }
-
-   //         it++;
-   //      }
-   //   }
-   //}
-
-   return encodeMessage(operatorId, paramCount);
 }
 
 bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)

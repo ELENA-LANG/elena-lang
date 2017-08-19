@@ -880,8 +880,6 @@ ref_t Compiler::ModuleScope :: mapAttribute(SNode attribute)
 
 ref_t Compiler::ModuleScope :: mapTemplateClass(ident_t templateName)
 {
-   ref_t reference = 0;
-
    ReferenceNs forwardName;
    forwardName.append("'");
    forwardName.append(templateName);
@@ -1030,7 +1028,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
          return ObjectInfo(okLocal, (ref_t)-1, ((ClassScope*)getScope(slClass))->reference);          
       }
       else if (stackSafe && classEmbeddable) {
-         return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference, -1);
+         return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
       }
       else return ObjectInfo(okThisParam, 1);
    }
@@ -1043,7 +1041,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
             return ObjectInfo(okParams, -1 - local, param.class_ref);
          }
          else if (stackSafe && param.class_ref != 0 && param.size != 0) {
-            return ObjectInfo(okParam, -1 - local, param.class_ref, -1);
+            return ObjectInfo(okParam, -1 - local, param.class_ref, (ref_t)-1);
          }
          return ObjectInfo(okParam, -1 - local, param.class_ref);
       }
@@ -2259,7 +2257,6 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
 
       int subject = 0;
       int param = 0;
-      bool firstSubj = true;
       for (size_t i = 0; i < getlength(message); i++) {
          if (message[i] == '.' && extensionRef == 0) {
             signature.copy(message + subject, i - subject);
@@ -2630,7 +2627,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       retVal = assignResult(writer, scope, resultClassRef);
    }
    // if not , replace with appropriate method call
-   else retVal = compileMessage(writer, node, scope, loperand, _logic->defineOperatorMessage(*scope.moduleScope, operator_id, paramCount, loperandRef, roperandRef, roperand2Ref), HINT_NODEBUGINFO);
+   else retVal = compileMessage(writer, node, scope, loperand, encodeMessage(operator_id, paramCount), HINT_NODEBUGINFO);
 
    if (assignMode) {
       if (loperand.kind == okField || loperand.kind == okOuter) {
@@ -3206,7 +3203,7 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
    return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
 }
 
-bool Compiler :: declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode)
+bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode)
 {
    bool lazyExpression = test(mode, HINT_LAZY_EXPR);
 
@@ -3240,7 +3237,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    writer.newNode(lxClass, scope.reference);
 
    ActionScope methodScope(&scope);
-   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, mode);   
+   bool lazyExpression = declareActionScope(scope, argNode, methodScope, mode);   
 
    scope.include(methodScope.message);
 
