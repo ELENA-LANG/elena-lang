@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * why this code is compiled without errors - example::(Signature new literal:methodSignature) eval:5.
-
                  * migrating rosetta samples : Zhang-Suen thinning algorithm
                  * migrating rosetta samples : json
 

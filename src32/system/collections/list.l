@@ -338,6 +338,17 @@ sealed class List :: BaseEnumerable, dispatchable<list>
         theCount := 0.
     ]
 
+    constructor new array:l
+    [
+        theCount := 0.
+        
+        var it := l enumerator.
+        while (it next)
+        [
+            $self append(it get)
+        ].
+    ]
+
     /// Returns the top item
     list_item topItem = theTop.
 
