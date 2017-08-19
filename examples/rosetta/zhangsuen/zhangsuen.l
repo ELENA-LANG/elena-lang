@@ -120,7 +120,7 @@ charmatrix extension zhangsuenOp
             [
                 1 till(self columns - 1) do(:c)
                 [
-                    if (self $proceed(r,c,toWhite,firstStep))
+                    if(self~zhangsuenOp $proceed(r,c,toWhite,firstStep))
                         [ hasChanged := true ].
                 ].
             ].

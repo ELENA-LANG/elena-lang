@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * migrating rosetta samples : Zhang-Suen thinning algorithm
                  * migrating rosetta samples : json
 
                  * embeddable eval[1]
