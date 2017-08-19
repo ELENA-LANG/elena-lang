@@ -166,12 +166,12 @@ extension enumerableOp
 
 //    safeSeek : aValue
 //        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
-//
-//    seek value:aValue
-//        = (:x)[ ^aValue equal:x ] retrieve enumerator:(self enumerator).
+
+    seekFor:aValue
+        = (:x)[ ^aValue equal:x ] retrieve enumerator(self enumerator).
 
     bool ifExists : aValue
-        = $nil != self~enumerableOp seekEach:aValue.
+        = $nil != self~enumerableOp seekFor:aValue.
 
 //    equal enumerable:list
 //    [

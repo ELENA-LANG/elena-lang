@@ -1,6 +1,6 @@
 import system'io.
 //import system'text.
-//import extensions'text.
+import extensions'text.
 
 // --- ReaderEnumerator ---
 
@@ -70,16 +70,16 @@ file_info extension fileExOp
 //        = anAction run enumerator:(ReaderEnumerator new path:self encoder:anEncoder).
 }
 
-//// --- stringExOp ---
-//
-//extension stringExOp
-//{
-//    run eachWord:aFunction
-//        = aFunction run enumerator:(TokenEnumerator new literal:self).
-//        
+// --- stringExOp ---
+
+extension stringExOp
+{
+    forEachWord:aFunction
+        = aFunction run enumerator(TokenEnumerator new literal:self).
+        
 //    run token_dfa:aStatemachine each:aFunction
 //        = aFunction run enumerator:(TokenEnumerator new literal:self token_dfa:aStatemachine).
-//}
+}
 
 // --- printingLn ---
 

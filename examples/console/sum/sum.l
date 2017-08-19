@@ -12,7 +12,7 @@ extension EReader
 {
     loadFrom : aStream
         = aStream readLine; convert to:self
-            | if FormatError: (:e)
+            | if(:e)
                 [
                     console writeLine:(e message); readChar.
                     
@@ -27,8 +27,8 @@ enteredNumber = 'number new; loadFrom:console.
 Program =
 [
     console
-        writeLine:'prompt;
-        writeLine:"The sum is ":(enteredNumber + enteredNumber);
+        printLine:'prompt;
+        printLine("The sum is ",enteredNumber + enteredNumber);
         readChar
 ].
 

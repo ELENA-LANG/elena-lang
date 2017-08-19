@@ -1562,8 +1562,30 @@ class Variant
         aTarget set($self $castValueTo:aTarget).
     ]
 
-    equal : anObject
-        = anObject equal:$self.
+    add : aTarget
+    [
+        aTarget add($self $castValueTo:aTarget).
+    ]
+
+    subtract : aTarget
+    [
+        $self $castValueTo:aTarget; subtract:aTarget.
+    ]
+
+    multiply : aTarget
+    [
+        $self $castValueTo:aTarget; multiply:aTarget.
+    ]
+
+    divide : aTarget
+    [
+        $self $castValueTo:aTarget; divide:aTarget.
+    ]
+
+    equal : aTarget
+    [
+        $self $castValueTo:aTarget; equal:aTarget.
+    ]
 }
 
 // --- Array ---

@@ -3,13 +3,15 @@ In development:
 ------                              
 
               xdev - general implementation
+                 * migrate samples
+
+                 * migrate intsum / realsum
                  * migrating rosetta samples : json
 
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]
 
-                 * migrate samples
                  * migrating rosetta samples : Conway's Game of Life
                  * raise an error if code template is not recognized
                  * fix the bug : duplciate methods are not recognized:
@@ -19,6 +21,9 @@ In development:
                  * elenart : correctly display strong typed message names
                  * elenavm : correctly display strong typed message names
                  * Signature should support only get, set, eval
+                 * migrate GUI samples
+                 * implement closure with explicit class type:
+			| if(&type<FormatException>:e) []
 
               zdev - script engine
                  * migrate Tape

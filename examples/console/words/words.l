@@ -28,12 +28,6 @@ class WordList
     total_words = theTotal.
 
     unique_words = theList length.
-
-    cast : aVerb to:aTarget
-        => theList.
-    
-    cast : aVerb to:aTarget with:aParam
-        => theList.
         
     dispatch => theList.
 }
@@ -61,11 +55,11 @@ Program =
 
     var aList := WordList new.
 
-    aText run eachWord: (:anItem)[ aList append:anItem ].
+    aText forEachWord(:anItem)[ aList append:anItem ].
 
-    console writeLine:"There are ":(aList unique_words):" unique words out of ":(aList total_words).
+    console printLine("There are ",aList unique_words," unique words out of ",aList total_words).
     if (aList total_words > 0)
-        [ console writeLine:"the list of unique words:":(aList ascendant) ].
+        [ console printLine("the list of unique words:",aList ascendant) ].
 
     console readChar // wait for any key
 ].
