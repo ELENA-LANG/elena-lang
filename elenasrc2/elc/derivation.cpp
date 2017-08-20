@@ -1865,7 +1865,8 @@ void DerivationReader :: generateCodeTemplateTree(SyntaxWriter& writer, SNode no
 
          return;
       }
-   }
+      else scope.raiseError(errInvalidHint, node);
+   }   
 
    generateExpressionTree(writer, node, scope);
 }

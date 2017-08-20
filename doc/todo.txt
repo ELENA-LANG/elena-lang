@@ -4,13 +4,18 @@ In development:
 
               xdev - general implementation
                  * raise an error if code template is not recognized
-                 * fix the bug : duplciate methods are not recognized:
-                      stacksafe literal add value:v = v literal.
-                      literal add literal : aLiteral => system'core_routines'__literal.
 
                  * migrate intsum / realsum
                  * migrating rosetta samples : json
 
+                 * fix the bug : duplciate methods are not recognized:
+                      stacksafe literal add value:v = v literal.
+                      literal add literal : aLiteral => system'core_routines'__literal.
+
+              zdev - script engine
+                 * migrate Tape
+
+              xdev - general implementation
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]
@@ -25,7 +30,6 @@ In development:
 			| if(&type<FormatException>:e) []
 
               zdev - script engine
-                 * migrate Tape
                  * optimize dynamic code building
                  * migrate script samples
                  * test vm console operations in IDE
