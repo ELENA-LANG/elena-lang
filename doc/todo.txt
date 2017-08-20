@@ -3,9 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * raise an error if code template is not recognized
-
-                 * migrate intsum / realsum
                  * migrating rosetta samples : json
 
                  * fix the bug : duplciate methods are not recognized:

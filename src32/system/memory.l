@@ -1558,34 +1558,22 @@ class Variant
         } eval:aTarget.
 
     saveTo : aTarget
-    [
-        aTarget set($self $castValueTo:aTarget).
-    ]
+        = aTarget set($self $castValueTo:aTarget).
 
     add : aTarget
-    [
-        aTarget add($self $castValueTo:aTarget).
-    ]
+        = aTarget add($self $castValueTo:aTarget).
 
     subtract : aTarget
-    [
-        $self $castValueTo:aTarget; subtract:aTarget.
-    ]
+        = $self $castValueTo:aTarget; subtract:aTarget.
 
     multiply : aTarget
-    [
-        $self $castValueTo:aTarget; multiply:aTarget.
-    ]
+        = $self $castValueTo:aTarget; multiply:aTarget.
 
     divide : aTarget
-    [
-        $self $castValueTo:aTarget; divide:aTarget.
-    ]
+        = $self $castValueTo:aTarget; divide:aTarget.
 
     equal : aTarget
-    [
-        $self $castValueTo:aTarget; equal:aTarget.
-    ]
+        = $self $castValueTo:aTarget; equal:aTarget.
 }
 
 // --- Array ---
