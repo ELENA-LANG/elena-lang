@@ -34,9 +34,9 @@ symbol startUp =
         [
             try('program eval)
                 {
-                    on(AbortException e) []
-                    
                     on(Exception e) [ console writeLine:(e literal) ]
+                    
+                    on(AbortException e) []                    
                 }.
     
             events $onStop:$nil

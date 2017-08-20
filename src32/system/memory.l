@@ -1705,6 +1705,9 @@ class literalConvertor =
     literal convert(BaseVariable v)
         <= convert(v value).
     
+    literal convert(BaseVariable v, int radix)
+        <= convert(v value, radix).
+    
     /// Converts the parameter to the literal value
     stacksafe convert char:aValue bytearray:buffer vint:length
         => system'core_routines'__literalconvertor.

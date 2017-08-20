@@ -723,23 +723,20 @@ intarray extension intArrayOp
         self write int:anIndex2 int:n1.
     ]
 
-//    set every:anIndexFunc
-//        = self~intArrayOp set nfunc:anIndexFunc.
-//        
-//    set nfunc:anIndexFunc
-//    [
-//        int anIndex := 0.
-//        int aLength := self length.
-//        
-//        while (anIndex < aLength)
-//        [            
-//            self write int:anIndex int:(anIndexFunc eval int:anIndex).
-//            
-//            anIndex := anIndex + 1
-//        ].
-//        
-//        ^ self
-//    ]
+    populate nfunc:anIndexFunc
+    [
+        int anIndex := 0.
+        int aLength := self length.
+        
+        while (anIndex < aLength)
+        [            
+            self write int:anIndex int(anIndexFunc eval int:anIndex).
+            
+            anIndex := anIndex + 1
+        ].
+        
+        ^ self
+    ]
 }
 
 // --- arrayOp ---
@@ -897,39 +894,36 @@ array extension arrayOp
     ]
 }
 
-//// --- intmatrixOp ---
-//
-//intmatrix extension intmatrixOp
-//{
-//    set every_ij:func
-//        = self set nnfunc:func.
-//    
-//    set nnfunc:func
-//    [
-//        int n := 0.
-//        int m := 0.
-//        self readLengthsTo vint:n vint:m.
-//        
-//        int i := 0.
-//        int j := 0.
-//        while (i < n)
-//        [
-//            j := 0.
-//            while (j < m)
-//            [
-//                int v := func eval int:i int:j.
-//                
-//                self write int:i int:j int:v.
-//                
-//                j := j + 1
-//            ].
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self
-//    ]
-//}
+// --- intmatrixOp ---
+
+intmatrix extension intmatrixOp
+{
+    populate nnfunc:func
+    [
+        int n := 0.
+        int m := 0.
+        self readLengthsTo vint:n vint:m.
+        
+        int i := 0.
+        int j := 0.
+        while (i < n)
+        [
+            j := 0.
+            while (j < m)
+            [
+                int v := func eval int:i int:j.
+                
+                self write int:i int:j int:v.
+                
+                j := j + 1
+            ].
+            
+            i := i + 1
+        ].
+        
+        ^ self
+    ]
+}
 
 // --- literalOp ---
 

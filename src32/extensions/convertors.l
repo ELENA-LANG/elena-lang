@@ -1,6 +1,6 @@
 import system'collections.
 import system'routines.
-//import system'calendar.
+import system'calendar.
 import system'text.
 //import system'dynamic.
 
@@ -43,9 +43,9 @@ class literalExConvertor =
         ^ anOutput literal
     ]
 
-//                datetime : aValue = aValue literal.
-//                    
-//                timestamp : aValue = aValue literal.
+    literal convert datetime:aValue = aValue literal.
+        
+    literal convert timestamp:aValue = aValue literal.
 
     literal convert(BaseEnumerable o)
         <= convert enumerator:o.
@@ -62,7 +62,7 @@ class literalExConvertor =
 
 class wideExConvertor =
 {
-    literal convert indexer:it
+    wide convert indexer:it
     [
         textbuffer anOutput := TextBuilder new.
         while (it available)
@@ -80,7 +80,7 @@ class wideExConvertor =
         ^ anOutput wide
     ]
 
-    literal convert enumerator:aList
+    wide convert enumerator:aList
     [
         textbuffer anOutput := TextBuilder new.
 
@@ -94,10 +94,10 @@ class wideExConvertor =
         ^ anOutput wide
     ]
         
-//                datetime : aValue = aValue literal.
-//                    
-//                timestamp : aValue = aValue literal.
-//                
+    literal convert datetime:aValue = aValue wide.
+        
+    literal convert timestamp:aValue = aValue wide.
+                
 //                intmatrix : m
 //                    = intmatrixExConvertor toLiteral intmatrix:m.
 
@@ -303,25 +303,25 @@ extension convertorOp
     toInt
         = intConvertor convert:self.
         
-////    toHexInt
-////        = self cast:%eval to:
-////            {
-////                literal : l = intConvertor convert literal:l base:16.
-////                
-////                wide : l = intConvertor convert wide:l base:16.
-////            }.
-//
+//    toHexInt
+//        = self cast:%eval to:
+//            {
+//                literal : l = intConvertor convert literal:l base:16.
+//                
+//                wide : l = intConvertor convert wide:l base:16.
+//            }.
+
 //    toLong
 //        = longConvertor convert:self.
 //
-////    toHexLong
-////        = self cast:%eval to:
-////            {
-////                literal : l = longConvertor convert literal:l base:16.
-////                
-////                wide : l = longConvertor convert wide:l base:16.
-////            }.
-//    
+//    toHexLong
+//        = self cast:%eval to:
+//            {
+//                literal : l = longConvertor convert literal:l base:16.
+//                
+//                wide : l = longConvertor convert wide:l base:16.
+//            }.
+    
 //    toChar
 //        = charConvertor convert:self.
 
@@ -334,12 +334,12 @@ extension convertorOp
 
 //class convertor 
 //    = { generic : n = Wrap::(n, convertorOp)~$subject get. }.
-//
-//datetime extension dateFormatterOp 
-//{
-//    toShortTimeLiteral
-//        = self __time_st; toShortTime; literal.
-//}
+
+datetime extension dateFormatterOp 
+{
+    toShortTimeLiteral
+        = self __time_st; toShortTime; literal.
+}
 
 /// obsolete
 symbol String = extensions'text'StringWriter.

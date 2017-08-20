@@ -5,9 +5,9 @@ import extensions'text.
 
 Program =
 [
-    var aText := console write:"Enter the text:"; readLineTo:(String new).
-    var aSearchText := console write:"Enter the phrase to be found:"; readLine.  
-    var aReplaceText := console write:"Enter the phrase to replace with:"; readLine.
+    var aText := console print:"Enter the text:"; readLineTo(String new).
+    var aSearchText := console print:"Enter the phrase to be found:"; readLine.  
+    var aReplaceText := console print:"Enter the phrase to replace with:"; readLine.
 
     var aBM := StringBookmark new:aText.
 
@@ -17,6 +17,6 @@ Program =
     ].
 
     console
-        writeLine:"The resulting text:":aBM;
+        printLine("The resulting text:",aBM);
         readChar. // wait for any key
 ].

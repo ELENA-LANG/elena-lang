@@ -6,7 +6,7 @@ program =
     if ('program'arguments length == 1)
         [  console writeLine:"Please provide the path to the file to view". AbortException new; raise ].
 
-    'program'arguments@1 file_path; run eachLine:printingLn.
+    File new('program'arguments[1]); forEachLine:printingLn.
   
     console readChar. // wait for any key
 ].

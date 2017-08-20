@@ -173,25 +173,25 @@ extension enumerableOp
     bool ifExists : aValue
         = $nil != self~enumerableOp seekFor:aValue.
 
-//    equal enumerable:list
-//    [
-//        ifnot (self length == list length)
-//            [ ^ false ].
-//            
-//        enumerator it1 := self enumerator.
-//        enumerator it2 := list enumerator.
-//        
-//        while (it1 next)
-//        [
-//            it2 next.
-//            
-//            ifnot (it1 get safeEqual:(it2 get))
-//                [ ^ false ]
-//        ].
-//        
-//        ^ true
-//    ]
-//             
+    equal enumerable:list
+    [
+        ifnot (self length == list length)
+            [ ^ false ].
+            
+        enumerator it1 := self enumerator.
+        enumerator it2 := list enumerator.
+        
+        while (it1 next)
+        [
+            it2 next.
+            
+            ifnot (it1 get safeEqual:(it2 get))
+                [ ^ false ]
+        ].
+        
+        ^ true
+    ]
+             
 //    sequenceEqual:list
 //        = self~enumerableOp equal enumerable:list.
                                                   
@@ -417,13 +417,6 @@ extension indexableOp
 
 // --- stringListOp ---
 
-//class stringListOpDispatcher =
-//{
-//    eval literal:aLiteral = literalListOp.
-//    
-//    eval wide:aLiteral = wideListOp.
-//}.
-
 singleton $stringController =
 {
     split literal:l char:ch
@@ -442,20 +435,6 @@ singleton $stringController =
 
 extension stringListOp
 {
-//    array split char:aChar
-//    [
-//        var dispatcher := self cast:%eval to:stringListOpDispatcher.
-//        
-//        ^ self~dispatcher split char:aChar.
-//    ]
-    
-//    split literal:aValue
-//    [
-//        var dispatcher := self cast:%eval to:stringListOpDispatcher.
-//        
-//        ^ self~dispatcher split literal:aValue.
-//    ]
-    
     split by:aSplitter
         = $stringController split(self, aSplitter).
 }

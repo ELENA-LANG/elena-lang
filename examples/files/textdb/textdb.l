@@ -53,9 +53,9 @@ class Record
 
     literal
         = StringWriter new;
-            writeLine:"Name:":theName;
-            writeLine:"Age:":theAge;
-            writeLine:"Phone:":thePhone.
+            printLine("Name:",theName);
+            printLine("Age:",theAge);
+            printLine("Phone:",thePhone).
 }
 
 // --- Program ---
@@ -65,17 +65,17 @@ Program =
     if ('program'arguments length == 1)
         [  console << "Please provide the path to the file to view". AbortException new; raise ].
 
-    var aDB := List new; append:(Record new).
+    var aDB := List new; append(Record new).
     
-    'program'arguments@1 file_path; run eachLine: (:aLine)
+    File new('program'arguments[1]); forEachLine(:aLine)
     [
         if (aLine length == 0)
             [ aDB append:(Record new). ];
             [
                 // split record line                    
                 var aKeyValue := aLine split by:":".
-                var aName  := aKeyValue@0.
-                var aValue := aKeyValue@1.
+                var aName  := aKeyValue[0].
+                var aValue := aKeyValue[1].
 
                 // update field
                 var aSubj := aName Unserialized.
@@ -85,7 +85,7 @@ Program =
     ].
     
     // print the list
-    aDB run each:printingLn.
+    aDB forEach:printingLn.
 
     console readChar.
 ].

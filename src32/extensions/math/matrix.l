@@ -2,13 +2,8 @@ import system'dynamic.
 import system'text.
 import extensions.
 
-class MatrixException :: exceptionof(MatrixError)
+class MatrixException :: Exception
 {
-    constructor new : message
-    [
-        theMessage := message literal.
-        theCallStack := CallStack new.
-    ]
 }
 
 realmatrix extension matrixOp
@@ -42,10 +37,7 @@ realmatrix extension matrixOp
         ^ r
     ]
     
-    set every_ij:aFunction
-        = self~matrixOp set nnfunc:(aFunction nnfunc).
-    
-    set nnfunc:aFunction
+    populate nnfunc:aFunction
     [
         int i := 0.
         int j := 0.
@@ -71,7 +63,7 @@ realmatrix extension matrixOp
     ]
     
     add : anObject
-        = self~matrixOp add realmatrix:(anObject realmatrix).
+        = self~matrixOp add realmatrix(anObject realmatrix).
     
     add realmatrix:b
     [
@@ -142,7 +134,7 @@ realmatrix extension matrixOp
                 self read int:i int:j vreal:r1.
                 b read int:i int:j vreal:r2.
                 
-                r write int:i int:j real:(r1 - r2).
+                r write int:i int:j real(r1 - r2).
                 
                 j := j + 1
             ].
@@ -154,7 +146,7 @@ realmatrix extension matrixOp
     ]
     
     multiply : anObject
-        = self~matrixOp multiply realmatrix:(anObject realmatrix).
+        = self~matrixOp multiply realmatrix(anObject realmatrix).
     
     multiply realmatrix:b
     [
@@ -227,7 +219,7 @@ realmatrix extension matrixOp
 
         // permutation matrix
         intarray pm := IntArray new int:n.
-        pm set nfunc: (&int:i) [ ^i ].
+        pm populate(&int:i) [ ^i ].
 
         // each column, j is counter for coulmns
         int  max_col := 0.
@@ -360,12 +352,12 @@ realmatrix extension matrixOp
                 real r := 0.0r.
                 self read int:i int:j vreal:r.
                 
-                anOutput writeLiteral:(RealNumber new real:r):",".
+                anOutput print(RealNumber new real:r,",").
                 
                 j := j + 1
             ].
             anOutput readLengthTo vint:l.            
-            anOutput setLength int:(l - 1).
+            anOutput setLength int(l - 1).
             
             anOutput write:'newLine.
             

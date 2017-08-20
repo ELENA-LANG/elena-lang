@@ -46,10 +46,10 @@ Transliteration = (:aText)
 [
     var anOutput := TextBuffer new.
     
-    aText run each: (:aChar)
+    aText forEach(:aChar)
     [
-        var aRule := rusLatRules seek each:
-            (:x) [ ^x from == aChar literal ].
+        var aRule := rusLatRules seekEach
+            (:x)( x from == aChar literal ).
                 
         if ($nil == aRule)
             [ anOutput << aChar. ];

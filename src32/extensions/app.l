@@ -19,7 +19,7 @@ class $ProgramLoop
     eval
     [
         // if grettings is not defined - do nothing
-        console writeLine:(theControl greeting) \ back:$nil.
+        console writeLine(theControl greeting) \ back:$nil.
         
         var aPrompt := theControl prompt.
         
@@ -27,7 +27,7 @@ class $ProgramLoop
         [
             console write:aPrompt.
             
-            console writeLine:(theControl proceed:(console readLine)).
+            console writeLine(theControl proceed(console readLine)).
         ].
     ]
 }

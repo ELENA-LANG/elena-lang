@@ -17,23 +17,23 @@ class Matrix
     ]
     
     constructor new n:anN name:aName
-        <= new realmatrix:(RealMatrix new:anN:anN; set every_ij: (&int:i &int:j)
+        <= new realmatrix(RealMatrix new(anN,anN); populate(&int:i &int:j)
             [  
-                ^ console writeLiteral:"Enter ":aName:"[":i:",":j:"]="; readLineTo:(Real new)
+                ^ console print("Enter ",aName,"[",i,",",j,"]="); readLineTo(Real new)
             ]).
     
     constructor newIdentity n:anN
-        <= new realmatrix:(RealMatrix new:anN:anN; set every_ij: (&int:i &int:j)
-            [ ^(i == j)iif:1:0 ]).
+        <= new realmatrix(RealMatrix new(anN,anN); populate(&int:i &int:j)
+            ( (i == j)iif(1,0) )).
     
     add : aMatrix
-        = Matrix new realmatrix:(theMatrix add:aMatrix).
+        = Matrix new realmatrix(theMatrix add:aMatrix).
 
     subtract : aMatrix
-        = Matrix new realmatrix:(theMatrix subtract:aMatrix).
+        = Matrix new realmatrix(theMatrix subtract:aMatrix).
 
     multiply : aMatrix
-        = Matrix new realmatrix:(theMatrix multiply:aMatrix).
+        = Matrix new realmatrix(theMatrix multiply:aMatrix).
     
     dispatch => theMatrix.
 }
@@ -57,7 +57,7 @@ control =
             "1"
             [
                 console write:"Enter the order of matrix: ".
-                var N := console readLineTo:(Integer new).
+                var N := console readLineTo(Integer new).
                 
                 var aMatrixA := Matrix new n:N name:"A".
                 
@@ -73,7 +73,7 @@ control =
             ];
             "2" [
                 console write:"Enter the order of matrix: ".
-                var N := console readLineTo:(Integer new).
+                var N := console readLineTo(Integer new).
                 
                 var aMatrixA := Matrix new n:N name:"A".
                 
@@ -89,7 +89,7 @@ control =
             ];
             "3" [
                 console write:"Enter the order of matrix: ".
-                var N := console readLineTo:(Integer new).
+                var N := console readLineTo(Integer new).
                 
                 var aMatrixA := Matrix new n:N name:"A".
                 
@@ -105,7 +105,7 @@ control =
             ];
             "4" [
                 console write:"Enter the order of matrix: ".
-                var N := console readLineTo:(Integer new).
+                var N := console readLineTo(Integer new).
 
                 realmatrix aMatrixA := Matrix new n:N name:"A".
                                 
@@ -115,7 +115,7 @@ control =
             ];
             "5" [
                 console write:"Enter the order of matrix: ".
-                var N := console readLineTo:(Integer new).
+                var N := console readLineTo(Integer new).
 
                 realmatrix identity := Matrix newIdentity n:N.
 

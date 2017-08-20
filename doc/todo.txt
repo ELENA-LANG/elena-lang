@@ -3,7 +3,10 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * migrate samples
+                 * raise an error if code template is not recognized
+                 * fix the bug : duplciate methods are not recognized:
+                      stacksafe literal add value:v = v literal.
+                      literal add literal : aLiteral => system'core_routines'__literal.
 
                  * migrate intsum / realsum
                  * migrating rosetta samples : json
@@ -13,10 +16,6 @@ In development:
                  * embeddable eval[2]
 
                  * migrating rosetta samples : Conway's Game of Life
-                 * raise an error if code template is not recognized
-                 * fix the bug : duplciate methods are not recognized:
-                      stacksafe literal add value:v = v literal.
-                      literal add literal : aLiteral => system'core_routines'__literal.
 
                  * elenart : correctly display strong typed message names
                  * elenavm : correctly display strong typed message names
@@ -30,6 +29,9 @@ In development:
                  * optimize dynamic code building
                  * migrate script samples
                  * test vm console operations in IDE
+
+              xdev - general implementation
+                 * migrate samples
 
               xdev - general implementation
                  * declaring an array field
@@ -120,6 +122,9 @@ In development:
                        symbol plotter = { .. }.
                  * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
                    (e.g. vhdc), it should be declared when it is used
+
+              sdev - console samples
+                 * test matrix determinant
 
               xdev - general optimization  
                  * opimized alt operator implementation : resolve it in compile-time if the operand is known

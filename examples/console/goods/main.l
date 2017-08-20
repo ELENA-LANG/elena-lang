@@ -23,7 +23,7 @@ class Record
 
     literal
     [
-        ^ StringWriter new; writeLiteral:"Name:":theName:" Price:":thePrice.
+        ^ StringWriter new; print("Name:",theName," Price:",thePrice).
     ]
 }
 
@@ -67,12 +67,12 @@ class Adapter
 program = 
 [
     ('program'arguments length == 1)?
-        [  console writeLine:"Please provide the path to the file to view". AbortException new; raise. ].
+        [  console printLine("Please provide the path to the file to view"). AbortException new; raise. ].
 
     var aList := List new.
     var anAdapter := Adapter new.
 
-    'program'arguments@1 file_path; run eachLine: (:aLine)
+    File new('program'arguments[1]); forEachLine(:aLine)
     [
         anAdapter write:aLine.
 
@@ -83,11 +83,11 @@ program =
         [
             anAdapter read:aPrice.
         
-            aList append:(Record new Price:(aPrice get) Name:(aName get)).
+            aList append(Record new Price(aPrice value) Name(aName value)).
         ].
     ].
 
-    aList run each:printingLn.
+    aList forEach:printingLn.
 
     console readChar
 ].

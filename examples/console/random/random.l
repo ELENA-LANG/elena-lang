@@ -17,12 +17,12 @@ program =
     var intCounts := IntArray new:distGroupCount.
     var realCounts := IntArray new:distGroupCount.
 
-    console writeLine:"Random reals:".
-    0 till:rows doEach: (:i)
+    console printLine:"Random reals:".
+    0 till:rows do(:i)
     [
-        0 to:cols doEach: (:j)
+        0 to:cols do(:j)
         [
-            console print:(randomGenerator nextReal) paddingRight:12.
+            console printPaddingRight(12, randomGenerator nextReal).
         ].
         
         console writeLine.
@@ -30,11 +30,11 @@ program =
 
     console writeLine.
     console writeLine:"Random integers:".
-    0 till:rows doEach: (:i)
+    0 till:rows do(:i)
     [
-        0 to:cols doEach: (:j)
+        0 to:cols do(:j)
         [
-            console print:(randomGenerator nextInt) paddingRight:12.
+            console printPaddingRight(12, randomGenerator nextInt).
         ].
         
         console writeLine.
@@ -43,26 +43,26 @@ program =
     console writeLine.
     console writeLine:"Distribution".
 
-    0 till:runCount doEach: (:i)
+    0 till:runCount do(:i)
     [
         var index := (randomGenerator nextInt / intGroupSize) toInt.
         if(index < distGroupCount)
-            [ intCounts@index := intCounts@index + 1. ].
+            [ intCounts[index] := intCounts[index] + 1. ].
         
         index := (randomGenerator nextReal * distGroupCount) toInt.
         if(index < distGroupCount)
-            [ realCounts@index := realCounts@index + 1. ].
+            [ realCounts[index] := realCounts[index] + 1. ].
     ].    
 
-    0 till:distGroupCount doEach: (:i)
+    0 till:distGroupCount do(:i)
     [
-        console print:((i * intGroupSize) toInt; literal):"-" paddingLeft:12.
-        console print:(((i + 1) * intGroupSize - 1) toInt; literal) paddingLeft:12.
-        console print:(intCounts@i literal) paddingLeft:12.
+        console printPaddingLeft(12, (i * intGroupSize) toInt,"-").
+        console printPaddingLeft(12, ((i + 1) * intGroupSize - 1) toInt).
+        console printPaddingLeft(12, intCounts[i]).
 
-        console print:((i real / distGroupCount) literal):"-" paddingLeft:14.
-        console print:(((i + 1) real / distGroupCount) literal) paddingLeft:12.
-        console print:(realCounts@i literal) paddingLeft:12.
+        console printPaddingLeft(14, i real / distGroupCount,"-").
+        console printPaddingLeft(12, (i + 1) real / distGroupCount).
+        console printPaddingLeft(12, realCounts[i]).
                 
         console writeLine.
     ].
