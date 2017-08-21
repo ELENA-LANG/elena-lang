@@ -243,6 +243,7 @@ enum LexicalType
    lxStaticAttr      = 0x2003B,
    lxTemplateParent  = 0x2003C,
    lxTemplateBoxing  = 0x2003D,
+   lxParentLists     = 0x2003E,
 
    lxTempAttr        = 0x2010D,
 };

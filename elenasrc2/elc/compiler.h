@@ -964,6 +964,7 @@ public:
    virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
+   virtual void inheritListMembers(_CompilerScope& scope, ref_t parentListRef, ref_t listRef);
 
    Compiler(_CompilerLogic* logic);
 };

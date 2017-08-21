@@ -568,7 +568,12 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
          if (current == lxAccumulator) {
             ref_t listRef = lists.get(current.argument);
             if (!listRef) {
+               ref_t parentListRef = info.methodHints.get(Attribute(current.argument, maAccumulationList));
                listRef = scope.mapAnonymous();
+               if (parentListRef != 0) {
+                  current.appendNode(lxParentLists, parentListRef);
+               }
+
                info.methodHints.exclude(Attribute(current.argument, maAccumulationList));
                info.methodHints.add(Attribute(current.argument, maAccumulationList), listRef);
 

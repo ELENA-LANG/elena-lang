@@ -4,6 +4,7 @@ In development:
 
               xdev - general implementation
                  * implementing accumulator methods
+                 * review accumulator methods
                  * JITLinker::resolveConstant - for mskConstArray, vmt should be array or super?
                  * support sealed accumulator methods
                  * implementing #348

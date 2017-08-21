@@ -4542,9 +4542,15 @@ void Compiler :: compileAccumulator(SNode node, MethodScope& scope)
 
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
+   ref_t listRef = classScope->info.methodHints.get(Attribute(node.argument, maAccumulationList));
+
+   SNode parentList = node.findChild(lxParentLists);
+   if (parentList != lxNone) {
+      inheritListMembers(*scope.moduleScope, parentList.argument, listRef);
+   }
+
    if (retVal.kind == okConstantClass) {
-      generateListMember(*scope.moduleScope, classScope->info.methodHints.get(Attribute(node.argument, maAccumulationList)), 
-         lxConstantClass, retVal.param);
+      generateListMember(*scope.moduleScope, listRef, lxConstantClass, retVal.param);
    }
    else scope.raiseError(errIllegalOperation, node);
 }
@@ -6643,7 +6649,7 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
       codeNode.appendNode(lxTarget, parentRef);
 }
 
-void Compiler ::injectVirtualAccumulator(_CompilerScope& scope, SNode classNode, ref_t message, ref_t listRef)
+void Compiler :: injectVirtualAccumulator(_CompilerScope& scope, SNode classNode, ref_t message, ref_t listRef)
 {
    _Memory* section = scope.module->mapSection(listRef | mskRDataRef, false);
    if (section->Length() == 0) {
@@ -6655,4 +6661,22 @@ void Compiler ::injectVirtualAccumulator(_CompilerScope& scope, SNode classNode,
 
    SNode codeNode = methNode.appendNode(lxReturning);
    codeNode.appendNode(lxConstantList, listRef);
+}
+
+void Compiler :: inheritListMembers(_CompilerScope& scope, ref_t parentListRef, ref_t listRef)
+{
+   _Memory* section = scope.module->mapSection(listRef | mskRDataRef, false);
+
+   _Memory* parentSection = scope.module->mapSection(parentListRef | mskRDataRef, false);
+
+   MemoryWriter writer(section);
+   MemoryReader reader(parentSection);
+   writer.read(&reader, parentSection->Length());
+   // resolve section references
+   _ELENA_::RelocationMap::Iterator it(parentSection->getReferences());
+   while (!it.Eof()) {
+      section->addReference(it.key(), *it);
+
+      it++;
+   }
 }
