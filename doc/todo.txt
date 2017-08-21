@@ -3,14 +3,23 @@ In development:
 ------                              
 
               xdev - general implementation
+                 * implementing accumulator methods
+                 * JITLinker::resolveConstant - for mskConstArray, vmt should be array or super?
+                 * support sealed accumulator methods
+                 * implementing #348
+
+              xdev - general implementation
+                 * implementing #347
+
+              zdev - script engine
+                 * migrate Tape
+
+              xdev - general implementation
                  * migrating rosetta samples : json
 
                  * fix the bug : duplciate methods are not recognized:
                       stacksafe literal add value:v = v literal.
                       literal add literal : aLiteral => system'core_routines'__literal.
-
-              zdev - script engine
-                 * migrate Tape
 
               xdev - general implementation
                  * embeddable eval[1]
@@ -206,6 +215,7 @@ Pipeline:
                  * #302 - byte array field : writing / reading / boxing / unboxing
                  * uncomment WSADATA structure
                  * no need to copy to the buffer field / variable / method attributes
+                 * get rid of listable attribute, use accumulators for bool values
 
               xdev - native code optimization
                  * use rep stos to clear the object after creating      

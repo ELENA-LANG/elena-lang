@@ -3933,6 +3933,17 @@ template<class Iterator> Iterator retrieveIt(Iterator it, int value)
    return it;
 }
 
+template<class Iterator> Iterator retrieveIt(Iterator it, ref_t value)
+{
+   while (!it.Eof()) {
+      if (*it == value)
+         return it;
+
+      it++;
+   }
+   return it;
+}
+
 template<class Iterator> const char* retrieve(Iterator it, const char* value, const char* defaultValue)
 {
    while (!it.Eof()) {

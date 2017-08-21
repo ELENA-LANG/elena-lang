@@ -327,7 +327,7 @@ bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compil
 
       while (true) {
          extModule = scope.loadReferenceModule(reference);
-         listSection = extModule ? extModule->mapSection(reference | mskConstArray, true) : NULL;
+         listSection = extModule ? extModule->mapSection(reference | mskRDataRef, true) : NULL;
 
          if (listSection == NULL && info.header.parentRef != 0) {
             reference = info.header.parentRef;
@@ -531,7 +531,7 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
 {
    // generate enumeration list
    if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
-      compiler.generateEnumListMember(scope, info.header.parentRef, classRef);
+      compiler.generateListMember(scope, info.header.parentRef, classRef);
    }
 
    // generate structure embeddable constructor
@@ -557,6 +557,27 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
       }
       if (found) {
          compiler.injectEmbeddableConstructor(node, encodeVerb(NEW_MESSAGE_ID), encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
+      }
+   }
+
+   // generate accumulating methods
+   if (!test(info.header.flags, elClassClass) && node.existChild(lxAccumulator)) {
+      Map<ref_t, ref_t> lists;
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         if (current == lxAccumulator) {
+            ref_t listRef = lists.get(current.argument);
+            if (!listRef) {
+               listRef = scope.mapAnonymous();
+               info.methodHints.exclude(Attribute(current.argument, maAccumulationList));
+               info.methodHints.add(Attribute(current.argument, maAccumulationList), listRef);
+
+               compiler.injectVirtualAccumulator(scope, node, current.argument, listRef);
+
+               lists.add(current.argument, listRef);
+            }
+         }
+         current = current.nextNode();
       }
    }
 }
@@ -1073,6 +1094,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
          return true;
       case V_MULTI:
          attrValue = tpMultimethod;
+         return true;
+      case V_ACCCUMULATOR:
+         attrValue = tpAccumulator;
          return true;
       default:
          return false;

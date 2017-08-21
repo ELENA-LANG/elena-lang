@@ -2114,7 +2114,11 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
    ident_t token = terminal.identifier();
 
    ObjectInfo object;
-   if (terminal==lxLiteral) {
+   if(terminal == lxConstantList) {
+      // HOTFIX : recognize predefined constant lists
+      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
+   }
+   else if (terminal==lxLiteral) {
       object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token));
    }
    else if (terminal == lxWide) {
@@ -3675,6 +3679,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
             else if (test(current.type, lxTerminalMask) && nextChild == lxNone) {
                objectInfo = compileObject(writer, current, scope, mode);
             }
+            else if (current == lxConstantList) {
+               objectInfo = compileObject(writer, current, scope, mode);
+            }
             else objectInfo = compileObject(writer, node, scope, mode);
             break;
          }
@@ -4524,6 +4531,24 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
    }
 }
 
+void Compiler :: compileAccumulator(SNode node, MethodScope& scope)
+{
+   SyntaxTree buffer;
+   SyntaxWriter writer(buffer);
+
+   CodeScope codeScope(&scope);
+
+   ObjectInfo retVal = compileExpression(writer, node.findChild(lxReturning), codeScope, 0);
+
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   if (retVal.kind == okConstantClass) {
+      generateListMember(*scope.moduleScope, classScope->info.methodHints.get(Attribute(node.argument, maAccumulationList)), 
+         lxConstantClass, retVal.param);
+   }
+   else scope.raiseError(errIllegalOperation, node);
+}
+
 void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
    writer.newNode(lxClassMethod, scope.message);
@@ -4757,6 +4782,16 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
             }
             break;
          }
+         case lxAccumulator:
+         {
+            MethodScope methodScope(&scope);
+            methodScope.message = current.argument;
+            initialize(scope, methodScope);
+
+            compileAccumulator(current, methodScope);
+
+            break;
+         }
       }
 
       current = current.nextNode();
@@ -4947,11 +4982,20 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
          declareArgumentList(current, methodScope);
          current.setArgument(methodScope.message);
 
-         if (test(methodScope.hints, tpConstructor))
-            current = lxConstructor;
+         if (test(methodScope.hints, tpAccumulator)) {
+            if (getParamCount(current.argument) > 0 || !current.existChild(lxReturning))
+               scope.raiseError(errIllegalMethod, current);
 
-         if (!_logic->validateMessage(methodScope.message, false))
-            scope.raiseError(errIllegalMethod, current);
+            // if it is an accumulation list expression
+            current = lxAccumulator;
+         }
+         else {
+            if (test(methodScope.hints, tpConstructor))
+               current = lxConstructor;
+
+            if (!_logic->validateMessage(methodScope.message, false))
+               scope.raiseError(errIllegalMethod, current);
+         }
       }
       current = current.nextNode();
    }
@@ -6442,11 +6486,18 @@ ModuleInfo Compiler :: createModule(ident_t name, _ProjectManager& project, bool
    return info;
 }
 
-void Compiler :: generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)
+void Compiler :: generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)
 {
-   MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskConstArray, false));
+   MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskRDataRef, false));
 
    metaWriter.writeDWord(memberRef | mskConstantRef);
+}
+
+void Compiler :: generateListMember(_CompilerScope& scope, ref_t listRef, LexicalType type, ref_t argument)
+{
+   MemoryWriter writer(scope.module->mapSection(listRef | mskRDataRef, false));
+
+   _writer.generateConstantMember(writer, type, argument);
 }
 
 void Compiler :: generateOverloadListMember(_CompilerScope& scope, ref_t listRef, ref_t messageRef)
@@ -6590,4 +6641,18 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
    SNode codeNode = methNode.appendNode(lxResendExpression, resendMessage);
    if (parentRef)
       codeNode.appendNode(lxTarget, parentRef);
+}
+
+void Compiler ::injectVirtualAccumulator(_CompilerScope& scope, SNode classNode, ref_t message, ref_t listRef)
+{
+   _Memory* section = scope.module->mapSection(listRef | mskRDataRef, false);
+   if (section->Length() == 0) {
+      section->addReference(scope.arrayReference | mskVMTRef, (pos_t)-4);
+   }
+
+   SNode methNode = classNode.appendNode(lxClassMethod, message);
+   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
+
+   SNode codeNode = methNode.appendNode(lxReturning);
+   codeNode.appendNode(lxConstantList, listRef);
 }

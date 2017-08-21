@@ -5281,6 +5281,26 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStat
    else endSymbol(tape);
 }
 
+void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument)
+{
+   switch (type) {
+      case lxConstantChar:
+      case lxConstantClass:
+      case lxConstantInt:
+      case lxConstantLong:
+      case lxConstantList:
+      case lxConstantReal:
+      case lxConstantString:
+      case lxConstantWideStr:
+      case lxConstantSymbol:
+         writer.writeRef(argument | defineConstantMask(type), 0);
+         break;
+      case lxNil:
+         writer.writeDWord(0);
+         break;
+   }
+}
+
 void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t reference)
 {
    SNode target = node.findChild(lxTarget);
@@ -5288,22 +5308,9 @@ void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t r
    SNode current = node.firstChild();
    while (current != lxNone) {
       SNode object = current.findSubNodeMask(lxObjectMask);
-      switch (object.type) {
-         case lxConstantChar:
-         case lxConstantClass:
-         case lxConstantInt:
-         case lxConstantLong:
-         case lxConstantList:
-         case lxConstantReal:
-         case lxConstantString:
-         case lxConstantWideStr:
-         case lxConstantSymbol:
-            writer.writeRef(object.argument | defineConstantMask(object.type), 0);
-            break;
-         case lxNil:
-            writer.writeDWord(0);
-            break;
-      }
+
+      generateConstantMember(writer, object.type, object.argument);
+
       current = current.nextNode();
    }
 
