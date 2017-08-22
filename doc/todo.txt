@@ -5,6 +5,7 @@ In development:
               xdev - general implementation
                  * support : "object theField := 1."
 
+                 * implementing #266
                  * support : "static object theField."           // - for every class its own copy
                  * support : "sealed static object theField."    // - one copy for all classes
 
@@ -28,6 +29,7 @@ In development:
 
               xdev - general implementation
                  * implementing #347
+                 * implementing #350
 
               zdev - script engine
                  * migrate Tape
