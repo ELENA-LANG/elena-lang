@@ -4744,7 +4744,7 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
    writer.closeNode();
 }
 
-void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope)
+void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope)
 {
    writer.newNode(lxClassMethod, scope.message);
 
@@ -4820,8 +4820,8 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
                declareArgumentList(current, methodScope);
 
                initialize(scope, methodScope);
-
-               if (methodScope.message == encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE) {
+               
+               if (methodScope.message == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
                   // if it is in-place class member initialization
                   compileImplicitConstructor(writer, current, methodScope);
                }
@@ -4862,7 +4862,7 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
       if (test(classScope.info.header.flags, elDynamicRole)) {
          compileDynamicDefaultConstructor(writer, methodScope);
       }
-      else compileDefaultConstructor(writer, methodScope, classClassScope);
+      else compileDefaultConstructor(writer, methodScope);
    }
 
    SNode current = node.firstChild();

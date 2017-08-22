@@ -859,7 +859,7 @@ private:
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
    void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
-   void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
+   void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
    void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 ////   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 

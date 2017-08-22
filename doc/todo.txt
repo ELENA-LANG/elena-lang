@@ -19,6 +19,7 @@ In development:
                  * implementing #349
                  * test: "int test := 3." - in the root
                  * test: "test." - in the root / class
+                 * field initialization and property??
 
               xdev - general implementation
                  * implementing accumulator methods
