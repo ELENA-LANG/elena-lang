@@ -4763,11 +4763,32 @@ void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& sc
       writer.closeNode();
    }
 
-   if (classScope->info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
-      // call the field in-place initialization
-      writer.newNode(lxCalling, encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE);
-      writer.appendNode(lxTarget, classScope->reference);
-      writer.closeNode();
+   ref_t implicitMessage = encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE;
+   if (classScope->info.methods.exist(implicitMessage)) {
+      if (classScope->info.methods.exist(implicitMessage, true)) {
+         // call the field in-place initialization
+         writer.newNode(lxCalling, implicitMessage);
+         writer.appendNode(lxTarget, classScope->reference);
+         writer.closeNode();
+      }
+      else {
+         ref_t parentRef = classScope->info.header.parentRef;         
+         while (parentRef != 0) {
+            // call the parent field in-place initialization
+            ClassInfo parentInfo;
+            _logic->defineClassInfo(*scope.moduleScope, parentInfo, parentRef);
+
+            if (parentInfo.methods.exist(implicitMessage, true)) {
+               writer.newNode(lxCalling, implicitMessage);
+               writer.appendNode(lxTarget, parentRef);
+               writer.closeNode();
+
+               break;
+            }
+
+            parentRef = parentInfo.header.parentRef;
+         }
+      }
    }
 
    writer.closeNode();
