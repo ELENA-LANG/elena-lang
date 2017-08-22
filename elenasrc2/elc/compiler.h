@@ -856,10 +856,10 @@ private:
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
-   void compileAccumulator(SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
+   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
-   void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
+   void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
    void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 ////   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
@@ -957,7 +957,6 @@ public:
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
    virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
-   virtual void injectVirtualAccumulator(_CompilerScope& scope, SNode classNode, ref_t message, ref_t listRef);
 //   virtual void injectFieldExpression(SyntaxWriter& writer);
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);

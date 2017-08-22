@@ -4199,8 +4199,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          if (paramCount == 1 && emptystr(messageStr)) {
             flags |= CONVERSION_MESSAGE;
          }
-         else if (emptystr(messageStr) && paramCount == 0 && test(scope.getClassFlags(false), elNestedClass)) {
-            // if it is an implicit nested constructor
+         else if (emptystr(messageStr) && paramCount == 0) {
+            // if it is an implicit in-place constructor
             flags |= CONVERSION_MESSAGE;
             actionRef = NEWOBJECT_MESSAGE_ID;
          }
@@ -4531,30 +4531,6 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
    }
 }
 
-void Compiler :: compileAccumulator(SNode node, MethodScope& scope)
-{
-   SyntaxTree buffer;
-   SyntaxWriter writer(buffer);
-
-   CodeScope codeScope(&scope);
-
-   ObjectInfo retVal = compileExpression(writer, node.findChild(lxReturning), codeScope, 0);
-
-   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-
-   ref_t listRef = classScope->info.methodHints.get(Attribute(node.argument, maAccumulationList));
-
-   SNode parentList = node.findChild(lxParentLists);
-   if (parentList != lxNone) {
-      inheritListMembers(*scope.moduleScope, parentList.argument, listRef);
-   }
-
-   if (retVal.kind == okConstantClass) {
-      generateListMember(*scope.moduleScope, listRef, lxConstantClass, retVal.param);
-   }
-   else scope.raiseError(errIllegalOperation, node);
-}
-
 void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
    writer.newNode(lxClassMethod, scope.message);
@@ -4620,6 +4596,60 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    }
    
    writer.appendNode(lxParamCount, paramCount + scope.rootToFree);
+   writer.appendNode(lxReserved, scope.reserved);
+   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
+
+   writer.closeNode();
+}
+
+void Compiler :: compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elRole));
+
+   int preallocated = 0;
+
+   CodeScope codeScope(&scope);
+
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   if (checkMethod(*scope.moduleScope, classScope->info.header.parentRef, scope.message) != tpUnknown) {
+      // check if the parent has implicit constructor - call it
+      writer.newNode(lxCalling, scope.message);
+      writer.appendNode(lxTarget, classScope->info.header.parentRef);
+      writer.closeNode();
+   }
+
+   writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
+
+   // new stack frame
+   // stack already contains current $self reference
+   // the original message should be restored if it is a generic method
+   codeScope.level++;
+
+   preallocated = codeScope.level;
+
+   SNode body = node.findChild(lxCode);
+   ObjectInfo retVal = compileCode(writer, body, codeScope);
+
+   // if the method returns itself
+   if (retVal.kind == okUnknown) {
+      // adding the code loading $self
+      writer.newNode(lxExpression);
+      writer.appendNode(lxLocal, 1);
+
+      ref_t resultRef = scope.getReturningRef(false);
+      if (resultRef != 0) {
+         scope.raiseError(errInvalidOperation, node);
+      }
+
+      writer.closeNode();
+   }
+   else scope.raiseError(errIllegalMethod, node);
+
+   writer.closeNode();
+
+   writer.appendNode(lxParamCount, getParamCount(scope.message) + 1);
    writer.appendNode(lxReserved, scope.reserved);
    writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
 
@@ -4714,7 +4744,7 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
    writer.closeNode();
 }
 
-void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope)
+void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope)
 {
    writer.newNode(lxClassMethod, scope.message);
 
@@ -4729,6 +4759,13 @@ void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& sc
    }
    else if (!test(classScope->info.header.flags, elDynamicRole)) {
       writer.newNode(lxCreatingClass, classScope->info.fields.Count());
+      writer.appendNode(lxTarget, classScope->reference);
+      writer.closeNode();
+   }
+
+   if (classScope->info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
+      // call the field in-place initialization
+      writer.newNode(lxCalling, encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE);
       writer.appendNode(lxTarget, classScope->reference);
       writer.closeNode();
    }
@@ -4784,18 +4821,12 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 
                initialize(scope, methodScope);
 
-               compileMethod(writer, current, methodScope);
+               if (methodScope.message == encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE) {
+                  // if it is in-place class member initialization
+                  compileImplicitConstructor(writer, current, methodScope);
+               }
+               else compileMethod(writer, current, methodScope);
             }
-            break;
-         }
-         case lxAccumulator:
-         {
-            MethodScope methodScope(&scope);
-            methodScope.message = current.argument;
-            initialize(scope, methodScope);
-
-            compileAccumulator(current, methodScope);
-
             break;
          }
       }
@@ -4831,7 +4862,7 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
       if (test(classScope.info.header.flags, elDynamicRole)) {
          compileDynamicDefaultConstructor(writer, methodScope);
       }
-      else compileDefaultConstructor(writer, methodScope);
+      else compileDefaultConstructor(writer, methodScope, classClassScope);
    }
 
    SNode current = node.firstChild();
@@ -4842,7 +4873,6 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
          {
             MethodScope methodScope(&classScope);
             methodScope.message = current.argument;
-
             declareArgumentList(current, methodScope);
 
             initialize(classClassScope, methodScope);
@@ -4988,20 +5018,11 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
          declareArgumentList(current, methodScope);
          current.setArgument(methodScope.message);
 
-         if (test(methodScope.hints, tpAccumulator)) {
-            if (getParamCount(current.argument) > 0 || !current.existChild(lxReturning))
-               scope.raiseError(errIllegalMethod, current);
+         if (test(methodScope.hints, tpConstructor))
+            current = lxConstructor;
 
-            // if it is an accumulation list expression
-            current = lxAccumulator;
-         }
-         else {
-            if (test(methodScope.hints, tpConstructor))
-               current = lxConstructor;
-
-            if (!_logic->validateMessage(methodScope.message, false))
-               scope.raiseError(errIllegalMethod, current);
-         }
+         if (!_logic->validateMessage(methodScope.message, false))
+            scope.raiseError(errIllegalMethod, current);
       }
       current = current.nextNode();
    }
@@ -6647,20 +6668,6 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
    SNode codeNode = methNode.appendNode(lxResendExpression, resendMessage);
    if (parentRef)
       codeNode.appendNode(lxTarget, parentRef);
-}
-
-void Compiler :: injectVirtualAccumulator(_CompilerScope& scope, SNode classNode, ref_t message, ref_t listRef)
-{
-   _Memory* section = scope.module->mapSection(listRef | mskRDataRef, false);
-   if (section->Length() == 0) {
-      section->addReference(scope.arrayReference | mskVMTRef, (pos_t)-4);
-   }
-
-   SNode methNode = classNode.appendNode(lxClassMethod, message);
-   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
-
-   SNode codeNode = methNode.appendNode(lxReturning);
-   codeNode.appendNode(lxConstantList, listRef);
 }
 
 void Compiler :: inheritListMembers(_CompilerScope& scope, ref_t parentListRef, ref_t listRef)

@@ -5135,22 +5135,25 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
    while (current != lxNone) {
       switch (current.type) {
          case lxCalling:
-            if (current.argument == -1) {
-               if (!open) {
-                  open = true;
+            if (!open) {
+               open = true;
 
-                  declareMethod(tape, node.argument, sourcePathRef, 0, 0, false, false);
-               }
+               declareMethod(tape, node.argument, sourcePathRef, 0, 0, false, false);
+            }
+            if (current.argument == -1) {
                // HOTFIX: -1 indicates the stack is not consumed by the constructor
                callMethod(tape, 1, -1);
             }
+            else callResolvedMethod(tape, current.findChild(lxTarget).argument, current.argument);
             break;
          case lxImporting:
          case lxCreatingClass:
          case lxCreatingStruct:
-            if (!open)
-               declareIdleMethod(tape, node.argument, sourcePathRef);
+            if (!open) {
+               open = true;
 
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+            }
             if (current == lxImporting) {
                importCode(tape, *imports.get(current.argument - 1), true);
             }

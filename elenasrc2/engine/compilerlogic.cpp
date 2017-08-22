@@ -559,32 +559,6 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
          compiler.injectEmbeddableConstructor(node, encodeVerb(NEW_MESSAGE_ID), encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
       }
    }
-
-   // generate accumulating methods
-   if (!test(info.header.flags, elClassClass) && node.existChild(lxAccumulator)) {
-      Map<ref_t, ref_t> lists;
-      SNode current = node.firstChild();
-      while (current != lxNone) {
-         if (current == lxAccumulator) {
-            ref_t listRef = lists.get(current.argument);
-            if (!listRef) {
-               ref_t parentListRef = info.methodHints.get(Attribute(current.argument, maAccumulationList));
-               listRef = scope.mapAnonymous();
-               if (parentListRef != 0) {
-                  current.appendNode(lxParentLists, parentListRef);
-               }
-
-               info.methodHints.exclude(Attribute(current.argument, maAccumulationList));
-               info.methodHints.add(Attribute(current.argument, maAccumulationList), listRef);
-
-               compiler.injectVirtualAccumulator(scope, node, current.argument, listRef);
-
-               lists.add(current.argument, listRef);
-            }
-         }
-         current = current.nextNode();
-      }
-   }
 }
 
 void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
@@ -1099,9 +1073,6 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
          return true;
       case V_MULTI:
          attrValue = tpMultimethod;
-         return true;
-      case V_ACCCUMULATOR:
-         attrValue = tpAccumulator;
          return true;
       default:
          return false;

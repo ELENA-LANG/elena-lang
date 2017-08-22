@@ -61,7 +61,6 @@
 #define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
 #define V_TAPEGROUP      (ref_t)-8209
-#define V_ACCCUMULATOR   (ref_t)-8210
 
 #define V_CONSTRUCTOR    (ref_t)-16384
 #define V_VARIABLE       (ref_t)-16385
@@ -103,7 +102,6 @@ enum MethodHint
    tpConstructor = 0x0400,
    tpConversion  = 0x0800,
    tpMultimethod = 0x1000,
-   tpAccumulator = 0x2000
 };
 
 // --- _CompileScope ---
@@ -195,7 +193,6 @@ public:
    virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef) = 0;
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0) = 0;
-   virtual void injectVirtualAccumulator(_CompilerScope& scope, SNode classNode, ref_t message, ref_t listRef) = 0;
 
    virtual void injectLocalBoxing(SNode node, int size) = 0;
 //   //virtual int injectTempLocal(SNode node) = 0;

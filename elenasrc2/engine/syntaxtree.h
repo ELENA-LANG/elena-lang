@@ -61,7 +61,7 @@ enum LexicalType
    lxBiggerSwitchOption = 0x0003E,
    lxLessSwitchOption = 0x0003F,
    lxLazyExpression  = 0x00040,
-   lxAccumulator     = 0x00041,
+   lxFieldInit       = 0x00041,
 
    //lxDefaultGeneric  = 0x00046,
    lxSubject         = 0x00047,
