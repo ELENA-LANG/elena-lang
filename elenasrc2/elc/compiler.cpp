@@ -164,6 +164,11 @@ SNode findTerminalInfo(SNode node)
    return current;
 }
 
+inline bool isSealedStaticField(ref_t ref)
+{
+   return (int)ref >= 0;
+}
+
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
@@ -208,7 +213,7 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    // system module should be included by default
    if (!module->Name().compare(STANDARD_MODULE)) {
       defaultNs.add(STANDARD_MODULE);
-      loadModuleInfo(project->loadModule(STANDARD_MODULE, true));
+      loadModuleInfo(project->loadModule(STANDARD_MODULE, false));
    }      
 }
 
@@ -549,12 +554,24 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
       ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
       while (!static_it.Eof()) {
          ClassInfo::FieldInfo info(
-            importReference(exporter, (*static_it).value2, module),
+            isSealedStaticField((*static_it).value1) ? importReference(exporter, (*static_it).value1, module) : (*static_it).value1,
             importReference(exporter, (*static_it).value2, module));
 
          target.statics.add(static_it.key(), info);
 
          static_it++;
+      }
+
+      // import static field values
+      auto staticValue_it = copy.staticValues.start();
+      while (!staticValue_it.Eof()) {
+         ref_t val = *staticValue_it;
+         if (val != mskStatRef)
+            val = importReference(exporter, val, module);
+
+         target.staticValues.add(staticValue_it.key(), val);
+
+         staticValue_it++;
       }
    }
    // import class class reference
@@ -955,7 +972,7 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.flags = elStandartVMT;
    info.header.count = 0;
    info.header.classRef = 0;
-   info.header.packageRef = parent->packageReference;
+   info.header.staticSize = 0;
    info.size = 0;
    
    extensionClassRef = 0;
@@ -1573,7 +1590,6 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
 
    size_t flagCopy = scope.info.header.flags;
    size_t classClassCopy = scope.info.header.classRef;
-   size_t packageRefCopy = scope.info.header.packageRef;
 
    // get module reference
    ref_t moduleRef = 0;
@@ -1612,7 +1628,6 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       scope.info.header.parentRef = parentRef;
       scope.info.header.classRef = classClassCopy;
       scope.info.header.flags |= flagCopy;
-      scope.info.header.packageRef = packageRefCopy;
 
       return irSuccessfull;
    }
@@ -1708,15 +1723,18 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
    }
 }
 
-void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, int& size, bool& isStaticField)
+void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (_logic->validateFieldAttribute(value)) {
+         if (_logic->validateFieldAttribute(value, isSealed, isConstant)) {
             if (value == lxStaticAttr) {
                isStaticField = true;
+            }
+            else if (value == -1) {
+               // ignore if constant / sealed attribute was set
             }
             else if (fieldRef == 0) {
                fieldRef = current.argument;
@@ -4930,11 +4948,16 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
       if (current == lxClassField) {
          ref_t fieldRef = 0;
          bool isStatic = false;
+         bool isSealed = false;
+         bool isConst = false;
          int sizeHint = 0;
-         declareFieldAttributes(current, scope, fieldRef, sizeHint, isStatic);
+         declareFieldAttributes(current, scope, fieldRef, sizeHint, isStatic, isSealed, isConst);
 
          if (isStatic) {
-            generateClassStaticField(scope, current, fieldRef);
+            generateClassStaticField(scope, current, fieldRef, isSealed, isConst);
+         }
+         else if (isSealed || isConst) {
+            scope.raiseError(errIllegalField, current);
          }
          else generateClassField(scope, current, fieldRef, sizeHint, singleField);
       }
@@ -5197,7 +5220,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    }
 }
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef)
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, bool isSealed, bool isConst)
 {
    _Module* module = scope.moduleScope->module;
 
@@ -5206,13 +5229,25 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
    if (scope.info.statics.exist(terminal))
       scope.raiseError(errDuplicatedField, current);
 
-   // generate static reference
-   ReferenceNs name(module->resolveReference(scope.reference));
-   name.append(STATICFIELD_POSTFIX);
+   if (isSealed) {
+      // generate static reference
+      ReferenceNs name(module->resolveReference(scope.reference));
+      name.append(STATICFIELD_POSTFIX);
 
-   findUninqueName(module, name);
+      findUninqueName(module, name);
 
-   scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), fieldRef));
+      scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), fieldRef));
+   }
+   else {
+      int index = ++scope.info.header.staticSize;
+      index = -index - 4;
+
+      scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
+
+      if (!isConst) {
+         scope.info.staticValues.add(index, mskStatRef);
+      }
+   }
 }
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message)

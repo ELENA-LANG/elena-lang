@@ -126,6 +126,7 @@ public:
       okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
+      okStaticConstantField,          // param - reference
       okFieldAddress,                 // param - field offset, extraparam - class reference
       okOuter,                        // param - field offset, extraparam - class reference
       okOuterField,                   // param - field offset, extraparam - outer field offset
@@ -774,7 +775,7 @@ private:
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
    void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, int& size, bool& isStaticField);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
    void declareVMT(SNode member, ClassScope& scope);
 //   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 //
@@ -877,7 +878,7 @@ private:
 //   void declareVirtualMethods(ClassScope& scope);
 
    void generateClassField(ClassScope& scope, SNode node, /*ref_t typeRef, */ref_t fieldRef, int sizeHint, bool singleField);
-   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef);
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);

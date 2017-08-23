@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class implementation.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -239,12 +239,15 @@ void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
    writer.writeBytes(0, count * 4);
 }
 
-void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength)
+void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize)
 {
-   alignCode(&vmtWriter, VA_ALIGNMENT, false);   
+   // create VMT static table
+   vmtWriter.writeBytes(0, staticSize << 2);
+
+   alignCode(&vmtWriter, VA_ALIGNMENT, false);
 
    // create VMT header:
-   //   dummy parent / package (if VMT flag elClassClass is set) reference
+   //   dummy parent reference
    vmtWriter.writeDWord(0);
 
    //   vmt length
@@ -575,12 +578,15 @@ void JITCompiler64 :: allocateArray(MemoryWriter& writer, size_t count)
    writer.writeBytes(0, count * 8);
 }
 
-void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength)
+void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize)
 {
    alignCode(&vmtWriter, VA_ALIGNMENT, false);
 
+   // create VMT static table
+   vmtWriter.writeBytes(0, staticSize << 3);
+
    // create VMT header:
-   //   dummy package reference
+   //   dummy parent reference
    vmtWriter.writeQWord(0);
 
    //   vmt length

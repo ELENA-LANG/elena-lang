@@ -535,7 +535,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
    MemoryWriter vmtWriter(vmtImage);
 
    // allocate space and make VTM offset
-   _compiler->allocateVMT(vmtWriter, header.flags, header.count);
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count, header.staticSize);
 
    void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
 
@@ -584,16 +584,31 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
 
       // load class class
       void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
-      void* packageParentVAddress = NULL;
-      /*if (test(header.flags, elClassClass)) {
-         if (header.packageRef != 0)
-            packageParentVAddress = resolve(sectionInfo.module->resolveReference(header.packageRef), mskConstArray, true);
-      }
-      else*/ if (header.parentRef != 0)
-         packageParentVAddress = resolve(sectionInfo.module->resolveReference(header.parentRef), mskVMTRef, true);
+      void* parentVAddress = NULL;
+      if (header.parentRef != 0)
+         parentVAddress = resolve(sectionInfo.module->resolveReference(header.parentRef), mskVMTRef, true);
 
       // fix VMT
-      _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)packageParentVAddress, count, _virtualMode);
+      _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
+
+      // fix VMT Static table
+      ClassInfo::StaticInfoMap staticValues;
+      staticValues.read(&vmtReader);
+
+      ref_t currentMask = 0;
+      ref_t currentRef = 0;
+      for (auto it = staticValues.start(); !it.Eof(); it++) {
+         currentMask = *it & mskAnyRef;
+         currentRef = *it & ~mskAnyRef;
+
+         void* refVAddress = NULL;
+         if (currentMask == mskStatRef && currentRef == 0) {
+            refVAddress = resolveAnonymousStaticVariable();
+         }
+         else refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+
+         resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
+      }
    }
 
    return vaddress;
@@ -749,6 +764,20 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
    resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
 
    return vaddress;
+}
+
+void* JITLinker :: resolveAnonymousStaticVariable()
+{
+   // get target image & resolve virtual address
+   MemoryWriter writer(_loader->getTargetSection(mskStatRef));
+
+   size_t vaddress = (_virtualMode ? writer.Position() | mskStatRef : (size_t)writer.Address());
+
+   _compiler->allocateVariable(writer);
+
+   _statLength++;
+
+   return (void*)vaddress;
 }
 
 void* JITLinker :: resolveStaticVariable(ident_t reference, int mask)
@@ -1021,7 +1050,7 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 {
    void* vaddress = _loader->resolveReference(reference, mask);
    if (vaddress==LOADER_NOTLOADED) {
-      if (reference.compare("mytest'#inline0")) {
+      if (reference.compare("mytest'MyClass")) {
          mask |= mask;
       }
 

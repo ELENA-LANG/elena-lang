@@ -18,6 +18,7 @@ In development:
                  * test: "int test := 3." - in the root
                  * test: "test." - in the root / class
                  * field initialization and property??
+                 * setting static constant fields - check the types
 
               xdev - general implementation
                  * implementing accumulator methods

@@ -472,7 +472,7 @@ struct VMTXEntry
 
 struct ClassHeader
 {
-   ref_t  packageRef;      // package header
+   ref_t  staticSize;      // static table size
    ref_t  classRef;        // class class reference
    size_t count;
    size_t flags;
@@ -510,12 +510,14 @@ struct ClassInfo
    typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
    typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
+   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
    ClassHeader    header;
    int            size;           // Object size
    MethodMap      methods;
    FieldMap       fields;
    StaticFieldMap statics;
+   StaticInfoMap  staticValues;
 
    FieldTypeMap   fieldTypes;
    MethodInfoMap  methodHints;
@@ -525,6 +527,7 @@ struct ClassInfo
       writer->write((void*)this, sizeof(ClassHeader));
       writer->writeDWord(size);
       if (!headerAndSizeOnly) {
+         staticValues.write(writer);
          methods.write(writer);
          fields.write(writer);
          fieldTypes.write(writer);
@@ -538,6 +541,7 @@ struct ClassInfo
       reader->read((void*)&header, sizeof(ClassHeader));
       size = reader->getDWord();
       if (!headerOnly) {
+         staticValues.read(reader);
          methods.read(reader);
          fields.read(reader);
          fieldTypes.read(reader);

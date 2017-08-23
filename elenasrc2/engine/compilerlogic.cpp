@@ -1079,13 +1079,27 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
    }
 }
 //
-bool CompilerLogic :: validateFieldAttribute(int& attrValue)
+bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant)
 {
    switch ((size_t)attrValue)
    {
       case V_STATIC:
          attrValue = lxStaticAttr;
          return true;
+      case V_SEALED:
+         if (!isSealed) {
+            attrValue = -1;
+            isSealed = true;
+            return true;
+         }
+         else return false;
+      case V_CONST:
+         if (!isConstant) {
+            attrValue = -1;
+            isConstant = true;
+            return true;
+         }
+         else return false;
       case V_INT32:
          attrValue = 0;
          return true;

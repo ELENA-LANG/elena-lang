@@ -335,10 +335,10 @@ namespace _ELENA_
    const int WARNING_MASK_3 = 7;
 
    // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.6."       // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "VM.ELENA.6."    // the ELENAVM client
+   #define ELENA_SIGNITURE          "ELENA.7."       // the stand alone image
+   #define ELENACLIENT_SIGNITURE    "VM.ELENA.7."    // the ELENAVM client
 
-   #define MODULE_SIGNATURE         "ELENA.6.0"      // the module version
+   #define MODULE_SIGNATURE         "ELENA.7.0"      // the module version
    #define DEBUG_MODULE_SIGNATURE   "ED!2"
 
   // --- ELENA core module names ---
