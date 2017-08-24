@@ -41,6 +41,7 @@ const char dfaQuote          = 'W';
 const char dfaPrivate        = 'X';
 const char dfaCharacter      = ']';
 const char dfaWideQuote      = '^';
+const char dfaMember         = 'a';
 
 class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LINE_LEN>
 {

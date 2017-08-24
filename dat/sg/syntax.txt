@@ -59,6 +59,8 @@ __define character		12299
 __define long                   12300
 __define wide                   12301
 __define attribute		12303
+__define member			12304
+
 
 START ->
 	SCOPE_DECLARATION DECLARATIONS eof
@@ -238,6 +240,7 @@ NEXT_SUB_EXPRESSION ->
 ROOT_EXPRESSION ->
 	identifier ROOT_OPERATIONS
 	| private ROOT_OPERATIONS
+	| member ROOT_OPERATIONS
 	| reference OPERATIONS
 	| literal OPERATIONS
 	| wide OPERATIONS
@@ -361,6 +364,7 @@ MESSAGE_PARAMETER ->
 OBJECT ->
 	identifier OBJECT_BODY
 	| private
+	| member
 	| reference REFERENCE_BODY
 	| literal
 	| wide
@@ -586,6 +590,7 @@ TOKEN ->
 	identifier TOKEN_BODY 
 	| private 
 	| reference
+	| member
 
 ATTRIBUTE ->
 	attribute

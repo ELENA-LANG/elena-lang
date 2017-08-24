@@ -240,6 +240,7 @@ inline bool isTerminal(LexicalType type)
       case lxCharacter:
       case lxWide:
       case lxExplicitConst:
+      case lxMemberIdentifier:
          return true;
       default:
          return false;
@@ -1549,9 +1550,9 @@ void DerivationReader :: generateVariableTree(SyntaxWriter& writer, SNode node, 
 {
    // check if the first token is attribute
    SNode current = node.firstChild();
-   SNode attr = node.findChild(lxIdentifier, lxPrivate);
+   SNode attr = node.findChild(lxIdentifier, lxPrivate, lxMemberIdentifier);
    SNode nextNode = attr.nextNode();
-   ref_t attrRef = (attr != lxPrivate) ? scope.mapAttribute(attr/*, true*/) : 0;
+   ref_t attrRef = (attr == lxIdentifier) ? scope.mapAttribute(attr/*, true*/) : 0;
    if (attrRef != 0 && nextNode != lxAssigning) {
       // HOTFIX : set already recognized attribute value if it is not a template parameter
       if (attrRef != INVALID_REF) {
@@ -2001,41 +2002,42 @@ void DerivationReader :: generateFieldTemplateTree(SyntaxWriter& writer, SNode n
 bool DerivationReader :: generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode)
 {
    SyntaxWriter bufferWriter(buffer);
+   if (node == lxClassField) {
+      writer.newNode(lxClassField, templateMode ? -1 : 0);
 
-   writer.newNode(lxClassField, templateMode ? -1 : 0);
+      if (scope.type == DerivationScope::ttFieldTemplate) {
+         SNode name = goToNode(attributes, lxNameAttr).findChild(lxIdentifier, lxPrivate);
 
-   if (scope.type == DerivationScope::ttFieldTemplate) {
-      SNode name = goToNode(attributes, lxNameAttr).findChild(lxIdentifier, lxPrivate);
+         scope.fields.add(name.findChild(lxTerminal).identifier(), scope.fields.Count() + 1);
 
-      scope.fields.add(name.findChild(lxTerminal).identifier(), scope.fields.Count() + 1);
+         writer.newNode(lxTemplateField, scope.fields.Count());
+         copyIdentifier(writer, name);
+         writer.closeNode();
 
-      writer.newNode(lxTemplateField, scope.fields.Count());
-      copyIdentifier(writer, name);
+         generateAttributes(bufferWriter, SNode(), scope, attributes, templateMode);
+      }
+      else if (scope.type == DerivationScope::ttMethodTemplate) {
+         SNode name = goToNode(attributes, lxNameAttr).findChild(lxIdentifier, lxPrivate);
+
+         scope.fields.add(name.findChild(lxTerminal).identifier(), scope.fields.Count() + 1);
+
+         writer.appendNode(lxTemplateMethod, scope.fields.Count());
+      }
+      else generateAttributes(bufferWriter, node, scope, attributes, templateMode);
+
+      // copy attributes
+      SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxSize, lxClassRefAttr, lxTemplateAttribute);
+
       writer.closeNode();
 
-      generateAttributes(bufferWriter, SNode(), scope, attributes, templateMode);
+      // copy methods
+      SyntaxTree::moveNodes(writer, buffer, lxClassMethod, lxClassField);
    }
-   else if (scope.type == DerivationScope::ttMethodTemplate) {
-      SNode name = goToNode(attributes, lxNameAttr).findChild(lxIdentifier, lxPrivate);
-
-      scope.fields.add(name.findChild(lxTerminal).identifier(), scope.fields.Count() + 1);
-
-      writer.appendNode(lxTemplateMethod, scope.fields.Count());
-   }
-   else generateAttributes(bufferWriter, node, scope, attributes, templateMode);
-
-   // copy attributes
-   SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxSize, lxClassRefAttr, lxTemplateAttribute);
-
-   writer.closeNode();
-
-   // copy methods
-   SyntaxTree::moveNodes(writer, buffer, lxClassMethod, lxClassField);
 
    // copy inplace initialization
    SNode bodyNode = node.findChild(lxAssigning);
    if (bodyNode != lxNone) {
-      SNode nameNode = goToNode(attributes, lxNameAttr).findChild(lxIdentifier, lxPrivate);
+      SNode nameNode = goToNode(attributes, lxNameAttr).firstChild(lxTerminalObjMask);
 
       bufferWriter.newNode(lxFieldInit);
       ::copyIdentifier(bufferWriter, nameNode);
@@ -2481,7 +2483,7 @@ void DerivationReader :: generateClassTree(SyntaxWriter& writer, SNode node, Der
          generateMethodTree(writer, current, scope, subAttributes, buffer);
          subAttributes = SNode();
       }
-      else if (current == lxClassField) {
+      else if (current == lxClassField || current == lxFieldInit) {
          /*if (current.argument == INVALID_REF) {
             generateFieldTemplateTree(writer, current, scope, subAttributes, buffer);
          }
@@ -2537,13 +2539,20 @@ void DerivationReader :: generateScopeMembers(SNode node, DerivationScope& scope
                current = lxFieldTemplate;
             }
             else if (setIdentifier(subAttributes)) {
-               current = lxClassField;
-               
-               if (current.existChild(lxAttributeValue)) {
-                  current.setArgument(-1);
+               subAttributes.refresh();
+
+               if (goToNode(subAttributes, lxNameAttr).firstChild(lxTerminalObjMask) == lxMemberIdentifier) {
+                  current = lxFieldInit;
                }
-               else if (scope.type == DerivationScope::ttMethodTemplate)
-                  current.setArgument(V_METHOD);
+               else {
+                  current = lxClassField;
+
+                  if (current.existChild(lxAttributeValue)) {
+                     current.setArgument(-1);
+                  }
+                  else if (scope.type == DerivationScope::ttMethodTemplate)
+                     current.setArgument(V_METHOD);
+               }
             }
          }
          subAttributes = SNode();

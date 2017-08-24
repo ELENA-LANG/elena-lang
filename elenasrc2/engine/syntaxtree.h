@@ -83,6 +83,7 @@ enum LexicalType
    lxWide            = 0x1800D,
    lxExplicitConst   = 0x1800E,
    lxExplicitAttr    = 0x1800F,
+   lxMemberIdentifier= 0x18010,
 
    lxImporting       = 0x08101,
    lxNested          = 0x08102, // arg - count

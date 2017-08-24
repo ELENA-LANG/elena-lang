@@ -2205,6 +2205,12 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 ////   else if (terminal == lxResult) {
 ////      object = ObjectInfo(okObject);
 ////   }
+   else if (terminal == lxMemberIdentifier) {
+      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+      if (classScope != NULL) {
+         object = classScope->mapField(token.c_str() + 1);
+      }
+   }
    else if (!emptystr(token))
       object = scope.mapObject(terminal);
 
@@ -5352,6 +5358,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    }
    else {
       bool privateOne = test(message, SEALED_MESSAGE);
+      bool castingOne = test(message, CONVERSION_MESSAGE);
       bool included = scope.include(message);
       bool sealedMethod = (methodHints & tpMask) == tpSealed;
       // if the class is closed, no new methods can be declared
@@ -5360,7 +5367,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.raiseError(errClosedParent, findParent(current, lxClass));
 
       // if the method is sealed, it cannot be overridden
-      if (!included && sealedMethod)
+      if (!included && sealedMethod && !castingOne)
          scope.raiseError(errClosedMethod, findParent(current, lxClass));
 
       // save extensions if required ; private method should be ignored
