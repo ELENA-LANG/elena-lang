@@ -3,12 +3,8 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * implementing #344
                  * implementing #349
-                 * test: "int test := 3." - in the root
-                 * test: "test." - in the root / class
-                 * field initialization and property??
-                 * setting static constant fields - check the types
+                 * field initialization and property
 
               xdev - general implementation
                  * implementing accumulator methods
@@ -30,9 +26,11 @@ In development:
                  * fix the bug : duplciate methods are not recognized:
                       stacksafe literal add value:v = v literal.
                       literal add literal : aLiteral => system'core_routines'__literal.
+                 * test: "int test := 3." - in the root
                  * compile - "a b:=n."
                  * compile - "a."
                  * compile - "a:=n."
+                 * test all possible syntax constructions, currently the wrong one is ignored without generating an error
 
               xdev - general implementation
                  * embeddable eval[1]
@@ -181,6 +179,8 @@ In development:
                  * should multi geneated private method be static as well or should not be generated at all?
                  * if else if ...
                  * unboxing primitive arrays?
+                 * constant field should always have assigning part
+                 * #266: sealed static constant fields
 
 ------                                 
 Pipeline:

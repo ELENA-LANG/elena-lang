@@ -264,7 +264,7 @@ public:
    {
       MemoryWriter  _bodyWriter;
       MemoryWriter  _stringWriter;
-      Stack<size_t> _bookmarks;
+      Stack<pos_t>  _bookmarks;
 
    public:
       bool hasBookmarks() const
@@ -272,7 +272,7 @@ public:
          return _bookmarks.Count() != 0;
       }
 
-      int setBookmark(size_t position)
+      int setBookmark(pos_t position)
       {
          _bookmarks.push(position);
          return _bookmarks.Count();
@@ -283,6 +283,14 @@ public:
          _bookmarks.push(_bodyWriter.Position());
 
          return _bookmarks.Count();
+      }
+
+      void trim()
+      {
+         pos_t position = _bookmarks.peek();
+
+         _bodyWriter.seek(position);
+         _bodyWriter.Memory()->trim(position);
       }
 
       void removeBookmark()

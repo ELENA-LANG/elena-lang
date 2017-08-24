@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   11
+#define REVISION_VERSION   12
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -196,6 +196,10 @@ ref_t resolveMessage(_Module* module, ident_t method)
    }
    else if (actionName.compare("#new")) {
       actionRef = NEWOBJECT_MESSAGE_ID;
+   }
+   else if (actionName.compare("#init")) {
+      actionRef = NEWOBJECT_MESSAGE_ID;
+      flags = CONVERSION_MESSAGE;
    }
    else {
       if (method.find("set&") != NOTFOUND_POS) {
@@ -382,7 +386,10 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       command.append("dispatch");
    }
    else if (actionRef == NEWOBJECT_MESSAGE_ID) {
-      command.append("#new");
+      if (test(reference, CONVERSION_MESSAGE)) {
+         command.append("#init");
+      }
+      else command.append("#new");
    }
    else if (actionRef <= PREDEFINED_MESSAGE_ID) {
       ident_t verbName = retrieveKey(_verbs.start(), actionRef, DEFAULT_STR);

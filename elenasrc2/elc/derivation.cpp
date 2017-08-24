@@ -2033,6 +2033,13 @@ bool DerivationReader :: generateFieldTree(SyntaxWriter& writer, SNode node, Der
       // copy methods
       SyntaxTree::moveNodes(writer, buffer, lxClassMethod, lxClassField);
    }
+   else if (node == lxFieldInit) {
+      SNode nameNode = goToNode(attributes, lxNameAttr).firstChild(lxTerminalObjMask);
+
+      writer.newNode(lxFieldInit);
+      ::copyIdentifier(writer, nameNode);
+      writer.closeNode();
+   }
 
    // copy inplace initialization
    SNode bodyNode = node.findChild(lxAssigning);

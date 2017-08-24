@@ -12,6 +12,8 @@
 [+] #100 : classOp : test if object is subclass of
 [+] #333 : multimethods
 [*] #266 : static fields
+[+] #344 : Resolving duplicate field names
+[+] #349 : Initialize fields at declaration
 
 [ELC]
 [+] fixing template routines

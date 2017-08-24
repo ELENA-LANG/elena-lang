@@ -605,7 +605,8 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
          if (currentMask == mskStatRef && currentRef == 0) {
             refVAddress = resolveAnonymousStaticVariable();
          }
-         else refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+         else if(currentRef != 0)
+            refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
 
          resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
       }
