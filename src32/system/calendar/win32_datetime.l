@@ -234,7 +234,7 @@ sealed embeddable struct TimeStruct
       
     stacksafe toWide date_attributes:Flags
     [
-        short[] aBuffer(127).
+        short& aBuffer(127).
 
         int aLength := system'external'KERNEL32 GetDateFormatW
             int:0
@@ -253,7 +253,7 @@ sealed embeddable struct TimeStruct
     
     stacksafe toWide time_attributes:Flags
     [
-        short[] aBuffer(127).
+        short& aBuffer(127).
 
         int aLength := system'external'KERNEL32 GetTimeFormatW
             int:0

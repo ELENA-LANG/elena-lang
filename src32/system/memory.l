@@ -92,7 +92,7 @@ template matrix :: template_subj
         
         int len := theRows * theColumns.
         
-        theArray := template_subj[](/*theRows * theColumns*/len).
+        theArray := template_subj&(/*theRows * theColumns*/len).
         
         var it := params indexer2d \ back:$nil.
         ifnot($nil == it)
@@ -229,7 +229,7 @@ sealed ByteArray :: array<byte>, dispatchable<bytearray>
 {
     /// Creates the byte array with the specified length
     stacksafe constructor new int:len
-        = byte[](len).
+        = byte&(len).
 
 //    /// Creates the byte array with the specified length
 //    constructor new : aLength
@@ -380,7 +380,7 @@ sealed ShortArray :: array<short>, dispatchable<shortarray>
 {
     /// Creates the short array with the specified length
     stacksafe constructor new int:aLength
-        = short[](aLength).
+        = short&(aLength).
     
 //    /// Creates the short array with the specified length
 //    constructor new : aLength
@@ -459,7 +459,7 @@ sealed IntArray :: array<int>, dispatchable<intarray>
 {
     /// Creates the array with the specified length
     stacksafe constructor new int : aLength
-        = int[](aLength).
+        = int&(aLength).
 
 //    /// Creates the array with the specified length
 //    constructor new : aLength
@@ -773,7 +773,7 @@ sealed RealArray :: array<real>, dispatchable<realarray>
 {
     /// Creates the array with the specified length
     stacksafe constructor new int:aLength
-        = real[](aLength).
+        = real&(aLength).
 
 //    /// Creates the array with the specified length
 //    constructor new : aLength
@@ -943,7 +943,7 @@ sealed CharArray :: array<char>, dispatchable<chararray>
 {
     /// Creates the new array with a specified length
     stacksafe constructor new int : len
-        = char[](len).
+        = char&(len).
 
 //    /// Creates the new array with a specified length
 //    constructor new : aLength
@@ -1036,7 +1036,7 @@ sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
         
     /// Creates the literal string with specified length        
     stacksafe constructor new int:size
-        = byte[](size + 1).
+        = byte&(size + 1).
 
     /// Creates the literal string with specified length and copies the parameter value
     stacksafe constructor new int:aSize literal:aLiteral
@@ -1252,7 +1252,7 @@ sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
         
     /// Creates the literal string with specified length
     stacksafe constructor new int:size
-        = short[](size + 1).
+        = short&(size + 1).
 
     /// Creates the literal string with specified length and copies the parameter value
     stacksafe constructor new int:aSize wide:aLiteral
@@ -1583,7 +1583,7 @@ sealed Array :: array<object>, dispatchable<array>
 {
     /// Creates an empty array
     constructor min
-        = object[](0).
+        = object&(0).
     
     /// Creates the array with the specified length
     constructor new : aLength
@@ -1597,7 +1597,7 @@ sealed Array :: array<object>, dispatchable<array>
     
     /// Creates the array with the specified length
     stacksafe constructor new int:aLength
-        = object[](aLength).
+        = object&(aLength).
 
     /// Creates a copy of the provided array
     constructor new array:anArray
@@ -1702,8 +1702,8 @@ class literalConvertor =
     
     stacksafe literal convert char:aValue
     [
-        byte[] buffer(4).
-        int    length := 0.
+        byte& buffer(4).
+        int   length := 0.
         
         $self convert char:aValue bytearray:buffer vint:length.
         
@@ -1719,8 +1719,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value
     stacksafe literal convert int:aNumber
     [
-        byte[] buffer(12).
-        int    length := 0.
+        byte& buffer(12).
+        int   length := 0.
         
         $self convert int:aNumber bytearray:buffer vint:length.
         
@@ -1730,8 +1730,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value
     stacksafe literal convert uint:aNumber
     [
-        byte[] buffer(12).
-        int    length := 0.
+        byte& buffer(12).
+        int   length := 0.
         
         $self convert uint:aNumber bytearray:buffer vint:length.
         
@@ -1745,8 +1745,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value
     stacksafe literal convert short:aNumber
     [
-        byte[] buffer(12).
-        int    length := 0.
+        byte& buffer(12).
+        int   length := 0.
         
         $self convert short:aNumber bytearray:buffer vint:length.
         
@@ -1760,8 +1760,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value
     stacksafe literal convert byte:aNumber
     [
-        byte[] buffer(4).
-        int    length := 0.
+        byte& buffer(4).
+        int   length := 0.
         
         $self convert byte:aNumber bytearray:buffer vint:length.
         
@@ -1775,8 +1775,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value
     stacksafe literal convert long:aNumber
     [
-        byte[] buffer(64).
-        int    length := 0.
+        byte& buffer(64).
+        int   length := 0.
         
         $self convert long:aNumber bytearray:buffer vint:length.
         
@@ -1794,8 +1794,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value with the provided radix
     stacksafe literal convert int:aNumber int:aRadix
     [
-        byte[] buffer(48).
-        int    length := 0.
+        byte& buffer(48).
+        int   length := 0.
         
         $self convert int:aNumber int:aRadix bytearray:buffer vint:length.
         
@@ -1805,8 +1805,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value with the provided radix
     stacksafe literal convert uint:aNumber int:aRadix
     [
-        byte[] buffer(48).
-        int    length := 0.
+        byte& buffer(48).
+        int   length := 0.
         
         $self convert uint:aNumber int:aRadix bytearray:buffer vint:length.
         
@@ -1820,8 +1820,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value with the provided radix
     stacksafe literal convert short:aNumber int:aRadix
     [
-        byte[] buffer(32).
-        int    length := 0.
+        byte& buffer(32).
+        int   length := 0.
         
         $self convert short:aNumber int:aRadix bytearray:buffer vint:length.
         
@@ -1835,8 +1835,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value with the provided radix
     stacksafe literal convert byte:aNumber int:aRadix
     [
-        byte[] buffer(8).
-        int    length := 0.
+        byte& buffer(8).
+        int   length := 0.
         
         $self convert byte:aNumber int:aRadix bytearray:buffer vint:length.
         
@@ -1850,8 +1850,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value
     stacksafe literal convert long:aNumber int:radix
     [
-        byte[] buffer(64).
-        int    length := 0.
+        byte& buffer(64).
+        int   length := 0.
         
         $self convert long:aNumber int:radix bytearray:buffer vint:length.
         
@@ -1865,8 +1865,8 @@ class literalConvertor =
     /// Converts the parameter to the literal value
     stacksafe literal convert real:aNumber
     [
-        byte[] buffer(32).
-        int    length := 0.
+        byte& buffer(32).
+        int   length := 0.
         
         $self convert real:aNumber bytearray:buffer vint:length.
         
@@ -1879,11 +1879,11 @@ class literalConvertor =
 
     stacksafe literal convert wide:aLiteral
     [
-        int    i := 0.
-        int    m := 0.
-        int    page := 0.
-        int    l := aLiteral length.
-        byte[] buffer(256).
+        int   i := 0.
+        int   m := 0.
+        int   page := 0.
+        int   l := aLiteral length.
+        byte& buffer(256).
         if (l < 128)
         [
             $self convert wide:aLiteral bytearray:buffer vint:m.
@@ -1934,8 +1934,8 @@ class wideConvertor =
     
     stacksafe wide convert char:aValue
     [
-        short[] buffer(2).
-        int     length := 0.
+        short& buffer(2).
+        int    length := 0.
         
         $self convert char:aValue shortarray:buffer vint:length.
         
@@ -1953,8 +1953,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value
     stacksafe wide convert int:aNumber
     [
-        short[] buffer(12).
-        int     length := 0.
+        short& buffer(12).
+        int    length := 0.
         
         $self convert int:aNumber shortarray:buffer vint:length.
         
@@ -1964,8 +1964,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value
     stacksafe wide convert uint:aNumber
     [
-        short[] buffer(12).
-        int     length := 0.
+        short& buffer(12).
+        int    length := 0.
         
         $self convert uint:aNumber shortarray:buffer vint:length.
         
@@ -1979,8 +1979,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value
     stacksafe wide convert short:aNumber
     [
-        short[] buffer(12).
-        int     length := 0.
+        short& buffer(12).
+        int    length := 0.
         
         $self convert short:aNumber shortarray:buffer vint:length.
         
@@ -1994,8 +1994,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value
     stacksafe wide convert byte:aNumber
     [
-        short[] buffer(12).
-        int     length := 0.
+        short& buffer(12).
+        int    length := 0.
         
         $self convert byte:aNumber shortarray:buffer vint:length.
         
@@ -2009,8 +2009,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value
     stacksafe wide convert long:aNumber
     [
-        short[] buffer(64).
-        int     length := 0.
+        short& buffer(64).
+        int    length := 0.
         
         $self convert long:aNumber shortarray:buffer vint:length.
         
@@ -2028,8 +2028,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value with the provided radix
     stacksafe wide convert int:aNumber int:aRadix
     [
-        short[] buffer(32).
-        int     length := 0.
+        short& buffer(32).
+        int    length := 0.
         
         $self convert int:aNumber int:aRadix shortarray:buffer vint:length.
         
@@ -2039,8 +2039,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value with the provided radix
     stacksafe wide convert uint:aNumber int:aRadix
     [
-        short[] buffer(32).
-        int     length := 0.
+        short& buffer(32).
+        int    length := 0.
         
         $self convert uint:aNumber int:aRadix shortarray:buffer vint:length.
         
@@ -2054,8 +2054,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value with the provided radix
     stacksafe wide convert short:aNumber int:aRadix
     [
-        short[] buffer(16).
-        int     length := 0.
+        short& buffer(16).
+        int    length := 0.
         
         $self convert short:aNumber int:aRadix shortarray:buffer vint:length.
         
@@ -2069,8 +2069,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value with the provided radix
     stacksafe wide convert byte:aNumber int:aRadix
     [
-        short[] buffer(12).
-        int     length := 0.
+        short& buffer(12).
+        int    length := 0.
         
         $self convert byte:aNumber int:aRadix shortarray:buffer vint:length.
         
@@ -2084,8 +2084,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value with the provided radix
     stacksafe wide convert long:aNumber int:aRadix
     [
-        short[] buffer(64).
-        int     length := 0.
+        short& buffer(64).
+        int    length := 0.
         
         $self convert long:aNumber int:aRadix shortarray:buffer vint:length.
         
@@ -2099,8 +2099,8 @@ class wideConvertor =
     /// Converts the parameter to the literal value
     stacksafe wide convert real:aNumber
     [
-        short[] buffer(32).
-        int     length := 0.
+        short& buffer(32).
+        int    length := 0.
         
         $self convert real:aNumber shortarray:buffer vint:length.
         
@@ -2114,11 +2114,11 @@ class wideConvertor =
     /// Converts UTF-8 literal to UTF-16e
     stacksafe wide convert literal:aLiteral
     [
-        int     i := 0.
-        int     m := 0.
-        int     page := 0.
-        int     l := aLiteral length.
-        short[] buffer(256).
+        int    i := 0.
+        int    m := 0.
+        int    page := 0.
+        int    l := aLiteral length.
+        short& buffer(256).
         if (l < 256)
         [
             $self convert literal:aLiteral shortarray:buffer vint:m.

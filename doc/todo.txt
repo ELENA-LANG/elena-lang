@@ -3,13 +3,9 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * primitive array field
-
-                 * get rid of dynamic keyword, use [] for this : e.g.
-                      template<BaseIndexable> array :: template_subj
-                      {
-                            template_subj[] $target.
-                 * primitive array variable
+                 * #342 : array declaration syntax
+                 * syntax modify
+                 * syntax modify : open arg list
 
               xdev - general implementation
                  * implementing accumulator methods
@@ -30,7 +26,7 @@ In development:
               xdev - general implementation
                  * migrating rosetta samples : json
 
-                 * fix the bug : duplciate methods are not recognized:
+2                 * fix the bug : duplciate methods are not recognized:
                       stacksafe literal add value:v = v literal.
                       literal add literal : aLiteral => system'core_routines'__literal.
                  * test: "int test := 3." - in the root
@@ -40,6 +36,12 @@ In development:
                  * test all possible syntax constructions, currently the wrong one is ignored without generating an error
 
               xdev - general implementation
+                 * get rid of dynamic keyword, use [] for this : e.g.
+                      template<BaseIndexable> array :: template_subj
+                      {
+                            template_subj[] $target.
+                            template_subj() $target.
+
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]
@@ -184,6 +186,8 @@ In development:
                  * uint16
 
               xdev - general implementation
+                 * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
+                   no other overload functions provided)
                  * check if the overload list was created
                  * should multi geneated private method be static as well or should not be generated at all?
                  * if else if ...

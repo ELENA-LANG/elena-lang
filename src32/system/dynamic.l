@@ -38,8 +38,8 @@ sealed embeddable struct Message :: dispatchable<mssg>
     [
         mssg val:= $self.
         
-        byte[] aBuffer(256).
-        int    aLength := system'external LoadMessageName mssg:$self bytearray:aBuffer int:255.
+        byte& aBuffer(256).
+        int   aLength := system'external LoadMessageName mssg:$self bytearray:aBuffer int:255.
         
         ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
     ]
@@ -102,8 +102,8 @@ sealed embeddable struct Signature :: dispatchable<subject>
 
     stacksafe literal
     [
-        byte[] aBuffer(256).
-        int    aLength := system'external LoadSubjectName subject:$self bytearray:aBuffer int:255.
+        byte& aBuffer(256).
+        int   aLength := system'external LoadSubjectName subject:$self bytearray:aBuffer int:255.
         
         ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
     ]

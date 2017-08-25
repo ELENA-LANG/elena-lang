@@ -43,8 +43,8 @@ limited class BinaryReader
 
     read vbyte:anInt
     [
-        byte[] aBuffer(4).
-        int    aRead := 1.
+        byte& aBuffer(4).
+        int   aRead := 1.
         
         $self read bytearray:aBuffer vint:aRead.
         
@@ -58,8 +58,8 @@ limited class BinaryReader
 
     read vshort:anInt
     [
-        byte[] aBuffer(4).
-        int    aRead := 2.
+        byte& aBuffer(4).
+        int   aRead := 2.
         
         $self read bytearray:aBuffer vint:aRead.
         
@@ -71,8 +71,8 @@ limited class BinaryReader
 
     read vchar:anInt
     [
-        byte[] aBuffer(4).
-        int    aRead := 4.
+        byte& aBuffer(4).
+        int   aRead := 4.
         
         $self read bytearray:aBuffer vint:aRead.
         
@@ -84,8 +84,8 @@ limited class BinaryReader
 
     read vint:anInt
     [
-        byte[] aBuffer(4).
-        int    aRead := 4.
+        byte& aBuffer(4).
+        int   aRead := 4.
         
         $self read bytearray:aBuffer int:aRead.
         
@@ -97,8 +97,8 @@ limited class BinaryReader
 
     read vlong:aLong
     [
-        byte[] aBuffer(8).
-        int    aRead := 8.
+        byte& aBuffer(8).
+        int   aRead := 8.
         
         $self read bytearray:aBuffer vint:aRead.
         
@@ -110,8 +110,8 @@ limited class BinaryReader
 
     read vreal:aReal
     [
-        byte[] aBuffer(8).
-        int    aRead := 8.
+        byte& aBuffer(8).
+        int   aRead := 8.
         
         $self read bytearray:aBuffer vint:aRead.
         
@@ -161,8 +161,8 @@ limited class TextReader
             
             if(aLength == -1)
                 [
-                    char[] aBuffer(64).
-                    int    aBufferLength := 64.
+                    char& aBuffer(64).
+                    int   aBufferLength := 64.
                     
                     $self read chararray:aBuffer vint:aBufferLength.
                     if(aBufferLength == 0)
@@ -198,8 +198,8 @@ limited class TextReader
             
             if(aLength == -1)
                 [
-                    char[] aBuffer(64).
-                    int    aBufferLength := 64.
+                    char& aBuffer(64).
+                    int   aBufferLength := 64.
                      
                     $self read chararray:aBuffer vint:aBufferLength.
                     if(aBufferLength == 0)

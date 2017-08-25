@@ -20,8 +20,8 @@ sealed nonstructural class CallStack
     /// Creates a current call stack
     constructor new
     [
-        int[] aStack(64).
-        int   aLength := 0.
+        int& aStack(64).
+        int  aLength := 0.
         
         aLength := system'external core_callstack_load
             intarray:aStack
@@ -38,7 +38,7 @@ sealed nonstructural class CallStack
         int     aBufferLength := 0.
         int     address := 0.
 
-        byte[]  aBuffer(512).
+        byte&   aBuffer(512).
         literal aCallStackText := emptyLiteralValue.
         while (anIndex < aLength)
         [

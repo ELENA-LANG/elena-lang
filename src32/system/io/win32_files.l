@@ -160,11 +160,11 @@ class StreamWriter :: TextWriter
         
     write chararray:anInput int:aLength
     [
-        int    aTotal := aLength.
-        byte[] aBuffer(64).
-        int    aBlockLength := 0.
-        int    aBufferLength := 0.
-        int    anOffset := 0.
+        int   aTotal := aLength.
+        byte& aBuffer(64).
+        int   aBlockLength := 0.
+        int   aBufferLength := 0.
+        int   anOffset := 0.
         
         while (aTotal > 0)
         [
@@ -217,8 +217,8 @@ class StreamReader :: TextReader
 
     read chararray:anOutput vint:aLength
     [
-        int    aBufferLength := 64.
-        byte[] aBuffer(64).
+        int   aBufferLength := 64.
+        byte& aBuffer(64).
         theStream read bytearray:aBuffer vint:aBufferLength.
         if(aBufferLength == 0)
             [ theOpen := false. aLength int := 0 ];

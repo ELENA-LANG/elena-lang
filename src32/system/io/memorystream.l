@@ -38,10 +38,10 @@ sealed class MemoryBuffer
     
     stacksafe $write int:index int:length bytearray:array
     [        
-        byte[] temp(64).
-        int    n := index.
-        int    len := length.
-        int    temp_len := 64.
+        byte& temp(64).
+        int   n := index.
+        int   len := length.
+        int   temp_len := 64.
         
         while (len > 0)
         [
