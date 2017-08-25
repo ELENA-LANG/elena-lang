@@ -105,6 +105,8 @@ ELENA byte codes (or ecodes)
                   
  copy                       - {base} << {acc}, base.Length (*index, ext affected)
 
+ xcopy                      - {base} << {acc}, base.Length (*index, ext affected) where acc and base are dynamic objects
+
  copyb                      - {base} >> {acc}, acc.Length
 
  get                        - acc <= base[index] ;

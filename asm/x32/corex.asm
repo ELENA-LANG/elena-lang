@@ -1646,6 +1646,25 @@ inline % 1Fh
   
 end
 
+// ; xcopy
+
+inline % 24h
+
+  mov  ecx, [edi-8]
+  mov  esi, eax
+  add  ecx, 3
+  mov  ebx, edi
+  and  ecx, 0FFFFCh
+labCopy:
+  mov  edx, [esi]
+  mov  [ebx], edx
+  lea  esi, [esi+4]
+  lea  ebx, [ebx+4]
+  sub  ecx, 4
+  ja   short labCopy
+
+end
+
 // ; include
 inline % 25h
        

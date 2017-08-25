@@ -186,6 +186,7 @@ CompilerLogic :: CompilerLogic()
    // array of arg list
    operators.add(OperatorInfo(REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
+
    //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 }
 
@@ -709,7 +710,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
 
       if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
          compiler.injectBoxing(writer, scope,
-            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef);
+            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef, true);
 
          return true;
       }
@@ -1132,6 +1133,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
 bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 {
    if (attrValue == (int)V_INT32) {
+      return true;
+   }
+   else if (attrValue == (int)V_OBJARRAY) {
       return true;
    }
    else if (attrValue == (int)V_VARIABLE) {

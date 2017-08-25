@@ -66,30 +66,42 @@ public:
    {
       int    offset;
       ref_t  class_ref;
+      ref_t  element_ref;
       int    size;
 
       Parameter()
       {
          offset = -1;
          class_ref = 0;
+         element_ref = 0;
          size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
          this->class_ref = 0;
+         this->element_ref = 0;
          this->size = 0;
       }
       Parameter(int offset, ref_t class_ref)
       {
          this->offset = offset;
          this->class_ref = class_ref;
+         this->element_ref = 0;
          this->size = 0;
       }
       Parameter(int offset, ref_t class_ref, int size)
       {
          this->offset = offset;
          this->class_ref = class_ref;
+         this->element_ref = 0;
+         this->size = size;
+      }
+      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
+         this->element_ref = element_ref;
          this->size = size;
       }
    };
@@ -599,6 +611,10 @@ private:
       {
          locals.add(local, Parameter(level, class_ref, size));
       }
+      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
+      {
+         locals.add(local, Parameter(level, class_ref, element_ref, size));
+      }
 
       void freeSpace()
       {
@@ -954,7 +970,7 @@ public:
 
 //   // _Compiler interface implementation
 ////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
-   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef);
+   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
    virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);

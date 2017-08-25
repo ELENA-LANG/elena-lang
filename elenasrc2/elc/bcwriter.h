@@ -160,6 +160,7 @@ class ByteCodeWriter
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
    void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
    void newDynamicObject(CommandTape& tape);
+   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
 
    void popObject(CommandTape& tape, LexicalType sourceTypeS);
 

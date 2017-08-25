@@ -3,8 +3,13 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * implementing #349
-                 * field initialization and property
+                 * primitive array field
+
+                 * get rid of dynamic keyword, use [] for this : e.g.
+                      template<BaseIndexable> array :: template_subj
+                      {
+                            template_subj[] $target.
+                 * primitive array variable
 
               xdev - general implementation
                  * implementing accumulator methods
@@ -14,6 +19,8 @@ In development:
                  * implementing #348
 
               xdev - general implementation
+                 * implementing #349
+                 * field initialization and property
                  * implementing #347
                  * implementing #350
 
@@ -169,6 +176,8 @@ In development:
                  * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
 
               xdev - general optimization  
+                 * bswap acopyb => bcopya
+                 * asavefi n aloadfi n => asavefi n nop
                  * hexadecimal - uint32
                  * uint64 
                  * postfix - ul
@@ -181,6 +190,11 @@ In development:
                  * unboxing primitive arrays?
                  * constant field should always have assigning part
                  * #266: sealed static constant fields
+                 * implementing #348 : sealed accumulator fields
+                 * struct fields : embeddable structures
+                 * struct fields : structures - should not be allowed
+                 * struct fields : objects - should not be allowed
+                 * primitive array field with size
 
 ------                                 
 Pipeline:

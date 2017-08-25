@@ -14,6 +14,7 @@
 [*] #266 : static fields
 [+] #344 : Resolving duplicate field names
 [+] #349 : Initialize fields at declaration
+[+] #348 : Accumulator static fields
 
 [ELC]
 [+] fixing template routines

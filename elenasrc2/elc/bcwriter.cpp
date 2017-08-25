@@ -535,6 +535,44 @@ void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
    tape.write(bcCreate);
 }
 
+void ByteCodeWriter :: copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode)
+{
+   if (swapMode)
+      tape.write(bcBSwap);
+
+   if (unsafeMode) {
+      // xcopy
+      tape.write(bcXCopy);
+   }
+   else {
+      // pusha
+      // count
+      // dcopy 0
+      // labCopy:
+      // bswapsi 0
+      // get
+      // bswapsi 0
+      // set
+      // next labCopy
+      // popa
+      tape.write(bcPushA);
+      tape.write(bcCount);
+      tape.write(bcDCopy);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcBSwapSI);
+      tape.write(bcGet);
+      tape.write(bcBSwapSI);
+      tape.write(bcSet);
+      tape.write(bcNext, baCurrentLabel);
+      tape.releaseLabel();
+      tape.write(bcPopA);
+   }
+
+   if (swapMode)
+      tape.write(bcBSwap);
+}
+
 void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
 {
    //   dcopy 0                  |   { axsavebi i }n
@@ -3621,7 +3659,12 @@ void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node 
    if (node.argument != 0) {
       int size = node.findChild(lxSize).argument;
 
-      loadObject(tape, lxConstantClass, node.argument);
+      if ((int)node.argument < 0) {
+         //HOTFIX : recognize primitive object
+         loadObject(tape, lxNil);
+      }
+      else loadObject(tape, lxConstantClass, node.argument);
+
       if (size < 0) {
          newDynamicStructure(tape, -size);
       }
@@ -4434,7 +4477,16 @@ void ByteCodeWriter :: generateBoxing(CommandTape& tape, SNode node)
       boxArgList(tape, target.argument);
    }
    else if (node.argument == 0) {
-      newVariable(tape, target.argument, lxResult);
+      SNode attr = node.findChild(lxBoxableAttr);
+      if (attr.argument == INVALID_REF) {
+         // HOTFIX : to recognize a primitive array boxing
+         tape.write(bcLen);
+         loadBase(tape, lxResult);
+         loadObject(tape, lxConstantClass, target.argument);
+         newDynamicObject(tape);
+         copyDynamicObject(tape, true, true);
+      }
+      else newVariable(tape, target.argument, lxResult);
    }
    else boxObject(tape, node.argument, target.argument, node != lxCondBoxing);
 

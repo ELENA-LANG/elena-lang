@@ -1155,7 +1155,7 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
       else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref);
       }
-      else return ObjectInfo(okLocal, local.offset, local.class_ref);
+      else return ObjectInfo(okLocal, local.offset, local.class_ref, local.element_ref);
    }
    else return Scope::mapTerminal(identifier);
 }
@@ -1784,9 +1784,16 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
          if (value > 0 && size == 0) {
             size = value;
          }
-         else if (_logic->validateLocalAttribute(value) && variable.extraparam == 0) {
+         else if (_logic->validateLocalAttribute(value)) {
             // negative value defines the target virtual class
-            variable.extraparam = value;
+            if (variable.extraparam == 0) {
+               variable.extraparam = value;
+            }
+            else if (value == V_OBJARRAY) {
+               variable.element = variable.extraparam;
+               variable.extraparam = value;
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);            
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
@@ -1907,14 +1914,16 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
       if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam))
          scope.raiseError(errUnknownClass, node.findChild(lxClassRefAttr));
 
-      if (_logic->isEmbeddableArray(localInfo)) {
+      if (_logic->isEmbeddableArray(localInfo) && size != 0) {
          bytearray = true;
          size = size * (-((int)localInfo.size));
       }
-      else if (_logic->isEmbeddable(localInfo)) {
+      else if (_logic->isEmbeddable(localInfo) && size == 0) {
          bool dummy = false;
          size = _logic->defineStructSize(localInfo, dummy);
-      }         
+      }
+      else if (size != 0)
+         scope.raiseError(errInvalidOperation, terminal);
 
       if (size > 0) {
          if (!allocateStructure(scope, size, bytearray, variable))
@@ -1975,7 +1984,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
 
       writer.closeNode();
 
-      scope.mapLocal(identifier, variable.param, variable.extraparam, size);
+      scope.mapLocal(identifier, variable.param, variable.extraparam, variable.element, size);
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
@@ -2621,6 +2630,9 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
 
    if (roperand2.kind != okUnknown) {
       roperand2Ref = resolveObjectReference(scope, roperand2);
+      //HOTFIX : allow to work with int constants
+      if (roperand2.kind == okIntConstant && loperandRef == V_OBJARRAY)
+         roperand2Ref = 0;
 
       operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, roperand2Ref, resultClassRef);
    }
@@ -2863,7 +2875,7 @@ bool Compiler :: convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t t
 
 bool Compiler :: typecastObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef)
 {
-   if (targetRef != 0) {
+   if (targetRef != 0 && !isPrimitiveRef(targetRef)) {
       IdentifierString sign;
       sign.append('$');
       sign.append(scope.module->resolveReference(targetRef));
@@ -6671,9 +6683,14 @@ ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, 
    return importReference(extModule, memberRef, scope.module);
 }
 
-void Compiler :: injectBoxing(SyntaxWriter& writer, _CompilerScope&, LexicalType boxingType, int argument, ref_t targetClassRef)
+void Compiler :: injectBoxing(SyntaxWriter& writer, _CompilerScope&, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode)
 {
-   writer.appendNode(lxBoxableAttr);
+   if (arrayMode && argument == 0) {
+      // HOTFIX : to iundicate a primitive array boxing
+      writer.appendNode(lxBoxableAttr, -1);
+   }
+   else writer.appendNode(lxBoxableAttr);
+
    writer.appendNode(lxTarget, targetClassRef);
    writer.insert(boxingType, argument);
    writer.closeNode();
