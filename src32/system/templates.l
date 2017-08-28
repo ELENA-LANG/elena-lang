@@ -30,6 +30,42 @@ field template rprop :: type, prop_name
     type prop_name = $field.
 }
 
+field template dto_prop :: prop_type, prop_name
+{
+    const static object& theProperties.
+
+    prop_type $field.
+    
+    @theProperties := theProperties + %prop_name.
+    
+    set prop_name prop_type:val
+    [
+        $field := val
+    ]
+    
+    prop_type prop_name = $field.
+    
+    __properties = theProperties.
+}
+
+field template dto_prop :: prop_name
+{
+    const static object& theProperties.
+
+    object $field.
+    
+    @theProperties := theProperties + %prop_name.
+    
+    set prop_name:val
+    [
+        $field := val
+    ]
+    
+    prop_name = $field.
+    
+    __properties = theProperties.
+}
+
 // --- vprop ---
 
 method template vprop :: prop_type,prop_name
