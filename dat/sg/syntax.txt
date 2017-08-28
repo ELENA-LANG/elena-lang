@@ -595,6 +595,7 @@ TOKEN ->
 
 ARRAY_TOKEN ->
 	identifier
+	| private 
 
 ATTRIBUTE ->
 	attribute

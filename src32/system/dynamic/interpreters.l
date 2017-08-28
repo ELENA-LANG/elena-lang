@@ -163,28 +163,28 @@ class DynamicStruct
     dispatch => theStruct.
 }
 
-//// --- Class ---
-//
-//dynamic mixin Class
-//{
-//    object $item.
-//    
-//    constructor $new int:n
-//        = object(n).
-//    
-//    constructor new array:list
-//        <= $new int:(list length);
-//    [
-//        int i := 0.
-//        int n := list length.
-//        
-//        while (i < n)
-//        [
-//            $self setField int:i object:(list getAt int:i).
-//            
-//            i := i + 1
-//        ]
-//    ]    
-//    
-//    dispatch => system'core_routines'__class.
-//}
+// --- Class ---
+
+dynamic mixin Class
+{
+    object $item.
+    
+    constructor $new int:n
+        = object&(n).
+    
+    constructor new array:list
+        <= $new int(list length);
+    [
+        int i := 0.
+        int n := list length.
+        
+        while (i < n)
+        [
+            $self setField int:i object(list getAt int:i).
+            
+            i := i + 1
+        ]
+    ]    
+    
+    dispatch => system'core_routines'__class.
+}

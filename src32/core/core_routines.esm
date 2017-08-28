@@ -4506,6 +4506,60 @@ labEnd:
 
 end
 
+procedure __class.dispatch[1]
+
+  bsredirect
+
+  pushe
+  bcopya
+  pushn 0
+
+labNext:
+  count
+  dloadsi 0
+  if labEnd
+  get
+  inc
+  dsavesi 0
+
+  flag
+  andn elMessage
+  ifn  labNext 0
+
+  nload
+  ecopyd
+  dloadsi 1
+  else labNext
+
+labCall:
+  dloadsi 0
+  get
+  pop
+  pope
+  setverb EVAL_ACTION
+  ajumpvi 0
+
+labQuit:
+  quitn 1
+  
+labEnd:
+  popi 2
+  pope
+  open    4
+  reserve 2
+  esavesi 3
+  bcopys  -3
+  pushb
+  pusha
+  acopyr class : system'Message
+  pushr class : system'MethodNotFoundException
+  asavesi 5
+  aloadsi 0
+  pushr const : %"new[2]"
+  throw
+
+end
+
 procedure __extension.dispatch[1]
 
   asavesi 1

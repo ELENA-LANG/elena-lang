@@ -2,22 +2,8 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * method templates with optional declarations
-
-              xdev - general implementation
-                 * review accumulator methods
-                 * JITLinker::resolveConstant - for mskConstArray, vmt should be array or super?
-                 * implementing #348
-
-              xdev - general implementation
-                 * implementing #349
-                 * field initialization and property
-                 * implementing #347
-                 * implementing #350
-
               zdev - script engine
-                 * migrate Tape
+                 * migrate Class
 
               xdev - general implementation
                  * migrating rosetta samples : json
@@ -32,12 +18,6 @@ In development:
                  * test all possible syntax constructions, currently the wrong one is ignored without generating an error
 
               xdev - general implementation
-                 * get rid of dynamic keyword, use [] for this : e.g.
-                      template<BaseIndexable> array :: template_subj
-                      {
-                            template_subj[] $target.
-                            template_subj() $target.
-
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]
@@ -148,6 +128,7 @@ In development:
                        symbol plotter = { .. }.
                  * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
                    (e.g. vhdc), it should be declared when it is used
+                 * migrate Group / Cast objects
 
               sdev - console samples
                  * test matrix determinant
@@ -182,6 +163,13 @@ In development:
                  * uint16
 
               xdev - general implementation
+                 * get rid of dynamic keyword, use [] for this : e.g.
+                      template<BaseIndexable> array :: template_subj
+                      {
+                            template_subj[] $target.
+                            template_subj() $target.
+
+                 * implementing #350
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)
                  * check if the overload list was created
