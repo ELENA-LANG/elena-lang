@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              zdev - script engine
-                 * migrate Class
-
               xdev - general implementation
                  * migrating rosetta samples : json
 
