@@ -2652,7 +2652,7 @@ void DerivationReader :: generateScopeMembers(SNode node, DerivationScope& scope
 
 void DerivationReader :: generateScope(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes)
 {
-   SNode body = node.findChild(lxExpression, lxAttributeDecl);
+   SNode body = node.findChild(lxExpression, lxAttributeDecl, lxAssigning);
    if (body == lxExpression) {
       // if it could be compiled as a symbol
       if (setIdentifier(attributes)) {
@@ -2682,6 +2682,9 @@ void DerivationReader :: generateScope(SyntaxWriter& writer, SNode node, Derivat
          if(!scope.moduleScope->saveAttribute(name, attrRef, false))
             scope.raiseError(errDuplicatedDefinition, nameAttr);
       }
+   }
+   else if (body == lxAssigning) {
+      scope.raiseError(errInvalidSyntax, body);
    }
    else {
       // it is is a template

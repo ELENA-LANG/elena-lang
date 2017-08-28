@@ -136,108 +136,102 @@ sealed embeddable struct UnsafePointer :: dispatchable<dirty_ptr>
         = 0 == thePointer.
 }
 
-//// --- COORD ---
-//
-//type win_coord :: system'COORD.
-//
-//sealed embeddable struct COORD
-//{
-//    short theX.
-//    short theY.
-//    
-//    constructor new
-//    [
-//        theX := 0.
-//        theY := 0.
-//    ]
-//    
-//    set : anObject
-//        <= write win_coord:anObject.
-//    
-//    stacksafe write short:X short:Y
-//    [
-//        theX := X.
-//        theY := Y.
-//    ]
-//    
-//    stacksafe write win_coord:aValue
-//    [
-//        short tmp := aValue X.
-//        theX := tmp.
-//        
-//        tmp := aValue Y.
-//        theY := tmp.
-//    ]
-//    
-//    stacksafe readXTo vshort:aRetVal
-//    [
-//        aRetVal short := theX.
-//    ]
-//    
-//    short X :: outwprop(readXTo).
-//    
-//    stacksafe readYTo vshort:aRetVal
-//    [
-//        aRetVal short := theY.
-//    ]
-//    
-//    short Y :: outwprop(readYTo).
-//}
-//
-//// --- SMALL_RECT --
-//
-//type win_small_rect :: system'SMALL_RECT.
-//                
-//sealed embeddable struct SMALL_RECT
-//{
-//    short theLeft.
-//    short theTop.
-//    short theRight.
-//    short theBottom.
-//    
-//    short Left :: outwprop(readLeftTo).
-//    
-//    short Top :: outwprop(readTopTo).
-//    
-//    short Right :: outwprop(readRightTo).
-//    
-//    short Bottom :: outwprop(readBottomTo).
-//    
-//    stacksafe readLeftTo vshort:aRetVal
-//    [
-//        aRetVal short := theLeft.
-//    ]
-//    
-//    stacksafe readTopTo vshort:aRetVal
-//    [
-//        aRetVal short := theTop.
-//    ]
-//    
-//    stacksafe readRightTo vshort:aRetVal
-//    [
-//        aRetVal short := theRight.
-//    ]
-//    
-//    stacksafe readBottomTo vshort:aRetVal
-//    [
-//        aRetVal short := theBottom.
-//    ]
-//    
-//    set : anObject
-//        <= write win_small_rect:anObject.
-//    
-//    write win_small_rect:aValue
-//    [
-//        short tmp := aValue Left.
-//        theLeft := tmp.
-//        
-//        tmp := aValue  Top.
-//        theTop := tmp.
-//        
-//        tmp := aValue Right.
-//        theRight := tmp.
-//        
-//        tmp := aValue Bottom.
-//        theBottom := tmp.
-//    ]
-//}    
+// --- COORD ---
+
+type win_coord = system'COORD.
+
+sealed embeddable struct COORD
+{
+    short theX.
+    short theY.
+    
+    constructor new
+    [
+        theX := 0.
+        theY := 0.
+    ]
+    
+    stacksafe write short:X short:Y
+    [
+        theX := X.
+        theY := Y.
+    ]
+    
+    stacksafe write win_coord:aValue
+    [
+        short tmp := aValue X.
+        theX := tmp.
+        
+        tmp := aValue Y.
+        theY := tmp.
+    ]
+    
+    stacksafe readXTo vshort:aRetVal
+    [
+        aRetVal short := theX.
+    ]
+    
+    short rvprop X :: readXTo.
+    
+    stacksafe readYTo vshort:aRetVal
+    [
+        aRetVal short := theY.
+    ]
+    
+    short rvprop Y :: readYTo.
+}
+
+// --- SMALL_RECT --
+
+type win_small_rect = system'SMALL_RECT.
+                
+sealed embeddable struct SMALL_RECT
+{
+    short theLeft.
+    short theTop.
+    short theRight.
+    short theBottom.
+    
+    short rvprop Left   :: readLeftTo.
+    
+    short rvprop Top    :: readTopTo.
+    
+    short rvprop Right  :: readRightTo.
+    
+    short rvprop Bottom :: readBottomTo.
+    
+    stacksafe readLeftTo vshort:aRetVal
+    [
+        aRetVal short := theLeft.
+    ]
+    
+    stacksafe readTopTo vshort:aRetVal
+    [
+        aRetVal short := theTop.
+    ]
+    
+    stacksafe readRightTo vshort:aRetVal
+    [
+        aRetVal short := theRight.
+    ]
+    
+    stacksafe readBottomTo vshort:aRetVal
+    [
+        aRetVal short := theBottom.
+    ]
+    
+    write win_small_rect:aValue
+    [
+        short tmp := aValue Left.
+        theLeft := tmp.
+        
+        tmp := aValue  Top.
+        theTop := tmp.
+        
+        tmp := aValue Right.
+        theRight := tmp.
+        
+        tmp := aValue Bottom.
+        theBottom := tmp.
+    ]
+}    

@@ -1,4 +1,5 @@
 type tape_structure = system'dynamic'Struct.
+type tape_dynamic_structure = system'dynamic'DynamicStruct.
 
 // --- Tape ---
 

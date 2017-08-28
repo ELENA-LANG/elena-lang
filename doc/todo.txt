@@ -3,22 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * migrating rosetta samples : json
-
-                 * fix the bug : duplciate methods are not recognized:
-                      stacksafe literal add value:v = v literal.
-                      literal add literal : aLiteral => system'core_routines'__literal.
-                 * test: "int test := 3." - in the root
-                 * compile - "a b:=n."
-                 * compile - "a."
-                 * compile - "a:=n."
-                 * test all possible syntax constructions, currently the wrong one is ignored without generating an error
-
-              xdev - general implementation
-                 * embeddable eval[1]
-                 * embeddable get[1]
-                 * embeddable eval[2]
-
                  * migrating rosetta samples : Conway's Game of Life
 
                  * elenart : correctly display strong typed message names
@@ -185,6 +169,13 @@ In development:
                  * support sealed accumulator constants
                  * warn on method duplications in the template
                  * warn on field duplications in the template
+                 * embeddable eval[1]
+                 * embeddable get[1]
+                 * embeddable eval[2]
+                 * fix the bug : duplciate methods are not recognized:
+                      stacksafe literal add value:v = v literal.
+                      literal add literal : aLiteral => system'core_routines'__literal.
+                 * test all possible syntax constructions, currently the wrong one is ignored without generating an error
 
 ------                                 
 Pipeline:
