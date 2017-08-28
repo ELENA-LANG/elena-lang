@@ -2,27 +2,23 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * migrating rosetta samples : Conway's Game of Life
-
-                 * elenart : correctly display strong typed message names
-                 * elenavm : correctly display strong typed message names
-                 * Signature should support only get, set, eval
-                 * migrate GUI samples
-                 * implement closure with explicit class type:
-			| if(&type<FormatException>:e) []
-
               zdev - script engine
                  * optimize dynamic code building
                  * migrate script samples
                  * test vm console operations in IDE
 
-              xdev - general implementation
-                 * migrate samples
+              xdev - refactoring
+                 * reimplement arithmeval
+                 * migrate amb
+                 * migrate anagram
+                 * test twentyfour sample
+                 * migrate execute brainf***
+                 * GUI component interaction
+                 * Hello world/Graphical
+                 * Simple windowed application
 
               xdev - general implementation
-                 * declaring an array field
-                 * declaring an array : // array<Field> fieldArray.
+                 * migrate GUI samples
 
               xdev - multimethod                 
                  * compile time multi method resolution : o x := 2.
@@ -64,18 +60,6 @@ In development:
 
               xdev - refactoring
                  * review cellular library
-
-              xdev - refactoring
-                 * reimplement arithmeval
-                 * migrate amb
-                 * migrate anagram
-                 * test twentyfour sample
-                 * migrate execute brainf***
-                 * GUI component interaction
-                 * Hello world/Graphical
-                 * Simple windowed application
-                 * nshift should be replaced with nshiftl, nshiftr
-                 * optimize shift implementation
 
               sdev - refactoring
                  * refactor extensions'scripting'Library ...
@@ -176,6 +160,15 @@ In development:
                       stacksafe literal add value:v = v literal.
                       literal add literal : aLiteral => system'core_routines'__literal.
                  * test all possible syntax constructions, currently the wrong one is ignored without generating an error
+                 * elenart : correctly display strong typed message names
+                 * elenavm : correctly display strong typed message names
+                 * Signature should support only get, set, eval
+                 * implement closure with explicit class type:
+			| if(&type<FormatException>:e) []
+                 * declaring an array field
+                 * declaring an array : // array<Field> fieldArray.
+                 * nshift should be replaced with nshiftl, nshiftr
+                 * optimize shift implementation
 
 ------                                 
 Pipeline:

@@ -322,8 +322,8 @@ extension convertorOp
 //                wide : l = longConvertor convert wide:l base:16.
 //            }.
     
-//    toChar
-//        = charConvertor convert:self.
+    toChar
+        = charConvertor convert:self.
 
     toReal
         = realConvertor convert:self.

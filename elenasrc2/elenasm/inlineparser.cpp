@@ -116,35 +116,9 @@ bool VMTapeParser :: parseMessage(ident_t message, IdentifierString& reference)
    }
    else return false;
 
-   int verb_id = 0;
-   size_t subjPos = message.find('&');
-   if (subjPos != NOTFOUND_POS) {
-      reference.copy(message, subjPos);
-      verb_id = mapVerb(reference);
-      if (verb_id != 0) {
-         message += subjPos + 1;
-         length -= subjPos + 1;
-      }         
-   }
-   else {
-      reference.copy(message, length);
-
-      verb_id = mapVerb(reference);
-      if (verb_id != 0)
-         message = NULL;
-   }
-
-   if (verb_id == 0)
-      verb_id = (paramCounter == 0) ? GET_MESSAGE_ID : EVAL_MESSAGE_ID;
-
    reference.clear();
    reference.append('0' + (char)paramCounter);
-   reference.append('#');
-   reference.append(0x20 + (char)verb_id);
-   if (!emptystr(message)) {
-      reference.append('&');
-      reference.append(message, length);
-   }
+   reference.append(message, length);
 
    return true;
 }
