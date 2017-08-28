@@ -1731,7 +1731,7 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
    }
 }
 
-void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant)
+void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -1740,6 +1740,10 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
          if (_logic->validateFieldAttribute(value, isSealed, isConstant)) {
             if (value == lxStaticAttr) {
                isStaticField = true;
+            }
+            else if (value == V_OBJARRAY) {
+               elementRef = fieldRef;
+               fieldRef = V_OBJARRAY;
             }
             else if (value == -1) {
                // ignore if constant / sealed attribute was set
@@ -3062,17 +3066,66 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    return retVal;
 }
 
+void Compiler :: inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef)
+{
+   _Module* parent = scope.loadReferenceModule(sourceRef);
+
+   _Memory* source = parent->mapSection(sourceRef | mskRDataRef, true);
+   _Memory* target = scope.module->mapSection(targetRef | mskRDataRef, false);
+
+   MemoryReader reader(source);
+   MemoryWriter writer(target);
+
+   writer.read(&reader, source->Length());
+
+   _ELENA_::RelocationMap::Iterator it(source->getReferences());
+   ref_t currentMask = 0;
+   ref_t currentRef = 0;
+   while (!it.Eof()) {
+      currentMask = it.key() & mskAnyRef;
+      currentRef = it.key() & ~mskAnyRef;
+
+      target->addReference(importReference(parent, currentRef, scope.module) | currentMask, *it);
+
+      it++;
+   }
+}
+
 ObjectInfo Compiler :: compileAssigningClassConstant(SyntaxWriter& writer, SNode targetNode, CodeScope& scope, ObjectInfo retVal,  int mode)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   bool accumulatorMode = false;
 
    if (scope.getMessageID() == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE) && classScope != NULL) {
       SymbolScope constantScope(scope.moduleScope, classScope->info.staticValues.get(retVal.param) & ~mskAnyRef);
 
       SNode sourceNode = targetNode.nextNode(lxObjectMask);
-      ObjectInfo source = compileAssigningExpression(writer, sourceNode, scope);
+      SNode operatorNode = sourceNode.findSubNode(lxOperator);
+      if (operatorNode != lxNone && operatorNode.identifier().compare("+")) {
+         SNode firstNode = sourceNode.findSubNodeMask(lxObjectMask);
+         ObjectInfo info = scope.mapObject(firstNode);
+         if (info.kind == retVal.kind && info.param == retVal.param) {
+            // HOTFIX : support accumulating attribute list 
+            ClassInfo parentInfo;
+            scope.moduleScope->loadClassInfo(parentInfo, classScope->info.header.parentRef);
+            ref_t parentListRef = parentInfo.staticValues.get(retVal.param) & ~mskAnyRef;
 
-      if (compileSymbolConstant(sourceNode, constantScope, source) && _logic->isCompatible(*scope.moduleScope, retVal.extraparam, resolveObjectReference(scope, source))) {
+            if (parentListRef != 0) {
+               // inherit the parent list
+               inheritClassConstantList(*scope.moduleScope, parentListRef, constantScope.reference);
+            }
+
+            accumulatorMode = true;
+            sourceNode = operatorNode.nextNode();
+         }
+      }
+      ObjectInfo source = compileAssigningExpression(writer, sourceNode, scope);
+      ref_t targetRef = accumulatorMode ? retVal.element : retVal.extraparam;
+      ref_t sourceRef = resolveObjectReference(scope, source);
+      if (sourceRef == V_INT32 && source.kind == okIntConstant)
+         sourceRef = scope.moduleScope->intReference;
+
+      if (compileSymbolConstant(sourceNode, constantScope, source, accumulatorMode) && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       }
       else scope.raiseError(errInvalidOperation, targetNode);
    }
@@ -5004,19 +5057,20 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
    while (current != lxNone) {
       if (current == lxClassField) {
          ref_t fieldRef = 0;
+         ref_t elementRef = 0;
          bool isStatic = false;
          bool isSealed = false;
          bool isConst = false;
          int sizeHint = 0;
-         declareFieldAttributes(current, scope, fieldRef, sizeHint, isStatic, isSealed, isConst);
+         declareFieldAttributes(current, scope, fieldRef, elementRef, sizeHint, isStatic, isSealed, isConst);
 
          if (isStatic) {
-            generateClassStaticField(scope, current, fieldRef, isSealed, isConst);
+            generateClassStaticField(scope, current, fieldRef, elementRef, isSealed, isConst);
          }
          else if (isSealed || isConst) {
             scope.raiseError(errIllegalField, current);
          }
-         else generateClassField(scope, current, fieldRef, sizeHint, singleField);
+         else generateClassField(scope, current, fieldRef, elementRef, sizeHint, singleField);
       }
       else if (current == lxFieldInit) {
          // HOTFIX : reallocate static constant
@@ -5176,7 +5230,7 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
    }
 }
 
-void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, /*ref_t typeRef, */ref_t classRef, int sizeHint, bool singleField)
+void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t classRef, ref_t elementRef, int sizeHint, bool singleField)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -5291,7 +5345,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    }
 }
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, bool isSealed, bool isConst)
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst)
 {
    _Module* module = scope.moduleScope->module;
 
@@ -5661,98 +5715,93 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
    }
 }
 
-bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal)
+bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode)
 {
-   if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
-      _Module* module = scope.moduleScope->module;
-      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+   ref_t parentRef = 0;
 
-      size_t value = module->resolveConstant(retVal.param).toULong(16);
+   _Module* module = scope.moduleScope->module;
+   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      dataWriter.writeDWord(value);
+   if (accumulatorMode) {
+      if (dataWriter.Position() == 0)
+         dataWriter.Memory()->addReference(scope.moduleScope->arrayReference | mskVMTRef, (ref_t)-4);
 
-      dataWriter.Memory()->addReference(scope.moduleScope->intReference | mskVMTRef, (ref_t)-4);
+      SymbolScope memberScope(scope.moduleScope, scope.moduleScope->mapAnonymous());
+      if (!compileSymbolConstant(node, memberScope, retVal))
+         return false;
 
-      scope.moduleScope->defineConstantSymbol(scope.reference, V_INT32);
+      dataWriter.Memory()->addReference(memberScope.reference | mskConstantRef, dataWriter.Position());
+      dataWriter.writeDWord(0);
    }
-   else if (retVal.kind == okLongConstant) {
-      _Module* module = scope.moduleScope->module;
-      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+   else {
+      if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
+         size_t value = module->resolveConstant(retVal.param).toULong(16);
 
-      long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
+         dataWriter.writeDWord(value);
 
-      dataWriter.write(&value, 8u);
+         parentRef = scope.moduleScope->intReference;
+      }
+      else if (retVal.kind == okLongConstant) {
+         long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
 
-      dataWriter.Memory()->addReference(scope.moduleScope->longReference | mskVMTRef, (ref_t)-4);
+         dataWriter.write(&value, 8u);
 
-      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->longReference);
-   }
-   else if (retVal.kind == okRealConstant) {
-      _Module* module = scope.moduleScope->module;
-      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+         parentRef = scope.moduleScope->longReference;
+      }
+      else if (retVal.kind == okRealConstant) {
+         double value = module->resolveConstant(retVal.param).toDouble();
 
-      double value = module->resolveConstant(retVal.param).toDouble();
+         dataWriter.write(&value, 8u);
 
-      dataWriter.write(&value, 8u);
+         parentRef = scope.moduleScope->realReference;
+      }
+      else if (retVal.kind == okLiteralConstant) {
+         ident_t value = module->resolveConstant(retVal.param);
 
-      dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, (ref_t)-4);
+         dataWriter.writeLiteral(value, getlength(value) + 1);
 
-      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->realReference);
-   }
-   else if (retVal.kind == okLiteralConstant) {
-      _Module* module = scope.moduleScope->module;
-      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+         parentRef = scope.moduleScope->literalReference;
+      }
+      else if (retVal.kind == okWideLiteralConstant) {
+         WideString wideValue(module->resolveConstant(retVal.param));
 
-      ident_t value = module->resolveConstant(retVal.param);
+         dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
 
-      dataWriter.writeLiteral(value, getlength(value) + 1);
+         parentRef = scope.moduleScope->wideReference;
+      }
+      else if (retVal.kind == okCharConstant) {
+         ident_t value = module->resolveConstant(retVal.param);
 
-      dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, (size_t)-4);
+         dataWriter.writeLiteral(value, getlength(value));
 
-      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->literalReference);
-   }
-   else if (retVal.kind == okWideLiteralConstant) {
-      _Module* module = scope.moduleScope->module;
-      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+         parentRef = scope.moduleScope->charReference;
+      }
+      else if (retVal.kind == okObject) {
+         SNode root = node.findSubNodeMask(lxObjectMask);
 
-      WideString wideValue(module->resolveConstant(retVal.param));
+         if (root == lxConstantList && !accumulatorMode) {
+            SymbolExpressionInfo info;
+            info.expressionClassRef = scope.outputRef;
+            info.constant = scope.constant;
+            info.listRef = root.argument;
 
-      dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
+            // save class meta data
+            MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+            info.save(&metaWriter);
 
-      dataWriter.Memory()->addReference(scope.moduleScope->wideReference | mskVMTRef, (size_t)-4);
-
-      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->wideReference);
-   }
-   else if (retVal.kind == okCharConstant) {
-      _Module* module = scope.moduleScope->module;
-      MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-
-      ident_t value = module->resolveConstant(retVal.param);
-
-      dataWriter.writeLiteral(value, getlength(value));
-
-      dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, (ref_t)-4);
-
-      scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->charReference);
-   }
-   else if (retVal.kind == okObject) {
-      SNode root = node.findSubNodeMask(lxObjectMask);
-
-      if (root == lxConstantList) {
-         SymbolExpressionInfo info;
-         info.expressionClassRef = scope.outputRef;
-         info.constant = scope.constant;
-         info.listRef = root.argument;
-
-         // save class meta data
-         MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-         info.save(&metaWriter);
-
-         return true;
+            return true;
+         }
+         else return false;
       }
       else return false;
+
+      dataWriter.Memory()->addReference(parentRef | mskVMTRef, (ref_t)-4);
+
+      if (parentRef == scope.moduleScope->intReference) {
+         scope.moduleScope->defineConstantSymbol(scope.reference, V_INT32);
+      }
+      else scope.moduleScope->defineConstantSymbol(scope.reference, parentRef);
    }
-   else return false;
 
    return true;
 }
@@ -6807,22 +6856,4 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
    SNode codeNode = methNode.appendNode(lxResendExpression, resendMessage);
    if (parentRef)
       codeNode.appendNode(lxTarget, parentRef);
-}
-
-void Compiler :: inheritListMembers(_CompilerScope& scope, ref_t parentListRef, ref_t listRef)
-{
-   _Memory* section = scope.module->mapSection(listRef | mskRDataRef, false);
-
-   _Memory* parentSection = scope.module->mapSection(parentListRef | mskRDataRef, false);
-
-   MemoryWriter writer(section);
-   MemoryReader reader(parentSection);
-   writer.read(&reader, parentSection->Length());
-   // resolve section references
-   _ELENA_::RelocationMap::Iterator it(parentSection->getReferences());
-   while (!it.Eof()) {
-      section->addReference(it.key(), *it);
-
-      it++;
-   }
 }

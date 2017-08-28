@@ -2038,7 +2038,17 @@ bool DerivationReader :: generateFieldTree(SyntaxWriter& writer, SNode node, Der
 
          writer.appendNode(lxTemplateMethod, scope.fields.Count());
       }
-      else generateAttributes(bufferWriter, node, scope, attributes, templateMode);
+      else {
+         generateAttributes(bufferWriter, node, scope, attributes, templateMode);
+
+         SNode attrValue = node.findChild(lxAttributeValue);
+         if (attrValue == lxAttributeValue && attrValue.argument == (ref_t)-1) {
+            // HOTFIX : if it is a primitive array field
+            scope.copySubject(bufferWriter, attrValue.firstChild(lxTerminalObjMask));
+
+            bufferWriter.appendNode(lxAttribute, V_OBJARRAY);
+         }
+      }
 
       // copy attributes
       SyntaxTree::moveNodes(writer, buffer, lxAttribute, lxIdentifier, lxPrivate, lxTemplateParam, lxSize, lxClassRefAttr, lxTemplateAttribute);
@@ -2559,6 +2569,10 @@ void DerivationReader :: generateScopeMembers(SNode node, DerivationScope& scope
             SNode fieldTemplate = current.findChild(lxBaseParent);
             if (fieldTemplate != lxNone) {
                current = lxFieldTemplate;
+            }
+            else if (checkNode(current.findChild(lxAttributeValue), lxAttributeValue, -1)) {
+               // HOTFIX : if it is a primitive array field
+               current = lxClassField;
             }
             else if (setIdentifier(subAttributes)) {
                subAttributes.refresh();

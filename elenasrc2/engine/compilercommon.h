@@ -198,7 +198,6 @@ public:
 //   //virtual int injectTempLocal(SNode node) = 0;
 
    virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
-   virtual void inheritListMembers(_CompilerScope& scope, ref_t parentListRef, ref_t listRef) = 0;
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;

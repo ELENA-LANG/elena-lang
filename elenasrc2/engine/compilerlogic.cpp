@@ -1125,6 +1125,8 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       case V_EXTMESSAGE:
          attrValue = 0;
          return true;
+      case V_OBJARRAY:
+         return true;
       default:
          return false;
    }

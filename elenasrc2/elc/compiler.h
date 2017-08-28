@@ -780,6 +780,7 @@ private:
    void importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
+   void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 
 //   /// NOTE : the method is used to set template pseudo variable
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
@@ -791,7 +792,7 @@ private:
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
    void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
    void declareVMT(SNode member, ClassScope& scope);
 //   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 //
@@ -894,8 +895,8 @@ private:
 
 //   void declareVirtualMethods(ClassScope& scope);
 
-   void generateClassField(ClassScope& scope, SNode node, /*ref_t typeRef, */ref_t fieldRef, int sizeHint, bool singleField);
-   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, bool isSealed, bool isConst);
+   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField);
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
@@ -911,7 +912,7 @@ private:
    void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
-   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
+   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
 //   void compileIncludeModule(SNode node, ModuleScope& scope);
 //   void compileForward(SNode node, ModuleScope& scope);
 
@@ -981,7 +982,6 @@ public:
    virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
-   virtual void inheritListMembers(_CompilerScope& scope, ref_t parentListRef, ref_t listRef);
 
    Compiler(_CompilerLogic* logic);
 };

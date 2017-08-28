@@ -3,9 +3,8 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * #342 : array declaration syntax
-                 * syntax modify
-                 * syntax modify : open arg list
+                 * array field
+                 * static array field
 
               xdev - general implementation
                  * implementing accumulator methods
@@ -199,6 +198,8 @@ In development:
                  * struct fields : structures - should not be allowed
                  * struct fields : objects - should not be allowed
                  * primitive array field with size
+                 * syntax modify : open arg list
+                 * primitive arraz should support + oeprator (similar to hard-coded static constant operation)
 
 ------                                 
 Pipeline:
