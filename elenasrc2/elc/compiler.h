@@ -772,6 +772,7 @@ private:
       return _logic->checkMethod(scope, reference, message, dummy);
    }
 
+   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 

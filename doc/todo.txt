@@ -3,14 +3,11 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * array field
-                 * static array field
+                 * method templates with optional declarations
 
               xdev - general implementation
-                 * implementing accumulator methods
                  * review accumulator methods
                  * JITLinker::resolveConstant - for mskConstArray, vmt should be array or super?
-                 * support sealed accumulator methods
                  * implementing #348
 
               xdev - general implementation
@@ -25,7 +22,7 @@ In development:
               xdev - general implementation
                  * migrating rosetta samples : json
 
-2                 * fix the bug : duplciate methods are not recognized:
+                 * fix the bug : duplciate methods are not recognized:
                       stacksafe literal add value:v = v literal.
                       literal add literal : aLiteral => system'core_routines'__literal.
                  * test: "int test := 3." - in the root
@@ -200,6 +197,9 @@ In development:
                  * primitive array field with size
                  * syntax modify : open arg list
                  * primitive arraz should support + oeprator (similar to hard-coded static constant operation)
+                 * support sealed accumulator constants
+                 * warn on method duplications in the template
+                 * warn on field duplications in the template
 
 ------                                 
 Pipeline:

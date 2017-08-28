@@ -3,7 +3,7 @@
 //               
 //		This file contains ELENA Engine Derivation Tree classes
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef derivationH
@@ -150,13 +150,14 @@ class DerivationReader : public _DerivationReader
    MessageMap  _verbs;                            // list of verbs
 
    void copyFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer);
+   void copyFieldInitTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyTreeNode(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool methodMode = false*/);
    void copyMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer);
    void copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues);
    void copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool variableMode*/);
 
-   bool generateTemplate(SyntaxWriter& writer, DerivationScope& scope, bool declaringClass/*, bool embeddableMode*/);
+   bool generateTemplate(SyntaxWriter& writer, DerivationScope& scope, bool declaringClass);
 
    void generateScopeMembers(SNode node, DerivationScope& scope);   
 
@@ -168,7 +169,7 @@ class DerivationReader : public _DerivationReader
    void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool operationMode*/);
    void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-   void generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
+   bool generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false); // returns true if in-place init found
    void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, int mode = 0*/);

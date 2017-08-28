@@ -1,21 +1,33 @@
+field template prop :: prop_name
+{
+    object $field.
+    
+    set prop_name:val
+    [
+        $field := val
+    ]
+    
+    prop_name = $field.
+}
+
 
 field template prop :: prop_type, prop_name
 {
-    prop_type field.
+    prop_type $field.
     
     set prop_name prop_type:val
     [
-        field := val
+        $field := val
     ]
     
-    prop_type prop_name = field.
+    prop_type prop_name = $field.
 }
 
 field template rprop :: type, prop_name
 {
-    type field.
+    type $field.
     
-    type prop_name = field.
+    type prop_name = $field.
 }
 
 // --- vprop ---

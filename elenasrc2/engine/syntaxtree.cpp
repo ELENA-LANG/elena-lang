@@ -176,11 +176,13 @@ void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer)
    }
 }
 
-void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type)
+bool SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type)
 {
+   bool moved = false;
    SNode current = buffer.readRoot();
    while (current != lxNone) {
       if (current == type) {
+         moved = true;
          if (current.strArgument >= 0) {
             writer.newNode(current.type, current.identifier());
          }
@@ -193,6 +195,8 @@ void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType typ
       }
       current = current.nextNode();
    }
+
+   return moved;
 }
 
 void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2)
