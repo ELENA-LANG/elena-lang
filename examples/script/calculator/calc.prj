@@ -12,7 +12,8 @@ parser.l
 control.l
 
 [forwards]
-'program=extensions'programLoop
+'program2=extensions'programLoop
 'program'control=calc'control
 'rules=calc'dynamicRules
+'program=calc'testCases
 

@@ -16,7 +16,7 @@ bin\elc examples\console\trans\tanslit.prj
 bin\elc examples\console\matrix\matrix.prj
 bin\elc examples\script\interpreter\interpreter.prj
 rem bin\elc examples\script\calculator\calc.xprj
-rem bin\elc examples\script\calculator\calc.prj
+bin\elc examples\script\calculator\calc.prj
 rem bin\elc examples\script\js\vmconsole.prj
 rem bin\elc examples\script\js\fibonacci.xprj 
 rem bin\elc examples\gui\agenda\agenda.prj

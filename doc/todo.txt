@@ -4,6 +4,7 @@ In development:
 
               zdev - script engine
                  * optimize dynamic code building
+
                  * migrate script samples
                  * test vm console operations in IDE
 

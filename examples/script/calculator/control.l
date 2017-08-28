@@ -13,7 +13,7 @@ static factory
 
 symbol dynamicRules = 
     factory 
-        eval:(Library new);
+        eval(Library new);
         first; 
         eval.
     
@@ -26,7 +26,7 @@ extension testOp
     [
         var result := self evaluated with:dynamicRules.
         
-        console printLine:self:" evaluated as ":result.
+        console printLine(self," evaluated as ",result).
     ]    
 }
 
@@ -36,7 +36,7 @@ extension staticTestOp
     [
         var result := self evaluated with:staticRules.
         
-        console printLine:self:" evaluated as ":result
+        console printLine(self," evaluated as ",result)
     ]
 }
 

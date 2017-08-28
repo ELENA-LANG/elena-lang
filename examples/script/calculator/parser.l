@@ -112,7 +112,7 @@ class TreeNode :: BaseTreeNode
         if ($nil == theRight)
             [ InvalidArgumentException new; raise ].
         
-        ^ theStrategy evalNode:(theLeft value):(theRight value)
+        ^ theStrategy evalNode(theLeft value, theRight value)
     ]
     
     constructor new:aStrategy baseLevel:baseLevel
@@ -172,9 +172,9 @@ class FunctionNode :: TreeLeaf
             [ ^ theStrategy~subj get ].
             
         if ($nil == theArg2)
-            [ ^ theStrategy~subj eval:(theArg1 value) ].
+            [ ^ theStrategy~subj eval(theArg1 value) ].
             
-        ^ theStrategy~subj eval:(theArg1 value):(theArg2 value).
+        ^ theStrategy~subj eval(theArg1 value, theArg2 value).
     ]
 
     append first_arg:node
@@ -194,12 +194,12 @@ class FunctionNode :: TreeLeaf
     set
         => theArgState.
         
-    set first_arg
+    first_arg
     [
         theArgState := %second_arg.
     ]    
         
-    set second_arg
+    second_arg
     [
         theArgState := %third_arg.
     ]    
@@ -222,7 +222,7 @@ class StateMachine
     object theCurrentState.
     object theDerivationTree.
     
-    int level :: prop(theLevel).
+    int prop level :: theLevel.
 
     constructor new : states
     [
@@ -231,7 +231,7 @@ class StateMachine
         theLevel := 0
     ]
 
-    generic seek
+    generic
     [
         theCurrentState := theStates~$subject get
     ]
@@ -315,12 +315,12 @@ extension parserOp
 {
     evaluated with:states
     [
-        var aStateMachine := StateMachine new:states; seek state0.
+        var aStateMachine := StateMachine new:states; state0.
         
         try (self run each:(aStateMachine func1))
         {
-            generic : e [
-                console writeLine:e.
+            on(Exception e) [
+                console printLine:e.
                 
                 aStateMachine invalidate
             ]
