@@ -647,17 +647,21 @@ sealed class $ClassContext
 
 class Library //:: Scope
 {
+//    stack<$ClassContext> _contextes.
+    
 //    object theClasses.
 //    object theForwards.
 //    object thePreloaded.
-//    
-//    constructor new
-//    [
+    
+    constructor new
+    [
+//        _contextes := stack<$ClassContext>(4).
+        
 //        theClasses := List new.
 //        theForwards := Dictionary new.
 //        thePreloaded := List new.
-//    ]
-//    
+    ]
+    
 //    include:ref:symbol
 //    [
 //        theForwards@symbol := ref.

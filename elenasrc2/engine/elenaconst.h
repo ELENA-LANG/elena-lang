@@ -65,6 +65,9 @@ namespace _ELENA_
    #define VALUES_MESSAGE_ID       0x001D             // virtual method returning the list of enum values
    #define PREDEFINED_MESSAGE_ID   0x001D
 
+   // virtual operator
+   #define SETNIL_REFER_MESSAGE_ID 0x1019
+
    // ---- ELENAVM command masks ---
    #define VM_MASK                 0x0200             // vm command mask
    #define LITERAL_ARG_MASK        0x0400             // indicates that the command has a literal argument

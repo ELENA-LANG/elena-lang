@@ -307,7 +307,7 @@ ROOT_L6_OPERATION ->
 
 ROOT_ANGLE_OBJECT ->
 	identifier ROOT_ANGLE_OPERATION
-	| private
+	| private ROOT_ANGLE_OPERATION
 	| reference
 	| literal
 	| wide
@@ -613,6 +613,7 @@ PARAMETER ->
 TOKEN_PARAM ->
 	identifier
 	| reference
+	| private
 
 MESSAGE_REFERENCE ->
 	identifier

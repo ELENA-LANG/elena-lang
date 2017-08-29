@@ -2839,6 +2839,12 @@ void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNLoadE);
          tape.write(bcNWrite);
          break;
+      case SETNIL_REFER_MESSAGE_ID:
+         // ecopy 0
+         // nwrite
+         tape.write(bcECopy, 0);
+         tape.write(bcNWrite);
+         break;
       // NOTE : read operator is used to define the array length
       case READ_MESSAGE_ID:
          // nlen
@@ -3683,7 +3689,7 @@ void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node 
 void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
 {
    bool lenMode = node.argument == READ_MESSAGE_ID;
-   bool setMode = node.argument == SET_REFER_MESSAGE_ID;
+   bool setMode = (node.argument == SET_REFER_MESSAGE_ID || node.argument == SETNIL_REFER_MESSAGE_ID);
    bool assignMode = node != lxArrOp || node != lxArgArrOp;
 
    SNode larg, rarg, rarg2;

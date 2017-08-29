@@ -2651,6 +2651,11 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
          roperand2Ref = 0;
 
       operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, roperand2Ref, resultClassRef);
+      
+      if (roperand2Ref == V_NIL && loperandRef == V_INT32ARRAY && operator_id == SET_REFER_MESSAGE_ID) {
+         //HOTFIX : allow set operation with $nil
+         operator_id = SETNIL_REFER_MESSAGE_ID;
+      }
    }
    else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
 
@@ -2663,19 +2668,6 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    bool assignMode = false;
    if (operationType != 0) {
       if (loperand.kind == okField || loperand.kind == okOuter) {
-         //// HOTFIX : for fields replace assigning operators with assigning expression
-         //switch (operator_id) {
-         //   case APPEND_MESSAGE_ID:
-         //      assignMode = true;
-         //      operator_id = ADD_MESSAGE_ID;
-         //      break;
-         //   case REDUCE_MESSAGE_ID:
-         //      assignMode = true;
-         //      operator_id = SUB_MESSAGE_ID;
-         //      break;
-         //   default:
-         //      break;
-         //}
          if (assignMode) {
             // once again resolve the primitive operator
             operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);

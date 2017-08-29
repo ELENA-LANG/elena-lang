@@ -81,6 +81,12 @@ template<BaseEnumerable> stack :: type
         theTop := 0.
     ]
     
+    explicit int:capacity
+    [
+        theArray := type&(capacity).
+        theTop := 0.
+    ]
+        
     int rvprop length :: readLengthTo.
     
     stacksafe readLengthTo vint:aLength
@@ -118,7 +124,7 @@ template<BaseEnumerable> stack :: type
         theTop reduce int:1.
         
         type item := theArray getAt int:theTop.                        
-        theArray setAt int:theTop type:$nil.
+        //theArray setAt int:theTop type:$nil.
         
         ^ item
     ]

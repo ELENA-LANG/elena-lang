@@ -439,9 +439,14 @@ void DerivationReader::DerivationScope :: loadAttributeValues(SNode attributes, 
          SNode terminalNode = current.firstChild(lxObjectMask);
          ref_t attr = mapAttribute(terminalNode);
          if (attr == 0) {
-            if (classMode)
+            if (classMode) {
                // if it is not a declared type - check if it is a class
                attr = mapTerminal(current.findChild(lxIdentifier, lxPrivate), true);
+
+               if (attr == 0)
+                  //HOTFIX : declare a new type
+                  attr = mapTerminal(current.findChild(lxIdentifier, lxPrivate), false);
+            }
 
             if (!attr)
                raiseError(errInvalidHint, current);
@@ -454,11 +459,12 @@ void DerivationReader::DerivationScope :: loadAttributeValues(SNode attributes, 
          if (item != lxNone && item.nextNode() == lxNone) {
             ref_t attr = 0;
             if (classMode) {
-               attr = mapTerminal(item.findChild(lxIdentifier), true);
+               attr = mapTerminal(item.findChild(lxIdentifier, lxPrivate), true);
             }
             else attr = mapAttribute(item);
             if (attr == 0) {
-               raiseError(errInvalidHint, current);
+               //HOTFIX : support newly declared classes
+               attr = mapTerminal(item.findChild(lxIdentifier, lxPrivate), false);
             }
 
             this->attributes.add(this->attributes.Count() + 1, attr);
