@@ -1695,6 +1695,10 @@ void DerivationReader :: generateAttributeTemplate(SyntaxWriter& writer, SNode n
 
       typeRef = templateScope.reference;
    }
+
+   if (!typeRef)
+      scope.raiseError(errUnknownSubject, node);
+
    if (node == lxAttribute) {
       writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(typeRef));
    }
