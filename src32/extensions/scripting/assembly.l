@@ -1,5 +1,5 @@
 //import system'routines.
-//import system'collections.
+import system'collections.
 //import system'text.
 //import system'dynamic.
 //import extensions.
@@ -647,7 +647,7 @@ sealed class $ClassContext
 
 class Library //:: Scope
 {
-//    stack<$ClassContext> _contextes.
+    stack<$ClassContext> _contextes.
     
 //    object theClasses.
 //    object theForwards.
@@ -655,7 +655,9 @@ class Library //:: Scope
     
     constructor new
     [
-//        _contextes := stack<$ClassContext>(4).
+        _contextes := stack<$ClassContext>(4).
+        
+        _contextes push($ClassContext new).
         
 //        theClasses := List new.
 //        theForwards := Dictionary new.
