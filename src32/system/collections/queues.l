@@ -2,7 +2,7 @@
 type stack = system'collections'Stack.
 type queue = system'collections'Queue.
 
-// --- Stack
+// --- Stack ---
 
 sealed class Stack :: BaseEnumerable
 {
@@ -66,6 +66,68 @@ sealed class Stack :: BaseEnumerable
         theList clear.
         theTop int := 0.
     ]
+}
+
+// --- Stack Template ---
+
+template<BaseEnumerable> stack :: type
+{
+    array<type> theArray.
+    vint        theTop.
+    
+    explicit
+    [
+        theArray := type&(8).
+        theTop := 0.
+    ]
+    
+    int rvprop length :: readLengthTo.
+    
+    stacksafe readLengthTo vint:aLength
+    [
+        aLength int := theTop.
+    ]
+    
+    bool isEmpty
+        = 0 == theTop.
+    
+    push type:anObject
+    [
+        int aCapacity := theArray length.
+        
+        if (theTop < aCapacity)
+            [ theArray setAt int:theTop type:anObject ];
+            [ theArray append type:anObject ].
+            
+        theTop append int:1
+    ]
+    
+    type peek
+    [
+        if (0 == theTop)
+            [ InvalidOperationException new:"Stack is empty"; raise ].
+            
+        ^ theArray getAt int(theTop - 1)
+    ]        
+    
+    type pop
+    [
+        if (0 == theTop)
+            [ InvalidOperationException new:"Stack is empty"; raise ].
+            
+        theTop reduce int:1.
+        
+        type item := theArray getAt int:theTop.                        
+        theArray setAt int:theTop type:$nil.
+        
+        ^ item
+    ]
+    
+    clear
+    [
+        theArray clear.
+        theTop int := 0.
+    ]    
 }
 
 // --- Queue ---

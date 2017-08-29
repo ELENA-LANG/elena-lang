@@ -1504,9 +1504,11 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode node, D
    copyIdentifier(writer, attr);
    writer.closeNode();
 
-   writer.newNode(lxExpression);
-   generateExpressionTree(writer, expr, scope, 0);
-   writer.closeNode();
+   if (expr != lxNone) {
+      writer.newNode(lxExpression);
+      generateExpressionTree(writer, expr, scope, 0);
+      writer.closeNode();
+   }
 
    writer.insert(lxBoxing);
    writer.closeNode();

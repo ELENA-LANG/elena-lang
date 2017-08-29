@@ -641,6 +641,10 @@
 //        => theBody.
 //}
 
+sealed class $ClassContext
+{
+}
+
 class Library //:: Scope
 {
 //    object theClasses.
@@ -658,16 +662,16 @@ class Library //:: Scope
 //    [
 //        theForwards@symbol := ref.
 //    ]
-//    
-//    open Symbol
-//    [
+    
+    openSymbol
+    [
 //        var symbol := SymbolScope new:$self.
 //        
 //        theClasses append:symbol.
 //        
 //        ^ symbol
-//    ]
-//    
+    ]
+    
 //    open Preloaded_symbol
 //    [
 //        var symbol := $self open Symbol.

@@ -3752,10 +3752,18 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 
    ref_t targetRef = scope.moduleScope->module->mapReference(node.findChild(lxClassRefAttr).identifier(), false);
 
-   ObjectInfo object = compileExpression(writer, node.findChild(lxExpression), scope, mode);
+   SNode objectNode = node.findChild(lxExpression);
+   if (objectNode != lxNone) {
+      ObjectInfo object = compileExpression(writer, objectNode, scope, mode);
 
-   if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
-      scope.raiseError(errIllegalOperation, node);
+      if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
+         scope.raiseError(errIllegalOperation, node);
+   }
+   else {
+      if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
+         scope.raiseError(errIllegalOperation, node);
+
+   }
 
    writer.removeBookmark();
 

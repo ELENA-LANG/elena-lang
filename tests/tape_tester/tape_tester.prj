@@ -9,6 +9,3 @@ warn:unresolved=0
 [files]
 main.l
 
-[forwards]
-'program=tape_tester'Program
-

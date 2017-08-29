@@ -40,6 +40,14 @@ extension tapeOp
         ^ params[n]
     ]
     
+    tape_swap_top args:params
+    [
+        var top := params[0].
+        var before_top := params[1].
+        params[0] := before_top.
+        params[1] := top.
+    ]
+    
     tape_assign args:params
         => system'core_routines'__tape.
     

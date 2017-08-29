@@ -624,6 +624,30 @@ bool CompilerLogic :: isReadonly(ClassInfo& info)
    return test(info.header.flags, elReadOnlyRole);
 }
 
+bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, targetRef))
+      return false;
+
+   if (test(info.header.flags, elStateless))
+      return false;
+
+   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
+   if (!info.methods.exist(implicitConstructor, true))
+      return false;
+
+   bool stackSafe = test(info.methodHints.get(Attribute(implicitConstructor, maHint)), tpStackSafe);
+
+   if (test(info.header.flags, elStructureRole)) {
+      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingStruct, info.size, targetRef, stackSafe);
+   }
+   else if (test(info.header.flags, elDynamicRole)) {
+      return false;
+   }
+   else compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
+}
+
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
 {
    if (targetRef == 0 && isPrimitiveRef(sourceRef)) {

@@ -7,7 +7,7 @@ import system'dynamic.
 class ScriptEngineException :: Exception
 {
     constructor new
-        <= new(scriptEngine $lastScriptError).
+        <= new literal(scriptEngine $lastScriptError).
 }
 
 // --- scriptEngine ---
