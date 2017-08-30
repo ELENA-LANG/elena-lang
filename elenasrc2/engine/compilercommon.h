@@ -184,7 +184,6 @@ struct _CompilerScope
 class _Compiler
 {
 public:
-////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument) = 0;
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe) = 0;
 //   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
@@ -193,6 +192,7 @@ public:
    virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef) = 0;
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0) = 0;
+   virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable) = 0;
 
    virtual void injectLocalBoxing(SNode node, int size) = 0;
 //   //virtual int injectTempLocal(SNode node) = 0;
@@ -283,7 +283,7 @@ public:
 //   virtual bool isPrimitiveArray(ref_t reference) = 0;
 //
 //   // auto generate virtual methods / fields
-   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
+   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
    virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef) = 0;
@@ -319,8 +319,6 @@ public:
    virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
    virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef) = 0;
    virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope) = 0;
-
-////   virtual void optimizeDuplicateBoxing(SNode node) = 0;
 
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;

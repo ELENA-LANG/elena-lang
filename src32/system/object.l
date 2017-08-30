@@ -1,8 +1,3 @@
-template dispatchable :: template_subj
-{
-    sealed embeddable template_subj = $self.
-}
-
 // --- super object ---
 
 /// a common ancestor
@@ -23,7 +18,7 @@ class Object
 }
 
 /// A common boolean value
-listable class BaseBoolValue :: dispatchable<bool>
+listable class BaseBoolValue
 {
     if : aTrueAction = $nil.
 

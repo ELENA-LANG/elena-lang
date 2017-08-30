@@ -326,7 +326,7 @@ class ListIndexer :: Indexer
 // --- List ---
 
 /// A list object
-sealed class List :: BaseEnumerable, dispatchable<list>
+sealed class List :: BaseEnumerable
 {
     vint      theCount.
     list_item theTop.
@@ -497,7 +497,7 @@ sealed class List :: BaseEnumerable, dispatchable<list>
 // --- ArrayList ---
 
 /// An array list object
-sealed class ArrayList :: BaseIndexable, dispatchable<array_list>
+sealed class ArrayList :: BaseIndexable
 {
     array theArray.
     vint  theLength.
@@ -793,7 +793,7 @@ class ArrayListIndexer :: Indexer
 // --- Dictionary ---
 
 /// Dictionary class
-sealed  class Dictionary :: BaseEnumerable, dispatchable<dictionary>
+sealed  class Dictionary :: BaseEnumerable
 {
     array_list theList.
     array      theHashTable.

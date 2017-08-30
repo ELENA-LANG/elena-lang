@@ -38,6 +38,7 @@ __mssg          = #19.
 __subj          = #18.
 __extmssg       = #21.
 __tape_mixin    = #8209.
+__symbol        = #22.
 
 __ifoperator    = #4097.
 __ifnotoperator = #4098.
@@ -46,8 +47,6 @@ __ifnotoperator = #4098.
 //#template(-4099) w1 {}
 //#template(-4100) w2 {}
 //#template(-4101) w3 {}
-//
-//#22 #262144     __symbol.
 
 /// Provides classes that describe the basic functionality
 
@@ -59,7 +58,7 @@ type bool       = system'BaseBoolValue.
 // === basic primitive types ===
 
 type keyvalue   = system'KeyValue.
-type dto        = system'DTO.  
+//type dto        = system'DTO.  
 
 type ref        = system'Variable.
 
@@ -74,7 +73,7 @@ type mssg       = system'Message.
 type ext_mssg   = system'ExtensionMessage.
 
 type subject    = system'Signature.
-//type symbol_ref :: system'Symbol.
+type symbol_ref = system'Symbol.
 
 // === basic dynamic types ===
 type bytearray  = system'ByteArray.

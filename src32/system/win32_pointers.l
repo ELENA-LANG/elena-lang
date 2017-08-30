@@ -54,7 +54,7 @@ sealed embeddable struct Handle
 
 // --- UnsafePointer ---
 
-sealed embeddable struct UnsafePointer :: dispatchable<dirty_ptr>
+sealed embeddable struct UnsafePointer
 {
     __dword thePointer(4).
 

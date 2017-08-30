@@ -316,7 +316,7 @@ class IntBaseNumber :: BaseNumber
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable<byte>
+sealed embeddable struct ByteNumber :: IntBaseNumber
 {
     __int theValue(1).
 
@@ -622,7 +622,7 @@ sealed embeddable struct ByteNumber :: IntBaseNumber, dispatchable<byte>
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable<short>
+sealed embeddable struct ShortNumber :: IntBaseNumber
 {
     __int theValue(2).
 
@@ -942,7 +942,7 @@ sealed embeddable struct ShortNumber :: IntBaseNumber, dispatchable<short>
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable<int>
+sealed embeddable struct IntNumber :: IntBaseNumber
 {
     __int theValue(4).
 
@@ -1270,7 +1270,7 @@ sealed embeddable struct IntNumber :: IntBaseNumber, dispatchable<int>
 
 /// A unsigned 32 bit integer
 
-sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable<uint>
+sealed embeddable struct UIntNumber :: IntBaseNumber
 {
     __int theValue(4).
 
@@ -1643,7 +1643,7 @@ sealed embeddable struct UIntNumber :: IntBaseNumber, dispatchable<uint>
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable<long>
+sealed embeddable struct LongNumber :: IntBaseNumber
 {
     __int theValue(8).
     
@@ -1968,7 +1968,7 @@ sealed embeddable struct LongNumber :: IntBaseNumber, dispatchable<long>
 // --- realNumber ---
 
 /// A 64bit float numeric value
-sealed embeddable struct RealNumber :: BaseNumber, dispatchable<real>
+sealed embeddable struct RealNumber :: BaseNumber
 {
     __real theValue(8).
 
@@ -2215,7 +2215,7 @@ sealed embeddable struct RealNumber :: BaseNumber, dispatchable<real>
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-sealed const embeddable struct CharValue :: BaseValue, dispatchable<char>
+sealed const embeddable struct CharValue :: BaseValue
 {
     __dword theValue(4).
 
@@ -2398,20 +2398,20 @@ sealed class Variable :: var<object>
             ! [ $value := $value - val ]
     ]
     
-//    multiplyBy : val
-//    [
-//        ($nil == $value)
-//            ? [ system'InvalidOperationException new; raise ]
-//            ! [ $value := $value * val ]
-//    ]
-//    
-//    /// Divides into the value
-//    divideInto : val
-//    [
-//        ($nil == $value)
-//            ? [ system'InvalidOperationException new; raise ]
-//            ! [ $value := $value / val ]
-//    ]    
+    multiplyBy : val
+    [
+        ($nil == $value)
+            ? [ system'InvalidOperationException new; raise ]
+            ! [ $value := $value * val ]
+    ]
+    
+    /// Divides into the value
+    divideInto : val
+    [
+        ($nil == $value)
+            ? [ system'InvalidOperationException new; raise ]
+            ! [ $value := $value / val ]
+    ]    
 }
 
 // --- KeyValue ---
@@ -2449,11 +2449,11 @@ sealed class KeyValue
     dispatch => theObject.
 }
 
-// --- DTO ---
-
-class DTO :: dispatchable<dto>
-{
-}
+//// --- DTO ---
+//
+//class DTO
+//{
+//}
 
 // === Basic Convertors ===
 

@@ -1,5 +1,5 @@
 
-limited class BaseSpace :: dispatchable<space>
+limited class BaseSpace
 {
     int fn2prop getLiveCell :: calcLiveCells.
     

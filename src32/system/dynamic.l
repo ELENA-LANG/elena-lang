@@ -1,24 +1,24 @@
-//// --- Symbol ---
-//
-///// A dynamic symbol
-//sealed embeddable struct Symbol
-//{
-//    __symbol theValue.
-//    
-//    /// Loads a symbol
-//    constructor new literal:name
-//    [
-//        system'core_routines'__symbol load symbol_ref:$self literal:name
-//    ]
-//        
-//    /// Redirects incoming messages to the symbol
-//    dispatch => system'core_routines'__symbol.
-//}
+// --- Symbol ---
+
+/// A dynamic symbol
+sealed embeddable struct Symbol
+{
+    __symbol theValue(4).
+    
+    /// Loads a symbol
+    constructor new literal:name
+    [
+        system'core_routines'__symbol load symbol_ref:$self literal:name
+    ]
+        
+    /// Redirects incoming messages to the symbol
+    dispatch => system'core_routines'__symbol.
+}
 
 // --- Message ---
 
 /// A message constant
-sealed embeddable struct Message :: dispatchable<mssg>
+sealed embeddable struct Message
 {
     __mssg theValue(4).
 
@@ -59,11 +59,11 @@ sealed embeddable struct ExtensionMessage
     stacksafe constructor new ext_mssg:message
         = message.
 
-//    stacksafe subject
-//        => system'core_routines'__message.
-//
-//    stacksafe equal ext_mssg : aSubject    
-//        => system'core_routines'__extmessage.
+    stacksafe subject
+        => system'core_routines'__message.
+
+    stacksafe equal ext_mssg : aSubject    
+        => system'core_routines'__extmessage.
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
     dispatch => system'core_routines'__extmessage.
@@ -72,7 +72,7 @@ sealed embeddable struct ExtensionMessage
 // --- Signature ---
 
 /// A dynamic signature extender
-sealed embeddable struct Signature :: dispatchable<subject>
+sealed embeddable struct Signature
 {
     __subj theValue(4).
     

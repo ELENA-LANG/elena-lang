@@ -3,26 +3,17 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * support : method []
-                 * support : method method []
-                 * support : method method int:n []
+                 * check if func1 / ... is auto generated
 
               zdev - script engine
-                 * elt : simple expression
                  * optimize dynamic code building
-
                  * migrate script samples
-                 * test vm console operations in IDE
-                 * do we need escript script?
 
               xdev - general implementation
                  * support only the following message expressions:
                       object message / type
                       object message:param message2:param (message, message2 should not be registered types)
                       object message type1:param type2:param - type1 / type2 - should be registered types
-
-                 * autogenerate typecast messages
-                 * get rid of dispatchable template
 
               xdev - refactoring
                  * reimplement arithmeval
@@ -36,6 +27,11 @@ In development:
 
               xdev - general implementation
                  * migrate GUI samples
+
+              zdev - script engine
+                 * elt : simple expression
+                 * test vm console operations in IDE
+                 * do we need escript script?
 
               xdev - multimethod                 
                  * compile time multi method resolution : o x := 2.

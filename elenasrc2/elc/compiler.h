@@ -980,6 +980,7 @@ public:
 //   virtual void injectFieldExpression(SyntaxWriter& writer);
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);
+   virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable);
    virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);

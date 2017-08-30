@@ -225,7 +225,7 @@ template matrix :: template_subj
 // --- ByteArray ---
 
 /// A byte array
-sealed ByteArray :: array<byte>, dispatchable<bytearray>
+sealed ByteArray :: array<byte>
 {
     /// Creates the byte array with the specified length
     stacksafe constructor new int:len
@@ -376,7 +376,7 @@ sealed ByteArray :: array<byte>, dispatchable<bytearray>
 // --- ShortArray ---
 
 /// A short integer array
-sealed ShortArray :: array<short>, dispatchable<shortarray>
+sealed ShortArray :: array<short>
 {
     /// Creates the short array with the specified length
     stacksafe constructor new int:aLength
@@ -455,7 +455,7 @@ sealed ShortArray :: array<short>, dispatchable<shortarray>
 // --- IntArray ---
 
 /// An array of integers
-sealed IntArray :: array<int>, dispatchable<intarray>
+sealed IntArray :: array<int>
 {
     /// Creates the array with the specified length
     stacksafe constructor new int : aLength
@@ -533,7 +533,7 @@ sealed IntArray :: array<int>, dispatchable<intarray>
 
 // --- BitArray ---
 
-sealed class BitArray :: dispatchable<bitarray>
+sealed class BitArray
 {
     intarray theArray.
     int      theLength.
@@ -609,7 +609,7 @@ sealed class BitArray :: dispatchable<bitarray>
 
 // --- BitArray32 ---
 
-sealed embeddable class BitArray32 :: dispatchable<bitset>
+sealed embeddable class BitArray32
 {
     int theValue.
     
@@ -674,7 +674,7 @@ sealed embeddable class BitArray32 :: dispatchable<bitset>
 
 // --- IntMatrix ---
 
-sealed class IntMatrix :: dispatchable<intmatrix>
+sealed class IntMatrix
 {
     intarray theArray.
     int      theRows.
@@ -769,7 +769,7 @@ sealed class IntMatrix :: dispatchable<intmatrix>
 // --- RealArray ---
 
 /// An array of real numbers
-sealed RealArray :: array<real>, dispatchable<realarray>
+sealed RealArray :: array<real>
 {
     /// Creates the array with the specified length
     stacksafe constructor new int:aLength
@@ -839,7 +839,7 @@ sealed RealArray :: array<real>, dispatchable<realarray>
 
 // --- RealMatrix ---
 
-sealed class RealMatrix :: dispatchable<realmatrix>
+sealed class RealMatrix
 {
     realarray theArray.
     int       theRows.
@@ -939,7 +939,7 @@ sealed class RealMatrix :: dispatchable<realmatrix>
 // --- CharArray ---
 
 /// An array of unicode characters (UTF-32)
-sealed CharArray :: array<char>, dispatchable<chararray>
+sealed CharArray :: array<char>
 {
     /// Creates the new array with a specified length
     stacksafe constructor new int : len
@@ -1026,7 +1026,7 @@ const literal emptyLiteralValue = "".
 // --- LiteralValue ---
 
 /// A UTF-8 literal value
-sealed dynamic __string LiteralValue :: BaseValue, dispatchable<literal>
+sealed dynamic __string LiteralValue :: BaseValue
 {
     byte $target.
 
@@ -1242,7 +1242,7 @@ const wide emptyWideLiteralValue = ""w.
 // --- WideLiteralValue ---
 
 /// A UTF-18 literal value
-sealed dynamic __string WideLiteralValue :: BaseValue, dispatchable<wide>
+sealed dynamic __string WideLiteralValue :: BaseValue
 {
     short $target.
 
@@ -1579,7 +1579,7 @@ class Variant
 // --- Array ---
 
 /// An array
-sealed Array :: array<object>, dispatchable<array>
+sealed Array :: array<object>
 {
     /// Creates an empty array
     constructor min

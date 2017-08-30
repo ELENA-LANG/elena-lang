@@ -79,7 +79,7 @@ extension tapeOp
 
 // --- Struct ---
 
-dynamic mixin Struct :: dispatchable<tape_structure>
+dynamic mixin Struct
 {
     object $item.
     

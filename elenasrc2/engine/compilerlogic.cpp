@@ -528,11 +528,19 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
    }
 }
 
-void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
+void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
 {
    // generate enumeration list
    if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
       compiler.generateListMember(scope, info.header.parentRef, classRef);
+   }
+
+   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference && !closed) {
+      // auto generate get&type message for explicitly declared classes
+      ReferenceName subject("$");
+      subject.append(scope.module->resolveReference(classRef));
+
+      compiler.injectVirtualReturningMethod(scope, node, encodeVerb(scope.module->mapSubject(subject.ident(), false)), THIS_VAR);
    }
 
    // generate structure embeddable constructor
@@ -1713,38 +1721,6 @@ bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
 
    return false;
 }
-
-////inline bool seekDuplicateBoxing(SNode& current, SNode target)
-////{
-////   current = current.nextNode();
-////
-////   while (current != lxNone) {
-////      if (current == lxBoxing) {
-////         SNode duplicate = current.findSubNodeMask(lxObjectMask);
-////         if (duplicate.type == target.type && duplicate.argument == (ref_t)target.type) {
-////            return true;
-////         }
-////      }
-////
-////      current = current.nextNode();
-////   }
-////
-////   return false;
-////}
-
-//void CompilerLogic :: optimizeDuplicateBoxing(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxBoxing) {
-//         SNode target = current.findSubNodeMask(lxObjectMask);
-//         SNode next = current;
-//         while (seekDuplicateBoxing(next, target)) {
-//
-//         }
-//      }
-//   }
-//}
 
 ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node)
 {

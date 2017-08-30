@@ -4298,6 +4298,15 @@ labDefault:
   
 end
 
+procedure __extmessage."equal$system@ExtensionMessage[2]"
+
+  bloadsi 2
+  lequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
 procedure __tape.dispatch[1]
 
   dcopyverb
@@ -4715,5 +4724,36 @@ procedure __vmtape."evaluateTape$system@UnsafePointer[2]"
   pushd
   popa
   quitn 2
+
+end
+
+procedure __symbol.dispatch[1]
+
+  pushe
+  acalli 0
+  pope
+  ajumpvi 0
+
+end
+
+
+procedure __symbol."load$system@Symbol$system@LiteralValue[2]"
+
+  aloadsi 2   // ; read aName parameter
+  pusha
+  callextr extern : LoadSymbol
+  pop
+  ifn labError 0
+  bloadsi 1
+  nsave
+  acopyb
+  quitn 2
+
+labError:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
 
 end

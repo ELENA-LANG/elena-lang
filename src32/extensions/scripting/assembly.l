@@ -1,6 +1,6 @@
 //import system'routines.
 import system'collections.
-//import system'text.
+import system'text.
 //import system'dynamic.
 //import extensions.
 //
@@ -141,11 +141,6 @@ import system'collections.
 //        theCallstack push:{ save array_list:list [ list append:(literal toInt) ] }.
 //    ]
 //        
-//    new LiteralToken : literal
-//    [
-//        theCallstack push:{ save array_list:list [ list append:(literal toLiteral) ] }.
-//    ]
-//        
 //    new IdentToken : literal
 //    [
 //        theCallstack push:
@@ -162,20 +157,6 @@ import system'collections.
 //        }.
 //    ]        
 //        
-//    new MessageToken : literal
-//    [
-//        theCallExpr := true.
-//        ifnot(0 == theMessage length)
-//            [ theMessage append:"&" ].
-//            
-//        theMessage append:literal
-//    ]
-//        
-//    new ReferenceToken : symbol
-//    [
-//        theCallstack push:{ save array_list:list [ list append:(Symbol new literal:symbol) ] }.
-//    ]
-//    
 //    new AssignToken : token
 //    [
 //        theAssignExpr := true.
@@ -641,19 +622,47 @@ import system'collections.
 //        => theBody.
 //}
 
+singleton $message_token.
+singleton $expr_end_token.
+
 sealed class $ClassContext
 {
+    type<Stack>     _stack.
+    type<ArrayList> _tape.
+    
+    constructor new
+    [
+        _stack := Stack new.
+        _tape := ArrayList new.
+    ]
+    
+    push : object
+    [
+        _stack push:object.
+    ]
+    
+    pop => _stack.
+        
+    append : object
+    [
+        _tape append:object.
+    ]
 }
 
 limited class $Strategy
 {
-    type<$Strategy> symbol_one []
-    type<$Strategy> expression []
+    type<$Strategy> symbol_one    []
+    type<$Strategy> expression    []
     type<$Strategy> singleton_one []
-    type<$Strategy> method_one []    
+    type<$Strategy> method_one    []
+    type<$Strategy> code_one      []
     
-    begin($ClassContext context) []
-    end($ClassContext context) []
+    begin($ClassContext context)  []
+    end($ClassContext context)    []
+    
+    setReference($ClassContext context, LiteralValue r) []
+    setMessage($ClassContext context, LiteralValue m)   []
+    setLiteral($ClassContext context, LiteralValue l)   []
 }
 
 singleton $StartOne :: $Strategy
@@ -680,19 +689,68 @@ singleton $Singleton :: $BaseClass
 {
 }
 
+singleton $Code :: $Strategy
+{
+    expression = $Code.
+}
+
 singleton $Method :: $Strategy
 {
-    expression = $Expresson.
+    code_one = $Expresson.
 }
 
 singleton $Expresson :: $Strategy
 {
     begin($ClassContext context)
     [
+        context push:$expr_end_token.
     ]
-    
+
+    setReference($ClassContext context, LiteralValue r) 
+    [
+        context push(Symbol new literal:r).
+    ]
+
+    setMessage($ClassContext context, LiteralValue m) 
+    [
+        context push:m.
+        context push:$message_token.
+//        theCallExpr := true.
+//        ifnot(0 == theMessage length)
+//            [ theMessage append:"&" ].
+//            
+//        theMessage append:literal
+    ]
+
+    setLiteral($ClassContext context, LiteralValue l) 
+    [
+        context push:l.
+    ]
+
     end($ClassContext context)
     [
+        var token := context pop.
+        textbuffer buffer := TextBuffer new.
+        int counter := -1.
+        until(token equal reference:$expr_end_token)
+        [
+            if (token equal reference:$message_token)
+            [
+                buffer append(context pop).
+            ];
+            [
+                context append:token.
+                counter := counter + 1.
+            ].
+            
+            token := context pop.
+        ].
+
+        buffer write literal:"[".
+        buffer write int:counter.
+        buffer write literal:"]".
+        
+        context append(Message new literal:buffer).
     ]
 }
 
@@ -726,49 +784,54 @@ class Library //:: Scope
 //        theForwards@symbol := ref.
 //    ]
     
-    openSymbol
+    open subject:state
     [
         _states push:_state.
-        _state := _state symbol_one.
+        _state := _state~state get.
         
         _state begin(_context).
-        
+    ]
+    
+    openSymbol
+        <= open(%symbol_one).
 //        var symbol := SymbolScope new:$self.
 //        
 //        theClasses append:symbol.
 //        
 //        ^ symbol
-    ]
     
     openExpression
-    [
-        _states push:_state.
-        _state := _state expression.
-        
-        _state begin(_context).
-    ]
+        <= open(%expression).
     
     openSingleton
-    [
-        _states push:_state.
-        _state := _state singleton_one.
-        
-        _state begin(_context).
-    ]
+        <= open(%singleton_one).
     
     openMethod
-    [
-        _states push:_state.
-        _state := _state method_one.
-        
-        _state begin(_context).
-    ]
+        <= open(%method_one).
+    
+    openCode
+        <= open(%code_one).
     
     close
     [
         _state end(_context).
         
         _state := _states pop.
+    ]
+    
+    newReference : r
+    [
+        _state setReference(_context, r literal).
+    ]
+    
+    newMessage : m
+    [
+        _state setMessage(_context, m literal).
+    ]
+    
+    newLiteral : l
+    [
+        _state setLiteral(_context, l literal).
     ]
     
 //    open Preloaded_symbol

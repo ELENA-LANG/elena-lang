@@ -7,7 +7,7 @@ type ruleset = BaseRuleSet.
 
 // --- Rule Set ---
 
-limited class BaseRuleSet :: dispatchable<ruleset>
+limited class BaseRuleSet
 {
     stacksafe bool validate space:s int:i int:j []
 }
