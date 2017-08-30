@@ -625,6 +625,7 @@ SIZE_PARAM ->
 BASE_CLASS ->
 	identifier TOKEN_BODY
 	| reference 
+	| private
 
 TOKEN_BODY ->
 	< TOKEN_PARAM TOKEN_PARAMS

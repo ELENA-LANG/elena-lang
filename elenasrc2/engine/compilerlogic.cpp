@@ -645,7 +645,11 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
    else if (test(info.header.flags, elDynamicRole)) {
       return false;
    }
-   else compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
+   else {
+      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
+
+      return true;
+   }
 }
 
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
@@ -1098,6 +1102,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
          return true;
       case V_MULTI:
          attrValue = tpMultimethod;
+         return true;
+      case V_METHOD:
+         attrValue = 0;
          return true;
       default:
          return false;

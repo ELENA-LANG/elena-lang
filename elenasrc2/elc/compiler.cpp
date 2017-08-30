@@ -326,7 +326,8 @@ ref_t Compiler::ModuleScope :: mapSubject(SNode terminal)
    if (terminal.type == lxIdentifier) {
       classRef = attributes.get(identifier);
       if (isPrimitiveRef(classRef) && !isPrimitiveType(classRef))
-         raiseError(errInvalidSubject, terminal);
+         classRef = 0; // ignore attributes in the message name
+         //raiseError(errInvalidSubject, terminal);
    }
 
    return classRef;
@@ -351,12 +352,6 @@ ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& outp
       
          return 0;
       }
-      
-      //   ref_t subjRef = mapSubject(terminal);
-      //   if (subjRef != 0) {
-      //      output.append(module->resolveSubject(subjRef));
-      //   }
-      //   else raiseError(errInvalidSubject, terminal);
    }
 
    if (classRef == 0)
@@ -1773,13 +1768,6 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
          }
          else scope.raiseError(errInvalidHint, node);
       }
-//      else if (current == lxTypeAttr) {
-//         if (fieldRef == 0) {
-//            fieldType = scope.moduleScope->module->mapSubject(current.identifier(), false);
-//            fieldRef = scope.moduleScope->subjectHints.get(fieldType);
-//         }
-//         else scope.raiseError(errInvalidHint, node);
-//      }
       else if (current == lxClassRefAttr) {
          if (fieldRef == 0) {
             fieldRef = scope.moduleScope->module->mapReference(current.identifier(), false);

@@ -1099,6 +1099,14 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
       if (!attrRef)
          attrRef = scope.mapAttribute(current, paramIndex);
 
+      if (attrRef == V_ATTRTEMPLATE && scope.moduleScope->mapAttribute((current)) == V_TYPETEMPL) {
+         SNode attrNode = current.findChild(lxAttributeValue).firstChild(lxTerminalObjMask);
+         // HOTFIX : recognize type template
+         attrRef = scope.mapTerminal(attrNode, true);
+         if (attrRef == 0)
+            attrRef = scope.mapTerminal(attrNode);
+      }
+
       if (attrRef == V_ATTRTEMPLATE) {
          generateAttributeTemplate(writer, current, scope, templateMode);
       }
@@ -2182,11 +2190,11 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
       }
       else if (current == lxAttributeValue) {
          // if it is an explicit type declaration
-         ref_t ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference), true);
+         ref_t ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference, lxPrivate), true);
          if (!ref) {
-            ref = scope.mapAttribute(current.findChild(lxIdentifier, lxReference));
+            ref = scope.mapAttribute(current.findChild(lxIdentifier, lxReference, lxPrivate));
             if (ref == 0) {
-               ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference), false);
+               ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference, lxPrivate), false);
             }
             else if ((int)ref < 0)
                scope.raiseError(errInvalidHint, current);

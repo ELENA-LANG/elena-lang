@@ -645,9 +645,64 @@ sealed class $ClassContext
 {
 }
 
+limited class $Strategy
+{
+    type<$Strategy> symbol_one []
+    type<$Strategy> expression []
+    type<$Strategy> singleton_one []
+    type<$Strategy> method_one []    
+    
+    begin($ClassContext context) []
+    end($ClassContext context) []
+}
+
+singleton $StartOne :: $Strategy
+{
+    symbol_one = $SymbolOne.
+}
+
+singleton $SymbolOne :: $Strategy
+{
+    expression = $SymbolBody.
+}
+
+singleton $SymbolBody :: $Strategy
+{
+    singleton_one = $Singleton.
+}
+
+class $BaseClass :: $Strategy
+{
+    method_one = $Method.
+}
+
+singleton $Singleton :: $BaseClass
+{
+}
+
+singleton $Method :: $Strategy
+{
+    expression = $Expresson.
+}
+
+singleton $Expresson :: $Strategy
+{
+    begin($ClassContext context)
+    [
+    ]
+    
+    end($ClassContext context)
+    [
+    ]
+}
+
 class Library //:: Scope
 {
+    stack<$Strategy>     _states.
+    type<$Strategy>      _state.
+
     stack<$ClassContext> _contextes.
+    type<$ClassContext>  _context.
     
 //    object theClasses.
 //    object theForwards.
@@ -655,9 +710,11 @@ class Library //:: Scope
     
     constructor new
     [
-        _contextes := stack<$ClassContext>(4).
+        _state := $StartOne.
+        _states := stack<$Strategy>(32).
         
-        _contextes push($ClassContext new).
+        _contextes := stack<$ClassContext>(4).
+        _context := $ClassContext new.
         
 //        theClasses := List new.
 //        theForwards := Dictionary new.
@@ -671,11 +728,47 @@ class Library //:: Scope
     
     openSymbol
     [
+        _states push:_state.
+        _state := _state symbol_one.
+        
+        _state begin(_context).
+        
 //        var symbol := SymbolScope new:$self.
 //        
 //        theClasses append:symbol.
 //        
 //        ^ symbol
+    ]
+    
+    openExpression
+    [
+        _states push:_state.
+        _state := _state expression.
+        
+        _state begin(_context).
+    ]
+    
+    openSingleton
+    [
+        _states push:_state.
+        _state := _state singleton_one.
+        
+        _state begin(_context).
+    ]
+    
+    openMethod
+    [
+        _states push:_state.
+        _state := _state method_one.
+        
+        _state begin(_context).
+    ]
+    
+    close
+    [
+        _state end(_context).
+        
+        _state := _states pop.
     ]
     
 //    open Preloaded_symbol
