@@ -1,3 +1,5 @@
+import system'collections.
+
 type tape_structure = system'dynamic'Struct.
 type tape_dynamic_structure = system'dynamic'DynamicStruct.
 
@@ -7,7 +9,7 @@ dynamic __tape_mixin Tape
 {
     object $item.
     
-    constructor $new int:n
+    stacksafe constructor $new int:n
         = object&(n).
     
     constructor new array:list
@@ -23,6 +25,18 @@ dynamic __tape_mixin Tape
             i := i + 1
         ].
     ]    
+    
+    stacksafe constructor new array_list:list int:index int:length
+        <= $new int:length;
+    [
+        int i := 0.
+        while(i < length)
+        [
+            $self setField int:i object:(list getAt int(index + i)).
+            
+            i := i + 1
+        ]
+    ]
     
     dispatch => system'core_routines'__tape.
 }
@@ -42,10 +56,11 @@ extension tapeOp
     
     tape_swap_top args:params
     [
-        var top := params[0].
-        var before_top := params[1].
-        params[0] := before_top.
-        params[1] := top.
+        var before_top := params[0].
+        
+        params[0] := self.
+        
+        ^ before_top.
     ]
     
     tape_assign args:params
@@ -83,7 +98,7 @@ dynamic mixin Struct
 {
     object $item.
     
-    constructor $new int:n
+    stacksafe constructor $new int:n
         = object&(n).
     
     constructor new array:list
@@ -95,6 +110,18 @@ dynamic mixin Struct
         while(i < n)
         [
             $self setField int:i object:(list getAt int:i).
+            
+            i := i + 1
+        ]
+    ]
+    
+    stacksafe constructor new array_list:list int:index int:length
+        <= $new int:length;
+    [
+        int i := 0.
+        while(i < length)
+        [
+            $self setField int:i object:(list getAt int(index + i)).
             
             i := i + 1
         ]
@@ -178,7 +205,7 @@ dynamic mixin Class
 {
     object $item.
     
-    constructor $new int:n
+    stacksafe constructor $new int:n
         = object&(n).
     
     constructor new array:list
@@ -194,6 +221,18 @@ dynamic mixin Class
             i := i + 1
         ]
     ]    
+    
+    stacksafe constructor new array_list:list int:index int:length
+        <= $new int:length;
+    [
+        int i := 0.
+        while(i < length)
+        [
+            $self setField int:i object:(list getAt int(index + i)).
+            
+            i := i + 1
+        ]
+    ]
     
     dispatch => system'core_routines'__class.
 }

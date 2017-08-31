@@ -2,11 +2,11 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * check if func1 / ... is auto generated
-
               zdev - script engine
                  * optimize dynamic code building
+                 * support return
+                 * support branching
+                 * support looping
                  * migrate script samples
 
               xdev - general implementation

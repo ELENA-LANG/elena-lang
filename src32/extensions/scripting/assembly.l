@@ -1,7 +1,7 @@
 //import system'routines.
 import system'collections.
 import system'text.
-//import system'dynamic.
+import system'dynamic.
 //import extensions.
 //
 //class Scope
@@ -255,25 +255,6 @@ import system'text.
 //            ].
 //        ].
 //    ]    
-//}
-//
-//class RetExpressionScope :: ExpressionScope
-//{
-//    constructor new : aParent
-//        <= new : aParent;
-//    [
-//    ]
-//    
-//    save array_list:retVal
-//    [
-//        $super save array_list:retVal.
-//        
-//        int jumpLabel := retVal length.
-//        theParent add retPoint:jumpLabel.
-//        
-//        retVal append:$nil.
-//        retVal append:%"tapeOp.tape_jump[]".
-//    ]
 //}
 //
 //class CodeScope :: Scope
@@ -636,6 +617,12 @@ sealed class $ClassContext
         _tape := ArrayList new.
     ]
     
+    tape = _tape.
+    
+    length => _tape.
+    
+    first => _tape.        
+        
     push : object
     [
         _stack push:object.
@@ -643,9 +630,67 @@ sealed class $ClassContext
     
     pop => _stack.
         
+    peek => _stack.        
+        
+    trim : pos
+        => _tape.        
+        
     append : object
     [
         _tape append:object.
+    ]
+    
+    getAt(IntNumber index)
+        = _tape[index].
+}
+
+sealed class $ParameterContext
+{
+    type<ArrayList> _buffer.
+    
+    constructor new
+    [
+        _buffer := ArrayList new.
+    ]
+    
+    int level
+    [
+        int len := _buffer length.
+        
+        len := len / 3.
+        
+        ^ len.
+    ]
+    
+    trim(IntNumber level)
+    [
+        int index := level * 3.
+        
+        _buffer trim int(index).
+    ]
+        
+    add(LiteralValue name, IntNumber type, Object value)
+    [
+        _buffer append(name); append(type); append(value)
+    ]
+    
+    resolve literal:name vint:type
+    [
+        int len := _buffer length.
+        int i := len - 3.
+        while (i > 0)
+        [
+            if (name == _buffer[i])
+            [
+                type set int(_buffer[i+1]).
+
+                ^ _buffer[i+2].
+            ].
+            
+            i := i - 3.
+        ].
+        
+        ^ $nil.
     ]
 }
 
@@ -653,16 +698,19 @@ limited class $Strategy
 {
     type<$Strategy> symbol_one    []
     type<$Strategy> expression    []
+    type<$Strategy> returning     []
     type<$Strategy> singleton_one []
     type<$Strategy> method_one    []
     type<$Strategy> code_one      []
     
-    begin($ClassContext context)  []
-    end($ClassContext context)    []
+    begin($ClassContext context, $ParameterContext parameters) []
+    end($ClassContext context, $ParameterContext parameters)   []
     
-    setReference($ClassContext context, LiteralValue r) []
-    setMessage($ClassContext context, LiteralValue m)   []
-    setLiteral($ClassContext context, LiteralValue l)   []
+    setIdentToken($ClassContext context, LiteralValue m) []
+    setParamToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
+    setReference($ClassContext context, LiteralValue r)  []
+    setMessageToken($ClassContext context, LiteralValue m)    []
+    setLiteral($ClassContext context, LiteralValue l)    []
 }
 
 singleton $StartOne :: $Strategy
@@ -683,6 +731,22 @@ singleton $SymbolBody :: $Strategy
 class $BaseClass :: $Strategy
 {
     method_one = $Method.
+        
+    begin($ClassContext context, $ParameterContext parameters)  
+    [
+        context push(context length).
+    ]
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        var pos := context pop.
+        var len := context length - pos.
+        
+        var class := Class new(context tape, pos, len).
+        
+        context trim(pos).
+        context append(class).
+    ]
 }
 
 singleton $Singleton :: $BaseClass
@@ -691,17 +755,63 @@ singleton $Singleton :: $BaseClass
 
 singleton $Code :: $Strategy
 {
-    expression = $Code.
+    expression = $Expresson.
+    returning  = $RetExpression.
 }
 
 singleton $Method :: $Strategy
 {
-    code_one = $Expresson.
+    code_one = $Code.
+    
+    begin($ClassContext context, $ParameterContext parameters)  
+    [
+        context push(context length).
+        context push(parameters level).
+    ]
+    
+    setMessageToken($ClassContext context, LiteralValue m) 
+    [
+        context append(m).
+    ]
+    
+    setParamToken($ClassContext context, LiteralValue value, $ParameterContext parameters)
+    [
+        int method_level := context peek.        
+        int level := parameters level.
+        
+        level := method_level - level.
+        level := level + 1.
+        
+        parameters add(value, $METHOD_PARAM, level).
+    ]
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        parameters trim(context pop).
+        
+        int pos := context pop.
+        var m := context getAt(pos).
+        
+        int counter := 0.
+        textbuffer name := TextBuffer new.
+        name append(m).
+        name append:"[".
+        name append(counter literal).
+        name append:"]".
+
+        int index := pos + 1.
+        int len := context length - index.
+        var tape := Tape new(context tape, index, len).
+        
+        context trim(pos).
+        context append(Message new literal:name).
+        context append(tape).
+    ]
 }
 
-singleton $Expresson :: $Strategy
+class $BaseExpression :: $Strategy
 {
-    begin($ClassContext context)
+    begin($ClassContext context, $ParameterContext parameters)
     [
         context push:$expr_end_token.
     ]
@@ -711,15 +821,14 @@ singleton $Expresson :: $Strategy
         context push(Symbol new literal:r).
     ]
 
-    setMessage($ClassContext context, LiteralValue m) 
+    setMessageToken($ClassContext context, LiteralValue m) 
     [
         context push:m.
         context push:$message_token.
-//        theCallExpr := true.
-//        ifnot(0 == theMessage length)
-//            [ theMessage append:"&" ].
-//            
-//        theMessage append:literal
+    ]
+
+    setIdentToken($ClassContext context, LiteralValue m) 
+    [
     ]
 
     setLiteral($ClassContext context, LiteralValue l) 
@@ -727,16 +836,18 @@ singleton $Expresson :: $Strategy
         context push:l.
     ]
 
-    end($ClassContext context)
+    end($ClassContext context, $ParameterContext parameters)
     [
         var token := context pop.
         textbuffer buffer := TextBuffer new.
         int counter := -1.
+        bool messageExpr := false.
         until(token equal reference:$expr_end_token)
         [
             if (token equal reference:$message_token)
             [
                 buffer append(context pop).
+                messageExpr := true.
             ];
             [
                 context append:token.
@@ -746,21 +857,42 @@ singleton $Expresson :: $Strategy
             token := context pop.
         ].
 
-        buffer write literal:"[".
-        buffer write int:counter.
-        buffer write literal:"]".
-        
-        context append(Message new literal:buffer).
+        if (messageExpr)
+        [
+            buffer write literal:"[".
+            buffer write int:counter.
+            buffer write literal:"]".
+            
+            context append(Message new literal:buffer)
+        ]
     ]
 }
 
+singleton $Expresson :: $BaseExpression.
+
+singleton $RetExpression :: $BaseExpression
+{
+//    save array_list:retVal
+//    [
+//        $super save array_list:retVal.
+//        
+//        int jumpLabel := retVal length.
+//        theParent add retPoint:jumpLabel.
+//        
+//        retVal append:$nil.
+//        retVal append:%"tapeOp.tape_jump[]".
+//    ]
+}
+
+const int $METHOD_PARAM = 1.
+
 class Library //:: Scope
 {
-    stack<$Strategy>     _states.
-    type<$Strategy>      _state.
+    stack<$Strategy>        _states.
+    type<$Strategy>         _state.
 
-    stack<$ClassContext> _contextes.
-    type<$ClassContext>  _context.
+    type<$ClassContext>     _context.
+    type<$ParameterContext> _parameters.
     
 //    object theClasses.
 //    object theForwards.
@@ -771,8 +903,8 @@ class Library //:: Scope
         _state := $StartOne.
         _states := stack<$Strategy>(32).
         
-        _contextes := stack<$ClassContext>(4).
         _context := $ClassContext new.
+        _parameters := $ParameterContext new.
         
 //        theClasses := List new.
 //        theForwards := Dictionary new.
@@ -789,7 +921,7 @@ class Library //:: Scope
         _states push:_state.
         _state := _state~state get.
         
-        _state begin(_context).
+        _state begin(_context, _parameters).
     ]
     
     openSymbol
@@ -802,7 +934,10 @@ class Library //:: Scope
     
     openExpression
         <= open(%expression).
-    
+
+    openReturning
+        <= open(%returning).
+        
     openSingleton
         <= open(%singleton_one).
     
@@ -814,22 +949,32 @@ class Library //:: Scope
     
     close
     [
-        _state end(_context).
+        _state end(_context, _parameters).
         
         _state := _states pop.
     ]
-    
+
+    newIdentToken : m
+    [
+        _state setIdentToken(_context, m literal).
+    ]
+
+    newParamToken : p
+    [
+        _state setParamToken(_context, p literal, _parameters).
+    ]            
+                                    
     newReference : r
     [
         _state setReference(_context, r literal).
     ]
     
-    newMessage : m
+    newMessageToken : m
     [
-        _state setMessage(_context, m literal).
+        _state setMessageToken(_context, m literal).
     ]
     
-    newLiteral : l
+    newLiteralToken : l
     [
         _state setLiteral(_context, l literal).
     ]
@@ -876,7 +1021,7 @@ class Library //:: Scope
 //            [ InvalidArgumentException new:("Variable cannot be resolved - " + literal); raise ];
 //            [ list append:(Symbol new literal:ref) ]        
 //    ]
-//        
-//    first
-//        => theClasses.
+        
+    first
+       => _context.
 }

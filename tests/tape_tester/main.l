@@ -12,10 +12,15 @@ InterpreterTest =
 
 //    var s := scriptEngine eval:"{ x : 1 , y : 2 , writeLine : function(x){ system'console.writeLine(x) } }".
 //    var s := scriptEngine eval:"program={ writeLine : function(x){ console.writeLine(x);}; };".
-    var s := scriptEngine eval:"program={ };".
-    
+
+    //var s := scriptEngine eval:"program={ writeLine : function(x){ return x; };".
+
+    var s := scriptEngine eval:"program={ writeLine : function(x){ x; }; };".
+
     var lab := Library new.
-    s eval:lab.
+    var obj := s eval:lab; first.
+
+    var l := obj writeLine("test").
     
 //    #var x := s x.
 //    #var y := s y.

@@ -763,8 +763,7 @@ int CFParser :: buildDerivationTree(_ScriptReader& reader, size_t startRuleId, M
       }      
    }
 
-   if (!reader.Eof())
-      throw EParseError(bm.column, bm.row);
+   throw EParseError(bm.column, bm.row);
 }
 
 void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptLog& log)

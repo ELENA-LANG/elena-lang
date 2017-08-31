@@ -674,16 +674,24 @@ sealed class ArrayList :: BaseIndexable
         theLength int := 0
     ]
     
-//    /// Returns the top object
-//    first = theArray getAt int:0.
-//
-//    /// Returns the last object
-//    last
-//    [
-//        int len := theLength.
-//        
-//        ^ theArray getAt int:(len - 1)
-//    ]
+    stacksafe trim(IntNumber pos)
+    [
+        if (pos > theLength)
+            [ OutOfRangeException new; raise ].
+        
+        theLength int := pos.
+    ]
+    
+    /// Returns the top object
+    first = theArray getAt int:0.
+
+    /// Returns the last object
+    last
+    [
+        int len := theLength.
+        
+        ^ theArray getAt int(len - 1)
+    ]
     
     /// Returns the list enumerator
     enumerator = ArrayListEnumerator new array_list:$self.

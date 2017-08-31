@@ -31,6 +31,7 @@
 
    #define object     ::= numeric;
    #define object     ::= identifier;
+   #define object     ::= literal;
    #define object     ::= "{" singleton;
 
    #define singleton  ::= <= nested ( => cls_mmbrs <= ) =>;
@@ -62,6 +63,7 @@
    #define parameter  ::= <= parameter = $identifier =>;
    #define identifier ::= <= identifier = $identifier =>;
    #define message    ::= <= message = $identifier =>;
+   #define literal    ::= <= literal = "$literal" =>;
 
    #define forward    ::= <= forward ( reference = $literal ) =>;
 ]]
