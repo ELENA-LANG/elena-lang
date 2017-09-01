@@ -11,11 +11,7 @@ InterpreterTest =
         load path:"~\scripts\eson.es".
 
 //    var s := scriptEngine eval:"{ x : 1 , y : 2 , writeLine : function(x){ system'console.writeLine(x) } }".
-//    var s := scriptEngine eval:"program={ writeLine : function(x){ console.writeLine(x);}; };".
-
-    //var s := scriptEngine eval:"program={ writeLine : function(x){ return x; };".
-
-    var s := scriptEngine eval:"program={ writeLine : function(x){ x; }; };".
+    var s := scriptEngine eval:"#import ""system'console"" as console ; program={ writeLine : function(x){ console.writeLine(x);}; };".
 
     var lab := Library new.
     var obj := s eval:lab; first.

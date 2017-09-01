@@ -606,6 +606,7 @@ import system'dynamic.
 singleton $message_token.
 singleton $expr_end_token.
 singleton $expr_var_token.
+singleton $subexpr_token.
 
 sealed class $ClassContext
 {
@@ -679,7 +680,7 @@ sealed class $ParameterContext
     [
         int len := _buffer length.
         int i := len - 3.
-        while (i > 0)
+        while (i >= 0)
         [
             if (name == _buffer[i])
             [
@@ -772,6 +773,7 @@ singleton $Method :: $Strategy
     
     setMessageToken($ClassContext context, LiteralValue m) 
     [
+        context append($message_token).
         context append(m).
     ]
     
@@ -795,12 +797,26 @@ singleton $Method :: $Strategy
         parameters trim(level).
         
         int pos := context pop.
-        var m := context getAt(pos).
-
-        // define the method name
+        var m := $nil.
         int counter := -1. // self is included as well
-        int index := pos + 1.
+        int index := pos.
+        
+        // define the method name
         var p := context getAt(index).
+        while (p equal reference:$expr_var_token)
+        [
+            index := index + 1.
+            counter := counter + 1.
+            p := context getAt(index).
+        ].
+
+        if (p equal reference:$message_token)
+        [
+            m := context getAt(index + 1).
+            index := index + 2.
+            p := context getAt(index).
+        ].
+                
         while (p equal reference:$expr_var_token)
         [
             index := index + 1.
@@ -849,7 +865,11 @@ class $BaseExpression :: $Strategy
         [
             context push:param.
             context push:$expr_var_token.            
-        ]
+        ].
+        if (type == $FORWARD_PARAM)
+        [
+            context push:param.
+        ].
     ]
 
     setLiteral($ClassContext context, LiteralValue l) 
@@ -865,20 +885,26 @@ class $BaseExpression :: $Strategy
         bool messageExpr := false.
         until(token equal reference:$expr_end_token)
         [
-            if (token equal reference:$message_token)
+            if (token equal reference:$subexpr_token)
             [
-                buffer append(context pop).
-                messageExpr := true.
+                counter := counter + 1.
             ];
             [
-                if (token equal reference:$expr_var_token)
+                if (token equal reference:$message_token)
                 [
-                    context append(context pop).
-                    token := %"tapeOp.tape_var[]".
+                    buffer append(context pop).
+                    messageExpr := true.
+                ];
+                [
+                    if (token equal reference:$expr_var_token)
+                    [
+                        context append(context pop).
+                        token := %"tapeOp.tape_var[]".
+                    ].
+                    context append:token.
+                    counter := counter + 1.
                 ].
-                context append:token.
-                counter := counter + 1.
-            ].
+            ].                
             
             token := context pop.
         ].
@@ -894,7 +920,22 @@ class $BaseExpression :: $Strategy
     ]
 }
 
-singleton $Expresson :: $BaseExpression.
+singleton $SubExpresson :: $BaseExpression
+{
+    expression = $SubExpresson.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        $super end(context, parameters).
+        
+        context push:$subexpr_token.
+    ]    
+}
+
+singleton $Expresson :: $BaseExpression
+{
+    expression = $SubExpresson.
+}
 
 singleton $RetExpression :: $BaseExpression
 {
@@ -911,6 +952,7 @@ singleton $RetExpression :: $BaseExpression
 }
 
 const int $METHOD_PARAM = 1.
+const int $FORWARD_PARAM = 2.
 
 class Library //:: Scope
 {
@@ -920,10 +962,6 @@ class Library //:: Scope
     type<$ClassContext>     _context.
     type<$ParameterContext> _parameters.
     
-//    object theClasses.
-//    object theForwards.
-//    object thePreloaded.
-    
     constructor new
     [
         _state := $StartOne.
@@ -931,16 +969,14 @@ class Library //:: Scope
         
         _context := $ClassContext new.
         _parameters := $ParameterContext new.
-        
-//        theClasses := List new.
-//        theForwards := Dictionary new.
-//        thePreloaded := List new.
     ]
     
-//    include:ref:symbol
-//    [
-//        theForwards@symbol := ref.
-//    ]
+    include(LiteralValue name,LiteralValue symbolName)
+    [
+        var symbol := Symbol new(symbolName).
+        
+        _parameters add(name, $FORWARD_PARAM, symbol).
+    ]
     
     open subject:state
     [
@@ -952,11 +988,6 @@ class Library //:: Scope
     
     openSymbol
         <= open(%symbol_one).
-//        var symbol := SymbolScope new:$self.
-//        
-//        theClasses append:symbol.
-//        
-//        ^ symbol
     
     openExpression
         <= open(%expression).
@@ -1022,15 +1053,6 @@ class Library //:: Scope
 //        
 //        ^ class
 //    ]
-//
-////    #method open &class
-////    [
-////        #var class := ClassScope new:$self.
-////        
-////        theClasses += class.
-////        
-////        ^ class.
-////    ]
 //
 //    init
 //    [

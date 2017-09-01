@@ -6,8 +6,13 @@
    #define start       ::= $eof;
 
    #define module      ::= <= ( > += "2" += "%""system'dynamic'tapeOp.tape_var[]""" => 
-                             "root" "(" symbol* ")" 
+                             "root" "(" include* symbol* ")" 
                            <= "*system'dynamic'Tape=" # ) =>;
+
+   #define include     ::=   "include" "(" forward identifier_v ")"
+                           <= += "%""include[2]""" =>;
+
+   #define forward     ::= "forward" "(" reference_v ")";
 
    #define symbol      ::=   symbol_expr;
 
@@ -22,6 +27,8 @@
    #define expr_member ::=   nested;
    #define expr_member ::=   literal;
    #define expr_member ::=   identifier;
+   #define expr_member ::=   expression;
+   #define expr_member ::=   message;
 
    #define nested      ::= <= += "%""openSingleton[0]""" =>
                              "nested" "(" identifier? method* ")"
@@ -59,12 +66,22 @@
    #define literal     ::=   "literal" "=" str_quote
                            <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newLiteralToken[1]""" => ;
 
+   #define reference_v ::= "reference" "=" ref_quote
+                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" => ;
+
+   #define identifier_v::= "identifier" "=" ident_quote
+                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" => ;
+
    #define ident_quote ::= <= >> += " """ => ident_token <= """ " > =>;
 
-   #define str_quote   ::= <= >> += " """ => str_token <= """ " =>;
+   #define str_quote   ::= <= >> += " """ => str_token <= """ " > =>;
+
+   #define ref_quote   ::= <= >> += " """ => ref_token <= """ " > =>;
 
    #define ident_token ::= <= "$identifier" =>;
 
    #define str_token   ::= <= "$literal" =>;
+
+   #define ref_token   ::= <= "$reference" =>;
 
 ]]

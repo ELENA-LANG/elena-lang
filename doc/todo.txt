@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              xdev - refactoring
+                 * fix methodnotfound code in tape, class, struct
+
               zdev - script engine
                  * optimize dynamic code building
                  * support return
