@@ -605,6 +605,7 @@ import system'dynamic.
 
 singleton $message_token.
 singleton $expr_end_token.
+singleton $expr_var_token.
 
 sealed class $ClassContext
 {
@@ -640,7 +641,7 @@ sealed class $ClassContext
         _tape append:object.
     ]
     
-    getAt(IntNumber index)
+    stacksafe getAt(IntNumber index)
         = _tape[index].
 }
 
@@ -706,7 +707,7 @@ limited class $Strategy
     begin($ClassContext context, $ParameterContext parameters) []
     end($ClassContext context, $ParameterContext parameters)   []
     
-    setIdentToken($ClassContext context, LiteralValue m) []
+    setIdentToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
     setParamToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
     setReference($ClassContext context, LiteralValue r)  []
     setMessageToken($ClassContext context, LiteralValue m)    []
@@ -779,27 +780,40 @@ singleton $Method :: $Strategy
         int method_level := context peek.        
         int level := parameters level.
         
-        level := method_level - level.
+        level := level - method_level.
         level := level + 1.
         
         parameters add(value, $METHOD_PARAM, level).
+        
+        context append($expr_var_token).
     ]
     
     end($ClassContext context, $ParameterContext parameters)
     [
-        parameters trim(context pop).
+        int level := context pop.
+        
+        parameters trim(level).
         
         int pos := context pop.
         var m := context getAt(pos).
+
+        // define the method name
+        int counter := -1. // self is included as well
+        int index := pos + 1.
+        var p := context getAt(index).
+        while (p equal reference:$expr_var_token)
+        [
+            index := index + 1.
+            counter := counter + 1.
+            p := context getAt(index).
+        ].
         
-        int counter := 0.
         textbuffer name := TextBuffer new.
         name append(m).
         name append:"[".
         name append(counter literal).
-        name append:"]".
-
-        int index := pos + 1.
+        name append:"]".        
+        
         int len := context length - index.
         var tape := Tape new(context tape, index, len).
         
@@ -827,8 +841,15 @@ class $BaseExpression :: $Strategy
         context push:$message_token.
     ]
 
-    setIdentToken($ClassContext context, LiteralValue m) 
+    setIdentToken($ClassContext context, LiteralValue m, $ParameterContext parameters) 
     [
+        int type := 0.
+        object param := parameters resolve literal:m vint:type.
+        if (type == $METHOD_PARAM)
+        [
+            context push:param.
+            context push:$expr_var_token.            
+        ]
     ]
 
     setLiteral($ClassContext context, LiteralValue l) 
@@ -850,6 +871,11 @@ class $BaseExpression :: $Strategy
                 messageExpr := true.
             ];
             [
+                if (token equal reference:$expr_var_token)
+                [
+                    context append(context pop).
+                    token := %"tapeOp.tape_var[]".
+                ].
                 context append:token.
                 counter := counter + 1.
             ].
@@ -956,7 +982,7 @@ class Library //:: Scope
 
     newIdentToken : m
     [
-        _state setIdentToken(_context, m literal).
+        _state setIdentToken(_context, m literal, _parameters).
     ]
 
     newParamToken : p
