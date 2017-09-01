@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xdev - refactoring
-                 * fix methodnotfound code in tape, class, struct
+                 * if else if ...
 
               zdev - script engine
                  * optimize dynamic code building
@@ -155,7 +155,6 @@ In development:
                    no other overload functions provided)
                  * check if the overload list was created
                  * should multi geneated private method be static as well or should not be generated at all?
-                 * if else if ...
                  * unboxing primitive arrays?
                  * constant field should always have assigning part
                  * #266: sealed static constant fields

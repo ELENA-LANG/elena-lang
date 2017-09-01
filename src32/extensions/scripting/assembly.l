@@ -2,8 +2,8 @@
 import system'collections.
 import system'text.
 import system'dynamic.
-//import extensions.
-//
+import extensions.
+
 //class Scope
 //{
 //    object theParent.
@@ -135,11 +135,6 @@ import system'dynamic.
 //    [
 //        theIfExpr := true.
 //    ]        
-//
-//    new NumericToken : literal
-//    [
-//        theCallstack push:{ save array_list:list [ list append:(literal toInt) ] }.
-//    ]
 //        
 //    new IdentToken : literal
 //    [
@@ -710,9 +705,10 @@ limited class $Strategy
     
     setIdentToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
     setParamToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
-    setReference($ClassContext context, LiteralValue r)  []
+    setReference($ClassContext context, LiteralValue r)       []
     setMessageToken($ClassContext context, LiteralValue m)    []
-    setLiteral($ClassContext context, LiteralValue l)    []
+    setLiteral($ClassContext context, LiteralValue l)         []
+    setNumericToken($ClassContext context, LiteralValue l)    []
 }
 
 singleton $StartOne :: $Strategy
@@ -755,6 +751,20 @@ singleton $Singleton :: $BaseClass
 {
 }
 
+singleton $Nested :: $BaseClass
+{
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        var pos := context pop.
+        var len := context length - pos.
+        
+        var class := Class new(context tape, pos, len).
+        
+        context trim(pos).
+        context push(class).
+    ]
+}
+
 singleton $Code :: $Strategy
 {
     expression = $Expresson.
@@ -789,6 +799,8 @@ singleton $Method :: $Strategy
         
         context append($expr_var_token).
     ]
+    
+    returning = $RetExpression.
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -872,10 +884,17 @@ class $BaseExpression :: $Strategy
         ].
     ]
 
+    setNumericToken($ClassContext context, LiteralValue l)
+    [
+        context push(l toInt).
+    ]
+
     setLiteral($ClassContext context, LiteralValue l) 
     [
         context push:l.
     ]
+
+    singleton_one = $Nested.
 
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -939,6 +958,8 @@ singleton $Expresson :: $BaseExpression
 
 singleton $RetExpression :: $BaseExpression
 {
+    expression = $Expresson.
+    
 //    save array_list:retVal
 //    [
 //        $super save array_list:retVal.
@@ -1034,6 +1055,11 @@ class Library //:: Scope
     newLiteralToken : l
     [
         _state setLiteral(_context, l literal).
+    ]
+    
+    newNumericToken : l
+    [
+        _state setNumericToken(_context, l literal).
     ]
     
 //    open Preloaded_symbol

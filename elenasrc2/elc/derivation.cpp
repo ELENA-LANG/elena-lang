@@ -42,6 +42,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
          break;
       case nsExpression:
       case nsRootExpression:
+      case nsNestedRootExpression:
          _writer.newNode(lxExpression);
          break;
       case nsCodeEnd:
@@ -134,6 +135,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
          break;
       case nsAttribute:
          _writer.newNode(lxAttributeDecl);
+         break;
+      case nsNestedSubCode:
+         _writer.newNode(lxCode);
          break;
       default:
          _writer.newNode((LexicalType)symbol);

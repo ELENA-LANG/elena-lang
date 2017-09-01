@@ -3834,12 +3834,7 @@ ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, Co
 
    writer.newNode(lxCode);
 
-   SNode expr = thenCode.firstChild(lxObjectMask);
-   if (expr == lxEOF || expr.nextNode() != lxNone) {
-      compileCode(writer, thenCode, subScope);
-   }
-   // if it is inline action
-   else compileRetExpression(writer, expr, scope, 0);
+   compileCode(writer, thenCode, subScope);
 
    // preserve the allocated space
    scope.level = subScope.level;

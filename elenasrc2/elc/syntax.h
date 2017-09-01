@@ -104,6 +104,8 @@ enum Symbol
    nsXInlineClosure             = 0x01057, 
    nsSizeExpression             = 0x01058,
    nsArrayIdentifier            = 0x01059,
+   nsNestedSubCode              = 0x0105A,
+   nsNestedRootExpression       = 0x0105B,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

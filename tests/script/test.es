@@ -20,19 +20,14 @@
     #define add_cont   ::= "+=" <= this.addContent(c); =>;
 
     #define level        ::= integer; 
-    #define next_state   ::= <= this.seek => "=" out_state <= (); =>;
+    #define next_state   ::= <= this. => "=" out_state <= (); =>;
 
     #define in_state     ::= ident <= : { =>;
     #define state        ::= ident <= : function(c) { => ;
-    #define out_state    ::= <= < % => ident <= > =>;
+    #define out_state    ::= ident ;
     #define body         ::= <= $literal =>;
     #define ident        ::= <= $identifier =>;
 ]]
 
 state0
   : digit => ( "level : 9; evalToken: function(s) { return convertor.toReal(s); };" ) += = digit
-
-digit
-  : digit => += = digit
-  : plus => [ "level : 1; evalNode: function(left,right){ return left.add(right); }; " ] = state0
-  : minus => [ "level : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = state0
