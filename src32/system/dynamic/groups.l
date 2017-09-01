@@ -1,11 +1,11 @@
-//// --- Wrap ---
-//
-//dynamic mixin Wrap
-//{
-//    object $item.
-//    
-//    dispatch => system'core_routines'__wrap.
-//}
+// --- Wrap ---
+
+dynamic mixin Wrap
+{
+    object $item.
+    
+    dispatch => system'core_routines'__wrap.
+}
 
 // --- Extension ---
 
@@ -16,24 +16,24 @@ dynamic mixin Extension
     dispatch => system'core_routines'__extension.
 }
 
-//// --- Group ---
-//
-//dynamic mixin Group
-//{
-//    object $item.
-//    
-//    stacksafe constructor $new int:aLength
-//        = object(aLength).
-//        
-//    constructor new args:objects
-//        <= $new int:(objects length);
-//    [
-//        $self setFields args:objects.
-//    ]
-//    
-//    dispatch => system'core_routines'__group.
-//}
-//
+// --- Group ---
+
+dynamic mixin Group
+{
+    object $item.
+    
+    stacksafe constructor $new int:aLength
+        = object&(aLength).
+        
+    constructor new args:objects
+        <= $new int(objects length);
+    [
+        $self setFields args:objects.
+    ]
+    
+    dispatch => system'core_routines'__group.
+}
+
 //// --- Cast ---
 //
 //sealed mixin Cast :: arrayof(object)

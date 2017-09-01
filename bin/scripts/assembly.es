@@ -25,6 +25,7 @@
                            <= += "%""close[0]""" =>;
 
    #define expr_member ::=   nested;
+   #define expr_member ::=   numeric;
    #define expr_member ::=   literal;
    #define expr_member ::=   identifier;
    #define expr_member ::=   expression;
@@ -63,6 +64,9 @@
    #define identifier  ::=   "identifier" "=" ident_quote
                            <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newIdentToken[1]""" => ;
 
+   #define numeric     ::=   "numeric" "=" num_quote
+                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newNumericToken[1]""" => ;
+
    #define literal     ::=   "literal" "=" str_quote
                            <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newLiteralToken[1]""" => ;
 
@@ -78,10 +82,13 @@
 
    #define ref_quote   ::= <= >> += " """ => ref_token <= """ " > =>;
 
+   #define num_quote   ::= <= >> += " """ => num_token  <= """ " > =>;
+
    #define ident_token ::= <= "$identifier" =>;
 
    #define str_token   ::= <= "$literal" =>;
 
    #define ref_token   ::= <= "$reference" =>;
 
+   #define num_token   ::= <= "$numeric" =>;
 ]]

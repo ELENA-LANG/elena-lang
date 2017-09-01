@@ -16,7 +16,7 @@ InterpreterTest =
     var lab := Library new.
     var obj := s eval:lab; first.
 
-    var l := obj writeLine("test").
+    obj writeLine("Script: function works").
     
 //    #var x := s x.
 //    #var y := s y.
