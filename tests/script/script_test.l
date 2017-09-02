@@ -32,18 +32,16 @@ symbol program =
 
     var obj := factory eval(Library new); first/*; eval*/.
     
-//    var m := script_test'mytest'States state0.
+    var m := script_test'mytest'States state0.
     
     var n := obj state0.
 
-    tester~n digit:3.
-      
     var nmix := Group::(tester, n).
-//    var mmix := Group::(tester, m).
+    var mmix := Group::(tester, m).
 
-    nmix digit:3.
+//    nmix digit:3.
 //    mmix digit:"3".
                 
-//    #var nn := nmix digit:3.
-//    #var mm := mmix digit:3.
+    var nn := nmix digit:3.
+    var mm := mmix digit:3.
 ].

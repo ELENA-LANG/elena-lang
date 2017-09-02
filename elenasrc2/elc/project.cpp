@@ -441,16 +441,16 @@ void Project :: compile(ident_t filePath, Compiler& compiler, Parser& parser, Mo
 void Project :: compile(ident_t filePath, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved)
 {
    try {
-      //// based on the target type generate the syntax tree for the file
-      //Path fullPath(StrSetting(_ELENA_::opProjectPath));
-      //fullPath.combine(filePath);
+      // based on the target type generate the syntax tree for the file
+      Path fullPath(StrSetting(_ELENA_::opProjectPath));
+      fullPath.combine(filePath);
 
-      //// parse
-      //SyntaxTree tree;
-      //parser.parse(fullPath.c_str(), tree/*, getTabSize()*/);
+      // parse
+      SyntaxTree tree;
+      parser.parse(fullPath.c_str(), tree/*, getTabSize()*/);
 
-      //// compile the syntax tree
-      //compiler.compileSyntaxTree(*this, filePath, tree, moduleInfo, unresolved);
+      // compile the syntax tree
+      compiler.compileSyntaxTree(*this, filePath, tree, moduleInfo, unresolved);
    }
    catch (LineTooLong& e)
    {

@@ -6458,14 +6458,14 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
    }
 }
 
-//void Compiler :: compileForward(SNode ns, ModuleScope& scope)
-//{
-//   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).identifier();
-//   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).identifier();
-//
-//   if (!scope.defineForward(shortcut, reference))
-//      scope.raiseError(errDuplicatedDefinition, ns);
-//}
+void Compiler :: compileForward(SNode ns, ModuleScope& scope)
+{
+   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).identifier();
+   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).identifier();
+
+   if (!scope.defineForward(shortcut, reference))
+      scope.raiseError(errDuplicatedDefinition, ns);
+}
 
 bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
 {
@@ -6578,17 +6578,17 @@ void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
 {
    SNode current = node.firstChild();
 
-   //   if (scope.superReference == 0)
-   //      scope.raiseError(errNotDefinedBaseClass, node.firstChild().firstChild(lxTerminalMask));
+   if (scope.superReference == 0)
+      scope.raiseError(errNotDefinedBaseClass, node.firstChild().firstChild(lxTerminalMask));
 
    // first pass - declaration
    while (current != lxNone) {
       SNode name = current.findChild(lxIdentifier, lxPrivate, lxReference);
 
       switch (current) {
-//         case lxInclude:
-//            compileForward(current, scope);
-//            break;
+         case lxInclude:
+            compileForward(current, scope);
+            break;
          case lxClass:
          {
             current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapTerminal(name));
@@ -6647,15 +6647,15 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
    compileImplementations(syntaxTree.readRoot(), scope);
 }
 
-//void Compiler :: compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& syntaxTree, ModuleInfo& info, Unresolveds& unresolveds)
-//{
-//   ModuleScope scope(&project, file, info.codeModule, info.debugModule, &unresolveds);
-//   
-//   project.printInfo("%s", file);
-//
-//   compileSyntaxTree(syntaxTree, scope);
-//}
-//
+void Compiler :: compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& syntaxTree, ModuleInfo& info, Unresolveds& unresolveds)
+{
+   ModuleScope scope(&project, file, info.codeModule, info.debugModule, &unresolveds);
+   
+   project.printInfo("%s", file);
+
+   compileSyntaxTree(syntaxTree, scope);
+}
+
 //inline bool isAttribute(_CompilerScope& scope, ref_t subjRef)
 //{
 //   return (subjRef != 0 && isPrimitiveRef(scope.subjectHints.get(subjRef)));

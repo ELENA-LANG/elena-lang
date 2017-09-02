@@ -338,12 +338,12 @@ private:
 
       virtual ref_t mapTemplateClass(ident_t templateName);
 
-//      bool defineForward(ident_t forward, ident_t referenceName)
-//      {
-//         ObjectInfo info = mapReferenceInfo(referenceName, false);
-//      
-//         return forwards.add(forward, info.param, true);
-//      }
+      bool defineForward(ident_t forward, ident_t referenceName)
+      {
+         ObjectInfo info = mapReferenceInfo(referenceName, false);
+      
+         return forwards.add(forward, info.param, true);
+      }
 
       virtual ident_t resolveFullName(ref_t reference)
       {
@@ -915,7 +915,7 @@ private:
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
    bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
 //   void compileIncludeModule(SNode node, ModuleScope& scope);
-//   void compileForward(SNode node, ModuleScope& scope);
+   void compileForward(SNode node, ModuleScope& scope);
 
    bool validate(_ProjectManager& project, _Module* module, int reference);
 
@@ -964,7 +964,7 @@ public:
    }
 
    void compileModule(_ProjectManager& project, ident_t file, _DerivationReader& reader, ModuleInfo& moduleInfo, Unresolveds& unresolveds);
-//   void compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& tree, ModuleInfo& moduleInfo, Unresolveds& unresolveds);
+   void compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& tree, ModuleInfo& moduleInfo, Unresolveds& unresolveds);
 
    ModuleInfo createModule(ident_t name, _ProjectManager& project, bool withDebugInfo);
 
