@@ -31,3 +31,8 @@
 
 state0
   : digit => ( "level : 9; evalToken: function(s) { return convertor.toReal(s); };" ) += = digit
+
+digit
+  : digit => += = digit
+  : plus => [ "level : 1; evalNode: function(left,right){ return left.add(right); }; " ] = state0
+  : minus => [ "level : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = state0

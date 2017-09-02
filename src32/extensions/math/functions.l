@@ -6,7 +6,7 @@ import system'dynamic.
 class mathControl = 
     { 
         min : l : r
-            = (l < r) iif:l:r.
+            = (l < r) iif(l,r).
     
         generic : n = Wrap::(n, mathOp)~$subject get.
     }.

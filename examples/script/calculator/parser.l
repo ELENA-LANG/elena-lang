@@ -6,10 +6,10 @@ extension lexicalOp
 {
     lexicalType
     [
-        if ((self >= $48)and:(self <= $57))
+        if ((self >= $48)&&(self <= $57))
             [ ^ %digit ].
 
-        if ((self >= $97)and:(self <= $122))
+        if ((self >= $97)&&(self <= $122))
             [ ^ %letter ].
 
         self =>
@@ -138,7 +138,7 @@ class TreeLeaf :: BaseTreeNode
         if ($nil == theFunction)
             [ InvalidArgumentException new; raise ].
             
-        ^ theFunction set
+        ^ theFunction eval
     ]
 
     appendContent : aChar
@@ -177,22 +177,19 @@ class FunctionNode :: TreeLeaf
         ^ theStrategy~subj eval(theArg1 value, theArg2 value).
     ]
 
-    append first_arg:node
+    first_arg:node
     [
         if ($nil == theArg1)
             [ theArg1 := node setFunction:$self ];
             [ theArg1 := theArg1 + node setFunction:$self ]
     ]
 
-    append second_arg:node
+    second_arg:node
     [
         if ($nil == theArg2)
             [ theArg2 := node setFunction:$self ];
             [ theArg2 := theArg2 + node setFunction:$self ]
     ]
-
-    set
-        => theArgState.
         
     first_arg
     [
@@ -203,6 +200,9 @@ class FunctionNode :: TreeLeaf
     [
         theArgState := %third_arg.
     ]    
+
+    eval
+        => theArgState.
 
     append : aNode
         => theArgState.
@@ -317,7 +317,7 @@ extension parserOp
     [
         var aStateMachine := StateMachine new:states; state0.
         
-        try (self run each:(aStateMachine func1))
+        try (self forEach(aStateMachine func1))
         {
             on(Exception e) [
                 console printLine:e.

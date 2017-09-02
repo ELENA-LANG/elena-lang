@@ -22,11 +22,11 @@
     #define add_cont   ::= "+=" <= self.addContent(c); =>;
 
     #define level        ::= integer; 
-    #define next_state   ::= <= self.seek => "=" out_state <= (); =>;
+    #define next_state   ::= <= self. => "=" out_state <= (); =>;
 
     #define in_state     ::= ident <= : { =>;
     #define state        ::= ident <= : function(c) { => ;
-    #define out_state    ::= <= < % => ident <= > =>;
+    #define out_state    ::= ident;
     #define body         ::= <= $literal =>;
     #define ident        ::= <= $identifier =>;
 ]]

@@ -954,23 +954,7 @@ int Instance :: parseMessage(ident_t message)
    }
    else signature.copy(message + subject);
 
-   if (subject == 0 && paramCount != -1) {
-      verb_id = _verbs.get(signature);
-      if (verb_id != 0) {
-         signature.clear();
-      }
-   }
-
-   int signatureId = 0;
-   if (getlength(signature) > 0)
-      signatureId = (int)resolveReference(signature, 0);
-
-   if (verb_id == 0 && paramCount != -1) {
-      if (paramCount == 0) {
-         verb_id = GET_MESSAGE_ID;
-      }
-      else verb_id = EVAL_MESSAGE_ID;
-   }
+   ref_t signatureId = (ref_t)resolveReference(signature, 0);
 
    return encodeMessage(signatureId, paramCount);
 }

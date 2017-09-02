@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              xdev - refactoring
-                 * if else if ...
-
               zdev - script engine
                  * optimize dynamic code building
                  * support return
@@ -109,7 +106,7 @@ In development:
                        symbol plotter = { .. }.
                  * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
                    (e.g. vhdc), it should be declared when it is used
-                 * migrate Group / Cast objects
+                 * migrate Cast objects
 
               sdev - console samples
                  * test matrix determinant
@@ -184,6 +181,7 @@ In development:
                  * declaring an array : // array<Field> fieldArray.
                  * nshift should be replaced with nshiftl, nshiftr
                  * optimize shift implementation
+                 * #269 : short-circuit boolean operation
 
 ------                                 
 Pipeline:
