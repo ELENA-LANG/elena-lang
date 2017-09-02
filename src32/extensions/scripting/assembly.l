@@ -877,10 +877,13 @@ class $BaseExpression :: $Strategy
         [
             context push:param.
             context push:$expr_var_token.            
-        ].
+        ];
         if (type == $FORWARD_PARAM)
         [
             context push:param.
+        ];
+        [
+            InvalidArgumentException new("Variable cannot be resolved - " + m); raise
         ].
     ]
 
@@ -908,22 +911,20 @@ class $BaseExpression :: $Strategy
             [
                 counter := counter + 1.
             ];
+            if (token equal reference:$message_token)
             [
-                if (token equal reference:$message_token)
+                buffer append(context pop).
+                messageExpr := true.
+            ];
+            [
+                if (token equal reference:$expr_var_token)
                 [
-                    buffer append(context pop).
-                    messageExpr := true.
-                ];
-                [
-                    if (token equal reference:$expr_var_token)
-                    [
-                        context append(context pop).
-                        token := %"tapeOp.tape_var[]".
-                    ].
-                    context append:token.
-                    counter := counter + 1.
+                    context append(context pop).
+                    token := %"tapeOp.tape_var[]".
                 ].
-            ].                
+                context append:token.
+                counter := counter + 1.
+            ].
             
             token := context pop.
         ].

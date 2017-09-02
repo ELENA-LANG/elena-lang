@@ -4810,7 +4810,7 @@ labReturn:
   equit
   
 labNotFound:  
-  dloadsi 8
+  dloadsi 9
   address labReturn
   else labContinueError
 
@@ -4823,6 +4823,7 @@ labNotFound:
 
 labContinueError:
   unhook
+  dloadfi -3
   throw
                          
 labEnd:
