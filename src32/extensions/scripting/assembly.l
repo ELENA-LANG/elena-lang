@@ -694,6 +694,7 @@ sealed class $ParameterContext
 limited class $Strategy
 {
     type<$Strategy> symbol_one    []
+    type<$Strategy> preloaded_one []
     type<$Strategy> expression    []
     type<$Strategy> returning     []
     type<$Strategy> singleton_one []
@@ -714,6 +715,8 @@ limited class $Strategy
 singleton $StartOne :: $Strategy
 {
     symbol_one = $SymbolOne.
+    
+    preloaded_one = $PreloadedOne.
 }
 
 singleton $SymbolOne :: $Strategy
@@ -721,9 +724,26 @@ singleton $SymbolOne :: $Strategy
     expression = $SymbolBody.
 }
 
-singleton $SymbolBody :: $Strategy
+singleton $PreloadedOne :: $Strategy
 {
-    singleton_one = $Singleton.
+    begin($ClassContext context, $ParameterContext parameters)  
+    [
+        context push(context length).
+    ]
+    
+    expression = $SymbolBody.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        int index := context pop.
+        int len := context length - index.
+        var tape := Tape new(context tape, index, len).
+        
+        context trim(index).
+        context append(tape).
+        
+        tape eval.
+    ]
 }
 
 class $BaseClass :: $Strategy
@@ -940,6 +960,11 @@ class $BaseExpression :: $Strategy
     ]
 }
 
+singleton $SymbolBody :: $BaseExpression
+{
+    expression = $SubExpresson.
+}
+
 singleton $SubExpresson :: $BaseExpression
 {
     expression = $SubExpresson.
@@ -1007,7 +1032,10 @@ class Library //:: Scope
         
         _state begin(_context, _parameters).
     ]
-    
+
+    openPreloadedSymbol
+        <= open(%preloaded_one).
+            
     openSymbol
         <= open(%symbol_one).
     
@@ -1063,15 +1091,6 @@ class Library //:: Scope
         _state setNumericToken(_context, l literal).
     ]
     
-//    open Preloaded_symbol
-//    [
-//        var symbol := $self open Symbol.
-//
-//        thePreloaded append:symbol.
-//                        
-//        ^ symbol
-//    ]
-//    
 //    open Singleton
 //    [
 //        var class := SingletonScope new:$self.

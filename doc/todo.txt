@@ -14,6 +14,8 @@ In development:
                       object message / type
                       object message:param message2:param (message, message2 should not be registered types)
                       object message type1:param type2:param - type1 / type2 - should be registered types
+                 * warn if the variable name is similar to the registered attributes
+                 * warn if the method name is similar to the registered attributes
 
               xdev - refactoring
                  * reimplement arithmeval
@@ -332,7 +334,6 @@ Pipeline:
                  * declaring : test => [] ?
                  * declaring : test param. // ?
                  * declaring : test test : test // ??
-                 * warn if for the expression "a b := c." - a could be considered both as symbol (variable,...) and subject.
                  * test short hand assigning : a prop := b.
                  * test a b c := d. (both when a is a varialbe and when it is a subject / attribute)
                  * support private variables / fields

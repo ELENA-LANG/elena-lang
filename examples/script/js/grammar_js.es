@@ -6,7 +6,7 @@
 root
 (
 =>
-   scope $eof
+   scope? $eof
 <=
 )
 =>;

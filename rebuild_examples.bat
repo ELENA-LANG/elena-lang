@@ -17,8 +17,8 @@ bin\elc examples\console\matrix\matrix.prj
 bin\elc examples\script\interpreter\interpreter.prj
 bin\elc examples\script\calculator\calc.xprj
 bin\elc examples\script\calculator\calc.prj
-rem bin\elc examples\script\js\vmconsole.prj
-rem bin\elc examples\script\js\fibonacci.xprj 
+bin\elc examples\script\js\vmconsole.prj
+bin\elc examples\script\js\fibonacci.xprj 
 rem bin\elc examples\gui\agenda\agenda.prj
 rem bin\elc examples\gui\graphs\graphs.prj
 rem bin\elc examples\gui\c_a_g\c_area_gui.prj

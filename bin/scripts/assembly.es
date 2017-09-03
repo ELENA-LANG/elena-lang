@@ -20,6 +20,10 @@
                              "symbol" "(" identifier expression ")" 
                            <= += "%""close[0]""" =>;
 
+   #define symbol_expr ::= <= += "%""openPreloadedSymbol[0]"""  => 
+                              "preloaded_symbol" "(" identifier? expression ")" 
+                           <= += "%""close[0]""" =>;
+
    #define expression  ::= <= += "%""openExpression[0]""" =>
                              "expression" "(" expr_member+ ")"
                            <= += "%""close[0]""" =>;
@@ -28,6 +32,7 @@
    #define expr_member ::=   numeric;
    #define expr_member ::=   literal;
    #define expr_member ::=   identifier;
+   #define expr_member ::=   reference;
    #define expr_member ::=   expression;
    #define expr_member ::=   message;
 
@@ -69,6 +74,9 @@
 
    #define literal     ::=   "literal" "=" str_quote
                            <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newLiteralToken[1]""" => ;
+
+   #define reference   ::=   "reference" "=" ref_quote
+                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newReference[1]""" => ;
 
    #define reference_v ::= "reference" "=" ref_quote
                            <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" => ;
