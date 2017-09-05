@@ -35,6 +35,7 @@
    #define expr_member ::=   reference;
    #define expr_member ::=   expression;
    #define expr_member ::=   message;
+   #define expr_member ::=   assign;
 
    #define nested      ::= <= += "%""openSingleton[0]""" =>
                              "nested" "(" identifier? method* ")"
@@ -58,6 +59,11 @@
    #define code        ::= statement* ret_expr?;
 
    #define statement   ::= expression;
+   #define statement   ::= "variable" "(" variable ")";
+
+   #define variable    ::= <= += "%""openVariable[0]""" =>
+                              identifier
+                           <= += "%""close[0]""" =>;
 
    #define ret_expr    ::= <= += "%""openReturning[0]""" =>
                              "returning" "(" expression ")"
@@ -77,6 +83,9 @@
 
    #define reference   ::=   "reference" "=" ref_quote
                            <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newReference[1]""" => ;
+
+   #define assign      ::=   "assign" "=" num_quote
+                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newAssignToken[1]""" => ;
 
    #define reference_v ::= "reference" "=" ref_quote
                            <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" => ;

@@ -299,17 +299,9 @@ void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap
    IdentifierString signature;
    size_t subject = 0;
    size_t param = 0;
-   size_t verb_id = 0;
    int paramCount = -1;
    for (size_t i = 0; i < getlength(message); i++) {
-      if (message[i] == '&' && subject == 0) {
-         signature.copy(message, i);
-         verb_id = verbs.get(signature);
-         if (verb_id != 0) {
-            subject = i + 1;
-         }
-      }
-      else if (message[i] == '.') {
+      if (message[i] == '.') {
          return NULL;
       }
       else if (message[i] == '[') {
@@ -339,23 +331,7 @@ void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap
    }
    else signature.copy(message + subject);
 
-   if (subject == 0 && paramCount != -1) {
-      verb_id = verbs.get(signature);
-      if (verb_id != 0) {
-         signature.clear();
-      }
-   }
-
-   int signatureId = 0;
-   if (getlength(signature) > 0)
-      signatureId = subjects.get(signature);
-
-   if (verb_id == 0 && paramCount != -1) {
-      if (paramCount == 0) {
-         verb_id = GET_MESSAGE_ID;
-      }
-      else verb_id = EVAL_MESSAGE_ID;
-   }
+   ref_t signatureId = subjects.get(signature);
 
    return (void*)(encodeMessage(signatureId, paramCount));
 }

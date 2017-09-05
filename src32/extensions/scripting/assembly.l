@@ -152,11 +152,6 @@ import extensions.
 //        }.
 //    ]        
 //        
-//    new AssignToken : token
-//    [
-//        theAssignExpr := true.
-//    ]
-//        
 //    open Expression
 //    [
 //        var expr := ExpressionScope new:$self.
@@ -424,19 +419,6 @@ import extensions.
 //                $super save variable:literal array_list:list
 //            ].
 //    ]
-//    
-//    assign variable:literal array_list:list
-//    [
-//        var param := theParameters seek each: (:x)[ ^x key; equal:literal ].
-//        if($nil != param)
-//            [
-//                list append:(param value).
-//                list append:%"tapeOp.tape_assign[]"
-//            ];
-//            [
-//                $super save variable:literal array_list:list
-//            ]        
-//    ]
 //}
 //
 //class BaseClassScope :: Scope
@@ -602,6 +584,7 @@ singleton $message_token.
 singleton $expr_end_token.
 singleton $expr_var_token.
 singleton $subexpr_token.
+singleton $assign_token.
 
 sealed class $ClassContext
 {
@@ -700,6 +683,7 @@ limited class $Strategy
     type<$Strategy> singleton_one []
     type<$Strategy> method_one    []
     type<$Strategy> code_one      []
+    type<$Strategy> variable_one  []
     
     begin($ClassContext context, $ParameterContext parameters) []
     end($ClassContext context, $ParameterContext parameters)   []
@@ -710,6 +694,7 @@ limited class $Strategy
     setMessageToken($ClassContext context, LiteralValue m)    []
     setLiteral($ClassContext context, LiteralValue l)         []
     setNumericToken($ClassContext context, LiteralValue l)    []
+    setAssignToken($ClassContext context, LiteralValue t)     []
 }
 
 singleton $StartOne :: $Strategy
@@ -787,8 +772,25 @@ singleton $Nested :: $BaseClass
 
 singleton $Code :: $Strategy
 {
-    expression = $Expresson.
-    returning  = $RetExpression.
+    expression   = $RootExpresson.
+    returning    = $RetExpression.
+    variable_one = $Variable.   
+}
+
+singleton $Variable :: $Strategy
+{
+    setIdentToken($ClassContext context, LiteralValue value, $ParameterContext parameters) 
+    [
+        context append:nil.
+        
+        int method_level := context peek.        
+        int level := parameters level.
+        
+        level := level - method_level.
+        level := level + 1.
+        
+        parameters add(value, $METHOD_PARAM, level).        
+    ]    
 }
 
 singleton $Method :: $Strategy
@@ -940,7 +942,15 @@ class $BaseExpression :: $Strategy
                 if (token equal reference:$expr_var_token)
                 [
                     context append(context pop).
-                    token := %"tapeOp.tape_var[]".
+                    
+                    var next_token := context peek.
+                    if(next_token equal reference:$assign_token)
+                    [
+                        token := %"tapeOp.tape_assign[]".
+                    ];
+                    [
+                        token := %"tapeOp.tape_var[]".
+                    ]
                 ].
                 context append:token.
                 counter := counter + 1.
@@ -956,6 +966,21 @@ class $BaseExpression :: $Strategy
             buffer write literal:"]".
             
             context append(Message new literal:buffer)
+        ]
+    ]
+    
+    setAssignToken($ClassContext context, LiteralValue t)
+    [
+        var token := context pop.
+        if (token equal reference:$expr_var_token)
+        [
+            token := context pop.
+            context push:%"tapeOp.tape_assign[]".
+            context push:token.
+        ];
+        [
+            context push:token.
+            context push:$assign_token.
         ]
     ]
 }
@@ -980,6 +1005,18 @@ singleton $SubExpresson :: $BaseExpression
 singleton $Expresson :: $BaseExpression
 {
     expression = $SubExpresson.
+}
+
+singleton $RootExpresson :: $BaseExpression
+{
+    expression = $SubExpresson.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        $super end(context, parameters).
+        
+        context append:%"tapeOp.tape_pop[1]".
+    ]    
 }
 
 singleton $RetExpression :: $BaseExpression
@@ -1054,6 +1091,9 @@ class Library //:: Scope
     openCode
         <= open(%code_one).
     
+    openVariable
+        <= open(%variable_one).
+    
     close
     [
         _state end(_context, _parameters).
@@ -1090,7 +1130,12 @@ class Library //:: Scope
     [
         _state setNumericToken(_context, l literal).
     ]
-    
+
+    newAssignToken : t
+    [
+        _state setAssignToken(_context, t literal).
+    ]
+        
 //    open Singleton
 //    [
 //        var class := SingletonScope new:$self.

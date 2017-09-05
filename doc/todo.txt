@@ -17,6 +17,10 @@ In development:
                  * warn if the variable name is similar to the registered attributes
                  * warn if the method name is similar to the registered attributes
 
+              idev - debugger
+                 * tape debugging - treat F8 as F7 for the tape
+                 * vmconsole open a new file instead of using existing one (e.g. extension'scripting)
+
               xdev - refactoring
                  * reimplement arithmeval
                  * migrate amb
@@ -70,6 +74,10 @@ In development:
                  * validate rprop (two message should be applied)
                  * duplicate method templates
 
+              zdev - live programming
+                 * implement xml library
+                 * implement live programming environment
+
               zdev - script engine
                  * migrate xforms
 
@@ -120,6 +128,7 @@ In development:
                  * optimize using, finally, try template implementations (get rid of dynamic closures)
                  * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                  * optimize listof.$expand
+                 * optimize ArrayList / list template insert operation (use xset for moving the references rather than set)
 
               zdev - remoting
               zdev - workflow

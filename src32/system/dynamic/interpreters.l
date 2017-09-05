@@ -66,6 +66,9 @@ extension tapeOp
     tape_assign args:params
         => system'core_routines'__tape.
     
+    tape_pop : o
+        = o.
+    
     tape_stack args:params
     [
         int n := self int.

@@ -4501,7 +4501,7 @@ labSearch:
   xset
   aloadsi 3
 
-  quitn 3
+  quitn 2
 
 end
 
