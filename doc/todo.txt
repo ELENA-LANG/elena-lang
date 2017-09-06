@@ -4,9 +4,9 @@ In development:
 
               zdev - script engine
                  * optimize dynamic code building
-                 * support return
-                 * support branching
                  * support looping
+                 * support return
+                 * free allocated variable in sub code
                  * migrate script samples
 
               xdev - general implementation
@@ -16,6 +16,7 @@ In development:
                       object message type1:param type2:param - type1 / type2 - should be registered types
                  * warn if the variable name is similar to the registered attributes
                  * warn if the method name is similar to the registered attributes
+                 * warn on singleton singleton $if_token.
 
               idev - debugger
                  * tape debugging - treat F8 as F7 for the tape

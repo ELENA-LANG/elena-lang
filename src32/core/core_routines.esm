@@ -4467,6 +4467,23 @@ labSkip:
 
 end
 
+procedure __tape.tape_goifnot[16]
+
+  aloadsi 2
+  elser labSkip const : system'false
+  aloadsi 1
+  nload
+  ecopyd
+  dloadfi -2
+  add
+  dsavefi -2  
+
+labSkip:
+  aloadsi 3
+  quitn 3
+
+end
+
 procedure __tape.tape_ptr[16]
 
   newn   class : system'IntNumber 4

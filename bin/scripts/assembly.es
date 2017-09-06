@@ -36,6 +36,11 @@
    #define expr_member ::=   expression;
    #define expr_member ::=   message;
    #define expr_member ::=   assign;
+   #define expr_member ::=   operator;
+
+   #define expr_member ::= <= += "%""openCode[0]""" =>
+                             "code" "(" code ")"
+                           <= += "%""close[0]""" =>;
 
    #define nested      ::= <= += "%""openSingleton[0]""" =>
                              "nested" "(" identifier? method* ")"
@@ -72,6 +77,12 @@
    #define message     ::=   "message" "=" ident_quote
                            <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newMessageToken[1]""" => ;
 
+   #define operator    ::=   "operator" "=" operator_quote
+                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newMessageToken[1]""" => ;
+
+   #define operator    ::=   "operator" "=" "?"
+                           <= += "%""if[0]""" => ;
+
    #define identifier  ::=   "identifier" "=" ident_quote
                            <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newIdentToken[1]""" => ;
 
@@ -92,6 +103,21 @@
 
    #define identifier_v::= "identifier" "=" ident_quote
                            <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" => ;
+
+   #define operator_quote ::= <= >> += " ""equal"" " > =>
+                             "==";
+
+   #define operator_quote ::= <= >> += " ""less"" " > =>
+                             "<";
+
+   #define operator_quote ::= <= >> += " ""notgreater"" " > =>
+                             "<=";
+
+   #define operator_quote ::= <= >> += " ""add"" " > =>
+                             "+";
+
+   #define operator_quote ::= <= >> += " ""subtract"" " > =>
+                             "-";
 
    #define ident_quote ::= <= >> += " """ => ident_token <= """ " > =>;
 

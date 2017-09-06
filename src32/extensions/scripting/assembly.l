@@ -585,6 +585,8 @@ singleton $expr_end_token.
 singleton $expr_var_token.
 singleton $subexpr_token.
 singleton $assign_token.
+singleton $if_token.
+singleton $code_token.
 
 sealed class $ClassContext
 {
@@ -622,6 +624,11 @@ sealed class $ClassContext
     
     stacksafe getAt(IntNumber index)
         = _tape[index].
+        
+    stacksafe setAt(IntNumber index, Object object)
+    [
+        _tape[index] := object.
+    ]
 }
 
 sealed class $ParameterContext
@@ -684,6 +691,8 @@ limited class $Strategy
     type<$Strategy> method_one    []
     type<$Strategy> code_one      []
     type<$Strategy> variable_one  []
+    
+    type<$Strategy> if_one($ClassContext context) []
     
     begin($ClassContext context, $ParameterContext parameters) []
     end($ClassContext context, $ParameterContext parameters)   []
@@ -770,11 +779,17 @@ singleton $Nested :: $BaseClass
     ]
 }
 
-singleton $Code :: $Strategy
+class $BaseCode :: $Strategy
 {
     expression   = $RootExpresson.
     returning    = $RetExpression.
     variable_one = $Variable.   
+}
+
+singleton $Code :: $BaseCode.
+
+singleton $SubCode :: $BaseCode
+{
 }
 
 singleton $Variable :: $Strategy
@@ -987,12 +1002,12 @@ class $BaseExpression :: $Strategy
 
 singleton $SymbolBody :: $BaseExpression
 {
-    expression = $SubExpresson.
+    expression = $SubExpression.
 }
 
-singleton $SubExpresson :: $BaseExpression
+singleton $SubExpression :: $BaseExpression
 {
-    expression = $SubExpresson.
+    expression = $SubExpression.
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -1004,12 +1019,61 @@ singleton $SubExpresson :: $BaseExpression
 
 singleton $Expresson :: $BaseExpression
 {
-    expression = $SubExpresson.
+    expression = $SubExpression.
+}
+
+singleton $CondExpression :: $BaseExpression
+{
+    begin($ClassContext context, $ParameterContext parameters)
+    [
+        $super begin(context, parameters).
+    ]
+    
+    code_one = $SubCode.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        $super end(context, parameters).
+        
+        var token := context pop.
+        if (token equal reference:$if_token)
+        [
+            context push(context length).
+            context append:nil.
+            context append:%"tapeOp.tape_goifnot[]".
+            context push($code_token).
+        ]
+    ]    
+}
+
+singleton $IfExpression :: $BaseExpression
+{
+    expression = $CondExpression.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        int pos := context pop.        
+        
+        $super end(context, parameters).
+        
+        int offset := context length - pos - 2.
+        
+        context[pos] := IntNumber new(offset).
+        
+        context append:%"tapeOp.tape_pop[1]".
+    ]        
 }
 
 singleton $RootExpresson :: $BaseExpression
 {
-    expression = $SubExpresson.
+    expression = $SubExpression.
+    
+    if_one($ClassContext context)
+    [
+        context push:$if_token.
+        
+        ^ $IfExpression.
+    ]
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -1093,6 +1157,11 @@ class Library //:: Scope
     
     openVariable
         <= open(%variable_one).
+    
+    if
+    [
+        _state := _state if_one(_context).
+    ]
     
     close
     [

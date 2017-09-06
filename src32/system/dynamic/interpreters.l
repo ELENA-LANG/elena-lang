@@ -88,6 +88,9 @@ extension tapeOp
     tape_goif args:params
         => system'core_routines'__tape.
     
+    tape_goifnot args:params
+        => system'core_routines'__tape.
+    
     tape_go args:params
         => system'core_routines'__tape.
         
