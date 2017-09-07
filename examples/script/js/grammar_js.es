@@ -153,6 +153,12 @@ root
 
    #define operation  ::= 
 <=
+                operator = ">"
+=>
+                ">" object;
+
+   #define operation  ::= 
+<=
                 operator = "<="
 =>
                 "<=" object;

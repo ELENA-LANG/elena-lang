@@ -3,17 +3,15 @@ import extensions'scripting.
 
 program =
 [
-//    if ('program'arguments length == 1)
-//        [  console << "Please provide the path to the file to interpret". AbortException new; raise ].
-
-    var p := "test.js".
+    if ('program'arguments length == 1)
+        [  console << "Please provide the path to the file to interpret". AbortException new; raise ].
 
     try(control do:
     [
         var factory := scriptEngine 
             load path:"~\scripts\assembly.es";
             load path:"grammar_js.es";
-            eval path(/*'program'arguments[1]*/p).
+            eval path('program'arguments[1]).
             
         factory eval:(Library new).
     ])

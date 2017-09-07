@@ -93,6 +93,9 @@ extension tapeOp
     
     tape_go args:params
         => system'core_routines'__tape.
+    
+    tape_exit args:params
+        => system'core_routines'__tape.
         
     tape_ptr args:params
         => system'core_routines'__tape.

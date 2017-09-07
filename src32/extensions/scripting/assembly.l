@@ -1,584 +1,7 @@
-//import system'routines.
 import system'collections.
 import system'text.
 import system'dynamic.
 import extensions.
-
-//class Scope
-//{
-//    object theParent.
-//    
-//    constructor new : parent
-//    [
-//        theParent := parent.
-//    ]
-//
-//    save variable:literal array_list:list
-//    [
-//        theParent save variable:literal array_list:list.
-//    ]
-//
-//    add retPoint:label
-//    [
-//        theParent add retPoint:label.
-//    ]
-//
-//    assign variable:literal array_list:list
-//        => theParent.
-//                        
-//    close = theParent.        
-//}
-//
-//class IfExpression :: Scope
-//{
-//    object theCondExpr.
-//    object theIfClosure.
-//    
-//    constructor new : aParent
-//        <= new:aParent;
-//    [
-//    ]
-//    
-//    open Expression
-//    [
-//        if ($nil == theCondExpr)
-//        [
-//            theCondExpr := ExpressionScope new:$self.
-//            
-//            ^ theCondExpr
-//        ];
-//        [
-//           theIfClosure := ExpressionScope newIfExpr:$self.
-//           
-//           ^ theIfClosure
-//        ]        
-//    ]
-//    
-//    close
-//        = theParent close.
-//        
-//    save array_list:retVal
-//    [
-//        theCondExpr save array_list:retVal.
-//        
-//        int jumpLabel := retVal length.
-//        
-//        retVal append:$nil.
-//        retVal append:%"tapeOp.tape_jumpifnot[]".
-//        
-//        theIfClosure save array_list:retVal.
-//        
-//        retVal@jumpLabel := retVal length.
-//    ]                
-//}
-//
-//class LoopExpression :: IfExpression
-//{
-//    constructor new : aParent
-//        <= new:aParent;
-//    [
-//    ]
-//    
-//    eval If []
-//    
-//    save array_list:retVal
-//    [
-//        int loopLabel := retVal length.
-//        
-//        theCondExpr save array_list:retVal.
-//        
-//        int jumpLabel := retVal length.
-//        
-//        retVal append:$nil.
-//        retVal append:%"tapeOp.tape_jumpifnot[]".
-//        
-//        theIfClosure save array_list:retVal.
-//        retVal append:loopLabel.
-//        retVal append:%"tapeOp.tape_jump[]".
-//        
-//        retVal@jumpLabel := retVal length.
-//    ]
-//    
-//    close = { close = theParent. }.
-//}
-//
-//class ExpressionScope :: Scope
-//{
-//    stack      theCallstack.
-//    textbuffer theMessage.
-//    bool       theCallExpr.
-//    bool       theAssignExpr.
-//    bool       theIfExpr.
-//        
-//    constructor $clone parent:parent stack:callstack textbuffer:message bool:callExpr bool:assignExpr bool:ifExpr
-//        <= new : parent;
-//    [
-//        theCallstack := callstack.
-//        theMessage := message.
-//        theCallExpr := callExpr.
-//        theAssignExpr := assignExpr.
-//        theIfExpr := ifExpr.
-//    ]
-//        
-//    constructor new : aParent
-//        <= new : aParent;
-//    [
-//        theCallstack := Stack new.
-//        theMessage := TextBuilder new.
-//        theCallExpr := false.
-//        theAssignExpr := false.
-//        theIfExpr := false.
-//    ]
-//    
-//    constructor newIfExpr : aParent
-//        <= new : aParent;
-//    [
-//        theIfExpr := true.
-//    ]        
-//        
-//    new IdentToken : literal
-//    [
-//        theCallstack push:
-//        { 
-//            save array_list:list 
-//            [ 
-//                theParent save variable:literal array_list:list
-//            ]
-//            
-//            assign array_list:list
-//            [
-//                theParent assign variable:literal array_list:list
-//            ]
-//        }.
-//    ]        
-//        
-//    open Expression
-//    [
-//        var expr := ExpressionScope new:$self.
-//        
-//        theCallstack push:expr.
-//        
-//        ^ expr
-//    ]
-//
-//    open Singleton
-//    [
-//        var expr := SingletonScope new:$self.
-//        
-//        theCallstack push:expr.
-//        
-//        ^ expr.
-//    ]
-//
-//    open Code
-//    [
-//        var expr := $nil.
-//        
-//        if (theIfExpr)
-//        [
-//            expr := CodeScope new:$self.
-//        ];
-//        [
-//            expr := ClosureScope new:$self.
-//        ].
-//            
-//        theCallstack push:expr.
-//        
-//        ^ expr
-//    ]
-//
-//    eval Nest
-//    [
-//        var nestedExpr := ExpressionScope 
-//                            $clone
-//                                parent:$self
-//                                stack:theCallstack 
-//                                textbuffer:theMessage 
-//                                bool:theCallExpr 
-//                                bool:theAssignExpr 
-//                                bool:theIfExpr.
-//        
-//        theCallstack := Stack new.
-//        theMessage := TextBuilder new.
-//        theCallExpr := false.
-//        theAssignExpr := false.
-//        theIfExpr := false.
-//        
-//        theCallstack push:nestedExpr.
-//    ]
-//
-//    eval If
-//    [
-//        theIfExpr := true.
-//        
-//        var expr := IfExpression new:$self.
-//        
-//        theCallstack push:expr.
-//        
-//        ^ expr.
-//    ]
-//
-//    save array_list:retVal
-//    [
-//        if(theCallExpr)
-//        [
-//            int length := theCallstack length.
-//            length := length - 1.
-//            
-//            theMessage write literal:"[".
-//            theMessage write int:length.
-//            theMessage write literal:"]".
-//            
-//            until (theCallstack is empty)
-//            [
-//                theCallstack pop; save array_list:retVal
-//            ].
-//            
-//            retVal append:(Message new literal:theMessage)
-//        ];
-//        [
-//            theCallstack pop; save array_list:retVal.
-//            
-//            if (theAssignExpr)
-//            [
-//                theCallstack pop; assign array_list:retVal
-//            ].
-//        ].
-//    ]    
-//}
-//
-//class CodeScope :: Scope
-//{
-//    object theStatements.
-//    
-//    constructor new : aParent
-//        <= new : aParent;
-//    [
-//        theStatements := List new.
-//    ]
-//
-//    save array_list:retVal
-//    [
-//        theStatements run each: (:statement)
-//        [
-//            statement save array_list:retVal
-//        ].
-//    ]
-//
-//    open Ret_expr
-//    [
-//        var expr := RetExpressionScope new:$self.
-//        
-//        theStatements append:expr.
-//        
-//        ^ expr
-//    ]
-//        
-//    open Expression
-//    [
-//        var expr := ExpressionScope new:$self.
-//        
-//        theStatements append:expr.
-//        
-//        ^ expr
-//    ]
-//    
-//    open Loop
-//    [
-//        var loop := LoopExpression new:$self.
-//        
-//        theStatements append:loop.
-//        
-//        ^ { open Expression = loop. }
-//    ]
-//    
-//    open Variable
-//        = 
-//        {
-//            new IdentToken:token
-//            [
-//                theParent new VariableToken:token
-//            ]
-//            
-//            close = $owner.
-//        }.
-//}
-//
-//class MethodScope :: Scope
-//{
-//    object theSubject.
-//    object theCode.
-//    object theParameters.
-//    object theRetPoints.
-//    vint   theParamCounter.
-//    vint   theVarCounter.    
-//    
-//    constructor new : aParent
-//        <= new : aParent;
-//    [
-//        theSubject := TextBuilder new.
-//        theParameters := List new.
-//        theRetPoints := ArrayList new.
-//        theParamCounter := -1.
-//        theVarCounter := 0.
-//    ]
-//        
-//    subject
-//        = Signature new literal:theSubject.
-//
-//    message
-//    [
-//        theSubject 
-//            append:"[";
-//            append:(theParamCounter literal);
-//            append:"]".
-//
-//        ^ Message new literal:theSubject         
-//    ]
-//
-//    add retPoint:label
-//    [
-//        theRetPoints append:label.
-//    ]
-//
-//    code
-//    [
-//        var list := ArrayList new.
-//        
-//        int counter := theVarCounter.
-//        while (counter > 0)
-//        [
-//            list append:nil.
-//            
-//            counter := counter - 1
-//        ].
-//        
-//        theCode save array_list:list.
-//        
-//        int eopLabel := list length.
-//        int retPointLen := theRetPoints length.
-//        int i := 0.
-//        while (i < retPointLen)
-//        [
-//            var retPoint := theRetPoints@i.
-//            
-//            //list@retPoint := eopLabel.
-//            list setAt:retPoint:eopLabel.
-//            
-//            i := i + 1.
-//        ].
-//        
-//        ^ Tape new array:list
-//    ]
-//        
-//    new MessageToken : message
-//    [
-//        ifnot(theSubject is empty)
-//            [ theSubject write:"&" ].
-//        
-//        theSubject write:message
-//    ]    
-//    
-//    new ParamToken : param
-//    [
-//        theParameters append:(KeyValue new key:param value:(theParameters length + 1)).
-//        
-//        theParamCounter append int:1
-//    ]
-//    
-//    new VariableToken : param
-//    [
-//        theParameters append:(KeyValue new key:param value:(theParameters length + 1)).
-//        
-//        theVarCounter append int:1
-//    ]
-//    
-//    open Ret_expr
-//    [
-//        theCode := RetExpressionScope new:$self.
-//        
-//        ^ theCode
-//    ]
-//    
-//    open Code
-//    [
-//        theCode := CodeScope new:$self.
-//        
-//        ^ theCode
-//    ]
-//    
-//    save variable:literal array_list:list
-//    [
-//        var param := theParameters seek each: (:x)[  x key; equal:literal ].
-//        if($nil != param)
-//            [
-//                list append:(param value).
-//                list append:%"tapeOp.tape_var[]"
-//            ];
-//            [
-//                $super save variable:literal array_list:list
-//            ].
-//    ]
-//}
-//
-//class BaseClassScope :: Scope
-//{
-//    object theMethods.
-//    
-//    constructor new : aParent
-//        <= new : aParent;
-//    [
-//        theMethods := List new.
-//    ]
-//
-//    open Method
-//    [
-//        var method := MethodScope new:$self.
-//        
-//        theMethods append:method.
-//        
-//        ^ method
-//    ]        
-//}
-//
-//class SingletonScope :: BaseClassScope
-//{
-//    constructor new : parent
-//        <= new:parent;
-//    [
-//    ]
-//    
-//    new IdentToken:name
-//    [
-//    ]
-//    
-//    save array_list:retVal
-//    [
-//        retVal append:($self eval)
-//    ]
-//    
-//    eval
-//    [
-//        var list := List new.
-//        
-//        theMethods run each: (:method)
-//        [
-//            list append:(method message).
-//            list append:(method code)
-//        ].
-//        
-//        ^ Class new array:(list toArray)
-//    ]
-//}
-//
-//class SymbolBody :: ExpressionScope
-//{
-//    object theSingleton.
-//    
-//    constructor new : parent
-//        <= new:parent;
-//    [
-//    ]
-//    
-//    open Singleton
-//    [
-//        theSingleton := SingletonScope new:$self.
-//        
-//        ^ theSingleton
-//    ]
-//    
-//    eval
-//    [
-//        if ($nil != theSingleton)
-//        [
-//            ^ theSingleton eval
-//        ];
-//        [
-//            var list := ArrayList new.
-//        
-//            $self save array_list:list.
-//        
-//            ^ Tape new array:list
-//        ].
-//    ]
-//}
-//
-//class ClosureScope :: CodeScope
-//{
-//    object theParameters.
-//    vint   theVarCounter.
-//    
-//    constructor new : parent
-//        <= new:parent;
-//    [
-//        theVarCounter := 0.
-//        theParameters := List new.
-//    ]
-//    
-//    save array_list:retVal
-//    [
-//        retVal append:($self eval)
-//    ]
-//    
-//    new VariableToken : param
-//    [
-//        theParameters append:(KeyValue new key:param value:(theParameters length + 1)).
-//        
-//        theVarCounter append int:1
-//    ]
-//    
-//    open Variable
-//        = 
-//        {
-//            new IdentToken:token
-//            [
-//                $owner new VariableToken:token
-//            ]
-//            
-//            close = $owner.
-//        }.
-//
-//    eval
-//    [
-//        var list := ArrayList new.
-//        
-//        int counter := theVarCounter.
-//        while (counter > 0)
-//        [
-//            list append:nil.
-//            
-//            counter := counter - 1
-//        ].
-//        
-//        $super save array_list:list.
-//        
-//        ^ Tape new array:list        
-//    ]
-//}
-//
-//class SymbolScope :: Scope
-//{
-//    object theBody.
-//    
-//    constructor new : parent
-//        <= new:parent;
-//    [
-//    ]
-//    
-//    new IdentToken:name
-//    [
-//    ]
-//    
-//    open Expression
-//    [
-//        theBody := SymbolBody new:$self.
-//        
-//        ^ theBody
-//    ]
-//    
-//    eval
-//        => theBody.
-//}
 
 singleton $message_token.
 singleton $expr_end_token.
@@ -691,6 +114,7 @@ limited class $Strategy
     type<$Strategy> method_one    []
     type<$Strategy> code_one      []
     type<$Strategy> variable_one  []
+    type<$Strategy> loop_one      []
     
     type<$Strategy> if_one($ClassContext context) []
     
@@ -784,6 +208,7 @@ class $BaseCode :: $Strategy
     expression   = $RootExpresson.
     returning    = $RetExpression.
     variable_one = $Variable.   
+    loop_one     = $Loop.
 }
 
 singleton $Code :: $BaseCode.
@@ -1059,10 +484,50 @@ singleton $IfExpression :: $BaseExpression
         int offset := context length - pos - 2.
         
         context[pos] := IntNumber new(offset).
-        
-        context append:%"tapeOp.tape_pop[1]".
     ]        
 }
+
+singleton $LoopIfExpression :: $BaseExpression
+{
+    expression = $CondExpression.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        int pos := context pop.
+        
+        $super end(context, parameters).
+        
+        int loop_pos := context pop.
+        
+        context append(loop_pos - context length - 2).
+        context append:%"tapeOp.tape_go[]".
+        
+        int offset := context length - pos - 2.
+        
+        context[pos] := IntNumber new(offset).
+        
+    ]        
+}
+
+singleton $Loop :: $Strategy
+{
+    expression = $LoopExpresson.    
+    
+    begin($ClassContext context, $ParameterContext parameters)
+    [
+        context push(context length).
+    ]
+}
+
+singleton $LoopExpresson :: $BaseExpression
+{
+    if_one($ClassContext context)
+    [
+        context push:$if_token.
+        
+        ^ $LoopIfExpression.
+    ]
+}    
 
 singleton $RootExpresson :: $BaseExpression
 {
@@ -1087,16 +552,12 @@ singleton $RetExpression :: $BaseExpression
 {
     expression = $Expresson.
     
-//    save array_list:retVal
-//    [
-//        $super save array_list:retVal.
-//        
-//        int jumpLabel := retVal length.
-//        theParent add retPoint:jumpLabel.
-//        
-//        retVal append:$nil.
-//        retVal append:%"tapeOp.tape_jump[]".
-//    ]
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        $super end(context, parameters).
+        
+        context append:%"tapeOp.tape_exit[]".
+    ]
 }
 
 const int $METHOD_PARAM = 1.
@@ -1158,6 +619,9 @@ class Library //:: Scope
     openVariable
         <= open(%variable_one).
     
+    openLoop
+        <= open(%loop_one).
+    
     if
     [
         _state := _state if_one(_context).
@@ -1204,31 +668,6 @@ class Library //:: Scope
     [
         _state setAssignToken(_context, t literal).
     ]
-        
-//    open Singleton
-//    [
-//        var class := SingletonScope new:$self.
-//        
-//        theClasses append:class.   
-//        
-//        ^ class
-//    ]
-//
-//    init
-//    [
-//        thePreloaded run each: (:symbol)
-//        [
-//            symbol eval; eval.
-//        ].
-//    ]
-//
-//    save variable:literal array_list:list
-//    [
-//        var ref := theForwards@literal.
-//        if ($nil == ref)
-//            [ InvalidArgumentException new:("Variable cannot be resolved - " + literal); raise ];
-//            [ list append:(Symbol new literal:ref) ]        
-//    ]
         
     first
        => _context.

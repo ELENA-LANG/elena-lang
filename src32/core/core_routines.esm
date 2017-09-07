@@ -4423,6 +4423,17 @@ labSkip:
 
 end
 
+procedure __tape.tape_exit[16]
+
+  bloadfi 1
+  count
+  dcopye
+  dsavefi -2  
+  aloadsi 1
+  quitn 1
+
+end
+
 procedure __tape.tape_jumpifnot[16]
 
   aloadsi 2

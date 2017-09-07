@@ -65,6 +65,9 @@
 
    #define statement   ::= expression;
    #define statement   ::= "variable" "(" variable ")";
+   #define statement   ::= <= += "%""openLoop[0]""" =>
+                             "loop" "(" expression ")"
+                           <= += "%""close[0]""" =>;
 
    #define variable    ::= <= += "%""openVariable[0]""" =>
                               identifier
@@ -109,6 +112,9 @@
 
    #define operator_quote ::= <= >> += " ""less"" " > =>
                              "<";
+
+   #define operator_quote ::= <= >> += " ""greater"" " > =>
+                             ">";
 
    #define operator_quote ::= <= >> += " ""notgreater"" " > =>
                              "<=";
