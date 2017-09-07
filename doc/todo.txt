@@ -2,12 +2,9 @@
 In development:
 ------                              
               xdev - refactoring
-                 * migrate anagram
-                 * test twentyfour sample
-                 * migrate execute brainf***
+                 * Simple windowed application
                  * GUI component interaction
                  * Hello world/Graphical
-                 * Simple windowed application
 
               xdev - general implementation
                  * migrate GUI samples

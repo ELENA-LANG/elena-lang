@@ -15,7 +15,7 @@ import extensions'routines.
 extension op
 {
      normalized
-         = self toArray; ascendant; summarize:(String new); literal.
+         = self toArray; ascendant; summarize(String new); literal.
 }
 
 // --- Program ---
@@ -26,29 +26,29 @@ symbol program =
 
     var aDictionary := Dictionary new.
 
-    "unixdict.txt" file_path; run eachLine: (:aWord)
+    File new("unixdict.txt"); forEachLine(:aWord)
     [    
         var s := aWord.
         var aKey := aWord normalized.
-        var anItem := aDictionary@aKey.
+        var anItem := aDictionary[aKey].
         if ($nil == anItem)
         [
             anItem := ArrayList new.
-            aDictionary@aKey := anItem.
+            aDictionary[aKey] := anItem.
         ].
     
         anItem append:aWord.
     ].
 
     aDictionary array_list;
-        sort: (:aFormer:aLater)[ ^aFormer length > aLater length ];
-        top:20; run each: (:aPair)[ console writeLine:aPair ].
+        sort(:aFormer:aLater)( aFormer length > aLater length );
+        top:20; forEach(:aPair)[ console printLine(aPair value) ].
     
     var anEnd := now.
    
     var aDiff := anEnd - aStart.
 
-    console writeLine:"Time elapsed in msec:":(aDiff milliseconds).
+    console printLine("Time elapsed in msec:",aDiff milliseconds).
     
     console readChar.
 ].

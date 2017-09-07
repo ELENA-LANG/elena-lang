@@ -29,6 +29,7 @@ define CORE_STATICROOT      20005h
 define CORE_TLS_INDEX       20007h
 define THREAD_TABLE         20008h
 define CORE_OS_TABLE        20009h
+define CORE_MESSAGE_TABLE   2000Ah
 
 // CORE GC SIZE OFFSETS
 define gcs_MGSize	0000h
@@ -80,7 +81,7 @@ define elPackageOffset       0010h
 
 define page_align_mask   000FFFF0h
 
-define SUBJ_MASK          0FFFFFFh
+define SUBJ_MASK          1FFFFFFh                          
 
 // --- System Core Preloaded Routines --
 
