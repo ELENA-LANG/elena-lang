@@ -2,6 +2,7 @@
 In development:
 ------                              
               xdev - refactoring
+                 * winnproc : make sure all message resolved directly
                  * Simple windowed application
                  * GUI component interaction
                  * Hello world/Graphical

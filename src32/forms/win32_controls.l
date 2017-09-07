@@ -97,7 +97,7 @@ class BaseWinControl :: BaseControl
         $self $onCreate.
     ]
 
-    is opened = ($nil != theHandle).
+    opened = ($nil != theHandle).
     
     hwnd = theHandle.
 
@@ -561,7 +561,7 @@ limited class RadioButton :: BaseButton, icontrolof<radiobutton>
         theChecked := false.
     ]
     
-    is checked
+    checked
     [
         ifnot($nil == theHandle)
             [ theChecked := theHandle isChecked ].
@@ -612,7 +612,7 @@ class BaseList :: BaseWinControl
 {
     array_list theList.
     
-    index_changed event index_changed :: theChangeAction.
+    index_changed event onIndexChanged :: theChangeAction.
     
     constructor new
         <= new;

@@ -5010,3 +5010,355 @@ procedure __hwnd."system#readXWndProc$@system@var#1&IntNumber[2]"
   quitn 2
 
 end
+
+// ; win32 constants
+define WM_CREATE            1
+define WM_DESTROY           2
+define WM_SIZE              5
+define WM_PAINT             000Fh
+define WM_CLOSE             0010h
+define WM_SETCURSOR         0020h
+define WM_KEYDOWN           0100h
+define WM_KEYUP             0101h
+define WM_COMMAND           0111h
+define GWL_USERDATA         0FFFFFFEBh
+
+procedure win_WndProc
+
+  dloadsi 2
+  ifn labPaint WM_PAINT
+  ifn labCreate WM_CREATE
+  ifn labCursor  WM_SETCURSOR
+  ifn labSize  WM_SIZE
+  ifn labCommand WM_COMMAND
+  ifn labDestroy WM_DESTROY
+  ifn labDestroy WM_CLOSE
+
+labEnd:
+  eloadsi 4
+  pushe
+  eloadsi 4
+  pushe
+  pushd
+  eloadsi 4
+  pushe
+  callextr extern : 'dlls'USER32.DefWindowProcW
+  quitn 4
+  
+labCreate:
+  callextr api : openframe
+
+  pushn 0
+  bcopys 0
+  
+  pushb
+  aloadfi -7
+  pusha
+  acopyf -6
+  pusha
+  acopyf -5
+  pusha
+  acopyf -4
+  pusha
+
+  aloadfi -7
+  pusha
+  callextr api : resolve_index  
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %"wm_create$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labDestroy:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %"eval$system@winforms@WindowHandle$system@IntNumber$@system@var#1&IntNumber[3]"
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labCommand:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -7
+  pushb
+  bcopyf -6
+  pushb
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %"wm_command$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labCursor:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -7
+  pushb
+  bcopyf -6
+  pushb
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %"eval$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labPaint:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %"wm_paint$system@winforms@WindowHandle$system@IntNumber$@system@var#1&IntNumber[3]"
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labSize:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -7
+  pushb
+  bcopyf -6
+  pushb
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %"eval$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+
+labEnd2:
+  callextr api : closeframe
+  jump  labEnd
+  
+end
+
+procedure win_XWndProc
+
+  dloadsi 2
+  ifn labCreate WM_CREATE
+  ifn labEvent WM_KEYDOWN
+  ifn labEvent WM_KEYUP
+  ifn labPaint WM_PAINT
+  ifn labEvent WM_DESTROY
+
+labEnd:
+  eloadsi 4
+  pushe
+  eloadsi 4
+  pushe
+  pushd
+  eloadsi 4
+  pushe
+  callextr extern : 'dlls'USER32.DefWindowProcW
+  quitn 4
+  
+labCreate:
+  callextr api : openframe
+
+  pushn 0
+  bcopys 0
+  
+  pushb
+  aloadfi -7
+  pusha
+  acopyf -6
+  pusha
+  acopyf -5
+  pusha
+  acopyf -4
+  pusha
+
+  aloadfi -7
+  pusha
+  callextr api : resolve_index  
+
+  pusha  
+  xcallrm system'winforms'XWindowCallback %"wm_create$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labPaint:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xcallrm system'winforms'XWindowCallback %"wm_paint$system@winforms@WindowHandle$system@IntNumber$@system@var#1&IntNumber[3]"
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labEvent:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -7
+  pushb
+  bcopyf -6
+  pushb
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xcallrm system'winforms'XWindowCallback %"eval$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+
+labEnd2:
+  callextr api : closeframe
+  jump  labEnd
+  
+end
+
+procedure win_thread_start
+
+  acopys 1  
+  pusha
+  callextr api : resolve_index
+  pusha
+  callextr api : start_thread
+  ifr labError 0
+  quitn 1
+
+labError:
+  open 1
+  pushr class : system'NotSupportedException
+  pushr const : %new[0]
+  throw
+  
+end
