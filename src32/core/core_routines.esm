@@ -5066,7 +5066,7 @@ labCreate:
   callextr api : resolve_index  
 
   pusha  
-  xindexrm system'winforms'WindowCallback %"wm_create$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  xindexrm system'winforms'WindowCallback %"wm_create$system'winforms'WindowHandle$system'IntNumber$system'IntNumber$system'winforms'CREATESTRUCT$'system@var#1&IntNumber[5]"
 
   acallvd
   popa
@@ -5095,7 +5095,7 @@ labDestroy:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback %"eval$system@winforms@WindowHandle$system@IntNumber$@system@var#1&IntNumber[3]"
+  xindexrm system'winforms'WindowCallback %"eval$system'winforms'WindowHandle$system'IntNumber$'system@var#1&IntNumber[3]"
   acallvd
   popa
 
@@ -5127,7 +5127,7 @@ labCommand:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback %"wm_command$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  xindexrm system'winforms'WindowCallback %"wm_command$system'winforms'WindowHandle$system'IntNumber$system'IntNumber$system'winforms'WindowHandle$'system@var#1&IntNumber[5]"
   acallvd
   popa
 
@@ -5159,7 +5159,7 @@ labCursor:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback %"eval$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  xindexrm system'winforms'WindowCallback %"eval$system'winforms'WindowHandle$system'IntNumber$system'IntNumber$system'IntNumber$'system@var#1&IntNumber[5]"
   acallvd
   popa
 
@@ -5187,7 +5187,7 @@ labPaint:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback %"wm_paint$system@winforms@WindowHandle$system@IntNumber$@system@var#1&IntNumber[3]"
+  xindexrm system'winforms'WindowCallback %"wm_paint$system'winforms'WindowHandle$system'IntNumber$'system@var#1&IntNumber[3]"
   acallvd
   popa
 
@@ -5219,7 +5219,7 @@ labSize:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback %"eval$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  xindexrm system'winforms'WindowCallback %"eval$system'winforms'WindowHandle$system'IntNumber$system'IntNumber$system'IntNumber$'system@var#1&IntNumber[5]"
   acallvd
   popa
 
@@ -5274,7 +5274,7 @@ labCreate:
   callextr api : resolve_index  
 
   pusha  
-  xcallrm system'winforms'XWindowCallback %"wm_create$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  xcallrm system'winforms'XWindowCallback %"wm_create$system'winforms'WindowHandle$system'IntNumber$system'IntNumber$system'winforms'CREATESTRUCT$'system@var#1&IntNumber[5]"
   popa
 
   callextr api : closeframe
@@ -5301,7 +5301,7 @@ labPaint:
   pushb
 
   pusha  
-  xcallrm system'winforms'XWindowCallback %"wm_paint$system@winforms@WindowHandle$system@IntNumber$@system@var#1&IntNumber[3]"
+  xcallrm system'winforms'XWindowCallback %"wm_paint$system'winforms'WindowHandle$system'IntNumber$'system@var#1&IntNumber[3]"
   popa
 
   callextr api : closeframe
@@ -5332,7 +5332,7 @@ labEvent:
   pushb
 
   pusha  
-  xcallrm system'winforms'XWindowCallback %"eval$system@winforms@WindowHandle$system@IntNumber$system@IntNumber$system@winforms@CREATESTRUCT$@system@var#1&IntNumber[5]"
+  xcallrm system'winforms'XWindowCallback %"eval$system'winforms'WindowHandle$system'IntNumber$system'IntNumber$system'IntNumber$'system@var#1&IntNumber[5]"
   popa
 
   callextr api : closeframe
