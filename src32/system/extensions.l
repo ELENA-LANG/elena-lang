@@ -1581,12 +1581,12 @@ class byteArrayHelper =
     ]
 }.
 
-//// --- intArrayHelper ---
-//
-//singleton intArrayHelper =
-//{    
-//    stacksafe fill intarray:array int:offset int:length int:val
-//    [
-//        array fill int:offset int:length int:val.
-//    ]
-//}.
+// --- intArrayHelper ---
+
+singleton intArrayHelper =
+{    
+    stacksafe fill intarray:array int:offset int:length int:val
+    [
+        array fill int:offset int:length int:val.
+    ]
+}.

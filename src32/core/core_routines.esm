@@ -4921,3 +4921,92 @@ labFound:
   ajumpvi 0
 
 end
+
+procedure __rtptr."new$system@Object$system@Object[2]"
+
+  callr system'rt_sync
+  pusha
+labWait:
+  snop
+  trylock
+  elsen labWait 0 
+
+  callextr api : alloc_index
+  bcopya
+  aloadsi 3
+  set  
+
+  popa
+  freelock
+
+  bloadsi 1
+  nsave
+  acopyb
+
+  quitn 2
+
+end
+
+procedure __rtptr."free[1]"
+                      
+  callr system'rt_sync
+  pusha
+labWait:
+  snop
+  trylock
+  elsen labWait 0 
+
+  aloadsi 2
+  nload
+  callextr api : free_index
+
+  popa
+  freelock
+
+  quitn 1
+  
+end
+
+procedure __rtptr.get[1]
+
+  pusha
+  callextr api : resolve_index
+
+  quitn 1
+
+end
+
+procedure __hwnd."system#fillWndClass$system@ByteArray$system@WideLiteralValue$system@IntNumber$system@winforms@HInstance$system@IntNumber[6]"
+
+  bloadsi 2
+  aloadsi 4
+  nload
+  nsavei 0
+  aloadsi 5
+  nload
+  nsavei 4
+  aloadsi 6
+  nload
+  nsavei 7
+  aloadsi 3
+  axsavebi 9    
+  acopyr intern : system'core_routines'win_WndProc
+  axsavebi 1
+  dcopy 0
+  nsavei 2
+  nsavei 3
+  nsavei 5
+  nsavei 6
+  nsavei 8
+  quitn 6
+
+end
+
+procedure __hwnd."system#readXWndProc$@system@var#1&IntNumber[2]"
+
+  acopyr intern : system'core_routines'win_XWndProc
+  bloadsi 2
+  axsavebi 0
+  quitn 2
+
+end

@@ -1,4 +1,4 @@
-type xwindow :: IWindow.
+type xwindow = IWindow.
 
 // --- XWindow ---
 
@@ -79,14 +79,14 @@ singleton $classFactoryX =
         int winproc_ptr := 0.
         $classFactoryX $readXWndProc vint:winproc_ptr.
                 
-        int wndclass(12).        
+        int& wndclass(12).        
         intArrayHelper fill intarray:wndclass int:0 int:12 int:0.
         
-        wndclass@0  := 48.
-        wndclass@1  := aStyle.
-        wndclass@2  := winproc_ptr.
-        wndclass@5  := anInstance.
-        wndclass@7  := cursor.
+        wndclass[0]  := 48.
+        wndclass[1]  := aStyle.
+        wndclass[2]  := winproc_ptr.
+        wndclass[5]  := anInstance.
+        wndclass[7]  := cursor.
                 
         dirty_ptr name_ptr := aName.
         name_ptr saveTo intarray:wndclass int:10.

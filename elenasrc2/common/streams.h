@@ -336,6 +336,8 @@ public:
 class TextWriter
 {
 public:
+   virtual pos_t Position() const = 0;
+
    virtual bool writeNewLine() = 0;
    virtual bool write(const wide_c* s, pos_t length) = 0;
    virtual bool write(const char* s, pos_t length) = 0;
@@ -429,7 +431,7 @@ template<class CHAR> class LiteralWriter : public TextWriter
    pos_t _size;
 
 public:
-   pos_t Position() const { return _offset; }
+   virtual pos_t Position() const { return _offset; }
 
    void reset()
    {

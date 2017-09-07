@@ -28,7 +28,7 @@ class SDIApplication :: BaseApplication
         int     result := 0.
         hwnd    handleCopy := theMainWindow hwnd.
         
-        extern
+        extern()
         [
             result := system'external'USER32 GetMessageW win_msg:msg int:0 int:0 int:0.
             while (result != 0)
@@ -51,7 +51,7 @@ class SDIApplication :: BaseApplication
         int     result := 0.
         hwnd    handleCopy := handle.
 
-        extern
+        extern()
         [
             while (handleCopy isVisible)
             [
@@ -102,7 +102,7 @@ class SDIXApplication :: BaseApplication
         int     result := 0.
     //    hwnd    handleCopy := handle.
     
-        extern
+        extern()
         [
             int message := msg message.
             while (message != WM_QUIT)

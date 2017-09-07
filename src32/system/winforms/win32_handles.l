@@ -2,7 +2,7 @@
 
 sealed const embeddable struct HInstance
 {
-    __ptr theHandle.
+    __dword theHandle(4).
     
     stacksafe constructor new int:aHandle
     [
@@ -41,7 +41,7 @@ sealed embeddable struct MSG
         theMessage := 0.
     ]
     
-    int message :: outnprop(readMessageTo).
+    int rvprop message :: readMessageTo.
     
     stacksafe readMessageTo vint:aMessage
     [
@@ -51,7 +51,7 @@ sealed embeddable struct MSG
 
 // --- CREATESTRUCT ---
 
-sealed embeddable struct CREATESTRUCT :: dispatchable(win_createstruct)
+sealed embeddable struct CREATESTRUCT
 {
     int       theCreateParam.
     hinstance theInstance.    
@@ -78,9 +78,9 @@ sealed embeddable struct CREATESTRUCT :: dispatchable(win_createstruct)
 
 // --- HMENU ---
 
-sealed const embeddable struct HMENU :: dispatchable(hmenu)
+sealed const embeddable struct HMENU
 {
-    __ptr theHandle.
+    __dword theHandle(4).
     
     constructor new
     [

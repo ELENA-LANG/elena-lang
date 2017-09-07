@@ -8,9 +8,9 @@ const wide ComboboxClass = "Combobox"w.
 
 // --- WindowHandle ---
 
-sealed const embeddable struct WindowHandle :: dispatchable(hwnd)
+sealed const embeddable struct WindowHandle
 {
-    __ptr theHandle.
+    __dword theHandle(4).
     
     constructor new
     [
@@ -36,7 +36,7 @@ sealed const embeddable struct WindowHandle :: dispatchable(hwnd)
         ].
                 
         int aHandle := 0.                
-        extern 
+        extern()
         [
             aHandle := system'external'USER32 CreateWindowExW
                 int:       dwExStyle
@@ -125,7 +125,7 @@ sealed const embeddable struct WindowHandle :: dispatchable(hwnd)
     [
         int handle := theHandle.
         
-        extern 
+        extern()
         [
             system'external'USER32 InvalidateRect int:handle int:0 int:1.
             system'external'USER32 UpdateWindow int:handle

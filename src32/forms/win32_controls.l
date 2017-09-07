@@ -131,13 +131,13 @@ class BaseWinControl :: BaseControl
         
         ifnot($nil == theHandle)
             [
-                theHandle setCaption wide:(aCaption wide).
+                theHandle setCaption wide(aCaption wide).
             ].
     ]
     
     append caption : aValue
     [    
-        $self set caption:($self caption + aValue wide)
+        $self set caption($self caption + aValue wide)
     ]
 
     caption
@@ -200,7 +200,7 @@ sealed class ControlCollection :: BaseControlCollection
         
         aControl $set parent:theParent.
         
-        if(theParent is opened)
+        if(theParent opened)
         [
             aControl open
         ]
@@ -272,7 +272,7 @@ class BaseWinContainer :: BaseWinControl
 
 // --- Frame ---
 
-sealed class Frame :: BaseWinControl, icontrolof(frame)
+sealed class Frame :: BaseWinControl, icontrolof<frame>
 {
     constructor new
         <= new;
@@ -303,7 +303,7 @@ sealed class Frame :: BaseWinControl, icontrolof(frame)
 
 // --- Label ---
 
-limited class Label :: BaseWinControl, icontrolof(label)
+limited class Label :: BaseWinControl, icontrolof<label>
 {
     constructor new
         <= new;
@@ -418,7 +418,7 @@ class BaseEdit :: BaseWinControl
 
 // --- Edit ---
 
-sealed class Edit :: BaseEdit, icontrolof(edit)
+sealed class Edit :: BaseEdit, icontrolof<edit>
 {
     constructor new
         <= new;
@@ -449,7 +449,7 @@ sealed class Edit :: BaseEdit, icontrolof(edit)
 
 // --- Memo ---
 
-sealed class Memo :: BaseEdit, icontrolof(memo)
+sealed class Memo :: BaseEdit, icontrolof<memo>
 {
     constructor new
         <= new;
@@ -520,7 +520,7 @@ class BaseButton :: BaseWinControl
 
 // --- Button ---
 
-sealed class Button :: BaseButton, icontrolof(button)
+sealed class Button :: BaseButton, icontrolof<button>
 {
     constructor new
         <= new;
@@ -551,7 +551,7 @@ sealed class Button :: BaseButton, icontrolof(button)
 
 // --- RadioButton ---
 
-limited class RadioButton :: BaseButton, icontrolof(radiobutton)
+limited class RadioButton :: BaseButton, icontrolof<radiobutton>
 {
     bool theChecked.
     
@@ -612,7 +612,7 @@ class BaseList :: BaseWinControl
 {
     array_list theList.
     
-    index_changed index_changed :: event(theChangeAction).
+    index_changed event index_changed :: theChangeAction.
     
     constructor new
         <= new;
@@ -645,14 +645,14 @@ class BaseList :: BaseWinControl
 
 // --- Combobox ---
 
-sealed class Combobox :: BaseList, icontrolof(combobox)
+sealed class Combobox :: BaseList, icontrolof<combobox>
 {
     constructor new
         <= new;
     [
     ]
     
-    int selected_index :: nprop(readSelectedIndexTo, setSelectedIndex).
+    int vprop selected_index :: readSelectedIndexTo, setSelectedIndex.
     
     stacksafe readSelectedIndexTo vint:retVal
     [
@@ -765,12 +765,12 @@ class PaintboxListener :: WindowCallback
     ]
 }
 
-limited class PaintAction :: dispatchable(paintfunc)
+limited class PaintAction
 {
     action eval sender:sender canvas:canvas []
 }
 
-limited class Paintbox :: BaseWinControl, icontrolof(paintbox), dispatchable(paintbox)
+limited class Paintbox :: BaseWinControl, icontrolof<paintbox>
 {
     canvas    theCanvas.
     paintfunc thePaint.
@@ -988,7 +988,7 @@ class PanelListener :: WindowCallback
     ]
 }
 
-sealed class Panel :: BasePanel, icontrolof(panel)
+sealed class Panel :: BasePanel, icontrolof<panel>
 {
     constructor new
         <= new;
@@ -1045,7 +1045,7 @@ class RadioButtonGroupListener :: WindowCallback
     ]
 }
 
-sealed class RadioButtonGroup :: BasePanel, icontrolof(radiogroup)
+sealed class RadioButtonGroup :: BasePanel, icontrolof<radiogroup>
 {
     int   theSelected.
     func1 theIndexChanged.

@@ -117,7 +117,7 @@ type n3func     = system'IndexFunction3.
 
 // === system handles ===
 type handle     = system'Handle.
-//type rt_ptr     :: system'RTPointer.
+type rt_ptr     = system'RTPointer.
 type dirty_ptr  = system'UnsafePointer.
 
 // --- Enumerators / Indexers ---

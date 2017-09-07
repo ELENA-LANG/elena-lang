@@ -48,7 +48,7 @@ inline void setOption(Model* model, const wchar_t* parameter)
 {
    if (parameter[0]!='-') {
       if (_ELENA_::Path::checkExtension(parameter, _T("l"))) {
-         model->defaultFiles.add(wcsdup(parameter));
+         model->defaultFiles.add(_wcsdup(parameter));
       }
       else if (_ELENA_::Path::checkExtension(parameter, _T("prj"))) {
          model->defaultProject.copy(parameter);

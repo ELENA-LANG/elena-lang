@@ -641,6 +641,8 @@ class TextFileWriter : public TextWriter
    File _file;
 
 public:
+   virtual pos_t Position() const { return _file.Position(); }
+
    int getEncoding() const { return _file.getEncoding(); }
 
    bool isOpened() const { return _file.isOpened(); }

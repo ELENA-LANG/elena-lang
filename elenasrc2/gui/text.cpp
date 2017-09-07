@@ -212,6 +212,18 @@ bool TextBookmark :: move(disp_t disp)
             _length = bm.getLength();
             _column = (int)_length;  // !! temporal
          }
+         else if ((*_page).text[_offset] == 13) {
+            //HOTFIX : to deal with \r\r
+            _length = BM_INVALID;
+            _row--;
+
+            TextBookmark bm = *this;
+
+            bm.moveToPrevBOL();
+
+            _length = bm.getLength();
+            _column = (int)_length;  // !! temporal
+         }
          else if ((*_page).text[_offset]==0x09) {
             TextBookmark bm = *this;
             if (!bm.moveToPrevBOL())

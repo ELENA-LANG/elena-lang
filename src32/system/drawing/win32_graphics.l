@@ -1,11 +1,11 @@
-type pen    :: system'drawing'Pen.
-type brush  :: system'drawing'Brush.
-type canvas :: system'drawing'Canvas.
-type image  :: system'drawing'Image.
+type pen    = system'drawing'Pen.
+type brush  = system'drawing'Brush.
+type canvas = system'drawing'Canvas.
+type image  = system'drawing'Image.
 
 // --- Pen ---
 
-sealed class Pen :: dispatchable(pen)
+sealed class Pen
 {
     int  theColor.
     hpen thePen.
@@ -23,7 +23,7 @@ sealed class Pen :: dispatchable(pen)
 
 // --- Brush ---
 
-sealed class Brush :: dispatchable(brush)
+sealed class Brush
 {
     int    theColor.
     hbrush theBrush.
@@ -49,7 +49,7 @@ brush BlackBrush = Brush new color:0.
 
 // --- Image ---
 
-sealed class Image :: dispatchable(image)
+sealed class Image
 {
     wide      thePath.
     hdc       theDC.
@@ -102,9 +102,6 @@ sealed struct Canvas
     [
         theHDC := aHandle.
     ]
-    
-    set : anObject
-        = anObject cast:%set to:$self.
     
     set pen:aPen
     [

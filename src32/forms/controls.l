@@ -2,11 +2,11 @@ import system'drawing.
 
 // --- Events ---
 
-type index_changed :: IndexChangedAction.
+type index_changed = IndexChangedAction.
 
-limited class IndexChangedAction :: dispatchable(index_changed)
+limited class IndexChangedAction
 {
-    action stacksafe onIndexChange:sender int:index
+    action stacksafe onIndexChange object:sender int:index
     [
     ]
 }
@@ -32,14 +32,14 @@ class BaseControl
         theCaption := emptyWideLiteralValue.
     ]
     
-    is visible = theVisible.
+    visible = theVisible.
     
     set visible:aValue
     [
         theVisible := aValue bool.
     ]
     
-    is enabled = theEnabled.
+    enabled = theEnabled.
     
     set enabled : aValue
     [
@@ -83,14 +83,14 @@ class BaseControl
     ]
     
     set x:aValue
-        <= set x:aValue y:(theRegion y).
+        <= set x:aValue y(theRegion y).
     
     set y:aValue
-        <= set x:(theRegion x) y:aValue.
+        <= set x(theRegion x) y:aValue.
     
     set x:x y:y
     [
-        $self setLocation int:(x int) int:(y int).
+        $self setLocation int(x int) int(y int).
     ]
     
     location = theRegion point.
@@ -108,10 +108,10 @@ class BaseControl
     ]
 
     set width:aWidth
-        <= set width:aWidth height:(theRegion height).
+        <= set width:aWidth height(theRegion height).
     
     set height:aHeight
-        <= set width:(theRegion width) height:aHeight.
+        <= set width(theRegion width) height:aHeight.
             
     stacksafe readDimensionTo vint:aWidth vint:aHeight
     [

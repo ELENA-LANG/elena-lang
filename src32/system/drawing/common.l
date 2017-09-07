@@ -1,11 +1,11 @@
 // --- common types ---
-type coord     :: system'drawing'Point.
-type dimension :: system'drawing'Dimension.
-type region    :: system'drawing'Region.
+type coord     = system'drawing'Point.
+type dimension = system'drawing'Dimension.
+type region    = system'drawing'Region.
 
 // --- Point ---
 
-sealed embeddable struct Point :: BaseNumber, dispatchable(coord)
+sealed embeddable struct Point :: BaseNumber
 {
     int theX.
     int theY.
@@ -28,8 +28,8 @@ sealed embeddable struct Point :: BaseNumber, dispatchable(coord)
         theY := anY.
     ]
     
-    int x :: nprop(readXTo, writeX).
-    int y :: nprop(readYTo, writeY).
+    int vprop x :: readXTo, writeX.
+    int vprop y :: readYTo, writeY.
     
     clone = Point new int:theX int:theY.
     
@@ -106,7 +106,7 @@ sealed embeddable struct Point :: BaseNumber, dispatchable(coord)
 
 // --- Dimension ---
 
-sealed embeddable struct Dimension :: BaseValue, dispatchable(dimension)
+sealed embeddable struct Dimension :: BaseValue
 {
     int theWidth.
     int theHeight.
@@ -129,8 +129,8 @@ sealed embeddable struct Dimension :: BaseValue, dispatchable(dimension)
         theHeight := aHeight.
     ]
     
-    int width  :: nprop(readWidthTo, writeWidth).
-    int height :: nprop(readHeightTo, writeHeight).    
+    int vprop width :: readWidthTo, writeWidth.
+    int vprop height :: readHeightTo, writeHeight.
     
     stacksafe writeWidth int:aValue
     [
@@ -179,7 +179,7 @@ sealed embeddable struct Dimension :: BaseValue, dispatchable(dimension)
 
 // --- Region ---
 
-sealed embeddable struct Region :: BaseValue, dispatchable(region)
+sealed embeddable struct Region :: BaseValue
 {
     int theX.
     int theY.
@@ -210,10 +210,10 @@ sealed embeddable struct Region :: BaseValue, dispatchable(region)
         theHeight := aHeight.
     ]
 
-    int x      :: nprop(readXTo, writeX).
-    int y      :: nprop(readYTo, writeY).
-    int width  :: nprop(readWidthTo, writeWidth).
-    int height :: nprop(readHeightTo, writeHeight).    
+    int vprop x      :: readXTo, writeX.
+    int vprop y      :: readYTo, writeY.
+    int vprop width  :: readWidthTo, writeWidth.
+    int vprop height :: readHeightTo, writeHeight.
         
     clone = Region new int:theX int:theY int:theWidth int:theHeight.
     

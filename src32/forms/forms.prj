@@ -1,5 +1,5 @@
 ﻿[project]
-output=..\..\lib31
+output=..\..\lib32
 options=-w3
 namespace=forms
 template=lib
@@ -8,7 +8,7 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA GUI Library
-version=3.1.4
+version=3.2.0
 author=Alex Rakov
 
 [files]

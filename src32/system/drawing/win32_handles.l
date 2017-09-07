@@ -1,10 +1,10 @@
 // data structure wrappers
-type hdc      :: system'drawing'HDC.
-type hbitmap  :: system'drawing'HBITMAP.
-type hpen     :: system'drawing'HPEN.
-type hbrush   :: system'drawing'HBRUSH.
+type hdc      = system'drawing'HDC.
+type hbitmap  = system'drawing'HBITMAP.
+type hpen     = system'drawing'HPEN.
+type hbrush   = system'drawing'HBRUSH.
 
-type win_rect :: system'drawing'RECT.
+type win_rect = system'drawing'RECT.
 
 // --- Raster Operation Codes ---
 
@@ -31,12 +31,12 @@ sealed embeddable struct RECT
         theBottom := 0.
     ]
     
-    int left   :: nprop(readLeftTo, setLeft).
-    int top    :: nprop(readToTo, setTop).
-    int right  :: nprop(readRightTo, setRight).
-    int bottom :: nprop(readBottomTo, setBottom).
-    int width  :: outnprop(readWidthTo).
-    int height :: outnprop(readHeightTo).
+    int vprop left   :: readLeftTo, setLeft.
+    int vprop top    :: readToTo, setTop.
+    int vprop right  :: readRightTo, setRight.
+    int vprop bottom :: readBottomTo, setBottom.
+    int rvprop width  :: readWidthTo.
+    int rvprop height :: readHeightTo.
     
     stacksafe setLeft int:aValue
     [
@@ -101,7 +101,7 @@ sealed embeddable struct RECT
 
 sealed embeddable const struct HDC
 {
-    __ptr theHandle.
+    __dword theHandle(4).
 
     stacksafe implicit int:handle
     [
@@ -179,7 +179,7 @@ sealed embeddable const struct HDC
 
 sealed const embeddable struct HBITMAP
 {
-    __ptr theHandle.
+    __dword theHandle(4).
 
     stacksafe constructor new hbitmap:aHandle
     [
@@ -220,7 +220,7 @@ sealed const embeddable struct HBITMAP
 
 sealed const embeddable struct HPEN
 {
-    __ptr theHandle.
+    __dword theHandle(4).
     
     stacksafe constructor new hpen:aHandle
     [
@@ -244,7 +244,7 @@ sealed const embeddable struct HPEN
 
 sealed const embeddable struct HBRUSH
 {
-    __ptr theHandle.
+    __dword theHandle(4).
 
     constructor new hbrush:aHandle
     [
@@ -264,4 +264,4 @@ sealed const embeddable struct HBRUSH
     ]
 }
 
-type vhdc     :: varof(hdc).
+type vhdc     = ref<hdc>.
