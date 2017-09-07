@@ -158,7 +158,7 @@ protected:
 
    bool              _started;
    bool              _running;
-   //bool              _debugTape;
+   bool              _autoStepInto;
    Path              _debuggee;
    Path              _arguments;
 
@@ -249,11 +249,6 @@ protected:
    }
 
 public:
-//   void allowTapeDebug()
-//   {
-//      _debugTape = true;
-//   }
-
    text_t getTemporalSource(int param)
    {
       return (text_t)_tape.get(param);
@@ -318,7 +313,7 @@ public:
       _running = false;
       _debugInfoPtr = 0;
       _debugInfoSize = 0;
-      //_debugTape = false;
+      _autoStepInto = false;
 
       ByteCodeCompiler::loadVerbs(_verbs);
    }

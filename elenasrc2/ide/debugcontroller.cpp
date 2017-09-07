@@ -348,6 +348,7 @@ void DebugController :: processStep()
          int flags = _debugger.Context()->VMTFlags(_debugger.Context()->ClassVMT(objectPtr));
          if (test(flags, elTapeGroup)) {
             loadTapeDebugInfo(objectPtr);
+            _autoStepInto = true;
          }
          else {
             // continue debugging if it is not a tape
@@ -761,6 +762,14 @@ void DebugController :: stepOver()
 {
    if (_running || !_debugger.isStarted())
       return;
+
+   if (_autoStepInto) {
+      _autoStepInto = false;
+
+      stepInto();
+
+      return;
+   }
 
    if (!_started) {
       _started = true;
