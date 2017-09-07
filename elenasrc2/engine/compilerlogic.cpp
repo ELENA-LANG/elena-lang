@@ -649,6 +649,8 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
 
    if (test(info.header.flags, elStructureRole)) {
       compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingStruct, info.size, targetRef, stackSafe);
+
+      return true;
    }
    else if (test(info.header.flags, elDynamicRole)) {
       return false;

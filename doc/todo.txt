@@ -2,12 +2,6 @@
 In development:
 ------                              
 
-              zdev - script engine
-                 * support looping
-                 * support return
-                 * optimize dynamic code building
-                 * migrate script samples
-
               xdev - general implementation
                  * support only the following message expressions:
                       object message / type

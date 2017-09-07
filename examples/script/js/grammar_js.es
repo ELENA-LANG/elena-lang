@@ -1,12 +1,14 @@
 [[
    #grammar cf
 
+   #define start     ::= $eof;
+
    #define start     ::= 
 <=
 root
 (
 =>
-   scope? $eof
+   scope $eof
 <=
 )
 =>;
