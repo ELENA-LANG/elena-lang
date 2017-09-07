@@ -107,17 +107,17 @@ extension testOp
     ]
 }
 
-//// --- controlOp ---
-//
-//extension controlOp
-//{
-//    save to:target
-//    [
-//        target write:self.
-//        
-//        ^   self.
-//    ]
-//}
+// --- controlOp ---
+
+extension controlOp
+{
+    saveTo:target
+    [
+        target write:self.
+        
+        ^   self.
+    ]
+}
 
 // --- control ---
 

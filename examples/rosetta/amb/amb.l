@@ -74,7 +74,7 @@ program1 =
     {
         on(Exception e)
         [
-            console writeLine:"AMB is angry"
+            console printLine:"AMB is angry"
         ]
     }.
         
@@ -90,7 +90,7 @@ program2 =
     {
         on(Exception e)
         [
-            console writeLine:"AMB is angry"
+            console printLine:"AMB is angry"
         ]        
     }.
         

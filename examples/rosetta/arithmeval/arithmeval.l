@@ -92,9 +92,9 @@ class Expression
         theLevel := aLevel
     ]
     
-//    right = theTop.
-//
-//    set right:aNode [ theTop := aNode ]
+    right = theTop.
+
+    set right:aNode [ theTop := aNode ]
     
     number => theTop.
 }
@@ -105,10 +105,10 @@ operatorState = (:ch)
 [
     ch =>
         $40 [      // (
-            closure newBracket; gotoStarting
+            ^ closure newBracket; gotoStarting
         ];
         ! [
-            closure newToken; append:ch; gotoToken
+            ^ closure newToken; append:ch; gotoToken
         ].
 ].
 
@@ -116,22 +116,22 @@ tokenState = (:ch)
 [
     ch =>
         $41 [      // )
-            closure closeBracket; gotoToken
+            ^ closure closeBracket; gotoToken
         ];
         $42 [      // *
-            closure newProduct; gotoOperator
+            ^ closure newProduct; gotoOperator
         ];
         $43 [      // +
-            closure newSummary; gotoOperator
+            ^ closure newSummary; gotoOperator
         ];
         $45 [      // -
-            closure newDifference; gotoOperator
+            ^ closure newDifference; gotoOperator
         ];
         $47 [      // /
-            closure newFraction; gotoOperator
+            ^ closure newFraction; gotoOperator
         ];
         ! [
-            closure append:ch
+            ^ closure append:ch
         ].
 ].
 
@@ -139,13 +139,13 @@ startState = (:ch)
 [
     ch =>
         $40 [      // (
-            closure newBracket; gotoStarting
+            ^ closure newBracket; gotoStarting
         ];
         $45 [ // -
-            closure newToken; append literal:"0"; newDifference; gotoOperator
+            ^ closure newToken; append literal:"0"; newDifference; gotoOperator
         ];
         ! [
-            closure newToken; append:ch; gotoToken
+            ^ closure newToken; append:ch; gotoToken
         ].
 ].
 
@@ -167,40 +167,40 @@ class Scope
         theParser := aParser.
     ]
                                        
-    new token
+    newToken
     [
         theToken := theParser appendToken expression:theExpression level:theLevel.
     ]                                                
     
-    new summary
+    newSummary
     [
         theToken := nil.
         
         theParser appendSummary expression:theExpression level:theLevel.
     ]                                                
     
-    new difference
+    newDifference
     [
         theToken := nil.
         
         theParser appendDifference expression:theExpression level:theLevel
     ]                                                
       
-    new product
+    newProduct
     [
         theToken := nil.
         
         theParser appendProduct expression:theExpression level:theLevel
     ]                                                
     
-    new fraction
+    newFraction
     [
         theToken := nil.
         
         theParser appendFraction expression:theExpression level:theLevel
     ]                                                
 
-    new bracket
+    newBracket
     [
         theToken := nil.
         
@@ -209,7 +209,7 @@ class Scope
         theParser appendSubexpression expression:theExpression level:theLevel.
     ]            
 
-    close bracket
+    closeBracket
     [
         if (theLevel < 10)
             [ InvalidArgumentException new:"Invalid expression"; raise ].
@@ -229,17 +229,17 @@ class Scope
         aLiteral forEach(:ch)[ self append:ch ]
     ]
                                                          
-    goto starting
+    gotoStarting
     [
         theState := startState
     ]
                                                                   
-    goto token
+    gotoToken
     [
         theState := tokenState
     ]
                                                                   
-    goto operator
+    gotoOperator
     [
         theState := operatorState
     ]
@@ -322,9 +322,9 @@ program =
     var aText := String new.
     var aParser := Parser new.
 
-    $(console readLine; save to:aText; length > 0) doWhile:
+    $(console readLine; saveTo:aText; length > 0) doWhile:
     [
-        try(console writeLine("=",aParser run:aText))
+        try(console printLine("=",aParser run:aText))
         {
             on(Exception e)
             [
