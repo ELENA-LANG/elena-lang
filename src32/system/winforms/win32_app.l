@@ -145,7 +145,7 @@ startUp =
                 
                 generic : e 
                     [ 
-                        messageBox open caption:"ELENA" value:(e message) int:MB_ICONEXCLAMATION.
+                        messageBox open literal:"ELENA" literal(e message) int:MB_ICONEXCLAMATION.
                     ]
             }.
     

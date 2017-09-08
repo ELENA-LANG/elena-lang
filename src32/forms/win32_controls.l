@@ -1269,7 +1269,7 @@ sealed class ImageList
     
     append path:aPath
     [        
-        theImages append:(Image new path:aPath dimension:theSize).
+        theImages append:(Image new literal:aPath dimension:theSize).
     ]
     
     open

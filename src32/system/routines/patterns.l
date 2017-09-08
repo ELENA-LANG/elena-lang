@@ -12,14 +12,14 @@ class TopFilter :: Enumerator
     vint       theCounter.    
     enumerator theEnumerator.
     
-    constructor new : aCounter enumerator:anEnumerator
+    constructor new int:aCounter enumerator:anEnumerator
     [
-        theCounter := aCounter int.
+        theCounter := aCounter.
         theOffset := 0.
         theEnumerator := anEnumerator.
     ]
     
-    constructor new : counter skipping:offset enumerator:enumerator
+    constructor new int:counter int:offset enumerator:enumerator
     [
         theCounter := counter int.
         theOffset := offset int.
@@ -712,10 +712,10 @@ extension patternOp
         = self~patternOp accumulate:(Variable new) with:operation.
 
     top:aCounter
-        = TopFilter new:aCounter enumerator:(self enumerator).
+        = TopFilter new int:aCounter enumerator:(self enumerator).
 
     last:counter
-        = TopFilter new:counter skipping:(self length - counter) enumerator:(self enumerator).
+        = TopFilter new int:counter int(self length - counter) enumerator:(self enumerator).
 
     filterBy func1:aSelector
         = Filter new(aSelector, self enumerator).

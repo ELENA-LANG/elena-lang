@@ -51,7 +51,7 @@ sealed class SaveFileDialog :: FileDialog
     
     run
     [
-        var aDialog := system'winforms'SaveFileDialog new hwnd:(theParent hwnd) filters:theFilters int:0 int:255 wide:(theTitle wide).
+        var aDialog := system'winforms'SaveFileDialog new hwnd:(theParent hwnd) array:theFilters int:0 int:255 wide:(theTitle wide).
         
         theSelectedPath := aDialog select.
         
@@ -65,44 +65,44 @@ singleton messageDialog =
 {
     open parent:aParent caption:aCaption information:aText
     [
-        messageBox open hwnd:(aParent hwnd) caption:aCaption value:aText int:MB_ICONINFORMATION.
+        messageBox open hwnd:(aParent hwnd) literal:aCaption literal:aText int:MB_ICONINFORMATION.
     ]
     
     open caption:aCaption information:aText
     [
-        messageBox open caption:aCaption value:aText int:MB_ICONINFORMATION.
+        messageBox open literal:aCaption literal:aText int:MB_ICONINFORMATION.
     ]
     
     open parent:aParent caption:aCaption exclamation:aText
     [
-        messageBox open hwnd:(aParent hwnd) caption:aCaption value:aText int:MB_ICONEXCLAMATION.
+        messageBox open hwnd:(aParent hwnd) literal:aCaption literal:aText int:MB_ICONEXCLAMATION.
     ]    
     
     open caption:aCaption exclamation:aText
     [
-        messageBox open caption:aCaption value:aText int:MB_ICONEXCLAMATION.
+        messageBox open literal:aCaption literal:aText int:MB_ICONEXCLAMATION.
     ]    
     
     open parent:aParent caption:aCaption warning:aText
     [
-        messageBox open hwnd:(aParent hwnd) caption:aCaption value:aText int:MB_ICONWARNING
+        messageBox open hwnd:(aParent hwnd) literal:aCaption literal:aText int:MB_ICONWARNING
     ]    
     
     open caption:aCaption warning:aText
     [
-        messageBox open caption:aCaption value:aText int:MB_ICONWARNING.
+        messageBox open literal:aCaption literal:aText int:MB_ICONWARNING.
     ]    
     
     open parent:aParent caption:aCaption question:aText
     [
-        var result := messageBox open hwnd:(aParent hwnd) caption:aCaption value:aText int:(MB_ICONQUESTION || MB_YESNO).
+        var result := messageBox open hwnd:(aParent hwnd) literal:aCaption literal:aText int:(MB_ICONQUESTION || MB_YESNO).
         
         ^ result == IDYES
     ]
     
     open caption:aCaption question:aText
     [
-        var result := messageBox open caption:aCaption value:aText int:(MB_ICONQUESTION || MB_YESNO).
+        var result := messageBox open literal:aCaption literal:aText int:(MB_ICONQUESTION || MB_YESNO).
         
         ^ result == IDYES
     ]

@@ -21,7 +21,7 @@ sealed class DBRow
     [
         int anIndex := -1.
 
-        theTable $indexOfField:aFieldName vint:anIndex.
+        theTable $indexOfField literal:aFieldName vint:anIndex.
                         
         if (-1 == anIndex)
             [ DBException new message:"Field is unknown"; raise ].
@@ -48,7 +48,7 @@ sealed class DBTable
         theRows append:(DBRow $new array:(aRow array) sqlite_table:$self).
     ]
 
-    stacksafe $indexOfField:aFieldName vint:anIndex
+    stacksafe $indexOfField literal:aFieldName vint:anIndex
     [
         theFieldNames indexOf int:0 object:aFieldName vint:anIndex.
     ]

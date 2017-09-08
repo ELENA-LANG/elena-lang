@@ -4227,7 +4227,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             signature.append('$');
             signature.append(scope.moduleScope->module->resolveReference(verbRef));
          }
-         else scope.raiseError(errInvalidSubject, verb);
+         else scope.raiseError(errIllegalMethod, verb);
       }
       else if (verb != lxNone) {
          // COMPILER MAGIC : recognize set property
@@ -4264,8 +4264,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    }
 
    // if method has named argument list
+   int strongParamCounter = 0;
    while (arg == lxMessage || arg == lxParamRefAttr) {
       ref_t class_ref = declareArgumentSubject(arg, *scope.moduleScope, first, messageStr, signature);
+      if (class_ref != 0)
+         strongParamCounter++;
 
       arg = arg.nextNode();
 
@@ -4304,6 +4307,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          }
       }
    }
+
+   // HOTFIX : validate that strong parameters are not mixed with generic ones
+   if (strongParamCounter > 0 && strongParamCounter != paramCount && paramCount != OPEN_ARG_COUNT)
+      scope.raiseError(errIllegalMethod, node);
 
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
@@ -4356,13 +4363,14 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       if (actionRef == NEWOBJECT_MESSAGE_ID) {
          // HOTFIX : for implicit constructor
       }
-      else {
+      else if (messageStr.Length() > 0) {
          actionRef = scope.moduleScope->module->mapSubject(messageStr.c_str(), false);
          if (actionRef == DISPATCH_MESSAGE_ID) {
             if (paramCount != 0)
                scope.raiseError(errIllegalMethod, node);
          }
       }
+      else scope.raiseError(errIllegalMethod, node);
 
       scope.message = encodeMessage(actionRef, paramCount) | flags;
    }

@@ -2,10 +2,6 @@
 In development:
 ------                              
               xdev - general implementation
-                 * support only the following message expressions:
-                      object message / type
-                      object message:param message2:param (message, message2 should not be registered types)
-                      object message type1:param type2:param - type1 / type2 - should be registered types
                  * warn if the variable name is similar to the registered attributes
                  * warn if the method name is similar to the registered attributes
                  * warn on singleton singleton $if_token.

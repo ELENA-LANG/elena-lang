@@ -131,7 +131,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int)
 
    // init paths & settings
    Paths::init(&model, appPath, defPath);
-   Settings::init(&model, _T("..\\src30"), _T("..\\lib30"));
+   Settings::init(&model, _T("..\\src32"), _T("..\\lib32"));
 
    _ELENA_::Path configPath(model.paths.appPath);
    configPath.combine(_T("ide.cfg"));

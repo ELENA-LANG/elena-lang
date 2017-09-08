@@ -9,7 +9,7 @@ const int DS_CENTER         = 0800h.
 
 class messageBox =
 {
-    stacksafe open hwnd:parent caption:caption value:message int:flags
+    stacksafe open hwnd:parent literal:caption literal:message int:flags
     [
         int retVal := system'external'USER32 MessageBoxW
             int:parent
@@ -20,7 +20,7 @@ class messageBox =
         ^ IntNumber new int:retVal.
     ]
     
-    stacksafe open caption:caption value:message int:flags
+    stacksafe open literal:caption literal:message int:flags
     [
         var aHandle := 'program mainWindow; hwnd.
         
@@ -29,8 +29,8 @@ class messageBox =
                 
         ^ messageBox open 
             hwnd:(aHandle hwnd)
-            caption:caption
-            value:message
+            literal:caption
+            literal:message
             int:flags
     ]
 }.
@@ -47,7 +47,7 @@ class BaseFileDialog
     wide       theCaption.
     int        theFlags.
      
-    constructor new hwnd:aParent filters:Filters int:aFilterIndex int:aMaxFile wide:aCaption int:Flags
+    constructor new hwnd:aParent array:Filters int:aFilterIndex int:aMaxFile wide:aCaption int:Flags
     [
         array arr := Filters array.
         int   i := 0.
@@ -144,8 +144,8 @@ class BaseFileDialog
 
 sealed class OpenFileDialog :: BaseFileDialog
 {
-    constructor new hwnd:aParent filters:Filters int:aFilterIndex int:aMaxFile wide:aCaption
-        <= new hwnd:aParent filters:Filters int:aFilterIndex int:aMaxFile wide:aCaption 
+    constructor new hwnd:aParent array:Filters int:aFilterIndex int:aMaxFile wide:aCaption
+        <= new hwnd:aParent array:Filters int:aFilterIndex int:aMaxFile wide:aCaption 
             int:(OFN_PATHMUSTEXIST || OFN_EXPLORER || OFN_LONGNAMES || DS_CENTER || OFN_HIDEREADONLY).
     
     select
@@ -170,8 +170,8 @@ sealed class OpenFileDialog :: BaseFileDialog
 
 sealed class SaveFileDialog :: BaseFileDialog
 {
-    constructor new hwnd:aParent filters:Filters int:aFilterIndex int:aMaxFile wide:aCaption
-        <= new hwnd:aParent filters:Filters int:aFilterIndex int:aMaxFile wide:aCaption 
+    constructor new hwnd:aParent array:Filters int:aFilterIndex int:aMaxFile wide:aCaption
+        <= new hwnd:aParent array:Filters int:aFilterIndex int:aMaxFile wide:aCaption 
             int:(OFN_PATHMUSTEXIST || OFN_EXPLORER || OFN_LONGNAMES || DS_CENTER || OFN_HIDEREADONLY).
     
     select

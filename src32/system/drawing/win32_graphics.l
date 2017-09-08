@@ -56,7 +56,7 @@ sealed class Image
     hbitmap   theBitmap.
     dimension theSize.
     
-    constructor new path:aPath dimension:aSize
+    constructor new literal:aPath dimension:aSize
     [
         thePath := aPath wide.
         theSize := aSize.

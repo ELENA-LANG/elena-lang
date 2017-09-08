@@ -2539,8 +2539,10 @@ bool DerivationReader :: generateMethodScope(SNode node, DerivationScope& scope,
             }
          }
 
-         // mark the last message as a name
-         lastAttr = lxNameAttr;
+         if (!lastAttr.existChild(lxAttributeValue)) {
+            // mark the last message as a name if the attributes are not available
+            lastAttr = lxNameAttr;
+         }
       }
       
       node = lxClassMethod;

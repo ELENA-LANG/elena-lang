@@ -71,7 +71,7 @@ sealed class DBConnection
     [
         ifnot (theOpen) [ DBException new message:"SQLite database is not open."; raise ].
 
-        sqlite_cmd aCommand := DBCommand new sqlite_cnn:$self sql:aSqlText.
+        sqlite_cmd aCommand := DBCommand new sqlite_cnn:$self literal:aSqlText.
         finally (aCommand eval)
             [ aCommand free ]
     ]
@@ -80,7 +80,7 @@ sealed class DBConnection
     [
         ifnot (theOpen) [ DBException new message:"SQLite database is not open."; raise ].
 
-        sqlite_cmd aCommand := DBCommand new sqlite_cnn:$self sql:aSqlText.
+        sqlite_cmd aCommand := DBCommand new sqlite_cnn:$self literal:aSqlText.
 
         var aTable := DBTable new sql_field_names:(aCommand sql_field_names).
         var aReader := DBReader new sqlite_cmd:aCommand.
@@ -98,7 +98,7 @@ sealed class DBConnection
     [
         ifnot (theOpen) [ DBException new message:"SQLite database is not open."; raise ].
 
-        sqlite_cmd aCommand := DBCommand new sqlite_cnn:$self sql:"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';".
+        sqlite_cmd aCommand := DBCommand new sqlite_cnn:$self literal:"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';".
 
         var aNumberOfTable := aCommand evalScalar.
         
@@ -111,7 +111,7 @@ sealed class DBConnection
     [
         ifnot (theOpen) [ DBException new message:"SQLite database is not open."; raise ].
 
-        sqlite_cmd aCommand := DBCommand new sqlite_cnn:$self sql:"SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';".
+        sqlite_cmd aCommand := DBCommand new sqlite_cnn:$self literal:"SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';".
 
         array_list nameOfTables := ArrayList new.
         
@@ -144,7 +144,7 @@ sealed class DBCommand
     sqlite_cnn theConnection.
     handle     theCommandHandle.
     
-    constructor new sqlite_cnn:aConnection sql:aText
+    constructor new sqlite_cnn:aConnection literal:aText
     [
         theConnection := aConnection.
             

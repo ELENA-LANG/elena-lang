@@ -5,7 +5,7 @@ class $windowClassControl =
     stacksafe $fillWndClass bytearray:anArray wide:aName int:aStyle hinstance:anInstance int:aBackground
         => system'core_routines'__hwnd.
     
-    createClass name:aName hinstance:anInstance int:aStyle int:aBackground
+    createClass literal:aName hinstance:anInstance int:aStyle int:aBackground
     [
         byte& aStruct(40).
         wide aWideName := aName wide.
@@ -226,6 +226,6 @@ class ChildWindowCallback :: WindowCallback
 
 // --- SDIWindowClass ---
 
-wide static SDIWindowClass = $windowClassControl createClass name:"ELENA.SDIWINDOW.3.1" hinstance:CurrentInstance int:WS_ELENAWINDOW int:COLOR_BACKGROUND; wide.
-wide static PaintboxClass  = $windowClassControl createClass name:"ELENA.Paintbox.3.1" hinstance:CurrentInstance int:(CS_VREDRAW or int:CS_HREDRAW) int:0; wide.
-wide static PanelClass     = $windowClassControl createClass name:"ELENA.PANEL.3.1" hinstance:CurrentInstance int:(CS_VREDRAW or int:CS_HREDRAW) int:COLOR_BACKGROUND; wide.
+wide static SDIWindowClass = $windowClassControl createClass literal:"ELENA.SDIWINDOW.3.1" hinstance:CurrentInstance int:WS_ELENAWINDOW int:COLOR_BACKGROUND; wide.
+wide static PaintboxClass  = $windowClassControl createClass literal:"ELENA.Paintbox.3.1" hinstance:CurrentInstance int:(CS_VREDRAW or int:CS_HREDRAW) int:0; wide.
+wide static PanelClass     = $windowClassControl createClass literal:"ELENA.PANEL.3.1" hinstance:CurrentInstance int:(CS_VREDRAW or int:CS_HREDRAW) int:COLOR_BACKGROUND; wide.

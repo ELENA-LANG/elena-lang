@@ -38,11 +38,6 @@ $mathController =
     multi absolute : n
         <= absolute(n value).
         
-    mod value:n object:m
-    [
-        system'NotSupportedException new; raise
-    ]
-    
     mod byte:n object:m
         = n~byteOp mod:m.
         
@@ -193,11 +188,6 @@ $mathController =
     bool multi isNonnegative:n
         <= isNonnegative(n value).
                 
-    power value:n object:m
-    [
-        system'NotSupportedException new; raise
-    ]
-    
     real power real:n int:m
         = n~realOp power int:m.        
         

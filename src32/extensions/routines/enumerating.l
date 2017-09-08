@@ -1,5 +1,5 @@
 import system'io.
-//import system'text.
+import system'text.
 import extensions'text.
 
 // --- ReaderEnumerator ---

@@ -206,7 +206,7 @@ class StreamReader :: TextReader
     constructor new:aPath
         <= new stream:(FileStream openForRead:aPath) encoder:UTF8Encoder.
 
-    constructor new path:aPath encoder:anEncoder
+    constructor new literal:aPath encoder:anEncoder
         <= new stream:(FileStream openForRead:aPath) encoder:anEncoder.
 
     available = theOpen.
