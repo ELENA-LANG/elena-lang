@@ -61,7 +61,7 @@ sealed class SaveFileDialog :: FileDialog
 
 // --- messageDialog ---
 
-singleton messageDialog =
+singleton messageDialog
 {
     open parent:aParent caption:aCaption information:aText
     [
@@ -106,4 +106,4 @@ singleton messageDialog =
         
         ^ result == IDYES
     ]
-}.
+}

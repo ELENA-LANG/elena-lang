@@ -242,8 +242,6 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
          return config.getSetting(ELC_LIB_PATH);
       case _ELENA_::opOutputPath:
          return config.getSetting(ELC_OUTPUT_PATH);
-      case _ELENA_::opWarnOnUnresolved:
-         return config.getSetting(ELC_WARNON_UNRESOLVED);
       case _ELENA_::opWarnOnWeakUnresolved:
          return config.getSetting(ELC_WARNON_WEAKUNRESOLVED);
          //   case _ELENA_::opWarnOnSignature:
@@ -477,10 +475,7 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
          else raiseError(ELC_ERR_INVALID_OPTION, valueName);
          break;
       case ELC_PRM_WARNING:
-         if (valueName.compare(ELC_W_UNRESOLVED)) {
-            _settings.add(_ELENA_::opWarnOnUnresolved, -1);
-         }
-         else if (valueName.compare(ELC_W_WEAKUNRESOLVED)) {
+         if (valueName.compare(ELC_W_WEAKUNRESOLVED)) {
             _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
          }
          else if (valueName.compare(ELC_W_LEVEL1)) {

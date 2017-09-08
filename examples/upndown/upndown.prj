@@ -5,7 +5,6 @@ output=tmp
 namespace=upndown
 template=gui
 debuginfo=-1
-warn:unresolved=0
 
 [files]
 config.l

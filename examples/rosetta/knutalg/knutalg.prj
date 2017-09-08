@@ -3,7 +3,6 @@ executable=knutalg.exe
 namespace=knutalg
 template=console
 debuginfo=-1
-warn:unresolved=0
 
 [files]
 main.l

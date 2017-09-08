@@ -4,7 +4,6 @@ arguments=db.txt
 namespace=textdb
 template=console
 debuginfo=-1
-warn:unresolved=0
 
 [files]
 textdb.l

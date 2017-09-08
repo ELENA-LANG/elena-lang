@@ -3,7 +3,6 @@ executable=strinterpolation.exe
 namespace=strinterpolation
 template=console
 debuginfo=-1
-warn:unresolved=0
 
 [files]
 main.l

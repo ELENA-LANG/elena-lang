@@ -67,7 +67,7 @@ sealed class XWindowCallback
 
 // --- $windowClassControl ---
 
-singleton $classFactoryX =
+singleton $classFactoryX
 {
     stacksafe $readXWndProc vint:retVal
         => system'core_routines'__hwnd.
@@ -95,7 +95,7 @@ singleton $classFactoryX =
         
         ^ aName
     ]
-}.
+}
 
 // --- Window Classes ---
 

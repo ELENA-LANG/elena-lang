@@ -256,7 +256,7 @@ sealed BinaryFileWriter :: BinaryWriter
 
 // --- fileOp ---
 
-singleton fileControl =
+singleton fileControl
 {
     openForRead : path = FileStream openForRead:path.
     
@@ -292,11 +292,11 @@ singleton fileControl =
         
        ^ ret != 0
     ]
-}.
+}
 
 // --- directoryExtOp
 
-singleton directoryControl =
+singleton directoryControl
 {
     bool isAvailable:path
     [
@@ -328,4 +328,4 @@ singleton directoryControl =
         
        ^ ret != 0
     ]    
-}.
+}

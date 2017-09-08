@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x006D
+#define ELC_REVISION_NUMBER             0x006E
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -37,7 +37,6 @@
 #define ELC_PRM_LIB_PATH            'p'
 #define ELC_PRM_TARGET              't'
 #define ELC_PRM_WARNING             'w'
-#define ELC_W_UNRESOLVED            "wun"
 #define ELC_W_WEAKUNRESOLVED        "wwun"
 #define ELC_W_LEVEL1                "w1"
 #define ELC_W_LEVEL2                "w2"
@@ -78,7 +77,6 @@
 //#define ELC_PROJECT_START           "start"
 #define ELC_PROJECT_TEMPLATE        "project/template"
 #define ELC_PLATFORMTYPE            "system/platform"
-#define ELC_WARNON_UNRESOLVED       "project/warn/unresolved"
 #define ELC_WARNON_WEAKUNRESOLVED   "project/warn/weakunresolved"
 //#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "linker/ygsize"

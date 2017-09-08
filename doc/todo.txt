@@ -1,11 +1,6 @@
 ------                                 
 In development:
 ------                              
-              xdev - general implementation
-                 * warn if the method name is similar to the registered attributes
-                 * warn on singleton singleton $if_token.
-                 * fix bug : type vtype     = ref<unknown>. - should not be compiled
-
               zdev - script engine
                  * elt : simple expression
                  * test vm console operations in IDE

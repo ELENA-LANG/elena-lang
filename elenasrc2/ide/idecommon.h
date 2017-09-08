@@ -47,7 +47,6 @@ namespace _GUI_
 #define IDE_OUTPUT_XMLSETTING                   "project/output"
 #define IDE_ARGUMENT_XMLSETTING                 "project/arguments"
 #define IDE_DEBUGINFO_XMLSETTING                "project/debuginfo"
-#define IDE_WARNON_UNRESOLVED                   "project/warn/unresolved"
 
 #define IDE_FILES_XMLSECTION                    "files/*"
 #define IDE_FORWARDS_XMLSECTION                 "forwards/*"

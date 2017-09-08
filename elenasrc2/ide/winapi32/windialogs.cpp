@@ -345,8 +345,6 @@ void ProjectSettingsDialog :: onCreate()
    }
    else setComboBoxIndex(IDC_SETTINGS_DEBUG, 0);
 
-   setCheckState(IDC_SETTINGS_WARN_REF, _project->getBoolSetting(IDE_WARNON_UNRESOLVED));
-
    loadTemplateList();
 
    //onProjectTypeChanged();
@@ -388,8 +386,6 @@ void ProjectSettingsDialog :: onOK()
       _project->setDebugMode(-1);
    }
    else _project->setDebugMode(0);
-
-   _project->setBoolSetting(IDE_WARNON_UNRESOLVED, getCheckState(IDC_SETTINGS_WARN_REF));
 }
 
 // --- ProjectForwardsDialog ---

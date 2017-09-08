@@ -64,7 +64,6 @@ public:
 
    virtual bool HasWarnings() const = 0;     // !! obsolete
    virtual int getWarningMask() const = 0;
-   virtual bool WarnOnUnresolved() const = 0;
    virtual bool WarnOnWeakUnresolved() const = 0;
 
    virtual ident_t getManinfestName() = 0;

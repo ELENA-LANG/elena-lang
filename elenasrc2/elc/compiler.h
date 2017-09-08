@@ -258,7 +258,6 @@ private:
       ref_t packageReference;
 
       // warning mapiing
-      bool warnOnUnresolved;
       bool warnOnWeakUnresolved;
       int  warningMask;
 

@@ -4,7 +4,6 @@ executable=calcgui.exe
 package=calc
 template=win32_vm_gui2
 debuginfo=-2
-warn:unresolved=0
 
 [files]
 dictionary.l

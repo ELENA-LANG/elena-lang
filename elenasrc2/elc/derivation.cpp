@@ -469,6 +469,8 @@ void DerivationReader::DerivationScope :: loadAttributeValues(SNode attributes, 
             if (attr == 0) {
                //HOTFIX : support newly declared classes
                attr = mapTerminal(item.findChild(lxIdentifier, lxPrivate), false);
+
+               moduleScope->validateReference(item.findChild(lxIdentifier, lxPrivate), attr);
             }
 
             this->attributes.add(this->attributes.Count() + 1, attr);

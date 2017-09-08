@@ -118,6 +118,7 @@ namespace _ELENA_
    #define wrnAmbiguousIdentifier   "%s(%d:%d): warning 421: Identifier '%s' is ambiguous"
    #define wrnAmbiguousMessageName  "%s(%d:%d): warning 422: Message name '%s' is ambiguous"
    #define wrnAmbiguousVariable     "%s(%d:%d): warning 421: Variable '%s' is ambiguous"
+   #define wrnDuplicateAttribute    "%s(%d:%d): warning 422: '%s': duplicate attribute\n"
 
 } // _ELENA_
 

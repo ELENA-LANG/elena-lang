@@ -58,7 +58,6 @@ enum ProjectSetting
    opGCYGSize              = 0x002B,
 
 //   // compiler engine options
-   opWarnOnUnresolved      = 0x0041,
    opWarnOnWeakUnresolved  = 0x0042,
 //   opWarnOnSignature       = 0x0043,
 
@@ -232,10 +231,6 @@ public:
    virtual ident_t Namespace() const
    {
       return StrSetting(opNamespace);
-   }
-   virtual bool WarnOnUnresolved() const
-   {
-      return BoolSetting(opWarnOnUnresolved);
    }
    virtual bool WarnOnWeakUnresolved() const
    {

@@ -165,6 +165,8 @@ struct _CompilerScope
 
    virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes) = 0;
 
+   virtual void validateReference(SNode terminal, ref_t reference) = 0;
+
    _CompilerScope()
       : attributes(0)
    {

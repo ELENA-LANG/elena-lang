@@ -182,7 +182,6 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 
    this->forwardsUnresolved = forwardsUnresolved;
 
-   warnOnUnresolved = project->WarnOnUnresolved();
    warnOnWeakUnresolved = project->WarnOnWeakUnresolved();
    warningMask = project->getWarningMask();
 
@@ -675,7 +674,7 @@ void Compiler::ModuleScope :: validateReference(SNode terminal, ref_t reference)
    // check if the reference may be resolved
    bool found = false;
 
-   if (warnOnUnresolved && (warnOnWeakUnresolved || !isWeakReference(terminal.identifier()))) {
+   if (warnOnWeakUnresolved || !isWeakReference(terminal.identifier())) {
       int   mask = reference & mskAnyRef;
       reference &= ~mskAnyRef;
 
@@ -1696,6 +1695,7 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 
 void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
 {
+   int flags = scope.info.header.flags;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {         
@@ -1709,7 +1709,13 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
 
                scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
             }
-            else current.set(lxClassFlag, value);
+            else {
+               current.set(lxClassFlag, value);
+               if (value != 0 && test(flags, value)) {
+                  scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateAttribute, current);
+               }
+               flags |= value;
+            }
          }
       }
       else if (current == lxClassRefAttr) {

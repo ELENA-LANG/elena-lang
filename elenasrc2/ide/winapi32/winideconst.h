@@ -13,7 +13,7 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDE_REVISION_NUMBER                     16
+#define IDE_REVISION_NUMBER                     17
 
 // --- Command line arguments ---
 
@@ -188,7 +188,6 @@
 #define IDC_SETTINGS_PACKAGE                   (IDD_SETTINGS + 7)
 #define IDC_SETTINGS_OUTPUT                    (IDD_SETTINGS + 8)
 #define IDC_SETTINGS_DEBUG                     (IDD_SETTINGS + 9)
-#define IDC_SETTINGS_WARN_REF                  (IDD_SETTINGS + 11)
 #define IDC_SETTINGS_TEPMPLATE                 (IDD_SETTINGS + 12)
 #define IDC_SETTINGS_ARGUMENT                  (IDD_SETTINGS + 13)
 #define IDC_SETTINGS_OPTIONS                   (IDD_SETTINGS + 14)

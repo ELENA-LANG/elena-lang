@@ -3,7 +3,6 @@ executable=words.exe
 namespace=words
 template=console
 debuginfo=-1
-warn:unresolved=0
 
 [files]
 words.l

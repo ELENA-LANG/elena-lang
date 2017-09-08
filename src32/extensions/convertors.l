@@ -332,7 +332,7 @@ extension convertorOp
         = Variant new:self; saveTo:aTarget.
 }
 
-singleton convertor 
+convertor 
     = { generic : n = Wrap::(n, convertorOp)~$subject get. }.
 
 datetime extension dateFormatterOp 

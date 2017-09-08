@@ -62,11 +62,11 @@ class $ConsoleHandleFactory =
     
     newWriter
     [
-        handle handle := $ConsoleHandleFactory new attributes:0FFFFFFF5h.
-        int    dwMode := system'external'KERNEL32 GetFileType int:handle.
+        handle h := $ConsoleHandleFactory new attributes:0FFFFFFF5h.
+        int    dwMode := system'external'KERNEL32 GetFileType int:h.
         if (dwMode == FILE_TYPE_CHAR)
-            [ ^ $ConsoleWriter new handle:handle ];
-            [ ^ $FileWriter new handle:handle ]
+            [ ^ $ConsoleWriter new handle:h ];
+            [ ^ $FileWriter new handle:h ]
     ]
 }.
 

@@ -417,7 +417,7 @@ extension indexableOp
 
 // --- stringListOp ---
 
-singleton $stringController =
+singleton $stringController
 {
     split literal:l char:ch
         = l~literalListOp split char:ch.
@@ -431,7 +431,7 @@ singleton $stringController =
     split wide:l wide:sp_l
         = l~wideListOp split wide:sp_l.
         
-}.
+}
 
 extension stringListOp
 {

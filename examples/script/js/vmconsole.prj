@@ -3,7 +3,6 @@ executable=vmconsole.exe
 namespace=vmconsole
 template=vm_console
 debuginfo=-1
-warn:unresolved=0
 
 [files]
 main.l
