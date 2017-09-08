@@ -30,7 +30,7 @@ class MainWindow :: SDIDialog
     object BtmDelTxt.
     object BtmInfo.
 
-    file_path theSavedPath.
+    object theSavedPath.
 
     constructor new
         <= new;
@@ -181,42 +181,42 @@ class MainWindow :: SDIDialog
                 aDialog addFilter caption:"Text Files" extension_mask:"*.txt".
                 aDialog set caption:"Select a file".
                 
-                (aDialog run) ?
+                if (aDialog run)
                 [
-                    theSavedPath := File new path:(aDialog selected).
+                    theSavedPath := File new(aDialog selected).
                     
                     var aWriter := theSavedPath logger.
                     
                     aWriter 
-                        writeLine:"//-------------------------------------------------------------------------------";
-                        writeLine:"Name: ":Name:" ":SurName:" ":OtName;
-                        writeLine:"Email: ":Email;
-                        writeLine:"Age: ":Age;
-                        writeLine:"PhoneNumber:":PhoneNumber;
-                        writeLine:"//-------------------------------------------------------------------------------".
+                        printLine:"//-------------------------------------------------------------------------------";
+                        printLine("Name: ",Name," ",SurName," ",OtName);
+                        printLine("Email: ",Email);
+                        printLine("Age: ",Age);
+                        printLine("PhoneNumber:",PhoneNumber);
+                        printLine:"//-------------------------------------------------------------------------------".
 
                     aWriter close.
 
-                    BtmDelTxt set enabled:true.
+                    BtmDelTxt enabled := true.
                 ].
             ].
         
         // Del TXT
-        BtmDelTxt set onClick: (:args)
+        BtmDelTxt set onClick(:args)
             [
                 theSavedPath delete.
             ].
 
         // Exit
-        BtmExit set onClick: (:args)
+        BtmExit set onClick(:args)
             [
                 'program stop.
             ].
             
         // About
-        BtmInfo set onClick: (:args)
+        BtmInfo set onClick(:args)
             [
-                LabelAbout set caption:"Created by Alexandre Bencz."$10"Thanks Alex Rakov, for support.".
+                LabelAbout caption := "Created by Alexandre Bencz."$10"Thanks Alex Rakov, for support.".
             ].
     ]
 }

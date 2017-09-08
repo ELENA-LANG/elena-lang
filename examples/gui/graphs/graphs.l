@@ -15,8 +15,8 @@ symbol C        = 2.0r / 3.0r.
 
 symbol function = (:t) [ 
             ^ Point new 
-                x:((A * (C * t cos + (C*t) cos) * ScaleX) roundedInt)
-                y:((A * (C * t sin - (C*t) sin) * ScaleY) roundedInt)
+                x((A * (C * t cos + (C*t) cos) * ScaleX) roundedInt)
+                y((A * (C * t sin - (C*t) sin) * ScaleY) roundedInt)
         ].
 
 singleton plotter =
@@ -38,7 +38,7 @@ singleton plotter =
 
         aCanvas writeText:"Y" x:(aZeroX + 2) y:2.
 
-        -10 to:10 by:2 doEach: (:i)
+        -10 to:10 by:2 do(:i)
         [
             if(i != 0)
             [
@@ -82,7 +82,7 @@ class Window :: SDIDialog
 
         theImagebox set x:0 y:0.
         theImagebox set width:400 height:420.
-        theImagebox set onPaint: (&sender:sender &canvas:aCanvas)
+        theImagebox set onPaint: (&object:sender &canvas:aCanvas)
         [
             aCanvas set:WhitePen.
             aCanvas set:BlackBrush.

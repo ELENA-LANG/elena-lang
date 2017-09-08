@@ -2,9 +2,6 @@
 In development:
 ------                              
               xdev - general implementation
-                 * migrate GUI samples
-
-              xdev - general implementation
                  * support only the following message expressions:
                       object message / type
                       object message:param message2:param (message, message2 should not be registered types)
@@ -12,6 +9,7 @@ In development:
                  * warn if the variable name is similar to the registered attributes
                  * warn if the method name is similar to the registered attributes
                  * warn on singleton singleton $if_token.
+                 * fix bug : type vtype     = ref<unknown>. - should not be compiled
 
               zdev - script engine
                  * elt : simple expression

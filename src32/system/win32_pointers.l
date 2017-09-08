@@ -58,32 +58,40 @@ sealed embeddable struct UnsafePointer
 {
     __dword thePointer(4).
 
-//    #constructor new : anObject
-//    [
-//        $self set:anObject.
-//    ]
+    constructor new : anObject
+    [
+        $self set:anObject.
+    ]
     
-//    stacksafe explicit(Object ref)
-//    [
-//        $self set:ref.
-//    ]
+    stacksafe explicit(Object ref)
+    [
+        $self set:ref.
+    ]
     
-//    stacksafe set : anObject
-//        => system'core_routines'__dptr.
+    $setReference:anObject
+        => system'core_routines'__dptr.
+    
+    stacksafe $setUnsafeReference:anObject
+        => system'core_routines'__dptr.
+    
+    set reference:anObject
+        <= $setReference:anObject.
                 
-//    stacksafe set int:aValue
-//    [
-//        thePointer := aValue.
-//    ]
-//                
+    stacksafe set int:aValue
+    [
+        thePointer := aValue.
+    ]
+                
+    stacksafe set dirty_ptr:anObject
+    [
+        $self $setUnsafeReference:anObject.
+    ]
+                
 //    stacksafe offset int:offs
 //    [
 //        thePointer := thePointer + offs.
 //    ]
 
-//    stacksafe set dirty_ptr:anObject
-//        => system'core_routines'__dptr.
-                
     stacksafe write int:anObject
         => system'core_routines'__dptr.
                 

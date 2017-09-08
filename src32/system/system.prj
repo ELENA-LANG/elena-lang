@@ -8,7 +8,7 @@ warn:unresolved=0
 
 [manifest]
 name=ELENA Standard Library
-version=3.2.17
+version=3.2.18
 author=Alex Rakov
 
 [files]

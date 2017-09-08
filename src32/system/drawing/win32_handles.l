@@ -264,4 +264,4 @@ sealed const embeddable struct HBRUSH
     ]
 }
 
-type vhdc     = ref<hdc>.
+type vhdc     = ref<HDC>.

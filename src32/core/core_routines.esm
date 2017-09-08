@@ -3681,7 +3681,7 @@ procedure __wideconvertor."convert$system@LongNumber$system@IntNumber$system@Sho
 
 end
 
-procedure __dptr.set[2]
+procedure __dptr."system#setReference[2]"
 
   bcopya
   dloadsi 2
@@ -3691,7 +3691,7 @@ procedure __dptr.set[2]
 
 end
 
-procedure __dptr."set$system@UnsafePointer[2]"
+procedure __dptr."system#setUnsafeReference[2]"
 
   bcopya
   aloadsi 2

@@ -126,7 +126,7 @@ class $fileStreamHelper =
 {
     stream openForWrite literal:aPath bool:anAppendMode
     [
-        if(anAppendMode) [ ^ FileStream openForAppend path:aPath ].
+        if(anAppendMode) [ ^ FileStream openForAppend:aPath ].
         
         ^ FileStream openForReWrite path:aPath
     ]
@@ -152,7 +152,7 @@ class StreamWriter :: TextWriter
         <= new stream:(FileStream openForReWrite:aPath) encoder:UTF8Encoder.
         
     constructor new literal:aPath bool:anAppendMode
-        <= new stream:($fileStreamHelper openForWrite:aPath bool:anAppendMode) encoder:UTF8Encoder.
+        <= new stream($fileStreamHelper openForWrite(aPath, anAppendMode)) encoder:UTF8Encoder.
         
     stream = theStream.        
         

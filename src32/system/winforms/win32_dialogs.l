@@ -118,21 +118,21 @@ class BaseFileDialog
         ptr saveTo bytearray:aStruct int:8.
 
 //        lpstrFilter;
-        ptr set:theFilters.
+        ptr set reference:theFilters.
         ptr saveTo bytearray:aStruct int:12.
 
 //        nFilterIndex;
         aStruct write int:24 int:theFilterIndex.
 
 //        lpstrFile;
-        ptr set:theFileName.
+        ptr set reference:theFileName.
         ptr saveTo bytearray:aStruct int:28.
 
 //        nMaxFile;
         aStruct write int:32 int:theMaxFile.
 
 //        lpstrTitle;
-        ptr set:theCaption.
+        ptr set reference:theCaption.
         ptr saveTo bytearray:aStruct int:48.
 
 //        Flags;

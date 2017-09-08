@@ -21,6 +21,8 @@ sealed nonstructural class File
     
     textwriter = fileControl writer:thePath.
     
+    logger = fileControl logger:thePath.
+    
     bool isAvailable
         = fileControl isAvailable:thePath.
     

@@ -1,63 +1,64 @@
 @echo off
 
-reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0" /v MSBuildToolsPath > nul 2>&1
-if ERRORLEVEL 1 goto MissingMSBuildRegistry
+set pre=Microsoft.VisualStudio.Product.
+set ids=%pre%Community %pre%Professional %pre%Enterprise %pre%BuildTools
+for /f "usebackq tokens=1* delims=: " %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere" -latest -products %ids% -requires Microsoft.Component.MSBuild`) do (
+  if /i "%%i"=="installationPath" set InstallDir=%%j
+)
 
-for /f "skip=2 tokens=2,*" %%A in ('reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0" /v MSBuildToolsPath') do SET MSBUILDDIR=%%B
-
-IF NOT EXIST %MSBUILDDIR%nul goto MissingMSBuildToolsPath
-IF NOT EXIST %MSBUILDDIR%msbuild.exe goto MissingMSBuildExe
+IF NOT EXIST %InstallDir%nul goto MissingMSBuildToolsPath
+IF NOT EXIST %InstallDir%\MSBuild\15.0\Bin\MSBuild.exe goto MissingMSBuildExe
 
 ECHO =========== Starting Release Compile ==================
 
 ECHO Command line Compiler compiling....
 ECHO -----------------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elc\vs\elc11.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\elc\vs\elc15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Virtual Machine compiling....
 ECHO -----------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elenavm\vs\elenavm11.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\elenavm\vs\elenavm15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO IDE compiling....
 ECHO -----------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\ide\vs\elide11.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\ide\vs\elide15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Run-Time Engine compiling....
 ECHO -----------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elenart\vs\elenart.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\elenart\vs\elenart15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Script Engine compiling....
 ECHO ----------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\elenasm\vs\elenasm11.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\elenasm\vs\elenasm15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Simplified Assembler compiling....
 ECHO -----------------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\asm2bin\vs\asm2binx11.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\tools\asm2bin\vs\asm2binx15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO ECODES viewer compiling....
 ECHO ---------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\ecv\vs\ecv11.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\tools\ecv\vs\ecv15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Virtual Machine Terminal compiling....
 ECHO --------------------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\elt\vs\elt11.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\tools\elt\vs\elt15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Optimization Rule Generator compiling....
 ECHO ------------------------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\og\vs\og11.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\tools\og\vs\og15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Syntax Parse Table Generator compiling....
 ECHO ------------------------------------------
-"%MSBUILDDIR%msbuild.exe" %1\elenasrc2\tools\sg\vs\sg10.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\tools\sg\vs\sg15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO =========== Release Compiled ==================
@@ -722,10 +723,10 @@ goto:eof
 echo Cannot obtain path to MSBuild tools from registry
 goto:eof
 :MissingMSBuildToolsPath
-echo The MSBuild tools path from the registry '%MSBUILDDIR%' does not exist
+echo The MSBuild tools path from the registry '%InstallDir%' does not exist
 goto:eof
 :MissingMSBuildExe
-echo The MSBuild executable could not be found at '%MSBUILDDIR%'
+echo The MSBuild executable could not be found at '%InstallDir%'
 goto:eof
 :CompilerError
 echo The MSBuild returns error %ERRORLEVEL%

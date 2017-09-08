@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{3CAA69D3-0F98-44B1-A73E-E864BA51D5BD}
 AppName=ELENA Programming Language
-AppVersion=3.1.0
+AppVersion=3.w.0
 ;AppVerName=ELENA Programming Language 3.1.0
 AppPublisher=Alexey Rakov
 AppPublisherURL=http://github.com/ELENA-LANG/elena-lang
@@ -42,6 +42,7 @@ Source: "..\src32\*"; DestDir: "{app}\src32"; Flags: ignoreversion recursesubdir
 Source: "..\doc\license"; DestDir: "{app}";
 Source: "..\readme.txt"; DestDir: "{app}"; Flags: isreadme
 Source: "..\whatsnew.txt"; DestDir: "{app}";
+Source: "VC_redist.x86.exe"; DestDir: "{app}"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -50,6 +51,7 @@ Name: "{commondesktop}\ELENA Programming Language"; Filename: "{app}\bin\elide.e
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\ELENA Programming Language"; Filename: "{app}\bin\elide.exe"; Tasks: quicklaunchicon
 
 [Run]
+Filename: "{app}\VC_redist.x86.exe; Parameters: "/install /passive /norestart" StatusMsg: Installing VC++ 2017 Redistributables...; Check: not VCinstalled
 Filename: "{app}\bin\elide.exe"; Description: "{cm:LaunchProgram,ELENA Programming Language}"; Flags: nowait postinstall skipifsilent
 
 [Registry]
@@ -71,3 +73,37 @@ begin
   // Pos() returns 0 if not found
   Result := Pos(';' + Param + ';', ';' + OrigPath + ';') = 0;
 end;
+
+function VCinstalled: Boolean;
+ // By Michael Weiner <mailto:spam@cogit.net>
+ // Function for Inno Setup Compiler
+ // 13 November 2015
+ // Returns True if Microsoft Visual C++ Redistributable is installed, otherwise False.
+ // The programmer may set the year of redistributable to find; see below.
+ var
+  names: TArrayOfString;
+  i: Integer;
+  dName, key, year: String;
+ begin
+  // Year of redistributable to find; leave null to find installation for any year.
+  year := '2017';
+  Result := False;
+  key := 'Software\Microsoft\Windows\CurrentVersion\Uninstall';
+  // Get an array of all of the uninstall subkey names.
+  if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, key, names) then
+   // Uninstall subkey names were found.
+   begin
+    i := 0
+    while ((i < GetArrayLength(names)) and (Result = False)) do
+     // The loop will end as soon as one instance of a Visual C++ redistributable is found.
+     begin
+      // For each uninstall subkey, look for a DisplayName value.
+      // If not found, then the subkey name will be used instead.
+      if not RegQueryStringValue(HKEY_LOCAL_MACHINE, key + '\' + names[i], 'DisplayName', dName) then
+       dName := names[i];
+      // See if the value contains both of the strings below.
+      Result := (Pos(Trim('Visual C++ ' + year),dName) * Pos('Redistributable',dName) <> 0)
+      i := i + 1;
+     end;
+   end;
+ end;
