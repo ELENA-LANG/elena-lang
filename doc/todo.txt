@@ -1,55 +1,26 @@
 ------                                 
 In development:
 ------                              
-              zdev - script engine
-                 * elt : simple expression
-                 * test vm console operations in IDE
-                 * do we need escript script?
-
               xdev - multimethod                 
-                 * compile time multi method resolution : o x := 2.
                  * multi dispatch with $nil
-                 * uncomment Array.setAt[2] amd Array.getAt[1]
-                 * explicit constant (uncomment generateMethodAttributes)
-                 * var n := 2 <=> int n := 2
-                 * optimize multimethod implementation for sealed / limited classes (resolve message index)
-                 * optimize multimethod implementation for sealed class containing only one overload class
-                 * no need for template class class?
-                 * get rid of defineOperatorMessage, resolveMultimethod does the job
-                 * custom verb generic handler
-                 * either generic or multi method can be declared, not both
-                 * message cannot have type signature
-                 * fixing multidispatching with class : e.g.: try(Object fail) {}
-                 * test nested exception handling
-                 * extension resend - literal extension literalListOp { array split <= split char:$32. /*...*/ } - self should points to 
-                   the incoming message
-                 * multi constructor - raise an error if not found
-                 * multi method extension should be resolved on compile-time
-                 * reimplement package info
-                 * test list<type>
-                 * uncomment get&hash_code
-                 * option not to generate multimethod
-                 * explicit conversion
-                 * test primitive operation with message
-                 * implicit conversions
-                 * check package functionality
-                 * simplify nfunc expression : set every(&int:n)( false ) - take into consideration the known target?.
-                 * uncomment compileOperator
-                 * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
-                 * private subjects??
-                 * fix message table implementation in VM (currently the space is reserved, but it should use virtual space allocation)
-                 * validate rprop (two message should be applied)
-                 * duplicate method templates
 
-              idev - debugger
-                 * vmconsole open a new file instead of using existing one (e.g. extension'scripting)
+              xdev - general implementation
+                 * test nested exception handling
+                 * fixing open issues
+
+              ydev - upndown
+                 * migrate xforms
+                 * reimplement chat sample
 
               zdev - live programming
                  * implement xml library
                  * implement live programming environment
 
-              zdev - script engine
-                 * migrate xforms
+------                                 
+Pipeline:
+------                                                                                         
+              idev - debugger
+                 * vmconsole open a new file instead of using existing one (e.g. extension'scripting)
 
               xdev - refactoring
                  * review cellular library
@@ -57,9 +28,6 @@ In development:
               sdev - refactoring
                  * refactor extensions'scripting'Library ...
                  * review assembly script : the parameter order
-
-              zdev - upndown
-                 * reimplement chat sample
 
               zdev - gui
                  * simple form with several labels
@@ -99,6 +67,8 @@ In development:
                  * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                  * optimize listof.$expand
                  * optimize ArrayList / list template insert operation (use xset for moving the references rather than set)
+                 * optimize multimethod implementation for sealed / limited classes (resolve message index)
+                 * optimize multimethod implementation for sealed class containing only one overload class
 
               zdev - remoting
               zdev - workflow
@@ -169,9 +139,30 @@ In development:
               zdev - script engine
                  * free allocated variable in sub code
 
-------                                 
-Pipeline:
-------                                                                                         
+              xdev - general implementation
+                 * no need for template class class?
+                 * custom verb generic handler
+                 * either generic or multi method can be declared, not both
+                 * message cannot have type signature
+                 * fixing multidispatching with class : e.g.: try(Object fail) {}
+                 * extension resend - literal extension literalListOp { array split <= split char:$32. /*...*/ } - self should points to 
+                   the incoming message
+                 * multi constructor - raise an error if not found
+                 * multi method extension should be resolved on compile-time
+                 * reimplement package info
+                 * test list<type>
+                 * option not to generate multimethod
+                 * explicit conversion
+                 * test primitive operation with message
+                 * implicit conversions
+                 * check package functionality
+                 * simplify nfunc expression : set every(&int:n)( false ) - take into consideration the known target?.
+                 * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
+                 * private subjects??
+                 * fix message table implementation in VM (currently the space is reserved, but it should use virtual space allocation)
+                 * validate rprop (two message should be applied)
+                 * duplicate method templates
+
               sdev - rosetta samples
                  * Zeckendorf arithmetic
 
@@ -1049,3 +1040,6 @@ Pipeline:
 
               zdev - gui
                  * directx : create 3D sample
+
+              zdev - script engine
+                 * do we need escript script?
