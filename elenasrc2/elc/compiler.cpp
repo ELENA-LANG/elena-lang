@@ -1903,6 +1903,8 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
       terminal = terminal.findChild(lxIdentifier, lxPrivate);
 
    ident_t identifier = terminal.identifier();
+   if (scope.moduleScope->mapAttribute(terminal) != 0)
+      scope.raiseWarning(WARNING_LEVEL_1, wrnAmbiguousIdentifier, terminal);
 
    if (!scope.locals.exist(identifier)) {
       LexicalType variableType = lxVariable;

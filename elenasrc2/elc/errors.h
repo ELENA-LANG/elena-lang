@@ -115,6 +115,7 @@ namespace _ELENA_
    #define wrnDuplicateExtension    "%s(%d:%d): warning 418: '%s': duplicate extension\n"
 //   #define wrnUnboxinging           "%s(%d:%d): warning 419: '%s' will be unboxed\n"
    #define wrnTypeAlreadyDeclared   "%s(%d:%d): warning 420: Type attribute cannot be overridden\n"
+   #define wrnAmbiguousIdentifier   "%s(%d:%d): warning 421: Variable '%s' is ambiguous"
 
 } // _ELENA_
 

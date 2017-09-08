@@ -2,7 +2,6 @@
 In development:
 ------                              
               xdev - general implementation
-                 * warn if the variable name is similar to the registered attributes
                  * warn if the method name is similar to the registered attributes
                  * warn on singleton singleton $if_token.
                  * fix bug : type vtype     = ref<unknown>. - should not be compiled
