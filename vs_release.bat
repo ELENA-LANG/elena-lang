@@ -13,52 +13,52 @@ ECHO =========== Starting Release Compile ==================
 
 ECHO Command line Compiler compiling....
 ECHO -----------------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\elc\vs\elc15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\elc\vs\elc15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Virtual Machine compiling....
 ECHO -----------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\elenavm\vs\elenavm15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\elenavm\vs\elenavm15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO IDE compiling....
 ECHO -----------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\ide\vs\elide15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\ide\vs\elide15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Run-Time Engine compiling....
 ECHO -----------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\elenart\vs\elenart15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\elenart\vs\elenart15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Script Engine compiling....
 ECHO ----------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\elenasm\vs\elenasm15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\elenasm\vs\elenasm15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Simplified Assembler compiling....
 ECHO -----------------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\tools\asm2bin\vs\asm2binx15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\tools\asm2bin\vs\asm2binx15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO ECODES viewer compiling....
 ECHO ---------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\tools\ecv\vs\ecv15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\tools\ecv\vs\ecv15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Virtual Machine Terminal compiling....
 ECHO --------------------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\tools\elt\vs\elt15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\tools\elt\vs\elt15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Optimization Rule Generator compiling....
 ECHO ------------------------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\tools\og\vs\og15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\tools\og\vs\og15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Syntax Parse Table Generator compiling....
 ECHO ------------------------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" elenasrc2\tools\sg\vs\sg15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\tools\sg\vs\sg15.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO =========== Release Compiled ==================
@@ -74,8 +74,8 @@ move %1\dat\og\rules.dat %1\bin
 md lib32
 %1\bin\asm2binx %1\src32\core\core_routines.esm lib32\system
 
-%1\bin\asm2binx %1\asm\x32\commands.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\core.asm %1\bin\x32
+%1\bin\asm2binx %1\asm\x32\corex.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\coreapi.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\core_vm.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\core_win.asm %1\bin\x32
@@ -303,6 +303,8 @@ copy %1\elenasrc2\tools\og\vs\*.vcxproj elenasrc2\tools\og\vs
 
 md install
 copy %1\install\*.iss install
+md install\redist
+copy %1\install\redist\VC_redist.x86.exe install\redist
 
 echo copying examples files
 
@@ -378,10 +380,10 @@ copy %1\examples\console\helloworld\*.prj examples\console\helloworld
 rem copy %1\examples\helloworld\*.es examples\helloworld
 
 md examples\script\interpreter
-copy %1\examples\script\interpreter\*.l examples\interpreter
-copy %1\examples\script\interpreter\*.prj examples\interpreter
-copy %1\examples\script\interpreter\*.txt examples\interpreter
-copy %1\examples\script\interpreter\*.es examples\interpreter
+copy %1\examples\script\interpreter\*.l examples\script\interpreter
+copy %1\examples\script\interpreter\*.prj examples\script\interpreter
+copy %1\examples\script\interpreter\*.txt examples\script\interpreter
+copy %1\examples\script\interpreter\*.es examples\script\interpreter
 
 md examples\console\matrix 
 copy %1\examples\console\matrix\*.l examples\console\matrix 
@@ -453,12 +455,12 @@ copy %1\examples\db\sqlite\*.l examples\db\sqlite
 copy %1\examples\db\sqlite\*.prj examples\db\sqlite
 
 md examples\script\js
-copy %1\examples\script\js\*.l examples\js
-copy %1\examples\script\js\*.prj examples\js
-copy %1\examples\script\js\*.xprj examples\js
-copy %1\examples\script\js\*.txt examples\js
-copy %1\examples\script\js\*.es examples\js
-copy %1\examples\script\js\*.js examples\js
+copy %1\examples\script\js\*.l examples\script\js
+copy %1\examples\script\js\*.prj examples\script\js
+copy %1\examples\script\js\*.xprj examples\script\js
+copy %1\examples\script\js\*.txt examples\script\js
+copy %1\examples\script\js\*.es examples\script\js
+copy %1\examples\script\js\*.js examples\script\js
 
 echo copying src3 files
 
