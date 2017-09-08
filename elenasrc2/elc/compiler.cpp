@@ -1904,7 +1904,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
 
    ident_t identifier = terminal.identifier();
    if (scope.moduleScope->mapAttribute(terminal) != 0)
-      scope.raiseWarning(WARNING_LEVEL_1, wrnAmbiguousIdentifier, terminal);
+      scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousVariable, terminal);
 
    if (!scope.locals.exist(identifier)) {
       LexicalType variableType = lxVariable;
@@ -4356,6 +4356,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          node.appendNode(lxMultiMethodAttr, genericMessage);
       }
 
+      if (scope.moduleScope->attributes.exist(messageStr) != 0)
+         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousMessageName, verb);
+
       if (propMode && paramCount == 1 && !emptystr(signature)) {
          // COMPILER MAGIC : set$int => $int
          messageStr.copy(signature);
@@ -6594,6 +6597,9 @@ void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
    // first pass - declaration
    while (current != lxNone) {
       SNode name = current.findChild(lxIdentifier, lxPrivate, lxReference);
+
+      if (scope.mapAttribute(name) != 0)
+         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
 
       switch (current) {
          case lxInclude:
