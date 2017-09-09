@@ -1,16 +1,24 @@
 ------                                 
 In development:
 ------                              
-              xdev - multimethod                 
-                 * multi dispatch with $nil
-
               xdev - general implementation
-                 * test nested exception handling
+                 * var a := 3 <=> int a := 3.
+                 * #345 : Resend statement does not work correctly for an extension 
+                 * extension resend - literal extension literalListOp { array split <= split char:$32. /*...*/ } - self should points to 
+                   the incoming message
                  * fixing open issues
+
+              idev - debugger
+                 * vmconsole open a new file instead of using existing one (e.g. extension'scripting)
 
               ydev - upndown
                  * migrate xforms
+                 * simple form with several labels
+                 * simple form with several labels : fonts, sizes
+                 * gui script
+                 * graph : function declared in the script
                  * reimplement chat sample
+                 * reimplement upndown
 
               zdev - live programming
                  * implement xml library
@@ -19,21 +27,11 @@ In development:
 ------                                 
 Pipeline:
 ------                                                                                         
-              idev - debugger
-                 * vmconsole open a new file instead of using existing one (e.g. extension'scripting)
-
               xdev - refactoring
                  * review cellular library
 
               sdev - refactoring
-                 * refactor extensions'scripting'Library ...
                  * review assembly script : the parameter order
-
-              zdev - gui
-                 * simple form with several labels
-                 * simple form with several labels : fonts, sizes
-                 * gui script
-                 * graph : function declared in the script
 
               xdev - refactoring
                  * check subject duplicates
@@ -145,8 +143,6 @@ Pipeline:
                  * either generic or multi method can be declared, not both
                  * message cannot have type signature
                  * fixing multidispatching with class : e.g.: try(Object fail) {}
-                 * extension resend - literal extension literalListOp { array split <= split char:$32. /*...*/ } - self should points to 
-                   the incoming message
                  * multi constructor - raise an error if not found
                  * multi method extension should be resolved on compile-time
                  * reimplement package info

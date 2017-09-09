@@ -40,16 +40,16 @@ extension objectOp
     bool equal reference:anObject
         => system'core_routines'__object.
         
-//    evalSelf func1:aFunction
-//        = aFunction eval:self.
+    evalSelf func1:aFunction
+        = aFunction eval:self.
 
-//    evalSelf:aFunction
-//        = aFunction eval:self.
-//
-//    /// Returns true if the object is nil
-//    bool isNil
-//        = nil == self.
-//        
+    evalSelf:aFunction
+        = aFunction eval:self.
+
+    /// Returns true if the object is nil
+    bool isNil
+        = nil == self.
+        
 //    /// Returns true if the object is literal or character
 //    isLiteral
 //        = self cast:%eval to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. generic eval : anObject = false. }.

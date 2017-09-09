@@ -83,7 +83,7 @@ class Exception
     /// Otherwise goes to the next exception handler
     catch : aCatchBlock
     [
-        aCatchBlock on:$self \ evalSelf((:e)[ e throw ]).
+        aCatchBlock on:$self \ then:[ $owner throw ].
     ]    
 
     /// Executes the exception handler for the current exception if available.
@@ -94,7 +94,7 @@ class Exception
     [
         aFinallyCode eval.
         
-        aCatchBlock on:$self \ evalSelf((:e) [ $self throw ]).
+        aCatchBlock on:$self \ then:[ $owner throw ].
     ]
 
     if : aCatchblock
