@@ -854,7 +854,7 @@ private:
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
    void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod);
+   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod, bool extensionMode);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 

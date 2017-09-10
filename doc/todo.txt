@@ -1,13 +1,6 @@
 ------                                 
 In development:
 ------                              
-              xdev - general implementation
-                 * var a := 3 <=> int a := 3.
-                 * #345 : Resend statement does not work correctly for an extension 
-                 * extension resend - literal extension literalListOp { array split <= split char:$32. /*...*/ } - self should points to 
-                   the incoming message
-                 * fixing open issues
-
               idev - debugger
                  * vmconsole open a new file instead of using existing one (e.g. extension'scripting)
 
@@ -19,6 +12,9 @@ In development:
                  * graph : function declared in the script
                  * reimplement chat sample
                  * reimplement upndown
+
+              xdev - general implementation
+                 * fixing open issues
 
               zdev - live programming
                  * implement xml library

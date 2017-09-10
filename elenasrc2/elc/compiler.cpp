@@ -38,6 +38,7 @@ using namespace _ELENA_;
 #define HINT_SWITCH           0x00400000
 #define HINT_ALT_MODE         0x00200000
 #define HINT_SINGLETON        0x00100000
+#define HINT_EXT_RESENDEXPR   0x00080400
 #define HINT_NODEBUGINFO      0x00020000
 //#define HINT_CLOSURE          0x00008000
 #define HINT_SUBCODE_CLOSURE  0x00008800
@@ -3032,7 +3033,11 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       target = ObjectInfo(okObject);
    }
    else if (test(mode, HINT_RESENDEXPR)) {
-      writer.insertChild(0, lxThisLocal, 1);
+      if (test(mode, HINT_EXT_RESENDEXPR)) {
+         //HOTFIX : fixing resending an extension message
+         writer.insertChild(0, lxLocal, -1);
+      }
+      else writer.insertChild(0, lxThisLocal, 1);
 
       target = ObjectInfo(okThisParam, 1);
    }      
@@ -4641,7 +4646,7 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
    writer.closeNode();
 }
 
-void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod)
+void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod, bool extensionMode)
 {
    if (node.argument != 0 && multiMethod) {
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
@@ -4662,7 +4667,7 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
       scope.level++;
 
       writer.newNode(lxExpression);
-      compileMessage(writer, node.firstChild(lxObjectMask), scope, HINT_RESENDEXPR);
+      compileMessage(writer, node.firstChild(lxObjectMask), scope, extensionMode ? HINT_EXT_RESENDEXPR : HINT_RESENDEXPR);
       writer.closeNode();
 
       scope.freeSpace();
@@ -4685,7 +4690,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
    // check if it is a resend
    if (body == lxResendExpression) {
-      compileResendExpression(writer, body, codeScope, scope.multiMethod);
+      compileResendExpression(writer, body, codeScope, scope.multiMethod, scope.extensionMode);
       preallocated = 1;
    }
    // check if it is a dispatch
