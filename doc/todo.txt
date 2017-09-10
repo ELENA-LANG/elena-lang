@@ -1,6 +1,24 @@
-------                                 
+2------                                 
 In development:
 ------                              
+              xdev - general implementation
+                 * optimize multimethod implementation for sealed / limited classes (resolve message index)
+
+                 * should multi geneated private method be static as well or should not be generated at all?
+                 * unboxing primitive arrays?
+                 * constant field should always have assigning part
+                 * #266: sealed static constant fields
+                 * implementing #348 : sealed accumulator fields
+                 * struct fields : embeddable structures
+                 * struct fields : structures - should not be allowed
+                 * struct fields : objects - should not be allowed
+                 * primitive array field with size
+                 * syntax modify : open arg list
+                 * primitive arraz should support + oeprator (similar to hard-coded static constant operation)
+                 * support sealed accumulator constants
+                 * warn on method duplications in the template
+                 * warn on field duplications in the template
+
               ydev - upndown
                  * migrate xforms
                  * review assembly script : the parameter order
@@ -12,6 +30,14 @@ In development:
                  * reimplement upndown
 
               xdev - general implementation
+                 * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
+                   no other overload functions provided)
+                 * implementing #350
+                 * get rid of dynamic keyword, use [] for this : e.g.
+                      template<BaseIndexable> array :: template_subj
+                      {
+                            template_subj[] $target.
+                            template_subj() $target.
                  * fixing open issues
 
               zdev - live programming
@@ -43,7 +69,6 @@ Pipeline:
                  * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                  * optimize listof.$expand
                  * optimize ArrayList / list template insert operation (use xset for moving the references rather than set)
-                 * optimize multimethod implementation for sealed / limited classes (resolve message index)
                  * optimize multimethod implementation for sealed class containing only one overload class
 
               zdev - remoting
@@ -68,30 +93,6 @@ Pipeline:
                  * uint16
 
               xdev - general implementation
-                 * get rid of dynamic keyword, use [] for this : e.g.
-                      template<BaseIndexable> array :: template_subj
-                      {
-                            template_subj[] $target.
-                            template_subj() $target.
-
-                 * implementing #350
-                 * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
-                   no other overload functions provided)
-                 * check if the overload list was created
-                 * should multi geneated private method be static as well or should not be generated at all?
-                 * unboxing primitive arrays?
-                 * constant field should always have assigning part
-                 * #266: sealed static constant fields
-                 * implementing #348 : sealed accumulator fields
-                 * struct fields : embeddable structures
-                 * struct fields : structures - should not be allowed
-                 * struct fields : objects - should not be allowed
-                 * primitive array field with size
-                 * syntax modify : open arg list
-                 * primitive arraz should support + oeprator (similar to hard-coded static constant operation)
-                 * support sealed accumulator constants
-                 * warn on method duplications in the template
-                 * warn on field duplications in the template
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]

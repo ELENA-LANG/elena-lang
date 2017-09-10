@@ -54,7 +54,7 @@ const char* _fnOpcodes[256] =
    "bloadfi", "bloadsi", "nloadi", "nsavei", "asaver", "aloadai", "aloadbi", "axsavebi",
 
    "popi", "nreadi", "scopyf", "setverb", "unknown", "andn", "addn", "orn",
-   "eaddn", "shiftn", "muln", "divn", "bloadr", "init", "mtredirect", "unknown",
+   "eaddn", "shiftn", "muln", "divn", "bloadr", "init", "mtredirect", "xmtredirect",
 
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",

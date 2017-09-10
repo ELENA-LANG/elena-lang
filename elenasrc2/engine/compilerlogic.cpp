@@ -498,7 +498,7 @@ bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
 }
 
-void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler)
+void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
 {
    for (auto it = info.methods.start(); !it.Eof(); it++) {
       // if the method included
@@ -520,7 +520,13 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
                ref_t flags = message & MESSAGE_FLAG_MASK;
                ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getParamCount(message) | flags), maOverloadlist));
                if (listRef != 0) {
-                  compiler.generateOverloadListMember(scope, listRef, message);
+                  if (test(info.header.flags, elSealed) || test(message, SEALED_MESSAGE)) {
+                     compiler.generateSealedOverloadListMember(scope, listRef, message, classRef);
+                  }
+                  else if (test(info.header.flags, elClosed)) {
+                     compiler.generateClosedOverloadListMember(scope, listRef, message, classRef);
+                  }
+                  else compiler.generateOverloadListMember(scope, listRef, message);
                }
             }
          }         

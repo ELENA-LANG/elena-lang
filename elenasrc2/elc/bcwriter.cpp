@@ -5174,9 +5174,17 @@ void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList)
    tape.write(bcMTRedirect, operationList | mskConstArray);
 }
 
+void ByteCodeWriter::doSealedMultiDispatch(CommandTape& tape, ref_t operationList)
+{
+   tape.write(bcXMTRedirect, operationList | mskConstArray);
+}
+
 void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node)
 {
-   doMultiDispatch(tape, node.argument);
+   if (node.type == lxSealedMultiDispatching) {
+      doSealedMultiDispatch(tape, node.argument);
+   }
+   else doMultiDispatch(tape, node.argument);
 
    SNode current = node.findChild(lxDispatching);
    if (current != lxNone)
@@ -5353,6 +5361,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
             generateDispatching(tape, current);
             break;
          case lxMultiDispatching:
+         case lxSealedMultiDispatching:
             if (!open) {
                declareIdleMethod(tape, node.argument, sourcePathRef);
                exitLabel = false;

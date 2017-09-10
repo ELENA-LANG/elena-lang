@@ -645,6 +645,27 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
       if (currentMask == 0) {
          (*image)[*it + position] = resolveMessage(sectionInfo.module, (*sectionInfo.section)[*it]);
       }
+      else if (currentMask == mskVMTEntryOffset) {
+         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
+
+         // message id should be replaced with an appropriate method address
+         size_t offset = *it;
+         size_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position]);
+
+         (*image)[offset + position] = getVMTMethodIndex(refVAddress, messageID);
+      }
+      else if (currentMask == mskVMTMethodAddress) {
+         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
+
+         // message id should be replaced with an appropriate method address
+         size_t offset = *it;
+         size_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position]);
+
+         (*image)[offset + position] = resolveVMTMethodAddress(sectionInfo.module, currentRef, messageID);
+         if (_virtualMode) {
+            image->addReference(mskCodeRef, offset + position);
+         }
+      }
       else {
          void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
 
@@ -1051,7 +1072,7 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 {
    void* vaddress = _loader->resolveReference(reference, mask);
    if (vaddress==LOADER_NOTLOADED) {
-      if (reference.compare("mytest'MyClass")) {
+      if (reference.compare("mytest'#inline0")) {
          mask |= mask;
       }
 

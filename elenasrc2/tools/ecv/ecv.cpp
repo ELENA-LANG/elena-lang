@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   12
+#define REVISION_VERSION   13
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -181,6 +181,12 @@ ref_t resolveMessage(_Module* module, ident_t method)
    ref_t actionRef = 0;
    ref_t flags = 0;
 
+   if (method.startsWith("#private&")) {
+      flags |= SEALED_MESSAGE;
+
+      method = method.c_str() + getlength("#private&");
+   }
+
    IdentifierString actionName;
    int paramIndex = method.find('[', -1);
    if (paramIndex != -1) {
@@ -212,7 +218,7 @@ ref_t resolveMessage(_Module* module, ident_t method)
 
       actionRef = module->mapSubject(actionName, true);
       if (actionRef == 0) {
-         printLine("Unknown subject", actionName);
+         printLine("Unknown subject ", actionName);
 
          return 0;
       }

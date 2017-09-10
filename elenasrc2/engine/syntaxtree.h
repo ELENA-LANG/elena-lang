@@ -165,6 +165,7 @@ enum LexicalType
    lxLongOp          = 0x8C039,   // arg - operation id
    lxRealOp          = 0x8C03A,   // arg - operation id
    lxMultiDispatching= 0x0C03B,
+   lxSealedMultiDispatching = 0x0C03C,
    lxOverridden      = 0x04047,
 
    lxBaseParent      = 0x10023,

@@ -4632,9 +4632,13 @@ void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNod
 
 void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope)
 {
-   ref_t overloadRef = classScope.info.methodHints.get(Attribute(scope.getMessageID(), maOverloadlist));
+   ref_t message = scope.getMessageID();
+   ref_t overloadRef = classScope.info.methodHints.get(Attribute(message, maOverloadlist));
    if (overloadRef) {
-      writer.newNode(lxMultiDispatching, overloadRef);
+      if (test(classScope.info.header.flags, elSealed) || test(message, SEALED_MESSAGE)) {
+         writer.newNode(lxSealedMultiDispatching, overloadRef);
+      }
+      else writer.newNode(lxMultiDispatching, overloadRef);
    }
    else scope.raiseError(errIllegalOperation, node);
 
@@ -5682,7 +5686,7 @@ void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 {
    // generation operation list if required
    if (test(scope.info.header.flags, elWithMuti)) {
-      _logic->injectOverloadList(*scope.moduleScope, scope.info, *this);
+      _logic->injectOverloadList(*scope.moduleScope, scope.info, *this, scope.reference);
    }
 
    WarningScope warningScope(scope.moduleScope->warningMask);
@@ -6748,6 +6752,38 @@ void Compiler :: generateOverloadListMember(_CompilerScope& scope, ref_t listRef
       metaWriter.insertDWord(0, 0);
       metaWriter.insertDWord(0, messageRef);
       metaWriter.Memory()->addReference(0, 0);
+   }
+}
+
+void Compiler ::generateClosedOverloadListMember(_CompilerScope& scope, ref_t listRef, ref_t messageRef, ref_t classRef)
+{
+   MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
+   if (metaWriter.Position() == 0) {
+      metaWriter.writeRef(0, messageRef);
+      metaWriter.writeRef(classRef | mskVMTEntryOffset, messageRef);
+      metaWriter.writeDWord(0);
+   }
+   else {
+      metaWriter.insertDWord(0, messageRef);
+      metaWriter.insertDWord(0, messageRef);
+      metaWriter.Memory()->addReference(0, 0);
+      metaWriter.Memory()->addReference(classRef | mskVMTEntryOffset, 4);
+   }
+}
+
+void Compiler :: generateSealedOverloadListMember(_CompilerScope& scope, ref_t listRef, ref_t messageRef, ref_t classRef)
+{
+   MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
+   if (metaWriter.Position() == 0) {
+      metaWriter.writeRef(0, messageRef);
+      metaWriter.writeRef(classRef | mskVMTMethodAddress, messageRef);
+      metaWriter.writeDWord(0);
+   }
+   else {
+      metaWriter.insertDWord(0, messageRef);
+      metaWriter.insertDWord(0, messageRef);
+      metaWriter.Memory()->addReference(0, 0);
+      metaWriter.Memory()->addReference(classRef | mskVMTMethodAddress, 4);
    }
 }
 

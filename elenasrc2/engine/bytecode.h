@@ -224,6 +224,7 @@ enum ByteCode
    bcBLoadR          = 0xDC,
    bcInit            = 0xDD,
    bcMTRedirect      = 0xDE,
+   bcXMTRedirect     = 0xDF,
 
    bcNew             = 0xF0,
    bcNewN            = 0xF1,

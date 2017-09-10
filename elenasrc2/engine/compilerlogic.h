@@ -55,7 +55,6 @@ class CompilerLogic : public _CompilerLogic
 
    typedef List<OperatorInfo> OperatorList;
 
-   int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
    int checkMethod(ClassInfo& info, ref_t message)
    {
       ChechMethodInfo dummy;
@@ -68,6 +67,7 @@ class CompilerLogic : public _CompilerLogic
 
 public:
    virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
+   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
 
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
@@ -126,7 +126,7 @@ public:
    virtual bool injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef);
    virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef);
 //   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode);
-   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
+   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef);
 
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
    virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
