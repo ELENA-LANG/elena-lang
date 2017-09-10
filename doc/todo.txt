@@ -2,13 +2,7 @@
 In development:
 ------                              
               xdev - refactoring
-                 * check subject duplicates
-                 * check attribute duplicates
-                 * method duplicates
                  * migrating pi2 sample
-                 * allow to initialize template based variable : arrayof numbers(int) := int(3).
-                 * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
-                   (e.g. vhdc), it should be declared when it is used
                  * migrate Cast objects
 
                  * uncomment matrixof template
@@ -124,6 +118,8 @@ Pipeline:
                  * #269 : short-circuit boolean operation
                  * stacksafe method : does not allow to pass stack-allocated object as object
                    e.g. stacksafe setAt(IntNumber index, Object object) - where object is stack-allocated number
+                 * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
+                   (e.g. vhdc), it should be declared when it is used
 
               zdev - script engine
                  * free allocated variable in sub code
