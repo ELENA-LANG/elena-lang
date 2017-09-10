@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                              
-              idev - debugger
-                 * vmconsole open a new file instead of using existing one (e.g. extension'scripting)
-
               ydev - upndown
                  * migrate xforms
                  * simple form with several labels

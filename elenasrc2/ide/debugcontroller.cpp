@@ -1359,7 +1359,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
 void DebugController :: showCurrentModule(DebugLineInfo* lineInfo, ident_t moduleName, ident_t sourcePath)
 {
    if (lineInfo) {
-      if (!moduleName.compare(_currentModule) || sourcePath.compare(_currentSource)) {
+      if (!moduleName.compare(_currentModule) || !sourcePath.compare(_currentSource)) {
          //!! do we need it at all?
          //onLoadModule(moduleName, sourcePath);
          _currentModule = moduleName;

@@ -1891,6 +1891,10 @@ bool IDEController :: loadModule(text_t ns, text_t source)
    else if (_ELENA_::NamespaceName::isIncluded(_project.getPackage(), _ELENA_::IdentifierString(ns))) {
       _ELENA_::Path path(_model->project.path);
       path.combine(source);
+#ifdef _WIN32
+      // HOTFIX : to ignore case for win32
+      path.lower();
+#endif
 
       openFile(path.c_str());
    }
@@ -1898,6 +1902,10 @@ bool IDEController :: loadModule(text_t ns, text_t source)
       _ELENA_::Path path(_model->paths.packageRoot);
       path.combine(ns, text_str(ns).find('\'', _ELENA_::getlength(ns)));
       path.combine(source);
+#ifdef _WIN32
+      // HOTFIX : to ignore case for win32
+      path.lower();
+#endif
 
       openFile(path.c_str());
    }
