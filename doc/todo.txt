@@ -1,13 +1,6 @@
 ------                                 
 In development:
 ------                              
-              xdev - refactoring
-                 * migrating pi2 sample
-                 * migrate Cast objects
-
-                 * uncomment matrixof template
-                 * uncomment arrayof enumerator method
-
               ydev - upndown
                  * migrate xforms
                  * review assembly script : the parameter order

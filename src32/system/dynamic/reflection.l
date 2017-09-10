@@ -1,8 +1,8 @@
-////#symbol $classControl =
-////{
-////    #method(stacksafe) readLength : anObject &vint:aLength        
-////        => system'core_routines'arrptr_getLen.        
-////}.
+//#symbol $classControl =
+//{
+//    #method(stacksafe) readLength : anObject &vint:aLength        
+//        => system'core_routines'arrptr_getLen.        
+//}.
 
 // --- classOp ---
 
