@@ -1,234 +1,11 @@
-2------                                 
+------                                 
 In development:
 ------                              
-              xdev - general implementation
-                 * optimize multimethod implementation for sealed / limited classes (resolve message index)
-
-                 * should multi geneated private method be static as well or should not be generated at all?
-                 * unboxing primitive arrays?
-                 * constant field should always have assigning part
-                 * #266: sealed static constant fields
-                 * implementing #348 : sealed accumulator fields
-                 * struct fields : embeddable structures
-                 * struct fields : structures - should not be allowed
-                 * struct fields : objects - should not be allowed
-                 * primitive array field with size
-                 * syntax modify : open arg list
-                 * primitive arraz should support + oeprator (similar to hard-coded static constant operation)
-                 * support sealed accumulator constants
-                 * warn on method duplications in the template
-                 * warn on field duplications in the template
-
-              ydev - upndown
-                 * migrate xforms
-                 * review assembly script : the parameter order
-                 * simple form with several labels
-                 * simple form with several labels : fonts, sizes
-                 * gui script
-                 * graph : function declared in the script
-                 * reimplement chat sample
-                 * reimplement upndown
-
-              xdev - general implementation
-                 * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
-                   no other overload functions provided)
-                 * implementing #350
-                 * get rid of dynamic keyword, use [] for this : e.g.
-                      template<BaseIndexable> array :: template_subj
-                      {
-                            template_subj[] $target.
-                            template_subj() $target.
-                 * fixing open issues
-
-              zdev - live programming
-                 * implement xml library
-                 * implement live programming environment
-
-------                                 
-Pipeline:
-------                                                                                         
-              xdev - refactoring
-                 * review cellular library
-
-                 * test if outnprop works correctly with optimization
-
-                 * #215 : Operations with structure fields
-                 * optimize : aResult int := 0.
-                 * test local : assign field struct
-                 * invalid error message for the code:
-                       symbol plotter = { .. }.
-
-              sdev - console samples
-                 * test matrix determinant
-
-              xdev - general optimization  
-                 * opimized alt operator implementation : resolve it in compile-time if the operand is known
-                 * opimized alt operator implementation : if the object has no custom dispatch handler check it before
-                   otherwise use try catch statement ; check $nil?
-                 * optimize using, finally, try template implementations (get rid of dynamic closures)
-                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
-                 * optimize listof.$expand
-                 * optimize ArrayList / list template insert operation (use xset for moving the references rather than set)
-                 * optimize multimethod implementation for sealed class containing only one overload class
-
-              zdev - remoting
-              zdev - workflow
-
-              idev - generic development
-                 * xml : include / exclude
-                 * allow to opem xml project
-                 * allow to create xml project
-                 * xml : format the xml on save
-                 * switch to xml config files #14
-
-              sdev - script engine
-                 * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
-
-              xdev - general optimization  
-                 * bswap acopyb => bcopya
-                 * asavefi n aloadfi n => asavefi n nop
-                 * hexadecimal - uint32
-                 * uint64 
-                 * postfix - ul
-                 * uint16
-
-              xdev - general implementation
-                 * embeddable eval[1]
-                 * embeddable get[1]
-                 * embeddable eval[2]
-                 * fix the bug : duplciate methods are not recognized:
-                      stacksafe literal add value:v = v literal.
-                      literal add literal : aLiteral => system'core_routines'__literal.
-                 * test all possible syntax constructions, currently the wrong one is ignored without generating an error
-                 * elenart : correctly display strong typed message names
-                 * elenavm : correctly display strong typed message names
-                 * Signature should support only get, set, eval
-                 * implement closure with explicit class type:
-			| if(&type<FormatException>:e) []
-                 * declaring an array field
-                 * declaring an array : // array<Field> fieldArray.
-                 * nshift should be replaced with nshiftl, nshiftr
-                 * optimize shift implementation
-                 * #269 : short-circuit boolean operation
-                 * stacksafe method : does not allow to pass stack-allocated object as object
-                   e.g. stacksafe setAt(IntNumber index, Object object) - where object is stack-allocated number
-                 * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
-                   (e.g. vhdc), it should be declared when it is used
-
-              zdev - script engine
-                 * free allocated variable in sub code
-
-              xdev - general implementation
-                 * no need for template class class?
-                 * custom verb generic handler
-                 * either generic or multi method can be declared, not both
-                 * message cannot have type signature
-                 * fixing multidispatching with class : e.g.: try(Object fail) {}
-                 * multi constructor - raise an error if not found
-                 * multi method extension should be resolved on compile-time
-                 * reimplement package info
-                 * test list<type>
-                 * option not to generate multimethod
-                 * explicit conversion
-                 * test primitive operation with message
-                 * implicit conversions
-                 * check package functionality
-                 * simplify nfunc expression : set every(&int:n)( false ) - take into consideration the known target?.
-                 * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
-                 * private subjects??
-                 * fix message table implementation in VM (currently the space is reserved, but it should use virtual space allocation)
-                 * validate rprop (two message should be applied)
-                 * duplicate method templates
-
-              sdev - rosetta samples
-                 * Zeckendorf arithmetic
-
-              xdev - x64
-                 * compile 64 bit IDE without warnings
-                 * x64 debugger : 32bit app
-                 * x64 debugger : 64bit app
-
-              sdev - rosetta samples
-                 * Zebra puzzle
-
-              sdev - cf parser
-                 * currently nested expression should be enclosed into another epxression (expression expression nested ...)
-                 * debug script generated code
-                 * the following grammar rule is not correctly split (code is ignored) :
-                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
-
-              zdev 
-                 * partial-evaluation
-
-              xdev - general optimization  
-                 * replace "vint int := int" with direct assinging
-                 * map isEmbeddable results, to reuse them
-
-              sdev - samples
-                 * basic tests
-                 * migrate net samples
-
-              sdev - rosetta samples
-                 * rosetta sample : 2048
-                 * rosetta sample : Ethiopian multiplication
-                 * rosetta sample : Flipping bits game
-                 * rosetta sample : Longest string challenge
-                 * rosetta sample : Magic squares of odd order
-
-              idev - debugger
-                 * Make possible to provide alternative path to lib #188
-
-              xdev - generic development 
-                 * bug : extensions in template - are not fully resolved
-                 * #302 - byte array field : writing / reading / boxing / unboxing
-                 * uncomment WSADATA structure
-                 * no need to copy to the buffer field / variable / method attributes
-                 * get rid of listable attribute, use accumulators for bool values
-
-              xdev - native code optimization
-                 * use rep stos to clear the object after creating      
-
-              zdev 
-                 * hello world sample
-                 * calc sample : gui
-
-              xdev - general implementation
-                 * game of life : display 2d map in gui window
-                 * game of life : display 2d map in vm gui window
-
-              sdev - cf parser
-                 * use pattern like in regex for terminal matching
-                 * there should be possibility to save the resulting code in the file
-                 * at least print the token where the parser error is
-                 * CodeScope : after each statement clear the top stack item
-                 * NEW_TAPE_MESSAGE - command to copy the stack into the object
-
-              xdev - generic development
-                 * message string
-                 * several messages can be packed into the message string
-
-              zdev - cellular automata
-                 * game of life : rules should be declared in external file
-                 * game of life : viewer
-
-              xdev - usability
-                 * ecv : display class size
-                 * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
-
-              idev - generic development
-                 * vm client : F8 on the start does not work
-                 * debugging vm client : f7 on start
-                 * fix syntax highlighting
-
               xdev - generic development                                            
                  * probably compiler may replace a += b to a := a + b automatically 
                  * assigning to the primitive array
 
                  * byte array operation - assigning (see streamreader)
-
-                 * primitive array declaration : byte(4) buffer := ??.
-
-                 * implement primitive array initializing : byte(4) buffer := (0,)
 
                  * vint.set&int[1] - do not box the variable before assigning
                  * local attribute : do not allow embeddable templates
@@ -257,25 +34,6 @@ Pipeline:
                  * should not be allowed to provide returning type for constructors
                  * type / sealed hint should not be overridden
                  * support local template
-                 * uncomment compileClassDeclaration
-                 * uncomment compileClassClassDeclaration
-                 * uncomment generateMethodDeclarations
-                 * uncomment ModuleScope::mapAttribute
-                 * uncomment ByteCodeWriter :: generateCodeBlock
-                 * uncomment ByteCodeWriter :: generateExpression
-                 * uncomment ModuleScope :: defineObjectInfo
-                 * uncomment ModuleScope :: mapReferenceInfo
-                 * uncomment getError
-                 * uncomment validateUnresolved
-                 * uncomment createPackageInfo
-                 * uncomment buildConstructor
-                 * uncomment buildClassDeclaration
-                 * uncomment isSimpleObject
-                 * uncomment declareRetExpression
-                 * uncomment declareDispatchExpression
-                 * uncomment __object.dispatch
-                 * uncomment ByteCodeWriter::generateOperation
-                 * uncomment Compiler::declareAssigning
                  * syntax : BLOCK_CLOSING_EXPECTED / DECLARATION_END_EXPECTED and so on
                  * check sealed / limited / sealed method
                  * dispatch verb should not be called explicitly
@@ -392,6 +150,220 @@ Pipeline:
                  * test generic handler
                  * test generic handler with redirect
                  * test redirect class with open arg generic handler
+
+              xdev - general optimization  
+                 * bswap acopyb => bcopya
+                 * asavefi n aloadfi n => asavefi n nop
+
+              xdev - general implementation
+                 * implement closure with explicit class type:
+			| if(&type<FormatException>:e) []
+                 * constant field should always have assigning part
+                 * #266: sealed static constant fields
+                 * struct fields : embeddable structures
+                 * struct fields : structures - should not be allowed
+                 * struct fields : objects - should not be allowed
+                 * declaring an array field
+                 * declaring an array : // array<Field> fieldArray.
+
+              sdev - rosetta samples
+                 * Zeckendorf arithmetic
+
+              sdev - console samples
+                 * test matrix determinant
+
+              ydev - upndown
+                 * migrate xforms
+                 * review assembly script : the parameter order
+                 * simple form with several labels
+                 * simple form with several labels : fonts, sizes
+                 * gui script
+                 * graph : function declared in the script
+                 * reimplement chat sample
+                 * reimplement upndown
+
+              xdev - general implementation
+                 * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
+                   no other overload functions provided)
+                 * implementing #350
+                 * get rid of dynamic keyword, use [] for this : e.g.
+                      template<BaseIndexable> array :: template_subj
+                      {
+                            template_subj[] $target.
+                            template_subj() $target.
+                 * fixing open issues
+
+              zdev - live programming
+                 * implement xml library
+                 * implement live programming environment
+
+              sdev - rosetta samples
+                 * Zebra puzzle
+                 * implement rosetta samples
+
+------                                 
+Pipeline:
+------                                                                                         
+              xdev - refactoring
+                 * review cellular library
+
+                 * test if outnprop works correctly with optimization
+
+                 * #215 : Operations with structure fields
+                 * optimize : aResult int := 0.
+                 * test local : assign field struct
+                 * invalid error message for the code:
+                       symbol plotter = { .. }.
+
+              xdev - general optimization  
+                 * opimized alt operator implementation : resolve it in compile-time if the operand is known
+                 * opimized alt operator implementation : if the object has no custom dispatch handler check it before
+                   otherwise use try catch statement ; check $nil?
+                 * optimize using, finally, try template implementations (get rid of dynamic closures)
+                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
+                 * optimize listof.$expand
+                 * optimize ArrayList / list template insert operation (use xset for moving the references rather than set)
+                 * optimize multimethod implementation for sealed class containing only one overload class
+
+              zdev - remoting
+              zdev - workflow
+
+              idev - generic development
+                 * xml : include / exclude
+                 * allow to opem xml project
+                 * allow to create xml project
+                 * xml : format the xml on save
+                 * switch to xml config files #14
+
+              sdev - script engine
+                 * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
+
+              xdev - general optimization  
+                 * hexadecimal - uint32
+                 * uint64 
+                 * postfix - ul
+                 * uint16
+
+              xdev - general implementation
+                 * syntax modify : open arg list
+                 * primitive array should support + oeprator (similar to hard-coded static constant operation)
+                 * support sealed accumulator constants
+                 * warn on method duplications in the template
+                 * warn on field duplications in the template
+                 * embeddable eval[1]
+                 * embeddable get[1]
+                 * embeddable eval[2]
+                 * test all possible syntax constructions, currently the wrong one is ignored without generating an error
+                 * elenart : correctly display strong typed message names
+                 * elenavm : correctly display strong typed message names
+                 * Signature should support only get, set, eval
+                 * nshift should be replaced with nshiftl, nshiftr
+                 * optimize shift implementation
+                 * #269 : short-circuit boolean operation
+                 * stacksafe method : does not allow to pass stack-allocated object as object
+                   e.g. stacksafe setAt(IntNumber index, Object object) - where object is stack-allocated number
+                 * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
+                   (e.g. vhdc), it should be declared when it is used
+
+              zdev - script engine
+                 * free allocated variable in sub code
+
+              xdev - general implementation
+                 * no need for template class class?
+                 * custom verb generic handler
+                 * either generic or multi method can be declared, not both
+                 * message cannot have type signature
+                 * fixing multidispatching with class : e.g.: try(Object fail) {}
+                 * multi constructor - raise an error if not found
+                 * multi method extension should be resolved on compile-time
+                 * reimplement package info
+                 * test list<type>
+                 * option not to generate multimethod
+                 * explicit conversion
+                 * test primitive operation with message
+                 * implicit conversions
+                 * check package functionality
+                 * simplify nfunc expression : set every(&int:n)( false ) - take into consideration the known target?.
+                 * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
+                 * private subjects??
+                 * fix message table implementation in VM (currently the space is reserved, but it should use virtual space allocation)
+                 * validate rprop (two message should be applied)
+                 * duplicate method templates
+                 * unboxing primitive arrays?
+
+              xdev - x64
+                 * compile 64 bit IDE without warnings
+                 * x64 debugger : 32bit app
+                 * x64 debugger : 64bit app
+
+              sdev - cf parser
+                 * currently nested expression should be enclosed into another epxression (expression expression nested ...)
+                 * debug script generated code
+                 * the following grammar rule is not correctly split (code is ignored) :
+                       #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
+
+              zdev 
+                 * partial-evaluation
+
+              xdev - general optimization  
+                 * replace "vint int := int" with direct assinging
+                 * map isEmbeddable results, to reuse them
+
+              sdev - samples
+                 * basic tests
+                 * migrate net samples
+
+              sdev - rosetta samples
+                 * rosetta sample : 2048
+                 * rosetta sample : Ethiopian multiplication
+                 * rosetta sample : Flipping bits game
+                 * rosetta sample : Longest string challenge
+                 * rosetta sample : Magic squares of odd order
+
+              idev - debugger
+                 * Make possible to provide alternative path to lib #188
+
+              xdev - generic development 
+                 * bug : extensions in template - are not fully resolved
+                 * #302 - byte array field : writing / reading / boxing / unboxing
+                 * uncomment WSADATA structure
+                 * no need to copy to the buffer field / variable / method attributes
+                 * get rid of listable attribute, use accumulators for bool values
+
+              xdev - native code optimization
+                 * use rep stos to clear the object after creating      
+
+              zdev 
+                 * hello world sample
+                 * calc sample : gui
+
+              xdev - general implementation
+                 * game of life : display 2d map in gui window
+                 * game of life : display 2d map in vm gui window
+
+              sdev - cf parser
+                 * use pattern like in regex for terminal matching
+                 * there should be possibility to save the resulting code in the file
+                 * at least print the token where the parser error is
+                 * CodeScope : after each statement clear the top stack item
+                 * NEW_TAPE_MESSAGE - command to copy the stack into the object
+
+              xdev - generic development
+                 * message string
+                 * several messages can be packed into the message string
+
+              zdev - cellular automata
+                 * game of life : rules should be declared in external file
+                 * game of life : viewer
+
+              xdev - usability
+                 * ecv : display class size
+                 * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
+
+              idev - generic development
+                 * vm client : F8 on the start does not work
+                 * debugging vm client : f7 on start
+                 * fix syntax highlighting
 
               zdev 
                  * scripting library : elena script (both run-time / compile-time)
