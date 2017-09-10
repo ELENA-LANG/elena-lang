@@ -1925,7 +1925,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
       ClassInfo localInfo;
       bool bytearray = false;
       if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam))
-         scope.raiseError(errUnknownClass, node.findChild(lxClassRefAttr));
+         scope.raiseError(errUnknownVariableType, terminal);
 
       if (_logic->isEmbeddableArray(localInfo) && size != 0) {
          bytearray = true;

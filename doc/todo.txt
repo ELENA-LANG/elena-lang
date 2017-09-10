@@ -1,8 +1,22 @@
 ------                                 
 In development:
 ------                              
+              xdev - refactoring
+                 * check subject duplicates
+                 * check attribute duplicates
+                 * method duplicates
+                 * migrating pi2 sample
+                 * allow to initialize template based variable : arrayof numbers(int) := int(3).
+                 * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
+                   (e.g. vhdc), it should be declared when it is used
+                 * migrate Cast objects
+
+                 * uncomment matrixof template
+                 * uncomment arrayof enumerator method
+
               ydev - upndown
                  * migrate xforms
+                 * review assembly script : the parameter order
                  * simple form with several labels
                  * simple form with several labels : fonts, sizes
                  * gui script
@@ -23,19 +37,6 @@ Pipeline:
               xdev - refactoring
                  * review cellular library
 
-              sdev - refactoring
-                 * review assembly script : the parameter order
-
-              xdev - refactoring
-                 * check subject duplicates
-                 * check attribute duplicates
-                 * method duplicates
-                 * migrating pi2 sample
-                 * allow to initialize template based variable : arrayof numbers(int) := int(3).
-
-                 * uncomment matrixof template
-                 * uncomment arrayof enumerator method
-
                  * test if outnprop works correctly with optimization
 
                  * #215 : Operations with structure fields
@@ -43,9 +44,6 @@ Pipeline:
                  * test local : assign field struct
                  * invalid error message for the code:
                        symbol plotter = { .. }.
-                 * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
-                   (e.g. vhdc), it should be declared when it is used
-                 * migrate Cast objects
 
               sdev - console samples
                  * test matrix determinant

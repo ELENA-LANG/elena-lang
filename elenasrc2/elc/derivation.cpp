@@ -2281,7 +2281,8 @@ bool DerivationReader :: declareType(SyntaxWriter& writer, SNode node, Derivatio
    }
 
    if (!invalid) {
-      scope.moduleScope->saveAttribute(typeName, classRef, internalSubject);
+      if (!scope.moduleScope->saveAttribute(typeName, classRef, internalSubject))
+         scope.raiseError(errDuplicatedDefinition, nameNode);
    }
 
    return !invalid;
