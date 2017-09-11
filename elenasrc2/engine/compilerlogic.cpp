@@ -15,6 +15,11 @@ using namespace _ELENA_;
 
 typedef ClassInfo::Attribute Attribute;
 
+inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
+{
+   return ref1 ? ref1 : ref2;
+}
+
 inline bool isWrappable(int flags)
 {
    return !test(flags, elWrapper) && test(flags, elSealed);
@@ -765,8 +770,15 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
 
    // check if there are implicit constructors
    if (test(info.header.flags, elSealed)) {
+      // HOTFIX : recognize primitive object array
+      if (sourceRef == V_OBJARRAY) {
+         sourceRef = firstNonZero(scope.arrayReference, scope.superReference);
+
+         compiler.injectBoxing(writer, scope,
+            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, sourceRef, true);
+      }
       // HOTFIX : recognize primitive data except of a constant literal
-      if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
+      else if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
          sourceRef = resolvePrimitiveReference(scope, sourceRef);
 
       // otherwise we have to go through the list
@@ -1282,11 +1294,6 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
    }
 
    return false;
-}
-
-inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
-{
-   return ref1 ? ref1 : ref2;
 }
 
 ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)

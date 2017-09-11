@@ -77,13 +77,13 @@ template<BaseEnumerable> stack :: type
     
     explicit
     [
-        theArray := type&(8).
+        theArray := list<type>(8).
         theTop := 0.
     ]
     
     explicit int:capacity
     [
-        theArray := type&(capacity).
+        theArray := list<type>(capacity).
         theTop := 0.
     ]
         
