@@ -2228,19 +2228,23 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 
       object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s));
    }
-//   else if (terminal == lxExplicitConst) {
-//      // try to resolve explicit constant
-//      size_t len = getlength(token);
-//
-//      ref_t postfixRef = scope.moduleScope->module->mapSubject(token + len - 1, false);
-//
-//      IdentifierString constant(token, len - 1);
-//
-//      object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(constant), postfixRef);
+   else if (terminal == lxExplicitConst) {
+      // try to resolve explicit constant
+      size_t len = getlength(token);
+
+      IdentifierString singature(token + len - 1);
+      singature.append('$');
+      singature.append(scope.moduleScope->module->resolveReference(scope.moduleScope->literalReference));
+
+      ref_t postfixRef = scope.moduleScope->module->mapSubject(singature, false);
+
+      IdentifierString constant(token, len - 1);
+
+      object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(constant), postfixRef);
+   }
+//   else if (terminal == lxResult) {
+//      object = ObjectInfo(okObject);
 //   }
-////   else if (terminal == lxResult) {
-////      object = ObjectInfo(okObject);
-////   }
    else if (terminal == lxMemberIdentifier) {
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
       if (classScope != NULL) {
@@ -2250,23 +2254,23 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
    else if (!emptystr(token))
       object = scope.mapObject(terminal);
 
-//   if (object.kind == okExplicitConstant) {
-//      // replace an explicit constant with the appropriate object
-//      writer.newBookmark();
-//      writeTerminal(writer, terminal, scope, ObjectInfo(okLiteralConstant, object.param) , mode);
-//
-//      ref_t constRef = scope.moduleScope->actionHints.get(encodeMessage(object.extraparam, PRIVATE_MESSAGE_ID, 1));
-//      if (constRef != 0) {
-//         if (!convertObject(writer, *scope.moduleScope, constRef, 0, V_STRCONSTANT, object.extraparam))
-//            scope.raiseError(errInvalidConstant, terminal);
-//      }
-//      else scope.raiseError(errInvalidConstant, terminal);
-//
-//      object = ObjectInfo(okObject, constRef);
-//
-//      writer.removeBookmark();
-   //}
-   /*else */writeTerminal(writer, terminal, scope, object, mode);
+   if (object.kind == okExplicitConstant) {
+      // replace an explicit constant with the appropriate object
+      writer.newBookmark();
+      writeTerminal(writer, terminal, scope, ObjectInfo(okLiteralConstant, object.param) , mode);
+
+      ref_t constRef = scope.moduleScope->actionHints.get(encodeMessage(object.extraparam, 1) | CONVERSION_MESSAGE);
+      if (constRef != 0) {
+         if (!convertObject(writer, *scope.moduleScope, constRef, V_STRCONSTANT, object.extraparam))
+            scope.raiseError(errInvalidConstant, terminal);
+      }
+      else scope.raiseError(errInvalidConstant, terminal);
+
+      object = ObjectInfo(okObject, constRef);
+
+      writer.removeBookmark();
+   }
+   else writeTerminal(writer, terminal, scope, object, mode);
 
    return object;
 }
@@ -4226,6 +4230,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    ref_t actionRef = 0;
    ref_t verbRef = 0;
    bool propMode = false;
+   bool constantConversion = false;
    ref_t flags = 0;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
@@ -4344,8 +4349,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
 
       if (test(scope.hints, tpSealed | tpConversion)) {
-         if (paramCount == 1 && emptystr(messageStr)) {
+         if (paramCount == 1) {
             flags |= CONVERSION_MESSAGE;
+            if (!emptystr(messageStr))
+               constantConversion = true;
          }
          else if (emptystr(messageStr) && paramCount == 0) {
             // if it is an implicit in-place constructor
@@ -4396,6 +4403,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       else scope.raiseError(errIllegalMethod, node);
 
       scope.message = encodeMessage(actionRef, paramCount) | flags;
+
+      // if it is an explicit constant conversion
+      if (constantConversion) {
+         scope.moduleScope->saveAction(scope.message, scope.getClassRef());
+      }
    }
 }
    
@@ -5468,13 +5480,6 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       hint |= tpPrivate;
 
       scope.info.methodHints.add(Attribute(message & ~SEALED_MESSAGE, maHint), hint);
-
-      //// if it is an explicit constant conversion
-      //if (getAction(message) != 0) {
-      //   if (test(hint, tpConversion) && getParamCount(message) == 1) {
-      //      scope.moduleScope->saveAction(message, scope.reference);
-      //   }
-      //}
    }
 
    if (hintChanged) {

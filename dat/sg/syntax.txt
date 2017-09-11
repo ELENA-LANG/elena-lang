@@ -62,6 +62,7 @@ __define real			12298
 __define character		12299
 __define long                   12300
 __define wide                   12301
+__define constant               12302
 __define attribute		12303
 __define member			12304
 
@@ -245,6 +246,7 @@ ROOT_EXPRESSION ->
 	identifier ROOT_OPERATIONS
 	| private ROOT_OPERATIONS
 	| member ROOT_OPERATIONS
+	| constant OPERATIONS
 	| reference OPERATIONS
 	| literal OPERATIONS
 	| wide OPERATIONS
@@ -385,6 +387,7 @@ OBJECT ->
 	| long
 	| real
 	| character
+	| constant
 	| % MESSAGE_REFERENCE
 	| CODE_BLOCK	
 	| NESTED_CLASS

@@ -2862,14 +2862,14 @@ class intConvertor =
         ^ IntNumber new int:aRetVal
     ]
         
-//    /// Converts a literal string into an integer
-//    stacksafe int convert literal:literal base:base
-//    [
-//        int retVal := 0.
-//        $self convert literal:literal int:base vint:retVal.
-//        
-//        ^ IntNumber new int:retVal
-//    ]
+    /// Converts a literal string into an integer
+    stacksafe int convert literal:literal int:base
+    [
+        int retVal := 0.
+        $self convert literal:literal int:base vint:retVal.
+        
+        ^ IntNumber new int:retVal
+    ]
         
     /// Converts a wide literal string into an integer
     stacksafe int convert wide:aLiteral
@@ -2880,14 +2880,14 @@ class intConvertor =
         ^ IntNumber new int:aRetVal
     ]
 
-//    /// Converts a wide literal string into an integer
-//    stacksafe int convert wide:literal base:base
-//    [
-//        int retVal := 0.
-//        $self convert wide:literal int:base vint:retVal.
-//        
-//        ^ IntNumber new int:retVal
-//    ]
+    /// Converts a wide literal string into an integer
+    stacksafe int convert wide:literal int:base
+    [
+        int retVal := 0.
+        $self convert wide:literal int:base vint:retVal.
+        
+        ^ IntNumber new int:retVal
+    ]
         
     /// Converts a character value into an integer
     stacksafe int convert char:aValue

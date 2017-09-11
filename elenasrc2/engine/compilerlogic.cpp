@@ -788,19 +788,9 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
          if (test(implicitMessage, CONVERSION_MESSAGE) && getParamCount(implicitMessage) == 1) {
             ref_t subj = getAction(implicitMessage);
             bool compatible = false;
-            if (sourceRef == V_STRCONSTANT) {
+            if (sourceRef == V_STRCONSTANT && subj == elementRef) {
                // try to resolve explicit constant conversion routine
-               ident_t signature = scope.module->resolveSubject(subj);
-               size_t index = signature.find('&');
-               if (index != NOTFOUND_POS) {
-                  //IdentifierString postfix(signature, index);
-                  //ref_t postfixRef = scope.module->mapSubject(postfix, true);
-                  //if (sourceType == postfixRef) {
-                  //   ref_t subjRef = scope.subjectHints.get(scope.module->mapSubject(signature + index + 1, false));
-
-                  //   compatible = subjRef != 0 && isCompatible(scope, subjRef, scope.literalReference);
-                  //}
-               }
+               compatible = true;
             }
             else {
                ref_t subjRef = scope.module->mapReference(scope.module->resolveSubject(subj).c_str() + 1);
