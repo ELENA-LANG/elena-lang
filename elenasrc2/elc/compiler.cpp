@@ -3415,14 +3415,15 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
    }
    else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
 
+   // set flags once again
+   // NOTE : it should be called before the code compilation to generate multi-methods properly
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, false);
+
    writer.newNode(lxClass, scope.reference);
 
    compileVMT(writer, node, scope);
 
    writer.closeNode();
-
-   // set flags once again
-   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, false);
    scope.save();
 
    generateClassImplementation(expressionTree.readRoot(), scope);

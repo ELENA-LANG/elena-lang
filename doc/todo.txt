@@ -2,22 +2,17 @@
 In development:
 ------                              
               xdev - generic development                                            
-                 * warn on boxing
-                 * warn on typifying
-                 * suppresw warnings in the code
-                 * byte shift operations
-
-                 * optimize k := n + m. - remove an extra assignment
-                 * optimize k := k + m.
-                 * optimize k += m.
-                 * optimize k := k + 2.
-                 * optimize k += 3.
                  * should not be allowed to provide returning type for constructors
+
                  * idle optimization: sending get message to $nil - should always return $nil
                  * do not generate typecast message for an extension
                  * declaring varof:type, before declaring type class
                  * declaring varof:struct - is not correctly recognized if declared before the struct
                  * Implicit constructor should not have return statements
+                 * warn on boxing
+                 * warn on typifying
+                 * suppres warnings in the code
+                 * byte shift operations
 
               xdev - general optimization  
                  * bcopya quit => quit

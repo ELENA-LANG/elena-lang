@@ -83,7 +83,8 @@ class Exception
     /// Otherwise goes to the next exception handler
     catch : aCatchBlock
     [
-        aCatchBlock on:$self \ then:[ $owner throw ].
+        aCatchBlock on:$self 
+            \ then:[ $owner throw ].
     ]    
 
     /// Executes the exception handler for the current exception if available.
