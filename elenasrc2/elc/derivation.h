@@ -175,6 +175,7 @@ class DerivationReader : public _DerivationReader
    void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = EXPRESSION_EXPLICIT_MODE);
    void generateNewOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateNewTemplate(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
    void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, bool templateMode);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);

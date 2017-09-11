@@ -84,6 +84,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsRootL6Operation:
          _writer.newNode(lxOperator);
          break;
+      case nsL8Operation:
+         _writer.newNode(lxAssignOperator);
+         break;
       case nsArrayOperation:
          _writer.newNode(lxOperator, REFER_MESSAGE_ID);
          break;
@@ -1603,6 +1606,27 @@ void DerivationReader:: generateSymbolTree(SyntaxWriter& writer, SNode node, Der
    writer.closeNode();
 }
 
+void DerivationReader :: generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+{
+   writer.newNode(lxExpression);
+
+   SNode loperand = node.firstChild(lxObjectMask);
+   SNode operatorNode = node.findChild(lxAssignOperator);
+
+   generateObjectTree(writer, loperand, scope);
+   writer.appendNode(lxAssign);
+   writer.newNode(lxExpression);
+   generateObjectTree(writer, loperand, scope);
+   
+   IdentifierString operatorName(operatorNode.firstChild().findChild(lxTerminal).identifier(), 1);
+   writer.appendNode(lxOperator, operatorName.c_str());
+
+   generateExpressionTree(writer, operatorNode, scope, 0);
+   writer.closeNode();
+
+   writer.closeNode();
+}
+
 void DerivationReader :: generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
    // check if the first token is attribute
@@ -1962,8 +1986,11 @@ void DerivationReader :: generateCodeTree(SyntaxWriter& writer, SNode node, Deri
          else if (isArrayDeclaration(current)) {
             generateArrayVariableTree(writer, current, scope);
          }
-         else if (current.existChild(lxCode) || current.existChild(lxNestedClass)) {
+         else if (current.existChild(lxCode, lxNestedClass)) {
             generateCodeTemplateTree(writer, current, scope);
+         }
+         else if (current.existChild(lxAssignOperator)) {
+            generateAssignmentOperator(writer, current, scope);
          }
          else generateExpressionTree(writer, current, scope);
       }

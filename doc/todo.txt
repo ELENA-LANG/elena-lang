@@ -2,7 +2,8 @@
 In development:
 ------                              
               xdev - generic development                                            
-                 * probably compiler may replace a += b to a := a + b automatically 
+                 * #313 : Reimplement assignment operators 
+
                  * assigning to the primitive array
 
                  * byte array operation - assigning (see streamreader)

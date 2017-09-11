@@ -106,6 +106,7 @@ enum Symbol
    nsArrayIdentifier            = 0x01059,
    nsNestedSubCode              = 0x0105A,
    nsNestedRootExpression       = 0x0105B,
+   nsL8Operation                = 0x0105C,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               
