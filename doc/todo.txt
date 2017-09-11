@@ -2,8 +2,6 @@
 In development:
 ------                              
               xdev - generic development                                            
-                 * do not generate typecast message for an extension
-                 * Implicit constructor should not have return statements
                  * warn on boxing
                  * warn on typifying
                  * suppres warnings in the code
@@ -26,6 +24,10 @@ In development:
                  * declaring an array field
                  * declaring an array : // array<Field> fieldArray.
                  * the following expression should generated an error : if(n test) { .... }
+
+              xdev - generic development                                            
+                 * test calc sample
+                 * test js sample
 
               sdev - rosetta samples
                  * Zeckendorf arithmetic

@@ -2,6 +2,8 @@ import extensions.
 import forms.
 import system'io.
 
+import system'drawing.
+
 // --- Main window ---
 
 class MainWindow :: SDIDialog

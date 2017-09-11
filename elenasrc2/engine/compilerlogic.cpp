@@ -544,7 +544,7 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
       compiler.generateListMember(scope, info.header.parentRef, classRef);
    }
 
-   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference && !closed) {
+   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference && !closed && !test(info.header.flags, elExtension)) {
       // auto generate get&type message for explicitly declared classes
       ReferenceName subject("$");
       subject.append(scope.module->resolveReference(classRef));

@@ -3897,6 +3897,9 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
          {
             needVirtualEnd = false;
 
+            if (test(scope.getMessageID(), CONVERSION_MESSAGE))
+               scope.raiseError(errIllegalOperation, current);
+
             writer.newNode(lxReturning);
             writer.appendNode(lxBreakpoint, dsStep);
             retVal = compileRetExpression(writer, current, scope, HINT_ROOT);
