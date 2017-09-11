@@ -159,7 +159,7 @@ extension enumerableOp
         = aFunction retrieve object:param enumerator:self.
 
     seekFor(Object param) eachPair(ExtensionMessage ext)
-        = self~enumerableOp seek:param eachPair(:n:m)( n~ext eval(m) ).
+        = self~enumerableOp seekFor:param eachPair(:n:m)( n~ext eval(m) ).
 
     multi seekFor:param eachPair:fn
         = self~enumerableOp seekFor:param eachPair(:n:m)( fn eval(n,m) ).
@@ -185,7 +185,7 @@ extension enumerableOp
         [
             it2 next.
             
-            ifnot (it1 get safeEqual:(it2 get))
+            ifnot (it1 get; equal(it2 get))
                 [ ^ false ]
         ].
         

@@ -70,7 +70,7 @@ dynamic template<BaseIndexable> array :: template_subj
     ]
                
     multi setAt:n:object
-        <= setAt int:n object:object.                
+        <= setAt int:n template_subj:object.                
                   
     /// Returns the item at the specified index
     multi template_subj getAt : aParam
@@ -738,18 +738,18 @@ sealed class IntMatrix
         ^ retVal
     ]
 
-//    getAt : i : j
-//    [
-//        int aValue := 0.
-//        $self read int:i int:j vint:aValue.
-//        
-//        ^ aValue
-//    ]
+    getAt : i : j
+    [
+        int aValue := 0.
+        $self read int:i int:j vint:aValue.
+        
+        ^ aValue
+    ]
 
-//    setAt : i : j : aValue
-//    [
-//        $self write int:i int:j int:aValue.    
-//    ]
+    setAt : i : j : aValue
+    [
+        $self write int:i int:j int:aValue.    
+    ]
 
     /// Returns a row
     getAt : i =

@@ -32,7 +32,7 @@ sealed embeddable struct RECT
     ]
     
     int vprop left   :: readLeftTo, setLeft.
-    int vprop top    :: readToTo, setTop.
+    int vprop top    :: readTopTo, setTop.
     int vprop right  :: readRightTo, setRight.
     int vprop bottom :: readBottomTo, setBottom.
     int rvprop width  :: readWidthTo.

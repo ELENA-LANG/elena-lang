@@ -87,10 +87,10 @@ sealed embeddable struct UnsafePointer
         $self $setUnsafeReference:anObject.
     ]
                 
-//    stacksafe offset int:offs
-//    [
-//        thePointer := thePointer + offs.
-//    ]
+    stacksafe offset int:offs
+    [
+        thePointer := thePointer + offs.
+    ]
 
     stacksafe write int:anObject
         => system'core_routines'__dptr.

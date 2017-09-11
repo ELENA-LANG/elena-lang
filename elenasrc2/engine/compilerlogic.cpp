@@ -223,8 +223,11 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
    result.found = defineClassInfo(scope, info, reference);
 
    if (result.found) {
-      if (!test(info.header.flags, elClosed))
-         result.closed = false;
+      if (test(info.header.flags, elClosed))
+         result.directResolved = true;
+
+      //if (!test(info.header.flags, elClosed))
+      //   result.closed = false;
 
       if (test(info.header.flags, elWithCustomDispatcher))
          result.withCustomDispatcher = true;

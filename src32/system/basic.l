@@ -423,7 +423,7 @@ sealed embeddable struct ByteNumber :: IntBaseNumber
         <= multiply byte:n.
 
     multi divide:n
-        <= add divide:n.
+        <= divide byte:n.
 
     stacksafe byte add(BaseVariable v)
         <= add(v value).
@@ -2277,7 +2277,7 @@ sealed const embeddable struct CharValue :: BaseValue
         => system'core_routines'__char.
 
     /// Reads the number of bytes to represent the symbol
-    stacksafe readWideLength vint:aRetVal
+    stacksafe readWideLengthTo vint:aRetVal
     [
         int aLength := 0.
         $self readLengthTo vint:aLength.

@@ -72,7 +72,7 @@ sealed class Stack :: BaseEnumerable
 
 template<BaseEnumerable> stack :: type
 {
-    array<type> theArray.
+    list<type> theArray.
     vint        theTop.
     
     explicit

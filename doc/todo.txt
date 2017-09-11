@@ -2,11 +2,6 @@
 In development:
 ------                              
               xdev - generic development                                            
-                 * cannot declare the following code:
-                      const nbrs = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1),(-1, 1), (-1, 0), (-1, -1), (0, -1)).
-
-                 * check attribute name if it is equal to verb / another predefined attribute
-                 * warn on not found messages
                  * warn on boxing
                  * warn on typifying
                  * suppresw warnings in the code

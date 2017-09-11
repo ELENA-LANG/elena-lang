@@ -208,7 +208,7 @@ sealed nonstructural class TextBuilder
             if (aCurrent == aValue)
                 [ aRetVal int := anIndex. ^$self ].
                 
-            anIndex append int:1
+            anIndex += 1
         ].
         
         aRetVal int := -1

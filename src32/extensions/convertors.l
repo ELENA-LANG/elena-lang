@@ -94,9 +94,9 @@ class wideExConvertor =
         ^ anOutput wide
     ]
         
-    literal convert datetime:aValue = aValue wide.
+    literal convert datetime:aValue = aValue literal.
         
-    literal convert timestamp:aValue = aValue wide.
+    literal convert timestamp:aValue = aValue literal.
                 
 //                intmatrix : m
 //                    = intmatrixExConvertor toLiteral intmatrix:m.

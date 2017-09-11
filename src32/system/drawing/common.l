@@ -312,6 +312,6 @@ sealed embeddable struct Region :: BaseValue
         
         aRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
         
-        ^ (theWidth == aWidth) and:(theHeight == aHeight) and:(theX == anX) and:(theY == anY)
+        ^ (theWidth == aWidth) && (theHeight == aHeight) && (theX == anX) && (theY == anY)
     ]
 }

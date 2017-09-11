@@ -174,17 +174,20 @@ byte extension byteOp
         ^ retVal cast:%convertor to:byteConvertor
     ]    
     
-    stacksafe byte power byte:y
+    stacksafe byte power int:y
     [
         byte x := self.
+        byte r := 1.
         
-        byte i := 0.
+        int i := 0.
         while (i < y)
         [
-            x := x * x.
+            r := r * x.
+            
+            i += 1
         ].
         
-        ^ ByteNumber new byte:x
+        ^ ByteNumber new byte:r
     ]
     
     stacksafe byte sqr
@@ -197,7 +200,7 @@ byte extension byteOp
     ]
 
     power : aPower
-        = self~byteOp power byte:aPower.
+        = self~byteOp power int:aPower.
                 
     bool isOdd
         = self~byteOp mod:2 != 0.
@@ -238,17 +241,20 @@ short extension shortOp
         ^ retVal cast:%convertor to:shortConvertor
     ]
     
-    stacksafe short power short:y
+    stacksafe short power int:y
     [
         short x := self.
+        short r := 1.
         
-        short i := 0.
+        int i := 0.
         while (i < y)
         [
-            x := x * x
+            r := r * x.
+            
+            i += 1.
         ].
         
-        ^ ShortNumber new short:x
+        ^ ShortNumber new short:r
     ]
     
     stacksafe short sqr
@@ -262,7 +268,7 @@ short extension shortOp
     ]
 
     power : aPower
-        = self~shortOp power short:aPower.
+        = self~shortOp power int:aPower.
                 
     bool isOdd
         = self~shortOp mod:2 != 0.
@@ -461,14 +467,33 @@ long extension longOp
     stacksafe long power long:y
     [
         long x := self.
+        long r := 1.
         
         long i := 0l.
         while (i < y)
         [
-            x := x * x.
+            r := r * x.
+            
+            i += 1l.
         ].
         
-        ^ LongNumber new long:x
+        ^ LongNumber new long:r
+    ]
+    
+    stacksafe long power int:y
+    [
+        long x := self.
+        long r := 1.
+        
+        int i := 0.
+        while (i < y)
+        [
+            r := r * x.
+            
+            i += 1.
+        ].
+        
+        ^ LongNumber new long:r
     ]
     
     stacksafe long sqr
@@ -999,10 +1024,10 @@ literal extension literalOp
         = self indexOf:anObject at:0.
 
     indexOf literal:aLiteral
-        = self indexOf literal:aLiteral at:0.
+        = self indexOf:aLiteral at:0.
 
     indexOf char:aChar
-        = self indexOf char:aChar at:0.
+        = self indexOf:aChar at:0.
         
     literal Substring at:anIndex
         = self~literalOp Substring int:anIndex.
@@ -1177,10 +1202,10 @@ wide extension wideOp
         = self indexOf:anObject at:0.
         
     indexOf wide:aLiteral
-        = self indexOf int:0 wide:aLiteral.
+        = self indexOf:aLiteral at:0.
 
     indexOf char:aChar
-        = self indexOf int:0 char:aChar.
+        = self indexOf:aChar at:0.
                 
     wide Substring at:anIndex
         = self~wideOp Substring int:anIndex.

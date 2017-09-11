@@ -96,11 +96,11 @@ limited class Indexer2D
     indexer2d append index1:anOffset
     [
         int anIndex := 0.
-        $self readIndex1 vint:anIndex.
+        $self readIndex1To vint:anIndex.
         
         anIndex := anIndex + anOffset int.
         
-        $self writeIndex1To int:anIndex.
+        $self writeIndex1 int:anIndex.
         
         ^ $self.
     ]

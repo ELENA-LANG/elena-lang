@@ -1044,7 +1044,9 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
    if (terminal.compare(THIS_VAR)) {
       if (extensionMode) {
          //COMPILER MAGIC : if it is an extension ; replace $self with self
-         return ObjectInfo(okLocal, (ref_t)-1, ((ClassScope*)getScope(slClass))->reference);          
+         ClassScope* extensionScope = (ClassScope*)getScope(slClass);
+
+         return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef);
       }
       else if (stackSafe && classEmbeddable) {
          return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
@@ -2814,11 +2816,11 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       if (result.embeddable)
          writer.appendNode(lxEmbeddableAttr);
    }
-//   else {
-//      // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
-//      if (result.found && !result.withCustomDispatcher && callType == tpUnknown)
-//         node.appendNode(lxNotFoundAttr);
-//   }
+   else {
+      // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
+      if (result.found && !result.withCustomDispatcher && callType == tpUnknown && result.directResolved)
+         scope.raiseWarning(WARNING_LEVEL_3, wrnUnknownMessage, node.findChild(lxMessage));
+   }
 
    if (result.multi)
       writer.appendNode(lxMultiAttr);

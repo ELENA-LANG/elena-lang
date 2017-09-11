@@ -128,7 +128,7 @@ class $fileStreamHelper =
     [
         if(anAppendMode) [ ^ FileStream openForAppend:aPath ].
         
-        ^ FileStream openForReWrite path:aPath
+        ^ FileStream openForReWrite:aPath
     ]
 }.
 

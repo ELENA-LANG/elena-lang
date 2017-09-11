@@ -108,14 +108,14 @@ sealed embeddable struct TimeStruct
         $self write __time:aTime.
     ]
 
-    int vprop year        :: readYearTo,writeYear.
-    int vprop month       :: readMonthTo,writeMonth.
-    int vprop dayOfWeek   :: readDayOfWeekTo,writeDayOfWeek.
-    int vprop day         :: readDayTo,writeDay.
-    int vprop hour        :: readHourTo,writeHour.
-    int vprop minute      :: readMinuteTo,writeMinute.
-    int vprop second      :: readSecondTo,writeSecond.
-    int vprop millisecond :: readMillisecondTo,writeMillisecond.
+    int vprop  year        :: readYearTo,writeYear.
+    int vprop  month       :: readMonthTo,writeMonth.
+    int rvprop dayOfWeek   :: readDayOfWeekTo.
+    int vprop  day         :: readDayTo,writeDay.
+    int vprop  hour        :: readHourTo,writeHour.
+    int vprop  minute      :: readMinuteTo,writeMinute.
+    int vprop  second      :: readSecondTo,writeSecond.
+    int vprop  millisecond :: readMillisecondTo,writeMillisecond.
 
     stacksafe readYearTo vint:aRetVal
     [

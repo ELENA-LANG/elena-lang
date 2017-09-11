@@ -49,9 +49,6 @@ $mathController =
         
     mod long:n object:m
         = n~longOp mod:m.
-        
-    mod real:n object:m
-        = n~realOp mod:m.
 
     multi mod : n : m
         <= mod(n value, m).
@@ -253,7 +250,7 @@ extension mathOp
         = $mathController isZero(self).
 
     bool isPositive
-        = $mathController Positive(self).
+        = $mathController isPositive(self).
 
     bool isNegative
         = $mathController isNegative(self).

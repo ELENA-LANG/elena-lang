@@ -223,8 +223,9 @@ public:
    struct ChechMethodInfo
    {
       bool  found;
+      bool  directResolved;
       bool  withCustomDispatcher;
-      bool  closed;
+      //bool  closed;
       bool  stackSafe;
       bool  embeddable;
       bool  withOpenArgDispatcher;
@@ -233,7 +234,8 @@ public:
 
       ChechMethodInfo()
       {
-         embeddable = closed = found = false;
+         directResolved = false;
+         embeddable = /*closed = */found = false;
          outputReference = 0;
          withCustomDispatcher = false;
          stackSafe = false;

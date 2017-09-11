@@ -220,7 +220,6 @@ enum LexicalType
 //   lxConstAttr       = 0x2001F,
 //   lxWarningMask     = 0x20020,
    lxOperatorAttr    = 0x20021,
-//   lxNotFoundAttr    = 0x20022,
    lxBinarySelf      = 0x20023, // debug info only
    lxOvreriddenMessage = 0x20024, // arg - message ; used for extension / implicit constructor call
 //   lxClassRef        = 0x20025,

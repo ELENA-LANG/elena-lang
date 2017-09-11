@@ -4,6 +4,8 @@ import extensions.
 
 class MatrixException :: Exception
 {
+    constructor new literal:l
+        <= new literal:l.
 }
 
 realmatrix extension matrixOp
@@ -76,10 +78,10 @@ realmatrix extension matrixOp
         b readLengthsTo vint:i vint:j.
         
         ifnot(n == i)
-            [ MatrixException new:"Two matrices must have an equal number of rows and columns to be added"; raise ].
+            [ MatrixException new literal:"Two matrices must have an equal number of rows and columns to be added"; raise ].
         
         ifnot(m == j)
-            [ MatrixException new:"Two matrices must have an equal number of rows and columns to be added"; raise ].
+            [ MatrixException new literal:"Two matrices must have an equal number of rows and columns to be added"; raise ].
             
         i := 0.                        
         realmatrix r := RealMatrix new int:n int:m.
@@ -268,7 +270,7 @@ realmatrix extension matrixOp
             ].
                         
             if(0.0r == max)
-                [ MatrixException new:"The matrix is singular!"; raise ].
+                [ MatrixException new literal:"The matrix is singular!"; raise ].
 
             a read int:j int:j vreal:t.
             

@@ -14,7 +14,7 @@ int extension intLoopOp
     stacksafe to(int anEnd) do(nfunc aFunction)
         = self~intLoopOp runIntLoop int:anEnd nfunc:aFunction.
             
-    stacksafe to(int anEnd) do(func aFunction)
+    stacksafe to(int anEnd) do(func1 aFunction)
         = self~intLoopOp runIntLoop int:anEnd nfunc(&int:n)[ aFunction eval:n ].
             
     stacksafe to(int anEnd) do(ext_mssg anExtension)

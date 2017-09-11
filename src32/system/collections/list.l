@@ -610,25 +610,25 @@ sealed class ArrayList :: BaseIndexable
 //            ]
 //        ]     
 //    ]
-//        
-//    /// Inserts a new object to the specified position
-//    insert int:anIndex object:anObject
-//    [
-//        if (anIndex >= theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        $self $expand.
-//        
-//        int i := theLength.
-//        while (i > anIndex)
-//        [
-//            theArray setAt int:i object:(theArray getAt int:(i - 1)).
-//            
-//            i := i - 1
-//        ].
-//        
-//        theArray setAt int:anIndex object:anObject
-//    ]    
+        
+    /// Inserts a new object to the specified position
+    insert int:anIndex object:anObject
+    [
+        if (anIndex >= theLength)
+            [ OutOfRangeException new; raise ].
+        
+        $self $expand.
+        
+        int i := theLength.
+        while (i > anIndex)
+        [
+            theArray setAt int:i object:(theArray getAt int:(i - 1)).
+            
+            i := i - 1
+        ].
+        
+        theArray setAt int:anIndex object:anObject
+    ]    
     
     /// Inserts a new object to the beginning of the list
     insert : anObject

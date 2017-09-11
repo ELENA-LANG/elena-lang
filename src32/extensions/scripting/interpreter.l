@@ -8,6 +8,9 @@ class ScriptEngineException :: Exception
 {
     constructor new
         <= new literal(scriptEngine $lastScriptError).
+        
+    constructor new literal:l
+        <= new literal:l.
 }
 
 // --- scriptEngine ---
@@ -80,7 +83,7 @@ class scriptEngine =
         system'external'elenasm Release dirty_ptr:tape.
         
         if ($nil == retVal)
-            [ ScriptEngineException new:($self $lastVMError); raise ].
+            [ ScriptEngineException new literal:($self $lastVMError); raise ].
             
         ^ retVal
     ]
