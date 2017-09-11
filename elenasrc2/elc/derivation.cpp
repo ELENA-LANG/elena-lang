@@ -2678,7 +2678,7 @@ void DerivationReader :: generateScopeMembers(SNode node, DerivationScope& scope
             if (fieldTemplate != lxNone) {
                current = lxFieldTemplate;
             }
-            else if (checkNode(current.findChild(lxAttributeValue), lxAttributeValue, -1)) {
+            else if (checkNode(current.findChild(lxAttributeValue), lxAttributeValue, (ref_t)-1)) {
                // HOTFIX : if it is a primitive array field
                current = lxClassField;
             }

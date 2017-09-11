@@ -2,16 +2,14 @@
 In development:
 ------                              
               xdev - generic development                                            
-                 * #313 : Reimplement assignment operators 
+                 * cannot declare the following code:
+                      const nbrs = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1),(-1, 1), (-1, 0), (-1, -1), (0, -1)).
 
-                 * assigning to the primitive array
-
-                 * byte array operation - assigning (see streamreader)
-
-                 * vint.set&int[1] - do not box the variable before assigning
-                 * local attribute : do not allow embeddable templates
-                 * method attribute : only embeddable templates should be allowed
-
+                 * check attribute name if it is equal to verb / another predefined attribute
+                 * warn on not found messages
+                 * warn on boxing
+                 * warn on typifying
+                 * suppresw warnings in the code
                  * byte shift operations
 
                  * optimize k := n + m. - remove an extra assignment
@@ -19,140 +17,15 @@ In development:
                  * optimize k += m.
                  * optimize k := k + 2.
                  * optimize k += 3.
-
-                 * extension in the template (see mytest)
-                 * do not unbox returning objects
-                 * box structure fields
-
-                 * idle optimization : sealed typecasting message should be not called
-                 * warn on not found messages
-                 * attributes var, class should enforce the compiler to treat the code as variable or class declaration
-
-                 * class class is sealed and stateless
-                 * raise an error when costructor new [] // !!
-                 * constructor constructor [] / constructor [] - raise warning
-                 * singleton classes / roles / extensions should not have a class class
                  * should not be allowed to provide returning type for constructors
-                 * type / sealed hint should not be overridden
-                 * support local template
-                 * syntax : BLOCK_CLOSING_EXPECTED / DECLARATION_END_EXPECTED and so on
-                 * check sealed / limited / sealed method
-                 * dispatch verb should not be called explicitly
-                 * dispatch method cannot be a constructor
-                 * dispatch method should support only dispatching expression currently (e.g. =>)
-                 * dispatch method should be generic and without parameters
-                 * declaring : test [] - action ?
-                 * declaring : test => [] ?
-                 * declaring : test param. // ?
-                 * declaring : test test : test // ??
-                 * test short hand assigning : a prop := b.
-                 * test a b c := d. (both when a is a varialbe and when it is a subject / attribute)
-                 * support private variables / fields
-                 * var should may be used for resovling "a b := c" ambiguity
-                 * optimize virtual get&type method
-                 * nested class : declaring fields
-                 * nested class : initializing fields??
                  * idle optimization: sending get message to $nil - should always return $nil
-                 * test typecastObject
-                 * test boxObject
-                 * ret rid of maType hint
-                 * optimie opertion with int constant
-                 * optimization bcopya quit => quit
-                 * get rid of __ifoperator / ifnotoeprator - embeddable attribute should be used instead
-                 * use intOp for assigning a constant
-                 * warn on boxing
-                 * test field : assign const, generic var, local struct, field struct
-                 * test field : copy var
-                 * test field : box
-                 * test field : pass as a parameter
-                 * test implicit convertor with stack allocated local / field
-                 * optimize n := n + m.
-                 * compile n + m * k
-                 * compile obj prop := n.
-                 * do not box numeric constants
-                 * compiling : dispatch = theValue. - should be allowed?
-                 * test dispatching for the class with generic methods
-                 * test dispatching to the expression result
-                 * test embeddable eval / get / getat
-                 * pass int as vint
-                 * pass vint as int
-                 * test generic methods
-                 * assign the real stack allocated variable with integer constant
-                 * typified symbols (e.g. system'pi_value, system'e_value)
-                 * uncomment Integer, Real
-                 * test loop operation with unrecognized branching operator
-                 * test a[] a(x)[]
-                 * support operation with typified array
-                 * test primitive operations with numbers
-                 * test primitive operations with message / subject
-                 * test primitive operations with arrays, int array, short arrays, byte arrays, binary arrays
-                 * test generic arrayof(byte), arrayof(message), arrayof(object), arrayof(enumerator)
-                 * new verb : update
-                 * optimization : constant array
-                 * test class and className extensions
-                 * test is &numeric, is &literal, ...
-                 * external function : duplicate assigning
-                 * typified extension : self should be typified
-                 * embeddable eval, get, getAt, getAt[2]
-                 * direct constant assigning : real r := 0.
-                 * warn on boxing
-                 * warn on typifying
-                 * warn on not found method
-                 * suppresw warnings in the code
-                 * exception template : default constructor
-                 * reimplement event templates
-                 * implement switch
-                 * exception in static symbol (e.g. $StartUpEvents new - if "new" is not found)
-                 * temporal code for declaring uninitialized array - "type(size)var := 0" - should be replaced!?
-                 * implement gui suppport
-                 * implement threading suppport
-                 * implement net suppport
-                 * implement constant lists
-                 * optimize constant symbols (use directly)
-                 * get rid of duplicate source paths in debug info
+                 * do not generate typecast message for an extension
                  * declaring varof:type, before declaring type class
                  * declaring varof:struct - is not correctly recognized if declared before the struct
-                 * optimize implicit conversion : stacksafe divide &int:anOperand [ real n := anOperand. ] // - no need to create a new object, call conversion with stack allocated variable
-                 * extension : include json.l file
-                 * operation with binary arrays - arrayof(mssg)
-                 * migrate all samples
-                 * do we need class class for auto-generated classes? Normally they cannot be created explicitly
                  * Implicit constructor should not have return statements
-                 * stack allocated structures - declaring : console_screen_buffer_info aBuffer := 0 ?
-                 * console_screen_buffer_info - implicit conversion : init with zeros
-                 * duplicate assigning
-                 * check why : bool is &keyAvailable => theReader does not work correctly
-                 * move calcLiveCells into an extension
-                 * support reference in collection expression : system'dynamic'Tape("Hello World", system'console, %"writeLine[1]").
-                 * boxing / unboxing argument list
-                 * the following expression should generated an error : try2(n test) { .... }
-                 * the following expression should generated an error : if(n test) { .... }
-                 * duplicate assigning : mssg(10) properties := 0. mssg message := properties@0.
-                 * #300 : Code template closure 
-                 * finally code template with assigning
-                 * args subject should be allowed to be used only in message expression
-                 * default dispatch method, generics and open argument list generic ; first try to resolve generic, if not found -
-                   continiue with open arg resending
-                 * redirect dispatch method and open argument list generic 
-                 * redirect dispatch method generics and open argument list generic 
-                 * extension method should not be called implicitly inside itself
-                 * compile the following code:
-                     sealed implicit object:params
-                     [
-                         theRows := params rows.
-                         theColumns := params columns.
-                         
-                         theArray := template_subj(theRows * theColumns).
-                     ]
-                 * fixing #303 issue : local boxing byref parameter
-                 * cannot declare the following code:
-                      const nbrs = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1),(-1, 1), (-1, 0), (-1, -1), (0, -1)).
-                 * check attribute name if it is equal to verb / another predefined attribute
-                 * test generic handler
-                 * test generic handler with redirect
-                 * test redirect class with open arg generic handler
 
               xdev - general optimization  
+                 * bcopya quit => quit
                  * bswap acopyb => bcopya
                  * asavefi n aloadfi n => asavefi n nop
 
@@ -166,6 +39,7 @@ In development:
                  * struct fields : objects - should not be allowed
                  * declaring an array field
                  * declaring an array : // array<Field> fieldArray.
+                 * the following expression should generated an error : if(n test) { .... }
 
               sdev - rosetta samples
                  * Zeckendorf arithmetic
@@ -180,6 +54,8 @@ In development:
                  * simple form with several labels : fonts, sizes
                  * gui script
                  * graph : function declared in the script
+                 * implement threading suppport
+                 * implement net suppport
                  * reimplement chat sample
                  * reimplement upndown
 
@@ -225,6 +101,7 @@ Pipeline:
                  * optimize listof.$expand
                  * optimize ArrayList / list template insert operation (use xset for moving the references rather than set)
                  * optimize multimethod implementation for sealed class containing only one overload class
+                 * external function : duplicate assigning
 
               zdev - remoting
               zdev - workflow
@@ -246,8 +123,8 @@ Pipeline:
                  * uint16
 
               xdev - general implementation
+                 * use intOp for assigning a constant
                  * syntax modify : open arg list
-                 * primitive array should support + oeprator (similar to hard-coded static constant operation)
                  * support sealed accumulator constants
                  * warn on method duplications in the template
                  * warn on field duplications in the template
@@ -291,6 +168,8 @@ Pipeline:
                  * validate rprop (two message should be applied)
                  * duplicate method templates
                  * unboxing primitive arrays?
+                 * local attribute : do not allow embeddable templates
+                 * method attribute : only embeddable templates should be allowed
 
               xdev - x64
                  * compile 64 bit IDE without warnings
@@ -325,6 +204,7 @@ Pipeline:
                  * Make possible to provide alternative path to lib #188
 
               xdev - generic development 
+                 * get rid of __ifoperator / ifnotoeprator - embeddable attribute should be used instead
                  * bug : extensions in template - are not fully resolved
                  * #302 - byte array field : writing / reading / boxing / unboxing
                  * uncomment WSADATA structure
@@ -689,7 +569,6 @@ Pipeline:
                        * implement remote database access
                        
               xdev - general implementation
-                       * implementing 2.0.0 issues
                        * variable: no need to store nil if the variable statement has initializing part
                        * drop message flag for message ids, messages should be saved in raw data stack frame
                        * external call: stack should be excluded only if the method is marked as threadsafe
@@ -713,6 +592,8 @@ Pipeline:
                        * make possible to compile the file from command line without project
                        * make possible to compile the file from command line without project and any parameter - using only
                          default values e.g. elc collatz.l
+                       * get rid of duplicate source paths in debug info
+                       * args subject should be allowed to be used only in message expression
     
               xdev - generic development
                        * tape_tester : classTest

@@ -655,7 +655,7 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
          (*image)[offset + position] = getVMTMethodIndex(refVAddress, messageID);
       }
       else if (currentMask == mskVMTMethodAddress) {
-         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
+         resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
 
          // message id should be replaced with an appropriate method address
          size_t offset = *it;
@@ -791,7 +791,7 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
 void* JITLinker :: resolveAnonymousStaticVariable()
 {
    // get target image & resolve virtual address
-   MemoryWriter writer(_loader->getTargetSection(mskStatRef));
+   MemoryWriter writer(_loader->getTargetSection((ref_t)mskStatRef));
 
    size_t vaddress = (_virtualMode ? writer.Position() | mskStatRef : (size_t)writer.Address());
 

@@ -3035,7 +3035,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    else if (test(mode, HINT_RESENDEXPR)) {
       if (test(mode, HINT_EXT_RESENDEXPR)) {
          //HOTFIX : fixing resending an extension message
-         writer.insertChild(0, lxLocal, -1);
+         writer.insertChild(0, lxLocal, (ref_t)-1);
       }
       else writer.insertChild(0, lxThisLocal, 1);
 
@@ -5408,13 +5408,12 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
 
          scope.info.staticValues.add(index, scope.moduleScope->module->mapReference(name) | mskConstArray);
       }
-      else scope.info.staticValues.add(index, mskStatRef);
+      else scope.info.staticValues.add(index, (ref_t)mskStatRef);
    }
 }
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message)
 {
-//   ref_t outputType = scope.info.methodHints.get(Attribute(message, maType));
    ref_t outputRef = scope.info.methodHints.get(Attribute(message, maReference));
    bool hintChanged = false;
    int hint = scope.info.methodHints.get(Attribute(message, maHint));
@@ -5992,6 +5991,13 @@ ref_t Compiler :: optimizeNestedExpression(SNode node, ModuleScope& scope, Warni
             case lxConstantString:
             case lxConstantWideStr:
             case lxConstantSymbol:
+               break;
+            case lxNested:
+               optimizeNestedExpression(object, scope, warningScope);
+               object.refresh();
+               if (object != lxConstantList)
+                  constant = false;
+
                break;
             default:
                constant = false;

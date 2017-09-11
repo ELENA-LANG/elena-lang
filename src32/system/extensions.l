@@ -50,17 +50,83 @@ extension objectOp
     bool isNil
         = nil == self.
         
-//    /// Returns true if the object is literal or character
-//    isLiteral
-//        = self cast:%eval to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. generic eval : anObject = false. }.
-//        
-//    /// Returns true if the object is integer numereric
-//    isInteger
-//        = self cast:%eval to:{ int : x = true. long : x = true. short : x = true. byte : x = true. generic eval : anObject = false. }.
-//        
-//    /// Returns true if the object is numereric
-//    isNumeric
-//        = self cast:%eval to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. generic eval : anObject = false. }.
+    /// Returns true if the object is literal or character
+    isLiteral
+    [
+        var o := self literal \ back:$nil.
+        if ($nil == o)
+        [
+            o := self wide \ back:$nil.
+            if ($nil == o)
+            [
+                o := self char \ back:$nil.
+                
+                if ($nil == o)
+                [
+                    ^ false
+                ]
+            ]
+        ].
+        
+        ^ true.
+    ]
+    
+    /// Returns true if the object is integer numereric
+    isInteger
+    [
+        var o := self int \ back:$nil.
+        if ($nil == o)
+        [
+            o := self long \ back:$nil.
+            if ($nil == o)
+            [
+                o := self short \ back:$nil.
+                
+                if ($nil == o)
+                [
+                    o := self byte \ back:$nil.
+                    
+                    if ($nil == o)
+                    [
+                        ^ false
+                    ]
+                ]
+            ]
+        ].
+        
+        ^ true.
+    ]
+    
+    /// Returns true if the object is numereric
+    isNumeric
+    [
+        var o := self int \ back:$nil.
+        if ($nil == o)
+        [
+            o := self long \ back:$nil.
+            if ($nil == o)
+            [
+                o := self short \ back:$nil.
+                
+                if ($nil == o)
+                [
+                    o := self byte \ back:$nil.
+                    
+                    if ($nil == o)
+                    [
+                        o := self real \ back:$nil.
+                        
+                        if ($nil == o)
+                        [
+                            ^ false
+                        ]
+                    ]
+                ]
+            ]
+        ].
+        
+        ^ true.
+    ]
         
     bool isEmpty
         = self length == 0.
@@ -78,12 +144,12 @@ extension objectOp
     stacksafe reallocate int:aNewLength
         => system'core_routines'__array.
         
-//    shift : n
-//    [
-//        if (n < 0)
-//            [ ^ self shiftLeft int:(n int; negative) ];
-//            [ ^ self shiftRight int:(n int) ].
-//    ]
+    shift : n
+    [
+        if (n < 0)
+            [ ^ self shiftLeft int(n int; negative) ];
+            [ ^ self shiftRight int:n ].
+    ]
 }
 
 // --- Operations ---
