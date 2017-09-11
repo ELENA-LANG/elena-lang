@@ -2,17 +2,13 @@
 In development:
 ------                              
               xdev - generic development                                            
-                 * should not be allowed to provide returning type for constructors
-
-                 * idle optimization: sending get message to $nil - should always return $nil
                  * do not generate typecast message for an extension
-                 * declaring varof:type, before declaring type class
-                 * declaring varof:struct - is not correctly recognized if declared before the struct
                  * Implicit constructor should not have return statements
                  * warn on boxing
                  * warn on typifying
                  * suppres warnings in the code
                  * byte shift operations
+                 * idle optimization: sending get message to $nil - should always return $nil
 
               xdev - general optimization  
                  * bcopya quit => quit
@@ -113,6 +109,8 @@ Pipeline:
                  * uint16
 
               xdev - general implementation
+                 * declaring varof:type, before declaring type class
+                 * declaring varof:struct - is not correctly recognized if declared before the struct
                  * use intOp for assigning a constant
                  * syntax modify : open arg list
                  * support sealed accumulator constants

@@ -899,8 +899,8 @@ private:
    void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node);
-   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
-   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed);
+   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
+   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute);
    void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, bool classClassMode);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool closureDeclarationMode = false);
 

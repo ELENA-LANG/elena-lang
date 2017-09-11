@@ -1,6 +1,8 @@
 import forms.
 import extensions.
 
+import system'drawing.
+
 class Window
 {
     object form.

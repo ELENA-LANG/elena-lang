@@ -73,6 +73,7 @@ namespace _ELENA_
    #define errIllegalOperation      "%s(%d:%d): error 152: Illegal operation\n"
    #define errInvalidConstant       "%s(%d:%d): error 153: Invalid constant '%s'\n"
    #define errInvalidMultimethod    "%s(%d:%d): error 154: Invalid multimethod declararion in the class '%s'\n"
+   #define errTypeNotAllowed        "%s(%d:%d): error 155: returning type attribute '%s' cannot be specified for this method\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
