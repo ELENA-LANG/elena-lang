@@ -214,6 +214,13 @@ template if :: expr,else =
     ! [
     ].
 
+template ifnot :: expr,else =
+    expr bool; inverted ?
+    [
+    ]
+    ! [
+    ].
+
 // -- try-catch statement ---
 
 template try :: expr =

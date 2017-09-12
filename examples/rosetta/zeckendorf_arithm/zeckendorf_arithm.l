@@ -1,16 +1,14 @@
-#import extensions.
-
-#subject zeckendorf = ZeckendorfNumber.
+import extensions.
 
 const dig = ("00","01","10").
 const dig1 = ("","1","10").
 
-sealed dispatchable(zeckendorf) struct ZeckendorfNumber :: BaseNumber
+sealed struct ZeckendorfNumber :: BaseNumber
 {
     int dVal.
     int dLen.
     
-    stacksafe implicit n &literal:s
+    stacksafe explicit n(LiteralValue s)
     [
         int i := s length - 1.
         int q := 1.
@@ -20,20 +18,20 @@ sealed dispatchable(zeckendorf) struct ZeckendorfNumber :: BaseNumber
         
         while (i >= 0)
         [
-            dVal += (intConvertor convert &char:(s@i) - 48) * q.
+            dVal += ((intConvertor convert(s[i]) - 48) * q).
             q *= 2. 
             
             i -= 1.
         ].
     ]
     
-    stacksafe $readContent &vint:val &vint:len
+    stacksafe $readContent vint:val vint:len
     [
-        val := dVal.
-        len := dLen.
+        val int := dVal.
+        len int := dLen.
     ]
     
-    sealed $a &int:n
+    sealed $a(IntNumber n)
     [
         int i := n.
 
@@ -44,66 +42,71 @@ sealed dispatchable(zeckendorf) struct ZeckendorfNumber :: BaseNumber
                 dLen := i.
             ].
             
-            ((dVal shift:(i * 2) and:3)) =>
-                0 [ ^ $self. ];
-                1 [ ^ $self. ];
+            ((dVal >> (i * 2)) && 3) =>
+                0 [ ^ $self ];
+                1 [ ^ $self ];
                 2 [
-                    ifnot (dVal shift:(i + 1 * 2) allMask:1)
+                    ifnot ((dVal >> ((i + 1) * 2)) allMask:1)
                     [
                         ^ $self.
                     ].
                     
-                    dVal += 1 shift:(-1 - i*2).
+                    dVal += (1 << (i*2 + 1)).
                     ^ $self.
                 ];
                 3 [
-                    dVal := dVal and:(3 shift:(-1*i*2) inverted).
+                    dVal := dVal && ((3 << i*2) inverted).
                     
-                    $self $b &int:((i+1)*2).
+                    $self $b((i+1)*2).
                 ].
             
             i += 1.
         ].
     ]
     
-    $b &int:pos
+    inc
     [
-        if (pos == 0)
-        [
-            dVal += 1.
-            $self $a &int:0.
-            
-            ^ $self.
-        ].
+        dVal += 1.
+        $self $a(0).
+    ]
+    
+    /*sealed*/ $b(IntNumber pos)
+    [
+        if (pos == 0) [ ^ $self inc ].
         
-        ifnot (dVal shift:pos allMask:1)
+        ifnot((dVal >> pos) allMask:1)
         [
-            dVal := dVal + 1 shift:pos.
-            
-            $self $a &int:(pos / 2).
-            if (pos > 1) [ $self $a &int:(pos / 2 - 1). ];
-            [
-                dVal := dVal and:(1 shift:(-1 * pos) inverted).
-                
-                $self $b &int:(pos + 1).
-                $self $b &int:(pos - (pos > 1) iif:2:1).
-            ].            
+            dVal += (1 << pos).
+            $self $a(pos / 2).
+            if (pos > 1) [ $self $a((pos / 2) - 1) ]
+        ];
+        [
+            dVal := dVal && (1 << pos) inverted.
+            $self $b(pos + 1).
+            $self $b(pos - (pos > 1) iif(2,1)).
         ].
     ]
     
-    constructor $sum &zeckendorf:n &zeckendorf:m
+    constructor $sum(ZeckendorfNumber n, ZeckendorfNumber m)
     [
         int mVal := 0.
         int mLen := 0.
         
-        n $readContent &vint:dVal &vint:dLen.
-        m $readContent &vint:mVal &vint:mLen.
+        int x := 0.
+        int y := 0.
+        n $readContent vint:x vint:y.
+        dVal := x.
+        dLen := y.
         
-        0 till:(mLen + 1 * 2) &doEach:GN
+        //n $readContent vint:dVal vint:dLen.
+        
+        m $readContent vint:mVal vint:mLen.
+        
+        0 till((mLen + 1) * 2) do(:GN)
         [
-            if (mVal shift:GN allMask:1)
+            if (mVal shiftRight:GN; allMask:1)
             [
-                $self $b &int:GN.
+                $self $b(GN).
             ].
         ].
     ]
@@ -113,25 +116,34 @@ sealed dispatchable(zeckendorf) struct ZeckendorfNumber :: BaseNumber
         if (dVal == 0)
             [ ^ "0". ].
             
-        literal s := dig1@(dVal shift:(dLen * 2) and:3).
+        literal s := dig1[(dVal >> (dLen * 2)) && 3].
         int i := dLen - 1.
         while (i >= 0)
         [
-            s := s + dig@(dVal shift:(dLen * 2) and:3)
+            s := s + dig[(dVal >> (i * 2)) && 3].
             
-            i-=1.
+            i-=1
         ].
         
         ^ s.
     ]
     
-    add &zeckendorf:n
-        = ZeckendorfNumber $sum &zeckendorf:$self &zeckendorf:n.
+    add(ZeckendorfNumber n)
+        = ZeckendorfNumber $sum($self, n).
 }
 
 program =
 [
     var n := 10n.
     
-    console writeLine:(n + 10n).
+    n += 10n.    
+    console printLine(n).
+    n += 10n.    
+    console printLine(n).
+    n += 1001n.    
+    console printLine(n).
+    n += 1000n.    
+    console printLine(n).
+    n += 10101n.    
+    console printLine(n).
 ].

@@ -2,6 +2,9 @@
 In development:
 ------                              
               sdev - rosetta samples
+                 * $sum : n $readContent vint:dVal vint:dLen. - dLen is not correctly set
+                 * sealed $b is not called
+
                  * Zeckendorf arithmetic
 
               sdev - console samples
