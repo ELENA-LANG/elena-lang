@@ -13,6 +13,7 @@
 [ELC]
 [-] #345 : Resend statement does not work correctly for 
            an extension
+[-] #363 : Structure field in the closure 
 
 [Samples]
 [+] Zeckendorf arithmetic

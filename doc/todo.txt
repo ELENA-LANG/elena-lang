@@ -1,12 +1,6 @@
 ------                                 
 In development:
 ------                              
-              xdev - general implementation
-                 * fix #363 : Structure field in the closure
-
-              sdev - console samples
-                 * test matrix determinant
-
               ydev - upndown
                  * migrate xforms
                  * review assembly script : the parameter order
