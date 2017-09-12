@@ -53,3 +53,4 @@
 ..\..\bin\elc gameoflife\gameoflife.prj
 ..\..\bin\elc zahngsuen\zahngsuen.prj
 ..\..\bin\elc zeckendorf\zeckendorf.prj
+..\..\bin\elc zeckendorf_arithm\zeckendorf_arithm.prj 

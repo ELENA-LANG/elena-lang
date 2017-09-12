@@ -10,10 +10,13 @@
 [ELENA]
 [+] #313 : Reimplement assignment operators
 
-
 [ELC]
 [-] #345 : Resend statement does not work correctly for 
            an extension
+
+[Samples]
+[+] Zeckendorf arithmetic
+
 
 ***************************************************************
                              What's New in 3.2.0

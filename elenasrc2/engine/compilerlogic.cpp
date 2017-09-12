@@ -1644,7 +1644,7 @@ bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& com
    return false;
 }
 
-bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef)
+bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected)
 {
    SNode exprNode = node.findSubNodeMask(lxObjectMask);   
 
@@ -1683,7 +1683,7 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
 
       compiler.injectLocalBoxing(exprNode, node.argument);
 
-      node = variable ? lxLocalUnboxing : lxExpression;
+      node = (variable || unboxingExpected) ? lxLocalUnboxing : lxExpression;
    }
 
    return true;

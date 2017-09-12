@@ -1,11 +1,8 @@
 ------                                 
 In development:
 ------                              
-              sdev - rosetta samples
-                 * $sum : n $readContent vint:dVal vint:dLen. - dLen is not correctly set
-                 * sealed $b is not called
-
-                 * Zeckendorf arithmetic
+              xdev - general implementation
+                 * fix #363 : Structure field in the closure
 
               sdev - console samples
                  * test matrix determinant

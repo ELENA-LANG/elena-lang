@@ -8,6 +8,9 @@ sealed struct ZeckendorfNumber :: BaseNumber
     int dVal.
     int dLen.
     
+    clone
+        = ZeckendorfNumber $new(dVal,dLen).
+    
     stacksafe explicit n(LiteralValue s)
     [
         int i := s length - 1.
@@ -70,7 +73,7 @@ sealed struct ZeckendorfNumber :: BaseNumber
         $self $a(0).
     ]
     
-    /*sealed*/ $b(IntNumber pos)
+    $b(IntNumber pos)
     [
         if (pos == 0) [ ^ $self inc ].
         
@@ -86,20 +89,33 @@ sealed struct ZeckendorfNumber :: BaseNumber
             $self $b(pos - (pos > 1) iif(2,1)).
         ].
     ]
-    
+
+    $c(IntNumber pos)
+    [
+        if ((dVal >> pos) allMask:1)
+        [
+            dVal := dVal && (1 << pos) inverted.
+            
+            ^ $self
+        ].
+                                        
+        $self $c(pos + 1).
+        
+        if (pos > 0)
+        [
+            $self $b(pos - 1).
+        ];
+        [
+            $self inc.
+        ]            
+    ]
+            
     constructor $sum(ZeckendorfNumber n, ZeckendorfNumber m)
     [
         int mVal := 0.
         int mLen := 0.
         
-        int x := 0.
-        int y := 0.
-        n $readContent vint:x vint:y.
-        dVal := x.
-        dLen := y.
-        
-        //n $readContent vint:dVal vint:dLen.
-        
+        n $readContent vint:dVal vint:dLen.        
         m $readContent vint:mVal vint:mLen.
         
         0 till((mLen + 1) * 2) do(:GN)
@@ -109,6 +125,57 @@ sealed struct ZeckendorfNumber :: BaseNumber
                 $self $b(GN).
             ].
         ].
+    ]
+    
+    constructor $difference(ZeckendorfNumber n, ZeckendorfNumber m)
+    [
+        int mVal := 0.
+        int mLen := 0.
+        
+        n $readContent vint:dVal vint:dLen.        
+        m $readContent vint:mVal vint:mLen.
+        
+        0 till((mLen + 1) * 2) do(:GN)      
+        [
+            if (mVal shiftRight:GN; allMask:1)
+            [
+                $self $c(GN).
+            ].
+        ].
+        
+        while ((((dVal >> (dLen*2)) && 3) == 0) || (dLen == 0))
+        [
+            dLen -= 1.
+        ].
+    ]
+    
+    constructor $product(ZeckendorfNumber n, ZeckendorfNumber m)
+    [
+        n $readContent vint:dVal vint:dLen.        
+        
+        var Na := m.
+        var Nb := m.
+        var Nr := 0n.
+        var Nt := 0n.
+        
+        0 to((dLen + 1) * 2) do(:i)
+        [
+            if (((dVal shiftRight:i) && 1) > 0)
+            [
+                Nr += Nb
+            ].
+            Nt := Nb.
+            Nb += Na.
+            Na := Nt.
+        ].
+        
+        Nr $readContent vint:dVal vint:dLen.
+    ]
+    
+    constructor $new(IntNumber v, IntNumber l)
+    [
+        dVal := v.
+        dLen := l.
     ]
     
     literal
@@ -130,10 +197,17 @@ sealed struct ZeckendorfNumber :: BaseNumber
     
     add(ZeckendorfNumber n)
         = ZeckendorfNumber $sum($self, n).
+        
+    subtract(ZeckendorfNumber n)
+        = ZeckendorfNumber $difference($self, n).
+        
+    multiply(ZeckendorfNumber n)
+        = ZeckendorfNumber $product($self, n).
 }
 
 program =
 [
+    console printLine("Addition:").
     var n := 10n.
     
     n += 10n.    
@@ -145,5 +219,21 @@ program =
     n += 1000n.    
     console printLine(n).
     n += 10101n.    
+    console printLine(n).
+    
+    console printLine("Subtraction:").
+    n := 1000n.
+    n -= 101n.
+    console printLine(n).
+    n := 10101010n.
+    n -= 1010101n.
+    console printLine(n).
+    
+    console printLine("Multiplication:").
+    n := 1001n.
+    n *= 101n.
+    console printLine(n).
+    n := 101010n.
+    n += 101n.
     console printLine(n).
 ].

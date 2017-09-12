@@ -45,6 +45,7 @@ using namespace _ELENA_;
 #define HINT_RESENDEXPR       0x00000400
 #define HINT_LAZY_EXPR        0x00000200
 #define HINT_DYNAMIC_OBJECT   0x00000100  // indicates that the structure MUST be boxed
+#define HINT_UNBOXINGEXPECTED 0x00000080
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
@@ -1256,7 +1257,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
          // map if the object is outer one
          else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal
             || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
-            || outer.outerObject.kind == okLocalAddress)
+            || outer.outerObject.kind == okLocalAddress || outer.outerObject.kind == okFieldAddress)
          {
             outer.reference = info.fields.Count();
 
@@ -6220,6 +6221,10 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
       else if (sourceNode == lxSignatureConstant && targetRef == scope.signatureReference) {
          boxing = false;
       }
+      else if (node == lxUnboxing && !boxing) {
+         //HOTFIX : to unbox structure field correctly
+         sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
+      }
       else sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
 
       // adjust primitive target
@@ -6228,7 +6233,7 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
          node.findChild(lxTarget).setArgument(targetRef);
       }
 
-      if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef)) {
+      if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED))) {
          scope.raiseError(errIllegalOperation, node);
       }
    }
