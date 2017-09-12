@@ -1,6 +1,9 @@
 ------                                 
 In development:
 ------                              
+              sdev - rosetta samples
+                 * Y combinator
+
               ydev - upndown
                  * migrate xforms
                  * review assembly script : the parameter order
@@ -29,7 +32,9 @@ In development:
                  * implement live programming environment
 
               sdev - rosetta samples
+                 * Runtime evaluation
                  * Zebra puzzle
+                 * Word search
                  * implement rosetta samples
 
 ------                                 

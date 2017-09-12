@@ -1,0 +1,10 @@
+﻿[project]
+executable=ycombinator.exe
+options=-w3
+namespace=ycombinator
+template=console
+debuginfo=-1
+
+[files]
+ycombinator.l
+

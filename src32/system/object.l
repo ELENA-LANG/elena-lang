@@ -61,4 +61,7 @@ extension commonOp
         
         self close
     ]
+    
+    ifTrue:trueBlock ifFalse:falseBlock
+        = self if(trueBlock,falseBlock).
 }

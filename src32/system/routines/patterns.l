@@ -754,6 +754,9 @@ extension patternOp
         = Filter new(patternFun, self enumerator).
         
     till:max repeat:aRepeater
+        = Repeater new(self, max + 1, aRepeater).
+        
+    to:max repeat:aRepeater
         = Repeater new(self, max, aRepeater).
         
 //    counting
