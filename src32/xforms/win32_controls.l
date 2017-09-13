@@ -38,7 +38,7 @@ template icontainerof :: type
     
     appendControl : control
     [
-        control $create container:$self int:($self xhandle)
+        control $create container:$self int($self xhandle)
     ]
 }
 
@@ -49,10 +49,10 @@ class BaseControl
     int    theHandle.
     
     /// properties
-    int x      :: nxprop(readXTo,writeX).
-    int y      :: nxprop(readXTo,writeY).
-    int width  :: nxprop(readWidthTo,writeWidth).
-    int height :: nxprop(readHeightTo,writeHeight).
+    int vxprop x      :: readXTo,writeX.
+    int vxprop y      :: readXTo,writeY.
+    int vxprop width  :: readWidthTo,writeWidth.
+    int vxprop height :: readHeightTo,writeHeight.
     
     int xhandle = theHandle.
     
@@ -118,17 +118,17 @@ class BaseControl
 
 class BaseContainer :: BaseControl
 {
-    listof theControls(control).
+    list<IControl> theControls.
     
     constructor new
     [
-        theControls := 5.
+        theControls := list<IControl>(5).
     ]
 }
 
 // --- Label ---
 
-sealed class Label :: BaseControl, icontrolof(label)
+sealed class Label :: BaseControl, icontrolof<label>
 {
     constructor new container:container int:hParent 
     [
@@ -136,7 +136,7 @@ sealed class Label :: BaseControl, icontrolof(label)
     ]
     
     constructor new : parent
-        <= new container:parent int:(parent xhandle);
+        <= new container:parent int(parent xhandle);
     [
     ]
     
@@ -157,7 +157,7 @@ sealed class Label :: BaseControl, icontrolof(label)
 
 // --- Window ---
 
-sealed class Window :: BaseContainer, icontainerof(window)
+sealed class Window :: BaseContainer, icontainerof<window>
 {
     constructor new
         <= new;

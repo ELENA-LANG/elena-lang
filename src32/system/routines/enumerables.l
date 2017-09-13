@@ -204,6 +204,46 @@ extension enumerableOp
             [ ^ $nil ]
     ]
 
+    maximalMember
+    [
+        enumerator en := self enumerator.
+        
+        object maximal := $nil.
+        while (en next)
+        [
+            var item := en get.
+            if ($nil == maximal)
+            [
+                maximal := item
+            ]; if (maximal < item)
+            [
+                maximal := item
+            ]
+        ].
+        
+        ^ maximal   
+    ]
+    
+    minimalMember
+    [
+        enumerator en := self enumerator.
+        
+        object maximal := $nil.
+        while (en next)
+        [
+            var item := en get.
+            if ($nil == maximal)
+            [
+                maximal := item
+            ]; if (maximal > item)
+            [
+                maximal := item
+            ]
+        ].
+        
+        ^ maximal   
+    ]
+    
     lastMember
     [
         enumerator anEnumerator := self enumerator.

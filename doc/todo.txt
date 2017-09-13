@@ -1,11 +1,10 @@
 ------                                 
 In development:
 ------                              
-              sdev - rosetta samples
-                 * Y combinator
-
               ydev - upndown
                  * migrate xforms
+
+                 * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
                  * review assembly script : the parameter order
                  * simple form with several labels
                  * simple form with several labels : fonts, sizes
@@ -31,15 +30,15 @@ In development:
                  * implement xml library
                  * implement live programming environment
 
+------                                 
+Pipeline:
+------                                                                                         
               sdev - rosetta samples
                  * Runtime evaluation
                  * Zebra puzzle
                  * Word search
                  * implement rosetta samples
 
-------                                 
-Pipeline:
-------                                                                                         
               xdev - general implementation
                  * implement closure with explicit class type:
 			| if(&type<FormatException>:e) []
@@ -90,9 +89,6 @@ Pipeline:
                  * allow to create xml project
                  * xml : format the xml on save
                  * switch to xml config files #14
-
-              sdev - script engine
-                 * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
 
               xdev - general optimization  
                  * hexadecimal - uint32

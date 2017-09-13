@@ -21,7 +21,7 @@ rem bin\elc src31\net\net.prj
 bin\elc src32\forms\forms.prj
 bin\elc src32\sqlite\sqlite.prj
 bin\elc src32\cellular\cellular.prj
-rem bin\elc src32\graphics\graphics.prj
-rem bin\elc src32\xforms\xforms.prj
+bin\elc src32\graphics\graphics.prj
+bin\elc src32\xforms\xforms.prj
 
 rem bin\elc src31\system\system_64.prj

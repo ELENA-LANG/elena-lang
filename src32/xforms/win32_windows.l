@@ -23,7 +23,7 @@ template iform :: type
     }.
 }
 
-sealed class Form :: iform(object)
+sealed class Form :: iform<object>
 {
     hwnd   theHandle.
     int    theWidth.
@@ -32,13 +32,13 @@ sealed class Form :: iform(object)
     window theWindow.
     
     /// events
-    func onInit    :: event(theInitFunc).
-    func onDestroy :: event(theDestroyFunc).
-    func onPaint   :: event(thePaintFunc).
+    func event onInit    :: theInitFunc.
+    func event onDestroy :: theDestroyFunc.
+    func event onPaint   :: thePaintFunc.
 
     /// properties
-    int width  :: nxprop(readWidthTo,writeWidth).
-    int height :: nxprop(readHeightTo,writeHeight).
+    int vxprop width  :: readWidthTo,writeWidth.
+    int vxprop height :: readHeightTo,writeHeight.
     
     constructor new
     [

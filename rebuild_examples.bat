@@ -27,5 +27,5 @@ bin\elc examples\db\sqlite\sqlite_test.prj
 bin\elc examples\console\pi2\pi2.prj
 rem bin\elc examples\net\chat\chatserver.prj
 rem bin\elc examples\net\chat\chat.prj
-rem bin\elc examples\gui\helloworld\xforms_hellowindow.prj
+bin\elc examples\gui\helloworld\xforms_hellowindow.prj
 rem bin\elc examples\gui\helloworld\xforms_hellowindow.xprj

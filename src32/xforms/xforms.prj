@@ -1,5 +1,5 @@
 ﻿[project]
-output=..\..\lib31
+output=..\..\lib32
 options=-w3
 namespace=xforms
 template=lib
@@ -7,7 +7,7 @@ debuginfo=-1
 
 [manifest]
 name=ELENA Library For Rendering UI
-version=3.1.0
+version=3.2.0
 author=Alex Rakov
 
 [files]
