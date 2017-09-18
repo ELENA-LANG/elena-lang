@@ -843,6 +843,30 @@ bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t typeRef, ref_t 
    else return false;
 }
 
+void Compiler::ModuleScope :: saveIncludedModule(_Module* extModule)
+{
+   // HOTFIX : do not include itself
+   if (module == extModule)
+      return;
+
+   ReferenceNs sectionName(module->Name(), IMPORT_SECTION);
+
+   _Memory* section = module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false);
+
+   // check if the module alread included
+   MemoryReader metaReader(section);
+   while (!metaReader.Eof()) {
+      ident_t name = metaReader.getLiteral(DEFAULT_STR);
+      if (name.compare(extModule->Name()))
+         return;
+   }
+
+   // otherwise add it to the list
+   MemoryWriter metaWriter(section);
+
+   metaWriter.writeLiteral(extModule->Name().c_str());
+}
+
 void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
 {
    ReferenceNs sectionName(module->Name(), ACTION_SECTION);
@@ -908,7 +932,7 @@ ref_t Compiler::ModuleScope :: mapTemplateClass(ident_t templateName)
    return module->mapReference(forwardName);
 }
 
-bool Compiler::ModuleScope :: includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes)
+bool Compiler::ModuleScope :: includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion)
 {
    // check if the module exists
    _Module* module = project->loadModule(name, true);
@@ -921,6 +945,7 @@ bool Compiler::ModuleScope :: includeModule(ident_t name, bool& duplicateExtensi
 
          return true;
       }
+      else duplicateInclusion = true;
    }
    return false;
 }

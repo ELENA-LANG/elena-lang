@@ -1,6 +1,10 @@
 ------                                 
 In development:
 ------                              
+
+              xdev - general implementation
+                 * #362 : Template generated class : cannot be resolved
+
               ydev - upndown
                  * migrate xforms
 

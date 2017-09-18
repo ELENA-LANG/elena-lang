@@ -339,10 +339,15 @@ _Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& referenc
    LoadResult result = lrNotFound;
    _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
    if (result != lrSuccessful) {
-      if (!silentMode)
-         raiseError(getLoadError(result), weakReferenceName);
+      // Bad luck : try to resolve it indirectly
+      module = _loader.resolveIndirectWeakModule(weakReferenceName, result, reference);
+      if (result != lrSuccessful) {
+         if (!silentMode)
+            raiseError(getLoadError(result), weakReferenceName);
 
-      return NULL;
+         return NULL;
+      }
+      else return module;
    }
    else return module;
 }

@@ -163,7 +163,7 @@ struct _CompilerScope
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 
-   virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes) = 0;
+   virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion) = 0;
 
    virtual void validateReference(SNode terminal, ref_t reference) = 0;
 

@@ -314,6 +314,7 @@ private:
       virtual bool saveAttribute(ident_t typeName, ref_t classReference, bool internalAttr);
       bool saveExtension(ref_t message, ref_t type, ref_t role);
       void saveAction(ref_t message, ref_t reference);
+      void saveIncludedModule(_Module* extModule);
 
       void validateReference(SNode terminal, ref_t reference);
 
@@ -331,6 +332,7 @@ private:
          duplicateAttributes = loadAttributes(extModule);
          loadExtensions(extModule, duplicateExtensions);
          loadActions(extModule);
+         saveIncludedModule(extModule);
       }
 
       virtual ref_t mapAnonymous();
@@ -366,7 +368,7 @@ private:
          else return module->mapSection(reference, existing);
       }
 
-      virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes);
+      virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion);
 
       ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };

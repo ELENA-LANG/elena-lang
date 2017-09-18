@@ -2324,9 +2324,13 @@ void DerivationReader :: includeModule(SNode ns, _CompilerScope& scope)
 
    bool duplicateExtensions = false;
    bool duplicateAttributes = false;
-   if (scope.includeModule(name, duplicateExtensions, duplicateAttributes)) {
+   bool duplicateInclusion = false;
+   if (scope.includeModule(name, duplicateExtensions, duplicateAttributes, duplicateInclusion)) {
       if (duplicateExtensions)
          scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
+   }
+   else if (duplicateInclusion) {
+      scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, ns);
    }
    else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
 }
