@@ -20,7 +20,6 @@ dynamicForm = Library new; evalSelf:
                         eval path:"helloworld.xs";
                         eval:l
                 ];
-                first; eval; 
-                eval.
+                first; eval.
 
 //  staticForm =    helloworld'stat'mainForm.

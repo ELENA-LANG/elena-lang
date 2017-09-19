@@ -141,7 +141,22 @@ singleton $StartOne :: $Strategy
 
 singleton $SymbolOne :: $Strategy
 {
+    begin($ClassContext context, $ParameterContext parameters)  
+    [
+        context push(context length).
+    ]
+    
     expression = $SymbolBody.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        int index := context pop.
+        int len := context length - index.
+        var tape := Tape new(context tape, index, len).
+        
+        context trim(index).
+        context append(tape).
+    ]
 }
 
 singleton $PreloadedOne :: $Strategy

@@ -60,15 +60,15 @@ sealed embeddable struct UnsafePointer
 
     constructor new : anObject
     [
-        $self set:anObject.
+        $self $setReference:anObject.
     ]
     
     stacksafe explicit(Object ref)
     [
-        $self set:ref.
+        $self $setReference:ref.
     ]
     
-    $setReference:anObject
+    stacksafe $setReference:anObject
         => system'core_routines'__dptr.
     
     stacksafe $setUnsafeReference:anObject
@@ -86,7 +86,7 @@ sealed embeddable struct UnsafePointer
     [
         $self $setUnsafeReference:anObject.
     ]
-                
+                                                
     stacksafe offset int:offs
     [
         thePointer := thePointer + offs.

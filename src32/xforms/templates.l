@@ -17,6 +17,6 @@ method template vxprop :: prop_type,prop_name
     
     stacksafe set prop_name:val
     [
-        $self set_method type(val toInt)
+        $self set_method prop_type(val toInt)
     ]
 }

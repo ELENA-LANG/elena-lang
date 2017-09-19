@@ -91,7 +91,7 @@ singleton $classFactoryX
         dirty_ptr name_ptr := aName.
         name_ptr saveTo intarray:wndclass int:10.
         
-        system'external'USER32 RegisterClassExW intarray:wndclass.        
+        int r := system'external'USER32 RegisterClassExW intarray:wndclass.        
         
         ^ aName
     ]

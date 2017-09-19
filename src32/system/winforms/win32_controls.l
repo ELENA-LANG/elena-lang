@@ -53,6 +53,8 @@ sealed const embeddable struct WindowHandle
                 int:       aParamIndex.
         ].
 
+        int err := system'external'KERNEL32 GetLastError.
+
         if (aHandle==0)
             [ WinFormsException new; raise ].
 
