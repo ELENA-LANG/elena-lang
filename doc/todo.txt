@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * #362 : Template generated class : cannot be resolved
-
               ydev - upndown
                  * migrate xforms
 
@@ -18,6 +15,16 @@ In development:
                  * implement net suppport
                  * reimplement chat sample
                  * reimplement upndown
+
+               xdev - linux
+                 * port compiler
+                 * port elenart
+
+              adev - linux
+                 * migrate LIB32
+
+               xdev - linux
+                 * proting debugger
 
               xdev - general implementation
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
@@ -283,9 +290,6 @@ Pipeline:
                  * use bool lamda expression for seek operations
                  * not ebeddable structure should not be embedded into another structure
                  * use explicit literal constants for declaring int, hex, signed, unsigned, long, real, literal, wide
-
-              adev - linux
-                 * migrate LIB30
 
               zdev 
                  * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class

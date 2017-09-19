@@ -319,11 +319,23 @@ void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap
 
          param = i;
       }
+      else if (message[i] == '&') {
+
+      }
       else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
       }
       else if (message[i] == ']' && i == (getlength(message) - 1)) {
       }
       else return NULL;
+   }
+
+   int flags = 0;
+   if (message.startsWith("set&")) {
+      subject = 4;
+      flags = PROPSET_MESSAGE;
+   }
+   else if (message.compare("set", param)) {
+      flags = PROPSET_MESSAGE;
    }
 
    if (param != 0) {
@@ -333,5 +345,5 @@ void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap
 
    ref_t signatureId = subjects.get(signature);
 
-   return (void*)(encodeMessage(signatureId, paramCount));
+   return (void*)(encodeMessage(signatureId, paramCount) | flags);
 }

@@ -37,6 +37,8 @@
    #define expr_member ::=   message;
    #define expr_member ::=   assign;
    #define expr_member ::=   operator;
+   #define expr_member ::= <= += "%""nextExpression[0]""" =>
+                             ";";
 
    #define expr_member ::= <= += "%""openCode[0]""" =>
                              "code" "(" code ")"

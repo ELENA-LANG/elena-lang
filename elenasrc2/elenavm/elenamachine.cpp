@@ -954,6 +954,15 @@ int Instance :: parseMessage(ident_t message)
       else return NULL;
    }
 
+   int flags = 0;
+   if (message.startsWith("set&")) {
+      subject = 4;
+      flags = PROPSET_MESSAGE;
+   }
+   else if (message.compare("set", param)) {
+      flags = PROPSET_MESSAGE;
+   }
+
    if (param != 0) {
       signature.copy(message + subject, param - subject);
    }
@@ -961,7 +970,7 @@ int Instance :: parseMessage(ident_t message)
 
    ref_t signatureId = (ref_t)resolveReference(signature, 0);
 
-   return encodeMessage(signatureId, paramCount);
+   return encodeMessage(signatureId, paramCount) | flags;
 }
 
 // --- ELENAMachine::Config ---

@@ -356,6 +356,11 @@ sealed nonstructural class TextBuilder
         
         theLength reduce int:aLength
     ]
+    
+    stacksafe trim int:n
+    [
+        theLength reduce int:n
+    ]
 }
 
 symbol TextBuffer = TextBuilder.

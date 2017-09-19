@@ -1,7 +1,10 @@
 [[
    #grammar cf
 
-   #define start     ::= 
+   #define start     ::= $eof;
+   #define start     ::= form $eof;
+
+   #define form     ::=
 <=
 root
 (

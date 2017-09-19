@@ -5,6 +5,7 @@ import extensions.
 
 singleton $message_token.
 singleton $expr_end_token.
+singleton $previous_token.
 singleton $expr_var_token.
 singleton $subexpr_token.
 singleton $assign_token.
@@ -116,7 +117,8 @@ limited class $Strategy
     type<$Strategy> variable_one  []
     type<$Strategy> loop_one      []
     
-    type<$Strategy> if_one($ClassContext context) []
+    type<$Strategy> if_one($ClassContext context)   []
+    type<$Strategy> next_one($ClassContext context, $ParameterContext parameters) []
     
     begin($ClassContext context, $ParameterContext parameters) []
     end($ClassContext context, $ParameterContext parameters)   []
@@ -367,6 +369,7 @@ class $BaseExpression :: $Strategy
         textbuffer buffer := TextBuffer new.
         int counter := -1.
         bool messageExpr := false.
+        bool popRequired := false.
         until(token equal reference:$expr_end_token)
         [
             if (token equal reference:$subexpr_token)
@@ -375,7 +378,8 @@ class $BaseExpression :: $Strategy
             ];
             if (token equal reference:$message_token)
             [
-                buffer append(context pop).
+                buffer insert int:0 literal:"&".
+                buffer insert int:0 literal(context pop).
                 messageExpr := true.
             ];
             [
@@ -391,6 +395,13 @@ class $BaseExpression :: $Strategy
                     [
                         token := %"tapeOp.tape_var[]".
                     ]
+                ];
+                if (token equal reference:$previous_token)
+                [
+                    context append(counter + 1).
+                    token := %"tapeOp.tape_stack[]".
+                    
+                    popRequired := true.
                 ].
                 context append:token.
                 counter := counter + 1.
@@ -401,12 +412,26 @@ class $BaseExpression :: $Strategy
 
         if (messageExpr)
         [
+            buffer trim int:1.
             buffer write literal:"[".
             buffer write int:counter.
             buffer write literal:"]".
             
             context append(Message new literal:buffer)
+        ].
+        
+        if (popRequired)
+        [
+            context append(%"tapeOp.tape_pop_prev[1]").
         ]
+    ]
+    
+    next_one($ClassContext context, $ParameterContext parameters) 
+    [
+        $self end(context, parameters).
+        $self begin(context, parameters).
+        
+        context push:$previous_token.
     ]
     
     setAssignToken($ClassContext context, LiteralValue t)
@@ -603,6 +628,11 @@ class Library //:: Scope
     
     openExpression
         <= open(%expression).
+
+    nextExpression
+    [
+        _state next_one(_context, _parameters).
+    ]
 
     openReturning
         <= open(%returning).

@@ -69,6 +69,9 @@ extension tapeOp
     tape_pop : o
         = o.
     
+    tape_pop_prev : o
+        = $self.
+    
     tape_stack args:params
     [
         int n := self int.
