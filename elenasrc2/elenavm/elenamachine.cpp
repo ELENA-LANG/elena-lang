@@ -116,7 +116,7 @@ void InstanceConfig :: init(path_t configPath, IniConfigFile& config)
    //maxThread = config.getIntSetting(SYSTEM_CATEGORY, SYSTEM_MAXTHREAD, maxThread);
    mgSize = config.getHexSetting(LINKER_MGSIZE, mgSize);
    ygSize = config.getHexSetting(LINKER_YGSIZE, ygSize);
-   platform = config.getHexSetting(SYSTEM_PLATFORM, platform);
+   platform = config.getIntSetting(SYSTEM_PLATFORM, platform);
 
    const char* path = config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL);
    if (!emptystr(path)) {
@@ -330,7 +330,12 @@ _Module* Instance :: resolveWeakModule(ident_t weakReferenceName, ref_t& referen
    LoadResult result = lrNotFound;
    _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
    if (result != lrSuccessful) {
-      return NULL;
+      // Bad luck : try to resolve it indirectly
+      module = _loader.resolveIndirectWeakModule(weakReferenceName, result, reference);
+      if (result != lrSuccessful) {
+         return NULL;
+      }
+      else return module;
    }
    else return module;
 }

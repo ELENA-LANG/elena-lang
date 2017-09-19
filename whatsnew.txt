@@ -14,6 +14,7 @@
 [-] #345 : Resend statement does not work correctly for 
            an extension
 [-] #363 : Structure field in the closure 
+[-] #362 : Template generated class : cannot be resolved
 
 [Samples]
 [+] Zeckendorf arithmetic
