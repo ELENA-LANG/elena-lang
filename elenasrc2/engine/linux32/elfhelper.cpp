@@ -5,7 +5,7 @@
 //
 //		This file contains ELENA PEHelper implementation.
 //		Supported platforms: Linux I386
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"

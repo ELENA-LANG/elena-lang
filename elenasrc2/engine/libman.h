@@ -23,7 +23,7 @@ class LibraryManager : public _LibraryManager
    Path              _rootPath;
    IdentifierString  _namespace;
 
-   ModuleMap         _modules;         // Note : assumed to be linked list by resolveIndirectWeakModule 
+   ModuleMap         _modules;         // Note : assumed to be linked list by resolveIndirectWeakModule
    ModuleMap         _debugModules;
    ModuleMap         _binaries;
 
@@ -55,10 +55,12 @@ public:
       _packagePaths.add(package, NULL);
    }
 
+#ifdef _WIN32
    void addPackage(ident_t package, path_t path)
    {
       _packagePaths.add(package, IdentifierString::clonePath(path));
    }
+#endif // _WIN32
 
    void addPackage(ident_t package, ident_t path)
    {

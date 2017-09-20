@@ -1002,6 +1002,11 @@ unsigned short* clone(const unsigned short* s)
    return emptystr(s) ? NULL : StrFactory::allocate(length, s);
 }
 
+unsigned short* clone(const unsigned short* s, size_t length)
+{
+   return emptystr(s) ? NULL : StrFactory::allocate(length, s);
+}
+
 int strToInt(const unsigned short* s)
 {
    int n = 0;

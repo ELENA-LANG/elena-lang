@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the Linux command-line compiler
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -176,8 +176,8 @@ _ELENA_::ident_t _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELEN
       return config.getSetting(ELC_LIB_PATH);
    case _ELENA_::opOutputPath:
       return config.getSetting(ELC_OUTPUT_PATH);
-   case _ELENA_::opWarnOnUnresolved:
-      return config.getSetting(ELC_WARNON_UNRESOLVED);
+   case _ELENA_::opWarnOnWeakUnresolved:
+      return config.getSetting(ELC_WARNON_WEAKUNRESOLVED);
 //   case _ELENA_::opWarnOnSignature:
 //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
    case _ELENA_::opDebugMode:
@@ -386,10 +386,7 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
          else raiseError(ELC_ERR_INVALID_OPTION, (const char*)value);
          break;
       case ELC_PRM_WARNING:
-         if (value.compare(ELC_W_UNRESOLVED)) {
-            _settings.add(_ELENA_::opWarnOnUnresolved, -1);
-         }
-         else if (value.compare(ELC_W_WEAKUNRESOLVED)) {
+         if (value.compare(ELC_W_WEAKUNRESOLVED)) {
             _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
          }
          else if (value.compare(ELC_W_LEVEL1)) {
@@ -436,7 +433,6 @@ _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
 bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
 {
    bool debugMode = BoolSetting(_ELENA_::opDebugMode);
-   bool result = true;
 
    _ELENA_::Unresolveds unresolveds(_ELENA_::Unresolved(), NULL);
    for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
@@ -467,7 +463,9 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
 
          _ELENA_::TargetIterator option_it = targetInfo->getIt(ELC_OPTION);
          while (!option_it.Eof()) {
-            scriptParser.setOption(*option_it);
+            if (!scriptParser.setOption(*option_it, StrSetting(_ELENA_::opProjectPath))) {
+               raiseError(errInvalidTargetOption, *option_it);
+            }
 
             option_it = targetInfo->nextIt(ELC_OPTION, option_it);
          }

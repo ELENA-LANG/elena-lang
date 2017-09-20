@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2016, by Alexei Rakov
+//                                              (C)2009-2017, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -23,6 +23,7 @@ void* init()
    instance = new Instance(CONFIG_PATH);
 
    void* debugSection = NULL;
+   void* messageSection = NULL;
    Instance::ImageSection section;
    section.init((void*)IMAGE_BASE, 0x1000);
 
@@ -32,7 +33,10 @@ void* init()
    ELFHelper::seekDebugSegment(reader, ptr);
    debugSection = (void*)ptr;
 
-   instance->init(debugSection, CONFIG_PATH);
+   PEHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
+   messageSection = (void*)ptr;
+
+   instance->init(debugSection, messageSection, CONFIG_PATH);
 
    return instance;
 }
