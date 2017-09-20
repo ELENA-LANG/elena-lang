@@ -462,6 +462,7 @@ private:
    {
       ClassInfo   info;
       ref_t       extensionClassRef;
+      bool        embeddable;
 
       ObjectInfo mapField(ident_t identifier);
 
@@ -777,7 +778,7 @@ private:
    ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
-   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
+   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target, bool& genericOne);
 
    void importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 

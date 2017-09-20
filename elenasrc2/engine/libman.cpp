@@ -226,7 +226,7 @@ _Module* LibraryManager :: resolveIndirectWeakModule(ident_t weakName, LoadResul
       // if not - load imported modules
       if ((*it)->mapReference(weakName, true)) {
          // get list of imported modules
-         ReferenceNs sectionName((*it)->Name(), IMPORT_SECTION);
+         ReferenceNs sectionName((*it)->Name(), IMPORTS_SECTION);
 
          _Memory* section = (*it)->mapSection((*it)->mapReference(sectionName, true) | mskMetaRDataRef, true);
          if (section) {

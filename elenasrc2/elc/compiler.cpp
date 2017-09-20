@@ -849,7 +849,7 @@ void Compiler::ModuleScope :: saveIncludedModule(_Module* extModule)
    if (module == extModule)
       return;
 
-   ReferenceNs sectionName(module->Name(), IMPORT_SECTION);
+   ReferenceNs sectionName(module->Name(), IMPORTS_SECTION);
 
    _Memory* section = module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false);
 
@@ -998,6 +998,7 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.size = 0;
 
    extensionClassRef = 0;
+   embeddable = false;
 }
 
 ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
@@ -1036,7 +1037,7 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
    }
    else if (terminal.compare(SELF_VAR)) {
       if (extensionClassRef != 0) {
-         return ObjectInfo(okParam, (size_t)-1, extensionClassRef);
+         return ObjectInfo(okParam, (size_t)-1, extensionClassRef, embeddable ? -1 : 0);
       }
       else return ObjectInfo(okParam, (size_t)-1);
    }
@@ -2512,7 +2513,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
    return encodeMessage(actionRef, paramCount) | actionFlags;
 }
 
-ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
+ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object, bool& genericOne)
 {
    // check typed extension if the type available
    ref_t typeRef = 0;
@@ -2561,8 +2562,10 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
    if (extRef == 0) {
       SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
 
-      if (typeExtensions)
+      if (typeExtensions) {
+         genericOne = true;
          extRef = typeExtensions->get(messageRef);
+      }         
    }
 
    return extRef;
@@ -2836,7 +2839,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       operation = callType == tpClosed ? lxSDirctCalling : lxDirectCalling;
       argument = result.withOpenArgDispatcher ? overwriteParamCount(messageRef, OPEN_ARG_COUNT) : messageRef;
 
-      if (result.stackSafe && target.kind != okParams)
+      if (result.stackSafe && target.kind != okParams && !test(mode, HINT_DYNAMIC_OBJECT))
          writer.appendNode(lxStacksafeAttr);
 
       if (result.embeddable)
@@ -3081,7 +3084,8 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          retVal = compileInternalCall(writer, node, scope, messageRef, target);
       }
       else {
-         ref_t extensionRef = mapExtension(scope, messageRef, target);
+         bool genericOne = false;
+         ref_t extensionRef = mapExtension(scope, messageRef, target, genericOne);
 
          if (extensionRef != 0) {
             //HOTFIX: A proper method should have a precedence over an extension one
@@ -3089,6 +3093,8 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
                target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
             }
          }
+         if (genericOne)
+            mode |= HINT_DYNAMIC_OBJECT;
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode);
       }
@@ -5756,6 +5762,11 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
 
    if (test(scope.info.header.flags, elExtension)) {
       scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;
+
+      scope.embeddable = _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef);
+   }
+   else if (_logic->isEmbeddable(scope.info)) {
+      scope.embeddable = true;
    }
 
    writer.newNode(lxClass, node.argument);
@@ -6234,6 +6245,9 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
       }
       // HOTFIX : do not box constant classes
       else if (sourceNode == lxConstantInt && targetRef == scope.intReference) {
+         boxing = false;
+      }
+      else if (sourceNode == lxConstantReal && targetRef == scope.realReference) {
          boxing = false;
       }
       else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {

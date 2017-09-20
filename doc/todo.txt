@@ -2,13 +2,6 @@
 In development:
 ------                              
 
-              ydev - upndown
-                 * simple form with several labels
-
-               xdev - linux
-                 * port compiler
-                 * port elenart
-
               zdev - live programming
                  * implement live programming environment
 
@@ -18,13 +11,8 @@ In development:
                  * reimplement chat sample
                  * reimplement upndown
 
-              adev - linux
-                 * migrate LIB32
-
-               xdev - linux
-                 * proting debugger
-
               xdev - general implementation
+                 * do we need long and all? probably only int and ref_t should be used
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)
                  * implementing #350
@@ -34,6 +22,18 @@ In development:
                             template_subj[] $target.
                             template_subj() $target.
                  * fixing open issues
+
+               xdev - linux
+                 * elc : migrate linker changes (.mdata section)
+                 * port compiler
+                 * port elenart
+                 * port asm2binx
+
+              adev - linux
+                 * migrate LIB32
+
+               xdev - linux
+                 * proting debugger
 
 ------                                 
 Pipeline:
