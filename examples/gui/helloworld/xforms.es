@@ -31,15 +31,16 @@ root
 
    #define member         ::=
 <=
-    message=appendControl
+    message=appendAndReturnControl
     expression
     (
       reference=xforms'Label
-      message=new;
+      message=new
+    );
 =>
          "<" "Label" property* label_closing_tag
 <=
-    );
+    message=owner;
 =>;
 
    #define property       ::=

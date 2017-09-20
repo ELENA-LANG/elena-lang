@@ -3,22 +3,20 @@ In development:
 ------                              
 
               ydev - upndown
-                 * migrate xforms
-
-                 * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
-                 * review assembly script : the parameter order
                  * simple form with several labels
-                 * simple form with several labels : fonts, sizes
-                 * gui script
-                 * graph : function declared in the script
-                 * implement threading suppport
-                 * implement net suppport
-                 * reimplement chat sample
-                 * reimplement upndown
 
                xdev - linux
                  * port compiler
                  * port elenart
+
+              zdev - live programming
+                 * implement live programming environment
+
+              ydev - upndown
+                 * implement threading suppport
+                 * implement net suppport
+                 * reimplement chat sample
+                 * reimplement upndown
 
               adev - linux
                  * migrate LIB32
@@ -36,10 +34,6 @@ In development:
                             template_subj[] $target.
                             template_subj() $target.
                  * fixing open issues
-
-              zdev - live programming
-                 * implement xml library
-                 * implement live programming environment
 
 ------                                 
 Pipeline:
@@ -131,6 +125,11 @@ Pipeline:
                    (e.g. vhdc), it should be declared when it is used
 
               zdev - script engine
+                 * simple form with several labels : fonts, sizes
+                 * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
+                 * review assembly script : the parameter order
+                 * gui script
+                 * graph : function declared in the script
                  * free allocated variable in sub code
 
               xdev - general implementation
@@ -241,13 +240,14 @@ Pipeline:
                  * test net sample
                  * test anagram
 
-              adev - lib30     
+              adev - lib32
                  * review toLiteral code, temporal size??
                  * it should be possible to work with TextBuffer as with an array
                  * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray
                  * implement date/time formatting
                  * Struct should support set method
                  * formatterOp should support padding (like in C#)
+                 * implement xml library
 
               xdev - x64 platform
                 * ReferenceMap should be redesigned (introducing )

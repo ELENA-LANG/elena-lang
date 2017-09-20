@@ -21,5 +21,5 @@ dynamicForm = Library new; evalSelf:
                         eval:l
                 ];
                 first; eval.
-
-//  staticForm =    helloworld'stat'mainForm.
+                
+staticForm =    helloworld'stat'mainForm.

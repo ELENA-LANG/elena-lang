@@ -36,9 +36,11 @@ template icontainerof :: type
         ]
     }.
     
-    appendControl : control
+    appendAndReturnControl : control
     [
-        control $create container:$self int($self xhandle)
+        control $create container:$self int($self xhandle) object:self.
+        
+        ^ control
     ]
 }
 
@@ -46,6 +48,8 @@ template icontainerof :: type
 
 class BaseControl
 {
+    object theOwner.
+    
     int    theHandle.
     
     /// properties
@@ -55,6 +59,8 @@ class BaseControl
     int vxprop height :: readHeightTo,writeHeight.
     
     int xhandle = theHandle.
+    
+    owner = theOwner.
     
     stacksafe readXTo vint:retVal
     [
@@ -130,13 +136,13 @@ class BaseContainer :: BaseControl
 
 sealed class Label :: BaseControl, icontrolof<label>
 {
-    constructor new container:container int:hParent 
+    constructor new container:container int:hParent object:owner
     [
-        $self $create container:container int:hParent.
+        $self $create container:container int:hParent object:owner.
     ]
     
     constructor new : parent
-        <= new container:parent int(parent xhandle);
+        <= new container:parent int(parent xhandle) object:parent;
     [
     ]
     
@@ -144,8 +150,10 @@ sealed class Label :: BaseControl, icontrolof<label>
     [
     ]
     
-    $create container:container int:hParent
+    $create container:container int:hParent object:owner
     [
+        theOwner := owner.
+        
         container append control:$self.
         
         int hRect := system'external'elenagm NewWidget int:hParent int:widgRect.

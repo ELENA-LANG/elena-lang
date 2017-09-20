@@ -140,4 +140,6 @@ sealed class Form :: iform<object>
             [ theHandle setVisible int:5 ];
             [ theHandle setVisible int:0 ]        
     ]
+    
+    dispatch => theWindow.
 }
