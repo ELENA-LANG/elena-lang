@@ -15,7 +15,9 @@
            an extension
 [-] #363 : Structure field in the closure 
 [-] #362 : Template generated class : cannot be resolved
-
+[-] #12  : Extension with stack allocated object 
+[-] #305 : Extensions without return statement
+   
 [Samples]
 [+] Zeckendorf arithmetic
 

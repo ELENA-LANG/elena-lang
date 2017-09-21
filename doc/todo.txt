@@ -2,26 +2,15 @@
 In development:
 ------                              
 
-              zdev - live programming
-                 * implement live programming environment
+              xdev - general implementation
+                 * #305 : Extensions without return statement
+                 * do we need long and all? probably only int and ref_t should be used
 
               ydev - upndown
                  * implement threading suppport
                  * implement net suppport
                  * reimplement chat sample
                  * reimplement upndown
-
-              xdev - general implementation
-                 * do we need long and all? probably only int and ref_t should be used
-                 * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
-                   no other overload functions provided)
-                 * implementing #350
-                 * get rid of dynamic keyword, use [] for this : e.g.
-                      template<BaseIndexable> array :: template_subj
-                      {
-                            template_subj[] $target.
-                            template_subj() $target.
-                 * fixing open issues
 
                xdev - linux
                  * elc : migrate linker changes (.mdata section)
@@ -34,6 +23,20 @@ In development:
 
                xdev - linux
                  * proting debugger
+
+              xdev - general implementation
+                 * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
+                   no other overload functions provided)
+                 * implementing #350
+                 * get rid of dynamic keyword, use [] for this : e.g.
+                      template<BaseIndexable> array :: template_subj
+                      {
+                            template_subj[] $target.
+                            template_subj() $target.
+                 * fixing open issues
+
+              zdev - live programming
+                 * implement live programming environment
 
 ------                                 
 Pipeline:
@@ -75,6 +78,7 @@ Pipeline:
                        symbol plotter = { .. }.
 
               xdev - general optimization  
+                 * optimize pi sample, after recent changes it is slowed down
                  * opimized alt operator implementation : resolve it in compile-time if the operand is known
                  * opimized alt operator implementation : if the object has no custom dispatch handler check it before
                    otherwise use try catch statement ; check $nil?

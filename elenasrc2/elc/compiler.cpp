@@ -1073,7 +1073,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
          //COMPILER MAGIC : if it is an extension ; replace $self with self
          ClassScope* extensionScope = (ClassScope*)getScope(slClass);
 
-         return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef);
+         return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, extensionScope->embeddable ? -1 : 0);
       }
       else if (stackSafe && classEmbeddable) {
          return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
@@ -4776,14 +4776,16 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
       // if the method returns itself
       if(retVal.kind == okUnknown) {
+         ObjectInfo thisParam = scope.mapTerminal(THIS_VAR);
+
          // adding the code loading $self
-         writer.newNode(lxExpression);
+         writer.newNode(lxReturning);
          writer.newBookmark();
-         writer.appendNode(lxLocal, 1);
+         writeTerminal(writer, node, codeScope, thisParam, HINT_NODEBUGINFO);
 
          ref_t resultRef = scope.getReturningRef(false);
          if (resultRef != 0) {
-            if (!convertObject(writer, *codeScope.moduleScope, resultRef, resolveObjectReference(codeScope, ObjectInfo(okThisParam)), 0))
+            if (!convertObject(writer, *codeScope.moduleScope, resultRef, resolveObjectReference(codeScope, thisParam), 0))
                scope.raiseError(errInvalidOperation, node);
          }
 
