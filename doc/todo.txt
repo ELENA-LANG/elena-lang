@@ -3,7 +3,14 @@ In development:
 ------                              
 
               xdev - general implementation
+                 * args subject should be allowed to be used only in message expression
+                 * syntax modify : open arg list
                  * #302 : byte array field : writing / reading / boxing / unboxing 
+                 * get rid of dynamic keyword, use [] for this : e.g.
+                      template<BaseIndexable> array :: template_subj
+                      {
+                            template_subj[] $target.
+                            template_subj() $target.
                  * declaring an array field
                  * test array of structures
 
@@ -13,6 +20,21 @@ In development:
                  * reimplement chat sample
                  * reimplement upndown (#79)
 
+              xdev - general implementation
+                 * fix agenda sample
+                 * do we need long and all? probably only int and ref_t should be used
+                 * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
+                   no other overload functions provided)
+                 * implementing #350
+                 * cache isEmbeddable operation result
+                 * fixing open issues
+
+              zdev - live programming
+                 * implement live programming environment
+
+------                                 
+Pipeline:
+------                                                                                         
                xdev - linux
                  * elc : migrate linker changes (.mdata section)
                  * port compiler
@@ -25,26 +47,6 @@ In development:
                xdev - linux
                  * proting debugger
 
-              xdev - general implementation
-                 * fix agenda sample
-                 * do we need long and all? probably only int and ref_t should be used
-                 * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
-                   no other overload functions provided)
-                 * implementing #350
-                 * get rid of dynamic keyword, use [] for this : e.g.
-                      template<BaseIndexable> array :: template_subj
-                      {
-                            template_subj[] $target.
-                            template_subj() $target.
-                 * cache isEmbeddable operation result
-                 * fixing open issues
-
-              zdev - live programming
-                 * implement live programming environment
-
-------                                 
-Pipeline:
-------                                                                                         
               sdev - rosetta samples
                  * Runtime evaluation
                  * Zebra puzzle
@@ -112,7 +114,6 @@ Pipeline:
                  * declaring varof:type, before declaring type class
                  * declaring varof:struct - is not correctly recognized if declared before the struct
                  * use intOp for assigning a constant
-                 * syntax modify : open arg list
                  * support sealed accumulator constants
                  * warn on method duplications in the template
                  * warn on field duplications in the template
@@ -579,7 +580,6 @@ Pipeline:
                        * make possible to compile the file from command line without project and any parameter - using only
                          default values e.g. elc collatz.l
                        * get rid of duplicate source paths in debug info
-                       * args subject should be allowed to be used only in message expression
     
               xdev - generic development
                        * tape_tester : classTest
