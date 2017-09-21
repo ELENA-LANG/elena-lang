@@ -4,6 +4,7 @@ pushn asavesi := 0 => pusha nop;
 pushn aloadfi asavesi := 0 => nop aloadfi pusha;
 pushn acopyr asavesi := 0 => nop acopyr pusha;
 asavesi := 0 copym aloadsi :=0 => asavesi copym nop;
+acopyb acopyr => nop acopyr;
 acopyb acopyf => nop acopyf;
 acopyb aloadfi => nop aloadfi;
 acopyr aloadfi => nop aloadfi;

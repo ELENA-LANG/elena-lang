@@ -3,8 +3,8 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * #305 : Extensions without return statement
-                 * do we need long and all? probably only int and ref_t should be used
+                 * stacksafe method : does not allow to pass stack-allocated object as object
+                   e.g. stacksafe setAt(IntNumber index, Object object) - where object is stack-allocated number
 
               ydev - upndown
                  * implement threading suppport
@@ -25,6 +25,7 @@ In development:
                  * proting debugger
 
               xdev - general implementation
+                 * do we need long and all? probably only int and ref_t should be used
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)
                  * implementing #350
@@ -123,8 +124,6 @@ Pipeline:
                  * nshift should be replaced with nshiftl, nshiftr
                  * optimize shift implementation
                  * #269 : short-circuit boolean operation
-                 * stacksafe method : does not allow to pass stack-allocated object as object
-                   e.g. stacksafe setAt(IntNumber index, Object object) - where object is stack-allocated number
                  * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
                    (e.g. vhdc), it should be declared when it is used
 
