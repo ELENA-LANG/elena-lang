@@ -17,6 +17,7 @@
 [-] #362 : Template generated class : cannot be resolved
 [-] #12  : Extension with stack allocated object 
 [-] #305 : Extensions without return statement
+[-] #312 : Compiler crashes while compiling the following code
    
 [Samples]
 [+] Zeckendorf arithmetic

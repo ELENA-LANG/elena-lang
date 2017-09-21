@@ -1773,7 +1773,13 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
                         if (isPrimitiveRef(sourRef))
                            sourRef = resolvePrimitiveReference(scope, sourRef);
                         
-                        if (isCompatible(scope, argRef, sourRef)) {
+                        if (isCompatible(scope, argRef, sourRef)) {                           
+                           if (current == lxBoxing || current == lxUnboxing || current == lxCondBoxing) {
+                              // HOTFIX : add dynamic object attribute if required
+                              if (argRef != sourRef && !isEmbeddable(scope, argRef))
+                                 current.appendNode(lxBoxingRequired);
+                           }
+
                            start = end + 1;
                            if (start < getlength(signature)) {
                               end = signature.find(start, '$', getlength(signature));
