@@ -19,11 +19,10 @@
 [-] #305 : Extensions without return statement
 [-] #312 : Compiler crashes while compiling the following code
 [-] #26  : Private types
-
+[-] #258 : Extension message with a full reference 
    
 [Samples]
 [+] Zeckendorf arithmetic
-
 
 ***************************************************************
                              What's New in 3.2.0

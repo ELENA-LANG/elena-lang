@@ -2,6 +2,11 @@
 In development:
 ------                              
 
+              xdev - general implementation
+                 * #302 : byte array field : writing / reading / boxing / unboxing 
+                 * declaring an array field
+                 * test array of structures
+
               ydev - upndown
                  * implement threading suppport
                  * implement net suppport
@@ -54,7 +59,6 @@ Pipeline:
                  * struct fields : embeddable structures
                  * struct fields : structures - should not be allowed
                  * struct fields : objects - should not be allowed
-                 * declaring an array field
                  * declaring an array : // array<Field> fieldArray.
                  * the following expression should generated an error : if(n test) { .... }
 
@@ -193,7 +197,6 @@ Pipeline:
               xdev - generic development 
                  * get rid of __ifoperator / ifnotoeprator - embeddable attribute should be used instead
                  * bug : extensions in template - are not fully resolved
-                 * #302 - byte array field : writing / reading / boxing / unboxing
                  * uncomment WSADATA structure
                  * no need to copy to the buffer field / variable / method attributes
                  * get rid of listable attribute, use accumulators for bool values
@@ -359,7 +362,6 @@ Pipeline:
                        * try to use lamda expressin for brackets example
 
               xdev - generic development
-                       * test array of structures
 
                        * support the following syntax : #throw(exceptionof:MyError)"My message" (using implicit constructors for exceptions)
 
@@ -381,7 +383,6 @@ Pipeline:
                          cast methods work correct after this
                                          	
                        * check template type before applying (i.e. method template should be declared only for the method declaration)
-
 
                        * array of long
                        * support #var(real)r := 2. // assigning int to real by constant
@@ -715,7 +716,6 @@ Pipeline:
                        * test bytearray read / write operation with byte, char, int, long, real
                        * consoleReader.read&Line : test with smaller buffer and longer string (to check how it works for large input)
                        
-                       * test operation with stack allocated binaray array (write / read / length / getAt)
                        * make sure exclude command excludes the stack correctly (e.g. any script sample - GC should happends inside
                          script, so we could check if the caller stack is included correctly)
 
