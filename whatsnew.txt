@@ -9,6 +9,7 @@
 
 [ELENA]
 [+] #313 : Reimplement assignment operators
+[+] #369 : Advanced syntax : open argument list 
 
 [ELC]
 [-] #345 : Resend statement does not work correctly for 

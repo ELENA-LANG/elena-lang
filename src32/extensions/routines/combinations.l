@@ -147,7 +147,7 @@ class BaseRowEnumerator :: Enumerator
     
     $strategy theStrategy.
 
-    constructor new args:Arguments
+    constructor new object&:Arguments
     [
         theLength := Arguments length.
         theIndexers := Array new int:theLength.

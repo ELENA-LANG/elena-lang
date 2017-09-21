@@ -51,8 +51,14 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsMethodParameter:
          _writer.newNode(lxMethodParameter);
          break;
+      case nsMethodOpenParameter:
+         _writer.newNode(lxMethodParameter, -1);
+         break;
       case nsMessageParameter:
          _writer.newNode(lxMessageParameter);
+         break;
+      case nsOpenMessageParameter:
+         _writer.newNode(lxMessageParameter, -1);
          break;
       case nsNestedClass:
          _writer.newNode(lxNestedClass);
@@ -1589,6 +1595,11 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
 
    if (test(mode, EXPRESSION_EXPLICIT_MODE)) {
       writer.insert(node.type);
+      writer.closeNode();
+   }
+
+   if (node == lxMessageParameter && node.argument == -1) {
+      writer.insert(lxExpression, V_ARGARRAY);
       writer.closeNode();
    }
 

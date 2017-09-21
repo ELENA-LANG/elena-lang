@@ -171,6 +171,11 @@ inline bool isSealedStaticField(ref_t ref)
    return (int)ref >= 0;
 }
 
+inline bool checkNode(SNode node, LexicalType type, ref_t argument)
+{
+   return node == type && node.argument == argument;
+}
+
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
@@ -2480,12 +2485,18 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 
       if (test(arg.type, lxObjectMask)) {
          // if it is an open argument list
-         if (arg.nextNode() == lxNone && class_ref == V_ARGARRAY) {
+         if (arg.nextNode() == lxNone && (class_ref == V_ARGARRAY || (arg == lxExpression && arg.argument == V_ARGARRAY))) {
             // if open argument list virtual subject is used - replace it with []
             if (paramCount > 0)
                scope.raiseError(errInvalidOperation, node);
 
             paramCount = OPEN_ARG_COUNT;
+
+            if (class_ref != scope.moduleScope->superReference && class_ref != V_ARGARRAY) {
+               //HOTFIX : temporally - only object is supported
+               scope.raiseError(errNotApplicable, arg);
+            }
+            else signature.clear();
 
             break;
          }
@@ -2996,9 +3007,17 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
       // compile an argument
       if (test(arg.type, lxObjectMask)) {
          // if it is an open argument list
-         if (arg.nextNode() != lxMessage && classRef == V_ARGARRAY) {
+         if (arg.nextNode() != lxMessage && (classRef == V_ARGARRAY || (arg == lxExpression && arg.argument == V_ARGARRAY))) {
+            if (classRef == V_ARGARRAY) {
+               classRef = scope.moduleScope->superReference;
+            }
+
+            if (arg.argument == V_ARGARRAY)
+               arg = arg.firstChild();
+
             if (arg == lxExpression) {
                SNode argListNode = arg.firstChild();
+
                while (argListNode != lxNone) {
                   compileExpression(writer, argListNode, scope, paramMode);
 
@@ -4342,8 +4361,17 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          int index = 1 + scope.parameters.Count();
 
          // if it is an open argument type
-         if (class_ref == V_ARGARRAY) {
-            scope.parameters.add(name, Parameter(index, class_ref));
+         if (class_ref == V_ARGARRAY || arg.argument == -1) {
+            if (class_ref == V_ARGARRAY)
+               class_ref = scope.moduleScope->superReference;
+
+            if (class_ref != scope.moduleScope->superReference) {
+               //HOTFIX : temporally - only object is supported
+               scope.raiseError(errNotApplicable, arg);
+            }
+            else signature.clear();
+
+            scope.parameters.add(name, Parameter(index, V_ARGARRAY, class_ref, 0));
 
             // the generic arguments should be free by the method exit
             scope.rootToFree += paramCount;
@@ -4351,8 +4379,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
             // to indicate open argument list
             paramCount += OPEN_ARG_COUNT;
-            if (paramCount > OPEN_ARG_COUNT)
+            if (paramCount > OPEN_ARG_COUNT) {
                scope.raiseError(errNotApplicable, arg);
+            }
          }
          else {
             paramCount++;

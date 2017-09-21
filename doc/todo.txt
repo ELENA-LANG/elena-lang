@@ -4,7 +4,6 @@ In development:
 
               xdev - general implementation
                  * args subject should be allowed to be used only in message expression
-                 * syntax modify : open arg list
                  * #302 : byte array field : writing / reading / boxing / unboxing 
                  * get rid of dynamic keyword, use [] for this : e.g.
                       template<BaseIndexable> array :: template_subj
@@ -21,6 +20,7 @@ In development:
                  * reimplement upndown (#79)
 
               xdev - general implementation
+                 * typified open arg list (#369)
                  * fix agenda sample
                  * do we need long and all? probably only int and ref_t should be used
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
