@@ -2,14 +2,11 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * #32 : Dispatching message to the target
-
               ydev - upndown
                  * implement threading suppport
                  * implement net suppport
                  * reimplement chat sample
-                 * reimplement upndown
+                 * reimplement upndown (#79)
 
                xdev - linux
                  * elc : migrate linker changes (.mdata section)
@@ -24,6 +21,7 @@ In development:
                  * proting debugger
 
               xdev - general implementation
+                 * fix agenda sample
                  * do we need long and all? probably only int and ref_t should be used
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)

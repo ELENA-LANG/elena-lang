@@ -2350,18 +2350,23 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
    else {
       ident_t message = terminal.identifier();
 
-      int subject = 0;
-      int param = 0;
-      for (size_t i = 0; i < getlength(message); i++) {
-         if (message[i] == '.' && extensionRef == 0) {
-            signature.copy(message + subject, i - subject);
-            subject = i + 1;
-
-            extensionRef = scope.moduleScope->resolveIdentifier(signature);
-            if (extensionRef == 0)
-               scope.raiseError(errInvalidSubject, terminal);
+      int subject = message.find('.',0);
+      if (subject != 0) {
+         signature.copy(message, subject);
+         if (signature.ident().find('\'') != NOTFOUND_POS) {
+            // if it is a full reference
+            extensionRef = scope.moduleScope->mapReference(signature.ident(), true);
          }
-         else if (message[i] == '&') {
+         else extensionRef = scope.moduleScope->resolveIdentifier(signature);
+         if (extensionRef == 0)
+            scope.raiseError(errInvalidSubject, terminal);
+
+         subject++;
+      }
+
+      int param = 0;
+      for (size_t i = subject; i < getlength(message); i++) {
+         if (message[i] == '&') {
          }
          else if (message[i] == '[') {
             int len = getlength(message);
@@ -2381,7 +2386,7 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
          }
          else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
          }
-         else scope.raiseError(errInvalidSubject, terminal);
+         else scope.raiseError(errInvalidConstant, terminal);
       }
 
       if (param != 0) {
