@@ -18,6 +18,8 @@
 [-] #12  : Extension with stack allocated object 
 [-] #305 : Extensions without return statement
 [-] #312 : Compiler crashes while compiling the following code
+[-] #26  : Private types
+
    
 [Samples]
 [+] Zeckendorf arithmetic

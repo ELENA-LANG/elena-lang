@@ -1633,7 +1633,7 @@ void DerivationReader :: generateVariableTree(SyntaxWriter& writer, SNode node, 
    SNode current = node.firstChild();
    SNode attr = node.findChild(lxIdentifier, lxPrivate, lxMemberIdentifier);
    SNode nextNode = attr.nextNode();
-   ref_t attrRef = (attr == lxIdentifier) ? scope.mapAttribute(attr/*, true*/) : 0;
+   ref_t attrRef = (attr == lxIdentifier || attr == lxPrivate) ? scope.mapAttribute(attr/*, true*/) : 0;
    if (attrRef != 0 && nextNode != lxAssigning && nextNode != lxOperator) {
       // HOTFIX : set already recognized attribute value if it is not a template parameter
       if (attrRef != INVALID_REF) {

@@ -3,7 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * #26 : Private subjects 
                  * #32 : Dispatching message to the target
 
               ydev - upndown
