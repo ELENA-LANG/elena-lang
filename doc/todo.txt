@@ -9,6 +9,7 @@ In development:
                  * reimplement upndown (#79)
 
               xdev - general implementation
+                 * fix bug : 1 - 0.3r => 0
                  * get rid of dynamic keyword, use [] for this : e.g.
                       template<BaseIndexable> array :: template_subj
                       {

@@ -263,6 +263,22 @@ extension mathOp
     
     real ln
         = self real; ln.
+  
+    real log2
+    [
+        real x := self ln.
+        real y := 2 ln.
+        
+        ^ x / y.
+    ]
+        
+    real log10
+    [
+        real x := self ln.
+        real y := 10 ln.
+        
+        ^ x / y.
+    ]
     
     sqrt
         = self real; sqrt.
