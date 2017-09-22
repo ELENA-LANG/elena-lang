@@ -2,7 +2,7 @@
 
 sealed const embeddable struct HInstance
 {
-    __dword theHandle(4).
+    __dword& theHandle(4).
     
     stacksafe constructor new int:aHandle
     [
@@ -80,7 +80,7 @@ sealed embeddable struct CREATESTRUCT
 
 sealed const embeddable struct HMENU
 {
-    __dword theHandle(4).
+    __dword& theHandle(4).
     
     constructor new
     [

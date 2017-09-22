@@ -318,7 +318,7 @@ class IntBaseNumber :: BaseNumber
 /// An unsigned 8 bit integer
 sealed embeddable struct ByteNumber :: IntBaseNumber
 {
-    __int theValue(1).
+    __int& theValue(1).
 
     stacksafe explicit(IntNumber n)
     [
@@ -624,7 +624,7 @@ sealed embeddable struct ByteNumber :: IntBaseNumber
 /// A signed 16 bit integer
 sealed embeddable struct ShortNumber :: IntBaseNumber
 {
-    __int theValue(2).
+    __int& theValue(2).
 
     stacksafe explicit(IntNumber n)
     [
@@ -944,7 +944,7 @@ sealed embeddable struct ShortNumber :: IntBaseNumber
 /// A signed 32 bit integer
 sealed embeddable struct IntNumber :: IntBaseNumber
 {
-    __int theValue(4).
+    __int& theValue(4).
 
     stacksafe explicit(ByteNumber n)
     [
@@ -1272,7 +1272,7 @@ sealed embeddable struct IntNumber :: IntBaseNumber
 
 sealed embeddable struct UIntNumber :: IntBaseNumber
 {
-    __int theValue(4).
+    __int& theValue(4).
 
     stacksafe explicit(ByteNumber n)
     [
@@ -1645,7 +1645,7 @@ sealed embeddable struct UIntNumber :: IntBaseNumber
 /// A signed 64 bit integer value
 sealed embeddable struct LongNumber :: IntBaseNumber
 {
-    __int theValue(8).
+    __int& theValue(8).
     
     /// Returns the minimal value
     constructor min
@@ -1970,7 +1970,7 @@ sealed embeddable struct LongNumber :: IntBaseNumber
 /// A 64bit float numeric value
 sealed embeddable struct RealNumber :: BaseNumber
 {
-    __real theValue(8).
+    __real& theValue(8).
 
     stacksafe explicit(IntNumber n)
     [
@@ -2217,7 +2217,7 @@ sealed embeddable struct RealNumber :: BaseNumber
 /// An UTF-32 character symbol
 sealed const embeddable struct CharValue :: BaseValue
 {
-    __dword theValue(4).
+    __dword& theValue(4).
 
     /// Creates the object with a default value (0)
     constructor new

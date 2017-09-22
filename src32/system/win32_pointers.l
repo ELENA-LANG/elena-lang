@@ -2,7 +2,7 @@
 
 sealed embeddable struct Handle
 {
-    __dword theHandle(4).
+    __dword& theHandle(4).
     
     stacksafe new handle:h
     [
@@ -56,7 +56,7 @@ sealed const embeddable struct RTPointer
 
 sealed embeddable struct UnsafePointer
 {
-    __dword thePointer(4).
+    __dword& thePointer(4).
 
     constructor new : anObject
     [

@@ -10,7 +10,7 @@ const wide ComboboxClass = "Combobox"w.
 
 sealed const embeddable struct WindowHandle
 {
-    __dword theHandle(4).
+    __dword& theHandle(4).
     
     constructor new
     [

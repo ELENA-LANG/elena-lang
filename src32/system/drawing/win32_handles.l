@@ -101,7 +101,7 @@ sealed embeddable struct RECT
 
 sealed embeddable const struct HDC
 {
-    __dword theHandle(4).
+    __dword& theHandle(4).
 
     stacksafe implicit int:handle
     [
@@ -179,7 +179,7 @@ sealed embeddable const struct HDC
 
 sealed const embeddable struct HBITMAP
 {
-    __dword theHandle(4).
+    __dword& theHandle(4).
 
     stacksafe constructor new hbitmap:aHandle
     [
@@ -220,7 +220,7 @@ sealed const embeddable struct HBITMAP
 
 sealed const embeddable struct HPEN
 {
-    __dword theHandle(4).
+    __dword& theHandle(4).
     
     stacksafe constructor new hpen:aHandle
     [
@@ -244,7 +244,7 @@ sealed const embeddable struct HPEN
 
 sealed const embeddable struct HBRUSH
 {
-    __dword theHandle(4).
+    __dword& theHandle(4).
 
     constructor new hbrush:aHandle
     [

@@ -1819,6 +1819,22 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
 
       current = current.nextNode();
    }
+
+   //HOTFIX : recognize primitive numeric constants
+   if (fieldRef == V_OBJARRAY && isPrimitiveRef(elementRef)) {
+      switch (elementRef) {
+         case V_INT32:
+         case V_PTR32:
+         case V_REAL64:
+         case V_MESSAGE:
+         case V_SYMBOL:
+         case V_SIGNATURE:
+         case V_EXTMESSAGE:
+            fieldRef = elementRef;
+            elementRef = 0;
+            break;
+      }
+   }
 }
 
 void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable, int& size)

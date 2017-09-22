@@ -3,7 +3,7 @@
 /// A dynamic symbol
 sealed embeddable struct Symbol
 {
-    __symbol theValue(4).
+    __symbol& theValue(4).
     
     /// Loads a symbol
     constructor new literal:name
@@ -20,7 +20,7 @@ sealed embeddable struct Symbol
 /// A message constant
 sealed embeddable struct Message
 {
-    __mssg theValue(4).
+    __mssg& theValue(4).
 
     constructor new literal:name
     [
@@ -53,7 +53,7 @@ sealed embeddable struct Message
 /// An extended message constant
 sealed embeddable struct ExtensionMessage
 {
-    __extmssg theValue(8).
+    __extmssg& theValue(8).
     
     /// Loads a message
     stacksafe constructor new ext_mssg:message
@@ -74,7 +74,7 @@ sealed embeddable struct ExtensionMessage
 /// A dynamic signature extender
 sealed embeddable struct Signature
 {
-    __subj theValue(4).
+    __subj& theValue(4).
     
     /// Creates a dynamic signature
     stacksafe constructor new mssg:message

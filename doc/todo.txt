@@ -3,15 +3,8 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * assigning fixed-sized structure array : with unboxing
-
-                 * #302 : byte array field : writing / reading / boxing / unboxing 
-
                  * set / get fixed-sized structure array : without unboxing if offset can be directly resolved
 
-                 * __int(4) should be compiled as __int& (4)
-                   __int theValue(4) => __int& theValue(4)
-                                                     
                  * test object&.
                  * test object&(1).
                  * test object object&.

@@ -25,20 +25,6 @@ inline bool isWrappable(int flags)
    return !test(flags, elWrapper) && test(flags, elSealed);
 }
 
-inline bool isPrimitiveStructArrayRef(ref_t classRef)
-{
-   switch (classRef)
-   {
-      case V_INT32ARRAY:
-      case V_INT16ARRAY:
-      case V_INT8ARRAY:
-      case V_BINARYARRAY:
-         return true;
-      default:
-         return false;
-   }
-}
-
 inline bool isPrimitiveArrayRef(ref_t classRef)
 {
    return classRef == V_OBJARRAY;
@@ -57,6 +43,19 @@ inline ref_t definePrimitiveArrayItem(ref_t classRef)
    }
 }
 
+inline bool isPrimitiveStructArrayRef(ref_t classRef)
+{
+   switch (classRef)
+   {
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
+      case V_BINARYARRAY:
+         return true;
+      default:
+         return false;
+   }
+}
 inline bool IsInvertedOperator(int& operator_id)
 {
    switch (operator_id)

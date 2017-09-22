@@ -31,7 +31,7 @@ class $systemTimeFactory =
 
 sealed const embeddable struct SystemTime :: BaseValue
 {
-    __int theValue(8).
+    __int& theValue(8).
 
     stacksafe explicit long:value
     [

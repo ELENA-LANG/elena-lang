@@ -332,7 +332,7 @@ public:
 
    virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node) = 0;
 };
-   
+
 }  // _ELENA_
 
 #endif // compilerCommonH
