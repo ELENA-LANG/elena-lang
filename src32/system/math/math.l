@@ -258,7 +258,41 @@ extension mathOp
     bool isNonnegative
         = $mathController isNonnegative(self).
 
-    exp
+    real floor
+    [
+        real x := self real.
+        
+        if (x >= 0)
+        [
+            ^ x integer.
+        ];
+        [
+            real y := x integer.
+            
+            ^ (y == x)iif(y,y-1).
+        ].
+        
+        
+        
+        real r := x - x frac.
+        
+        ^ x - r.
+    ]
+
+    real ceil
+    [
+        real x := self real.
+        
+        x := x * (-1.0r).
+        
+        x := x floor.
+        
+        x := x * (-1.0r).
+        
+        ^ x.
+    ]
+
+    real exp
         = (self real)~realOp exp.
     
     real ln
