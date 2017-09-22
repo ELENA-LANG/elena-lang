@@ -117,6 +117,13 @@ extension controlOp
         
         ^   self.
     ]
+    
+    exchangeWith:v
+    [
+        var tmp := self value.
+        self set(v value).
+        v set(tmp).
+    ]
 }
 
 // --- control ---

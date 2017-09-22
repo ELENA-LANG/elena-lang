@@ -2,21 +2,6 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * set / get fixed-sized structure array : without unboxing if offset can be directly resolved
-
-                 * test object&.
-                 * test object&(1).
-                 * test object object&.
-                 * test object object&(2).
-                 * test object(IntNumber r) []
-                 * get rid of dynamic keyword, use [] for this : e.g.
-                      template<BaseIndexable> array :: template_subj
-                      {
-                            template_subj[] $target.
-                            template_subj() $target.
-                 * declaring an array field
-
               ydev - upndown
                  * implement threading suppport
                  * implement net suppport
@@ -24,6 +9,11 @@ In development:
                  * reimplement upndown (#79)
 
               xdev - general implementation
+                 * get rid of dynamic keyword, use [] for this : e.g.
+                      template<BaseIndexable> array :: template_subj
+                      {
+                            template_subj[] $target.
+                            template_subj() $target.
                  * test array of structures
                  * typified open arg list (#369)
                  * fix agenda sample
@@ -159,14 +149,17 @@ Pipeline:
                  * implicit conversions
                  * check package functionality
                  * simplify nfunc expression : set every(&int:n)( false ) - take into consideration the known target?.
-                 * lib32 : redesign int / byte / short / .. convertors to use multimethods (if it more optimal)
-                 * private subjects??
                  * fix message table implementation in VM (currently the space is reserved, but it should use virtual space allocation)
                  * validate rprop (two message should be applied)
                  * duplicate method templates
                  * unboxing primitive arrays?
                  * local attribute : do not allow embeddable templates
                  * method attribute : only embeddable templates should be allowed
+                 * test object&.
+                 * test object&(1).
+                 * test object object&.
+                 * test object object&(2).
+                 * test object(IntNumber r) []
 
               xdev - x64
                  * compile 64 bit IDE without warnings
