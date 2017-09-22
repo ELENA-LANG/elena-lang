@@ -1150,7 +1150,7 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
       current = current.nextNode();
    }
 
-   if (current == lxNameAttr && node.existChild(lxSize)) {
+   if (node == lxClassField && node.existChild(lxSize)) {
       SNode sizeNode = node.findChild(lxSize).findChild(lxInteger, lxHexInteger);
       if (sizeNode != lxNone) {
          writer.appendNode(lxSize, readSizeValue(sizeNode, sizeNode == lxHexInteger ? 16 : 10));

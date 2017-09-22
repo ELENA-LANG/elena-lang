@@ -526,7 +526,7 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
       while (!type_it.Eof()) {
          ClassInfo::FieldInfo info = *type_it;
          info.value1 = importReference(exporter, info.value1, module);
-         info.value2 = importSubject(exporter, info.value2, module);
+         info.value2 = importReference(exporter, info.value2, module);
 
          target.fieldTypes.add(type_it.key(), info);
 
@@ -1012,9 +1012,9 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
    if (offset >= 0) {
       ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
       if (test(info.header.flags, elStructureRole)) {
-         return ObjectInfo(okFieldAddress, offset, fieldInfo.value1/*, fieldInfo.value2*/);
+         return ObjectInfo(okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2);
       }
-      else return ObjectInfo(okField, offset, fieldInfo.value1/*, fieldInfo.value2*/);
+      else return ObjectInfo(okField, offset, fieldInfo.value1, fieldInfo.value2);
    }
    else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
       return ObjectInfo(okThisParam, 1, -2, info.fieldTypes.get(-1).value1);
@@ -2051,6 +2051,18 @@ inline void writeTarget(SyntaxWriter& writer, ref_t targetRef)
       writer.appendNode(lxTarget, targetRef);
 }
 
+int Compiler :: defineFieldSize(CodeScope& scope, int offset)
+{
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   ClassInfo::FieldMap::Iterator it = retrieveIt(classScope->info.fields.start(), offset);
+   it++;
+   if (!it.Eof()) {
+      return *it - offset;
+   }
+   else return classScope->info.size - offset;
+}
+
 void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode)
 {
    switch (object.kind) {
@@ -2140,7 +2152,11 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 
             bool variable = false;
             int size = _logic->defineStructSizeVariable(*scope.moduleScope, resolveObjectReference(scope, object), 0u, variable);
-            writer.newNode(variable ? lxUnboxing : lxBoxing, size);
+            if (size < 0 && type == lxFieldAddress) {
+               // if it is fixed-size array
+               size = defineFieldSize(scope, object.param) * (-size);
+            }
+            writer.newNode((variable && !test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxBoxing, size);
 
             writer.appendNode(type, object.param);
             if (test(mode, HINT_DYNAMIC_OBJECT))
@@ -2727,7 +2743,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       // if it is a primitive operation
       _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.element);
 
-      retVal = assignResult(writer, scope, resultClassRef);
+      retVal = assignResult(writer, scope, resultClassRef/*, loperand.element*/);
    }
    // if not , replace with appropriate method call
    else retVal = compileMessage(writer, node, scope, loperand, encodeMessage(operator_id, paramCount), HINT_NODEBUGINFO);
@@ -3893,7 +3909,7 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode as
    writer.newNode(lxExpression);
    //writer.appendNode(lxBreakpoint, dsStep);
 
-   ObjectInfo objectInfo = compileExpression(writer, assigning, scope, 0);
+   ObjectInfo objectInfo = compileExpression(writer, assigning, scope, HINT_NOUNBOXING);
 
    writer.closeNode();
 
@@ -5354,7 +5370,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    if (test(flags, elStateless))
       scope.raiseError(errIllegalField, current);
 
-   int size = (classRef != 0) ? _logic->defineStructSize(*moduleScope, classRef, 0u) : 0;
+   int size = (classRef != 0) ? _logic->defineStructSize(*moduleScope, classRef, elementRef) : 0;
    bool fieldArray = false;
    if (sizeHint != 0) {
       if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
@@ -5366,13 +5382,13 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          classRef = V_INT64;
          size = 8;
       }
-   //   else if (size > 0) {
-   //      size *= sizeHint;
+      else if (size > 0) {
+         size *= sizeHint;
 
-   //      // HOTFIX : to recognize the fixed length array
-   //      fieldArray = true;
-   //      classRef = _logic->definePrimitiveArray(*scope.moduleScope, classRef);
-   //   }
+         // HOTFIX : to recognize the fixed length array
+         fieldArray = true;
+         classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef);
+      }
       else scope.raiseError(errIllegalField, current);
    }
 
@@ -5439,7 +5455,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          scope.info.size += size;
 
          scope.info.fields.add(terminal, offset);
-         scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
+         scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, elementRef));
       }
       // if it is a normal field
       else {
@@ -5986,7 +6002,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    _writer.save(tape, *scope.moduleScope);
 }
 
-// NOTE : targetType is used for binary arrays
+// NOTE : elementRef is used for binary arrays
 ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef)
 {
    ObjectInfo retVal(okObject, targetRef, 0, elementRef);
@@ -6300,7 +6316,16 @@ ref_t Compiler :: optimizeBoxing(SNode node, ModuleScope& scope, WarningScope& w
          //HOTFIX : to unbox structure field correctly
          sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
       }
-      else sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
+      else {
+         if ((sourceNode == lxBoxing || sourceNode == lxUnboxing) && (int)node.argument < 0 && (int)sourceNode.argument > 0) {
+            //HOTFIX : boxing fixed-sized array
+            if (sourceNode.existChild(lxFieldAddress)) {
+               node.setArgument(-((int)sourceNode.argument / (int)node.argument));
+            }
+         }
+
+         sourceRef = optimizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
+      }
 
       // adjust primitive target
       if (_logic->isPrimitiveRef(targetRef) && boxing) {
@@ -6351,8 +6376,22 @@ ref_t Compiler :: optimizeSymbol(SNode& node, ModuleScope& scope, WarningScope&)
 
 ref_t Compiler :: optimizeOp(SNode current, ModuleScope& scope, WarningScope& warningScope)
 {
+   int lmask = HINT_NOBOXING;
+   if (current.argument == REFER_MESSAGE_ID) {
+      switch (current.type) {
+         case lxIntArrOp:
+         case lxByteArrOp:
+         case lxShortArrOp:
+         case lxBinArrOp:
+            lmask |= HINT_NOUNBOXING;
+            break;
+         default:
+            break;
+      }
+   }
+
    SNode loperand = current.firstChild(lxObjectMask);
-   optimizeExpression(loperand, scope, warningScope, HINT_NOBOXING);
+   optimizeExpression(loperand, scope, warningScope, lmask);
 
    SNode roperand = loperand.nextNode(lxObjectMask);
    optimizeExpression(roperand, scope, warningScope, HINT_NOBOXING);

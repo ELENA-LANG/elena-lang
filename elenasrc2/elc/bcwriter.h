@@ -177,6 +177,7 @@ class ByteCodeWriter
    void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
    void boxArgList(CommandTape& tape, ref_t vmtReference);
    void unboxArgList(CommandTape& tape);
+   void unboxLocal(CommandTape& tape, SNode larg, SNode rarg);
 
    void releaseObject(CommandTape& tape, int count = 1);
    void releaseArgList(CommandTape& tape);
@@ -239,6 +240,7 @@ class ByteCodeWriter
    void saveReal(CommandTape& tape, LexicalType target, int argument);
    void copyInt(CommandTape& tape, int offset);
    void copyShort(CommandTape& tape, int offset);
+   void copyByte(CommandTape& tape, int offset);
    void copyStructure(CommandTape& tape, int offset, int size);
    void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
    void saveSubject(CommandTape& tape);

@@ -3,15 +3,26 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * args subject should be allowed to be used only in message expression
+                 * assigning fixed-sized structure array : with unboxing
+
                  * #302 : byte array field : writing / reading / boxing / unboxing 
+
+                 * set / get fixed-sized structure array : without unboxing if offset can be directly resolved
+
+                 * __int(4) should be compiled as __int& (4)
+                   __int theValue(4) => __int& theValue(4)
+                                                     
+                 * test object&.
+                 * test object&(1).
+                 * test object object&.
+                 * test object object&(2).
+                 * test object(IntNumber r) []
                  * get rid of dynamic keyword, use [] for this : e.g.
                       template<BaseIndexable> array :: template_subj
                       {
                             template_subj[] $target.
                             template_subj() $target.
                  * declaring an array field
-                 * test array of structures
 
               ydev - upndown
                  * implement threading suppport
@@ -20,6 +31,7 @@ In development:
                  * reimplement upndown (#79)
 
               xdev - general implementation
+                 * test array of structures
                  * typified open arg list (#369)
                  * fix agenda sample
                  * do we need long and all? probably only int and ref_t should be used

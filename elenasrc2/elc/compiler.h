@@ -782,6 +782,8 @@ private:
 
    void importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 
+   int defineFieldSize(CodeScope& scope, int offset);
+
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
    void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 

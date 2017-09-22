@@ -2453,6 +2453,21 @@ void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
    tape.write(bcACopyB);
 }
 
+void ByteCodeWriter :: copyByte(CommandTape& tape, int offset)
+{
+   // dcopy index
+   // breadb
+   // dcopye
+   // nsave
+   // acopyb
+
+   tape.write(bcDCopy, offset);
+   tape.write(bcBReadB);
+   tape.write(bcDCopyE);
+   tape.write(bcNSave);
+   tape.write(bcACopyB);
+}
+
 void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
 {
    // bcopya
@@ -3804,6 +3819,29 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          doArgArrayOperation(tape, node.argument);
          break;
    }
+
+   if (larg == lxLocalUnboxing) {
+      SNode tempLocal = larg.findChild(lxAssigning).firstChild(lxObjectMask);
+      loadObject(tape, tempLocal);
+
+      unboxLocal(tape, larg, rarg);
+   }
+}
+
+void ByteCodeWriter :: unboxLocal(CommandTape& tape, SNode larg, SNode rarg)
+{
+   SNode assignNode = larg.findChild(lxAssigning);
+   assignOpArguments(assignNode, larg, rarg);
+
+   loadBase(tape, rarg.type, 0);
+
+   if (assignNode.argument == 4) {
+      assignInt(tape, lxFieldAddress, rarg.argument);
+   }
+   else if (assignNode.argument == 2) {
+      assignLong(tape, lxFieldAddress, rarg.argument);
+   }
+   else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
 }
 
 void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node)
@@ -3966,18 +4004,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    else assignBaseTo(tape, lxResult);
 
    if (larg == lxLocalUnboxing) {
-      SNode assignNode = larg.findChild(lxAssigning);
-      assignOpArguments(assignNode, larg, rarg);
-
-      loadBase(tape, rarg.type, 0);
-
-      if (assignNode.argument == 4) {
-         assignInt(tape, lxFieldAddress, rarg.argument);
-      }
-      else if (assignNode.argument == 2) {
-         assignLong(tape, lxFieldAddress, rarg.argument);
-      }
-      else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
+      unboxLocal(tape, larg, rarg);
    }
 
    releaseObject(tape, level);
@@ -4586,6 +4613,9 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
             }
             else if (size == 2) {
                copyShort(tape, source.argument);
+            }
+            else if (size == 1) {
+               copyByte(tape, source.argument);
             }
             else copyStructure(tape, source.argument, size);
          }

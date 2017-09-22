@@ -925,6 +925,9 @@ int CompilerLogic :: defineStructSizeVariable(_CompilerScope& scope, ref_t refer
    if (reference == V_BINARYARRAY && elementRef != 0) {
       return -defineStructSizeVariable(scope, elementRef, 0, variable, false);
    }
+   else if (reference == V_OBJARRAY && elementRef != 0) {
+      return defineStructSizeVariable(scope, elementRef, 0, variable, false);
+   }
    else {
       ClassInfo classInfo;
       if (defineClassInfo(scope, classInfo, reference)) {
@@ -1666,7 +1669,6 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
    else return false;
 
    bool localBoxing = false;
-   bool variable = false;
    if (exprNode == lxFieldAddress && exprNode.argument > 0) {
       localBoxing = true;
    }
@@ -1679,11 +1681,11 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
    }
 
    if (localBoxing) {
-      variable = !isReadonly(scope, targetRef);
+      bool unboxingMode = (node == lxUnboxing) || unboxingExpected;
 
       compiler.injectLocalBoxing(exprNode, node.argument);
 
-      node = (variable || unboxingExpected) ? lxLocalUnboxing : lxExpression;
+      node = unboxingMode ? lxLocalUnboxing : lxExpression;
    }
 
    return true;
