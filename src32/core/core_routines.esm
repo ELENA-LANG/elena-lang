@@ -5436,3 +5436,26 @@ labError:
   throw
   
 end
+
+procedure __thread.enterCriticalSection[1]
+
+  aloadsi 1
+  pusha
+labWait:
+  snop
+  trylock
+  elsen labWait 0
+
+  pop
+  quitn 1
+  
+end
+
+procedure __thread.leaveCriticalSection[1]
+
+  aloadsi 1
+  freelock
+
+  quitn 1
+  
+end

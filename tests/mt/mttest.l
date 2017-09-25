@@ -1,7 +1,7 @@
-#import extensions.
+import extensions.
 
-#import system'routines.
-#import system'threading.
+import system'routines.
+import system'threading.
 
 //#class LockTest
 //{
@@ -140,7 +140,7 @@ class GCXTester
     
     proceed1
     [
-        ("thread 1 line1", "thread 1 line2", "thread 1 line3", "thread 1 line4", "thread 1 line5", "thread 1 line6") run &each:word
+        ("thread 1 line1", "thread 1 line2", "thread 1 line3", "thread 1 line4", "thread 1 line5", "thread 1 line6") forEach(:word)
         [
             lock (theSync)
             [
@@ -153,7 +153,7 @@ class GCXTester
     
     proceed2
     [
-        ("thread 2 line1", "thread 2 line2", "thread 2 line3", "thread 2 line4", "thread 2 line5", "thread 2 line6") run &each:word
+        ("thread 2 line1", "thread 2 line2", "thread 2 line3", "thread 2 line4", "thread 2 line5", "thread 2 line6") forEach(:word)
         [
             lock (theSync)
             [
@@ -166,7 +166,7 @@ class GCXTester
     
     start1
     [
-        var handle := Thread new &func:
+        var handle := Thread new:
         [
             while (true)
             [
@@ -179,7 +179,7 @@ class GCXTester
 
     start2
     [
-        var handle := Thread new &func:
+        var handle := Thread new:
         [
             while (true)
             [
@@ -193,7 +193,7 @@ class GCXTester
 
 program =
 [
-    GCXTester new start1 start2.
+    GCXTester new; start1; start2.
     
     console readChar.
 ].

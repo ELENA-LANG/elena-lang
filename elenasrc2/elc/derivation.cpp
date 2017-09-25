@@ -1246,7 +1246,7 @@ void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, De
             break;
          case lxCode:
             generateCodeTree(writer, current, scope);
-            if (scope.type == DerivationScope::ttCodeTemplate) {
+            if (scope.type == DerivationScope::ttCodeTemplate && current.firstChild() == lxEOF) {
                if (scope.parameters.Count() == 2) {
                   if (scope.codeNode == lxNone) {
                      writer.insert(lxTemplateParam);
@@ -1286,6 +1286,12 @@ void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, De
       }
       current = current.nextNode();
    }
+}
+
+inline bool checkFirstNode(SNode node, LexicalType type)
+{
+   SNode current = node.firstChild();
+   return (current == type);
 }
 
 void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current, DerivationScope& scope)
@@ -1383,7 +1389,7 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
          if (current == lxReturning) {
             writer.closeNode();
          }
-         else if (scope.type == DerivationScope::ttCodeTemplate) {
+         else if (scope.type == DerivationScope::ttCodeTemplate && checkFirstNode(current, lxEOF)) {
             if (scope.parameters.Count() == 2) {
                if (scope.codeNode == lxNone) {
                   writer.insert(lxTemplateParam);

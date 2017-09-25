@@ -2,31 +2,51 @@
 In development:
 ------                              
 
+              zdev - live programming
+                 * implement tree prototype
+                 * implement xpath resolver prototype
+
               ydev - upndown
-                 * implement threading suppport
                  * implement net suppport
                  * reimplement chat sample
                  * reimplement upndown (#79)
 
+              zdev - live programming
+                 * implement live programming environment
+
               xdev - general implementation
-                 * fix bug : 1 - 0.3r => 0
-                 * get rid of dynamic keyword, use [] for this : e.g.
-                      template<BaseIndexable> array :: template_subj
-                      {
-                            template_subj[] $target.
-                            template_subj() $target.
-                 * test array of structures
-                 * typified open arg list (#369)
+                 * test array of structures:
+                 import extensions.
+                 
+                 embeddable struct Record
+                 {
+                     int x.
+                     int y.
+                 }
+                 
+                 program =
+                 [
+                     array<Record> r := type<Record>&(3).
+                     
+                     r[0] := Record::{ @x:= 1. @y := 10.}.
+                     r[1] := Record::{ @x:= 2. @y := 20.}.
+                     r[2] := Record::{ @x:= 3. @y := 30.}.
+                 ].
+
+              xdev - general implementation
                  * fix agenda sample
-                 * do we need long and all? probably only int and ref_t should be used
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)
                  * implementing #350
                  * cache isEmbeddable operation result
+                 * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
+                   as light as possible
+                 * get rid of dynamic keyword, use [] for this : e.g.
+                      template<BaseIndexable> array :: template_subj
+                      {
+                            object& $target.
+                 * typified open arg list (#369)
                  * fixing open issues
-
-              zdev - live programming
-                 * implement live programming environment
 
 ------                                 
 Pipeline:
@@ -50,6 +70,7 @@ Pipeline:
                  * implement rosetta samples
 
               xdev - general implementation
+                 * strings module : do we need long (toLong) at all? probably only int and ref_t should be used
                  * implement closure with explicit class type:
 			| if(&type<FormatException>:e) []
                  * constant field should always have assigning part
@@ -429,8 +450,6 @@ Pipeline:
 
                        * verify if methods can be added for sealed, limited, method duplications                       
                        * test live eson script                                                                                                         
-                       * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
-                         as light as possible
                          possible, no exception boxing
                        * review source code to use templates
                        * review try-catch statement, make sure the closure is created only in case of the error

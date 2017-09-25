@@ -1,14 +1,12 @@
-#subject thread = Thread.
-
 // --- Thread ---
 
 class Thread
 {
     object theHandle.
     
-    constructor new &func:anAction
+    constructor new:anAction
     [
-        theHandle := ThreadHandle new &func:anAction.
+        theHandle := ThreadHandle new:anAction.
     ]
     
     start

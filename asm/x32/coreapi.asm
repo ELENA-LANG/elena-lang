@@ -21,10 +21,8 @@ define elSizeOffset      0008h
 define elVMTSizeOffset   000Ch
 
 // verbs
-define EXEC_MESSAGE_ID  085000000h
-define START_MESSAGE_ID 0B7000000h
+define EVAL_MESSAGE_ID  0050h
 
-define VERB_MASK        0FF000000h
 define SUBJECT_MASK     000FFFFF0h
 define INV_SUBJECT_MASK 0FF00000Fh
 
@@ -4121,7 +4119,7 @@ procedure coreapi'start_thread
   jz   short lErr
 
   push  eax
-  mov   ecx, EXEC_MESSAGE_ID
+  mov   ecx, EVAL_MESSAGE_ID
   mov   esi, [eax - 4]
   call [esi + 4]
   

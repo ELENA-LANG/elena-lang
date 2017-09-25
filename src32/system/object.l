@@ -51,7 +51,7 @@ extension commonOp
 {
     /// Returns the parameter        
     back : anObject = anObject.
-    
+ 
     then : code
         = code eval.
         
@@ -64,4 +64,16 @@ extension commonOp
     
     ifTrue:trueBlock ifFalse:falseBlock
         = self if(trueBlock,falseBlock).
+        
+    doFinally func:c1 func:c2
+    [
+        c1 eval; then:c2
+            | raise:c2.
+    ]
+    
+    doAndClose : code
+    [
+        self thenClose:code
+            | raise:[ self close ].
+    ]        
 }

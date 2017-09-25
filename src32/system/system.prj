@@ -7,7 +7,7 @@ debuginfo=-1
 
 [manifest]
 name=ELENA Standard Library
-version=3.2.25
+version=3.2.26
 author=Alex Rakov
 
 [files]
@@ -54,6 +54,8 @@ dynamic\reflection.l
 dynamic\groups.l
 dynamic\interpreters.l
 threading\win32_handlers.l
+threading\thread.l
+threading\thread_patterns.l
 winforms\win32_types.l
 winforms\win32_exceptions.l
 winforms\win32_common.l

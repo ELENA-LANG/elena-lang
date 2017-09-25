@@ -242,21 +242,6 @@ template finally :: expr =
         [
         ]                 
         | raise:[].
-        
-extension $templateOp =
-{
-    doFinally func:c1 func:c2
-    [
-        c1 eval; then:c2
-            | raise:c2.
-    ]
-    
-    doAndClose : code
-    [
-        self thenClose:code
-            | raise:[ self close ].
-    ]
-}.
 
 template finally :: dummy, else =
     true doFinally([],[]).

@@ -9,7 +9,7 @@ class BaseIndexable
 dynamic template<BaseIndexable> array :: template_subj
 {
     template_subj $target.
-    
+
     enumerator 
     [
         vint index := -1.
