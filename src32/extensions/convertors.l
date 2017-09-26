@@ -285,6 +285,9 @@ extension convertorOp
     toLiteral
         = literalExConvertor convert:self.
     
+    toLiteral(IntNumber radix)
+        = literalConvertor convert(self, radix).
+    
     toWide
         = wideExConvertor convert:self.
 
@@ -302,6 +305,9 @@ extension convertorOp
 
     toInt
         = intConvertor convert:self.
+        
+    toInt(IntNumber radix)
+        = intConvertor convert(self, radix).
         
 //    toHexInt
 //        = self cast:%eval to:

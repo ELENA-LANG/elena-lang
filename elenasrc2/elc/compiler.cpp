@@ -1271,7 +1271,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
       else {
          outer.outerObject = parent->mapTerminal(identifier);
          // handle outer fields in a special way: save only self
-         if (outer.outerObject.kind == okField || outer.outerObject.kind == okOuterField) {
+         if (outer.outerObject.kind == okField || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okStaticField || outer.outerObject.kind == okOuterStaticField) {
             Outer owner = mapSelf();
 
             // save the outer field type if provided
@@ -1282,6 +1282,12 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
             // map as an outer field (reference to outer object and outer object field index)
             if (outer.outerObject.kind == okOuterField) {
                return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam);
+            }
+            else if (outer.outerObject.kind == okOuterStaticField) {
+               return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.extraparam);
+            }
+            else if (outer.outerObject.kind == okStaticField) {
+               return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.param);
             }
             else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param);
          }
@@ -2154,6 +2160,11 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          writer.newNode(lxFieldExpression, 0);
          writer.appendNode(lxField, object.param);
          writer.appendNode(lxResultField, object.extraparam);
+         break;
+      case okOuterStaticField:
+         writer.newNode(lxFieldExpression, 0);
+         writer.appendNode(lxField, object.param);
+         writer.appendNode(lxResultStaticField, object.extraparam);
          break;
       case okSubject:
          writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->signatureReference, 0u));
@@ -3307,7 +3318,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          }
          else scope.raiseError(errInvalidOperation, node);
       }
-      else if (retVal.kind == okLocal || retVal.kind == okField || retVal.kind == okOuterField || retVal.kind == okStaticField) {
+      else if (retVal.kind == okLocal || retVal.kind == okField || retVal.kind == okOuterField || retVal.kind == okStaticField || retVal.kind == okOuterStaticField) {
       }
       else if (/*retVal.kind == okParam || */retVal.kind == okOuter) {
          InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
@@ -3541,7 +3552,14 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       closureRef = scope.info.header.parentRef;
 
    if (test(scope.info.header.flags, elStateless)) {
-      writer.appendNode(lxConstantSymbol, closureRef);
+      ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
+      if (scope.info.methods.exist(implicitConstructor, true)) {
+         // if implicit constructor is declared - it should be automatically called
+         writer.newNode(lxCalling, implicitConstructor);
+         writer.appendNode(lxConstantSymbol, closureRef);
+         writer.closeNode();
+      }
+      else writer.appendNode(lxConstantSymbol, closureRef);
 
       // if it is a stateless class
       return ObjectInfo(okConstantSymbol, closureRef, closureRef/*, scope.moduleScope->defineType(scope.reference)*/);
@@ -5278,7 +5296,11 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    // creates implicit symbol
    SymbolScope symbolScope(scope.moduleScope, scope.reference);
 
-   _writer.generateSymbol(tape, symbolScope.reference, lxConstantClass, scope.reference);
+   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
+   if (scope.info.methods.exist(implicitConstructor, true)) {
+      _writer.generateSymbolWithInitialization(tape, symbolScope.reference, lxConstantClass, scope.reference, implicitConstructor);
+   }
+   else _writer.generateSymbol(tape, symbolScope.reference, lxConstantClass, scope.reference);
 
    // create byte code sections
    _writer.save(tape, *scope.moduleScope);

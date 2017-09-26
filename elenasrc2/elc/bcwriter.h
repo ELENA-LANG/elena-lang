@@ -322,6 +322,7 @@ public:
 
    void generateClass(CommandTape& tape, SNode root);
    void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+   void generateSymbolWithInitialization(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument, ref_t implicitConstructor);
    void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic);
    void generateConstantList(SyntaxTree::Node node, _Module* module, ref_t reference);

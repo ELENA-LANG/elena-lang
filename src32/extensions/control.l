@@ -87,7 +87,19 @@ extension loopOp
         while (self bool)
         [
         ].
-    ]
+    ]    
+}
+
+func extension blockOp
+{
+    repeatUntil:aCondition
+    [
+        $self eval.
+        while (aCondition)
+        [
+            $self eval.
+        ].
+    ]    
 }
 
 // --- testOp ---

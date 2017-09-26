@@ -772,6 +772,26 @@ void ByteCodeWriter :: saveBase(CommandTape& tape, bool directOperation, Lexical
             tape.write(bcASaveBI, sourceArgument);
          }
          break;
+      case lxResultStaticField:
+         if ((int)sourceArgument > 0) {
+            // asaver arg
+            tape.write(bcASaveR, sourceArgument | mskStatSymbolRef);
+         }
+         else {
+            // pusha
+            // class
+            // aloadai -offset
+            // bcopya
+            // popa
+            // axsavebi 0
+            tape.write(bcPushA);
+            tape.write(bcClass);
+            tape.write(bcALoadAI, sourceArgument);
+            tape.write(bcBCopyA);
+            tape.write(bcPopA);
+            tape.write(bcAXSaveBI, 0);
+         }
+         break;
    }
 }
 
@@ -3484,6 +3504,30 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushai reference
          tape.write(bcPushAI, argument);
          break;
+      case lxResultStaticField:
+         if ((int)argument > 0) {
+            // aloadr r
+            // pusha
+            tape.write(bcALoadR, argument | mskStatSymbolRef);
+            tape.write(bcPushA);
+         }
+         else {
+            // pushb
+            // bcopya
+            // class
+            // aloadai -offset
+            // aloadai 0
+            // popb
+            // pusha
+            tape.write(bcPushB);
+            tape.write(bcBCopyA);
+            tape.write(bcClass);
+            tape.write(bcALoadAI, argument);
+            tape.write(bcALoadAI, 0);
+            tape.write(bcPopB);
+            tape.write(bcPushA);
+         }
+         break;
       case lxCurrentMessage:
          // pushe
          tape.write(bcPushE);
@@ -3586,6 +3630,22 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxResultField:
          // aloadai
          tape.write(bcALoadAI, argument);
+         break;
+      case lxResultStaticField:
+         if ((int)argument > 0) {
+            // aloadr r
+            tape.write(bcALoadR, argument | mskStatSymbolRef);
+         }
+         else {
+            // bcopya
+            // class
+            // aloadai -offset
+            // aloadai 0
+            tape.write(bcBCopyA);
+            tape.write(bcClass);
+            tape.write(bcALoadAI, argument);
+            tape.write(bcALoadAI, 0);
+         }
          break;
       case lxInternalCall:
          tape.write(bcCallR, argument | mskInternalRef);
@@ -4613,7 +4673,10 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 
          assignOpArguments(target, arg1, arg2);
          loadBase(tape, arg1.type, arg1.argument);
-         saveBase(tape, false, lxResult, arg2.argument);
+         if (arg2 == lxResultStaticField) {
+            saveBase(tape, false, lxResultStaticField, arg2.argument);
+         }
+         else saveBase(tape, false, lxResult, arg2.argument);
       }
       else if (size != 0) {
          if (source == lxFieldAddress) {
@@ -5377,6 +5440,10 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                // HOTFIX: -1 indicates the stack is not consumed by the constructor
                callMethod(tape, 1, -1);
             }
+            else if (current.argument == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
+               // HOTFIX: call implicit constructor without putting the target to the stack
+               callImplicitConstructorMethod(tape, current.findChild(lxTarget).argument, current.argument, false);
+            }               
             else {
                pushObject(tape, lxCurrent); // push the target
                callResolvedMethod(tape, current.findChild(lxTarget).argument, current.argument);
@@ -5488,6 +5555,14 @@ void ByteCodeWriter :: generateClass(CommandTape& tape, SNode root)
    }
 
    endClass(tape);
+}
+
+void ByteCodeWriter :: generateSymbolWithInitialization(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument, ref_t implicitConstructor)
+{
+   declareSymbol(tape, reference, (size_t)-1);
+   loadObject(tape, type, argument);
+   callImplicitConstructorMethod(tape, reference, implicitConstructor, false);
+   endSymbol(tape);
 }
 
 void ByteCodeWriter :: generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
