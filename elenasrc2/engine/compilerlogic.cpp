@@ -1684,7 +1684,7 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
 
       compiler.injectLocalBoxing(exprNode, node.argument);
 
-      node = unboxingMode ? lxLocalUnboxing : lxExpression;
+      node = unboxingMode ? lxLocalUnboxing : lxBoxing;
    }
 
    return true;

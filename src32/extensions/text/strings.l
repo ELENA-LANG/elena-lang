@@ -1,3 +1,5 @@
+import extensions.
+
 // --- StringBookmark ---
 
 class StringBookmark :: BaseValue
@@ -138,7 +140,7 @@ class StringBookmark :: BaseValue
 
 // --- StringWriter ---
 
-class StringWriter :: BaseVariable
+sealed class StringWriter :: BaseVariable
 {    
     literal theValue.
     
@@ -166,6 +168,36 @@ class StringWriter :: BaseVariable
     [
         $self write:'newLine.
     ]    
+
+    writeFormatted : format : o1
+        = $self printFormatted(format, o1).
+
+    writeFormatted : format : o1 : o2
+        = $self printFormatted(format, o1, o2).
+
+    writeFormatted : format : o1 : o2: o3
+        = $self printFormatted(format, o1, o2, o3).
+
+    writeFormatted : format : o1 : o2: o3: o4
+        = $self printFormatted(format, o1, o2, o3, o4).
+
+    writeFormatted : format : o1 : o2: o3: o4: o5
+        = $self printFormatted(format, o1, o2, o3, o4, o5).
+
+    writeFormatted : format : o1 : o2: o3: o4: o5: o6
+        = $self printFormatted(format, o1, o2, o3, o4, o5, o6).
+
+    writeFormatted : format : o1 : o2: o3: o4: o5: o6: o7
+        = $self printFormatted(format, o1, o2, o3, o4, o5, o6, o7).
+
+    writeFormatted : format : o1 : o2: o3: o4: o5: o6: o7: o8
+        = $self printFormatted(format, o1, o2, o3, o4, o5, o6, o7, o8).
+
+    writeFormatted : format : o1 : o2: o3: o4: o5: o6: o7: o8: o9
+        = $self printFormatted(format, o1, o2, o3, o4, o5, o6, o7, o8, o9).
+
+    writeFormatted object&:args
+        = $self printFormatted object&:args.
 
     set : aText
     [

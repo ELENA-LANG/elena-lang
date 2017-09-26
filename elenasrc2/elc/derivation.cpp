@@ -1472,7 +1472,7 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode node, D
       SNode typeNode = current.findChild(lxObject);
 
       SNode operatorNode = typeNode.findChild(lxAngleOperator);
-      expr = operatorNode.findChild(lxReturning);
+      expr = operatorNode.findChild(lxReturning, lxOperator);
 
       int prefixCounter = SyntaxTree::countChild(current, lxObject);
       if (scope.mapAttribute(attr/*, true*/) == V_TYPETEMPL && prefixCounter == 1) {
@@ -1539,7 +1539,11 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode node, D
    copyIdentifier(writer, attr);
    writer.closeNode();
 
-   if (expr != lxNone) {
+   if (expr == lxOperator && expr.argument == -3) {
+      writer.appendNode(lxOperator, -1);
+      generateExpressionTree(writer, expr.findChild(lxExpression), scope, EXPRESSION_EXPLICIT_MODE);
+   }
+   else if (expr != lxNone) {
       writer.newNode(lxExpression);
       generateExpressionTree(writer, expr, scope, 0);
       writer.closeNode();

@@ -3497,6 +3497,23 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
       compileParentDeclaration(node, scope);
 
       declareVMT(node, scope);
+
+      // check if it is a virtual vmt (only for the class initialization)
+      SNode current = node.firstChild();
+      bool virtualClass = true;
+      while (current != lxNone) {
+         if (current == lxClassMethod) {
+            if (!test(current.argument, SEALED_MESSAGE)) {
+               virtualClass = false;
+               break;
+            }
+         }
+         current = current.nextNode();
+      }
+
+      if (virtualClass)
+         scope.info.header.flags |= elVirtualVMT;
+
       generateClassDeclaration(node, scope, false, true);
 
       scope.save();
@@ -3519,11 +3536,15 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope)
 {
+   ref_t closureRef = scope.reference;
+   if (test(scope.info.header.flags, elVirtualVMT))
+      closureRef = scope.info.header.parentRef;
+
    if (test(scope.info.header.flags, elStateless)) {
-      writer.appendNode(lxConstantSymbol, scope.reference);
+      writer.appendNode(lxConstantSymbol, closureRef);
 
       // if it is a stateless class
-      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference/*, scope.moduleScope->defineType(scope.reference)*/);
+      return ObjectInfo(okConstantSymbol, closureRef, closureRef/*, scope.moduleScope->defineType(scope.reference)*/);
    }
    else if (test(scope.info.header.flags, elDynamicRole)) {
       scope.raiseError(errInvalidInlineClass, node);
@@ -3535,7 +3556,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       // dynamic binary symbol
       if (test(scope.info.header.flags, elStructureRole)) {
          writer.newNode(lxStruct, scope.info.size);
-         writer.appendNode(lxTarget, scope.reference);
+         writer.appendNode(lxTarget, closureRef);
 
          if (scope.outers.Count() > 0)
             scope.raiseError(errInvalidInlineClass, node);
@@ -3543,7 +3564,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       else {
          // dynamic normal symbol
          writer.newNode(lxNested, scope.info.fields.Count());
-         writer.appendNode(lxTarget, scope.reference);
+         writer.appendNode(lxTarget, closureRef);
       }
 
       Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
@@ -3587,12 +3608,15 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
       if (scope.info.methods.exist(implicitConstructor, true)) {
          // if implicit constructor is declared - it should be automatically called
-         writer.appendNode(lxOvreriddenMessage, implicitConstructor);
+         writer.newNode(lxOvreriddenMessage, implicitConstructor);
+         if (scope.reference != closureRef)
+            writer.appendNode(lxTarget, scope.reference);
+         writer.closeNode();
       }
 
       writer.closeNode();
 
-      return ObjectInfo(okObject, scope.reference);
+      return ObjectInfo(okObject, closureRef);
    }
 }
 
@@ -3836,22 +3860,39 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 
    ref_t targetRef = scope.moduleScope->module->mapReference(node.findChild(lxClassRefAttr).identifier(), false);
 
+   ObjectInfo retVal = ObjectInfo(okObject, targetRef);
    SNode objectNode = node.findChild(lxExpression);
    if (objectNode != lxNone) {
-      ObjectInfo object = compileExpression(writer, objectNode, scope, mode);
+      if (node.existChild(lxOperator)) {
+         ObjectInfo loperand = compileExpression(writer, objectNode, scope, 0);
 
-      if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
-         scope.raiseError(errIllegalOperation, node);
+         ref_t arrayRef = 0;
+         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, 
+            targetRef, resolveObjectReference(scope, loperand), arrayRef);
+
+         if (operationType != 0) {
+            // if it is a primitive operation
+            _logic->injectNewOperation(writer, *scope.moduleScope, operationType, arrayRef, targetRef);
+
+            retVal = assignResult(writer, scope, arrayRef, targetRef);
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
+      else {
+         ObjectInfo object = compileExpression(writer, objectNode, scope, mode);
+
+         if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
+            scope.raiseError(errIllegalOperation, node);
+      }
    }
    else {
       if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
          scope.raiseError(errIllegalOperation, node);
-
    }
 
    writer.removeBookmark();
 
-   return ObjectInfo(okObject, targetRef);
+   return retVal;
 }
 
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
@@ -4917,7 +4958,7 @@ void Compiler :: compileImplicitConstructor(SyntaxWriter& writer, SNode node, Me
 
    writer.closeNode();
 
-   writer.appendNode(lxParamCount, getParamCount(scope.message) + 1);
+   writer.appendNode(lxParamCount, getParamCount(scope.message));
    writer.appendNode(lxReserved, scope.reserved);
    writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
 

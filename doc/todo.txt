@@ -2,17 +2,7 @@
 In development:
 ------                              
 
-              zdev - live programming
-                 * implement tree prototype
-                 * implement xpath resolver prototype
-
-              ydev - upndown
-                 * implement net suppport
-                 * reimplement chat sample
-                 * reimplement upndown (#79)
-
-              zdev - live programming
-                 * implement live programming environment
+How to : Initialize Objects by Using an Object Initializer
 
               xdev - general implementation
                  * test array of structures:
@@ -32,6 +22,56 @@ In development:
                      r[1] := Record::{ @x:= 2. @y := 20.}.
                      r[2] := Record::{ @x:= 3. @y := 30.}.
                  ].
+                 * fix bug : duplicate symbols:
+
+import extensions.
+import extensions'text.
+
+embeddable struct Record
+{
+    int x := 2.
+    int y := 3.
+    
+    literal
+        = StringWriter new; writeFormatted("{0}.x={1}, {0}.y={2}", $self className, x, y).
+}
+
+program =
+[
+    var r := Record::{ @x:= 1. @y := 10.}.
+    
+    console printLine(r).
+].
+
+program =
+[
+//    array<Record> r := type<Record>&(3).
+    
+    var r := Record::{ @x:= 1. @y := 10.}.
+    
+//    r[0] := Record::{ @x:= 1. @y := 10.}.
+//    r[1] := Record::{ @x:= 2. @y := 20.}.
+//    r[2] := Record::{ @x:= 3. @y := 30.}.
+].
+
+program =
+[
+    var r := Record::{ @x:= 1. @y := 10.}.
+    
+    console printLine(r).
+].
+
+              zdev - live programming
+                 * implement tree prototype
+                 * implement xpath resolver prototype
+
+              ydev - upndown
+                 * implement net suppport
+                 * reimplement chat sample
+                 * reimplement upndown (#79)
+
+              zdev - live programming
+                 * implement live programming environment
 
               xdev - general implementation
                  * fix agenda sample
@@ -110,6 +150,7 @@ Pipeline:
                  * optimize ArrayList / list template insert operation (use xset for moving the references rather than set)
                  * optimize multimethod implementation for sealed class containing only one overload class
                  * external function : duplicate assigning
+                 * do not allocate a virtual vmt (for the object initilizer code)
 
               zdev - remoting
               zdev - workflow

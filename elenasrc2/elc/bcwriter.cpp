@@ -1010,6 +1010,19 @@ void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, re
    tape.write(bcFreeStack, 1 + getParamCount(message));
 }
 
+void ByteCodeWriter :: callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
+{
+   // validate
+   // xcallrm r, m
+
+   if (withValidattion)
+      tape.write(bcValidate);
+
+   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
+
+   tape.write(bcFreeStack, getParamCount(message));
+}
+
 void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
 {
    // xindexrm r, m
@@ -4849,8 +4862,12 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
    
    SNode callNode = node.findChild(lxOvreriddenMessage);
    if (callNode != lxNone) {
+      ref_t messageTarget = callNode.findChild(lxTarget).argument;
+      if (!messageTarget)
+         messageTarget = target.argument;
+
       // call implicit constructor
-      callResolvedMethod(tape, target.argument, callNode.argument);
+      callImplicitConstructorMethod(tape, messageTarget, callNode.argument, false);
    }   
 }
 
@@ -4859,6 +4876,16 @@ void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::N
    SNode target = node.findChild(lxTarget);
 
    newStructure(tape, node.argument, target.argument);
+
+   SNode callNode = node.findChild(lxOvreriddenMessage);
+   if (callNode != lxNone) {
+      ref_t messageTarget = callNode.findChild(lxTarget).argument;
+      if (!messageTarget)
+         messageTarget = target.argument;
+
+      // call implicit constructor
+      callImplicitConstructorMethod(tape, messageTarget, callNode.argument, false);
+   }
 }
 
 void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
