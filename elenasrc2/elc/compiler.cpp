@@ -6848,11 +6848,11 @@ void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
 
             SymbolScope symbolScope(&scope, current.argument);
 
-//            // check for duplicate declaration
-//            if (scope.module->mapSection(symbolScope.reference | mskSymbolRef, true))
-//               scope.raiseError(errDuplicatedSymbol, name);
-//
-//            scope.module->mapSection(symbolScope.reference | mskSymbolRef, false);
+            // check for duplicate declaration
+            if (scope.module->mapSection(symbolScope.reference | mskSymbolRef, true))
+               scope.raiseError(errDuplicatedSymbol, name);
+
+            scope.module->mapSection(symbolScope.reference | mskSymbolRef, false);
 
             // declare symbol
             compileSymbolDeclaration(current, symbolScope);
