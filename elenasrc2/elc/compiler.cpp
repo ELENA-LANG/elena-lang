@@ -176,6 +176,39 @@ inline bool checkNode(SNode node, LexicalType type, ref_t argument)
    return node == type && node.argument == argument;
 }
 
+inline bool isConstantArguments(SNode node)
+{
+   if (node == lxNone)
+      return true;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type)
+      {
+         case lxExpression:
+            if (!isConstantArguments(current))
+               return false;
+            break;
+         case lxLiteral:
+         case lxWide:
+         case lxCharacter:
+         case lxInteger:
+         case lxLong:
+         case lxHexInteger:
+         case lxReal:
+         case lxExplicitConst:
+         case lxMessage:
+            break;
+         default:
+            return false;
+      }
+
+      current = current.nextNode();
+   }
+
+   return true;
+}
+
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
@@ -1187,6 +1220,22 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.element_ref);
    }
    else return Scope::mapTerminal(identifier);
+}
+
+// --- Compiler::ResendScope ---
+
+ObjectInfo Compiler::ResendScope :: mapTerminal(ident_t identifier)
+{
+   if (!withFrame && (identifier.compare(THIS_VAR) || identifier.compare(SELF_VAR)))
+   {
+      return ObjectInfo();
+   }
+
+   ObjectInfo info = CodeScope::mapTerminal(identifier);
+   if (consructionMode && (info.kind == okField || info.kind == okFieldAddress)) {
+      return ObjectInfo();
+   }
+   else return info;
 }
 
 // --- Compiler::InlineClassScope ---
@@ -4757,7 +4806,7 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
       }
    }
    if (found) {
-      if ((count != 0 && methodScope->parameters.Count() != 0) || node.existChild(lxCode)) {
+      if ((count != 0 && methodScope->parameters.Count() != 0) || node.existChild(lxCode) || !isConstantArguments(expr)) {
          withFrame = true;
 
          // new stack frame
@@ -4776,9 +4825,13 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
 
       writer.appendNode(lxCallTarget, classRef);
 
-      compileMessageParameters(writer, expr, scope, HINT_RESENDEXPR);
+      ResendScope resendScope(&scope);
+      resendScope.consructionMode = true;
+      resendScope.withFrame = withFrame;
 
-      compileMessage(writer, expr, scope, ObjectInfo(okObject, classRef), messageRef, HINT_RESENDEXPR);
+      compileMessageParameters(writer, expr, resendScope, HINT_RESENDEXPR);
+
+      compileMessage(writer, expr, resendScope, ObjectInfo(okObject, classRef), messageRef, HINT_RESENDEXPR);
 
       writer.removeBookmark();
 
@@ -5327,7 +5380,7 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
       if (classScope.info.header.parentRef == 0)
          classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
 
-      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.moduleScope->superReference));
+      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(/*classScope.moduleScope->superReference*/classScope.info.header.parentRef));
       classClassParentName.append(CLASSCLASS_POSTFIX);
 
       classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);

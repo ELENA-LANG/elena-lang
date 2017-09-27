@@ -143,6 +143,7 @@ public:
       okOuter,                        // param - field offset, extraparam - class reference
       okOuterField,                   // param - field offset, extraparam - outer field offset
       okOuterStaticField,             // param - field offset, extraparam - outer field offset
+      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
 //      okParamField,
@@ -659,6 +660,22 @@ private:
       CodeScope(MethodScope* parent);
       CodeScope(CodeScope* parent);
    };
+
+   // --- ResendScope ---
+   struct ResendScope : public CodeScope
+   {
+      bool withFrame;
+      bool consructionMode;
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
+
+      ResendScope(CodeScope* parent)
+         : CodeScope(parent)
+      {
+         consructionMode = withFrame = false;
+      }
+   };
+
 
    // - InlineClassScope -
    struct InlineClassScope : public ClassScope
