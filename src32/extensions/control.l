@@ -99,7 +99,26 @@ func extension blockOp
         [
             $self eval.
         ].
-    ]    
+    ]        
+}
+
+lazy_func extension lazyOp
+{
+    whileTrue func:action
+    [
+        while(self)
+        [
+            action eval
+        ]
+    ]
+
+    whileFalse func:action
+    [
+        until(self)
+        [
+            action eval
+        ]
+    ]        
 }
 
 // --- testOp ---

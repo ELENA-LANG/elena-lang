@@ -15,6 +15,7 @@ In development:
                  * implement live programming environment
 
               xdev - general implementation
+                 * #283 : unboxing duplicate object 
                  * implememnt : Word search
                  * #195 : impelement rosetta code samples
                  * fix agenda sample

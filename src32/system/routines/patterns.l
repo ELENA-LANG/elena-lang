@@ -548,6 +548,15 @@ class Range :: BaseEnumerable
         theEnd := start + count.
     ]
     
+    stacksafe readLengthTo vint:retVal
+    [
+        int l := theEnd - theStart.
+        
+        retVal int := l.
+    ]
+    
+    int rvprop length :: readLengthTo.
+    
     enumerator = IntRangeEnumerator new(theStart, theEnd).
 }
 

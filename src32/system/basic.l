@@ -3305,6 +3305,18 @@ class Integer =
         = n int.
 }.
 
+class LongInteger =
+{
+    vlong new
+        = 0l.
+        
+    vlong new long:n
+        = n.
+        
+    vlong new:n
+        = n long.
+}.
+
 class Real =
 {
     vreal new

@@ -95,6 +95,7 @@ type wide       = system'WideLiteralValue.
 
 // === function types ===
 type func       = system'BaseFunction.
+type lazy_func  = system'BaseLazyExpression.
 
 /// An anonymous function with a generic parameter.
 ///

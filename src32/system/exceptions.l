@@ -123,6 +123,9 @@ class Exception
         theMessage := aMessage.
         theCallStack := CallStack new.
     ]    
+    
+    constructor new
+        <= new($self className).
 }
 
 // --- FormatException ---
