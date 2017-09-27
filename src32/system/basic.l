@@ -2263,6 +2263,18 @@ sealed const embeddable struct CharValue :: BaseValue
     stacksafe bool equal int:val
         = theValue == val.
 
+    stacksafe bool equal literal:val
+        = val == $self literal.
+
+    stacksafe bool equal wide:val
+        = val == $self wide.
+
+    stacksafe bool less literal:val
+        = val < $self literal.
+
+    stacksafe bool less wide:val
+        = val < $self wide.
+
     /// Clones the value
     clone = CharValue new char:$self.
 
