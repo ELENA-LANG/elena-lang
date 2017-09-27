@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * #195 : impelement rosetta code samples (19)
-
               zdev - live programming
                  * implement tree prototype
                  * implement xpath resolver prototype
@@ -18,6 +15,8 @@ In development:
                  * implement live programming environment
 
               xdev - general implementation
+                 * implememnt : Word search
+                 * #195 : impelement rosetta code samples
                  * fix agenda sample
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)

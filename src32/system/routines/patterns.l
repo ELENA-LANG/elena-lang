@@ -502,6 +502,55 @@ class RangeEnumerator :: Enumerator
     ]
 }
 
+// --- BaseIndexer ---
+
+class IntRangeEnumerator :: Enumerator
+{
+    int theIndex.
+    int theStart.
+    int theEnd.
+
+    stacksafe constructor new(IntNumber start, IntNumber end)
+    [
+        theStart := start.
+        theEnd := end.
+        
+        $self reset.
+    ]
+
+    get = theIndex.
+            
+    /// Returns false if the index out of range
+    next 
+    [
+        theIndex += 1.
+        
+        ^ theIndex < theEnd
+    ]
+    
+    /// Sets the i-index by specified value
+    reset
+    [ 
+        theIndex := theStart - 1.
+    ] 
+}
+
+// --- Range --
+
+class Range :: BaseEnumerable
+{
+    int theStart.
+    int theEnd.
+    
+    constructor new(IntNumber start, IntNumber count)
+    [
+        theStart := start.
+        theEnd := start + count.
+    ]
+    
+    enumerator = IntRangeEnumerator new(theStart, theEnd).
+}
+
 // --- IntervalEnumerator ---
 
 class IntervalEnumerator :: Enumerator
@@ -759,6 +808,9 @@ extension patternOp
     to:max repeat:aRepeater
         = Repeater new(self, max, aRepeater).
 
-    repeateTill:n
+    repeatTill:n
         = RangeEnumerator new from:self to(n - 1) by:1.              
+        
+    repeatTo:n
+        = RangeEnumerator new from:self to:n by:1.              
 }

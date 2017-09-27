@@ -7,7 +7,7 @@ debuginfo=-1
 
 [manifest]
 name=ELENA Standard Library
-version=3.2.28
+version=3.2.29
 author=Alex Rakov
 
 [files]
