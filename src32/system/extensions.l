@@ -828,6 +828,9 @@ intarray extension intArrayOp
         
         ^ self
     ]
+    
+    populate(BaseFunction1 aFunction)
+        = self~intArrayOp populate(&int:n)[ ^aFunction eval:n ].    
 }
 
 // --- arrayOp ---

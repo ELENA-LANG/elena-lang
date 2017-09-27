@@ -1,7 +1,7 @@
 class BaseIndexable
 {
     // should be overridden
-    indexer = $self.
+    indexer = $nil.
 }
 
 // --- arrayof ---
@@ -32,7 +32,22 @@ dynamic template<BaseIndexable> array :: template_subj
               ]
           }
     ]
+
+    indexer = BaseIndexer::
+    {
+        @theIndex := 0.
         
+        @theBaseIndexerLength := $owner length.
+        
+        get
+            = $owner getAt int:theIndex.
+            
+        set : o
+        [
+            $owner setAt int:theIndex template_subj:o.
+        ]                        
+    }.    
+
     stacksafe readLengthTo vint:retVal
     [
         int len := 0.
@@ -458,8 +473,21 @@ sealed ShortArray :: array<short>
 sealed IntArray :: array<int>
 {
     /// Creates the array with the specified length
-    stacksafe constructor new int : aLength
+    stacksafe constructor $new int : aLength
         = int&(aLength).
+        
+    /// Creates the array with the specified length
+    stacksafe constructor new int : aLength
+        <= $new(aLength);
+    [
+        int i := 0.
+        while (i < aLength)
+        [
+            $self[i] := 0.
+            
+            i := i + 1
+        ]
+    ]
 
 //    /// Creates the array with the specified length
 //    constructor new : aLength
@@ -752,9 +780,24 @@ sealed class IntMatrix
     ]
 
     /// Returns a row
-    getAt : i =
+    getAt : i = BaseIndexable::
     {
         length = theColumns.
+        
+        indexer = BaseIndexer::
+        {
+            @theIndex := 0.
+            
+            @theBaseIndexerLength := $owner columns.
+            
+            get
+                = $owner getAt(i,theIndex).
+                
+            set : o
+            [
+                $owner setAt(i,theIndex,o).
+            ]                        
+        }.    
         
         getAt : j
             = $owner getAt(i,j).

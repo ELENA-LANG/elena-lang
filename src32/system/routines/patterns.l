@@ -758,7 +758,7 @@ extension patternOp
         
     to:max repeat:aRepeater
         = Repeater new(self, max, aRepeater).
-        
-//    counting
-//        = RangeEnumerator new from:1 to:(self int) by:1.
+
+    repeateTill:n
+        = RangeEnumerator new from:self to(n - 1) by:1.              
 }

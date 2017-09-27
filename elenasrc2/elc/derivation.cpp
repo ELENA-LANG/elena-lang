@@ -1638,19 +1638,32 @@ void DerivationReader :: generateAssignmentOperator(SyntaxWriter& writer, SNode 
       // HOTFIX : if it is an assign operator with array brackets
       SNode loperatorNode = loperand.nextNode();
 
+      writer.newBookmark();
       writer.newNode(lxExpression);
       generateObjectTree(writer, loperand, scope);
       copyOperator(writer, loperatorNode.firstChild(), loperatorNode.argument);
       generateExpressionTree(writer, loperatorNode, scope, 0);
       writer.closeNode();
+      while (loperatorNode.nextNode() == lxOperator) {
+         loperatorNode = loperatorNode.nextNode();
+         generateObjectTree(writer, loperatorNode, scope);
+      }      
+      writer.removeBookmark();      
 
+      loperatorNode = loperand.nextNode();
       writer.appendNode(lxAssign);
+      writer.newBookmark();
       writer.newNode(lxExpression);
       writer.newNode(lxExpression);
       generateObjectTree(writer, loperand, scope);
       copyOperator(writer, loperatorNode.firstChild(), loperatorNode.argument);
       generateExpressionTree(writer, loperatorNode, scope, 0);
       writer.closeNode();
+      while (loperatorNode.nextNode() == lxOperator) {
+         loperatorNode = loperatorNode.nextNode();
+         generateObjectTree(writer, loperatorNode, scope);
+      }
+      writer.removeBookmark();
    }
    else {
       generateObjectTree(writer, loperand, scope);

@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              xdev - general implementation
+                 * #195 : impelement rosetta code samples (19)
+
               zdev - live programming
                  * implement tree prototype
                  * implement xpath resolver prototype
@@ -415,7 +418,6 @@ Pipeline:
                        * optimite #var(int)last_index := theLength - 1. // where theLength is vint
                        * optimize pop close => nop close
                        * optimize system'dynamic'Dynamic
-                       * arrayof should support iterator
                        * optimization : equal, less, div, xor should support operation with immediate argumnt as well
                        * optimization : SMALL_RECT.write&win_small_rec[1] - should directly assign the property to the field, 
                          the stack read optimization should work

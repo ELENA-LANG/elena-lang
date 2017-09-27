@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0088
+#define ELC_REVISION_NUMBER             0x0089
 
 // --- ELC default file names ---
 #ifdef _WIN32

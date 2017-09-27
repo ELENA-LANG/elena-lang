@@ -3248,9 +3248,9 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
    SNode exprNode = node;
    SNode operation = node.findChild(lxMessage, lxExpression, lxAssign);
-   if (operation == lxExpression) {
+   while (operation == lxExpression) {
       exprNode = operation;
-      operation = exprNode.findChild(lxMessage, lxOperator);
+      operation = exprNode.findChild(lxMessage, lxOperator, lxExpression);
    }
 
    if (operation == lxMessage) {

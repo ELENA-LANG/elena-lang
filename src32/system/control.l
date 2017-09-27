@@ -782,7 +782,7 @@ class BaseIndexer :: Indexer
     int theBaseIndexerLength.
     
     /// Returns false if the index out of range
-    available = (theIndex <= theBaseIndexerLength).
+    available = (theIndex < theBaseIndexerLength).
     
     /// Reads the current i-index into an output parameter
     readIndexTo vint:retVal
