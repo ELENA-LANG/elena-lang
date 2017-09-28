@@ -1,7 +1,7 @@
 
 limited class BaseSpace
 {
-    int fn2prop getLiveCell :: calcLiveCells.
+    int fn3prop getLiveCell :: calcLiveCells.
     
     int rvprop rows         :: readRowsTo.
     int rvprop columns      :: readColumnsTo.
@@ -22,7 +22,7 @@ limited class BaseSpace
         ^ retVal
     ]
     
-    stacksafe calcLiveCells int:k int:l vint:retVal
+    stacksafe calcLiveCells int:k int:l int:state vint:retVal
     [
         int i := -1.
         int j := -1.
@@ -33,7 +33,7 @@ limited class BaseSpace
             while (j < 2)
             [
                 int cell := $self getAt int(k + i) int(l + j).
-                if (cell == 1)
+                if (cell == state)
                     [ counter := counter + 1 ].
                 
                 j := j + 1
@@ -100,8 +100,7 @@ sealed class IntMatrixSpace :: BaseSpace
             while(j < theM)
             [
                 int cell := 0.
-                if(rs validate space:$self int:i int:j )
-                    [ cell := 1 ].
+                rs proceed space:$self int:i int:j vint:cell.
                     
                 matrix write int:i int:j int:cell.
                 

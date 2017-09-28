@@ -171,6 +171,20 @@ method template fn2prop :: type,template_fn
     ]
 }
 
+// --- fn3prop ---
+
+method template fn3prop :: type,template_fn
+{
+    method target_method.
+    
+    stacksafe embeddable type template_fn type:n type:m type:o
+    [
+        type retVal := 0.
+        $self target_method type:n type:m type:o var<type>:retVal.
+        ^ retVal.            
+    ]
+}
+
 // --- while statement ---
 
 loop_template while :: expr =

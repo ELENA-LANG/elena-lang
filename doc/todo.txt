@@ -2,6 +2,13 @@
 In development:
 ------                              
 
+              xdev - general implementation
+                 * Runtime evaluation
+                 * #195 : impelement rosetta code samples
+                 * Zebra puzzle
+                 * Write float arrays to a text file
+                 * Word search
+
               zdev - live programming
                  * implement tree prototype
                  * implement xpath resolver prototype
@@ -16,8 +23,6 @@ In development:
 
               xdev - general implementation
                  * #283 : unboxing duplicate object 
-                 * implememnt : Word search
-                 * #195 : impelement rosetta code samples
                  * fix agenda sample
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)
@@ -30,6 +35,7 @@ In development:
                       {
                             object& $target.
                  * typified open arg list (#369)
+                 * fn3prop : embeddable option for the function with three arguments should be recognized
                  * fixing open issues
 
 ------                                 
@@ -46,12 +52,6 @@ Pipeline:
 
                xdev - linux
                  * proting debugger
-
-              sdev - rosetta samples
-                 * Runtime evaluation
-                 * Zebra puzzle
-                 * Word search
-                 * implement rosetta samples
 
               xdev - general implementation
                  * strings module : do we need long (toLong) at all? probably only int and ref_t should be used

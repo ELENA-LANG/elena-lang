@@ -9,13 +9,15 @@ type ruleset = BaseRuleSet.
 
 limited class BaseRuleSet
 {
-    stacksafe bool validate space:s int:i int:j []
+    stacksafe proceed space:s int:i int:j vint:newState []
 }
 
 class randomSet = BaseRuleSet::
 {
-    validate space:s int:i int:j
-        = 1 == randomGenerator eval(0,2).
+    proceed space:s int:i int:j vint:newState
+    [
+        newState int := randomGenerator eval(0,2).
+    ]
 }.
 
 class LoadedSet :: BaseRuleSet
@@ -30,17 +32,19 @@ class LoadedSet :: BaseRuleSet
     constructor load:list
         <= load intmatrix:(list toIntMatrix).
     
-    validate space:s int:i int:j    
+    proceed space:s int:i int:j vint:newState
     [
         int n := 0.
         int m := 0.        
         theSet readLengthsTo vint:n vint:m.
         
         if ((i >= n) || (j >= m))
-            [ ^ false ].
-        
-        int cell := theSet getAt int:i int:j.
-        
-        ^ cell != 0
+        [ 
+            newState int := 0
+        ];
+        [
+            int cell := theSet getAt int:i int:j.
+            newState int := cell
+        ]
     ]
 }

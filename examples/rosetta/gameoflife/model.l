@@ -6,7 +6,7 @@ const int maxY = 28.
 
 type listener_func = ListenerFunc.
 
-limited class ListenerFunc :: dispatchable<listener_func>
+limited class ListenerFunc
 {
     action eval space:space []
 }

@@ -1,0 +1,9 @@
+﻿[project]
+executable=wireworld.exe
+namespace=wireworld
+template=console
+debuginfo=-1
+
+[files]
+wireworld.l
+

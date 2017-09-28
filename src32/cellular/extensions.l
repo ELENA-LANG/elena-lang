@@ -1,5 +1,5 @@
-space extension spaceOp
-{
+//space extension spaceOp
+//{
 //    run &ruleset:set
 //    [
 //        self scan:set &cellfunc: (:o &space:space &int:x &int:y)
@@ -12,4 +12,4 @@ space extension spaceOp
 //                space setAt &int:x &int:y &int:cell.
 //            ].
 //    ]
-}
+//}

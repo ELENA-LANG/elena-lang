@@ -11,18 +11,22 @@ symbol testSet = ((0,1,0),
 
 class gameOfLifeRuleSet = BaseRuleSet::
 {
-    validate space:s int:x int:y 
+    proceed space:s int:x int:y vint:retVal
     [
         int cell := s getAt int:x int:y.
-        int number := s getLiveCell int:x int:y. // NOTE : number of living cells around the self includes the cell itself
+        int number := s getLiveCell int:x int:y int:1. // NOTE : number of living cells around the self includes the cell itself
         
         if ((cell == 0) && (number == 3))
-            [ ^ true. ].
-            
+        [ 
+            retVal int := 1 
+        ];
         if ((cell == 1) && ((number == 4) || (number == 3)))
-            [ ^ true. ].
-            
-        ^ false.            
+        [
+            retVal int := 1 
+        ];
+        [
+            retVal int := 0
+        ]
     ]
 }.
 
