@@ -1315,7 +1315,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
          if (outer.outerObject.kind == okSuper) {
             return ObjectInfo(okSuper, outer.reference);
          }
-         else return ObjectInfo(okOuter, outer.reference, 0/*, outer.outerObject.type*/);
+         else return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
       }
       else {
          outer.outerObject = parent->mapTerminal(identifier);
@@ -1355,14 +1355,14 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
                (*outers.getIt(identifier)).preserved = true;
             }
 
-            switch (outer.outerObject.kind) {
-               case okOuterField:
-               case okParam:
-               case okThisParam:
+            //switch (outer.outerObject.kind) {
+            //   case okOuterField:
+            //   case okParam:
+            //   case okThisParam:
+            //      return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
+            //   default:
                   return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
-               default:
-                  return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
-            }
+            //}
          }
          // map if the object is outer one
          else if (outer.outerObject.kind == okUnknown) {

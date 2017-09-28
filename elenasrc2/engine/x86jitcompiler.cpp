@@ -50,12 +50,13 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define CORE_THREADTABLE     0x20008
 #define CORE_OS_TABLE        0x20009
 #define CORE_MESSAGE_TABLE   0x2000A
+#define CORE_EH_TABLE        0x2000B
 
 // preloaded gc routines
-const int coreVariableNumber = 3;
+const int coreVariableNumber = 4;
 const int coreVariables[coreVariableNumber] =
 {
-   CORE_EXCEPTION_TABLE, CORE_GC_TABLE, CORE_OS_TABLE
+   CORE_EXCEPTION_TABLE, CORE_GC_TABLE, CORE_OS_TABLE, CORE_EH_TABLE
 };
 
 // preloaded gc routines

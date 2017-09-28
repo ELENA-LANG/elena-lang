@@ -234,3 +234,12 @@ class AbortException :: Exception
     constructor new
         <= new literal:"The process terminated".
 }
+
+// --- CriticalException ---
+
+class CriticalException :: Exception
+{
+    /// Creates the exception
+    constructor new
+        <= new literal:"Critical exception".
+}

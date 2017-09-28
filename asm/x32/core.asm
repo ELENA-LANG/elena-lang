@@ -27,6 +27,7 @@ define CORE_STAT_COUNT      20004h
 define CORE_STATICROOT      20005h
 define CORE_OS_TABLE        20009h
 define CORE_MESSAGE_TABLE   2000Ah
+define CORE_ET_TABLE        2000Bh
 
 // CORE GC SIZE OFFSETS
 define gcs_MGSize	0000h
@@ -74,6 +75,11 @@ structure % CORE_EXCEPTION_TABLE
   dd 0 // ; core_catch_addr       : +x00   - exception point of return
   dd 0 // ; core_catch_level      : +x04   - stack level
   dd 0 // ; core_catch_frame      : +x08   - stack frame pointer
+end
+
+structure % CORE_ET_TABLE
+
+  dd 0 // ; critical_exception    ; +x00   - pointer to critical exception handler
 
 end
 
@@ -889,6 +895,13 @@ procedure % NEWFRAME
   // ; put frame end and move procedure returning address
   pop  edx           
 
+  // ; set SEH handler
+  mov  ebx, code : "$native'coreapi'seh_handler"
+  push ebx
+  mov  ecx, fs:[0]
+  push ecx
+  mov  fs:[0], esp
+
   xor  ebx, ebx
 
   push ebp
@@ -933,6 +946,9 @@ procedure % INIT_ET
   mov  [data : %CORE_EXCEPTION_TABLE], ebx
   mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
   push ecx
+
+  // ; init default critical handler
+  mov  [data : % CORE_ET_TABLE], ebx
 
   ret
 

@@ -3,6 +3,18 @@ In development:
 ------                              
 
               xdev - general implementation
+                 * handle access vialation : correct call stack
+                 * handle access vialation : gui (openframe / closeframe??)
+                 * handle access vialation : multi thread (NEWTHREAD,CLOSETHREAD)
+                 * handle access vialation : vm client 
+                 * handle access vialation exception : exception handler should be called
+
+              xdev - general implementation
+                 * code - invoke message only if the object is not nil, otherwise return nil
+
+                 * CompoundEnumerator new args:(SingleEnumerable new(value), left Preorder, right Preorder) - should
+                   be possible to pass directly - CompoundEnumerator new(SingleEnumerable new(value), left Preorder, right Preorder)
+
                  * Runtime evaluation
                  * #195 : impelement rosetta code samples
                  * Zebra puzzle
@@ -36,9 +48,10 @@ In development:
                             object& $target.
                  * typified open arg list (#369)
                  * fn3prop : embeddable option for the function with three arguments should be recognized
+                 * NilReferenceException, AccessViolationException, DivisionByZeroException should be recognized
                  * fixing open issues
 
-------                                 
+------                                                           
 Pipeline:
 ------                                                                                         
                xdev - linux
@@ -567,7 +580,6 @@ Pipeline:
                        * no need to provide exclude command for every external call, special hint to ignore it?
                        * think over optimized way to get GCXT TLS TABLE, try to cache the pointer
                        * cast should be called directly, make sure it is always after dispatch
-                       * handle access vialation exception : exception handler should be called
                        * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
                        * review graph sample, get rid of warnings
                        * constant symbols should be used directly

@@ -1102,6 +1102,9 @@ literal extension literalOp
 //    trim
 //        = self~literalOp trimLeft char:$32; trimRight char:$32.        
     
+    padLeft int:aLength
+        = self padLeft($32, aLength).
+    
     padLeft char:aChar int:aLength
     [
         int aCurrentLength := self length.
@@ -1111,6 +1114,9 @@ literal extension literalOp
             
         ^ self
     ]
+    
+    padRight int:aLength
+        = self padRight($32, aLength).
     
     padRight char:aChar int:aLength
     [

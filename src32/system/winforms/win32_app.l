@@ -139,6 +139,8 @@ startUp =
     {
         start : events
         [
+            system'core_routines'__exception register.
+                
             try('program eval)
             {
                 Abort : e []

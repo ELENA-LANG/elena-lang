@@ -30,6 +30,7 @@ define CORE_TLS_INDEX       20007h
 define THREAD_TABLE         20008h
 define CORE_OS_TABLE        20009h
 define CORE_MESSAGE_TABLE   2000Ah
+define CORE_ET_TABLE        2000Bh
 
 // CORE GC SIZE OFFSETS
 define gcs_MGSize	0000h
@@ -88,6 +89,12 @@ define SUBJ_MASK          1FFFFFFh
 structure % CORE_EXCEPTION_TABLE
 
   dd 0 // ; dummy
+
+end
+
+structure % CORE_ET_TABLE
+
+  dd 0 // ; critical_exception    ; +x00   - pointer to critical exception handler
 
 end
 
@@ -1155,6 +1162,10 @@ procedure % INIT_ET
   mov  [ebx + tls_catch_frame], ebp
 
   push esi
+
+  // ; init default critical handler
+  mov  [data : % CORE_ET_TABLE], edx
+
   ret
 
 end 
