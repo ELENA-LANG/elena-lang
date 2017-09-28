@@ -1098,6 +1098,13 @@ procedure % NEWFRAME
   // ; put frame end and move procedure returning address
   pop  edx           
 
+  // ; set SEH handler
+  mov  ebx, code : "$native'coreapi'seh_handler"
+  push ebx
+  mov  ecx, fs:[0]
+  push ecx
+  mov  fs:[0], esp
+
   // ; GCXT                                                               
   // ; get thread table entry from tls
   mov  ecx, [data : %CORE_TLS_INDEX]
@@ -1123,8 +1130,12 @@ procedure % NEWFRAME
   mov  [data : %CORE_GC_TABLE + tt_ptr], ebx   
 
   mov  ebx, code : "$native'coreapi'default_handler"
-  call code : % INIT_ET
-  
+
+  // ; init default critical handler
+  mov  [data : % CORE_ET_TABLE], ebx
+
+  call code : % INIT_ET  
+
   ret
 
 end
@@ -1162,9 +1173,6 @@ procedure % INIT_ET
   mov  [ebx + tls_catch_frame], ebp
 
   push esi
-
-  // ; init default critical handler
-  mov  [data : % CORE_ET_TABLE], edx
 
   ret
 

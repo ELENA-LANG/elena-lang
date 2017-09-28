@@ -3,13 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * handle access vialation : correct call stack
-                 * handle access vialation : gui (openframe / closeframe??)
-                 * handle access vialation : multi thread (NEWTHREAD,CLOSETHREAD)
-                 * handle access vialation : vm client 
-                 * handle access vialation exception : exception handler should be called
-
-              xdev - general implementation
                  * code - invoke message only if the object is not nil, otherwise return nil
 
                  * CompoundEnumerator new args:(SingleEnumerable new(value), left Preorder, right Preorder) - should

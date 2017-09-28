@@ -3460,6 +3460,10 @@ bool x86Assembler :: compileCommandC(PrefixInfo& prefix, TokenInfo& token, Proce
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JS);
       return true;
    }
+   else if (token.check("cmove")) {
+      compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JE);
+      return true;
+   }
    else if (token.check("cwde")) {
       compileCWDE(token, info, &writer);
       return true;
