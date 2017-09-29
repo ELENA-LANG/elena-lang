@@ -7,7 +7,7 @@ debuginfo=-1
 
 [manifest]
 name=ELENA Extension Library
-version=3.2.18
+version=3.2.19
 author=Alex Rakov
 
 [files]
@@ -28,3 +28,5 @@ routines\patterns.l
 scripting\interpreter.l
 scripting\assembly.l
 dynamic\json.l
+routines\compound.l
+
