@@ -464,6 +464,12 @@ void DerivationReader::DerivationScope :: loadAttributeValues(SNode attributes, 
             if (!attr)
                raiseError(errInvalidHint, current);
          }
+         else if (isPrimitiveRef(attr)) {
+            if (attr == V_TYPETEMPL) {
+               // HOTFIX : recognize type template
+               attr = mapTypeTemplate(current);
+            }
+         }
 
          this->attributes.add(this->attributes.Count() + 1, attr);
       }
@@ -638,6 +644,16 @@ _Memory* DerivationReader::DerivationScope :: loadTemplateTree()
    _Module* argModule = moduleScope->loadReferenceModule(ref);
 
    return argModule ? argModule->mapSection(ref | mskSyntaxTreeRef, true) : NULL;
+}
+
+ref_t DerivationReader::DerivationScope :: mapTypeTemplate(SNode current)
+{
+   SNode attrNode = current.findChild(lxAttributeValue).firstChild(lxTerminalObjMask);
+   ref_t attrRef = mapTerminal(attrNode, true);
+   if (attrRef == 0)
+      attrRef = mapTerminal(attrNode);
+
+   return attrRef;
 }
 
 // --- DerivationReader ---
@@ -1115,11 +1131,8 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
          attrRef = scope.mapAttribute(current, paramIndex);
 
       if (attrRef == V_ATTRTEMPLATE && scope.moduleScope->mapAttribute((current)) == V_TYPETEMPL) {
-         SNode attrNode = current.findChild(lxAttributeValue).firstChild(lxTerminalObjMask);
          // HOTFIX : recognize type template
-         attrRef = scope.mapTerminal(attrNode, true);
-         if (attrRef == 0)
-            attrRef = scope.mapTerminal(attrNode);
+         attrRef = scope.mapTypeTemplate(current);
       }
 
       if (attrRef == V_ATTRTEMPLATE) {

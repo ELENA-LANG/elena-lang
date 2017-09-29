@@ -29,6 +29,9 @@ sealed class Stack :: BaseEnumerable
     bool isEmpty
         = 0 == theTop.
     
+    bool isNotEmpty
+        = 0 != theTop.
+    
     push : anObject
     [
         int aCapacity := theList length.
@@ -96,6 +99,9 @@ template<BaseEnumerable> stack :: type
     
     bool isEmpty
         = 0 == theTop.
+    
+    bool isNotEmpty
+        = 0 != theTop.
     
     push type:anObject
     [
@@ -226,6 +232,90 @@ sealed class Queue :: BaseEnumerable
         
         theList setAt int:i object:topItem
     ]
+}
+
+// --- Queue Template ---
+
+template<BaseEnumerable> queue :: type
+{
+    list<type> theArray.
+    vint       theTop.
+    vint       theTale.
+    
+    explicit
+    [
+        theArray := list<type>(8).
+        theTop := 0.
+        theTale := 0.
+    ]
+    
+    explicit int:capacity
+    [
+        theArray := list<type>(capacity).
+        theTop := 0.
+        theTale := 0.
+    ]
+        
+    int rvprop length :: readLengthTo.
+    
+    stacksafe readLengthTo vint:aLength
+    [
+        int n := theTale - theTop.
+        
+        aLength int := n.
+    ]
+    
+    bool isEmpty
+        = theTop == theTale.
+    
+    bool isNotEmpty
+        = theTop != theTale.
+    
+    push type:anObject
+    [
+        int aCapacity := theArray length.
+        
+        if (theTale < aCapacity)
+            [ theArray setAt int:theTale type:anObject ];
+            [ theArray append type:anObject ].
+            
+        theTale append int:1.
+    ]
+    
+    type peek
+    [
+        if (theTale == theTop)
+            [ InvalidOperationException new:"Queue is empty"; raise ].
+            
+        ^ theArray getAt int:theTop
+    ]        
+    
+    type pop
+    [
+        if (theTale == theTop)
+            [ InvalidOperationException new:"Queue is empty"; raise ].
+                        
+        type item := theArray getAt int:theTop.                        
+                        
+        theArray setAt int:theTop type:$nil.                                    
+        theTop append int:1.
+        
+        // reuse the space if the queue is empty
+        if(theTale == theTop)
+            [
+                theTop  int := 0.
+                theTale int := 0.
+            ].        
+        
+        ^ item
+    ]
+    
+    clear
+    [
+        theArray clear.
+        theTop int :=0.
+        theTale int:=0
+    ]    
 }
 
 // --- StackEnumerator ---
