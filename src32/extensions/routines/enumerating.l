@@ -42,7 +42,7 @@ class ReaderEnumerator :: Enumerator
         NotSupportedException new; raise.
     ]
     
-    next
+    bool next
     [
         if(theReader available)
             [
@@ -90,5 +90,5 @@ symbol printingLn = (:aLine)[ 'program'output writeLine:aLine ].
 func1 extension func1Op
 {
     asComparator
-        = { equal : object = $owner eval:object. }.
+        = { bool equal : object = $owner eval:object. }.
 }

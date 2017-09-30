@@ -62,7 +62,7 @@ sealed embeddable struct ExtensionMessage
     stacksafe subject
         => system'core_routines'__message.
 
-    stacksafe equal ext_mssg : aSubject    
+    stacksafe bool equal ext_mssg : aSubject    
         => system'core_routines'__extmessage.
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target

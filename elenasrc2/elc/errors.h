@@ -74,6 +74,8 @@ namespace _ELENA_
    #define errInvalidConstant       "%s(%d:%d): error 153: Invalid constant '%s'\n"
    #define errInvalidMultimethod    "%s(%d:%d): error 154: Invalid multimethod declararion in the class '%s'\n"
    #define errTypeNotAllowed        "%s(%d:%d): error 155: returning type attribute '%s' cannot be specified for this method\n"
+   #define errNotCompatibleMulti    "%s(%d:%d): error 156: type attribute should be the same for the overloaded method '%s'\n"
+   #define errTypeAlreadyDeclared   "%s(%d:%d): error 157: type attribute cannot be overridden\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
@@ -115,7 +117,7 @@ namespace _ELENA_
    #define wrnBoxingCheck           "%s(%d:%d): warning 417: The object may be boxed\n"
    #define wrnDuplicateExtension    "%s(%d:%d): warning 418: '%s': duplicate extension\n"
 //   #define wrnUnboxinging           "%s(%d:%d): warning 419: '%s' will be unboxed\n"
-   #define wrnTypeAlreadyDeclared   "%s(%d:%d): warning 420: Type attribute cannot be overridden\n"
+   #define wrnTypeInherited         "%s(%d:%d): warning 420: Type attribute is inherited\n"
    #define wrnAmbiguousIdentifier   "%s(%d:%d): warning 421: Identifier '%s' is ambiguous"
    #define wrnAmbiguousMessageName  "%s(%d:%d): warning 422: Message name '%s' is ambiguous"
    #define wrnAmbiguousVariable     "%s(%d:%d): warning 421: Variable '%s' is ambiguous"

@@ -18,14 +18,14 @@ limited class BaseStrategy
 
 class combinationEnd = BaseStrategy::
 {
-    result = false.
+    bool result = false.
 }.
 
 class sequentialNext = BaseStrategy::
 {
-    result = true.
+    bool result = true.
     
-    eval array:Indexers int:aLength
+    $strategy eval array:Indexers int:aLength
     [
         if($nil == (Indexers seekEach(:anIndexer)
                 [
@@ -49,7 +49,7 @@ class sequentialNext = BaseStrategy::
 
 class sequentialStart = BaseStrategy::
 {
-    eval array:Indexers int:aLength
+    $strategy eval array:Indexers int:aLength
     [
         Indexers forEach(:anIndexer) [ anIndexer writeIndex int:0 ].
         
@@ -61,9 +61,9 @@ class sequentialStart = BaseStrategy::
 
 class parallelNext = BaseStrategy::
 {
-    result = true.
+    bool result = true.
     
-    eval array:Indexers int:aLength
+    $strategy eval array:Indexers int:aLength
     [
         if($nil != Indexers seekEach(:anIndexer)(anIndexer append index:1; available; not ))
             [ ^ combinationEnd ].
@@ -79,7 +79,7 @@ class parallelNext = BaseStrategy::
 
 class parallelStart = BaseStrategy::
 {
-    eval array:Indexers int:aLength
+    $strategy eval array:Indexers int:aLength
     [
         Indexers forEach(:anIndexer)[ anIndexer writeIndex int:0 ].
         
@@ -91,14 +91,14 @@ class parallelStart = BaseStrategy::
 
 class combinationNext = BaseStrategy::
 {
-    result = true.
+    bool result = true.
 
     getAt array:Indexers int:aLength
     [
         ^ Array new int:aLength; populate(&int:i)(Indexers array; getAt int:i; get)
     ]
         
-    eval array:Indexers int:aLength
+    $strategy eval array:Indexers int:aLength
     [
         array anArray := Indexers array.
         int   k := anArray length.
@@ -127,7 +127,7 @@ class combinationNext = BaseStrategy::
 
 class combinationStart = BaseStrategy::
 {
-    eval array:Indexers int:n
+    $strategy eval array:Indexers int:n
     [
         array anArray := Indexers array.
         int aLength := anArray length.
@@ -179,7 +179,7 @@ class BaseRowEnumerator :: Enumerator
         $self reset
     ]
     
-    next
+    bool next
     [
         theStrategy := theStrategy eval array:theIndexers int:theLength.
 
@@ -231,7 +231,7 @@ class Combinator :: BaseRowEnumerator
         theTotalLength := aSet length.
     ]
     
-    next
+    bool next
     [
         theStrategy := theStrategy eval array:theIndexers int:theTotalLength.
 

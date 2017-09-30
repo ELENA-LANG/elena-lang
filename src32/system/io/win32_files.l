@@ -209,7 +209,7 @@ class StreamReader :: TextReader
     constructor new literal:aPath encoder:anEncoder
         <= new stream:(FileStream openForRead:aPath) encoder:anEncoder.
 
-    available = theOpen.
+    bool available = theOpen.
 
     stream = theStream.
 

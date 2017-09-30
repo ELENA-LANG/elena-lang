@@ -62,6 +62,6 @@ sealed class DBReader
     {
         get = $owner row.
     
-        next => $owner.
+        bool next => $owner.
     }.
 }

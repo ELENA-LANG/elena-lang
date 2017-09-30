@@ -1924,7 +1924,11 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
    }
 
    if (size != 0 && variable.extraparam != 0) {
-      variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, variable.extraparam);
+      if (!isPrimitiveRef(variable.extraparam)) {
+         variable.element = variable.extraparam;
+         variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, variable.element);
+      }
+      else scope.raiseError(errInvalidHint, node);      
    }
 }
 
@@ -2032,6 +2036,10 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
       bool bytearray = false;
       if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam))
          scope.raiseError(errUnknownVariableType, terminal);
+
+      if (variable.extraparam == V_BINARYARRAY && variable.element != 0) {
+         localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0, true);
+      }
 
       if (_logic->isEmbeddableArray(localInfo) && size != 0) {
          bytearray = true;
@@ -2801,21 +2809,21 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       operationType = 0;
    }
 
-   bool assignMode = false;
+   //bool assignMode = false;
    if (operationType != 0) {
-      if (loperand.kind == okField || loperand.kind == okOuter) {
-         if (assignMode) {
-            // once again resolve the primitive operator
-            operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
+      //if (loperand.kind == okField || loperand.kind == okOuter) {
+         //if (assignMode) {
+         //   // once again resolve the primitive operator
+         //   operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
 
-            if (loperand.kind == okOuter) {
-               InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+         //   if (loperand.kind == okOuter) {
+         //      InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
 
-               if (!closure->markAsPresaved(loperand))
-                  scope.raiseError(errInvalidOperation, node);
-            }
-         }
-      }
+         //      if (!closure->markAsPresaved(loperand))
+         //         scope.raiseError(errInvalidOperation, node);
+         //   }
+         //}
+      //}
       // if it is a primitive operation
       _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.element);
 
@@ -2824,13 +2832,13 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    // if not , replace with appropriate method call
    else retVal = compileMessage(writer, node, scope, loperand, encodeMessage(operator_id, paramCount), HINT_NODEBUGINFO);
 
-   if (assignMode) {
-      if (loperand.kind == okField || loperand.kind == okOuter) {
-         writer.insertChild(0, lxField, loperand.param);
-      }
-      writer.insert(lxAssigning);
-      writer.closeNode();
-   }
+   //if (assignMode) {
+   //   if (loperand.kind == okField || loperand.kind == okOuter) {
+   //      writer.insertChild(0, lxField, loperand.param);
+   //   }
+   //   writer.insert(lxAssigning);
+   //   writer.closeNode();
+   //}
 
    return retVal;
 }
@@ -5650,7 +5658,7 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message, bool allowTypeAttribute)
 {
    ref_t outputRef = scope.info.methodHints.get(Attribute(message, maReference));
-   bool hintChanged = false;
+   bool hintChanged = false, outputChanged = false;
    int hint = scope.info.methodHints.get(Attribute(message, maHint));
 
    // HOTFIX : multimethod attribute should not be inherited
@@ -5658,7 +5666,6 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       hint &= ~tpMultimethod;
       hintChanged = true;
    }
-
 
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -5677,9 +5684,12 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
          else if (outputRef == 0) {
             outputRef = scope.moduleScope->module->mapReference(current.identifier(), false);
 
-            scope.info.methodHints.add(Attribute(message, maReference), outputRef);
+            outputChanged = true;
          }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnTypeAlreadyDeclared, node);
+         else if (outputRef != scope.moduleScope->module->mapReference(current.identifier(), false)) {
+            scope.raiseError(errTypeAlreadyDeclared, node);
+         }
+         else outputChanged = true;
       }
 //      else if (current == lxClassMethodOpt) {
 //         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
@@ -5702,6 +5712,12 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       scope.info.methodHints.exclude(Attribute(message, maHint));
       scope.info.methodHints.add(Attribute(message, maHint), hint);
    }
+   if (outputChanged) {
+      scope.info.methodHints.add(Attribute(message, maReference), outputRef);
+   }
+   else if (outputRef != 0 && !node.existChild(lxAutogenerated))
+      //wanr if the method output was not redclared, ignore auto generated methods
+      scope.raiseWarning(WARNING_LEVEL_1, wrnTypeInherited, node);
 }
 
 void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute)
@@ -5810,6 +5826,9 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
          current = current.nextNode();
       }
    }
+
+   if (!classClassMode && implicitMultimethods.Count() > 0)
+      _logic->verifyMultimethods(*scope.moduleScope, root, scope.info, implicitMultimethods);
 }
 
 void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool closureDeclarationMode)

@@ -29,7 +29,7 @@ class TopFilter :: Enumerator
     
     get = theEnumerator get.
     
-    next
+    bool next
     [
         if (theCounter != 0)
         [
@@ -73,7 +73,7 @@ class Filter :: Enumerator
     
     get = theEnumerator get.
     
-    next
+    bool next
     [
         while (theEnumerator next)
         [
@@ -106,7 +106,7 @@ class PatternFilter2 :: Enumerator
     
     get = theEnumerator get.
     
-    next
+    bool next
     [
         if ($nil == thePrevious)
         [
@@ -145,7 +145,7 @@ class PatternFilter3 :: Enumerator
     
     get = theEnumerator get.
     
-    next
+    bool next
     [
         if ($nil == thePrevious)
         [
@@ -191,7 +191,7 @@ class PatternFilter4 :: Enumerator
     
     get = theEnumerator get.
     
-    next
+    bool next
     [
         if($nil == thePrevious)
         [
@@ -244,7 +244,7 @@ class PatternFilter5 :: Enumerator
     
     get = theEnumerator get.
     
-    next
+    bool next
     [
         if ($nil == thePrevious)
         [
@@ -304,7 +304,7 @@ class PatternFilter6 :: Enumerator
     
     get = theEnumerator get.
     
-    next
+    bool next
     [
         if ($nil == thePrevious)
         [
@@ -371,7 +371,7 @@ class Selector :: Enumerator
     
     get = theSelector eval(theEnumerator get).
     
-    next = theEnumerator next.
+    bool next = theEnumerator next.
     
     reset 
     [
@@ -412,7 +412,7 @@ class Repeater :: Enumerator
         theCurrent := theMin - 1.
     ]
     
-    next
+    bool next
     [
         theCurrent := theCurrent + 1.
         
@@ -442,7 +442,7 @@ class ZipEnumerator :: Enumerator
     
     get = theZipper eval(theEnumerator1 get, theEnumerator2 get).
     
-    next = theEnumerator1 next && theEnumerator2 next.
+    bool next = theEnumerator1 next && theEnumerator2 next.
     
     reset
     [
@@ -491,7 +491,7 @@ class RangeEnumerator :: Enumerator
     
     get = theVariable value.
     
-    next
+    bool next
     [
         if(theForward)
             [ theVariable append:theStep. ^ (theVariable <= theEnd) ].
@@ -521,7 +521,7 @@ class IntRangeEnumerator :: Enumerator
     get = theIndex.
             
     /// Returns false if the index out of range
-    next 
+    bool next 
     [
         theIndex += 1.
         
@@ -600,7 +600,7 @@ class IntervalEnumerator :: Enumerator
     
     get = theVariable value.
     
-    next
+    bool next
     [
         if(theForward )
             [ theVariable append:theStep. ^ (theVariable < theEnd) ].
@@ -657,7 +657,7 @@ class GroupingEnumerator :: Enumerator
     
     get = theGroupEnumerator get.
     
-    next
+    bool next
         = theGroupEnumerator next.
 }
 
@@ -692,7 +692,7 @@ class OrderingEnumerator :: Enumerator
     
     get = theListEnumerator get.
     
-    next
+    bool next
         = theListEnumerator next.
 }
 

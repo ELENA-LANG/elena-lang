@@ -331,7 +331,7 @@ class StackEnumerator :: Enumerator
         theEnumerator := aStack array_list; enumerator.
     ]
     
-    next 
+    bool next 
         = theEnumerator next.
         
     get
@@ -356,7 +356,7 @@ class QueueEnumerator :: Enumerator
         theEnumerator := aQueue array_list; enumerator.
     ]
     
-    next 
+    bool next 
         = theEnumerator next.
         
     get

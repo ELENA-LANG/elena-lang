@@ -22,13 +22,13 @@ class StringBookmark :: BaseValue
         theStart := 0.
     ]
 
-    equal int:aValue
+    bool equal int:aValue
         => theIndex.
 
-    equal literal:aValue
+    bool equal literal:aValue
         => theValue.
 
-    equal wide:aValue
+    bool equal wide:aValue
         => theValue.
 
     multi find : anObject

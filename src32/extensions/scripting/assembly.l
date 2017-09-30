@@ -134,9 +134,9 @@ limited class $Strategy
 
 singleton $StartOne :: $Strategy
 {
-    symbol_one = $SymbolOne.
+    type<$Strategy> symbol_one = $SymbolOne.
     
-    preloaded_one = $PreloadedOne.
+    type<$Strategy> preloaded_one = $PreloadedOne.
 }
 
 singleton $SymbolOne :: $Strategy
@@ -146,7 +146,7 @@ singleton $SymbolOne :: $Strategy
         context push(context length).
     ]
     
-    expression = $SymbolBody.
+    type<$Strategy> expression = $SymbolBody.
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -166,7 +166,7 @@ singleton $PreloadedOne :: $Strategy
         context push(context length).
     ]
     
-    expression = $SymbolBody.
+    type<$Strategy> expression = $SymbolBody.
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -183,7 +183,7 @@ singleton $PreloadedOne :: $Strategy
 
 class $BaseClass :: $Strategy
 {
-    method_one = $Method.
+    type<$Strategy> method_one = $Method.
         
     begin($ClassContext context, $ParameterContext parameters)  
     [
@@ -222,10 +222,10 @@ singleton $Nested :: $BaseClass
 
 class $BaseCode :: $Strategy
 {
-    expression   = $RootExpresson.
-    returning    = $RetExpression.
-    variable_one = $Variable.   
-    loop_one     = $Loop.
+    type<$Strategy> expression   = $RootExpresson.
+    type<$Strategy> returning    = $RetExpression.
+    type<$Strategy> variable_one = $Variable.   
+    type<$Strategy> loop_one     = $Loop.
 }
 
 singleton $Code :: $BaseCode.
@@ -252,7 +252,7 @@ singleton $Variable :: $Strategy
 
 singleton $Method :: $Strategy
 {
-    code_one = $Code.
+    type<$Strategy> code_one = $Code.
     
     begin($ClassContext context, $ParameterContext parameters)  
     [
@@ -279,7 +279,7 @@ singleton $Method :: $Strategy
         context append($expr_var_token).
     ]
     
-    returning = $RetExpression.
+    type<$Strategy> returning = $RetExpression.
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -376,7 +376,7 @@ class $BaseExpression :: $Strategy
         context push:l.
     ]
 
-    singleton_one = $Nested.
+    type<$Strategy> singleton_one = $Nested.
 
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -441,7 +441,7 @@ class $BaseExpression :: $Strategy
         ]
     ]
     
-    next_one($ClassContext context, $ParameterContext parameters) 
+    type<$Strategy> next_one($ClassContext context, $ParameterContext parameters) 
     [
         $self end(context, parameters).
         $self begin(context, parameters).
@@ -467,12 +467,12 @@ class $BaseExpression :: $Strategy
 
 singleton $SymbolBody :: $BaseExpression
 {
-    expression = $SubExpression.
+    type<$Strategy> expression = $SubExpression.
 }
 
 singleton $SubExpression :: $BaseExpression
 {
-    expression = $SubExpression.
+    type<$Strategy> expression = $SubExpression.
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -484,7 +484,7 @@ singleton $SubExpression :: $BaseExpression
 
 singleton $Expresson :: $BaseExpression
 {
-    expression = $SubExpression.
+    type<$Strategy> expression = $SubExpression.
 }
 
 singleton $CondExpression :: $BaseExpression
@@ -494,7 +494,7 @@ singleton $CondExpression :: $BaseExpression
         $super begin(context, parameters).
     ]
     
-    code_one = $SubCode.
+    type<$Strategy> code_one = $SubCode.
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -513,7 +513,7 @@ singleton $CondExpression :: $BaseExpression
 
 singleton $IfExpression :: $BaseExpression
 {
-    expression = $CondExpression.
+    type<$Strategy> expression = $CondExpression.
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -529,7 +529,7 @@ singleton $IfExpression :: $BaseExpression
 
 singleton $LoopIfExpression :: $BaseExpression
 {
-    expression = $CondExpression.
+    type<$Strategy> expression = $CondExpression.
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -551,7 +551,7 @@ singleton $LoopIfExpression :: $BaseExpression
 
 singleton $Loop :: $Strategy
 {
-    expression = $LoopExpresson.    
+    type<$Strategy> expression = $LoopExpresson.    
     
     begin($ClassContext context, $ParameterContext parameters)
     [
@@ -561,7 +561,7 @@ singleton $Loop :: $Strategy
 
 singleton $LoopExpresson :: $BaseExpression
 {
-    if_one($ClassContext context)
+    type<$Strategy> if_one($ClassContext context)
     [
         context push:$if_token.
         
@@ -571,9 +571,9 @@ singleton $LoopExpresson :: $BaseExpression
 
 singleton $RootExpresson :: $BaseExpression
 {
-    expression = $SubExpression.
+    type<$Strategy> expression = $SubExpression.
     
-    if_one($ClassContext context)
+    type<$Strategy> if_one($ClassContext context)
     [
         context push:$if_token.
         
@@ -590,7 +590,7 @@ singleton $RootExpresson :: $BaseExpression
 
 singleton $RetExpression :: $BaseExpression
 {
-    expression = $Expresson.
+    type<$Strategy> expression = $Expresson.
     
     end($ClassContext context, $ParameterContext parameters)
     [

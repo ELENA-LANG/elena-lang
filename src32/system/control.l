@@ -782,7 +782,7 @@ class BaseIndexer :: Indexer
     int theBaseIndexerLength.
     
     /// Returns false if the index out of range
-    available = (theIndex < theBaseIndexerLength).
+    bool available = (theIndex < theBaseIndexerLength).
     
     /// Reads the current i-index into an output parameter
     readIndexTo vint:retVal
@@ -807,7 +807,7 @@ class BaseMatrixIndexer :: Indexer2D
     int theLength2.
     
     /// Returns false if the index out of range
-    available = (theIndex1 <= theLength1) && (theIndex2 <= theLength2).
+    bool available = (theIndex1 <= theLength1) && (theIndex2 <= theLength2).
     
     /// Reads the current i-index into an output parameter
     readIndex1To vint:retVal

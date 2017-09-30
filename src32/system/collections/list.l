@@ -141,7 +141,7 @@ template<BaseEnumerable> list :: type
               
               reset [ index int := -1. ]
               
-              next
+              bool next
               [
                   index append int:1.
                   
@@ -250,7 +250,7 @@ class ListEnumerator :: Enumerator
     ]
 
     /// Goes to the next enumeration member and returns true if it is not the last member
-    next
+    bool next
     [
         if ($nil == theCurrent)
             [ theCurrent := theList topItem ];
@@ -282,7 +282,7 @@ class ListIndexer :: Indexer
         <= new list:anObject.
     
     /// Returns false if the index out of range
-    available = $nil != theCurrent.
+    bool available = $nil != theCurrent.
 
     /// Returns the current member
     get = theCurrent get.
@@ -739,7 +739,7 @@ class ArrayListEnumerator :: Enumerator
     ]
 
     /// Goes to the next enumeration member and returns true if it is not the last member
-    next
+    bool next
     [
         theIndex append int:1.
         
@@ -769,7 +769,7 @@ class ArrayListIndexer :: Indexer
         <= new array_list:anObject.
     
     /// Returns false if the index out of range
-    available
+    bool available
     [
         int aLength := theList length.
         

@@ -1,4 +1,3 @@
-
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
@@ -10,6 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "compilerlogic.h"
+#include "errors.h"
 
 using namespace _ELENA_;
 
@@ -596,6 +596,45 @@ void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode nod
    }
 }
 
+void CompilerLogic :: verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods)
+{
+   // HOTFIX : Make sure the multi-method methods have the same output type as generic one
+   bool needVerification = false;
+   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
+      ref_t message = *it;
+
+      ref_t outputRef = info.methodHints.get(Attribute(message, maReference));
+      if (outputRef != 0) {
+         // Bad luck we have to verify all overloaded methods
+         needVerification = true;
+         break;
+      }
+   }
+
+   if (!needVerification)
+      return;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
+         if (multiMethAttr != lxNone) {
+            ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethAttr.argument, maReference));
+            if (outputRefMulti != 0) {
+               ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
+               if (outputRef == 0) {
+                  scope.raiseError(errNotCompatibleMulti, current.findChild(lxIdentifier, lxPrivate));
+               }
+               else if (!isCompatible(scope, outputRefMulti, outputRef)) {
+                  scope.raiseError(errNotCompatibleMulti, current.findChild(lxIdentifier, lxPrivate));
+               }
+            }            
+         }
+      }
+      current = current.nextNode();
+   }
+}
+
 void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t elementRef)
 {
    int size = 0;
@@ -900,7 +939,7 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          break;
       case V_BINARYARRAY:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDynamicRole | elStructureRole;
+         info.header.flags = elDynamicRole | elStructureRole | elEmbeddable;
          info.size = -1;
          break;
       default:

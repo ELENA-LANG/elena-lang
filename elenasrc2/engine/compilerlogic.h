@@ -166,6 +166,7 @@ public:
 ////   virtual void optimizeDuplicateBoxing(SNode node);
 
    virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node);
+   virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
 
    CompilerLogic();
 };

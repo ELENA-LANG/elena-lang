@@ -3751,7 +3751,7 @@ void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node 
    loadIndex(tape, lxResult);
 
    if (node.argument != 0) {
-      int size = node.findChild(lxSize).argument;
+      int size = node.findSubNode(lxSize).argument;
 
       if ((int)node.argument < 0) {
          //HOTFIX : recognize primitive object

@@ -116,7 +116,7 @@ sealed embeddable struct TimeSpan :: BaseNumber
         ^ LongNumber new long:aRetVal.
     ]
 
-    equal timespan:aSpan
+    bool equal timespan:aSpan
     [
         __time aValue := 0l.
         aSpan read __vtime:aValue.
@@ -124,7 +124,7 @@ sealed embeddable struct TimeSpan :: BaseNumber
         ^ aValue equal __time:theValue.
     ]
 
-    less timespan:aSpan
+    bool less timespan:aSpan
     [
         __time aValue := 0l.
         aSpan read __vtime:aValue.
@@ -228,7 +228,7 @@ sealed embeddable struct Date :: BaseNumber
         aRetVal __time := theValue.
     ]
    
-    equal datetime:aDate
+    bool equal datetime:aDate
     [
         __time aValue := 0l.
         aDate read __vtime:aValue.
@@ -236,7 +236,7 @@ sealed embeddable struct Date :: BaseNumber
         ^ aValue equal __time:theValue
     ]
 
-    less datetime:aDate
+    bool less datetime:aDate
     [
         __time aValue := 0l.
         aDate read __vtime:aValue.

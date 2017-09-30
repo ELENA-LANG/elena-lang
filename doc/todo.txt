@@ -3,11 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * code - invoke message only if the object is not nil, otherwise return nil :
-
-                 * CompoundEnumerator new args:(SingleEnumerable new(value), left Preorder, right Preorder) - should
-                   be possible to pass directly - CompoundEnumerator new(SingleEnumerable new(value), left Preorder, right Preorder)
-
                  * Runtime evaluation
                  * #195 : impelement rosetta code samples
                  * Zebra puzzle

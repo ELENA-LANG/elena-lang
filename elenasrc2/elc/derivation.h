@@ -103,6 +103,7 @@ class DerivationReader : public _DerivationReader
       ref_t mapTemplate(SNode terminal, int prefixCounter = 0);
       ref_t mapClassTemplate(SNode terminal);
       ref_t mapTerminal(SNode terminal, bool existing = false);
+      ref_t mapTypeTerminal(SNode terminal, bool existing = false);  // map type or reference
       int mapIdentifier(SNode terminal);
 
       ref_t mapTypeTemplate(SNode current);

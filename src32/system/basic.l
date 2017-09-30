@@ -39,7 +39,7 @@ template<BaseVariable> var :: template_subj
     multi reduce:val
         <= reduce template_subj:val.
     
-    equal : anObject
+    bool equal : anObject
         => $value.
 
     embeddable dispatch => $value.
@@ -99,13 +99,13 @@ class true = BaseBoolValue::
     /// Executes logical OR operation
     ///
     /// Always return true
-    or : anExpr = $self.
+    bool or : anExpr = $self.
 
     /// Executes logical AND operation
-    and : anExpr = anExpr bool.
+    bool and : anExpr = anExpr bool.
 
     /// Executes logical XOR operation
-    xor : aBool
+    bool xor : aBool
     [
         aBool bool ? [ ^ false ].
         
@@ -113,13 +113,13 @@ class true = BaseBoolValue::
     ]
 
     /// Determines whether the specified object is equal to the current object boolean value.
-    equal : anExpr = anExpr bool.
+    bool equal : anExpr = anExpr bool.
 
     /// Determines whether the specified object is equal to the current object boolean value.
-    equal bool:aBool = aBool.
+    bool equal bool:aBool = aBool.
 
     /// Always returns false.
-    inverted = false.
+    bool inverted = false.
 
     /// Returns literal representation.
     literal = "true".
@@ -148,15 +148,15 @@ class false = BaseBoolValue::
     iif:aTrueValue:aFalseValue = aFalseValue.
 
     /// Executes logical OR operation
-    or : anExpr = anExpr bool.
+    bool or : anExpr = anExpr bool.
 
     /// Executes logical AND operation
     ///
     /// Always return false
-    and : anExpr = $self.
+    bool and : anExpr = $self.
 
     /// Executes logical XOR operation
-    xor : anExpr 
+    bool xor : anExpr 
     [
         anExpr bool ? [ ^ true ].
         
@@ -164,7 +164,7 @@ class false = BaseBoolValue::
     ]
 
     /// Determines whether the specified object is equal to the current object boolean value
-    equal : anExpr
+    bool equal : anExpr
     [
         anExpr bool ? [ ^ $self ].
         
@@ -172,13 +172,13 @@ class false = BaseBoolValue::
     ]
 
     /// Determines whether the specified object is equal to the current object boolean value
-    equal bool:anExpr
+    bool equal bool:anExpr
     [
         ^ anExpr inverted
     ]
 
     /// Always returns true
-    inverted = true.
+    bool inverted = true.
 
     /// Returns literal representation
     literal = "false".
@@ -197,14 +197,14 @@ class false = BaseBoolValue::
 // A base value
 class BaseValue
 {
-    equal(BaseVariable var)
+    bool equal(BaseVariable var)
         <= equal(var value).
     
-    less(BaseVariable var)
+    bool less(BaseVariable var)
         <= equal(var value).
     
     /// Compares the values
-    multi equal : anObject
+    bool multi equal : anObject
         = false.
 
     /// Compares the values
@@ -377,7 +377,7 @@ sealed embeddable struct ByteNumber :: IntBaseNumber
     stacksafe bool equal real:anOperand
         = RealNumber new byte:$self; equal real:anOperand.
         
-    multi equal : o
+    multi bool equal : o
     [
         var n := o byte \ back:$nil.
         ($nil == n)
@@ -385,7 +385,7 @@ sealed embeddable struct ByteNumber :: IntBaseNumber
             ! [ ^ $self equal byte:n ]
     ]
 
-    multi less : n
+    multi bool less : n
         <= less byte:n.                
 
     stacksafe bool less(BaseVariable v)
@@ -517,13 +517,13 @@ sealed embeddable struct ByteNumber :: IntBaseNumber
     stacksafe real divide real:anOperand
         = RealNumber new byte:$self; divide real:anOperand.
 
-    byte multi and:n
+    multi and:n
         <= and byte:n.
         
-    byte multi or:n
+    multi or:n
         <= or byte:n.
         
-    byte multi xor:n
+    multi xor:n
         <= xor byte:n.
         
     stacksafe byte and(BaseVariable v)
@@ -676,7 +676,7 @@ sealed embeddable struct ShortNumber :: IntBaseNumber
     /// Returns the value as a real number
     real = RealNumber new short:$self.
 
-    multi equal:o
+    multi bool equal:o
     [
         var n := o short \ back:$nil.
         ($nil == n)
@@ -684,7 +684,7 @@ sealed embeddable struct ShortNumber :: IntBaseNumber
             ! [ ^ $self equal short:n ]
     ]
 
-    multi less:n
+    multi bool less:n
         <= less short:n.
 
     stacksafe bool equal(BaseVariable v)
@@ -733,16 +733,16 @@ sealed embeddable struct ShortNumber :: IntBaseNumber
     stacksafe bool less real:anOperand
         = RealNumber new short:$self; less real:anOperand.
 
-    short multi add:n
+    multi add:n
         <= add short:n.
 
-    short multi subtract:n
+    multi subtract:n
         <= subtract short:n.
 
-    short multi multiply:n
+    multi multiply:n
         <= multiply short:n.
 
-    short multi divide:n
+    multi divide:n
         <= divide short:n.
 
     stacksafe short add(BaseVariable v)
@@ -837,13 +837,13 @@ sealed embeddable struct ShortNumber :: IntBaseNumber
     stacksafe divide real:anOperand
         = RealNumber new short:$self; divide real:anOperand.
 
-    short multi and:n
+    multi and:n
         <= and short:n.
         
-    short multi or:n
+    multi or:n
         <= divide short:n.
         
-    short multi xor:n
+    multi xor:n
         <= xor short:n.
         
     stacksafe short and(BaseVariable v)
@@ -999,7 +999,7 @@ sealed embeddable struct IntNumber :: IntBaseNumber
     /// Returns the real number
     uint = UIntNumber new int:$self.
     
-    multi equal:o
+    multi bool equal:o
     [
         var n := o int \ back:$nil.
         ($nil == n)
@@ -1007,7 +1007,7 @@ sealed embeddable struct IntNumber :: IntBaseNumber
             ! [ ^ $self equal int:n ]
     ]
 
-    multi less:n
+    multi bool less:n
         <= less int:n.
         
     stacksafe bool equal(BaseVariable v)
@@ -1024,16 +1024,16 @@ sealed embeddable struct IntNumber :: IntBaseNumber
     stacksafe bool less int:anOperand
         = theValue < anOperand.
         
-    multi int add:n
+    multi add:n
         <= add int:n.
 
-    int multi subtract:n
+    multi subtract:n
         <= subtract int:n.
 
-    int multi multiply:n
+    multi multiply:n
         <= multiply int:n.
 
-    int multi divide:n
+    multi divide:n
         <= divide int:n.
         
     stacksafe int add(BaseVariable v)
@@ -1064,13 +1064,13 @@ sealed embeddable struct IntNumber :: IntBaseNumber
     stacksafe int divide int:anOperand
         = theValue / anOperand.
 
-    int multi and:n
+    multi and:n
         <= and int:n.
         
-    int multi or:n
+    multi or:n
         <= divide int:n.
         
-    int multi xor:n
+    multi xor:n
         <= xor int:n.
         
     stacksafe int and(BaseVariable v)
@@ -1135,11 +1135,11 @@ sealed embeddable struct IntNumber :: IntBaseNumber
         = $self add int:(IntNumber new byte:value).
 
     /// Returns the sum of integers
-    stacksafe add long:anOperand
+    stacksafe long add long:anOperand
         = LongNumber new int:$self; add long:anOperand.
 
     /// Returns the sum of integers
-    stacksafe add real:anOperand
+    stacksafe real add real:anOperand
         = RealNumber new int:$self; add real:anOperand.
 
     /// Returns the difference of integers
@@ -1151,11 +1151,11 @@ sealed embeddable struct IntNumber :: IntBaseNumber
         = $self subtract int:(IntNumber new byte:value).
 
     /// Returns the difference of integers
-    stacksafe subtract long:anOperand
+    stacksafe long subtract long:anOperand
         = LongNumber new int:$self; subtract long:anOperand.
 
     /// Returns the difference of integers
-    stacksafe subtract real:anOperand
+    stacksafe real subtract real:anOperand
         = RealNumber new int:$self; subtract real:anOperand.
 
     /// Returns the product of integers
@@ -1167,11 +1167,11 @@ sealed embeddable struct IntNumber :: IntBaseNumber
         = $self multiply int:(IntNumber new byte:value).        
 
     /// Returns the product of integers
-    stacksafe multiply long:anOperand
+    stacksafe long multiply long:anOperand
         = LongNumber new int:$self; multiply long:anOperand.
 
     /// Returns the product of integers
-    stacksafe multiply real:anOperand
+    stacksafe real multiply real:anOperand
         = RealNumber new int:$self; multiply real:anOperand.
 
     /// Returns the result of integer division
@@ -1183,11 +1183,11 @@ sealed embeddable struct IntNumber :: IntBaseNumber
         = $self divide int:(IntNumber new byte:value).        
 
     /// Returns the result of integer division
-    stacksafe divide long:anOperand
+    stacksafe long divide long:anOperand
         = LongNumber new int:$self; divide long:anOperand.
 
     /// Returns the result of integer division
-    stacksafe divide real:anOperand
+    stacksafe real divide real:anOperand
         = RealNumber new int:$self; divide real:anOperand.
 
     /// Returns the result of bitwise AND operation
@@ -1347,7 +1347,7 @@ sealed embeddable struct UIntNumber :: IntBaseNumber
     /// Returns the real number
     real = RealNumber new uint:$self.
 
-    multi equal:o
+    multi bool equal:o
     [
         var n := o int \ back:$nil.
         ($nil == n)
@@ -1355,7 +1355,7 @@ sealed embeddable struct UIntNumber :: IntBaseNumber
             ! [ ^ $self equal int:n ]
     ]
 
-    multi less:n
+    multi bool less:n
         <= less int:n.
         
     stacksafe bool equal(BaseVariable v)
@@ -1372,16 +1372,16 @@ sealed embeddable struct UIntNumber :: IntBaseNumber
     stacksafe bool less int:anOperand
         = theValue < anOperand.
         
-    int multi add:n
+    multi add:n
         <= add int:n.
 
-    int multi subtract:n
+    multi subtract:n
         <= subtract int:n.
 
-    int multi multiply:n
+    multi multiply:n
         <= multiply int:n.
 
-    int multi divide:n
+    multi divide:n
         <= divide int:n.
         
     stacksafe int add(BaseVariable v)
@@ -1412,13 +1412,13 @@ sealed embeddable struct UIntNumber :: IntBaseNumber
     stacksafe int divide int:anOperand
         = theValue / anOperand.
 
-    int multi and:n
+    multi and:n
         <= and int:n.
         
-    int multi or:n
+    multi or:n
         <= divide int:n.
         
-    int multi xor:n
+    multi xor:n
         <= xor int:n.
         
     stacksafe int and(BaseVariable v)
@@ -1698,7 +1698,7 @@ sealed embeddable struct LongNumber :: IntBaseNumber
     /// Returns a real value
     real = RealNumber new long:$self.
     
-    multi equal:o
+    multi bool equal:o
     [
         var n := o long \ back:$nil.
         ($nil == n)
@@ -1706,7 +1706,7 @@ sealed embeddable struct LongNumber :: IntBaseNumber
             ! [ ^ $self equal long:n ]
     ]
 
-    multi less:n
+    multi bool less:n
         <= less long:n.
         
     stacksafe bool equal(BaseVariable v)
@@ -1723,16 +1723,16 @@ sealed embeddable struct LongNumber :: IntBaseNumber
     stacksafe bool less long:anOperand
         = theValue < anOperand.
         
-    long multi add:n
+    multi add:n
         <= add long:n.
 
-    long multi subtract:n
+    multi subtract:n
         <= subtract long:n.
 
-    long multi multiply:n
+    multi multiply:n
         <= multiply long:n.
 
-    long multi divide:n
+    multi divide:n
         <= divide long:n.
         
     stacksafe long add(BaseVariable v)
@@ -1763,13 +1763,13 @@ sealed embeddable struct LongNumber :: IntBaseNumber
     stacksafe long divide long:anOperand
         = theValue / anOperand.
 
-    long multi and:n
+    multi and:n
         <= and long:n.
         
-    long multi or:n
+    multi or:n
         <= divide long:n.
         
-    long multi xor:n
+    multi xor:n
         <= xor long:n.
         
     stacksafe long and(BaseVariable v)
@@ -1806,7 +1806,7 @@ sealed embeddable struct LongNumber :: IntBaseNumber
         = $self equal long:(LongNumber new byte:anOperand).
 
     /// Compares the integer value
-    stacksafe equal real:anOperand 
+    stacksafe bool equal real:anOperand 
         = RealNumber new long:$self; equal real:anOperand.
 
     /// Compares the integer value
@@ -1822,7 +1822,7 @@ sealed embeddable struct LongNumber :: IntBaseNumber
         = $self less long:(LongNumber new byte:anOperand).
 
     /// Compares the integer value
-    stacksafe less real:anOperand 
+    stacksafe bool less real:anOperand 
         = RealNumber new long:$self; less real:anOperand.
 
     /// Returns the sum of integers
@@ -2017,7 +2017,7 @@ sealed embeddable struct RealNumber :: BaseNumber
     constructor new : anObject
         <= new real:anObject.
         
-    multi equal:o
+    multi bool equal:o
     [
         var n := o real \ back:$nil.
         ($nil == n)
@@ -2025,7 +2025,7 @@ sealed embeddable struct RealNumber :: BaseNumber
             ! [ ^ $self equal real:n ]
     ]
 
-    multi less:n
+    multi bool less:n
         <= less real:n.
         
     stacksafe bool equal(BaseVariable v)
@@ -2042,16 +2042,16 @@ sealed embeddable struct RealNumber :: BaseNumber
     stacksafe bool less real:anOperand
         = theValue < anOperand.
         
-    real multi add :n
+    multi add :n
         <= add real:n.
 
-    real multi subtract:n
+    multi subtract:n
         <= subtract real:n.
 
-    real multi multiply:n
+    multi multiply:n
         <= multiply real:n.
 
-    real multi divide:n
+    multi divide:n
         <= divide real:n.
         
     stacksafe real add(BaseVariable v)
@@ -2243,7 +2243,7 @@ sealed const embeddable struct CharValue :: BaseValue
     constructor max
         = $010FFFFh.
 
-    multi equal:o
+    multi bool equal:o
     [
         var n := o char \ back:$nil.
         ($nil == n)
@@ -2251,7 +2251,7 @@ sealed const embeddable struct CharValue :: BaseValue
             ! [ ^ $self equal char:n ]
     ]
 
-    multi less:n
+    multi bool less:n
         <= less char:n.
         
     stacksafe bool equal(BaseVariable v)
@@ -2345,7 +2345,7 @@ sealed const embeddable struct CharValue :: BaseValue
 singleton nil
 {
     /// Returns true if the specified object is nil.
-    equal : anObject 
+    bool equal : anObject 
     [
         ($nil == anObject)
             ? [ ^ true. ].
@@ -2369,7 +2369,7 @@ class BaseExtender
     object theObject.
     
     /// Returns true if the specified object is equal to the current object; otherwise, false.
-    equal : anObject
+    bool equal : anObject
         => theObject.
       
     dispatch => theObject.
@@ -2454,7 +2454,7 @@ sealed class KeyValue
         theObject := anObject.
     ]
            
-    equal : o
+    bool equal : o
         => theObject.
                                                                                       
     /// Redirects the incoming messages to the object
@@ -3052,7 +3052,7 @@ class longConvertor =
     ]
 
     /// Converts a real number into a long integer
-    stacksafe convert real:aValue
+    stacksafe long convert real:aValue
     [
         long aRetVal := 0l.
         $self convert real:aValue vlong:aRetVal.
@@ -3061,7 +3061,7 @@ class longConvertor =
     ]
 
     /// Converts a character into a long integer
-    stacksafe convert char:aValue
+    stacksafe long convert char:aValue
     [
         int aRetVal := 0.
         intConvertor convert char:aValue vint:aRetVal.

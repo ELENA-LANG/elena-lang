@@ -24,7 +24,7 @@ dynamic template<BaseIndexable> array :: template_subj
               
               reset [ index int := -1 ]
               
-              next
+              bool next
               [
                   index append int:1.
                   
@@ -303,7 +303,7 @@ sealed ByteArray :: array<byte>
     stacksafe read int:anIndex vbyte:anInt
         => system'core_routines'__bytearray.
 
-    embeddable getAt int:n
+    embeddable byte getAt int:n
     [
         byte retVal := 0.
         
@@ -450,7 +450,7 @@ sealed ShortArray :: array<short>
     stacksafe write int:anIndex short:aValue
         => system'core_routines'__shortarray.
 
-    embeddable getAt int:n
+    embeddable short getAt int:n
     [
         short retVal := 0.
         
@@ -546,7 +546,7 @@ sealed IntArray :: array<int>
     stacksafe read int:anIndex vint:anInt
         => system'core_routines'__intarray.
 
-    embeddable getAt int:n
+    embeddable int getAt int:n
     [
         int retVal := 0.
         
@@ -867,7 +867,7 @@ sealed RealArray :: array<real>
     stacksafe read int:anIndex vreal:aReal
         => system'core_routines'__realarray.
 
-    embeddable getAt int:n
+    embeddable real getAt int:n
     [
         real retVal := 0.
         
@@ -1045,7 +1045,7 @@ sealed CharArray :: array<char>
     stacksafe read int:anIndex vchar:anInt
         => system'core_routines'__chararray.
 
-    embeddable getAt int:n
+    embeddable char getAt int:n
     [
         char retVal := $0.
         
@@ -1109,7 +1109,7 @@ sealed dynamic __string LiteralValue :: BaseValue
     /// Converts to UTF-16 literal
     wide = wideConvertor convert literal:$self.
 
-    multi equal:n
+    multi bool equal:n
     [
         var l := n literal \ back:$nil.
         if ($nil == l)
@@ -1121,7 +1121,7 @@ sealed dynamic __string LiteralValue :: BaseValue
         ]
     ]
 
-    multi less:o
+    multi bool less:o
         <= less literal:o.
         
     stacksafe bool equal(BaseVariable v)
@@ -1325,7 +1325,7 @@ sealed dynamic __string WideLiteralValue :: BaseValue
     /// Converts to UTF-8 literal
     literal = literalConvertor convert wide:$self.
 
-    multi equal:n
+    multi bool equal:n
     [
         var l := n wide \ back:$nil.
         if ($nil == l)
@@ -1337,7 +1337,7 @@ sealed dynamic __string WideLiteralValue :: BaseValue
         ]
     ]
 
-    multi less:n
+    multi bool less:n
         <= less wide:n.
         
     stacksafe bool equal(BaseVariable v)
@@ -1615,7 +1615,7 @@ class Variant
     divide : aTarget
         = $self $castValueTo:aTarget; divide:aTarget.
 
-    equal : aTarget
+    bool equal : aTarget
         = $self $castValueTo:aTarget; equal:aTarget.
 }
 
@@ -1695,7 +1695,7 @@ sealed Array :: array<object>
         => system'core_routines'__array.
 
     /// Returns the specified array member
-    stacksafe getAt int:anIndex
+    stacksafe object getAt int:anIndex
         => system'core_routines'__array.
  
     /// Returns the array enumerator
@@ -2224,7 +2224,7 @@ class LiteralEnumerator :: Enumerator
     ]
 
     /// Goes to the next enumeration member and returns true if it is not the last member
-    next
+    bool next
     [
         int aLength := theLiteral length.
         
@@ -2269,7 +2269,7 @@ class LiteralIndexer :: Indexer
     ]
     
     /// Returns false if the index out of range
-    available
+    bool available
     [
         int aLength := theLiteral length.
         
@@ -2339,7 +2339,7 @@ class WideLiteralEnumerator :: Enumerator
     ]
 
     /// Goes to the next enumeration member and returns true if it is not the last member
-    next
+    bool next
     [
         int aLength := theLiteral length.
 
@@ -2386,7 +2386,7 @@ class WideLiteralIndexer :: Indexer
     ]
 
     /// Returns false if the index out of range    
-    available
+    bool available
     [
         int aLength := theLiteral length.
         
@@ -2439,7 +2439,7 @@ class ArrayIndexer :: Indexer
     ]
     
     /// Returns false if the index out of range
-    available
+    bool available
     [
         int aLength := 0.
         theArray readLengthTo vint:aLength.
@@ -2500,7 +2500,7 @@ class ArrayEnumerator :: Enumerator
     ]
 
     /// Goes to the next enumeration member and returns true if it is not the last member
-    next
+    bool next
     [
         int aLength := theArray length.
         
@@ -2534,7 +2534,7 @@ class BitArrayIndexer :: Indexer
     ]
     
     /// Returns false if the index out of range
-    available
+    bool available
     [
         int aLength := theArray length.
         
@@ -2594,7 +2594,7 @@ class BitArrayEnumerator :: Enumerator
     ]
 
     /// Goes to the next enumeration member and returns true if it is not the last member
-    next
+    bool next
     [
         int aLength := theArray length.
         
@@ -2628,7 +2628,7 @@ class BitArray32Indexer :: Indexer
     ]
     
     /// Returns false if the index out of range
-    available
+    bool available
     [
         ^ theIndex < 32
     ]
@@ -2686,7 +2686,7 @@ class BitArray32Enumerator :: Enumerator
     ]
 
     /// Goes to the next enumeration member and returns true if it is not the last member
-    next
+    bool next
     [
         theIndex append int:1.
 

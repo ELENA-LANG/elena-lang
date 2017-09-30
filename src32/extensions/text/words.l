@@ -24,7 +24,7 @@ class SimpleStatemachine :: Statemachine
         theSpaceMode := true.
     ]
     
-    proceed char:aChar
+    bool proceed char:aChar
     [
         if (aChar isWhitespace)
             [
@@ -38,7 +38,7 @@ class SimpleStatemachine :: Statemachine
         ^ false
     ]
     
-    isWhitespace = theSpaceMode.
+    bool isWhitespace = theSpaceMode.
 }
 
 class ExpressionStatemachine :: Statemachine
@@ -56,7 +56,7 @@ class ExpressionStatemachine :: Statemachine
         theOperatorMode := false.
     ]
     
-    proceed char:aChar
+    bool proceed char:aChar
     [
         if (theQuoteMode)
             [
@@ -110,7 +110,7 @@ class ExpressionStatemachine :: Statemachine
         ^ false
     ]
     
-    isWhitespace = theSpaceMode.    
+    bool isWhitespace = theSpaceMode.    
 }
 
 /// obosolet
@@ -140,7 +140,7 @@ class TokenEnumerator :: Enumerator
         theIndex int := 0.
     ]
     
-    next
+    bool next
     [
         theBuffer clear.
 

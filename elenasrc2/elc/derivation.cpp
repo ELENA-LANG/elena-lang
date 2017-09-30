@@ -365,6 +365,17 @@ ref_t DerivationReader::DerivationScope :: mapTerminal(SNode terminal, bool exis
    return moduleScope->mapTerminal(terminal, existing);
 }
 
+ref_t DerivationReader::DerivationScope :: mapTypeTerminal(SNode terminal, bool existing)
+{
+   if (existing) {
+      ref_t attrRef = moduleScope->mapAttribute(terminal);
+      if (attrRef != 0 && !isPrimitiveRef(attrRef))
+         return attrRef;
+   }
+   return mapTerminal(terminal, existing);
+}
+
+
 bool DerivationReader::DerivationScope :: isTypeAttribute(SNode terminal)
 {
    ident_t name = terminal.identifier();
@@ -478,7 +489,7 @@ void DerivationReader::DerivationScope :: loadAttributeValues(SNode attributes, 
          if (item != lxNone && item.nextNode() == lxNone) {
             ref_t attr = 0;
             if (classMode) {
-               attr = mapTerminal(item.findChild(lxIdentifier, lxPrivate), true);
+               attr = mapTypeTerminal(item.findChild(lxIdentifier, lxPrivate), true);
             }
             else attr = mapAttribute(item);
             if (attr == 0) {

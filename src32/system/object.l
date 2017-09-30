@@ -20,6 +20,8 @@ class Object
 /// A common boolean value
 listable class BaseBoolValue
 {
+    bool equal bool:aBool = $nil.
+
     if : aTrueAction = $nil.
 
     if : aTrueAction : aFalseAction = $nil.
@@ -33,8 +35,6 @@ listable class BaseBoolValue
     bool and : anExpr = $nil.
 
     bool xor : aBool = $nil.
-
-    bool equal bool:aBool = $nil.
 
     bool not = $self inverted.
 
