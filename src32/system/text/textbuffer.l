@@ -15,6 +15,12 @@ sealed nonstructural class TextBuilder
         theLength := 0.
     ]
 
+    constructor new : value
+        <= new;
+    [
+        $self write(value).
+    ] 
+
     int rvprop length :: readLengthTo.
 
     clear

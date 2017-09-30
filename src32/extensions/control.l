@@ -14,6 +14,9 @@ int extension intLoopOp
     stacksafe to(int anEnd) do(nfunc aFunction)
         = self~intLoopOp runIntLoop int:anEnd nfunc:aFunction.
             
+    stacksafe till(int anEnd) do(nfunc aFunction)
+        = self~intLoopOp runIntLoop int(anEnd-1) nfunc:aFunction.
+            
     stacksafe to(int anEnd) do(func1 aFunction)
         = self~intLoopOp runIntLoop int:anEnd nfunc(&int:n)[ aFunction eval:n ].
             
@@ -22,6 +25,9 @@ int extension intLoopOp
             
     multi to:anEnd do:anAction
         = self~intLoopOp runIntLoop int(anEnd int) nfunc(&int:n)[ anAction eval:n ].
+        
+    multi till:anEnd do:anAction
+        = self~intLoopOp runIntLoop int(anEnd int - 1) nfunc(&int:n)[ anAction eval:n ].
 }
 
 extension forLoopOp
@@ -53,6 +59,9 @@ extension forLoopOp
     multi till:aMaxValue do:anAction
         = self~forLoopOp to:aMaxValue do(:n)[ anAction eval:n ].
 
+//    till(IntNumber aMaxValue) do(nfunc aFunction)
+//        = aFunction run enumerator:(IntervalEnumerator new from:self till:aMaxValue by:aStep).
+//
     till(object aMaxValue) by(object aStep) do(func1 aFunction)
         = aFunction run enumerator:(IntervalEnumerator new from:self till:aMaxValue by:aStep).
 
