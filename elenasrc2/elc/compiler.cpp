@@ -2142,6 +2142,20 @@ int Compiler :: defineFieldSize(CodeScope& scope, int offset)
    else return classScope->info.size - offset;
 }
 
+void Compiler :: writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type)
+{
+   if (object.element == -1) {
+      ref_t targetRef = resolveObjectReference(scope, object);
+      bool variable = false;
+      int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, 0u, variable);
+      writer.newNode((variable && !test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxCondBoxing, size);
+      writer.appendNode(type, object.param);
+      if (test(mode, HINT_DYNAMIC_OBJECT))
+         writer.appendNode(lxBoxingRequired);
+   }
+   else writer.newNode(type, object.param);
+}
+
 void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode)
 {
    switch (object.kind) {
@@ -2183,22 +2197,10 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          break;
       case okLocal:
       case okParam:
-         if (object.element == -1) {
-            ref_t targetRef = resolveObjectReference(scope, object);
-            writer.newNode(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef, 0u));
-            writer.appendNode(lxLocal, object.param);
-            if (test(mode, HINT_DYNAMIC_OBJECT))
-               writer.appendNode(lxBoxingRequired);
-         }
-         else writer.newNode(lxLocal, object.param);
+         writeParamTerminal(writer, scope, object, mode, lxLocal);
          break;
       case okThisParam:
-         if (object.element == -1) {
-            ref_t targetRef = resolveObjectReference(scope, object);
-            writer.newNode(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef, 0u));
-            writer.appendNode(lxThisLocal, object.param);
-         }
-         else writer.newNode(lxThisLocal, object.param);
+         writeParamTerminal(writer, scope, object, mode, lxThisLocal);
          break;
       case okSuper:
          writer.newNode(lxLocal, 1);
@@ -2678,9 +2680,10 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
    if (extRef == 0) {
       SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
 
-      if (typeExtensions) {
-         genericOne = true;
+      if (typeExtensions) {         
          extRef = typeExtensions->get(messageRef);
+         if (extRef != 0)
+            genericOne = true;
       }         
    }
 
