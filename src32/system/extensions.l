@@ -1044,63 +1044,63 @@ literal extension literalOp
         ^ self Substring int:anIndex int:aLength
     ]        
     
-//    trimLeft char:aChar
-//    [
-//        int  anIndex := 0.
-//        int  aLength := self length.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//        
-//        while(anIndex < aLength)
-//        [
-//            self read int:anIndex vchar:aCurrent.
-//            
-//            ifnot(aCurrent == aChar)
-//                [ 
-//                    if (anIndex == 0)
-//                        [ ^ self ];
-//                        [ ^ self delete int:0 int:anIndex ]
-//                ].
-//            
-//            anIndex := anIndex + aCharLen
-//        ].
-//        
-//        ^ emptyLiteralValue
-//    ]
-//    
-//    trimLeft
-//        = self~literalOp trimLeft char:$32.    
-//       
-//    trimRight char:aChar
-//    [
-//        int  aLength := self length.
-//        int  anIndex := aLength - 1.
-//        int  aPrevious := aLength.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self read int:anIndex vchar:aCurrent.
-//            
-//            ifnot (aCurrent equal char:aChar)
-//                [ ^ self delete int:aPrevious int:(aLength - aPrevious) ].
-//            
-//            aPrevious := anIndex.
-//            anIndex := anIndex - aCharLen
-//        ].
-//        
-//        ^ emptyLiteralValue
-//    ]
-//    
-//    trimRight
-//        = self~literalOp trimRight char:$32.
-//        
-//    trim char:aChar
-//        = self~literalOp trimLeft char:aChar; trimRight char:aChar.
-//    
-//    trim
-//        = self~literalOp trimLeft char:$32; trimRight char:$32.        
+    literal trimLeft char:aChar
+    [
+        int  anIndex := 0.
+        int  aLength := self length.
+        char aCurrent := $0.
+        int  aCharLen := aChar length.
+        
+        while(anIndex < aLength)
+        [
+            self read int:anIndex vchar:aCurrent.
+            
+            ifnot(aCurrent == aChar)
+                [ 
+                    if (anIndex == 0)
+                        [ ^ self ];
+                        [ ^ self delete int:0 int:anIndex ]
+                ].
+            
+            anIndex := anIndex + aCharLen
+        ].
+        
+        ^ emptyLiteralValue
+    ]
+    
+    literal trimLeft
+        = self~literalOp trimLeft char:$32.    
+       
+    literal trimRight char:aChar
+    [
+        int  aLength := self length.
+        int  anIndex := aLength - 1.
+        int  aPrevious := aLength.
+        char aCurrent := $0.
+        int  aCharLen := aChar length.
+        
+        while (anIndex >= 0)
+        [
+            self read int:anIndex vchar:aCurrent.
+            
+            ifnot (aCurrent equal char:aChar)
+                [ ^ self delete int:aPrevious int:(aLength - aPrevious) ].
+            
+            aPrevious := anIndex.
+            anIndex := anIndex - aCharLen
+        ].
+        
+        ^ emptyLiteralValue
+    ]
+    
+    literal trimRight
+        = self~literalOp trimRight char:$32.
+        
+    literal trim char:aChar
+        = self~literalOp trimLeft char:aChar; trimRight char:aChar.
+    
+    literal trim
+        = self~literalOp trimLeft char:$32; trimRight char:$32.        
     
     padLeft int:aLength
         = self padLeft($32, aLength).
@@ -1228,59 +1228,59 @@ wide extension wideOp
         ^ self Substring int:anIndex int:aLength
     ]
      
-//    trimLeft char:aChar
-//    [
-//        int  anIndex := 0.
-//        int  aLength := self length.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//        
-//        while (anIndex < aLength)
-//        [
-//            self read int:anIndex vchar:aCurrent.
-//            
-//            ifnot(aCurrent equal char:aChar)
-//                [ ^ self delete int:0 int:anIndex ].
-//            
-//            anIndex := anIndex + aCharLen
-//        ].
-//        
-//        ^ emptyWideLiteralValue
-//    ]
-//    
-//    trimLeft
-//        = self~wideOp trimLeft char:$32.
-//       
-//    trimRight char:aChar
-//    [
-//        int  aLength := self length.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//                
-//        int  anIndex := aLength - 1.
-//        int  aPrevious := aLength.
-//        while (anIndex >= 0)
-//        [
-//            self read int:anIndex vchar:aCurrent.
-//            
-//            ifnot (aCurrent equal char:aChar)
-//                [ ^ self delete int:aPrevious int:(aLength - aPrevious) ].
-//            
-//            aPrevious := anIndex.
-//            anIndex := anIndex - aCharLen
-//        ].
-//        
-//        ^ emptyWideLiteralValue
-//    ]
-//    
-//    trimRight
-//        = self~wideOp trimRight char:$32.
-//       
-//    trim char:aChar
-//        = self~wideOp trimLeft char:aChar; trimRight char:aChar.
-//    
-//    trim
-//        = self~wideOp trimLeft char:$32; trimRight char:$32.
+    wide trimLeft char:aChar
+    [
+        int  anIndex := 0.
+        int  aLength := self length.
+        char aCurrent := $0.
+        int  aCharLen := aChar length.
+        
+        while (anIndex < aLength)
+        [
+            self read int:anIndex vchar:aCurrent.
+            
+            ifnot(aCurrent equal char:aChar)
+                [ ^ self delete int:0 int:anIndex ].
+            
+            anIndex := anIndex + aCharLen
+        ].
+        
+        ^ emptyWideLiteralValue
+    ]
+    
+    wide trimLeft
+        = self~wideOp trimLeft char:$32.
+       
+    wide trimRight char:aChar
+    [
+        int  aLength := self length.
+        char aCurrent := $0.
+        int  aCharLen := aChar length.
+                
+        int  anIndex := aLength - 1.
+        int  aPrevious := aLength.
+        while (anIndex >= 0)
+        [
+            self read int:anIndex vchar:aCurrent.
+            
+            ifnot (aCurrent equal char:aChar)
+                [ ^ self delete int:aPrevious int:(aLength - aPrevious) ].
+            
+            aPrevious := anIndex.
+            anIndex := anIndex - aCharLen
+        ].
+        
+        ^ emptyWideLiteralValue
+    ]
+    
+    wide trimRight
+        = self~wideOp trimRight char:$32.
+       
+    wide trim char:aChar
+        = self~wideOp trimLeft char:aChar; trimRight char:aChar.
+    
+    wide trim
+        = self~wideOp trimLeft char:$32; trimRight char:$32.
     
     padLeft char:aChar int:aLength
     [
@@ -1409,7 +1409,24 @@ class $stringOpDispatcher =
 
     containing wide:s wide:subs
         = s~wideOp containing wide:subs.
-}.
+        
+    trimLeft literal:s char:ch
+        =s~literalOp trimLeft char:ch.        
+        
+    trimRight literal:s char:ch
+        =s~literalOp trimRight char:ch.        
+        
+    trim literal:s char:ch
+        =s~literalOp trim char:ch.
+        
+    trimLeft wide:s char:ch
+        =s~wideOp trimLeft char:ch.        
+        
+    trimRight wide:s char:ch
+        =s~wideOp trimRight char:ch.        
+        
+    trim wide:s char:ch
+        =s~wideOp trim char:ch.}.
 
 extension stringOp
 {
@@ -1418,49 +1435,25 @@ extension stringOp
             
     Substring : anIndex : aLength
         = self Substring:aLength at:anIndex.
-            
-//    trimLeft char:aChar
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher trimLeft char:aChar
-//    ]
-//
-//    trimRight char:aChar
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher trimRight char:aChar
-//    ]
-//
-//    trim char:aChar
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher trim char:aChar
-//    ]
-//
-//    trim
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher trim
-//    ]
-//
-//    trimLeft
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher trimLeft
-//    ]
-//
-//    trimRight
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher trimRight
-//    ]
-//    
+    
+    trimLeft :ch
+        = $stringOpDispatcher trimLeft(self, ch).
+
+    trimRight :ch
+        = $stringOpDispatcher trimRight(self, ch).
+
+    trim:ch
+        = $stringOpDispatcher trim(self, ch).
+    
+    trimLeft
+        = $stringOpDispatcher trimLeft(self, $32).
+
+    trimRight
+        = $stringOpDispatcher trimRight(self, $32).
+
+    trim
+        = $stringOpDispatcher trim(self, $32).
+
     padLeft : padSymbol : len
         = $stringOpDispatcher padLeft(self, padSymbol, len).
         
