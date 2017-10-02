@@ -364,6 +364,28 @@ extension indexableOp
     multi populate : anAction
         = self~indexableOp populate(&int:n)[ ^anAction eval:n ].
 
+    isSorted func2:aCompareFunc
+    [
+        indexer it := self indexer.
+        if (it available)
+        [
+            var previous := it get.
+            it append index:1.
+            while (it available)
+            [
+                ifnot (aCompareFunc eval(previous, it get))
+                [
+                    ^ false
+                ].
+                
+                previous := it get.
+                it append index:1
+            ]
+        ].
+        
+        ^ true.
+    ]
+
     sort func2:aCompareFunc
     [
         indexer aFormer := self indexer.
@@ -394,6 +416,9 @@ extension indexableOp
     
     ascendant
         = (self clone)~indexableOp sort:ifOrdered.
+
+    isAscendant
+        = self~indexableOp isSorted:ifOrdered.
 
     Subarray : aLength at:anIndex
         = self~indexableOp Subarray int:anIndex int:aLength.

@@ -4,9 +4,9 @@ class Thread
 {
     object theHandle.
     
-    constructor new:anAction
+    constructor new func:anAction
     [
-        theHandle := ThreadHandle new:anAction.
+        theHandle := ThreadHandle new func:anAction.
     ]
     
     start

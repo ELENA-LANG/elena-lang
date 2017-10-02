@@ -511,20 +511,6 @@ sealed class ArrayList :: BaseIndexable
         theArray := Array new int:32.
     ]
 
-//    /// Creates the list
-//    constructor new : param
-//        <= new int:(param cast:%eval to:
-//                        { 
-//                            int : n = n. 
-//                            
-//                            array : a = a length.
-//                            
-//                            generic : n = 32. 
-//                        });
-//    [
-//        $self append array:(param cast:%eval to:{ array : a = a. generic : o = $nil. }).
-//    ]
-    
     constructor new int:aCapacity
     [
         theCapacity := aCapacity.
@@ -597,20 +583,38 @@ sealed class ArrayList :: BaseIndexable
         theLength append int:1.
     ]
     
-//    append array:subarray
-//    [
-//        if ($nil != subarray)
-//        [
-//            int len := subarray length.
-//            int i := 0.
-//            while (i < len)
-//            [
-//                $self append object:(subarray getAt int:i).
-//                i := i + 1
-//            ]
-//        ]     
-//    ]
-        
+    multi appendRange : subarray
+    [
+        if ($nil != subarray)
+        [
+            int len := subarray length.
+            int i := 0.
+            while (i < len)
+            [
+                $self append(subarray getAt int:i).
+                i := i + 1
+            ]
+        ]
+    ]
+
+    appendRange(BaseIndexable indexable)
+    [
+        if ($nil != indexable)
+        [
+            int len := indexable length.
+            indexer it := indexable indexer.
+            
+            int i := 0.
+            while (it available)
+            [                
+                $self append(it get).
+                
+                i += 1.
+                it writeIndex int:i.
+            ]
+        ]
+    ]        
+                
     /// Inserts a new object to the specified position
     insert int:anIndex object:anObject
     [

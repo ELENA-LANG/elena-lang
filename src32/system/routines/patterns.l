@@ -52,6 +52,51 @@ class TopFilter :: Enumerator
     ]    
 }
 
+// --- SkipFilter ---
+
+class SkipFilter :: Enumerator
+{
+    vint       theCounter.    
+    bool       skipped.    
+    enumerator theEnumerator.
+    
+    constructor new int:aCounter enumerator:anEnumerator
+    [
+        theCounter := aCounter.
+        skipped := false.
+        theEnumerator := anEnumerator.
+    ]
+    
+    get = theEnumerator get.
+    
+    bool next
+    [
+        ifnot (skipped)
+        [
+            skipped := true.
+            
+            int i := theCounter.
+            while (i > 0)            
+            [
+                ifnot (theEnumerator next)
+                [
+                    ^ false
+                ].
+                
+                i -= 1.
+            ]
+        ].
+        
+        ^ theEnumerator next
+    ]
+    
+    reset 
+    [
+        theEnumerator reset.
+        skipped := false.
+    ]    
+}
+
 // --- Filtering ---
 
 class Filter :: Enumerator
@@ -677,6 +722,14 @@ class OrderingEnumerator :: Enumerator
         $self reset.
     ]
     
+    constructor new func1:orderVal enumerator:enumerator
+    [
+        theOrderFunc := (:p:n)(orderVal eval(p) < orderVal eval(n) ).
+        theEnumerator := enumerator.
+        
+        $self reset.
+    ]
+    
     constructor new ext_mssg:fn enumerator:enumerator
         <= new func2:(:x:y)(x~fn eval:y) enumerator:enumerator.
     
@@ -771,6 +824,9 @@ extension patternOp
 
     top:aCounter
         = TopFilter new int:aCounter enumerator:(self enumerator).
+
+    skipping:aCounter
+        = SkipFilter new int:aCounter enumerator:(self enumerator).
 
     last:counter
         = TopFilter new int:counter int(self length - counter) enumerator:(self enumerator).
