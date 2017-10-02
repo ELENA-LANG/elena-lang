@@ -6,8 +6,9 @@ In development:
                  * raising an exception in the exception handler - test why AbortException does not correctly handled
                  * implement enmureation : consolecolor
 
-                 * Runtime evaluation
                  * #195 : impelement rosetta code samples
+                 * Runtime evaluation
+                 * Elementary cellular automaton
                  * Zebra puzzle
                  * Write float arrays to a text file
                  * Word search
@@ -862,5 +863,3 @@ Pipeline:
               zdev - gui
                  * directx : create 3D sample
 
-              zdev - script engine
-                 * do we need escript script?

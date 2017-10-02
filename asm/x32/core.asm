@@ -931,6 +931,10 @@ procedure % ENDFRAME
   lea  esp, [esp+8]
   pop  ebp
 
+  pop  ebx
+  mov  fs:[0], ebx
+  lea  esp, [esp+4]
+
   // ; restore return pointer
   push ecx   
   ret

@@ -94,7 +94,7 @@ procedure core_vm'start_n_eval
   
   // invoke symbol
   mov ebp, esp
-  mov edx, [ebp+20h]  
+  mov edx, [ebp+28h]  
   mov esi, [edx]
   
   call eax

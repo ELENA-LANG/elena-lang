@@ -137,6 +137,8 @@ singleton $StartOne :: $Strategy
     type<$Strategy> symbol_one = $SymbolOne.
     
     type<$Strategy> preloaded_one = $PreloadedOne.
+    
+    type<$Strategy> singleton_one = $Singleton.
 }
 
 singleton $SymbolOne :: $Strategy
@@ -204,6 +206,16 @@ class $BaseClass :: $Strategy
 
 singleton $Singleton :: $BaseClass
 {
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        var pos := context pop.
+        var len := context length - pos.
+        
+        var class := Class new(context tape, pos, len).
+        
+        context trim(pos).
+        context append(class).
+    ]
 }
 
 singleton $Nested :: $BaseClass

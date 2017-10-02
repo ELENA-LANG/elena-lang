@@ -15,6 +15,11 @@
    #define forward     ::= "forward" "(" reference_v ")";
 
    #define symbol      ::=   symbol_expr;
+   #define symbol      ::=   singleton_expr;
+
+   #define singleton_expr ::= <= += "%""openSingleton[0]"""  => 
+                                "singleton" "(" method* ")" 
+                              <= += "%""close[0]""" =>;
 
    #define symbol_expr ::= <= += "%""openSymbol[0]"""  => 
                              "symbol" "(" identifier expression ")" 
