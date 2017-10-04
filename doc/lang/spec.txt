@@ -1,4 +1,4 @@
-{{language|Smalltalk
+{{language|Elena
 |exec=bytecode
 |strength=strong
 |safety=safe
@@ -7,27 +7,12 @@
 |parampass=value
 |gc=yes
 |LCT=yes
-|bnf=http://github.com/aquasync/ruby-ometa/blob/60deea23abe7eb07d200233dde4213d74041b81f/smalltalk.syntax}}
+|bnf=https://github.com/ELENA-LANG/elena-lang/}}
 {{language programming paradigm|Object-oriented}}
 {{language programming paradigm|reflective}}
 {{language programming paradigm|Dynamic}}
-'''Smalltalk-80''' is an [[object-oriented programming|object-oriented]], dynamically typed, [[reflective programming]] language. It was designed and created in part for educational use, more so for Constructivist teaching, at Xerox PARC by Alan Kay, Dan Ingalls, Ted Kaehler, Adele Goldberg, and others during the 1970s, influenced by Sketchpad and Simula.
 
-The language was generally released as Smalltalk-80 and has been widely used since. Smalltalk-like languages are in continuing active development, and has gathered a loyal community of users around it.
-
-'''Smalltalk-80''' is a fully reflective system, implemented in itself. Smalltalk-80 provides both structural and computational reflection. Smalltalk is a structurally reflective system whose structure is defined by Smalltalk-80 objects. The classes and methods that define the system are themselves objects and fully part of the system that they help define. The Smalltalk compiler compiles textual source code into method objects, typically instances of <code>CompiledMethod</code>. These get added to classes by storing them in a class's method dictionary. The part of the class hierarchy that defines classes can add new classes to the system. The system is extended by running Smalltalk-80 code that creates or redefines classes and methods. In this way a Smalltalk-80 system is a "living" system, carrying around the ability to extend itself at run-time.
-
-==Implementations==
-Over time, various implementations ("dialects") of Smalltalk have appeared, some of which target different audiences and/or focus on particular applications. Their internal implementation (evaluation mechanism) may also differ radically, from bytecode interpretation, just-in-time compilation, dynamic optimizing recompilation to cross-language translators (Smalltalk-to-C, Smalltalk-to-JavaScript, Smalltalk-to-Java).
-
-==Spirit==
-Smalltalk consist of both the programming language and a more or less standardized library of classes. Most Smalltalks also include a sophisticated IDE, which supports editing, compiling, refactoring, debugging, tools, source code revisioning and packaging/deployment. With a few exceptions, working in a traditional editor (vi, emacs) or general purpose IDE (eclipse) is usually not recommended, as these cannot make use of all the reflective and dynamic coding features and will make the programmer less productive. For example, typical Smalltalk debuggers allow for code to be changed while the program is running (or halted at a breakpoint), allowing for a "programming in the debugger" style of coding. Code is usually developed and tested incrementally, with breakpoints on unimplemented parts, which are filled as encountered. This makes Smalltalk a perfect environment for rapid prototyping and experimental development. 
-
-Smalltalk environments are open - almost every aspect of the language and IDE can be changed, enhanced and customized. This includes object representation, metaclass and reflection facilities, language syntax, exception handling and the IDE itself. For this reason, Smalltalk has traditionally been a testbed for new language features, mechanisms and patterns.
-
-Smalltalk is a very high level language, which almost completely hides any underlying machine representation. Implementation details such as integer size, pointer size, byte order etc. are invisible. The numeric tower is highly polymorphic, allowing for transparent use of arbitrary large integers, fractions, floats, complex numbers etc.
-
-Smalltalk is a very late bound language. Object types, classes, references etc. are resolved at execution time, and can be dynamically changed.
+ELENA is a general-purpose, object-oriented, polymorphic language with late binding. It features message dispatching / manipulation, dynamic object mutation, a script engine / interpreter and mix-in support.
 
 ==Language Syntax==
 Smalltalk has a very simple and highly orthogonal syntax, which is based exclusively on message sending (aka pure virtual function calling in C-parlance). The language syntax and semantic only consists of literal (compile-time) constants, variable bindings, message sends and block closures (lambda expression objects). Control flow, loop constructs, exception handling etc. are defined as messages to booleans, blocks or by passing blocks as arguments. This makes it trivial and common practice to add new control constructs.

@@ -807,53 +807,51 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
    }
 
    // check if there are implicit constructors
-   if (test(info.header.flags, elSealed)) {
+   if (sourceRef == V_OBJARRAY) {
       // HOTFIX : recognize primitive object array
-      if (sourceRef == V_OBJARRAY) {
-         sourceRef = firstNonZero(scope.arrayReference, scope.superReference);
+      sourceRef = firstNonZero(scope.arrayReference, scope.superReference);
 
-         compiler.injectBoxing(writer, scope,
-            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, sourceRef, true);
-      }
-      // HOTFIX : recognize primitive data except of a constant literal
-      else if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
-         sourceRef = resolvePrimitiveReference(scope, sourceRef);
+      compiler.injectBoxing(writer, scope,
+         test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, sourceRef, true);
+   }
+   // HOTFIX : recognize primitive data except of a constant literal
+   else if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
+      sourceRef = resolvePrimitiveReference(scope, sourceRef);
 
-      // otherwise we have to go through the list
-      ClassInfo::MethodMap::Iterator it = info.methods.start();
-      while (!it.Eof()) {
-         pos_t implicitMessage = it.key();
-         if (test(implicitMessage, CONVERSION_MESSAGE) && getParamCount(implicitMessage) == 1) {
-            ref_t subj = getAction(implicitMessage);
-            bool compatible = false;
-            if (sourceRef == V_STRCONSTANT && subj == elementRef) {
-               // try to resolve explicit constant conversion routine
-               compatible = true;
+   // otherwise we have to go through the list
+   ClassInfo::MethodMap::Iterator it = info.methods.start();
+   while (!it.Eof()) {
+      pos_t implicitMessage = it.key();
+      if (test(implicitMessage, CONVERSION_MESSAGE) && getParamCount(implicitMessage) == 1) {
+         ref_t subj = getAction(implicitMessage);
+         bool compatible = false;
+         if (sourceRef == V_STRCONSTANT && subj == elementRef) {
+            // try to resolve explicit constant conversion routine
+            compatible = true;
+         }
+         else {
+            ref_t subjRef = scope.module->mapReference(scope.module->resolveSubject(subj).c_str() + 1);
+            if (subjRef != 0) {
+               compatible = isCompatible(scope, subjRef, sourceRef);
             }
-            else {
-               ref_t subjRef = scope.module->mapReference(scope.module->resolveSubject(subj).c_str() + 1);
-               if (subjRef != 0) {
-                  compatible = isCompatible(scope, subjRef, sourceRef);
-               }
-               else compatible = true;
-            }
-
-            if (compatible) {
-               bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
-               if (test(info.header.flags, elStructureRole)) {
-                  compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
-               }
-               else if (test(info.header.flags, elDynamicRole)) {
-                  return false;
-               }
-               else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
-
-               return true;
-            }
+            else compatible = true;
          }
 
-         it++;
+         if (compatible) {
+            bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
+            if (test(info.header.flags, elStructureRole)) {
+               compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
+            }
+            else if (test(info.header.flags, elDynamicRole)) {
+               return false;
+            }
+            else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
+
+            return true;
+         }
       }
+
+      it++;
    }
 
    return false;
