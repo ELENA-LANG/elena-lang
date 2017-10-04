@@ -3,15 +3,7 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * raising an exception in the exception handler - test why AbortException does not correctly handled
                  * implement enmureation : consolecolor
-
-                 * #195 : impelement rosetta code samples
-                 * Runtime evaluation
-                 * Elementary cellular automaton
-                 * Zebra puzzle
-                 * Write float arrays to a text file
-                 * Word search
 
               zdev - live programming
                  * implement tree prototype
@@ -46,6 +38,14 @@ In development:
 ------                                                           
 Pipeline:
 ------                                                                                         
+              xdev - general implementation
+                 * #195 : impelement rosetta code samples
+                 * Runtime evaluation
+                 * Elementary cellular automaton
+                 * Zebra puzzle
+                 * Write float arrays to a text file
+                 * Word search
+
                xdev - linux
                  * elc : migrate linker changes (.mdata section)
                  * port compiler

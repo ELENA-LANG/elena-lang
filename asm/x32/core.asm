@@ -1271,6 +1271,21 @@ inline % 28h
 
 end
 
+// ; rethrow
+inline % 29h
+
+  mov  edx, [data : %CORE_EXCEPTION_TABLE + 4]
+  mov  esi, [edx]
+  mov  [data : %CORE_EXCEPTION_TABLE + 8], esi
+  mov  esi, [edx+4]
+  mov  [data : %CORE_EXCEPTION_TABLE + 4], esi
+  mov  esi, [edx+8]
+  mov  [data : %CORE_EXCEPTION_TABLE ], esi
+
+  jmp  [data : %CORE_EXCEPTION_TABLE]
+
+end
+
 // ; eswap
 inline % 2Ch
 

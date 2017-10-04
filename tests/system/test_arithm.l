@@ -1,6 +1,6 @@
 //#import system'routines.
 //#import system'collections.
-//#import system'dynamic.
+import system'dynamic.
 //#import system'calendar.
 import extensions.
 //#import extensions'dynamic.
@@ -194,7 +194,7 @@ class MyException2 :: Exception
         <= new literal:message.
 }
 
-symbol ExecTester =
+ExecTester =
 {
     do : anAction [ anAction eval. ]
 
@@ -496,7 +496,7 @@ symbol ExceptionTest =
     
     try(ExecTester break2)
     {
-        on(MyException e) [ console writeLine:"!!Wrong handler". ]
+        on(MyException e) [ console writeLine:"!!Wrong handler" ]
         
         on(MyException2 e) [ console writeLine:(e message). ]
     }.
@@ -572,25 +572,25 @@ symbol ExceptionTest =
 //
 //    a print:"Struct method works".
 //].
-//
-//#symbol GroupMember1 =
-//{
-//    m1 : prm = "group 1 " + prm.
-//}.
-//
-//#symbol GroupMember2 =
-//{
-//    m2 : prm : prm2 = "group 2 " + prm.
-//}.
-//
-//#symbol GroupTest =
-//[
-//    #var g := Group(GroupMember1, GroupMember2).
-//    
-//    #var m1 := g m1:"called".
-//    #var m2 := g m2:"called":2.
-//].
-//
+
+GroupMember1 =
+{
+    m1 : prm = "group 1 " + prm.
+}.
+
+GroupMember2 =
+{
+    m2 : prm : prm2 = "group 2 " + prm.
+}.
+
+GroupTest =
+[
+    var g := Group::(GroupMember1, GroupMember2).
+    
+    console printLine(g m1("called")).
+    console printLine(g m2("called",2)).
+].
+
 //// --- ClassWithGeneric ---
 //
 //#class ClassWithGeneric

@@ -344,6 +344,8 @@ ELENA byte codes (or ecodes)
 
  throw                      - raise an exception (acc contains the exception object)
 
+ rethrow                    - resend the exception to the previous handler, without freeing stack
+
  unhook                     - remove the current exception handler
 
  snop                       - thread safe nop operation

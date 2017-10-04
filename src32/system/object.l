@@ -77,3 +77,8 @@ extension commonOp
             | raise:[ self close ].
     ]        
 }
+
+singleton __prober
+{
+    dispatch => system'core_routines'__prober.    
+}

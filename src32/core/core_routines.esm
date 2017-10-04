@@ -28,6 +28,73 @@ procedure __object.dispatch[1]
 
 end
 
+procedure __prober.dispatch[1]
+
+  aloadsi 1
+  flag 
+  andn 08800000h
+  elsen labWithHook 0
+
+  bsredirect  
+  acopyr 0
+  equit
+
+labWithHook:
+  open 4
+  reserve 1
+  dcopye
+  dsavefi -2
+
+  hook labNotFound
+
+// ; define the message length
+
+  dloadfi -2
+  ecopyd
+  dcopycount
+  inc
+ 
+// ; copy message
+  bcopyf -4
+labNextParam:
+  get
+  pusha
+  dec
+  elsen labNextParam 0
+
+  aloadsi 0
+  acallvi 0
+
+labReturn:
+  unhook
+  dloadfi -2
+  ecopyd
+  restore 1
+  close
+  close
+
+  equit
+  
+labNotFound:  
+  dloadsi 9
+  address labReturn
+  else labContinueError
+
+  unhook
+  dloadfi -2
+  ecopyd
+  restore 1
+  close
+  close
+  acopyr 0
+  
+  equit
+
+labContinueError:
+  rethrow
+
+end
+
 procedure __object.equal[2]
 
   aloadsi 1

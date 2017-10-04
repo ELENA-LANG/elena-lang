@@ -83,8 +83,8 @@ class Exception
     /// Otherwise goes to the next exception handler
     catch : aCatchBlock
     [
-        aCatchBlock on:$self 
-            \ then:[ $owner throw ].
+        if($nil == aCatchBlock~__prober on:$self)
+            [ $self throw ]
     ]    
 
     /// Executes the exception handler for the current exception if available.
@@ -95,7 +95,8 @@ class Exception
     [
         aFinallyCode eval.
         
-        aCatchBlock on:$self \ then:[ $owner throw ].
+        if($nil == aCatchBlock~__prober on:$self)
+            [ $self throw ]
     ]
 
     if : aCatchblock

@@ -30,7 +30,7 @@ symbol program =
 //    OuterFieldTest eval.
 //    LocalTest eval.
 //    StructTest eval.
-//    GroupTest eval.
+    GroupTest eval.
 //    GenericMethodTest eval.
 //    ConstructorTest eval.
 //    DTOToStructTest eval.

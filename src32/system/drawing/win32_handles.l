@@ -62,7 +62,7 @@ sealed embeddable struct RECT
     [
         aRetVal int := theLeft.
     ]
-    
+        
     stacksafe readTopTo vint:aRetVal
     [
         aRetVal int := theTop.

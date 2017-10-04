@@ -63,7 +63,7 @@ template<BaseVariable> ref :: template_subj
     
     sealed embeddable template_subj = $value.
     
-    equal : anObject
+    bool equal : anObject
         => $value.
 
     embeddable dispatch => $value.
