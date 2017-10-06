@@ -402,6 +402,10 @@ namespace _ELENA_
    #define WRITE_OPERATOR           "<<"
    #define READ_OPERATOR            ">>"
 
+   // template virtual methods
+   #define TEMPLATE_GET_MESSAGE     "$get"
+   #define TEMPLATE_SET_MESSAGE     "$set"
+
   // --- ELENA explicit variables ---
    #define SELF_VAR                "self"             // the current method target / closure owner method target
    #define THIS_VAR                "$self"            // the current method class reference / closure owner class reference
@@ -413,6 +417,8 @@ namespace _ELENA_
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
    #define RETVAL_VAR              "$$ret"            // the closure returning value
+
+   #define TEMPLATE_FIELD          "$field"
 
   // --- ELENA special sections ---
    #define ATTRIBUTE_SECTION        "#attributes"

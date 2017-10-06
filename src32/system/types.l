@@ -27,6 +27,7 @@ import          = #16395.
 extern_template = #16396.
 action          = #8205.
 mixin           = #8206.
+accessor        = #16399.
 
 args            = #32. 
 

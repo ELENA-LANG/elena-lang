@@ -100,7 +100,7 @@ class DerivationReader : public _DerivationReader
          return mapAttribute(terminal, dummy);
       }
 
-      ref_t mapTemplate(SNode terminal, int prefixCounter = 0);
+      ref_t mapTemplate(SNode terminal, int paramCounter = 0, int prefixCounter = 0);
       ref_t mapClassTemplate(SNode terminal);
       ref_t mapTerminal(SNode terminal, bool existing = false);
       ref_t mapTypeTerminal(SNode terminal, bool existing = false);  // map type or reference
@@ -138,15 +138,16 @@ class DerivationReader : public _DerivationReader
 
    enum DeclarationAttr
    {
-      daNone     = 0x00,
-      daType     = 0x01,
-      daClass    = 0x02,
-      daTemplate = 0x04,
-      daField    = 0x08,
-      daMethod   = 0x10, 
-      daLoop     = 0x20,
-      daImport   = 0x40,
-      daExtern   = 0x80
+      daNone        = 0x000,
+      daType        = 0x001,
+      daClass       = 0x002,
+      daTemplate    = 0x004,
+      daField       = 0x008,
+      daLoop        = 0x020,
+      daImport      = 0x040,
+      daExtern      = 0x080,
+      daAccessor    = 0x100,
+      daDblAccessor = 0x300
    };
 
    SNode       _root;

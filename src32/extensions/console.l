@@ -49,8 +49,7 @@ extension outputOp
         while (i < len)
         [
             object obj := list[i].
-            
-            self write(obj~convertorOp toLiteral).
+            self write(obj~convertorOp toLiteral).            
             
             i := i + 1
         ].

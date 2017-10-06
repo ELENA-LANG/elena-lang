@@ -1289,10 +1289,10 @@ sealed embeddable struct UIntNumber :: IntBaseNumber
         theValue := n.
     ]
     
-//    implicit u literal:s
-//    [
-//        theValue := intConvertor convertUnsigned literal:s.
-//    ]
+    explicit u literal:s
+    [
+        theValue := intConvertor convertUnsigned literal:s.
+    ]
     
     /// Creates the object with the minimal value
     constructor min

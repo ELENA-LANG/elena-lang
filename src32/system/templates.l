@@ -68,76 +68,79 @@ field template dto_prop :: prop_name
 
 // --- vprop ---
 
-method template vprop :: prop_type,prop_name
+accessor accessor template vprop :: prop_type,prop_name
 {
-    method get_method.
-    method set_method.
-    
     stacksafe embeddable prop_type prop_name
     [
         prop_type val := 0.        
-        $self get_method var<prop_type>:val.
+        $self $get var<prop_type>:val.
 
         ^ val.
     ]
     
     stacksafe embeddable set prop_name prop_type:val
     [
-        $self set_method prop_type:val.
+        $self $set prop_type:val.
     ]
 }
 
 // --- vvprop ---
 
-method template vvprop :: prop_type,prop_name
+accessor accessor template vvprop :: prop_type,prop_name
 {
-    method get_method.
-    method set_method.
-    
     stacksafe embeddable prop_type prop_name
     [
         prop_type val := 0.        
-        $self get_method var<prop_type>:val.
+        $self $get var<prop_type>:val.
 
         ^ val.
     ]
     
     stacksafe embeddable set prop_name prop_type:val
     [
-        $self set_method prop_type:val.
+        $self $set prop_type:val.
     ]
     
     stacksafe embeddable append prop_name prop_type:val
     [
         prop_type newVal := 0.        
-        $self get_method var<prop_type>:newVal.
+        $self $get var<prop_type>:newVal.
         
         newVal := newVal + val.
         
-        $self set_method prop_type:newVal.
+        $self $set prop_type:newVal.
     ]
     
     stacksafe embeddable reduce prop_name prop_type:val
     [
         prop_type newVal := 0.        
-        $self get_method var<prop_type>:newVal.
+        $self $get var<prop_type>:newVal.
         
         newVal := newVal - val.
         
-        $self set_method prop_type:newVal.
+        $self $set prop_type:newVal.
     ]    
+}
+
+accessor template vprop :: type,prop_name
+{
+    stacksafe embeddable type prop_name
+    [
+        type val := 0.        
+        $self $get var<type>:val.
+
+        ^ val.
+    ]
 }
 
 // --- rvprop ---
 
-method template rvprop :: type,prop_name
+accessor template rvprop :: type,prop_name
 {
-    method get_method.
-    
     stacksafe embeddable type prop_name
     [
         type val := 0.        
-        $self get_method var<type>:val.
+        $self $get var<type>:val.
 
         ^ val.
     ]
@@ -145,42 +148,36 @@ method template rvprop :: type,prop_name
 
 // --- fnprop ---
 
-method template fnprop :: type,template_fn
+accessor template fnprop :: type,template_fn
 {
-    method target_method.
-    
     stacksafe embeddable type template_fn type:n
     [
         type retVal := 0.
-        $self target_method type:n var<type>:retVal.
+        $self $get type:n var<type>:retVal.
         ^ retVal.            
     ]
 }
 
 // --- fn2prop ---
 
-method template fn2prop :: type,template_fn
+accessor template fn2prop :: type,template_fn
 {
-    method target_method.
-    
     stacksafe embeddable type template_fn type:n type:m
     [
         type retVal := 0.
-        $self target_method type:n type:m var<type>:retVal.
+        $self $get type:n type:m var<type>:retVal.
         ^ retVal.            
     ]
 }
 
 // --- fn3prop ---
 
-method template fn3prop :: type,template_fn
+accessor template fn3prop :: type,template_fn
 {
-    method target_method.
-    
     stacksafe embeddable type template_fn type:n type:m type:o
     [
         type retVal := 0.
-        $self target_method type:n type:m type:o var<type>:retVal.
+        $self $get type:n type:m type:o var<type>:retVal.
         ^ retVal.            
     ]
 }

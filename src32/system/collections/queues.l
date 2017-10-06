@@ -15,6 +15,8 @@ sealed class Stack :: BaseEnumerable
         theTop := 0.
     ]
     
+    int $top_pointer = theTop.
+    
     array_list = theList.
     
     enumerator = StackEnumerator new stack:$self.
@@ -323,23 +325,36 @@ template<BaseEnumerable> queue :: type
 class StackEnumerator :: Enumerator
 {
     stack      theStack.
-    enumerator theEnumerator.
+    array_list theList.
+    int        theIndex. 
     
     constructor new stack:aStack
     [
         theStack := aStack.
-        theEnumerator := aStack array_list; enumerator.
+        theList := aStack array_list.
+        theIndex := aStack $top_pointer.
     ]
     
     bool next 
-        = theEnumerator next.
+    [
+        if (theIndex > 0)
+        [
+            theIndex -= 1.
+            
+            ^ true
+        ];
+        [
+            ^ false
+        ]
+    ]
         
     get
-        = theEnumerator get.
+        = theList[theIndex].
         
     reset
     [
-        theEnumerator reset.
+        theList := theStack array_list.
+        theIndex := theStack $top_pointer.
     ]        
 }
 
