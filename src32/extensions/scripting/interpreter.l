@@ -102,4 +102,4 @@ class scriptEngine =
 
 // --- globlas ---
 
-static globals = DynamicStruct new.
+static globals = system'collections'Dictionary new.

@@ -2,17 +2,8 @@
 In development:
 ------                              
 
-              zdev - live programming
-                 * implement tree prototype
-                 * implement xpath resolver prototype
-
               ydev - upndown
-                 * implement net suppport
                  * reimplement chat sample
-                 * reimplement upndown (#79)
-
-              zdev - live programming
-                 * implement live programming environment
 
               xdev - general implementation
                  * #283 : unboxing duplicate object 
@@ -31,6 +22,14 @@ In development:
                  * fn3prop : embeddable option for the function with three arguments should be recognized
                  * NilReferenceException, AccessViolationException, DivisionByZeroException should be recognized
                  * fixing open issues
+
+              zdev - live programming
+                 * implement live programming environment
+                 * implement tree prototype
+                 * implement xpath resolver prototype
+
+              ydev - upndown
+                 * reimplement upndown (#79)
 
 ------                                                           
 Pipeline:

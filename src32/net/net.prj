@@ -1,12 +1,12 @@
 ﻿[project]
-output=..\..\lib31
+output=..\..\lib32
 namespace=net
 template=lib
 debuginfo=-1
 
 [manifest]
 name=ELENA Network Provider Library
-version=3.0.1
+version=3.2.0
 author=Alex Rakov
 
 [files]

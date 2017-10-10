@@ -1,15 +1,8 @@
-#import system.
-
 // --- types ---
-#subject tcp_client       = net'TcpClient.
-#subject tcp_remoteclient = net'TcpRemoteClient.
-#subject tcp_server       = net'TcpServer.
+type tcp_client       = net'TcpClient.
+type tcp_remoteclient = net'TcpRemoteClient.
+type tcp_server       = net'TcpServer.
 
-exceptionof(TcpClientError) TcpClientException
+class TcpClientException :: Exception
 {
-    constructor new:message
-    [
-        theMessage := message literal.
-        theCallStack := CallStack new.
-    ]
 }

@@ -20,35 +20,33 @@ const int SD_BOTH = 2.
 
 // --- types ---
 
-#subject socket   = system'net'Socket.
-#subject wsadata  = system'net'WSADATA.
-#subject addrinfo = system'net'AddrInfo.
+type socket   = system'net'Socket.
+type wsadata  = system'net'WSADATA.
+type addrinfo = system'net'AddrInfo.
 
 // --- WSAException ---
 
-exceptionof(SocketError) SocketException
+class SocketException :: Exception
 {
     object theCode.
     
     /// Creates the exception
-    constructor new:message &error_code:aCode
+    constructor new:message error_code:aCode
+        <= new literal:message;
     [
-        theMessage := message literal.
-        theCallStack := CallStack new.
         theCode := aCode.
     ]
     
     constructor stacksafe new:message
+        <= new literal:message;
     [
-        theMessage := message literal.
-        theCallStack := CallStack new.
-        theCode := IntNumber new &int:(system'external'WS2_32 WSAGetLastError).
+        theCode := IntNumber new int(system'external'WS2_32 WSAGetLastError).
     ]
     
     int error_code = theCode int.
     
     /// Returns the message and the call stack
-    literal = theMessage add &literal:#10"Socket Error code:" add &literal:(theCode literal) add &literal:#10"Call stack:"#10 add &literal:(theCallStack literal).
+    literal = theMessage add literal:$10"Socket Error code:"; add literal(theCode literal); add literal:$10"Call stack:"$10; add literal(theCallStack literal).
 }
 
 // --- WSAStartUp ---
@@ -57,24 +55,24 @@ sealed embeddable struct WSADATA
 {
     short     wVersion.
     short     wHighVersion.
-    byte(257) szDescription.
-    byte(129) szSystemStatus.
+    byte&     szDescription(257).
+    byte&     szSystemStatus(129).
     short     iMaxSockets.
     short     iMaxUdpDg.
     int       lpVendorInfo.
     
-    stacksafe init &byte:aVersion &byte:aHighVersion
+    stacksafe init byte:aVersion byte:aHighVersion
     [
         short wVersionRequested := aVersion * 10h + aHighVersion.
 
         int aRetVal := system'external'WS2_32 WSAStartup 
-            &short:wVersionRequested
-            &wsadata:$self.
+            short:wVersionRequested
+            wsadata:$self.
             
         ifnot (0 == aRetVal)
-            [ SocketException new:"Cannot start socket service" &error_code:(IntNumber new &int:aRetVal) raise. ].
+            [ SocketException new:"Cannot start socket service" error_code(IntNumber new int:aRetVal); raise ].
             
-        startUpEvents set &onAppEnd: arg [ $self close ].
+        startUpEvents onStop := (:e)[ $self close ].
     ]
     
     wsadata = $self.
@@ -85,4 +83,4 @@ sealed embeddable struct WSADATA
     ]
 }
 
-static WSAStartUp22 = WSADATA init &byte:2 &byte:2.
+static WSAStartUp22 = WSADATA init byte:2 byte:2.
