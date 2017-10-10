@@ -2350,9 +2350,9 @@ void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
          // nsavei 0
          // nloadi offset + 1
          // nsavei 1
-         tape.write(bcNLoadI, offset);
+         tape.write(bcNLoadI, (offset >> 2));
          tape.write(bcNSaveI, 0);
-         tape.write(bcNLoadI, offset + 1);
+         tape.write(bcNLoadI, (offset >> 2) + 1);
          tape.write(bcNSaveI, 1);
       }
       else if (size == 12) {
@@ -2362,11 +2362,11 @@ void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
          // nsavei 1
          // nloadi offset + 2
          // nsavei 2
-         tape.write(bcNLoadI, offset);
+         tape.write(bcNLoadI, (offset >> 2));
          tape.write(bcNSaveI, 0);
-         tape.write(bcNLoadI, offset + 1);
+         tape.write(bcNLoadI, (offset >> 2) + 1);
          tape.write(bcNSaveI, 1);
-         tape.write(bcNLoadI, offset + 2);
+         tape.write(bcNLoadI, (offset >> 2) + 2);
          tape.write(bcNSaveI, 2);
       }
       else if (size == 16) {
@@ -2378,13 +2378,13 @@ void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
          // nsavei 2
          // nloadi offset + 3
          // nsavei 3
-         tape.write(bcNLoadI, offset);
+         tape.write(bcNLoadI, (offset >> 2));
          tape.write(bcNSaveI, 0);
-         tape.write(bcNLoadI, offset + 1);
+         tape.write(bcNLoadI, (offset >> 2) + 1);
          tape.write(bcNSaveI, 1);
-         tape.write(bcNLoadI, offset + 2);
+         tape.write(bcNLoadI, (offset >> 2) + 2);
          tape.write(bcNSaveI, 2);
-         tape.write(bcNLoadI, offset + 3);
+         tape.write(bcNLoadI, (offset >> 2) + 3);
          tape.write(bcNSaveI, 3);
       }
       else {
@@ -2465,10 +2465,7 @@ void ByteCodeWriter :: copyInt(CommandTape& tape, int offset)
    }
 
    // nsave
-   // acopyb
-
    tape.write(bcNSave);
-   tape.write(bcACopyB);
 }
 
 void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
@@ -2477,13 +2474,11 @@ void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
    // breadw
    // dcopye
    // nsave
-   // acopyb
 
    tape.write(bcDCopy, offset);
    tape.write(bcBReadW);
    tape.write(bcDCopyE);
    tape.write(bcNSave);
-   tape.write(bcACopyB);
 }
 
 void ByteCodeWriter :: copyByte(CommandTape& tape, int offset)
@@ -2492,13 +2487,11 @@ void ByteCodeWriter :: copyByte(CommandTape& tape, int offset)
    // breadb
    // dcopye
    // nsave
-   // acopyb
 
    tape.write(bcDCopy, offset);
    tape.write(bcBReadB);
    tape.write(bcDCopyE);
    tape.write(bcNSave);
-   tape.write(bcACopyB);
 }
 
 void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
@@ -4694,6 +4687,8 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
                copyByte(tape, source.argument);
             }
             else copyStructure(tape, source.argument, size);
+
+            assignBaseTo(tape, lxResult);
          }
          else {
             if (size == 4) {

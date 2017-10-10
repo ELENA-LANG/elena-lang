@@ -1,18 +1,17 @@
-#import system.
-#import extensions.
-#import extensions'dynamic.
-#import net.
+import extensions.
+import extensions'dynamic.
+import net.
 
-#class ChatClient :: BaseClient
+class ChatClient :: BaseClient
 {
-    #field(tcp_client) theNetworkClient.
+    tcp_client theNetworkClient.
     
-    #field theAddress.
-    #field thePort.
-    #field theUserName.    
+    object     theAddress.
+    object     thePort.
+    object     theUserName.    
     
-    #constructor new &ip:ip &port:port &userName:userName
-        <= (new)
+    constructor new ip:ip port:port userName:userName
+        <= new;
     [
         theNetworkClient := TcpClient new.
         
@@ -21,25 +20,25 @@
         theUserName := userName literal.
     ]
     
-    #method sendNickname
+    sendNickname
     [
-        #var(literal)json := DTO{ Command = INTRODUCTION. Value = theUserName. } toJson literal.
-        #var(int)len := json length.
+        literal json := { Command = INTRODUCTION. Value = theUserName. } toJson; literal.
+        int len := json length.
         
-        theNetworkClient write &int:len write &literal:json.
+        theNetworkClient write int:len; write literal:json.
     ]
     
-    #method send &text:text
+    send text:text
     [
-        #var(literal)json := DTO{ Command = SEND. Value = text. } toJson literal.
-        #var(int)len := json length.
+        literal json := { Command = SEND. Value = text. } toJson; literal.
+        int len := json length.
         
-        theNetworkClient write &int:len write &literal:json.
+        theNetworkClient write int:len; write literal:json.
     ]
     
-    #method start
+    start
     [
-        theNetworkClient set &tcp_client_listener:TcpClientListener
+        theNetworkClient set tcp_client_listener(TcpClientListener::
         {
             onConnect:client
             [
@@ -48,35 +47,35 @@
                 $owner sendNickname.
             ]
             
-            onError:e &for:client
+            onError:e for:client
             [
-                console writeLine:"Exception #":(e error_code).
+                console printLine("Exception #",e error_code).
             ]
             
-            onReceived:client &bytearray:buffer &int:length
+            onReceived object:client bytearray:buffer int:length
             [
-                $owner write &bytearray:buffer &int:length.
-                #var command := $owner readCommand.
-                ($nil != command)
-                    ? [
+                $owner write bytearray:buffer int:length.
+                var command := $owner readCommand.
+                if ($nil != command)
+                    [
                         (command Command) =>
-                            TRANSLATE ?
+                            TRANSLATE
                             [
-                                console writeLine writeLine:(command User):":":(command Value) write:">".
+                                console printLine; printLine(command User,":",command Value); print:">".
                             ].
                     ].                
             ]
-        }.
+        }).
         
-        theNetworkClient connect &ip:theAddress &port:thePort.
+        theNetworkClient connect ip:theAddress port:thePort.
         
-        theNetworkClient set &blocking:false.
-        theNetworkClient set &nodelay:true.        
+        theNetworkClient blocking := false.
+        theNetworkClient nodelay := true.        
         
         theNetworkClient start.
     ]
     
-    #method stop
+    method stop
     [
         theNetworkClient close.
     ]

@@ -1,38 +1,37 @@
-#import system.
-#import system'dynamic.
+import system'dynamic.
 
-#symbol(const,int)DEFAULT_PORT = 6881.
+const int DEFAULT_PORT = 6881.
 
-#class Client
+class Client
 {
-    #field theClient.
+    object theClient.
     
-    #method start &name:userName &ip:ip &port:port
+    start name:userName ip:ip port:port
     [
-        theClient := ChatClient new &ip:ip &port:port &userName:userName.
+        theClient := ChatClient new ip:ip port:port userName:userName.
         
         theClient start.
     ]
     
-    #method send &text:text
+    send text:text
         => theClient.
     
-    #method stop
+    stop
     [
         theClient stop.
     ]
 }
 
-#symbol control = Client new mix &into:
+symbol control = Client new; mixInto:
 {
     greeting
     [
         console writeLine:"ELENA Char Client".
         
-        #var userName := console write:"Enter nickname:" readLine.
+        var userName := console write:"Enter nickname:"; readLine.
         
-        this start &name:userName &ip:"127.0.0.1" &port:DEFAULT_PORT
-            | if &Error: e [ console writeLine:"Cannot esteblish connection!". #throw AbortException new. ].
+        self start name:userName ip:"127.0.0.1" port:DEFAULT_PORT
+            | if(:e)[ console writeLine:"Cannot esteblish connection!". AbortException new; raise. ].
             
         console writeLine:"Enter -q to exit the chat".
     ]
@@ -42,14 +41,14 @@
     
     proceed : line
     [
-        (line == "-q")
-            ? [
-                this stop.
+        if(line == "-q")
+            [
+                self stop.
         
                 'program stop.
-            ]
-            ! [
-                this send &text:line.
+            ];
+            [
+                self send text:line.
             ].
             
         ^ emptyLiteralValue.

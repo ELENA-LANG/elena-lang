@@ -72,7 +72,7 @@ sealed embeddable struct WSADATA
         ifnot (0 == aRetVal)
             [ SocketException new:"Cannot start socket service" error_code(IntNumber new int:aRetVal); raise ].
             
-        startUpEvents onStop := (:e)[ $self close ].
+        startUpEvents onStop(:e)[ $self close ].
     ]
     
     wsadata = $self.

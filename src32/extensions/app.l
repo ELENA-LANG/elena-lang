@@ -11,7 +11,7 @@ class $ProgramLoop
         theControl := aControl.
         
         // if initializing is not defined - do nothing
-        theControl initializing \ back:$nil.
+        theControl~__prober initializing.
     ]
     
     stop [ theActive := false. ]
@@ -19,7 +19,7 @@ class $ProgramLoop
     eval
     [
         // if grettings is not defined - do nothing
-        console writeLine(theControl greeting) \ back:$nil.
+        console printLine(theControl~__prober greeting).
         
         var aPrompt := theControl prompt.
         
@@ -27,7 +27,7 @@ class $ProgramLoop
         [
             console write:aPrompt.
             
-            console writeLine(theControl proceed(console readLine)).
+            console printLine(theControl proceed(console readLine)).
         ].
     ]
 }

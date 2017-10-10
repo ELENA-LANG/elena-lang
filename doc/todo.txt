@@ -2,12 +2,20 @@
 In development:
 ------                              
 
+              xdev - general implementation
+                 * struct fields : embeddable structures
+                 * struct fields : structures - should not be allowed
+                 * struct fields : objects - should not be allowed
+                 * declaring an array : // array<Field> fieldArray.
+                 * the following expression should generated an error : if(n test) { .... }
+
               ydev - upndown
                  * reimplement chat sample
+                 * uncomment onStop resource freeing code
 
               xdev - general implementation
+                 * elena script : declare closure
                  * #283 : unboxing duplicate object 
-                 * fix agenda sample
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)
                  * implementing #350
@@ -62,11 +70,6 @@ Pipeline:
 			| if(&type<FormatException>:e) []
                  * constant field should always have assigning part
                  * #266: sealed static constant fields
-                 * struct fields : embeddable structures
-                 * struct fields : structures - should not be allowed
-                 * struct fields : objects - should not be allowed
-                 * declaring an array : // array<Field> fieldArray.
-                 * the following expression should generated an error : if(n test) { .... }
 
               xdev - generic development                                            
                  * warn on boxing
@@ -138,7 +141,6 @@ Pipeline:
               zdev - script engine
                  * simple form with several labels : fonts, sizes
                  * in xforms script - all properties are literal, it should be possbile to recognize numbers at least
-                 * review assembly script : the parameter order
                  * gui script
                  * graph : function declared in the script
                  * free allocated variable in sub code
@@ -303,9 +305,6 @@ Pipeline:
                  * use bool lamda expression for seek operations
                  * not ebeddable structure should not be embedded into another structure
                  * use explicit literal constants for declaring int, hex, signed, unsigned, long, real, literal, wide
-
-              zdev 
-                 * script : elena - elena syntax, lika is c-like dialect, eson - similar to json, only one class
 
               ydev
                  * upndown : playing a round
