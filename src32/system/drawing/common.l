@@ -5,7 +5,7 @@ type region    = system'drawing'Region.
 
 // --- Point ---
 
-sealed embeddable struct Point :: BaseNumber
+sealed struct Point :: BaseNumber
 {
     int theX.
     int theY.
@@ -106,7 +106,7 @@ sealed embeddable struct Point :: BaseNumber
 
 // --- Dimension ---
 
-sealed embeddable struct Dimension :: BaseValue
+sealed struct Dimension :: BaseValue
 {
     int theWidth.
     int theHeight.
@@ -179,7 +179,7 @@ sealed embeddable struct Dimension :: BaseValue
 
 // --- Region ---
 
-sealed embeddable struct Region :: BaseValue
+sealed struct Region :: BaseValue
 {
     int theX.
     int theY.

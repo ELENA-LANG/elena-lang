@@ -463,7 +463,7 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
 
 bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
 {
-   return test(info.header.flags, elDynamicRole | elEmbeddable | elStructureRole);
+   return test(info.header.flags, elDynamicRole | elStructureRole);
 }
 
 bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
@@ -482,7 +482,7 @@ bool CompilerLogic :: isVariable(ClassInfo& info)
 
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 {
-   return test(info.header.flags, elStructureRole | elEmbeddable) && !test(info.header.flags, elDynamicRole);
+   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
 }
 
 bool CompilerLogic :: isRole(ClassInfo& info)
@@ -859,7 +859,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
 
 void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef)
 {
-   int size = defineStructSize(scope, targetRef, elementRef, false);
+   int size = defineStructSize(scope, targetRef, elementRef);
    if (size != 0)
       writer.appendNode(lxSize, size);
 
@@ -877,57 +877,57 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
    {
       case V_INT32:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugDWORD | elStructureRole | elEmbeddable;
+         info.header.flags = elDebugDWORD | elStructureRole;
          info.size = 4;
          break;
       case V_INT64:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugQWORD | elStructureRole | elEmbeddable;
+         info.header.flags = elDebugQWORD | elStructureRole;
          info.size = 8;
          break;
       case V_REAL64:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugReal64 | elStructureRole | elEmbeddable;
+         info.header.flags = elDebugReal64 | elStructureRole;
          info.size = 8;
          break;
       case V_PTR32:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugPTR | elStructureRole | elEmbeddable;
+         info.header.flags = elDebugPTR | elStructureRole;
          info.size = 4;
          break;
       case V_SIGNATURE:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugSubject | elStructureRole | elEmbeddable;
+         info.header.flags = elDebugSubject | elStructureRole;
          info.size = 4;
          break;
       case V_MESSAGE:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
+         info.header.flags = elDebugMessage | elStructureRole;
          info.size = 4;
          break;
       case V_EXTMESSAGE:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
+         info.header.flags = elDebugMessage | elStructureRole;
          info.size = 8;
          break;
       case V_SYMBOL:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugReference | elStructureRole | elEmbeddable;
+         info.header.flags = elDebugReference | elStructureRole;
          info.size = 4;
          break;
       case V_INT32ARRAY:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
+         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole;
          info.size = -4;
          break;
       case V_INT16ARRAY:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elEmbeddable;
+         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole;
          info.size = -2;
          break;
       case V_INT8ARRAY:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elEmbeddable;
+         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole;
          info.size = -1;
          break;
       case V_OBJARRAY:
@@ -937,7 +937,7 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          break;
       case V_BINARYARRAY:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDynamicRole | elStructureRole | elEmbeddable;
+         info.header.flags = elDynamicRole | elStructureRole;
          info.size = -1;
          break;
       default:
@@ -956,30 +956,41 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
    return true;
 }
 
-int CompilerLogic :: defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable, bool embeddableOnly)
+int CompilerLogic :: defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable)
 {
    if (reference == V_BINARYARRAY && elementRef != 0) {
-      return -defineStructSizeVariable(scope, elementRef, 0, variable, false);
+      return -defineStructSizeVariable(scope, elementRef, 0, variable);
    }
    else if (reference == V_OBJARRAY && elementRef != 0) {
-      return defineStructSizeVariable(scope, elementRef, 0, variable, false);
+      return defineStructSizeVariable(scope, elementRef, 0, variable);
+   }
+   else if (reference == V_INT32ARRAY) {
+      return -4;
+   }
+   else if (reference == V_INT32ARRAY) {
+      return -4;
+   }
+   else if (reference == V_INT16ARRAY) {
+      return -2;
+   }
+   else if (reference == V_INT8ARRAY) {
+      return -1;
    }
    else {
       ClassInfo classInfo;
       if (defineClassInfo(scope, classInfo, reference)) {
-         return defineStructSize(classInfo, variable, embeddableOnly);
+         return defineStructSize(classInfo, variable);
       }
       else return 0;      
    }
 }
 
-int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable, bool embeddableOnly)
+int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
 {
    variable = !test(info.header.flags, elReadOnlyRole);
    
-   if (test(info.header.flags, elStructureRole)) {
-      if (!embeddableOnly || isEmbeddable(info))
-         return info.size;
+   if (isEmbeddable(info)) {
+      return info.size;
    }
 
    return 0;
@@ -1093,9 +1104,6 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
          return true;
       case V_ENUMLIST:
          attrValue = elStateless | elEnumList | elClosed;
-         return true;
-      case V_EMBEDDABLE:
-         attrValue = elEmbeddable;
          return true;
       case V_DYNAMIC:
          attrValue = elDynamicRole;
@@ -1390,7 +1398,7 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
 
 bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject)
 {
-   if (returningRef != 0 && defineStructSize(scope, returningRef, 0, true) > 0) {
+   if (returningRef != 0 && defineStructSize(scope, returningRef, 0) > 0) {
       root = root.findChild(lxNewFrame);
 
       if (root.existChild(lxReturning)) {
@@ -1456,7 +1464,7 @@ bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, 
 
 bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t verb, ref_t& subject)
 {
-   if (returningRef != 0 && defineStructSize(scope, returningRef, 0, true) > 0) {
+   if (returningRef != 0 && defineStructSize(scope, returningRef, 0) > 0) {
       root = root.findChild(lxNewFrame);
 
       if (root.existChild(lxReturning))
@@ -1525,7 +1533,7 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
 
 bool CompilerLogic :: recognizeEmbeddableOp2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t verb, ref_t& subject)
 {
-   if (returningRef != 0 && defineStructSize(scope, returningRef, 0, true) > 0) {
+   if (returningRef != 0 && defineStructSize(scope, returningRef, 0) > 0) {
       root = root.findChild(lxNewFrame);
 
       if (root.existChild(lxReturning))

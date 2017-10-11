@@ -3,10 +3,8 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * struct fields : embeddable structures
-                 * struct fields : structures - should not be allowed
-                 * struct fields : objects - should not be allowed
-                 * declaring an array : // array<Field> fieldArray.
+                 * class Class { int x. }  // should be a normal class??
+
                  * the following expression should generated an error : if(n test) { .... }
 
               ydev - upndown

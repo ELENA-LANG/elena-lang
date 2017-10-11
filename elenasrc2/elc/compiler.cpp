@@ -2038,7 +2038,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
          scope.raiseError(errUnknownVariableType, terminal);
 
       if (variable.extraparam == V_BINARYARRAY && variable.element != 0) {
-         localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0, true);
+         localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
       }
 
       if (_logic->isEmbeddableArray(localInfo) && size != 0) {
@@ -2237,7 +2237,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          if (!test(mode, HINT_NOBOXING) || test(mode, HINT_DYNAMIC_OBJECT)) {
 
             bool variable = false;
-            int size = _logic->defineStructSizeVariable(*scope.moduleScope, resolveObjectReference(scope, object), 0u, variable);
+            int size = _logic->defineStructSizeVariable(*scope.moduleScope, resolveObjectReference(scope, object), object.element, variable);
             if (size < 0 && type == lxFieldAddress) {
                // if it is fixed-size array
                size = defineFieldSize(scope, object.param) * (-size);
@@ -4354,8 +4354,7 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
             scope.raiseError(errDuplicatedLocal, arg);
 
          int index = 1 + scope.parameters.Count();
-         int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
-            class_ref, 0, true) : 0;
+         int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, class_ref, 0) : 0;
 
          scope.parameters.add(name, Parameter(index, class_ref, size));
 
@@ -4482,7 +4481,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
       // if it is typified argument
       if (verbRef) {
-         int size = _logic->defineStructSize(*scope.moduleScope, verbRef, 0, true);
+         int size = _logic->defineStructSize(*scope.moduleScope, verbRef, 0);
 
          scope.parameters.add(terminal, Parameter(index, verbRef, size));
          verbRef = 0;
@@ -4539,8 +4538,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             if (paramCount >= OPEN_ARG_COUNT)
                scope.raiseError(errTooManyParameters, verb);
 
-            int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
-               class_ref, 0, true) : 0;
+            int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, class_ref, 0) : 0;
 
             scope.parameters.add(name, Parameter(index, class_ref, size));
 

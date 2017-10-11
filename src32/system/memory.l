@@ -637,7 +637,7 @@ sealed class BitArray
 
 // --- BitArray32 ---
 
-sealed embeddable class BitArray32
+sealed class BitArray32
 {
     int theValue.
     

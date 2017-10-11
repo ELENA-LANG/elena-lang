@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   15
+#define REVISION_VERSION   16
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -560,6 +560,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcInit:
       case bcNLoadI:
       case bcNSaveI:
+      case bcMulN:
          command.append(opcode);
          command.append(' ');
          command.appendHex(argument);
@@ -843,9 +844,6 @@ void listFlags(int flags)
 
    if (test(flags, elStructureRole))
       printLine("@flag ", "elStructureRole");
-
-   if (test(flags, elEmbeddable))
-      printLine("@flag ", "elEmbeddable");
 
    if (test(flags, elSealed))
       printLine("@flag ", "elSealed");

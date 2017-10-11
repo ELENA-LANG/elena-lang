@@ -71,13 +71,13 @@ public:
 
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
-   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool embeddableOnly = false)
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef)
    {
       bool dummy = false;
-      return defineStructSizeVariable(scope, reference, elementRef, dummy, embeddableOnly);
+      return defineStructSizeVariable(scope, reference, elementRef, dummy);
    }
-   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable, bool embeddableOnly = false);
-   virtual int defineStructSize(ClassInfo& info, bool& variable, bool embeddableOnly);
+   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable);
+   virtual int defineStructSize(ClassInfo& info, bool& variableS);
 
    virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
 

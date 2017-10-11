@@ -51,7 +51,7 @@ class SocketException :: Exception
 
 // --- WSAStartUp ---
 
-sealed embeddable struct WSADATA
+sealed struct WSADATA
 {
     short     wVersion.
     short     wHighVersion.

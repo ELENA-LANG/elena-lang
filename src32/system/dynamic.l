@@ -1,7 +1,7 @@
 // --- Symbol ---
 
 /// A dynamic symbol
-sealed embeddable struct Symbol
+sealed struct Symbol
 {
     __symbol& theValue(4).
     
@@ -18,7 +18,7 @@ sealed embeddable struct Symbol
 // --- Message ---
 
 /// A message constant
-sealed embeddable struct Message
+sealed struct Message
 {
     __mssg& theValue(4).
 
@@ -51,7 +51,7 @@ sealed embeddable struct Message
 // --- ExtensionMessage ---
 
 /// An extended message constant
-sealed embeddable struct ExtensionMessage
+sealed struct ExtensionMessage
 {
     __extmssg& theValue(8).
     
@@ -72,7 +72,7 @@ sealed embeddable struct ExtensionMessage
 // --- Signature ---
 
 /// A dynamic signature extender
-sealed embeddable struct Signature
+sealed struct Signature
 {
     __subj& theValue(4).
     

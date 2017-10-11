@@ -1,6 +1,6 @@
 // --- HInstance ---
 
-sealed const embeddable struct HInstance
+sealed const struct HInstance
 {
     __dword& theHandle(4).
     
@@ -26,7 +26,7 @@ hinstance static CurrentInstance = HInstance current.
 
 // --- MSG ---
 
-sealed embeddable struct MSG 
+sealed struct MSG 
 {
     handle theHWND.
     int    theMessage.
@@ -51,7 +51,7 @@ sealed embeddable struct MSG
 
 // --- CREATESTRUCT ---
 
-sealed embeddable struct CREATESTRUCT
+sealed struct CREATESTRUCT
 {
     int       theCreateParam.
     hinstance theInstance.    
@@ -78,7 +78,7 @@ sealed embeddable struct CREATESTRUCT
 
 // --- HMENU ---
 
-sealed const embeddable struct HMENU
+sealed const struct HMENU
 {
     __dword& theHandle(4).
     

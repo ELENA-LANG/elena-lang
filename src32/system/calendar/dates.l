@@ -1,6 +1,6 @@
 // --- TimeSpan --
 
-sealed embeddable struct TimeSpan :: BaseNumber
+sealed struct TimeSpan :: BaseNumber
 {
     __time theValue.
 
@@ -169,7 +169,7 @@ sealed embeddable struct TimeSpan :: BaseNumber
 
 // --- Date ---
 
-sealed embeddable struct Date :: BaseNumber
+sealed struct Date :: BaseNumber
 {
     __time theValue.
 
