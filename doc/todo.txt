@@ -2,14 +2,8 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * class Class { int x. }  // should be a normal class??
-
-                 * the following expression should generated an error : if(n test) { .... }
-
               ydev - upndown
                  * reimplement chat sample
-                 * uncomment onStop resource freeing code
 
               xdev - general implementation
                  * elena script : declare closure
@@ -27,6 +21,7 @@ In development:
                  * typified open arg list (#369)
                  * fn3prop : embeddable option for the function with three arguments should be recognized
                  * NilReferenceException, AccessViolationException, DivisionByZeroException should be recognized
+                 * the following expression should generated an error : if(n test) { .... }
                  * fixing open issues
 
               zdev - live programming

@@ -1741,9 +1741,9 @@ inline % 29h
 
   mov  esi, [edx + tls_catch_level]  
   mov  ebx, [esi]
-  mov  [edx + tls_catch_frame], ebx
-  mov  ebx, [esi+4]
   mov  [edx + tls_catch_level], ebx
+  mov  ebx, [esi+4]
+  mov  [edx + tls_catch_frame], ebx
   mov  ebx, [esi+8]
   mov  [edx + tls_catch_addr], ebx
 
