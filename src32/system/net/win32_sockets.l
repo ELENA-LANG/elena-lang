@@ -11,6 +11,11 @@ sealed struct AddrInfo
     dirty_ptr ai_addr.
     dirty_ptr ai_next.
     
+    embeddable stacksafe constructor new
+    [
+        $self clear.
+    ]
+    
     stacksafe setFlags int:aValue
     [
         ai_flags := aValue.
@@ -95,7 +100,7 @@ sealed struct AddrInfoReader
     dirty_ptr paddrinfo.
     dirty_ptr prootinfo.
     
-    stacksafe implicit dirty_ptr:addr
+    stacksafe explicit dirty_ptr:addr
     [
         paddrinfo := addr.
         prootinfo := addr.
@@ -107,8 +112,8 @@ sealed struct AddrInfoReader
         prootinfo := addr.
     ]
     
-    bool stacksafe Available
-        = paddrinfo isempty; not.
+    bool stacksafe available
+        = paddrinfo isEmpty; not.
     
     stacksafe next
     [

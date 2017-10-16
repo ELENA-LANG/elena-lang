@@ -61,7 +61,7 @@ sealed struct WSADATA
     short     iMaxUdpDg.
     int       lpVendorInfo.
     
-    stacksafe init byte:aVersion byte:aHighVersion
+    stacksafe constructor init byte:aVersion byte:aHighVersion
     [
         short wVersionRequested := aVersion * 10h + aHighVersion.
 
