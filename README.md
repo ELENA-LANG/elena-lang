@@ -61,7 +61,7 @@ If you've noticed a bug or have a question go ahead and [make one](https://githu
 
 ### 2. Implement "up for grab" issues
 
-[Up for grab list](https://github.com/ELENA-LANG/elena-lang/labels/up%20for%20grabs) is good starting point for a first-time contributors.
+[Good first issue](https://github.com/ELENA-LANG/elena-lang/labels/good%20first%20issue) is good starting point for a first-time contributors.
 
 ### 3. Rosetta code
 
