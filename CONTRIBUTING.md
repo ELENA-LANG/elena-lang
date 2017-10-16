@@ -28,9 +28,9 @@ ELENA Project looks for programmers interested in learning the language and prov
 
 If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new)!
 
-### 2. Implement "up for grab" issues
+### 2. Implement "help wanted" issues
 
-You may implement one of the open [issues](https://github.com/ELENA-LANG/elena-lang/labels/up%20for%20grabs).
+You may implement one of the open [issues](https://github.com/ELENA-LANG/elena-lang/labels/help%20wanted).
 Push to your fork and [submit a pull request](https://github.com/ELENA-LANG/elena-lang/compare).
 
 ### 3. Rosetta code
