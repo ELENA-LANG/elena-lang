@@ -2,6 +2,33 @@
 In development:
 ------                              
 
+              xdev - general implementation
+                 * optimize : 
+    int n := 4.
+    int m := 4.
+    int k := m + n.
+                 - do not allocate an extra space
+
+                 - add directly (e.g. load value, add value)
+                 - assign the value directly?
+
+                 * calculate n + m * k
+                 * use intOp for assigning a constant
+                 * Assigning stack allocated real number with integer constant #360
+                 * Resolving arithmetic operation in compile-time #71
+                 * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
+                 * support #var(real)r := 2. // assigning int to real by constant
+                 * Read-only classes should be enforced #282
+                 * method returning a constant #381
+                 * ByteNumber.get&min - could we return the constant object?
+                 * constant symbols should be used directly
+                 * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
+                 * Comparison with numeric constants #279
+                 * Constant fields #351
+
+              idev - generic development
+                 * #263 - IDE : MTA Debugging 
+
               ydev - upndown
                  * reimplement chat sample
 
@@ -114,7 +141,6 @@ Pipeline:
               xdev - general implementation
                  * declaring varof:type, before declaring type class
                  * declaring varof:struct - is not correctly recognized if declared before the struct
-                 * use intOp for assigning a constant
                  * support sealed accumulator constants
                  * warn on method duplications in the template
                  * warn on field duplications in the template
@@ -339,7 +365,6 @@ Pipeline:
                        * #14 : switch to xml config files (.xprj project)
 
                        * show internal errors in message list
-                       * #263 - IDE : MTA Debugging 
                        * refactor IDEController::ProjectManager - get rid of duplicate code
 
                        * vertical scroller does not work correctly
@@ -386,7 +411,6 @@ Pipeline:
                        * check template type before applying (i.e. method template should be declared only for the method declaration)
 
                        * array of long
-                       * support #var(real)r := 2. // assigning int to real by constant
 
                        * singleton template : make sure it is not possible to declare fields for them??
 
@@ -442,7 +466,6 @@ Pipeline:
                        * probably any stand-alone external cal should be declared in implicit extern block. If the operation
                          does not affect GC, a special hint should be used to skip external block declaration
                        * #238 : Manifest - store the manifest info into the resource
-                       * ByteNumber.get&min - could we return the constant object?
                        * support abstract attribute                       
                        * probably we could get rid of conditional branching? (what about unboxing?)
                        * MemoryMap, MemoryHashTable are not compatible with amd64 ; they should be retired and replaced
@@ -563,7 +586,6 @@ Pipeline:
                        * cast should be called directly, make sure it is always after dispatch
                        * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
                        * review graph sample, get rid of warnings
-                       * constant symbols should be used directly
                        * should be possible to implement :     #constructor newCompatible &hdc:aCompatible <= new &hdc:(system'external'GDI32 CreateCompatibleDC &hdc:aCompatible).
                        * refactoring : declareParameterDebugInfo - use debug hint flags
                        * refactoring : do we need to use paramsReference ditectly??
@@ -605,7 +627,6 @@ Pipeline:
                        * optimize primitive operator implementations                       
                        * review / optimize SDIApplication.start
                        * call to $super should be direct
-                       * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
 
                        * optimize ByteCodeWriter::copyStructure                       
 
@@ -625,7 +646,6 @@ Pipeline:
                        * optimize sort method : use typified lamda expression
                        * review ArgArray operations : should it be optimized
                        * optimize BaseFunctionN retrieve operations                       
-                       * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
                        * optimize : LiteralValue#class.eval&system$new...
                        * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
                        * use imm mode for (n) => 1 ? [ now literal. ]

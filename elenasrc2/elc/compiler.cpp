@@ -2814,19 +2814,6 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
 
    //bool assignMode = false;
    if (operationType != 0) {
-      //if (loperand.kind == okField || loperand.kind == okOuter) {
-         //if (assignMode) {
-         //   // once again resolve the primitive operator
-         //   operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
-
-         //   if (loperand.kind == okOuter) {
-         //      InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
-
-         //      if (!closure->markAsPresaved(loperand))
-         //         scope.raiseError(errInvalidOperation, node);
-         //   }
-         //}
-      //}
       // if it is a primitive operation
       _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.element);
 
@@ -2834,14 +2821,6 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    }
    // if not , replace with appropriate method call
    else retVal = compileMessage(writer, node, scope, loperand, encodeMessage(operator_id, paramCount), HINT_NODEBUGINFO);
-
-   //if (assignMode) {
-   //   if (loperand.kind == okField || loperand.kind == okOuter) {
-   //      writer.insertChild(0, lxField, loperand.param);
-   //   }
-   //   writer.insert(lxAssigning);
-   //   writer.closeNode();
-   //}
 
    return retVal;
 }
@@ -6170,9 +6149,6 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
          writer.closeNode();
       }
       else if (size > 0) {
-         retVal.kind = okObject;
-         retVal.param = targetRef;
-
          writer.appendNode(lxTarget, targetRef);
          writer.insert(lxCreatingStruct, size);
          writer.closeNode();
@@ -6180,11 +6156,16 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
          writer.insert(lxAssigning, size);
          writer.closeNode();
       }
+      
+      targetRef = _logic->resolvePrimitiveReference(*scope.moduleScope, targetRef);
 
       writer.appendNode(lxTarget, targetRef);
       writer.appendNode(lxBoxableAttr);
-      writer.insert(lxBoxing, size);
+      writer.insert(lxBoxing,  size);
       writer.closeNode();
+
+      retVal.kind = okObject;
+      retVal.param = targetRef;
 
       return retVal;
    }
