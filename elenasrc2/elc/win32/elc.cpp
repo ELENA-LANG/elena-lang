@@ -638,6 +638,12 @@ const char* showPlatform(int platform)
 
 int main()
 {
+   //__asm {
+   //   mov dword ptr [ebp + 100h], 1000h
+   //   add dword ptr [ebp + 100h], 1000h
+   //   sub dword ptr [ebp + 100h], 1000h
+   //}
+
    int argc;
    wchar_t **argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 

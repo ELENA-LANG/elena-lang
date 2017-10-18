@@ -3319,6 +3319,27 @@ labNextBaseClass:
 
 end
 
+// ; subfi (__arg1 - index, __arg2 - n)
+inline % 0EDh
+
+  sub dword ptr [ebp + __arg1], __arg2
+
+end
+
+// ; addfi (__arg1 - index, __arg2 - n)
+inline % 0EEh
+
+  add dword ptr [ebp + __arg1], __arg2
+
+end
+
+// ; savefi (__arg1 - index, __arg2 - n)
+inline % 0EFh
+
+  mov dword ptr [ebp + __arg1], __arg2
+
+end
+
 // ; new (ebx - size, __arg1 - length)
 
 inline % 0F0h

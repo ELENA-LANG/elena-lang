@@ -70,6 +70,7 @@ protected:
    friend void loadVMTIndexOp(int opcode, x86JITScope& scope);
    //friend void loadVMTMIndexOp(int opcode, x86JITScope& scope);
    friend void loadNOp(int opcode, x86JITScope& scope);
+   friend void loadFNOp(int opcode, x86JITScope& scope);
    friend void loadFPOp(int opcode, x86JITScope& scope);
    friend void loadROp(int opcode, x86JITScope& scope);
    friend void loadMTOp(int opcode, x86JITScope& scope);
@@ -203,6 +204,7 @@ void loadIndexOp(int opcode, x86JITScope& scope);
 void loadVMTIndexOp(int opcode, x86JITScope& scope);
 //void loadVMTMIndexOp(int opcode, x86JITScope& scope);
 void loadNOp(int opcode, x86JITScope& scope);
+void loadFNOp(int opcode, x86JITScope& scope);
 void loadFPOp(int opcode, x86JITScope& scope);
 void loadROp(int opcode, x86JITScope& scope);
 void loadMTOp(int opcode, x86JITScope& scope);

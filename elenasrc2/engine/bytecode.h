@@ -227,6 +227,10 @@ enum ByteCode
    bcMTRedirect      = 0xDE,
    bcXMTRedirect     = 0xDF,
 
+   bcSubFI           = 0xED,
+   bcAddFI           = 0xEE,
+   bcSaveFI          = 0xEF,
+
    bcNew             = 0xF0,
    bcNewN            = 0xF1,
    bcXSelectR        = 0xF3,
@@ -283,7 +287,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x8F
-#define MAX_DOUBLE_ECODE 0xEF
+#define MAX_DOUBLE_ECODE 0xEC
 
 enum PseudoArg
 {

@@ -249,6 +249,7 @@ class ByteCodeWriter
 //   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id);
    void doIntOperation(CommandTape& tape, int operator_id, int immArg);
+   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
    void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
    void doLongOperation(CommandTape& tape, int operator_id);
    void doRealOperation(CommandTape& tape, int operator_id);

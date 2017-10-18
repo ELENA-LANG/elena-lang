@@ -6350,7 +6350,7 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
                else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
                   larg = subNode.findSubNodeMask(lxObjectMask);
 
-                  if (larg.type == targetNode.type && larg.argument == targetNode.argument) {
+                  if ((larg.type == targetNode.type && larg.argument == targetNode.argument) || (tempAttr && subNode.argument == node.argument && larg == lxLocalAddress)) {
                      // remove an extra assignment
                      subNode = lxExpression;
                      larg = lxIdle;

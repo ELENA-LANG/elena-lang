@@ -151,6 +151,8 @@ ELENA byte codes (or ecodes)
 
  Stack operations:
  -----------------
+ addfi i,n                  - [fp:i] <= [fp:i] + n
+
  aloadfi i                  - [fp+i] => acc
 
  aloadsi i                  - [sp+i] => acc;
@@ -222,6 +224,10 @@ ELENA byte codes (or ecodes)
  
  pushsi i                   - [sp+i] => [sp+1] ; sp++
            
+ savefi i,n                 - [fp:i] <= n
+
+ subfi i,n                  - [fp:i] <= [fp:i] - n
+
 
  Call operations:
  ----------------

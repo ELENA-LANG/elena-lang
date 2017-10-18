@@ -2533,6 +2533,46 @@ void ByteCodeWriter :: saveSubject(CommandTape& tape)
    tape.write(bcPushD);
 }
 
+void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg)
+{
+   switch (operator_id) {
+      case ADD_MESSAGE_ID:
+      case APPEND_MESSAGE_ID:
+         tape.write(bcAddFI, indexArg, immArg);
+         break;
+      case SUB_MESSAGE_ID:
+      case REDUCE_MESSAGE_ID:
+         tape.write(bcSubFI, indexArg, immArg);
+         break;
+      case MUL_MESSAGE_ID:
+         tape.write(bcNMul);
+         break;
+      case DIV_MESSAGE_ID:
+         tape.write(bcNDiv);
+         break;
+      case AND_MESSAGE_ID:
+         tape.write(bcNAnd);
+         break;
+      case OR_MESSAGE_ID:
+         tape.write(bcNOr);
+         break;
+      case XOR_MESSAGE_ID:
+         tape.write(bcNXor);
+         break;
+      case EQUAL_MESSAGE_ID:
+         tape.write(bcNEqual);
+         break;
+      case LESS_MESSAGE_ID:
+         tape.write(bcNLess);
+         break;
+      case SET_MESSAGE_ID:
+         tape.write(bcSaveFI, indexArg, immArg);
+         break;
+      default:
+         break;
+   }
+}
+
 void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
@@ -3918,6 +3958,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    bool invertSelectMode = false;
    bool invertMode = false;
    bool immOp = false;
+   bool directMode = false;
    int  level = 0;
 
    switch (node.argument) {
@@ -3951,6 +3992,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
          break;
       case SET_MESSAGE_ID:
          immOp = true;
+         directMode = node.type == lxIntOp;
          break;
       case APPEND_MESSAGE_ID:
       case REDUCE_MESSAGE_ID:
@@ -3974,49 +4016,36 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    bool rargSimple = isSimpleObject(rarg);
    bool rargConst = immOp && (rarg == lxConstantInt);
 
-   if (!largSimple) {
-      if (assignMode) {
-         tape.write(bcPushB);
+   // direct mode is possible only with a numeric constant
+   if (directMode && (!rargConst || larg != lxLocalAddress))
+      directMode = false;
+
+   if (!directMode) {
+      if (!largSimple) {
+         if (assignMode) {
+            tape.write(bcPushB);
+            level++;
+         }
+
+         generateObjectExpression(tape, larg);
+         pushObject(tape, lxResult);
          level++;
       }
 
-      generateObjectExpression(tape, larg);
-      pushObject(tape, lxResult);
-      level++;
-   }
+      if (!rargSimple) {
+         if (level == 0 && assignMode) {
+            tape.write(bcPushB);
+            level++;
+         }
 
-   if (!rargSimple) {
-      if (level == 0 && assignMode) {
-         tape.write(bcPushB);
+         generateObjectExpression(tape, rarg);
+         pushObject(tape, lxResult);
          level++;
       }
 
-      generateObjectExpression(tape, rarg);
-      pushObject(tape, lxResult);
-      level++;
-   }
+      if (level > 0 && assignMode)
+         loadBase(tape, lxCurrent, level - 1);
 
-   if (level > 0 && assignMode)
-      loadBase(tape, lxCurrent, level - 1);
-
-   // if operation result is assigned to the same variable
-   bool targetSet = false;
-   if (assignMode) {
-      //SNode parent = node.parentNode();
-      //while (parent == lxExpression)
-      //   parent = parent.parentNode();
-
-      //if (parent == lxAssigning) {
-      //   SNode target = parent.findSubNodeMask(lxObjectMask);
-      //   if (target.type == larg.type && target.argument == larg.argument)
-      //      targetSet = true;
-      //}
-   }
-
-   if (targetSet) {
-      assignBaseTo(tape, lxResult);
-   }
-   else {
       if (!largSimple) {
          loadObject(tape, lxCurrent, level - (assignMode ? 2 : 1));
       }
@@ -4031,19 +4060,22 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
          }
       }
       else loadBase(tape, lxResult);
-   }
 
-   if (!rargSimple) {
-      popObject(tape, lxResult);
-      level--;
+      if (!rargSimple) {
+         popObject(tape, lxResult);
+         level--;
+      }
+      else if (!rargConst)
+         generateObjectExpression(tape, rarg);
    }
-   else if (!rargConst)
-      generateObjectExpression(tape, rarg);
 
    if (node.type == lxIntOp) {
       if (rargConst) {
          SNode immArg = rarg.findChild(lxIntValue);
-         if (larg == lxFieldAddress && larg.argument > 0) {
+         if (directMode) {
+            doIntDirectOperation(tape, operation, immArg.argument, larg.argument);
+         }
+         else if (larg == lxFieldAddress && larg.argument > 0) {
             doFieldIntOperation(tape, operation, larg.argument, immArg.argument);
          }
          else doIntOperation(tape, operation, immArg.argument);
