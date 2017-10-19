@@ -2536,17 +2536,27 @@ void ByteCodeWriter :: saveSubject(CommandTape& tape)
 void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg)
 {
    switch (operator_id) {
-      //case ADD_MESSAGE_ID:
+      case ADD_MESSAGE_ID:
+         tape.write(bcDLoadFI, indexArg);
+         tape.write(bcAddN, immArg);
+         tape.write(bcNSave);
+         break;
       case APPEND_MESSAGE_ID:
          tape.write(bcAddFI, indexArg, immArg);
          break;
-      //case SUB_MESSAGE_ID:
+      case SUB_MESSAGE_ID:
+         tape.write(bcDLoadFI, indexArg);
+         tape.write(bcAddN, -immArg);
+         tape.write(bcNSave);
+         break;
       case REDUCE_MESSAGE_ID:
          tape.write(bcSubFI, indexArg, immArg);
          break;
-      //case MUL_MESSAGE_ID:
-      //   tape.write(bcNMul);
-      //   break;
+      case MUL_MESSAGE_ID:
+         tape.write(bcDLoadFI, indexArg);
+         tape.write(bcMulN, immArg);
+         tape.write(bcNSave);
+         break;
       //case DIV_MESSAGE_ID:
       //   tape.write(bcNDiv);
       //   break;
@@ -3965,6 +3975,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       case ADD_MESSAGE_ID:
       case SUB_MESSAGE_ID:
       case MUL_MESSAGE_ID:
+         directMode = node.type == lxIntOp;
       case AND_MESSAGE_ID:
       case OR_MESSAGE_ID:
       case XOR_MESSAGE_ID:
