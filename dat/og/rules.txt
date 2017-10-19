@@ -44,6 +44,8 @@ acopyr bcopya newn => bcopyr nop newn;
 acopyf bcopya acopyr => bcopyf nop acopyr;
 acopyf bcopya aloadfi => bcopyf nop aloadfi;
 acopyf bcopya aloadsi => bcopyf nop aloadsi;
+acopyf bcopya acopyf => bcopyf nop acopyf;
+
 acopyb asavesi aloadsi => nop bsavesi aloadsi;
 acopyf bcopya dcopy nsave acopyb => bcopyf nop dcopy nsave acopyb;
 

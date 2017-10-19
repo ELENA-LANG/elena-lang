@@ -2536,35 +2536,35 @@ void ByteCodeWriter :: saveSubject(CommandTape& tape)
 void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg)
 {
    switch (operator_id) {
-      case ADD_MESSAGE_ID:
+      //case ADD_MESSAGE_ID:
       case APPEND_MESSAGE_ID:
          tape.write(bcAddFI, indexArg, immArg);
          break;
-      case SUB_MESSAGE_ID:
+      //case SUB_MESSAGE_ID:
       case REDUCE_MESSAGE_ID:
          tape.write(bcSubFI, indexArg, immArg);
          break;
-      case MUL_MESSAGE_ID:
-         tape.write(bcNMul);
-         break;
-      case DIV_MESSAGE_ID:
-         tape.write(bcNDiv);
-         break;
-      case AND_MESSAGE_ID:
-         tape.write(bcNAnd);
-         break;
-      case OR_MESSAGE_ID:
-         tape.write(bcNOr);
-         break;
-      case XOR_MESSAGE_ID:
-         tape.write(bcNXor);
-         break;
-      case EQUAL_MESSAGE_ID:
-         tape.write(bcNEqual);
-         break;
-      case LESS_MESSAGE_ID:
-         tape.write(bcNLess);
-         break;
+      //case MUL_MESSAGE_ID:
+      //   tape.write(bcNMul);
+      //   break;
+      //case DIV_MESSAGE_ID:
+      //   tape.write(bcNDiv);
+      //   break;
+      //case AND_MESSAGE_ID:
+      //   tape.write(bcNAnd);
+      //   break;
+      //case OR_MESSAGE_ID:
+      //   tape.write(bcNOr);
+      //   break;
+      //case XOR_MESSAGE_ID:
+      //   tape.write(bcNXor);
+      //   break;
+      //case EQUAL_MESSAGE_ID:
+      //   tape.write(bcNEqual);
+      //   break;
+      //case LESS_MESSAGE_ID:
+      //   tape.write(bcNLess);
+      //   break;
       case SET_MESSAGE_ID:
          tape.write(bcSaveFI, indexArg, immArg);
          break;
@@ -3991,12 +3991,10 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
          operation = LESS_MESSAGE_ID;
          break;
       case SET_MESSAGE_ID:
-         immOp = true;
-         directMode = node.type == lxIntOp;
-         break;
       case APPEND_MESSAGE_ID:
       case REDUCE_MESSAGE_ID:
          immOp = true;
+         directMode = node.type == lxIntOp;
          break;
    }
 

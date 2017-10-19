@@ -3,12 +3,16 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * optimize : n += 1.  addfi  i,n
                  * optimize : n -= 1.  subfi  i,n
                  - add directly (e.g. load value, add value)
 
+                 * optimize : n := n + k.
+                 * optimize : n := n + 1.
                  * optimize : n := m + 1.
                  * optimize : n := m - 1.
+
+                 * optimize : real r := 3.0r.
+                 * optimize : r += 2.0r.
 
                  * direct and, or, xor, shift, mul, div, equal, less
                  * direct shift

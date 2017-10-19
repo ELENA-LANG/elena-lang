@@ -6157,7 +6157,23 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
          writer.closeNode();
       }
       
-      targetRef = _logic->resolvePrimitiveReference(*scope.moduleScope, targetRef);
+      switch (targetRef) {
+         case V_INT32:
+            targetRef = scope.moduleScope->intReference;
+            break;
+         case V_INT64:
+            targetRef = scope.moduleScope->longReference;
+            break;
+         case V_REAL64:
+            targetRef = scope.moduleScope->realReference;
+            break;
+         case V_SIGNATURE:
+            targetRef = scope.moduleScope->signatureReference;
+            break;
+         case V_MESSAGE:
+            targetRef = scope.moduleScope->messageReference;
+            break;
+      }
 
       writer.appendNode(lxTarget, targetRef);
       writer.appendNode(lxBoxableAttr);
@@ -6345,6 +6361,20 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
                   larg.setArgument(target.argument);
                   node = lxExpression;
                   target = lxIdle;
+
+                  // replace add / subtract with append / reduce and remove an assignment
+                  switch (operationNode.argument) {
+                     case ADD_MESSAGE_ID:
+                        operationNode.setArgument(APPEND_MESSAGE_ID);
+                        subNode = lxExpression;
+                        larg = lxIdle;
+                        break;
+                     case SUB_MESSAGE_ID:
+                        operationNode.setArgument(REDUCE_MESSAGE_ID);
+                        subNode = lxExpression;
+                        larg = lxIdle;
+                        break;
+                  }
                }
                // if it is an operation with an extra temporal variable
                else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
