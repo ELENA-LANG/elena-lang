@@ -1984,6 +1984,18 @@ sealed struct RealNumber :: BaseNumber
     /// Returns the maximal value
     constructor max
         = 1.7976931348623157e+308r.
+        
+    /// Returns the negative infinity
+    embeddable constructor negativeInfinity 
+        = -1.0r / 0.0r. 
+        
+    /// Returns the positive infinity 
+    embeddable constructor positiveInfinity 
+        = 1.0r / 0.0r.
+        
+    /// returns the NaN
+    embeddable constructor NaN
+        = 0.0r / 0.0r.
 
     /// Creates the object with a default value (0)
     constructor new
