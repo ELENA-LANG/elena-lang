@@ -665,6 +665,24 @@ real extension realOp
         
         ^ RealNumber new real:aRetVal
     ]
+    
+    stacksafe real round int:precision
+    [
+        real a := self.
+        bool neg := false.
+        if(self isNegative)
+        [
+            a := a * -1.0r.
+            neg := true.
+        ].
+           
+        int b := 10 power:precision.
+        int c := (a * b + 0.5r) roundedInt.
+    
+        a := c realDiv:b.
+    
+        ^(neg) iif(a * -1.0r, a). 
+    ]
 
     stacksafe real integer
     [
