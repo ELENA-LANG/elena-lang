@@ -1986,15 +1986,15 @@ sealed struct RealNumber :: BaseNumber
         = 1.7976931348623157e+308r.
         
     /// Returns the negative infinity
-    constructor negativeInfinity 
+    embeddable constructor negativeInfinity 
         = -1.0r / 0.0r. 
         
     /// Returns the positive infinity 
-    constructor positiveInfinity 
+    embeddable constructor positiveInfinity 
         = 1.0r / 0.0r.
         
     /// returns the NaN
-    constructor NaN
+    embeddable constructor NaN
         = 0.0r / 0.0r.
 
     /// Creates the object with a default value (0)
