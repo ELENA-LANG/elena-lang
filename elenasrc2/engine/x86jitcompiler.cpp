@@ -69,7 +69,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 148;
+const int gcCommandNumber = 150;
 const int gcCommands[gcCommandNumber] =
 {
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcParent,
@@ -90,7 +90,7 @@ const int gcCommands[gcCommandNumber] =
    bcNAnd, bcNOr, bcNXor, bcTryLock, bcFreeLock,
    bcLCopy, bcLEqual, bcLLess, bcLAdd, bcRethrow,
    bcLSub, bcLMul, bcLDiv, bcLAnd, bcLOr,
-   bcLXor, bcNShift, bcNNot, bcLShift,
+   bcLXor, bcNShiftL, bcNNot, bcLShiftL, bcLShiftR,
    bcLNot, bcRCopy, bcRSave, bcREqual, bcBSaveSI,
    bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
    bcCreate, bcExclude, bcDCopyR, bcInclude,
@@ -102,7 +102,7 @@ const int gcCommands[gcCommandNumber] =
    bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
    bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit,
    bcCheck, bcMTRedirect, bcDCopyVerb, bcXCopy, bcXMTRedirect,
-   bcSaveFI, bcAddFI, bcSubFI
+   bcSaveFI, bcAddFI, bcSubFI, bcNShiftR
 };
 
 // command table
@@ -123,14 +123,14 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop,
    &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp,
 
    &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop,
 
    &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
@@ -147,7 +147,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp,
    &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
-   &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileNop, &compileDAndN, &compileDAddN, &compileDOrN,
+   &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileDShiftN, &compileDAndN, &compileDAddN, &compileDOrN,
    &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &loadMTOp, &loadMTOp,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -1416,12 +1416,12 @@ void _ELENA_::compileInit(int opcode, x86JITScope& scope)
    else loadNOp(opcode, scope);
 }
 
-void _ELENA_ :: compileDShiftN(int, x86JITScope& scope)
+void _ELENA_ :: compileDShiftN(int op, x86JITScope& scope)
 {
-   if (scope.argument < 0) {
+   if (op == bcShiftLN) {
       // shl ebx, n
       scope.code->writeWord(0xE3C1);
-      scope.code->writeByte((unsigned char) - scope.argument);
+      scope.code->writeByte((unsigned char)scope.argument);
    }
    else {
       // shr ebx, n

@@ -425,7 +425,9 @@ ELENA byte codes (or ecodes)
  
  lor                        - long[base] || long[acc]    (*index and ext affected)
  
- lshift                     - long[base] <<= index       (*index and ext affected)
+ lshiftl                    - long[base] <<= index       (*index and ext affected)
+ 
+ lshiftr                    - long[base] >>= index       (*index and ext affected)
  
  lsub                       - long[base] -= long[acc]
  
@@ -449,7 +451,9 @@ ELENA byte codes (or ecodes)
 
  not                        - !index => index
  
- nshift                     - int[base] <<= index
+ nshiftl                    - int[base] <<= index
+ 
+ nshiftr                    - int[base] >>= index
  
  nsub                       - int[base] -= int[acc]
  
@@ -479,7 +483,9 @@ ELENA byte codes (or ecodes)
 
  rsub                       - real[base] -= real[acc]
 
- shiftn n                   - index >> n  => index
+ shiftln n                  - index << n  => index
+ 
+ shiftrn n                  - index >> n  => index
  
  sub                        - index -= ext
 

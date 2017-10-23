@@ -2624,20 +2624,16 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
       // Note read / write operator is used for bitwise operations
       case WRITE_MESSAGE_ID:
          // nload
-         // not
-         // inc
-         // nshift
+         // nshiftl
          tape.write(bcNLoad);
-         tape.write(bcNot);
-         tape.write(bcInc);
-         tape.write(bcNShift);
+         tape.write(bcNShiftL);
          break;
       // Note read / write operator is used for bitwise operations
       case READ_MESSAGE_ID:
          // nload
-         // nshift
+         // nshiftr
          tape.write(bcNLoad);
-         tape.write(bcNShift);
+         tape.write(bcNShiftR);
          break;
       case ADD_MESSAGE_ID:
       case APPEND_MESSAGE_ID:
@@ -2683,10 +2679,10 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
       // Note read / write operator is used for bitwise operations
       case WRITE_MESSAGE_ID:
          // nload
-         // shiftn -immArg
+         // shiftln immArg
          // nsave
          tape.write(bcNLoad);
-         tape.write(bcShiftN, -immArg);
+         tape.write(bcShiftLN, immArg);
          tape.write(bcNSave);
          break;
       // Note read / write operator is used for bitwise operations
@@ -2695,7 +2691,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
          // shiftn immArg
          // nsave
          tape.write(bcNLoad);
-         tape.write(bcShiftN, immArg);
+         tape.write(bcShiftRN, immArg);
          tape.write(bcNSave);
          break;
       case ADD_MESSAGE_ID:
@@ -2748,7 +2744,7 @@ void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, i
          tape.write(bcDCopy, offset);
          tape.write(bcBRead);
          tape.write(bcESwap);
-         tape.write(bcShiftN, -immArg);
+         tape.write(bcShiftLN, immArg);
          tape.write(bcESwap);
          tape.write(bcBWrite);
          break;
@@ -2763,7 +2759,7 @@ void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, i
          tape.write(bcDCopy, offset);
          tape.write(bcBRead);
          tape.write(bcESwap);
-         tape.write(bcShiftN, immArg);
+         tape.write(bcShiftRN, immArg);
          tape.write(bcESwap);
          tape.write(bcBWrite);
          break;
@@ -2825,20 +2821,16 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
       // Note read / write operator is used for bitwise operations
       case WRITE_MESSAGE_ID:
          // nload
-         // not
-         // inc
-         // lshift
+         // lshiftl
          tape.write(bcNLoad);
-         tape.write(bcNot);
-         tape.write(bcInc);
-         tape.write(bcLShift);
+         tape.write(bcLShiftL);
          break;
       // Note read / write operator is used for bitwise operations
       case READ_MESSAGE_ID:
          // nload
-         // lshift
+         // lshiftr
          tape.write(bcNLoad);
-         tape.write(bcLShift);
+         tape.write(bcLShiftR);
          break;
       case ADD_MESSAGE_ID:
       case APPEND_MESSAGE_ID:
@@ -3025,13 +3017,13 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
             tape.write(bcNSave);
          }
          else if (itemSize == 8) {
-            // shiftn -3
+            // shiftln 3
             // bread
             // nwritei 0
             // addn 4
             // bread
             // nwritei 1
-            tape.write(bcShiftN, -3);
+            tape.write(bcShiftLN, 3);
             tape.write(bcBRead);
             tape.write(bcNWriteI, 0);
             tape.write(bcAddN, 4);
@@ -3059,7 +3051,7 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
             tape.write(bcNWriteI, 2);
          }
          else if (itemSize == 16) {
-            // shiftn -4
+            // shiftn 4
             // bread
             // nwritei 0
             // addn 4
@@ -3071,7 +3063,7 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
             // addn 4
             // bread
             // nwritei 3
-            tape.write(bcShiftN, -4);
+            tape.write(bcShiftLN, 4);
             tape.write(bcBRead);
             tape.write(bcNWriteI, 0);
             tape.write(bcAddN, 4);
@@ -3164,13 +3156,13 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
             break;
          }
          else if (itemSize == 8) {
-            // shiftn -3
+            // shiftn 3
             // nreadi 0
             // bwrite
             // addn 4
             // nreadi 1
             // bwrite
-            tape.write(bcShiftN, -3);
+            tape.write(bcShiftLN, 3);
             tape.write(bcNReadI, 0);
             tape.write(bcBWrite);
             tape.write(bcAddN, 4);
@@ -3198,7 +3190,7 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
             tape.write(bcBWrite);
          }
          else if (itemSize == 16) {
-            // shiftn -4
+            // shiftln 4
             // nreadi 0
             // bwrite
             // addn 4
@@ -3210,7 +3202,7 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
             // addn 4
             // nreadi 3
             // bwrite
-            tape.write(bcShiftN, -4);
+            tape.write(bcShiftLN, 4);
             tape.write(bcNReadI, 0);
             tape.write(bcBWrite);
             tape.write(bcAddN, 4);
@@ -3305,13 +3297,13 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
          // nsave
          tape.write(bcBLen);
          if (itemSize == 4) {
-            tape.write(bcShiftN, 2);
+            tape.write(bcShiftRN, 2);
          }
          else if (itemSize == 8) {
-            tape.write(bcShiftN, 3);
+            tape.write(bcShiftRN, 3);
          }
          else if (itemSize == 16) {
-            tape.write(bcShiftN, 4);
+            tape.write(bcShiftRN, 4);
          }
          else tape.write(bcDivN, itemSize);
          tape.write(bcNSave);

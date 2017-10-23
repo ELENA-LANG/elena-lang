@@ -3,10 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * direct shift
-                 * nshift should be replaced with nshiftl, nshiftr
-                 * optimize shift implementation
-
                  * optimize : 
     int n := 4.
     int m := 4.
@@ -28,6 +24,7 @@ In development:
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
                  * Comparison with numeric constants #279
                  * Constant fields #351
+                 * test all samples
 
               idev - generic development
                  * #263 - IDE : MTA Debugging 
