@@ -961,6 +961,7 @@ private:
    ref_t optimizeExtCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
    ref_t optimizeNestedExpression(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
+   void optimizeBranching(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    void optimizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);

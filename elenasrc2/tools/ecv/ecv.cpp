@@ -524,6 +524,9 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcIfN:
       case bcElseN:
       case bcLessN:
+      case bcNotLessN:
+      case bcGreaterN:
+      case bcNotGreaterN:
          command.append(opcode);
          command.append(' ');
          command.appendHex(argument);

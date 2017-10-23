@@ -481,6 +481,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcIfN:
          case bcElseN:
          case bcLessN:
+         case bcNotLessN:
+         case bcGreaterN:
+         case bcNotGreaterN:
             compileNJump(opcode, token, writer, info);
             break;
          case bcIfR:

@@ -1776,6 +1776,58 @@ bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
    return false;
 }
 
+void CompilerLogic :: optimizeBranchingOp(_CompilerScope& scope, SNode node)
+{
+   // check if direct comparision with a numeric constant is possible
+   SNode ifOp = SyntaxTree::findPattern(node, 3,
+      SNodePattern(lxExpression),
+      SNodePattern(lxIntOp),
+      SNodePattern(lxConstantInt));
+
+   if (ifOp != lxNone) {
+      int arg = ifOp.findChild(lxIntValue).argument;
+
+      SNode intOpNode = node.findSubNode(lxIntOp);
+      SNode ifNode = node.findChild(lxIf, lxElse);
+      if (ifNode != lxNone) {
+         SNode trueNode = intOpNode.findChild(ifNode == lxIf ? lxIfValue : lxElseValue);
+
+         if (intOpNode.argument == EQUAL_MESSAGE_ID) {
+            if (trueNode.argument == scope.branchingInfo.trueRef) {
+               ifNode.set(lxIfN, arg);
+            }
+            else if (trueNode.argument == scope.branchingInfo.falseRef) {
+               ifNode.set(lxIfNotN, arg);
+            }
+            else return;
+         }
+         else if (intOpNode.argument == LESS_MESSAGE_ID) {
+            if (trueNode.argument == scope.branchingInfo.falseRef) {
+               ifNode.set(lxLessN, arg);
+            }
+            else if (trueNode.argument == scope.branchingInfo.trueRef) {
+               ifNode.set(lxNotLessN, arg);
+            }
+            else return;
+         }
+         else if (intOpNode.argument == GREATER_MESSAGE_ID) {
+            if (trueNode.argument == scope.branchingInfo.falseRef) {
+               ifNode.set(lxGreaterN, arg);
+            }
+            else if (trueNode.argument == scope.branchingInfo.trueRef) {
+               ifNode.set(lxNotGreaterN, arg);
+            }
+            else return;
+         }
+         else return;
+
+         ifOp = lxIdle;
+         intOpNode = lxExpression;
+      }
+   }
+
+}
+
 ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node)
 {
    ClassInfo info;

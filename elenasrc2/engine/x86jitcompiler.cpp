@@ -151,7 +151,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &loadMTOp, &loadMTOp,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFNOp, &loadFNOp, &loadFNOp,
+   &compileNop, &compileNop, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
 
    &compileCreate, &compileCreateN, &compileNop, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileIfM, &compileElseM, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop
@@ -212,16 +212,28 @@ inline void compileJumpBelow(x86JITScope& scope, int label, bool forwardJump, bo
    compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JB);
 }
 
-//inline void compileJumpGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-//{
-//   // jg   lbEnding
-//   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JG);
-//}
-
 inline void compileJumpLess(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
 {
    // jl   lbEnding
    compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JL);
+}
+
+inline void compileJumpNotLess(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JGE);
+}
+
+inline void compileJumpGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JG);
+}
+
+inline void compileJumpNotGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JLE);
 }
 
 inline void compileJumpLessOrEqual(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
@@ -1297,16 +1309,32 @@ void _ELENA_::compileElseN(int, x86JITScope& scope)
    compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
 
-void _ELENA_::compileLessN(int, x86JITScope& scope)
+void _ELENA_::compileLessN(int op, x86JITScope& scope)
 {
    int jumpOffset = scope.tape->getDWord();
 
    // cmp ebx, n
    // jz lab
-
    scope.code->writeWord(0xFB81);
    scope.code->writeDWord(scope.argument);
-   compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+   if (op == bcLessN) {
+      compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+   }
+   else compileJumpNotLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
+
+void _ELENA_::compileGreaterN(int op, x86JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+
+   // cmp ebx, n
+   // jz lab
+   scope.code->writeWord(0xFB81);
+   scope.code->writeDWord(scope.argument);
+   if (op == bcGreaterN) {
+      compileJumpGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+   }
+   else compileJumpNotGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
 
 void _ELENA_::compileSetVerb(int, x86JITScope& scope)

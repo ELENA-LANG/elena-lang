@@ -141,6 +141,10 @@ enum LexicalType
    lxAltExpression   = 0x0C018,
    lxIfNot           = 0x0C019,   // optional arg - reference
    lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
+   lxIfN             = 0x0C01B,   // arg - value
+   lxIfNotN          = 0x0C01C,   // arg - value
+   lxLessN           = 0x0C01D,   // arg - value
+   lxNotLessN        = 0x0C01E,   // arg - value
    lxIf              = 0x0C01F,   // optional arg - reference
    lxElse            = 0x0C020,   // optional arg - reference
    lxOption          = 0x0C021,
@@ -151,10 +155,14 @@ enum LexicalType
    lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
    lxNewOp           = 0x0C028,
-   lxArrOp           = 0x8C029, // arg - operation id
-   lxBinArrOp        = 0x8C02A, // arg - operation id
-   lxArgArrOp        = 0x8C02B, // arg - operation id
-   lxNilOp           = 0x8C02C, // arg - operation id
+   lxArrOp           = 0x8C029,   // arg - operation id
+   lxBinArrOp        = 0x8C02A,   // arg - operation id
+   lxArgArrOp        = 0x8C02B,   // arg - operation id
+   lxNilOp           = 0x8C02C,   // arg - operation id
+
+   lxGreaterN        = 0x0C02D,   // arg - value
+   lxNotGreaterN     = 0x0C02E,   // arg - value
+
    lxIntArrOp        = 0x8C030,   // arg - operation id
    lxResendExpression= 0x0C031, 
    lxByteArrOp       = 0x8C032, // arg - operation id

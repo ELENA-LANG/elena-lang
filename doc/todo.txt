@@ -3,15 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * optimize : n := n + k.
-                 * optimize : n := n + 1.
-                 * optimize : n := m + 1.
-                 * optimize : n := m - 1.
-
-                 * optimize : real r := 3.0r.
-                 * optimize : r += 2.0r.
-
-                 * direct and, or, xor, shift, mul, div, equal, less
                  * direct shift
                  * nshift should be replaced with nshiftl, nshiftr
                  * optimize shift implementation
@@ -133,6 +124,7 @@ Pipeline:
                  * optimize multimethod implementation for sealed class containing only one overload class
                  * external function : duplicate assigning
                  * do not allocate a virtual vmt (for the object initilizer code)
+                 * direct and, or, xor, shift, mul, div, equal, less
 
               zdev - remoting
               zdev - workflow

@@ -13,6 +13,8 @@ acopyb bcopya => acopyb nop;
 acopyb pusha acopyr => pushb nop acopyr;
 acopyb bcopyf dcopy nsave acopyb => nop bcopyf dcopy nsave acopyb;
 acopyb bcopyf acopyf => nop bcopyf acopyf;
+acopyb restore => nop restore;
+acopyb close => nop close;
 
 bcopya acopyb => bcopya nop;
 acopyr acopyb => nop acopyb;
@@ -45,6 +47,13 @@ acopyf bcopya acopyr => bcopyf nop acopyr;
 acopyf bcopya aloadfi => bcopyf nop aloadfi;
 acopyf bcopya aloadsi => bcopyf nop aloadsi;
 acopyf bcopya acopyf => bcopyf nop acopyf;
+
+acopyf nload ifn => dloadfi nop ifn;
+acopyf nload elsen => dloadfi nop elsen;
+acopyf nload lessn => dloadfi nop lessn;
+acopyf nload notlessn => dloadfi nop notlessn;
+acopyf nload greatern => dloadfi nop greatern;
+acopyf nload notgreatern => dloadfi nop notgreatern;
 
 acopyb asavesi aloadsi => nop bsavesi aloadsi;
 acopyf bcopya dcopy nsave acopyb => bcopyf nop dcopy nsave acopyb;

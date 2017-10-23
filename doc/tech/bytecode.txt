@@ -254,6 +254,8 @@ ELENA byte codes (or ecodes)
  elsen n, label             - jump to the label if index != n
  
  elser r, label             - jumps to the label if acc != r
+
+ greatern n, label          - jump to the label if index > n
  
  if label                   - jump to the label if index == ext                                                   
 
@@ -275,7 +277,11 @@ ELENA byte codes (or ecodes)
 
  next label                 - index++; if index < ext, jump to the label
  
+ notgreatern n, label      - jump to the label if index <= n
+ 
  notless label              - jump to the label if index >= ext
+
+ notlessn n, label          - jump to the label if index >= n
 
  
  Object operations:

@@ -330,6 +330,7 @@ public:
 
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
+   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node) = 0;
 
    virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node) = 0;
 };

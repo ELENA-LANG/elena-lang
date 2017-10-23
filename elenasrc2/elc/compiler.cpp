@@ -6639,18 +6639,27 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
    }
 }
 
+void Compiler :: optimizeBranching(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
+{
+   optimizeExpressionTree(node, scope, warningScope, mode);
+
+   _logic->optimizeBranchingOp(scope, node);
+}
+
 void Compiler :: optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-         case lxLooping:
          case lxElse:
          case lxCode:
          case lxIf:
          case lxExternFrame:
-         case lxBranching:
             optimizeExpressionTree(current, scope, warningScope);
+            break;
+         case lxBranching:
+         case lxLooping:
+            optimizeBranching(current, scope, warningScope);
             break;
          default:
             if (test(current.type, lxObjectMask)) {
