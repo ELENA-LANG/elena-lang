@@ -3819,7 +3819,7 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
 
 void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node node)
 {
-   generateExpression(tape, node);
+   generateExpression(tape, node, ACC_REQUIRED);
    loadIndex(tape, lxResult);
 
    if (node.argument != 0) {
@@ -3864,7 +3864,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
    bool immIndex = rarg == lxConstantInt;
 
    if (setMode) {
-      generateObjectExpression(tape, larg);
+      generateObjectExpression(tape, larg, ACC_REQUIRED);
       loadBase(tape, lxResult);
 
       if (!rargSimple || !rarg2Simple) {
@@ -3872,7 +3872,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       }
 
       if (!rarg2Simple) {
-         generateObjectExpression(tape, rarg2);
+         generateObjectExpression(tape, rarg2, ACC_REQUIRED);
          pushObject(tape, lxResult);
       }
 
@@ -3896,7 +3896,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       }
    }
    else if (lenMode) {
-      generateObjectExpression(tape, rarg);
+      generateObjectExpression(tape, rarg, ACC_REQUIRED);
       loadBase(tape, lxResult);
 
       generateObjectExpression(tape, larg);
@@ -3907,7 +3907,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       }
 
       if (!largSimple) {
-         generateObjectExpression(tape, larg);
+         generateObjectExpression(tape, larg, ACC_REQUIRED);
          pushObject(tape, lxResult);
       }
 
@@ -3917,7 +3917,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          loadIndex(tape, rarg.type, index);
       }
       else {
-         generateObjectExpression(tape, rarg);
+         generateObjectExpression(tape, rarg, ACC_REQUIRED);
          loadIndex(tape, lxResult);
       }
 
@@ -4066,7 +4066,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
             level++;
          }
 
-         generateObjectExpression(tape, larg);
+         generateObjectExpression(tape, larg, ACC_REQUIRED);
          pushObject(tape, lxResult);
          level++;
       }
@@ -4077,7 +4077,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
             level++;
          }
 
-         generateObjectExpression(tape, rarg);
+         generateObjectExpression(tape, rarg, ACC_REQUIRED);
          pushObject(tape, lxResult);
          level++;
       }
@@ -4162,7 +4162,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 
 void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node)
 {
-   generateExpression(tape, node);
+   generateExpression(tape, node, ACC_REQUIRED);
 
    SNode ifParam = node.findChild(lxIfValue);
    SNode elseParam = node.findChild(lxElseValue);
@@ -4184,7 +4184,7 @@ void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, 
             if (!isSimpleObject(object, true)) {
                ExternalScope::ParamInfo param;
 
-               generateObjectExpression(tape, object);
+               generateObjectExpression(tape, object, ACC_REQUIRED);
                pushObject(tape, lxResult);
                param.offset = ++externalScope.frameSize;
 
@@ -4308,7 +4308,7 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    SNode overridden = callNode.findChild(lxOverridden);
    if (overridden != lxNone) {
-      generateExpression(tape, overridden);
+      generateExpression(tape, overridden, ACC_REQUIRED);
    }
    else tape.write(bcALoadSI, 0);
 
@@ -4363,7 +4363,7 @@ void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
       }
 
       if (test(current.type, lxObjectMask)) {
-         generateObjectExpression(tape, current);
+         generateObjectExpression(tape, current, ACC_REQUIRED);
 
          saveObject(tape, lxCurrent, index);
          index++;
@@ -4396,7 +4396,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 
       if (current == lxArgUnboxing) {
          argUnboxMode = true;
-         generateExpression(tape, current);
+         generateExpression(tape, current, ACC_REQUIRED);
          unboxArgList(tape);
       }
       else if (test(member.type, lxObjectMask)) {
@@ -4408,14 +4408,14 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 
       // presave the boxed arguments if required
       if (member == lxUnboxing) {
-         generateObjectExpression(tape, member);
+         generateObjectExpression(tape, member, ACC_REQUIRED);
          pushObject(tape, lxResult);
          presavedCount++;
          unboxMode = true;
       }
       // presave the nested object if outer operation is required
       else if (member == lxNested && member.existChild(lxOuterMember, lxCode)) {
-         generateObjectExpression(tape, member);
+         generateObjectExpression(tape, member, ACC_REQUIRED);
          pushObject(tape, lxResult);
          presavedCount++;
          unboxMode = true;
@@ -4468,7 +4468,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
             loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
             presavedCount--;
          }
-         else generateObjectExpression(tape, current);
+         else generateObjectExpression(tape, current, ACC_REQUIRED);
 
          if (directMode) {
             pushObject(tape, lxResult);
@@ -4631,7 +4631,7 @@ void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
 
 void ByteCodeWriter :: generateThrowExpression(CommandTape& tape, SNode node)
 {
-   generateExpression(tape, node);
+   generateExpression(tape, node, ACC_REQUIRED);
 
    pushObject(tape, lxResult);
    throwCurrent(tape);
@@ -4674,7 +4674,7 @@ void ByteCodeWriter :: generateFieldBoxing(CommandTape& tape, SyntaxTree::Node n
    boxField(tape, offset, node.argument, target.argument);
 }
 
-void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
+void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node, int mode)
 {
    SNode expr = node.firstChild(lxObjectMask);
    if (expr == lxFieldAddress && expr.argument > 0) {
@@ -4682,12 +4682,12 @@ void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
       generateFieldBoxing(tape, node, expr.argument);
    }
    else {
-      generateExpression(tape, node);
+      generateExpression(tape, node, mode);
       generateBoxing(tape, node);
    }
 }
 
-void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
+void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode)
 {
    int size = node.argument;
 
@@ -4715,12 +4715,12 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp))))
    {
       if (target == lxCreatingStruct) {
-         generateObjectExpression(tape, target);
+         generateObjectExpression(tape, target, ACC_REQUIRED);
          loadBase(tape, lxResult);
       }
       else loadBase(tape, target.type, target.argument);
 
-      generateObjectExpression(tape, source);
+      generateObjectExpression(tape, source, mode);
    }
    else {
       generateObjectExpression(tape, source, ACC_REQUIRED);
@@ -5036,7 +5036,7 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
    while (current != lxNone) {
       if (current.type == lxMember || current.type == lxOuterMember) {
          if (!isSimpleObjectExpression(current)) {
-            generateExpression(tape, current);
+            generateExpression(tape, current, ACC_REQUIRED);
             pushObject(tape, lxResult);
          }
       }
@@ -5054,7 +5054,7 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
          if (!isSimpleObjectExpression(current)) {
             popObject(tape, lxResult);
          }
-         else generateExpression(tape, current);
+         else generateExpression(tape, current, ACC_REQUIRED);
 
          saveBase(tape, true, lxResult, current.argument);
       }
@@ -5155,7 +5155,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node, i
       case lxLocalUnboxing:
       case lxFieldExpression:
       case lxAltExpression:
-         generateExpression(tape, node);
+         generateExpression(tape, node, mode);
          break;
 ////      case lxTypecasting:
       case lxCalling:
@@ -5187,10 +5187,10 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node, i
       case lxCondBoxing:
       case lxArgBoxing:
       case lxUnboxing:
-         generateBoxingExpression(tape, node);
+         generateBoxingExpression(tape, node, mode);
          break;
       case lxAssigning:
-         generateAssigningExpression(tape, node);
+         generateAssigningExpression(tape, node, mode);
          break;
       case lxBranching:
          generateBranching(tape, node);

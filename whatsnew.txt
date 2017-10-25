@@ -22,6 +22,7 @@
 [-] #312 : Compiler crashes while compiling the following code
 [-] #26  : Private types
 [-] #258 : Extension message with a full reference 
+[*] #71  : Resolving arithmetic operation in compile-time
    
 [Samples]
 [+] Zeckendorf arithmetic

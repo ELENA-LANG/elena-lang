@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   17
+#define REVISION_VERSION   18
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -564,6 +564,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcNLoadI:
       case bcNSaveI:
       case bcMulN:
+      case bcAddN:
          command.append(opcode);
          command.append(' ');
          command.appendHex(argument);
@@ -582,6 +583,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPushFI:
       case bcALoadFI:
       case bcASaveFI:
+      case bcDLoadFI:
          command.append(opcode);
          command.append(" fp[");
          command.appendInt(argument);

@@ -299,13 +299,13 @@ class ByteCodeWriter
    void generateLooping(CommandTape& tape, SyntaxTree::Node node);
    void generateBranching(CommandTape& tape, SyntaxTree::Node node);
    void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
-   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
    void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
-   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);

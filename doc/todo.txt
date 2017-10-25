@@ -3,15 +3,6 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * Resolving arithmetic operation in compile-time #71
-
-                 * Read-only classes should be enforced #282
-                 * method returning a constant #381
-                 * ByteNumber.get&min - could we return the constant object?
-                 * constant symbols should be used directly
-                 * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
-                 * Comparison with numeric constants #279
-                 * Constant fields #351
                  * test all samples
 
               idev - generic development
@@ -21,7 +12,9 @@ In development:
                  * reimplement chat sample
 
               xdev - general implementation
+                 * elt : probably better to use eson and get rid of elena script
                  * elena script : declare closure
+                 * Read-only classes should be enforced #282
                  * #283 : unboxing duplicate object 
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)
@@ -37,6 +30,11 @@ In development:
                  * fn3prop : embeddable option for the function with three arguments should be recognized
                  * NilReferenceException, AccessViolationException, DivisionByZeroException should be recognized
                  * the following expression should generated an error : if(n test) { .... }
+                 * method returning a constant #381
+                 * ByteNumber.get&min - could we return the constant object?
+                 * constant numbers / strings should be used directly?? (e.g. replace a constant with its value)
+                 * Constant fields #351
+                 * print nan value
                  * fixing open issues
 
               zdev - live programming
@@ -114,9 +112,11 @@ Pipeline:
                  * optimize n + m * k
                  * optimize n + 1
                  * optimize n + m * 2
+                 * optimize int n := 3 + 2.
                  * Assigning stack allocated real number with integer constant #360
                  * support #var(real)r := 2. // assigning int to real by constant
                  * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
+                 * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
 
               zdev - remoting
               zdev - workflow
