@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   16
+#define REVISION_VERSION   17
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -644,6 +644,15 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.append(' ');
          printReference(command, module, argument);
          command.append(", ");
+         command.appendInt(argument2);
+         break;
+      case bcSaveFI:
+      case bcAddFI:
+      case bcSubFI:
+         command.append(opcode);
+         command.append(" fp[");
+         command.appendInt(argument);
+         command.append("], ");
          command.appendInt(argument2);
          break;
       default:

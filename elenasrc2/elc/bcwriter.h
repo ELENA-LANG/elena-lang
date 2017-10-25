@@ -280,7 +280,7 @@ class ByteCodeWriter
 
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
 
@@ -308,8 +308,8 @@ class ByteCodeWriter
    void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
-   void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
-   void generateExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
    void generateCreating(CommandTape& tape, SyntaxTree::Node node);

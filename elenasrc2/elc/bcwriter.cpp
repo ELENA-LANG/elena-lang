@@ -12,6 +12,8 @@
 
 using namespace _ELENA_;
 
+#define ACC_REQUIRED    0x0001
+
 // check if the node contains only the simple nodes
 
 bool isSimpleObject(SNode node, bool ignoreFields = false)
@@ -3987,7 +3989,7 @@ void ByteCodeWriter :: unboxLocal(CommandTape& tape, SNode larg, SNode rarg)
    else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
 }
 
-void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node)
+void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
 {
    int operation = node.argument;
    bool assignMode = false;
@@ -3996,13 +3998,14 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    bool invertMode = false;
    bool immOp = false;
    bool directMode = false;
+   bool resultExpected = mode & ACC_REQUIRED;
    int  level = 0;
 
    switch (node.argument) {
       case ADD_MESSAGE_ID:
       case SUB_MESSAGE_ID:
       case MUL_MESSAGE_ID:
-         directMode = node.type == lxIntOp;
+         directMode = node.type == lxIntOp && !resultExpected;
       case AND_MESSAGE_ID:
       case OR_MESSAGE_ID:
       case XOR_MESSAGE_ID:
@@ -4032,7 +4035,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       case APPEND_MESSAGE_ID:
       case REDUCE_MESSAGE_ID:
          immOp = true;
-         directMode = node.type == lxIntOp;
+         directMode = node.type == lxIntOp && !resultExpected;
          break;
    }
 
@@ -4135,7 +4138,8 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
          node.findChild(lxIfValue).argument,
          node.findChild(lxElseValue).argument);
    }
-   else assignBaseTo(tape, lxResult);
+   else if (resultExpected) 
+      assignBaseTo(tape, lxResult);
 
    if (larg == lxLocalUnboxing) {
       unboxLocal(tape, larg, rarg);
@@ -4719,7 +4723,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       generateObjectExpression(tape, source);
    }
    else {
-      generateObjectExpression(tape, source);
+      generateObjectExpression(tape, source, ACC_REQUIRED);
 
       if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
          if (node.argument == 4) {
@@ -5143,7 +5147,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
    }
 }
 
-void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
+void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node, int mode)
 {
    switch (node.type)
    {
@@ -5212,7 +5216,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxIntOp:
       case lxLongOp:
       case lxRealOp:
-         generateOperation(tape, node);
+         generateOperation(tape, node, mode);
          break;
       case lxIntArrOp:
       case lxByteArrOp:
@@ -5257,7 +5261,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
    }
 }
 
-void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
+void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, int mode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -5265,7 +5269,7 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
       //   releaseObject(tape, current.argument);
       //}
       /*else */if (test(current.type, lxObjectMask)) {
-         generateObjectExpression(tape, current);
+         generateObjectExpression(tape, current, mode);
       }
       else generateDebugInfo(tape, current);
 

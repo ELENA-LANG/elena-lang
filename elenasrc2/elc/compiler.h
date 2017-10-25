@@ -775,12 +775,10 @@ private:
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
 
-////   void raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered = true);
-////
-////   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
+   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
+   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
+
    void writeMessageInfo(SyntaxWriter& writer, ModuleScope& scope, ref_t messageRef);
-////   ref_t mapAttribute(SNode attribute, Scope& scope, int& attrValue);
-//   ref_t mapAttribute(SNode attribute, ModuleScope& scope);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
    pos_t saveSourcePath(ModuleScope& scope, ident_t path);

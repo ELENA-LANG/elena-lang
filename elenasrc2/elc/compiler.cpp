@@ -1498,6 +1498,67 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
+bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVal)
+{
+   switch (operation_id)
+   {
+      case ADD_MESSAGE_ID:
+         retVal = arg1 + arg2;
+         break;
+      case SUB_MESSAGE_ID:
+         retVal = arg1 - arg2;
+         break;
+      case MUL_MESSAGE_ID:
+         retVal = arg1 * arg2;
+         break;
+      case DIV_MESSAGE_ID:
+         retVal = arg1 / arg2;
+         break;
+      case AND_MESSAGE_ID:
+         retVal = arg1 & arg2;
+         break;
+      case OR_MESSAGE_ID:
+         retVal = arg1 | arg2;
+         break;
+      case XOR_MESSAGE_ID:
+         retVal = arg1 ^ arg2;
+         break;
+      case READ_MESSAGE_ID:
+         retVal = arg1 >> arg2;
+         break;
+      case WRITE_MESSAGE_ID:
+         retVal = arg1 << arg2;
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
+
+bool Compiler :: calculateRealOp(int operation_id, double arg1, double arg2, double& retVal)
+{
+   switch (operation_id)
+   {
+      case ADD_MESSAGE_ID:
+         retVal = arg1 + arg2;
+         break;
+      case SUB_MESSAGE_ID:
+         retVal = arg1 - arg2;
+         break;
+      case MUL_MESSAGE_ID:
+         retVal = arg1 * arg2;
+         break;
+      case DIV_MESSAGE_ID:
+         retVal = arg1 / arg2;
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
+
 pos_t Compiler :: saveSourcePath(ModuleScope&, ident_t path)
 {
    return _writer.writeString(path);
@@ -6562,6 +6623,36 @@ ref_t Compiler :: optimizeOp(SNode current, ModuleScope& scope, WarningScope& wa
    SNode roperand2 = roperand.nextNode(lxObjectMask);
    if (roperand2 != lxNone)
       optimizeExpression(roperand2, scope, warningScope, HINT_NOBOXING);
+
+   if (current == lxIntOp && loperand == lxConstantInt && roperand == lxConstantInt) {
+      int val = 0;
+      if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
+         loperand = lxIdle;
+         roperand = lxIdle;
+
+         IdentifierString str;
+         str.appendHex(val);
+         current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
+         current.appendNode(lxIntValue, val);
+
+         return V_INT32;
+      }
+   }
+   else if (current == lxRealOp && loperand == lxConstantReal && roperand == lxConstantReal) {
+      double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
+      double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
+      double val = 0;
+      if (calculateRealOp(current.argument, d1, d2, val)) {
+         loperand = lxIdle;
+         roperand = lxIdle;
+
+         IdentifierString str;
+         str.appendDouble(val);
+         current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
+
+         return V_REAL64;
+      }
+   }
 
    switch (current) {
       case lxIntOp:

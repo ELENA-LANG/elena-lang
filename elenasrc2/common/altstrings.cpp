@@ -685,14 +685,26 @@ long long strToLongLong(const char* s, int radix)
 
 char* Convertor :: doubleToStr(double value, int digit, char* s)
 {
-   gcvt(value, digit, s);
+   // !!HOTFIX : to recognize nan
+   if (value != value) {
+      StrHelper::append(s, "nan", 4);
+   }
+   else gcvt(value, digit, s);
 
    return s;
 }
 
 double strToDouble(const char* s)
 {
-   return atof(s);
+   // !!HOTFIX : to recognize nan
+   if (strcmp(s, "nan") == 0) {
+      double t = 0;
+
+      double NAN = 0.0 / t;
+
+      return NAN;
+   }
+   else return atof(s);
 }
 
 //void StringHelper :: trim(char* s, char ch)

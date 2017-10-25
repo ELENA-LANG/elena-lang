@@ -402,7 +402,7 @@ public:
    {
       size_t pos = getlength(_string);
 
-      Convertor::doubleToStr(n, 8, _string + pos);
+      Convertor::doubleToStr(n, 10, _string + pos);
       if (_string[getlength(_string) - 1]=='.')
          append("0");
    }

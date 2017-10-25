@@ -3,20 +3,8 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * optimize : 
-    int n := 4.
-    int m := 4.
-    int k := m + n.
-
-                 * optimize n + m * k
-                 * optimize n + 1
-                 * optimize n + m * 2
-
-                 * use intOp for assigning a constant
-                 * Assigning stack allocated real number with integer constant #360
                  * Resolving arithmetic operation in compile-time #71
-                 * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
-                 * support #var(real)r := 2. // assigning int to real by constant
+
                  * Read-only classes should be enforced #282
                  * method returning a constant #381
                  * ByteNumber.get&min - could we return the constant object?
@@ -122,6 +110,13 @@ Pipeline:
                  * external function : duplicate assigning
                  * do not allocate a virtual vmt (for the object initilizer code)
                  * direct and, or, xor, shift, mul, div, equal, less
+                 * get rid of acopyb after each operation
+                 * optimize n + m * k
+                 * optimize n + 1
+                 * optimize n + m * 2
+                 * Assigning stack allocated real number with integer constant #360
+                 * support #var(real)r := 2. // assigning int to real by constant
+                 * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
 
               zdev - remoting
               zdev - workflow
