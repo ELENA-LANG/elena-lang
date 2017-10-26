@@ -604,6 +604,16 @@ public:
          return tree->readPreviousNode(position);
       }
 
+      Node prevNode(LexicalType mask) const
+      {
+         Node current = prevNode();
+
+         while (current != lxNone && !test(current.type, mask))
+            current = current.prevNode();
+
+         return current;
+      }
+
       Node parentNode() const
       {
          return tree->readParentNode(position);

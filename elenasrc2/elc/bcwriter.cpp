@@ -5015,7 +5015,7 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
             break;
          default:
             if (test(current.type, lxObjectMask))
-               generateObjectExpression(tape, current);
+               generateObjectExpression(tape, current, ACC_REQUIRED);
 
             break;
       }

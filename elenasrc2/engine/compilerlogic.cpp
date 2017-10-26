@@ -1792,6 +1792,16 @@ void CompilerLogic :: optimizeBranchingOp(_CompilerScope& scope, SNode node)
       if (ifNode != lxNone) {
          SNode trueNode = intOpNode.findChild(ifNode == lxIf ? lxIfValue : lxElseValue);
 
+         if (ifOp.prevNode(lxObjectMask) == lxNone) {
+            // if the numeric constant is the first operand
+            if (intOpNode.argument == LESS_MESSAGE_ID) {
+               intOpNode.argument = GREATER_MESSAGE_ID;
+            }
+            else if (intOpNode.argument == GREATER_MESSAGE_ID) {
+               intOpNode.argument = LESS_MESSAGE_ID;
+            }
+         }
+
          if (intOpNode.argument == EQUAL_MESSAGE_ID) {
             if (trueNode.argument == ifNode.argument) {
                ifNode.set(lxIfN, arg);
