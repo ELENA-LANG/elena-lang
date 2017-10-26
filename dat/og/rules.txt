@@ -13,8 +13,6 @@ acopyb bcopya => acopyb nop;
 acopyb pusha acopyr => pushb nop acopyr;
 acopyb bcopyf dcopy nsave acopyb => nop bcopyf dcopy nsave acopyb;
 acopyb bcopyf acopyf => nop bcopyf acopyf;
-acopyb restore => nop restore;
-acopyb close => nop close;
 
 bcopya acopyb => bcopya nop;
 acopyr acopyb => nop acopyb;

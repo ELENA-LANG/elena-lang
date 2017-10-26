@@ -4621,7 +4621,7 @@ void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
 {
    if (translateBreakpoint(tape, node.findSubNode(lxBreakpoint))) {
       declareBlock(tape);
-      generateExpression(tape, node);
+      generateExpression(tape, node, ACC_REQUIRED);
       declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
    }
    else generateExpression(tape, node);
@@ -4682,7 +4682,7 @@ void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node, i
       generateFieldBoxing(tape, node, expr.argument);
    }
    else {
-      generateExpression(tape, node, mode);
+      generateExpression(tape, node, mode | ACC_REQUIRED);
       generateBoxing(tape, node);
    }
 }
