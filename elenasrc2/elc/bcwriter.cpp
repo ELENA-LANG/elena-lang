@@ -4873,35 +4873,35 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
          repeatMode = false;
       }
       else if (current == lxIfNotN) {
-         jumpIfEqual(tape, current.argument, true);
+         jumpIfEqual(tape, current.argument, false);
 
          generateCodeBlock(tape, current.findSubNode(lxCode));
 
          repeatMode = false;
       }
       else if (current == lxLessN) {
-         jumpIfNotLess(tape, current.argument);
-
-         generateCodeBlock(tape, current.findSubNode(lxCode));
-
-         repeatMode = false;
-      }
-      else if (current == lxNotLessN) {
          jumpIfLess(tape, current.argument);
 
          generateCodeBlock(tape, current.findSubNode(lxCode));
 
          repeatMode = false;
       }
+      else if (current == lxNotLessN) {
+         jumpIfNotLess(tape, current.argument);
+
+         generateCodeBlock(tape, current.findSubNode(lxCode));
+
+         repeatMode = false;
+      }
       else if (current == lxGreaterN) {
-         jumpIfNotGreater(tape, current.argument);
+         jumpIfGreater(tape, current.argument);
 
          generateCodeBlock(tape, current.findSubNode(lxCode));
 
          repeatMode = false;
       }
       else if (current == lxNotGreaterN) {
-         jumpIfGreater(tape, current.argument);
+         jumpIfNotGreater(tape, current.argument);
 
          generateCodeBlock(tape, current.findSubNode(lxCode));
 

@@ -5,6 +5,7 @@ In development:
               xdev - general implementation
                  * test all samples
                  * review pi : performance
+                 * test anagram
 
               idev - generic development
                  * #263 - IDE : MTA Debugging 

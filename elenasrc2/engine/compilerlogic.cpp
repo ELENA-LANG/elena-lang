@@ -1793,28 +1793,28 @@ void CompilerLogic :: optimizeBranchingOp(_CompilerScope& scope, SNode node)
          SNode trueNode = intOpNode.findChild(ifNode == lxIf ? lxIfValue : lxElseValue);
 
          if (intOpNode.argument == EQUAL_MESSAGE_ID) {
-            if (trueNode.argument == scope.branchingInfo.trueRef) {
+            if (trueNode.argument == ifNode.argument) {
                ifNode.set(lxIfN, arg);
             }
-            else if (trueNode.argument == scope.branchingInfo.falseRef) {
+            else if (trueNode.argument != ifNode.argument) {
                ifNode.set(lxIfNotN, arg);
             }
             else return;
          }
          else if (intOpNode.argument == LESS_MESSAGE_ID) {
-            if (trueNode.argument == scope.branchingInfo.falseRef) {
+            if (trueNode.argument != ifNode.argument) {
                ifNode.set(lxLessN, arg);
             }
-            else if (trueNode.argument == scope.branchingInfo.trueRef) {
+            else if (trueNode.argument == ifNode.argument) {
                ifNode.set(lxNotLessN, arg);
             }
             else return;
          }
          else if (intOpNode.argument == GREATER_MESSAGE_ID) {
-            if (trueNode.argument == scope.branchingInfo.falseRef) {
+            if (trueNode.argument != ifNode.argument) {
                ifNode.set(lxGreaterN, arg);
             }
-            else if (trueNode.argument == scope.branchingInfo.trueRef) {
+            else if (trueNode.argument == ifNode.argument) {
                ifNode.set(lxNotGreaterN, arg);
             }
             else return;
