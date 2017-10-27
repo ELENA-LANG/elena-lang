@@ -1077,7 +1077,7 @@ sealed struct IntNumber :: IntBaseNumber
         <= and(v value).
         
     stacksafe int or(BaseVariable v)
-        <= divide(v value).
+        <= or(v value).
         
     stacksafe int xor(BaseVariable v)
         <= xor(v value).

@@ -3,9 +3,11 @@ In development:
 ------                              
 
               xdev - general implementation
+                 * dynamic var
                  * test all samples
                  * review pi : performance
                  * test anagram
+                 * arrays
 
               idev - generic development
                  * #263 - IDE : MTA Debugging 
