@@ -24,6 +24,7 @@
 #include "common.h"
 // --------------------------------------------------------------------------
 #include "altstrings.h"
+#include <math.h> 
 
 #pragma warning(disable : 4996)
 
@@ -689,7 +690,13 @@ char* Convertor :: doubleToStr(double value, int digit, char* s)
    if (value != value) {
       StrHelper::append(s, "nan", 4);
    }
-   else gcvt(value, digit, s);
+   else if (isinf(value)) {
+      if (value == -INFINITY) {
+         StrHelper::append(s, "-inf", 4);
+      }
+      else StrHelper::append(s, "+inf", 4);
+   }
+   else _gcvt(value, digit, s);
 
    return s;
 }
@@ -698,11 +705,13 @@ double strToDouble(const char* s)
 {
    // !!HOTFIX : to recognize nan
    if (strcmp(s, "nan") == 0) {
-      double t = 0;
-
-      double NAN = 0.0 / t;
-
       return NAN;
+   }
+   else if (strcmp(s, "-inf") == 0) {
+      return -INFINITY;
+   }
+   else if (strcmp(s, "+inf") == 0) {
+      return INFINITY;
    }
    else return atof(s);
 }
