@@ -3,9 +3,11 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * dynamic var
+                 * Amicable pairs
+                 * first class
                  * test all samples
                  * review pi : performance
+                 * test evolution
                  * test anagram
                  * arrays
 

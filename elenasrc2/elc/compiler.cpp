@@ -5003,7 +5003,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
       // if the method returns itself
       // HOTFIX : it should not be applied to the embeddable conversion routine
-      if(retVal.kind == okUnknown && (!test(scope.message, CONVERSION_MESSAGE) || !scope.classEmbeddable)) {
+      if(retVal.kind == okUnknown/* && (!test(scope.message, CONVERSION_MESSAGE) || !scope.classEmbeddable)*/) {
          ObjectInfo thisParam = scope.mapTerminal(THIS_VAR);
 
          // adding the code loading $self
