@@ -198,8 +198,12 @@ class ByteCodeWriter
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
    void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
 
-   void jumpIfEqual(CommandTape& tape, ref_t ref);
-   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
+   void jumpIfLess(CommandTape& tape, ref_t ref);
+   void jumpIfNotLess(CommandTape& tape, ref_t ref);
+   void jumpIfGreater(CommandTape& tape, ref_t ref);
+   void jumpIfNotGreater(CommandTape& tape, ref_t ref);
+   void jumpIfEqual(CommandTape& tape, ref_t ref, bool referenceMode);
+   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode, bool jumpToEnd = false);
 
    void throwCurrent(CommandTape& tape);
 
@@ -249,6 +253,7 @@ class ByteCodeWriter
 //   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id);
    void doIntOperation(CommandTape& tape, int operator_id, int immArg);
+   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
    void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
    void doLongOperation(CommandTape& tape, int operator_id);
    void doRealOperation(CommandTape& tape, int operator_id);
@@ -275,7 +280,7 @@ class ByteCodeWriter
 
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
 
@@ -294,17 +299,17 @@ class ByteCodeWriter
    void generateLooping(CommandTape& tape, SyntaxTree::Node node);
    void generateBranching(CommandTape& tape, SyntaxTree::Node node);
    void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
-   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
    void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
-   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
-   void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
-   void generateExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
    void generateCreating(CommandTape& tape, SyntaxTree::Node node);

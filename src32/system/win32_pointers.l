@@ -1,6 +1,6 @@
 // --- Handler ---
 
-sealed embeddable struct Handle
+sealed struct Handle
 {
     __dword& theHandle(4).
     
@@ -24,7 +24,7 @@ sealed embeddable struct Handle
 
 static rt_sync = Object new.
 
-sealed const embeddable struct RTPointer
+sealed const struct RTPointer
 {
     __dword theIndex.
     
@@ -54,7 +54,7 @@ sealed const embeddable struct RTPointer
 
 // --- UnsafePointer ---
 
-sealed embeddable struct UnsafePointer
+sealed struct UnsafePointer
 {
     __dword& thePointer(4).
 
@@ -148,7 +148,7 @@ sealed embeddable struct UnsafePointer
 
 type win_coord = system'COORD.
 
-sealed embeddable struct COORD
+sealed struct COORD
 {
     short theX.
     short theY.
@@ -193,7 +193,7 @@ sealed embeddable struct COORD
 
 type win_small_rect = system'SMALL_RECT.
                 
-sealed embeddable struct SMALL_RECT
+sealed struct SMALL_RECT
 {
     short theLeft.
     short theTop.

@@ -71,13 +71,13 @@ public:
 
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
-   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool embeddableOnly = false)
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef)
    {
       bool dummy = false;
-      return defineStructSizeVariable(scope, reference, elementRef, dummy, embeddableOnly);
+      return defineStructSizeVariable(scope, reference, elementRef, dummy);
    }
-   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable, bool embeddableOnly = false);
-   virtual int defineStructSize(ClassInfo& info, bool& variable, bool embeddableOnly);
+   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable);
+   virtual int defineStructSize(ClassInfo& info, bool& variableS);
 
    virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
 
@@ -160,6 +160,7 @@ public:
    virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope);
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node);
    virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node);
+   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node);
 
    virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected);
 

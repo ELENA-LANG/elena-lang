@@ -151,6 +151,8 @@ ELENA byte codes (or ecodes)
 
  Stack operations:
  -----------------
+ addfi i,n                  - [fp:i] <= [fp:i] + n
+
  aloadfi i                  - [fp+i] => acc
 
  aloadsi i                  - [sp+i] => acc;
@@ -222,6 +224,10 @@ ELENA byte codes (or ecodes)
  
  pushsi i                   - [sp+i] => [sp+1] ; sp++
            
+ savefi i,n                 - [fp:i] <= n
+
+ subfi i,n                  - [fp:i] <= [fp:i] - n
+
 
  Call operations:
  ----------------
@@ -248,6 +254,8 @@ ELENA byte codes (or ecodes)
  elsen n, label             - jump to the label if index != n
  
  elser r, label             - jumps to the label if acc != r
+
+ greatern n, label          - jump to the label if index > n
  
  if label                   - jump to the label if index == ext                                                   
 
@@ -269,7 +277,11 @@ ELENA byte codes (or ecodes)
 
  next label                 - index++; if index < ext, jump to the label
  
+ notgreatern n, label      - jump to the label if index <= n
+ 
  notless label              - jump to the label if index >= ext
+
+ notlessn n, label          - jump to the label if index >= n
 
  
  Object operations:
@@ -413,7 +425,9 @@ ELENA byte codes (or ecodes)
  
  lor                        - long[base] || long[acc]    (*index and ext affected)
  
- lshift                     - long[base] <<= index       (*index and ext affected)
+ lshiftl                    - long[base] <<= index       (*index and ext affected)
+ 
+ lshiftr                    - long[base] >>= index       (*index and ext affected)
  
  lsub                       - long[base] -= long[acc]
  
@@ -437,7 +451,9 @@ ELENA byte codes (or ecodes)
 
  not                        - !index => index
  
- nshift                     - int[base] <<= index
+ nshiftl                    - int[base] <<= index
+ 
+ nshiftr                    - int[base] >>= index
  
  nsub                       - int[base] -= int[acc]
  
@@ -467,7 +483,9 @@ ELENA byte codes (or ecodes)
 
  rsub                       - real[base] -= real[acc]
 
- shiftn n                   - index >> n  => index
+ shiftln n                  - index << n  => index
+ 
+ shiftrn n                  - index >> n  => index
  
  sub                        - index -= ext
 

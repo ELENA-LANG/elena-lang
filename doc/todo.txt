@@ -2,19 +2,20 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * struct fields : embeddable structures
-                 * struct fields : structures - should not be allowed
-                 * struct fields : objects - should not be allowed
-                 * declaring an array : // array<Field> fieldArray.
-                 * the following expression should generated an error : if(n test) { .... }
+              idev - generic development
+                 * #263 - IDE : MTA Debugging 
 
               ydev - upndown
                  * reimplement chat sample
-                 * uncomment onStop resource freeing code
 
               xdev - general implementation
+                 * test calc sample
+                 * test fibonacci sample
+                 * test zeckendorf_arithm 
+                 * test anagram
+                 * elt : probably better to use eson and get rid of elena script
                  * elena script : declare closure
+                 * Read-only classes should be enforced #282
                  * #283 : unboxing duplicate object 
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)
@@ -29,6 +30,12 @@ In development:
                  * typified open arg list (#369)
                  * fn3prop : embeddable option for the function with three arguments should be recognized
                  * NilReferenceException, AccessViolationException, DivisionByZeroException should be recognized
+                 * the following expression should generated an error : if(n test) { .... }
+                 * method returning a constant #381
+                 * ByteNumber.get&min - could we return the constant object?
+                 * constant numbers / strings should be used directly?? (e.g. replace a constant with its value)
+                 * Constant fields #351
+                 * print nan value
                  * fixing open issues
 
               zdev - live programming
@@ -101,6 +108,16 @@ Pipeline:
                  * optimize multimethod implementation for sealed class containing only one overload class
                  * external function : duplicate assigning
                  * do not allocate a virtual vmt (for the object initilizer code)
+                 * direct and, or, xor, shift, mul, div, equal, less
+                 * get rid of acopyb after each operation
+                 * optimize n + m * k
+                 * optimize n + 1
+                 * optimize n + m * 2
+                 * optimize int n := 3 + 2.
+                 * Assigning stack allocated real number with integer constant #360
+                 * support #var(real)r := 2. // assigning int to real by constant
+                 * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
+                 * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
 
               zdev - remoting
               zdev - workflow
@@ -121,7 +138,6 @@ Pipeline:
               xdev - general implementation
                  * declaring varof:type, before declaring type class
                  * declaring varof:struct - is not correctly recognized if declared before the struct
-                 * use intOp for assigning a constant
                  * support sealed accumulator constants
                  * warn on method duplications in the template
                  * warn on field duplications in the template
@@ -132,8 +148,6 @@ Pipeline:
                  * elenart : correctly display strong typed message names
                  * elenavm : correctly display strong typed message names
                  * Signature should support only get, set, eval
-                 * nshift should be replaced with nshiftl, nshiftr
-                 * optimize shift implementation
                  * #269 : short-circuit boolean operation
                  * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
                    (e.g. vhdc), it should be declared when it is used
@@ -346,7 +360,6 @@ Pipeline:
                        * #14 : switch to xml config files (.xprj project)
 
                        * show internal errors in message list
-                       * #263 - IDE : MTA Debugging 
                        * refactor IDEController::ProjectManager - get rid of duplicate code
 
                        * vertical scroller does not work correctly
@@ -393,7 +406,6 @@ Pipeline:
                        * check template type before applying (i.e. method template should be declared only for the method declaration)
 
                        * array of long
-                       * support #var(real)r := 2. // assigning int to real by constant
 
                        * singleton template : make sure it is not possible to declare fields for them??
 
@@ -449,7 +461,6 @@ Pipeline:
                        * probably any stand-alone external cal should be declared in implicit extern block. If the operation
                          does not affect GC, a special hint should be used to skip external block declaration
                        * #238 : Manifest - store the manifest info into the resource
-                       * ByteNumber.get&min - could we return the constant object?
                        * support abstract attribute                       
                        * probably we could get rid of conditional branching? (what about unboxing?)
                        * MemoryMap, MemoryHashTable are not compatible with amd64 ; they should be retired and replaced
@@ -570,7 +581,6 @@ Pipeline:
                        * cast should be called directly, make sure it is always after dispatch
                        * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
                        * review graph sample, get rid of warnings
-                       * constant symbols should be used directly
                        * should be possible to implement :     #constructor newCompatible &hdc:aCompatible <= new &hdc:(system'external'GDI32 CreateCompatibleDC &hdc:aCompatible).
                        * refactoring : declareParameterDebugInfo - use debug hint flags
                        * refactoring : do we need to use paramsReference ditectly??
@@ -612,7 +622,6 @@ Pipeline:
                        * optimize primitive operator implementations                       
                        * review / optimize SDIApplication.start
                        * call to $super should be direct
-                       * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
 
                        * optimize ByteCodeWriter::copyStructure                       
 
@@ -632,7 +641,6 @@ Pipeline:
                        * optimize sort method : use typified lamda expression
                        * review ArgArray operations : should it be optimized
                        * optimize BaseFunctionN retrieve operations                       
-                       * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
                        * optimize : LiteralValue#class.eval&system$new...
                        * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
                        * use imm mode for (n) => 1 ? [ now literal. ]

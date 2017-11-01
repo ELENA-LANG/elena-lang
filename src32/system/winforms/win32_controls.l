@@ -8,7 +8,7 @@ const wide ComboboxClass = "Combobox"w.
 
 // --- WindowHandle ---
 
-sealed const embeddable struct WindowHandle
+sealed const struct WindowHandle
 {
     __dword& theHandle(4).
     
@@ -172,7 +172,7 @@ sealed const embeddable struct WindowHandle
 
 // --- PAINTSTRUCT ---
 
-sealed embeddable struct PAINTSTRUCT
+sealed struct PAINTSTRUCT
 {
     hdc      theHDC.
     int      theErase.

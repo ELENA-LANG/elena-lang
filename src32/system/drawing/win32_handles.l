@@ -16,7 +16,7 @@ const int LR_LOADFROMFILE  = 0010h.
 
 // --- RECT ---
 
-sealed embeddable struct RECT
+sealed struct RECT
 {
     int       theLeft.
     int       theTop.
@@ -99,7 +99,7 @@ sealed embeddable struct RECT
 
 // --- HDC ---
 
-sealed embeddable const struct HDC
+sealed const struct HDC
 {
     __dword& theHandle(4).
 
@@ -177,7 +177,7 @@ sealed embeddable const struct HDC
 
 // --- HBITMAP ---
 
-sealed const embeddable struct HBITMAP
+sealed const struct HBITMAP
 {
     __dword& theHandle(4).
 
@@ -218,7 +218,7 @@ sealed const embeddable struct HBITMAP
 
 // --- HPEN ---
 
-sealed const embeddable struct HPEN
+sealed const struct HPEN
 {
     __dword& theHandle(4).
     
@@ -242,7 +242,7 @@ sealed const embeddable struct HPEN
 
 // --- HBRUSH ---
 
-sealed const embeddable struct HBRUSH
+sealed const struct HBRUSH
 {
     __dword& theHandle(4).
 

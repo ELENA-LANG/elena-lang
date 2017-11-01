@@ -440,7 +440,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcELoadSI:
          case bcESaveSI:
          case bcESaveFI:
-         case bcShiftN:
+         case bcShiftLN:
+         case bcShiftRN:
          case bcEAddN:
          case bcDSwapSI:
          case bcAJumpI:
@@ -481,6 +482,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcIfN:
          case bcElseN:
          case bcLessN:
+         case bcNotLessN:
+         case bcGreaterN:
+         case bcNotGreaterN:
             compileNJump(opcode, token, writer, info);
             break;
          case bcIfR:

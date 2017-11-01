@@ -24,6 +24,7 @@
 #include "common.h"
 // --------------------------------------------------------------------------
 #include "altstrings.h"
+#include <math.h> 
 
 #pragma warning(disable : 4996)
 
@@ -685,14 +686,34 @@ long long strToLongLong(const char* s, int radix)
 
 char* Convertor :: doubleToStr(double value, int digit, char* s)
 {
-   gcvt(value, digit, s);
+   // !!HOTFIX : to recognize nan
+   if (value != value) {
+      StrHelper::append(s, "nan", 4);
+   }
+   else if (isinf(value)) {
+      if (value == -INFINITY) {
+         StrHelper::append(s, "-inf", 4);
+      }
+      else StrHelper::append(s, "+inf", 4);
+   }
+   else _gcvt(value, digit, s);
 
    return s;
 }
 
 double strToDouble(const char* s)
 {
-   return atof(s);
+   // !!HOTFIX : to recognize nan
+   if (strcmp(s, "nan") == 0) {
+      return NAN;
+   }
+   else if (strcmp(s, "-inf") == 0) {
+      return -INFINITY;
+   }
+   else if (strcmp(s, "+inf") == 0) {
+      return INFINITY;
+   }
+   else return atof(s);
 }
 
 //void StringHelper :: trim(char* s, char ch)

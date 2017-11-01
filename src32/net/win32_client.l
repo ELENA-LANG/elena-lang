@@ -43,10 +43,9 @@ sealed class TcpClient
     connect ip:anAddress port:aPort
     [
         //resolve server address and port
-        addrinfo addrinfo := 0.
+        addrinfo addrinfo := AddrInfo new.
         
         // set address info
-        addrinfo clear.
         addrinfo setFamily int:AF_UNSPEC.
         addrinfo setSocketType int:SOCK_STREAM.
         addrinfo setProtocol int:IPPROTO_TCP.
@@ -144,7 +143,7 @@ sealed class TcpClient
         int received := 0.
         try(theSocket read bytearray:theBuffer int:theMaxLength int:0 vint:received)
         {
-            SocketError:e
+            on(SocketException e)
             [
                 $self onError:e.
             ]

@@ -1,81 +1,80 @@
-#import system.
-#import system'routines.
-#import system'text.
-#import system'io.
-#import system'threading.
-#import extensions.
-#import extensions'dynamic.
-#import net.
+import system'routines.
+import system'text.
+import system'io.
+import system'threading.
+import extensions.
+import extensions'dynamic.
+import net.
 
-#subject chatter = ChatMember.
+type chatter = ChatMember.
 
-#class(sealed) ChatMember :: BaseClient
+sealed class ChatMember :: BaseClient
 {
-    #field(tcp_remoteclient) theOwner.
-    #field theServer.
+    tcp_remoteclient theOwner.
+    object           theServer.
     
-    #field(prop:Name) theName.
+    literal prop Name :: theName.
 
-    #constructor new : owner &of:server
-        <= (new)
+    constructor new:owner of:server
+        <= new;
     [
         theOwner := owner tcp_remoteclient.
         
         theServer := server.
     ]    
     
-    #method server = theServer.
+    server = theServer.
     
-    #method chatter = $self.
+    chatter = $self.
 }
 
-#class ChatServer
+class ChatServer
 {
-    #field theLock.
+    object     theLock.
     
-    #field(tcp_server)theNetworkServer.
-    #field(thread)theBroadcastThread.
+    tcp_server theNetworkServer.
+    thread     theBroadcastThread.
     
-    #constructor new &port:port
+    constructor new port:port
     [
         theLock := Object new.
         
-        theNetworkServer := TcpServer new &port:port.
+        theNetworkServer := TcpServer new port:port.
         
-        theNetworkServer set &blocking:false.
+        theNetworkServer blocking := false.
     ]
     
-    #method translate : command
+    translate : command
     [
-        #var(literal)json := command toJson literal.
+        literal json := command toJson; literal.
         
-        theNetworkServer sendAll &int:(json length) sendAll &literal:json.
+        theNetworkServer sendAll int(json length); sendAll literal:json.
     ]
     
-    #method proceed
+    proceed
     [
-        theNetworkServer run &eachConnection:client
+        theNetworkServer run eachConnection(:client)
         [
-            #lock (theLock)
+            lock (theLock)
             [
-                #var member := client Parameter.
-                ($nil != member)? 
+                var member := client Parameter.
+                if($nil != member)
                 [
-                    #var command := member readCommand.
-                    ($nil != command)
-                        ? [
+                    var command := member readCommand.
+                    if ($nil != command)
+                        [
                             (command Command) =>
-                                INTRODUCTION ? 
+                                INTRODUCTION
                                 [
-                                    member set &Name:(command Value).
+                                    member Name := command Value.
                                     
-                                    console writeLine:(command Value):" joined".
-                                ]
-                                SEND ?
+                                    console printLine(command Value," joined").
+                                ];
+                                SEND
                                 [
-                                    console writeLine:(member Name):":":(command Value).
+                                    console printLine(member Name,":",command Value).
                                     
-                                    member server translate:DTO { Command = TRANSLATE. Value = command Value. User = member Name. }.
+                                    member server; translate:{ Command = TRANSLATE. Value = command Value. User = member Name. }.
                                 ].
                         ].                
                 ].
@@ -85,50 +84,50 @@
         ^ true.
     ]
     
-    #method start
+    start
     [
-        theNetworkServer set &tcp_server_listener:TcpServerListener
+        theNetworkServer set tcp_server_listener:TcpServerListener::
         {
             onConnect:client
             [
-                #lock (theLock)
+                lock (theLock)
                 [
                     console writeLine:"new client joint".
                 
-                    client set &Parameter:(ChatMember new:client &of:$owner).
+                    client set Parameter(ChatMember new:client of:$owner).
                 ].                    
             ]
             
             onLeave:client
             [
-                #lock (theLock)
+                lock (theLock)
                 [
                     console writeLine:"client left".
                 ].
             ]
             
-            onError:e &for:client
+            onError:e for:client
             [
-                #lock (theLock)
+                lock (theLock)
                 [
-                    console writeLine:"exception #":(e error_code).
+                    console printLine("exception #",e error_code).
                 ].
             ]
             
-            onReceived:client &bytearray:buffer &int:length 
+            onReceived object:client bytearray:buffer int:length 
             [
-                #lock (theLock)
+                lock (theLock)
                 [
-                    client Parameter chatter write &bytearray:buffer &int:length.
+                    client Parameter; chatter; write bytearray:buffer int:length.
                 ].                
             ]
         }.
         
         theNetworkServer start.
         
-        theBroadcastThread := Thread new &func:
+        theBroadcastThread := Thread new func:
         [
-            #loop $self proceed.
+            while($self proceed) [].
         ].
         
         theBroadcastThread start.

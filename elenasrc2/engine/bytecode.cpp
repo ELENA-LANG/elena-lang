@@ -27,16 +27,16 @@ const char* _fnOpcodes[256] =
    "check", "acallvd", "validate", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
-   "nload", "dcopyr", "nand", "nor", "nxor", "nshift", "nnot", "ncreate",
+   "nload", "dcopyr", "nand", "nor", "nxor", "nshiftl", "nnot", "ncreate",
 
-   "ncopyb", "lcopyb", "copyb", "nloade", "unknown", "unknown", "unknown", "unknown",
+   "ncopyb", "lcopyb", "copyb", "nloade", "nshiftr", "unknown", "unknown", "unknown",
    "unknown", "wread", "wwrite", "nread", "nwrite", "unknown", "unknown", "wcreate",
 
    "breadw", "bread", "unknown", "unknown", "unknown", "breadb", "rsin", "rcos",
    "rarctan", "bwrite", "unknown", "unknown", "bwriteb", "bwritew", "unknown", "bcreate",
 
    "lcopy", "unknown", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
-   "land", "lor", "lxor", "lshift", "lnot", "unknown", "unknown", "unknown",
+   "land", "lor", "lxor", "lshiftl", "lnot", "lshiftr", "unknown", "unknown",
 
    "rcopy", "unknown", "rsave", "requal", "rless", "radd", "rsub", "rmul",
    "rdiv", "unknown", "rexp", "rln", "rabs", "rround", "rint", "rload",
@@ -53,11 +53,11 @@ const char* _fnOpcodes[256] =
    "asavebi", "nwritei", "aswapsi", "asavesi", "asavefi", "bswapsi", "eswapsi", "dswapsi",
    "bloadfi", "bloadsi", "nloadi", "nsavei", "asaver", "aloadai", "aloadbi", "axsavebi",
 
-   "popi", "nreadi", "scopyf", "setverb", "unknown", "andn", "addn", "orn",
-   "eaddn", "shiftn", "muln", "divn", "bloadr", "init", "mtredirect", "xmtredirect",
+   "popi", "nreadi", "scopyf", "setverb", "shiftln", "andn", "addn", "orn",
+   "eaddn", "shiftrn", "muln", "divn", "bloadr", "init", "mtredirect", "xmtredirect",
 
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
-   "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
+   "unknown", "unknown", "greatern", "notgreatern", "notlessn", "subfi", "addfi", "savefi",
 
    "new", "newn", "unknown", "xselectr", "xindexrm", "xjumprm", "selectr", "lessn",
    "ifm", "elsem", "ifr", "elser", "ifn", "elsen", "xcallrm", "unknown"
@@ -337,6 +337,9 @@ inline bool removeIdleJump(ByteCodeIterator it)
          case bcIfN:
          case bcElseN:
          case bcLessN:
+         case bcNotLessN:
+         case bcGreaterN:
+         case bcNotGreaterN:
          case bcIfM:
          case bcElseM:
          case bcNext:
@@ -414,6 +417,9 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcIfN:
             case bcElseN:              
             case bcLessN:
+            case bcNotLessN:
+            case bcGreaterN:
+            case bcNotGreaterN:
             case bcIfM:
             case bcElseM:              
             case bcNext:

@@ -1858,7 +1858,7 @@ procedure __shortarray."write$system@IntNumber$system@ShortNumber[3]"
   aloadsi 3
   nload
   eswap
-  shiftn -1
+  shiftln 1
   bwritew
   quitn 3
 
@@ -1882,7 +1882,7 @@ procedure __shortarray."read$system@IntNumber$@system@var#1&ShortNumber[3]"
   lessn   labErr 0
 
   acopyb
-  shiftn -1
+  shiftln 1
   breadw
   bloadsi 3
   dcopye
@@ -2026,7 +2026,7 @@ procedure __realarray."read$system@IntNumber$system@IntNumber$system@RealArray[4
   aloadsi 1
   bcopya
   blen
-  shiftn 3
+  shiftrn 3
   ecopyd  
   aloadsi 2
   nload
@@ -2038,14 +2038,14 @@ procedure __realarray."read$system@IntNumber$system@IntNumber$system@RealArray[4
   lessn   labErr 0
   add
   blen
-  shiftn 3
+  shiftrn 3
   less labErr
  
   aloadsi 3
   nload
-  shiftn -1
+  shiftln 1
   eswap
-  shiftn -1
+  shiftln 1
 
   acopyb
   bloadsi 4
@@ -2074,14 +2074,14 @@ procedure __realarray."write$system@IntNumber$system@IntNumber$system@RealArray[
   ecopyd
   acopyb
   blen
-  shiftn 3
+  shiftrn 3
   less labErr
   popd
-  shiftn -1
+  shiftln 1
   ecopyd
   aloadsi 2
   nload
-  shiftn -1
+  shiftln 1
   aloadsi 4
   callextr api : ninsert
   quitn 4
@@ -2099,14 +2099,14 @@ procedure __realarray."read$system@IntNumber$@system@var#1&RealNumber[3]"
 
   bcopya
   blen
-  shiftn 3 
+  shiftrn 3 
   ecopyd  
   aloadsi 2
   nload
   notless labErr
   lessn   labErr 0
  
-  shiftn -1
+  shiftln 1
   acopyb
   bloadsi 3
   nread
@@ -2651,7 +2651,7 @@ procedure __literal."new$system@IntNumber$system@CharValue[3]"
 
   aloadsi 6
   nload
-  shiftn -2
+  shiftln 2
   pushd
   inc
   aloadsi 4
@@ -2694,7 +2694,7 @@ labNext1:
 lab2:
   aloadsi 6
   nload
-  shiftn -1
+  shiftln 1
   pushd
   inc
   aloadsi 4
@@ -2895,7 +2895,7 @@ procedure __wide."read$system@IntNumber$@system@var#1&ShortNumber[3]"
   lessn   labErr 0
 
   acopyb
-  shiftn -1
+  shiftln 1
   breadw
   bloadsi 3
   dcopye
@@ -3112,7 +3112,7 @@ procedure __wide."new$system@IntNumber$system@IntNumber$system@CharArray[4]"
   wlen
   ecopy 0
   dec
-  shiftn -1
+  shiftln 1
   bwritew
   quitn 4
   
@@ -3155,7 +3155,7 @@ procedure __wide."new$system@IntNumber$system@CharValue[3]"
 
   aloadsi 6
   nload
-  shiftn -1
+  shiftln 1
   pushd
   inc
   aloadsi 4
@@ -3163,7 +3163,7 @@ procedure __wide."new$system@IntNumber$system@CharValue[3]"
 
   bcopya
   popd
-  shiftn -1
+  shiftln 1
   ecopyd
   dcopy 0
 
@@ -3185,7 +3185,7 @@ labFill:
 
   bcopya
   popd
-  shiftn -1
+  shiftln 1
   ecopyd
   dcopy 0
 
@@ -4087,11 +4087,11 @@ procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$system@Short
 
   aloadsi 3
   nload
-  shiftn -1
+  shiftln 1
   ecopyd
   aloadsi 2
   nload
-  shiftn -1
+  shiftln 1
   aloadsi 4
   bloadsi 5
   

@@ -2,7 +2,7 @@ const int INFINITE = 0FFFFFFFFh.
 
 // --- ThreadHandle ---
 
-sealed embeddable struct ThreadHandle
+sealed struct ThreadHandle
 {
     int    theHandle.
     rt_ptr theActionPtr.

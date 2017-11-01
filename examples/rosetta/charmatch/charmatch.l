@@ -1,5 +1,5 @@
-#import system'routines.
-#import extensions.
+import system'routines.
+import extensions.
 
 // --- Program ---
 
@@ -9,17 +9,17 @@ program =
     
     (s startingWith:"hel") ?
     [
-        console writeLine:s:" starts with hel".
+        console printLine(s," starts with hel").
     ].
     
     (s endingWith:"llo") ?
     [
-        console writeLine:s:" ends with llo".
+        console printLine(s," ends with llo").
     ].
 
     (s containing:"hello") ?
     [
-        console writeLine:s:" contains el".
+        console printLine(s," contains el").
     ].
     
     console readChar.

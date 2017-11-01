@@ -1,14 +1,12 @@
-#import system.
-
-#symbol(const,int)DEFAULT_PORT = 6881.
+const int DEFAULT_PORT = 6881.
 
 // --- progrma ---
 
-#symbol program =
+program =
 [
     console writeLine:"ELENA Chat Server".
     
-    #var server := ChatServer new &port:DEFAULT_PORT.
+    var server := ChatServer new port:DEFAULT_PORT.
     
     server start.
     

@@ -1,6 +1,6 @@
 // --- AddrInfo ---
 
-sealed embeddable struct AddrInfo
+sealed struct AddrInfo
 {
     int       ai_flags.
     int       ai_family.
@@ -10,6 +10,11 @@ sealed embeddable struct AddrInfo
     dirty_ptr ai_canonname.
     dirty_ptr ai_addr.
     dirty_ptr ai_next.
+    
+    embeddable stacksafe constructor new
+    [
+        $self clear.
+    ]
     
     stacksafe setFlags int:aValue
     [
@@ -90,12 +95,12 @@ sealed embeddable struct AddrInfo
 
 type addr_reader = AddrInfoReader.
 
-sealed embeddable struct AddrInfoReader
+sealed struct AddrInfoReader
 {
     dirty_ptr paddrinfo.
     dirty_ptr prootinfo.
     
-    stacksafe implicit dirty_ptr:addr
+    stacksafe explicit dirty_ptr:addr
     [
         paddrinfo := addr.
         prootinfo := addr.
@@ -107,8 +112,8 @@ sealed embeddable struct AddrInfoReader
         prootinfo := addr.
     ]
     
-    bool stacksafe Available
-        = paddrinfo isempty; not.
+    bool stacksafe available
+        = paddrinfo isEmpty; not.
     
     stacksafe next
     [
@@ -137,7 +142,7 @@ sealed embeddable struct AddrInfoReader
 
 // --- Socket ---
 
-sealed const embeddable struct Socket
+sealed const struct Socket
 {
     __dword& theHandle(4).
     

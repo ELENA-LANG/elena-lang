@@ -29,7 +29,7 @@ class $systemTimeFactory =
     ]
 }.
 
-sealed const embeddable struct SystemTime :: BaseValue
+sealed const struct SystemTime :: BaseValue
 {
     __int& theValue(8).
 
@@ -78,7 +78,7 @@ sealed const embeddable struct SystemTime :: BaseValue
 
 // --- TimeStruct ---
 
-sealed embeddable struct TimeStruct
+sealed struct TimeStruct
 {
     short theYear.
     short theMonth.

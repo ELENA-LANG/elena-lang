@@ -56,7 +56,7 @@ sealed class TcpServer
 {
     socket     theListenSocket.
     array_list theClients.
-    type<ThreadHandle> theListenThread.
+    thread     theListenThread.
     bytearray  theBuffer.
     int        theMaxLength.
     
@@ -76,10 +76,9 @@ sealed class TcpServer
         WSAStartUp22.
         
         //resolve server address and port
-        addrinfo addrinfo := 0.
+        addrinfo addrinfo := AddrInfo new.
         
         // set address info
-        addrinfo clear.
         addrinfo setFamily int:AF_INET.
         addrinfo setSocketType int:SOCK_STREAM.
         addrinfo setProtocol int:IPPROTO_TCP.
@@ -186,7 +185,7 @@ sealed class TcpServer
             int              received := 0.
             try(client read bytearray:theBuffer int:theMaxLength vint:received)
             {
-                on(SocketError e)
+                on(SocketException e)
                 [
                     $self onError:e for:client.
                 ]                

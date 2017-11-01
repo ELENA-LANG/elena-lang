@@ -1498,6 +1498,67 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
+bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVal)
+{
+   switch (operation_id)
+   {
+      case ADD_MESSAGE_ID:
+         retVal = arg1 + arg2;
+         break;
+      case SUB_MESSAGE_ID:
+         retVal = arg1 - arg2;
+         break;
+      case MUL_MESSAGE_ID:
+         retVal = arg1 * arg2;
+         break;
+      case DIV_MESSAGE_ID:
+         retVal = arg1 / arg2;
+         break;
+      case AND_MESSAGE_ID:
+         retVal = arg1 & arg2;
+         break;
+      case OR_MESSAGE_ID:
+         retVal = arg1 | arg2;
+         break;
+      case XOR_MESSAGE_ID:
+         retVal = arg1 ^ arg2;
+         break;
+      case READ_MESSAGE_ID:
+         retVal = arg1 >> arg2;
+         break;
+      case WRITE_MESSAGE_ID:
+         retVal = arg1 << arg2;
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
+
+bool Compiler :: calculateRealOp(int operation_id, double arg1, double arg2, double& retVal)
+{
+   switch (operation_id)
+   {
+      case ADD_MESSAGE_ID:
+         retVal = arg1 + arg2;
+         break;
+      case SUB_MESSAGE_ID:
+         retVal = arg1 - arg2;
+         break;
+      case MUL_MESSAGE_ID:
+         retVal = arg1 * arg2;
+         break;
+      case DIV_MESSAGE_ID:
+         retVal = arg1 / arg2;
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
+
 pos_t Compiler :: saveSourcePath(ModuleScope&, ident_t path)
 {
    return _writer.writeString(path);
@@ -2038,7 +2099,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
          scope.raiseError(errUnknownVariableType, terminal);
 
       if (variable.extraparam == V_BINARYARRAY && variable.element != 0) {
-         localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0, true);
+         localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
       }
 
       if (_logic->isEmbeddableArray(localInfo) && size != 0) {
@@ -2237,7 +2298,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          if (!test(mode, HINT_NOBOXING) || test(mode, HINT_DYNAMIC_OBJECT)) {
 
             bool variable = false;
-            int size = _logic->defineStructSizeVariable(*scope.moduleScope, resolveObjectReference(scope, object), 0u, variable);
+            int size = _logic->defineStructSizeVariable(*scope.moduleScope, resolveObjectReference(scope, object), object.element, variable);
             if (size < 0 && type == lxFieldAddress) {
                // if it is fixed-size array
                size = defineFieldSize(scope, object.param) * (-size);
@@ -2814,19 +2875,6 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
 
    //bool assignMode = false;
    if (operationType != 0) {
-      //if (loperand.kind == okField || loperand.kind == okOuter) {
-         //if (assignMode) {
-         //   // once again resolve the primitive operator
-         //   operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
-
-         //   if (loperand.kind == okOuter) {
-         //      InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
-
-         //      if (!closure->markAsPresaved(loperand))
-         //         scope.raiseError(errInvalidOperation, node);
-         //   }
-         //}
-      //}
       // if it is a primitive operation
       _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.element);
 
@@ -2834,14 +2882,6 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    }
    // if not , replace with appropriate method call
    else retVal = compileMessage(writer, node, scope, loperand, encodeMessage(operator_id, paramCount), HINT_NODEBUGINFO);
-
-   //if (assignMode) {
-   //   if (loperand.kind == okField || loperand.kind == okOuter) {
-   //      writer.insertChild(0, lxField, loperand.param);
-   //   }
-   //   writer.insert(lxAssigning);
-   //   writer.closeNode();
-   //}
 
    return retVal;
 }
@@ -4354,8 +4394,7 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
             scope.raiseError(errDuplicatedLocal, arg);
 
          int index = 1 + scope.parameters.Count();
-         int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
-            class_ref, 0, true) : 0;
+         int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, class_ref, 0) : 0;
 
          scope.parameters.add(name, Parameter(index, class_ref, size));
 
@@ -4482,7 +4521,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
       // if it is typified argument
       if (verbRef) {
-         int size = _logic->defineStructSize(*scope.moduleScope, verbRef, 0, true);
+         int size = _logic->defineStructSize(*scope.moduleScope, verbRef, 0);
 
          scope.parameters.add(terminal, Parameter(index, verbRef, size));
          verbRef = 0;
@@ -4539,8 +4578,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             if (paramCount >= OPEN_ARG_COUNT)
                scope.raiseError(errTooManyParameters, verb);
 
-            int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope,
-               class_ref, 0, true) : 0;
+            int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, class_ref, 0) : 0;
 
             scope.parameters.add(name, Parameter(index, class_ref, size));
 
@@ -4965,7 +5003,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
       // if the method returns itself
       // HOTFIX : it should not be applied to the embeddable conversion routine
-      if(retVal.kind == okUnknown && (!test(scope.message, CONVERSION_MESSAGE) || !scope.classEmbeddable)) {
+      if(retVal.kind == okUnknown/* && (!test(scope.message, CONVERSION_MESSAGE) || !scope.classEmbeddable)*/) {
          ObjectInfo thisParam = scope.mapTerminal(THIS_VAR);
 
          // adding the code loading $self
@@ -6172,9 +6210,6 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
          writer.closeNode();
       }
       else if (size > 0) {
-         retVal.kind = okObject;
-         retVal.param = targetRef;
-
          writer.appendNode(lxTarget, targetRef);
          writer.insert(lxCreatingStruct, size);
          writer.closeNode();
@@ -6182,11 +6217,32 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
          writer.insert(lxAssigning, size);
          writer.closeNode();
       }
+      
+      switch (targetRef) {
+         case V_INT32:
+            targetRef = scope.moduleScope->intReference;
+            break;
+         case V_INT64:
+            targetRef = scope.moduleScope->longReference;
+            break;
+         case V_REAL64:
+            targetRef = scope.moduleScope->realReference;
+            break;
+         case V_SIGNATURE:
+            targetRef = scope.moduleScope->signatureReference;
+            break;
+         case V_MESSAGE:
+            targetRef = scope.moduleScope->messageReference;
+            break;
+      }
 
       writer.appendNode(lxTarget, targetRef);
       writer.appendNode(lxBoxableAttr);
-      writer.insert(lxBoxing, size);
+      writer.insert(lxBoxing,  size);
       writer.closeNode();
+
+      retVal.kind = okObject;
+      retVal.param = targetRef;
 
       return retVal;
    }
@@ -6262,9 +6318,14 @@ ref_t Compiler :: optimizeNestedExpression(SNode node, ModuleScope& scope, Warni
                   constant = false;
 
                break;
+            case lxUnboxing:
+               current = lxOuterMember;
+               optimizeBoxing(object, scope, warningScope, HINT_NOUNBOXING);
+               constant = false;
+               break;
             default:
                constant = false;
-               optimizeExpression(current, scope, warningScope);
+               optimizeExpressionTree(current, scope, warningScope);
                break;
          }
          memberCounter++;
@@ -6356,9 +6417,14 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
             SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxLongOp, lxIntArrOp, lxByteArrOp, lxShortArrOp);
             if (operationNode != lxNone) {
                SNode larg = operationNode.findSubNodeMask(lxObjectMask);
+               SNode rarg = operationNode.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
                SNode target = node.firstChild(lxObjectMask);
+               if (rarg.type == targetNode.type && rarg.argument == targetNode.argument) {
+                  // if the target is used in the subexpression rvalue
+                  // do nothing
+               }
                // if it is an operation with the same target
-               if (larg.type == target.type && larg.argument == target.argument) {
+               else if (larg.type == target.type && larg.argument == target.argument) {
                   // remove an extra assignment
                   larg = subNode.findSubNodeMask(lxObjectMask);
 
@@ -6366,12 +6432,26 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
                   larg.setArgument(target.argument);
                   node = lxExpression;
                   target = lxIdle;
+
+                  // replace add / subtract with append / reduce and remove an assignment
+                  switch (operationNode.argument) {
+                     case ADD_MESSAGE_ID:
+                        operationNode.setArgument(APPEND_MESSAGE_ID);
+                        subNode = lxExpression;
+                        larg = lxIdle;
+                        break;
+                     case SUB_MESSAGE_ID:
+                        operationNode.setArgument(REDUCE_MESSAGE_ID);
+                        subNode = lxExpression;
+                        larg = lxIdle;
+                        break;
+                  }
                }
                // if it is an operation with an extra temporal variable
                else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
                   larg = subNode.findSubNodeMask(lxObjectMask);
 
-                  if (larg.type == targetNode.type && larg.argument == targetNode.argument) {
+                  if ((larg.type == targetNode.type && larg.argument == targetNode.argument) || (tempAttr && subNode.argument == node.argument && larg == lxLocalAddress)) {
                      // remove an extra assignment
                      subNode = lxExpression;
                      larg = lxIdle;
@@ -6554,6 +6634,36 @@ ref_t Compiler :: optimizeOp(SNode current, ModuleScope& scope, WarningScope& wa
    if (roperand2 != lxNone)
       optimizeExpression(roperand2, scope, warningScope, HINT_NOBOXING);
 
+   if (current == lxIntOp && loperand == lxConstantInt && roperand == lxConstantInt) {
+      int val = 0;
+      if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
+         loperand = lxIdle;
+         roperand = lxIdle;
+
+         IdentifierString str;
+         str.appendHex(val);
+         current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
+         current.appendNode(lxIntValue, val);
+
+         return V_INT32;
+      }
+   }
+   else if (current == lxRealOp && loperand == lxConstantReal && roperand == lxConstantReal) {
+      double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
+      double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
+      double val = 0;
+      if (calculateRealOp(current.argument, d1, d2, val)) {
+         loperand = lxIdle;
+         roperand = lxIdle;
+
+         IdentifierString str;
+         str.appendDouble(val);
+         current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
+
+         return V_REAL64;
+      }
+   }
+
    switch (current) {
       case lxIntOp:
       case lxByteArrOp:
@@ -6630,18 +6740,27 @@ ref_t Compiler :: optimizeExpression(SNode current, ModuleScope& scope, WarningS
    }
 }
 
+void Compiler :: optimizeBranching(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
+{
+   optimizeExpressionTree(node, scope, warningScope, mode);
+
+   _logic->optimizeBranchingOp(scope, node);
+}
+
 void Compiler :: optimizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-         case lxLooping:
          case lxElse:
          case lxCode:
          case lxIf:
          case lxExternFrame:
-         case lxBranching:
             optimizeExpressionTree(current, scope, warningScope);
+            break;
+         case lxBranching:
+         case lxLooping:
+            optimizeBranching(current, scope, warningScope);
             break;
          default:
             if (test(current.type, lxObjectMask)) {

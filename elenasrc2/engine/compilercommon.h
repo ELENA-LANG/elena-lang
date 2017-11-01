@@ -66,7 +66,6 @@
 #define V_VARIABLE       (ref_t)-16385
 #define V_CLASS          (ref_t)-16386
 #define V_CONVERSION     (ref_t)-16387
-////#define V_EMBEDDABLETMPL (ref_t)-16388
 #define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
@@ -251,9 +250,9 @@ public:
    // retrieve the class info / size
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 
-   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable, bool embeddableOnly = false) = 0;
-   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool embeddableOnly = false) = 0;
-   virtual int defineStructSize(ClassInfo& info, bool& variable, bool embeddableOnly = false) = 0;
+   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef) = 0;
+   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
 
    virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
 
@@ -331,6 +330,7 @@ public:
 
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
+   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node) = 0;
 
    virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node) = 0;
 };

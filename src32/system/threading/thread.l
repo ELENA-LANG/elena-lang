@@ -1,5 +1,7 @@
 // --- Thread ---
 
+type thread = Thread.
+
 class Thread
 {
     object theHandle.

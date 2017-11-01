@@ -111,11 +111,9 @@ EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, char* buffer, int maxLen
       return 0;
 
    try {
-      size_t subj_id;
-      int param_count;
-      decodeMessage((size_t)subjectRef, subj_id, param_count);
+      size_t subj_id = (size_t)subjectRef;
 
-      ident_t subjectName = instance->getSubject((ref_t)subj_id);
+      ident_t subjectName = instance->getSubject(subj_id);
       size_t length = getlength(subjectName);
       if (length > 0) {
          if (maxLength >= (int)length) {

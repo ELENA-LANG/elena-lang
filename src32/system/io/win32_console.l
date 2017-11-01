@@ -4,7 +4,7 @@ type console_screen_buffer_info = CONSOLE_SCREEN_BUFFER_INFO.
 
 const int FILE_TYPE_CHAR = 2.
 
-embeddable sealed struct CONSOLE_SCREEN_BUFFER_INFO
+sealed struct CONSOLE_SCREEN_BUFFER_INFO
 {
     win_coord      dwSize.    
     win_coord      dwCursorPosition.    
@@ -138,7 +138,7 @@ sealed struct $ConsoleWriter
 
 // --- $FileWriter ---
 
-sealed embeddable class $FileWriter
+sealed class $FileWriter
 {
     handle theHandle.
 
@@ -223,7 +223,7 @@ sealed embeddable class $FileWriter
 
 // --- ConsoleReader ---
 
-sealed embeddable struct $ConsoleReader
+sealed struct $ConsoleReader
 {
     handle theHandle.
     

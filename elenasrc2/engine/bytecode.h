@@ -90,7 +90,7 @@ enum ByteCode
    bcNAnd            = 0x4A,
    bcNOr             = 0x4B,
    bcNXor            = 0x4C,
-   bcNShift          = 0x4D,
+   bcNShiftL         = 0x4D,
    bcNNot            = 0x4E,
    bcNCreate         = 0x4F,
 
@@ -98,6 +98,7 @@ enum ByteCode
    bcLCopyB          = 0x51,
    bcCopyB           = 0x52,
    bcNLoadE          = 0x53,
+   bcNShiftR         = 0x44,
    bcWRead           = 0x59,
    bcWWrite          = 0x5A,
    bcNRead           = 0x5B,
@@ -125,8 +126,9 @@ enum ByteCode
    bcLAnd            = 0x78,
    bcLOr             = 0x79,
    bcLXor            = 0x7A,
-   bcLShift          = 0x7B,
+   bcLShiftL         = 0x7B,
    bcLNot            = 0x7C,
+   bcLShiftR         = 0x7D,
 
    bcRCopy           = 0x80,
    bcRSave           = 0x82,
@@ -215,17 +217,25 @@ enum ByteCode
    bcNReadI          = 0xD1,
    bcSCopyF          = 0xD2,
    bcSetVerb         = 0xD3,
+   bcShiftLN         = 0xD4,
    bcAndN            = 0xD5,
    bcAddN            = 0xD6,
    bcOrN             = 0xD7,
    bcEAddN           = 0xD8,
-   bcShiftN          = 0xD9,
+   bcShiftRN         = 0xD9,
    bcMulN            = 0xDA,
    bcDivN            = 0xDB,
    bcBLoadR          = 0xDC,
    bcInit            = 0xDD,
    bcMTRedirect      = 0xDE,
    bcXMTRedirect     = 0xDF,
+
+   bcGreaterN        = 0xEA,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
+   bcNotGreaterN     = 0xEB,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
+   bcNotLessN        = 0xEC,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
+   bcSubFI           = 0xED,
+   bcAddFI           = 0xEE,
+   bcSaveFI          = 0xEF,
 
    bcNew             = 0xF0,
    bcNewN            = 0xF1,
@@ -283,7 +293,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x8F
-#define MAX_DOUBLE_ECODE 0xEF
+#define MAX_DOUBLE_ECODE 0xE9
 
 enum PseudoArg
 {
@@ -398,6 +408,9 @@ public:
          case bcIfN:
          case bcElseN:
          case bcLessN:
+         case bcNotLessN:
+         case bcGreaterN:
+         case bcNotGreaterN:
          case bcIfM:
          case bcElseM:
          case bcNext:

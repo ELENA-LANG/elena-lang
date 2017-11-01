@@ -868,10 +868,10 @@ extension patternOp
         = Filter new(patternFun, self enumerator).
         
     till:max repeat:aRepeater
-        = Repeater new(self, max + 1, aRepeater).
+        = Repeater new(self, max, aRepeater).
         
     to:max repeat:aRepeater
-        = Repeater new(self, max, aRepeater).
+        = Repeater new(self, max + 1, aRepeater).
 
     repeatTill:n
         = RangeEnumerator new from:self to(n - 1) by:1.              

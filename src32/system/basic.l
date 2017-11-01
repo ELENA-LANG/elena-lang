@@ -316,7 +316,7 @@ class IntBaseNumber :: BaseNumber
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-sealed embeddable struct ByteNumber :: IntBaseNumber
+sealed struct ByteNumber :: IntBaseNumber
 {
     __int& theValue(1).
 
@@ -622,7 +622,7 @@ sealed embeddable struct ByteNumber :: IntBaseNumber
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-sealed embeddable struct ShortNumber :: IntBaseNumber
+sealed struct ShortNumber :: IntBaseNumber
 {
     __int& theValue(2).
 
@@ -942,7 +942,7 @@ sealed embeddable struct ShortNumber :: IntBaseNumber
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-sealed embeddable struct IntNumber :: IntBaseNumber
+sealed struct IntNumber :: IntBaseNumber
 {
     __int& theValue(4).
 
@@ -1077,7 +1077,7 @@ sealed embeddable struct IntNumber :: IntBaseNumber
         <= and(v value).
         
     stacksafe int or(BaseVariable v)
-        <= divide(v value).
+        <= or(v value).
         
     stacksafe int xor(BaseVariable v)
         <= xor(v value).
@@ -1270,7 +1270,7 @@ sealed embeddable struct IntNumber :: IntBaseNumber
 
 /// A unsigned 32 bit integer
 
-sealed embeddable struct UIntNumber :: IntBaseNumber
+sealed struct UIntNumber :: IntBaseNumber
 {
     __int& theValue(4).
 
@@ -1643,7 +1643,7 @@ sealed embeddable struct UIntNumber :: IntBaseNumber
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-sealed embeddable struct LongNumber :: IntBaseNumber
+sealed struct LongNumber :: IntBaseNumber
 {
     __int& theValue(8).
     
@@ -1968,7 +1968,7 @@ sealed embeddable struct LongNumber :: IntBaseNumber
 // --- realNumber ---
 
 /// A 64bit float numeric value
-sealed embeddable struct RealNumber :: BaseNumber
+sealed struct RealNumber :: BaseNumber
 {
     __real& theValue(8).
 
@@ -1984,6 +1984,18 @@ sealed embeddable struct RealNumber :: BaseNumber
     /// Returns the maximal value
     constructor max
         = 1.7976931348623157e+308r.
+        
+    /// Returns the negative infinity
+    embeddable constructor negativeInfinity 
+        = -1.0r / 0.0r. 
+        
+    /// Returns the positive infinity 
+    embeddable constructor positiveInfinity 
+        = 1.0r / 0.0r.
+        
+    /// returns the NaN
+    embeddable constructor NaN
+        = 0.0r / 0.0r.
 
     /// Creates the object with a default value (0)
     constructor new
@@ -2215,7 +2227,7 @@ sealed embeddable struct RealNumber :: BaseNumber
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-sealed const embeddable struct CharValue :: BaseValue
+sealed const struct CharValue :: BaseValue
 {
     __dword& theValue(4).
 

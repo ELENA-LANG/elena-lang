@@ -1580,19 +1580,12 @@ inline % 4Ch
 
 end
 
-// ; nshift
+// ; nshiftl
 inline % 4Dh
 
   mov edx, [edi]
   mov ecx, ebx
-  and ecx, ecx
-  jns short lab1
-  neg ecx
   shl edx, cl
-  jmp short lab2
-lab1:
-  shr edx, cl
-lab2:
   mov [edi], edx
 
 end
@@ -1662,6 +1655,16 @@ end
 inline % 53h
 
   mov ecx, [eax]
+
+end
+
+// ; nshiftr
+inline % 54h
+
+  mov edx, [edi]
+  mov ecx, ebx
+  shr edx, cl
+  mov [edi], edx
 
 end
 
@@ -2074,16 +2077,12 @@ inline % 7Ah
   mov [edi+4], ecx
 end
 
-// ; lshift
+// ; lshiftl
 inline % 7Bh
 
   mov  ecx, ebx
   mov  edx, [edi]
   mov  ebx, [edi+4]
-
-  and  ecx, ecx
-  jns  short LR
-  neg  ecx
 
   cmp  cl, 40h 
   jae  short lErr
@@ -2099,8 +2098,39 @@ LL32:
   sub  cl, 20h
   shl  ebx, cl 
   jmp  short lEnd
+  
+lErr:
+  xor  eax, eax
+  jmp  short lEnd2
 
-LR:
+lEnd:
+  mov  [edi], edx
+  mov  [edi+4], ebx
+
+lEnd2:
+
+end
+
+// ; lnot
+inline % 7Ch
+
+  mov esi, [eax]
+  mov edx, [eax+4]
+                                                                        
+  not esi
+  not edx
+
+  mov [edi], esi
+  mov [edi+4], edx
+
+end
+
+// ; lshiftr
+inline % 7Dh
+
+  mov  ecx, ebx
+  mov  edx, [edi]
+  mov  ebx, [edi+4]
 
   cmp  cl, 64
   jae  short lErr
@@ -2127,20 +2157,6 @@ lEnd:
   mov  [edi+4], ebx
 
 lEnd2:
-
-end
-
-// ; lnot
-inline % 7Ch
-
-  mov esi, [eax]
-  mov edx, [eax+4]
-                                                                        
-  not esi
-  not edx
-
-  mov [edi], esi
-  mov [edi+4], edx
 
 end
 
@@ -2842,6 +2858,27 @@ labNextBaseClass:
 
   lea  esp, [esp + 8]
   pop  eax
+
+end
+
+// ; subfi (__arg1 - index, __arg2 - n)
+inline % 0EDh
+
+  sub dword ptr [ebp + __arg1], __arg2
+
+end
+
+// ; addfi (__arg1 - index, __arg2 - n)
+inline % 0EEh
+
+  add dword ptr [ebp + __arg1], __arg2
+
+end
+
+// ; savefi (__arg1 - index, __arg2 - n)
+inline % 0EFh
+
+  mov dword ptr [ebp + __arg1], __arg2
 
 end
 

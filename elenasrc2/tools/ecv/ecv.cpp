@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   15
+#define REVISION_VERSION   18
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -524,6 +524,9 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcIfN:
       case bcElseN:
       case bcLessN:
+      case bcNotLessN:
+      case bcGreaterN:
+      case bcNotGreaterN:
          command.append(opcode);
          command.append(' ');
          command.appendHex(argument);
@@ -560,6 +563,8 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcInit:
       case bcNLoadI:
       case bcNSaveI:
+      case bcMulN:
+      case bcAddN:
          command.append(opcode);
          command.append(' ');
          command.appendHex(argument);
@@ -578,6 +583,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPushFI:
       case bcALoadFI:
       case bcASaveFI:
+      case bcDLoadFI:
          command.append(opcode);
          command.append(" fp[");
          command.appendInt(argument);
@@ -640,6 +646,15 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.append(' ');
          printReference(command, module, argument);
          command.append(", ");
+         command.appendInt(argument2);
+         break;
+      case bcSaveFI:
+      case bcAddFI:
+      case bcSubFI:
+         command.append(opcode);
+         command.append(" fp[");
+         command.appendInt(argument);
+         command.append("], ");
          command.appendInt(argument2);
          break;
       default:
@@ -843,9 +858,6 @@ void listFlags(int flags)
 
    if (test(flags, elStructureRole))
       printLine("@flag ", "elStructureRole");
-
-   if (test(flags, elEmbeddable))
-      printLine("@flag ", "elEmbeddable");
 
    if (test(flags, elSealed))
       printLine("@flag ", "elSealed");

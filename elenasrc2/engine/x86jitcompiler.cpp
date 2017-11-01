@@ -69,7 +69,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 145;
+const int gcCommandNumber = 150;
 const int gcCommands[gcCommandNumber] =
 {
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcParent,
@@ -90,7 +90,7 @@ const int gcCommands[gcCommandNumber] =
    bcNAnd, bcNOr, bcNXor, bcTryLock, bcFreeLock,
    bcLCopy, bcLEqual, bcLLess, bcLAdd, bcRethrow,
    bcLSub, bcLMul, bcLDiv, bcLAnd, bcLOr,
-   bcLXor, bcNShift, bcNNot, bcLShift,
+   bcLXor, bcNShiftL, bcNNot, bcLShiftL, bcLShiftR,
    bcLNot, bcRCopy, bcRSave, bcREqual, bcBSaveSI,
    bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
    bcCreate, bcExclude, bcDCopyR, bcInclude,
@@ -101,7 +101,8 @@ const int gcCommands[gcCommandNumber] =
    bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
    bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
    bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit,
-   bcCheck, bcMTRedirect, bcDCopyVerb, bcXCopy, bcXMTRedirect
+   bcCheck, bcMTRedirect, bcDCopyVerb, bcXCopy, bcXMTRedirect,
+   bcSaveFI, bcAddFI, bcSubFI, bcNShiftR
 };
 
 // command table
@@ -122,14 +123,14 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop,
    &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp,
 
    &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop,
 
    &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
@@ -146,11 +147,11 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp,
    &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
-   &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileNop, &compileDAndN, &compileDAddN, &compileDOrN,
+   &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileDShiftN, &compileDAndN, &compileDAddN, &compileDOrN,
    &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &loadMTOp, &loadMTOp,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
 
    &compileCreate, &compileCreateN, &compileNop, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileIfM, &compileElseM, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop
@@ -211,16 +212,28 @@ inline void compileJumpBelow(x86JITScope& scope, int label, bool forwardJump, bo
    compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JB);
 }
 
-//inline void compileJumpGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-//{
-//   // jg   lbEnding
-//   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JG);
-//}
-
 inline void compileJumpLess(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
 {
    // jl   lbEnding
    compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JL);
+}
+
+inline void compileJumpNotLess(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JGE);
+}
+
+inline void compileJumpGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JG);
+}
+
+inline void compileJumpNotGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JLE);
 }
 
 inline void compileJumpLessOrEqual(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
@@ -343,6 +356,37 @@ void _ELENA_::loadNOp(int opcode, x86JITScope& scope)
          scope.code->writeDWord(scope.argument << 2);
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadFNOp(int opcode, x86JITScope& scope)
+{
+   int arg2 = scope.tape->getDWord();
+
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(-(scope.argument << 2));
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(arg2);
+      }
 
       relocation += 2;
       count--;
@@ -1265,16 +1309,32 @@ void _ELENA_::compileElseN(int, x86JITScope& scope)
    compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
 
-void _ELENA_::compileLessN(int, x86JITScope& scope)
+void _ELENA_::compileLessN(int op, x86JITScope& scope)
 {
    int jumpOffset = scope.tape->getDWord();
 
    // cmp ebx, n
    // jz lab
-
    scope.code->writeWord(0xFB81);
    scope.code->writeDWord(scope.argument);
-   compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+   if (op == bcLessN) {
+      compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+   }
+   else compileJumpNotLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
+
+void _ELENA_::compileGreaterN(int op, x86JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+
+   // cmp ebx, n
+   // jz lab
+   scope.code->writeWord(0xFB81);
+   scope.code->writeDWord(scope.argument);
+   if (op == bcGreaterN) {
+      compileJumpGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+   }
+   else compileJumpNotGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
 
 void _ELENA_::compileSetVerb(int, x86JITScope& scope)
@@ -1356,12 +1416,12 @@ void _ELENA_::compileInit(int opcode, x86JITScope& scope)
    else loadNOp(opcode, scope);
 }
 
-void _ELENA_ :: compileDShiftN(int, x86JITScope& scope)
+void _ELENA_ :: compileDShiftN(int op, x86JITScope& scope)
 {
-   if (scope.argument < 0) {
+   if (op == bcShiftLN) {
       // shl ebx, n
       scope.code->writeWord(0xE3C1);
-      scope.code->writeByte((unsigned char) - scope.argument);
+      scope.code->writeByte((unsigned char)scope.argument);
    }
    else {
       // shr ebx, n
