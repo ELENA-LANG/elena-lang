@@ -3,13 +3,9 @@ In development:
 ------                              
 
               xdev - general implementation
-                 * Amicable pairs
-                 * first class
-                 * test all samples
+                 * test pi
                  * review pi : performance
-                 * test evolution
                  * test anagram
-                 * arrays
 
               idev - generic development
                  * #263 - IDE : MTA Debugging 

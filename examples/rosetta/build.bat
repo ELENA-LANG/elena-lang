@@ -51,7 +51,7 @@
 ..\..\bin\elc truncprime\truncprime.prj
 ..\..\bin\elc treeview\treeview.prj
 ..\..\bin\elc gameoflife\gameoflife.prj
-..\..\bin\elc zahngsuen\zahngsuen.prj
+..\..\bin\elc zhangsuen\zhangsuen.prj
 ..\..\bin\elc zeckendorf\zeckendorf.prj
 ..\..\bin\elc zeckendorf_arithm\zeckendorf_arithm.prj 
 ..\..\bin\elc ycombinator\ycombinator.prj

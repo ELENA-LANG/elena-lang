@@ -6318,9 +6318,14 @@ ref_t Compiler :: optimizeNestedExpression(SNode node, ModuleScope& scope, Warni
                   constant = false;
 
                break;
+            case lxUnboxing:
+               current = lxOuterMember;
+               optimizeBoxing(object, scope, warningScope, HINT_NOUNBOXING);
+               constant = false;
+               break;
             default:
                constant = false;
-               optimizeExpression(current, scope, warningScope);
+               optimizeExpressionTree(current, scope, warningScope);
                break;
          }
          memberCounter++;
@@ -6412,9 +6417,14 @@ ref_t Compiler :: optimizeAssigning(SNode node, ModuleScope& scope, WarningScope
             SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxLongOp, lxIntArrOp, lxByteArrOp, lxShortArrOp);
             if (operationNode != lxNone) {
                SNode larg = operationNode.findSubNodeMask(lxObjectMask);
+               SNode rarg = operationNode.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
                SNode target = node.firstChild(lxObjectMask);
+               if (rarg.type == targetNode.type && rarg.argument == targetNode.argument) {
+                  // if the target is used in the subexpression rvalue
+                  // do nothing
+               }
                // if it is an operation with the same target
-               if (larg.type == target.type && larg.argument == target.argument) {
+               else if (larg.type == target.type && larg.argument == target.argument) {
                   // remove an extra assignment
                   larg = subNode.findSubNodeMask(lxObjectMask);
 
