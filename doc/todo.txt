@@ -2,11 +2,6 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * test pi
-                 * review pi : performance
-                 * test anagram
-
               idev - generic development
                  * #263 - IDE : MTA Debugging 
 
@@ -14,6 +9,10 @@ In development:
                  * reimplement chat sample
 
               xdev - general implementation
+                 * test calc sample
+                 * test fibonacci sample
+                 * test zeckendorf_arithm 
+                 * test anagram
                  * elt : probably better to use eson and get rid of elena script
                  * elena script : declare closure
                  * Read-only classes should be enforced #282
