@@ -434,7 +434,7 @@ void Debugger :: processEvent(size_t timeout)
             break;
          case EXIT_THREAD_DEBUG_EVENT:
             threads.erase(event.dwThreadId);
-            current = NULL;
+            current = *threads.start();
             break;
          case LOAD_DLL_DEBUG_EVENT:
             ::CloseHandle(event.u.LoadDll.hFile);
@@ -448,11 +448,11 @@ void Debugger :: processEvent(size_t timeout)
             break;
          case EXCEPTION_DEBUG_EVENT:
             current = threads.get(dwCurrentThreadId);
-            if (current)
+            if (current) {
                current->refresh();
-
-            processException(&event.u.Exception);
-            current->refresh();
+               processException(&event.u.Exception);
+               current->refresh();
+            }
             break;
       }
    }

@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              idev - generic development
-                 * #263 - IDE : MTA Debugging 
-
               ydev - upndown
                  * reimplement chat sample
 
@@ -42,6 +39,9 @@ In development:
                  * implement live programming environment
                  * implement tree prototype
                  * implement xpath resolver prototype
+
+              idev - generic development
+                 * #263 - fix goto
 
               ydev - upndown
                  * reimplement upndown (#79)
