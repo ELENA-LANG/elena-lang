@@ -135,9 +135,9 @@ template<BaseEnumerable> list :: type
         
         ^ Enumerator::
           {
-              get = $owner getAt int:index.
+              get = $self getAt int:index.
               
-              enumerable = $owner.
+              enumerable = $self.
               
               reset [ index int := -1. ]
               
@@ -157,17 +157,17 @@ template<BaseEnumerable> list :: type
             theIndex := 0.
 
             int len := 0.                                    
-            $owner readLengthTo vint:len.
+            $self readLengthTo vint:len.
             
             theBaseIndexerLength := len.
         ]
 
         get
-            = $owner getAt int:theIndex.
+            = $self getAt int:theIndex.
             
         set : o
         [
-            $owner setAt int:theIndex type:o.
+            $self setAt int:theIndex type:o.
         ]                
     }.
                        

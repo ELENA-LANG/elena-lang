@@ -90,5 +90,5 @@ symbol printingLn = (:aLine)[ 'program'output writeLine:aLine ].
 func1 extension func1Op
 {
     asComparator
-        = { bool equal : object = $owner eval:object. }.
+        = { bool equal : object = $self eval:object. }.
 }

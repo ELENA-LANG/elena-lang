@@ -11,6 +11,7 @@
 [+] #313 : Reimplement assignment operators
 [+] #369 : Advanced syntax : open argument list 
 [+] #378 : handle access violation
+[*] #198 : self and $self in the closure 
 
 [ELC]
 [-] #345 : Resend statement does not work correctly for 

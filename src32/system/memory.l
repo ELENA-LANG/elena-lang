@@ -18,9 +18,9 @@ dynamic template<BaseIndexable> array :: template_subj
         
         ^ Enumerator::
           {
-              get = $owner getAt int:index.
+              get = $self getAt int:index.
               
-              enumerable = $owner.
+              enumerable = $self.
               
               reset [ index int := -1 ]
               
@@ -37,14 +37,14 @@ dynamic template<BaseIndexable> array :: template_subj
     {
         @theIndex := 0.
         
-        @theBaseIndexerLength := $owner length.
+        @theBaseIndexerLength := $self length.
         
         get
-            = $owner getAt int:theIndex.
+            = $self getAt int:theIndex.
             
         set : o
         [
-            $owner setAt int:theIndex template_subj:o.
+            $self setAt int:theIndex template_subj:o.
         ]                        
     }.    
 
@@ -184,11 +184,11 @@ template matrix :: template_subj
         length = theColumns int.
         
         getAt : j
-            = $owner getAt(i,j).
+            = $self getAt(i,j).
         
         setAt : j : aValue
         [
-            $owner setAt(i,j,aValue).
+            $self setAt(i,j,aValue).
         ]
     }.
 //    
@@ -206,9 +206,9 @@ template matrix :: template_subj
         
         ^ Enumerator::
           {
-              get = $owner getAt int:i int:j.
+              get = $self getAt int:i int:j.
               
-              enumerable = $owner.
+              enumerable = $self.
               
               reset [ i := 0. j := -1. ]
               
@@ -788,23 +788,23 @@ sealed class IntMatrix
         {
             @theIndex := 0.
             
-            @theBaseIndexerLength := $owner columns.
+            @theBaseIndexerLength := $self columns.
             
             get
-                = $owner getAt(i,theIndex).
+                = $self getAt(i,theIndex).
                 
             set : o
             [
-                $owner setAt(i,theIndex,o).
+                $self setAt(i,theIndex,o).
             ]                        
         }.    
         
         getAt : j
-            = $owner getAt(i,j).
+            = $self getAt(i,j).
         
         setAt : j : aValue
         [
-            $owner setAt(i,j,aValue).
+            $self setAt(i,j,aValue).
         ]
     }.
 }
@@ -970,11 +970,11 @@ sealed class RealMatrix
         length = theColumns.
         
         getAt : j
-            = $owner getAt(i,j).
+            = $self getAt(i,j).
         
         setAt : j : aValue
         [
-            $owner setAt(i,j,aValue)
+            $self setAt(i,j,aValue)
         ]
     }.
 }
@@ -1579,25 +1579,25 @@ class Variant
                 <= eval(v value).
             
             eval int:aValue
-                = $owner int.
+                = $self int.
                 
             eval byte:aValue
-                = $owner byte.
+                = $self byte.
                 
             eval short:aValue
-                = $owner short.
+                = $self short.
                 
             eval long:aValue
-                = $owner long.
+                = $self long.
                 
             eval real:aValue
-                = $owner real.
+                = $self real.
                 
             eval literal:aValue
-                = $owner literal.
+                = $self literal.
                 
             eval wide:aValue
-                = $owner wide.
+                = $self wide.
         } eval:aTarget.
 
     saveTo : aTarget

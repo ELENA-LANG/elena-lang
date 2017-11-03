@@ -31,23 +31,23 @@ template icontrolof :: type
 {
     control = IControl::
     {
-        control_object = $owner.
+        control_object = $self.
         
-        open [ $owner open ]
+        open [ $self open ]
     
-        change [ $owner change ]
+        change [ $self change ]
     
-        close [ $owner close ]
+        close [ $self close ]
     
-        retrieve hwnd:aHandle = $owner retrieve hwnd:aHandle.
+        retrieve hwnd:aHandle = $self retrieve hwnd:aHandle.
     
-        setDimension int:aWidth int:aHeight [ $owner setDimension int:aWidth int:aHeight ]
+        setDimension int:aWidth int:aHeight [ $self setDimension int:aWidth int:aHeight ]
     
-        setLocation int:aWidth int:aHeight [ $owner setLocation int:aWidth int:aHeight. ]
+        setLocation int:aWidth int:aHeight [ $self setLocation int:aWidth int:aHeight. ]
     
-        readDimensionTo vint:aWidth vint:aHeight [ $owner readDimensionTo vint:aWidth vint:aHeight ]
+        readDimensionTo vint:aWidth vint:aHeight [ $self readDimensionTo vint:aWidth vint:aHeight ]
     
-        readLocationTo vint:aWidth vint:aHeight [ $owner readLocationTo vint:aWidth vint:aHeight ]
+        readLocationTo vint:aWidth vint:aHeight [ $self readLocationTo vint:aWidth vint:aHeight ]
     }.
 }
 
@@ -1103,7 +1103,7 @@ sealed class RadioButtonGroup :: BasePanel, icontrolof<radiogroup>
         [
             theControls append:(RadioButton new; set caption:anItem).
             
-            $owner $resize
+            $self $resize
         ]
     }.
 
@@ -1238,15 +1238,15 @@ sealed class ImageList
    
     control = IControl::
     {
-        control_object = $owner.
+        control_object = $self.
  
-        open [ $owner open ]
+        open [ $self open ]
           
-        close [ $owner close ]
+        close [ $self close ]
           
         retrieve hwnd:aHandle = $nil.
     
-        setDimension int:aWidth int:aHeight [ $owner setDimension int:aWidth int:aHeight ]
+        setDimension int:aWidth int:aHeight [ $self setDimension int:aWidth int:aHeight ]
     }.
  
     $set parent:aParent
@@ -1333,11 +1333,11 @@ sealed class DockingBox
    
     control = IControl::
     {
-        control_object = $owner.
+        control_object = $self.
  
-        open [ $owner open ]
+        open [ $self open ]
           
-        close [ $owner close ]
+        close [ $self close ]
           
         retrieve hwnd:aHandle = $nil.
     }.

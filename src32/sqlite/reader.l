@@ -60,8 +60,8 @@ sealed class DBReader
     
     enumerator = Enumerator::
     {
-        get = $owner row.
+        get = $self row.
     
-        bool next => $owner.
+        bool next => $self.
     }.
 }

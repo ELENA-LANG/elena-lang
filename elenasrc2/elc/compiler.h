@@ -480,6 +480,8 @@ private:
          else return Scope::getScope(level);
       }
 
+      virtual bool isClosureMode() { return false; }
+
       void save()
       {
          // save class meta data
@@ -544,6 +546,8 @@ private:
       bool         generic;
       bool         extensionMode;
       bool         multiMethod;
+      bool         closureMode;
+      bool         subCodeMode;
       
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -575,18 +579,9 @@ private:
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
+      ObjectInfo mapThis();
+
       MethodScope(ClassScope* parent);
-   };
-
-   // - ActionScope -
-   struct ActionScope : public MethodScope
-   {
-      bool subCodeMode;
-      bool  singletonMode;  // indicates that the symbol is a singleton closure
-
-      ActionScope(ClassScope* parent);
-
-      virtual ObjectInfo mapTerminal(ident_t identifier);
    };
 
    // - CodeScope -
@@ -718,6 +713,8 @@ private:
          }
          else return Scope::getScope(level);
       }
+
+      virtual bool isClosureMode() { return closureMode; }
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -885,7 +882,7 @@ private:
    ref_t declareArgumentSubject(SNode node, ModuleScope& scope, bool& first, IdentifierString& messageStr, IdentifierString& signature);
    void declareArgumentList(SNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
-   bool declareActionScope(ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode/*, bool alreadyDeclared*/);
+   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
 
 //   void declareSingletonClass(SNode node, ClassScope& scope);
 ////   void compileSingletonClass(SNode member, ClassScope& scope, SNode hints);

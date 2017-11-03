@@ -13,12 +13,12 @@ template iform :: type
         
         stacksafe on_paint hwnd:anHWND vint:aRetVal
         [
-            $owner $on_paint vint:aRetVal.
+            $self $on_paint vint:aRetVal.
         ]
         
         stacksafe on_destroy hwnd:anHWND vint:aRetVal
         [
-            $owner $on_destroy vint:aRetVal.
+            $self $on_destroy vint:aRetVal.
         ]
     }.
 }

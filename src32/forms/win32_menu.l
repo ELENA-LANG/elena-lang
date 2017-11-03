@@ -19,7 +19,7 @@ class BaseMenu
             if($nil == theItems)
                 [ theItems := List new ].
             
-            theItems append:(MenuItem new parent:$owner caption:aCaption onClick:anAction).
+            theItems append:(MenuItem new parent:$self caption:aCaption onClick:anAction).
         ]
         
         append caption:aCaption
@@ -155,11 +155,11 @@ class Menu :: BaseMenu
     
     control = IControl::
     {
-        control_object = $owner.
+        control_object = $self.
  
-        open [ $owner open ]
+        open [ $self open ]
           
-        close [ $owner close ]
+        close [ $self close ]
           
         retrieve hwnd:aHandle = $nil.
     }.

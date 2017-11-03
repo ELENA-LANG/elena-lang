@@ -30,19 +30,19 @@ limited class MatrixSpace
             int len1 := 0.
             int len2 := 0.
                                     
-            $owner readLength1 vint:len1.
-            $owner readLength2 vint:len2.
+            $self readLength1 vint:len1.
+            $self readLength2 vint:len2.
             
             theLength1 := len1.
             theLength2 := len2.
         ]
         
         get
-            = $owner getAt int:theIndex1 int:theIndex2.
+            = $self getAt int:theIndex1 int:theIndex2.
             
         set : o
         [
-            $owner setAt int:theIndex1 int:theIndex2 object:o.
+            $self setAt int:theIndex1 int:theIndex2 object:o.
         ]            
     }.
 }

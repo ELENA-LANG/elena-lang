@@ -1102,23 +1102,52 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->generic = false;
    this->extensionMode = false;
    this->multiMethod = false;
+   this->closureMode = parent->isClosureMode();
+   this->subCodeMode = false;
+}
+
+ObjectInfo Compiler::MethodScope :: mapThis()
+{
+   if (extensionMode) {
+      //COMPILER MAGIC : if it is an extension ; replace $self with self
+      ClassScope* extensionScope = (ClassScope*)getScope(slClass);
+
+      return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, extensionScope->embeddable ? -1 : 0);
+   }
+   else if (stackSafe && classEmbeddable) {
+      return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
+   }
+   else return ObjectInfo(okThisParam, 1);
 }
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 {
    if (terminal.compare(THIS_VAR)) {
-      if (extensionMode) {
-         //COMPILER MAGIC : if it is an extension ; replace $self with self
-         ClassScope* extensionScope = (ClassScope*)getScope(slClass);
-
-         return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, extensionScope->embeddable ? -1 : 0);
+      if (closureMode) {
+         return parent->mapTerminal(OWNER_VAR);
       }
-      else if (stackSafe && classEmbeddable) {
-         return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
-      }
-      else return ObjectInfo(okThisParam, 1);
+      else return mapThis();
    }
    else {
+      if (closureMode) {
+         if (terminal.compare(CLOSURE_SELF_VAR)) {
+            if (subCodeMode) {
+               return parent->mapTerminal(terminal);
+            }
+            else return ObjectInfo(okParam, (size_t)-1);
+         }
+         else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
+            ObjectInfo retVar = parent->mapTerminal(terminal);
+            if (retVar.kind == okUnknown) {
+               InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
+
+               retVar = closure->allocateRetVar();
+            }
+
+            return retVar;
+         }
+      }
+
       Parameter param = parameters.get(terminal);
 
       int local = param.offset;
@@ -1133,54 +1162,6 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
       }
       else return Scope::mapTerminal(terminal);
    }
-}
-
-// --- Compiler::ActionScope ---
-
-Compiler::ActionScope :: ActionScope(ClassScope* parent)
-   : MethodScope(parent)
-{
-   subCodeMode = false;
-   singletonMode = false;
-}
-
-ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
-{
-   if (singletonMode && identifier.compare(SELF_VAR)) {
-      // COMPILER MAGIC : recognize self / $self in singleton closure
-      return ObjectInfo(okParam, (size_t)-1);
-   }
-   if (identifier.compare(THIS_VAR)) {
-      if (singletonMode) {
-         // COMPILER MAGIC : recognize $self in singleton closure
-         return ObjectInfo(okThisParam, 1);
-      }
-      // otherwise it should refer to the owner ones
-      else return parent->mapTerminal(identifier);
-   }
-   else if (identifier.compare(CLOSURE_THIS_VAR)) {
-      if (subCodeMode) {
-         return parent->mapTerminal(identifier);
-      }
-      else return MethodScope::mapTerminal(THIS_VAR);
-   }
-   else if (identifier.compare(CLOSURE_SELF_VAR)) {
-      if (subCodeMode) {
-         return parent->mapTerminal(identifier);
-      }
-      else return ObjectInfo(okParam, (size_t)-1);
-   }
-   else if (identifier.compare(RETVAL_VAR) && subCodeMode) {
-      ObjectInfo retVar = parent->mapTerminal(identifier);
-      if (retVar.kind == okUnknown) {
-         InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
-
-         retVar = closure->allocateRetVar();
-      }
-
-      return retVar;
-   }
-   else return MethodScope::mapTerminal(identifier);
 }
 
 // --- Compiler::CodeScope ---
@@ -1257,7 +1238,11 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
       owner.reference = info.fields.Count();
 
       owner.outerObject = parent->mapTerminal(THIS_VAR);
-      if (owner.outerObject.kind == okThisParam) {
+      if (owner.outerObject.kind == okUnknown) {
+         // HOTFIX : if it is a singleton nested class
+         owner.outerObject = ObjectInfo(okThisParam, 1, reference);
+      }
+      else if (owner.outerObject.kind == okThisParam) {
          owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
       }
 
@@ -3539,7 +3524,7 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
    return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
 }
 
-bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode)
+bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode)
 {
    bool lazyExpression = test(mode, HINT_LAZY_EXPR);
 
@@ -3572,12 +3557,12 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
    writer.newNode(lxClass, scope.reference);
 
-   ActionScope methodScope(&scope);
+   MethodScope methodScope(&scope);
    bool lazyExpression = declareActionScope(scope, argNode, methodScope, mode);
 
    scope.include(methodScope.message);
 
-   // HOTFIX : if the clousre emulates code brackets
+   // HOTFIX : if the closure emulates code brackets
    if (test(mode, HINT_SUBCODE_CLOSURE))
       methodScope.subCodeMode = true;
 
@@ -3754,22 +3739,20 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       nestedRef = ownerScope.moduleScope->mapAnonymous();
 
    InlineClassScope scope(&ownerScope, nestedRef);
+   scope.closureMode = ownerScope.getScope(Scope::slClass) != NULL;
+   if (!scope.closureMode) {
+      scope.closureMode = false;
+   }
 
    // if it is a lazy expression / multi-statement closure without parameters
    SNode argNode = node.firstChild();
    if (node == lxLazyExpression) {
-      scope.closureMode = true;
-
       compileAction(node, scope, SNode(), HINT_LAZY_EXPR);
    }
    else if (argNode == lxCode) {
-      scope.closureMode = true;
-
       compileAction(node, scope, SNode(), singleton ? mode | HINT_SINGLETON : mode);
    }
    else if (node.existChild(lxCode)) {
-      scope.closureMode = true;
-
       SNode codeNode = node.findChild(lxCode);
 
       // if it is a closure / lambda function with a parameter
@@ -5004,7 +4987,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
       // if the method returns itself
       // HOTFIX : it should not be applied to the embeddable conversion routine
       if(retVal.kind == okUnknown/* && (!test(scope.message, CONVERSION_MESSAGE) || !scope.classEmbeddable)*/) {
-         ObjectInfo thisParam = scope.mapTerminal(THIS_VAR);
+         ObjectInfo thisParam = scope.mapThis();
 
          // adding the code loading $self
          writer.newNode(lxReturning);

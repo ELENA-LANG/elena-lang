@@ -187,6 +187,8 @@ sealed class TcpServer
             {
                 on(SocketException e)
                 [
+                    var e := $self.
+                    
                     $self onError:e for:client.
                 ]                
             }.

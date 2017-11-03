@@ -424,7 +424,7 @@ ref_t DerivationReader::DerivationScope :: mapTemplate(SNode terminal, int param
    IdentifierString attrName(terminal.findChild(lxIdentifier).findChild(lxTerminal).identifier());
    if (prefixCounter != 0) {
       attrName.append('#');
-      attrName.append('0' + prefixCounter);
+      attrName.append('0' + (char)prefixCounter);
    }
    attrName.append('#');
    attrName.appendInt(paramCounter);
