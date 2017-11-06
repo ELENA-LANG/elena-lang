@@ -74,7 +74,7 @@ class ChatServer
                                 [
                                     console printLine(member Name,":",command Value).
                                     
-                                    member server; translate:{ Command = TRANSLATE. Value = command Value. User = member Name. }.
+                                    member server; translate:CommandDTO::{ @_command := TRANSLATE. @_value := command Value. @_user := member Name. }.
                                 ].
                         ].                
                 ].

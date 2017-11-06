@@ -30,7 +30,7 @@ class ChatClient :: BaseClient
     
     send text:text
     [
-        literal json := CommandDTO::{ @_command := SEND. @_value := text. } toJson; literal.
+        literal json := CommandDTO::{ @_command := SEND. @_value := text. @_user := $nil. } toJson; literal.
         int len := json length.
         
         theNetworkClient write int:len; write literal:json.

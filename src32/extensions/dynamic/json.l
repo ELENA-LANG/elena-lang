@@ -161,12 +161,16 @@ textbuffer extension jsonSerializer
         while (i < len)
         [
             var prop := props[i].
+            var val := object~prop get.
             
-            self print("""",prop literal,""":").
-            
-            self $serialize(object~prop get).
-            
-            self write:",".
+            if ($nil != val)
+            [
+                self print("""",prop literal,""":").
+                
+                self $serialize(val).
+                
+                self write:","
+            ].            
 
             i += 1
         ].

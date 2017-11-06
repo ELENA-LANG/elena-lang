@@ -50,4 +50,6 @@ class CommandDTO
     dto_prop Command :: _command.
     
     dto_prop Value :: _value.
+    
+    dto_prop User :: _user.
 }

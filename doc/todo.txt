@@ -2,12 +2,6 @@
 In development:
 ------                              
 
-              adev - lib32
-                 * reimpleemnt toJson
-
-              ydev - upndown
-                 * reimplement chat sample
-
               xdev - general implementation
                  * test calc sample
                  * test fibonacci sample
@@ -46,6 +40,7 @@ In development:
                  * #263 - fix goto
 
               ydev - upndown
+                 * reimplement chat sample - literal json := CommandDTO::{ @_command := SEND. @_value := text. @_user := $nil. } toJson; literal. - if @user initialization is miss, the code is broken
                  * reimplement upndown (#79)
 
 ------                                                           

@@ -33,7 +33,7 @@ symbol control = Client new; mixInto:
         self start name:userName ip:"127.0.0.1" port:DEFAULT_PORT
             | if(:e)[ console writeLine:"Cannot esteblish connection!". AbortException new; raise. ].
             
-        console writeLine:"Enter -q to exit the chat".
+        ^ "Enter -q to exit the chat".
     ]
     
     prompt
