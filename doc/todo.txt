@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              adev - lib32
+                 * reimpleemnt toJson
+
               ydev - upndown
                  * reimplement chat sample
 
@@ -9,7 +12,6 @@ In development:
                  * test calc sample
                  * test fibonacci sample
                  * test zeckendorf_arithm 
-                 * test anagram
                  * elt : probably better to use eson and get rid of elena script
                  * elena script : declare closure
                  * Read-only classes should be enforced #282

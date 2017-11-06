@@ -111,7 +111,7 @@ sealed class TcpServer
 
     run eachConnection:func1
     [
-        theClients run each:func1.
+        theClients forEach:func1.
     ]
 
     set blocking:aValue
@@ -150,7 +150,7 @@ sealed class TcpServer
     ]
     
     closeClient : client
-        <= close int(theClients indexOf:client; int).
+        <= close int(theClients indexOfElement:client).
     
     close int:index
     [
@@ -187,8 +187,6 @@ sealed class TcpServer
             {
                 on(SocketException e)
                 [
-                    var e := $self.
-                    
                     $self onError:e for:client.
                 ]                
             }.
@@ -197,7 +195,7 @@ sealed class TcpServer
                 [ $self closeClient:client. ];
                 [ 
                     if (received > 0)
-                        [ theListener onReceived:client bytearray:theBuffer int:received. ].
+                        [ theListener onReceived object:client bytearray:theBuffer int:received. ].
                 ].
             
             i := i + 1.

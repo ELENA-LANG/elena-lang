@@ -94,7 +94,7 @@ class ChatServer
                 [
                     console writeLine:"new client joint".
                 
-                    client set Parameter(ChatMember new:client of:$owner).
+                    client set Parameter(ChatMember new:client of:$self).
                 ].                    
             ]
             

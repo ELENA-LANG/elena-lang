@@ -13,7 +13,7 @@ ELENA is OO language, so a function is in fact an object
 import system'dynamic.
 
 Function = 
-    (:x)(closure append:x).
+    (:x)(self append:x).
 
 extension op
 {

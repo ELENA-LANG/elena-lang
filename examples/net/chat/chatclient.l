@@ -22,7 +22,7 @@ class ChatClient :: BaseClient
     
     sendNickname
     [
-        literal json := { Command = INTRODUCTION. Value = theUserName. } toJson; literal.
+        literal json := CommandDTO::{ @_command := INTRODUCTION. @_value := theUserName. } toJson; literal.
         int len := json length.
         
         theNetworkClient write int:len; write literal:json.
@@ -30,7 +30,7 @@ class ChatClient :: BaseClient
     
     send text:text
     [
-        literal json := { Command = SEND. Value = text. } toJson; literal.
+        literal json := CommandDTO::{ @_command := SEND. @_value := text. } toJson; literal.
         int len := json length.
         
         theNetworkClient write int:len; write literal:json.
@@ -44,7 +44,7 @@ class ChatClient :: BaseClient
             [
                 console writeLine:"connected".
                 
-                $owner sendNickname.
+                $self sendNickname.
             ]
             
             onError:e for:client
@@ -54,8 +54,8 @@ class ChatClient :: BaseClient
             
             onReceived object:client bytearray:buffer int:length
             [
-                $owner write bytearray:buffer int:length.
-                var command := $owner readCommand.
+                $self write bytearray:buffer int:length.
+                var command := $self readCommand.
                 if ($nil != command)
                     [
                         (command Command) =>

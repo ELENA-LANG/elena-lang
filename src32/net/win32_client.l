@@ -17,7 +17,7 @@ limited class TcpClientListener
 
 sealed class TcpClient
 {
-    type<ThreadHandle> theListenThread.
+    thread    theListenThread.
     object    theLock.
     
     socket    theSocket.

@@ -1,5 +1,5 @@
 import system'collections.
-//import system'text.
+import system'text.
 import system'dynamic.
 //import system'routines.
 import extensions.
@@ -39,19 +39,14 @@ class JsonException :: Exception
 //        = output writeLiteral:"""":(object literal):"""".
 //}.
 
-//textbuffer extension jsonSerializer
-//{
+textbuffer extension jsonSerializer
+{
 //    $serialize byte:n
 //    [
 //        self write(n literal).
 //    ]
 //
 //    $serialize short:n
-//    [
-//        self write(n literal).
-//    ]
-//
-//    $serialize int:n
 //    [
 //        self write(n literal).
 //    ]
@@ -74,11 +69,6 @@ class JsonException :: Exception
 //    $serialize char:b
 //    [
 //        self write:"'"; write(b literal); write:"'".
-//    ]
-//
-//    $serialize literal:s
-//    [
-//        self write:""""; write:s; write:"""".
 //    ]
 //
 //    $serialize wide:s
@@ -148,44 +138,46 @@ class JsonException :: Exception
 //                                
 //        self write:"}"
 //    ]
-//
-//    $serialize dto:object
-//    [
-////        self write:"{".
-////                
-////        mssg(10) properties := 0.
-////        int      len := 10.
-////        int      offs := 0.
-//
-////        object readMatchedEntries &mssg:%"get[0]" &int:0 &mssgarray:properties &vint:len.
-////        while (len > 0)
-////        [
-////            int i:=0.
-////            while (i < len)
-////            [
-////                mssg message := properties@i.
-////                
-////                self writeLiteral:"""":(message subject literal):""":".
-////                
-////                self::jsonSerializer jsonSerialize:(object::message eval).
-////                
-////                self write:",".
-////                
-////                i := i + 1.
-////            ].
-////            
-////            offs += len.
-////            
-////            object readMatchedEntries &mssg:%"get[0]" &int:offs &mssgarray:properties &vint:len.
-////        ].
-//        
-//        int outputLen := self length.
-//        if(outputLen > 1)
-//            [ self setLength int(outputLen - 1) ].
-//        
-//        self write:"}"
-//    ]    
-//        
+
+    $serialize(IntNumber n)
+    [
+        self write(n literal)
+    ]
+    
+    $serialize(LiteralValue s)
+    [
+        self write:"""".
+        self write(s).
+        self write:"""".
+    ]
+    
+    multi $serialize:object
+    [
+        self write:"{".
+
+        array props := object __properties.
+        int i := 0.
+        int len := props length.
+        while (i < len)
+        [
+            var prop := props[i].
+            
+            self print("""",prop literal,""":").
+            
+            self $serialize(object~prop get).
+            
+            self write:",".
+
+            i += 1
+        ].
+                                                
+        int outputLen := self length.
+        if(outputLen > 1)
+            [ self setLength int(outputLen - 1) ].
+        
+        self write:"}"
+    ]    
+
 //    $serialize array:array
 //    [
 //        self~jsonSerializer $serialize enumerator:array.
@@ -216,7 +208,7 @@ class JsonException :: Exception
 //
 //        ^ self
 //    ]
-//}
+}
 
 class $helper =
 {
@@ -341,8 +333,8 @@ class $helper =
 
 extension jsonOp
 {
-//    toJson
-//        = TextBuilder new; jsonSerialize:self; literal.
+    toJson
+        = TextBuilder new; $serialize:self; literal.
         
     fromJson
         = $helper deserializeObject enumerator(TokenEnumerator new literal:self token_dfa(ExpressionStatemachine new)).

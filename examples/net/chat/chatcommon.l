@@ -44,3 +44,10 @@ class BaseClient
         ^ $nil.
     ]        
 }
+
+class CommandDTO
+{
+    dto_prop Command :: _command.
+    
+    dto_prop Value :: _value.
+}
