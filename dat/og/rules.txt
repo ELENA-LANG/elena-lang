@@ -100,3 +100,4 @@ bcopya quit => nop quit;
 
 bswap acopyb => bcopya nop;
 
+pop close => nop close;

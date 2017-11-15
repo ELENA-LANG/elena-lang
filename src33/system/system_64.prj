@@ -1,0 +1,23 @@
+﻿[project]
+output=..\..\lib30_64
+options=-w3
+namespace=system
+template=lib_64
+debuginfo=-1
+warn:unresolved=0
+
+[manifest]
+name=ELENA Standard Library 64bit
+version=3.2.0
+author=Alex Rakov
+
+[files]
+types.l
+object.l
+basic.l
+templates.l
+control.l
+memory.l
+dynamic.l
+exceptions.l
+text\win32_common.l

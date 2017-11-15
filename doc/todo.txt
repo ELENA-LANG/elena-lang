@@ -2,12 +2,41 @@
 In development:
 ------                              
 
-              xdev - general implementation
-                 * test calc sample
-                 * test fibonacci sample
-                 * test zeckendorf_arithm 
-                 * elt : probably better to use eson and get rid of elena script
-                 * elena script : declare closure
+              exp - live programming
+                 * 0 function call - constant call
+
+
+(:x) [ x add:2 ]
+
+$(x == 3)
+
+%(x add:2) 
+
+
+                 * function call
+
+                 * method call
+                 * virtual method call
+
+              dev - usability
+                 * ecv : display class size
+
+              exp - web
+                 * http://www.codeproject.com/Articles/452052/Build-Your-Own-Web-Server
+                 * http://www.codeproject.com/Articles/1505/Create-your-own-Web-Server-using-C
+                 * #34 : Web support 
+                 * web server
+
+              dev - elt
+                 * probably better to use eson and get rid of elena script
+                 * implement rosetta sample with vm terminal
+
+              exp - live programming
+                 * implement live programming environment
+                 * implement tree prototype
+                 * implement xpath resolver prototype
+
+              dev - general implementation
                  * Read-only classes should be enforced #282
                  * #283 : unboxing duplicate object 
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
@@ -29,17 +58,17 @@ In development:
                  * constant numbers / strings should be used directly?? (e.g. replace a constant with its value)
                  * Constant fields #351
                  * print nan value
+                 * nil and $nil
                  * fixing open issues
 
-              zdev - live programming
-                 * implement live programming environment
-                 * implement tree prototype
-                 * implement xpath resolver prototype
+              dev - samples
+                 * test zeckendorf_arithm 
+                 * test fibonacci sample
 
-              idev - generic development
+              dev - debugger
                  * #263 - fix goto
 
-              ydev - upndown
+              exp - upndown
                  * reimplement chat sample - literal json := CommandDTO::{ @_command := SEND. @_value := text. @_user := $nil. } toJson; literal. - if @user initialization is miss, the code is broken
                  * reimplement upndown (#79)
 
@@ -95,6 +124,7 @@ Pipeline:
 
               xdev - general optimization  
                  * optimize pi sample, after recent changes it is slowed down
+                 * optimize anagram sample, after recent changes it is slowed down
                  * opimized alt operator implementation : resolve it in compile-time if the operand is known
                  * opimized alt operator implementation : if the object has no custom dispatch handler check it before
                    otherwise use try catch statement ; check $nil?
@@ -116,8 +146,8 @@ Pipeline:
                  * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
 
-              zdev - remoting
-              zdev - workflow
+              exp - remoting
+              exp - workflow
 
               idev - generic development
                  * xml : include / exclude
@@ -204,7 +234,6 @@ Pipeline:
 
               sdev - samples
                  * basic tests
-                 * migrate net samples
 
               sdev - rosetta samples
                  * rosetta sample : 2048
@@ -219,7 +248,6 @@ Pipeline:
               xdev - generic development 
                  * get rid of __ifoperator / ifnotoeprator - embeddable attribute should be used instead
                  * bug : extensions in template - are not fully resolved
-                 * uncomment WSADATA structure
                  * no need to copy to the buffer field / variable / method attributes
                  * get rid of listable attribute, use accumulators for bool values
 
@@ -250,7 +278,6 @@ Pipeline:
                  * game of life : viewer
 
               xdev - usability
-                 * ecv : display class size
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
 
               idev - generic development
@@ -261,10 +288,6 @@ Pipeline:
               zdev 
                  * scripting library : elena script (both run-time / compile-time)
                  * reg ex
-
-              xrev           
-                 * test net sample
-                 * test anagram
 
               adev - lib32
                  * review toLiteral code, temporal size??
@@ -306,11 +329,8 @@ Pipeline:
                  * fixing dynamic array ineriting - constructor should call default dynamic constructor
                    instead of creating the array itself (because in this case MyArray::Array will return an instance of Array)
                  * breaking loop (loop and return statement)
-                 * signature : make possible to create a combined signature from several subjects (constructor overloading)
-                 * multy parameter dispatching
                  * create closure outside the loop, so it will be created only once
                  * #236 : Namespace sharing
-                 * #167 : stack allocated variable and $nil
                  * passing vint as int probably should be possible only for embeddable classes
                  * for wrapper classes generate virutal set method
                  * use bool lamda expression for seek operations
@@ -380,9 +400,6 @@ Pipeline:
                        * try to use lamda expressin for brackets example
 
               xdev - generic development
-
-                       * support the following syntax : #throw(exceptionof:MyError)"My message" (using implicit constructors for exceptions)
-
                        * #237 : Multidimensional arrays 
                        * Implicit constructor should not have return statements
 
@@ -390,7 +407,6 @@ Pipeline:
 
                        * optimize #var(dirty_ptr)aPtr := system'external'sqlite3 sqlite3_errmsg &int:1. - assigning is done three times!!
 
-                       * implicit boxing (int to vint) should be possible only for stack allocated local variable, structure fields
                        * operation with primitive arrays should not be allowed
                        * extension should not be used stand-alone
                        * primitive operation with subject
@@ -413,10 +429,6 @@ Pipeline:
                        * subject and its wrapper should be declared in the same namespace, probably
                          warn if it is not the case
 
-                       * test stack unsafe operation
-                       * test stack safe operation
-                       * test int => vint
-                       * test vint => int
                        * test not, shift, negative operations
                        * test notepad
                        * test chat sample : fix the current bug, simple implementation - direct output
@@ -426,10 +438,8 @@ Pipeline:
                        * optimize charvalue#class.new&char$[1]
                        * optimize varof.append / varof.reduce / ...
                        * optimize ($nil != a) ? [ ... ]
-                       * optimite #var(int)last_index := theLength - 1. // where theLength is vint
-                       * optimize pop close => nop close
                        * optimize system'dynamic'Dynamic
-                       * optimization : equal, less, div, xor should support operation with immediate argumnt as well
+                       * optimization : div, xor should support operation with immediate argumnt as well
                        * optimization : SMALL_RECT.write&win_small_rec[1] - should directly assign the property to the field, 
                          the stack read optimization should work
                        * review Point.equal&coord[1] - why typecast message is sent
@@ -507,9 +517,7 @@ Pipeline:
                        * test unicode symbols
                        * interact with the current project objects
 
-              adev - lib30     
-                       * use implicit constructors in LIB30
-                       * implement #33 (tcp/ip socket)
+              adev - lib32
                        * operator << should be used to add a list item
 
               fdev - samples
@@ -781,10 +789,6 @@ Pipeline:
                        * support thread list
                        * implement watch
 
-               adev - web support
-                       * http://www.codeproject.com/Articles/452052/Build-Your-Own-Web-Server
-                       * http://www.codeproject.com/Articles/1505/Create-your-own-Web-Server-using-C
-                       
               adev - gui
                        * make possible to set / change / get the control color
                        * make possible to set / change / get the control font                       

@@ -14,8 +14,8 @@ static factory
 symbol dynamicRules = 
     factory 
         eval(Library new);
-        first/*; 
-        eval*/.
+        first; 
+        eval.
     
 symbol staticRules =
     calc'rules'States.

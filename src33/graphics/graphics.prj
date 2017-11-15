@@ -1,0 +1,15 @@
+﻿[project]
+output=..\..\lib33
+options=-w3
+namespace=graphics
+template=lib
+debuginfo=-1
+
+[manifest]
+name=ELENA Graphic Library API
+version=3.3.0
+author=Alex Rakov
+
+[files]
+types.l
+

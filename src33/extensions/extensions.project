@@ -1,0 +1,25 @@
+[project]
+output=/usr/lib/elena/lib31
+namespace=extensions
+template=lib
+debuginfo=-1
+warn:unresolved=0
+
+[manifest]
+name=ELENA Extension Library
+version=3.1.0
+author=Alex Rakov
+
+[files]
+control.l
+convertors.l
+console.l
+app.l
+lnx32_args.l
+math/functions.l
+math/matrix.l
+text/words.l
+text/strings.l
+text/encoder.l
+routines/enumerating.l
+routines/combinations.l

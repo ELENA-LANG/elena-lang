@@ -1,0 +1,16 @@
+﻿[project]
+output=..\..\lib33
+namespace=net
+template=lib
+debuginfo=-1
+
+[manifest]
+name=ELENA Network Provider Library
+version=3.3.0
+author=Alex Rakov
+
+[files]
+common.l
+win32_client.l
+win32_server.l
+

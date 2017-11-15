@@ -1,0 +1,17 @@
+﻿[project]
+output=..\..\lib33
+options=-w3
+namespace=sqlite
+template=lib
+debuginfo=-1
+
+[manifest]
+name=ELENA SQLite Provider Library
+version=3.3.0
+author=Alex Rakov
+
+[files]
+common.l
+reader.l
+data_table.l
+

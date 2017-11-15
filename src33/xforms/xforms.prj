@@ -1,0 +1,19 @@
+﻿[project]
+output=..\..\lib33
+options=-w3
+namespace=xforms
+template=lib
+debuginfo=-1
+
+[manifest]
+name=ELENA Library For Rendering UI
+version=3.3.0
+author=Alex Rakov
+
+[files]
+types.l
+consts.l
+templates.l
+win32_controls.l
+win32_windows.l
+
