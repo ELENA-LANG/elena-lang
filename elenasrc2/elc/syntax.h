@@ -53,7 +53,7 @@ enum Symbol
 //   nsMethodOpenParameter        = 0x01016,
 //   nsMethodParameter            = 0x01017,
 //   nsNestedClass                = 0x01018,
-//   nsObject                     = 0x01019,
+   nsObject                     = 0x01019,
 //   nsSubCode                    = 0x0101A,
 //   nsMessageOperation           = 0x0101B,
 //   nsMessageParameter           = 0x0101C,

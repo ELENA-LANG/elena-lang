@@ -149,16 +149,16 @@ public:
 ////      okParamField,
 //      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
-//      okNil,
+      okNil,
 //      okSuper,
 //      okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset
 //      okConstantRole,                 // param - role reference
-//      okExplicitConstant,             // param - reference, extraparam - subject
-//
-//      okExternal,
-//      okInternal,
+      okExplicitConstant,             // param - reference, extraparam - subject
+
+      okExternal,
+      okInternal,
    };
 
    struct ObjectInfo
@@ -265,12 +265,12 @@ private:
       // list of references to the current module which should be checked after the project is compiled
       Unresolveds* forwardsUnresolved;
 
-//      ObjectInfo mapObject(SNode identifier);
+      ObjectInfo mapObject(SNode identifier);
 
       virtual ref_t mapReference(ident_t reference, bool existing = false);
       virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/);
 
-//      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
+      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 
       void defineConstantSymbol(ref_t reference, ref_t classReference)
       {
@@ -399,22 +399,22 @@ private:
          moduleScope->raiseWarning(level, message, terminal);
       }
 
-//      ObjectInfo mapObject(SNode terminal)
-//      {
-//         ObjectInfo object = mapTerminal(terminal.identifier());
-//         if (object.kind == okUnknown) {
-//            return moduleScope->mapObject(terminal);
-//         }
-//         else return object;
-//      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier)
-//      {
-//         if (parent) {
-//            return parent->mapTerminal(identifier);
-//         }
-//         else return ObjectInfo();
-//      }
+      ObjectInfo mapObject(SNode terminal)
+      {
+         ObjectInfo object = mapTerminal(terminal.identifier());
+         if (object.kind == okUnknown) {
+            return moduleScope->mapObject(terminal);
+         }
+         else return object;
+      }
+
+      virtual ObjectInfo mapTerminal(ident_t identifier)
+      {
+         if (parent) {
+            return parent->mapTerminal(identifier);
+         }
+         else return ObjectInfo();
+      }
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -464,20 +464,20 @@ private:
       ref_t       extensionClassRef;
       bool        embeddable;
 
-//      ObjectInfo mapField(ident_t identifier);
-//
+      ObjectInfo mapField(ident_t identifier);
+
 //      virtual ObjectInfo mapTerminal(ident_t identifier);
 //
 ////      void compileClassAttribute(SyntaxTree::Node hint);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass || level == slOwnerClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass || level == slOwnerClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
 //      virtual bool isClosureMode() { return false; }
 //
 //      void save()
@@ -827,13 +827,13 @@ private:
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
 //
 //   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
-//   void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
-//   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
-//   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
-//
-//   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
-//
+   void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
+   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
+   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
+
+   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
