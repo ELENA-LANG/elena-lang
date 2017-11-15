@@ -144,9 +144,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 ////      case nsInlineClosure:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          break;
-//      case nsAttribute:
-//         _writer.newNode(lxAttributeDecl);
-//         break;
+      case nsAttribute:
+         _writer.newNode(lxAttributeDecl);
+         break;
 //      case nsNestedSubCode:
 //         _writer.newNode(lxCode);
 //         break;
@@ -261,20 +261,20 @@ inline bool setIdentifier(SNode current)
 //         return false;
 //   }
 //}
-//
-//inline SNode goToNode(SNode current, LexicalType type)
-//{
-//   while (current != lxNone && current != type)
-//      current = current.nextNode();
-//
-//   return current;
-//}
-//
-//inline bool isAttribute(ref_t attr)
-//{
-//   return (int)attr < 0;
-//}
-//
+
+inline SNode goToNode(SNode current, LexicalType type)
+{
+   while (current != lxNone && current != type)
+      current = current.nextNode();
+
+   return current;
+}
+
+inline bool isAttribute(ref_t attr)
+{
+   return (int)attr < 0;
+}
+
 //inline int readSizeValue(SNode node, int radix)
 //{
 //   ident_t val = node.identifier();
@@ -340,13 +340,13 @@ inline bool setIdentifier(SNode current)
 //
 //   return moduleScope->module->mapReference(name);
 //}
-//
-//ref_t DerivationReader::DerivationScope :: mapAttribute(SNode attribute, int& paramIndex)
-//{
-//   SNode terminal = attribute.firstChild(lxTerminalMask);
-//   if (terminal == lxNone)
-//      terminal = attribute;
-//
+
+ref_t DerivationReader::DerivationScope :: mapAttribute(SNode attribute/*, int& paramIndex*/)
+{
+   SNode terminal = attribute.firstChild(lxTerminalMask);
+   if (terminal == lxNone)
+      terminal = attribute;
+
 //   int index = mapParameter(terminal);
 //   if (index) {
 //      paramIndex = index;
@@ -356,9 +356,9 @@ inline bool setIdentifier(SNode current)
 //   else if (attribute.existChild(lxAttributeValue)) {
 //      return V_ATTRTEMPLATE;
 //   }
-//   else return moduleScope->mapAttribute(attribute);
-//}
-//
+   /*else */return moduleScope->mapAttribute(attribute);
+}
+
 //ref_t DerivationReader::DerivationScope :: mapTerminal(SNode terminal, bool existing)
 //{
 //   return moduleScope->mapTerminal(terminal, existing);
@@ -1087,12 +1087,12 @@ DerivationReader ::DerivationReader(SyntaxTree& tree)
 void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes/*, bool templateMode*/)
 {
    SNode current = attributes;
-//   while (current == lxAttribute || current == lxAttributeDecl) {
+   while (current == lxAttribute || current == lxAttributeDecl) {
 //      int paramIndex = 0;
-//      ref_t attrRef = current.argument;
-//      if (!attrRef)
-//         attrRef = scope.mapAttribute(current, paramIndex);
-//
+      ref_t attrRef = current.argument;
+      if (!attrRef)
+         attrRef = scope.mapAttribute(current/*, paramIndex*/);
+
 //      if (attrRef == V_ATTRTEMPLATE && scope.moduleScope->mapAttribute((current)) == V_TYPETEMPL) {
 //         // HOTFIX : recognize type template
 //         attrRef = scope.mapTypeTemplate(current);
@@ -1104,28 +1104,28 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
 //      else if (attrRef == INVALID_REF) {
 //         writer.appendNode(lxTemplateAttribute, paramIndex);
 //      }
-//      else if (isAttribute(attrRef)) {
-//         writer.newNode(lxAttribute, attrRef);
-//         copyIdentifier(writer, current.findChild(lxIdentifier));
-//         writer.closeNode();
-//
-//         if (attrRef == V_TEMPLATE && current.existChild(lxBaseParent)) {
-//            //HOTFIX : check if it is template based on the class
-//            writer.newNode(lxTemplateParent);
-//            copyIdentifier(writer, current.findChild(lxBaseParent).firstChild(lxTerminalMask));
-//            writer.closeNode();
-//         }
-//      }
-//      else if (attrRef != 0) {
-//         writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(attrRef));
-//         copyIdentifier(writer, current.firstChild(lxTerminalMask));
-//         writer.closeNode();
-//      }
-//      else scope.raiseError(errInvalidHint, current);
-//
-//      current = current.nextNode();
-//   }
-//
+      /*else */if (isAttribute(attrRef)) {
+         writer.newNode(lxAttribute, attrRef);
+         copyIdentifier(writer, current.findChild(lxIdentifier));
+         writer.closeNode();
+
+         //if (attrRef == V_TEMPLATE && current.existChild(lxBaseParent)) {
+         //   //HOTFIX : check if it is template based on the class
+         //   writer.newNode(lxTemplateParent);
+         //   copyIdentifier(writer, current.findChild(lxBaseParent).firstChild(lxTerminalMask));
+         //   writer.closeNode();
+         //}
+      }
+      else if (attrRef != 0) {
+         writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(attrRef));
+         copyIdentifier(writer, current.firstChild(lxTerminalMask));
+         writer.closeNode();
+      }
+      else scope.raiseError(errInvalidHint, current);
+
+      current = current.nextNode();
+   }
+
 //   if (node == lxClassField && node.existChild(lxSize)) {
 //      SNode sizeNode = node.findChild(lxSize).findChild(lxInteger, lxHexInteger);
 //      if (sizeNode != lxNone) {
@@ -2316,11 +2316,11 @@ bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope,
 {
 //   // recognize the declaration type
 //   DeclarationAttr declType = daNone;
-//   SNode current = attributes;
-//   while (current == lxAttribute || current == lxAttributeDecl) {
-//      ref_t attrRef = current.argument;
-//      if (!attrRef) {
-//         attrRef = scope.mapAttribute(current);
+   SNode current = attributes;
+   while (current == lxAttribute || current == lxAttributeDecl) {
+      ref_t attrRef = current.argument;
+      if (!attrRef) {
+         attrRef = scope.mapAttribute(current);
 //         if (attrRef == V_ATTRTEMPLATE) {
 //            if (scope.moduleScope->mapAttribute(current) == V_TEMPLATE) {
 //               // HOTFIX : check if it is a template based on the class
@@ -2330,9 +2330,9 @@ bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope,
 //               attrRef = V_TEMPLATE;
 //            }
 //         }
-//
-//         current.setArgument(attrRef);
-//
+
+         current.setArgument(attrRef);
+
 //         DeclarationAttr attr = daNone;
 //         switch (attrRef) {
 //            case V_TYPETEMPL:
@@ -2371,11 +2371,11 @@ bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope,
 //               break;
 //         }
 //         declType = (DeclarationAttr)(declType | attr);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
+      }
+
+      current = current.nextNode();
+   }
+
 //   attributes.refresh();
 //
 //   if (declType == daType) {
@@ -2698,6 +2698,9 @@ void DerivationReader :: generateScopeMembers(SNode& node, DerivationScope& scop
       else if (current == lxExpression && mode == MODE_ROOT) {
          node = lxSymbol;
       }
+      else if (current == lxAttributeDecl && mode == MODE_ROOT) {
+         node.set(lxAttributeDecl, scope.mapAttribute(current));
+      }
       else scope.raiseError(errInvalidSyntax, node);
 
       current = current.nextNode();
@@ -2724,19 +2727,6 @@ void DerivationReader :: generateScope(SyntaxWriter& writer, SNode node, Derivat
 //         }
 //      }
 //   }
-//   else if (body == lxAttributeDecl) {
-//      if (setIdentifier(attributes)) {
-//         attributes.refresh();
-//
-//         SNode nameAttr = goToNode(attributes, lxNameAttr);
-//         ident_t name = nameAttr.findChild(lxIdentifier).findChild(lxTerminal).identifier();
-//
-//         ref_t attrRef = scope.mapAttribute(body);
-//
-//         if(!scope.moduleScope->saveAttribute(name, attrRef, false))
-//            scope.raiseError(errDuplicatedDefinition, nameAttr);
-//      }
-//   }
 //   else if (body == lxAssigning) {
 //      scope.raiseError(errInvalidSyntax, body);
 //   }
@@ -2759,6 +2749,13 @@ void DerivationReader :: generateScope(SyntaxWriter& writer, SNode node, Derivat
 
             if (node == lxSymbol) {
                generateSymbolTree(writer, node, scope, attributes);
+            }
+            else if (node == lxAttributeDecl) {
+               SNode nameAttr = goToNode(attributes, lxNameAttr);
+               ident_t name = nameAttr.findChild(lxIdentifier).findChild(lxTerminal).identifier();
+               
+               if(!scope.moduleScope->saveAttribute(name, node.argument, false))
+                  scope.raiseError(errDuplicatedDefinition, nameAttr);
             }
 //            else generateClassTree(writer, node, scope, attributes);
          }

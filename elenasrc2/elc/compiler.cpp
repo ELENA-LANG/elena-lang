@@ -906,7 +906,10 @@ void Compiler::ModuleScope :: saveIncludedModule(_Module* extModule)
 
 bool Compiler::ModuleScope :: saveAttribute(ident_t name, ref_t attr, bool internalType)
 {
-   if (!internalType) {
+   if (!attr) {
+      return 0;
+   }
+   else if (!internalType) {
       ReferenceNs sectionName(module->Name(), ATTRIBUTE_SECTION);
       MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
 

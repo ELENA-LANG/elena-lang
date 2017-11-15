@@ -92,7 +92,7 @@ enum Symbol
 ////   nsImplicitConstructor        = 0x0104B,
    nsToken                      = 0x0104C,
    nsScope                      = 0x0104D,
-//   nsAttribute                  = 0x0104E,
+   nsAttribute                  = 0x0104E,
 //   nsRootMessage                = 0x0104F,
 //   nsLazyExpression             = 0x01050,
 //   nsAngleOperator              = 0x01051,

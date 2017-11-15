@@ -93,7 +93,7 @@ class DerivationReader : public _DerivationReader
 //      ref_t mapNewReference(ident_t identifier);
 //
 //      int mapParameter(SNode terminal);
-//      ref_t mapAttribute(SNode terminal, int& paramIndex);
+      ref_t mapAttribute(SNode terminal/*, int& paramIndex*/);
 //      ref_t mapAttribute(SNode terminal)
 //      {
 //         int dummy = 0;
