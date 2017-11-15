@@ -2,21 +2,63 @@
 In development:
 ------                              
 
+              dev - syntax redesign
+
+a
+a(b)
+a(b)[..]
+
+a(b,c)
+a(b,c)[..]
+
+
+
+
+a(b)
+a(b,c)
+a(b)[ ... ]
+a<b>(c)
+
+
+a[b]
+a[...]
+
+
+                 * support function call : a(b).
+                 * support function call : a(b,c).
+                 * support template statement : a(b)[ ... ].
+                 * not support template statement : a(b,c)[ ... ]. ??
+                 * support template initialization : var<int>(3).
+
+                 * support array a[b].
+                 * support template statement : a[ ... ];{} (e.g extern[] instead of extern()[]).
+
+              dev - closure redesign (#314)
+                 * closure call : a(2).
+
+a(2).
+
+if(a==3)[].
+
+
+              dev - closure redesign (#314,#197,#196)
+                 * closure declaration - (:x)(...)
+                 * closure declaration with explicit signature - (:x)<IntNumber>(...), do not support (&int:x)(...)
+
+                 * closure is a special method where self (message target) is not passed
+
+              dev - self and $self in the closure (#198)
+                 * redesign
+
+              dev - this built-in variable #294
+                 * get rid of closure / $closure variables
+
               exp - live programming
-                 * 0 function call - constant call
-
-
-(:x) [ x add:2 ]
-
-$(x == 3)
-
-%(x add:2) 
-
-
                  * function call
 
                  * method call
                  * virtual method call
+                 * redesign Tape
 
               dev - usability
                  * ecv : display class size
