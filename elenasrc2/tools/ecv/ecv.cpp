@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   1
+#define REVISION_VERSION   2
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1233,7 +1233,7 @@ int main(int argc, char* argv[])
 
    // prepare library manager
    Path configPath("templates\\lib.cfg");
-   Path rootPath("..\\lib32");
+   Path rootPath("..\\lib33");
 
    // get viewing module name
    IdentifierString buffer(argv[1]);

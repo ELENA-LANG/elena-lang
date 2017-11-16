@@ -5,6 +5,7 @@ __define EXPRESSION		4114
 __define TOKEN_PARAM		4117
 __define OBJECT			4121
 __define CODE_BLOCK		4122
+__define MESSAGE		4123
 __define BLOCK_END		4125
 __define DISPATCH               4128
 __define SIZE_PARAM             4162
@@ -79,12 +80,20 @@ SYMBOL_EXPRESSION ->
 	EXPRESSION
 
 EXPRESSION ->
-        OBJECT
+        OBJECT OPERATIONS
 
 OBJECT ->
 	identifier
 	| private
 	| reference
+
+OPERATIONS ->
+	MESSAGE
+	| eps
+
+MESSAGE ->
+	identifier
+	| private
 
 DECLARATION_END ->
 	TERMINATOR

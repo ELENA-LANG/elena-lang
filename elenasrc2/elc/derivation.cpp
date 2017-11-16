@@ -101,9 +101,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsXInlineClosure:
 //         _writer.newNode(lxInlineClosure);
 //         break;
-//      case nsMessageOperation:
-//         _writer.newNode(lxMessage);
-//         break;
+      case nsMessageOperation:
+         _writer.newNode(lxMessage);
+         break;
 //      case nsSubjectArg:
 //         _writer.newNode(lxMessage, -1);
 //         break;
@@ -236,27 +236,27 @@ inline bool setIdentifier(SNode current)
    else return false;
 }
 
-//inline bool isTerminal(LexicalType type)
-//{
-//   switch (type)
-//   {
-//      case lxIdentifier:
-//      case lxPrivate:
-//      case lxInteger:
-//      case lxHexInteger:
-//      case lxLong:
-//      case lxReal:
-//      case lxLiteral:
-//      case lxReference:
-//      case lxCharacter:
-//      case lxWide:
-//      case lxExplicitConst:
-//      case lxMemberIdentifier:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+inline bool isTerminal(LexicalType type)
+{
+   switch (type)
+   {
+      case lxIdentifier:
+      case lxPrivate:
+      case lxInteger:
+      case lxHexInteger:
+      case lxLong:
+      case lxReal:
+      case lxLiteral:
+      case lxReference:
+      case lxCharacter:
+      case lxWide:
+      case lxExplicitConst:
+      case lxMemberIdentifier:
+         return true;
+      default:
+         return false;
+   }
+}
 
 inline SNode goToNode(SNode current, LexicalType type)
 {
@@ -1204,12 +1204,12 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
 //   }
 //   writer.removeBookmark();
 //}
-//
-//void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type) {
+
+void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
 //         case lxObject:
 //         case lxMessageParameter:
 //            generateExpressionTree(writer, current, scope, EXPRESSION_MESSAGE_MODE);
@@ -1252,18 +1252,21 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
 //            else generateAttributeTemplate(writer, current, scope, scope.reference == INVALID_REF);
 //            writer.closeNode();
 //            break;
-//         case lxIdentifier:
-//         case lxPrivate:
-//         case lxReference:
-//            writer.newNode(lxMessage);
-//            scope.copySubject(writer, current);
-//            writer.closeNode();
-//            break;
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
+         case lxIdentifier:
+         case lxPrivate:
+         case lxReference:
+            writer.newNode(lxMessage);
+            scope.copySubject(writer, current);
+            writer.closeNode();
+            break;
+         default:
+            scope.raiseError(errInvalidSyntax, current);
+            break;
+      }
+      current = current.nextNode();
+   }
+}
+
 //inline bool checkFirstNode(SNode node, LexicalType type)
 //{
 //   SNode current = node.firstChild();
@@ -1297,17 +1300,17 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //            scope.codeNode = SNode();
 //         }
 //         writer.newBookmark();
-//      case lxMessage:
+      case lxMessage:
 //         if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
 //            writer.newNode(lxClosureMessage);
 //            copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
 //            writer.closeNode();
 //         }
 //         else {
-//            generateMessageTree(writer, current, scope/*, false*/);
-//
-//            writer.insert(lxExpression);
-//            writer.closeNode();
+            generateMessageTree(writer, current, scope);
+
+            writer.insert(lxExpression);
+            writer.closeNode();
 //         }
 //         if (current == lxCatchOperation) {
 //            writer.removeBookmark();
@@ -1319,7 +1322,7 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //            writer.insert(lxAlt);
 //            writer.closeNode();
 //         }
-//         break;
+         break;
 //      case lxExtension:
 //         writer.newNode(current.type, current.argument);
 //         generateExpressionTree(writer, current, scope, 0);
@@ -1389,7 +1392,7 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //         break;
       default:
       {
-//         if (isTerminal(current.type)) {
+         if (isTerminal(current.type)) {
 //            if (scope.type == DerivationScope::ttFieldTemplate) {
 //               int index = scope.mapIdentifier(current);
 //               if (index != 0) {
@@ -1405,7 +1408,8 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //               writer.closeNode();
 //            }
             /*else */copyIdentifier(writer, current);
-//         }
+         }
+         else scope.raiseError(errInvalidSyntax, current);
          break;
       }
    }

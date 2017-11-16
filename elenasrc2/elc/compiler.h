@@ -147,14 +147,14 @@ public:
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
 //      okParam,                        // param - parameter offset, extraparam = class reference
 ////      okParamField,
-//      okSubject,                      // param - parameter offset
+      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
-//      okSuper,
+      okSuper,
 //      okLocalAddress,                 // param - local offset, extraparam - class reference
-//      okParams,                       // param - local offset
+      okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset
-//      okConstantRole,                 // param - role reference
+      okConstantRole,                 // param - role reference
       okExplicitConstant,             // param - reference, extraparam - subject
 
       okExternal,
@@ -813,8 +813,8 @@ private:
 
    void declareMethodAttributes(SNode member, MethodScope& scope);
 
-//   ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
-//
+   ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
+
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //
@@ -837,11 +837,11 @@ private:
 //   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
 //   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
 //   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
-//
-//   ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
-//
-//   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
+
+   ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
+
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
 //
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);

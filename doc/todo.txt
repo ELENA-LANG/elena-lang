@@ -3,10 +3,9 @@ In development:
 ------                              
 
               dev - fixed size array field #123
-
+                 * support fixed size array : type<ShortNumber,260> cFileName.
 
               dev - syntax redesign
-
 a
 a(b)
 a(b)[..]
