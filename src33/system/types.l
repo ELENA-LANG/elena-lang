@@ -32,7 +32,7 @@ sealed          = #8195.
 //args            = #32. 
 //
 //__string        = #8200.
-//__int           = #11.
+__int           = #11.
 //__dword         = #12.
 //__real          = #14.
 __mssg          = #19.
@@ -65,7 +65,7 @@ type object     = system'Object.
 //
 //type byte       = system'ByteNumber.
 //type short      = system'ShortNumber.
-//type int        = system'IntNumber.
+type int        = system'IntNumber.
 //type uint       = system'UIntNumber.
 //type long       = system'LongNumber.
 //type real       = system'RealNumber.

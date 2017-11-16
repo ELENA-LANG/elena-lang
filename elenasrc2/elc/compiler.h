@@ -137,12 +137,12 @@ public:
       okSignatureConstant,            // param - reference
       okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
-//      okStaticField,                  // param - reference
+      okStaticField,                  // param - reference
       okStaticConstantField,          // param - reference
-//      okFieldAddress,                 // param - field offset, extraparam - class reference
-//      okOuter,                        // param - field offset, extraparam - class reference
-//      okOuterField,                   // param - field offset, extraparam - outer field offset
-//      okOuterStaticField,             // param - field offset, extraparam - outer field offset
+      okFieldAddress,                 // param - field offset, extraparam - class reference
+      okOuter,                        // param - field offset, extraparam - class reference
+      okOuterField,                   // param - field offset, extraparam - outer field offset
+      okOuterStaticField,             // param - field offset, extraparam - outer field offset
 //      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
 //      okParam,                        // param - parameter offset, extraparam = class reference
@@ -151,7 +151,7 @@ public:
       okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
       okSuper,
-//      okLocalAddress,                 // param - local offset, extraparam - class reference
+      okLocalAddress,                 // param - local offset, extraparam - class reference
       okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
@@ -592,12 +592,12 @@ private:
       int          reserved;  // allocated for the current statement
       int          saved;     // permanently allocated
 
-//      int newLocal()
-//      {
-//         level++;
-//
-//         return level;
-//      }
+      int newLocal()
+      {
+         level++;
+
+         return level;
+      }
 
       void mapLocal(ident_t local, int level)
       {
@@ -668,55 +668,55 @@ private:
 //      }
 //   };
 //
-//
-//   // - InlineClassScope -
-//   struct InlineClassScope : public ClassScope
-//   {
-//      struct Outer
-//      {
-//         ref_t      reference;
-//         bool       preserved;
-//         ObjectInfo outerObject;
-//
-//         Outer()
-//         {
-//            reference = INVALID_REF;
-//            preserved = false;
-//         }
-//         Outer(int reference, ObjectInfo outerObject)
-//         {
-//            this->reference = reference;
-//            this->outerObject = outerObject;
-//            this->preserved = false;
-//         }
-//      };
-//
-//      bool                    returningMode;
+
+   // - InlineClassScope -
+   struct InlineClassScope : public ClassScope
+   {
+      struct Outer
+      {
+         ref_t      reference;
+         bool       preserved;
+         ObjectInfo outerObject;
+
+         Outer()
+         {
+            reference = INVALID_REF;
+            preserved = false;
+         }
+         Outer(int reference, ObjectInfo outerObject)
+         {
+            this->reference = reference;
+            this->outerObject = outerObject;
+            this->preserved = false;
+         }
+      };
+
+      bool                    returningMode;
 //      bool                    closureMode;
-//      Map<ident_t, Outer>     outers;
-//      ClassInfo::FieldTypeMap outerFieldTypes;
-//
+      Map<ident_t, Outer>     outers;
+      ClassInfo::FieldTypeMap outerFieldTypes;
+
 //      Outer mapSelf();
 //      Outer mapOwner();
 //
 //      ObjectInfo allocateRetVar();
-//
-//      bool markAsPresaved(ObjectInfo object);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
+
+      bool markAsPresaved(ObjectInfo object);
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
 //      virtual bool isClosureMode() { return closureMode; }
 //
 //      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      InlineClassScope(CodeScope* owner, ref_t reference);
-//   };
+
+      InlineClassScope(CodeScope* owner, ref_t reference);
+   };
 
    struct WarningScope
    {
@@ -783,8 +783,8 @@ private:
 //
 //      return _logic->checkMethod(scope, reference, message, dummy);
 //   }
-//
-//   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
+
+   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
@@ -792,10 +792,10 @@ private:
 
    void importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 
-//   int defineFieldSize(CodeScope& scope, int offset);
+   int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
-//   void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
+   void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 
 //   /// NOTE : the method is used to set template pseudo variable
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
@@ -806,7 +806,7 @@ private:
 
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
-//   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
+   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
    void declareVMT(SNode member, ClassScope& scope);
 //   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
@@ -816,8 +816,8 @@ private:
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
+   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
+
 //   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
 //   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
@@ -831,8 +831,8 @@ private:
    ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
 
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
 //   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
@@ -846,13 +846,13 @@ private:
 //
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
-//   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
+   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
-//
+   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
+
 //   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 //
 //   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -861,8 +861,8 @@ private:
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(SNode node, int& size);
-//   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
-//
+   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
+
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 //
@@ -927,7 +927,7 @@ private:
 
    bool validate(_ProjectManager& project, _Module* module, int reference);
 
-//   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
+   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
 
    bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
    bool typecastObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef);

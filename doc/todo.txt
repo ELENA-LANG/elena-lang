@@ -35,6 +35,9 @@ a[...]
                  * support array a[b].
                  * support template statement : a[ ... ];{} (e.g extern[] instead of extern()[]).
 
+              dev - lib
+                * support fixed size array : array<IntNumber,4>   - array of 4 elements
+
               dev - closure redesign (#314)
                  * closure call : a(2).
 

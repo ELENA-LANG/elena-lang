@@ -165,10 +165,12 @@ class DerivationReader : public _DerivationReader
 
    void generateScopeMembers(SNode& node, DerivationScope& scope, int mode);
 
+   bool generateRootAttribute(SNode node, DerivationScope& scope);
+
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
 //   bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope);
 //   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-//   void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
