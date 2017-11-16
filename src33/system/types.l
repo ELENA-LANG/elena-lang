@@ -1,12 +1,12 @@
 /// Attributes
-//type            = #16390.
+type            = #16390.
 class           = #16386.
-//struct          = #8197.
+struct          = #8197.
 symbol          = #16389.
 constructor     = #16384.
 //multi           = #16397.
 //listable        = #8198.
-//sealed          = #8195.
+sealed          = #8195.
 //embeddable      = #8193.
 //template        = #16391.
 //extension       = #8203.
@@ -35,7 +35,7 @@ constructor     = #16384.
 //__int           = #11.
 //__dword         = #12.
 //__real          = #14.
-//__mssg          = #19.
+__mssg          = #19.
 //__subj          = #18.
 //__extmssg       = #21.
 //__tape_mixin    = #8209.
@@ -48,11 +48,11 @@ constructor     = #16384.
 ////#template(-4099) w1 {}
 ////#template(-4100) w2 {}
 ////#template(-4101) w3 {}
-//
-///// Provides classes that describe the basic functionality
-//
-//type object     = system'Object.
-//
+
+/// Provides classes that describe the basic functionality
+
+type object     = system'Object.
+
 //// === basic logical types ===
 //type bool       = system'BaseBoolValue.
 //

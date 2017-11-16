@@ -14,14 +14,14 @@
 //    /// Redirects incoming messages to the symbol
 //    dispatch => system'core_routines'__symbol.
 //}
-//
-//// --- Message ---
-//
-///// A message constant
-//sealed struct Message
-//{
-//    __mssg& theValue(4).
-//
+
+// --- Message ---
+
+/// A message constant
+sealed struct Message
+{
+    __mssg<4> theValue.
+
 //    constructor new literal:name
 //    [
 //        system'core_routines'__message load mssg:$self literal:name
@@ -46,8 +46,8 @@
 //
 //    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
 //    dispatch => system'core_routines'__message.
-//}
-//
+}
+
 //// --- ExtensionMessage ---
 //
 ///// An extended message constant

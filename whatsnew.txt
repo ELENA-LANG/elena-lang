@@ -9,6 +9,7 @@
 
 [ELENA]
 [*] #314 : Shortcut closure syntax 
+[*] #123 : fixed size array field 
 
 ***************************************************************
                              What's New in 3.2.1

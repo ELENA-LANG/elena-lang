@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              dev - fixed size array field #123
+
+
               dev - syntax redesign
 
 a
