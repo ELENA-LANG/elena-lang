@@ -21,23 +21,23 @@ class Object
 /// A common boolean value
 listable class BaseBoolValue
 {
-//    bool equal bool:aBool = $nil.
-//
-//    if : aTrueAction = $nil.
-//
-//    if : aTrueAction : aFalseAction = $nil.
-//
-//    ifnot : aTrueAction = $nil.
-//
-//    iif:aTrueValue:aFalseValue = $nil.
-//
-//    bool or : anExpr = $nil.
-//
-//    bool and : anExpr = $nil.
-//
-//    bool xor : aBool = $nil.
-//
-//    bool not = $self inverted.
+    bool equal bool:aBool = $nil.
+
+    if : aTrueAction = $nil.
+
+    if : aTrueAction : aFalseAction = $nil.
+
+    ifnot : aTrueAction = $nil.
+
+    iif:aTrueValue:aFalseValue = $nil.
+
+    bool or : anExpr = $nil.
+
+    bool and : anExpr = $nil.
+
+    bool xor : aBool = $nil.
+
+    bool not = $self inverted.
 
     bool inverted = $nil.
 

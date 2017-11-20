@@ -65,7 +65,7 @@ enum Symbol
 ////   nsStatic                     = 0x01022,
    nsBaseClass                  = 0x01023,
 //   nsL3Operation                = 0x01025,
-//   nsL7Operation                = 0x01026,
+   nsL7Operation                = 0x01026,
    nsRetStatement               = 0x01027,
 //   nsL5Operation                = 0x01028,
 ////   nsElseOperation              = 0x0102A,

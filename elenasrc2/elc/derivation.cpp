@@ -85,7 +85,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsL4Operation:
 //      case nsL5Operation:
       case nsL6Operation:
-//      case nsL7Operation:
+      case nsL7Operation:
 //      case nsRootL6Operation:
          _writer.newNode(lxOperator);
          break;
@@ -283,26 +283,26 @@ inline int readSizeValue(SNode node, int radix)
    return val.toLong(radix);
 }
 
-//inline void copyOperator(SyntaxWriter& writer, SNode ident, int operator_id)
-//{
-//   if (operator_id != 0) {
-//      writer.newNode(lxOperator, operator_id);
-//   }
-//   else if (emptystr(ident.identifier())) {
-//      SNode terminal = ident.findChild(lxTerminal);
-//      if (terminal != lxNone) {
-//         writer.newNode(lxOperator, terminal.identifier());
-//      }
-//      else writer.newNode(ident.type);
-//   }
-//   else writer.newNode(lxOperator, ident.identifier());
-//
-//   SyntaxTree::copyNode(writer, lxRow, ident);
-//   SyntaxTree::copyNode(writer, lxCol, ident);
-//   SyntaxTree::copyNode(writer, lxLength, ident);
-//   writer.closeNode();
-//}
-//
+inline void copyOperator(SyntaxWriter& writer, SNode ident, int operator_id)
+{
+   if (operator_id != 0) {
+      writer.newNode(lxOperator, operator_id);
+   }
+   else if (emptystr(ident.identifier())) {
+      SNode terminal = ident.findChild(lxTerminal);
+      if (terminal != lxNone) {
+         writer.newNode(lxOperator, terminal.identifier());
+      }
+      else writer.newNode(ident.type);
+   }
+   else writer.newNode(lxOperator, ident.identifier());
+
+   SyntaxTree::copyNode(writer, lxRow, ident);
+   SyntaxTree::copyNode(writer, lxCol, ident);
+   SyntaxTree::copyNode(writer, lxLength, ident);
+   writer.closeNode();
+}
+
 //inline bool isTemplateDeclaration(SNode node)
 //{
 //   SNode current = node.findChild(lxOperator);
@@ -372,44 +372,43 @@ ref_t DerivationReader::DerivationScope :: mapTerminal(SNode terminal, bool exis
 //   }
 //   return mapTerminal(terminal, existing);
 //}
-//
-//
-//bool DerivationReader::DerivationScope :: isTypeAttribute(SNode terminal)
-//{
-//   ident_t name = terminal.identifier();
-//   if (emptystr(name))
-//      name = terminal.findChild(lxTerminal).identifier();
-//
-//   if (!parameters.exist(name)) {
-//      ref_t attr = moduleScope->attributes.get(name);
-//
-//      return attr != 0 && !::isAttribute(attr);
-//   }
-//   else return true;
-//}
-//
-//bool DerivationReader::DerivationScope :: isAttribute(SNode terminal)
-//{
-//   ident_t name = terminal.identifier();
-//   if (emptystr(name))
-//      name = terminal.findChild(lxTerminal).identifier();
-//
-//   ref_t attr = moduleScope->attributes.get(name);
-//
-//   return attr != 0 && ::isAttribute(attr);
-//}
-//
-//bool DerivationReader::DerivationScope :: isImplicitAttribute(SNode terminal)
-//{
-//   ident_t name = terminal.identifier();
-//   if (emptystr(name))
-//      name = terminal.findChild(lxTerminal).identifier();
-//
-//   ref_t attr = moduleScope->attributes.get(name);
-//
-//   return attr == V_GENERIC || attr == V_CONVERSION;
-//}
-//
+
+bool DerivationReader::DerivationScope :: isTypeAttribute(SNode terminal)
+{
+   ident_t name = terminal.identifier();
+   if (emptystr(name))
+      name = terminal.findChild(lxTerminal).identifier();
+
+   /*if (!parameters.exist(name)) {*/
+      ref_t attr = moduleScope->attributes.get(name);
+
+      return attr != 0 && !::isAttribute(attr);
+   //}
+   //else return true;
+}
+
+bool DerivationReader::DerivationScope :: isAttribute(SNode terminal)
+{
+   ident_t name = terminal.identifier();
+   if (emptystr(name))
+      name = terminal.findChild(lxTerminal).identifier();
+
+   ref_t attr = moduleScope->attributes.get(name);
+
+   return attr != 0 && ::isAttribute(attr);
+}
+
+bool DerivationReader::DerivationScope :: isImplicitAttribute(SNode terminal)
+{
+   ident_t name = terminal.identifier();
+   if (emptystr(name))
+      name = terminal.findChild(lxTerminal).identifier();
+
+   ref_t attr = moduleScope->attributes.get(name);
+
+   return attr == V_GENERIC || attr == V_CONVERSION;
+}
+
 //ref_t DerivationReader::DerivationScope :: mapTemplate(SNode terminal, int paramCounter, int prefixCounter)
 //{
 //   if (terminal == lxBaseParent) {
@@ -667,21 +666,21 @@ ref_t DerivationReader::DerivationScope :: mapTypeTemplate(SNode current)
 
 // --- DerivationReader ---
 
-DerivationReader ::DerivationReader(SyntaxTree& tree)
+DerivationReader :: DerivationReader(SyntaxTree& tree)
 {
    _root = tree.readRoot();
 
-//   ByteCodeCompiler::loadVerbs(_verbs);
+   ByteCodeCompiler::loadVerbs(_verbs);
 }
 
-//bool DerivationReader :: isVerbAttribute(SNode attribute)
-//{
-//   if (attribute != lxAttribute)
-//      return false;
-//
-//   return _verbs.exist(attribute.findChild(lxIdentifier).findChild(lxTerminal).identifier());
-//}
-//
+bool DerivationReader :: isVerbAttribute(SNode attribute)
+{
+   if (attribute != lxAttribute)
+      return false;
+
+   return _verbs.exist(attribute.findChild(lxIdentifier).findChild(lxTerminal).identifier());
+}
+
 //void DerivationReader :: copyExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 //{
 //   if (node.strArgument != -1) {
@@ -1304,12 +1303,12 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //         writer.insert(lxExpression);
 //         writer.closeNode();
 //         break;
-//      case lxOperator:
-//         copyOperator(writer, current.firstChild(), current.argument);
-//         generateExpressionTree(writer, current, scope, 0);
-//         writer.insert(lxExpression);
-//         writer.closeNode();
-//         break;
+      case lxOperator:
+         copyOperator(writer, current.firstChild(), current.argument);
+         generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE);
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
 //      case lxCatchOperation:
 //      case lxAltOperation:
 //         if (scope.type == DerivationScope::ttCodeTemplate && scope.templateRef == 0) {
@@ -1557,6 +1556,12 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
    writer.newBookmark();
 
    SNode current = node.firstChild();
+
+   if (mode == EXPRESSION_OPERATOR_MODE) {
+      // skip the operator terminal
+      current = current.nextNode();
+   }
+
 //   SNode next = current.nextNode();
 //   bool identifierMode = current.type == lxIdentifier;
 //   bool listMode = false;
@@ -2228,12 +2233,12 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
 
    // copy method signature
    SNode current = goToNode(attributes, lxNameAttr);
-   while (current == lxNameAttr/* || current == lxMessage*/) {
-      //if (current == lxMessage) {
-      //   writer.newNode(lxMessage);
-      //   scope.copySubject(writer, current.firstChild(lxTerminalMask));
-      //   writer.closeNode();
-      //}
+   while (current == lxNameAttr || current == lxMessage) {
+      if (current == lxMessage) {
+         writer.newNode(lxMessage);
+         scope.copySubject(writer, current.firstChild(lxTerminalMask));
+         writer.closeNode();
+      }
 
       current = current.nextNode();
    }
@@ -2241,12 +2246,12 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
    // copy method arguments
    current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxMethodParameter/* || current == lxMessage*/) {
+      if (current == lxMethodParameter || current == lxMessage) {
          writer.newNode(current.type, current.argument);
-         /*if (current == lxMessage) {
+         if (current == lxMessage) {
             scope.copySubject(writer, current.firstChild(lxTerminalMask));
          }
-         else*/ copyIdentifier(writer, current.firstChild(lxTerminalMask));
+         else copyIdentifier(writer, current.firstChild(lxTerminalMask));
          writer.closeNode();
       }
       else if (current == lxAttributeValue) {
@@ -2586,38 +2591,38 @@ bool DerivationReader :: generateMethodScope(SNode node, DerivationScope& scope,
    if (current != lxNone) {
       // try to resolve the message name
       SNode lastAttr = findLastAttribute(attributes);
-//      SNode firstMember = node.findChild(lxMethodParameter, lxAttribute, lxAttributeValue);
-//
-//      if (scope.isImplicitAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) && (firstMember == lxAttributeValue || firstMember == lxMethodParameter || firstMember == lxNone)) {
-//         // HOTFIX : recognize explicit / generic attributes
-//      }
-//      else {
-//         if (node.firstChild(lxExprMask) == lxMethodParameter) {
-//            // HOTFIX : recognize type
-//            current = lastAttr.prevNode();
-//            if (current == lxAttribute && (scope.isTypeAttribute(lastAttr.findChild(lxIdentifier, lxPrivate))
-//               || scope.isSubject(current.findChild(lxIdentifier, lxPrivate))))
-//            {
-//               if (!scope.isAttribute(current.findChild(lxIdentifier, lxPrivate))) {
-//                  lastAttr = lxMessage;
-//                  lastAttr = current;
-//
-//                  current = current.prevNode();
-//
-//                  if (!isVerbAttribute(lastAttr) && isVerbAttribute(current)) {
-//                     // HOTFIX : to support "verb subject type[]"
-//                     lastAttr = lxMessage;
-//                     lastAttr = current;
-//                  }
-//               }
-//            }
-//         }
+      SNode firstMember = node.findChild(lxMethodParameter, lxAttribute, lxAttributeValue);
+
+      if (scope.isImplicitAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) && (firstMember == lxAttributeValue || firstMember == lxMethodParameter || firstMember == lxNone)) {
+         // HOTFIX : recognize explicit / generic attributes
+      }
+      else {
+         if (node.firstChild(lxExprMask) == lxMethodParameter) {
+            // HOTFIX : recognize type
+            current = lastAttr.prevNode();
+            if (current == lxAttribute && (scope.isTypeAttribute(lastAttr.findChild(lxIdentifier, lxPrivate))
+               || scope.isSubject(current.findChild(lxIdentifier, lxPrivate))))
+            {
+               if (!scope.isAttribute(current.findChild(lxIdentifier, lxPrivate))) {
+                  lastAttr = lxMessage;
+                  lastAttr = current;
+
+                  current = current.prevNode();
+
+                  if (!isVerbAttribute(lastAttr) && isVerbAttribute(current)) {
+                     // HOTFIX : to support "verb subject type[]"
+                     lastAttr = lxMessage;
+                     lastAttr = current;
+                  }
+               }
+            }
+         }
 //
 //         if (!lastAttr.existChild(lxAttributeValue)) {
             // mark the last message as a name if the attributes are not available
             lastAttr = lxNameAttr;
 //         }
-//      }
+      }
 
       node = lxClassMethod;
 
@@ -2678,6 +2683,8 @@ void DerivationReader :: generateClassTree(SyntaxWriter& writer, SNode node, Der
 //         withInPlaceInit |= generateFieldTemplateTree(writer, current, scope, subAttributes, buffer);
 //         subAttributes = SNode();
 //      }
+      else if (current == lxMessage) {
+      }
       else scope.raiseError(errInvalidSyntax, node);
 
       current = current.nextNode();

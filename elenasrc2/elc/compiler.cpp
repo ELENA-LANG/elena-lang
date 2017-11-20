@@ -34,8 +34,8 @@ using namespace _ELENA_;
 #define HINT_NOCONDBOXING     0x04000000
 #define HINT_EXTENSION_MODE   0x02000000
 //#define HINT_TRY_MODE         0x01000000
-//#define HINT_LOOP             0x00800000
-//#define HINT_SWITCH           0x00400000
+#define HINT_LOOP             0x00800000
+#define HINT_SWITCH           0x00400000
 //#define HINT_ALT_MODE         0x00200000
 #define HINT_SINGLETON        0x00100000
 #define HINT_EXT_RESENDEXPR   0x00080400
@@ -2570,41 +2570,41 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
       arg = arg.nextNode();
    }
 
-//   // if message has named argument list
-//   bool first = messageStr.Length() == 0;
-//
-//   while (arg == lxMessage) {
-//      ref_t class_ref = declareArgumentSubject(arg, *scope.moduleScope, first, messageStr, signature);
-//
-//      // skip an argument
-//      arg = arg.nextNode();
-//
-//      if (test(arg.type, lxObjectMask)) {
-//         // if it is an open argument list
-//         if (arg.nextNode() == lxNone && (class_ref == V_ARGARRAY || (arg == lxExpression && arg.argument == V_ARGARRAY))) {
-//            // if open argument list virtual subject is used - replace it with []
-//            if (paramCount > 0)
-//               scope.raiseError(errInvalidOperation, node);
-//
-//            paramCount = OPEN_ARG_COUNT;
-//
-//            if (class_ref != scope.moduleScope->superReference && class_ref != V_ARGARRAY) {
-//               //HOTFIX : temporally - only object is supported
-//               scope.raiseError(errNotApplicable, arg);
-//            }
-//            else signature.clear();
-//
-//            break;
-//         }
-//         else {
-//            paramCount++;
-//            if (paramCount >= OPEN_ARG_COUNT)
-//               scope.raiseError(errInvalidOperation, node);
-//
-//            arg = arg.nextNode();
-//         }
-//      }
-//   }
+   // if message has named argument list
+   bool first = messageStr.Length() == 0;
+
+   while (arg == lxMessage) {
+      ref_t class_ref = declareArgumentSubject(arg, *scope.moduleScope, first, messageStr, signature);
+
+      // skip an argument
+      arg = arg.nextNode();
+
+      if (test(arg.type, lxObjectMask)) {
+         // if it is an open argument list
+        /* if (arg.nextNode() == lxNone && (class_ref == V_ARGARRAY || (arg == lxExpression && arg.argument == V_ARGARRAY))) {
+            // if open argument list virtual subject is used - replace it with []
+            if (paramCount > 0)
+               scope.raiseError(errInvalidOperation, node);
+
+            paramCount = OPEN_ARG_COUNT;
+
+            if (class_ref != scope.moduleScope->superReference && class_ref != V_ARGARRAY) {
+               //HOTFIX : temporally - only object is supported
+               scope.raiseError(errNotApplicable, arg);
+            }
+            else signature.clear();
+
+            break;
+         }
+         else {*/
+            paramCount++;
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errInvalidOperation, node);
+
+            arg = arg.nextNode();
+         //}
+      }
+   }
 
    if (actionFlags == PROPSET_MESSAGE && paramCount == 1) {
       // COMPILER MAGIC : set&x => x
@@ -2683,97 +2683,97 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 //
 //   return extRef;
 //}
-//
-//void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode)
-//{
-//   if (loopMode) {
-//      writer.newNode(lxElse, ifReference);
-//
-//      compileBranching(writer, thenBody.findSubNode(lxCode), scope);
-//      writer.closeNode();
-//   }
-//   else {
-//      SNode thenCode = thenBody.findSubNode(lxCode);
-//
-//      writer.newNode(lxIf, ifReference);
-//      compileBranching(writer, thenCode, scope);
-//      writer.closeNode();
-//
-//      // HOTFIX : switch mode - ignore else
-//      if (!switchMode) {
-//         SNode elseCode = thenBody.firstChild().nextNode();
-//         if (elseCode != lxNone) {
-//            writer.newNode(lxElse, 0);
-//            compileBranching(writer, elseCode, scope);
-//            writer.closeNode();
-//         }
-//      }
-//   }
-//}
-//
-//void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal)
-//{
-//   bool loopMode = test(mode, HINT_LOOP);
-//   bool switchMode = test(mode, HINT_SWITCH);
-//
-//   // HOTFIX : in loop expression, else node is used to be similar with branching code
-//   // because of optimization rules
-//   ref_t original_id = operator_id;
-//   if (loopMode) {
-//      operator_id = operator_id == IF_MESSAGE_ID ? IFNOT_MESSAGE_ID : IF_MESSAGE_ID;
-//   }
-//
-//   ref_t ifReference = 0;
-//   ref_t resolved_operator_id = operator_id;
-//   // try to resolve the branching operator directly
-//   if (_logic->resolveBranchOperation(*scope.moduleScope, *this, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
-//      // good luck : we can implement branching directly
-//      compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
-//
-//      writer.insert(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
-//      writer.closeNode();
-//   }
-//   else {
-//      operator_id = original_id;
-//
-//      // bad luck : we have to create closure
-//      compileObject(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
-//
-//      SNode roperand2Node = roperandNode.firstChild() == lxExpression ? roperandNode.findChild(lxCode) : SNode();
-//      if (roperand2Node != lxNone) {
-//         // HOTFIX : else sub code is located in the first expression, while if one - in second layer expression
-//         compileClosure(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
-//
-//         //compileObject(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
-//
-//         retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(operator_id, 2), 0);
-//      }
-//      else retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(operator_id, 1), 0);
-//
-//      if (loopMode) {
-//         writer.insert(lxLooping);
-//         writer.closeNode();
-//      }
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id)
-//{
-//   ObjectInfo retVal(okObject);
-//
-//   writer.newBookmark();
-//
-//   SNode loperandNode = node.firstChild(lxObjectMask);
-//   ObjectInfo loperand = compileExpression(writer, loperandNode, scope, 0);
-//
-//   SNode roperandNode = loperandNode.nextNode(lxObjectMask);
-//
-//   compileBranchingOperand(writer, roperandNode, scope, mode, operator_id, loperand, retVal);
-//
-//   writer.removeBookmark();
-//
-//   return retVal;
-//}
+
+void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode)
+{
+   if (loopMode) {
+      writer.newNode(lxElse, ifReference);
+
+      compileBranching(writer, thenBody.findSubNode(lxCode), scope);
+      writer.closeNode();
+   }
+   else {
+      SNode thenCode = thenBody.findSubNode(lxCode);
+
+      writer.newNode(lxIf, ifReference);
+      compileBranching(writer, thenCode, scope);
+      writer.closeNode();
+
+      // HOTFIX : switch mode - ignore else
+      if (!switchMode) {
+         SNode elseCode = thenBody.firstChild().nextNode();
+         if (elseCode != lxNone) {
+            writer.newNode(lxElse, 0);
+            compileBranching(writer, elseCode, scope);
+            writer.closeNode();
+         }
+      }
+   }
+}
+
+void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal)
+{
+   bool loopMode = test(mode, HINT_LOOP);
+   bool switchMode = test(mode, HINT_SWITCH);
+
+   // HOTFIX : in loop expression, else node is used to be similar with branching code
+   // because of optimization rules
+   ref_t original_id = operator_id;
+   if (loopMode) {
+      operator_id = operator_id == IF_MESSAGE_ID ? IFNOT_MESSAGE_ID : IF_MESSAGE_ID;
+   }
+
+   ref_t ifReference = 0;
+   ref_t resolved_operator_id = operator_id;
+   // try to resolve the branching operator directly
+   if (_logic->resolveBranchOperation(*scope.moduleScope, *this, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
+      // good luck : we can implement branching directly
+      compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
+
+      writer.insert(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
+      writer.closeNode();
+   }
+   else {
+      operator_id = original_id;
+
+      // bad luck : we have to create closure
+      compileObject(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
+
+      SNode roperand2Node = roperandNode.firstChild() == lxExpression ? roperandNode.findChild(lxCode) : SNode();
+      if (roperand2Node != lxNone) {
+         // HOTFIX : else sub code is located in the first expression, while if one - in second layer expression
+         compileClosure(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
+
+         //compileObject(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
+
+         retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(operator_id, 2), 0);
+      }
+      else retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(operator_id, 1), 0);
+
+      if (loopMode) {
+         writer.insert(lxLooping);
+         writer.closeNode();
+      }
+   }
+}
+
+ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id)
+{
+   ObjectInfo retVal(okObject);
+
+   writer.newBookmark();
+
+   SNode loperandNode = node.firstChild(lxObjectMask);
+   ObjectInfo loperand = compileExpression(writer, loperandNode, scope, 0);
+
+   SNode roperandNode = loperandNode.nextNode(lxObjectMask);
+
+   compileBranchingOperand(writer, roperandNode, scope, mode, operator_id, loperand, retVal);
+
+   writer.removeBookmark();
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2)
 {
@@ -2869,21 +2869,21 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-//   SNode operatorNode = node.findChild(lxOperator);
-//   int operator_id = operatorNode.argument != 0 ? operatorNode.argument : _operators.get(operatorNode.identifier());
-//
-//   // if it is a new operator
-//   if (operator_id == -1) {
-//      return compileNewOperator(writer, node, scope/*, mode*/);
-//   }
-//   // if it is branching operators
-//   else if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
-//      return compileBranchingOperator(writer, node, scope, mode, operator_id);
-//   }
-//   else return compileOperator(writer, node, scope, mode, operator_id);
-//}
+ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   SNode operatorNode = node.findChild(lxOperator);
+   int operator_id = operatorNode.argument != 0 ? operatorNode.argument : _operators.get(operatorNode.identifier());
+
+   // if it is a new operator
+   //if (operator_id == -1) {
+   //   return compileNewOperator(writer, node, scope/*, mode*/);
+   //}
+   // if it is branching operators
+   /*else*/ if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
+      return compileBranchingOperator(writer, node, scope, mode, operator_id);
+   }
+   else return compileOperator(writer, node, scope, mode, operator_id);
+}
 
 ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode)
 {
@@ -3964,7 +3964,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //   //   writer.appendNode(lxNil);
 //   //}
 //   else {
-      SNode current = node.findChild(lxAssign, /*lxExtension, */lxMessage/*, lxOperator, lxSwitching*/);
+      SNode current = node.findChild(lxAssign, /*lxExtension, */lxMessage, lxOperator/*, lxSwitching*/);
       switch (current.type) {
          case lxAssign:
             objectInfo = compileAssigning(writer, node, scope, mode);
@@ -3980,9 +3980,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //         case lxExtension:
 //            objectInfo = compileExtension(writer, node, scope);
 //            break;
-//         case lxOperator:
-//            objectInfo = compileOperator(writer, node, scope, mode);
-//            break;
+         case lxOperator:
+            objectInfo = compileOperator(writer, node, scope, mode);
+            break;
          default:
          {
             current = node.firstChild(lxObjectMask);
@@ -4022,22 +4022,22 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode as
    return objectInfo;
 }
 
-//ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, CodeScope& scope)
-//{
-//   CodeScope subScope(&scope);
-//
-//   writer.newNode(lxCode);
-//
-//   compileCode(writer, thenCode, subScope);
-//
-//   // preserve the allocated space
-//   scope.level = subScope.level;
-//
-//   writer.closeNode();
-//
-//   return ObjectInfo(okObject);
-//}
-//
+ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, CodeScope& scope)
+{
+   CodeScope subScope(&scope);
+
+   writer.newNode(lxCode);
+
+   compileCode(writer, thenCode, subScope);
+
+   // preserve the allocated space
+   scope.level = subScope.level;
+
+   writer.closeNode();
+
+   return ObjectInfo(okObject);
+}
+
 //void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
 //{
 //   // find inner expression
@@ -4410,7 +4410,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    ref_t flags = 0;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
-   SNode arg = node.findChild(lxMethodParameter/*, lxMessage*/, lxParamRefAttr);
+   SNode arg = node.findChild(lxMethodParameter, lxMessage, lxParamRefAttr);
 
 //   if (verb == lxNone) {
 //      if (arg == lxMessage) {
@@ -4424,11 +4424,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    if (node.argument == 0) {
       if (verbRef) {
-//         if (arg == lxMethodParameter || arg == lxNone) {
-//            signature.append('$');
-//            signature.append(scope.moduleScope->module->resolveReference(verbRef));
-//         }
-         /*else */scope.raiseError(errIllegalMethod, verb);
+         if (arg == lxMethodParameter || arg == lxNone) {
+            signature.append('$');
+            signature.append(scope.moduleScope->module->resolveReference(verbRef));
+         }
+         else scope.raiseError(errIllegalMethod, verb);
       }
       else if (verb != lxNone) {
          // COMPILER MAGIC : recognize set property
@@ -4466,7 +4466,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    // if method has named argument list
    int strongParamCounter = 0;
-   while (/*arg == lxMessage || */arg == lxParamRefAttr) {
+   while (arg == lxMessage || arg == lxParamRefAttr) {
       ref_t class_ref = declareArgumentSubject(arg, *scope.moduleScope, first, messageStr, signature);
       if (class_ref != 0)
          strongParamCounter++;
