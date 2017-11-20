@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   2
+#define REVISION_VERSION   3
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -748,7 +748,7 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
    ref_t message = 0;
 
    // resolve method
-   if (methodName[0] == '$') {
+   if (methodName[0] == '$' && methodName[1] >= '0' && methodName[1] <= '9') {
       message = resolveMessageByIndex(module, className.ident(), methodName.toInt(1));
    }
    else message = resolveMessage(module, methodName);

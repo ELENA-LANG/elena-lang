@@ -1019,17 +1019,24 @@ void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, 
    tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
 }
 
-void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
+void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion)
 {
    // validate
    // xcallrm r, m
+
+   int freeArg;
+   if (invokeMode) {
+      tape.write(bcPop);
+      freeArg = getParamCount(message);
+   }
+   else freeArg = getParamCount(message) + 1;
 
    if(withValidattion)
       tape.write(bcValidate);
 
    tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
 
-   tape.write(bcFreeStack, 1 + getParamCount(message));
+   tape.write(bcFreeStack, freeArg);
 }
 
 void ByteCodeWriter :: callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
@@ -1045,15 +1052,22 @@ void ByteCodeWriter :: callImplicitConstructorMethod(CommandTape& tape, ref_t re
    tape.write(bcFreeStack, getParamCount(message));
 }
 
-void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode)
 {
+   int freeArg;
+   if (invokeMode) {
+      tape.write(bcPop);
+      freeArg = getParamCount(message);
+   }
+   else freeArg = getParamCount(message) + 1;
+
    // xindexrm r, m
    // acallvd
 
    tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
    tape.write(bcACallVD);
 
-   tape.write(bcFreeStack, 1 + getParamCount(message));
+   tape.write(bcFreeStack, freeArg);
 }
 
 void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
@@ -4320,12 +4334,21 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    tape.write(bcCopyM, message);
 
+   bool invokeMode = getAction(message) == INVOKE_MESSAGE_ID;
+
    SNode target = callNode.findChild(lxCallTarget);
    if (callNode == lxDirectCalling) {
-      callResolvedMethod(tape, target.argument, callNode.argument);
+      callResolvedMethod(tape, target.argument, callNode.argument, invokeMode);
    }
    else if (callNode == lxSDirctCalling) {
-      callVMTResolvedMethod(tape, target.argument, callNode.argument);
+      callVMTResolvedMethod(tape, target.argument, callNode.argument, invokeMode);
+   }
+   else if (invokeMode) {
+      // pop
+      // acallvi offs
+      tape.write(bcPop);
+      tape.write(bcACallVI, 0);
+      tape.write(bcFreeStack, getParamCount(callNode.argument));
    }
    else {
       // acallvi offs
@@ -5103,7 +5126,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
          tape.write(bcOpen, 1);
 
          unboxMessage(tape);
-         callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument, false);
+         callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument, false, false);
 
          closeFrame(tape);
          popObject(tape, lxCurrentMessage);
@@ -5587,7 +5610,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
             }               
             else {
                pushObject(tape, lxCurrent); // push the target
-               callResolvedMethod(tape, current.findChild(lxTarget).argument, current.argument);
+               callResolvedMethod(tape, current.findChild(lxTarget).argument, current.argument, false, false);
             }
             break;
          case lxImporting:

@@ -63,7 +63,8 @@ namespace _ELENA_
    #define WRITE_MESSAGE_ID        0x001B
    #define SHIFT_MESSAGE_ID        0x001C
    #define VALUES_MESSAGE_ID       0x001D             // virtual method returning the list of enum values
-   #define PREDEFINED_MESSAGE_ID   0x001D
+   #define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
+   #define PREDEFINED_MESSAGE_ID   0x001E
 
    // virtual operator
    #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -376,6 +377,7 @@ namespace _ELENA_
    #define IF_MESSAGE               "if"
    #define IFNOT_MESSAGE            "ifnot"
    #define SHIFT_MESSAGE            "shift"
+   #define INVOKE_MESSAGE           "$$invoke"
 
    // ELENA verb operators
    #define EQUAL_OPERATOR		      "=="

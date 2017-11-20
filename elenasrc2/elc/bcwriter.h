@@ -185,9 +185,9 @@ class ByteCodeWriter
    void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
+   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion = true);
    void callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
-   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode);
 
    void doMultiDispatch(CommandTape& tape, ref_t operationList);
    void doSealedMultiDispatch(CommandTape& tape, ref_t operationList);

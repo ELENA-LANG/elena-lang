@@ -145,8 +145,8 @@ public:
       okOuterStaticField,             // param - field offset, extraparam - outer field offset
 //      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
-//      okParam,                        // param - parameter offset, extraparam = class reference
-////      okParamField,
+      okParam,                        // param - parameter offset, extraparam = class reference
+//      okParamField,
       okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
@@ -318,7 +318,7 @@ private:
 
       virtual void validateReference(SNode terminal, ref_t reference);
 
-//      ref_t getBaseLazyExpressionClass();
+      ref_t getBaseLazyExpressionClass();
 
       void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
 
@@ -818,8 +818,8 @@ private:
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
 //
@@ -876,16 +876,13 @@ private:
 
 //   ref_t declareArgumentSubject(SNode node, ModuleScope& scope, bool& first, IdentifierString& messageStr, IdentifierString& signature);
    void declareArgumentList(SNode node, MethodScope& scope);
-//   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
-//   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
-//
-////   void declareSingletonClass(SNode node, ClassScope& scope);
-//////   void compileSingletonClass(SNode member, ClassScope& scope, SNode hints);
-////
-//////   void declareSingletonAction(ClassScope& scope, SNode objNode);
-//
-//   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-//   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
+   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
+
+//   void declareSingletonClass(SNode node, ClassScope& scope);
+
+   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
@@ -897,8 +894,8 @@ private:
 
    void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ClassScope& scope);
-//
-//   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
+
+   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
 //   void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);

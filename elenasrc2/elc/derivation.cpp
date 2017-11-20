@@ -47,15 +47,15 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsCodeEnd:
          _writer.newNode(lxEOF);
          break;
-//      case nsMethodParameter:
-//         _writer.newNode(lxMethodParameter);
-//         break;
+      case nsMethodParameter:
+         _writer.newNode(lxMethodParameter);
+         break;
 //      case nsMethodOpenParameter:
 //         _writer.newNode(lxMethodParameter, -1);
 //         break;
-//      case nsMessageParameter:
-//         _writer.newNode(lxMessageParameter);
-//         break;
+      case nsMessageParameter:
+         _writer.newNode(lxMessageParameter);
+         break;
 //      case nsOpenMessageParameter:
 //         _writer.newNode(lxMessageParameter, -1);
 //         break;
@@ -113,9 +113,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsLazyExpression:
 //         _writer.newNode(lxLazyExpression);
 //         break;
-//      case nsRetStatement:
-//         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
-//         break;
+      case nsRetStatement:
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
+         break;
 //      case nsMessageReference:
 //         _writer.newNode(lxMessageReference);
 //         break;
@@ -1207,15 +1207,22 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
 //   writer.removeBookmark();
 //}
 
-void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool invokeMode)
 {
-   SNode current = node.firstChild();
+   SNode current;
+   if (invokeMode) {
+      writer.appendNode(lxMessage, INVOKE_MESSAGE);
+
+      current = node;
+   }
+   else current = node.firstChild();   
+
    while (current != lxNone) {
       switch (current.type) {
 //         case lxObject:
-//         case lxMessageParameter:
-//            generateExpressionTree(writer, current, scope, EXPRESSION_MESSAGE_MODE);
-//            break;
+         case lxMessageParameter:
+            generateExpressionTree(writer, current, scope, EXPRESSION_MESSAGE_MODE);
+            break;
 //         case lxExpression:
 //            generateExpressionTree(writer, current, scope, EXPRESSION_EXPLICIT_MODE | EXPRESSION_MESSAGE_MODE);
 //            break;
@@ -1302,6 +1309,7 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //            scope.codeNode = SNode();
 //         }
 //         writer.newBookmark();
+      case lxMessageParameter:
       case lxMessage:
 //         if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
 //            writer.newNode(lxClosureMessage);
@@ -1309,7 +1317,7 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //            writer.closeNode();
 //         }
 //         else {
-            generateMessageTree(writer, current, scope);
+            generateMessageTree(writer, current, scope, current == lxMessageParameter);
 
             writer.insert(lxExpression);
             writer.closeNode();
@@ -1365,8 +1373,8 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //         break;
 //      case lxReturning:
 //         writer.newNode(lxCode);
-//      case lxCode:
-//         generateCodeTree(writer, current, scope);
+      case lxCode:
+         generateCodeTree(writer, current, scope);
 //         if (current == lxReturning) {
 //            writer.closeNode();
 //         }
@@ -1384,14 +1392,14 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //            else writer.insert(lxTemplateParam);
 //            writer.closeNode();
 //         }
-//         writer.insert(lxExpression);
-//         writer.closeNode();
-//         break;
-//      case lxMethodParameter:
-//         writer.newNode(lxMethodParameter);
-//         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
-//         writer.closeNode();
-//         break;
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
+      case lxMethodParameter:
+         writer.newNode(lxMethodParameter);
+         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+         writer.closeNode();
+         break;
       default:
       {
          if (isTerminal(current.type)) {
