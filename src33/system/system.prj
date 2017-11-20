@@ -14,5 +14,6 @@ author=Alex Rakov
 types.l
 object.l
 basic.l
+memory.l
 dynamic.l
 exceptions.l

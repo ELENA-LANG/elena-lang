@@ -36,7 +36,7 @@ using namespace _ELENA_;
 //#define HINT_TRY_MODE         0x01000000
 #define HINT_LOOP             0x00800000
 #define HINT_SWITCH           0x00400000
-//#define HINT_ALT_MODE         0x00200000
+#define HINT_ALT_MODE         0x00200000
 #define HINT_SINGLETON        0x00100000
 #define HINT_EXT_RESENDEXPR   0x00080400
 #define HINT_NODEBUGINFO      0x00020000
@@ -994,52 +994,51 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 
 ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
 {
-//   int offset = info.fields.get(terminal);
-//   if (offset >= 0) {
-//      ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
-//      if (test(info.header.flags, elStructureRole)) {
-//         return ObjectInfo(okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2);
-//      }
-//      else return ObjectInfo(okField, offset, fieldInfo.value1, fieldInfo.value2);
-//   }
-//   else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
-//      return ObjectInfo(okThisParam, 1, -2, info.fieldTypes.get(-1).value1);
-//   }
-//   else {
-//      ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
-//      if (staticInfo.value1 != 0) {
-//         if (!isSealedStaticField(staticInfo.value1)) {
-//            ref_t val = info.staticValues.get(staticInfo.value1);
-//            if (val != mskStatRef) {
-//               return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
-//            }
-//         }
-//         return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2);
-//      }
-      /*else */return ObjectInfo();
-//   }
-
+   int offset = info.fields.get(terminal);
+   if (offset >= 0) {
+      ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
+      if (test(info.header.flags, elStructureRole)) {
+         return ObjectInfo(okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2);
+      }
+      else return ObjectInfo(okField, offset, fieldInfo.value1, fieldInfo.value2);
+   }
+   else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
+      return ObjectInfo(okThisParam, 1, -2, info.fieldTypes.get(-1).value1);
+   }
+   else {
+      ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
+      if (staticInfo.value1 != 0) {
+         if (!isSealedStaticField(staticInfo.value1)) {
+            ref_t val = info.staticValues.get(staticInfo.value1);
+            if (val != mskStatRef) {
+               return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
+            }
+         }
+         return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2);
+      }
+      else return ObjectInfo();
+   }
 }
 
-//ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
-//{
-//   if (terminal.compare(SUPER_VAR)) {
-//      return ObjectInfo(okSuper, info.header.parentRef);
-//   }
-//   else if (terminal.compare(SELF_VAR)) {
-//      if (extensionClassRef != 0) {
-//         return ObjectInfo(okParam, (size_t)-1, extensionClassRef, embeddable ? -1 : 0);
-//      }
-//      else return ObjectInfo(okParam, (size_t)-1);
-//   }
-//   else {
-//      ObjectInfo fieldInfo = mapField(terminal);
-//      if (fieldInfo.kind != okUnknown) {
-//         return fieldInfo;
-//      }
-//      else return Scope::mapTerminal(terminal);
-//   }
-//}
+ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
+{
+   if (terminal.compare(SUPER_VAR)) {
+      return ObjectInfo(okSuper, info.header.parentRef);
+   }
+   else if (terminal.compare(SELF_VAR)) {
+      if (extensionClassRef != 0) {
+         return ObjectInfo(okParam, (size_t)-1, extensionClassRef, embeddable ? -1 : 0);
+      }
+      else return ObjectInfo(okParam, (size_t)-1);
+   }
+   else {
+      ObjectInfo fieldInfo = mapField(terminal);
+      if (fieldInfo.kind != okUnknown) {
+         return fieldInfo;
+      }
+      else return Scope::mapTerminal(terminal);
+   }
+}
 
 // --- Compiler::MetodScope ---
 
@@ -3154,16 +3153,16 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
    //   target = ObjectInfo(okObject);
    //}
-   //else if (test(mode, HINT_ALT_MODE)) {
-   //   SNode targetNode = node.parentNode().firstChild(lxObjectMask).firstChild(lxObjectMask);
-   //   if (targetNode == lxLocal) {
-   //      writer.insertChild(0, targetNode.type, targetNode.argument);
-   //   }
-   //   else writer.insertChild(0, lxCurrent, 0);
+   /*else */if (test(mode, HINT_ALT_MODE)) {
+      SNode targetNode = node.parentNode().firstChild(lxObjectMask).firstChild(lxObjectMask);
+      if (targetNode == lxLocal) {
+         writer.insertChild(0, targetNode.type, targetNode.argument);
+      }
+      else writer.insertChild(0, lxCurrent, 0);
 
-   //   target = ObjectInfo(okObject);
-   //}
-   /*else */if (test(mode, HINT_RESENDEXPR)) {
+      target = ObjectInfo(okObject);
+   }
+   else if (test(mode, HINT_RESENDEXPR)) {
       if (test(mode, HINT_EXT_RESENDEXPR)) {
          //HOTFIX : fixing resending an extension message
          writer.insertChild(0, lxLocal, (ref_t)-1);
@@ -3859,50 +3858,50 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //
 //   writer.removeBookmark();
 //}
-//
-//void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   // extract the expression target
-//   SNode firstExpr = node.firstChild(lxObjectMask);
-//   SNode targetNode = firstExpr.firstChild(lxObjectMask);
-//
-//   writer.newBookmark();
-//
-//   // inject a temporal variable
-//   int tempLocal = scope.newLocal();
-//   writer.newNode(lxAssigning);
-//   writer.appendNode(lxLocal, tempLocal);
-//   compileExpression(writer, targetNode, scope, 0);
-//   writer.closeNode();
-//
-//   targetNode.set(lxLocal, tempLocal);
-//
-//   writer.newBookmark();
-//
-//   bool catchNode = false;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExprMask)) {
-//         compileExpression(writer, current, scope, catchNode ? HINT_ALT_MODE | HINT_RESENDEXPR : 0);
-//
-//         catchNode = true;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   writer.insert(lxAlt);
-//   writer.closeNode();
-//
-//   writer.removeBookmark();
-//
-//   // inject a nested expression
-//   writer.insert(lxAltExpression);
-//   writer.closeNode();
-//
-//   writer.removeBookmark();
-//}
-//
+
+void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   // extract the expression target
+   SNode firstExpr = node.firstChild(lxObjectMask);
+   SNode targetNode = firstExpr.firstChild(lxObjectMask);
+
+   writer.newBookmark();
+
+   // inject a temporal variable
+   int tempLocal = scope.newLocal();
+   writer.newNode(lxAssigning);
+   writer.appendNode(lxLocal, tempLocal);
+   compileExpression(writer, targetNode, scope, 0);
+   writer.closeNode();
+
+   targetNode.set(lxLocal, tempLocal);
+
+   writer.newBookmark();
+
+   bool catchNode = false;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         compileExpression(writer, current, scope, catchNode ? HINT_ALT_MODE | HINT_RESENDEXPR : 0);
+
+         catchNode = true;
+      }
+
+      current = current.nextNode();
+   }
+
+   writer.insert(lxAlt);
+   writer.closeNode();
+
+   writer.removeBookmark();
+
+   // inject a nested expression
+   writer.insert(lxAltExpression);
+   writer.closeNode();
+
+   writer.removeBookmark();
+}
+
 //ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 //{
 //   writer.newBookmark();
@@ -3947,11 +3946,11 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    ObjectInfo objectInfo;
-//   if (node == lxAlt) {
-//      compileAltOperation(writer, node, scope);
-//
-//      objectInfo = ObjectInfo(okObject);
-//   }
+   if (node == lxAlt) {
+      compileAltOperation(writer, node, scope);
+
+      objectInfo = ObjectInfo(okObject);
+   }
 //   else if (node == lxTrying) {
 //      compileTrying(writer, node, scope);
 //
@@ -4406,18 +4405,18 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    ref_t actionRef = 0;
    ref_t verbRef = 0;
    bool propMode = false;
-//   bool constantConversion = false;
+   bool constantConversion = false;
    ref_t flags = 0;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
    SNode arg = node.findChild(lxMethodParameter, lxMessage, lxParamRefAttr);
 
-//   if (verb == lxNone) {
-//      if (arg == lxMessage) {
-//         verb = arg;
-//         arg = verb.nextNode();
-//      }
-//   }
+   if (verb == lxNone) {
+      if (arg == lxMessage) {
+         verb = arg;
+         arg = verb.nextNode();
+      }
+   }
 
    if (verb != lxNone)
       verbRef = scope.mapSubject(verb, messageStr);
@@ -4532,23 +4531,23 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //            messageStr.copy(GENERIC_PREFIX);
 //         }
 //      }
-//
-//      if (test(scope.hints, tpSealed | tpConversion)) {
-//         if (paramCount == 1) {
-//            flags |= CONVERSION_MESSAGE;
-//            if (!emptystr(messageStr))
-//               constantConversion = true;
-//         }
-//         else if (emptystr(messageStr) && paramCount == 0) {
-//            // if it is an implicit in-place constructor
-//            flags |= CONVERSION_MESSAGE;
-//            actionRef = NEWOBJECT_MESSAGE_ID;
-//         }
-//         else scope.raiseError(errIllegalMethod, node);
-//      }
-//      else if (test(scope.hints, tpSealed) && verb == lxPrivate) {
-//         flags |= SEALED_MESSAGE;
-//      }
+
+      if (test(scope.hints, tpSealed | tpConversion)) {
+         if (paramCount == 1) {
+            flags |= CONVERSION_MESSAGE;
+            if (!emptystr(messageStr))
+               constantConversion = true;
+         }
+         else if (emptystr(messageStr) && paramCount == 0) {
+            // if it is an implicit in-place constructor
+            flags |= CONVERSION_MESSAGE;
+            actionRef = NEWOBJECT_MESSAGE_ID;
+         }
+         else scope.raiseError(errIllegalMethod, node);
+      }
+      else if (test(scope.hints, tpSealed) && verb == lxPrivate) {
+         flags |= SEALED_MESSAGE;
+      }
 
       if (propMode && paramCount == 1 && messageStr.Length() > 3) {
          // COMPILER MAGIC : set&x => x
@@ -4589,10 +4588,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
       scope.message = encodeMessage(actionRef, paramCount) | flags;
 
-//      // if it is an explicit constant conversion
-//      if (constantConversion) {
-//         scope.moduleScope->saveAction(scope.message, scope.getClassRef());
-//      }
+      // if it is an explicit constant conversion
+      if (constantConversion) {
+         scope.moduleScope->saveAction(scope.message, scope.getClassRef());
+      }
    }
 }
 

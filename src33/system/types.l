@@ -7,11 +7,11 @@ constructor     = #16384.
 multi           = #16397.
 listable        = #8198.
 sealed          = #8195.
-//embeddable      = #8193.
-//template        = #16391.
+embeddable      = #8193.
+template        = #16391.
 //extension       = #8203.
-//stacksafe       = #8192.
-//explicit        = #16387.
+stacksafe       = #8192.
+explicit        = #16387.
 //const           = #8201.
 //singleton       = #8208.
 //generic         = #8202.
@@ -30,11 +30,11 @@ var             = #16385.
 //accessor        = #16399.
 //
 //args            = #32. 
-//
-//__string        = #8200.
+
+__string        = #8200.
 __int           = #11.
 //__dword         = #12.
-//__real          = #14.
+__real          = #14.
 __mssg          = #19.
 //__subj          = #18.
 //__extmssg       = #21.
@@ -59,13 +59,13 @@ type bool       = system'BaseBoolValue.
 ////type dto        = system'DTO.  
 //
 //type ref        = system'Variable.
-//
-//type byte       = system'ByteNumber.
-//type short      = system'ShortNumber.
+
+type byte       = system'ByteNumber.
+type short      = system'ShortNumber.
 type int        = system'IntNumber.
-//type uint       = system'UIntNumber.
-//type long       = system'LongNumber.
-//type real       = system'RealNumber.
+type uint       = system'UIntNumber.
+type long       = system'LongNumber.
+type real       = system'RealNumber.
 //type char       = system'CharValue.
 //type mssg       = system'Message.
 //type ext_mssg   = system'ExtensionMessage.
@@ -85,12 +85,12 @@ type int        = system'IntNumber.
 ////#subject mssgarray  = system'MessageArray.
 //type bitarray   = system'BitArray.
 //type bitset     = system'BitArray32.
-//
-///// An instance of system'LiteralValue class. 
-//type literal    = system'LiteralValue.
-//
-//type wide       = system'WideLiteralValue.
-//
+
+/// An instance of system'LiteralValue class. 
+type literal    = system'LiteralValue.
+
+type wide       = system'WideLiteralValue.
+
 //// === function types ===
 //type func       = system'BaseFunction.
 //type lazy_func  = system'BaseLazyExpression.

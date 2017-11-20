@@ -465,9 +465,7 @@ private:
 
       ObjectInfo mapField(ident_t identifier);
 
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-////      void compileClassAttribute(SyntaxTree::Node hint);
+      virtual ObjectInfo mapTerminal(ident_t identifier);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -855,7 +853,7 @@ private:
    ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
 //   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
