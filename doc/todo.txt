@@ -6,25 +6,7 @@ In development:
                  * support fixed size array : type<ShortNumber,260> cFileName.
 
               dev - syntax redesign
-a
-a(b)
-a(b)[..]
-
-a(b,c)
-a(b,c)[..]
-
-
-
-
-a(b)
-a(b,c)
-a(b)[ ... ]
-a<b>(c)
-
-
-a[b]
-a[...]
-
+                 * invoke multi dispatch
 
                  * support function call : a(b).
                  * support function call : a(b,c).

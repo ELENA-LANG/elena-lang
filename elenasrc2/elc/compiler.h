@@ -542,7 +542,7 @@ private:
       bool         classEmbeddable;
       bool         generic;
       bool         extensionMode;
-      //bool         multiMethod;
+      bool         multiMethod;
       //bool         closureMode;
       //bool         subCodeMode;
       
@@ -653,21 +653,20 @@ private:
       CodeScope(CodeScope* parent);
    };
 
-//   // --- ResendScope ---
-//   struct ResendScope : public CodeScope
-//   {
-//      bool withFrame;
-//      bool consructionMode;
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      ResendScope(CodeScope* parent)
-//         : CodeScope(parent)
-//      {
-//         consructionMode = withFrame = false;
-//      }
-//   };
-//
+   // --- ResendScope ---
+   struct ResendScope : public CodeScope
+   {
+      bool withFrame;
+      bool consructionMode;
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
+
+      ResendScope(CodeScope* parent)
+         : CodeScope(parent)
+      {
+         consructionMode = withFrame = false;
+      }
+   };
 
    // - InlineClassScope -
    struct InlineClassScope : public ClassScope
@@ -777,12 +776,12 @@ private:
 
    pos_t saveSourcePath(ModuleScope& scope, ident_t path);
 
-//   int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
-//   {
-//      _CompilerLogic::ChechMethodInfo dummy;
-//
-//      return _logic->checkMethod(scope, reference, message, dummy);
-//   }
+   int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
+   {
+      _CompilerLogic::ChechMethodInfo dummy;
+
+      return _logic->checkMethod(scope, reference, message, dummy);
+   }
 
    ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
@@ -865,16 +864,16 @@ private:
 
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
-//
-//   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-//   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod, bool extensionMode);
+
+   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod, bool extensionMode);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
+   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-//   ref_t declareArgumentSubject(SNode node, ModuleScope& scope, bool& first, IdentifierString& messageStr, IdentifierString& signature);
+   ref_t declareArgumentSubject(SNode node, ModuleScope& scope, bool& first, IdentifierString& messageStr, IdentifierString& signature);
    void declareArgumentList(SNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
    bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);

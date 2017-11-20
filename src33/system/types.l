@@ -4,8 +4,8 @@ class           = #16386.
 struct          = #8197.
 symbol          = #16389.
 constructor     = #16384.
-//multi           = #16397.
-//listable        = #8198.
+multi           = #16397.
+listable        = #8198.
 sealed          = #8195.
 //embeddable      = #8193.
 //template        = #16391.
@@ -40,22 +40,19 @@ __mssg          = #19.
 //__extmssg       = #21.
 //__tape_mixin    = #8209.
 //__symbol        = #22.
-//
-//__ifoperator    = #4097.
-//__ifnotoperator = #4098.
-//
-////#template(-8207)         preloaded {}
-////#template(-4099) w1 {}
-////#template(-4100) w2 {}
-////#template(-4101) w3 {}
+
+__ifoperator    = #4097.
+__ifnotoperator = #4098.
+
+//#template(-8207)         preloaded {}
 
 /// Provides classes that describe the basic functionality
 
 type object     = system'Object.
 
-//// === basic logical types ===
-//type bool       = system'BaseBoolValue.
-//
+// === basic logical types ===
+type bool       = system'BaseBoolValue.
+
 //// === basic primitive types ===
 //
 //type keyvalue   = system'KeyValue.

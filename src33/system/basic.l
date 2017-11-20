@@ -1,10 +1,10 @@
-//// base variable mixin
-//class BaseVariable
-//{
-//    // should be overridden
-//    value = $nil.
-//}
-//
+// base variable mixin
+class BaseVariable
+{
+    // should be overridden
+    value = $nil.
+}
+
 //template<BaseVariable> var :: template_subj
 //{
 //    template_subj $value.
@@ -77,17 +77,17 @@
 //type vlong  = var<LongNumber>.
 //type vreal  = var<RealNumber>.
 //type vchar  = var<CharValue>.
-//
-//// === Boolean values ===
-//
-//// --- true ---
-//
-///// A true value symbol
-//class true = BaseBoolValue::
-//{
-//    /// Executes the action
+
+// === Boolean values ===
+
+// --- true ---
+
+/// A true value symbol
+class true = BaseBoolValue::
+{
+    /// Executes the action
 //    __ifoperator if : aTrueAction = aTrueAction eval.
-//
+
 //    /// Executes then-action
 //    if : aTrueAction : aFalseAction = aTrueAction eval.
 //
@@ -126,16 +126,16 @@
 //
 //    /// Returns literal representation.
 //    wide = "true"w.
-//
-//    /// Returns itself.
-//    clone = $self.
-//}.
-//
-//// --- false ---
-//
-///// A false value symbol
-//class false = BaseBoolValue::
-//{
+
+    /// Returns itself.
+    clone = $self.
+}.
+
+// --- false ---
+
+/// A false value symbol
+class false = BaseBoolValue::
+{
 //    /// Always returns nil
 //    __ifnotoperator if : anAction = $nil.
 //    
@@ -185,47 +185,47 @@
 //    
 //    /// Returns literal representation
 //    wide = "false"w.
-//    
-//    /// Returns itself
-//    clone = $self.
-//}.
-//
-//// === basic data classes ===
-//
-//// --- BaseValue ---
-//
-//// A base value
-//class BaseValue
-//{
-//    bool equal(BaseVariable var)
-//        <= equal(var value).
-//    
-//    bool less(BaseVariable var)
-//        <= equal(var value).
-//    
-//    /// Compares the values
-//    bool multi equal : anObject
-//        = false.
-//
-//    /// Compares the values
-//    bool multi less : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//
-//    /// Compares the values
-//    bool greater : anObject = anObject less:$self.
-//
-//    bool notless : anObject = $self less:anObject; inverted.
-//
-//    bool notgreater : anObject = $self greater:anObject; inverted.
-//}
-//
-//// --- BaseNumber ---
-//
-///// A base numeric value
-//class BaseNumber :: BaseValue
-//{
+    
+    /// Returns itself
+    clone = $self.
+}.
+
+// === basic data classes ===
+
+// --- BaseValue ---
+
+// A base value
+class BaseValue
+{
+    bool equal(BaseVariable var)
+        <= equal(var value).
+    
+    bool less(BaseVariable var)
+        <= equal(var value).
+    
+    /// Compares the values
+    bool multi equal : anObject
+        = false.
+
+    /// Compares the values
+    bool multi less : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
+
+    /// Compares the values
+    bool greater : anObject = anObject less:$self.
+
+    bool notless : anObject = $self less:anObject; inverted.
+
+    bool notgreater : anObject = $self greater:anObject; inverted.
+}
+
+// --- BaseNumber ---
+
+/// A base numeric value
+class BaseNumber :: BaseValue
+{
 //    add(BaseVariable var)
 //        <= add(var value).
 //
@@ -264,13 +264,13 @@
 //    
 //    negative
 //        = 0 - self.
-//}
-//
-//// --- IntBaseNumber ---
-//
-///// A base integer value
-//class IntBaseNumber :: BaseNumber
-//{
+}
+
+// --- IntBaseNumber ---
+
+/// A base integer value
+class IntBaseNumber :: BaseNumber
+{
 //    and(BaseVariable var)
 //        <= and(var value).
 //        
@@ -311,15 +311,15 @@
 //        
 //    stacksafe shiftRight:n
 //        <= shiftRight int:n.        
-//}
-//
-//// --- ByteNumber ---
-//
-///// An unsigned 8 bit integer
-//sealed struct ByteNumber :: IntBaseNumber
-//{
-//    __int& theValue(1).
-//
+}
+
+// --- ByteNumber ---
+
+/// An unsigned 8 bit integer
+sealed struct ByteNumber :: IntBaseNumber
+{
+    __int<1> theValue.
+
 //    stacksafe explicit(IntNumber n)
 //    [
 //        theValue := n && 255.
@@ -617,8 +617,8 @@
 //        
 //        ^ aCode
 //    ]
-//}
-//
+}
+
 //// --- ShortNumber ---
 //
 ///// A signed 16 bit integer
@@ -942,7 +942,7 @@
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-sealed struct IntNumber //:: IntBaseNumber
+sealed struct IntNumber :: IntBaseNumber
 {
     __int<4> theValue.
 

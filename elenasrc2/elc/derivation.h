@@ -190,7 +190,7 @@ class DerivationReader : public _DerivationReader
    void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, int nested = 0);
 
    bool generateMethodScope(SNode node, DerivationScope& scope, SNode attributes);
-//   bool generateSingletonScope(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);
+   bool generateSingletonScope(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);
    bool generateDeclaration(SNode node, DerivationScope& scope, SNode attributes);
 //   void generateTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);
 //   void generateTemplateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);

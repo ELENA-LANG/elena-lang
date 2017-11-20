@@ -58,12 +58,12 @@
 //        ^ aCallStackText.
 //    ]
 //}
-//
-//// --- Exception ---
-//
-///// A basic exception
-//class Exception
-//{
+
+// --- Exception ---
+
+/// A basic exception
+class Exception
+{
 //    literal theMessage.
 //    object  theCallStack.
 //    
@@ -127,8 +127,8 @@
 //    
 //    constructor new
 //        <= new($self className).
-//}
-//
+}
+
 //// --- FormatException ---
 //
 //class FormatException :: Exception
@@ -200,7 +200,7 @@
 
 // --- MethodNotFound ---
 
-class MethodNotFoundException //:: Exception
+class MethodNotFoundException :: Exception
 {
 //    /// Creates the exception
 //    constructor new
@@ -213,10 +213,10 @@ class MethodNotFoundException //:: Exception
 //        <= new literal(object className; add literal:" : Method "; add literal:missingMessage; add literal:" not found").
 }
 
-//// --- MethodNotSupported ---
-//
-//class NotSupportedException :: Exception
-//{
+// --- MethodNotSupported ---
+
+class NotSupportedException :: Exception
+{
 //    /// Creates the exception
 //    constructor new
 //        <= new literal:"Operation is not supported".
@@ -224,8 +224,8 @@ class MethodNotFoundException //:: Exception
 //    /// Creates the exception
 //    constructor new :aMessage
 //        <= new literal:aMessage.
-//}
-//
+}
+
 //// --- AbortException ---
 //
 ///// An abort exception 
