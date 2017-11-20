@@ -146,6 +146,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsNestedSubCode:
 //         _writer.newNode(lxCode);
 //         break;
+      case nsIdleMessageParameter:
+         _writer.newNode(lxIdleMsgParameter);
+         break;
       default:
          _writer.newNode((LexicalType)symbol);
          break;
@@ -1207,13 +1210,18 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
 //   writer.removeBookmark();
 //}
 
-void DerivationReader:: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool invokeMode)
+void DerivationReader :: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
+   bool invokeWithNoParamMode = node == lxIdleMsgParameter;
+   bool invokeMode = invokeWithNoParamMode | (node == lxMessageParameter);
+
    SNode current;
    if (invokeMode) {
       writer.appendNode(lxMessage, INVOKE_MESSAGE);
 
       current = node;
+      if (invokeWithNoParamMode)
+         return;
    }
    else current = node.firstChild();   
 
@@ -1309,6 +1317,7 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //            scope.codeNode = SNode();
 //         }
 //         writer.newBookmark();
+      case lxIdleMsgParameter:
       case lxMessageParameter:
       case lxMessage:
 //         if (current.argument == -1 && current.nextNode() == lxMethodParameter) {
@@ -1317,7 +1326,7 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //            writer.closeNode();
 //         }
 //         else {
-            generateMessageTree(writer, current, scope, current == lxMessageParameter);
+            generateMessageTree(writer, current, scope);
 
             writer.insert(lxExpression);
             writer.closeNode();
@@ -1371,13 +1380,13 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 //         writer.insert(lxExpression);
 //         writer.closeNode();
 //         break;
-//      case lxReturning:
-//         writer.newNode(lxCode);
+      case lxReturning:
+         writer.newNode(lxCode);
       case lxCode:
          generateCodeTree(writer, current, scope);
-//         if (current == lxReturning) {
-//            writer.closeNode();
-//         }
+         if (current == lxReturning) {
+            writer.closeNode();
+         }
 //         else if (scope.type == DerivationScope::ttCodeTemplate && checkFirstNode(current, lxEOF)) {
 //            if (scope.parameters.Count() == 2) {
 //               if (scope.codeNode == lxNone) {
