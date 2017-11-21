@@ -163,7 +163,7 @@ class DerivationReader : public _DerivationReader
    MessageMap  _verbs;                            // list of verbs
 
    void copyFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SyntaxTree& buffer*/);
-//   void copyFieldInitTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void copyFieldInitTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyTreeNode(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool methodMode = false*/);
    void copyMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SyntaxTree& buffer*/);
@@ -188,9 +188,9 @@ class DerivationReader : public _DerivationReader
    void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-   bool generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, /*SyntaxTree& buffer, */bool templateMode = false);
+   bool generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes/*, SyntaxTree& buffer*/, bool templateMode = false);
-   bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes/*, SyntaxTree& buffer*/, bool templateMode = false); // returns true if in-place init found
+   bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false); // returns true if in-place init found
    void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = EXPRESSION_EXPLICIT_MODE);
 //   void generateNewOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);

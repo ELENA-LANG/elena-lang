@@ -993,6 +993,10 @@ public:
    SyntaxTree()
    {
    }
+   SyntaxTree(pos_t size)
+      : _body(size), _strings(size)
+   {
+   }
    SyntaxTree(_Memory* dump)
    {
       MemoryReader reader(dump);
