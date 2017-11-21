@@ -180,21 +180,25 @@ __accessor template rvprop :: type,prop_name
 //        ^ retVal.            
 //    ]
 //}
-//
-//// --- while statement ---
-//
-//__loop template while :: expr =
-//    expr bool ?
-//    [
-//    ].
-//
-//// --- until statement ---
-//
-//__loop template until :: expr =
-//    expr bool !
-//    [
-//    ].
-//    
+
+// --- while statement ---
+
+__loop template while :: expr
+[
+    expr bool ?
+    [
+    ].
+]    
+
+// --- until statement ---
+
+__loop template until :: expr
+[
+    expr bool !
+    [
+    ].
+]
+    
 //// --- extern statement ---
 //
 //__extern template extern =

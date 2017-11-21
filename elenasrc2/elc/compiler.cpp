@@ -4037,16 +4037,16 @@ ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, Co
    return ObjectInfo(okObject);
 }
 
-//void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   // find inner expression
-//   SNode expr = node;
-//   while (expr.findChild(lxMessage, lxAssign, lxOperator) == lxNone) {
-//      expr = expr.findChild(lxExpression);
-//   }
-//
-//   compileExpression(writer, expr, scope, HINT_LOOP);
-//}
+void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   // find inner expression
+   SNode expr = node;
+   while (expr.findChild(lxMessage, lxAssign, lxOperator) == lxNone) {
+      expr = expr.findChild(lxExpression);
+   }
+
+   compileExpression(writer, expr, scope, HINT_LOOP);
+}
 
 ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -4063,12 +4063,12 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
             compileExpression(writer, current, scope, HINT_ROOT);
             writer.closeNode();
             break;
-//         case lxLoop:
-//            writer.newNode(lxExpression);
-//            writer.appendNode(lxBreakpoint, dsStep);
-//            compileLoop(writer, current, scope);
-//            writer.closeNode();
-//            break;
+         case lxLoop:
+            writer.newNode(lxExpression);
+            writer.appendNode(lxBreakpoint, dsStep);
+            compileLoop(writer, current, scope);
+            writer.closeNode();
+            break;
          case lxReturning:
          {
             needVirtualEnd = false;

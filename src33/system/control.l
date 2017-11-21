@@ -171,29 +171,29 @@ limited class BaseFunction
     /// Executes the action
     eval = $self().
     
-//    /// Executes the action while the condition is true
-//    sealed run while:aBool
-//    [
-//        while (aBool)
-//        [
-//            $self eval
-//        ]
-//    ]
-//
-//    /// Executes the action while the condition is false
-//    ///
-//    /// Executes at least once
-//    sealed run until:aBool
-//    [
-//        bool flag := false.
-//        
-//        until (flag)
-//        [
-//            $self eval.
-//            
-//            flag := aBool bool
-//        ].
-//    ]
+    /// Executes the action while the condition is true
+    sealed run while:aBool
+    [
+        while (aBool)
+        [
+            $self()
+        ]
+    ]
+
+    /// Executes the action while the condition is false
+    ///
+    /// Executes at least once
+    sealed run until:aBool
+    [
+        bool flag := false.
+        
+        until (flag)
+        [
+            $self eval.
+            
+            flag := aBool bool
+        ].
+    ]
 }
 
 ///// A base function

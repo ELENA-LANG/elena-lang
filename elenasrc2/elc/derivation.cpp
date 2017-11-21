@@ -55,6 +55,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //         _writer.newNode(lxMethodParameter, -1);
 //         break;
       case nsMessageParameter:
+      case nsExprMessageParameter:
          _writer.newNode(lxMessageParameter);
          break;
 //      case nsOpenMessageParameter:
@@ -90,9 +91,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsRootL6Operation:
          _writer.newNode(lxOperator);
          break;
-//      case nsL8Operation:
-//         _writer.newNode(lxAssignOperator);
-//         break;
+      case nsL8Operation:
+         _writer.newNode(lxAssignOperator);
+         break;
 //      case nsArrayOperation:
 //         _writer.newNode(lxOperator, REFER_MESSAGE_ID);
 //         break;
@@ -1637,59 +1638,59 @@ void DerivationReader :: generateSymbolTree(SyntaxWriter& writer, SNode node, De
    writer.closeNode();
 }
 
-//void DerivationReader :: generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope)
-//{
-//   writer.newNode(lxExpression);
-//
-//   SNode loperand = node.firstChild(lxObjectMask);
-//   SNode operatorNode = node.findChild(lxAssignOperator);
-//
-//   if (loperand.nextNode() == lxOperator) {
-//      // HOTFIX : if it is an assign operator with array brackets
-//      SNode loperatorNode = loperand.nextNode();
-//
-//      writer.newBookmark();
-//      writer.newNode(lxExpression);
-//      generateObjectTree(writer, loperand, scope);
-//      copyOperator(writer, loperatorNode.firstChild(), loperatorNode.argument);
-//      generateExpressionTree(writer, loperatorNode, scope, 0);
-//      writer.closeNode();
-//      while (loperatorNode.nextNode() == lxOperator) {
-//         loperatorNode = loperatorNode.nextNode();
-//         generateObjectTree(writer, loperatorNode, scope);
-//      }      
-//      writer.removeBookmark();      
-//
-//      loperatorNode = loperand.nextNode();
-//      writer.appendNode(lxAssign);
-//      writer.newBookmark();
-//      writer.newNode(lxExpression);
-//      writer.newNode(lxExpression);
-//      generateObjectTree(writer, loperand, scope);
-//      copyOperator(writer, loperatorNode.firstChild(), loperatorNode.argument);
-//      generateExpressionTree(writer, loperatorNode, scope, 0);
-//      writer.closeNode();
-//      while (loperatorNode.nextNode() == lxOperator) {
-//         loperatorNode = loperatorNode.nextNode();
-//         generateObjectTree(writer, loperatorNode, scope);
-//      }
-//      writer.removeBookmark();
-//   }
-//   else {
-//      generateObjectTree(writer, loperand, scope);
-//      writer.appendNode(lxAssign);
-//      writer.newNode(lxExpression);
-//      generateObjectTree(writer, loperand, scope);
-//   }
-//
-//   IdentifierString operatorName(operatorNode.firstChild().findChild(lxTerminal).identifier(), 1);
-//   writer.appendNode(lxOperator, operatorName.c_str());
-//
-//   generateExpressionTree(writer, operatorNode, scope, 0);
-//   writer.closeNode();
-//
-//   writer.closeNode();
-//}
+void DerivationReader :: generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+{
+   writer.newNode(lxExpression);
+
+   SNode loperand = node.firstChild(lxObjectMask);
+   SNode operatorNode = node.findChild(lxAssignOperator);
+
+   if (loperand.nextNode() == lxOperator) {
+      // HOTFIX : if it is an assign operator with array brackets
+      SNode loperatorNode = loperand.nextNode();
+
+      writer.newBookmark();
+      writer.newNode(lxExpression);
+      generateObjectTree(writer, loperand, scope);
+      copyOperator(writer, loperatorNode.firstChild(), loperatorNode.argument);
+      generateExpressionTree(writer, loperatorNode, scope, 0);
+      writer.closeNode();
+      while (loperatorNode.nextNode() == lxOperator) {
+         loperatorNode = loperatorNode.nextNode();
+         generateObjectTree(writer, loperatorNode, scope);
+      }      
+      writer.removeBookmark();      
+
+      loperatorNode = loperand.nextNode();
+      writer.appendNode(lxAssign);
+      writer.newBookmark();
+      writer.newNode(lxExpression);
+      writer.newNode(lxExpression);
+      generateObjectTree(writer, loperand, scope);
+      copyOperator(writer, loperatorNode.firstChild(), loperatorNode.argument);
+      generateExpressionTree(writer, loperatorNode, scope, 0);
+      writer.closeNode();
+      while (loperatorNode.nextNode() == lxOperator) {
+         loperatorNode = loperatorNode.nextNode();
+         generateObjectTree(writer, loperatorNode, scope);
+      }
+      writer.removeBookmark();
+   }
+   else {
+      generateObjectTree(writer, loperand, scope);
+      writer.appendNode(lxAssign);
+      writer.newNode(lxExpression);
+      generateObjectTree(writer, loperand, scope);
+   }
+
+   IdentifierString operatorName(operatorNode.firstChild().findChild(lxTerminal).identifier(), 1);
+   writer.appendNode(lxOperator, operatorName.c_str());
+
+   generateExpressionTree(writer, operatorNode, scope, EXPRESSION_OPERATOR_MODE);
+   writer.closeNode();
+
+   writer.closeNode();
+}
 
 bool DerivationReader :: checkPatternDeclaration(SNode node, DerivationScope& scope)
 {
@@ -2100,9 +2101,9 @@ void DerivationReader :: generateCodeTree(SyntaxWriter& writer, SNode node, Deri
 //         else if (isArrayDeclaration(current)) {
 //            generateArrayVariableTree(writer, current, scope);
 //         }
-//         else if (current.existChild(lxAssignOperator)) {
-//            generateAssignmentOperator(writer, current, scope);
-//         }
+         else if (current.existChild(lxAssignOperator)) {
+            generateAssignmentOperator(writer, current, scope);
+         }
          else generateExpressionTree(writer, current, scope);
       }
       else if (current == lxEOF) {
@@ -2114,9 +2115,9 @@ void DerivationReader :: generateCodeTree(SyntaxWriter& writer, SNode node, Deri
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
       }
-//      else if (current == lxLoop || current == lxCode || current == lxExtern) {
-//         generateCodeTree(writer, current, scope);
-//      }
+      else if (current == lxLoop/* || current == lxCode || current == lxExtern*/) {
+         generateCodeTree(writer, current, scope);
+      }
 //      else if (current == lxObject && checkNode(current.nextNode(), lxOperator, (ref_t)-3) && current.nextNode().nextNode() != lxAttributeValue) {
 //         // check if it is new operator
 //         writer.newBookmark();
@@ -2433,9 +2434,9 @@ bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope,
             case V_FIELD:
                attr = daField;
                break;
-//            case V_LOOP:
-//               attr = (DeclarationAttr)(daLoop | daTemplate);
-//               break;
+            case V_LOOP:
+               attr = (DeclarationAttr)(daLoop | daTemplate | daBlock);
+               break;
             case V_ACCESSOR:
                if (test(declType, daAccessor)) {
                   if (test(declType, daDblAccessor)) {
@@ -2528,16 +2529,13 @@ bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope,
          }
          else templateName.append("#0");
 
-         //         // HOTFIX : mark the expression as a code
-         //         SNode exprNode = node.findChild(lxExpression);
-         //         exprNode.injectNode(lxExpression);
-         //         if (test(declType, daLoop)) {
-         //            exprNode.injectNode(lxLoop);
-         //         }
-         //         else if (test(declType, daExtern)) {
-         //            exprNode.injectNode(lxExtern);
-         //         }
-         //
+         if (test(declType, daLoop)) {
+            node.findChild(lxCode).injectNode(lxLoop);
+         }
+         //else if (test(declType, daExtern)) {
+         //   exprNode.injectNode(lxExtern);
+         //}
+         
          //         exprNode = lxCode
       }
 
