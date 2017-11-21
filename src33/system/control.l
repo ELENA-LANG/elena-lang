@@ -196,353 +196,389 @@ limited class BaseFunction
     ]
 }
 
-///// A base function
-//limited class BaseFunction1
-//{
-//    /// Executes the function
-//    action eval : aParam []
-//
-//    /// Executes the function for every enumeration item
-//    run enumerator:anEnumerator
-//    [
-//        while(anEnumerator next)
-//        [
-//            $self eval:(anEnumerator get)
-//        ].        
-//    ]
-//    
-//    /// Executes the function for every enumeration item until it returns true
-//    sealed retrieve enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//
-//            if($self eval:anItem)
-//                [ ^ anItem ]
-//        ].
-//        
-//        ^ $nil.
-//    ]
-//}
-//
-///// A base two variable function
-//limited class BaseFunction2
-//{
-//    /// Dispatches the verb to the target with func2 subject
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam enumerator:anEnumerator
-//    [
-//        while(anEnumerator next)
-//        [
-//            $self eval(aParam,anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true
-//    sealed retrieve object:aParam enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            // !! temporal
-//            if ($self eval(aParam,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base three variable function
-//limited class BaseFunction3
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval(aParam1,aParam2,anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self eval(aParam1,aParam2,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base four variable function
-//limited class BaseFunction4
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval(aParam1,aParam2,aParam3,anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            // !! temporal
-//            if ($self eval(aParam1,aParam2,aParam3,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base five variable function
-//limited class BaseFunction5
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval(aParam1,aParam2,aParam3,aParam4,anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self eval(aParam1,aParam2,aParam3,aParam4,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base six variable function
-//limited class BaseFunction6
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval(aParam1,aParam2,aParam3,aParam4,aParam5,anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self eval(aParam1,aParam2,aParam3,aParam4,aParam5,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base seven variable function
-//limited class BaseFunction7
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self eval(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base eight variable function
-//limited class BaseFunction8
-//{
-//    /// Executes the function    
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self eval(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base nine variable function
-//limited class BaseFunction9
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self eval(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base ten variable function
-//limited class BaseFunction10
-//{
-//    /// Executes the function    
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 
-//                enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 enumerator:anEnumerator
-//    [
-//        var anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self eval(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base eleven variable functions
-//limited class BaseFunction11
-//{
-//    /// Executes the function
-//    action eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 
-//               object:aParam10 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self eval(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10,anEnumerator get)
-//        ]
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 
-//                    object:aParam10 enumerator:anEnumerator
-//    [
-//        var anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self eval(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
-//}
-//
+/// A base function
+limited class BaseFunction1
+{
+    /// Executes the action
+    closure : aParam []
+    
+    /// Executes the function
+    eval : aParam = $self(aParam).
+
+    /// Executes the function for every enumeration item
+    run enumerator:anEnumerator
+    [
+        while(anEnumerator next)
+        [
+            $self(anEnumerator get)
+        ].        
+    ]
+    
+    /// Executes the function for every enumeration item until it returns true
+    sealed retrieve enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+
+            if($self(anItem))
+                [ ^ anItem ]
+        ].
+        
+        ^ $nil.
+    ]
+}
+
+/// A base two variable function
+limited class BaseFunction2
+{
+    /// Executes the action
+    closure : aParam1 : aParam2 []
+    
+    /// Executes the function
+    eval : aParam1 : aParam2 = $self(aParam1,aParam2).
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam enumerator:anEnumerator
+    [
+        while(anEnumerator next)
+        [
+            $self(aParam,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true
+    sealed retrieve object:aParam enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            // !! temporal
+            if ($self(aParam,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
+/// A base three variable function
+limited class BaseFunction3
+{
+    /// Executes the function
+    closure : aParam1 : aParam2 : aParam3 []
+    
+    /// Executes the function
+    eval : aParam1 : aParam2 : aParam3 = $self(aParam1,aParam2,aParam3).
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self(aParam1,aParam2,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if ($self(aParam1,aParam2,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
+/// A base four variable function
+limited class BaseFunction4
+{
+    /// Executes the function
+    closure : aParam1 : aParam2 : aParam3 : aParam4 []
+    
+    /// Executes the function
+    eval : aParam1 : aParam2 : aParam3 : aParam4 = $self(aParam1,aParam2,aParam3,aParam4).
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 object:aParam3 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self(aParam1,aParam2,aParam3,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 object:aParam3 enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            // !! temporal
+            if ($self(aParam1,aParam2,aParam3,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
+/// A base five variable function
+limited class BaseFunction5
+{
+    /// Executes the function
+    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
+    
+    /// Executes the function
+    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 = $self(aParam1,aParam2,aParam3,aParam4,aParam5).
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self(aParam1,aParam2,aParam3,aParam4,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if ($self(aParam1,aParam2,aParam3,aParam4,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
+/// A base six variable function
+limited class BaseFunction6
+{
+    /// Executes the function
+    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
+    
+    /// Executes the function
+    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6).
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self(aParam1,aParam2,aParam3,aParam4,aParam5,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
+/// A base seven variable function
+limited class BaseFunction7
+{
+    /// Executes the function    
+    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []    /// Executes the function
+    
+    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 
+        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7).
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
+/// A base eight variable function
+limited class BaseFunction8
+{
+    /// Executes the function    
+    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []    /// Executes the function
+    
+    /// Executes the function    
+    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8
+        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8).
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
+/// A base nine variable function
+limited class BaseFunction9
+{
+    /// Executes the function    
+    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []    /// Executes the function
+    
+    /// Executes the function
+    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9
+        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9).
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 enumerator:anEnumerator
+    [
+        object anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
+/// A base ten variable function
+limited class BaseFunction10
+{
+    /// Executes the function    
+    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []    /// Executes the function
+    
+    /// Executes the function    
+    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10
+        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10).
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 
+                enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 enumerator:anEnumerator
+    [
+        var anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
+/// A base eleven variable functions
+limited class BaseFunction11
+{
+    /// Executes the function    
+    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []    /// Executes the function
+    
+    /// Executes the function
+    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11
+        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10,aParam11).
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 
+               object:aParam10 enumerator:anEnumerator
+    [
+        while (anEnumerator next)
+        [
+            $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10,anEnumerator get)
+        ]
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 
+                    object:aParam10 enumerator:anEnumerator
+    [
+        var anItem := $nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ $nil
+    ]
+}
+
 //// --- base lazy expression ---
 //
 //limited class BaseLazyExpression
@@ -728,130 +764,130 @@ limited class BaseFunction
 //        ^ $nil
 //    ]
 //}
+
+//// --- Boolean ---
 //
-////// --- Boolean ---
-////
-/////// A boolean variable. 
-////#class(varof:bool) Boolean :: BaseValue
-////{
-////    /// Creates a boolean variable with an initial value (false)
-////    #constructor new
-////    [        
-////        $value := false.
-////    ]
-////
-////    /// Creates a boolean variable with specified value
-////    #constructor new : aValue
-////    [        
-////        $value := true equal &bool:(aValue bool).
-////    ]
-////    
-////    /// Creates a boolean variable with specified value
-////    #constructor new &bool:aValue
-////    [        
-////        $value := aValue.
-////    ]
-////
-////    /// Returns the boolean value
-////    #method bool = $value.
-////
-////    /// Executes logical OR operation
-////    #method append : aValue
-////    [
-////        $value := $value or:aValue.
-////    ]
-////
-////    /// Executes logical AND operation            
-////    #method multiplyBy : aValue
-////    [
-////        $value := $value and:aValue.
-////    ]
-////            
-////    /// Inverts the boolean value
-////    #method invert
-////    [
-////        $value := $value not bool.
-////    ]            
-////
-////    /// Clones the object
-////    #method clone = Boolean new:$value.
-////}
-//
-//// --- BaseIndexer ---
-//
-//class BaseIndexer :: Indexer
+///// A boolean variable. 
+//#class(varof:bool) Boolean :: BaseValue
 //{
-//    int theIndex.
-//    int theBaseIndexerLength.
+//    /// Creates a boolean variable with an initial value (false)
+//    #constructor new
+//    [        
+//        $value := false.
+//    ]
+//
+//    /// Creates a boolean variable with specified value
+//    #constructor new : aValue
+//    [        
+//        $value := true equal &bool:(aValue bool).
+//    ]
 //    
-//    /// Returns false if the index out of range
-//    bool available = (theIndex < theBaseIndexerLength).
-//    
-//    /// Reads the current i-index into an output parameter
-//    readIndexTo vint:retVal
+//    /// Creates a boolean variable with specified value
+//    #constructor new &bool:aValue
+//    [        
+//        $value := aValue.
+//    ]
+//
+//    /// Returns the boolean value
+//    #method bool = $value.
+//
+//    /// Executes logical OR operation
+//    #method append : aValue
 //    [
-//        retVal int := theIndex
-//    ]    
-//    
-//    /// Sets the i-index by specified value
-//    writeIndex int:anIndex 
-//    [ 
-//        theIndex := anIndex
-//    ] 
+//        $value := $value or:aValue.
+//    ]
+//
+//    /// Executes logical AND operation            
+//    #method multiplyBy : aValue
+//    [
+//        $value := $value and:aValue.
+//    ]
+//            
+//    /// Inverts the boolean value
+//    #method invert
+//    [
+//        $value := $value not bool.
+//    ]            
+//
+//    /// Clones the object
+//    #method clone = Boolean new:$value.
 //}
-//
-//// --- BaseMatrixIndexer ---
-//
-//class BaseMatrixIndexer :: Indexer2D
-//{
-//    int theIndex1.
-//    int theIndex2.
-//    int theLength1.
-//    int theLength2.
-//    
-//    /// Returns false if the index out of range
-//    bool available = (theIndex1 <= theLength1) && (theIndex2 <= theLength2).
-//    
-//    /// Reads the current i-index into an output parameter
-//    readIndex1To vint:retVal
-//    [
-//        retVal int := theIndex1.
-//    ]    
-//    
-//    /// Reads the current j-index into an output parameter
-//    readIndex2To vint:retVal
-//    [
-//        retVal int := theIndex2.
-//    ]
-//    
-//    /// Sets the i-index by specified value
-//    writeIndex1 int:anIndex 
-//    [ 
-//        theIndex1 := anIndex.
-//    ] 
-//    
-//    /// Sets the i-index by specified value
-//    writeIndex2 int:anIndex 
-//    [
-//        theIndex2 := anIndex.
-//    ] 
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe readSizeTo vint:n vint:m
-//    [
-//        n int := theLength1.
-//        m int := theLength2.
-//    ]
-//
-//    /// Reads the length to the output parameter    
-//    readColumnsTo vint:m
-//    [
-//        m int := theLength2.
-//    ]
-//
-//    /// Reads the length to the output parameter    
-//    readRownsTo vint:n
-//    [
-//        n int := theLength1.
-//    ]    
-//}
+
+// --- BaseIndexer ---
+
+class BaseIndexer :: Indexer
+{
+    int theIndex.
+    int theBaseIndexerLength.
+    
+    /// Returns false if the index out of range
+    bool available = (theIndex < theBaseIndexerLength).
+    
+    /// Reads the current i-index into an output parameter
+    readIndexTo vint:retVal
+    [
+        retVal int := theIndex
+    ]    
+    
+    /// Sets the i-index by specified value
+    writeIndex int:anIndex 
+    [ 
+        theIndex := anIndex
+    ] 
+}
+
+// --- BaseMatrixIndexer ---
+
+class BaseMatrixIndexer :: Indexer2D
+{
+    int theIndex1.
+    int theIndex2.
+    int theLength1.
+    int theLength2.
+    
+    /// Returns false if the index out of range
+    bool available = (theIndex1 <= theLength1) && (theIndex2 <= theLength2).
+    
+    /// Reads the current i-index into an output parameter
+    readIndex1To vint:retVal
+    [
+        retVal int := theIndex1.
+    ]    
+    
+    /// Reads the current j-index into an output parameter
+    readIndex2To vint:retVal
+    [
+        retVal int := theIndex2.
+    ]
+    
+    /// Sets the i-index by specified value
+    writeIndex1 int:anIndex 
+    [ 
+        theIndex1 := anIndex.
+    ] 
+    
+    /// Sets the i-index by specified value
+    writeIndex2 int:anIndex 
+    [
+        theIndex2 := anIndex.
+    ] 
+
+    /// Reads the length to the output parameter    
+    stacksafe readSizeTo vint:n vint:m
+    [
+        n int := theLength1.
+        m int := theLength2.
+    ]
+
+    /// Reads the length to the output parameter    
+    readColumnsTo vint:m
+    [
+        m int := theLength2.
+    ]
+
+    /// Reads the length to the output parameter    
+    readRownsTo vint:n
+    [
+        n int := theLength1.
+    ]    
+}

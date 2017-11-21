@@ -178,12 +178,13 @@ class DerivationReader : public _DerivationReader
 
    bool checkVariableDeclaration(SNode node, DerivationScope& scope);
    bool checkPatternDeclaration(SNode node, DerivationScope& scope);
+   bool checkArrayDeclaration(SNode node, DerivationScope& scope);
 
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
    bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-//   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);

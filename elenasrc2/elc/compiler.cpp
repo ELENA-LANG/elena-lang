@@ -2406,13 +2406,13 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 {
    ObjectInfo result;
 
-   SNode member = objectNode.findChild(lxCode, /*lxNestedClass, lxMessageReference, */lxExpression/*, lxLazyExpression, lxBoxing*/);
+   SNode member = objectNode.findChild(lxCode, lxNestedClass, /*lxMessageReference, */lxExpression/*, lxLazyExpression, lxBoxing*/);
    switch (member.type)
    {
-//      case lxNestedClass:
+      case lxNestedClass:
 //      case lxLazyExpression:
-//         result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
-//         break;
+         result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
+         break;
       case lxCode:
          result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
          break;
@@ -3959,9 +3959,6 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //   else if (node == lxBoxing) {
 //      objectInfo = compileBoxingExpression(writer, node, scope, mode);
 //   }
-//   //else if (node == lxNil) {
-//   //   writer.appendNode(lxNil);
-//   //}
 //   else {
       SNode current = node.findChild(lxAssign, /*lxExtension, */lxMessage, lxOperator/*, lxSwitching*/);
       switch (current.type) {
@@ -5472,6 +5469,11 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t classRef, ref_t elementRef, int sizeHint, bool singleField)
 {
    ModuleScope* moduleScope = scope.moduleScope;
+
+   if (singleField && sizeHint == -1) {
+      scope.info.header.flags |= elDynamicRole;
+      sizeHint = 0;
+   }
 
    int flags = scope.info.header.flags;
    int offset = 0;

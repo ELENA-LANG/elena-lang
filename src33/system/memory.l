@@ -1,38 +1,38 @@
-//class BaseIndexable
-//{
-//    // should be overridden
-//    indexer = $nil.
-//}
-//
-//// --- arrayof ---
-//
-//dynamic template<BaseIndexable> array :: template_subj
-//{
-//    template_subj $target.
-//
-//    enumerator 
-//    [
-//        vint index := -1.
-//        int length := 0.
-//        $target >> length.
-//        
-//        ^ Enumerator::
-//          {
-//              get = $self getAt int:index.
-//              
-//              enumerable = $self.
-//              
-//              reset [ index int := -1 ]
-//              
-//              bool next
-//              [
-//                  index append int:1.
-//                  
-//                  ^ index < length
-//              ]
-//          }
-//    ]
-//
+class BaseIndexable
+{
+    // should be overridden
+    indexer = $nil.
+}
+
+// --- arrayof ---
+
+template<BaseIndexable> array :: template_subj
+{
+    template_subj<> $target.
+
+    enumerator 
+    [
+        vint index := -1.
+        int length := 0.
+        $target >> length.
+        
+        ^ Enumerator::
+          {
+              get = $self getAt int:index.
+              
+              enumerable = $self.
+              
+              reset [ index int := -1 ]
+              
+              bool next
+              [
+                  index append int:1.
+                  
+                  ^ index < length
+              ]
+          }
+    ]
+
 //    indexer = BaseIndexer::
 //    {
 //        @theIndex := 0.
@@ -90,8 +90,8 @@
 //    /// Returns the item at the specified index
 //    multi template_subj getAt : aParam
 //        <= getAt int:aParam.
-//}
-//
+}
+
 //// --- matrixof ---
 //
 //template matrix :: template_subj
@@ -234,14 +234,14 @@
 //          }.
 //    ]
 //}
-//
-//// === basic memory classes ===
-//
-//// --- ByteArray ---
-//
-///// A byte array
-//sealed ByteArray :: array<byte>
-//{
+
+// === basic memory classes ===
+
+// --- ByteArray ---
+
+/// A byte array
+sealed ByteArray :: array<byte>
+{
 //    /// Creates the byte array with the specified length
 //    stacksafe constructor new int:len
 //        = byte&(len).
@@ -386,8 +386,8 @@
 //
 //    /// Creates the object copy
 //    clone = ByteArray new bytearray:$self.
-//}
-//
+}
+
 //// --- ShortArray ---
 //
 ///// A short integer array

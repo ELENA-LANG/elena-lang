@@ -16,7 +16,6 @@ const           = #8201.
 singleton       = #8208.
 generic         = #8202.
 //static          = #8194.
-//dynamic         = #8199.
 var             = #16385.
 limited         = #8196.
 field           = #16392.
@@ -92,29 +91,29 @@ type literal    = system'LiteralValue.
 
 type wide       = system'WideLiteralValue.
 
-//// === function types ===
-//type func       = system'BaseFunction.
-//type lazy_func  = system'BaseLazyExpression.
-//
-///// An anonymous function with a generic parameter.
-/////
-///// An instance of system'BaseFunction1
-//type func1      = system'BaseFunction1.
-//type func2      = system'BaseFunction2.
-//type func3      = system'BaseFunction3.
-//type func4      = system'BaseFunction4.
-//type func5      = system'BaseFunction5.
-//type func6      = system'BaseFunction6.
-//type func7      = system'BaseFunction7.
-//type func8      = system'BaseFunction8.
-//type func9      = system'BaseFunction9.
-//type func10     = system'BaseFunction10.
-//type func11     = system'BaseFunction11.
-//
-//type nfunc      = system'IndexFunction1.
-//type nnfunc     = system'IndexFunction2.
-//type n3func     = system'IndexFunction3.
-//
+// === function types ===
+type func       = system'BaseFunction.
+type lazy_func  = system'BaseLazyExpression.
+
+/// An anonymous function with a generic parameter.
+///
+/// An instance of system'BaseFunction1
+type func1      = system'BaseFunction1.
+type func2      = system'BaseFunction2.
+type func3      = system'BaseFunction3.
+type func4      = system'BaseFunction4.
+type func5      = system'BaseFunction5.
+type func6      = system'BaseFunction6.
+type func7      = system'BaseFunction7.
+type func8      = system'BaseFunction8.
+type func9      = system'BaseFunction9.
+type func10     = system'BaseFunction10.
+type func11     = system'BaseFunction11.
+
+type nfunc      = system'IndexFunction1.
+type nnfunc     = system'IndexFunction2.
+type n3func     = system'IndexFunction3.
+
 //// === system handles ===
 //type handle     = system'Handle.
 //type rt_ptr     = system'RTPointer.

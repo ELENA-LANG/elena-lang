@@ -6,6 +6,7 @@ In development:
                  * support fixed size array : type<ShortNumber,260> cFileName.
 
               dev - syntax redesign
+                 * uncomment nfunc, ...
                  * invoke multi dispatch
 
                  * support function call : a(b).
@@ -75,10 +76,6 @@ if(a==3)[].
                  * cache isEmbeddable operation result
                  * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
                    as light as possible
-                 * get rid of dynamic keyword, use [] for this : e.g.
-                      template<BaseIndexable> array :: template_subj
-                      {
-                            object& $target.
                  * typified open arg list (#369)
                  * fn3prop : embeddable option for the function with three arguments should be recognized
                  * NilReferenceException, AccessViolationException, DivisionByZeroException should be recognized
