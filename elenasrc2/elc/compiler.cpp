@@ -4523,14 +4523,14 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
-//      if (test(scope.hints, tpSealed | tpGeneric)) {
-//         if (paramCount != OPEN_ARG_COUNT) {
-//            if (!emptystr(signature) || !emptystr(messageStr))
-//               scope.raiseError(errInvalidHint, verb);
-//
-//            messageStr.copy(GENERIC_PREFIX);
-//         }
-//      }
+      if (test(scope.hints, tpSealed | tpGeneric)) {
+         if (paramCount != OPEN_ARG_COUNT) {
+            if (!emptystr(signature) || !emptystr(messageStr))
+               scope.raiseError(errInvalidHint, verb);
+
+            messageStr.copy(GENERIC_PREFIX);
+         }
+      }
 
       if (test(scope.hints, tpSealed | tpConversion)) {
          if (paramCount == 1) {
@@ -4963,56 +4963,56 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
 void Compiler :: compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elRole));
-//
-//   int preallocated = 0;
-//
-//   CodeScope codeScope(&scope);
-//
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//   if (checkMethod(*scope.moduleScope, classScope->info.header.parentRef, scope.message) != tpUnknown) {
-//      // check if the parent has implicit constructor - call it
-//      writer.newNode(lxCalling, scope.message);
-//      writer.appendNode(lxTarget, classScope->info.header.parentRef);
-//      writer.closeNode();
-//   }
-//
-//   writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
-//
-//   // new stack frame
-//   // stack already contains current $self reference
-//   // the original message should be restored if it is a generic method
-//   codeScope.level++;
-//
-//   preallocated = codeScope.level;
-//
-//   SNode body = node.findChild(lxCode);
-//   ObjectInfo retVal = compileCode(writer, body, codeScope);
-//
-//   // if the method returns itself
-//   if (retVal.kind == okUnknown) {
-//      // adding the code loading $self
-//      writer.newNode(lxExpression);
-//      writer.appendNode(lxLocal, 1);
-//
-//      ref_t resultRef = scope.getReturningRef(false);
-//      if (resultRef != 0) {
-//         scope.raiseError(errInvalidOperation, node);
-//      }
-//
-//      writer.closeNode();
-//   }
-//   else scope.raiseError(errIllegalMethod, node);
-//
-//   writer.closeNode();
-//
-//   writer.appendNode(lxParamCount, getParamCount(scope.message));
-//   writer.appendNode(lxReserved, scope.reserved);
-//   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
-//
-//   writer.closeNode();
+   writer.newNode(lxClassMethod, scope.message);
+
+   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elRole));
+
+   int preallocated = 0;
+
+   CodeScope codeScope(&scope);
+
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   if (checkMethod(*scope.moduleScope, classScope->info.header.parentRef, scope.message) != tpUnknown) {
+      // check if the parent has implicit constructor - call it
+      writer.newNode(lxCalling, scope.message);
+      writer.appendNode(lxTarget, classScope->info.header.parentRef);
+      writer.closeNode();
+   }
+
+   writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
+
+   // new stack frame
+   // stack already contains current $self reference
+   // the original message should be restored if it is a generic method
+   codeScope.level++;
+
+   preallocated = codeScope.level;
+
+   SNode body = node.findChild(lxCode);
+   ObjectInfo retVal = compileCode(writer, body, codeScope);
+
+   // if the method returns itself
+   if (retVal.kind == okUnknown) {
+      // adding the code loading $self
+      writer.newNode(lxExpression);
+      writer.appendNode(lxLocal, 1);
+
+      ref_t resultRef = scope.getReturningRef(false);
+      if (resultRef != 0) {
+         scope.raiseError(errInvalidOperation, node);
+      }
+
+      writer.closeNode();
+   }
+   else scope.raiseError(errIllegalMethod, node);
+
+   writer.closeNode();
+
+   writer.appendNode(lxParamCount, getParamCount(scope.message));
+   writer.appendNode(lxReserved, scope.reserved);
+   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
+
+   writer.closeNode();
 }
 
 void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope)

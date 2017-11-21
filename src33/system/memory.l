@@ -1718,14 +1718,14 @@ sealed /*dynamic*/ __string WideLiteralValue :: BaseValue
 //        
 //    int rvprop length :: readLengthTo.
 //}
-//
-//// === Convertors ===
-//
-//// --- literalConvertor ---
-//
-///// A literal convertor
-//class literalConvertor =
-//{
+
+// === Convertors ===
+
+// --- literalConvertor ---
+
+/// A literal convertor
+class literalConvertor =
+{
 //    literal convert(BaseVariable v)
 //        <= convert(v value).
 //    
@@ -1954,13 +1954,13 @@ sealed /*dynamic*/ __string WideLiteralValue :: BaseValue
 //    /// Returns the literal presentation of the parameter
 //    literal multi convert : anObject
 //        = anObject literal.
-//}.
-//
-//// --- wideConvertor ---
-//
-///// A wide literal convertor
-//class wideConvertor =
-//{
+}.
+
+// --- wideConvertor ---
+
+/// A wide literal convertor
+class wideConvertor =
+{
 //    wide convert(BaseVariable v)
 //        <= convert(v value).
 //    
@@ -2189,8 +2189,8 @@ sealed /*dynamic*/ __string WideLiteralValue :: BaseValue
 //    /// Returns the literal presentation of the parameter
 //    wide multi convert : anObject
 //        = anObject wide.
-//}.
-//
+}.
+
 //// === Enumerators / Indexers
 //
 //// --- LiteralEnumerator ---

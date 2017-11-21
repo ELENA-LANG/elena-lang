@@ -129,21 +129,21 @@ class Exception
 //        <= new($self className).
 }
 
-//// --- FormatException ---
-//
-//class FormatException :: Exception
-//{
+// --- FormatException ---
+
+class FormatException :: Exception
+{
 //    constructor new
 //        <= new literal:"A number is not in the correct format".
 //        
 //    constructor new : message
 //        <= new literal:message.
-//}
-//
-//// --- OutOfRangeException ---
-//
-//class OutOfRangeException :: Exception
-//{
+}
+
+// --- OutOfRangeException ---
+
+class OutOfRangeException :: Exception
+{
 //    /// Creates the exception
 //    constructor new
 //        <= new literal:"An index is out of range".
@@ -151,8 +151,8 @@ class Exception
 //    /// Creates the exception
 //    constructor new:aMessage
 //        <= new literal:aMessage.
-//}
-//
+}
+
 ////// --- IndexOutOfRangeException ---
 ////
 ////#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
@@ -171,11 +171,11 @@ class Exception
 ////    #constructor new:aMessage
 ////        <= new &literal:(aMessage literal).
 ////}
-//
-//// --- InvalidArgumentException ---
-//
-//class InvalidArgumentException :: Exception
-//{
+
+// --- InvalidArgumentException ---
+
+class InvalidArgumentException :: Exception
+{
 //    /// Creates the exception
 //    constructor new
 //        <= new literal:"Invalid argument".
@@ -183,12 +183,12 @@ class Exception
 //    /// Creates the exception
 //    constructor new:aMessage
 //        <= new literal:aMessage.
-//}
-//
-//// --- InvalidOperationException ---
-//
-//class InvalidOperationException :: Exception
-//{
+}
+
+// --- InvalidOperationException ---
+
+class InvalidOperationException :: Exception
+{
 //    /// Creates the exception
 //    constructor new
 //        <= new literal:"Invalid operation".
@@ -196,7 +196,7 @@ class Exception
 //    /// Creates the exception
 //    constructor new:aMessage
 //        <= new literal:aMessage.
-//}
+}
 
 // --- MethodNotFound ---
 

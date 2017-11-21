@@ -12,14 +12,14 @@ template        = #16391.
 //extension       = #8203.
 stacksafe       = #8192.
 explicit        = #16387.
-//const           = #8201.
-//singleton       = #8208.
-//generic         = #8202.
+const           = #8201.
+singleton       = #8208.
+generic         = #8202.
 //static          = #8194.
 //dynamic         = #8199.
 var             = #16385.
-//limited         = #8196.
-//field           = #16392.
+limited         = #8196.
+field           = #16392.
 //method          = #16393.
 //loop_template   = #16394.
 //nonstructural   = #8204.
@@ -33,7 +33,7 @@ var             = #16385.
 
 __string        = #8200.
 __int           = #11.
-//__dword         = #12.
+__dword         = #12.
 __real          = #14.
 __mssg          = #19.
 //__subj          = #18.
@@ -66,16 +66,16 @@ type int        = system'IntNumber.
 type uint       = system'UIntNumber.
 type long       = system'LongNumber.
 type real       = system'RealNumber.
-//type char       = system'CharValue.
+type char       = system'CharValue.
 //type mssg       = system'Message.
 //type ext_mssg   = system'ExtensionMessage.
 //
 //type subject    = system'Signature.
 //type symbol_ref = system'Symbol.
-//
-//// === basic dynamic types ===
-//type bytearray  = system'ByteArray.
-//type shortarray = system'ShortArray.
+
+// === basic dynamic types ===
+type bytearray  = system'ByteArray.
+type shortarray = system'ShortArray.
 //type intarray   = system'IntArray.
 //type intmatrix  = system'IntMatrix.
 //type realarray  = system'RealArray.
