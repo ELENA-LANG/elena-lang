@@ -220,16 +220,18 @@ __block template if :: expr
 //    expr bool !
 //    [
 //    ].
-//
-//// --- if-else statement ---
-//
-//__double_block template if :: expr =
-//    expr bool ?
-//    [
-//    ]
-//    ! [
-//    ].
-//
+
+// --- if-else statement ---
+
+__block __block template if :: expr
+[
+    expr bool ?
+    [
+    ]
+    ! [
+    ].    
+]
+
 //__double_block template ifnot :: expr =
 //    expr bool; inverted ?
 //    [

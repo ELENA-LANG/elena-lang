@@ -2106,10 +2106,10 @@ void DerivationReader :: generateCodeTemplateTree(SyntaxWriter& writer, SNode no
          templateScope.exprNode = node.findChild(lxMessageParameter);
          templateScope.codeNode = node.findChild(lxCode);
          //templateScope.nestedNode = node.findChild(lxNestedClass);
-         //if (templateScope.nestedNode == lxNone || templateScope.codeNode != lxNone) {
-         //   // if there is else code block
-         //   templateScope.elseNode = templateScope.codeNode.nextNode();
-         //}
+         if (/*templateScope.nestedNode == lxNone || */templateScope.codeNode != lxNone) {
+            // if there is else code block
+            templateScope.elseNode = templateScope.codeNode.nextNode();
+         }
 
          templateScope.type = DerivationScope::ttCodeTemplate;
 
@@ -2634,10 +2634,10 @@ void DerivationReader :: generateTemplateTree(SyntaxWriter& writer, SNode node, 
 
          subAttributes = SNode();
       }
-      //else if (current == lxFieldTemplate) {
-      //   generateFieldTemplateTree(writer, current, scope, subAttributes, buffer, true);
-      //   subAttributes = SNode();
-      //}
+      else if (current == lxFieldTemplate) {
+         generateFieldTemplateTree(writer, current, scope, subAttributes, buffer, true);
+         subAttributes = SNode();
+      }
       else if (current == lxCode) {
          scope.type = DerivationScope::ttCodeTemplate;
 

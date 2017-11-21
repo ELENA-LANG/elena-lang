@@ -58,38 +58,38 @@ template<BaseIndexable> array :: template_subj
     
     int rvprop length :: readLengthTo.
 
-//    stacksafe template_subj getAt int:n
-//    [
-//        if (n < 0)
-//            [ InvalidArgumentException new; raise ].
-//        
-//        int len := 0.
-//        $target >> len.
-//
-//        if (n < len)
-//            [ ^ $target[n] ];
-//            [ InvalidArgumentException new; raise ]
-//    ]
+    stacksafe template_subj getAt int:n
+    [
+        if (n < 0)
+            [ InvalidArgumentException new; raise ].
+        
+        int len := 0.
+        $target >> len.
 
-//    stacksafe setAt int:n template_subj:item
-//    [
-//        if (n < 0)
-//            [ InvalidArgumentException new; raise ].
-//        
-//        int len := 0.
-//        $target >> len.
-//
-//        if (n < len)
-//            [ $target[n] := item ];
-//            [ InvalidArgumentException new; raise ]
-//    ]
-//               
-//    multi setAt:n:object
-//        <= setAt int:n template_subj:object.                
-//                  
-//    /// Returns the item at the specified index
-//    multi template_subj getAt : aParam
-//        <= getAt int:aParam.
+        if (n < len)
+            [ ^ $target[n] ];
+            [ InvalidArgumentException new; raise ]
+    ]
+
+    stacksafe setAt int:n template_subj:item
+    [
+        if (n < 0)
+            [ InvalidArgumentException new; raise ].
+        
+        int len := 0.
+        $target >> len.
+
+        if (n < len)
+            [ $target[n] := item ];
+            [ InvalidArgumentException new; raise ]
+    ]
+               
+    multi setAt:n:object
+        <= setAt int:n template_subj:object.                
+                  
+    /// Returns the item at the specified index
+    multi template_subj getAt : aParam
+        <= getAt int:aParam.
 }
 
 //// --- matrixof ---

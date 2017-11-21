@@ -475,7 +475,7 @@ private:
          else return Scope::getScope(level);
       }
 
-//      virtual bool isClosureMode() { return false; }
+      virtual bool isClosureMode() { return false; }
 
       void save()
       {
@@ -541,7 +541,7 @@ private:
       bool         generic;
       bool         extensionMode;
       bool         multiMethod;
-      //bool         closureMode;
+      bool         closureMode;
       //bool         subCodeMode;
       
       virtual Scope* getScope(ScopeLevel level)
@@ -689,13 +689,13 @@ private:
       };
 
       bool                    returningMode;
-//      bool                    closureMode;
+      bool                    closureMode;
       Map<ident_t, Outer>     outers;
       ClassInfo::FieldTypeMap outerFieldTypes;
 
-//      Outer mapSelf();
-//      Outer mapOwner();
-//
+      Outer mapSelf();
+      Outer mapOwner();
+
 //      ObjectInfo allocateRetVar();
 
       bool markAsPresaved(ObjectInfo object);
@@ -708,9 +708,9 @@ private:
          else return Scope::getScope(level);
       }
 
-//      virtual bool isClosureMode() { return closureMode; }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
+      virtual bool isClosureMode() { return closureMode; }
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
 
       InlineClassScope(CodeScope* owner, ref_t reference);
    };
