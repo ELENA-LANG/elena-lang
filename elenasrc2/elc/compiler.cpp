@@ -3530,52 +3530,52 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    generateClassImplementation(expressionTree.readRoot(), scope);
 }
 
-//void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
-//{
-//   SyntaxTree expressionTree;
-//   SyntaxWriter writer(expressionTree);
-//
-//   // check if the class was already compiled
-//   if (!node.argument) {
-//      compileParentDeclaration(node, scope);
-//
-//      declareVMT(node, scope);
-//
-//      // check if it is a virtual vmt (only for the class initialization)
-//      SNode current = node.firstChild();
-//      bool virtualClass = true;
-//      while (current != lxNone) {
-//         if (current == lxClassMethod) {
-//            if (!test(current.argument, SEALED_MESSAGE)) {
-//               virtualClass = false;
-//               break;
-//            }
-//         }
-//         current = current.nextNode();
-//      }
-//
-//      if (virtualClass)
-//         scope.info.header.flags |= elVirtualVMT;
-//
-//      generateClassDeclaration(node, scope, false, true);
-//
-//      scope.save();
-//   }
-//   else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
-//
-//   writer.newNode(lxClass, scope.reference);
-//
-//   compileVMT(writer, node, scope);
-//
-//   // set flags once again
-//   // NOTE : it should be called after the code compilation to take into consideration outer fields
-//   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, false);
-//
-//   writer.closeNode();
-//   scope.save();
-//
-//   generateClassImplementation(expressionTree.readRoot(), scope);
-//}
+void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
+{
+   SyntaxTree expressionTree;
+   SyntaxWriter writer(expressionTree);
+
+   // check if the class was already compiled
+   if (!node.argument) {
+      compileParentDeclaration(node, scope);
+
+      declareVMT(node, scope);
+
+      // check if it is a virtual vmt (only for the class initialization)
+      SNode current = node.firstChild();
+      bool virtualClass = true;
+      while (current != lxNone) {
+         if (current == lxClassMethod) {
+            if (!test(current.argument, SEALED_MESSAGE)) {
+               virtualClass = false;
+               break;
+            }
+         }
+         current = current.nextNode();
+      }
+
+      if (virtualClass)
+         scope.info.header.flags |= elVirtualVMT;
+
+      generateClassDeclaration(node, scope, false, true);
+
+      scope.save();
+   }
+   else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
+
+   writer.newNode(lxClass, scope.reference);
+
+   compileVMT(writer, node, scope);
+
+   // set flags once again
+   // NOTE : it should be called after the code compilation to take into consideration outer fields
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, false);
+
+   writer.closeNode();
+   scope.save();
+
+   generateClassImplementation(expressionTree.readRoot(), scope);
+}
 
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope)
 {
@@ -3713,7 +3713,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       codeNode = lxIdle;
    }
    // if it is a nested class
-   //else compileNestedVMT(node, scope);
+   else compileNestedVMT(node, scope);
 
    return compileClosure(writer, node, ownerScope, scope);
 }
@@ -4530,6 +4530,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
             messageStr.copy(GENERIC_PREFIX);
          }
+      }
+      else if (test(scope.hints, tpAction)) {
+         messageStr.copy(INVOKE_MESSAGE);
       }
 
       if (test(scope.hints, tpSealed | tpConversion)) {

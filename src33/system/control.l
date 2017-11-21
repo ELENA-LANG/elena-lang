@@ -160,14 +160,17 @@ limited class Indexer2D
     int rvprop rows :: readRownsTo.
 }
 
-//// --- base functions ---
-//
-///// A base action
-//limited class BaseFunction
-//{
-//    /// Executes the action
-//    action eval []
-//    
+// --- base functions ---
+
+/// A base action
+limited class BaseFunction
+{
+    /// Executes the action
+    closure []
+    
+    /// Executes the action
+    eval = $self().
+    
 //    /// Executes the action while the condition is true
 //    sealed run while:aBool
 //    [
@@ -191,8 +194,8 @@ limited class Indexer2D
 //            flag := aBool bool
 //        ].
 //    ]
-//}
-//
+}
+
 ///// A base function
 //limited class BaseFunction1
 //{

@@ -411,7 +411,7 @@ bool DerivationReader::DerivationScope :: isImplicitAttribute(SNode terminal)
 
    ref_t attr = moduleScope->attributes.get(name);
 
-   return attr == V_GENERIC || attr == V_CONVERSION;
+   return attr == V_GENERIC || attr == V_CONVERSION || attr == V_ACTION;
 }
 
 ref_t DerivationReader::DerivationScope :: mapTemplate(SNode terminal, int paramCounter, int prefixCounter)

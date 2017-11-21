@@ -893,7 +893,7 @@ private:
    void compileSymbolCode(ClassScope& scope);
 
    void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
-//   void compileNestedVMT(SNode node, InlineClassScope& scope);
+   void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
