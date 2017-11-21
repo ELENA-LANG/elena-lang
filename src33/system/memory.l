@@ -33,31 +33,31 @@ template<BaseIndexable> array :: template_subj
           }
     ]
 
-//    indexer = BaseIndexer::
-//    {
-//        @theIndex := 0.
-//        
-//        @theBaseIndexerLength := $self length.
-//        
-//        get
-//            = $self getAt int:theIndex.
-//            
-//        set : o
-//        [
-//            $self setAt int:theIndex template_subj:o.
-//        ]                        
-//    }.    
-//
-//    stacksafe readLengthTo vint:retVal
-//    [
-//        int len := 0.
-//        $target >> len.
-//        
-//        retVal int := len
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//
+    indexer = BaseIndexer::
+    {
+        @theIndex := 0.
+        
+        @theBaseIndexerLength := $self length.
+        
+        get
+            = $self getAt int:theIndex.
+            
+        set : o
+        [
+            $self setAt int:theIndex template_subj:o.
+        ]                        
+    }.    
+
+    stacksafe readLengthTo vint:retVal
+    [
+        int len := 0.
+        $target >> len.
+        
+        retVal int := len
+    ]
+    
+    int rvprop length :: readLengthTo.
+
 //    stacksafe template_subj getAt int:n
 //    [
 //        if (n < 0)
@@ -70,7 +70,7 @@ template<BaseIndexable> array :: template_subj
 //            [ ^ $target[n] ];
 //            [ InvalidArgumentException new; raise ]
 //    ]
-//
+
 //    stacksafe setAt int:n template_subj:item
 //    [
 //        if (n < 0)

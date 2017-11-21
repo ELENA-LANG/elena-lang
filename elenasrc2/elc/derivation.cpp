@@ -94,9 +94,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsL8Operation:
          _writer.newNode(lxAssignOperator);
          break;
-//      case nsArrayOperation:
-//         _writer.newNode(lxOperator, REFER_MESSAGE_ID);
-//         break;
+      case nsArrayOperation:
+         _writer.newNode(lxOperator, REFER_MESSAGE_ID);
+         break;
 //      case nsSizeExpression:
 //         _writer.newNode(lxOperator, -3);
 //         break;

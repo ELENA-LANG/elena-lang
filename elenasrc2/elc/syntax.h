@@ -97,7 +97,7 @@ enum Symbol
 //   nsLazyExpression             = 0x01050,
    nsAngleOperator              = 0x01051,
 //   nsAngleObject                = 0x01052,
-//   nsArrayOperation             = 0x01053,
+   nsArrayOperation             = 0x01053,
 //   nsRootAngleOperator          = 0x01054,
 //   nsRootAngleObject            = 0x01055,
 //   nsRootL6Operation            = 0x01056,
