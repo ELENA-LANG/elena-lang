@@ -200,14 +200,16 @@ __accessor template rvprop :: type,prop_name
 //__extern template extern =
 //    [
 //    ].
-//
-//// --- if statement ---
-//
-//__block template if :: expr = 
-//    expr bool ?
-//    [
-//    ].
-//
+
+// --- if statement ---
+
+__block template if :: expr
+[
+    expr bool ?
+    [
+    ].
+]
+
 //// --- ifnot statement ---
 //
 //__block template ifnot :: expr =

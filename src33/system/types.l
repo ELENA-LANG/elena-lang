@@ -28,6 +28,7 @@ field           = #16392.
 closure         = #8205.
 //mixin           = #8206.
 __accessor      = #16399.
+__block         = #16400.
 
 //args            = #32. 
 
