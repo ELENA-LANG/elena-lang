@@ -25,10 +25,10 @@ field           = #16392.
 //nonstructural   = #8204.
 //import          = #16395.
 //extern_template = #16396.
-//action          = #8205.
+closure         = #8205.
 //mixin           = #8206.
-//accessor        = #16399.
-//
+__accessor      = #16399.
+
 //args            = #32. 
 
 __string        = #8200.
@@ -118,10 +118,10 @@ type wide       = system'WideLiteralValue.
 //type handle     = system'Handle.
 //type rt_ptr     = system'RTPointer.
 //type dirty_ptr  = system'UnsafePointer.
-//
-//// --- Enumerators / Indexers ---
-//type enumerator = system'Enumerator.
-//type indexer    = system'Indexer.
-//type indexer2d  = system'Indexer2D.
-//
+
+// --- Enumerators / Indexers ---
+type enumerator = system'Enumerator.
+type indexer    = system'Indexer.
+type indexer2d  = system'Indexer2D.
+
 //type void       = nil.

@@ -355,7 +355,11 @@ TOKEN_PARAM ->
 	| private
 
 SUBJECT_ARG ->
-	identifier
+	identifier SUBJECT_BODY
+	      
+SUBJECT_BODY ->
+	< TOKEN_PARAM >
+	| eps
 
 BASE_CLASS ->
 	identifier TOKEN_BODY

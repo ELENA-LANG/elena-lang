@@ -82,45 +82,45 @@ field template rprop :: type, prop_name
 //        $self $set prop_type:val.
 //    ]
 //}
-//
-//// --- vvprop ---
-//
-//accessor accessor template vvprop :: prop_type,prop_name
-//{
-//    stacksafe embeddable prop_type prop_name
-//    [
-//        prop_type val := 0.        
-//        $self $get var<prop_type>:val.
-//
-//        ^ val.
-//    ]
-//    
-//    stacksafe embeddable set prop_name prop_type:val
-//    [
-//        $self $set prop_type:val.
-//    ]
-//    
-//    stacksafe embeddable append prop_name prop_type:val
-//    [
-//        prop_type newVal := 0.        
-//        $self $get var<prop_type>:newVal.
-//        
-//        newVal := newVal + val.
-//        
-//        $self $set prop_type:newVal.
-//    ]
-//    
-//    stacksafe embeddable reduce prop_name prop_type:val
-//    [
-//        prop_type newVal := 0.        
-//        $self $get var<prop_type>:newVal.
-//        
-//        newVal := newVal - val.
-//        
-//        $self $set prop_type:newVal.
-//    ]    
-//}
-//
+
+// --- vvprop ---
+
+__accessor __accessor template vvprop :: prop_type,prop_name
+{
+    stacksafe embeddable prop_type prop_name
+    [
+        prop_type val := 0.        
+        $self $get var<prop_type>:val.
+
+        ^ val.
+    ]
+    
+    stacksafe embeddable set prop_name prop_type:val
+    [
+        $self $set prop_type:val.
+    ]
+    
+    stacksafe embeddable append prop_name prop_type:val
+    [
+        prop_type newVal := 0.        
+        $self $get var<prop_type>:newVal.
+        
+        newVal := newVal + val.
+        
+        $self $set prop_type:newVal.
+    ]
+    
+    stacksafe embeddable reduce prop_name prop_type:val
+    [
+        prop_type newVal := 0.        
+        $self $get var<prop_type>:newVal.
+        
+        newVal := newVal - val.
+        
+        $self $set prop_type:newVal.
+    ]    
+}
+
 //accessor template vprop :: type,prop_name
 //{
 //    stacksafe embeddable type prop_name
@@ -131,20 +131,20 @@ field template rprop :: type, prop_name
 //        ^ val.
 //    ]
 //}
-//
-//// --- rvprop ---
-//
-//accessor template rvprop :: type,prop_name
-//{
-//    stacksafe embeddable type prop_name
-//    [
-//        type val := 0.        
-//        $self $get var<type>:val.
-//
-//        ^ val.
-//    ]
-//}
-//
+
+// --- rvprop ---
+
+__accessor template rvprop :: type,prop_name
+{
+    stacksafe embeddable type prop_name
+    [
+        type val := 0.        
+        $self $get var<type>:val.
+
+        ^ val.
+    ]
+}
+
 //// --- fnprop ---
 //
 //accessor template fnprop :: type,template_fn

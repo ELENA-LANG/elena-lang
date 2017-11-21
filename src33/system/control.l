@@ -35,131 +35,131 @@ limited class Indexer
     /// Reads the current index into an output parameter
     stacksafe readIndexTo vint:retVal []
 
-//    int vvprop index :: readIndexTo, writeIndex.
-//
-//    /// Sets the index by specified value
-//    ///
-//    /// Should be overidden(or set&index)
-//    stacksafe writeIndex int:anIndex 
-//    [ 
-//        $self set index:anIndex.
-//    ] 
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe readLengthTo vint:retVal 
-//    [
-//        retVal int := 0
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
+    int vvprop index :: readIndexTo, writeIndex.
+
+    /// Sets the index by specified value
+    ///
+    /// Should be overidden(or set&index)
+    stacksafe writeIndex int:anIndex 
+    [ 
+        $self set index:anIndex.
+    ] 
+
+    /// Reads the length to the output parameter    
+    stacksafe readLengthTo vint:retVal 
+    [
+        retVal int := 0
+    ]
+    
+    int rvprop length :: readLengthTo.
 }
 
-//// --- MatrixIndexer ---
-//
-///// An indexer prototype
-//limited class Indexer2D
-//{
-//    /// Returns false if the index out of range
-//    bool available = $nil.
-//
-//    /// Returns the current member
-//    get = $nil.
-//    
-//    /// Sets the current member
-//    set : anObject []
-//    
-//    /// Reads the current i-index into an output parameter
-//    stacksafe readIndex1To vint:anIndex []
-//    
-//    /// Reads the current j-index into an output parameter
-//    stacksafe readIndex2To vint:anIndex []
-//    
-//    int rvprop index1 :: readIndex1To.
-//    
-//    int rvprop index2 :: readIndex2To.
-//    
-//    /// Sets the i-index by specified value
-//    stacksafe writeIndex1 int:anIndex [ ] 
-//    
-//    /// Sets the i-index by specified value
-//    stacksafe writeIndex2 int:anIndex [ ] 
-//    
-//    /// Sets the index by specified value
-//    set index1:anIndex 
-//        <= writeIndex1 int:anIndex.
-//    
-//    /// Sets the index by specified value
-//    set index2:anIndex 
-//        <= writeIndex2 int:anIndex.
-//    
-//    /// Increaments the index by specified value
-//    indexer2d append index1:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndex1To vint:anIndex.
-//        
-//        anIndex := anIndex + anOffset int.
-//        
-//        $self writeIndex1 int:anIndex.
-//        
-//        ^ $self.
-//    ]
-//    
-//    /// Increaments the index by specified value
-//    indexer2d append index2:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndex2To vint:anIndex.
-//        
-//        anIndex := anIndex + anOffset int.
-//        
-//        $self writeIndex2 int:anIndex.
-//        
-//        ^ $self.
-//    ]
-//
-//    /// Decreaments the index by specified value
-//    reduce index1:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndex1To vint:anIndex.
-//        
-//        anIndex := anIndex - anOffset int.
-//        
-//        $self writeIndex1 int:anIndex.
-//    ]
-//
-//    /// Decreaments the index by specified value
-//    reduce index2:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndex2To vint:anIndex.
-//        
-//        anIndex := anIndex - anOffset int.
-//        
-//        $self writeIndex2 int:anIndex.
-//    ]
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe readSizeTo vint:n vint:m
-//    [
-//    ]
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe readColumnsTo vint:m
-//    [
-//    ]
-//
-//    int rvprop columns :: readColumnsTo.
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe readRownsTo vint:n
-//    [
-//    ]
-//    
-//    int rvprop rows :: readRownsTo.
-//}
-//
+// --- MatrixIndexer ---
+
+/// An indexer prototype
+limited class Indexer2D
+{
+    /// Returns false if the index out of range
+    bool available = $nil.
+
+    /// Returns the current member
+    get = $nil.
+    
+    /// Sets the current member
+    set : anObject []
+    
+    /// Reads the current i-index into an output parameter
+    stacksafe readIndex1To vint:anIndex []
+    
+    /// Reads the current j-index into an output parameter
+    stacksafe readIndex2To vint:anIndex []
+    
+    int rvprop index1 :: readIndex1To.
+    
+    int rvprop index2 :: readIndex2To.
+    
+    /// Sets the i-index by specified value
+    stacksafe writeIndex1 int:anIndex [ ] 
+    
+    /// Sets the i-index by specified value
+    stacksafe writeIndex2 int:anIndex [ ] 
+    
+    /// Sets the index by specified value
+    set index1:anIndex 
+        <= writeIndex1 int:anIndex.
+    
+    /// Sets the index by specified value
+    set index2:anIndex 
+        <= writeIndex2 int:anIndex.
+    
+    /// Increaments the index by specified value
+    indexer2d append index1:anOffset
+    [
+        int anIndex := 0.
+        $self readIndex1To vint:anIndex.
+        
+        anIndex := anIndex + anOffset int.
+        
+        $self writeIndex1 int:anIndex.
+        
+        ^ $self.
+    ]
+    
+    /// Increaments the index by specified value
+    indexer2d append index2:anOffset
+    [
+        int anIndex := 0.
+        $self readIndex2To vint:anIndex.
+        
+        anIndex := anIndex + anOffset int.
+        
+        $self writeIndex2 int:anIndex.
+        
+        ^ $self.
+    ]
+
+    /// Decreaments the index by specified value
+    reduce index1:anOffset
+    [
+        int anIndex := 0.
+        $self readIndex1To vint:anIndex.
+        
+        anIndex := anIndex - anOffset int.
+        
+        $self writeIndex1 int:anIndex.
+    ]
+
+    /// Decreaments the index by specified value
+    reduce index2:anOffset
+    [
+        int anIndex := 0.
+        $self readIndex2To vint:anIndex.
+        
+        anIndex := anIndex - anOffset int.
+        
+        $self writeIndex2 int:anIndex.
+    ]
+
+    /// Reads the length to the output parameter    
+    stacksafe readSizeTo vint:n vint:m
+    [
+    ]
+
+    /// Reads the length to the output parameter    
+    stacksafe readColumnsTo vint:m
+    [
+    ]
+
+    int rvprop columns :: readColumnsTo.
+
+    /// Reads the length to the output parameter    
+    stacksafe readRownsTo vint:n
+    [
+    ]
+    
+    int rvprop rows :: readRownsTo.
+}
+
 //// --- base functions ---
 //
 ///// A base action

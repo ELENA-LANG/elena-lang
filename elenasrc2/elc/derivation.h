@@ -48,7 +48,7 @@ class DerivationReader : public _DerivationReader
       {
          ttNone           = 0,
          ttFieldTemplate  = 1,
-//         ttMethodTemplate = 2,
+         ttMethodTemplate = 2,
 //         ttCodeTemplate   = 3,
       };
 
