@@ -1429,6 +1429,11 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
          copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
          writer.closeNode();
          break;
+      case lxAttributeValue:
+         writer.newNode(lxClosureMessage, -1);
+         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+         writer.closeNode();
+         break;
       case lxIdle:
          break;
       default:

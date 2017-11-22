@@ -136,6 +136,14 @@ inline bool existChildWithArg(SNode node, LexicalType type, ref_t arg)
    return false;
 }
 
+inline SNode goToNode(SNode current, LexicalType type)
+{
+   while (current != lxNone && current != type)
+      current = current.nextNode();
+
+   return current;
+}
+
 SNode findTerminalInfo(SNode node)
 {
    if (node.existChild(lxRow))
@@ -4293,7 +4301,8 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
 
    ref_t actionRef = 0;
 
-   // if method has generic (unnamed) argument list
+   SNode sign = goToNode(arg, lxClosureMessage);
+   bool first = true;
    while (arg == lxMethodParameter || arg == lxIdentifier || arg == lxPrivate) {
       SNode terminalNode = arg;
       if (terminalNode == lxMethodParameter) {
@@ -4302,32 +4311,27 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
 
       ident_t terminal = terminalNode.identifier();
       int index = 1 + scope.parameters.Count();
-      scope.parameters.add(terminal, Parameter(index));
+
+      // !! check duplicates
+      if (scope.parameters.exist(terminal))
+         scope.raiseError(errDuplicatedLocal, arg);
+
+      if (sign != lxNone) {
+         // if the closure has explicit signature
+         ref_t class_ref = declareArgumentSubject(sign, *scope.moduleScope, first, messageStr, signature);
+
+         int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, class_ref, 0) : 0;
+         scope.parameters.add(terminal, Parameter(index, class_ref, size));
+
+         sign = sign.nextNode();
+      }
+      else if (first) {
+         scope.parameters.add(terminal, Parameter(index));
+      }
+      else scope.raiseError(errInvalidSyntax, arg);      
 
       arg = arg.nextNode();
    }
-//   bool first = true;
-//   while (arg == lxMessage || arg == lxClosureMessage) {
-//      ref_t class_ref = declareArgumentSubject(arg, *scope.moduleScope, first, messageStr, signature);
-//
-//      // declare method parameter
-//      arg = arg.nextNode();
-//
-//      if (arg == lxMethodParameter) {
-//         ident_t name = arg.findChild(lxIdentifier, lxPrivate).identifier();
-//
-//         // !! check duplicates
-//         if (scope.parameters.exist(name))
-//            scope.raiseError(errDuplicatedLocal, arg);
-//
-//         int index = 1 + scope.parameters.Count();
-//         int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, class_ref, 0) : 0;
-//
-//         scope.parameters.add(name, Parameter(index, class_ref, size));
-//
-//         arg = arg.nextNode();
-//      }
-//   }
 
    if (emptystr(messageStr)) {
       messageStr.copy(INVOKE_MESSAGE);

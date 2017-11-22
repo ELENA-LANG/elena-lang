@@ -377,7 +377,7 @@ namespace _ELENA_
    #define IF_MESSAGE               "if"
    #define IFNOT_MESSAGE            "ifnot"
    #define SHIFT_MESSAGE            "shift"
-   #define INVOKE_MESSAGE           "$$invoke"
+   #define INVOKE_MESSAGE           "#invoke"
 
    // ELENA verb operators
    #define EQUAL_OPERATOR		      "=="

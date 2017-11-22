@@ -587,67 +587,71 @@ limited class BaseFunction11
 //    
 //    dispatch => system'core_routines'__lazyexpression.
 //}
-//
-//// --- IndexFunction ---
-//
-///// A base index function
-//limited class IndexFunction1
-//{
-//    /// Executes the function
-//    stacksafe action eval int:n []
-//
-//    /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
-//    sealed stacksafe rewind int:aStart int:n int:dx
-//    [
-//        int i := aStart.
-//        
-//        while (i >= n)
-//        [
-//            $self eval int:i.
-//            
-//            i := i - dx
-//        ].
-//        
-//        ^ $nil
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting value, ending value, step)
-//    sealed stacksafe run int:aStart int:n int:dx
-//    [
-//        int i := aStart.
-//        
-//        while (i <= n)
-//        [
-//            $self eval int:i.
-//            
-//            i := i + dx
-//        ].
-//        
-//        ^ $nil
-//    ]
-//
-//    /// Executes the function for every value in the specified range (starting value, ending value, step) until it returns true    
-//    sealed stacksafe retrieve int:aStart int:n int:dx
-//    [
-//        int i := aStart.
-//        
-//        while(i <= n)
-//        [
-//            if ($self eval int:i)
-//                [ ^ IntNumber new int:i ].
-//            
-//            i := i + dx
-//        ].
-//        
-//        ^ $nil
-//    ]
-//}
-//
+
+// --- IndexFunction ---
+
+/// A base index function
+limited class IndexFunction1
+{
+    /// Executes the function
+    stacksafe closure int:n []
+
+    stacksafe eval int:n = $self(n).
+
+    /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
+    sealed stacksafe rewind int:aStart int:n int:dx
+    [
+        int i := aStart.
+        
+        while (i >= n)
+        [
+            $self eval int:i.
+            
+            i := i - dx
+        ].
+        
+        ^ $nil
+    ]          
+    
+    /// Executes the function for every value in the specified range (starting value, ending value, step)
+    sealed stacksafe run int:aStart int:n int:dx
+    [
+        int i := aStart.
+        
+        while (i <= n)
+        [
+            $self eval int:i.
+            
+            i := i + dx
+        ].
+        
+        ^ $nil
+    ]
+
+    /// Executes the function for every value in the specified range (starting value, ending value, step) until it returns true    
+    sealed stacksafe retrieve int:aStart int:n int:dx
+    [
+        int i := aStart.
+        
+        while(i <= n)
+        [
+            if ($self eval int:i)
+                [ ^ IntNumber new int:i ].
+            
+            i := i + dx
+        ].
+        
+        ^ $nil
+    ]
+}
+
 ///// A base two variable index function
 //limited class IndexFunction2
 //{
 //    /// Executes the function
-//    stacksafe action eval int:i int:j []
+//    stacksafe closure int:i int:j []
+//
+//    stacksafe eval int:n int:m = $self(n,m).
 //
 //    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
 //    sealed rewind int:i int:j int:n int:m int:dx
@@ -700,7 +704,9 @@ limited class BaseFunction11
 //limited class IndexFunction3
 //{
 //    /// Executes the function
-//    stacksafe action eval int:i int:j int:k []
+//    stacksafe closure int:i int:j int:k []
+//
+//    stacksafe eval int:n int:m int:k = $self(n,m,k).
 //
 //    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
 //    sealed rewind int:i int:j int:k int:n int:m int:p int:dx
