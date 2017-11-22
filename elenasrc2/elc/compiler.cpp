@@ -5155,22 +5155,22 @@ void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& sc
 
 void Compiler :: compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope)
 {
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
-//   if (test(classScope->info.header.flags, elStructureRole)) {
-//      writer.newNode(lxCreatingStruct, classScope->info.size);
-//      writer.appendNode(lxTarget, classScope->reference);
-//      writer.closeNode();
-//   }
-//   else {
-//      writer.newNode(lxCreatingClass, -1);
-//      writer.appendNode(lxTarget, classScope->reference);
-//      writer.closeNode();
-//   }
-//
-//   writer.closeNode();
+   writer.newNode(lxClassMethod, scope.message);
+
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   if (test(classScope->info.header.flags, elStructureRole)) {
+      writer.newNode(lxCreatingStruct, classScope->info.size);
+      writer.appendNode(lxTarget, classScope->reference);
+      writer.closeNode();
+   }
+   else {
+      writer.newNode(lxCreatingClass, -1);
+      writer.appendNode(lxTarget, classScope->reference);
+      writer.closeNode();
+   }
+
+   writer.closeNode();
 }
 
 void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)

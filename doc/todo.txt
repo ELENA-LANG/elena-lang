@@ -4,6 +4,9 @@ In development:
 
               dev - fixed size array field #123
                  * support fixed size array : type<ShortNumber,260> cFileName.
+                 * support var<IntNumber>(3)
+                 * support type<IntNumber><>(3)
+                 * support var<IntNumber><>(3)
 
               dev - syntax redesign
                  * uncomment nfunc, ...

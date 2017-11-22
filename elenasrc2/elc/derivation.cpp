@@ -2191,17 +2191,17 @@ void DerivationReader :: generateCodeTree(SyntaxWriter& writer, SNode node, Deri
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
       }
-      else if (current == lxLoop/* || current == lxCode || current == lxExtern*/) {
+      else if (current == lxLoop || current == lxCode/* || current == lxExtern*/) {
          generateCodeTree(writer, current, scope);
       }
-//      else if (current == lxObject && checkNode(current.nextNode(), lxOperator, (ref_t)-3) && current.nextNode().nextNode() != lxAttributeValue) {
-//         // check if it is new operator
-//         writer.newBookmark();
-//         generateNewOperator(writer, current, scope);
-//         writer.removeBookmark();
-//
-//         break;
-//      }
+      else if (current == lxObject && checkTemplateExpression(current, scope)) {
+         // check if it is template expression
+         writer.newBookmark();
+         generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
+         writer.removeBookmark();
+
+         break;
+      }
       else generateObjectTree(writer, current, scope);
 
       current = current.nextNode();
@@ -2739,11 +2739,11 @@ bool DerivationReader :: generateMethodScope(SNode node, DerivationScope& scope,
                }
             }
          }
-//
-//         if (!lastAttr.existChild(lxAttributeValue)) {
+
+         if (!lastAttr.existChild(lxAttributeValue)) {
             // mark the last message as a name if the attributes are not available
             lastAttr = lxNameAttr;
-//         }
+         }
       }
 
       node = lxClassMethod;

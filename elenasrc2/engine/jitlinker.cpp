@@ -1072,7 +1072,7 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 {
    void* vaddress = _loader->resolveReference(reference, mask);
    if (vaddress==LOADER_NOTLOADED) {
-      //if (reference.compare("mytest'#inline0")) {
+      //if (reference.compare("mytest'XByteArray")) {
       //   mask |= mask;
       //}
 

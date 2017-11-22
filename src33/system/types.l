@@ -67,24 +67,23 @@ type uint       = system'UIntNumber.
 type long       = system'LongNumber.
 type real       = system'RealNumber.
 type char       = system'CharValue.
-//type mssg       = system'Message.
-//type ext_mssg   = system'ExtensionMessage.
-//
-//type subject    = system'Signature.
-//type symbol_ref = system'Symbol.
+type mssg       = system'Message.
+type ext_mssg   = system'ExtensionMessage.
+
+type subject    = system'Signature.
+type symbol_ref = system'Symbol.
 
 // === basic dynamic types ===
 type bytearray  = system'ByteArray.
 type shortarray = system'ShortArray.
-//type intarray   = system'IntArray.
-//type intmatrix  = system'IntMatrix.
-//type realarray  = system'RealArray.
-//type realmatrix = system'RealMatrix.
-//type chararray  = system'CharArray.
-//type array      = system'Array.
-////#subject mssgarray  = system'MessageArray.
-//type bitarray   = system'BitArray.
-//type bitset     = system'BitArray32.
+type intarray   = system'IntArray.
+type intmatrix  = system'IntMatrix.
+type realarray  = system'RealArray.
+type realmatrix = system'RealMatrix.
+type chararray  = system'CharArray.
+type array      = system'Array.
+type bitarray   = system'BitArray.
+type bitset     = system'BitArray32.
 
 /// An instance of system'LiteralValue class. 
 type literal    = system'LiteralValue.
