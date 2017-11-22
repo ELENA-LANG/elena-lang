@@ -9,7 +9,7 @@ listable        = #8198.
 sealed          = #8195.
 embeddable      = #8193.
 template        = #16391.
-//extension       = #8203.
+extension       = #8203.
 stacksafe       = #8192.
 explicit        = #16387.
 const           = #8201.
@@ -36,10 +36,10 @@ __int           = #11.
 __dword         = #12.
 __real          = #14.
 __mssg          = #19.
-//__subj          = #18.
-//__extmssg       = #21.
+__subj          = #18.
+__extmssg       = #21.
 //__tape_mixin    = #8209.
-//__symbol        = #22.
+__symbol        = #22.
 
 __ifoperator    = #4097.
 __ifnotoperator = #4098.
@@ -57,8 +57,8 @@ type bool       = system'BaseBoolValue.
 //
 //type keyvalue   = system'KeyValue.
 ////type dto        = system'DTO.  
-//
-//type ref        = system'Variable.
+
+type ref        = system'Variable.
 
 type byte       = system'ByteNumber.
 type short      = system'ShortNumber.

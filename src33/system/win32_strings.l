@@ -19,8 +19,8 @@ class $characterController =
     
     stacksafe toUpperCase char:aChar vchar:aRetVal
     [
-        int    aLength := 0.
-        short& aBuffer(3).
+        int      aLength := 0.
+        short<3> aBuffer.
 
         charConvertor $save char:aChar int:0 shortarray:aBuffer vint:aLength.
 
@@ -33,8 +33,8 @@ class $characterController =
     
     stacksafe toLowerCase char:aChar vchar:aRetVal
     [
-        int    aLength := 0.
-        short& aBuffer(3).
+        int      aLength := 0.
+        short<3> aBuffer.
 
         charConvertor $save char:aChar int:0 shortarray:aBuffer vint:aLength.
         

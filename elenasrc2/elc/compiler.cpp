@@ -2624,64 +2624,64 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
    return encodeMessage(actionRef, paramCount) | actionFlags;
 }
 
-//ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object, bool& genericOne)
-//{
-//   // check typed extension if the type available
-//   ref_t typeRef = 0;
-//   ref_t extRef = 0;
-//
-//   ref_t objectRef = resolveObjectReference(scope, object);
-//   if (_logic->isPrimitiveRef(objectRef)) {
-//      if (objectRef != V_ARGARRAY)
-//         objectRef = _logic->resolvePrimitiveReference(*scope.moduleScope, objectRef);
-//   }
-//   else if (objectRef == scope.moduleScope->superReference) {
-//      objectRef = 0;
-//   }
-//
-//   if (objectRef != 0 && scope.moduleScope->extensionHints.exist(messageRef, objectRef)) {
-//      typeRef = objectRef;
-//   }
-//   else {
-//      if (scope.moduleScope->extensionHints.exist(messageRef)) {
-//         // if class reference available - select the possible type
-//         if (objectRef != 0) {
-//            SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
-//            while (!it.Eof()) {
-//               if (it.key() == messageRef) {
-//                  if (_logic->isCompatible(*scope.moduleScope, *it, objectRef)) {
-//                     typeRef = *it;
-//
-//                     break;
-//                  }
-//               }
-//
-//               it++;
-//            }
-//         }
-//      }
-//   }
-//
-//   if (typeRef != 0) {
-//      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(typeRef);
-//
-//      if (typeExtensions)
-//         extRef = typeExtensions->get(messageRef);
-//   }
-//
-//   // check generic extension
-//   if (extRef == 0) {
-//      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
-//
-//      if (typeExtensions) {         
-//         extRef = typeExtensions->get(messageRef);
-//         if (extRef != 0)
-//            genericOne = true;
-//      }         
-//   }
-//
-//   return extRef;
-//}
+ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object, bool& genericOne)
+{
+   // check typed extension if the type available
+   ref_t typeRef = 0;
+   ref_t extRef = 0;
+
+   ref_t objectRef = resolveObjectReference(scope, object);
+   if (_logic->isPrimitiveRef(objectRef)) {
+      if (objectRef != V_ARGARRAY)
+         objectRef = _logic->resolvePrimitiveReference(*scope.moduleScope, objectRef);
+   }
+   else if (objectRef == scope.moduleScope->superReference) {
+      objectRef = 0;
+   }
+
+   if (objectRef != 0 && scope.moduleScope->extensionHints.exist(messageRef, objectRef)) {
+      typeRef = objectRef;
+   }
+   else {
+      if (scope.moduleScope->extensionHints.exist(messageRef)) {
+         // if class reference available - select the possible type
+         if (objectRef != 0) {
+            SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
+            while (!it.Eof()) {
+               if (it.key() == messageRef) {
+                  if (_logic->isCompatible(*scope.moduleScope, *it, objectRef)) {
+                     typeRef = *it;
+
+                     break;
+                  }
+               }
+
+               it++;
+            }
+         }
+      }
+   }
+
+   if (typeRef != 0) {
+      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(typeRef);
+
+      if (typeExtensions)
+         extRef = typeExtensions->get(messageRef);
+   }
+
+   // check generic extension
+   if (extRef == 0) {
+      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
+
+      if (typeExtensions) {         
+         extRef = typeExtensions->get(messageRef);
+         if (extRef != 0)
+            genericOne = true;
+      }         
+   }
+
+   return extRef;
+}
 
 void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode)
 {
@@ -3172,32 +3172,32 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       target = ObjectInfo(okThisParam, 1);
    }
 
-   ////   bool externalMode = false;
-   //if (target.kind == okExternal) {
-   //   retVal = compileExternalCall(writer, node, scope);
-   //}
-   //else {
+   //   bool externalMode = false;
+   if (target.kind == okExternal) {
+      retVal = compileExternalCall(writer, node, scope);
+   }
+   else {
       ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
 
-      //if (target.kind == okInternal) {
-      //   retVal = compileInternalCall(writer, node, scope, messageRef, target);
-      //}
-      //else {
-         //bool genericOne = false;
-         //ref_t extensionRef = mapExtension(scope, messageRef, target, genericOne);
+      if (target.kind == okInternal) {
+         retVal = compileInternalCall(writer, node, scope, messageRef, target);
+      }
+      else {
+         bool genericOne = false;
+         ref_t extensionRef = mapExtension(scope, messageRef, target, genericOne);
 
-         //if (extensionRef != 0) {
-         //   //HOTFIX: A proper method should have a precedence over an extension one
-         //   if (checkMethod(*scope.moduleScope, resolveObjectReference(scope, target), messageRef) == tpUnknown) {
-         //      target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
-         //   }
-         //}
-         //if (genericOne)
-         //   mode |= HINT_DYNAMIC_OBJECT;
+         if (extensionRef != 0) {
+            //HOTFIX: A proper method should have a precedence over an extension one
+            if (checkMethod(*scope.moduleScope, resolveObjectReference(scope, target), messageRef) == tpUnknown) {
+               target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
+            }
+         }
+         if (genericOne)
+            mode |= HINT_DYNAMIC_OBJECT;
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode);
-      //}
-//   }
+      }
+   }
 
    writer.removeBookmark();
 
@@ -3390,86 +3390,86 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   ref_t extensionRef = 0;
-//
-//   writer.newBookmark();
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//   ObjectInfo   role;
-//
-//   SNode roleNode = node.findChild(lxExtension);
-//   // check if the extension can be used as a static role (it is constant)
-//   SNode roleTerminal = roleNode.firstChild(lxTerminalMask);
-//   if (roleTerminal != lxNone) {
-//      int flags = 0;
-//
-//      role = scope.mapObject(roleTerminal);
-//      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
-//         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
-//
-//         // if the symbol is used inside itself
-//         if (classRef == scope.getClassRefId()) {
-//            flags = scope.getClassFlags();
-//         }
-//         // otherwise
-//         else {
-//            ClassInfo roleClass;
-//            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
-//
-//            flags = roleClass.header.flags;
-//            //HOTFIX : typecast the extension target if required
-//            if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
-//               extensionRef = roleClass.fieldTypes.get(-1).value1;
-//            }
-//         }
-//      }
-//      // if the symbol VMT can be used as an external role
-//      if (test(flags, elStateless)) {
-//         role = ObjectInfo(okConstantRole, role.param);
-//      }
-//   }
-//
-//   // if it is a generic role
-//   if (role.kind != okConstantRole && role.kind != okSubject) {
-//      writer.newNode(lxOverridden);
-//      role = compileExpression(writer, roleNode, scope, 0);
-//      writer.closeNode();
-//   }
-//
-//   ObjectInfo retVal = compileExtensionMessage(writer, node, scope, role, extensionRef);
-//
-//   writer.removeBookmark();
-//
-//   return retVal;
-//}
-//
-//// NOTE : targetRef refers to the type for the typified extension method
-//ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef)
-//{
-//   size_t paramCount = 0;
-//   ref_t  messageRef = mapMessage(node, scope, paramCount);
-//
-//   ObjectInfo object;
-//   if (targetRef != 0) {
-//      //HOTFIX : to compile strong typed explicit extension
-//      writer.newBookmark();
-//      SNode targetNode = node.firstChild(lxObjectMask);
-//
-//      object = compileExpression(writer, targetNode, scope, 0);
-//
-//      convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, object), object.element);
-//      writer.removeBookmark();
-//
-//      // the target node already compiler so it should be skipped
-//      targetNode = lxResult;
-//      compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
-//   }
-//   else object = compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
-//
-//   return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
-//}
+ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ref_t extensionRef = 0;
+
+   writer.newBookmark();
+
+   ModuleScope* moduleScope = scope.moduleScope;
+   ObjectInfo   role;
+
+   SNode roleNode = node.findChild(lxExtension);
+   // check if the extension can be used as a static role (it is constant)
+   SNode roleTerminal = roleNode.firstChild(lxTerminalMask);
+   if (roleTerminal != lxNone) {
+      int flags = 0;
+
+      role = scope.mapObject(roleTerminal);
+      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
+         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
+
+         // if the symbol is used inside itself
+         if (classRef == scope.getClassRefId()) {
+            flags = scope.getClassFlags();
+         }
+         // otherwise
+         else {
+            ClassInfo roleClass;
+            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
+
+            flags = roleClass.header.flags;
+            //HOTFIX : typecast the extension target if required
+            if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
+               extensionRef = roleClass.fieldTypes.get(-1).value1;
+            }
+         }
+      }
+      // if the symbol VMT can be used as an external role
+      if (test(flags, elStateless)) {
+         role = ObjectInfo(okConstantRole, role.param);
+      }
+   }
+
+   // if it is a generic role
+   if (role.kind != okConstantRole && role.kind != okSubject) {
+      writer.newNode(lxOverridden);
+      role = compileExpression(writer, roleNode, scope, 0);
+      writer.closeNode();
+   }
+
+   ObjectInfo retVal = compileExtensionMessage(writer, node, scope, role, extensionRef);
+
+   writer.removeBookmark();
+
+   return retVal;
+}
+
+// NOTE : targetRef refers to the type for the typified extension method
+ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef)
+{
+   size_t paramCount = 0;
+   ref_t  messageRef = mapMessage(node, scope, paramCount);
+
+   ObjectInfo object;
+   if (targetRef != 0) {
+      //HOTFIX : to compile strong typed explicit extension
+      writer.newBookmark();
+      SNode targetNode = node.firstChild(lxObjectMask);
+
+      object = compileExpression(writer, targetNode, scope, 0);
+
+      convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, object), object.element);
+      writer.removeBookmark();
+
+      // the target node already compiler so it should be skipped
+      targetNode = lxResult;
+      compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
+   }
+   else object = compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
+
+   return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
+}
 
 bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode)
 {
@@ -3960,7 +3960,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       objectInfo = compileBoxingExpression(writer, node, scope, mode);
    }
    else {
-      SNode current = node.findChild(lxAssign, /*lxExtension, */lxMessage, lxOperator/*, lxSwitching*/);
+      SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator/*, lxSwitching*/);
       switch (current.type) {
          case lxAssign:
             objectInfo = compileAssigning(writer, node, scope, mode);
@@ -3973,9 +3973,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //
 //            objectInfo = ObjectInfo(okObject);
 //            break;
-//         case lxExtension:
-//            objectInfo = compileExtension(writer, node, scope);
-//            break;
+         case lxExtension:
+            objectInfo = compileExtension(writer, node, scope);
+            break;
          case lxOperator:
             objectInfo = compileOperator(writer, node, scope, mode);
             break;
@@ -4154,94 +4154,94 @@ void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope, 
    }
 }
 
-//ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   ObjectInfo retVal(okExternal);
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-////   bool rootMode = test(mode, HINT_ROOT);
-//   bool stdCall = false;
-//   bool apiCall = false;
-//
-//   SNode targetNode = node.firstChild(lxTerminalMask);
-//   // HOTFIX : comment out dll reference
-//   targetNode = lxIdle;
-//
-//   //SNode messageNode = node.findChild(lxMessage);
-//   writer.appendNode(lxBreakpoint, dsAtomicStep);
-//
-//   ident_t dllAlias = targetNode.identifier();
-//   ident_t functionName = node.findChild(lxMessage).firstChild(lxTerminalMask).identifier();
-//
-//   ident_t dllName = NULL;
-//   if (dllAlias.compare(EXTERNAL_MODULE)) {
-//      // if run time dll is used
-//      dllName = RTDLL_FORWARD;
-//
-//      if (functionName.compare(COREAPI_MASK, COREAPI_MASK_LEN))
-//         apiCall = true;
-//   }
-//   else dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
-//
-//   // legacy : if dll is not mapped, use the name directly
-//   if (emptystr(dllName))
-//      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
-//
-//   ReferenceNs name;
-//   if (!apiCall) {
-//      name.copy(DLL_NAMESPACE);
-//      name.combine(dllName);
-//      name.append(".");
-//      name.append(functionName);
-//   }
-//   else {
-//      name.copy(NATIVE_MODULE);
-//      name.combine(CORE_MODULE);
-//      name.combine(functionName);
-//   }
-//
-//   ref_t reference = moduleScope->module->mapReference(name);
-//
-////   if (!rootMode)
-////      scope.writer->appendNode(lxTarget, -1);
-//
-//   // To tell apart coreapi calls, the name convention is used
-//   if (apiCall) {
-//      writer.insert(lxCoreAPICall, reference);
-//   }
-//   else writer.insert(stdCall ? lxStdExternalCall : lxExternalCall, reference);
-//   writer.closeNode();
-//
-//   return retVal;
-//}
-//
-//ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo routine)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
-//   virtualReference.append('.');
-//
-//   int paramCount;
-//   ref_t actionRef;
-//   decodeMessage(message, actionRef, paramCount);
-//
-//   size_t signIndex = virtualReference.Length();
-//   virtualReference.append('0' + (char)paramCount);
-//   virtualReference.append(moduleScope->module->resolveSubject(actionRef));
-//
-//   virtualReference.replaceAll('\'', '@', signIndex);
-//
-//   writer.insert(lxInternalCall, moduleScope->module->mapReference(virtualReference));
-//   writer.closeNode();
-//
-//   SNode targetNode = node.firstChild(lxTerminalMask);
-//   // HOTFIX : comment out dll reference
-//   targetNode = lxIdle;
-//
-//   return ObjectInfo(okObject);
-//}
+ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ObjectInfo retVal(okExternal);
+
+   ModuleScope* moduleScope = scope.moduleScope;
+
+//   bool rootMode = test(mode, HINT_ROOT);
+   bool stdCall = false;
+   bool apiCall = false;
+
+   SNode targetNode = node.firstChild(lxTerminalMask);
+   // HOTFIX : comment out dll reference
+   targetNode = lxIdle;
+
+   //SNode messageNode = node.findChild(lxMessage);
+   writer.appendNode(lxBreakpoint, dsAtomicStep);
+
+   ident_t dllAlias = targetNode.identifier();
+   ident_t functionName = node.findChild(lxMessage).firstChild(lxTerminalMask).identifier();
+
+   ident_t dllName = NULL;
+   if (dllAlias.compare(EXTERNAL_MODULE)) {
+      // if run time dll is used
+      dllName = RTDLL_FORWARD;
+
+      if (functionName.compare(COREAPI_MASK, COREAPI_MASK_LEN))
+         apiCall = true;
+   }
+   else dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
+
+   // legacy : if dll is not mapped, use the name directly
+   if (emptystr(dllName))
+      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
+
+   ReferenceNs name;
+   if (!apiCall) {
+      name.copy(DLL_NAMESPACE);
+      name.combine(dllName);
+      name.append(".");
+      name.append(functionName);
+   }
+   else {
+      name.copy(NATIVE_MODULE);
+      name.combine(CORE_MODULE);
+      name.combine(functionName);
+   }
+
+   ref_t reference = moduleScope->module->mapReference(name);
+
+//   if (!rootMode)
+//      scope.writer->appendNode(lxTarget, -1);
+
+   // To tell apart coreapi calls, the name convention is used
+   if (apiCall) {
+      writer.insert(lxCoreAPICall, reference);
+   }
+   else writer.insert(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+   writer.closeNode();
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo routine)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
+   virtualReference.append('.');
+
+   int paramCount;
+   ref_t actionRef;
+   decodeMessage(message, actionRef, paramCount);
+
+   size_t signIndex = virtualReference.Length();
+   virtualReference.append('0' + (char)paramCount);
+   virtualReference.append(moduleScope->module->resolveSubject(actionRef));
+
+   virtualReference.replaceAll('\'', '@', signIndex);
+
+   writer.insert(lxInternalCall, moduleScope->module->mapReference(virtualReference));
+   writer.closeNode();
+
+   SNode targetNode = node.firstChild(lxTerminalMask);
+   // HOTFIX : comment out dll reference
+   targetNode = lxIdle;
+
+   return ObjectInfo(okObject);
+}
 
 int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reserved)
 {

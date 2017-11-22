@@ -45,29 +45,29 @@ template<BaseVariable> var :: template_subj
     embeddable dispatch => $value.
 }
 
-//template<BaseVariable> ref :: template_subj
-//{
-//    template_subj $value.
-//    
-//    stacksafe explicit template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
-//    stacksafe set template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
-//    value = $value.
-//    
-//    sealed embeddable template_subj = $value.
-//    
-//    bool equal : anObject
-//        => $value.
-//
-//    embeddable dispatch => $value.
-//}
+template<BaseVariable> ref :: template_subj
+{
+    template_subj $value.
+    
+    stacksafe explicit template_subj:val
+    [
+        $value := val.
+    ]
+    
+    stacksafe set template_subj:val
+    [
+        $value := val.
+    ]
+    
+    value = $value.
+    
+    sealed embeddable template_subj = $value.
+    
+    bool equal : anObject
+        => $value.
+
+    embeddable dispatch => $value.
+}
 
 // === Numeric Variables ===
 

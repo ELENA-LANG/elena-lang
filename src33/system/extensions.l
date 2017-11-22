@@ -24,8 +24,8 @@ extension objectOp
     [
         var c := self~objectOp class_ref.
         
-        byte& aBuffer(256).
-        int   aLength := system'external LoadClassName 
+        byte<256> aBuffer.
+        int       aLength := system'external LoadClassName 
                                 ref:c
                                 bytearray:aBuffer
                                 int:255.
@@ -171,7 +171,7 @@ byte extension byteOp
     [
         var retVal := self / anOperand * anOperand.
         
-        ^ retVal cast:%convertor to:byteConvertor
+        ^ byteConvertor convert(retVal)
     ]    
     
     stacksafe byte power int:y
@@ -238,7 +238,7 @@ short extension shortOp
     [
         var retVal := self / anOperand * anOperand.
         
-        ^ retVal cast:%convertor to:shortConvertor
+        ^ shortConvertor convert(retVal)
     ]
     
     stacksafe short power int:y
@@ -865,857 +865,857 @@ intarray extension intArrayOp
         ^ self
     ]
     
-    populate(BaseFunction1 aFunction)
-        = self~intArrayOp populate(&int:n)[ ^aFunction eval:n ].    
+//    populate(BaseFunction1 aFunction)
+//        = self~intArrayOp populate(&int:n)[ ^aFunction eval:n ].    
 }
 
-// --- arrayOp ---
-
-array extension arrayOp
-{
-    exchange : anIndex1 : anIndex2
-        = self~arrayOp exchange int:anIndex1 int:anIndex2.
-        
-    exchange int:anIndex1 int:anIndex2
-    [
-        var aTemp := self getAt int:anIndex1.
-        
-        self setAt int:anIndex1 object:(self getAt int:anIndex2).
-        self setAt int:anIndex2 object:aTemp.
-    ]
-    
-    stacksafe indexOf int:anIndex object:anObject vint:aRetVal
-    [
-        aRetVal int := -1.
-        
-        int aLength := self length.
-        
-        int i := anIndex.
-        while(i < aLength)
-        [
-            var anArrayItem := self getAt int:i.
-            
-            if (anObject == anArrayItem)
-                [ aRetVal int := i ].
-            
-            i := i + 1
-        ]
-    ]        
-        
-    stacksafe indexOf int:anIndex object:anObject
-    [
-        int aRetVal := 0.
-        
-        self~arrayOp indexOf int:anIndex object:anObject vint:aRetVal.
-        
-        ^ IntNumber new int:aRetVal
-    ]
-    
-    indexOf : anObject
-        = self~arrayOp indexOf int:0 object:anObject.
-        
-//    safeSeek : aValue
+//// --- arrayOp ---
+//
+//array extension arrayOp
+//{
+//    exchange : anIndex1 : anIndex2
+//        = self~arrayOp exchange int:anIndex1 int:anIndex2.
+//        
+//    exchange int:anIndex1 int:anIndex2
 //    [
+//        var aTemp := self getAt int:anIndex1.
+//        
+//        self setAt int:anIndex1 object:(self getAt int:anIndex2).
+//        self setAt int:anIndex2 object:aTemp.
+//    ]
+//    
+//    stacksafe indexOf int:anIndex object:anObject vint:aRetVal
+//    [
+//        aRetVal int := -1.
+//        
 //        int aLength := self length.
 //        
-//        int i := 0.
-//        while (i < aLength)
+//        int i := anIndex.
+//        while(i < aLength)
 //        [
 //            var anArrayItem := self getAt int:i.
 //            
-//            if (aValue safeEqual:anArrayItem)
-//                [ ^ anArrayItem ].
+//            if (anObject == anArrayItem)
+//                [ aRetVal int := i ].
+//            
+//            i := i + 1
+//        ]
+//    ]        
+//        
+//    stacksafe indexOf int:anIndex object:anObject
+//    [
+//        int aRetVal := 0.
+//        
+//        self~arrayOp indexOf int:anIndex object:anObject vint:aRetVal.
+//        
+//        ^ IntNumber new int:aRetVal
+//    ]
+//    
+//    indexOf : anObject
+//        = self~arrayOp indexOf int:0 object:anObject.
+//        
+////    safeSeek : aValue
+////    [
+////        int aLength := self length.
+////        
+////        int i := 0.
+////        while (i < aLength)
+////        [
+////            var anArrayItem := self getAt int:i.
+////            
+////            if (aValue safeEqual:anArrayItem)
+////                [ ^ anArrayItem ].
+////            
+////            i := i + 1
+////        ].
+////        
+////        ^ $nil
+////    ]
+//        
+//    deepClone
+//    [
+//        int aLength := self length.
+//        
+//        array aCopy := Array new int:aLength.
+//                
+//        int anIndex := 0.
+//        while(anIndex < aLength)
+//        [
+//            aCopy setAt int:anIndex object:(self getAt int:anIndex; clone).
+//            
+//            anIndex := anIndex + 1.
+//        ].
+//        
+//        ^ self.
+//    ]
+//    
+//    populate nfunc:anIndexFunc
+//    [
+//        int anIndex := 0.
+//        int aLength := self length.
+//        
+//        while(anIndex < aLength)
+//        [            
+//            self setAt int:anIndex object:(anIndexFunc eval int:anIndex).
+//            
+//            anIndex := anIndex + 1.
+//        ].
+//        
+//        ^ self
+//    ]
+//    
+//    populate(BaseFunction1 aFunction)
+//        = self~arrayOp populate(&int:n)[ ^aFunction eval:n ].
+//
+//    multi populate : anAction
+//        = self~arrayOp populate(&int:n)[ ^anAction eval:n ].    
+//    
+//    sort func2:aCompareFunc
+//    [
+//        int i := 0.
+//        int j := 0.
+//        int aLength := self length.
+//        var aCurrent := $nil.
+//        var aNext := $nil.
+//        
+//        while(i < aLength)
+//        [
+//            aCurrent := self getAt int:i.
+//            
+//            j := i + 1.
+//            while (j < aLength)
+//            [
+//                aNext := self getAt int:j.
+//                ifnot(aCompareFunc eval(aCurrent,aNext))
+//                    [                        
+//                        self setAt int:i object:aNext.
+//                        self setAt int:j object:aCurrent.
+//                        
+//                        aCurrent := aNext
+//                    ].
+//                    
+//                j := j + 1
+//            ].
 //            
 //            i := i + 1
 //        ].
 //        
-//        ^ $nil
+//        ^ self
 //    ]
-        
-    deepClone
-    [
-        int aLength := self length.
-        
-        array aCopy := Array new int:aLength.
-                
-        int anIndex := 0.
-        while(anIndex < aLength)
-        [
-            aCopy setAt int:anIndex object:(self getAt int:anIndex; clone).
-            
-            anIndex := anIndex + 1.
-        ].
-        
-        ^ self.
-    ]
-    
-    populate nfunc:anIndexFunc
-    [
-        int anIndex := 0.
-        int aLength := self length.
-        
-        while(anIndex < aLength)
-        [            
-            self setAt int:anIndex object:(anIndexFunc eval int:anIndex).
-            
-            anIndex := anIndex + 1.
-        ].
-        
-        ^ self
-    ]
-    
-    populate(BaseFunction1 aFunction)
-        = self~arrayOp populate(&int:n)[ ^aFunction eval:n ].
-
-    multi populate : anAction
-        = self~arrayOp populate(&int:n)[ ^anAction eval:n ].    
-    
-    sort func2:aCompareFunc
-    [
-        int i := 0.
-        int j := 0.
-        int aLength := self length.
-        var aCurrent := $nil.
-        var aNext := $nil.
-        
-        while(i < aLength)
-        [
-            aCurrent := self getAt int:i.
-            
-            j := i + 1.
-            while (j < aLength)
-            [
-                aNext := self getAt int:j.
-                ifnot(aCompareFunc eval(aCurrent,aNext))
-                    [                        
-                        self setAt int:i object:aNext.
-                        self setAt int:j object:aCurrent.
-                        
-                        aCurrent := aNext
-                    ].
-                    
-                j := j + 1
-            ].
-            
-            i := i + 1
-        ].
-        
-        ^ self
-    ]
-    
-    ascendant
-        = (self clone)~arrayOp sort:ifOrdered.
-    
-    bool isEmpty
-    [
-        int aLength := self length.
-        
-        ^ aLength == 0.
-    ]
-    
-    array Subarray : aLength at:anIndex
-        = self~arrayOp Subarray int:anIndex int:aLength.
-    
-    array Subarray int:anIndex int:aLength
-    [
-        indexer it := self indexer.
-        
-        ^ Array new int:aLength; populate(&int:i) (it writeIndex int(anIndex + i); get).
-    ]
-}
-
-// --- intmatrixOp ---
-
-intmatrix extension intmatrixOp
-{
-    populate nnfunc:func
-    [
-        int n := 0.
-        int m := 0.
-        self readLengthsTo vint:n vint:m.
-        
-        int i := 0.
-        int j := 0.
-        while (i < n)
-        [
-            j := 0.
-            while (j < m)
-            [
-                int v := func eval int:i int:j.
-                
-                self write int:i int:j int:v.
-                
-                j := j + 1
-            ].
-            
-            i := i + 1
-        ].
-        
-        ^ self
-    ]
-}
-
-// --- literalOp ---
-
-literal extension literalOp
-{
-    indexOf : anObject
-        = self indexOf:anObject at:0.
-
-    indexOf literal:aLiteral
-        = self indexOf:aLiteral at:0.
-
-    indexOf char:aChar
-        = self indexOf:aChar at:0.
-        
-    literal Substring at:anIndex
-        = self~literalOp Substring int:anIndex.
-        
-    stacksafe literal Substring int:anIndex
-    [
-        int aLength := self length.
-        
-        aLength := aLength - anIndex.
-        
-        ^ self Substring int:anIndex int:aLength
-    ]        
-    
-    literal trimLeft char:aChar
-    [
-        int  anIndex := 0.
-        int  aLength := self length.
-        char aCurrent := $0.
-        int  aCharLen := aChar length.
-        
-        while(anIndex < aLength)
-        [
-            self read int:anIndex vchar:aCurrent.
-            
-            ifnot(aCurrent == aChar)
-                [ 
-                    if (anIndex == 0)
-                        [ ^ self ];
-                        [ ^ self delete int:0 int:anIndex ]
-                ].
-            
-            anIndex := anIndex + aCharLen
-        ].
-        
-        ^ emptyLiteralValue
-    ]
-    
-    literal trimLeft
-        = self~literalOp trimLeft char:$32.    
-       
-    literal trimRight char:aChar
-    [
-        int  aLength := self length.
-        int  anIndex := aLength - 1.
-        int  aPrevious := aLength.
-        char aCurrent := $0.
-        int  aCharLen := aChar length.
-        
-        while (anIndex >= 0)
-        [
-            self read int:anIndex vchar:aCurrent.
-            
-            ifnot (aCurrent equal char:aChar)
-                [ ^ self delete int:aPrevious int:(aLength - aPrevious) ].
-            
-            aPrevious := anIndex.
-            anIndex := anIndex - aCharLen
-        ].
-        
-        ^ emptyLiteralValue
-    ]
-    
-    literal trimRight
-        = self~literalOp trimRight char:$32.
-        
-    literal trim char:aChar
-        = self~literalOp trimLeft char:aChar; trimRight char:aChar.
-    
-    literal trim
-        = self~literalOp trimLeft char:$32; trimRight char:$32.        
-    
-    padLeft int:aLength
-        = self padLeft($32, aLength).
-    
-    padLeft char:aChar int:aLength
-    [
-        int aCurrentLength := self length.
-        
-        if (aCurrentLength < aLength)
-            [ ^ LiteralValue new int(aLength - aCurrentLength) char(aChar); add literal:self ].
-            
-        ^ self
-    ]
-    
-    padRight int:aLength
-        = self padRight($32, aLength).
-    
-    padRight char:aChar int:aLength
-    [
-        int aCurrentLength := self length.
-
-        if (aCurrentLength < aLength)
-            [ ^ self add literal(LiteralValue new int(aLength - aCurrentLength) char(aChar)) ].
-            
-        ^ self
-    ]
-
-    startingWith literal:s
-    [
-        int n := 0.
-        self indexOf int:0 literal:s vint:n.
-        
-        ^ 0 == n
-    ]
-        
-    endingWith literal:s
-    [
-        int l1 := self length.
-        int l2 := s length.
-
-        int n := 0.
-        self indexOf int:(l1 - l2) literal:s vint:n.
-        
-        ^ n != -1
-    ]
-        
-    containing literal:s
-    [
-        int l1 := self length.
-        int l2 := s length.
-
-        int n := 0.
-        self indexOf int:0 literal:s vint:n.
-        
-        ^ n != -1
-    ]
-
-//    replaceFirst literal:aReplacee literal:aReplacer
+//    
+//    ascendant
+//        = (self clone)~arrayOp sort:ifOrdered.
+//    
+//    bool isEmpty
 //    [
-//        int aReplaceeLen := aReplacee length.
-//        int anIndex := 0.
+//        int aLength := self length.
 //        
-//        self indexOf int:0 literal:aReplacee vint:anIndex.
+//        ^ aLength == 0.
+//    ]
+//    
+//    array Subarray : aLength at:anIndex
+//        = self~arrayOp Subarray int:anIndex int:aLength.
+//    
+//    array Subarray int:anIndex int:aLength
+//    [
+//        indexer it := self indexer.
 //        
-//        if (anIndex != -1)
-//            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex literal:aReplacee ];
-//            [ ^ self ].
+//        ^ Array new int:aLength; populate(&int:i) (it writeIndex int(anIndex + i); get).
+//    ]
+//}
+//
+//// --- intmatrixOp ---
+//
+//intmatrix extension intmatrixOp
+//{
+//    populate nnfunc:func
+//    [
+//        int n := 0.
+//        int m := 0.
+//        self readLengthsTo vint:n vint:m.
+//        
+//        int i := 0.
+//        int j := 0.
+//        while (i < n)
+//        [
+//            j := 0.
+//            while (j < m)
+//            [
+//                int v := func eval int:i int:j.
+//                
+//                self write int:i int:j int:v.
+//                
+//                j := j + 1
+//            ].
+//            
+//            i := i + 1
+//        ].
+//        
+//        ^ self
+//    ]
+//}
+//
+//// --- literalOp ---
+//
+//literal extension literalOp
+//{
+//    indexOf : anObject
+//        = self indexOf:anObject at:0.
+//
+//    indexOf literal:aLiteral
+//        = self indexOf:aLiteral at:0.
+//
+//    indexOf char:aChar
+//        = self indexOf:aChar at:0.
+//        
+//    literal Substring at:anIndex
+//        = self~literalOp Substring int:anIndex.
+//        
+//    stacksafe literal Substring int:anIndex
+//    [
+//        int aLength := self length.
+//        
+//        aLength := aLength - anIndex.
+//        
+//        ^ self Substring int:anIndex int:aLength
+//    ]        
+//    
+//    literal trimLeft char:aChar
+//    [
+//        int  anIndex := 0.
+//        int  aLength := self length.
+//        char aCurrent := $0.
+//        int  aCharLen := aChar length.
+//        
+//        while(anIndex < aLength)
+//        [
+//            self read int:anIndex vchar:aCurrent.
+//            
+//            ifnot(aCurrent == aChar)
+//                [ 
+//                    if (anIndex == 0)
+//                        [ ^ self ];
+//                        [ ^ self delete int:0 int:anIndex ]
+//                ].
+//            
+//            anIndex := anIndex + aCharLen
+//        ].
+//        
+//        ^ emptyLiteralValue
+//    ]
+//    
+//    literal trimLeft
+//        = self~literalOp trimLeft char:$32.    
+//       
+//    literal trimRight char:aChar
+//    [
+//        int  aLength := self length.
+//        int  anIndex := aLength - 1.
+//        int  aPrevious := aLength.
+//        char aCurrent := $0.
+//        int  aCharLen := aChar length.
+//        
+//        while (anIndex >= 0)
+//        [
+//            self read int:anIndex vchar:aCurrent.
+//            
+//            ifnot (aCurrent equal char:aChar)
+//                [ ^ self delete int:aPrevious int:(aLength - aPrevious) ].
+//            
+//            aPrevious := anIndex.
+//            anIndex := anIndex - aCharLen
+//        ].
+//        
+//        ^ emptyLiteralValue
+//    ]
+//    
+//    literal trimRight
+//        = self~literalOp trimRight char:$32.
+//        
+//    literal trim char:aChar
+//        = self~literalOp trimLeft char:aChar; trimRight char:aChar.
+//    
+//    literal trim
+//        = self~literalOp trimLeft char:$32; trimRight char:$32.        
+//    
+//    padLeft int:aLength
+//        = self padLeft($32, aLength).
+//    
+//    padLeft char:aChar int:aLength
+//    [
+//        int aCurrentLength := self length.
+//        
+//        if (aCurrentLength < aLength)
+//            [ ^ LiteralValue new int(aLength - aCurrentLength) char(aChar); add literal:self ].
+//            
+//        ^ self
+//    ]
+//    
+//    padRight int:aLength
+//        = self padRight($32, aLength).
+//    
+//    padRight char:aChar int:aLength
+//    [
+//        int aCurrentLength := self length.
+//
+//        if (aCurrentLength < aLength)
+//            [ ^ self add literal(LiteralValue new int(aLength - aCurrentLength) char(aChar)) ].
+//            
+//        ^ self
+//    ]
+//
+//    startingWith literal:s
+//    [
+//        int n := 0.
+//        self indexOf int:0 literal:s vint:n.
+//        
+//        ^ 0 == n
+//    ]
+//        
+//    endingWith literal:s
+//    [
+//        int l1 := self length.
+//        int l2 := s length.
+//
+//        int n := 0.
+//        self indexOf int:(l1 - l2) literal:s vint:n.
+//        
+//        ^ n != -1
+//    ]
+//        
+//    containing literal:s
+//    [
+//        int l1 := self length.
+//        int l2 := s length.
+//
+//        int n := 0.
+//        self indexOf int:0 literal:s vint:n.
+//        
+//        ^ n != -1
+//    ]
+//
+////    replaceFirst literal:aReplacee literal:aReplacer
+////    [
+////        int aReplaceeLen := aReplacee length.
+////        int anIndex := 0.
+////        
+////        self indexOf int:0 literal:aReplacee vint:anIndex.
+////        
+////        if (anIndex != -1)
+////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex literal:aReplacee ];
+////            [ ^ self ].
+////    ]    
+////    
+////    replace literal:aReplacee literal:aReplacer
+////    [
+////        literal aTarget := emptyLiteralValue.
+////        int     aStart := 0.
+////        int     anEnd := 0.
+////        int     aReplaceeLen := aReplacee length.
+////        
+////        self indexOf int:aStart literal:aReplacee vint:anEnd.
+////        
+////        while (anEnd != -1)
+////        [
+////            aTarget := aTarget
+////                add literal:(self Substring int:aStart int:(anEnd - aStart));
+////                add literal:aReplacer.
+////            
+////            aStart := anEnd + aReplaceeLen.
+////            
+////            self indexOf int:aStart literal:aReplacee vint:anEnd
+////        ].
+////    
+////        (aStart != 0)
+////            ? [ ^ aTarget add literal:(self~literalOp Substring int:aStart) ]
+////            ! [ ^ self ]
+////    ]
+//    
+//    bool isEmpty
+//    [
+//        int aLength := self length.
+//        
+//        ^ aLength == 0
 //    ]    
-//    
-//    replace literal:aReplacee literal:aReplacer
+//}
+//
+//// --- wideOp ---
+//
+//wide extension wideOp
+//{
+//    indexOf : anObject
+//        = self indexOf:anObject at:0.
+//        
+//    indexOf wide:aLiteral
+//        = self indexOf:aLiteral at:0.
+//
+//    indexOf char:aChar
+//        = self indexOf:aChar at:0.
+//                
+//    wide Substring at:anIndex
+//        = self~wideOp Substring int:anIndex.
+//        
+//    stacksafe wide Substring int:anIndex
 //    [
-//        literal aTarget := emptyLiteralValue.
-//        int     aStart := 0.
-//        int     anEnd := 0.
-//        int     aReplaceeLen := aReplacee length.
+//        int aLength := self length.
 //        
-//        self indexOf int:aStart literal:aReplacee vint:anEnd.
+//        aLength := aLength - anIndex.
 //        
-//        while (anEnd != -1)
+//        ^ self Substring int:anIndex int:aLength
+//    ]
+//     
+//    wide trimLeft char:aChar
+//    [
+//        int  anIndex := 0.
+//        int  aLength := self length.
+//        char aCurrent := $0.
+//        int  aCharLen := aChar length.
+//        
+//        while (anIndex < aLength)
 //        [
-//            aTarget := aTarget
-//                add literal:(self Substring int:aStart int:(anEnd - aStart));
-//                add literal:aReplacer.
+//            self read int:anIndex vchar:aCurrent.
 //            
-//            aStart := anEnd + aReplaceeLen.
+//            ifnot(aCurrent equal char:aChar)
+//                [ ^ self delete int:0 int:anIndex ].
 //            
-//            self indexOf int:aStart literal:aReplacee vint:anEnd
+//            anIndex := anIndex + aCharLen
 //        ].
+//        
+//        ^ emptyWideLiteralValue
+//    ]
 //    
-//        (aStart != 0)
-//            ? [ ^ aTarget add literal:(self~literalOp Substring int:aStart) ]
-//            ! [ ^ self ]
-//    ]
-    
-    bool isEmpty
-    [
-        int aLength := self length.
-        
-        ^ aLength == 0
-    ]    
-}
-
-// --- wideOp ---
-
-wide extension wideOp
-{
-    indexOf : anObject
-        = self indexOf:anObject at:0.
-        
-    indexOf wide:aLiteral
-        = self indexOf:aLiteral at:0.
-
-    indexOf char:aChar
-        = self indexOf:aChar at:0.
-                
-    wide Substring at:anIndex
-        = self~wideOp Substring int:anIndex.
-        
-    stacksafe wide Substring int:anIndex
-    [
-        int aLength := self length.
-        
-        aLength := aLength - anIndex.
-        
-        ^ self Substring int:anIndex int:aLength
-    ]
-     
-    wide trimLeft char:aChar
-    [
-        int  anIndex := 0.
-        int  aLength := self length.
-        char aCurrent := $0.
-        int  aCharLen := aChar length.
-        
-        while (anIndex < aLength)
-        [
-            self read int:anIndex vchar:aCurrent.
-            
-            ifnot(aCurrent equal char:aChar)
-                [ ^ self delete int:0 int:anIndex ].
-            
-            anIndex := anIndex + aCharLen
-        ].
-        
-        ^ emptyWideLiteralValue
-    ]
-    
-    wide trimLeft
-        = self~wideOp trimLeft char:$32.
-       
-    wide trimRight char:aChar
-    [
-        int  aLength := self length.
-        char aCurrent := $0.
-        int  aCharLen := aChar length.
-                
-        int  anIndex := aLength - 1.
-        int  aPrevious := aLength.
-        while (anIndex >= 0)
-        [
-            self read int:anIndex vchar:aCurrent.
-            
-            ifnot (aCurrent equal char:aChar)
-                [ ^ self delete int:aPrevious int:(aLength - aPrevious) ].
-            
-            aPrevious := anIndex.
-            anIndex := anIndex - aCharLen
-        ].
-        
-        ^ emptyWideLiteralValue
-    ]
-    
-    wide trimRight
-        = self~wideOp trimRight char:$32.
-       
-    wide trim char:aChar
-        = self~wideOp trimLeft char:aChar; trimRight char:aChar.
-    
-    wide trim
-        = self~wideOp trimLeft char:$32; trimRight char:$32.
-    
-    padLeft char:aChar int:aLength
-    [
-        int aCurrentLength := self length.
-        
-        if (aCurrentLength < aLength)
-            [ ^ WideLiteralValue new int(aLength - aCurrentLength) char(aChar); add wide:self ].
-            
-        ^ self
-    ]
-    
-    padRight char:aChar int:aLength
-    [
-        int aCurrentLength := self length.
-
-        if (aCurrentLength < aLength)
-            [ ^ self add wide(WideLiteralValue new int(aLength - aCurrentLength) char(aChar)) ].
-            
-        ^ self
-    ]
-
-    startingWith wide:s
-    [
-        int n := 0.
-        self indexOf int:0 wide:s vint:n.
-        
-        ^ 0 == n
-    ]
-    
-    endingWith wide:s
-    [
-        int l1 := self length.
-        int l2 := s length.
-        int n := 0.
-        self indexOf int:(l1 - l2) wide:s vint:n.
-        
-        ^ n != -1
-    ]
-    
-    containing wide:s
-    [
-        int l1 := self length.
-        int l2 := s length.
-        int n := 0.
-        
-        self indexOf int:0 wide:s vint:n.
-        
-        ^ n != -1
-    ]
-    
-//    replaceFirst wide:aReplacee wide:aReplacer
+//    wide trimLeft
+//        = self~wideOp trimLeft char:$32.
+//       
+//    wide trimRight char:aChar
 //    [
-//        int aReplaceeLen := aReplacee length.
-//        int anIndex := 0.
-//        
-//        self indexOf int:0 wide:aReplacee vint:anIndex.
-//        
-//        if (anIndex != -1)
-//            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex wide:aReplacee ];
-//            [ ^ self ].
-//    ]
-//        
-//    replace wide:aReplacee wide:aReplacer
-//    [
-//        wide aTarget := emptyWideLiteralValue.
-//        int  aStart := 0.
-//        int  anEnd := 0.
-//        int  aReplaceeLen := aReplacee length.
-//        
-//        self indexOf int:aStart wide:aReplacee vint:anEnd.
-//        
-//        while (anEnd != -1)
+//        int  aLength := self length.
+//        char aCurrent := $0.
+//        int  aCharLen := aChar length.
+//                
+//        int  anIndex := aLength - 1.
+//        int  aPrevious := aLength.
+//        while (anIndex >= 0)
 //        [
-//            aTarget := aTarget
-//                add wide:(self Substring int:aStart int:(anEnd - aStart));
-//                add wide:aReplacer.
+//            self read int:anIndex vchar:aCurrent.
 //            
-//            aStart := anEnd + aReplaceeLen.
+//            ifnot (aCurrent equal char:aChar)
+//                [ ^ self delete int:aPrevious int:(aLength - aPrevious) ].
 //            
-//            self indexOf int:aStart wide:aReplacee vint:anEnd
+//            aPrevious := anIndex.
+//            anIndex := anIndex - aCharLen
 //        ].
-//    
-//        if (aStart != 0)
-//            [ ^ aTarget add wide:(self~wideOp Substring int:aStart) ];
-//            [ ^ self ].
-//    ]
-
-    bool isEmpty
-    [
-        int aLength := self length.
-        
-        ^ aLength == 0
-    ]
-}
-
-// --- stringOp ---
-
-class $stringOpDispatcher =
-{
-    padRight literal:s char:ch int:len
-        = s~literalOp padRight char:ch int:len.
-    
-    padRight wide:s char:ch int:len
-        = s~wideOp padRight char:ch int:len.
-        
-    padLeft literal:s char:ch int:len
-        = s~literalOp padLeft char:ch int:len.
-    
-    padLeft wide:s char:ch int:len
-        = s~wideOp padLeft char:ch int:len.
-        
-    startingWith literal:s literal:subs
-        = s~literalOp startingWith literal:subs.
-
-    startingWith wide:s wide:subs
-        = s~wideOp startingWith wide:subs.
-
-    endingWith literal:s literal:subs
-        = s~literalOp endingWith literal:subs.
-
-    endingWith wide:s wide:subs
-        = s~wideOp endingWith wide:subs.
-        
-    containing literal:s literal:subs
-        = s~literalOp containing literal:subs.
-
-    containing wide:s wide:subs
-        = s~wideOp containing wide:subs.
-        
-    trimLeft literal:s char:ch
-        =s~literalOp trimLeft char:ch.        
-        
-    trimRight literal:s char:ch
-        =s~literalOp trimRight char:ch.        
-        
-    trim literal:s char:ch
-        =s~literalOp trim char:ch.
-        
-    trimLeft wide:s char:ch
-        =s~wideOp trimLeft char:ch.        
-        
-    trimRight wide:s char:ch
-        =s~wideOp trimRight char:ch.        
-        
-    trim wide:s char:ch
-        =s~wideOp trim char:ch.}.
-
-extension stringOp
-{
-    Substring : anIndex
-        = self Substring:(self length - anIndex) at:anIndex.
-            
-    Substring : anIndex : aLength
-        = self Substring:aLength at:anIndex.
-    
-    trimLeft :ch
-        = $stringOpDispatcher trimLeft(self, ch).
-
-    trimRight :ch
-        = $stringOpDispatcher trimRight(self, ch).
-
-    trim:ch
-        = $stringOpDispatcher trim(self, ch).
-    
-    trimLeft
-        = $stringOpDispatcher trimLeft(self, $32).
-
-    trimRight
-        = $stringOpDispatcher trimRight(self, $32).
-
-    trim
-        = $stringOpDispatcher trim(self, $32).
-
-    padLeft : padSymbol : len
-        = $stringOpDispatcher padLeft(self, padSymbol, len).
-        
-    padRight : padSymbol : len
-        = $stringOpDispatcher padRight(self, padSymbol, len).
-
-    startingWith : s
-        = $stringOpDispatcher startingWith(self, s).
-
-    endingWith : s
-        = $stringOpDispatcher endingWith(self, s).
-
-    containing : s
-        = $stringOpDispatcher containing(self, s).
-
-//    replaceFirst literal:aReplacee literal:aReplacer
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
 //        
-//        ^ self~dispatcher replaceFirst literal:aReplacee literal:aReplacer
+//        ^ emptyWideLiteralValue
 //    ]
 //    
-//    replace literal:aReplacee literal:aReplacer
+//    wide trimRight
+//        = self~wideOp trimRight char:$32.
+//       
+//    wide trim char:aChar
+//        = self~wideOp trimLeft char:aChar; trimRight char:aChar.
+//    
+//    wide trim
+//        = self~wideOp trimLeft char:$32; trimRight char:$32.
+//    
+//    padLeft char:aChar int:aLength
 //    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
+//        int aCurrentLength := self length.
 //        
-//        ^ self~dispatcher replace literal:aReplacee literal:aReplacer
+//        if (aCurrentLength < aLength)
+//            [ ^ WideLiteralValue new int(aLength - aCurrentLength) char(aChar); add wide:self ].
+//            
+//        ^ self
 //    ]
-    
-    stacksafe write object:aLiteral int:aCounter
-    [
-        int aNumber := aCounter.
-        
-        while (aNumber > 0)
-        [
-            self write:aLiteral. 
-            
-            aNumber := aNumber - 1
-        ].
-            
-        ^ self
-    ]
-
-    write : aLine length:aCounter
-        = self~stringOp write object:aLine int:aCounter.
-        
-    write : aLine paddingLeft:aWidth
-        = self~stringOp write:aLine paddingLeft:aWidth with:$32.
-
-    write : aLine paddingLeft:aWidth with:aChar
-    [
-        var aPaddedStr := aLine padLeft(aChar, aWidth).
-
-        self write:aPaddedStr.
-            
-        ^ self
-    ]
-
-    write : aLine paddingRight:aWidth
-        = self~stringOp write:aLine paddingRight:aWidth with:$32.
-
-    write : aLine paddingRight:aWidth with:aChar
-    [
-        var aPaddedStr := aLine padRight(aChar, aWidth).
-
-        self write:aPaddedStr.
-            
-        ^ self
-    ]
-    
-    write : aLine padding:aWidth with:aChar
-    [
-        int aWidthInt := aWidth int.
-        int aLength := aLine length.        
-        
-        if (aLength < aWidthInt)
-            [
-                int aLen := aWidthInt - aLength.
-                int aLeftLen := aLen / 2.
-                
-                self~stringOp write object:aChar int:aLeftLen.
-                self write:aLine.
-                self~stringOp write object:aChar int:(aLen - aLeftLen)
-            ];
-            [ self write:aLine ].
-            
-        ^ self
-    ]    
-}
-
-// --- charOp ---
-
-char extension charOp
-{
-    stacksafe bool isWhitespace
-    [
-        self =>
-            $9  [ ^ true ];
-            $32 [ ^ true ];
-            $10 [ ^ true ];
-            $13 [ ^ true ];
-            $12 [ ^ true ].
-            
-        ^ false
-    ]
-    
-    stacksafe bool isDigit
-    [
-        int ch := 0.
-        intConvertor convert char:self vint:ch.
-        
-        ^ (ch >= 30h) and: (ch <= 39h)
-    ]
-    
-    stacksafe bool isNewLine
-    [
-        ^ self == $10
-    ]
-    
-    stacksafe bool isLetter
-    [
-        int ch := 0.
-        intConvertor convert char:self vint:ch.
-        
-        if ((ch >= 41h) and: (ch <= 5Ah))
-            [ ^ true ].
-        
-        if ((ch >= 61h) and: (ch <= 7Ah))
-            [ ^ true ].
-        
-        if ((ch >= 3ACh) and: (ch <= 3CEh))
-            [ ^ true ].
-            
-        if ((ch >= 400h) and: (ch <= 42Fh))
-            [ ^ true ].
-            
-        ^ false
-    ]
-    
-    stacksafe bool isLToken
-    [
-        int ch := 0.
-        intConvertor convert char:self vint:ch.
-        
-        if ((ch >= 41h) and: (ch <= 5Ah))
-            [ ^ true ].
-        
-        if ((ch >= 61h) and: (ch <= 7Ah))
-            [ ^ true ].
-        
-        if ((ch >= 3ACh) and: (ch <= 3CEh))
-            [ ^ true ].
-            
-        if ((ch >= 400h) and: (ch <= 42Fh))
-            [ ^ true ].
-            
-        ^ ch == 39
-    ]
-}
-
-// --- byteArrayHelper ---
-
-class byteArrayHelper =
-{
-    stacksafe read bytearray:array int:offset vshort:retVal
-    [
-        array read int:offset vshort:retVal
-    ]
-    
-    stacksafe read bytearray:array int:offset vint:retVal
-    [
-        array read int:offset vint:retVal
-    ]
-    
-    stacksafe read bytearray:array int:offset vlong:retVal
-    [
-        array read int:offset vlong:retVal
-    ]
-    
-    stacksafe read bytearray:array int:offset vreal:retVal
-    [
-        array read int:offset vreal:retVal
-    ]
-    
-    stacksafe read bytearray:array int:offset vchar:retVal
-    [
-        array read int:offset vchar:retVal
-    ]
-    
-    stacksafe write bytearray:array int:offset short:retVal
-    [
-        array write int:offset short:retVal
-    ]
-    
-    stacksafe write bytearray:array int:offset int:retVal
-    [
-        array write int:offset int:retVal
-    ]
-    
-    stacksafe write bytearray:array int:offset long:retVal
-    [
-        array write int:offset long:retVal.
-    ]
-    
-    stacksafe write bytearray:array int:offset real:retVal
-    [
-        array write int:offset real:retVal
-    ]
-    
-    stacksafe write bytearray:array int:offset char:retVal
-    [
-        array write int:offset char:retVal
-    ]
-    
-    stacksafe fill bytearray:array int:offset int:length byte:val
-    [
-        array fill int:offset int:length byte:val.
-    ]
-}.
-
-// --- intArrayHelper ---
-
-singleton intArrayHelper
-{
-    stacksafe fill intarray:array int:offset int:length int:val
-    [
-        array fill int:offset int:length int:val.
-    ]
-}
+//    
+//    padRight char:aChar int:aLength
+//    [
+//        int aCurrentLength := self length.
+//
+//        if (aCurrentLength < aLength)
+//            [ ^ self add wide(WideLiteralValue new int(aLength - aCurrentLength) char(aChar)) ].
+//            
+//        ^ self
+//    ]
+//
+//    startingWith wide:s
+//    [
+//        int n := 0.
+//        self indexOf int:0 wide:s vint:n.
+//        
+//        ^ 0 == n
+//    ]
+//    
+//    endingWith wide:s
+//    [
+//        int l1 := self length.
+//        int l2 := s length.
+//        int n := 0.
+//        self indexOf int:(l1 - l2) wide:s vint:n.
+//        
+//        ^ n != -1
+//    ]
+//    
+//    containing wide:s
+//    [
+//        int l1 := self length.
+//        int l2 := s length.
+//        int n := 0.
+//        
+//        self indexOf int:0 wide:s vint:n.
+//        
+//        ^ n != -1
+//    ]
+//    
+////    replaceFirst wide:aReplacee wide:aReplacer
+////    [
+////        int aReplaceeLen := aReplacee length.
+////        int anIndex := 0.
+////        
+////        self indexOf int:0 wide:aReplacee vint:anIndex.
+////        
+////        if (anIndex != -1)
+////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex wide:aReplacee ];
+////            [ ^ self ].
+////    ]
+////        
+////    replace wide:aReplacee wide:aReplacer
+////    [
+////        wide aTarget := emptyWideLiteralValue.
+////        int  aStart := 0.
+////        int  anEnd := 0.
+////        int  aReplaceeLen := aReplacee length.
+////        
+////        self indexOf int:aStart wide:aReplacee vint:anEnd.
+////        
+////        while (anEnd != -1)
+////        [
+////            aTarget := aTarget
+////                add wide:(self Substring int:aStart int:(anEnd - aStart));
+////                add wide:aReplacer.
+////            
+////            aStart := anEnd + aReplaceeLen.
+////            
+////            self indexOf int:aStart wide:aReplacee vint:anEnd
+////        ].
+////    
+////        if (aStart != 0)
+////            [ ^ aTarget add wide:(self~wideOp Substring int:aStart) ];
+////            [ ^ self ].
+////    ]
+//
+//    bool isEmpty
+//    [
+//        int aLength := self length.
+//        
+//        ^ aLength == 0
+//    ]
+//}
+//
+//// --- stringOp ---
+//
+//class $stringOpDispatcher =
+//{
+//    padRight literal:s char:ch int:len
+//        = s~literalOp padRight char:ch int:len.
+//    
+//    padRight wide:s char:ch int:len
+//        = s~wideOp padRight char:ch int:len.
+//        
+//    padLeft literal:s char:ch int:len
+//        = s~literalOp padLeft char:ch int:len.
+//    
+//    padLeft wide:s char:ch int:len
+//        = s~wideOp padLeft char:ch int:len.
+//        
+//    startingWith literal:s literal:subs
+//        = s~literalOp startingWith literal:subs.
+//
+//    startingWith wide:s wide:subs
+//        = s~wideOp startingWith wide:subs.
+//
+//    endingWith literal:s literal:subs
+//        = s~literalOp endingWith literal:subs.
+//
+//    endingWith wide:s wide:subs
+//        = s~wideOp endingWith wide:subs.
+//        
+//    containing literal:s literal:subs
+//        = s~literalOp containing literal:subs.
+//
+//    containing wide:s wide:subs
+//        = s~wideOp containing wide:subs.
+//        
+//    trimLeft literal:s char:ch
+//        =s~literalOp trimLeft char:ch.        
+//        
+//    trimRight literal:s char:ch
+//        =s~literalOp trimRight char:ch.        
+//        
+//    trim literal:s char:ch
+//        =s~literalOp trim char:ch.
+//        
+//    trimLeft wide:s char:ch
+//        =s~wideOp trimLeft char:ch.        
+//        
+//    trimRight wide:s char:ch
+//        =s~wideOp trimRight char:ch.        
+//        
+//    trim wide:s char:ch
+//        =s~wideOp trim char:ch.}.
+//
+//extension stringOp
+//{
+//    Substring : anIndex
+//        = self Substring:(self length - anIndex) at:anIndex.
+//            
+//    Substring : anIndex : aLength
+//        = self Substring:aLength at:anIndex.
+//    
+//    trimLeft :ch
+//        = $stringOpDispatcher trimLeft(self, ch).
+//
+//    trimRight :ch
+//        = $stringOpDispatcher trimRight(self, ch).
+//
+//    trim:ch
+//        = $stringOpDispatcher trim(self, ch).
+//    
+//    trimLeft
+//        = $stringOpDispatcher trimLeft(self, $32).
+//
+//    trimRight
+//        = $stringOpDispatcher trimRight(self, $32).
+//
+//    trim
+//        = $stringOpDispatcher trim(self, $32).
+//
+//    padLeft : padSymbol : len
+//        = $stringOpDispatcher padLeft(self, padSymbol, len).
+//        
+//    padRight : padSymbol : len
+//        = $stringOpDispatcher padRight(self, padSymbol, len).
+//
+//    startingWith : s
+//        = $stringOpDispatcher startingWith(self, s).
+//
+//    endingWith : s
+//        = $stringOpDispatcher endingWith(self, s).
+//
+//    containing : s
+//        = $stringOpDispatcher containing(self, s).
+//
+////    replaceFirst literal:aReplacee literal:aReplacer
+////    [
+////        var dispatcher := self cast:%eval to:stringOpDispatcher.
+////        
+////        ^ self~dispatcher replaceFirst literal:aReplacee literal:aReplacer
+////    ]
+////    
+////    replace literal:aReplacee literal:aReplacer
+////    [
+////        var dispatcher := self cast:%eval to:stringOpDispatcher.
+////        
+////        ^ self~dispatcher replace literal:aReplacee literal:aReplacer
+////    ]
+//    
+//    stacksafe write object:aLiteral int:aCounter
+//    [
+//        int aNumber := aCounter.
+//        
+//        while (aNumber > 0)
+//        [
+//            self write:aLiteral. 
+//            
+//            aNumber := aNumber - 1
+//        ].
+//            
+//        ^ self
+//    ]
+//
+//    write : aLine length:aCounter
+//        = self~stringOp write object:aLine int:aCounter.
+//        
+//    write : aLine paddingLeft:aWidth
+//        = self~stringOp write:aLine paddingLeft:aWidth with:$32.
+//
+//    write : aLine paddingLeft:aWidth with:aChar
+//    [
+//        var aPaddedStr := aLine padLeft(aChar, aWidth).
+//
+//        self write:aPaddedStr.
+//            
+//        ^ self
+//    ]
+//
+//    write : aLine paddingRight:aWidth
+//        = self~stringOp write:aLine paddingRight:aWidth with:$32.
+//
+//    write : aLine paddingRight:aWidth with:aChar
+//    [
+//        var aPaddedStr := aLine padRight(aChar, aWidth).
+//
+//        self write:aPaddedStr.
+//            
+//        ^ self
+//    ]
+//    
+//    write : aLine padding:aWidth with:aChar
+//    [
+//        int aWidthInt := aWidth int.
+//        int aLength := aLine length.        
+//        
+//        if (aLength < aWidthInt)
+//            [
+//                int aLen := aWidthInt - aLength.
+//                int aLeftLen := aLen / 2.
+//                
+//                self~stringOp write object:aChar int:aLeftLen.
+//                self write:aLine.
+//                self~stringOp write object:aChar int:(aLen - aLeftLen)
+//            ];
+//            [ self write:aLine ].
+//            
+//        ^ self
+//    ]    
+//}
+//
+//// --- charOp ---
+//
+//char extension charOp
+//{
+//    stacksafe bool isWhitespace
+//    [
+//        self =>
+//            $9  [ ^ true ];
+//            $32 [ ^ true ];
+//            $10 [ ^ true ];
+//            $13 [ ^ true ];
+//            $12 [ ^ true ].
+//            
+//        ^ false
+//    ]
+//    
+//    stacksafe bool isDigit
+//    [
+//        int ch := 0.
+//        intConvertor convert char:self vint:ch.
+//        
+//        ^ (ch >= 30h) and: (ch <= 39h)
+//    ]
+//    
+//    stacksafe bool isNewLine
+//    [
+//        ^ self == $10
+//    ]
+//    
+//    stacksafe bool isLetter
+//    [
+//        int ch := 0.
+//        intConvertor convert char:self vint:ch.
+//        
+//        if ((ch >= 41h) and: (ch <= 5Ah))
+//            [ ^ true ].
+//        
+//        if ((ch >= 61h) and: (ch <= 7Ah))
+//            [ ^ true ].
+//        
+//        if ((ch >= 3ACh) and: (ch <= 3CEh))
+//            [ ^ true ].
+//            
+//        if ((ch >= 400h) and: (ch <= 42Fh))
+//            [ ^ true ].
+//            
+//        ^ false
+//    ]
+//    
+//    stacksafe bool isLToken
+//    [
+//        int ch := 0.
+//        intConvertor convert char:self vint:ch.
+//        
+//        if ((ch >= 41h) and: (ch <= 5Ah))
+//            [ ^ true ].
+//        
+//        if ((ch >= 61h) and: (ch <= 7Ah))
+//            [ ^ true ].
+//        
+//        if ((ch >= 3ACh) and: (ch <= 3CEh))
+//            [ ^ true ].
+//            
+//        if ((ch >= 400h) and: (ch <= 42Fh))
+//            [ ^ true ].
+//            
+//        ^ ch == 39
+//    ]
+//}
+//
+//// --- byteArrayHelper ---
+//
+//class byteArrayHelper =
+//{
+//    stacksafe read bytearray:array int:offset vshort:retVal
+//    [
+//        array read int:offset vshort:retVal
+//    ]
+//    
+//    stacksafe read bytearray:array int:offset vint:retVal
+//    [
+//        array read int:offset vint:retVal
+//    ]
+//    
+//    stacksafe read bytearray:array int:offset vlong:retVal
+//    [
+//        array read int:offset vlong:retVal
+//    ]
+//    
+//    stacksafe read bytearray:array int:offset vreal:retVal
+//    [
+//        array read int:offset vreal:retVal
+//    ]
+//    
+//    stacksafe read bytearray:array int:offset vchar:retVal
+//    [
+//        array read int:offset vchar:retVal
+//    ]
+//    
+//    stacksafe write bytearray:array int:offset short:retVal
+//    [
+//        array write int:offset short:retVal
+//    ]
+//    
+//    stacksafe write bytearray:array int:offset int:retVal
+//    [
+//        array write int:offset int:retVal
+//    ]
+//    
+//    stacksafe write bytearray:array int:offset long:retVal
+//    [
+//        array write int:offset long:retVal.
+//    ]
+//    
+//    stacksafe write bytearray:array int:offset real:retVal
+//    [
+//        array write int:offset real:retVal
+//    ]
+//    
+//    stacksafe write bytearray:array int:offset char:retVal
+//    [
+//        array write int:offset char:retVal
+//    ]
+//    
+//    stacksafe fill bytearray:array int:offset int:length byte:val
+//    [
+//        array fill int:offset int:length byte:val.
+//    ]
+//}.
+//
+//// --- intArrayHelper ---
+//
+//singleton intArrayHelper
+//{
+//    stacksafe fill intarray:array int:offset int:length int:val
+//    [
+//        array fill int:offset int:length int:val.
+//    ]
+//}
