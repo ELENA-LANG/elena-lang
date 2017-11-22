@@ -475,8 +475,6 @@ private:
          else return Scope::getScope(level);
       }
 
-      virtual bool isClosureMode() { return false; }
-
       void save()
       {
          // save class meta data
@@ -542,6 +540,7 @@ private:
       bool         extensionMode;
       bool         multiMethod;
       bool         closureMode;
+      bool         nestedMode;
       //bool         subCodeMode;
       
       virtual Scope* getScope(ScopeLevel level)
@@ -689,7 +688,6 @@ private:
       };
 
       bool                    returningMode;
-      bool                    closureMode;
       Map<ident_t, Outer>     outers;
       ClassInfo::FieldTypeMap outerFieldTypes;
 
@@ -707,8 +705,6 @@ private:
          }
          else return Scope::getScope(level);
       }
-
-      virtual bool isClosureMode() { return closureMode; }
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -812,7 +808,7 @@ private:
 
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
-//   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
@@ -903,6 +899,7 @@ private:
 
    void generateClassFlags(ClassScope& scope, SNode node);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
+
    void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute);
    void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, bool classClassMode);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool closureDeclarationMode = false);

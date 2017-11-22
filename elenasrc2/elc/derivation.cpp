@@ -100,9 +100,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsSizeExpression:
 //         _writer.newNode(lxOperator, -3);
 //         break;
-//      case nsXInlineClosure:
-//         _writer.newNode(lxInlineClosure);
-//         break;
+      case nsXInlineClosure:
+         _writer.newNode(lxInlineClosure);
+         break;
       case nsMessageOperation:
          _writer.newNode(lxMessage);
          break;
@@ -127,9 +127,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsDynamicSize:
          _writer.newNode(lxSize, -1);
          break;
-         //      case nsSwitching:
-//         _writer.newNode(lxSwitching);
-//         break;
+      case nsSwitching:
+         _writer.newNode(lxSwitching);
+         break;
       case nsSubCode:
       case nsScope:
 //      case nsTemplate:
@@ -138,8 +138,8 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsExtension:
 //      case nsCatchMessageOperation:
       case nsAltMessageOperation:
-//      case nsSwitchOption:
-//      case nsLastSwitchOption:
+      case nsSwitchOption:
+      case nsLastSwitchOption:
 ////      case nsBiggerSwitchOption:
 ////      case nsLessSwitchOption:
 ////      case nsInlineClosure:
@@ -1159,69 +1159,70 @@ void DerivationReader :: generateAttributes(SyntaxWriter& writer, SNode node, De
    }
 }
 
-//void DerivationReader :: generateSwitchTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type) {
-//         case lxSwitchOption:
-//         case lxBiggerSwitchOption:
-//         case lxLessSwitchOption:
-//            if (current.type == lxBiggerSwitchOption) {
-//               writer.newNode(lxOption, GREATER_MESSAGE_ID);
-//            }
-//            else if (current.type == lxLessSwitchOption) {
-//               writer.newNode(lxOption, LESS_MESSAGE_ID);
-//            }
-//            else writer.newNode(lxOption, EQUAL_MESSAGE_ID);
-//            generateExpressionTree(writer, current, scope, false);
-//            writer.closeNode();
-//            break;
-//         case lxLastSwitchOption:
-//            writer.newNode(lxElse);
-//            generateExpressionTree(writer, current, scope, false);
-//            writer.closeNode();
-//            break;
-//         default:
-//            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
-//void DerivationReader :: generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
-//{
-//   SNode current = node.firstChild();
-//
-//   // COMPILER MAGIC : advanced closure syntax
-//   writer.newBookmark();
-//
-//   do {
-//      bool closureMode = false;
-//      if (current == lxMessage) {
-//         closureMode = true;
-//
-//         writer.newNode(lxClosureMessage);
-//         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
-//         writer.closeNode();
-//
-//         current = current.nextNode();
-//      }
-//
-//      if (closureMode) {
-//         generateObjectTree(writer, current, scope);
-//      }
-//      else generateExpressionTree(writer, current, scope, 0);
-//
-//      current = current.nextNode();
-//   } while (current.compare(lxMessage, lxMethodParameter));
-//
-//   if (current.compare(lxCode, lxReturning)) {
-//      generateObjectTree(writer, current, scope);
-//   }
-//   writer.removeBookmark();
-//}
+void DerivationReader :: generateSwitchTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxSwitchOption:
+         case lxBiggerSwitchOption:
+         case lxLessSwitchOption:
+            if (current.type == lxBiggerSwitchOption) {
+               writer.newNode(lxOption, GREATER_MESSAGE_ID);
+            }
+            else if (current.type == lxLessSwitchOption) {
+               writer.newNode(lxOption, LESS_MESSAGE_ID);
+            }
+            else writer.newNode(lxOption, EQUAL_MESSAGE_ID);
+            generateExpressionTree(writer, current, scope, false);
+            writer.closeNode();
+            break;
+         case lxLastSwitchOption:
+            writer.newNode(lxElse);
+            generateExpressionTree(writer, current, scope, false);
+            writer.closeNode();
+            break;
+         default:
+            scope.raiseError(errInvalidSyntax, current);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void DerivationReader :: generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+{
+   SNode current = node.firstChild();
+
+   // COMPILER MAGIC : advanced closure syntax
+   writer.newBookmark();
+
+   do {
+      //bool closureMode = false;
+      //if (current == lxMessage) {
+      //   closureMode = true;
+
+      //   writer.newNode(lxClosureMessage);
+      //   copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+      //   writer.closeNode();
+
+      //   current = current.nextNode();
+      //}
+
+      //if (closureMode) {
+         generateObjectTree(writer, current, scope);
+      //}
+      /*else generateExpressionTree(writer, current, scope, 0);*/
+
+      current = current.nextNode();
+   } while (current.compare(lxAttributeValue, lxMethodParameter));
+
+   if (current.compare(lxCode, lxReturning)) {
+      generateObjectTree(writer, current, scope);
+   }
+   writer.removeBookmark();
+}
 
 void DerivationReader :: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
@@ -1271,10 +1272,10 @@ void DerivationReader :: generateMessageTree(SyntaxWriter& writer, SNode node, D
 //            writer.insert(lxExpression);
 //            writer.closeNode();
 //            break;
-//         case lxInlineClosure:
-//            // COMPILER MAGIC : advanced closure syntax
-//            generateClosureTree(writer, current, scope);
-//            break;
+         case lxInlineClosure:
+            // COMPILER MAGIC : advanced closure syntax
+            generateClosureTree(writer, current, scope);
+            break;
          case lxMessage:
             writer.newNode(lxMessage);
             if (!current.existChild(lxAttributeValue)) {
@@ -1311,13 +1312,13 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
          writer.appendNode(lxAssign);
          generateExpressionTree(writer, current, scope, 0);
          break;
-//      case lxSwitching:
-//         generateSwitchTree(writer, current, scope);
-//         writer.insert(lxSwitching);
-//         writer.closeNode();
-//         writer.insert(lxExpression);
-//         writer.closeNode();
-//         break;
+      case lxSwitching:
+         generateSwitchTree(writer, current, scope);
+         writer.insert(lxSwitching);
+         writer.closeNode();
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
       case lxOperator:
          copyOperator(writer, current.firstChild(), current.argument);
          generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE);

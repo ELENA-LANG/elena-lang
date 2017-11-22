@@ -21,6 +21,8 @@ In development:
                  * support array a[b].
                  * support template statement : a[ ... ];{} (e.g extern[] instead of extern()[]).
                  * uncomment matrix template
+                 * uncomment IndexFunction2
+                 * uncomment IndexFunction3
 
               dev - lib
                 * support fixed size array : array<IntNumber,4>   - array of 4 elements

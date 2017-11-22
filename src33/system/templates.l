@@ -214,12 +214,14 @@ __block template if :: expr
     ].
 ]
 
-//// --- ifnot statement ---
-//
-//__block template ifnot :: expr =
-//    expr bool !
-//    [
-//    ].
+// --- ifnot statement ---
+
+__block template ifnot :: expr
+[
+    expr bool !
+    [
+    ].
+]
 
 // --- if-else statement ---
 
