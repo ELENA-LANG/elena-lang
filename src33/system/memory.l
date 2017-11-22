@@ -92,14 +92,14 @@ template<BaseIndexable> array :: template_subj
         <= getAt int:aParam.
 }
 
-//// --- matrixof ---
-//
-//template matrix :: template_subj
-//{
-//    array<template_subj> theArray.
-//    int                  theRows.
-//    int                  theColumns.
-//    
+// --- matrixof ---
+
+template matrix :: template_subj
+{
+    array<template_subj> theArray.
+    int                  theRows.
+    int                  theColumns.
+    
 //    explicit object:params
 //    [
 //        theRows := params rows.
@@ -134,8 +134,8 @@ template<BaseIndexable> array :: template_subj
 //                ]
 //            ]
 //    ]
-//    
-//    /// Reads the matrix lengths to the output parameter
+    
+    /// Reads the matrix lengths to the output parameter
 //    stacksafe readLengths vint:Rows vint:Columns
 //    [
 //        Rows int := theRows.
@@ -233,7 +233,7 @@ template<BaseIndexable> array :: template_subj
 //              ]
 //          }.
 //    ]
-//}
+}
 
 // === basic memory classes ===
 

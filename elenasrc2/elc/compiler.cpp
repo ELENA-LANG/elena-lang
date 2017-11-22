@@ -2406,7 +2406,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 {
    ObjectInfo result;
 
-   SNode member = objectNode.findChild(lxCode, lxNestedClass, /*lxMessageReference, */lxExpression/*, lxLazyExpression, lxBoxing*/);
+   SNode member = objectNode.findChild(lxCode, lxNestedClass, /*lxMessageReference, */lxExpression/*, lxLazyExpression*/, lxBoxing);
    switch (member.type)
    {
       case lxNestedClass:
@@ -2422,9 +2422,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 //         }
          /*else */result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
          break;
-//      case lxBoxing:
-//         result = compileExpression(writer, member, scope, mode);
-//         break;
+      case lxBoxing:
+         result = compileExpression(writer, member, scope, mode);
+         break;
 //      case lxMessageReference:
 //         result = compileMessageReference(writer, member, scope, mode);
 //         break;
@@ -3902,46 +3902,46 @@ void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope
    writer.removeBookmark();
 }
 
-//ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-//   writer.newBookmark();
-//
-//   ref_t targetRef = scope.moduleScope->module->mapReference(node.findChild(lxClassRefAttr).identifier(), false);
-//
-//   ObjectInfo retVal = ObjectInfo(okObject, targetRef);
-//   SNode objectNode = node.findChild(lxExpression);
-//   if (objectNode != lxNone) {
-//      if (node.existChild(lxOperator)) {
-//         ObjectInfo loperand = compileExpression(writer, objectNode, scope, 0);
-//
-//         ref_t arrayRef = 0;
-//         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, 
-//            targetRef, resolveObjectReference(scope, loperand), arrayRef);
-//
-//         if (operationType != 0) {
-//            // if it is a primitive operation
-//            _logic->injectNewOperation(writer, *scope.moduleScope, operationType, arrayRef, targetRef);
-//
-//            retVal = assignResult(writer, scope, arrayRef, targetRef);
-//         }
-//         else scope.raiseError(errInvalidOperation, node);
-//      }
-//      else {
-//         ObjectInfo object = compileExpression(writer, objectNode, scope, mode);
-//
-//         if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
-//            scope.raiseError(errIllegalOperation, node);
-//      }
-//   }
-//   else {
-//      if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
-//         scope.raiseError(errIllegalOperation, node);
-//   }
-//
-//   writer.removeBookmark();
-//
-//   return retVal;
-//}
+ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   writer.newBookmark();
+
+   ref_t targetRef = scope.moduleScope->module->mapReference(node.findChild(lxClassRefAttr).identifier(), false);
+
+   ObjectInfo retVal = ObjectInfo(okObject, targetRef);
+   SNode objectNode = node.findChild(lxExpression);
+   if (objectNode != lxNone) {
+      if (node.existChild(lxOperator)) {
+         ObjectInfo loperand = compileExpression(writer, objectNode, scope, 0);
+
+         ref_t arrayRef = 0;
+         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, 
+            targetRef, resolveObjectReference(scope, loperand), arrayRef);
+
+         if (operationType != 0) {
+            // if it is a primitive operation
+            _logic->injectNewOperation(writer, *scope.moduleScope, operationType, arrayRef, targetRef);
+
+            retVal = assignResult(writer, scope, arrayRef, targetRef);
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
+      else {
+         ObjectInfo object = compileExpression(writer, objectNode, scope, mode);
+
+         if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
+            scope.raiseError(errIllegalOperation, node);
+      }
+   }
+   else {
+      if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
+         scope.raiseError(errIllegalOperation, node);
+   }
+
+   writer.removeBookmark();
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
@@ -3956,10 +3956,10 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //
 //      objectInfo = ObjectInfo(okObject);
 //   }
-//   else if (node == lxBoxing) {
-//      objectInfo = compileBoxingExpression(writer, node, scope, mode);
-//   }
-//   else {
+   else if (node == lxBoxing) {
+      objectInfo = compileBoxingExpression(writer, node, scope, mode);
+   }
+   else {
       SNode current = node.findChild(lxAssign, /*lxExtension, */lxMessage, lxOperator/*, lxSwitching*/);
       switch (current.type) {
          case lxAssign:
@@ -4002,7 +4002,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
             break;
          }
       }
-//   }
+   }
    return objectInfo;
 }
 
