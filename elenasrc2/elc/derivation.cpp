@@ -136,7 +136,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsTokenParam:
       case nsDispatchExpression:
       case nsExtension:
-//      case nsCatchMessageOperation:
+      case nsCatchMessageOperation:
       case nsAltMessageOperation:
       case nsSwitchOption:
       case nsLastSwitchOption:
@@ -1325,7 +1325,7 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
          writer.insert(lxExpression);
          writer.closeNode();
          break;
-//      case lxCatchOperation:
+      case lxCatchOperation:
       case lxAltOperation:
          //if (scope.type == DerivationScope::ttCodeTemplate && scope.templateRef == 0) {
          //   // HOTFIX : for try-catch template
@@ -1346,12 +1346,12 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
             writer.insert(lxExpression);
             writer.closeNode();
 //         }
-//         if (current == lxCatchOperation) {
-//            writer.removeBookmark();
-//            writer.insert(lxTrying);
-//            writer.closeNode();
-//         }
-         /*else */if (current == lxAltOperation) {
+         if (current == lxCatchOperation) {
+            writer.removeBookmark();
+            writer.insert(lxTrying);
+            writer.closeNode();
+         }
+         else if (current == lxAltOperation) {
             writer.removeBookmark();
             writer.insert(lxAlt);
             writer.closeNode();

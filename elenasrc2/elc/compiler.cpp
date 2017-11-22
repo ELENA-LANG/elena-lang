@@ -33,7 +33,7 @@ using namespace _ELENA_;
 #define HINT_EXTERNALOP       0x08000000
 #define HINT_NOCONDBOXING     0x04000000
 #define HINT_EXTENSION_MODE   0x02000000
-//#define HINT_TRY_MODE         0x01000000
+#define HINT_TRY_MODE         0x01000000
 #define HINT_LOOP             0x00800000
 #define HINT_SWITCH           0x00400000
 #define HINT_ALT_MODE         0x00200000
@@ -3160,12 +3160,12 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    ObjectInfo retVal;
    ObjectInfo target = compileMessageParameters(writer, node, scope, mode & HINT_RESENDEXPR);
 
-   //if (test(mode, HINT_TRY_MODE)) {
-   //   writer.insertChild(0, lxResult, 0);
+   if (test(mode, HINT_TRY_MODE)) {
+      writer.insertChild(0, lxResult, 0);
 
-   //   target = ObjectInfo(okObject);
-   //}
-   /*else */if (test(mode, HINT_ALT_MODE)) {
+      target = ObjectInfo(okObject);
+   }
+   else if (test(mode, HINT_ALT_MODE)) {
       SNode targetNode = node.parentNode().firstChild(lxObjectMask).firstChild(lxObjectMask);
       if (targetNode == lxLocal) {
          writer.insertChild(0, targetNode.type, targetNode.argument);
@@ -3847,28 +3847,28 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //
 //   return retVal;
 //}
-//
-//void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   writer.newBookmark();
-//
-//   bool catchNode = false;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         compileExpression(writer, current, scope, catchNode ? HINT_TRY_MODE | HINT_RESENDEXPR : 0);
-//
-//         catchNode = true;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   writer.insert(lxTrying);
-//   writer.closeNode();
-//
-//   writer.removeBookmark();
-//}
+
+void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   writer.newBookmark();
+
+   bool catchNode = false;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         compileExpression(writer, current, scope, catchNode ? HINT_TRY_MODE | HINT_RESENDEXPR : 0);
+
+         catchNode = true;
+      }
+
+      current = current.nextNode();
+   }
+
+   writer.insert(lxTrying);
+   writer.closeNode();
+
+   writer.removeBookmark();
+}
 
 void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -3962,11 +3962,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
       objectInfo = ObjectInfo(okObject);
    }
-//   else if (node == lxTrying) {
-//      compileTrying(writer, node, scope);
-//
-//      objectInfo = ObjectInfo(okObject);
-//   }
+   else if (node == lxTrying) {
+      compileTrying(writer, node, scope);
+
+      objectInfo = ObjectInfo(okObject);
+   }
    else if (node == lxBoxing) {
       objectInfo = compileBoxingExpression(writer, node, scope, mode);
    }
@@ -3993,17 +3993,17 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          default:
          {
             current = node.firstChild(lxObjectMask);
-//            SNode nextChild = current.nextNode();
-//
-//            if ((current == lxExpression || current == lxAlt || current == lxTrying) && nextChild == lxNone) {
-//               // if it is a nested expression
-//               objectInfo = compileExpression(writer, current, scope, mode);
-//            }
+            SNode nextChild = current.nextNode();
+
+            if ((/*current == lxExpression || current == lxAlt || */current == lxTrying) && nextChild == lxNone) {
+               // if it is a nested expression
+               objectInfo = compileExpression(writer, current, scope, mode);
+            }
 //            else if (test(current.type, lxTerminalMask) && nextChild == lxExpression) {
 //               //HOTFIX : to compile the collection
 //               objectInfo = compileCollection(writer, node, scope);
 //            }
-            /*else */if (test(current.type, lxTerminalMask)/* && nextChild == lxNone*/) {
+            else if (test(current.type, lxTerminalMask)/* && nextChild == lxNone*/) {
                objectInfo = compileObject(writer, current, scope, mode);
             }
 //            else if (current == lxConstantList) {
