@@ -25,4 +25,6 @@ events.l
 console.l
 win32_pointers.l
 win32_app.l
+collections\list.l
+collections\queues.l
 text\win32_common.l

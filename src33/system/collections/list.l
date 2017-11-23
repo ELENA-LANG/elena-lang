@@ -26,7 +26,7 @@ template<BaseEnumerable> list :: type
         
         theLength := len.
         theCapacity := size.
-        theArray := type&(size).
+        theArray := type<>(size).
         
         int i := 0.
         while(i < len)
@@ -41,7 +41,7 @@ template<BaseEnumerable> list :: type
     [
         theCapacity := capacity.
         theLength := 0.
-        theArray := type&(capacity).
+        theArray := type<>(capacity).
     ]
     
     int rvprop length :: readLengthTo.
@@ -52,7 +52,7 @@ template<BaseEnumerable> list :: type
         [
             theCapacity append int:32.
             
-            array<type> newArray := type&(theCapacity).
+            array<type> newArray := type<>(theCapacity).
 
             int i := 0.
             while (i < theLength)
