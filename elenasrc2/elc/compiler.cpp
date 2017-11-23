@@ -5750,7 +5750,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          if (isOpenArg(message) && _logic->isMethodGeneric(scope.info, message)) {
             // if it is an extension with open argument list generic handler
             // creates the references for all possible number of parameters
-            for (int i = 1; i < 15; i++) {
+            for (int i = 1; i < OPEN_ARG_COUNT; i++) {
                scope.moduleScope->saveExtension(overwriteParamCount(message, i), scope.extensionClassRef, scope.reference);
             }
          }
