@@ -2,7 +2,7 @@
 
 sealed const struct HInstance
 {
-    __dword& theHandle(4).
+    __dword<4> theHandle.
     
     stacksafe constructor new int:aHandle
     [
@@ -80,7 +80,7 @@ sealed struct CREATESTRUCT
 
 sealed const struct HMENU
 {
-    __dword& theHandle(4).
+    __dword<4> theHandle.
     
     constructor new
     [

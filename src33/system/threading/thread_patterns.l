@@ -1,4 +1,8 @@
 // --- lock statement
 
-template lock :: expr =
+__block template lock :: expr
+[
     expr enterCriticalSection; doFinally([],[ expr leaveCriticalSection ]).
+]
+
+    

@@ -7,7 +7,7 @@ class $windowClassControl =
     
     createClass literal:aName hinstance:anInstance int:aStyle int:aBackground
     [
-        byte& aStruct(40).
+        byte<40> aStruct.
         wide aWideName := aName wide.
         
         $self $fillWndClass bytearray:aStruct wide:aWideName int:aStyle hinstance:anInstance int:aBackground.

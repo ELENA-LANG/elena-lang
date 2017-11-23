@@ -144,7 +144,7 @@ sealed struct AddrInfoReader
 
 sealed const struct Socket
 {
-    __dword& theHandle(4).
+    __dword<4> theHandle.
     
     stacksafe constructor $new int:aSocket
     [

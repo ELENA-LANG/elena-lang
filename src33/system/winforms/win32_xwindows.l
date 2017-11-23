@@ -79,7 +79,7 @@ singleton $classFactoryX
         int winproc_ptr := 0.
         $classFactoryX $readXWndProc vint:winproc_ptr.
                 
-        int& wndclass(12).        
+        int<12> wndclass.
         intArrayHelper fill intarray:wndclass int:0 int:12 int:0.
         
         wndclass[0]  := 48.

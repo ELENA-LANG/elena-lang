@@ -55,8 +55,8 @@ sealed struct WSADATA
 {
     short     wVersion.
     short     wHighVersion.
-    byte&     szDescription(257).
-    byte&     szSystemStatus(129).
+    byte<257> szDescription.
+    byte<129> szSystemStatus.
     short     iMaxSockets.
     short     iMaxUdpDg.
     int       lpVendorInfo.

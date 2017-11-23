@@ -150,7 +150,7 @@ sealed class OpenFileDialog :: BaseFileDialog
     
     select
     [
-        byte& aStruct(76).
+        byte<76> aStruct.
         
         $self $prepare bytearray:aStruct.
         // NOTE: !! it should be any object creation between two lines
@@ -176,7 +176,7 @@ sealed class SaveFileDialog :: BaseFileDialog
     
     select
     [
-        byte& aStruct(76).
+        byte<76> aStruct.
         
         $self $prepare bytearray:aStruct.
         // NOTE: !! it should be any object creation between two lines
