@@ -240,14 +240,16 @@ __block __block template if :: expr
 //    ]
 //    ! [
 //    ].
-//
-//// -- try-catch statement ---
-//
-//__nested template try :: expr =
-//    expr | catch:
-//    {
-//    }.
-//
+
+// -- try-catch statement ---
+
+__nested template try :: expr
+[
+    expr | catch:
+    {
+    }.
+]
+
 //// -- try-finally-catch statement ---
 //
 //__nested __block template try :: expr =

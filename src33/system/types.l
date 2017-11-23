@@ -28,6 +28,7 @@ closure         = #8205.
 //mixin           = #8206.
 __accessor      = #16399.
 __block         = #16400.
+__nested        = #16401.
 
 //args            = #32. 
 
