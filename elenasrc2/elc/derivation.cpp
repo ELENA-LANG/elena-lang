@@ -1954,7 +1954,11 @@ void DerivationReader :: generateAttributeTemplate(SyntaxWriter& writer, SNode n
       writer.newNode(lxTemplateParam, -1);
       writer.appendNode(lxTemplate, attrName.c_str());
 
-      copyTemplateAttributeTree(writer, node, scope);
+      if (node.argument == INVALID_REF) {
+         copyTemplateAttributeTree(writer, node.nextNode(), scope);
+      }
+      else copyTemplateAttributeTree(writer, node, scope);
+      copyIdentifier(writer, attr.findChild(lxIdentifier, lxPrivate));
 
       writer.closeNode();
 

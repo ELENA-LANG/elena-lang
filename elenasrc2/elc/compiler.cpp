@@ -1899,7 +1899,7 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
 
 void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
 {
-   SNode current = node.firstChild(lxAttribute);
+   SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
@@ -1919,7 +1919,7 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
-      else if (current == lxClassRefAttr) {
+      else if (current == lxClassRefAttr || current == lxReference) {
          if (variable.extraparam == 0) {
             variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), false);
          }

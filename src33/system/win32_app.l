@@ -28,20 +28,20 @@ class $StartUpEvents
 
 static startUpEvents = $StartUpEvents new.
 
-symbol startUp =
-    {
-        start : events
-        [
-            system'core_routines'__exception register.
-            
-            try('program eval)
-                {
-                    on(Exception e) [ console writeLine:(e literal) ]
-                    
-                    on(AbortException e) []                    
-                }.
-    
-            events $onStop:$nil
-        ]        
-    }
-    start:startUpEvents.
+//symbol startUp =
+//    {
+//        start : events
+//        [
+//            system'core_routines'__exception register.
+//            
+//            try('program eval)
+//                {
+//                    on(Exception e) [ console writeLine:(e literal) ]
+//                    
+//                    on(AbortException e) []                    
+//                }.
+//    
+//            events $onStop:$nil
+//        ]        
+//    }
+//    start:startUpEvents.
