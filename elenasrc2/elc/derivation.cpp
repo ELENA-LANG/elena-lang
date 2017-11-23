@@ -1298,13 +1298,19 @@ void DerivationReader :: generateMessageTree(SyntaxWriter& writer, SNode node, D
             generateClosureTree(writer, current, scope);
             break;
          case lxMessage:
+         {
             writer.newNode(lxMessage);
-            if (!current.existChild(lxAttributeValue)) {
+            SNode attrNode = current.findChild(lxAttributeValue, lxSize);
+            if (attrNode != lxAttributeValue) {
                scope.copySubject(writer, current.firstChild(lxTerminalMask));
+               if (attrNode == lxSize)
+                  writer.appendNode(lxSize, -1);
             }
             else generateAttributeTemplate(writer, current, scope, scope.reference == INVALID_REF);
             writer.closeNode();
             break;
+
+         }
          case lxIdentifier:
          case lxPrivate:
          case lxReference:

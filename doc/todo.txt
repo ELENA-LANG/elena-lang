@@ -3,7 +3,6 @@ In development:
 ------                              
               dev - syntax redesign
                  * expression : type<Enumerator><>(len)
-                 * explicit open argument method call - $self test object<>(1,2,3).
 
                  * uncomment CompoundEnumerator
                  * uncomment StringWriter.writeFormatted(object<> args)
