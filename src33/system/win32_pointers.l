@@ -2,7 +2,7 @@
 
 sealed struct Handle
 {
-    __dword& theHandle(4).
+    __dword<4> theHandle.
     
     stacksafe new handle:h
     [
@@ -56,7 +56,7 @@ sealed const struct RTPointer
 
 sealed struct UnsafePointer
 {
-    __dword& thePointer(4).
+    __dword<4> thePointer.
 
     constructor new : anObject
     [

@@ -5,7 +5,7 @@ template eventhandler :: function
     
     stacksafe explicit function:func
     [
-        $functions := function&(1).
+        $functions := function<>(1).
         $functions[0] := func.
     ]
 
@@ -13,7 +13,7 @@ template eventhandler :: function
     [
         int len := $functions length.
         
-        array<function> functions := function&(len + 1).
+        array<function> functions := function<>(len + 1).
 
         int i := 0.
         while (i < len)

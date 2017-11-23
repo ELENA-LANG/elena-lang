@@ -133,114 +133,114 @@ class Exception
 
 class FormatException :: Exception
 {
-//    constructor new
-//        <= new literal:"A number is not in the correct format".
-//        
-//    constructor new : message
-//        <= new literal:message.
+    constructor new
+        <= new literal:"A number is not in the correct format".
+        
+    constructor new : message
+        <= new literal:message.
 }
 
 // --- OutOfRangeException ---
 
 class OutOfRangeException :: Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"An index is out of range".
-//
-//    /// Creates the exception
-//    constructor new:aMessage
-//        <= new literal:aMessage.
+    /// Creates the exception
+    constructor new
+        <= new literal:"An index is out of range".
+
+    /// Creates the exception
+    constructor new:aMessage
+        <= new literal:aMessage.
 }
 
-////// --- IndexOutOfRangeException ---
-////
-////#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
-////{
-////    #constructor new &literal:message
-////    [
-////        theMessage := message.
-////        theCallStack := CallStack new.
-////    ]
-////    
-////    /// Creates the exception
-////    #constructor new
-////        <= new &literal:"An index is out of range".
-////
-////    /// Creates the exception
-////    #constructor new:aMessage
-////        <= new &literal:(aMessage literal).
-////}
+//// --- IndexOutOfRangeException ---
+//
+//#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
+//{
+//    #constructor new &literal:message
+//    [
+//        theMessage := message.
+//        theCallStack := CallStack new.
+//    ]
+//    
+//    /// Creates the exception
+//    #constructor new
+//        <= new &literal:"An index is out of range".
+//
+//    /// Creates the exception
+//    #constructor new:aMessage
+//        <= new &literal:(aMessage literal).
+//}
 
 // --- InvalidArgumentException ---
 
 class InvalidArgumentException :: Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"Invalid argument".
-//        
-//    /// Creates the exception
-//    constructor new:aMessage
-//        <= new literal:aMessage.
+    /// Creates the exception
+    constructor new
+        <= new literal:"Invalid argument".
+        
+    /// Creates the exception
+    constructor new:aMessage
+        <= new literal:aMessage.
 }
 
 // --- InvalidOperationException ---
 
 class InvalidOperationException :: Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"Invalid operation".
-//
-//    /// Creates the exception
-//    constructor new:aMessage
-//        <= new literal:aMessage.
+    /// Creates the exception
+    constructor new
+        <= new literal:"Invalid operation".
+
+    /// Creates the exception
+    constructor new:aMessage
+        <= new literal:aMessage.
 }
 
 // --- MethodNotFound ---
 
 class MethodNotFoundException :: Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"Method not found".
-//
-//    stacksafe constructor new mssg:missingMessage
-//        <= new literal("Method " add literal:missingMessage; add literal:" not found").
-//        
-//    stacksafe constructor new object:object mssg:missingMessage
-//        <= new literal(object className; add literal:" : Method "; add literal:missingMessage; add literal:" not found").
+    /// Creates the exception
+    constructor new
+        <= new literal:"Method not found".
+
+    stacksafe constructor new mssg:missingMessage
+        <= new literal("Method " add literal:missingMessage; add literal:" not found").
+        
+    stacksafe constructor new object:object mssg:missingMessage
+        <= new literal(object className; add literal:" : Method "; add literal:missingMessage; add literal:" not found").
 }
 
 // --- MethodNotSupported ---
 
 class NotSupportedException :: Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"Operation is not supported".
-//        
-//    /// Creates the exception
-//    constructor new :aMessage
-//        <= new literal:aMessage.
+    /// Creates the exception
+    constructor new
+        <= new literal:"Operation is not supported".
+        
+    /// Creates the exception
+    constructor new :aMessage
+        <= new literal:aMessage.
 }
 
-//// --- AbortException ---
-//
-///// An abort exception 
-//class AbortException :: Exception
-//{
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"The process terminated".
-//}
-//
-//// --- CriticalException ---
-//
-//class CriticalException :: Exception
-//{
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"Critical exception".
-//}
+// --- AbortException ---
+
+/// An abort exception 
+class AbortException :: Exception
+{
+    /// Creates the exception
+    constructor new
+        <= new literal:"The process terminated".
+}
+
+// --- CriticalException ---
+
+class CriticalException :: Exception
+{
+    /// Creates the exception
+    constructor new
+        <= new literal:"Critical exception".
+}

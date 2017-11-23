@@ -15,7 +15,7 @@ explicit        = #16387.
 const           = #8201.
 singleton       = #8208.
 generic         = #8202.
-//static          = #8194.
+static          = #8194.
 var             = #16385.
 limited         = #8196.
 field           = #16392.
@@ -113,10 +113,10 @@ type nfunc      = system'IndexFunction1.
 type nnfunc     = system'IndexFunction2.
 type n3func     = system'IndexFunction3.
 
-//// === system handles ===
-//type handle     = system'Handle.
-//type rt_ptr     = system'RTPointer.
-//type dirty_ptr  = system'UnsafePointer.
+// === system handles ===
+type handle     = system'Handle.
+type rt_ptr     = system'RTPointer.
+type dirty_ptr  = system'UnsafePointer.
 
 // --- Enumerators / Indexers ---
 type enumerator = system'Enumerator.

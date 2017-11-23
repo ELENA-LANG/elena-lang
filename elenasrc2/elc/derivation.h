@@ -162,6 +162,7 @@ class DerivationReader : public _DerivationReader
    SNode       _root;
    MessageMap  _verbs;                            // list of verbs
 
+   void copyParamAttribute(SyntaxWriter& writer, SNode current, DerivationScope& scope);
    void copyFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SyntaxTree& buffer*/);
    void copyFieldInitTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
