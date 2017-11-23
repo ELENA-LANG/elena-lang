@@ -1701,15 +1701,15 @@ sealed Array :: array<object>
         = Array new array:$self.
 }
 
-//// --- $paramsOp ---
-//
-//args extension paramsOp
-//{
-//    stacksafe readLengthTo vint:aLength
-//        => system'core_routines'__args.            
-//        
-//    int rvprop length :: readLengthTo.
-//}
+// --- $paramsOp ---
+
+args extension paramsOp
+{
+    stacksafe readLengthTo vint:aLength
+        => system'core_routines'__args.            
+        
+    int rvprop length :: readLengthTo.
+}
 
 // === Convertors ===
 

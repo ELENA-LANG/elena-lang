@@ -1,6 +1,10 @@
 ------                                 
 In development:
 ------                              
+              dev - syntax redesign
+                 * class cannot have the same name as type, so it is possible to use in signature brackets both
+                   class names and types
+                 * explicit open argument method call - $self test object<>(1,2,3).
 
               dev - fixed size array field #123
                  * support fixed size array : type<ShortNumber,260> cFileName.

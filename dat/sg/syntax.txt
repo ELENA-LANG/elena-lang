@@ -532,7 +532,7 @@ TOKEN_PARAMS ->
 	| CLOSING_ANGLE_BRACKET
 
 TOKEN_PARAM ->
-	identifier
+	identifier TOKEN_BODY
 	| reference
 	| private
 

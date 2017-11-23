@@ -2389,6 +2389,8 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
       }
       else if (current == lxAttributeValue) {
          // if it is an explicit type declaration
+         bool argMode = current.existChild(lxSize);
+
          ref_t ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference, lxPrivate), true);
          if (!ref) {
             ref = scope.mapAttribute(current.findChild(lxIdentifier, lxReference, lxPrivate));
@@ -2400,6 +2402,9 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
          }
 
          writer.newNode(lxParamRefAttr, scope.moduleScope->module->resolveReference(ref));
+         if (argMode) {
+            writer.appendNode(lxSize, -1);
+         }
          copyIdentifier(writer, current.firstChild(lxTerminalMask));
          writer.closeNode();
       }

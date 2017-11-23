@@ -28,7 +28,7 @@ namespace _ELENA_
    #define CONVERSION_MESSAGE      0x60000000u
    #define PROPSET_MESSAGE         0x20000000u
    #define PARAM_MASK              0x0000000Fu
-   #define OPEN_ARG_COUNT          0x0F
+   #define OPEN_ARG_COUNT          0x0C
 
    #define PARAMX_MASK             0x000000000000FFFFu
 

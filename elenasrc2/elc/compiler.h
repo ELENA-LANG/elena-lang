@@ -533,7 +533,7 @@ private:
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
-      //bool         withOpenArg;
+      bool         withOpenArg;
       bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;
@@ -867,7 +867,7 @@ private:
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   ref_t declareArgumentSubject(SNode node, ModuleScope& scope, bool& first, IdentifierString& messageStr, IdentifierString& signature);
+   ref_t declareArgumentSubject(SNode node, ModuleScope& scope, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef);
    void declareArgumentList(SNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
    bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);

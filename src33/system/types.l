@@ -30,7 +30,7 @@ __accessor      = #16399.
 __block         = #16400.
 __nested        = #16401.
 
-//args            = #32. 
+args            = #32. 
 
 __string        = #8200.
 __int           = #11.
