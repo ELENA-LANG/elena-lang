@@ -52,10 +52,10 @@ typedef ClassInfo::Attribute Attribute;
 
 // --- Auxiliary routines ---
 
-//inline bool isCollection(SNode node)
-//{
-//   return (node == lxExpression && node.nextNode() == lxExpression);
-//}
+inline bool isCollection(SNode node)
+{
+   return (node == lxExpression && node.nextNode() == lxExpression);
+}
 
 inline bool isPrimitiveRef(ref_t reference)
 {
@@ -2429,10 +2429,10 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
          result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxExpression:
-//         if (isCollection(member)) {
-//            result = compileCollection(writer, objectNode, scope);
-//         }
-         /*else */result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
+         if (isCollection(member)) {
+            result = compileCollection(writer, objectNode, scope);
+         }
+         else result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxBoxing:
          result = compileExpression(writer, member, scope, mode);
@@ -3729,47 +3729,47 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    return compileClosure(writer, node, ownerScope, scope);
 }
 
-//ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   ref_t parentRef = scope.moduleScope->arrayReference;
-//   SNode parentNode = node.findChild(lxIdentifier, lxPrivate, lxReference);
-//   if (parentNode != lxNone) {
-//      parentRef = scope.moduleScope->mapTerminal(parentNode, true);
-//      if (parentRef == 0)
-//         scope.raiseError(errUnknownObject, node);
-//   }
-//
-//   return compileCollection(writer, node, scope, parentRef);
-//}
-//
-//ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t vmtReference)
-//{
-//   if (vmtReference == 0)
-//      vmtReference = scope.moduleScope->superReference;
-//
-//   int counter = 0;
-//
-//   writer.newBookmark();
-//
-//   // all collection memebers should be created before the collection itself
-//   SNode current = node.findChild(lxExpression);
-//   while (current != lxNone) {
-//      writer.newNode(lxMember, counter);
-//      compileExpression(writer, current, scope, 0);
-//      writer.closeNode();
-//
-//      current = current.nextNode();
-//      counter++;
-//   }
-//
-//   writer.appendNode(lxTarget, vmtReference);
-//   writer.insert(lxNested, counter);
-//   writer.closeNode();
-//
-//   writer.removeBookmark();
-//
-//   return ObjectInfo(okObject, vmtReference);
-//}
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ref_t parentRef = scope.moduleScope->arrayReference;
+   SNode parentNode = node.findChild(lxIdentifier, lxPrivate, lxReference);
+   if (parentNode != lxNone) {
+      parentRef = scope.moduleScope->mapTerminal(parentNode, true);
+      if (parentRef == 0)
+         scope.raiseError(errUnknownObject, node);
+   }
+
+   return compileCollection(writer, node, scope, parentRef);
+}
+
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t vmtReference)
+{
+   if (vmtReference == 0)
+      vmtReference = scope.moduleScope->superReference;
+
+   int counter = 0;
+
+   writer.newBookmark();
+
+   // all collection memebers should be created before the collection itself
+   SNode current = node.findChild(lxExpression);
+   while (current != lxNone) {
+      writer.newNode(lxMember, counter);
+      compileExpression(writer, current, scope, 0);
+      writer.closeNode();
+
+      current = current.nextNode();
+      counter++;
+   }
+
+   writer.appendNode(lxTarget, vmtReference);
+   writer.insert(lxNested, counter);
+   writer.closeNode();
+
+   writer.removeBookmark();
+
+   return ObjectInfo(okObject, vmtReference);
+}
 
 ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
@@ -3999,16 +3999,16 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
                // if it is a nested expression
                objectInfo = compileExpression(writer, current, scope, mode);
             }
-//            else if (test(current.type, lxTerminalMask) && nextChild == lxExpression) {
-//               //HOTFIX : to compile the collection
-//               objectInfo = compileCollection(writer, node, scope);
-//            }
+            else if (test(current.type, lxTerminalMask) && nextChild == lxExpression) {
+               //HOTFIX : to compile the collection
+               objectInfo = compileCollection(writer, node, scope);
+            }
             else if (test(current.type, lxTerminalMask)/* && nextChild == lxNone*/) {
                objectInfo = compileObject(writer, current, scope, mode);
             }
-//            else if (current == lxConstantList) {
-//               objectInfo = compileObject(writer, current, scope, mode);
-//            }
+            else if (current == lxConstantList) {
+               objectInfo = compileObject(writer, current, scope, mode);
+            }
             else objectInfo = compileObject(writer, node, scope, mode);
             break;
          }

@@ -1627,7 +1627,7 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
 
    SNode next = current.nextNode();
    bool identifierMode = current.type == lxIdentifier;
-//   bool listMode = false;
+   bool listMode = false;
    if (next == lxOperator && checkTemplateExpression(current, scope)) {
       // check if it is template expression
       generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
@@ -1638,37 +1638,37 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
 //   }
    else {
       while (current != lxNone) {
-//         if (current == lxExpression) {
-//            // HOTFIX : to supper collection of one element
-//            if ((current.nextNode() == lxExpression || (identifierMode && current.nextNode() == lxNone)) && !test(mode, EXPRESSION_MESSAGE_MODE))
-//               listMode = true;
-//
-//            if (identifierMode) {
-//               generateExpressionTree(writer, current, scope, listMode ? EXPRESSION_EXPLICIT_MODE : 0);
-//            }
-//            else if (listMode) {
-//               generateExpressionTree(writer, current, scope, EXPRESSION_EXPLICIT_MODE);
-//            }
-//            else generateObjectTree(writer, current, scope);
-//         }
-//         else if (listMode && (current == lxMessage || current == lxOperator)) {
-//            // HOTFIX : if it is an operation with a collection
-//            listMode = false;
-//            writer.insert(lxExpression);
-//            writer.closeNode();
-//
-//            generateObjectTree(writer, current, scope);
-//         }
-         /*else */generateObjectTree(writer, current, scope);
+         if (current == lxExpression) {
+            // HOTFIX : to supper collection of one element
+            if ((current.nextNode() == lxExpression || (identifierMode && current.nextNode() == lxNone)) && !test(mode, EXPRESSION_MESSAGE_MODE))
+               listMode = true;
+
+            if (identifierMode) {
+               generateExpressionTree(writer, current, scope, listMode ? EXPRESSION_EXPLICIT_MODE : 0);
+            }
+            else if (listMode) {
+               generateExpressionTree(writer, current, scope, EXPRESSION_EXPLICIT_MODE);
+            }
+            else generateObjectTree(writer, current, scope);
+         }
+         else if (listMode && (current == lxMessage || current == lxOperator)) {
+            // HOTFIX : if it is an operation with a collection
+            listMode = false;
+            writer.insert(lxExpression);
+            writer.closeNode();
+
+            generateObjectTree(writer, current, scope);
+         }
+         else generateObjectTree(writer, current, scope);
 
          current = current.nextNode();
       }
    }
 
-//   if (listMode) {
-//      writer.insert(lxExpression);
-//      writer.closeNode();
-//   }
+   if (listMode) {
+      writer.insert(lxExpression);
+      writer.closeNode();
+   }
 
    if (test(mode, EXPRESSION_EXPLICIT_MODE)) {
       writer.insert(node.type);

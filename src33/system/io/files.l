@@ -57,7 +57,7 @@ sealed nonstructural class File
     read textbuffer:anOutput
     [
         textreader aReader := fileControl reader:thePath.
-        char&      buffer(128).
+        char<128>  buffer.
         int        read := 0.
         while (aReader available)
         [

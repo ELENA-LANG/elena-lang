@@ -74,6 +74,7 @@ if(a==3)[].
                  * implement xpath resolver prototype
 
               dev - general implementation
+                 * compileExpression, compileObject : refactor collection compilation
                  * Read-only classes should be enforced #282
                  * #283 : unboxing duplicate object 
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if

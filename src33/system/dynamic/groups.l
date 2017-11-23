@@ -1,29 +1,29 @@
 // --- Wrap ---
 
-dynamic mixin Wrap
+mixin Wrap
 {
-    object $item.
+    object<> $item.
     
     dispatch => system'core_routines'__wrap.
 }
 
 // --- Extension ---
 
-dynamic mixin Extension
+mixin Extension
 {
-    object $item.
+    object<> $item.
     
     dispatch => system'core_routines'__extension.
 }
 
 // --- Group ---
 
-dynamic mixin Group
+mixin Group
 {
-    object $item.
+    object<> $item.
     
     stacksafe constructor $new int:aLength
-        = object&(aLength).
+        = object<>(aLength).
         
     constructor new args:objects
         <= $new int(objects length);
@@ -36,12 +36,12 @@ dynamic mixin Group
 
 // --- Cast ---
 
-dynamic mixin Cast
+mixin Cast
 {
-    object $item.
+    object<> $item.
     
     stacksafe constructor $new int:aLength
-        = object&(aLength).
+        = object<>(aLength).
         
     constructor new args:objects
         <= $new int(objects length);
