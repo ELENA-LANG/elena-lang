@@ -645,131 +645,131 @@ limited class IndexFunction1
     ]
 }
 
-///// A base two variable index function
-//limited class IndexFunction2
-//{
-//    /// Executes the function
-//    stacksafe closure int:i int:j []
-//
-//    stacksafe eval int:n int:m = $self(n,m).
-//
-//    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
-//    sealed rewind int:i int:j int:n int:m int:dx
-//    [
-//        int x := i.
-//        int y := j.
-//        
-//        while(x >= n)
-//        [
-//            y := j.
-//            
-//            while (y >= m)
-//            [
-//                $self eval int:x int:y.
-//                
-//                y := y - dx
-//            ].
-//                        
-//            x := x - dx
-//        ].
-//        
-//        ^ $nil
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting x-value, starting y-value, ending x-value, ending y-value, step)
-//    sealed run int:i int:j int:n int:m int:dx
-//    [
-//        int x := i.
-//        int y := j.
-//        
-//        while(x <= n)
-//        [
-//            y := j.
-//            
-//            while (y <= m)
-//            [
-//                $self eval int:x int:y.
-//                
-//                y := y + dx
-//            ].
-//                        
-//            x := x + dx
-//        ].
-//        
-//        ^ $nil
-//    ]
-//}
-//
-///// A base three variable index function
-//limited class IndexFunction3
-//{
-//    /// Executes the function
-//    stacksafe closure int:i int:j int:k []
-//
-//    stacksafe eval int:n int:m int:k = $self(n,m,k).
-//
-//    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
-//    sealed rewind int:i int:j int:k int:n int:m int:p int:dx
-//    [
-//        int x := i.
-//        int y := j.
-//        int z := k.
-//        
-//        while(x >= n)
-//        [
-//            y := j.
-//            
-//            while(y >= m)
-//            [
-//                z := k.
-//                
-//                while(z >= p)
-//                [
-//                    $self eval int:x int:y int:z.
-//                    
-//                    z := z - dx
-//                ].                
-//                
-//                y := y - dx
-//            ].
-//                        
-//            x := x - dx
-//        ].
-//        
-//        ^ $nil
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, step)
-//    sealed run int:i int:j int:k int:n int:m int:p int:dx
-//    [
-//        int x := i.
-//        int y := j.
-//        int z := k.
-//        
-//        while(x <= n)
-//        [
-//            y := j.
-//            
-//            while(y <= m)
-//            [
-//                z := k.
-//                
-//                while(z <= p)
-//                [
-//                    $self eval int:x int:y int:z.
-//                    
-//                    z := z + dx
-//                ].                
-//                
-//                y := y + dx
-//            ].
-//                        
-//            x := x + dx
-//        ].
-//        
-//        ^ $nil
-//    ]
-//}
+/// A base two variable index function
+limited class IndexFunction2
+{
+    /// Executes the function
+    stacksafe closure(int i, int j)[]
+
+    stacksafe eval int:n int:m = $self(n,m).
+
+    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
+    sealed rewind int:i int:j int:n int:m int:dx
+    [
+        int x := i.
+        int y := j.
+        
+        while(x >= n)
+        [
+            y := j.
+            
+            while (y >= m)
+            [
+                $self eval int:x int:y.
+                
+                y := y - dx
+            ].
+                        
+            x := x - dx
+        ].
+        
+        ^ $nil
+    ]          
+    
+    /// Executes the function for every value in the specified range (starting x-value, starting y-value, ending x-value, ending y-value, step)
+    sealed run int:i int:j int:n int:m int:dx
+    [
+        int x := i.
+        int y := j.
+        
+        while(x <= n)
+        [
+            y := j.
+            
+            while (y <= m)
+            [
+                $self eval int:x int:y.
+                
+                y := y + dx
+            ].
+                        
+            x := x + dx
+        ].
+        
+        ^ $nil
+    ]
+}
+
+/// A base three variable index function
+limited class IndexFunction3
+{
+    /// Executes the function
+    stacksafe closure(int i, int j, int k) []
+
+    stacksafe eval int:n int:m int:k = $self(n,m,k).
+
+    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
+    sealed rewind int:i int:j int:k int:n int:m int:p int:dx
+    [
+        int x := i.
+        int y := j.
+        int z := k.
+        
+        while(x >= n)
+        [
+            y := j.
+            
+            while(y >= m)
+            [
+                z := k.
+                
+                while(z >= p)
+                [
+                    $self eval int:x int:y int:z.
+                    
+                    z := z - dx
+                ].                
+                
+                y := y - dx
+            ].
+                        
+            x := x - dx
+        ].
+        
+        ^ $nil
+    ]          
+    
+    /// Executes the function for every value in the specified range (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, step)
+    sealed run int:i int:j int:k int:n int:m int:p int:dx
+    [
+        int x := i.
+        int y := j.
+        int z := k.
+        
+        while(x <= n)
+        [
+            y := j.
+            
+            while(y <= m)
+            [
+                z := k.
+                
+                while(z <= p)
+                [
+                    $self eval int:x int:y int:z.
+                    
+                    z := z + dx
+                ].                
+                
+                y := y + dx
+            ].
+                        
+            x := x + dx
+        ].
+        
+        ^ $nil
+    ]
+}
 
 //// --- Boolean ---
 //

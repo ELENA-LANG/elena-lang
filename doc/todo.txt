@@ -1,48 +1,11 @@
 ------                                 
 In development:
 ------                              
-              dev - syntax redesign
-                 * expression : type<Enumerator><>(len)
-
-                 * uncomment CompoundEnumerator
-                 * uncomment StringWriter.writeFormatted(object<> args)
-                 * uncomment SequentialEnumerator
-                 * class cannot have the same name as type, so it is possible to use in signature brackets both
-                   class names and types
-                 * support a test int:2 object<>(1,2,3).
-
-              dev - fixed size array field #123
-                 * support fixed size array : type<ShortNumber,260> cFileName.
-                 * support var<IntNumber>(3)
-                 * support type<IntNumber><>(3)
-                 * support var<IntNumber><>(3)
-
-              dev - syntax redesign
-                 * uncomment nfunc, ...
-                 * invoke multi dispatch
-
-                 * support function call : a(b).
-                 * support function call : a(b,c).
-                 * support template statement : a(b)[ ... ].
-                 * not support template statement : a(b,c)[ ... ]. ??
-                 * support template initialization : var<int>(3).
-
-                 * support array a[b].
-                 * support template statement : a[ ... ];{} (e.g extern[] instead of extern()[]).
-                 * uncomment matrix template
-                 * uncomment IndexFunction2
-                 * uncomment IndexFunction3
-
               dev - lib
                 * support fixed size array : array<IntNumber,4>   - array of 4 elements
 
               dev - closure redesign (#314)
                  * closure call : a(2).
-
-a(2).
-
-if(a==3)[].
-
 
               dev - closure redesign (#314,#197,#196)
                  * closure declaration - (:x)(...)
@@ -83,6 +46,9 @@ if(a==3)[].
                  * implement xpath resolver prototype
 
               dev - general implementation
+                 * class cannot have the same name as type, so it is possible to use in signature brackets both
+                   class names and types
+                 * support a test int:2 object<>(1,2,3).
                  * compileExpression, compileObject : refactor collection compilation
                  * Read-only classes should be enforced #282
                  * #283 : unboxing duplicate object 

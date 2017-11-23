@@ -41,6 +41,7 @@ __subj          = #18.
 __extmssg       = #21.
 //__tape_mixin    = #8209.
 __symbol        = #22.
+__array         = #30.
 
 __ifoperator    = #4097.
 __ifnotoperator = #4098.

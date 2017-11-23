@@ -230,7 +230,7 @@ extension formatterOp
     
     generic printLineFormatted(object<> args)
     [
-        self~formatterOp printFormatted args:args.
+        self~formatterOp printFormatted object<>:args.
         self writeLine.
     ]
 }

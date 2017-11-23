@@ -1533,6 +1533,11 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode current
       expr = operatorNode.findChild(lxExpression);
       arrayMode = true;
    }
+   else if (attrRef == V_OBJARRAY && prefixCounter == 1) {
+      expr = operatorNode.findChild(lxExpression);
+      arrayMode = true;
+      attrRef = scope.mapTerminal(operatorNode.findChild(lxObject).findChild(lxIdentifier, lxReference), true);
+   }
    //if (attrRef == V_TYPETEMPL && prefixCounter == 1) {
    //   attrRef = V_TYPETEMPL;
    //
