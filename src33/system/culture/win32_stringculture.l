@@ -17,11 +17,11 @@ literal extension literalCultureOp
             if(s_len > len)
                 [ s_len := len ].
             
-            short& src_tmp(32).
-            int    src_len := 32.
+            short<32> src_tmp.
+            int       src_len := 32.
             
-            short& dst_tmp(32).
-            int    dst_len := 64.
+            short<32> dst_tmp.
+            int       dst_len := 64.
 
             UTF16Encoding convert int:i vint:s_len literal:self shortarray:src_tmp vint:src_len.
                                     
@@ -51,11 +51,11 @@ literal extension literalCultureOp
             (s_len > len)
                 ? [ s_len := len. ].
             
-            short& src_tmp(32).
-            int    src_len := 32.
+            short<32> src_tmp.
+            int       src_len := 32.
             
-            short& dst_tmp(32).
-            int    dst_len := 64.
+            short<32> dst_tmp.
+            int       dst_len := 64.
 
             UTF16Encoding convert int:i vint:s_len literal:self shortarray:src_tmp vint:src_len.
                                     
@@ -86,13 +86,13 @@ wide extension wideCultureOp
         
         while (len > 0)
         [
-            short& src_tmp(32).
-            int    src_len := 32.
+            short<32> src_tmp.
+            int       src_len := 32.
             if(src_len > len)
                 [ src_len := len ].
             
-            short& dst_tmp(32).
-            int    dst_len := 64.
+            short<32> dst_tmp.
+            int       dst_len := 64.
             
             self $save int:i shortarray:src_tmp int:src_len.
             
@@ -118,13 +118,13 @@ wide extension wideCultureOp
         
         while (len > 0)
         [
-            short& src_tmp(32).
-            int    src_len := 32.
+            short<32> src_tmp.
+            int       src_len := 32.
             if(src_len > len)
                 [ src_len := len ].
             
-            short& dst_tmp(32).
-            int    dst_len := 64.
+            short<32> dst_tmp.
+            int       dst_len := 64.
             
             self $save int:i shortarray:src_tmp int:src_len.
             

@@ -121,9 +121,9 @@ sealed nonstructural class TextBuilder
 
     stacksafe write int:n
     [
-        byte& tmp(16).
-        char& ch_tmp(16).
-        int   len := 16.
+        byte<16> tmp.
+        char<16> ch_tmp.
+        int      len := 16.
         
         literalConvertor convert int:n bytearray:tmp vint:len.
         

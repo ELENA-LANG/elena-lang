@@ -2224,7 +2224,7 @@ void DerivationReader :: generateCodeTree(SyntaxWriter& writer, SNode node, Deri
          SyntaxTree::copyNode(writer, lxLength, terminal);
          writer.closeNode();
       }
-      else if (current == lxLoop || current == lxCode/* || current == lxExtern*/) {
+      else if (current == lxLoop || current == lxCode || current == lxExtern) {
          generateCodeTree(writer, current, scope);
       }
       else if (current == lxObject && checkTemplateExpression(current, scope)) {
@@ -2557,9 +2557,9 @@ bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope,
             case V_IMPORT:
                attr = daImport;
                break;
-//            case V_EXTERN:
-//               attr = (DeclarationAttr)(daExtern | daTemplate);
-//               break;
+            case V_EXTERN:
+               attr = (DeclarationAttr)(daExtern | daTemplate | daBlock);
+               break;
             case V_BLOCK:
                if (test(declType, daBlock)) {
                   if (test(declType, daDblBlock)) {
@@ -2651,9 +2651,9 @@ bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope,
          if (test(declType, daLoop)) {
             node.findChild(lxCode).injectNode(lxLoop);
          }
-         //else if (test(declType, daExtern)) {
-         //   exprNode.injectNode(lxExtern);
-         //}
+         else if (test(declType, daExtern)) {
+            node.findChild(lxCode).injectNode(lxExtern);
+         }
       }
 
       templateName.append('#');

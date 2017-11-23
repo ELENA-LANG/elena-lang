@@ -101,7 +101,7 @@ sealed struct RECT
 
 sealed const struct HDC
 {
-    __dword& theHandle(4).
+    __dword<4> theHandle.
 
     stacksafe implicit int:handle
     [
@@ -179,7 +179,7 @@ sealed const struct HDC
 
 sealed const struct HBITMAP
 {
-    __dword& theHandle(4).
+    __dword<4> theHandle.
 
     stacksafe constructor new hbitmap:aHandle
     [
@@ -220,7 +220,7 @@ sealed const struct HBITMAP
 
 sealed const struct HPEN
 {
-    __dword& theHandle(4).
+    __dword<4> theHandle.
     
     stacksafe constructor new hpen:aHandle
     [
@@ -244,7 +244,7 @@ sealed const struct HPEN
 
 sealed const struct HBRUSH
 {
-    __dword& theHandle(4).
+    __dword<4> theHandle.
 
     constructor new hbrush:aHandle
     [

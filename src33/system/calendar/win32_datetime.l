@@ -31,7 +31,7 @@ class $systemTimeFactory =
 
 sealed const struct SystemTime :: BaseValue
 {
-    __int& theValue(8).
+    __int<8> theValue.
 
     stacksafe explicit long:value
     [
@@ -234,7 +234,7 @@ sealed struct TimeStruct
       
     stacksafe toWide date_attributes:Flags
     [
-        short& aBuffer(127).
+        short<127> aBuffer.
 
         int aLength := system'external'KERNEL32 GetDateFormatW
             int:0
@@ -253,7 +253,7 @@ sealed struct TimeStruct
     
     stacksafe toWide time_attributes:Flags
     [
-        short& aBuffer(127).
+        short<127> aBuffer.
 
         int aLength := system'external'KERNEL32 GetTimeFormatW
             int:0

@@ -64,24 +64,24 @@ field template rprop :: type, prop_name
 //    
 //    __properties = theProperties.
 //}
-//
-//// --- vprop ---
-//
-//accessor accessor template vprop :: prop_type,prop_name
-//{
-//    stacksafe embeddable prop_type prop_name
-//    [
-//        prop_type val := 0.        
-//        $self $get var<prop_type>:val.
-//
-//        ^ val.
-//    ]
-//    
-//    stacksafe embeddable set prop_name prop_type:val
-//    [
-//        $self $set prop_type:val.
-//    ]
-//}
+
+// --- vprop ---
+
+__accessor __accessor template vprop :: prop_type,prop_name
+{
+    stacksafe embeddable prop_type prop_name
+    [
+        prop_type val := 0.        
+        $self $get var<prop_type>:val.
+
+        ^ val.
+    ]
+    
+    stacksafe embeddable set prop_name prop_type:val
+    [
+        $self $set prop_type:val.
+    ]
+}
 
 // --- vvprop ---
 
@@ -199,11 +199,13 @@ __loop template until :: expr
     ].
 ]
     
-//// --- extern statement ---
-//
-//__extern template extern =
-//    [
-//    ].
+// --- extern statement ---
+
+__extern template extern
+[
+    [
+    ].
+]
 
 // --- if statement ---
 

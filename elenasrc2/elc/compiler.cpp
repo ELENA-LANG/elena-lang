@@ -4094,11 +4094,11 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
          case lxVariable:
             compileVariable(writer, current, scope);
             break;
-//         case lxExtern:
-//            writer.newNode(lxExternFrame);
-//            compileCode(writer, current.findSubNode(lxCode), scope);
-//            writer.closeNode();
-//            break;
+         case lxExtern:
+            writer.newNode(lxExternFrame);
+            compileCode(writer, current.findSubNode(lxCode), scope);
+            writer.closeNode();
+            break;
          case lxEOF:
             needVirtualEnd = false;
             writer.newNode(lxBreakpoint, dsEOP);

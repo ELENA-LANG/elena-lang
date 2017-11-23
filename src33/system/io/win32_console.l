@@ -160,11 +160,11 @@ sealed class $FileWriter
 
     write wide : literal
     [
-        byte& buffer(256).
-        int   length := literal length.
-        int   index := 0.
-        int   buf_len := 256.
-        int   subs_len := 256.
+        byte<256> buffer.
+        int       length := literal length.
+        int       index := 0.
+        int       buf_len := 256.
+        int       subs_len := 256.
         while (length > 0)
         [
             buf_len := 256.
@@ -184,11 +184,11 @@ sealed class $FileWriter
     
     write literal : literal
     [
-        byte& buffer(256).
-        int   length := literal length.
-        int   index := 0.
-        int   buf_len := 256.
-        int   subs_len := 256.
+        byte<256> buffer.
+        int       length := literal length.
+        int       index := 0.
+        int       buf_len := 256.
+        int       subs_len := 256.
         while (length > 0)
         [
             buf_len := 256.
@@ -234,11 +234,11 @@ sealed struct $ConsoleReader
 
     stacksafe read vchar:aChar
     [
-        byte& aDump(20).
-        int   aNumberRead := 0.
-        short anEventType := 0.
-        int   aKeyDown := 0.
-        int   aHandle := theHandle.
+        byte<20> aDump.
+        int      aNumberRead := 0.
+        short    anEventType := 0.
+        int      aKeyDown := 0.
+        int      aHandle := theHandle.
         
         bool found := false.
         until (found)
@@ -267,10 +267,10 @@ sealed struct $ConsoleReader
 
     stacksafe read vint:aKey
     [
-        byte& aDump(20).
-        int   aNumberRead := 0.
-        short anEventType := 0.
-        int   aKeyDown := 0.
+        byte<20> aDump.
+        int      aNumberRead := 0.
+        short    anEventType := 0.
+        int      aKeyDown := 0.
         
         bool found := false.
         until (found)
@@ -299,10 +299,10 @@ sealed struct $ConsoleReader
 
     bool isKeyAvailable
     [
-        byte& aDump(20).
-        int   aNumberRead := 1.
-        short anEventType := 0.
-        int   aKeyDown := 0.
+        byte<20> aDump.
+        int      aNumberRead := 1.
+        short    anEventType := 0.
+        int      aKeyDown := 0.
         
         while (true)
         [
@@ -352,9 +352,9 @@ sealed struct $ConsoleReader
     
     wide
     [
-        short& aBuffer(127).
-        int    aLength := 0.
-        var    anOutput := emptyWideLiteralValue.
+        short<127> aBuffer.
+        int        aLength := 0.
+        var        anOutput := emptyWideLiteralValue.
         
         bool continue := true.
         while (continue)
