@@ -204,319 +204,319 @@ extension enumerableOp
             [ ^ $nil ]
     ]
 
-    maximalMember
-    [
-        enumerator en := self enumerator.
-        
-        object maximal := $nil.
-        while (en next)
-        [
-            var item := en get.
-            if ($nil == maximal)
-            [
-                maximal := item
-            ]; if (maximal < item)
-            [
-                maximal := item
-            ]
-        ].
-        
-        ^ maximal   
-    ]
-    
-    minimalMember
-    [
-        enumerator en := self enumerator.
-        
-        object maximal := $nil.
-        while (en next)
-        [
-            var item := en get.
-            if ($nil == maximal)
-            [
-                maximal := item
-            ]; if (maximal > item)
-            [
-                maximal := item
-            ]
-        ].
-        
-        ^ maximal   
-    ]
-    
-    lastMember
-    [
-        enumerator anEnumerator := self enumerator.
-        object     aLastItem := $nil.
-        
-        while (anEnumerator next)
-            [ aLastItem := anEnumerator get ].
-            
-        ^ aLastItem
-    ]
-    
-    int countMembers
-    [
-        enumerator en := self enumerator.
-        int        counter := 0.
-        while (en next)
-        [
-            counter := counter + 1
-        ].
-        
-        ^ counter
-    ]
-    
-    allMatchedBy(BaseFunction1 f)
-    [
-        enumerator en := self enumerator.
-        while (en next)
-        [
-            ifnot (f eval(en get))
-            [
-                ^ false
-            ]
-        ].
-        
-        ^ true.
-    ]
-    
-    allMatchedBy(ExtensionMessage extMessage)
-        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
-}
-
-// --- indexableOp ---
-
-extension indexableOp
-{
-    exchange : anIndex1 : anIndex2
-        = self~indexableOp exchange int:anIndex1 int:anIndex2.
-        
-    stacksafe exchange int:anIndex1 int:anIndex2
-    [
-        indexer anIndexer := self indexer.
-        
-        anIndexer writeIndex int:anIndex1.
-        
-        var anObject1 := anIndexer get.
-        
-        anIndexer writeIndex int:anIndex2.
-        var anObject2 := anIndexer get.
-        
-        anIndexer set:anObject1.
-        
-        anIndexer writeIndex int:anIndex1.
-        anIndexer set:anObject2
-    ]
-    
-    forEvery nfunc:fn
-    [
-        indexer it := self indexer.
-        
-        while (it available)
-        [
-            fn eval int:(it index).
-            
-            it append index:1.
-        ].
-    ]
-    
-    forEvery(BaseFunction1 aFunction)
-        = self~indexableOp forEvery(&int:n)(aFunction eval:n).
-    
-    indexOfElement : anObject
-    [
-        indexer anIndexer := self indexer.
-        
-        while (anIndexer available)
-        [
-            if (anObject == anIndexer get)
-                [ ^ anIndexer index ].
-            
-            anIndexer append index:1.
-        ].
-        
-        ^ -1
-    ]
-    
-//    #method deepClone
+//    maximalMember
 //    [
-//        #var aCopy := self clone.
+//        enumerator en := self enumerator.
 //        
-//        #var(indexer)aIndexer := aCopy indexer.
-//        
-//        #loop (aIndexer available)?
+//        object maximal := $nil.
+//        while (en next)
 //        [
-//            aIndexer set:(aIndexer get clone).
-//            
-//            aIndexer append &index:1.
+//            var item := en get.
+//            if ($nil == maximal)
+//            [
+//                maximal := item
+//            ]; if (maximal < item)
+//            [
+//                maximal := item
+//            ]
 //        ].
 //        
-//        ^ aCopy.
+//        ^ maximal   
 //    ]
-        
-    populate(IndexFunction1 anIndexFunc)
-    [
-        indexer aIndexer := self indexer.
-
-        while (aIndexer available)
-        [
-            int anIndex := 0.
-            aIndexer readIndexTo vint:anIndex.
-            
-            aIndexer set:(anIndexFunc eval int:anIndex).
-            
-            aIndexer append index:1
-        ].
-        
-        ^ self
-    ]    
-
-    populate(ExtensionMessage anExtMessage)
-        = self~indexableOp populate(&int:n)[ ^n~anExtMessage get ].
-
-    populate(BaseFunction1 aFunction)
-        = self~indexableOp populate(&int:n)[ ^aFunction eval:n ].
-
-    multi populate : anAction
-        = self~indexableOp populate(&int:n)[ ^anAction eval:n ].
-
-    isSorted func2:aCompareFunc
-    [
-        indexer it := self indexer.
-        if (it available)
-        [
-            var previous := it get.
-            it append index:1.
-            while (it available)
-            [
-                ifnot (aCompareFunc eval(previous, it get))
-                [
-                    ^ false
-                ].
-                
-                previous := it get.
-                it append index:1
-            ]
-        ].
-        
-        ^ true.
-    ]
-
-    sort func2:aCompareFunc
-    [
-        indexer aFormer := self indexer.
-        indexer aLater := self indexer.
-
-        while (aFormer available)
-        [
-            int i := aFormer index.
-            
-            aLater writeIndex int:(i + 1).
-            
-            while (aLater available)
-            [
-                ifnot (aCompareFunc eval(aFormer get, aLater get))
-                    [
-                        var aTmp := aFormer get.
-                        aFormer set(aLater get).
-                        aLater set:aTmp.
-                    ].
-                    
-                aLater append index:1
-            ].
-            aFormer append index:1
-        ].
-        
-        ^ self
-    ]
-    
-    ascendant
-        = (self clone)~indexableOp sort:ifOrdered.
-
-    isAscendant
-        = self~indexableOp isSorted:ifOrdered.
-
-    Subarray : aLength at:anIndex
-        = self~indexableOp Subarray int:anIndex int:aLength.
-                
-    Subarray int:anIndex int:aLength
-    [
-        indexer it := self indexer.
-        
-        ^ Array new int:aLength; populate(&int:i)(it writeIndex int(anIndex + i); get)
-    ]
-    
-    sequenceEqual:anArray
-    [
-        if (self length != anArray length)
-            [ ^ false ].
-            
-        indexer a := self indexer.
-        indexer b := anArray indexer.
-        
-        while (a available)
-        [
-            ifnot (a get == b get)
-                [ ^ false ].
-                
-            a append index:1.
-            b append index:1
-        ].
-          
-        ^ true                
-    ]
-            
-    sequenceReverse
-        = self~indexableOp sequenceReverse(self length) at:0.
-            
-    sequenceReverse:counter at:index
-    [
-        indexer it := self indexer.
-        
-        int      i := index int.
-        int      j := counter int.
-        j := j + i.
-        j := j - 1.
-        
-        while (i < j)
-        [
-            it writeIndex int:i.
-            var temp1 := it get.
-            it writeIndex int:j.
-            var temp2 := it get.
-            it set:temp1.
-            it writeIndex int:i.
-            it set:temp2.
-            
-            i := i + 1.
-            j := j - 1
-        ].
-        
-        ^ self
-    ]    
+//    
+//    minimalMember
+//    [
+//        enumerator en := self enumerator.
+//        
+//        object maximal := $nil.
+//        while (en next)
+//        [
+//            var item := en get.
+//            if ($nil == maximal)
+//            [
+//                maximal := item
+//            ]; if (maximal > item)
+//            [
+//                maximal := item
+//            ]
+//        ].
+//        
+//        ^ maximal   
+//    ]
+//    
+//    lastMember
+//    [
+//        enumerator anEnumerator := self enumerator.
+//        object     aLastItem := $nil.
+//        
+//        while (anEnumerator next)
+//            [ aLastItem := anEnumerator get ].
+//            
+//        ^ aLastItem
+//    ]
+//    
+//    int countMembers
+//    [
+//        enumerator en := self enumerator.
+//        int        counter := 0.
+//        while (en next)
+//        [
+//            counter := counter + 1
+//        ].
+//        
+//        ^ counter
+//    ]
+//    
+//    allMatchedBy(BaseFunction1 f)
+//    [
+//        enumerator en := self enumerator.
+//        while (en next)
+//        [
+//            ifnot (f eval(en get))
+//            [
+//                ^ false
+//            ]
+//        ].
+//        
+//        ^ true.
+//    ]
+//    
+//    allMatchedBy(ExtensionMessage extMessage)
+//        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
 }
 
-// --- stringListOp ---
-
-singleton $stringController
-{
-    split literal:l char:ch
-        = l~literalListOp split char:ch.
-        
-    split literal:l literal:sp_l
-        = l~literalListOp split literal:sp_l.
-        
-    split wide:l char:ch
-        = l~wideListOp split char:ch.
-        
-    split wide:l wide:sp_l
-        = l~wideListOp split wide:sp_l.
-        
-}
-
-extension stringListOp
-{
-    split by:aSplitter
-        = $stringController split(self, aSplitter).
-}
+//// --- indexableOp ---
+//
+//extension indexableOp
+//{
+//    exchange : anIndex1 : anIndex2
+//        = self~indexableOp exchange int:anIndex1 int:anIndex2.
+//        
+//    stacksafe exchange int:anIndex1 int:anIndex2
+//    [
+//        indexer anIndexer := self indexer.
+//        
+//        anIndexer writeIndex int:anIndex1.
+//        
+//        var anObject1 := anIndexer get.
+//        
+//        anIndexer writeIndex int:anIndex2.
+//        var anObject2 := anIndexer get.
+//        
+//        anIndexer set:anObject1.
+//        
+//        anIndexer writeIndex int:anIndex1.
+//        anIndexer set:anObject2
+//    ]
+//    
+//    forEvery nfunc:fn
+//    [
+//        indexer it := self indexer.
+//        
+//        while (it available)
+//        [
+//            fn eval int:(it index).
+//            
+//            it append index:1.
+//        ].
+//    ]
+//    
+//    forEvery(BaseFunction1 aFunction)
+//        = self~indexableOp forEvery(&int:n)(aFunction eval:n).
+//    
+//    indexOfElement : anObject
+//    [
+//        indexer anIndexer := self indexer.
+//        
+//        while (anIndexer available)
+//        [
+//            if (anObject == anIndexer get)
+//                [ ^ anIndexer index ].
+//            
+//            anIndexer append index:1.
+//        ].
+//        
+//        ^ -1
+//    ]
+//    
+////    #method deepClone
+////    [
+////        #var aCopy := self clone.
+////        
+////        #var(indexer)aIndexer := aCopy indexer.
+////        
+////        #loop (aIndexer available)?
+////        [
+////            aIndexer set:(aIndexer get clone).
+////            
+////            aIndexer append &index:1.
+////        ].
+////        
+////        ^ aCopy.
+////    ]
+//        
+//    populate(IndexFunction1 anIndexFunc)
+//    [
+//        indexer aIndexer := self indexer.
+//
+//        while (aIndexer available)
+//        [
+//            int anIndex := 0.
+//            aIndexer readIndexTo vint:anIndex.
+//            
+//            aIndexer set:(anIndexFunc eval int:anIndex).
+//            
+//            aIndexer append index:1
+//        ].
+//        
+//        ^ self
+//    ]    
+//
+//    populate(ExtensionMessage anExtMessage)
+//        = self~indexableOp populate(&int:n)[ ^n~anExtMessage get ].
+//
+//    populate(BaseFunction1 aFunction)
+//        = self~indexableOp populate(&int:n)[ ^aFunction eval:n ].
+//
+//    multi populate : anAction
+//        = self~indexableOp populate(&int:n)[ ^anAction eval:n ].
+//
+//    isSorted func2:aCompareFunc
+//    [
+//        indexer it := self indexer.
+//        if (it available)
+//        [
+//            var previous := it get.
+//            it append index:1.
+//            while (it available)
+//            [
+//                ifnot (aCompareFunc eval(previous, it get))
+//                [
+//                    ^ false
+//                ].
+//                
+//                previous := it get.
+//                it append index:1
+//            ]
+//        ].
+//        
+//        ^ true.
+//    ]
+//
+//    sort func2:aCompareFunc
+//    [
+//        indexer aFormer := self indexer.
+//        indexer aLater := self indexer.
+//
+//        while (aFormer available)
+//        [
+//            int i := aFormer index.
+//            
+//            aLater writeIndex int:(i + 1).
+//            
+//            while (aLater available)
+//            [
+//                ifnot (aCompareFunc eval(aFormer get, aLater get))
+//                    [
+//                        var aTmp := aFormer get.
+//                        aFormer set(aLater get).
+//                        aLater set:aTmp.
+//                    ].
+//                    
+//                aLater append index:1
+//            ].
+//            aFormer append index:1
+//        ].
+//        
+//        ^ self
+//    ]
+//    
+//    ascendant
+//        = (self clone)~indexableOp sort:ifOrdered.
+//
+//    isAscendant
+//        = self~indexableOp isSorted:ifOrdered.
+//
+//    Subarray : aLength at:anIndex
+//        = self~indexableOp Subarray int:anIndex int:aLength.
+//                
+//    Subarray int:anIndex int:aLength
+//    [
+//        indexer it := self indexer.
+//        
+//        ^ Array new int:aLength; populate(&int:i)(it writeIndex int(anIndex + i); get)
+//    ]
+//    
+//    sequenceEqual:anArray
+//    [
+//        if (self length != anArray length)
+//            [ ^ false ].
+//            
+//        indexer a := self indexer.
+//        indexer b := anArray indexer.
+//        
+//        while (a available)
+//        [
+//            ifnot (a get == b get)
+//                [ ^ false ].
+//                
+//            a append index:1.
+//            b append index:1
+//        ].
+//          
+//        ^ true                
+//    ]
+//            
+//    sequenceReverse
+//        = self~indexableOp sequenceReverse(self length) at:0.
+//            
+//    sequenceReverse:counter at:index
+//    [
+//        indexer it := self indexer.
+//        
+//        int      i := index int.
+//        int      j := counter int.
+//        j := j + i.
+//        j := j - 1.
+//        
+//        while (i < j)
+//        [
+//            it writeIndex int:i.
+//            var temp1 := it get.
+//            it writeIndex int:j.
+//            var temp2 := it get.
+//            it set:temp1.
+//            it writeIndex int:i.
+//            it set:temp2.
+//            
+//            i := i + 1.
+//            j := j - 1
+//        ].
+//        
+//        ^ self
+//    ]    
+//}
+//
+//// --- stringListOp ---
+//
+//singleton $stringController
+//{
+//    split literal:l char:ch
+//        = l~literalListOp split char:ch.
+//        
+//    split literal:l literal:sp_l
+//        = l~literalListOp split literal:sp_l.
+//        
+//    split wide:l char:ch
+//        = l~wideListOp split char:ch.
+//        
+//    split wide:l wide:sp_l
+//        = l~wideListOp split wide:sp_l.
+//        
+//}
+//
+//extension stringListOp
+//{
+//    split by:aSplitter
+//        = $stringController split(self, aSplitter).
+//}

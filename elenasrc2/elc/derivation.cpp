@@ -42,7 +42,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
          break;
       case nsExpression:
       case nsRootExpression:
-//      case nsNestedRootExpression:
+      case nsNestedRootExpression:
          _writer.newNode(lxExpression);
          break;
       case nsCodeEnd:
@@ -148,9 +148,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsAttribute:
          _writer.newNode(lxAttributeDecl);
          break;
-//      case nsNestedSubCode:
-//         _writer.newNode(lxCode);
-//         break;
+      case nsNestedSubCode:
+         _writer.newNode(lxCode);
+         break;
       case nsIdleMessageParameter:
          _writer.newNode(lxIdleMsgParameter);
          break;
@@ -2485,25 +2485,25 @@ bool DerivationReader :: declareType(SyntaxWriter& writer, SNode node, Derivatio
    return !invalid;
 }
 
-//void DerivationReader :: includeModule(SNode ns, _CompilerScope& scope)
-//{
-//   ident_t name = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
-//   if (name.compare(STANDARD_MODULE))
-//      // system module is included automatically - nothing to do in this case
-//      return;
-//
-//   bool duplicateExtensions = false;
-//   bool duplicateAttributes = false;
-//   bool duplicateInclusion = false;
-//   if (scope.includeModule(name, duplicateExtensions, duplicateAttributes, duplicateInclusion)) {
-//      if (duplicateExtensions)
-//         scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
-//   }
-//   else if (duplicateInclusion) {
-//      scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, ns);
-//   }
-//   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
-//}
+void DerivationReader :: includeModule(SNode ns, _CompilerScope& scope)
+{
+   ident_t name = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
+   if (name.compare(STANDARD_MODULE))
+      // system module is included automatically - nothing to do in this case
+      return;
+
+   bool duplicateExtensions = false;
+   bool duplicateAttributes = false;
+   bool duplicateInclusion = false;
+   if (scope.includeModule(name, duplicateExtensions, duplicateAttributes, duplicateInclusion)) {
+      if (duplicateExtensions)
+         scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
+   }
+   else if (duplicateInclusion) {
+      scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, ns);
+   }
+   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
+}
 
 bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope, SNode attributes)
 {
@@ -2554,9 +2554,9 @@ bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope,
                }
                else attr = daAccessor;
                break;
-//            case V_IMPORT:
-//               attr = daImport;
-//               break;
+            case V_IMPORT:
+               attr = daImport;
+               break;
 //            case V_EXTERN:
 //               attr = (DeclarationAttr)(daExtern | daTemplate);
 //               break;
@@ -2596,13 +2596,13 @@ bool DerivationReader :: generateDeclaration(SNode node, DerivationScope& scope,
 
       return retVal;
    }
-//   if (declType == daImport) {
-//      SNode name = goToNode(attributes, lxNameAttr);
-//
-//      includeModule(name, *scope.moduleScope);
-//
-//      return true;
-//   }
+   else if (declType == daImport) {
+      SNode name = goToNode(attributes, lxNameAttr);
+
+      includeModule(name, *scope.moduleScope);
+
+      return true;
+   }
    else if (test(declType, daTemplate)) {
       node = lxTemplate;
 
