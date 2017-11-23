@@ -4,7 +4,7 @@ import extensions.
 
 // --- Prompter ---
 
-prompter = (&int:anIndex)
+prompter = (:anIndex)<int>
 [
      ^ console print("Enter array[",anIndex,"]:"); readLineTo(Integer new); int
 ].

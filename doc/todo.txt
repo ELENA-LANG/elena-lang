@@ -1,18 +1,8 @@
 ------                                 
 In development:
 ------                              
-              dev - lib
-                * support fixed size array : array<IntNumber,4>   - array of 4 elements
-
-              dev - closure redesign (#314)
-                 * closure call : a(2).
-
-              dev - closure redesign (#314,#197,#196)
-                 * closure declaration - (:x)(...)
-                 * closure declaration - ()(...)
-                 * closure declaration with explicit signature - (:x)<IntNumber>(...), do not support (&int:x)(...)
-
-                 * closure is a special method where self (message target) is not passed
+              dev - migrating
+                 * bsort
 
               dev - self and $self in the closure (#198)
                  * redesign
