@@ -221,7 +221,7 @@ realmatrix extension matrixOp
 
         // permutation matrix
         intarray pm := IntArray new int:n.
-        pm populate(&int:i) [ ^i ].
+        pm populate(:i)<int> [ ^i ].
 
         // each column, j is counter for coulmns
         int  max_col := 0.

@@ -18,16 +18,16 @@ int extension intLoopOp
         = self~intLoopOp runIntLoop int(anEnd-1) nfunc:aFunction.
             
     stacksafe to(int anEnd) do(func1 aFunction)
-        = self~intLoopOp runIntLoop int:anEnd nfunc(&int:n)[ aFunction eval:n ].
+        = self~intLoopOp runIntLoop int:anEnd nfunc(:n)<int>[ aFunction eval:n ].
             
     stacksafe to(int anEnd) do(ext_mssg anExtension)
-        = self~intLoopOp runIntLoop int:anEnd nfunc(&int:n)[ n~anExtension get ].
+        = self~intLoopOp runIntLoop int:anEnd nfunc(:n)<int>[ n~anExtension get ].
             
     multi to:anEnd do:anAction
-        = self~intLoopOp runIntLoop int(anEnd int) nfunc(&int:n)[ anAction eval:n ].
+        = self~intLoopOp runIntLoop int(anEnd int) nfunc(:n)<int>[ anAction eval:n ].
         
     multi till:anEnd do:anAction
-        = self~intLoopOp runIntLoop int(anEnd int - 1) nfunc(&int:n)[ anAction eval:n ].
+        = self~intLoopOp runIntLoop int(anEnd int - 1) nfunc(:n)<int>[ anAction eval:n ].
 }
 
 extension forLoopOp

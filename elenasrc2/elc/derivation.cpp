@@ -112,15 +112,15 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsRootMessage:
 //         _writer.newNode(lxMessage, -2);
 //         break;
-//      case nsLazyExpression:
-//         _writer.newNode(lxLazyExpression);
-//         break;
+      case nsLazyExpression:
+         _writer.newNode(lxLazyExpression);
+         break;
       case nsRetStatement:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
          break;
-//      case nsMessageReference:
-//         _writer.newNode(lxMessageReference);
-//         break;
+      case nsMessageReference:
+         _writer.newNode(lxMessageReference);
+         break;
       case nsSizeValue:
          _writer.newNode(lxSize);
          break;
@@ -1386,20 +1386,20 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
       case lxExpression:
          generateExpressionTree(writer, current, scope, 0);
          break;
-//      case lxMessageReference:
-//      case lxLazyExpression:
-//         writer.newNode(lxExpression);
-//         writer.newNode(current.type);
-//         if (current == lxLazyExpression) {
-//            generateExpressionTree(writer, current, scope, 0);
-//         }
-//         else if (scope.type == DerivationScope::ttFieldTemplate) {
-//            scope.copySubject(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
-//         }
-//         else copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
-//         writer.closeNode();
-//         writer.closeNode();
-//         break;
+      case lxMessageReference:
+      case lxLazyExpression:
+         writer.newNode(lxExpression);
+         writer.newNode(current.type);
+         if (current == lxLazyExpression) {
+            generateExpressionTree(writer, current, scope, 0);
+         }
+         else if (scope.type == DerivationScope::ttFieldTemplate) {
+            scope.copySubject(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
+         }
+         else copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
+         writer.closeNode();
+         writer.closeNode();
+         break;
       case lxObject:
          generateExpressionTree(writer, current, scope, 0);
          break;

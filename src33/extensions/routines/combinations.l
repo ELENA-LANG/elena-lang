@@ -43,7 +43,7 @@ class sequentialNext = BaseStrategy::
         
     getAt array:Indexers int:aLength
     [
-        ^ Array new int:aLength; populate(&int:i) (Indexers getAt int:i; get)
+        ^ Array new int:aLength; populate(:i)<int>(Indexers getAt int:i; get)
     ]
 }.
 
@@ -73,7 +73,7 @@ class parallelNext = BaseStrategy::
         
     getAt array:Indexers int:aLength
     [
-        ^ Array new int:aLength; populate(&int:i)(Indexers array; getAt int:i; get ).
+        ^ Array new int:aLength; populate(:i)<int>(Indexers array; getAt int:i; get ).
     ]
 }.
 
@@ -95,7 +95,7 @@ class combinationNext = BaseStrategy::
 
     getAt array:Indexers int:aLength
     [
-        ^ Array new int:aLength; populate(&int:i)(Indexers array; getAt int:i; get)
+        ^ Array new int:aLength; populate(:i)<int>(Indexers array; getAt int:i; get)
     ]
         
     $strategy eval array:Indexers int:aLength
@@ -119,7 +119,7 @@ class combinationNext = BaseStrategy::
         
         //i to &int:(k - 1)
         IntNumber new int:i; runIntLoop int:(k - 1)
-            nfunc: (&int:j) [ anArray getAt int:j; writeIndex int:(IntNumber new int:(anArray getAt int:(j - 1); index; int + 1)) ].
+            nfunc: (:j)<int>[ anArray getAt int:j; writeIndex int:(IntNumber new int:(anArray getAt int:(j - 1); index; int + 1)) ].
             
         ^ $self          
     ]
@@ -132,7 +132,7 @@ class combinationStart = BaseStrategy::
         array anArray := Indexers array.
         int aLength := anArray length.
         
-        0~intLoopOp to(aLength - 1) do(&int:i) [ anArray getAt int:i; indexer; writeIndex int:i ].
+        0~intLoopOp to(aLength - 1) do(:i)<int>[ anArray getAt int:i; indexer; writeIndex int:i ].
         
         ^ combinationNext
     ]
@@ -147,7 +147,7 @@ class BaseRowEnumerator :: Enumerator
     
     $strategy theStrategy.
 
-    constructor new object&:Arguments
+    constructor new(object<> Arguments)
     [
         theLength := Arguments length.
         theIndexers := Array new int:theLength.
@@ -190,21 +190,21 @@ class BaseRowEnumerator :: Enumerator
         = theStrategy getAt array:theIndexers int:theLength.
 }
 
-// --- SequentialEnumerator ---
-
-class SequentialEnumerator :: BaseRowEnumerator
-{
-    constructor new : Arguments
-        <= new:Arguments.
-    
-    constructor new args:Arguments    
-        <= new args:Arguments.
-
-    reset
-    [
-        theStrategy := sequentialStart.
-    ]
-}
+//// --- SequentialEnumerator ---
+//
+//class SequentialEnumerator :: BaseRowEnumerator
+//{
+//    constructor new : Arguments
+//        <= new:Arguments.
+//    
+//    constructor new args:Arguments    
+//        <= new args:Arguments.
+//
+//    reset
+//    [
+//        theStrategy := sequentialStart.
+//    ]
+//}
 
 // --- ParallelEnumerator ---
 
@@ -226,7 +226,7 @@ class Combinator :: BaseRowEnumerator
     int theTotalLength.
     
     constructor new : aSubLength of:aSet
-        <= new : (Array new int:(aSubLength int); populate(&int:n)(aSet));
+        <= new : (Array new int:(aSubLength int); populate(:n)<int>(aSet));
     [
         theTotalLength := aSet length.
     ]

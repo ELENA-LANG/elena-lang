@@ -19,8 +19,8 @@ class scriptEngine =
 {
     stacksafe $lastScriptError
     [
-        byte& aBuffer(256).
-        int   aLength := system'external'elenasm GetStatus
+        byte<256> aBuffer.
+        int       aLength := system'external'elenasm GetStatus
                                 bytearray:aBuffer
                                 int:255.
             

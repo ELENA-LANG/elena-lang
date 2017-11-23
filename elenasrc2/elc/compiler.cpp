@@ -1567,16 +1567,16 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
       case okSubject:
       case okSignatureConstant:
          return V_SIGNATURE;
-//      case okExtMessageConstant:
-//         return scope.extMessageReference;
+      case okExtMessageConstant:
+         return scope.extMessageReference;
       case okSuper:
          return object.param;
       case okParams:
          return V_ARGARRAY;
       case okExternal:
          return V_INT32;
-//      case okMessageConstant:
-//         return V_MESSAGE;
+      case okMessageConstant:
+         return V_MESSAGE;
       case okNil:
          return V_NIL;
       case okField:
@@ -2259,12 +2259,12 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okNil:
          writer.newNode(lxNil, object.param);
          break;
-      //case okMessageConstant:
-      //   writer.newNode(lxMessageConstant, object.param);
-      //   break;
-      //case okExtMessageConstant:
-      //   writer.newNode(lxExtMessageConstant, object.param);
-      //   break;
+      case okMessageConstant:
+         writer.newNode(lxMessageConstant, object.param);
+         break;
+      case okExtMessageConstant:
+         writer.newNode(lxExtMessageConstant, object.param);
+         break;
       case okSignatureConstant:
          writer.newNode(lxSignatureConstant, object.param);
          break;
@@ -2418,11 +2418,11 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 {
    ObjectInfo result;
 
-   SNode member = objectNode.findChild(lxCode, lxNestedClass, /*lxMessageReference, */lxExpression/*, lxLazyExpression*/, lxBoxing);
+   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing);
    switch (member.type)
    {
       case lxNestedClass:
-//      case lxLazyExpression:
+      case lxLazyExpression:
          result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
          break;
       case lxCode:
@@ -2437,9 +2437,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
       case lxBoxing:
          result = compileExpression(writer, member, scope, mode);
          break;
-//      case lxMessageReference:
-//         result = compileMessageReference(writer, member, scope, mode);
-//         break;
+      case lxMessageReference:
+         result = compileMessageReference(writer, member, scope, mode);
+         break;
       default:
          result = compileTerminal(writer, objectNode, scope, mode);
    }
@@ -2447,94 +2447,94 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
    return result;
 }
 
-//ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-//   SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
-//   IdentifierString signature;
-//   int paramCount = 0;
-//   ref_t extensionRef = 0;
-//   if (terminal == lxIdentifier || terminal == lxPrivate) {
-//      ident_t name = terminal.identifier();
-//      signature.copy(name);
-//
-//      paramCount = -1;
-//   }
-//   else {
-//      ident_t message = terminal.identifier();
-//
-//      int subject = message.find('.',0);
-//      if (subject != 0) {
-//         signature.copy(message, subject);
-//         if (signature.ident().find('\'') != NOTFOUND_POS) {
-//            // if it is a full reference
-//            extensionRef = scope.moduleScope->mapReference(signature.ident(), true);
-//         }
-//         else extensionRef = scope.moduleScope->resolveIdentifier(signature);
-//         if (extensionRef == 0)
-//            scope.raiseError(errInvalidSubject, terminal);
-//
-//         subject++;
-//      }
-//
-//      int param = 0;
-//      for (size_t i = subject; i < getlength(message); i++) {
-//         if (message[i] == '&') {
-//         }
-//         else if (message[i] == '[') {
-//            int len = getlength(message);
-//            if (message[i+1] == ']') {
-//               paramCount = OPEN_ARG_COUNT;
-//            }
-//            else if (message[len - 1] == ']') {
-//               signature.copy(message + i + 1, len - i - 2);
-//               paramCount = signature.ident().toInt();
-//               if (paramCount >= OPEN_ARG_COUNT)
-//                  scope.raiseError(errInvalidSubject, terminal);
-//            }
-//            else scope.raiseError(errInvalidSubject, terminal);
-//
-//            param = i;
-//            break;
-//         }
-//         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-//         }
-//         else scope.raiseError(errInvalidConstant, terminal);
-//      }
-//
-//      if (param != 0) {
-//         signature.copy(message + subject, param - subject);
-//      }
-//      else signature.copy(message + subject);
-//   }
-//
-//   ObjectInfo retVal;
-//   IdentifierString message;
-//   if (extensionRef != 0) {
-//      message.append(scope.moduleScope->module->resolveReference(extensionRef));
-//      message.append('.');
-//   }
-//
-//   if (paramCount != -1) {
-//      message.append('0' + (char)paramCount);
-//      message.append(signature);
-//   }
-//   else message.copy(signature);
-//
-//   if (extensionRef != 0) {
-//      retVal.kind = okExtMessageConstant;
-//   }
-//   else if (paramCount == -1) {
-//      retVal.kind = okSignatureConstant;
-//   }
-//   else retVal.kind = okMessageConstant;
-//
-//   retVal.param = scope.moduleScope->module->mapReference(message);
-//
-//   writeTerminal(writer, node, scope, retVal, mode);
-//
-//   return retVal;
-//}
-//
+ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
+   IdentifierString signature;
+   int paramCount = 0;
+   ref_t extensionRef = 0;
+   if (terminal == lxIdentifier || terminal == lxPrivate) {
+      ident_t name = terminal.identifier();
+      signature.copy(name);
+
+      paramCount = -1;
+   }
+   else {
+      ident_t message = terminal.identifier();
+
+      int subject = message.find('.',0);
+      if (subject != 0) {
+         signature.copy(message, subject);
+         if (signature.ident().find('\'') != NOTFOUND_POS) {
+            // if it is a full reference
+            extensionRef = scope.moduleScope->mapReference(signature.ident(), true);
+         }
+         else extensionRef = scope.moduleScope->resolveIdentifier(signature);
+         if (extensionRef == 0)
+            scope.raiseError(errInvalidSubject, terminal);
+
+         subject++;
+      }
+
+      int param = 0;
+      for (size_t i = subject; i < getlength(message); i++) {
+         if (message[i] == '&') {
+         }
+         else if (message[i] == '[') {
+            int len = getlength(message);
+            if (message[i+1] == ']') {
+               paramCount = OPEN_ARG_COUNT;
+            }
+            else if (message[len - 1] == ']') {
+               signature.copy(message + i + 1, len - i - 2);
+               paramCount = signature.ident().toInt();
+               if (paramCount >= OPEN_ARG_COUNT)
+                  scope.raiseError(errInvalidSubject, terminal);
+            }
+            else scope.raiseError(errInvalidSubject, terminal);
+
+            param = i;
+            break;
+         }
+         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+         }
+         else scope.raiseError(errInvalidConstant, terminal);
+      }
+
+      if (param != 0) {
+         signature.copy(message + subject, param - subject);
+      }
+      else signature.copy(message + subject);
+   }
+
+   ObjectInfo retVal;
+   IdentifierString message;
+   if (extensionRef != 0) {
+      message.append(scope.moduleScope->module->resolveReference(extensionRef));
+      message.append('.');
+   }
+
+   if (paramCount != -1) {
+      message.append('0' + (char)paramCount);
+      message.append(signature);
+   }
+   else message.copy(signature);
+
+   if (extensionRef != 0) {
+      retVal.kind = okExtMessageConstant;
+   }
+   else if (paramCount == -1) {
+      retVal.kind = okSignatureConstant;
+   }
+   else retVal.kind = okMessageConstant;
+
+   retVal.param = scope.moduleScope->module->mapReference(message);
+
+   writeTerminal(writer, node, scope, retVal, mode);
+
+   return retVal;
+}
+
 ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
 {
    ref_t actionFlags = 0;

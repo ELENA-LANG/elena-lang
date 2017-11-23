@@ -196,8 +196,8 @@ sealed class StringWriter :: BaseVariable
     writeFormatted : format : o1 : o2: o3: o4: o5: o6: o7: o8: o9
         = $self printFormatted(format, o1, o2, o3, o4, o5, o6, o7, o8, o9).
 
-    writeFormatted object&:args
-        = $self printFormatted object&:args.
+//    writeFormatted(object<> args)
+//        = $self printFormatted object<>:args.
 
     set : aText
     [

@@ -5,7 +5,7 @@ import system'text.
 
 extension outputOp
 {
-    generic print object&:list
+    generic print(object<> list)
     [
         int len := list length.
         int i := 0.
@@ -21,7 +21,7 @@ extension outputOp
         ^ self
     ]
     
-    generic printWide object&:list
+    generic printWide(object<> list)
     [
         int len := list length.
         int i := 0.
@@ -42,7 +42,7 @@ extension outputOp
         self writeLine.
     ]
             
-    generic printLine object&:list
+    generic printLine(object<> list)
     [
         int len := list length.
         int i := 0.
@@ -57,7 +57,7 @@ extension outputOp
         ^ self writeLine
     ]    
 
-    generic printPaddingRight object&:list
+    generic printPaddingRight(object<> list)
     [
         textbuffer aBuffer := TextBuilder new.
         
@@ -79,7 +79,7 @@ extension outputOp
         ^ self
     ]
 
-    generic printPaddingLeft object&:list
+    generic printPaddingLeft(object<> list)
     [
         textbuffer aBuffer := TextBuilder new.
         
@@ -101,7 +101,7 @@ extension outputOp
         ^ self
     ]
 
-    generic printPaddingRightChar object&:list
+    generic printPaddingRightChar(object<> list)
     [
         textbuffer aBuffer := TextBuilder new.
         
@@ -129,7 +129,7 @@ extension outputOp
         ^ self
     ]
 
-    generic printPaddingLeftChar object&:list
+    generic printPaddingLeftChar(object<> list)
     [
         textbuffer aBuffer := TextBuilder new.
         
@@ -191,7 +191,7 @@ class $helper =
 
 extension formatterOp
 {
-    generic printFormatted object&:args
+    generic printFormatted(object<> args)
     [
         literal    s := args[0].
         textbuffer buffer := TextBuilder new.
@@ -228,7 +228,7 @@ extension formatterOp
         ^ self
     ]
     
-    generic printLineFormatted object&:args
+    generic printLineFormatted(object<> args)
     [
         self~formatterOp printFormatted args:args.
         self writeLine.
@@ -248,7 +248,7 @@ extension inputOp
         ^var.
     ]
     
-    generic readLine object&:Arguments
+    generic readLine(object<> Arguments)
     [
         literal aLine := self readLiteral.
         
