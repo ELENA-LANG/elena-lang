@@ -3523,6 +3523,13 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    if (!lazyExpression)
       methodScope.closureMode = true;
 
+   if (test(scope.info.header.flags, elWithMuti)) {
+      // HOTFIX: temporally the closure does not generate virtual multi-method
+      // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
+      scope.info.header.flags &= elSealed;
+      scope.info.header.flags |= elClosed;
+   }
+
    scope.include(methodScope.message);
 
    //// HOTFIX : if the closure emulates code brackets
@@ -5665,7 +5672,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       if (current == lxAttribute) {
          hint |= current.argument;
 
-         if (current.argument == tpAction && getAction(message) != INVOKE_MESSAGE_ID)
+         if (current.argument == tpAction)
             scope.moduleScope->saveAction(message, scope.reference);
 
          hintChanged = true;

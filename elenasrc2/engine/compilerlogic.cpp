@@ -1020,15 +1020,8 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
       }
       else info.header.flags &= ~elStateless;
 
-      if (test(info.header.flags, elWithMuti)) {
-         // HOTFIX: temporally the closure does not generate virtual multi-method
-         // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
-         info.header.flags |= elClosed;
-      }
-      else {
-         // nested class is sealed
-         info.header.flags |= elSealed;
-      }
+      // nested class is sealed
+      info.header.flags |= elSealed;
    }
 
    if (test(info.header.flags, elExtension)) {
