@@ -3526,7 +3526,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    if (test(scope.info.header.flags, elWithMuti)) {
       // HOTFIX: temporally the closure does not generate virtual multi-method
       // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
-      scope.info.header.flags &= elSealed;
+      scope.info.header.flags &= ~elSealed;
       scope.info.header.flags |= elClosed;
    }
 
@@ -6305,7 +6305,7 @@ ref_t Compiler :: analizeNestedExpression(SNode node, ModuleScope& scope, Warnin
       constant = false;
 
    // replace with constant array if possible
-   if (constant) {
+   if (constant && memberCounter > 0) {
       ref_t reference = scope.mapAnonymous();
 
       node = lxConstantList;
