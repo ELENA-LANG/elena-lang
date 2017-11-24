@@ -3485,7 +3485,7 @@ bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScop
 {
    bool lazyExpression = test(mode, HINT_LAZY_EXPR);
 
-   methodScope.message = encodeVerb(INVOKE_MESSAGE_ID);
+   methodScope.message = encodeVerb(lazyExpression ? EVAL_MESSAGE_ID : INVOKE_MESSAGE_ID);
 
    if (argNode != lxNone) {
       // define message parameter
