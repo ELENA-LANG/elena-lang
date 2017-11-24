@@ -148,10 +148,10 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
    &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileDShiftN, &compileDAndN, &compileDAddN, &compileDOrN,
-   &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &loadMTOp, &loadMTOp,
+   &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
+   &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
 
    &compileCreate, &compileCreateN, &compileNop, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileIfM, &compileElseM, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop
@@ -447,6 +447,9 @@ void _ELENA_::loadMTOp(int opcode, x86JITScope& scope)
 
       if (relocation[0] == -1) {
          scope.writeReference(*scope.code, scope.argument, 0);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(scope.extra_arg);
       }
       else if (relocation[0] == (CORE_MESSAGE_TABLE | mskPreloadDataRef)) {
          scope.helper->writeMTReference(*scope.code);
@@ -1337,6 +1340,18 @@ void _ELENA_::compileGreaterN(int op, x86JITScope& scope)
    else compileJumpNotGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
 
+void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
+{
+   ref_t message = scope.tape->getDWord();
+
+   if (getAction(message) == INVOKE_MESSAGE_ID) {
+      scope.extra_arg = 8;
+   }
+   else scope.extra_arg = 12;
+
+   loadMTOp(op, scope);
+}
+
 void _ELENA_::compileSetVerb(int, x86JITScope& scope)
 {
    // and ecx, PARAM_MASK
@@ -1454,6 +1469,7 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->withDebugInfo = compiler->isWithDebugInfo();
    this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
    this->module = NULL;
+   this->extra_arg = 0;
 
 //   this->prevFSPOffs = 0;
 }

@@ -1,7 +1,16 @@
 ------                                 
 In development:
 ------                              
+              dev - general implementation
+                 * redesign mtredirect / xmtredirect, they should be virtual, for one, two, three parameters special
+                   optimized version should be used, invoke operation should be taken into account as well
+
+                   lea  eax, [esp + 12] - 12 - should be parametrized - __arg2 = 12 for normal message and 8 for invoke 
+                   message
+
               dev - migrating
+                 * uncomment ShortNumber.explicit(IntNumber)
+                 * uncomment BitArray32.setAt(int,bool)
                  * bsort
 
               dev - self and $self in the closure (#198)
@@ -38,6 +47,7 @@ In development:
               dev - general implementation
                  * class cannot have the same name as type, so it is possible to use in signature brackets both
                    class names and types
+                 * generate generic multi-method for the closure (in this case we can get rid of hotfix in tweakClassFlags)
                  * support a test int:2 object<>(1,2,3).
                  * compileExpression, compileObject : refactor collection compilation
                  * Read-only classes should be enforced #282

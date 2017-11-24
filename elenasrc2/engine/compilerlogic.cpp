@@ -204,6 +204,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
 
       result.embeddable = test(hint, tpEmbeddable);
       result.multi = test(hint, tpMultimethod);
+      result.closure = test(hint, tpAction);
 
       if ((hint & tpMask) == tpSealed) {
          return hint;
@@ -259,6 +260,11 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
    if (callType == tpClosed || callType == tpSealed) {
       result.stackSafe = test(methodHint, tpStackSafe);
    }      
+
+   if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
+      // HOTFIX : calling closure
+      result.closure = true;
+   }
 
    return callType;
 }
@@ -1014,8 +1020,15 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
       }
       else info.header.flags &= ~elStateless;
 
-      // nested class is sealed
-      info.header.flags |= elSealed;
+      if (test(info.header.flags, elWithMuti)) {
+         // HOTFIX: temporally the closure does not generate virtual multi-method
+         // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
+         info.header.flags |= elClosed;
+      }
+      else {
+         // nested class is sealed
+         info.header.flags |= elSealed;
+      }
    }
 
    if (test(info.header.flags, elExtension)) {

@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   4
+#define REVISION_VERSION   5
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -902,6 +902,12 @@ void listFlags(int flags)
 
    if (test(flags, elSymbol))
       printLine("@flag ", "elSymbol");
+
+   if (test(flags, elWithMuti))
+      printLine("@flag ", "elWithMuti");
+
+   if (test(flags, elClassClass))
+      printLine("@flag ", "elClassClass");
 
    switch (flags & elDebugMask) {
       case elDebugDWORD:

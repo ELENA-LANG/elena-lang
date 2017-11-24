@@ -227,9 +227,9 @@ enum ByteCode
    bcDivN            = 0xDB,
    bcBLoadR          = 0xDC,
    bcInit            = 0xDD,
-   bcMTRedirect      = 0xDE,
-   bcXMTRedirect     = 0xDF,
 
+   bcMTRedirect      = 0xE8,
+   bcXMTRedirect     = 0xE9,
    bcGreaterN        = 0xEA,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
    bcNotGreaterN     = 0xEB,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
    bcNotLessN        = 0xEC,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
@@ -293,7 +293,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x8F
-#define MAX_DOUBLE_ECODE 0xE9
+#define MAX_DOUBLE_ECODE 0xE7
 
 enum PseudoArg
 {

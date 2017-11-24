@@ -232,6 +232,7 @@ public:
       bool  embeddable;
       bool  withOpenArgDispatcher;
       bool  multi;
+      bool  closure;
       ref_t outputReference;
 
       ChechMethodInfo()
@@ -243,6 +244,7 @@ public:
          stackSafe = false;
          withOpenArgDispatcher = false;
          multi = false;
+         closure = false;
       }
    };
 

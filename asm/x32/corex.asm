@@ -3225,15 +3225,15 @@ inline %0DDh
 
 end
 
-// ; mtresolve
+// ; mtredirect
 
-inline % 0DEh
+inline % 0E8h
 
   push eax
   xor  edx, edx
   push ecx
   add  ecx, 1
-  lea  eax, [esp + 12]
+  lea  eax, [esp + __arg2]
   and  ecx, 0Fh
   mov  esi, __arg1
   push ecx
@@ -3281,15 +3281,15 @@ labNextBaseClass:
 
 end
 
-// ; xmtresolve
+// ; xmtredirect
 
-inline % 0DFh
+inline % 0E9h
 
   push eax
   xor  edx, edx
   push ecx
   add  ecx, 1
-  lea  eax, [esp + 12]
+  lea  eax, [esp + __arg2]
   and  ecx, 0Fh
   mov  esi, __arg1
   push ecx

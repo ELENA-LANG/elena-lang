@@ -2958,6 +2958,9 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    if (result.multi)
       writer.appendNode(lxMultiAttr);
 
+   if (result.closure)
+      writer.appendNode(lxClosureAttr);
+
    if (classReference)
       writer.appendNode(lxCallTarget, classReference);
 
@@ -3513,6 +3516,9 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
    MethodScope methodScope(&scope);
    bool lazyExpression = declareActionScope(scope, argNode, methodScope, mode);
+
+   int hints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
+   int hints2 = scope.info.methodHints.get(Attribute(encodeMessage(INVOKE_MESSAGE_ID, 1), maHint));
 
    if (!lazyExpression)
       methodScope.closureMode = true;
@@ -4368,7 +4374,13 @@ ref_t Compiler :: declareArgumentSubject(SNode arg, ModuleScope& scope, bool& fi
          }
       }
 
-      class_ref = scope.mapSubject(subject, messageStr);
+      if (arg == lxClosureMessage) {
+         class_ref = scope.mapTerminal(subject, true);
+         if (!class_ref)
+            class_ref = scope.mapSubject(subject, messageStr);
+      }
+      else class_ref = scope.mapSubject(subject, messageStr);
+
       if (class_ref) {
          if (openArg) {
             if (!emptystr(signature))
@@ -5653,7 +5665,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       if (current == lxAttribute) {
          hint |= current.argument;
 
-         if (current.argument == tpAction)
+         if (current.argument == tpAction && getAction(message) != INVOKE_MESSAGE_ID)
             scope.moduleScope->saveAction(message, scope.reference);
 
          hintChanged = true;
@@ -6321,6 +6333,9 @@ ref_t Compiler :: analizeMessageCall(SNode node, ModuleScope& scope, WarningScop
 
          if (result.stackSafe)
             mode |= HINT_NOBOXING;
+
+         if (result.closure)
+            node.appendNode(lxClosureAttr);
       }
    }
 
@@ -7255,9 +7270,10 @@ void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref
 void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef)
 {
    ref_t resendMessage = message;
+   ref_t actionRef = getAction(message);
    if (!parentRef) {
       int paramCount = getParamCount(message);
-      IdentifierString sign(scope.module->resolveSubject(getAction(message)));
+      IdentifierString sign(scope.module->resolveSubject(actionRef));
       for (int i = 0; i < paramCount; i++) {
          sign.append('$');
          sign.append(scope.module->resolveReference(scope.superReference));
@@ -7272,6 +7288,9 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
    methNode.appendNode(lxAttribute, tpMultimethod);
    if (methodType == lxConstructor)
       methNode.appendNode(lxAttribute, tpConstructor);
+
+   if (actionRef == INVOKE_MESSAGE_ID)
+      methNode.appendNode(lxAttribute, tpAction);
 
    SNode codeNode = methNode.appendNode(lxResendExpression, resendMessage);
    if (parentRef)

@@ -4334,7 +4334,7 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    tape.write(bcCopyM, message);
 
-   bool invokeMode = getAction(message) == INVOKE_MESSAGE_ID;
+   bool invokeMode = callNode.existChild(lxClosureAttr);
 
    SNode target = callNode.findChild(lxCallTarget);
    if (callNode == lxDirectCalling) {
@@ -5453,22 +5453,22 @@ void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool wi
    }
 }
 
-void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList)
+void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
 {
-   tape.write(bcMTRedirect, operationList | mskConstArray);
+   tape.write(bcMTRedirect, operationList | mskConstArray, message);
 }
 
-void ByteCodeWriter::doSealedMultiDispatch(CommandTape& tape, ref_t operationList)
+void ByteCodeWriter::doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
 {
-   tape.write(bcXMTRedirect, operationList | mskConstArray);
+   tape.write(bcXMTRedirect, operationList | mskConstArray, message);
 }
 
-void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node)
+void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message)
 {
    if (node.type == lxSealedMultiDispatching) {
-      doSealedMultiDispatch(tape, node.argument);
+      doSealedMultiDispatch(tape, node.argument, message);
    }
-   else doMultiDispatch(tape, node.argument);
+   else doMultiDispatch(tape, node.argument, message);
 
    SNode current = node.findChild(lxDispatching);
    if (current != lxNone)
@@ -5656,7 +5656,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
                open = true;
             }               
 
-            generateMultiDispatching(tape, current);
+            generateMultiDispatching(tape, current, node.argument);
             break;
          default:
             if (test(current.type, lxExprMask)) {
