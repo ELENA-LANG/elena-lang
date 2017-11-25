@@ -1299,6 +1299,10 @@ void DerivationReader :: generateMessageTree(SyntaxWriter& writer, SNode node, D
             break;
          case lxMessage:
          {
+            if (invokeMode || invokeWithNoParamMode) {
+               // message should be considered as a new operation if followed after closure invoke
+               return;
+            }
             writer.newNode(lxMessage);
             SNode attrNode = current.findChild(lxAttributeValue, lxSize);
             if (attrNode != lxAttributeValue) {
