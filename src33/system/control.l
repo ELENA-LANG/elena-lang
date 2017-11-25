@@ -620,7 +620,7 @@ limited class IndexFunction1
         
         while (i <= n)
         [
-            $self eval int:i.
+            $self(i).
             
             i := i + dx
         ].

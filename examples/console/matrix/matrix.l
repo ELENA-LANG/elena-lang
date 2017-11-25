@@ -17,13 +17,13 @@ class Matrix
     ]
     
     constructor new n:anN name:aName
-        <= new realmatrix(RealMatrix new(anN,anN); populate(&int:i &int:j)
+        <= new realmatrix(RealMatrix new(anN,anN); populate(:i:j)<int,int>
             [  
                 ^ console print("Enter ",aName,"[",i,",",j,"]="); readLineTo(Real new)
             ]).
     
     constructor newIdentity n:anN
-        <= new realmatrix(RealMatrix new(anN,anN); populate(&int:i &int:j)
+        <= new realmatrix(RealMatrix new(anN,anN); populate(:i:j)<int,int>
             ( (i == j)iif(1,0) )).
     
     add : aMatrix

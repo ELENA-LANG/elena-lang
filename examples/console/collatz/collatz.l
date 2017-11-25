@@ -64,7 +64,7 @@ altcol = (:x)
     
     //z = hL( y, Id(x), 0, g( hR(y, Id(x), -1/3) ) );
     var z := hL(y, Id(x), 0, g(hR(y, Id(x), -1 realDiv:3))) toInt.
-    
+
     //disp(['Final out: ', num2str(z), ' Correct should be ', num2str( col(x) )])
     console printLine("Final out: ",z," Correct should be ", col(x)).
     
@@ -72,7 +72,7 @@ altcol = (:x)
 ].
 
 col = (:x)
-    ( x int; isEven; iif([ ^x / 2 ],[ ^3*x + 1 ]) ).
+    ( x int; isEven; iif($(x / 2), $(3*x + 1)) ).
 
 //function x = col(x)
 //if ~mod(x,2)

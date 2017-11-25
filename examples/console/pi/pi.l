@@ -10,7 +10,7 @@ program =
 
     vreal pi := 0.0r.
     
-    0 to:MAX do(&int:i)
+    0 to:MAX do(:i)<int>
     [
         //pi += -1.0r power &int:i / (2*i+1) * 4.
         pi append real(-1.0r power int:i; divide int(2*i+1); multiply int:4)
