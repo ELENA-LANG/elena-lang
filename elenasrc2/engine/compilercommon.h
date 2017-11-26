@@ -286,6 +286,7 @@ public:
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
+   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          

@@ -1322,6 +1322,11 @@ void DerivationReader :: generateMessageTree(SyntaxWriter& writer, SNode node, D
             scope.copySubject(writer, current);
             writer.closeNode();
             break;
+         case lxOperator:
+            if (invokeMode || invokeWithNoParamMode) {
+               // operator should be considered as a new operation if followed after closure invoke
+               return;
+            }
          default:
             scope.raiseError(errInvalidSyntax, current);
             break;

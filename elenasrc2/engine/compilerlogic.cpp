@@ -511,6 +511,11 @@ bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
 }
 
+bool CompilerLogic :: isClosure(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpAction);
+}
+
 void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
 {
    for (auto it = info.methods.start(); !it.Eof(); it++) {

@@ -163,7 +163,7 @@ limited class Indexer2D
 // --- base functions ---
 
 /// A base action
-limited class BaseFunction
+limited closure class BaseFunction
 {
     /// Executes the action
     closure []
@@ -197,7 +197,7 @@ limited class BaseFunction
 }
 
 /// A base function
-limited class BaseFunction1
+limited closure class BaseFunction1
 {
     /// Executes the action
     closure : aParam []
@@ -231,7 +231,7 @@ limited class BaseFunction1
 }
 
 /// A base two variable function
-limited class BaseFunction2
+limited closure class BaseFunction2
 {
     /// Executes the action
     closure : aParam1 : aParam2 []
@@ -266,7 +266,7 @@ limited class BaseFunction2
 }
 
 /// A base three variable function
-limited class BaseFunction3
+limited closure class BaseFunction3
 {
     /// Executes the function
     closure : aParam1 : aParam2 : aParam3 []
@@ -300,7 +300,7 @@ limited class BaseFunction3
 }
 
 /// A base four variable function
-limited class BaseFunction4
+limited closure class BaseFunction4
 {
     /// Executes the function
     closure : aParam1 : aParam2 : aParam3 : aParam4 []
@@ -335,7 +335,7 @@ limited class BaseFunction4
 }
 
 /// A base five variable function
-limited class BaseFunction5
+limited closure class BaseFunction5
 {
     /// Executes the function
     closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
@@ -369,7 +369,7 @@ limited class BaseFunction5
 }
 
 /// A base six variable function
-limited class BaseFunction6
+limited closure class BaseFunction6
 {
     /// Executes the function
     closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
@@ -403,7 +403,7 @@ limited class BaseFunction6
 }
 
 /// A base seven variable function
-limited class BaseFunction7
+limited closure class BaseFunction7
 {
     /// Executes the function    
     closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []    /// Executes the function
@@ -437,7 +437,7 @@ limited class BaseFunction7
 }
 
 /// A base eight variable function
-limited class BaseFunction8
+limited closure class BaseFunction8
 {
     /// Executes the function    
     closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []    /// Executes the function
@@ -472,7 +472,7 @@ limited class BaseFunction8
 }
 
 /// A base nine variable function
-limited class BaseFunction9
+limited closure class BaseFunction9
 {
     /// Executes the function    
     closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []    /// Executes the function
@@ -507,7 +507,7 @@ limited class BaseFunction9
 }
 
 /// A base ten variable function
-limited class BaseFunction10
+limited closure class BaseFunction10
 {
     /// Executes the function    
     closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []    /// Executes the function
@@ -543,7 +543,7 @@ limited class BaseFunction10
 }
 
 /// A base eleven variable functions
-limited class BaseFunction11
+limited closure class BaseFunction11
 {
     /// Executes the function    
     closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []    /// Executes the function
@@ -591,7 +591,7 @@ limited class BaseLazyExpression
 // --- IndexFunction ---
 
 /// A base index function
-limited class IndexFunction1
+limited closure class IndexFunction1
 {
     /// Executes the function
     stacksafe closure int:n []
@@ -605,7 +605,7 @@ limited class IndexFunction1
         
         while (i >= n)
         [
-            $self eval int:i.
+            $self(i).
             
             i := i - dx
         ].
@@ -635,7 +635,7 @@ limited class IndexFunction1
         
         while(i <= n)
         [
-            if ($self eval int:i)
+            if ($self(i))
                 [ ^ IntNumber new int:i ].
             
             i := i + dx
@@ -646,7 +646,7 @@ limited class IndexFunction1
 }
 
 /// A base two variable index function
-limited class IndexFunction2
+limited closure class IndexFunction2
 {
     /// Executes the function
     stacksafe closure(int i, int j)[]
@@ -701,7 +701,7 @@ limited class IndexFunction2
 }
 
 /// A base three variable index function
-limited class IndexFunction3
+limited closure class IndexFunction3
 {
     /// Executes the function
     stacksafe closure(int i, int j, int k) []

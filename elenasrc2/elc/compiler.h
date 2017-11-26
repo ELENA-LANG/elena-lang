@@ -897,11 +897,11 @@ private:
    void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField);
    void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
 
-   void generateClassFlags(ClassScope& scope, SNode node);
+   void generateClassFlags(ClassScope& scope, SNode node, bool& closureBaseClass);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
-   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute);
-   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, bool classClassMode);
+   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool closureBaseClass);
+   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, bool classClassMode, bool closureBaseClass);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool closureDeclarationMode = false);
 
    void generateClassImplementation(SNode node, ClassScope& scope);

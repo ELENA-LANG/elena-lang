@@ -9,9 +9,7 @@ In development:
                    message
 
               dev - migrating
-                 * uncomment ShortNumber.explicit(IntNumber)
-                 * uncomment BitArray32.setAt(int,bool)
-                 * bsort
+                 * 24 game
 
               dev - self and $self in the closure (#198)
                  * redesign

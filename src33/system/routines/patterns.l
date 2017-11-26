@@ -122,7 +122,7 @@ class Filter :: Enumerator
     [
         while (theEnumerator next)
         [
-            if (theFilter eval(theEnumerator get))
+            if (theFilter(theEnumerator get))
                 [ ^ true ]
         ].
         
@@ -163,7 +163,7 @@ class PatternFilter2 :: Enumerator
         
         while (theEnumerator next)
         [
-            if (theFilter eval(thePrevious,theEnumerator get))
+            if (theFilter(thePrevious,theEnumerator get))
                 [ ^ true ].
             
             thePrevious := theEnumerator get
@@ -207,7 +207,7 @@ class PatternFilter3 :: Enumerator
                 
         while (theEnumerator next)
         [
-            if(theFilter eval(theBeforePrev,thePrevious,theEnumerator get))
+            if(theFilter(theBeforePrev,thePrevious,theEnumerator get))
                 [ ^ true ].
             
             theBeforePrev := thePrevious.
@@ -258,7 +258,7 @@ class PatternFilter4 :: Enumerator
                 
         while (theEnumerator next)
         [
-            if (theFilter eval(theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
+            if (theFilter(theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
                 [ ^ true ].
             
             theBefore2Prev := theBeforePrev.
@@ -316,7 +316,7 @@ class PatternFilter5 :: Enumerator
                 
         while (theEnumerator next)
         [
-            if (theFilter eval(theBefore3Prev,theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
+            if (theFilter(theBefore3Prev,theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
                 [ ^ true ].
             
             theBefore3Prev := theBefore2Prev.
@@ -381,7 +381,7 @@ class PatternFilter6 :: Enumerator
                                 
         while (theEnumerator next)
         [
-            if (theFilter eval(theBefore4Prev,theBefore3Prev,theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
+            if (theFilter(theBefore4Prev,theBefore3Prev,theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
                 [ ^ true ].
             
             theBefore4Prev := theBefore3Prev.
@@ -414,7 +414,7 @@ class Selector :: Enumerator
         theEnumerator := anEnumerator.
     ]
     
-    get = theSelector eval(theEnumerator get).
+    get = theSelector(theEnumerator get).
     
     bool next = theEnumerator next.
     
@@ -450,7 +450,7 @@ class Repeater :: Enumerator
     ]
 
 
-    get = theFunc eval:theCurrent.
+    get = theFunc(theCurrent).
     
     reset
     [
@@ -485,7 +485,7 @@ class ZipEnumerator :: Enumerator
     constructor new(ExtensionMessage ext, Enumerator enum1, Enumerator enum2)
         <= new func2:(:n:m)(n~ext eval:m) enumerator:enum1 enumerator:enum2.
     
-    get = theZipper eval(theEnumerator1 get, theEnumerator2 get).
+    get = theZipper(theEnumerator1 get, theEnumerator2 get).
     
     bool next = theEnumerator1 next && theEnumerator2 next.
     
@@ -684,7 +684,7 @@ class GroupingEnumerator :: Enumerator
         while (theEnumerator next)
         [
             var item := theEnumerator get.
-            var key := theGroupFunc eval:item.
+            var key := theGroupFunc(item).
             
             var groupItem := theDictionary[key].
             if ($nil == groupItem)
@@ -724,7 +724,7 @@ class OrderingEnumerator :: Enumerator
     
     constructor new func1:orderVal enumerator:enumerator
     [
-        theOrderFunc := (:p:n)(orderVal eval(p) < orderVal eval(n) ).
+        theOrderFunc := (:p:n)(orderVal(p) < orderVal(n) ).
         theEnumerator := enumerator.
         
         $self reset.
@@ -774,7 +774,7 @@ class Summing :: BasePattern
         theResult := aVariable.
     ]
 
-    eval : aParam [ theResult append:aParam. ]
+    closure : aParam [ theResult append:aParam. ]
 }
 
 // --- Accumulating ---
@@ -795,7 +795,7 @@ class Accumulating :: BasePattern
         theOperation := (:a:b)[ a~anOperation eval:b ].
     ]
 
-    eval : aParam [ theResult set(theOperation eval(theResult,aParam)). ]
+    closure : aParam [ theResult set(theOperation(theResult,aParam)). ]
 }
 
 // --- patternOp ---
