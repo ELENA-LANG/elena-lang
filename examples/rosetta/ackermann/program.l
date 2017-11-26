@@ -23,8 +23,8 @@ ackermann = (:m:n)
        0 [ ^n + 1 ];
        ! [
               n => 
-                0 [ ^ackermann eval(m - 1,1) ];
-                ! [ ^ackermann eval(m - 1,ackermann eval(m,n-1)) ]
+                0 [ ^ackermann(m - 1,1) ];
+                ! [ ^ackermann(m - 1,ackermann(m,n-1)) ]
            ]
 ].
 
@@ -34,7 +34,7 @@ program =
     [
         0 to:5 do(:j)
         [
-            console printLine("A(",i,",",j,")=",ackermann eval(i,j))
+            console printLine("A(",i,",",j,")=",ackermann(i,j))
         ]
     ].
 

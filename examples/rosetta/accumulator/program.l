@@ -10,24 +10,19 @@ and returns the sum of all the numeric values passed in so far to that accumulat
 ELENA is OO language, so a function is in fact an object
 */
 
-import system'dynamic.
+function = 
+    (:acc)((:n)(acc append:n)).
 
-Function = 
-    (:x)(self append:x).
-
-extension op
-{
-    accumulatorOf:func
-        = Variable new(self); mixInto(func).
-}
+accumulator = 
+    (:n)(function(Variable new(n))).
 
 program =
 [
-    var x := 1 accumulatorOf(Function).
+    var x := accumulator(1).
     
-    x eval(5).
+    x(5).
     
-    var y := 3 accumulatorOf(Function).
+    var y := accumulator(3).
     
-    console write(x eval(2.3r)).
+    console write(x(2.3r)).
 ].

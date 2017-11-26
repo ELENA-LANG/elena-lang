@@ -10,22 +10,22 @@ dispatcher =
 {
     eval object:anArray func2:aFunction
     [
-        ^ aFunction eval(anArray[0],anArray[1]).
+        ^ aFunction(anArray[0],anArray[1]).
     ]
 
     eval object:anArray func3:aFunction
     [
-        ^ aFunction eval(anArray[0], anArray[1],anArray[2]).
+        ^ aFunction(anArray[0], anArray[1],anArray[2]).
     ]
     
     eval object:anArray func4:aFunction
     [
-        ^ aFunction eval(anArray[0],anArray[1],anArray[2],anArray[3]).
+        ^ aFunction(anArray[0],anArray[1],anArray[2],anArray[3]).
     ]
     
     eval object:anArray func5:aFunction
     [
-        ^ aFunction eval(anArray[0],anArray[1],anArray[2],anArray[3],anArray[4]).
+        ^ aFunction(anArray[0],anArray[1],anArray[2],anArray[3],anArray[4]).
     ]
 
 }.
@@ -36,9 +36,9 @@ class AmbValueCollection
 {
     object theCombinator.
     
-    constructor new args:Arguments
+    constructor new object<>:Arguments
     [
-        theCombinator := SequentialEnumerator new args:Arguments.
+        theCombinator := SequentialEnumerator new(Arguments).
     ]
 
     seek : aCondition
@@ -61,8 +61,8 @@ class AmbValueCollection
 
 ambOperator =
 {
-    generic for args:Arguments
-        = AmbValueCollection new args:Arguments.
+    generic for(object<> Arguments)
+        = AmbValueCollection new(Arguments).
 }.
 
 // --- Program ---
