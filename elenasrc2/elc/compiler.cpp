@@ -1033,12 +1033,6 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
    if (terminal.compare(SUPER_VAR)) {
       return ObjectInfo(okSuper, info.header.parentRef);
    }
-   else if (terminal.compare(SELF_VAR)) {
-      if (extensionClassRef != 0) {
-         return ObjectInfo(okParam, (size_t)-1, extensionClassRef, embeddable ? -1 : 0);
-      }
-      else return ObjectInfo(okParam, (size_t)-1);
-   }
    else {
       ObjectInfo fieldInfo = mapField(terminal);
       if (fieldInfo.kind != okUnknown) {
@@ -1089,26 +1083,13 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
       }
       else return mapThis();
    }
+   else if (terminal.compare(SELF_VAR) && !closureMode) {
+      if (extensionMode) {
+         return mapThis();
+      }
+      else return ObjectInfo(okParam, (size_t)-1);
+   }
    else {
-//      if (closureMode) {
-//         if (terminal.compare(CLOSURE_SELF_VAR)) {
-//            if (subCodeMode) {
-//               return parent->mapTerminal(terminal);
-//            }
-//            else return ObjectInfo(okParam, (size_t)-1);
-//         }
-//         else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
-//            ObjectInfo retVar = parent->mapTerminal(terminal);
-//            if (retVar.kind == okUnknown) {
-//               InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
-//
-//               retVar = closure->allocateRetVar();
-//            }
-//
-//            return retVar;
-//         }
-//      }
-
       Parameter param = parameters.get(terminal);
 
       int local = param.offset;
@@ -4483,6 +4464,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             flags |= PROPSET_MESSAGE;
          }
       }
+      else messageStr.append(EVAL_MESSAGE);
    }
 
    bool first = messageStr.Length() == 0;

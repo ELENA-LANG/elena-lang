@@ -2834,6 +2834,10 @@ void DerivationReader :: generateClassTree(SyntaxWriter& writer, SNode node, Der
       writer.newNode(lxClass);
 
       generateAttributes(writer, node, scope, attributes, false);
+      if (node.argument == -2) {
+         // if it is a singleton
+         writer.appendNode(lxAttribute, V_SINGLETON);
+      }
    }
 
    SNode current = node.firstChild();
@@ -2951,6 +2955,11 @@ void DerivationReader :: generateScopeMembers(SNode& node, DerivationScope& scop
       else if (current == lxBaseParent && test(mode, MODE_ROOT)) {
       }
       else if (current == lxCode && test(mode, MODE_CODETEMPLATE)) {
+      }
+      else if (current == lxMethodParameter && mode == MODE_ROOT) {
+         // one method class declaration
+         node.injectNode(lxClassMethod);
+         node.set(lxClass, -2);
       }
       else scope.raiseError(errInvalidSyntax, node);
 

@@ -101,53 +101,53 @@ class Expression
 
 // --- States ---
 
-operatorState = (:ch)
+operatorState : ch
 [
     ch =>
         $40 [      // (
-            ^ closure newBracket; gotoStarting
+            ^ self newBracket; gotoStarting
         ];
         ! [
-            ^ closure newToken; append:ch; gotoToken
+            ^ self newToken; append:ch; gotoToken
         ].
-].
+]
 
-tokenState = (:ch)
+tokenState : ch
 [
     ch =>
         $41 [      // )
-            ^ closure closeBracket; gotoToken
+            ^ self closeBracket; gotoToken
         ];
         $42 [      // *
-            ^ closure newProduct; gotoOperator
+            ^ self newProduct; gotoOperator
         ];
         $43 [      // +
-            ^ closure newSummary; gotoOperator
+            ^ self newSummary; gotoOperator
         ];
         $45 [      // -
-            ^ closure newDifference; gotoOperator
+            ^ self newDifference; gotoOperator
         ];
         $47 [      // /
-            ^ closure newFraction; gotoOperator
+            ^ self newFraction; gotoOperator
         ];
         ! [
-            ^ closure append:ch
+            ^ self append:ch
         ].
-].
+]
 
-startState = (:ch)
+startState : ch
 [
     ch =>
         $40 [      // (
-            ^ closure newBracket; gotoStarting
+            ^ self newBracket; gotoStarting
         ];
         $45 [ // -
-            ^ closure newToken; append literal:"0"; newDifference; gotoOperator
+            ^ self newToken; append literal:"0"; newDifference; gotoOperator
         ];
         ! [
-            ^ closure newToken; append:ch; gotoToken
+            ^ self newToken; append:ch; gotoToken
         ].
-].
+]
 
 // --- Scope ---
 
