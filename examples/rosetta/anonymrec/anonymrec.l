@@ -13,7 +13,7 @@ extension mathOp
             (:n)
                 [
                     if (n > 1)
-                        [ ^ $closure eval(n - 2) + $closure eval(n - 1) ];
+                        [ ^ @self(n - 2) + @self(n - 1) ];
                         [ ^ n ]
                 ].
     ]

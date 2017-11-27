@@ -614,6 +614,8 @@ private:
          reserved = saved;
       }
 
+      ObjectInfo mapMember(ident_t identifier);
+
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
       virtual Scope* getScope(ScopeLevel level)

@@ -1151,6 +1151,23 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
    this->reserved = parent->reserved;
 }
 
+ObjectInfo Compiler::CodeScope :: mapMember(ident_t identifier)
+{
+   if (identifier.compare(SELF_VAR)) {
+      MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
+      if (methodScope != NULL) {
+         return methodScope->mapThis();
+      }
+   }
+   else {
+      ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
+      if (classScope != NULL) {
+         return classScope->mapField(identifier);
+      }      
+   }
+   return ObjectInfo();
+}
+
 ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
@@ -2389,10 +2406,7 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 //      object = ObjectInfo(okObject);
 //   }
    else if (terminal == lxMemberIdentifier) {
-      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-      if (classScope != NULL) {
-         object = classScope->mapField(token.c_str() + 1);
-      }
+      object = scope.mapMember(token.c_str() + 1);
    }
    else if (!emptystr(token))
       object = scope.mapObject(terminal);
