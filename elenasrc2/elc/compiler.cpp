@@ -4433,6 +4433,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    ref_t verbRef = 0;
    bool propMode = false;
    bool constantConversion = false;
+   bool unnamedMessage = false;
    ref_t flags = 0;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate, lxReference);
@@ -4464,7 +4465,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             flags |= PROPSET_MESSAGE;
          }
       }
-      else messageStr.append(EVAL_MESSAGE);
+      else unnamedMessage = true;
    }
 
    bool first = messageStr.Length() == 0;
@@ -4571,6 +4572,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       else if (test(scope.hints, tpSealed) && verb == lxPrivate) {
          flags |= SEALED_MESSAGE;
       }
+      else if (unnamedMessage && emptystr(messageStr))
+         messageStr.append(EVAL_MESSAGE);
 
       if (propMode && paramCount == 1 && messageStr.Length() > 3) {
          // COMPILER MAGIC : set&x => x

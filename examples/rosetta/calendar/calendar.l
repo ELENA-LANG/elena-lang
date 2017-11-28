@@ -66,13 +66,13 @@ class CalendarMonthPrinter
         writeIndex int:anIndex 
         [
             if (anIndex <= theRow)
-                [ $owner writeTitle ].
+                [ $self writeTitle ].
                 
             while (anIndex > theRow)
-                [ $owner writeLine ]
+                [ $self writeLine ]
         ]
 
-        get = $owner.
+        get = $self.
     }.
     
     printTitleTo : anOutput
