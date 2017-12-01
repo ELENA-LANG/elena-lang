@@ -6,9 +6,9 @@ const int maxY = 28.
 
 type listener_func = ListenerFunc.
 
-limited class ListenerFunc
+limited closure class ListenerFunc
 {
-    action eval space:space []
+    closure space:space []
 }
 
 sealed class Model
@@ -40,7 +40,7 @@ sealed class Model
     $onUpdate
     [
         if ($nil != theListener)
-            [ theListener eval space:theSpace ].
+            [ theListener(theSpace) ].
     ]
     
     init

@@ -3519,15 +3519,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    int hints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
    int hints2 = scope.info.methodHints.get(Attribute(encodeMessage(INVOKE_MESSAGE_ID, 1), maHint));
 
-   if (!lazyExpression)
-      methodScope.closureMode = true;
-
-   if (test(scope.info.header.flags, elWithMuti)) {
-      // HOTFIX: temporally the closure does not generate virtual multi-method
-      // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
-      scope.info.header.flags &= ~elSealed;
-      scope.info.header.flags |= elClosed;
-   }
+   methodScope.closureMode = true;
 
    scope.include(methodScope.message);
 
@@ -3544,6 +3536,13 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    else compileLazyExpressionMethod(writer, node, methodScope);
 
    generateClassDeclaration(SNode(), scope, false);
+
+   if (test(scope.info.header.flags, elWithMuti)) {
+      // HOTFIX: temporally the closure does not generate virtual multi-method
+      // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
+      scope.info.header.flags &= ~elSealed;
+      scope.info.header.flags |= elClosed;
+   }
 
    writer.closeNode();
 

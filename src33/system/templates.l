@@ -157,29 +157,29 @@ __accessor template fnprop :: type,template_fn
     ]
 }
 
-//// --- fn2prop ---
-//
-//accessor template fn2prop :: type,template_fn
-//{
-//    stacksafe embeddable type template_fn type:n type:m
-//    [
-//        type retVal := 0.
-//        $self $get type:n type:m var<type>:retVal.
-//        ^ retVal.            
-//    ]
-//}
-//
-//// --- fn3prop ---
-//
-//accessor template fn3prop :: type,template_fn
-//{
-//    stacksafe embeddable type template_fn type:n type:m type:o
-//    [
-//        type retVal := 0.
-//        $self $get type:n type:m type:o var<type>:retVal.
-//        ^ retVal.            
-//    ]
-//}
+// --- fn2prop ---
+
+__accessor template fn2prop :: type,template_fn
+{
+    stacksafe embeddable type template_fn type:n type:m
+    [
+        type retVal := 0.
+        $self $get type:n type:m var<type>:retVal.
+        ^ retVal.            
+    ]
+}
+
+// --- fn3prop ---
+
+__accessor template fn3prop :: type,template_fn
+{
+    stacksafe embeddable type template_fn type:n type:m type:o
+    [
+        type retVal := 0.
+        $self $get type:n type:m type:o var<type>:retVal.
+        ^ retVal.            
+    ]
+}
 
 // --- while statement ---
 

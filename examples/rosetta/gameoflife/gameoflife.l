@@ -36,7 +36,7 @@ program =
     
     var model := Model newRandomset ruleset:gameOfLifeRuleSet.
 
-    model onUpdate listener_func(&space:sp)[ sp print ].
+    model onUpdate listener_func(:sp)<space>[ sp print ].
 
     until (console isKeyAvailable)
     [
