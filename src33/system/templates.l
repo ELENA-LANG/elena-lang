@@ -236,12 +236,14 @@ __block __block template if :: expr
     ].    
 ]
 
-//__double_block template ifnot :: expr =
-//    expr bool; inverted ?
-//    [
-//    ]
-//    ! [
-//    ].
+__block __block template ifnot :: expr
+[
+    expr bool; inverted ?
+    [
+    ]
+    ! [
+    ].
+]
 
 // -- try-catch statement ---
 

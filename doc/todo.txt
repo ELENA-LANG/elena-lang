@@ -9,7 +9,27 @@ In development:
                    message
 
               dev - migrating
+                 * Queue/Definition
+                 * Polymorphic copy
+                 * GUI component interaction
+                 * Hello world/Graphical
+                 * Simple windowed application
+                 * Sort three variables
+                 * Sorting algorithms/Counting sort
+                 * Sorting algorithms/Sleep sort
+                 * Ternary logic
+                 * Time a function
+                 * Tree traversal
+                 * Visualize a tree
+                 * Wireworld
+                 * World Cup group stage
+                 * Y combinator
+                 * Zeckendorf arithmetic
+                 * Zhang-Suen thinning algorithm
+                 * first class
                  * 24 game
+                 * execute bf
+                 * Runtime evaluation/In an environment
 
               dev - self and $self in the closure (#198)
                  * redesign
