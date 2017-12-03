@@ -1729,7 +1729,7 @@ void DerivationReader :: generateAssignmentOperator(SyntaxWriter& writer, SNode 
       writer.newNode(lxExpression);
       generateObjectTree(writer, loperand, scope);
       copyOperator(writer, loperatorNode.firstChild(), loperatorNode.argument);
-      generateExpressionTree(writer, loperatorNode, scope, 0);
+      generateExpressionTree(writer, loperatorNode, scope, EXPRESSION_OPERATOR_MODE);
       writer.closeNode();
       while (loperatorNode.nextNode() == lxOperator) {
          loperatorNode = loperatorNode.nextNode();
@@ -1744,7 +1744,7 @@ void DerivationReader :: generateAssignmentOperator(SyntaxWriter& writer, SNode 
       writer.newNode(lxExpression);
       generateObjectTree(writer, loperand, scope);
       copyOperator(writer, loperatorNode.firstChild(), loperatorNode.argument);
-      generateExpressionTree(writer, loperatorNode, scope, 0);
+      generateExpressionTree(writer, loperatorNode, scope, EXPRESSION_OPERATOR_MODE);
       writer.closeNode();
       while (loperatorNode.nextNode() == lxOperator) {
          loperatorNode = loperatorNode.nextNode();

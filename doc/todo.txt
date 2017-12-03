@@ -2,12 +2,6 @@
 In development:
 ------                              
               dev - migrating
-                 * GUI component interaction
-                 * Hello world/Graphical
-                 * Simple windowed application
-                 * Sort three variables
-                 * Sorting algorithms/Counting sort
-                 * Sorting algorithms/Sleep sort
                  * Ternary logic
                  * Time a function
                  * Tree traversal
@@ -17,8 +11,13 @@ In development:
                  * Y combinator
                  * Zeckendorf arithmetic
                  * Zhang-Suen thinning algorithm
-                 * first class
                  * 24 game
+                 * GUI component interaction
+                 * Hello world/Graphical
+                 * Simple windowed application
+                 * first class
+                 * Sort three variables
+                 * Sorting algorithms/Sleep sort
                  * execute bf
                  * Runtime evaluation/In an environment
 
