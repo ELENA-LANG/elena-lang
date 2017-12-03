@@ -2,15 +2,12 @@
 In development:
 ------                              
               dev - migrating
-                 * Ternary logic
-                 * Time a function
-                 * Tree traversal
-                 * Visualize a tree
-                 * Wireworld
-                 * World Cup group stage
-                 * Y combinator
                  * Zeckendorf arithmetic
                  * Zhang-Suen thinning algorithm
+                 * Visualize a tree
+                 * Wireworld
+                 * Ternary logic
+                 * Tree traversal
                  * 24 game
                  * GUI component interaction
                  * Hello world/Graphical
