@@ -2,8 +2,6 @@
 In development:
 ------                              
               dev - migrating
-                 * Zeckendorf arithmetic
-                 * Zhang-Suen thinning algorithm
                  * Visualize a tree
                  * Wireworld
                  * Ternary logic
@@ -17,6 +15,7 @@ In development:
                  * Sorting algorithms/Sleep sort
                  * execute bf
                  * Runtime evaluation/In an environment
+                 * Zeckendorf arithmetic
 
               dev - general implementation
                  * redesign mtredirect / xmtredirect, they should be virtual, for one, two, three parameters special
