@@ -183,6 +183,10 @@ sealed struct ZeckendorfNumber :: BaseNumber
         if (dVal == 0)
             [ ^ "0". ].
             
+        int n := dVal >> (dLen * 2).            
+            
+        int r := (dVal >> (dLen * 2)) && 3.            
+            
         literal s := dig1[(dVal >> (dLen * 2)) && 3].
         int i := dLen - 1.
         while (i >= 0)
