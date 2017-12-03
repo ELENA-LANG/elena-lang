@@ -1628,7 +1628,7 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode current
       generateExpressionTree(writer, expr, scope, 0);
       writer.closeNode();
    }
-   else scope.raiseError(errIllegalOperation, current);
+   //else scope.raiseError(errIllegalOperation, current);
 
    writer.insert(lxBoxing);
    writer.closeNode();
@@ -1986,7 +1986,7 @@ void DerivationReader :: generateAttributeTemplate(SyntaxWriter& writer, SNode n
    else if (attrRef == V_TYPETEMPL) {
       typeRef = scope.mapTerminal(attr.findChild(lxIdentifier, lxPrivate), true);
       if (typeRef == 0)
-         typeRef = scope.mapTerminal(attr);
+         typeRef = scope.mapTerminal(attr.findChild(lxIdentifier, lxPrivate));
    }
    else {
       DerivationScope templateScope(&scope, attrRef);
