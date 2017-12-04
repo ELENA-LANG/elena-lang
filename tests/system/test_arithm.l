@@ -1,6 +1,6 @@
 //#import system'routines.
 //#import system'collections.
-import system'dynamic.
+//import system'dynamic.
 //#import system'calendar.
 import extensions.
 //#import extensions'dynamic.
@@ -182,46 +182,46 @@ import extensions.
 //    ]
 //}.
 
-class MyException :: Exception
-{
-    constructor new : message
-        <= new literal:message.
-}
-
-class MyException2 :: Exception
-{
-    constructor new : message
-        <= new literal:message.
-}
-
-ExecTester =
-{
-    do : anAction [ anAction eval. ]
-
-    do:x with:y
-    [
-    ]
-            
-    run : anAction
-    [
-        anAction eval x:"Eval Works!!".
-    ]
-    
-    break
-    [
-        MyException new:"OnError handler works"; raise.
-    ]
-    
-    break2
-    [
-        MyException2 new:"OnError2 handler works"; raise.
-    ]
-    
-    break3
-    [
-        MyException2 new:"Nested OnError2 handler works"; raise.
-    ]
-}.
+//class MyException :: Exception
+//{
+//    constructor new : message
+//        <= new literal:message.
+//}
+//
+//class MyException2 :: Exception
+//{
+//    constructor new : message
+//        <= new literal:message.
+//}
+//
+//ExecTester =
+//{
+//    do : anAction [ anAction eval. ]
+//
+//    do:x with:y
+//    [
+//    ]
+//            
+//    run : anAction
+//    [
+//        anAction eval x:"Eval Works!!".
+//    ]
+//    
+//    break
+//    [
+//        MyException new:"OnError handler works"; raise.
+//    ]
+//    
+//    break2
+//    [
+//        MyException2 new:"OnError2 handler works"; raise.
+//    ]
+//    
+//    break3
+//    [
+//        MyException2 new:"Nested OnError2 handler works"; raise.
+//    ]
+//}.
 
 //#symbol ObjectTest =
 //[
@@ -440,21 +440,21 @@ ExecTester =
 //        if &OutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
 //].
 
-// --- MethodNotFoundTest ---
-
-symbol MethodNotFoundTest =
-[
-    var n := 2.
-    
-    try(n test)
-    {
-        on(MethodNotFoundException e)
-        [
-            console printLine(e message," works")
-        ]
-    }
-].
-
+//// --- MethodNotFoundTest ---
+//
+//symbol MethodNotFoundTest =
+//[
+//    var n := 2.
+//    
+//    try(n test)
+//    {
+//        on(MethodNotFoundException e)
+//        [
+//            console printLine(e message," works")
+//        ]
+//    }
+//].
+//
 //// --- LoopTest ---
 //
 //#symbol LoopTest =
@@ -486,38 +486,38 @@ symbol MethodNotFoundTest =
 //    &until:[j == 0].
 //].
 
-// --- ExceptionTest ---
-
-symbol ExceptionTest =
-[
-    ExecTester break | if(:e) [ console writeLine:"Throw works!". ].
-    
-    ExecTester break | if (:e) [ console writeLine:(e message). ].
-    
-    try(ExecTester break2)
-    {
-        on(MyException e) [ console writeLine:"!!Wrong handler" ]
-        
-        on(MyException2 e) [ console writeLine:(e message). ]
-    }.
-    
-    try(control do:
-    [
-        try(ExecTester break3)
-        {
-            on(MyException e)
-            [
-                console writeLine:"!!Wrong handler"
-            ]
-        }
-    ])
-    {
-        on(MyException2 e)
-        [
-            console printLine(e message).
-        ]
-    }.
-].
+//// --- ExceptionTest ---
+//
+//symbol ExceptionTest =
+//[
+//    ExecTester break | if(:e) [ console writeLine:"Throw works!". ].
+//    
+//    ExecTester break | if (:e) [ console writeLine:(e message). ].
+//    
+//    try(ExecTester break2)
+//    {
+//        on(MyException e) [ console writeLine:"!!Wrong handler" ]
+//        
+//        on(MyException2 e) [ console writeLine:(e message). ]
+//    }.
+//    
+//    try(control do:
+//    [
+//        try(ExecTester break3)
+//        {
+//            on(MyException e)
+//            [
+//                console writeLine:"!!Wrong handler"
+//            ]
+//        }
+//    ])
+//    {
+//        on(MyException2 e)
+//        [
+//            console printLine(e message).
+//        ]
+//    }.
+//].
 
 //// --- TextBufferTest ---
 //
@@ -573,23 +573,23 @@ symbol ExceptionTest =
 //    a print:"Struct method works".
 //].
 
-GroupMember1 =
-{
-    m1 : prm = "group 1 " + prm.
-}.
-
-GroupMember2 =
-{
-    m2 : prm : prm2 = "group 2 " + prm.
-}.
-
-GroupTest =
-[
-    var g := Group::(GroupMember1, GroupMember2).
-    
-    console printLine(g m1("called")).
-    console printLine(g m2("called",2)).
-].
+//GroupMember1 =
+//{
+//    m1 : prm = "group 1 " + prm.
+//}.
+//
+//GroupMember2 =
+//{
+//    m2 : prm : prm2 = "group 2 " + prm.
+//}.
+//
+//GroupTest =
+//[
+//    var g := Group::(GroupMember1, GroupMember2).
+//    
+//    console printLine(g m1("called")).
+//    console printLine(g m2("called",2)).
+//].
 
 //// --- ClassWithGeneric ---
 //
@@ -781,3 +781,40 @@ GroupTest =
 //    var d := (2,3).
 //    var e := (1+2)*3.
 //].
+
+
+
+nestedFieldsTest =
+[
+    console write("nestedFieldsTest..").
+    
+    var o := 
+    {
+        field3 := 3.
+        
+        innerMost =>
+        {
+            field2 := 2.
+            
+            innerMost =>
+            {
+                field1 := 1.
+                
+                innerMost = @self.
+                
+                getField = field1.
+                
+                getParentField = field2.
+                
+                getParentParentField = field3.
+            }.
+        }.
+    }.
+  
+    var n := o innerMost.
+    Assert ifEqual(n getField, 1).
+    Assert ifEqual(n getParentField, 2).
+    Assert ifEqual(n getParentParentField, 3).
+    
+    console writeLine("done").
+].

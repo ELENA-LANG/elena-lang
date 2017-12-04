@@ -21,8 +21,8 @@ symbol program =
 //    ConvertorTest eval.
 //    ArrayTest eval.
 //    OpenArgTest eval.
-    MethodNotFoundTest eval.
-    ExceptionTest eval.
+//    MethodNotFoundTest eval.
+//    ExceptionTest eval.
 //    DateTest eval.
 //    ListTest eval.
 //    DictionaryTest eval.
@@ -30,7 +30,7 @@ symbol program =
 //    OuterFieldTest eval.
 //    LocalTest eval.
 //    StructTest eval.
-    GroupTest eval.
+//    GroupTest eval.
 //    GenericMethodTest eval.
 //    ConstructorTest eval.
 //    DTOToStructTest eval.
@@ -40,4 +40,8 @@ symbol program =
 //    //EmbedConstTest eval.
 //    jsonTest eval.
 //    subExpressionTest eval.
+
+    nestedFieldsTest().
+
+    console writeLine:"Passed".
 ].

@@ -75,6 +75,7 @@ In development:
                  * nil and $nil
                  * fixing open issues
                  * duplicate nested classes (see array template)
+                 * get rid of mapSelf
 
               dev - samples
                  * test zeckendorf_arithm 

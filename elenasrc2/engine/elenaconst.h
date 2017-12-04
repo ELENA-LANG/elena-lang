@@ -415,7 +415,8 @@ namespace _ELENA_
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
    #define RETVAL_VAR              "$$ret"            // the closure returning value
-   #define OWNER_VAR               "$$owner"          // the closure returning value   
+   #define OWNER_VAR               "$$owner"          // the nested class / closure owner
+   #define PARENT_VAR              "$$parent"         // the closure parent
 
    #define TEMPLATE_FIELD          "$field"
 

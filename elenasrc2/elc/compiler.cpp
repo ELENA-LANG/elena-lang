@@ -1072,7 +1072,7 @@ ObjectInfo Compiler::MethodScope :: mapThis()
    else if (stackSafe && classEmbeddable) {
       return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
    }
-   else return ObjectInfo(okThisParam, 1);
+   else return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference);
 }
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
@@ -1190,6 +1190,25 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
    info.header.flags |= elNestedClass;
 }
 
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapParent()
+{
+   Outer parentVar = outers.get(PARENT_VAR);
+   // if owner reference is not yet mapped, add it
+   if (parentVar.outerObject.kind == okUnknown) {
+      parentVar.reference = info.fields.Count();
+      CodeScope* codeScope = (CodeScope*)parent->getScope(Scope::slCode);
+      if (codeScope) {
+         parentVar.outerObject = codeScope->mapMember(SELF_VAR);
+      }
+      else parentVar = mapOwner();
+
+      outers.add(PARENT_VAR, parentVar);
+      mapKey(info.fields, PARENT_VAR, (int)parentVar.reference);
+
+   }
+   return parentVar;
+}
+
 Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 {
    Outer owner = outers.get(THIS_VAR);
@@ -1234,13 +1253,7 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapOwner()
 
 ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
 {
-   if (identifier.compare(THIS_VAR)) {
-      Outer owner = mapSelf();
-
-      // map as an outer field (reference to outer object and outer object field index)
-      return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam/*, owner.outerObject.type*/);
-   }
-   else if (identifier.compare(SUPER_VAR)) {
+   if (identifier.compare(SUPER_VAR)) {
       return ObjectInfo(okSuper, info.header.parentRef);
    }
    else if (identifier.compare(OWNER_VAR)) {
@@ -1265,8 +1278,8 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
       else {
          outer.outerObject = parent->mapTerminal(identifier);
          // handle outer fields in a special way: save only self
-         if (outer.outerObject.kind == okField || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okStaticField || outer.outerObject.kind == okOuterStaticField) {
-            Outer owner = mapSelf();
+         if (outer.outerObject.kind == okField || outer.outerObject.kind == okStaticField) {
+            Outer owner = mapParent();
 
             // save the outer field type if provided
             if (outer.outerObject.extraparam != 0) {
@@ -1288,7 +1301,8 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
          // map if the object is outer one
          else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal
             || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
-            || outer.outerObject.kind == okLocalAddress || outer.outerObject.kind == okFieldAddress)
+            || outer.outerObject.kind == okLocalAddress || outer.outerObject.kind == okFieldAddress 
+            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okOuterStaticField)
          {
             outer.reference = info.fields.Count();
 

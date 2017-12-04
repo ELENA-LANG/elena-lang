@@ -147,6 +147,21 @@ extension testOp
     ]
 }
 
+// --- Assert ---
+
+class AssertException :: Exception.
+
+singleton Assert
+{
+    ifEqual(object expr, object val)
+    [
+        ifnot(val == expr)
+        [
+            AssertException new("Assertion failed"); raise
+        ]
+    ]
+}
+
 // --- controlOp ---
 
 extension controlOp

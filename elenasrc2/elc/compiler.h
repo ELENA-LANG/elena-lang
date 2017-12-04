@@ -695,6 +695,7 @@ private:
 
       Outer mapSelf();
       Outer mapOwner();
+      Outer mapParent();
 
 //      ObjectInfo allocateRetVar();
 

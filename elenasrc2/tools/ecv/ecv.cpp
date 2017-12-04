@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   5
+#define REVISION_VERSION   6
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -80,6 +80,23 @@ void printLine(ident_t line1, ident_t line2)
    if (_writer) {
       _writer->writeLiteral(line1);
       _writer->writeLiteral(line2);
+      _writer->writeNewLine();
+   }
+}
+
+void printLine(ident_t line1, ident_t line2, ident_t line3, ident_t line4)
+{
+   wprintf(WideString(line1));
+   wprintf(WideString(line2));
+   wprintf(WideString(line3));
+   wprintf(WideString(line4));
+   printf("\n");
+
+   if (_writer) {
+      _writer->writeLiteral(line1);
+      _writer->writeLiteral(line2);
+      _writer->writeLiteral(line3);
+      _writer->writeLiteral(line4);
       _writer->writeNewLine();
    }
 }
@@ -156,23 +173,6 @@ _Memory* findSymbolCode(_Module* module, ident_t referenceName)
       return NULL;
    }
    return module->mapSection(reference | mskSymbolRef, true);
-}
-
-bool loadClassInfo(_Module* module, ident_t className, ClassInfo& info)
-{
-   // find class meta data
-   ReferenceNs reference(module->Name(), className);
-   _Memory* data = findClassMetaData(module, reference);
-   if (data == NULL) {
-      printLine("Class not found:", reference);
-
-      return false;
-   }
-
-   MemoryReader reader(data);
-   info.load(&reader);
-
-   return true;
 }
 
 ref_t resolveMessage(_Module* module, ident_t method)
@@ -848,6 +848,45 @@ void printSymbol(_Module* module, ident_t symbolReference, int pageSize)
    print("@end\n");
 }
 
+bool loadClassInfo(_Module* module, ident_t reference, ClassInfo& info)
+{
+   // find class meta data
+   _Memory* data = findClassMetaData(module, reference);
+   if (data == NULL) {
+      printLine("Class not found:", reference);
+
+      return false;
+   }
+
+   MemoryReader reader(data);
+   info.load(&reader);
+
+   return true;
+}
+
+void listFields(_Module* module, ReferenceNs className)
+{
+   ClassInfo info;
+   if (!loadClassInfo(module, className, info)) {
+      return;
+   }
+   
+   ClassInfo::FieldMap::Iterator it = info.fields.start();
+   while (!it.Eof()) {
+      ref_t type = info.fieldTypes.get(*it).value1;
+      if (type != 0) {
+         ident_t typeName = module->resolveReference(type);
+
+         printLine("Field ", (const char*)it.key(), " of ", typeName);
+      }
+      else printLine("Field ", (const char*)it.key());
+   
+
+
+      it++;
+   }
+}
+
 void listFlags(int flags)
 {
    if (test(flags, elNestedClass))
@@ -1008,7 +1047,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    // read tape record size
    size_t size = vmtReader.getDWord();
 
-   // read VMT header
+   // read VMT info
    ClassHeader header;
    vmtReader.read((void*)&header, sizeof(ClassHeader));
 
@@ -1017,6 +1056,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
          printLine("@parent ", module->resolveReference(header.parentRef));
 
       listFlags(header.flags);
+      listFields(module, reference);
    }
 
    if (header.classRef != 0 && withConstructors) {
@@ -1049,26 +1089,6 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       size -= sizeof(VMTEntry);
    }
 }
-
-//void listClassRoles(_Module* module, const wchar_t* className, int pageSize)
-//{
-//   className = trim(className);
-//
-//   ClassInfo info;
-//   if (!loadClassInfo(module, className, info)) {
-//      return;
-//   }
-//
-//   if (info.roles.Count() > 0) {
-//      ClassInfo::FieldMap::Iterator it = info.roles.start();
-//      while (!it.Eof()) {
-//         wprintf(_T("Role %s:%s\n"), (const wchar_t*)it.key(), module->resolveReference(*it & ~mskAnyRef));
-//
-//         it++;
-//      }
-//   }
-//   else wprintf(_T("No roles are found\n"));
-//}
 
 void printAPI(_Module* module, int pageSize)
 {
