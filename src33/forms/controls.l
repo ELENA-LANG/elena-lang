@@ -4,9 +4,9 @@ import system'drawing.
 
 type index_changed = IndexChangedAction.
 
-limited class IndexChangedAction
+limited closure class IndexChangedAction
 {
-    action stacksafe onIndexChange object:sender int:index
+    stacksafe closure(object sender, int index)
     [
     ]
 }

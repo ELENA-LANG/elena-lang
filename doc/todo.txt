@@ -2,11 +2,6 @@
 In development:
 ------                              
               dev - migrating
-                 * Tree traversal
-                 * 24 game
-                 * GUI component interaction
-                 * Hello world/Graphical
-                 * Simple windowed application
                  * first class
                  * Sort three variables
                  * Sorting algorithms/Sleep sort

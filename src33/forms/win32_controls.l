@@ -765,9 +765,9 @@ class PaintboxListener :: WindowCallback
     ]
 }
 
-limited class PaintAction
+limited closure class PaintAction
 {
-    action eval object:sender canvas:canvas []
+    closure(object sender, canvas canvas) []
 }
 
 limited class Paintbox :: BaseWinControl, icontrolof<paintbox>
@@ -802,7 +802,7 @@ limited class Paintbox :: BaseWinControl, icontrolof<paintbox>
         theCanvas open hdc:dc.
         
         ifnot($nil == thePaint)
-            [ thePaint eval object:$self canvas:theCanvas ].
+            [ thePaint($self, theCanvas) ].
         
         theCanvas close.
 
@@ -888,7 +888,7 @@ class Imagebox :: Paintbox
             [ ^ $self ].
         
         ifnot($nil == thePaint)
-            [ thePaint eval object:$self canvas:theCanvas ].
+            [ thePaint($self,theCanvas) ].
 
         $super refresh.
         theNeedToRefresh := false
@@ -1217,7 +1217,7 @@ sealed class ImageList
  
     assign paintbox:aPaintbox
     [
-        aPaintbox set onPaint:(&object:sender&canvas:aCanvas)
+        aPaintbox set onPaint:(:sender:aCanvas)<object,canvas>
         [
             int aWidth := 0.
             int aHeight := 0.
