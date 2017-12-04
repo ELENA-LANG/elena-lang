@@ -74,6 +74,7 @@ In development:
                  * print nan value
                  * nil and $nil
                  * fixing open issues
+                 * duplicate nested classes (see array template)
 
               dev - samples
                  * test zeckendorf_arithm 
