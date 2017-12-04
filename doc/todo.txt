@@ -2,9 +2,6 @@
 In development:
 ------                              
               dev - migrating
-                 * Visualize a tree
-                 * Wireworld
-                 * Ternary logic
                  * Tree traversal
                  * 24 game
                  * GUI component interaction
