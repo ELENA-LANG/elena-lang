@@ -527,7 +527,7 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
       // if the method included
       if (*it) {
          ref_t message = it.key();
-         if (getParamCount(message) > 0 && getAction(message) != 0 && !test(message, CONVERSION_MESSAGE)) {
+         if (getAbsoluteParamCount(message) > 0 && getAction(message) != 0 && !test(message, CONVERSION_MESSAGE)) {
             ident_t messageName = scope.module->resolveSubject(getAction(message));
 
             int index = messageName.find('$');
@@ -541,7 +541,7 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
                else actionRef = SET_MESSAGE_ID;
 
                ref_t flags = message & MESSAGE_FLAG_MASK;
-               ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getParamCount(message) | flags), maOverloadlist));
+               ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getAbsoluteParamCount(message) | flags), maOverloadlist));
                if (listRef != 0) {
                   if (test(info.header.flags, elSealed) || test(message, SEALED_MESSAGE)) {
                      compiler.generateSealedOverloadListMember(scope, listRef, message, classRef);

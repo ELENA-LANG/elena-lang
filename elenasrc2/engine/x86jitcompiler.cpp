@@ -105,6 +105,14 @@ const int gcCommands[gcCommandNumber] =
    bcSaveFI, bcAddFI, bcSubFI, bcNShiftR
 };
 
+const int gcCommandExNumber = /*6*/4;
+const int gcCommandExs[gcCommandExNumber] =
+{
+   bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
+   bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
+   //bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00,
+};
+
 // command table
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
@@ -156,6 +164,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileCreate, &compileCreateN, &compileNop, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileIfM, &compileElseM, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop
 };
+
 
 // --- x86JITCompiler commands ---
 
@@ -432,6 +441,46 @@ void _ELENA_::loadROp(int opcode, x86JITScope& scope)
 void _ELENA_::loadMTOp(int opcode, x86JITScope& scope)
 {
    char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.writeReference(*scope.code, scope.argument, 0);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(scope.extra_arg);
+      }
+      else if (relocation[0] == (CORE_MESSAGE_TABLE | mskPreloadDataRef)) {
+         scope.helper->writeMTReference(*scope.code);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadMTOpX(int opcode, x86JITScope& scope, int prefix)
+{
+   char* code = NULL;
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      if (gcCommandExs[i] == opcode + prefix) {
+         code = (char*)scope.compiler->_inlineExs[i];
+         break;
+      }
+   }
+
    size_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
@@ -1345,11 +1394,24 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
    ref_t message = scope.tape->getDWord();
 
    if (getAction(message) == INVOKE_MESSAGE_ID) {
-      scope.extra_arg = 8;
+      scope.extra_arg = 0;
    }
-   else scope.extra_arg = 12;
+   else scope.extra_arg = 4;
 
-   loadMTOp(op, scope);
+   switch (getAbsoluteParamCount(message)) {
+      case 1:
+         loadMTOpX(op, scope, 0x100);
+         break;
+      case 2:
+         loadMTOpX(op, scope, 0x200);
+         break;
+      //case OPEN_ARG_COUNT:
+      //   loadMTOpX(op, scope, 0xC00);
+      //   break;
+      default:
+         loadMTOp(op, scope);
+         break;
+   }
 }
 
 void _ELENA_::compileSetVerb(int, x86JITScope& scope)
@@ -1487,6 +1549,7 @@ void x86JITScope :: writeReference(MemoryWriter& writer, ref_t reference, size_t
 // --- x86JITCompiler ---
 
 x86JITCompiler :: x86JITCompiler(bool debugMode)
+   : _inlineExs(NULL, gcCommandExNumber << 2)
 {
    _debugMode = debugMode;
 }
@@ -1590,6 +1653,12 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 
       // due to optimization section must be ROModule::ROSection instance
       _inlines[gcCommands[i]] = (char*)info.section->get(0);
+   }
+
+   // preload vm exended commmands
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      SectionInfo info = helper.getCoreSection(gcCommandExs[i]);
+      _inlineExs.add(gcCommandExs[i], info.section->get(0));
    }
 }
 

@@ -2,6 +2,16 @@
 In development:
 ------                              
               dev - migrating
+                 * fix exception callstack 
+
+              dev - general implementation
+                 * redesign mtredirect / xmtredirect, they should be virtual, open arg parameters special
+                   optimized version should be used, invoke operation should be taken into account as well
+
+              dev - general implementation
+                 * typified open arg list (#369)
+
+              dev - migrating
                  * first class
                  * Sort three variables
                  * Sorting algorithms/Sleep sort
@@ -10,13 +20,6 @@ In development:
                  * Zeckendorf arithmetic
                  * graph
                  * chat
-
-              dev - general implementation
-                 * redesign mtredirect / xmtredirect, they should be virtual, for one, two, three parameters special
-                   optimized version should be used, invoke operation should be taken into account as well
-
-                   lea  eax, [esp + 12] - 12 - should be parametrized - __arg2 = 12 for normal message and 8 for invoke 
-                   message
 
               exp - live programming
                  * function call
@@ -57,7 +60,6 @@ In development:
                  * cache isEmbeddable operation result
                  * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
                    as light as possible
-                 * typified open arg list (#369)
                  * fn3prop : embeddable option for the function with three arguments should be recognized
                  * NilReferenceException, AccessViolationException, DivisionByZeroException should be recognized
                  * the following expression should generated an error : if(n test) { .... }
@@ -155,6 +157,7 @@ Pipeline:
                  * support #var(real)r := 2. // assigning int to real by constant
                  * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
+                 * redesign mtredirect / xmtredirect, for three, four parameters (?)
 
               exp - remoting
               exp - workflow

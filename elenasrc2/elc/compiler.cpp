@@ -2614,8 +2614,8 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
             paramCount = OPEN_ARG_COUNT;
 
             if (elementRef != scope.moduleScope->superReference) {
-               //HOTFIX : temporally - only object is supported
-               scope.raiseError(errNotApplicable, arg);
+               signature.append('$');
+               signature.append(scope.moduleScope->module->resolveReference(elementRef));
             }
             else signature.clear();
 
@@ -3117,7 +3117,13 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
                SNode argListNode = arg.firstChild();
 
                while (argListNode != lxNone) {
-                  compileExpression(writer, argListNode, scope, paramMode);
+                  writer.newBookmark();
+                  ObjectInfo param = compileExpression(writer, argListNode, scope, paramMode);
+                  if (classRef != 0 && classRef != scope.moduleScope->superReference) {
+                     if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param), param.element))
+                        scope.raiseError(errInvalidOperation, arg);
+                  }
+                  writer.removeBookmark();
 
                   argListNode = argListNode.nextNode();
                }
@@ -4535,6 +4541,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             paramCount += OPEN_ARG_COUNT;
             if (paramCount > OPEN_ARG_COUNT) {
                scope.raiseError(errNotApplicable, arg);
+            }
+            else if (elementRef != 0 && elementRef != scope.moduleScope->superReference) {
+               signature.append('$');
+               signature.append(scope.moduleScope->module->resolveReference(elementRef));
             }
          }
          else {
@@ -7309,7 +7319,7 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
    ref_t resendMessage = message;
    ref_t actionRef = getAction(message);
    if (!parentRef) {
-      int paramCount = getParamCount(message);
+      int paramCount = getAbsoluteParamCount(message);
       IdentifierString sign(scope.module->resolveSubject(actionRef));
       for (int i = 0; i < paramCount; i++) {
          sign.append('$');
