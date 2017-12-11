@@ -4466,7 +4466,7 @@ labDefault:
 
 end
 
-procedure __tape.tape_jump[16]
+procedure __tape.tape_jump[13]
 
   aloadsi 1
   nload
@@ -4476,7 +4476,7 @@ procedure __tape.tape_jump[16]
 
 end
 
-procedure __tape.tape_jumpif[16]
+procedure __tape.tape_jumpif[13]
 
   aloadsi 2
   elser labSkip const : system'true
@@ -4490,7 +4490,7 @@ labSkip:
 
 end
 
-procedure __tape.tape_exit[16]
+procedure __tape.tape_exit[13]
 
   bloadfi 1
   count
@@ -4501,7 +4501,7 @@ procedure __tape.tape_exit[16]
 
 end
 
-procedure __tape.tape_jumpifnot[16]
+procedure __tape.tape_jumpifnot[13]
 
   aloadsi 2
   elser labSkip const : system'false
@@ -4515,7 +4515,7 @@ labSkip:
 
 end
 
-procedure __tape.tape_go[16]
+procedure __tape.tape_go[13]
 
   aloadsi 1
   nload
@@ -4528,7 +4528,7 @@ procedure __tape.tape_go[16]
 
 end
 
-procedure __tape.tape_goif[16]
+procedure __tape.tape_goif[13]
 
   aloadsi 2
   elser labSkip const : system'true
@@ -4545,7 +4545,7 @@ labSkip:
 
 end
 
-procedure __tape.tape_goifnot[16]
+procedure __tape.tape_goifnot[13]
 
   aloadsi 2
   elser labSkip const : system'false
@@ -4562,7 +4562,7 @@ labSkip:
 
 end
 
-procedure __tape.tape_ptr[16]
+procedure __tape.tape_ptr[13]
 
   newn   class : system'IntNumber 4
   bcopya
@@ -4576,7 +4576,7 @@ procedure __tape.tape_ptr[16]
 
 end
 
-procedure __tape.tape_assign[16]
+procedure __tape.tape_assign[13]
 
   acopys 1
   bcopya
@@ -5542,5 +5542,13 @@ procedure critical_exception_handler
   pushr class : system'CriticalException
   pushr const : %"new[0]"
   throw
+
+end
+
+procedure __mssg_closure."#invoke[13]"
+
+  nloade
+  aloadsi 1
+  ajumpvi 0
 
 end

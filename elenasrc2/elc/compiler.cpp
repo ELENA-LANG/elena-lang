@@ -6569,7 +6569,7 @@ ref_t Compiler :: analizeBoxing(SNode node, ModuleScope& scope, WarningScope& wa
    return targetRef;
 }
 
-ref_t Compiler :: analizeArgBoxing(SNode node, ModuleScope& scope, WarningScope&, int mode)
+ref_t Compiler :: analizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
 {
    bool boxing = !test(mode, HINT_NOBOXING);
 
@@ -6579,6 +6579,8 @@ ref_t Compiler :: analizeArgBoxing(SNode node, ModuleScope& scope, WarningScope&
 
    if (!boxing)
       node = lxExpression;
+
+   analizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
 
    return scope.arrayReference;
 }

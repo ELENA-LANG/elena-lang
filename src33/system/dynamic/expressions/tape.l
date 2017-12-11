@@ -1,0 +1,6 @@
+// --- ClosureTape ---
+
+mixin ClosureTape
+{
+}
+

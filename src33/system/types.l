@@ -39,7 +39,7 @@ __real          = #14.
 __mssg          = #19.
 __subj          = #18.
 __extmssg       = #21.
-//__tape_mixin    = #8209.
+__tape_mixin    = #8209.
 __symbol        = #22.
 __array         = #30.
 

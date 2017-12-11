@@ -7,7 +7,7 @@ debuginfo=-1
 
 [manifest]
 name=ELENA Standard Library
-version=3.3.6
+version=3.3.8
 author=Alex Rakov
 
 [files]
@@ -56,7 +56,7 @@ dynamic\interpreters.l
 threading\win32_handlers.l
 threading\thread.l
 threading\thread_patterns.l
-net\win32_common.l 
+net\win32_common.l
 net\win32_sockets.l
 winforms\win32_types.l
 winforms\win32_exceptions.l
@@ -67,3 +67,6 @@ winforms\win32_windows.l
 winforms\win32_dialogs.l
 winforms\win32_app.l
 winforms\win32_xwindows.l
+dynamic\expressions\closures.l
+dynamic\expressions\tape.l
+

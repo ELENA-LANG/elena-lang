@@ -3,106 +3,106 @@ import system'collections.
 type tape_structure = system'dynamic'Struct.
 type tape_dynamic_structure = system'dynamic'DynamicStruct.
 
-//// --- Tape ---
-//
-//dynamic __tape_mixin Tape
-//{
-//    object $item.
-//    
-//    stacksafe constructor $new int:n
-//        = object&(n).
-//    
-//    constructor new array:list
-//        <= $new int:(list length);
-//    [
-//        int i := 0.
-//        int n := list length.
-//        
-//        while(i < n)
-//        [
-//            $self setField int:i object:(list getAt int:i).
-//            
-//            i := i + 1
-//        ].
-//    ]    
-//    
-//    stacksafe constructor new array_list:list int:index int:length
-//        <= $new int:length;
-//    [
-//        int i := 0.
-//        while(i < length)
-//        [
-//            $self setField int:i object:(list getAt int(index + i)).
-//            
-//            i := i + 1
-//        ]
-//    ]
-//    
-//    dispatch => system'core_routines'__tape.
-//}
-//
-//// --- tapeControl ---
-//
-//extension tapeOp
-//{
-//    tape_var args:params
-//    [
-//        int len := params length.
-//        int n := len.
-//        n := n - self int.
-//       
-//        ^ params[n]
-//    ]
-//    
-//    tape_swap_top args:params
-//    [
-//        var before_top := params[0].
-//        
-//        params[0] := self.
-//        
-//        ^ before_top.
-//    ]
-//    
-//    tape_assign args:params
-//        => system'core_routines'__tape.
-//    
-//    tape_pop : o
-//        = o.
-//    
-//    tape_pop_prev : o
-//        = $self.
-//    
-//    tape_stack args:params
-//    [
-//        int n := self int.
-//       
-//        ^ params[n]
-//    ]
-//        
-//    tape_jumpif args:params
-//        => system'core_routines'__tape.
-//    
-//    tape_jumpifnot args:params
-//        => system'core_routines'__tape.
-//    
-//    tape_jump args:params
-//        => system'core_routines'__tape.
-//        
-//    tape_goif args:params
-//        => system'core_routines'__tape.
-//    
-//    tape_goifnot args:params
-//        => system'core_routines'__tape.
-//    
-//    tape_go args:params
-//        => system'core_routines'__tape.
-//    
-//    tape_exit args:params
-//        => system'core_routines'__tape.
-//        
-//    tape_ptr args:params
-//        => system'core_routines'__tape.
-//}
+// --- Tape ---
+
+__tape_mixin Tape
+{
+    object<> $item.
+    
+    stacksafe constructor $new int:n
+        = object<>(n).
+    
+    constructor new array:list
+        <= $new int(list length);
+    [
+        int i := 0.
+        int n := list length.
+        
+        while(i < n)
+        [
+            $self setField int:i object:(list getAt int:i).
+            
+            i := i + 1
+        ].
+    ]    
+    
+    stacksafe constructor new array_list:list int:index int:length
+        <= $new int:length;
+    [
+        int i := 0.
+        while(i < length)
+        [
+            $self setField int:i object:(list getAt int(index + i)).
+            
+            i := i + 1
+        ]
+    ]
+    
+    dispatch => system'core_routines'__tape.
+}
+
+// --- tapeControl ---
+
+extension tapeOp
+{
+    tape_var(object<> params)
+    [
+        int len := params length.
+        int n := len.
+        n := n - self int.
+       
+        ^ params[n]
+    ]
+    
+    tape_swap_top(object<> params)
+    [
+        var before_top := params[0].
+        
+        params[0] := self.
+        
+        ^ before_top.
+    ]
+    
+    tape_assign(object<> params)
+        => system'core_routines'__tape.
+    
+    tape_pop : o
+        = o.
+    
+    tape_pop_prev : o
+        = $self.
+    
+    tape_stack(object<> params)
+    [
+        int n := self int.
+       
+        ^ params[n]
+    ]
+        
+    tape_jumpif(object<> params)
+        => system'core_routines'__tape.
+    
+    tape_jumpifnot(object<> params)
+        => system'core_routines'__tape.
+    
+    tape_jump(object<> params)
+        => system'core_routines'__tape.
+        
+    tape_goif(object<> params)
+        => system'core_routines'__tape.
+    
+    tape_goifnot(object<> params)
+        => system'core_routines'__tape.
+    
+    tape_go(object<> params)
+        => system'core_routines'__tape.
+    
+    tape_exit(object<> params)
+        => system'core_routines'__tape.
+        
+    tape_ptr(object<> params)
+        => system'core_routines'__tape.
+}
 
 // --- Struct ---
 
@@ -211,40 +211,40 @@ class DynamicStruct
     dispatch => theStruct.
 }
 
-//// --- Class ---
-//
-//dynamic mixin Class
-//{
-//    object $item.
-//    
-//    stacksafe constructor $new int:n
-//        = object&(n).
-//    
-//    constructor new array:list
-//        <= $new int(list length);
-//    [
-//        int i := 0.
-//        int n := list length.
-//        
-//        while (i < n)
-//        [
-//            $self setField int:i object(list getAt int:i).
-//            
-//            i := i + 1
-//        ]
-//    ]    
-//    
-//    stacksafe constructor new array_list:list int:index int:length
-//        <= $new int:length;
-//    [
-//        int i := 0.
-//        while(i < length)
-//        [
-//            $self setField int:i object:(list getAt int(index + i)).
-//            
-//            i := i + 1
-//        ]
-//    ]
-//    
-//    dispatch => system'core_routines'__class.
-//}
+// --- Class ---
+
+mixin Class
+{
+    object<> $item.
+    
+    stacksafe constructor $new int:n
+        = object<>(n).
+    
+    constructor new array:list
+        <= $new int(list length);
+    [
+        int i := 0.
+        int n := list length.
+        
+        while (i < n)
+        [
+            $self setField int:i object(list getAt int:i).
+            
+            i := i + 1
+        ]
+    ]    
+    
+    stacksafe constructor new array_list:list int:index int:length
+        <= $new int:length;
+    [
+        int i := 0.
+        while(i < length)
+        [
+            $self setField int:i object:(list getAt int(index + i)).
+            
+            i := i + 1
+        ]
+    ]
+    
+    dispatch => system'core_routines'__class.
+}

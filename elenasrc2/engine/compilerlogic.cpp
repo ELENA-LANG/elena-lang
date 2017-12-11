@@ -30,6 +30,11 @@ inline bool isPrimitiveArrayRef(ref_t classRef)
    return classRef == V_OBJARRAY;
 }
 
+inline bool isOpenArgRef(ref_t classRef)
+{
+   return classRef == V_ARGARRAY;
+}
+
 inline ref_t definePrimitiveArrayItem(ref_t classRef)
 {
    switch (classRef)
@@ -812,6 +817,14 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
          compiler.injectBoxing(writer, scope,
             test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef, true);
+
+         return true;
+      }
+   }
+   // HOTFIX : trying to typecast open argument list
+   if (isOpenArgRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
+      if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+         compiler.injectBoxing(writer, scope, lxArgBoxing, 0, targetRef, true);
 
          return true;
       }
