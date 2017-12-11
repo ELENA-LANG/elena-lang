@@ -1,13 +1,6 @@
 ------                                 
 In development:
 ------                              
-              dev - migrating
-                 * fix exception callstack 
-
-              dev - general implementation
-                 * redesign mtredirect / xmtredirect, they should be virtual, open arg parameters special
-                   optimized version should be used, invoke operation should be taken into account as well
-
               dev - general implementation
                  * typified open arg list (#369)
 
@@ -158,6 +151,7 @@ Pipeline:
                  * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
                  * redesign mtredirect / xmtredirect, for three, four parameters (?)
+                 * mtredirect / xmtredirect : do not need to save ecx twice
 
               exp - remoting
               exp - workflow

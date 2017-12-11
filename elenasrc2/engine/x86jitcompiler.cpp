@@ -105,12 +105,12 @@ const int gcCommands[gcCommandNumber] =
    bcSaveFI, bcAddFI, bcSubFI, bcNShiftR
 };
 
-const int gcCommandExNumber = /*6*/4;
+const int gcCommandExNumber = 6;
 const int gcCommandExs[gcCommandExNumber] =
 {
    bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
    bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
-   //bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00,
+   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00,
 };
 
 // command table
@@ -1405,9 +1405,9 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
       case 2:
          loadMTOpX(op, scope, 0x200);
          break;
-      //case OPEN_ARG_COUNT:
-      //   loadMTOpX(op, scope, 0xC00);
-      //   break;
+      case OPEN_ARG_COUNT:
+         loadMTOpX(op, scope, 0xC00);
+         break;
       default:
          loadMTOp(op, scope);
          break;
