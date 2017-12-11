@@ -4557,13 +4557,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
-      if (test(scope.hints, tpSealed | tpGeneric)) {
-         if (paramCount != OPEN_ARG_COUNT) {
-            if (!emptystr(signature) || !emptystr(messageStr))
-               scope.raiseError(errInvalidHint, verb);
+      if (test(scope.hints, tpSealed | tpGeneric) && paramCount != OPEN_ARG_COUNT) {
+         if (!emptystr(signature) || !emptystr(messageStr))
+            scope.raiseError(errInvalidHint, verb);
 
-            messageStr.copy(GENERIC_PREFIX);
-         }
+         messageStr.copy(GENERIC_PREFIX);
       }
       else if (test(scope.hints, tpAction)) {
          messageStr.copy(INVOKE_MESSAGE);
@@ -5730,6 +5728,11 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    }
 
    if (hintChanged) {
+      if (test(hint, tpSealed | tpGeneric) && getAction(message) == INVOKE_MESSAGE_ID) {
+         // HOTFIX : generic closure cannot be sealed
+         hint &= ~tpSealed;
+      }
+
       scope.info.methodHints.exclude(Attribute(message, maHint));
       scope.info.methodHints.add(Attribute(message, maHint), hint);
    }

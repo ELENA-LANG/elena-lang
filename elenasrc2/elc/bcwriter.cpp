@@ -1107,6 +1107,7 @@ void ByteCodeWriter :: unboxMessage(CommandTape& tape)
    tape.write(bcElseN, baCurrentLabel, 0);
    tape.releaseLabel();
    tape.write(bcDLoadFI, -1);
+   tape.write(bcAndN, ~PARAM_MASK);
    tape.write(bcOrN, OPEN_ARG_COUNT);
    tape.write(bcECopyD);
 }
@@ -5124,8 +5125,10 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
          // if it is open argument dispatching
          pushObject(tape, lxCurrentMessage);
          tape.write(bcOpen, 1);
+         tape.write(bcPushA);
 
          unboxMessage(tape);
+         loadObject(tape, lxLocal, 1);
          callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument, false, false);
 
          closeFrame(tape);

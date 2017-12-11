@@ -260,19 +260,23 @@ __nested template try :: expr
 //    expr then:[] | catch([],
 //    {
 //    }).
-//
-//// -- finally statement ---
-//
-//__block template finally :: expr =
-//    expr then:
-//        [
-//        ]                 
-//        | raise:[].
-//
+
+// -- finally statement ---
+
+__block template finally :: expr
+[
+    expr then:
+        [
+        ]                 
+        | raise:[].
+]        
+
 //__double_block template finally =
 //    true doFinally([],[]).
-//
-//// --- using statement ---
-//
-//__block template using :: expr =
-//    expr doAndClose:[].
+
+// --- using statement ---
+
+__block template using :: expr
+[
+    expr doAndClose:[].
+]    

@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   6
+#define REVISION_VERSION   7
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1276,8 +1276,9 @@ int main(int argc, char* argv[])
    _Module* module = NULL;
 
    // if direct path is provieded
-   if (moduleName[0]=='-' && moduleName[1]=='p') {
-      moduleName += 2;
+   if (moduleName[0]=='-' && moduleName[1]=='p' || moduleName.find('.') != NOTFOUND_POS) {
+      if (moduleName[0] == '-')
+         moduleName += 2;
 
       Path path;
       path.copySubPath(moduleName);

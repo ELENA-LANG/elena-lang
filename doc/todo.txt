@@ -8,6 +8,8 @@ In development:
                  * execute bf
                  * Runtime evaluation/In an environment
                  * Zeckendorf arithmetic
+                 * graph
+                 * chat
 
               dev - general implementation
                  * redesign mtredirect / xmtredirect, they should be virtual, for one, two, three parameters special
@@ -15,9 +17,6 @@ In development:
 
                    lea  eax, [esp + 12] - 12 - should be parametrized - __arg2 = 12 for normal message and 8 for invoke 
                    message
-
-              dev - this built-in variable #294
-                 * get rid of closure / $closure variables
 
               exp - live programming
                  * function call
