@@ -5002,7 +5002,7 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
             break;
          case lxIfNot:
          case lxIfNotN:
-            jumpIfEqual(tape, current.argument, current == lxIf);
+            jumpIfEqual(tape, current.argument, current == lxIfNot);
 
             //declareBlock(tape);
             generateCodeBlock(tape, current.findSubNode(lxCode));

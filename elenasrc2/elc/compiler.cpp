@@ -1058,7 +1058,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->multiMethod = false;
    this->closureMode = false;
    this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
-   //this->subCodeMode = false;
+   this->subCodeMode = false;
 }
 
 ObjectInfo Compiler::MethodScope :: mapThis()
@@ -1088,6 +1088,16 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
          return mapThis();
       }
       else return ObjectInfo(okParam, (size_t)-1);
+   }
+   else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
+      ObjectInfo retVar = parent->mapTerminal(terminal);
+      if (retVar.kind == okUnknown) {
+         InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
+
+         retVar = closure->allocateRetVar();
+      }
+
+      return retVar;
    }
    else {
       Parameter param = parameters.get(terminal);
@@ -1367,19 +1377,19 @@ bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
    return false;
 }
 
-//ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
-//{
-//   returningMode = true;
-//
-//   Outer outer;
-//   outer.reference = info.fields.Count();
-//   outer.outerObject = ObjectInfo(okNil, -1);
-//
-//   outers.add(RETVAL_VAR, outer);
-//   mapKey(info.fields, RETVAL_VAR, (int)outer.reference);
-//
-//   return ObjectInfo(okOuter, outer.reference);
-//}
+ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
+{
+   returningMode = true;
+
+   Outer outer;
+   outer.reference = info.fields.Count();
+   outer.outerObject = ObjectInfo(okNil, -1);
+
+   outers.add(RETVAL_VAR, outer);
+   mapKey(info.fields, RETVAL_VAR, (int)outer.reference);
+
+   return ObjectInfo(okOuter, outer.reference);
+}
 
 // --- Compiler ---
 
@@ -3536,16 +3546,16 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    MethodScope methodScope(&scope);
    bool lazyExpression = declareActionScope(scope, argNode, methodScope, mode);
 
-   int hints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
-   int hints2 = scope.info.methodHints.get(Attribute(encodeMessage(INVOKE_MESSAGE_ID, 1), maHint));
+   //int hints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
+   //int hints2 = scope.info.methodHints.get(Attribute(encodeMessage(INVOKE_MESSAGE_ID, 1), maHint));
 
    methodScope.closureMode = true;
 
    scope.include(methodScope.message);
 
-   //// HOTFIX : if the closure emulates code brackets
-   //if (test(mode, HINT_SUBCODE_CLOSURE))
-   //   methodScope.subCodeMode = true;
+   // HOTFIX : if the closure emulates code brackets
+   if (test(mode, HINT_SUBCODE_CLOSURE))
+      methodScope.subCodeMode = true;
 
    // if it is single expression
    if (!lazyExpression) {
@@ -6906,14 +6916,14 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
    }
 }
 
-//void Compiler :: compileForward(SNode ns, ModuleScope& scope)
-//{
-//   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).identifier();
-//   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).identifier();
-//
-//   if (!scope.defineForward(shortcut, reference))
-//      scope.raiseError(errDuplicatedDefinition, ns);
-//}
+void Compiler :: compileForward(SNode ns, ModuleScope& scope)
+{
+   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).identifier();
+   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).identifier();
+
+   if (!scope.defineForward(shortcut, reference))
+      scope.raiseError(errDuplicatedDefinition, ns);
+}
 
 bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
 {
@@ -7037,9 +7047,9 @@ void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
          scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
 
       switch (current) {
-   //      case lxInclude:
-   //         compileForward(current, scope);
-   //         break;
+         case lxInclude:
+            compileForward(current, scope);
+            break;
          case lxClass:
          {
             current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapTerminal(name));
@@ -7100,11 +7110,11 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
 
 void Compiler :: compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& syntaxTree, ModuleInfo& info, Unresolveds& unresolveds)
 {
-//   ModuleScope scope(&project, file, info.codeModule, info.debugModule, &unresolveds);
-//
-//   project.printInfo("%s", file);
-//
-//   compileSyntaxTree(syntaxTree, scope);
+   ModuleScope scope(&project, file, info.codeModule, info.debugModule, &unresolveds);
+
+   project.printInfo("%s", file);
+
+   compileSyntaxTree(syntaxTree, scope);
 }
 
 //inline bool isAttribute(_CompilerScope& scope, ref_t subjRef)

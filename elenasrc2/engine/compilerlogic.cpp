@@ -1800,7 +1800,7 @@ bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
    return false;
 }
 
-void CompilerLogic :: optimizeBranchingOp(_CompilerScope& scope, SNode node)
+void CompilerLogic :: optimizeBranchingOp(_CompilerScope&, SNode node)
 {
    // check if direct comparision with a numeric constant is possible
    SNode ifOp = SyntaxTree::findPattern(node, 3,

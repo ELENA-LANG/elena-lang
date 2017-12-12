@@ -1765,7 +1765,7 @@ void DerivationReader :: generateAssignmentOperator(SyntaxWriter& writer, SNode 
    writer.closeNode();
 }
 
-bool DerivationReader :: checkPatternDeclaration(SNode node, DerivationScope& scope)
+bool DerivationReader :: checkPatternDeclaration(SNode node, DerivationScope&)
 {
    return node.existChild(lxCode, lxNestedClass);
 }
@@ -1798,7 +1798,7 @@ bool DerivationReader :: checkArrayDeclaration(SNode node, DerivationScope& scop
    return false;
 }
 
-bool DerivationReader :: checkTemplateExpression(SNode current, DerivationScope& scope)
+bool DerivationReader :: checkTemplateExpression(SNode current, DerivationScope&)
 {
    if (current != lxObject || !verifyNode(current.firstChild(), lxIdentifier, lxPrivate))
       return false;

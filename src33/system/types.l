@@ -29,6 +29,7 @@ mixin           = #8206.
 __accessor      = #16399.
 __block         = #16400.
 __nested        = #16401.
+preloaded       = #8207.
 
 args            = #32. 
 
@@ -46,7 +47,6 @@ __array         = #30.
 __ifoperator    = #4097.
 __ifnotoperator = #4098.
 
-//#template(-8207)         preloaded {}
 
 /// Provides classes that describe the basic functionality
 

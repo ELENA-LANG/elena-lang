@@ -15,7 +15,7 @@ class BFTape
 
     constructor new:aLength
     [
-        theArray := Array new:aLength; populate(&int:n)(Integer new:0).
+        theArray := Array new:aLength; populate(:n)<int>(Integer new:0).
         
         thePointer := Integer new:0.
         
@@ -267,7 +267,7 @@ symbol program3 =
     var bfProgram := TapeAssembler new;
         open; input; output; close; get.
                     
-    var bfTape := Array new:1024; populate(&int:n) [ ^0 ].
+    var bfTape := Array new:1024; populate(:n)<int> [ ^0 ].
     
     bfProgram eval:bfTape.
 ].
@@ -283,7 +283,7 @@ symbol program4 =
 
     var bfProgram := bfAssemblyProgram eval(TapeAssembler new).
 
-    var bfTape := Array new:1024; populate(&int:n)( 0 ).
+    var bfTape := Array new:1024; populate(:n)<int>( 0 ).
 
     bfProgram eval:bfTape.
 ].

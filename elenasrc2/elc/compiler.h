@@ -339,12 +339,12 @@ private:
 
       virtual ref_t mapTemplateClass(ident_t templateName);
 
-//      bool defineForward(ident_t forward, ident_t referenceName)
-//      {
-//         ObjectInfo info = mapReferenceInfo(referenceName, false);
-//      
-//         return forwards.add(forward, info.param, true);
-//      }
+      bool defineForward(ident_t forward, ident_t referenceName)
+      {
+         ObjectInfo info = mapReferenceInfo(referenceName, false);
+      
+         return forwards.add(forward, info.param, true);
+      }
 
       virtual ident_t resolveFullName(ref_t reference)
       {
@@ -541,7 +541,7 @@ private:
       bool         multiMethod;
       bool         closureMode;
       bool         nestedMode;
-      //bool         subCodeMode;
+      bool         subCodeMode;
       
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -697,7 +697,7 @@ private:
       Outer mapOwner();
       Outer mapParent();
 
-//      ObjectInfo allocateRetVar();
+      ObjectInfo allocateRetVar();
 
       bool markAsPresaved(ObjectInfo object);
 
@@ -916,8 +916,8 @@ private:
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
    bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
-////   void compileIncludeModule(SNode node, ModuleScope& scope);
-//   //void compileForward(SNode node, ModuleScope& scope);
+//   void compileIncludeModule(SNode node, ModuleScope& scope);
+   void compileForward(SNode node, ModuleScope& scope);
 
    bool validate(_ProjectManager& project, _Module* module, int reference);
 
