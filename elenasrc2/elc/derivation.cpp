@@ -2414,6 +2414,12 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
             if (ref == 0) {
                ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference, lxPrivate), false);
             }
+            else if (ref == V_OBJARRAY && !argMode) {
+               argMode = true;
+               ref = scope.moduleScope->mapTerminal(current.findChild(lxAttributeValue).findChild(lxIdentifier, lxReference, lxPrivate), true);
+               if (!ref)
+                  scope.raiseError(errInvalidHint, current);
+            }
             else if ((int)ref < 0)
                scope.raiseError(errInvalidHint, current);
          }

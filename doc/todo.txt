@@ -19,6 +19,7 @@ In development:
                  * redesign Tape
 
               dev - usability
+                 * ecv : class info should be counted for listing mode
                  * ecv : display class size
 
               exp - web
@@ -65,7 +66,6 @@ In development:
 
               dev - samples
                  * test zeckendorf_arithm 
-                 * test fibonacci sample
 
               dev - debugger
                  * #263 - fix goto
@@ -290,7 +290,6 @@ Pipeline:
                  * fix syntax highlighting
 
               zdev 
-                 * scripting library : elena script (both run-time / compile-time)
                  * reg ex
 
               adev - lib32
@@ -604,7 +603,6 @@ Pipeline:
     
               xdev - generic development
                        * tape_tester : classTest
-                       * test script samples
                        * fix linux pi2
                        * review multi-method implementation in clojure
                        * forms.onPaint : should it be possible somehow to validate if the action can be used for this type??
