@@ -814,7 +814,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       //ClassInfo sourceInfo;
       //defineClassInfo(scope, sourceInfo, sourceRef, true);
 
-      if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+      if (isCompatible(scope, info.fieldTypes.get(-1).value1, elementRef)) {
          compiler.injectBoxing(writer, scope,
             test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef, true);
 
@@ -823,7 +823,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
    }
    // HOTFIX : trying to typecast open argument list
    if (isOpenArgRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
-      if (isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+      if (isCompatible(scope, info.fieldTypes.get(-1).value1, elementRef)) {
          compiler.injectBoxing(writer, scope, lxArgBoxing, 0, targetRef, true);
 
          return true;
@@ -1077,7 +1077,7 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
    }
 
    // adjust array
-   if (test(info.header.flags, elDynamicRole) && !testany(info.header.flags, elStructureRole | elNonStructureRole)) {
+   if (test(info.header.flags, elDynamicRole) && !testany(info.header.flags, elStructureRole/* | elNonStructureRole*/)) {
       info.header.flags |= elNonStructureRole;
 
       if ((info.header.flags & elDebugMask) == 0) {
@@ -1864,6 +1864,8 @@ void CompilerLogic :: optimizeBranchingOp(_CompilerScope& scope, SNode node)
 
 ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node)
 {
+   bool openArg = getAbsoluteParamCount(multiMessage) == OPEN_ARG_COUNT;
+
    ClassInfo info;
    if (defineClassInfo(scope, info, targetRef)) {
       ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
@@ -1886,6 +1888,7 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
             IdentifierString temp(signature.c_str() + start, end - start);
             SNode current = node.firstChild();
             bool first = true;
+            bool matched = true;
             ref_t argRef = scope.module->mapReference(temp);
             while (current != lxNone) {
                if (test(current.type, lxObjectMask)) {
@@ -1913,14 +1916,19 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
                            }
 
                            start = end + 1;
+                           if (openArg) {
+                              // for open arg check the same type
+                           }
                            if (start < getlength(signature)) {
                               end = signature.find(start, '$', getlength(signature));
                               temp.copy(signature.c_str() + start, end - start);
                               argRef = scope.module->mapReference(temp);
                            }
-                           else return message;
                         }
-                        else break;
+                        else {
+                           matched = false;
+                           break;
+                        }
                      }
                      else return 0;
                   }
@@ -1928,6 +1936,9 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
                }
                current = current.nextNode();
             }
+            if (matched)
+               return message;
+
             position -= 8;
          }
       }

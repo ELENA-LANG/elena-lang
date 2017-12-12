@@ -1097,7 +1097,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
          int prefix = closureMode ? 0 : -1;
 
          if (withOpenArg && param.class_ref == V_ARGARRAY) {
-            return ObjectInfo(okParams, prefix - local, param.class_ref);
+            return ObjectInfo(okParams, prefix - local, param.class_ref, param.element_ref);
          }
          else if (stackSafe && param.class_ref != 0 && param.size != 0) {
             return ObjectInfo(okParam, prefix - local, param.class_ref, (ref_t)-1);
@@ -5586,7 +5586,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    else if (test(scope.info.header.flags, elDynamicRole)) {
       if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
          // compiler magic : turn a field declaration into an array or string one
-         if (size != 0) {
+         if (size != 0 && !test(scope.info.header.flags, elNonStructureRole)) {
             scope.info.header.flags |= elStructureRole;
             scope.info.size = -size;
          }
@@ -7321,9 +7321,15 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
    if (!parentRef) {
       int paramCount = getAbsoluteParamCount(message);
       IdentifierString sign(scope.module->resolveSubject(actionRef));
-      for (int i = 0; i < paramCount; i++) {
+      if (paramCount == OPEN_ARG_COUNT) {
          sign.append('$');
          sign.append(scope.module->resolveReference(scope.superReference));
+      }
+      else {
+         for (int i = 0; i < paramCount; i++) {
+            sign.append('$');
+            sign.append(scope.module->resolveReference(scope.superReference));
+         }
       }
       ref_t signRef = scope.module->mapSubject(sign, false);
 

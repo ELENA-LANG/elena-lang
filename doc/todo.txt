@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                              
-              dev - general implementation
-                 * typified open arg list (#369)
-
               dev - migrating
                  * first class
                  * Sort three variables
