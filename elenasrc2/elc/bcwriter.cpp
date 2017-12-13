@@ -1077,7 +1077,7 @@ void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
    tape.write(bcBSRedirect);
 }
 
-void ByteCodeWriter :: unboxMessage(CommandTape& tape)
+void ByteCodeWriter :: unboxMessage(CommandTape& tape, int paramCount)
 {
    // ; copy the call stack
    // bcopyf -2
@@ -1109,7 +1109,7 @@ void ByteCodeWriter :: unboxMessage(CommandTape& tape)
    tape.releaseLabel();
    tape.write(bcDLoadFI, -1);
    tape.write(bcAndN, ~PARAM_MASK);
-   tape.write(bcOrN, OPEN_ARG_COUNT);
+   tape.write(bcOrN, paramCount);
    tape.write(bcECopyD);
 }
 
@@ -5122,13 +5122,13 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
    SNode target = node.findChild(lxTarget);
    if (node.argument == 0) {
       SNode message = node.findChild(lxMessage);
-      if (message.argument == encodeMessage(DISPATCH_MESSAGE_ID, OPEN_ARG_COUNT)) {
+      if (isOpenArg(message.argument) && getAction(message.argument) == DISPATCH_MESSAGE_ID) {
          // if it is open argument dispatching
          pushObject(tape, lxCurrentMessage);
          tape.write(bcOpen, 1);
          tape.write(bcPushA);
 
-         unboxMessage(tape);
+         unboxMessage(tape, getAbsoluteParamCount(message.argument));
          loadObject(tape, lxLocal, 1);
          callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument, false, false);
 

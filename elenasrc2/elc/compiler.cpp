@@ -2629,7 +2629,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
             if (paramCount > MAX_ARG_COUNT)
                scope.raiseError(errInvalidOperation, node);
 
-            if (elementRef != scope.moduleScope->superReference) {
+            if (elementRef != scope.moduleScope->superReference || paramCount > OPEN_ARG_COUNT) {
                signature.append('$');
                signature.append(scope.moduleScope->module->resolveReference(elementRef));
             }
@@ -4567,7 +4567,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             if (paramCount > MAX_ARG_COUNT) {
                scope.raiseError(errNotApplicable, arg);
             }
-            else if (elementRef != 0 && elementRef != scope.moduleScope->superReference) {
+            else if (elementRef != 0 && (elementRef != scope.moduleScope->superReference || paramCount > OPEN_ARG_COUNT)) {
                signature.append('$');
                signature.append(scope.moduleScope->module->resolveReference(elementRef));
             }
@@ -4709,9 +4709,19 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
       }
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
+         // retrieve the number of extra arguments
+         int extraParamCount = 0;
+         ClassScope* owner = (ClassScope*)scope.parent;
+         for (auto it = owner->info.methods.start(); !it.Eof(); it++) {
+            if (isOpenArg(it.key()) && _logic->isMethodGeneric(owner->info, it.key())) {
+               extraParamCount = getParamCount(it.key());
+               break;
+            }
+         }
+
          writer.newNode(lxResending);
 
-         writer.appendNode(lxMessage, encodeMessage(DISPATCH_MESSAGE_ID, OPEN_ARG_COUNT));
+         writer.appendNode(lxMessage, encodeMessage(DISPATCH_MESSAGE_ID, OPEN_ARG_COUNT + extraParamCount));
 
          writer.newNode(lxTarget, scope.moduleScope->superReference);
          writer.appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));

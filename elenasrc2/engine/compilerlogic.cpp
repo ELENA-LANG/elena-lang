@@ -245,8 +245,21 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
       int hint = checkMethod(info, message, result);
       if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
          hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT), result);
-         if (hint != tpUnknown)
+         if (hint != tpUnknown) {
             result.withOpenArgDispatcher = true;
+         }
+         else {
+            hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 1), result);
+            if (hint != tpUnknown) {
+               result.withOpenArg1Dispatcher = true;
+            }
+            else {
+               hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 2), result);
+               if (hint != tpUnknown) {
+                  result.withOpenArg2Dispatcher = true;
+               }
+            }
+         }
       }
 
       return hint;
