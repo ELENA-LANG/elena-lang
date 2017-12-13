@@ -4559,7 +4559,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             scope.parameters.add(name, Parameter(index, class_ref, elementRef, 0));
 
             // the generic arguments should be free by the method exit
-            scope.rootToFree += paramCount;
             scope.withOpenArg = true;
 
             // to indicate open argument list
@@ -4667,6 +4666,19 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    }
 }
 
+int Compiler ::retrieveGenericArgParamCount(ClassScope& scope)
+{
+   int extraParamCount = -1;
+   for (auto it = scope.info.methods.start(); !it.Eof(); it++) {
+      if (isOpenArg(it.key()) && _logic->isMethodGeneric(scope.info, it.key())) {
+         extraParamCount = getParamCount(it.key());
+         break;
+      }
+   }
+
+   return extraParamCount;
+}
+
 void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
 {
    writer.newNode(lxClassMethod, scope.message);
@@ -4710,14 +4722,7 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
          // retrieve the number of extra arguments
-         int extraParamCount = 0;
-         ClassScope* owner = (ClassScope*)scope.parent;
-         for (auto it = owner->info.methods.start(); !it.Eof(); it++) {
-            if (isOpenArg(it.key()) && _logic->isMethodGeneric(owner->info, it.key())) {
-               extraParamCount = getParamCount(it.key());
-               break;
-            }
-         }
+         int extraParamCount = retrieveGenericArgParamCount(*(ClassScope*)scope.parent);
 
          writer.newNode(lxResending);
 
@@ -5805,6 +5810,11 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
    if (isOpenArg(message)) {
       if (_logic->isMethodGeneric(scope.info, message)) {
+         // HOTFIX : verify that only generics with similar argument signature available
+         int extraParamCount = retrieveGenericArgParamCount(scope);
+         if (extraParamCount != -1 && getParamCount(message) != extraParamCount)
+            scope.raiseError(errIllegalMethod, current);
+
          scope.info.header.flags |= elWithArgGenerics;
       }
    }

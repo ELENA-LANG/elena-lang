@@ -1,12 +1,6 @@
 ------                                 
 In development:
 ------                              
-              dev - general implementation
-                 * combining parameter with open argument list - multimethod (support EE8 / EE9)
-                 * combining parameter with open argument list - multimethod (EE8,EE9,DE8,DE9 - to corex)
-                 * combining parameter with open argument list - generic one should be only for one of possible open arg signatures
-                 * #253 : open argument list routine
-
               dev - migrating
                  * first class
                  * Sort three variables
