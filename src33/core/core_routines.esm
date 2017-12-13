@@ -8,6 +8,7 @@ define elExtMessage         000200000h
 
 define EVAL_MESSAGE_ID      050h
 define EVAL_ACTION          005h
+define INVOKE_ACTION        01Eh
 
 procedure __object.dispatch[1]
 
@@ -5550,5 +5551,76 @@ procedure __mssg_closure."#invoke[13]"
   nloade
   aloadsi 1
   ajumpvi 0
+
+end
+
+procedure __closuretape.dispatch[1]
+
+  dcopyverb
+  elsen labDefault INVOKE_ACTION
+
+  dcopycount
+  ecopyd  
+
+  open 5
+  reserve 2
+  pusha
+  
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+  
+  pushn 0
+  
+  bcopyf -6
+  
+// ; copy message parameters
+  dcopye
+labNextParam:
+  dec
+  get
+  pusha
+  elsen labNextParam 0
+
+  bloadfi 1
+
+labNext:
+  breakpoint
+
+  count
+  dloadfi -2
+  if labEnd
+  get
+  inc
+  dsavefi -2
+
+  xindexrm system'dynamic'expressions'DynamicClosure %"#invoke[12]"
+  acallvd
+  pusha
+  bloadfi 1
+  jump labNext
+
+labEnd:
+  popa
+
+  dloadfi -3
+  dec
+  ecopyd
+  restore 4
+  close
+
+  equit
+
+labDefault:
+  ecopyd
+  bsredirect  
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[1]
+  throw
 
 end

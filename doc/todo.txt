@@ -12,11 +12,11 @@ In development:
                  * chat
 
               exp - live programming
+                 * test ClosureTape - if the stack is cleared correctly
                  * function call
 
                  * method call
                  * virtual method call
-                 * redesign Tape
 
               dev - usability
                  * ecv : class info should be counted for listing mode

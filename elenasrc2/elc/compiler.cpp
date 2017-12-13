@@ -1899,6 +1899,12 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
       else if (current == lxClassRefAttr) {
          if (fieldRef == 0) {
             fieldRef = scope.moduleScope->module->mapReference(current.identifier(), false);
+            if (current.existChild(lxSize)) {
+               if (size == 0) {
+                  size = current.findChild(lxSize).argument;
+               }
+               else scope.raiseError(errInvalidHint, node);
+            }
          }
          else scope.raiseError(errInvalidHint, node);
       }

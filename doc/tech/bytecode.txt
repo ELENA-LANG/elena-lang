@@ -339,7 +339,7 @@ ELENA byte codes (or ecodes)
  xcallrm r, m               - calls directly the method resolved by JIT by r and m
                               acc contains the result
  
- xindexrm r, m              - directly resolve message mapping for the spcified class
+ xindexrm r, m              - directly resolve message mapping for the specified class
  
  xjumprm r, m               - jumps directly the method resolved by JIT by r and m
  
