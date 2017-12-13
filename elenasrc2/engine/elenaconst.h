@@ -29,6 +29,7 @@ namespace _ELENA_
    #define PROPSET_MESSAGE         0x20000000u
    #define PARAM_MASK              0x0000000Fu
    #define OPEN_ARG_COUNT          0x0C
+   #define MAX_ARG_COUNT           0x0E
 
    #define PARAMX_MASK             0x000000000000FFFFu
 

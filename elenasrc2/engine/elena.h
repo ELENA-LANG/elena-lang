@@ -858,7 +858,7 @@ inline bool IsRealExprOperator(int operator_id)
 
 inline bool isOpenArg(ref_t message)
 {
-   return (message & PARAM_MASK) == OPEN_ARG_COUNT;
+   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
 }
 
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)

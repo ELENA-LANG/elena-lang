@@ -2517,7 +2517,7 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
             else if (message[len - 1] == ']') {
                signature.copy(message + i + 1, len - i - 2);
                paramCount = signature.ident().toInt();
-               if (paramCount >= OPEN_ARG_COUNT)
+               if (paramCount > MAX_ARG_COUNT)
                   scope.raiseError(errInvalidSubject, terminal);
             }
             else scope.raiseError(errInvalidSubject, terminal);
@@ -2623,11 +2623,11 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
       if (test(arg.type, lxObjectMask)) {
          // if it is an open argument list
          if (class_ref == V_ARGARRAY) {
-            // if open argument list virtual subject is used - replace it with []
-            if (paramCount > 0)
-               scope.raiseError(errInvalidOperation, node);
+            paramCount += OPEN_ARG_COUNT;
 
-            paramCount = OPEN_ARG_COUNT;
+            // if open argument list virtual subject is used - replace it with []
+            if (paramCount > MAX_ARG_COUNT)
+               scope.raiseError(errInvalidOperation, node);
 
             if (elementRef != scope.moduleScope->superReference) {
                signature.append('$');
@@ -2646,6 +2646,9 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
          }
       }
    }
+
+   if (paramCount > MAX_ARG_COUNT)
+      scope.raiseError(errInvalidOperation, node);
 
    if (actionFlags == PROPSET_MESSAGE && paramCount == 1) {
       // COMPILER MAGIC : set&x => x
@@ -2970,7 +2973,16 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    }
    else if (callType == tpClosed || callType == tpSealed) {
       operation = callType == tpClosed ? lxSDirctCalling : lxDirectCalling;
-      argument = result.withOpenArgDispatcher ? overwriteParamCount(messageRef, OPEN_ARG_COUNT) : messageRef;
+      argument = messageRef;
+      if (result.withOpenArgDispatcher) {
+         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT);
+      }
+      else if (result.withOpenArg1Dispatcher) {
+         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 1);
+      }
+      else if (result.withOpenArg2Dispatcher) {
+         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 2);
+      }
 
       if (result.stackSafe && target.kind != okParams && !test(mode, HINT_DYNAMIC_OBJECT))
          writer.appendNode(lxStacksafeAttr);
@@ -4424,9 +4436,6 @@ ref_t Compiler :: declareArgumentSubject(SNode arg, ModuleScope& scope, bool& fi
 
       if (class_ref) {
          if (openArg) {
-            if (!emptystr(signature))
-               scope.raiseError(errNotApplicable, arg);
-
             elementRef = class_ref;
             class_ref = V_ARGARRAY;
          }
@@ -4555,7 +4564,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
             // to indicate open argument list
             paramCount += OPEN_ARG_COUNT;
-            if (paramCount > OPEN_ARG_COUNT) {
+            if (paramCount > MAX_ARG_COUNT) {
                scope.raiseError(errNotApplicable, arg);
             }
             else if (elementRef != 0 && elementRef != scope.moduleScope->superReference) {
@@ -4578,12 +4587,12 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    }
 
    // HOTFIX : validate that strong parameters are not mixed with generic ones
-   if (strongParamCounter > 0 && strongParamCounter != paramCount && paramCount != OPEN_ARG_COUNT)
+   if (strongParamCounter > 0 && strongParamCounter != paramCount && paramCount < OPEN_ARG_COUNT)
       scope.raiseError(errIllegalMethod, node);
 
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
-      if (test(scope.hints, tpSealed | tpGeneric) && paramCount != OPEN_ARG_COUNT) {
+      if (test(scope.hints, tpSealed | tpGeneric) && paramCount < OPEN_ARG_COUNT) {
          if (!emptystr(signature) || !emptystr(messageStr))
             scope.raiseError(errInvalidHint, verb);
 
@@ -7337,7 +7346,11 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
    if (!parentRef) {
       int paramCount = getAbsoluteParamCount(message);
       IdentifierString sign(scope.module->resolveSubject(actionRef));
-      if (paramCount == OPEN_ARG_COUNT) {
+      if (paramCount >= OPEN_ARG_COUNT) {
+         for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
+            sign.append('$');
+            sign.append(scope.module->resolveReference(scope.superReference));
+         }
          sign.append('$');
          sign.append(scope.module->resolveReference(scope.superReference));
       }

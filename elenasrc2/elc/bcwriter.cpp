@@ -1092,7 +1092,8 @@ void ByteCodeWriter :: unboxMessage(CommandTape& tape)
    // elsen labNextParam 0
    // ; change param count
    // dcopyfi - 1
-   // orn 0Fh
+   // and ~PARAM_MASK
+   // orn OPEN_ARG_COUNT
    // ecopyd
 
    tape.write(bcBCopyF, -2);

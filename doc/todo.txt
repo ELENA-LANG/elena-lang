@@ -1,6 +1,15 @@
 ------                                 
 In development:
 ------                              
+              dev - general implementation
+                 * combining parameter with open argument list
+                 * combining parameter with open argument list - generic one
+
+                 * combining parameter with open argument list - implicit resolving
+                 * combining parameter with open argument list - multimethod
+
+                 * #253 : open argument list routine
+
               dev - migrating
                  * first class
                  * Sort three variables

@@ -11,6 +11,7 @@
 [*] #314 : Shortcut closure syntax 
 [*] #123 : fixed size array field 
 [+] #369 : typified open argument list
+[*] #253 : open argument list routine refactoring
 
 [LIB]
 [+] new library : system'dynamic'expressions

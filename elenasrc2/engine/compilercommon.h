@@ -231,6 +231,8 @@ public:
       bool  stackSafe;
       bool  embeddable;
       bool  withOpenArgDispatcher;
+      bool  withOpenArg1Dispatcher;
+      bool  withOpenArg2Dispatcher;
       bool  multi;
       bool  closure;
       ref_t outputReference;
@@ -243,6 +245,8 @@ public:
          withCustomDispatcher = false;
          stackSafe = false;
          withOpenArgDispatcher = false;
+         withOpenArg1Dispatcher = false;
+         withOpenArg2Dispatcher = false;
          multi = false;
          closure = false;
       }
