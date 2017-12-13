@@ -5576,12 +5576,14 @@ procedure __closuretape.dispatch[1]
   
 // ; copy message parameters
   dcopye
+  ifn  labSkipCopy 0
 labNextParam:
   dec
   get
   pusha
   elsen labNextParam 0
 
+labSkipCopy:
   bloadfi 1
 
 labNext:
