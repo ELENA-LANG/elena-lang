@@ -43,7 +43,7 @@ sealed struct RandomGenerator
     nextInt : aValue
         = $self eval:aValue.
         
-    nextReal
+    real nextReal
     [
         int next := 0.
         $self eval int:1000000 vint:next.
@@ -85,4 +85,6 @@ extension randomOp
         
         ^ list
     ]
+    
+    
 }

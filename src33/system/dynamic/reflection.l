@@ -4,6 +4,8 @@
 //        => system'core_routines'arrptr_getLen.        
 //}.
 
+type mssgarray = array<Message>.
+
 // --- classOp ---
 
 extension classROp
@@ -30,18 +32,19 @@ extension classROp
     stacksafe respondTo mssg:aMessage
         => system'core_routines'__object.
 
-//    stacksafe readMatchedEntries &mssg:aMask &int:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
+//    array<Message> __messages
 //    [
-//        var class := self::objectOp class.
+//        __mssg<256> array.
+//        
+//        var class := self~objectOp class_ref.
 //
-//        int retVal := system'external core_filtervmt
-//           &mssg:aMask
-//           &ref:class
-//           &int:aVMTOffset
-//           &int:aResultLength
-//           &mssgarray:aResultArray.
+//        int retVal := system'external core_readvmt
+//           int:0
+//           ref:class
+//           int:256
+//           intarray:array.
 //
-//        aResultLength := retVal.
+//        ^ array.
 //    ]
     
     setFields args:objects

@@ -2,14 +2,13 @@
 In development:
 ------                              
               dev - migrating
-                 * first class
                  * Sort three variables
-                 * Sorting algorithms/Sleep sort
                  * execute bf
                  * Runtime evaluation/In an environment
                  * Zeckendorf arithmetic
-                 * graph
-                 * chat
+
+              exp - built-in script
+                 * graph : provide function in the script
 
               exp - live programming
                  * test ClosureTape - if the stack is cleared correctly
@@ -65,7 +64,7 @@ In development:
                  * get rid of mapSelf
 
               dev - samples
-                 * test zeckendorf_arithm 
+                 * Cartesian product of two or more lists
 
               dev - debugger
                  * #263 - fix goto

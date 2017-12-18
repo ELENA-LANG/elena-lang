@@ -165,10 +165,10 @@ sealed class TcpClient
     
     stacksafe write literal:s
     [
-        byte& buffer(256).
-        int   len := s length.
-        int   buf_len := 256.
-        int   index := 0.
+        byte<256> buffer.
+        int       len := s length.
+        int       buf_len := 256.
+        int       index := 0.
         while (len > 0)
         [
             if (len < 256)
@@ -186,7 +186,7 @@ sealed class TcpClient
     
     stacksafe write int:n
     [
-        byte& buffer(4).
+        byte<4> buffer.
         byteArrayHelper write bytearray:buffer int:0 int:n.
         
         $self write int:0 bytearray:buffer int:4.

@@ -25,7 +25,6 @@ define elVMTSizeOffset   000Ch
 define EVAL_MESSAGE_ID  0050h
 
 define SUBJECT_MASK     000FFFFF0h
-define INV_SUBJECT_MASK 0FF00000Fh
 
 // ; --- API ---
 
@@ -107,34 +106,28 @@ labEnd:
 
 end
 
-// ; filter_vmt (filter,class,index,len,dump) = len
-procedure coreapi'core_filtervmt
+// ; read_vmt (int,class,len,dump) = len
+procedure coreapi'core_readvmt
 
    xor  esi, esi
+   mov  edx, [esp+12]
    mov  eax, [esp+8]
    mov  ecx, [eax - elVMTSizeOffset]
-   xor  ebx, ebx
-   mov  edi, [esp+20]   
+   mov  ebx, [esp+4]
+   mov  edi, [esp+16]   
+   sub  ecx, ebx
+   jz   labEnd
 
 labNext:   
-   mov  edx, [eax + ebx * 8]
-   and  edx, INV_SUBJECT_MASK
-   cmp  edx, [esp + 4]
-   jnz  labContinue
-   mov  edx, [esp+12]
+   sub  edx, 1
    test edx, edx
-   jz   short labAdding
-   sub  [esp+12], 1
-   jmp  labContinue
+   jz   labEnd
 
-labAdding:
+   push edx
    mov  edx, [eax + ebx * 8]
    mov  [edi+esi*4], edx
+   pop  edx
    add  esi, 1
-   mov  edx, [esp+16]
-   sub  edx, 1
-   jz   labEnd
-   mov  [esp+16], edx
    
 labContinue:
    add  ebx, 1
