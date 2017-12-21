@@ -2,6 +2,7 @@
 In development:
 ------                              
               dev - migrating
+                 * Reflection / List methods
                  * Sort three variables
                  * execute bf
                  * Runtime evaluation/In an environment

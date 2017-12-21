@@ -913,43 +913,65 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    tape.write(bcPopA);
 }
 
-void ByteCodeWriter :: unboxArgList(CommandTape& tape)
+void ByteCodeWriter :: unboxArgList(CommandTape& tape, bool arrayMode)
 {
-   // bcopya
-   // dcopy 0
-   // labSearch:
-   // get
-   // inc
-   // elser labSearch
-   // ecopyd
-   // dec
-   // pushn 0
+   if (arrayMode) {
+      // bcopya
+      // len
+      // labNext:
+      // get
+      // pusha
+      // dec
+      // elsen labNext
+      // pushn 0
+      tape.write(bcBCopyA);
+      tape.write(bcLen);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcGet);
+      tape.write(bcPushA);
+      tape.write(bcDec);
+      tape.write(bcElseN, baCurrentLabel, 0);
+      tape.releaseLabel();
+      tape.write(bcPushN, 0);
+   }
+   else {
+      // bcopya
+      // dcopy 0
+      // labSearch:
+      // get
+      // inc
+      // elser labSearch
+      // ecopyd
+      // dec
+      // pushn 0
 
-   // labNext:
-   // dec
-   // get
-   // pusha
-   // elsen labNext 0
+      // labNext:
+      // dec
+      // get
+      // pusha
+      // elsen labNext 0
 
-   tape.write(bcBCopyA);
-   tape.write(bcDCopy, 0);
-   tape.newLabel();
-   tape.setLabel(true);
-   tape.write(bcGet);
-   tape.write(bcInc);
-   tape.write(bcElseR, baCurrentLabel, 0);
-   tape.releaseLabel();
-   tape.write(bcECopyD);
-   tape.write(bcDec);
-   tape.write(bcPushN, 0);
+      tape.write(bcBCopyA);
+      tape.write(bcDCopy, 0);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcGet);
+      tape.write(bcInc);
+      tape.write(bcElseR, baCurrentLabel, 0);
+      tape.releaseLabel();
+      tape.write(bcECopyD);
+      tape.write(bcDec);
+      tape.write(bcPushN, 0);
 
-   tape.newLabel();
-   tape.setLabel(true);
-   tape.write(bcDec);
-   tape.write(bcGet);
-   tape.write(bcPushA);
-   tape.write(bcElseN, baCurrentLabel, 0);
-   tape.releaseLabel();
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcDec);
+      tape.write(bcGet);
+      tape.write(bcPushA);
+      tape.write(bcElseN, baCurrentLabel, 0);
+      tape.releaseLabel();
+   }
 }
 
 void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType)
@@ -4422,7 +4444,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       if (current == lxArgUnboxing) {
          argUnboxMode = true;
          generateExpression(tape, current, ACC_REQUIRED);
-         unboxArgList(tape);
+         unboxArgList(tape, current.argument != 0);
       }
       else if (test(member.type, lxObjectMask)) {
          if (member.type == lxLocalUnboxing)

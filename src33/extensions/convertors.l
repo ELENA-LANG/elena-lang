@@ -348,4 +348,4 @@ datetime extension dateFormatterOp
 }
 
 /// obsolete
-symbol String = extensions'text'StringWriter new.
+symbol String = extensions'text'StringWriter.

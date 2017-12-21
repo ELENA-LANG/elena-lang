@@ -621,6 +621,11 @@ void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode nod
       }
       else compiler.injectVirtualMultimethod(scope, node, *it, methodType);
 
+      if (isOpenArg(*it)) {
+         // generate explicit argument list dispatcher
+         //compiler.injectVirtualArgDispatcher(scope, node, *it, methodType);
+      }
+
       info.header.flags |= elWithMuti;
    }
 }

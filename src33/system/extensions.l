@@ -1074,10 +1074,15 @@ literal extension literalOp
     stacksafe literal Substring int:anIndex
     [
         int aLength := self length.
-        
-        aLength := aLength - anIndex.
-        
-        ^ self Substring int:anIndex int:aLength
+        if (aLength > anIndex)
+        [
+            aLength := aLength - anIndex.
+            
+            ^ self Substring int:anIndex int:aLength
+        ];
+        [
+            ^ emptyLiteralValue
+        ]        
     ]        
     
     literal trimLeft char:aChar
@@ -1205,31 +1210,31 @@ literal extension literalOp
 //            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex literal:aReplacee ];
 //            [ ^ self ].
 //    ]    
-//    
-//    replace literal:aReplacee literal:aReplacer
-//    [
-//        literal aTarget := emptyLiteralValue.
-//        int     aStart := 0.
-//        int     anEnd := 0.
-//        int     aReplaceeLen := aReplacee length.
-//        
-//        self indexOf int:aStart literal:aReplacee vint:anEnd.
-//        
-//        while (anEnd != -1)
-//        [
-//            aTarget := aTarget
-//                add literal:(self Substring int:aStart int:(anEnd - aStart));
-//                add literal:aReplacer.
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            self indexOf int:aStart literal:aReplacee vint:anEnd
-//        ].
-//    
-//        (aStart != 0)
-//            ? [ ^ aTarget add literal:(self~literalOp Substring int:aStart) ]
-//            ! [ ^ self ]
-//    ]
+    
+    replace literal:aReplacee literal:aReplacer
+    [
+        literal aTarget := emptyLiteralValue.
+        int     aStart := 0.
+        int     anEnd := 0.
+        int     aReplaceeLen := aReplacee length.
+        
+        self indexOf int:aStart literal:aReplacee vint:anEnd.
+        
+        while (anEnd != -1)
+        [
+            aTarget := aTarget
+                add literal:(self Substring int:aStart int:(anEnd - aStart));
+                add literal:aReplacer.
+            
+            aStart := anEnd + aReplaceeLen.
+            
+            self indexOf int:aStart literal:aReplacee vint:anEnd
+        ].
+    
+        (aStart != 0)
+            ? [ ^ aTarget add literal:(self~literalOp Substring int:aStart) ]
+            ! [ ^ self ]
+    ]
     
     bool isEmpty
     [
@@ -1379,30 +1384,30 @@ wide extension wideOp
 //            [ ^ self ].
 //    ]
 //        
-//    replace wide:aReplacee wide:aReplacer
-//    [
-//        wide aTarget := emptyWideLiteralValue.
-//        int  aStart := 0.
-//        int  anEnd := 0.
-//        int  aReplaceeLen := aReplacee length.
-//        
-//        self indexOf int:aStart wide:aReplacee vint:anEnd.
-//        
-//        while (anEnd != -1)
-//        [
-//            aTarget := aTarget
-//                add wide:(self Substring int:aStart int:(anEnd - aStart));
-//                add wide:aReplacer.
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            self indexOf int:aStart wide:aReplacee vint:anEnd
-//        ].
-//    
-//        if (aStart != 0)
-//            [ ^ aTarget add wide:(self~wideOp Substring int:aStart) ];
-//            [ ^ self ].
-//    ]
+    replace wide:aReplacee wide:aReplacer
+    [
+        wide aTarget := emptyWideLiteralValue.
+        int  aStart := 0.
+        int  anEnd := 0.
+        int  aReplaceeLen := aReplacee length.
+        
+        self indexOf int:aStart wide:aReplacee vint:anEnd.
+        
+        while (anEnd != -1)
+        [
+            aTarget := aTarget
+                add wide:(self Substring int:aStart int:(anEnd - aStart));
+                add wide:aReplacer.
+            
+            aStart := anEnd + aReplaceeLen.
+            
+            self indexOf int:aStart wide:aReplacee vint:anEnd
+        ].
+    
+        if (aStart != 0)
+            [ ^ aTarget add wide:(self~wideOp Substring int:aStart) ];
+            [ ^ self ].
+    ]
 
     bool isEmpty
     [

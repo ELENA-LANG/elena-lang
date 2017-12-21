@@ -154,6 +154,13 @@ sealed class StringWriter :: BaseVariable
         theValue := aText literal.
     ]
     
+    constructor new(literal s, int count)
+    [
+        theValue := emptyLiteralValue.
+        
+        0 till:count do(:i)[ $self append(s) ].
+    ]
+    
     write : aText
     [
         theValue := theValue add:aText.
@@ -212,6 +219,16 @@ sealed class StringWriter :: BaseVariable
     insert:s at:index
     [
         theValue := theValue insert:s at:index.
+    ]
+
+    replace(literal s, literal s2)
+    [
+        theValue := theValue replace(s, s2).
+    ]
+    
+    replace(object s, object s2)
+    [
+        theValue := theValue replace(s literal, s2 literal).
     ]
     
     get = theValue.

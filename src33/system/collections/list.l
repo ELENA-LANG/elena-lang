@@ -846,7 +846,7 @@ sealed  class Dictionary :: BaseEnumerable
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode object:aKey; set value:anObject
+        $self $getItem int:aHashCode object:aKey; set value:anObject
     ]
         
     setAt long:aKey object:anObject
@@ -854,7 +854,7 @@ sealed  class Dictionary :: BaseEnumerable
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode object:aKey; set value:anObject
+        $self $getItem int:aHashCode object:aKey; set value:anObject
     ]
         
     setAt real:aKey object:anObject
@@ -862,7 +862,7 @@ sealed  class Dictionary :: BaseEnumerable
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode object:aKey; set value:anObject
+        $self $getItem int:aHashCode object:aKey; set value:anObject
     ]
         
     setAt char:aKey object:anObject
@@ -870,7 +870,7 @@ sealed  class Dictionary :: BaseEnumerable
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode object:aKey; set value:anObject
+        $self $getItem int:aHashCode object:aKey; set value:anObject
     ]
         
     setAt literal:aKey object:anObject
@@ -878,7 +878,7 @@ sealed  class Dictionary :: BaseEnumerable
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode object:aKey; set value:anObject
+        $self $getItem int:aHashCode object:aKey; set value:anObject
     ]
         
     setAt wide:aKey object:anObject
@@ -886,7 +886,7 @@ sealed  class Dictionary :: BaseEnumerable
         int aHashCode := 0.
         aKey readHashCodeTo vint:aHashCode.
         
-        ^ $self $getItem int:aHashCode object:aKey; set value:anObject.
+        $self $getItem int:aHashCode object:aKey; set value:anObject.
     ]
     
     /// Sets a dictionary item with the specified key

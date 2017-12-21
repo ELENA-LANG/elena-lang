@@ -104,6 +104,7 @@ enum MethodHint
    tpConstructor = 0x0400,
    tpConversion  = 0x0800,
    tpMultimethod = 0x1000,
+   tpArgDispatcher = 0x3000,
 };
 
 // --- _CompileScope ---
@@ -196,6 +197,7 @@ public:
    virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef) = 0;
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0) = 0;
+   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
    virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable) = 0;
 
    virtual void injectLocalBoxing(SNode node, int size) = 0;

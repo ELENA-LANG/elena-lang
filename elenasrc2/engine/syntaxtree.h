@@ -258,6 +258,7 @@ enum LexicalType
    lxTemplateBoxing  = 0x2003D,
    lxParentLists     = 0x2003E,
    lxClosureAttr      = 0x2003F,
+   lxArgDispatcherAttr = 0x20040,
 
    lxTempAttr        = 0x2010D,
 };
