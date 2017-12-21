@@ -1009,6 +1009,43 @@ sealed  class Dictionary :: BaseEnumerable
         ^ $self $getItem int:aHashCode object:aKey; value.
     ]
 
+    bool containsKey(object aKey)
+    [
+        int aHashCode := aKey hash_code.
+        
+        aHashCode := aHashCode && theHashMask.
+        
+        var aHashItem := theHashTable getAt int:aHashCode.
+        if ($nil == aHashItem)
+        [
+            aHashItem := IntArray new int:5.
+            
+            aHashItem write int:0 int:1.
+            
+            theHashTable setAt int:aHashCode object:aHashItem
+        ].
+        
+        intarray aBacket := aHashItem intarray.        
+        int      aLength := 0.
+        aBacket read int:0 vint:aLength.
+        
+        int i := 1.
+        while (i < aLength)
+        [
+            int anItemIndex := 0.
+            aBacket read int:i vint:anItemIndex.
+            
+            var anItem := theList getAt int:anItemIndex.
+            
+            if(aKey equal(anItem key))
+                [ ^ true ].
+            
+            i := i + 1
+        ].        
+        
+        ^ false
+    ]
+
     /// Returns a dictionary enumerator
     enumerator => theList.
     

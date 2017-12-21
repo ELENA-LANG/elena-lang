@@ -149,6 +149,91 @@ sealed nonstructural class TextBuilder
         ].
     ]
 
+    sealed stacksafe $readIndex literal:s vint:i vint:retVal
+    [
+        char ch := $0.
+        int  n := 0.
+        int  v := 0.
+        
+        s read int:i vchar:ch.
+        while (ch != $125)
+        [
+            intConvertor convert char:ch vint:n.
+            if((n >= 30h)and:(n <= 39h))
+            [                
+                n := n - 30h.
+                
+                v := v * 10.
+                v := v + n.
+            ];
+            [ InvalidArgumentException new; raise ].
+                
+            i append int:1.
+            s read int:i vchar:ch
+        ].
+        
+        retVal int := v
+    ]
+
+    generic writeFormatted(literal s, object<> args)
+    [
+        int  len := s length.
+        int  i := 0.
+        char ch := $0.
+        int  chlen := 0.
+        int  index := 0.
+        
+        while (i < len)
+        [
+            s read int:i vchar:ch.
+            
+            if (ch == $123)
+                [ 
+                    i := i + 1.
+                    
+                    $self $readIndex literal:s vint:i vint:index.
+                    $self write(args[index]).
+                    
+                    chlen := 1.
+                ];
+                [ 
+                    $self write char:ch. 
+                    ch readLengthTo vint:chlen
+                ].
+            
+            i := i + chlen
+        ]
+    ]
+
+    fill(literal s, int counter)
+    [
+        int i := 0.
+        while (i < counter)
+        [
+            $self write(s).
+        ]
+    ]
+
+    fill(wide s, int counter)
+    [
+        int i := 0.
+        while (i < counter)
+        [
+            $self write(s).
+        ]
+    ]
+
+    fill(char ch, int counter)
+    [
+        int i := 0.
+        while (i < counter)
+        [
+            $self write(ch).
+            
+            i += 1
+        ]
+    ]
+
     insert int:anIndex int:aLength chararray:anArray
     [
         $self reserve int:aLength.
