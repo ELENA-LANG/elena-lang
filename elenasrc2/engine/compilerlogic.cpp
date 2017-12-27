@@ -623,7 +623,15 @@ void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode nod
 
       if (isOpenArg(*it)) {
          // generate explicit argument list dispatcher
-         //compiler.injectVirtualArgDispatcher(scope, node, *it, methodType);
+         compiler.injectVirtualArgDispatcher(scope, node, *it, methodType);
+
+         ref_t resendMessage = encodeMessage(getAction(*it), getParamCount(*it) + 1);
+
+         // generate argument list dispatcher multi-method
+         if (info.methods.exist(resendMessage)) {
+            compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType, info.header.parentRef);
+         }
+         else compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType);
       }
 
       info.header.flags |= elWithMuti;

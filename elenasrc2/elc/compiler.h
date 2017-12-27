@@ -574,6 +574,7 @@ private:
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
       ObjectInfo mapThis();
+      ObjectInfo mapParameter(Parameter param);
 
       MethodScope(ClassScope* parent);
    };

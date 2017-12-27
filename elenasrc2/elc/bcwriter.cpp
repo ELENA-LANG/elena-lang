@@ -916,24 +916,24 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
 void ByteCodeWriter :: unboxArgList(CommandTape& tape, bool arrayMode)
 {
    if (arrayMode) {
+      // pushn 0
       // bcopya
       // len
       // labNext:
+      // dec
       // get
       // pusha
-      // dec
       // elsen labNext
-      // pushn 0
+      tape.write(bcPushN, 0);
       tape.write(bcBCopyA);
       tape.write(bcLen);
       tape.newLabel();
       tape.setLabel(true);
+      tape.write(bcDec);
       tape.write(bcGet);
       tape.write(bcPushA);
-      tape.write(bcDec);
       tape.write(bcElseN, baCurrentLabel, 0);
       tape.releaseLabel();
-      tape.write(bcPushN, 0);
    }
    else {
       // bcopya
