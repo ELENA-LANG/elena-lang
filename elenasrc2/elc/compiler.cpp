@@ -4461,7 +4461,14 @@ ref_t Compiler :: declareArgumentSubject(SNode arg, ModuleScope& scope, bool& fi
             return V_ARGARRAY;
          }
       }
-      else class_ref = scope.mapReference(subject.identifier());
+      else {
+         class_ref = scope.mapReference(subject.identifier());
+         if (subject.existChild(lxSize)) {
+            elementRef = class_ref;
+
+            return V_ARGARRAY;
+         }
+      }
       if (!class_ref)
          scope.raiseError(errInvalidSubject, arg);
 

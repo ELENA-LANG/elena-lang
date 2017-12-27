@@ -44,6 +44,13 @@ template<BaseEnumerable> list :: type
         theArray := type<>(capacity).
     ]
     
+    explicit
+    [
+        theCapacity := 16.
+        theLength := 0.
+        theArray := type<>(16).
+    ]
+    
     int rvprop length :: readLengthTo.
 
     $expand

@@ -1239,6 +1239,57 @@ void DerivationReader :: generateClosureTree(SyntaxWriter& writer, SNode node, D
    writer.removeBookmark();
 }
 
+void DerivationReader :: generateMessage(SyntaxWriter& writer, SNode current, DerivationScope& scope, bool templateMode)
+{
+   writer.newNode(lxMessage);
+   SNode attrNode = current.findChild(lxAttributeValue, lxSize);
+   if (attrNode != lxAttributeValue) {
+      scope.copySubject(writer, current.firstChild(lxTerminalMask));
+      if (attrNode == lxSize)
+         writer.appendNode(lxSize, -1);
+   }
+   else generateAttributeTemplate(writer, current, scope, templateMode);
+   writer.closeNode();
+
+}
+
+void DerivationReader :: generateParamRef(SyntaxWriter& writer, SNode current, DerivationScope& scope, bool templateMode)
+{
+   SNode attr = current.findChild(lxAttributeValue, lxSize);
+   if (attr == lxAttributeValue) {
+      writer.newNode(lxMessage);
+      generateAttributeTemplate(writer, current, scope, templateMode);
+      writer.closeNode();
+   }
+   else {
+      // if it is an explicit type declaration
+      bool argMode = attr == lxSize;
+
+      ref_t ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference, lxPrivate), true);
+      if (!ref) {
+         ref = scope.mapAttribute(current.findChild(lxIdentifier, lxReference, lxPrivate));
+         if (ref == 0) {
+            ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference, lxPrivate), false);
+         }
+         else if (ref == V_OBJARRAY && !argMode) {
+            argMode = true;
+            ref = scope.moduleScope->mapTerminal(current.findChild(lxAttributeValue).findChild(lxIdentifier, lxReference, lxPrivate), true);
+            if (!ref)
+               scope.raiseError(errInvalidHint, current);
+         }
+         else if ((int)ref < 0)
+            scope.raiseError(errInvalidHint, current);
+      }
+
+      writer.newNode(lxParamRefAttr, scope.moduleScope->module->resolveReference(ref));
+      if (argMode) {
+         writer.appendNode(lxSize, -1);
+      }
+      copyIdentifier(writer, current.firstChild(lxTerminalMask));
+      writer.closeNode();
+   }
+}
+
 void DerivationReader :: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
    bool invokeWithNoParamMode = node == lxIdleMsgParameter;
@@ -1297,17 +1348,8 @@ void DerivationReader :: generateMessageTree(SyntaxWriter& writer, SNode node, D
                // message should be considered as a new operation if followed after closure invoke
                return;
             }
-            writer.newNode(lxMessage);
-            SNode attrNode = current.findChild(lxAttributeValue, lxSize);
-            if (attrNode != lxAttributeValue) {
-               scope.copySubject(writer, current.firstChild(lxTerminalMask));
-               if (attrNode == lxSize)
-                  writer.appendNode(lxSize, -1);
-            }
-            else generateAttributeTemplate(writer, current, scope, scope.reference == INVALID_REF);
-            writer.closeNode();
+            generateMessage(writer, current, scope, scope.reference == INVALID_REF);
             break;
-
          }
          case lxIdentifier:
          case lxPrivate:
@@ -2378,9 +2420,7 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
    SNode current = goToNode(attributes, lxNameAttr);
    while (current == lxNameAttr || current == lxMessage) {
       if (current == lxMessage) {
-         writer.newNode(lxMessage);
-         scope.copySubject(writer, current.firstChild(lxTerminalMask));
-         writer.closeNode();
+         generateMessage(writer, current, scope, templateMode);
       }
 
       current = current.nextNode();
@@ -2398,31 +2438,7 @@ void DerivationReader :: generateMethodTree(SyntaxWriter& writer, SNode node, De
          writer.closeNode();
       }
       else if (current == lxAttributeValue) {
-         // if it is an explicit type declaration
-         bool argMode = current.existChild(lxSize);
-
-         ref_t ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference, lxPrivate), true);
-         if (!ref) {
-            ref = scope.mapAttribute(current.findChild(lxIdentifier, lxReference, lxPrivate));
-            if (ref == 0) {
-               ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference, lxPrivate), false);
-            }
-            else if (ref == V_OBJARRAY && !argMode) {
-               argMode = true;
-               ref = scope.moduleScope->mapTerminal(current.findChild(lxAttributeValue).findChild(lxIdentifier, lxReference, lxPrivate), true);
-               if (!ref)
-                  scope.raiseError(errInvalidHint, current);
-            }
-            else if ((int)ref < 0)
-               scope.raiseError(errInvalidHint, current);
-         }
-
-         writer.newNode(lxParamRefAttr, scope.moduleScope->module->resolveReference(ref));
-         if (argMode) {
-            writer.appendNode(lxSize, -1);
-         }
-         copyIdentifier(writer, current.firstChild(lxTerminalMask));
-         writer.closeNode();
+         generateParamRef(writer, current, scope, templateMode);
       }
 
       current = current.nextNode();

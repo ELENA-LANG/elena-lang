@@ -183,6 +183,9 @@ class DerivationReader : public _DerivationReader
    bool checkArrayDeclaration(SNode node, DerivationScope& scope);
    bool checkTemplateExpression(SNode node, DerivationScope& scope);
 
+   void generateMessage(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
+   void generateParamRef(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
+
    void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
    bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
