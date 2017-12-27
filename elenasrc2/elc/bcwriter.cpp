@@ -5496,9 +5496,19 @@ void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::N
    }
    else doMultiDispatch(tape, node.argument, message);
 
-   SNode current = node.findChild(lxDispatching);
-   if (current != lxNone)
-      generateResending(tape, current);
+   SNode current = node.findChild(lxDispatching, lxResending);
+   switch (current.type) {
+      case lxDispatching:
+         generateResending(tape, current);
+         break;
+      case lxResending:
+         // if there is an ambiguity with open argument list handler
+         tape.write(bcCopyM, current.findChild(lxOvreriddenMessage).argument);
+         generateResendingExpression(tape, current);
+         break;
+      default:
+         break;
+   }
 }
 
 void ByteCodeWriter :: generateResending(CommandTape& tape, SyntaxTree::Node node)

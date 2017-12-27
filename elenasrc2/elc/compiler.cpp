@@ -4971,9 +4971,24 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
       else scope.raiseError(errIllegalOperation, node);
 
       if (node == lxResendExpression) {
-         writer.newNode(lxDispatching, node.argument);
-         SyntaxTree::copyNode(writer, lxTarget, node);
-         writer.closeNode();
+         ref_t openArgMessage = encodeMessage(getAction(message), getParamCount(message) + OPEN_ARG_COUNT - 1);
+         if (classScope.info.methods.exist(openArgMessage)) {
+            writer.newNode(lxResending);
+
+            writer.appendNode(lxMessage, encodeMessage(DISPATCH_MESSAGE_ID, getAbsoluteParamCount(openArgMessage)));
+            writer.appendNode(lxOvreriddenMessage, message);
+
+            writer.newNode(lxTarget, scope.moduleScope->superReference);
+            writer.appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));
+            writer.closeNode();
+
+            writer.closeNode();
+         }
+         else {
+            writer.newNode(lxDispatching, node.argument);
+            SyntaxTree::copyNode(writer, lxTarget, node);
+            writer.closeNode();
+         }
       }
       writer.closeNode();
    }

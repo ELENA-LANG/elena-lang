@@ -2,6 +2,7 @@
 In development:
 ------                              
               dev - migrating
+                 * fix reddit posting : Generic lists in ELENA - https://www.reddit.com/r/elena_lang/comments/6cuwq1/generic_lists_in_elena/
                  * Reflection / List methods
                  * Sort three variables
                  * execute bf
