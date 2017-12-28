@@ -231,6 +231,10 @@ public:
       : String(value, length)
    {
    }
+   IdentifierString(ident_t value, size_t index, size_t length)
+      : String(value, index, length)
+   {
+   }
    IdentifierString(ident_t value1, ident_t value2)
       : String(value1, value2)
    {

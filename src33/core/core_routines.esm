@@ -5596,7 +5596,7 @@ labNext:
   inc
   dsavefi -2
 
-  xindexrm system'dynamic'expressions'DynamicClosure %"#invoke[12]"
+  xindexrm system'dynamic'DynamicClosure %"#invoke[12]"
   acallvd
   pusha
   bloadfi 1

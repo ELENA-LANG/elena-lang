@@ -537,6 +537,7 @@ private:
       bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;
+      bool         genericClosure;
       bool         extensionMode;
       bool         multiMethod;
       bool         closureMode;

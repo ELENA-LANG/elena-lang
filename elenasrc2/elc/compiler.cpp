@@ -144,6 +144,26 @@ inline SNode goToNode(SNode current, LexicalType type)
    return current;
 }
 
+inline bool validateGenericClosure(ident_t signature)
+{
+   size_t len = getlength(signature);
+   size_t start = 0;
+
+   while (start < len) {
+      size_t middle = signature.findSubStr(start + 1, "$");
+      size_t end = signature.findSubStr(middle + 1, "$", len);
+
+      IdentifierString first(signature, start, middle - start);
+      IdentifierString second(signature, middle, end - middle);
+      if (!first.compare(second))
+         return false;
+
+      start = end;
+   }
+
+   return true;
+}
+
 SNode findTerminalInfo(SNode node)
 {
    if (node.existChild(lxRow))
@@ -1059,6 +1079,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->closureMode = false;
    this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
    this->subCodeMode = false;
+   this->genericClosure = false;
 }
 
 ObjectInfo Compiler::MethodScope :: mapThis()
@@ -4609,6 +4630,20 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
       else if (test(scope.hints, tpAction)) {
          messageStr.copy(INVOKE_MESSAGE);
+         // Compiler Magic : if it is a generic closure - ignore fixed argument
+         if (test(scope.hints, tpGeneric) && paramCount > OPEN_ARG_COUNT) {
+            if (validateGenericClosure(signature)) {
+               signature.truncate(signature.ident().findSubStr(1, "$"));
+               paramCount = OPEN_ARG_COUNT;
+               scope.genericClosure = true;               
+               if (scope.moduleScope->mapReference(signature.ident() + 1) == scope.moduleScope->superReference) {
+                  // HOTFIX : ignore super object reference
+                  signature.clear();
+               }
+            }
+            // generic clsoure should have a homogeneous signature (i.e. same types)
+            else scope.raiseError(errIllegalMethod, node);
+         }
       }
 
       if (test(scope.hints, tpSealed | tpConversion)) {
@@ -4673,6 +4708,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       if (constantConversion) {
          scope.moduleScope->saveAction(scope.message, scope.getClassRef());
       }
+   }
+
+   if (scope.genericClosure && paramCount > OPEN_ARG_COUNT) {
+      // Compiler Magic : if it is a generic closure - ignore fixed argument but it should be removed from the stack
+      scope.rootToFree += (paramCount - OPEN_ARG_COUNT);
    }
 }
 
@@ -5345,9 +5385,8 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
             }
             // if it is a normal method
             else {
-               declareArgumentList(current, methodScope);
-
                initialize(scope, methodScope);
+               declareArgumentList(current, methodScope);
 
                if (methodScope.message == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
                   // if it is in-place class member initialization
@@ -5558,6 +5597,8 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
       // HOTFIX : generic with open argument list is compiled differently
       methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
    }
+   else if (_logic->isMethodGeneric(scope.info, methodScope.message))
+      methodScope.genericClosure = true;
 }
 
 void Compiler :: declareVMT(SNode node, ClassScope& scope)

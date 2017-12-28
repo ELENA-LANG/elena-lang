@@ -502,6 +502,11 @@ public:
       copy(s, length);
       _string[length] = 0;
    }
+   String(const T* s, size_t index, size_t length)
+   {
+      copy(s + index, length);
+      _string[length] = 0;
+   }
 };
 
 // --- DynamicString ---
