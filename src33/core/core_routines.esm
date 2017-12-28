@@ -5681,3 +5681,14 @@ labEnd:
   throw
 
 end
+
+procedure __exit_closure."#invoke[13]"
+
+  bloadfi 1
+  count
+  dcopye
+  dsavefi -2  
+  aloadsi 1
+  quit
+
+end

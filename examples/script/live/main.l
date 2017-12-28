@@ -57,17 +57,19 @@ program =
         openMethodClosure,
         newMessageClosure new:"eval",
         newParamTokenClosure new:"n",
-        newParamTokenClosure new:"self",
-        openCodeClosure,        
+        newParamTokenClosure new:"self",        
+        openCodeClosure,                
+        openReturningClosure,        
         openExpressionClosure,
-        newReferenceClosure new:"system'console",
-        newMessageClosure new:"writeLine",
         newIdentifierClosure new:"n",
+        newMessageClosure new:"add",
+        newNumericClosure new:"1",
+        closeClosure,                
+        closeClosure,                
         closeClosure,        
-        closeClosure,
         closeClosure,
         closeClosure).
   
     var o := TapeAssembly new(a1); eval.
-    o eval("Hello again").
+    var r := o eval(2).
 ].

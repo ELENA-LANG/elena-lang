@@ -1,6 +1,7 @@
 import system'collections.
 import system'dynamic.
 import system'text.
+import extensions.
 
 singleton $message_token.
 singleton $expr_end_token.
@@ -104,6 +105,7 @@ limited class $Strategy
     type<$Strategy> singleton_one []
     type<$Strategy> method_one    []
     type<$Strategy> code_one      []
+    type<$Strategy> returning     []
     
     begin($ClassContext context, $ParameterContext parameters) []
     end($ClassContext context, $ParameterContext parameters)   []    
@@ -111,6 +113,7 @@ limited class $Strategy
     setReference($ClassContext context, LiteralValue r)       []
     setMessageToken($ClassContext context, LiteralValue m)    []
     setLiteral($ClassContext context, LiteralValue l)         []
+    setNumericToken($ClassContext context, LiteralValue l)    []
     setIdentToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
     setParamToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
 }
@@ -145,6 +148,7 @@ singleton $SymbolOne :: $Strategy
 class $BaseCode :: $Strategy
 {
     type<$Strategy> expression   = $RootExpresson.
+    type<$Strategy> returning    = $RetExpression.
 }
 
 singleton $Code :: $BaseCode.
@@ -279,6 +283,11 @@ class $BaseExpression :: $Strategy
     [
         context push(ConstantClosure new:l).
     ]
+
+    setNumericToken($ClassContext context, LiteralValue l)
+    [
+        context push(ConstantClosure new(l toInt)).
+    ]
     
     setMessageToken($ClassContext context, LiteralValue m) 
     [
@@ -406,6 +415,23 @@ singleton $RootExpresson :: $BaseExpression
     ]    
 }
 
+singleton $Expresson :: $BaseExpression
+{
+    type<$Strategy> expression = $SubExpression.
+}
+
+singleton $RetExpression :: $BaseExpression
+{
+    type<$Strategy> expression = $Expresson.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        $super end(context, parameters).
+        
+        context append:$exitClosure.
+    ]
+}
+
 class TapeAssembly
 {
     stack<$Strategy>        _states.
@@ -452,6 +478,9 @@ class TapeAssembly
     openExpression
         <= open(%expression).
     
+    openReturning
+        <= open(%returning).
+        
     newReference : r
     [
         _state setReference(_context, r literal).
@@ -460,6 +489,11 @@ class TapeAssembly
     newLiteralToken : l
     [
         _state setLiteral(_context, l literal).
+    ]
+    
+    newNumericToken : l
+    [
+        _state setNumericToken(_context, l literal).
     ]
     
     newMessageToken : m
@@ -529,6 +563,12 @@ singleton openExpressionClosure :: DynamicClosure
         = target openExpression.
 }
 
+singleton openReturningClosure :: DynamicClosure
+{
+    generic closure(object target, object<> args)
+        = target openReturning.
+}
+
 singleton closeClosure :: DynamicClosure
 {
     generic closure(object target, object<> args)
@@ -563,6 +603,12 @@ class newLiteralClosure :: DynamicClosureWithParam
         = target newLiteralToken:param.    
 }
 
+class newNumericClosure :: DynamicClosureWithParam
+{    
+    generic closure(object target, object<> args)
+        = target newNumericToken:param.    
+}
+
 class newParamTokenClosure :: DynamicClosureWithParam
 {    
     generic closure(object target, object<> args)
@@ -579,6 +625,12 @@ singleton $popClosure :: DynamicClosure
 {
     generic closure(object elementToRemove, object nextElement, object<> args)
         = nextElement.    
+}
+
+singleton $exitClosure :: DynamicClosure
+{
+    generic closure(object<> args)
+        => system'core_routines'__exit_closure.
 }
 
 class $VarClosure :: DynamicClosure
