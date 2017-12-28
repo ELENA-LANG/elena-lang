@@ -48,6 +48,7 @@
 //].
 
 import system'dynamic.
+import extensions.
 import extensions'dynamic.
  
 program =
@@ -59,11 +60,22 @@ program =
         newParamTokenClosure new:"n",
         newParamTokenClosure new:"self",        
         openCodeClosure,                
+        
+        openVariableClosure,
+        newIdentifierClosure new:"m",
+        closeClosure,        
+        
+        openExpressionClosure,
+        newIdentifierClosure new:"m",
+        newAssignClosure,
+        newNumericClosure new:"1",
+        closeClosure,
+        
         openReturningClosure,        
         openExpressionClosure,
         newIdentifierClosure new:"n",
         newMessageClosure new:"add",
-        newNumericClosure new:"1",
+        newIdentifierClosure new:"m",
         closeClosure,                
         closeClosure,                
         closeClosure,        
@@ -71,5 +83,5 @@ program =
         closeClosure).
   
     var o := TapeAssembly new(a1); eval.
-    var r := o eval(2).
+    console printLine(o eval(2)).
 ].

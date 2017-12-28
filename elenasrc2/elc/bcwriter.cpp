@@ -1855,6 +1855,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcALoadFI:
          case bcASaveFI:
          case bcACopyF:
+         case bcBCopyF:
          case bcBLoadFI:
          case bcDLoadFI:
          case bcDSaveFI:
@@ -3888,7 +3889,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
 {
    bool lenMode = node.argument == READ_MESSAGE_ID;
    bool setMode = (node.argument == SET_REFER_MESSAGE_ID || node.argument == SETNIL_REFER_MESSAGE_ID);
-   bool assignMode = node != lxArrOp || node != lxArgArrOp;
+   bool assignMode = node != lxArrOp && node != lxArgArrOp;
 
    SNode larg, rarg, rarg2;
    assignOpArguments(node, larg, rarg, rarg2);

@@ -7,6 +7,7 @@ singleton $message_token.
 singleton $expr_end_token.
 singleton $subexpr_token.
 singleton $expr_var_token.
+singleton $assign_token.
 
 const int $METHOD_PARAM = 1.
 
@@ -106,6 +107,7 @@ limited class $Strategy
     type<$Strategy> method_one    []
     type<$Strategy> code_one      []
     type<$Strategy> returning     []
+    type<$Strategy> variable_one  []
     
     begin($ClassContext context, $ParameterContext parameters) []
     end($ClassContext context, $ParameterContext parameters)   []    
@@ -114,6 +116,7 @@ limited class $Strategy
     setMessageToken($ClassContext context, LiteralValue m)    []
     setLiteral($ClassContext context, LiteralValue l)         []
     setNumericToken($ClassContext context, LiteralValue l)    []
+    setAssignToken($ClassContext context, LiteralValue t)     []
     setIdentToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
     setParamToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
 }
@@ -149,6 +152,7 @@ class $BaseCode :: $Strategy
 {
     type<$Strategy> expression   = $RootExpresson.
     type<$Strategy> returning    = $RetExpression.
+    type<$Strategy> variable_one = $Variable.   
 }
 
 singleton $Code :: $BaseCode.
@@ -313,6 +317,20 @@ class $BaseExpression :: $Strategy
         ].
     ]
     
+    setAssignToken($ClassContext context, LiteralValue t)
+    [
+        var token := context pop.
+        if (token equal reference:$expr_var_token)
+        [
+            token := context pop.            
+            context push($AssignClosure new(token)).
+        ];
+        [
+            context push:token.
+            context push:$assign_token.
+        ]
+    ]
+    
     end($ClassContext context, $ParameterContext parameters)
     [
         object token := context pop.
@@ -337,16 +355,14 @@ class $BaseExpression :: $Strategy
                 [
                     var index := context pop.
                     
-//                    context append(context pop).
-//                    
-//                    var next_token := context peek.
-//                    if(next_token equal reference:$assign_token)
-//                    [
-//                        token := %"tapeOp.tape_assign[]".
-//                    ];
-//                    [
+                    var next_token := context peek.
+                    if(next_token equal reference:$assign_token)
+                    [
+                        token := $AssignClosure new(index).
+                    ];
+                    [
                         token := $VarClosure new(index).
-//                    ]
+                    ]
 //                ];
 //                if (token equal reference:$previous_token)
 //                [
@@ -432,6 +448,22 @@ singleton $RetExpression :: $BaseExpression
     ]
 }
 
+singleton $Variable :: $Strategy
+{
+    setIdentToken($ClassContext context, LiteralValue value, $ParameterContext parameters) 
+    [
+        context append(ConstantClosure new(Object new)). // !! cannot pass nil
+        
+        int method_level := context peek.        
+        int level := parameters level.
+        
+        level := level - method_level.
+        level := level + 1.
+        
+        parameters add(value, $METHOD_PARAM, level).        
+    ]    
+}
+
 class TapeAssembly
 {
     stack<$Strategy>        _states.
@@ -480,6 +512,9 @@ class TapeAssembly
     
     openReturning
         <= open(%returning).
+    
+    openVariable
+        <= open(%variable_one).
         
     newReference : r
     [
@@ -509,6 +544,11 @@ class TapeAssembly
     newIdentToken : m
     [
         _state setIdentToken(_context, m literal, _parameters).
+    ]
+
+    newAssignToken : t
+    [
+        _state setAssignToken(_context, t literal).
     ]
     
     close
@@ -569,10 +609,22 @@ singleton openReturningClosure :: DynamicClosure
         = target openReturning.
 }
 
+singleton openVariableClosure :: DynamicClosure
+{
+    generic closure(object target, object<> args)
+        = target openVariable.
+}
+
 singleton closeClosure :: DynamicClosure
 {
     generic closure(object target, object<> args)
         = target close.
+}
+
+singleton newAssignClosure :: DynamicClosure
+{
+    generic closure(object target, object<> args)
+        = target newAssignToken:"=".
 }
 
 class DynamicClosureWithParam :: DynamicClosure
@@ -649,5 +701,26 @@ class $VarClosure :: DynamicClosure
         n := n - index.
        
         ^ args[n]
+    ]
+}
+
+class $AssignClosure :: DynamicClosure
+{
+    int index.
+    
+    constructor new(int index)
+    [
+        @index := index.
+    ]
+    
+    generic closure(object target, object<> args)
+    [
+        int len := args length.
+        int n := len.
+        n := n - index.
+       
+        args[n] := target.
+       
+        ^ target
     ]
 }
