@@ -27,6 +27,7 @@ routines\patterns.l
 scripting\interpreter.l
 scripting\assembly.l
 dynamic\json.l
+dynamic\tape_assembly.l
 routines\compound.l
 threading\threading.l
 scripting\escript.l

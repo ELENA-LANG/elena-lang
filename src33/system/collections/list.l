@@ -129,10 +129,21 @@ template<BaseEnumerable> list :: type
         ]
     ]
         
+    /// Returns the top object
+    type first = theArray getAt int:0.
+    
     /// Clears the list
     clear 
     [
         theLength int := 0.        
+    ]
+    
+    stacksafe trim(IntNumber pos)
+    [
+        if (pos > theLength)
+            [ OutOfRangeException new; raise ].
+        
+        theLength int := pos.
     ]
     
     enumerator 

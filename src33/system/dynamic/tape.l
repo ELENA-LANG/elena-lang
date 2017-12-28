@@ -24,6 +24,34 @@ mixin ClosureTape
         ]
     ]
         
+    constructor new (list<DynamicClosure> list, int index, int length)        
+        <= new(length);
+    [
+        int i := index.
+        int c := 0.
+        while (c < length)
+        [
+            theList[c] := list[i].
+
+            c += 1.
+            i += 1.
+        ]
+    ]
+        
+    constructor new (list<object> list, int index, int length)        
+        <= new(length);
+    [
+        int i := index.
+        int c := 0.
+        while (c < length)
+        [
+            theList[c] := list[i].
+
+            c += 1.
+            i += 1.
+        ]
+    ]
+        
     dispatch => system'core_routines'__closuretape.        
 }
 
