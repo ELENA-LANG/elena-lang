@@ -5,6 +5,9 @@ import system'text.
 singleton $message_token.
 singleton $expr_end_token.
 singleton $subexpr_token.
+singleton $expr_var_token.
+
+const int $METHOD_PARAM = 1.
 
 sealed class $ClassContext
 {
@@ -24,6 +27,8 @@ sealed class $ClassContext
     
     pop => _stack.
     
+    peek => _stack.        
+        
     int length => _tape.
     
     tape = _tape.
@@ -37,16 +42,49 @@ sealed class $ClassContext
     [
         _tape append:object.
     ]    
+    
+    stacksafe getAt(IntNumber index)
+        = _tape[index].        
 }
 
 sealed class $ParameterContext
 {
+    type<ArrayList> _buffer.
+    
+    constructor new
+    [
+        _buffer := ArrayList new.
+    ]
+    
+    int level
+    [
+        int len := _buffer length.
+        
+        len := len / 3.
+        
+        ^ len.
+    ]
+    
+    trim(IntNumber level)
+    [
+        int index := level * 3.
+        
+        _buffer trim int(index).
+    ]
+        
+    add(LiteralValue name, IntNumber type, Object value)
+    [
+        _buffer append(name); append(type); append(value)
+    ]
 }
 
 limited class $Strategy
 {
     type<$Strategy> symbol_one    []
     type<$Strategy> expression    []
+    type<$Strategy> singleton_one []
+    type<$Strategy> method_one    []
+    type<$Strategy> code_one      []
     
     begin($ClassContext context, $ParameterContext parameters) []
     end($ClassContext context, $ParameterContext parameters)   []    
@@ -54,11 +92,14 @@ limited class $Strategy
     setReference($ClassContext context, LiteralValue r)       []
     setMessageToken($ClassContext context, LiteralValue m)    []
     setLiteral($ClassContext context, LiteralValue l)         []
+    setParamToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
 }
 
 singleton $StartOne :: $Strategy
 {
     type<$Strategy> symbol_one = $SymbolOne.
+    
+    type<$Strategy> singleton_one = $Singleton.
 }
 
 singleton $SymbolOne :: $Strategy
@@ -79,6 +120,127 @@ singleton $SymbolOne :: $Strategy
         context trim(index).
         context append(tape).
     ]    
+}
+
+class $BaseCode :: $Strategy
+{
+    type<$Strategy> expression   = $RootExpresson.
+}
+
+singleton $Code :: $BaseCode.
+
+singleton $Method :: $Strategy
+{
+    type<$Strategy> code_one = $Code.
+    
+    setParamToken($ClassContext context, LiteralValue value, $ParameterContext parameters)
+    [
+        int method_level := context peek.        
+        int level := parameters level.
+        
+        level := level - method_level.
+        level := level + 1.
+        
+        parameters add(value, $METHOD_PARAM, level).
+        
+        context append($expr_var_token).
+    ]
+    
+    begin($ClassContext context, $ParameterContext parameters)  
+    [
+        context push(context length).
+        context push(parameters level).
+    ]
+    
+    setMessageToken($ClassContext context, LiteralValue m) 
+    [
+        context append($message_token).
+        context append(m).
+    ]
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        int level := context pop.
+        
+        parameters trim(level).
+        
+        int pos := context pop.
+        var m := $nil.
+        int counter := -1. // self is included as well
+        int index := pos.
+        
+        // define the method name
+        var p := context getAt(index).
+        while (p equal reference:$expr_var_token)
+        [
+            index := index + 1.
+            counter := counter + 1.
+            p := context getAt(index).
+        ].
+
+        if (p equal reference:$message_token)
+        [
+            m := context getAt(index + 1).
+            index := index + 2.
+            p := context getAt(index).
+        ].
+                
+        while (p equal reference:$expr_var_token)
+        [
+            index := index + 1.
+            counter := counter + 1.
+            p := context getAt(index).
+        ].
+        
+        textbuffer name := TextBuffer new.
+        name append(m).
+        name append:"[".
+        name append(counter literal).
+        name append:"]".        
+        
+        int len := context length - index.
+        var tape := ClosureTape new(context tape, index, len).
+        
+        context trim(pos).
+        context append(Message new literal:name).
+        context append(tape).
+    ]    
+}
+
+class $BaseClass :: $Strategy
+{
+    type<$Strategy> method_one = $Method.
+        
+    begin($ClassContext context, $ParameterContext parameters)  
+    [
+        context push(context length).
+    ]
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        var pos := context pop.
+        var len := context length - pos.
+        
+        var class := ClosureClass new(context tape, pos, len).
+        
+        context trim(pos).
+        context append(class).
+    ]
+}
+
+
+singleton $Singleton :: $BaseClass
+{
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        var pos := context pop.
+        var len := context length - pos.
+        
+        var class := ClosureClass new(context tape, pos, len).
+        
+        context trim(pos).
+        context append(class).
+    ]
 }
 
 class $BaseExpression :: $Strategy
@@ -183,7 +345,26 @@ singleton $SubExpression :: $BaseExpression
         
         context push:$subexpr_token.
     ]    
-}    
+}
+    
+singleton $RootExpresson :: $BaseExpression
+{
+    type<$Strategy> expression = $SubExpression.
+    
+//    type<$Strategy> if_one($ClassContext context)
+//    [
+//        context push:$if_token.
+//        
+//        ^ $IfExpression.
+//    ]
+//    
+//    end($ClassContext context, $ParameterContext parameters)
+//    [
+//        $super end(context, parameters).
+//        
+//        context append:%"tapeOp.tape_pop[1]".
+//    ]    
+}
 
 class TapeAssembly
 {
@@ -202,6 +383,12 @@ class TapeAssembly
         _parameters := $ParameterContext new.
     ]
     
+    constructor new(ClosureTape tape)
+        <= new;
+    [
+        tape($self).
+    ]
+    
     open subject:state
     [
         _states push:_state.
@@ -212,6 +399,15 @@ class TapeAssembly
     
     openSymbol
         <= open(%symbol_one).
+    
+    openSingleton
+        <= open(%singleton_one).
+    
+    openMethod
+        <= open(%method_one).
+    
+    openCode
+        <= open(%code_one).
     
     openExpression
         <= open(%expression).
@@ -230,6 +426,11 @@ class TapeAssembly
     [
         _state setMessageToken(_context, m literal).
     ]
+
+    newParamToken : p
+    [
+        _state setParamToken(_context, p literal, _parameters).
+    ]            
     
     close
     [
@@ -240,15 +441,41 @@ class TapeAssembly
     
     eval
     [
-        (_context first)().
+        var o := _context first.
+        if (o instanceOf:ClosureTape)
+        [
+            ^ o().
+        ];
+        [
+            ^ o
+        ]        
     ]
+    
+    first => _context.
 }
-
 
 singleton openSymbolClosure :: DynamicClosure
 {
     generic closure(object target, object<> args)
         = target openSymbol.
+}
+
+singleton openSingletonClosure :: DynamicClosure
+{
+    generic closure(object target, object<> args)
+        = target openSingleton.
+}
+
+singleton openMethodClosure :: DynamicClosure
+{
+    generic closure(object target, object<> args)
+        = target openMethod.
+}
+
+singleton openCodeClosure :: DynamicClosure
+{
+    generic closure(object target, object<> args)
+        = target openCode.
 }
 
 singleton openExpressionClosure :: DynamicClosure
@@ -289,4 +516,10 @@ class newLiteralClosure :: DynamicClosureWithParam
 {    
     generic closure(object target, object<> args)
         = target newLiteralToken:param.    
+}
+
+class newParamTokenClosure :: DynamicClosureWithParam
+{    
+    generic closure(object target, object<> args)
+        = target newParamToken:param.    
 }

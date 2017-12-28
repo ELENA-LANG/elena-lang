@@ -55,4 +55,55 @@ mixin ClosureTape
     dispatch => system'core_routines'__closuretape.        
 }
 
+// --- Class ---
+
+mixin ClosureClass
+{
+    object<> $item.
+    
+    stacksafe constructor $new int:n
+        = object<>(n).
+    
+    constructor new array:list
+        <= $new int(list length);
+    [
+        int i := 0.
+        int n := list length.
+        
+        while (i < n)
+        [
+            $self setField int:i object(list getAt int:i).
+            
+            i := i + 1
+        ]
+    ]    
+    
+    stacksafe constructor new array_list:list int:index int:length
+        <= $new int:length;
+    [
+        int i := 0.
+        while(i < length)
+        [
+            $self setField int:i object:(list getAt int(index + i)).
+            
+            i := i + 1
+        ]
+    ]
+    
+    stacksafe constructor new(list<object> list, int index, int length)
+        <= $new int:length;
+    [
+        int i := 0.
+        while(i < length)
+        [
+            $self setField int:i object:(list getAt int(index + i)).
+            
+            i := i + 1
+        ]
+    ]
+    
+    dispatch => system'core_routines'__closureclass.
+}
+
+
 

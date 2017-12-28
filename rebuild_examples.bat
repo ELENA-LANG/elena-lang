@@ -30,3 +30,4 @@ bin\elc examples\net\chat\chat.prj
 bin\elc examples\gui\helloworld\xforms_hellowindow.prj
 rem bin\elc examples\gui\helloworld\xforms_hellowindow.xprj
 bin\elc tests\system\system_test.prj
+bin\elc examples\script\live\live.prj 
