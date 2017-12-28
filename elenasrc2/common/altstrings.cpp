@@ -1410,9 +1410,9 @@ size_t ident_t :: find(const char* s, size_t defValue)
 
 size_t ident_t :: findSubStr(size_t index, const char* s, size_t defValue)
 {
-   size_t retVal = ::find(_string + index, s, defValue);
+   size_t retVal = ::find(_string + index, s, NOTFOUND_POS);
 
-   return retVal == NOTFOUND_POS ? NOTFOUND_POS : retVal + index;
+   return retVal == NOTFOUND_POS ? defValue : retVal + index;
 }
 
 size_t ident_t :: find(char c, size_t defValue)

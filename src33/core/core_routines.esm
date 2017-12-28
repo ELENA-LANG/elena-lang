@@ -5658,6 +5658,7 @@ labCall:
   pop
   pope
   setverb INVOKE_ACTION
+  eaddn 1
   ajumpvi 0
 
 labQuit:

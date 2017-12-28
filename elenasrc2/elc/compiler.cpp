@@ -149,8 +149,8 @@ inline bool validateGenericClosure(ident_t signature)
    size_t len = getlength(signature);
    size_t start = 0;
 
-   while (start < len) {
-      size_t middle = signature.findSubStr(start + 1, "$");
+   while (true) {
+      size_t middle = signature.findSubStr(start + 1, "$", len);
       size_t end = signature.findSubStr(middle + 1, "$", len);
 
       IdentifierString first(signature, start, middle - start);
@@ -158,10 +158,11 @@ inline bool validateGenericClosure(ident_t signature)
       if (!first.compare(second))
          return false;
 
-      start = end;
-   }
+      if (end == len)
+         return true;
 
-   return true;
+      start = middle;
+   }
 }
 
 SNode findTerminalInfo(SNode node)

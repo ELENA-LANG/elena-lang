@@ -76,6 +76,25 @@ sealed class $ParameterContext
     [
         _buffer append(name); append(type); append(value)
     ]
+    
+    resolve literal:name vint:type
+    [
+        int len := _buffer length.
+        int i := len - 3.
+        while (i >= 0)
+        [
+            if (name == _buffer[i])
+            [
+                type set int(_buffer[i+1]).
+
+                ^ _buffer[i+2].
+            ].
+            
+            i := i - 3.
+        ].
+        
+        ^ $nil.
+    ]        
 }
 
 limited class $Strategy
@@ -92,6 +111,7 @@ limited class $Strategy
     setReference($ClassContext context, LiteralValue r)       []
     setMessageToken($ClassContext context, LiteralValue m)    []
     setLiteral($ClassContext context, LiteralValue l)         []
+    setIdentToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
     setParamToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
 }
 
@@ -266,6 +286,24 @@ class $BaseExpression :: $Strategy
         context push:$message_token.
     ]
     
+    setIdentToken($ClassContext context, LiteralValue m, $ParameterContext parameters) 
+    [
+        int type := 0.
+        object param := parameters resolve literal:m vint:type.
+        if (type == $METHOD_PARAM)
+        [
+            context push:param.
+            context push:$expr_var_token.            
+        ];
+//        if (type == $FORWARD_PARAM)
+//        [
+//            context push:param.
+//        ];
+        [
+            InvalidArgumentException new("Variable cannot be resolved - " + m); raise
+        ].
+    ]
+    
     end($ClassContext context, $ParameterContext parameters)
     [
         object token := context pop.
@@ -286,8 +324,10 @@ class $BaseExpression :: $Strategy
                 messageExpr := true.
             ];
             [
-//                if (token equal reference:$expr_var_token)
-//                [
+                if (token equal reference:$expr_var_token)
+                [
+                    var index := context pop.
+                    
 //                    context append(context pop).
 //                    
 //                    var next_token := context peek.
@@ -296,7 +336,7 @@ class $BaseExpression :: $Strategy
 //                        token := %"tapeOp.tape_assign[]".
 //                    ];
 //                    [
-//                        token := %"tapeOp.tape_var[]".
+                        token := $VarClosure new(index).
 //                    ]
 //                ];
 //                if (token equal reference:$previous_token)
@@ -305,7 +345,7 @@ class $BaseExpression :: $Strategy
 //                    token := %"tapeOp.tape_stack[]".
 //                    
 //                    popRequired := true.
-//                ].
+                ].
                 context append:token.
                 counter := counter + 1.
             ].
@@ -357,13 +397,13 @@ singleton $RootExpresson :: $BaseExpression
 //        
 //        ^ $IfExpression.
 //    ]
-//    
-//    end($ClassContext context, $ParameterContext parameters)
-//    [
-//        $super end(context, parameters).
-//        
-//        context append:%"tapeOp.tape_pop[1]".
-//    ]    
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        $super end(context, parameters).
+        
+        context append:$popClosure.
+    ]    
 }
 
 class TapeAssembly
@@ -431,6 +471,11 @@ class TapeAssembly
     [
         _state setParamToken(_context, p literal, _parameters).
     ]            
+
+    newIdentToken : m
+    [
+        _state setIdentToken(_context, m literal, _parameters).
+    ]
     
     close
     [
@@ -522,4 +567,35 @@ class newParamTokenClosure :: DynamicClosureWithParam
 {    
     generic closure(object target, object<> args)
         = target newParamToken:param.    
+}
+
+class newIdentifierClosure :: DynamicClosureWithParam
+{    
+    generic closure(object target, object<> args)
+        = target newIdentToken:param.    
+}
+
+singleton $popClosure :: DynamicClosure
+{
+    generic closure(object elementToRemove, object nextElement, object<> args)
+        = nextElement.    
+}
+
+class $VarClosure :: DynamicClosure
+{
+    int index.
+    
+    constructor new(int index)
+    [
+        @index := index.
+    ]
+    
+    generic closure(object<> args)
+    [
+        int len := args length.
+        int n := len.
+        n := n - index.
+       
+        ^ args[n]
+    ]
 }

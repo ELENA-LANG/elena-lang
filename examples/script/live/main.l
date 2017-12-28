@@ -55,18 +55,19 @@ program =
     var a1 := ClosureTape::(
         openSingletonClosure,
         openMethodClosure,
-        newParamTokenClosure new:"self",
         newMessageClosure new:"eval",
+        newParamTokenClosure new:"n",
+        newParamTokenClosure new:"self",
         openCodeClosure,        
         openExpressionClosure,
         newReferenceClosure new:"system'console",
         newMessageClosure new:"writeLine",
-        newLiteralClosure new:"Hello",
+        newIdentifierClosure new:"n",
         closeClosure,        
         closeClosure,
         closeClosure,
         closeClosure).
   
     var o := TapeAssembly new(a1); eval.
-    o eval.
+    o eval("Hello again").
 ].
