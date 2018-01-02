@@ -556,8 +556,7 @@ singleton $LoopIfExpression :: $BaseExpression
         
         int offset := context length - pos - 2.
         
-        context[pos] := IntNumber new(offset).
-        
+        context[pos] := IntNumber new(offset).        
     ]        
 }
 

@@ -53,6 +53,56 @@ import extensions'dynamic.
  
 program =
 [
+//    var a1 := ClosureTape::(
+//        openSingletonClosure,
+//        openMethodClosure,
+//        newMessageClosure new:"eval",
+//        newParamTokenClosure new:"n",
+//        newParamTokenClosure new:"self",        
+//        openCodeClosure,                
+//        
+//        openVariableClosure,
+//        newIdentifierClosure new:"m",
+//        closeClosure,        
+//        
+//        openExpressionClosure,
+//        newIdentifierClosure new:"m",
+//        newAssignClosure,
+//        newIdentifierClosure new:"n",
+//        closeClosure,
+//        
+//        newLoopClosure,        
+//         openExpressionClosure,
+//          ifClosure,
+//        
+//          openExpressionClosure,
+//          newReferenceClosure new:"system'true",
+//          closeClosure,
+//         
+//          openExpressionClosure,        
+//           openCodeClosure,
+//            openExpressionClosure,
+//             newIdentifierClosure new:"m",
+//             newAssignClosure,        
+//             newNumericClosure new:"0",
+//            closeClosure,
+//           closeClosure,
+//          closeClosure,
+//                
+//         closeClosure,
+//        closeClosure,
+//        
+//        openReturningClosure,        
+//        openExpressionClosure,
+//        newIdentifierClosure new:"n",
+//        newMessageClosure new:"add",
+//        newIdentifierClosure new:"m",
+//        closeClosure,                
+//        closeClosure,                
+//        closeClosure,        
+//        closeClosure,
+//        closeClosure).
+  
     var a1 := ClosureTape::(
         openSingletonClosure,
         openMethodClosure,
@@ -64,24 +114,49 @@ program =
         openVariableClosure,
         newIdentifierClosure new:"m",
         closeClosure,        
-        
+
         openExpressionClosure,
         newIdentifierClosure new:"m",
         newAssignClosure,
-        newNumericClosure new:"1",
+        newIdentifierClosure new:"n",
+        closeClosure,
+                
+        openLoopClosure,        
+         openExpressionClosure,
+          ifClosure,
+        
+          openExpressionClosure,
+          newIdentifierClosure new:"m",
+          newMessageClosure new:"greater",
+          newNumericClosure new:"0",
+          closeClosure,
+         
+          openExpressionClosure,        
+           openCodeClosure,
+            openExpressionClosure,
+             newReferenceClosure new:"system'console",
+             newMessageClosure new:"writeLine",
+             newIdentifierClosure new:"m",
+            closeClosure,                        
+            openExpressionClosure,
+             newIdentifierClosure new:"m",
+             newAssignClosure,
+             openExpressionClosure,
+              newIdentifierClosure new:"m",
+              newMessageClosure new:"subtract",
+              newNumericClosure new:"1",
+             closeClosure,
+            closeClosure,
+           closeClosure,
+          closeClosure,
+                
+         closeClosure,
         closeClosure,
         
-        openReturningClosure,        
-        openExpressionClosure,
-        newIdentifierClosure new:"n",
-        newMessageClosure new:"add",
-        newIdentifierClosure new:"m",
-        closeClosure,                
-        closeClosure,                
         closeClosure,        
         closeClosure,
         closeClosure).
   
     var o := TapeAssembly new(a1); eval.
-    console printLine(o eval(2)).
+    o eval(5).
 ].

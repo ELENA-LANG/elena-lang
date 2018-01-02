@@ -1,6 +1,11 @@
 ------                                 
 In development:
 ------                              
+              exp - live programming
+                 * function call
+                 * method call
+                 * virtual method call
+
               dev - migrating
                  * duplicate extensions
                  * fix reddit posting : Generic lists in ELENA - https://www.reddit.com/r/elena_lang/comments/6cuwq1/generic_lists_in_elena/
@@ -12,13 +17,6 @@ In development:
 
               exp - built-in script
                  * graph : provide function in the script
-
-              exp - live programming
-                 * test ClosureTape - if the stack is cleared correctly
-                 * function call
-
-                 * method call
-                 * virtual method call
 
               dev - usability
                  * ecv : class info should be counted for listing mode

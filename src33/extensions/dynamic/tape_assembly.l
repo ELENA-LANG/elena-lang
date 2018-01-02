@@ -8,6 +8,8 @@ singleton $expr_end_token.
 singleton $subexpr_token.
 singleton $expr_var_token.
 singleton $assign_token.
+singleton $if_token.
+singleton $code_token.
 
 const int $METHOD_PARAM = 1.
 
@@ -47,6 +49,11 @@ sealed class $ClassContext
     
     stacksafe getAt(IntNumber index)
         = _tape[index].        
+        
+    stacksafe setAt(IntNumber index, Object object)
+    [
+        _tape[index] := object.
+    ]
 }
 
 sealed class $ParameterContext
@@ -108,7 +115,11 @@ limited class $Strategy
     type<$Strategy> code_one      []
     type<$Strategy> returning     []
     type<$Strategy> variable_one  []
-    
+    type<$Strategy> loop_one      []
+
+    type<$Strategy> if_one($ClassContext context)   []
+    type<$Strategy> next_one($ClassContext context, $ParameterContext parameters) []
+        
     begin($ClassContext context, $ParameterContext parameters) []
     end($ClassContext context, $ParameterContext parameters)   []    
     
@@ -152,10 +163,15 @@ class $BaseCode :: $Strategy
 {
     type<$Strategy> expression   = $RootExpresson.
     type<$Strategy> returning    = $RetExpression.
-    type<$Strategy> variable_one = $Variable.   
+    type<$Strategy> variable_one = $Variable. 
+    type<$Strategy> loop_one     = $Loop.      
 }
 
 singleton $Code :: $BaseCode.
+
+singleton $SubCode :: $BaseCode
+{
+}
 
 singleton $Method :: $Strategy
 {
@@ -416,12 +432,12 @@ singleton $RootExpresson :: $BaseExpression
 {
     type<$Strategy> expression = $SubExpression.
     
-//    type<$Strategy> if_one($ClassContext context)
-//    [
-//        context push:$if_token.
-//        
-//        ^ $IfExpression.
-//    ]
+    type<$Strategy> if_one($ClassContext context)
+    [
+        context push:$if_token.
+        
+        ^ $IfExpression.
+    ]
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -448,6 +464,46 @@ singleton $RetExpression :: $BaseExpression
     ]
 }
 
+singleton $CondExpression :: $BaseExpression
+{
+    begin($ClassContext context, $ParameterContext parameters)
+    [
+        $super begin(context, parameters).
+    ]
+    
+    type<$Strategy> code_one = $SubCode.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        $super end(context, parameters).
+        
+        var token := context pop.
+        if (token equal reference:$if_token)
+        [
+            context push(context length).
+            context append:nil.
+//            context append:%"tapeOp.tape_goifnot[]".
+            context push($code_token).
+        ]
+    ]    
+}
+
+singleton $IfExpression :: $BaseExpression
+{
+    type<$Strategy> expression = $CondExpression.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        int pos := context pop.        
+        
+        $super end(context, parameters).
+        
+        int offset := context length - pos - 1.
+        
+        context[pos] := $JumpIfNotClosure new(offset).
+    ]        
+}
+
 singleton $Variable :: $Strategy
 {
     setIdentToken($ClassContext context, LiteralValue value, $ParameterContext parameters) 
@@ -462,6 +518,46 @@ singleton $Variable :: $Strategy
         
         parameters add(value, $METHOD_PARAM, level).        
     ]    
+}
+
+singleton $Loop :: $Strategy
+{
+    type<$Strategy> expression = $LoopExpresson.    
+    
+    begin($ClassContext context, $ParameterContext parameters)
+    [
+        context push(context length).
+    ]
+}
+
+singleton $LoopExpresson :: $BaseExpression
+{
+    type<$Strategy> if_one($ClassContext context)
+    [
+        context push:$if_token.
+        
+        ^ $LoopIfExpression.
+    ]
+}    
+
+singleton $LoopIfExpression :: $BaseExpression
+{
+    type<$Strategy> expression = $CondExpression.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        int pos := context pop.
+        
+        $super end(context, parameters).
+        
+        int loop_pos := context pop.
+        
+        context append($GoToClosure new(loop_pos - context length - 1)).
+        
+        int offset := context length - pos - 1.
+        
+        context[pos] := $JumpIfNotClosure new(offset).        
+    ]        
 }
 
 class TapeAssembly
@@ -515,6 +611,9 @@ class TapeAssembly
     
     openVariable
         <= open(%variable_one).
+    
+    openLoop
+        <= open(%loop_one).
         
     newReference : r
     [
@@ -549,6 +648,11 @@ class TapeAssembly
     newAssignToken : t
     [
         _state setAssignToken(_context, t literal).
+    ]
+    
+    if
+    [
+        _state := _state if_one(_context).
     ]
     
     close
@@ -615,6 +719,12 @@ singleton openVariableClosure :: DynamicClosure
         = target openVariable.
 }
 
+singleton openLoopClosure :: DynamicClosure
+{
+    generic closure(object target, object<> args)
+        = target openLoop.
+}
+
 singleton closeClosure :: DynamicClosure
 {
     generic closure(object target, object<> args)
@@ -625,6 +735,12 @@ singleton newAssignClosure :: DynamicClosure
 {
     generic closure(object target, object<> args)
         = target newAssignToken:"=".
+}
+
+singleton ifClosure :: DynamicClosure
+{
+    generic closure(object target, object<> args)
+        = target if.
 }
 
 class DynamicClosureWithParam :: DynamicClosure
@@ -704,7 +820,7 @@ class $VarClosure :: DynamicClosure
     ]
 }
 
-class $AssignClosure :: DynamicClosure
+struct $AssignClosure :: DynamicClosure
 {
     int index.
     
@@ -723,4 +839,43 @@ class $AssignClosure :: DynamicClosure
        
         ^ target
     ]
+}
+
+struct $JumpIfClosure :: DynamicClosure
+{
+    int index.
+    
+    constructor new(int index)
+    [
+        @index := index.
+    ]
+    
+    generic closure(object<> args)
+        => system'core_routines'__jumpif_closure.    
+}
+
+struct $JumpIfNotClosure :: DynamicClosure
+{
+    int index.
+    
+    constructor new(int index)
+    [
+        @index := index.
+    ]
+    
+    generic closure(object<> args)
+        => system'core_routines'__jumpifnot_closure.    
+}
+        
+struct $GoToClosure :: DynamicClosure
+{
+    int index.
+    
+    constructor new(int index)
+    [
+        @index := index.
+    ]
+    
+    generic closure(object<> args)
+        => system'core_routines'__jump_closure.    
 }

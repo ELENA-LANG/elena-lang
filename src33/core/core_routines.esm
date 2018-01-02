@@ -5692,3 +5692,48 @@ procedure __exit_closure."#invoke[13]"
   quit
 
 end
+
+procedure __jumpif_closure."#invoke[13]"
+
+  bcopya
+  aloadsi 1
+  elser labSkip const : system'true
+  acopyb
+  nloade
+  dloadfi -2
+  add
+  dsavefi -2  
+
+labSkip:
+  aloadsi 2
+  quitn 2
+
+end
+
+procedure __jumpifnot_closure."#invoke[13]"
+
+  bcopya
+  aloadsi 1
+  elser labSkip const : system'false
+  acopyb
+  nloade
+  dloadfi -2
+  add
+  dsavefi -2  
+
+labSkip:
+  aloadsi 2
+  quitn 2
+
+end
+
+procedure __jump_closure."#invoke[13]"
+
+  nloade
+  dloadfi -2
+  add
+  dsavefi -2
+  aloadsi 1
+  quitn 1
+
+end
