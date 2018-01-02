@@ -10,6 +10,9 @@ limited class TapeExpression
     generic constructor MessageCall(TapeExpression target, literal message, TapeExpression<> arguments)
         = TapeMessageCallExpression new(target,message,arguments).
         
+    constructor MessageCall(TapeExpression target, literal message)
+        = TapeMessageCallExpression new(target,message).
+        
     constructor Symbol(TapeExpression expression)
         = TapeSymbolExpression new(expression).
         
@@ -248,19 +251,29 @@ class TapeMessageCallExpression :: TapeExpression
         @arguments := arguments.
     ]
     
+    constructor new(TapeExpression target, literal message)
+    [
+        @message := message.
+        @target := target.
+        @arguments := $nil.
+    ]
+    
     saveTo(list<DynamicClosure> list)
     [
         list append(openExpressionClosure).
         
         target saveTo(list).
         
-        int len := arguments length.
-        int i := 0.
-        while(i < len)
+        if ($nil != arguments)
         [
-            arguments[i] saveTo(list).
-            
-            i += 1.            
+            int len := arguments length.
+            int i := 0.
+            while(i < len)
+            [
+                arguments[i] saveTo(list).
+                
+                i += 1.            
+            ]
         ].
         
         list append(newMessageClosure new:message).

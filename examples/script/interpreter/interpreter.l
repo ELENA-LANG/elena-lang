@@ -6,6 +6,8 @@ import extensions.
 import extensions'scripting.
 import extensions'dynamic.
 
+import extensions'dynamic'expressions.
+
 // --- Tape ---
 
 class BFTape
@@ -236,7 +238,7 @@ class TapeCGenerator
     ]
 }
 
-symbol program = program0.
+symbol program = program1.
 
 program0 =
 [
@@ -327,19 +329,63 @@ program0 =
     p eval(bf_tape).
 ].    
 
-symbol program1 =
+program1 =
 [
-    // [,.]
+    var c := TapeExpression Singleton(
+                TapeExpression Method(
+                   "eval",
+                   TapeExpression Code(
+                      TapeExpression Declaring("ptr"),
+                      // ptr := 0
+                      TapeExpression Assigning(
+                        "ptr",
+                        TapeExpression Constant(0)
+                      ),
+                      
+                      // tape[ptr] := console readChar
+                      TapeExpression MessageCall(
+                        TapeExpression Variable("tape"),
+                        "setAt",
+                        TapeExpression Variable("ptr"),
+                        TapeExpression MessageCall(
+                           TapeExpression Constant(console),
+                           "readChar"
+                        )),
+                      
+                      // while (tape[ptr]!=0) [
+                      TapeExpression Loop(
+                          TapeExpression MessageCall(
+                             TapeExpression MessageCall(
+                                TapeExpression Variable("tape"),
+                                "getAt",
+                                TapeExpression Variable("ptr")
+                             ),
+                             "notequal",
+                             TapeExpression Constant($0)),
+                          TapeExpression Code(
+                              // console write(tape[ptr])  
+                              TapeExpression MessageCall(
+                                 TapeExpression Constant(console), 
+                                 "write",
+                                 TapeExpression MessageCall(
+                                   TapeExpression Variable("tape"),
+                                   "getAt",
+                                   TapeExpression Variable("ptr")
+                                 )),
+                              // tape[ptr] := console readChar
+                              TapeExpression MessageCall(
+                                TapeExpression Variable("tape"),
+                                "setAt",
+                                TapeExpression Variable("ptr"), 
+                                TapeExpression MessageCall(
+                                    TapeExpression Constant(console),
+                                    "readChar"))))),
+                      TapeExpression Parameter("tape"))).
+
+    var bf_tape := Array new:1024; populate(:n)($0).
+    var o := (c compiled)().   
     
-    var bfProgram := Tape::(
-        Integer new,
-        console, %"readChar[0]", %"convertorOp.toInt[0]", 3, %"tapeOp.tape_var[]", 2, %"tapeOp.tape_var[]", %"setAt[2]",            
-        3, %"tapeOp.tape_var[]", 2, %"tapeOp.tape_var[]", %"getAt[1]", %"convertorOp.toChar[0]", console, %"write[1]",        
-        3, %"tapeOp.tape_var[]", 2, %"tapeOp.tape_var[]", %"getAt[1]", 0, %"notequal[1]", 1, %"tapeOp.tape_jumpif[]").
-        
-    var bfTape := Array new:1024; populate(:n)(Integer new).
-    
-    bfProgram eval:bfTape.    
+    o eval(bf_tape).
 ].
 
 symbol program2 =
