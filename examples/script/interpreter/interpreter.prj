@@ -11,5 +11,5 @@ debuginfo=-1
 interpreter.l
 
 [forwards]
-'program=interpreter'program4
+'program=interpreter'program
 

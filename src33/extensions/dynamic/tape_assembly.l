@@ -7,6 +7,7 @@ singleton $message_token.
 singleton $expr_end_token.
 singleton $subexpr_token.
 singleton $expr_var_token.
+singleton $previous_token.
 singleton $assign_token.
 singleton $if_token.
 singleton $code_token.
@@ -124,6 +125,7 @@ limited class $Strategy
     end($ClassContext context, $ParameterContext parameters)   []    
     
     setReference($ClassContext context, LiteralValue r)       []
+    setConstant($ClassContext context, object o)       []
     setMessageToken($ClassContext context, LiteralValue m)    []
     setLiteral($ClassContext context, LiteralValue l)         []
     setNumericToken($ClassContext context, LiteralValue l)    []
@@ -299,6 +301,11 @@ class $BaseExpression :: $Strategy
         context push(ConstantClosure new(Symbol new literal:r)).
     ]
     
+    setConstant($ClassContext context, object c) 
+    [
+        context push(ConstantClosure new(c)).
+    ]
+    
     setLiteral($ClassContext context, LiteralValue l) 
     [
         context push(ConstantClosure new:l).
@@ -347,13 +354,22 @@ class $BaseExpression :: $Strategy
         ]
     ]
     
+    
+    type<$Strategy> next_one($ClassContext context, $ParameterContext parameters) 
+    [
+        $self end(context, parameters).
+        $self begin(context, parameters).
+        
+        context push:$previous_token.
+    ]
+    
     end($ClassContext context, $ParameterContext parameters)
     [
         object token := context pop.
         textbuffer buffer := TextBuffer new.
         int counter := -1.
         bool messageExpr := false.
-//        bool popRequired := false.
+        bool popRequired := false.
         until(token equal reference:$expr_end_token)
         [
             if (token equal reference:$subexpr_token)
@@ -379,13 +395,12 @@ class $BaseExpression :: $Strategy
                     [
                         token := $VarClosure new(index).
                     ]
-//                ];
-//                if (token equal reference:$previous_token)
-//                [
-//                    context append(counter + 1).
-//                    token := %"tapeOp.tape_stack[]".
-//                    
-//                    popRequired := true.
+                ];
+                if (token equal reference:$previous_token)
+                [
+                    token := $StackClosure new(counter + 1).
+                    
+                    popRequired := true.
                 ].
                 context append:token.
                 counter := counter + 1.
@@ -404,10 +419,10 @@ class $BaseExpression :: $Strategy
             context append(MessageClosure new(Message new literal:buffer))
         ].
         
-//        if (popRequired)
-//        [
-//            context append(%"tapeOp.tape_pop_prev[1]").
-//        ]
+        if (popRequired)
+        [
+            context append:$popPrevClosure.
+        ]
     ]    
 }
 
@@ -472,6 +487,8 @@ singleton $CondExpression :: $BaseExpression
     ]
     
     type<$Strategy> code_one = $SubCode.
+    
+    type<$Strategy> expression = $SubExpression.
     
     end($ClassContext context, $ParameterContext parameters)
     [
@@ -619,6 +636,11 @@ class TapeAssembly
     [
         _state setReference(_context, r literal).
     ]
+        
+    newConstant : r
+    [
+        _state setConstant(_context, r).
+    ]
     
     newLiteralToken : l
     [
@@ -653,6 +675,11 @@ class TapeAssembly
     if
     [
         _state := _state if_one(_context).
+    ]
+    
+    nextOperation
+    [
+        _state next_one(_context, _parameters).
     ]
     
     close
@@ -743,6 +770,12 @@ singleton ifClosure :: DynamicClosure
         = target if.
 }
 
+singleton nextClosure :: DynamicClosure
+{
+    generic closure(object target, object<> args)
+        = target nextOperation.
+}
+
 class DynamicClosureWithParam :: DynamicClosure
 {
     object param.
@@ -763,6 +796,12 @@ class newMessageClosure :: DynamicClosureWithParam
 {    
     generic closure(object target, object<> args)
         = target newMessageToken:param.    
+}
+
+class newConstantClosure :: DynamicClosureWithParam
+{    
+    generic closure(object target, object<> args)
+        = target newConstant:param.    
 }
 
 class newLiteralClosure :: DynamicClosureWithParam
@@ -795,13 +834,19 @@ singleton $popClosure :: DynamicClosure
         = nextElement.    
 }
 
+singleton $popPrevClosure :: DynamicClosure
+{
+    generic closure(object prevElement, object elementToRemove, object<> args)
+        = prevElement.    
+}
+
 singleton $exitClosure :: DynamicClosure
 {
     generic closure(object<> args)
         => system'core_routines'__exit_closure.
 }
 
-class $VarClosure :: DynamicClosure
+struct $VarClosure :: DynamicClosure
 {
     int index.
     
@@ -817,6 +862,21 @@ class $VarClosure :: DynamicClosure
         n := n - index.
        
         ^ args[n]
+    ]
+}
+
+struct $StackClosure :: DynamicClosure
+{
+    int index.
+    
+    constructor new(int index)
+    [
+        @index := index.
+    ]
+    
+    generic closure(object<> args)
+    [
+        ^ args[index]
     ]
 }
 

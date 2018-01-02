@@ -19,6 +19,7 @@
 
 [LIB]
 [+] new library : system'dynamic'expressions
+[+] new library : extensions'dynamic'expressions
 [+] new class : extensions'dynamic'TapeAssembly
 
 ***************************************************************

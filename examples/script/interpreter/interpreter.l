@@ -4,6 +4,7 @@ import system'dynamic.
 
 import extensions.
 import extensions'scripting.
+import extensions'dynamic.
 
 // --- Tape ---
 
@@ -235,7 +236,98 @@ class TapeCGenerator
     ]
 }
 
-symbol program =
+symbol program = program0.
+
+program0 =
+[
+    // .[,.]
+    
+    var a1 := ClosureTape::(
+        // declare a singleton
+        openSingletonClosure,
+        // declare a method
+        openMethodClosure,
+        newMessageClosure new:"eval",
+        newParamTokenClosure new:"tape",
+        newParamTokenClosure new:"self",        
+        openCodeClosure,                
+
+        // declare a variable - ptr
+        openVariableClosure,
+         newIdentifierClosure new:"ptr",
+        closeClosure,        
+        
+        // ptr := 0
+        openExpressionClosure,
+         newIdentifierClosure new:"ptr",
+         newAssignClosure,
+         newNumericClosure new:"0",
+        closeClosure,
+        
+        // tape[ptr] := console readChar
+        openExpressionClosure,
+         newIdentifierClosure new:"tape",
+         newMessageClosure new:"setAt",
+         newIdentifierClosure new:"ptr",
+         openExpressionClosure,
+          newReferenceClosure new:"system'console",
+          newMessageClosure new:"readChar",
+         closeClosure,
+        closeClosure,
+
+        // while (tape[ptr]!=0) [
+        openLoopClosure,
+         openExpressionClosure,
+          ifClosure,
+          openExpressionClosure,
+           openExpressionClosure,
+            newIdentifierClosure new:"tape",
+            newMessageClosure new:"getAt",
+            newIdentifierClosure new:"ptr",
+            nextClosure,
+            newMessageClosure new:"notequal",
+            newNumericClosure new:"0",
+           closeClosure,  
+          closeClosure,
+          openExpressionClosure,
+           openCodeClosure,
+            // console write(tape[ptr])
+            openExpressionClosure,
+             newReferenceClosure new:"system'console",             
+             newMessageClosure new:"write",
+             openExpressionClosure,
+              newIdentifierClosure new:"tape",
+              newMessageClosure new:"getAt",
+              newIdentifierClosure new:"ptr",
+             closeClosure,
+            closeClosure,
+            
+            // tape[ptr] := console readChar
+            openExpressionClosure,
+             newIdentifierClosure new:"tape",
+             newMessageClosure new:"setAt",
+             newIdentifierClosure new:"ptr",
+             openExpressionClosure,
+              newReferenceClosure new:"system'console",
+              newMessageClosure new:"readChar",
+             closeClosure,
+            closeClosure,
+            
+           closeClosure,
+          closeClosure,
+         closeClosure,
+        closeClosure,
+
+        closeClosure,        
+        closeClosure,
+        closeClosure).
+
+    var bf_tape := Array new:1024; populate(:n)($0).
+    var p := TapeAssembly new(a1); eval.
+    p eval(bf_tape).
+].    
+
+symbol program1 =
 [
     // [,.]
     
