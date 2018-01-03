@@ -8,176 +8,150 @@ import extensions'dynamic.
 
 import extensions'dynamic'expressions.
 
-// --- Tape ---
-
-class BFTape
-{
-    object theArray.
-    object thePointer.
-    object theBrackets.
-
-    constructor new:aLength
-    [
-        theArray := Array new:aLength; populate(:n)<int>(Integer new:0).
-        
-        thePointer := Integer new:0.
-        
-        theBrackets := Stack new.
-    ]
-
-    append
-    [
-         theArray[thePointer] append:1.
-    ]
-    
-    reduce
-    [
-         theArray[thePointer] reduce:1.
-    ]
-    
-    next
-    [
-        thePointer append:1.
-    ]
-
-    previous
-    [
-        thePointer reduce:1.
-    ]
-    
-    push : bookmark
-    [
-        theBrackets push:bookmark.
-    ]
-    
-    pop
-        => theBrackets.
-    
-    input
-    [
-        theArray[thePointer] := console readChar; toInt.
-    ]
-    
-    output
-    [
-        console write(theArray[thePointer] toChar).
-    ]
-
-    check = theArray[thePointer] != 0.
-}
-
 class TapeAssembler
 {    
-    object theBrackets.
-    object theTape.
+    stack                theBrackets.
+    list<TapeExpression> theTape.
     
     constructor new
     [
         theBrackets := Stack new.
-        theTape := ArrayList new.
+        theTape := list<TapeExpression>().
         
-        theTape append(Integer new).
+        theTape append(TapeExpression Declaring("ptr")).
+        theTape append(TapeExpression Assigning("ptr", TapeExpression Constant(0))).
     ]
+    
+    constructor new : assembly_program
+        <= new;
+    [
+        assembly_program($self).
+    ]    
     
     open
     [
-        theBrackets push(theTape length).
+        theBrackets push(theTape).
+        theTape := list<TapeExpression>().
     ]
     
     close
     [
-        theTape
-            append:3;
-            append:%"tapeOp.tape_var[]";
-            append:2;
-            append:%"tapeOp.tape_var[]";
-            append:%"getAt[1]";
-            append:0;
-            append:%"notequal[1]";
-            append(theBrackets pop);
-            append:%"tapeOp.tape_jumpif[]".
+        var loop := TapeExpression Loop(
+                          TapeExpression MessageCall(
+                             TapeExpression MessageCall(
+                                TapeExpression Variable("tape"),
+                                "getAt",
+                                TapeExpression Variable("ptr")
+                             ),
+                             "notequal",
+                             TapeExpression Constant($0)),
+                          TapeExpression Code(theTape array)).
+                          
+        theTape := theBrackets pop.
+        theTape append(loop).                        
     ]
     
     input
     [
-        theTape
-            append:console;
-            append:%"readChar[0]";
-            append:%"convertorOp.toInt[0]";
-            append:3;
-            append:%"tapeOp.tape_var[]";
-            append:2;
-            append:%"tapeOp.tape_var[]";
-            append:%"setAt[2]".
+        theTape append(TapeExpression MessageCall(
+                        TapeExpression Variable("tape"),
+                        "setAt",
+                        TapeExpression Variable("ptr"),
+                        TapeExpression MessageCall(
+                           TapeExpression Constant(console),
+                           "readChar"
+                        ))).
     ]
     
     output
     [
-        theTape
-            append:3;
-            append:%"tapeOp.tape_var[]";
-            append:2;
-            append:%"tapeOp.tape_var[]";
-            append:%"getAt[1]";
-            append:%"convertorOp.toChar[0]";
-            append:console;
-            append:%"write[1]".
+        theTape append(TapeExpression MessageCall(
+                                 TapeExpression Constant(console), 
+                                 "write",
+                                 TapeExpression MessageCall(
+                                   TapeExpression Variable("tape"),
+                                   "getAt",
+                                   TapeExpression Variable("ptr")
+                                 ))).
     ]
     
     next
     [
-        theTape
-            append:1;
-            append:3;
-            append:%"tapeOp.tape_var[]";
-            append:%"append[1]".
+        theTape append(TapeExpression Assigning(
+            "ptr",
+            TapeExpression MessageCall(
+                TapeExpression Variable("ptr"),
+                "add",
+                TapeExpression Constant(1)))).
     ]
     
     previous
     [
-        theTape
-            append:1;
-            append:3;
-            append:%"tapeOp.tape_var[]";
-            append:%"reduce[1]".
+        theTape append(TapeExpression Assigning(
+            "ptr",
+            TapeExpression MessageCall(
+                TapeExpression Variable("ptr"),
+                "subtract",
+                TapeExpression Constant(1)))).
     ]
     
     increase
     [
-        theTape
-            append:1;
-            append:3;
-            append:%"tapeOp.tape_var[]";
-            append:2;
-            append:%"tapeOp.tape_var[]";
-            append:%"getAt[1]";
-            append:%"add[1]";
-            append:3;
-            append:%"tapeOp.tape_var[]";
-            append:2;
-            append:%"tapeOp.tape_var[]";
-            append:%"setAt[2]".
+        theTape append(TapeExpression MessageCall(
+                                TapeExpression Variable("tape"),
+                                "setAt",
+                                TapeExpression Variable("ptr"), 
+                                TapeExpression MessageCall(
+                                    TapeExpression Constant(CharValue),
+                                    "new",
+                                    TapeExpression MessageCall(
+                                        TapeExpression MessageCall(
+                                            TapeExpression Constant(convertor),
+                                            "toInt",
+                                            TapeExpression MessageCall(
+                                                TapeExpression Variable("tape"),
+                                                "getAt",
+                                                TapeExpression Variable("ptr"))
+                                        ),
+                                        "add",
+                                        TapeExpression Constant(1))))).
     ]
     
     decrease
     [
-        theTape
-            append:1;
-            append:3;
-            append:%"tapeOp.tape_var[]";
-            append:2;
-            append:%"tapeOp.tape_var[]";
-            append:%"getAt[1]";
-            append:%"subtract[1]";
-            append:3;
-            append:%"tapeOp.tape_var[]";
-            append:2;
-            append:%"tapeOp.tape_var[]";
-            append:%"setAt[2]".
+        theTape append(TapeExpression MessageCall(
+                                TapeExpression Variable("tape"),
+                                "setAt",
+                                TapeExpression Variable("ptr"), 
+                                TapeExpression MessageCall(
+                                    TapeExpression Constant(CharValue),
+                                    "new",
+                                    TapeExpression MessageCall(
+                                        TapeExpression MessageCall(
+                                            TapeExpression Constant(convertor),
+                                            "toInt",
+                                            TapeExpression MessageCall(
+                                                TapeExpression Variable("tape"),
+                                                "getAt",
+                                                TapeExpression Variable("ptr"))
+                                        ),
+                                        "subtract",
+                                        TapeExpression Constant(1))))).
+
     ]
     
     get
-        = Tape new array:theTape.
+    [
+        var program := TapeExpression Singleton(
+                TapeExpression Method(
+                   "eval",
+                   TapeExpression Code(theTape array),
+                   TapeExpression Parameter("tape"))).
+                   
+        var o := (program compiled)().
+                   
+        ^(:tape) [ o eval(tape) ]
+    ]
 }
 
 class TapeCGenerator
@@ -238,7 +212,7 @@ class TapeCGenerator
     ]
 }
 
-symbol program = program1.
+symbol program = program3.
 
 program0 =
 [
@@ -390,27 +364,28 @@ program1 =
 
 symbol program2 =
 [
-    if ('program'arguments length == 1)
-        [ console write:"Please provide the path to the file to interpret". AbortException new; raise ].
-
-    var bfProgram := scriptEngine 
-        load path:"rules.es";
-        eval path('program'arguments[1]).
-
-    bfProgram eval(BFTape new:1024).
-].
-
-symbol program3 =
-[
     var bfProgram := TapeAssembler new;
-        open; input; output; close; get.
+        input; open; output; input; close; get.
                     
-    var bfTape := Array new:1024; populate(:n)<int> [ ^0 ].
+    var bfTape := Array new:1024; populate(:n)<int>($0).
     
     bfProgram eval:bfTape.
 ].
 
-symbol program4 =
+symbol program3bis =
+[
+    var bfAssemblyProgram := scriptEngine 
+        load path:"asmrules.es";
+        eval (">,[.,]").
+
+    var bfProgram := TapeAssembler new(bfAssemblyProgram); get.
+
+    var bfTape := Array new:1024; populate(:n)<int>($0).
+
+    bfProgram(bfTape).
+].
+
+symbol program3 =
 [
     if ('program'arguments length == 1)
         [ console write:"Please provide the path to the file to interpret". AbortException new; raise. ].
@@ -419,14 +394,14 @@ symbol program4 =
         load path:"asmrules.es";
         eval path('program'arguments[1]).
 
-    var bfProgram := bfAssemblyProgram eval(TapeAssembler new).
+    var bfProgram := TapeAssembler new(bfAssemblyProgram); get.
 
-    var bfTape := Array new:1024; populate(:n)<int>( 0 ).
+    var bfTape := Array new:1024; populate(:n)<int>($0).
 
-    bfProgram eval:bfTape.
+    bfProgram(bfTape).
 ].
 
-symbol program5 =
+symbol program4 =
 [
     if ('program'arguments length == 1)
         [ console write:"Please provide the path to the file to interpret". AbortException new; raise ].

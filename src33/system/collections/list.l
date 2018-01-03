@@ -189,6 +189,20 @@ template<BaseEnumerable> list :: type
         ]                
     }.
                        
+    array
+    [
+        array a := Array new(theLength).
+        int i := 0.
+        while (i < theLength)
+        [
+            a[i] := theArray[i].
+            
+            i += 1
+        ].
+        
+        ^ a
+    ]                       
+                       
     stacksafe readLengthTo vint:retVal
     [
         retVal int := theLength.

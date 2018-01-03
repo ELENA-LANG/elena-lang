@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2017, by Alexei Rakov
+//                                              (C)2009-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -48,7 +48,8 @@ int x86Process :: getProtectedMode(bool writeAccess, bool executeAccess)
 
 void x86Process :: protect(bool writeAccess, bool executeAccess)
 {
-   ::VirtualProtect((LPVOID)_code, _size, getProtectedMode(writeAccess, executeAccess), NULL);
+   DWORD oldprotect;
+   ::VirtualProtect((LPVOID)_code, _size, getProtectedMode(writeAccess, executeAccess), &oldprotect);
 }
 
 bool x86Process :: allocate(size_t size)

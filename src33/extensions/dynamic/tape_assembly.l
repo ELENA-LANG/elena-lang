@@ -368,6 +368,7 @@ class $BaseExpression :: $Strategy
         object token := context pop.
         textbuffer buffer := TextBuffer new.
         int counter := -1.
+        int prealloc := 0.
         bool messageExpr := false.
         bool popRequired := false.
         until(token equal reference:$expr_end_token)
@@ -375,6 +376,8 @@ class $BaseExpression :: $Strategy
             if (token equal reference:$subexpr_token)
             [
                 counter := counter + 1.
+                context append($StackClosure new(prealloc + counter)).
+                prealloc += 1.
             ];
             if (token equal reference:$message_token)
             [
@@ -421,7 +424,12 @@ class $BaseExpression :: $Strategy
         
         if (popRequired)
         [
+            prealloc += 1.
+        ].
+        while (prealloc > 0)
+        [
             context append:$popPrevClosure.
+            prealloc -= 1.
         ]
     ]    
 }
@@ -869,7 +877,7 @@ struct $StackClosure :: DynamicClosure
 {
     int index.
     
-    constructor new(int index)
+    stacksafe constructor new(int index)
     [
         @index := index.
     ]
@@ -884,7 +892,7 @@ struct $AssignClosure :: DynamicClosure
 {
     int index.
     
-    constructor new(int index)
+    stacksafe constructor new(int index)
     [
         @index := index.
     ]

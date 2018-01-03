@@ -5,7 +5,7 @@ Ultimate goals
 - maximally reusable code        
 - dynamic code without reflection
 
-Version 3.1.0
+Version 3.x.x
 -------------
 - basic linux version (only console)
 - start the code documentation
@@ -17,9 +17,6 @@ Version 3.1.0
 - gui / console vm clients
 - gui vm / mt
 - x64 alpha version
-
-Version 3.2.0
--------------
 - x64 beta version
 - web
 - api : optimize utf8 <-> utf16, utf8 <-> utf32, utf16 <-> utf32
@@ -32,27 +29,15 @@ Version 3.2.0
 - optimization : use frame only when it is necessary (especially in dispatch / resend operations)
 - linux version (console & windowsx)
 - vmt-less action                 
-
-Version 3.3.0
--------------
 - MVC
 - start migrating all assembler code to c; either dll or import object code
 - gcx, final version
 - x86 native code: optimize with pentium pro commands
-
-Version 3.4.0
--------------
 - start work on visualizer
-
-Version 3.5.0
--------------
 - lib30 review -> lib31
 - optimize elenavm
 - optimize elenart
 - optimize elenasm
-
-Version 3.x.x
--------------
 - system'dynamics'tape optimization, currently every object is checked if it is a message,
   could it be optimized (move the check to the message, the only question how one can
   check if it is a tape call)?

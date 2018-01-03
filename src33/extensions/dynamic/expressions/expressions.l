@@ -264,6 +264,8 @@ class TapeMessageCallExpression :: TapeExpression
         
         target saveTo(list).
         
+        list append(newMessageClosure new:message).
+        
         if ($nil != arguments)
         [
             int len := arguments length.
@@ -275,8 +277,6 @@ class TapeMessageCallExpression :: TapeExpression
                 i += 1.            
             ]
         ].
-        
-        list append(newMessageClosure new:message).
         
         list append(closeClosure).
     ]
