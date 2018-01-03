@@ -163,6 +163,12 @@ class TapeCGenerator
         theOutput := system'text'TextBuilder new.
     ]
     
+    constructor new : assembly_program
+        <= new;
+    [
+        assembly_program($self).
+    ]    
+    
     open
     [
         theOutput printLine:"while (*p) {".
@@ -211,8 +217,6 @@ class TapeCGenerator
         ^ theOutput literal.
     ]
 }
-
-symbol program = program3.
 
 program0 =
 [
@@ -410,9 +414,7 @@ symbol program4 =
         load path:"asmrules.es";
         eval path:('program'arguments[1]).
 
-    var bfProgram := bfAssemblyProgram eval:(TapeCGenerator new).
-
-    var len := bfProgram length.
+    var bfProgram := TapeCGenerator new(bfAssemblyProgram); get.
 
     console writeLine:bfProgram.
 ].
