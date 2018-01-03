@@ -5,33 +5,33 @@
    #define start       ::= module $eof;
    #define start       ::= $eof;
 
-   #define module      ::= <= ( > += "2" += "%""system'dynamic'tapeOp.tape_var[]""" => 
+   #define module      ::= <= ( > => 
                              "root" "(" include* symbol* ")" 
-                           <= "*system'dynamic'Tape=" # ) =>;
+                           <= "*system'dynamic'ClosureTape=" # ) =>;
 
    #define include     ::=   "include" "(" forward identifier_v ")"
-                           <= += "%""include[2]""" =>;
+                           <= += " extensions'dynamic'includeClosure ^ ""new[2]"" " =>;
 
    #define forward     ::= "forward" "(" reference_v ")";
 
    #define symbol      ::=   symbol_expr;
    #define symbol      ::=   singleton_expr;
 
-   #define singleton_expr ::= <= += "%""openSingleton[0]"""  => 
+   #define singleton_expr ::= <= += " extensions'dynamic'openSingletonClosure "  => 
                                 "singleton" "(" method* ")" 
-                              <= += "%""close[0]""" =>;
+                              <= += " extensions'dynamic'closeClosure " =>;
 
-   #define symbol_expr ::= <= += "%""openSymbol[0]"""  => 
+   #define symbol_expr ::= <= += " extensions'dynamic'openSymbolClosure "  => 
                              "symbol" "(" identifier expression ")" 
-                           <= += "%""close[0]""" =>;
+                           <= += " extensions'dynamic'closeClosure " =>;
 
-   #define symbol_expr ::= <= += "%""openPreloadedSymbol[0]"""  => 
+   #define symbol_expr ::= <= += " extensions'dynamic'openPreloadedSymbolClosure "  => 
                               "preloaded_symbol" "(" identifier? expression ")" 
-                           <= += "%""close[0]""" =>;
+                              <= += " extensions'dynamic'closeClosure " =>;
 
-   #define expression  ::= <= += "%""openExpression[0]""" =>
+   #define expression  ::= <= += " extensions'dynamic'openExpressionClosure " =>
                              "expression" "(" expr_member+ ")"
-                           <= += "%""close[0]""" =>;
+                              <= += " extensions'dynamic'closeClosure " =>;
 
    #define expr_member ::=   nested;
    #define expr_member ::=   numeric;
@@ -42,31 +42,32 @@
    #define expr_member ::=   message;
    #define expr_member ::=   assign;
    #define expr_member ::=   operator;
-   #define expr_member ::= <= += "%""nextExpression[0]""" =>
+   #define expr_member ::= <= += " extensions'dynamic'nextClosure " =>
                              ";";
 
-   #define expr_member ::= <= += "%""openCode[0]""" =>
+   #define expr_member ::= <= += " extensions'dynamic'openCodeClosure " =>
                              "code" "(" code ")"
-                           <= += "%""close[0]""" =>;
+                           <= += " extensions'dynamic'closeClosure " =>;
 
-   #define nested      ::= <= += "%""openSingleton[0]""" =>
+   #define nested      ::= <= += " extensions'dynamic'openSingletonClosure " =>
                              "nested" "(" identifier? method* ")"
-                            <= += "%""close[0]""" =>;
+                              <= += " extensions'dynamic'closeClosure " =>;
 
    #define method      ::= <= 
-                              += "%""openMethod[0]""" 
-                              += """self""" += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newParamToken[1]""" 
+                              += " extensions'dynamic'openMethodClosure " 
                            =>
-                             "method" "(" message parameter* meth_body ")"
-                           <= += "%""close[0]""" =>;
+                             "method" "(" message meth_params meth_body ")"
+                              <= += " extensions'dynamic'closeClosure " =>;
+
+   #define meth_params ::= parameter* <= += " ""self"" extensions'dynamic'newParamTokenClosure ^ ""new[1]"" " =>;
 
    #define parameter   ::=   "parameter" "=" ident_quote
-                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newParamToken[1]""" => ;
+                           <= += " extensions'dynamic'newParamTokenClosure ^ ""new[1]"" " => ;
 
    #define meth_body   ::= ret_expr;
-   #define meth_body   ::= <= += "%""openCode[0]""" =>
+   #define meth_body   ::= <= += " extensions'dynamic'openCodeClosure " =>
                              "code" "(" code ")"
-                           <=  += "%""close[0]""" =>;
+                           <= += " extensions'dynamic'closeClosure " =>;
 
    #define code        ::= statement* ret_expr?;
 
@@ -76,43 +77,41 @@
                              "loop" "(" expression ")"
                            <= += "%""close[0]""" =>;
 
-   #define variable    ::= <= += "%""openVariable[0]""" =>
+   #define variable    ::= <= += " extensions'dynamic'openVariableClosure " =>
                               identifier
-                           <= += "%""close[0]""" =>;
+                           <= += " extensions'dynamic'closeClosure " =>;
 
-   #define ret_expr    ::= <= += "%""openReturning[0]""" =>
+   #define ret_expr    ::= <= += " extensions'dynamic'openReturningClosure " =>
                              "returning" "(" expression ")"
-                           <=  += "%""close[0]""" =>;
+                           <= += " extensions'dynamic'closeClosure " =>;
 
    #define message     ::=   "message" "=" ident_quote
-                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newMessageToken[1]""" => ;
+                           <= += " extensions'dynamic'newMessageClosure ^ ""new[1]"" " => ;
 
    #define operator    ::=   "operator" "=" operator_quote
-                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newMessageToken[1]""" => ;
+                           <= += " extensions'dynamic'newMessageClosure ^ ""new[1]"" " => ;
 
    #define operator    ::=   "operator" "=" "?"
-                           <= += "%""if[0]""" => ;
+                           <= += " extensions'dynamic'ifClosure " => ;
 
    #define identifier  ::=   "identifier" "=" ident_quote
-                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newIdentToken[1]""" => ;
+                           <= += " extensions'dynamic'newIdentifierClosure ^ ""new[1]"" " => ;
 
    #define numeric     ::=   "numeric" "=" num_quote
-                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newNumericToken[1]""" => ;
+                           <= += " extensions'dynamic'newNumericClosure ^ ""new[1]"" " => ;
 
    #define literal     ::=   "literal" "=" str_quote
-                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newLiteralToken[1]""" => ;
+                           <= += " extensions'dynamic'newLiteralClosure ^ ""new[1]"" " => ;
 
    #define reference   ::=   "reference" "=" ref_quote
-                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newReference[1]""" => ;
+                           <= += " extensions'dynamic'newReferenceClosure ^ ""new[1]"" " => ;
 
    #define assign      ::=   "assign" "=" num_quote
-                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" += "%""newAssignToken[1]""" => ;
+                           <= += " extensions'dynamic'assignClosureFactory ^ ""new[1]"" " => ;
 
-   #define reference_v ::= "reference" "=" ref_quote
-                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" => ;
+   #define reference_v ::= "reference" "=" ref_quote;
 
-   #define identifier_v::= "identifier" "=" ident_quote
-                           <= += "%""system'dynamic'tapeOp.tape_swap_top[]""" => ;
+   #define identifier_v::= "identifier" "=" ident_quote;
 
    #define operator_quote ::= <= >> += " ""equal"" " > =>
                              "==";
@@ -139,6 +138,8 @@
    #define ref_quote   ::= <= >> += " """ => ref_token <= """ " > =>;
 
    #define num_quote   ::= <= >> += " """ => num_token  <= """ " > =>;
+
+   #define num_dummy   ::= $numeric;
 
    #define ident_token ::= <= "$identifier" =>;
 

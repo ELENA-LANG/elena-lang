@@ -13,6 +13,7 @@ singleton $if_token.
 singleton $code_token.
 
 const int $METHOD_PARAM = 1.
+const int $FORWARD_PARAM = 2.
 
 sealed class $ClassContext
 {
@@ -109,6 +110,7 @@ sealed class $ParameterContext
 
 limited class $Strategy
 {
+    type<$Strategy> preloaded_one []
     type<$Strategy> symbol_one    []
     type<$Strategy> expression    []
     type<$Strategy> singleton_one []
@@ -136,6 +138,8 @@ limited class $Strategy
 
 singleton $StartOne :: $Strategy
 {
+    type<$Strategy> preloaded_one = $PreloadedOne.
+    
     type<$Strategy> symbol_one = $SymbolOne.
     
     type<$Strategy> singleton_one = $Singleton.
@@ -161,6 +165,28 @@ singleton $SymbolOne :: $Strategy
     ]    
 }
 
+singleton $PreloadedOne :: $Strategy
+{
+    begin($ClassContext context, $ParameterContext parameters)  
+    [
+        context push(context length).
+    ]
+    
+    type<$Strategy> expression = $SymbolBody.
+    
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        int index := context pop.
+        int len := context length - index.
+        var tape := ClosureTape new(context tape, index, len).
+        
+        context trim(index).
+        context append(tape).
+        
+        tape().
+    ]
+}
+
 class $BaseCode :: $Strategy
 {
     type<$Strategy> expression   = $RootExpresson.
@@ -178,6 +204,8 @@ singleton $SubCode :: $BaseCode
 singleton $Method :: $Strategy
 {
     type<$Strategy> code_one = $Code.
+    
+    type<$Strategy> returning = $RetExpression.
     
     setParamToken($ClassContext context, LiteralValue value, $ParameterContext parameters)
     [
@@ -331,10 +359,10 @@ class $BaseExpression :: $Strategy
             context push:param.
             context push:$expr_var_token.            
         ];
-//        if (type == $FORWARD_PARAM)
-//        [
-//            context push:param.
-//        ];
+        if (type == $FORWARD_PARAM)
+        [
+            context push(ConstantClosure new(param)).
+        ];
         [
             InvalidArgumentException new("Variable cannot be resolved - " + m); raise
         ].
@@ -616,6 +644,9 @@ class TapeAssembly
         _state begin(_context, _parameters).
     ]
     
+    openPreloadedSymbol
+        <= open(%preloaded_one).
+            
     openSymbol
         <= open(%symbol_one).
     
@@ -685,6 +716,13 @@ class TapeAssembly
         _state := _state if_one(_context).
     ]
     
+    include(LiteralValue name,LiteralValue symbolName)
+    [
+        var symbol := Symbol new(symbolName).
+        
+        _parameters add(name, $FORWARD_PARAM, symbol).
+    ]
+    
     nextOperation
     [
         _state next_one(_context, _parameters).
@@ -713,6 +751,12 @@ class TapeAssembly
 }
 
 singleton openSymbolClosure :: DynamicClosure
+{
+    generic closure(object target, object<> args)
+        = target openSymbol.
+}
+
+singleton openPreloadedSymbolClosure :: DynamicClosure
 {
     generic closure(object target, object<> args)
         = target openSymbol.
@@ -772,6 +816,11 @@ singleton newAssignClosure :: DynamicClosure
         = target newAssignToken:"=".
 }
 
+assignClosureFactory =
+{
+    new : x = newAssignClosure.
+}.
+
 singleton ifClosure :: DynamicClosure
 {
     generic closure(object target, object<> args)
@@ -782,6 +831,21 @@ singleton nextClosure :: DynamicClosure
 {
     generic closure(object target, object<> args)
         = target nextOperation.
+}
+
+class includeClosure :: DynamicClosure
+{
+    literal forward.
+    literal reference.
+    
+    constructor new(literal forward, literal reference)
+    [
+        @forward:=forward.
+        @reference:=reference.
+    ]
+    
+    generic closure(object target, object<> args)
+        = target include(forward,reference).
 }
 
 class DynamicClosureWithParam :: DynamicClosure

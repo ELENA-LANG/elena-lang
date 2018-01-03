@@ -1,21 +1,19 @@
 import system'dynamic.
 import extensions.
 import extensions'scripting.
+import extensions'dynamic.
 
 ////'program=extensions'programLoop
 // --- testCase ---
 
-static factory
+static assembly_tape
     = scriptEngine 
         load path:"~\scripts\assembly.es";
         load path:"~\scripts\eson.es";
         eval path:"calc.es".
 
 symbol dynamicRules = 
-    factory 
-        eval(Library new);
-        first; 
-        eval.
+    TapeAssembly new(assembly_tape); eval.
     
 symbol staticRules =
     calc'rules'States.

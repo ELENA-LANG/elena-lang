@@ -2,6 +2,11 @@
 In development:
 ------                              
               exp - live programming
+                 * get rid of extensions'scripting'assembly.l
+                 * get rid of Tape / tapeOp
+
+                 * do we need scriptInterpreter?
+
                  * function call
                  * method call
                  * virtual method call
@@ -38,6 +43,7 @@ In development:
                  * implement xpath resolver prototype
 
               dev - general implementation
+                 * probably better to get rid of escript script
                  * class cannot have the same name as type, so it is possible to use in signature brackets both
                    class names and types
                  * generate generic multi-method for the closure (in this case we can get rid of hotfix in tweakClassFlags)

@@ -160,6 +160,17 @@ singleton Assert
             AssertException new("Assertion failed"); raise
         ]
     ]
+    
+    notFailed(BaseFunction f)
+    [
+        f eval 
+            | if(:e)
+            [
+                console writeLine:(e message).
+                
+                AssertException new("Assertion failed"); raise
+            ].
+    ]
 }
 
 // --- controlOp ---
