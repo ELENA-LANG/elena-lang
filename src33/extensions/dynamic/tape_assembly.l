@@ -317,13 +317,29 @@ singleton $Singleton :: $BaseClass
     ]
 }
 
+singleton $Nested :: $BaseClass
+{
+    end($ClassContext context, $ParameterContext parameters)
+    [
+        var pos := context pop.
+        var len := context length - pos.
+        
+        var class := ClosureClass new(context tape, pos, len).
+        
+        context trim(pos).
+        context push(ConstantClosure new(class)).
+    ]
+}
+
 class $BaseExpression :: $Strategy
 {
     begin($ClassContext context, $ParameterContext parameters)
     [
         context push:$expr_end_token.
     ]    
-    
+ 
+    type<$Strategy> singleton_one = $Nested.
+          
     setReference($ClassContext context, LiteralValue r) 
     [
         context push(ConstantClosure new(Symbol new literal:r)).

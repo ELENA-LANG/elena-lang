@@ -6,7 +6,7 @@
   <targets>
       <target name="eson" type="2">
          <option>[[ #grammar tree ]]</option>
-         <option>~\scripts\eson.es</option>
+         <option>~\scripts\jscript.es</option>
       </target>
   </targets>
   <files>

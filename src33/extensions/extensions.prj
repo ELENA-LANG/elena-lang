@@ -7,7 +7,7 @@ debuginfo=-1
 
 [manifest]
 name=ELENA Extension Library
-version=3.3.8
+version=3.3.9
 author=Alex Rakov
 
 [files]
@@ -24,12 +24,13 @@ text\strings.l
 routines\enumerating.l
 routines\combinations.l
 routines\patterns.l
-scripting\interpreter.l
-scripting\assembly.l
+routines\compound.l
 dynamic\json.l
 dynamic\tape_assembly.l
-routines\compound.l
-threading\threading.l
-scripting\escript.l
 dynamic\expressions\expressions.l
+scripting\interpreter.l
+scripting\assembly.l
+scripting\escript.l
+scripting\jscript.l
+threading\threading.l
 

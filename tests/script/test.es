@@ -1,8 +1,8 @@
-#import "system'console" as console; 
+#import "system'console" as console;
 
 program=
 { 
-   writeLine : function(x)
+   test : function(x)
    { 
       console.writeLine(x);
    }; 

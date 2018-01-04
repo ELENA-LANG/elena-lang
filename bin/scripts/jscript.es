@@ -12,14 +12,22 @@
    #define directive  ::= <= include ( => "#import" forward alias <= ) =>;
    #define alias      ::= "as" s_name;
 
-   #define expression ::= <= expression ( => object operations <= ) =>; 
-   #define operations ::= operation operations;
-   #define operations ::= $eps;
+   #define expression    ::= <= expression ( => object operations <= ) =>; 
+   #define l1_expression ::= <= expression ( => object l1_operation* <= ) =>; 
+   #define l2_expression ::= <= expression ( => object l2_operation* <= ) =>; 
+   #define operations    ::= operation operations;
+   #define operations    ::= $eps;
 
-   #define operation  ::= "." message ext_op op_params;
-   #define op_params  ::= "(" op_params_r;
-   #define op_params_r::= expression op_nparam;
-   #define op_params_r::= ")";
+   #define operation     ::= "." message ext_op op_params;
+   #define l1_operation  ::= "." message ext_op op_params;
+   #define l2_operation  ::= "." message ext_op op_params;
+
+   #define operation     ::= <= message = add => "+" l1_expression;
+   #define l1_operation  ::= <= message = multiply => "*" l2_expression;
+
+   #define op_params     ::= "(" op_params_r;
+   #define op_params_r   ::= expression op_nparam;
+   #define op_params_r   ::= ")";
 
    #define op_nparam  ::= "," expression op_nparam;
    #define op_nparam  ::= ")";

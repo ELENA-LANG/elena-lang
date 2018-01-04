@@ -73,9 +73,9 @@
 
    #define statement   ::= expression;
    #define statement   ::= "variable" "(" variable ")";
-   #define statement   ::= <= += "%""openLoop[0]""" =>
+   #define statement   ::= <= += " extensions'dynamic'openLoopClosure " =>
                              "loop" "(" expression ")"
-                           <= += "%""close[0]""" =>;
+                           <= += " extensions'dynamic'closeClosure " =>;
 
    #define variable    ::= <= += " extensions'dynamic'openVariableClosure " =>
                               identifier
@@ -113,31 +113,31 @@
 
    #define identifier_v::= "identifier" "=" ident_quote;
 
-   #define operator_quote ::= <= >> += " ""equal"" " > =>
+   #define operator_quote ::= <= >> " ""equal"" " > =>
                              "==";
 
-   #define operator_quote ::= <= >> += " ""less"" " > =>
+   #define operator_quote ::= <= >> " ""less"" " > =>
                              "<";
 
-   #define operator_quote ::= <= >> += " ""greater"" " > =>
+   #define operator_quote ::= <= >> " ""greater"" " > =>
                              ">";
 
-   #define operator_quote ::= <= >> += " ""notgreater"" " > =>
+   #define operator_quote ::= <= >> " ""notgreater"" " > =>
                              "<=";
 
-   #define operator_quote ::= <= >> += " ""add"" " > =>
+   #define operator_quote ::= <= >> " ""add"" " > =>
                              "+";
 
    #define operator_quote ::= <= >> += " ""subtract"" " > =>
                              "-";
 
-   #define ident_quote ::= <= >> += " """ => ident_token <= """ " > =>;
+   #define ident_quote ::= <= >> " """ => ident_token <= """ " > =>;
 
-   #define str_quote   ::= <= >> += " """ => str_token <= """ " > =>;
+   #define str_quote   ::= <= >> " """ => str_token <= """ " > =>;
 
-   #define ref_quote   ::= <= >> += " """ => ref_token <= """ " > =>;
+   #define ref_quote   ::= <= >> " """ => ref_token <= """ " > =>;
 
-   #define num_quote   ::= <= >> += " """ => num_token  <= """ " > =>;
+   #define num_quote   ::= <= >> " """ => num_token  <= """ " > =>;
 
    #define num_dummy   ::= $numeric;
 

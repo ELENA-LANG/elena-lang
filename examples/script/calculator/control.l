@@ -9,7 +9,7 @@ import extensions'dynamic.
 static assembly_tape
     = scriptEngine 
         load path:"~\scripts\assembly.es";
-        load path:"~\scripts\eson.es";
+        load path:"~\scripts\jscript.es";
         eval path:"calc.es".
 
 symbol dynamicRules = 
