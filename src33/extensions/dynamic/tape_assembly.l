@@ -561,9 +561,13 @@ singleton $IfExpression :: $BaseExpression
 {
     type<$Strategy> expression = $CondExpression.
     
+    type<$Strategy> code_one = $SubCode.
+    
     end($ClassContext context, $ParameterContext parameters)
     [
-        int pos := context pop.        
+        var token := context pop.
+        
+        int pos := context pop.
         
         $super end(context, parameters).
         

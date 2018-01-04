@@ -46,6 +46,9 @@ limited class TapeExpression
     constructor Returning(TapeExpression value)
         = TapeReturningExpression new(value).
         
+    constructor If(TapeExpression condition, TapeExpression truePart)
+        = TapeIfExpression new(condition, truePart).
+        
     saveTo(list<DynamicClosure> list)
     [
     ]
@@ -345,6 +348,29 @@ class TapeLoopExpression :: TapeExpression
         list append(closeClosure).
         
         list append(closeClosure).
+        list append(closeClosure).
+    ]
+}
+
+class TapeIfExpression :: TapeExpression
+{
+    type<TapeExpression>  condition.
+    type<TapeExpression>  truePart.
+    
+    constructor new(TapeExpression condition, TapeExpression truePart)
+    [
+        @condition := condition.
+        @truePart := truePart.
+    ]
+    
+    saveTo(list<DynamicClosure> list)
+    [
+        list append(openExpressionClosure).
+        list append(extensions'dynamic'ifClosure).
+        
+        condition saveTo(list).        
+        truePart saveTo(list).
+        
         list append(closeClosure).
     ]
 }

@@ -1,4 +1,5 @@
 import extensions.
+import extensions'dynamic.
 import extensions'scripting.
 
 program =
@@ -8,12 +9,7 @@ program =
 
     try(control do:
     [
-        var factory := scriptEngine 
-            load path:"~\scripts\assembly.es";
-            load path:"grammar_js.es";
-            eval path('program'arguments[1]).
-            
-        factory eval:(Library new).
+        assemblyScript eval path:"grammar_js.es" path('program'arguments[1]).
     ])
     {
         on(Exception e)
