@@ -6,14 +6,8 @@ import extensions'dynamic.
 ////'program=extensions'programLoop
 // --- testCase ---
 
-static assembly_tape
-    = scriptEngine 
-        load path:"~\scripts\assembly.es";
-        load path:"~\scripts\jscript.es";
-        eval path:"calc.es".
-
-symbol dynamicRules = 
-    TapeAssembly new(assembly_tape); eval.
+static dynamicRules = 
+    jscript eval path:"calc.es".
     
 symbol staticRules =
     calc'rules'States.
