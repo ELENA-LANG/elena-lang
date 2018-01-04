@@ -128,7 +128,7 @@
    #define operator_quote ::= <= >> " ""add"" " > =>
                              "+";
 
-   #define operator_quote ::= <= >> += " ""subtract"" " > =>
+   #define operator_quote ::= <= >> " ""subtract"" " > =>
                              "-";
 
    #define ident_quote ::= <= >> " """ => ident_token <= """ " > =>;

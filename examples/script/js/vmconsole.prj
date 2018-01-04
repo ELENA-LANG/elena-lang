@@ -1,8 +1,10 @@
 ﻿[project]
 executable=vmconsole.exe
+arguments=test2.js
 namespace=vmconsole
 template=vm_console
 debuginfo=-1
 
 [files]
 main.l
+

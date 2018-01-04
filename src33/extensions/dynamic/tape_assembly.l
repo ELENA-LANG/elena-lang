@@ -553,6 +553,9 @@ singleton $CondExpression :: $BaseExpression
             context append:nil.
 //            context append:%"tapeOp.tape_goifnot[]".
             context push($code_token).
+        ];
+        [
+            context push(token).
         ]
     ]    
 }
@@ -619,6 +622,8 @@ singleton $LoopIfExpression :: $BaseExpression
     
     end($ClassContext context, $ParameterContext parameters)
     [
+        var token := context pop.
+        
         int pos := context pop.
         
         $super end(context, parameters).
