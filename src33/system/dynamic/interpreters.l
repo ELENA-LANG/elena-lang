@@ -41,69 +41,6 @@ __tape_mixin Tape
     dispatch => system'core_routines'__tape.
 }
 
-// --- tapeControl ---
-
-extension tapeOp
-{
-    tape_var(object<> params)
-    [
-        int len := params length.
-        int n := len.
-        n := n - self int.
-       
-        ^ params[n]
-    ]
-    
-    tape_swap_top(object<> params)
-    [
-        var before_top := params[0].
-        
-        params[0] := self.
-        
-        ^ before_top.
-    ]
-    
-    tape_assign(object<> params)
-        => system'core_routines'__tape.
-    
-    tape_pop : o
-        = o.
-    
-    tape_pop_prev : o
-        = $self.
-    
-    tape_stack(object<> params)
-    [
-        int n := self int.
-       
-        ^ params[n]
-    ]
-        
-    tape_jumpif(object<> params)
-        => system'core_routines'__tape.
-    
-    tape_jumpifnot(object<> params)
-        => system'core_routines'__tape.
-    
-    tape_jump(object<> params)
-        => system'core_routines'__tape.
-        
-    tape_goif(object<> params)
-        => system'core_routines'__tape.
-    
-    tape_goifnot(object<> params)
-        => system'core_routines'__tape.
-    
-    tape_go(object<> params)
-        => system'core_routines'__tape.
-    
-    tape_exit(object<> params)
-        => system'core_routines'__tape.
-        
-    tape_ptr(object<> params)
-        => system'core_routines'__tape.
-}
-
 // --- Struct ---
 
 mixin Struct

@@ -2,7 +2,6 @@
 In development:
 ------                              
               exp - live programming
-                 * get rid of extensions'scripting'assembly.l
                  * get rid of Tape / tapeOp
 
                  * do we need scriptInterpreter?
@@ -10,6 +9,7 @@ In development:
                  * function call
                  * method call
                  * virtual method call
+                 * escript : support closures
 
               dev - migrating
                  * duplicate extensions

@@ -21,6 +21,7 @@
 [+] new library : system'dynamic'expressions
 [+] new library : extensions'dynamic'expressions
 [+] new class : extensions'dynamic'TapeAssembly
+[-] system'dynamic'tapeOp extension
 
 ***************************************************************
                              What's New in 3.2.1

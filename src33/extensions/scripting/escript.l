@@ -1,16 +1,15 @@
 import extensions'dynamic.
 
+static $escript
+    = scriptEngine 
+            load path:"~\scripts\assembly.es";
+            load path:"~\scripts\escript.es".
+
 singleton escript
 {
     eval(literal script)
-        = TapeAssembly new(scriptEngine 
-            load path:"~\scripts\assembly.es";
-            load path:"~\scripts\escript.es";
-            eval:script); eval.
+        = TapeAssembly new($escript eval:script); eval.
             
     eval path:path
-        = TapeAssembly new(scriptEngine 
-            load path:"~\scripts\assembly.es";
-            load path:"~\scripts\escript.es";
-            eval path:path); eval.
+        = TapeAssembly new($escript eval path:path); eval.
 }
