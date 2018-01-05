@@ -27,6 +27,11 @@ sealed struct Message
         system'core_routines'__message load mssg:$self literal:name
     ]
     
+    stacksafe constructor $new(int message)
+    [
+        system'core_routines'__message copy mssg:$self int:message.
+    ]
+    
     /// Loads a message
     constructor new mssg:message
         = message.

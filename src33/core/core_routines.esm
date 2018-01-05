@@ -4277,6 +4277,16 @@ labError:
 
 end
 
+procedure __message."copy$system@Message$system@IntNumber[2]"
+
+  aloadsi 2  
+  bloadsi 1
+  nload
+  nsave
+  quitn 2
+
+end
+
 procedure __message."$system@Signature[1]"
 
   pusha

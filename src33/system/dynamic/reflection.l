@@ -32,20 +32,28 @@ extension classROp
     stacksafe respondTo mssg:aMessage
         => system'core_routines'__object.
 
-//    array<Message> __messages
-//    [
-//        __mssg<256> array.
-//        
-//        var class := self~objectOp class_ref.
-//
-//        int retVal := system'external core_readvmt
-//           int:0
-//           ref:class
-//           int:256
-//           intarray:array.
-//
-//        ^ array.
-//    ]
+    array<Message> __messages
+    [
+        var class := self~objectOp class_ref.
+
+        int<256> tmp_array.
+        int retVal := system'external core_readvmt
+           int:0
+           ref:class
+           int:256
+           intarray:tmp_array.
+
+        array<Message> array := __array<Message>(retVal).
+        int i := 0.
+        while (i < retVal)
+        [
+           array[i] := Message $new int:(tmp_array[i]).
+            
+           i += 1.
+        ].
+
+        ^ array.
+    ]
     
     setFields args:objects
     [

@@ -1,20 +1,10 @@
 ------                                 
 In development:
 ------                              
-              exp - live programming
-                 * get rid of Tape / tapeOp
-
-                 * do we need scriptInterpreter?
-
-                 * function call
-                 * method call
-                 * virtual method call
-                 * escript : support closures
-
               dev - migrating
                  * duplicate extensions
+
                  * fix reddit posting : Generic lists in ELENA - https://www.reddit.com/r/elena_lang/comments/6cuwq1/generic_lists_in_elena/
-                 * Reflection / List methods
                  * Sort three variables
                  * execute bf
                  * Runtime evaluation/In an environment
@@ -22,6 +12,7 @@ In development:
 
               exp - built-in script
                  * graph : provide function in the script
+                 * escript : support closures
 
               dev - usability
                  * ecv : class info should be counted for listing mode
@@ -33,17 +24,12 @@ In development:
                  * #34 : Web support 
                  * web server
 
-              dev - elt
-                 * probably better to use eson and get rid of elena script
-                 * implement rosetta sample with vm terminal
-
               exp - live programming
                  * implement live programming environment
                  * implement tree prototype
                  * implement xpath resolver prototype
 
               dev - general implementation
-                 * probably better to get rid of escript script
                  * class cannot have the same name as type, so it is possible to use in signature brackets both
                    class names and types
                  * generate generic multi-method for the closure (in this case we can get rid of hotfix in tweakClassFlags)
@@ -59,7 +45,6 @@ In development:
                    as light as possible
                  * fn3prop : embeddable option for the function with three arguments should be recognized
                  * NilReferenceException, AccessViolationException, DivisionByZeroException should be recognized
-                 * the following expression should generated an error : if(n test) { .... }
                  * method returning a constant #381
                  * ByteNumber.get&min - could we return the constant object?
                  * constant numbers / strings should be used directly?? (e.g. replace a constant with its value)
@@ -68,7 +53,6 @@ In development:
                  * nil and $nil
                  * fixing open issues
                  * duplicate nested classes (see array template)
-                 * get rid of mapSelf
 
               dev - samples
                  * Cartesian product of two or more lists

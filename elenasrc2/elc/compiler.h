@@ -279,6 +279,7 @@ private:
 
       void raiseError(const char* message, int row, int col, ident_t terminal);
       void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
+      void raiseWarning(int level, const char* message);
 
       virtual void raiseError(const char* message, SNode terminal);
       virtual void raiseWarning(int level, const char* message, SNode terminal);

@@ -124,6 +124,8 @@ namespace _ELENA_
    #define wrnDuplicateAttribute    "%s(%d:%d): warning 422: '%s': duplicate attribute\n"
    #define wrnDuplicateInclude      "%s(%d:%d): warning 422: '%s': duplicate inclusion\n"
 
+   #define wrnDuplicateInfo         "Duplicate extension - "
+
 } // _ELENA_
 
 #endif // jeterrors

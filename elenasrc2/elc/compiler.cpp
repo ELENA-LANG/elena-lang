@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -749,6 +749,12 @@ void Compiler::ModuleScope :: raiseWarning(int level, const char* message, int r
       project->raiseWarning(message, sourcePath, row, col, terminal);
 }
 
+void Compiler::ModuleScope::raiseWarning(int level, const char* message)
+{
+   if (test(warningMask, level))
+      project->raiseWarning(message, message);
+}
+
 void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, ident_t terminal)
 {
    project->raiseError(message, sourcePath, row, col, terminal);
@@ -824,7 +830,23 @@ void Compiler::ModuleScope :: loadExtensions(_Module* extModule, bool& duplicate
 
                typeExtensions->add(message, role_ref);
             }
-            else duplicateExtensions = true;
+            else {
+               IdentifierString warningStr(wrnDuplicateInfo);
+               warningStr.append(module->resolveSubject(getAction(message)));
+               warningStr.append('[');
+               warningStr.appendInt(getAbsoluteParamCount(message));
+               warningStr.append("] - ");
+
+               warningStr.append(module->resolveReference(role_ref));
+               warningStr.append(" and ");
+
+               SubjectMap* typeExtensions = extensions.get(type_ref);
+               warningStr.append(module->resolveReference(typeExtensions->get(message)));
+
+               raiseWarning(WARNING_LEVEL_3, warningStr.c_str());
+
+               duplicateExtensions = true;
+            }
          }
       }
    }
