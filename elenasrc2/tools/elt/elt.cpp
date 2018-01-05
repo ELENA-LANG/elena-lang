@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line DSA script terminal main file
-//                                              (C)2011-2017, by Alexei Rakov
+//                                              (C)2011-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,11 +14,10 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   1
+#define ELT_BUILD_NUMBER   2
  
 // global variables
 int   _encoding = feAnsi;
-bool _loaded = false;
 
 void print(const char* str, ...)
 {
@@ -106,7 +105,6 @@ bool executeCommand(const char* line, bool& running)
       printHelp();
    }
    else if(line[1] == 'l') {
-      _loaded = true;
       loadScript(line + 2);
    }
    else return false;
@@ -167,9 +165,11 @@ void runSession()
 
 int main(int argc, char* argv[])
 {
-   print("ELENA command line VM terminal %d.%d.%d (C)2011-2017 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
+   print("ELENA command line VM terminal %d.%d.%d (C)2011-2018 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
    
-   executeScript("[[ #config vm_console #start; ]]");
+   loadScript("~\\elt.es");
+   loadScript("~\\scripts\\assembly.es");
+   loadScript("~\\scripts\\escript.es");
 
    // load script passed via command line arguments
    if (argc > 1) {
@@ -184,9 +184,6 @@ int main(int argc, char* argv[])
          else executeCommandLine(argv[i]);
       }
    }
-
-   if (!_loaded)
-      loadScript("scripts\\elena.es");
 
    runSession();
 }

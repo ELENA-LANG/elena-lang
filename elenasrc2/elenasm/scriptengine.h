@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2016, by Alexei Rakov
+//                                              (C)2011-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef scriptEngineH
@@ -333,6 +333,8 @@ public:
 class _Parser
 {
 public:
+   virtual bool setPostfix(ident_t postfix) = 0;
+
    virtual bool parseGrammarRule(_ScriptReader& reader) = 0;
    virtual bool parseGrammarMode(_ScriptReader& reader) = 0;
    virtual void parse(_ScriptReader& reader, MemoryDump* output) = 0;

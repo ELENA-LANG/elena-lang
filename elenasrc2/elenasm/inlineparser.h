@@ -17,6 +17,7 @@ namespace _ELENA_
 class VMTapeParser : public _Parser
 {
    MessageMap _verbs;
+   TempString _postfix;
 
    int mapVerb(ident_t literal);
 
@@ -29,7 +30,20 @@ class VMTapeParser : public _Parser
    bool writeExtension(TapeWriter& writer, ident_t message, int command);
    void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 
+   bool parse(TapeWriter& writer, _ScriptReader& reader);
+   void parsePostfix(TapeWriter& writer);
+
 public:
+   virtual bool setPostfix(ident_t postfix_script)
+   {
+      if (_postfix.Length() == 0) {
+         _postfix.copy(postfix_script);
+
+         return true;
+      }
+      else return false;
+   }
+
    virtual bool parseGrammarRule(_ScriptReader&)
    {
       return false;

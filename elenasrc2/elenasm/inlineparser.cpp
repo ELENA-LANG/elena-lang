@@ -178,16 +178,37 @@ void VMTapeParser:: parseStatement(_ScriptReader& reader, ScriptBookmark& bm, Ta
    else writeObject(writer, bm.state, reader.lookup(bm));
 }
 
+bool VMTapeParser :: parse(TapeWriter& writer, _ScriptReader& reader)
+{
+   bool idle = true;
+   ScriptBookmark bm = reader.read();
+   while (!reader.Eof()) {
+      idle = false;
+
+      parseStatement(reader, bm, writer);
+
+      bm = reader.read();
+   }
+
+   return !idle;
+}
+
+void VMTapeParser :: parsePostfix(TapeWriter& writer)
+{
+   IdentifierTextReader logReader(_postfix);
+   ScriptReader scriptReader(&logReader);
+
+   parse(writer, scriptReader);
+}
+
 void VMTapeParser :: parse(_ScriptReader& reader, MemoryDump* output)
 {
    TapeWriter writer(output);
 
-   ScriptBookmark bm = reader.read();
-   while (!reader.Eof()) {      
-      parseStatement(reader, bm, writer);
-
-      bm = reader.read();
-   }   
-
+   if (parse(writer, reader)) {
+      if (_postfix.Length() != 0) {
+         parsePostfix(writer);
+      }
+   }
    writer.writeEndCommand();
 }

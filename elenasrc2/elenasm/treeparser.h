@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2011-2017, by Alexei Rakov
+//                                             (C)2011-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef treearserH
@@ -24,6 +24,11 @@ class TreeScriptParser : public _Parser
    void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer);
 
 public:
+   virtual bool setPostfix(ident_t postfix)
+   {
+      return false;
+   }
+
    virtual bool parseGrammarRule(_ScriptReader&)
    {
       return false;

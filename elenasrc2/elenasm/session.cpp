@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                               (C)2011-2017 by Alexei Rakov
+//                                               (C)2011-2018 by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -107,6 +107,16 @@ void Session :: parseMetaScript(MemoryDump& tape, _ScriptReader& reader)
 
          if(reader.compare("#define")) {
             _currentParser->parseGrammarRule(reader);
+         }
+         else if (reader.compare("#set")) {
+            reader.read();
+            if (reader.compare("postfix")) {
+               bm = reader.read();
+
+               if(!_currentParser->setPostfix(reader.lookup(bm)))
+                  throw EParseError(bm.column, bm.row);
+            }
+            else throw EParseError(bm.column, bm.row);
          }
          else if (reader.compare("#grammar")) {
             reader.read();
