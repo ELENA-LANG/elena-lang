@@ -831,21 +831,25 @@ void Compiler::ModuleScope :: loadExtensions(_Module* extModule, bool& duplicate
                typeExtensions->add(message, role_ref);
             }
             else {
-               IdentifierString warningStr(wrnDuplicateInfo);
-               warningStr.append(module->resolveSubject(getAction(message)));
-               warningStr.append('[');
-               warningStr.appendInt(getAbsoluteParamCount(message));
-               warningStr.append("] - ");
-
-               warningStr.append(module->resolveReference(role_ref));
-               warningStr.append(" and ");
-
                SubjectMap* typeExtensions = extensions.get(type_ref);
-               warningStr.append(module->resolveReference(typeExtensions->get(message)));
+               ref_t duplicateRef = typeExtensions->get(message);
 
-               raiseWarning(WARNING_LEVEL_3, warningStr.c_str());
+               if (role_ref != duplicateRef) {
+                  // HOTFIX : ignore warning if it is virtual extension (for generic extension with open argument list)
+                  IdentifierString warningStr(wrnDuplicateInfo);
+                  warningStr.append(module->resolveSubject(getAction(message)));
+                  warningStr.append('[');
+                  warningStr.appendInt(getAbsoluteParamCount(message));
+                  warningStr.append("] - ");
 
-               duplicateExtensions = true;
+                  warningStr.append(module->resolveReference(role_ref));
+                  warningStr.append(" and ");
+                  warningStr.append(module->resolveReference(duplicateRef));
+
+                  raiseWarning(WARNING_LEVEL_3, warningStr.c_str());
+
+                  duplicateExtensions = true;
+               }
             }
          }
       }
@@ -1105,9 +1109,9 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->genericClosure = false;
 }
 
-ObjectInfo Compiler::MethodScope :: mapThis()
+ObjectInfo Compiler::MethodScope :: mapThis(bool forced)
 {
-   if (extensionMode) {
+   if (extensionMode && !forced) {
       //COMPILER MAGIC : if it is an extension ; replace $self with self
       ClassScope* extensionScope = (ClassScope*)getScope(slClass);
 
@@ -5000,6 +5004,7 @@ void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNod
 void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope)
 {
    if (node.existChild(lxArgDispatcherAttr)) {
+      // if it is a argument list unboxing routine
       MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
       writer.newNode(lxNewFrame);
@@ -5021,6 +5026,16 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
 
          if (i == paramCount)
             writer.closeNode();
+      }
+
+      if (methodScope->extensionMode) {
+         ObjectInfo target = methodScope->mapThis(true);
+
+         writer.newNode(lxOverridden);
+         writeParamTerminal(writer, scope, target, HINT_DYNAMIC_OBJECT, lxThisLocal);
+         writeTarget(writer, resolveObjectReference(scope, target));
+         writer.closeNode();
+         writer.closeNode();
       }
 
       writer.closeNode();

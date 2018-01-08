@@ -1,13 +1,16 @@
 ------                                 
 In development:
 ------                              
+
+
+              dev - samples
+                 * Sockets - implement
+                 * Cartesian product of two or more lists
+
               dev - migrating
                  * duplicate extensions
 
-                 * fix reddit posting : Generic lists in ELENA - https://www.reddit.com/r/elena_lang/comments/6cuwq1/generic_lists_in_elena/
                  * Sort three variables
-                 * execute bf
-                 * Runtime evaluation/In an environment
                  * Zeckendorf arithmetic
 
               exp - built-in script
@@ -25,9 +28,9 @@ In development:
                  * web server
 
               exp - live programming
-                 * implement live programming environment
-                 * implement tree prototype
-                 * implement xpath resolver prototype
+                 * implement code evaluation
+                 * implement code generation
+                 * implement code transformation
 
               dev - general implementation
                  * class cannot have the same name as type, so it is possible to use in signature brackets both
@@ -53,9 +56,6 @@ In development:
                  * nil and $nil
                  * fixing open issues
                  * duplicate nested classes (see array template)
-
-              dev - samples
-                 * Cartesian product of two or more lists
 
               dev - debugger
                  * #263 - fix goto

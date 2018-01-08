@@ -1,3 +1,40 @@
+// --- IN_ADDR ---
+
+sealed struct IN_ADDR
+{
+    long addr.    
+    
+    stacksafe clear
+    [
+        addr := 0l.
+    ]
+}
+
+// --- SOCKADDR_IN ---
+
+sealed struct SOCKADDR_IN
+{
+    short         sin_family.
+    short         sin_port.
+    type<IN_ADDR> sin_addr.
+    byte<4>       sin_zero. 
+    
+    embeddable constructor new
+    [
+        sin_family := 0.
+        sin_port := 0.
+        
+//        sin_zero[0]:=0.
+//        sin_zero[1]:=0.
+//        sin_zero[2]:=0.
+//        sin_zero[3]:=0.
+        
+        sin_addr clear.
+    ]
+}
+
+const int SOCKADDR_IN_SIZE = 16.
+
 // --- AddrInfo ---
 
 sealed struct AddrInfo
@@ -203,6 +240,24 @@ sealed const struct Socket
             int:aNameLen.
             
         ^ (SOCKET_ERROR != aRetVal).
+    ]
+
+    stacksafe connect(literal ip_address, int port)
+    [
+        type<SOCKADDR_IN> addr := SOCKADDR_IN new.
+        addr port := port.
+        addr family := AF_INET.
+        addr addr := ip_address.
+        
+        dirty_ptr addr_ptr := addr.
+        
+        int retVal := system'external'WS2_32 connect 
+            int:theHandle
+            dirty_ptr:addr_ptr
+            int:SOCKADDR_IN_SIZE.
+            
+        if (SOCKET_ERROR == retVal)
+            [ SocketException new:"Error at socket"; raise ].
     ]
 
     stacksafe write bytearray:buffer int:length int:flags vint:sent

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerH
@@ -575,7 +575,7 @@ private:
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
-      ObjectInfo mapThis();
+      ObjectInfo mapThis(bool forced = false);
       ObjectInfo mapParameter(Parameter param);
 
       MethodScope(ClassScope* parent);

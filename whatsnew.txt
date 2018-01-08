@@ -21,6 +21,7 @@
 [+] new library : system'dynamic'expressions
 [+] new library : extensions'dynamic'expressions
 [+] new class : extensions'dynamic'TapeAssembly
+[+] new class : system'io'MemoryStream
 [-] system'dynamic'tapeOp extension
 
 ***************************************************************

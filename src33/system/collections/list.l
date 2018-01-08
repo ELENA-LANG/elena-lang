@@ -209,18 +209,6 @@ template<BaseEnumerable> list :: type
     ]    
 }
 
-// --- ObjectList ---
-
-//sealed class ObjectList :: list<object>
-//{
-//    constructor new
-//    [
-//        theArray := object[](32).
-//        theLength := 0.
-//        theCapacity := 32.
-//    ]
-//}
-
 // --- ListItem ---
 
 /// A list item

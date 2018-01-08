@@ -22,7 +22,7 @@ sealed class MemoryBuffer
     
     membuffer = $self.
     
-    bytearray = theBuffer.
+    bytearray = ByteArray new int:0 int:theUsed bytearray:theBuffer.
     
     stacksafe reserve int:len
     [
@@ -83,6 +83,14 @@ sealed class MemoryBuffer
         theBuffer read int:index vint:retVal
     ]
     
+    stacksafe read int:index int:length bytearray:array
+    [
+        if(index + length > theUsed)
+            [ OutOfRangeException new; raise ].
+            
+        theBuffer read int:index int:length bytearray:array.            
+    ]
+    
     stacksafe delete int:anIndex int:aLength
     [
         int n := 0 - aLength.
@@ -101,4 +109,78 @@ sealed class MemoryBuffer
     [
         retVal int := theUsed.
     ]
+
+    clear
+    [
+        theUsed := 0.
+    ]
+}
+
+// --- MemoryStream ---
+
+class MemoryStream :: Stream
+{
+    membuffer theBuffer.
+    int       thePosition.
+    
+    constructor new
+    [
+        theBuffer := MemoryBuffer new.
+        thePosition := 0.
+    ]
+    
+    stacksafe constructor new int:anIndex int:aLength bytearray:anArray
+        <= new;
+    [
+        $self $write(anArray, anIndex, aLength).
+    ]
+    
+    write bytearray:aDump int:aLength
+    [
+        theBuffer write int:0 int:aLength bytearray:aDump.
+    ]
+
+    sealed $write bytearray:aDump int:anIndex int:aLength
+    [
+        theBuffer write int:anIndex int:aLength bytearray:aDump.
+    ]
+
+    read bytearray:aDump vint:aLength
+    [
+        theBuffer read int:thePosition int:aLength bytearray:aDump.
+
+        thePosition += aLength.
+    ]
+    
+    readIndexTo vint:anIndex
+    [
+        anIndex int := thePosition.
+    ] 
+    
+    writeIndex int:index
+    [
+        int pos := theBuffer length.
+        if (pos < index)
+            [ OutOfRangeException new; raise ].
+            
+        thePosition := index.            
+    ] 
+    
+    readLengthTo vint:aLength 
+    [ 
+        int len := theBuffer length.
+    
+        aLength int := len. 
+    ]
+    
+    writeLength int:length
+    [
+        NotSupportedException new; raise
+    ]
+    
+    close
+    [
+        thePosition := 0.
+        theBuffer clear.
+    ]    
 }
