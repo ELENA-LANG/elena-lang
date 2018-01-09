@@ -39,8 +39,8 @@ using namespace _ELENA_;
 #define HINT_ALT_MODE         0x00200000
 #define HINT_SINGLETON        0x00100000
 #define HINT_EXT_RESENDEXPR   0x00080400
+#define HINT_ASSIGNING_EXPR   0x00040000
 #define HINT_NODEBUGINFO      0x00020000
-////#define HINT_CLOSURE          0x00008000
 #define HINT_SUBCODE_CLOSURE  0x00008800
 #define HINT_RESENDEXPR       0x00000400
 #define HINT_LAZY_EXPR        0x00000200
@@ -2209,7 +2209,10 @@ void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
    SyntaxTree::copyNode(writer, lxRow, terminal);
    SyntaxTree::copyNode(writer, lxCol, terminal);
    SyntaxTree::copyNode(writer, lxLength, terminal);
-   //writer.appendNode(lxTerminal, terminal.identifier());
+
+   ident_t ident = terminal.identifier();
+   if (ident)
+      writer.appendNode(lxTerminal, terminal.identifier());
 }
 
 inline void writeTarget(SyntaxWriter& writer, ref_t targetRef)
@@ -2969,12 +2972,8 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    SNode operatorNode = node.findChild(lxOperator);
    int operator_id = operatorNode.argument != 0 ? operatorNode.argument : _operators.get(operatorNode.identifier());
 
-   // if it is a new operator
-   //if (operator_id == -1) {
-   //   return compileNewOperator(writer, node, scope/*, mode*/);
-   //}
    // if it is branching operators
-   /*else*/ if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
+   if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
       return compileBranchingOperator(writer, node, scope, mode, operator_id);
    }
    else return compileOperator(writer, node, scope, mode, operator_id);
@@ -3043,8 +3042,12 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    }
    else {
       // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
-      if (result.found && !result.withCustomDispatcher && callType == tpUnknown && result.directResolved)
-         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage));
+      if (result.found && !result.withCustomDispatcher && callType == tpUnknown && result.directResolved) {
+         if (test(mode, HINT_ASSIGNING_EXPR)) {
+            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxExpression).findChild(lxMessage));
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage));
+      }         
    }
 
    if (result.multi)
@@ -3420,7 +3423,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          SNode sourceNode = exprNode.nextNode(lxObjectMask);
          ObjectInfo source = compileExpression(writer, sourceNode, scope, (classRef != 0) ? 0 : HINT_DYNAMIC_OBJECT);
 
-         retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO);
+         retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO | HINT_ASSIGNING_EXPR);
 
          operationType = lxNone;
       }
@@ -3927,31 +3930,6 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 
    return info;
 }
-
-//ObjectInfo Compiler :: compileNewOperator(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/)
-//{
-//   ObjectInfo retVal(okObject);
-//
-//   if (node.nextNode() != lxNone)
-//      scope.raiseError(errInvalidOperation, node);
-//
-//   SNode objectNode = node.firstChild(lxTerminalMask);
-//
-//   ref_t elementRef = scope.mapSubject(objectNode);
-//   ref_t roperand = resolveObjectReference(scope, compileExpression(writer, objectNode.nextNode(lxObjectMask), scope, 0));
-//   ref_t targetRef = 0;
-//   int operationType = _logic->resolveNewOperationType(*scope.moduleScope, elementRef, roperand, targetRef);
-//
-//   if (operationType != 0) {
-//      // if it is a primitive operation
-//      _logic->injectNewOperation(writer, *scope.moduleScope, operationType, targetRef, elementRef);
-//
-//      retVal = assignResult(writer, scope, targetRef, elementRef);
-//   }
-//   else scope.raiseError(errInvalidOperation, node);
-//
-//   return retVal;
-//}
 
 void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {

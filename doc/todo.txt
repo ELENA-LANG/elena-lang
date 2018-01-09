@@ -3,34 +3,36 @@ In development:
 ------                              
 
 
+              exp - live programming
+                 * class to expression tree
+                 * expression tree to class
+
               dev - samples
                  * Sockets - implement
                  * Cartesian product of two or more lists
 
-              dev - migrating
-                 * duplicate extensions
-
-                 * Sort three variables
-                 * Zeckendorf arithmetic
+------                                                           
+Pipeline:
+------                                                                                         
+              exp - live programming
+                 * implement code generation
+                 * implement code transformation
+                 * use script to build objects
+                 * use script to parse
+                 * use script generate code
 
               exp - built-in script
                  * graph : provide function in the script
                  * escript : support closures
 
+              dev - migrating
+                 * Sort three variables
+                 * Zeckendorf arithmetic
+
               dev - usability
                  * ecv : class info should be counted for listing mode
+                 * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
                  * ecv : display class size
-
-              exp - web
-                 * http://www.codeproject.com/Articles/452052/Build-Your-Own-Web-Server
-                 * http://www.codeproject.com/Articles/1505/Create-your-own-Web-Server-using-C
-                 * #34 : Web support 
-                 * web server
-
-              exp - live programming
-                 * implement code evaluation
-                 * implement code generation
-                 * implement code transformation
 
               dev - general implementation
                  * class cannot have the same name as type, so it is possible to use in signature brackets both
@@ -60,16 +62,19 @@ In development:
               dev - debugger
                  * #263 - fix goto
 
+              exp - web
+
               exp - upndown
                  * reimplement chat sample - literal json := CommandDTO::{ @_command := SEND. @_value := text. @_user := $nil. } toJson; literal. - if @user initialization is miss, the code is broken
                  * reimplement upndown (#79)
 
-------                                                           
-Pipeline:
-------                                                                                         
+                 * http://www.codeproject.com/Articles/452052/Build-Your-Own-Web-Server
+                 * http://www.codeproject.com/Articles/1505/Create-your-own-Web-Server-using-C
+                 * #34 : Web support 
+                 * web server
+
               xdev - general implementation
                  * #195 : impelement rosetta code samples
-                 * Runtime evaluation
                  * Elementary cellular automaton
                  * Zebra puzzle
                  * Write float arrays to a text file
@@ -84,15 +89,13 @@ Pipeline:
                  * port asm2binx
 
               adev - linux
-                 * migrate LIB32
+                 * migrate LIB33
 
                xdev - linux
                  * proting debugger
 
               xdev - general implementation
                  * strings module : do we need long (toLong) at all? probably only int and ref_t should be used
-                 * implement closure with explicit class type:
-			| if(&type<FormatException>:e) []
                  * constant field should always have assigning part
                  * #266: sealed static constant fields
 
@@ -115,7 +118,6 @@ Pipeline:
                        symbol plotter = { .. }.
 
               xdev - general optimization  
-                 * optimize pi sample, after recent changes it is slowed down
                  * optimize anagram sample, after recent changes it is slowed down
                  * opimized alt operator implementation : resolve it in compile-time if the operand is known
                  * opimized alt operator implementation : if the object has no custom dispatch handler check it before
@@ -165,7 +167,6 @@ Pipeline:
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]
-                 * test all possible syntax constructions, currently the wrong one is ignored without generating an error
                  * elenart : correctly display strong typed message names
                  * elenavm : correctly display strong typed message names
                  * Signature should support only get, set, eval
@@ -185,7 +186,6 @@ Pipeline:
                  * custom verb generic handler
                  * either generic or multi method can be declared, not both
                  * message cannot have type signature
-                 * fixing multidispatching with class : e.g.: try(Object fail) {}
                  * multi constructor - raise an error if not found
                  * multi method extension should be resolved on compile-time
                  * reimplement package info
@@ -195,18 +195,13 @@ Pipeline:
                  * test primitive operation with message
                  * implicit conversions
                  * check package functionality
-                 * simplify nfunc expression : set every(&int:n)( false ) - take into consideration the known target?.
+                 * simplify nfunc expression : set every(:n)<int>( false ) - take into consideration the known target?.
                  * fix message table implementation in VM (currently the space is reserved, but it should use virtual space allocation)
                  * validate rprop (two message should be applied)
                  * duplicate method templates
                  * unboxing primitive arrays?
                  * local attribute : do not allow embeddable templates
                  * method attribute : only embeddable templates should be allowed
-                 * test object&.
-                 * test object&(1).
-                 * test object object&.
-                 * test object object&(2).
-                 * test object(IntNumber r) []
 
               xdev - x64
                  * compile 64 bit IDE without warnings
@@ -249,7 +244,6 @@ Pipeline:
                  * use rep stos to clear the object after creating      
 
               zdev 
-                 * hello world sample
                  * calc sample : gui
 
               xdev - general implementation
@@ -270,9 +264,6 @@ Pipeline:
               zdev - cellular automata
                  * game of life : rules should be declared in external file
                  * game of life : viewer
-
-              xdev - usability
-                 * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
 
               idev - generic development
                  * vm client : F8 on the start does not work
@@ -386,7 +377,6 @@ Pipeline:
                        * implement UnsafePointer.get&literal / UnsafePointer.get&wide
 
               sdev - samples
-                       * test all samples
 	               * Distributed programming
                        * Metaprogramming
                        * Object serialization
@@ -446,8 +436,6 @@ Pipeline:
                        * review #10 issue
 
                        * verify if methods can be added for sealed, limited, method duplications                       
-                       * test live eson script                                                                                                         
-                         possible, no exception boxing
                        * review source code to use templates
                        * review try-catch statement, make sure the closure is created only in case of the error
                        * breaking int loop method (both #loop and pattern code), exiting closure (different behaviour between
@@ -475,8 +463,6 @@ Pipeline:
 
                        * rename console to STA, consolex to MTO, consolevm to STA VM Client, gui to STAGUI, guix to MTAGUI
                        * chatserver : #var(type:int)len := theBuffer length. - embeddable get should be used
-                       * fix #12 : Extension with stack allocated object
-                       * implement #167 : stack allocated variable and $nil                       
                        * optimize thread_wait
                        * test raising exception inside lock statement
 
@@ -486,7 +472,6 @@ Pipeline:
 
                        * #229 : unboxing optimization
                        * #200 : unboxing explicit local allocated extension  
-                       * #220 : s_copyint_radix / ws_copyint_radix
                        * in the following code:
                              theListenThread := Thread new &func:
                              [
@@ -498,24 +483,11 @@ Pipeline:
                          assigning)
                        * primitive array of objec should not be allowed
                        * refactor branching operator implementation
-                       * get rid of double (or tripple) breakpoints : merge them into a single combined one
                        
              xdev - linux
                        * support compiling the project without -c option
                        * support manifest info
                        
-              fdev - live programming
-                       * provide path to the current library automatically
-                       * change syntax to be standart one
-                       * test unicode symbols
-                       * interact with the current project objects
-
-              adev - lib32
-                       * operator << should be used to add a list item
-
-              fdev - samples
-                       * reimplement script samples: helloworld, vmconsole
-
               fdev - eldoc
                        * design
                        * implement basic parsing : only classes                       
@@ -527,20 +499,15 @@ Pipeline:
                        * rosetta sample : Pascal's triangle
                        * rosetta sample : Pig the dice game
                        * rosetta sample : Program termination
-                       * rosetta sample : Tree traversal                       
-                       * rosetta sample : Stack traces
                        * rosetta sample : Set
                        * Animate a pendulum
-                       * rosetta sample : Undefined values                       
+                       * rosetta sample : Undefined values
                        * rosetta sample : Variable size/Get
                        * rosetta sample : Variable size/Set
                        * rosetta sample : Vogel's approximation method
                        * rosetta sample : Voronoi diagram
-                       * rosetta sample : Write entire file
                        * rosetta sample : Walk a directory/Non-recursively
                        * rosetta sample : Walk a directory/Recursively
-                       * rosetta sample : Word wrap
-                       * rosetta sample : World Cup group stage
                        * rosetta sample : Write float arrays to a text file
                        * rosetta sample : XML/DOM serialization
                        * rosetta sample : XML/Input
@@ -561,7 +528,7 @@ Pipeline:
                        * linux : migrate two rosetta samples to linux
 
               xdev - usability
-                       * ecv : use >out for ourput redirect
+                       * ecv : use >out for output redirect
 
               fdev - db app
                        * implement passing an object over tcp/ip
@@ -576,13 +543,11 @@ Pipeline:
                        * if more than 11 parameters are passed, open argument list should be used automatically??
                        * no need to provide exclude command for every external call, special hint to ignore it?
                        * think over optimized way to get GCXT TLS TABLE, try to cache the pointer
-                       * cast should be called directly, make sure it is always after dispatch
                        * should be possible to write  #var(type:vint)Styles := WS_CHILD || BS_AUTORADIOBUTTON. - directly
                        * review graph sample, get rid of warnings
                        * should be possible to implement :     #constructor newCompatible &hdc:aCompatible <= new &hdc:(system'external'GDI32 CreateCompatibleDC &hdc:aCompatible).
                        * refactoring : declareParameterDebugInfo - use debug hint flags
                        * refactoring : do we need to use paramsReference ditectly??
-                       * refactoring : do we need to use trueReference / falseReference ditectly??
                        * unboxing : for small objects (~4) use appropriate byte commands
                        * refactoring : create a single procedure to typecast acc, should be used every time
                          typecasting required
@@ -596,16 +561,12 @@ Pipeline:
                        * fix linux pi2
                        * review multi-method implementation in clojure
                        * forms.onPaint : should it be possible somehow to validate if the action can be used for this type??
-                       * begin / end should be verbs?
-                       * shoud "is" verb always return boolean?
                        * default dynamic constructor
                        
               xdev - byte code optimization  
-                       * bcopya quit => quit
                        * review system_test code : $Console (ControlTest)
                        * multiple-select if the type of operands are known try to optimize it ; for example of switch value is constant, maybe
                          better to compare value ?? (if it is true / false constants for example)
-                       * direct parameter allocation can be used for open argument list : e.g. OpenArgTester testParamsCopy &args:1:"a":3
                        * optimized switch statement implementation (e.g. ordered ??)                       
                        * optimize !=, <= and >= implementation
                        * optimize index operation (literal / array) ; indexer should use more optimize algorithm
@@ -622,7 +583,6 @@ Pipeline:
 
                        * optimize ByteCodeWriter::copyStructure                       
 
-                       * anObject cast:%equal &to:$self bool can be compiled directly in reverse order (BaseValue.equal[1])
                        * n := n - $self - should be replaced with direct subtract operation if n is of int type and $self is IntNumber                       
                        
                        * optimize output code: system'BaseFunction2
@@ -688,35 +648,13 @@ Pipeline:
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
                        * compile pi with mt
                        
-               xdev - script engine
-                       * cfparser : there should be two mappings so we could support both local and function variables
-                       * cfparser : methods variable
-                       * support if, foreach, while constructions,
-
-                       * if the script contains only grammar, virtual machine should not be called
-
-                       * implement basic operations with ElenaScript (expression,variable,loop,branching,new class)
-                           - text generating
-                           - construct objects - implement expression, with variables
-                           - using roles
-                           - branching
-                           - branching in code
-                           - assigning values to dynamic objects
-                           - global variables
-                           - script engine support in ELENA code : text generating                           
-
-                       * use script to build objects
-                       * use script to parse
-                       * use script generate code
-                      
               xdev - test
                        * test math functions
                        * test with cyriclic and chinese names (strings, variables, files2)
                        * test short -> int, int -> short should correctly set sign
                        * test system'io'StreamWriter
                        * test system'io'BinarayReader / system'io'BinarayWriter
-                       * test vm samples       
-                       * test thread operation                                                                               
+                       * test thread operation
                        * sqlite : test operation with double
                        * test extension is &nil
                        
@@ -731,7 +669,6 @@ Pipeline:
                       * create x64 elena vm
                       
               idev - usability
-                       * fix #83
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
                        * recognize out of memory exception
                        * error: more accurate error messages
@@ -749,7 +686,7 @@ Pipeline:
                        * test with small page size intensive insert / delete operations
                        * test ide: goto error if the file is not opened
                        
-              idev - unicode
+              idev - linux ide
                        * save last open path (should be saved in the current path??)
                        * fix outdent / uncomment / trim / eraseLine - some general bug in removing
                        * menu option - project - forwards
@@ -792,15 +729,12 @@ Pipeline:
                        * IControl.retrieve&hwnd - probably should always return control?
                        * a lot of operations with controls should be implemented directly
                        
-              adev - lib30     
+              adev - lib33
                        * implement sorting for locale
                        * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?                       
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA
-                       * expanding lib30
                        * make sure all method are safe (raise exceptions if the argument is wrong, the result is wrong, ...)
-                       * review lib30 warnings, try to get rid of most of them
                        * redesign upper / lower case functionality, make it locale dependant like in c#+                       
-                       * test load class by name
                        * linux32 : upper / lowe cases
                        * linux32 : file stream - length, index
                        * linux32 : implement console clear
@@ -813,7 +747,7 @@ Pipeline:
                        * move expression parsing code into the library
                        * RealMatrix / IntMatrix should support indexer2d, implicit constructor with initialization
                        
-              adev - lib30 optimization
+              adev - lib33 optimization
                        * simplify the code using call optimization, set sealed methods if required
 
                        * reivew system'winforms'SDIApplication.start, optimize the main loop
@@ -831,13 +765,11 @@ Pipeline:
                        * migrate to linux
                        
               sdev - rosetta code samples
-                       * implement
                        * migrate to linux
       
               sdev - samples
                        * calculator : gui
                        * get rid of reverse command
-                       * vmconsole
                        * notepad: add status bar
                        * notepad: add open / save
                        * notepad: show the current cursor position
