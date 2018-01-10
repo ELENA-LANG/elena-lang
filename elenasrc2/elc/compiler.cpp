@@ -5712,6 +5712,9 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          size *= sizeHint;
 
          // HOTFIX : to recognize the fixed length array
+         if (elementRef == 0 && !isPrimitiveRef(classRef))
+            elementRef = classRef;
+
          fieldArray = true;
          classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef);
       }
