@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2012-2017, by Alexei Rakov
+//                                              (C)2012-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   7
+#define REVISION_VERSION   8
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -403,6 +403,13 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       else command.append("#new");
    }
    else if (actionRef <= PREDEFINED_MESSAGE_ID) {
+      if (test(reference, CONVERSION_MESSAGE)) {
+         command.append("#conversion&");
+      }
+      else if (test(reference, SEALED_MESSAGE)) {
+         command.append("#private&");
+      }
+
       ident_t verbName = retrieveKey(_verbs.start(), actionRef, DEFAULT_STR);
       command.append(verbName);
    }

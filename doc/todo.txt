@@ -4,7 +4,6 @@ In development:
 
 
               dev - general implementation
-                 * support fixed size array
                  * #392 : Supporing __array<Class,Size> attribute 
 
               exp - live programming

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Derivation Tree class implementation
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -2029,8 +2029,13 @@ void DerivationReader :: generateAttributeTemplate(SyntaxWriter& writer, SNode n
    }
    else writer.newNode(lxReference, scope.moduleScope->module->resolveReference(typeRef));
    copyIdentifier(writer, node);
-   if (arrayMode)
-      writer.appendNode(lxSize, -1);
+   if (arrayMode) {
+      if (!node.existChild(lxSize)) {
+         //HOTFIX : append dynamic size only if the size was not specified
+         writer.appendNode(lxSize, -1);
+      }
+   }
+      
 
    writer.closeNode();
 }
