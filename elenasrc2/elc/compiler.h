@@ -788,6 +788,7 @@ private:
    ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
 
    ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target, bool& genericOne);
 
@@ -941,7 +942,7 @@ private:
    ref_t analizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
    ref_t analizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    ref_t analizeInternalCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
-   ref_t analizeExtCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
+   ref_t analizeExtCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope, int mode);
    ref_t analizeNestedExpression(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void analizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
    void analizeBranching(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);

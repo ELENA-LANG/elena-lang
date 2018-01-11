@@ -3,7 +3,7 @@
 //
 //		This file contains implementation of ELENA byte code routines.
 //
-//                                                 (C)2009-2017, by Alexei Rakov
+//                                                 (C)2009-2018, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #include "elena.h"
@@ -35,7 +35,7 @@ const char* _fnOpcodes[256] =
    "breadw", "bread", "unknown", "unknown", "unknown", "breadb", "rsin", "rcos",
    "rarctan", "bwrite", "unknown", "unknown", "bwriteb", "bwritew", "unknown", "bcreate",
 
-   "lcopy", "unknown", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
+   "lcopy", "lsave", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
    "land", "lor", "lxor", "lshiftl", "lnot", "lshiftr", "unknown", "unknown",
 
    "rcopy", "unknown", "rsave", "requal", "rless", "radd", "rsub", "rmul",

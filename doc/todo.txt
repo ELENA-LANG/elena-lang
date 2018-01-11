@@ -3,9 +3,6 @@ In development:
 ------                              
 
 
-              dev - general implementation
-                 * #392 : Supporing __array<Class,Size> attribute 
-
               exp - live programming
                  * class to expression tree
                  * expression tree to class

@@ -46,6 +46,8 @@ using namespace _ELENA_;
 #define HINT_LAZY_EXPR        0x00000200
 #define HINT_DYNAMIC_OBJECT   0x00000100  // indicates that the structure MUST be boxed
 #define HINT_UNBOXINGEXPECTED 0x00000080
+#define HINT_INT64EXPECTED    0x00000004
+#define HINT_REAL64EXPECTED   0x00000002
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
@@ -1594,6 +1596,21 @@ ref_t Compiler :: resolveConstantObjectReference(CodeScope& scope, ObjectInfo ob
       default:
          return resolveObjectReference(scope, object);
    }
+}
+
+ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef)
+{
+   if (object.kind == okExternal) {
+      // HOTFIX : recognize external functions returning long / real
+      if (targetRef == scope.moduleScope->longReference) {
+         return V_INT64;
+      }
+      else if (targetRef == scope.moduleScope->realReference) {
+         return V_REAL64;
+      }
+      else return resolveObjectReference(scope, object);
+   }
+   else return resolveObjectReference(scope, object);
 }
 
 ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
@@ -3202,7 +3219,7 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
                   writer.newBookmark();
                   ObjectInfo param = compileExpression(writer, argListNode, scope, paramMode);
                   if (classRef != 0 && classRef != scope.moduleScope->superReference) {
-                     if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param), param.element))
+                     if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param, classRef), param.element))
                         scope.raiseError(errInvalidOperation, arg);
                   }
                   writer.removeBookmark();
@@ -3230,7 +3247,7 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
 
             ObjectInfo param = compileExpression(writer, arg, scope, exprMode);
             if (classRef != 0)
-               if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param), param.element))
+               if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param, classRef), param.element))
                   scope.raiseError(errInvalidOperation, arg);
 
             // HOTFIX : externall operation arguments should be inside expression node
@@ -3485,7 +3502,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       SNode sourceNode = targetNode.nextNode(lxObjectMask);
       ObjectInfo source = compileAssigningExpression(writer, sourceNode, scope);
 
-      if (!convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, source), source.element))
+      if (!convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, source, targetRef), source.element))
          scope.raiseError(errInvalidOperation, node);
 
       writer.removeBookmark();
@@ -6408,11 +6425,20 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
    else return retVal;
 }
 
-ref_t Compiler :: analizeExtCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
+ref_t Compiler :: analizeExtCall(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
 {
    compileExternalArguments(node, scope, warningScope);
 
-   return V_INT32;
+   if (test(mode, HINT_INT64EXPECTED)) {
+      return V_INT64;
+   }
+   else if (test(mode, HINT_REAL64EXPECTED)) {
+      // HOTFIX : to recognize external function returning real number
+      node.appendNode(lxFPUTarget);
+
+      return V_REAL64;
+   }
+   else return V_INT32;
 }
 
 ref_t Compiler :: analizeInternalCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
@@ -6720,7 +6746,15 @@ ref_t Compiler :: analizeBoxing(SNode node, ModuleScope& scope, WarningScope& wa
             }
          }
 
-         sourceRef = analizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
+         int subMode = HINT_NOBOXING;
+         if (targetRef == scope.longReference) {
+            subMode |= HINT_INT64EXPECTED;
+         }
+         else if (targetRef == scope.realReference) {
+            subMode |= HINT_REAL64EXPECTED;
+         }
+
+         sourceRef = analizeExpression(sourceNode, scope, warningScope, subMode);
       }
 
       // adjust primitive target
@@ -6890,7 +6924,7 @@ ref_t Compiler ::analizeExpression(SNode current, ModuleScope& scope, WarningSco
       case lxStdExternalCall:
       case lxExternalCall:
       case lxCoreAPICall:
-         return analizeExtCall(current, scope, warningScope);
+         return analizeExtCall(current, scope, warningScope, mode);
       case lxLooping:
       case lxSwitching:
       case lxOption:

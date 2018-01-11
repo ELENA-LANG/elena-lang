@@ -243,6 +243,7 @@ class ByteCodeWriter
    void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
    void saveInt(CommandTape& tape, LexicalType target, int argument);
    void saveReal(CommandTape& tape, LexicalType target, int argument);
+   void saveLong(CommandTape& tape, LexicalType target, int argument);
    void copyInt(CommandTape& tape, int offset);
    void copyShort(CommandTape& tape, int offset);
    void copyByte(CommandTape& tape, int offset);

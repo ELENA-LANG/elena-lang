@@ -2,7 +2,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                              (C)2009-2017, by Alexei Rakov
+//                                              (C)2009-2018, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #ifndef bytecodeH
@@ -117,6 +117,7 @@ enum ByteCode
    bcBCreate         = 0x6F,
 
    bcLCopy           = 0x70,
+   bcLSave           = 0x71,
    bcLEqual          = 0x72,
    bcLLess           = 0x73,
    bcLAdd            = 0x74,

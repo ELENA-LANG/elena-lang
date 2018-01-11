@@ -4,6 +4,11 @@ sealed struct IN_ADDR
 {
     long addr.    
     
+    stacksafe set(LongNumber addr)
+    [
+        @addr := addr.
+    ]
+    
     stacksafe clear
     [
         addr := 0l.
@@ -14,21 +19,42 @@ sealed struct IN_ADDR
 
 sealed struct SOCKADDR_IN
 {
-    short         sin_family.
-    short         sin_port.
+    short         prop family :: sin_family.
+    short         prop port   :: sin_port.
     type<IN_ADDR> sin_addr.
     byte<4>       sin_zero. 
-    
+
+    set family(IntNumber n)
+    [
+        short n16 := n.
+        
+        $self family := n16.
+    ]
+
+    set port(IntNumber n)
+    [
+        short n16 := n.
+        
+        $self port := n16.
+    ]
+
+    set ip_address(LiteralValue ip)
+    [
+        long addr := system'external'WS2_32 inet_addr literal:ip.
+        
+        sin_addr long := addr.
+    ]
+
     embeddable constructor new
     [
         sin_family := 0.
         sin_port := 0.
         
-//        sin_zero[0]:=0.
-//        sin_zero[1]:=0.
-//        sin_zero[2]:=0.
-//        sin_zero[3]:=0.
-        
+        sin_zero[0]:=0.
+        sin_zero[1]:=0.
+        sin_zero[2]:=0.
+        sin_zero[3]:=0.
+
         sin_addr clear.
     ]
 }
@@ -246,18 +272,26 @@ sealed const struct Socket
     [
         type<SOCKADDR_IN> addr := SOCKADDR_IN new.
         addr port := port.
-        addr family := AF_INET.
-        addr addr := ip_address.
+        addr family := system'net'AF_INET.
+        addr ip_address := ip_address.
         
-        dirty_ptr addr_ptr := addr.
-        
+        dirty_ptr ptr := addr.        
         int retVal := system'external'WS2_32 connect 
             int:theHandle
-            dirty_ptr:addr_ptr
+            int:ptr
             int:SOCKADDR_IN_SIZE.
             
         if (SOCKET_ERROR == retVal)
             [ SocketException new:"Error at socket"; raise ].
+    ]
+
+    stacksafe write bytearray:buffer
+    [
+        int len := buffer length.
+        int sent := 0.
+        $self write bytearray:buffer int:len int:0 vint:sent.        
+        
+        ^ sent.
     ]
 
     stacksafe write bytearray:buffer int:length int:flags vint:sent

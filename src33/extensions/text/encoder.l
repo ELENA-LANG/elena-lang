@@ -1,49 +1,34 @@
-#import system'io.
-#import system'text.
+import system'io.
+import system'text.
 
-extension(encoder) encoderOpX
+encoder extension encoderOpX
 {
-    save &wide:literal &stream:stream
+    bytearray toByteArray(literal s)
     [
-        byte(255) buffer := 0.
-        int       length := literal length.
-        int       index := 0.
-        int       buf_len := 255.
-        int       subs_len := 255.
-        while (index < length)
+        membuffer arr := MemoryBuffer new.
+        byte<256> buffer.
+        
+        int len := s length.
+        int b_len := 0.
+        int index := 0.
+        
+        while (len > 0)
         [
-            buf_len := 255.
+            int s_len := 64.
+            if (s_len > len)
+            [
+                s_len := len
+            ].
+        
+            b_len := 256.
+            self convert int:index vint:s_len literal:s bytearray:buffer vint:b_len.    
             
-            if (length < 128)
-                [ subs_len := length. ];
-                [ subs_len := 128. ].
-                        
-            self convert &int:index &vint:subs_len &wide:literal &bytearray:buffer &vint:buf_len.            
-            stream write &bytearray:buffer &int:buf_len.
+            arr write int:0 int:b_len bytearray:buffer.
             
-            index := index + subs_len.
+            index += s_len.
+            len -= s_len
         ].
-    ]    
-    
-    save &literal:literal &stream:stream
-    [
-        byte(255) buffer := 0.
-        int       length := literal length.
-        int       index := 0.
-        int       buf_len := 255.
-        int       subs_len := 255.
-        while (index < length)
-        [
-            buf_len := 255.
-            
-            (length < 128)
-                ? [ subs_len := length. ]  
-                ! [ subs_len := 128. ].
-                        
-            self convert &int:index &vint:subs_len &literal:literal &bytearray:buffer &vint:buf_len.            
-            stream write &bytearray:buffer &int:buf_len.
-            
-            index := index + subs_len.
-        ].
-    ]    
+        
+        ^ arr bytearray.
+    ]
 }

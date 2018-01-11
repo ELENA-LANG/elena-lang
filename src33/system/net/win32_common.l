@@ -83,4 +83,4 @@ sealed struct WSADATA
     ]
 }
 
-static WSAStartUp22 = WSADATA init byte:2 byte:2.
+preloaded static WSAStartUp22 = WSADATA init byte:2 byte:2.

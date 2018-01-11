@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1993,6 +1993,16 @@ void ByteCodeWriter :: saveReal(CommandTape& tape, LexicalType target, int argum
       tape.write(bcDCopy, argument + 4);
       tape.write(bcBWrite);
       tape.write(bcPopI, 2);
+   }
+}
+
+void ByteCodeWriter :: saveLong(CommandTape& tape, LexicalType target, int argument)
+{
+   if (target == lxLocalAddress) {
+      // bcopyf param
+      // lsave
+      tape.write(bcBCopyF, argument);
+      tape.write(bcLSave);
    }
 }
 
@@ -4778,7 +4788,10 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
             saveInt(tape, target.type, target.argument);
          }
          else if (node.argument == 8) {
-            saveReal(tape, target.type, target.argument);
+            if (node.existChild(lxFPUTarget)) {
+               saveReal(tape, target.type, target.argument);               
+            }
+            else saveLong(tape, target.type, target.argument);
          }
       }
       else if (target == lxFieldExpression || target == lxExpression) {

@@ -1832,6 +1832,14 @@ inline % 70h
     
 end
 
+// ; lsave
+inline % 71h
+
+  mov [edi+4], edx
+  mov [edi], ebx
+
+end
+
 // ; lequal
 
 inline % 72h
