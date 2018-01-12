@@ -1,5 +1,6 @@
 import system'io.
 import system'text.
+import extensions.
 import extensions'text.
 
 // --- ReaderEnumerator ---
@@ -83,7 +84,7 @@ extension stringExOp
 
 // --- printingLn ---
 
-symbol printingLn = (:aLine)[ 'program'output writeLine:aLine ].
+symbol printingLn = (:aLine)[ 'program'output printLine:aLine ].
 
 // --- func1Op ---
 

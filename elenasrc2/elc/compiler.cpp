@@ -115,6 +115,15 @@ inline SNode findParent(SNode node, LexicalType type)
    return node;
 }
 
+inline SNode findParent(SNode node, LexicalType type1, LexicalType type2)
+{
+   while (node.type != type1 && node.type != type2 && node != lxNone) {
+      node = node.parentNode();
+   }
+
+   return node;
+}
+
 inline bool isImportRedirect(SNode node)
 {
    SNode terminal = node.firstChild(lxObjectMask);
@@ -3063,7 +3072,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          if (test(mode, HINT_ASSIGNING_EXPR)) {
             scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxExpression).findChild(lxMessage));
          }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage));
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage, lxOperator));
       }         
    }
 
@@ -5971,11 +5980,11 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       // if the class is closed, no new methods can be declared
       // except private sealed ones (which are declared outside the class VMT)
       if (included && closed && !privateOne)
-         scope.raiseError(errClosedParent, findParent(current, lxClass));
+         scope.raiseError(errClosedParent, findParent(current, lxClass, lxNestedClass));
 
       // if the method is sealed, it cannot be overridden
       if (!included && sealedMethod && !castingOne)
-         scope.raiseError(errClosedMethod, findParent(current, lxClass));
+         scope.raiseError(errClosedMethod, findParent(current, lxClass, lxNestedClass));
 
       // save extensions if required ; private method should be ignored
       if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {

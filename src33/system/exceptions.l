@@ -101,7 +101,7 @@ class Exception
 
     if : aCatchblock
     [
-        aCatchblock eval:$self.
+        ^ aCatchblock eval:$self.
     ]
 
     raise

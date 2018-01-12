@@ -802,6 +802,41 @@ sealed class IntMatrix
             $self setAt(i,j,aValue).
         ]
     }.
+    
+    enumerator = Enumerator::
+    {
+        int i := -1.
+        
+        bool next
+        [
+            i += 1.
+            if (i >= theRows)
+            [
+                ^ false
+            ].
+            
+            ^ true
+        ]
+        
+        get = Enumerator::
+        {
+            int j := -1.
+        
+            bool next
+            [
+                j += 1.
+                if (j >= theColumns)
+                [
+                    ^ false
+                ].
+                
+                ^ true
+            ]
+            
+            get
+                = $self[i][j].
+        }.
+    }.
 }
 
 // --- RealArray ---

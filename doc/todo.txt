@@ -7,10 +7,6 @@ In development:
                  * class to expression tree
                  * expression tree to class
 
-              dev - samples
-                 * Sockets - implement
-                 * Cartesian product of two or more lists
-
 ------                                                           
 Pipeline:
 ------                                                                                         
@@ -26,6 +22,7 @@ Pipeline:
                  * escript : support closures
 
               dev - migrating
+                 * Cartesian product of two or more lists
                  * Sort three variables
                  * Zeckendorf arithmetic
 
@@ -58,6 +55,9 @@ Pipeline:
                  * nil and $nil
                  * fixing open issues
                  * duplicate nested classes (see array template)
+
+              xdev - samples
+                 * test chat sample
 
               dev - debugger
                  * #263 - fix goto
