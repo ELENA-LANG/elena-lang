@@ -31,14 +31,26 @@ void freeSession()
 
 EXTERN_DLL_EXPORT void* InterpretScript(_ELENA_::ident_t script)
 {
-   return session->translate(script);
+   return session->translate(0, script);
+}
+
+EXTERN_DLL_EXPORT void* InterpretScopeScript(int scope_id, _ELENA_::ident_t script)
+{
+   return session->translate(scope_id, script);
 }
 
 EXTERN_DLL_EXPORT void* InterpretFile(const char* pathStr, int encoding, bool autoDetect)
 {
    _ELENA_::Path path(pathStr);
 
-   return session->translate(path.c_str(), encoding, autoDetect);
+   return session->translate(0, path.c_str(), encoding, autoDetect);
+}
+
+EXTERN_DLL_EXPORT void* InterpretScopeFile(int scope_id, const char* pathStr, int encoding, bool autoDetect)
+{
+   _ELENA_::Path path(pathStr);
+
+   return session->translate(scope_id, path.c_str(), encoding, autoDetect);
 }
 
 EXTERN_DLL_EXPORT void Release(void* tape)
@@ -61,6 +73,14 @@ EXTERN_DLL_EXPORT int GetStatus(char* buffer, int maxLength)
       return length;
    }
    else return 0;
+}
+
+EXTERN_DLL_EXPORT int NewScope()
+{
+   if (session) {
+      return session->newScope();
+   }
+   else return -1;
 }
 
 // --- dllmain ---

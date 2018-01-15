@@ -343,6 +343,29 @@ inline bool verifyNode(SNode node, LexicalType type1, LexicalType type2)
 
 // --- DerivationReader::DerivationScope ---
 
+ref_t DerivationReader::DerivationScope :: mapClassType(SNode node, bool& argMode)
+{
+   SNode current = node.findChild(lxIdentifier, lxReference, lxPrivate);
+
+   ref_t ref = moduleScope->mapTerminal(current, true);
+   if (!ref) {
+      ref = mapAttribute(current);
+      if (ref == 0) {
+         ref = moduleScope->mapTerminal(current, false);
+      }
+      else if (ref == V_OBJARRAY && !argMode) {
+         argMode = true;
+         ref = moduleScope->mapTerminal(node.findChild(lxAttributeValue).findChild(lxIdentifier, lxReference, lxPrivate), true);
+         if (!ref)
+            raiseError(errInvalidHint, node);
+      }
+      else if ((int)ref < 0)
+         raiseError(errInvalidHint, node);
+   }
+
+   return ref;
+}
+
 ref_t DerivationReader::DerivationScope :: mapNewReference(ident_t identifier)
 {
    ReferenceNs name(moduleScope->module->Name(), identifier);
@@ -1263,26 +1286,12 @@ void DerivationReader :: generateParamRef(SyntaxWriter& writer, SNode current, D
    }
    else {
       // if it is an explicit type declaration
-      bool argMode = attr == lxSize;
+      bool arrayMode = attr == lxSize;
 
-      ref_t ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference, lxPrivate), true);
-      if (!ref) {
-         ref = scope.mapAttribute(current.findChild(lxIdentifier, lxReference, lxPrivate));
-         if (ref == 0) {
-            ref = scope.moduleScope->mapTerminal(current.findChild(lxIdentifier, lxReference, lxPrivate), false);
-         }
-         else if (ref == V_OBJARRAY && !argMode) {
-            argMode = true;
-            ref = scope.moduleScope->mapTerminal(current.findChild(lxAttributeValue).findChild(lxIdentifier, lxReference, lxPrivate), true);
-            if (!ref)
-               scope.raiseError(errInvalidHint, current);
-         }
-         else if ((int)ref < 0)
-            scope.raiseError(errInvalidHint, current);
-      }
+      ref_t ref = scope.mapClassType(current, arrayMode);
 
       writer.newNode(lxParamRefAttr, scope.moduleScope->module->resolveReference(ref));
-      if (argMode) {
+      if (arrayMode) {
          writer.appendNode(lxSize, -1);
       }
       copyIdentifier(writer, current.firstChild(lxTerminalMask));
@@ -1565,11 +1574,10 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode current
       arrayMode = true;
       attrRef = scope.mapTerminal(operatorNode.findChild(lxObject).findChild(lxIdentifier, lxReference), true);
    }
-   //if (attrRef == V_TYPETEMPL && prefixCounter == 1) {
-   //   attrRef = V_TYPETEMPL;
-   //
-   //         current = typeNode;
-   //}
+   else if (attrRef == V_TYPETEMPL && prefixCounter == 1) {
+      current = operatorNode.findChild(lxObject);
+      expr = operatorNode.findChild(lxExpression);
+   }
    else {
       attrName.copy(attr.findChild(lxTerminal).identifier());
       attrName.append('#');
@@ -1610,13 +1618,9 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode current
 
       return;
    }
-   //else if (attrRef == V_TYPETEMPL) {
-   //   attr = current.findChild(lxIdentifier, lxPrivate, lxReference);
-
-   //   typeRef = scope.mapTerminal(attr, true);
-   //   if (typeRef == 0)
-   //      typeRef = scope.mapTerminal(attr);
-   //}
+   else if (attrRef == V_TYPETEMPL) {
+      typeRef = scope.mapClassType(current, arrayMode);
+   }
    else if (classMode) {
       DerivationScope templateScope(&scope, attrRef);
       if (classMode) {

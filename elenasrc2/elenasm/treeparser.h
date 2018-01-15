@@ -24,7 +24,7 @@ class TreeScriptParser : public _Parser
    void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer);
 
 public:
-   virtual bool setPostfix(ident_t postfix)
+   virtual bool setPostfix(ident_t)
    {
       return false;
    }

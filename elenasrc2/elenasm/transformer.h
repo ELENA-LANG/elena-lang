@@ -72,7 +72,7 @@ protected:
    bool parseDirective(_ScriptReader& reader, Scopes& scopes, ScriptLog& log);
 
 public:
-   virtual bool setPostfix(ident_t postfix)
+   virtual bool setPostfix(ident_t)
    {
       return false;
    }

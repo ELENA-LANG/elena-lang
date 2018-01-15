@@ -7,6 +7,9 @@ In development:
                  * class to expression tree
                  * expression tree to class
 
+              dev - samples
+                 * Sort three variables
+
 ------                                                           
 Pipeline:
 ------                                                                                         
@@ -21,9 +24,8 @@ Pipeline:
                  * graph : provide function in the script
                  * escript : support closures
 
-              dev - migrating
+              dev - samples
                  * Cartesian product of two or more lists
-                 * Sort three variables
                  * Zeckendorf arithmetic
 
               dev - usability
@@ -32,8 +34,6 @@ Pipeline:
                  * ecv : display class size
 
               dev - general implementation
-                 * class cannot have the same name as type, so it is possible to use in signature brackets both
-                   class names and types
                  * generate generic multi-method for the closure (in this case we can get rid of hotfix in tweakClassFlags)
                  * support a test int:2 object<>(1,2,3).
                  * compileExpression, compileObject : refactor collection compilation

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2015, by Alexei Rakov
+//                                              (C)2011-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef sessionH
@@ -16,17 +16,30 @@ namespace _ELENA_
 
 class Session
 {
-   _Parser*          _currentParser;
-   Path              _rootPath;
+   const int BaseParseMask = 0x0F;
 
-   String<char, 512> _lastError;
-   MemoryDump        _tape;
+   enum ParserType
+   {
+      ptInline    = 0x01,
+      ptTree      = 0x02,
+      ptCF        = 0x10,
+      ptTransform = 0x20
+   };
+
+   int                _lastId;
+   Map<int, _Parser*> _parsers;
+   Path               _rootPath;
+
+   String<char, 512>  _lastError;
+   MemoryDump         _tape;
+
+   _Parser* newParser(int id, ParserType type);
 
    void parseDirectives(MemoryDump& tape, _ScriptReader& reader);
-   void parseMetaScript(MemoryDump& tape, _ScriptReader& reader);
-   void parseScript(MemoryDump& tape, _ScriptReader& reader);
+   void parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader);
+   void parseScript(int id, MemoryDump& tape, _ScriptReader& reader);
 
-   void* translate(TextReader* source);
+   void* translate(int id, TextReader* source);
 
 public:
    ident_t getLastError()
@@ -36,8 +49,10 @@ public:
       return !emptystr(error) ? error : NULL;
    }
 
-   void* translate(ident_t script);
-   void* translate(path_t path, int encoding, bool autoDetect);
+   int newScope();
+
+   void* translate(int id, ident_t script);
+   void* translate(int id, path_t path, int encoding, bool autoDetect);
    void free(void*)
    {
       _tape.trim(0);

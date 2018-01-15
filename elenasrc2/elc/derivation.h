@@ -3,7 +3,7 @@
 //               
 //		This file contains ELENA Engine Derivation Tree classes
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef derivationH
@@ -102,6 +102,8 @@ class DerivationReader : public _DerivationReader
          int dummy = 0;
          return mapAttribute(terminal, dummy);
       }
+
+      ref_t mapClassType(SNode terminal, bool& arrayMode);
 
       ref_t mapTemplate(SNode terminal, int paramCounter = 0, int prefixCounter = 0);
       ref_t mapClassTemplate(SNode terminal);

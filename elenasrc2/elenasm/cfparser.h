@@ -137,7 +137,7 @@ public:
    bool compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rule);
    bool compareTokenWithAny(_ScriptReader& reader, ScriptBookmark& bm, int rule);
 
-   virtual bool setPostfix(ident_t postfix)
+   virtual bool setPostfix(ident_t)
    {
       return false;
    }

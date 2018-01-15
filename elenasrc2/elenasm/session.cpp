@@ -18,14 +18,49 @@ using namespace _ELENA_TOOL_;
 // --- Session ---
 
 Session::Session(path_t rootPath)
-   : _rootPath(rootPath), _tape(16384)
+   : _rootPath(rootPath), _tape(16384), _parsers(NULL, freeobj)
 {
-   _currentParser = new VMTapeParser();
+   _lastId = 0;
 }
 
 Session :: ~Session()
 {
-   freeobj(_currentParser);
+}
+
+_Parser* Session :: newParser(int id, ParserType type)
+{
+   _Parser* baseOne = _parsers.get(id);
+   _Parser* newOne = NULL;
+
+   if (!baseOne && !testany(type, BaseParseMask)) {
+      baseOne = new VMTapeParser();
+   }
+   else if (baseOne && testany(type, BaseParseMask)) {
+      throw EInvalidOperation("This parser should be created first");
+   }
+
+   switch (type)
+   {
+      case _ELENA_::Session::ptInline:
+         newOne = new VMTapeParser();
+         break;
+      case _ELENA_::Session::ptCF:
+         newOne = new CFParser(baseOne);
+         break;
+      case _ELENA_::Session::ptTransform:
+         newOne = new Transformer(baseOne);
+         break;
+      case _ELENA_::Session::ptTree:
+         newOne = new TreeScriptParser();
+         break;
+      default:
+         throw EInvalidOperation("Unknown parser type");
+   }
+
+   _parsers.exclude(id);
+   _parsers.add(id, newOne);
+
+   return newOne;
 }
 
 void Session :: parseDirectives(MemoryDump& tape, _ScriptReader& reader)
@@ -97,8 +132,10 @@ void Session :: parseDirectives(MemoryDump& tape, _ScriptReader& reader)
    while(true);
 }
 
-void Session :: parseMetaScript(MemoryDump& tape, _ScriptReader& reader)
+void Session :: parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader)
 {
+   _Parser* parser = _parsers.get(id);
+
    reader.read();
 
    if (reader.compare("[[")) {
@@ -106,14 +143,14 @@ void Session :: parseMetaScript(MemoryDump& tape, _ScriptReader& reader)
          ScriptBookmark bm = reader.read();
 
          if(reader.compare("#define")) {
-            _currentParser->parseGrammarRule(reader);
+            parser->parseGrammarRule(reader);
          }
          else if (reader.compare("#set")) {
             reader.read();
             if (reader.compare("postfix")) {
                bm = reader.read();
 
-               if(!_currentParser->setPostfix(reader.lookup(bm)))
+               if(!parser->setPostfix(reader.lookup(bm)))
                   throw EParseError(bm.column, bm.row);
             }
             else throw EParseError(bm.column, bm.row);
@@ -122,25 +159,21 @@ void Session :: parseMetaScript(MemoryDump& tape, _ScriptReader& reader)
             reader.read();
 
             if (reader.compare("cf")) {
-               _currentParser = new CFParser(_currentParser);
+               parser = newParser(id, Session::ptCF);
             }
             else if (reader.compare("inline")) {
-               freeobj(_currentParser);
-
-               _currentParser = new VMTapeParser();
+               parser = newParser(id, Session::ptInline);
             }
             else if (reader.compare("transform")) {
-               _currentParser = new Transformer(_currentParser);
+               parser = newParser(id, Session::ptTransform);
             }
             else if (reader.compare("tree")) {
-               freeobj(_currentParser);
-
-               _currentParser = new TreeScriptParser();
+               parser = newParser(id, Session::ptTree);
             }
             else throw EParseError(bm.column, bm.row);
          }
          else if(reader.compare("#mode")) {
-            _currentParser->parseGrammarMode(reader);
+            parser->parseGrammarMode(reader);
          }
          else parseDirectives(tape, reader);
       }
@@ -148,14 +181,16 @@ void Session :: parseMetaScript(MemoryDump& tape, _ScriptReader& reader)
    else reader.reset();
 }
 
-void Session :: parseScript(MemoryDump& tape, _ScriptReader& reader)
+void Session :: parseScript(int id, MemoryDump& tape, _ScriptReader& reader)
 {
+   _Parser* parser = _parsers.get(id);
+
    TapeWriter writer(&tape);
 
-   _currentParser->parse(reader, &tape);
+   parser->parse(reader, &tape);
 }
 
-void* Session :: translate(TextReader* source)
+void* Session :: translate(int id, TextReader* source)
 {
    _lastError.clear();
 
@@ -164,18 +199,26 @@ void* Session :: translate(TextReader* source)
    if (offset != 0)
       throw EInvalidOperation("Tape is not released");
 
-   parseMetaScript(_tape, scriptReader);
-   parseScript(_tape, scriptReader);
+   if (_parsers.exist(id)) {
+      parseMetaScript(id, _tape, scriptReader);
+      parseScript(id, _tape, scriptReader);
 
-   return _tape.get(offset);
+      return _tape.get(offset);
+   }
+   else throw EInvalidOperation("Scope is not found");
 }
 
-void* Session :: translate(ident_t script)
+int Session :: newScope()
+{
+   return ++_lastId;
+}
+
+void* Session :: translate(int id, ident_t script)
 {
    try {
       IdentifierTextReader reader(script);
 
-      return translate(&reader);
+      return translate(id, &reader);
    }
 //   catch(EUnrecognizedException) {
 //      _lastError.copy("Unrecognized expression");
@@ -214,7 +257,7 @@ void* Session :: translate(ident_t script)
    }
 }
 
-void* Session :: translate(path_t path, int encoding, bool autoDetect)
+void* Session :: translate(int id, path_t path, int encoding, bool autoDetect)
 {
    try {
       Path scriptPath(_rootPath);
@@ -237,7 +280,7 @@ void* Session :: translate(path_t path, int encoding, bool autoDetect)
          return NULL;
       }
 
-      return translate(&reader);
+      return translate(id, &reader);
    }
 //   catch(EUnrecognizedException) {
 //      _lastError.copy("Unrecognized expression");
