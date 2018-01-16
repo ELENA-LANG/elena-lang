@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the Linux command-line compiler
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -541,6 +541,9 @@ int main(int argc, char* argv[])
          if (argv[i][0]=='-') {
             project.setOption(argv[i] + 1);
          }
+         else if (_ELENA_::Path::checkExtension(argv[i], "xprj") || _ELENA_::Path::checkExtension(argv[i], "prj")) {
+            project.loadProject(argv[i]);
+         }
          else project.addSource(argv[i]);
       }
 
@@ -583,9 +586,9 @@ int main(int argc, char* argv[])
       if (platform == _ELENA_::ptLinux32Console) {
          print(ELC_LINKING);
 
+         _ELENA_::I386Linker32 linker;
          ImageHelper helper;
          _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
-         _ELENA_::I386Linker32 linker;
          linker.run(project, image/*, -1*/);
 
          print(ELC_SUCCESSFUL_LINKING);
@@ -616,6 +619,10 @@ int main(int argc, char* argv[])
 //
 //         print(ELC_SUCCESSFUL_LINKING);
 //      }
+      else if (platform == _ELENA_::ptLibrary) {
+         // no linking for the library
+      }
+      else print(ELC_UNKNOWN_PLATFORM);
    }
    catch(_ELENA_::InternalError& e) {
       print(ELC_INTERNAL_ERROR, e.message);

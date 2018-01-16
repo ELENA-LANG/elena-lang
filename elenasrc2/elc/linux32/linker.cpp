@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Linux32
-//                                              (C)2015, by Alexei Rakov
+//                                              (C)2015-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -98,9 +98,9 @@ ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
 
 void Linker32 :: mapImage(ImageInfo& info)
 {
-   int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
-
    info.map.base = info.project->IntSetting(opImageBase, IMAGE_BASE);
+
+   int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
 
    info.ph_length = 4; // header + text + rdata + data
 
@@ -115,6 +115,7 @@ void Linker32 :: mapImage(ImageInfo& info)
    info.headerSize = align(HEADER_SIZE, FILE_ALIGNMENT);
    info.textSize = align(getSize(info.image->getTextSection()), FILE_ALIGNMENT);
    info.rdataSize = align(getSize(info.image->getRDataSection()), FILE_ALIGNMENT);
+   info.rdataSize += align(getSize(info.image->getMDataSection()), FILE_ALIGNMENT);
    info.importSize = align(getSize(info.image->getImportSection()), FILE_ALIGNMENT);
    info.bssSize = align(getSize(info.image->getStatSection()), FILE_ALIGNMENT);
    info.bssSize += align(getSize(info.image->getBSSSection()), FILE_ALIGNMENT);
@@ -128,8 +129,10 @@ void Linker32 :: mapImage(ImageInfo& info)
    // due to loader requirement, adjust offset
    info.map.rdata += ((info.headerSize + info.textSize) & (alignment - 1));
 
+   info.map.mdata = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
+
    // data segment
-   info.map.import = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
+   info.map.import = align(info.map.mdata + getSize(info.image->getMDataSection()), alignment);
    // due to loader requirement, adjust offset
    if (info.importSize != 0)
       info.map.import += ((info.headerSize + info.textSize + info.rdataSize) & (alignment - 1));
@@ -321,9 +324,10 @@ void Linker32 :: fixImage(ImageInfo& info)
 {
    Section* text = info.image->getTextSection();
    Section* rdata = info.image->getRDataSection();
-   Section* import = info.image->getImportSection();
-   Section* stat = info.image->getStatSection();
+   Section* mdata = info.image->getMDataSection();
    Section* bss = info.image->getBSSSection();
+   Section* stat = info.image->getStatSection();
+   Section* import = info.image->getImportSection();
 //   Section* tls = info.image->getTLSSection();
 
   // fix up text reallocate
@@ -332,17 +336,20 @@ void Linker32 :: fixImage(ImageInfo& info)
   // fix up rdata section
    rdata->fixupReferences(&info.map, reallocate);
 
-  // fix up import section
-   import->fixupReferences(&info.map, reallocateImport);
-
-  // fix up stat section
-   stat->fixupReferences(&info.map, reallocate);
+   // fix up mdata section
+   mdata->fixupReferences(&info.map, reallocate);
 
   // fix up bss section
    bss->fixupReferences(&info.map, reallocate);
 
+  // fix up stat section
+   stat->fixupReferences(&info.map, reallocate);
+
 //  // fix up tls section
 //   tls->fixupReferences(&info.map, reallocate);
+
+  // fix up import section
+   import->fixupReferences(&info.map, reallocateImport);
 
   // fix up debug info if enabled
    if (info.withDebugInfo) {
@@ -481,6 +488,9 @@ void Linker32 :: writeSegments(ImageInfo& info, FileWriter* file)
    // rdata section
    writeSection(file, info.image->getRDataSection(), FILE_ALIGNMENT);
 
+   // mdata section
+   writeSection(file, info.image->getMDataSection(), FILE_ALIGNMENT);
+
    // import section
    writeSection(file, info.image->getImportSection(), FILE_ALIGNMENT);
 
@@ -538,7 +548,7 @@ void Linker32 :: run(Project& project, Image& image/*, ref_t tls_directory*/)
    chmod(path, S_IXOTH | S_IXUSR | S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
 }
 
-// --- I386Linjer32 ---
+// --- I386Linker32 ---
 
 void I386Linker32 :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference)
 {

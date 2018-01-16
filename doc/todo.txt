@@ -7,12 +7,24 @@ In development:
                  * class to expression tree
                  * expression tree to class
 
-              dev - samples
-                 * Sort three variables
+               xdev - linux
+                 * elc : migrate linker changes (.mdata section)
+                 * port compiler
+                 * port elenart
+                 * port asm2binx
+
+              adev - linux
+                 * migrate LIB33
+
+               xdev - linux
+                 * proting debugger
 
 ------                                                           
 Pipeline:
 ------                                                                                         
+              dev - samples
+                 * Sort three variables
+
               exp - live programming
                  * implement code generation
                  * implement code transformation
@@ -58,6 +70,7 @@ Pipeline:
 
               xdev - samples
                  * test chat sample
+                 * test rosetta socket sample
 
               dev - debugger
                  * #263 - fix goto
@@ -81,18 +94,6 @@ Pipeline:
                  * Word search
                  * implementing enum analogue
                  * support field template with an intializer	
-
-               xdev - linux
-                 * elc : migrate linker changes (.mdata section)
-                 * port compiler
-                 * port elenart
-                 * port asm2binx
-
-              adev - linux
-                 * migrate LIB33
-
-               xdev - linux
-                 * proting debugger
 
               xdev - general implementation
                  * strings module : do we need long (toLong) at all? probably only int and ref_t should be used
