@@ -39,11 +39,11 @@ You have to add a path to _BIN_ folder to the system environment *PATH* or copy 
 
 To build the compiler under VS2015 you have to go to the root folder and type:
 
-    recompile15.bat
+    recompile.bat
 
 If you use VS2017 type the following:
 
-    recompile.bat
+    recompile15.bat
 
 To build the ELENA libraries type the following command:
 
