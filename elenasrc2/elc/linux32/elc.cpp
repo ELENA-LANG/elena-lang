@@ -303,25 +303,25 @@ void _ELC_::Project :: cleanUp()
 void _ELC_::Project :: loadConfig(_ELENA_::path_t path, bool root, bool requiered)
 {
    // HOTFIX : loading xml configuarion if required
-   /*if (_ELENA_::Path::checkExtension(path, "xprj")) {
+   if (_ELENA_::Path::checkExtension(path, "xprj")) {
       loadXMLConfig(path, root, requiered);
    }
-   else*/ loadIniConfig(path, root, requiered);
+   else loadIniConfig(path, root, requiered);
 }
 
 void _ELC_::Project :: loadXMLConfig(_ELENA_::path_t path, bool root, bool requiered)
 {
-//   ElcXmlConfigFile config;
-//   _ELENA_::Path configPath;
-//
-//   configPath.copySubPath(path);
-//
-//   if (!config.load(path, getDefaultEncoding())) {
-//      raiseErrorIf(requiered, ELC_ERR_INVALID_PATH, _ELENA_::IdentifierString(path));
-//      return;
-//   }
-//
-//   loadGenericConfig(config, configPath.c_str(), root, requiered);
+   ElcXmlConfigFile config;
+   _ELENA_::Path configPath;
+
+   configPath.copySubPath(path);
+
+   if (!config.load(path, getDefaultEncoding())) {
+      raiseErrorIf(requiered, ELC_ERR_INVALID_PATH, _ELENA_::IdentifierString(path));
+      return;
+   }
+
+   loadGenericConfig(config, configPath.c_str(), root, requiered);
 }
 
 void _ELC_::Project :: loadIniConfig(_ELENA_::path_t path, bool root, bool requiered)
@@ -358,6 +358,22 @@ void _ELC_::Project :: loadGenericConfig(_ELENA_::_ConfigFile& config, _ELENA_::
    }
 
    loadConfig(config, configPath);
+}
+
+bool _ELC_::Project :: loadProject(_ELENA_::path_t path)
+{
+   if (emptystr(projectName)) {
+      projectName.copy(_ELENA_::IdentifierString(path));
+
+      loadConfig(path);
+
+      _ELENA_::Path projectPath;
+      projectPath.copySubPath(path);
+      _settings.add(_ELENA_::opProjectPath, _ELENA_::IdentifierString::clonePath(projectPath.c_str()));
+
+      return true;
+   }
+   else return false;
 }
 
 void _ELC_::Project :: setOption(_ELENA_::path_t value)
@@ -428,6 +444,11 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
 _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
 {
    return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode));
+}
+
+_ELENA_::_JITCompiler* _ELC_::Project::createJITCompiler64()
+{
+   return /*new _ELENA_::AMD64JITCompiler(BoolSetting(_ELENA_::opDebugMode))*/NULL;
 }
 
 bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
@@ -650,7 +671,7 @@ int main(int argc, char* argv[])
       print(ELC_UNSUCCESSFUL);
       exitCode = -2;
 
-//      project.cleanUp();
+      project.cleanUp();
    }
    return exitCode;
 }

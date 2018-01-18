@@ -22,6 +22,7 @@
 #include <ctype.h>
 
 #define _strdup strdup
+#define _gcvt gcvt
 
 namespace _ELENA_
 {

@@ -81,7 +81,7 @@ public:
    virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
    virtual void raiseWarning(ident_t msg, ident_t path) = 0;
 
-   virtual _Module* createModule(ident_t name) = 0;      
+   virtual _Module* createModule(ident_t name) = 0;
    virtual _Module* createDebugModule(ident_t name) = 0 ;
 
    virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
@@ -677,24 +677,24 @@ inline ref_t mapReferenceKey(ident_t key)
    return position;
 }
 
-inline ref_t mapIdentifierKey(ident_t key)
-{
-   int position = key[0] - 'a';
-   if (position > 26)
-      position = 26;
-   else if (position < 0)
-      position = 0;
-
-   return position;
-}
+//inline ref_t mapIdentifierKey(ident_t key)
+//{
+//   int position = key[0] - 'a';
+//   if (position > 26)
+//      position = 26;
+//   else if (position < 0)
+//      position = 0;
+//
+//   return position;
+//}
 
 // --- Common type definitions ---
 
 typedef Map<ident_t, _Module*> ModuleMap;
 typedef List<_Module*>         ModuleList;
 
-// --- Reference mapping types ---
-typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
+//// --- Reference mapping types ---
+//typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
 typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
 typedef Map<ref_t, ref_t>                                       SubjectMap;
 

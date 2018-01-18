@@ -61,7 +61,7 @@ bool IniConfigFile :: select(ident_t key, Map<ident_t, Node>& list)
 
          list.add(it.key(), _ConfigFile::Node(this, (void*)value.c_str()));
       }
-   }   
+   }
 
    return !idle;
 }
@@ -273,7 +273,7 @@ bool XmlConfigFile :: load(path_t path, int encoding)
       }
    }
    catch (XMLException&)
-   {      
+   {
    }
    return false;
 }
@@ -366,7 +366,7 @@ bool XmlConfigFile :: select(Node root, ident_t key, Map<ident_t, _ConfigFile::N
             found = true;
 
             list.add(tag.c_str(), _ConfigFile::Node(this, (void*)position));
-         }         
+         }
       }
    }
 
@@ -405,7 +405,7 @@ ident_t XmlConfigFile :: getNodeAttribute(void* reference, ident_t name)
       }
       else return NULL;
    }
-   else return value;   
+   else return value;
 }
 
 void XmlConfigFile :: setSetting(ident_t key, const char* value)

@@ -175,7 +175,7 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
 
    bool operator !=(wide_t key) const
    {
-      return !key-compare(this->key);
+      return !key.compare(this->key);
    }
 
    bool operator <=(const wchar_t* key) const
@@ -1341,7 +1341,7 @@ public:
    Queue(T defaultItem, void(*freeT)(T))
       : _list(freeT)
    {
-      defaultItem = defaultItem;
+      _defaultItem = defaultItem;
    }
 };
 
@@ -3161,7 +3161,7 @@ public:
       return _defaultValue;
    }
 
-   void exist(Key key) const
+   bool exist(Key key) const
    {
       int i = _top;
       while (i != _tale) {

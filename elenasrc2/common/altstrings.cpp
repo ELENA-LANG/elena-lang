@@ -24,7 +24,7 @@
 #include "common.h"
 // --------------------------------------------------------------------------
 #include "altstrings.h"
-#include <math.h> 
+#include <math.h>
 
 #pragma warning(disable : 4996)
 

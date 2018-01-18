@@ -122,7 +122,7 @@
 #define ELC_ERR_INVALID_PATH        "elc: error 402: Invalid or none-existing file '%s'\n"
 #define ELC_ERR_INVALID_TEMPLATE    "elc: error 404: Invalid or none-existing template '%s'\n"
 
-//#define ELC_WRN_MISSING_VMPATH      "elc: warning 411: Missing project/vmpath\n"
+#define ELC_WRN_MISSING_VMPATH      "elc: warning 411: Missing project/vmpath\n"
 
 namespace _ELC_
 {

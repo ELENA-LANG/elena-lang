@@ -9,7 +9,7 @@
 #ifndef commonH
 #define commonH 1
 
-// --- Common defintions ---
+// --- Common definitions ---
 
 #include <stdlib.h>
 #include <stdio.h>
