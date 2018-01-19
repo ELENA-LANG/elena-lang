@@ -123,7 +123,7 @@ extension enumerableOp
         = self~enumerableOp forEach(:n)(n~anExtMessage eval).
         
     multi forEach:fn
-        = self~enumerableOp forEach(:n)[ fn eval:n ].
+        = self~enumerableOp forEach(:n)[ fn(n) ].
     
     forEachPair(object object, ext_mssg anExtMessage)
         = self~enumerableOp forEachPair(object, (:o:n)(o~anExtMessage eval:n)).
@@ -132,7 +132,7 @@ extension enumerableOp
       = aFunction run object:anObject enumerator:(self enumerator).
     
     multi forEachPair:object:fn
-        = self~enumerableOp forEachPair(object, (:o:n)[ fn eval(o,n) ]).
+        = self~enumerableOp forEachPair(object, (:o:n)[ fn(o,n) ]).
 
     runFor(object aParam) eachPair(BaseFunction2 aFunction)
       = aFunction run object:aParam enumerator:(self enumerator).
@@ -141,7 +141,7 @@ extension enumerableOp
         = self~enumerableOp runFor:aParam eachPair(:n:m)(n~anExtMessage eval:m).
 
     multi runFor:aParam eachPair:aFunction
-        = self~enumerableOp runFor:aParam eachPair(:n:m)(aFunction eval(n,m)).
+        = self~enumerableOp runFor:aParam eachPair(:n:m)(aFunction(n,m)).
 
     seekEach(BaseFunction1 aFunction)
         = aFunction retrieve enumerator:(self enumerator).
@@ -153,7 +153,7 @@ extension enumerableOp
         = (:x)(v equal:x) retrieve enumerator:(self enumerator).        
         
     multi seekEach:fn
-        = self~enumerableOp seekEach(:n)[ fn eval:n ].
+        = self~enumerableOp seekEach(:n)[ fn(n) ].
 
     seekFor(Object param) eachPair(BaseFunction2 aFunction)
         = aFunction retrieve object:param enumerator:self.
@@ -162,7 +162,7 @@ extension enumerableOp
         = self~enumerableOp seekFor:param eachPair(:n:m)( n~ext eval(m) ).
 
     multi seekFor:param eachPair:fn
-        = self~enumerableOp seekFor:param eachPair(:n:m)( fn eval(n,m) ).
+        = self~enumerableOp seekFor:param eachPair(:n:m)( fn(n,m) ).
 
 //    safeSeek : aValue
 //        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
@@ -376,10 +376,10 @@ extension indexableOp
         = self~indexableOp populate(:n)<int>[ ^n~anExtMessage get ].
 
     populate(BaseFunction1 aFunction)
-        = self~indexableOp populate(:n)<int>[ ^aFunction eval:n ].
+        = self~indexableOp populate(:n)<int>[ ^aFunction(n) ].
 
     multi populate : anAction
-        = self~indexableOp populate(:n)<int>[ ^anAction eval:n ].
+        = self~indexableOp populate(:n)<int>[ ^anAction(n) ].
 
     isSorted func2:aCompareFunc
     [
