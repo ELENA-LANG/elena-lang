@@ -14,6 +14,7 @@
 [*] #253 : open argument list routine refactoring
 [+] #392 : Supporting __array<Class,Size> attribute 
 [+] #393 : Invoking explicit conversion 
+[+] a support of multi-line quotes
 
 [ELC]
 [*] #394 : Calling the methods with open argument list 

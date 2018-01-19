@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textparserH
@@ -66,7 +66,11 @@ struct LineInfo
    }
 };
 
-template <char dfaMaxChar, char dfaStart, char dfaWhitespace, int maxLength> class _TextParser
+typedef bool(*state_matcher)(char ch);
+
+inline bool dummy_matcher(char) { return false; }
+
+template <char dfaMaxChar, char dfaStart, char dfaWhitespace, int maxLength, state_matcher isContinuous = dummy_matcher> class _TextParser
 {
 protected:
    const char** _dfa;
@@ -102,6 +106,19 @@ protected:
       else return false;
    }
 
+   bool continueLine()
+   {
+      if (_source->read(_line + _position, maxLength - _position)) {
+         _row++;
+         _column = 1;
+         if (getlength(_line) == maxLength)
+            throw LineTooLong(_row);
+
+         return true;
+      }
+      else return false;
+   }
+
 public:
    void step(uident_c ch, char& state, char& terminateState)
    {
@@ -122,7 +139,10 @@ public:
       char terminateState = 0;
       do {
          if (_line[_position]=='\0') {
-            if(cacheLine()) {
+            if (isContinuous(state)) {
+               continueLine();
+            }
+            else if(cacheLine()) {
                info.position = _position;
                info.column = _column;
                info.row = _row;

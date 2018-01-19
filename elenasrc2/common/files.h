@@ -355,61 +355,61 @@ public:
 #endif
 };
 
-//// --- FileNameTemplate ---
-//
-//class FileName
-//{
-//   String<path_c, LOCAL_PATH_LENGTH>  _path;
-//
-//public:
-//   operator const path_c*() const { return path_t(_path); }
-//
-//   path_t str() { return path_t(_path); }
-//
-//   void copyName(path_t path)
-//   {
-//      size_t index = path.findLast(PATH_SEPARATOR) + 1;
-//      size_t dotpos = path.findLast('.', getlength(path));
-//
-//      _path.copy(path + index, dotpos - index);
-//   }
-//
-//   void copyExtension(path_t path)
-//   {
-//      size_t len = getlength(path);
-//      size_t dotpos = path.findLast('.', len);
-//
-//      _path.copy(path + dotpos + 1);
-//   }
-//
-//   bool isEmpty() const
-//   {
-//      return getlength(_path) == 0;
-//   }
-//
-//   void clear()
-//   {
-//      _path.clear();
-//   }
-//
-//   FileName(const path_c* path)
-//   {
-//      copyName(path);
-//   }
-//
-//#ifdef _WIN32
-//   FileName(const char* pathStr)
-//   {
-//      Path path(pathStr);
-//
-//      copyName(path.c_str());
-//   }
-//#endif
-//
-//   FileName()
-//   {
-//   }
-//};
+// --- FileNameTemplate ---
+
+class FileName
+{
+   String<path_c, LOCAL_PATH_LENGTH>  _path;
+
+public:
+   operator const path_c*() const { return path_t(_path); }
+
+   path_t str() { return path_t(_path); }
+
+   void copyName(path_t path)
+   {
+      size_t index = path.findLast(PATH_SEPARATOR) + 1;
+      size_t dotpos = path.findLast('.', getlength(path));
+
+      _path.copy(path + index, dotpos - index);
+   }
+
+   void copyExtension(path_t path)
+   {
+      size_t len = getlength(path);
+      size_t dotpos = path.findLast('.', len);
+
+      _path.copy(path + dotpos + 1);
+   }
+
+   bool isEmpty() const
+   {
+      return getlength(_path) == 0;
+   }
+
+   void clear()
+   {
+      _path.clear();
+   }
+
+   FileName(const path_c* path)
+   {
+      copyName(path);
+   }
+
+#ifdef _WIN32
+   FileName(const char* pathStr)
+   {
+      Path path(pathStr);
+
+      copyName(path.c_str());
+   }
+#endif
+
+   FileName()
+   {
+   }
+};
 
 // --- File class ---
 

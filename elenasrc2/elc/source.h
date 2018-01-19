@@ -37,13 +37,19 @@ const char dfaLong           = 'R';
 const char dfaHexInteger     = 'T'; // should be kept for compatibility
 const char dfaReal           = 'Q';
 const char dfaSignStart      = 'U';
+const char dfaQuoteStart     = 'V';
 const char dfaQuote          = 'W';
 const char dfaPrivate        = 'X';
 const char dfaCharacter      = ']';
 const char dfaWideQuote      = '^';
 const char dfaMember         = 'a';
 
-class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LINE_LEN>
+inline bool isQuote(char state)
+{
+   return state == dfaQuoteStart;
+}
+
+class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LINE_LEN, isQuote>
 {
    char _lastState;
 
