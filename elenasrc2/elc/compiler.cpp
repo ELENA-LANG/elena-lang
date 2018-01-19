@@ -3644,12 +3644,10 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    MethodScope methodScope(&scope);
    bool lazyExpression = declareActionScope(scope, argNode, methodScope, mode);
 
-   //int hints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
-   //int hints2 = scope.info.methodHints.get(Attribute(encodeMessage(INVOKE_MESSAGE_ID, 1), maHint));
-
-   methodScope.closureMode = true;
+   methodScope.closureMode = true; // !! do we need it??
 
    scope.include(methodScope.message);
+   scope.addHint(methodScope.message, tpAction);
 
    // HOTFIX : if the closure emulates code brackets
    if (test(mode, HINT_SUBCODE_CLOSURE))
@@ -3663,13 +3661,29 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    }
    else compileLazyExpressionMethod(writer, node, methodScope);
 
-   generateClassDeclaration(SNode(), scope, false);
+   if (node.existChild(lxClosureMessage)) {
+      // inject a virtual invoke multi-method if required
+      SyntaxTree virtualTree;
+      virtualTree.insertNode(0, lxClass, 0);
 
-   if (test(scope.info.header.flags, elWithMuti)) {
-      // HOTFIX: temporally the closure does not generate virtual multi-method
-      // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
-      scope.info.header.flags &= ~elSealed;
-      scope.info.header.flags |= elClosed;
+      List<ref_t> implicitMultimethods;
+      implicitMultimethods.add(encodeMessage(INVOKE_MESSAGE_ID, getAbsoluteParamCount(methodScope.message)));
+
+      _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), scope.info, *this, implicitMultimethods, lxClassMethod);
+
+      generateClassDeclaration(virtualTree.readRoot(), scope, false);
+
+      compileVMT(writer, virtualTree.readRoot(), scope);
+   }
+   else {
+      generateClassDeclaration(SNode(), scope, false);
+
+      if (test(scope.info.header.flags, elWithMuti)) {
+         // HOTFIX: temporally the closure does not generate virtual multi-method
+         // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
+         scope.info.header.flags &= ~elSealed;
+         scope.info.header.flags |= elClosed;
+      }
    }
 
    writer.closeNode();

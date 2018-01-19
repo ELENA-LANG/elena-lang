@@ -484,6 +484,15 @@ private:
          info.save(&metaWriter);
       }
 
+      void addHint(ref_t message, int hint)
+      {
+         ClassInfo::Attribute attr(message, maHint);
+
+         hint |= info.methodHints.get(attr);
+         info.methodHints.exclude(attr);
+         info.methodHints.add(attr, hint);
+      }
+
       bool include(ref_t message)
       {
          // check if the method is inhreited and update vmt size accordingly

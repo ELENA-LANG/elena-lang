@@ -2,11 +2,16 @@
 In development:
 ------                              
 
+              dev - general implementation
+                 * generate generic multi-method for the closure (in this case we can get rid of hotfix in tweakClassFlags)
 
               exp - live programming
                  * class to expression tree
                  * expression tree to class
 
+------                                                           
+Pipeline:
+------                                                                                         
                xdev - linux
                  * elc : migrate linker changes (.mdata section)
                  * port compiler
@@ -19,9 +24,6 @@ In development:
                xdev - linux
                  * proting debugger
 
-------                                                           
-Pipeline:
-------                                                                                         
               dev - samples
                  * Sort three variables
 
@@ -46,7 +48,6 @@ Pipeline:
                  * ecv : display class size
 
               dev - general implementation
-                 * generate generic multi-method for the closure (in this case we can get rid of hotfix in tweakClassFlags)
                  * support a test int:2 object<>(1,2,3).
                  * compileExpression, compileObject : refactor collection compilation
                  * Read-only classes should be enforced #282
