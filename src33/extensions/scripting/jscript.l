@@ -1,16 +1,16 @@
 import extensions'dynamic.
 
+static $jscript
+    = ScriptEngine
+            new; 
+            load path:"~\scripts\assembly.es";
+            load path:"~\scripts\jscript.es".
+
 singleton jscript
 {
     eval(literal script)
-        = TapeAssembly new(scriptEngine 
-            load path:"~\scripts\assembly.es";
-            load path:"~\scripts\jscript.es";
-            eval:script); eval.
+        = TapeAssembly new($jscript eval:script); eval.
             
     eval path:path
-        = TapeAssembly new(scriptEngine 
-            load path:"~\scripts\assembly.es";
-            load path:"~\scripts\jscript.es";
-            eval path:path); eval.
+        = TapeAssembly new($jscript eval path:path); eval.
 }

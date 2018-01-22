@@ -27,6 +27,15 @@ Session :: ~Session()
 {
 }
 
+_Parser* Session :: getParser(int id)
+{
+   _Parser* parser = _parsers.get(id);
+   if (parser) {
+      return parser;
+   }
+   else throw EInvalidOperation("Scope is not created");
+}
+
 _Parser* Session :: newParser(int id, ParserType type)
 {
    _Parser* baseOne = _parsers.get(id);
@@ -134,28 +143,14 @@ void Session :: parseDirectives(MemoryDump& tape, _ScriptReader& reader)
 
 void Session :: parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader)
 {
-   _Parser* parser = _parsers.get(id);
+   _Parser* parser = NULL;
 
    reader.read();
 
    if (reader.compare("[[")) {
       while (!reader.compare("]]")) {
          ScriptBookmark bm = reader.read();
-
-         if(reader.compare("#define")) {
-            parser->parseGrammarRule(reader);
-         }
-         else if (reader.compare("#set")) {
-            reader.read();
-            if (reader.compare("postfix")) {
-               bm = reader.read();
-
-               if(!parser->setPostfix(reader.lookup(bm)))
-                  throw EParseError(bm.column, bm.row);
-            }
-            else throw EParseError(bm.column, bm.row);
-         }
-         else if (reader.compare("#grammar")) {
+         if (reader.compare("#grammar")) {
             reader.read();
 
             if (reader.compare("cf")) {
@@ -172,10 +167,28 @@ void Session :: parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader)
             }
             else throw EParseError(bm.column, bm.row);
          }
-         else if(reader.compare("#mode")) {
-            parser->parseGrammarMode(reader);
+         else {
+            if (!parser)
+               parser = getParser(id);
+
+            if (reader.compare("#define")) {
+               parser->parseGrammarRule(reader);
+            }
+            else if (reader.compare("#set")) {
+               reader.read();
+               if (reader.compare("postfix")) {
+                  bm = reader.read();
+
+                  if (!parser->setPostfix(reader.lookup(bm)))
+                     throw EParseError(bm.column, bm.row);
+               }
+               else throw EParseError(bm.column, bm.row);
+            }
+            else if (reader.compare("#mode")) {
+               parser->parseGrammarMode(reader);
+            }
+            else parseDirectives(tape, reader);
          }
-         else parseDirectives(tape, reader);
       }
    }
    else reader.reset();
@@ -183,7 +196,7 @@ void Session :: parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader)
 
 void Session :: parseScript(int id, MemoryDump& tape, _ScriptReader& reader)
 {
-   _Parser* parser = _parsers.get(id);
+   _Parser* parser = getParser(id);
 
    TapeWriter writer(&tape);
 
@@ -199,13 +212,10 @@ void* Session :: translate(int id, TextReader* source)
    if (offset != 0)
       throw EInvalidOperation("Tape is not released");
 
-   if (_parsers.exist(id)) {
-      parseMetaScript(id, _tape, scriptReader);
-      parseScript(id, _tape, scriptReader);
+   parseMetaScript(id, _tape, scriptReader);
+   parseScript(id, _tape, scriptReader);
 
-      return _tape.get(offset);
-   }
-   else throw EInvalidOperation("Scope is not found");
+   return _tape.get(offset);
 }
 
 int Session :: newScope()

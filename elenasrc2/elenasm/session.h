@@ -34,6 +34,7 @@ class Session
    MemoryDump         _tape;
 
    _Parser* newParser(int id, ParserType type);
+   _Parser* getParser(int id);
 
    void parseDirectives(MemoryDump& tape, _ScriptReader& reader);
    void parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader);

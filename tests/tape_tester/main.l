@@ -20,4 +20,6 @@ program =
 [
     Assert notFailed:[InterpreterTest(script0)].
     Assert ifEqual(InterpreterTestWithParam(script1,2), 4).
+    
+    console writeLine("passed").
 ].

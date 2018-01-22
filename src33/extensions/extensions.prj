@@ -7,7 +7,7 @@ debuginfo=-1
 
 [manifest]
 name=ELENA Extension Library
-version=3.3.12
+version=3.3.13
 author=Alex Rakov
 
 [files]

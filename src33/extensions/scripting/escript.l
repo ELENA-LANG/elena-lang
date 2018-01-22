@@ -1,7 +1,8 @@
 import extensions'dynamic.
 
 static $escript
-    = scriptEngine 
+    = ScriptEngine
+            new; 
             load path:"~\scripts\assembly.es";
             load path:"~\scripts\escript.es".
 
