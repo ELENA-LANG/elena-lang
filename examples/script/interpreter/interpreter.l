@@ -378,7 +378,8 @@ symbol program2 =
 
 symbol program3bis =
 [
-    var bfAssemblyProgram := scriptEngine 
+    var bfAssemblyProgram := ScriptEngine 
+        new;
         load path:"asmrules.es";
         eval (">,[.,]").
 
@@ -394,7 +395,8 @@ symbol program3 =
     if ('program'arguments length == 1)
         [ console write:"Please provide the path to the file to interpret". AbortException new; raise. ].
 
-    var bfAssemblyProgram := scriptEngine 
+    var bfAssemblyProgram := ScriptEngine 
+        new;
         load path:"asmrules.es";
         eval path('program'arguments[1]).
 
@@ -410,7 +412,8 @@ symbol program4 =
     if ('program'arguments length == 1)
         [ console write:"Please provide the path to the file to interpret". AbortException new; raise ].
 
-    var bfAssemblyProgram := scriptEngine 
+    var bfAssemblyProgram := ScriptEngine 
+        new;
         load path:"asmrules.es";
         eval path:('program'arguments[1]).
 
