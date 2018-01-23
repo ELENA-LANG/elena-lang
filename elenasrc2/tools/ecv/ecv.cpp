@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   8
+#define REVISION_VERSION   9
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -108,6 +108,30 @@ void printLine()
    if (_writer) {
       _writer->writeNewLine();
    }
+}
+
+void nextRow(int& row, int pageSize)
+{
+   row++;
+   if (row == pageSize - 1) {
+      print("Press any key to continue...");
+      _fgetchar();
+      printf("\n");
+
+      row = 0;
+   }
+}
+
+void printLine(ident_t line1, ident_t line2, ident_t line3, ident_t line4, int& row, int pageSize)
+{
+   printLine(line1, line2, line3, line4);
+   nextRow(row, pageSize);
+}
+
+void printLine(ident_t line1, ident_t line2, int& row, int pageSize)
+{
+   printLine(line1, line2);
+   nextRow(row, pageSize);
 }
 
 void printLoadError(LoadResult result)
@@ -686,14 +710,7 @@ void printByteCodes(_Module* module, _Memory* code, ref_t address, int indent, i
       if (printCommand(module, codeReader, indent, labels)) {
          print("\n");
 
-         row++;
-         if (row == pageSize - 1) {
-            printf("Press any key to continue...");
-            ConsoleHelper::getChar();
-            printf("\n");
-
-            row = 0;
-         }
+         nextRow(row, pageSize);
       }      
    }
 }
@@ -871,7 +888,7 @@ bool loadClassInfo(_Module* module, ident_t reference, ClassInfo& info)
    return true;
 }
 
-void listFields(_Module* module, ReferenceNs className)
+void listFields(_Module* module, ReferenceNs className, int& row, int pageSize)
 {
    ClassInfo info;
    if (!loadClassInfo(module, className, info)) {
@@ -884,125 +901,132 @@ void listFields(_Module* module, ReferenceNs className)
       if (type != 0) {
          ident_t typeName = module->resolveReference(type);
 
-         printLine("Field ", (const char*)it.key(), " of ", typeName);
+         printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
       }
-      else printLine("Field ", (const char*)it.key());
+      else printLine("Field ", (const char*)it.key(), row, pageSize);
    
-
-
       it++;
    }
 }
 
-void listFlags(int flags)
+void listFlags(int flags, int& row, int pageSize)
 {
-   if (test(flags, elNestedClass))
-      printLine("@flag ", "elNestedClass");
+   if (test(flags, elNestedClass)) {
+      printLine("@flag ", "elNestedClass", row, pageSize);
+   }      
 
-   if (test(flags, elDynamicRole))
-      printLine("@flag ", "elDynamicRole");
+   if (test(flags, elDynamicRole)) {
+      printLine("@flag ", "elDynamicRole", row, pageSize);
+   }
+      
+   if (test(flags, elStructureRole)) {
+      printLine("@flag ", "elStructureRole", row, pageSize);
+   }      
 
-   if (test(flags, elStructureRole))
-      printLine("@flag ", "elStructureRole");
+   if (test(flags, elSealed)) {
+      printLine("@flag ", "elSealed", row, pageSize);
+   }      
+   else if (test(flags, elClosed)) {
+      printLine("@flag ", "elClosed", row, pageSize);
+   }      
 
-   if (test(flags, elSealed))
-      printLine("@flag ", "elSealed");
-   else if (test(flags, elClosed))
-      printLine("@flag ", "elClosed");
+   if (test(flags, elWrapper)) {
+      printLine("@flag ", "elWrapper", row, pageSize);
+   }
+      
+   if (test(flags, elStateless)) {
+      printLine("@flag ", "elStateless", row, pageSize);
+   }      
 
-   if (test(flags, elWrapper))
-      printLine("@flag ", "elWrapper");
+   if (test(flags, elGroup)) {
+      printLine("@flag ", "elGroup", row, pageSize);
+   }      
 
-   if (test(flags, elStateless))
-      printLine("@flag ", "elStateless");
-
-   if (test(flags, elGroup))
-      printLine("@flag ", "elGroup");
-
-   if (test(flags, elWithGenerics))
-      printLine("@flag ", "elWithGenerics");
+   if (test(flags, elWithGenerics)) {
+      printLine("@flag ", "elWithGenerics", row, pageSize);
+   }      
 
    if (test(flags, elWithArgGenerics))
-      printLine("@flag ", "elWithArgGenerics");
+      printLine("@flag ", "elWithArgGenerics", row, pageSize);
 
    if (test(flags, elReadOnlyRole))
-      printLine("@flag ", "elReadOnlyRole");
+      printLine("@flag ", "elReadOnlyRole", row, pageSize);
 
    if (test(flags, elNonStructureRole))
-      printLine("@flag ", "elNonStructureRole");
+      printLine("@flag ", "elNonStructureRole", row, pageSize);
 
    if (test(flags, elSignature))
-      printLine("@flag ", "elSignature");
+      printLine("@flag ", "elSignature", row, pageSize);
 
    if (test(flags, elRole))
-      printLine("@flag ", "elRole");
+      printLine("@flag ", "elRole", row, pageSize);
 
    if (test(flags, elExtension))
-      printLine("@flag ", "elExtension");
+      printLine("@flag ", "elExtension", row, pageSize);
 
    if (test(flags, elMessage))
-      printLine("@flag ", "elMessage");
+      printLine("@flag ", "elMessage", row, pageSize);
 
    if (test(flags, elExtMessage))
-      printLine("@flag ", "elExtMessage");
+      printLine("@flag ", "elExtMessage", row, pageSize);
 
    if (test(flags, elSymbol))
-      printLine("@flag ", "elSymbol");
+      printLine("@flag ", "elSymbol", row, pageSize);
 
    if (test(flags, elWithMuti))
-      printLine("@flag ", "elWithMuti");
+      printLine("@flag ", "elWithMuti", row, pageSize);
 
    if (test(flags, elClassClass))
-      printLine("@flag ", "elClassClass");
+      printLine("@flag ", "elClassClass", row, pageSize);
 
    switch (flags & elDebugMask) {
       case elDebugDWORD:
-         printLine("@flag ", "elDebugDWORD");
+         printLine("@flag ", "elDebugDWORD", row, pageSize);
          break;
       case elDebugReal64:
-         printLine("@flag ", "elDebugReal64");
+         printLine("@flag ", "elDebugReal64", row, pageSize);
          break;
       case elDebugLiteral:
-         printLine("@flag ", "elDebugLiteral");
+         printLine("@flag ", "elDebugLiteral", row, pageSize);
          break;
       case elDebugIntegers:
-         printLine("@flag ", "elDebugIntegers");
+         printLine("@flag ", "elDebugIntegers", row, pageSize);
          break;
       case elDebugArray:
-         printLine("@flag ", "elDebugArray");
+         printLine("@flag ", "elDebugArray", row, pageSize);
          break;
       case elDebugQWORD:
-         printLine("@flag ", "elDebugQWORD");
+         printLine("@flag ", "elDebugQWORD", row, pageSize);
          break;
       case elDebugBytes:
-         printLine("@flag ", "elDebugBytes");
+         printLine("@flag ", "elDebugBytes", row, pageSize);
          break;
       case elDebugShorts:
-         printLine("@flag ", "elDebugShorts");
+         printLine("@flag ", "elDebugShorts", row, pageSize);
          break;
       //case elDebugPTR:
       //   printLine("@flag ", "elDebugPTR");
       //   break;
       case elDebugWideLiteral:
-         printLine("@flag ", "elDebugWideLiteral");
+         printLine("@flag ", "elDebugWideLiteral", row, pageSize);
          break;
       case elDebugReference:
-         printLine("@flag ", "elDebugReference");
+         printLine("@flag ", "elDebugReference", row, pageSize);
          break;
       case elDebugSubject:
-         printLine("@flag ", "elDebugSubject");
+         printLine("@flag ", "elDebugSubject", row, pageSize);
          break;
       //case elDebugReals:
       //   printLine("@flag ", "elDebugReals");
       //   break;
       case elDebugMessage:
-         printLine("@flag ", "elDebugMessage");
+         printLine("@flag ", "elDebugMessage", row, pageSize);
          break;
       //case elDebugDPTR:
       //   printLine("@flag ", "elDebugDPTR");
       //   break;
       case elEnumList:
-         printLine("@flag ", "elEnumList");
+         printLine("@flag ", "elEnumList", row, pageSize);
          break;
    }
 }
@@ -1058,12 +1082,16 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    ClassHeader header;
    vmtReader.read((void*)&header, sizeof(ClassHeader));
 
-   if (fullInfo) {
-      if (header.parentRef)
-         printLine("@parent ", module->resolveReference(header.parentRef));
+   int row = 0;
 
-      listFlags(header.flags);
-      listFields(module, reference);
+   if (fullInfo) {
+      if (header.parentRef) {
+         printLine("@parent ", module->resolveReference(header.parentRef));
+         row++;
+      }         
+
+      listFlags(header.flags, row, pageSize);
+      listFields(module, reference, row, pageSize);
    }
 
    if (header.classRef != 0 && withConstructors) {
@@ -1074,7 +1102,6 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
 
    size -= sizeof(ClassHeader);
    IdentifierString temp;
-   int row = 0;
    while (size > 0) {
       vmtReader.read((void*)&entry, sizeof(VMTEntry));
 
@@ -1084,14 +1111,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       printMessage(temp, module, entry.message);
       printLine("@method ", temp);
 
-      row++;
-      if (row == pageSize) {
-         print("Press any key to continue...");
-         _fgetchar();
-         printf("\n");
-
-         row = 0;
-      }
+      nextRow(row, pageSize);
 
       size -= sizeof(VMTEntry);
    }
@@ -1134,20 +1154,10 @@ void listClasses(_Module* module, int pageSize)
       if (moduleName.compare(ns)) {
          ReferenceName name(it.key());
          if (module->mapSection(*it | mskVMTRef, true)) {
-            printLine("class ", name);
-            row++;
+            printLine("class ", name, row, pageSize);
          }
          else if (module->mapSection(*it | mskSymbolRef, true)) {
-            printLine("symbol ", name);
-            row++;
-         }
-         
-         if (row == pageSize - 1) {
-            printf("Press any key to continue...");
-            _fgetchar();
-            printf("\n");
-
-            row = 0;
+            printLine("symbol ", name, row, pageSize);
          }
       }
 

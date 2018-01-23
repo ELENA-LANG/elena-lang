@@ -4,6 +4,7 @@ In development:
 
               exp - live programming
                  * class to expression tree
+
                  * expression tree to class
 
 ------                                                           
@@ -37,12 +38,10 @@ Pipeline:
                  * Zeckendorf arithmetic
 
               dev - usability
-                 * ecv : class info should be counted for listing mode
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
                  * ecv : display class size
 
               dev - general implementation
-                 * support a test int:2 object<>(1,2,3).
                  * compileExpression, compileObject : refactor collection compilation
                  * Read-only classes should be enforced #282
                  * #283 : unboxing duplicate object 
@@ -185,7 +184,6 @@ Pipeline:
                  * multi constructor - raise an error if not found
                  * multi method extension should be resolved on compile-time
                  * reimplement package info
-                 * test list<type>
                  * option not to generate multimethod
                  * explicit conversion
                  * test primitive operation with message
@@ -314,7 +312,6 @@ Pipeline:
                  * passing vint as int probably should be possible only for embeddable classes
                  * for wrapper classes generate virutal set method
                  * use bool lamda expression for seek operations
-                 * not ebeddable structure should not be embedded into another structure
                  * use explicit literal constants for declaring int, hex, signed, unsigned, long, real, literal, wide
 
               ydev
@@ -405,9 +402,6 @@ Pipeline:
                        
                        * stacksafe template method : box this variable if required
 
-                       * subject and its wrapper should be declared in the same namespace, probably
-                         warn if it is not the case
-
                        * test not, shift, negative operations
                        * test notepad
                        * test chat sample : fix the current bug, simple implementation - direct output
@@ -464,7 +458,6 @@ Pipeline:
 
                        * review pi performance
                        * review warnings
-	               * test external call : return real value	               
 
                        * #229 : unboxing optimization
                        * #200 : unboxing explicit local allocated extension  
