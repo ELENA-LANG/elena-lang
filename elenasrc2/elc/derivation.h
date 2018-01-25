@@ -183,8 +183,8 @@ class DerivationReader : public _DerivationReader
 
    bool checkVariableDeclaration(SNode node, DerivationScope& scope);
    bool checkPatternDeclaration(SNode node, DerivationScope& scope);
-//   bool checkArrayDeclaration(SNode node, DerivationScope& scope);
-//   bool checkTemplateExpression(SNode node, DerivationScope& scope);
+   bool checkArrayDeclaration(SNode node, DerivationScope& scope);
+   bool checkTemplateExpression(SNode node, DerivationScope& scope);
 
    void generateMessage(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
    void generateParamRef(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
@@ -193,7 +193,7 @@ class DerivationReader : public _DerivationReader
    bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-//   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
@@ -202,8 +202,8 @@ class DerivationReader : public _DerivationReader
    bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false); // returns true if in-place init found
    void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, int mode = 0*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = EXPRESSION_EXPLICIT_MODE);
-//   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-//   void generateNewTemplate(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
+   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateNewTemplate(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
    void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, bool templateMode);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);
    void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, int nested = 0);
