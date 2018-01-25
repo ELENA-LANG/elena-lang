@@ -11,7 +11,7 @@ sealed struct ZeckendorfNumber :: BaseNumber
     clone
         = ZeckendorfNumber $new(dVal,dLen).
     
-    stacksafe explicit n(LiteralValue s)
+    stacksafe implicit n(LiteralValue s)
     [
         int i := s length - 1.
         int q := 1.

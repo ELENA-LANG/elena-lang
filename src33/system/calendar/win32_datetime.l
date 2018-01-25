@@ -33,7 +33,7 @@ sealed const struct SystemTime :: BaseValue
 {
     __int<8> theValue.
 
-    stacksafe explicit long:value
+    stacksafe implicit long:value
     [
         theValue := value.
     ]
@@ -89,11 +89,11 @@ sealed struct TimeStruct
     short theSecond.
     short theMillisecond.
 
-    stacksafe explicit int:dummy
+    stacksafe implicit int:dummy
     [
     ]
     
-    stacksafe explicit __time:aTime
+    stacksafe implicit __time:aTime
     [
         $self write __time:aTime.
     ]

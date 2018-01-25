@@ -2,11 +2,18 @@
 In development:
 ------                              
 
+              dev - general implementation
+                 * support : a<2  |  a > 2    | type<int> n := 4   | type<int>  | tuple<int,int>.
+                 * test -> a>. - only in declaration mode
+
+                 * #391 : Analog of C# Tuple<>
+                 * if all fields are embeddable - mark as a structure
+
               exp - live programming
                  * class to expression tree
 
                  * expression tree to class
-
+                                                                                                        
 ------                                                           
 Pipeline:
 ------                                                                                         

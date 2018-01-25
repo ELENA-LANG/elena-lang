@@ -11,7 +11,8 @@ embeddable      = #8193.
 template        = #16391.
 extension       = #8203.
 stacksafe       = #8192.
-explicit        = #16387.
+
+implicit        = #16387.
 const           = #8201.
 singleton       = #8208.
 generic         = #8202.
@@ -126,3 +127,6 @@ type indexer    = system'Indexer.
 type indexer2d  = system'Indexer2D.
 
 type void       = nil.
+
+/// obsolete : use implicit instead
+explicit        = #16387.  

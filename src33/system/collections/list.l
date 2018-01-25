@@ -17,7 +17,7 @@ template<BaseEnumerable> list :: type
     vint        theLength.
     vint        theCapacity.
 
-    explicit array:list
+    implicit array:list
     [
         int len := list length.
         int size := len / 32.
@@ -37,14 +37,14 @@ template<BaseEnumerable> list :: type
         ].
     ]
     
-    explicit int:capacity
+    implicit int:capacity
     [
         theCapacity := capacity.
         theLength := 0.
         theArray := type<>(capacity).
     ]
     
-    explicit
+    implicit
     [
         theCapacity := 16.
         theLength := 0.
@@ -170,7 +170,7 @@ template<BaseEnumerable> list :: type
 
     indexer = BaseIndexer::
     {
-        explicit
+        implicit
         [
             theIndex := 0.
 

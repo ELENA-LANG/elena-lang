@@ -163,7 +163,7 @@ sealed struct AddrInfoReader
     dirty_ptr paddrinfo.
     dirty_ptr prootinfo.
     
-    stacksafe explicit dirty_ptr:addr
+    stacksafe implicit dirty_ptr:addr
     [
         paddrinfo := addr.
         prootinfo := addr.

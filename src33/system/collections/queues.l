@@ -80,13 +80,13 @@ template<BaseEnumerable> stack :: type
     list<type> theArray.
     vint        theTop.
     
-    explicit
+    implicit
     [
         theArray := list<type>(8).
         theTop := 0.
     ]
     
-    explicit int:capacity
+    implicit int:capacity
     [
         theArray := list<type>(capacity).
         theTop := 0.
@@ -244,14 +244,14 @@ template<BaseEnumerable> queue :: type
     vint       theTop.
     vint       theTale.
     
-    explicit
+    implicit
     [
         theArray := list<type>(8).
         theTop := 0.
         theTale := 0.
     ]
     
-    explicit int:capacity
+    implicit int:capacity
     [
         theArray := list<type>(capacity).
         theTop := 0.

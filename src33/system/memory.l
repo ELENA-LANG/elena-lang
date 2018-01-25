@@ -103,7 +103,7 @@ template matrix :: template_subj
     int                  theRows.
     int                  theColumns.
     
-    explicit object:params
+    implicit object:params
     [
         theRows := params rows.
         theColumns := params columns.

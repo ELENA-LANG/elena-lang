@@ -11,7 +11,7 @@ sealed struct TimeSpan :: BaseNumber
 
 //    #constructor min <= new &__time:(SystemTime $new &long:0l).
 
-    stacksafe explicit __time:aValue
+    stacksafe implicit __time:aValue
     [
         theValue := aValue.
     ]
@@ -190,7 +190,7 @@ sealed struct Date :: BaseNumber
         $systemTimeFactory readUtcNow __vtime:theValue.
     ]
             
-    stacksafe explicit __time:aValue
+    stacksafe implicit __time:aValue
     [
         theValue := aValue.
     ]

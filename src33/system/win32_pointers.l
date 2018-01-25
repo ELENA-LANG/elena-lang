@@ -63,7 +63,7 @@ sealed struct UnsafePointer
         $self $setReference:anObject.
     ]
     
-    stacksafe explicit(Object ref)
+    stacksafe implicit(Object ref)
     [
         $self $setReference:ref.
     ]

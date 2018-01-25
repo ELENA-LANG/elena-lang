@@ -3,7 +3,7 @@ template eventhandler :: function
 {
     array<function> $functions.
     
-    stacksafe explicit function:func
+    stacksafe implicit function:func
     [
         $functions := function<>(1).
         $functions[0] := func.

@@ -260,6 +260,7 @@ enum LexicalType
    lxClosureAttr     = 0x2003F,
    lxArgDispatcherAttr = 0x20040,
    lxFPUTarget       = 0x20041,
+   lxIdleAttribute   = 0x20042,
 
    lxTempAttr        = 0x2010D,
 };
@@ -915,6 +916,19 @@ public:
    static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);
    static void saveNode(Node node, _Memory* dump, bool inclusingNode = false);
    static void loadNode(Node node, _Memory* dump);
+
+   static int countNode(Node current, LexicalType type)
+   {
+      int counter = 0;
+      while (current != lxNone) {
+         if (current == type)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
 
    static int countChild(Node node, LexicalType type)
    {

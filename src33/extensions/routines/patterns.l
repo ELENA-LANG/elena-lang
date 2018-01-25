@@ -22,7 +22,7 @@ limited class MatrixSpace
     
     indexer2d = BaseMatrixIndexer::
     {
-        explicit
+        implicit
         [
             theIndex1 := 0.
             theIndex2 := 0.            

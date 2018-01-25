@@ -13,7 +13,7 @@ template<BaseVariable> var :: template_subj
     
     value = $value.
     
-    stacksafe explicit template_subj:val
+    stacksafe implicit template_subj:val
     [
         $value := val.
     ]
@@ -49,7 +49,7 @@ template<BaseVariable> ref :: template_subj
 {
     template_subj $value.
     
-    stacksafe explicit template_subj:val
+    stacksafe implicit template_subj:val
     [
         $value := val.
     ]
@@ -320,7 +320,7 @@ sealed struct ByteNumber :: IntBaseNumber
 {
     __int<1> theValue.
 
-    stacksafe explicit(IntNumber n)
+    stacksafe implicit(IntNumber n)
     [
         theValue := n && 255.
     ]
@@ -626,7 +626,7 @@ sealed struct ShortNumber :: IntBaseNumber
 {
     __int<2> theValue.
 
-    stacksafe explicit(IntNumber n)
+    stacksafe implicit(IntNumber n)
     [
         (n < 0)
             ? [ 
@@ -946,12 +946,12 @@ sealed struct IntNumber :: IntBaseNumber
 {
     __int<4> theValue.
 
-    stacksafe explicit(ByteNumber n)
+    stacksafe implicit(ByteNumber n)
     [
         theValue := n.
     ]
     
-    stacksafe explicit(ShortNumber n)
+    stacksafe implicit(ShortNumber n)
     [
         theValue := n.
     ]
@@ -1274,22 +1274,22 @@ sealed struct UIntNumber :: IntBaseNumber
 {
     __int<4> theValue.
 
-    stacksafe explicit(ByteNumber n)
+    stacksafe implicit(ByteNumber n)
     [
         theValue := n.
     ]
     
-    stacksafe explicit(ShortNumber n)
+    stacksafe implicit(ShortNumber n)
     [
         theValue := n.
     ]
     
-    stacksafe explicit(IntNumber n)
+    stacksafe implicit(IntNumber n)
     [
         theValue := n.
     ]
     
-    explicit u literal:s
+    implicit u literal:s
     [
         theValue := intConvertor convertUnsigned literal:s.
     ]
@@ -1972,7 +1972,7 @@ sealed struct RealNumber :: BaseNumber
 {
     __real<8> theValue.
 
-    stacksafe explicit(IntNumber n)
+    stacksafe implicit(IntNumber n)
     [
         realConvertor convert int:n vreal:$self.
     ]
