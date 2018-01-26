@@ -459,6 +459,15 @@ public:
          return this->type != operand;
       }
 
+      bool operator == (Node operand)
+      {
+         return this->position == operand.position && this->tree == operand.tree;
+      }
+      bool operator != (Node operand)
+      {
+         return this->position != operand.position || this->tree != operand.tree;
+      }
+
       void operator = (LexicalType operand)
       {
          this->type = operand;

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler common interfaces.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerCommonH
@@ -156,7 +156,7 @@ struct _CompilerScope
    virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/) = 0;
    virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
    virtual ref_t mapReference(ident_t reference, bool existing = false) = 0;
-   virtual ref_t mapTemplateClass(ident_t templateName) = 0;
+   virtual ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared) = 0;
    virtual ref_t mapAnonymous() = 0;
 
    virtual bool saveAttribute(ident_t name, ref_t attr, bool internalAttr) = 0;

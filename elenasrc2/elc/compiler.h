@@ -338,7 +338,7 @@ private:
 
       virtual ref_t mapAnonymous();
 
-      virtual ref_t mapTemplateClass(ident_t templateName);
+      virtual ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared);
 
       bool defineForward(ident_t forward, ident_t referenceName)
       {

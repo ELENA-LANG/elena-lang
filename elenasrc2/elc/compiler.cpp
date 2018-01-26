@@ -973,7 +973,7 @@ ref_t Compiler::ModuleScope :: mapAttribute(SNode attribute)
    }
 }
 
-ref_t Compiler::ModuleScope :: mapTemplateClass(ident_t templateName)
+ref_t Compiler::ModuleScope :: mapTemplateClass(ident_t templateName, bool& alreadyDeclared)
 {
    ReferenceNs forwardName;
    forwardName.append("'");
@@ -984,7 +984,10 @@ ref_t Compiler::ModuleScope :: mapTemplateClass(ident_t templateName)
       fullName.combine(templateName);
 
       project->addForward(forwardName, fullName);
+
+      alreadyDeclared = false;
    }
+   else alreadyDeclared = true;
 
    return module->mapReference(forwardName);
 }
