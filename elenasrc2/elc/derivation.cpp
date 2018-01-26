@@ -333,6 +333,8 @@ inline SNode findTemplateEnd(SNode current)
       }
 
       current = current.nextNode();
+      if (current == lxObject)
+         current = current.nextNode();
    }
 
    return SNode();
@@ -1483,7 +1485,7 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode current
    bool classMode = false;
    bool arrayMode = false;
    SNode operatorNode = current.nextNode();
-   int prefixCounter = SyntaxTree::countNode(operatorNode, lxIdleAttribute);
+   int prefixCounter = SyntaxTree::countNode(operatorNode, lxIdleAttribute, lxAttributeValue);
 
    int paramIndex = 0;
    attrRef = scope.mapAttribute(attr, paramIndex);
@@ -1770,6 +1772,9 @@ inline void setTypeTemplateAttributes(SNode current, SNode lastNode)
 
          SNode objectNode = current.findChild(lxObject);
          objectNode = lxAttributeValue;
+      }
+      else if (current == lxObject) {
+         current = lxAttributeValue;
       }
 
       current = current.nextNode();

@@ -939,6 +939,19 @@ public:
       return counter;
    }
 
+   static int countNode(Node current, LexicalType type1, LexicalType type2)
+   {
+      int counter = 0;
+      while (current != lxNone) {
+         if (current == type1 || current == type2)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
    static int countChild(Node node, LexicalType type)
    {
       int counter = 0;

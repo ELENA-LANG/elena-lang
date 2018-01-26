@@ -4593,6 +4593,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    bool first = messageStr.Length() == 0;
    int paramCount = 0;
+   int strongParamCounter = 0;
    // if method has generic (unnamed) argument list
    while (arg == lxMethodParameter) {
       int index = 1 + scope.parameters.Count();
@@ -4607,6 +4608,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
          scope.parameters.add(terminal, Parameter(index, verbRef, size));
          verbRef = 0;
+         strongParamCounter++;
       }
       else scope.parameters.add(terminal, Parameter(index));
 
@@ -4616,7 +4618,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    }
 
    // if method has named argument list
-   int strongParamCounter = 0;
    while (arg == lxMessage || arg == lxParamRefAttr) {
       ref_t elementRef = 0;
       ref_t class_ref = declareArgumentSubject(arg, *scope.moduleScope, first, messageStr, signature, elementRef);
@@ -4695,9 +4696,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
 
       if (test(scope.hints, tpSealed | tpConversion)) {
-         if (paramCount == 1) {
+         if (strongParamCounter > 0) {
             flags |= CONVERSION_MESSAGE;
-            if (!emptystr(messageStr))
+            if (!emptystr(messageStr) && strongParamCounter == 1)
                constantConversion = true;
          }
          else if (emptystr(messageStr) && paramCount == 0) {
