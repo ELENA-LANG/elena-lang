@@ -29,6 +29,7 @@
 [+] new class : extensions'dynamic'TapeAssembly
 [+] new class : system'io'MemoryStream
 [-] system'dynamic'tapeOp extension
+[+] tuple<> templates
 
 ***************************************************************
                              What's New in 3.2.1

@@ -15,7 +15,7 @@ limited class Expression
     
     type<ClosureTape> compiled
     [
-        list<DynamicClosure> list/* := list<DynamicClosure>(8)*/.
+        list<DynamicClosure> list := list<DynamicClosure>(8).
         
         $self saveTo(list).
         
