@@ -261,6 +261,7 @@ enum LexicalType
    lxArgDispatcherAttr = 0x20040,
    lxFPUTarget       = 0x20041,
    lxIdleAttribute   = 0x20042,
+   lxTemplateParamAttr = 0x20043,
 
    lxTempAttr        = 0x2010D,
 };

@@ -71,8 +71,6 @@ inline bool isCollection(SNode node, bool nextedExpr)
       else return false;
    }
    else return isCollection(node);
-
-   return (node == lxExpression && node.nextNode() == lxExpression);
 }
 
 inline bool isPrimitiveRef(ref_t reference)

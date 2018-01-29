@@ -103,7 +103,7 @@ class DerivationReader : public _DerivationReader
          return mapAttribute(terminal, dummy);
       }
 
-      ref_t mapClassType(SNode terminal, bool& arrayMode);
+      ref_t mapClassType(SNode terminal, bool& arrayMode, bool& paramMode);
 
       ref_t mapTemplate(SNode terminal, int paramCounter = 0, int prefixCounter = 0);
       ref_t mapClassTemplate(SNode terminal);
@@ -201,6 +201,7 @@ class DerivationReader : public _DerivationReader
    void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes/*, SyntaxTree& buffer*/, bool templateMode = false);
    bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false); // returns true if in-place init found
    void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, int mode = 0*/);
+   void generateExpression(SyntaxWriter& writer, SNode& node, DerivationScope& scope, int mode);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = EXPRESSION_EXPLICIT_MODE);
    void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateNewTemplate(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);

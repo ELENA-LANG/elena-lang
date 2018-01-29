@@ -4,6 +4,7 @@ In development:
 
               dev - general implementation
                  * #391 : Analog of C# Tuple<>
+
                  * uncomment Expression::compiled
                  * if all fields are embeddable - mark as a structure
 
