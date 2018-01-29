@@ -3,14 +3,13 @@ In development:
 ------                              
 
               dev - general implementation
-                 * duplicate stack allocated classes - should be generated only once
+                 * #391 : Analog of C# Tuple<>
+                 * uncomment Expression::compiled
+                 * if all fields are embeddable - mark as a structure
 
                  * support : a<2  |  a > 2    | type<int> n := 4   | type<int>  | tuple<int,int>.
                  * test -> a>. - only in declaration mode
 
-                 * #391 : Analog of C# Tuple<>
-                 * uncomment Expression::compiled
-                 * if all fields are embeddable - mark as a structure
 
               exp - live programming
                  * class to expression tree

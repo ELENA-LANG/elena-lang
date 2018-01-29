@@ -850,6 +850,7 @@ private:
    ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
 
    ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
+   ref_t resolveAndCompileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope); // returns the resulting signature list
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);

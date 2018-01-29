@@ -59,6 +59,22 @@ inline bool isCollection(SNode node)
    return (node == lxExpression && node.nextNode() == lxExpression);
 }
 
+inline bool isCollection(SNode node, bool nextedExpr)
+{
+   if (nextedExpr) {
+      if (isCollection(node)) {
+         return true;
+      }
+      else if (node == lxExpression && isSingleStatement(node)) {
+         return isCollection(node.firstChild(lxObjectMask), true);
+      }
+      else return false;
+   }
+   else return isCollection(node);
+
+   return (node == lxExpression && node.nextNode() == lxExpression);
+}
+
 inline bool isPrimitiveRef(ref_t reference)
 {
    return (int)reference < 0;
@@ -3155,6 +3171,34 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, ModuleScope& scope, ref_t 
    else return false;
 }
 
+ref_t Compiler :: resolveAndCompileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   int paramMode = 0;
+   bool anonymous = false;
+   IdentifierString signature;
+
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      ObjectInfo info = compileExpression(writer, current, scope, paramMode);
+      ref_t argRef = resolveObjectReference(scope, info);
+      if (isPrimitiveRef(argRef))
+         argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+
+      if (!anonymous && argRef != 0) {
+         signature.append('$');
+         signature.append(scope.moduleScope->module->resolveReference(argRef));
+      }
+      else anonymous = true;
+
+      current = current.nextNode(lxObjectMask);
+   }
+
+   if (!anonymous) {
+      return scope.moduleScope->module->mapSubject(signature.ident(), false);
+   }
+   else return 0;
+}
+
 ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    ObjectInfo target;
@@ -4063,6 +4107,14 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
          }
          else scope.raiseError(errInvalidOperation, node);
       }
+      else if (isCollection(objectNode, true)) {
+         SNode argNode = objectNode.findChild(lxExpression);
+         int paramCount = SyntaxTree::countChild(argNode, lxExpression);
+
+         ref_t actionRef = resolveAndCompileMessageParameters(writer, objectNode.findChild(lxExpression), scope);
+         if (!_logic->injectImplicitConstructor(writer, *scope.moduleScope, *this, targetRef, actionRef, paramCount))
+            scope.raiseError(errIllegalOperation, node);
+      }
       else {
          ObjectInfo object = compileExpression(writer, objectNode, scope, mode);
 
@@ -4070,10 +4122,8 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
             scope.raiseError(errIllegalOperation, node);
       }
    }
-   else {
-      if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
-         scope.raiseError(errIllegalOperation, node);
-   }
+   else if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
+      scope.raiseError(errIllegalOperation, node);
 
    writer.removeBookmark();
 

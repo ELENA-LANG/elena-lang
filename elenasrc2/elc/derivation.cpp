@@ -203,9 +203,11 @@ inline void copyIdentifier(SyntaxWriter& writer, SNode ident)
 inline SNode findLastAttribute(SNode current)
 {
    SNode lastAttribute;
-   while (current == lxAttribute/* || current == lxIdle*/ || current == lxIdleAttribute) {
+   while (current == lxAttribute || current == lxIdleAttribute) {
       lastAttribute = current;
       current = current.nextNode();
+      if (current == lxAttributeValue)
+         current = current.nextNode();
    }
 
    return lastAttribute;
@@ -1872,6 +1874,9 @@ inline void setTemplateAttributes(SNode current)
          SNode objectNode = current.findChild(lxObject);
          objectNode = lxAttributeValue;
       }
+      else if (current == lxObject) {
+         current = lxAttributeValue;
+      }
 
       current = current.nextNode();
    }
@@ -1998,7 +2003,7 @@ void DerivationReader :: generateAttributeTemplate(SyntaxWriter& writer, SNode n
    int prefixCounter = 0;
    if (node.argument == INVALID_REF) {
       //prefixCounter = SyntaxTree::countChild(node.nextNode(), lxAttributeValue);
-      prefixCounter = SyntaxTree::countNode(node.nextNode(), lxIdleAttribute);
+      prefixCounter = SyntaxTree::countNode(node.nextNode(), lxIdleAttribute, lxAttributeValue);
    }
    else prefixCounter = SyntaxTree::countChild(node, lxAttributeValue);
 

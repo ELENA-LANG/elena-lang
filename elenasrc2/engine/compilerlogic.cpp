@@ -756,6 +756,92 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
    }
 }
 
+bool CompilerLogic :: isSignatureCompatible(_CompilerScope& scope, ref_t targetAction, ref_t sourceAction)
+{
+   if (targetAction == sourceAction)
+      return true;
+
+   ident_t targetSignature = scope.module->resolveSubject(targetAction);
+   ident_t sourceSignature = scope.module->resolveSubject(sourceAction);
+   
+   size_t targetLen = getlength(targetSignature);
+   size_t sourceLen = getlength(sourceSignature);
+
+   size_t targetStart = targetSignature.find('$') + 1;
+   size_t targetEnd = targetSignature.find(targetStart, '$', targetLen);
+   size_t sourceStart = sourceSignature.find('$') + 1;
+   size_t sourceEnd = sourceSignature.find(sourceStart, '$', sourceLen);
+   IdentifierString temp;
+   do {
+      temp.copy(targetSignature.c_str() + targetStart, targetEnd - targetStart);
+      ref_t targetArgRef = scope.module->mapReference(temp);
+      
+      temp.copy(sourceSignature.c_str() + sourceStart, sourceEnd - sourceStart);
+      ref_t sourceArgRef = scope.module->mapReference(temp);
+
+      if (!isCompatible(scope, targetArgRef, sourceArgRef))
+         return false;
+
+      sourceStart = sourceEnd + 1;
+      sourceEnd = sourceSignature.find(sourceStart, '$', sourceLen);
+
+      targetStart = targetEnd + 1;
+      sourceEnd = targetSignature.find(targetStart, '$', targetLen);
+   } while (targetStart < targetLen && sourceStart < sourceLen);
+
+   return false;
+}
+
+bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef, ref_t elementRef, ref_t actionRef, int paramCount)
+{
+   ClassInfo::MethodMap::Iterator it = info.methods.start();
+   while (!it.Eof()) {
+      pos_t implicitMessage = it.key();
+      if (test(implicitMessage, CONVERSION_MESSAGE) && getParamCount(implicitMessage) == paramCount) {
+         ref_t subj = getAction(implicitMessage);
+         bool compatible = false;
+         if (actionRef == V_STRCONSTANT && subj == elementRef) {
+            // try to resolve explicit constant conversion routine
+            compatible = true;
+         }
+         else if (paramCount == 1) {
+            ref_t subjRef = scope.module->mapReference(scope.module->resolveSubject(subj).c_str() + 1);
+            if (subjRef != 0) {
+               compatible = isCompatible(scope, subjRef, actionRef);
+            }
+            else compatible = true;
+         }
+         else compatible = isSignatureCompatible(scope, subj, actionRef);
+
+         if (compatible) {
+            bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
+            if (test(info.header.flags, elStructureRole)) {
+               compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
+            }
+            else if (test(info.header.flags, elDynamicRole)) {
+               return false;
+            }
+            else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
+
+            return true;
+         }
+      }
+
+      it++;
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t actionRef, int paramCount)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, targetRef))
+      return false;
+
+   return injectImplicitConstructor(writer, scope, compiler, info, targetRef, 0, actionRef, paramCount);
+}
+
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
 {
    if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
@@ -869,42 +955,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       sourceRef = resolvePrimitiveReference(scope, sourceRef);
 
    // otherwise we have to go through the list
-   ClassInfo::MethodMap::Iterator it = info.methods.start();
-   while (!it.Eof()) {
-      pos_t implicitMessage = it.key();
-      if (test(implicitMessage, CONVERSION_MESSAGE) && getParamCount(implicitMessage) == 1) {
-         ref_t subj = getAction(implicitMessage);
-         bool compatible = false;
-         if (sourceRef == V_STRCONSTANT && subj == elementRef) {
-            // try to resolve explicit constant conversion routine
-            compatible = true;
-         }
-         else {
-            ref_t subjRef = scope.module->mapReference(scope.module->resolveSubject(subj).c_str() + 1);
-            if (subjRef != 0) {
-               compatible = isCompatible(scope, subjRef, sourceRef);
-            }
-            else compatible = true;
-         }
-
-         if (compatible) {
-            bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
-            if (test(info.header.flags, elStructureRole)) {
-               compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
-            }
-            else if (test(info.header.flags, elDynamicRole)) {
-               return false;
-            }
-            else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
-
-            return true;
-         }
-      }
-
-      it++;
-   }
-
-   return false;
+   return injectImplicitConstructor(writer, scope, compiler, info, targetRef, elementRef, sourceRef, 1);
 }
 
 void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef)
