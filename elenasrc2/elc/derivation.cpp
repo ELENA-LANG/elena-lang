@@ -1656,6 +1656,8 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
    
    while (current != lxNone) {
       if (messageList && current == lxObject) {
+         writer.removeBookmark();
+         writer.newBookmark();
          generateExpression(writer, current, scope, EXPRESSION_MESSAGE_MODE);
       }
       else if (listMode && current == lxObject) {
