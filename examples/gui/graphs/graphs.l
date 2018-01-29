@@ -19,7 +19,7 @@ symbol function = (:t) [
                 y((A * (C * t sin - (C*t) sin) * ScaleY) roundedInt)
         ].
 
-singleton plotter =
+plotter =
 {
     drawAxis dimension:aSize canvas:aCanvas
     [        
@@ -82,7 +82,7 @@ class Window :: SDIDialog
 
         theImagebox set x:0 y:0.
         theImagebox set width:400 height:420.
-        theImagebox set onPaint: (&object:sender &canvas:aCanvas)
+        theImagebox set onPaint: (:sender:aCanvas)<object,canvas>
         [
             aCanvas set:WhitePen.
             aCanvas set:BlackBrush.
