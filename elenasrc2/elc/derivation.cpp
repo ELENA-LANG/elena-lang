@@ -1611,11 +1611,18 @@ void DerivationReader :: generateExpression(SyntaxWriter& writer, SNode& current
          // check if it is template expression
          writer.newBookmark();
          generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
-         writer.removeBookmark();
 
          while (!current.nextNode().compare(lxNone, lxObject)) {
             current = current.nextNode();
          }
+         SNode operationNode = current.findChild(lxMessage, lxOperator);
+         while (operationNode != lxNone) {
+            //HOTFIX : implementing operations with a template
+            generateObjectTree(writer, operationNode, scope);
+            operationNode = operationNode.nextNode();
+         }
+
+         writer.removeBookmark();
       }
       else if (test(mode, EXPRESSION_MESSAGE_MODE)) {
          generateExpressionTree(writer, current, scope, 0);
