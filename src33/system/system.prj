@@ -71,4 +71,5 @@ winforms\win32_dialogs.l
 winforms\win32_app.l
 winforms\win32_xwindows.l
 dynamic\expressions\expressions.l
+collections\maps.l
 

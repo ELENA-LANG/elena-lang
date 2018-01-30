@@ -10,7 +10,7 @@ template<BaseIndexable> array :: template_subj
 {
     template_subj<> $target.
 
-//    explicit int:n
+//    implicit int:n
 //        = template_subj<>(n).
 
     enumerator 

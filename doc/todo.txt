@@ -2,6 +2,11 @@
 In development:
 ------                              
 
+
+              dev - general implementation
+                 * #269 : short-circuit boolean operation
+                 * #235 : generic map
+
               exp - live programming
                  * class to expression tree
 
@@ -165,7 +170,6 @@ Pipeline:
                  * elenart : correctly display strong typed message names
                  * elenavm : correctly display strong typed message names
                  * Signature should support only get, set, eval
-                 * #269 : short-circuit boolean operation
                  * fix the bug with varof(type) - it is not recognized type as a structure if varof is declared before the type
                    (e.g. vhdc), it should be declared when it is used
 
