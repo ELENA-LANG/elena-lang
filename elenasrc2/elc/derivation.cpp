@@ -1517,8 +1517,8 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode current
       attrRef = scope.mapTypeTerminal(operatorNode.findChild(lxAttributeValue).findChild(lxIdentifier, lxReference), true);
    }
    else if (attrRef == V_TYPETEMPL && prefixCounter == 1) {
-      current = operatorNode.findChild(lxObject);
-      expr = operatorNode.findChild(lxExpression);
+      current = operatorNode.findChild(lxAttributeValue);
+      expr = goToNode(operatorNode, lxOperator).findChild(lxObject);
    }
    else {
       attrName.copy(attr.findChild(lxTerminal).identifier());
