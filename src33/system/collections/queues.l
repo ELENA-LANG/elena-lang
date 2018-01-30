@@ -191,7 +191,6 @@ sealed class Queue :: BaseEnumerable
 
         var item := theList getAt int:theTop.
                                     
-        theList setAt int:theTop object:$nil.
         theTop append int:1.
         
         // reuse the space if the queue is empty
@@ -299,7 +298,6 @@ template<BaseEnumerable> queue :: type
                         
         type item := theArray getAt int:theTop.                        
                         
-        theArray setAt int:theTop type:$nil.                                    
         theTop append int:1.
         
         // reuse the space if the queue is empty
