@@ -2,10 +2,11 @@
 In development:
 ------                              
 
-
+                            ,
               dev - general implementation
                  * #269 : short-circuit boolean operation
                  * #235 : generic map
+                 * compile <>, ><, ...
 
               exp - live programming
                  * class to expression tree

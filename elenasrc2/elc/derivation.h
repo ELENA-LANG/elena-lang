@@ -12,7 +12,7 @@
 #include "syntax.h"
 #include "compilercommon.h"
 
-#define EXPRESSION_EXPLICIT_MODE   1
+#define EXPRESSION_IMPLICIT_MODE   1
 #define EXPRESSION_MESSAGE_MODE    2
 #define EXPRESSION_OPERATOR_MODE   4
 
@@ -173,11 +173,14 @@ class DerivationReader : public _DerivationReader
    void copyMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues);
    void copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void copyOperator(SyntaxWriter& writer, SNode& node, DerivationScope& scope);
 
    bool generateTemplate(SyntaxWriter& writer, DerivationScope& scope, bool declaringClass);
 
    ref_t mapAttributeType(SNode attr, DerivationScope& scope);
    ref_t mapAttribute(SNode terminal, DerivationScope& scope, bool& templateAttr);
+
+   ref_t mapNewTemplate(SNode node, DerivationScope& scope, bool& arrayMode, int& paramIndex, bool templateMode);
 
    void generateScopeMembers(SNode& node, DerivationScope& scope, int mode);
 
@@ -194,17 +197,23 @@ class DerivationReader : public _DerivationReader
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-   void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   //void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void _generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    bool generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes/*, SyntaxTree& buffer*/, bool templateMode = false);
    bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false); // returns true if in-place init found
-   void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, int mode = 0*/);
-   void generateExpression(SyntaxWriter& writer, SNode& node, DerivationScope& scope, int mode);
-   void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = EXPRESSION_EXPLICIT_MODE);
+   void _generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, int mode = 0*/);
+   //void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, int mode = 0*/);
+   //void generateExpression(SyntaxWriter& writer, SNode& node, DerivationScope& scope, int mode);
+   //void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = EXPRESSION_EXPLICIT_MODE);
+   void _generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
    void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateNewTemplate(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
+   void generateTemplateParameters(SNode& current, DerivationScope& scope, bool templateMode);
+   void generateSubTemplate(SNode& node, DerivationScope& scope, bool templateMode);
+   void _generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope, bool templateMode);
    void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, bool templateMode);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);
    void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, int nested = 0);

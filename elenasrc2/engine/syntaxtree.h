@@ -483,6 +483,12 @@ public:
          (*this) = type;
          setArgument(argument);
       }
+      void set(LexicalType type, ident_t argument)
+      {
+         (*this) = type;
+         setArgument(0);
+         setStrArgument(argument);
+      }
 
       void setArgument(ref_t argument)
       {
@@ -490,6 +496,15 @@ public:
 
          MemoryReader reader(&tree->_body, position - 8);
          *(int*)(reader.Address()) = (int)argument;
+      }
+      void setStrArgument(ident_t argument)
+      {
+         this->strArgument = tree->_strings.Length();
+         MemoryWriter  stringWriter(&tree->_strings);
+         stringWriter.writeLiteral(argument, getlength(argument) + 1);
+
+         MemoryReader reader(&tree->_body, position - 4);
+         *(int*)(reader.Address()) = (int)this->strArgument;
       }
 
       void setArgument(int argument)
@@ -869,6 +884,10 @@ public:
       {
          return (this->type == type1) || (this->type == type2);
       }
+      bool compare(LexicalType type1, LexicalType type2, LexicalType type3)
+      {
+         return (this->type == type1) || (this->type == type2) || (this->type == type3);
+      }
 
       Node()
       {
@@ -945,6 +964,19 @@ public:
       int counter = 0;
       while (current != lxNone) {
          if (current == type1 || current == type2)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
+   static int countNode(Node current, LexicalType type1, LexicalType type2, LexicalType type3)
+   {
+      int counter = 0;
+      while (current != lxNone) {
+         if (current.compare(type1, type2, type3))
             counter++;
 
          current = current.nextNode();
