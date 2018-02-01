@@ -65,7 +65,7 @@ inline bool isCollection(SNode node, bool nextedExpr)
       if (isCollection(node)) {
          return true;
       }
-      else if (node == lxExpression && isSingleStatement(node)) {
+      else if (node == lxExpression && !node.existChild(lxMessage, lxAssign, lxOperator)) {
          return isCollection(node.firstChild(lxObjectMask), true);
       }
       else return false;
@@ -4106,10 +4106,11 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
          else scope.raiseError(errInvalidOperation, node);
       }
       else if (isCollection(objectNode, true)) {
-         SNode argNode = objectNode.findChild(lxExpression);
+         SNode argNode = isCollection(objectNode, true) ? objectNode : objectNode.findChild(lxExpression);
+
          int paramCount = SyntaxTree::countChild(argNode, lxExpression);
 
-         ref_t actionRef = resolveAndCompileMessageParameters(writer, objectNode.findChild(lxExpression), scope);
+         ref_t actionRef = resolveAndCompileMessageParameters(writer, argNode, scope);
          if (!_logic->injectImplicitConstructor(writer, *scope.moduleScope, *this, targetRef, actionRef, paramCount))
             scope.raiseError(errIllegalOperation, node);
       }

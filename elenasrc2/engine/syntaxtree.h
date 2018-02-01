@@ -879,6 +879,10 @@ public:
       {
          return findChild(type1, type2) != lxNone;
       }
+      bool existChild(LexicalType type1, LexicalType type2, LexicalType type3)
+      {
+         return findChild(type1, type2, type3) != lxNone;
+      }
 
       bool compare(LexicalType type1, LexicalType type2)
       {
