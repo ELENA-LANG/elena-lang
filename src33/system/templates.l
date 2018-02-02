@@ -271,8 +271,11 @@ __block template finally :: expr
         | raise:[].
 ]        
 
-//__double_block template finally =
-//    true doFinally([],[]).
+__block __block template finally
+[
+    true doFinally([],[]).
+]
+
 
 // --- using statement ---
 

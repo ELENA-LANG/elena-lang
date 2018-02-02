@@ -1475,7 +1475,7 @@ void DerivationReader :: generateMessageTree(SyntaxWriter& writer, SNode node, D
    while (current != lxNone) {
       switch (current.type) {
          case lxMessageParameter:
-            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
+            generateExpressionTree(writer, current, scope/*, EXPRESSION_IMPLICIT_MODE*/);
          //   current = lxIdle; // HOTFIX : to prevent duble compilation of closure parameters
             break;
          case lxExpression:

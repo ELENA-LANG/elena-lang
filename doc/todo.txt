@@ -4,9 +4,11 @@ In development:
 
                             
               dev - general implementation
-                 * test reddit examples
+                 * test reddit examples : Generic handler with variable number of parameters
 
               dev - general implementation
+                 * test dtcalc
+                 * test db sample
                  * #235 : generic map
                  * test graph
                  * #269 : short-circuit boolean operation

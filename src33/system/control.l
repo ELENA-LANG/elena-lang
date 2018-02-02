@@ -244,7 +244,10 @@ limited closure class BaseFunction2
     [
         while(anEnumerator next)
         [
-            $self(aParam,anEnumerator get)
+            var x := anEnumerator get.
+            
+            $self(aParam,x).
+            //$self(aParam,anEnumerator get)
         ]
     ]
     
