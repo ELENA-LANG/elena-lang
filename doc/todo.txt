@@ -2,10 +2,14 @@
 In development:
 ------                              
 
-                            ,
+                            
               dev - general implementation
-                 * #269 : short-circuit boolean operation
+                 * test reddit examples
+
+              dev - general implementation
                  * #235 : generic map
+                 * test graph
+                 * #269 : short-circuit boolean operation
                  * compile <>, ><, ...
 
               exp - live programming
