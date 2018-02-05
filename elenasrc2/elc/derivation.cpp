@@ -1502,6 +1502,7 @@ void DerivationReader :: generateMessageTree(SyntaxWriter& writer, SNode node, D
             writer.closeNode();
             break;
          case lxOperator:
+         case lxObject:
             if (invokeMode/* || invokeWithNoParamMode*/) {
                // operator should be considered as a new operation if followed after closure invoke
                return;

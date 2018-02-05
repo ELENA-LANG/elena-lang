@@ -19,7 +19,7 @@ class $ProgramLoop
     eval
     [
         // if grettings is not defined - do nothing
-        console printLine(theControl~__prober greeting).
+        console printLine(theControl greeting \ back:emptyLiteralValue).
         
         var aPrompt := theControl prompt.
         

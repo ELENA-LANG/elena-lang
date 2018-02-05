@@ -4,15 +4,16 @@ In development:
 
                             
               dev - general implementation
-                 * test dtcalc
-                 * test collatz
                  * test : Explicit literal constants
+                 * #399 : Assinging $nil value to a structure 
                  * #235 : generic map
                  * test graph
                  * #269 : short-circuit boolean operation
                  * compile <>, ><, ...
 
               exp - live programming
+                 * test dynamic code snippets from reddit
+                 * test dynamic samples
                  * class to expression tree
 
                  * expression tree to class
@@ -71,6 +72,8 @@ Pipeline:
                  * nil and $nil
                  * fixing open issues
                  * duplicate nested classes (see array template)
+                 * #355 : Multimethods and $nil 
+                 * support void type to be used in multimethod with $nil?
 
               xdev - samples
                  * test chat sample

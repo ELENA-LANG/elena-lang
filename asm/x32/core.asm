@@ -2880,6 +2880,8 @@ inline % 1E8h
   mov  ebx, __arg1
   mov  edi, [edi + 4]
   mov  ebx, [ebx + edx * 8] // ; message from overload list
+// ;  test edi, edi
+// ;  jz   short labEnd
   mov  ecx, [edi - 4]
 
 labNextOverloadlist:
@@ -2912,6 +2914,8 @@ labContinue:
   mov  ebx, [ebx + edx * 8] // ; message from overload list
   and  ebx, ebx
   jnz  labNextOverloadlist
+
+labEnd:
 
 end
 
