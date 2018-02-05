@@ -4,12 +4,7 @@ In development:
 
                             
               dev - general implementation
-                 * test : Explicit literal constants
-                 * #399 : Assinging $nil value to a structure 
                  * #235 : generic map
-                 * test graph
-                 * #269 : short-circuit boolean operation
-                 * compile <>, ><, ...
 
               exp - live programming
                  * test dynamic code snippets from reddit
@@ -21,6 +16,16 @@ In development:
 ------                                                           
 Pipeline:
 ------                                                                                         
+              dev - general implementation
+                 * #269 : short-circuit boolean operation
+                 * compile <>, ><, ...
+
+              xdev - samples
+                 * test chat sample
+                 * test rosetta socket sample
+                 * test graph
+                 * Zeckendorf arithmetic
+
                xdev - linux
                  * elc : migrate linker changes (.mdata section)
                  * port compiler
@@ -46,7 +51,6 @@ Pipeline:
 
               dev - samples
                  * Cartesian product of two or more lists
-                 * Zeckendorf arithmetic
 
               dev - usability
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
@@ -74,10 +78,6 @@ Pipeline:
                  * duplicate nested classes (see array template)
                  * #355 : Multimethods and $nil 
                  * support void type to be used in multimethod with $nil?
-
-              xdev - samples
-                 * test chat sample
-                 * test rosetta socket sample
 
               dev - debugger
                  * #263 - fix goto

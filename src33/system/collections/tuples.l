@@ -48,6 +48,11 @@ template tuple :: type1, type2
         field2 := o2.
     ]
 
+    implicit(type1 o1) 
+    [
+        field1 := o1.
+    ]
+
     getAt(int index)
     [
         index =>
