@@ -14,14 +14,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 #define HINT_CLOSURE_MASK     0xC0008800
@@ -2868,8 +2868,6 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
    ref_t resolved_operator_id = operator_id;
    // try to resolve the branching operator directly
    if (_logic->resolveBranchOperation(*scope.moduleScope, *this, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
-      test2(roperandNode);
-
       // good luck : we can implement branching directly
       compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
 

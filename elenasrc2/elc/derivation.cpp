@@ -470,89 +470,6 @@ ref_t DerivationReader::DerivationScope :: mapClassTemplate(SNode terminal)
    return ref;
 }
 
-void DerivationReader::DerivationScope :: loadAttributeValues(SNode attributes, bool classMode)
-{
-   SNode current = attributes;
-   // load template parameters
-   while (current != lxNone) {
-      if (current == lxAttributeValue || current == lxIdleAttribute) {
-         SNode terminalNode;
-         if (current == lxIdleAttribute) {
-            terminalNode = current.findChild(lxAttributeValue).firstChild(lxObjectMask);
-         }
-         else terminalNode = current.firstChild(lxObjectMask);
-
-         ref_t attr = mapAttribute(terminalNode);
-         if (attr == INVALID_REF) {
-            attr = -1 - mapParameter(terminalNode);
-         }
-         else if (attr == 0) {
-            if (classMode) {
-               // if it is not a declared type - check if it is a class
-               attr = mapTerminal(terminalNode, true);
-
-               if (attr == 0)
-                  //HOTFIX : declare a new type
-                  attr = mapTerminal(terminalNode, false);
-            }
-
-            if (!attr)
-               raiseError(errInvalidHint, current);
-         }
-         else if (isPrimitiveRef(attr)) {
-            if (attr == V_TYPETEMPL) {
-               // HOTFIX : recognize type template
-               attr = mapTypeTemplate(current);
-            }
-         }
-
-         this->attributes.add(this->attributes.Count() + 1, attr);
-      }
-      //else if (/*current == lxExpression || */current == lxObject) {
-      //   //SNode item = current == lxObject ? current : current.findChild(lxObject);
-      //   SNode terminal = current.findChild(lxIdentifier, lxPrivate);
-      //   if (terminal != lxNone && terminal.nextNode() == lxNone) {
-      //      ref_t attr = 0;
-      //      if (classMode) {
-      //         attr = mapTypeTerminal(terminal, true);
-      //      }
-      //      //else attr = mapAttribute(item);
-      //      if (attr == 0) {
-      //         //HOTFIX : support newly declared classes
-      //         attr = mapTerminal(terminal, false);
-
-      //         moduleScope->validateReference(terminal, attr);
-      //      }
-
-      //      this->attributes.add(this->attributes.Count() + 1, attr);
-      //   }
-      //   else raiseError(errInvalidHint, current);
-      //}
-      else if (current == lxClassRefAttr) {
-         ref_t attr = attr = mapTerminal(current, true);
-         if (attr == 0) {
-            raiseError(errInvalidHint, current);
-         }
-
-         this->attributes.add(this->attributes.Count() + 1, attr);
-      }
-      else if (current == lxNameAttr && type == ttFieldTemplate) {
-         this->attributes.add(this->attributes.Count() + 1, INVALID_REF);
-
-         identNode = current;
-
-         break;
-      }
-      else if (current == lxTemplateAttribute) {
-         ref_t subject = parent->attributes.get(current.argument);
-
-         this->attributes.add(this->attributes.Count() + 1, subject);
-      }
-
-      current = current.nextNode();
-   }
-}
-
 void DerivationReader::DerivationScope :: loadParameters(SNode node)
 {
    SNode current = node.firstChild();
@@ -700,6 +617,94 @@ DerivationReader :: DerivationReader(SyntaxTree& tree)
    ByteCodeCompiler::loadVerbs(_verbs);
 }
 
+void DerivationReader :: loadAttributeValues(SNode attributes, DerivationScope& scope, SubjectMap* parentAttributes, bool classMode)
+{
+   SNode current = attributes;
+   // load template parameters
+   while (current != lxNone) {
+      if (current == lxAttributeValue || current == lxIdleAttribute) {
+         SNode terminalNode;
+         if (current == lxIdleAttribute) {
+            terminalNode = current.findChild(lxAttributeValue).firstChild(lxObjectMask);
+         }
+         else terminalNode = current.firstChild(lxObjectMask);
+
+         ref_t attr = scope.mapAttribute(terminalNode);
+         if (attr == INVALID_REF) {
+            attr = -1 - scope.mapParameter(terminalNode);
+         }
+         else if (attr == 0) {
+            if (classMode) {
+               // if it is not a declared type - check if it is a class
+               attr = scope.mapTerminal(terminalNode, true);
+
+               if (attr == 0)
+                  //HOTFIX : declare a new type
+                  attr = scope.mapTerminal(terminalNode, false);
+            }
+
+            if (!attr)
+               scope.raiseError(errInvalidHint, current);
+         }
+         else if (isPrimitiveRef(attr)) {
+            if (attr == V_TYPETEMPL) {
+               // HOTFIX : recognize type template
+               attr = scope.mapTypeTemplate(current);
+            }
+         }
+
+         scope.attributes.add(scope.attributes.Count() + 1, attr);
+      }
+      //else if (/*current == lxExpression || */current == lxObject) {
+      //   //SNode item = current == lxObject ? current : current.findChild(lxObject);
+      //   SNode terminal = current.findChild(lxIdentifier, lxPrivate);
+      //   if (terminal != lxNone && terminal.nextNode() == lxNone) {
+      //      ref_t attr = 0;
+      //      if (classMode) {
+      //         attr = mapTypeTerminal(terminal, true);
+      //      }
+      //      //else attr = mapAttribute(item);
+      //      if (attr == 0) {
+      //         //HOTFIX : support newly declared classes
+      //         attr = mapTerminal(terminal, false);
+
+      //         moduleScope->validateReference(terminal, attr);
+      //      }
+
+      //      this->attributes.add(this->attributes.Count() + 1, attr);
+      //   }
+      //   else raiseError(errInvalidHint, current);
+      //}
+      else if (current == lxClassRefAttr) {
+         ref_t attr = attr = scope.mapTerminal(current, true);
+         if (attr == 0) {
+            scope.raiseError(errInvalidHint, current);
+         }
+
+         scope.attributes.add(scope.attributes.Count() + 1, attr);
+      }
+      else if (current == lxNameAttr && scope.type == DerivationScope::ttFieldTemplate) {
+         scope.attributes.add(scope.attributes.Count() + 1, INVALID_REF);
+
+         scope.identNode = current;
+
+         break;
+      }
+      else if (current == lxTemplateAttribute) {
+         ref_t subject = parentAttributes->get(current.argument);
+
+         scope.attributes.add(scope.attributes.Count() + 1, subject);
+      }
+      else if (current == lxTemplateParam && current.argument == INVALID_REF) {
+         ref_t templateRef = generateTemplate(current, scope, parentAttributes);
+
+         scope.attributes.add(scope.attributes.Count() + 1, templateRef);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 bool DerivationReader :: isVerbAttribute(SNode attribute)
 {
    if (attribute != lxAttribute)
@@ -739,6 +744,21 @@ void DerivationReader :: copyParamAttribute(SyntaxWriter& writer, SNode current,
    SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
    writer.closeNode();
 
+}
+
+ref_t DerivationReader :: generateTemplate(SNode current, DerivationScope& scope, SubjectMap* parentAttributes)
+{
+   ref_t attrRef = scope.moduleScope->attributes.get(current.findChild(lxTemplate).identifier());
+
+   DerivationScope templateScope(&scope, attrRef);
+   loadAttributeValues(current.firstChild(), templateScope, parentAttributes/*, true*/);
+
+   SyntaxTree buffer;
+   SyntaxWriter bufferWriter(buffer);
+   generateTemplate(bufferWriter, templateScope, true);
+   copyAutogeneratedClass(buffer, *scope.autogeneratedTree);
+
+   return templateScope.reference;
 }
 
 void DerivationReader :: copyTreeNode(SyntaxWriter& writer, SNode current, DerivationScope& scope)
@@ -785,17 +805,9 @@ void DerivationReader :: copyTreeNode(SyntaxWriter& writer, SNode current, Deriv
          }
       }
       else if (current.argument == INVALID_REF) {
-         ref_t attrRef = scope.moduleScope->attributes.get(current.findChild(lxTemplate).identifier());
+         ref_t templateRef = generateTemplate(current, scope, &scope.attributes);
 
-         DerivationScope templateScope(&scope, attrRef);
-         templateScope.loadAttributeValues(current.firstChild()/*, true*/);
-
-         SyntaxTree buffer;
-         SyntaxWriter bufferWriter(buffer);
-         generateTemplate(bufferWriter, templateScope, true);
-         copyAutogeneratedClass(buffer, *scope.autogeneratedTree);
-
-         writer.newNode(lxReference, scope.moduleScope->module->resolveReference(templateScope.reference));
+         writer.newNode(lxReference, scope.moduleScope->module->resolveReference(templateRef));
          copyIdentifier(writer, current.findChild(lxIdentifier));
          writer.closeNode();
       }
@@ -846,7 +858,7 @@ void DerivationReader :: copyTreeNode(SyntaxWriter& writer, SNode current, Deriv
          ref_t attrRef = scope.moduleScope->attributes.get(current.findChild(lxTemplate).identifier());
 
          DerivationScope templateScope(&scope, attrRef);
-         templateScope.loadAttributeValues(current.firstChild()/*, true*/);
+         loadAttributeValues(current.firstChild(), templateScope, &scope.attributes/*, true*/);
          
          SyntaxTree buffer;
          SyntaxWriter bufferWriter(buffer);
@@ -884,7 +896,7 @@ void DerivationReader :: copyFieldTree(SyntaxWriter& writer, SNode node, Derivat
          ref_t attrRef = scope.moduleScope->attributes.get(current.findChild(lxTemplate).identifier());
 
          DerivationScope templateScope(&scope, attrRef);
-         templateScope.loadAttributeValues(current.firstChild()/*, true*/);
+         loadAttributeValues(current.firstChild(), templateScope, &scope.attributes/*, true*/);
 
          SyntaxTree tempBuffer;
          SyntaxWriter bufferWriter(tempBuffer);
@@ -952,9 +964,9 @@ void DerivationReader :: copyMethodTree(SyntaxWriter& writer, SNode node, Deriva
    writer.closeNode();
 }
 
-void DerivationReader :: copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues)
+void DerivationReader :: copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, SubjectMap* parentAttributes)
 {
-   scope.loadAttributeValues(attributeValues, true);
+   loadAttributeValues(attributeValues, scope, parentAttributes, true);
 
    if (generateTemplate(writer, scope, false)) {
       //if (/*variableMode && */scope.reference != 0)
@@ -965,7 +977,7 @@ void DerivationReader :: copyTemplateTree(SyntaxWriter& writer, SNode node, Deri
 
 void DerivationReader :: copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
-   SNode current = node.firstChild();
+   SNode current = node;
    // validare template parameters
    while (current != lxNone) {
       //if (/*current == lxExpression || */current == lxObject) {
@@ -991,14 +1003,47 @@ void DerivationReader :: copyTemplateAttributeTree(SyntaxWriter& writer, SNode n
       //      writer.closeNode();
       //   }
       //}
-      /*else */if (current == lxAttributeValue) {
-         int paramIndex = 0;
-         ref_t attrRef = scope.mapAttribute(current.findChild(lxPrivate, lxIdentifier), paramIndex);
-         if (attrRef == INVALID_REF) {
-            writer.appendNode(lxTemplateAttribute, paramIndex);
+      /*else */if (current == lxAttributeValue || current == lxIdleAttribute) {
+         SNode attrNode;
+         if (current == lxIdleAttribute) {
+            attrNode = current.findChild(lxAttributeValue);
          }
-         else if (attrRef != 0) {
-            writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(attrRef));
+         else attrNode = current;
+
+         if (attrNode.existChild(lxAttributeValue)) {
+            generateAttributeTemplate(writer, attrNode, scope, true);
+         }
+         else {
+            int paramIndex = 0;
+            ref_t attrRef = scope.mapAttribute(attrNode.findChild(lxPrivate, lxIdentifier), paramIndex);
+            if (attrRef == INVALID_REF) {
+               writer.appendNode(lxTemplateAttribute, paramIndex);
+            }
+            else if (attrRef != 0) {
+               writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(attrRef));
+               copyIdentifier(writer, attrNode.firstChild(lxTerminalMask));
+               writer.closeNode();
+            }
+         }
+      }
+      else if (current == lxClassRefAttr) {
+         if (current.existChild(lxTemplateAttribute)) {
+            writer.newNode(lxTemplateParam, INVALID_REF);
+            writer.appendNode(lxTemplate, current.identifier());
+            SNode attr = current.firstChild();
+            while (attr != lxNone) {
+               if (attr == lxTemplateAttribute) {
+                  if ((int)attr.argument < 0) {
+                     writer.appendNode(lxTemplateAttribute, -((int)attr.argument + 1));
+                  }
+                  else writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(attr.argument));
+               }
+               attr = attr.nextNode();
+            }
+            writer.closeNode();
+         }
+         else {
+            writer.newNode(lxClassRefAttr, current.identifier());
             copyIdentifier(writer, current.firstChild(lxTerminalMask));
             writer.closeNode();
          }
@@ -1269,7 +1314,7 @@ inline bool isTemplateBracket(SNode current)
    return false;
 }
 
-ref_t DerivationReader :: mapNewTemplate(SNode node, DerivationScope& scope, bool& arrayMode, int& paramIndex, bool templateMode)
+ref_t DerivationReader :: mapNewTemplate(SNode node, DerivationScope& scope, bool& arrayMode, int& paramIndex, bool templateMode, List<int>* templateAttributes)
 {
    IdentifierString attrName;
 
@@ -1312,6 +1357,18 @@ ref_t DerivationReader :: mapNewTemplate(SNode node, DerivationScope& scope, boo
       scope.raiseError(errInvalidHint, node);
 
    if (templateMode) {
+      if (classMode && templateAttributes != NULL) {
+         DerivationScope templateScope(&scope, attrRef);
+         loadAttributeValues(operatorNode, templateScope, &scope.attributes, true);
+
+         auto sub_attr = templateScope.attributes.start();
+         while (!sub_attr.Eof()) {
+            templateAttributes->add(*sub_attr);
+
+            sub_attr++;
+         }
+      }
+
       return attrRef;
    }
    else if (attrRef == V_TYPETEMPL) {
@@ -1319,7 +1376,7 @@ ref_t DerivationReader :: mapNewTemplate(SNode node, DerivationScope& scope, boo
    }
    else if (classMode) {
       DerivationScope templateScope(&scope, attrRef);
-      templateScope.loadAttributeValues(operatorNode, true);
+      loadAttributeValues(operatorNode, templateScope, &scope.attributes, true);
 
       SyntaxTree buffer;
       SyntaxWriter bufferWriter(buffer);
@@ -1338,8 +1395,10 @@ ref_t DerivationReader :: mapNewTemplate(SNode node, DerivationScope& scope, boo
 
 void DerivationReader :: generateTemplateParameters(SNode& current, DerivationScope& scope, bool templateMode)
 {
+   SNode lastNode;
+
    bool starting = true;
-   while (current != lxNone) {
+   while (true) {
       if (current == lxOperator) {
          if (!current.existChild(lxAngleOperator)) {
             if (starting) {
@@ -1359,8 +1418,11 @@ void DerivationReader :: generateTemplateParameters(SNode& current, DerivationSc
       }
       else scope.raiseError(errInvalidSyntax, current);
 
+      lastNode = current;
       current = current.nextNode();
-   }
+      if (current == lxNone)
+         scope.raiseError(errInvalidSyntax, lastNode);
+   }   
 }
 
 void DerivationReader :: generateSubTemplate(SNode& node, DerivationScope& scope, bool templateMode)
@@ -1372,18 +1434,26 @@ void DerivationReader :: generateSubTemplate(SNode& node, DerivationScope& scope
 
    bool invalid = false;
    int paramIndex = 0;
-   ref_t paramRef = mapNewTemplate(node, scope, invalid, paramIndex, templateMode);
+   List<int> templateAttributes;
+   ref_t paramRef = mapNewTemplate(node, scope, invalid, paramIndex, templateMode, &templateAttributes);
    if (invalid)
       scope.raiseError(errInvalidSyntax, node);
 
-   node.set(lxClassRefAttr, scope.moduleScope->module->resolveReference(paramRef));
+   node = lxIdle;
    do {
       node = node.nextNode();
       node = lxIdle;
-   }
-   while (node != current);
+   } while (node != current);
 
-   node = current;
+   if (templateAttributes.Count() > 0) {
+      ident_t attrName = retrieveKey(scope.moduleScope->attributes.start(), paramRef, DEFAULT_STR);
+
+      node.set(lxClassRefAttr, attrName);
+      for (auto it = templateAttributes.start(); !it.Eof(); it++) {
+         node.appendNode(lxTemplateAttribute, *it);
+      }
+   }
+   else node.set(lxClassRefAttr, scope.moduleScope->module->resolveReference(paramRef));
 }
 
 void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope, bool templateMode)
@@ -1398,7 +1468,7 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode& node, 
 
    bool arrayMode = false;
    int paramIndex = 0;
-   ref_t typeRef = mapNewTemplate(node, scope, arrayMode, paramIndex, templateMode);
+   ref_t typeRef = mapNewTemplate(node, scope, arrayMode, paramIndex, templateMode, NULL);
 
    if (templateMode) {
       // template in template should be copied "as is" (resolving all references)
@@ -1721,7 +1791,7 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
          case lxOperator:
             expressionExpected = false;
             copyOperator(writer, current, scope);
-            generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE | EXPRESSION_IMPLICIT_MODE);
+            generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE | EXPRESSION_IMPLICIT_MODE | EXPRESSION_OBJECT_REQUIRED);
             writer.insert(lxExpression);
             writer.closeNode();
             break;
@@ -1761,6 +1831,9 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
       writer.insert(lxExpression);
       writer.closeNode();
    }
+
+   if (first && test(mode, EXPRESSION_OBJECT_REQUIRED))
+      scope.raiseError(errInvalidSyntax, node);
 
    writer.removeBookmark();
 }
@@ -1998,6 +2071,8 @@ void DerivationReader :: generateVariableTree(SyntaxWriter& writer, SNode node, 
    if (attributes == lxAttribute && attributes.argument == INVALID_REF) {
       ident = ident.findChild(lxObject);
    }
+   if (ident == lxNone)
+      scope.raiseError(errInvalidSyntax, node);
 
    generateAttributes(writer, SNode(), scope, current, scope.reference == INVALID_REF);
 
@@ -2101,9 +2176,9 @@ void DerivationReader :: generateAttributeTemplate(SyntaxWriter& writer, SNode n
       writer.appendNode(lxTemplate, attrName.c_str());
 
       if (node.argument == INVALID_REF) {
-         copyTemplateAttributeTree(writer, node.nextNode(), scope);
+         copyTemplateAttributeTree(writer, attr, scope);
       }
-      else copyTemplateAttributeTree(writer, node, scope);
+      else copyTemplateAttributeTree(writer, node.firstChild(), scope);
       copyIdentifier(writer, attr.findChild(lxIdentifier, lxPrivate));
 
       writer.closeNode();
@@ -2115,7 +2190,7 @@ void DerivationReader :: generateAttributeTemplate(SyntaxWriter& writer, SNode n
    }
    else {
       DerivationScope templateScope(&scope, attrRef);
-      templateScope.loadAttributeValues(attr, true);
+      loadAttributeValues(attr, templateScope, &scope.attributes, true);
 
       SyntaxTree buffer;
       SyntaxWriter bufferWriter(buffer);
@@ -2144,7 +2219,7 @@ void DerivationReader :: generateAttributeTemplate(SyntaxWriter& writer, SNode n
    writer.closeNode();
 }
 
-bool DerivationReader :: generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope)
+bool DerivationReader :: generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope, SubjectMap* parentAttributes)
 {
    _Memory* body = scope.loadTemplateTree();
    if (body == NULL)
@@ -2152,7 +2227,7 @@ bool DerivationReader :: generateTemplateCode(SyntaxWriter& writer, DerivationSc
 
    SyntaxTree templateTree(body);
 
-   scope.loadAttributeValues(templateTree.readRoot()/*, false*/);
+   loadAttributeValues(templateTree.readRoot(), scope, parentAttributes/*, false*/);
 
    SNode current = templateTree.readRoot().findChild(lxCode).firstChild();
    while (current != lxNone) {
@@ -2198,7 +2273,7 @@ void DerivationReader :: generateCodeTemplateTree(SyntaxWriter& writer, SNode no
 
          templateScope.type = DerivationScope::ttCodeTemplate;
 
-         if (!generateTemplateCode(writer, templateScope))
+         if (!generateTemplateCode(writer, templateScope, &scope.attributes))
             scope.raiseError(errInvalidHint, node);
 
          return;
@@ -2311,7 +2386,7 @@ bool DerivationReader :: generateFieldTemplateTree(SyntaxWriter& writer, SNode n
    templateScope.type = DerivationScope::ttFieldTemplate;
    templateScope.loadFields(node.findChild(lxBaseParent));
 
-   copyTemplateTree(writer, node, templateScope, attributes);
+   copyTemplateTree(writer, node, templateScope, attributes, &scope.attributes);
 
    // copy class initializers
    SyntaxWriter initFieldWriter(buffer);
@@ -2457,7 +2532,7 @@ bool DerivationReader :: declareType(SyntaxWriter& writer, SNode node, Derivatio
       if (templateMode) {
          DerivationScope templateScope(&scope, 0);
          templateScope.templateRef = templateScope.mapClassTemplate(expr);
-         templateScope.loadAttributeValues(paramNode, classMode);
+         loadAttributeValues(paramNode, templateScope, NULL, classMode);
 
          if (generateTemplate(writer, templateScope, true/*, true*/)) {
             classRef = templateScope.reference;
@@ -2820,7 +2895,7 @@ void DerivationReader :: generateClassTree(SyntaxWriter& writer, SNode node, Der
             ref_t attrRef = scope.mapTemplate(current);
 
             DerivationScope templateScope(&scope, attrRef);
-            copyTemplateTree(writer, current, templateScope, current.firstChild());
+            copyTemplateTree(writer, current, templateScope, current.firstChild(), &scope.attributes);
          }
          else {
             writer.newNode(lxBaseParent);

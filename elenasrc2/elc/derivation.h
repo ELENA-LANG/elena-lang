@@ -15,6 +15,7 @@
 #define EXPRESSION_IMPLICIT_MODE   1
 #define EXPRESSION_MESSAGE_MODE    2
 #define EXPRESSION_OPERATOR_MODE   4
+#define EXPRESSION_OBJECT_REQUIRED 8
 
 namespace _ELENA_
 {
@@ -86,7 +87,6 @@ class DerivationReader : public _DerivationReader
          return !(isTypeAttribute(terminal) || isAttribute(terminal));
       }
 
-      void loadAttributeValues(SNode node, bool classMode = false);
       void loadParameters(SNode node);
       void loadFields(SNode node);
 
@@ -165,22 +165,26 @@ class DerivationReader : public _DerivationReader
    SNode       _root;
    MessageMap  _verbs;                            // list of verbs
 
+   void loadAttributeValues(SNode node, DerivationScope& scope, SubjectMap* parentAttributes, bool classMode = false);
+
    void copyParamAttribute(SyntaxWriter& writer, SNode current, DerivationScope& scope);
    void copyFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyFieldInitTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyTreeNode(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-   void copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues);
+   void copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, SubjectMap* parentAttributes);
    void copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyOperator(SyntaxWriter& writer, SNode& node, DerivationScope& scope);
 
    bool generateTemplate(SyntaxWriter& writer, DerivationScope& scope, bool declaringClass);
 
+   ref_t generateTemplate(SNode current, DerivationScope& scope, SubjectMap* parentAttributes);
+
    ref_t mapAttributeType(SNode attr, DerivationScope& scope);
    ref_t mapAttribute(SNode terminal, DerivationScope& scope, bool& templateAttr);
 
-   ref_t mapNewTemplate(SNode node, DerivationScope& scope, bool& arrayMode, int& paramIndex, bool templateMode);
+   ref_t mapNewTemplate(SNode node, DerivationScope& scope, bool& arrayMode, int& paramIndex, bool templateMode, List<int>* templateAttributes);
 
    void generateScopeMembers(SNode& node, DerivationScope& scope, int mode);
 
@@ -192,7 +196,7 @@ class DerivationReader : public _DerivationReader
    void generateParamRef(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
 
    void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
-   bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope);
+   bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope, SubjectMap* parentAttributes);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
