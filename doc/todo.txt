@@ -4,6 +4,7 @@ In development:
 
                             
               dev - general implementation
+                 * #395 : array<type> template - support explicit constructor 
                  * #235 : generic map
 
               exp - live programming

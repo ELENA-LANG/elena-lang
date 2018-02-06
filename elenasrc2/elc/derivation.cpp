@@ -1796,6 +1796,7 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
             writer.closeNode();
             break;
          case lxExpression:
+            first = false;
             generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
             break;
          case lxAssigning:
@@ -1804,6 +1805,7 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
             expressionExpected = true;
             break;
          case lxCode:
+            first = false;
             generateCodeExpression(writer, current, scope);
             break;
          case lxExtension:
