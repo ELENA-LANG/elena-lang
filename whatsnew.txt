@@ -30,6 +30,7 @@
 [+] new class : system'io'MemoryStream
 [-] system'dynamic'tapeOp extension
 [+] tuple<> templates
+[+] #235 : generic map
 
 ***************************************************************
                              What's New in 3.2.1

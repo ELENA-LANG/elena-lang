@@ -848,9 +848,14 @@ void DerivationReader :: copyTreeNode(SyntaxWriter& writer, SNode current, Deriv
    else if (current == lxTemplateBoxing) {
       writer.newNode(lxBoxing);
       if (current.existChild(lxSize)) {
-         SNode attrNode = current.findChild(lxTemplateAttribute);
+         SNode attrNode = current.findChild(lxTemplateAttribute, lxClassRefAttr);
          if (attrNode == lxTemplateAttribute) {
             copyParamAttribute(writer, attrNode, scope);
+            writer.appendNode(lxOperator, -1);
+         }
+         else if (attrNode == lxClassRefAttr) {
+            writer.newNode(lxClassRefAttr, attrNode.identifier());
+            writer.closeNode();
             writer.appendNode(lxOperator, -1);
          }
       }
@@ -1479,6 +1484,7 @@ void DerivationReader :: generateNewTemplate(SyntaxWriter& writer, SNode& node, 
          if (paramIndex) {
             writer.appendNode(lxTemplateAttribute, paramIndex);
          }
+         else writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(typeRef));
       }
       else {
          ident_t attrName = retrieveKey(scope.moduleScope->attributes.start(), typeRef, DEFAULT_STR);
@@ -2836,7 +2842,7 @@ bool DerivationReader :: generateMethodScope(SNode node, DerivationScope& scope,
             if (current == lxAttribute && (scope.isTypeAttribute(lastAttr.findChild(lxIdentifier, lxPrivate))
                || scope.isSubject(current.findChild(lxIdentifier, lxPrivate))))
             {
-               if (!scope.isAttribute(current.findChild(lxIdentifier, lxPrivate))) {
+               if (!scope.isAttribute(current.findChild(lxIdentifier, lxPrivate)) && !current.existChild(lxAttributeValue)) {
                   lastAttr = lxMessage;
                   lastAttr = current;
 

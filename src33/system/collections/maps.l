@@ -8,32 +8,37 @@ template<BaseEnumerable> map :: key_type, value_type
     
 //    value_type     theDefault.
 
-    /// Creates a dictionary
-    implicit
-        <= new int:32 int:32/* object:$nil*/.
-
-    /// Creates a dictionary
-    implicit int:aCapacity int:aHashLength// object:aDefault
+    sealed $init(int capacity, int hashLength)
     [
         int size := 32.
-        while (size < aHashLength)
+        while (size < hashLength)
         [
             size := size << 1.
         ].
-        
+
         size := size - 1.
         theHashMask := IntNumber new int:size.
         
-        theHashTable := array<intarray>(aHashLength).
-        theList := list<tuple<key_type, value_type>>(aCapacity).
+        theHashTable := intarray<>(hashLength).
+        theList := list<tuple<key_type, value_type>>(capacity).
         
 //        theDefault := aDefault.
+    ]
+
+    implicit
+    [
+        $self $init(32,32).
+    ]
+
+    implicit int:capacity int:hashLength// object:aDefault
+    [
+        $self $init(capacity,hashLength).
     ]
     
     sealed tuple<key_type, value_type> $retrieve(int index, key_type key)
     [
         intarray backet := theHashTable[index].        
-        if ($nil == item)
+        if ($nil == backet)
         [
             backet := int<>(5).
             backet[0] := 1.
@@ -47,7 +52,7 @@ template<BaseEnumerable> map :: key_type, value_type
         while (i < len)
         [
             int j := 0.
-            aBacket read int:i vint:j.
+            backet read int:i vint:j.
             
             tuple<key_type, value_type> item := theList[j].
             
@@ -66,7 +71,7 @@ template<BaseEnumerable> map :: key_type, value_type
         int capacity := backet length.
         if (capacity == len)
         [
-            intarray new_backet := IntArray new int:(aCapacity + 4).
+            intarray new_backet := IntArray new int:(capacity + 4).
             new_backet write int:0 int:capacity intarray:backet.
 
             backet := new_backet.
@@ -81,7 +86,6 @@ template<BaseEnumerable> map :: key_type, value_type
         ^ new_item.                
     ]
     
-
     setAt key_type:aKey value_type:anObject
     [
         int code := 0.
@@ -105,10 +109,10 @@ template<BaseEnumerable> map :: key_type, value_type
         
         ^ item item2.
     ]
-//
-//    /// Returns a dictionary enumerator
-//    enumerator => theList.
-//    
+
+    /// Returns a dictionary enumerator
+    enumerator => theList.
+    
 //    array_list
 //        = theList clone.
 //
@@ -130,7 +134,7 @@ template<BaseEnumerable> map :: key_type, value_type
     
     clear
     [
-        theHashTable := array<intarray>(theHashTable length).
+        theHashTable := intarray<>(theHashTable length).
         theList clear.
     ]
 }

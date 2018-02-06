@@ -6176,6 +6176,12 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
+      else if (current == lxReference) {
+         if (current.nextNode().findNext(lxTerminalMask) != lxNone) {
+            // HOTFIX : to correctly recognize the method returning type
+            current = lxClassRefAttr;
+         }
+      }
 
       current = current.nextNode();
    }
