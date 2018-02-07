@@ -17,6 +17,10 @@ Pipeline:
                  * #269 : short-circuit boolean operation
                  * compile <>, ><, ...
 
+              xdev - general optimization  
+                 * #371 : Pi sample optimization
+                 * pusha  new bcopya popa => bcopya new bswap nop??
+
               xdev - samples
                  * test chat sample
                  * test rosetta socket sample
@@ -465,7 +469,6 @@ Pipeline:
                        * optimize thread_wait
                        * test raising exception inside lock statement
 
-                       * review pi performance
                        * review warnings
 
                        * #229 : unboxing optimization

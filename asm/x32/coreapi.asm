@@ -1252,13 +1252,13 @@ procedure coreapi'strtochar
   mov  dl, byte ptr [eax + ebx]
   cmp  edx, 00000080h
   jl   short lab1
-  cmp  edx, 000000C2h
+  cmp  edx, 000000C0h
   jl   short err
   cmp  edx, 000000E0h
   jl   short lab2
   cmp  edx, 000000F0h
   jl   short lab3
-  cmp  edx, 000000F5h
+  cmp  edx, 000000F8h
   jl   lab4
 
 err:
@@ -1309,7 +1309,7 @@ lab3_1:
   
 lab4:
   mov  ecx, edx
-  mov  bl, byte ptr [eax + ebx + 1]
+  mov  dl, byte ptr [eax + ebx + 1]
   mov  esi, edx
   and  esi, 0C0h
   cmp  esi, 00000080h
@@ -3519,14 +3519,17 @@ labNext:
   add  eax, 1
   cmp  ebx, 00000080h
   jl   lab1
-  cmp  ebx, 000000C2h
+  cmp  ebx, 000000C0h
   jl   err2
   cmp  ebx, 000000E0h
   jl   short lab2
   cmp  ebx, 000000F0h
   jl   lab3
-  cmp  ebx, 000000F5h
+  cmp  ebx, 000000F8h
   jl   lab4
+  nop
+  nop
+  jmp err2
 
 lab2:  
   sub  ecx, 2

@@ -2127,35 +2127,35 @@ sealed struct RealNumber :: BaseNumber
         = $self less real:(RealNumber new long:anOperand).
 
     /// Returns the sum of numbers
-    stacksafe add int:anOperand
+    stacksafe real add int:anOperand
         = $self add real:(RealNumber new int:anOperand).
 
     /// Returns the sum of numbers
-    stacksafe add byte:anOperand
+    stacksafe real add byte:anOperand
         = $self add real:(RealNumber new byte:anOperand).
 
     /// Returns the sum of numbers
-    stacksafe add short:anOperand
+    stacksafe real add short:anOperand
         = $self add real:(RealNumber new short:anOperand).
 
     /// Returns the sum of numbers
-    stacksafe add long:anOperand
+    stacksafe real add long:anOperand
         = $self add real:(RealNumber new long:anOperand).
 
     /// Returns the difference of numbers
-    stacksafe subtract int:anOperand
+    stacksafe real subtract int:anOperand
         = $self subtract real:(RealNumber new int:anOperand).
 
     /// Returns the difference of numbers
-    stacksafe subtract byte:anOperand
+    stacksafe real subtract byte:anOperand
         = $self subtract real:(RealNumber new byte:anOperand).
 
     /// Returns the difference of numbers
-    stacksafe subtract short:anOperand
+    stacksafe real subtract short:anOperand
         = $self subtract real:(RealNumber new short:anOperand).
 
     /// Returns the difference of numbers
-    stacksafe subtract long:anOperand
+    stacksafe real subtract long:anOperand
         = $self subtract real:(RealNumber new long:anOperand).
 
     /// Returns the product of numbers
@@ -2167,19 +2167,19 @@ sealed struct RealNumber :: BaseNumber
     ]
 
     /// Returns the product of numbers
-    stacksafe multiply byte:anOperand
+    stacksafe real multiply byte:anOperand
         = $self multiply real:(RealNumber new byte:anOperand).
 
     /// Returns the product of numbers
-    stacksafe multiply short:anOperand
+    stacksafe real multiply short:anOperand
         = $self multiply real:(RealNumber new short:anOperand).
 
     /// Returns the product of numbers
-    stacksafe multiply long:anOperand
+    stacksafe real multiply long:anOperand
         = $self multiply real:(RealNumber new long:anOperand).
 
     /// Returns the result of the division
-    stacksafe divide int:anOperand
+    stacksafe real divide int:anOperand
     [
         real n := anOperand.
         
@@ -2187,15 +2187,15 @@ sealed struct RealNumber :: BaseNumber
     ]
 
     /// Returns the result of the division
-    stacksafe divide byte:anOperand
+    stacksafe real divide byte:anOperand
         = $self divide real:(RealNumber new byte:anOperand).
         
     /// Returns the result of the division
-    stacksafe divide short:anOperand
+    stacksafe real divide short:anOperand
         = $self divide real:(RealNumber new short:anOperand).
 
     /// Returns the result of the division
-    stacksafe divide long:anOperand
+    stacksafe real divide long:anOperand
         = $self divide real:(RealNumber new long:anOperand).
 
     /// Returns the literal presentation
