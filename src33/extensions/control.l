@@ -11,6 +11,15 @@ int extension intLoopOp
             [ ^ aFunction rewind int:aStart int:anEnd int:1 ]
     ]
 
+    stacksafe runIntLoop int:anEnd int:aStep nfunc:aFunction
+    [
+       int aStart := self.
+
+       if (aStep > 0)
+            [ ^ aFunction run int:aStart int:anEnd int:aStep ];
+            [ ^ aFunction rewind int:aStart int:anEnd int:aStep ]
+    ]
+
     stacksafe to(int anEnd) do(nfunc aFunction)
         = self~intLoopOp runIntLoop int:anEnd nfunc:aFunction.
             
@@ -28,6 +37,25 @@ int extension intLoopOp
         
     multi till:anEnd do:anAction
         = self~intLoopOp runIntLoop int(anEnd int - 1) nfunc(:n)<int>[ anAction eval:n ].
+                
+    stacksafe to(int anEnd) by(int aStep) do(nfunc aFunction)
+        = self~intLoopOp runIntLoop int:anEnd int:aStep nfunc:aFunction.
+            
+    stacksafe till(int anEnd) by(int aStep) do(nfunc aFunction)
+        = self~intLoopOp runIntLoop int(anEnd-1) int:aStep nfunc:aFunction.
+            
+    stacksafe to(int anEnd) by(int aStep) do(func1 aFunction)
+        = self~intLoopOp runIntLoop int:anEnd int:aStep nfunc(:n)<int>[ aFunction eval:n ].
+            
+    stacksafe to(int anEnd) by(int aStep) do(ext_mssg anExtension)
+        = self~intLoopOp runIntLoop int:anEnd int:aStep nfunc(:n)<int>[ n~anExtension get ].
+            
+    multi to:anEnd by:aStep do:anAction
+        = self~intLoopOp runIntLoop int(anEnd int) int:aStep nfunc(:n)<int>[ anAction eval:n ].
+        
+    multi till:anEnd by:aStep do:anAction
+        = self~intLoopOp runIntLoop int(anEnd int - 1) int:aStep nfunc(:n)<int>[ anAction eval:n ].
+        
 }
 
 extension forLoopOp

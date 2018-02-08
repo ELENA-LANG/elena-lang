@@ -4,7 +4,7 @@ In development:
 
                             
               exp - live programming
-                 * test dynamic code snippets from reddit
+                 * Dynamic Programming in ELENA : call your code from IDE
                  * test dynamic samples
                  * class to expression tree
 
