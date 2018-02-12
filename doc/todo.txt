@@ -14,7 +14,9 @@ In development:
 Pipeline:
 ------                                                                                         
               dev - general implementation
-                 * #269 : short-circuit boolean operation
+                 * implement AKS test for primes
+                 * #269 : short-circuit boolean operation (modify AKS test for primes)
+                 * #401 : operator with array  (modify AKS test for primes)
                  * compile <>, ><, ...
 
               xdev - general optimization  

@@ -1273,7 +1273,7 @@ ObjectInfo Compiler::ResendScope :: mapTerminal(ident_t identifier)
 // --- Compiler::InlineClassScope ---
 
 Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
-   : ClassScope(owner->moduleScope, reference), outers(Outer()), outerFieldTypes(ClassInfo::FieldInfo(0, 0))
+   : ClassScope(owner->moduleScope, reference), outers(Outer())//, outerFieldTypes(ClassInfo::FieldInfo(0, 0))
 {
    this->returningMode = false;
    this->parent = owner;
@@ -1371,22 +1371,22 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
          if (outer.outerObject.kind == okField || outer.outerObject.kind == okStaticField) {
             Outer owner = mapParent();
 
-            // save the outer field type if provided
-            if (outer.outerObject.extraparam != 0) {
-               outerFieldTypes.add(outer.outerObject.param, ClassInfo::FieldInfo(outer.outerObject.extraparam, /*outer.outerObject.type*/0), true);
-            }
+            //// save the outer field type if provided
+            //if (outer.outerObject.extraparam != 0) {
+            //   outerFieldTypes.add(outer.outerObject.param, ClassInfo::FieldInfo(outer.outerObject.extraparam, /*outer.outerObject.type*/0), true);
+            //}
 
             // map as an outer field (reference to outer object and outer object field index)
             if (outer.outerObject.kind == okOuterField) {
-               return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam);
+               return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
             }
             else if (outer.outerObject.kind == okOuterStaticField) {
-               return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.extraparam);
+               return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
             }
             else if (outer.outerObject.kind == okStaticField) {
-               return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.param);
+               return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
             }
-            else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param);
+            else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
          }
          // map if the object is outer one
          else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal
@@ -1706,6 +1706,8 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
       case okStaticConstantField:
          return object.extraparam;
       case okClassStaticField:
+      case okOuterField:
+      case okOuterStaticField:
          return object.element;
       default:
          if (object.kind == okObject) {

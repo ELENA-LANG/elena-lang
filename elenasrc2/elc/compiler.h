@@ -709,7 +709,7 @@ private:
 
       bool                    returningMode;
       Map<ident_t, Outer>     outers;
-      ClassInfo::FieldTypeMap outerFieldTypes;
+      //ClassInfo::FieldTypeMap outerFieldTypes;
 
       Outer mapSelf();
       Outer mapOwner();
