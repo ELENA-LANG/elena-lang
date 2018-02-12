@@ -143,6 +143,7 @@ public:
       okOuter,                        // param - field offset, extraparam - class reference
       okOuterField,                   // param - field offset, extraparam - outer field offset
       okOuterStaticField,             // param - field offset, extraparam - outer field offset
+      okClassStaticField,             // param - class reference, extraparam - field offset
 //      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
@@ -638,6 +639,11 @@ private:
          else return parent->getScope(level);
       }
 
+      bool isInitializer()
+      {
+         return getMessageID() == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE);
+      }
+
       ref_t getMessageID()
       {
          MethodScope* scope = (MethodScope*)getScope(slMethod);
@@ -659,7 +665,7 @@ private:
          return scope ? scope->info.header.flags : 0;
       }
 
-      CodeScope(SymbolScope* parent);
+      CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
       CodeScope(CodeScope* parent);
    };
@@ -866,6 +872,8 @@ private:
 
    ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
+   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
+
    void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -904,6 +912,7 @@ private:
    void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
    void compilePreloadedCode(SymbolScope& scope);
+   void compilePreloadedCode(ClassScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 
    void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
@@ -959,7 +968,7 @@ private:
    void analizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void analizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope);
    void analizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);
-   void analizeSymbolTree(SNode node, SourceScope& scope, int warningMask);
+   void analizeSymbolTree(SNode node, Scope& scope, int warningMask);
 
    void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 

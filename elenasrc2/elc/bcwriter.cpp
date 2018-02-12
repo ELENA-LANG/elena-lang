@@ -630,9 +630,42 @@ void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
    }
 }
 
+inline ref_t defineConstantMask(LexicalType type)
+{
+   switch (type) {
+   case lxConstantClass:
+      return mskVMTRef;
+   case lxConstantString:
+      return mskLiteralRef;
+   case lxConstantWideStr:
+      return mskWideLiteralRef;
+   case lxConstantChar:
+      return mskCharRef;
+   case lxConstantInt:
+      return mskInt32Ref;
+   case lxConstantLong:
+      return mskInt64Ref;
+   case lxConstantReal:
+      return mskRealRef;
+   case lxMessageConstant:
+      return mskMessage;
+   case lxExtMessageConstant:
+      return mskExtMessage;
+   case lxSignatureConstant:
+      return mskSignature;
+   case lxConstantList:
+      return mskConstArray;
+   default:
+      return mskConstantRef;
+   }
+}
+
 void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
 {
    switch (sourceType) {
+      case lxConstantClass:
+         tape.write(bcBCopyR, sourceArgument | defineConstantMask(sourceType));
+         break;
       case lxCurrent:
          // bloadsi param
          tape.write(bcBLoadSI, sourceArgument);
@@ -789,6 +822,24 @@ void ByteCodeWriter :: saveBase(CommandTape& tape, bool directOperation, Lexical
             tape.write(bcPushA);
             tape.write(bcClass);
             tape.write(bcALoadAI, sourceArgument);
+            tape.write(bcBCopyA);
+            tape.write(bcPopA);
+            tape.write(bcAXSaveBI, 0);
+         }
+         break;
+      case lxClassStaticField:
+         if ((int)sourceArgument > 0) {
+            // asaver arg
+            tape.write(bcASaveR, sourceArgument | mskStatSymbolRef);
+         }
+         else {
+            // pusha
+            // aloadbi -offset
+            // bcopya
+            // popa
+            // axsavebi 0
+            tape.write(bcPushA);
+            tape.write(bcALoadBI, sourceArgument);
             tape.write(bcBCopyA);
             tape.write(bcPopA);
             tape.write(bcAXSaveBI, 0);
@@ -3456,36 +3507,6 @@ inline size_t countChildren(SNode node)
    return counter;
 }
 
-inline ref_t defineConstantMask(LexicalType type)
-{
-   switch(type) {
-      case lxConstantClass:
-         return mskVMTRef;
-      case lxConstantString:
-         return mskLiteralRef;
-      case lxConstantWideStr:
-         return mskWideLiteralRef;
-      case lxConstantChar:
-         return mskCharRef;
-      case lxConstantInt:
-         return mskInt32Ref;
-      case lxConstantLong:
-         return mskInt64Ref;
-      case lxConstantReal:
-         return mskRealRef;
-      case lxMessageConstant:
-         return mskMessage;
-      case lxExtMessageConstant:
-         return mskExtMessage;
-      case lxSignatureConstant:
-         return mskSignature;
-      case lxConstantList:
-         return mskConstArray;
-      default:
-         return mskConstantRef;
-   }
-}
-
 bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
 {
    if (node != lxNone) {
@@ -4799,8 +4820,8 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 
          assignOpArguments(target, arg1, arg2);
          loadBase(tape, arg1.type, arg1.argument);
-         if (arg2 == lxResultStaticField) {
-            saveBase(tape, false, lxResultStaticField, arg2.argument);
+         if (arg2 == lxResultStaticField || arg2 == lxClassStaticField) {
+            saveBase(tape, false, arg2.type, arg2.argument);
          }
          else saveBase(tape, false, lxResult, arg2.argument);
       }
@@ -5790,6 +5811,13 @@ void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, L
 {
    declareInitializer(tape, reference);
    loadObject(tape, type, argument);
+   endInitializer(tape);
+}
+
+void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, SNode root)
+{
+   declareInitializer(tape, reference);
+   generateCodeBlock(tape, root);
    endInitializer(tape);
 }
 

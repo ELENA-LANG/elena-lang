@@ -48,6 +48,7 @@ using namespace _ELENA_;
 #define HINT_UNBOXINGEXPECTED 0x00000080
 #define HINT_INT64EXPECTED    0x00000004
 #define HINT_REAL64EXPECTED   0x00000002
+#define HINT_INQUIRY_MODE     0x00000001
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
@@ -1199,7 +1200,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 
 // --- Compiler::CodeScope ---
 
-Compiler::CodeScope :: CodeScope(SymbolScope* parent)
+Compiler::CodeScope :: CodeScope(SourceScope* parent)
    : Scope(parent), locals(Parameter(0))
 {
    this->level = 0;
@@ -1704,6 +1705,8 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
       case okStaticField:
       case okStaticConstantField:
          return object.extraparam;
+      case okClassStaticField:
+         return object.element;
       default:
          if (object.kind == okObject) {
             return object.param;
@@ -2346,6 +2349,11 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okStaticField:
          writer.newNode(lxStaticField, object.param);
          break;
+      case okClassStaticField:
+         writer.newNode(lxFieldExpression, 0);
+         writer.appendNode(lxConstantClass, object.param);
+         writer.appendNode(lxClassStaticField, object.extraparam);
+         break;
       case okStaticConstantField:
          writer.newNode(lxStaticConstField, object.param);
          break;
@@ -2519,7 +2527,10 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
    else if (!emptystr(token))
       object = scope.mapObject(terminal);
 
-   if (object.kind == okExplicitConstant) {
+   if (test(mode, HINT_INQUIRY_MODE)) {
+      // assingment optimization - do nothing for an inqiry mode
+   }
+   else if (object.kind == okExplicitConstant) {
       // replace an explicit constant with the appropriate object
       writer.newBookmark();
       writeTerminal(writer, terminal, scope, ObjectInfo(okLiteralConstant, object.param) , mode);
@@ -3515,7 +3526,20 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    }
    else {
       SNode targetNode = node.firstChild(lxObjectMask);
-      retVal = compileExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
+      if (scope.isInitializer()) {
+         // HOTFIX : recognize static field initializer
+         retVal = compileExpression(writer, targetNode, scope, HINT_INQUIRY_MODE);
+         if (retVal.kind == okStaticField) {
+            // HOTFIX : static field initializer should be compiled as preloaded symbol
+            compileStaticAssigning(retVal, targetNode.nextNode(lxObjectMask), *((ClassScope*)scope.getScope(Scope::slClass)));
+
+            writer.removeBookmark();
+
+            return ObjectInfo();
+         }
+         else retVal = compileExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
+      }
+      else retVal = compileExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
 
       ref_t targetRef = resolveObjectReference(scope, retVal);
       if (retVal.kind == okLocalAddress) {
@@ -5650,6 +5674,19 @@ void Compiler :: compilePreloadedCode(SymbolScope& scope)
    _writer.save(tape, *scope.moduleScope);
 }
 
+void Compiler :: compilePreloadedCode(ClassScope& scope, SNode node)
+{
+   _Module* module = scope.moduleScope->module;
+
+   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
+
+   CommandTape tape;
+   _writer.generateInitializer(tape, module->mapReference(sectionName), node);
+
+   // create byte code sections
+   _writer.save(tape, *scope.moduleScope);
+}
+
 void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
    bool withDefaultConstructor = _logic->isDefaultConstructorEnabled(classScope.info);
@@ -6455,6 +6492,33 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    _writer.save(tape, *scope.moduleScope);
 }
 
+void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/)
+{
+   SyntaxTree expressionTree;
+   SyntaxWriter writer(expressionTree);
+
+   CodeScope codeScope(&scope);
+
+   writer.newNode(lxExpression);
+   writer.newNode(lxAssigning);
+   if (isPrimitiveRef(target.param)) {
+      writeTerminal(writer, node, codeScope, ObjectInfo(okClassStaticField, scope.reference, target.param, target.extraparam), HINT_NODEBUGINFO);
+   }
+   else writeTerminal(writer, node, codeScope, target, HINT_NODEBUGINFO);
+
+   writer.newBookmark();
+   ObjectInfo source = compileExpression(writer, node, codeScope, 0);
+   convertObject(writer, *scope.moduleScope, target.extraparam, resolveObjectReference(codeScope, source), source.element);
+
+   writer.removeBookmark();
+   writer.closeNode();
+   writer.closeNode();
+
+   analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
+
+   compilePreloadedCode(scope, expressionTree.readRoot());
+}
+
 // NOTE : elementRef is used for binary arrays
 ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef)
 {
@@ -7114,7 +7178,7 @@ void Compiler :: analizeClassTree(SNode node, ClassScope& scope, WarningScope& w
    }
 }
 
-void Compiler :: analizeSymbolTree(SNode node, SourceScope& scope, int warningMask)
+void Compiler :: analizeSymbolTree(SNode node, Scope& scope, int warningMask)
 {
    WarningScope warningScope(warningMask);
 

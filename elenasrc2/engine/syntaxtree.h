@@ -116,6 +116,7 @@ enum LexicalType
    lxResultStaticField  = 0x0A11D,
    lxConstantList    = 0x0A11E, // arg - reference
    lxBlockLocalAddr  = 0x0A11F, // arg - offset
+   lxClassStaticField = 0x0A120, // arg - offset
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
