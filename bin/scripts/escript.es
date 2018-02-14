@@ -110,9 +110,9 @@ root
 
    #define message_body   ::= "(" parameters? ")";
 
-   #define parameters     ::= object next_parameter? ;
+   #define parameters     ::= expression next_parameter? ;
 
-   #define next_parameter ::= "," object;
+   #define next_parameter ::= "," expression;
    #define next_operation ::= <= ; => operation;
 
    #define object         ::= "{" nested "}" ;

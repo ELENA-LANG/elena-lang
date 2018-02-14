@@ -4,8 +4,6 @@ In development:
 
                             
               exp - live programming
-                 * Dynamic Programming in ELENA : call your code from IDE
-                 * test dynamic samples
                  * class to expression tree
 
                  * expression tree to class
@@ -14,9 +12,9 @@ In development:
 Pipeline:
 ------                                                                                         
               dev - general implementation
-                 * implement AKS test for primes
                  * #269 : short-circuit boolean operation (modify AKS test for primes)
                  * #401 : operator with array  (modify AKS test for primes)
+                 * enable to emulate C# program structure - class with a main method, without program symbol
                  * compile <>, ><, ...
 
               xdev - general optimization  
