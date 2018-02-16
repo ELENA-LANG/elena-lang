@@ -297,7 +297,7 @@ class Parser
             
         var aParent := aLastNode.
         var aCurrent := aLastNode right.
-        while (($nil != aCurrent) && $(aNewNode level > aCurrent level))
+        while (($nil != aCurrent) && (aNewNode level > aCurrent level))
             [ aParent := aCurrent. aCurrent := aCurrent right. ].
         
         if ($nil == aCurrent)

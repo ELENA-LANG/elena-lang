@@ -2952,7 +2952,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
          operator_id = SETNIL_REFER_MESSAGE_ID;
       }
    }
-   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
+   else operationType = _logic->resolveOperationType(*scope.moduleScope, *this, operator_id, loperandRef, roperandRef, resultClassRef);
 
    // HOTFIX : primitive operations can be implemented only in the method
    // because the symbol implementations do not open a new stack frame
@@ -7069,6 +7069,7 @@ ref_t Compiler ::analizeExpression(SNode current, ModuleScope& scope, WarningSco
       case lxBinArrOp:
       case lxNewOp:
       case lxArgArrOp:
+      case lxBoolOp:
          return analizeOp(current, scope, warningScope);
       case lxInternalCall:
          return analizeInternalCall(current, scope, warningScope);

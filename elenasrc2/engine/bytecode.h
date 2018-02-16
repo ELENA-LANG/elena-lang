@@ -259,6 +259,7 @@ enum ByteCode
    blBegin          = 0xC001,  // meta command, declaring the structure
    blEnd            = 0xC002,  // meta command, closing the structure
    blLabel          = 0xC003,  // meta command, declaring the label
+   blBreakLabel     = 0xC004,  // meta command, breaking the optimization rules
 
    // meta commands:
    bcAllocStack     = 0x8101,  // meta command, used to indicate that the previous command allocate number of items in the stack; used only for exec

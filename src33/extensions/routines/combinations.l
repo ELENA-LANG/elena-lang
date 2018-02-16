@@ -109,7 +109,7 @@ class combinationNext = BaseStrategy::
         if(aCurrentIndexer append index:1; available)
             [ ^ $self ].
              
-        while ((i > 0) and:$(anArray getAt int:(i - 1); indexer; index; int + k - i + 1 >= aLength))
+        while ((i > 0) && (anArray getAt int:(i - 1); indexer; index; int + k - i + 1 >= aLength))
             [ i := i - 1 ].
         
         if(i == 0)

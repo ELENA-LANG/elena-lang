@@ -22,7 +22,7 @@ extension bsortOp
             int aMaxChild := 0.
             int aChild := (aCurrent * 2) + 1.
     
-            if ((aChild == anEnd)or:$(self[aChild] > self[aChild + 1]))
+            if ((aChild == anEnd) || (self[aChild] > self[aChild + 1]))
                 [ aMaxChild := aChild ];
                 [ aMaxChild := aChild + 1 ].
     

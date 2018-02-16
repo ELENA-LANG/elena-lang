@@ -47,7 +47,7 @@ class CalendarMonthPrinter
                     
                     theDate := theDate add days:1.
                 ]         
-                until:$((theDate month != theMonth)or:$(theDate dayOfWeek == 1)).
+                until:$((theDate month != theMonth)||(theDate dayOfWeek == 1)).
             ].
         
         int aLength := theLine length.

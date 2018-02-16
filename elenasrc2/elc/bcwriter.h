@@ -279,7 +279,7 @@ class ByteCodeWriter
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
-//   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
    void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);

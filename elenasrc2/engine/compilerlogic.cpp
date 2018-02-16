@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -197,6 +197,10 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
 
    //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
+
+   // boolean primitive operations
+   operators.add(OperatorInfo(AND_MESSAGE_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
+   operators.add(OperatorInfo(OR_MESSAGE_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
@@ -287,7 +291,7 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
    return callType;
 }
 
-int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
+int CompilerLogic :: resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
 {
    if (loperand == 0 || (roperand == 0 && loperand != V_NIL))
       return 0;
@@ -299,6 +303,13 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
       if (info.operatorId == operatorId) {
          if (info.loperand == V_NIL) {
             if (loperand == V_NIL) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         else if (info.loperand == V_FLAG && info.roperand == V_FLAG) {
+            if (isBoolean(scope, compiler, loperand) && isBoolean(scope, compiler, loperand)) {
                result = info.result;
 
                return info.operationType;
@@ -675,6 +686,17 @@ void CompilerLogic :: verifyMultimethods(_CompilerScope& scope, SNode node, Clas
       }
       current = current.nextNode();
    }
+}
+
+bool CompilerLogic :: isBoolean(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
+{
+   if (!scope.branchingInfo.reference) {
+      // HOTFIX : resolve boolean symbols
+      ref_t dummy;
+      resolveBranchOperation(scope, compiler, IF_MESSAGE_ID, scope.boolReference, dummy);
+   }
+
+   return isCompatible(scope, scope.branchingInfo.reference, reference);
 }
 
 void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t elementRef)

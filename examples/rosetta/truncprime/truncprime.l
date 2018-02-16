@@ -76,12 +76,12 @@ program =
     [
         if(n literal; indexOf:"0" == -1)
         [
-            if ((max_lt == 0) && $(n isLeftTruncatable))
+            if ((max_lt == 0) && (n isLeftTruncatable))
                 [
                     max_lt := n.
                 ].
                 
-            if ((max_rt == 0) && $(n isRightTruncatable))
+            if ((max_rt == 0) && (n isRightTruncatable))
                 [
                     max_rt := n.
                 ].

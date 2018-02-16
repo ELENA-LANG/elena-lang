@@ -3,6 +3,10 @@ In development:
 ------                              
 
                             
+              dev - general implementation
+                 * #269 : short-circuit boolean operation (modify AKS test for primes)
+                 * #401 : operator with array  (modify AKS test for primes)
+
               exp - live programming
                  * class to expression tree
 
@@ -12,8 +16,6 @@ In development:
 Pipeline:
 ------                                                                                         
               dev - general implementation
-                 * #269 : short-circuit boolean operation (modify AKS test for primes)
-                 * #401 : operator with array  (modify AKS test for primes)
                  * enable to emulate C# program structure - class with a main method, without program symbol
                  * compile <>, ><, ...
 

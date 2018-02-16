@@ -14,7 +14,7 @@ extension op
         [
             0 to:(anOriginal length - 1) do(:j)
             [
-                if ((i != j) && $(anOriginal[i] != aShuffled[j]) && $(anOriginal[j] != aShuffled[i]))
+                if ((i != j) && (anOriginal[i] != aShuffled[j]) && $(anOriginal[j] != aShuffled[i]))
                 [
                     aShuffled exchange(i,j)
                 ].

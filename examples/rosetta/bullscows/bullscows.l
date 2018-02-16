@@ -40,7 +40,7 @@ class GameMaster
                         [ InvalidArgumentException new; raise. ].
                     
                     // check duplicates
-                    var duplicate := aGuess seekEach(:x)((x == ch)and:$(x equal reference:ch; not)).
+                    var duplicate := aGuess seekEach(:x)((x == ch)&&(x equal reference:ch; not)).
                     if ($nil != duplicate)
                     [
                         InvalidArgumentException new; raise.

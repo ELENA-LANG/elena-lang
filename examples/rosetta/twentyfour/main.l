@@ -39,7 +39,7 @@ class ExpressionTree
                         ];
                         [
                             var aTop := theTree.
-                            while (($nil != aTop right)and:$(aTop right; level < node level))
+                            while (($nil != aTop right)&&(aTop right; level < node level))
                                 [ aTop := aTop right ].
                             
                             node set left(aTop right); set right:$nil.
