@@ -199,6 +199,22 @@ singleton Assert
                 AssertException new("Assertion failed"); raise
             ].
     ]
+    
+    ifTrue : b
+    [
+        ifnot(b)
+        [
+            AssertException new("Assertion failed"); raise
+        ]
+    ]
+    
+    ifFalse : b
+    [
+        if(b)
+        [
+            AssertException new("Assertion failed"); raise
+        ]
+    ]
 }
 
 // --- controlOp ---

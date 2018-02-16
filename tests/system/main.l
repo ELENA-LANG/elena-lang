@@ -42,6 +42,7 @@ symbol program =
 //    subExpressionTest eval.
 
     nestedFieldsTest().
+    shortCircuitBooleanOperation().
 
     console writeLine:"Passed".
 ].

@@ -818,3 +818,15 @@ nestedFieldsTest =
     
     console writeLine("done").
 ].
+
+shortCircuitBooleanOperation =
+[
+    console write("shortCircuitBooleanOperation..").
+    
+    int n := 0.    
+    var b := (n != 0) && (1/n != 0).
+        
+    Assert ifFalse(b).
+    
+    console writeLine("done").
+].
