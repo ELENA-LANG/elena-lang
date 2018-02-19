@@ -21,6 +21,7 @@ inline bool isPrimitiveRef(ref_t reference)
 
 #define MODE_ROOT          1
 #define MODE_CODETEMPLATE  2
+#define MODE_OBJECTEXPR    4
 
 //void test2(SNode node)
 //{
@@ -1625,13 +1626,19 @@ void DerivationReader :: generateObjectTree(SyntaxWriter& writer, SNode current,
 {
    SNode nextNode = current.nextNode();
    bool rootMode = test(mode, MODE_ROOT);
+   bool objectMode = test(mode, MODE_OBJECTEXPR);
    bool singleMode = false;
    if (rootMode)
       writer.newBookmark();
 
    switch (current.type) {
-      case lxExpression:
-         generateExpressionTree(writer, current, scope);
+      case lxExpression:         
+         if (objectMode) {
+            writer.newNode(lxExpression);
+            generateExpressionTree(writer, current, scope);
+            writer.closeNode();
+         }
+         else generateExpressionTree(writer, current, scope);
          break;
       case lxMessageReference:
       case lxLazyExpression:
@@ -1783,7 +1790,7 @@ void DerivationReader :: generateExpressionTree(SyntaxWriter& writer, SNode node
             if (isTemplateBracket(current.nextNode())) {
                generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
             }
-            else generateObjectTree(writer, current.firstChild(), scope);
+            else generateObjectTree(writer, current.firstChild(), scope, MODE_OBJECTEXPR);
             break;
          case lxCatchOperation:
          case lxAltOperation:
