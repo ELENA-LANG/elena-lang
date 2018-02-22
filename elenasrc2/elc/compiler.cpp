@@ -1367,62 +1367,61 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
       }
       else {
          outer.outerObject = parent->mapTerminal(identifier);
-         // handle outer fields in a special way: save only self
-         if (outer.outerObject.kind == okField || outer.outerObject.kind == okStaticField) {
-            Outer owner = mapParent();
+         switch (outer.outerObject.kind) {
+            case okField:
+            case okStaticField:
+            {
+               // handle outer fields in a special way: save only self
+               Outer owner = mapParent();
 
-            //// save the outer field type if provided
-            //if (outer.outerObject.extraparam != 0) {
-            //   outerFieldTypes.add(outer.outerObject.param, ClassInfo::FieldInfo(outer.outerObject.extraparam, /*outer.outerObject.type*/0), true);
-            //}
+               // map as an outer field (reference to outer object and outer object field index)
+               if (outer.outerObject.kind == okOuterField) {
+                  return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
+               }
+               else if (outer.outerObject.kind == okOuterStaticField) {
+                  return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
+               }
+               else if (outer.outerObject.kind == okStaticField) {
+                  return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
+               }
+               else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
+            }
+            case okParam:
+            case okLocal:
+            case okOuter:
+            case okSuper:
+            case okThisParam:
+            case okLocalAddress:
+            case okFieldAddress:
+            case okOuterField:
+            case okOuterStaticField:
+            case okParams:
+            {
+               // map if the object is outer one
+               outer.reference = info.fields.Count();
 
-            // map as an outer field (reference to outer object and outer object field index)
-            if (outer.outerObject.kind == okOuterField) {
-               return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
+               outers.add(identifier, outer);
+               mapKey(info.fields, identifier, (int)outer.reference);
+
+               if (outer.outerObject.kind == okOuter && identifier.compare(RETVAL_VAR)) {
+                  // HOTFIX : quitting several clsoures
+                  (*outers.getIt(identifier)).preserved = true;
+               }
+
+               return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
             }
-            else if (outer.outerObject.kind == okOuterStaticField) {
-               return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
+            case okUnknown:
+            {
+               // check if there is inherited fields
+               ObjectInfo fieldInfo = mapField(identifier);
+               if (fieldInfo.kind != okUnknown) {
+                  return fieldInfo;
+               }
+               else return outer.outerObject;
             }
-            else if (outer.outerObject.kind == okStaticField) {
-               return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
-            }
-            else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
+            default:               
+               return outer.outerObject;
          }
-         // map if the object is outer one
-         else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal
-            || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
-            || outer.outerObject.kind == okLocalAddress || outer.outerObject.kind == okFieldAddress 
-            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okOuterStaticField)
-         {
-            outer.reference = info.fields.Count();
-
-            outers.add(identifier, outer);
-            mapKey(info.fields, identifier, (int)outer.reference);
-
-            if (outer.outerObject.kind == okOuter && identifier.compare(RETVAL_VAR)) {
-               // HOTFIX : quitting several clsoures
-               (*outers.getIt(identifier)).preserved = true;
-            }
-
-            //switch (outer.outerObject.kind) {
-            //   case okOuterField:
-            //   case okParam:
-            //   case okThisParam:
-            //      return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
-            //   default:
-                  return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
-            //}
-         }
-         // map if the object is outer one
-         else if (outer.outerObject.kind == okUnknown) {
-            // check if there is inherited fields
-            ObjectInfo fieldInfo = mapField(identifier);
-            if (fieldInfo.kind != okUnknown) {
-               return fieldInfo;
-            }
-            else return outer.outerObject;
-         }
-         else return outer.outerObject;
       }
    }
 }
