@@ -1076,6 +1076,18 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    embeddable = false;
 }
 
+void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics)
+{
+   // import static fields
+   ClassInfo::StaticFieldMap::Iterator static_it = statics.start();
+   while (!static_it.Eof()) {
+      info.statics.add(static_it.key(), *static_it);
+
+      static_it++;
+   }
+
+}
+
 ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
 {
    int offset = info.fields.get(terminal);
@@ -5558,6 +5570,8 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 
 void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
+   bool staticFieldsInherited = false;
+
    // add virtual constructor
    if (classClassScope.info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID), true)) {
       MethodScope methodScope(&classScope);
@@ -5582,6 +5596,24 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
             initialize(classClassScope, methodScope);
 
             compileConstructor(writer, current, methodScope, classClassScope);
+            break;
+         }
+         case lxStaticMethod:
+         {
+            if (!staticFieldsInherited) {
+               // HOTFIX : inherit static fields
+               classClassScope.copyStaticFields(classScope.info.statics);
+
+               staticFieldsInherited = true;
+            }
+
+            MethodScope methodScope(&classClassScope);
+            methodScope.message = current.argument;
+            declareArgumentList(current, methodScope);
+
+            initialize(classClassScope, methodScope);
+
+            compileMethod(writer, current, methodScope);
             break;
          }
       }
@@ -5693,7 +5725,7 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
    bool withDefaultConstructor = _logic->isDefaultConstructorEnabled(classScope.info);
 
    // if no construtors are defined inherits the default one
-   if (!node.existChild(lxConstructor) && withDefaultConstructor) {
+   if (!node.existChild(lxConstructor, lxStaticMethod) && withDefaultConstructor) {
       if (classScope.info.header.parentRef == 0)
          classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
 
@@ -5763,8 +5795,11 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
          declareArgumentList(current, methodScope);
          current.setArgument(methodScope.message);
 
-         if (test(methodScope.hints, tpConstructor))
+         if (test(methodScope.hints, tpConstructor)) {
             current = lxConstructor;
+         }
+         else if (test(methodScope.hints, tpStatic))
+            current = lxStaticMethod;
 
          if (!_logic->validateMessage(methodScope.message, false))
             scope.raiseError(errIllegalMethod, current);
@@ -6116,12 +6151,11 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    }
 }
 
-void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool closed, bool classClassMode, bool closureBaseClass)
+void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool closed, LexicalType methodType, bool closureBaseClass)
 {
+   bool classClassMode = methodType == lxConstructor || methodType == lxStaticMethod;
    bool templateMethods = false;
    List<ref_t> implicitMultimethods;
-
-   LexicalType methodType = classClassMode ? lxConstructor : lxClassMethod;
 
    // first pass - ignore template based methods
    SNode current = root.firstChild();
@@ -6189,7 +6223,11 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    _logic->injectVirtualCode(*scope.moduleScope, node, scope.reference, scope.info, *this, closed);
 
    // generate methods
-   generateMethodDeclarations(node, scope, closed, classClassMode, closureBaseClass);
+   if (classClassMode) {
+      generateMethodDeclarations(node, scope, closed, lxConstructor, closureBaseClass);
+      generateMethodDeclarations(node, scope, closed, lxStaticMethod, closureBaseClass);
+   }
+   else generateMethodDeclarations(node, scope, closed, lxClassMethod, closureBaseClass);
 
    // do not set flags for closure declaration - they will be set later
    if (!closureDeclarationMode) {

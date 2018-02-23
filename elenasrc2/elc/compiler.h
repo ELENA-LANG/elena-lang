@@ -465,6 +465,8 @@ private:
       ref_t       extensionClassRef;
       bool        embeddable;
 
+      void copyStaticFields(ClassInfo::StaticFieldMap& statics);
+
       ObjectInfo mapField(ident_t identifier);
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
@@ -928,7 +930,7 @@ private:
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
    void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool closureBaseClass);
-   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, bool classClassMode, bool closureBaseClass);
+   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, bool closureBaseClass);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool closureDeclarationMode = false);
 
    void generateClassImplementation(SNode node, ClassScope& scope);

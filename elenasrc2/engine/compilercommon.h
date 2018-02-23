@@ -105,6 +105,7 @@ enum MethodHint
    tpConversion  = 0x0800,
    tpMultimethod = 0x1000,
    tpArgDispatcher = 0x3000,
+   tpStatic      = 0x4000,
 };
 
 // --- _CompileScope ---

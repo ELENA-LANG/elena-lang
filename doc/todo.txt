@@ -3,7 +3,8 @@ In development:
 ------                              
                             
               dev - general implementation
-                 * #401 : operator with array  (modify AKS test for primes)
+                 * #350 : Static methods 
+                 * modify dto_prop template to support static methods
 
               exp - live programming
                  * class to expression tree
@@ -14,6 +15,7 @@ In development:
 Pipeline:
 ------                                                                                         
               dev - general implementation
+                 * #401 : operator with array  (modify AKS test for primes)
                  * enable to emulate C# program structure - class with a main method, without program symbol
                  * compile <>, ><, ...
 

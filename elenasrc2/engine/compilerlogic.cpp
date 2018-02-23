@@ -1297,6 +1297,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_METHOD:
          attrValue = 0;
          return true;
+      case V_STATIC:
+         attrValue = (tpStatic | tpSealed);
+         return true;
       default:
          return false;
    }
