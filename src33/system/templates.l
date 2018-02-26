@@ -44,7 +44,7 @@ field template dto_prop :: prop_type, prop_name
     
     prop_type prop_name = $field.
     
-    __properties = theProperties.
+    static __properties = theProperties.
 }
 
 field template dto_prop :: prop_name
@@ -62,7 +62,7 @@ field template dto_prop :: prop_name
     
     prop_name = $field.
     
-    __properties = theProperties.
+    static __properties = theProperties.
 }
 
 // --- vprop ---

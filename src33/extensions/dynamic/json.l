@@ -155,7 +155,12 @@ textbuffer extension jsonSerializer
     [
         self write:"{".
 
-        array props := object __properties.
+        array props := (object class_ref)~__prober __properties.
+        if ($nil == props)
+        [
+            props := object __properties.
+        ].
+        
         int i := 0.
         int len := props length.
         while (i < len)

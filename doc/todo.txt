@@ -2,9 +2,6 @@
 In development:
 ------                              
                             
-              dev - general implementation
-                 * modify dto_prop template to support static methods
-
               exp - live programming
                  * class to expression tree
 
