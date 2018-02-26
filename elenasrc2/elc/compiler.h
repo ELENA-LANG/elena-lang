@@ -136,9 +136,10 @@ public:
       okExtMessageConstant,           // param - reference
       okSignatureConstant,            // param - reference
       okArrayConst,
-      okField,                        // param - field offset, extraparam - class reference
+      okField,                        // param - reference, param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
       okStaticConstantField,          // param - reference
+      okClassStaticConstantField,     // extraparam - reference
       okFieldAddress,                 // param - field offset, extraparam - class reference
       okOuter,                        // param - field offset, extraparam - class reference
       okOuterField,                   // param - field offset, extraparam - outer field offset

@@ -1108,11 +1108,11 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
       if (staticInfo.value1 != 0) {
          if (!isSealedStaticField(staticInfo.value1)) {
             ref_t val = info.staticValues.get(staticInfo.value1);
-            if (classClassMode) {
-               return ObjectInfo(okClassStaticField, classReference, staticInfo.value1, staticInfo.value2);
-            }         
-            else if (val != mskStatRef) {
-               return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
+            if (val != mskStatRef) {
+               if (classClassMode) {
+                  return ObjectInfo(okClassStaticConstantField, classReference, staticInfo.value1, staticInfo.value2);
+               }
+               else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
             }
          }
          if (classClassMode) {
@@ -1724,9 +1724,10 @@ ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
       case okStaticField:
       case okStaticConstantField:
          return object.extraparam;
-      case okClassStaticField:
+      case okClassStaticConstantField:
       case okOuterField:
       case okOuterStaticField:
+      case okClassStaticField:
          return object.element;
       default:
          if (object.kind == okObject) {
@@ -2386,6 +2387,11 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          writer.newNode(lxFieldExpression, 0);
          writer.appendNode(lxClassRefField, 1);
          writer.appendNode(lxStaticConstField, object.param);
+         break;
+      case okClassStaticConstantField:
+         writer.newNode(lxFieldExpression, 0);
+         writer.appendNode(lxConstantClass, object.param);
+         writer.appendNode(lxStaticConstField, object.extraparam);
          break;
       case okOuterField:
          writer.newNode(lxFieldExpression, 0);
