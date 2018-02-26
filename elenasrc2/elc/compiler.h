@@ -467,7 +467,7 @@ private:
       bool        embeddable;
       bool        classClassMode;
 
-      void copyStaticFields(ClassInfo::StaticFieldMap& statics);
+      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 
       ObjectInfo mapField(ident_t identifier);
 

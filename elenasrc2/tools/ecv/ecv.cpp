@@ -926,6 +926,9 @@ void listFlags(int flags, int& row, int pageSize)
    if (test(flags, elSealed)) {
       printLine("@flag ", "elSealed", row, pageSize);
    }      
+   else if (test(flags, elFinal)) {
+      printLine("@flag ", "elFinal", row, pageSize);
+   }      
    else if (test(flags, elClosed)) {
       printLine("@flag ", "elClosed", row, pageSize);
    }      

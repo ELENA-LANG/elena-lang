@@ -1077,7 +1077,7 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    classClassMode = false;
 }
 
-void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics)
+void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
 {
    // import static fields
    ClassInfo::StaticFieldMap::Iterator static_it = statics.start();
@@ -1087,6 +1087,13 @@ void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics
       static_it++;
    }
 
+   auto staticValue_it = staticValues.start();
+   while (!staticValue_it.Eof()) {
+      ref_t val = *staticValue_it;
+      info.staticValues.add(staticValue_it.key(), val);
+
+      staticValue_it++;
+   }
 }
 
 ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
@@ -5634,7 +5641,7 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
          {
             if (!staticFieldsInherited) {
                // HOTFIX : inherit static fields
-               classClassScope.copyStaticFields(classScope.info.statics);
+               classClassScope.copyStaticFields(classScope.info.statics, classScope.info.staticValues);
 
                staticFieldsInherited = true;
             }
@@ -6348,7 +6355,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    // compile class class if it available
    if (scope.info.header.classRef != scope.reference) {
       ClassScope classClassScope(scope.moduleScope, scope.info.header.classRef);
-      classClassScope.info.header.flags |= elClassClass; // !! IMPORTANT : classclass flag should be set
+      classClassScope.info.header.flags |= (elClassClass | elFinal); // !! IMPORTANT : classclass / final flags should be set
 
       compileClassClassDeclaration(node, classClassScope, scope);
    }

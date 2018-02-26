@@ -3,7 +3,6 @@ In development:
 ------                              
                             
               dev - general implementation
-                 * #350 : Static methods 
                  * modify dto_prop template to support static methods
 
               exp - live programming
