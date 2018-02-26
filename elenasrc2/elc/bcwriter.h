@@ -166,6 +166,7 @@ class ByteCodeWriter
 
    void copyBase(CommandTape& tape, int size);
    void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);

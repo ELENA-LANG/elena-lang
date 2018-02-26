@@ -661,6 +661,22 @@ inline ref_t defineConstantMask(LexicalType type)
    }
 }
 
+void ByteCodeWriter :: loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+{
+   switch (sourceType) {
+      case lxClassRefField:
+         // pusha
+         // class
+         // bcopya
+         // popa
+         tape.write(bcPushA);
+         tape.write(bcClass);
+         tape.write(bcBCopyA);
+         tape.write(bcPopA);
+         break;
+   }
+}
+
 void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
 {
    switch (sourceType) {
@@ -697,18 +713,28 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
          tape.write(bcBCopyA);
          tape.write(bcPopA);
          break;
+      case lxClassRefField:
+         // pusha
+         // bloadfi 1
+         // class
+         // bcopya
+         // popa
+         tape.write(bcPushA);
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcClass);
+         tape.write(bcBCopyA);
+         tape.write(bcPopA);
+         break;
       case lxFieldAddress:
          // bloadfi 1
          tape.write(bcBLoadFI, 1, bpFrame);
          break;
       case lxStaticConstField:
          // pusha
-         // class
          // aloadai -offset
          // bcopya
          // popa
          tape.write(bcPushA);
-         tape.write(bcClass);
          tape.write(bcALoadAI, sourceArgument);
          tape.write(bcBCopyA);
          tape.write(bcPopA);
@@ -720,13 +746,11 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
          }
          else {
             // pusha
-            // class
             // aloadai -offset
             // aloadai 0
             // bcopya
             // popa
             tape.write(bcPushA);
-            tape.write(bcClass);
             tape.write(bcALoadAI, sourceArgument);
             tape.write(bcALoadAI, 0);
             tape.write(bcBCopyA);
@@ -808,27 +832,7 @@ void ByteCodeWriter :: saveBase(CommandTape& tape, bool directOperation, Lexical
             tape.write(bcASaveBI, sourceArgument);
          }
          break;
-      case lxResultStaticField:
-         if ((int)sourceArgument > 0) {
-            // asaver arg
-            tape.write(bcASaveR, sourceArgument | mskStatSymbolRef);
-         }
-         else {
-            // pusha
-            // class
-            // aloadai -offset
-            // bcopya
-            // popa
-            // axsavebi 0
-            tape.write(bcPushA);
-            tape.write(bcClass);
-            tape.write(bcALoadAI, sourceArgument);
-            tape.write(bcBCopyA);
-            tape.write(bcPopA);
-            tape.write(bcAXSaveBI, 0);
-         }
-         break;
-      case lxClassStaticField:
+      case lxStaticField:
          if ((int)sourceArgument > 0) {
             // asaver arg
             tape.write(bcASaveR, sourceArgument | mskStatSymbolRef);
@@ -3595,17 +3599,9 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          else tape.write(bcPushAI, argument);
          break;
       case lxStaticConstField:
-         // pushb
-         // bloadfi 1
-         // class
          // aloadai -offset
-         // popb
          // pusha
-         tape.write(bcPushB);
-         tape.write(bcBLoadFI, 1, bpFrame);
-         tape.write(bcClass);
          tape.write(bcALoadAI, argument);
-         tape.write(bcPopB);
          tape.write(bcPushA);
          break;
       case lxStaticField:
@@ -3616,19 +3612,11 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
             tape.write(bcPushA);
          }
          else {
-            // pushb
-            // bloadfi 1
-            // class
             // aloadai -offset
             // aloadai 0
-            // popb
             // pusha
-            tape.write(bcPushB);
-            tape.write(bcBCopyA);
-            tape.write(bcClass);
             tape.write(bcALoadAI, argument);
             tape.write(bcALoadAI, 0);
-            tape.write(bcPopB);
             tape.write(bcPushA);
          }
          break;
@@ -3647,30 +3635,6 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxResultField:
          // pushai reference
          tape.write(bcPushAI, argument);
-         break;
-      case lxResultStaticField:
-         if ((int)argument > 0) {
-            // aloadr r
-            // pusha
-            tape.write(bcALoadR, argument | mskStatSymbolRef);
-            tape.write(bcPushA);
-         }
-         else {
-            // pushb
-            // bcopya
-            // class
-            // aloadai -offset
-            // aloadai 0
-            // popb
-            // pusha
-            tape.write(bcPushB);
-            tape.write(bcBCopyA);
-            tape.write(bcClass);
-            tape.write(bcALoadAI, argument);
-            tape.write(bcALoadAI, 0);
-            tape.write(bcPopB);
-            tape.write(bcPushA);
-         }
          break;
       case lxCurrentMessage:
          // pushe
@@ -3732,11 +3696,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          else tape.write(bcALoadBI, argument);
          break;
       case lxStaticConstField:
-         // bloadfi 1
-         // class
          // aloadai -offset
-         tape.write(bcBLoadFI, 1, bpFrame);
-         tape.write(bcClass);
          tape.write(bcALoadAI, argument);
          break;
       case lxStaticField:
@@ -3745,12 +3705,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
             tape.write(bcALoadR, argument | mskStatSymbolRef);
          }
          else {
-            // bloadfi 1
-            // class
             // aloadai -offset
             // aloadai 0
-            tape.write(bcBLoadFI, 1, bpFrame);
-            tape.write(bcClass);
             tape.write(bcALoadAI, argument);
             tape.write(bcALoadAI, 0);
          }
@@ -3775,24 +3731,18 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // aloadai
          tape.write(bcALoadAI, argument);
          break;
-      case lxResultStaticField:
-         if ((int)argument > 0) {
-            // aloadr r
-            tape.write(bcALoadR, argument | mskStatSymbolRef);
-         }
-         else {
-            // bcopya
-            // class
-            // aloadai -offset
-            // aloadai 0
-            tape.write(bcBCopyA);
-            tape.write(bcClass);
-            tape.write(bcALoadAI, argument);
-            tape.write(bcALoadAI, 0);
-         }
-         break;
       case lxInternalCall:
          tape.write(bcCallR, argument | mskInternalRef);
+         break;
+      case lxClassRefField:
+         // pushb
+         // bloadfi 1
+         // class
+         // popb
+         tape.write(bcPushB);
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcClass);
+         tape.write(bcPopB);
          break;
       default:
          break;
@@ -3826,15 +3776,11 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
          }
          else {
             // pusha
-            // bloadfi 1
-            // class
             // aloadai -offset
             // bcopya
             // popa
             // axsavebi 0
             tape.write(bcPushA);
-            tape.write(bcBLoadFI, 1, bpFrame);
-            tape.write(bcClass);
             tape.write(bcALoadAI, argument);
             tape.write(bcBCopyA);
             tape.write(bcPopA);
@@ -4840,8 +4786,14 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
          SNode arg1, arg2;
 
          assignOpArguments(target, arg1, arg2);
-         loadBase(tape, arg1.type, arg1.argument);
-         if (arg2 == lxResultStaticField || arg2 == lxClassStaticField) {
+         if (arg1.type == lxFieldExpression) {
+            SNode arg3, arg4;
+            assignOpArguments(arg1, arg3, arg4);
+            loadBase(tape, arg3.type, arg3.argument);
+            loadFieldExpressionBase(tape, arg4.type, arg4.argument);
+         }
+         else loadBase(tape, arg1.type, arg1.argument);
+         if (arg2 == lxStaticField) {
             saveBase(tape, false, arg2.type, arg2.argument);
          }
          else saveBase(tape, false, lxResult, arg2.argument);

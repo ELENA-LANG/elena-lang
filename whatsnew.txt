@@ -15,6 +15,7 @@
 [+] #392 : Supporting __array<Class,Size> attribute 
 [+] #393 : Invoking explicit conversion 
 [+] #269 : short-circuit boolean operation
+[+] #350 : Static methods
 [+] a support of multi-line quotes
 [!] introducing implicit attribute
 [!] explicit attribute is obsolete

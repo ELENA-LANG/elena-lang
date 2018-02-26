@@ -1073,7 +1073,9 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.size = 0;
 
    extensionClassRef = 0;
+   classReference = 0;
    embeddable = false;
+   classClassMode = false;
 }
 
 void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics)
@@ -1106,11 +1108,17 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
       if (staticInfo.value1 != 0) {
          if (!isSealedStaticField(staticInfo.value1)) {
             ref_t val = info.staticValues.get(staticInfo.value1);
-            if (val != mskStatRef) {
+            if (classClassMode) {
+               return ObjectInfo(okClassStaticField, classReference, staticInfo.value1, staticInfo.value2);
+            }         
+            else if (val != mskStatRef) {
                return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
             }
          }
-         return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2);
+         if (classClassMode) {
+            return ObjectInfo(okClassStaticField, classReference, staticInfo.value1, staticInfo.value2);
+         }         
+         else return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2);
       }
       else return ObjectInfo();
    }
@@ -2360,15 +2368,24 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          writer.newNode(lxField, object.param);
          break;
       case okStaticField:
-         writer.newNode(lxStaticField, object.param);
+         if ((int)object.param < 0) {
+            // if it is a normal static field - field expression should be used
+            writer.newNode(lxFieldExpression, 0);
+            writer.appendNode(lxClassRefField, 1);
+            writer.appendNode(lxStaticField, object.param);
+         }
+         // if it is a sealed static field
+         else writer.newNode(lxStaticField, object.param);
          break;
       case okClassStaticField:
          writer.newNode(lxFieldExpression, 0);
          writer.appendNode(lxConstantClass, object.param);
-         writer.appendNode(lxClassStaticField, object.extraparam);
+         writer.appendNode(lxStaticField, object.extraparam);
          break;
       case okStaticConstantField:
-         writer.newNode(lxStaticConstField, object.param);
+         writer.newNode(lxFieldExpression, 0);
+         writer.appendNode(lxClassRefField, 1);
+         writer.appendNode(lxStaticConstField, object.param);
          break;
       case okOuterField:
          writer.newNode(lxFieldExpression, 0);
@@ -2377,8 +2394,11 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          break;
       case okOuterStaticField:
          writer.newNode(lxFieldExpression, 0);
+         writer.newNode(lxFieldExpression, 0);
          writer.appendNode(lxField, object.param);
-         writer.appendNode(lxResultStaticField, object.extraparam);
+         writer.appendNode(lxClassRefAttr, object.param);
+         writer.closeNode();         
+         writer.appendNode(lxStaticField, object.extraparam);
          break;
       case okSubject:
          writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->signatureReference, 0u));
@@ -7391,6 +7411,8 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
             if (classScope.info.header.classRef != classScope.reference) {
                ClassScope classClassScope(&scope, classScope.info.header.classRef);
                scope.loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
+               classClassScope.classClassMode = true;
+               classClassScope.classReference = classScope.reference;
 
                compileClassClassImplementation(expressionTree, current, classClassScope, classScope);
             }

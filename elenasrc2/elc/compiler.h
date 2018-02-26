@@ -464,6 +464,8 @@ private:
       ClassInfo   info;
       ref_t       extensionClassRef;
       bool        embeddable;
+      bool        classClassMode;
+      ref_t       classReference; // used for static methods
 
       void copyStaticFields(ClassInfo::StaticFieldMap& statics);
 

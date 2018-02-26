@@ -91,7 +91,7 @@ enum LexicalType
    lxStruct          = 0x08103, // arg - count
    lxConstantSymbol  = 0x0A104, // arg - reference
    lxField           = 0x08105, // arg - offset
-   lxStaticField     = 0x08106, // arg - reference
+   lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
    lxSymbolReference = 0x08107,
    lxLocalAddress    = 0x0A108, // arg - offset
    lxFieldAddress    = 0x08109, // arg - offset
@@ -108,16 +108,15 @@ enum LexicalType
    lxExtMessageConstant = 0x0A114, // arg -reference
    lxSignatureConstant  = 0x0A115, // arg - reference
    lxStaticConstField   = 0x08116, // arg - reference
-   lxNil             = 0x0A117,
-   lxCurrent         = 0x0A118, // arg -offset
-   lxResult          = 0x0A119, // arg -offset
-   lxResultField     = 0x0A11A, // arg -offset
-   lxCurrentMessage  = 0x0A11B,
-   lxThisLocal       = 0x0A11C,
-   lxResultStaticField  = 0x0A11D,
-   lxConstantList    = 0x0A11E, // arg - reference
-   lxBlockLocalAddr  = 0x0A11F, // arg - offset
-   lxClassStaticField = 0x0A120, // arg - offset
+   lxNil                = 0x0A117,
+   lxCurrent            = 0x0A118, // arg -offset
+   lxResult             = 0x0A119, // arg -offset
+   lxResultField        = 0x0A11A, // arg -offset
+   lxCurrentMessage     = 0x0A11B,
+   lxThisLocal          = 0x0A11C,
+   lxConstantList       = 0x0A11E,   // arg - reference
+   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
+   lxClassRefField      = 0x08120,  // arg - self instance offset
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
