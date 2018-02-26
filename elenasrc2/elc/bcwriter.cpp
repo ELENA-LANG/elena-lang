@@ -661,7 +661,7 @@ inline ref_t defineConstantMask(LexicalType type)
    }
 }
 
-void ByteCodeWriter :: loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+void ByteCodeWriter :: loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t)
 {
    switch (sourceType) {
       case lxClassRefField:

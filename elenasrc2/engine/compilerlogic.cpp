@@ -218,7 +218,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       if ((hint & tpMask) == tpSealed) {
          return hint;
       }
-      else if (test(info.header.flags, elSealed)) {
+      else if (test(info.header.flags, elFinal)) {
          return tpSealed | hint;
       }
       else if (test(info.header.flags, elClosed)) {
@@ -488,7 +488,11 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
                return true;
          }
 
-         sourceRef = info.header.parentRef;
+         if (test(info.header.flags, elClassClass)) {
+            // class class can be compatible only with itself and the super class
+            sourceRef = scope.superReference;
+         }
+         else sourceRef = info.header.parentRef;
       }
       else return true;
    }
@@ -1122,9 +1126,9 @@ int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
 void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode)
 {
    if (classClassMode) {
-      // class class is always stateless and sealed
+      // class class is always stateless and final
       info.header.flags |= elStateless;
-      info.header.flags |= elSealed;
+      info.header.flags |= elFinal;
    }
 
    if (test(info.header.flags, elNestedClass)) {

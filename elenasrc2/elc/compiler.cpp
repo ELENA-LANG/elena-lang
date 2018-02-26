@@ -1073,7 +1073,6 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.size = 0;
 
    extensionClassRef = 0;
-   classReference = 0;
    embeddable = false;
    classClassMode = false;
 }
@@ -1110,13 +1109,13 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
             ref_t val = info.staticValues.get(staticInfo.value1);
             if (val != mskStatRef) {
                if (classClassMode) {
-                  return ObjectInfo(okClassStaticConstantField, classReference, staticInfo.value1, staticInfo.value2);
+                  return ObjectInfo(okClassStaticConstantField, 0, staticInfo.value1, staticInfo.value2);
                }
                else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
             }
          }
          if (classClassMode) {
-            return ObjectInfo(okClassStaticField, classReference, staticInfo.value1, staticInfo.value2);
+            return ObjectInfo(okClassStaticField, 0, staticInfo.value1, staticInfo.value2);
          }         
          else return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2);
       }
@@ -2380,7 +2379,10 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          break;
       case okClassStaticField:
          writer.newNode(lxFieldExpression, 0);
-         writer.appendNode(lxConstantClass, object.param);
+         if (!object.param) {
+            writer.appendNode(lxThisLocal, 1);
+         }
+         else writer.appendNode(lxConstantClass, object.param);
          writer.appendNode(lxStaticField, object.extraparam);
          break;
       case okStaticConstantField:
@@ -2390,7 +2392,10 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          break;
       case okClassStaticConstantField:
          writer.newNode(lxFieldExpression, 0);
-         writer.appendNode(lxConstantClass, object.param);
+         if (!object.param) {
+            writer.appendNode(lxThisLocal, 1);
+         }         
+         else writer.appendNode(lxConstantClass, object.param);
          writer.appendNode(lxStaticConstField, object.extraparam);
          break;
       case okOuterField:
@@ -5185,7 +5190,8 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
       ref_t message = scope.getMessageID();
       ref_t overloadRef = classScope.info.methodHints.get(Attribute(message, maOverloadlist));
       if (overloadRef) {
-         if (test(classScope.info.header.flags, elSealed) || test(message, SEALED_MESSAGE)) {
+         // !! hotfix : temporal do not use direct multi method resolving for the class constructors
+         if (test(classScope.info.header.flags, /*elFinal*/elSealed) || test(message, SEALED_MESSAGE)) {
             writer.newNode(lxSealedMultiDispatching, overloadRef);
          }
          else writer.newNode(lxMultiDispatching, overloadRef);
@@ -5748,20 +5754,27 @@ void Compiler :: compilePreloadedCode(ClassScope& scope, SNode node)
 
 void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-   bool withDefaultConstructor = _logic->isDefaultConstructorEnabled(classScope.info);
+   //bool withDefaultConstructor = _logic->isDefaultConstructorEnabled(classScope.info);
 
-   // if no construtors are defined inherits the default one
-   if (!node.existChild(lxConstructor, lxStaticMethod) && withDefaultConstructor) {
-      if (classScope.info.header.parentRef == 0)
-         classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
+   //// if no construtors are defined inherits the default one
+   //if (!node.existChild(lxConstructor, lxStaticMethod) && withDefaultConstructor) {
+      if (classScope.info.header.parentRef == 0) {
+         //   classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
+         classScope.info.header.parentRef = classScope.moduleScope->superReference;
+      }
+      else {
+         IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(/*classScope.moduleScope->superReference*/classScope.info.header.parentRef));
+         classClassParentName.append(CLASSCLASS_POSTFIX);
 
-      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(/*classScope.moduleScope->superReference*/classScope.info.header.parentRef));
-      classClassParentName.append(CLASSCLASS_POSTFIX);
+         classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
+      }
 
-      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-   }
+//   }
 
    compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef, true);
+
+   //// !! hotfix : remove closed
+   //classClassScope.info.header.flags &= ~elClosed;
 
    generateClassDeclaration(node, classClassScope, true);
 
@@ -6101,8 +6114,9 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    if (outputChanged) {
       scope.info.methodHints.add(Attribute(message, maReference), outputRef);
    }
-   else if (outputRef != 0 && !node.existChild(lxAutogenerated))
-      //wanr if the method output was not redclared, ignore auto generated methods
+   else if (outputRef != 0 && !node.existChild(lxAutogenerated) && !test(hint, tpConstructor))
+      //warn if the method output was not redclared, ignore auto generated methods
+      //!!hotfix : ignore the warning for the constructor
       scope.raiseWarning(WARNING_LEVEL_1, wrnTypeInherited, node);
 }
 
@@ -7418,7 +7432,6 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
                ClassScope classClassScope(&scope, classScope.info.header.classRef);
                scope.loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
                classClassScope.classClassMode = true;
-               classClassScope.classReference = classScope.reference;
 
                compileClassClassImplementation(expressionTree, current, classClassScope, classScope);
             }

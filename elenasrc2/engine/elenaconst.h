@@ -279,6 +279,7 @@ namespace _ELENA_
    const int elWrapper             = 0x00000040;
    const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
+   const int elFinal               = 0x00000100;
    const int elSealed              = 0x00000120;
    const int elGroup               = 0x00000200;
    const int elWithGenerics        = 0x00000400;
@@ -294,7 +295,7 @@ namespace _ELENA_
    const int elWithCustomDispatcher= 0x00800000;
    const int elWithArgGenerics     = 0x01000000;
    const int elTapeGroup           = 0x02000200;
-   const int elClassClass          = 0x04000000;
+   const int elClassClass          = 0x04000100;
    const int elWithMuti            = 0x08000000;
    const int elVirtualVMT          = 0x10000000;
 

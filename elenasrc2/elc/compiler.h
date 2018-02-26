@@ -139,12 +139,12 @@ public:
       okField,                        // param - reference, param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
       okStaticConstantField,          // param - reference
-      okClassStaticConstantField,     // extraparam - reference
+      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
       okFieldAddress,                 // param - field offset, extraparam - class reference
       okOuter,                        // param - field offset, extraparam - class reference
       okOuterField,                   // param - field offset, extraparam - outer field offset
       okOuterStaticField,             // param - field offset, extraparam - outer field offset
-      okClassStaticField,             // param - class reference, extraparam - field offset
+      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
 //      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
@@ -466,7 +466,6 @@ private:
       ref_t       extensionClassRef;
       bool        embeddable;
       bool        classClassMode;
-      ref_t       classReference; // used for static methods
 
       void copyStaticFields(ClassInfo::StaticFieldMap& statics);
 
