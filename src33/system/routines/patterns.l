@@ -593,6 +593,18 @@ class Range :: BaseEnumerable
         theEnd := start + count.
     ]
     
+    constructor from(IntNumber start) till(IntNumber end)
+    [
+        theStart := start.
+        theEnd := end.
+    ]
+    
+    constructor from(IntNumber start) to(IntNumber end)
+    [
+        theStart := start.
+        theEnd := end + 1.
+    ]
+    
     stacksafe readLengthTo vint:retVal
     [
         int l := theEnd - theStart.
