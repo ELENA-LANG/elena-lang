@@ -1075,6 +1075,7 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    extensionClassRef = 0;
    embeddable = false;
    classClassMode = false;
+   abstractBasedMode = false;
 }
 
 void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
@@ -1884,6 +1885,13 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       // restore parent and flags
       scope.info.header.parentRef = parentRef;
       scope.info.header.classRef = classClassCopy;
+      
+      if (test(scope.info.header.flags, elAbstract)) {
+         // exclude abstract flag
+         scope.info.header.flags &= ~elAbstract;
+         scope.abstractBasedMode = true;
+      }      
+
       scope.info.header.flags |= flagCopy;
 
       return irSuccessfull;
@@ -1927,7 +1935,13 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
       if (identifier == lxIdentifier || identifier == lxPrivate) {
          parentRef = scope.moduleScope->mapTerminal(identifier, true);
       }
-      else parentRef = scope.moduleScope->mapReference(identifier.findChild(lxTerminal).identifier());
+      else {
+         ident_t name = identifier.findChild(lxTerminal).identifier();
+         if (emptystr(name))
+            name = identifier.identifier();
+
+         parentRef = scope.moduleScope->mapReference(name);
+      }
 
       if (parentRef == 0)
          scope.raiseError(errUnknownClass, identifier);
@@ -4715,6 +4729,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             flags |= PROPSET_MESSAGE;
          }
       }
+      else if (node.existChild(lxClassRefAttr) && arg == lxNone) {
+         signature.append('$');
+         signature.append(node.findChild(lxClassRefAttr).identifier());
+      }
       else unnamedMessage = true;
    }
 
@@ -5761,22 +5779,19 @@ void Compiler :: compilePreloadedCode(ClassScope& scope, SNode node)
 
 void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-   //bool withDefaultConstructor = _logic->isDefaultConstructorEnabled(classScope.info);
+   if (classScope.info.header.parentRef == 0) {
+      //   classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
+      classScope.info.header.parentRef = classScope.moduleScope->superReference;
+   }
+   else if (classScope.abstractBasedMode) {
+      classClassScope.info.header.parentRef = classScope.moduleScope->superReference;
+   }
+   else {
+      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(/*classScope.moduleScope->superReference*/classScope.info.header.parentRef));
+      classClassParentName.append(CLASSCLASS_POSTFIX);
 
-   //// if no construtors are defined inherits the default one
-   //if (!node.existChild(lxConstructor, lxStaticMethod) && withDefaultConstructor) {
-      if (classScope.info.header.parentRef == 0) {
-         //   classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
-         classScope.info.header.parentRef = classScope.moduleScope->superReference;
-      }
-      else {
-         IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(/*classScope.moduleScope->superReference*/classScope.info.header.parentRef));
-         classClassParentName.append(CLASSCLASS_POSTFIX);
-
-         classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-      }
-
-//   }
+      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
+   }
 
    compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef, true);
 
@@ -6335,6 +6350,9 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
       // class is its own class class
       scope.info.header.classRef = scope.reference;
    }
+   else if (_logic->isAbstract(scope.info)) {
+      scope.info.header.classRef = 0;
+   }
    else {
       // define class class name
       IdentifierString classClassName(scope.moduleScope->resolveFullName(scope.reference));
@@ -6353,7 +6371,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    scope.save();
 
    // compile class class if it available
-   if (scope.info.header.classRef != scope.reference) {
+   if (scope.info.header.classRef != scope.reference && scope.info.header.classRef != 0) {
       ClassScope classClassScope(scope.moduleScope, scope.info.header.classRef);
       classClassScope.info.header.flags |= (elClassClass | elFinal); // !! IMPORTANT : classclass / final flags should be set
 
@@ -6406,7 +6424,7 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
 
    // compile explicit symbol
    // extension cannot be used stand-alone, so the symbol should not be generated
-   if (scope.extensionClassRef == 0)
+   if (scope.extensionClassRef == 0 && scope.info.header.classRef != 0)
       compileSymbolCode(scope);
 }
 
@@ -7435,7 +7453,7 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
             compileClassImplementation(expressionTree, current, classScope);
 
             // compile class class if it available
-            if (classScope.info.header.classRef != classScope.reference) {
+            if (classScope.info.header.classRef != classScope.reference && classScope.info.header.classRef != 0) {
                ClassScope classClassScope(&scope, classScope.info.header.classRef);
                scope.loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
                classClassScope.classClassMode = true;
