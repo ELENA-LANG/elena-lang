@@ -1885,12 +1885,12 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       // restore parent and flags
       scope.info.header.parentRef = parentRef;
       scope.info.header.classRef = classClassCopy;
-      
+
       if (test(scope.info.header.flags, elAbstract)) {
          // exclude abstract flag
          scope.info.header.flags &= ~elAbstract;
          scope.abstractBasedMode = true;
-      }      
+      }
 
       scope.info.header.flags |= flagCopy;
 
@@ -1920,31 +1920,39 @@ void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref
       scope.raiseError(errUnknownBaseClass, baseNode);
 }
 
-void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
+ref_t Compiler :: resolveParentRef(SNode node, ModuleScope& moduleScope, bool silentMode)
 {
-   ref_t parentRef = scope.info.header.parentRef;
-
-   SNode identifier = node.findChild(lxIdentifier,lxPrivate,lxReference);
-   if (scope.info.header.parentRef == scope.reference) {
-      if (identifier != lxNone) {
-         scope.raiseError(errInvalidSyntax, node);
-      }
-      else parentRef = 0;
-   }
-   else if (identifier != lxNone) {
+   ref_t parentRef = 0;
+   SNode identifier = node.findChild(lxIdentifier, lxPrivate, lxReference);
+   if (identifier != lxNone) {
       if (identifier == lxIdentifier || identifier == lxPrivate) {
-         parentRef = scope.moduleScope->mapTerminal(identifier, true);
+         parentRef = moduleScope.mapTerminal(identifier, true);
       }
       else {
          ident_t name = identifier.findChild(lxTerminal).identifier();
          if (emptystr(name))
             name = identifier.identifier();
 
-         parentRef = scope.moduleScope->mapReference(name);
+         parentRef = moduleScope.mapReference(name);
       }
 
-      if (parentRef == 0)
-         scope.raiseError(errUnknownClass, identifier);
+      if (parentRef == 0 && !silentMode)
+         moduleScope.raiseError(errUnknownClass, identifier);
+   }
+
+   return parentRef;
+}
+
+void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
+{
+   ref_t parentRef = resolveParentRef(node, *scope.moduleScope, false);
+   if (scope.info.header.parentRef == scope.reference) {
+      if (parentRef != 0) {
+         scope.raiseError(errInvalidSyntax, node);
+      }
+   }
+   else if (parentRef == 0) {
+      parentRef = scope.info.header.parentRef;
    }
 
    compileParentDeclaration(node, scope, parentRef);
@@ -6325,19 +6333,43 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
    }
 }
 
-void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
+inline SNode findBaseParent(SNode node, bool tryMode = false)
 {
    SNode baseNode = node.findChild(lxBaseParent);
-   if (baseNode!=lxNone) {
+   if (baseNode != lxNone) {
       if (baseNode.argument == -1 && existChildWithArg(node, lxBaseParent, 0u)) {
          // HOTFIX : allow to override the template parent
          baseNode = lxIdle;
          baseNode = node.findChild(lxBaseParent);
       }
-
-      compileParentDeclaration(baseNode, scope);
    }
-   else compileParentDeclaration(SNode(), scope);
+
+   return baseNode;
+}
+
+bool Compiler :: isDependentOnNotDeclaredClass(SNode baseNode, ModuleScope& scope)
+{
+   if (baseNode == lxNone)
+      return false;
+
+   ref_t parentRef = resolveParentRef(baseNode, scope, true);
+   if (parentRef == 0)
+      return true;
+
+   // get module reference
+   ref_t moduleRef = 0;
+   _Module* module = scope.project->resolveModule(scope.module->resolveReference(parentRef), moduleRef);
+
+   if (module == NULL || moduleRef == 0)
+      return true;
+
+   // load parent meta data
+   return module->mapSection(moduleRef | mskMetaRDataRef, true) == NULL;
+}
+
+void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
+{
+   compileParentDeclaration(findBaseParent(node), scope);
 
    declareClassAttributes(node, scope);
 
@@ -7444,7 +7476,7 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
       switch (current) {
          case lxClass:
          {
-            ident_t name = scope.module->resolveReference(current.argument);
+            //ident_t name = scope.module->resolveReference(current.argument);
 
             // compile class
             ClassScope classScope(&scope, current.argument);
@@ -7473,7 +7505,7 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
    }
 }
 
-void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
+bool Compiler :: compileDeclarations(SNode node, ModuleScope& scope, bool forcedMode, bool& repeatMode)
 {
    SNode current = node.firstChild();
 
@@ -7481,8 +7513,11 @@ void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
       scope.raiseError(errNotDefinedBaseClass, node.firstChild().firstChild(lxTerminalMask));
 
    // first pass - declaration
+   bool declared = false;
+   repeatMode = false;
    while (current != lxNone) {
       SNode name = current.findChild(lxIdentifier, lxPrivate, lxReference);
+      ident_t n = name.identifier();
 
       if (scope.mapAttribute(name) != 0)
          scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
@@ -7492,45 +7527,52 @@ void Compiler :: compileDeclarations(SNode node, ModuleScope& scope)
             compileForward(current, scope);
             break;
          case lxClass:
-         {
-            current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapTerminal(name));
+            // hotfix : ignore already declared classes (0 or -1 for template)
+            if ((int)current.argument <= 0 && (forcedMode || !isDependentOnNotDeclaredClass(findBaseParent(current), scope))) {
+               current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapTerminal(name));
 
-            ClassScope classScope(&scope, current.argument);
+               ClassScope classScope(&scope, current.argument);
 
-            // check for duplicate declaration
-            if (scope.module->mapSection(classScope.reference | mskSymbolRef, true))
-               scope.raiseError(errDuplicatedSymbol, name);
+               // check for duplicate declaration
+               if (scope.module->mapSection(classScope.reference | mskSymbolRef, true))
+                  scope.raiseError(errDuplicatedSymbol, name);
 
-            scope.mapSection(classScope.reference | mskSymbolRef, false);
+               scope.mapSection(classScope.reference | mskSymbolRef, false);
 
-            // build class expression tree
-            compileClassDeclaration(current, classScope);
-            break;
-         }
-         case lxSymbol:
-         {
-            if (name == lxNone) {
-               // HOTFIX : for script generated anonymous symbol
-               current.setArgument(scope.mapAnonymous());
+               // build class expression tree
+               compileClassDeclaration(current, classScope);
+
+               declared = true;
             }
-            else current.setArgument(scope.mapTerminal(name));
-
-            SymbolScope symbolScope(&scope, current.argument);
-
-            // check for duplicate declaration
-            if (scope.module->mapSection(symbolScope.reference | mskSymbolRef, true))
-               scope.raiseError(errDuplicatedSymbol, name);
-
-            scope.module->mapSection(symbolScope.reference | mskSymbolRef, false);
-
-            // declare symbol
-            compileSymbolDeclaration(current, symbolScope);
+            else repeatMode = true;
             break;
-         }
+         case lxSymbol:
+            if (current.argument == 0) {
+               if (name == lxNone) {
+                  // HOTFIX : for script generated anonymous symbol
+                  current.setArgument(scope.mapAnonymous());
+               }
+               else current.setArgument(scope.mapTerminal(name));
+
+               SymbolScope symbolScope(&scope, current.argument);
+
+               // check for duplicate declaration
+               if (scope.module->mapSection(symbolScope.reference | mskSymbolRef, true))
+                  scope.raiseError(errDuplicatedSymbol, name);
+
+               scope.module->mapSection(symbolScope.reference | mskSymbolRef, false);
+
+               // declare symbol
+               compileSymbolDeclaration(current, symbolScope);
+               declared = true;
+            }
+            break;
       }
 
       current = current.nextNode();
    }
+
+   return declared;
 }
 
 void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
@@ -7542,8 +7584,18 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
    _writer.clear();
    _writer.writeString(scope.sourcePath);
 
-   // declare
-   compileDeclarations(syntaxTree.readRoot(), scope);
+   // declare classes several times to ignore the declaration order
+   bool repeatMode = false;
+   while (compileDeclarations(syntaxTree.readRoot(), scope, false, repeatMode)) {
+      if (!repeatMode) {
+         break;
+      }
+   }
+   if (repeatMode) {
+      // if still exists undeclared classes - try once again in forced mode
+      repeatMode = true;
+      compileDeclarations(syntaxTree.readRoot(), scope, true, repeatMode);
+   }
 
    // compile
    compileImplementations(syntaxTree.readRoot(), scope);

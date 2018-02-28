@@ -822,6 +822,9 @@ private:
 //   /// NOTE : the method is used to set template pseudo variable
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
 
+   ref_t resolveParentRef(SNode node, ModuleScope& moduleScope, bool silentMode);
+   bool isDependentOnNotDeclaredClass(SNode baseNode, ModuleScope& scope);
+
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);
@@ -979,7 +982,7 @@ private:
 
    void createPackageInfo(_Module* module, _ProjectManager& project);
 
-   void compileDeclarations(SNode node, ModuleScope& scope);
+   bool compileDeclarations(SNode node, ModuleScope& scope, bool forcedMode, bool& repeatMode);
    void compileImplementations(SNode node, ModuleScope& scope);
 
    void compileSyntaxTree(SyntaxTree& tree, ModuleScope& scope);
