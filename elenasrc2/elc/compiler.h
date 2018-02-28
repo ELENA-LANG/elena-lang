@@ -410,6 +410,14 @@ private:
          else return object;
       }
 
+      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
+      {
+         if (parent) {
+            return parent->resolveAutoType(info, reference, element);
+         }
+         else return false;
+      }
+
       virtual ObjectInfo mapTerminal(ident_t identifier)
       {
          if (parent) {
@@ -428,10 +436,7 @@ private:
 
       virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
       {
-         /*if (parent) {
-            return parent->mapSubject(terminal, output);
-         }
-         else */return moduleScope->mapSubject(terminal, output);
+         return moduleScope->mapSubject(terminal, output);
       }
 
       virtual ref_t mapSubject(SNode terminal)
@@ -635,6 +640,7 @@ private:
       ObjectInfo mapMember(ident_t identifier);
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
+      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -837,6 +843,8 @@ private:
 //   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
    void declareMethodAttributes(SNode member, MethodScope& scope);
+
+   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 

@@ -1072,6 +1072,8 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDynamicRole | elStructureRole;
          info.size = -1;
          break;
+      case V_AUTO:
+         break;
       default:
          if (reference != 0) {
             if (!scope.loadClassInfo(info, reference, headerOnly))
@@ -1380,6 +1382,9 @@ bool CompilerLogic :: validateLocalAttribute(int& attrValue)
    else if (attrValue == (int)V_VARIABLE) {
       attrValue = 0;
 
+      return true;
+   }
+   else if (attrValue == (int)V_AUTO) {
       return true;
    }
    else return false;

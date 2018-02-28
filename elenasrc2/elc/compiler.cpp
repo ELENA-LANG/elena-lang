@@ -1266,6 +1266,27 @@ ObjectInfo Compiler::CodeScope :: mapMember(ident_t identifier)
    return ObjectInfo();
 }
 
+bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
+{
+   if (info.kind == okLocal) {
+      for (auto it = locals.start(); !it.Eof(); it++) {
+         if ((*it).offset == info.param) {
+            if ((*it).class_ref == V_AUTO) {
+               (*it).class_ref = reference;
+               (*it).element_ref = element;
+
+               info.extraparam = reference;
+               info.element = element;
+
+               return true;
+            }
+         }
+      }
+   }
+
+   return Scope::resolveAutoType(info, reference, element);
+}
+
 ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
@@ -3536,6 +3557,16 @@ ObjectInfo Compiler :: compileAssigningClassConstant(SyntaxWriter& writer, SNode
    return ObjectInfo();
 }
 
+bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope)
+{
+   ref_t sourceRef = resolveObjectReference(scope, source);
+
+   if (isPrimitiveRef(sourceRef))
+      sourceRef = _logic->resolvePrimitiveReference(*scope.moduleScope, sourceRef);
+
+   return scope.resolveAutoType(target, sourceRef, source.element);
+}
+
 ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    writer.newBookmark();
@@ -3652,6 +3683,14 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
       SNode sourceNode = targetNode.nextNode(lxObjectMask);
       ObjectInfo source = compileAssigningExpression(writer, sourceNode, scope);
+
+      // support auto attribute
+      if (targetRef == V_AUTO) {
+         if (resolveAutoType(source, retVal, scope)) {
+            targetRef = resolveObjectReference(scope, retVal);
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
 
       if (!convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, source, targetRef), source.element))
          scope.raiseError(errInvalidOperation, node);

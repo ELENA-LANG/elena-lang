@@ -37,6 +37,8 @@
 #define V_INT16ARRAY    (ref_t)-38
 #define V_INT8ARRAY     (ref_t)-39
 
+#define V_AUTO          (ref_t)-50
+
 #define V_IFBRANCH      (ref_t)-4097
 #define V_IFNOTBRANCH   (ref_t)-4098
 //#define V_WARNING1    (ref_t)-4099
