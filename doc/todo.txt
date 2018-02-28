@@ -3,7 +3,6 @@ In development:
 ------                              
                             
               dev - general implementation
-                 * Get rid build order of source files #388
                  * typified enumerators / extensions #245
                  * var should be treated like in C# #356
                  * Template based extensions #408

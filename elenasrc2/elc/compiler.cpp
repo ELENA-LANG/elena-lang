@@ -4216,9 +4216,11 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
       }
       else {
          ObjectInfo object = compileExpression(writer, objectNode, scope, mode);
-
-         if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
+         if (!convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, object), 0))
             scope.raiseError(errIllegalOperation, node);
+
+         //if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
+         //   scope.raiseError(errIllegalOperation, node);
       }
    }
    else if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
