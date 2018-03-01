@@ -3964,7 +3964,7 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 
    // set flags once again
    // NOTE : it should be called after the code compilation to take into consideration outer fields
-   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, false);
+   _logic->tweakClassFlags(*scope.moduleScope, *this, scope.reference, scope.info, false);
 
    writer.closeNode();
    scope.save();
@@ -6355,7 +6355,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
       _logic->verifyMultimethods(*scope.moduleScope, root, scope.info, implicitMultimethods);
 }
 
-void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool closureDeclarationMode)
+void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool nestedDeclarationMode)
 {
    bool closed = test(scope.info.header.flags, elClosed);
    bool closureBaseClass = false;
@@ -6387,8 +6387,8 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    else generateMethodDeclarations(node, scope, closed, lxClassMethod, closureBaseClass);
 
    // do not set flags for closure declaration - they will be set later
-   if (!closureDeclarationMode) {
-      _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, classClassMode);
+   if (!nestedDeclarationMode) {
+      _logic->tweakClassFlags(*scope.moduleScope, *this, scope.reference, scope.info, classClassMode);
    }
    else if (test(scope.info.header.flags, elNestedClass)) {
       // HOTFIX : nested class should be marked as sealed to generate multi-method properly
@@ -6500,11 +6500,6 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 {
-   // generation operation list if required
-   if (test(scope.info.header.flags, elWithMuti)) {
-      _logic->injectOverloadList(*scope.moduleScope, scope.info, *this, scope.reference);
-   }
-
    WarningScope warningScope(scope.moduleScope->warningMask);
 
    analizeClassTree(node, scope, warningScope);

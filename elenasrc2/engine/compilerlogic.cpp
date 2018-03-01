@@ -1130,7 +1130,7 @@ int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
    return 0;
 }
 
-void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode)
+void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
 {
    if (classClassMode) {
       // class class is always stateless and final
@@ -1220,6 +1220,11 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
    // adjust objects with custom dispatch handler
    if (info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
       info.header.flags |= elWithCustomDispatcher;
+   }
+
+   // generation operation list if required
+   if (test(info.header.flags, elWithMuti)) {
+      injectOverloadList(scope, info, compiler, classRef);
    }
 }
 

@@ -321,7 +321,7 @@ public:
    virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef) = 0;
 
    // auto generate class flags
-   virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
+   virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
    virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
 //   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
