@@ -5,7 +5,7 @@ class BaseVariable
     value = $nil.
 }
 
-template<BaseVariable> var :: template_subj
+sealed template<BaseVariable> var :: template_subj
 {
     template_subj $value.
     
@@ -45,7 +45,7 @@ template<BaseVariable> var :: template_subj
     embeddable dispatch => $value.
 }
 
-template<BaseVariable> ref :: template_subj
+sealed template<BaseVariable> ref :: template_subj
 {
     template_subj $value.
     
@@ -2386,7 +2386,7 @@ class BaseExtender
 /// A generic variable. 
 ///
 /// Extends an assigned value
-sealed class Variable :: var<object>
+sealed class Variable :: BaseVariable, var<object>
 {
     /// Creates the empty variable
     constructor new

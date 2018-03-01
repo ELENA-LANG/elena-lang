@@ -11,7 +11,7 @@ class BaseEnumerable
 
 // --- listof ---
 
-template<BaseEnumerable> list :: type
+sealed template<BaseEnumerable> list :: type
 {
     array<type> theArray.
     vint        theLength.

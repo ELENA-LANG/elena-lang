@@ -1,5 +1,5 @@
 
-template eventhandler :: function
+sealed template eventhandler :: function
 {
     array<function> $functions.
     

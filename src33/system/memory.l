@@ -6,7 +6,7 @@ class BaseIndexable
 
 // --- arrayof ---
 
-template<BaseIndexable> array :: template_subj
+sealed template<BaseIndexable> array :: template_subj
 {
     template_subj<> $target.
 
@@ -97,7 +97,7 @@ template<BaseIndexable> array :: template_subj
 
 // --- matrixof ---
 
-template matrix :: template_subj
+sealed template matrix :: template_subj
 {
     array<template_subj> theArray.
     int                  theRows.
@@ -243,7 +243,7 @@ template matrix :: template_subj
 // --- ByteArray ---
 
 /// A byte array
-sealed ByteArray :: array<byte>
+sealed ByteArray :: BaseIndexable, array<byte>
 {
     /// Creates the byte array with the specified length
     stacksafe constructor new int:len
@@ -390,7 +390,7 @@ sealed ByteArray :: array<byte>
 // --- ShortArray ---
 
 /// A short integer array
-sealed ShortArray :: array<short>
+sealed ShortArray :: BaseIndexable, array<short>
 {
     /// Creates the short array with the specified length
     stacksafe constructor new int:aLength
@@ -465,7 +465,7 @@ sealed ShortArray :: array<short>
 // --- IntArray ---
 
 /// An array of integers
-sealed IntArray :: array<int>
+sealed IntArray :: BaseIndexable, array<int>
 {
     /// Creates the array with the specified length
     stacksafe constructor $new int : aLength
@@ -842,7 +842,7 @@ sealed class IntMatrix
 // --- RealArray ---
 
 /// An array of real numbers
-sealed RealArray :: array<real>
+sealed RealArray :: BaseIndexable, array<real>
 {
     /// Creates the array with the specified length
     stacksafe constructor new int:aLength
@@ -1012,7 +1012,7 @@ sealed class RealMatrix
 // --- CharArray ---
 
 /// An array of unicode characters (UTF-32)
-sealed CharArray :: array<char>
+sealed CharArray :: BaseIndexable, array<char>
 {
     /// Creates the new array with a specified length
     stacksafe constructor new int : len
@@ -1652,7 +1652,7 @@ class Variant
 // --- Array ---
 
 /// An array
-sealed Array :: array<object>
+sealed Array :: BaseIndexable, array<object>
 {
     /// Creates an empty array
     constructor min

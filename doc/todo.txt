@@ -3,8 +3,7 @@ In development:
 ------                              
                             
               dev - general implementation
-                 * typified enumerators / extensions #245
-                 * var should be treated like in C# #356
+                 * typified enumerators / extensions #245                 
                  * Template based extensions #408
 
               exp - live programming

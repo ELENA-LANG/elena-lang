@@ -1,4 +1,4 @@
-template tuple :: type1
+sealed template tuple :: type1
 {
     type1 prop item1 :: field1.
 
@@ -37,7 +37,7 @@ template tuple :: type1
     ]
 }
 
-template tuple :: type1, type2
+sealed template tuple :: type1, type2
 {
     type1 prop item1 :: field1.
     type2 prop item2 :: field2.
@@ -85,7 +85,7 @@ template tuple :: type1, type2
     }.
 }
 
-template tuple :: type1, type2, type3
+sealed template tuple :: type1, type2, type3
 {
     type1 prop item1 :: field1.
     type2 prop item2 :: field2.
@@ -132,7 +132,7 @@ template tuple :: type1, type2, type3
     }.
 }
 
-template tuple :: type1, type2, type3, type4
+sealed template tuple :: type1, type2, type3, type4
 {
     type1 prop item1 :: field1.
     type2 prop item2 :: field2.
@@ -183,7 +183,7 @@ template tuple :: type1, type2, type3, type4
     }.
 }
 
-template tuple :: type1, type2, type3, type4, type5
+sealed template tuple :: type1, type2, type3, type4, type5
 {
     type1 prop item1 :: field1.
     type2 prop item2 :: field2.
@@ -238,7 +238,7 @@ template tuple :: type1, type2, type3, type4, type5
     }.
 }
 
-template tuple :: type1, type2, type3, type4, type5, type6
+sealed template tuple :: type1, type2, type3, type4, type5, type6
 {
     type1 prop item1 :: field1.
     type2 prop item2 :: field2.

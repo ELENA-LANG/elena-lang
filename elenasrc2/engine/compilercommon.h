@@ -174,6 +174,9 @@ struct _CompilerScope
 
    virtual void validateReference(SNode terminal, ref_t reference) = 0;
 
+   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
+   virtual SubjectList* getAutogerenatedExtensions(ref_t attr) = 0;
+
    _CompilerScope()
       : attributes(0)
    {

@@ -18,6 +18,21 @@ limited class Enumerator
     enumerable = $nil.
 }
 
+//// --- enumerator<> ---
+//
+//template limited enumerator :: type
+//{
+//    bool next
+//    [
+//        NotSupportedException new; raise. // only raise??
+//    ]    
+//    
+//    type get
+//    [
+//        NotSupportedException new; raise. // only raise??
+//    ]
+//}
+
 // --- Indexer ---
 
 /// An indexer prototype
@@ -227,6 +242,16 @@ limited closure class BaseFunction1
         ].
         
         ^ $nil.
+    ]
+}
+
+limited template function :: type
+{
+    /// Executes the action
+    closure(type param) []
+    
+    run(enumerator<type> e)
+    [
     ]
 }
 

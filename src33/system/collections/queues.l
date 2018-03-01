@@ -75,7 +75,7 @@ sealed class Stack :: BaseEnumerable
 
 // --- Stack Template ---
 
-template<BaseEnumerable> stack :: type
+sealed template<BaseEnumerable> stack :: type
 {
     list<type> theArray.
     vint        theTop.
@@ -237,7 +237,7 @@ sealed class Queue :: BaseEnumerable
 
 // --- Queue Template ---
 
-template<BaseEnumerable> queue :: type
+sealed template<BaseEnumerable> queue :: type
 {
     list<type> theArray.
     vint       theTop.

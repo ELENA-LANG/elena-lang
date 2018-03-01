@@ -11,18 +11,30 @@ symbol ifDecrescent
 /// A generic extender
 extension objectOp
 {
+    // !! obsolete
     class_ref
+        = self __class.
+
+    __class
         => system'core_routines'__object.
 
+    // !! obsolete
     parent_ref
+        = self __parent.
+    
+    __parent
         => system'core_routines'__object.
 
     bool instanceOf:type
         => system'core_routines'__object.        
 
+    // obsolete
     literal className
+        = self __className.
+
+    literal __className
     [
-        var c := self~objectOp class_ref.
+        var c := self~objectOp __class.
         
         byte<256> aBuffer.
         int       aLength := system'external LoadClassName 

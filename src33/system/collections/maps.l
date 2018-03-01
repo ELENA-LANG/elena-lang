@@ -1,5 +1,5 @@
 /// Map template
-template<BaseEnumerable> map :: key_type, value_type
+sealed template<BaseEnumerable> map :: key_type, value_type
 {
     int theHashMask.
     

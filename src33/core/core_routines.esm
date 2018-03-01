@@ -118,7 +118,7 @@ procedure __object."throw[1]"
   
 end
 
-procedure __object."class_ref[1]"
+procedure __object."__class[1]"
 
   bloadsi 1
   class
@@ -126,7 +126,7 @@ procedure __object."class_ref[1]"
 
 end
 
-procedure __object."parent_ref[1]"
+procedure __object."__parent[1]"
 
   bloadsi 1
   class

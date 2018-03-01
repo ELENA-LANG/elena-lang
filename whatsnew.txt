@@ -16,6 +16,7 @@
 [+] #393 : Invoking explicit conversion 
 [+] #269 : short-circuit boolean operation
 [+] #350 : Static methods
+[+] #356 : auto attribute
 [+] a support of multi-line quotes
 [!] introducing implicit attribute
 [!] explicit attribute is obsolete

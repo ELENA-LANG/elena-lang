@@ -697,6 +697,7 @@ typedef List<_Module*>         ModuleList;
 //typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
 typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
 typedef Map<ref_t, ref_t>                                       SubjectMap;
+typedef List<ref_t>                                             SubjectList;
 
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> MessageMap;
