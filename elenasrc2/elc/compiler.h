@@ -856,6 +856,13 @@ private:
 
    bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 
+   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
+                                     bool withExtension, bool& genericOne);
+   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
+   {
+      bool dummy;
+      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
+   }
    ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 
    void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -881,7 +888,9 @@ private:
    void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
    ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
 
-   ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);   // returns an info of the first operand
+   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
+
+   ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t& signatureRef, int mode = 0);   // returns an info of the first operand
    ref_t resolveAndCompileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope); // returns the resulting signature list
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);

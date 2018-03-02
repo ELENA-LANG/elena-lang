@@ -4,7 +4,6 @@ class           = #16386.
 struct          = #8197.
 symbol          = #16389.
 constructor     = #16384.
-multi           = #16397.
 listable        = #8198.
 sealed          = #8195.
 embeddable      = #8193.
@@ -131,3 +130,6 @@ type void       = nil.
 
 /// obsolete : use implicit instead
 explicit        = #16387.  
+
+/// obsolete : all methods are multi now
+multi           = #16397.

@@ -3350,9 +3350,24 @@ ref_t Compiler :: resolveAndCompileMessageParameters(SyntaxWriter& writer, SNode
    else return 0;
 }
 
-ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+void Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature)
+{
+   ref_t argRef = resolveObjectReference(scope, info);
+   if (isPrimitiveRef(argRef))
+      argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+
+   if (!anonymous && argRef != 0) {
+      signature.append('$');
+      signature.append(scope.moduleScope->module->resolveReference(argRef));
+   }
+   else anonymous = true;
+}
+
+ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t& signatureRef, int mode)
 {
    ObjectInfo target;
+   bool anonymous = false;
+   IdentifierString signature;
 
    int paramMode = 0;
 
@@ -3393,7 +3408,8 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
                // HOTFIX : skip the extension node
                arg = arg.nextNode();
          }
-         else compileExpression(writer, arg, scope, paramMode);
+         // try to recognize the message signature
+         else resolveStrongArgument(scope, compileExpression(writer, arg, scope, paramMode), anonymous, signature);
       }
 
       arg = arg.nextNode();
@@ -3453,9 +3469,15 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
                exprMode |= HINT_DYNAMIC_OBJECT;
 
             ObjectInfo param = compileExpression(writer, arg, scope, exprMode);
-            if (classRef != 0)
+            if (classRef != 0) {
+               anonymous = false;
+
                if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param, classRef), param.element))
                   scope.raiseError(errInvalidOperation, arg);
+            }
+            else if (anonymous) {
+               resolveStrongArgument(scope, param, anonymous, signature);
+            }
 
             // HOTFIX : externall operation arguments should be inside expression node
             if (test(paramMode, HINT_EXTERNALOP)) {
@@ -3472,16 +3494,69 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
       }
    }
 
+   if (!anonymous) {
+      signatureRef = scope.moduleScope->module->mapSubject(signature.ident(), false);
+   }
    return target;
+}
+
+ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef, 
+   bool withExtension, bool& genericOne)
+{
+   ref_t resolvedMessageRef = 0;
+   ref_t targetRef = resolveObjectReference(scope, target);
+   ref_t extensionRef = 0;
+
+   if (implicitSignatureRef != 0) {
+      IdentifierString message(scope.moduleScope->module->resolveSubject(getAction(generalMessageRef)));
+      message.append(scope.moduleScope->module->resolveSubject(implicitSignatureRef));
+
+      resolvedMessageRef = encodeMessage(scope.moduleScope->module->mapSubject(message, false), getAbsoluteParamCount(generalMessageRef));
+   }
+
+   if (checkMethod(*scope.moduleScope, targetRef, resolvedMessageRef) != tpUnknown) {
+      // if the object handles the compile-time resolved message - use it
+      return resolvedMessageRef;
+   }
+
+   if (withExtension) {
+      // check the existing extensions if allowed
+      if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
+         // if the object handles the general message - use it
+         return generalMessageRef;
+      }
+
+      if (resolvedMessageRef) {
+         extensionRef = mapExtension(scope, resolvedMessageRef, target, genericOne);
+         if (extensionRef != 0) {
+            // if there is an extension to handle the compile-time resolved message - use it
+            target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
+
+            return resolvedMessageRef;
+         }
+      }
+
+      extensionRef = mapExtension(scope, generalMessageRef, target, genericOne);
+      if (extensionRef != 0) {
+         // if there is an extension to handle the general message - use it
+         target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
+
+         return generalMessageRef;
+      }
+   }
+
+   // otherwise - use the general message
+   return generalMessageRef;
 }
 
 ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    writer.newBookmark();
 
+   ref_t implicitSignatureRef = 0;
    size_t paramCount = 0;
    ObjectInfo retVal;
-   ObjectInfo target = compileMessageParameters(writer, node, scope, mode & HINT_RESENDEXPR);
+   ObjectInfo target = compileMessageParameters(writer, node, scope, implicitSignatureRef, mode & HINT_RESENDEXPR);
 
    if (test(mode, HINT_TRY_MODE)) {
       writer.insertChild(0, lxResult, 0);
@@ -3512,21 +3587,15 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       retVal = compileExternalCall(writer, node, scope);
    }
    else {
-      ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
+      ref_t messageRef = mapMessage(node, scope, paramCount);
 
       if (target.kind == okInternal) {
          retVal = compileInternalCall(writer, node, scope, messageRef, target);
       }
       else {
          bool genericOne = false;
-         ref_t extensionRef = mapExtension(scope, messageRef, target, genericOne);
+         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, genericOne);
 
-         if (extensionRef != 0) {
-            //HOTFIX: A proper method should have a precedence over an extension one
-            if (checkMethod(*scope.moduleScope, resolveObjectReference(scope, target), messageRef) == tpUnknown) {
-               target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
-            }
-         }
          if (genericOne)
             mode |= HINT_DYNAMIC_OBJECT;
 
@@ -3651,23 +3720,19 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
          // compile target
          // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
-         ObjectInfo target = compileMessageParameters(writer, exprNode, scope);
+         ref_t dummy = 0;
+         ObjectInfo target = compileMessageParameters(writer, exprNode, scope, dummy);
 
          // compile the parameter
          SNode sourceNode = exprNode.nextNode(lxObjectMask);
          ObjectInfo source = compileExpression(writer, sourceNode, scope, (classRef != 0) ? 0 : HINT_DYNAMIC_OBJECT);
 
+         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveObjectReference(scope, source));
+
          retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO | HINT_ASSIGNING_EXPR);
 
          operationType = lxNone;
       }
-   //   else if (_logic->recognizeNewLocal(exprNode)) {
-   //      // if it is variable declaration
-   //      declareVariable(writer, exprNode, scope);
-   //      declareExpression(writer, node, scope, 0);
-
-   //      operationType = lxNone;
-   //   }
       else scope.raiseError(errUnknownObject, firstToken);
    }
    // if it setat operator
@@ -3816,6 +3881,7 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
 {
    size_t paramCount = 0;
    ref_t  messageRef = mapMessage(node, scope, paramCount);
+   ref_t implicitSignatureRef = 0;
 
    ObjectInfo object;
    if (targetRef != 0) {
@@ -3830,9 +3896,11 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
 
       // the target node already compiler so it should be skipped
       targetNode = lxResult;
-      compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
+      compileMessageParameters(writer, node, scope, implicitSignatureRef, HINT_EXTENSION_MODE);
    }
-   else object = compileMessageParameters(writer, node, scope, HINT_EXTENSION_MODE);
+   else object = compileMessageParameters(writer, node, scope, implicitSignatureRef, HINT_EXTENSION_MODE);
+
+   messageRef = resolveMessageAtCompileTime(role, scope, messageRef, implicitSignatureRef);
 
    return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
 }
@@ -5236,9 +5304,13 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
       resendScope.consructionMode = true;
       resendScope.withFrame = withFrame;
 
-      compileMessageParameters(writer, expr, resendScope, HINT_RESENDEXPR);
+      ref_t implicitSignatureRef = 0;
+      compileMessageParameters(writer, expr, resendScope, implicitSignatureRef, HINT_RESENDEXPR);
 
-      compileMessage(writer, expr, resendScope, ObjectInfo(okObject, classRef), messageRef, HINT_RESENDEXPR);
+      ObjectInfo target(okObject, classRef);
+      messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef);
+
+      compileMessage(writer, expr, resendScope, target, messageRef, HINT_RESENDEXPR);
 
       writer.removeBookmark();
 
@@ -6319,7 +6391,8 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
    while (current != lxNone) {
       if (current == methodType) {
          SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
-         if (multiMethAttr != lxNone) {
+         if (multiMethAttr != lxNone && scope.extensionClassRef == 0) {
+            // HOTFIX : do not generate virtual multimethod for the extensions
             implicitMultimethods.add(multiMethAttr.argument);
             templateMethods = true;
          }
