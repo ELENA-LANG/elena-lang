@@ -41,6 +41,7 @@ using namespace _ELENA_;
 #define HINT_EXT_RESENDEXPR   0x00080400
 #define HINT_ASSIGNING_EXPR   0x00040000
 #define HINT_NODEBUGINFO      0x00020000
+#define HINT_PARAMETERSONLY   0x00010000
 #define HINT_SUBCODE_CLOSURE  0x00008800
 #define HINT_RESENDEXPR       0x00000400
 #define HINT_LAZY_EXPR        0x00000200
@@ -2919,7 +2920,25 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount)
    return encodeMessage(actionRef, paramCount) | actionFlags;
 }
 
-ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object, bool& genericOne)
+ref_t Compiler :: mapExtension(ModuleScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef)
+{
+   auto it = typeExtensions->getIt(messageRef);
+   while (!it.Eof()) {
+      ref_t ref = *it;
+      ref_t resolvedMessage = _logic->resolveMultimethod(scope, messageRef, ref, implicitSignatureRef);
+      if (resolvedMessage) {
+         messageRef = resolvedMessage;
+
+         return ref;
+      }
+
+      it = typeExtensions->nextIt(messageRef, it);
+   }
+
+   return 0;
+}
+
+ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, bool& genericOne)
 {
    // check typed extension if the type available
    ref_t typeRef = 0;
@@ -2957,6 +2976,21 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
       }
    }
 
+   // try to resolve strong typed extension and strong typed message
+   if (implicitSignatureRef) {
+      if (typeRef != 0) {
+         extRef = mapExtension(*scope.moduleScope, scope.moduleScope->extensions.get(typeRef), messageRef, implicitSignatureRef);
+         if (extRef)
+            return extRef;
+      }
+
+      // if no match found - try to resolve general extension and strong typed message
+      extRef = mapExtension(*scope.moduleScope, scope.moduleScope->extensions.get(0), messageRef, implicitSignatureRef);
+      if (extRef)
+         return extRef;
+   }
+
+   // if no match found - try to resolve strong typed extension and genral message
    if (typeRef != 0) {
       SubjectMap* typeExtensions = scope.moduleScope->extensions.get(typeRef);
 
@@ -2964,15 +2998,15 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
          extRef = typeExtensions->get(messageRef);
    }
 
-   // check generic extension
+   // if no match found - try to resolve general extension and general message
    if (extRef == 0) {
       SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
 
-      if (typeExtensions) {         
+      if (typeExtensions) {
          extRef = typeExtensions->get(messageRef);
          if (extRef != 0)
             genericOne = true;
-      }         
+      }
    }
 
    return extRef;
@@ -3246,9 +3280,6 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       }         
    }
 
-   if (result.multi)
-      writer.appendNode(lxMultiAttr);
-
    if (result.closure)
       writer.appendNode(lxClosureAttr);
 
@@ -3322,34 +3353,6 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, ModuleScope& scope, ref_t 
    else return false;
 }
 
-ref_t Compiler :: resolveAndCompileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope)
-{
-   int paramMode = 0;
-   bool anonymous = false;
-   IdentifierString signature;
-
-   SNode current = node.firstChild(lxObjectMask);
-   while (current != lxNone) {
-      ObjectInfo info = compileExpression(writer, current, scope, paramMode);
-      ref_t argRef = resolveObjectReference(scope, info);
-      if (isPrimitiveRef(argRef))
-         argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
-
-      if (!anonymous && argRef != 0) {
-         signature.append('$');
-         signature.append(scope.moduleScope->module->resolveReference(argRef));
-      }
-      else anonymous = true;
-
-      current = current.nextNode(lxObjectMask);
-   }
-
-   if (!anonymous) {
-      return scope.moduleScope->module->mapSubject(signature.ident(), false);
-   }
-   else return 0;
-}
-
 void Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature)
 {
    ref_t argRef = resolveObjectReference(scope, info);
@@ -3363,11 +3366,25 @@ void Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& 
    else anonymous = true;
 }
 
+ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
+{
+   bool anonymous = false;
+   IdentifierString signature;
+   resolveStrongArgument(scope, info, anonymous, signature);
+   if (!anonymous) {
+      return scope.moduleScope->module->mapSubject(signature.ident(), false);
+   }
+   else return 0;
+}
+
 ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t& signatureRef, int mode)
 {
    ObjectInfo target;
    bool anonymous = false;
    IdentifierString signature;
+
+   if (test(mode, HINT_PARAMETERSONLY))
+      target = ObjectInfo(okObject);
 
    int paramMode = 0;
 
@@ -3428,6 +3445,8 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
          subject = arg;
 
       ref_t classRef = scope.mapSubject(subject);
+      if (classRef)
+         anonymous = true;
 
       arg = arg.nextNode();
 
@@ -3470,14 +3489,11 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
 
             ObjectInfo param = compileExpression(writer, arg, scope, exprMode);
             if (classRef != 0) {
-               anonymous = false;
-
                if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param, classRef), param.element))
                   scope.raiseError(errInvalidOperation, arg);
             }
-            else if (anonymous) {
+            else if (!anonymous)
                resolveStrongArgument(scope, param, anonymous, signature);
-            }
 
             // HOTFIX : externall operation arguments should be inside expression node
             if (test(paramMode, HINT_EXTERNALOP)) {
@@ -3494,7 +3510,7 @@ ObjectInfo Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node
       }
    }
 
-   if (!anonymous) {
+   if (!anonymous && !emptystr(signature)) {
       signatureRef = scope.moduleScope->module->mapSubject(signature.ident(), false);
    }
    return target;
@@ -3507,14 +3523,9 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
    ref_t targetRef = resolveObjectReference(scope, target);
    ref_t extensionRef = 0;
 
-   if (implicitSignatureRef != 0) {
-      IdentifierString message(scope.moduleScope->module->resolveSubject(getAction(generalMessageRef)));
-      message.append(scope.moduleScope->module->resolveSubject(implicitSignatureRef));
+   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef);
 
-      resolvedMessageRef = encodeMessage(scope.moduleScope->module->mapSubject(message, false), getAbsoluteParamCount(generalMessageRef));
-   }
-
-   if (checkMethod(*scope.moduleScope, targetRef, resolvedMessageRef) != tpUnknown) {
+   if (resolvedMessageRef != 0) {
       // if the object handles the compile-time resolved message - use it
       return resolvedMessageRef;
    }
@@ -3526,17 +3537,17 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
          return generalMessageRef;
       }
 
-      if (resolvedMessageRef) {
-         extensionRef = mapExtension(scope, resolvedMessageRef, target, genericOne);
+      if (implicitSignatureRef) {
+         extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, genericOne);
          if (extensionRef != 0) {
             // if there is an extension to handle the compile-time resolved message - use it
             target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
 
-            return resolvedMessageRef;
+            return generalMessageRef;
          }
       }
 
-      extensionRef = mapExtension(scope, generalMessageRef, target, genericOne);
+      extensionRef = mapExtension(scope, generalMessageRef, 0, target, genericOne);
       if (extensionRef != 0) {
          // if there is an extension to handle the general message - use it
          target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
@@ -3556,7 +3567,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    ref_t implicitSignatureRef = 0;
    size_t paramCount = 0;
    ObjectInfo retVal;
-   ObjectInfo target = compileMessageParameters(writer, node, scope, implicitSignatureRef, mode & HINT_RESENDEXPR);
+   ObjectInfo target = compileMessageParameters(writer, node, scope, implicitSignatureRef, mode & (HINT_RESENDEXPR | HINT_PARAMETERSONLY));
 
    if (test(mode, HINT_TRY_MODE)) {
       writer.insertChild(0, lxResult, 0);
@@ -3727,7 +3738,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          SNode sourceNode = exprNode.nextNode(lxObjectMask);
          ObjectInfo source = compileExpression(writer, sourceNode, scope, (classRef != 0) ? 0 : HINT_DYNAMIC_OBJECT);
 
-         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveObjectReference(scope, source));
+         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source));
 
          retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO | HINT_ASSIGNING_EXPR);
 
@@ -4365,7 +4376,8 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 
          int paramCount = SyntaxTree::countChild(argNode, lxExpression);
 
-         ref_t actionRef = resolveAndCompileMessageParameters(writer, argNode, scope);
+         ref_t actionRef = 0;
+         compileMessageParameters(writer, argNode, scope, actionRef, HINT_PARAMETERSONLY);
          if (!_logic->injectImplicitConstructor(writer, *scope.moduleScope, *this, targetRef, actionRef, paramCount))
             scope.raiseError(errIllegalOperation, node);
       }
@@ -5437,7 +5449,7 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
       scope.level++;
 
       writer.newNode(lxExpression);
-      compileMessage(writer, node.firstChild(lxObjectMask), scope, extensionMode ? HINT_EXT_RESENDEXPR : HINT_RESENDEXPR);
+      compileMessage(writer, node.firstChild(lxObjectMask), scope, (extensionMode ? HINT_EXT_RESENDEXPR : HINT_RESENDEXPR) | HINT_PARAMETERSONLY);
       writer.closeNode();
 
       scope.freeSpace();
@@ -6309,6 +6321,18 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       scope.raiseWarning(WARNING_LEVEL_1, wrnTypeInherited, node);
 }
 
+void Compiler :: saveExtension(ClassScope& scope, ref_t message)
+{
+   scope.moduleScope->saveExtension(message, scope.extensionClassRef, scope.reference);
+   if (isOpenArg(message) && _logic->isMethodGeneric(scope.info, message)) {
+      // if it is an extension with open argument list generic handler
+      // creates the references for all possible number of parameters
+      for (int i = 1; i < OPEN_ARG_COUNT; i++) {
+         scope.moduleScope->saveExtension(overwriteParamCount(message, i), scope.extensionClassRef, scope.reference);
+      }
+   }
+}
+
 void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool closureBaseClass)
 {
    ref_t message = current.argument;
@@ -6360,14 +6384,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
       // save extensions if required ; private method should be ignored
       if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
-         scope.moduleScope->saveExtension(message, scope.extensionClassRef, scope.reference);
-         if (isOpenArg(message) && _logic->isMethodGeneric(scope.info, message)) {
-            // if it is an extension with open argument list generic handler
-            // creates the references for all possible number of parameters
-            for (int i = 1; i < OPEN_ARG_COUNT; i++) {
-               scope.moduleScope->saveExtension(overwriteParamCount(message, i), scope.extensionClassRef, scope.reference);
-            }
-         }
+         saveExtension(scope, message);
       }
 
       // create overloadlist if required
@@ -6391,8 +6408,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
    while (current != lxNone) {
       if (current == methodType) {
          SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
-         if (multiMethAttr != lxNone && scope.extensionClassRef == 0) {
-            // HOTFIX : do not generate virtual multimethod for the extensions
+         if (multiMethAttr != lxNone) {
             implicitMultimethods.add(multiMethAttr.argument);
             templateMethods = true;
          }
@@ -6989,27 +7005,6 @@ ref_t Compiler :: analizeMessageCall(SNode node, ModuleScope& scope, WarningScop
 
    if (node.existChild(lxStacksafeAttr)) {
       mode |= HINT_NOBOXING;
-   }
-   bool multi = false;
-   if (node.existChild(lxMultiAttr)) {
-      multi = true;
-   }
-
-   SNode targetNode = node.findChild(lxCallTarget);
-   if (targetNode != lxNone && multi) {
-      ref_t message = _logic->resolveMultimethod(scope, node.argument, targetNode.argument, node);
-      if (message != 0) {
-         node.setArgument(message);
-
-         _CompilerLogic::ChechMethodInfo result;
-         _logic->resolveCallType(scope, targetNode.argument, message, result);
-
-         if (result.stackSafe)
-            mode |= HINT_NOBOXING;
-
-         if (result.closure)
-            node.appendNode(lxClosureAttr);
-      }
    }
 
    if (node.existChild(lxEmbeddableAttr)) {

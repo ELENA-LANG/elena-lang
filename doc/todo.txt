@@ -3,28 +3,6 @@ In development:
 ------                              
                             
               dev - general implementation
-                 * get rid of resolveAndCompileMessageParameters, lxMultiAttr, ...
-
-                 * a msg(b) - if a & b - strong typed - try to resolve multimethod directly (even if the class is not sealed / limited)
-                              if not, calls generic one 
-
-                 * a msg type:b - always call strong typed  -- ??
-
-                 * method msg(type b) []
-                 * method msg type:b  []
-
-                 * method msg(object b) [] - ??
-                 * method msg : b [] 
-
-                 * multi attribute is obsolete
-                 * methods with strong-typed signature are always multi-method, if generic one does not exist - generate new one
-                 * calling messafe if the target and the parameter objects are strong typed - resolve multi-method directly
-                 * extension message does not generate default multi-method, always resolved directly
-                 * extension cannot be used directly, but can be explicitly called
-
-                 * extension implementation review
-
-              dev - general implementation
                  * typified enumerators / extensions #245                 
                  * Template based extensions #408
 

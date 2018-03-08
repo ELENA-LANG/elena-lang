@@ -212,7 +212,6 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       result.outputReference = info.methodHints.get(Attribute(message, maReference));
 
       result.embeddable = test(hint, tpEmbeddable);
-      result.multi = test(hint, tpMultimethod);
       result.closure = test(hint, tpAction);
 
       if ((hint & tpMask) == tpSealed) {
@@ -1311,7 +1310,8 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
          attrValue = (tpConversion | tpSealed);
          return true;
       case V_MULTI:
-         attrValue = tpMultimethod;
+         // obsolete
+         attrValue = /*tpMultimethod*/0;
          return true;
       case V_METHOD:
          attrValue = 0;
@@ -1983,12 +1983,28 @@ void CompilerLogic :: optimizeBranchingOp(_CompilerScope&, SNode node)
          intOpNode = lxExpression;
       }
    }
-
 }
 
-ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node)
+inline void readFirstSignature(ident_t signature, size_t& start, size_t& end, IdentifierString& temp)
 {
+   start = signature.find('$') + 1;
+   end = signature.find(start, '$', getlength(signature));
+   temp.copy(signature.c_str() + start, end - start);
+}
+
+inline void readNextSignature(ident_t signature, size_t& start, size_t& end, IdentifierString& temp)
+{
+   end = signature.find(start, '$', getlength(signature));
+   temp.copy(signature.c_str() + start, end - start);
+}
+
+ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef)
+{
+   if (!implicitSignatureRef)
+      return 0;
+
    bool openArg = getAbsoluteParamCount(multiMessage) == OPEN_ARG_COUNT;
+   ident_t sour_sign = scope.module->resolveSubject(implicitSignatureRef);
 
    ClassInfo info;
    if (defineClassInfo(scope, info, targetRef)) {
@@ -2007,59 +2023,42 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
             ref_t message = importMessage(argModule, reader.getDWord(), scope.module);
 
             ident_t signature = scope.module->resolveSubject(getAction(message));
-            size_t start = signature.find('$') + 1;
-            size_t end = signature.find(start, '$', getlength(signature));
-            IdentifierString temp(signature.c_str() + start, end - start);
-            SNode current = node.firstChild();
-            bool first = true;
-            bool matched = true;
-            ref_t argRef = scope.module->mapReference(temp);
-            while (current != lxNone) {
-               if (test(current.type, lxObjectMask)) {
-                  // skip the message target
-                  if (!first) {
-                     ref_t sourRef = 0;
-                     if (current == lxConstantSymbol) {
-                        sourRef = current.argument;
-                     }
-                     else {
-                        SNode opTarget = current.findChild(lxTarget);
-                        if (opTarget != lxNone)
-                           sourRef = opTarget.argument;
-                     }
-                     if (sourRef != 0 && sourRef != scope.superReference) {
-                        // HOTFIX : exclude a super object from compile-time resolving
-                        if (isPrimitiveRef(sourRef))
-                           sourRef = resolvePrimitiveReference(scope, sourRef);
-                        
-                        if (isCompatible(scope, argRef, sourRef)) {                           
-                           if (current == lxBoxing || current == lxUnboxing || current == lxCondBoxing) {
-                              // HOTFIX : add dynamic object attribute if required
-                              if (argRef != sourRef && !isEmbeddable(scope, argRef))
-                                 current.appendNode(lxBoxingRequired);
-                           }
+            IdentifierString temp;
+            size_t start, end;
+            readFirstSignature(signature, start, end, temp);
 
-                           start = end + 1;
-                           if (openArg) {
-                              // for open arg check the same type
-                           }
-                           if (start < getlength(signature)) {
-                              end = signature.find(start, '$', getlength(signature));
-                              temp.copy(signature.c_str() + start, end - start);
-                              argRef = scope.module->mapReference(temp);
-                           }
-                        }
-                        else {
-                           matched = false;
-                           break;
-                        }
+            IdentifierString sour_temp;
+            size_t sour_start, sour_end;
+            readFirstSignature(sour_sign, sour_start, sour_end, sour_temp);
+
+            ref_t sourRef = scope.module->mapReference(sour_temp);
+            ref_t argRef = scope.module->mapReference(temp);
+            bool matched = true;
+            while (start < getlength(signature)) {
+               if (sourRef != scope.superReference) {
+                  // HOTFIX : exclude a super object from compile-time resolving
+                  if (isCompatible(scope, argRef, sourRef)) {
+                     start = end + 1;
+                     sour_start = sour_end + 1;
+                     if (openArg) {
+                        // for open arg check the same type
                      }
-                     else return 0;
+                     if (start < getlength(signature)) {
+                        readNextSignature(signature, start, end, temp);
+                        argRef = scope.module->mapReference(temp);
+
+                        readNextSignature(sour_sign, sour_start, sour_end, sour_temp);
+                        sourRef = scope.module->mapReference(sour_temp);
+                     }
                   }
-                  else first = false;
+                  else {
+                     matched = false;
+                     break;
+                  }
                }
-               current = current.nextNode();
+               else return 0;
             }
+
             if (matched)
                return message;
 
@@ -2070,6 +2069,7 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
 
    return 0;
 }
+
 
 bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)
 {
@@ -2083,8 +2083,3 @@ bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)
    }
    else return true;
 }
-
-////bool CompilerLogic :: isPrimitiveArray(ref_t reference)
-////{
-////   return isPrimitiveStructArrayRef(reference) | isPrimitiveArrayRef(reference);
-////}

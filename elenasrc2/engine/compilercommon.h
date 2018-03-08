@@ -77,11 +77,13 @@
 #define V_LOOP           (ref_t)-16394
 #define V_IMPORT         (ref_t)-16395
 #define V_EXTERN         (ref_t)-16396
-#define V_MULTI          (ref_t)-16397
 #define V_ATTRTEMPLATE   (ref_t)-16398
 #define V_ACCESSOR       (ref_t)-16399
 #define V_BLOCK          (ref_t)-16400
 #define V_NESTEDBLOCK    (ref_t)-16401
+
+// obsolete
+#define V_MULTI          (ref_t)-16397
 
 namespace _ELENA_
 {
@@ -242,7 +244,6 @@ public:
       bool  withOpenArgDispatcher;
       bool  withOpenArg1Dispatcher;
       bool  withOpenArg2Dispatcher;
-      bool  multi;
       bool  closure;
       ref_t outputReference;
 
@@ -256,7 +257,6 @@ public:
          withOpenArgDispatcher = false;
          withOpenArg1Dispatcher = false;
          withOpenArg2Dispatcher = false;
-         multi = false;
          closure = false;
       }
    };
@@ -352,7 +352,7 @@ public:
    virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
    virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node) = 0;
 
-   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, SNode node) = 0;
+   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef) = 0;
 };
 
 }  // _ELENA_

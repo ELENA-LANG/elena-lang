@@ -826,7 +826,9 @@ private:
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
 
-   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target, bool& genericOne);
+   void saveExtension(ClassScope& scope, ref_t message);
+   ref_t mapExtension(ModuleScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef);
+   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, bool& genericOne);
 
    void importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 
@@ -889,9 +891,9 @@ private:
    ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
 
    void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
+   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 
    ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t& signatureRef, int mode = 0);   // returns an info of the first operand
-   ref_t resolveAndCompileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope); // returns the resulting signature list
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
