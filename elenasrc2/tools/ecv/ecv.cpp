@@ -1282,7 +1282,7 @@ int main(int argc, char* argv[])
 
    // prepare library manager
    Path configPath("templates\\lib.cfg");
-   Path rootPath("..\\lib33");
+   Path rootPath("..\\lib34");
 
    // get viewing module name
    IdentifierString buffer(argv[1]);

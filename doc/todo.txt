@@ -2,6 +2,11 @@
 In development:
 ------                              
                             
+              dev - redesign
+                 * switch to xml config files #14
+                 * namespace redesign : module should contain only relative namespaces to the current one
+                 * uncomment afterLoad,prepareCompiler,compileSources,createModule,createDebugModule,validateUnresolved
+
               dev - general implementation
                  * typified enumerators / extensions #245                 
                  * Template based extensions #408

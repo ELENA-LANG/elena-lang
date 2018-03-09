@@ -65,33 +65,33 @@ const char* _fnOpcodes[256] =
 
 using namespace _ELENA_;
 
-inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
-{
-   if (ref != 0) {
-      int mask = ref & mskAnyRef;
-
-      ident_t referenceName = sour->resolveReference(ref & ~mskAnyRef);
-
-      return dest->mapReference(referenceName) | mask;
-   }
-   else return 0;
-}
-
-// --- CommandTape ---
-
-bool CommandTape :: import(ByteCommand& command, _Module* sour, _Module* dest)
-{
-   if (ByteCodeCompiler::IsR2Code(command.code)) {
-      command.additional = importRef(sour, (ref_t)command.additional, dest);
-   }
-   if (ByteCodeCompiler::IsM2Code(command.code)) {
-      command.additional = importMessage(sour, (ref_t)command.additional, dest);
-   }
-   if (ByteCodeCompiler::IsRCode(command.code)) {
-      command.argument = importRef(sour, (ref_t)command.argument, dest);
-   }
-   return true;
-}
+//inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
+//{
+//   if (ref != 0) {
+//      int mask = ref & mskAnyRef;
+//
+//      ident_t referenceName = sour->resolveReference(ref & ~mskAnyRef);
+//
+//      return dest->mapReference(referenceName) | mask;
+//   }
+//   else return 0;
+//}
+//
+//// --- CommandTape ---
+//
+//bool CommandTape :: import(ByteCommand& command, _Module* sour, _Module* dest)
+//{
+//   if (ByteCodeCompiler::IsR2Code(command.code)) {
+//      command.additional = importRef(sour, (ref_t)command.additional, dest);
+//   }
+//   if (ByteCodeCompiler::IsM2Code(command.code)) {
+//      command.additional = importMessage(sour, (ref_t)command.additional, dest);
+//   }
+//   if (ByteCodeCompiler::IsRCode(command.code)) {
+//      command.argument = importRef(sour, (ref_t)command.argument, dest);
+//   }
+//   return true;
+//}
 
 void CommandTape :: write(ByteCode code)
 {
@@ -196,68 +196,68 @@ ByteCodeIterator CommandTape :: find(ByteCode code)
    return tape.end()++;
 }
 
-void CommandTape :: import(_Memory* section, bool withHeader, bool withBreakpoints)
-{
-   ByteCode code;
-   int      argument = 0;
-   int      additional = 0;
-
-   Map<int, int> extLabels;
-
-   MemoryReader reader(section);
-
-   if (withHeader)
-      reader.getDWord();
-
-   while (!reader.Eof()) {
-      argument = 0;
-      additional = 0;
-
-      code = (ByteCode)reader.getByte();
-      if (code > MAX_SINGLE_ECODE) {
-         argument = reader.getDWord();
-      }
-      if (code > MAX_DOUBLE_ECODE) {  
-         additional = reader.getDWord();
-      }
-      if (ByteCodeCompiler::IsJump(code)) {
-         int position = 0;
-         int label = 0;
-         if (code > MAX_DOUBLE_ECODE) {
-            position = additional + reader.Position();
-         }
-         else position = argument + reader.Position();
-
-         if (!extLabels.exist(position)) {
-            label = ++labelSeed;
-            extLabels.add(position, label);
-         }
-         else label = extLabels.get(position);
-
-         if (code > MAX_DOUBLE_ECODE) {
-            write(code, label, argument);
-         }
-         else write(code, label);
-      }
-      else if (code == bcNop) {
-         int label;
-         if (!extLabels.exist(reader.Position() - 1)) {
-            label = ++labelSeed;
-            extLabels.add(reader.Position() - 1, label);
-         }
-         else label = extLabels.get(reader.Position() - 1);
-
-         write(blLabel, label);
-      }
-      else if (code == bcBreakpoint) {
-         if (withBreakpoints) {
-            write(code);
-            write(bdBreakpoint, dsAssemblyStep);
-         }
-      }
-      else write(code, argument, additional);
-   }   
-}
+//void CommandTape :: import(_Memory* section, bool withHeader, bool withBreakpoints)
+//{
+//   ByteCode code;
+//   int      argument = 0;
+//   int      additional = 0;
+//
+//   Map<int, int> extLabels;
+//
+//   MemoryReader reader(section);
+//
+//   if (withHeader)
+//      reader.getDWord();
+//
+//   while (!reader.Eof()) {
+//      argument = 0;
+//      additional = 0;
+//
+//      code = (ByteCode)reader.getByte();
+//      if (code > MAX_SINGLE_ECODE) {
+//         argument = reader.getDWord();
+//      }
+//      if (code > MAX_DOUBLE_ECODE) {  
+//         additional = reader.getDWord();
+//      }
+//      if (ByteCodeCompiler::IsJump(code)) {
+//         int position = 0;
+//         int label = 0;
+//         if (code > MAX_DOUBLE_ECODE) {
+//            position = additional + reader.Position();
+//         }
+//         else position = argument + reader.Position();
+//
+//         if (!extLabels.exist(position)) {
+//            label = ++labelSeed;
+//            extLabels.add(position, label);
+//         }
+//         else label = extLabels.get(position);
+//
+//         if (code > MAX_DOUBLE_ECODE) {
+//            write(code, label, argument);
+//         }
+//         else write(code, label);
+//      }
+//      else if (code == bcNop) {
+//         int label;
+//         if (!extLabels.exist(reader.Position() - 1)) {
+//            label = ++labelSeed;
+//            extLabels.add(reader.Position() - 1, label);
+//         }
+//         else label = extLabels.get(reader.Position() - 1);
+//
+//         write(blLabel, label);
+//      }
+//      else if (code == bcBreakpoint) {
+//         if (withBreakpoints) {
+//            write(code);
+//            write(bdBreakpoint, dsAssemblyStep);
+//         }
+//      }
+//      else write(code, argument, additional);
+//   }   
+//}
 
 inline void addJump(int label, int index, CachedMemoryMap<int, int, 20>& labels, 
                     CachedMemoryMap<int, int, 40>& jumps, 
@@ -682,62 +682,62 @@ inline void addVerb(MessageMap& map, const char* verb, int id)
 
 void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
 {
-   // load verbs
-   addVerb(verbs, DISPATCH_MESSAGE,   DISPATCH_MESSAGE_ID); // NOTE : dispatch verb should not be used explicitly
-   addVerb(verbs, "#new",             NEWOBJECT_MESSAGE_ID);
-   addVerb(verbs, INVOKE_MESSAGE,     INVOKE_MESSAGE_ID);
-   addVerb(verbs, NEW_MESSAGE,        NEW_MESSAGE_ID);
-   addVerb(verbs, GET_MESSAGE,        GET_MESSAGE_ID);
-   addVerb(verbs, EVAL_MESSAGE,       EVAL_MESSAGE_ID);
-   addVerb(verbs, EVALUATE_MESSAGE,   EVAL_MESSAGE_ID);
-   addVerb(verbs, EQUAL_MESSAGE,      EQUAL_MESSAGE_ID);
-   addVerb(verbs, NOTEQUAL_MESSAGE,   NOTEQUAL_MESSAGE_ID);
-   addVerb(verbs, GREATER_MESSAGE,    GREATER_MESSAGE_ID);
-   addVerb(verbs, NOTLESS_MESSAGE,    NOTLESS_MESSAGE_ID);
-   addVerb(verbs, NOTGREATER_MESSAGE, NOTGREATER_MESSAGE_ID);
-   addVerb(verbs, LESS_MESSAGE,       LESS_MESSAGE_ID);
-   addVerb(verbs, AND_MESSAGE,        AND_MESSAGE_ID);
-   addVerb(verbs, OR_MESSAGE,         OR_MESSAGE_ID);
-   addVerb(verbs, XOR_MESSAGE,        XOR_MESSAGE_ID);
-   addVerb(verbs, ADD_MESSAGE,        ADD_MESSAGE_ID);
-   addVerb(verbs, SUB_MESSAGE,        SUB_MESSAGE_ID);
-   addVerb(verbs, MUL_MESSAGE,        MUL_MESSAGE_ID);
-   addVerb(verbs, DIV_MESSAGE,        DIV_MESSAGE_ID);
-   addVerb(verbs, REFER_MESSAGE,      REFER_MESSAGE_ID);
-   addVerb(verbs, APPEND_MESSAGE,     APPEND_MESSAGE_ID);
-   addVerb(verbs, REDUCE_MESSAGE,     REDUCE_MESSAGE_ID);
-   addVerb(verbs, SET_REFER_MESSAGE,  SET_REFER_MESSAGE_ID);
-   addVerb(verbs, SET_MESSAGE,        SET_MESSAGE_ID);
-   addVerb(verbs, READ_MESSAGE,       READ_MESSAGE_ID);
-   addVerb(verbs, WRITE_MESSAGE,      WRITE_MESSAGE_ID);
-   addVerb(verbs, IF_MESSAGE,         IF_MESSAGE_ID);
-   addVerb(verbs, IFNOT_MESSAGE,      IFNOT_MESSAGE_ID);
-   addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);
-   addVerb(verbs, "#values", VALUES_MESSAGE_ID);
+   //// load verbs
+   //addVerb(verbs, DISPATCH_MESSAGE,   DISPATCH_MESSAGE_ID); // NOTE : dispatch verb should not be used explicitly
+   //addVerb(verbs, "#new",             NEWOBJECT_MESSAGE_ID);
+   //addVerb(verbs, INVOKE_MESSAGE,     INVOKE_MESSAGE_ID);
+   //addVerb(verbs, NEW_MESSAGE,        NEW_MESSAGE_ID);
+   //addVerb(verbs, GET_MESSAGE,        GET_MESSAGE_ID);
+   //addVerb(verbs, EVAL_MESSAGE,       EVAL_MESSAGE_ID);
+   //addVerb(verbs, EVALUATE_MESSAGE,   EVAL_MESSAGE_ID);
+   //addVerb(verbs, EQUAL_MESSAGE,      EQUAL_MESSAGE_ID);
+   //addVerb(verbs, NOTEQUAL_MESSAGE,   NOTEQUAL_MESSAGE_ID);
+   //addVerb(verbs, GREATER_MESSAGE,    GREATER_MESSAGE_ID);
+   //addVerb(verbs, NOTLESS_MESSAGE,    NOTLESS_MESSAGE_ID);
+   //addVerb(verbs, NOTGREATER_MESSAGE, NOTGREATER_MESSAGE_ID);
+   //addVerb(verbs, LESS_MESSAGE,       LESS_MESSAGE_ID);
+   //addVerb(verbs, AND_MESSAGE,        AND_MESSAGE_ID);
+   //addVerb(verbs, OR_MESSAGE,         OR_MESSAGE_ID);
+   //addVerb(verbs, XOR_MESSAGE,        XOR_MESSAGE_ID);
+   //addVerb(verbs, ADD_MESSAGE,        ADD_MESSAGE_ID);
+   //addVerb(verbs, SUB_MESSAGE,        SUB_MESSAGE_ID);
+   //addVerb(verbs, MUL_MESSAGE,        MUL_MESSAGE_ID);
+   //addVerb(verbs, DIV_MESSAGE,        DIV_MESSAGE_ID);
+   //addVerb(verbs, REFER_MESSAGE,      REFER_MESSAGE_ID);
+   //addVerb(verbs, APPEND_MESSAGE,     APPEND_MESSAGE_ID);
+   //addVerb(verbs, REDUCE_MESSAGE,     REDUCE_MESSAGE_ID);
+   //addVerb(verbs, SET_REFER_MESSAGE,  SET_REFER_MESSAGE_ID);
+   //addVerb(verbs, SET_MESSAGE,        SET_MESSAGE_ID);
+   //addVerb(verbs, READ_MESSAGE,       READ_MESSAGE_ID);
+   //addVerb(verbs, WRITE_MESSAGE,      WRITE_MESSAGE_ID);
+   //addVerb(verbs, IF_MESSAGE,         IF_MESSAGE_ID);
+   //addVerb(verbs, IFNOT_MESSAGE,      IFNOT_MESSAGE_ID);
+   //addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);
+   //addVerb(verbs, "#values", VALUES_MESSAGE_ID);
 }
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)
 {
-   addVerb(operators, ADD_OPERATOR, ADD_MESSAGE_ID);
-   addVerb(operators, SUB_OPERATOR, SUB_MESSAGE_ID);
-   addVerb(operators, MUL_OPERATOR, MUL_MESSAGE_ID);
-   addVerb(operators, DIV_OPERATOR, DIV_MESSAGE_ID);
-   addVerb(operators, IF_OPERATOR, IF_MESSAGE_ID);
-   addVerb(operators, IFNOT_OPERATOR, IFNOT_MESSAGE_ID);
-   addVerb(operators, EQUAL_OPERATOR, EQUAL_MESSAGE_ID);
-   addVerb(operators, NOTEQUAL_OPERATOR, NOTEQUAL_MESSAGE_ID);
-   addVerb(operators, LESS_OPERATOR, LESS_MESSAGE_ID);
-   addVerb(operators, GREATER_OPERATOR, GREATER_MESSAGE_ID);
-   addVerb(operators, NOTLESS_OPERATOR, NOTLESS_MESSAGE_ID);
-   addVerb(operators, NOTGREATER_OPERATOR, NOTGREATER_MESSAGE_ID);
-   addVerb(operators, AND_OPERATOR, AND_MESSAGE_ID);
-   addVerb(operators, OR_OPERATOR, OR_MESSAGE_ID);
-   addVerb(operators, XOR_OPERATOR, XOR_MESSAGE_ID);
-   addVerb(operators, REFER_OPERATOR, REFER_MESSAGE_ID);
-   addVerb(operators, APPEND_OPERATOR, APPEND_MESSAGE_ID);
-   addVerb(operators, REDUCE_OPERATOR, REDUCE_MESSAGE_ID);
-   addVerb(operators, WRITE_OPERATOR, WRITE_MESSAGE_ID);
-   addVerb(operators, READ_OPERATOR, READ_MESSAGE_ID);
+   //addVerb(operators, ADD_OPERATOR, ADD_MESSAGE_ID);
+   //addVerb(operators, SUB_OPERATOR, SUB_MESSAGE_ID);
+   //addVerb(operators, MUL_OPERATOR, MUL_MESSAGE_ID);
+   //addVerb(operators, DIV_OPERATOR, DIV_MESSAGE_ID);
+   //addVerb(operators, IF_OPERATOR, IF_MESSAGE_ID);
+   //addVerb(operators, IFNOT_OPERATOR, IFNOT_MESSAGE_ID);
+   //addVerb(operators, EQUAL_OPERATOR, EQUAL_MESSAGE_ID);
+   //addVerb(operators, NOTEQUAL_OPERATOR, NOTEQUAL_MESSAGE_ID);
+   //addVerb(operators, LESS_OPERATOR, LESS_MESSAGE_ID);
+   //addVerb(operators, GREATER_OPERATOR, GREATER_MESSAGE_ID);
+   //addVerb(operators, NOTLESS_OPERATOR, NOTLESS_MESSAGE_ID);
+   //addVerb(operators, NOTGREATER_OPERATOR, NOTGREATER_MESSAGE_ID);
+   //addVerb(operators, AND_OPERATOR, AND_MESSAGE_ID);
+   //addVerb(operators, OR_OPERATOR, OR_MESSAGE_ID);
+   //addVerb(operators, XOR_OPERATOR, XOR_MESSAGE_ID);
+   //addVerb(operators, REFER_OPERATOR, REFER_MESSAGE_ID);
+   //addVerb(operators, APPEND_OPERATOR, APPEND_MESSAGE_ID);
+   //addVerb(operators, REDUCE_OPERATOR, REDUCE_MESSAGE_ID);
+   //addVerb(operators, WRITE_OPERATOR, WRITE_MESSAGE_ID);
+   //addVerb(operators, READ_OPERATOR, READ_MESSAGE_ID);
 }
 
 ByteCode ByteCodeCompiler :: code(ident_t s)

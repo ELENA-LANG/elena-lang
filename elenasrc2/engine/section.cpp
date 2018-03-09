@@ -12,38 +12,38 @@
 
 using namespace _ELENA_;
 
-// --- Section ---
-
-Section* _ELENA_::_readSection(StreamReader* reader)
-{
-   Section* section = new Section();
-
-   pos_t length = reader->getDWord();
-   section->load(reader, length);
-
-   section->_references.read(reader);
-
-   return section;
-}
-
-void _ELENA_::_readToMap(StreamReader* reader, SectionMap* map, pos_t counter, ref_t& key, Section* section)
-{
-   while (counter > 0) {
-      reader->readDWord(key);
-
-      section = _readSection(reader);
-
-      map->add(key, section);
-      counter--;
-   }
-}
-
-void Section :: insert(pos_t position, const void* s, pos_t length)
-{
-   MemoryDump::insert(position, s, length);
-
-   ::shift(_references.start(), position, length);
-}
+//// --- Section ---
+//
+//Section* _ELENA_::_readSection(StreamReader* reader)
+//{
+//   Section* section = new Section();
+//
+//   pos_t length = reader->getDWord();
+//   section->load(reader, length);
+//
+//   section->_references.read(reader);
+//
+//   return section;
+//}
+//
+//void _ELENA_::_readToMap(StreamReader* reader, SectionMap* map, pos_t counter, ref_t& key, Section* section)
+//{
+//   while (counter > 0) {
+//      reader->readDWord(key);
+//
+//      section = _readSection(reader);
+//
+//      map->add(key, section);
+//      counter--;
+//   }
+//}
+//
+//void Section :: insert(pos_t position, const void* s, pos_t length)
+//{
+//   MemoryDump::insert(position, s, length);
+//
+//   ::shift(_references.start(), position, length);
+//}
 
 //void Section :: fixupReferences(RelocationFixMap& fixupTable, int base, bool relative)
 //{

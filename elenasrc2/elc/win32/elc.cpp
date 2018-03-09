@@ -98,10 +98,10 @@ public:
 
          // save subject info if enabled
          _ELENA_::MemoryWriter debugWriter(debug);
-         if (project->BoolSetting(_ELENA_::opDebugSubjectInfo)) {
+         /*if (project->BoolSetting(_ELENA_::opDebugSubjectInfo)) {
             image.saveSubject(&debugWriter);
          }
-         else debugWriter.writeDWord(0);
+         else */debugWriter.writeDWord(0);
       }
       else debug->clear();
    }
@@ -124,8 +124,8 @@ _ELC_::Project :: Project()
    _tabSize = 4;
    _encoding = _ELENA_::feUTF8;
 
-   // !! temporally
-   _settings.add(_ELENA_::opDebugSubjectInfo, -1);
+//   // !! temporally
+//   _settings.add(_ELENA_::opDebugSubjectInfo, -1);
 }
 
 void _ELC_::Project :: raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
@@ -196,20 +196,20 @@ bool _ELC_::Project :: readCategory(_ELENA_::_ConfigFile& config, _ELENA_::Proje
    switch (setting) {
       case _ELENA_::opTemplates:
          return config.select(TEMPLATE_CATEGORY, list);
-      case _ELENA_::opPrimitives:
-         return config.select(PRIMITIVE_CATEGORY, list);
+//      case _ELENA_::opPrimitives:
+//         return config.select(PRIMITIVE_CATEGORY, list);
       case _ELENA_::opSources:
          return config.select(SOURCE_CATEGORY, list);
-      case _ELENA_::opForwards:
-         return config.select(FORWARD_CATEGORY, list);
-      case _ELENA_::opExternals:
-         return config.select(EXTERNALS_CATEGORY, list);
+//      case _ELENA_::opForwards:
+//         return config.select(FORWARD_CATEGORY, list);
+//      case _ELENA_::opExternals:
+//         return config.select(EXTERNALS_CATEGORY, list);
       case _ELENA_::opReferences:
          return config.select(REFERENCE_CATEGORY, list);
-      case _ELENA_::opWinAPI:
-         return config.select(WINAPI_CATEGORY, list);
-      case _ELENA_::opTargets:
-         return config.select(TARGET_CATEGORY, list);
+//      case _ELENA_::opWinAPI:
+//         return config.select(WINAPI_CATEGORY, list);
+//      case _ELENA_::opTargets:
+//         return config.select(TARGET_CATEGORY, list);
       default:
          return false;
    }
@@ -242,59 +242,59 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
          return config.getSetting(ELC_LIB_PATH);
       case _ELENA_::opOutputPath:
          return config.getSetting(ELC_OUTPUT_PATH);
-      case _ELENA_::opWarnOnWeakUnresolved:
-         return config.getSetting(ELC_WARNON_WEAKUNRESOLVED);
-         //   case _ELENA_::opWarnOnSignature:
-   //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
+//      case _ELENA_::opWarnOnWeakUnresolved:
+//         return config.getSetting(ELC_WARNON_WEAKUNRESOLVED);
+//         //   case _ELENA_::opWarnOnSignature:
+//   //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
       case _ELENA_::opDebugMode:
          return config.getSetting(ELC_DEBUGINFO);
-      case _ELENA_::opDebugSubjectInfo:
-         return config.getSetting(ELC_SUBJECTINFO);
+//      case _ELENA_::opDebugSubjectInfo:
+//         return config.getSetting(ELC_SUBJECTINFO);
       case _ELENA_::opClassSymbolAutoLoad:
          return config.getSetting(ELC_CLASSSYMBOLLOAD);
       case _ELENA_::opThreadMax:
          return config.getSetting(ELC_SYSTEM_THREADMAX);
       case _ELENA_::opL0:
          return config.getSetting(ELC_L0);
-      case _ELENA_::opL1:
-         return config.getSetting(ELC_L1);
-   //   case _ELENA_::opL2:
-   //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
-      case _ELENA_::opTemplate:
-         return config.getSetting(ELC_PROJECT_TEMPLATE);
-      case _ELENA_::opManifestName:
-         return config.getSetting(ELC_MANIFEST_NAME);
-      case _ELENA_::opManifestVersion:
-         return config.getSetting(ELC_MANIFEST_VERSION);
-      case _ELENA_::opManifestAuthor:
-         return config.getSetting(ELC_MANIFEST_AUTHOR);
+//      case _ELENA_::opL1:
+//         return config.getSetting(ELC_L1);
+//   //   case _ELENA_::opL2:
+//   //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
+//      case _ELENA_::opTemplate:
+//         return config.getSetting(ELC_PROJECT_TEMPLATE);
+//      case _ELENA_::opManifestName:
+//         return config.getSetting(ELC_MANIFEST_NAME);
+//      case _ELENA_::opManifestVersion:
+//         return config.getSetting(ELC_MANIFEST_VERSION);
+//      case _ELENA_::opManifestAuthor:
+//         return config.getSetting(ELC_MANIFEST_AUTHOR);
       default:
          return NULL;
    }
 }
 
-void _ELC_::Project :: addTarget(_ELENA_::_ConfigFile::Node moduleNode)
-{
-   _ELENA_::ident_t name = moduleNode.Attribute(ELC_NAME_KEY);
-
-   _ELENA_::ident_t typeAttr = moduleNode.Attribute(ELC_TYPE_NAME);
-   int type = typeAttr.toInt();
-   if (type != 0) {
-      _targets.add(name, ELC_TYPE_NAME, type);
-
-      // copy options
-      _ELENA_::_ConfigFile::Nodes list;
-      moduleNode.select(ELC_OPTION, list);
-
-      for (_ELENA_::_ConfigFile::Nodes::Iterator it = list.start(); !it.Eof(); it++) {
-         _ELENA_::ident_t val = (*it).Content();
-
-         _targets.add(name, ELC_OPTION, val.clone());
-      }
-
-   }
-   // !! raise a warning if type is invalid
-}
+////void _ELC_::Project :: addTarget(_ELENA_::_ConfigFile::Node moduleNode)
+////{
+////   _ELENA_::ident_t name = moduleNode.Attribute(ELC_NAME_KEY);
+////
+////   _ELENA_::ident_t typeAttr = moduleNode.Attribute(ELC_TYPE_NAME);
+////   int type = typeAttr.toInt();
+////   if (type != 0) {
+////      _targets.add(name, ELC_TYPE_NAME, type);
+////
+////      // copy options
+////      _ELENA_::_ConfigFile::Nodes list;
+////      moduleNode.select(ELC_OPTION, list);
+////
+////      for (_ELENA_::_ConfigFile::Nodes::Iterator it = list.start(); !it.Eof(); it++) {
+////         _ELENA_::ident_t val = (*it).Content();
+////
+////         _targets.add(name, ELC_OPTION, val.clone());
+////      }
+////
+////   }
+////   // !! raise a warning if type is invalid
+////}
 
 void _ELC_::Project :: addModule(_ELENA_::_ConfigFile::Node moduleNode)
 {
@@ -370,41 +370,26 @@ void _ELC_::Project :: cleanUp()
 
 void _ELC_::Project :: loadConfig(_ELENA_::path_t path, bool root, bool requiered)
 {
-   // HOTFIX : loading xml configuarion if required
-   if (_ELENA_::Path::checkExtension(path, "xprj")) {
-      loadXMLConfig(path, root, requiered);
-   }
-   else loadIniConfig(path, root, requiered);
-}
-
-void _ELC_::Project :: loadXMLConfig(_ELENA_::path_t path, bool root, bool requiered)
-{
    ElcXmlConfigFile config;
    _ELENA_::Path configPath;
-
+   
    configPath.copySubPath(path);
-
-   if (!config.load(path, getDefaultEncoding())) {
+   
+   if (!config.load(path, _encoding)) {
       raiseErrorIf(requiered, ELC_ERR_INVALID_PATH, _ELENA_::IdentifierString(path));
       return;
    }
 
-   loadGenericConfig(config, configPath.c_str(), root, requiered);
-}
-
-void _ELC_::Project :: loadIniConfig(_ELENA_::path_t path, bool root, bool requiered)
-{
-   ElcConfigFile config(true);
-   _ELENA_::Path configPath;
-
-   configPath.copySubPath(path);
-
-   if (!config.load(path, getDefaultEncoding())) {
+   try
+   {
+      loadGenericConfig(config, configPath.c_str(), root, requiered);
+   }
+   catch (_ELENA_::XMLException& e)
+   {
       raiseErrorIf(requiered, ELC_ERR_INVALID_PATH, _ELENA_::IdentifierString(path));
       return;
    }
-
-   loadGenericConfig(config, configPath.c_str(), root, requiered);
+   
 }
 
 void _ELC_::Project :: loadGenericConfig(_ELENA_::_ConfigFile& config, _ELENA_::path_t configPath, bool root, bool requiered)
@@ -425,6 +410,7 @@ void _ELC_::Project :: loadGenericConfig(_ELENA_::_ConfigFile& config, _ELENA_::
       else raiseErrorIf(requiered, ELC_ERR_INVALID_TEMPLATE, projectTemplate);
    }
 
+   // load config
    loadConfig(config, configPath);
 }
 
@@ -449,65 +435,65 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
    _ELENA_::IdentifierString valueName(value);
 
    switch ((char)value[0]) {
-      case ELC_PRM_LIB_PATH:
-         _settings.add(_ELENA_::opLibPath, valueName.clone(1));
-         break;
-      case ELC_PRM_OUTPUT_PATH:
-         _settings.add(_ELENA_::opOutputPath, valueName.clone(1));
-         break;
-      case ELC_PRM_EXTRA:
-         if (valueName.compare(ELC_PRM_TABSIZE, 4)) {
-            _tabSize = valueName.ident().toInt(4);
-         }
-         else if (valueName.compare(ELC_PRM_CODEPAGE, 3)) {
-            _encoding = valueName.ident().toInt(3);
-         }
-         else if (valueName.compare(ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
-            _settings.add(_ELENA_::opProjectPath, valueName.clone(_ELENA_::getlength(ELC_PRM_PROJECTPATH)));
-         }
-         else if (valueName.compare(ELC_PRM_OPTOFF)) {
-            _settings.add(_ELENA_::opL0, 0);
-            _settings.add(_ELENA_::opL1, 0);
-         }
-         else if (valueName.compare(ELC_PRM_OPT1OFF)) {
-            _settings.add(_ELENA_::opL1, 0);
-         }
-         else raiseError(ELC_ERR_INVALID_OPTION, valueName);
-         break;
-      case ELC_PRM_WARNING:
-         if (valueName.compare(ELC_W_WEAKUNRESOLVED)) {
-            _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
-         }
-         else if (valueName.compare(ELC_W_LEVEL1)) {
-            _warningMasks = _ELENA_::WARNING_MASK_1;
-         }
-         else if (valueName.compare(ELC_W_LEVEL2)) {
-            _warningMasks = _ELENA_::WARNING_MASK_2;
-         }
-         else if (valueName.compare(ELC_W_LEVEL3)) {
-            _warningMasks = _ELENA_::WARNING_MASK_3;
-         }
-         else if (valueName.compare(ELC_W_OFF)) {
-            _warningMasks = 0;
-         }
-         else raiseError(ELC_ERR_INVALID_OPTION, valueName);
-         break;
-      case ELC_PRM_TARGET:
-         _settings.add(_ELENA_::opTarget, valueName.clone(1));
-         break;
-      case ELC_PRM_DEBUGINFO:
-         if (valueName.compare(ELC_SUBJECTINFO)) {
-            _settings.add(_ELENA_::opDebugSubjectInfo, -1);
-         }
-         _settings.add(_ELENA_::opDebugMode, -1);
-         break;
-      case ELC_PRM_CONFIG:
-      {
-         if (!loadProject(value + 1))
-            raiseError(ELC_ERR_INVALID_OPTION, valueName);
-
-         break;
-      }
+//      case ELC_PRM_LIB_PATH:
+//         _settings.add(_ELENA_::opLibPath, valueName.clone(1));
+//         break;
+//      case ELC_PRM_OUTPUT_PATH:
+//         _settings.add(_ELENA_::opOutputPath, valueName.clone(1));
+//         break;
+//      case ELC_PRM_EXTRA:
+//         if (valueName.compare(ELC_PRM_TABSIZE, 4)) {
+//            _tabSize = valueName.ident().toInt(4);
+//         }
+//         else if (valueName.compare(ELC_PRM_CODEPAGE, 3)) {
+//            _encoding = valueName.ident().toInt(3);
+//         }
+//         else if (valueName.compare(ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
+//            _settings.add(_ELENA_::opProjectPath, valueName.clone(_ELENA_::getlength(ELC_PRM_PROJECTPATH)));
+//         }
+//         else if (valueName.compare(ELC_PRM_OPTOFF)) {
+//            _settings.add(_ELENA_::opL0, 0);
+//            _settings.add(_ELENA_::opL1, 0);
+//         }
+//         else if (valueName.compare(ELC_PRM_OPT1OFF)) {
+//            _settings.add(_ELENA_::opL1, 0);
+//         }
+//         else raiseError(ELC_ERR_INVALID_OPTION, valueName);
+//         break;
+//      case ELC_PRM_WARNING:
+//         if (valueName.compare(ELC_W_WEAKUNRESOLVED)) {
+//            _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
+//         }
+//         else if (valueName.compare(ELC_W_LEVEL1)) {
+//            _warningMasks = _ELENA_::WARNING_MASK_1;
+//         }
+//         else if (valueName.compare(ELC_W_LEVEL2)) {
+//            _warningMasks = _ELENA_::WARNING_MASK_2;
+//         }
+//         else if (valueName.compare(ELC_W_LEVEL3)) {
+//            _warningMasks = _ELENA_::WARNING_MASK_3;
+//         }
+//         else if (valueName.compare(ELC_W_OFF)) {
+//            _warningMasks = 0;
+//         }
+//         else raiseError(ELC_ERR_INVALID_OPTION, valueName);
+//         break;
+//      case ELC_PRM_TARGET:
+//         _settings.add(_ELENA_::opTarget, valueName.clone(1));
+//         break;
+//      case ELC_PRM_DEBUGINFO:
+//         if (valueName.compare(ELC_SUBJECTINFO)) {
+//            _settings.add(_ELENA_::opDebugSubjectInfo, -1);
+//         }
+//         _settings.add(_ELENA_::opDebugMode, -1);
+//         break;
+//      case ELC_PRM_CONFIG:
+//      {
+//         if (!loadProject(value + 1))
+//            raiseError(ELC_ERR_INVALID_OPTION, valueName);
+//
+//         break;
+//      }
       default:
          raiseError(ELC_ERR_INVALID_OPTION, valueName);
    }
@@ -536,7 +522,7 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
       _ELENA_::ModuleInfo moduleInfo = compiler.createModule(name, *this, debugMode);
 
       _ELENA_::ident_t target = source->get(ELC_TARGET_NAME);      
-      int type = !emptystr(target) ? _targets.get(target, ELC_TYPE_NAME, 1) : 1;
+      int type = /*!emptystr(target) ? _targets.get(target, ELC_TYPE_NAME, 1) : */1;
       if (type == 1) {
          // if it is a normal ELENA source file
          _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
@@ -547,35 +533,35 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
             file_it = source->nextIt(ELC_INCLUDE, file_it);
          }
       }
-      else if (type == 2) {
-         // if it is a script file
-         _ELENA_::ScriptParser scriptParser;
+      //else if (type == 2) {
+      //   // if it is a script file
+      //   _ELENA_::ScriptParser scriptParser;
 
-         // load options
-         _ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>* targetInfo = _targets.get(target, (_ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>*)NULL);
+      //   // load options
+      //   _ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>* targetInfo = _targets.get(target, (_ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>*)NULL);
 
-         _ELENA_::TargetIterator option_it = targetInfo->getIt(ELC_OPTION);
-         while (!option_it.Eof()) {
-            if (!scriptParser.setOption(*option_it, StrSetting(_ELENA_::opProjectPath))) {
-               raiseError(errInvalidTargetOption, *option_it);
-            }
+      //   _ELENA_::TargetIterator option_it = targetInfo->getIt(ELC_OPTION);
+      //   while (!option_it.Eof()) {
+      //      if (!scriptParser.setOption(*option_it, StrSetting(_ELENA_::opProjectPath))) {
+      //         raiseError(errInvalidTargetOption, *option_it);
+      //      }
 
-            option_it = targetInfo->nextIt(ELC_OPTION, option_it);
-         }
+      //      option_it = targetInfo->nextIt(ELC_OPTION, option_it);
+      //   }
 
-         // compile script files
-         _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
-         while (!file_it.Eof()) {
-            compile(*file_it, compiler, scriptParser, moduleInfo, unresolveds);
+      //   // compile script files
+      //   _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
+      //   while (!file_it.Eof()) {
+      //      compile(*file_it, compiler, scriptParser, moduleInfo, unresolveds);
 
-            file_it = source->nextIt(ELC_INCLUDE, file_it);
-         }
-      }
+      //      file_it = source->nextIt(ELC_INCLUDE, file_it);
+      //   }
+      //}
 
-      saveModule(moduleInfo.codeModule, "nl");
+      //saveModule(moduleInfo.codeModule, "nl");
 
-      if (moduleInfo.debugModule)
-         saveModule(moduleInfo.debugModule, "dnl");
+      //if (moduleInfo.debugModule)
+      //   saveModule(moduleInfo.debugModule, "dnl");
    }
 
    // validate the unresolved forward refereces if unresolved reference warning is enabled
@@ -797,14 +783,14 @@ int main()
 
       project.cleanUp();
    }
-   catch(_ELENA_::JITConstantExpectedException& ex)
-   {
-      project.printInfo(errConstantExpectedLink, ex.reference);
-      print(ELC_UNSUCCESSFUL);
-      exitCode = -2;
-
-      project.cleanUp();
-   }
+//   catch(_ELENA_::JITConstantExpectedException& ex)
+//   {
+//      project.printInfo(errConstantExpectedLink, ex.reference);
+//      print(ELC_UNSUCCESSFUL);
+//      exitCode = -2;
+//
+//      project.cleanUp();
+//   }
    catch(_ELENA_::_Exception&) {
       print(ELC_UNSUCCESSFUL);
       exitCode = -2;

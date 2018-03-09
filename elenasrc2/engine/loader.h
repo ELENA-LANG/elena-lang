@@ -18,43 +18,43 @@ namespace _ELENA_
 class _ImageLoader : public _JITLoader
 {
 protected:
-   // addresses
-   ReferenceMap _codeReferences, _dataReferences, _symbolReferences;
-   ReferenceMap _statReferences, _exportReferences;
-   ReferenceMap _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
-   ReferenceMap _bssReferences;
-
-   ReferenceMap _subjects;         // subjects
-
+//   // addresses
+//   ReferenceMap _codeReferences, _dataReferences, _symbolReferences;
+   ReferenceMap /*_statReferences, */_exportReferences;
+//   ReferenceMap _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
+//   ReferenceMap _bssReferences;
+//
+//   ReferenceMap _subjects;         // subjects
+//
 public:
-   virtual void* resolveReference(ident_t reference, size_t mask);
-
-   virtual ref_t resolveExternal(ident_t external);
+//   virtual void* resolveReference(ident_t reference, size_t mask);
+//
+//   virtual ref_t resolveExternal(ident_t external);
 
    virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
-   virtual void mapPredefinedSubject(ident_t name, ref_t reference);
-
-   void clearReferences()
-   {
-      _codeReferences.clear();
-      _dataReferences.clear();
-      _symbolReferences.clear();
-      _statReferences.clear();
-      _exportReferences.clear();
-      _constReferences.clear();
-      _numberReferences.clear();
-      _literalReferences.clear();
-      _characterReferences.clear();
-      _wideReferences.clear();
-      _bssReferences.clear();
-      _subjects.clear();
-   }
+//   virtual void mapPredefinedSubject(ident_t name, ref_t reference);
+//
+//   void clearReferences()
+//   {
+//      //_codeReferences.clear();
+//      //_dataReferences.clear();
+//      //_symbolReferences.clear();
+//      //_statReferences.clear();
+//      //_exportReferences.clear();
+//      //_constReferences.clear();
+//      //_numberReferences.clear();
+//      //_literalReferences.clear();
+//      //_characterReferences.clear();
+//      //_wideReferences.clear();
+//      //_bssReferences.clear();
+//      //_subjects.clear();
+//   }
 
    _ImageLoader()
-      : _codeReferences((size_t)-1), _dataReferences((size_t)-1), _symbolReferences((size_t)-1),
-        _statReferences((size_t)-1), _constReferences((size_t)-1), _numberReferences((size_t)-1), _characterReferences((size_t)-1),
-        _literalReferences((size_t)-1), _bssReferences((size_t)-1), _exportReferences((size_t)-1), _wideReferences((size_t)-1),
-        _subjects(0)
+      : //_codeReferences((size_t)-1), _dataReferences((size_t)-1), _symbolReferences((size_t)-1),
+      //  _statReferences((size_t)-1), _constReferences((size_t)-1), _numberReferences((size_t)-1), _characterReferences((size_t)-1),
+      /*  _literalReferences((size_t)-1), _bssReferences((size_t)-1), */_exportReferences((size_t)-1)//, _wideReferences((size_t)-1),
+      //  _subjects(0)
    {
    }
 };

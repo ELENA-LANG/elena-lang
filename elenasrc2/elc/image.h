@@ -30,17 +30,17 @@ public:
 private:
    Project* _project;
    void*    _entryPoint;
-   size_t   _objectHeaderSize;
-
-   ident_t _literal;
-   ident_t _wideLiteral;
-   ident_t _character;
-   ident_t _int;
-   ident_t _long;
-   ident_t _real;
-   ident_t _message;
-   ident_t _ext_message;
-   ident_t _signature;
+//   size_t   _objectHeaderSize;
+//
+//   ident_t _literal;
+//   ident_t _wideLiteral;
+//   ident_t _character;
+//   ident_t _int;
+//   ident_t _long;
+//   ident_t _real;
+//   ident_t _message;
+//   ident_t _ext_message;
+//   ident_t _signature;
 
 public:
    virtual ref_t getEntryPoint()
@@ -57,41 +57,41 @@ public:
 
    virtual _Memory* getTargetSection(ref_t mask);
 
-   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask, bool silentMode);
-   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode);
-   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
+//   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask, bool silentMode);
+//   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode);
+//   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
+//
+//   virtual _Memory* getTargetDebugSection()
+//   {
+//      return &_debug;
+//   }
 
-   virtual _Memory* getTargetDebugSection()
-   {
-      return &_debug;
-   }
-
-   virtual size_t getLinkerConstant(int id);
-
-   virtual ident_t getLiteralClass();
-   virtual ident_t getWideLiteralClass();
-   virtual ident_t getCharacterClass();
-   virtual ident_t getIntegerClass();
-   virtual ident_t getRealClass();
-   virtual ident_t getLongClass();
-   virtual ident_t getMessageClass();
-   virtual ident_t getExtMessageClass();
-   virtual ident_t getSignatureClass();
-   virtual ident_t getNamespace();
-
-   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask);
+//   virtual size_t getLinkerConstant(int id);
+//
+//   virtual ident_t getLiteralClass();
+//   virtual ident_t getWideLiteralClass();
+//   virtual ident_t getCharacterClass();
+//   virtual ident_t getIntegerClass();
+//   virtual ident_t getRealClass();
+//   virtual ident_t getLongClass();
+//   virtual ident_t getMessageClass();
+//   virtual ident_t getExtMessageClass();
+//   virtual ident_t getSignatureClass();
+//   virtual ident_t getNamespace();
+//
+//   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask);
 
    Project* getProject() const { return _project; }
 
-   void saveSubject(MemoryWriter* writer)
-   {
-      _subjects.write(writer);
-   }
-
-   virtual void addListener(_JITLoaderListener* listener)
-   {
-      _project->addLoaderListener(listener);
-   }
+//   void saveSubject(MemoryWriter* writer)
+//   {
+//      _subjects.write(writer);
+//   }
+//
+//   virtual void addListener(_JITLoaderListener* listener)
+//   {
+//      _project->addLoaderListener(listener);
+//   }
 
    ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper);
 };
@@ -101,35 +101,35 @@ public:
 class VirtualMachineClientImage : public Image
 {
    ReferenceMap   _exportReferences;
-   Project*       _project;
-
-   class VMClientHelper : public _BinaryHelper
-   {
-      VirtualMachineClientImage* _owner;
-      ReferenceMap*              _references;
-      MemoryWriter*              _dataWriter;
-      _Module*                   _module;
-
-   public:
-      virtual void writeReference(MemoryWriter& writer, ident_t reference, int mask);
-
-      VMClientHelper(VirtualMachineClientImage* owner, ReferenceMap* references, MemoryWriter* writer, _Module* module)
-      {
-         _owner = owner;
-         _references = references;
-         _dataWriter = writer;
-         _module = module;
-      }
-   };
-
-   friend class VMClientHelper;
-
-   ref_t resolveExternal(ident_t function)
-   {
-      return mapKey(_exportReferences, function, mskImportRef | (_exportReferences.Count() + 1));
-   }
-
-   ref_t createTape(MemoryWriter& data, Project* project, bool withNewConsole);
+//   Project*       _project;
+//
+//   class VMClientHelper : public _BinaryHelper
+//   {
+//      VirtualMachineClientImage* _owner;
+//      ReferenceMap*              _references;
+//      MemoryWriter*              _dataWriter;
+//      _Module*                   _module;
+//
+//   public:
+//      virtual void writeReference(MemoryWriter& writer, ident_t reference, int mask);
+//
+//      VMClientHelper(VirtualMachineClientImage* owner, ReferenceMap* references, MemoryWriter* writer, _Module* module)
+//      {
+//         _owner = owner;
+//         _references = references;
+//         _dataWriter = writer;
+//         _module = module;
+//      }
+//   };
+//
+//   friend class VMClientHelper;
+//
+//   ref_t resolveExternal(ident_t function)
+//   {
+//      return mapKey(_exportReferences, function, mskImportRef | (_exportReferences.Count() + 1));
+//   }
+//
+//   ref_t createTape(MemoryWriter& data, Project* project, bool withNewConsole);
 
 public:
    virtual ReferenceMap::Iterator getExternalIt()

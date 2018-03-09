@@ -583,11 +583,11 @@ struct CommandTape
 //      return command;
 //   }
 
-   void import(_Memory* section, bool withHeader = false, bool withBreakpoints = false);
+   //void import(_Memory* section, bool withHeader = false, bool withBreakpoints = false);
 
    static bool optimizeIdleBreakpoints(CommandTape& tape);
    static bool optimizeJumps(CommandTape& tape);
-   static bool import(ByteCommand& command, _Module* sour, _Module* dest);
+   //static bool import(ByteCommand& command, _Module* sour, _Module* dest);
 
    CommandTape()
    {

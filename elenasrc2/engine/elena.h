@@ -21,24 +21,24 @@ namespace _ELENA_
 class _Module
 {
 public:
-   virtual ident_t Name() const = 0;
-
-   virtual ident_t resolveReference(ref_t reference) = 0;
-   virtual ident_t resolveSubject(ref_t reference) = 0;
-   virtual ident_t resolveConstant(ref_t reference) = 0;
-
-   virtual ref_t mapReference(ident_t reference) = 0;
-   virtual ref_t mapReference(ident_t reference, bool existing) = 0;
-
-   virtual ref_t mapSubject(ident_t reference, bool existing) = 0;
-   virtual ref_t mapConstant(ident_t reference) = 0;
-
-   virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
-   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
-
-   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
-
-   virtual bool save(StreamWriter& writer) = 0;
+////   virtual ident_t Name() const = 0;
+////
+////   virtual ident_t resolveReference(ref_t reference) = 0;
+////   virtual ident_t resolveSubject(ref_t reference) = 0;
+////   virtual ident_t resolveConstant(ref_t reference) = 0;
+////
+////   virtual ref_t mapReference(ident_t reference) = 0;
+////   virtual ref_t mapReference(ident_t reference, bool existing) = 0;
+////
+////   virtual ref_t mapSubject(ident_t reference, bool existing) = 0;
+////   virtual ref_t mapConstant(ident_t reference) = 0;
+////
+////   virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
+////   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
+////
+////   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
+////
+////   virtual bool save(StreamWriter& writer) = 0;
 
    virtual ~_Module() {}
 };
@@ -48,8 +48,8 @@ public:
 class _LibraryManager
 {
 public:
-   virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
-   virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
+   //virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
+   //virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
 };
 
 // --- _Project ---
@@ -57,18 +57,18 @@ public:
 class _ProjectManager
 {
 public:
-   virtual ident_t Namespace() const = 0; // !! obsolete??
+   virtual ident_t Namespace() const = 0;
 
    virtual int getDefaultEncoding() = 0; // !! obsolete
-   virtual int getTabSize() = 0;  // !! obsolete
+   virtual int getTabSize() = 0; // !! obsolete
 
-   virtual bool HasWarnings() const = 0;     // !! obsolete
-   virtual int getWarningMask() const = 0;
-   virtual bool WarnOnWeakUnresolved() const = 0;
-
-   virtual ident_t getManinfestName() = 0;
-   virtual ident_t getManinfestVersion() = 0;
-   virtual ident_t getManinfestAuthor() = 0;
+//   virtual bool HasWarnings() const = 0;     // !! obsolete
+//   virtual int getWarningMask() const = 0;
+//   virtual bool WarnOnWeakUnresolved() const = 0;
+//
+//   virtual ident_t getManinfestName() = 0;
+//   virtual ident_t getManinfestVersion() = 0;
+//   virtual ident_t getManinfestAuthor() = 0;
 
    virtual void printInfo(const char* msg, ident_t value) = 0;
 
@@ -84,52 +84,52 @@ public:
    virtual _Module* createModule(ident_t name) = 0;
    virtual _Module* createDebugModule(ident_t name) = 0 ;
 
-   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
-//   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
-
-   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
-   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
-
-   virtual ident_t resolveForward(ident_t forward) = 0;
-
-   virtual bool addForward(ident_t forward, ident_t reference) = 0;
-
-   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
+////   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
+//////   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
+////
+////   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
+////   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
+////
+////   virtual ident_t resolveForward(ident_t forward) = 0;
+////
+////   virtual bool addForward(ident_t forward, ident_t reference) = 0;
+////
+////   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
-// --- SectionInfo ---
-
-struct SectionInfo
-{
-   _Module* module;
-   _Memory* section;
-
-   SectionInfo()
-   {
-      module = NULL;
-      section = NULL;
-   }
-   SectionInfo(_Module* module, _Memory* section)
-   {
-      this->module = module;
-      this->section = section;
-   }
-};
-
-// --- ClassSectionInfo ---
-
-struct ClassSectionInfo
-{
-   _Module* module;
-   _Memory* codeSection;
-   _Memory* vmtSection;
-
-   ClassSectionInfo()
-   {
-      module = NULL;
-      codeSection = vmtSection = NULL;
-   }
-};
+//// --- SectionInfo ---
+//
+//struct SectionInfo
+//{
+//   _Module* module;
+//   _Memory* section;
+//
+//   SectionInfo()
+//   {
+//      module = NULL;
+//      section = NULL;
+//   }
+//   SectionInfo(_Module* module, _Memory* section)
+//   {
+//      this->module = module;
+//      this->section = section;
+//   }
+//};
+//
+//// --- ClassSectionInfo ---
+//
+//struct ClassSectionInfo
+//{
+//   _Module* module;
+//   _Memory* codeSection;
+//   _Memory* vmtSection;
+//
+//   ClassSectionInfo()
+//   {
+//      module = NULL;
+//      codeSection = vmtSection = NULL;
+//   }
+//};
 
 // --- _LoaderListener ---
 
@@ -146,34 +146,34 @@ class _JITLoader
 public:
    virtual _Memory* getTargetSection(ref_t mask) = 0;
 
-   virtual _Memory* getTargetDebugSection() = 0;
-
-   virtual SectionInfo getSectionInfo(ident_t reference, ref_t mask, bool silentMode) = 0;
-   virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
-   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
-
-   virtual size_t getLinkerConstant(int id) = 0;
-
-   virtual ident_t getLiteralClass() = 0;
-   virtual ident_t getWideLiteralClass() = 0;
-   virtual ident_t getCharacterClass() = 0;
-   virtual ident_t getIntegerClass() = 0;
-   virtual ident_t getRealClass() = 0;
-   virtual ident_t getLongClass() = 0;
-   virtual ident_t getMessageClass() = 0;
-   virtual ident_t getExtMessageClass() = 0;
-   virtual ident_t getSignatureClass() = 0;
-   virtual ident_t getNamespace() = 0;
-
-   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
-
-   virtual void* resolveReference(ident_t reference, ref_t mask) = 0;
-
-   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
+//   virtual _Memory* getTargetDebugSection() = 0;
+//
+//   virtual SectionInfo getSectionInfo(ident_t reference, ref_t mask, bool silentMode) = 0;
+//   virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
+//   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
+//
+////   virtual size_t getLinkerConstant(int id) = 0;
+////
+////   virtual ident_t getLiteralClass() = 0;
+////   virtual ident_t getWideLiteralClass() = 0;
+////   virtual ident_t getCharacterClass() = 0;
+////   virtual ident_t getIntegerClass() = 0;
+////   virtual ident_t getRealClass() = 0;
+////   virtual ident_t getLongClass() = 0;
+////   virtual ident_t getMessageClass() = 0;
+////   virtual ident_t getExtMessageClass() = 0;
+////   virtual ident_t getSignatureClass() = 0;
+////   virtual ident_t getNamespace() = 0;
+////
+////   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
+////
+////   virtual void* resolveReference(ident_t reference, ref_t mask) = 0;
+////
+////   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
 
    virtual void mapReference(ident_t reference, void* vaddress, ref_t mask) = 0;
 
-   virtual void addListener(_JITLoaderListener* listener) = 0;
+//   virtual void addListener(_JITLoaderListener* listener) = 0;
 
    virtual ~_JITLoader() {}
 };
@@ -261,28 +261,28 @@ public:
    }
 };
 
-// --- ReferenceName ---
-
-class ReferenceName : public IdentifierString
-{
-public:
-   ReferenceName()
-   {
-   }
-   ReferenceName(ident_t reference)
-   {
-      copy(reference + reference.findLast('\'') + 1);
-   }
-   ReferenceName(ident_t reference, ident_t package)
-   {
-      size_t length = getlength(package);
-
-      if (reference.compare(package, length) && reference[length] == '\'') {
-         copy(reference + length + 1);
-      }
-      else copy(reference + reference.findLast('\'') + 1);
-   }
-};
+//////// --- ReferenceName ---
+//////
+//////class ReferenceName : public IdentifierString
+//////{
+//////public:
+//////   ReferenceName()
+//////   {
+//////   }
+//////   ReferenceName(ident_t reference)
+//////   {
+//////      copy(reference + reference.findLast('\'') + 1);
+//////   }
+//////   ReferenceName(ident_t reference, ident_t package)
+//////   {
+//////      size_t length = getlength(package);
+//////
+//////      if (reference.compare(package, length) && reference[length] == '\'') {
+//////         copy(reference + length + 1);
+//////      }
+//////      else copy(reference + reference.findLast('\'') + 1);
+//////   }
+//////};
 
 // --- NamespaceName ---
 
@@ -455,172 +455,172 @@ public:
    }
 };
 
-// --- VMTEntry ---
-
-struct VMTEntry
-{
-   ref_t message;
-   pos_t address;
-};
-
-// --- VMTXEntry ---
-
-struct VMTXEntry
-{
-   ref64_t message;
-   ref64_t address;
-};
-
-// --- ClassHeader ---
-
-struct ClassHeader
-{
-   ref_t  staticSize;      // static table size
-   ref_t  classRef;        // class class reference
-   size_t count;
-   size_t flags;
-   ref_t  parentRef;
-};
-
-// --- ClassInfo ---
-
-enum MethodAttribute
-{
-   maSubjectMask        = 0x100,
-   maRefefernceMask     = 0x200,
-   maVerb               = 0x400,
-
-   maNone               = 0x000,
-   maHint               = 0x001,
-   maReference          = 0x202,
-   maEmbeddableGet      = 0x103,
-   maEmbeddableEval     = 0x104,
-   maEmbeddableIdle     = 0x005,
-   maEmbeddableGetAt    = 0x106,
-   maEmbeddableGetAt2   = 0x107,
-   maEmbeddableEval2    = 0x108,
-   maEmbeddableNew      = 0x409,
-   maOverloadlist       = 0x20A,
-};
-
-struct ClassInfo
-{
-   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - type
-   typedef Pair<ref_t, int>                    Attribute;
-   typedef MemoryMap<ref_t, bool, false>       MethodMap;
-   typedef MemoryMap<ident_t, int, true>       FieldMap;
-   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
-   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
-   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
-   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
-
-   ClassHeader    header;
-   int            size;           // Object size
-   MethodMap      methods;
-   FieldMap       fields;
-   StaticFieldMap statics;
-   StaticInfoMap  staticValues;
-
-   FieldTypeMap   fieldTypes;
-   MethodInfoMap  methodHints;
-
-   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
-   {
-      writer->write((void*)this, sizeof(ClassHeader));
-      writer->writeDWord(size);
-      if (!headerAndSizeOnly) {
-         staticValues.write(writer);
-         methods.write(writer);
-         fields.write(writer);
-         fieldTypes.write(writer);
-         methodHints.write(writer);
-         statics.write(writer);
-      }
-   }
-
-   void load(StreamReader* reader, bool headerOnly = false)
-   {
-      reader->read((void*)&header, sizeof(ClassHeader));
-      size = reader->getDWord();
-      if (!headerOnly) {
-         staticValues.read(reader);
-         methods.read(reader);
-         fields.read(reader);
-         fieldTypes.read(reader);
-         methodHints.read(reader);
-         statics.read(reader);
-      }
-   }
-
-   ClassInfo()
-      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
-   {
-      header.flags = 0;
-      header.classRef = 0;
-   }
-};
-
-// --- SymbolExpressionInfo ---
-
-struct SymbolExpressionInfo
-{
-   ref_t expressionClassRef;
-   ref_t listRef;
-   bool  constant;
-
-   void save(StreamWriter* writer)
-   {
-      writer->writeDWord(listRef);
-      writer->writeDWord(constant ? -1: 0);
-      writer->writeDWord(expressionClassRef);
-   }
-
-   void load(StreamReader* reader)
-   {
-      listRef = reader->getDWord();
-      constant = (reader->getDWord() != 0);
-      expressionClassRef = reader->getDWord();
-   }
-
-   SymbolExpressionInfo()
-   {
-      expressionClassRef = 0;
-      listRef = 0;
-      constant = false;
-   }
-};
-
-// --- DebugLineInfo ---
-
-struct DebugLineInfo
-{
-   DebugSymbol symbol;
-   int         col, row, length;
-   union
-   {
-      struct Source { pos_t nameRef; } source;
-      struct Module { pos_t nameRef; int flags; } symbol;
-      struct Step   { pos_t address;         } step;
-      struct Local  { pos_t nameRef; int level; } local;
-      struct Field  { pos_t nameRef; int size;  } field;
-   } addresses;
-
-   DebugLineInfo()
-   {
-      symbol = dsNone;
-      col = row = length = 0;
-   }
-   DebugLineInfo(DebugSymbol symbol, int length, int col, int row)
-   {
-      this->symbol = symbol;
-      this->col = col;
-      this->row = row;
-      this->length = length;
-
-      this->addresses.symbol.nameRef = 0;
-      this->addresses.symbol.flags = 0;
-   }
-};
+////// --- VMTEntry ---
+////
+////struct VMTEntry
+////{
+////   ref_t message;
+////   pos_t address;
+////};
+////
+////// --- VMTXEntry ---
+////
+////struct VMTXEntry
+////{
+////   ref64_t message;
+////   ref64_t address;
+////};
+////
+//////// --- ClassHeader ---
+//////
+//////struct ClassHeader
+//////{
+//////   ref_t  staticSize;      // static table size
+//////   ref_t  classRef;        // class class reference
+//////   size_t count;
+//////   size_t flags;
+//////   ref_t  parentRef;
+//////};
+//////
+//////// --- ClassInfo ---
+//////
+//////enum MethodAttribute
+//////{
+//////   maSubjectMask        = 0x100,
+//////   maRefefernceMask     = 0x200,
+//////   maVerb               = 0x400,
+//////
+//////   maNone               = 0x000,
+//////   maHint               = 0x001,
+//////   maReference          = 0x202,
+//////   maEmbeddableGet      = 0x103,
+//////   maEmbeddableEval     = 0x104,
+//////   maEmbeddableIdle     = 0x005,
+//////   maEmbeddableGetAt    = 0x106,
+//////   maEmbeddableGetAt2   = 0x107,
+//////   maEmbeddableEval2    = 0x108,
+//////   maEmbeddableNew      = 0x409,
+//////   maOverloadlist       = 0x20A,
+//////};
+//////
+//////struct ClassInfo
+//////{
+//////   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - type
+//////   typedef Pair<ref_t, int>                    Attribute;
+//////   typedef MemoryMap<ref_t, bool, false>       MethodMap;
+//////   typedef MemoryMap<ident_t, int, true>       FieldMap;
+//////   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
+//////   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
+//////   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
+//////   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
+//////
+//////   ClassHeader    header;
+//////   int            size;           // Object size
+//////   MethodMap      methods;
+//////   FieldMap       fields;
+//////   StaticFieldMap statics;
+//////   StaticInfoMap  staticValues;
+//////
+//////   FieldTypeMap   fieldTypes;
+//////   MethodInfoMap  methodHints;
+//////
+//////   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+//////   {
+//////      writer->write((void*)this, sizeof(ClassHeader));
+//////      writer->writeDWord(size);
+//////      if (!headerAndSizeOnly) {
+//////         staticValues.write(writer);
+//////         methods.write(writer);
+//////         fields.write(writer);
+//////         fieldTypes.write(writer);
+//////         methodHints.write(writer);
+//////         statics.write(writer);
+//////      }
+//////   }
+//////
+//////   void load(StreamReader* reader, bool headerOnly = false)
+//////   {
+//////      reader->read((void*)&header, sizeof(ClassHeader));
+//////      size = reader->getDWord();
+//////      if (!headerOnly) {
+//////         staticValues.read(reader);
+//////         methods.read(reader);
+//////         fields.read(reader);
+//////         fieldTypes.read(reader);
+//////         methodHints.read(reader);
+//////         statics.read(reader);
+//////      }
+//////   }
+//////
+//////   ClassInfo()
+//////      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+//////   {
+//////      header.flags = 0;
+//////      header.classRef = 0;
+//////   }
+//////};
+//////
+//////// --- SymbolExpressionInfo ---
+//////
+//////struct SymbolExpressionInfo
+//////{
+//////   ref_t expressionClassRef;
+//////   ref_t listRef;
+//////   bool  constant;
+//////
+//////   void save(StreamWriter* writer)
+//////   {
+//////      writer->writeDWord(listRef);
+//////      writer->writeDWord(constant ? -1: 0);
+//////      writer->writeDWord(expressionClassRef);
+//////   }
+//////
+//////   void load(StreamReader* reader)
+//////   {
+//////      listRef = reader->getDWord();
+//////      constant = (reader->getDWord() != 0);
+//////      expressionClassRef = reader->getDWord();
+//////   }
+//////
+//////   SymbolExpressionInfo()
+//////   {
+//////      expressionClassRef = 0;
+//////      listRef = 0;
+//////      constant = false;
+//////   }
+//////};
+//////
+//////// --- DebugLineInfo ---
+//////
+//////struct DebugLineInfo
+//////{
+//////   DebugSymbol symbol;
+//////   int         col, row, length;
+//////   union
+//////   {
+//////      struct Source { pos_t nameRef; } source;
+//////      struct Module { pos_t nameRef; int flags; } symbol;
+//////      struct Step   { pos_t address;         } step;
+//////      struct Local  { pos_t nameRef; int level; } local;
+//////      struct Field  { pos_t nameRef; int size;  } field;
+//////   } addresses;
+//////
+//////   DebugLineInfo()
+//////   {
+//////      symbol = dsNone;
+//////      col = row = length = 0;
+//////   }
+//////   DebugLineInfo(DebugSymbol symbol, int length, int col, int row)
+//////   {
+//////      this->symbol = symbol;
+//////      this->col = col;
+//////      this->row = row;
+//////      this->length = length;
+//////
+//////      this->addresses.symbol.nameRef = 0;
+//////      this->addresses.symbol.flags = 0;
+//////   }
+//////};
 
 // --- Exception base class ---
 
@@ -640,11 +640,11 @@ struct InternalError : _Exception
    }
 };
 
-// --- EAbortException ---
-
-class EAbortException : _Exception
-{
-};
+//// --- EAbortException ---
+//
+//class EAbortException : _Exception
+//{
+//};
 
 // --- key mapping routines ---
 
@@ -677,215 +677,195 @@ inline ref_t mapReferenceKey(ident_t key)
    return position;
 }
 
-//inline ref_t mapIdentifierKey(ident_t key)
-//{
-//   int position = key[0] - 'a';
-//   if (position > 26)
-//      position = 26;
-//   else if (position < 0)
-//      position = 0;
-//
-//   return position;
-//}
-
 // --- Common type definitions ---
 
 typedef Map<ident_t, _Module*> ModuleMap;
-typedef List<_Module*>         ModuleList;
-
-//// --- Reference mapping types ---
-//typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
+////typedef List<_Module*>         ModuleList;
+//
+////// --- Reference mapping types ---
+////typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
 typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
-typedef Map<ref_t, ref_t>                                       SubjectMap;
-typedef List<ref_t>                                             SubjectList;
+////typedef Map<ref_t, ref_t>                                       SubjectMap;
+////typedef List<ref_t>                                             SubjectList;
 
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> MessageMap;
 
-// --- ParserTable auxiliary types ---
+//// --- ParserTable auxiliary types ---
 typedef Stack<int>                                          ParserStack;
 typedef MemoryMap<ident_t, int>                             SymbolMap;
 typedef MemoryHashTable<ref_t, int, syntaxRule, cnHashSize> SyntaxHash;
 typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 
-// --- miscellaneous routines ---
-
-inline bool isWeakReference(ident_t referenceName)
-{
-   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0]=='\'');
-}
-
-inline bool isTemplateWeakReference(ident_t referenceName)
-{
-   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0] == '\'' && referenceName.find('#') != NOTFOUND_POS);
-}
-
-inline ref_t encodeMessage(ref_t actionRef, int paramCount)
-{
-   return (actionRef << 4) + paramCount;
-}
-
-inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
-{
-   ref64_t message = actionRef;
-   message <<= 16;
-
-   message += paramCount;
-
-   return message;
-}
-
-inline ref_t encodeVerb(int verbId)
-{
-   return encodeMessage(verbId, 0);
-}
-
-inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
-{
-   actionRef = (message >> 4) & ACTION_MASK;
-
-   paramCount = message & PARAM_MASK;
-}
-
-inline ref_t overwriteParamCount(ref_t message, int paramCount)
-{
-   message &= ~PARAM_MASK;
-   message |= paramCount;
-
-   return message;
-}
-
-inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
-{
-   actionRef = (ref_t)(message >> 16);
-
-   actionRef &= ACTION_MASK;
-
-   paramCount = message & PARAMX_MASK;
-}
-
-inline int getAbsoluteParamCount(ref_t message)
-{
-   int   paramCount;
-   ref_t action;
-   decodeMessage(message, action, paramCount);
-
-   return paramCount;
-}
-
-inline int getParamCount(ref_t message)
-{
-   int   paramCount;
-   ref_t action;
-   decodeMessage(message, action, paramCount);
-
-   if (paramCount >= OPEN_ARG_COUNT)
-      return paramCount - OPEN_ARG_COUNT;
-
-   return paramCount;
-}
-
-inline ref_t getAction(ref_t message)
-{
-   int   paramCount;
-   ref_t action;
-   decodeMessage(message, action, paramCount);
-
-   return action;
-}
-
-//inline ref_t getSignature(ref_t message)
-//{
-//   int   paramCount;
-//   ref_t verb, signature;
-//   decodeMessage(message, signature, verb, paramCount);
-//
-//   return signature;
-//}
-
-inline ref64_t toMessage64(ref_t message)
-{
-   int   paramCount;
-   ref_t actionRef;
-   decodeMessage(message, actionRef, paramCount);
-
-   return encodeMessage64(actionRef, paramCount);
-}
-
-inline ref_t fromMessage64(ref64_t message)
-{
-   int   paramCount;
-   ref_t actionRef;
-   decodeMessage64(message, actionRef, paramCount);
-
-   return encodeMessage(actionRef, paramCount);
-}
-
-inline bool IsExprOperator(int operator_id)
-{
-   switch (operator_id) {
-      case ADD_MESSAGE_ID:
-      case SUB_MESSAGE_ID:
-      case MUL_MESSAGE_ID:
-      case DIV_MESSAGE_ID:
-      case AND_MESSAGE_ID:
-      case OR_MESSAGE_ID:
-      case XOR_MESSAGE_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-inline bool IsShiftOperator(int operator_id)
-{
-   switch (operator_id) {
-      case READ_MESSAGE_ID:
-      case WRITE_MESSAGE_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-inline bool IsRealExprOperator(int operator_id)
-{
-   switch (operator_id) {
-   case ADD_MESSAGE_ID:
-   case SUB_MESSAGE_ID:
-   case MUL_MESSAGE_ID:
-   case DIV_MESSAGE_ID:
-      return true;
-   default:
-      return false;
-   }
-}
-
-inline bool isOpenArg(ref_t message)
-{
-   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
-}
-
-inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
-{
-   ref_t actionRef = 0;
-   ref_t flags = exportRef & MESSAGE_FLAG_MASK;
-   int paramCount = 0;
-
-   decodeMessage(exportRef, actionRef, paramCount);
-
-   // if it is generic message
-   if (actionRef <= PREDEFINED_MESSAGE_ID) {
-      return exportRef;
-   }
-
-   // otherwise signature and custom verb should be imported
-   ident_t subject = exporter->resolveSubject(actionRef);
-
-   actionRef = importer->mapSubject(subject, false);
-
-   return encodeMessage(actionRef, paramCount) | flags;
-}
+//////// --- miscellaneous routines ---
+//////
+//////inline bool isWeakReference(ident_t referenceName)
+//////{
+//////   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0]=='\'');
+//////}
+//////
+//////inline bool isTemplateWeakReference(ident_t referenceName)
+//////{
+//////   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0] == '\'' && referenceName.find('#') != NOTFOUND_POS);
+//////}
+////
+////inline ref_t encodeMessage(ref_t actionRef, int paramCount)
+////{
+////   return (actionRef << 4) + paramCount;
+////}
+////
+////inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
+////{
+////   ref64_t message = actionRef;
+////   message <<= 16;
+////
+////   message += paramCount;
+////
+////   return message;
+////}
+////
+////inline ref_t encodeVerb(int verbId)
+////{
+////   return encodeMessage(verbId, 0);
+////}
+////
+////inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
+////{
+////   actionRef = (message >> 4) & ACTION_MASK;
+////
+////   paramCount = message & PARAM_MASK;
+////}
+////
+//////inline ref_t overwriteParamCount(ref_t message, int paramCount)
+//////{
+//////   message &= ~PARAM_MASK;
+//////   message |= paramCount;
+//////
+//////   return message;
+//////}
+////
+////inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
+////{
+////   actionRef = (ref_t)(message >> 16);
+////
+////   actionRef &= ACTION_MASK;
+////
+////   paramCount = message & PARAMX_MASK;
+////}
+////
+////inline int getAbsoluteParamCount(ref_t message)
+////{
+////   int   paramCount;
+////   ref_t action;
+////   decodeMessage(message, action, paramCount);
+////
+////   return paramCount;
+////}
+////
+//////inline int getParamCount(ref_t message)
+//////{
+//////   int   paramCount;
+//////   ref_t action;
+//////   decodeMessage(message, action, paramCount);
+//////
+//////   if (paramCount >= OPEN_ARG_COUNT)
+//////      return paramCount - OPEN_ARG_COUNT;
+//////
+//////   return paramCount;
+//////}
+////
+////inline ref_t getAction(ref_t message)
+////{
+////   int   paramCount;
+////   ref_t action;
+////   decodeMessage(message, action, paramCount);
+////
+////   return action;
+////}
+////
+////inline ref64_t toMessage64(ref_t message)
+////{
+////   int   paramCount;
+////   ref_t actionRef;
+////   decodeMessage(message, actionRef, paramCount);
+////
+////   return encodeMessage64(actionRef, paramCount);
+////}
+////
+////inline ref_t fromMessage64(ref64_t message)
+////{
+////   int   paramCount;
+////   ref_t actionRef;
+////   decodeMessage64(message, actionRef, paramCount);
+////
+////   return encodeMessage(actionRef, paramCount);
+////}
+////
+//////inline bool IsExprOperator(int operator_id)
+//////{
+//////   switch (operator_id) {
+//////      case ADD_MESSAGE_ID:
+//////      case SUB_MESSAGE_ID:
+//////      case MUL_MESSAGE_ID:
+//////      case DIV_MESSAGE_ID:
+//////      case AND_MESSAGE_ID:
+//////      case OR_MESSAGE_ID:
+//////      case XOR_MESSAGE_ID:
+//////         return true;
+//////      default:
+//////         return false;
+//////   }
+//////}
+//////
+//////inline bool IsShiftOperator(int operator_id)
+//////{
+//////   switch (operator_id) {
+//////      case READ_MESSAGE_ID:
+//////      case WRITE_MESSAGE_ID:
+//////         return true;
+//////      default:
+//////         return false;
+//////   }
+//////}
+//////
+//////inline bool IsRealExprOperator(int operator_id)
+//////{
+//////   switch (operator_id) {
+//////   case ADD_MESSAGE_ID:
+//////   case SUB_MESSAGE_ID:
+//////   case MUL_MESSAGE_ID:
+//////   case DIV_MESSAGE_ID:
+//////      return true;
+//////   default:
+//////      return false;
+//////   }
+//////}
+//////
+//////inline bool isOpenArg(ref_t message)
+//////{
+//////   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
+//////}
+////
+////inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
+////{
+////   ref_t actionRef = 0;
+////   ref_t flags = exportRef & MESSAGE_FLAG_MASK;
+////   int paramCount = 0;
+////
+////   decodeMessage(exportRef, actionRef, paramCount);
+////
+////   // if it is generic message
+////   if (actionRef <= PREDEFINED_MESSAGE_ID) {
+////      return exportRef;
+////   }
+////
+////   // otherwise signature and custom verb should be imported
+////   ident_t subject = exporter->resolveSubject(actionRef);
+////
+////   actionRef = importer->mapSubject(subject, false);
+////
+////   return encodeMessage(actionRef, paramCount) | flags;
+////}
 
 } // _ELENA_
 

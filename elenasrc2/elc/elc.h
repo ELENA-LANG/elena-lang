@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0075
+#define ELC_REVISION_NUMBER             0x0001
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -28,39 +28,39 @@
 
 #endif
 
-// --- ELC command-line parameters ---
-#define ELC_PRM_CONFIG              'c'
-#define ELC_PRM_DEBUGINFO           'd'
-//#define ELC_PRM_SUBJECTINFO         'ds'
-#define ELC_PRM_OUTPUT_PATH         'o'
-#define ELC_PRM_LIB_PATH            'p'
-#define ELC_PRM_TARGET              't'
-#define ELC_PRM_WARNING             'w'
-#define ELC_W_WEAKUNRESOLVED        "wwun"
-#define ELC_W_LEVEL1                "w1"
-#define ELC_W_LEVEL2                "w2"
-#define ELC_W_LEVEL3                "w3"
-#define ELC_W_OFF                   "w-"
-#define ELC_PRM_EXTRA               'x'
-#define ELC_PRM_TABSIZE             "xtab"
-#define ELC_PRM_PROJECTPATH         "xpath"
-#define ELC_PRM_CODEPAGE            "xcp"
-#define ELC_PRM_OPTOFF              "xo-"
-#define ELC_PRM_OPT1OFF             "xo1-"
+//// --- ELC command-line parameters ---
+//#define ELC_PRM_CONFIG              'c'
+//#define ELC_PRM_DEBUGINFO           'd'
+////#define ELC_PRM_SUBJECTINFO         'ds'
+//#define ELC_PRM_OUTPUT_PATH         'o'
+//#define ELC_PRM_LIB_PATH            'p'
+//#define ELC_PRM_TARGET              't'
+//#define ELC_PRM_WARNING             'w'
+//#define ELC_W_WEAKUNRESOLVED        "wwun"
+//#define ELC_W_LEVEL1                "w1"
+//#define ELC_W_LEVEL2                "w2"
+//#define ELC_W_LEVEL3                "w3"
+//#define ELC_W_OFF                   "w-"
+//#define ELC_PRM_EXTRA               'x'
+//#define ELC_PRM_TABSIZE             "xtab"
+//#define ELC_PRM_PROJECTPATH         "xpath"
+//#define ELC_PRM_CODEPAGE            "xcp"
+//#define ELC_PRM_OPTOFF              "xo-"
+//#define ELC_PRM_OPT1OFF             "xo1-"
 
 // --- ELC config categories ---
 #define SOURCE_CATEGORY             "files/*"
-#define FORWARD_CATEGORY            "forwards/*"
-#define PRIMITIVE_CATEGORY          "primitives/*"
+//#define FORWARD_CATEGORY            "forwards/*"
+//#define PRIMITIVE_CATEGORY          "primitives/*"
 #define TEMPLATE_CATEGORY           "templates/*"
-#define WINAPI_CATEGORY             "winapi/*"
-#define EXTERNALS_CATEGORY          "externals/*"
+//#define WINAPI_CATEGORY             "winapi/*"
+//#define EXTERNALS_CATEGORY          "externals/*"
 #define REFERENCE_CATEGORY          "references/*"
-#define TARGET_CATEGORY             "targets/*"
+//#define TARGET_CATEGORY             "targets/*"
 
 // --- ELC config settings ---
 #define ELC_DEBUGINFO               "project/debuginfo"
-#define ELC_SUBJECTINFO             "project/subjectinfo"
+//#define ELC_SUBJECTINFO             "project/subjectinfo"
 #define ELC_CLASSSYMBOLLOAD         "project/classsymbolload"
 #define ELC_TARGET                  "project/executable"
 #define ELC_MG_SIZE                 "linker/mgsize"
@@ -73,25 +73,25 @@
 #define ELC_NAMESPACE               "project/namespace"
 #define ELC_STACK_COMMIT            "linker/stackcommit"
 #define ELC_STACK_RESERV            "linker/stackresrv"
-//#define ELC_PROJECT_START           "start"
+////#define ELC_PROJECT_START           "start"
 #define ELC_PROJECT_TEMPLATE        "project/template"
 #define ELC_PLATFORMTYPE            "system/platform"
-#define ELC_WARNON_WEAKUNRESOLVED   "project/warn/weakunresolved"
-//#define ELC_WARNON_SIGNATURE        "warn:signature"
+//#define ELC_WARNON_WEAKUNRESOLVED   "project/warn/weakunresolved"
+////#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "linker/ygsize"
 #define ELC_L0                      "compiler/l0"                // optimization: byte code optimization
-#define ELC_L1                      "compiler/l1"                // optimization: source code optimization
+//#define ELC_L1                      "compiler/l1"                // optimization: source code optimization
 
 #define ELC_TARGET_NAME             "target"
-#define ELC_TYPE_NAME               "type"
+//#define ELC_TYPE_NAME               "type"
 #define ELC_INCLUDE                 "include"
 #define ELC_NAMESPACE_KEY           "namespace"
 #define ELC_NAME_KEY                "name"
-#define ELC_OPTION                  "option"
-
-#define ELC_MANIFEST_NAME           "manifest/name"
-#define ELC_MANIFEST_VERSION        "manifest/version"
-#define ELC_MANIFEST_AUTHOR         "manifest/author"
+//#define ELC_OPTION                  "option"
+//
+//#define ELC_MANIFEST_NAME           "manifest/name"
+//#define ELC_MANIFEST_VERSION        "manifest/version"
+//#define ELC_MANIFEST_AUTHOR         "manifest/author"
 
 // --- ELC information messages ---
 #define ELC_GREETING                "ELENA Command-line compiler %d.%d.%d (C)2005-2018 by Alex Rakov\n"
@@ -122,7 +122,7 @@
 #define ELC_ERR_INVALID_PATH        "elc: error 402: Invalid or none-existing file '%s'\n"
 #define ELC_ERR_INVALID_TEMPLATE    "elc: error 404: Invalid or none-existing template '%s'\n"
 
-#define ELC_WRN_MISSING_VMPATH      "elc: warning 411: Missing project/vmpath\n"
+//#define ELC_WRN_MISSING_VMPATH      "elc: warning 411: Missing project/vmpath\n"
 
 namespace _ELC_
 {
@@ -160,7 +160,7 @@ public:
    bool loadProject(_ELENA_::path_t path);
 
    virtual void addModule(_ELENA_::_ConfigFile::Node moduleNode);
-   virtual void addTarget(_ELENA_::_ConfigFile::Node moduleNode);
+//   virtual void addTarget(_ELENA_::_ConfigFile::Node moduleNode);
 
    virtual void loadConfig(_ELENA_::_ConfigFile& config, _ELENA_::path_t configPath)
    {
@@ -168,10 +168,7 @@ public:
    }
 
    virtual void loadConfig(_ELENA_::path_t path, bool root = false, bool requiered = true);
-
    void loadGenericConfig(_ELENA_::_ConfigFile& config, _ELENA_::path_t configPath, bool root, bool requiered);
-   void loadIniConfig(_ELENA_::path_t path, bool root, bool requiered);
-   void loadXMLConfig(_ELENA_::path_t path, bool root, bool requiered);
 
    void setOption(_ELENA_::path_t value);
 

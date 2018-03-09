@@ -39,7 +39,7 @@ inline ident_t getLoadError(LoadResult result)
 // --- Project ---
 
 Project :: Project()
-   : _sources(true), _targets(true)
+   : _sources(true)//, _targets(true)
 {
    _hasWarning = false;
    _numberOfWarnings = 100;
@@ -141,49 +141,49 @@ void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, path_t
    }
 }
 
-void Project :: loadForwardCategory(_ConfigFile& config)
-{
-   _ConfigFile::Nodes nodes;
-   if (readCategory(config, opForwards, nodes)) {
-      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
-         ident_t key = (*it).Attribute("key");
-         if (emptystr(key))
-            key = it.key();
-
-         _settings.add(opForwards, key, (*it).Content().clone());
-      }
-   }
-}
-
-void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
-{
-   _ConfigFile::Nodes nodes;
-   if (readCategory(config, opPrimitives, nodes)) {
-      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
-         ident_t key = (*it).Attribute("key");
-         if (emptystr(key))
-            key = it.key();
-
-         // copy value or key if the value is absent
-         ident_t value = (*it).Content();
-         if (emptystr(value))
-            value = key;
-
-         // add path if provided
-         Path filePath(path);
-         // if path starts with tilda - skip path
-         if (value[0] == '~') {
-            filePath.copy(value + 1);
-         }
-         else filePath.combine((const char*)value);
-
-         if (key.compare(CORE_ALIAS)) {
-            _loader.addCorePath(filePath.c_str());
-         }
-         else _loader.addPrimitivePath(key, filePath.c_str());
-      }
-   }
-}
+////void Project :: loadForwardCategory(_ConfigFile& config)
+////{
+////   _ConfigFile::Nodes nodes;
+////   if (readCategory(config, opForwards, nodes)) {
+////      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
+////         ident_t key = (*it).Attribute("key");
+////         if (emptystr(key))
+////            key = it.key();
+////
+////         _settings.add(opForwards, key, (*it).Content().clone());
+////      }
+////   }
+////}
+////
+////void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
+////{
+////   _ConfigFile::Nodes nodes;
+////   if (readCategory(config, opPrimitives, nodes)) {
+////      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
+////         ident_t key = (*it).Attribute("key");
+////         if (emptystr(key))
+////            key = it.key();
+////
+////         // copy value or key if the value is absent
+////         ident_t value = (*it).Content();
+////         if (emptystr(value))
+////            value = key;
+////
+////         // add path if provided
+////         Path filePath(path);
+////         // if path starts with tilda - skip path
+////         if (value[0] == '~') {
+////            filePath.copy(value + 1);
+////         }
+////         else filePath.combine((const char*)value);
+////
+////         if (key.compare(CORE_ALIAS)) {
+////            _loader.addCorePath(filePath.c_str());
+////         }
+////         else _loader.addPrimitivePath(key, filePath.c_str());
+////      }
+////   }
+////}
 
 void Project :: loadSourceCategory(_ConfigFile& config)
 {
@@ -201,15 +201,15 @@ void Project :: loadSourceCategory(_ConfigFile& config)
    }
 }
 
-void Project :: loadTargetCategory(_ConfigFile& config)
-{
-   _ConfigFile::Nodes nodes;
-   if (readCategory(config, opTargets, nodes)) {
-      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
-         addTarget(*it);
-      }
-   }
-}
+////void Project :: loadTargetCategory(_ConfigFile& config)
+////{
+////   _ConfigFile::Nodes nodes;
+////   if (readCategory(config, opTargets, nodes)) {
+////      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
+////         addTarget(*it);
+////      }
+////   }
+////}
 
 void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 {
@@ -218,12 +218,12 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadPathOption(config, opLibPath, configPath);
    loadPathOption(config, opTarget, configPath);
    loadOption(config, opOutputPath);
-   loadBoolOption(config, opWarnOnWeakUnresolved);
-   //loadBoolOption(config, opWarnOnSignature);
+//   loadBoolOption(config, opWarnOnWeakUnresolved);
+//   //loadBoolOption(config, opWarnOnSignature);
    loadBoolOption(config, opDebugMode);
-   loadBoolOption(config, opDebugSubjectInfo);
+//   loadBoolOption(config, opDebugSubjectInfo);
    loadBoolOption(config, opClassSymbolAutoLoad);
-   loadOption(config, opTemplate);
+//   loadOption(config, opTemplate);
 
    // load compiler settings
    loadIntOption(config, opThreadMax, 0, 60);
@@ -242,49 +242,49 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    // load compiler engine options
    loadIntOption(config, opL0);
 
-   // load primitive aliases
-   loadPrimitiveCategory(config, configPath);
-
-   // load external aliases
-   loadCategory(config, opExternals, NULL);
-   loadCategory(config, opWinAPI, NULL);
+//   // load primitive aliases
+//   loadPrimitiveCategory(config, configPath);
+//
+//   // load external aliases
+//   loadCategory(config, opExternals, NULL);
+//   loadCategory(config, opWinAPI, NULL);
    loadCategory(config, opReferences, configPath);
 
-   // load targets
-   loadTargetCategory(config);
+//   // load targets
+//   loadTargetCategory(config);
 
    // load sources
    loadSourceCategory(config);
 
-   // load forwards
-   loadForwardCategory(config);
-
-   // load manifest info
-   loadOption(config, opManifestName);
-   loadOption(config, opManifestVersion);
-   loadOption(config, opManifestAuthor);
-}
-
-//void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
-//{
-//   ReferenceNs fwd(forward);
+//   // load forwards
+//   loadForwardCategory(config);
 //
-//   _settings.add(opForwards, fwd, StringHelper::clone(reference));
-//}
-
-_Module* Project :: loadModule(ident_t package, bool silentMode)
-{
-   LoadResult result = lrNotFound;
-   _Module* module = _loader.loadModule(package, result);
-   if (result != lrSuccessful) {
-      if (!silentMode) {
-         raiseError(getLoadError(result), package);
-      }
-
-      return NULL;
-   }
-   else return module;
+//   // load manifest info
+//   loadOption(config, opManifestName);
+//   loadOption(config, opManifestVersion);
+//   loadOption(config, opManifestAuthor);
 }
+
+//////void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
+//////{
+//////   ReferenceNs fwd(forward);
+//////
+//////   _settings.add(opForwards, fwd, StringHelper::clone(reference));
+//////}
+////
+////_Module* Project :: loadModule(ident_t package, bool silentMode)
+////{
+////   LoadResult result = lrNotFound;
+////   _Module* module = _loader.loadModule(package, result);
+////   if (result != lrSuccessful) {
+////      if (!silentMode) {
+////         raiseError(getLoadError(result), package);
+////      }
+////
+////      return NULL;
+////   }
+////   else return module;
+////}
 
 _Module* Project :: createModule(ident_t name)
 {
@@ -301,106 +301,106 @@ _Module* Project :: createModule(ident_t name)
 
 _Module* Project :: createDebugModule(ident_t name)
 {
-   return new Module(name);
+   return /*new Module(name)*/NULL;
 }
 
-void Project :: saveModule(_Module* module, ident_t extension)
-{
-   ident_t name = module->Name();
-   Path path;
-   _loader.nameToPath(name, path, extension);
-
-   Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
-
-   Path::create(outputPath.c_str(), path.c_str());
-
-   FileWriter writer(path.c_str(), feRaw, false);
-   if(!module->save(writer))
-      raiseError(getLoadError(lrCannotCreate), IdentifierString(path.c_str()));
-}
-
-ident_t Project :: resolveForward(ident_t forward)
-{
-   return _settings.get(opForwards, forward, DEFAULT_STR);
-}
-
-bool Project :: addForward(ident_t forward, ident_t reference)
-{
-   if (emptystr(resolveForward(forward))) {
-      _settings.add(opForwards, forward, reference.clone());
-
-      return true;
-   }
-   else return false;
-}
-
-_Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode)
-{
-   LoadResult result = lrNotFound;
-   _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
-   if (result != lrSuccessful) {
-      // Bad luck : try to resolve it indirectly
-      module = _loader.resolveIndirectWeakModule(weakReferenceName, result, reference);
-      if (result != lrSuccessful) {
-         if (!silentMode)
-            raiseError(getLoadError(result), weakReferenceName);
-
-         return NULL;
-      }
-      else return module;
-   }
-   else return module;
-}
-
-_Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
-{
-   while (isWeakReference(referenceName)) {
-      referenceName = resolveForward(referenceName);
-   }
-
-   if (emptystr(referenceName))
-      return NULL;
-
-   LoadResult result = lrNotFound;
-   _Module* module = NULL;
-   if (referenceName.compare(NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
-      module = _loader.resolveNative(referenceName, result, reference);
-   }
-   else module = _loader.resolveModule(referenceName, result, reference);
-
-   if (result != lrSuccessful) {
-      if (!silentMode)
-         raiseError(getLoadError(result), referenceName);
-
-      return NULL;
-   }
-   else return module;
-}
-
-_Module* Project :: resolveCore(ref_t reference, bool silentMode)
-{
-   LoadResult result = lrNotFound;
-   _Module* module = _loader.resolveCore(reference, result);
-
-   if (result != lrSuccessful) {
-      if (!silentMode)
-         raiseError(getLoadError(result), CORE_ALIAS);
-
-      return NULL;
-   }
-   else return module;
-}
-
-ident_t Project :: resolveExternalAlias(ident_t alias, bool& stdCall)
-{
-   ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);
-   if (!emptystr(dll)) {
-      stdCall = true;
-
-      return dll;
-   }
-   else return _settings.get(opExternals, alias, DEFAULT_STR);
-}
+////void Project :: saveModule(_Module* module, ident_t extension)
+////{
+////   ident_t name = module->Name();
+////   Path path;
+////   _loader.nameToPath(name, path, extension);
+////
+////   Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
+////
+////   Path::create(outputPath.c_str(), path.c_str());
+////
+////   FileWriter writer(path.c_str(), feRaw, false);
+////   if(!module->save(writer))
+////      raiseError(getLoadError(lrCannotCreate), IdentifierString(path.c_str()));
+////}
+////
+////ident_t Project :: resolveForward(ident_t forward)
+////{
+////   return _settings.get(opForwards, forward, DEFAULT_STR);
+////}
+////
+////bool Project :: addForward(ident_t forward, ident_t reference)
+////{
+////   if (emptystr(resolveForward(forward))) {
+////      _settings.add(opForwards, forward, reference.clone());
+////
+////      return true;
+////   }
+////   else return false;
+////}
+////
+////_Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode)
+////{
+////   LoadResult result = lrNotFound;
+////   _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
+////   if (result != lrSuccessful) {
+////      // Bad luck : try to resolve it indirectly
+////      module = _loader.resolveIndirectWeakModule(weakReferenceName, result, reference);
+////      if (result != lrSuccessful) {
+////         if (!silentMode)
+////            raiseError(getLoadError(result), weakReferenceName);
+////
+////         return NULL;
+////      }
+////      else return module;
+////   }
+////   else return module;
+////}
+////
+////_Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
+////{
+////   while (isWeakReference(referenceName)) {
+////      referenceName = resolveForward(referenceName);
+////   }
+////
+////   if (emptystr(referenceName))
+////      return NULL;
+////
+////   LoadResult result = lrNotFound;
+////   _Module* module = NULL;
+////   if (referenceName.compare(NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
+////      module = _loader.resolveNative(referenceName, result, reference);
+////   }
+////   else module = _loader.resolveModule(referenceName, result, reference);
+////
+////   if (result != lrSuccessful) {
+////      if (!silentMode)
+////         raiseError(getLoadError(result), referenceName);
+////
+////      return NULL;
+////   }
+////   else return module;
+////}
+////
+////_Module* Project :: resolveCore(ref_t reference, bool silentMode)
+////{
+////   LoadResult result = lrNotFound;
+////   _Module* module = _loader.resolveCore(reference, result);
+////
+////   if (result != lrSuccessful) {
+////      if (!silentMode)
+////         raiseError(getLoadError(result), CORE_ALIAS);
+////
+////      return NULL;
+////   }
+////   else return module;
+////}
+////
+////ident_t Project :: resolveExternalAlias(ident_t alias, bool& stdCall)
+////{
+////   ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);
+////   if (!emptystr(dll)) {
+////      stdCall = true;
+////
+////      return dll;
+////   }
+////   else return _settings.get(opExternals, alias, DEFAULT_STR);
+////}
 
 void Project :: compile(ident_t filePath, Compiler& compiler, Parser& parser, ModuleInfo& moduleInfo, Unresolveds& unresolved)
 {
@@ -418,10 +418,10 @@ void Project :: compile(ident_t filePath, Compiler& compiler, Parser& parser, Mo
       DerivationWriter writer(derivationTree);
       parser.parse(&sourceFile, writer, getTabSize());
 
-      DerivationReader reader(derivationTree);
+      DerivationTransformer transformer(derivationTree);
 
       // compile the syntax tree
-      compiler.compileModule(*this, filePath, reader, moduleInfo, unresolved);
+      compiler.compileModule(*this, filePath, transformer, moduleInfo, unresolved);
    }
    catch (LineTooLong& e)
    {
@@ -442,39 +442,39 @@ void Project :: compile(ident_t filePath, Compiler& compiler, Parser& parser, Mo
    }
 }
 
-void Project :: compile(ident_t filePath, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved)
-{
-   try {
-      // based on the target type generate the syntax tree for the file
-      Path fullPath(StrSetting(_ELENA_::opProjectPath));
-      fullPath.combine(filePath);
-
-      // parse
-      SyntaxTree tree;
-      parser.parse(fullPath.c_str(), tree/*, getTabSize()*/);
-
-      // compile the syntax tree
-      compiler.compileSyntaxTree(*this, filePath, tree, moduleInfo, unresolved);
-   }
-   catch (LineTooLong& e)
-   {
-      raiseError(errLineTooLong, filePath, e.row, 1);
-   }
-   catch (InvalidChar& e)
-   {
-      size_t destLength = 6;
-
-      _ELENA_::String<char, 6> symbol;
-      _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
-
-      raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
-   }
-   catch (SyntaxError& e)
-   {
-      raiseError(e.error, filePath, e.row, e.column, e.token);
-   }
-   catch (ScriptError& e)
-   {
-      raiseError(e.error, filePath);
-   }
-}
+////void Project :: compile(ident_t filePath, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved)
+////{
+////   try {
+////      // based on the target type generate the syntax tree for the file
+////      Path fullPath(StrSetting(_ELENA_::opProjectPath));
+////      fullPath.combine(filePath);
+////
+////      // parse
+////      SyntaxTree tree;
+////      parser.parse(fullPath.c_str(), tree/*, getTabSize()*/);
+////
+////      // compile the syntax tree
+////      compiler.compileSyntaxTree(*this, filePath, tree, moduleInfo, unresolved);
+////   }
+////   catch (LineTooLong& e)
+////   {
+////      raiseError(errLineTooLong, filePath, e.row, 1);
+////   }
+////   catch (InvalidChar& e)
+////   {
+////      size_t destLength = 6;
+////
+////      _ELENA_::String<char, 6> symbol;
+////      _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
+////
+////      raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
+////   }
+////   catch (SyntaxError& e)
+////   {
+////      raiseError(e.error, filePath, e.row, e.column, e.token);
+////   }
+////   catch (ScriptError& e)
+////   {
+////      raiseError(e.error, filePath);
+////   }
+////}

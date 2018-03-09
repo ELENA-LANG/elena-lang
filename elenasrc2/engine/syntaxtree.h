@@ -18,14 +18,14 @@ namespace _ELENA_
 
 enum LexicalType
 {
-   lxSimpleMask      = 0x02000,
-   lxCodeScopeMask   = 0x04000,
+//   lxSimpleMask      = 0x02000,
+//   lxCodeScopeMask   = 0x04000,
    lxObjectMask      = 0x08000,
-   lxExprMask        = 0x0C000,
+//   lxExprMask        = 0x0C000,
    lxTerminalMask    = 0x10000,
-   lxTerminalObjMask = 0x18000,
-//   lxReferenceMask   = 0x40000,
-   lxPrimitiveOpMask = 0x80000,
+//   lxTerminalObjMask = 0x18000,
+////   lxReferenceMask   = 0x40000,
+//   lxPrimitiveOpMask = 0x80000,
 
    lxEnding          = -1,
    lxInvalid         = -2,
@@ -34,238 +34,238 @@ enum LexicalType
    // scopes
    lxRoot            = 0x00001,
    lxIdle            = 0x00002,
-   lxObject          = 0x00003,
-   lxAttributeDecl   = 0x00004,
-   lxAngleOperator   = 0x00005,
-   lxClass           = 0x0000E,
-   lxTemplate        = 0x0000F,
-   lxSymbol          = 0x00011,
-   lxClassField      = 0x00013,
-   lxFieldTemplate   = 0x00014,
-   lxAttributeValue  = 0x00015,
-   lxClassMethod     = 0x00016,
-   lxNestedClass     = 0x00018,
-   lxCode            = 0x0001A,
-   lxDispatchCode    = 0x00020,
-   lxStatic          = 0x00022,
-   lxConstructor     = 0x00024,
-   lxStaticMethod    = 0x00025,
-   lxExtension       = 0x0002B,
-   lxAltOperation    = 0x0002C,
-   lxCatchOperation  = 0x0002F,
-   lxLoop            = 0x00030,
-//   lxInlineExpression= 0x00032,
-   lxMessageReference= 0x00033,
-   lxExtern          = 0x00039,
-   lxSwitchOption    = 0x0003C,
-   lxLastSwitchOption = 0x0003D,
-   lxBiggerSwitchOption = 0x0003E,
-   lxLessSwitchOption = 0x0003F,
-   lxLazyExpression  = 0x00040,
-   lxFieldInit       = 0x00041,
-
-   //lxDefaultGeneric  = 0x00046,
-   lxSubject         = 0x00047,
-//   lxImplicitConstructor = 0x0004B,
-   lxScope           = 0x0004D,
-   lxMessageParameter= 0x0C04E,
-
-   // parameters
-   lxEOF             = 0x18003, // indicating closing code bracket
-   lxLiteral         = 0x18004,
-   lxIdentifier      = 0x18005,
-   lxPrivate         = 0x18006,
-   lxReference       = 0x18007,
-   lxInteger         = 0x18008,
-   lxHexInteger      = 0x18009,
-   lxReal            = 0x1800A,
-   lxCharacter       = 0x1800B,
-   lxLong            = 0x1800C,
-   lxWide            = 0x1800D,
-   lxExplicitConst   = 0x1800E,
-   lxExplicitAttr    = 0x1800F,
-   lxMemberIdentifier= 0x18010,
-
-   lxImporting       = 0x08101,
-   lxNested          = 0x08102, // arg - count
-   lxStruct          = 0x08103, // arg - count
-   lxConstantSymbol  = 0x0A104, // arg - reference
-   lxField           = 0x08105, // arg - offset
-   lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
-   lxSymbolReference = 0x08107,
-   lxLocalAddress    = 0x0A108, // arg - offset
-   lxFieldAddress    = 0x08109, // arg - offset
-   lxLocal           = 0x0A10A, // arg - offset
-   lxBlockLocal      = 0x0A10B, // arg - offset
-   lxConstantString  = 0x0A10C, // arg - reference
-   lxConstantWideStr = 0x0A10D, // arg - reference
-   lxConstantChar    = 0x0A10E, // arg - reference
-   lxConstantInt     = 0x1A10F, // arg - reference
-   lxConstantLong    = 0x1A110, // arg - reference
-   lxConstantReal    = 0x1A111, // arg - reference
-   lxConstantClass   = 0x0A112, // arg - reference
-   lxMessageConstant = 0x0A113, // arg - rererence
-   lxExtMessageConstant = 0x0A114, // arg -reference
-   lxSignatureConstant  = 0x0A115, // arg - reference
-   lxStaticConstField   = 0x08116, // arg - reference
-   lxNil                = 0x0A117,
-   lxCurrent            = 0x0A118, // arg -offset
-   lxResult             = 0x0A119, // arg -offset
-   lxResultField        = 0x0A11A, // arg -offset
-   lxCurrentMessage     = 0x0A11B,
-   lxThisLocal          = 0x0A11C,
-   lxConstantList       = 0x0A11E,   // arg - reference
-   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
-   lxClassRefField      = 0x08120,  // arg - self instance offset
-
-   lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
-   lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
-   lxLocalUnboxing   = 0x0C003,   // arg - size
-   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
-   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
-   lxArgUnboxing     = 0x0C006,
-   lxCalling         = 0x0C007,   // sending a message, arg - message
-   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
-   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
-   lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
-   lxTrying          = 0x0C00C,   // try-catch expression
-   lxAlt             = 0x0C00D,   // alt-catch expression
-   lxBranching       = 0x0C00F,   // branch expression
-   lxSwitching       = 0x0C010,
-   lxLooping         = 0x0C011,
-   lxExpression      = 0x0C012,
-   lxThrowing        = 0x0C013,
-   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
-   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
-   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
-   lxMethodParameter = 0x0C017,
-   lxAltExpression   = 0x0C018,
-   lxIfNot           = 0x0C019,   // optional arg - reference
-   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
-   lxIfN             = 0x0C01B,   // arg - value
-   lxIfNotN          = 0x0C01C,   // arg - value
-   lxLessN           = 0x0C01D,   // arg - value
-   lxNotLessN        = 0x0C01E,   // arg - value
-   lxIf              = 0x0C01F,   // optional arg - reference
-   lxElse            = 0x0C020,   // optional arg - reference
-   lxOption          = 0x0C021,
-   lxFieldExpression = 0x0C022,
-   lxExternFrame     = 0x04023,
-   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
-   lxCreatingClass   = 0x0C025,   // arg - count
-   lxCreatingStruct  = 0x0C026,   // arg - size
-   lxReturning       = 0x0C027,
-   lxNewOp           = 0x0C028,
-   lxArrOp           = 0x8C029,   // arg - operation id
-   lxBinArrOp        = 0x8C02A,   // arg - operation id
-   lxArgArrOp        = 0x8C02B,   // arg - operation id
-   lxNilOp           = 0x8C02C,   // arg - operation id
-   lxBoolOp          = 0x0C02D,   // arg - operation id
-
-   lxGreaterN        = 0x0C02E,   // arg - value
-   lxNotGreaterN     = 0x0C02F,   // arg - value
-
-   lxIntArrOp        = 0x8C030,   // arg - operation id
-   lxResendExpression= 0x0C031, 
-   lxByteArrOp       = 0x8C032, // arg - operation id
-   lxShortArrOp      = 0x8C033, // arg - operation id
-//   lxReleasing       = 0x0C034,
-   lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
-   lxAssigning       = 0x0C037,   // an assigning expression, arg - size
-   lxIntOp           = 0x8C038,   // arg - operation id
-   lxLongOp          = 0x8C039,   // arg - operation id
-   lxRealOp          = 0x8C03A,   // arg - operation id
-   lxMultiDispatching= 0x0C03B,
-   lxSealedMultiDispatching = 0x0C03C,
-   lxOverridden      = 0x04047,
-
-   lxBaseParent      = 0x10023,
-   lxAssignOperator  = 0x10024,
-   lxOperator        = 0x10025,
-   lxIntVariable     = 0x10028,
-   lxLongVariable    = 0x10029,
-   lxReal64Variable  = 0x1002A,
-   lxForward         = 0x1002E,
-   lxVariable        = 0x10037,
-   lxBinaryVariable  = 0x10038,
-   lxMember          = 0x10039,  // a collection member, arg - offset
-   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
-   lxIntsVariable    = 0x1003B,
-   lxBytesVariable   = 0x1003C,
-   lxShortsVariable  = 0x1003D,
-   lxParamsVariable  = 0x1003E,
-   lxInlineClosure   = 0x1003F,
-
-   // attributes
-   lxAttribute       = 0x20000,
-   lxSourcePath      = 0x20001,
+//   lxObject          = 0x00003,
+//   lxAttributeDecl   = 0x00004,
+//   lxAngleOperator   = 0x00005,
+//   lxClass           = 0x0000E,
+//   lxTemplate        = 0x0000F,
+//   lxSymbol          = 0x00011,
+//   lxClassField      = 0x00013,
+//   lxFieldTemplate   = 0x00014,
+//   lxAttributeValue  = 0x00015,
+//   lxClassMethod     = 0x00016,
+//   lxNestedClass     = 0x00018,
+//   lxCode            = 0x0001A,
+//   lxDispatchCode    = 0x00020,
+//   lxStatic          = 0x00022,
+//   lxConstructor     = 0x00024,
+//   lxStaticMethod    = 0x00025,
+//   lxExtension       = 0x0002B,
+//   lxAltOperation    = 0x0002C,
+//   lxCatchOperation  = 0x0002F,
+//   lxLoop            = 0x00030,
+////   lxInlineExpression= 0x00032,
+//   lxMessageReference= 0x00033,
+//   lxExtern          = 0x00039,
+//   lxSwitchOption    = 0x0003C,
+//   lxLastSwitchOption = 0x0003D,
+//   lxBiggerSwitchOption = 0x0003E,
+//   lxLessSwitchOption = 0x0003F,
+//   lxLazyExpression  = 0x00040,
+//   lxFieldInit       = 0x00041,
+//
+//   //lxDefaultGeneric  = 0x00046,
+//   lxSubject         = 0x00047,
+////   lxImplicitConstructor = 0x0004B,
+//   lxScope           = 0x0004D,
+//   lxMessageParameter= 0x0C04E,
+//
+//   // parameters
+//   lxEOF             = 0x18003, // indicating closing code bracket
+//   lxLiteral         = 0x18004,
+//   lxIdentifier      = 0x18005,
+//   lxPrivate         = 0x18006,
+//   lxReference       = 0x18007,
+//   lxInteger         = 0x18008,
+//   lxHexInteger      = 0x18009,
+//   lxReal            = 0x1800A,
+//   lxCharacter       = 0x1800B,
+//   lxLong            = 0x1800C,
+//   lxWide            = 0x1800D,
+//   lxExplicitConst   = 0x1800E,
+//   lxExplicitAttr    = 0x1800F,
+//   lxMemberIdentifier= 0x18010,
+//
+//   lxImporting       = 0x08101,
+//   lxNested          = 0x08102, // arg - count
+//   lxStruct          = 0x08103, // arg - count
+//   lxConstantSymbol  = 0x0A104, // arg - reference
+//   lxField           = 0x08105, // arg - offset
+//   lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
+//   lxSymbolReference = 0x08107,
+//   lxLocalAddress    = 0x0A108, // arg - offset
+//   lxFieldAddress    = 0x08109, // arg - offset
+//   lxLocal           = 0x0A10A, // arg - offset
+//   lxBlockLocal      = 0x0A10B, // arg - offset
+//   lxConstantString  = 0x0A10C, // arg - reference
+//   lxConstantWideStr = 0x0A10D, // arg - reference
+//   lxConstantChar    = 0x0A10E, // arg - reference
+//   lxConstantInt     = 0x1A10F, // arg - reference
+//   lxConstantLong    = 0x1A110, // arg - reference
+//   lxConstantReal    = 0x1A111, // arg - reference
+//   lxConstantClass   = 0x0A112, // arg - reference
+//   lxMessageConstant = 0x0A113, // arg - rererence
+//   lxExtMessageConstant = 0x0A114, // arg -reference
+//   lxSignatureConstant  = 0x0A115, // arg - reference
+//   lxStaticConstField   = 0x08116, // arg - reference
+//   lxNil                = 0x0A117,
+//   lxCurrent            = 0x0A118, // arg -offset
+//   lxResult             = 0x0A119, // arg -offset
+//   lxResultField        = 0x0A11A, // arg -offset
+//   lxCurrentMessage     = 0x0A11B,
+//   lxThisLocal          = 0x0A11C,
+//   lxConstantList       = 0x0A11E,   // arg - reference
+//   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
+//   lxClassRefField      = 0x08120,  // arg - self instance offset
+//
+//   lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
+//   lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
+//   lxLocalUnboxing   = 0x0C003,   // arg - size
+//   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
+//   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
+//   lxArgUnboxing     = 0x0C006,
+//   lxCalling         = 0x0C007,   // sending a message, arg - message
+//   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
+//   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
+//   lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
+//   lxTrying          = 0x0C00C,   // try-catch expression
+//   lxAlt             = 0x0C00D,   // alt-catch expression
+//   lxBranching       = 0x0C00F,   // branch expression
+//   lxSwitching       = 0x0C010,
+//   lxLooping         = 0x0C011,
+//   lxExpression      = 0x0C012,
+//   lxThrowing        = 0x0C013,
+//   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
+//   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
+//   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
+//   lxMethodParameter = 0x0C017,
+//   lxAltExpression   = 0x0C018,
+//   lxIfNot           = 0x0C019,   // optional arg - reference
+//   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
+//   lxIfN             = 0x0C01B,   // arg - value
+//   lxIfNotN          = 0x0C01C,   // arg - value
+//   lxLessN           = 0x0C01D,   // arg - value
+//   lxNotLessN        = 0x0C01E,   // arg - value
+//   lxIf              = 0x0C01F,   // optional arg - reference
+//   lxElse            = 0x0C020,   // optional arg - reference
+//   lxOption          = 0x0C021,
+//   lxFieldExpression = 0x0C022,
+//   lxExternFrame     = 0x04023,
+//   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
+//   lxCreatingClass   = 0x0C025,   // arg - count
+//   lxCreatingStruct  = 0x0C026,   // arg - size
+//   lxReturning       = 0x0C027,
+//   lxNewOp           = 0x0C028,
+//   lxArrOp           = 0x8C029,   // arg - operation id
+//   lxBinArrOp        = 0x8C02A,   // arg - operation id
+//   lxArgArrOp        = 0x8C02B,   // arg - operation id
+//   lxNilOp           = 0x8C02C,   // arg - operation id
+//   lxBoolOp          = 0x0C02D,   // arg - operation id
+//
+//   lxGreaterN        = 0x0C02E,   // arg - value
+//   lxNotGreaterN     = 0x0C02F,   // arg - value
+//
+//   lxIntArrOp        = 0x8C030,   // arg - operation id
+//   lxResendExpression= 0x0C031, 
+//   lxByteArrOp       = 0x8C032, // arg - operation id
+//   lxShortArrOp      = 0x8C033, // arg - operation id
+////   lxReleasing       = 0x0C034,
+//   lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
+//   lxAssigning       = 0x0C037,   // an assigning expression, arg - size
+//   lxIntOp           = 0x8C038,   // arg - operation id
+//   lxLongOp          = 0x8C039,   // arg - operation id
+//   lxRealOp          = 0x8C03A,   // arg - operation id
+//   lxMultiDispatching= 0x0C03B,
+//   lxSealedMultiDispatching = 0x0C03C,
+//   lxOverridden      = 0x04047,
+//
+//   lxBaseParent      = 0x10023,
+//   lxAssignOperator  = 0x10024,
+//   lxOperator        = 0x10025,
+//   lxIntVariable     = 0x10028,
+//   lxLongVariable    = 0x10029,
+//   lxReal64Variable  = 0x1002A,
+//   lxForward         = 0x1002E,
+//   lxVariable        = 0x10037,
+//   lxBinaryVariable  = 0x10038,
+//   lxMember          = 0x10039,  // a collection member, arg - offset
+//   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
+//   lxIntsVariable    = 0x1003B,
+//   lxBytesVariable   = 0x1003C,
+//   lxShortsVariable  = 0x1003D,
+//   lxParamsVariable  = 0x1003E,
+//   lxInlineClosure   = 0x1003F,
+//
+//   // attributes
+//   lxAttribute       = 0x20000,
+//   lxSourcePath      = 0x20001,
    lxTerminal        = 0x20002,
    lxCol             = 0x20003,
    lxRow             = 0x20004,
    lxLength          = 0x02005,
-   lxBreakpoint      = 0x20006,
-   lxImport          = 0x20007,
-   lxReserved        = 0x20008,
-   lxAllocated       = 0x20009,
-   lxParamCount      = 0x2000A,
-   lxClassFlag       = 0x2000B, // class fields
-   lxTarget          = 0x2000C, // arg - reference
-   lxMessageVariable = 0x2000D, // debug info only
-   lxSelfVariable    = 0x2000E, // debug info only
-   lxMessage         = 0x2000F, // arg - message
-   lxAssign          = 0x20010,
-   lxLevel           = 0x20011,
-   lxType            = 0x20012, // arg - subject
-   lxCallTarget      = 0x20013, // arg - reference
-   lxClassName       = 0x20014, // arg - identifier
-   lxIntValue        = 0x20015, // arg - integer value
-   lxTempLocal       = 0x20016,
-   lxIfValue         = 0x20017, // arg - reference
-   lxElseValue       = 0x20018, // arg - reference
-   lxSize            = 0x20019,
-   lxTemplateParam   = 0x2001A,
-   lxEmbeddable      = 0x2001B,
-   lxIntExtArgument  = 0x2001C,
-   lxExtArgument     = 0x2001D,
-   lxExtInteranlRef  = 0x2001E,
-//   lxConstAttr       = 0x2001F,
-//   lxWarningMask     = 0x20020,
-   lxOperatorAttr    = 0x20021,
-   lxIdleMsgParameter= 0x20022,
-   lxBinarySelf      = 0x20023, // debug info only
-   lxOvreriddenMessage = 0x20024, // arg - message ; used for extension / implicit constructor call
-//   lxClassRef        = 0x20025,
-//   lxPreloadedAttr   = 0x20026,
-   lxInclude         = 0x20027,
-   lxTemplateField   = 0x20028,
-   lxNameAttr        = 0x20029,
-   lxStacksafeAttr   = 0x2002B,
-   lxTemplateAttribute = 0x2002C,
-   lxEmbeddableAttr  = 0x2002D,
-   lxBoxableAttr     = 0x2002E,
-   lxClassRefAttr    = 0x2002F,
-   lxClosureMessage  = 0x20030,
-   lxExtArgumentRef  = 0x20031,
-   lxInternalRef     = 0x20032,
-   lxTemplateVar     = 0x20033,
-   lxEmbeddableMssg  = 0x20034,
-   lxBoxingRequired  = 0x20035,
-   lxParamRefAttr    = 0x20036,
-   lxMultiMethodAttr = 0x20037,
-   lxAutogenerated   = 0x20038,
-   lxTemplateMethod  = 0x20039,
-   lxMultiAttr       = 0x2003A,
-   lxStaticAttr      = 0x2003B,
-   lxTemplateParent  = 0x2003C,
-   lxTemplateBoxing  = 0x2003D,
-   lxParentLists     = 0x2003E,
-   lxClosureAttr     = 0x2003F,
-   lxArgDispatcherAttr = 0x20040,
-   lxFPUTarget       = 0x20041,
-   lxIdleAttribute   = 0x20042,
-   lxTemplateParamAttr = 0x20043,
-
-   lxTempAttr        = 0x2010D,
+//   lxBreakpoint      = 0x20006,
+//   lxImport          = 0x20007,
+//   lxReserved        = 0x20008,
+//   lxAllocated       = 0x20009,
+//   lxParamCount      = 0x2000A,
+//   lxClassFlag       = 0x2000B, // class fields
+//   lxTarget          = 0x2000C, // arg - reference
+//   lxMessageVariable = 0x2000D, // debug info only
+//   lxSelfVariable    = 0x2000E, // debug info only
+//   lxMessage         = 0x2000F, // arg - message
+//   lxAssign          = 0x20010,
+//   lxLevel           = 0x20011,
+//   lxType            = 0x20012, // arg - subject
+//   lxCallTarget      = 0x20013, // arg - reference
+//   lxClassName       = 0x20014, // arg - identifier
+//   lxIntValue        = 0x20015, // arg - integer value
+//   lxTempLocal       = 0x20016,
+//   lxIfValue         = 0x20017, // arg - reference
+//   lxElseValue       = 0x20018, // arg - reference
+//   lxSize            = 0x20019,
+//   lxTemplateParam   = 0x2001A,
+//   lxEmbeddable      = 0x2001B,
+//   lxIntExtArgument  = 0x2001C,
+//   lxExtArgument     = 0x2001D,
+//   lxExtInteranlRef  = 0x2001E,
+////   lxConstAttr       = 0x2001F,
+////   lxWarningMask     = 0x20020,
+//   lxOperatorAttr    = 0x20021,
+//   lxIdleMsgParameter= 0x20022,
+//   lxBinarySelf      = 0x20023, // debug info only
+//   lxOvreriddenMessage = 0x20024, // arg - message ; used for extension / implicit constructor call
+////   lxClassRef        = 0x20025,
+////   lxPreloadedAttr   = 0x20026,
+//   lxInclude         = 0x20027,
+//   lxTemplateField   = 0x20028,
+//   lxNameAttr        = 0x20029,
+//   lxStacksafeAttr   = 0x2002B,
+//   lxTemplateAttribute = 0x2002C,
+//   lxEmbeddableAttr  = 0x2002D,
+//   lxBoxableAttr     = 0x2002E,
+//   lxClassRefAttr    = 0x2002F,
+//   lxClosureMessage  = 0x20030,
+//   lxExtArgumentRef  = 0x20031,
+//   lxInternalRef     = 0x20032,
+//   lxTemplateVar     = 0x20033,
+//   lxEmbeddableMssg  = 0x20034,
+//   lxBoxingRequired  = 0x20035,
+//   lxParamRefAttr    = 0x20036,
+//   lxMultiMethodAttr = 0x20037,
+//   lxAutogenerated   = 0x20038,
+//   lxTemplateMethod  = 0x20039,
+//   lxMultiAttr       = 0x2003A,
+//   lxStaticAttr      = 0x2003B,
+//   lxTemplateParent  = 0x2003C,
+//   lxTemplateBoxing  = 0x2003D,
+//   lxParentLists     = 0x2003E,
+//   lxClosureAttr     = 0x2003F,
+//   lxArgDispatcherAttr = 0x20040,
+//   lxFPUTarget       = 0x20041,
+//   lxIdleAttribute   = 0x20042,
+//   lxTemplateParamAttr = 0x20043,
+//
+//   lxTempAttr        = 0x2010D,
 };
 
 // --- SyntaxTree ---
@@ -542,65 +542,65 @@ public:
          return current;
       }
 
-      Node findSubNodeMask(LexicalType mask)
-      {
-         Node child = firstChild(mask);
-         if (child == lxExpression) {
-            return child.findSubNodeMask(mask);
-         }
-         else return child;
-      }
+      //Node findSubNodeMask(LexicalType mask)
+      //{
+      //   Node child = firstChild(mask);
+      //   if (child == lxExpression) {
+      //      return child.findSubNodeMask(mask);
+      //   }
+      //   else return child;
+      //}
 
-      Node findSubNode(LexicalType type)
-      {
-         Node current = firstChild();
-         while (current != lxNone && current.type != type) {
-            if (current == lxExpression) {
-               Node subNode = current.findSubNode(type);
-               if (subNode != lxNone)
-                  return subNode;
-            }
-            current = current.nextNode();
-         }
+      //Node findSubNode(LexicalType type)
+      //{
+      //   Node current = firstChild();
+      //   while (current != lxNone && current.type != type) {
+      //      if (current == lxExpression) {
+      //         Node subNode = current.findSubNode(type);
+      //         if (subNode != lxNone)
+      //            return subNode;
+      //      }
+      //      current = current.nextNode();
+      //   }
 
-         return current;
-      }
-      Node findSubNode(LexicalType type1, LexicalType type2)
-      {
-         Node child = firstChild();
-         while (child != lxNone && child.type != type1) {
-            if (child == lxExpression) {
-               Node subNode = child.findSubNode(type1, type2);
-               if (subNode != lxNone)
-                  return subNode;
-            }
-            else if (child == type2)
-               break;
+      //   return current;
+      //}
+      //Node findSubNode(LexicalType type1, LexicalType type2)
+      //{
+      //   Node child = firstChild();
+      //   while (child != lxNone && child.type != type1) {
+      //      if (child == lxExpression) {
+      //         Node subNode = child.findSubNode(type1, type2);
+      //         if (subNode != lxNone)
+      //            return subNode;
+      //      }
+      //      else if (child == type2)
+      //         break;
 
-            child = child.nextNode();
-         }
+      //      child = child.nextNode();
+      //   }
 
-         return child;
-      }
-      Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
-      {
-         Node child = firstChild();
-         while (child != lxNone && child.type != type1) {
-            if (child == lxExpression) {
-               Node subNode = child.findSubNode(type1, type2, type3);
-               if (subNode != lxNone)
-                  return subNode;
-            }
-            else if (child == type2)
-               break;
-            else if (child == type3)
-               break;
+      //   return child;
+      //}
+      //Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
+      //{
+      //   Node child = firstChild();
+      //   while (child != lxNone && child.type != type1) {
+      //      if (child == lxExpression) {
+      //         Node subNode = child.findSubNode(type1, type2, type3);
+      //         if (subNode != lxNone)
+      //            return subNode;
+      //      }
+      //      else if (child == type2)
+      //         break;
+      //      else if (child == type3)
+      //         break;
 
-            child = child.nextNode();
-         }
+      //      child = child.nextNode();
+      //   }
 
-         return child;
-      }
+      //   return child;
+      //}
 
       Node lastChild() const
       {
@@ -631,15 +631,14 @@ public:
          return current;
       }
 
-      Node nextSubNodeMask(LexicalType mask)
-      {
-         Node child = nextNode(mask);
-         if (child == lxExpression) {
-            return child.findSubNodeMask(mask);
-         }
-         else return child;
-      }
-
+      //Node nextSubNodeMask(LexicalType mask)
+      //{
+      //   Node child = nextNode(mask);
+      //   if (child == lxExpression) {
+      //      return child.findSubNodeMask(mask);
+      //   }
+      //   else return child;
+      //}
 
       Node prevNode() const
       {
@@ -1084,10 +1083,10 @@ public:
    }
 };
 
-inline bool isSingleStatement(SyntaxTree::Node expr)
-{
-   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
-}
+//inline bool isSingleStatement(SyntaxTree::Node expr)
+//{
+//   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
+//}
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
