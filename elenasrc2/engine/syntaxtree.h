@@ -39,7 +39,7 @@ enum LexicalType
 //   lxAngleOperator   = 0x00005,
 //   lxClass           = 0x0000E,
 //   lxTemplate        = 0x0000F,
-//   lxSymbol          = 0x00011,
+   lxSymbol          = 0x00011,
 //   lxClassField      = 0x00013,
 //   lxFieldTemplate   = 0x00014,
 //   lxAttributeValue  = 0x00015,
@@ -63,17 +63,17 @@ enum LexicalType
 //   lxLessSwitchOption = 0x0003F,
 //   lxLazyExpression  = 0x00040,
 //   lxFieldInit       = 0x00041,
-//
+
 //   //lxDefaultGeneric  = 0x00046,
 //   lxSubject         = 0x00047,
 ////   lxImplicitConstructor = 0x0004B,
-//   lxScope           = 0x0004D,
+   lxScope           = 0x0004D,
 //   lxMessageParameter= 0x0C04E,
 //
 //   // parameters
 //   lxEOF             = 0x18003, // indicating closing code bracket
 //   lxLiteral         = 0x18004,
-//   lxIdentifier      = 0x18005,
+   lxIdentifier      = 0x18005,
 //   lxPrivate         = 0x18006,
 //   lxReference       = 0x18007,
 //   lxInteger         = 0x18008,
@@ -195,11 +195,11 @@ enum LexicalType
 //   lxShortsVariable  = 0x1003D,
 //   lxParamsVariable  = 0x1003E,
 //   lxInlineClosure   = 0x1003F,
-//
-//   // attributes
-//   lxAttribute       = 0x20000,
-//   lxSourcePath      = 0x20001,
-   lxTerminal        = 0x20002,
+
+   // attributes
+   lxAttribute       = 0x20000,
+   lxSourcePath      = 0x20001,
+ //  lxTerminal        = 0x20002,
    lxCol             = 0x20003,
    lxRow             = 0x20004,
    lxLength          = 0x02005,
@@ -238,7 +238,7 @@ enum LexicalType
 ////   lxPreloadedAttr   = 0x20026,
 //   lxInclude         = 0x20027,
 //   lxTemplateField   = 0x20028,
-//   lxNameAttr        = 0x20029,
+   lxNameAttr        = 0x20029,
 //   lxStacksafeAttr   = 0x2002B,
 //   lxTemplateAttribute = 0x2002C,
 //   lxEmbeddableAttr  = 0x2002D,

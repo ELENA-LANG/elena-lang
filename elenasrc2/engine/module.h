@@ -16,18 +16,18 @@ namespace _ELENA_
 
 class _BaseModule  : public _Module
 {
-//protected:
-//   typedef Cache<ref_t, ident_t, 20> ResolveMap;
-//
-//   ReferenceMap _references;
+protected:
+   typedef Cache<ref_t, ident_t, 20> ResolveMap;
+
+   ReferenceMap _references;
 //   ReferenceMap _subjects;
 //   ReferenceMap _constants;
-//
-//   ResolveMap   _resolvedReferences;
+
+   ResolveMap   _resolvedReferences;
 //   ResolveMap   _resolvedSubjects;
 
 public:
-//   virtual ident_t resolveReference(ref_t reference);
+   virtual ident_t resolveReference(ref_t reference);
 //   virtual ident_t resolveSubject(ref_t reference);
 //   virtual ident_t resolveConstant(ref_t reference);
 
@@ -40,27 +40,27 @@ class Module : public _BaseModule
 {
    IdentifierString _name;
 
-//   SectionMap   _sections;
-//
+   SectionMap   _sections;
+
 //   void loadSections(StreamReader& reader);
 //   void saveSections(StreamWriter& writer);
 
 public:
-//   virtual ident_t Name() const { return _name; }
-//
+   virtual ident_t Name() const { return _name; }
+
 //   ReferenceMap::Iterator References() { return _references.start(); }
-//
-//   virtual void mapPredefinedReference(ident_t name, ref_t reference);
+
+   virtual void mapPredefinedReference(ident_t name, ref_t reference);
 //   virtual void mapPredefinedSubject(ident_t name, ref_t reference);
-//
-//   virtual ref_t mapReference(ident_t reference);
-//   virtual ref_t mapReference(ident_t reference, bool existing);
-//
+
+   virtual ref_t mapReference(ident_t reference);
+   virtual ref_t mapReference(ident_t reference, bool existing);
+
 //   virtual ref_t mapSubject(ident_t message, bool existing);
 //   virtual ref_t mapConstant(ident_t constant);
-//
-//   virtual Section* mapSection(ref_t reference, bool existing);
-//
+
+   virtual Section* mapSection(ref_t reference, bool existing);
+
 //   virtual LoadResult load(StreamReader& reader);
 //   virtual bool save(StreamWriter& writer);
 

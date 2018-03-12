@@ -119,8 +119,10 @@ public:
       _content.clear();
    }
 
+   bool loadXml(ident_t content);
+
    bool load(path_t path, int encoding);
-   bool save(path_t path, int encoding);
+   bool save(path_t path, int encoding, bool formatted = true);
 
    XMLTree();
 };

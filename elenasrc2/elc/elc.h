@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0001
+#define ELC_REVISION_NUMBER             0x0002
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -118,7 +118,7 @@
 #define ELC_UNKNOWN                 "unknown"
 
 // --- ELC error messages ---
-#define ELC_ERR_INVALID_OPTION	   "elc: error 401: Invalid command line parameter '%c'\n"
+#define ELC_ERR_INVALID_OPTION	   "elc: error 401: Invalid command line parameter '%s'\n"
 #define ELC_ERR_INVALID_PATH        "elc: error 402: Invalid or none-existing file '%s'\n"
 #define ELC_ERR_INVALID_TEMPLATE    "elc: error 404: Invalid or none-existing template '%s'\n"
 

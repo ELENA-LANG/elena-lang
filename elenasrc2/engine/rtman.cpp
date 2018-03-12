@@ -127,87 +127,87 @@ void* RTManager :: loadSymbol(StreamReader& reader, ident_t name)
 bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _LibraryManager* manager,
    ident_t &symbol, ident_t &method, ident_t &path, int& row)
 {
-   int index = 0;
+   //int index = 0;
    bool found = false;
-   row = 0;
+   //row = 0;
 
-   // search through debug section until the ret point is inside two consecutive steps within the same object
-   while (!reader.Eof() && !found) {
-      // read reference
-      symbol = reader.getLiteral(DEFAULT_STR);
+   //// search through debug section until the ret point is inside two consecutive steps within the same object
+   //while (!reader.Eof() && !found) {
+   //   // read reference
+   //   symbol = reader.getLiteral(DEFAULT_STR);
 
-      // define the next record position
-      size_t size = reader.getDWord() - 4;
-      index = 0;
-      size_t previous = 0;
-      size_t current = 0;
-      while (size > 0) {
-         current = reader.getDWord();
-         if (retAddress == current || (previous != 0 && previous < retAddress && current >= retAddress)) {
-            found = true;
+   //   // define the next record position
+   //   size_t size = reader.getDWord() - 4;
+   //   index = 0;
+   //   size_t previous = 0;
+   //   size_t current = 0;
+   //   while (size > 0) {
+   //      current = reader.getDWord();
+   //      if (retAddress == current || (previous != 0 && previous < retAddress && current >= retAddress)) {
+   //         found = true;
 
-            break;
-         }
+   //         break;
+   //      }
 
-         previous = current;
-         index++;
-         size -= 4;
-      }
-   }
+   //      previous = current;
+   //      index++;
+   //      size -= 4;
+   //   }
+   //}
 
-   if (found) {
-      bool isClass = true;
-      _Module* module = NULL;
-      // if symbol
-      if (symbol[0]=='#') {
-         symbol+=1;
+   //if (found) {
+   //   bool isClass = true;
+   //   _Module* module = NULL;
+   //   // if symbol
+   //   if (symbol[0]=='#') {
+   //      symbol+=1;
 
-         isClass = false;
-      }
-      LoadResult result;
-      ref_t position = 0;
-      // load the appropriate debug module
-      module = manager->resolveDebugModule(symbol, result, position);
-      if (result == lrSuccessful) {
-         // load the object debug section
-         MemoryReader lineReader(module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true), position);
-         MemoryReader stringReader(module->mapSection(DEBUG_STRINGS_ID | mskDataRef, true));
+   //      isClass = false;
+   //   }
+   //   LoadResult result;
+   //   ref_t position = 0;
+   //   // load the appropriate debug module
+   //   module = manager->resolveDebugModule(symbol, result, position);
+   //   if (result == lrSuccessful) {
+   //      // load the object debug section
+   //      MemoryReader lineReader(module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true), position);
+   //      MemoryReader stringReader(module->mapSection(DEBUG_STRINGS_ID | mskDataRef, true));
 
-         // skip vmt address for a class
-         reader.getDWord();
+   //      // skip vmt address for a class
+   //      reader.getDWord();
 
-         // look through the records to find the entry
-         DebugLineInfo info;
-         while (!lineReader.Eof()) {
-            lineReader.read(&info, sizeof(DebugLineInfo));
-            if (info.symbol == dsProcedure) {
-               stringReader.seek(info.addresses.source.nameRef);
-               path = stringReader.getLiteral(DEFAULT_STR);
-               method = NULL;
-            }
-            else if (info.symbol == dsMessage) {
-               stringReader.seek(info.addresses.source.nameRef);
-               method = stringReader.getLiteral(DEFAULT_STR);
-            }
-            else if ((info.symbol & dsDebugMask) == dsStep) {
-               index--;
-               if (index == 0) {
-                  if (info.row >= 0) {
-                     row = info.row;
-                  }
-                  break;
-               }
-            }
+   //      // look through the records to find the entry
+   //      DebugLineInfo info;
+   //      while (!lineReader.Eof()) {
+   //         lineReader.read(&info, sizeof(DebugLineInfo));
+   //         if (info.symbol == dsProcedure) {
+   //            stringReader.seek(info.addresses.source.nameRef);
+   //            path = stringReader.getLiteral(DEFAULT_STR);
+   //            method = NULL;
+   //         }
+   //         else if (info.symbol == dsMessage) {
+   //            stringReader.seek(info.addresses.source.nameRef);
+   //            method = stringReader.getLiteral(DEFAULT_STR);
+   //         }
+   //         else if ((info.symbol & dsDebugMask) == dsStep) {
+   //            index--;
+   //            if (index == 0) {
+   //               if (info.row >= 0) {
+   //                  row = info.row;
+   //               }
+   //               break;
+   //            }
+   //         }
 
-            if (info.row > 0)
-               row = info.row;
-         }
-      }
-      else {
-         path = NULL;
-         method = NULL;
-      }
-   }
+   //         if (info.row > 0)
+   //            row = info.row;
+   //      }
+   //   }
+   //   else {
+   //      path = NULL;
+   //      method = NULL;
+   //   }
+   //}
 
    return found;
 }
@@ -293,57 +293,59 @@ void* RTManager :: loadSubject(StreamReader& reader, ident_t name)
 
 void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap& verbs)
 {
-   ReferenceMap subjects(0);
-   subjects.read(&reader);
+   //ReferenceMap subjects(0);
+   //subjects.read(&reader);
 
-   IdentifierString signature;
-   size_t subject = 0;
-   size_t param = 0;
-   int paramCount = -1;
-   for (size_t i = 0; i < getlength(message); i++) {
-      if (message[i] == '.') {
-         return NULL;
-      }
-      else if (message[i] == '[') {
-         if (message[i + 1] == ']') {
-            //HOT FIX : support open argument list
-            paramCount = OPEN_ARG_COUNT;
-         }
-         else if (message[getlength(message) - 1] == ']') {
-            signature.copy(message + i + 1, getlength(message) - i - 2);
-            paramCount = signature.ident().toInt();
-            if (paramCount > 12)
-               return NULL;
-         }
-         else return NULL;
+   //IdentifierString signature;
+   //size_t subject = 0;
+   //size_t param = 0;
+   //int paramCount = -1;
+   //for (size_t i = 0; i < getlength(message); i++) {
+   //   if (message[i] == '.') {
+   //      return NULL;
+   //   }
+   //   else if (message[i] == '[') {
+   //      if (message[i + 1] == ']') {
+   //         //HOT FIX : support open argument list
+   //         paramCount = OPEN_ARG_COUNT;
+   //      }
+   //      else if (message[getlength(message) - 1] == ']') {
+   //         signature.copy(message + i + 1, getlength(message) - i - 2);
+   //         paramCount = signature.ident().toInt();
+   //         if (paramCount > 12)
+   //            return NULL;
+   //      }
+   //      else return NULL;
 
-         param = i;
-      }
-      else if (message[i] == '&') {
+   //      param = i;
+   //   }
+   //   else if (message[i] == '&') {
 
-      }
-      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-      }
-      else if (message[i] == ']' && i == (getlength(message) - 1)) {
-      }
-      else return NULL;
-   }
+   //   }
+   //   else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+   //   }
+   //   else if (message[i] == ']' && i == (getlength(message) - 1)) {
+   //   }
+   //   else return NULL;
+   //}
 
-   int flags = 0;
-   if (message.startsWith("set&")) {
-      subject = 4;
-      flags = PROPSET_MESSAGE;
-   }
-   else if (message.compare("set", param)) {
-      flags = PROPSET_MESSAGE;
-   }
+   //int flags = 0;
+   //if (message.startsWith("set&")) {
+   //   subject = 4;
+   //   flags = PROPSET_MESSAGE;
+   //}
+   //else if (message.compare("set", param)) {
+   //   flags = PROPSET_MESSAGE;
+   //}
 
-   if (param != 0) {
-      signature.copy(message + subject, param - subject);
-   }
-   else signature.copy(message + subject);
+   //if (param != 0) {
+   //   signature.copy(message + subject, param - subject);
+   //}
+   //else signature.copy(message + subject);
 
-   ref_t signatureId = subjects.get(signature);
+   //ref_t signatureId = subjects.get(signature);
 
-   return (void*)(encodeMessage(signatureId, paramCount) | flags);
+   //return (void*)(encodeMessage(signatureId, paramCount) | flags);
+
+   return NULL; // !! temporal
 }

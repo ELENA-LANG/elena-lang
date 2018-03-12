@@ -262,7 +262,7 @@ _Module* LibraryManager :: createModule(ident_t package, LoadResult& result)
 //      return module;
 //   }
 //}
-//
+
 //_Module* LibraryManager :: resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference)
 //{
 //   NamespaceName name(referenceName);

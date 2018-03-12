@@ -40,9 +40,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 {
    switch (symbol)
    {
-//      case nsToken:
-//         _writer.newNode(lxAttribute);
-//         break;
+      case nsToken:
+         _writer.newNode(lxAttribute);
+         break;
 //      case nsExpression:
 ////      case nsRootExpression:
 //      case nsNestedRootExpression:
@@ -117,7 +117,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //         _writer.newNode(lxSwitching);
 //         break;
 //      case nsSubCode:
-//      case nsScope:
+      case nsScope:
 //      case nsTokenParam:
 //      case nsDispatchExpression:
 //      case nsExtension:
@@ -127,8 +127,8 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsLastSwitchOption:
 ////      case nsBiggerSwitchOption:
 ////      case nsLessSwitchOption:
-//         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
-//         break;
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
+         break;
 //      case nsAttribute:
 //         _writer.newNode(lxAttributeDecl);
 //         break;
@@ -159,22 +159,22 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
       terminal.symbol = tsLiteral;
    }
 
-   _writer.newNode((LexicalType)(terminal.symbol & ~mskAnySymbolMask | lxTerminalMask | lxObjectMask));
+   LexicalType type = (LexicalType)(terminal.symbol & ~mskAnySymbolMask | lxTerminalMask | lxObjectMask);
 
    if (terminal==tsLiteral || terminal==tsCharacter || terminal==tsWide) {
       // try to use local storage if the quote is not too big
       if (getlength(terminal.value) < 0x100) {
          QuoteTemplate<IdentifierString> quote(terminal.value);
 
-         _writer.appendNode(lxTerminal, quote.ident());
+         _writer.newNode(type, quote.ident());
       }
       else {
          QuoteTemplate<DynamicString<char> > quote(terminal.value);
 
-         _writer.appendNode(lxTerminal, quote.ident());
+         _writer.newNode(type, quote.ident());
       }
    }
-   else _writer.appendNode(lxTerminal, terminal.value);
+   else _writer.newNode(type, terminal.value);
 
    _writer.appendNode(lxCol, terminal.col);
    _writer.appendNode(lxRow, terminal.row);
@@ -215,9 +215,16 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 //
 //   return lastAttribute;
 //}
-//
-//inline bool setIdentifier(SNode& current)
-//{
+
+inline bool setIdentifier(SNode node)
+{
+   SNode current = node.prevNode();
+   if (current == lxAttribute) {
+      current = lxNameAttr;
+
+      return true;
+   }
+
 //   SNode lastAttribute = findLastAttribute(current);
 //
 //   if (lastAttribute == lxAttribute) {
@@ -227,9 +234,10 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 //
 //      return true;
 //   }
-//   else return false;
-//}
-//
+
+   return false;
+}
+
 //inline bool isTerminal(LexicalType type)
 //{
 //   switch (type)
@@ -615,8 +623,8 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 
 DerivationTransformer :: DerivationTransformer(SyntaxTree& tree)
 {
-//   _root = tree.readRoot();
-//
+   _root = tree.readRoot();
+
 //   ByteCodeCompiler::loadVerbs(_verbs);
 }
 
@@ -1918,18 +1926,19 @@ DerivationTransformer :: DerivationTransformer(SyntaxTree& tree)
 //
 //   writer.removeBookmark();
 //}
-//
-//void DerivationReader :: generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes)
-//{
-//   writer.newNode(lxSymbol);
-//
+
+void DerivationTransformer :: generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes*/)
+{
+   writer.newNode(lxSymbol);
+   writer.appendNode(lxSourcePath, scope.sourcePath);
+
 //   generateAttributes(writer, node, scope, attributes, false);
 //
 //   generateExpressionTree(writer, node.findChild(lxExpression), scope);
-//
-//   writer.closeNode();
-//}
-//
+
+   writer.closeNode();
+}
+
 //void DerivationReader :: generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 //{
 //   writer.newNode(lxExpression);
@@ -3105,9 +3114,9 @@ DerivationTransformer :: DerivationTransformer(SyntaxTree& tree)
 //      node = lxClass;
 //   }   
 //}
-//
-//void DerivationReader :: generateScope(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, int mode)
-//{
+
+void DerivationTransformer :: generateScope(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes, int mode*/)
+{
 //   // it is is a template
 //   if (node == lxTemplate) {
 //      generateScopeMembers(node, scope, mode);
@@ -3116,7 +3125,7 @@ DerivationTransformer :: DerivationTransformer(SyntaxTree& tree)
 //   }
 //   else {
 //      setIdentifier(attributes);
-//      // try to recognize general declaration
+      // try to recognize general declaration
 //      if (!generateDeclaration(node, scope, attributes)) {
 //         attributes.refresh();
 //
@@ -3124,7 +3133,7 @@ DerivationTransformer :: DerivationTransformer(SyntaxTree& tree)
 //
 //         if (node == lxSymbol) {
 //            if (!generateSingletonScope(writer, node, scope, attributes)) {
-//               generateSymbolTree(writer, node, scope, attributes);
+               generateSymbolTree(writer, node, scope/*, attributes*/);
 //            }
 //         }
 //         else if (node == lxAttributeDecl) {
@@ -3137,13 +3146,20 @@ DerivationTransformer :: DerivationTransformer(SyntaxTree& tree)
 //         else generateClassTree(writer, node, scope, attributes);
 //      }
 //   }
-//}
+}
 
-//void DerivationReader :: generateSyntaxTree(SyntaxWriter& writer, SNode node, _CompilerScope& scope, SyntaxTree& autogenerated)
-//{
+void DerivationTransformer :: generateSyntaxTree(SyntaxWriter& writer, SNode node, _CompilerScope& scope/*, SyntaxTree& autogenerated*/, ident_t sourcePath)
+{
 //   SNode attributes;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxScope) {
+         DerivationScope rootScope(/*&scope*/sourcePath);
+         //            rootScope.autogeneratedTree = &autogenerated;
+         setIdentifier(current);
+         generateScope(writer, current, rootScope/*, attributes, MODE_ROOT*/);
+         //            attributes = SNode();
+      }
 //      switch (current.type) {
 //         case lxAttribute:
 ////         case lxAttributeDecl:
@@ -3151,19 +3167,11 @@ DerivationTransformer :: DerivationTransformer(SyntaxTree& tree)
 //               attributes = current;
 //            }
 //            break;
-//         case lxScope:
-//         {
-//            DerivationScope rootScope(&scope);
-//            rootScope.autogeneratedTree = &autogenerated;
-//            generateScope(writer, current, rootScope, attributes, MODE_ROOT);
-//            attributes = SNode();
-//            break;
-//         }
 //      }
-//      current = current.nextNode();
-//   }
-//}
-//
+      current = current.nextNode();
+   }
+}
+
 //void DerivationReader :: saveTemplate(SNode node, _CompilerScope& scope, SNode attributes, DerivationScope::Type type, SyntaxTree& autogenerated, ref_t templateRef)
 //{
 //   _Memory* target = scope.module->mapSection(templateRef | mskSyntaxTreeRef, false);
@@ -3207,13 +3215,13 @@ DerivationTransformer :: DerivationTransformer(SyntaxTree& tree)
 //   SyntaxTree::saveNode(tree.readRoot(), target);
 //}
 
-void DerivationTransformer :: generateSyntaxTree(SyntaxWriter& writer, _CompilerScope& scope)
+void DerivationTransformer :: generateSyntaxTree(SyntaxWriter& writer, _CompilerScope& scope, ident_t sourcePath)
 {
 //   SyntaxTree autogeneratedTree;
-//   writer.newNode(lxRoot);
-//   generateSyntaxTree(writer, _root, scope, autogeneratedTree);
-//
+   writer.newNode(lxRoot);
+   generateSyntaxTree(writer, _root, scope, /*autogeneratedTree, */sourcePath);
+
 //   SyntaxTree::moveNodes(writer, autogeneratedTree, lxClass);
-//
-//   writer.closeNode();
+
+   writer.closeNode();
 }

@@ -521,16 +521,31 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
       _ELENA_::ident_t name = source->get(ELC_NAMESPACE_KEY);
       _ELENA_::ModuleInfo moduleInfo = compiler.createModule(name, *this, debugMode);
 
+      _ELENA_::SyntaxTree syntaxTree;
+
       _ELENA_::ident_t target = source->get(ELC_TARGET_NAME);      
       int type = /*!emptystr(target) ? _targets.get(target, ELC_TYPE_NAME, 1) : */1;
       if (type == 1) {
          // if it is a normal ELENA source file
          _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
+         bool noForwards = true;
          while (!file_it.Eof()) {
-            // compile a source file
-            compile(*file_it, compiler, parser, moduleInfo, unresolveds);
+            // declare a source file
+            noForwards &= declare(*file_it, compiler, parser, syntaxTree, moduleInfo, unresolveds);
+
+            if (noForwards) {
+               // if we are lucky - compile a source file directly
+               compile(compiler, syntaxTree, moduleInfo, unresolveds);
+
+               syntaxTree.clear();
+            }
 
             file_it = source->nextIt(ELC_INCLUDE, file_it);
+         }
+
+         if (!noForwards) {
+            // if we are unlucky - compile a whole module scope
+            compile(compiler, syntaxTree, moduleInfo, unresolveds);
          }
       }
       //else if (type == 2) {

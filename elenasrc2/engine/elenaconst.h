@@ -131,25 +131,25 @@ namespace _ELENA_
 //      mskPreloadDataRef      = 0xAC000000u,
 //      mskNativeVariable      = 0xAD000000u,
 //      mskConstVariable       = 0x4D000000u,
-//      mskLockVariable        = 0xAE000000u,   // HOTFIX : used to fool trylock opcode, adding virtual offset
-//
+      mskLockVariable        = 0xAE000000u,   // HOTFIX : used to fool trylock opcode, adding virtual offset
+
 //      mskInternalRef         = 0x13000000u,   // internal code
 //      mskInternalRelRef      = 0x33000000u,   // internal code
-//      mskSymbolRef           = 0x12000000u,   // symbol code
+      mskSymbolRef           = 0x12000000u,   // symbol code
 //      mskSymbolRelRef        = 0x32000000u,   // symbol code
 //      mskVMTRef              = 0x41000000u,   // class VMT
 //      mskClassRef            = 0x11000000u,   // class code
 //      mskClassRelRef         = 0x31000000u,   // class relative code
-//      mskStatSymbolRef       = 0x82000000u,   // reference to static symbol
-//
+      mskStatSymbolRef       = 0x82000000u,   // reference to static symbol
+
 //      mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
 //      mskMetaRDataRef        = 0x44000000u,   // meta data
 //      mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
 //      mskSyntaxTreeRef       = 0x46000000u,   // template, declared in subject namespace
 //      mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
 //      mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
-//
-//      mskConstantRef         = 0x01000000u,   // reference to constant
+
+      mskConstantRef         = 0x01000000u,   // reference to constant
 //      mskLiteralRef          = 0x02000000u,   // reference to constant literal
 //      mskInt32Ref            = 0x03000000u,   // reference to constant integer number
 //      mskInt64Ref            = 0x04000000u,   // reference to constant 64bit integer number
@@ -165,56 +165,56 @@ namespace _ELENA_
       mskMessageTableRef     = 0x60FFFFFFu    // message table reference, a special case of debug reference
    };
 
-////   // --- ELENA Debug symbol constants ---
-////   enum DebugSymbol
-////   {
-////      dsNone                    = 0x0000,
-////
-////      dsStep                    = 0x0010,
-////      dsEOP                     = 0x0011,    // end of procedure
-////      dsVirtualEnd              = 0x0013,    // virtual end of expreession; it should be skipped by debugger
-////      dsProcedureStep           = 0x0014,    // check the step result
-////      dsAtomicStep              = 0x0018,    // "step into" is always treated as step over, used for external code
-////      dsAssemblyStep            = 0x0110,    // the step requires some "disassemblying"
-////
-////      dsSymbol                  = 0x0001,
-////      dsClass                   = 0x0002,
-////      dsField                   = 0x0004,
-////      dsLocal                   = 0x0005,
-////      dsMessage                 = 0x0006,
-////      dsProcedure               = 0x0007,
-////      dsConstructor             = 0x0008,
-////      dsStack                   = 0x0009,
-////      dsStatement               = 0x000A,
-////      dsVirtualBlock            = 0x000B,
-////      dsEnd                     = 0x000F,
-////      dsIntLocal                = 0x0105,
-////      dsLongLocal               = 0x0205,
-////      dsRealLocal               = 0x0305,
-////      dsParamsLocal             = 0x0405,
-////      dsByteArrayLocal          = 0x0505,
-////      dsShortArrayLocal         = 0x0605,
-////      dsIntArrayLocal           = 0x0705,
-////
-////      // primitive variables
-////      dsIntLocalPtr             = 0x0805,
-////      dsLongLocalPtr            = 0x0905,
-////      dsRealLocalPtr            = 0x0A05,
-////      dsByteArrayLocalPtr       = 0x0B05,
-////      dsShortArrayLocalPtr      = 0x0C05,
-////      dsIntArrayLocalPtr        = 0x0D05,
-////      dsStructPtr               = 0x0E05,
-////      dsStructInfo              = 0x0F05,
-////      dsLocalPtr                = 0x1005,
-////
-////      dsDebugMask               = 0x00F0,
-////      dsTypeMask                = 0x1F00,
-////      dsDebugTypeMask           = 0x1FFF,
-////   };
-////
-////   // predefined debug module sections
-////   #define DEBUG_LINEINFO_ID      (pos_t)-1
-////   #define DEBUG_STRINGS_ID       (pos_t)-2
+   // --- ELENA Debug symbol constants ---
+   enum DebugSymbol
+   {
+      dsNone                    = 0x0000,
+
+      dsStep                    = 0x0010,
+      dsEOP                     = 0x0011,    // end of procedure
+      dsVirtualEnd              = 0x0013,    // virtual end of expreession; it should be skipped by debugger
+      dsProcedureStep           = 0x0014,    // check the step result
+      dsAtomicStep              = 0x0018,    // "step into" is always treated as step over, used for external code
+      dsAssemblyStep            = 0x0110,    // the step requires some "disassemblying"
+
+      dsSymbol                  = 0x0001,
+      dsClass                   = 0x0002,
+      dsField                   = 0x0004,
+      dsLocal                   = 0x0005,
+      dsMessage                 = 0x0006,
+      dsProcedure               = 0x0007,
+      dsConstructor             = 0x0008,
+      dsStack                   = 0x0009,
+      dsStatement               = 0x000A,
+      dsVirtualBlock            = 0x000B,
+      dsEnd                     = 0x000F,
+      dsIntLocal                = 0x0105,
+      dsLongLocal               = 0x0205,
+      dsRealLocal               = 0x0305,
+      dsParamsLocal             = 0x0405,
+      dsByteArrayLocal          = 0x0505,
+      dsShortArrayLocal         = 0x0605,
+      dsIntArrayLocal           = 0x0705,
+
+      // primitive variables
+      dsIntLocalPtr             = 0x0805,
+      dsLongLocalPtr            = 0x0905,
+      dsRealLocalPtr            = 0x0A05,
+      dsByteArrayLocalPtr       = 0x0B05,
+      dsShortArrayLocalPtr      = 0x0C05,
+      dsIntArrayLocalPtr        = 0x0D05,
+      dsStructPtr               = 0x0E05,
+      dsStructInfo              = 0x0F05,
+      dsLocalPtr                = 0x1005,
+
+      dsDebugMask               = 0x00F0,
+      dsTypeMask                = 0x1F00,
+      dsDebugTypeMask           = 0x1FFF,
+   };
+
+   // predefined debug module sections
+   #define DEBUG_LINEINFO_ID      (pos_t)-1
+   #define DEBUG_STRINGS_ID       (pos_t)-2
 
    // --- LoadResult enum ---
    enum LoadResult
@@ -272,54 +272,54 @@ namespace _ELENA_
 
 //  // --- ELENA VMT flags ---
 //   const int elStandartVMT         = 0x00000001;
-////   const int elNestedClass         = 0x00000002;
-////   const int elDynamicRole         = 0x00000004;
-////   const int elStructureRole       = 0x00000008;
-////   const int elAbstract            = 0x00000010;
-////   const int elClosed              = 0x00000020;
-////   const int elWrapper             = 0x00000040;
-////   const int elStructureWrapper    = 0x00000048;
-////   const int elStateless           = 0x00000080;
-////   const int elFinal               = 0x00000100;
-////   const int elSealed              = 0x00000120;
-////   const int elGroup               = 0x00000200;
-////   const int elWithGenerics        = 0x00000400;
-////   const int elReadOnlyRole        = 0x00000800;
-////   const int elNonStructureRole    = 0x00001000;
-////   const int elSignature           = 0x00002000;
-////   const int elRole                = 0x00004080;
-////   const int elExtension           = 0x00004980;
-////   const int elMessage             = 0x00008000;
-////   const int elSymbol              = 0x00100000;
-////   const int elExtMessage          = 0x00208000;
-////   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
-////   const int elWithCustomDispatcher= 0x00800000;
-////   const int elWithArgGenerics     = 0x01000000;
-////   const int elTapeGroup           = 0x02000200;
-////   const int elClassClass          = 0x04000000;
-////   const int elWithMuti            = 0x08000000;
-////   const int elVirtualVMT          = 0x10000000;
-//
-//   const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
-//
-////   const int elDebugMask           = 0x001F0000;
-////   const int elDebugDWORD          = 0x00010000;
-////   const int elDebugReal64         = 0x00020000;
-////   const int elDebugLiteral        = 0x00030000;
-////   const int elDebugIntegers       = 0x00040000;
-////   const int elDebugArray          = 0x00050000;
-////   const int elDebugQWORD          = 0x00060000;
-////   const int elDebugBytes          = 0x00070000;
-////   const int elDebugShorts         = 0x00080000;
-////   const int elDebugPTR            = 0x00090000;
-////   const int elDebugWideLiteral    = 0x000A0000;
-////   const int elDebugReference      = 0x000B0000;   // symbol reference
-////   const int elDebugSubject        = 0x000C0000;
-//////   const int elDebugReals          = 0x000D0000;
-////   const int elDebugMessage        = 0x000E0000;
-//////   const int elDebugDPTR           = 0x000F0000;
-////   const int elEnumList            = 0x00100000;
-//
+//   const int elNestedClass         = 0x00000002;
+//   const int elDynamicRole         = 0x00000004;
+//   const int elStructureRole       = 0x00000008;
+//   const int elAbstract            = 0x00000010;
+//   const int elClosed              = 0x00000020;
+//   const int elWrapper             = 0x00000040;
+//   const int elStructureWrapper    = 0x00000048;
+//   const int elStateless           = 0x00000080;
+//   const int elFinal               = 0x00000100;
+//   const int elSealed              = 0x00000120;
+//   const int elGroup               = 0x00000200;
+//   const int elWithGenerics        = 0x00000400;
+//   const int elReadOnlyRole        = 0x00000800;
+//   const int elNonStructureRole    = 0x00001000;
+//   const int elSignature           = 0x00002000;
+//   const int elRole                = 0x00004080;
+//   const int elExtension           = 0x00004980;
+   const int elMessage             = 0x00008000;
+//   const int elSymbol              = 0x00100000;
+//   const int elExtMessage          = 0x00208000;
+//   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
+//   const int elWithCustomDispatcher= 0x00800000;
+//   const int elWithArgGenerics     = 0x01000000;
+//   const int elTapeGroup           = 0x02000200;
+//   const int elClassClass          = 0x04000000;
+//   const int elWithMuti            = 0x08000000;
+//   const int elVirtualVMT          = 0x10000000;
+
+   const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
+
+//   const int elDebugMask           = 0x001F0000;
+//   const int elDebugDWORD          = 0x00010000;
+//   const int elDebugReal64         = 0x00020000;
+//   const int elDebugLiteral        = 0x00030000;
+//   const int elDebugIntegers       = 0x00040000;
+//   const int elDebugArray          = 0x00050000;
+//   const int elDebugQWORD          = 0x00060000;
+//   const int elDebugBytes          = 0x00070000;
+//   const int elDebugShorts         = 0x00080000;
+//   const int elDebugPTR            = 0x00090000;
+//   const int elDebugWideLiteral    = 0x000A0000;
+//   const int elDebugReference      = 0x000B0000;   // symbol reference
+//   const int elDebugSubject        = 0x000C0000;
+////   const int elDebugReals          = 0x000D0000;
+//   const int elDebugMessage        = 0x000E0000;
+////   const int elDebugDPTR           = 0x000F0000;
+//   const int elEnumList            = 0x00100000;
+
 //  // --- ELENA Linker / ELENA VM constants ---
 //   const int lnGCMGSize            = 0x00000001;
 //   const int lnGCYGSize            = 0x00000002;
@@ -327,9 +327,9 @@ namespace _ELENA_
 //   const int lnObjectSize          = 0x00000004;
 //
 //   const int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
-//
-////  // ELENA run-time exceptions
-////   #define ELENA_ERR_OUTOF_MEMORY  0x190
+
+  // ELENA run-time exceptions
+   #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- Project warning levels
    const int WARNING_LEVEL_1 = 1;
@@ -348,97 +348,97 @@ namespace _ELENA_
    #define MODULE_SIGNATURE         "ELENA.9.0"      // the module version
    #define DEBUG_MODULE_SIGNATURE   "ED!2"
 
-////  // --- ELENA core module names ---
-////   #define CORE_ALIAS                "core"          // Core functionality
-////  
-////  // --- ELENA verb messages ---
-////   #define DISPATCH_MESSAGE         "dispatch"
-////   #define NEW_MESSAGE              "new"
-////   #define GET_MESSAGE              "get"
-////   #define EVAL_MESSAGE             "eval"
-////   #define EVALUATE_MESSAGE         "evaluate"
-////   #define EQUAL_MESSAGE            "equal"
-////   #define NOTEQUAL_MESSAGE         "notequal"
-////   #define LESS_MESSAGE             "less"
-////   #define AND_MESSAGE              "and"
-////   #define OR_MESSAGE               "or"
-////   #define XOR_MESSAGE              "xor"
-////   #define GREATER_MESSAGE          "greater"
-////   #define NOTLESS_MESSAGE          "notless"
-////   #define NOTGREATER_MESSAGE       "notgreater"
-////   #define ADD_MESSAGE              "add"
-////   #define SUB_MESSAGE              "subtract"
-////   #define MUL_MESSAGE              "multiply"
-////   #define DIV_MESSAGE              "divide"
-////   #define REFER_MESSAGE            "getAt"
-////   #define APPEND_MESSAGE           "append"
-////   #define REDUCE_MESSAGE           "reduce"
-////   #define SET_REFER_MESSAGE        "setAt"
-////   #define SET_MESSAGE              "set"
-////   #define READ_MESSAGE             "read"
-////   #define WRITE_MESSAGE            "write"
-////   #define IF_MESSAGE               "if"
-////   #define IFNOT_MESSAGE            "ifnot"
-////   #define SHIFT_MESSAGE            "shift"
-////   #define INVOKE_MESSAGE           "#invoke"
-////
-////   // ELENA verb operators
-////   #define EQUAL_OPERATOR		      "=="
-////   #define NOTEQUAL_OPERATOR		   "!="
-////   #define NOTLESS_OPERATOR		   ">="
-////   #define NOTGREATER_OPERATOR      "<="
-////   #define GREATER_OPERATOR		   ">"
-////   #define LESS_OPERATOR            "<"
-////   #define IF_OPERATOR			      "?"
-////   #define IFNOT_OPERATOR		      "!"
-////   #define AND_OPERATOR             "&&"
-////   #define OR_OPERATOR              "||"
-////   #define XOR_OPERATOR             "^^"
-////   #define ADD_OPERATOR             "+"
-////   #define SUB_OPERATOR             "-"
-////   #define MUL_OPERATOR             "*"
-////   #define DIV_OPERATOR             "/"
-////   #define REFER_OPERATOR			   "@"
-////   #define APPEND_OPERATOR			   "+="
-////   #define REDUCE_OPERATOR			   "-="
-////   #define INCREASE_OPERATOR			"*="
-////   #define SEPARATE_OPERATOR			"/="
-////   #define WRITE_OPERATOR           "<<"
-////   #define READ_OPERATOR            ">>"
-////
-////   // template virtual methods
-////   #define TEMPLATE_GET_MESSAGE     "$get"
-////   #define TEMPLATE_SET_MESSAGE     "$set"
-////
-////  // --- ELENA explicit variables ---
-////   #define SELF_VAR                "self"             // the current method target / closure owner method target
-////   #define THIS_VAR                "$self"            // the current method class reference / closure owner class reference
-////
-////   #define SUPER_VAR               "$super"           // the predecessor class
-////   #define SUBJECT_VAR             "$subject"         // the current message
-////   #define NIL_VAR                 "$nil"             // the nil symbol
-////   #define RETVAL_VAR              "$$ret"            // the closure returning value
-////   #define OWNER_VAR               "$$owner"          // the nested class / closure owner
-////   #define PARENT_VAR              "$$parent"         // the closure parent
-////
-////   #define TEMPLATE_FIELD          "$field"
-////
-////  // --- ELENA special sections ---
-////   #define ATTRIBUTE_SECTION        "#attributes"
-////   #define EXTENSION_SECTION        "#extensions"
-////   #define ACTION_SECTION           "#actions"
-////   #define INITIALIZER_SECTION      "#initializer"
-////   #define PACKAGE_SECTION          "#package"
-////   #define IMPORTS_SECTION          "#import"
-////   #define AUTOEXTENSION_SECTION    "#auto_extensions"
-////
-////  // --- ELENA class prefixes / postfixes ---
-////   #define INLINE_POSTFIX           "#inline"
-////   #define CLASSCLASS_POSTFIX       "#class"
-////   #define GENERIC_PREFIX           "#generic"
-//////   #define EMBEDDED_PREFIX          "#embedded"
-//////   #define TARGET_POSTFIX           "##"
-////   #define STATICFIELD_POSTFIX      "#static"
+//  // --- ELENA core module names ---
+//   #define CORE_ALIAS                "core"          // Core functionality
+//  
+//  // --- ELENA verb messages ---
+//   #define DISPATCH_MESSAGE         "dispatch"
+//   #define NEW_MESSAGE              "new"
+//   #define GET_MESSAGE              "get"
+//   #define EVAL_MESSAGE             "eval"
+//   #define EVALUATE_MESSAGE         "evaluate"
+//   #define EQUAL_MESSAGE            "equal"
+//   #define NOTEQUAL_MESSAGE         "notequal"
+//   #define LESS_MESSAGE             "less"
+//   #define AND_MESSAGE              "and"
+//   #define OR_MESSAGE               "or"
+//   #define XOR_MESSAGE              "xor"
+//   #define GREATER_MESSAGE          "greater"
+//   #define NOTLESS_MESSAGE          "notless"
+//   #define NOTGREATER_MESSAGE       "notgreater"
+//   #define ADD_MESSAGE              "add"
+//   #define SUB_MESSAGE              "subtract"
+//   #define MUL_MESSAGE              "multiply"
+//   #define DIV_MESSAGE              "divide"
+//   #define REFER_MESSAGE            "getAt"
+//   #define APPEND_MESSAGE           "append"
+//   #define REDUCE_MESSAGE           "reduce"
+//   #define SET_REFER_MESSAGE        "setAt"
+//   #define SET_MESSAGE              "set"
+//   #define READ_MESSAGE             "read"
+//   #define WRITE_MESSAGE            "write"
+//   #define IF_MESSAGE               "if"
+//   #define IFNOT_MESSAGE            "ifnot"
+//   #define SHIFT_MESSAGE            "shift"
+//   #define INVOKE_MESSAGE           "#invoke"
+//
+//   // ELENA verb operators
+//   #define EQUAL_OPERATOR		      "=="
+//   #define NOTEQUAL_OPERATOR		   "!="
+//   #define NOTLESS_OPERATOR		   ">="
+//   #define NOTGREATER_OPERATOR      "<="
+//   #define GREATER_OPERATOR		   ">"
+//   #define LESS_OPERATOR            "<"
+//   #define IF_OPERATOR			      "?"
+//   #define IFNOT_OPERATOR		      "!"
+//   #define AND_OPERATOR             "&&"
+//   #define OR_OPERATOR              "||"
+//   #define XOR_OPERATOR             "^^"
+//   #define ADD_OPERATOR             "+"
+//   #define SUB_OPERATOR             "-"
+//   #define MUL_OPERATOR             "*"
+//   #define DIV_OPERATOR             "/"
+//   #define REFER_OPERATOR			   "@"
+//   #define APPEND_OPERATOR			   "+="
+//   #define REDUCE_OPERATOR			   "-="
+//   #define INCREASE_OPERATOR			"*="
+//   #define SEPARATE_OPERATOR			"/="
+//   #define WRITE_OPERATOR           "<<"
+//   #define READ_OPERATOR            ">>"
+//
+//   // template virtual methods
+//   #define TEMPLATE_GET_MESSAGE     "$get"
+//   #define TEMPLATE_SET_MESSAGE     "$set"
+
+  //// --- ELENA explicit variables ---
+  // #define SELF_VAR                "self"             // the current method target / closure owner method target
+  // #define THIS_VAR                "$self"            // the current method class reference / closure owner class reference
+
+//   #define SUPER_VAR               "$super"           // the predecessor class
+//   #define SUBJECT_VAR             "$subject"         // the current message
+//   #define NIL_VAR                 "$nil"             // the nil symbol
+//   #define RETVAL_VAR              "$$ret"            // the closure returning value
+//   #define OWNER_VAR               "$$owner"          // the nested class / closure owner
+//   #define PARENT_VAR              "$$parent"         // the closure parent
+
+//   #define TEMPLATE_FIELD          "$field"
+//
+//  // --- ELENA special sections ---
+//   #define ATTRIBUTE_SECTION        "#attributes"
+//   #define EXTENSION_SECTION        "#extensions"
+//   #define ACTION_SECTION           "#actions"
+//   #define INITIALIZER_SECTION      "#initializer"
+//   #define PACKAGE_SECTION          "#package"
+//   #define IMPORTS_SECTION          "#import"
+//   #define AUTOEXTENSION_SECTION    "#auto_extensions"
+
+  // --- ELENA class prefixes / postfixes ---
+   #define INLINE_POSTFIX           "#inline"
+//   #define CLASSCLASS_POSTFIX       "#class"
+//   #define GENERIC_PREFIX           "#generic"
+////   #define EMBEDDED_PREFIX          "#embedded"
+////   #define TARGET_POSTFIX           "##"
+//   #define STATICFIELD_POSTFIX      "#static"
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"

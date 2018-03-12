@@ -402,8 +402,11 @@ _Module* Project :: createDebugModule(ident_t name)
 ////   else return _settings.get(opExternals, alias, DEFAULT_STR);
 ////}
 
-void Project :: compile(ident_t filePath, Compiler& compiler, Parser& parser, ModuleInfo& moduleInfo, Unresolveds& unresolved)
+bool Project :: declare(ident_t filePath, Compiler& compiler, Parser& parser, SyntaxTree& syntaxTree, ModuleInfo& moduleInfo, Unresolveds& unresolved)
 {
+   printInfo("%s", filePath);
+
+   bool noForwards = false;
    try {
       // based on the target type generate the syntax tree for the file
       Path fullPath(StrSetting(_ELENA_::opProjectPath));
@@ -418,10 +421,9 @@ void Project :: compile(ident_t filePath, Compiler& compiler, Parser& parser, Mo
       DerivationWriter writer(derivationTree);
       parser.parse(&sourceFile, writer, getTabSize());
 
+      // declare the module members
       DerivationTransformer transformer(derivationTree);
-
-      // compile the syntax tree
-      compiler.compileModule(*this, filePath, transformer, moduleInfo, unresolved);
+      noForwards = compiler.declareModule(filePath, *this, transformer, syntaxTree, moduleInfo, unresolved);
    }
    catch (LineTooLong& e)
    {
@@ -440,6 +442,14 @@ void Project :: compile(ident_t filePath, Compiler& compiler, Parser& parser, Mo
    {
       raiseError(e.error, filePath, e.row, e.column, e.token);
    }
+
+   return noForwards;
+}
+
+void Project :: compile(Compiler& compiler, SyntaxTree& syntaxTree, ModuleInfo& moduleInfo, Unresolveds& unresolved)
+{
+   // compile the syntax tree
+   compiler.compileModule(*this, syntaxTree, moduleInfo, unresolved);
 }
 
 ////void Project :: compile(ident_t filePath, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved)

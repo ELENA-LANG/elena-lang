@@ -59,31 +59,31 @@ inline void loadSection(ConfigCategoryIterator it, PathMapping& list)
    }
 }
 
-inline void saveSetting(_ELENA_::IniConfigFile& config, const char* section, const char* setting, bool value, bool defaultValue)
+inline void saveSetting(_ELENA_::XmlConfigFile& config, const char* setting, bool value, bool defaultValue)
 {
    if (value != defaultValue)
-      config.setSetting(section, setting, value);
+      config.setSetting(setting, value);
 }
 
-inline void saveSetting(_ELENA_::IniConfigFile& config, const char* section, const char* setting, unsigned int value, unsigned int defaultValue)
+inline void saveSetting(_ELENA_::XmlConfigFile& config, const char* setting, unsigned int value, unsigned int defaultValue)
 {
    if (value != defaultValue)
-      config.setSetting(section, setting, value);
+      config.setSetting(setting, value);
 }
 
-inline void saveSetting(_ELENA_::IniConfigFile& config, const char* section, const char* setting, int value, int defaultValue)
+inline void saveSetting(_ELENA_::XmlConfigFile& config, const char* setting, int value, int defaultValue)
 {
    if (value != defaultValue)
-      config.setSetting(section, setting, value);
+      config.setSetting(setting, value);
 }
 
-inline void saveSection(_ELENA_::IniConfigFile& config, const char* section, PathMapping& list)
+inline void saveSection(_ELENA_::XmlConfigFile& config, const char* section, PathMapping& list)
 {
-   for(PathMapping::Iterator it = list.start(); !it.Eof(); it++) {
-      IdentifierString value(*it);
+   //for(PathMapping::Iterator it = list.start(); !it.Eof(); it++) {
+   //   IdentifierString value(*it);
 
-      config.setSetting(section, it.key(), value);
-   }
+   //   config.setSetting(section, it.key(), value);
+   //}
 }
 
 // -- Paths ---
@@ -127,67 +127,67 @@ void Settings :: init(Model* model, path_t packagePath, path_t libraryPath)
    model->libraryRoots.add("default", libraryPath.clone());
 }
 
-void Settings :: load(Model* model, _ELENA_::IniConfigFile& config)
+void Settings :: load(Model* model, _ELENA_::XmlConfigFile& config)
 {
-   model->defaultProject.copy(config.getSetting(SETTINGS_SECTION, DEFAULT_PROJECT_SETTING));
+   model->defaultProject.copy(config.getSetting(DEFAULT_PROJECT_SETTING));
 
-   loadSetting(config.getSetting(SETTINGS_SECTION, TAB_USING_SETTING), model->tabCharUsing);
-   loadSetting(config.getSetting(SETTINGS_SECTION, MAXIMIZED_SETTING), model->appMaximized);
-   loadSetting(config.getSetting(SETTINGS_SECTION, OUTPUT_SETTING), model->compilerOutput);
-   loadSetting(config.getSetting(SETTINGS_SECTION, PROJECTVIEW_SETTING), model->projectView);
-   loadSetting(config.getSetting(SETTINGS_SECTION, CALLSTACK_SETTING), model->callStack);
-   loadSetting(config.getSetting(SETTINGS_SECTION, MESSAGES_SETTING), model->messages);
-   loadSetting(config.getSetting(SETTINGS_SECTION, PATH_REMEMBER_SETTING), model->lastPathRemember);
-   loadSetting(config.getSetting(SETTINGS_SECTION, PROJECT_REMEMBER_SETTING), model->lastProjectRemember);
-   loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_DETECTING_SETTING), model->autoDetecting);
-   loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_RECOMPILE_SETTING), model->autoRecompile);
-   loadSetting(config.getSetting(SETTINGS_SECTION, AUTO_PROJECT_LOAD_SETTING), model->autoProjectLoad);
+   loadSetting(config.getSetting(TAB_USING_SETTING), model->tabCharUsing);
+   loadSetting(config.getSetting(MAXIMIZED_SETTING), model->appMaximized);
+   loadSetting(config.getSetting(OUTPUT_SETTING), model->compilerOutput);
+   loadSetting(config.getSetting(PROJECTVIEW_SETTING), model->projectView);
+   loadSetting(config.getSetting(CALLSTACK_SETTING), model->callStack);
+   loadSetting(config.getSetting(MESSAGES_SETTING), model->messages);
+   loadSetting(config.getSetting(PATH_REMEMBER_SETTING), model->lastPathRemember);
+   loadSetting(config.getSetting(PROJECT_REMEMBER_SETTING), model->lastProjectRemember);
+   loadSetting(config.getSetting(AUTO_DETECTING_SETTING), model->autoDetecting);
+   loadSetting(config.getSetting(AUTO_RECOMPILE_SETTING), model->autoRecompile);
+   loadSetting(config.getSetting(AUTO_PROJECT_LOAD_SETTING), model->autoProjectLoad);
    //loadSetting(config.getSetting(SETTINGS_SECTION, DEBUG_TAPE_SETTING), model->debugTape);
 
-   loadSetting(config.getSetting(SETTINGS_SECTION, TAB_SIZE_SETTING), model->tabSize, 1, 20, 4);
-   loadSetting(config.getSetting(SETTINGS_SECTION, ENCODING_SETTING), model->defaultEncoding);
+   //loadSetting(config.getSetting(SETTINGS_SECTION, TAB_SIZE_SETTING), model->tabSize, 1, 20, 4);
+   //loadSetting(config.getSetting(SETTINGS_SECTION, ENCODING_SETTING), model->defaultEncoding);
 
-   loadSetting(config.getSetting(SETTINGS_SECTION, LINE_NUMBERS_SETTING), model->lineNumberVisible);
-   loadSetting(config.getSetting(SETTINGS_SECTION, HIGHLIGHT_SETTING), model->highlightSyntax);
-   loadSetting(config.getSetting(SETTINGS_SECTION, BRACKETS_SETTING), model->highlightBrackets);
-   loadSetting(config.getSetting(SETTINGS_SECTION, TABSCORE_SETTING), model->tabWithAboveScore);
-   loadSetting(config.getSetting(SETTINGS_SECTION, SCHEME_SETTING), model->scheme, 0, 1, 0);
-   loadSetting(config.getSetting(SETTINGS_SECTION, FONTSIZE_SETTING), model->font_size, 8, 24, 10);
+   //loadSetting(config.getSetting(SETTINGS_SECTION, LINE_NUMBERS_SETTING), model->lineNumberVisible);
+   //loadSetting(config.getSetting(SETTINGS_SECTION, HIGHLIGHT_SETTING), model->highlightSyntax);
+   //loadSetting(config.getSetting(SETTINGS_SECTION, BRACKETS_SETTING), model->highlightBrackets);
+   //loadSetting(config.getSetting(SETTINGS_SECTION, TABSCORE_SETTING), model->tabWithAboveScore);
+   //loadSetting(config.getSetting(SETTINGS_SECTION, SCHEME_SETTING), model->scheme, 0, 1, 0);
+   //loadSetting(config.getSetting(SETTINGS_SECTION, FONTSIZE_SETTING), model->font_size, 8, 24, 10);
 
-   loadSection(config.getCategoryIt(SRCPATH_SECTION), model->packageRoots);
-   loadSection(config.getCategoryIt(LIBPATH_SECTION), model->libraryRoots);
+   //loadSection(config.getCategoryIt(SRCPATH_SECTION), model->packageRoots);
+   //loadSection(config.getCategoryIt(LIBPATH_SECTION), model->libraryRoots);
 }
 
-void Settings :: save(Model* model, _ELENA_::IniConfigFile& config)
+void Settings :: save(Model* model, _ELENA_::XmlConfigFile& config)
 {
    if (!model->defaultProject.isEmpty() && model->lastProjectRemember)
-      config.setSetting(SETTINGS_SECTION, DEFAULT_PROJECT_SETTING, IdentifierString(model->defaultProject));
+      config.setSetting(DEFAULT_PROJECT_SETTING, IdentifierString(model->defaultProject));
 
-   saveSetting(config, SETTINGS_SECTION, TAB_USING_SETTING, model->tabCharUsing, false);
-   saveSetting(config, SETTINGS_SECTION, MAXIMIZED_SETTING, model->appMaximized, true);
-   saveSetting(config, SETTINGS_SECTION, OUTPUT_SETTING, model->compilerOutput, true);
-   saveSetting(config, SETTINGS_SECTION, PROJECTVIEW_SETTING, model->projectView, true);
-   saveSetting(config, SETTINGS_SECTION, CALLSTACK_SETTING, model->callStack, true);
-   saveSetting(config, SETTINGS_SECTION, MESSAGES_SETTING, model->messages, true);
-   saveSetting(config, SETTINGS_SECTION, PATH_REMEMBER_SETTING, model->lastPathRemember, true);
-   saveSetting(config, SETTINGS_SECTION, PROJECT_REMEMBER_SETTING, model->lastProjectRemember, true);
-   saveSetting(config, SETTINGS_SECTION, AUTO_PROJECT_LOAD_SETTING, model->autoProjectLoad, false);
-   saveSetting(config, SETTINGS_SECTION, AUTO_DETECTING_SETTING, model->autoDetecting, true);
-   saveSetting(config, SETTINGS_SECTION, AUTO_RECOMPILE_SETTING, model->autoRecompile, true);
+   saveSetting(config, TAB_USING_SETTING, model->tabCharUsing, false);
+   saveSetting(config, MAXIMIZED_SETTING, model->appMaximized, true);
+   saveSetting(config, OUTPUT_SETTING, model->compilerOutput, true);
+   saveSetting(config, PROJECTVIEW_SETTING, model->projectView, true);
+   saveSetting(config, CALLSTACK_SETTING, model->callStack, true);
+   saveSetting(config, MESSAGES_SETTING, model->messages, true);
+   saveSetting(config, PATH_REMEMBER_SETTING, model->lastPathRemember, true);
+   saveSetting(config, PROJECT_REMEMBER_SETTING, model->lastProjectRemember, true);
+   saveSetting(config, AUTO_PROJECT_LOAD_SETTING, model->autoProjectLoad, false);
+   saveSetting(config, AUTO_DETECTING_SETTING, model->autoDetecting, true);
+   saveSetting(config, AUTO_RECOMPILE_SETTING, model->autoRecompile, true);
    //saveSetting(config, SETTINGS_SECTION, DEBUG_TAPE_SETTING, model->debugTape, false);
 
-   saveSetting(config, SETTINGS_SECTION, LINE_NUMBERS_SETTING, model->lineNumberVisible, true);
-   saveSetting(config, SETTINGS_SECTION, HIGHLIGHT_SETTING, model->highlightSyntax, true);
-   saveSetting(config, SETTINGS_SECTION, BRACKETS_SETTING, model->highlightBrackets, true);
-   saveSetting(config, SETTINGS_SECTION, TABSCORE_SETTING, model->tabWithAboveScore, true);
-   saveSetting(config, SETTINGS_SECTION, SCHEME_SETTING, model->scheme, 0);
-   saveSetting(config, SETTINGS_SECTION, FONTSIZE_SETTING, model->font_size, 10);
+   //saveSetting(config, SETTINGS_SECTION, LINE_NUMBERS_SETTING, model->lineNumberVisible, true);
+   //saveSetting(config, SETTINGS_SECTION, HIGHLIGHT_SETTING, model->highlightSyntax, true);
+   //saveSetting(config, SETTINGS_SECTION, BRACKETS_SETTING, model->highlightBrackets, true);
+   //saveSetting(config, SETTINGS_SECTION, TABSCORE_SETTING, model->tabWithAboveScore, true);
+   //saveSetting(config, SETTINGS_SECTION, SCHEME_SETTING, model->scheme, 0);
+   //saveSetting(config, SETTINGS_SECTION, FONTSIZE_SETTING, model->font_size, 10);
 
-   saveSetting(config, SETTINGS_SECTION, TAB_SIZE_SETTING, model->tabSize, 4);
-   saveSetting(config, SETTINGS_SECTION, ENCODING_SETTING, model->defaultEncoding, 0);
+   //saveSetting(config, SETTINGS_SECTION, TAB_SIZE_SETTING, model->tabSize, 4);
+   //saveSetting(config, SETTINGS_SECTION, ENCODING_SETTING, model->defaultEncoding, 0);
 
-   saveSection(config, SRCPATH_SECTION, model->packageRoots);
-   saveSection(config, LIBPATH_SECTION, model->libraryRoots);
+   //saveSection(config, SRCPATH_SECTION, model->packageRoots);
+   //saveSection(config, LIBPATH_SECTION, model->libraryRoots);
 }
 
 void Settings :: onNewProjectTemplate(Model* model, _GUI_::_ProjectManager* project)

@@ -1386,10 +1386,7 @@ bool IDEWindow :: compileProject(_ProjectManager* project, int postponedAction)
 {
    _ELENA_::Path path(_model->project.path);
    path.combine(_model->project.name.str());
-   if (_model->project.type == ctXml) {
-      path.appendExtension(_T("xprj"));
-   }
-   else path.appendExtension(_T("prj"));
+   path.appendExtension(_T("prj"));
 
    _ELENA_::Path appPath(_model->paths.appPath);
    appPath.combine(_T("elc.exe"));

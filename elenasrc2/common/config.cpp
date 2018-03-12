@@ -262,6 +262,7 @@ void IniConfigFile :: clear()
 XmlConfigFile :: XmlConfigFile()
    : _values(NULL, freestr)
 {
+   _tree.loadXml("<configuration></configuration>");
 }
 
 bool XmlConfigFile :: load(path_t path, int encoding)
@@ -282,7 +283,7 @@ bool XmlConfigFile :: save(path_t path, int encoding)
 {
    try
    {
-      return _tree.save(path, encoding);
+      return _tree.save(path, encoding, true);
    }
    catch (XMLException&)
    {
@@ -290,28 +291,44 @@ bool XmlConfigFile :: save(path_t path, int encoding)
    return false;
 }
 
-size_t XmlConfigFile :: find(XMLNode& node, ident_t key)
+size_t XmlConfigFile :: find(ident_t key)
 {
    size_t length = getlength(key);
    size_t end = key.find('/', length);
 
    XMLNodeTag tag((const char*)key, end);
-
-   XMLNode foundNode = node.findNode((const char*)tag);
-   if (foundNode.Position() != -1) {
+   if (_tree.compareTag(tag.c_str())) {
       if (end < length) {
-         return find(foundNode, (const char*)key + end + 1);
+         return find(_tree, key + end + 1);         
       }
-      else return foundNode.Position();
+      else return _tree.Position();
    }
+   else return (size_t)-1;
+}
 
-   return (size_t)-1;
+size_t XmlConfigFile :: find(XMLNode& node, ident_t key)
+{
+   if (!emptystr(key)) {
+      size_t length = getlength(key);
+      size_t end = key.find('/', length);
+
+      XMLNodeTag tag((const char*)key, end);
+      XMLNode foundNode = node.findNode((const char*)tag);
+      if (foundNode.Position() != -1) {
+         if (end < length) {
+            return find(foundNode, (const char*)key + end + 1);
+         }
+         else return foundNode.Position();
+      }
+
+      return (size_t)-1;
+   }
+   else return node.Position();
 }
 
 _ConfigFile::Node XmlConfigFile :: get(ident_t key)
 {
-   size_t position = find(_tree, key);
-
+   size_t position = find(key);
    if (position != NOTFOUND_POS) {
       return _ConfigFile::Node(this, (void*)position);
    }
@@ -327,7 +344,7 @@ bool XmlConfigFile :: select(ident_t key, Map<ident_t, _ConfigFile::Node>& list)
    if (length > end) {
       XMLNodeTag tag((const char*)key, end);
 
-      position = find(_tree, (const char*)tag);
+      position = find((const char*)tag);
    }
 
    if (position == NOTFOUND_POS)
@@ -410,7 +427,7 @@ ident_t XmlConfigFile :: getNodeAttribute(void* reference, ident_t name)
 
 void XmlConfigFile :: setSetting(ident_t key, const char* value)
 {
-   size_t position = find(_tree, key);
+   size_t position = find(key);
 
    if (position != NOTFOUND_POS) {
       XMLNode node(position, &_tree);
@@ -422,10 +439,10 @@ void XmlConfigFile :: setSetting(ident_t key, const char* value)
       size_t end = key.findLast('/', length);
       if (end != NOTFOUND_POS) {
          String<char, 255> subCategory(key, end);
-         position = find(_tree, subCategory.c_str());
+         position = find(subCategory.c_str());
          if (position == NOTFOUND_POS) {
             setSetting(subCategory.c_str(), DEFAULT_STR);
-            position = find(_tree, subCategory.c_str());
+            position = find(subCategory.c_str());
          }
 
          XMLNode parent(position, &_tree);
@@ -454,7 +471,7 @@ void XmlConfigFile :: setSetting(ident_t key, size_t value)
 
 void XmlConfigFile :: setSetting(ident_t key, bool value)
 {
-
+   setSetting(key, value ? "-1" : "0");
 }
 
 void XmlConfigFile  :: appendSetting(ident_t key, ident_t attribute, const char* value)
@@ -484,5 +501,5 @@ void XmlConfigFile :: clear()
    _values.clear();
    _attributes.clear();
 
-   _tree.clear();
+   _tree.loadXml("<configuration></configuration>");
 }

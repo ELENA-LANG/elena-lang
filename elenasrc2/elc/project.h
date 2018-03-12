@@ -236,7 +236,8 @@ public:
 ////      return BoolSetting(opWarnOnWeakUnresolved);
 ////   }
 
-   void compile(ident_t sourceFile, Compiler& compiler, Parser& parser, ModuleInfo& moduleInfo, Unresolveds& unresolved);
+   bool declare(ident_t filePath, Compiler& compiler, Parser& parser, SyntaxTree& derivationTree, ModuleInfo& moduleInfo, Unresolveds& unresolved);
+   void compile(Compiler& compiler, SyntaxTree& derivationTree, ModuleInfo& moduleInfo, Unresolveds& unresolved);
 //   void compile(ident_t sourceFile, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved);
 
    Project();

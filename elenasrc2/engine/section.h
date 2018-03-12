@@ -18,9 +18,9 @@ ref_t indexReference(ref_t reference);
 // --- Section Fixup map ---
 typedef MemoryHashTable<ref_t, int, indexReference, cnHashSize> RelocationFixMap;
 
-//// --- Section mapping types ---
-//class Section;
-//typedef Map<ref_t, Section*> SectionMap;
+// --- Section mapping types ---
+class Section;
+typedef Map<ref_t, Section*> SectionMap;
 
 // --- Section class ---
 typedef IntFixedMap<ref_t> RelocationMap;

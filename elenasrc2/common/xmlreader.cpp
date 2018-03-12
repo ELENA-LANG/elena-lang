@@ -125,10 +125,11 @@ size_t XMLNode :: parse(ident_t content, size_t position, size_t end, PositionLi
          position++;
 
       if (content[position] != '<') {
-         position = content.findSubStr(position, '<', end - position, end);
-         if (content[position + 1] != '/') {
-            throw XMLException(position);
+         position = content.findSubStr(position, '<', end, end);
+         if (isClosingTag(content, position, tag)) {
+            return position + 3 + tag.Length();
          }
+         else throw XMLException(position);
       }
       else if (!isClosingTag(content, position, tag)) {
          if (list)
@@ -201,15 +202,16 @@ void XMLNode :: readTag(XMLNodeTag& tag)
 XMLNode XMLNode :: findNode(ident_t tag)
 {
    ident_t content = getContent();
+   if (!emptystr(content)) {
+      PositionList positions;
+      parse(content, _position, getlength(content), &positions);
 
-   PositionList positions;
-   parse(content, _position, getlength(content), &positions);
+      for (PositionList::Iterator it = positions.start(); !it.Eof(); it++) {
+         XMLNode node(*it, this);
 
-   for (PositionList::Iterator it = positions.start(); !it.Eof(); it++) {
-      XMLNode node(*it, this);
-
-      if (node.compareTag(tag)) {
-         return node;
+         if (node.compareTag(tag)) {
+            return node;
+         }
       }
    }
 
@@ -271,14 +273,55 @@ bool XMLTree :: load(path_t path, int encoding)
    return true;
 }
 
-bool XMLTree :: save(path_t path, int encoding)
+bool XMLTree :: loadXml(ident_t content)
+{
+   _content.copy(content);
+
+   return true;
+}
+
+bool XMLTree :: save(path_t path, int encoding, bool formatted)
 {
    TextFileWriter  writer(path, encoding, false);
 
    if (!writer.isOpened())
       return false;
 
-   writer.writeLiteral(_content);
+   if (formatted) {
+      int indent = -4;
+      int start = 0;
+      bool inlineMode = false;
+      bool openning = true;
+      for (int i = 0; i < getlength(_content); i++) {
+         if (_content[i] == '<') {            
+            if (_content[i + 1] != '/') {
+               openning = true;
+               inlineMode = false;
+               indent += 4;
+               if (indent > 0) {
+                  writer.writeNewLine();
+                  writer.fillText(" ", 1, indent);
+               }
+            }
+            else {
+               openning = false;
+               if (!inlineMode) {
+                  writer.writeNewLine();
+                  writer.fillText(" ", 1, indent);
+               }
+               inlineMode = false;
+
+               indent -= 4;
+            }
+         }
+         else if (_content[i] == '>' && openning) {
+            inlineMode = true;
+         }
+
+         writer.writeChar(_content[i]);
+      }
+   }
+   else writer.writeLiteral(_content);
 
    return true;
 }
@@ -364,7 +407,7 @@ size_t XMLTree :: insertNode(size_t  position, ident_t name)
    _content.insert("</", position);
    _content.insert(">", position);
    _content.insert(name, position);
-   _content.insert("\n<", position);
+   _content.insert("<", position);
 
-   return position + 1;
+   return position;
 }

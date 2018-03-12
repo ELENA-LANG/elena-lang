@@ -1,17 +1,17 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler Engine
-////
-////		This file contains ELENA byte code compiler class implementation.
-////
-////                                              (C)2005-2018, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "bcwriter.h"
+//		This file contains ELENA byte code compiler class implementation.
 //
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2018, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "bcwriter.h"
+
+using namespace _ELENA_;
+
 //#define ACC_REQUIRED    0x0001
 //#define BOOL_ARG_EXPR   0x0002
 //
@@ -49,20 +49,20 @@
 //
 //   return true;
 //}
-//
-//// --- Auxiliary  ---
-//
-//void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
-//{
-//   Map<int, int>::Iterator it = jumps.start();
-//   while (!it.Eof()) {
-//      if (it.key() == label) {
-//         (*code)[*it] = labelPosition - *it - 4;
-//      }
-//      it++;
-//   }
-//}
-//
+
+// --- Auxiliary  ---
+
+void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
+{
+   Map<int, int>::Iterator it = jumps.start();
+   while (!it.Eof()) {
+      if (it.key() == label) {
+         (*code)[*it] = labelPosition - *it - 4;
+      }
+      it++;
+   }
+}
+
 //// --- ByteCodeWriter ---
 //
 //int ByteCodeWriter :: writeString(ident_t path)
@@ -75,66 +75,66 @@
 //
 //   return position;
 //}
-//
-//ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
-//{
-//   if (debugModule != NULL) {
-//      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
-//
-//      ref_t sourceRef = debugStringWriter.Position();
-//
-//      debugStringWriter.writeLiteral(path);
-//
-//      return sourceRef;
-//   }
-//   else return 0;
-//}
-//
+
+pos_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
+{
+   if (debugModule != NULL) {
+      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
+
+      pos_t sourceRef = debugStringWriter.Position();
+
+      debugStringWriter.writeLiteral(path);
+
+      return sourceRef;
+   }
+   else return 0;
+}
+
 //void ByteCodeWriter :: declareInitializer(CommandTape& tape, ref_t reference)
 //{
 //   // symbol-begin:
 //   tape.write(blBegin, bsInitializer, reference);
 //}
-//
-//void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef)
-//{
-//   // symbol-begin:
-//   tape.write(blBegin, bsSymbol, reference);
-//
-//   if (sourcePathRef != (size_t)-1)
-//      tape.write(bdSourcePath, sourcePathRef);
-//}
-//
-//void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef)
-//{
-//   // symbol-begin:
-//
-//   // aloadr static
-//   // elser procedure-end
-//   // acopyr ref
-//   // pusha
-//
-//   tape.newLabel();     // declare symbol-end label
-//
-//   if (sourcePathRef != (size_t)-1)
-//      tape.write(blBegin, bsSymbol, staticReference);
-//
+
+void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef)
+{
+   // symbol-begin:
+   tape.write(blBegin, bsSymbol, reference);
+
+   //if (sourcePathRef != (size_t)-1)
+   //   tape.write(bdSourcePath, sourcePathRef);
+}
+
+void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef)
+{
+   // symbol-begin:
+
+   // aloadr static
+   // elser procedure-end
+   // acopyr ref
+   // pusha
+
+   tape.newLabel();     // declare symbol-end label
+
+   if (sourcePathRef != (size_t)-1)
+      tape.write(blBegin, bsSymbol, staticReference);
+
 //   tape.write(bdSourcePath, sourcePathRef);
-//
-//   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
-//   tape.write(bcElseR, baCurrentLabel, 0);
-//   tape.write(bcACopyR, staticReference | mskLockVariable);
-//   tape.write(bcPushA);
-//
-//   tryLock(tape);
-//   declareTry(tape);
-//
-//   // check if the symbol was not created while in the lock
-//   // aloadr static
-//   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
-//   jumpIfNotEqual(tape, 0, true, true);
-//}
-//
+
+   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.write(bcACopyR, staticReference | mskLockVariable);
+   tape.write(bcPushA);
+
+   tryLock(tape);
+   declareTry(tape);
+
+   // check if the symbol was not created while in the lock
+   // aloadr static
+   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
+   jumpIfNotEqual(tape, 0, true, true);
+}
+
 //void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
 //{
 //   // class-begin:
@@ -357,56 +357,56 @@
 //{
 //   tape.setLabel();
 //}
-//
-//void ByteCodeWriter :: declareTry(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare end-label
-//   tape.newLabel();                  // declare alternative-label
-//
-//   // hook labAlt
-//
-//   tape.write(bcHook, baCurrentLabel);
-//   tape.write(bcAllocStack, 3);
-//}
-//
-//void ByteCodeWriter :: declareCatch(CommandTape& tape)
-//{
-//   //   unhook
-//   //   jump labEnd
-//   // labErr:
-//   //   popa
-//   //   flag
-//   //   andn elMessage
-//   //   ifn labSkip
-//   //   nload
-//   //   ecopyd
-//   //   aloadsi 0
-//   //   acallvi 0
-//   // labSkip:
-//   //   unhook
-//
-//   tape.write(bcUnhook);
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//
-//   tape.newLabel();
-//
-//   // HOT FIX: to compensate the unpaired pop
-//   tape.write(bcAllocStack, 1);
-//   tape.write(bcPopA);
-//   tape.write(bcFlag);
-//   tape.write(bcAndN, elMessage);
-//   tape.write(bcIfN, baCurrentLabel, 0);
-//   tape.write(bcNLoad);
-//   tape.write(bcECopyD);
-//   tape.write(bcALoadSI, 0);
-//   tape.write(bcACallVI, 0);
-//
-//   tape.setLabel();
-//
-//   tape.write(bcUnhook);
-//}
-//
+
+void ByteCodeWriter :: declareTry(CommandTape& tape)
+{
+   tape.newLabel();                  // declare end-label
+   tape.newLabel();                  // declare alternative-label
+
+   // hook labAlt
+
+   tape.write(bcHook, baCurrentLabel);
+   tape.write(bcAllocStack, 3);
+}
+
+void ByteCodeWriter :: declareCatch(CommandTape& tape)
+{
+   //   unhook
+   //   jump labEnd
+   // labErr:
+   //   popa
+   //   flag
+   //   andn elMessage
+   //   ifn labSkip
+   //   nload
+   //   ecopyd
+   //   aloadsi 0
+   //   acallvi 0
+   // labSkip:
+   //   unhook
+
+   tape.write(bcUnhook);
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+
+   tape.newLabel();
+
+   // HOT FIX: to compensate the unpaired pop
+   tape.write(bcAllocStack, 1);
+   tape.write(bcPopA);
+   tape.write(bcFlag);
+   tape.write(bcAndN, elMessage);
+   tape.write(bcIfN, baCurrentLabel, 0);
+   tape.write(bcNLoad);
+   tape.write(bcECopyD);
+   tape.write(bcALoadSI, 0);
+   tape.write(bcACallVI, 0);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
+
 //void ByteCodeWriter :: declareAlt(CommandTape& tape)
 //{
 //   //   unhook
@@ -1245,20 +1245,20 @@
 //   tape.write(bcNLoad);
 //   tape.write(bcNotGreaterN, baCurrentLabel, comparingRef);
 //}
-//
-//void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode, bool jumpToEnd)
-//{
-//   if (!referenceMode) {
-//      tape.write(bcNLoad);
-//      tape.write(bcElseN, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef);
-//   }
-//   // elser then-end, r
-//   else if (comparingRef == 0) {
-//      tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, 0);
-//   }
-//   else tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef | mskConstantRef);
-//}
-//
+
+void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode, bool jumpToEnd)
+{
+   if (!referenceMode) {
+      tape.write(bcNLoad);
+      tape.write(bcElseN, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef);
+   }
+   // elser then-end, r
+   else if (comparingRef == 0) {
+      tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, 0);
+   }
+   else tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef | mskConstantRef);
+}
+
 //void ByteCodeWriter :: throwCurrent(CommandTape& tape)
 //{
 //   // throw
@@ -1270,15 +1270,15 @@
 //   // jump labEnd
 //   tape.write(bcJump, label);
 //}
-//
-//void ByteCodeWriter :: endCatch(CommandTape& tape)
-//{
-//   // labEnd
-//
-//   tape.setLabel();
-//   tape.write(bcFreeStack, 3);
-//}
-//
+
+void ByteCodeWriter :: endCatch(CommandTape& tape)
+{
+   // labEnd
+
+   tape.setLabel();
+   tape.write(bcFreeStack, 3);
+}
+
 //void ByteCodeWriter :: endAlt(CommandTape& tape)
 //{
 //   // labEnd
@@ -1359,176 +1359,176 @@
 //   // end:
 //   tape.write(blEnd, bsClass);
 //}
-//
-//void ByteCodeWriter :: endSymbol(CommandTape& tape)
-//{
-//   // symbol-end:
-//   tape.write(blEnd, bsSymbol);
-//}
-//
+
+void ByteCodeWriter :: endSymbol(CommandTape& tape)
+{
+   // symbol-end:
+   tape.write(blEnd, bsSymbol);
+}
+
 //void ByteCodeWriter :: endInitializer(CommandTape& tape)
 //{
 //   // symbol-end:
 //   tape.write(blEnd, bsInitializer);
 //}
-//
-//void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
-//{
-//   // finally block - should free the lock if the exception was thrown
-//   declareCatch(tape);
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcPopA);
-//   freeLock(tape);
-//   tape.write(bcPushB);
-//
-//   // throw
-//   tape.write(bcThrow);
-//
-//   endCatch(tape);
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcPopA);
-//   freeLock(tape);
-//   tape.write(bcACopyB);
-//
-//   // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
-//   // asaver static
-//   tape.write(bcASaveR, staticReference | mskStatSymbolRef);
-//   tape.setLabel();
-//
-//   // symbol-end:
-//   tape.write(blEnd, bsSymbol);
-//}
-//
-//void ByteCodeWriter :: writeProcedureDebugInfo(Scope& scope, ident_t path)
-//{
-//   ref_t sourceRef = scope.debugStrings->Position();
-//   ident_t defaultPath = scope.defaultNameRef != -1 ? (const char*)scope.debugStrings->Memory()->get(scope.defaultNameRef) : NULL;
-//
-//   if (!emptystr(path) && !path.compare(defaultPath)) {
-//      scope.debugStrings->writeLiteral(path);
-//   }
-//   else sourceRef = scope.defaultNameRef;
-//
-//   DebugLineInfo symbolInfo(dsProcedure, 0, 0, 0);
-//   symbolInfo.addresses.source.nameRef = sourceRef;
-//
-//   scope.debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
-//}
-//
-//void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
-//{
-//   DebugLineInfo symbolInfo(dsStatement, 0, 0, 0);
-//
-//   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
-//}
-//
-//void ByteCodeWriter :: writeNewBlock(MemoryWriter* debug)
-//{
-//   DebugLineInfo symbolInfo(dsVirtualBlock, 0, 0, -1);
-//
-//   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
-//}
-//
-//void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, int frameLevel)
-//{
-//   writeLocal(scope, localName, level, dsLocal, frameLevel);
-//}
-//
-//void ByteCodeWriter :: writeInfo(Scope& scope, DebugSymbol symbol, ident_t className)
-//{
-//   if (!scope.debug)
-//      return;
-//
-//   DebugLineInfo info;
-//   info.symbol = symbol;
-//   info.addresses.source.nameRef = scope.debugStrings->Position();
-//
-//   scope.debugStrings->writeLiteral(className);
-//   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
-//}
-//
-//void ByteCodeWriter :: writeSelf(Scope& scope, int level, int frameLevel)
-//{
-//   if (!scope.debug)
-//      return;
-//
-//   DebugLineInfo info;
-//   info.symbol = dsLocal;
-//   info.addresses.local.nameRef = scope.debugStrings->Position();
-//
-//   if (level < 0) {
-//      scope.debugStrings->writeLiteral(SELF_VAR);
-//
-//      level -= frameLevel;
-//   }
-//   else scope.debugStrings->writeLiteral(THIS_VAR);
-//
-//   info.addresses.local.level = level;
-//
-//   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
-//}
-//
-//void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel)
-//{
-//   if (!scope.debug)
-//      return;
-//
-//   if (level < 0) {
-//      level -= frameLevel;
-//   }
-//
-//   DebugLineInfo info;
-//   info.symbol = symbol;
-//   info.addresses.local.nameRef = scope.debugStrings->Position();
-//   info.addresses.local.level = level;
-//
-//   scope.debugStrings->writeLiteral(localName);
-//   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
-//}
-//
-//void ByteCodeWriter :: writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message)
-//{
-//   if (!scope.debug)
-//      return;
-//
-//   ref_t nameRef = scope.debugStrings->Position();
-//   scope.debugStrings->writeLiteral(message);
-//
-//   DebugLineInfo info;
-//   info.symbol = symbol;
-//   info.addresses.local.nameRef = nameRef;
-//
-//   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
-//}
-//
-//void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug)
-//{
-//   // reading breakpoint coordinate
-//   DebugLineInfo info;
-//
-//   info.col = 0;
-//   info.length = 0;
-//   info.symbol = (DebugSymbol)(*it).Argument();
-//   info.row = (*it).additional - 1;
-//   if (peekNext(it) == bdBreakcoord) {
-//      it++;
-//
-//      info.col = (*it).argument;
-//      info.length = (*it).additional;
-//   }
-//   // saving breakpoint
-//   debug->write((char*)&info, sizeof(DebugLineInfo));
-//}
-//
+
+void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
+{
+   // finally block - should free the lock if the exception was thrown
+   declareCatch(tape);
+
+   tape.write(bcBCopyA);
+   tape.write(bcPopA);
+   freeLock(tape);
+   tape.write(bcPushB);
+
+   // throw
+   tape.write(bcThrow);
+
+   endCatch(tape);
+
+   tape.write(bcBCopyA);
+   tape.write(bcPopA);
+   freeLock(tape);
+   tape.write(bcACopyB);
+
+   // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
+   // asaver static
+   tape.write(bcASaveR, staticReference | mskStatSymbolRef);
+   tape.setLabel();
+
+   // symbol-end:
+   tape.write(blEnd, bsSymbol);
+}
+
+void ByteCodeWriter :: writeProcedureDebugInfo(Scope& scope, ident_t path)
+{
+   ref_t sourceRef = scope.debugStrings->Position();
+   ident_t defaultPath = scope.defaultNameRef != -1 ? (const char*)scope.debugStrings->Memory()->get(scope.defaultNameRef) : NULL;
+
+   if (!emptystr(path) && !path.compare(defaultPath)) {
+      scope.debugStrings->writeLiteral(path);
+   }
+   else sourceRef = scope.defaultNameRef;
+
+   DebugLineInfo symbolInfo(dsProcedure, 0, 0, 0);
+   symbolInfo.addresses.source.nameRef = sourceRef;
+
+   scope.debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
+{
+   DebugLineInfo symbolInfo(dsStatement, 0, 0, 0);
+
+   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: writeNewBlock(MemoryWriter* debug)
+{
+   DebugLineInfo symbolInfo(dsVirtualBlock, 0, 0, -1);
+
+   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, int frameLevel)
+{
+   writeLocal(scope, localName, level, dsLocal, frameLevel);
+}
+
+void ByteCodeWriter :: writeInfo(Scope& scope, DebugSymbol symbol, ident_t className)
+{
+   if (!scope.debug)
+      return;
+
+   DebugLineInfo info;
+   info.symbol = symbol;
+   info.addresses.source.nameRef = scope.debugStrings->Position();
+
+   scope.debugStrings->writeLiteral(className);
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: writeSelf(Scope& scope, int level, int frameLevel)
+{
+   //if (!scope.debug)
+   //   return;
+
+   //DebugLineInfo info;
+   //info.symbol = dsLocal;
+   //info.addresses.local.nameRef = scope.debugStrings->Position();
+
+   //if (level < 0) {
+   //   scope.debugStrings->writeLiteral(SELF_VAR);
+
+   //   level -= frameLevel;
+   //}
+   //else scope.debugStrings->writeLiteral(THIS_VAR);
+
+   //info.addresses.local.level = level;
+
+   //scope.debug->write((char*)&info, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel)
+{
+   if (!scope.debug)
+      return;
+
+   if (level < 0) {
+      level -= frameLevel;
+   }
+
+   DebugLineInfo info;
+   info.symbol = symbol;
+   info.addresses.local.nameRef = scope.debugStrings->Position();
+   info.addresses.local.level = level;
+
+   scope.debugStrings->writeLiteral(localName);
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message)
+{
+   if (!scope.debug)
+      return;
+
+   ref_t nameRef = scope.debugStrings->Position();
+   scope.debugStrings->writeLiteral(message);
+
+   DebugLineInfo info;
+   info.symbol = symbol;
+   info.addresses.local.nameRef = nameRef;
+
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug)
+{
+   //// reading breakpoint coordinate
+   //DebugLineInfo info;
+
+   //info.col = 0;
+   //info.length = 0;
+   //info.symbol = (DebugSymbol)(*it).Argument();
+   //info.row = (*it).additional - 1;
+   //if (peekNext(it) == bdBreakcoord) {
+   //   it++;
+
+   //   info.col = (*it).argument;
+   //   info.length = (*it).additional;
+   //}
+   //// saving breakpoint
+   //debug->write((char*)&info, sizeof(DebugLineInfo));
+}
+
 //inline int getNextOffset(ClassInfo::FieldMap::Iterator it)
 //{
 //   it++;
 //
 //   return it.Eof() ? -1 : *it;
 //}
-//
+
 //void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings)
 //{
 //   bool structure = test(info.header.flags, elStructureRole);
@@ -1580,88 +1580,88 @@
 //
 //   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 //}
-//
-//void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName)
-//{
-//   // put place holder if debug section is empty
-//   if (debug->Position() == 0)
-//   {
-//      debug->writeDWord(0);
-//   }
-//
-//   // map symbol debug info, starting the symbol with # to distinsuish from class
-//   IdentifierString bookmark("#", symbolName);
-//   debugModule->mapPredefinedReference(bookmark, debug->Position());
-//
-//   ref_t position = debugStrings->Position();
-//
-//   debugStrings->writeLiteral(symbolName);
-//
-//   DebugLineInfo symbolInfo(dsSymbol, 0, 0, 0);
-//   symbolInfo.addresses.symbol.nameRef = position;
-//
-//   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
-//}
-//
-//void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule,
-//   int sourcePathRef, bool appendMode)
-//{
-//   // initialize bytecode writer
-//   MemoryWriter codeWriter(module->mapSection(reference | mskSymbolRef, false));
-//
-//   Scope scope;
-//   //scope.codeStrings = strings;
-//   scope.code = &codeWriter;
-//   scope.appendMode = appendMode;
-//
-//   // create debug info if debugModule available
-//   if (debugModule) {
-//      // initialize debug info writer
-//      MemoryWriter debugWriter(debugModule->mapSection(DEBUG_LINEINFO_ID, false));
-//      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
-//
-//      scope.debugStrings = &debugStringWriter;
-//      scope.debug = &debugWriter;
-//      scope.defaultNameRef = sourcePathRef;
-//
-//      // save symbol debug line info
-//      writeSymbolDebugInfo(debugModule, &debugWriter, &debugStringWriter, module->resolveReference(reference & ~mskAnyRef));
-//
-//      writeProcedure(it, scope);
-//
-//      writeDebugInfoStopper(&debugWriter);
-//   }
-//   else writeProcedure(it, scope);
-//}
-//
-//void ByteCodeWriter :: writeDebugInfoStopper(MemoryWriter* debug)
-//{
-//   DebugLineInfo symbolInfo(dsEnd, 0, 0, 0);
-//
-//   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
-//}
-//
-//void ByteCodeWriter :: save(CommandTape& tape, _CompilerScope& scope)
-//{
-//   ByteCodeIterator it = tape.start();
-//   while (!it.Eof()) {
-//      if (*it == blBegin) {
-//         ref_t reference = (*it).additional;
-//         if ((*it).Argument() == bsClass) {
-//            writeClass(reference, ++it, scope);
-//         }
-//         else if ((*it).Argument() == bsSymbol) {
-//            writeSymbol(reference, ++it, scope.module, scope.debugModule, scope.sourcePathRef, false);
-//         }
-//         else if ((*it).Argument() == bsInitializer) {
-//            writeSymbol(reference, ++it, scope.module, scope.debugModule, scope.sourcePathRef, true);
-//         }
-//      }
-//      it++;
-//   }
-//}
-//
-//void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _CompilerScope& compilerScope)
+
+void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName)
+{
+   // put place holder if debug section is empty
+   if (debug->Position() == 0)
+   {
+      debug->writeDWord(0);
+   }
+
+   // map symbol debug info, starting the symbol with # to distinsuish from class
+   IdentifierString bookmark("#", symbolName);
+   debugModule->mapPredefinedReference(bookmark, debug->Position());
+
+   ref_t position = debugStrings->Position();
+
+   debugStrings->writeLiteral(symbolName);
+
+   DebugLineInfo symbolInfo(dsSymbol, 0, 0, 0);
+   symbolInfo.addresses.symbol.nameRef = position;
+
+   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule,
+   int sourcePathRef, bool appendMode)
+{
+   // initialize bytecode writer
+   MemoryWriter codeWriter(module->mapSection(reference | mskSymbolRef, false));
+
+   Scope scope;
+   //scope.codeStrings = strings;
+   scope.code = &codeWriter;
+   scope.appendMode = appendMode;
+
+   // create debug info if debugModule available
+   if (debugModule) {
+      // initialize debug info writer
+      MemoryWriter debugWriter(debugModule->mapSection(DEBUG_LINEINFO_ID, false));
+      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
+
+      scope.debugStrings = &debugStringWriter;
+      scope.debug = &debugWriter;
+      scope.defaultNameRef = sourcePathRef;
+
+      // save symbol debug line info
+      writeSymbolDebugInfo(debugModule, &debugWriter, &debugStringWriter, module->resolveReference(reference & ~mskAnyRef));
+
+      writeProcedure(it, scope);
+
+      writeDebugInfoStopper(&debugWriter);
+   }
+   else writeProcedure(it, scope);
+}
+
+void ByteCodeWriter :: writeDebugInfoStopper(MemoryWriter* debug)
+{
+   DebugLineInfo symbolInfo(dsEnd, 0, 0, 0);
+
+   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: save(CommandTape& tape, _CompilerScope& scope, pos_t sourcePathRef)
+{
+   ByteCodeIterator it = tape.start();
+   while (!it.Eof()) {
+      if (*it == blBegin) {
+         ref_t reference = (*it).additional;
+         //if ((*it).Argument() == bsClass) {
+         //   writeClass(reference, ++it, scope, sourcePathRef);
+         //}
+         /*else */if ((*it).Argument() == bsSymbol) {
+            writeSymbol(reference, ++it, scope.module, scope.debugModule, sourcePathRef, false);
+         }
+         else if ((*it).Argument() == bsInitializer) {
+            writeSymbol(reference, ++it, scope.module, scope.debugModule, sourcePathRef, true);
+         }
+      }
+      it++;
+   }
+}
+
+//void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _CompilerScope& compilerScope, pos_t sourcePathRef)
 //{
 //   // initialize bytecode writer
 //   MemoryWriter codeWriter(compilerScope.mapSection(reference | mskClassRef, false));
@@ -1699,7 +1699,7 @@
 //
 //      scope.debugStrings = &debugStringWriter;
 //      scope.debug = &debugWriter;
-//      scope.defaultNameRef = compilerScope.sourcePathRef;
+//      scope.defaultNameRef = sourcePathRef;
 //
 //     // save class debug info
 //      writeClassDebugInfo(compilerScope.debugModule, &debugWriter, &debugStringWriter, compilerScope.module->resolveReference(reference & ~mskAnyRef), info.header.flags);
@@ -1714,7 +1714,7 @@
 //   // save Static table
 //   info.staticValues.write(&vmtWriter);
 //}
-//
+
 //void ByteCodeWriter :: writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope)
 //{
 //   while (!it.Eof() && (*it) != blEnd) {
@@ -1735,262 +1735,262 @@
 //   // save the real section size
 //   (*scope.vmt->Memory())[classPosition - 4] = scope.vmt->Position() - classPosition;
 //}
-//
-//void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
-//{
-//   if (*it == bdSourcePath) {
-//      if (scope.debug)
-//         writeProcedureDebugInfo(scope, (const char*)_strings.get((*it).Argument()));
-//
-//      it++;
-//   }
-//   else if (scope.debug)
-//      writeProcedureDebugInfo(scope, NULL);
-//
-//   size_t procPosition = 4;
-//   if (!scope.appendMode || scope.code->Position() == 0) {
-//      scope.code->writeDWord(0);                                // write size place holder
-//      procPosition = scope.code->Position();
-//   }
-//
-//   Map<int, int> labels;
-//   Map<int, int> fwdJumps;
-//   Stack<int>    stackLevels;                          // scope stack levels
-//
-//   int frameLevel = 0;
-//   int level = 1;
-//   int stackLevel = 0;
-//   while (!it.Eof() && level > 0) {
-//      // calculate stack level
-//      if(*it == bcAllocStack) {
-//         stackLevel += (*it).argument;
-//      }
-//      else if (*it == bcResetStack) {
-//         stackLevel = stackLevels.peek();
-//      }
-//      else if (ByteCodeCompiler::IsPush(*it)) {
-//         stackLevel++;
-//      }
-//      else if (ByteCodeCompiler::IsPop(*it) || *it == bcFreeStack) {
-//         stackLevel -= (*it == bcPopI || *it == bcFreeStack) ? (*it).argument : 1;
-//
-//         // clear previous stack level bookmarks when they are no longer valid
-//         while (stackLevels.Count() > 0 && stackLevels.peek() > stackLevel)
-//            stackLevels.pop();
-//      }
-//
-//      // save command
-//      switch (*it) {
-//         case bcFreeStack:
-//         case bcAllocStack:
-//         case bcResetStack:
-//         case bcNone:
-//         case bcNop:
-//         case blBreakLabel:
-//            // nop in command tape is ignored (used in replacement patterns)
-//            break;
-//         case blBegin:
-//            level++;
-//            break;
-//         case blLabel:
-//            fixJumps(scope.code->Memory(), scope.code->Position(), fwdJumps, (*it).argument);
-//            labels.add((*it).argument, scope.code->Position());
-//
-//            // JIT compiler interprets nop command as a label mark
-//            scope.code->writeByte(bcNop);
-//
-//            break;
-//         case blDeclare:
-//            if ((*it).Argument() == bsBranch) {
-//               stackLevels.push(stackLevel);
-//            }
-//            break;
-//         case blEnd:
-//            if ((*it).Argument() == bsBranch) {
-//               stackLevels.pop();
-//            }
-//            else level--;
-//            break;
-//         case blStatement:
-//            // generate debug exception only if debug info enabled
-//            if (scope.debug)
-//               writeNewStatement(scope.debug);
-//
-//            break;
-//         case blBlock:
-//            // generate debug exception only if debug info enabled
-//            if (scope.debug)
-//               writeNewBlock(scope.debug);
-//
-//            break;
-//         case bcBreakpoint:
-//            // generate debug exception only if debug info enabled
-//            if (scope.debug) {
-//               (*it).save(scope.code);
-//
-//               if(peekNext(it) == bdBreakpoint)
-//                  writeBreakpoint(++it, scope.debug);
-//            }
-//            break;
-//         case bdSelf:
-//            writeSelf(scope, (*it).additional, frameLevel);
-//            break;
-//         case bdLocal:
-//            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, frameLevel);
-//            break;
-//         case bdIntLocal:
-//            if ((*it).predicate == bpFrame) {
-//               // if it is a variable containing reference to the primitive value
-//               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocal, frameLevel);
-//            }
-//            // else it is a primitice variable
-//            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocalPtr, 0);
-//            break;
-//         case bdLongLocal:
-//            if ((*it).predicate == bpFrame) {
-//               // if it is a variable containing reference to the primitive value
-//               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsLongLocal, frameLevel);
-//            }
-//            // else it is a primitice variable
-//            else writeLocal(scope, (const char*)(const char*)_strings.get((*it).Argument()), (*it).additional, dsLongLocalPtr, 0);
-//            break;
-//         case bdRealLocal:
-//            if ((*it).predicate == bpFrame) {
-//               // if it is a variable containing reference to the primitive value
-//               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsRealLocal, frameLevel);
-//            }
-//            // else it is a primitice variable
-//            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsRealLocalPtr, 0);
-//            break;
-//         case bdByteArrayLocal:
-//            if ((*it).predicate == bpFrame) {
-//               // if it is a variable containing reference to the primitive value
-//               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocal, frameLevel);
-//            }
-//            // else it is a primitive variable
-//            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocalPtr, 0);
-//            break;
-//         case bdShortArrayLocal:
-//            if ((*it).predicate == bpFrame) {
-//               // if it is a variable containing reference to the primitive value
-//               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocal, frameLevel);
-//            }
-//            // else it is a primitice variable
-//            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocalPtr, 0);
-//            break;
-//         case bdIntArrayLocal:
-//            if ((*it).predicate == bpFrame) {
-//               // if it is a variable containing reference to the primitive value
-//               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocal, frameLevel);
-//            }
-//            // else it is a primitice variable
-//            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocalPtr, 0);
-//            break;
-//         case bdParamsLocal:
-//            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsParamsLocal, frameLevel);
-//            break;
-//         case bdMessage:
-//            writeMessageInfo(scope, dsMessage, (const char*)_strings.get((*it).additional));
-//            break;
-//         case bdStruct:
-//            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
-//            it++;
-//            writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
-//            break;
-//         case bdStructSelf:
-//            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsLocalPtr, frameLevel);
-//            it++;
-//            writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
-//            break;
-//         case bcOpen:
-//            frameLevel = (*it).argument;
-//            stackLevel = 0;
-//            (*it).save(scope.code);
-//            break;
-//         case bcPushFI:
-//         case bcPushF:
-//         case bcALoadFI:
-//         case bcASaveFI:
-//         case bcACopyF:
-//         case bcBCopyF:
-//         case bcBLoadFI:
-//         case bcDLoadFI:
-//         case bcDSaveFI:
-//         case bcELoadFI:
-//         case bcESaveFI:
-//            (*it).save(scope.code, true);
-//            if ((*it).predicate == bpBlock) {
-//               scope.code->writeDWord(stackLevels.peek() + (*it).argument);
-//            }
-//            else if ((*it).predicate == bpFrame && (*it).argument < 0) {
-//               scope.code->writeDWord((*it).argument - frameLevel);
-//            }
-//            else scope.code->writeDWord((*it).argument);
-//            break;
-//         case bcSCopyF:
-//            (*it).save(scope.code, true);
-//            if ((*it).argument == bsBranch) {
-//               stackLevel = stackLevels.peek();
-//            }
-//            else stackLevel = (*it).additional;
-//
-//            scope.code->writeDWord(stackLevel);
-//            break;
-//         case bcIfR:
-//         case bcElseR:
-//         case bcIfB:
-//         case bcElseB:
-//         case bcIf:
-//         case bcElse:
-//         case bcLess:
-//         case bcNotLess:
-//         case bcIfN:
-//         case bcElseN:
-//         case bcLessN:
-//         case bcNotLessN:
-//         case bcGreaterN:
-//         case bcNotGreaterN:
-//         case bcIfM:
-//         case bcElseM:
-//         case bcNext:
-//         case bcJump:
-//         case bcHook:
-//         case bcAddress:
-//         case bcIfHeap:
-//            (*it).save(scope.code, true);
-//
-//            if ((*it).code > MAX_DOUBLE_ECODE)
-//               scope.code->writeDWord((*it).additional);
-//
-//            // if forward jump, it should be resolved later
-//            if (!labels.exist((*it).argument)) {
-//               fwdJumps.add((*it).argument, scope.code->Position());
-//               // put jump offset place holder
-//               scope.code->writeDWord(0);
-//            }
-//            // if backward jump
-//            else scope.code->writeDWord(labels.get((*it).argument) - scope.code->Position() - 4);
-//
-//            break;
-//         case bdBreakpoint:
-//         case bdBreakcoord:
-//            break; // bdBreakcoord & bdBreakpoint should be ingonored if they are not paired with bcBreakpoint
-//         default:
-//            (*it).save(scope.code);
-//            break;
-//      }
-//      if (level == 0)
-//         break;
-//      it++;
-//   }
-//   // save the real procedure size
-//   (*scope.code->Memory())[procPosition - 4] = scope.code->Position() - procPosition;
-//
-//   // add debug end line info
-//   if (scope.debug)
-//      writeDebugInfoStopper(scope.debug);
-//}
-//
+
+void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
+{
+   //if (*it == bdSourcePath) {
+   //   if (scope.debug)
+   //      writeProcedureDebugInfo(scope, (const char*)_strings.get((*it).Argument()));
+
+   //   it++;
+   //}
+   //else if (scope.debug)
+   //   writeProcedureDebugInfo(scope, NULL);
+
+   size_t procPosition = 4;
+   if (!scope.appendMode || scope.code->Position() == 0) {
+      scope.code->writeDWord(0);                                // write size place holder
+      procPosition = scope.code->Position();
+   }
+
+   Map<int, int> labels;
+   Map<int, int> fwdJumps;
+   Stack<int>    stackLevels;                          // scope stack levels
+
+   int frameLevel = 0;
+   int level = 1;
+   int stackLevel = 0;
+   while (!it.Eof() && level > 0) {
+      // calculate stack level
+      if(*it == bcAllocStack) {
+         stackLevel += (*it).argument;
+      }
+      else if (*it == bcResetStack) {
+         stackLevel = stackLevels.peek();
+      }
+      else if (ByteCodeCompiler::IsPush(*it)) {
+         stackLevel++;
+      }
+      else if (ByteCodeCompiler::IsPop(*it) || *it == bcFreeStack) {
+         stackLevel -= (*it == bcPopI || *it == bcFreeStack) ? (*it).argument : 1;
+
+         // clear previous stack level bookmarks when they are no longer valid
+         while (stackLevels.Count() > 0 && stackLevels.peek() > stackLevel)
+            stackLevels.pop();
+      }
+
+      // save command
+      switch (*it) {
+         case bcFreeStack:
+         case bcAllocStack:
+         case bcResetStack:
+         case bcNone:
+         case bcNop:
+         case blBreakLabel:
+            // nop in command tape is ignored (used in replacement patterns)
+            break;
+         case blBegin:
+            level++;
+            break;
+         case blLabel:
+            fixJumps(scope.code->Memory(), scope.code->Position(), fwdJumps, (*it).argument);
+            labels.add((*it).argument, scope.code->Position());
+
+            // JIT compiler interprets nop command as a label mark
+            scope.code->writeByte(bcNop);
+
+            break;
+         case blDeclare:
+            if ((*it).Argument() == bsBranch) {
+               stackLevels.push(stackLevel);
+            }
+            break;
+         case blEnd:
+            if ((*it).Argument() == bsBranch) {
+               stackLevels.pop();
+            }
+            else level--;
+            break;
+         case blStatement:
+            // generate debug exception only if debug info enabled
+            if (scope.debug)
+               writeNewStatement(scope.debug);
+
+            break;
+         case blBlock:
+            // generate debug exception only if debug info enabled
+            if (scope.debug)
+               writeNewBlock(scope.debug);
+
+            break;
+         //case bcBreakpoint:
+         //   // generate debug exception only if debug info enabled
+         //   if (scope.debug) {
+         //      (*it).save(scope.code);
+
+         //      if(peekNext(it) == bdBreakpoint)
+         //         writeBreakpoint(++it, scope.debug);
+         //   }
+         //   break;
+         //case bdSelf:
+         //   writeSelf(scope, (*it).additional, frameLevel);
+         //   break;
+         //case bdLocal:
+         //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, frameLevel);
+         //   break;
+         //case bdIntLocal:
+         //   if ((*it).predicate == bpFrame) {
+         //      // if it is a variable containing reference to the primitive value
+         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocal, frameLevel);
+         //   }
+         //   // else it is a primitice variable
+         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocalPtr, 0);
+         //   break;
+         //case bdLongLocal:
+         //   if ((*it).predicate == bpFrame) {
+         //      // if it is a variable containing reference to the primitive value
+         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsLongLocal, frameLevel);
+         //   }
+         //   // else it is a primitice variable
+         //   else writeLocal(scope, (const char*)(const char*)_strings.get((*it).Argument()), (*it).additional, dsLongLocalPtr, 0);
+         //   break;
+         //case bdRealLocal:
+         //   if ((*it).predicate == bpFrame) {
+         //      // if it is a variable containing reference to the primitive value
+         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsRealLocal, frameLevel);
+         //   }
+         //   // else it is a primitice variable
+         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsRealLocalPtr, 0);
+         //   break;
+         //case bdByteArrayLocal:
+         //   if ((*it).predicate == bpFrame) {
+         //      // if it is a variable containing reference to the primitive value
+         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocal, frameLevel);
+         //   }
+         //   // else it is a primitive variable
+         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocalPtr, 0);
+         //   break;
+         //case bdShortArrayLocal:
+         //   if ((*it).predicate == bpFrame) {
+         //      // if it is a variable containing reference to the primitive value
+         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocal, frameLevel);
+         //   }
+         //   // else it is a primitice variable
+         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocalPtr, 0);
+         //   break;
+         //case bdIntArrayLocal:
+         //   if ((*it).predicate == bpFrame) {
+         //      // if it is a variable containing reference to the primitive value
+         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocal, frameLevel);
+         //   }
+         //   // else it is a primitice variable
+         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocalPtr, 0);
+         //   break;
+         //case bdParamsLocal:
+         //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsParamsLocal, frameLevel);
+         //   break;
+         //case bdMessage:
+         //   writeMessageInfo(scope, dsMessage, (const char*)_strings.get((*it).additional));
+         //   break;
+         //case bdStruct:
+         //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
+         //   it++;
+         //   writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
+         //   break;
+         //case bdStructSelf:
+         //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsLocalPtr, frameLevel);
+         //   it++;
+         //   writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
+         //   break;
+         case bcOpen:
+            frameLevel = (*it).argument;
+            stackLevel = 0;
+            (*it).save(scope.code);
+            break;
+         case bcPushFI:
+         case bcPushF:
+         case bcALoadFI:
+         case bcASaveFI:
+         case bcACopyF:
+         case bcBCopyF:
+         case bcBLoadFI:
+         case bcDLoadFI:
+         case bcDSaveFI:
+         case bcELoadFI:
+         case bcESaveFI:
+            (*it).save(scope.code, true);
+            if ((*it).predicate == bpBlock) {
+               scope.code->writeDWord(stackLevels.peek() + (*it).argument);
+            }
+            else if ((*it).predicate == bpFrame && (*it).argument < 0) {
+               scope.code->writeDWord((*it).argument - frameLevel);
+            }
+            else scope.code->writeDWord((*it).argument);
+            break;
+         case bcSCopyF:
+            (*it).save(scope.code, true);
+            if ((*it).argument == bsBranch) {
+               stackLevel = stackLevels.peek();
+            }
+            else stackLevel = (*it).additional;
+
+            scope.code->writeDWord(stackLevel);
+            break;
+         case bcIfR:
+         case bcElseR:
+         case bcIfB:
+         case bcElseB:
+         case bcIf:
+         case bcElse:
+         case bcLess:
+         case bcNotLess:
+         case bcIfN:
+         case bcElseN:
+         case bcLessN:
+         case bcNotLessN:
+         case bcGreaterN:
+         case bcNotGreaterN:
+         case bcIfM:
+         case bcElseM:
+         case bcNext:
+         case bcJump:
+         case bcHook:
+         case bcAddress:
+         case bcIfHeap:
+            (*it).save(scope.code, true);
+
+            if ((*it).code > MAX_DOUBLE_ECODE)
+               scope.code->writeDWord((*it).additional);
+
+            // if forward jump, it should be resolved later
+            if (!labels.exist((*it).argument)) {
+               fwdJumps.add((*it).argument, scope.code->Position());
+               // put jump offset place holder
+               scope.code->writeDWord(0);
+            }
+            // if backward jump
+            else scope.code->writeDWord(labels.get((*it).argument) - scope.code->Position() - 4);
+
+            break;
+         //case bdBreakpoint:
+         //case bdBreakcoord:
+         //   break; // bdBreakcoord & bdBreakpoint should be ingonored if they are not paired with bcBreakpoint
+         default:
+            (*it).save(scope.code);
+            break;
+      }
+      if (level == 0)
+         break;
+      it++;
+   }
+   // save the real procedure size
+   (*scope.code->Memory())[procPosition - 4] = scope.code->Position() - procPosition;
+
+   // add debug end line info
+   if (scope.debug)
+      writeDebugInfoStopper(scope.debug);
+}
+
 //void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argument)
 //{
 //   if (target == lxLocalAddress) {
@@ -3459,28 +3459,28 @@
 //{
 //   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
 //}
-//
-//void ByteCodeWriter :: tryLock(CommandTape& tape)
-//{
-//   // labWait:
-//   // snop
-//   // trylock
-//   // elsen labWait
-//
-//   int labWait = tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcSNop);
-//   tape.write(bcTryLock);
-//   tape.write(bcElseN, labWait, 0);
-//   tape.releaseLabel();
-//}
-//
-//void ByteCodeWriter::freeLock(CommandTape& tape)
-//{
-//   // freelock
-//   tape.write(bcFreeLock);
-//}
-//
+
+void ByteCodeWriter :: tryLock(CommandTape& tape)
+{
+   // labWait:
+   // snop
+   // trylock
+   // elsen labWait
+
+   int labWait = tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcSNop);
+   tape.write(bcTryLock);
+   tape.write(bcElseN, labWait, 0);
+   tape.releaseLabel();
+}
+
+void ByteCodeWriter::freeLock(CommandTape& tape)
+{
+   // freelock
+   tape.write(bcFreeLock);
+}
+
 //inline SNode getChild(SNode node, size_t index)
 //{
 //   SNode current = node.firstChild();
@@ -5793,24 +5793,22 @@
 //   generateCodeBlock(tape, root);
 //   endInitializer(tape);
 //}
-//
-//void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStatic)
-//{
-//   SNode sourceNode = root.findChild(lxSourcePath);
-//
-//   if (isStatic) {
-//      declareStaticSymbol(tape, root.argument, sourceNode.argument);
-//   }
-//   else declareSymbol(tape, root.argument, sourceNode.argument);
-//
+
+void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathRef)
+{
+   if (isStatic) {
+      declareStaticSymbol(tape, root.argument, sourcePathRef);
+   }
+   else declareSymbol(tape, root.argument, sourcePathRef);
+
 //   generateCodeBlock(tape, root);
-//
-//   if (isStatic) {
-//      endStaticSymbol(tape, root.argument);
-//   }
-//   else endSymbol(tape);
-//}
-//
+
+   if (isStatic) {
+      endStaticSymbol(tape, root.argument);
+   }
+   else endSymbol(tape);
+}
+
 //void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument)
 //{
 //   switch (type) {

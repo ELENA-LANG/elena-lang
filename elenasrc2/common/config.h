@@ -80,6 +80,7 @@ class XmlConfigFile : public _ConfigFile
    NodeValues     _values;
    NodeAttributes _attributes;
 
+   size_t find(ident_t key);
    size_t find(XMLNode& node, ident_t key);
 
 public:

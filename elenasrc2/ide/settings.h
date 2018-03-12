@@ -11,34 +11,33 @@
 #include "config.h"
 #include "idecommon.h"
 
-#define SETTINGS_SECTION         "settings"
 #define SRCPATH_SECTION          "srcpath"     // template source paths
 #define LIBPATH_SECTION          "libpath"     // template library paths
 #define RECENTFILES_SECTION      "recent_files"
 #define RECENTRPOJECTS_SECTION   "recent_projects"
 
-#define TAB_SIZE_SETTING         "tabsize"
+#define TAB_SIZE_SETTING         "configuration/settings/tabsize"
 #define ENCODING_SETTING         "encoding"
 #define TAB_USING_SETTING        "tabusing"
-#define MAXIMIZED_SETTING        "app_maximized"
-#define PATH_REMEMBER_SETTING    "remeber_path"
-#define PROJECT_REMEMBER_SETTING "remeber_project"
-#define AUTO_DETECTING_SETTING   "encoding_detecting"
+#define MAXIMIZED_SETTING        "configuration/settings/app_maximized"
+#define PATH_REMEMBER_SETTING    "configuration/settings/remeber_path"
+#define PROJECT_REMEMBER_SETTING "configuration/settings/remeber_project"
+#define AUTO_DETECTING_SETTING   "configuration/settings/encoding_detecting"
 #define LINE_NUMBERS_SETTING     "linenumbers"
 #define HIGHLIGHT_SETTING        "highlightsyntax"
 #define BRACKETS_SETTING         "highlightbrackets"
 #define SCHEME_SETTING           "scheme"
 #define TABSCORE_SETTING         "tabscore"
-#define OUTPUT_SETTING           "compileroutput"
-#define PROJECTVIEW_SETTING      "projectview"
-#define CALLSTACK_SETTING        "callstack"
-#define MESSAGES_SETTING         "messages"
-#define AUTO_RECOMPILE_SETTING   "autocomp"
-#define AUTO_PROJECT_LOAD_SETTING "autoload"
+#define OUTPUT_SETTING           "configuration/settings/compileroutput"
+#define PROJECTVIEW_SETTING      "configuration/settings/projectview"
+#define CALLSTACK_SETTING        "configuration/settings/callstack"
+#define MESSAGES_SETTING         "configuration/settings/messages"
+#define AUTO_RECOMPILE_SETTING   "configuration/settings/autocomp"
+#define AUTO_PROJECT_LOAD_SETTING "configuration/settings/autoload"
 #define DEBUG_TAPE_SETTING       "debugtape"
 #define FONTSIZE_SETTING         "font_size"
 
-#define DEFAULT_PROJECT_SETTING  "defaultproject"
+#define DEFAULT_PROJECT_SETTING  "configuration/settings/defaultproject"
 
 namespace _GUI_
 {
@@ -62,8 +61,8 @@ public:
 struct Settings
 {
    static void init(Model* model, _ELENA_::path_t packagePath, _ELENA_::path_t libraryPath);
-   static void load(Model* model, _ELENA_::IniConfigFile& config);
-   static void save(Model* model, _ELENA_::IniConfigFile& config);
+   static void load(Model* model, _ELENA_::XmlConfigFile& config);
+   static void save(Model* model, _ELENA_::XmlConfigFile& config);
 
    static void onNewProjectTemplate(Model* model, _GUI_::_ProjectManager* project);
 

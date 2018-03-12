@@ -3,9 +3,17 @@ In development:
 ------                              
                             
               dev - redesign
+                 * should be possible to rosolve the namespace ambiguity using an extra path
+                 * get rid of compile order
+                 * test case : parent class declared after the child
+                 * test case : undeclared parent class
                  * switch to xml config files #14
                  * namespace redesign : module should contain only relative namespaces to the current one
-                 * uncomment afterLoad,prepareCompiler,compileSources,createModule,createDebugModule,validateUnresolved
+                 * uncomment afterLoad,prepareCompiler,compileSources,createModule,createDebugModule,validateUnresolved,writeSelf,
+                   processStep,loadTapeDebugInfo,loadDebugData,parseMessage,readContext,generateTape,declareStaticSymbol,
+                   writeBreakpoint,writeProcedure,declareSymbol,onDebuggerStop,loadMessage,loadMessage,loadDebugModule,
+                   excludeSource,includeSource,loadSettings,saveSettings,readAddressInfo
+                 *test creating project, adding source files. including / excluding, forwards, settings, ...
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

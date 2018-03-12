@@ -346,14 +346,14 @@ void DebugController :: processStep()
       if (lineInfo->symbol == dsAssemblyStep) {
          size_t objectPtr = _debugger.Context()->LocalPtr(1);
          int flags = _debugger.Context()->VMTFlags(_debugger.Context()->ClassVMT(objectPtr));
-         if (test(flags, elTapeGroup)) {
-            loadTapeDebugInfo(objectPtr);
-            _autoStepInto = true;
-         }
-         else {
+         //if (test(flags, elTapeGroup)) {
+         //   loadTapeDebugInfo(objectPtr);
+         //   _autoStepInto = true;
+         //}
+         //else {
             // continue debugging if it is not a tape
             stepInto();
-         }
+         //}
       }
       else showCurrentModule(lineInfo, moduleName, sourcePath);
    }
@@ -521,29 +521,29 @@ void DebugController :: loadSubjectInfo(StreamReader& addressReader)
 
 bool DebugController :: loadTapeDebugInfo(size_t selfPtr)
 {
-   // if tape debugging is allowed, debugger should switch to step mode
-   //_postponed.setStepMode();
+   //// if tape debugging is allowed, debugger should switch to step mode
+   ////_postponed.setStepMode();
 
-   int row = _debugger.Context()->LocalPtr(-2);
+   //int row = _debugger.Context()->LocalPtr(-2);
 
-   int sourcePos = _tapeBookmarks.get(selfPtr);
-   if (sourcePos == -1) {
-      int list[DEBUG_MAX_LIST_LENGTH];
-      int length = 0;
-      getValue(selfPtr - 8, (char*)&length, 4);
+   //int sourcePos = _tapeBookmarks.get(selfPtr);
+   //if (sourcePos == -1) {
+   //   int list[DEBUG_MAX_LIST_LENGTH];
+   //   int length = 0;
+   //   getValue(selfPtr - 8, (char*)&length, 4);
 
-      if (length > sizeof(list))
-         length = sizeof(list);
+   //   if (length > sizeof(list))
+   //      length = sizeof(list);
 
-      getValue(selfPtr, (char*)list, length);
+   //   getValue(selfPtr, (char*)list, length);
 
-      // create temporal document
-      sourcePos = generateTape(list, length >> 2);
+   //   // create temporal document
+   //   sourcePos = generateTape(list, length >> 2);
 
-      _tapeBookmarks.add(selfPtr, sourcePos);
-   }
+   //   _tapeBookmarks.add(selfPtr, sourcePos);
+   //}
 
-   _listener->onLoadTape(TAPE_SYMBOL, row + 1, sourcePos, 0);
+   //_listener->onLoadTape(TAPE_SYMBOL, row + 1, sourcePos, 0);
 
    return true;
 }
@@ -578,12 +578,12 @@ bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress
          setEntryAddress = false;
       }
 
-      // if it is a VM temporal symbol - skip it
-      if (reference.compare(TAPE_SYMBOL)/* && _debugTape*/) {
-      //      loadTapeDebugInfo(reader, size);
-      }
+      //// if it is a VM temporal symbol - skip it
+      //if (reference.compare(TAPE_SYMBOL)/* && _debugTape*/) {
+      ////      loadTapeDebugInfo(reader, size);
+      //}
       // otherwise load standard debug info
-      else loadSymbolDebugInfo(reference, reader);
+      /*else */loadSymbolDebugInfo(reference, reader);
 
       reader.seek(nextPosition);
    }
@@ -630,18 +630,18 @@ _Module* DebugController :: loadDebugModule(ident_t reference)
    _manager->retrievePath(name, path, _T("dnl"));
 
    Module* module = (Module*)_modules.get(name);
-   if (module == NULL) {
-      module = new Module();
+   //if (module == NULL) {
+   //   module = new Module();
 
-      _ELENA_::FileReader reader(path.c_str(), _ELENA_::feRaw, false);
-      _ELENA_::LoadResult result = module->load(reader);
-      if (result != _ELENA_::lrSuccessful) {
-         delete module;
+   //   _ELENA_::FileReader reader(path.c_str(), _ELENA_::feRaw, false);
+   //   _ELENA_::LoadResult result = module->load(reader);
+   //   if (result != _ELENA_::lrSuccessful) {
+   //      delete module;
 
-         return NULL;
-      }
-      _modules.add(name, module);
-   }
+   //      return NULL;
+   //   }
+   //   _modules.add(name, module);
+   //}
    return module;
 }
 
@@ -951,19 +951,19 @@ void DebugController::readByteArray(_DebuggerWatch* watch, size_t address, ident
 
 void DebugController :: parseMessage(IdentifierString& messageValue, ref_t message)
 {
-   ref_t sign_ref = getAction(message);
-   if (sign_ref != 0) {
-      ident_t subject = retrieveKey(_subjects.start(), sign_ref, DEFAULT_STR);
-      if (emptystr(subject)) {
-         messageValue.append("?<");
-         messageValue.appendHex(getAction(message));
-         messageValue.append('>');
-      }
-      else messageValue.append(subject);
-   }
-   messageValue.append('[');
-   messageValue.appendInt(getParamCount(message));
-   messageValue.append("]");
+   //ref_t sign_ref = getAction(message);
+   //if (sign_ref != 0) {
+   //   ident_t subject = retrieveKey(_subjects.start(), sign_ref, DEFAULT_STR);
+   //   if (emptystr(subject)) {
+   //      messageValue.append("?<");
+   //      messageValue.appendHex(getAction(message));
+   //      messageValue.append('>');
+   //   }
+   //   else messageValue.append(subject);
+   //}
+   //messageValue.append('[');
+   //messageValue.appendInt(getParamCount(message));
+   //messageValue.append("]");
 }
 
 void DebugController :: readMessage(_DebuggerWatch* watch, size_t address, ref_t message)
@@ -1246,97 +1246,97 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
 
 void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_t classPtr)
 {
-   if (_debugger.isStarted()) {
-      size_t flags = 0;
-      ident_t className = NULL;
-      DebugLineInfo* info = seekClassInfo(selfPtr, className, flags, classPtr);
-      if (info) {
-         int type = info->addresses.symbol.flags & elDebugMask;
-         if (type==elDebugLiteral) {
-            char value[DEBUG_MAX_STR_LENGTH + 1];
-            int length = 0;
-            getValue(selfPtr - 8, (char*)&length, 4);
+   //if (_debugger.isStarted()) {
+   //   size_t flags = 0;
+   //   ident_t className = NULL;
+   //   DebugLineInfo* info = seekClassInfo(selfPtr, className, flags, classPtr);
+   //   if (info) {
+   //      int type = info->addresses.symbol.flags & elDebugMask;
+   //      if (type==elDebugLiteral) {
+   //         char value[DEBUG_MAX_STR_LENGTH + 1];
+   //         int length = 0;
+   //         getValue(selfPtr - 8, (char*)&length, 4);
 
-            length &= 0xFFFFF;
+   //         length &= 0xFFFFF;
 
-            if (length > DEBUG_MAX_STR_LENGTH) {
-               length = DEBUG_MAX_STR_LENGTH;
-            }
-            getValue(selfPtr, value, length);
-            value[length] = 0;
-            watch->write(this, value);
-         }
-         if (type == elDebugWideLiteral) {
-            wide_c value[DEBUG_MAX_STR_LENGTH + 1];
-            int length = 0;
-            getValue(selfPtr - 8, (char*)&length, 4);
+   //         if (length > DEBUG_MAX_STR_LENGTH) {
+   //            length = DEBUG_MAX_STR_LENGTH;
+   //         }
+   //         getValue(selfPtr, value, length);
+   //         value[length] = 0;
+   //         watch->write(this, value);
+   //      }
+   //      if (type == elDebugWideLiteral) {
+   //         wide_c value[DEBUG_MAX_STR_LENGTH + 1];
+   //         int length = 0;
+   //         getValue(selfPtr - 8, (char*)&length, 4);
 
-            length &= 0xFFFFF;
-            length >>= 1;
+   //         length &= 0xFFFFF;
+   //         length >>= 1;
 
-            if (length > DEBUG_MAX_STR_LENGTH) {
-               length = DEBUG_MAX_STR_LENGTH;
-            }
-            getValue(selfPtr, value, length);
-            value[length] = 0;
-            watch->write(this, value);
-         }
-         else if (type == elDebugDWORD || type == elDebugSubject) {
-            char value[4];
-            getValue(selfPtr, value, 4);
+   //         if (length > DEBUG_MAX_STR_LENGTH) {
+   //            length = DEBUG_MAX_STR_LENGTH;
+   //         }
+   //         getValue(selfPtr, value, length);
+   //         value[length] = 0;
+   //         watch->write(this, value);
+   //      }
+   //      else if (type == elDebugDWORD || type == elDebugSubject) {
+   //         char value[4];
+   //         getValue(selfPtr, value, 4);
 
-            watch->write(this, *(int*)value);
-         }
-         else if (type == elDebugMessage) {
-            char value[4];
-            getValue(selfPtr, value, 4);
+   //         watch->write(this, *(int*)value);
+   //      }
+   //      else if (type == elDebugMessage) {
+   //         char value[4];
+   //         getValue(selfPtr, value, 4);
 
-            readMessage(watch, selfPtr, *(int*)value);
-         }
-         else if (type==elDebugReal64) {
-            char value[8];
-            getValue(selfPtr, value, 8);
+   //         readMessage(watch, selfPtr, *(int*)value);
+   //      }
+   //      else if (type==elDebugReal64) {
+   //         char value[8];
+   //         getValue(selfPtr, value, 8);
 
-            watch->write(this, *(double*)value);
-         }
-         else if (type==elDebugQWORD) {
-            char value[8];
-            getValue(selfPtr, value, 8);
+   //         watch->write(this, *(double*)value);
+   //      }
+   //      else if (type==elDebugQWORD) {
+   //         char value[8];
+   //         getValue(selfPtr, value, 8);
 
-            watch->write(this, *(long long*)value);
-         }
-         else if (type==elDebugArray) {
-            int list[DEBUG_MAX_LIST_LENGTH];
-            int length = 0;
+   //         watch->write(this, *(long long*)value);
+   //      }
+   //      else if (type==elDebugArray) {
+   //         int list[DEBUG_MAX_LIST_LENGTH];
+   //         int length = 0;
 
-            // get array size
-            getValue(selfPtr - 8, (char*)&length, 4);
-            if (length == 0x800000)
-               length = 0;
+   //         // get array size
+   //         getValue(selfPtr - 8, (char*)&length, 4);
+   //         if (length == 0x800000)
+   //            length = 0;
 
-            if (length > sizeof(list))
-               length = sizeof(list);
+   //         if (length > sizeof(list))
+   //            length = sizeof(list);
 
-            getValue(selfPtr, (char*)list, length);
+   //         getValue(selfPtr, (char*)list, length);
 
-            length >>= 2;
-            readList(watch, list, length);
-         }
-         else if (type==elDebugBytes) {
-            readByteArray(watch, selfPtr, NULL);
-         }
-         else if (type==elDebugShorts) {
-            readShortArray(watch, selfPtr, NULL);
-         }
-         else if (type == elDebugIntegers) {
-            readIntArray(watch, selfPtr, NULL);
-         }
-         else if (className.compare("system'nil")) {
-            watch->write(this, "<nil>");
-         }
-         else readFields(watch, info, selfPtr);
-      }
-   }
+   //         length >>= 2;
+   //         readList(watch, list, length);
+   //      }
+   //      else if (type==elDebugBytes) {
+   //         readByteArray(watch, selfPtr, NULL);
+   //      }
+   //      else if (type==elDebugShorts) {
+   //         readShortArray(watch, selfPtr, NULL);
+   //      }
+   //      else if (type == elDebugIntegers) {
+   //         readIntArray(watch, selfPtr, NULL);
+   //      }
+   //      else if (className.compare("system'nil")) {
+   //         watch->write(this, "<nil>");
+   //      }
+   //      else readFields(watch, info, selfPtr);
+   //   }
+   //}
 }
 
 //void DebugController :: readPString(size_t address, IdentifierString& string)
@@ -1424,63 +1424,63 @@ int DebugController :: generateTape(int* list, int length)
 {
    int textPos = _tape.Length();
 
-   MemoryWriter textWriter(&_tape);
+   //MemoryWriter textWriter(&_tape);
 
-   // a tape beginning
-   writeStatement(textWriter, _T("$tape"));
+   //// a tape beginning
+   //writeStatement(textWriter, _T("$tape"));
 
-   for (int i = 0; i < length; i++) {
-      size_t memberPtr = list[i];
-      if (memberPtr == 0) {
-         writeStatement(textWriter, _T("$nil"));
-      }
-      else {
-         size_t flags = 0;
-         ident_t className = NULL;
-         DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
-         if (item) {
-            switch (flags & elDebugMask)
-            {
-               case elDebugDWORD:
-                  writeStatement(textWriter, className, _debugger.Context()->readDWord(memberPtr));
-                  break;
-               case elDebugLiteral:
-               {
-                  char value[DEBUG_MAX_STR_LENGTH + 1];
-                  int length = 0;
-                  getValue(memberPtr - 8, (char*)&length, 4);
+   //for (int i = 0; i < length; i++) {
+   //   size_t memberPtr = list[i];
+   //   if (memberPtr == 0) {
+   //      writeStatement(textWriter, _T("$nil"));
+   //   }
+   //   else {
+   //      size_t flags = 0;
+   //      ident_t className = NULL;
+   //      DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
+   //      if (item) {
+   //         switch (flags & elDebugMask)
+   //         {
+   //            case elDebugDWORD:
+   //               writeStatement(textWriter, className, _debugger.Context()->readDWord(memberPtr));
+   //               break;
+   //            case elDebugLiteral:
+   //            {
+   //               char value[DEBUG_MAX_STR_LENGTH + 1];
+   //               int length = 0;
+   //               getValue(memberPtr - 8, (char*)&length, 4);
 
-                  length &= 0xFFFFF;
+   //               length &= 0xFFFFF;
 
-                  if (length > DEBUG_MAX_STR_LENGTH) {
-                     length = DEBUG_MAX_STR_LENGTH;
-                  }
-                  getValue(memberPtr, value, length);
-                  value[length] = 0;
+   //               if (length > DEBUG_MAX_STR_LENGTH) {
+   //                  length = DEBUG_MAX_STR_LENGTH;
+   //               }
+   //               getValue(memberPtr, value, length);
+   //               value[length] = 0;
 
-                  writeStatement(textWriter, className, value);
-                  break;
-               }
-               case elDebugMessage:
-               {
-                  IdentifierString messageValue("%");
+   //               writeStatement(textWriter, className, value);
+   //               break;
+   //            }
+   //            case elDebugMessage:
+   //            {
+   //               IdentifierString messageValue("%");
 
-                  parseMessage(messageValue, _debugger.Context()->readDWord(memberPtr));
+   //               parseMessage(messageValue, _debugger.Context()->readDWord(memberPtr));
 
-                  writeMessage(textWriter, className, messageValue.c_str());
-                  break;
-               }
-               default:
-                  writeStatement(textWriter, className);
-                  break;
-            }            
-         }
-         else writeStatement(textWriter, _T("<unknown>"));
-      }
-   }
+   //               writeMessage(textWriter, className, messageValue.c_str());
+   //               break;
+   //            }
+   //            default:
+   //               writeStatement(textWriter, className);
+   //               break;
+   //         }            
+   //      }
+   //      else writeStatement(textWriter, _T("<unknown>"));
+   //   }
+   //}
 
-   writeStatement(textWriter, _T("end"));
-   textWriter.writeChar((text_c)0);
+   //writeStatement(textWriter, _T("end"));
+   //textWriter.writeChar((text_c)0);
 
    return textPos;
 }

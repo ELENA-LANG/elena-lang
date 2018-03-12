@@ -21,24 +21,24 @@ namespace _ELENA_
 class _Module
 {
 public:
-////   virtual ident_t Name() const = 0;
-////
-////   virtual ident_t resolveReference(ref_t reference) = 0;
-////   virtual ident_t resolveSubject(ref_t reference) = 0;
-////   virtual ident_t resolveConstant(ref_t reference) = 0;
-////
-////   virtual ref_t mapReference(ident_t reference) = 0;
-////   virtual ref_t mapReference(ident_t reference, bool existing) = 0;
-////
-////   virtual ref_t mapSubject(ident_t reference, bool existing) = 0;
-////   virtual ref_t mapConstant(ident_t reference) = 0;
-////
-////   virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
-////   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
-////
-////   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
-////
-////   virtual bool save(StreamWriter& writer) = 0;
+   virtual ident_t Name() const = 0;
+
+   virtual ident_t resolveReference(ref_t reference) = 0;
+//   virtual ident_t resolveSubject(ref_t reference) = 0;
+//   virtual ident_t resolveConstant(ref_t reference) = 0;
+
+   virtual ref_t mapReference(ident_t reference) = 0;
+   virtual ref_t mapReference(ident_t reference, bool existing) = 0;
+
+//   virtual ref_t mapSubject(ident_t reference, bool existing) = 0;
+//   virtual ref_t mapConstant(ident_t reference) = 0;
+
+   virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
+//   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
+
+   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
+
+//   virtual bool save(StreamWriter& writer) = 0;
 
    virtual ~_Module() {}
 };
@@ -470,157 +470,157 @@ public:
 ////   ref64_t message;
 ////   ref64_t address;
 ////};
+//
+////// --- ClassHeader ---
 ////
-//////// --- ClassHeader ---
-//////
-//////struct ClassHeader
-//////{
-//////   ref_t  staticSize;      // static table size
-//////   ref_t  classRef;        // class class reference
-//////   size_t count;
-//////   size_t flags;
-//////   ref_t  parentRef;
-//////};
-//////
-//////// --- ClassInfo ---
-//////
-//////enum MethodAttribute
-//////{
-//////   maSubjectMask        = 0x100,
-//////   maRefefernceMask     = 0x200,
-//////   maVerb               = 0x400,
-//////
-//////   maNone               = 0x000,
-//////   maHint               = 0x001,
-//////   maReference          = 0x202,
-//////   maEmbeddableGet      = 0x103,
-//////   maEmbeddableEval     = 0x104,
-//////   maEmbeddableIdle     = 0x005,
-//////   maEmbeddableGetAt    = 0x106,
-//////   maEmbeddableGetAt2   = 0x107,
-//////   maEmbeddableEval2    = 0x108,
-//////   maEmbeddableNew      = 0x409,
-//////   maOverloadlist       = 0x20A,
-//////};
-//////
-//////struct ClassInfo
-//////{
-//////   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - type
-//////   typedef Pair<ref_t, int>                    Attribute;
-//////   typedef MemoryMap<ref_t, bool, false>       MethodMap;
-//////   typedef MemoryMap<ident_t, int, true>       FieldMap;
-//////   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
-//////   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
-//////   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
-//////   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
-//////
-//////   ClassHeader    header;
-//////   int            size;           // Object size
-//////   MethodMap      methods;
-//////   FieldMap       fields;
-//////   StaticFieldMap statics;
-//////   StaticInfoMap  staticValues;
-//////
-//////   FieldTypeMap   fieldTypes;
-//////   MethodInfoMap  methodHints;
-//////
-//////   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
-//////   {
-//////      writer->write((void*)this, sizeof(ClassHeader));
-//////      writer->writeDWord(size);
-//////      if (!headerAndSizeOnly) {
-//////         staticValues.write(writer);
-//////         methods.write(writer);
-//////         fields.write(writer);
-//////         fieldTypes.write(writer);
-//////         methodHints.write(writer);
-//////         statics.write(writer);
-//////      }
-//////   }
-//////
-//////   void load(StreamReader* reader, bool headerOnly = false)
-//////   {
-//////      reader->read((void*)&header, sizeof(ClassHeader));
-//////      size = reader->getDWord();
-//////      if (!headerOnly) {
-//////         staticValues.read(reader);
-//////         methods.read(reader);
-//////         fields.read(reader);
-//////         fieldTypes.read(reader);
-//////         methodHints.read(reader);
-//////         statics.read(reader);
-//////      }
-//////   }
-//////
-//////   ClassInfo()
-//////      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
-//////   {
-//////      header.flags = 0;
-//////      header.classRef = 0;
-//////   }
-//////};
-//////
-//////// --- SymbolExpressionInfo ---
-//////
-//////struct SymbolExpressionInfo
-//////{
-//////   ref_t expressionClassRef;
-//////   ref_t listRef;
-//////   bool  constant;
-//////
-//////   void save(StreamWriter* writer)
-//////   {
-//////      writer->writeDWord(listRef);
-//////      writer->writeDWord(constant ? -1: 0);
-//////      writer->writeDWord(expressionClassRef);
-//////   }
-//////
-//////   void load(StreamReader* reader)
-//////   {
-//////      listRef = reader->getDWord();
-//////      constant = (reader->getDWord() != 0);
-//////      expressionClassRef = reader->getDWord();
-//////   }
-//////
-//////   SymbolExpressionInfo()
-//////   {
-//////      expressionClassRef = 0;
-//////      listRef = 0;
-//////      constant = false;
-//////   }
-//////};
-//////
-//////// --- DebugLineInfo ---
-//////
-//////struct DebugLineInfo
-//////{
-//////   DebugSymbol symbol;
-//////   int         col, row, length;
-//////   union
-//////   {
-//////      struct Source { pos_t nameRef; } source;
-//////      struct Module { pos_t nameRef; int flags; } symbol;
-//////      struct Step   { pos_t address;         } step;
-//////      struct Local  { pos_t nameRef; int level; } local;
-//////      struct Field  { pos_t nameRef; int size;  } field;
-//////   } addresses;
-//////
-//////   DebugLineInfo()
-//////   {
-//////      symbol = dsNone;
-//////      col = row = length = 0;
-//////   }
-//////   DebugLineInfo(DebugSymbol symbol, int length, int col, int row)
-//////   {
-//////      this->symbol = symbol;
-//////      this->col = col;
-//////      this->row = row;
-//////      this->length = length;
-//////
-//////      this->addresses.symbol.nameRef = 0;
-//////      this->addresses.symbol.flags = 0;
-//////   }
-//////};
+////struct ClassHeader
+////{
+////   ref_t  staticSize;      // static table size
+////   ref_t  classRef;        // class class reference
+////   size_t count;
+////   size_t flags;
+////   ref_t  parentRef;
+////};
+////
+////// --- ClassInfo ---
+////
+////enum MethodAttribute
+////{
+////   maSubjectMask        = 0x100,
+////   maRefefernceMask     = 0x200,
+////   maVerb               = 0x400,
+////
+////   maNone               = 0x000,
+////   maHint               = 0x001,
+////   maReference          = 0x202,
+////   maEmbeddableGet      = 0x103,
+////   maEmbeddableEval     = 0x104,
+////   maEmbeddableIdle     = 0x005,
+////   maEmbeddableGetAt    = 0x106,
+////   maEmbeddableGetAt2   = 0x107,
+////   maEmbeddableEval2    = 0x108,
+////   maEmbeddableNew      = 0x409,
+////   maOverloadlist       = 0x20A,
+////};
+////
+////struct ClassInfo
+////{
+////   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - type
+////   typedef Pair<ref_t, int>                    Attribute;
+////   typedef MemoryMap<ref_t, bool, false>       MethodMap;
+////   typedef MemoryMap<ident_t, int, true>       FieldMap;
+////   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
+////   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
+////   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
+////   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
+////
+////   ClassHeader    header;
+////   int            size;           // Object size
+////   MethodMap      methods;
+////   FieldMap       fields;
+////   StaticFieldMap statics;
+////   StaticInfoMap  staticValues;
+////
+////   FieldTypeMap   fieldTypes;
+////   MethodInfoMap  methodHints;
+////
+////   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+////   {
+////      writer->write((void*)this, sizeof(ClassHeader));
+////      writer->writeDWord(size);
+////      if (!headerAndSizeOnly) {
+////         staticValues.write(writer);
+////         methods.write(writer);
+////         fields.write(writer);
+////         fieldTypes.write(writer);
+////         methodHints.write(writer);
+////         statics.write(writer);
+////      }
+////   }
+////
+////   void load(StreamReader* reader, bool headerOnly = false)
+////   {
+////      reader->read((void*)&header, sizeof(ClassHeader));
+////      size = reader->getDWord();
+////      if (!headerOnly) {
+////         staticValues.read(reader);
+////         methods.read(reader);
+////         fields.read(reader);
+////         fieldTypes.read(reader);
+////         methodHints.read(reader);
+////         statics.read(reader);
+////      }
+////   }
+////
+////   ClassInfo()
+////      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+////   {
+////      header.flags = 0;
+////      header.classRef = 0;
+////   }
+////};
+////
+////// --- SymbolExpressionInfo ---
+////
+////struct SymbolExpressionInfo
+////{
+////   ref_t expressionClassRef;
+////   ref_t listRef;
+////   bool  constant;
+////
+////   void save(StreamWriter* writer)
+////   {
+////      writer->writeDWord(listRef);
+////      writer->writeDWord(constant ? -1: 0);
+////      writer->writeDWord(expressionClassRef);
+////   }
+////
+////   void load(StreamReader* reader)
+////   {
+////      listRef = reader->getDWord();
+////      constant = (reader->getDWord() != 0);
+////      expressionClassRef = reader->getDWord();
+////   }
+////
+////   SymbolExpressionInfo()
+////   {
+////      expressionClassRef = 0;
+////      listRef = 0;
+////      constant = false;
+////   }
+////};
+
+// --- DebugLineInfo ---
+
+struct DebugLineInfo
+{
+   DebugSymbol symbol;
+   int         col, row, length;
+   union
+   {
+      struct Source { pos_t nameRef; } source;
+      struct Module { pos_t nameRef; int flags; } symbol;
+      struct Step   { pos_t address;         } step;
+      struct Local  { pos_t nameRef; int level; } local;
+      struct Field  { pos_t nameRef; int size;  } field;
+   } addresses;
+
+   DebugLineInfo()
+   {
+      symbol = dsNone;
+      col = row = length = 0;
+   }
+   DebugLineInfo(DebugSymbol symbol, int length, int col, int row)
+   {
+      this->symbol = symbol;
+      this->col = col;
+      this->row = row;
+      this->length = length;
+
+      this->addresses.symbol.nameRef = 0;
+      this->addresses.symbol.flags = 0;
+   }
+};
 
 // --- Exception base class ---
 

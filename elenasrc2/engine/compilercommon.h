@@ -88,8 +88,8 @@
 namespace _ELENA_
 {
 
-//typedef Map<ident_t, ref_t> ForwardMap;
-//
+typedef Map<ident_t, ref_t> ForwardMap;
+
 //enum MethodHint
 //{
 //   tpMask        = 0x000F,
@@ -132,10 +132,10 @@ struct _CompilerScope
 //
 //   ident_t  sourcePath;
 //   ref_t    sourcePathRef;
-//
-//   _Module* module;
-//   _Module* debugModule;
-//
+
+   _Module* module;
+   _Module* debugModule;
+
 ////   // cached references
 //   ref_t superReference;
 //   ref_t intReference;
@@ -184,7 +184,7 @@ struct _CompilerScope
    {
 //      sourcePath = NULL;
 //      sourcePathRef = 0;
-//      debugModule = module = NULL;
+      debugModule = module = NULL;
 //      intReference = boolReference = superReference = 0;
 //      signatureReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
@@ -225,7 +225,7 @@ public:
 class _DerivationTransformer
 {
 public:
-   virtual void generateSyntaxTree(SyntaxWriter& writer, _CompilerScope& scope) = 0;
+   virtual void generateSyntaxTree(SyntaxWriter& writer, _CompilerScope& scope, ident_t sourcePath) = 0;
 };
 
 // --- _CompilerLogic ---

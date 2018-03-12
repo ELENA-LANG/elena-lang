@@ -116,8 +116,8 @@ public:
 //   virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
 //   virtual _Module* resolveWeakModule(ident_t weakName, LoadResult& result, ref_t& reference);
 //   virtual _Module* resolveIndirectWeakModule(ident_t weakName, LoadResult& result, ref_t& reference);
-//   virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference);
-//
+   //virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference);
+
 //   void addListener(_JITLoaderListener* listener)
 //   {
 //      _listeners.add(listener);

@@ -16,22 +16,22 @@ using namespace _ELENA_;
 // --- BaseModule ---
 
 _BaseModule  :: _BaseModule()
-//   : _references(0), _subjects(0), _constants(0)
+   : _references(0)//, _subjects(0), _constants(0)
 {
 }
 
-//ident_t _BaseModule :: resolveReference(ref_t reference)
-//{
-//   ident_t key = _resolvedReferences.get(reference);
-//   if (!key) {
-//      ReferenceMap::Iterator it = _references.start();
-//      key = goToKey(it, reference, DEFAULT_STR);
-//
-//      _resolvedReferences.add(reference, key);
-//   }
-//   return key;
-//}
-//
+ident_t _BaseModule :: resolveReference(ref_t reference)
+{
+   ident_t key = _resolvedReferences.get(reference);
+   if (!key) {
+      ReferenceMap::Iterator it = _references.start();
+      key = goToKey(it, reference, DEFAULT_STR);
+
+      _resolvedReferences.add(reference, key);
+   }
+   return key;
+}
+
 //ident_t _BaseModule :: resolveSubject(ref_t reference)
 //{
 //   ident_t key = _resolvedSubjects.get(reference);
@@ -51,46 +51,46 @@ _BaseModule  :: _BaseModule()
 // --- Module ---
 
 Module :: Module()
-//   : _sections(NULL, freeobj)
+   : _sections(NULL, freeobj)
 {
 }
 
 Module :: Module(ident_t name)
-   : _name(name)//, _sections(NULL, freeobj)
+   : _name(name), _sections(NULL, freeobj)
 {
 }
 
-//void Module :: mapPredefinedReference(ident_t name, ref_t reference)
-//{
-//   _resolvedReferences.clear();
-//
-//   _references.add(name, reference);
-//}
-//
+void Module :: mapPredefinedReference(ident_t name, ref_t reference)
+{
+   _resolvedReferences.clear();
+
+   _references.add(name, reference);
+}
+
 //void Module :: mapPredefinedSubject(ident_t name, ref_t reference)
 //{
 //   _resolvedSubjects.clear();
 //
 //   _subjects.add(name, reference);
 //}
-//
-//ref_t Module :: mapReference(ident_t reference)
-//{
-//   ref_t nextId = _references.Count() + 1;
-//
-//   // generate an exception if reference id is out of range
-//   if (nextId > ~mskAnyRef)
-//      throw InternalError("Reference overflow");
-//
-//   ref_t refId = mapKey(_references, reference, nextId);
-//
-//   // if we added new reference, clear resolved reference cache (due to possible string relocation)
-//   if (refId == nextId)
-//      _resolvedReferences.clear();
-//
-//   return refId;
-//}
-//
+
+ref_t Module :: mapReference(ident_t reference)
+{
+   ref_t nextId = _references.Count() + 1;
+
+   // generate an exception if reference id is out of range
+   if (nextId > ~mskAnyRef)
+      throw InternalError("Reference overflow");
+
+   ref_t refId = mapKey(_references, reference, nextId);
+
+   // if we added new reference, clear resolved reference cache (due to possible string relocation)
+   if (refId == nextId)
+      _resolvedReferences.clear();
+
+   return refId;
+}
+
 //ref_t Module :: mapSubject(ident_t subject, bool existing)
 //{
 //   if (existing)
@@ -114,26 +114,26 @@ Module :: Module(ident_t name)
 //
 //   return mapKey(_constants, constant, nextId);
 //}
-//
-//ref_t Module :: mapReference(ident_t reference, bool existing)
-//{
-//   if (existing) {
-//      return _references.get(reference);
-//   }
-//   else return mapReference(reference);
-//}
-//
-//Section* Module :: mapSection(ref_t reference, bool existing)
-//{
-//   Section* section = _sections.get(reference);
-//   if (!existing && section==NULL) {
-//      section = new Section();
-//
-//      _sections.add(reference, section);
-//   }
-//   return section;
-//}
-//
+
+ref_t Module :: mapReference(ident_t reference, bool existing)
+{
+   if (existing) {
+      return _references.get(reference);
+   }
+   else return mapReference(reference);
+}
+
+Section* Module :: mapSection(ref_t reference, bool existing)
+{
+   Section* section = _sections.get(reference);
+   if (!existing && section==NULL) {
+      section = new Section();
+
+      _sections.add(reference, section);
+   }
+   return section;
+}
+
 //void Module :: loadSections(StreamReader& reader)
 //{
 //   int totalSize = reader.getDWord();

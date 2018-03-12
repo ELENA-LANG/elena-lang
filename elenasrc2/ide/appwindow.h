@@ -27,36 +27,8 @@ class IDEController : public _Controller
       _ELENA_::List<_ELENA_::ident_t>  _sources;
       _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ident_t>  _forwards;
 
-      bool openIni(_ELENA_::path_t path);
-      bool openXml(_ELENA_::path_t path);
-
-      const char* getTemplateIni();
-      const char* getTemplateXml();
-
-      const char* getPackageIni();
-      const char* getPackageXml();
-
-      const char* getOptionsIni();
-      const char* getOptionsXml();
-
-      const char* getTargetIni();
-      const char* getTargetXml();
-
-      const char* getOutputPathIni();
-      const char* getOutputPathXml();
-
-      const char* getArgumentsIni();
-      const char* getArgumentsXml();
-
-      int getDebugModeIni();
-      int getDebugModeXml();
-
-      void reloadSourcesIni();
-      void reloadSourcesXml();
       void reloadSources();
 
-      void reloadForwardsIni();
-      void reloadForwardsXml();
       void reloadForwards();
 
    public:

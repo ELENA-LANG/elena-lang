@@ -684,7 +684,7 @@ public:
          _string[0] = 0;
    }
 
-   size_t Length()
+   size_t Length() const
    {
       return getlength(_string);
    }

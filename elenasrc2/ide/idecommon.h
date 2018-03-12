@@ -48,7 +48,7 @@ namespace _GUI_
 #define IDE_ARGUMENT_XMLSETTING                 "project/arguments"
 #define IDE_DEBUGINFO_XMLSETTING                "project/debuginfo"
 
-#define IDE_FILES_XMLSECTION                    "files/*"
+#define IDE_FILES_XMLSECTION                    "configuration/files/*"
 #define IDE_FORWARDS_XMLSECTION                 "forwards/*"
 
 #define IDE_FORWARDS_ELEMENT                    "forwards/forward"
@@ -150,18 +150,16 @@ struct MessageBookmark
    }
 };
 
-enum ConfigType
-{
-   ctIni = 0,
-   ctXml = 1
-};
+//enum ConfigType
+//{
+//   ctIni = 0,
+//   ctXml = 1
+//};
 
 struct ProjectScope
 {
    bool                   changed;
 
-   ConfigType             type;
-   _ELENA_::IniConfigFile config;
    _ELENA_::XmlConfigFile xmlConfig;
 
    _ELENA_::FileName      name;
@@ -171,7 +169,6 @@ struct ProjectScope
    ProjectScope()
    {
       changed = false;
-      type = ctIni;
    }
 };
 

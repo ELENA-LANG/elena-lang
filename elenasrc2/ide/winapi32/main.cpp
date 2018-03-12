@@ -90,12 +90,12 @@ void loadCommandLine(Model* model, char* cmdLine, _ELENA_::Path& configPath)
 
 void loadSettings(_ELENA_::path_t path, Model* model, IDEWindow* view)
 {
-   _ELENA_::IniConfigFile file;
+   _ELENA_::XmlConfigFile file;
 
    if (file.load(path, _ELENA_::feUTF8)) {
       Settings::load(model, file);
 
-      view->loadHistory(file, RECENTFILES_SECTION, RECENTRPOJECTS_SECTION);
+      //view->loadHistory(file, RECENTFILES_SECTION, RECENTRPOJECTS_SECTION);
 
       view->reloadSettings();
    }
@@ -105,11 +105,11 @@ void loadSettings(_ELENA_::path_t path, Model* model, IDEWindow* view)
 
 void saveSettings(_ELENA_::path_t path, Model* model, IDEWindow* view)
 {
-   _ELENA_::IniConfigFile file;
+   _ELENA_::XmlConfigFile file;
 
    Settings::save(model, file);
 
-   view->saveHistory(file, RECENTFILES_SECTION, RECENTRPOJECTS_SECTION);
+   //view->saveHistory(file, RECENTFILES_SECTION, RECENTRPOJECTS_SECTION);
 
    file.save(path, _ELENA_::feUTF8);
 }

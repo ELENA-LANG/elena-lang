@@ -108,20 +108,20 @@ using namespace _ELENA_;
 //   }
 //   else return 0;
 //}
-//
-//inline void findUninqueName(_Module* module, ReferenceNs& name)
-//{
-//   size_t pos = getlength(name);
-//   int   index = 0;
-//   ref_t ref = 0;
-//   do {
-//      name[pos] = 0;
-//      name.appendHex(index++);
-//
-//      ref = module->mapReference(name, true);
-//   } while (ref != 0);
-//}
-//
+
+inline void findUninqueName(_Module* module, ReferenceNs& name)
+{
+   size_t pos = getlength(name);
+   int   index = 0;
+   ref_t ref = 0;
+   do {
+      name[pos] = 0;
+      name.appendHex(index++);
+
+      ref = module->mapReference(name, true);
+   } while (ref != 0);
+}
+
 //inline SNode findParent(SNode node, LexicalType type)
 //{
 //   while (node.type != type && node != lxNone) {
@@ -191,24 +191,24 @@ using namespace _ELENA_;
 //      start = middle;
 //   }
 //}
-//
-//SNode findTerminalInfo(SNode node)
-//{
-//   if (node.existChild(lxRow))
-//      return node;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      SNode terminalNode = findTerminalInfo(current);
-//      if (terminalNode != lxNone)
-//         return terminalNode;
-//
-//      current = current.nextNode();
-//   }
-//
-//   return current;
-//}
-//
+
+SNode findTerminalInfo(SNode node)
+{
+   if (node.existChild(lxRow))
+      return node;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      SNode terminalNode = findTerminalInfo(current);
+      if (terminalNode != lxNone)
+         return terminalNode;
+
+      current = current.nextNode();
+   }
+
+   return current;
+}
+
 //inline bool isSealedStaticField(ref_t ref)
 //{
 //   return (int)ref >= 0;
@@ -254,13 +254,13 @@ using namespace _ELENA_;
 
 // --- Compiler::ModuleScope ---
 
-Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
-//   : constantHints(INVALID_REF), extensions(NULL, freeobj), autoExtensions(NULL, freeobj)
+Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
+   : /*constantHints(INVALID_REF), extensions(NULL, freeobj), autoExtensions(NULL, freeobj), */savedPaths(-1)
 {
-//   this->project = project;
+   this->project = project;
 //   this->sourcePath = sourcePath;
-//   this->module = module;
-//   this->debugModule = debugModule;
+   this->module = module;
+   this->debugModule = debugModule;
 //   this->sourcePathRef = INVALID_REF;
 //
 //   this->forwardsUnresolved = forwardsUnresolved;
@@ -297,6 +297,21 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //      defaultNs.add(STANDARD_MODULE);
 //      loadModuleInfo(project->loadModule(STANDARD_MODULE, false));
 //   }
+}
+
+pos_t Compiler::ModuleScope :: saveSourcePath(ByteCodeWriter& writer, ident_t sourcePath)
+{
+   if (!emptystr(sourcePath)) {
+      int position = savedPaths.get(sourcePath);
+      if (position == -1) {
+         position = writer.writeSourcePath(debugModule, sourcePath);
+
+         savedPaths.add(sourcePath, position);
+      }
+
+      return position;
+   }
+   else return 0;
 }
 
 //ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
@@ -407,25 +422,25 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //
 //   return classRef;
 //}
-//
-//ref_t Compiler::ModuleScope :: mapTerminal(SNode terminal, bool existing)
-//{
-//   ident_t identifier = terminal.identifier();
+
+ref_t Compiler::ModuleScope :: mapTerminal(SNode terminal, bool existing)
+{
+   ident_t identifier = terminal.identifier();
 //   if (emptystr(identifier))
 //      identifier = terminal.findChild(lxTerminal).identifier();
 //
-//   if (terminal == lxIdentifier) {
-//      ref_t reference = forwards.get(identifier);
-//      if (reference == 0) {
-//         if (!existing) {
-//            ReferenceNs name(module->Name(), identifier);
-//
-//            return module->mapReference(name);
-//         }
+   if (terminal == lxIdentifier) {
+      ref_t reference = forwards.get(identifier);
+      if (reference == 0) {
+         if (!existing) {
+            ReferenceNs name(module->Name(), identifier);
+
+            return module->mapReference(identifier);
+         }
 //         else return resolveIdentifier(identifier);
-//      }
-//      else return reference;
-//   }
+      }
+      else return reference;
+   }
 //   else if (terminal == lxPrivate) {
 //      ReferenceNs name(module->Name(), "#");
 //      name.append(identifier.c_str() + 1);
@@ -433,18 +448,18 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //      return mapReference(name, existing);
 //   }
 //   else return mapReference(identifier, existing);
-//}
-//
-//ref_t Compiler::ModuleScope :: mapAnonymous()
-//{
-//   // otherwise auto generate the name
-//   ReferenceNs name(module->Name(), INLINE_POSTFIX);
-//
-//   findUninqueName(module, name);
-//
-//   return module->mapReference(name);
-//}
-//
+}
+
+ref_t Compiler::ModuleScope :: mapAnonymous()
+{
+   // auto generate the name
+   ReferenceNs name(module->Name(), INLINE_POSTFIX);
+
+   findUninqueName(module, name);
+
+   return module->mapReference(name);
+}
+
 //bool Compiler::ModuleScope :: checkReference(ident_t referenceName)
 //{
 //   ref_t moduleRef = 0;
@@ -743,20 +758,20 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //      }
 //   }
 //}
-//
-//void Compiler::ModuleScope :: raiseError(const char* message, SNode node)
-//{
-//   SNode terminal = findTerminalInfo(node);
-//
-//   int col = terminal.findChild(lxCol).argument;
-//   int row = terminal.findChild(lxRow).argument;
-//   ident_t identifier = terminal.identifier();
-//   if (emptystr(identifier))
-//      identifier = terminal.findChild(lxTerminal).identifier();
-//
-//   raiseError(message, row, col, identifier);
-//}
-//
+
+void Compiler::ModuleScope :: raiseError(const char* message, ident_t sourcePath, SNode node)
+{
+   SNode terminal = findTerminalInfo(node);
+
+   int col = terminal.findChild(lxCol).argument;
+   int row = terminal.findChild(lxRow).argument;
+   ident_t identifier = terminal.identifier();
+   if (emptystr(identifier))
+      identifier = terminal.identifier();
+
+   raiseError(message, row, col, sourcePath, identifier);
+}
+
 //void Compiler::ModuleScope :: raiseWarning(int level, const char* message, SNode node)
 //{
 //   SNode terminal = findTerminalInfo(node);
@@ -781,12 +796,12 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //   if (test(warningMask, level))
 //      project->raiseWarning(message, message);
 //}
-//
-//void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, ident_t terminal)
-//{
-//   project->raiseError(message, sourcePath, row, col, terminal);
-//}
-//
+
+void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, ident_t sourcePath, ident_t terminal)
+{
+   project->raiseError(message, sourcePath, row, col, terminal);
+}
+
 //void Compiler::ModuleScope :: loadActions(_Module* extModule)
 //{
 //   if (extModule) {
@@ -1068,26 +1083,26 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //   }
 //   return false;
 //}
-//
-//// --- Compiler::SourceScope ---
-//
-//Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference)
-//   : Scope(moduleScope)
-//{
-//   this->reference = reference;
-//}
-//
-//// --- Compiler::SymbolScope ---
-//
-//Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
-//   : SourceScope(parent, reference)
-//{
+
+// --- Compiler::SourceScope ---
+
+Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference, ident_t sourcePath)
+   : Scope(moduleScope, sourcePath)
+{
+   this->reference = reference;
+}
+
+// --- Compiler::SymbolScope ---
+
+Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference, ident_t sourcePath)
+   : SourceScope(parent, reference, sourcePath)
+{
 //   outputRef = 0;
 //   constant = false;
-//   staticOne = false;
+   staticOne = false;
 //   preloaded = false;
-//}
-//
+}
+
 ////ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
 ////{
 ////   return Scope::mapTerminal(identifier);
@@ -1596,48 +1611,48 @@ void Compiler :: loadRules(StreamReader* optimization)
    _rules.load(optimization);
 }
 
-//bool Compiler :: optimizeIdleBreakpoints(CommandTape& tape)
-//{
-//   return CommandTape::optimizeIdleBreakpoints(tape);
-//}
-//
-//bool Compiler :: optimizeJumps(CommandTape& tape)
-//{
-//   return CommandTape::optimizeJumps(tape);
-//}
-//
-//bool Compiler :: applyRules(CommandTape& tape)
-//{
-//   if (!_rules.loaded)
-//      return false;
-//
-//   if (_rules.apply(tape)) {
-//      while (_rules.apply(tape));
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//void Compiler :: optimizeTape(CommandTape& tape)
-//{
-//   // HOTFIX : remove all breakpoints which follows jumps
-//   while (optimizeIdleBreakpoints(tape));
-//
-//   // optimize unused and idle jumps
-//   while (optimizeJumps(tape));
-//
-//   // optimize the code
-//   bool modified = false;
-//   while (applyRules(tape)) {
-//      modified = true;
-//   }
-//
-//   if (modified) {
-//      optimizeTape(tape);
-//   }
-//}
-//
+bool Compiler :: optimizeIdleBreakpoints(CommandTape& tape)
+{
+   return CommandTape::optimizeIdleBreakpoints(tape);
+}
+
+bool Compiler :: optimizeJumps(CommandTape& tape)
+{
+   return CommandTape::optimizeJumps(tape);
+}
+
+bool Compiler :: applyRules(CommandTape& tape)
+{
+   if (!_rules.loaded)
+      return false;
+
+   if (_rules.apply(tape)) {
+      while (_rules.apply(tape));
+
+      return true;
+   }
+   else return false;
+}
+
+void Compiler :: optimizeTape(CommandTape& tape)
+{
+   // HOTFIX : remove all breakpoints which follows jumps
+   while (optimizeIdleBreakpoints(tape));
+
+   // optimize unused and idle jumps
+   while (optimizeJumps(tape));
+
+   // optimize the code
+   bool modified = false;
+   while (applyRules(tape)) {
+      modified = true;
+   }
+
+   if (modified) {
+      optimizeTape(tape);
+   }
+}
+
 //bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVal)
 //{
 //   switch (operation_id)
@@ -1698,12 +1713,7 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //   return true;
 //}
-//
-//pos_t Compiler :: saveSourcePath(ModuleScope&, ident_t path)
-//{
-//   return _writer.writeString(path);
-//}
-//
+
 //ref_t Compiler :: resolveConstantObjectReference(CodeScope& scope, ObjectInfo object)
 //{
 //   switch (object.kind) {
@@ -6630,16 +6640,16 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   if (scope.extensionClassRef == 0 && scope.info.header.classRef != 0)
 //      compileSymbolCode(scope);
 //}
-//
-//void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
-//{
+
+void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
+{
 //   declareSymbolAttributes(node, scope);
 //
 //   if ((scope.constant || scope.outputRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == false) {
 //      scope.save();
 //   }
-//}
-//
+}
+
 //bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode)
 //{
 //   ref_t parentRef = 0;
@@ -6737,17 +6747,17 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //   return true;
 //}
-//
-//void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope)
-//{
+
+void Compiler :: compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNode node, SymbolScope& scope)
+{
 //   expressionTree.clear();
 //
 //   SyntaxWriter writer(expressionTree);
 //
 //   declareSymbolAttributes(node, scope);
-//
-//   bool isStatic = scope.staticOne;
-//
+
+   bool isStatic = scope.staticOne;
+
 //   SNode expression = node.findChild(lxExpression);
 //
 //   CodeScope codeScope(&scope);
@@ -6788,17 +6798,19 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   if (scope.preloaded) {
 //      compilePreloadedCode(scope);
 //   }
-//
-//   CommandTape tape;
-//   _writer.generateSymbol(tape, expressionTree.readRoot(), isStatic);
-//
-//   // optimize
-//   optimizeTape(tape);
-//
-//   // create byte code sections
-//   _writer.save(tape, *scope.moduleScope);
-//}
-//
+
+   pos_t sourcePathRef = scope.moduleScope->saveSourcePath(_writer, scope.sourcePath);
+
+   CommandTape tape;
+   _writer.generateSymbol(tape, node, isStatic, sourcePathRef);
+
+   // optimize
+   optimizeTape(tape);
+
+   // create byte code sections
+   _writer.save(tape, *scope.moduleScope, sourcePathRef);
+}
+
 //void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/)
 //{
 //   SyntaxTree expressionTree;
@@ -7615,15 +7627,15 @@ void Compiler :: validateUnresolved(Unresolveds& unresolveds, _ProjectManager& p
 //
 //   _writer.generateConstantList(tree.readRoot(), module, reference);
 //}
-//
-//void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
-//{
+
+void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
+{
 //   SyntaxTree expressionTree; // expression tree is reused
-//
-//   // second pass - implementation
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current) {
+
+   // second pass - implementation
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current) {
 //         case lxClass:
 //         {
 //            //ident_t name = scope.module->resolveReference(current.argument);
@@ -7644,111 +7656,86 @@ void Compiler :: validateUnresolved(Unresolveds& unresolveds, _ProjectManager& p
 //            }
 //            break;
 //         }
-//         case lxSymbol:
-//         {
-//            SymbolScope symbolScope(&scope, current.argument);
-//            compileSymbolImplementation(expressionTree, current, symbolScope);
-//            break;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
-//bool Compiler :: compileDeclarations(SNode node, ModuleScope& scope, bool forcedMode, bool& repeatMode)
-//{
-//   SNode current = node.firstChild();
-//
+         case lxSymbol:
+         {
+            SymbolScope symbolScope(&scope, current.argument, current.findChild(lxSourcePath).identifier());
+            compileSymbolImplementation(/*expressionTree, */current, symbolScope);
+            break;
+         }
+      }
+      current = current.nextNode();
+   }
+}
+
+bool Compiler :: compileDeclarations(SNode node, ModuleScope& scope, bool& repeatMode)
+{
+   SNode current = node.firstChild();
+
 //   if (scope.superReference == 0)
 //      scope.raiseError(errNotDefinedBaseClass, node.firstChild().firstChild(lxTerminalMask));
-//
-//   // first pass - declaration
-//   bool declared = false;
-//   repeatMode = false;
-//   while (current != lxNone) {
-//      SNode name = current.findChild(lxIdentifier, lxPrivate, lxReference);
-//      ident_t n = name.identifier();
-//
-//      if (scope.mapAttribute(name) != 0)
-//         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
-//
-//      switch (current) {
-//         case lxInclude:
-//            compileForward(current, scope);
-//            break;
-//         case lxClass:
-//            // hotfix : ignore already declared classes (0 or -1 for template)
-//            if ((int)current.argument <= 0 && (forcedMode || !isDependentOnNotDeclaredClass(findBaseParent(current), scope))) {
-//               current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapTerminal(name));
-//
-//               ClassScope classScope(&scope, current.argument);
-//
-//               // check for duplicate declaration
-//               if (scope.module->mapSection(classScope.reference | mskSymbolRef, true))
-//                  scope.raiseError(errDuplicatedSymbol, name);
-//
-//               scope.mapSection(classScope.reference | mskSymbolRef, false);
-//
-//               // build class expression tree
-//               compileClassDeclaration(current, classScope);
-//
-//               declared = true;
-//            }
-//            else repeatMode = true;
-//            break;
-//         case lxSymbol:
-//            if (current.argument == 0) {
-//               if (name == lxNone) {
-//                  // HOTFIX : for script generated anonymous symbol
-//                  current.setArgument(scope.mapAnonymous());
-//               }
-//               else current.setArgument(scope.mapTerminal(name));
-//
-//               SymbolScope symbolScope(&scope, current.argument);
-//
-//               // check for duplicate declaration
-//               if (scope.module->mapSection(symbolScope.reference | mskSymbolRef, true))
-//                  scope.raiseError(errDuplicatedSymbol, name);
-//
-//               scope.module->mapSection(symbolScope.reference | mskSymbolRef, false);
-//
-//               // declare symbol
-//               compileSymbolDeclaration(current, symbolScope);
-//               declared = true;
-//            }
-//            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   return declared;
-//}
 
-void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
-{
-//   // HOTFIX : the module path should be presaved in debug section
-//   scope.sourcePathRef = _writer.writeSourcePath(scope.debugModule, scope.sourcePath);
-//
-//   // HOTFIX : the module path should be the first saved string
-//   _writer.clear();
-//   _writer.writeString(scope.sourcePath);
-//
-//   // declare classes several times to ignore the declaration order
-//   bool repeatMode = false;
-//   while (compileDeclarations(syntaxTree.readRoot(), scope, false, repeatMode)) {
-//      if (!repeatMode) {
-//         break;
-//      }
-//   }
-//   if (repeatMode) {
-//      // if still exists undeclared classes - try once again in forced mode
-//      repeatMode = true;
-//      compileDeclarations(syntaxTree.readRoot(), scope, true, repeatMode);
-//   }
-//
-//   // compile
-//   compileImplementations(syntaxTree.readRoot(), scope);
+   // first pass - declaration
+   bool declared = false;
+   repeatMode = false;
+   while (current != lxNone) {
+      SNode name = current.findChild(lxIdentifier/*, lxPrivate, lxReference*/);
+      //      ident_t n = name.identifier();
+      //
+      //      if (scope.mapAttribute(name) != 0)
+      //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
+
+      if (current.argument == 0) {
+         switch (current) {
+            //         case lxInclude:
+            //            compileForward(current, scope);
+            //            break;
+            //         case lxClass:
+            //            // hotfix : ignore already declared classes (0 or -1 for template)
+            //            if ((int)current.argument <= 0 && (forcedMode || !isDependentOnNotDeclaredClass(findBaseParent(current), scope))) {
+            //               current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapTerminal(name));
+            //
+            //               ClassScope classScope(&scope, current.argument);
+            //
+            //               // check for duplicate declaration
+            //               if (scope.module->mapSection(classScope.reference | mskSymbolRef, true))
+            //                  scope.raiseError(errDuplicatedSymbol, name);
+            //
+            //               scope.mapSection(classScope.reference | mskSymbolRef, false);
+            //
+            //               // build class expression tree
+            //               compileClassDeclaration(current, classScope);
+            //
+            //               declared = true;
+            //            }
+            //            else repeatMode = true;
+            //            break;
+            case lxSymbol:
+            {
+               if (name == lxNone) {
+                  // HOTFIX : for script generated anonymous symbol
+                  current.setArgument(scope.mapAnonymous());
+               }
+               else current.setArgument(scope.mapTerminal(name));
+
+               SymbolScope symbolScope(&scope, current.argument, current.findChild(lxSourcePath).identifier());
+
+               // check for duplicate declaration
+               if (scope.module->mapSection(symbolScope.reference | mskSymbolRef, true))
+                  symbolScope.raiseError(errDuplicatedSymbol, name);
+               
+               scope.module->mapSection(symbolScope.reference | mskSymbolRef, false);
+               
+               // declare symbol
+               compileSymbolDeclaration(current, symbolScope);
+               declared = true;
+               break;
+            }
+         }
+      }
+      current = current.nextNode();
+   }
+
+   return declared;
 }
 
 //void Compiler :: compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& syntaxTree, ModuleInfo& info, Unresolveds& unresolveds)
@@ -7765,20 +7752,29 @@ void Compiler :: compileSyntaxTree(SyntaxTree& syntaxTree, ModuleScope& scope)
 ////   return (subjRef != 0 && isPrimitiveRef(scope.subjectHints.get(subjRef)));
 ////}
 
-void Compiler :: compileModule(_ProjectManager& project, ident_t file, _DerivationTransformer& builder, ModuleInfo& info, Unresolveds& unresolveds)
+bool Compiler :: declareModule(ident_t sourcePath, _ProjectManager& project, _DerivationTransformer& builder, SyntaxTree& syntaxTree, ModuleInfo& info, Unresolveds& unresolveds)
 {
-   ModuleScope scope(&project, file, info.codeModule, info.debugModule, &unresolveds);
+   ModuleScope scope(&project, info.codeModule, info.debugModule, &unresolveds);
 
-   project.printInfo("%s", file);
-
-   // prepare syntax tree
-   SyntaxTree syntaxTree;
    SyntaxWriter writer(syntaxTree);
+   builder.generateSyntaxTree(writer, scope, sourcePath);
 
-   builder.generateSyntaxTree(writer, scope);
+   // declare classes several times to ignore the declaration order
+   bool repeatMode = true;
+   bool idle = false;
+   while (repeatMode && !idle) {
+      idle = compileDeclarations(syntaxTree.readRoot(), scope, repeatMode);
+   }
 
-   // compile syntax tree
-   compileSyntaxTree(syntaxTree, scope);
+   return !repeatMode;
+}
+
+void Compiler :: compileModule(_ProjectManager& project, SyntaxTree& syntaxTree, ModuleInfo& info, Unresolveds& unresolveds)
+{
+   ModuleScope scope(&project, info.codeModule, info.debugModule, &unresolveds);
+
+   // compile
+   compileImplementations(syntaxTree.readRoot(), scope);
 }
 
 ModuleInfo Compiler :: createModule(ident_t name, _ProjectManager& project, bool withDebugInfo)

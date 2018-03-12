@@ -1832,13 +1832,13 @@ void IDEController :: onDebuggerStop(bool broken)
 
    _debugController.release();
 
-   // close temporal document
-   // !! probably more generic solution should be used
-   int tempDocIndex = _model->getDocumentIndex(_ELENA_::Path(TAPE_SYMBOL).str());
-   if (tempDocIndex >= 0) {
-      _model->removeDocument(tempDocIndex);
-      _view->closeDocument(tempDocIndex);
-   }      
+   //// close temporal document
+   //// !! probably more generic solution should be used
+   //int tempDocIndex = _model->getDocumentIndex(_ELENA_::Path(TAPE_SYMBOL).str());
+   //if (tempDocIndex >= 0) {
+   //   _model->removeDocument(tempDocIndex);
+   //   _view->closeDocument(tempDocIndex);
+   //}      
 
    onChange();
 }
@@ -1989,127 +1989,37 @@ void IDEController :: toggleBreakpoint()
 
 // --- Projects ---
 
-const char* IDEController::ProjectManager :: getPackageIni()
-{
-   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_PACKAGE_SETTING);
-}
-
-const char* IDEController::ProjectManager :: getPackageXml()
+const char* IDEController::ProjectManager :: getPackage()
 {
    return _model->project.xmlConfig.getSetting(IDE_PACKAGE_XMLSETTING);
 }
 
-const char* IDEController::ProjectManager :: getPackage()
-{
-   if (_model->project.type == ctXml) {
-      return getPackageXml();
-   }
-   else return getPackageIni();
-}
-
-const char* IDEController::ProjectManager :: getTemplateIni()
-{
-   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_TEMPLATE_SETTING);
-}
-
-const char* IDEController::ProjectManager :: getTemplateXml()
+const char* IDEController::ProjectManager :: getTemplate()
 {
    return _model->project.xmlConfig.getSetting(IDE_TEMPLATE_XMLSETTING);
 }
 
-const char* IDEController::ProjectManager::getTemplate()
-{
-   if (_model->project.type == ctXml) {
-      return getTemplateXml();
-   }
-   else return getTemplateIni();
-}
-
-const char* IDEController::ProjectManager::getOptionsIni()
-{
-   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_COMPILER_OPTIONS);
-}
-
-const char* IDEController::ProjectManager::getOptionsXml()
+const char* IDEController::ProjectManager::getOptions()
 {
    return _model->project.xmlConfig.getSetting(IDE_COMPILER_XMLOPTIONS);
 }
 
-const char* IDEController::ProjectManager::getOptions()
-{
-   if (_model->project.type == ctXml) {
-      return getOptionsXml();
-   }
-   else return getOptionsIni();
-}
-
-const char* IDEController::ProjectManager::getTargetIni()
-{
-   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_EXECUTABLE_SETTING);
-}
-
-const char* IDEController::ProjectManager::getTargetXml()
+const char* IDEController::ProjectManager::getTarget()
 {
    return _model->project.xmlConfig.getSetting(IDE_EXECUTABLE_XMLSETTING);
 }
 
-const char* IDEController::ProjectManager::getTarget()
-{
-   if (_model->project.type == ctXml) {
-      return getTargetXml();
-   }
-   else return getTargetIni();
-}
-
-const char* IDEController::ProjectManager::getOutputPathIni()
-{
-   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_OUTPUT_SETTING);
-}
-
-const char* IDEController::ProjectManager::getOutputPathXml()
+const char* IDEController::ProjectManager::getOutputPath()
 {
    return _model->project.xmlConfig.getSetting(IDE_OUTPUT_XMLSETTING);
 }
 
-const char* IDEController::ProjectManager::getOutputPath()
-{
-   if (_model->project.type == ctXml) {
-      return getOutputPathXml();
-   }
-   else return getOutputPathIni();
-}
-
-const char* IDEController::ProjectManager::getArgumentsIni()
-{
-   return _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_ARGUMENT_SETTING);
-}
-
-const char* IDEController::ProjectManager::getArgumentsXml()
+const char* IDEController::ProjectManager::getArguments()
 {
    return _model->project.xmlConfig.getSetting(IDE_ARGUMENT_XMLSETTING);
 }
 
-const char* IDEController::ProjectManager::getArguments()
-{
-   if (_model->project.type == ctXml) {
-      return getArgumentsXml();
-   }
-   else return getArgumentsIni();
-}
-
-int IDEController::ProjectManager :: getDebugModeIni()
-{
-   _ELENA_::ident_t mode = _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
-   if (mode.compare("-1")) {
-      return -1;
-   }
-   else if (mode.compare("-2")) {
-      return -2;
-   }
-   else return 0;
-}
-
-int IDEController::ProjectManager::getDebugModeXml()
+int IDEController::ProjectManager::getDebugMode()
 {
    _ELENA_::ident_t mode = _model->project.xmlConfig.getSetting(IDE_DEBUGINFO_XMLSETTING);
    if (mode.compare("-1")) {
@@ -2121,39 +2031,19 @@ int IDEController::ProjectManager::getDebugModeXml()
    else return 0;
 }
 
-int IDEController::ProjectManager :: getDebugMode()
-{
-   if (_model->project.type == ctXml) {
-      return getDebugModeXml();
-   }
-   else return getDebugModeIni();
-}
-
 bool IDEController::ProjectManager::getBoolSetting(const char* name)
 {
-   _ELENA_::ident_t value = NULL;
-   if (_model->project.type == ctXml) {
-      value = _model->project.xmlConfig.getSetting(name);
-   }
-   else value = _model->project.config.getSetting(name);
+   _ELENA_::ident_t value = _model->project.xmlConfig.getSetting(name);
 
    return value.compare("-1");
 }
 
 void IDEController::ProjectManager::setSectionOption(const char* option, const char* value)
 {
-   if (_model->project.type == ctXml) {
-      if (!_ELENA_::emptystr(value)) {
-         _model->project.xmlConfig.setSetting(option, value);
-      }
-      else _model->project.xmlConfig.setSetting(option, NULL);
+   if (!_ELENA_::emptystr(value)) {
+      _model->project.xmlConfig.setSetting(option, value);
    }
-   else {
-      if (!_ELENA_::emptystr(value)) {
-         _model->project.config.setSetting(option, value);
-      }
-      else _model->project.config.clearSetting(option);
-   }
+   else _model->project.xmlConfig.setSetting(option, NULL);
 
    _model->project.changed = true;
 }
@@ -2190,18 +2080,10 @@ void IDEController::ProjectManager::setPackage(const char* package)
 
 void IDEController::ProjectManager::setDebugMode(int mode)
 {
-   if (_model->project.type == ctXml) {
-      if (mode != 0) {
-         _model->project.xmlConfig.setSetting(IDE_DEBUGINFO_XMLSETTING, mode);
-      }
-      else _model->project.xmlConfig.setSetting(IDE_DEBUGINFO_XMLSETTING, NULL);
+   if (mode != 0) {
+      _model->project.xmlConfig.setSetting(IDE_DEBUGINFO_XMLSETTING, mode);
    }
-   else {
-      if (mode != 0) {
-         _model->project.config.setSetting(IDE_DEBUGINFO_XMLSETTING, mode);
-      }
-      else _model->project.config.setSetting(IDE_DEBUGINFO_XMLSETTING, NULL);
-   }
+   else _model->project.xmlConfig.setSetting(IDE_DEBUGINFO_XMLSETTING, NULL);
 
    _model->project.changed = true;
 }
@@ -2211,14 +2093,7 @@ void IDEController::ProjectManager::setBoolSetting(const char* key, bool value)
    setSectionOption(key, value ? "-1" : "0");
 }
 
-void IDEController::ProjectManager :: reloadSourcesIni()
-{
-   for (_ELENA_::ConfigCategoryIterator it = _model->project.config.getCategoryIt(IDE_FILES_SECTION); !it.Eof(); it++) {
-      _sources.add(it.key());
-   }
-}
-
-void IDEController::ProjectManager :: reloadSourcesXml()
+void IDEController::ProjectManager :: reloadSources()
 {
    _ELENA_::Map<_ELENA_::ident_t, _ELENA_::_ConfigFile::Node> list;
    _model->project.xmlConfig.select(IDE_FILES_XMLSECTION, list);
@@ -2233,24 +2108,7 @@ void IDEController::ProjectManager :: reloadSourcesXml()
    }
 }
 
-void IDEController::ProjectManager :: reloadSources()
-{
-   _sources.clear();
-
-   if (_model->project.type == ctXml) {
-      reloadSourcesXml();
-   }
-   else reloadSourcesIni();
-}
-
-void IDEController::ProjectManager :: reloadForwardsIni()
-{
-   for (_ELENA_::ConfigCategoryIterator it = _model->project.config.getCategoryIt(IDE_FORWARDS_SECTION); !it.Eof(); it++) {
-      _forwards.add(it.key(), *it);
-   }
-}
-
-void IDEController::ProjectManager :: reloadForwardsXml()
+void IDEController::ProjectManager :: reloadForwards()
 {
    _ELENA_::Map<_ELENA_::ident_t, _ELENA_::_ConfigFile::Node> list;
    _model->project.xmlConfig.select(IDE_FORWARDS_XMLSECTION, list);
@@ -2261,16 +2119,6 @@ void IDEController::ProjectManager :: reloadForwardsXml()
 
       _forwards.add(key, content);
    }
-}
-
-void IDEController::ProjectManager :: reloadForwards()
-{
-   _forwards.clear();
-
-   if (_model->project.type == ctXml) {
-      reloadForwardsXml();
-   }
-   else reloadForwardsIni();
 }
 
 void IDEController::ProjectManager :: refresh()
@@ -2300,28 +2148,12 @@ void IDEController::ProjectManager :: refresh()
    reloadForwards();
 }
 
-bool IDEController::ProjectManager :: openIni(_ELENA_::path_t path)
+bool IDEController::ProjectManager :: open(_ELENA_::path_t path)
 {
-   _model->project.type = ctIni;
-   _model->project.config.clear();
-
-   if (!_model->project.config.load(path, _ELENA_::feUTF8))
-      return false;
-
-   rename(path);
-   refresh();
-
-   _model->project.changed = false;
-   return true;
-}
-
-bool IDEController::ProjectManager :: openXml(_ELENA_::path_t path)
-{
-   _model->project.type = ctXml;
    _model->project.xmlConfig.clear();
 
    if (!_model->project.xmlConfig.load(path, _ELENA_::feUTF8)) {
-      _model->project.type = ctIni; // to reset default
+      //_model->project.type = ctIni; // to reset default
 
       return false;
    }
@@ -2333,17 +2165,9 @@ bool IDEController::ProjectManager :: openXml(_ELENA_::path_t path)
    return true;
 }
 
-bool IDEController::ProjectManager::open(_ELENA_::path_t path)
-{
-   if (_ELENA_::Path::checkExtension(path, "xprj")) {
-      return openXml(path);
-   }
-   else return openIni(path);
-}
-
 void IDEController::ProjectManager::reset()
 {
-   _model->project.config.clear();
+   _model->project.xmlConfig.clear();
 
    _model->project.name.clear();
    _model->project.path.clear();
@@ -2360,12 +2184,7 @@ void IDEController::ProjectManager::save(_ELENA_::path_t extension)
    cfgPath.combine(_model->project.name.str());
    cfgPath.appendExtension(extension);
 
-   if (_model->project.type == ctXml) {
-      _model->project.xmlConfig.save(cfgPath.c_str(), _ELENA_::feUTF8);
-   }
-   else _model->project.config.save(cfgPath.c_str(), _ELENA_::feUTF8);
-
-   
+   _model->project.xmlConfig.save(cfgPath.c_str(), _ELENA_::feUTF8);
 
    _model->project.changed = false;
 }
@@ -2437,48 +2256,38 @@ bool IDEController::ProjectManager :: isIncluded(_ELENA_::path_t path)
 
 void IDEController::ProjectManager::includeSource(_ELENA_::path_t path)
 {
-   _ELENA_::Path relPath(path);
-   Paths::makeRelativePath(relPath, _model->project.path.c_str());
+   //_ELENA_::Path relPath(path);
+   //Paths::makeRelativePath(relPath, _model->project.path.c_str());
 
-   if (_model->project.type == ctXml) {
-   }
-   else _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clonePath(relPath.c_str()), (const char*)NULL);
+   //if (_model->project.type == ctXml) {
+   //}
+   //else _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clonePath(relPath.c_str()), (const char*)NULL);
 
-   reloadSources();
+   //reloadSources();
 
-   _model->project.changed = true;
+   //_model->project.changed = true;
 }
 
 void IDEController::ProjectManager::excludeSource(_ELENA_::path_t path)
 {
-   _ELENA_::Path relPath(path);
-   Paths::makeRelativePath(relPath, _model->project.path.c_str());
+   //_ELENA_::Path relPath(path);
+   //Paths::makeRelativePath(relPath, _model->project.path.c_str());
 
-   if (_model->project.type == ctXml) {
-   }
-   else _model->project.config.clear(IDE_FILES_SECTION, _ELENA_::IdentifierString(relPath));
+   //reloadSources();
 
-   reloadSources();
-
-   _model->project.changed = true;
+   //_model->project.changed = true;
 }
 
 void IDEController::ProjectManager::clearForwards()
 {
-   if (_model->project.type == ctXml) {
-      _model->project.xmlConfig.setSetting(IDE_FORWARDS_SECTION, DEFAULT_STR);
-   }
-   else _model->project.config.clear(IDE_FORWARDS_SECTION);
+   _model->project.xmlConfig.setSetting(IDE_FORWARDS_SECTION, DEFAULT_STR);
 
    _model->project.changed = true;
 }
 
 void IDEController::ProjectManager::addForward(const char* name, const char* reference)
 {
-   if (_model->project.type == ctXml) {
-      _model->project.xmlConfig.appendSetting(IDE_FORWARDS_ELEMENT, name, reference);
-   }
-   else _model->project.config.setSetting(IDE_FORWARDS_SECTION, name, reference);
+   _model->project.xmlConfig.appendSetting(IDE_FORWARDS_ELEMENT, name, reference);
 
    _model->project.changed = true;
 
