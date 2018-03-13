@@ -155,8 +155,8 @@ struct _CompilerScope
 //
 //   // cached bool values
 //   BranchingInfo branchingInfo;
-//
-//   virtual void raiseError(const char* message, SNode terminal) = 0;
+
+   virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal) = 0;
 //   virtual void raiseWarning(int level, const char* message, SNode terminal) = 0;
 //
 //   virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/) = 0;

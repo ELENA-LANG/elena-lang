@@ -18,17 +18,17 @@ namespace _ELENA_
 class _ImageLoader : public _JITLoader
 {
 protected:
-//   // addresses
-//   ReferenceMap _codeReferences, _dataReferences, _symbolReferences;
-   ReferenceMap /*_statReferences, */_exportReferences;
+   // addresses
+   ReferenceMap _codeReferences, _dataReferences, _symbolReferences;
+   ReferenceMap _statReferences, _exportReferences;
 //   ReferenceMap _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
-//   ReferenceMap _bssReferences;
-//
+   ReferenceMap _bssReferences;
+
 //   ReferenceMap _subjects;         // subjects
 //
 public:
-//   virtual void* resolveReference(ident_t reference, size_t mask);
-//
+   virtual void* resolveReference(ident_t reference, size_t mask);
+
 //   virtual ref_t resolveExternal(ident_t external);
 
    virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
@@ -51,9 +51,9 @@ public:
 //   }
 
    _ImageLoader()
-      : //_codeReferences((size_t)-1), _dataReferences((size_t)-1), _symbolReferences((size_t)-1),
-      //  _statReferences((size_t)-1), _constReferences((size_t)-1), _numberReferences((size_t)-1), _characterReferences((size_t)-1),
-      /*  _literalReferences((size_t)-1), _bssReferences((size_t)-1), */_exportReferences((size_t)-1)//, _wideReferences((size_t)-1),
+      : _codeReferences((size_t)-1), _dataReferences((size_t)-1), _symbolReferences((size_t)-1),
+        _statReferences((size_t)-1), //_constReferences((size_t)-1), _numberReferences((size_t)-1), _characterReferences((size_t)-1),
+      /*  _literalReferences((size_t)-1), */_bssReferences((size_t)-1), _exportReferences((size_t)-1)//, _wideReferences((size_t)-1),
       //  _subjects(0)
    {
    }

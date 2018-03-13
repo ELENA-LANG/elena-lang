@@ -116,11 +116,11 @@ public:
 //      irInvalid,
 //      irObsolete
 //   };
-//
-//   enum ObjectKind
-//   {
-//      okUnknown = 0,
-//
+
+   enum ObjectKind
+   {
+      okUnknown = 0,
+
 //      okObject,                       // param - class reference
 //      okSymbol,                       // param - reference
 //      okConstantSymbol,               // param - reference, extraparam - class reference
@@ -151,7 +151,7 @@ public:
 ////      okParamField,
 //      okSubject,                      // param - parameter offset
 //      okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
-//      okNil,
+      okNil,
 //      okSuper,
 //      okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
@@ -161,29 +161,29 @@ public:
 //
 //      okExternal,
 //      okInternal,
-//   };
-//
-//   struct ObjectInfo
-//   {
-//      ObjectKind kind;
+   };
+
+   struct ObjectInfo
+   {
+      ObjectKind kind;
 //      ref_t      param;
 //      ref_t      extraparam;
 //      ref_t      element;
-//
-//      ObjectInfo()
-//      {
-//         this->kind = okUnknown;
+
+      ObjectInfo()
+      {
+         this->kind = okUnknown;
 //         this->param = 0;
 //         this->extraparam = 0;
 //         this->element = 0;
-//      }
-//      ObjectInfo(ObjectKind kind)
-//      {
-//         this->kind = kind;
+      }
+      ObjectInfo(ObjectKind kind)
+      {
+         this->kind = kind;
 //         this->param = 0;
 //         this->extraparam = 0;
 //         this->element = 0;
-//      }
+      }
 ////      ObjectInfo(ObjectKind kind, ObjectInfo copy)
 ////      {
 ////         this->kind = kind;
@@ -233,8 +233,8 @@ public:
 //         this->extraparam = (ref_t)extraparam;
 //         this->element = element;
 //      }
-//   };
-//
+   };
+
 //   typedef MemoryMap<ident_t, Parameter>  LocalMap;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 //   typedef Map<ref_t, SubjectList*>       AutoExtensionMap;
@@ -271,8 +271,8 @@ private:
 
       SymbolMap savedPaths;
 
-//      ObjectInfo mapObject(SNode identifier);
-//
+      ObjectInfo mapObject(SNode identifier);
+
 //      virtual ref_t mapReference(ident_t reference, bool existing = false);
 //      virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/);
 //
@@ -415,16 +415,16 @@ private:
 //      {
 //         moduleScope->raiseWarning(level, message, terminal);
 //      }
-//
-//      ObjectInfo mapObject(SNode terminal)
-//      {
-//         ObjectInfo object = mapTerminal(terminal.identifier());
-//         if (object.kind == okUnknown) {
-//            return moduleScope->mapObject(terminal);
-//         }
-//         else return object;
-//      }
-//
+
+      ObjectInfo mapObject(SNode terminal)
+      {
+         ObjectInfo object = mapTerminal(terminal.identifier());
+         if (object.kind == okUnknown) {
+            return moduleScope->mapObject(terminal);
+         }
+         else return object;
+      }
+
 //      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
 //      {
 //         if (parent) {
@@ -432,15 +432,15 @@ private:
 //         }
 //         else return false;
 //      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier)
-//      {
-//         if (parent) {
-//            return parent->mapTerminal(identifier);
-//         }
-//         else return ObjectInfo();
-//      }
-//
+
+      virtual ObjectInfo mapTerminal(ident_t identifier)
+      {
+         /*if (parent) {
+            return parent->mapTerminal(identifier);
+         }
+         else*/ return ObjectInfo();
+      }
+
 //      virtual Scope* getScope(ScopeLevel level)
 //      {
 //         if (parent) {
@@ -465,11 +465,12 @@ private:
          this->sourcePath = sourcePath;
          this->moduleScope = moduleScope;
       }
-//      Scope(Scope* parent)
-//      {
+      Scope(Scope* parent)
+      {
 //         this->parent = parent;
-//         this->moduleScope = parent->moduleScope;
-//      }
+         this->moduleScope = parent->moduleScope;
+         this->sourcePath = parent->sourcePath;
+      }
    };
 
    // - SourceScope -
@@ -616,10 +617,10 @@ private:
 //
 //      MethodScope(ClassScope* parent);
 //   };
-//
-//   // - CodeScope -
-//   struct CodeScope : public Scope
-//   {
+
+   // - CodeScope -
+   struct CodeScope : public Scope
+   {
 //      // scope local variables
 //      LocalMap     locals;
 //      int          level;
@@ -691,12 +692,12 @@ private:
 //
 //         return scope ? scope->info.header.flags : 0;
 //      }
-//
-//      CodeScope(SourceScope* parent);
+
+      CodeScope(SourceScope* parent);
 //      CodeScope(MethodScope* parent);
 //      CodeScope(CodeScope* parent);
-//   };
-//
+   };
+
 //   // --- ResendScope ---
 //   struct ResendScope : public CodeScope
 //   {
@@ -880,13 +881,13 @@ private:
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
 //
 //   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
-//   void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
+   void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object/*, int mode*/);
 //   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
 //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 //
-//   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
-//
+   /*ObjectInfo*/void compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
+   /*ObjectInfo */void compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope/*, int mode*/);
+
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
@@ -907,7 +908,7 @@ private:
 //   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   /*ObjectInfo*/void compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
 //   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
 //
@@ -979,7 +980,7 @@ private:
 //   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
-   void compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNode node, SymbolScope& scope);
+   void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
 ////   void compileIncludeModule(SNode node, ModuleScope& scope);
 //   void compileForward(SNode node, ModuleScope& scope);

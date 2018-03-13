@@ -19,89 +19,89 @@ namespace _ELENA_
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
 
-//  // --- ELENA Standart message constants ---
-//   #define ACTION_MASK             0x01FFFFFFu
-////   #define SIGNATURE_FLAG          0x08000000u
-////
-////   #define MESSAGE_FLAG_MASK       0xE0000000u
-////   #define SEALED_MESSAGE          0x40000000u
-////   #define CONVERSION_MESSAGE      0x60000000u
-////   #define PROPSET_MESSAGE         0x20000000u
-//   #define PARAM_MASK              0x0000000Fu
-////   #define OPEN_ARG_COUNT          0x0C
-////   #define MAX_ARG_COUNT           0x0E
+  // --- ELENA Standart message constants ---
+   #define ACTION_MASK             0x01FFFFFFu
+//   #define SIGNATURE_FLAG          0x08000000u
+
+   #define MESSAGE_FLAG_MASK       0xE0000000u
+//   #define SEALED_MESSAGE          0x40000000u
+//   #define CONVERSION_MESSAGE      0x60000000u
+//   #define PROPSET_MESSAGE         0x20000000u
+   #define PARAM_MASK              0x0000000Fu
+//   #define OPEN_ARG_COUNT          0x0C
+//   #define MAX_ARG_COUNT           0x0E
+
+   #define PARAMX_MASK             0x000000000000FFFFu
+
+//   #define INVALID_REF             (ref_t)-1
 //
-//   #define PARAMX_MASK             0x000000000000FFFFu
+//   #define DISPATCH_MESSAGE_ID     0x0001
+//   #define NEWOBJECT_MESSAGE_ID    0x0002
+//   #define NEW_MESSAGE_ID          0x0003
+//   #define EQUAL_MESSAGE_ID        0x0004
+//   #define EVAL_MESSAGE_ID         0x0005
+//   #define GET_MESSAGE_ID          0x0006
+//   #define SET_MESSAGE_ID          0x0007
+//   #define LESS_MESSAGE_ID         0x0008
+//   #define IF_MESSAGE_ID           0x0009
+//   #define AND_MESSAGE_ID          0x000A
+//   #define OR_MESSAGE_ID           0x000B
+//   #define XOR_MESSAGE_ID          0x000C
+//   #define IFNOT_MESSAGE_ID        0x000D
+//   #define NOTEQUAL_MESSAGE_ID     0x000E
+//   #define NOTLESS_MESSAGE_ID      0x000F
+//   #define NOTGREATER_MESSAGE_ID   0x0010
+//   #define GREATER_MESSAGE_ID      0x0011
+//   #define ADD_MESSAGE_ID          0x0012
+//   #define SUB_MESSAGE_ID          0x0013
+//   #define MUL_MESSAGE_ID          0x0014
+//   #define DIV_MESSAGE_ID          0x0015
+//   #define REFER_MESSAGE_ID        0x0016
+//   #define APPEND_MESSAGE_ID       0x0017
+//   #define REDUCE_MESSAGE_ID       0x0018
+//   #define SET_REFER_MESSAGE_ID    0x0019
+//   #define READ_MESSAGE_ID         0x001A
+//   #define WRITE_MESSAGE_ID        0x001B
+//   #define SHIFT_MESSAGE_ID        0x001C
+//   #define VALUES_MESSAGE_ID       0x001D             // virtual method returning the list of enum values
+//   #define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
+//   #define PREDEFINED_MESSAGE_ID   0x001E
 //
-////   #define INVALID_REF             (ref_t)-1
-////
-////   #define DISPATCH_MESSAGE_ID     0x0001
-////   #define NEWOBJECT_MESSAGE_ID    0x0002
-////   #define NEW_MESSAGE_ID          0x0003
-////   #define EQUAL_MESSAGE_ID        0x0004
-////   #define EVAL_MESSAGE_ID         0x0005
-////   #define GET_MESSAGE_ID          0x0006
-////   #define SET_MESSAGE_ID          0x0007
-////   #define LESS_MESSAGE_ID         0x0008
-////   #define IF_MESSAGE_ID           0x0009
-////   #define AND_MESSAGE_ID          0x000A
-////   #define OR_MESSAGE_ID           0x000B
-////   #define XOR_MESSAGE_ID          0x000C
-////   #define IFNOT_MESSAGE_ID        0x000D
-////   #define NOTEQUAL_MESSAGE_ID     0x000E
-////   #define NOTLESS_MESSAGE_ID      0x000F
-////   #define NOTGREATER_MESSAGE_ID   0x0010
-////   #define GREATER_MESSAGE_ID      0x0011
-////   #define ADD_MESSAGE_ID          0x0012
-////   #define SUB_MESSAGE_ID          0x0013
-////   #define MUL_MESSAGE_ID          0x0014
-////   #define DIV_MESSAGE_ID          0x0015
-////   #define REFER_MESSAGE_ID        0x0016
-////   #define APPEND_MESSAGE_ID       0x0017
-////   #define REDUCE_MESSAGE_ID       0x0018
-////   #define SET_REFER_MESSAGE_ID    0x0019
-////   #define READ_MESSAGE_ID         0x001A
-////   #define WRITE_MESSAGE_ID        0x001B
-////   #define SHIFT_MESSAGE_ID        0x001C
-////   #define VALUES_MESSAGE_ID       0x001D             // virtual method returning the list of enum values
-////   #define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
-////   #define PREDEFINED_MESSAGE_ID   0x001E
-////
-////   // virtual operator
-////   #define SETNIL_REFER_MESSAGE_ID 0x1019
-////
-////   // ---- ELENAVM command masks ---
-////   #define VM_MASK                 0x0200             // vm command mask
-////   #define LITERAL_ARG_MASK        0x0400             // indicates that the command has a literal argument
-////
-////   // ---- ELENAVM commands ---
-////   #define START_VM_MESSAGE_ID     0x02F1             // restart VM
-////   #define MAP_VM_MESSAGE_ID       0x06F2             // map forward reference
-////   #define USE_VM_MESSAGE_ID       0x06F3             // set current package
-////   #define LOAD_VM_MESSAGE_ID      0x06F4             // load template
-////   #define OPEN_VM_CONSOLE         0x02F5             // open console
-////
-////   // ---- ELENAVM interpreter commands ---
-////   #define CALL_TAPE_MESSAGE_ID    0x05E0             // call symbol
-////   #define ARG_TAPE_MESSAGE_ID     0x05E1             // define the second parameter
-////   #define PUSH_VAR_MESSAGE_ID     0x01E2             // copy the data
-////   #define ASSIGN_VAR_MESSAGE_ID   0x01E3             // assign the data
-////   #define PUSH_TAPE_MESSAGE_ID    0x05E4             // push constant
-////   #define PUSHS_TAPE_MESSAGE_ID   0x05E5             // push literal constant
-////   #define PUSHN_TAPE_MESSAGE_ID   0x05E6             // push integer constant
-////   #define PUSHR_TAPE_MESSAGE_ID   0x05E7             // push floating numeric constant
-////   #define PUSHL_TAPE_MESSAGE_ID   0x05E8             // push long integer constant
-////   #define PUSHM_TAPE_MESSAGE_ID   0x05E9             // push message reference
-////   #define PUSHG_TAPE_MESSAGE_ID   0x05EA             // push the subject reference
-////   #define POP_TAPE_MESSAGE_ID     0x01EB             // free the stack content
-////   #define SEND_TAPE_MESSAGE_ID    0x05EC             // send the message
-////   #define REVERSE_TAPE_MESSAGE_ID 0x01ED             // reverse the stack
-////   #define PUSHE_TAPE_MESSAGE_ID   0x05EE             // push message reference
-////
-////   #define NEW_TAPE_MESSAGE_ID     0x01F0             // create a dynamic object
-////
-////   #define VA_ALIGNMENT       0x08
-////   #define VA_ALIGNMENT_POWER 0x03
+//   // virtual operator
+//   #define SETNIL_REFER_MESSAGE_ID 0x1019
+//
+//   // ---- ELENAVM command masks ---
+//   #define VM_MASK                 0x0200             // vm command mask
+//   #define LITERAL_ARG_MASK        0x0400             // indicates that the command has a literal argument
+//
+//   // ---- ELENAVM commands ---
+//   #define START_VM_MESSAGE_ID     0x02F1             // restart VM
+//   #define MAP_VM_MESSAGE_ID       0x06F2             // map forward reference
+//   #define USE_VM_MESSAGE_ID       0x06F3             // set current package
+//   #define LOAD_VM_MESSAGE_ID      0x06F4             // load template
+//   #define OPEN_VM_CONSOLE         0x02F5             // open console
+//
+//   // ---- ELENAVM interpreter commands ---
+//   #define CALL_TAPE_MESSAGE_ID    0x05E0             // call symbol
+//   #define ARG_TAPE_MESSAGE_ID     0x05E1             // define the second parameter
+//   #define PUSH_VAR_MESSAGE_ID     0x01E2             // copy the data
+//   #define ASSIGN_VAR_MESSAGE_ID   0x01E3             // assign the data
+//   #define PUSH_TAPE_MESSAGE_ID    0x05E4             // push constant
+//   #define PUSHS_TAPE_MESSAGE_ID   0x05E5             // push literal constant
+//   #define PUSHN_TAPE_MESSAGE_ID   0x05E6             // push integer constant
+//   #define PUSHR_TAPE_MESSAGE_ID   0x05E7             // push floating numeric constant
+//   #define PUSHL_TAPE_MESSAGE_ID   0x05E8             // push long integer constant
+//   #define PUSHM_TAPE_MESSAGE_ID   0x05E9             // push message reference
+//   #define PUSHG_TAPE_MESSAGE_ID   0x05EA             // push the subject reference
+//   #define POP_TAPE_MESSAGE_ID     0x01EB             // free the stack content
+//   #define SEND_TAPE_MESSAGE_ID    0x05EC             // send the message
+//   #define REVERSE_TAPE_MESSAGE_ID 0x01ED             // reverse the stack
+//   #define PUSHE_TAPE_MESSAGE_ID   0x05EE             // push message reference
+//
+//   #define NEW_TAPE_MESSAGE_ID     0x01F0             // create a dynamic object
+
+   #define VA_ALIGNMENT       0x08
+   #define VA_ALIGNMENT_POWER 0x03
 
   // --- ELENA Reference masks ---
    enum ReferenceType
@@ -109,7 +109,7 @@ namespace _ELENA_
       // masks
       mskAnyRef              = 0xFF000000u,
       mskImageMask           = 0xE0000000u,
-//      mskTypeMask            = 0x0F000000u,
+      mskTypeMask            = 0x0F000000u,
 
       mskCodeRef             = 0x00000000u,
       mskRelCodeRef          = 0x20000000u,
@@ -122,13 +122,13 @@ namespace _ELENA_
 
       mskRelImportRef        = 0xEF000000u,
 
-//      mskNativeCodeRef       = 0x18000000u,
-//      mskNativeRelCodeRef    = 0x38000000u,
-//      mskNativeRDataRef      = 0x48000000u,
-//      mskNativeDataRef       = 0xA8000000u,
-//      mskPreloadCodeRef      = 0x1C000000u,
-//      mskPreloadRelCodeRef   = 0x3C000000u,
-//      mskPreloadDataRef      = 0xAC000000u,
+      mskNativeCodeRef       = 0x18000000u,
+      mskNativeRelCodeRef    = 0x38000000u,
+      mskNativeRDataRef      = 0x48000000u,
+      mskNativeDataRef       = 0xA8000000u,
+      mskPreloadCodeRef      = 0x1C000000u,
+      mskPreloadRelCodeRef   = 0x3C000000u,
+      mskPreloadDataRef      = 0xAC000000u,
 //      mskNativeVariable      = 0xAD000000u,
 //      mskConstVariable       = 0x4D000000u,
       mskLockVariable        = 0xAE000000u,   // HOTFIX : used to fool trylock opcode, adding virtual offset
@@ -136,7 +136,7 @@ namespace _ELENA_
 //      mskInternalRef         = 0x13000000u,   // internal code
 //      mskInternalRelRef      = 0x33000000u,   // internal code
       mskSymbolRef           = 0x12000000u,   // symbol code
-//      mskSymbolRelRef        = 0x32000000u,   // symbol code
+      mskSymbolRelRef        = 0x32000000u,   // symbol code
 //      mskVMTRef              = 0x41000000u,   // class VMT
 //      mskClassRef            = 0x11000000u,   // class code
 //      mskClassRelRef         = 0x31000000u,   // class relative code
@@ -159,7 +159,7 @@ namespace _ELENA_
 //      mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
 //      mskSignature           = 0x09000000u,   // message signature constant
 //      mskExtMessage          = 0x0B000000u,   // external message verb constant
-//      mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
+      mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
 //      mskConstArray          = 0x0D000000u,   // constant array
 
       mskMessageTableRef     = 0x60FFFFFFu    // message table reference, a special case of debug reference
@@ -320,13 +320,13 @@ namespace _ELENA_
 ////   const int elDebugDPTR           = 0x000F0000;
 //   const int elEnumList            = 0x00100000;
 
-//  // --- ELENA Linker / ELENA VM constants ---
-//   const int lnGCMGSize            = 0x00000001;
-//   const int lnGCYGSize            = 0x00000002;
-//   const int lnThreadCount         = 0x00000003;
-//   const int lnObjectSize          = 0x00000004;
-//
-//   const int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
+  // --- ELENA Linker / ELENA VM constants ---
+   const int lnGCMGSize            = 0x00000001;
+   const int lnGCYGSize            = 0x00000002;
+   const int lnThreadCount         = 0x00000003;
+   const int lnObjectSize          = 0x00000004;
+
+   const int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
 
   // ELENA run-time exceptions
    #define ELENA_ERR_OUTOF_MEMORY  0x190
@@ -348,9 +348,9 @@ namespace _ELENA_
    #define MODULE_SIGNATURE         "ELENA.9.0"      // the module version
    #define DEBUG_MODULE_SIGNATURE   "ED!2"
 
-//  // --- ELENA core module names ---
-//   #define CORE_ALIAS                "core"          // Core functionality
-//  
+  // --- ELENA core module names ---
+   #define CORE_ALIAS                "core"          // Core functionality
+  
 //  // --- ELENA verb messages ---
 //   #define DISPATCH_MESSAGE         "dispatch"
 //   #define NEW_MESSAGE              "new"
@@ -416,7 +416,7 @@ namespace _ELENA_
 
 //   #define SUPER_VAR               "$super"           // the predecessor class
 //   #define SUBJECT_VAR             "$subject"         // the current message
-//   #define NIL_VAR                 "$nil"             // the nil symbol
+   #define NIL_VAR                 "$nil"             // the nil pseudo symbol - representing the null value
 //   #define RETVAL_VAR              "$$ret"            // the closure returning value
 //   #define OWNER_VAR               "$$owner"          // the nested class / closure owner
 //   #define PARENT_VAR              "$$parent"         // the closure parent
@@ -447,16 +447,16 @@ namespace _ELENA_
 //   #define STANDARD_MODULE_LEN      6
 //   #define INTERNAL_MASK_LEN        12
 //   #define COREAPI_MASK_LEN         5 
-//
-//   #define CORE_MODULE              "coreapi"
+
+   #define CORE_MODULE              "coreapi"
 //   #define STANDARD_MODULE          "system"                         // the standard module name
 //   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
 //                                                                     // will be treated like internal core api one
 //   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
-//
-//   #define NATIVE_MODULE            "$native"
-//
+
+   #define NATIVE_MODULE            "$native"
+
 ////   #define MESSAGE_TABLE_MODULE     "$messages"
 ////   #define MESSAGE_TABLE            "$messages'$table"
 ////
@@ -467,22 +467,22 @@ namespace _ELENA_
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
    #define NAMESPACE_KEY            "$elena'@rootnamespace"          // The project namespace
 
-////   // predefined system forwards
-////   #define SUPER_FORWARD            "'$super"                        // the common class predecessor
-////   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
-////   #define INT_FORWARD              "'$int"
-////   #define LONG_FORWARD             "'$long"
-////   #define REAL_FORWARD             "'$real"
-////   #define STR_FORWARD              "'$literal"
-////   #define WIDESTR_FORWARD          "'$wideliteral"
-////   #define CHAR_FORWARD             "'$char"
-////   #define MESSAGE_FORWARD          "'$message"
-////   #define EXT_MESSAGE_FORWARD      "'$ext_message"
-////   #define SIGNATURE_FORWARD        "'$signature"
-////   #define ARRAY_FORWARD            "'$array"
-////   #define BOOL_FORWARD             "'$bool"
-////
-////   #define STARTUP_CLASS            "'startUp"
+//   // predefined system forwards
+//   #define SUPER_FORWARD            "'$super"                        // the common class predecessor
+//   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
+//   #define INT_FORWARD              "'$int"
+//   #define LONG_FORWARD             "'$long"
+//   #define REAL_FORWARD             "'$real"
+//   #define STR_FORWARD              "'$literal"
+//   #define WIDESTR_FORWARD          "'$wideliteral"
+//   #define CHAR_FORWARD             "'$char"
+//   #define MESSAGE_FORWARD          "'$message"
+//   #define EXT_MESSAGE_FORWARD      "'$ext_message"
+//   #define SIGNATURE_FORWARD        "'$signature"
+//   #define ARRAY_FORWARD            "'$array"
+//   #define BOOL_FORWARD             "'$bool"
+
+   #define STARTUP_SYMBOL             "'startUp"
 
 } // _ELENA_
 

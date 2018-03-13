@@ -34,7 +34,7 @@ enum LexicalType
    // scopes
    lxRoot            = 0x00001,
    lxIdle            = 0x00002,
-//   lxObject          = 0x00003,
+   lxObject          = 0x00003,
 //   lxAttributeDecl   = 0x00004,
 //   lxAngleOperator   = 0x00005,
 //   lxClass           = 0x0000E,
@@ -74,7 +74,7 @@ enum LexicalType
 //   lxEOF             = 0x18003, // indicating closing code bracket
 //   lxLiteral         = 0x18004,
    lxIdentifier      = 0x18005,
-//   lxPrivate         = 0x18006,
+   lxPrivate         = 0x18006,
 //   lxReference       = 0x18007,
 //   lxInteger         = 0x18008,
 //   lxHexInteger      = 0x18009,
@@ -108,7 +108,7 @@ enum LexicalType
 //   lxExtMessageConstant = 0x0A114, // arg -reference
 //   lxSignatureConstant  = 0x0A115, // arg - reference
 //   lxStaticConstField   = 0x08116, // arg - reference
-//   lxNil                = 0x0A117,
+   lxNil                = 0x0A117,
 //   lxCurrent            = 0x0A118, // arg -offset
 //   lxResult             = 0x0A119, // arg -offset
 //   lxResultField        = 0x0A11A, // arg -offset
@@ -133,7 +133,7 @@ enum LexicalType
 //   lxBranching       = 0x0C00F,   // branch expression
 //   lxSwitching       = 0x0C010,
 //   lxLooping         = 0x0C011,
-//   lxExpression      = 0x0C012,
+   lxExpression      = 0x0C012,
 //   lxThrowing        = 0x0C013,
 //   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
 //   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference

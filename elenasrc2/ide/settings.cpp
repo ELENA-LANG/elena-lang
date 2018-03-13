@@ -144,15 +144,15 @@ void Settings :: load(Model* model, _ELENA_::XmlConfigFile& config)
    loadSetting(config.getSetting(AUTO_PROJECT_LOAD_SETTING), model->autoProjectLoad);
    //loadSetting(config.getSetting(SETTINGS_SECTION, DEBUG_TAPE_SETTING), model->debugTape);
 
-   //loadSetting(config.getSetting(SETTINGS_SECTION, TAB_SIZE_SETTING), model->tabSize, 1, 20, 4);
-   //loadSetting(config.getSetting(SETTINGS_SECTION, ENCODING_SETTING), model->defaultEncoding);
+   loadSetting(config.getSetting(TAB_SIZE_SETTING), model->tabSize, 1, 20, 4);
+   loadSetting(config.getSetting(ENCODING_SETTING), model->defaultEncoding);
 
-   //loadSetting(config.getSetting(SETTINGS_SECTION, LINE_NUMBERS_SETTING), model->lineNumberVisible);
-   //loadSetting(config.getSetting(SETTINGS_SECTION, HIGHLIGHT_SETTING), model->highlightSyntax);
-   //loadSetting(config.getSetting(SETTINGS_SECTION, BRACKETS_SETTING), model->highlightBrackets);
-   //loadSetting(config.getSetting(SETTINGS_SECTION, TABSCORE_SETTING), model->tabWithAboveScore);
-   //loadSetting(config.getSetting(SETTINGS_SECTION, SCHEME_SETTING), model->scheme, 0, 1, 0);
-   //loadSetting(config.getSetting(SETTINGS_SECTION, FONTSIZE_SETTING), model->font_size, 8, 24, 10);
+   loadSetting(config.getSetting(LINE_NUMBERS_SETTING), model->lineNumberVisible);
+   loadSetting(config.getSetting(HIGHLIGHT_SETTING), model->highlightSyntax);
+   loadSetting(config.getSetting(BRACKETS_SETTING), model->highlightBrackets);
+   loadSetting(config.getSetting(TABSCORE_SETTING), model->tabWithAboveScore);
+   loadSetting(config.getSetting(SCHEME_SETTING), model->scheme, 0, 1, 0);
+   loadSetting(config.getSetting(FONTSIZE_SETTING), model->font_size, 8, 24, 10);
 
    //loadSection(config.getCategoryIt(SRCPATH_SECTION), model->packageRoots);
    //loadSection(config.getCategoryIt(LIBPATH_SECTION), model->libraryRoots);
@@ -176,15 +176,15 @@ void Settings :: save(Model* model, _ELENA_::XmlConfigFile& config)
    saveSetting(config, AUTO_RECOMPILE_SETTING, model->autoRecompile, true);
    //saveSetting(config, SETTINGS_SECTION, DEBUG_TAPE_SETTING, model->debugTape, false);
 
-   //saveSetting(config, SETTINGS_SECTION, LINE_NUMBERS_SETTING, model->lineNumberVisible, true);
-   //saveSetting(config, SETTINGS_SECTION, HIGHLIGHT_SETTING, model->highlightSyntax, true);
-   //saveSetting(config, SETTINGS_SECTION, BRACKETS_SETTING, model->highlightBrackets, true);
-   //saveSetting(config, SETTINGS_SECTION, TABSCORE_SETTING, model->tabWithAboveScore, true);
-   //saveSetting(config, SETTINGS_SECTION, SCHEME_SETTING, model->scheme, 0);
-   //saveSetting(config, SETTINGS_SECTION, FONTSIZE_SETTING, model->font_size, 10);
+   saveSetting(config, LINE_NUMBERS_SETTING, model->lineNumberVisible, true);
+   saveSetting(config, HIGHLIGHT_SETTING, model->highlightSyntax, true);
+   saveSetting(config, BRACKETS_SETTING, model->highlightBrackets, true);
+   saveSetting(config, TABSCORE_SETTING, model->tabWithAboveScore, true);
+   saveSetting(config, SCHEME_SETTING, model->scheme, 0);
+   saveSetting(config, FONTSIZE_SETTING, model->font_size, 10);
 
-   //saveSetting(config, SETTINGS_SECTION, TAB_SIZE_SETTING, model->tabSize, 4);
-   //saveSetting(config, SETTINGS_SECTION, ENCODING_SETTING, model->defaultEncoding, 0);
+   saveSetting(config, TAB_SIZE_SETTING, model->tabSize, 4);
+   saveSetting(config, ENCODING_SETTING, model->defaultEncoding, 0);
 
    //saveSection(config, SRCPATH_SECTION, model->packageRoots);
    //saveSection(config, LIBPATH_SECTION, model->libraryRoots);

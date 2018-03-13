@@ -25,8 +25,8 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    : Image(true)
 {
    _project = project;
-//   _objectHeaderSize = compiler->getObjectHeaderSize();
-//
+   _objectHeaderSize = compiler->getObjectHeaderSize();
+
 //  // create message table module
 //   _Module* messages = _project->createModule(MESSAGE_TABLE_MODULE);
 //   messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
@@ -56,10 +56,10 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    linker.prepareCompiler(/*verbs*/);
 
   // create the image
-   //ident_t startUpClass = project->resolveForward(STARTUP_CLASS);
-   _entryPoint = /*emptystr(startUpClass) ? */LOADER_NOTLOADED /*: linker.resolve(startUpClass, mskSymbolRef, true)*/;
+   ident_t startUpClass = project->resolveForward(STARTUP_SYMBOL);
+   _entryPoint = emptystr(startUpClass) ? LOADER_NOTLOADED : linker.resolve(startUpClass, mskSymbolRef, true);
    if(_entryPoint == LOADER_NOTLOADED)
-      throw /*JITUnresolvedException(STARTUP_CLASS)*/_Exception(); // !! temporal
+      throw JITUnresolvedException(STARTUP_SYMBOL);
 
   //// inject initializing code into the entry point
   // _entryPoint = linker.resolveEntry(_entryPoint);
@@ -108,42 +108,42 @@ _Memory* ExecutableImage :: getTargetSection(ref_t mask)
    }
 }
 
-//SectionInfo ExecutableImage :: getSectionInfo(ident_t reference, size_t mask, bool silentMode)
-//{
-//   SectionInfo sectionInfo;
-//
-//   ref_t referenceID = 0;
-//   sectionInfo.module = _project->resolveModule(reference, referenceID);
-//   if (sectionInfo.module == NULL || referenceID == 0) {
-//      if (!silentMode)
-//         throw JITUnresolvedException(reference);
-//   }
-//   else sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
-//
-//   if (sectionInfo.section == NULL && !silentMode) {
-//      throw JITUnresolvedException(reference);
-//   }
-//
-//   return sectionInfo;
-//}
-//
-//SectionInfo ExecutableImage :: getCoreSectionInfo(ref_t reference, size_t mask)
-//{
-//   SectionInfo sectionInfo;
-//
-//   sectionInfo.module = _project->resolveCore(reference, true);
-//   if (sectionInfo.module == NULL) {
-//      throw InternalError(errCommandSetAbsent);
-//   }
-//   else sectionInfo.section = sectionInfo.module->mapSection(reference | mask, true);
-//
-//   if (sectionInfo.section == NULL) {
-//      throw InternalError(errCommandSetAbsent);
-//   }
-//
-//   return sectionInfo;
-//}
-//
+SectionInfo ExecutableImage :: getSectionInfo(ident_t reference, size_t mask, bool silentMode)
+{
+   SectionInfo sectionInfo;
+
+   ref_t referenceID = 0;
+   sectionInfo.module = _project->resolveModule(reference, referenceID);
+   if (sectionInfo.module == NULL || referenceID == 0) {
+      if (!silentMode)
+         throw JITUnresolvedException(reference);
+   }
+   else sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
+
+   if (sectionInfo.section == NULL && !silentMode) {
+      throw JITUnresolvedException(reference);
+   }
+
+   return sectionInfo;
+}
+
+SectionInfo ExecutableImage :: getCoreSectionInfo(ref_t reference, size_t mask)
+{
+   SectionInfo sectionInfo;
+
+   sectionInfo.module = _project->resolveCore(reference, true);
+   if (sectionInfo.module == NULL) {
+      throw InternalError(errCommandSetAbsent);
+   }
+   else sectionInfo.section = sectionInfo.module->mapSection(reference | mask, true);
+
+   if (sectionInfo.section == NULL) {
+      throw InternalError(errCommandSetAbsent);
+   }
+
+   return sectionInfo;
+}
+
 //ClassSectionInfo ExecutableImage :: getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode)
 //{
 //   ClassSectionInfo sectionInfo;
@@ -160,23 +160,23 @@ _Memory* ExecutableImage :: getTargetSection(ref_t mask)
 //   }
 //   return sectionInfo;
 //}
-//
-//size_t ExecutableImage :: getLinkerConstant(int id)
-//{
-//   switch (id) {
-//      case lnGCMGSize:
-//         return _project->IntSetting(opGCMGSize);
-//      case lnGCYGSize:
-//         return _project->IntSetting(opGCYGSize);
-//      case lnThreadCount:
-//         return _project->IntSetting(opThreadMax);
-//      case lnObjectSize:
-//         return _objectHeaderSize;
-//      default:
-//         return 0;
-//   }
-//}
-//
+
+size_t ExecutableImage :: getLinkerConstant(int id)
+{
+   switch (id) {
+      case lnGCMGSize:
+         return _project->IntSetting(opGCMGSize);
+      case lnGCYGSize:
+         return _project->IntSetting(opGCYGSize);
+      case lnThreadCount:
+         return _project->IntSetting(opThreadMax);
+      case lnObjectSize:
+         return _objectHeaderSize;
+      default:
+         return 0;
+   }
+}
+
 //ident_t ExecutableImage::getLiteralClass()
 //{
 //   return _literal;
@@ -226,9 +226,9 @@ _Memory* ExecutableImage :: getTargetSection(ref_t mask)
 //{
 //   return _project->StrSetting(opNamespace);
 //}
-//
-//ident_t ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
-//{
+
+ident_t ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
+{
 //   if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef) {
 //      return module->resolveConstant(reference);
 //   }
@@ -237,33 +237,33 @@ _Memory* ExecutableImage :: getTargetSection(ref_t mask)
 //      return module->resolveSubject(reference);
 //   }
 //   else {
-//      ident_t referenceName = module->resolveReference(reference);
-//      while (isWeakReference(referenceName)) {
-//         ident_t resolvedName = _project->resolveForward(referenceName);
-//
-//         if (!emptystr(resolvedName))  {
-//            referenceName = resolvedName;
-//         }
-//         else if (isTemplateWeakReference(referenceName)) {
-//            // COMPILER MAGIC : try to find a template implementation
-//            ref_t resolvedRef = 0;
-//            _Module* refModule = _project->resolveWeakModule(referenceName, resolvedRef, true);
-//            if (refModule != nullptr) {
-//               _project->addForward(referenceName, refModule->resolveReference(resolvedRef));
-//            }
-//
-//            resolvedName = _project->resolveForward(referenceName);
-//            if (!emptystr(resolvedName)) {
-//               referenceName = resolvedName;
-//            }
-//            else throw JITUnresolvedException(referenceName);
-//         }
-//         else throw JITUnresolvedException(referenceName);
-//      }
-//      return referenceName;
+      ident_t referenceName = module->resolveReference(reference);
+      while (isWeakReference(referenceName)) {
+         ident_t resolvedName = _project->resolveForward(referenceName);
+
+         if (!emptystr(resolvedName))  {
+            referenceName = resolvedName;
+         }
+         //else if (isTemplateWeakReference(referenceName)) {
+         //   // COMPILER MAGIC : try to find a template implementation
+         //   ref_t resolvedRef = 0;
+         //   _Module* refModule = _project->resolveWeakModule(referenceName, resolvedRef, true);
+         //   if (refModule != nullptr) {
+         //      _project->addForward(referenceName, refModule->resolveReference(resolvedRef));
+         //   }
+
+         //   resolvedName = _project->resolveForward(referenceName);
+         //   if (!emptystr(resolvedName)) {
+         //      referenceName = resolvedName;
+         //   }
+         //   else throw JITUnresolvedException(referenceName);
+         //}
+         else throw JITUnresolvedException(referenceName);
+      }
+      return referenceName;
 //   }
-//}
-//
+}
+
 //// --- VirtualMachineClientImage ---
 //
 //inline void writeTapeRecord(MemoryWriter& tape, size_t command)

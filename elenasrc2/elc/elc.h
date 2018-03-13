@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0002
+#define ELC_REVISION_NUMBER             0x0003
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -28,31 +28,31 @@
 
 #endif
 
-//// --- ELC command-line parameters ---
+// --- ELC command-line parameters ---
 //#define ELC_PRM_CONFIG              'c'
 //#define ELC_PRM_DEBUGINFO           'd'
 ////#define ELC_PRM_SUBJECTINFO         'ds'
-//#define ELC_PRM_OUTPUT_PATH         'o'
-//#define ELC_PRM_LIB_PATH            'p'
+#define ELC_PRM_OUTPUT_PATH         'o'
+#define ELC_PRM_LIB_PATH            'p'
 //#define ELC_PRM_TARGET              't'
-//#define ELC_PRM_WARNING             'w'
-//#define ELC_W_WEAKUNRESOLVED        "wwun"
-//#define ELC_W_LEVEL1                "w1"
-//#define ELC_W_LEVEL2                "w2"
-//#define ELC_W_LEVEL3                "w3"
-//#define ELC_W_OFF                   "w-"
-//#define ELC_PRM_EXTRA               'x'
-//#define ELC_PRM_TABSIZE             "xtab"
-//#define ELC_PRM_PROJECTPATH         "xpath"
-//#define ELC_PRM_CODEPAGE            "xcp"
-//#define ELC_PRM_OPTOFF              "xo-"
-//#define ELC_PRM_OPT1OFF             "xo1-"
+#define ELC_PRM_WARNING             'w'
+#define ELC_W_WEAKUNRESOLVED        "wwun"
+#define ELC_W_LEVEL1                "w1"
+#define ELC_W_LEVEL2                "w2"
+#define ELC_W_LEVEL3                "w3"
+#define ELC_W_OFF                   "w-"
+#define ELC_PRM_EXTRA               'x'
+#define ELC_PRM_TABSIZE             "xtab"
+#define ELC_PRM_PROJECTPATH         "xpath"
+#define ELC_PRM_CODEPAGE            "xcp"
+#define ELC_PRM_OPTOFF              "xo-"
+#define ELC_PRM_OPT1OFF             "xo1-"
 
 // --- ELC config categories ---
-#define SOURCE_CATEGORY             "files/*"
-//#define FORWARD_CATEGORY            "forwards/*"
-//#define PRIMITIVE_CATEGORY          "primitives/*"
-#define TEMPLATE_CATEGORY           "templates/*"
+#define SOURCE_CATEGORY             "configuration/files/*"
+#define FORWARD_CATEGORY            "configuration/forwards/*"
+#define PRIMITIVE_CATEGORY          "configuration/primitives/*"
+#define TEMPLATE_CATEGORY           "configuration/templates/*"
 //#define WINAPI_CATEGORY             "winapi/*"
 //#define EXTERNALS_CATEGORY          "externals/*"
 #define REFERENCE_CATEGORY          "references/*"
@@ -62,7 +62,7 @@
 #define ELC_DEBUGINFO               "project/debuginfo"
 //#define ELC_SUBJECTINFO             "project/subjectinfo"
 #define ELC_CLASSSYMBOLLOAD         "project/classsymbolload"
-#define ELC_TARGET                  "project/executable"
+#define ELC_TARGET                  "configuration/project/executable"
 #define ELC_MG_SIZE                 "linker/mgsize"
 #define ELC_HEAP_COMMIT             "linker/heapcommit"
 #define ELC_HEAP_RESERV             "linker/heapresrv"
@@ -70,13 +70,13 @@
 #define ELC_LIB_PATH                "project/libpath"
 #define ELC_SYSTEM_THREADMAX        "system/maxthread"
 #define ELC_OUTPUT_PATH             "project/output"
-#define ELC_NAMESPACE               "project/namespace"
+#define ELC_NAMESPACE               "configuration/project/namespace"
 #define ELC_STACK_COMMIT            "linker/stackcommit"
 #define ELC_STACK_RESERV            "linker/stackresrv"
 ////#define ELC_PROJECT_START           "start"
-#define ELC_PROJECT_TEMPLATE        "project/template"
-#define ELC_PLATFORMTYPE            "system/platform"
-//#define ELC_WARNON_WEAKUNRESOLVED   "project/warn/weakunresolved"
+#define ELC_PROJECT_TEMPLATE        "configuration/project/template"
+#define ELC_PLATFORMTYPE            "configuration/system/platform"
+#define ELC_WARNON_WEAKUNRESOLVED   "project/warn/weakunresolved"
 ////#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "linker/ygsize"
 #define ELC_L0                      "compiler/l0"                // optimization: byte code optimization

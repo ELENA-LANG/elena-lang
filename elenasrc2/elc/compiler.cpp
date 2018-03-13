@@ -50,8 +50,8 @@ using namespace _ELENA_;
 //#define HINT_INT64EXPECTED    0x00000004
 //#define HINT_REAL64EXPECTED   0x00000002
 //#define HINT_INQUIRY_MODE     0x00000001
-//
-//typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
+
+typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 //typedef ClassInfo::Attribute Attribute;
 //
 //// --- Auxiliary routines ---
@@ -318,26 +318,26 @@ pos_t Compiler::ModuleScope :: saveSourcePath(ByteCodeWriter& writer, ident_t so
 //{
 //   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
 //}
-//
-//ObjectInfo Compiler::ModuleScope :: mapObject(SNode identifier)
-//{
-//   ident_t terminal = identifier.identifier();
-//
+
+ObjectInfo Compiler::ModuleScope :: mapObject(SNode identifier)
+{
+   ident_t terminal = identifier.identifier();
+
 //   if (identifier==lxReference) {
 //      return mapReferenceInfo(terminal, false);
 //   }
-//   else if (identifier==lxPrivate) {
-//      if (terminal.compare(NIL_VAR)) {
-//         return ObjectInfo(okNil);
-//      }
-//      else return defineObjectInfo(mapTerminal(identifier, true), true);
-//   }
+   /*else */if (identifier==lxPrivate) {
+      if (terminal.compare(NIL_VAR)) {
+         return ObjectInfo(okNil);
+      }
+      else return /*defineObjectInfo(mapTerminal(identifier, true), true)*/ObjectInfo(); // !! temporal
+   }
 //   else if (identifier==lxIdentifier) {
 //      return defineObjectInfo(mapTerminal(identifier, true), true);
 //   }
-//   else return ObjectInfo();
-//}
-//
+   else return ObjectInfo();
+}
+
 //ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
 //{
 //   List<ident_t>::Iterator it = defaultNs.start();
@@ -435,9 +435,9 @@ ref_t Compiler::ModuleScope :: mapTerminal(SNode terminal, bool existing)
          if (!existing) {
             ReferenceNs name(module->Name(), identifier);
 
-            return module->mapReference(identifier);
+            return module->mapReference(name);
          }
-//         else return resolveIdentifier(identifier);
+         else return /*resolveIdentifier(identifier)*/0; // !! temporal
       }
       else return reference;
    }
@@ -1283,16 +1283,16 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference, ident
 //      else return Scope::mapTerminal(terminal);
 //   }
 //}
-//
-//// --- Compiler::CodeScope ---
-//
-//Compiler::CodeScope :: CodeScope(SourceScope* parent)
-//   : Scope(parent), locals(Parameter(0))
-//{
-//   this->level = 0;
-//   this->saved = this->reserved = 0;
-//}
-//
+
+// --- Compiler::CodeScope ---
+
+Compiler::CodeScope :: CodeScope(SourceScope* parent)
+   : Scope(parent)//, locals(Parameter(0))
+{
+   //this->level = 0;
+   //this->saved = this->reserved = 0;
+}
+
 //Compiler::CodeScope :: CodeScope(MethodScope* parent)
 //   : Scope(parent), locals(Parameter(0))
 //{
@@ -2422,13 +2422,13 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   }
 //   else writer.newNode(type, object.param);
 //}
-//
-//void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   switch (object.kind) {
-//      case okUnknown:
-//         scope.raiseError(errUnknownObject, terminal);
-//         break;
+
+void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object/*, int mode*/)
+{
+   switch (object.kind) {
+      case okUnknown:
+         scope.raiseError(errUnknownObject, terminal);
+         break;
 //      case okSymbol:
 //         scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
 //         writer.newNode(lxSymbolReference, object.param);
@@ -2546,9 +2546,9 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //         else writer.newNode(type, object.param);
 //         break;
 //      }
-//      case okNil:
-//         writer.newNode(lxNil, object.param);
-//         break;
+      case okNil:
+         writer.newNode(lxNil/*, object.param*/);
+         break;
 //      case okMessageConstant:
 //         writer.newNode(lxMessageConstant, object.param);
 //         break;
@@ -2579,24 +2579,24 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //      case okInternal:
 //         writer.appendNode(lxInternalRef, object.param);
 //         return;
-//   }
-//
+   }
+
 //   writeTarget(writer, resolveObjectReference(scope, object));
 //
 //   if (!test(mode, HINT_NODEBUGINFO))
 //      writeTerminalInfo(writer, terminal);
-//
-//   writer.closeNode();
-//}
-//
-//ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
-//{
-////   //if (!test(mode, HINT_NODEBUGINFO))
-////   //   insertDebugStep(terminal, dsStep);
-//
-//   ident_t token = terminal.identifier();
-//
-//   ObjectInfo object;
+
+   writer.closeNode();
+}
+
+/*ObjectInfo*/void Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope/*, int mode*/)
+{
+//   //if (!test(mode, HINT_NODEBUGINFO))
+//   //   insertDebugStep(terminal, dsStep);
+
+   ident_t token = terminal.identifier();
+
+   ObjectInfo object;
 //   if(terminal == lxConstantList) {
 //      // HOTFIX : recognize predefined constant lists
 //      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
@@ -2678,8 +2678,8 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //      object = scope.mapMember(token.c_str() + 1);
 //   }
 //   else if (!emptystr(token))
-//      object = scope.mapObject(terminal);
-//
+      object = scope.mapObject(terminal);
+
 //   if (test(mode, HINT_INQUIRY_MODE)) {
 //      // assingment optimization - do nothing for an inqiry mode
 //   }
@@ -2699,13 +2699,13 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //
 //      writer.removeBookmark();
 //   }
-//   else writeTerminal(writer, terminal, scope, object, mode);
-//
+   /*else */writeTerminal(writer, terminal, scope, object/*, mode*/);
+
 //   return object;
-//}
-//
-//ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode)
-//{
+}
+
+/*ObjectInfo*/void Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope/*, int mode*/)
+{
 //   ObjectInfo result;
 //
 //   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing);
@@ -2731,12 +2731,12 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //         result = compileMessageReference(writer, member, scope, mode);
 //         break;
 //      default:
-//         result = compileTerminal(writer, objectNode, scope, mode);
+         /*result = */compileTerminal(writer, objectNode, scope/*, mode*/);
 //   }
 //
 //   return result;
-//}
-//
+}
+
 //ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 //{
 //   SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
@@ -4407,9 +4407,12 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //
 //   return retVal;
 //}
-//
-//ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
+
+/*ObjectInfo*/void Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/)
+{
+   SNode object = node.firstChild(lxObjectMask);
+   compileObject(writer, object, scope);
+
 //   ObjectInfo objectInfo;
 //   if (node == lxAlt) {
 //      compileAltOperation(writer, node, scope);
@@ -4469,8 +4472,8 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //      }
 //   }
 //   return objectInfo;
-//}
-//
+}
+
 //ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope)
 //{
 //   writer.newNode(lxExpression);
@@ -6748,25 +6751,25 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 //   return true;
 //}
 
-void Compiler :: compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNode node, SymbolScope& scope)
+void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope)
 {
-//   expressionTree.clear();
-//
-//   SyntaxWriter writer(expressionTree);
-//
+   expressionTree.clear();
+
+   SyntaxWriter writer(expressionTree);
+
 //   declareSymbolAttributes(node, scope);
 
    bool isStatic = scope.staticOne;
 
-//   SNode expression = node.findChild(lxExpression);
-//
-//   CodeScope codeScope(&scope);
-//
-//   writer.newNode(lxSymbol, node.argument);
-//   writer.newNode(lxExpression);
+   SNode expression = node.findChild(lxExpression);
+
+   CodeScope codeScope(&scope);
+
+   writer.newNode(lxSymbol, node.argument);
+   writer.newNode(lxExpression);
 //   writer.appendNode(lxBreakpoint, dsStep);
 //   writer.newBookmark();
-//   ObjectInfo retVal = compileExpression(writer, expression, codeScope, isSingleStatement(expression) ? HINT_ROOTSYMBOL : 0);
+   /*ObjectInfo retVal = */compileExpression(writer, expression, codeScope/*, isSingleStatement(expression) ? HINT_ROOTSYMBOL : 0*/);
 //   if (scope.outputRef != 0) {
 //      ModuleScope* moduleScope = scope.moduleScope;
 //
@@ -6779,9 +6782,9 @@ void Compiler :: compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNo
 //   }
 //
 //   writer.removeBookmark();
-//   writer.closeNode();
-//   writer.closeNode();
-//
+   writer.closeNode();
+   writer.closeNode();
+
 //   analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
 //   node.refresh();
 //
@@ -6802,7 +6805,7 @@ void Compiler :: compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNo
    pos_t sourcePathRef = scope.moduleScope->saveSourcePath(_writer, scope.sourcePath);
 
    CommandTape tape;
-   _writer.generateSymbol(tape, node, isStatic, sourcePathRef);
+   _writer.generateSymbol(tape, expressionTree.readRoot(), isStatic, sourcePathRef);
 
    // optimize
    optimizeTape(tape);
@@ -7630,7 +7633,7 @@ void Compiler :: validateUnresolved(Unresolveds& unresolveds, _ProjectManager& p
 
 void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
 {
-//   SyntaxTree expressionTree; // expression tree is reused
+   SyntaxTree expressionTree; // expression tree is reused
 
    // second pass - implementation
    SNode current = node.firstChild();
@@ -7659,7 +7662,7 @@ void Compiler :: compileImplementations(SNode node, ModuleScope& scope)
          case lxSymbol:
          {
             SymbolScope symbolScope(&scope, current.argument, current.findChild(lxSourcePath).identifier());
-            compileSymbolImplementation(/*expressionTree, */current, symbolScope);
+            compileSymbolImplementation(expressionTree, current, symbolScope);
             break;
          }
       }

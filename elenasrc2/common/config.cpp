@@ -461,12 +461,18 @@ void XmlConfigFile :: setSetting(ident_t key, const char* value)
 
 void XmlConfigFile :: setSetting(ident_t key, int value)
 {
+   String<char, 15> string;
+   string.appendInt(value);
 
+   setSetting(key, (ident_t)string);
 }
 
 void XmlConfigFile :: setSetting(ident_t key, size_t value)
 {
+   String<char, 15> string;
+   string.appendInt(value);
 
+   setSetting(key, (ident_t)string);
 }
 
 void XmlConfigFile :: setSetting(ident_t key, bool value)

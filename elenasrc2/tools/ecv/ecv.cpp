@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   10
+#define REVISION_VERSION   1
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -163,32 +163,32 @@ void printHelp()
    printf("?                       - list all classes\n");
 }
 
-_Memory* findClassMetaData(_Module* module, ident_t referenceName)
-{
-   ref_t reference = module->mapReference(referenceName, true);
-   if (reference == 0) {
-      return NULL;
-   }
-   return module->mapSection(reference | mskMetaRDataRef, true);
-}
-
-_Memory* findClassVMT(_Module* module, ident_t referenceName)
-{
-   ref_t reference = module->mapReference(referenceName, true);
-   if (reference == 0) {
-      return NULL;
-   }
-   return module->mapSection(reference | mskVMTRef, true);
-}
-
-_Memory* findClassCode(_Module* module, ident_t referenceName)
-{
-   ref_t reference = module->mapReference(referenceName, true);
-   if (reference == 0) {
-      return NULL;
-   }
-   return module->mapSection(reference | mskClassRef, true);
-}
+//_Memory* findClassMetaData(_Module* module, ident_t referenceName)
+//{
+//   ref_t reference = module->mapReference(referenceName, true);
+//   if (reference == 0) {
+//      return NULL;
+//   }
+//   return module->mapSection(reference | mskMetaRDataRef, true);
+//}
+//
+//_Memory* findClassVMT(_Module* module, ident_t referenceName)
+//{
+//   ref_t reference = module->mapReference(referenceName, true);
+//   if (reference == 0) {
+//      return NULL;
+//   }
+//   return module->mapSection(reference | mskVMTRef, true);
+//}
+//
+//_Memory* findClassCode(_Module* module, ident_t referenceName)
+//{
+//   ref_t reference = module->mapReference(referenceName, true);
+//   if (reference == 0) {
+//      return NULL;
+//   }
+//   return module->mapSection(reference | mskClassRef, true);
+//}
 
 _Memory* findSymbolCode(_Module* module, ident_t referenceName)
 {
@@ -201,59 +201,61 @@ _Memory* findSymbolCode(_Module* module, ident_t referenceName)
 
 ref_t resolveMessage(_Module* module, ident_t method)
 {
-   int paramCount = 0;
-   ref_t actionRef = 0;
-   ref_t flags = 0;
+   //int paramCount = 0;
+   //ref_t actionRef = 0;
+   //ref_t flags = 0;
 
-   if (method.startsWith("#private&")) {
-      flags |= SEALED_MESSAGE;
+   //if (method.startsWith("#private&")) {
+   //   flags |= SEALED_MESSAGE;
 
-      method = method.c_str() + getlength("#private&");
-   }
-   else if (method.startsWith("#conversion&")) {
-      flags |= CONVERSION_MESSAGE;
+   //   method = method.c_str() + getlength("#private&");
+   //}
+   //else if (method.startsWith("#conversion&")) {
+   //   flags |= CONVERSION_MESSAGE;
 
-      method = method.c_str() + getlength("#conversion&");
-   }
+   //   method = method.c_str() + getlength("#conversion&");
+   //}
 
-   IdentifierString actionName;
-   int paramIndex = method.find('[', -1);
-   if (paramIndex != -1) {
-      actionName.copy(method, paramIndex);
+   //IdentifierString actionName;
+   //int paramIndex = method.find('[', -1);
+   //if (paramIndex != -1) {
+   //   actionName.copy(method, paramIndex);
 
-      IdentifierString countStr(method + paramIndex + 1, getlength(method) - paramIndex - 2);
-      paramCount = countStr.ident().toInt();
-   }
-   else actionName.copy(method);
+   //   IdentifierString countStr(method + paramIndex + 1, getlength(method) - paramIndex - 2);
+   //   paramCount = countStr.ident().toInt();
+   //}
+   //else actionName.copy(method);
 
-   if (actionName.compare("dispatch")) {
-      actionRef = DISPATCH_MESSAGE_ID;
-   }
-   else if (actionName.compare("#new")) {
-      actionRef = NEWOBJECT_MESSAGE_ID;
-   }
-   else if (actionName.compare("#init")) {
-      actionRef = NEWOBJECT_MESSAGE_ID;
-      flags = CONVERSION_MESSAGE;
-   }
-   else {
-      if (method.find("set&") != NOTFOUND_POS) {
-         actionName.cut(0, 4);
-         flags = PROPSET_MESSAGE;
-      }
-      else if (actionName.compare("set")) {
-         flags = PROPSET_MESSAGE;
-      }
+   //if (actionName.compare("dispatch")) {
+   //   actionRef = DISPATCH_MESSAGE_ID;
+   //}
+   //else if (actionName.compare("#new")) {
+   //   actionRef = NEWOBJECT_MESSAGE_ID;
+   //}
+   //else if (actionName.compare("#init")) {
+   //   actionRef = NEWOBJECT_MESSAGE_ID;
+   //   flags = CONVERSION_MESSAGE;
+   //}
+   //else {
+   //   if (method.find("set&") != NOTFOUND_POS) {
+   //      actionName.cut(0, 4);
+   //      flags = PROPSET_MESSAGE;
+   //   }
+   //   else if (actionName.compare("set")) {
+   //      flags = PROPSET_MESSAGE;
+   //   }
 
-      actionRef = module->mapSubject(actionName, true);
-      if (actionRef == 0) {
-         printLine("Unknown subject ", actionName);
+   //   actionRef = module->mapSubject(actionName, true);
+   //   if (actionRef == 0) {
+   //      printLine("Unknown subject ", actionName);
 
-         return 0;
-      }
-   }
+   //      return 0;
+   //   }
+   //}
 
-   return encodeMessage(actionRef, paramCount) | flags;
+   //return encodeMessage(actionRef, paramCount) | flags;
+
+   return 0; // !! temporal
 }
 
 inline void appendHex32(IdentifierString& command, unsigned int hex)
@@ -352,112 +354,112 @@ void parseMessageConstant(IdentifierString& message, ident_t reference)
 
 void printReference(IdentifierString& command, _Module* module, size_t reference)
 {
-   bool literalConstant = false;
-   bool charConstant = false;
-   ident_t referenceName = NULL;
-   int mask = reference & mskAnyRef;
-   if (mask == mskInt32Ref) {
-      referenceName = _integer;
-      literalConstant = true;
-   }
-   else if (mask == mskInt64Ref) {
-      referenceName = _long;
-      literalConstant = true;
-   }
-   else if (mask == mskLiteralRef) {
-      referenceName = _literal;
-      literalConstant = true;
-   }
-   else if (mask == mskWideLiteralRef) {
-      referenceName = _wide;
-      literalConstant = true;
-   }
-   else if (mask == mskRealRef) {
-      referenceName = _real;
-      literalConstant = true;
-   }
-   else if (mask == mskCharRef) {
-      referenceName = _char;
-      charConstant = true;
-   }
-   else if (reference == 0) {
-      referenceName = "$nil";
-   }
-   else if (reference == -1) {
-      referenceName = "$undefined";
-   }
-   else referenceName = module->resolveReference(reference & ~mskAnyRef);
+   //bool literalConstant = false;
+   //bool charConstant = false;
+   //ident_t referenceName = NULL;
+   //int mask = reference & mskAnyRef;
+   //if (mask == mskInt32Ref) {
+   //   referenceName = _integer;
+   //   literalConstant = true;
+   //}
+   //else if (mask == mskInt64Ref) {
+   //   referenceName = _long;
+   //   literalConstant = true;
+   //}
+   //else if (mask == mskLiteralRef) {
+   //   referenceName = _literal;
+   //   literalConstant = true;
+   //}
+   //else if (mask == mskWideLiteralRef) {
+   //   referenceName = _wide;
+   //   literalConstant = true;
+   //}
+   //else if (mask == mskRealRef) {
+   //   referenceName = _real;
+   //   literalConstant = true;
+   //}
+   //else if (mask == mskCharRef) {
+   //   referenceName = _char;
+   //   charConstant = true;
+   //}
+   //else if (reference == 0) {
+   //   referenceName = "$nil";
+   //}
+   //else if (reference == -1) {
+   //   referenceName = "$undefined";
+   //}
+   //else referenceName = module->resolveReference(reference & ~mskAnyRef);
 
-   if (emptystr(referenceName)) {
-      command.append("unknown");
-   }
-   else {
-      command.append(referenceName);
-      if (literalConstant) {
-         command.append("(");
-         command.append(module->resolveConstant(reference & ~mskAnyRef));
-         command.append(")");
-      }
-      else if (charConstant) {
-         const char* ch = module->resolveConstant(reference & ~mskAnyRef);
+   //if (emptystr(referenceName)) {
+   //   command.append("unknown");
+   //}
+   //else {
+   //   command.append(referenceName);
+   //   if (literalConstant) {
+   //      command.append("(");
+   //      command.append(module->resolveConstant(reference & ~mskAnyRef));
+   //      command.append(")");
+   //   }
+   //   else if (charConstant) {
+   //      const char* ch = module->resolveConstant(reference & ~mskAnyRef);
 
-         IdentifierString num;
-         num.appendInt(ch[0]);
-         command.append("(");
-         command.append(num);
-         command.append(")");
+   //      IdentifierString num;
+   //      num.appendInt(ch[0]);
+   //      command.append("(");
+   //      command.append(num);
+   //      command.append(")");
 
-      }
-   }
+   //   }
+   //}
 }
 
 void printMessage(IdentifierString& command, _Module* module, size_t reference)
 {
-   ref_t actionRef = 0;
-   int paramCount = 0;
-   decodeMessage(reference, actionRef, paramCount);
+   //ref_t actionRef = 0;
+   //int paramCount = 0;
+   //decodeMessage(reference, actionRef, paramCount);
 
-   if (actionRef == DISPATCH_MESSAGE_ID) {
-      command.append("dispatch");
-   }
-   else if (actionRef == NEWOBJECT_MESSAGE_ID) {
-      if (test(reference, CONVERSION_MESSAGE)) {
-         command.append("#init");
-      }
-      else command.append("#new");
-   }
-   else if (actionRef <= PREDEFINED_MESSAGE_ID) {
-      if (test(reference, CONVERSION_MESSAGE)) {
-         command.append("#conversion&");
-      }
-      else if (test(reference, SEALED_MESSAGE)) {
-         command.append("#private&");
-      }
+   //if (actionRef == DISPATCH_MESSAGE_ID) {
+   //   command.append("dispatch");
+   //}
+   //else if (actionRef == NEWOBJECT_MESSAGE_ID) {
+   //   if (test(reference, CONVERSION_MESSAGE)) {
+   //      command.append("#init");
+   //   }
+   //   else command.append("#new");
+   //}
+   //else if (actionRef <= PREDEFINED_MESSAGE_ID) {
+   //   if (test(reference, CONVERSION_MESSAGE)) {
+   //      command.append("#conversion&");
+   //   }
+   //   else if (test(reference, SEALED_MESSAGE)) {
+   //      command.append("#private&");
+   //   }
 
-      ident_t verbName = retrieveKey(_verbs.start(), actionRef, DEFAULT_STR);
-      command.append(verbName);
-   }
-   else {
-      if (test(reference, CONVERSION_MESSAGE)) {
-         command.append("#conversion&");
-      }
-      else {
-         if (test(reference, SEALED_MESSAGE)) {
-            command.append("#private&");
-         }
-         if (test(reference, PROPSET_MESSAGE)) {
-            command.append("set&");
-         }
-      }
-      ident_t subjectName = module->resolveSubject(actionRef);
-      command.append(subjectName);
-   }
+   //   ident_t verbName = retrieveKey(_verbs.start(), actionRef, DEFAULT_STR);
+   //   command.append(verbName);
+   //}
+   //else {
+   //   if (test(reference, CONVERSION_MESSAGE)) {
+   //      command.append("#conversion&");
+   //   }
+   //   else {
+   //      if (test(reference, SEALED_MESSAGE)) {
+   //         command.append("#private&");
+   //      }
+   //      if (test(reference, PROPSET_MESSAGE)) {
+   //         command.append("set&");
+   //      }
+   //   }
+   //   ident_t subjectName = module->resolveSubject(actionRef);
+   //   command.append(subjectName);
+   //}
 
-   if (paramCount > 0) {
-      command.append('[');
-      command.appendInt(paramCount);
-      command.append(']');
-   }
+   //if (paramCount > 0) {
+   //   command.append('[');
+   //   command.appendInt(paramCount);
+   //   command.append(']');
+   //}
 }
 
 bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<int>& labels)
@@ -717,116 +719,116 @@ void printByteCodes(_Module* module, _Memory* code, ref_t address, int indent, i
 
 ref_t resolveMessageByIndex(_Module* module, ident_t className, int index)
 {
-   // find class VMT
-   ReferenceNs reference(module->Name(), className);
-   _Memory* vmt = findClassVMT(module, reference);
-   if (vmt == NULL) {
-      return 0;
-   }
+   //// find class VMT
+   //ReferenceNs reference(module->Name(), className);
+   //_Memory* vmt = findClassVMT(module, reference);
+   //if (vmt == NULL) {
+   //   return 0;
+   //}
 
-   // list methods
-   MemoryReader vmtReader(vmt);
-   // read tape record size
-   size_t size = vmtReader.getDWord();
+   //// list methods
+   //MemoryReader vmtReader(vmt);
+   //// read tape record size
+   //size_t size = vmtReader.getDWord();
 
-   // read VMT header
-   ClassHeader header;
-   vmtReader.read((void*)&header, sizeof(ClassHeader));
+   //// read VMT header
+   //ClassHeader header;
+   //vmtReader.read((void*)&header, sizeof(ClassHeader));
 
-   VMTEntry        entry;
+   //VMTEntry        entry;
 
-   size -= sizeof(ClassHeader);
-   IdentifierString temp;
-   int row = 0;
-   while (size > 0) {
-      vmtReader.read((void*)&entry, sizeof(VMTEntry));
+   //size -= sizeof(ClassHeader);
+   //IdentifierString temp;
+   //int row = 0;
+   //while (size > 0) {
+   //   vmtReader.read((void*)&entry, sizeof(VMTEntry));
 
-      index--;
-      if (index == 0) {
-         IdentifierString temp;
-         printMessage(temp, module, entry.message);
+   //   index--;
+   //   if (index == 0) {
+   //      IdentifierString temp;
+   //      printMessage(temp, module, entry.message);
 
-         return resolveMessage(module, temp.c_str());
-      }
+   //      return resolveMessage(module, temp.c_str());
+   //   }
 
-      size -= sizeof(VMTEntry);
-   }
+   //   size -= sizeof(VMTEntry);
+   //}
 
    return 0;
 }
 
 void printMethod(_Module* module, ident_t methodReference, int pageSize)
 {
-   methodReference = trim(methodReference);
+   //methodReference = trim(methodReference);
 
-   int separator = methodReference.find('.');
-   if (separator == -1) {
-      printf("Invalid command");
+   //int separator = methodReference.find('.');
+   //if (separator == -1) {
+   //   printf("Invalid command");
 
-      return;
-   }
+   //   return;
+   //}
 
-   IdentifierString className(methodReference, separator);
+   //IdentifierString className(methodReference, separator);
 
-   ident_t methodName = methodReference + separator + 1;
-   ref_t message = 0;
+   //ident_t methodName = methodReference + separator + 1;
+   //ref_t message = 0;
 
-   // resolve method
-   if (methodName[0] == '$' && methodName[1] >= '0' && methodName[1] <= '9') {
-      message = resolveMessageByIndex(module, className.ident(), methodName.toInt(1));
-   }
-   else message = resolveMessage(module, methodName);
-   
-   if (message == 0)
-      return;
+   //// resolve method
+   //if (methodName[0] == '$' && methodName[1] >= '0' && methodName[1] <= '9') {
+   //   message = resolveMessageByIndex(module, className.ident(), methodName.toInt(1));
+   //}
+   //else message = resolveMessage(module, methodName);
+   //
+   //if (message == 0)
+   //   return;
 
-   // find class VMT
-   ReferenceNs reference(module->Name(), className);
-   _Memory* vmt = findClassVMT(module, reference);
-   _Memory* code = findClassCode(module, reference);
-   if (vmt == NULL || code == NULL) {
-      printLine("Class not found: ", reference);
+   //// find class VMT
+   //ReferenceNs reference(module->Name(), className);
+   //_Memory* vmt = findClassVMT(module, reference);
+   //_Memory* code = findClassCode(module, reference);
+   //if (vmt == NULL || code == NULL) {
+   //   printLine("Class not found: ", reference);
 
-      return;
-   }
+   //   return;
+   //}
 
-   // find method entry
-   MemoryReader vmtReader(vmt);
-   // read tape record size
-   size_t size = vmtReader.getDWord();
+   //// find method entry
+   //MemoryReader vmtReader(vmt);
+   //// read tape record size
+   //size_t size = vmtReader.getDWord();
 
-   // read VMT header
-   ClassHeader header;
-   vmtReader.read((void*)&header, sizeof(ClassHeader));
+   //// read VMT header
+   //ClassHeader header;
+   //vmtReader.read((void*)&header, sizeof(ClassHeader));
 
-   VMTEntry        entry;
+   //VMTEntry        entry;
 
-   // read VMT while the entry not found
-   size -= sizeof(ClassHeader);
-   bool found = false;
-   while (size > 0) {
-      vmtReader.read((void*)&entry, sizeof(VMTEntry));
+   //// read VMT while the entry not found
+   //size -= sizeof(ClassHeader);
+   //bool found = false;
+   //while (size > 0) {
+   //   vmtReader.read((void*)&entry, sizeof(VMTEntry));
 
-      if (entry.message == message) {
-         found = true;
+   //   if (entry.message == message) {
+   //      found = true;
 
-         IdentifierString temp;
-         temp.copy(className);
-         temp.append('.');
-         printMessage(temp, module, entry.message);
-         printLine("@method ", temp);
+   //      IdentifierString temp;
+   //      temp.copy(className);
+   //      temp.append('.');
+   //      printMessage(temp, module, entry.message);
+   //      printLine("@method ", temp);
 
-         printByteCodes(module, code, entry.address, 4, pageSize);
-         print("@end\n");
+   //      printByteCodes(module, code, entry.address, 4, pageSize);
+   //      print("@end\n");
 
-         break;
-      }
+   //      break;
+   //   }
 
-      size -= sizeof(VMTEntry);
-   }
-   if (!found) {
-      printLine("Method not found:", methodName);
-   }
+   //   size -= sizeof(VMTEntry);
+   //}
+   //if (!found) {
+   //   printLine("Method not found:", methodName);
+   //}
 }
 
 //void printConstructor(_Module* module, const wchar_t* className, int pageSize)
@@ -872,255 +874,255 @@ void printSymbol(_Module* module, ident_t symbolReference, int pageSize)
    print("@end\n");
 }
 
-bool loadClassInfo(_Module* module, ident_t reference, ClassInfo& info)
-{
-   // find class meta data
-   _Memory* data = findClassMetaData(module, reference);
-   if (data == NULL) {
-      printLine("Class not found:", reference);
-
-      return false;
-   }
-
-   MemoryReader reader(data);
-   info.load(&reader);
-
-   return true;
-}
+//bool loadClassInfo(_Module* module, ident_t reference, ClassInfo& info)
+//{
+//   // find class meta data
+//   _Memory* data = findClassMetaData(module, reference);
+//   if (data == NULL) {
+//      printLine("Class not found:", reference);
+//
+//      return false;
+//   }
+//
+//   MemoryReader reader(data);
+//   info.load(&reader);
+//
+//   return true;
+//}
 
 void listFields(_Module* module, ReferenceNs className, int& row, int pageSize)
 {
-   ClassInfo info;
-   if (!loadClassInfo(module, className, info)) {
-      return;
-   }
-   
-   ClassInfo::FieldMap::Iterator it = info.fields.start();
-   while (!it.Eof()) {
-      ref_t type = info.fieldTypes.get(*it).value1;
-      if (type != 0) {
-         ident_t typeName = module->resolveReference(type);
+   //ClassInfo info;
+   //if (!loadClassInfo(module, className, info)) {
+   //   return;
+   //}
+   //
+   //ClassInfo::FieldMap::Iterator it = info.fields.start();
+   //while (!it.Eof()) {
+   //   ref_t type = info.fieldTypes.get(*it).value1;
+   //   if (type != 0) {
+   //      ident_t typeName = module->resolveReference(type);
 
-         printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
-      }
-      else printLine("Field ", (const char*)it.key(), row, pageSize);
-   
-      it++;
-   }
+   //      printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
+   //   }
+   //   else printLine("Field ", (const char*)it.key(), row, pageSize);
+   //
+   //   it++;
+   //}
 }
 
 void listFlags(int flags, int& row, int pageSize)
 {
-   if (test(flags, elNestedClass)) {
-      printLine("@flag ", "elNestedClass", row, pageSize);
-   }      
+   //if (test(flags, elNestedClass)) {
+   //   printLine("@flag ", "elNestedClass", row, pageSize);
+   //}      
 
-   if (test(flags, elDynamicRole)) {
-      printLine("@flag ", "elDynamicRole", row, pageSize);
-   }
-      
-   if (test(flags, elStructureRole)) {
-      printLine("@flag ", "elStructureRole", row, pageSize);
-   }      
+   //if (test(flags, elDynamicRole)) {
+   //   printLine("@flag ", "elDynamicRole", row, pageSize);
+   //}
+   //   
+   //if (test(flags, elStructureRole)) {
+   //   printLine("@flag ", "elStructureRole", row, pageSize);
+   //}      
 
-   if (test(flags, elSealed)) {
-      printLine("@flag ", "elSealed", row, pageSize);
-   }      
-   else if (test(flags, elFinal)) {
-      printLine("@flag ", "elFinal", row, pageSize);
-   }      
-   else if (test(flags, elClosed)) {
-      printLine("@flag ", "elClosed", row, pageSize);
-   }      
+   //if (test(flags, elSealed)) {
+   //   printLine("@flag ", "elSealed", row, pageSize);
+   //}      
+   //else if (test(flags, elFinal)) {
+   //   printLine("@flag ", "elFinal", row, pageSize);
+   //}      
+   //else if (test(flags, elClosed)) {
+   //   printLine("@flag ", "elClosed", row, pageSize);
+   //}      
 
-   if (test(flags, elWrapper)) {
-      printLine("@flag ", "elWrapper", row, pageSize);
-   }
-      
-   if (test(flags, elStateless)) {
-      printLine("@flag ", "elStateless", row, pageSize);
-   }      
+   //if (test(flags, elWrapper)) {
+   //   printLine("@flag ", "elWrapper", row, pageSize);
+   //}
+   //   
+   //if (test(flags, elStateless)) {
+   //   printLine("@flag ", "elStateless", row, pageSize);
+   //}      
 
-   if (test(flags, elGroup)) {
-      printLine("@flag ", "elGroup", row, pageSize);
-   }      
+   //if (test(flags, elGroup)) {
+   //   printLine("@flag ", "elGroup", row, pageSize);
+   //}      
 
-   if (test(flags, elWithGenerics)) {
-      printLine("@flag ", "elWithGenerics", row, pageSize);
-   }      
+   //if (test(flags, elWithGenerics)) {
+   //   printLine("@flag ", "elWithGenerics", row, pageSize);
+   //}      
 
-   if (test(flags, elWithArgGenerics))
-      printLine("@flag ", "elWithArgGenerics", row, pageSize);
+   //if (test(flags, elWithArgGenerics))
+   //   printLine("@flag ", "elWithArgGenerics", row, pageSize);
 
-   if (test(flags, elReadOnlyRole))
-      printLine("@flag ", "elReadOnlyRole", row, pageSize);
+   //if (test(flags, elReadOnlyRole))
+   //   printLine("@flag ", "elReadOnlyRole", row, pageSize);
 
-   if (test(flags, elNonStructureRole))
-      printLine("@flag ", "elNonStructureRole", row, pageSize);
+   //if (test(flags, elNonStructureRole))
+   //   printLine("@flag ", "elNonStructureRole", row, pageSize);
 
-   if (test(flags, elSignature))
-      printLine("@flag ", "elSignature", row, pageSize);
+   //if (test(flags, elSignature))
+   //   printLine("@flag ", "elSignature", row, pageSize);
 
-   if (test(flags, elAbstract))
-      printLine("@flag ", "elAbstract", row, pageSize);
+   //if (test(flags, elAbstract))
+   //   printLine("@flag ", "elAbstract", row, pageSize);
 
-   if (test(flags, elRole))
-      printLine("@flag ", "elRole", row, pageSize);
+   //if (test(flags, elRole))
+   //   printLine("@flag ", "elRole", row, pageSize);
 
-   if (test(flags, elExtension))
-      printLine("@flag ", "elExtension", row, pageSize);
+   //if (test(flags, elExtension))
+   //   printLine("@flag ", "elExtension", row, pageSize);
 
-   if (test(flags, elMessage))
-      printLine("@flag ", "elMessage", row, pageSize);
+   //if (test(flags, elMessage))
+   //   printLine("@flag ", "elMessage", row, pageSize);
 
-   if (test(flags, elExtMessage))
-      printLine("@flag ", "elExtMessage", row, pageSize);
+   //if (test(flags, elExtMessage))
+   //   printLine("@flag ", "elExtMessage", row, pageSize);
 
-   if (test(flags, elSymbol))
-      printLine("@flag ", "elSymbol", row, pageSize);
+   //if (test(flags, elSymbol))
+   //   printLine("@flag ", "elSymbol", row, pageSize);
 
-   if (test(flags, elWithMuti))
-      printLine("@flag ", "elWithMuti", row, pageSize);
+   //if (test(flags, elWithMuti))
+   //   printLine("@flag ", "elWithMuti", row, pageSize);
 
-   if (test(flags, elClassClass))
-      printLine("@flag ", "elClassClass", row, pageSize);
+   //if (test(flags, elClassClass))
+   //   printLine("@flag ", "elClassClass", row, pageSize);
 
-   switch (flags & elDebugMask) {
-      case elDebugDWORD:
-         printLine("@flag ", "elDebugDWORD", row, pageSize);
-         break;
-      case elDebugReal64:
-         printLine("@flag ", "elDebugReal64", row, pageSize);
-         break;
-      case elDebugLiteral:
-         printLine("@flag ", "elDebugLiteral", row, pageSize);
-         break;
-      case elDebugIntegers:
-         printLine("@flag ", "elDebugIntegers", row, pageSize);
-         break;
-      case elDebugArray:
-         printLine("@flag ", "elDebugArray", row, pageSize);
-         break;
-      case elDebugQWORD:
-         printLine("@flag ", "elDebugQWORD", row, pageSize);
-         break;
-      case elDebugBytes:
-         printLine("@flag ", "elDebugBytes", row, pageSize);
-         break;
-      case elDebugShorts:
-         printLine("@flag ", "elDebugShorts", row, pageSize);
-         break;
-      //case elDebugPTR:
-      //   printLine("@flag ", "elDebugPTR");
-      //   break;
-      case elDebugWideLiteral:
-         printLine("@flag ", "elDebugWideLiteral", row, pageSize);
-         break;
-      case elDebugReference:
-         printLine("@flag ", "elDebugReference", row, pageSize);
-         break;
-      case elDebugSubject:
-         printLine("@flag ", "elDebugSubject", row, pageSize);
-         break;
-      //case elDebugReals:
-      //   printLine("@flag ", "elDebugReals");
-      //   break;
-      case elDebugMessage:
-         printLine("@flag ", "elDebugMessage", row, pageSize);
-         break;
-      //case elDebugDPTR:
-      //   printLine("@flag ", "elDebugDPTR");
-      //   break;
-      case elEnumList:
-         printLine("@flag ", "elEnumList", row, pageSize);
-         break;
-   }
+   //switch (flags & elDebugMask) {
+   //   case elDebugDWORD:
+   //      printLine("@flag ", "elDebugDWORD", row, pageSize);
+   //      break;
+   //   case elDebugReal64:
+   //      printLine("@flag ", "elDebugReal64", row, pageSize);
+   //      break;
+   //   case elDebugLiteral:
+   //      printLine("@flag ", "elDebugLiteral", row, pageSize);
+   //      break;
+   //   case elDebugIntegers:
+   //      printLine("@flag ", "elDebugIntegers", row, pageSize);
+   //      break;
+   //   case elDebugArray:
+   //      printLine("@flag ", "elDebugArray", row, pageSize);
+   //      break;
+   //   case elDebugQWORD:
+   //      printLine("@flag ", "elDebugQWORD", row, pageSize);
+   //      break;
+   //   case elDebugBytes:
+   //      printLine("@flag ", "elDebugBytes", row, pageSize);
+   //      break;
+   //   case elDebugShorts:
+   //      printLine("@flag ", "elDebugShorts", row, pageSize);
+   //      break;
+   //   //case elDebugPTR:
+   //   //   printLine("@flag ", "elDebugPTR");
+   //   //   break;
+   //   case elDebugWideLiteral:
+   //      printLine("@flag ", "elDebugWideLiteral", row, pageSize);
+   //      break;
+   //   case elDebugReference:
+   //      printLine("@flag ", "elDebugReference", row, pageSize);
+   //      break;
+   //   case elDebugSubject:
+   //      printLine("@flag ", "elDebugSubject", row, pageSize);
+   //      break;
+   //   //case elDebugReals:
+   //   //   printLine("@flag ", "elDebugReals");
+   //   //   break;
+   //   case elDebugMessage:
+   //      printLine("@flag ", "elDebugMessage", row, pageSize);
+   //      break;
+   //   //case elDebugDPTR:
+   //   //   printLine("@flag ", "elDebugDPTR");
+   //   //   break;
+   //   case elEnumList:
+   //      printLine("@flag ", "elEnumList", row, pageSize);
+   //      break;
+   //}
 }
 
 void listConstructorMethods(_Module* module, ident_t className, ref_t reference)
 {
-   _Memory* vmt = module->mapSection(reference | mskVMTRef, true);
+   //_Memory* vmt = module->mapSection(reference | mskVMTRef, true);
 
-   // list methods
-   MemoryReader vmtReader(vmt);
-   // read tape record size
-   size_t size = vmtReader.getDWord();
+   //// list methods
+   //MemoryReader vmtReader(vmt);
+   //// read tape record size
+   //size_t size = vmtReader.getDWord();
 
-   ClassHeader header;
-   vmtReader.read((void*)&header, sizeof(ClassHeader));
+   //ClassHeader header;
+   //vmtReader.read((void*)&header, sizeof(ClassHeader));
 
-   VMTEntry        entry;
+   //VMTEntry        entry;
 
-   size -= sizeof(ClassHeader);
-   IdentifierString temp;
-   while (size > 0) {
-      vmtReader.read((void*)&entry, sizeof(VMTEntry));
+   //size -= sizeof(ClassHeader);
+   //IdentifierString temp;
+   //while (size > 0) {
+   //   vmtReader.read((void*)&entry, sizeof(VMTEntry));
 
-      // print the method name
-      temp.copy(className);
-      temp.append('.');
-      printMessage(temp, module, entry.message);
-      printLine("@constructor ", temp);
+   //   // print the method name
+   //   temp.copy(className);
+   //   temp.append('.');
+   //   printMessage(temp, module, entry.message);
+   //   printLine("@constructor ", temp);
 
-      size -= sizeof(VMTEntry);
-   }
+   //   size -= sizeof(VMTEntry);
+   //}
 }
 
 void listClassMethods(_Module* module, ident_t className, int pageSize, bool fullInfo, bool withConstructors)
 {
-   className = trim(className);
+   //className = trim(className);
 
-   // find class VMT
-   ReferenceNs reference(module->Name(), className);
-   _Memory* vmt = findClassVMT(module, reference);
-   if (vmt == NULL) {
-      printLine("Class not found:", reference);
+   //// find class VMT
+   //ReferenceNs reference(module->Name(), className);
+   //_Memory* vmt = findClassVMT(module, reference);
+   //if (vmt == NULL) {
+   //   printLine("Class not found:", reference);
 
-      return;
-   }
+   //   return;
+   //}
 
-   // list methods
-   MemoryReader vmtReader(vmt);
-   // read tape record size
-   size_t size = vmtReader.getDWord();
+   //// list methods
+   //MemoryReader vmtReader(vmt);
+   //// read tape record size
+   //size_t size = vmtReader.getDWord();
 
-   // read VMT info
-   ClassHeader header;
-   vmtReader.read((void*)&header, sizeof(ClassHeader));
+   //// read VMT info
+   //ClassHeader header;
+   //vmtReader.read((void*)&header, sizeof(ClassHeader));
 
-   int row = 0;
+   //int row = 0;
 
-   if (fullInfo) {
-      if (header.parentRef) {
-         printLine("@parent ", module->resolveReference(header.parentRef));
-         row++;
-      }         
+   //if (fullInfo) {
+   //   if (header.parentRef) {
+   //      printLine("@parent ", module->resolveReference(header.parentRef));
+   //      row++;
+   //   }         
 
-      listFlags(header.flags, row, pageSize);
-      listFields(module, reference, row, pageSize);
-   }
+   //   listFlags(header.flags, row, pageSize);
+   //   listFields(module, reference, row, pageSize);
+   //}
 
-   if (header.classRef != 0 && withConstructors) {
-      listConstructorMethods(module, className, header.classRef);
-   }
+   //if (header.classRef != 0 && withConstructors) {
+   //   listConstructorMethods(module, className, header.classRef);
+   //}
 
-   VMTEntry        entry;
+   //VMTEntry        entry;
 
-   size -= sizeof(ClassHeader);
-   IdentifierString temp;
-   while (size > 0) {
-      vmtReader.read((void*)&entry, sizeof(VMTEntry));
+   //size -= sizeof(ClassHeader);
+   //IdentifierString temp;
+   //while (size > 0) {
+   //   vmtReader.read((void*)&entry, sizeof(VMTEntry));
 
-      // print the method name
-      temp.copy(className);
-      temp.append('.');
-      printMessage(temp, module, entry.message);
-      printLine("@method ", temp);
+   //   // print the method name
+   //   temp.copy(className);
+   //   temp.append('.');
+   //   printMessage(temp, module, entry.message);
+   //   printLine("@method ", temp);
 
-      nextRow(row, pageSize);
+   //   nextRow(row, pageSize);
 
-      size -= sizeof(VMTEntry);
-   }
+   //   size -= sizeof(VMTEntry);
+   //}
 }
 
 void printAPI(_Module* module, int pageSize)
@@ -1133,13 +1135,13 @@ void printAPI(_Module* module, int pageSize)
       NamespaceName ns(it.key());
       if (moduleName.compare(ns)) {
          ReferenceName name(it.key());
-         if (module->mapSection(*it | mskVMTRef, true)) {
-            printLine("class ", name);
+         //if (module->mapSection(*it | mskVMTRef, true)) {
+         //   printLine("class ", name);
 
-            listClassMethods(module, name, pageSize, true, true);
-            printLine();
-         }
-         else if (module->mapSection(*it | mskSymbolRef, true)) {
+         //   listClassMethods(module, name, pageSize, true, true);
+         //   printLine();
+         //}
+         /*else */if (module->mapSection(*it | mskSymbolRef, true)) {
             printLine("symbol ", name);
          }
       }
@@ -1150,25 +1152,25 @@ void printAPI(_Module* module, int pageSize)
 
 void listClasses(_Module* module, int pageSize)
 {
-   ident_t moduleName = module->Name();
+   //ident_t moduleName = module->Name();
 
-   int row = 0;
-   ReferenceMap::Iterator it = ((Module*)module)->References();
-   while (!it.Eof()) {
-      ident_t reference = it.key();
-      NamespaceName ns(it.key());
-      if (moduleName.compare(ns)) {
-         ReferenceName name(it.key());
-         if (module->mapSection(*it | mskVMTRef, true)) {
-            printLine("class ", name, row, pageSize);
-         }
-         else if (module->mapSection(*it | mskSymbolRef, true)) {
-            printLine("symbol ", name, row, pageSize);
-         }
-      }
+   //int row = 0;
+   //ReferenceMap::Iterator it = ((Module*)module)->References();
+   //while (!it.Eof()) {
+   //   ident_t reference = it.key();
+   //   NamespaceName ns(it.key());
+   //   if (moduleName.compare(ns)) {
+   //      ReferenceName name(it.key());
+   //      if (module->mapSection(*it | mskVMTRef, true)) {
+   //         printLine("class ", name, row, pageSize);
+   //      }
+   //      else if (module->mapSection(*it | mskSymbolRef, true)) {
+   //         printLine("symbol ", name, row, pageSize);
+   //      }
+   //   }
 
-      it++;
-   }
+   //   it++;
+   //}
 }
 
 void setOutputMode(path_t path)
@@ -1243,27 +1245,27 @@ const char* manifestParameters[4] = { "namespace","name     ","version  ","autho
 
 void printManifest(_Module* module)
 {
-   ReferenceNs name(module->Name(), PACKAGE_SECTION);
+   //ReferenceNs name(module->Name(), PACKAGE_SECTION);
 
-   _Memory* section = module->mapSection(module->mapReference(name, false) | mskRDataRef, true);
-   if (section != NULL) {
+   //_Memory* section = module->mapSection(module->mapReference(name, false) | mskRDataRef, true);
+   //if (section != NULL) {
 
-      _ELENA_::RelocationMap::Iterator it(section->getReferences());
-      ref_t currentMask = 0;
-      ref_t currentRef = 0;
-      while (!it.Eof()) {
-         int i = *it >> 2;
-         currentMask = it.key() & mskAnyRef;
-         currentRef = it.key() & ~mskAnyRef;
+   //   _ELENA_::RelocationMap::Iterator it(section->getReferences());
+   //   ref_t currentMask = 0;
+   //   ref_t currentRef = 0;
+   //   while (!it.Eof()) {
+   //      int i = *it >> 2;
+   //      currentMask = it.key() & mskAnyRef;
+   //      currentRef = it.key() & ~mskAnyRef;
 
-         if (currentMask == mskLiteralRef) {
-            //printf(manifestParameters[i]);
-            ident_t value = module->resolveConstant(currentRef);
-            printf("%s : %s\n", manifestParameters[i], value.c_str());
-         }
-         it++;
-      }
-   }
+   //      if (currentMask == mskLiteralRef) {
+   //         //printf(manifestParameters[i]);
+   //         ident_t value = module->resolveConstant(currentRef);
+   //         printf("%s : %s\n", manifestParameters[i], value.c_str());
+   //      }
+   //      it++;
+   //   }
+   //}
 }
 
 // === Main Program ===

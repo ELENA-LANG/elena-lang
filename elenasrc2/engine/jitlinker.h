@@ -41,54 +41,54 @@ struct JITUnresolvedException
 // --- JITLinker class ---
 class JITLinker : _JITLoaderListener
 {
-//   struct RefInfo
-//   {
-//      ref_t    reference;
-//      _Module* module;
-//
-//      RefInfo()
-//      {
-//         reference = 0;
-//      }
-//      RefInfo(ref_t reference, _Module* module)
-//      {
-//         this->reference = reference;
-//         this->module = module;
-//      }
-//   };
-//
-//   typedef CachedMemoryMap<ref_t, RefInfo, 10> References;
-//
-//   // --- ReferenceHelper ---
-//   class ReferenceHelper : public _ReferenceHelper
-//   {
-//      References* _references;
-//
-//      JITLinker*  _owner;
-//      _Memory*    _debug;
-//      _Module*    _module;
-//
-//   public:
-//      virtual ref_t getLinkerConstant(ref_t constant)
-//      {
-//         return _owner->_loader->getLinkerConstant(constant);
-//      }
-//
+   struct RefInfo
+   {
+      ref_t    reference;
+      _Module* module;
+
+      RefInfo()
+      {
+         reference = 0;
+      }
+      RefInfo(ref_t reference, _Module* module)
+      {
+         this->reference = reference;
+         this->module = module;
+      }
+   };
+
+   typedef CachedMemoryMap<ref_t, RefInfo, 10> References;
+
+   // --- ReferenceHelper ---
+   class ReferenceHelper : public _ReferenceHelper
+   {
+      References* _references;
+
+      JITLinker*  _owner;
+      _Memory*    _debug;
+      _Module*    _module;
+
+   public:
+      virtual ref_t getLinkerConstant(ref_t constant)
+      {
+         return _owner->_loader->getLinkerConstant(constant);
+      }
+
 //      virtual SectionInfo getSection(ref_t reference, _Module* module);
-//      virtual SectionInfo getCoreSection(ref_t reference);
-//
-//      virtual void* getVAddress(MemoryWriter& writer, int mask)
-//      {
-//         return _owner->calculateVAddress(&writer, mask);
-//      }
-//
+      virtual SectionInfo getCoreSection(ref_t reference);
+
+      virtual void* getVAddress(MemoryWriter& writer, int mask)
+      {
+         return _owner->calculateVAddress(&writer, mask);
+      }
+
 //      virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL);
-//
-//      virtual void addBreakpoint(size_t position);
-//
-////      virtual void writeMethodReference(SectionWriter& writer, size_t tapeDisp);
-//      virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
-//      virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
+
+      virtual void addBreakpoint(size_t position);
+
+//      virtual void writeMethodReference(SectionWriter& writer, size_t tapeDisp);
+      virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
+      virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
 //      virtual void writeMTReference(MemoryWriter& writer)
 //      {
 //         if (_owner->_virtualMode) {
@@ -100,28 +100,28 @@ class JITLinker : _JITLoaderListener
 //            writer.writeDWord((ref_t)section->get(0));
 //         }
 //      }
-//
-//      virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module);
-//
-//      ReferenceHelper(JITLinker* owner, _Module* module, References* references)
-//      {
-//         _references = references;
-//         _owner = owner;
-//         _module = module;
-//         _debug = NULL;
-//      }
-//   };
-//
+
+      virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module);
+
+      ReferenceHelper(JITLinker* owner, _Module* module, References* references)
+      {
+         _references = references;
+         _owner = owner;
+         _module = module;
+         _debug = NULL;
+      }
+   };
+
 //   typedef Pair<void*, int>                                       MethodInfo;
 //   typedef MemoryMap<MethodInfo, int, false>                      MethodMap;
 //   typedef Memory32HashTable<ident_t, void*, mapReferenceKey, 29> StrongTypeMap;
 
    _JITLoader*    _loader;
-//   _JITCompiler*  _compiler; 
-//   bool           _virtualMode;
+   _JITCompiler*  _compiler; 
+   bool           _virtualMode;
 //   bool           _withDebugInfo;
 //   bool           _classSymbolAutoLoadMode;
-//   void*          _codeBase;
+   void*          _codeBase;
 //   int            _statLength;
 //   MethodMap      _staticMethods;
 //   ModuleList     _loadedModules;
@@ -139,8 +139,8 @@ class JITLinker : _JITLoaderListener
 //   int getVMTMethodAddress(void* vaddress, int messageID);   
 //   int getVMTMethodIndex(void* vaddress, int messageID);
 //   size_t getVMTFlags(void* vaddress);
-//
-//   void fixReferences(References& relocations, _Memory* image);
+
+   void fixReferences(References& relocations, _Memory* image);
 //   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress);
 //
 //   size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
@@ -150,8 +150,8 @@ class JITLinker : _JITLoaderListener
 //
 //   void* resolveNativeVariable(ident_t  reference, int mask);
 //   void* resolveConstVariable(ident_t  reference, int mask);
-//   void* resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo);
-//   void* resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo);
+   void* resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo);
+   void* resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo);
 //   void* createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references);
 //   void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
 //   void* resolveConstant(ident_t reference, int mask);
@@ -182,9 +182,9 @@ public:
       return _loader->getTargetSection((size_t)mskStatRef)->Length() >> 2;
    }
 
-//   void* calculateVAddress(MemoryWriter* writer, int mask, int alignment);
-//   void* calculateVAddress(MemoryWriter* writer, int mask);
-//
+   void* calculateVAddress(MemoryWriter* writer, int mask, int alignment);
+   void* calculateVAddress(MemoryWriter* writer, int mask);
+
 //   ref_t parseMessage(ident_t reference, bool actionMode);
 
    virtual void onModuleLoad(_Module* module);
@@ -193,10 +193,10 @@ public:
 //      : _staticMethods(-1)
    {
       _loader = loader;
-//      _compiler = compiler;
-//      _virtualMode = virtualMode;
+      _compiler = compiler;
+      _virtualMode = virtualMode;
 //      _withDebugInfo = compiler->isWithDebugInfo();
-//      _codeBase = codeBase;
+      _codeBase = codeBase;
 //      _statLength = 0;
 //      _classSymbolAutoLoadMode = autoLoadMode;
 //

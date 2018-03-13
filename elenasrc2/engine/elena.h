@@ -38,7 +38,7 @@ public:
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 
-//   virtual bool save(StreamWriter& writer) = 0;
+   virtual bool save(StreamWriter& writer) = 0;
 
    virtual ~_Module() {}
 };
@@ -48,7 +48,7 @@ public:
 class _LibraryManager
 {
 public:
-   //virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
+   virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
    //virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
 };
 
@@ -97,25 +97,25 @@ public:
 ////   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
-//// --- SectionInfo ---
-//
-//struct SectionInfo
-//{
-//   _Module* module;
-//   _Memory* section;
-//
-//   SectionInfo()
-//   {
-//      module = NULL;
-//      section = NULL;
-//   }
-//   SectionInfo(_Module* module, _Memory* section)
-//   {
-//      this->module = module;
-//      this->section = section;
-//   }
-//};
-//
+// --- SectionInfo ---
+
+struct SectionInfo
+{
+   _Module* module;
+   _Memory* section;
+
+   SectionInfo()
+   {
+      module = NULL;
+      section = NULL;
+   }
+   SectionInfo(_Module* module, _Memory* section)
+   {
+      this->module = module;
+      this->section = section;
+   }
+};
+
 //// --- ClassSectionInfo ---
 //
 //struct ClassSectionInfo
@@ -146,30 +146,30 @@ class _JITLoader
 public:
    virtual _Memory* getTargetSection(ref_t mask) = 0;
 
-//   virtual _Memory* getTargetDebugSection() = 0;
-//
-//   virtual SectionInfo getSectionInfo(ident_t reference, ref_t mask, bool silentMode) = 0;
-//   virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
+   virtual _Memory* getTargetDebugSection() = 0;
+
+   virtual SectionInfo getSectionInfo(ident_t reference, ref_t mask, bool silentMode) = 0;
+   virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
 //   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
-//
-////   virtual size_t getLinkerConstant(int id) = 0;
-////
-////   virtual ident_t getLiteralClass() = 0;
-////   virtual ident_t getWideLiteralClass() = 0;
-////   virtual ident_t getCharacterClass() = 0;
-////   virtual ident_t getIntegerClass() = 0;
-////   virtual ident_t getRealClass() = 0;
-////   virtual ident_t getLongClass() = 0;
-////   virtual ident_t getMessageClass() = 0;
-////   virtual ident_t getExtMessageClass() = 0;
-////   virtual ident_t getSignatureClass() = 0;
-////   virtual ident_t getNamespace() = 0;
-////
-////   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
-////
-////   virtual void* resolveReference(ident_t reference, ref_t mask) = 0;
-////
-////   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
+
+   virtual size_t getLinkerConstant(int id) = 0;
+
+//   virtual ident_t getLiteralClass() = 0;
+//   virtual ident_t getWideLiteralClass() = 0;
+//   virtual ident_t getCharacterClass() = 0;
+//   virtual ident_t getIntegerClass() = 0;
+//   virtual ident_t getRealClass() = 0;
+//   virtual ident_t getLongClass() = 0;
+//   virtual ident_t getMessageClass() = 0;
+//   virtual ident_t getExtMessageClass() = 0;
+//   virtual ident_t getSignatureClass() = 0;
+//   virtual ident_t getNamespace() = 0;
+
+   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
+
+   virtual void* resolveReference(ident_t reference, ref_t mask) = 0;
+
+//   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
 
    virtual void mapReference(ident_t reference, void* vaddress, ref_t mask) = 0;
 
@@ -261,28 +261,28 @@ public:
    }
 };
 
-//////// --- ReferenceName ---
-//////
-//////class ReferenceName : public IdentifierString
-//////{
-//////public:
-//////   ReferenceName()
-//////   {
-//////   }
-//////   ReferenceName(ident_t reference)
-//////   {
-//////      copy(reference + reference.findLast('\'') + 1);
-//////   }
-//////   ReferenceName(ident_t reference, ident_t package)
-//////   {
-//////      size_t length = getlength(package);
-//////
-//////      if (reference.compare(package, length) && reference[length] == '\'') {
-//////         copy(reference + length + 1);
-//////      }
-//////      else copy(reference + reference.findLast('\'') + 1);
-//////   }
-//////};
+// --- ReferenceName ---
+
+class ReferenceName : public IdentifierString
+{
+public:
+   ReferenceName()
+   {
+   }
+   ReferenceName(ident_t reference)
+   {
+      copy(reference + reference.findLast('\'') + 1);
+   }
+   ReferenceName(ident_t reference, ident_t package)
+   {
+      size_t length = getlength(package);
+
+      if (reference.compare(package, length) && reference[length] == '\'') {
+         copy(reference + length + 1);
+      }
+      else copy(reference + reference.findLast('\'') + 1);
+   }
+};
 
 // --- NamespaceName ---
 
@@ -697,62 +697,62 @@ typedef MemoryMap<ident_t, int>                             SymbolMap;
 typedef MemoryHashTable<ref_t, int, syntaxRule, cnHashSize> SyntaxHash;
 typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 
-//////// --- miscellaneous routines ---
-//////
-//////inline bool isWeakReference(ident_t referenceName)
-//////{
-//////   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0]=='\'');
-//////}
-//////
-//////inline bool isTemplateWeakReference(ident_t referenceName)
-//////{
-//////   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0] == '\'' && referenceName.find('#') != NOTFOUND_POS);
-//////}
-////
-////inline ref_t encodeMessage(ref_t actionRef, int paramCount)
+// --- miscellaneous routines ---
+
+inline bool isWeakReference(ident_t referenceName)
+{
+   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0]=='\'');
+}
+
+//inline bool isTemplateWeakReference(ident_t referenceName)
+//{
+//   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0] == '\'' && referenceName.find('#') != NOTFOUND_POS);
+//}
+
+//inline ref_t encodeMessage(ref_t actionRef, int paramCount)
+//{
+//   return (actionRef << 4) + paramCount;
+//}
+//
+//inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
+//{
+//   ref64_t message = actionRef;
+//   message <<= 16;
+//
+//   message += paramCount;
+//
+//   return message;
+//}
+//
+//inline ref_t encodeVerb(int verbId)
+//{
+//   return encodeMessage(verbId, 0);
+//}
+//
+//inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
+//{
+//   actionRef = (message >> 4) & ACTION_MASK;
+//
+//   paramCount = message & PARAM_MASK;
+//}
+//
+////inline ref_t overwriteParamCount(ref_t message, int paramCount)
 ////{
-////   return (actionRef << 4) + paramCount;
-////}
-////
-////inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
-////{
-////   ref64_t message = actionRef;
-////   message <<= 16;
-////
-////   message += paramCount;
+////   message &= ~PARAM_MASK;
+////   message |= paramCount;
 ////
 ////   return message;
 ////}
-////
-////inline ref_t encodeVerb(int verbId)
-////{
-////   return encodeMessage(verbId, 0);
-////}
-////
-////inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
-////{
-////   actionRef = (message >> 4) & ACTION_MASK;
-////
-////   paramCount = message & PARAM_MASK;
-////}
-////
-//////inline ref_t overwriteParamCount(ref_t message, int paramCount)
-//////{
-//////   message &= ~PARAM_MASK;
-//////   message |= paramCount;
-//////
-//////   return message;
-//////}
-////
-////inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
-////{
-////   actionRef = (ref_t)(message >> 16);
-////
-////   actionRef &= ACTION_MASK;
-////
-////   paramCount = message & PARAMX_MASK;
-////}
-////
+//
+//inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
+//{
+//   actionRef = (ref_t)(message >> 16);
+//
+//   actionRef &= ACTION_MASK;
+//
+//   paramCount = message & PARAMX_MASK;
+//}
+//
 ////inline int getAbsoluteParamCount(ref_t message)
 ////{
 ////   int   paramCount;

@@ -30,8 +30,8 @@ public:
 private:
    Project* _project;
    void*    _entryPoint;
-//   size_t   _objectHeaderSize;
-//
+   size_t   _objectHeaderSize;
+
 //   ident_t _literal;
 //   ident_t _wideLiteral;
 //   ident_t _character;
@@ -57,17 +57,17 @@ public:
 
    virtual _Memory* getTargetSection(ref_t mask);
 
-//   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask, bool silentMode);
+   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask, bool silentMode);
 //   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode);
-//   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
-//
-//   virtual _Memory* getTargetDebugSection()
-//   {
-//      return &_debug;
-//   }
+   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
 
-//   virtual size_t getLinkerConstant(int id);
-//
+   virtual _Memory* getTargetDebugSection()
+   {
+      return &_debug;
+   }
+
+   virtual size_t getLinkerConstant(int id);
+
 //   virtual ident_t getLiteralClass();
 //   virtual ident_t getWideLiteralClass();
 //   virtual ident_t getCharacterClass();
@@ -78,8 +78,8 @@ public:
 //   virtual ident_t getExtMessageClass();
 //   virtual ident_t getSignatureClass();
 //   virtual ident_t getNamespace();
-//
-//   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask);
+
+   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask);
 
    Project* getProject() const { return _project; }
 

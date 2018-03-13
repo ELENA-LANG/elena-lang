@@ -134,173 +134,173 @@ Section* Module :: mapSection(ref_t reference, bool existing)
    return section;
 }
 
-//void Module :: loadSections(StreamReader& reader)
-//{
-//   int totalSize = reader.getDWord();
-//
-//   while (totalSize > 0) {
-//      ref_t key = reader.getDWord();
-//
-//      Section* section = _readSection(&reader);
-//
-//      _sections.add(key, section);
-//
-//      totalSize -= section->Size() + 8;
-//   }
-//}
-//
-//void Module :: saveSections(StreamWriter& writer)
-//{
-//   int totalSize = 0;
-//
-//   // calculate the total section size
-//   SectionMap::Iterator it = _sections.start();
-//   while (!it.Eof()) {
-//      totalSize += (*it)->Size() + 8;
-//
-//      it++;
-//   }
-//
-//   // save total size
-//   writer.writeDWord(totalSize);
-//
-//   // save sections
-//   it = _sections.start();
-//   while (!it.Eof()) {
-//      _writeIterator(&writer, it.key(), *it);
-//
-//      it++;
-//   }
-//}
-//
-//LoadResult Module :: load(StreamReader& reader)
-//{
-//   if (reader.Eof())
-//      return lrNotFound;
-//
-//   // load signature...
-//   char signature[12];
-//   reader.read(signature, (pos_t)strlen(MODULE_SIGNATURE));
-//   if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
-//      return (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? lrWrongVersion : lrWrongStructure;
-//   }
-//
-//   // load name...
-//   reader.readString(_name);
-//
-//   // load references...
-//   _references.read(&reader);
-//
+void Module :: loadSections(StreamReader& reader)
+{
+   int totalSize = reader.getDWord();
+
+   while (totalSize > 0) {
+      ref_t key = reader.getDWord();
+
+      Section* section = _readSection(&reader);
+
+      _sections.add(key, section);
+
+      totalSize -= section->Size() + 8;
+   }
+}
+
+void Module :: saveSections(StreamWriter& writer)
+{
+   int totalSize = 0;
+
+   // calculate the total section size
+   SectionMap::Iterator it = _sections.start();
+   while (!it.Eof()) {
+      totalSize += (*it)->Size() + 8;
+
+      it++;
+   }
+
+   // save total size
+   writer.writeDWord(totalSize);
+
+   // save sections
+   it = _sections.start();
+   while (!it.Eof()) {
+      _writeIterator(&writer, it.key(), *it);
+
+      it++;
+   }
+}
+
+LoadResult Module :: load(StreamReader& reader)
+{
+   if (reader.Eof())
+      return lrNotFound;
+
+   // load signature...
+   char signature[12];
+   reader.read(signature, (pos_t)strlen(MODULE_SIGNATURE));
+   if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
+      return (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? lrWrongVersion : lrWrongStructure;
+   }
+
+   // load name...
+   reader.readString(_name);
+
+   // load references...
+   _references.read(&reader);
+
 //   // load subjects...
 //   _subjects.read(&reader);
 //
 //   // load constants...
 //   _constants.read(&reader);
-//
-//   // load sections..
-//   loadSections(reader);
-//
-//   return lrSuccessful;
-//}
-//
-//bool Module :: save(StreamWriter& writer)
-//{
-//   if (!writer.isOpened())
-//      return false;
-//
-//   // save signature...
-//   writer.write(MODULE_SIGNATURE, (pos_t)strlen(MODULE_SIGNATURE));
-//
-//   // save name...
-//   writer.writeLiteral(_name, getlength(_name) + 1);
-//
-//   // save references...
-//   _references.write(&writer);
-//
+
+   // load sections..
+   loadSections(reader);
+
+   return lrSuccessful;
+}
+
+bool Module :: save(StreamWriter& writer)
+{
+   if (!writer.isOpened())
+      return false;
+
+   // save signature...
+   writer.write(MODULE_SIGNATURE, (pos_t)strlen(MODULE_SIGNATURE));
+
+   // save name...
+   writer.writeLiteral(_name, getlength(_name) + 1);
+
+   // save references...
+   _references.write(&writer);
+
 //   // save subjects...
 //   _subjects.write(&writer);
 //
 //   // save constants...
 //   _constants.write(&writer);
-//
-//   // save sections..
-//   saveSections(writer);
-//
-//   return true;
-//}
-//
-//// --- ROModule ---
-//
-//ROModule :: ROModule(StreamReader& reader, LoadResult& result)
-//   : _sections(ROModule::ROSection())
-//{
-//   if (reader.Eof()) {
-//      result = lrNotFound;
-//      return;
-//   }
-//
-//   // load signature...
-//   char signature[12];
-//   reader.read(signature, (pos_t)strlen(MODULE_SIGNATURE));
-//   if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
-//      result = (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? lrWrongVersion : lrWrongStructure;
-//      return;
-//   }
-//
-//   // load name...
-//   reader.readString(_name);
-//
-//   // load references...
-//   _references.read(&reader);
-//
+
+   // save sections..
+   saveSections(writer);
+
+   return true;
+}
+
+// --- ROModule ---
+
+ROModule :: ROModule(StreamReader& reader, LoadResult& result)
+   : _sections(ROModule::ROSection())
+{
+   if (reader.Eof()) {
+      result = lrNotFound;
+      return;
+   }
+
+   // load signature...
+   char signature[12];
+   reader.read(signature, (pos_t)strlen(MODULE_SIGNATURE));
+   if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
+      result = (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? lrWrongVersion : lrWrongStructure;
+      return;
+   }
+
+   // load name...
+   reader.readString(_name);
+
+   // load references...
+   _references.read(&reader);
+
 //   // load subjects...
 //   _subjects.read(&reader);
 //
 //   // load constants...
 //   _constants.read(&reader);
-//
-//   // load sections..
-//   loadSections(reader);
-//
-//   result = lrSuccessful;
-//}
-//
-//void ROModule :: loadSections(StreamReader& reader)
-//{
-//   int totalSize = reader.getDWord();
-//
-//   // load section bodies
-//   _sectionDump.load(&reader, totalSize);
-//
-//   // create section map
-//   int position = 0;
-//   int length = _sectionDump.Length();
-//   while (position < length) {
-//      // add section object
-//      _sections.add(_sectionDump[position], ROSection((char*)_sectionDump.get(position + 4)));
-//
-//      // skip key
-//      position += 4;
-//      // skip section + section size field
-//      position += _sectionDump[position] + 4;
-//      // skip section relocation map + relocation map count field
-//      position += (_sectionDump[position] << 3) + 4;
-//   }
-//}
-//
-//ref_t ROModule :: mapReference(ident_t reference)
-//{
-//   return _references.get(reference);
-//}
-//
-//ref_t ROModule :: mapReference(ident_t reference, bool existing)
-//{
-//   if (!existing) {
-//      throw InternalError("Read-only Module");
-//   }
-//   else return _references.get(reference);
-//}
-//
+
+   // load sections..
+   loadSections(reader);
+
+   result = lrSuccessful;
+}
+
+void ROModule :: loadSections(StreamReader& reader)
+{
+   int totalSize = reader.getDWord();
+
+   // load section bodies
+   _sectionDump.load(&reader, totalSize);
+
+   // create section map
+   int position = 0;
+   int length = _sectionDump.Length();
+   while (position < length) {
+      // add section object
+      _sections.add(_sectionDump[position], ROSection((char*)_sectionDump.get(position + 4)));
+
+      // skip key
+      position += 4;
+      // skip section + section size field
+      position += _sectionDump[position] + 4;
+      // skip section relocation map + relocation map count field
+      position += (_sectionDump[position] << 3) + 4;
+   }
+}
+
+ref_t ROModule :: mapReference(ident_t reference)
+{
+   return _references.get(reference);
+}
+
+ref_t ROModule :: mapReference(ident_t reference, bool existing)
+{
+   if (!existing) {
+      throw InternalError("Read-only Module");
+   }
+   else return _references.get(reference);
+}
+
 //ref_t ROModule :: mapSubject(ident_t reference, bool existing)
 //{
 //   if (!existing) {
@@ -313,11 +313,11 @@ Section* Module :: mapSection(ref_t reference, bool existing)
 //{
 //   return _constants.get(reference);
 //}
-//
-//_Memory* ROModule :: mapSection(ref_t reference, bool existing)
-//{
-//   if (!existing)
-//      throw InternalError("Read-only Module");
-//
-//   return _sections.getPtr(reference);
-//}
+
+_Memory* ROModule :: mapSection(ref_t reference, bool existing)
+{
+   if (!existing)
+      throw InternalError("Read-only Module");
+
+   return _sections.getPtr(reference);
+}

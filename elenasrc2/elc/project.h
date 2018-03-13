@@ -57,16 +57,16 @@ enum ProjectSetting
    opPlatform              = 0x002A,      // defines the project platform type
    opGCYGSize              = 0x002B,
 
-////   // compiler engine options
-//   opWarnOnWeakUnresolved  = 0x0042,
-////   opWarnOnSignature       = 0x0043,
+//   // compiler engine options
+   opWarnOnWeakUnresolved  = 0x0042,
+//   opWarnOnSignature       = 0x0043,
 
    // compiler optimization options
    opL0                    = 0x0050,   // byte-code optimization
    opL1                    = 0x0051,   // source-code optimization
 
-//   opPrimitives            = 0x0060,
-//   opForwards              = 0x0061,
+   opPrimitives            = 0x0060,
+   opForwards              = 0x0061,
    opSources               = 0x0062,  
    opTemplates             = 0x0063,
 //   opExternals             = 0x0064,
@@ -108,8 +108,8 @@ protected:
 
    void loadCategory(_ConfigFile& config, ProjectSetting setting, path_t configPath);
    void loadSourceCategory(_ConfigFile& config);
-//   void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
-//   void loadForwardCategory(_ConfigFile& config);
+   void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
+   void loadForwardCategory(_ConfigFile& config);
 //   void loadTargetCategory(_ConfigFile& config);
 
 public:
@@ -172,20 +172,20 @@ public:
       }
    }
 
-////   void addLoaderListener(_JITLoaderListener* listener)
-////   {
-////      _loader.addListener(listener);
-////   }
-////
-////   virtual ident_t resolveForward(ident_t forward);
-////   virtual bool addForward(ident_t forward, ident_t reference);
-////
-////   // loader
-////   virtual _Module* loadModule(ident_t package, bool silentMode);
-////
-////   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false);
-////   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
-////   virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
+//   void addLoaderListener(_JITLoaderListener* listener)
+//   {
+//      _loader.addListener(listener);
+//   }
+
+   virtual ident_t resolveForward(ident_t forward);
+//   virtual bool addForward(ident_t forward, ident_t reference);
+//
+//   // loader
+//   virtual _Module* loadModule(ident_t package, bool silentMode);
+
+//   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false);
+   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
+   virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
 
    virtual bool HasWarnings() const { return _hasWarning; }
 
@@ -225,16 +225,16 @@ public:
    virtual _Module* createModule(ident_t name);
    virtual _Module* createDebugModule(ident_t name);
 
-//   virtual void saveModule(_Module* module, ident_t extension);
+   virtual void saveModule(_Module* module, ident_t extension);
 
    virtual ident_t Namespace() const
    {
       return StrSetting(opNamespace);
    }
-////   virtual bool WarnOnWeakUnresolved() const
-////   {
-////      return BoolSetting(opWarnOnWeakUnresolved);
-////   }
+   virtual bool WarnOnWeakUnresolved() const
+   {
+      return BoolSetting(opWarnOnWeakUnresolved);
+   }
 
    bool declare(ident_t filePath, Compiler& compiler, Parser& parser, SyntaxTree& derivationTree, ModuleInfo& moduleInfo, Unresolveds& unresolved);
    void compile(Compiler& compiler, SyntaxTree& derivationTree, ModuleInfo& moduleInfo, Unresolveds& unresolved);

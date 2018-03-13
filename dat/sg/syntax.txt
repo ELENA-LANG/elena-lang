@@ -1,6 +1,8 @@
 __define START          	1
 __define eps            	2
 
+__define EXPRESSION		4114
+__define OBJECT			4121
 __define TOKEN   		4172
 __define DECLARATION   		4173
 

@@ -12,7 +12,12 @@ In development:
                  * uncomment afterLoad,prepareCompiler,compileSources,createModule,createDebugModule,validateUnresolved,writeSelf,
                    processStep,loadTapeDebugInfo,loadDebugData,parseMessage,readContext,generateTape,declareStaticSymbol,
                    writeBreakpoint,writeProcedure,declareSymbol,onDebuggerStop,loadMessage,loadMessage,loadDebugModule,
-                   excludeSource,includeSource,loadSettings,saveSettings,readAddressInfo
+                   excludeSource,includeSource,loadSettings,saveSettings,readAddressInfo,resolveBytecodeSection,fixReferences,
+                   ExecutableImage :: retrieveReference,compileMTRedirect,loadMTOpX,compileInvokeVMTOffset,compileInvokeVMT,compileInvokeVMT,
+                   compileSetVerb,compileIfM,compileElseM,compileMCopy,compileMCopy,prepareCore,loadMTOp,writeXReference,
+                   writeReference,compileRArg,compileRMessageArg,compileMessageArg,compileMCommand,ECodesAssembler :: compile,
+                   resolveMessageByIndex,listFields,printMethod,listClassMethods,listConstructorMethods,resolveMessage,
+                   printMessage,printReference,listFlags,printManifest,printAPI,listClasses,loadMessageName,resolveNativeSection
                  *test creating project, adding source files. including / excluding, forwards, settings, ...
 
               dev - general implementation

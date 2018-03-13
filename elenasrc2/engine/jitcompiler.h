@@ -12,29 +12,29 @@
 namespace _ELENA_
 {
 
-//// --- ReferenceHelper ---
-//
-//class _ReferenceHelper
-//{
-//public:
-//   virtual ref_t getLinkerConstant(ref_t constant) = 0;
-//   virtual SectionInfo getCoreSection(ref_t reference) = 0;
+// --- ReferenceHelper ---
+
+class _ReferenceHelper
+{
+public:
+   virtual ref_t getLinkerConstant(ref_t constant) = 0;
+   virtual SectionInfo getCoreSection(ref_t reference) = 0;
 //   virtual SectionInfo getSection(ref_t reference, _Module* module = NULL) = 0;
-//
-//   virtual void* getVAddress(MemoryWriter& writer, int mask) = 0;
-//
+
+   virtual void* getVAddress(MemoryWriter& writer, int mask) = 0;
+
 //   virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL) = 0;
-//
-//   virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module = NULL) = 0;
-//   virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp) = 0;
+
+   virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module = NULL) = 0;
+   virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp) = 0;
 //   virtual void writeMTReference(MemoryWriter& writer) = 0;
-//
-//   // used for 64bit programming, currently only for mskVMTXMethodAddress and mskVMTXEntryOffset
-//   virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module = NULL) = 0;
-//
-//   virtual void addBreakpoint(size_t position) = 0;
-//};
-//
+
+   // used for 64bit programming, currently only for mskVMTXMethodAddress and mskVMTXEntryOffset
+   virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module = NULL) = 0;
+
+   virtual void addBreakpoint(size_t position) = 0;
+};
+
 //// --- _BinaryHelper ---
 //
 //class _BinaryHelper
@@ -47,14 +47,14 @@ namespace _ELENA_
 class _JITCompiler
 {
 public:
-//   virtual size_t getObjectHeaderSize() const = 0;
-//
-//   virtual bool isWithDebugInfo() const = 0;
-//
-//   virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader) = 0;
-//
-//   virtual void alignCode(MemoryWriter* writer, int alignment, bool code) = 0;
-//
+   virtual size_t getObjectHeaderSize() const = 0;
+
+   virtual bool isWithDebugInfo() const = 0;
+
+   virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader) = 0;
+
+   virtual void alignCode(MemoryWriter* writer, int alignment, bool code) = 0;
+
 //   virtual void compileInt32(MemoryWriter* writer, int integer) = 0;
 //   virtual void compileInt64(MemoryWriter* writer, long long integer) = 0;
 //   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset) = 0;
@@ -65,9 +65,9 @@ public:
 //   virtual void compileChar32(MemoryWriter* writer, const char* value) = 0;
 //   virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
 //   virtual void compileCollection(MemoryWriter* writer, _Memory* binary) = 0;
-//
-//   virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
-//   virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter) = 0;
+
+   virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
+   virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter) = 0;
 
    virtual void allocateVariable(MemoryWriter& writer) = 0;
    virtual void allocateArray(MemoryWriter& writer, size_t count) = 0;
@@ -90,8 +90,8 @@ public:
 //   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode) = 0;
 //
 //   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
-//
-//   virtual void* getPreloadedReference(ref_t reference) = 0;
+
+   virtual void* getPreloadedReference(ref_t reference) = 0;
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode) = 0;
 

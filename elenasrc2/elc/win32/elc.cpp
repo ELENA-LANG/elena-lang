@@ -196,12 +196,12 @@ bool _ELC_::Project :: readCategory(_ELENA_::_ConfigFile& config, _ELENA_::Proje
    switch (setting) {
       case _ELENA_::opTemplates:
          return config.select(TEMPLATE_CATEGORY, list);
-//      case _ELENA_::opPrimitives:
-//         return config.select(PRIMITIVE_CATEGORY, list);
+      case _ELENA_::opPrimitives:
+         return config.select(PRIMITIVE_CATEGORY, list);
       case _ELENA_::opSources:
          return config.select(SOURCE_CATEGORY, list);
-//      case _ELENA_::opForwards:
-//         return config.select(FORWARD_CATEGORY, list);
+      case _ELENA_::opForwards:
+         return config.select(FORWARD_CATEGORY, list);
 //      case _ELENA_::opExternals:
 //         return config.select(EXTERNALS_CATEGORY, list);
       case _ELENA_::opReferences:
@@ -242,8 +242,8 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
          return config.getSetting(ELC_LIB_PATH);
       case _ELENA_::opOutputPath:
          return config.getSetting(ELC_OUTPUT_PATH);
-//      case _ELENA_::opWarnOnWeakUnresolved:
-//         return config.getSetting(ELC_WARNON_WEAKUNRESOLVED);
+      case _ELENA_::opWarnOnWeakUnresolved:
+         return config.getSetting(ELC_WARNON_WEAKUNRESOLVED);
 //         //   case _ELENA_::opWarnOnSignature:
 //   //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
       case _ELENA_::opDebugMode:
@@ -435,49 +435,49 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
    _ELENA_::IdentifierString valueName(value);
 
    switch ((char)value[0]) {
-//      case ELC_PRM_LIB_PATH:
-//         _settings.add(_ELENA_::opLibPath, valueName.clone(1));
-//         break;
-//      case ELC_PRM_OUTPUT_PATH:
-//         _settings.add(_ELENA_::opOutputPath, valueName.clone(1));
-//         break;
-//      case ELC_PRM_EXTRA:
-//         if (valueName.compare(ELC_PRM_TABSIZE, 4)) {
-//            _tabSize = valueName.ident().toInt(4);
-//         }
-//         else if (valueName.compare(ELC_PRM_CODEPAGE, 3)) {
-//            _encoding = valueName.ident().toInt(3);
-//         }
-//         else if (valueName.compare(ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
-//            _settings.add(_ELENA_::opProjectPath, valueName.clone(_ELENA_::getlength(ELC_PRM_PROJECTPATH)));
-//         }
-//         else if (valueName.compare(ELC_PRM_OPTOFF)) {
-//            _settings.add(_ELENA_::opL0, 0);
-//            _settings.add(_ELENA_::opL1, 0);
-//         }
-//         else if (valueName.compare(ELC_PRM_OPT1OFF)) {
-//            _settings.add(_ELENA_::opL1, 0);
-//         }
-//         else raiseError(ELC_ERR_INVALID_OPTION, valueName);
-//         break;
-//      case ELC_PRM_WARNING:
-//         if (valueName.compare(ELC_W_WEAKUNRESOLVED)) {
-//            _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
-//         }
-//         else if (valueName.compare(ELC_W_LEVEL1)) {
-//            _warningMasks = _ELENA_::WARNING_MASK_1;
-//         }
-//         else if (valueName.compare(ELC_W_LEVEL2)) {
-//            _warningMasks = _ELENA_::WARNING_MASK_2;
-//         }
-//         else if (valueName.compare(ELC_W_LEVEL3)) {
-//            _warningMasks = _ELENA_::WARNING_MASK_3;
-//         }
-//         else if (valueName.compare(ELC_W_OFF)) {
-//            _warningMasks = 0;
-//         }
-//         else raiseError(ELC_ERR_INVALID_OPTION, valueName);
-//         break;
+      case ELC_PRM_LIB_PATH:
+         _settings.add(_ELENA_::opLibPath, valueName.clone(1));
+         break;
+      case ELC_PRM_OUTPUT_PATH:
+         _settings.add(_ELENA_::opOutputPath, valueName.clone(1));
+         break;
+      case ELC_PRM_EXTRA:
+         if (valueName.compare(ELC_PRM_TABSIZE, 4)) {
+            _tabSize = valueName.ident().toInt(4);
+         }
+         else if (valueName.compare(ELC_PRM_CODEPAGE, 3)) {
+            _encoding = valueName.ident().toInt(3);
+         }
+         else if (valueName.compare(ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
+            _settings.add(_ELENA_::opProjectPath, valueName.clone(_ELENA_::getlength(ELC_PRM_PROJECTPATH)));
+         }
+         else if (valueName.compare(ELC_PRM_OPTOFF)) {
+            _settings.add(_ELENA_::opL0, 0);
+            _settings.add(_ELENA_::opL1, 0);
+         }
+         else if (valueName.compare(ELC_PRM_OPT1OFF)) {
+            _settings.add(_ELENA_::opL1, 0);
+         }
+         else raiseError(ELC_ERR_INVALID_OPTION, valueName);
+         break;
+      case ELC_PRM_WARNING:
+         if (valueName.compare(ELC_W_WEAKUNRESOLVED)) {
+            _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
+         }
+         else if (valueName.compare(ELC_W_LEVEL1)) {
+            _warningMasks = _ELENA_::WARNING_MASK_1;
+         }
+         else if (valueName.compare(ELC_W_LEVEL2)) {
+            _warningMasks = _ELENA_::WARNING_MASK_2;
+         }
+         else if (valueName.compare(ELC_W_LEVEL3)) {
+            _warningMasks = _ELENA_::WARNING_MASK_3;
+         }
+         else if (valueName.compare(ELC_W_OFF)) {
+            _warningMasks = 0;
+         }
+         else raiseError(ELC_ERR_INVALID_OPTION, valueName);
+         break;
 //      case ELC_PRM_TARGET:
 //         _settings.add(_ELENA_::opTarget, valueName.clone(1));
 //         break;
@@ -573,10 +573,10 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
       //   }
       //}
 
-      //saveModule(moduleInfo.codeModule, "nl");
+      saveModule(moduleInfo.codeModule, "nl");
 
-      //if (moduleInfo.debugModule)
-      //   saveModule(moduleInfo.debugModule, "dnl");
+      if (moduleInfo.debugModule)
+         saveModule(moduleInfo.debugModule, "dnl");
    }
 
    // validate the unresolved forward refereces if unresolved reference warning is enabled
@@ -664,7 +664,7 @@ int main()
          if (argv[i][0]=='-') {
             project.setOption(argv[i] + 1);
          }
-         else if (_ELENA_::Path::checkExtension(argv[i], "xprj") || _ELENA_::Path::checkExtension(argv[i], "prj")) {
+         else if (_ELENA_::Path::checkExtension(argv[i], "prj")) {
             project.loadProject(argv[i]);
          }
          else project.addSource(argv[i]);

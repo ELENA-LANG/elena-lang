@@ -3644,10 +3644,10 @@ void ByteCodeWriter::freeLock(CommandTape& tape)
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument)
-//{
-//   switch (type) {
+
+void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument)
+{
+   switch (type) {
 //      case lxSymbolReference:
 //         tape.write(bcCallR, argument | mskSymbolRef);
 //         break;
@@ -3682,10 +3682,10 @@ void ByteCodeWriter::freeLock(CommandTape& tape)
 ////         tape.write(bcALoadSI, argument);
 ////         tape.write(bcALoadAI, 0);
 ////         break;
-//      case lxNil:
-//         // acopyr 0
-//         tape.write(bcACopyR, argument);
-//         break;
+      case lxNil:
+         // acopyr 0
+         tape.write(bcACopyR, argument);
+         break;
 //      case lxField:
 //         // bloadfi 1
 //         // aloadbi / acopyb
@@ -3744,11 +3744,11 @@ void ByteCodeWriter::freeLock(CommandTape& tape)
 //         tape.write(bcClass);
 //         tape.write(bcPopB);
 //         break;
-//      default:
-//         break;
-//   }
-//}
-//
+      default:
+         break;
+   }
+}
+
 //void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t argument)
 //{
 //   switch (type)
@@ -3791,12 +3791,12 @@ void ByteCodeWriter::freeLock(CommandTape& tape)
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node)
-//{
-//   loadObject(tape, node.type, node.argument);
-//}
-//
+
+void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node)
+{
+   loadObject(tape, node.type, node.argument);
+}
+
 //void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
 //{
 //   pushObject(tape, node.type, node.argument);
@@ -5203,11 +5203,11 @@ void ByteCodeWriter::freeLock(CommandTape& tape)
 //      else resend(tape);
 //   }
 //}
-//
-//void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node, int mode)
-//{
-//   switch (node.type)
-//   {
+
+void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node, int mode)
+{
+   switch (node.type)
+   {
 //      case lxExpression:
 //      case lxLocalUnboxing:
 //      case lxFieldExpression:
@@ -5312,28 +5312,28 @@ void ByteCodeWriter::freeLock(CommandTape& tape)
 //      case lxCode:
 //         generateCodeBlock(tape, node);
 //         break;
-//      default:
-//         loadObject(tape, node);
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, int mode)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
+      default:
+         loadObject(tape, node);
+         break;
+   }
+}
+
+void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, int mode)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
 //      //if (current == lxReleasing) {
 //      //   releaseObject(tape, current.argument);
 //      //}
 //      /*else */if (test(current.type, lxObjectMask)) {
-//         generateObjectExpression(tape, current, mode);
+         generateObjectExpression(tape, current, mode);
 //      }
 //      else generateDebugInfo(tape, current);
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+
+      current = current.nextNode();
+   }
+}
+
 //void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
 //{
 //   loadObject(tape, lxLocalAddress, offset + 2);
@@ -5419,22 +5419,22 @@ void ByteCodeWriter::freeLock(CommandTape& tape)
 //      }
 //   }
 //}
-//
-//void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SyntaxTree::Node current = node.firstChild();
-//   while (current != lxNone) {
-//      LexicalType type = current.type;
-//      switch (type)
-//      {
-//         case lxExpression:
+
+void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node node)
+{
+   SyntaxTree::Node current = node.firstChild();
+   while (current != lxNone) {
+      LexicalType type = current.type;
+      switch (type)
+      {
+         case lxExpression:
 //            if (translateBreakpoint(tape, current.findChild(lxBreakpoint))) {
 //               declareBlock(tape);
 //               generateExpression(tape, current);
 //               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 //            }
-//            else generateExpression(tape, current);
-//            break;
+            /*else */generateExpression(tape, current);
+            break;
 //         case lxReturning:
 //            generateObjectExpression(tape, current);
 //            break;
@@ -5463,14 +5463,14 @@ void ByteCodeWriter::freeLock(CommandTape& tape)
 //         case lxBinaryVariable:
 //            generateDebugInfo(tape, current);
 //            break;
-//         default:
-//            generateObjectExpression(tape, current);
-//            break;
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
+         //default:
+         //   generateObjectExpression(tape, current);
+         //   break;
+      }
+      current = current.nextNode();
+   }
+}
+
 //void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints)
 //{
 //   ByteCodeIterator it = tape.end();
@@ -5801,7 +5801,7 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStat
    }
    else declareSymbol(tape, root.argument, sourcePathRef);
 
-//   generateCodeBlock(tape, root);
+   generateCodeBlock(tape, root);
 
    if (isStatic) {
       endStaticSymbol(tape, root.argument);
