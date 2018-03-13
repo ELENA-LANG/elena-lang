@@ -190,9 +190,9 @@ public:
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
 
-//   virtual void generateProgramStart(MemoryDump& tape);
-//   virtual void generateSymbolCall(MemoryDump& tape, void* address);
-//   virtual void generateProgramEnd(MemoryDump& tape);
+   virtual void generateProgramStart(MemoryDump& tape);
+   virtual void generateSymbolCall(MemoryDump& tape, void* address);
+   virtual void generateProgramEnd(MemoryDump& tape);
 
    x86JITCompiler(bool debugMode);
 };

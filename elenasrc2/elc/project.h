@@ -70,7 +70,7 @@ enum ProjectSetting
    opSources               = 0x0062,  
    opTemplates             = 0x0063,
 //   opExternals             = 0x0064,
-//   opWinAPI                = 0x0065,   // used only for WIN32
+   opWinAPI                = 0x0065,   // used only for WIN32
    opReferences            = 0x0066,
 //   opTargets               = 0x0067,   // compiler targets (only xml project)
 //

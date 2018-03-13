@@ -17,7 +17,8 @@ In development:
                    compileSetVerb,compileIfM,compileElseM,compileMCopy,compileMCopy,prepareCore,loadMTOp,writeXReference,
                    writeReference,compileRArg,compileRMessageArg,compileMessageArg,compileMCommand,ECodesAssembler :: compile,
                    resolveMessageByIndex,listFields,printMethod,listClassMethods,listConstructorMethods,resolveMessage,
-                   printMessage,printReference,listFlags,printManifest,printAPI,listClasses,loadMessageName,resolveNativeSection
+                   printMessage,printReference,listFlags,printManifest,printAPI,listClasses,loadMessageName,resolveNativeSection,
+                   listClasses
                  *test creating project, adding source files. including / excluding, forwards, settings, ...
 
               dev - general implementation

@@ -881,12 +881,12 @@ private:
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
 //
 //   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
-   void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object/*, int mode*/);
+   void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
 //   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
-//   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
-//
-   /*ObjectInfo*/void compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
-   /*ObjectInfo */void compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope/*, int mode*/);
+   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
+
+   /*ObjectInfo*/void compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   /*ObjectInfo */void compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
 
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
@@ -908,7 +908,7 @@ private:
 //   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   /*ObjectInfo*/void compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/);
+   /*ObjectInfo*/void compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
 //

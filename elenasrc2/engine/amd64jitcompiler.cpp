@@ -1593,36 +1593,36 @@ void AMD64JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader
 //   //}
 //   //writer.seekEOF();
 //}
-//
-//void AMD64JITCompiler :: generateProgramStart(MemoryDump& tape)
-//{
-//   JITCompiler64::generateProgramStart(tape);
-//
-//   MemoryWriter ecodes(&tape);
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(PREPARE | mskPreloadCodeRef);
-//
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(INIT | mskPreloadCodeRef);
-//
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
-//}
-//
-//void AMD64JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   ecodes.writeByte(bcCallR);
-//   ecodes.writeDWord((size_t)address | mskCodeRef);
-//}
-//
-//void AMD64JITCompiler :: generateProgramEnd(MemoryDump& tape)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(mskPreloadCodeRef | EXIT);
-//
-//   JITCompiler64::generateProgramEnd(tape);
-//}
+
+void AMD64JITCompiler :: generateProgramStart(MemoryDump& tape)
+{
+   JITCompiler64::generateProgramStart(tape);
+
+   MemoryWriter ecodes(&tape);
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(PREPARE | mskPreloadCodeRef);
+
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(INIT | mskPreloadCodeRef);
+
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
+}
+
+void AMD64JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeByte(bcCallR);
+   ecodes.writeDWord((size_t)address | mskCodeRef);
+}
+
+void AMD64JITCompiler :: generateProgramEnd(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(mskPreloadCodeRef | EXIT);
+
+   JITCompiler64::generateProgramEnd(tape);
+}

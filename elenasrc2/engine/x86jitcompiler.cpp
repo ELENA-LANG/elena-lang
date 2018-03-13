@@ -1784,36 +1784,36 @@ void x86JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& 
 //   }
 //   writer.seekEOF();
 //}
-//
-//void x86JITCompiler :: generateProgramStart(MemoryDump& tape)
-//{
-//   JITCompiler32::generateProgramStart(tape);
-//
-//   MemoryWriter ecodes(&tape);
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(PREPARE | mskPreloadCodeRef);
-//
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(INIT | mskPreloadCodeRef);
-//
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
-//}
-//
-//void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   ecodes.writeByte(bcCallR);
-//   ecodes.writeDWord((size_t)address | mskCodeRef);
-//}
-//
-//void x86JITCompiler :: generateProgramEnd(MemoryDump& tape)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(mskPreloadCodeRef | EXIT);
-//
-//   JITCompiler32::generateProgramEnd(tape);
-//}
+
+void x86JITCompiler :: generateProgramStart(MemoryDump& tape)
+{
+   JITCompiler32::generateProgramStart(tape);
+
+   MemoryWriter ecodes(&tape);
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(PREPARE | mskPreloadCodeRef);
+
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(INIT | mskPreloadCodeRef);
+
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
+}
+
+void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeByte(bcCallR);
+   ecodes.writeDWord((size_t)address | mskCodeRef);
+}
+
+void x86JITCompiler :: generateProgramEnd(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(mskPreloadCodeRef | EXIT);
+
+   JITCompiler32::generateProgramEnd(tape);
+}

@@ -84,17 +84,17 @@ public:
    virtual _Module* createModule(ident_t name) = 0;
    virtual _Module* createDebugModule(ident_t name) = 0 ;
 
-////   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
-//////   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
-////
-////   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
-////   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
-////
-////   virtual ident_t resolveForward(ident_t forward) = 0;
-////
-////   virtual bool addForward(ident_t forward, ident_t reference) = 0;
-////
-////   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
+//   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
+////   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
+//
+//   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
+//   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
+//
+//   virtual ident_t resolveForward(ident_t forward) = 0;
+//
+//   virtual bool addForward(ident_t forward, ident_t reference) = 0;
+
+//   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
 // --- SectionInfo ---
@@ -163,7 +163,7 @@ public:
 //   virtual ident_t getMessageClass() = 0;
 //   virtual ident_t getExtMessageClass() = 0;
 //   virtual ident_t getSignatureClass() = 0;
-//   virtual ident_t getNamespace() = 0;
+   virtual ident_t getNamespace() = 0;
 
    virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
 

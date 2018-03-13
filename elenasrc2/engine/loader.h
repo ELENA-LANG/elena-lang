@@ -29,7 +29,7 @@ protected:
 public:
    virtual void* resolveReference(ident_t reference, size_t mask);
 
-//   virtual ref_t resolveExternal(ident_t external);
+   virtual ref_t resolveExternal(ident_t external);
 
    virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
 //   virtual void mapPredefinedSubject(ident_t name, ref_t reference);

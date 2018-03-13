@@ -630,18 +630,18 @@ _Module* DebugController :: loadDebugModule(ident_t reference)
    _manager->retrievePath(name, path, _T("dnl"));
 
    Module* module = (Module*)_modules.get(name);
-   //if (module == NULL) {
-   //   module = new Module();
+   if (module == NULL) {
+      module = new Module();
 
-   //   _ELENA_::FileReader reader(path.c_str(), _ELENA_::feRaw, false);
-   //   _ELENA_::LoadResult result = module->load(reader);
-   //   if (result != _ELENA_::lrSuccessful) {
-   //      delete module;
+      _ELENA_::FileReader reader(path.c_str(), _ELENA_::feRaw, false);
+      _ELENA_::LoadResult result = module->load(reader);
+      if (result != _ELENA_::lrSuccessful) {
+         delete module;
 
-   //      return NULL;
-   //   }
-   //   _modules.add(name, module);
-   //}
+         return NULL;
+      }
+      _modules.add(name, module);
+   }
    return module;
 }
 

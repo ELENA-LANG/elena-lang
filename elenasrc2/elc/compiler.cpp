@@ -40,7 +40,7 @@ using namespace _ELENA_;
 //#define HINT_SINGLETON        0x00100000
 //#define HINT_EXT_RESENDEXPR   0x00080400
 //#define HINT_ASSIGNING_EXPR   0x00040000
-//#define HINT_NODEBUGINFO      0x00020000
+#define HINT_NODEBUGINFO      0x00020000
 //#define HINT_PARAMETERSONLY   0x00010000
 //#define HINT_SUBCODE_CLOSURE  0x00008800
 //#define HINT_RESENDEXPR       0x00000400
@@ -2379,18 +2379,18 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   }
 //   else scope.raiseError(errDuplicatedLocal, terminal);
 //}
-//
-//void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
-//{
-//   SyntaxTree::copyNode(writer, lxRow, terminal);
-//   SyntaxTree::copyNode(writer, lxCol, terminal);
-//   SyntaxTree::copyNode(writer, lxLength, terminal);
-//
-//   ident_t ident = terminal.identifier();
-//   if (ident)
-//      writer.appendNode(lxTerminal, terminal.identifier());
-//}
-//
+
+void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
+{
+   SyntaxTree::copyNode(writer, lxRow, terminal);
+   SyntaxTree::copyNode(writer, lxCol, terminal);
+   SyntaxTree::copyNode(writer, lxLength, terminal);
+
+   //ident_t ident = terminal.identifier();
+   //if (ident)
+   //   writer.appendNode(lxTerminal, terminal.identifier());
+}
+
 //inline void writeTarget(SyntaxWriter& writer, ref_t targetRef)
 //{
 //   if (targetRef)
@@ -2423,7 +2423,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   else writer.newNode(type, object.param);
 //}
 
-void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object/*, int mode*/)
+void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode)
 {
    switch (object.kind) {
       case okUnknown:
@@ -2582,14 +2582,14 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
    }
 
 //   writeTarget(writer, resolveObjectReference(scope, object));
-//
-//   if (!test(mode, HINT_NODEBUGINFO))
-//      writeTerminalInfo(writer, terminal);
+
+   if (!test(mode, HINT_NODEBUGINFO))
+      writeTerminalInfo(writer, terminal);
 
    writer.closeNode();
 }
 
-/*ObjectInfo*/void Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope/*, int mode*/)
+/*ObjectInfo*/void Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
 {
 //   //if (!test(mode, HINT_NODEBUGINFO))
 //   //   insertDebugStep(terminal, dsStep);
@@ -2699,12 +2699,12 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //
 //      writer.removeBookmark();
 //   }
-   /*else */writeTerminal(writer, terminal, scope, object/*, mode*/);
+   /*else */writeTerminal(writer, terminal, scope, object, mode);
 
 //   return object;
 }
 
-/*ObjectInfo*/void Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope/*, int mode*/)
+/*ObjectInfo*/void Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode)
 {
 //   ObjectInfo result;
 //
@@ -2731,7 +2731,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //         result = compileMessageReference(writer, member, scope, mode);
 //         break;
 //      default:
-         /*result = */compileTerminal(writer, objectNode, scope/*, mode*/);
+         /*result = */compileTerminal(writer, objectNode, scope, mode);
 //   }
 //
 //   return result;
@@ -4408,10 +4408,10 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //   return retVal;
 //}
 
-/*ObjectInfo*/void Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope/*, int mode*/)
+/*ObjectInfo*/void Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    SNode object = node.firstChild(lxObjectMask);
-   compileObject(writer, object, scope);
+   compileObject(writer, object, scope, mode);
 
 //   ObjectInfo objectInfo;
 //   if (node == lxAlt) {
@@ -6767,9 +6767,9 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 
    writer.newNode(lxSymbol, node.argument);
    writer.newNode(lxExpression);
-//   writer.appendNode(lxBreakpoint, dsStep);
+   writer.appendNode(lxBreakpoint, dsStep);
 //   writer.newBookmark();
-   /*ObjectInfo retVal = */compileExpression(writer, expression, codeScope/*, isSingleStatement(expression) ? HINT_ROOTSYMBOL : 0*/);
+   /*ObjectInfo retVal = */compileExpression(writer, expression, codeScope, /*isSingleStatement(expression) ? HINT_ROOTSYMBOL : */0);
 //   if (scope.outputRef != 0) {
 //      ModuleScope* moduleScope = scope.moduleScope;
 //

@@ -203,7 +203,7 @@ enum LexicalType
    lxCol             = 0x20003,
    lxRow             = 0x20004,
    lxLength          = 0x02005,
-//   lxBreakpoint      = 0x20006,
+   lxBreakpoint      = 0x20006,
 //   lxImport          = 0x20007,
 //   lxReserved        = 0x20008,
 //   lxAllocated       = 0x20009,

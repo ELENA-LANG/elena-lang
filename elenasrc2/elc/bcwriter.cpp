@@ -273,20 +273,20 @@ void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticRefere
 //   tape.write(bdMessage, 0, writer.Position());
 //   writer.writeLiteral(message);
 //}
-//
-//void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
-//{
-//   tape.write(bcBreakpoint);
-//
-//   tape.write(bdBreakpoint, stepType, row);
-//   tape.write(bdBreakcoord, disp, length);
-//}
-//
-//void ByteCodeWriter :: declareBlock(CommandTape& tape)
-//{
-//   tape.write(blBlock);
-//}
-//
+
+void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
+{
+   tape.write(bcBreakpoint);
+
+   tape.write(bdBreakpoint, stepType, row);
+   tape.write(bdBreakcoord, disp, length);
+}
+
+void ByteCodeWriter :: declareBlock(CommandTape& tape)
+{
+   tape.write(blBlock);
+}
+
 //void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
 //{
 //   // { pushn 0 } n
@@ -1505,21 +1505,21 @@ void ByteCodeWriter :: writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_
 
 void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug)
 {
-   //// reading breakpoint coordinate
-   //DebugLineInfo info;
+   // reading breakpoint coordinate
+   DebugLineInfo info;
 
-   //info.col = 0;
-   //info.length = 0;
-   //info.symbol = (DebugSymbol)(*it).Argument();
-   //info.row = (*it).additional - 1;
-   //if (peekNext(it) == bdBreakcoord) {
-   //   it++;
+   info.col = 0;
+   info.length = 0;
+   info.symbol = (DebugSymbol)(*it).Argument();
+   info.row = (*it).additional - 1;
+   if (peekNext(it) == bdBreakcoord) {
+      it++;
 
-   //   info.col = (*it).argument;
-   //   info.length = (*it).additional;
-   //}
-   //// saving breakpoint
-   //debug->write((char*)&info, sizeof(DebugLineInfo));
+      info.col = (*it).argument;
+      info.length = (*it).additional;
+   }
+   // saving breakpoint
+   debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
 //inline int getNextOffset(ClassInfo::FieldMap::Iterator it)
@@ -1744,8 +1744,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 
    //   it++;
    //}
-   //else if (scope.debug)
-   //   writeProcedureDebugInfo(scope, NULL);
+   /*else */if (scope.debug)
+      writeProcedureDebugInfo(scope, NULL);
 
    size_t procPosition = 4;
    if (!scope.appendMode || scope.code->Position() == 0) {
@@ -1823,15 +1823,15 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
                writeNewBlock(scope.debug);
 
             break;
-         //case bcBreakpoint:
-         //   // generate debug exception only if debug info enabled
-         //   if (scope.debug) {
-         //      (*it).save(scope.code);
+         case bcBreakpoint:
+            // generate debug exception only if debug info enabled
+            if (scope.debug) {
+               (*it).save(scope.code);
 
-         //      if(peekNext(it) == bdBreakpoint)
-         //         writeBreakpoint(++it, scope.debug);
-         //   }
-         //   break;
+               if(peekNext(it) == bdBreakpoint)
+                  writeBreakpoint(++it, scope.debug);
+            }
+            break;
          //case bdSelf:
          //   writeSelf(scope, (*it).additional, frameLevel);
          //   break;
@@ -1972,9 +1972,9 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             else scope.code->writeDWord(labels.get((*it).argument) - scope.code->Position() - 4);
 
             break;
-         //case bdBreakpoint:
-         //case bdBreakcoord:
-         //   break; // bdBreakcoord & bdBreakpoint should be ingonored if they are not paired with bcBreakpoint
+         case bdBreakpoint:
+         case bdBreakcoord:
+            break; // bdBreakcoord & bdBreakpoint should be ingonored if they are not paired with bcBreakpoint
          default:
             (*it).save(scope.code);
             break;
@@ -3512,42 +3512,42 @@ void ByteCodeWriter::freeLock(CommandTape& tape)
 //
 //   return counter;
 //}
-//
-//bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
-//{
-//   if (node != lxNone) {
-//      // try to find the terminal symbol
-//      SNode terminal = node;
-//      while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
-//         terminal = terminal.firstChild(lxObjectMask);
-//      }
-//
-//      if (terminal == lxNone) {
-//         terminal = node.findNext(lxObjectMask);
-//         while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
-//            terminal = terminal.firstChild(lxObjectMask);
-//         }
-//         // HOTFIX : use idle node 
-//         if (terminal == lxNone && node.nextNode() == lxIdle) {
-//            terminal = node.nextNode();
-//            while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
-//               terminal = terminal.firstChild(lxObjectMask);
-//            }
-//         }
-//      }
-//
-//      if (terminal != lxNone) {
-//         declareBreakpoint(tape,
-//            terminal.findChild(lxRow).argument,
-//            terminal.findChild(lxCol).argument - 1,
-//            terminal.findChild(lxLength).argument, node.argument);
-//      }
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
+
+bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
+{
+   if (node != lxNone) {
+      // try to find the terminal symbol
+      SNode terminal = node;
+      while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
+         terminal = terminal.firstChild(lxObjectMask);
+      }
+
+      if (terminal == lxNone) {
+         terminal = node.findNext(lxObjectMask);
+         while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
+            terminal = terminal.firstChild(lxObjectMask);
+         }
+         // HOTFIX : use idle node 
+         if (terminal == lxNone && node.nextNode() == lxIdle) {
+            terminal = node.nextNode();
+            while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
+               terminal = terminal.firstChild(lxObjectMask);
+            }
+         }
+      }
+
+      if (terminal != lxNone) {
+         declareBreakpoint(tape,
+            terminal.findChild(lxRow).argument,
+            terminal.findChild(lxCol).argument - 1,
+            terminal.findChild(lxLength).argument, node.argument);
+      }
+
+      return true;
+   }
+   else return false;
+}
+
 //void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t argument)
 //{
 //   switch (type)
@@ -5325,9 +5325,9 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, int mod
 //      //if (current == lxReleasing) {
 //      //   releaseObject(tape, current.argument);
 //      //}
-//      /*else */if (test(current.type, lxObjectMask)) {
+      /*else */if (test(current.type, lxObjectMask)) {
          generateObjectExpression(tape, current, mode);
-//      }
+      }
 //      else generateDebugInfo(tape, current);
 
       current = current.nextNode();
@@ -5428,12 +5428,12 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
       switch (type)
       {
          case lxExpression:
-//            if (translateBreakpoint(tape, current.findChild(lxBreakpoint))) {
-//               declareBlock(tape);
-//               generateExpression(tape, current);
-//               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//            }
-            /*else */generateExpression(tape, current);
+            if (translateBreakpoint(tape, current.findChild(lxBreakpoint))) {
+               declareBlock(tape);
+               generateExpression(tape, current);
+               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+            }
+            else generateExpression(tape, current);
             break;
 //         case lxReturning:
 //            generateObjectExpression(tape, current);

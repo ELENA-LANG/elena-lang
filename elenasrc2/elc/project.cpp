@@ -247,7 +247,7 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 
 //   // load external aliases
 //   loadCategory(config, opExternals, NULL);
-//   loadCategory(config, opWinAPI, NULL);
+   loadCategory(config, opWinAPI, NULL);
    loadCategory(config, opReferences, configPath);
 
 //   // load targets
@@ -301,7 +301,7 @@ _Module* Project :: createModule(ident_t name)
 
 _Module* Project :: createDebugModule(ident_t name)
 {
-   return /*new Module(name)*/NULL;
+   return new Module(name);
 }
 
 void Project :: saveModule(_Module* module, ident_t extension)

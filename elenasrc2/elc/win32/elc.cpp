@@ -206,8 +206,8 @@ bool _ELC_::Project :: readCategory(_ELENA_::_ConfigFile& config, _ELENA_::Proje
 //         return config.select(EXTERNALS_CATEGORY, list);
       case _ELENA_::opReferences:
          return config.select(REFERENCE_CATEGORY, list);
-//      case _ELENA_::opWinAPI:
-//         return config.select(WINAPI_CATEGORY, list);
+      case _ELENA_::opWinAPI:
+         return config.select(WINAPI_CATEGORY, list);
 //      case _ELENA_::opTargets:
 //         return config.select(TARGET_CATEGORY, list);
       default:
@@ -481,12 +481,12 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
 //      case ELC_PRM_TARGET:
 //         _settings.add(_ELENA_::opTarget, valueName.clone(1));
 //         break;
-//      case ELC_PRM_DEBUGINFO:
-//         if (valueName.compare(ELC_SUBJECTINFO)) {
-//            _settings.add(_ELENA_::opDebugSubjectInfo, -1);
-//         }
-//         _settings.add(_ELENA_::opDebugMode, -1);
-//         break;
+      case ELC_PRM_DEBUGINFO:
+         //if (valueName.compare(ELC_SUBJECTINFO)) {
+         //   _settings.add(_ELENA_::opDebugSubjectInfo, -1);
+         //}
+         _settings.add(_ELENA_::opDebugMode, -1);
+         break;
 //      case ELC_PRM_CONFIG:
 //      {
 //         if (!loadProject(value + 1))

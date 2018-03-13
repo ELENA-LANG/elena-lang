@@ -356,8 +356,8 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
 {
    //bool literalConstant = false;
    //bool charConstant = false;
-   //ident_t referenceName = NULL;
-   //int mask = reference & mskAnyRef;
+   ident_t referenceName = NULL;
+   int mask = reference & mskAnyRef;
    //if (mask == mskInt32Ref) {
    //   referenceName = _integer;
    //   literalConstant = true;
@@ -382,35 +382,35 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
    //   referenceName = _char;
    //   charConstant = true;
    //}
-   //else if (reference == 0) {
-   //   referenceName = "$nil";
-   //}
-   //else if (reference == -1) {
-   //   referenceName = "$undefined";
-   //}
-   //else referenceName = module->resolveReference(reference & ~mskAnyRef);
+   /*else */if (reference == 0) {
+      referenceName = "$nil";
+   }
+   else if (reference == -1) {
+      referenceName = "$undefined";
+   }
+   else referenceName = module->resolveReference(reference & ~mskAnyRef);
 
-   //if (emptystr(referenceName)) {
-   //   command.append("unknown");
-   //}
-   //else {
-   //   command.append(referenceName);
-   //   if (literalConstant) {
-   //      command.append("(");
-   //      command.append(module->resolveConstant(reference & ~mskAnyRef));
-   //      command.append(")");
-   //   }
-   //   else if (charConstant) {
-   //      const char* ch = module->resolveConstant(reference & ~mskAnyRef);
+   if (emptystr(referenceName)) {
+      command.append("unknown");
+   }
+   else {
+      command.append(referenceName);
+      //if (literalConstant) {
+      //   command.append("(");
+      //   command.append(module->resolveConstant(reference & ~mskAnyRef));
+      //   command.append(")");
+      //}
+      //else if (charConstant) {
+      //   const char* ch = module->resolveConstant(reference & ~mskAnyRef);
 
-   //      IdentifierString num;
-   //      num.appendInt(ch[0]);
-   //      command.append("(");
-   //      command.append(num);
-   //      command.append(")");
+      //   IdentifierString num;
+      //   num.appendInt(ch[0]);
+      //   command.append("(");
+      //   command.append(num);
+      //   command.append(")");
 
-   //   }
-   //}
+      //}
+   }
 }
 
 void printMessage(IdentifierString& command, _Module* module, size_t reference)
@@ -1152,25 +1152,25 @@ void printAPI(_Module* module, int pageSize)
 
 void listClasses(_Module* module, int pageSize)
 {
-   //ident_t moduleName = module->Name();
+   ident_t moduleName = module->Name();
 
-   //int row = 0;
-   //ReferenceMap::Iterator it = ((Module*)module)->References();
-   //while (!it.Eof()) {
-   //   ident_t reference = it.key();
-   //   NamespaceName ns(it.key());
-   //   if (moduleName.compare(ns)) {
-   //      ReferenceName name(it.key());
-   //      if (module->mapSection(*it | mskVMTRef, true)) {
-   //         printLine("class ", name, row, pageSize);
-   //      }
-   //      else if (module->mapSection(*it | mskSymbolRef, true)) {
-   //         printLine("symbol ", name, row, pageSize);
-   //      }
-   //   }
+   int row = 0;
+   ReferenceMap::Iterator it = ((Module*)module)->References();
+   while (!it.Eof()) {
+      ident_t reference = it.key();
+      NamespaceName ns(it.key());
+      if (moduleName.compare(ns)) {
+         ReferenceName name(it.key());
+         //if (module->mapSection(*it | mskVMTRef, true)) {
+         //   printLine("class ", name, row, pageSize);
+         //}
+         /*else */if (module->mapSection(*it | mskSymbolRef, true)) {
+            printLine("symbol ", name, row, pageSize);
+         }
+      }
 
-   //   it++;
-   //}
+      it++;
+   }
 }
 
 void setOutputMode(path_t path)

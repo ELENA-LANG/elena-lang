@@ -40,18 +40,18 @@ namespace _GUI_
 #define IDE_DEBUGINFO_SETTING                   "debuginfo"
 #define ELC_INCLUDE                             "include"
 
-#define IDE_TEMPLATE_XMLSETTING                 "project/template"
-#define IDE_PACKAGE_XMLSETTING                  "project/namespace"
-#define IDE_COMPILER_XMLOPTIONS                 "project/options"
-#define IDE_EXECUTABLE_XMLSETTING               "project/executable"
-#define IDE_OUTPUT_XMLSETTING                   "project/output"
-#define IDE_ARGUMENT_XMLSETTING                 "project/arguments"
-#define IDE_DEBUGINFO_XMLSETTING                "project/debuginfo"
+#define IDE_TEMPLATE_XMLSETTING                 "configuration/project/template"
+#define IDE_PACKAGE_XMLSETTING                  "configuration/project/namespace"
+#define IDE_COMPILER_XMLOPTIONS                 "configuration/project/options"
+#define IDE_EXECUTABLE_XMLSETTING               "configuration/project/executable"
+#define IDE_OUTPUT_XMLSETTING                   "configuration/project/output"
+#define IDE_ARGUMENT_XMLSETTING                 "configuration/project/arguments"
+#define IDE_DEBUGINFO_XMLSETTING                "configuration/project/debuginfo"
 
 #define IDE_FILES_XMLSECTION                    "configuration/files/*"
-#define IDE_FORWARDS_XMLSECTION                 "forwards/*"
+#define IDE_FORWARDS_XMLSECTION                 "configuration/forwards/*"
 
-#define IDE_FORWARDS_ELEMENT                    "forwards/forward"
+#define IDE_FORWARDS_ELEMENT                    "configuration/forwards/forward"
 
 
 // --- ELENA IDE Styles ---

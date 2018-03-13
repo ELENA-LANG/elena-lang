@@ -21,7 +21,7 @@ using namespace _ELENA_;
 
 // --- ExecutableImage ---
 
-ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper)
+ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper)
    : Image(true)
 {
    _project = project;
@@ -45,8 +45,8 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef,
       project->BoolSetting(opClassSymbolAutoLoad));
 
-  //// save root namespace
-  // _debug.writeLiteral(_debug.Length(), getNamespace());
+  // save root namespace
+   _debug.writeLiteral(_debug.Length(), getNamespace());
 
    helper.beforeLoad(compiler, *this);
 
@@ -61,8 +61,8 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    if(_entryPoint == LOADER_NOTLOADED)
       throw JITUnresolvedException(STARTUP_SYMBOL);
 
-  //// inject initializing code into the entry point
-  // _entryPoint = linker.resolveEntry(_entryPoint);
+  // inject initializing code into the entry point
+   _entryPoint = linker.resolveEntry(_entryPoint);
 
   // fix up static table size
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
@@ -75,12 +75,12 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
 
 ref_t ExecutableImage :: getDebugEntryPoint()
 {
-   /*ident_t starter = _project->resolveForward(STARTUP_CLASS);
+   ident_t starter = _project->resolveForward(STARTUP_SYMBOL);
    while (isWeakReference(starter)) {
       starter = _project->resolveForward(starter);
-   }*/
+   }
 
-   return /*(ref_t)resolveReference(starter, mskSymbolRef) & ~mskAnyRef*/(ref_t)LOADER_NOTLOADED; // !! temporal
+   return (ref_t)resolveReference(starter, mskSymbolRef) & ~mskAnyRef;
 }
 
 _Memory* ExecutableImage :: getTargetSection(ref_t mask)
@@ -221,11 +221,11 @@ size_t ExecutableImage :: getLinkerConstant(int id)
 //{
 //   return _signature;
 //}
-//
-//ident_t ExecutableImage :: getNamespace()
-//{
-//   return _project->StrSetting(opNamespace);
-//}
+
+ident_t ExecutableImage :: getNamespace()
+{
+   return _project->StrSetting(opNamespace);
+}
 
 ident_t ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {

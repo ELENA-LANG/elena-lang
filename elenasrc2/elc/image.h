@@ -77,7 +77,7 @@ public:
 //   virtual ident_t getMessageClass();
 //   virtual ident_t getExtMessageClass();
 //   virtual ident_t getSignatureClass();
-//   virtual ident_t getNamespace();
+   virtual ident_t getNamespace();
 
    virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask);
 

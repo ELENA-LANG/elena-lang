@@ -497,14 +497,14 @@ void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionIn
 ////      _compiler->compileMethod(refHelper, reader, writer);
 //   }
 //   else {
-      //if (_withDebugInfo)
-      //   createNativeSymbolDebugInfo(reference, vaddress, sizePtr);
+      if (_withDebugInfo)
+         createNativeSymbolDebugInfo(reference, vaddress, sizePtr);
 
       _compiler->compileSymbol(refHelper, reader, writer);
    //}
 
-   //if (_withDebugInfo)
-   //   endNativeDebugInfo(sizePtr);
+   if (_withDebugInfo)
+      endNativeDebugInfo(sizePtr);
 
    // fix not loaded references
    fixReferences(references, image);
@@ -932,41 +932,41 @@ void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionIn
 ////
 ////   return (void*)vaddress;
 ////}
-//
-//void JITLinker :: createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr)
-//{
-//   _Memory* debug = _loader->getTargetDebugSection();
-//
-//   MemoryWriter writer(debug);
-//   writer.writeLiteral(reference);
-//
-//   sizePtr = writer.Position();
-//   writer.writeDWord(0); // size place holder
-//
-//   writer.writeDWord((size_t)param);
-//}
-//
-//void JITLinker :: createNativeSymbolDebugInfo(ident_t reference, void* address, size_t& sizePtr)
-//{
-//   _Memory* debug = _loader->getTargetDebugSection();
-//
-//   MemoryWriter writer(debug);
-//   // start with # to distinguish the symbol debug info from the class one
-//   writer.writeChar('#');
-//   writer.writeLiteral(reference);
-//
-//   sizePtr = writer.Position();
-//   writer.writeDWord(0); // size place holder
-//
-//   // save symbol entry
-//
-//   // save VMT address
-//   if (!_virtualMode || address == NULL) {
-//      writer.writeDWord((size_t)address);
-//   }
-//   else writer.writeRef((ref_t)address, 0);
-//}
-//
+
+void JITLinker :: createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr)
+{
+   _Memory* debug = _loader->getTargetDebugSection();
+
+   MemoryWriter writer(debug);
+   writer.writeLiteral(reference);
+
+   sizePtr = writer.Position();
+   writer.writeDWord(0); // size place holder
+
+   writer.writeDWord((size_t)param);
+}
+
+void JITLinker :: createNativeSymbolDebugInfo(ident_t reference, void* address, size_t& sizePtr)
+{
+   _Memory* debug = _loader->getTargetDebugSection();
+
+   MemoryWriter writer(debug);
+   // start with # to distinguish the symbol debug info from the class one
+   writer.writeChar('#');
+   writer.writeLiteral(reference);
+
+   sizePtr = writer.Position();
+   writer.writeDWord(0); // size place holder
+
+   // save symbol entry
+
+   // save VMT address
+   if (!_virtualMode || address == NULL) {
+      writer.writeDWord((size_t)address);
+   }
+   else writer.writeRef((ref_t)address, 0);
+}
+
 //void JITLinker :: createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr)
 //{
 //   _Memory* debug = _loader->getTargetDebugSection();
@@ -983,39 +983,39 @@ void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionIn
 //   }
 //   else writer.writeRef((ref_t)vaddress, 0);
 //}
-//
-//void JITLinker :: endNativeDebugInfo(size_t sizePtr)
-//{
-//   _Memory* debug = _loader->getTargetDebugSection();
-//
-//   (*debug)[sizePtr] = debug->Length() - sizePtr;
-//}
-//
-//void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param)
-//{
-//   _Memory* image = _loader->getTargetSection(mskCodeRef);
-//
-//   // map dynamic code
-//   MemoryWriter writer(image);
-//   void* vaddress = calculateVAddress(&writer, mskCodeRef);
-//
-//   if (_withDebugInfo && !emptystr(reference)) {
-//      // it it is a debug mode a special debug record is created containing link to tape
-//      size_t sizePtr = 0;
-//      createNativeDebugInfo(reference, param, sizePtr);
-//
-//      //HOTFIX: temporal byte code is compiled as a method
-//      //because compileSymbol emulates embedded code now
-//      _compiler->compileProcedure(helper, reader, writer);
-//
-//      endNativeDebugInfo(sizePtr);
-//   }
-//   //HOTFIX: temporal byte code is compiled as a method
-//   //because compileSymbol emulates embedded code now
-//   else _compiler->compileProcedure(helper, reader, writer);
-//
-//   return vaddress;
-//}
+
+void JITLinker :: endNativeDebugInfo(size_t sizePtr)
+{
+   _Memory* debug = _loader->getTargetDebugSection();
+
+   (*debug)[sizePtr] = debug->Length() - sizePtr;
+}
+
+void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param)
+{
+   _Memory* image = _loader->getTargetSection(mskCodeRef);
+
+   // map dynamic code
+   MemoryWriter writer(image);
+   void* vaddress = calculateVAddress(&writer, mskCodeRef);
+
+   if (_withDebugInfo && !emptystr(reference)) {
+      // it it is a debug mode a special debug record is created containing link to tape
+      size_t sizePtr = 0;
+      createNativeDebugInfo(reference, param, sizePtr);
+
+      //HOTFIX: temporal byte code is compiled as a method
+      //because compileSymbol emulates embedded code now
+      _compiler->compileProcedure(helper, reader, writer);
+
+      endNativeDebugInfo(sizePtr);
+   }
+   //HOTFIX: temporal byte code is compiled as a method
+   //because compileSymbol emulates embedded code now
+   else _compiler->compileProcedure(helper, reader, writer);
+
+   return vaddress;
+}
 
 void JITLinker :: onModuleLoad(_Module* module)
 {
@@ -1041,31 +1041,31 @@ void JITLinker :: onModuleLoad(_Module* module)
 //
 //   _loadedModules.clear();
 //}
-//
-//void* JITLinker :: resolveEntry(void* programEntry)
-//{
-//   MemoryDump   ecodes;
-//
-//   _compiler->generateProgramStart(ecodes);
-//
+
+void* JITLinker :: resolveEntry(void* programEntry)
+{
+   MemoryDump   ecodes;
+
+   _compiler->generateProgramStart(ecodes);
+
 //   // generate module initializers
 //   generateInitTape(ecodes);
-//
-//   _compiler->generateSymbolCall(ecodes, programEntry);
-//
-//   _compiler->generateProgramEnd(ecodes);
-//
-//   References references(RefInfo(0, NULL));
-//   ReferenceHelper refHelper(this, NULL, &references);
-//   MemoryReader reader(&ecodes);
-//
-//   void* entry = resolveTemporalByteCode(refHelper, reader, NULL, NULL);
-//
-//   // fix not loaded references
-//   fixReferences(references, _loader->getTargetSection(mskCodeRef));
-//
-//   return entry;
-//}
+
+   _compiler->generateSymbolCall(ecodes, programEntry);
+
+   _compiler->generateProgramEnd(ecodes);
+
+   References references(RefInfo(0, NULL));
+   ReferenceHelper refHelper(this, NULL, &references);
+   MemoryReader reader(&ecodes);
+
+   void* entry = resolveTemporalByteCode(refHelper, reader, NULL, NULL);
+
+   // fix not loaded references
+   fixReferences(references, _loader->getTargetSection(mskCodeRef));
+
+   return entry;
+}
 
 // NOTE: reference should not be a forward one, otherwise there may be code duplication
 void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)

@@ -119,7 +119,7 @@ class JITLinker : _JITLoaderListener
    _JITLoader*    _loader;
    _JITCompiler*  _compiler; 
    bool           _virtualMode;
-//   bool           _withDebugInfo;
+   bool           _withDebugInfo;
 //   bool           _classSymbolAutoLoadMode;
    void*          _codeBase;
 //   int            _statLength;
@@ -127,12 +127,12 @@ class JITLinker : _JITLoaderListener
 //   ModuleList     _loadedModules;
 //
 ////   int            _uniqueID;           // used for dynamic subject
-//
-//   void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
-//   void createNativeSymbolDebugInfo(ident_t reference, void* address, size_t& sizePtr);
+
+   void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
+   void createNativeSymbolDebugInfo(ident_t reference, void* address, size_t& sizePtr);
 //   void createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr);
-//   void endNativeDebugInfo(size_t sizePtr);
-//
+   void endNativeDebugInfo(size_t sizePtr);
+
 //   void* getVMTAddress(_Module* module, ref_t reference, References& references);
 //   void* getVMTReference(_Module* module, ref_t reference, References& references);
 //   int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
@@ -167,15 +167,15 @@ public:
 
    void* resolve(ident_t reference, int mask, bool silentMode);
 
-//   void* resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);
-//
-//   void* resolveEntry(void* programEntry);
-//
+   void* resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);
+
+   void* resolveEntry(void* programEntry);
+
 //   //void loadModuleInfo(_Module* module);
 //
 //   void generateInitTape(MemoryDump& tape);
-//
-//   bool getDebugMode() const { return _withDebugInfo; }
+
+   bool getDebugMode() const { return _withDebugInfo; }
 
    size_t getStaticCount() const 
    { 
@@ -195,7 +195,7 @@ public:
       _loader = loader;
       _compiler = compiler;
       _virtualMode = virtualMode;
-//      _withDebugInfo = compiler->isWithDebugInfo();
+      _withDebugInfo = compiler->isWithDebugInfo();
       _codeBase = codeBase;
 //      _statLength = 0;
 //      _classSymbolAutoLoadMode = autoLoadMode;

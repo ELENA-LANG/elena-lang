@@ -59,16 +59,16 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
    }
 }
 
-//ref_t _ImageLoader :: resolveExternal(ident_t external)
-//{
-//   ref_t reference = _exportReferences.get(external);
-//   if (reference == (size_t)-1) {
-//      reference = (_exportReferences.Count() + 1) | mskImportRef;
-//
-//      _exportReferences.add(external, reference);
-//   }
-//   return reference;
-//}
+ref_t _ImageLoader :: resolveExternal(ident_t external)
+{
+   ref_t reference = _exportReferences.get(external);
+   if (reference == (size_t)-1) {
+      reference = (_exportReferences.Count() + 1) | mskImportRef;
+
+      _exportReferences.add(external, reference);
+   }
+   return reference;
+}
 
 void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
 {
@@ -89,8 +89,8 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
 //         case mskSymbolRelRef:
          case mskSymbolRef:
            return (void*)_symbolReferences.get(reference);
-//         case mskImportRef:
-//            return (void*)resolveExternal(reference);
+         case mskImportRef:
+            return (void*)resolveExternal(reference);
 //         case mskRelImportRef:
 //            //HOTFIX : relative import ref mask should not be lost
 //            return (void*)(resolveExternal(reference) | mskRelImportRef);

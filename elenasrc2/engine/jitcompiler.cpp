@@ -348,23 +348,23 @@ void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
 //      }
 //   }
 //}
-//   
-//void JITCompiler32 :: generateProgramStart(MemoryDump& tape)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   ecodes.writeDWord(0);            // write size place holder
-//}
-//
-//void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   tape[0] = ecodes.Position() - 4;
-//}
-//
-//// --- JITCompiler64 ---
-//
+   
+void JITCompiler32 :: generateProgramStart(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeDWord(0);            // write size place holder
+}
+
+void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   tape[0] = ecodes.Position() - 4;
+}
+
+// --- JITCompiler64 ---
+
 //void JITCompiler64 :: compileInt32(MemoryWriter* writer, int integer)
 //{
 //   writer->seek(writer->Position() - 0x10);
@@ -699,17 +699,17 @@ void JITCompiler64 :: allocateArray(MemoryWriter& writer, size_t count)
 //      }
 //   }
 //}
-//
-//void JITCompiler64 :: generateProgramStart(MemoryDump& tape)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   ecodes.writeDWord(0);            // write size place holder
-//}
-//
-//void JITCompiler64 :: generateProgramEnd(MemoryDump& tape)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   tape[0] = ecodes.Position() - 4;
-//}
+
+void JITCompiler64 :: generateProgramStart(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeDWord(0);            // write size place holder
+}
+
+void JITCompiler64 :: generateProgramEnd(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   tape[0] = ecodes.Position() - 4;
+}

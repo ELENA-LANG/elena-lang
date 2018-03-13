@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0003
+#define ELC_REVISION_NUMBER             0x0004
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -30,7 +30,7 @@
 
 // --- ELC command-line parameters ---
 //#define ELC_PRM_CONFIG              'c'
-//#define ELC_PRM_DEBUGINFO           'd'
+#define ELC_PRM_DEBUGINFO           'd'
 ////#define ELC_PRM_SUBJECTINFO         'ds'
 #define ELC_PRM_OUTPUT_PATH         'o'
 #define ELC_PRM_LIB_PATH            'p'
@@ -53,33 +53,33 @@
 #define FORWARD_CATEGORY            "configuration/forwards/*"
 #define PRIMITIVE_CATEGORY          "configuration/primitives/*"
 #define TEMPLATE_CATEGORY           "configuration/templates/*"
-//#define WINAPI_CATEGORY             "winapi/*"
+#define WINAPI_CATEGORY             "configuration/winapi/*"
 //#define EXTERNALS_CATEGORY          "externals/*"
 #define REFERENCE_CATEGORY          "references/*"
 //#define TARGET_CATEGORY             "targets/*"
 
 // --- ELC config settings ---
-#define ELC_DEBUGINFO               "project/debuginfo"
+#define ELC_DEBUGINFO               "configuration/project/debuginfo"
 //#define ELC_SUBJECTINFO             "project/subjectinfo"
 #define ELC_CLASSSYMBOLLOAD         "project/classsymbolload"
 #define ELC_TARGET                  "configuration/project/executable"
-#define ELC_MG_SIZE                 "linker/mgsize"
-#define ELC_HEAP_COMMIT             "linker/heapcommit"
-#define ELC_HEAP_RESERV             "linker/heapresrv"
-#define ELC_YG_IMAGEBASE            "linker/imagebase"
-#define ELC_LIB_PATH                "project/libpath"
-#define ELC_SYSTEM_THREADMAX        "system/maxthread"
-#define ELC_OUTPUT_PATH             "project/output"
+#define ELC_MG_SIZE                 "configuration/linker/mgsize"
+#define ELC_HEAP_COMMIT             "configuration/linker/heapcommit"
+#define ELC_HEAP_RESERV             "configuration/linker/heapresrv"
+#define ELC_YG_IMAGEBASE            "configuration/linker/imagebase"
+#define ELC_LIB_PATH                "configuration/project/libpath"
+#define ELC_SYSTEM_THREADMAX        "configuration/system/maxthread"
+#define ELC_OUTPUT_PATH             "configuration/project/output"
 #define ELC_NAMESPACE               "configuration/project/namespace"
-#define ELC_STACK_COMMIT            "linker/stackcommit"
-#define ELC_STACK_RESERV            "linker/stackresrv"
+#define ELC_STACK_COMMIT            "configuration/linker/stackcommit"
+#define ELC_STACK_RESERV            "configuration/linker/stackresrv"
 ////#define ELC_PROJECT_START           "start"
 #define ELC_PROJECT_TEMPLATE        "configuration/project/template"
 #define ELC_PLATFORMTYPE            "configuration/system/platform"
-#define ELC_WARNON_WEAKUNRESOLVED   "project/warn/weakunresolved"
+#define ELC_WARNON_WEAKUNRESOLVED   "configuration/project/warn/weakunresolved"
 ////#define ELC_WARNON_SIGNATURE        "warn:signature"
-#define ELC_YG_SIZE                 "linker/ygsize"
-#define ELC_L0                      "compiler/l0"                // optimization: byte code optimization
+#define ELC_YG_SIZE                 "configuration/linker/ygsize"
+#define ELC_L0                      "configuration/compiler/l0"                // optimization: byte code optimization
 //#define ELC_L1                      "compiler/l1"                // optimization: source code optimization
 
 #define ELC_TARGET_NAME             "target"
