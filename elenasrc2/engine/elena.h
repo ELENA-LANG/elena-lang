@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaH
@@ -24,13 +24,13 @@ public:
    virtual ident_t Name() const = 0;
 
    virtual ident_t resolveReference(ref_t reference) = 0;
-//   virtual ident_t resolveSubject(ref_t reference) = 0;
+   virtual ident_t resolveAction(ref_t reference) = 0;
 //   virtual ident_t resolveConstant(ref_t reference) = 0;
 
    virtual ref_t mapReference(ident_t reference) = 0;
    virtual ref_t mapReference(ident_t reference, bool existing) = 0;
 
-//   virtual ref_t mapSubject(ident_t reference, bool existing) = 0;
+   virtual ref_t mapMessage(ident_t actionName, bool existing) = 0;
 //   virtual ref_t mapConstant(ident_t reference) = 0;
 
    virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
@@ -455,111 +455,111 @@ public:
    }
 };
 
-////// --- VMTEntry ---
-////
-////struct VMTEntry
-////{
-////   ref_t message;
-////   pos_t address;
-////};
-////
-////// --- VMTXEntry ---
-////
-////struct VMTXEntry
-////{
-////   ref64_t message;
-////   ref64_t address;
-////};
+// --- VMTEntry ---
+
+struct VMTEntry
+{
+   ref_t message;
+   pos_t address;
+};
+
+// --- VMTXEntry ---
+
+struct VMTXEntry
+{
+   ref64_t message;
+   ref64_t address;
+};
+
+// --- ClassHeader ---
+
+struct ClassHeader
+{
+//   ref_t  staticSize;      // static table size
+//   ref_t  classRef;        // class class reference
+   size_t count;
+   size_t flags;
+//   ref_t  parentRef;
+};
+
+// --- ClassInfo ---
+
+//enum MethodAttribute
+//{
+//   maSubjectMask        = 0x100,
+//   maRefefernceMask     = 0x200,
+//   maVerb               = 0x400,
 //
-////// --- ClassHeader ---
-////
-////struct ClassHeader
-////{
-////   ref_t  staticSize;      // static table size
-////   ref_t  classRef;        // class class reference
-////   size_t count;
-////   size_t flags;
-////   ref_t  parentRef;
-////};
-////
-////// --- ClassInfo ---
-////
-////enum MethodAttribute
-////{
-////   maSubjectMask        = 0x100,
-////   maRefefernceMask     = 0x200,
-////   maVerb               = 0x400,
-////
-////   maNone               = 0x000,
-////   maHint               = 0x001,
-////   maReference          = 0x202,
-////   maEmbeddableGet      = 0x103,
-////   maEmbeddableEval     = 0x104,
-////   maEmbeddableIdle     = 0x005,
-////   maEmbeddableGetAt    = 0x106,
-////   maEmbeddableGetAt2   = 0x107,
-////   maEmbeddableEval2    = 0x108,
-////   maEmbeddableNew      = 0x409,
-////   maOverloadlist       = 0x20A,
-////};
-////
-////struct ClassInfo
-////{
-////   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - type
-////   typedef Pair<ref_t, int>                    Attribute;
-////   typedef MemoryMap<ref_t, bool, false>       MethodMap;
-////   typedef MemoryMap<ident_t, int, true>       FieldMap;
-////   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
-////   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
-////   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
-////   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
-////
-////   ClassHeader    header;
-////   int            size;           // Object size
-////   MethodMap      methods;
-////   FieldMap       fields;
-////   StaticFieldMap statics;
-////   StaticInfoMap  staticValues;
-////
-////   FieldTypeMap   fieldTypes;
-////   MethodInfoMap  methodHints;
-////
-////   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
-////   {
-////      writer->write((void*)this, sizeof(ClassHeader));
-////      writer->writeDWord(size);
-////      if (!headerAndSizeOnly) {
-////         staticValues.write(writer);
-////         methods.write(writer);
-////         fields.write(writer);
-////         fieldTypes.write(writer);
-////         methodHints.write(writer);
-////         statics.write(writer);
-////      }
-////   }
-////
-////   void load(StreamReader* reader, bool headerOnly = false)
-////   {
-////      reader->read((void*)&header, sizeof(ClassHeader));
-////      size = reader->getDWord();
-////      if (!headerOnly) {
-////         staticValues.read(reader);
-////         methods.read(reader);
-////         fields.read(reader);
-////         fieldTypes.read(reader);
-////         methodHints.read(reader);
-////         statics.read(reader);
-////      }
-////   }
-////
-////   ClassInfo()
-////      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
-////   {
-////      header.flags = 0;
-////      header.classRef = 0;
-////   }
-////};
-////
+//   maNone               = 0x000,
+//   maHint               = 0x001,
+//   maReference          = 0x202,
+//   maEmbeddableGet      = 0x103,
+//   maEmbeddableEval     = 0x104,
+//   maEmbeddableIdle     = 0x005,
+//   maEmbeddableGetAt    = 0x106,
+//   maEmbeddableGetAt2   = 0x107,
+//   maEmbeddableEval2    = 0x108,
+//   maEmbeddableNew      = 0x409,
+//   maOverloadlist       = 0x20A,
+//};
+
+struct ClassInfo
+{
+//   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - type
+//   typedef Pair<ref_t, int>                    Attribute;
+   typedef MemoryMap<ref_t, bool, false>       MethodMap;
+//   typedef MemoryMap<ident_t, int, true>       FieldMap;
+//   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
+//   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
+//   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
+//   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
+
+   ClassHeader    header;
+//   int            size;           // Object size
+   MethodMap      methods;
+//   FieldMap       fields;
+//   StaticFieldMap statics;
+//   StaticInfoMap  staticValues;
+//
+//   FieldTypeMap   fieldTypes;
+//   MethodInfoMap  methodHints;
+
+   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+   {
+      writer->write((void*)this, sizeof(ClassHeader));
+//      writer->writeDWord(size);
+      if (!headerAndSizeOnly) {
+//         staticValues.write(writer);
+         methods.write(writer);
+//         fields.write(writer);
+//         fieldTypes.write(writer);
+//         methodHints.write(writer);
+//         statics.write(writer);
+      }
+   }
+
+   void load(StreamReader* reader, bool headerOnly = false)
+   {
+      reader->read((void*)&header, sizeof(ClassHeader));
+//      size = reader->getDWord();
+      if (!headerOnly) {
+//         staticValues.read(reader);
+         methods.read(reader);
+//         fields.read(reader);
+//         fieldTypes.read(reader);
+//         methodHints.read(reader);
+//         statics.read(reader);
+      }
+   }
+
+   ClassInfo()
+      : /*fields(-1), */methods(0)//, methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+   {
+      header.flags = 0;
+//      header.classRef = 0;
+   }
+};
+
 ////// --- SymbolExpressionInfo ---
 ////
 ////struct SymbolExpressionInfo
@@ -709,11 +709,11 @@ inline bool isWeakReference(ident_t referenceName)
 //   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0] == '\'' && referenceName.find('#') != NOTFOUND_POS);
 //}
 
-//inline ref_t encodeMessage(ref_t actionRef, int paramCount)
-//{
-//   return (actionRef << 4) + paramCount;
-//}
-//
+inline ref_t encodeMessage(ref_t actionRef, int paramCount)
+{
+   return (actionRef << 4) + paramCount;
+}
+
 //inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
 //{
 //   ref64_t message = actionRef;
@@ -728,14 +728,14 @@ inline bool isWeakReference(ident_t referenceName)
 //{
 //   return encodeMessage(verbId, 0);
 //}
-//
-//inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
-//{
-//   actionRef = (message >> 4) & ACTION_MASK;
-//
-//   paramCount = message & PARAM_MASK;
-//}
-//
+
+inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
+{
+   actionRef = (message >> 4) & ACTION_MASK;
+
+   paramCount = message & PARAM_MASK;
+}
+
 ////inline ref_t overwriteParamCount(ref_t message, int paramCount)
 ////{
 ////   message &= ~PARAM_MASK;
@@ -752,37 +752,37 @@ inline bool isWeakReference(ident_t referenceName)
 //
 //   paramCount = message & PARAMX_MASK;
 //}
+
+//inline int getAbsoluteParamCount(ref_t message)
+//{
+//   int   paramCount;
+//   ref_t action;
+//   decodeMessage(message, action, paramCount);
 //
-////inline int getAbsoluteParamCount(ref_t message)
-////{
-////   int   paramCount;
-////   ref_t action;
-////   decodeMessage(message, action, paramCount);
-////
-////   return paramCount;
-////}
-////
-//////inline int getParamCount(ref_t message)
-//////{
-//////   int   paramCount;
-//////   ref_t action;
-//////   decodeMessage(message, action, paramCount);
-//////
-//////   if (paramCount >= OPEN_ARG_COUNT)
-//////      return paramCount - OPEN_ARG_COUNT;
-//////
-//////   return paramCount;
-//////}
-////
-////inline ref_t getAction(ref_t message)
-////{
-////   int   paramCount;
-////   ref_t action;
-////   decodeMessage(message, action, paramCount);
-////
-////   return action;
-////}
-////
+//   return paramCount;
+//}
+
+inline int getParamCount(ref_t message)
+{
+   int   paramCount;
+   ref_t action;
+   decodeMessage(message, action, paramCount);
+
+   if (paramCount >= OPEN_ARG_COUNT)
+      return paramCount - OPEN_ARG_COUNT;
+
+   return paramCount;
+}
+
+inline ref_t getAction(ref_t message)
+{
+   int   paramCount;
+   ref_t action;
+   decodeMessage(message, action, paramCount);
+
+   return action;
+}
+
 ////inline ref64_t toMessage64(ref_t message)
 ////{
 ////   int   paramCount;

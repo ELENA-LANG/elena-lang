@@ -28,7 +28,7 @@ namespace _ELENA_
 //   #define CONVERSION_MESSAGE      0x60000000u
 //   #define PROPSET_MESSAGE         0x20000000u
    #define PARAM_MASK              0x0000000Fu
-//   #define OPEN_ARG_COUNT          0x0C
+   #define OPEN_ARG_COUNT          0x0C
 //   #define MAX_ARG_COUNT           0x0E
 
    #define PARAMX_MASK             0x000000000000FFFFu
@@ -137,13 +137,13 @@ namespace _ELENA_
 //      mskInternalRelRef      = 0x33000000u,   // internal code
       mskSymbolRef           = 0x12000000u,   // symbol code
       mskSymbolRelRef        = 0x32000000u,   // symbol code
-//      mskVMTRef              = 0x41000000u,   // class VMT
-//      mskClassRef            = 0x11000000u,   // class code
+      mskVMTRef              = 0x41000000u,   // class VMT
+      mskClassRef            = 0x11000000u,   // class code
 //      mskClassRelRef         = 0x31000000u,   // class relative code
       mskStatSymbolRef       = 0x82000000u,   // reference to static symbol
 
 //      mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
-//      mskMetaRDataRef        = 0x44000000u,   // meta data
+      mskMetaRDataRef        = 0x44000000u,   // meta data
 //      mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
 //      mskSyntaxTreeRef       = 0x46000000u,   // template, declared in subject namespace
 //      mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
@@ -270,8 +270,8 @@ namespace _ELENA_
    const int cnTableKeyPower       = cnTablePower + 1;
    const int cnSyntaxPower         = 0x0008;
 
-//  // --- ELENA VMT flags ---
-//   const int elStandartVMT         = 0x00000001;
+  // --- ELENA VMT flags ---
+   const int elStandartVMT         = 0x00000001;
 //   const int elNestedClass         = 0x00000002;
 //   const int elDynamicRole         = 0x00000004;
 //   const int elStructureRole       = 0x00000008;

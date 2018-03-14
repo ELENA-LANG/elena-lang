@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   1
+#define REVISION_VERSION   2
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -171,24 +171,24 @@ void printHelp()
 //   }
 //   return module->mapSection(reference | mskMetaRDataRef, true);
 //}
-//
-//_Memory* findClassVMT(_Module* module, ident_t referenceName)
-//{
-//   ref_t reference = module->mapReference(referenceName, true);
-//   if (reference == 0) {
-//      return NULL;
-//   }
-//   return module->mapSection(reference | mskVMTRef, true);
-//}
-//
-//_Memory* findClassCode(_Module* module, ident_t referenceName)
-//{
-//   ref_t reference = module->mapReference(referenceName, true);
-//   if (reference == 0) {
-//      return NULL;
-//   }
-//   return module->mapSection(reference | mskClassRef, true);
-//}
+
+_Memory* findClassVMT(_Module* module, ident_t referenceName)
+{
+   ref_t reference = module->mapReference(referenceName, true);
+   if (reference == 0) {
+      return NULL;
+   }
+   return module->mapSection(reference | mskVMTRef, true);
+}
+
+_Memory* findClassCode(_Module* module, ident_t referenceName)
+{
+   ref_t reference = module->mapReference(referenceName, true);
+   if (reference == 0) {
+      return NULL;
+   }
+   return module->mapSection(reference | mskClassRef, true);
+}
 
 _Memory* findSymbolCode(_Module* module, ident_t referenceName)
 {
@@ -201,9 +201,9 @@ _Memory* findSymbolCode(_Module* module, ident_t referenceName)
 
 ref_t resolveMessage(_Module* module, ident_t method)
 {
-   //int paramCount = 0;
-   //ref_t actionRef = 0;
-   //ref_t flags = 0;
+   int paramCount = 0;
+   ref_t actionRef = 0;
+   ref_t flags = 0;
 
    //if (method.startsWith("#private&")) {
    //   flags |= SEALED_MESSAGE;
@@ -216,15 +216,15 @@ ref_t resolveMessage(_Module* module, ident_t method)
    //   method = method.c_str() + getlength("#conversion&");
    //}
 
-   //IdentifierString actionName;
-   //int paramIndex = method.find('[', -1);
-   //if (paramIndex != -1) {
-   //   actionName.copy(method, paramIndex);
+   IdentifierString actionName;
+   int paramIndex = method.find('[', -1);
+   if (paramIndex != -1) {
+      actionName.copy(method, paramIndex);
 
-   //   IdentifierString countStr(method + paramIndex + 1, getlength(method) - paramIndex - 2);
-   //   paramCount = countStr.ident().toInt();
-   //}
-   //else actionName.copy(method);
+      IdentifierString countStr(method + paramIndex + 1, getlength(method) - paramIndex - 2);
+      paramCount = countStr.ident().toInt();
+   }
+   else actionName.copy(method);
 
    //if (actionName.compare("dispatch")) {
    //   actionRef = DISPATCH_MESSAGE_ID;
@@ -245,17 +245,15 @@ ref_t resolveMessage(_Module* module, ident_t method)
    //      flags = PROPSET_MESSAGE;
    //   }
 
-   //   actionRef = module->mapSubject(actionName, true);
-   //   if (actionRef == 0) {
-   //      printLine("Unknown subject ", actionName);
+      actionRef = module->mapMessage(actionName, true);
+      if (actionRef == 0) {
+         printLine("Unknown subject ", actionName);
 
-   //      return 0;
-   //   }
+         return 0;
+      }
    //}
 
-   //return encodeMessage(actionRef, paramCount) | flags;
-
-   return 0; // !! temporal
+   return encodeMessage(actionRef, paramCount) | flags;
 }
 
 inline void appendHex32(IdentifierString& command, unsigned int hex)
@@ -415,9 +413,9 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
 
 void printMessage(IdentifierString& command, _Module* module, size_t reference)
 {
-   //ref_t actionRef = 0;
-   //int paramCount = 0;
-   //decodeMessage(reference, actionRef, paramCount);
+   ref_t actionRef = 0;
+   int paramCount = 0;
+   decodeMessage(reference, actionRef, paramCount);
 
    //if (actionRef == DISPATCH_MESSAGE_ID) {
    //   command.append("dispatch");
@@ -451,15 +449,15 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    //         command.append("set&");
    //      }
    //   }
-   //   ident_t subjectName = module->resolveSubject(actionRef);
-   //   command.append(subjectName);
+      ident_t actionName = module->resolveAction(actionRef);
+      command.append(actionName);
    //}
 
-   //if (paramCount > 0) {
-   //   command.append('[');
-   //   command.appendInt(paramCount);
-   //   command.append(']');
-   //}
+   if (paramCount > 0) {
+      command.append('[');
+      command.appendInt(paramCount);
+      command.append(']');
+   }
 }
 
 bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<int>& labels)
@@ -719,116 +717,116 @@ void printByteCodes(_Module* module, _Memory* code, ref_t address, int indent, i
 
 ref_t resolveMessageByIndex(_Module* module, ident_t className, int index)
 {
-   //// find class VMT
-   //ReferenceNs reference(module->Name(), className);
-   //_Memory* vmt = findClassVMT(module, reference);
-   //if (vmt == NULL) {
-   //   return 0;
-   //}
+   // find class VMT
+   ReferenceNs reference(module->Name(), className);
+   _Memory* vmt = findClassVMT(module, reference);
+   if (vmt == NULL) {
+      return 0;
+   }
 
-   //// list methods
-   //MemoryReader vmtReader(vmt);
-   //// read tape record size
-   //size_t size = vmtReader.getDWord();
+   // list methods
+   MemoryReader vmtReader(vmt);
+   // read tape record size
+   size_t size = vmtReader.getDWord();
 
-   //// read VMT header
-   //ClassHeader header;
-   //vmtReader.read((void*)&header, sizeof(ClassHeader));
+   // read VMT header
+   ClassHeader header;
+   vmtReader.read((void*)&header, sizeof(ClassHeader));
 
-   //VMTEntry        entry;
+   VMTEntry        entry;
 
-   //size -= sizeof(ClassHeader);
-   //IdentifierString temp;
-   //int row = 0;
-   //while (size > 0) {
-   //   vmtReader.read((void*)&entry, sizeof(VMTEntry));
+   size -= sizeof(ClassHeader);
+   IdentifierString temp;
+   int row = 0;
+   while (size > 0) {
+      vmtReader.read((void*)&entry, sizeof(VMTEntry));
 
-   //   index--;
-   //   if (index == 0) {
-   //      IdentifierString temp;
-   //      printMessage(temp, module, entry.message);
+      index--;
+      if (index == 0) {
+         IdentifierString temp;
+         printMessage(temp, module, entry.message);
 
-   //      return resolveMessage(module, temp.c_str());
-   //   }
+         return resolveMessage(module, temp.c_str());
+      }
 
-   //   size -= sizeof(VMTEntry);
-   //}
+      size -= sizeof(VMTEntry);
+   }
 
    return 0;
 }
 
 void printMethod(_Module* module, ident_t methodReference, int pageSize)
 {
-   //methodReference = trim(methodReference);
+   methodReference = trim(methodReference);
 
-   //int separator = methodReference.find('.');
-   //if (separator == -1) {
-   //   printf("Invalid command");
+   int separator = methodReference.find('.');
+   if (separator == -1) {
+      printf("Invalid command");
 
-   //   return;
-   //}
+      return;
+   }
 
-   //IdentifierString className(methodReference, separator);
+   IdentifierString className(methodReference, separator);
 
-   //ident_t methodName = methodReference + separator + 1;
-   //ref_t message = 0;
+   ident_t methodName = methodReference + separator + 1;
+   ref_t message = 0;
 
-   //// resolve method
-   //if (methodName[0] == '$' && methodName[1] >= '0' && methodName[1] <= '9') {
-   //   message = resolveMessageByIndex(module, className.ident(), methodName.toInt(1));
-   //}
-   //else message = resolveMessage(module, methodName);
-   //
-   //if (message == 0)
-   //   return;
+   // resolve method
+   if (methodName[0] == '$' && methodName[1] >= '0' && methodName[1] <= '9') {
+      message = resolveMessageByIndex(module, className.ident(), methodName.toInt(1));
+   }
+   else message = resolveMessage(module, methodName);
+   
+   if (message == 0)
+      return;
 
-   //// find class VMT
-   //ReferenceNs reference(module->Name(), className);
-   //_Memory* vmt = findClassVMT(module, reference);
-   //_Memory* code = findClassCode(module, reference);
-   //if (vmt == NULL || code == NULL) {
-   //   printLine("Class not found: ", reference);
+   // find class VMT
+   ReferenceNs reference(module->Name(), className);
+   _Memory* vmt = findClassVMT(module, reference);
+   _Memory* code = findClassCode(module, reference);
+   if (vmt == NULL || code == NULL) {
+      printLine("Class not found: ", reference);
 
-   //   return;
-   //}
+      return;
+   }
 
-   //// find method entry
-   //MemoryReader vmtReader(vmt);
-   //// read tape record size
-   //size_t size = vmtReader.getDWord();
+   // find method entry
+   MemoryReader vmtReader(vmt);
+   // read tape record size
+   size_t size = vmtReader.getDWord();
 
-   //// read VMT header
-   //ClassHeader header;
-   //vmtReader.read((void*)&header, sizeof(ClassHeader));
+   // read VMT header
+   ClassHeader header;
+   vmtReader.read((void*)&header, sizeof(ClassHeader));
 
-   //VMTEntry        entry;
+   VMTEntry        entry;
 
-   //// read VMT while the entry not found
-   //size -= sizeof(ClassHeader);
-   //bool found = false;
-   //while (size > 0) {
-   //   vmtReader.read((void*)&entry, sizeof(VMTEntry));
+   // read VMT while the entry not found
+   size -= sizeof(ClassHeader);
+   bool found = false;
+   while (size > 0) {
+      vmtReader.read((void*)&entry, sizeof(VMTEntry));
 
-   //   if (entry.message == message) {
-   //      found = true;
+      if (entry.message == message) {
+         found = true;
 
-   //      IdentifierString temp;
-   //      temp.copy(className);
-   //      temp.append('.');
-   //      printMessage(temp, module, entry.message);
-   //      printLine("@method ", temp);
+         IdentifierString temp;
+         temp.copy(className);
+         temp.append('.');
+         printMessage(temp, module, entry.message);
+         printLine("@method ", temp);
 
-   //      printByteCodes(module, code, entry.address, 4, pageSize);
-   //      print("@end\n");
+         printByteCodes(module, code, entry.address, 4, pageSize);
+         print("@end\n");
 
-   //      break;
-   //   }
+         break;
+      }
 
-   //   size -= sizeof(VMTEntry);
-   //}
-   //if (!found) {
-   //   printLine("Method not found:", methodName);
-   //}
+      size -= sizeof(VMTEntry);
+   }
+   if (!found) {
+      printLine("Method not found:", methodName);
+   }
 }
 
 //void printConstructor(_Module* module, const wchar_t* className, int pageSize)
@@ -1070,59 +1068,59 @@ void listConstructorMethods(_Module* module, ident_t className, ref_t reference)
 
 void listClassMethods(_Module* module, ident_t className, int pageSize, bool fullInfo, bool withConstructors)
 {
-   //className = trim(className);
+   className = trim(className);
 
-   //// find class VMT
-   //ReferenceNs reference(module->Name(), className);
-   //_Memory* vmt = findClassVMT(module, reference);
-   //if (vmt == NULL) {
-   //   printLine("Class not found:", reference);
+   // find class VMT
+   ReferenceNs reference(module->Name(), className);
+   _Memory* vmt = findClassVMT(module, reference);
+   if (vmt == NULL) {
+      printLine("Class not found:", reference);
 
-   //   return;
-   //}
+      return;
+   }
 
-   //// list methods
-   //MemoryReader vmtReader(vmt);
-   //// read tape record size
-   //size_t size = vmtReader.getDWord();
+   // list methods
+   MemoryReader vmtReader(vmt);
+   // read tape record size
+   size_t size = vmtReader.getDWord();
 
-   //// read VMT info
-   //ClassHeader header;
-   //vmtReader.read((void*)&header, sizeof(ClassHeader));
+   // read VMT info
+   ClassHeader header;
+   vmtReader.read((void*)&header, sizeof(ClassHeader));
 
-   //int row = 0;
+   int row = 0;
 
-   //if (fullInfo) {
-   //   if (header.parentRef) {
-   //      printLine("@parent ", module->resolveReference(header.parentRef));
-   //      row++;
-   //   }         
+   if (fullInfo) {
+      //if (header.parentRef) {
+      //   printLine("@parent ", module->resolveReference(header.parentRef));
+      //   row++;
+      //}         
 
-   //   listFlags(header.flags, row, pageSize);
-   //   listFields(module, reference, row, pageSize);
-   //}
+      listFlags(header.flags, row, pageSize);
+//      listFields(module, reference, row, pageSize);
+   }
 
    //if (header.classRef != 0 && withConstructors) {
    //   listConstructorMethods(module, className, header.classRef);
    //}
 
-   //VMTEntry        entry;
+   VMTEntry        entry;
 
-   //size -= sizeof(ClassHeader);
-   //IdentifierString temp;
-   //while (size > 0) {
-   //   vmtReader.read((void*)&entry, sizeof(VMTEntry));
+   size -= sizeof(ClassHeader);
+   IdentifierString temp;
+   while (size > 0) {
+      vmtReader.read((void*)&entry, sizeof(VMTEntry));
 
-   //   // print the method name
-   //   temp.copy(className);
-   //   temp.append('.');
-   //   printMessage(temp, module, entry.message);
-   //   printLine("@method ", temp);
+      // print the method name
+      temp.copy(className);
+      temp.append('.');
+      printMessage(temp, module, entry.message);
+      printLine("@method ", temp);
 
-   //   nextRow(row, pageSize);
+      nextRow(row, pageSize);
 
-   //   size -= sizeof(VMTEntry);
-   //}
+      size -= sizeof(VMTEntry);
+   }
 }
 
 void printAPI(_Module* module, int pageSize)
@@ -1135,13 +1133,13 @@ void printAPI(_Module* module, int pageSize)
       NamespaceName ns(it.key());
       if (moduleName.compare(ns)) {
          ReferenceName name(it.key());
-         //if (module->mapSection(*it | mskVMTRef, true)) {
-         //   printLine("class ", name);
+         if (module->mapSection(*it | mskVMTRef, true)) {
+            printLine("class ", name);
 
-         //   listClassMethods(module, name, pageSize, true, true);
-         //   printLine();
-         //}
-         /*else */if (module->mapSection(*it | mskSymbolRef, true)) {
+            listClassMethods(module, name, pageSize, true, true);
+            printLine();
+         }
+         else if (module->mapSection(*it | mskSymbolRef, true)) {
             printLine("symbol ", name);
          }
       }
@@ -1161,10 +1159,10 @@ void listClasses(_Module* module, int pageSize)
       NamespaceName ns(it.key());
       if (moduleName.compare(ns)) {
          ReferenceName name(it.key());
-         //if (module->mapSection(*it | mskVMTRef, true)) {
-         //   printLine("class ", name, row, pageSize);
-         //}
-         /*else */if (module->mapSection(*it | mskSymbolRef, true)) {
+         if (module->mapSection(*it | mskVMTRef, true)) {
+            printLine("class ", name, row, pageSize);
+         }
+         else if (module->mapSection(*it | mskSymbolRef, true)) {
             printLine("symbol ", name, row, pageSize);
          }
       }

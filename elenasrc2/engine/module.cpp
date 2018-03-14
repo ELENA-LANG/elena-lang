@@ -3,7 +3,7 @@
 //
 //		This file contains the class implementing ELENA Engine Module class
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -16,7 +16,7 @@ using namespace _ELENA_;
 // --- BaseModule ---
 
 _BaseModule  :: _BaseModule()
-   : _references(0)//, _subjects(0), _constants(0)
+   : _references(0), _actions(0)//, _constants(0)
 {
 }
 
@@ -32,17 +32,17 @@ ident_t _BaseModule :: resolveReference(ref_t reference)
    return key;
 }
 
-//ident_t _BaseModule :: resolveSubject(ref_t reference)
-//{
-//   ident_t key = _resolvedSubjects.get(reference);
-//   if (!key) {
-//      key = retrieveKey(_subjects.start(), reference, DEFAULT_STR);
-//
-//      _resolvedSubjects.add(reference, key);
-//   }
-//   return key;
-//}
-//
+ident_t _BaseModule :: resolveAction(ref_t reference)
+{
+   ident_t key = _resolvedActions.get(reference);
+   if (!key) {
+      key = retrieveKey(_actions.start(), reference, DEFAULT_STR);
+
+      _resolvedActions.add(reference, key);
+   }
+   return key;
+}
+
 //ident_t _BaseModule :: resolveConstant(ref_t reference)
 //{
 //   return retrieveKey(_constants.start(), reference, DEFAULT_STR);
@@ -91,23 +91,23 @@ ref_t Module :: mapReference(ident_t reference)
    return refId;
 }
 
-//ref_t Module :: mapSubject(ident_t subject, bool existing)
-//{
-//   if (existing)
-//      return _subjects.get(subject);
-//   else {
-//      ref_t nextId = _subjects.Count() + 1;
-//
-//      ref_t refId = mapKey(_subjects, subject, nextId);
-//
-//      // if we added new message, clear resolved message cache (due to possible string relocation)
-//      if (refId == nextId)
-//         _resolvedSubjects.clear();
-//
-//      return refId;
-//   }
-//}
-//
+ref_t Module :: mapMessage(ident_t actionName, bool existing)
+{
+   if (existing)
+      return _actions.get(actionName);
+   else {
+      ref_t nextId = _actions.Count() + 1;
+
+      ref_t refId = mapKey(_actions, actionName, nextId);
+
+      // if we added new message, clear resolved message cache (due to possible string relocation)
+      if (refId == nextId)
+         _resolvedActions.clear();
+
+      return refId;
+   }
+}
+
 //ref_t Module :: mapConstant(ident_t constant)
 //{
 //   ref_t nextId = _constants.Count() + 1;
@@ -191,9 +191,9 @@ LoadResult Module :: load(StreamReader& reader)
    // load references...
    _references.read(&reader);
 
-//   // load subjects...
-//   _subjects.read(&reader);
-//
+   // load actions...
+   _actions.read(&reader);
+
 //   // load constants...
 //   _constants.read(&reader);
 
@@ -217,9 +217,9 @@ bool Module :: save(StreamWriter& writer)
    // save references...
    _references.write(&writer);
 
-//   // save subjects...
-//   _subjects.write(&writer);
-//
+   // save actions...
+   _actions.write(&writer);
+
 //   // save constants...
 //   _constants.write(&writer);
 
@@ -253,9 +253,9 @@ ROModule :: ROModule(StreamReader& reader, LoadResult& result)
    // load references...
    _references.read(&reader);
 
-//   // load subjects...
-//   _subjects.read(&reader);
-//
+   // load actions...
+   _actions.read(&reader);
+
 //   // load constants...
 //   _constants.read(&reader);
 
@@ -301,14 +301,14 @@ ref_t ROModule :: mapReference(ident_t reference, bool existing)
    else return _references.get(reference);
 }
 
-//ref_t ROModule :: mapSubject(ident_t reference, bool existing)
-//{
-//   if (!existing) {
-//      throw InternalError("Read-only Module");
-//   }
-//   else return _subjects.get(reference);
-//}
-//
+ref_t ROModule :: mapMessage(ident_t actionName, bool existing)
+{
+   if (!existing) {
+      throw InternalError("Read-only Module");
+   }
+   else return _actions.get(actionName);
+}
+
 //ref_t ROModule :: mapConstant(ident_t reference)
 //{
 //   return _constants.get(reference);

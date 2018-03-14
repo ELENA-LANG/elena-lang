@@ -3,6 +3,9 @@ In development:
 ------                              
                             
               dev - redesign
+                 * message - offset in message table = action offset + signature offset ;
+                   message table, action table, signature table
+                 
                  * should be possible to rosolve the namespace ambiguity using an extra path
                  * get rid of compile order
                  * test case : parent class declared after the child
@@ -18,7 +21,7 @@ In development:
                    writeReference,compileRArg,compileRMessageArg,compileMessageArg,compileMCommand,ECodesAssembler :: compile,
                    resolveMessageByIndex,listFields,printMethod,listClassMethods,listConstructorMethods,resolveMessage,
                    printMessage,printReference,listFlags,printManifest,printAPI,listClasses,loadMessageName,resolveNativeSection,
-                   listClasses
+                   listClasses,ModuleScope::mapSection,writeClass,writeVMT,declareArgumentList,writeClass,compileCode
                  *test creating project, adding source files. including / excluding, forwards, settings, ...
 
               dev - general implementation

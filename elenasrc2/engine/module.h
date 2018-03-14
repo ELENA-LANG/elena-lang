@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of the class implementing
 //      ELENA Engine Module class
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef moduleH
@@ -20,15 +20,15 @@ protected:
    typedef Cache<ref_t, ident_t, 20> ResolveMap;
 
    ReferenceMap _references;
-//   ReferenceMap _subjects;
+   ReferenceMap _actions;
 //   ReferenceMap _constants;
 
    ResolveMap   _resolvedReferences;
-//   ResolveMap   _resolvedSubjects;
+   ResolveMap   _resolvedActions;
 
 public:
    virtual ident_t resolveReference(ref_t reference);
-//   virtual ident_t resolveSubject(ref_t reference);
+   virtual ident_t resolveAction(ref_t reference);
 //   virtual ident_t resolveConstant(ref_t reference);
 
    _BaseModule ();
@@ -56,7 +56,7 @@ public:
    virtual ref_t mapReference(ident_t reference);
    virtual ref_t mapReference(ident_t reference, bool existing);
 
-//   virtual ref_t mapSubject(ident_t message, bool existing);
+   virtual ref_t mapMessage(ident_t actionName, bool existing);
 //   virtual ref_t mapConstant(ident_t constant);
 
    virtual Section* mapSection(ref_t reference, bool existing);
@@ -178,7 +178,7 @@ public:
    virtual ref_t mapReference(ident_t reference);
    virtual ref_t mapReference(ident_t reference, bool existing);
 
-//   virtual ref_t mapSubject(ident_t reference, bool existing);
+   virtual ref_t mapMessage(ident_t actionName, bool existing);
 //   virtual ref_t mapConstant(ident_t reference);
 
    virtual void mapPredefinedReference(ident_t, ref_t)

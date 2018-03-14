@@ -169,9 +169,9 @@ struct _CompilerScope
 //
 //   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 //   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
-//
-//   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
-//
+
+   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
+
 //   virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion) = 0;
 //
 //   virtual void validateReference(SNode terminal, ref_t reference) = 0;

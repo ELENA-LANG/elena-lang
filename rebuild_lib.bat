@@ -4,7 +4,7 @@ move dat\sg\syntax.dat bin
 bin\og dat\og\rules.txt
 move dat\og\rules.dat bin
 
-bin\asm2binx src33\core\core_routines.esm lib33\system
+rem bin\asm2binx src33\core\core_routines.esm lib33\system
 bin\asm2binx asm\x32\core.asm bin\x32
 bin\asm2binx asm\x32\corex.asm bin\x32                
 bin\asm2binx asm\x32\coreapi.asm bin\x32
@@ -15,12 +15,12 @@ rem bin\asm2binx -amd64 asm\amd64\core.asm bin\amd64
 rem bin\asm2binx -amd64 asm\amd64\core_win.asm bin\amd64
 rem bin\asm2binx -amd64 asm\amd64\coreapi.asm bin\amd64
 
-bin\elc src33\system\system.prj
-bin\elc src33\extensions\extensions.prj
-bin\elc src33\net\net.prj
-bin\elc src33\forms\forms.prj
-bin\elc src33\sqlite\sqlite.prj
-bin\elc src33\cellular\cellular.prj
+rem bin\elc src33\system\system.prj
+rem bin\elc src33\extensions\extensions.prj
+rem bin\elc src33\net\net.prj
+rem bin\elc src33\forms\forms.prj
+rem bin\elc src33\sqlite\sqlite.prj
+rem bin\elc src33\cellular\cellular.prj
 rem bin\elc src33\graphics\graphics.prj
 rem bin\elc src33\xforms\xforms.prj
 

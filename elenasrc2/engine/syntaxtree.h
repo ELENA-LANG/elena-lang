@@ -21,7 +21,7 @@ enum LexicalType
 //   lxSimpleMask      = 0x02000,
 //   lxCodeScopeMask   = 0x04000,
    lxObjectMask      = 0x08000,
-//   lxExprMask        = 0x0C000,
+   lxExprMask        = 0x0C000,
    lxTerminalMask    = 0x10000,
 //   lxTerminalObjMask = 0x18000,
 ////   lxReferenceMask   = 0x40000,
@@ -37,13 +37,13 @@ enum LexicalType
    lxObject          = 0x00003,
 //   lxAttributeDecl   = 0x00004,
 //   lxAngleOperator   = 0x00005,
-//   lxClass           = 0x0000E,
+   lxClass           = 0x0000E,
 //   lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
 //   lxClassField      = 0x00013,
 //   lxFieldTemplate   = 0x00014,
 //   lxAttributeValue  = 0x00015,
-//   lxClassMethod     = 0x00016,
+   lxClassMethod     = 0x00016,
 //   lxNestedClass     = 0x00018,
 //   lxCode            = 0x0001A,
 //   lxDispatchCode    = 0x00020,
@@ -154,7 +154,7 @@ enum LexicalType
 //   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
 //   lxCreatingClass   = 0x0C025,   // arg - count
 //   lxCreatingStruct  = 0x0C026,   // arg - size
-//   lxReturning       = 0x0C027,
+   lxReturning       = 0x0C027,
 //   lxNewOp           = 0x0C028,
 //   lxArrOp           = 0x8C029,   // arg - operation id
 //   lxBinArrOp        = 0x8C02A,   // arg - operation id
@@ -205,9 +205,9 @@ enum LexicalType
    lxLength          = 0x02005,
    lxBreakpoint      = 0x20006,
 //   lxImport          = 0x20007,
-//   lxReserved        = 0x20008,
+   lxReserved        = 0x20008,
 //   lxAllocated       = 0x20009,
-//   lxParamCount      = 0x2000A,
+   lxParamCount      = 0x2000A,
 //   lxClassFlag       = 0x2000B, // class fields
 //   lxTarget          = 0x2000C, // arg - reference
 //   lxMessageVariable = 0x2000D, // debug info only
