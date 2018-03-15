@@ -144,22 +144,22 @@ SectionInfo ExecutableImage :: getCoreSectionInfo(ref_t reference, size_t mask)
    return sectionInfo;
 }
 
-//ClassSectionInfo ExecutableImage :: getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode)
-//{
-//   ClassSectionInfo sectionInfo;
-//
-//   ref_t referenceID = 0;
-//   sectionInfo.module = _project->resolveModule(reference, referenceID, silentMode);
-//   if (sectionInfo.module == NULL || referenceID == 0) {
-//      if (!silentMode)
-//         throw JITUnresolvedException(reference);
-//   }
-//   else {
-//      sectionInfo.codeSection = sectionInfo.module->mapSection(referenceID | codeMask, true);
-//      sectionInfo.vmtSection = sectionInfo.module->mapSection(referenceID | vmtMask, true);
-//   }
-//   return sectionInfo;
-//}
+ClassSectionInfo ExecutableImage :: getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode)
+{
+   ClassSectionInfo sectionInfo;
+
+   ref_t referenceID = 0;
+   sectionInfo.module = _project->resolveModule(reference, referenceID, silentMode);
+   if (sectionInfo.module == NULL || referenceID == 0) {
+      if (!silentMode)
+         throw JITUnresolvedException(reference);
+   }
+   else {
+      sectionInfo.codeSection = sectionInfo.module->mapSection(referenceID | codeMask, true);
+      sectionInfo.vmtSection = sectionInfo.module->mapSection(referenceID | vmtMask, true);
+   }
+   return sectionInfo;
+}
 
 size_t ExecutableImage :: getLinkerConstant(int id)
 {

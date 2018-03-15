@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   2
+#define REVISION_VERSION   3
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -245,7 +245,7 @@ ref_t resolveMessage(_Module* module, ident_t method)
    //      flags = PROPSET_MESSAGE;
    //   }
 
-      actionRef = module->mapMessage(actionName, true);
+      actionRef = module->mapAction(actionName, true);
       if (actionRef == 0) {
          printLine("Unknown subject ", actionName);
 
@@ -923,15 +923,15 @@ void listFlags(int flags, int& row, int pageSize)
    //   printLine("@flag ", "elStructureRole", row, pageSize);
    //}      
 
-   //if (test(flags, elSealed)) {
-   //   printLine("@flag ", "elSealed", row, pageSize);
-   //}      
-   //else if (test(flags, elFinal)) {
-   //   printLine("@flag ", "elFinal", row, pageSize);
-   //}      
-   //else if (test(flags, elClosed)) {
-   //   printLine("@flag ", "elClosed", row, pageSize);
-   //}      
+   if (test(flags, elSealed)) {
+      printLine("@flag ", "elSealed", row, pageSize);
+   }      
+   else if (test(flags, elFinal)) {
+      printLine("@flag ", "elFinal", row, pageSize);
+   }      
+   else if (test(flags, elClosed)) {
+      printLine("@flag ", "elClosed", row, pageSize);
+   }      
 
    //if (test(flags, elWrapper)) {
    //   printLine("@flag ", "elWrapper", row, pageSize);
@@ -982,8 +982,8 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elWithMuti))
    //   printLine("@flag ", "elWithMuti", row, pageSize);
 
-   //if (test(flags, elClassClass))
-   //   printLine("@flag ", "elClassClass", row, pageSize);
+   if (test(flags, elClassClass))
+      printLine("@flag ", "elClassClass", row, pageSize);
 
    //switch (flags & elDebugMask) {
    //   case elDebugDWORD:
@@ -1091,10 +1091,10 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    int row = 0;
 
    if (fullInfo) {
-      //if (header.parentRef) {
-      //   printLine("@parent ", module->resolveReference(header.parentRef));
-      //   row++;
-      //}         
+      if (header.parentRef) {
+         printLine("@parent ", module->resolveReference(header.parentRef));
+         row++;
+      }         
 
       listFlags(header.flags, row, pageSize);
 //      listFields(module, reference, row, pageSize);

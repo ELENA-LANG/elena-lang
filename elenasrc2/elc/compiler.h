@@ -105,26 +105,26 @@ public:
 //         this->size = size;
 //      }
 //   };
-//
-//   // InheritResult
-//   enum InheritResult
-//   {
-//      irNone = 0,
-//      irSuccessfull,
-//      irUnsuccessfull,
-//      irSealed,
-//      irInvalid,
-//      irObsolete
-//   };
+
+   // InheritResult
+   enum InheritResult
+   {
+      irNone = 0,
+      irSuccessfull,
+      irUnsuccessfull,
+      irSealed,
+      irInvalid,
+      irObsolete
+   };
 
    enum ObjectKind
    {
       okUnknown = 0,
 
 //      okObject,                       // param - class reference
-//      okSymbol,                       // param - reference
+      okSymbol,                       // param - reference
 //      okConstantSymbol,               // param - reference, extraparam - class reference
-//      okConstantClass,                // param - reference, extraparam - class reference
+      okConstantClass,                // param - reference, extraparam - class reference
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
@@ -166,38 +166,31 @@ public:
    struct ObjectInfo
    {
       ObjectKind kind;
-//      ref_t      param;
-//      ref_t      extraparam;
+      ref_t      param;
+      ref_t      extraparam;
 //      ref_t      element;
 
       ObjectInfo()
       {
          this->kind = okUnknown;
-//         this->param = 0;
-//         this->extraparam = 0;
+         this->param = 0;
+         this->extraparam = 0;
 //         this->element = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
-//         this->param = 0;
-//         this->extraparam = 0;
+         this->param = 0;
+         this->extraparam = 0;
 //         this->element = 0;
       }
-////      ObjectInfo(ObjectKind kind, ObjectInfo copy)
-////      {
-////         this->kind = kind;
-////         this->param = copy.param;
-////         this->extraparam = copy.extraparam;
-////         this->type = copy.type;
-////      }
-//      ObjectInfo(ObjectKind kind, ref_t param)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = 0;
+      ObjectInfo(ObjectKind kind, ref_t param)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = 0;
 //         this->element = 0;
-//      }
+      }
 //      ObjectInfo(ObjectKind kind, int param)
 //      {
 //         this->kind = kind;
@@ -205,13 +198,13 @@ public:
 //         this->extraparam = 0;
 //         this->element = 0;
 //      }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
 //         this->element = 0;
-//      }
+      }
 //      ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
 //      {
 //         this->kind = kind;
@@ -245,8 +238,8 @@ private:
    {
       _ProjectManager* project;      
 
-//      // default namespaces
-//      List<ident_t> defaultNs;
+      // imported namespaces
+      List<ident_t> importedNs;
       ForwardMap    forwards;       // forward declarations
 
 //      // symbol hints
@@ -289,11 +282,11 @@ private:
 //
       virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal);
 //      virtual void raiseWarning(int level, const char* message, SNode terminal);
-//
-//      bool checkReference(ident_t referenceName);
-//
-//      ref_t resolveIdentifier(ident_t name);
-//
+
+      bool doesReferenceExist(ident_t referenceName);
+
+      ref_t resolveImplicitIdentifier(ident_t name);
+
 ////      ref_t mapNewSubject(ident_t terminal);
 //
 //      // NOTE : the function returns 0 for implicit subjects
@@ -303,15 +296,15 @@ private:
 
       /*virtual */ref_t mapTerminal(SNode terminal, bool existing = false);
 
-//      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
-//
+      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
+
 //      virtual _Module* loadReferenceModule(ref_t& reference);
-//
-//      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
-//      virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
-//      {
-//         return loadClassInfo(info, module->resolveReference(reference), headerOnly);
-//      }
+
+      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
+      virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
+      {
+         return loadClassInfo(info, module->resolveReference(reference), headerOnly);
+      }
 //      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 //
 //      bool loadAttributes(_Module* module);
@@ -328,9 +321,9 @@ private:
 //      virtual void validateReference(SNode terminal, ref_t reference);
 //
 //      ref_t getBaseLazyExpressionClass();
-//
-//      void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
-//
+
+      void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
+
 //      void loadModuleInfo(_Module* extModule)
 //      {
 //         bool dummy1, dummy2;
@@ -355,16 +348,16 @@ private:
 //      
 //         return forwards.add(forward, info.param, true);
 //      }
-//
-//      virtual ident_t resolveFullName(ref_t reference)
-//      {
-//         ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
+
+      virtual ident_t resolveFullName(ref_t reference)
+      {
+         ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
 //         if (isTemplateWeakReference(referenceName)) {
 //            return project->resolveForward(referenceName);
 //         }
-//         else return referenceName;
-//      }
-//
+         /*else */return referenceName;
+      }
+
 //      ident_t resolveWeakTemplateReference(ident_t referenceName);
 
       virtual _Memory* mapSection(ref_t reference, bool existing)
@@ -838,18 +831,18 @@ private:
 //   void importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 //
 //   int defineFieldSize(CodeScope& scope, int offset);
-//
-//   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
+
+   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 //   void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 //
 ////   /// NOTE : the method is used to set template pseudo variable
 //   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withThis, bool withSelf);
-//
-//   ref_t resolveParentRef(SNode node, ModuleScope& moduleScope, bool silentMode);
+
+   ref_t resolveParentRef(SNode node, ModuleScope& moduleScope, bool silentMode);
 //   bool isDependentOnNotDeclaredClass(SNode baseNode, ModuleScope& scope);
-//
-//   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
-//   void compileParentDeclaration(SNode node, ClassScope& scope);
+
+   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
+   void compileParentDeclaration(SNode node, ClassScope& scope);
 //   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
 //
 //   void declareSymbolAttributes(SNode node, SymbolScope& scope);
@@ -955,30 +948,30 @@ private:
 //
 //   void compilePreloadedCode(SymbolScope& scope);
 //   void compilePreloadedCode(ClassScope& scope, SNode node);
-//   void compileSymbolCode(ClassScope& scope);
-//
+   void compileSymbolCode(ClassScope& scope);
+
 //   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
 //   void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
-//   void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
-//
+   void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
+
 //   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField);
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
 //
 //   void generateClassFlags(ClassScope& scope, SNode node, bool& closureBaseClass);
 //   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
-   void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool closureBaseClass*/);
-   void generateMethodDeclarations(SNode node, ClassScope& scope/*, bool closed, LexicalType methodType, bool closureBaseClass*/);
-   void generateClassDeclaration(SNode node, ClassScope& scope/*, bool classClassMode, bool nestedDeclarationMode = false*/);
+   void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates*/, bool closed/*, bool allowTypeAttribute, bool closureBaseClass*/);
+   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType/*, bool closureBaseClass*/);
+   void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode/*, bool nestedDeclarationMode = false*/);
 
    void generateClassImplementation(SNode node, ClassScope& scope);
 
    void compileClassDeclaration(SNode node, ClassScope& scope);
    void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
-//   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
@@ -1022,6 +1015,8 @@ private:
 //////   void generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScope& scope, SyntaxTree& autogenerated);
 ////
 ////   void generateListMember(_CompilerScope& scope, ref_t listRef, LexicalType type, ref_t argument);
+
+   void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
 
 public:
    void loadRules(StreamReader* optimization);

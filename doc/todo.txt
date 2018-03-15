@@ -21,7 +21,10 @@ In development:
                    writeReference,compileRArg,compileRMessageArg,compileMessageArg,compileMCommand,ECodesAssembler :: compile,
                    resolveMessageByIndex,listFields,printMethod,listClassMethods,listConstructorMethods,resolveMessage,
                    printMessage,printReference,listFlags,printManifest,printAPI,listClasses,loadMessageName,resolveNativeSection,
-                   listClasses,ModuleScope::mapSection,writeClass,writeVMT,declareArgumentList,writeClass,compileCode
+                   listClasses,ModuleScope::mapSection,writeClass,writeVMT,declareArgumentList,writeClass,compileCode,writeTerminal,
+                   compileClassImplementation,compileSymbolCode,resolveFullName,loadClassInfo,importReference,importClassInfo,
+                   importMessage,createBytecodeVMTSection,JITLinker :: resolveMessage, JITLinker :: resolveAction,importMessage,
+                   compileClassClassDeclaration,findBaseParent,compileParentDeclaration,inheritClass
                  *test creating project, adding source files. including / excluding, forwards, settings, ...
 
               dev - general implementation

@@ -136,8 +136,8 @@ struct _CompilerScope
    _Module* module;
    _Module* debugModule;
 
-////   // cached references
-//   ref_t superReference;
+//   // cached references
+   ref_t superReference;
 //   ref_t intReference;
 //   ref_t longReference;
 //   ref_t realReference;
@@ -185,7 +185,7 @@ struct _CompilerScope
 //      sourcePath = NULL;
 //      sourcePathRef = 0;
       debugModule = module = NULL;
-//      intReference = boolReference = superReference = 0;
+      /*intReference = boolReference = */superReference = 0;
 //      signatureReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      arrayReference = charReference = realReference = 0;

@@ -101,7 +101,7 @@ void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t s
    // symbol-begin:
    tape.write(blBegin, bsSymbol, reference);
 
-   if (sourcePathRef != (size_t)-1)
+   if (sourcePathRef != INVALID_REF)
       tape.write(bdSourcePath, sourcePathRef);
 }
 
@@ -116,7 +116,7 @@ void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticRefere
 
    tape.newLabel();     // declare symbol-end label
 
-   if (sourcePathRef != (size_t)-1)
+   if (sourcePathRef != INVALID_REF)
       tape.write(blBegin, bsSymbol, staticReference);
 
    tape.write(bdSourcePath, sourcePathRef);
@@ -146,7 +146,7 @@ void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message, ref_t
    // method-begin:
    tape.write(blBegin, bsMethod, message);
 
-   if (sourcePathRef != (size_t)-1)
+   if (sourcePathRef != INVALID_REF)
       tape.write(bdSourcePath, sourcePathRef);
 }
 
@@ -159,7 +159,7 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
    //   pusha
    tape.write(blBegin, bsMethod, message);
 
-   if (sourcePathRef != (size_t)-1)
+   if (sourcePathRef != INVALID_REF)
       tape.write(bdSourcePath, sourcePathRef);
 
    if (withPresavedMessage)
@@ -630,37 +630,37 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
 //         break;
 //   }
 //}
-//
-//inline ref_t defineConstantMask(LexicalType type)
-//{
-//   switch (type) {
-//   case lxConstantClass:
-//      return mskVMTRef;
-//   case lxConstantString:
-//      return mskLiteralRef;
-//   case lxConstantWideStr:
-//      return mskWideLiteralRef;
-//   case lxConstantChar:
-//      return mskCharRef;
-//   case lxConstantInt:
-//      return mskInt32Ref;
-//   case lxConstantLong:
-//      return mskInt64Ref;
-//   case lxConstantReal:
-//      return mskRealRef;
-//   case lxMessageConstant:
-//      return mskMessage;
-//   case lxExtMessageConstant:
-//      return mskExtMessage;
-//   case lxSignatureConstant:
-//      return mskSignature;
-//   case lxConstantList:
-//      return mskConstArray;
-//   default:
-//      return mskConstantRef;
-//   }
-//}
-//
+
+inline ref_t defineConstantMask(LexicalType type)
+{
+   switch (type) {
+      case lxConstantClass:
+         return mskVMTRef;
+   //   case lxConstantString:
+   //      return mskLiteralRef;
+   //   case lxConstantWideStr:
+   //      return mskWideLiteralRef;
+   //   case lxConstantChar:
+   //      return mskCharRef;
+   //   case lxConstantInt:
+   //      return mskInt32Ref;
+   //   case lxConstantLong:
+   //      return mskInt64Ref;
+   //   case lxConstantReal:
+   //      return mskRealRef;
+   //   case lxMessageConstant:
+   //      return mskMessage;
+   //   case lxExtMessageConstant:
+   //      return mskExtMessage;
+   //   case lxSignatureConstant:
+   //      return mskSignature;
+   //   case lxConstantList:
+   //      return mskConstArray;
+      default:
+         return mskConstantRef;
+   }
+}
+
 //void ByteCodeWriter :: loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t)
 //{
 //   switch (sourceType) {
@@ -3648,12 +3648,12 @@ bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
 void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument)
 {
    switch (type) {
-//      case lxSymbolReference:
-//         tape.write(bcCallR, argument | mskSymbolRef);
-//         break;
+      case lxSymbolReference:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         break;
 //      case lxConstantString:
 //      case lxConstantWideStr:
-//      case lxConstantClass:
+      case lxConstantClass:
 //      case lxConstantSymbol:
 //      case lxConstantChar:
 //      case lxConstantInt:
@@ -3663,9 +3663,9 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case lxExtMessageConstant:
 //      case lxSignatureConstant:
 //      case lxConstantList:
-//         // pushr reference
-//         tape.write(bcACopyR, argument | defineConstantMask(type));
-//         break;
+         // pushr reference
+         tape.write(bcACopyR, argument | defineConstantMask(type));
+         break;
 //      case lxLocal:
 //      case lxThisLocal:
 ////      //case lxBoxableLocal:
@@ -5463,9 +5463,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxBinaryVariable:
 //            generateDebugInfo(tape, current);
 //            break;
-         //default:
-         //   generateObjectExpression(tape, current);
-         //   break;
+         default:
+            generateObjectExpression(tape, current);
+            break;
       }
       current = current.nextNode();
    }

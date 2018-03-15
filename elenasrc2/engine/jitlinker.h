@@ -82,7 +82,7 @@ class JITLinker : _JITLoaderListener
          return _owner->calculateVAddress(&writer, mask);
       }
 
-//      virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL);
+      virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL);
 
       virtual void addBreakpoint(size_t position);
 
@@ -120,7 +120,7 @@ class JITLinker : _JITLoaderListener
    _JITCompiler*  _compiler; 
    bool           _virtualMode;
    bool           _withDebugInfo;
-//   bool           _classSymbolAutoLoadMode;
+   bool           _classSymbolAutoLoadMode;
    void*          _codeBase;
 //   int            _statLength;
 //   MethodMap      _staticMethods;
@@ -130,11 +130,11 @@ class JITLinker : _JITLoaderListener
 
    void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
    void createNativeSymbolDebugInfo(ident_t reference, void* address, size_t& sizePtr);
-//   void createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr);
+   void createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr);
    void endNativeDebugInfo(size_t sizePtr);
 
-//   void* getVMTAddress(_Module* module, ref_t reference, References& references);
-//   void* getVMTReference(_Module* module, ref_t reference, References& references);
+   void* getVMTAddress(_Module* module, ref_t reference, References& references);
+   void* getVMTReference(_Module* module, ref_t reference, References& references);
 //   int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
 //   int getVMTMethodAddress(void* vaddress, int messageID);   
 //   int getVMTMethodIndex(void* vaddress, int messageID);
@@ -142,18 +142,18 @@ class JITLinker : _JITLoaderListener
 
    void fixReferences(References& relocations, _Memory* image);
 //   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress);
-//
-//   size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
-//
-//   ref_t resolveSignature(ident_t signature, int paramCount);
-//   ref_t resolveMessage(_Module* module, ref_t reference);
-//
+
+   size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
+
+   ref_t resolveAction(ident_t signature, int paramCount);
+   ref_t resolveMessage(_Module* module, ref_t reference);
+
 //   void* resolveNativeVariable(ident_t  reference, int mask);
 //   void* resolveConstVariable(ident_t  reference, int mask);
    void* resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo);
    void* resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo);
-//   void* createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references);
-//   void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
+   void* createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references);
+   void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
 //   void* resolveConstant(ident_t reference, int mask);
 //   void* resolveStaticVariable(ident_t reference, int mask);
 //   void* resolveAnonymousStaticVariable();
@@ -198,8 +198,8 @@ public:
       _withDebugInfo = compiler->isWithDebugInfo();
       _codeBase = codeBase;
 //      _statLength = 0;
-//      _classSymbolAutoLoadMode = autoLoadMode;
-//
+      _classSymbolAutoLoadMode = autoLoadMode;
+
 //      loader->addListener(this);
 ////      _uniqueID = 0;
    }

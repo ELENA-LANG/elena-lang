@@ -91,7 +91,7 @@ ref_t Module :: mapReference(ident_t reference)
    return refId;
 }
 
-ref_t Module :: mapMessage(ident_t actionName, bool existing)
+ref_t Module :: mapAction(ident_t actionName, bool existing)
 {
    if (existing)
       return _actions.get(actionName);
@@ -301,7 +301,7 @@ ref_t ROModule :: mapReference(ident_t reference, bool existing)
    else return _references.get(reference);
 }
 
-ref_t ROModule :: mapMessage(ident_t actionName, bool existing)
+ref_t ROModule :: mapAction(ident_t actionName, bool existing)
 {
    if (!existing) {
       throw InternalError("Read-only Module");

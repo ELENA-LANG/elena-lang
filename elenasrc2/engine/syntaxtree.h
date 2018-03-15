@@ -48,8 +48,8 @@ enum LexicalType
 //   lxCode            = 0x0001A,
 //   lxDispatchCode    = 0x00020,
 //   lxStatic          = 0x00022,
-//   lxConstructor     = 0x00024,
-//   lxStaticMethod    = 0x00025,
+   lxConstructor     = 0x00024,
+   lxStaticMethod    = 0x00025,
 //   lxExtension       = 0x0002B,
 //   lxAltOperation    = 0x0002C,
 //   lxCatchOperation  = 0x0002F,
@@ -92,7 +92,7 @@ enum LexicalType
 //   lxConstantSymbol  = 0x0A104, // arg - reference
 //   lxField           = 0x08105, // arg - offset
 //   lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
-//   lxSymbolReference = 0x08107,
+   lxSymbolReference = 0x08107,
 //   lxLocalAddress    = 0x0A108, // arg - offset
 //   lxFieldAddress    = 0x08109, // arg - offset
 //   lxLocal           = 0x0A10A, // arg - offset
@@ -103,7 +103,7 @@ enum LexicalType
 //   lxConstantInt     = 0x1A10F, // arg - reference
 //   lxConstantLong    = 0x1A110, // arg - reference
 //   lxConstantReal    = 0x1A111, // arg - reference
-//   lxConstantClass   = 0x0A112, // arg - reference
+   lxConstantClass   = 0x0A112, // arg - reference
 //   lxMessageConstant = 0x0A113, // arg - rererence
 //   lxExtMessageConstant = 0x0A114, // arg -reference
 //   lxSignatureConstant  = 0x0A115, // arg - reference

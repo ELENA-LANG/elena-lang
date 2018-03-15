@@ -56,7 +56,7 @@ public:
    virtual ref_t mapReference(ident_t reference);
    virtual ref_t mapReference(ident_t reference, bool existing);
 
-   virtual ref_t mapMessage(ident_t actionName, bool existing);
+   virtual ref_t mapAction(ident_t actionName, bool existing);
 //   virtual ref_t mapConstant(ident_t constant);
 
    virtual Section* mapSection(ref_t reference, bool existing);
@@ -178,7 +178,7 @@ public:
    virtual ref_t mapReference(ident_t reference);
    virtual ref_t mapReference(ident_t reference, bool existing);
 
-   virtual ref_t mapMessage(ident_t actionName, bool existing);
+   virtual ref_t mapAction(ident_t actionName, bool existing);
 //   virtual ref_t mapConstant(ident_t reference);
 
    virtual void mapPredefinedReference(ident_t, ref_t)

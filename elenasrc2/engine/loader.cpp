@@ -117,8 +117,8 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
          }      
       }
    }
-//   // !! make sure message id is smaller than 0x7FFFFF
-//   else return (void*)mapKey(_subjects, reference, (_subjects.Count() + PREDEFINED_MESSAGE_ID));
+   // !! make sure message id is smaller than 0x7FFFFF
+   else return (void*)mapKey(_actions, reference, (_actions.Count()/* + PREDEFINED_MESSAGE_ID*/));
 }
 
 //void _ImageLoader :: mapPredefinedSubject(ident_t name, ref_t reference)

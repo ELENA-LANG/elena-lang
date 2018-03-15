@@ -30,7 +30,7 @@ public:
    virtual ref_t mapReference(ident_t reference) = 0;
    virtual ref_t mapReference(ident_t reference, bool existing) = 0;
 
-   virtual ref_t mapMessage(ident_t actionName, bool existing) = 0;
+   virtual ref_t mapAction(ident_t actionName, bool existing) = 0;
 //   virtual ref_t mapConstant(ident_t reference) = 0;
 
    virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
@@ -86,8 +86,8 @@ public:
 
 //   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
 ////   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
-//
-//   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
+
+   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
 //   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
 //
 //   virtual ident_t resolveForward(ident_t forward) = 0;
@@ -116,20 +116,20 @@ struct SectionInfo
    }
 };
 
-//// --- ClassSectionInfo ---
-//
-//struct ClassSectionInfo
-//{
-//   _Module* module;
-//   _Memory* codeSection;
-//   _Memory* vmtSection;
-//
-//   ClassSectionInfo()
-//   {
-//      module = NULL;
-//      codeSection = vmtSection = NULL;
-//   }
-//};
+// --- ClassSectionInfo ---
+
+struct ClassSectionInfo
+{
+   _Module* module;
+   _Memory* codeSection;
+   _Memory* vmtSection;
+
+   ClassSectionInfo()
+   {
+      module = NULL;
+      codeSection = vmtSection = NULL;
+   }
+};
 
 // --- _LoaderListener ---
 
@@ -150,7 +150,7 @@ public:
 
    virtual SectionInfo getSectionInfo(ident_t reference, ref_t mask, bool silentMode) = 0;
    virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
-//   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
+   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
 
    virtual size_t getLinkerConstant(int id) = 0;
 
@@ -475,11 +475,11 @@ struct VMTXEntry
 
 struct ClassHeader
 {
-//   ref_t  staticSize;      // static table size
-//   ref_t  classRef;        // class class reference
+   ref_t  staticSize;      // static table size
+   ref_t  classRef;        // class class reference
    size_t count;
    size_t flags;
-//   ref_t  parentRef;
+   ref_t  parentRef;
 };
 
 // --- ClassInfo ---
@@ -556,39 +556,39 @@ struct ClassInfo
       : /*fields(-1), */methods(0)//, methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
-//      header.classRef = 0;
+      header.classRef = 0;
    }
 };
 
-////// --- SymbolExpressionInfo ---
-////
-////struct SymbolExpressionInfo
-////{
-////   ref_t expressionClassRef;
-////   ref_t listRef;
-////   bool  constant;
-////
-////   void save(StreamWriter* writer)
-////   {
-////      writer->writeDWord(listRef);
-////      writer->writeDWord(constant ? -1: 0);
-////      writer->writeDWord(expressionClassRef);
-////   }
-////
-////   void load(StreamReader* reader)
-////   {
-////      listRef = reader->getDWord();
-////      constant = (reader->getDWord() != 0);
-////      expressionClassRef = reader->getDWord();
-////   }
-////
-////   SymbolExpressionInfo()
-////   {
-////      expressionClassRef = 0;
-////      listRef = 0;
-////      constant = false;
-////   }
-////};
+// --- SymbolExpressionInfo ---
+
+struct SymbolExpressionInfo
+{
+   ref_t expressionClassRef;
+   ref_t listRef;
+   bool  constant;
+
+   void save(StreamWriter* writer)
+   {
+      writer->writeDWord(listRef);
+      writer->writeDWord(constant ? -1: 0);
+      writer->writeDWord(expressionClassRef);
+   }
+
+   void load(StreamReader* reader)
+   {
+      listRef = reader->getDWord();
+      constant = (reader->getDWord() != 0);
+      expressionClassRef = reader->getDWord();
+   }
+
+   SymbolExpressionInfo()
+   {
+      expressionClassRef = 0;
+      listRef = 0;
+      constant = false;
+   }
+};
 
 // --- DebugLineInfo ---
 
@@ -714,16 +714,16 @@ inline ref_t encodeMessage(ref_t actionRef, int paramCount)
    return (actionRef << 4) + paramCount;
 }
 
-//inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
-//{
-//   ref64_t message = actionRef;
-//   message <<= 16;
-//
-//   message += paramCount;
-//
-//   return message;
-//}
-//
+inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
+{
+   ref64_t message = actionRef;
+   message <<= 16;
+
+   message += paramCount;
+
+   return message;
+}
+
 //inline ref_t encodeVerb(int verbId)
 //{
 //   return encodeMessage(verbId, 0);
@@ -783,89 +783,89 @@ inline ref_t getAction(ref_t message)
    return action;
 }
 
-////inline ref64_t toMessage64(ref_t message)
+inline ref64_t toMessage64(ref_t message)
+{
+   int   paramCount;
+   ref_t actionRef;
+   decodeMessage(message, actionRef, paramCount);
+
+   return encodeMessage64(actionRef, paramCount);
+}
+
+//inline ref_t fromMessage64(ref64_t message)
+//{
+//   int   paramCount;
+//   ref_t actionRef;
+//   decodeMessage64(message, actionRef, paramCount);
+//
+//   return encodeMessage(actionRef, paramCount);
+//}
+//
+////inline bool IsExprOperator(int operator_id)
 ////{
-////   int   paramCount;
-////   ref_t actionRef;
-////   decodeMessage(message, actionRef, paramCount);
-////
-////   return encodeMessage64(actionRef, paramCount);
-////}
-////
-////inline ref_t fromMessage64(ref64_t message)
-////{
-////   int   paramCount;
-////   ref_t actionRef;
-////   decodeMessage64(message, actionRef, paramCount);
-////
-////   return encodeMessage(actionRef, paramCount);
-////}
-////
-//////inline bool IsExprOperator(int operator_id)
-//////{
-//////   switch (operator_id) {
-//////      case ADD_MESSAGE_ID:
-//////      case SUB_MESSAGE_ID:
-//////      case MUL_MESSAGE_ID:
-//////      case DIV_MESSAGE_ID:
-//////      case AND_MESSAGE_ID:
-//////      case OR_MESSAGE_ID:
-//////      case XOR_MESSAGE_ID:
-//////         return true;
-//////      default:
-//////         return false;
-//////   }
-//////}
-//////
-//////inline bool IsShiftOperator(int operator_id)
-//////{
-//////   switch (operator_id) {
-//////      case READ_MESSAGE_ID:
-//////      case WRITE_MESSAGE_ID:
-//////         return true;
-//////      default:
-//////         return false;
-//////   }
-//////}
-//////
-//////inline bool IsRealExprOperator(int operator_id)
-//////{
-//////   switch (operator_id) {
-//////   case ADD_MESSAGE_ID:
-//////   case SUB_MESSAGE_ID:
-//////   case MUL_MESSAGE_ID:
-//////   case DIV_MESSAGE_ID:
-//////      return true;
-//////   default:
-//////      return false;
-//////   }
-//////}
-//////
-//////inline bool isOpenArg(ref_t message)
-//////{
-//////   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
-//////}
-////
-////inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
-////{
-////   ref_t actionRef = 0;
-////   ref_t flags = exportRef & MESSAGE_FLAG_MASK;
-////   int paramCount = 0;
-////
-////   decodeMessage(exportRef, actionRef, paramCount);
-////
-////   // if it is generic message
-////   if (actionRef <= PREDEFINED_MESSAGE_ID) {
-////      return exportRef;
+////   switch (operator_id) {
+////      case ADD_MESSAGE_ID:
+////      case SUB_MESSAGE_ID:
+////      case MUL_MESSAGE_ID:
+////      case DIV_MESSAGE_ID:
+////      case AND_MESSAGE_ID:
+////      case OR_MESSAGE_ID:
+////      case XOR_MESSAGE_ID:
+////         return true;
+////      default:
+////         return false;
 ////   }
-////
-////   // otherwise signature and custom verb should be imported
-////   ident_t subject = exporter->resolveSubject(actionRef);
-////
-////   actionRef = importer->mapSubject(subject, false);
-////
-////   return encodeMessage(actionRef, paramCount) | flags;
 ////}
+////
+////inline bool IsShiftOperator(int operator_id)
+////{
+////   switch (operator_id) {
+////      case READ_MESSAGE_ID:
+////      case WRITE_MESSAGE_ID:
+////         return true;
+////      default:
+////         return false;
+////   }
+////}
+////
+////inline bool IsRealExprOperator(int operator_id)
+////{
+////   switch (operator_id) {
+////   case ADD_MESSAGE_ID:
+////   case SUB_MESSAGE_ID:
+////   case MUL_MESSAGE_ID:
+////   case DIV_MESSAGE_ID:
+////      return true;
+////   default:
+////      return false;
+////   }
+////}
+////
+////inline bool isOpenArg(ref_t message)
+////{
+////   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
+////}
+
+inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   ref_t actionRef = 0;
+   ref_t flags = exportRef & MESSAGE_FLAG_MASK;
+   int paramCount = 0;
+
+   decodeMessage(exportRef, actionRef, paramCount);
+
+   //// if it is generic message
+   //if (actionRef <= PREDEFINED_MESSAGE_ID) {
+   //   return exportRef;
+   //}
+
+   // otherwise signature and custom verb should be imported
+   ident_t actionName = exporter->resolveAction(actionRef);
+
+   actionRef = importer->mapAction(actionName, false);
+
+   return encodeMessage(actionRef, paramCount) | flags;
+}
 
 } // _ELENA_
 

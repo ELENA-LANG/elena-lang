@@ -33,8 +33,8 @@ namespace _ELENA_
 
    #define PARAMX_MASK             0x000000000000FFFFu
 
-//   #define INVALID_REF             (ref_t)-1
-//
+   #define INVALID_REF             (ref_t)-1
+
 //   #define DISPATCH_MESSAGE_ID     0x0001
 //   #define NEWOBJECT_MESSAGE_ID    0x0002
 //   #define NEW_MESSAGE_ID          0x0003
@@ -65,8 +65,8 @@ namespace _ELENA_
 //   #define SHIFT_MESSAGE_ID        0x001C
 //   #define VALUES_MESSAGE_ID       0x001D             // virtual method returning the list of enum values
 //   #define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
-//   #define PREDEFINED_MESSAGE_ID   0x001E
-//
+   //#define PREDEFINED_MESSAGE_ID   0x001E
+
 //   // virtual operator
 //   #define SETNIL_REFER_MESSAGE_ID 0x1019
 //
@@ -276,12 +276,12 @@ namespace _ELENA_
 //   const int elDynamicRole         = 0x00000004;
 //   const int elStructureRole       = 0x00000008;
 //   const int elAbstract            = 0x00000010;
-//   const int elClosed              = 0x00000020;
+   const int elClosed              = 0x00000020;
 //   const int elWrapper             = 0x00000040;
 //   const int elStructureWrapper    = 0x00000048;
 //   const int elStateless           = 0x00000080;
-//   const int elFinal               = 0x00000100;
-//   const int elSealed              = 0x00000120;
+   const int elFinal               = 0x00000100;
+   const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
 //   const int elReadOnlyRole        = 0x00000800;
@@ -296,7 +296,7 @@ namespace _ELENA_
 //   const int elWithCustomDispatcher= 0x00800000;
 //   const int elWithArgGenerics     = 0x01000000;
 //   const int elTapeGroup           = 0x02000200;
-//   const int elClassClass          = 0x04000000;
+   const int elClassClass          = 0x04000000;
 //   const int elWithMuti            = 0x08000000;
 //   const int elVirtualVMT          = 0x10000000;
 
@@ -434,7 +434,7 @@ namespace _ELENA_
 
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"
-//   #define CLASSCLASS_POSTFIX       "#class"
+   #define CLASSCLASS_POSTFIX       "#class"
 //   #define GENERIC_PREFIX           "#generic"
 ////   #define EMBEDDED_PREFIX          "#embedded"
 ////   #define TARGET_POSTFIX           "##"
