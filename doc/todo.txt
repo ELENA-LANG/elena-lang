@@ -24,7 +24,8 @@ In development:
                    listClasses,ModuleScope::mapSection,writeClass,writeVMT,declareArgumentList,writeClass,compileCode,writeTerminal,
                    compileClassImplementation,compileSymbolCode,resolveFullName,loadClassInfo,importReference,importClassInfo,
                    importMessage,createBytecodeVMTSection,JITLinker :: resolveMessage, JITLinker :: resolveAction,importMessage,
-                   compileClassClassDeclaration,findBaseParent,compileParentDeclaration,inheritClass
+                   compileClassClassDeclaration,findBaseParent,compileParentDeclaration,inheritClass,
+                   ProjectManager::clearForwards(),
                  *test creating project, adding source files. including / excluding, forwards, settings, ...
 
               dev - general implementation

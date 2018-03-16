@@ -118,7 +118,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsSubCode:
       case nsScope:
 //      case nsTokenParam:
-//      case nsDispatchExpression:
+      case nsDispatchExpression:
 //      case nsExtension:
 //      case nsCatchMessageOperation:
 //      case nsAltMessageOperation:
@@ -2557,9 +2557,9 @@ void DerivationTransformer :: generateMethodTree(SyntaxWriter& writer, SNode nod
 //      current = current.nextNode();
 //   }
 
-   SNode bodyNode = node.findChild(/*lxCode, lxExpression, lxDispatchCode, */lxReturning/*, lxResendExpression*/);
-   if (bodyNode == lxReturning) {
-      writer.newNode(lxReturning);
+   SNode bodyNode = node.findChild(/*lxCode, lxExpression, */lxDispatchCode, lxReturning/*, lxResendExpression*/);
+   if (bodyNode.compare(lxReturning, lxDispatchCode)) {
+      writer.newNode(bodyNode.type);
       generateExpressionTree(writer, bodyNode, scope, EXPRESSION_IMPLICIT_MODE);
       writer.closeNode();
    }
@@ -2907,7 +2907,7 @@ bool DerivationTransformer :: generateDeclaration(SNode node, DerivationScope& s
 
 bool DerivationTransformer :: generateMethodScope(SNode node, DerivationScope& scope)
 {
-   SNode current = node.findChild(/*lxCode, */lxExpression/*, lxDispatchCode, lxReturning, lxResendExpression*/);
+   SNode current = node.findChild(/*lxCode, */lxExpression, lxDispatchCode/*, lxReturning, lxResendExpression*/);
    if (current != lxNone) {
       // try to resolve the message name
       setIdentifier(node);

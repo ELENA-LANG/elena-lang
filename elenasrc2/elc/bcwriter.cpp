@@ -5471,22 +5471,22 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
    }
 }
 
-//void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints)
-//{
-//   ByteCodeIterator it = tape.end();
-//
-//   tape.import(scope.section, true, withBreakpoints);
-//
-//   // goes to the first imported command
-//   it++;
-//
-//   // import references
-//   while (!it.Eof()) {
-//      CommandTape::import(*it, scope.sour, scope.dest);
-//      it++;
-//   }
-//}
-//
+void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints)
+{
+   ByteCodeIterator it = tape.end();
+
+   tape.import(scope.section, true, withBreakpoints);
+
+   // goes to the first imported command
+   it++;
+
+   // import references
+   while (!it.Eof()) {
+      CommandTape::importReference(*it, scope.sour, scope.dest);
+      it++;
+   }
+}
+
 //void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
 //{
 //   tape.write(bcMTRedirect, operationList | mskConstArray, message);
@@ -5657,19 +5657,19 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
 //               callResolvedMethod(tape, current.findChild(lxTarget).argument, current.argument, false, false);
 //            }
 //            break;
-//         case lxImporting:
+         case lxImporting:
 //         case lxCreatingClass:
 //         case lxCreatingStruct:
-//            if (!open) {
-//               open = true;
-//
-//               declareIdleMethod(tape, node.argument, sourcePathRef);
-//            }
+            if (!open) {
+               open = true;
+
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+            }
 //            if (current == lxImporting) {
-//               importCode(tape, *imports.get(current.argument - 1), true);
+               importCode(tape, *imports.get(current.argument - 1), true);
 //            }
 //            else generateCreating(tape, current);
-//            break;
+            break;
 //         case lxNewFrame:
 //            withNewFrame = true;
 //            if (!open) {

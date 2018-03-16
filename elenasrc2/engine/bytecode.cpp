@@ -65,33 +65,33 @@ const char* _fnOpcodes[256] =
 
 using namespace _ELENA_;
 
-//inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
-//{
-//   if (ref != 0) {
-//      int mask = ref & mskAnyRef;
-//
-//      ident_t referenceName = sour->resolveReference(ref & ~mskAnyRef);
-//
-//      return dest->mapReference(referenceName) | mask;
-//   }
-//   else return 0;
-//}
-//
-//// --- CommandTape ---
-//
-//bool CommandTape :: import(ByteCommand& command, _Module* sour, _Module* dest)
-//{
-//   if (ByteCodeCompiler::IsR2Code(command.code)) {
-//      command.additional = importRef(sour, (ref_t)command.additional, dest);
-//   }
-//   if (ByteCodeCompiler::IsM2Code(command.code)) {
-//      command.additional = importMessage(sour, (ref_t)command.additional, dest);
-//   }
-//   if (ByteCodeCompiler::IsRCode(command.code)) {
-//      command.argument = importRef(sour, (ref_t)command.argument, dest);
-//   }
-//   return true;
-//}
+inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
+{
+   if (ref != 0) {
+      int mask = ref & mskAnyRef;
+
+      ident_t referenceName = sour->resolveReference(ref & ~mskAnyRef);
+
+      return dest->mapReference(referenceName) | mask;
+   }
+   else return 0;
+}
+
+// --- CommandTape ---
+
+bool CommandTape :: importReference(ByteCommand& command, _Module* sour, _Module* dest)
+{
+   if (ByteCodeCompiler::IsR2Code(command.code)) {
+      command.additional = importRef(sour, (ref_t)command.additional, dest);
+   }
+   if (ByteCodeCompiler::IsM2Code(command.code)) {
+      command.additional = importMessage(sour, (ref_t)command.additional, dest);
+   }
+   if (ByteCodeCompiler::IsRCode(command.code)) {
+      command.argument = importRef(sour, (ref_t)command.argument, dest);
+   }
+   return true;
+}
 
 void CommandTape :: write(ByteCode code)
 {
@@ -196,68 +196,68 @@ ByteCodeIterator CommandTape :: find(ByteCode code)
    return tape.end()++;
 }
 
-//void CommandTape :: import(_Memory* section, bool withHeader, bool withBreakpoints)
-//{
-//   ByteCode code;
-//   int      argument = 0;
-//   int      additional = 0;
-//
-//   Map<int, int> extLabels;
-//
-//   MemoryReader reader(section);
-//
-//   if (withHeader)
-//      reader.getDWord();
-//
-//   while (!reader.Eof()) {
-//      argument = 0;
-//      additional = 0;
-//
-//      code = (ByteCode)reader.getByte();
-//      if (code > MAX_SINGLE_ECODE) {
-//         argument = reader.getDWord();
-//      }
-//      if (code > MAX_DOUBLE_ECODE) {  
-//         additional = reader.getDWord();
-//      }
-//      if (ByteCodeCompiler::IsJump(code)) {
-//         int position = 0;
-//         int label = 0;
-//         if (code > MAX_DOUBLE_ECODE) {
-//            position = additional + reader.Position();
-//         }
-//         else position = argument + reader.Position();
-//
-//         if (!extLabels.exist(position)) {
-//            label = ++labelSeed;
-//            extLabels.add(position, label);
-//         }
-//         else label = extLabels.get(position);
-//
-//         if (code > MAX_DOUBLE_ECODE) {
-//            write(code, label, argument);
-//         }
-//         else write(code, label);
-//      }
-//      else if (code == bcNop) {
-//         int label;
-//         if (!extLabels.exist(reader.Position() - 1)) {
-//            label = ++labelSeed;
-//            extLabels.add(reader.Position() - 1, label);
-//         }
-//         else label = extLabels.get(reader.Position() - 1);
-//
-//         write(blLabel, label);
-//      }
-//      else if (code == bcBreakpoint) {
-//         if (withBreakpoints) {
-//            write(code);
-//            write(bdBreakpoint, dsAssemblyStep);
-//         }
-//      }
-//      else write(code, argument, additional);
-//   }   
-//}
+void CommandTape :: import(_Memory* section, bool withHeader, bool withBreakpoints)
+{
+   ByteCode code;
+   int      argument = 0;
+   int      additional = 0;
+
+   Map<int, int> extLabels;
+
+   MemoryReader reader(section);
+
+   if (withHeader)
+      reader.getDWord();
+
+   while (!reader.Eof()) {
+      argument = 0;
+      additional = 0;
+
+      code = (ByteCode)reader.getByte();
+      if (code > MAX_SINGLE_ECODE) {
+         argument = reader.getDWord();
+      }
+      if (code > MAX_DOUBLE_ECODE) {  
+         additional = reader.getDWord();
+      }
+      if (ByteCodeCompiler::IsJump(code)) {
+         int position = 0;
+         int label = 0;
+         if (code > MAX_DOUBLE_ECODE) {
+            position = additional + reader.Position();
+         }
+         else position = argument + reader.Position();
+
+         if (!extLabels.exist(position)) {
+            label = ++labelSeed;
+            extLabels.add(position, label);
+         }
+         else label = extLabels.get(position);
+
+         if (code > MAX_DOUBLE_ECODE) {
+            write(code, label, argument);
+         }
+         else write(code, label);
+      }
+      else if (code == bcNop) {
+         int label;
+         if (!extLabels.exist(reader.Position() - 1)) {
+            label = ++labelSeed;
+            extLabels.add(reader.Position() - 1, label);
+         }
+         else label = extLabels.get(reader.Position() - 1);
+
+         write(blLabel, label);
+      }
+      else if (code == bcBreakpoint) {
+         if (withBreakpoints) {
+            write(code);
+            write(bdBreakpoint, dsAssemblyStep);
+         }
+      }
+      else write(code, argument, additional);
+   }   
+}
 
 inline void addJump(int label, int index, CachedMemoryMap<int, int, 20>& labels, 
                     CachedMemoryMap<int, int, 40>& jumps, 

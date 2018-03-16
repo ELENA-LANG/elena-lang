@@ -114,10 +114,10 @@ void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& messa
 
 ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
 {
-   //IdentifierString message;
-   //compileMessage(token, message);
+   IdentifierString message;
+   compileMessage(token, message);
 
-   return /*binary->mapReference(message) | mskMessage*/0; // !! temporal
+   return binary->mapReference(message) | mskMessage;
 }
 
 ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
@@ -153,11 +153,11 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       }
       else return binary->mapReference(token.value) | mskConstantRef;
    }
-   //else if (word.compare("class")) {
-   //   token.read(":", "Invalid operand (%d)");
-   //   token.read();
-   //   return binary->mapReference(token.value) | mskVMTRef;
-   //}
+   else if (word.compare("class")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
+      return binary->mapReference(token.value) | mskVMTRef;
+   }
    //else if (word.compare("intern")) {
    //   token.read(":", "Invalid operand (%d)");
    //   token.read();

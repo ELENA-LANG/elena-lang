@@ -2278,11 +2278,11 @@ void IDEController::ProjectManager::excludeSource(_ELENA_::path_t path)
    //_model->project.changed = true;
 }
 
-void IDEController::ProjectManager::clearForwards()
+void IDEController::ProjectManager :: clearForwards()
 {
-   _model->project.xmlConfig.setSetting(IDE_FORWARDS_SECTION, DEFAULT_STR);
+   //_model->project.xmlConfig.setSetting(IDE_FORWARDS_SECTION, DEFAULT_STR);
 
-   _model->project.changed = true;
+   //_model->project.changed = true;
 }
 
 void IDEController::ProjectManager::addForward(const char* name, const char* reference)

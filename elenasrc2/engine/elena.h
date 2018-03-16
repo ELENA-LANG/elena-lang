@@ -59,8 +59,8 @@ class _ProjectManager
 public:
    virtual ident_t Namespace() const = 0;
 
-   virtual int getDefaultEncoding() = 0; // !! obsolete
-   virtual int getTabSize() = 0; // !! obsolete
+   virtual int getDefaultEncoding() = 0; // !! obsolete!?
+   virtual int getTabSize() = 0; // !! obsolete!?
 
 //   virtual bool HasWarnings() const = 0;     // !! obsolete
 //   virtual int getWarningMask() const = 0;
@@ -72,7 +72,7 @@ public:
 
    virtual void printInfo(const char* msg, ident_t value) = 0;
 
-   //   virtual void raiseError(const char* msg) = 0;
+   virtual void raiseError(ident_t msg) = 0;
    virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
    virtual void raiseError(ident_t msg, ident_t value) = 0;
 
@@ -89,9 +89,9 @@ public:
 
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
 //   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
-//
-//   virtual ident_t resolveForward(ident_t forward) = 0;
-//
+
+   virtual ident_t resolveForward(ident_t forward) = 0;
+
 //   virtual bool addForward(ident_t forward, ident_t reference) = 0;
 
 //   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;

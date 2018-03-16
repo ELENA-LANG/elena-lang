@@ -3,12 +3,14 @@ __define eps            	2
 
 __define EXPRESSION		4114
 __define OBJECT			4121
+__define DISPATCH               4128
 __define TOKEN   		4172
 __define DECLARATION   		4173
 
 __define eof            	12291
 __define identifier		12293
 __define private	        12294
+__define reference		12295
 
 __define DECLARATION_END_EXPECTED	16384
 
@@ -18,8 +20,9 @@ START ->
 
 DECLARATION ->
 	EXPRESSION_DECLARATION DECLARATION_END
+	| DISPATCH_DECLARATION DECLARATION_END
 	| CLASS_DECLARATION
-
+ 
 DECLARATIONS ->
 	TOKEN DECLARATION DECLARATIONS
 	| eps
@@ -27,15 +30,22 @@ DECLARATIONS ->
 CLASS_DECLARATION ->
 	OPENING_CURLY_BRACKET DECLARATIONS CLOSING_CURLY_BRACKET
 
+DISPATCH_DECLARATION ->
+	=> DISPATCH 
+
 EXPRESSION_DECLARATION ->
 	= EXPRESSION
 
 EXPRESSION ->
 	OBJECT
 
+DISPATCH ->
+	OBJECT
+
 OBJECT ->
 	identifier
 	| private
+	| reference
 
 TOKEN ->
 	identifier

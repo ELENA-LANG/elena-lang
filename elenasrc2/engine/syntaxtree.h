@@ -46,7 +46,7 @@ enum LexicalType
    lxClassMethod     = 0x00016,
 //   lxNestedClass     = 0x00018,
 //   lxCode            = 0x0001A,
-//   lxDispatchCode    = 0x00020,
+   lxDispatchCode    = 0x00020,
 //   lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
    lxStaticMethod    = 0x00025,
@@ -75,7 +75,7 @@ enum LexicalType
 //   lxLiteral         = 0x18004,
    lxIdentifier      = 0x18005,
    lxPrivate         = 0x18006,
-//   lxReference       = 0x18007,
+   lxReference       = 0x18007,
 //   lxInteger         = 0x18008,
 //   lxHexInteger      = 0x18009,
 //   lxReal            = 0x1800A,
@@ -85,8 +85,8 @@ enum LexicalType
 //   lxExplicitConst   = 0x1800E,
 //   lxExplicitAttr    = 0x1800F,
 //   lxMemberIdentifier= 0x18010,
-//
-//   lxImporting       = 0x08101,
+
+   lxImporting       = 0x08101,
 //   lxNested          = 0x08102, // arg - count
 //   lxStruct          = 0x08103, // arg - count
 //   lxConstantSymbol  = 0x0A104, // arg - reference

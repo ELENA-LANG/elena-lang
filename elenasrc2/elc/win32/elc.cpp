@@ -149,6 +149,15 @@ void _ELC_::Project :: raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t identif
    throw _ELENA_::_Exception();
 }
 
+void _ELC_::Project :: raiseError(_ELENA_::ident_t msg)
+{
+   _ELENA_::WideString wMsg(msg);
+
+   print(wMsg);
+
+   throw _ELENA_::_Exception();
+}
+
 void _ELC_::Project :: printInfo(const char* msg, _ELENA_::ident_t value)
 {
    _ELENA_::WideString wMsg(msg);

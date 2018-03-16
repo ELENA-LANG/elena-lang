@@ -28,16 +28,6 @@ namespace _GUI_
 {
 
 // --- Project settings ---
-#define IDE_FILES_SECTION                       "files"
-#define IDE_FORWARDS_SECTION                    "forwards"
-#define IDE_PROJECT_SECTION                     "project"
-#define IDE_PACKAGE_SETTING                     "namespace"
-#define IDE_TEMPLATE_SETTING                    "template"
-#define IDE_COMPILER_OPTIONS                    "options"
-#define IDE_EXECUTABLE_SETTING                  "executable"
-#define IDE_OUTPUT_SETTING                      "output"
-#define IDE_ARGUMENT_SETTING                    "arguments"
-#define IDE_DEBUGINFO_SETTING                   "debuginfo"
 #define ELC_INCLUDE                             "include"
 
 #define IDE_TEMPLATE_XMLSETTING                 "configuration/project/template"

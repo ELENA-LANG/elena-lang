@@ -57,28 +57,28 @@ class ByteCodeWriter
 //         frameSize = 0;
 //      }
 //   };
-//
-//   struct ImportScope
-//   {
-//      _Memory*    section; 
-//      _Module*    sour;
-//      _Module*    dest;
-//
-//      ImportScope()
-//      {
-//         section = NULL;
-//         sour = NULL;
-//         dest = NULL;
-//      }
-//      ImportScope(_Memory* section, _Module* sour, _Module* dest)
-//      {
-//         this->section = section;
-//         this->sour = sour;
-//         this->dest = dest;
-//      }
-//   };
 
-//   List<ImportScope> imports;
+   struct ImportScope
+   {
+      _Memory*    section; 
+      _Module*    sour;
+      _Module*    dest;
+
+      ImportScope()
+      {
+         section = NULL;
+         sour = NULL;
+         dest = NULL;
+      }
+      ImportScope(_Memory* section, _Module* sour, _Module* dest)
+      {
+         this->section = section;
+         this->sour = sour;
+         this->dest = dest;
+      }
+   };
+
+   List<ImportScope> imports;
    MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
 
    ByteCode peekNext(ByteCodeIterator it)
@@ -319,9 +319,9 @@ class ByteCodeWriter
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
    void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
 
-//   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
-//
-////   void generateTemplateMethods(CommandTape& tape, SNode root);
+   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
+
+//   void generateTemplateMethods(CommandTape& tape, SNode root);
 
 public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
@@ -338,16 +338,16 @@ public:
 
    void save(CommandTape& tape, _CompilerScope& scope, pos_t sourcePathRef);
 
-//   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
-//   {
-//      imports.add(ImportScope(section, sour, dest));
-//
-//      return imports.Count();
-//   }
+   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
+   {
+      imports.add(ImportScope(section, sour, dest));
+
+      return imports.Count();
+   }
    void clear()
    {
       _strings.clear();
-//      imports.clear();
+      imports.clear();
    }
 };
 

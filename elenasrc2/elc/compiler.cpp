@@ -140,16 +140,16 @@ inline SNode findParent(SNode node, LexicalType type1, LexicalType type2)
    return node;
 }
 
-//inline bool isImportRedirect(SNode node)
-//{
-//   SNode terminal = node.firstChild(lxObjectMask);
-//   if (terminal == lxReference) {
-//      if (terminal.identifier().compare(INTERNAL_MASK, INTERNAL_MASK_LEN))
-//         return true;
-//   }
-//   return false;
-//}
-//
+inline bool isImportRedirect(SNode node)
+{
+   SNode terminal = node.firstChild(lxObjectMask);
+   if (terminal == lxReference) {
+      if (terminal.identifier().compare(INTERNAL_MASK, INTERNAL_MASK_LEN))
+         return true;
+   }
+   return false;
+}
+
 //inline bool existChildWithArg(SNode node, LexicalType type, ref_t arg)
 //{
 //   SNode current = node.firstChild();
@@ -267,9 +267,9 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, _Module* module, 
 //
 //   warnOnWeakUnresolved = project->WarnOnWeakUnresolved();
 //   warningMask = project->getWarningMask();
-//
-//   // cache the frequently used references
-//   superReference = mapReference(project->resolveForward(SUPER_FORWARD));
+
+   // cache the frequently used references
+   superReference = mapReference(project->resolveForward(SUPER_FORWARD));
 //   intReference = mapReference(project->resolveForward(INT_FORWARD));
 //   longReference = mapReference(project->resolveForward(LONG_FORWARD));
 //   realReference = mapReference(project->resolveForward(REAL_FORWARD));
@@ -520,28 +520,28 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
    return ObjectInfo(okSymbol, reference);
 }
 
-//ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing)
-//{
-//   if (emptystr(referenceName))
-//      return 0;
-//
-//   ref_t reference = 0;
-//   if (!isWeakReference(referenceName)) {
-//      if (existing) {
-//         // check if the reference does exist
-//         ref_t moduleRef = 0;
-//         _Module* argModule = project->resolveModule(referenceName, moduleRef);
-//
-//         if (argModule != NULL && moduleRef != 0)
-//            reference = module->mapReference(referenceName);
-//      }
-//      else reference = module->mapReference(referenceName, existing);
-//   }
-//   else reference = module->mapReference(referenceName, existing);
-//
-//   return reference;
-//}
-//
+ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing)
+{
+   if (emptystr(referenceName))
+      return 0;
+
+   ref_t reference = 0;
+   if (!isWeakReference(referenceName)) {
+      if (existing) {
+         // check if the reference does exist
+         ref_t moduleRef = 0;
+         _Module* argModule = project->resolveModule(referenceName, moduleRef);
+
+         if (argModule != NULL && moduleRef != 0)
+            reference = module->mapReference(referenceName);
+      }
+      else reference = module->mapReference(referenceName, existing);
+   }
+   else reference = module->mapReference(referenceName, existing);
+
+   return reference;
+}
+
 //ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool existing)
 //{
 //   if (reference.compare(EXTERNAL_MODULE, strlen(EXTERNAL_MODULE))) {
@@ -797,6 +797,11 @@ void Compiler::ModuleScope :: raiseError(const char* message, ident_t sourcePath
 void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, ident_t sourcePath, ident_t terminal)
 {
    project->raiseError(message, sourcePath, row, col, terminal);
+}
+
+void Compiler::ModuleScope::raiseError(const char* message)
+{
+   project->raiseError(message);
 }
 
 //void Compiler::ModuleScope :: loadActions(_Module* extModule)
@@ -1884,35 +1889,37 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
 //   scope.extensionMode = (ownerScope != NULL && ownerScope->extensionClassRef != 0);
 //}
-//
-//void Compiler :: importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t function, ref_t message)
-//{
-//   IdentifierString virtualReference(function);
-//   virtualReference.append('.');
-//
-//   int paramCount;
-//   ref_t actionRef;
-//   decodeMessage(message, actionRef, paramCount);
-//
-//   // HOTFIX : include self as a parameter
-//   paramCount++;
-//
-//   size_t signIndex = virtualReference.Length();
-//   virtualReference.append('0' + (char)paramCount);
-//
-//   virtualReference.append(scope.module->resolveSubject(actionRef));
-//
-//   virtualReference.replaceAll('\'', '@', signIndex);
-//
-//   ref_t reference = 0;
-//   _Module* api = scope.project->resolveModule(virtualReference, reference);
-//
-//   _Memory* section = api != NULL ? api->mapSection(reference | mskCodeRef, true) : NULL;
-//   if (section != NULL) {
-//      writer.appendNode(lxImporting, _writer.registerImportInfo(section, api, scope.module));
-//   }
-//   else scope.raiseError(errInvalidLink, node);
-//}
+
+void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t function, ref_t message)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   IdentifierString virtualReference(function);
+   virtualReference.append('.');
+
+   int paramCount;
+   ref_t actionRef;
+   decodeMessage(message, actionRef, paramCount);
+
+   // HOTFIX : include self as a parameter
+   paramCount++;
+
+   size_t signIndex = virtualReference.Length();
+   virtualReference.append('0' + (char)paramCount);
+
+   virtualReference.append(moduleScope->module->resolveAction(actionRef));
+
+   virtualReference.replaceAll('\'', '@', signIndex);
+
+   ref_t reference = 0;
+   _Module* api = moduleScope->project->resolveModule(virtualReference, reference);
+
+   _Memory* section = api != NULL ? api->mapSection(reference | mskCodeRef, true) : NULL;
+   if (section != NULL) {
+      writer.appendNode(lxImporting, _writer.registerImportInfo(section, api, moduleScope->module));
+   }
+   else scope.raiseError(errInvalidLink, node);
+}
 
 Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
 {
@@ -2023,12 +2030,12 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 //   }
 
    ref_t parentRef = resolveParentRef(node, *scope.moduleScope, false);
-//   if (scope.info.header.parentRef == scope.reference) {
-//      if (parentRef != 0) {
-//         scope.raiseError(errInvalidSyntax, node);
-//      }
-//   }
-   /*else */if (parentRef == 0) {
+   if (scope.info.header.parentRef == scope.reference) {
+      if (parentRef != 0) {
+         scope.raiseError(errInvalidSyntax, node);
+      }
+   }
+   else if (parentRef == 0) {
       parentRef = scope.info.header.parentRef;
    }
 
@@ -5226,13 +5233,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //
 //   writer.closeNode();
 //}
-//
-//void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   if (isImportRedirect(node)) {
-//      importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).identifier(), scope.getMessageID());
-//   }
-//   else {
+
+void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   if (isImportRedirect(node)) {
+      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
+   }
+   else {
+      scope.raiseError(errIllegalOperation, node); // !! temporal
+
 //      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 //
 //      // try to implement light-weight resend operation
@@ -5261,9 +5270,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //         writer.closeNode();
 //         writer.closeNode();
 //      }
-//   }
-//}
-//
+   }
+}
+
 //void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
 //{
 //   SNode expr = node.findChild(lxExpression);
@@ -5481,17 +5490,17 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
    CodeScope codeScope(&scope);
 
-//   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
+   SNode body = node.findChild(/*lxCode, */lxReturning, lxDispatchCode/*, lxResendExpression*/);
 //   // check if it is a resend
 //   if (body == lxResendExpression) {
 //      compileResendExpression(writer, body, codeScope, scope.multiMethod, scope.extensionMode);
 //      preallocated = 1;
 //   }
-//   // check if it is a dispatch
-//   else if (body == lxDispatchCode) {
-//      compileDispatchExpression(writer, body, codeScope);
-//   }
-//   else {
+   // check if it is a dispatch
+   /*else */if (body == lxDispatchCode) {
+      compileDispatchExpression(writer, body, codeScope);
+   }
+   else {
 //      if (scope.multiMethod) {
 //         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 //
@@ -5535,7 +5544,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 //      }
 //
 //      writer.closeNode();
-//   }
+   }
 
    writer.appendNode(lxParamCount, paramCount + scope.rootToFree);
    writer.appendNode(lxReserved, scope.reserved);
@@ -7680,8 +7689,8 @@ bool Compiler :: compileDeclarations(SNode node, ModuleScope& scope, bool& repea
 {
    SNode current = node.firstChild();
 
-//   if (scope.superReference == 0)
-//      scope.raiseError(errNotDefinedBaseClass, node.firstChild().firstChild(lxTerminalMask));
+   if (scope.superReference == 0)
+      scope.raiseError(errNotDefinedBaseClass);
 
    // first pass - declaration
    bool declared = false;

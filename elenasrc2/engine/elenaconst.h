@@ -154,7 +154,7 @@ namespace _ELENA_
 //      mskInt32Ref            = 0x03000000u,   // reference to constant integer number
 //      mskInt64Ref            = 0x04000000u,   // reference to constant 64bit integer number
 //      mskRealRef             = 0x05000000u,   // reference to constant real number
-//      mskMessage             = 0x06000000u,   // message constant
+      mskMessage             = 0x06000000u,   // message constant
 //      mskCharRef             = 0x07000000u,   // reference to character constant
 //      mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
 //      mskSignature           = 0x09000000u,   // message signature constant
@@ -445,7 +445,7 @@ namespace _ELENA_
    #define RTDLL_FORWARD            "$rt"
 
 //   #define STANDARD_MODULE_LEN      6
-//   #define INTERNAL_MASK_LEN        12
+   #define INTERNAL_MASK_LEN        12
 //   #define COREAPI_MASK_LEN         5 
 
    #define CORE_MODULE              "coreapi"
@@ -453,7 +453,7 @@ namespace _ELENA_
 //   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
 //                                                                     // will be treated like internal core api one
-//   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
+   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
 
    #define NATIVE_MODULE            "$native"
 
@@ -467,8 +467,8 @@ namespace _ELENA_
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
    #define NAMESPACE_KEY            "$elena'@rootnamespace"          // The project namespace
 
-//   // predefined system forwards
-//   #define SUPER_FORWARD            "'$super"                        // the common class predecessor
+   // predefined system forwards
+   #define SUPER_FORWARD            "'$super"                        // the common class predecessor
 //   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
 //   #define INT_FORWARD              "'$int"
 //   #define LONG_FORWARD             "'$long"

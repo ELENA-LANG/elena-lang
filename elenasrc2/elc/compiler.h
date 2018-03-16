@@ -266,7 +266,7 @@ private:
 
       ObjectInfo mapObject(SNode identifier);
 
-//      virtual ref_t mapReference(ident_t reference, bool existing = false);
+      virtual ref_t mapReference(ident_t reference, bool existing = false);
 //      virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/);
 //
 //      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
@@ -276,6 +276,7 @@ private:
 //         constantHints.add(reference, classReference);
 //      }
 
+      void raiseError(const char* message);
       void raiseError(const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
 //      void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
 //      void raiseWarning(int level, const char* message);
@@ -386,18 +387,18 @@ private:
    // - Scope -
    struct Scope
    {
-//      enum ScopeLevel
-//      {
-//         slClass,
-//         slSymbol,
-//         slMethod,
-//         slCode,
-//         slOwnerClass,
-//         slTemplate,
-//      };
+      enum ScopeLevel
+      {
+         slClass,
+         slSymbol,
+         slMethod,
+         slCode,
+         slOwnerClass,
+         slTemplate,
+      };
 
       ModuleScope* moduleScope;
-//      Scope*       parent;
+      Scope*       parent;
       ident_t      sourcePath;
 
       void raiseError(const char* message, SNode terminal)
@@ -434,14 +435,14 @@ private:
          else*/ return ObjectInfo();
       }
 
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (parent) {
-//            return parent->getScope(level);
-//         }
-//         else return NULL;
-//      }
-//
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (parent) {
+            return parent->getScope(level);
+         }
+         else return NULL;
+      }
+
 //      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
 //      {
 //         return moduleScope->mapSubject(terminal, output);
@@ -454,13 +455,13 @@ private:
 
       Scope(ModuleScope* moduleScope, ident_t sourcePath)
       {
-//         this->parent = NULL;
+         this->parent = NULL;
          this->sourcePath = sourcePath;
          this->moduleScope = moduleScope;
       }
       Scope(Scope* parent)
       {
-//         this->parent = parent;
+         this->parent = parent;
          this->moduleScope = parent->moduleScope;
          this->sourcePath = parent->sourcePath;
       }
@@ -488,14 +489,14 @@ private:
 //      ObjectInfo mapField(ident_t identifier);
 //
 //      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass || level == slOwnerClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass || level == slOwnerClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
 
       void save()
       {
@@ -540,17 +541,17 @@ private:
       bool  staticOne;
 //      bool  preloaded;
 //      ref_t outputRef;
-//
-////      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slSymbol) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
+
+//      virtual ObjectInfo mapTerminal(ident_t identifier);
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slSymbol) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
 //      void save();
 
       SymbolScope(ModuleScope* parent, ref_t reference, ident_t sourcePath);
@@ -574,15 +575,15 @@ private:
 //      bool         closureMode;
 //      bool         nestedMode;
 //      bool         subCodeMode;
-//      
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slMethod) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+      
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slMethod) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      ref_t getReturningRef(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -651,27 +652,27 @@ private:
 //
 //      virtual ObjectInfo mapTerminal(ident_t identifier);
 //      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slCode) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slCode) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      bool isInitializer()
 //      {
 //         return getMessageID() == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE);
 //      }
-//
-//      ref_t getMessageID()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(slMethod);
-//
-//         return scope ? scope->message : 0;
-//      }
-//
+
+      ref_t getMessageID()
+      {
+         MethodScope* scope = (MethodScope*)getScope(slMethod);
+
+         return scope ? scope->message : 0;
+      }
+
 //      ref_t getClassRefId(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -827,9 +828,9 @@ private:
 //   void saveExtension(ClassScope& scope, ref_t message);
 //   ref_t mapExtension(ModuleScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef);
 //   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, bool& genericOne);
-//
-//   void importCode(SyntaxWriter& writer, SNode node, ModuleScope& scope, ident_t reference, ref_t message);
-//
+
+   void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
+
 //   int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
@@ -923,7 +924,7 @@ private:
 //   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod, bool extensionMode);
-//   void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 
    /*ObjectInfo*/void compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
