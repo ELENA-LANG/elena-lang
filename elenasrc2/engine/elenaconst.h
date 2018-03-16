@@ -35,37 +35,37 @@ namespace _ELENA_
 
    #define INVALID_REF             (ref_t)-1
 
-//   #define DISPATCH_MESSAGE_ID     0x0001
-//   #define NEWOBJECT_MESSAGE_ID    0x0002
-//   #define NEW_MESSAGE_ID          0x0003
-//   #define EQUAL_MESSAGE_ID        0x0004
-//   #define EVAL_MESSAGE_ID         0x0005
-//   #define GET_MESSAGE_ID          0x0006
-//   #define SET_MESSAGE_ID          0x0007
-//   #define LESS_MESSAGE_ID         0x0008
-//   #define IF_MESSAGE_ID           0x0009
-//   #define AND_MESSAGE_ID          0x000A
-//   #define OR_MESSAGE_ID           0x000B
-//   #define XOR_MESSAGE_ID          0x000C
-//   #define IFNOT_MESSAGE_ID        0x000D
-//   #define NOTEQUAL_MESSAGE_ID     0x000E
-//   #define NOTLESS_MESSAGE_ID      0x000F
-//   #define NOTGREATER_MESSAGE_ID   0x0010
-//   #define GREATER_MESSAGE_ID      0x0011
-//   #define ADD_MESSAGE_ID          0x0012
-//   #define SUB_MESSAGE_ID          0x0013
-//   #define MUL_MESSAGE_ID          0x0014
-//   #define DIV_MESSAGE_ID          0x0015
-//   #define REFER_MESSAGE_ID        0x0016
-//   #define APPEND_MESSAGE_ID       0x0017
-//   #define REDUCE_MESSAGE_ID       0x0018
-//   #define SET_REFER_MESSAGE_ID    0x0019
-//   #define READ_MESSAGE_ID         0x001A
-//   #define WRITE_MESSAGE_ID        0x001B
-//   #define SHIFT_MESSAGE_ID        0x001C
-//   #define VALUES_MESSAGE_ID       0x001D             // virtual method returning the list of enum values
-//   #define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
-   //#define PREDEFINED_MESSAGE_ID   0x001E
+   #define DISPATCH_MESSAGE_ID     0x0001
+   #define NEWOBJECT_MESSAGE_ID    0x0002
+   #define NEW_MESSAGE_ID          0x0003
+   #define EQUAL_MESSAGE_ID        0x0004
+   #define EVAL_MESSAGE_ID         0x0005
+   #define GET_MESSAGE_ID          0x0006
+   #define SET_MESSAGE_ID          0x0007
+   #define LESS_MESSAGE_ID         0x0008
+   #define IF_MESSAGE_ID           0x0009
+   #define AND_MESSAGE_ID          0x000A
+   #define OR_MESSAGE_ID           0x000B
+   #define XOR_MESSAGE_ID          0x000C
+   #define IFNOT_MESSAGE_ID        0x000D
+   #define NOTEQUAL_MESSAGE_ID     0x000E
+   #define NOTLESS_MESSAGE_ID      0x000F
+   #define NOTGREATER_MESSAGE_ID   0x0010
+   #define GREATER_MESSAGE_ID      0x0011
+   #define ADD_MESSAGE_ID          0x0012
+   #define SUB_MESSAGE_ID          0x0013
+   #define MUL_MESSAGE_ID          0x0014
+   #define DIV_MESSAGE_ID          0x0015
+   #define REFER_MESSAGE_ID        0x0016
+   #define APPEND_MESSAGE_ID       0x0017
+   #define REDUCE_MESSAGE_ID       0x0018
+   #define SET_REFER_MESSAGE_ID    0x0019
+   #define READ_MESSAGE_ID         0x001A
+   #define WRITE_MESSAGE_ID        0x001B
+   #define SHIFT_MESSAGE_ID        0x001C
+   #define VALUES_MESSAGE_ID       0x001D             // virtual method returning the list of enum values
+   #define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
+   #define PREDEFINED_MESSAGE_ID   0x001E
 
 //   // virtual operator
 //   #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -351,37 +351,37 @@ namespace _ELENA_
   // --- ELENA core module names ---
    #define CORE_ALIAS                "core"          // Core functionality
   
-//  // --- ELENA verb messages ---
-//   #define DISPATCH_MESSAGE         "dispatch"
-//   #define NEW_MESSAGE              "new"
-//   #define GET_MESSAGE              "get"
-//   #define EVAL_MESSAGE             "eval"
-//   #define EVALUATE_MESSAGE         "evaluate"
-//   #define EQUAL_MESSAGE            "equal"
-//   #define NOTEQUAL_MESSAGE         "notequal"
-//   #define LESS_MESSAGE             "less"
-//   #define AND_MESSAGE              "and"
-//   #define OR_MESSAGE               "or"
-//   #define XOR_MESSAGE              "xor"
-//   #define GREATER_MESSAGE          "greater"
-//   #define NOTLESS_MESSAGE          "notless"
-//   #define NOTGREATER_MESSAGE       "notgreater"
-//   #define ADD_MESSAGE              "add"
-//   #define SUB_MESSAGE              "subtract"
-//   #define MUL_MESSAGE              "multiply"
-//   #define DIV_MESSAGE              "divide"
-//   #define REFER_MESSAGE            "getAt"
-//   #define APPEND_MESSAGE           "append"
-//   #define REDUCE_MESSAGE           "reduce"
-//   #define SET_REFER_MESSAGE        "setAt"
-//   #define SET_MESSAGE              "set"
-//   #define READ_MESSAGE             "read"
-//   #define WRITE_MESSAGE            "write"
-//   #define IF_MESSAGE               "if"
-//   #define IFNOT_MESSAGE            "ifnot"
-//   #define SHIFT_MESSAGE            "shift"
-//   #define INVOKE_MESSAGE           "#invoke"
-//
+  // --- ELENA verb messages ---
+   #define DISPATCH_MESSAGE         "dispatch"
+   #define NEW_MESSAGE              "new"
+   #define GET_MESSAGE              "get"
+   #define EVAL_MESSAGE             "eval"
+   #define EVALUATE_MESSAGE         "evaluate"
+   #define EQUAL_MESSAGE            "equal"
+   #define NOTEQUAL_MESSAGE         "notequal"
+   #define LESS_MESSAGE             "less"
+   #define AND_MESSAGE              "and"
+   #define OR_MESSAGE               "or"
+   #define XOR_MESSAGE              "xor"
+   #define GREATER_MESSAGE          "greater"
+   #define NOTLESS_MESSAGE          "notless"
+   #define NOTGREATER_MESSAGE       "notgreater"
+   #define ADD_MESSAGE              "add"
+   #define SUB_MESSAGE              "subtract"
+   #define MUL_MESSAGE              "multiply"
+   #define DIV_MESSAGE              "divide"
+   #define REFER_MESSAGE            "getAt"
+   #define APPEND_MESSAGE           "append"
+   #define REDUCE_MESSAGE           "reduce"
+   #define SET_REFER_MESSAGE        "setAt"
+   #define SET_MESSAGE              "set"
+   #define READ_MESSAGE             "read"
+   #define WRITE_MESSAGE            "write"
+   #define IF_MESSAGE               "if"
+   #define IFNOT_MESSAGE            "ifnot"
+   #define SHIFT_MESSAGE            "shift"
+   #define INVOKE_MESSAGE           "#invoke"
+
 //   // ELENA verb operators
 //   #define EQUAL_OPERATOR		      "=="
 //   #define NOTEQUAL_OPERATOR		   "!="

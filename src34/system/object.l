@@ -4,8 +4,6 @@
 
 /*class*/ Object
 {
-    test = $nil.
-    
 //    /// Creates the object
 //    constructor new []
 //    
@@ -15,9 +13,9 @@
 //    bool equal : anObject => system'core_routines'__object.
 //    
 //    bool notequal : anObject = $self equal:anObject; inverted.
-//                
-//    /// Implements a message dispatching in VMT
-//    dispatch => system'core_routines'__object.
+                
+    /// Implements a message dispatching in VMT
+    dispatch => system'core_routines'__object.
 }
 
 ///// A common boolean value

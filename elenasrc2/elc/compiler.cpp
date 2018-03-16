@@ -1582,13 +1582,13 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 // --- Compiler ---
 
 Compiler :: Compiler(_CompilerLogic* logic)
-//   : _verbs(0)
+   : _verbs(0)
 {
    _optFlag = 0;
 
    this->_logic = logic;
 
-//   ByteCodeCompiler::loadVerbs(_verbs);
+   ByteCodeCompiler::loadVerbs(_verbs);
 //   ByteCodeCompiler::loadOperators(_operators);
 }
 
@@ -5114,17 +5114,19 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //
 //   return extraParamCount;
 //}
-//
-//void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
-//{
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   CodeScope codeScope(&scope);
-//
-//   if (isImportRedirect(node)) {
-//      importCode(writer, node, *scope.moduleScope, node.findChild(lxReference).identifier(), scope.message);
-//   }
-//   else {
+
+void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods, bool withOpenArgGenerics*/)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   CodeScope codeScope(&scope);
+
+   if (isImportRedirect(node)) {
+      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.message);
+   }
+   else {
+      scope.raiseError(errIllegalOperation, node); // !! temporal
+
 //      writer.newNode(lxDispatching);
 //
 //      // if it is generic handler with redirect statement / redirect statement
@@ -5172,11 +5174,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //      }
 //
 //      writer.closeNode();
-//   }
-//
-//   writer.closeNode();
-//}
-//
+   }
+
+   writer.closeNode();
+}
+
 //void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 //{
 //   writer.newNode(lxClassMethod, scope.message);
@@ -5776,19 +5778,19 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
             MethodScope methodScope(&scope);
             methodScope.message = current.argument;
 
-//            // if it is a dispatch handler
-//            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
-//               //if (test(scope.info.header.flags, elRole))
-//               //   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-//
+            // if it is a dispatch handler
+            if (methodScope.message == encodeVerb(DISPATCH_MESSAGE_ID)) {
+               //if (test(scope.info.header.flags, elRole))
+               //   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
+
 //               initialize(scope, methodScope);
-//
-//               compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope,
-//                  test(scope.info.header.flags, elWithGenerics),
-//                  test(scope.info.header.flags, elWithArgGenerics));
-//            }
-//            // if it is a normal method
-//            else {
+
+               compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope/*,
+                  test(scope.info.header.flags, elWithGenerics),
+                  test(scope.info.header.flags, elWithArgGenerics)*/);
+            }
+            // if it is a normal method
+            else {
 //               initialize(scope, methodScope);
                declareArgumentList(current, methodScope);
 //
@@ -5797,7 +5799,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 //                  compileImplicitConstructor(writer, current, methodScope);
 //               }
                /*else */compileMethod(writer, current, methodScope);
-//            }
+            }
             break;
          }
       }
@@ -6593,12 +6595,12 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
       scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
 //   }
-//
-//   // if it is a super class validate it
-//   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
-//      if (!scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID)))
-//         scope.raiseError(errNoDispatcher, node.findChild(lxIdentifier, lxPrivate));
-//   }
+
+   // if it is a super class validate it
+   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
+      if (!scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID)))
+         scope.raiseError(errNoDispatcher, node.findChild(lxIdentifier, lxPrivate));
+   }
 
    // save declaration
    scope.save();
@@ -7801,10 +7803,10 @@ ModuleInfo Compiler :: createModule(ident_t name, _ProjectManager& project, bool
    ModuleInfo info;
    info.codeModule = project.createModule(name);
 
-   //// load predefine messages
-   //for (MessageMap::Iterator it = _verbs.start(); !it.Eof(); it++) {
-   //   info.codeModule->mapPredefinedSubject(it.key(), *it);
-   //}
+   // load predefine messages
+   for (MessageMap::Iterator it = _verbs.start(); !it.Eof(); it++) {
+      info.codeModule->mapPredefinedAction(it.key(), *it);
+   }
 
    if (withDebugInfo)
       info.debugModule = project.createDebugModule(name);

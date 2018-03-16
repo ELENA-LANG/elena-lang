@@ -67,12 +67,12 @@ void Module :: mapPredefinedReference(ident_t name, ref_t reference)
    _references.add(name, reference);
 }
 
-//void Module :: mapPredefinedSubject(ident_t name, ref_t reference)
-//{
-//   _resolvedSubjects.clear();
-//
-//   _subjects.add(name, reference);
-//}
+void Module :: mapPredefinedAction(ident_t name, ref_t reference)
+{
+   _resolvedActions.clear();
+
+   _actions.add(name, reference);
+}
 
 ref_t Module :: mapReference(ident_t reference)
 {

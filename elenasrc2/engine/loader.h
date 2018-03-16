@@ -32,23 +32,23 @@ public:
    virtual ref_t resolveExternal(ident_t external);
 
    virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
-//   virtual void mapPredefinedSubject(ident_t name, ref_t reference);
-//
-//   void clearReferences()
-//   {
-//      //_codeReferences.clear();
-//      //_dataReferences.clear();
-//      //_symbolReferences.clear();
-//      //_statReferences.clear();
-//      //_exportReferences.clear();
-//      //_constReferences.clear();
-//      //_numberReferences.clear();
-//      //_literalReferences.clear();
-//      //_characterReferences.clear();
-//      //_wideReferences.clear();
-//      //_bssReferences.clear();
-//      //_subjects.clear();
-//   }
+   virtual void mapPredefinedAction(ident_t name, ref_t reference);
+
+   void clearReferences()
+   {
+      _codeReferences.clear();
+      _dataReferences.clear();
+      _symbolReferences.clear();
+      _statReferences.clear();
+      _exportReferences.clear();
+      //_constReferences.clear();
+      //_numberReferences.clear();
+      //_literalReferences.clear();
+      //_characterReferences.clear();
+      //_wideReferences.clear();
+      _bssReferences.clear();
+      _actions.clear();
+   }
 
    _ImageLoader()
       : _codeReferences((size_t)-1), _dataReferences((size_t)-1), _symbolReferences((size_t)-1),

@@ -34,7 +34,7 @@ public:
 //   virtual ref_t mapConstant(ident_t reference) = 0;
 
    virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
-//   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
+   virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 
@@ -169,7 +169,7 @@ public:
 
    virtual void* resolveReference(ident_t reference, ref_t mask) = 0;
 
-//   virtual void mapPredefinedSubject(ident_t name, ref_t reference) = 0;
+   virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
 
    virtual void mapReference(ident_t reference, void* vaddress, ref_t mask) = 0;
 
@@ -724,10 +724,10 @@ inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
    return message;
 }
 
-//inline ref_t encodeVerb(int verbId)
-//{
-//   return encodeMessage(verbId, 0);
-//}
+inline ref_t encodeVerb(int verbId)
+{
+   return encodeMessage(verbId, 0);
+}
 
 inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
 {
@@ -854,10 +854,10 @@ inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer
 
    decodeMessage(exportRef, actionRef, paramCount);
 
-   //// if it is generic message
-   //if (actionRef <= PREDEFINED_MESSAGE_ID) {
-   //   return exportRef;
-   //}
+   // if it is generic message
+   if (actionRef <= PREDEFINED_MESSAGE_ID) {
+      return exportRef;
+   }
 
    // otherwise signature and custom verb should be imported
    ident_t actionName = exporter->resolveAction(actionRef);

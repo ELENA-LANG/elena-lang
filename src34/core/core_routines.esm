@@ -4,7 +4,7 @@
 procedure __object.dispatch[1]
 
   bsredirect  
-
+/*
   open    4
   reserve 2
   esavesi 3
@@ -16,6 +16,7 @@ procedure __object.dispatch[1]
   asavesi 5
   aloadsi 0
   pushr const : %"new[2]"
+*/
   throw
 
 end

@@ -426,18 +426,18 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    //   }
    //   else command.append("#new");
    //}
-   //else if (actionRef <= PREDEFINED_MESSAGE_ID) {
-   //   if (test(reference, CONVERSION_MESSAGE)) {
-   //      command.append("#conversion&");
-   //   }
-   //   else if (test(reference, SEALED_MESSAGE)) {
-   //      command.append("#private&");
-   //   }
+   /*else */if (actionRef <= PREDEFINED_MESSAGE_ID) {
+      //if (test(reference, CONVERSION_MESSAGE)) {
+      //   command.append("#conversion&");
+      //}
+      //else if (test(reference, SEALED_MESSAGE)) {
+      //   command.append("#private&");
+      //}
 
-   //   ident_t verbName = retrieveKey(_verbs.start(), actionRef, DEFAULT_STR);
-   //   command.append(verbName);
-   //}
-   //else {
+      ident_t verbName = retrieveKey(_verbs.start(), actionRef, DEFAULT_STR);
+      command.append(verbName);
+   }
+   else {
    //   if (test(reference, CONVERSION_MESSAGE)) {
    //      command.append("#conversion&");
    //   }
@@ -451,7 +451,7 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    //   }
       ident_t actionName = module->resolveAction(actionRef);
       command.append(actionName);
-   //}
+   }
 
    if (paramCount > 0) {
       command.append('[');

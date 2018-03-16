@@ -210,10 +210,10 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
    int paramCount = 0;
    decodeMessage(message, actionRef, paramCount);
 
-   //// if it is a predefined message
-   //if (actionRef <= PREDEFINED_MESSAGE_ID) {
-   //   return message;
-   //}
+   // if it is a predefined message
+   if (actionRef <= PREDEFINED_MESSAGE_ID) {
+      return message;
+   }
 
    // otherwise signature and custom verb should be imported
    actionRef = resolveAction(module->resolveAction(actionRef), paramCount);
@@ -1140,15 +1140,15 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
    return vaddress;
 }
 
-void JITLinker :: prepareCompiler(/*MessageMap& verbs*/)
+void JITLinker :: prepareCompiler(MessageMap& verbs)
 {
    References      references(RefInfo(0, NULL));
    ReferenceHelper helper(this, NULL, &references);
 
-   //// load predefine messages
-   //for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
-   //   _loader->mapPredefinedSubject(it.key(), *it);
-   //}
+   // load predefine messages
+   for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
+      _loader->mapPredefinedAction(it.key(), *it);
+   }
 
    _compiler->prepareCore(helper, _loader);
 
