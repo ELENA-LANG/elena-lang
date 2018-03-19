@@ -265,26 +265,26 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 //   loadOption(config, opManifestAuthor);
 }
 
-//////void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
-//////{
-//////   ReferenceNs fwd(forward);
-//////
-//////   _settings.add(opForwards, fwd, StringHelper::clone(reference));
-//////}
-////
-////_Module* Project :: loadModule(ident_t package, bool silentMode)
-////{
-////   LoadResult result = lrNotFound;
-////   _Module* module = _loader.loadModule(package, result);
-////   if (result != lrSuccessful) {
-////      if (!silentMode) {
-////         raiseError(getLoadError(result), package);
-////      }
-////
-////      return NULL;
-////   }
-////   else return module;
-////}
+//void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
+//{
+//   ReferenceNs fwd(forward);
+//
+//   _settings.add(opForwards, fwd, StringHelper::clone(reference));
+//}
+
+_Module* Project :: loadModule(ident_t package, bool silentMode)
+{
+   LoadResult result = lrNotFound;
+   _Module* module = _loader.loadModule(package, result);
+   if (result != lrSuccessful) {
+      if (!silentMode) {
+         raiseError(getLoadError(result), package);
+      }
+
+      return NULL;
+   }
+   else return module;
+}
 
 _Module* Project :: createModule(ident_t name)
 {

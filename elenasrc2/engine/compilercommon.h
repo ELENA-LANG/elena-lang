@@ -61,7 +61,7 @@
 //#define V_ACTION         (ref_t)-8205
 //#define V_GROUP          (ref_t)-8206
 //#define V_PRELOADED      (ref_t)-8207
-//#define V_SINGLETON      (ref_t)-8208
+#define V_SINGLETON      (ref_t)-8208
 //#define V_TAPEGROUP      (ref_t)-8209
 //#define V_ABSTRACT       (ref_t)-8210
 //
@@ -149,24 +149,24 @@ struct _CompilerScope
 //   ref_t wideReference;
 //   ref_t charReference;
 //   ref_t arrayReference;
-//
-//   // list of attributes / types
-//   MessageMap attributes;
-//
+
+   // list of attributes / types
+   MessageMap attributes;
+
 //   // cached bool values
 //   BranchingInfo branchingInfo;
 
    virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal) = 0;
 //   virtual void raiseWarning(int level, const char* message, SNode terminal) = 0;
-//
-//   virtual ref_t mapAttribute(SNode terminal/*, int& attrValue*/) = 0;
+
+   virtual ref_t mapAttribute(SNode terminal) = 0;
 //   virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
 //   virtual ref_t mapReference(ident_t reference, bool existing = false) = 0;
 //   virtual ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared) = 0;
 //   virtual ref_t mapAnonymous() = 0;
-//
-//   virtual bool saveAttribute(ident_t name, ref_t attr, bool internalAttr) = 0;
-//
+
+   virtual bool saveAttribute(ident_t name, ref_t attr/*, bool internalAttr*/) = 0;
+
 //   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 //   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
@@ -180,7 +180,7 @@ struct _CompilerScope
 //   virtual SubjectList* getAutogerenatedExtensions(ref_t attr) = 0;
 
    _CompilerScope()
-//      : attributes(0)
+      : attributes(0)
    {
 //      sourcePath = NULL;
 //      sourcePathRef = 0;
@@ -300,9 +300,9 @@ public:
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
-//
-//   // class is considered to be a role if it cannot be initiated
-//   virtual bool isRole(ClassInfo& info) = 0;          
+
+   // class is considered to be a role if it cannot be initiated
+   virtual bool isRole(ClassInfo& info) = 0;          
 //   virtual bool isAbstract(ClassInfo& info) = 0;
 //
 //   virtual bool isPrimitiveRef(ref_t reference) = 0;
@@ -325,9 +325,9 @@ public:
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 //
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
-//
-//   // attribute validations
-//   virtual bool validateClassAttribute(int& attrValue) = 0;
+
+   // attribute validations
+   virtual bool validateClassAttribute(int& attrValue) = 0;
 //   virtual bool validateMethodAttribute(int& attrValue) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant) = 0;
 //   virtual bool validateLocalAttribute(int& attrValue) = 0;

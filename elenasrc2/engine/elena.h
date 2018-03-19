@@ -63,9 +63,9 @@ public:
    virtual int getTabSize() = 0; // !! obsolete!?
 
 //   virtual bool HasWarnings() const = 0;     // !! obsolete
-//   virtual int getWarningMask() const = 0;
+   virtual int getWarningMask() const = 0;
 //   virtual bool WarnOnWeakUnresolved() const = 0;
-//
+
 //   virtual ident_t getManinfestName() = 0;
 //   virtual ident_t getManinfestVersion() = 0;
 //   virtual ident_t getManinfestAuthor() = 0;
@@ -84,8 +84,8 @@ public:
    virtual _Module* createModule(ident_t name) = 0;
    virtual _Module* createDebugModule(ident_t name) = 0 ;
 
-//   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
-////   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
+   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
+//   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
 
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
 //   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;

@@ -125,7 +125,7 @@ class ByteCodeWriter
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
-//   void declareArgumentList(CommandTape& tape, int count);
+   void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
 //   void declareThenBlock(CommandTape& tape);
 //   void declareThenElseBlock(CommandTape& tape);
@@ -147,11 +147,11 @@ class ByteCodeWriter
 //   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareSelfInfo(CommandTape& tape, int level);
-//   void declareMessageInfo(CommandTape& tape, ident_t message);
+   void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
-//   void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
+   void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
 //   void newStructure(CommandTape& tape, int size, ref_t reference);
 //   void newDynamicStructure(CommandTape& tape, int itemSize);
 //   void newDynamicWStructure(CommandTape& tape);
@@ -211,8 +211,8 @@ class ByteCodeWriter
    void tryLock(CommandTape& tape);
    void freeLock(CommandTape& tape);
 
-//   void gotoEnd(CommandTape& tape, PseudoArg label);
-//
+   void gotoEnd(CommandTape& tape, PseudoArg label);
+
 //   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
 //   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 //
@@ -268,13 +268,13 @@ class ByteCodeWriter
 
    bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
-//   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
-//   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
-//
+   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
+   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
+
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void pushObject(CommandTape& tape, SyntaxTree::Node node);
+
+   void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
 
@@ -293,8 +293,8 @@ class ByteCodeWriter
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
 //   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
-//   ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
-//
+   ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
+
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
 //   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
@@ -302,9 +302,9 @@ class ByteCodeWriter
 //   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
-//   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
 //   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
 //   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
@@ -312,7 +312,7 @@ class ByteCodeWriter
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
-//   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
+   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
 //   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
 
@@ -351,7 +351,7 @@ public:
    }
 };
 
-//bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
+bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
 
 } // _ELENA_
 

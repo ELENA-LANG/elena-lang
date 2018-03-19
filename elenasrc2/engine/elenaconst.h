@@ -272,7 +272,7 @@ namespace _ELENA_
 
   // --- ELENA VMT flags ---
    const int elStandartVMT         = 0x00000001;
-//   const int elNestedClass         = 0x00000002;
+   const int elNestedClass         = 0x00000002;
 //   const int elDynamicRole         = 0x00000004;
 //   const int elStructureRole       = 0x00000008;
 //   const int elAbstract            = 0x00000010;
@@ -287,7 +287,7 @@ namespace _ELENA_
 //   const int elReadOnlyRole        = 0x00000800;
 //   const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
-//   const int elRole                = 0x00004080;
+   const int elRole                = 0x00004080;
 //   const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
 //   const int elSymbol              = 0x00100000;
@@ -422,9 +422,9 @@ namespace _ELENA_
 //   #define PARENT_VAR              "$$parent"         // the closure parent
 
 //   #define TEMPLATE_FIELD          "$field"
-//
-//  // --- ELENA special sections ---
-//   #define ATTRIBUTE_SECTION        "#attributes"
+
+  // --- ELENA special sections ---
+   #define ATTRIBUTE_SECTION        "#attributes"
 //   #define EXTENSION_SECTION        "#extensions"
 //   #define ACTION_SECTION           "#actions"
 //   #define INITIALIZER_SECTION      "#initializer"
@@ -449,7 +449,7 @@ namespace _ELENA_
 //   #define COREAPI_MASK_LEN         5 
 
    #define CORE_MODULE              "coreapi"
-//   #define STANDARD_MODULE          "system"                         // the standard module name
+   #define STANDARD_MODULE          "system"                         // the standard module name
 //   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
 //                                                                     // will be treated like internal core api one

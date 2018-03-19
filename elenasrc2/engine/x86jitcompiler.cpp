@@ -888,30 +888,30 @@ void _ELENA_::compileElseB(int, x86JITScope& scope)
 
 void _ELENA_::compileIfM(int, x86JITScope& scope)
 {
-   //int jumpOffset = scope.tape->getDWord();
-   //int message = scope.resolveMessage(scope.argument);
+   int jumpOffset = scope.tape->getDWord();
+   int message = scope.resolveMessage(scope.argument);
 
-   //// cmp ecx, message
-   //scope.code->writeWord(0xF981);
-   //scope.code->writeDWord(message);
+   // cmp ecx, message
+   scope.code->writeWord(0xF981);
+   scope.code->writeDWord(message);
 
-   //// try to use short jump if offset small (< 0x10?)
-   ////NOTE: due to compileJumpX implementation - compileJumpIfNot is called
-   //compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+   // try to use short jump if offset small (< 0x10?)
+   //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
+   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
 }
 
 void _ELENA_::compileElseM(int, x86JITScope& scope)
 {
-  // int jumpOffset = scope.tape->getDWord();
-  // int message = scope.resolveMessage(scope.argument);
+   int jumpOffset = scope.tape->getDWord();
+   int message = scope.resolveMessage(scope.argument);
 
-  // // cmp ecx, message
-  // scope.code->writeWord(0xF981);
-  // scope.code->writeDWord(message);
+   // cmp ecx, message
+   scope.code->writeWord(0xF981);
+   scope.code->writeDWord(message);
 
-  //// try to use short jump if offset small (< 0x10?)
-  // //NOTE: due to compileJumpX implementation - compileJumpIf is called
-  // compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+  // try to use short jump if offset small (< 0x10?)
+   //NOTE: due to compileJumpX implementation - compileJumpIf is called
+   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
 }
 
 void _ELENA_::compileIfHeap(int opcode, x86JITScope& scope)
@@ -1191,9 +1191,9 @@ void _ELENA_::compilePopA(int, x86JITScope& scope)
 
 void _ELENA_::compileMCopy(int, x86JITScope& scope)
 {
-   //// mov ecx, message
-   //scope.code->writeByte(0xB9);
-   //scope.code->writeDWord(scope.resolveMessage(scope.argument));
+   // mov ecx, message
+   scope.code->writeByte(0xB9);
+   scope.code->writeDWord(scope.resolveMessage(scope.argument));
 }
 
 void _ELENA_::compilePopN(int, x86JITScope& scope)
@@ -1423,12 +1423,12 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
 
 void _ELENA_::compileSetVerb(int, x86JITScope& scope)
 {
-   //// and ecx, PARAM_MASK
-   //// or  ecx, m
-   //scope.code->writeWord(0xE181);
-   //scope.code->writeDWord(PARAM_MASK);
-   //scope.code->writeWord(0xC981);
-   //scope.code->writeDWord(scope.resolveMessage(encodeVerb(scope.argument)));
+   // and ecx, PARAM_MASK
+   // or  ecx, m
+   scope.code->writeWord(0xE181);
+   scope.code->writeDWord(PARAM_MASK);
+   scope.code->writeWord(0xC981);
+   scope.code->writeDWord(scope.resolveMessage(encodeVerb(scope.argument)));
 }
 
 void _ELENA_::compilePopB(int, x86JITScope& scope)

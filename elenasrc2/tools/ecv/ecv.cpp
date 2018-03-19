@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   3
+#define REVISION_VERSION   4
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -911,9 +911,9 @@ void listFields(_Module* module, ReferenceNs className, int& row, int pageSize)
 
 void listFlags(int flags, int& row, int pageSize)
 {
-   //if (test(flags, elNestedClass)) {
-   //   printLine("@flag ", "elNestedClass", row, pageSize);
-   //}      
+   if (test(flags, elNestedClass)) {
+      printLine("@flag ", "elNestedClass", row, pageSize);
+   }      
 
    //if (test(flags, elDynamicRole)) {
    //   printLine("@flag ", "elDynamicRole", row, pageSize);
@@ -964,8 +964,8 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elAbstract))
    //   printLine("@flag ", "elAbstract", row, pageSize);
 
-   //if (test(flags, elRole))
-   //   printLine("@flag ", "elRole", row, pageSize);
+   if (test(flags, elRole))
+      printLine("@flag ", "elRole", row, pageSize);
 
    //if (test(flags, elExtension))
    //   printLine("@flag ", "elExtension", row, pageSize);

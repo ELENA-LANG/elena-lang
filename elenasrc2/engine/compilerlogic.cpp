@@ -522,12 +522,12 @@ CompilerLogic :: CompilerLogic()
 //{
 //   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
 //}
-//
-//bool CompilerLogic :: isRole(ClassInfo& info)
-//{
-//   return test(info.header.flags, elRole);
-//}
-//
+
+bool CompilerLogic :: isRole(ClassInfo& info)
+{
+   return test(info.header.flags, elRole);
+}
+
 //bool CompilerLogic :: isAbstract(ClassInfo& info)
 //{
 //   return test(info.header.flags, elAbstract);
@@ -1226,11 +1226,11 @@ CompilerLogic :: CompilerLogic()
 //      injectOverloadList(scope, info, compiler, classRef);
 //   }
 //}
-//
-//bool CompilerLogic :: validateClassAttribute(int& attrValue)
-//{
-//   switch ((size_t)attrValue)
-//   {
+
+bool CompilerLogic :: validateClassAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
 //      case V_SEALED:
 //         attrValue = elSealed;
 //         return true;
@@ -1270,14 +1270,14 @@ CompilerLogic :: CompilerLogic()
 //      case V_CLASS:
 //         attrValue = 0;
 //         return true;
-//      case V_SINGLETON:
-//         attrValue = elRole | elNestedClass;
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+      case V_SINGLETON:
+         attrValue = elRole | elNestedClass;
+         return true;
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 //{
 //   switch ((size_t)attrValue)

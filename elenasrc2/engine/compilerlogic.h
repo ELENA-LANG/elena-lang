@@ -110,7 +110,7 @@ public:
 //
 //      return isEmbeddable(info);
 //   }
-//   virtual bool isRole(ClassInfo& info);
+   virtual bool isRole(ClassInfo& info);
 //   virtual bool isAbstract(ClassInfo& info);
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
@@ -138,8 +138,8 @@ public:
 //
 //   virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
-//
-//   virtual bool validateClassAttribute(int& attrValue);
+
+   virtual bool validateClassAttribute(int& attrValue);
 //   virtual bool validateMethodAttribute(int& attrValue);
 //   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant);
 //   virtual bool validateLocalAttribute(int& attrValue);

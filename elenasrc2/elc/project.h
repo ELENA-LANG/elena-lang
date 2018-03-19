@@ -179,9 +179,9 @@ public:
 
    virtual ident_t resolveForward(ident_t forward);
 //   virtual bool addForward(ident_t forward, ident_t reference);
-//
-//   // loader
-//   virtual _Module* loadModule(ident_t package, bool silentMode);
+
+   // loader
+   virtual _Module* loadModule(ident_t package, bool silentMode);
 
 //   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false);
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
@@ -189,24 +189,24 @@ public:
 
    virtual bool HasWarnings() const { return _hasWarning; }
 
-////   virtual int getTabSize() { return 4; }
-////
-////   virtual int getWarningMask() const { return _warningMasks; }
-////
-////   virtual ident_t getManinfestName()
-////   {
-////      return StrSetting(opManifestName);
-////   }
-////
-////   virtual ident_t getManinfestVersion()
-////   {
-////      return StrSetting(opManifestVersion);
-////   }
-////
-////   virtual ident_t getManinfestAuthor()
-////   {
-////      return StrSetting(opManifestAuthor);
-////   }
+   virtual int getTabSize() { return 4; }
+
+   virtual int getWarningMask() const { return _warningMasks; }
+
+//   virtual ident_t getManinfestName()
+//   {
+//      return StrSetting(opManifestName);
+//   }
+//
+//   virtual ident_t getManinfestVersion()
+//   {
+//      return StrSetting(opManifestVersion);
+//   }
+//
+//   virtual ident_t getManinfestAuthor()
+//   {
+//      return StrSetting(opManifestAuthor);
+//   }
 
    bool indicateWarning()
    {

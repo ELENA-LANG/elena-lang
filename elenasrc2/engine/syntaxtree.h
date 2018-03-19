@@ -18,8 +18,8 @@ namespace _ELENA_
 
 enum LexicalType
 {
-//   lxSimpleMask      = 0x02000,
-//   lxCodeScopeMask   = 0x04000,
+   lxSimpleMask      = 0x02000,
+   lxCodeScopeMask   = 0x04000,
    lxObjectMask      = 0x08000,
    lxExprMask        = 0x0C000,
    lxTerminalMask    = 0x10000,
@@ -35,7 +35,7 @@ enum LexicalType
    lxRoot            = 0x00001,
    lxIdle            = 0x00002,
    lxObject          = 0x00003,
-//   lxAttributeDecl   = 0x00004,
+   lxAttributeDecl   = 0x00004,
 //   lxAngleOperator   = 0x00005,
    lxClass           = 0x0000E,
 //   lxTemplate        = 0x0000F,
@@ -83,7 +83,7 @@ enum LexicalType
 //   lxLong            = 0x1800C,
 //   lxWide            = 0x1800D,
 //   lxExplicitConst   = 0x1800E,
-//   lxExplicitAttr    = 0x1800F,
+   lxExplicitAttr    = 0x1800F,
 //   lxMemberIdentifier= 0x18010,
 
    lxImporting       = 0x08101,
@@ -109,8 +109,8 @@ enum LexicalType
 //   lxSignatureConstant  = 0x0A115, // arg - reference
 //   lxStaticConstField   = 0x08116, // arg - reference
    lxNil                = 0x0A117,
-//   lxCurrent            = 0x0A118, // arg -offset
-//   lxResult             = 0x0A119, // arg -offset
+   lxCurrent            = 0x0A118, // arg -offset
+   lxResult             = 0x0A119, // arg -offset
 //   lxResultField        = 0x0A11A, // arg -offset
 //   lxCurrentMessage     = 0x0A11B,
 //   lxThisLocal          = 0x0A11C,
@@ -124,7 +124,7 @@ enum LexicalType
 //   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
 //   lxArgUnboxing     = 0x0C006,
-//   lxCalling         = 0x0C007,   // sending a message, arg - message
+   lxCalling         = 0x0C007,   // sending a message, arg - message
 //   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
 //   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
 //   lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
@@ -151,7 +151,7 @@ enum LexicalType
 //   lxOption          = 0x0C021,
 //   lxFieldExpression = 0x0C022,
 //   lxExternFrame     = 0x04023,
-//   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
+   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
 //   lxCreatingClass   = 0x0C025,   // arg - count
 //   lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
@@ -206,13 +206,13 @@ enum LexicalType
    lxBreakpoint      = 0x20006,
 //   lxImport          = 0x20007,
    lxReserved        = 0x20008,
-//   lxAllocated       = 0x20009,
+   lxAllocated       = 0x20009,
    lxParamCount      = 0x2000A,
-//   lxClassFlag       = 0x2000B, // class fields
+   lxClassFlag       = 0x2000B, // class fields
 //   lxTarget          = 0x2000C, // arg - reference
-//   lxMessageVariable = 0x2000D, // debug info only
+   lxMessageVariable = 0x2000D, // debug info only
 //   lxSelfVariable    = 0x2000E, // debug info only
-//   lxMessage         = 0x2000F, // arg - message
+   lxMessage         = 0x2000F, // arg - message
 //   lxAssign          = 0x20010,
 //   lxLevel           = 0x20011,
 //   lxType            = 0x20012, // arg - subject
@@ -542,65 +542,65 @@ public:
          return current;
       }
 
-      //Node findSubNodeMask(LexicalType mask)
-      //{
-      //   Node child = firstChild(mask);
-      //   if (child == lxExpression) {
-      //      return child.findSubNodeMask(mask);
-      //   }
-      //   else return child;
-      //}
+      Node findSubNodeMask(LexicalType mask)
+      {
+         Node child = firstChild(mask);
+         if (child == lxExpression) {
+            return child.findSubNodeMask(mask);
+         }
+         else return child;
+      }
 
-      //Node findSubNode(LexicalType type)
-      //{
-      //   Node current = firstChild();
-      //   while (current != lxNone && current.type != type) {
-      //      if (current == lxExpression) {
-      //         Node subNode = current.findSubNode(type);
-      //         if (subNode != lxNone)
-      //            return subNode;
-      //      }
-      //      current = current.nextNode();
-      //   }
+      Node findSubNode(LexicalType type)
+      {
+         Node current = firstChild();
+         while (current != lxNone && current.type != type) {
+            if (current == lxExpression) {
+               Node subNode = current.findSubNode(type);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            current = current.nextNode();
+         }
 
-      //   return current;
-      //}
-      //Node findSubNode(LexicalType type1, LexicalType type2)
-      //{
-      //   Node child = firstChild();
-      //   while (child != lxNone && child.type != type1) {
-      //      if (child == lxExpression) {
-      //         Node subNode = child.findSubNode(type1, type2);
-      //         if (subNode != lxNone)
-      //            return subNode;
-      //      }
-      //      else if (child == type2)
-      //         break;
+         return current;
+      }
+      Node findSubNode(LexicalType type1, LexicalType type2)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
 
-      //      child = child.nextNode();
-      //   }
+            child = child.nextNode();
+         }
 
-      //   return child;
-      //}
-      //Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
-      //{
-      //   Node child = firstChild();
-      //   while (child != lxNone && child.type != type1) {
-      //      if (child == lxExpression) {
-      //         Node subNode = child.findSubNode(type1, type2, type3);
-      //         if (subNode != lxNone)
-      //            return subNode;
-      //      }
-      //      else if (child == type2)
-      //         break;
-      //      else if (child == type3)
-      //         break;
+         return child;
+      }
+      Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {   
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2, type3);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
+            else if (child == type3)
+               break;
 
-      //      child = child.nextNode();
-      //   }
+            child = child.nextNode();
+         }
 
-      //   return child;
-      //}
+         return child;
+      }
 
       Node lastChild() const
       {
