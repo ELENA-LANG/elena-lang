@@ -45,7 +45,7 @@ enum LexicalType
 //   lxAttributeValue  = 0x00015,
    lxClassMethod     = 0x00016,
 //   lxNestedClass     = 0x00018,
-//   lxCode            = 0x0001A,
+   lxCode            = 0x0001A,
    lxDispatchCode    = 0x00020,
 //   lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
@@ -69,9 +69,9 @@ enum LexicalType
 ////   lxImplicitConstructor = 0x0004B,
    lxScope           = 0x0004D,
 //   lxMessageParameter= 0x0C04E,
-//
-//   // parameters
-//   lxEOF             = 0x18003, // indicating closing code bracket
+
+   // parameters
+   lxEOF             = 0x18003, // indicating closing code bracket
 //   lxLiteral         = 0x18004,
    lxIdentifier      = 0x18005,
    lxPrivate         = 0x18006,
@@ -113,7 +113,7 @@ enum LexicalType
    lxResult             = 0x0A119, // arg -offset
 //   lxResultField        = 0x0A11A, // arg -offset
 //   lxCurrentMessage     = 0x0A11B,
-//   lxThisLocal          = 0x0A11C,
+   lxSelfLocal          = 0x0A11C,
 //   lxConstantList       = 0x0A11E,   // arg - reference
 //   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
 //   lxClassRefField      = 0x08120,  // arg - self instance offset

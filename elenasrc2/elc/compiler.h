@@ -121,7 +121,7 @@ public:
    {
       okUnknown = 0,
 
-//      okObject,                       // param - class reference
+      okObject,                       // param - class reference
       okSymbol,                       // param - reference
 //      okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
@@ -150,7 +150,7 @@ public:
 //      okParam,                        // param - parameter offset, extraparam = class reference
 ////      okParamField,
 //      okSubject,                      // param - parameter offset
-//      okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
+      okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
 //      okSuper,
 //      okLocalAddress,                 // param - local offset, extraparam - class reference
@@ -607,8 +607,8 @@ private:
 //      }
 //
 //      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      ObjectInfo mapThis(bool forced = false);
+
+      ObjectInfo mapSelf(bool forced = false);
 //      ObjectInfo mapParameter(Parameter param);
 
       MethodScope(ClassScope* parent);
@@ -878,11 +878,11 @@ private:
 
    //ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
-//   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
+   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
-   /*ObjectInfo*/void compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   /*ObjectInfo */void compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
 
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
@@ -896,16 +896,16 @@ private:
 //
 //   ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t& signatureRef, int mode = 0);   // returns an info of the first operand
 
-   /*ObjectInfo*/void compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   /*ObjectInfo*/void compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, /*ObjectInfo target, */int messageRef, int mode);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, /*ObjectInfo target, */int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
 //
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   /*ObjectInfo*/void compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   /*ObjectInfo*/void compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
 //
 //   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
@@ -929,7 +929,7 @@ private:
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 
-   /*ObjectInfo*/void compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
 //   ref_t declareArgumentSubject(SNode node, ModuleScope& scope, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef);
    void declareArgumentList(SNode node, MethodScope& scope);

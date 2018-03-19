@@ -1226,8 +1226,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   this->genericClosure = false;
 }
 
-//ObjectInfo Compiler::MethodScope :: mapThis(bool forced)
-//{
+ObjectInfo Compiler::MethodScope :: mapSelf(bool forced)
+{
 //   if (extensionMode && !forced) {
 //      //COMPILER MAGIC : if it is an extension ; replace $self with self
 //      ClassScope* extensionScope = (ClassScope*)getScope(slClass);
@@ -1237,9 +1237,9 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   else if (stackSafe && classEmbeddable) {
 //      return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
 //   }
-//   else return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference);
-//}
-//
+   /*else */return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
+}
+
 //ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
 //{
 //   int prefix = closureMode ? 0 : -1;
@@ -2412,20 +2412,20 @@ void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
 //   }
 //   else return classScope->info.size - offset;
 //}
-//
-//void Compiler :: writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type)
-//{
-//   if (object.element == -1) {
-//      ref_t targetRef = resolveObjectReference(scope, object);
-//      bool variable = false;
-//      int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, 0u, variable);
-//      writer.newNode((variable && !test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxCondBoxing, size);
-//      writer.appendNode(type, object.param);
-//      if (test(mode, HINT_DYNAMIC_OBJECT))
-//         writer.appendNode(lxBoxingRequired);
-//   }
-//   else writer.newNode(type, object.param);
-//}
+
+void Compiler :: writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type)
+{
+   //if (object.element == -1) {
+   //   ref_t targetRef = resolveObjectReference(scope, object);
+   //   bool variable = false;
+   //   int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, 0u, variable);
+   //   writer.newNode((variable && !test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxCondBoxing, size);
+   //   writer.appendNode(type, object.param);
+   //   if (test(mode, HINT_DYNAMIC_OBJECT))
+   //      writer.appendNode(lxBoxingRequired);
+   //}
+   /*else */writer.newNode(type, object.param);
+}
 
 void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode)
 {
@@ -2470,9 +2470,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //      case okParam:
 //         writeParamTerminal(writer, scope, object, mode, lxLocal);
 //         break;
-//      case okThisParam:
-//         writeParamTerminal(writer, scope, object, mode, lxThisLocal);
-//         break;
+      case okSelfParam:
+         writeParamTerminal(writer, scope, object, mode, lxSelfLocal);
+         break;
 //      case okSuper:
 //         writer.newNode(lxLocal, 1);
 //         break;
@@ -2572,9 +2572,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //         if (test(mode, HINT_DYNAMIC_OBJECT))
 //            writer.appendNode(lxBoxingRequired);
 //         break;
-//      case okObject:
-//         writer.newNode(lxResult, 0);
-//         break;
+      case okObject:
+         writer.newNode(lxResult, 0);
+         break;
 //      case okConstantRole:
 //         writer.newNode(lxConstantSymbol, object.param);
 //         break;
@@ -2593,7 +2593,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
    writer.closeNode();
 }
 
-/*ObjectInfo*/void Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
 {
    ident_t token = terminal.identifier();
 
@@ -2702,13 +2702,13 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //   }
    /*else */writeTerminal(writer, terminal, scope, object, mode);
 
-//   return object;
+   return object;
 }
 
-/*ObjectInfo*/void Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode)
 {
-//   ObjectInfo result;
-//
+   ObjectInfo result;
+
 //   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing);
 //   switch (member.type)
 //   {
@@ -2732,10 +2732,10 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //         result = compileMessageReference(writer, member, scope, mode);
 //         break;
 //      default:
-         /*result = */compileTerminal(writer, objectNode, scope, mode);
+         result = compileTerminal(writer, objectNode, scope, mode);
 //   }
-//
-//   return result;
+
+   return result;
 }
 
 //ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
@@ -3221,9 +3221,9 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //   else return compileOperator(writer, node, scope, mode, operator_id);
 //}
 
-/*ObjectInfo*/void Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, /*ObjectInfo target, */int messageRef, int mode)
+ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, /*ObjectInfo target, */int messageRef, int mode)
 {
-//   ObjectInfo retVal(okObject);
+   ObjectInfo retVal(okObject);
 
    LexicalType operation = lxCalling;
    int argument = messageRef;
@@ -3337,7 +3337,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
    writer.insert(operation, argument);
    writer.closeNode();
 
-//   return retVal;
+   return retVal;
 }
 
 //bool Compiler :: convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
@@ -3572,11 +3572,11 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //   return generalMessageRef;
 //}
 
-/*ObjectInfo*/void Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
 //   ref_t implicitSignatureRef = 0;
 //   size_t paramCount = 0;
-//   ObjectInfo retVal;
+   ObjectInfo retVal;
 //   ObjectInfo target = compileMessageParameters(writer, node, scope, implicitSignatureRef, mode & (HINT_RESENDEXPR | HINT_PARAMETERSONLY));
 //
 //   if (test(mode, HINT_TRY_MODE)) {
@@ -3620,11 +3620,11 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //         if (genericOne)
 //            mode |= HINT_DYNAMIC_OBJECT;
 
-         /*retVal = */compileMessage(writer, node, scope, /*target, */messageRef, mode);
+         retVal = compileMessage(writer, node, scope, /*target, */messageRef, mode);
 //      }
 //   }
-//
-//   return retVal;
+
+   return retVal;
 }
 
 //void Compiler :: inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef)
@@ -4238,7 +4238,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //   return ObjectInfo(okObject, vmtReference);
 //}
 
-/*ObjectInfo*/void Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
 //   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 //
@@ -4269,7 +4269,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //
 //   writer.newBookmark();
 
-   /*ObjectInfo info = */compileExpression(writer, node, scope, mode);
+   ObjectInfo info = compileExpression(writer, node, scope, mode);
 
 //   if (converting || typecasting)
 //      convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, info), info.element);
@@ -4286,8 +4286,8 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //   }
 //
 //   writer.removeBookmark();
-//
-//   return info;
+
+   return info;
 }
 
 //void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope)
@@ -4406,17 +4406,17 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //   return retVal;
 //}
 
-/*ObjectInfo*/void Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    writer.newBookmark();
 
    SNode object = node.firstChild(lxObjectMask);
-   compileObject(writer, object, scope, mode);
+   ObjectInfo objectInfo = compileObject(writer, object, scope, mode);
 
    SNode current = object.nextNode();
    switch (current.type) {
       case lxMessage:
-         /*objectInfo = */compileMessage(writer, node, scope, mode);
+         objectInfo = compileMessage(writer, node, scope, mode);
          break;
    }
 
@@ -4481,7 +4481,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 
    writer.removeBookmark();
 
-//   return objectInfo;
+   return objectInfo;
 }
 
 //ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope)
@@ -4523,9 +4523,9 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //   compileExpression(writer, expr, scope, HINT_LOOP);
 //}
 
-/*ObjectInfo*/void Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
+ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
-//   ObjectInfo retVal;
+   ObjectInfo retVal;
 
    bool needVirtualEnd = true;
    SNode current = node.firstChild();
@@ -4546,14 +4546,14 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //            break;
          case lxReturning:
          {
-//            needVirtualEnd = false;
-//
+            needVirtualEnd = false;
+
 //            if (test(scope.getMessageID(), CONVERSION_MESSAGE))
 //               scope.raiseError(errIllegalOperation, current);
 //
             writer.newNode(lxReturning);
             writer.appendNode(lxBreakpoint, dsStep);
-            /*retVal = */compileRetExpression(writer, current, scope, /*HINT_ROOT*/0);
+            retVal = compileRetExpression(writer, current, scope, /*HINT_ROOT*/0);
             writer.closeNode();
 
             break;
@@ -4566,12 +4566,12 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //            compileCode(writer, current.findSubNode(lxCode), scope);
 //            writer.closeNode();
 //            break;
-//         case lxEOF:
-//            needVirtualEnd = false;
-//            writer.newNode(lxBreakpoint, dsEOP);
-//            writeTerminalInfo(writer, current);
-//            writer.closeNode();
-//            break;
+         case lxEOF:
+            needVirtualEnd = false;
+            writer.newNode(lxBreakpoint, dsEOP);
+            writeTerminalInfo(writer, current);
+            writer.closeNode();
+            break;
       }
 
 //      scope.freeSpace();
@@ -4583,7 +4583,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
       writer.appendNode(lxBreakpoint, dsVirtualEnd);
    }
 
-//   return retVal;
+   return retVal;
 }
 
 //void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope, WarningScope& warningScope)
@@ -5501,7 +5501,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
    CodeScope codeScope(&scope);
 
-   SNode body = node.findChild(/*lxCode, */lxReturning, lxDispatchCode/*, lxResendExpression*/);
+   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode/*, lxResendExpression*/);
 //   // check if it is a resend
 //   if (body == lxResendExpression) {
 //      compileResendExpression(writer, body, codeScope, scope.multiMethod, scope.extensionMode);
@@ -5532,18 +5532,18 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
       preallocated = codeScope.level;
 
-      /*ObjectInfo retVal = */compileCode(writer, /*body == lxReturning ? */node/* : body*/, codeScope);
+      ObjectInfo retVal = compileCode(writer, body == lxReturning ? node : body, codeScope);
 
-//      // if the method returns itself
-//      // HOTFIX : it should not be applied to the embeddable conversion routine
-//      if(retVal.kind == okUnknown/* && (!test(scope.message, CONVERSION_MESSAGE) || !scope.classEmbeddable)*/) {
-//         ObjectInfo thisParam = scope.mapThis();
-//
-//         // adding the code loading $self
-//         writer.newNode(lxReturning);
+      // if the method returns itself
+      // HOTFIX : it should not be applied to the embeddable conversion routine
+      if(retVal.kind == okUnknown/* && (!test(scope.message, CONVERSION_MESSAGE) || !scope.classEmbeddable)*/) {
+         ObjectInfo thisParam = scope.mapSelf();
+
+         // adding the code loading $self
+         writer.newNode(lxReturning);
 //         writer.newBookmark();
-//         writeTerminal(writer, node, codeScope, thisParam, HINT_NODEBUGINFO);
-//
+         writeTerminal(writer, node, codeScope, thisParam, HINT_NODEBUGINFO);
+
 //         ref_t resultRef = scope.getReturningRef(false);
 //         if (resultRef != 0) {
 //            if (!convertObject(writer, *codeScope.moduleScope, resultRef, resolveObjectReference(codeScope, thisParam), 0))
@@ -5551,8 +5551,8 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 //         }
 //
 //         writer.removeBookmark();
-//         writer.closeNode();
-//      }
+         writer.closeNode();
+      }
 
       writer.closeNode();
    }

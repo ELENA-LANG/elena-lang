@@ -47,9 +47,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsNestedRootExpression:
          _writer.newNode(lxExpression);
          break;
-//      case nsCodeEnd:
-//         _writer.newNode(lxEOF);
-//         break;
+      case nsCodeEnd:
+         _writer.newNode(lxEOF);
+         break;
 //      case nsMethodParameter:
 //         _writer.newNode(lxMethodParameter);
 //         break;
@@ -100,9 +100,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsLazyExpression:
 //         _writer.newNode(lxLazyExpression);
 //         break;
-//      case nsRetStatement:
-//         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
-//         break;
+      case nsRetStatement:
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
+         break;
 //      case nsMessageReference:
 //         _writer.newNode(lxMessageReference);
 //         break;
@@ -115,7 +115,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsSwitching:
 //         _writer.newNode(lxSwitching);
 //         break;
-//      case nsSubCode:
+      case nsSubCode:
       case nsScope:
 //      case nsTokenParam:
       case nsDispatchExpression:
@@ -1874,10 +1874,10 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
 //            writer.insert(lxExpression);
 //            writer.closeNode();
 //            break;
-//         case lxExpression:
+         case lxExpression:
 //            first = false;
-//            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
-//            break;
+            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
+            break;
 //         case lxAssigning:
 //            writer.appendNode(lxAssign);
 //            generateExpressionTree(writer, current, scope);
@@ -2393,23 +2393,23 @@ void DerivationTransformer :: generateCodeTree(SyntaxWriter& writer, SNode node,
 //            }
 //            else generateExpressionTree(writer, current, scope);
 //            break;
-//         case lxReturning:
-////         case lxExtension:
-//            writer.newNode(current.type, current.argument);
-//            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
-//            writer.closeNode();
-//            break;
-//         case lxEOF:
-//         {
-//            writer.newNode(lxEOF);
-//
-//            SNode terminal = current.firstChild();
-//            SyntaxTree::copyNode(writer, lxRow, terminal);
-//            SyntaxTree::copyNode(writer, lxCol, terminal);
-//            SyntaxTree::copyNode(writer, lxLength, terminal);
-//            writer.closeNode();
-//            break;
-//         }
+         case lxReturning:
+//         case lxExtension:
+            writer.newNode(current.type, current.argument);
+            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
+            writer.closeNode();
+            break;
+         case lxEOF:
+         {
+            writer.newNode(lxEOF);
+
+            SNode terminal = current.firstChild();
+            SyntaxTree::copyNode(writer, lxRow, terminal);
+            SyntaxTree::copyNode(writer, lxCol, terminal);
+            SyntaxTree::copyNode(writer, lxLength, terminal);
+            writer.closeNode();
+            break;
+         }
 //         case lxLoop:
 //         case lxCode:
 //         case lxExtern:
@@ -2562,18 +2562,18 @@ void DerivationTransformer :: generateMethodTree(SyntaxWriter& writer, SNode nod
 //      current = current.nextNode();
 //   }
 
-   SNode bodyNode = node.findChild(/*lxCode, lxExpression, */lxDispatchCode, lxReturning/*, lxResendExpression*/);
+   SNode bodyNode = node.findChild(lxCode, /*lxExpression, */lxDispatchCode, lxReturning/*, lxResendExpression*/);
    if (bodyNode.compare(lxReturning, lxDispatchCode)) {
       writer.newNode(bodyNode.type);
       generateExpressionTree(writer, bodyNode, scope, EXPRESSION_IMPLICIT_MODE);
       writer.closeNode();
    }
-//   if (bodyNode != lxNone) {
-////      if (templateMode)
-////         scope.reference = INVALID_REF;
-//
-//      generateCodeTree(writer, bodyNode, scope);
-//   }
+   else if (bodyNode == lxCode) {
+//      if (templateMode)
+//         scope.reference = INVALID_REF;
+
+      generateCodeTree(writer, bodyNode, scope);
+   }
 
    writer.closeNode();
 }
@@ -2912,7 +2912,7 @@ bool DerivationTransformer :: generateDeclaration(SNode node, DerivationScope& s
 
 bool DerivationTransformer :: generateMethodScope(SNode node, DerivationScope& scope)
 {
-   SNode current = node.findChild(/*lxCode, */lxExpression, lxDispatchCode/*, lxReturning, lxResendExpression*/);
+   SNode current = node.findChild(lxCode, lxExpression, lxDispatchCode/*, lxReturning, lxResendExpression*/);
    if (current != lxNone) {
       // try to resolve the message name
       setIdentifier(node);
