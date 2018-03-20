@@ -13,8 +13,8 @@
 
 using namespace _ELENA_;
 
-//typedef ClassInfo::Attribute Attribute;
-//
+typedef ClassInfo::Attribute Attribute;
+
 //inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
 //{
 //   return ref1 ? ref1 : ref2;
@@ -203,49 +203,49 @@ CompilerLogic :: CompilerLogic()
 //   operators.add(OperatorInfo(OR_MESSAGE_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
 }
 
-//int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
-//{
-//   bool methodFound = info.methods.exist(message);
-//
-//   if (methodFound) {
-//      int hint = info.methodHints.get(Attribute(message, maHint));
+int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
+{
+   bool methodFound = info.methods.exist(message);
+
+   if (methodFound) {
+      int hint = info.methodHints.get(Attribute(message, maHint));
 //      result.outputReference = info.methodHints.get(Attribute(message, maReference));
 //
 //      result.embeddable = test(hint, tpEmbeddable);
 //      result.closure = test(hint, tpAction);
-//
-//      if ((hint & tpMask) == tpSealed) {
-//         return hint;
-//      }
-//      else if (test(info.header.flags, elFinal)) {
-//         return tpSealed | hint;
-//      }
-//      else if (test(info.header.flags, elClosed)) {
-//         return tpClosed | hint;
-//      }
-//      else return tpNormal | hint;
-//   }
-//   //HOTFIX : to recognize the sealed private method call
-//   //         hint search should be done even if the method is not declared
-//   else return info.methodHints.get(Attribute(message, maHint));
-//}
-//
-//int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
-//{
-//   ClassInfo info;
-//   result.found = defineClassInfo(scope, info, reference);
-//
-//   if (result.found) {
-//      if (test(info.header.flags, elClosed))
-//         result.directResolved = true;
-//
+
+      if ((hint & tpMask) == tpSealed) {
+         return hint;
+      }
+      else if (test(info.header.flags, elFinal)) {
+         return tpSealed | hint;
+      }
+      else if (test(info.header.flags, elClosed)) {
+         return tpClosed | hint;
+      }
+      else return tpNormal | hint;
+   }
+   //HOTFIX : to recognize the sealed private method call
+   //         hint search should be done even if the method is not declared
+   else return info.methodHints.get(Attribute(message, maHint));
+}
+
+int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
+{
+   ClassInfo info;
+   result.found = defineClassInfo(scope, info, reference);
+
+   if (result.found) {
+      if (test(info.header.flags, elClosed))
+         result.directResolved = true;
+
 //      //if (!test(info.header.flags, elClosed))
 //      //   result.closed = false;
 //
 //      if (test(info.header.flags, elWithCustomDispatcher))
 //         result.withCustomDispatcher = true;
-//
-//      int hint = checkMethod(info, message, result);
+
+      int hint = checkMethod(info, message, result);
 //      if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
 //         hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT), result);
 //         if (hint != tpUnknown) {
@@ -264,20 +264,20 @@ CompilerLogic :: CompilerLogic()
 //            }
 //         }
 //      }
-//
-//      return hint;
-//   }
-//   else return tpUnknown;
-//}
-//
-//int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
-//{
+
+      return hint;
+   }
+   else return tpUnknown;
+}
+
+int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
+{
 //   if (isPrimitiveRef(classReference)) {
 //      classReference = resolvePrimitiveReference(scope, classReference);
 //   }
-//
-//   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
-//   int callType = methodHint & tpMask;
+
+   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
+   int callType = methodHint & tpMask;
 //   if (callType == tpClosed || callType == tpSealed) {
 //      result.stackSafe = test(methodHint, tpStackSafe);
 //   }      
@@ -286,10 +286,10 @@ CompilerLogic :: CompilerLogic()
 //      // HOTFIX : calling closure
 //      result.closure = true;
 //   }
-//
-//   return callType;
-//}
-//
+
+   return callType;
+}
+
 //int CompilerLogic :: resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
 //{
 //   if (loperand == 0 || (roperand == 0 && loperand != V_NIL))
@@ -997,15 +997,15 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //   writer.insert((LexicalType)operation, targetRef);
 //   writer.closeNode();
 //}
-//
-//bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
-//{
+
+bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
+{
 //   if (isPrimitiveRef(reference) && !headerOnly) {
 //      scope.loadClassInfo(info, scope.superReference);
 //   }
-//
-//   switch (reference)
-//   {
+
+   switch (reference)
+   {
 //      case V_INT32:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugDWORD | elStructureRole;
@@ -1073,22 +1073,22 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //         break;
 //      case V_AUTO:
 //         break;
-//      default:
-//         if (reference != 0) {
-//            if (!scope.loadClassInfo(info, reference, headerOnly))
-//               return false;
-//         }
-//         else {
-//            info.header.parentRef = 0;
-//            info.header.flags = 0;
-//            info.size = 0;
-//         }
-//         break;
-//   }
-//
-//   return true;
-//}
-//
+      default:
+         if (reference != 0) {
+            if (!scope.loadClassInfo(info, reference, headerOnly))
+               return false;
+         }
+         else {
+            info.header.parentRef = 0;
+            info.header.flags = 0;
+            //info.size = 0;
+         }
+         break;
+   }
+
+   return true;
+}
+
 //int CompilerLogic :: defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable)
 //{
 //   if (reference == V_BINARYARRAY && elementRef != 0) {
@@ -1128,29 +1128,29 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //
 //   return 0;
 //}
-//
-//void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
-//{
-//   if (classClassMode) {
-//      // class class is always stateless and final
-//      info.header.flags |= elStateless;
-//      info.header.flags |= elFinal;
-//   }
-//
-//   if (test(info.header.flags, elNestedClass)) {
-//      // stateless inline class
+
+void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
+{
+   if (classClassMode) {
+      // class class is always stateless and final
+      info.header.flags |= elStateless;
+      info.header.flags |= elFinal;
+   }
+
+   if (test(info.header.flags, elNestedClass)) {
+      // stateless inline class
 //      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
-//         info.header.flags |= elStateless;
-//
-//         // stateless inline class is its own class class
-//         info.header.classRef = classRef;
+         info.header.flags |= elStateless;
+
+         // stateless inline class is its own class class
+         info.header.classRef = classRef;
 //      }
 //      else info.header.flags &= ~elStateless;
-//
-//      // nested class is sealed
-//      info.header.flags |= elSealed;
-//   }
-//
+
+      // nested class is sealed
+      info.header.flags |= elSealed;
+   }
+
 //   if (test(info.header.flags, elExtension)) {
 //      info.header.flags |= elSealed;
 //   }
@@ -1225,7 +1225,7 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //   if (test(info.header.flags, elWithMuti)) {
 //      injectOverloadList(scope, info, compiler, classRef);
 //   }
-//}
+}
 
 bool CompilerLogic :: validateClassAttribute(int& attrValue)
 {

@@ -277,7 +277,7 @@ enum ByteCode
    //bdDebugInfo      = 0x8400,
    bdBreakpoint     = 0x8401,
    bdBreakcoord     = 0x8402,
-   //bdLocal          = 0x8403,
+   bdLocal          = 0x8403,
    //bdSelf           = 0x8404,
    bdMessage        = 0x8405,
    //bdLocalInfo      = 0x8406,

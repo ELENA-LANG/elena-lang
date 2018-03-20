@@ -62,27 +62,27 @@ typedef List<Unresolved> Unresolveds;
 class Compiler : public _Compiler
 {
 public:
-//   struct Parameter
-//   {
-//      int    offset;
-//      ref_t  class_ref;
+   struct Parameter
+   {
+      int    offset;
+      ref_t  class_ref;
 //      ref_t  element_ref;
 //      int    size;
-//
-//      Parameter()
-//      {
-//         offset = -1;
-//         class_ref = 0;
+
+      Parameter()
+      {
+         offset = -1;
+         class_ref = 0;
 //         element_ref = 0;
 //         size = 0;
-//      }
-//      Parameter(int offset)
-//      {
-//         this->offset = offset;
-//         this->class_ref = 0;
+      }
+      Parameter(int offset)
+      {
+         this->offset = offset;
+         this->class_ref = 0;
 //         this->element_ref = 0;
 //         this->size = 0;
-//      }
+      }
 //      Parameter(int offset, ref_t class_ref)
 //      {
 //         this->offset = offset;
@@ -104,7 +104,7 @@ public:
 //         this->element_ref = element_ref;
 //         this->size = size;
 //      }
-//   };
+   };
 
    // InheritResult
    enum InheritResult
@@ -123,7 +123,7 @@ public:
 
       okObject,                       // param - class reference
       okSymbol,                       // param - reference
-//      okConstantSymbol,               // param - reference, extraparam - class reference
+      okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
@@ -147,7 +147,7 @@ public:
 //      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
 ////      okCurrent,                      // param - stack offset
 //      okLocal,                        // param - local / out parameter offset, extraparam : class reference
-//      okParam,                        // param - parameter offset, extraparam = class reference
+      okParam,                        // param - parameter offset, extraparam = class reference
 ////      okParamField,
 //      okSubject,                      // param - parameter offset
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
@@ -228,7 +228,7 @@ public:
 //      }
    };
 
-//   typedef MemoryMap<ident_t, Parameter>  LocalMap;
+   typedef MemoryMap<ident_t, Parameter>  LocalMap;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 //   typedef Map<ref_t, SubjectList*>       AutoExtensionMap;
 
@@ -431,10 +431,10 @@ private:
 
       virtual ObjectInfo mapTerminal(ident_t identifier)
       {
-         /*if (parent) {
+         if (parent) {
             return parent->mapTerminal(identifier);
          }
-         else*/ return ObjectInfo();
+         else return ObjectInfo();
       }
 
       virtual Scope* getScope(ScopeLevel level)
@@ -563,7 +563,7 @@ private:
    struct MethodScope : public Scope
    {
       ref_t        message;
-//      LocalMap     parameters;
+      LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 //      int          hints;
@@ -605,11 +605,11 @@ private:
 //
 //         return scope ? scope->reference : 0;
 //      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier);
 
       ObjectInfo mapSelf(bool forced = false);
-//      ObjectInfo mapParameter(Parameter param);
+      ObjectInfo mapParameter(Parameter param);
 
       MethodScope(ClassScope* parent);
    };
@@ -675,13 +675,13 @@ private:
          return scope ? scope->message : 0;
       }
 
-//      ref_t getClassRefId(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
-//
+      ref_t getClassRefId(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
+      }
+
 //      ref_t getClassFlags(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -823,8 +823,8 @@ private:
 //   int retrieveGenericArgParamCount(ClassScope& scope);
 //
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
-//   ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
-//   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+   ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
+   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
 //
 //   void saveExtension(ClassScope& scope, ref_t message);
@@ -893,11 +893,11 @@ private:
 //
 //   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
-//
-//   ObjectInfo compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t& signatureRef, int mode = 0);   // returns an info of the first operand
 
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, /*ObjectInfo target, */int messageRef, int mode);
+   /*ObjectInfo*/void compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
+
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
 //
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);

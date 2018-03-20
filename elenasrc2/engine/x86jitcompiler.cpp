@@ -1237,60 +1237,60 @@ void _ELENA_::compileIndexDec(int, x86JITScope& scope)
 
 void _ELENA_::compileInvokeVMTOffset(int opcode, x86JITScope& scope)
 {
-   //int message = scope.resolveMessage(scope.tape->getDWord());
+   int message = scope.resolveMessage(scope.tape->getDWord());
 
-   //char*  code = (char*)scope.compiler->_inlines[opcode];
-   //size_t position = scope.code->Position();
-   //size_t length = *(size_t*)(code - 4);
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
 
-   //// simply copy correspondent inline code
-   //scope.code->write(code, length);
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
 
-   //// resolve section references
-   //int count = *(int*)(code + length);
-   //int* relocation = (int*)(code + length + 4);
-   //while (count > 0) {
-   //   // locate relocation position
-   //   scope.code->seek(position + relocation[1]);
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
 
-   //   if (relocation[0]==-1) {
-   //      // resolve message offset
-   //      scope.writeReference(*scope.code, scope.argument | mskVMTEntryOffset, message);
-   //   }
+      if (relocation[0]==-1) {
+         // resolve message offset
+         scope.writeReference(*scope.code, scope.argument | mskVMTEntryOffset, message);
+      }
 
-   //   relocation += 2;
-   //   count--;
-   //}
-   //scope.code->seekEOF();
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
 }
 
 void _ELENA_::compileInvokeVMT(int opcode, x86JITScope& scope)
 {
-   //int message = scope.resolveMessage(scope.tape->getDWord());
+   int message = scope.resolveMessage(scope.tape->getDWord());
 
-   //char*  code = (char*)scope.compiler->_inlines[opcode];
-   //size_t position = scope.code->Position();
-   //size_t length = *(size_t*)(code - 4);
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
 
-   //// simply copy correspondent inline code
-   //scope.code->write(code, length);
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
 
-   //// resolve section references
-   //int count = *(int*)(code + length);
-   //int* relocation = (int*)(code + length + 4);
-   //while (count > 0) {
-   //   // locate relocation position
-   //   scope.code->seek(position + relocation[1]);
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
 
-   //   if (relocation[0]==-1) {
-   //      // resolve message offset
-   //      scope.writeReference(*scope.code, scope.argument | mskVMTMethodAddress, message);
-   //   }
+      if (relocation[0]==-1) {
+         // resolve message offset
+         scope.writeReference(*scope.code, scope.argument | mskVMTMethodAddress, message);
+      }
 
-   //   relocation += 2;
-   //   count--;
-   //}
-   //scope.code->seekEOF();
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
 }
 
 void _ELENA_::compileACopyS(int, x86JITScope& scope)

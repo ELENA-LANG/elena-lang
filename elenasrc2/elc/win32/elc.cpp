@@ -807,14 +807,14 @@ int main()
 
       project.cleanUp();
    }
-//   catch(_ELENA_::JITConstantExpectedException& ex)
-//   {
-//      project.printInfo(errConstantExpectedLink, ex.reference);
-//      print(ELC_UNSUCCESSFUL);
-//      exitCode = -2;
-//
-//      project.cleanUp();
-//   }
+   catch(_ELENA_::JITConstantExpectedException& ex)
+   {
+      project.printInfo(errConstantExpectedLink, ex.reference);
+      print(ELC_UNSUCCESSFUL);
+      exitCode = -2;
+
+      project.cleanUp();
+   }
    catch(_ELENA_::_Exception&) {
       print(ELC_UNSUCCESSFUL);
       exitCode = -2;

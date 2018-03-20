@@ -28,15 +28,15 @@ struct JITUnresolvedException
    }
 };
 
-//struct JITConstantExpectedException
-//{
-//   ident_t reference;
-//
-//   JITConstantExpectedException(ident_t reference)
-//   {
-//      this->reference = reference;
-//   }
-//};
+struct JITConstantExpectedException
+{
+   ident_t reference;
+
+   JITConstantExpectedException(ident_t reference)
+   {
+      this->reference = reference;
+   }
+};
 
 // --- JITLinker class ---
 class JITLinker : _JITLoaderListener
@@ -112,8 +112,8 @@ class JITLinker : _JITLoaderListener
       }
    };
 
-//   typedef Pair<void*, int>                                       MethodInfo;
-//   typedef MemoryMap<MethodInfo, int, false>                      MethodMap;
+   typedef Pair<void*, int>                                       MethodInfo;
+   typedef MemoryMap<MethodInfo, int, false>                      MethodMap;
 //   typedef Memory32HashTable<ident_t, void*, mapReferenceKey, 29> StrongTypeMap;
 
    _JITLoader*    _loader;
@@ -123,7 +123,7 @@ class JITLinker : _JITLoaderListener
    bool           _classSymbolAutoLoadMode;
    void*          _codeBase;
 //   int            _statLength;
-//   MethodMap      _staticMethods;
+   MethodMap      _staticMethods;
 //   ModuleList     _loadedModules;
 //
 ////   int            _uniqueID;           // used for dynamic subject
@@ -135,10 +135,10 @@ class JITLinker : _JITLoaderListener
 
    void* getVMTAddress(_Module* module, ref_t reference, References& references);
    void* getVMTReference(_Module* module, ref_t reference, References& references);
-//   int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
-//   int getVMTMethodAddress(void* vaddress, int messageID);   
-//   int getVMTMethodIndex(void* vaddress, int messageID);
-//   size_t getVMTFlags(void* vaddress);
+   int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
+   int getVMTMethodAddress(void* vaddress, int messageID);   
+   int getVMTMethodIndex(void* vaddress, int messageID);
+   size_t getVMTFlags(void* vaddress);
 
    void fixReferences(References& relocations, _Memory* image);
 //   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress);
@@ -154,7 +154,7 @@ class JITLinker : _JITLoaderListener
    void* resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo);
    void* createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references);
    void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
-//   void* resolveConstant(ident_t reference, int mask);
+   void* resolveConstant(ident_t reference, int mask);
 //   void* resolveStaticVariable(ident_t reference, int mask);
 //   void* resolveAnonymousStaticVariable();
 //   void* resolveMessageTable(ident_t reference, int mask);
@@ -190,7 +190,7 @@ public:
    virtual void onModuleLoad(_Module* module);
 
    JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase, bool autoLoadMode = false)
-//      : _staticMethods(-1)
+      : _staticMethods(-1)
    {
       _loader = loader;
       _compiler = compiler;

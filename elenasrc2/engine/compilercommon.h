@@ -12,10 +12,10 @@
 #include "elena.h"
 #include "syntaxtree.h"
 
-//// virtual objects
+// virtual objects
 //#define V_FLAG           (ref_t)-03
-//#define V_NIL            (ref_t)-04
-//
+#define V_NIL            (ref_t)-04
+
 //#define V_BINARY         (ref_t)-10
 //#define V_INT32          (ref_t)-11
 //#define V_PTR32          (ref_t)-12
@@ -90,14 +90,14 @@ namespace _ELENA_
 
 typedef Map<ident_t, ref_t> ForwardMap;
 
-//enum MethodHint
-//{
-//   tpMask        = 0x000F,
-//
-//   tpUnknown     = 0x0000,
-//   tpSealed      = 0x0001,
-//   tpClosed      = 0x0002,
-//   tpNormal      = 0x0003,
+enum MethodHint
+{
+   tpMask        = 0x000F,
+
+   tpUnknown     = 0x0000,
+   tpSealed      = 0x0001,
+   tpClosed      = 0x0002,
+   tpNormal      = 0x0003,
 ////      tpDispatcher = 0x04,
 //   tpPrivate     = 0x0005,
 //   tpStackSafe   = 0x0010,
@@ -111,7 +111,7 @@ typedef Map<ident_t, ref_t> ForwardMap;
 //   tpMultimethod = 0x1000,
 //   tpArgDispatcher = 0x3000,
 //   tpStatic      = 0x4000,
-//};
+};
 
 // --- _CompileScope ---
 
@@ -167,7 +167,7 @@ struct _CompilerScope
 
    virtual bool saveAttribute(ident_t name, ref_t attr/*, bool internalAttr*/) = 0;
 
-//   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 //   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
@@ -233,10 +233,10 @@ public:
 class _CompilerLogic
 {
 public:
-//   struct ChechMethodInfo
-//   {
-//      bool  found;
-//      bool  directResolved;
+   struct ChechMethodInfo
+   {
+      bool  found;
+      bool  directResolved;
 //      bool  withCustomDispatcher;
 //      //bool  closed;
 //      bool  stackSafe;
@@ -246,11 +246,11 @@ public:
 //      bool  withOpenArg2Dispatcher;
 //      bool  closure;
 //      ref_t outputReference;
-//
-//      ChechMethodInfo()
-//      {
-//         directResolved = false;
-//         embeddable = /*closed = */found = false;
+
+      ChechMethodInfo()
+      {
+         directResolved = false;
+         /*embeddable = *//*closed = */found = false;
 //         outputReference = 0;
 //         withCustomDispatcher = false;
 //         stackSafe = false;
@@ -258,9 +258,9 @@ public:
 //         withOpenArg1Dispatcher = false;
 //         withOpenArg2Dispatcher = false;
 //         closure = false;
-//      }
-//   };
-//
+      }
+   };
+
 //   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
 //   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result) = 0;
 //
@@ -272,10 +272,10 @@ public:
 //   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
 //
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
-//
-//   // retrieve the call type
-//   virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
-//
+
+   // retrieve the call type
+   virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
+
 //   // retrieve the operation type
 //   virtual int resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
@@ -319,9 +319,9 @@ public:
 //   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
 ////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
 //   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef) = 0;
-//
-//   // auto generate class flags
-//   virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
+
+   // auto generate class flags
+   virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 //
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;

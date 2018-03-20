@@ -937,9 +937,9 @@ void listFlags(int flags, int& row, int pageSize)
    //   printLine("@flag ", "elWrapper", row, pageSize);
    //}
    //   
-   //if (test(flags, elStateless)) {
-   //   printLine("@flag ", "elStateless", row, pageSize);
-   //}      
+   if (test(flags, elStateless)) {
+      printLine("@flag ", "elStateless", row, pageSize);
+   }      
 
    //if (test(flags, elGroup)) {
    //   printLine("@flag ", "elGroup", row, pageSize);

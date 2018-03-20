@@ -68,7 +68,7 @@ enum LexicalType
 //   lxSubject         = 0x00047,
 ////   lxImplicitConstructor = 0x0004B,
    lxScope           = 0x0004D,
-//   lxMessageParameter= 0x0C04E,
+   lxMessageParameter= 0x0C04E,
 
    // parameters
    lxEOF             = 0x18003, // indicating closing code bracket
@@ -89,13 +89,13 @@ enum LexicalType
    lxImporting       = 0x08101,
 //   lxNested          = 0x08102, // arg - count
 //   lxStruct          = 0x08103, // arg - count
-//   lxConstantSymbol  = 0x0A104, // arg - reference
+   lxConstantSymbol  = 0x0A104, // arg - reference
 //   lxField           = 0x08105, // arg - offset
 //   lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
    lxSymbolReference = 0x08107,
 //   lxLocalAddress    = 0x0A108, // arg - offset
 //   lxFieldAddress    = 0x08109, // arg - offset
-//   lxLocal           = 0x0A10A, // arg - offset
+   lxLocal           = 0x0A10A, // arg - offset
 //   lxBlockLocal      = 0x0A10B, // arg - offset
 //   lxConstantString  = 0x0A10C, // arg - reference
 //   lxConstantWideStr = 0x0A10D, // arg - reference
@@ -125,8 +125,8 @@ enum LexicalType
 //   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
 //   lxArgUnboxing     = 0x0C006,
    lxCalling         = 0x0C007,   // sending a message, arg - message
-//   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
-//   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
+   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
+   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
 //   lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
 //   lxTrying          = 0x0C00C,   // try-catch expression
 //   lxAlt             = 0x0C00D,   // alt-catch expression
@@ -138,7 +138,7 @@ enum LexicalType
 //   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
 //   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
 //   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
-//   lxMethodParameter = 0x0C017,
+   lxMethodParameter = 0x0C017,
 //   lxAltExpression   = 0x0C018,
 //   lxIfNot           = 0x0C019,   // optional arg - reference
 //   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
@@ -186,7 +186,7 @@ enum LexicalType
 //   lxLongVariable    = 0x10029,
 //   lxReal64Variable  = 0x1002A,
 //   lxForward         = 0x1002E,
-//   lxVariable        = 0x10037,
+   lxVariable        = 0x10037,
 //   lxBinaryVariable  = 0x10038,
 //   lxMember          = 0x10039,  // a collection member, arg - offset
 //   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
@@ -214,9 +214,9 @@ enum LexicalType
 //   lxSelfVariable    = 0x2000E, // debug info only
    lxMessage         = 0x2000F, // arg - message
 //   lxAssign          = 0x20010,
-//   lxLevel           = 0x20011,
+   lxLevel           = 0x20011,
 //   lxType            = 0x20012, // arg - subject
-//   lxCallTarget      = 0x20013, // arg - reference
+   lxCallTarget      = 0x20013, // arg - reference
 //   lxClassName       = 0x20014, // arg - identifier
 //   lxIntValue        = 0x20015, // arg - integer value
 //   lxTempLocal       = 0x20016,

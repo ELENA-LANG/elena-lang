@@ -484,14 +484,14 @@ struct ClassHeader
 
 // --- ClassInfo ---
 
-//enum MethodAttribute
-//{
-//   maSubjectMask        = 0x100,
-//   maRefefernceMask     = 0x200,
+enum MethodAttribute
+{
+   maActionMask         = 0x100,
+   maRefefernceMask     = 0x200,
 //   maVerb               = 0x400,
-//
-//   maNone               = 0x000,
-//   maHint               = 0x001,
+
+   maNone               = 0x000,
+   maHint               = 0x001,
 //   maReference          = 0x202,
 //   maEmbeddableGet      = 0x103,
 //   maEmbeddableEval     = 0x104,
@@ -501,17 +501,17 @@ struct ClassHeader
 //   maEmbeddableEval2    = 0x108,
 //   maEmbeddableNew      = 0x409,
 //   maOverloadlist       = 0x20A,
-//};
+};
 
 struct ClassInfo
 {
 //   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - type
-//   typedef Pair<ref_t, int>                    Attribute;
+   typedef Pair<ref_t, int>                    Attribute;
    typedef MemoryMap<ref_t, bool, false>       MethodMap;
 //   typedef MemoryMap<ident_t, int, true>       FieldMap;
 //   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
 //   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
-//   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
+   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
 //   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
    ClassHeader    header;
@@ -522,7 +522,7 @@ struct ClassInfo
 //   StaticInfoMap  staticValues;
 //
 //   FieldTypeMap   fieldTypes;
-//   MethodInfoMap  methodHints;
+   MethodInfoMap  methodHints;
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
@@ -533,7 +533,7 @@ struct ClassInfo
          methods.write(writer);
 //         fields.write(writer);
 //         fieldTypes.write(writer);
-//         methodHints.write(writer);
+         methodHints.write(writer);
 //         statics.write(writer);
       }
    }
@@ -547,13 +547,13 @@ struct ClassInfo
          methods.read(reader);
 //         fields.read(reader);
 //         fieldTypes.read(reader);
-//         methodHints.read(reader);
+         methodHints.read(reader);
 //         statics.read(reader);
       }
    }
 
    ClassInfo()
-      : /*fields(-1), */methods(0)//, methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+      : /*fields(-1), */methods(0), methodHints(0)//, fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;
@@ -736,22 +736,22 @@ inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
    paramCount = message & PARAM_MASK;
 }
 
-////inline ref_t overwriteParamCount(ref_t message, int paramCount)
-////{
-////   message &= ~PARAM_MASK;
-////   message |= paramCount;
-////
-////   return message;
-////}
-//
-//inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
+//inline ref_t overwriteParamCount(ref_t message, int paramCount)
 //{
-//   actionRef = (ref_t)(message >> 16);
+//   message &= ~PARAM_MASK;
+//   message |= paramCount;
 //
-//   actionRef &= ACTION_MASK;
-//
-//   paramCount = message & PARAMX_MASK;
+//   return message;
 //}
+
+inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
+{
+   actionRef = (ref_t)(message >> 16);
+
+   actionRef &= ACTION_MASK;
+
+   paramCount = message & PARAMX_MASK;
+}
 
 //inline int getAbsoluteParamCount(ref_t message)
 //{
@@ -792,15 +792,15 @@ inline ref64_t toMessage64(ref_t message)
    return encodeMessage64(actionRef, paramCount);
 }
 
-//inline ref_t fromMessage64(ref64_t message)
-//{
-//   int   paramCount;
-//   ref_t actionRef;
-//   decodeMessage64(message, actionRef, paramCount);
-//
-//   return encodeMessage(actionRef, paramCount);
-//}
-//
+inline ref_t fromMessage64(ref64_t message)
+{
+   int   paramCount;
+   ref_t actionRef;
+   decodeMessage64(message, actionRef, paramCount);
+
+   return encodeMessage(actionRef, paramCount);
+}
+
 ////inline bool IsExprOperator(int operator_id)
 ////{
 ////   switch (operator_id) {

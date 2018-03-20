@@ -178,56 +178,56 @@ void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reade
 //   writer->write(binary->get(0), length);
 //   writer->align(4, 0);
 //}
-//
-//size_t JITCompiler32 :: findFlags(void* refVMT)
-//{
-//   return *(int*)((ref_t)refVMT - 0x08);  // !! explicit constant
-//}
-//
-//size_t JITCompiler32 :: findLength(void* refVMT)
-//{
-//   int count = *(int*)((int)refVMT - elVMTCountOffset32);
-//   return count;
-//}
-//
-//pos_t JITCompiler32 :: findMethodAddress(void* refVMT, size_t message, size_t count)
-//{
-//   VMTEntry* entries = (VMTEntry*)refVMT;
-//
-//   // search for the message entry
-//   size_t i = 0;
-//   while (i < count && entries[i].message != message) {
-//      i++;
-//   }
-//
-//   // return the method address
-//   // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
-//   return (i < count) ? entries[i].address : entries[0].address;
-//}
-//
-//int JITCompiler32 :: findMethodIndex(void* refVMT, ref_t message, size_t count)
-//{
-//   VMTEntry* entries = (VMTEntry*)refVMT;
-//
-//   // search for the message entry
-//   size_t i = 0;
-//   while (i < count && entries[i].message != message) {
-//      i++;
-//   }
-//
-//   // return the method index
-//   // if the vmt entry was not resolved, SEND_MESSAGE index should be used (the first method entry)
-//   return (i < count) ? i : 0;
-//}
-//
-//int JITCompiler32 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
-//{
-//   writer.writeBytes(0, objectOffset);
-//
-//   alignCode(&writer, VA_ALIGNMENT, false);
-//
-//   return writer.Position() - 4;
-//}
+
+size_t JITCompiler32 :: findFlags(void* refVMT)
+{
+   return *(int*)((ref_t)refVMT - 0x08);  // !! explicit constant
+}
+
+size_t JITCompiler32 :: findLength(void* refVMT)
+{
+   int count = *(int*)((int)refVMT - elVMTCountOffset32);
+   return count;
+}
+
+pos_t JITCompiler32 :: findMethodAddress(void* refVMT, size_t message, size_t count)
+{
+   VMTEntry* entries = (VMTEntry*)refVMT;
+
+   // search for the message entry
+   size_t i = 0;
+   while (i < count && entries[i].message != message) {
+      i++;
+   }
+
+   // return the method address
+   // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
+   return (i < count) ? entries[i].address : entries[0].address;
+}
+
+int JITCompiler32 :: findMethodIndex(void* refVMT, ref_t message, size_t count)
+{
+   VMTEntry* entries = (VMTEntry*)refVMT;
+
+   // search for the message entry
+   size_t i = 0;
+   while (i < count && entries[i].message != message) {
+      i++;
+   }
+
+   // return the method index
+   // if the vmt entry was not resolved, SEND_MESSAGE index should be used (the first method entry)
+   return (i < count) ? i : 0;
+}
+
+int JITCompiler32 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
+{
+   writer.writeBytes(0, objectOffset);
+
+   alignCode(&writer, VA_ALIGNMENT, false);
+
+   return writer.Position() - 4;
+}
 
 void JITCompiler32 :: allocateVariable(MemoryWriter& writer)
 {
@@ -502,71 +502,71 @@ void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
 //   writer->write(binary->get(0), length);
 //   writer->align(8, 0);
 //}
-//
-//size_t JITCompiler64 :: findFlags(void* refVMT)
-//{
-//   return *(int*)((ref_t)refVMT - 0x10);  // !! explicit constant
-//}
-//
-//size_t JITCompiler64 :: findLength(void* refVMT)
-//{
-//   ref64_t count = *(int*)((int)refVMT - elVMTCountOffset64);
-//   return (size_t)count;
-//}
-//
-//pos_t JITCompiler64 :: findMethodAddress(void* refVMT, size_t message, size_t count)
-//{
-//   ref64_t address = findMethodAddressX(refVMT, toMessage64(message), count);
-//
-//   if (address < 10000000000000000ull) {
-//      return (pos_t)address;
-//   }
-//   else throw InternalError("Addresses bigger than 4GB are not supported");
-//}
-//
-//ref64_t JITCompiler64 :: findMethodAddressX(void* refVMT, ref64_t messageID, size_t count)
-//{
-//   VMTXEntry* entries = (VMTXEntry*)refVMT;
-//
-//   // search for the message entry
-//   size_t i = 0;
-//   while (i < count && entries[i].message != messageID) {
-//      i++;
-//   }
-//
-//   // return the method address
-//   // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
-//   return (i < count) ? entries[i].address : entries[0].address;
-//}
-//
-//int JITCompiler64::findMethodIndex(void* refVMT, size_t message, size_t count)
-//{
-//   return findMethodIndexX(refVMT, toMessage64(message), count);
-//}
-//
-//int JITCompiler64::findMethodIndexX(void* refVMT, ref64_t messageID, size_t count)
-//{
-//   VMTXEntry* entries = (VMTXEntry*)refVMT;
-//
-//   // search for the message entry
-//   size_t i = 0;
-//   while (i < count && entries[i].message != messageID) {
-//      i++;
-//   }
-//
-//   // return the method index
-//   // if the vmt entry was not resolved, SEND_MESSAGE index should be used (the first method entry)
-//   return (i < count) ? i : 0;
-//}
-//
-//int JITCompiler64 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
-//{
-//   writer.writeBytes(0, objectOffset);
-//
-//   alignCode(&writer, VA_ALIGNMENT, false);
-//
-//   return writer.Position() - 8;
-//}
+
+size_t JITCompiler64 :: findFlags(void* refVMT)
+{
+   return *(int*)((ref_t)refVMT - 0x10);  // !! explicit constant
+}
+
+size_t JITCompiler64 :: findLength(void* refVMT)
+{
+   ref64_t count = *(int*)((int)refVMT - elVMTCountOffset64);
+   return (size_t)count;
+}
+
+pos_t JITCompiler64 :: findMethodAddress(void* refVMT, size_t message, size_t count)
+{
+   ref64_t address = findMethodAddressX(refVMT, toMessage64(message), count);
+
+   if (address < 10000000000000000ull) {
+      return (pos_t)address;
+   }
+   else throw InternalError("Addresses bigger than 4GB are not supported");
+}
+
+ref64_t JITCompiler64 :: findMethodAddressX(void* refVMT, ref64_t messageID, size_t count)
+{
+   VMTXEntry* entries = (VMTXEntry*)refVMT;
+
+   // search for the message entry
+   size_t i = 0;
+   while (i < count && entries[i].message != messageID) {
+      i++;
+   }
+
+   // return the method address
+   // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
+   return (i < count) ? entries[i].address : entries[0].address;
+}
+
+int JITCompiler64::findMethodIndex(void* refVMT, size_t message, size_t count)
+{
+   return findMethodIndexX(refVMT, toMessage64(message), count);
+}
+
+int JITCompiler64::findMethodIndexX(void* refVMT, ref64_t messageID, size_t count)
+{
+   VMTXEntry* entries = (VMTXEntry*)refVMT;
+
+   // search for the message entry
+   size_t i = 0;
+   while (i < count && entries[i].message != messageID) {
+      i++;
+   }
+
+   // return the method index
+   // if the vmt entry was not resolved, SEND_MESSAGE index should be used (the first method entry)
+   return (i < count) ? i : 0;
+}
+
+int JITCompiler64 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
+{
+   writer.writeBytes(0, objectOffset);
+
+   alignCode(&writer, VA_ALIGNMENT, false);
+
+   return writer.Position() - 8;
+}
 
 void JITCompiler64 :: allocateVariable(MemoryWriter& writer)
 {

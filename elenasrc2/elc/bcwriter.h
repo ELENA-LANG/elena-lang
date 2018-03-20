@@ -135,8 +135,8 @@ class ByteCodeWriter
    void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
-//
-//   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
+
+   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -186,10 +186,10 @@ class ByteCodeWriter
 //   void setSubject(CommandTape& tape, ref_t subject);
 //
 //   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-//   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion = true);
+   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion = true);
 //   void callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
-//   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode);
-//
+   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode);
+
 //   void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
 //   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
 //   void doGenericHandler(CommandTape& tape);
@@ -325,7 +325,7 @@ class ByteCodeWriter
 
 public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
-//   int writeString(ident_t path);
+   int writeString(ident_t path);
 
    void generateClass(CommandTape& tape, SNode root, pos_t sourcePathBookmark);
 //   void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);

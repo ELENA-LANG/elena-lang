@@ -75,15 +75,15 @@ public:
    virtual int allocateTLSVariable(_JITLoader* loader) = 0;
    virtual void allocateThreadTable(_JITLoader* loader, int length) = 0;
 
-//   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
+   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize) = 0;
 
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
 
-//   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
-//   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
-//   virtual size_t findFlags(void* refVMT) = 0;
-//   virtual size_t findLength(void* refVMT) = 0;
+   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
+   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
+   virtual size_t findFlags(void* refVMT) = 0;
+   virtual size_t findLength(void* refVMT) = 0;
 
    virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count) = 0;
 
@@ -118,13 +118,13 @@ public:
    virtual void allocateVariable(MemoryWriter& writer);
    virtual void allocateArray(MemoryWriter& writer, size_t count);
 
-//   // return VMT field position
-//   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
-//
-//   virtual size_t findFlags(void* refVMT);
-//   virtual size_t findLength(void* refVMT);
-//   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
-//   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);
+   // return VMT field position
+   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
+
+   virtual size_t findFlags(void* refVMT);
+   virtual size_t findLength(void* refVMT);
+   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
+   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);
 
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
@@ -153,16 +153,16 @@ public:
    virtual void allocateVariable(MemoryWriter& writer);
    virtual void allocateArray(MemoryWriter& writer, size_t count);
 
-//   // return VMT field position
-//   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
-//
-//   virtual size_t findFlags(void* refVMT);
-//   virtual size_t findLength(void* refVMT);
-//   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
-//   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);
-//
-//   virtual ref64_t findMethodAddressX(void* refVMT, ref64_t messageID, size_t vmtLength);
-//   virtual int findMethodIndexX(void* refVMT, ref64_t messageID, size_t vmtLength);
+   // return VMT field position
+   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
+
+   virtual size_t findFlags(void* refVMT);
+   virtual size_t findLength(void* refVMT);
+   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
+   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);
+
+   virtual ref64_t findMethodAddressX(void* refVMT, ref64_t messageID, size_t vmtLength);
+   virtual int findMethodIndexX(void* refVMT, ref64_t messageID, size_t vmtLength);
 
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);

@@ -3,6 +3,13 @@ In development:
 ------                              
                             
               dev - redesign
+                 * message : param - direct call
+
+                 * debugger : show self / __target
+
+                 * message : param other : param2
+                 * message : param : param
+
                  * message - offset in message table = action offset + signature offset ;
                    message table, action table, signature table
                  

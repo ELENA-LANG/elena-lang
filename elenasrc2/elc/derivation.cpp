@@ -50,13 +50,13 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsCodeEnd:
          _writer.newNode(lxEOF);
          break;
-//      case nsMethodParameter:
-//         _writer.newNode(lxMethodParameter);
-//         break;
-//      case nsMessageParameter:
+      case nsMethodParameter:
+         _writer.newNode(lxMethodParameter);
+         break;
+      case nsMessageParameter:
 //      case nsExprMessageParameter:
-//         _writer.newNode(lxMessageParameter);
-//         break;
+         _writer.newNode(lxMessageParameter);
+         break;
 //      case nsNestedClass:
 //         _writer.newNode(lxNestedClass);
 //         break;
@@ -1604,10 +1604,10 @@ void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode no
 
    while (current != lxNone) {
       switch (current.type) {
-//         case lxMessageParameter:
-//            generateExpressionTree(writer, current, scope/*, EXPRESSION_IMPLICIT_MODE*/);
+         case lxMessageParameter:
+            generateExpressionTree(writer, current, scope);
 //            current = lxIdle; // HOTFIX : to prevent duble compilation of closure parameters
-//            break;
+            break;
 //         case lxExpression:
 //            generateExpressionTree(writer, current, scope/*, *//*EXPRESSION_EXPLICIT_MODE | *//*EXPRESSION_MESSAGE_MODE*/);
 //            break;
@@ -2543,24 +2543,24 @@ void DerivationTransformer :: generateMethodTree(SyntaxWriter& writer, SNode nod
 //
 //      current = current.nextNode();
 //   }
-//
-//   // copy method arguments
-//   current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxMethodParameter || current == lxMessage) {
-//         writer.newNode(current.type, current.argument);
+
+   // copy method arguments
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxMethodParameter/* || current == lxMessage*/) {
+         writer.newNode(current.type, current.argument);
 //         if (current == lxMessage) {
 //            scope.copySubject(writer, current.firstChild(lxTerminalMask));
 //         }
-//         else copyIdentifier(writer, current.firstChild(lxTerminalMask));
-//         writer.closeNode();
-//      }
+         /*else */copyIdentifier(writer, current.firstChild(lxTerminalMask));
+         writer.closeNode();
+      }
 //      else if (current == lxAttributeValue) {
 //         generateParamRef(writer, current, scope, templateMode);
 //      }
-//
-//      current = current.nextNode();
-//   }
+
+      current = current.nextNode();
+   }
 
    SNode bodyNode = node.findChild(lxCode, /*lxExpression, */lxDispatchCode, lxReturning/*, lxResendExpression*/);
    if (bodyNode.compare(lxReturning, lxDispatchCode)) {

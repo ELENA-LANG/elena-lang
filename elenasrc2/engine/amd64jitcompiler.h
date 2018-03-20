@@ -36,12 +36,12 @@ struct AMD64JITScope
    void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
    void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp);
 
-//   ref64_t resolveMessage(ref_t reference)
-//   {
-//      ref_t message32 = helper->resolveMessage(reference, module);
-//
-//      return toMessage64(message32);
-//   }
+   ref64_t resolveMessage(ref_t reference)
+   {
+      ref_t message32 = helper->resolveMessage(reference, module);
+
+      return toMessage64(message32);
+   }
 
    //SectionInfo getSection(ref_t reference)
    //{
@@ -80,6 +80,7 @@ protected:
    friend void compileACopyF(int opcode, AMD64JITScope& scope);
    friend void compileDAddN(int opcode, AMD64JITScope& scope);
    friend void compileBreakpoint(int opcode, AMD64JITScope& scope);
+   friend void compileInvokeVMTOffset(int opcode, AMD64JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];

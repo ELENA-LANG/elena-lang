@@ -29,7 +29,7 @@ namespace _ELENA_
 //   #define PROPSET_MESSAGE         0x20000000u
    #define PARAM_MASK              0x0000000Fu
    #define OPEN_ARG_COUNT          0x0C
-//   #define MAX_ARG_COUNT           0x0E
+   #define MAX_ARG_COUNT           0x0E
 
    #define PARAMX_MASK             0x000000000000FFFFu
 
@@ -142,12 +142,12 @@ namespace _ELENA_
 //      mskClassRelRef         = 0x31000000u,   // class relative code
       mskStatSymbolRef       = 0x82000000u,   // reference to static symbol
 
-//      mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
+      mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000u,   // meta data
-//      mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
+      mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
 //      mskSyntaxTreeRef       = 0x46000000u,   // template, declared in subject namespace
-//      mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
-//      mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
+      mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
+      mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
 
       mskConstantRef         = 0x01000000u,   // reference to constant
 //      mskLiteralRef          = 0x02000000u,   // reference to constant literal
@@ -279,7 +279,7 @@ namespace _ELENA_
    const int elClosed              = 0x00000020;
 //   const int elWrapper             = 0x00000040;
 //   const int elStructureWrapper    = 0x00000048;
-//   const int elStateless           = 0x00000080;
+   const int elStateless           = 0x00000080;
    const int elFinal               = 0x00000100;
    const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
