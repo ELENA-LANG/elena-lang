@@ -83,13 +83,13 @@ public:
 //         this->element_ref = 0;
 //         this->size = 0;
       }
-//      Parameter(int offset, ref_t class_ref)
-//      {
-//         this->offset = offset;
-//         this->class_ref = class_ref;
+      Parameter(int offset, ref_t class_ref)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
 //         this->element_ref = 0;
 //         this->size = 0;
-//      }
+      }
 //      Parameter(int offset, ref_t class_ref, int size)
 //      {
 //         this->offset = offset;
@@ -295,7 +295,7 @@ private:
 //      ref_t mapSubject(SNode terminal, IdentifierString& output);
 //      ref_t mapSubject(SNode terminal);
 
-      /*virtual */ref_t mapTerminal(SNode terminal, bool existing = false);
+      virtual ref_t mapTerminal(SNode terminal, bool existing = false);
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
@@ -931,7 +931,7 @@ private:
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-//   ref_t declareArgumentSubject(SNode node, ModuleScope& scope, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef);
+   ref_t declareArgumentType(SNode node, ModuleScope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/);
    void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
 //   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);

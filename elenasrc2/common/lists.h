@@ -530,6 +530,11 @@ template <class Key, class T> struct _Memory32MapItem
       return (const char*)((size_t)this + keyOffset);
    }
 
+   unsigned int getKey(unsigned int) const // parameter is passed only for overloading
+   {
+      return *(unsigned int*)((size_t)this + keyOffset);
+   }
+
    bool operator ==(ident_t key) const
    {
       return key.compare(getKey(key));
@@ -562,6 +567,36 @@ template <class Key, class T> struct _Memory32MapItem
       ident_t s = getKey(key);
 
       return s.greater(key);
+   }
+
+   bool operator ==(unsigned int key) const
+   {
+      return (this->key == key);
+   }
+
+   bool operator !=(unsigned int key) const
+   {
+      return (getKey(key) != key);
+   }
+
+   bool operator <=(unsigned int key) const
+   {
+      return (getKey(key) <= key);
+   }
+
+   bool operator <(unsigned int key) const
+   {
+      return (getKey(key) < key);
+   }
+
+   bool operator >=(unsigned int key) const
+   {
+      return (getKey(key) >= key);
+   }
+
+   bool operator >(unsigned int key) const
+   {
+      return (getKey(key) > key);
    }
 
    _Memory32MapItem()

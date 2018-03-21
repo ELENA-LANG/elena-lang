@@ -389,6 +389,11 @@ public:
       BaseString<T>::intToStr(n, _string, 10);
    }
 
+   void copyHex(int n)
+   {
+      BaseString<T>::uintToStr(n, _string, 16);
+   }
+
    void appendHex(int n)
    {
       size_t pos = getlength(_string);

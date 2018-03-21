@@ -13,10 +13,26 @@
 
 using namespace _ELENA_;
 
+inline ref64_t encodeActionX(ref_t actionNameRef, ref_t signatureRef)
+{
+   ref64_t r = actionNameRef;
+
+   r = (r << 32) + signatureRef;
+
+   return r;
+}
+
+inline void decodeActionX(ref64_t r, ref_t& actionName, ref_t& signatureRef)
+{
+   signatureRef = r & 0xFFFFFF;
+
+   actionName = (r >> 32);
+}
+
 // --- BaseModule ---
 
 _BaseModule  :: _BaseModule()
-   : _references(0), _actions(0)//, _constants(0)
+   : _references(0), _actionNames(0), _actions(0ll)//, _constants(0)
 {
 }
 
@@ -32,21 +48,82 @@ ident_t _BaseModule :: resolveReference(ref_t reference)
    return key;
 }
 
-ident_t _BaseModule :: resolveAction(ref_t reference)
+ident_t _BaseModule :: resolveAction(ref_t reference, ref_t& signature)
 {
-   ident_t key = _resolvedActions.get(reference);
-   if (!key) {
-      key = retrieveKey(_actions.start(), reference, DEFAULT_STR);
+   ref64_t actionRef = _resolvedActions.get(reference);
+   if (!actionRef) {
+      actionRef = retrieveKey(_actions.start(), reference, 0ll);
 
-      _resolvedActions.add(reference, key);
+      _resolvedActions.add(reference, actionRef);
    }
+
+   ref_t nameRef = 0;
+   decodeActionX(actionRef, nameRef, signature);
+
+   ident_t key = _resolvedActionNames.get(nameRef);
+   if (!key) {
+      key = retrieveKey(_actionNames.start(), nameRef, DEFAULT_STR);
+
+      _resolvedActionNames.add(nameRef, key);
+   }
+
    return key;
+}
+
+size_t _BaseModule :: resolveSignature(ref_t signature, ref_t* references)
+{
+   ident_t key = _resolvedActionNames.get(signature);
+   if (!key) {
+      key = retrieveKey(_actionNames.start(), signature, DEFAULT_STR);
+
+      _resolvedActionNames.add(signature, key);
+   }
+   if (!emptystr(key)) {
+      size_t len = getlength(key) >> 3;
+      String<char, 9> tmp;
+      for (size_t i = 0; i < len; i++) {
+         tmp.copy(key.c_str() + (i << 3), 8);
+
+         references[i] = ident_t(tmp).toULong(16);
+      }
+
+      return len;
+   }
+   else return 0;
 }
 
 //ident_t _BaseModule :: resolveConstant(ref_t reference)
 //{
 //   return retrieveKey(_constants.start(), reference, DEFAULT_STR);
 //}
+
+ref_t _BaseModule :: retrieveSignature(ref_t* references, size_t length, bool existing)
+{
+   String<char, 256> signatureStr;
+   String<char, 9> tmp;
+   for (size_t i = 0; i < length; i++) {
+      tmp.copyHex(references[i]);
+
+      size_t filling = 8 - getlength(tmp);
+      for(size_t j = 0 ; j < filling ; j++)
+         signatureStr.append('0');
+
+      signatureStr.append(tmp);
+   }
+   if (existing) {
+      return _actionNames.get(signatureStr.c_str());
+   }
+   else {
+      ref_t nextNameId = _actionNames.Count() + 1;
+      ref_t nameId = mapKey(_actionNames, signatureStr.c_str(), nextNameId);
+
+      // if we added new message, clear resolved message cache (due to possible string relocation)
+      if (nameId == nextNameId)
+         _resolvedActionNames.clear();
+
+      return nameId;
+   }
+}
 
 // --- Module ---
 
@@ -70,8 +147,10 @@ void Module :: mapPredefinedReference(ident_t name, ref_t reference)
 void Module :: mapPredefinedAction(ident_t name, ref_t reference)
 {
    _resolvedActions.clear();
+   _resolvedActionNames.clear();
 
-   _actions.add(name, reference);
+   _actionNames.add(name, reference);
+   _actions.add(reference, encodeActionX(reference, 0));
 }
 
 ref_t Module :: mapReference(ident_t reference)
@@ -91,21 +170,31 @@ ref_t Module :: mapReference(ident_t reference)
    return refId;
 }
 
-ref_t Module :: mapAction(ident_t actionName, bool existing)
+ref_t Module :: mapAction(ident_t actionName, ref_t signature, bool existing)
 {
-   if (existing)
-      return _actions.get(actionName);
-   else {
-      ref_t nextId = _actions.Count() + 1;
+   if (existing) {
+      ref_t actionNameId = _actionNames.get(actionName);
 
-      ref_t refId = mapKey(_actions, actionName, nextId);
+      return _actions.get(encodeActionX(actionNameId, signature));
+   }
+   else {
+      ref_t nextNameId = _actionNames.Count() + 1;
+      ref_t nameId = mapKey(_actionNames, actionName, nextNameId);
 
       // if we added new message, clear resolved message cache (due to possible string relocation)
-      if (refId == nextId)
-         _resolvedActions.clear();
+      if (nameId == nextNameId)
+         _resolvedActionNames.clear();
+
+      ref_t nextId = _actions.Count() + 1;
+      ref_t refId = mapKey(_actions, encodeActionX(nameId, signature), nextId);
 
       return refId;
    }
+}
+
+ref_t Module :: mapSignature(ref_t* references, size_t length, bool existing)
+{
+   return retrieveSignature(references, length, existing);
 }
 
 //ref_t Module :: mapConstant(ident_t constant)
@@ -191,6 +280,9 @@ LoadResult Module :: load(StreamReader& reader)
    // load references...
    _references.read(&reader);
 
+   // load action names...
+   _actionNames.read(&reader);
+
    // load actions...
    _actions.read(&reader);
 
@@ -216,6 +308,9 @@ bool Module :: save(StreamWriter& writer)
 
    // save references...
    _references.write(&writer);
+
+   // save action names...
+   _actionNames.write(&writer);
 
    // save actions...
    _actions.write(&writer);
@@ -252,6 +347,9 @@ ROModule :: ROModule(StreamReader& reader, LoadResult& result)
 
    // load references...
    _references.read(&reader);
+
+   // load action names...
+   _actionNames.read(&reader);
 
    // load actions...
    _actions.read(&reader);
@@ -301,12 +399,22 @@ ref_t ROModule :: mapReference(ident_t reference, bool existing)
    else return _references.get(reference);
 }
 
-ref_t ROModule :: mapAction(ident_t actionName, bool existing)
+ref_t ROModule :: mapAction(ident_t actionName, ref_t signature, bool existing)
 {
-   if (!existing) {
-      throw InternalError("Read-only Module");
+   if (existing) {
+      ref_t actionNameId = _actionNames.get(actionName);
+
+      return _actions.get(encodeActionX(actionNameId, signature));
    }
-   else return _actions.get(actionName);
+   else throw InternalError("Read-only Module");
+}
+
+ref_t ROModule :: mapSignature(ref_t* references, size_t length, bool existing)
+{
+   if (existing) {
+      return retrieveSignature(references, length, existing);
+   }
+   else throw InternalError("Read-only Module");
 }
 
 //ref_t ROModule :: mapConstant(ident_t reference)

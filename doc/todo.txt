@@ -3,7 +3,10 @@ In development:
 ------                              
                             
               dev - redesign
-                 * message : param - direct call
+                 * message : param
+
+                 * message1 : param1 message2 : param2
+
 
                  * debugger : show self / __target
 

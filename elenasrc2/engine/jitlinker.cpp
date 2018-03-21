@@ -163,7 +163,7 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 // --- JITLinker ---
 
-ref_t JITLinker :: resolveAction(ident_t signature, int paramCount)
+ref_t JITLinker :: resolveAction(ident_t action, int paramCount)
 {
 //   size_t overloadIndex = signature.find('$');
 //   if (overloadIndex != NOTFOUND_POS && paramCount > 0) {
@@ -200,7 +200,7 @@ ref_t JITLinker :: resolveAction(ident_t signature, int paramCount)
 //
 //      return tableOffs | SIGNATURE_FLAG;
 //   }
-   /*else */return (ref_t)_loader->resolveReference(signature, 0);
+   /*else */return (ref_t)_loader->resolveReference(action, 0);
 }
 
 ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
@@ -216,7 +216,10 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
    }
 
    // otherwise signature and custom verb should be imported
-   actionRef = resolveAction(module->resolveAction(actionRef), paramCount);
+   ref_t signature = 0;
+   ident_t actionName = module->resolveAction(actionRef, signature);
+
+   actionRef = resolveAction(actionName, /*signature, */paramCount);
 
    return encodeMessage(actionRef, paramCount) | flags;
 }

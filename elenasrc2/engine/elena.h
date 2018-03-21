@@ -24,13 +24,15 @@ public:
    virtual ident_t Name() const = 0;
 
    virtual ident_t resolveReference(ref_t reference) = 0;
-   virtual ident_t resolveAction(ref_t reference) = 0;
+   virtual ident_t resolveAction(ref_t reference, ref_t& signature) = 0;
+   virtual size_t resolveSignature(ref_t signature, ref_t* references) = 0;
 //   virtual ident_t resolveConstant(ref_t reference) = 0;
 
    virtual ref_t mapReference(ident_t reference) = 0;
    virtual ref_t mapReference(ident_t reference, bool existing) = 0;
 
-   virtual ref_t mapAction(ident_t actionName, bool existing) = 0;
+   virtual ref_t mapSignature(ref_t* references, size_t length, bool existing) = 0;
+   virtual ref_t mapAction(ident_t actionName, ref_t signature, bool existing) = 0;
 //   virtual ref_t mapConstant(ident_t reference) = 0;
 
    virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
@@ -663,6 +665,11 @@ inline ref_t tableRule(ref_t key)
    return key >> cnTableKeyPower;
 }
 
+inline ref_t __map64Key(ref_t key)
+{
+   return key & 0x3F;
+}
+
 // --- mapping keys ---
 inline ref_t mapReferenceKey(ident_t key)
 {
@@ -681,17 +688,18 @@ inline ref_t mapReferenceKey(ident_t key)
 
 typedef Map<ident_t, _Module*> ModuleMap;
 ////typedef List<_Module*>         ModuleList;
-//
-////// --- Reference mapping types ---
-////typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
+
+// --- Reference mapping types ---
+//typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
 typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
-////typedef Map<ref_t, ref_t>                                       SubjectMap;
-////typedef List<ref_t>                                             SubjectList;
+//typedef Map<ref_t, ref_t>                                       SubjectMap;
+//typedef List<ref_t>                                             SubjectList;
+typedef Memory32HashTable<ref_t, ref64_t, __map64Key, 64>       ActionMap;
 
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> MessageMap;
 
-//// --- ParserTable auxiliary types ---
+// --- ParserTable auxiliary types ---
 typedef Stack<int>                                          ParserStack;
 typedef MemoryMap<ident_t, int>                             SymbolMap;
 typedef MemoryHashTable<ref_t, int, syntaxRule, cnHashSize> SyntaxHash;
@@ -724,9 +732,9 @@ inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
    return message;
 }
 
-inline ref_t encodeVerb(int verbId)
+inline ref_t encodeAction(ref_t actionId)
 {
-   return encodeMessage(verbId, 0);
+   return encodeMessage(actionId, 0);
 }
 
 inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
@@ -846,6 +854,17 @@ inline ref_t fromMessage64(ref64_t message)
 ////   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
 ////}
 
+inline ref_t importSignature(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   if (!exportRef)
+      return 0;
+
+   ref_t dump[OPEN_ARG_COUNT];
+   size_t len = exporter->resolveSignature(exportRef, dump);
+
+   return importer->mapSignature(dump, len, false);
+}
+
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
    ref_t actionRef = 0;
@@ -860,9 +879,10 @@ inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer
    }
 
    // otherwise signature and custom verb should be imported
-   ident_t actionName = exporter->resolveAction(actionRef);
+   ref_t signature = 0;
+   ident_t actionName = exporter->resolveAction(actionRef, signature);
 
-   actionRef = importer->mapAction(actionName, false);
+   actionRef = importer->mapAction(actionName, importSignature(exporter, signature, importer), false);
 
    return encodeMessage(actionRef, paramCount) | flags;
 }

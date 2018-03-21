@@ -18,17 +18,31 @@ class _BaseModule  : public _Module
 {
 protected:
    typedef Cache<ref_t, ident_t, 20> ResolveMap;
+   typedef Cache<ref_t, ref64_t, 20> ResolvedAMap;
 
    ReferenceMap _references;
-   ReferenceMap _actions;
+   ReferenceMap _actionNames;
+   ActionMap    _actions;
+
+   //_actionNames;
+   //_signatures;
+   //_actions;
+
+   //_resolvedActions;
+
+   //ReferenceMap _actions;
 //   ReferenceMap _constants;
 
    ResolveMap   _resolvedReferences;
-   ResolveMap   _resolvedActions;
+   ResolveMap   _resolvedActionNames;
+   ResolvedAMap _resolvedActions;
+
+   ref_t retrieveSignature(ref_t* references, size_t length, bool existing);
 
 public:
    virtual ident_t resolveReference(ref_t reference);
-   virtual ident_t resolveAction(ref_t reference);
+   virtual ident_t resolveAction(ref_t reference, ref_t& signature);
+   virtual size_t resolveSignature(ref_t signature, ref_t* references);
 //   virtual ident_t resolveConstant(ref_t reference);
 
    _BaseModule ();
@@ -56,7 +70,8 @@ public:
    virtual ref_t mapReference(ident_t reference);
    virtual ref_t mapReference(ident_t reference, bool existing);
 
-   virtual ref_t mapAction(ident_t actionName, bool existing);
+   virtual ref_t mapAction(ident_t actionName, ref_t signature, bool existing);
+   virtual ref_t mapSignature(ref_t* references, size_t length, bool existing);
 //   virtual ref_t mapConstant(ident_t constant);
 
    virtual Section* mapSection(ref_t reference, bool existing);
@@ -178,7 +193,8 @@ public:
    virtual ref_t mapReference(ident_t reference);
    virtual ref_t mapReference(ident_t reference, bool existing);
 
-   virtual ref_t mapAction(ident_t actionName, bool existing);
+   virtual ref_t mapAction(ident_t actionName, ref_t signature, bool existing);
+   virtual ref_t mapSignature(ref_t* references, size_t length, bool existing);
 //   virtual ref_t mapConstant(ident_t reference);
 
    virtual void mapPredefinedReference(ident_t, ref_t)

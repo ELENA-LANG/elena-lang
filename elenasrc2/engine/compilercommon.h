@@ -160,7 +160,7 @@ struct _CompilerScope
 //   virtual void raiseWarning(int level, const char* message, SNode terminal) = 0;
 
    virtual ref_t mapAttribute(SNode terminal) = 0;
-//   virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
+   virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
 //   virtual ref_t mapReference(ident_t reference, bool existing = false) = 0;
 //   virtual ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared) = 0;
 //   virtual ref_t mapAnonymous() = 0;

@@ -107,9 +107,9 @@ class DerivationTransformer : public _DerivationTransformer
 //         int dummy = 0;
 //         return mapAttribute(terminal, dummy);
 //      }
-//
-//      ref_t mapClassType(SNode terminal, bool& arrayMode, bool& paramMode);
-//
+
+      ref_t mapAttributeType(SNode terminal/*, bool& arrayMode, bool& paramMode*/);
+
 //      ref_t mapTemplate(SNode terminal, int paramCounter = 0, int prefixCounter = 0);
 //      ref_t mapClassTemplate(SNode terminal);
 //      ref_t mapTerminal(SNode terminal, bool existing = false);
@@ -207,8 +207,8 @@ class DerivationTransformer : public _DerivationTransformer
 //   bool checkArrayDeclaration(SNode node, DerivationScope& scope);
 //
 //   void generateMessage(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
-//   void generateParamRef(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
-//
+   void generateTypeAttribute(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool templateMode*/);
+
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
 //   bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope, SubjectMap* parentAttributes);
 //   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
