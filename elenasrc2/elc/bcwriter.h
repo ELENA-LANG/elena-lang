@@ -11,6 +11,7 @@
 
 #include "bytecode.h"
 #include "compilercommon.h"
+#include "syntaxtree.h"
 
 namespace _ELENA_
 {

@@ -315,36 +315,36 @@ inline bool isAttribute(ref_t attr)
 
 // --- DerivationTransformer::DerivationScope ---
 
-ref_t DerivationTransformer::DerivationScope :: mapAttributeType(SNode node/*, bool& argMode, bool& paramMode*/)
-{
-   SNode current = node.findChild(lxIdentifier/*, lxReference, lxPrivate*/);
-
-//   int paramIndex = 0;
-//   ref_t ref = mapAttribute(current, paramIndex);
-//   if (paramIndex != 0) {
-//      paramMode = true;
+//ref_t DerivationTransformer::DerivationScope :: mapAttributeType(SNode node/*, bool& argMode, bool& paramMode*/)
+//{
+//   SNode current = node.findChild(lxIdentifier/*, lxReference, lxPrivate*/);
 //
-//      return paramIndex;
+////   int paramIndex = 0;
+////   ref_t ref = mapAttribute(current, paramIndex);
+////   if (paramIndex != 0) {
+////      paramMode = true;
+////
+////      return paramIndex;
+////   }
+//
+//   ref_t ref = moduleScope->mapTerminal(current, true);
+//   if (!ref) {
+////      ref = mapAttribute(current);
+////      if (ref == 0) {
+//         ref = moduleScope->mapTerminal(current, false);
+////      }
+////      else if (ref == V_OBJARRAY && !argMode) {
+////         argMode = true;
+////         ref = moduleScope->mapTerminal(node.findChild(lxAttributeValue).findChild(lxIdentifier, lxReference, lxPrivate), true);
+////         if (!ref)
+////            raiseError(errInvalidHint, node);
+////      }
+////      else if ((int)ref < 0)
+////         raiseError(errInvalidHint, node);
 //   }
-
-   ref_t ref = moduleScope->mapTerminal(current, true);
-   if (!ref) {
-//      ref = mapAttribute(current);
-//      if (ref == 0) {
-         ref = moduleScope->mapTerminal(current, false);
-//      }
-//      else if (ref == V_OBJARRAY && !argMode) {
-//         argMode = true;
-//         ref = moduleScope->mapTerminal(node.findChild(lxAttributeValue).findChild(lxIdentifier, lxReference, lxPrivate), true);
-//         if (!ref)
-//            raiseError(errInvalidHint, node);
-//      }
-//      else if ((int)ref < 0)
-//         raiseError(errInvalidHint, node);
-   }
-
-   return ref;
-}
+//
+//   return ref;
+//}
 
 //ref_t DerivationReader::DerivationScope :: mapNewReference(ident_t identifier)
 //{
@@ -353,23 +353,23 @@ ref_t DerivationTransformer::DerivationScope :: mapAttributeType(SNode node/*, b
 //   return moduleScope->module->mapReference(name);
 //}
 
-ref_t DerivationTransformer::DerivationScope :: mapAttribute(SNode attribute/*, int& paramIndex*/)
-{
-//   SNode terminal = attribute.firstChild(lxTerminalMask);
-//   if (terminal == lxNone)
-//      terminal = attribute;
-//
-//   int index = mapParameter(terminal);
-//   if (index) {
-//      paramIndex = index;
-//
-//      return attribute.existChild(lxAttributeValue) ? V_ATTRTEMPLATE : INVALID_REF;
-//   }
-//   else if (attribute.existChild(lxAttributeValue)) {
-//      return V_ATTRTEMPLATE;
-//   }
-   /*else */return moduleScope->mapAttribute(attribute);
-}
+//ref_t DerivationTransformer::DerivationScope :: mapAttribute(SNode attribute/*, int& paramIndex*/)
+//{
+////   SNode terminal = attribute.firstChild(lxTerminalMask);
+////   if (terminal == lxNone)
+////      terminal = attribute;
+////
+////   int index = mapParameter(terminal);
+////   if (index) {
+////      paramIndex = index;
+////
+////      return attribute.existChild(lxAttributeValue) ? V_ATTRTEMPLATE : INVALID_REF;
+////   }
+////   else if (attribute.existChild(lxAttributeValue)) {
+////      return V_ATTRTEMPLATE;
+////   }
+//   /*else */return moduleScope->mapAttribute(attribute);
+//}
 
 //ref_t DerivationReader::DerivationScope :: mapTerminal(SNode terminal, bool existing)
 //{
@@ -526,34 +526,34 @@ ref_t DerivationTransformer::DerivationScope :: mapAttribute(SNode attribute/*, 
 //   else return 0;
 //}
 
-void DerivationTransformer::DerivationScope :: copyName(SyntaxWriter& writer, SNode terminal)
-{
-//   int index = mapParameter(terminal);
-//   if (index) {
-//      writer.newNode(lxTemplateParam, index);
-//      copyIdentifier(writer, terminal);
-//      writer.closeNode();
-//   }
-//   else if (type == DerivationScope::ttMethodTemplate) {
-//      ident_t identifier = terminal.identifier();
-//      if (emptystr(identifier))
-//         identifier = terminal.findChild(lxTerminal).identifier();
+//void DerivationTransformer::DerivationScope :: copyName(SyntaxWriter& writer, SNode terminal)
+//{
+////   int index = mapParameter(terminal);
+////   if (index) {
+////      writer.newNode(lxTemplateParam, index);
+////      copyIdentifier(writer, terminal);
+////      writer.closeNode();
+////   }
+////   else if (type == DerivationScope::ttMethodTemplate) {
+////      ident_t identifier = terminal.identifier();
+////      if (emptystr(identifier))
+////         identifier = terminal.findChild(lxTerminal).identifier();
+////
+////      index = fields.get(identifier);
+////      if (index != 0) {
+////         writer.newNode(lxTemplateMethod, parameters.Count() + index);
+////         copyIdentifier(writer, terminal);
+////         writer.closeNode();
+////      }
+////      else copyIdentifier(writer, terminal);
+////   }
+//   /*else */copyIdentifier(writer, terminal);
+//}
 //
-//      index = fields.get(identifier);
-//      if (index != 0) {
-//         writer.newNode(lxTemplateMethod, parameters.Count() + index);
-//         copyIdentifier(writer, terminal);
-//         writer.closeNode();
-//      }
-//      else copyIdentifier(writer, terminal);
-//   }
-   /*else */copyIdentifier(writer, terminal);
-}
-
-void DerivationTransformer::DerivationScope :: copyMessage(SyntaxWriter& writer, SNode terminal)
-{
-   copyIdentifier(writer, terminal);
-}
+//void DerivationTransformer::DerivationScope :: copyMessage(SyntaxWriter& writer, SNode terminal)
+//{
+//   copyIdentifier(writer, terminal);
+//}
 
 //void DerivationReader::DerivationScope :: copyIdentifier(SyntaxWriter& writer, SNode terminal)
 //{
@@ -1164,84 +1164,84 @@ DerivationTransformer :: DerivationTransformer(SyntaxTree& tree)
 ref_t DerivationTransformer :: mapAttribute(SNode terminal, DerivationScope& scope/*, bool& templateAttr*/)
 {
    ref_t attrRef = terminal.argument;
-//   if (attrRef == INVALID_REF) {
-//      // generate a template based type
-//      attrRef = V_ATTRTEMPLATE;
-//   }
-   /*else */if (attrRef == 0) {
-//      int paramIndex = 0;
-      attrRef = scope.mapAttribute(terminal/*, paramIndex*/);
-//      if (paramIndex != 0) {
-//         templateAttr = true;
-//
-//         return paramIndex;
-//      }         
-   }      
+////   if (attrRef == INVALID_REF) {
+////      // generate a template based type
+////      attrRef = V_ATTRTEMPLATE;
+////   }
+//   /*else */if (attrRef == 0) {
+////      int paramIndex = 0;
+//      attrRef = scope.mapAttribute(terminal/*, paramIndex*/);
+////      if (paramIndex != 0) {
+////         templateAttr = true;
+////
+////         return paramIndex;
+////      }         
+//   }      
 
    return attrRef;
 }
 
 void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes, bool templateMode*/)
 {
-   SNode current = node.prevNode();
-
-   if (current == lxNameAttr) {
-      scope.copyName(writer, current.firstChild(lxTerminalMask));
-
-      current = current.prevNode();
-   }
-   //   if (node != lxNone) {
-   //      SNode nameNode = current == lxNameAttr ? current.findChild(lxIdentifier, lxPrivate) : node.findChild(lxIdentifier, lxPrivate);
-   //      if (nameNode != lxNone)
-   //         scope.copySubject(writer, nameNode);
-   //   }
-
-   while (current == lxAttribute/* || current == lxAttributeDecl*/) {
-//      bool templateAttr = false;
-      ref_t attrRef = mapAttribute(current, scope/*, templateAttr*/);         
-
-//      if (templateAttr) {
-//         writer.appendNode(lxTemplateAttribute, attrRef);
-//      }
-//      else if (attrRef == V_ATTRTEMPLATE) {
-//         generateAttributeTemplate(writer, current, scope, templateMode);
-//      }
-      /*else */if (isAttribute(attrRef)) {
-         writer.newNode(lxAttribute, attrRef);
-         copyIdentifier(writer, current.findChild(lxIdentifier));
-         writer.closeNode();
-
-//         if (attrRef == V_TEMPLATE && current.existChild(lxBaseParent)) {
-//            //HOTFIX : check if it is template based on the class
-//            writer.newNode(lxTemplateParent);
-//            copyIdentifier(writer, current.findChild(lxBaseParent).firstChild(lxTerminalMask));
-//            writer.closeNode();
-//         }
-      }
-//      else if (attrRef != 0) {
-//         writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(attrRef));
-//         copyIdentifier(writer, current.firstChild(lxTerminalMask));
+//   SNode current = node.prevNode();
+//
+//   if (current == lxNameAttr) {
+//      scope.copyName(writer, current.firstChild(lxTerminalMask));
+//
+//      current = current.prevNode();
+//   }
+//   //   if (node != lxNone) {
+//   //      SNode nameNode = current == lxNameAttr ? current.findChild(lxIdentifier, lxPrivate) : node.findChild(lxIdentifier, lxPrivate);
+//   //      if (nameNode != lxNone)
+//   //         scope.copySubject(writer, nameNode);
+//   //   }
+//
+//   while (current == lxAttribute/* || current == lxAttributeDecl*/) {
+////      bool templateAttr = false;
+//      ref_t attrRef = mapAttribute(current, scope/*, templateAttr*/);         
+//
+////      if (templateAttr) {
+////         writer.appendNode(lxTemplateAttribute, attrRef);
+////      }
+////      else if (attrRef == V_ATTRTEMPLATE) {
+////         generateAttributeTemplate(writer, current, scope, templateMode);
+////      }
+//      /*else */if (isAttribute(attrRef)) {
+//         writer.newNode(lxAttribute, attrRef);
+//         copyIdentifier(writer, current.findChild(lxIdentifier));
 //         writer.closeNode();
+//
+////         if (attrRef == V_TEMPLATE && current.existChild(lxBaseParent)) {
+////            //HOTFIX : check if it is template based on the class
+////            writer.newNode(lxTemplateParent);
+////            copyIdentifier(writer, current.findChild(lxBaseParent).firstChild(lxTerminalMask));
+////            writer.closeNode();
+////         }
 //      }
-      else scope.raiseError(errInvalidHint, current);
-
-//      if (current.existChild(lxSize)) {
-//         SNode sizeNode = current.findChild(lxSize);
-//         if (sizeNode.argument == -1 && node == lxClassField) {
-//            // if it is a dynamic size
-//            writer.appendNode(lxSize, -1);
-//         }
-//         else {
-//            sizeNode = sizeNode.findChild(lxInteger, lxHexInteger);
-//            if (sizeNode != lxNone && node == lxClassField) {
-//               writer.appendNode(lxSize, readSizeValue(sizeNode, sizeNode == lxHexInteger ? 16 : 10));            
-//            }
-//            else scope.raiseError(errInvalidHint, node);
-//         }         
-//      }
-
-      current = current.prevNode();
-   }
+////      else if (attrRef != 0) {
+////         writer.newNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(attrRef));
+////         copyIdentifier(writer, current.firstChild(lxTerminalMask));
+////         writer.closeNode();
+////      }
+//      else scope.raiseError(errInvalidHint, current);
+//
+////      if (current.existChild(lxSize)) {
+////         SNode sizeNode = current.findChild(lxSize);
+////         if (sizeNode.argument == -1 && node == lxClassField) {
+////            // if it is a dynamic size
+////            writer.appendNode(lxSize, -1);
+////         }
+////         else {
+////            sizeNode = sizeNode.findChild(lxInteger, lxHexInteger);
+////            if (sizeNode != lxNone && node == lxClassField) {
+////               writer.appendNode(lxSize, readSizeValue(sizeNode, sizeNode == lxHexInteger ? 16 : 10));            
+////            }
+////            else scope.raiseError(errInvalidHint, node);
+////         }         
+////      }
+//
+//      current = current.prevNode();
+//   }
 }
 
 //void DerivationReader :: generateSwitchTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
@@ -1308,29 +1308,29 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
 
 void DerivationTransformer :: generateTypeAttribute(SyntaxWriter& writer, SNode current, DerivationScope& scope/*, bool templateMode*/)
 {
-//   SNode attr = current.findChild(lxAttributeValue, lxSize);
-//   if (attr == lxAttributeValue) {
-//      writer.newNode(lxMessage);
-//      generateAttributeTemplate(writer, current, scope, templateMode, MODE_SIGNATURE);
+////   SNode attr = current.findChild(lxAttributeValue, lxSize);
+////   if (attr == lxAttributeValue) {
+////      writer.newNode(lxMessage);
+////      generateAttributeTemplate(writer, current, scope, templateMode, MODE_SIGNATURE);
+////      writer.closeNode();
+////   }
+////   else {
+////      // if it is an explicit type declaration
+////      bool arrayMode = attr == lxSize;
+////      bool paramMode = false;
+////
+//      ref_t ref = scope.mapAttributeType(current/*, arrayMode, paramMode*/);
+////      if (paramMode) {
+////         writer.newNode(lxTemplateParamAttr, ref);
+////      }
+//      /*else */writer.newNode(lxReference, scope.moduleScope->module->resolveReference(ref));
+////
+////      if (arrayMode) {
+////         writer.appendNode(lxSize, -1);
+////      }
+//      copyIdentifier(writer, current.firstChild(lxTerminalMask));
 //      writer.closeNode();
-//   }
-//   else {
-//      // if it is an explicit type declaration
-//      bool arrayMode = attr == lxSize;
-//      bool paramMode = false;
-//
-      ref_t ref = scope.mapAttributeType(current/*, arrayMode, paramMode*/);
-//      if (paramMode) {
-//         writer.newNode(lxTemplateParamAttr, ref);
-//      }
-      /*else */writer.newNode(lxReference, scope.moduleScope->module->resolveReference(ref));
-//
-//      if (arrayMode) {
-//         writer.appendNode(lxSize, -1);
-//      }
-      copyIdentifier(writer, current.firstChild(lxTerminalMask));
-      writer.closeNode();
-//   }
+////   }
 }
 
 //inline bool checkFirstNode(SNode node, LexicalType type)
@@ -1589,60 +1589,60 @@ void DerivationTransformer :: generateTypeAttribute(SyntaxWriter& writer, SNode 
 
 void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
-//   bool invokeWithNoParamMode = node == lxIdleMsgParameter;
-//   bool invokeMode = invokeWithNoParamMode || (node == lxMessageParameter);
-
-   SNode current;
-//   if (invokeMode) {
-//      writer.appendNode(lxMessage, INVOKE_MESSAGE);
+////   bool invokeWithNoParamMode = node == lxIdleMsgParameter;
+////   bool invokeMode = invokeWithNoParamMode || (node == lxMessageParameter);
 //
-//      current = node;
-//      if (invokeWithNoParamMode)
-//         return;
+//   SNode current;
+////   if (invokeMode) {
+////      writer.appendNode(lxMessage, INVOKE_MESSAGE);
+////
+////      current = node;
+////      if (invokeWithNoParamMode)
+////         return;
+////   }
+//   /*else */current = node.firstChild();
+//
+//   while (current != lxNone) {
+//      switch (current.type) {
+//         case lxMessageParameter:
+//            generateExpressionTree(writer, current, scope);
+////            current = lxIdle; // HOTFIX : to prevent duble compilation of closure parameters
+//            break;
+////         case lxExpression:
+////            generateExpressionTree(writer, current, scope/*, *//*EXPRESSION_EXPLICIT_MODE | *//*EXPRESSION_MESSAGE_MODE*/);
+////            break;
+////         case lxInlineClosure:
+////            // COMPILER MAGIC : advanced closure syntax
+////            generateClosureTree(writer, current, scope);
+////            break;
+////         case lxMessage:
+////         {
+////            if (invokeMode/* || invokeWithNoParamMode*/) {
+////               // message should be considered as a new operation if followed after closure invoke
+////               return;
+////            }
+////            generateMessage(writer, current, scope, scope.reference == INVALID_REF);
+////            break;
+////         }
+//         case lxIdentifier:
+////         case lxPrivate:
+////         case lxReference:
+//            writer.newNode(lxMessage);
+//            scope.copyMessage(writer, current);
+//            writer.closeNode();
+//            break;
+////         case lxOperator:
+////         case lxObject:
+////            if (invokeMode/* || invokeWithNoParamMode*/) {
+////               // operator should be considered as a new operation if followed after closure invoke
+////               return;
+////            }
+//         default:
+//            scope.raiseError(errInvalidSyntax, current);
+//            break;
+//      }
+//      current = current.nextNode();
 //   }
-   /*else */current = node.firstChild();
-
-   while (current != lxNone) {
-      switch (current.type) {
-         case lxMessageParameter:
-            generateExpressionTree(writer, current, scope);
-//            current = lxIdle; // HOTFIX : to prevent duble compilation of closure parameters
-            break;
-//         case lxExpression:
-//            generateExpressionTree(writer, current, scope/*, *//*EXPRESSION_EXPLICIT_MODE | *//*EXPRESSION_MESSAGE_MODE*/);
-//            break;
-//         case lxInlineClosure:
-//            // COMPILER MAGIC : advanced closure syntax
-//            generateClosureTree(writer, current, scope);
-//            break;
-//         case lxMessage:
-//         {
-//            if (invokeMode/* || invokeWithNoParamMode*/) {
-//               // message should be considered as a new operation if followed after closure invoke
-//               return;
-//            }
-//            generateMessage(writer, current, scope, scope.reference == INVALID_REF);
-//            break;
-//         }
-         case lxIdentifier:
-//         case lxPrivate:
-//         case lxReference:
-            writer.newNode(lxMessage);
-            scope.copyMessage(writer, current);
-            writer.closeNode();
-            break;
-//         case lxOperator:
-//         case lxObject:
-//            if (invokeMode/* || invokeWithNoParamMode*/) {
-//               // operator should be considered as a new operation if followed after closure invoke
-//               return;
-//            }
-         default:
-            scope.raiseError(errInvalidSyntax, current);
-            break;
-      }
-      current = current.nextNode();
-   }
 }
 
 //void DerivationReader :: generateCodeExpression(SyntaxWriter& writer, SNode current, DerivationScope& scope)
@@ -1814,121 +1814,121 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 
 void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode)
 {
-   writer.newBookmark();
-
-//   bool first = true;
-   bool implicitMode = test(mode, EXPRESSION_IMPLICIT_MODE);
-   bool expressionExpected = !implicitMode;
-
-   SNode current = node.firstChild();
-//   if (test(mode, EXPRESSION_OPERATOR_MODE))
-//      current = current.nextNode();
-
-   while (current != lxNone) {
-      switch (current.type)
-      {
-         case lxObject:
-//            if (!first) {
-//               if (expressionExpected) {
-//                  writer.insert(lxExpression);
-//                  writer.closeNode();
-//               }
-//               writer.removeBookmark();
-//               writer.newBookmark();
-//            }
-//            else first = false;
+//   writer.newBookmark();
 //
-//            expressionExpected = !implicitMode;
-//            if (isTemplateBracket(current.nextNode())) {
-//               generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
-//            }
-            /*else */generateObjectTree(writer, current.firstChild(), scope/*, MODE_OBJECTEXPR*/);
-            break;
-//         case lxCatchOperation:
-//         case lxAltOperation:
-//            writer.newBookmark();
-//         case lxIdleMsgParameter:
-//         case lxMessageParameter:
-         case lxMessage:
-            expressionExpected = false;
-            generateMessageTree(writer, current, scope);
-            writer.insert(lxExpression);
-            writer.closeNode();
-//            if (current == lxCatchOperation) {
-//               writer.removeBookmark();
-//               writer.insert(lxTrying);
-//               writer.closeNode();
-//               expressionExpected = true;
-//            }
-//            else if (current == lxAltOperation) {
-//               writer.removeBookmark();
-//               writer.insert(lxAlt);
-//               writer.closeNode();
-//               expressionExpected = true;
-//            }
-            break;
-//         case lxOperator:
+////   bool first = true;
+//   bool implicitMode = test(mode, EXPRESSION_IMPLICIT_MODE);
+//   bool expressionExpected = !implicitMode;
+//
+//   SNode current = node.firstChild();
+////   if (test(mode, EXPRESSION_OPERATOR_MODE))
+////      current = current.nextNode();
+//
+//   while (current != lxNone) {
+//      switch (current.type)
+//      {
+//         case lxObject:
+////            if (!first) {
+////               if (expressionExpected) {
+////                  writer.insert(lxExpression);
+////                  writer.closeNode();
+////               }
+////               writer.removeBookmark();
+////               writer.newBookmark();
+////            }
+////            else first = false;
+////
+////            expressionExpected = !implicitMode;
+////            if (isTemplateBracket(current.nextNode())) {
+////               generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
+////            }
+//            /*else */generateObjectTree(writer, current.firstChild(), scope/*, MODE_OBJECTEXPR*/);
+//            break;
+////         case lxCatchOperation:
+////         case lxAltOperation:
+////            writer.newBookmark();
+////         case lxIdleMsgParameter:
+////         case lxMessageParameter:
+//         case lxMessage:
 //            expressionExpected = false;
-//            copyOperator(writer, current, scope);
-//            generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE | EXPRESSION_IMPLICIT_MODE | EXPRESSION_OBJECT_REQUIRED);
+//            generateMessageTree(writer, current, scope);
 //            writer.insert(lxExpression);
 //            writer.closeNode();
+////            if (current == lxCatchOperation) {
+////               writer.removeBookmark();
+////               writer.insert(lxTrying);
+////               writer.closeNode();
+////               expressionExpected = true;
+////            }
+////            else if (current == lxAltOperation) {
+////               writer.removeBookmark();
+////               writer.insert(lxAlt);
+////               writer.closeNode();
+////               expressionExpected = true;
+////            }
 //            break;
-         case lxExpression:
-//            first = false;
-            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
-            break;
-//         case lxAssigning:
-//            writer.appendNode(lxAssign);
-//            generateExpressionTree(writer, current, scope);
-//            expressionExpected = true;
-//            break;
-//         case lxCode:
-//            first = false;
-//            generateCodeExpression(writer, current, scope);
-//            break;
-//         case lxExtension:
-//            writer.newNode(current.type, current.argument);
+////         case lxOperator:
+////            expressionExpected = false;
+////            copyOperator(writer, current, scope);
+////            generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE | EXPRESSION_IMPLICIT_MODE | EXPRESSION_OBJECT_REQUIRED);
+////            writer.insert(lxExpression);
+////            writer.closeNode();
+////            break;
+//         case lxExpression:
+////            first = false;
 //            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
-//            writer.closeNode();
 //            break;
-//         case lxSwitching:
-//            generateSwitchTree(writer, current, scope);
-//            writer.insert(lxSwitching);
-//            writer.closeNode();
-//            expressionExpected = true;
+////         case lxAssigning:
+////            writer.appendNode(lxAssign);
+////            generateExpressionTree(writer, current, scope);
+////            expressionExpected = true;
+////            break;
+////         case lxCode:
+////            first = false;
+////            generateCodeExpression(writer, current, scope);
+////            break;
+////         case lxExtension:
+////            writer.newNode(current.type, current.argument);
+////            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
+////            writer.closeNode();
+////            break;
+////         case lxSwitching:
+////            generateSwitchTree(writer, current, scope);
+////            writer.insert(lxSwitching);
+////            writer.closeNode();
+////            expressionExpected = true;
+////            break;
+////         case lxIdle:
+////            break;
+//         default:
+//            scope.raiseError(errInvalidSyntax, current);
 //            break;
-//         case lxIdle:
-//            break;
-         default:
-            scope.raiseError(errInvalidSyntax, current);
-            break;
-      }
-
-      current = current.nextNode();
-   }
-
-   if (expressionExpected) {
-      writer.insert(lxExpression);
-      writer.closeNode();
-   }
-
-//   if (first && test(mode, EXPRESSION_OBJECT_REQUIRED))
-//      scope.raiseError(errInvalidSyntax, node);
-
-   writer.removeBookmark();
+//      }
+//
+//      current = current.nextNode();
+//   }
+//
+//   if (expressionExpected) {
+//      writer.insert(lxExpression);
+//      writer.closeNode();
+//   }
+//
+////   if (first && test(mode, EXPRESSION_OBJECT_REQUIRED))
+////      scope.raiseError(errInvalidSyntax, node);
+//
+//   writer.removeBookmark();
 }
 
 void DerivationTransformer :: generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes*/)
 {
-   writer.newNode(lxSymbol);
-   writer.appendNode(lxSourcePath, scope.sourcePath);
+   //writer.newNode(lxSymbol);
+   //writer.appendNode(lxSourcePath, scope.sourcePath);
 
-   generateAttributes(writer, node, scope/*, attributes, false*/);
+   //generateAttributes(writer, node, scope/*, attributes, false*/);
 
-   generateExpressionTree(writer, node.findChild(lxExpression), scope);
+   //generateExpressionTree(writer, node.findChild(lxExpression), scope);
 
-   writer.closeNode();
+   //writer.closeNode();
 }
 
 //void DerivationReader :: generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope)
@@ -2978,155 +2978,155 @@ bool DerivationTransformer :: generateMethodScope(SNode node, DerivationScope& s
 
 void DerivationTransformer :: generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes, *int nested*/)
 {
-//   SyntaxTree buffer((pos_t)0);
+////   SyntaxTree buffer((pos_t)0);
+////
+////   if (!nested) {
+//      writer.newNode(lxClass);
+//      writer.appendNode(lxSourcePath, scope.sourcePath);
 //
-//   if (!nested) {
-      writer.newNode(lxClass);
-      writer.appendNode(lxSourcePath, scope.sourcePath);
-
-      generateAttributes(writer, node, scope/*, attributes, false*/);
-//      if (node.argument == -2) {
-//         // if it is a singleton
-//         writer.appendNode(lxAttribute, V_SINGLETON);
-//      }
-//   }
-
-   SNode current = node.firstChild();
-//   bool withInPlaceInit = false;
-//   bool firstParent = true;
-   while (current != lxNone) {
-      if (current == lxAttribute || current == lxNameAttr) {
-      }
-//      else if (current == lxBaseParent) {
-//         if (current.existChild(lxAttributeValue)) {
-//            if (firstParent) {               
-//               writer.newNode(lxBaseParent);
-//               writer.appendNode(lxTemplate);
-//               generateAttributeTemplate(writer, current, scope, false);
-//               copyIdentifier(writer, current.firstChild(lxTerminalMask));
-//               writer.closeNode();
-//            }
-//            else {
-//               ref_t attrRef = scope.mapTemplate(current);
+//      generateAttributes(writer, node, scope/*, attributes, false*/);
+////      if (node.argument == -2) {
+////         // if it is a singleton
+////         writer.appendNode(lxAttribute, V_SINGLETON);
+////      }
+////   }
 //
-//               DerivationScope templateScope(&scope, attrRef);
-//               copyTemplateTree(writer, current, templateScope, current.firstChild(), &scope.attributes, MODE_IMPORTING);
-//            }
-//         }
-//         else if (firstParent) {
-//            writer.newNode(lxBaseParent);
-//            copyIdentifier(writer, current.firstChild(lxTerminalMask));
-//            writer.closeNode();
-//         }
-//         else scope.raiseError(errInvalidSyntax, node);
+//   SNode current = node.firstChild();
+////   bool withInPlaceInit = false;
+////   bool firstParent = true;
+//   while (current != lxNone) {
+//      if (current == lxAttribute || current == lxNameAttr) {
+//      }
+////      else if (current == lxBaseParent) {
+////         if (current.existChild(lxAttributeValue)) {
+////            if (firstParent) {               
+////               writer.newNode(lxBaseParent);
+////               writer.appendNode(lxTemplate);
+////               generateAttributeTemplate(writer, current, scope, false);
+////               copyIdentifier(writer, current.firstChild(lxTerminalMask));
+////               writer.closeNode();
+////            }
+////            else {
+////               ref_t attrRef = scope.mapTemplate(current);
+////
+////               DerivationScope templateScope(&scope, attrRef);
+////               copyTemplateTree(writer, current, templateScope, current.firstChild(), &scope.attributes, MODE_IMPORTING);
+////            }
+////         }
+////         else if (firstParent) {
+////            writer.newNode(lxBaseParent);
+////            copyIdentifier(writer, current.firstChild(lxTerminalMask));
+////            writer.closeNode();
+////         }
+////         else scope.raiseError(errInvalidSyntax, node);
+////
+////         firstParent = false;
+////      }
+//      else if (current == lxClassMethod) {
+//         generateMethodTree(writer, current, scope);
+//      }
+////      else if (current == lxClassField || current == lxFieldInit) {
+////         withInPlaceInit |= generateFieldTree(writer, current, scope, subAttributes, buffer);
+////         subAttributes = SNode();
+////      }
+////      else if (current == lxFieldTemplate) {
+////         withInPlaceInit |= generateFieldTemplateTree(writer, current, scope, subAttributes, buffer);
+////         subAttributes = SNode();
+////      }
+////      else if (current == lxMessage) {
+////      }
+//      else scope.raiseError(errInvalidSyntax, node);
 //
-//         firstParent = false;
-//      }
-      else if (current == lxClassMethod) {
-         generateMethodTree(writer, current, scope);
-      }
-//      else if (current == lxClassField || current == lxFieldInit) {
-//         withInPlaceInit |= generateFieldTree(writer, current, scope, subAttributes, buffer);
-//         subAttributes = SNode();
-//      }
-//      else if (current == lxFieldTemplate) {
-//         withInPlaceInit |= generateFieldTemplateTree(writer, current, scope, subAttributes, buffer);
-//         subAttributes = SNode();
-//      }
-//      else if (current == lxMessage) {
-//      }
-      else scope.raiseError(errInvalidSyntax, node);
-
-      current = current.nextNode();
-   }
-
-//   if (withInPlaceInit) {
-//      current = goToNode(buffer.readRoot(), lxFieldInit);
-//      writer.newNode(lxClassMethod);
-//      writer.appendNode(lxAttribute, V_SEALED);
-//      writer.appendNode(lxAttribute, V_CONVERSION);
-//      writer.newNode(lxCode);
-//      while (current != lxNone) {
-//         if (current == lxFieldInit) {
-//            writer.newNode(lxExpression);
-//            SyntaxTree::copyNode(writer, current);
-//            writer.closeNode();
-//         }
-//         current = current.nextNode();
-//      }
-//      writer.closeNode();
-//      writer.closeNode();
+//      current = current.nextNode();
 //   }
 //
-//   if (nested == -1)
-//      writer.insert(lxNestedClass);
-
-   writer.closeNode();
+////   if (withInPlaceInit) {
+////      current = goToNode(buffer.readRoot(), lxFieldInit);
+////      writer.newNode(lxClassMethod);
+////      writer.appendNode(lxAttribute, V_SEALED);
+////      writer.appendNode(lxAttribute, V_CONVERSION);
+////      writer.newNode(lxCode);
+////      while (current != lxNone) {
+////         if (current == lxFieldInit) {
+////            writer.newNode(lxExpression);
+////            SyntaxTree::copyNode(writer, current);
+////            writer.closeNode();
+////         }
+////         current = current.nextNode();
+////      }
+////      writer.closeNode();
+////      writer.closeNode();
+////   }
+////
+////   if (nested == -1)
+////      writer.insert(lxNestedClass);
+//
+//   writer.closeNode();
 }
 
 void DerivationTransformer :: declareAttribute(SNode node, DerivationScope& scope)
 {
-   SNode nameAttr = node.prevNode();
-   ident_t name = nameAttr.findChild(lxIdentifier).identifier();
+   //SNode nameAttr = node.prevNode();
+   //ident_t name = nameAttr.findChild(lxIdentifier).identifier();
 
-   if(!scope.moduleScope->saveAttribute(name, node.argument/*, false*/))
-      scope.raiseError(errDuplicatedDefinition, nameAttr);
+   //if(!scope.moduleScope->saveAttribute(name, node.argument/*, false*/))
+   //   scope.raiseError(errDuplicatedDefinition, nameAttr);
 }
 
 void DerivationTransformer :: generateScopeMembers(SNode& node, DerivationScope& scope, int mode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxAttribute) {
-      }
-      else if (current == lxScope) {
-         if (!generateMethodScope(current, scope)) {
-//            // recognize the field template if available
-//            SNode fieldTemplate = current.findChild(lxBaseParent);
-//            if (fieldTemplate != lxNone) {
-//               current = lxFieldTemplate;
-//            }
-//            else if (setIdentifier(subAttributes)) {
-//               subAttributes.refresh();
-//
-//               if (goToNode(subAttributes, lxNameAttr).firstChild(lxTerminalObjMask) == lxMemberIdentifier) {
-//                  current = lxFieldInit;
-//               }
-//               else {
-//                  current = lxClassField;
-//
-//                  if (scope.type == DerivationScope::ttMethodTemplate)
-//                     current.setArgument(V_METHOD);
-//               }
-               scope.raiseError(errInvalidSyntax, current); // !! temporal
-            //}
-            //else scope.raiseError(errInvalidSyntax, current);
-         }
-      }
-      else if (current == lxExpression && mode == MODE_ROOT) {
-         node = lxSymbol;
-      }
-      else if (current == lxAttributeDecl && test(mode, MODE_ROOT)) {
-         node.set(lxAttributeDecl, scope.moduleScope->mapAttribute(current));
-      }
-//      else if (current == lxBaseParent && test(mode, MODE_ROOT)) {
+      //if (current == lxAttribute) {
+      //}
+      //else if (current == lxScope) {
+//         if (!generateMethodScope(current, scope)) {
+////            // recognize the field template if available
+////            SNode fieldTemplate = current.findChild(lxBaseParent);
+////            if (fieldTemplate != lxNone) {
+////               current = lxFieldTemplate;
+////            }
+////            else if (setIdentifier(subAttributes)) {
+////               subAttributes.refresh();
+////
+////               if (goToNode(subAttributes, lxNameAttr).firstChild(lxTerminalObjMask) == lxMemberIdentifier) {
+////                  current = lxFieldInit;
+////               }
+////               else {
+////                  current = lxClassField;
+////
+////                  if (scope.type == DerivationScope::ttMethodTemplate)
+////                     current.setArgument(V_METHOD);
+////               }
+//               scope.raiseError(errInvalidSyntax, current); // !! temporal
+//            //}
+//            //else scope.raiseError(errInvalidSyntax, current);
+//         }
 //      }
-//      else if (current == lxCode && test(mode, MODE_CODETEMPLATE)) {
+//      else if (current == lxExpression && mode == MODE_ROOT) {
+//         node = lxSymbol;
 //      }
-//      else if (current == lxMethodParameter && mode == MODE_ROOT) {
-//         // one method class declaration
-//         node.injectNode(lxClassMethod);
-//         node.set(lxClass, (ref_t)-2);
+//      else if (current == lxAttributeDecl && test(mode, MODE_ROOT)) {
+//         node.set(lxAttributeDecl, scope.moduleScope->mapAttribute(current));
 //      }
-      else scope.raiseError(errInvalidSyntax, current);
+////      else if (current == lxBaseParent && test(mode, MODE_ROOT)) {
+////      }
+////      else if (current == lxCode && test(mode, MODE_CODETEMPLATE)) {
+////      }
+////      else if (current == lxMethodParameter && mode == MODE_ROOT) {
+////         // one method class declaration
+////         node.injectNode(lxClassMethod);
+////         node.set(lxClass, (ref_t)-2);
+////      }
+      /*else */scope.raiseError(errInvalidSyntax, current);
 
       current = current.nextNode();
    }
    
-   if (node == lxScope) {
-      // otherwise it will be compiled as a class
-      node = lxClass;
-   }   
+//   if (node == lxScope) {
+//      // otherwise it will be compiled as a class
+//      node = lxClass;
+//   }   
 }
 
 void DerivationTransformer :: generateScope(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode)
@@ -3157,7 +3157,7 @@ void DerivationTransformer :: generateScope(SyntaxWriter& writer, SNode node, De
 //   }
 }
 
-void DerivationTransformer :: generateSyntaxTree(SyntaxWriter& writer, SNode node, _CompilerScope& scope/*, SyntaxTree& autogenerated*/, ident_t sourcePath)
+void DerivationTransformer :: generateSyntaxTree(SyntaxWriter& writer, SNode node, CompilerScope& scope/*, SyntaxTree& autogenerated*/, ident_t sourcePath)
 {
 //   SNode attributes;
    SNode current = node.firstChild();
@@ -3215,13 +3215,10 @@ void DerivationTransformer :: generateSyntaxTree(SyntaxWriter& writer, SNode nod
 //   SyntaxTree::saveNode(tree.readRoot(), target);
 //}
 
-void DerivationTransformer :: generateSyntaxTree(SyntaxWriter& writer, _CompilerScope& scope, ident_t sourcePath)
+void DerivationTransformer :: generateSyntaxTree(SyntaxWriter& writer, CompilerScope& scope, ident_t sourcePath)
 {
 //   SyntaxTree autogeneratedTree;
-   writer.newNode(lxRoot);
-   generateSyntaxTree(writer, _root, scope, /*autogeneratedTree, */sourcePath);
+   generateSyntaxTree(writer, _root, scope, /*autogeneratedTree,*/ sourcePath);
 
 //   SyntaxTree::moveNodes(writer, autogeneratedTree, lxClass);
-
-   writer.closeNode();
 }

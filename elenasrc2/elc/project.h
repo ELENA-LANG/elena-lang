@@ -3,23 +3,22 @@
 //
 //		This header contains the declaration of the base class implementing
 //      ELENA Project interface.
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef projectH
 #define projectH 1
 
 #include "libman.h"
-#include "compiler.h"
-#include "parser.h"
-#include "separser.h"
+//#include "separser.h"
 
 namespace _ELENA_
 {
 
 // --- Project list types ---
-typedef Dictionary2D<int, ident_t>     ProjectSettings;
+typedef Dictionary2D<int, ident_t>           ProjectSettings;
 //typedef Dictionary2D<ident_t, ident_t> TargetSettings;
+typedef Map<ident_t, ProjectSettings::VItem> FileMapping;
 
 typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ForwardIterator;
 typedef _Iterator<ProjectSettings::VItem, _MapItem<int, ProjectSettings::VItem>, int>         SourceIterator;
@@ -236,8 +235,6 @@ public:
       return BoolSetting(opWarnOnWeakUnresolved);
    }
 
-   bool declare(ident_t filePath, Compiler& compiler, Parser& parser, SyntaxTree& derivationTree, ModuleInfo& moduleInfo, Unresolveds& unresolved);
-   void compile(Compiler& compiler, SyntaxTree& derivationTree, ModuleInfo& moduleInfo, Unresolveds& unresolved);
 //   void compile(ident_t sourceFile, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved);
 
    Project();

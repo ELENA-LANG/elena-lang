@@ -3034,6 +3034,15 @@ public:
       return offset - position;
    }
 
+   pos_t storeKey(unsigned int position, ref64_t key)
+   {
+      pos_t offset = _buffer.Length();
+
+      _buffer.writeQWord(offset, key);
+
+      return offset - position;
+   }
+
    void add(Key key, T value)
    {
       Item item(0, value, 0);

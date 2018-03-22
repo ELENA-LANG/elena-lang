@@ -10,7 +10,6 @@
 #define compilerCommonH
 
 #include "elena.h"
-#include "syntaxtree.h"
 
 // virtual objects
 //#define V_FLAG           (ref_t)-03
@@ -117,18 +116,18 @@ enum MethodHint
 
 struct _CompilerScope
 {
-//   struct BranchingInfo
-//   {
-//      ref_t reference;
-//      ref_t trueRef;
-//      ref_t falseRef;
-//
-//      BranchingInfo()
-//      {
-//         reference = 0;
-//         trueRef = falseRef = 0;
-//      }
-//   };
+////   struct BranchingInfo
+////   {
+////      ref_t reference;
+////      ref_t trueRef;
+////      ref_t falseRef;
+////
+////      BranchingInfo()
+////      {
+////         reference = 0;
+////         trueRef = falseRef = 0;
+////      }
+////   };
 //
 //   ident_t  sourcePath;
 //   ref_t    sourcePathRef;
@@ -136,60 +135,60 @@ struct _CompilerScope
    _Module* module;
    _Module* debugModule;
 
-//   // cached references
-   ref_t superReference;
-//   ref_t intReference;
-//   ref_t longReference;
-//   ref_t realReference;
-//   ref_t signatureReference;
-//   ref_t messageReference;
-//   ref_t extMessageReference;
-//   ref_t boolReference;
-//   ref_t literalReference;
-//   ref_t wideReference;
-//   ref_t charReference;
-//   ref_t arrayReference;
-
-   // list of attributes / types
-   MessageMap attributes;
-
-//   // cached bool values
-//   BranchingInfo branchingInfo;
-
-   virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal) = 0;
-//   virtual void raiseWarning(int level, const char* message, SNode terminal) = 0;
-
-   virtual ref_t mapAttribute(SNode terminal) = 0;
-   virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
-//   virtual ref_t mapReference(ident_t reference, bool existing = false) = 0;
-//   virtual ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared) = 0;
-//   virtual ref_t mapAnonymous() = 0;
-
-   virtual bool saveAttribute(ident_t name, ref_t attr/*, bool internalAttr*/) = 0;
+////   // cached references
+//   ref_t superReference;
+////   ref_t intReference;
+////   ref_t longReference;
+////   ref_t realReference;
+////   ref_t signatureReference;
+////   ref_t messageReference;
+////   ref_t extMessageReference;
+////   ref_t boolReference;
+////   ref_t literalReference;
+////   ref_t wideReference;
+////   ref_t charReference;
+////   ref_t arrayReference;
+//
+//   // list of attributes / types
+//   MessageMap attributes;
+//
+////   // cached bool values
+////   BranchingInfo branchingInfo;
+//
+//   virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal) = 0;
+////   virtual void raiseWarning(int level, const char* message, SNode terminal) = 0;
+//
+//   virtual ref_t mapAttribute(SNode terminal) = 0;
+//   virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
+////   virtual ref_t mapReference(ident_t reference, bool existing = false) = 0;
+////   virtual ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared) = 0;
+////   virtual ref_t mapAnonymous() = 0;
+//
+//   virtual bool saveAttribute(ident_t name, ref_t attr/*, bool internalAttr*/) = 0;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 //   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 
-//   virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion) = 0;
-//
-//   virtual void validateReference(SNode terminal, ref_t reference) = 0;
-//
-//   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
-//   virtual SubjectList* getAutogerenatedExtensions(ref_t attr) = 0;
+////   virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion) = 0;
+////
+////   virtual void validateReference(SNode terminal, ref_t reference) = 0;
+////
+////   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
+////   virtual SubjectList* getAutogerenatedExtensions(ref_t attr) = 0;
 
    _CompilerScope()
-      : attributes(0)
+//      : attributes(0)
    {
-//      sourcePath = NULL;
-//      sourcePathRef = 0;
+////      sourcePath = NULL;
+////      sourcePathRef = 0;
       debugModule = module = NULL;
-      /*intReference = boolReference = */superReference = 0;
-//      signatureReference = messageReference = 0;
-//      longReference = literalReference = wideReference = 0;
-//      arrayReference = charReference = realReference = 0;
-//      extMessageReference = 0;
+//      /*intReference = boolReference = */superReference = 0;
+////      signatureReference = messageReference = 0;
+////      longReference = literalReference = wideReference = 0;
+////      arrayReference = charReference = realReference = 0;
+////      extMessageReference = 0;
    }
 };
 
@@ -218,14 +217,6 @@ public:
 //   virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
 //
 //   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
-};
-
-// --- _DerivationReader ---
-
-class _DerivationTransformer
-{
-public:
-   virtual void generateSyntaxTree(SyntaxWriter& writer, _CompilerScope& scope, ident_t sourcePath) = 0;
 };
 
 // --- _CompilerLogic ---

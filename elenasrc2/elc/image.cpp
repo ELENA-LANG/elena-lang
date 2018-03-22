@@ -2,13 +2,14 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image class implementations
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "image.h"
 #include "errors.h"
+#include "bytecode.h"
 
 using namespace _ELENA_;
 

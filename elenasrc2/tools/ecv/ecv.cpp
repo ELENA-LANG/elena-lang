@@ -245,7 +245,7 @@ ref_t resolveMessage(_Module* module, ident_t method)
    //      flags = PROPSET_MESSAGE;
    //   }
 
-      actionRef = module->mapAction(actionName, true);
+      actionRef = module->mapAction(actionName, 0, true);
       if (actionRef == 0) {
          printLine("Unknown subject ", actionName);
 
@@ -449,7 +449,8 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    //         command.append("set&");
    //      }
    //   }
-      ident_t actionName = module->resolveAction(actionRef);
+      ref_t signature = 0;
+      ident_t actionName = module->resolveAction(actionRef, signature);
       command.append(actionName);
    }
 

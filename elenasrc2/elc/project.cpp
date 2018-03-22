@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA Project interface.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -11,7 +11,6 @@
 #include "project.h"
 #include "errors.h"
 #include "module.h"
-#include "derivation.h"
 
 using namespace _ELENA_;
 
@@ -401,56 +400,6 @@ _Module* Project :: resolveCore(ref_t reference, bool silentMode)
 //   }
 //   else return _settings.get(opExternals, alias, DEFAULT_STR);
 //}
-
-bool Project :: declare(ident_t filePath, Compiler& compiler, Parser& parser, SyntaxTree& syntaxTree, ModuleInfo& moduleInfo, Unresolveds& unresolved)
-{
-   printInfo("%s", filePath);
-
-   bool noForwards = false;
-   try {
-      // based on the target type generate the syntax tree for the file
-      Path fullPath(StrSetting(_ELENA_::opProjectPath));
-      fullPath.combine(filePath);
-
-      // parse
-      TextFileReader sourceFile(fullPath.c_str(), getDefaultEncoding(), true);
-      if (!sourceFile.isOpened())
-         raiseError(errInvalidFile, filePath);
-
-      SyntaxTree derivationTree;
-      DerivationWriter writer(derivationTree);
-      parser.parse(&sourceFile, writer, getTabSize());
-
-      // declare the module members
-      DerivationTransformer transformer(derivationTree);
-      noForwards = compiler.declareModule(filePath, *this, transformer, syntaxTree, moduleInfo, unresolved);
-   }
-   catch (LineTooLong& e)
-   {
-      raiseError(errLineTooLong, filePath, e.row, 1);
-   }
-   catch (InvalidChar& e)
-   {
-      size_t destLength = 6;
-
-      _ELENA_::String<char, 6> symbol;
-      _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
-
-      raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
-   }
-   catch (SyntaxError& e)
-   {
-      raiseError(e.error, filePath, e.row, e.column, e.token);
-   }
-
-   return noForwards;
-}
-
-void Project :: compile(Compiler& compiler, SyntaxTree& syntaxTree, ModuleInfo& moduleInfo, Unresolveds& unresolved)
-{
-   // compile the syntax tree
-   compiler.compileModule(*this, syntaxTree, moduleInfo, unresolved);
-}
 
 ////void Project :: compile(ident_t filePath, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved)
 ////{

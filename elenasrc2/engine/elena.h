@@ -665,7 +665,7 @@ inline ref_t tableRule(ref_t key)
    return key >> cnTableKeyPower;
 }
 
-inline ref_t __map64Key(ref_t key)
+inline ref_t __map64Key(ref64_t key)
 {
    return key & 0x3F;
 }
@@ -694,7 +694,7 @@ typedef Map<ident_t, _Module*> ModuleMap;
 typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
 //typedef Map<ref_t, ref_t>                                       SubjectMap;
 //typedef List<ref_t>                                             SubjectList;
-typedef Memory32HashTable<ref_t, ref64_t, __map64Key, 64>       ActionMap;
+typedef Memory32HashTable<ref64_t, ref_t, __map64Key, 64>       ActionMap;
 
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> MessageMap;

@@ -3,6 +3,11 @@ In development:
 ------                              
                             
               dev - redesign
+                 * do not save the full reference for the name space (modify ecv and asm2binx)
+                 * refactor module resloving algorithm, no need to replicate the name space structure on physical level
+                 * get rid of weak references
+                 * get rid of private identifiers
+
                  * message : param
 
                  * message1 : param1 message2 : param2
@@ -36,7 +41,8 @@ In development:
                    importMessage,createBytecodeVMTSection,JITLinker :: resolveMessage, JITLinker :: resolveAction,importMessage,
                    compileClassClassDeclaration,findBaseParent,compileParentDeclaration,inheritClass,
                    ProjectManager::clearForwards(),
-                 *test creating project, adding source files. including / excluding, forwards, settings, ...
+                 * test creating project, adding source files. including / excluding, forwards, settings, ...
+                 * test sub namespace relative resolving
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

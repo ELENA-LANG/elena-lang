@@ -67,6 +67,10 @@ public:
    {
       return write(position, (void*)&value, sizeof(size_t));
    }
+   bool writeQWord(pos_t position, long long value)
+   {
+      return write(position, (void*)&value, 8u);
+   }
    bool writeDWord(pos_t position, int value)
    {
       return write(position, (void*)&value, 4u);

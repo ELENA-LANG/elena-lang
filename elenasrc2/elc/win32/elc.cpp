@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the win32 command-line compiler
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #define __MSVCRT_VERSION__ 0x0800
@@ -18,6 +18,7 @@
 #include "image.h"
 #include "x86jitcompiler.h"
 #include "amd64jitcompiler.h"
+#include "derivation.h"
 
 #include <stdarg.h>
 #include <windows.h>
@@ -518,44 +519,90 @@ _ELENA_::_JITCompiler* _ELC_::Project::createJITCompiler64()
    return new _ELENA_::AMD64JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 }
 
+bool _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::SyntaxTree& syntaxTree, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope/*,
+   _ELENA_::ModuleInfo& moduleInfo, bool& repeatMode*/)
+{
+   _ELENA_::SyntaxWriter syntaxWriter(syntaxTree);
+   syntaxWriter.newNode(_ELENA_::lxRoot);
+
+   _ELENA_::SyntaxTree derivationTree;
+
+   _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
+   while (!file_it.Eof()) {
+      _ELENA_::ident_t filePath = *file_it;
+
+      printInfo("%s", filePath);
+
+      try {
+         // based on the target type generate the syntax tree for the file
+         _ELENA_::Path fullPath(StrSetting(_ELENA_::opProjectPath));
+         fullPath.combine(filePath);
+      
+         // parse
+         _ELENA_::TextFileReader sourceFile(fullPath.c_str(), getDefaultEncoding(), true);
+         if (!sourceFile.isOpened())
+            raiseError(errInvalidFile, filePath);
+      
+         derivationTree.clear();
+         _ELENA_::DerivationWriter writer(derivationTree);
+         parser.parse(&sourceFile, writer, getTabSize());
+      
+         // declare the module members
+         _ELENA_::DerivationTransformer transformer(derivationTree);
+         transformer.generateSyntaxTree(syntaxWriter, scope, filePath);
+      }
+      catch (_ELENA_::LineTooLong& e)
+      {
+         raiseError(errLineTooLong, filePath, e.row, 1);
+      }
+      catch (_ELENA_::InvalidChar& e)
+      {
+         size_t destLength = 6;
+      
+         _ELENA_::String<char, 6> symbol;
+         _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
+      
+         raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
+      }
+      catch (_ELENA_::SyntaxError& e)
+      {
+         raiseError(e.error, filePath, e.row, e.column, e.token);
+      }
+
+      file_it = source->nextIt(ELC_INCLUDE, file_it);
+   }
+
+   //return idle;
+
+   syntaxWriter.closeNode();
+
+   return false;
+}
+
 bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
 {
    bool debugMode = BoolSetting(_ELENA_::opDebugMode);
 
-   _ELENA_::Unresolveds unresolveds(_ELENA_::Unresolved(), NULL);
+   //_ELENA_::Unresolveds unresolveds(_ELENA_::Unresolved(), NULL);
    for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
       _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ProjectSettings::VItem>* source = *it;
 
       // create module
       _ELENA_::ident_t name = source->get(ELC_NAMESPACE_KEY);
-      _ELENA_::ModuleInfo moduleInfo = compiler.createModule(name, *this, debugMode);
+      _ELENA_::CompilerScope scope(this);
+      compiler.initializeScope(name, scope, debugMode);
 
       _ELENA_::SyntaxTree syntaxTree;
 
       _ELENA_::ident_t target = source->get(ELC_TARGET_NAME);      
       int type = /*!emptystr(target) ? _targets.get(target, ELC_TYPE_NAME, 1) : */1;
       if (type == 1) {
-         // if it is a normal ELENA source file
-         _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
-         bool noForwards = true;
-         while (!file_it.Eof()) {
-            // declare a source file
-            noForwards &= declare(*file_it, compiler, parser, syntaxTree, moduleInfo, unresolveds);
+         buildSyntaxTree(parser, syntaxTree, source, scope);
 
-            if (noForwards) {
-               // if we are lucky - compile a source file directly
-               compile(compiler, syntaxTree, moduleInfo, unresolveds);
+         compiler.declareModule(*this, syntaxTree, scope/*, unresolved*/);
 
-               syntaxTree.clear();
-            }
-
-            file_it = source->nextIt(ELC_INCLUDE, file_it);
-         }
-
-         if (!noForwards) {
-            // if we are unlucky - compile a whole module scope
-            compile(compiler, syntaxTree, moduleInfo, unresolveds);
-         }
+         // compile the syntax tree
+         compiler.compileModule(*this, syntaxTree, scope/*, unresolved*/);
       }
       //else if (type == 2) {
       //   // if it is a script file
@@ -582,14 +629,14 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
       //   }
       //}
 
-      saveModule(moduleInfo.codeModule, "nl");
+      saveModule(scope.module, "nl");
 
-      if (moduleInfo.debugModule)
-         saveModule(moduleInfo.debugModule, "dnl");
+      if (scope.debugModule)
+         saveModule(scope.debugModule, "dnl");
    }
 
    // validate the unresolved forward refereces if unresolved reference warning is enabled
-   compiler.validateUnresolved(unresolveds, *this);
+   //compiler.validateUnresolved(unresolveds, *this);
 
    return !HasWarnings();
 }

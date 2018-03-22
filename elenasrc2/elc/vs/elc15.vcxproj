@@ -122,6 +122,7 @@
     <ClCompile Include="..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\..\engine\x86jitcompiler.cpp" />
     <ClCompile Include="..\..\engine\syntaxtree.cpp" />
+    <ClCompile Include="..\compilerscope.cpp" />
     <ClCompile Include="..\image.cpp" />
     <ClCompile Include="..\separser.cpp" />
     <ClCompile Include="..\win32\elc.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="..\..\engine\x86jitcompiler.h" />
     <ClInclude Include="..\..\engine\syntaxtree.h" />
     <ClInclude Include="..\compiler.h" />
+    <ClInclude Include="..\compilerscope.h" />
     <ClInclude Include="..\elc.h" />
     <ClInclude Include="..\image.h" />
     <ClInclude Include="..\project.h" />

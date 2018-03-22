@@ -15,18 +15,18 @@ using namespace _ELENA_;
 
 inline ref64_t encodeActionX(ref_t actionNameRef, ref_t signatureRef)
 {
-   ref64_t r = actionNameRef;
+   ref64_t r = signatureRef;
 
-   r = (r << 32) + signatureRef;
+   r = (r << 32) + actionNameRef;
 
    return r;
 }
 
 inline void decodeActionX(ref64_t r, ref_t& actionName, ref_t& signatureRef)
 {
-   signatureRef = r & 0xFFFFFF;
+   actionName = r & 0xFFFFFF;
 
-   actionName = (r >> 32);
+   signatureRef = (r >> 32);
 }
 
 // --- BaseModule ---
