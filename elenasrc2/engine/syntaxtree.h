@@ -37,6 +37,7 @@ enum LexicalType
    lxObject          = 0x00003,
    lxAttributeDecl   = 0x00004,
 //   lxAngleOperator   = 0x00005,
+   lxNamespace       = 0x00006,
    lxClass           = 0x0000E,
 //   lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,

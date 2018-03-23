@@ -64,6 +64,20 @@ void CompilerScope :: raiseError(const char* message, ident_t sourcePath, SNode 
    project->raiseError(message, sourcePath, row, col, identifier);
 }
 
+void CompilerScope :: raiseWarning(int level, const char* message, ident_t sourcePath, SNode node)
+{
+   SNode terminal = findTerminalInfo(node);
+
+   int col = terminal.findChild(lxCol).argument;
+   int row = terminal.findChild(lxRow).argument;
+   ident_t identifier = terminal.identifier();
+   //if (emptystr(identifier))
+   //   identifier = terminal.findChild(lxTerminal).identifier();
+
+   if (test(warningMask, level))
+      project->raiseWarning(message, sourcePath, row, col, identifier);
+}
+
 void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
 {
    target.header = copy.header;
@@ -185,3 +199,88 @@ ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool head
  //  }
 }
 
+ref_t CompilerScope :: mapTerminal(SNode terminal, bool existing)
+{
+   ident_t identifier = terminal.identifier();
+   switch (terminal) {
+      case lxIdentifier:
+         return mapIdentifier(identifier, existing);
+      case lxReference:
+         return mapReference(identifier, existing);
+      default:
+         return 0;
+   }
+   //ident_t identifier = terminal.identifier();
+   //if (terminal == lxIdentifier) {
+      //      ref_t reference = forwards.get(identifier);
+      //      if (reference == 0) {
+      //         if (!existing) {
+      //            ReferenceNs name(module->Name(), identifier);
+      //
+     // return module->mapReference(/*name*/identifier);
+      //         }
+      //         else return resolveImplicitIdentifier(identifier);
+      //      }
+      //      else return reference;
+   //}
+   ////   else if (terminal == lxPrivate) {
+   ////      ReferenceNs name(module->Name(), "#");
+   ////      name.append(identifier.c_str() + 1);
+   ////
+   ////      return mapReference(name, existing);
+   ////   }
+   //else return /*mapReference(identifier, existing)*/0;
+}
+
+ref_t CompilerScope :: mapIdentifier(ident_t identifier, bool existing)
+{
+   if (!existing) {
+      if (isWeakReference(identifier)) {
+         if (identifier.findLast('\'') == 0) {
+            return module->mapReference(identifier + 1);
+         }
+         else return module->mapReference(identifier);
+      }
+      else return module->mapReference(identifier);
+   }
+   else return 0; // !! temporal
+}
+
+ref_t CompilerScope :: mapReference(ident_t referenceName, bool existing)
+{
+   ident_t moduleName = module->Name();
+   if (NamespaceName::compare(referenceName, moduleName)) {
+      return mapIdentifier(referenceName + getlength(moduleName), existing);
+   }
+   else return module->mapReference(referenceName, existing);
+
+//   if (emptystr(referenceName))
+//      return 0;
+//
+//   ref_t reference = 0;
+//   if (!isWeakReference(referenceName)) {
+//      if (existing) {
+//         // check if the reference does exist
+//         ref_t moduleRef = 0;
+//         _Module* argModule = project->resolveModule(referenceName, moduleRef);
+//
+//         if (argModule != NULL && moduleRef != 0)
+//            reference = module->mapReference(referenceName);
+//      }
+//      else reference = module->mapReference(referenceName, existing);
+//   }
+//   else reference = module->mapReference(referenceName, existing);
+//
+//   return reference;
+}
+
+_Module* CompilerScope :: resolveReference(ref_t reference, ref_t& moduleReference)
+{
+   ident_t refName = module->resolveReference(reference);
+   if (isWeakReference(refName) || refName.find('\'') == NOTFOUND_POS) {
+      moduleReference = reference;
+
+      return module;
+   }
+   else return project->resolveModule(refName, moduleReference);
+}

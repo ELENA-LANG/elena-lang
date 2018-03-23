@@ -19,6 +19,12 @@ struct CompilerScope : _CompilerScope
 {
    _ProjectManager*  project;
 
+   // warning mapiing
+//      bool warnOnWeakUnresolved;
+   int  warningMask;
+
+   SymbolMap savedPaths;
+
    void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
    
    ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
@@ -26,6 +32,11 @@ struct CompilerScope : _CompilerScope
    {
       return loadClassInfo(info, module->resolveReference(reference), headerOnly);
    }
+
+   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
+   ref_t mapReference(ident_t referenceName, bool existing = false);
+
+   /*virtual */ref_t mapTerminal(SNode terminal, bool existing = false);
 
    virtual _Memory* mapSection(ref_t reference, bool existing)
    {
@@ -38,11 +49,27 @@ struct CompilerScope : _CompilerScope
       else */return module->mapSection(reference, existing);
    }
    
+   /*virtual */ident_t resolveFullName(ref_t reference)
+   {
+      ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
+//         if (isTemplateWeakReference(referenceName)) {
+//            return project->resolveForward(referenceName);
+//         }
+      /*else */return referenceName;
+   }
+   
+   _Module* resolveReference(ref_t reference, ref_t& moduleReference);
+
    void raiseError(const char* message, ident_t sourcePath, SNode terminal);
+   void raiseWarning(int level, const char* message, ident_t sourcePath, SNode terminal);
 
    CompilerScope(_ProjectManager* project)
+      : savedPaths(-1)
    {
       this->project = project;
+
+   //   warnOnWeakUnresolved = project->WarnOnWeakUnresolved();
+      warningMask = project->getWarningMask();
    }
 };
 

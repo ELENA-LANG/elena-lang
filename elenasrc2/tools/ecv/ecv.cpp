@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   4
+#define REVISION_VERSION   5
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -719,8 +719,7 @@ void printByteCodes(_Module* module, _Memory* code, ref_t address, int indent, i
 ref_t resolveMessageByIndex(_Module* module, ident_t className, int index)
 {
    // find class VMT
-   ReferenceNs reference(module->Name(), className);
-   _Memory* vmt = findClassVMT(module, reference);
+   _Memory* vmt = findClassVMT(module, className);
    if (vmt == NULL) {
       return 0;
    }
@@ -782,11 +781,10 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
       return;
 
    // find class VMT
-   ReferenceNs reference(module->Name(), className);
-   _Memory* vmt = findClassVMT(module, reference);
-   _Memory* code = findClassCode(module, reference);
+   _Memory* vmt = findClassVMT(module, className);
+   _Memory* code = findClassCode(module, className);
    if (vmt == NULL || code == NULL) {
-      printLine("Class not found: ", reference);
+      printLine("Class not found: ", className);
 
       return;
    }
@@ -1072,10 +1070,9 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    className = trim(className);
 
    // find class VMT
-   ReferenceNs reference(module->Name(), className);
-   _Memory* vmt = findClassVMT(module, reference);
+   _Memory* vmt = findClassVMT(module, className);
    if (vmt == NULL) {
-      printLine("Class not found:", reference);
+      printLine("Class not found:", className);
 
       return;
    }
@@ -1157,14 +1154,12 @@ void listClasses(_Module* module, int pageSize)
    ReferenceMap::Iterator it = ((Module*)module)->References();
    while (!it.Eof()) {
       ident_t reference = it.key();
-      NamespaceName ns(it.key());
-      if (moduleName.compare(ns)) {
-         ReferenceName name(it.key());
+      if (isWeakReference(reference) || reference.find('\'') == NOTFOUND_POS) {
          if (module->mapSection(*it | mskVMTRef, true)) {
-            printLine("class ", name, row, pageSize);
+            printLine("class ", reference, row, pageSize);
          }
          else if (module->mapSection(*it | mskSymbolRef, true)) {
-            printLine("symbol ", name, row, pageSize);
+            printLine("symbol ", reference, row, pageSize);
          }
       }
 

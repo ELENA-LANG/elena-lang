@@ -216,8 +216,99 @@ public:
 //   typedef Map<ref_t, SubjectList*>       AutoExtensionMap;
 
 private:
-   // - ModuleScope -
-   struct ModuleScope //: _CompilerScope
+      // - Scope -
+      struct Scope
+      {
+         //enum ScopeLevel
+         //{
+         //   slClass,
+         //   slSymbol,
+         //   slMethod,
+         //   slCode,
+         //   slOwnerClass,
+         //   slTemplate,
+         //};
+   
+         CompilerScope* moduleScope;
+         _Module*       module;
+         Scope*         parent;
+   
+         virtual void raiseError(const char* message, SNode terminal)
+         {
+            parent->raiseError(message, terminal);
+         }
+         virtual void raiseWarning(int level, const char* message, SNode terminal)
+         {
+            parent->raiseWarning(level, message, terminal);
+         }
+   
+         virtual pos_t saveSourcePath(ByteCodeWriter& writer)
+         {
+            return parent->saveSourcePath(writer);
+         }
+
+         //ObjectInfo mapObject(SNode terminal)
+         //{
+         //   ObjectInfo object = mapTerminal(terminal.identifier());
+         //   if (object.kind == okUnknown) {
+         //      return moduleScope->mapObject(terminal);
+         //   }
+         //   else return object;
+         //}
+   
+   //      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
+   //      {
+   //         if (parent) {
+   //            return parent->resolveAutoType(info, reference, element);
+   //         }
+   //         else return false;
+   //      }
+   
+         //virtual ObjectInfo mapTerminal(ident_t identifier)
+         //{
+         //   if (parent) {
+         //      return parent->mapTerminal(identifier);
+         //   }
+         //   else return ObjectInfo();
+         //}
+   
+         //virtual Scope* getScope(ScopeLevel level)
+         //{
+         //   if (parent) {
+         //      return parent->getScope(level);
+         //   }
+         //   else return NULL;
+         //}
+   
+   //      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
+   //      {
+   //         return moduleScope->mapSubject(terminal, output);
+   //      }
+   //
+   //      virtual ref_t mapSubject(SNode terminal)
+   //      {
+   //         return moduleScope->mapSubject(terminal);
+   //      }
+   
+         Scope(CompilerScope* moduleScope/*, ident_t sourcePath*/)
+         {
+            this->parent = NULL;
+         //   this->sourcePath = sourcePath;
+            this->moduleScope = moduleScope;
+            this->module = moduleScope->module;
+         }
+         Scope(Scope* parent)
+         {
+            this->parent = parent;
+            this->moduleScope = parent->moduleScope;
+            this->module = parent->module;
+         //   this->sourcePath = parent->sourcePath;
+         }
+      };
+
+
+   // - NamespaceScope -
+   struct NamespaceScope : Scope
    {
 //      _ProjectManager* project;      
 //
@@ -237,16 +328,14 @@ private:
 ////      SubjectMap        actionHints;
 ////
 ////      ref_t packageReference;
-////
-////      // warning mapiing
-////      bool warnOnWeakUnresolved;
-//      int  warningMask;
 //
 ////      // list of references to the current module which should be checked after the project is compiled
 ////      Unresolveds* forwardsUnresolved;
 //
-//      SymbolMap savedPaths;
-//
+      ident_t      sourcePath;
+
+      void loadNamespaceInfo(SNode node);
+
 //      ObjectInfo mapObject(SNode identifier);
 //
 //      virtual ref_t mapReference(ident_t reference, bool existing = false);
@@ -259,6 +348,17 @@ private:
 ////         constantHints.add(reference, classReference);
 ////      }
 //
+      virtual void raiseError(const char* message, SNode terminal)
+      {
+         moduleScope->raiseError(message, sourcePath, terminal);
+      }
+      virtual void raiseWarning(int level, const char* message, SNode terminal)
+      {
+         moduleScope->raiseWarning(level, message, sourcePath, terminal);
+      }
+
+      virtual pos_t saveSourcePath(ByteCodeWriter& writer);
+
 //      void raiseError(const char* message);
 //      void raiseError(const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
 //      void raiseWarning(int level, const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
@@ -277,9 +377,9 @@ private:
 ////      // in any case output is set (for explicit one - the namespace is copied as well)
 ////      ref_t mapSubject(SNode terminal, IdentifierString& output);
 ////      ref_t mapSubject(SNode terminal);
-//
-//      virtual ref_t mapTerminal(SNode terminal, bool existing = false);
-//
+
+      /*virtual */ref_t mapTerminal(SNode terminal, bool existing = false);
+
 //      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 //
 ////      virtual _Module* loadReferenceModule(ref_t& reference);
@@ -327,16 +427,6 @@ private:
 ////      
 ////         return forwards.add(forward, info.param, true);
 ////      }
-//
-//      virtual ident_t resolveFullName(ref_t reference)
-//      {
-//         ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
-////         if (isTemplateWeakReference(referenceName)) {
-////            return project->resolveForward(referenceName);
-////         }
-//         /*else */return referenceName;
-//      }
-//
 ////      ident_t resolveWeakTemplateReference(ident_t referenceName);
 //
 ////      virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion);
@@ -348,90 +438,7 @@ private:
 //
 //      pos_t saveSourcePath(ByteCodeWriter& writer, ident_t sourcePath);
 
-      ModuleScope(_ProjectManager* project, _Module* module, _Module* debugModule/*, Unresolveds* forwardsUnresolved*/);
-   };
-
-   // - Scope -
-   struct Scope
-   {
-      enum ScopeLevel
-      {
-         slClass,
-         slSymbol,
-         slMethod,
-         slCode,
-         slOwnerClass,
-         slTemplate,
-      };
-
-      ModuleScope* moduleScope;
-      Scope*       parent;
-      ident_t      sourcePath;
-
-      //void raiseError(const char* message, SNode terminal)
-      //{
-      //   moduleScope->raiseError(message, sourcePath, terminal);
-      //}
-      //void raiseWarning(int level, const char* message, SNode terminal)
-      //{
-      //   moduleScope->raiseWarning(level, message, sourcePath, terminal);
-      //}
-
-      //ObjectInfo mapObject(SNode terminal)
-      //{
-      //   ObjectInfo object = mapTerminal(terminal.identifier());
-      //   if (object.kind == okUnknown) {
-      //      return moduleScope->mapObject(terminal);
-      //   }
-      //   else return object;
-      //}
-
-//      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
-//      {
-//         if (parent) {
-//            return parent->resolveAutoType(info, reference, element);
-//         }
-//         else return false;
-//      }
-
-      virtual ObjectInfo mapTerminal(ident_t identifier)
-      {
-         if (parent) {
-            return parent->mapTerminal(identifier);
-         }
-         else return ObjectInfo();
-      }
-
-      virtual Scope* getScope(ScopeLevel level)
-      {
-         if (parent) {
-            return parent->getScope(level);
-         }
-         else return NULL;
-      }
-
-//      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
-//      {
-//         return moduleScope->mapSubject(terminal, output);
-//      }
-//
-//      virtual ref_t mapSubject(SNode terminal)
-//      {
-//         return moduleScope->mapSubject(terminal);
-//      }
-
-      Scope(ModuleScope* moduleScope, ident_t sourcePath)
-      {
-         this->parent = NULL;
-         this->sourcePath = sourcePath;
-         this->moduleScope = moduleScope;
-      }
-      Scope(Scope* parent)
-      {
-         this->parent = parent;
-         this->moduleScope = parent->moduleScope;
-         this->sourcePath = parent->sourcePath;
-      }
+      NamespaceScope(CompilerScope* moduleScope/*_ProjectManager* project, _Module* module, _Module* debugModule*//*, Unresolveds* forwardsUnresolved*/);
    };
 
    // - SourceScope -
@@ -439,7 +446,7 @@ private:
    {
       ref_t          reference;
 
-      SourceScope(ModuleScope* parent, ref_t reference, ident_t sourcePath);
+      SourceScope(NamespaceScope* parent, ref_t reference/*, ident_t sourcePath*/);
    };
 
    // - ClassScope -
@@ -457,21 +464,21 @@ private:
 //
 //      virtual ObjectInfo mapTerminal(ident_t identifier);
 
-      virtual Scope* getScope(ScopeLevel level)
-      {
-         if (level == slClass || level == slOwnerClass) {
-            return this;
-         }
-         else return Scope::getScope(level);
-      }
+//      virtual Scope* getScope(ScopeLevel level)
+//      {
+//         if (level == slClass || level == slOwnerClass) {
+//            return this;
+//         }
+//         else return Scope::getScope(level);
+//      }
 
-      //void save()
-      //{
-      //   // save class meta data
-      //   MemoryWriter metaWriter(moduleScope->mapSection(reference | mskMetaRDataRef, false), 0);
-      //   metaWriter.Memory()->trim(0);
-      //   info.save(&metaWriter);
-      //}
+      void save()
+      {
+         // save class meta data
+         MemoryWriter metaWriter(moduleScope->mapSection(reference | mskMetaRDataRef, false), 0);
+         metaWriter.Memory()->trim(0);
+         info.save(&metaWriter);
+      }
 
 //      void addHint(ref_t message, int hint)
 //      {
@@ -498,31 +505,31 @@ private:
          }
       }
 
-      ClassScope(ModuleScope* parent, ref_t reference, ident_t sourcePath);
+      ClassScope(NamespaceScope* parent, ref_t reference/*, ident_t sourcePath*/);
    };
 
-   // - SymbolScope -
-   struct SymbolScope : public SourceScope
-   {
-//      bool  constant;
-      bool  staticOne;
-//      bool  preloaded;
-//      ref_t outputRef;
-
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-
-      virtual Scope* getScope(ScopeLevel level)
-      {
-         if (level == slSymbol) {
-            return this;
-         }
-         else return Scope::getScope(level);
-      }
-
-//      void save();
-
-      SymbolScope(ModuleScope* parent, ref_t reference, ident_t sourcePath);
-   };
+//   // - SymbolScope -
+//   struct SymbolScope : public SourceScope
+//   {
+////      bool  constant;
+//      bool  staticOne;
+////      bool  preloaded;
+////      ref_t outputRef;
+//
+////      virtual ObjectInfo mapTerminal(ident_t identifier);
+//
+//      virtual Scope* getScope(ScopeLevel level)
+//      {
+//         if (level == slSymbol) {
+//            return this;
+//         }
+//         else return Scope::getScope(level);
+//      }
+//
+////      void save();
+//
+//      SymbolScope(ModuleScope* parent, ref_t reference, ident_t sourcePath);
+//   };
 
    // - MethodScope -
    struct MethodScope : public Scope
@@ -543,13 +550,13 @@ private:
 //      bool         nestedMode;
 //      bool         subCodeMode;
       
-      virtual Scope* getScope(ScopeLevel level)
-      {
-         if (level == slMethod) {
-            return this;
-         }
-         else return parent->getScope(level);
-      }
+      //virtual Scope* getScope(ScopeLevel level)
+      //{
+      //   if (level == slMethod) {
+      //      return this;
+      //   }
+      //   else return parent->getScope(level);
+      //}
 
 //      ref_t getReturningRef(bool ownerClass = true)
 //      {
@@ -571,10 +578,10 @@ private:
 //         return scope ? scope->reference : 0;
 //      }
 
-      virtual ObjectInfo mapTerminal(ident_t identifier);
+      //virtual ObjectInfo mapTerminal(ident_t identifier);
 
-      ObjectInfo mapSelf(bool forced = false);
-      ObjectInfo mapParameter(Parameter param);
+      //ObjectInfo mapSelf(bool forced = false);
+      //ObjectInfo mapParameter(Parameter param);
 
       MethodScope(ClassScope* parent);
    };
@@ -620,32 +627,32 @@ private:
 //      virtual ObjectInfo mapTerminal(ident_t identifier);
 //      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
-      virtual Scope* getScope(ScopeLevel level)
-      {
-         if (level == slCode) {
-            return this;
-         }
-         else return parent->getScope(level);
-      }
+      //virtual Scope* getScope(ScopeLevel level)
+      //{
+      //   if (level == slCode) {
+      //      return this;
+      //   }
+      //   else return parent->getScope(level);
+      //}
 
 //      bool isInitializer()
 //      {
 //         return getMessageID() == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE);
 //      }
 
-      ref_t getMessageID()
-      {
-         MethodScope* scope = (MethodScope*)getScope(slMethod);
+      //ref_t getMessageID()
+      //{
+      //   MethodScope* scope = (MethodScope*)getScope(slMethod);
 
-         return scope ? scope->message : 0;
-      }
+      //   return scope ? scope->message : 0;
+      //}
 
-      ref_t getClassRefId(bool ownerClass = true)
-      {
-         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+      //ref_t getClassRefId(bool ownerClass = true)
+      //{
+      //   ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
-         return scope ? scope->reference : 0;
-      }
+      //   return scope ? scope->reference : 0;
+      //}
 
 //      ref_t getClassFlags(bool ownerClass = true)
 //      {
@@ -775,7 +782,7 @@ private:
 //   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
-   void writeMessageInfo(SyntaxWriter& writer, ModuleScope& scope, ref_t messageRef);
+//   void writeMessageInfo(SyntaxWriter& writer, ModuleScope& scope, ref_t messageRef);
 //   void initialize(ClassScope& scope, MethodScope& methodScope);
 //
 //   int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
@@ -788,8 +795,8 @@ private:
 //   int retrieveGenericArgParamCount(ClassScope& scope);
 //
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
-   ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
-   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+   //ref_t resolveObjectReference(ModuleScope& scope, ObjectInfo object);
+   //ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
 //
 //   void saveExtension(ClassScope& scope, ref_t message);
@@ -804,9 +811,9 @@ private:
 //   void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 //
 ////   /// NOTE : the method is used to set template pseudo variable
-   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withThis, bool withSelf*/);
+   //void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withThis, bool withSelf*/);
 
-   ref_t resolveParentRef(SNode node, ModuleScope& moduleScope, bool silentMode);
+   ref_t resolveParentRef(SNode node, CompilerScope& moduleScope, bool silentMode);
 //   bool isDependentOnNotDeclaredClass(SNode baseNode, ModuleScope& scope);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
@@ -831,7 +838,7 @@ private:
 //      bool dummy;
 //      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
 //   }
-   ref_t mapMessage(SNode node, CodeScope& scope);
+   //ref_t mapMessage(SNode node, CodeScope& scope);
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -846,8 +853,8 @@ private:
    void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
-   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+   //ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   //ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
 
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
@@ -859,18 +866,18 @@ private:
 //   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 
-   /*ObjectInfo*/void compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
+   ///*ObjectInfo*/void compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
 
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
+   //ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
+   //ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
 //
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   //ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   //ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
 //
 //   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
@@ -891,12 +898,12 @@ private:
 //   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod, bool extensionMode);
-   void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//   void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 
-   ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   //ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   ref_t declareArgumentType(SNode node, ModuleScope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/);
+   //ref_t declareArgumentType(SNode node, ModuleScope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/);
    void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
 //   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
@@ -907,7 +914,7 @@ private:
 //   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods = false, bool withOpenArgGenerics = false*/);
 
-   void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   //void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //   void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
 //   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //
@@ -940,8 +947,8 @@ private:
    void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
    void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
-   void compileSymbolDeclaration(SNode node, SymbolScope& scope);
-   void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
+//   void compileSymbolDeclaration(SNode node, SymbolScope& scope);
+//   void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
 ////   void compileIncludeModule(SNode node, ModuleScope& scope);
 //   void compileForward(SNode node, ModuleScope& scope);
@@ -977,12 +984,12 @@ private:
 //
 //   void createPackageInfo(_Module* module, _ProjectManager& project);
 //
-   bool compileDeclarations(SNode node, ModuleScope& scope, bool& repeatMode);
-   void compileImplementations(SNode node, ModuleScope& scope);
+   bool compileDeclarations(SNode node, NamespaceScope& scope/*, bool& repeatMode*/);
+   void compileImplementations(SNode node, NamespaceScope& scope);
 
-//////   void generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScope& scope, SyntaxTree& autogenerated);
-////
-////   void generateListMember(_CompilerScope& scope, ref_t listRef, LexicalType type, ref_t argument);
+////   void generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScope& scope, SyntaxTree& autogenerated);
+//
+//   void generateListMember(_CompilerScope& scope, ref_t listRef, LexicalType type, ref_t argument);
 
    void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
 
@@ -994,7 +1001,7 @@ public:
    }
 
    // return true if no forward class declarations are encountered
-   bool declareModule(_ProjectManager& project, SyntaxTree& tree, CompilerScope& scope/*, Unresolveds& unresolveds, */);
+   void declareModule(_ProjectManager& project, SyntaxTree& tree, CompilerScope& scope/*, Unresolveds& unresolveds, */);
    void compileModule(_ProjectManager& project, SyntaxTree& syntaxTree, CompilerScope& scope/*, Unresolveds& unresolveds*/);
 
 //   void compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& tree, ModuleInfo& moduleInfo, Unresolveds& unresolveds);

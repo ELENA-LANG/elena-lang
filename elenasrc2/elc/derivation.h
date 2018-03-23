@@ -78,6 +78,8 @@ class DerivationTransformer //: public _DerivationTransformer
 
       ident_t sourcePath;
 
+      ref_t mapAttribute(SNode terminal);
+
       void raiseError(const char* message, SNode terminal)
       {
          compilerScope->raiseError(message, sourcePath, terminal);
@@ -93,8 +95,9 @@ class DerivationTransformer //: public _DerivationTransformer
 ////
 ////      void loadParameters(SNode node);
 ////      void loadFields(SNode node);
-//
-//      void copyName(SyntaxWriter& writer, SNode terminal);
+
+      void copyName(SyntaxWriter& writer, SNode terminal, bool withDeclaration);
+      void copyMessageName(SyntaxWriter& writer, SNode terminal);
 //      void copyMessage(SyntaxWriter& writer, SNode terminal);
 ////      void copyIdentifier(SyntaxWriter& writer, SNode terminal);
 ////
@@ -227,7 +230,7 @@ class DerivationTransformer //: public _DerivationTransformer
 //   void generateTemplateParameters(SNode& current, DerivationScope& scope, bool templateMode);
 //   void generateSubTemplate(SNode& node, DerivationScope& scope, bool templateMode);
 //   void generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope, bool templateMode);
-   void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes, bool templateMode*/);
+   void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool classMode/*, bool templateMode*/);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes*/);
    void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes,int nested = 0*/);
 
