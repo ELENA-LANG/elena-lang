@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -29,8 +29,8 @@ inline void resolveReference(_Memory* image, size_t position, ref_t vaddress, si
    else image->addReference(vaddress, position);
 }
 
-//// --- ReferenceLoader::ReferenceHelper ---
-//
+// --- ReferenceLoader::ReferenceHelper ---
+
 //SectionInfo JITLinker::ReferenceHelper :: getSection(ref_t reference, _Module* module)
 //{
 //   if (!module)
@@ -317,16 +317,16 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
 void* JITLinker :: getVMTAddress(_Module* module, ref_t reference, References& references)
 {
    if (reference != 0) {
-      ident_t referenceName = _loader->retrieveReference(module, reference, mskVMTRef);
+      ReferenceInfo referenceInfo = _loader->retrieveReference(module, reference, mskVMTRef);
 
-      void* vaddress = _loader->resolveReference(referenceName, mskVMTRef);
+      void* vaddress = _loader->resolveReference(referenceInfo, mskVMTRef);
 
       if (vaddress==LOADER_NOTLOADED) {
          // create VMT table without resolving references to prevent circular reference
-         vaddress = createBytecodeVMTSection(referenceName, mskVMTRef, _loader->getClassSectionInfo(referenceName, mskClassRef, mskVMTRef, false), references);
+         vaddress = createBytecodeVMTSection(referenceInfo, mskVMTRef, _loader->getClassSectionInfo(referenceInfo, mskClassRef, mskVMTRef, false), references);
 
          if (vaddress == LOADER_NOTLOADED)
-            throw JITUnresolvedException(referenceName);
+            throw JITUnresolvedException(referenceInfo.referenceName);
       }
       return vaddress;
    }
@@ -394,7 +394,7 @@ size_t JITLinker :: loadMethod(ReferenceHelper& refHelper, MemoryReader& reader,
    return _virtualMode ? position : (size_t)writer.Memory()->get(position);
 }
 
-void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo)
+void* JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo)
 {
    if (sectionInfo.section == NULL)
       return LOADER_NOTLOADED;
@@ -406,7 +406,7 @@ void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo
    void* vaddress = calculateVAddress(&writer, mask & mskImageMask);
    size_t position = writer.Position();
 
-   _loader->mapReference(reference, vaddress, mask);
+   _loader->mapReference(referenceInfo, vaddress, mask);
 
    // load section into target image
    MemoryReader reader(sectionInfo.section);
@@ -472,7 +472,7 @@ void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo
 //   return vaddress;
 //}
 
-void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo)
+void* JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo)
 {
    if (sectionInfo.section == NULL)
       return LOADER_NOTLOADED;
@@ -483,7 +483,7 @@ void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionIn
 
    void* vaddress = calculateVAddress(&writer, mask & mskImageMask);
 
-   _loader->mapReference(reference, vaddress, mask);
+   _loader->mapReference(referenceInfo, vaddress, mask);
 
    // symbol just in time compilation
    References references(RefInfo(0, NULL));
@@ -501,7 +501,7 @@ void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionIn
    }
    else {
       if (_withDebugInfo)
-         createNativeSymbolDebugInfo(reference, vaddress, sizePtr);
+         createNativeSymbolDebugInfo(referenceInfo, vaddress, sizePtr);
 
       // !! generate an error if the section length is zero (because the section is created even if the symbol does not exist, see compileDeclarations)
 
@@ -517,7 +517,7 @@ void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionIn
    return vaddress;
 }
 
-void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references)
+void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references)
 {
    if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
       return LOADER_NOTLOADED;
@@ -544,7 +544,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
 
    void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
 
-   _loader->mapReference(reference, vaddress, mask);
+   _loader->mapReference(referenceInfo, vaddress, mask);
 
    // if it is a standard VMT
    if (test(header.flags, elStandartVMT)) {
@@ -557,7 +557,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
       // create native debug info header if debug info enabled
       size_t sizePtr = (size_t)-1;
       if (_withDebugInfo)
-         createNativeClassDebugInfo(reference, vaddress, sizePtr);
+         createNativeClassDebugInfo(referenceInfo, vaddress, sizePtr);
 
       // read and compile VMT entries
       MemoryWriter   codeWriter(codeImage);
@@ -620,19 +620,19 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
    return vaddress;
 }
 
-void* JITLinker :: resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo)
+void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo)
 {
    References      references(RefInfo(0, NULL));
 
    // create VMT
-   void* vaddress = createBytecodeVMTSection(reference, mask, sectionInfo, references);
+   void* vaddress = createBytecodeVMTSection(referenceInfo, mask, sectionInfo, references);
 
    // fix not loaded references
    fixReferences(references, _loader->getTargetSection(mskClassRef));
 
    //HOTFIX : resolve class symbol as well
    if (_classSymbolAutoLoadMode)
-      resolve(reference, mskSymbolRef, true);
+      resolve(referenceInfo, mskSymbolRef, true);
 
    return vaddress;
 }
@@ -685,11 +685,11 @@ void* JITLinker :: resolveBytecodeVMTSection(ident_t reference, int mask, ClassS
 //   }
 //}
 
-void* JITLinker :: resolveConstant(ident_t reference, int mask)
+void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 {
 //   bool constantValue = true;
 //   ident_t value = NULL;
-   ident_t vmtReference = reference;
+   ReferenceInfo vmtReferenceInfo = referenceInfo;
 //   if (mask == mskLiteralRef) {
 //      value = reference;
 //      vmtReference = _loader->getLiteralClass();
@@ -717,10 +717,10 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
 //   else constantValue = false;
 
    // get constant VMT reference
-   void* vmtVAddress = resolve(vmtReference, mskVMTRef, true);
+   void* vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
 
    // HOTFIX: if the constant is referred by iself it could be already resolved
-   void* vaddress = _loader->resolveReference(reference, mask);
+   void* vaddress = _loader->resolveReference(referenceInfo, mask);
    if (vaddress != LOADER_NOTLOADED)
       return vaddress;
 
@@ -733,7 +733,7 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
 
    vaddress = calculateVAddress(&writer, mskRDataRef);
 
-   _loader->mapReference(reference, vaddress, mask);
+   _loader->mapReference(referenceInfo, vaddress, mask);
 
    size_t position = writer.Position();
 //   if (mask == mskLiteralRef) {
@@ -776,7 +776,7 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
 //   }
 
    if (vmtVAddress == LOADER_NOTLOADED)
-      throw JITUnresolvedException(reference);
+      throw JITUnresolvedException(referenceInfo);
 
 //   // check if the class could be constant one
 //   if (!constantValue) {
@@ -784,7 +784,7 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
       size_t flags = getVMTFlags(vmtVAddress);
 
       if (!test(flags, elStateless))
-         throw JITConstantExpectedException(reference);
+         throw JITConstantExpectedException(referenceInfo);
 //   }
 
    // fix object VMT reference
@@ -951,14 +951,20 @@ void JITLinker :: createNativeDebugInfo(ident_t reference, void* param, size_t& 
    writer.writeDWord((size_t)param);
 }
 
-void JITLinker :: createNativeSymbolDebugInfo(ident_t reference, void* address, size_t& sizePtr)
+void JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, void* address, size_t& sizePtr)
 {
    _Memory* debug = _loader->getTargetDebugSection();
 
    MemoryWriter writer(debug);
+
    // start with # to distinguish the symbol debug info from the class one
-   writer.writeChar('#');
-   writer.writeLiteral(reference);
+   if (referenceInfo.isRelative()) {
+      IdentifierString name(referenceInfo.module->Name(), "'#", ReferenceName(referenceInfo.referenceName + 1));
+   }
+   else {
+      IdentifierString name(NamespaceName(referenceInfo.referenceName), "'#", ReferenceName(referenceInfo.referenceName));
+      writer.writeLiteral(name);
+   }
 
    sizePtr = writer.Position();
    writer.writeDWord(0); // size place holder
@@ -972,12 +978,17 @@ void JITLinker :: createNativeSymbolDebugInfo(ident_t reference, void* address, 
    else writer.writeRef((ref_t)address, 0);
 }
 
-void JITLinker :: createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr)
+void JITLinker :: createNativeClassDebugInfo(ReferenceInfo referenceInfo, void* vaddress, size_t& sizePtr)
 {
    _Memory* debug = _loader->getTargetDebugSection();
 
    MemoryWriter writer(debug);
-   writer.writeLiteral(reference);
+   if (referenceInfo.isRelative()) {
+      IdentifierString name(referenceInfo.module->Name(), referenceInfo.referenceName);
+
+      writer.writeLiteral(name.c_str());
+   }
+   else writer.writeLiteral(referenceInfo.referenceName);
 
    sizePtr = writer.Position();   
    writer.writeDWord(0); // size place holder
@@ -1073,30 +1084,30 @@ void* JITLinker :: resolveEntry(void* programEntry)
 }
 
 // NOTE: reference should not be a forward one, otherwise there may be code duplication
-void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
+void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMode)
 {
-   void* vaddress = _loader->resolveReference(reference, mask);
+   void* vaddress = _loader->resolveReference(referenceInfo, mask);
    if (vaddress==LOADER_NOTLOADED) {
       switch (mask) {
          case mskSymbolRef:
 //         case mskClassRef:
-            vaddress = resolveBytecodeSection(reference, mask, _loader->getSectionInfo(reference, mask, silentMode));
+            vaddress = resolveBytecodeSection(referenceInfo, mask, _loader->getSectionInfo(referenceInfo, mask, silentMode));
             break;
          case mskSymbolRelRef:
 //         case mskClassRelRef:
-            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, mask & ~mskRelCodeRef, silentMode));
+            vaddress = resolveBytecodeSection(referenceInfo, mask & ~mskRelCodeRef, _loader->getSectionInfo(referenceInfo, mask & ~mskRelCodeRef, silentMode));
             break;
 //         case mskInternalRef:
 //         case mskInternalRelRef:
 //            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, 0, silentMode));
 //            break;
          case mskVMTRef:
-            vaddress = resolveBytecodeVMTSection(reference, mask, _loader->getClassSectionInfo(reference, mskClassRef, mskVMTRef, silentMode));
+            vaddress = resolveBytecodeVMTSection(referenceInfo, mask, _loader->getClassSectionInfo(referenceInfo, mskClassRef, mskVMTRef, silentMode));
             break;
          case mskNativeCodeRef:
          case mskNativeDataRef:
          case mskNativeRDataRef:
-            vaddress = resolveNativeSection(reference, mask, _loader->getSectionInfo(reference, mask, silentMode));
+            vaddress = resolveNativeSection(referenceInfo, mask, _loader->getSectionInfo(referenceInfo, mask, silentMode));
             break;
 //         case mskNativeRelCodeRef:
 //            vaddress = resolveNativeSection(reference, mskNativeCodeRef, _loader->getSectionInfo(reference, mskNativeCodeRef, silentMode));
@@ -1108,7 +1119,7 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 //         case mskInt32Ref:
 //         case mskRealRef:
 //         case mskInt64Ref:
-            vaddress = resolveConstant(reference, mask);
+            vaddress = resolveConstant(referenceInfo, mask);
             break;
 //         case mskConstArray:
 //            vaddress = resolveConstant(reference, mask);
@@ -1138,9 +1149,14 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
       }
    }
    if (!silentMode && vaddress == LOADER_NOTLOADED)
-      throw JITUnresolvedException(reference);
+      throw JITUnresolvedException(referenceInfo);
 
    return vaddress;
+}
+
+void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
+{
+   return resolve(ReferenceInfo(reference), mask, silentMode);
 }
 
 void JITLinker :: prepareCompiler(MessageMap& verbs)

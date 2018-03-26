@@ -219,43 +219,30 @@ Compiler::NamespaceScope :: NamespaceScope(CompilerScope* moduleScope/*_ProjectM
 {
    this->sourcePath = NULL;
 
-//   this->project = project;
-////   this->sourcePath = sourcePath;
-//   this->module = module;
-//   this->debugModule = debugModule;
-////   this->sourcePathRef = INVALID_REF;
-////
-////   this->forwardsUnresolved = forwardsUnresolved;
+  //   this->forwardsUnresolved = forwardsUnresolved;
 
 //   // cache the frequently used references
-//   superReference = mapReference(project->resolveForward(SUPER_FORWARD));
-////   intReference = mapReference(project->resolveForward(INT_FORWARD));
-////   longReference = mapReference(project->resolveForward(LONG_FORWARD));
-////   realReference = mapReference(project->resolveForward(REAL_FORWARD));
-////   literalReference = mapReference(project->resolveForward(STR_FORWARD));
-////   wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
-////   charReference = mapReference(project->resolveForward(CHAR_FORWARD));
-////   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
-////   messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
-////   extMessageReference = mapReference(project->resolveForward(EXT_MESSAGE_FORWARD));
-////   arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
-////   boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
-////
-////   // HOTFIX : package section should be created if at least literal class is declated
-////   if (literalReference != 0) {
-////      packageReference = module->mapReference(ReferenceNs(module->Name(), PACKAGE_SECTION));
-////   }
-////   else packageReference = 0;
+//   intReference = mapReference(project->resolveForward(INT_FORWARD));
+//   longReference = mapReference(project->resolveForward(LONG_FORWARD));
+//   realReference = mapReference(project->resolveForward(REAL_FORWARD));
+//   literalReference = mapReference(project->resolveForward(STR_FORWARD));
+//   wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
+//   charReference = mapReference(project->resolveForward(CHAR_FORWARD));
+//   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
+//   messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
+//   extMessageReference = mapReference(project->resolveForward(EXT_MESSAGE_FORWARD));
+//   arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
+//   boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
 //
-//   importedNs.add(module->Name());
-//
-//   loadModuleInfo(module, true);
-//
-//   // system module should be included by default
-//   if (!module->Name().compare(STANDARD_MODULE)) {
-//      importedNs.add(STANDARD_MODULE);
-//      loadModuleInfo(project->loadModule(STANDARD_MODULE, false), true);
+//   // HOTFIX : package section should be created if at least literal class is declated
+//   if (literalReference != 0) {
+//      packageReference = module->mapReference(ReferenceNs(module->Name(), PACKAGE_SECTION));
 //   }
+//   else packageReference = 0;
+
+   importedNs.add(module->Name());
+
+//   loadModuleInfo(module, true);
 }
 
 void Compiler::NamespaceScope :: loadNamespaceInfo(SNode node)
@@ -265,6 +252,9 @@ void Compiler::NamespaceScope :: loadNamespaceInfo(SNode node)
       switch (current) {
          case lxSourcePath:
             sourcePath = current.identifier();
+            break;
+         case lxImporting:
+            importedNs.add(current.identifier());
             break;
          default:
             return;
@@ -293,7 +283,21 @@ pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
 ////{
 ////   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
 ////}
-//
+
+ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier)
+{
+   ref_t reference = resolveImplicitIdentifier(identifier);
+   if (reference)
+      return defineObjectInfo(reference, true);
+
+   if (parent == NULL) {
+      if (identifier.compare(NIL_VAR)) {
+         return ObjectInfo(okNil);
+      }
+   }
+   return Scope::mapTerminal(identifier);
+}
+
 //ObjectInfo Compiler::ModuleScope :: mapObject(SNode identifier)
 //{
 //   ident_t terminal = identifier.identifier();
@@ -312,21 +316,22 @@ pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
 //   }
 //   else return ObjectInfo();
 //}
-//
-//ref_t Compiler::ModuleScope :: resolveImplicitIdentifier(ident_t identifier)
-//{
-//   List<ident_t>::Iterator it = importedNs.start();
-//   while (!it.Eof()) {
-//      ReferenceNs name(*it, identifier);
-//
-//      if (doesReferenceExist(name))
-//         return module->mapReference(name);
-//
-//      it++;
-//   }
-//   return 0;
-//}
-//
+
+ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier)
+{
+   List<ident_t>::Iterator it = importedNs.start();
+   while (!it.Eof()) {
+      IdentifierString name("'", identifier);
+
+      ref_t ref = module->mapReference(name, true);
+      if (ref)
+         return ref;
+
+      it++;
+   }
+   return 0;
+}
+
 //////ref_t Compiler::ModuleScope :: mapNewSubject(ident_t terminal)
 //////{
 //////   IdentifierString fullName(terminal);
@@ -398,21 +403,21 @@ pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
 ////   return classRef;
 ////}
 
-ref_t Compiler::NamespaceScope :: mapTerminal(SNode terminal, bool existing)
+ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal)
 {
-   return moduleScope->mapTerminal(terminal, existing);
+   return moduleScope->mapNewTerminal(terminal);
 }
 
-//ref_t Compiler::ModuleScope :: mapAnonymous()
-//{
-//   // auto generate the name
-//   ReferenceNs name(module->Name(), INLINE_POSTFIX);
-//
-//   findUninqueName(module, name);
-//
-//   return module->mapReference(name);
-//}
-//
+ref_t Compiler::NamespaceScope :: mapAnonymous()
+{
+   // auto generate the name
+   ReferenceNs name(INLINE_POSTFIX);
+
+   findUninqueName(moduleScope->module, name);
+
+   return moduleScope->module->mapReference(name);
+}
+
 //bool Compiler::ModuleScope :: doesReferenceExist(ident_t referenceName)
 //{
 //   ref_t moduleRef = 0;
@@ -423,59 +428,59 @@ ref_t Compiler::NamespaceScope :: mapTerminal(SNode terminal, bool existing)
 //
 //   return module->mapReference(referenceName, true) != 0;
 //}
-//
-//ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool checkState)
-//{
-//   // if reference is zero the symbol is unknown
-//   if (reference == 0) {
-//      return ObjectInfo();
+
+ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool checkState)
+{
+   // if reference is zero the symbol is unknown
+   if (reference == 0) {
+      return ObjectInfo();
+   }
+//   // check if symbol should be treated like constant one
+//   else if (constantHints.exist(reference)) {
+//      return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
 //   }
-////   // check if symbol should be treated like constant one
-////   else if (constantHints.exist(reference)) {
-////      return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
-////   }
-//   else if (checkState) {
-//      ClassInfo info;
-//      // check if the object can be treated like a constant object
-//      ref_t r = loadClassInfo(info, module->resolveReference(reference), true);
-//      if (r) {
-//         // if it is a stateless symbol
-//         if (test(info.header.flags, elStateless)) {
-//            return ObjectInfo(okConstantSymbol, reference, reference);
-//         }
-//         // if it is a normal class
-//         // then the symbol is reference to the class class
-//         else if (test(info.header.flags, elStandartVMT) && info.header.classRef != 0) {
-//            return ObjectInfo(okConstantClass, reference, info.header.classRef);
+   else if (checkState) {
+      ClassInfo info;
+      // check if the object can be treated like a constant object
+      ref_t r = moduleScope->loadClassInfo(info, reference, true);
+      if (r) {
+         // if it is a stateless symbol
+         if (test(info.header.flags, elStateless)) {
+            return ObjectInfo(okConstantSymbol, reference, reference);
+         }
+         // if it is a normal class
+         // then the symbol is reference to the class class
+         else if (test(info.header.flags, elStandartVMT) && info.header.classRef != 0) {
+            return ObjectInfo(okConstantClass, reference, info.header.classRef);
+         }
+      }
+//      else {
+//         // check if the object is typed expression
+//         SymbolExpressionInfo symbolInfo;
+//         // check if the object can be treated like a constant object
+//         r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
+//         if (r) {
+//            // if it is a constant
+//            if (symbolInfo.constant) {
+//               ref_t classRef = symbolInfo.expressionClassRef;
+//
+//               if (symbolInfo.listRef != 0) {
+//                  return ObjectInfo(okArrayConst, symbolInfo.listRef, classRef);
+//               }
+//               else return ObjectInfo(okConstantSymbol, reference, classRef);
+//            }
+//            // if it is a typed symbol
+//            else if (symbolInfo.expressionClassRef != 0) {
+//               return ObjectInfo(okSymbol, reference, symbolInfo.expressionClassRef);
+//            }
 //         }
 //      }
-////      else {
-////         // check if the object is typed expression
-////         SymbolExpressionInfo symbolInfo;
-////         // check if the object can be treated like a constant object
-////         r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
-////         if (r) {
-////            // if it is a constant
-////            if (symbolInfo.constant) {
-////               ref_t classRef = symbolInfo.expressionClassRef;
-////
-////               if (symbolInfo.listRef != 0) {
-////                  return ObjectInfo(okArrayConst, symbolInfo.listRef, classRef);
-////               }
-////               else return ObjectInfo(okConstantSymbol, reference, classRef);
-////            }
-////            // if it is a typed symbol
-////            else if (symbolInfo.expressionClassRef != 0) {
-////               return ObjectInfo(okSymbol, reference, symbolInfo.expressionClassRef);
-////            }
-////         }
-////      }
-//   }
-//
-//   // otherwise it is a normal one
-//   return ObjectInfo(okSymbol, reference);
-//}
-//
+   }
+
+   // otherwise it is a normal one
+   return ObjectInfo(okSymbol, reference);
+}
+
 //ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing)
 //{
 //   if (emptystr(referenceName))
@@ -643,33 +648,6 @@ ref_t Compiler::NamespaceScope :: mapTerminal(SNode terminal, bool existing)
 ////      }
 ////   }
 ////}
-//
-//bool Compiler::ModuleScope :: loadAttributes(_Module* extModule)
-//{
-//   bool duplicates = false;
-//   if (extModule) {
-//      //bool owner = module == extModule;
-//
-//      ReferenceNs sectionName(extModule->Name(), ATTRIBUTE_SECTION);
-//
-//      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
-//      if (section) {
-//         MemoryReader metaReader(section);
-//         while (!metaReader.Eof()) {
-//            ref_t attrRef = metaReader.getDWord();
-//            //if (!isPrimitiveRef(attrRef)) {
-//            //   attrRef = importReference(extModule, attrRef, module);
-//            //}
-//
-//            ident_t attrName = metaReader.getLiteral(DEFAULT_STR);
-//
-//            if (!attributes.add(attrName, attrRef, true))
-//               duplicates = true;
-//         }
-//      }
-//   }
-//   return duplicates;
-//}
 //
 ////void Compiler::ModuleScope :: loadExtensions(_Module* extModule, bool& duplicateExtensions)
 ////{
@@ -916,17 +894,17 @@ Compiler::SourceScope :: SourceScope(NamespaceScope* moduleScope, ref_t referenc
    this->reference = reference;
 }
 
-//// --- Compiler::SymbolScope ---
-//
-//Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference, ident_t sourcePath)
-//   : SourceScope(parent, reference, sourcePath)
-//{
-////   outputRef = 0;
-////   constant = false;
-//   staticOne = false;
-////   preloaded = false;
-//}
-//
+// --- Compiler::SymbolScope ---
+
+Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference)
+   : SourceScope(parent, reference)
+{
+//   outputRef = 0;
+//   constant = false;
+   staticOne = false;
+//   preloaded = false;
+}
+
 //////ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
 //////{
 //////   return Scope::mapTerminal(identifier);
@@ -1048,65 +1026,65 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   this->genericClosure = false;
 }
 
-//ObjectInfo Compiler::MethodScope :: mapSelf(bool forced)
-//{
-////   if (extensionMode && !forced) {
-////      //COMPILER MAGIC : if it is an extension ; replace $self with self
-////      ClassScope* extensionScope = (ClassScope*)getScope(slClass);
-////
-////      return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, extensionScope->embeddable ? -1 : 0);
-////   }
-////   else if (stackSafe && classEmbeddable) {
-////      return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
-////   }
-//   /*else */return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
-//}
+ObjectInfo Compiler::MethodScope :: mapSelf(bool forced)
+{
+//   if (extensionMode && !forced) {
+//      //COMPILER MAGIC : if it is an extension ; replace $self with self
+//      ClassScope* extensionScope = (ClassScope*)getScope(slClass);
 //
-//ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
-//{
-//   int prefix = /*closureMode ? 0 : */-1;
-//
-////   if (withOpenArg && param.class_ref == V_ARGARRAY) {
-////      return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref);
-////   }
-////   else if (stackSafe && param.class_ref != 0 && param.size != 0) {
-////      return ObjectInfo(okParam, prefix - param.offset, param.class_ref, (ref_t)-1);
-////   }
-//   return ObjectInfo(okParam, prefix - param.offset, param.class_ref);
-//}
-//
-//ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
-//{
-////   if (terminal.compare(THIS_VAR)) {
-////      if (closureMode || nestedMode) {
-////         return parent->mapTerminal(OWNER_VAR);
-////      }
-////      else return mapThis();
-////   }
-////   else if (terminal.compare(SELF_VAR) && !closureMode) {
-////      if (extensionMode) {
-////         return mapThis();
-////      }
-////      else return ObjectInfo(okParam, (size_t)-1);
-////   }
-////   else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
-////      ObjectInfo retVar = parent->mapTerminal(terminal);
-////      if (retVar.kind == okUnknown) {
-////         InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
-////
-////         retVar = closure->allocateRetVar();
-////      }
-////
-////      return retVar;
-////   }
-////   else {
-//      Parameter param = parameters.get(terminal);
-//      if (param.offset >= 0) {
-//         return mapParameter(param);
+//      return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, extensionScope->embeddable ? -1 : 0);
+//   }
+//   else if (stackSafe && classEmbeddable) {
+//      return ObjectInfo(okThisParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
+//   }
+   /*else */return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
+}
+
+ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
+{
+   int prefix = /*closureMode ? 0 : */-1;
+
+//   if (withOpenArg && param.class_ref == V_ARGARRAY) {
+//      return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref);
+//   }
+//   else if (stackSafe && param.class_ref != 0 && param.size != 0) {
+//      return ObjectInfo(okParam, prefix - param.offset, param.class_ref, (ref_t)-1);
+//   }
+   return ObjectInfo(okParam, prefix - param.offset, param.class_ref);
+}
+
+ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
+{
+//   if (terminal.compare(THIS_VAR)) {
+//      if (closureMode || nestedMode) {
+//         return parent->mapTerminal(OWNER_VAR);
 //      }
-//      else return Scope::mapTerminal(terminal);
-////   }
-//}
+//      else return mapThis();
+//   }
+//   else if (terminal.compare(SELF_VAR) && !closureMode) {
+//      if (extensionMode) {
+//         return mapThis();
+//      }
+//      else return ObjectInfo(okParam, (size_t)-1);
+//   }
+//   else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
+//      ObjectInfo retVar = parent->mapTerminal(terminal);
+//      if (retVar.kind == okUnknown) {
+//         InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
+//
+//         retVar = closure->allocateRetVar();
+//      }
+//
+//      return retVar;
+//   }
+//   else {
+      Parameter param = parameters.get(terminal);
+      if (param.offset >= 0) {
+         return mapParameter(param);
+      }
+      else return Scope::mapTerminal(terminal);
+//   }
+}
 
 // --- Compiler::CodeScope ---
 
@@ -1414,22 +1392,22 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //   ByteCodeCompiler::loadOperators(_operators);
 }
 
-//void Compiler :: writeMessageInfo(SyntaxWriter& writer, ModuleScope& scope, ref_t messageRef)
-//{
-//   //ref_t actionRef;
-//   //int paramCount;
-//   //decodeMessage(messageRef, actionRef, paramCount);
-//
-//   //IdentifierString name;
-//   //ref_t signature = 0;
-//   //name.append(scope.module->resolveAction(actionRef, signature));
-//
-//   //name.append('[');
-//   //name.appendInt(paramCount);
-//   //name.append(']');
-//
-//   //writer.appendNode(lxMessageVariable, name);
-//}
+void Compiler :: writeMessageInfo(SyntaxWriter& writer, CompilerScope& scope, ref_t messageRef)
+{
+   ref_t actionRef;
+   int paramCount;
+   decodeMessage(messageRef, actionRef, paramCount);
+
+   IdentifierString name;
+   ref_t signature = 0;
+   name.append(scope.module->resolveAction(actionRef, signature));
+
+   name.append('[');
+   name.appendInt(paramCount);
+   name.append(']');
+
+   writer.appendNode(lxMessageVariable, name);
+}
 
 void Compiler :: loadRules(StreamReader* optimization)
 {
@@ -1566,151 +1544,151 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   else return resolveObjectReference(scope, object);
 //}
 
-//ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
-//{
-//   if (object.kind == okSelfParam) {
-////      if (object.extraparam == -2) {
-////         return _logic->definePrimitiveArray(*scope.moduleScope, object.element);
-////      }
-//      /*else */return scope.getClassRefId(false);
-//   }
-//   else return resolveObjectReference(*scope.moduleScope, object);
-//}
-//
-//ref_t Compiler :: resolveObjectReference(ModuleScope& scope, ObjectInfo object)
-//{
-//   // if static message is sent to a class class
-//   switch (object.kind)
-//   {
-//      case okConstantClass:
-//         return object.extraparam;
-//      //case okConstantRole:
-//      //   // if external role is provided
-//      //   return object.param;
-//      case okConstantSymbol:
-//         if (object.extraparam != 0) {
-//            return object.extraparam;
-//         }
-//         else return object.param;
-//      //case okLocalAddress:
-//      //   return object.extraparam;
-//      //case okIntConstant:
-//      //case okUIntConstant:
-//      //   return V_INT32;
-//      //case okLongConstant:
-//      //   return V_INT64;
-//      //case okRealConstant:
-//      //   return V_REAL64;
-//      //case okCharConstant:
-//      //   return scope.charReference;
-//      //case okLiteralConstant:
-//      //   return scope.literalReference;
-//      //case okWideLiteralConstant:
-//      //   return scope.wideReference;
-//      //case okSubject:
-//      //case okSignatureConstant:
-//      //   return V_SIGNATURE;
-//      //case okExtMessageConstant:
-//      //   return scope.extMessageReference;
-//      //case okSuper:
-//      //   return object.param;
-//      //case okParams:
-//      //   return V_ARGARRAY;
-//      //case okExternal:
-//      //   return V_INT32;
-//      //case okMessageConstant:
-//      //   return V_MESSAGE;
-//      case okNil:
-//         return V_NIL;
-//      //case okField:
-//      //case okLocal:
-//      //case okFieldAddress:
-//      //case okOuter:
-//      case okParam:
-//      case okSymbol:
-//      //case okStaticField:
-//      //case okStaticConstantField:
-//         return object.extraparam;
-//      //case okClassStaticConstantField:
-//      //case okOuterField:
-//      //case okOuterStaticField:
-//      //case okClassStaticField:
-//      //   return object.element;
-//      default:
-//         if (object.kind == okObject) {
-//            return object.param;
-//         }
-//         else return 0;
-//   }
-//}
+ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
+{
+   if (object.kind == okSelfParam) {
+//      if (object.extraparam == -2) {
+//         return _logic->definePrimitiveArray(*scope.moduleScope, object.element);
+//      }
+      /*else */return scope.getClassRefId(false);
+   }
+   else return resolveObjectReference(/**scope.moduleScope, */object);
+}
 
-//void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withThis, bool withSelf*/)
-//{
-////   ModuleScope* moduleScope = scope.moduleScope;
-////
-//////   // declare built-in variables
-//////   if (withThis) {
-//////      if (scope.stackSafe && scope.classEmbeddable) {
-//////         SNode debugNode = node.insertNode(lxBinarySelf, 1);
-//////         debugNode.appendNode(lxClassName, scope.moduleScope->module->resolveReference(scope.getClassRef()));
-//////      }
-//////      else writer.appendNode(lxSelfVariable, 1);
-//////   }
-//////
-//////   if (withSelf)
-//////      writer.appendNode(lxSelfVariable, -1);
-////
-////   writeMessageInfo(writer, *moduleScope, scope.message);
-////
-////   int prefix = /*scope.closureMode ? 0 : */-1;
-////
-////   SNode current = node.firstChild();
-////   // method parameter debug info
-////   while (current != lxNone) {
-////      if (current == lxMethodParameter/* || current == lxIdentifier*/) {
-////         ident_t name = /*(current == lxIdentifier) ? current.identifier() : */current.findChild(lxIdentifier, lxPrivate).identifier();
-////         Parameter param = scope.parameters.get(name);
-////         if (param.offset != -1) {
-//////            if (param.class_ref == V_ARGARRAY) {
-//////               writer.newNode(lxParamsVariable);
-//////            }
-//////            else if (param.class_ref == moduleScope->intReference) {
-//////               writer.newNode(lxIntVariable);
-//////            }
-//////            else if (param.class_ref == moduleScope->longReference) {
-//////               writer.newNode(lxLongVariable);
-//////            }
-//////            else if (param.class_ref == moduleScope->realReference) {
-//////               writer.newNode(lxReal64Variable);
-//////            }
-//////            else if (scope.stackSafe && param.class_ref != 0) {
-//////               ref_t classRef = param.class_ref;
-//////               if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
-//////                  writer.newNode(lxBinaryVariable);
-//////                  writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
-//////               }
-//////               else writer.newNode(lxVariable);
-//////            }
-////            /*else */writer.newNode(lxVariable);
-////
-////            writer.appendNode(lxLevel, prefix - param.offset);
-////            writer.newNode(lxIdentifier, name);
-////            writer.closeNode();
-////
-////            writer.closeNode();
-////         }
-////      }
-////      else if (current == lxSourcePath) {
-////         writer.appendNode(lxSourcePath, scope.moduleScope->saveSourcePath(_writer, current.identifier()));
-////      }
-////
-////      current = current.nextNode();
-////   }
-////
-//////   //COMPILER MAGIC : if it is an extension ; replace $self with self
-//////   ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
-//////   scope.extensionMode = (ownerScope != NULL && ownerScope->extensionClassRef != 0);
-//}
+ref_t Compiler :: resolveObjectReference(/*ModuleScope& scope, */ObjectInfo object)
+{
+   // if static message is sent to a class class
+   switch (object.kind)
+   {
+      case okConstantClass:
+         return object.extraparam;
+      //case okConstantRole:
+      //   // if external role is provided
+      //   return object.param;
+      case okConstantSymbol:
+         if (object.extraparam != 0) {
+            return object.extraparam;
+         }
+         else return object.param;
+      //case okLocalAddress:
+      //   return object.extraparam;
+      //case okIntConstant:
+      //case okUIntConstant:
+      //   return V_INT32;
+      //case okLongConstant:
+      //   return V_INT64;
+      //case okRealConstant:
+      //   return V_REAL64;
+      //case okCharConstant:
+      //   return scope.charReference;
+      //case okLiteralConstant:
+      //   return scope.literalReference;
+      //case okWideLiteralConstant:
+      //   return scope.wideReference;
+      //case okSubject:
+      //case okSignatureConstant:
+      //   return V_SIGNATURE;
+      //case okExtMessageConstant:
+      //   return scope.extMessageReference;
+      //case okSuper:
+      //   return object.param;
+      //case okParams:
+      //   return V_ARGARRAY;
+      //case okExternal:
+      //   return V_INT32;
+      //case okMessageConstant:
+      //   return V_MESSAGE;
+      case okNil:
+         return V_NIL;
+      //case okField:
+      //case okLocal:
+      //case okFieldAddress:
+      //case okOuter:
+      case okParam:
+      case okSymbol:
+      //case okStaticField:
+      //case okStaticConstantField:
+         return object.extraparam;
+      //case okClassStaticConstantField:
+      //case okOuterField:
+      //case okOuterStaticField:
+      //case okClassStaticField:
+      //   return object.element;
+      default:
+         if (object.kind == okObject) {
+            return object.param;
+         }
+         else return 0;
+   }
+}
+
+void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withThis, bool withSelf*/)
+{
+   CompilerScope* moduleScope = scope.moduleScope;
+
+//   // declare built-in variables
+//   if (withThis) {
+//      if (scope.stackSafe && scope.classEmbeddable) {
+//         SNode debugNode = node.insertNode(lxBinarySelf, 1);
+//         debugNode.appendNode(lxClassName, scope.moduleScope->module->resolveReference(scope.getClassRef()));
+//      }
+//      else writer.appendNode(lxSelfVariable, 1);
+//   }
+//
+//   if (withSelf)
+//      writer.appendNode(lxSelfVariable, -1);
+
+   writeMessageInfo(writer, *moduleScope, scope.message);
+
+   int prefix = /*scope.closureMode ? 0 : */-1;
+
+   SNode current = node.firstChild();
+   // method parameter debug info
+   while (current != lxNone) {
+      if (current == lxMethodParameter/* || current == lxIdentifier*/) {
+         ident_t name = /*(current == lxIdentifier) ? current.identifier() : */current.findChild(lxIdentifier, lxPrivate).identifier();
+         Parameter param = scope.parameters.get(name);
+         if (param.offset != -1) {
+//            if (param.class_ref == V_ARGARRAY) {
+//               writer.newNode(lxParamsVariable);
+//            }
+//            else if (param.class_ref == moduleScope->intReference) {
+//               writer.newNode(lxIntVariable);
+//            }
+//            else if (param.class_ref == moduleScope->longReference) {
+//               writer.newNode(lxLongVariable);
+//            }
+//            else if (param.class_ref == moduleScope->realReference) {
+//               writer.newNode(lxReal64Variable);
+//            }
+//            else if (scope.stackSafe && param.class_ref != 0) {
+//               ref_t classRef = param.class_ref;
+//               if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
+//                  writer.newNode(lxBinaryVariable);
+//                  writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+//               }
+//               else writer.newNode(lxVariable);
+//            }
+            /*else */writer.newNode(lxVariable);
+
+            writer.appendNode(lxLevel, prefix - param.offset);
+            writer.newNode(lxIdentifier, name);
+            writer.closeNode();
+
+            writer.closeNode();
+         }
+      }
+      else if (current == lxSourcePath) {
+         writer.appendNode(lxSourcePath, scope.saveSourcePath(_writer));
+      }
+
+      current = current.nextNode();
+   }
+
+//   //COMPILER MAGIC : if it is an extension ; replace $self with self
+//   ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
+//   scope.extensionMode = (ownerScope != NULL && ownerScope->extensionClassRef != 0);
+}
 
 void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t function, ref_t message)
 {
@@ -2416,150 +2394,150 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
    writer.closeNode();
 }
 
-//ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
-//{
-////   ident_t token = terminal.identifier();
+ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
+{
+//   ident_t token = terminal.identifier();
+
+   ObjectInfo object;
+//   if(terminal == lxConstantList) {
+//      // HOTFIX : recognize predefined constant lists
+//      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
+//   }
+//   else if (terminal==lxLiteral) {
+//      object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token));
+//   }
+//   else if (terminal == lxWide) {
+//      object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token));
+//   }
+//   else if (terminal==lxCharacter) {
+//      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token));
+//   }
+//   else if (terminal == lxInteger) {
+//      String<char, 20> s;
 //
-//   ObjectInfo object;
-//////   if(terminal == lxConstantList) {
-//////      // HOTFIX : recognize predefined constant lists
-//////      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
-//////   }
-//////   else if (terminal==lxLiteral) {
-//////      object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token));
-//////   }
-//////   else if (terminal == lxWide) {
-//////      object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token));
-//////   }
-//////   else if (terminal==lxCharacter) {
-//////      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token));
-//////   }
-//////   else if (terminal == lxInteger) {
-//////      String<char, 20> s;
-//////
-//////      int integer = token.toInt();
-//////      if (errno == ERANGE)
-//////         scope.raiseError(errInvalidIntNumber, terminal);
-//////
-//////      // convert back to string as a decimal integer
-//////      s.appendHex(integer);
-//////
-//////      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
-//////   }
-//////   else if (terminal == lxLong) {
-//////      String<char, 30> s("_"); // special mark to tell apart from integer constant
-//////      s.append(token, getlength(token) - 1);
-//////
-//////      token.toULongLong(10, 1);
-//////      if (errno == ERANGE)
-//////         scope.raiseError(errInvalidIntNumber, terminal);
-//////
-//////      object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s));
-//////   }
-//////   else if (terminal == lxHexInteger) {
-//////      String<char, 20> s;
-//////
-//////      int integer = token.toULong(16);
-//////      if (errno == ERANGE)
-//////         scope.raiseError(errInvalidIntNumber, terminal);
-//////
-//////      // convert back to string as a decimal integer
-//////      s.appendHex(integer);
-//////
-//////      object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
-//////   }
-//////   else if (terminal == lxReal) {
-//////      String<char, 30> s(token, getlength(token) - 1);
-//////      token.toDouble();
-//////      if (errno == ERANGE)
-//////         scope.raiseError(errInvalidIntNumber, terminal);
-//////
-//////      // HOT FIX : to support 0r constant
-//////      if (s.Length() == 1) {
-//////         s.append(".0");
-//////      }
-//////
-//////      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s));
-//////   }
-//////   else if (terminal == lxExplicitConst) {
-//////      // try to resolve explicit constant
-//////      size_t len = getlength(token);
-//////
-//////      IdentifierString singature(token + len - 1);
-//////      singature.append('$');
-//////      singature.append(scope.moduleScope->module->resolveReference(scope.moduleScope->literalReference));
-//////
-//////      ref_t postfixRef = scope.moduleScope->module->mapSubject(singature, false);
-//////
-//////      IdentifierString constant(token, len - 1);
-//////
-//////      object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(constant), postfixRef);
-//////   }
-////////   else if (terminal == lxResult) {
-////////      object = ObjectInfo(okObject);
-////////   }
-//////   else if (terminal == lxMemberIdentifier) {
-//////      object = scope.mapMember(token.c_str() + 1);
-//////   }
-//////   else if (!emptystr(token))
-////      object = scope.mapObject(terminal);
-////
-//////   if (test(mode, HINT_INQUIRY_MODE)) {
-//////      // assingment optimization - do nothing for an inqiry mode
-//////   }
-//////   else if (object.kind == okExplicitConstant) {
-//////      // replace an explicit constant with the appropriate object
-//////      writer.newBookmark();
-//////      writeTerminal(writer, terminal, scope, ObjectInfo(okLiteralConstant, object.param) , mode);
-//////
-//////      ref_t constRef = scope.moduleScope->actionHints.get(encodeMessage(object.extraparam, 1) | CONVERSION_MESSAGE);
-//////      if (constRef != 0) {
-//////         if (!convertObject(writer, *scope.moduleScope, constRef, V_STRCONSTANT, object.extraparam))
-//////            scope.raiseError(errInvalidConstant, terminal);
-//////      }
-//////      else scope.raiseError(errInvalidConstant, terminal);
-//////
-//////      object = ObjectInfo(okObject, constRef);
-//////
-//////      writer.removeBookmark();
-//////   }
-////   /*else */writeTerminal(writer, terminal, scope, object, mode);
+//      int integer = token.toInt();
+//      if (errno == ERANGE)
+//         scope.raiseError(errInvalidIntNumber, terminal);
 //
-//   return object;
-//}
+//      // convert back to string as a decimal integer
+//      s.appendHex(integer);
 //
-//ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode)
-//{
-//   ObjectInfo result;
+//      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
+//   }
+//   else if (terminal == lxLong) {
+//      String<char, 30> s("_"); // special mark to tell apart from integer constant
+//      s.append(token, getlength(token) - 1);
 //
-////   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing);
-////   switch (member.type)
-////   {
-////      case lxNestedClass:
-////      case lxLazyExpression:
-////         result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
-////         break;
-////      case lxCode:
-////         result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
-////         break;
-////      case lxExpression:
-////         if (isCollection(member)) {
-////            result = compileCollection(writer, objectNode, scope);
-////         }
-////         else result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
-////         break;
-////      case lxBoxing:
-////         result = compileExpression(writer, member, scope, mode);
-////         break;
-////      case lxMessageReference:
-////         result = compileMessageReference(writer, member, scope, mode);
-////         break;
-////      default:
-//         result = compileTerminal(writer, objectNode, scope, mode);
+//      token.toULongLong(10, 1);
+//      if (errno == ERANGE)
+//         scope.raiseError(errInvalidIntNumber, terminal);
+//
+//      object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s));
+//   }
+//   else if (terminal == lxHexInteger) {
+//      String<char, 20> s;
+//
+//      int integer = token.toULong(16);
+//      if (errno == ERANGE)
+//         scope.raiseError(errInvalidIntNumber, terminal);
+//
+//      // convert back to string as a decimal integer
+//      s.appendHex(integer);
+//
+//      object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
+//   }
+//   else if (terminal == lxReal) {
+//      String<char, 30> s(token, getlength(token) - 1);
+//      token.toDouble();
+//      if (errno == ERANGE)
+//         scope.raiseError(errInvalidIntNumber, terminal);
+//
+//      // HOT FIX : to support 0r constant
+//      if (s.Length() == 1) {
+//         s.append(".0");
+//      }
+//
+//      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s));
+//   }
+//   else if (terminal == lxExplicitConst) {
+//      // try to resolve explicit constant
+//      size_t len = getlength(token);
+//
+//      IdentifierString singature(token + len - 1);
+//      singature.append('$');
+//      singature.append(scope.moduleScope->module->resolveReference(scope.moduleScope->literalReference));
+//
+//      ref_t postfixRef = scope.moduleScope->module->mapSubject(singature, false);
+//
+//      IdentifierString constant(token, len - 1);
+//
+//      object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(constant), postfixRef);
+//   }
+////   else if (terminal == lxResult) {
+////      object = ObjectInfo(okObject);
 ////   }
+//   else if (terminal == lxMemberIdentifier) {
+//      object = scope.mapMember(token.c_str() + 1);
+//   }
+//   else if (!emptystr(token))
+      object = scope.mapObject(terminal);
+
+//   if (test(mode, HINT_INQUIRY_MODE)) {
+//      // assingment optimization - do nothing for an inqiry mode
+//   }
+//   else if (object.kind == okExplicitConstant) {
+//      // replace an explicit constant with the appropriate object
+//      writer.newBookmark();
+//      writeTerminal(writer, terminal, scope, ObjectInfo(okLiteralConstant, object.param) , mode);
 //
-//   return result;
-//}
+//      ref_t constRef = scope.moduleScope->actionHints.get(encodeMessage(object.extraparam, 1) | CONVERSION_MESSAGE);
+//      if (constRef != 0) {
+//         if (!convertObject(writer, *scope.moduleScope, constRef, V_STRCONSTANT, object.extraparam))
+//            scope.raiseError(errInvalidConstant, terminal);
+//      }
+//      else scope.raiseError(errInvalidConstant, terminal);
+//
+//      object = ObjectInfo(okObject, constRef);
+//
+//      writer.removeBookmark();
+//   }
+   /*else */writeTerminal(writer, terminal, scope, object, mode);
+
+   return object;
+}
+
+ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode)
+{
+   ObjectInfo result;
+
+//   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing);
+//   switch (member.type)
+//   {
+//      case lxNestedClass:
+//      case lxLazyExpression:
+//         result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
+//         break;
+//      case lxCode:
+//         result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
+//         break;
+//      case lxExpression:
+//         if (isCollection(member)) {
+//            result = compileCollection(writer, objectNode, scope);
+//         }
+//         else result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
+//         break;
+//      case lxBoxing:
+//         result = compileExpression(writer, member, scope, mode);
+//         break;
+//      case lxMessageReference:
+//         result = compileMessageReference(writer, member, scope, mode);
+//         break;
+//      default:
+         result = compileTerminal(writer, objectNode, scope, mode);
+//   }
+
+   return result;
+}
 
 //ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 //{
@@ -2649,111 +2627,111 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //   return retVal;
 //}
 
-//ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
-//{
-////   ref_t actionFlags = 0;
-////
-//////   IdentifierString signature;
-////   IdentifierString messageStr;
-////
-////   SNode current = node;
-//////   if (arg.argument != 0)
-//////      return arg.argument;
-////
-////   SNode name = current.findChild(/*lxPrivate, */lxIdentifier/*, lxReference*/);
-//////   //HOTFIX : if generated by a script / closure call
-//////   if (name == lxNone)
-//////      name = arg;
-////
-////   if (name == lxNone)
-////      scope.raiseError(errInvalidOperation, node);
-////
-////   messageStr.copy(name.identifier()); // !! temporal
-//////   ref_t verbRef = scope.mapSubject(name, messageStr);
-//////   if (verbRef) {
-//////      if (arg.nextNode() == lxNone) {
-//////         signature.append('$');
-//////         signature.append(scope.moduleScope->module->resolveReference(verbRef));
-//////      }
-//////      else scope.raiseError(errInvalidSubject, name);
-//////   }
-//////   else {
-//////      // COMPILER MAGIC : recognize set property
-//////      int verb_id = _verbs.get(messageStr.c_str());
-//////      if (verb_id == SET_MESSAGE_ID) {
-//////         actionFlags = PROPSET_MESSAGE;
-//////      }
-//////   }
-////
-////   current = current.nextNode();
-////
-////   int paramCount = 0;
-////   // if message has generic argument list
-////   while (test(current.type, lxObjectMask)) {
-////      //if (paramCount < OPEN_ARG_COUNT)
-////         paramCount++;
-////
-////      current = current.nextNode();
-////   }
-////
-//////   // if message has named argument list
-//////   bool first = messageStr.Length() == 0;
-//////
-//////   while (arg == lxMessage) {
-//////      ref_t elementRef = 0;
-//////      ref_t class_ref = declareArgumentSubject(arg, *scope.moduleScope, first, messageStr, signature, elementRef);
-//////
-//////      // skip an argument
-//////      arg = arg.nextNode();
-//////
-//////      if (test(arg.type, lxObjectMask)) {
-//////         // if it is an open argument list
-//////         if (class_ref == V_ARGARRAY) {
-//////            paramCount += OPEN_ARG_COUNT;
-//////
-//////            // if open argument list virtual subject is used - replace it with []
-//////            if (paramCount > MAX_ARG_COUNT)
-//////               scope.raiseError(errInvalidOperation, node);
-//////
-//////            if (elementRef != scope.moduleScope->superReference || paramCount > OPEN_ARG_COUNT) {
-//////               signature.append('$');
-//////               signature.append(scope.moduleScope->module->resolveReference(elementRef));
-//////            }
-//////            else signature.clear();
-//////
-//////            break;
-//////         }
-//////         else {
-//////            paramCount++;
-//////            if (paramCount >= OPEN_ARG_COUNT)
-//////               scope.raiseError(errInvalidOperation, node);
-//////
-//////            arg = arg.nextNode();
-//////         }
-//////      }
-//////   }
-////
-////   if (paramCount > MAX_ARG_COUNT)
-////      scope.raiseError(errInvalidOperation, node);
-////
-//////   if (actionFlags == PROPSET_MESSAGE && paramCount == 1) {
-//////      // COMPILER MAGIC : set&x => x
-//////      if (messageStr.Length() > 3) {
-//////         messageStr.cut(0, 4);
-//////      }
-//////      else if (messageStr.compare(SET_MESSAGE) && !emptystr(signature)) {
-//////         messageStr.clear();
-//////      }
-//////   }
-//////
-//////   messageStr.append(signature);
-////
-////   // if signature is presented
-////   ref_t actionRef = scope.moduleScope->module->mapAction(messageStr, 0, false);
-////
-//   // create a message id
-//   return /*encodeMessage(actionRef, paramCount) | actionFlags*/0;
-//}
+ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
+{
+   ref_t actionFlags = 0;
+
+//   IdentifierString signature;
+   IdentifierString messageStr;
+
+   SNode current = node;
+//   if (arg.argument != 0)
+//      return arg.argument;
+
+   SNode name = current.findChild(/*lxPrivate, */lxIdentifier/*, lxReference*/);
+//   //HOTFIX : if generated by a script / closure call
+//   if (name == lxNone)
+//      name = arg;
+
+   if (name == lxNone)
+      scope.raiseError(errInvalidOperation, node);
+
+   messageStr.copy(name.identifier()); // !! temporal
+//   ref_t verbRef = scope.mapSubject(name, messageStr);
+//   if (verbRef) {
+//      if (arg.nextNode() == lxNone) {
+//         signature.append('$');
+//         signature.append(scope.moduleScope->module->resolveReference(verbRef));
+//      }
+//      else scope.raiseError(errInvalidSubject, name);
+//   }
+//   else {
+//      // COMPILER MAGIC : recognize set property
+//      int verb_id = _verbs.get(messageStr.c_str());
+//      if (verb_id == SET_MESSAGE_ID) {
+//         actionFlags = PROPSET_MESSAGE;
+//      }
+//   }
+
+   current = current.nextNode();
+
+   int paramCount = 0;
+   // if message has generic argument list
+   while (test(current.type, lxObjectMask)) {
+      //if (paramCount < OPEN_ARG_COUNT)
+         paramCount++;
+
+      current = current.nextNode();
+   }
+
+//   // if message has named argument list
+//   bool first = messageStr.Length() == 0;
+//
+//   while (arg == lxMessage) {
+//      ref_t elementRef = 0;
+//      ref_t class_ref = declareArgumentSubject(arg, *scope.moduleScope, first, messageStr, signature, elementRef);
+//
+//      // skip an argument
+//      arg = arg.nextNode();
+//
+//      if (test(arg.type, lxObjectMask)) {
+//         // if it is an open argument list
+//         if (class_ref == V_ARGARRAY) {
+//            paramCount += OPEN_ARG_COUNT;
+//
+//            // if open argument list virtual subject is used - replace it with []
+//            if (paramCount > MAX_ARG_COUNT)
+//               scope.raiseError(errInvalidOperation, node);
+//
+//            if (elementRef != scope.moduleScope->superReference || paramCount > OPEN_ARG_COUNT) {
+//               signature.append('$');
+//               signature.append(scope.moduleScope->module->resolveReference(elementRef));
+//            }
+//            else signature.clear();
+//
+//            break;
+//         }
+//         else {
+//            paramCount++;
+//            if (paramCount >= OPEN_ARG_COUNT)
+//               scope.raiseError(errInvalidOperation, node);
+//
+//            arg = arg.nextNode();
+//         }
+//      }
+//   }
+
+   if (paramCount > MAX_ARG_COUNT)
+      scope.raiseError(errInvalidOperation, node);
+
+//   if (actionFlags == PROPSET_MESSAGE && paramCount == 1) {
+//      // COMPILER MAGIC : set&x => x
+//      if (messageStr.Length() > 3) {
+//         messageStr.cut(0, 4);
+//      }
+//      else if (messageStr.compare(SET_MESSAGE) && !emptystr(signature)) {
+//         messageStr.clear();
+//      }
+//   }
+//
+//   messageStr.append(signature);
+
+   // if signature is presented
+   ref_t actionRef = scope.moduleScope->module->mapAction(messageStr, 0, false);
+
+   // create a message id
+   return encodeMessage(actionRef, paramCount) | actionFlags;
+}
 
 //ref_t Compiler :: mapExtension(ModuleScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef)
 //{
@@ -3044,124 +3022,124 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //   else return compileOperator(writer, node, scope, mode, operator_id);
 //}
 
-//ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode)
-//{
-//   ObjectInfo retVal(okObject);
+ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode)
+{
+   ObjectInfo retVal(okObject);
+
+   LexicalType operation = lxCalling;
+   int argument = messageRef;
+
+//   ref_t actionRef;
+//   int paramCount;
+//   decodeMessage(messageRef, actionRef, paramCount);
+
+   // try to recognize the operation
+   ref_t classReference = resolveObjectReference(scope, target);
+//   bool dispatchCall = false;
+   _CompilerLogic::ChechMethodInfo result;
+   int callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
+//   if (result.found) {
+//      retVal.param = result.outputReference;
+//   }
 //
-////   LexicalType operation = lxCalling;
-////   int argument = messageRef;
-////
-//////   ref_t actionRef;
-//////   int paramCount;
-//////   decodeMessage(messageRef, actionRef, paramCount);
-////
-////   // try to recognize the operation
-////   ref_t classReference = resolveObjectReference(scope, target);
-//////   bool dispatchCall = false;
-////   _CompilerLogic::ChechMethodInfo result;
-////   int callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
-//////   if (result.found) {
-//////      retVal.param = result.outputReference;
-//////   }
-//////
-//////   if (target.kind == okThisParam && callType == tpPrivate) {
-//////      messageRef |= SEALED_MESSAGE;
-//////
-//////      callType = tpSealed;
-//////   }
-//////   else if (classReference == scope.moduleScope->signatureReference) {
-//////      dispatchCall = test(mode, HINT_EXTENSION_MODE);
-//////   }
-//////   else if (classReference == scope.moduleScope->messageReference) {
-//////      dispatchCall = test(mode, HINT_EXTENSION_MODE);
-//////   }
-//////   else if (target.kind == okSuper) {
-//////      // parent methods are always sealed
-//////      callType = tpSealed;
-//////   }
-//////
-//////   if (dispatchCall) {
-//////      operation = lxDirectCalling;
-//////      argument = encodeVerb(DISPATCH_MESSAGE_ID);
-//////
-//////      writer.appendNode(lxOvreriddenMessage, messageRef);
-//////   }
-////   /*else */if (callType == tpClosed || callType == tpSealed) {
-////      operation = callType == tpClosed ? lxSDirctCalling : lxDirectCalling;
-////      argument = messageRef;
-//////      if (result.withOpenArgDispatcher) {
-//////         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT);
-//////      }
-//////      else if (result.withOpenArg1Dispatcher) {
-//////         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 1);
-//////      }
-//////      else if (result.withOpenArg2Dispatcher) {
-//////         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 2);
-//////      }
-//////
-//////      if (result.stackSafe && target.kind != okParams && !test(mode, HINT_DYNAMIC_OBJECT))
-//////         writer.appendNode(lxStacksafeAttr);
-//////
-//////      if (result.embeddable)
-//////         writer.appendNode(lxEmbeddableAttr);
-////   }
-//////   else {
-//////      // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
-//////      if (result.found && !result.withCustomDispatcher && callType == tpUnknown && result.directResolved) {
-//////         if (test(mode, HINT_ASSIGNING_EXPR)) {
-//////            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxExpression).findChild(lxMessage));
-//////         }
-//////         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage, lxOperator));
-//////      }         
-//////   }
-//////
-//////   if (result.closure)
-//////      writer.appendNode(lxClosureAttr);
-////
-////   if (classReference)
-////      writer.appendNode(lxCallTarget, classReference);
-////
-//////   if (result.outputReference)
-//////      writer.appendNode(lxTarget, result.outputReference);
-////
-////   if (!test(mode, HINT_NODEBUGINFO)) {
-////      // set a breakpoint
-////      writer.newNode(lxBreakpoint, dsStep);
-////
-////      SNode messageNode = node.findChild(lxIdentifier, lxPrivate);
-////      if (messageNode != lxNone) {
-////         writeTerminalInfo(writer, messageNode);
-////      }
-////
-////      writer.closeNode();
-////   }
-////
-//////   // define the message target if required
-//////   if (target.kind == okConstantRole || target.kind == okSubject) {
-//////      writer.newNode(lxOverridden);
-//////      writer.newNode(lxExpression);
-//////      writeTerminal(writer, node, scope, target, 0);
-//////      writer.closeNode();
-//////      writer.closeNode();
-//////   }
-//////
-//////   // the result of get&type message should be typed
-//////
-//////   if (retVal.param == 0 && paramCount == 0 && actionRef != 0) {
-//////      ident_t sign = scope.moduleScope->module->resolveSubject(actionRef);
-//////      size_t index = sign.find('$');
-//////      if (index != NOTFOUND_POS && sign[index+1] != 0)
-//////         retVal.param = scope.moduleScope->module->mapReference(sign.c_str() + index + 1);
-//////
-//////      writer.appendNode(lxTarget, retVal.param);
-//////   }
-////
-////   // inserting calling expression
-////   writer.insert(operation, argument);
-////   writer.closeNode();
+//   if (target.kind == okThisParam && callType == tpPrivate) {
+//      messageRef |= SEALED_MESSAGE;
 //
-//   return retVal;
-//}
+//      callType = tpSealed;
+//   }
+//   else if (classReference == scope.moduleScope->signatureReference) {
+//      dispatchCall = test(mode, HINT_EXTENSION_MODE);
+//   }
+//   else if (classReference == scope.moduleScope->messageReference) {
+//      dispatchCall = test(mode, HINT_EXTENSION_MODE);
+//   }
+//   else if (target.kind == okSuper) {
+//      // parent methods are always sealed
+//      callType = tpSealed;
+//   }
+//
+//   if (dispatchCall) {
+//      operation = lxDirectCalling;
+//      argument = encodeVerb(DISPATCH_MESSAGE_ID);
+//
+//      writer.appendNode(lxOvreriddenMessage, messageRef);
+//   }
+   /*else */if (callType == tpClosed || callType == tpSealed) {
+      operation = callType == tpClosed ? lxSDirctCalling : lxDirectCalling;
+      argument = messageRef;
+//      if (result.withOpenArgDispatcher) {
+//         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT);
+//      }
+//      else if (result.withOpenArg1Dispatcher) {
+//         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 1);
+//      }
+//      else if (result.withOpenArg2Dispatcher) {
+//         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 2);
+//      }
+//
+//      if (result.stackSafe && target.kind != okParams && !test(mode, HINT_DYNAMIC_OBJECT))
+//         writer.appendNode(lxStacksafeAttr);
+//
+//      if (result.embeddable)
+//         writer.appendNode(lxEmbeddableAttr);
+   }
+//   else {
+//      // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
+//      if (result.found && !result.withCustomDispatcher && callType == tpUnknown && result.directResolved) {
+//         if (test(mode, HINT_ASSIGNING_EXPR)) {
+//            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxExpression).findChild(lxMessage));
+//         }
+//         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage, lxOperator));
+//      }         
+//   }
+//
+//   if (result.closure)
+//      writer.appendNode(lxClosureAttr);
+
+   if (classReference)
+      writer.appendNode(lxCallTarget, classReference);
+
+//   if (result.outputReference)
+//      writer.appendNode(lxTarget, result.outputReference);
+
+   if (!test(mode, HINT_NODEBUGINFO)) {
+      // set a breakpoint
+      writer.newNode(lxBreakpoint, dsStep);
+
+      SNode messageNode = node.findChild(lxIdentifier, lxPrivate);
+      if (messageNode != lxNone) {
+         writeTerminalInfo(writer, messageNode);
+      }
+
+      writer.closeNode();
+   }
+
+//   // define the message target if required
+//   if (target.kind == okConstantRole || target.kind == okSubject) {
+//      writer.newNode(lxOverridden);
+//      writer.newNode(lxExpression);
+//      writeTerminal(writer, node, scope, target, 0);
+//      writer.closeNode();
+//      writer.closeNode();
+//   }
+//
+//   // the result of get&type message should be typed
+//
+//   if (retVal.param == 0 && paramCount == 0 && actionRef != 0) {
+//      ident_t sign = scope.moduleScope->module->resolveSubject(actionRef);
+//      size_t index = sign.find('$');
+//      if (index != NOTFOUND_POS && sign[index+1] != 0)
+//         retVal.param = scope.moduleScope->module->mapReference(sign.c_str() + index + 1);
+//
+//      writer.appendNode(lxTarget, retVal.param);
+//   }
+
+   // inserting calling expression
+   writer.insert(operation, argument);
+   writer.closeNode();
+
+   return retVal;
+}
 
 //bool Compiler :: convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
 //{
@@ -3212,144 +3190,144 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //   else return 0;
 //}
 
-///*ObjectInfo*/void Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode*/)
-//{
-////   ObjectInfo target;
-////   bool anonymous = false;
-////   IdentifierString signature;
-////
-////   if (test(mode, HINT_PARAMETERSONLY))
-////      target = ObjectInfo(okObject);
+/*ObjectInfo*/void Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode*/)
+{
+//   ObjectInfo target;
+//   bool anonymous = false;
+//   IdentifierString signature;
 //
-//   int paramMode = 0;
+//   if (test(mode, HINT_PARAMETERSONLY))
+//      target = ObjectInfo(okObject);
+
+   int paramMode = 0;
+
+   SNode current = node;
+//   if (test(mode, HINT_RESENDEXPR) && (arg == lxMessage && arg.nextNode() != lxMessage)) {
+//      arg = arg.nextNode();
+//   }
+
+   // compile the message target and generic argument list
+   while (/*current != lxMessage && */current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+//         if (target.kind == okUnknown) {
+//            // HOTFIX : to handle alt expression
+//            if (arg.type == lxLocal) {
+//               target = ObjectInfo(okLocal, arg.argument);
+//               writeTerminal(writer, arg, scope, target, 0);
+//            }
+//            // HOTFIX : to handle resend expression / explcit strong extension
+//            else if (arg.type == lxResult) {
+//               target = ObjectInfo(okObject);
+//            }
+//            else target = compileExpression(writer, arg, scope, paramMode);
 //
-//   SNode current = node;
-////   if (test(mode, HINT_RESENDEXPR) && (arg == lxMessage && arg.nextNode() != lxMessage)) {
-////      arg = arg.nextNode();
-////   }
+//            // HOTFIX : recognize external operation
+//            if (target.kind == okExternal) {
+//               paramMode |= HINT_EXTERNALOP;
+//            }
 //
-//   // compile the message target and generic argument list
-//   while (/*current != lxMessage && */current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-////         if (target.kind == okUnknown) {
-////            // HOTFIX : to handle alt expression
-////            if (arg.type == lxLocal) {
-////               target = ObjectInfo(okLocal, arg.argument);
-////               writeTerminal(writer, arg, scope, target, 0);
-////            }
-////            // HOTFIX : to handle resend expression / explcit strong extension
-////            else if (arg.type == lxResult) {
-////               target = ObjectInfo(okObject);
-////            }
-////            else target = compileExpression(writer, arg, scope, paramMode);
-////
-////            // HOTFIX : recognize external operation
-////            if (target.kind == okExternal) {
-////               paramMode |= HINT_EXTERNALOP;
-////            }
-////
-////            // HOTFIX : skip the prime message
-////            arg = arg.nextNode();
-////
-////            if (test(mode, HINT_RESENDEXPR)) {
-////               // HOTFIX : support several generic arguments for try mode
-////               if (arg == lxExpression)
-////                  continue;
-////            }
-////            else if (arg == lxExtension)
-////               // HOTFIX : skip the extension node
-////               arg = arg.nextNode();
-////         }
-////         // try to recognize the message signature
-///*         else *//*resolveStrongArgument(scope, */compileExpression(writer, current, scope, paramMode)/*, anonymous, signature)*/;
+//            // HOTFIX : skip the prime message
+//            arg = arg.nextNode();
+//
+//            if (test(mode, HINT_RESENDEXPR)) {
+//               // HOTFIX : support several generic arguments for try mode
+//               if (arg == lxExpression)
+//                  continue;
+//            }
+//            else if (arg == lxExtension)
+//               // HOTFIX : skip the extension node
+//               arg = arg.nextNode();
+//         }
+//         // try to recognize the message signature
+/*         else *//*resolveStrongArgument(scope, */compileExpression(writer, current, scope, paramMode)/*, anonymous, signature)*/;
+      }
+
+      current = current.nextNode();
+   }
+
+//   // resend expression starts with the message, so it should be skipped
+//   if (test(mode, HINT_RESENDEXPR))
+//      arg = arg.nextNode();
+//
+//   // if message has named argument list
+//   while (arg == lxMessage) {
+//      bool openArg = arg.existChild(lxSize);
+//      SNode subject = arg.findChild(lxPrivate, lxIdentifier, lxReference);
+//      //HOTFIX : if generated by a script
+//      if (subject == lxNone)
+//         subject = arg;
+//
+//      ref_t classRef = scope.mapSubject(subject);
+//      if (classRef)
+//         anonymous = true;
+//
+//      arg = arg.nextNode();
+//
+//      // compile an argument
+//      if (test(arg.type, lxObjectMask)) {
+//         // if it is an open argument list
+//         if (openArg) {
+//            if (arg == lxExpression) {
+//               SNode argListNode = arg.firstChild();
+//
+//               while (argListNode != lxNone) {
+//                  writer.newBookmark();
+//                  ObjectInfo param = compileExpression(writer, argListNode, scope, paramMode);
+//                  if (classRef != 0 && classRef != scope.moduleScope->superReference) {
+//                     if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param, classRef), param.element))
+//                        scope.raiseError(errInvalidOperation, arg);
+//                  }
+//                  writer.removeBookmark();
+//
+//                  argListNode = argListNode.nextNode();
+//               }
+//            }
+//            else {
+//               writer.newBookmark();
+//               ObjectInfo argListParam = compileExpression(writer, arg, scope, paramMode);
+//               if (argListParam.kind == okParams) {
+//                  writer.insert(lxArgUnboxing);
+//                  writer.closeNode();
+//               }
+//               writer.removeBookmark();
+//            }
+//         }
+//         else {
+//            writer.newBookmark();
+//
+//            int exprMode = paramMode;
+//            // HOTFIX : generic parameter object MUST be boxed
+//            if (classRef == 0)
+//               exprMode |= HINT_DYNAMIC_OBJECT;
+//
+//            ObjectInfo param = compileExpression(writer, arg, scope, exprMode);
+//            if (classRef != 0) {
+//               if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param, classRef), param.element))
+//                  scope.raiseError(errInvalidOperation, arg);
+//            }
+//            else if (!anonymous)
+//               resolveStrongArgument(scope, param, anonymous, signature);
+//
+//            // HOTFIX : externall operation arguments should be inside expression node
+//            if (test(paramMode, HINT_EXTERNALOP)) {
+//               writer.appendNode(lxExtArgumentRef, classRef);
+//
+//               writer.insert(lxExpression);
+//               writer.closeNode();
+//            }
+//
+//            writer.removeBookmark();
+//
+//            arg = arg.nextNode();
+//         }
 //      }
-//
-//      current = current.nextNode();
 //   }
 //
-////   // resend expression starts with the message, so it should be skipped
-////   if (test(mode, HINT_RESENDEXPR))
-////      arg = arg.nextNode();
-////
-////   // if message has named argument list
-////   while (arg == lxMessage) {
-////      bool openArg = arg.existChild(lxSize);
-////      SNode subject = arg.findChild(lxPrivate, lxIdentifier, lxReference);
-////      //HOTFIX : if generated by a script
-////      if (subject == lxNone)
-////         subject = arg;
-////
-////      ref_t classRef = scope.mapSubject(subject);
-////      if (classRef)
-////         anonymous = true;
-////
-////      arg = arg.nextNode();
-////
-////      // compile an argument
-////      if (test(arg.type, lxObjectMask)) {
-////         // if it is an open argument list
-////         if (openArg) {
-////            if (arg == lxExpression) {
-////               SNode argListNode = arg.firstChild();
-////
-////               while (argListNode != lxNone) {
-////                  writer.newBookmark();
-////                  ObjectInfo param = compileExpression(writer, argListNode, scope, paramMode);
-////                  if (classRef != 0 && classRef != scope.moduleScope->superReference) {
-////                     if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param, classRef), param.element))
-////                        scope.raiseError(errInvalidOperation, arg);
-////                  }
-////                  writer.removeBookmark();
-////
-////                  argListNode = argListNode.nextNode();
-////               }
-////            }
-////            else {
-////               writer.newBookmark();
-////               ObjectInfo argListParam = compileExpression(writer, arg, scope, paramMode);
-////               if (argListParam.kind == okParams) {
-////                  writer.insert(lxArgUnboxing);
-////                  writer.closeNode();
-////               }
-////               writer.removeBookmark();
-////            }
-////         }
-////         else {
-////            writer.newBookmark();
-////
-////            int exprMode = paramMode;
-////            // HOTFIX : generic parameter object MUST be boxed
-////            if (classRef == 0)
-////               exprMode |= HINT_DYNAMIC_OBJECT;
-////
-////            ObjectInfo param = compileExpression(writer, arg, scope, exprMode);
-////            if (classRef != 0) {
-////               if (!convertObject(writer, *scope.moduleScope, classRef, resolveObjectReference(scope, param, classRef), param.element))
-////                  scope.raiseError(errInvalidOperation, arg);
-////            }
-////            else if (!anonymous)
-////               resolveStrongArgument(scope, param, anonymous, signature);
-////
-////            // HOTFIX : externall operation arguments should be inside expression node
-////            if (test(paramMode, HINT_EXTERNALOP)) {
-////               writer.appendNode(lxExtArgumentRef, classRef);
-////
-////               writer.insert(lxExpression);
-////               writer.closeNode();
-////            }
-////
-////            writer.removeBookmark();
-////
-////            arg = arg.nextNode();
-////         }
-////      }
-////   }
-////
-////   if (!anonymous && !emptystr(signature)) {
-////      signatureRef = scope.moduleScope->module->mapSubject(signature.ident(), false);
-////   }
-////   return target;
-//}
+//   if (!anonymous && !emptystr(signature)) {
+//      signatureRef = scope.moduleScope->module->mapSubject(signature.ident(), false);
+//   }
+//   return target;
+}
 
 //ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef, 
 //   bool withExtension, bool& genericOne)
@@ -3395,60 +3373,60 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //   return generalMessageRef;
 //}
 
-//ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode)
-//{
-////   ref_t implicitSignatureRef = 0;
-////   size_t paramCount = 0;
-//   ObjectInfo retVal;
-//   compileMessageParameters(writer, node, scope/*, implicitSignatureRef, mode & (HINT_RESENDEXPR | HINT_PARAMETERSONLY)*/);
-////
-////   if (test(mode, HINT_TRY_MODE)) {
-////      writer.insertChild(0, lxResult, 0);
-////
-////      target = ObjectInfo(okObject);
-////   }
-////   else if (test(mode, HINT_ALT_MODE)) {
-////      SNode targetNode = node.parentNode().firstChild(lxObjectMask).firstChild(lxObjectMask);
-////      if (targetNode == lxLocal) {
-////         writer.insertChild(0, targetNode.type, targetNode.argument);
-////      }
-////      else writer.insertChild(0, lxCurrent, 0);
-////
-////      target = ObjectInfo(okObject);
-////   }
-////   else if (test(mode, HINT_RESENDEXPR)) {
-////      if (test(mode, HINT_EXT_RESENDEXPR)) {
-////         //HOTFIX : fixing resending an extension message
-////         writer.insertChild(0, lxLocal, (ref_t)-1);
-////      }
-////      else writer.insertChild(0, lxThisLocal, 1);
-////
-////      target = ObjectInfo(okThisParam, 1);
-////   }
-////
-////   //   bool externalMode = false;
-////   if (target.kind == okExternal) {
-////      retVal = compileExternalCall(writer, node, scope);
-////   }
-////   else {
-//      ref_t messageRef = mapMessage(node, scope/*, paramCount*/);
-////
-////      if (target.kind == okInternal) {
-////         retVal = compileInternalCall(writer, node, scope, messageRef, target);
-////      }
-////      else {
-////         bool genericOne = false;
-////         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, genericOne);
-////
-////         if (genericOne)
-////            mode |= HINT_DYNAMIC_OBJECT;
+ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode)
+{
+//   ref_t implicitSignatureRef = 0;
+//   size_t paramCount = 0;
+   ObjectInfo retVal;
+   compileMessageParameters(writer, node, scope/*, implicitSignatureRef, mode & (HINT_RESENDEXPR | HINT_PARAMETERSONLY)*/);
 //
-//         retVal = compileMessage(writer, node, scope, target, messageRef, mode);
-////      }
-////   }
+//   if (test(mode, HINT_TRY_MODE)) {
+//      writer.insertChild(0, lxResult, 0);
 //
-//   return retVal;
-//}
+//      target = ObjectInfo(okObject);
+//   }
+//   else if (test(mode, HINT_ALT_MODE)) {
+//      SNode targetNode = node.parentNode().firstChild(lxObjectMask).firstChild(lxObjectMask);
+//      if (targetNode == lxLocal) {
+//         writer.insertChild(0, targetNode.type, targetNode.argument);
+//      }
+//      else writer.insertChild(0, lxCurrent, 0);
+//
+//      target = ObjectInfo(okObject);
+//   }
+//   else if (test(mode, HINT_RESENDEXPR)) {
+//      if (test(mode, HINT_EXT_RESENDEXPR)) {
+//         //HOTFIX : fixing resending an extension message
+//         writer.insertChild(0, lxLocal, (ref_t)-1);
+//      }
+//      else writer.insertChild(0, lxThisLocal, 1);
+//
+//      target = ObjectInfo(okThisParam, 1);
+//   }
+//
+//   //   bool externalMode = false;
+//   if (target.kind == okExternal) {
+//      retVal = compileExternalCall(writer, node, scope);
+//   }
+//   else {
+      ref_t messageRef = mapMessage(node, scope/*, paramCount*/);
+//
+//      if (target.kind == okInternal) {
+//         retVal = compileInternalCall(writer, node, scope, messageRef, target);
+//      }
+//      else {
+//         bool genericOne = false;
+//         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, genericOne);
+//
+//         if (genericOne)
+//            mode |= HINT_DYNAMIC_OBJECT;
+
+         retVal = compileMessage(writer, node, scope, target, messageRef, mode);
+//      }
+//   }
+
+   return retVal;
+}
 
 //void Compiler :: inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef)
 //{
@@ -4061,57 +4039,57 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //   return ObjectInfo(okObject, vmtReference);
 //}
 
-//ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-////   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-////
-////   bool typecasting = false;
-////   bool converting = false;
-////   ref_t signature = 0;
-////   ref_t targetRef = 0;
-////   if (test(mode, HINT_ROOT)) {
-////      // type cast returning value if required
-////      int paramCount;
-////      decodeMessage(scope.getMessageID(), signature, paramCount);
-////      if (classScope->info.methodHints.exist(Attribute(scope.getMessageID(), maReference))) {
-////         targetRef = classScope->info.methodHints.get(Attribute(scope.getMessageID(), maReference));
-////         converting = true;
-////      }
-////      else if (paramCount == 0 && signature != 0) {
-////         ident_t signName = scope.moduleScope->module->resolveSubject(signature);
-////         int index = signName.find('$');
-////         // if it is a qualified message and is not a property
-////         if (index != NOTFOUND_POS && signName[index + 1] != 0) {
-////            IdentifierString className(signName.c_str() + index + 1);
-////
-////            typecasting = true;
-////            targetRef = scope.moduleScope->module->mapReference(className);
-////         }
-////      }
-////   }
-////
-////   writer.newBookmark();
+ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 //
-//   ObjectInfo info = compileExpression(writer, node, scope, mode);
+//   bool typecasting = false;
+//   bool converting = false;
+//   ref_t signature = 0;
+//   ref_t targetRef = 0;
+//   if (test(mode, HINT_ROOT)) {
+//      // type cast returning value if required
+//      int paramCount;
+//      decodeMessage(scope.getMessageID(), signature, paramCount);
+//      if (classScope->info.methodHints.exist(Attribute(scope.getMessageID(), maReference))) {
+//         targetRef = classScope->info.methodHints.get(Attribute(scope.getMessageID(), maReference));
+//         converting = true;
+//      }
+//      else if (paramCount == 0 && signature != 0) {
+//         ident_t signName = scope.moduleScope->module->resolveSubject(signature);
+//         int index = signName.find('$');
+//         // if it is a qualified message and is not a property
+//         if (index != NOTFOUND_POS && signName[index + 1] != 0) {
+//            IdentifierString className(signName.c_str() + index + 1);
 //
-////   if (converting || typecasting)
-////      convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, info), info.element);
-////
-////   // HOTFIX : implementing closure exit
-////   if (test(mode, HINT_ROOT)) {
-////      ObjectInfo retVar = scope.mapTerminal(RETVAL_VAR);
-////      if (retVar.kind != okUnknown) {
-////         writer.insertChild(0, lxField, retVar.param);
-////
-////         writer.insert(lxAssigning);
-////         writer.closeNode();
-////      }
-////   }
-////
-////   writer.removeBookmark();
+//            typecasting = true;
+//            targetRef = scope.moduleScope->module->mapReference(className);
+//         }
+//      }
+//   }
 //
-//   return info;
-//}
+//   writer.newBookmark();
+
+   ObjectInfo info = compileExpression(writer, node, scope, mode);
+
+//   if (converting || typecasting)
+//      convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, info), info.element);
+//
+//   // HOTFIX : implementing closure exit
+//   if (test(mode, HINT_ROOT)) {
+//      ObjectInfo retVar = scope.mapTerminal(RETVAL_VAR);
+//      if (retVar.kind != okUnknown) {
+//         writer.insertChild(0, lxField, retVar.param);
+//
+//         writer.insert(lxAssigning);
+//         writer.closeNode();
+//      }
+//   }
+//
+//   writer.removeBookmark();
+
+   return info;
+}
 
 //void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope)
 //{
@@ -4229,83 +4207,83 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //   return retVal;
 //}
 
-//ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-//   writer.newBookmark();
+ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   writer.newBookmark();
+
+   SNode object = node.firstChild(lxObjectMask);
+   ObjectInfo objectInfo = compileObject(writer, object, scope, mode);
+
+   SNode current = object.nextNode();
+   switch (current.type) {
+      case lxMessage:
+         objectInfo = compileMessage(writer, current, scope, objectInfo, mode);
+         break;
+   }
+
+//   ObjectInfo objectInfo;
+//   if (node == lxAlt) {
+//      compileAltOperation(writer, node, scope);
 //
-//   SNode object = node.firstChild(lxObjectMask);
-//   ObjectInfo objectInfo = compileObject(writer, object, scope, mode);
-//
-//   SNode current = object.nextNode();
-//   switch (current.type) {
-//      case lxMessage:
-//         objectInfo = compileMessage(writer, current, scope, objectInfo, mode);
-//         break;
+//      objectInfo = ObjectInfo(okObject);
 //   }
+//   else if (node == lxTrying) {
+//      compileTrying(writer, node, scope);
 //
-////   ObjectInfo objectInfo;
-////   if (node == lxAlt) {
-////      compileAltOperation(writer, node, scope);
-////
-////      objectInfo = ObjectInfo(okObject);
-////   }
-////   else if (node == lxTrying) {
-////      compileTrying(writer, node, scope);
-////
-////      objectInfo = ObjectInfo(okObject);
-////   }
-////   else if (node == lxBoxing) {
-////      objectInfo = compileBoxingExpression(writer, node, scope, mode);
-////   }
-////   else {
-////      SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxSwitching);
-////      switch (current.type) {
-////         case lxAssign:
-////            objectInfo = compileAssigning(writer, node, scope, mode);
-////            break;
-////         case lxMessage:
-////            objectInfo = compileMessage(writer, node, scope, mode);
-////            break;
-////         case lxSwitching:
-////            compileSwitch(writer, current, scope);
-////
-////            objectInfo = ObjectInfo(okObject);
-////            break;
-////         case lxExtension:
-////            objectInfo = compileExtension(writer, node, scope);
-////            break;
-////         case lxOperator:
-////            objectInfo = compileOperator(writer, node, scope, mode);
-////            break;
-////         default:
-////         {
-////            current = node.firstChild(lxObjectMask);
-////            SNode nextChild = current.nextNode();
-////
-////            if ((/*current == lxExpression || */current == lxAlt || current == lxTrying) && nextChild == lxNone) {
-////               // if it is a nested expression
-////               objectInfo = compileExpression(writer, current, scope, mode);
-////            }
-////            else if (test(current.type, lxTerminalMask) && nextChild == lxExpression) {
-////               //HOTFIX : to compile the collection
-////               objectInfo = compileCollection(writer, node, scope);
-////            }
-////            else if (test(current.type, lxTerminalMask)/* && nextChild == lxNone*/) {
-////               objectInfo = compileObject(writer, current, scope, mode);
-////            }
-////            else if (current == lxConstantList) {
-////               objectInfo = compileObject(writer, current, scope, mode);
-////            }
-////            else objectInfo = compileObject(writer, node, scope, mode);
-////            break;
-////         }
-////      }
-////   }
+//      objectInfo = ObjectInfo(okObject);
+//   }
+//   else if (node == lxBoxing) {
+//      objectInfo = compileBoxingExpression(writer, node, scope, mode);
+//   }
+//   else {
+//      SNode current = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxSwitching);
+//      switch (current.type) {
+//         case lxAssign:
+//            objectInfo = compileAssigning(writer, node, scope, mode);
+//            break;
+//         case lxMessage:
+//            objectInfo = compileMessage(writer, node, scope, mode);
+//            break;
+//         case lxSwitching:
+//            compileSwitch(writer, current, scope);
 //
-//   writer.removeBookmark();
+//            objectInfo = ObjectInfo(okObject);
+//            break;
+//         case lxExtension:
+//            objectInfo = compileExtension(writer, node, scope);
+//            break;
+//         case lxOperator:
+//            objectInfo = compileOperator(writer, node, scope, mode);
+//            break;
+//         default:
+//         {
+//            current = node.firstChild(lxObjectMask);
+//            SNode nextChild = current.nextNode();
 //
-//   return objectInfo;
-//}
+//            if ((/*current == lxExpression || */current == lxAlt || current == lxTrying) && nextChild == lxNone) {
+//               // if it is a nested expression
+//               objectInfo = compileExpression(writer, current, scope, mode);
+//            }
+//            else if (test(current.type, lxTerminalMask) && nextChild == lxExpression) {
+//               //HOTFIX : to compile the collection
+//               objectInfo = compileCollection(writer, node, scope);
+//            }
+//            else if (test(current.type, lxTerminalMask)/* && nextChild == lxNone*/) {
+//               objectInfo = compileObject(writer, current, scope, mode);
+//            }
+//            else if (current == lxConstantList) {
+//               objectInfo = compileObject(writer, current, scope, mode);
+//            }
+//            else objectInfo = compileObject(writer, node, scope, mode);
+//            break;
+//         }
+//      }
+//   }
+
+   writer.removeBookmark();
+
+   return objectInfo;
+}
 
 //ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope)
 //{
@@ -4346,68 +4324,68 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //   compileExpression(writer, expr, scope, HINT_LOOP);
 //}
 
-//ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   ObjectInfo retVal;
-//
-//   bool needVirtualEnd = true;
-//   SNode current = node.firstChild();
-//
-//   while (current != lxNone) {
-//      switch(current) {
-////         case lxExpression:
-////            writer.newNode(lxExpression);
-////            writer.appendNode(lxBreakpoint, dsStep);
-////            compileExpression(writer, current, scope, HINT_ROOT);
-////            writer.closeNode();
-////            break;
-////         case lxLoop:
-////            writer.newNode(lxExpression);
-////            writer.appendNode(lxBreakpoint, dsStep);
-////            compileLoop(writer, current, scope);
-////            writer.closeNode();
-////            break;
-//         case lxReturning:
-//         {
-//            needVirtualEnd = false;
-//
-////            if (test(scope.getMessageID(), CONVERSION_MESSAGE))
-////               scope.raiseError(errIllegalOperation, current);
-////
-//            writer.newNode(lxReturning);
+ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ObjectInfo retVal;
+
+   bool needVirtualEnd = true;
+   SNode current = node.firstChild();
+
+   while (current != lxNone) {
+      switch(current) {
+//         case lxExpression:
+//            writer.newNode(lxExpression);
 //            writer.appendNode(lxBreakpoint, dsStep);
-//            retVal = compileRetExpression(writer, current, scope, /*HINT_ROOT*/0);
-//            writer.closeNode();
-//
-//            break;
-//         }
-////         case lxVariable:
-////            compileVariable(writer, current, scope);
-////            break;
-////         case lxExtern:
-////            writer.newNode(lxExternFrame);
-////            compileCode(writer, current.findSubNode(lxCode), scope);
-////            writer.closeNode();
-////            break;
-//         case lxEOF:
-//            needVirtualEnd = false;
-//            writer.newNode(lxBreakpoint, dsEOP);
-//            writeTerminalInfo(writer, current);
+//            compileExpression(writer, current, scope, HINT_ROOT);
 //            writer.closeNode();
 //            break;
-//      }
+//         case lxLoop:
+//            writer.newNode(lxExpression);
+//            writer.appendNode(lxBreakpoint, dsStep);
+//            compileLoop(writer, current, scope);
+//            writer.closeNode();
+//            break;
+         case lxReturning:
+         {
+            needVirtualEnd = false;
+
+//            if (test(scope.getMessageID(), CONVERSION_MESSAGE))
+//               scope.raiseError(errIllegalOperation, current);
 //
-////      scope.freeSpace();
-//
-//      current = current.nextNode();
-//   }
-//
-//   if (needVirtualEnd) {
-//      writer.appendNode(lxBreakpoint, dsVirtualEnd);
-//   }
-//
-//   return retVal;
-//}
+            writer.newNode(lxReturning);
+            writer.appendNode(lxBreakpoint, dsStep);
+            retVal = compileRetExpression(writer, current, scope, /*HINT_ROOT*/0);
+            writer.closeNode();
+
+            break;
+         }
+//         case lxVariable:
+//            compileVariable(writer, current, scope);
+//            break;
+//         case lxExtern:
+//            writer.newNode(lxExternFrame);
+//            compileCode(writer, current.findSubNode(lxCode), scope);
+//            writer.closeNode();
+//            break;
+         case lxEOF:
+            needVirtualEnd = false;
+            writer.newNode(lxBreakpoint, dsEOP);
+            writeTerminalInfo(writer, current);
+            writer.closeNode();
+            break;
+      }
+
+//      scope.freeSpace();
+
+      current = current.nextNode();
+   }
+
+   if (needVirtualEnd) {
+      writer.appendNode(lxBreakpoint, dsVirtualEnd);
+   }
+
+   return retVal;
+}
 
 //void Compiler :: compileExternalArguments(SNode node, ModuleScope& moduleScope, WarningScope& warningScope)
 //{
@@ -4846,9 +4824,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //   // HOTFIX : validate that strong parameters are not mixed with generic ones
 //   if (strongParamCounter > 0 && strongParamCounter != paramCount && paramCount < OPEN_ARG_COUNT)
 //      scope.raiseError(errIllegalMethod, node);
-//
-//   // HOTFIX : do not overrwrite the message on the second pass
-//   if (scope.message == 0) {
+
+   // HOTFIX : do not overrwrite the message on the second pass
+   if (scope.message == 0) {
 //      if (test(scope.hints, tpSealed | tpGeneric) && paramCount < OPEN_ARG_COUNT) {
 //         if (!emptystr(signature) || !emptystr(messageStr))
 //            scope.raiseError(errInvalidHint, verb);
@@ -4935,8 +4913,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //      if (constantConversion) {
 //         scope.moduleScope->saveAction(scope.message, scope.getClassRef());
 //      }
-//   }
-//
+   }
+
 //   if (scope.genericClosure && paramCount > OPEN_ARG_COUNT) {
 //      // Compiler Magic : if it is a generic closure - ignore fixed argument but it should be removed from the stack
 //      scope.rootToFree += (paramCount - OPEN_ARG_COUNT);
@@ -5077,44 +5055,44 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
 //   writer.closeNode();
 //}
 
-//void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-////   if (isImportRedirect(node)) {
-////      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
-////   }
-////   else {
-////      scope.raiseError(errIllegalOperation, node); // !! temporal
-////
-//////      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//////
-//////      // try to implement light-weight resend operation
-//////      ObjectInfo target;
-//////      if (isSingleStatement(node)) {
-//////         target = scope.mapObject(node.firstChild(lxTerminalMask));
-//////      }
-//////
-//////      if (target.kind == okConstantSymbol || target.kind == okField) {
-//////         writer.newNode(lxResending, methodScope->message);
-//////         writer.newNode(lxExpression);
-//////         if (target.kind == okField) {
-//////            writer.appendNode(lxResultField, target.param);
-//////         }
-//////         else writer.appendNode(lxConstantSymbol, target.param);
-//////
-//////         writer.closeNode();
-//////         writer.closeNode();
-//////      }
-//////      else {
-//////         writer.newNode(lxResending, methodScope->message);
-//////         writer.newNode(lxNewFrame);
-//////
-//////         target = compileExpression(writer, node, scope, 0);
-//////
-//////         writer.closeNode();
-//////         writer.closeNode();
-//////      }
-////   }
-//}
+void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   if (isImportRedirect(node)) {
+      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
+   }
+   else {
+      scope.raiseError(errIllegalOperation, node); // !! temporal
+
+//      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+//
+//      // try to implement light-weight resend operation
+//      ObjectInfo target;
+//      if (isSingleStatement(node)) {
+//         target = scope.mapObject(node.firstChild(lxTerminalMask));
+//      }
+//
+//      if (target.kind == okConstantSymbol || target.kind == okField) {
+//         writer.newNode(lxResending, methodScope->message);
+//         writer.newNode(lxExpression);
+//         if (target.kind == okField) {
+//            writer.appendNode(lxResultField, target.param);
+//         }
+//         else writer.appendNode(lxConstantSymbol, target.param);
+//
+//         writer.closeNode();
+//         writer.closeNode();
+//      }
+//      else {
+//         writer.newNode(lxResending, methodScope->message);
+//         writer.newNode(lxNewFrame);
+//
+//         target = compileExpression(writer, node, scope, 0);
+//
+//         writer.closeNode();
+//         writer.closeNode();
+//      }
+   }
+}
 
 //void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
 //{
@@ -5318,83 +5296,83 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
 //   }
 //}
 
-//void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
-//{
-//   writer.newNode(lxClassMethod, scope.message);
-//
-////   if (scope.closureMode) {
-////      scope.rootToFree -= 1;
-////   }
-//
-//   declareParameterDebugInfo(writer, node, scope/*, true, test(scope.getClassFlags(), elRole)*/);
-//
-//   int paramCount = getParamCount(scope.message);
-//   int preallocated = 0;
-//
-//   CodeScope codeScope(&scope);
-//
-//   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode/*, lxResendExpression*/);
-////   // check if it is a resend
-////   if (body == lxResendExpression) {
-////      compileResendExpression(writer, body, codeScope, scope.multiMethod, scope.extensionMode);
-////      preallocated = 1;
-////   }
-//   // check if it is a dispatch
-//   /*else */if (body == lxDispatchCode) {
-//      compileDispatchExpression(writer, body, codeScope);
+void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+//   if (scope.closureMode) {
+//      scope.rootToFree -= 1;
 //   }
-//   else {
-////      if (scope.multiMethod) {
-////         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-////
-////         compileMultidispatch(writer, SNode(), codeScope, *classScope);
-////      }
+
+   declareParameterDebugInfo(writer, node, scope/*, true, test(scope.getClassFlags(), elRole)*/);
+
+   int paramCount = getParamCount(scope.message);
+   int preallocated = 0;
+
+   CodeScope codeScope(&scope);
+
+   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode/*, lxResendExpression*/);
+//   // check if it is a resend
+//   if (body == lxResendExpression) {
+//      compileResendExpression(writer, body, codeScope, scope.multiMethod, scope.extensionMode);
+//      preallocated = 1;
+//   }
+   // check if it is a dispatch
+   /*else */if (body == lxDispatchCode) {
+      compileDispatchExpression(writer, body, codeScope);
+   }
+   else {
+//      if (scope.multiMethod) {
+//         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 //
-//      writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
-//
-//      // new stack frame
-//      // stack already contains current self reference
-//      // the original message should be restored if it is a generic method
-//      codeScope.level++;
-////      // declare the current subject for a generic method
-////      if (scope.generic) {
-////         codeScope.level++;
-////         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, V_MESSAGE, 0);
-////      }
-//
-//      preallocated = codeScope.level;
-//
-//      ObjectInfo retVal = compileCode(writer, body == lxReturning ? node : body, codeScope);
-//
-//      // if the method returns itself
-//      // HOTFIX : it should not be applied to the embeddable conversion routine
-//      if(retVal.kind == okUnknown/* && (!test(scope.message, CONVERSION_MESSAGE) || !scope.classEmbeddable)*/) {
-//         ObjectInfo thisParam = scope.mapSelf();
-//
-//         // adding the code loading $self
-//         writer.newNode(lxReturning);
-////         writer.newBookmark();
-//         writeTerminal(writer, node, codeScope, thisParam, HINT_NODEBUGINFO);
-//
-////         ref_t resultRef = scope.getReturningRef(false);
-////         if (resultRef != 0) {
-////            if (!convertObject(writer, *codeScope.moduleScope, resultRef, resolveObjectReference(codeScope, thisParam), 0))
-////               scope.raiseError(errInvalidOperation, node);
-////         }
-////
-////         writer.removeBookmark();
-//         writer.closeNode();
+//         compileMultidispatch(writer, SNode(), codeScope, *classScope);
 //      }
+
+      writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
+
+      // new stack frame
+      // stack already contains current self reference
+      // the original message should be restored if it is a generic method
+      codeScope.level++;
+//      // declare the current subject for a generic method
+//      if (scope.generic) {
+//         codeScope.level++;
+//         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, V_MESSAGE, 0);
+//      }
+
+      preallocated = codeScope.level;
+
+      ObjectInfo retVal = compileCode(writer, body == lxReturning ? node : body, codeScope);
+
+      // if the method returns itself
+      // HOTFIX : it should not be applied to the embeddable conversion routine
+      if(retVal.kind == okUnknown/* && (!test(scope.message, CONVERSION_MESSAGE) || !scope.classEmbeddable)*/) {
+         ObjectInfo thisParam = scope.mapSelf();
+
+         // adding the code loading $self
+         writer.newNode(lxReturning);
+//         writer.newBookmark();
+         writeTerminal(writer, node, codeScope, thisParam, HINT_NODEBUGINFO);
+
+//         ref_t resultRef = scope.getReturningRef(false);
+//         if (resultRef != 0) {
+//            if (!convertObject(writer, *codeScope.moduleScope, resultRef, resolveObjectReference(codeScope, thisParam), 0))
+//               scope.raiseError(errInvalidOperation, node);
+//         }
 //
-//      writer.closeNode();
-//   }
-//
-//   writer.appendNode(lxParamCount, paramCount + scope.rootToFree);
-//   writer.appendNode(lxReserved, scope.reserved);
-//   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
-//
-//   writer.closeNode();
-//}
+//         writer.removeBookmark();
+         writer.closeNode();
+      }
+
+      writer.closeNode();
+   }
+
+   writer.appendNode(lxParamCount, paramCount + scope.rootToFree);
+   writer.appendNode(lxReserved, scope.reserved);
+   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
+
+   writer.closeNode();
+}
 
 //void Compiler :: compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
 //{
@@ -5630,17 +5608,17 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
                   test(scope.info.header.flags, elWithGenerics),
                   test(scope.info.header.flags, elWithArgGenerics)*/);
             }
-//            // if it is a normal method
-//            else {
-////               initialize(scope, methodScope);
-//               declareArgumentList(current, methodScope);
-////
-////               if (methodScope.message == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
-////                  // if it is in-place class member initialization
-////                  compileImplicitConstructor(writer, current, methodScope);
-////               }
-//               /*else */compileMethod(writer, current, methodScope);
-//            }
+            // if it is a normal method
+            else {
+//               initialize(scope, methodScope);
+               declareArgumentList(current, methodScope);
+//
+//               if (methodScope.message == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
+//                  // if it is in-place class member initialization
+//                  compileImplicitConstructor(writer, current, methodScope);
+//               }
+               /*else */compileMethod(writer, current, methodScope);
+            }
             break;
          }
       }
@@ -6501,14 +6479,14 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
    }
 }
 
-//void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
-//{
-////   declareSymbolAttributes(node, scope);
-////
-////   if ((scope.constant || scope.outputRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == false) {
-////      scope.save();
-////   }
-//}
+void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
+{
+//   declareSymbolAttributes(node, scope);
+//
+//   if ((scope.constant || scope.outputRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == false) {
+//      scope.save();
+//   }
+}
 
 //bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode)
 //{
@@ -6608,66 +6586,66 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
 //   return true;
 //}
 
-//void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope)
-//{
-////   expressionTree.clear();
-////
-////   SyntaxWriter writer(expressionTree);
-////
-//////   declareSymbolAttributes(node, scope);
-////
-////   bool isStatic = scope.staticOne;
-////
-////   SNode expression = node.findChild(lxExpression);
-////
-////   CodeScope codeScope(&scope);
-////
-////   writer.newNode(lxSymbol, node.argument);
-////   writer.newNode(lxExpression);
-////   writer.appendNode(lxBreakpoint, dsStep);
-////   /*ObjectInfo retVal = */compileExpression(writer, expression, codeScope, /*isSingleStatement(expression) ? HINT_ROOTSYMBOL : */0);
-//////   if (scope.outputRef != 0) {
-//////      ModuleScope* moduleScope = scope.moduleScope;
-//////
-//////      convertObject(writer, *moduleScope, scope.outputRef, resolveObjectReference(codeScope, retVal), retVal.element);
-//////   }
-//////   else if (resolveObjectReference(*scope.moduleScope, retVal) != 0) {
-//////      // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
-//////      scope.outputRef = resolveObjectReference(*scope.moduleScope, retVal);
-//////      scope.save();
-//////   }
-//////
-////   writer.closeNode();
-////   writer.closeNode();
-////
-//////   analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
-//////   node.refresh();
-//////
-//////   // create constant if required
-//////   if (scope.constant) {
-//////      // static symbol cannot be constant
-//////      if (isStatic)
-//////         scope.raiseError(errInvalidOperation, expression);
-//////
-//////      if (!compileSymbolConstant(expressionTree.readRoot(), scope, retVal))
-//////         scope.raiseError(errInvalidOperation, expression);
-//////   }
-//////
-//////   if (scope.preloaded) {
-//////      compilePreloadedCode(scope);
-//////   }
-////
-////   pos_t sourcePathRef = scope.moduleScope->saveSourcePath(_writer, scope.sourcePath);
-////
-////   CommandTape tape;
-////   _writer.generateSymbol(tape, expressionTree.readRoot(), isStatic, sourcePathRef);
-////
-////   // optimize
-////   optimizeTape(tape);
-////
-////   // create byte code sections
-////   _writer.save(tape, *scope.moduleScope, sourcePathRef);
-//}
+void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope)
+{
+   expressionTree.clear();
+
+   SyntaxWriter writer(expressionTree);
+
+//   declareSymbolAttributes(node, scope);
+
+   bool isStatic = scope.staticOne;
+
+   SNode expression = node.findChild(lxExpression);
+
+   CodeScope codeScope(&scope);
+
+   writer.newNode(lxSymbol, node.argument);
+   writer.newNode(lxExpression);
+   writer.appendNode(lxBreakpoint, dsStep);
+   /*ObjectInfo retVal = */compileExpression(writer, expression, codeScope, /*isSingleStatement(expression) ? HINT_ROOTSYMBOL : */0);
+//   if (scope.outputRef != 0) {
+//      ModuleScope* moduleScope = scope.moduleScope;
+//
+//      convertObject(writer, *moduleScope, scope.outputRef, resolveObjectReference(codeScope, retVal), retVal.element);
+//   }
+//   else if (resolveObjectReference(*scope.moduleScope, retVal) != 0) {
+//      // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
+//      scope.outputRef = resolveObjectReference(*scope.moduleScope, retVal);
+//      scope.save();
+//   }
+//
+   writer.closeNode();
+   writer.closeNode();
+
+//   analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
+//   node.refresh();
+//
+//   // create constant if required
+//   if (scope.constant) {
+//      // static symbol cannot be constant
+//      if (isStatic)
+//         scope.raiseError(errInvalidOperation, expression);
+//
+//      if (!compileSymbolConstant(expressionTree.readRoot(), scope, retVal))
+//         scope.raiseError(errInvalidOperation, expression);
+//   }
+//
+//   if (scope.preloaded) {
+//      compilePreloadedCode(scope);
+//   }
+
+   pos_t sourcePathRef = scope.saveSourcePath(_writer);
+
+   CommandTape tape;
+   _writer.generateSymbol(tape, expressionTree.readRoot(), isStatic, sourcePathRef);
+
+   // optimize
+   optimizeTape(tape);
+
+   // create byte code sections
+   _writer.save(tape, *scope.moduleScope, sourcePathRef);
+}
 
 //void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/)
 //{
@@ -7514,12 +7492,12 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
             }
             break;
          }
-         //case lxSymbol:
-         //{
-         //   SymbolScope symbolScope(&scope, current.argument, current.findChild(lxSourcePath).identifier());
-         //   compileSymbolImplementation(expressionTree, current, symbolScope);
-         //   break;
-         //}
+         case lxSymbol:
+         {
+            SymbolScope symbolScope(&scope, current.argument);
+            compileSymbolImplementation(expressionTree, current, symbolScope);
+            break;
+         }
       }
       current = current.nextNode();
    }
@@ -7550,7 +7528,7 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope/*, bool& 
    //         //            break;
             case lxClass:
                /*if (!isDependentOnNotDeclaredClass(findBaseParent(current), scope))*/ {
-               current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapTerminal(name));
+               current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(name));
             
                ClassScope classScope(&scope, current.argument/*, current.findChild(lxSourcePath).identifier()*/);
             
@@ -7565,31 +7543,31 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope/*, bool& 
                   compileClassDeclaration(current, classScope);
             
                   declared = true;
-   //            }
+               }
                //else repeatMode = true;
                break;
-   //         case lxSymbol:
-   //         {
-   //            if (name == lxNone) {
-   //               // HOTFIX : for script generated anonymous symbol
-   //               current.setArgument(scope.mapAnonymous());
-   //            }
-   //            else current.setArgument(scope.mapTerminal(name));
+            case lxSymbol:
+            {
+               if (name == lxNone) {
+                  // HOTFIX : for script generated anonymous symbol
+                  current.setArgument(scope.mapAnonymous());
+               }
+               else current.setArgument(scope.mapNewTerminal(name));
 
-   //            SymbolScope symbolScope(&scope, current.argument, current.findChild(lxSourcePath).identifier());
+               SymbolScope symbolScope(&scope, current.argument);
 
-   //            // check for duplicate declaration
-   //            if (scope.module->mapSection(symbolScope.reference | mskSymbolRef, true))
-   //               symbolScope.raiseError(errDuplicatedSymbol, name);
-   //            
-   //            scope.mapSection(symbolScope.reference | mskSymbolRef, false);
-   //            
-   //            // declare symbol
-   //            compileSymbolDeclaration(current, symbolScope);
-   //            declared = true;
-   //            break;
-   //         }
-         }
+               // check for duplicate declaration
+               if (scope.module->mapSection(symbolScope.reference | mskSymbolRef, true))
+                  symbolScope.raiseError(errDuplicatedSymbol, name);
+               
+               scope.moduleScope->mapSection(symbolScope.reference | mskSymbolRef, false);
+               
+               // declare symbol
+               compileSymbolDeclaration(current, symbolScope);
+               declared = true;
+               break;
+            }
+        // }
       }
       current = current.nextNode();
    }
@@ -7672,7 +7650,7 @@ void Compiler :: initializeScope(ident_t name, CompilerScope& scope, bool withDe
       scope.debugModule = scope.project->createDebugModule(name);
 
    // cache the frequently used references
-   scope.superReference = scope.mapReference(/*project->resolveForward(*/SUPER_FORWARD/*)*/);
+   scope.superReference = scope.module->mapReference(/*project->resolveForward(*/SUPER_FORWARD/*)*/);
 
 //   createPackageInfo(info.codeModule, project);
 }

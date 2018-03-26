@@ -272,22 +272,22 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
 
 int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
 {
-////   if (isPrimitiveRef(classReference)) {
-////      classReference = resolvePrimitiveReference(scope, classReference);
-////   }
-//
-//   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
-//   int callType = methodHint & tpMask;
-////   if (callType == tpClosed || callType == tpSealed) {
-////      result.stackSafe = test(methodHint, tpStackSafe);
-////   }      
-////
-////   if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
-////      // HOTFIX : calling closure
-////      result.closure = true;
-////   }
+//   if (isPrimitiveRef(classReference)) {
+//      classReference = resolvePrimitiveReference(scope, classReference);
+//   }
 
-   return /*callType*/0;
+   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
+   int callType = methodHint & tpMask;
+//   if (callType == tpClosed || callType == tpSealed) {
+//      result.stackSafe = test(methodHint, tpStackSafe);
+//   }      
+//
+//   if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
+//      // HOTFIX : calling closure
+//      result.closure = true;
+//   }
+
+   return callType;
 }
 
 //int CompilerLogic :: resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)

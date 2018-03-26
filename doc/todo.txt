@@ -3,13 +3,11 @@ In development:
 ------                              
                             
               dev - redesign
-                 * do not save the full reference for the name space (modify ecv and asm2binx)
+                 * support private and public classes - class / symbol without public attribute - private one
 
                  * refactor module resloving algorithm, no need to replicate the name space structure on physical level
                  * get rid of weak references
                  * get rid of private identifiers
-
-                 * support private and public classes - class / symbol without public attribute - private one
 
                  * message : param
 
@@ -46,7 +44,8 @@ In development:
                    ProjectManager::clearForwards(),
                  * test creating project, adding source files. including / excluding, forwards, settings, ...
                  * test sub namespace relative resolving
-                 * hard-coded system classes, could it be configurable?? (e.g. special private attribute??)
+                 * hard-coded system classes / start entry, could it be configurable?? (e.g. special private attribute??)
+                 * refactor _ImageLoader, to use module weak references without combining them together
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

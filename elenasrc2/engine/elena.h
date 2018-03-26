@@ -99,6 +99,35 @@ public:
 //   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
+// -- ReferenceInfo ---
+
+struct ReferenceInfo
+{
+   _Module* module;
+   ident_t  referenceName; // when module is not null - referenceName is weak one
+
+   bool isRelative() const
+   {
+      return module != NULL && isWeakReference(referenceName);
+   }
+
+   ReferenceInfo()
+   {
+      this->module = NULL;
+      this->referenceName = NULL;
+   }
+   ReferenceInfo(ident_t referenceName)
+   {
+      this->module = NULL;
+      this->referenceName = referenceName;
+   }
+   ReferenceInfo(_Module* module, ident_t referenceName)
+   {
+      this->module = module;
+      this->referenceName = referenceName;
+   }
+};
+
 // --- SectionInfo ---
 
 struct SectionInfo
@@ -150,9 +179,9 @@ public:
 
    virtual _Memory* getTargetDebugSection() = 0;
 
-   virtual SectionInfo getSectionInfo(ident_t reference, ref_t mask, bool silentMode) = 0;
+   virtual SectionInfo getSectionInfo(ReferenceInfo referenceInfo, ref_t mask, bool silentMode) = 0;
    virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
-   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
+   virtual ClassSectionInfo getClassSectionInfo(ReferenceInfo referenceInfo, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
 
    virtual size_t getLinkerConstant(int id) = 0;
 
@@ -167,15 +196,15 @@ public:
 //   virtual ident_t getSignatureClass() = 0;
    virtual ident_t getNamespace() = 0;
 
-   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
+   virtual ReferenceInfo retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
 
-   virtual void* resolveReference(ident_t reference, ref_t mask) = 0;
+   virtual void* resolveReference(ReferenceInfo referenceInfo, ref_t mask) = 0;
 
    virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
 
-   virtual void mapReference(ident_t reference, void* vaddress, ref_t mask) = 0;
+   virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, ref_t mask) = 0;
 
-//   virtual void addListener(_JITLoaderListener* listener) = 0;
+////   virtual void addListener(_JITLoaderListener* listener) = 0;
 
    virtual ~_JITLoader() {}
 };
@@ -670,6 +699,11 @@ inline ref_t __map64Key(ref64_t key)
    return key & 0x3F;
 }
 
+inline ref_t __mapKey(ref_t key)
+{
+   return key & 0x3F;
+}
+
 // --- mapping keys ---
 inline ref_t mapReferenceKey(ident_t key)
 {
@@ -692,6 +726,7 @@ typedef Map<ident_t, _Module*> ModuleMap;
 // --- Reference mapping types ---
 //typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
 typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
+typedef Memory32HashTable<ref_t, ref_t, __mapKey, 64>           AddressMap;
 //typedef Map<ref_t, ref_t>                                       SubjectMap;
 //typedef List<ref_t>                                             SubjectList;
 typedef Memory32HashTable<ref64_t, ref_t, __map64Key, 64>       ActionMap;
@@ -706,11 +741,6 @@ typedef MemoryHashTable<ref_t, int, syntaxRule, cnHashSize> SyntaxHash;
 typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 
 // --- miscellaneous routines ---
-
-inline bool isWeakReference(ident_t referenceName)
-{
-   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0]=='\'');
-}
 
 //inline bool isTemplateWeakReference(ident_t referenceName)
 //{

@@ -159,6 +159,16 @@ void _ELC_::Project :: raiseError(_ELENA_::ident_t msg)
    throw _ELENA_::_Exception();
 }
 
+void _ELC_::Project::printInfo(const char* msg, _ELENA_::ReferenceInfo referenceInfo)
+{
+   if (referenceInfo.isRelative()) {
+      _ELENA_::IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);
+
+      printInfo(msg, fullName.c_str());
+   }
+   else printInfo(msg, referenceInfo.referenceName);
+}
+
 void _ELC_::Project :: printInfo(const char* msg, _ELENA_::ident_t value)
 {
    _ELENA_::WideString wMsg(msg);
@@ -848,7 +858,7 @@ int main()
    }
    catch(_ELENA_::JITUnresolvedException& ex)
    {
-      project.printInfo(errUnresovableLink, ex.reference);
+      project.printInfo(errUnresovableLink, ex.referenceInfo);
       print(ELC_UNSUCCESSFUL);
       exitCode = -2;
 
@@ -856,7 +866,7 @@ int main()
    }
    catch(_ELENA_::JITConstantExpectedException& ex)
    {
-      project.printInfo(errConstantExpectedLink, ex.reference);
+      project.printInfo(errConstantExpectedLink, ex.referenceInfo);
       print(ELC_UNSUCCESSFUL);
       exitCode = -2;
 

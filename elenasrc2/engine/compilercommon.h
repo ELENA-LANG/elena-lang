@@ -149,9 +149,6 @@ struct _CompilerScope
 //   ref_t charReference;
 //   ref_t arrayReference;
 
-//   // list of attributes / types
-//   MessageMap attributes;
-//
 ////   // cached bool values
 ////   BranchingInfo branchingInfo;
 //

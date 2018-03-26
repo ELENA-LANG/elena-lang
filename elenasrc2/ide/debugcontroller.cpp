@@ -441,13 +441,22 @@ void DebugController :: onInitBreakpoint()
    else _events.setEvent(DEBUG_RESUME);
 }
 
+inline bool isSymbolReference(ident_t name)
+{
+   size_t pos = name.findLast('\'');
+   if (pos != NOTFOUND_POS) {
+      return name[pos + 1] == '#';
+   }
+   else return false;
+}
+
 bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  addressReader)
 {
    bool isClass = true;
    _Module* module = NULL;
    // if symbol
-   if (reference[0]=='#') {
-      module = loadDebugModule(reference + 1);
+   if (isSymbolReference(reference)) {
+      module = loadDebugModule(reference);
       isClass = false;
    }
    else module = loadDebugModule(reference);

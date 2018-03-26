@@ -57,10 +57,10 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
    linker.prepareCompiler(verbs);
 
   // create the image
-   ident_t startUpClass = project->resolveForward(STARTUP_SYMBOL);
+   ident_t startUpClass = /*project->resolveForward(*/STARTUP_SYMBOL/*)*/;
    _entryPoint = emptystr(startUpClass) ? LOADER_NOTLOADED : linker.resolve(startUpClass, mskSymbolRef, true);
    if(_entryPoint == LOADER_NOTLOADED)
-      throw JITUnresolvedException(STARTUP_SYMBOL);
+      throw JITUnresolvedException(ReferenceInfo(STARTUP_SYMBOL));
 
   // inject initializing code into the entry point
    _entryPoint = linker.resolveEntry(_entryPoint);
@@ -76,10 +76,10 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
 
 ref_t ExecutableImage :: getDebugEntryPoint()
 {
-   ident_t starter = _project->resolveForward(STARTUP_SYMBOL);
-   while (isWeakReference(starter)) {
+   ident_t starter = /*_project->resolveForward(*/STARTUP_SYMBOL/*)*/;
+   /*while (isWeakReference(starter)) {
       starter = _project->resolveForward(starter);
-   }
+   }*/
 
    return (ref_t)resolveReference(starter, mskSymbolRef) & ~mskAnyRef;
 }
@@ -109,20 +109,28 @@ _Memory* ExecutableImage :: getTargetSection(ref_t mask)
    }
 }
 
-SectionInfo ExecutableImage :: getSectionInfo(ident_t reference, size_t mask, bool silentMode)
+SectionInfo ExecutableImage::getSectionInfo(ReferenceInfo referenceInfo, size_t mask, bool silentMode)
 {
    SectionInfo sectionInfo;
 
-   ref_t referenceID = 0;
-   sectionInfo.module = _project->resolveModule(reference, referenceID);
-   if (sectionInfo.module == NULL || referenceID == 0) {
-      if (!silentMode)
-         throw JITUnresolvedException(reference);
+   if (referenceInfo.isRelative()) {
+      ref_t referenceID = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
+
+      sectionInfo.module = referenceInfo.module;
+      sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
    }
-   else sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
+   else {
+      ref_t referenceID = 0;
+      sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID);
+      if (sectionInfo.module == NULL || referenceID == 0) {
+         if (!silentMode)
+            throw JITUnresolvedException(referenceInfo);
+      }
+      else sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
+   }   
 
    if (sectionInfo.section == NULL && !silentMode) {
-      throw JITUnresolvedException(reference);
+      throw JITUnresolvedException(referenceInfo);
    }
 
    return sectionInfo;
@@ -145,20 +153,26 @@ SectionInfo ExecutableImage :: getCoreSectionInfo(ref_t reference, size_t mask)
    return sectionInfo;
 }
 
-ClassSectionInfo ExecutableImage :: getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode)
+ClassSectionInfo ExecutableImage :: getClassSectionInfo(ReferenceInfo referenceInfo, size_t codeMask, size_t vmtMask, bool silentMode)
 {
    ClassSectionInfo sectionInfo;
 
    ref_t referenceID = 0;
-   sectionInfo.module = _project->resolveModule(reference, referenceID, silentMode);
+   if (referenceInfo.isRelative()) {
+      sectionInfo.module = referenceInfo.module;
+      referenceID = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
+   }
+   else sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID, silentMode);
+
    if (sectionInfo.module == NULL || referenceID == 0) {
       if (!silentMode)
-         throw JITUnresolvedException(reference);
+         throw JITUnresolvedException(referenceInfo);
    }
    else {
       sectionInfo.codeSection = sectionInfo.module->mapSection(referenceID | codeMask, true);
       sectionInfo.vmtSection = sectionInfo.module->mapSection(referenceID | vmtMask, true);
    }
+
    return sectionInfo;
 }
 
@@ -228,7 +242,7 @@ ident_t ExecutableImage :: getNamespace()
    return _project->StrSetting(opNamespace);
 }
 
-ident_t ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
+ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
 //   if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef) {
 //      return module->resolveConstant(reference);
@@ -239,29 +253,33 @@ ident_t ExecutableImage :: retrieveReference(_Module* module, ref_t reference, r
 //   }
 //   else {
       ident_t referenceName = module->resolveReference(reference);
-      while (isWeakReference(referenceName)) {
-         ident_t resolvedName = _project->resolveForward(referenceName);
-
-         if (!emptystr(resolvedName))  {
-            referenceName = resolvedName;
-         }
-         //else if (isTemplateWeakReference(referenceName)) {
-         //   // COMPILER MAGIC : try to find a template implementation
-         //   ref_t resolvedRef = 0;
-         //   _Module* refModule = _project->resolveWeakModule(referenceName, resolvedRef, true);
-         //   if (refModule != nullptr) {
-         //      _project->addForward(referenceName, refModule->resolveReference(resolvedRef));
-         //   }
-
-         //   resolvedName = _project->resolveForward(referenceName);
-         //   if (!emptystr(resolvedName)) {
-         //      referenceName = resolvedName;
-         //   }
-         //   else throw JITUnresolvedException(referenceName);
-         //}
-         else throw JITUnresolvedException(referenceName);
+      if (isWeakReference(referenceName)) {
+         return ReferenceInfo(module, referenceName);
       }
-      return referenceName;
+
+      //while (isWeakReference(referenceName)) {
+      //   ident_t resolvedName = _project->resolveForward(referenceName);
+
+      //   if (!emptystr(resolvedName))  {
+      //      referenceName = resolvedName;
+      //   }
+      //   //else if (isTemplateWeakReference(referenceName)) {
+      //   //   // COMPILER MAGIC : try to find a template implementation
+      //   //   ref_t resolvedRef = 0;
+      //   //   _Module* refModule = _project->resolveWeakModule(referenceName, resolvedRef, true);
+      //   //   if (refModule != nullptr) {
+      //   //      _project->addForward(referenceName, refModule->resolveReference(resolvedRef));
+      //   //   }
+
+      //   //   resolvedName = _project->resolveForward(referenceName);
+      //   //   if (!emptystr(resolvedName)) {
+      //   //      referenceName = resolvedName;
+      //   //   }
+      //   //   else throw JITUnresolvedException(referenceName);
+      //   //}
+      //   else throw JITUnresolvedException(referenceName);
+      //}
+      return ReferenceInfo(referenceName);
 //   }
 }
 

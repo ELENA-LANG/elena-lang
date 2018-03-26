@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   5
+#define REVISION_VERSION   6
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -174,7 +174,9 @@ void printHelp()
 
 _Memory* findClassVMT(_Module* module, ident_t referenceName)
 {
-   ref_t reference = module->mapReference(referenceName, true);
+   IdentifierString name("'", referenceName);
+
+   ref_t reference = module->mapReference(name, true);
    if (reference == 0) {
       return NULL;
    }
@@ -183,7 +185,9 @@ _Memory* findClassVMT(_Module* module, ident_t referenceName)
 
 _Memory* findClassCode(_Module* module, ident_t referenceName)
 {
-   ref_t reference = module->mapReference(referenceName, true);
+   IdentifierString name("'", referenceName);
+
+   ref_t reference = module->mapReference(name, true);
    if (reference == 0) {
       return NULL;
    }
@@ -192,7 +196,9 @@ _Memory* findClassCode(_Module* module, ident_t referenceName)
 
 _Memory* findSymbolCode(_Module* module, ident_t referenceName)
 {
-   ref_t reference = module->mapReference(referenceName, true);
+   IdentifierString name("'", referenceName);
+
+   ref_t reference = module->mapReference(name, true);
    if (reference == 0) {
       return NULL;
    }
@@ -858,10 +864,9 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
 void printSymbol(_Module* module, ident_t symbolReference, int pageSize)
 {
    // find class VMT
-   ReferenceNs reference(module->Name(), symbolReference);
-   _Memory* code = findSymbolCode(module, reference);
+   _Memory* code = findSymbolCode(module, symbolReference);
    if (code == NULL) {
-      printLine("Symbol not found:", reference);
+      printLine("Symbol not found:", symbolReference);
 
       return;
    }
@@ -1154,12 +1159,12 @@ void listClasses(_Module* module, int pageSize)
    ReferenceMap::Iterator it = ((Module*)module)->References();
    while (!it.Eof()) {
       ident_t reference = it.key();
-      if (isWeakReference(reference) || reference.find('\'') == NOTFOUND_POS) {
+      if (isWeakReference(reference)) {
          if (module->mapSection(*it | mskVMTRef, true)) {
-            printLine("class ", reference, row, pageSize);
+            printLine("class ", reference + 1, row, pageSize);
          }
          else if (module->mapSection(*it | mskSymbolRef, true)) {
-            printLine("symbol ", reference, row, pageSize);
+            printLine("symbol ", reference + 1, row, pageSize);
          }
       }
 

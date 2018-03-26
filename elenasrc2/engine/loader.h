@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Image Loader class declarations
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef loaderH
@@ -15,23 +15,29 @@ namespace _ELENA_
 
 // --- _ImageLoader ---
 
+//typedef Map<ident_t, AddressMap*> ModuleAddressMap;
+
 class _ImageLoader : public _JITLoader
 {
 protected:
    // addresses
-   ReferenceMap _codeReferences, _dataReferences, _symbolReferences;
-   ReferenceMap _statReferences, _exportReferences;
+   ReferenceMap  _codeReferences, _dataReferences, _symbolReferences;
+   ReferenceMap  _statReferences, _exportReferences;
 //   ReferenceMap _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
-   ReferenceMap _bssReferences;
+   ReferenceMap  _bssReferences;
 
-   ReferenceMap _actions;         // actions
+   // actions
+   ReferenceMap  _actions;         // actions
+
+   void mapReference(ident_t reference, void* vaddress, size_t mask);
+   void* resolveReference(ident_t reference, size_t mask);
 
 public:
-   virtual void* resolveReference(ident_t reference, size_t mask);
+   virtual void* resolveReference(ReferenceInfo referenceInfo, size_t mask);
 
    virtual ref_t resolveExternal(ident_t external);
 
-   virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
+   virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, size_t mask);
    virtual void mapPredefinedAction(ident_t name, ref_t reference);
 
    void clearReferences()
@@ -51,9 +57,9 @@ public:
    }
 
    _ImageLoader()
-      : _codeReferences((size_t)-1), _dataReferences((size_t)-1), _symbolReferences((size_t)-1),
-        _statReferences((size_t)-1), //_constReferences((size_t)-1), _numberReferences((size_t)-1), _characterReferences((size_t)-1),
-      /*  _literalReferences((size_t)-1), */_bssReferences((size_t)-1), _exportReferences((size_t)-1), //_wideReferences((size_t)-1),
+      : _codeReferences(INVALID_REF), _dataReferences(INVALID_REF), _symbolReferences(INVALID_REF),
+        _statReferences(INVALID_REF), //_constReferences((size_t)-1), _numberReferences((size_t)-1), _characterReferences((size_t)-1),
+      /*  _literalReferences((size_t)-1), */_bssReferences(INVALID_REF), _exportReferences(INVALID_REF), //_wideReferences((size_t)-1),
         _actions(0)
    {
    }

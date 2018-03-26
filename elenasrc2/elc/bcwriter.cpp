@@ -1590,7 +1590,8 @@ void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* 
    }
 
    // map symbol debug info, starting the symbol with # to distinsuish from class
-   IdentifierString bookmark("#", symbolName);
+   NamespaceName ns(symbolName);
+   IdentifierString bookmark(ns, "'#", symbolName + ns.Length() + 1);
    debugModule->mapPredefinedReference(bookmark, debug->Position());
 
    ref_t position = debugStrings->Position();

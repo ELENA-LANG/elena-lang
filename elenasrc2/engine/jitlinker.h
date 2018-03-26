@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jitlinkerH
@@ -20,21 +20,21 @@ namespace _ELENA_
 // --- JITUnresolvedException ---
 struct JITUnresolvedException
 {
-   ident_t reference;
+   ReferenceInfo referenceInfo;
 
-   JITUnresolvedException(ident_t reference)
+   JITUnresolvedException(ReferenceInfo referenceInfo)
    {
-      this->reference = reference;
+      this->referenceInfo = referenceInfo;
    }
 };
 
 struct JITConstantExpectedException
 {
-   ident_t reference;
+   ReferenceInfo referenceInfo;
 
-   JITConstantExpectedException(ident_t reference)
+   JITConstantExpectedException(ReferenceInfo referenceInfo)
    {
-      this->reference = reference;
+      this->referenceInfo = referenceInfo;
    }
 };
 
@@ -129,8 +129,8 @@ class JITLinker : _JITLoaderListener
 ////   int            _uniqueID;           // used for dynamic subject
 
    void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
-   void createNativeSymbolDebugInfo(ident_t reference, void* address, size_t& sizePtr);
-   void createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr);
+   void createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, void* address, size_t& sizePtr);
+   void createNativeClassDebugInfo(ReferenceInfo referenceInfo, void* vaddress, size_t& sizePtr);
    void endNativeDebugInfo(size_t sizePtr);
 
    void* getVMTAddress(_Module* module, ref_t reference, References& references);
@@ -150,11 +150,11 @@ class JITLinker : _JITLoaderListener
 
 //   void* resolveNativeVariable(ident_t  reference, int mask);
 //   void* resolveConstVariable(ident_t  reference, int mask);
-   void* resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo);
-   void* resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo);
-   void* createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references);
-   void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
-   void* resolveConstant(ident_t reference, int mask);
+   void* resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
+   void* resolveBytecodeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
+   void* createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references);
+   void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo);
+   void* resolveConstant(ReferenceInfo referenceInfo, int mask);
 //   void* resolveStaticVariable(ident_t reference, int mask);
 //   void* resolveAnonymousStaticVariable();
 //   void* resolveMessageTable(ident_t reference, int mask);
@@ -165,6 +165,7 @@ class JITLinker : _JITLoaderListener
 public:
    void prepareCompiler(MessageMap& verbs);
 
+   void* resolve(ReferenceInfo referenceInfo, int mask, bool silentMode);
    void* resolve(ident_t reference, int mask, bool silentMode);
 
    void* resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);

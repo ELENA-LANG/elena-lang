@@ -59,6 +59,16 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
    }
 }
 
+void _ImageLoader :: mapReference(ReferenceInfo referenceInfo, void* vaddress, size_t mask)
+{
+   if (referenceInfo.isRelative()) {
+      IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);
+
+      mapReference(fullName.c_str(), vaddress, mask);
+   }
+   else mapReference(referenceInfo.referenceName, vaddress, mask);
+}
+
 ref_t _ImageLoader :: resolveExternal(ident_t external)
 {
    ref_t reference = _exportReferences.get(external);
@@ -119,6 +129,16 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
    }
    // !! make sure message id is smaller than 0x7FFFFF
    else return (void*)mapKey(_actions, reference, (_actions.Count() + PREDEFINED_MESSAGE_ID));
+}
+
+void* _ImageLoader :: resolveReference(ReferenceInfo referenceInfo, size_t mask)
+{
+   if (referenceInfo.isRelative()) {
+      IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);
+
+      return resolveReference(fullName.c_str(), mask);
+   }
+   else return resolveReference(referenceInfo.referenceName, mask);
 }
 
 void _ImageLoader :: mapPredefinedAction(ident_t name, ref_t reference)

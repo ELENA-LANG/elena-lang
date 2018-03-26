@@ -29,6 +29,14 @@ inline void decodeActionX(ref64_t r, ref_t& actionName, ref_t& signatureRef)
    signatureRef = (r >> 32);
 }
 
+inline ident_t resolveModuleReference(ident_t ns, ident_t reference)
+{
+   if (!isWeakReference(reference) && NamespaceName::compare(reference, ns)) {
+      return reference + getlength(ns);
+   }
+   else return reference;
+}
+
 // --- BaseModule ---
 
 _BaseModule  :: _BaseModule()
@@ -161,7 +169,7 @@ ref_t Module :: mapReference(ident_t reference)
    if (nextId > ~mskAnyRef)
       throw InternalError("Reference overflow");
 
-   ref_t refId = mapKey(_references, reference, nextId);
+   ref_t refId = mapKey(_references, resolveModuleReference(_name.c_str(), reference), nextId);
 
    // if we added new reference, clear resolved reference cache (due to possible string relocation)
    if (refId == nextId)
@@ -207,7 +215,7 @@ ref_t Module :: mapSignature(ref_t* references, size_t length, bool existing)
 ref_t Module :: mapReference(ident_t reference, bool existing)
 {
    if (existing) {
-      return _references.get(reference);
+      return _references.get(resolveModuleReference(_name.c_str(), reference));
    }
    else return mapReference(reference);
 }
@@ -388,7 +396,7 @@ void ROModule :: loadSections(StreamReader& reader)
 
 ref_t ROModule :: mapReference(ident_t reference)
 {
-   return _references.get(reference);
+   return _references.get(resolveModuleReference(_name.c_str(), reference));
 }
 
 ref_t ROModule :: mapReference(ident_t reference, bool existing)
@@ -396,7 +404,7 @@ ref_t ROModule :: mapReference(ident_t reference, bool existing)
    if (!existing) {
       throw InternalError("Read-only Module");
    }
-   else return _references.get(reference);
+   else return _references.get(resolveModuleReference(_name.c_str(), reference));
 }
 
 ref_t ROModule :: mapAction(ident_t actionName, ref_t signature, bool existing)

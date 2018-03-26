@@ -171,7 +171,12 @@ ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool head
    //else {
       // load class meta data
       ref_t moduleRef = 0;
-      argModule = project->resolveModule(vmtName, moduleRef, true);
+      if (isWeakReference(vmtName)) {
+         // if it is a weak reference - do not need to resolve the module
+         argModule = module;
+         moduleRef = module->mapReference(vmtName);
+      }
+      else argModule = project->resolveModule(vmtName, moduleRef, true);
 
       if (argModule == NULL || moduleRef == 0)
          return 0;
@@ -199,14 +204,22 @@ ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool head
  //  }
 }
 
-ref_t CompilerScope :: mapTerminal(SNode terminal, bool existing)
+inline ref_t mapNewIdentifier(_Module* module, ident_t identifier)
+{
+   IdentifierString name("'", identifier);
+
+   return module->mapReference(name);
+}
+
+ref_t CompilerScope :: mapNewTerminal(SNode terminal)
 {
    ident_t identifier = terminal.identifier();
    switch (terminal) {
       case lxIdentifier:
-         return mapIdentifier(identifier, existing);
-      case lxReference:
-         return mapReference(identifier, existing);
+         return mapNewIdentifier(module, identifier);
+//         return mapIdentifier(identifier, existing);
+//      case lxReference:
+//         return mapReference(identifier, existing);
       default:
          return 0;
    }
@@ -232,47 +245,43 @@ ref_t CompilerScope :: mapTerminal(SNode terminal, bool existing)
    //else return /*mapReference(identifier, existing)*/0;
 }
 
-ref_t CompilerScope :: mapIdentifier(ident_t identifier, bool existing)
-{
-   if (!existing) {
-      if (isWeakReference(identifier)) {
-         if (identifier.findLast('\'') == 0) {
-            return module->mapReference(identifier + 1);
-         }
-         else return module->mapReference(identifier);
-      }
-      else return module->mapReference(identifier);
-   }
-   else return 0; // !! temporal
-}
-
-ref_t CompilerScope :: mapReference(ident_t referenceName, bool existing)
-{
-   ident_t moduleName = module->Name();
-   if (NamespaceName::compare(referenceName, moduleName)) {
-      return mapIdentifier(referenceName + getlength(moduleName), existing);
-   }
-   else return module->mapReference(referenceName, existing);
-
-//   if (emptystr(referenceName))
-//      return 0;
-//
-//   ref_t reference = 0;
-//   if (!isWeakReference(referenceName)) {
-//      if (existing) {
-//         // check if the reference does exist
-//         ref_t moduleRef = 0;
-//         _Module* argModule = project->resolveModule(referenceName, moduleRef);
-//
-//         if (argModule != NULL && moduleRef != 0)
-//            reference = module->mapReference(referenceName);
+//ref_t CompilerScope :: mapIdentifier(ident_t identifier, bool existing)
+//{
+//   if (!existing) {
+//      if (isWeakReference(identifier)) {
+//         if (identifier.findLast('\'') == 0) {
+//            return module->mapReference(identifier + 1);
+//         }
+//         else return module->mapReference(identifier);
 //      }
-//      else reference = module->mapReference(referenceName, existing);
+//      else return module->mapReference(identifier);
 //   }
-//   else reference = module->mapReference(referenceName, existing);
+//   else return 0; // !! temporal
+//}
+
+//ref_t CompilerScope :: mapReference(ident_t referenceName, bool existing)
+//{
+//   return module->mapReference(referenceName, existing);
 //
-//   return reference;
-}
+////   if (emptystr(referenceName))
+////      return 0;
+////
+////   ref_t reference = 0;
+////   if (!isWeakReference(referenceName)) {
+////      if (existing) {
+////         // check if the reference does exist
+////         ref_t moduleRef = 0;
+////         _Module* argModule = project->resolveModule(referenceName, moduleRef);
+////
+////         if (argModule != NULL && moduleRef != 0)
+////            reference = module->mapReference(referenceName);
+////      }
+////      else reference = module->mapReference(referenceName, existing);
+////   }
+////   else reference = module->mapReference(referenceName, existing);
+////
+////   return reference;
+//}
 
 _Module* CompilerScope :: resolveReference(ref_t reference, ref_t& moduleReference)
 {
@@ -283,4 +292,15 @@ _Module* CompilerScope :: resolveReference(ref_t reference, ref_t& moduleReferen
       return module;
    }
    else return project->resolveModule(refName, moduleReference);
+}
+
+void CompilerScope :: saveAttribute(ident_t name, ref_t attr)
+{
+   if (attr) {
+      ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
+      MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+      metaWriter.writeDWord(attr);
+      metaWriter.writeLiteral(name);
+   }
 }

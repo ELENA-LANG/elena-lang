@@ -1701,7 +1701,7 @@ void x86JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumb
    allocateArray(dataWriter, maxThreadNumber);
 
    // map thread table
-   loader->mapReference(GC_THREADTABLE, (void*)(position | mskDataRef), (ref_t)mskDataRef);
+   loader->mapReference(ReferenceInfo(GC_THREADTABLE), (void*)(position | mskDataRef), (ref_t)mskDataRef);
    _preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
 }
 
@@ -1714,7 +1714,7 @@ int x86JITCompiler :: allocateTLSVariable(_JITLoader* loader)
    allocateVariable(dataWriter);
 
    // map TLS index
-   loader->mapReference(TLS_KEY, (void*)(position | mskDataRef), (ref_t)mskDataRef);
+   loader->mapReference(ReferenceInfo(TLS_KEY), (void*)(position | mskDataRef), (ref_t)mskDataRef);
    _preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
 
    return position;

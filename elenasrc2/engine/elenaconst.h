@@ -416,7 +416,7 @@ namespace _ELENA_
 
 //   #define SUPER_VAR               "$super"           // the predecessor class
 //   #define SUBJECT_VAR             "$subject"         // the current message
-   #define NIL_VAR                 "$nil"             // the nil pseudo symbol - representing the null value
+   #define NIL_VAR                 "__nil"             // the nil pseudo symbol - representing the null value
 //   #define RETVAL_VAR              "$$ret"            // the closure returning value
 //   #define OWNER_VAR               "$$owner"          // the nested class / closure owner
 //   #define PARENT_VAR              "$$parent"         // the closure parent
@@ -482,8 +482,13 @@ namespace _ELENA_
 //   #define ARRAY_FORWARD            "'$array"
 //   #define BOOL_FORWARD             "'$bool"
 
-   #define STARTUP_SYMBOL             "'startUp"
-
+   #define STARTUP_SYMBOL             /*"'startUp"*/ "mytest'program" // !! temporal
+   
+   // --- miscellaneous routines ---
+   inline bool isWeakReference(ident_t referenceName)
+   {
+      return (referenceName != NULL && referenceName[0] != 0 && referenceName[0] == '\'');
+   }
 } // _ELENA_
 
 #endif // elenaconstH

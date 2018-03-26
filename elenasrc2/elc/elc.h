@@ -16,7 +16,7 @@
 #include "compiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x000E
+#define ELC_REVISION_NUMBER             0x000F
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -151,6 +151,7 @@ public:
    _ELENA_::_JITCompiler* createJITCompiler();
    _ELENA_::_JITCompiler* createJITCompiler64();
 
+   virtual void printInfo(const char* msg, _ELENA_::ReferenceInfo param);
    virtual void printInfo(const char* msg, _ELENA_::ident_t param);
 
    virtual void raiseError(_ELENA_::ident_t msg);
