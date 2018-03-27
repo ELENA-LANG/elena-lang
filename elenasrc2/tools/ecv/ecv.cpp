@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   6
+#define REVISION_VERSION   7
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -251,7 +251,28 @@ ref_t resolveMessage(_Module* module, ident_t method)
    //      flags = PROPSET_MESSAGE;
    //   }
 
-      actionRef = module->mapAction(actionName, 0, true);
+      ref_t signature = 0;
+      size_t index = actionName.ident().find('<');
+      if (index != NOTFOUND_POS) {
+         ref_t references[OPEN_ARG_COUNT];
+         size_t end = actionName.ident().find('>');
+         size_t len = 0;
+         size_t i = index + 1;
+         while (i < end) {
+            size_t j = actionName.ident().find(i, ',', end);
+
+            IdentifierString temp(actionName.c_str() + i, j-i);
+            references[len++] = module->mapReference(temp, true);
+
+            i = j + 1;
+         }
+
+         signature = module->mapSignature(references, len, true);
+
+         actionName.truncate(index);
+      }
+
+      actionRef = module->mapAction(actionName, signature, true);
       if (actionRef == 0) {
          printLine("Unknown subject ", actionName);
 
@@ -458,6 +479,19 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       ref_t signature = 0;
       ident_t actionName = module->resolveAction(actionRef, signature);
       command.append(actionName);
+      if (signature) {
+         ref_t references[OPEN_ARG_COUNT];
+
+         command.append('<');
+         size_t len = module->resolveSignature(signature, references);
+         for (size_t i = 0; i < len; i++) {
+            if (i != 0)
+               command.append(',');
+
+            command.append(module->resolveReference(references[i]));
+         }
+         command.append('>');
+      }
    }
 
    if (paramCount > 0) {
@@ -983,8 +1017,8 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elSymbol))
    //   printLine("@flag ", "elSymbol", row, pageSize);
 
-   //if (test(flags, elWithMuti))
-   //   printLine("@flag ", "elWithMuti", row, pageSize);
+   if (test(flags, elWithMuti))
+      printLine("@flag ", "elWithMuti", row, pageSize);
 
    if (test(flags, elClassClass))
       printLine("@flag ", "elClassClass", row, pageSize);

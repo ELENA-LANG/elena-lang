@@ -10,6 +10,7 @@
 #define compilerCommonH
 
 #include "elena.h"
+#include "syntaxtree.h"
 
 // virtual objects
 //#define V_FLAG           (ref_t)-03
@@ -105,9 +106,9 @@ enum MethodHint
 //   tpAction      = 0x0080,
 //   tpIfBranch    = 0x0100,
 //   tpIfNotBranch = 0x0200,
-//   tpConstructor = 0x0400,
+   tpConstructor = 0x0400,
 //   tpConversion  = 0x0800,
-//   tpMultimethod = 0x1000,
+   tpMultimethod = 0x1000,
 //   tpArgDispatcher = 0x3000,
 //   tpStatic      = 0x4000,
 };
@@ -201,7 +202,7 @@ public:
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef) = 0;
-//   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0) = 0;
+   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0) = 0;
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 //   virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable) = 0;
 //
@@ -209,10 +210,10 @@ public:
 ////   //virtual int injectTempLocal(SNode node) = 0;
 //
 //   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
-//   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
-//   virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
-//   virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
-//
+   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
+   virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
+   virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
+
 //   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };
 
@@ -286,7 +287,7 @@ public:
 //   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
@@ -295,11 +296,11 @@ public:
 //
 //   virtual bool isPrimitiveRef(ref_t reference) = 0;
 ////   virtual bool isPrimitiveArray(ref_t reference) = 0;
-////
-////   // auto generate virtual methods / fields
+//
+//   // auto generate virtual methods / fields
 //   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
-//   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
-//   virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
+   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
+   virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
 //   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef) = 0;
 //   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t actionRef, int paramCount) = 0;
@@ -321,8 +322,8 @@ public:
 //   virtual bool validateLocalAttribute(int& attrValue) = 0;
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
 //////   virtual bool validateWarningAttribute(int& attrValue) = 0;
-//   virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
-//
+   virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
+
 //   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 //
 //   // optimization

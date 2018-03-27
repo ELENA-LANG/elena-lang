@@ -28,10 +28,10 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
    _project = project;
    _objectHeaderSize = compiler->getObjectHeaderSize();
 
-//  // create message table module
-//   _Module* messages = _project->createModule(MESSAGE_TABLE_MODULE);
-//   messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
-//
+  // create message table module
+   _Module* messages = _project->createModule(MESSAGE_TABLE_MODULE);
+   messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
+
 //  // load default forwards
 //   _literal = project->resolveForward(STR_FORWARD);
 //   _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
@@ -68,8 +68,8 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
   // fix up static table size
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
 
-  //// resolve message table
-  // linker.resolve(MESSAGE_TABLE, mskMessageTableRef, true);
+  // resolve message table
+   linker.resolve(MESSAGE_TABLE, mskMessageTableRef, true);
 
    helper.afterLoad(*this);
 }

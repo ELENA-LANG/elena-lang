@@ -531,7 +531,7 @@ enum MethodAttribute
 //   maEmbeddableGetAt2   = 0x107,
 //   maEmbeddableEval2    = 0x108,
 //   maEmbeddableNew      = 0x409,
-//   maOverloadlist       = 0x20A,
+   maOverloadlist       = 0x20A,
 };
 
 struct ClassInfo
@@ -791,14 +791,14 @@ inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
    paramCount = message & PARAMX_MASK;
 }
 
-//inline int getAbsoluteParamCount(ref_t message)
-//{
-//   int   paramCount;
-//   ref_t action;
-//   decodeMessage(message, action, paramCount);
-//
-//   return paramCount;
-//}
+inline int getAbsoluteParamCount(ref_t message)
+{
+   int   paramCount;
+   ref_t action;
+   decodeMessage(message, action, paramCount);
+
+   return paramCount;
+}
 
 inline int getParamCount(ref_t message)
 {

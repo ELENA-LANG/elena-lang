@@ -163,21 +163,21 @@ void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reade
 //   writer->write(binary->get(0), length);
 //   writer->align(4, 0);
 //}
-//
-//void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
-//{
-//   size_t length = binary->Length();
-//
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(length);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->write(binary->get(0), length);
-//   writer->align(4, 0);
-//}
+
+void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
+{
+   size_t length = binary->Length();
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(length);
+   writer->writeDWord(0);
+
+   // object body
+   writer->write(binary->get(0), length);
+   writer->align(4, 0);
+}
 
 size_t JITCompiler32 :: findFlags(void* refVMT)
 {
@@ -487,21 +487,21 @@ void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
 //   writer->write(binary->get(0), length);
 //   writer->align(8, 0);
 //}
-//
-//void JITCompiler64 :: compileCollection(MemoryWriter* writer, _Memory* binary)
-//{
-//   unsigned int length = binary->Length();
-//
-//   writer->seek(writer->Position() - 0x10);
-//
-//   // object header
-//   writer->writeQWord(length);
-//   writer->writeQWord(0);
-//
-//   // object body
-//   writer->write(binary->get(0), length);
-//   writer->align(8, 0);
-//}
+
+void JITCompiler64 :: compileCollection(MemoryWriter* writer, _Memory* binary)
+{
+   unsigned int length = binary->Length();
+
+   writer->seek(writer->Position() - 0x10);
+
+   // object header
+   writer->writeQWord(length);
+   writer->writeQWord(0);
+
+   // object body
+   writer->write(binary->get(0), length);
+   writer->align(8, 0);
+}
 
 size_t JITCompiler64 :: findFlags(void* refVMT)
 {

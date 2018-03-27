@@ -555,14 +555,14 @@ private:
       LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-//      int          hints;
+      int          hints;
 //      bool         withOpenArg;
 //      bool         stackSafe;
 //      bool         classEmbeddable;
 //      bool         generic;
 //      bool         genericClosure;
 //      bool         extensionMode;
-//      bool         multiMethod;
+      bool         multiMethod;
 //      bool         closureMode;
 //      bool         nestedMode;
 //      bool         subCodeMode;
@@ -800,8 +800,8 @@ private:
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
    void writeMessageInfo(SyntaxWriter& writer, CompilerScope& scope, ref_t messageRef);
-//   void initialize(ClassScope& scope, MethodScope& methodScope);
-//
+   void initialize(ClassScope& scope, MethodScope& methodScope);
+
 //   int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
 //   {
 //      _CompilerLogic::ChechMethodInfo dummy;
@@ -914,13 +914,13 @@ private:
 //
 //   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod, bool extensionMode);
+   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
+   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   //ref_t declareArgumentType(SNode node, ModuleScope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/);
+   ref_t declareArgumentType(SNode node, Scope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/);
    void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
 //   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
@@ -952,9 +952,9 @@ private:
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
-//   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
+   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message/*, bool allowTypeAttribute*/);
 
-   void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates*/, bool closed/*, bool allowTypeAttribute, bool closureBaseClass*/);
+   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed/*, bool allowTypeAttribute, bool closureBaseClass*/);
    void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType/*, bool closureBaseClass*/);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode/*, bool nestedDeclarationMode = false*/);
 
@@ -1036,14 +1036,14 @@ public:
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 ////   virtual void injectFieldExpression(SyntaxWriter& writer);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
-//   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);
+   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
 //   virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable);
 //   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
-//   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
-//   virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
-//   virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
-//
+   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
+   virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
+   virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
+
 //   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
    Compiler(_CompilerLogic* logic);

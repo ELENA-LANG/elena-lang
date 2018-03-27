@@ -69,12 +69,6 @@ void JITLinker::ReferenceHelper :: addBreakpoint(size_t position)
    else writer.writeRef((ref_t)_owner->_codeBase, position);
 }
 
-//void ReferenceLoader::ReferenceHelper :: writeMethodReference(SectionWriter& writer, size_t tapeDisp)
-//{
-//   _relocations->add(tapeDisp, writer.Position());
-//   writer.writeRef(mskCodeRef, 0);
-//}
-
 void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module)
 {
    ref_t mask = reference & mskAnyRef;
@@ -163,44 +157,50 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 // --- JITLinker ---
 
-ref_t JITLinker :: resolveAction(ident_t action, int paramCount)
+ref_t JITLinker :: resolveAction(ident_t action, _Module* module, ref_t* signatures, int paramCount)
 {
 //   size_t overloadIndex = signature.find('$');
-//   if (overloadIndex != NOTFOUND_POS && paramCount > 0) {
-//      SectionInfo info = _loader->getSectionInfo(MESSAGE_TABLE, mskRDataRef, true);
-//
-//      ref_t tableOffs = info.module->mapSubject(signature, true);
-//      if (tableOffs == 0) {
-//         MemoryWriter writer(info.section);
-//
-//         tableOffs = writer.Position();
-//         ref_t sign_ref = 0;
-//
-//         IdentifierString content(signature, overloadIndex);
-//         if (!emptystr(content))
-//            sign_ref = (ref_t)_loader->resolveReference(content, 0);
-//
-//         writer.writeDWord(sign_ref);
-//
-//         size_t len = getlength(signature);
-//         size_t start = overloadIndex + 1;
-//         while (start < len) {
-//            size_t end = signature.find(start, '$', len);
-//
-//            content.copy(signature.c_str() + start, end - start);
-//
-//            ref_t typeClassRef = info.module->mapReference(content.c_str(), false);
-//            writer.writeRef(typeClassRef | mskVMTRef, 0);
-//
-//            start = end + 1;
-//         }
-//
-//         info.module->mapPredefinedSubject(signature, tableOffs);
-//      }
-//
-//      return tableOffs | SIGNATURE_FLAG;
-//   }
-   /*else */return (ref_t)_loader->resolveReference(action, 0);
+   if (signatures) {
+      SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
+
+      // resolve the message
+      IdentifierString signatureName;
+      for (int i = 0; i < paramCount; i++) {
+         signatureName.append('$');
+         ident_t referenceName = module->resolveReference(signatures[i]);
+         if (isWeakReference(referenceName)) {
+            signatureName.append(module->Name());
+            signatureName.append(referenceName);
+         }
+         else signatureName.append(referenceName);
+      }
+
+      ref_t tableOffs = info.module->mapAction(signatureName.c_str(), 0, true);
+      if (tableOffs == 0) {
+         MemoryWriter writer(info.section);
+
+         tableOffs = writer.Position();
+         writer.writeDWord((ref_t)_loader->resolveReference(action, 0));
+
+         IdentifierString typeName;
+         for (int i = 0; i < paramCount; i++) {
+            ident_t referenceName = module->resolveReference(signatures[i]);
+            if (isWeakReference(referenceName)) {
+               typeName.copy(module->Name());
+               typeName.append(referenceName);
+            }
+            else typeName.copy(referenceName);
+
+            ref_t typeClassRef = info.module->mapReference(typeName.c_str(), false);
+            writer.writeRef(typeClassRef | mskVMTRef, 0);
+         }
+
+         info.module->mapPredefinedAction(signatureName.c_str(), tableOffs);
+      }
+
+      return tableOffs | SIGNATURE_FLAG;
+   }
+   else return (ref_t)_loader->resolveReference(action, 0);
 }
 
 ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
@@ -218,8 +218,14 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
    // otherwise signature and custom verb should be imported
    ref_t signature = 0;
    ident_t actionName = module->resolveAction(actionRef, signature);
+   if (signature) {
+      // if the message signature is provided
+      ref_t signatures[OPEN_ARG_COUNT];
+      paramCount = module->resolveSignature(signature, signatures);
 
-   actionRef = resolveAction(actionName, /*signature, */paramCount);
+      actionRef = resolveAction(actionName, module, signatures, paramCount);
+   }
+   else actionRef = (ref_t)_loader->resolveReference(actionName, 0);
 
    return encodeMessage(actionRef, paramCount) | flags;
 }
@@ -637,57 +643,57 @@ void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int ma
    return vaddress;
 }
 
-//void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, size_t position, void* &vmtVAddress)
-//{
-//   // resolve section references
-//   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
-//   ref_t currentMask = 0;
-//   ref_t currentRef = 0;
-//   while (!it.Eof()) {
-//      currentMask = it.key() & mskAnyRef;
-//      currentRef = it.key() & ~mskAnyRef;
-//
-//      if (currentMask == 0) {
-//         (*image)[*it + position] = resolveMessage(sectionInfo.module, (*sectionInfo.section)[*it]);
-//      }
-//      else if (currentMask == mskVMTEntryOffset) {
-//         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
-//
-//         // message id should be replaced with an appropriate method address
-//         size_t offset = *it;
-//         size_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position]);
-//
-//         (*image)[offset + position] = getVMTMethodIndex(refVAddress, messageID);
-//      }
-//      else if (currentMask == mskVMTMethodAddress) {
-//         resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
-//
-//         // message id should be replaced with an appropriate method address
-//         size_t offset = *it;
-//         size_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position]);
-//
-//         (*image)[offset + position] = resolveVMTMethodAddress(sectionInfo.module, currentRef, messageID);
-//         if (_virtualMode) {
-//            image->addReference(mskCodeRef, offset + position);
-//         }
-//      }
-//      else {
-//         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
-//
-//         if (*it == -4) {
-//            // resolve the constant vmt reference
-//            vmtVAddress = refVAddress;
-//         }
-//         else resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
-//      }
-//
-//      it++;
-//   }
-//}
+void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, size_t position, void* &vmtVAddress)
+{
+   // resolve section references
+   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
+   ref_t currentMask = 0;
+   ref_t currentRef = 0;
+   while (!it.Eof()) {
+      currentMask = it.key() & mskAnyRef;
+      currentRef = it.key() & ~mskAnyRef;
+
+      if (currentMask == 0) {
+         (*image)[*it + position] = resolveMessage(sectionInfo.module, (*sectionInfo.section)[*it]);
+      }
+      else if (currentMask == mskVMTEntryOffset) {
+         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
+
+         // message id should be replaced with an appropriate method address
+         size_t offset = *it;
+         size_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position]);
+
+         (*image)[offset + position] = getVMTMethodIndex(refVAddress, messageID);
+      }
+      else if (currentMask == mskVMTMethodAddress) {
+         resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
+
+         // message id should be replaced with an appropriate method address
+         size_t offset = *it;
+         size_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position]);
+
+         (*image)[offset + position] = resolveVMTMethodAddress(sectionInfo.module, currentRef, messageID);
+         if (_virtualMode) {
+            image->addReference(mskCodeRef, offset + position);
+         }
+      }
+      else {
+         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+
+         if (*it == -4) {
+            // resolve the constant vmt reference
+            vmtVAddress = refVAddress;
+         }
+         else resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
+      }
+
+      it++;
+   }
+}
 
 void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 {
-//   bool constantValue = true;
+   bool constantValue = true;
 //   ident_t value = NULL;
    ReferenceInfo vmtReferenceInfo = referenceInfo;
 //   if (mask == mskLiteralRef) {
@@ -714,7 +720,7 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 //      value = reference;
 //      vmtReference = _loader->getRealClass();
 //   }
-//   else constantValue = false;
+   /*else */constantValue = false;
 
    // get constant VMT reference
    void* vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
@@ -757,15 +763,15 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 //   else if (mask == mskRealRef) {
 //      _compiler->compileReal64(&writer, value.toDouble());
 //   }
-//   else if (mask == mskConstArray) {
-//      // resolve constant value
-//      SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
-//      _compiler->compileCollection(&writer, sectionInfo.section);
-//
-//      vmtVAddress = NULL; // !! to support dump array
-//      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
-//      constantValue = true;
-//   }
+   /*else */if (mask == mskConstArray) {
+      // resolve constant value
+      SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
+      _compiler->compileCollection(&writer, sectionInfo.section);
+
+      vmtVAddress = NULL; // !! to support dump array
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
+      constantValue = true;
+   }
 //   else if (vmtVAddress == LOADER_NOTLOADED) {
 //      // resolve constant value
 //      SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
@@ -778,14 +784,14 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    if (vmtVAddress == LOADER_NOTLOADED)
       throw JITUnresolvedException(referenceInfo);
 
-//   // check if the class could be constant one
-//   if (!constantValue) {
+   // check if the class could be constant one
+   if (!constantValue) {
       // read VMT flags
       size_t flags = getVMTFlags(vmtVAddress);
 
       if (!test(flags, elStateless))
          throw JITConstantExpectedException(referenceInfo);
-//   }
+   }
 
    // fix object VMT reference
    resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
@@ -822,36 +828,36 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 //
 //   return (void*)vaddress;
 //}
-//
-//void* JITLinker :: resolveMessageTable(ident_t reference, int mask)
-//{
-//   References      references(RefInfo(0, NULL));
-//
-//   // get target image & resolve virtual address
-//   MemoryWriter writer(_loader->getTargetSection(mask));
-//
-//   pos_t position = writer.Position();
-//
-//   SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
-//
-//   // load section into target image
-//   MemoryReader reader(sectionInfo.section);
-//   writer.read(&reader, sectionInfo.section->Length());
-//
-//   // resolve section references
-//   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
-//   while (!it.Eof()) {
-//      references.add(position + *it, RefInfo(it.key(), sectionInfo.module));
-//
-//      it++;
-//   }
-//
-//   // fix not loaded references
-//   fixReferences(references, _loader->getTargetSection(mask));
-//
-//   return NULL; // !! should be resolved only once
-//}
-//
+
+void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
+{
+   References      references(RefInfo(0, NULL));
+
+   // get target image & resolve virtual address
+   MemoryWriter writer(_loader->getTargetSection(mask));
+
+   pos_t position = writer.Position();
+
+   SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
+
+   // load section into target image
+   MemoryReader reader(sectionInfo.section);
+   writer.read(&reader, sectionInfo.section->Length());
+
+   // resolve section references
+   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
+   while (!it.Eof()) {
+      references.add(position + *it, RefInfo(it.key(), sectionInfo.module));
+
+      it++;
+   }
+
+   // fix not loaded references
+   fixReferences(references, _loader->getTargetSection(mask));
+
+   return NULL; // !! should be resolved only once
+}
+
 //ref_t JITLinker :: parseMessage(ident_t reference, bool actionMode)
 //{
 //   if (actionMode) {
@@ -1121,9 +1127,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //         case mskInt64Ref:
             vaddress = resolveConstant(referenceInfo, mask);
             break;
-//         case mskConstArray:
-//            vaddress = resolveConstant(reference, mask);
-//            break;
+         case mskConstArray:
+            vaddress = resolveConstant(referenceInfo, mask);
+            break;
 //         case mskStatSymbolRef:
 //            vaddress = resolveStaticVariable(reference, mskStatRef);
 //            break;
@@ -1143,9 +1149,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //         case mskConstVariable:
 //            vaddress = resolveConstVariable(reference, mask);
 //            break;
-//         case mskMessageTableRef:
-//            vaddress = resolveMessageTable(reference, mskMessageTableRef);
-//            break;
+         case mskMessageTableRef:
+            vaddress = resolveMessageTable(referenceInfo, mskMessageTableRef);
+            break;
       }
    }
    if (!silentMode && vaddress == LOADER_NOTLOADED)

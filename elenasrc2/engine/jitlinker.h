@@ -86,20 +86,19 @@ class JITLinker : _JITLoaderListener
 
       virtual void addBreakpoint(size_t position);
 
-//      virtual void writeMethodReference(SectionWriter& writer, size_t tapeDisp);
       virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
       virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
-//      virtual void writeMTReference(MemoryWriter& writer)
-//      {
-//         if (_owner->_virtualMode) {
-//            writer.writeRef(mskMessageTableRef, 0);
-//         }
-//         else {
-//            _Memory* section = _owner->_loader->getTargetSection(mskMessageTableRef);
-//
-//            writer.writeDWord((ref_t)section->get(0));
-//         }
-//      }
+      virtual void writeMTReference(MemoryWriter& writer)
+      {
+         if (_owner->_virtualMode) {
+            writer.writeRef(mskMessageTableRef, 0);
+         }
+         else {
+            _Memory* section = _owner->_loader->getTargetSection(mskMessageTableRef);
+
+            writer.writeDWord((ref_t)section->get(0));
+         }
+      }
 
       virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module);
 
@@ -141,11 +140,11 @@ class JITLinker : _JITLoaderListener
    size_t getVMTFlags(void* vaddress);
 
    void fixReferences(References& relocations, _Memory* image);
-//   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress);
+   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress);
 
    size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
-   ref_t resolveAction(ident_t signature, int paramCount);
+   ref_t resolveAction(ident_t signature, _Module* module, ref_t* signatures, int paramCount);
    ref_t resolveMessage(_Module* module, ref_t reference);
 
 //   void* resolveNativeVariable(ident_t  reference, int mask);
@@ -157,7 +156,7 @@ class JITLinker : _JITLoaderListener
    void* resolveConstant(ReferenceInfo referenceInfo, int mask);
 //   void* resolveStaticVariable(ident_t reference, int mask);
 //   void* resolveAnonymousStaticVariable();
-//   void* resolveMessageTable(ident_t reference, int mask);
+   void* resolveMessageTable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveMessage(ident_t reference, ident_t vmt, bool actionMode);
 //   void* resolveExtensionMessage(ident_t reference, ident_t vmt);
 ////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);

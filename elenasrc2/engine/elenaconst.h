@@ -21,7 +21,7 @@ namespace _ELENA_
 
   // --- ELENA Standart message constants ---
    #define ACTION_MASK             0x01FFFFFFu
-//   #define SIGNATURE_FLAG          0x08000000u
+   #define SIGNATURE_FLAG          0x08000000u
 
    #define MESSAGE_FLAG_MASK       0xE0000000u
 //   #define SEALED_MESSAGE          0x40000000u
@@ -160,7 +160,7 @@ namespace _ELENA_
 //      mskSignature           = 0x09000000u,   // message signature constant
 //      mskExtMessage          = 0x0B000000u,   // external message verb constant
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
-//      mskConstArray          = 0x0D000000u,   // constant array
+      mskConstArray          = 0x0D000000u,   // constant array
 
       mskMessageTableRef     = 0x60FFFFFFu    // message table reference, a special case of debug reference
    };
@@ -297,7 +297,7 @@ namespace _ELENA_
 //   const int elWithArgGenerics     = 0x01000000;
 //   const int elTapeGroup           = 0x02000200;
    const int elClassClass          = 0x04000000;
-//   const int elWithMuti            = 0x08000000;
+   const int elWithMuti            = 0x08000000;
 //   const int elVirtualVMT          = 0x10000000;
 
    const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
@@ -457,11 +457,11 @@ namespace _ELENA_
 
    #define NATIVE_MODULE            "$native"
 
-////   #define MESSAGE_TABLE_MODULE     "$messages"
-////   #define MESSAGE_TABLE            "$messages'$table"
-////
-////  // VM temporal code
-////   #define TAPE_SYMBOL              "$tape"
+   #define MESSAGE_TABLE_MODULE     "$messages"
+   #define MESSAGE_TABLE            "$messages'$table"
+
+//  // VM temporal code
+//   #define TAPE_SYMBOL              "$tape"
 
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key

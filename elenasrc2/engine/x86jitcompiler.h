@@ -163,7 +163,7 @@ protected:
 
    // preloaded command set
    void* _inlines[0x100];
-//   IntFixedMap<void*> _inlineExs;
+   IntFixedMap<void*> _inlineExs;
 
    // preloaded references
    IntFixedMap<void*> _preloaded;

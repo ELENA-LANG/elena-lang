@@ -162,9 +162,9 @@ class ByteCodeWriter
 //   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
 //   void newDynamicObject(CommandTape& tape);
 //   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
-//
-//   void popObject(CommandTape& tape, LexicalType sourceTypeS);
-//
+
+   void popObject(CommandTape& tape, LexicalType sourceTypeS);
+
 //   void copyBase(CommandTape& tape, int size);
 //   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
@@ -183,20 +183,20 @@ class ByteCodeWriter
 //
 //   void releaseObject(CommandTape& tape, int count = 1);
 //   void releaseArgList(CommandTape& tape);
-//
-//   void setSubject(CommandTape& tape, ref_t subject);
-//
+
+   void setSubject(CommandTape& tape, ref_t subject);
+
 //   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion = true);
 //   void callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode);
 
-//   void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
-//   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
-//   void doGenericHandler(CommandTape& tape);
+   void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
+   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
+   void doGenericHandler(CommandTape& tape);
 //   void unboxMessage(CommandTape& tape, int paramCount);
-//   void resend(CommandTape& tape);
-//   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void resend(CommandTape& tape);
+   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 //   void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
 //
@@ -234,8 +234,8 @@ class ByteCodeWriter
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
-//   void closeFrame(CommandTape& tape);
-//
+   void closeFrame(CommandTape& tape);
+
 //   void assignBaseTo(CommandTape& tape, LexicalType target);
 //
 //   void assignInt(CommandTape& tape, LexicalType target, int offset);
@@ -286,11 +286,11 @@ class ByteCodeWriter
 //   void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
-//   void generateResending(CommandTape& tape, SyntaxTree::Node node);
-//   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message);
+
+   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
+   void generateResending(CommandTape& tape, SyntaxTree::Node node);
+   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message);
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
 //   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);

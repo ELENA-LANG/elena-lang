@@ -114,7 +114,7 @@ public:
 //   virtual bool isAbstract(ClassInfo& info);
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
-//   virtual bool isMultiMethod(ClassInfo& info, ref_t message);
+   virtual bool isMultiMethod(ClassInfo& info, ref_t message);
 //   virtual bool isClosure(ClassInfo& info, ref_t message);
 //   virtual bool isReadonly(ClassInfo& info);
 //   virtual bool isReadonly(_CompilerScope& scope, ref_t reference)
@@ -126,7 +126,7 @@ public:
 //   }
 //
 //   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
-//   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
+   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef);
 //   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
 //   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t actionRef, int paramCount);
@@ -134,7 +134,7 @@ public:
 //   virtual bool injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef);
 //   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef);
 ////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode);
-//   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef);
+   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef);
 
    virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
@@ -145,10 +145,10 @@ public:
 //   virtual bool validateLocalAttribute(int& attrValue);
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
 //////   virtual bool validateWarningAttribute(int& attrValue);
-//   virtual bool validateMessage(ref_t message, bool isClassClass);
-////
-////   virtual bool validateClassFlag(ClassInfo& info, int flag);
+   virtual bool validateMessage(ref_t message, bool isClassClass);
 //
+//   virtual bool validateClassFlag(ClassInfo& info, int flag);
+
 //   virtual bool isDefaultConstructorEnabled(ClassInfo& info)
 //   {
 //      return (info.header.flags & elDebugMask) != elEnumList;
@@ -175,7 +175,7 @@ public:
 //////   virtual void optimizeDuplicateBoxing(SNode node);
 //
 //   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef);
-//   virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
+   virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
 
    CompilerLogic();
 };

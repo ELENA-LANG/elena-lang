@@ -1335,29 +1335,31 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
 
 void DerivationTransformer :: generateTypeAttribute(SyntaxWriter& writer, SNode current, DerivationScope& scope/*, bool templateMode*/)
 {
-////   SNode attr = current.findChild(lxAttributeValue, lxSize);
-////   if (attr == lxAttributeValue) {
-////      writer.newNode(lxMessage);
-////      generateAttributeTemplate(writer, current, scope, templateMode, MODE_SIGNATURE);
-////      writer.closeNode();
-////   }
-////   else {
-////      // if it is an explicit type declaration
-////      bool arrayMode = attr == lxSize;
-////      bool paramMode = false;
-////
-//      ref_t ref = scope.mapAttributeType(current/*, arrayMode, paramMode*/);
-////      if (paramMode) {
-////         writer.newNode(lxTemplateParamAttr, ref);
-////      }
-//      /*else */writer.newNode(lxReference, scope.moduleScope->module->resolveReference(ref));
-////
-////      if (arrayMode) {
-////         writer.appendNode(lxSize, -1);
-////      }
-//      copyIdentifier(writer, current.firstChild(lxTerminalMask));
+//   SNode attr = current.findChild(lxAttributeValue, lxSize);
+//   if (attr == lxAttributeValue) {
+//      writer.newNode(lxMessage);
+//      generateAttributeTemplate(writer, current, scope, templateMode, MODE_SIGNATURE);
 //      writer.closeNode();
-////   }
+//   }
+//   else {
+//      // if it is an explicit type declaration
+//      bool arrayMode = attr == lxSize;
+//      bool paramMode = false;
+
+      writer.newNode(lxTypeAttr);
+
+//      ref_t ref = scope.mapAttributeType(current/*, arrayMode, paramMode*/);
+//      if (paramMode) {
+//         writer.newNode(lxTemplateParamAttr, ref);
+//      }
+//      else writer.newNode(lxReference, scope.moduleScope->module->resolveReference(ref));
+//
+//      if (arrayMode) {
+//         writer.appendNode(lxSize, -1);
+//      }
+      copyIdentifier(writer, current.firstChild(lxTerminalMask));
+      writer.closeNode();
+//   }
 }
 
 //inline bool checkFirstNode(SNode node, LexicalType type)
