@@ -2,7 +2,7 @@
 
 /// a common ancestor
 
-/*class*/ Object
+public class Object
 {
 //    /// Creates the object
 //    constructor new []

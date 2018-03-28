@@ -319,13 +319,35 @@ ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier)
 
 ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier)
 {
+   ref_t reference = forwards.get(identifier);
+   if (reference)
+      return reference;
+
+   // check private ones
+   IdentifierString privateOne(PRIVATE_PREFIX_NS, identifier);
+   reference = module->mapReference(privateOne.c_str(), true);
+   if (reference) {
+      forwards.add(identifier, reference);
+
+      return reference;
+   }
+
+   // check imported references
+   IdentifierString name("'", identifier);
    List<ident_t>::Iterator it = importedNs.start();
    while (!it.Eof()) {
-      IdentifierString name("'", identifier);
+      _Module* ext_module = moduleScope->project->loadModule(*it, true);
+      if (ext_module) {
+         reference = ext_module->mapReference(name.c_str(), true);
+         if (reference) {
+            if (ext_module != module) {
+               IdentifierString fullName(ext_module->Name(), name.c_str());
 
-      ref_t ref = module->mapReference(name, true);
-      if (ref)
-         return ref;
+               return module->mapReference(fullName.c_str(), false);
+            }
+            else return reference;
+         }
+      }
 
       it++;
    }
@@ -405,7 +427,36 @@ ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier)
 
 ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal)
 {
-   return moduleScope->mapNewTerminal(terminal);
+   if (terminal == lxNameAttr) {
+      // verify if the name is unique
+      ident_t name = module->resolveReference(terminal.argument);
+      ref_t reference = terminal.argument;
+      if (name.startsWith(PRIVATE_PREFIX_NS)) {
+         IdentifierString altName("'", name.c_str() + getlength(PRIVATE_PREFIX_NS));
+         // if the public symbol with the same name was already declared -
+         // raise an error
+         ref_t dup = module->mapReference(altName.c_str(), true);
+         if (dup)
+            reference = dup;
+      }
+      else {
+         IdentifierString altName(PRIVATE_PREFIX_NS, name.c_str() + 1);
+         // if the private symbol with the same name was already declared -
+         // raise an error
+         ref_t dup = module->mapReference(altName.c_str(), true);
+         if (dup)
+            reference = dup;
+      }
+
+      if (module->mapSection(reference | mskSymbolRef, true))
+         raiseError(errDuplicatedSymbol, terminal.parentNode().firstChild(lxTerminalMask));
+
+      return terminal.argument;
+   }
+   else if (terminal == lxNone) {
+      return mapAnonymous();
+   }
+   else return moduleScope->mapNewTerminal(terminal, false);
 }
 
 ref_t Compiler::NamespaceScope :: mapAnonymous()
@@ -7531,27 +7582,22 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope/*, bool& 
    bool declared = false;
    //repeatMode = false;
    while (current != lxNone) {
-      SNode name = current.findChild(lxIdentifier/*, lxPrivate, lxReference*/);
    //   //      ident_t n = name.identifier();
    //   //
    //   //      if (scope.mapAttribute(name) != 0)
    //   //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
 
-   //   if (current.argument == 0) {
-   //      // hotfix : ignore already declared classes and symbols
+      if (current.argument == 0) {
+         // hotfix : ignore already declared classes and symbols
          switch (current) {
    //         //         case lxInclude:
    //         //            compileForward(current, scope);
    //         //            break;
             case lxClass:
                /*if (!isDependentOnNotDeclaredClass(findBaseParent(current), scope))*/ {
-               current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(name));
+                  current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr)));
             
-               ClassScope classScope(&scope, current.argument/*, current.findChild(lxSourcePath).identifier()*/);
-            
-               // check for duplicate declaration
-               if (scope.module->mapSection(classScope.reference | mskSymbolRef, true))
-                  classScope.raiseError(errDuplicatedSymbol, name);
+                  ClassScope classScope(&scope, current.argument/*, current.findChild(lxSourcePath).identifier()*/);
             
                   // NOTE : the symbol section is created even if the class symbol doesn't exist
                   scope.moduleScope->mapSection(classScope.reference | mskSymbolRef, false);
@@ -7565,18 +7611,10 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope/*, bool& 
                break;
             case lxSymbol:
             {
-               if (name == lxNone) {
-                  // HOTFIX : for script generated anonymous symbol
-                  current.setArgument(scope.mapAnonymous());
-               }
-               else current.setArgument(scope.mapNewTerminal(name));
+               current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr)));
 
                SymbolScope symbolScope(&scope, current.argument);
 
-               // check for duplicate declaration
-               if (scope.module->mapSection(symbolScope.reference | mskSymbolRef, true))
-                  symbolScope.raiseError(errDuplicatedSymbol, name);
-               
                scope.moduleScope->mapSection(symbolScope.reference | mskSymbolRef, false);
                
                // declare symbol
@@ -7584,7 +7622,7 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope/*, bool& 
                declared = true;
                break;
             }
-        // }
+         }
       }
       current = current.nextNode();
    }

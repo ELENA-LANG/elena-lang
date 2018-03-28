@@ -1267,9 +1267,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //      case V_TAPEGROUP:
 //         attrValue = elTapeGroup;
 //         return true;
-//      case V_CLASS:
-//         attrValue = 0;
-//         return true;
+      case V_CLASS:
+         attrValue = 0;
+         return true;
       case V_SINGLETON:
          attrValue = elRole | elNestedClass;
          return true;

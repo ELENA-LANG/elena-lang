@@ -204,19 +204,21 @@ ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool head
  //  }
 }
 
-inline ref_t mapNewIdentifier(_Module* module, ident_t identifier)
+inline ref_t mapNewIdentifier(_Module* module, ident_t identifier, bool privateOne)
 {
-   IdentifierString name("'", identifier);
+   ident_t prefix = privateOne ? PRIVATE_PREFIX_NS : "'";
+
+   IdentifierString name(prefix, identifier);
 
    return module->mapReference(name);
 }
 
-ref_t CompilerScope :: mapNewTerminal(SNode terminal)
+ref_t CompilerScope :: mapNewTerminal(SNode terminal, bool privateOne)
 {
    ident_t identifier = terminal.identifier();
    switch (terminal) {
       case lxIdentifier:
-         return mapNewIdentifier(module, identifier);
+         return mapNewIdentifier(module, identifier, privateOne);
 //         return mapIdentifier(identifier, existing);
 //      case lxReference:
 //         return mapReference(identifier, existing);

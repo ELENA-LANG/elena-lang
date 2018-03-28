@@ -320,24 +320,24 @@ private:
 
       // imported namespaces
       List<ident_t> importedNs;
-//      ForwardMap    forwards;       // forward declarations
+      ForwardMap    forwards;       // forward declarations
+
+//      // symbol hints
+//      Map<ref_t, ref_t> constantHints;
 //
-////      // symbol hints
-////      Map<ref_t, ref_t> constantHints;
-////
-//////      // extensions
-////      SubjectMap        extensionHints;
-////      ExtensionMap      extensions;
-////      AutoExtensionMap  autoExtensions;
-////
-////      // action hints
-////      SubjectMap        actionHints;
-////
-////      ref_t packageReference;
+////      // extensions
+//      SubjectMap        extensionHints;
+//      ExtensionMap      extensions;
+//      AutoExtensionMap  autoExtensions;
 //
-////      // list of references to the current module which should be checked after the project is compiled
-////      Unresolveds* forwardsUnresolved;
+//      // action hints
+//      SubjectMap        actionHints;
 //
+//      ref_t packageReference;
+
+//      // list of references to the current module which should be checked after the project is compiled
+//      Unresolveds* forwardsUnresolved;
+
       ident_t      sourcePath;
 
       void loadNamespaceInfo(SNode node);

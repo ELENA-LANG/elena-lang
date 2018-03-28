@@ -36,7 +36,7 @@ struct CompilerScope : _CompilerScope
 //   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
    //ref_t mapReference(ident_t referenceName, bool existing = false);
 
-   /*virtual */ref_t mapNewTerminal(SNode terminal);
+   /*virtual */ref_t mapNewTerminal(SNode terminal, bool privateOne);
 
    virtual _Memory* mapSection(ref_t reference, bool existing)
    {

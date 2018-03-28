@@ -636,6 +636,17 @@ _Module* DebugController :: loadDebugModule(ident_t reference)
    _ELENA_::NamespaceName name(reference);
    _ELENA_::Path          path;
 
+   // check if the module is already loaded
+   auto it = _modules.start();
+   while (!it.Eof()) {
+      if (NamespaceName::isIncluded((*it)->Name(), reference)) {
+         ident_t properName = reference + getlength((*it)->Name());
+         if ((*it)->mapReference(properName, true))
+            return *it;
+      }
+      it++;
+   }
+
    _manager->retrievePath(name, path, _T("dnl"));
 
    Module* module = (Module*)_modules.get(name);

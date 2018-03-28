@@ -31,7 +31,7 @@ inline void decodeActionX(ref64_t r, ref_t& actionName, ref_t& signatureRef)
 
 inline ident_t resolveModuleReference(ident_t ns, ident_t reference)
 {
-   if (!isWeakReference(reference) && NamespaceName::compare(reference, ns)) {
+   if (!isWeakReference(reference) && NamespaceName::isIncluded(ns, reference)) {
       return reference + getlength(ns);
    }
    else return reference;

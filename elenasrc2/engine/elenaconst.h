@@ -433,6 +433,8 @@ namespace _ELENA_
 //   #define AUTOEXTENSION_SECTION    "#auto_extensions"
 
   // --- ELENA class prefixes / postfixes ---
+   #define PRIVATE_PREFIX_NS        "'$private'"
+
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
 //   #define GENERIC_PREFIX           "#generic"

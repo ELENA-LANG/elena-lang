@@ -97,7 +97,7 @@ class DerivationTransformer //: public _DerivationTransformer
 ////      void loadParameters(SNode node);
 ////      void loadFields(SNode node);
 
-      void copyName(SyntaxWriter& writer, SNode terminal, bool withDeclaration);
+      void copyName(SyntaxWriter& writer, SNode terminal, bool privateOne, bool withDeclaration);
       void copyMessageName(SyntaxWriter& writer, SNode terminal);
 //      void copyMessage(SyntaxWriter& writer, SNode terminal);
 ////      void copyIdentifier(SyntaxWriter& writer, SNode terminal);

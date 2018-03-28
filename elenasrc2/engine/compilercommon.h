@@ -64,10 +64,12 @@
 #define V_SINGLETON      (ref_t)-8208
 //#define V_TAPEGROUP      (ref_t)-8209
 //#define V_ABSTRACT       (ref_t)-8210
-//
+#define V_PUBLIC         (ref_t)-8211
+#define V_PRIVATE        (ref_t)-8212
+
 //#define V_CONSTRUCTOR    (ref_t)-16384
 //#define V_VARIABLE       (ref_t)-16385
-//#define V_CLASS          (ref_t)-16386
+#define V_CLASS          (ref_t)-16386
 //#define V_CONVERSION     (ref_t)-16387
 //#define V_SYMBOLEXPR     (ref_t)-16389
 //#define V_TYPETEMPL      (ref_t)-16390

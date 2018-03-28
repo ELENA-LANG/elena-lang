@@ -1,6 +1,6 @@
 /// Attributes
 //type            = #16390.
-//class           = #16386.
+class           = #16386.
 //struct          = #8197.
 //symbol          = #16389.
 //constructor     = #16384.
@@ -31,6 +31,10 @@ singleton       = #8208.
 //__block         = #16400.
 //__nested        = #16401.
 //preloaded       = #8207.
+
+public          = #8211.
+private         = #8212.
+
 //
 //args            = #32. 
 //
