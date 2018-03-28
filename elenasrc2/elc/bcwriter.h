@@ -166,12 +166,12 @@ class ByteCodeWriter
    void popObject(CommandTape& tape, LexicalType sourceTypeS);
 
 //   void copyBase(CommandTape& tape, int size);
-//   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
+   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
 //
@@ -302,7 +302,7 @@ class ByteCodeWriter
 //   void generateLooping(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
-//   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);

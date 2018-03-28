@@ -60,9 +60,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsNestedClass:
 //         _writer.newNode(lxNestedClass);
 //         break;
-//      case nsAssigning:
-//         _writer.newNode(lxAssigning);
-//         break;
+      case nsAssigning:
+         _writer.newNode(lxAssigning);
+         break;
 //      case nsResendExpression:
 //         _writer.newNode(lxResendExpression);
 //         break;
@@ -1921,11 +1921,11 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
 //            first = false;
             generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
             break;
-//         case lxAssigning:
-//            writer.appendNode(lxAssign);
-//            generateExpressionTree(writer, current, scope);
-//            expressionExpected = true;
-//            break;
+         case lxAssigning:
+            writer.appendNode(lxAssign);
+            generateExpressionTree(writer, current, scope);
+            expressionExpected = true;
+            break;
 //         case lxCode:
 //            first = false;
 //            generateCodeExpression(writer, current, scope);
@@ -2143,39 +2143,43 @@ void DerivationTransformer :: generateSymbolTree(SyntaxWriter& writer, SNode nod
 //      current = current.nextNode();
 //   }
 //}
-//
-//bool DerivationReader :: checkVariableDeclaration(SNode node, DerivationScope& scope)
-//{
-//   if (node.existChild(lxAssigning)) {
-//      SNode current = node.firstChild();
+
+bool DerivationTransformer :: checkVariableDeclaration(SNode node, DerivationScope& scope)
+{
+   if (node.existChild(lxAssigning)) {
+      SNode current = node.firstChild();
 //      if (current != lxObject || !current.existChild(lxIdentifier, lxPrivate))
 //         return false;
-//
-//      SNode nextNode = current.nextNode();
-//      if (nextNode == lxMessage) {
-//         ref_t attrRef = scope.mapAttribute(current/*, true*/);
-//         if (attrRef != 0) {
-//            // HOTFIX : set already recognized attribute value if it is not a template parameter
+
+      SNode nextNode = current.nextNode();
+      if (nextNode == lxMessage) {
+         ref_t attrRef = scope.mapAttribute(current/*, true*/);
+         if (attrRef != 0) {
+            // HOTFIX : set already recognized attribute value if it is not a template parameter
 //            if (attrRef != INVALID_REF) {
 //               current.setArgument(attrRef);
 //            }
 //
-//            current = lxAttribute;
-//            nextNode = lxAttribute;
-//
-//            return true;
-//         }
-//      }
+            current = lxAttribute;
+            nextNode = lxAttribute;
+
+            return true;
+         }
+      }
 //         else if (nextNode == lxOperator) {
 //            return checkVarTemplateBrackets(nextNode);
 //         }
-//   }
-//
-//   return false;
-//}
-//
-//void DerivationReader :: generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
-//{
+   }
+
+   return false;
+}
+
+void DerivationTransformer :: generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+{
+   SNode current = node.findChild(lxAssigning);
+
+   setIdentifier(current);
+
 //   SNode current = node.firstChild();
 //
 //   bool templatedBased = current.nextNode() == lxOperator;
@@ -2186,9 +2190,9 @@ void DerivationTransformer :: generateSymbolTree(SyntaxWriter& writer, SNode nod
 //      current.set(lxAttribute, INVALID_REF);
 //      paramNode = lxAttribute;
 //   }   
-//
-//   writer.newNode(lxVariable);
-//
+
+   writer.newNode(lxVariable);
+
 //   SNode attributes = current;
 //   setIdentifier(attributes);
 //
@@ -2198,22 +2202,20 @@ void DerivationTransformer :: generateSymbolTree(SyntaxWriter& writer, SNode nod
 //   }
 //   if (ident == lxNone)
 //      scope.raiseError(errInvalidSyntax, node);
-//
-//   generateAttributes(writer, SNode(), scope, current, scope.reference == INVALID_REF);
-//
-//   copyIdentifier(writer, ident.findChild(lxIdentifier, lxPrivate));
-//
-//   writer.closeNode();
-//
-//   writer.newNode(lxExpression);
-//
-//   copyIdentifier(writer, ident.findChild(lxIdentifier, lxPrivate));
-//   writer.appendNode(lxAssign);
-//   generateExpressionTree(writer, node.findChild(lxAssigning), scope/*, EXPRESSION_IMPLICIT_MODE*/);
-//
-//   writer.closeNode();
-//}
-//
+
+   generateAttributes(writer, current, scope, false/*, scope.reference == INVALID_REF*/);
+
+   writer.closeNode();
+
+   writer.newNode(lxExpression);
+
+   copyIdentifier(writer, current.prevNode().findChild(lxIdentifier/*, lxPrivate*/));
+   writer.appendNode(lxAssign);
+   generateExpressionTree(writer, current, scope/*, EXPRESSION_IMPLICIT_MODE*/);
+
+   writer.closeNode();
+}
+
 //void DerivationReader :: generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 //{
 //   SNode current = node.firstChild();
@@ -2421,10 +2423,10 @@ void DerivationTransformer :: generateCodeTree(SyntaxWriter& writer, SNode node,
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-//         case lxExpression:
-//            if (checkVariableDeclaration(current, scope)) {
-//               generateVariableTree(writer, current, scope);
-//            }
+         case lxExpression:
+            if (checkVariableDeclaration(current, scope)) {
+               generateVariableTree(writer, current, scope);
+            }
 //            else if (checkPatternDeclaration(current, scope)) {
 //               generateCodeTemplateTree(writer, current, scope);
 //            }
@@ -2434,8 +2436,8 @@ void DerivationTransformer :: generateCodeTree(SyntaxWriter& writer, SNode node,
 //            else if (current.existChild(lxAssignOperator)) {
 //               generateAssignmentOperator(writer, current, scope);
 //            }
-//            else generateExpressionTree(writer, current, scope);
-//            break;
+            else generateExpressionTree(writer, current, scope);
+            break;
          case lxReturning:
 //         case lxExtension:
             writer.newNode(current.type, current.argument);
@@ -2477,6 +2479,8 @@ void DerivationTransformer :: generateCodeTree(SyntaxWriter& writer, SNode node,
 //            writer.insert(lxExpression);
 //            writer.closeNode();
 //            break;
+         default:
+            scope.raiseError(errInvalidHint, current);
       }
       current = current.nextNode();
    }

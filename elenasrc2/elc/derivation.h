@@ -207,7 +207,7 @@ class DerivationTransformer //: public _DerivationTransformer
 
    void generateScopeMembers(SNode& node, DerivationScope& scope, int mode);
 
-//   bool checkVariableDeclaration(SNode node, DerivationScope& scope);
+   bool checkVariableDeclaration(SNode node, DerivationScope& scope);
 //   bool checkPatternDeclaration(SNode node, DerivationScope& scope);
 //   bool checkArrayDeclaration(SNode node, DerivationScope& scope);
 //
@@ -217,7 +217,7 @@ class DerivationTransformer //: public _DerivationTransformer
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
 //   bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope, SubjectMap* parentAttributes);
 //   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-//   void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
      void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);

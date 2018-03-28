@@ -172,7 +172,7 @@ enum LexicalType
 //   lxShortArrOp      = 0x8C033, // arg - operation id
 ////   lxReleasing       = 0x0C034,
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
-//   lxAssigning       = 0x0C037,   // an assigning expression, arg - size
+   lxAssigning       = 0x0C037,   // an assigning expression, arg - size
 //   lxIntOp           = 0x8C038,   // arg - operation id
 //   lxLongOp          = 0x8C039,   // arg - operation id
 //   lxRealOp          = 0x8C03A,   // arg - operation id
@@ -214,7 +214,7 @@ enum LexicalType
    lxMessageVariable = 0x2000D, // debug info only
 //   lxSelfVariable    = 0x2000E, // debug info only
    lxMessage         = 0x2000F, // arg - message
-//   lxAssign          = 0x20010,
+   lxAssign          = 0x20010,
    lxLevel           = 0x20011,
 //   lxType            = 0x20012, // arg - subject
    lxCallTarget      = 0x20013, // arg - reference
