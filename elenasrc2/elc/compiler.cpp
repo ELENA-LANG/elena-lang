@@ -2034,12 +2034,16 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
-      //else if (current == lxClassRefAttr || current == lxReference) {
-      //   if (variable.extraparam == 0) {
+      else if (current == lxClassRefAttr/* || current == lxReference*/) {
+         if (variable.extraparam == 0) {
+            NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+            variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
+
       //      variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), false);
-      //   }
-      //   else scope.raiseError(errInvalidHint, node);
-      //}
+         }
+         else scope.raiseError(errInvalidHint, node);
+      }
       current = current.nextNode();
    }
 
@@ -2557,13 +2561,12 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
    return object;
 }
 
-ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    ObjectInfo result;
 
 //   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing);
-//   switch (member.type)
-//   {
+   switch (node.type) {
 //      case lxNestedClass:
 //      case lxLazyExpression:
 //         result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
@@ -2571,21 +2574,21 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode objectNode, Cod
 //      case lxCode:
 //         result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
 //         break;
-//      case lxExpression:
+      case lxExpression:
 //         if (isCollection(member)) {
 //            result = compileCollection(writer, objectNode, scope);
 //         }
-//         else result = compileExpression(writer, member, scope, mode & HINT_CLOSURE_MASK);
-//         break;
+         /*else */result = compileExpression(writer, node, scope, 0, mode/* & HINT_CLOSURE_MASK*/);
+         break;
 //      case lxBoxing:
 //         result = compileExpression(writer, member, scope, mode);
 //         break;
 //      case lxMessageReference:
 //         result = compileMessageReference(writer, member, scope, mode);
 //         break;
-//      default:
-         result = compileTerminal(writer, objectNode, scope, mode);
-//   }
+      default:
+         result = compileTerminal(writer, node, scope, mode);
+   }
 
    return result;
 }
@@ -6433,7 +6436,7 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 
 inline SNode findBaseParent(SNode node)
 {
-   SNode baseNode = /*node.findChild(lxBaseParent)*/SNode(); // !! temporal
+   SNode baseNode = node.findChild(lxBaseParent);
    //if (baseNode != lxNone) {
    //   if (baseNode.argument == -1 && existChildWithArg(node, lxBaseParent, 0u)) {
    //      // HOTFIX : allow to override the template parent

@@ -39,11 +39,11 @@ enum LexicalType
 //   lxAngleOperator   = 0x00005,
    lxNamespace       = 0x00006,
    lxClass           = 0x0000E,
-//   lxTemplate        = 0x0000F,
+   lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
    lxClassField      = 0x00013,
 //   lxFieldTemplate   = 0x00014,
-//   lxAttributeValue  = 0x00015,
+   lxAttributeValue  = 0x00015,
    lxClassMethod     = 0x00016,
 //   lxNestedClass     = 0x00018,
    lxCode            = 0x0001A,
@@ -179,10 +179,10 @@ enum LexicalType
    lxMultiDispatching= 0x0C03B,
    lxSealedMultiDispatching = 0x0C03C,
 //   lxOverridden      = 0x04047,
-//
-//   lxBaseParent      = 0x10023,
+
+   lxBaseParent      = 0x10023,
 //   lxAssignOperator  = 0x10024,
-//   lxOperator        = 0x10025,
+   lxOperator        = 0x10025,
 //   lxIntVariable     = 0x10028,
 //   lxLongVariable    = 0x10029,
 //   lxReal64Variable  = 0x1002A,
@@ -245,7 +245,7 @@ enum LexicalType
 //   lxTemplateAttribute = 0x2002C,
 //   lxEmbeddableAttr  = 0x2002D,
 //   lxBoxableAttr     = 0x2002E,
-//   lxClassRefAttr    = 0x2002F,
+   lxClassRefAttr    = 0x2002F,
 //   lxClosureMessage  = 0x20030,
 //   lxExtArgumentRef  = 0x20031,
 //   lxInternalRef     = 0x20032,
@@ -264,7 +264,7 @@ enum LexicalType
 //   lxClosureAttr     = 0x2003F,
 //   lxArgDispatcherAttr = 0x20040,
 //   lxFPUTarget       = 0x20041,
-//   lxIdleAttribute   = 0x20042,
+//   lxFalseAttribute   = 0x20042,
 //   lxTemplateParamAttr = 0x20043,
 //
 //   lxTempAttr        = 0x2010D,
@@ -1085,10 +1085,10 @@ public:
    }
 };
 
-//inline bool isSingleStatement(SyntaxTree::Node expr)
-//{
-//   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
-//}
+inline bool isSingleStatement(SyntaxTree::Node expr)
+{
+   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
+}
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;

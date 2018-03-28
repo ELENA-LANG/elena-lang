@@ -72,14 +72,14 @@
 #define V_CLASS          (ref_t)-16386
 //#define V_CONVERSION     (ref_t)-16387
 //#define V_SYMBOLEXPR     (ref_t)-16389
-//#define V_TYPETEMPL      (ref_t)-16390
-//#define V_TEMPLATE       (ref_t)-16391
+#define V_TYPETEMPL      (ref_t)-16390
+#define V_TEMPLATE       (ref_t)-16391
 #define V_FIELD          (ref_t)-16392
 //#define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
 //#define V_EXTERN         (ref_t)-16396
-//#define V_ATTRTEMPLATE   (ref_t)-16398
+#define V_ATTRTEMPLATE   (ref_t)-16398
 //#define V_ACCESSOR       (ref_t)-16399
 //#define V_BLOCK          (ref_t)-16400
 //#define V_NESTEDBLOCK    (ref_t)-16401

@@ -3,7 +3,15 @@ In development:
 ------                              
                             
               dev - redesign
-                 * support private and public classes - class / symbol without public attribute - private one
+                 * templates and identifier namespaces
+
+                 * namespaces and templates - it should be possible to provide a namespace for the template
+
+                 * namespaces and attributes??
+
+                 * warn if the class / variable is similar to the attribute
+
+
 
                  * refactor module resloving algorithm, no need to replicate the name space structure on physical level
                  * get rid of weak references
