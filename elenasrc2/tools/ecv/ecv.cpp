@@ -993,8 +993,8 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elReadOnlyRole))
    //   printLine("@flag ", "elReadOnlyRole", row, pageSize);
 
-   //if (test(flags, elNonStructureRole))
-   //   printLine("@flag ", "elNonStructureRole", row, pageSize);
+   if (test(flags, elNonStructureRole))
+      printLine("@flag ", "elNonStructureRole", row, pageSize);
 
    //if (test(flags, elSignature))
    //   printLine("@flag ", "elSignature", row, pageSize);

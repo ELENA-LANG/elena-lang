@@ -285,7 +285,7 @@ namespace _ELENA_
 //   const int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
 //   const int elReadOnlyRole        = 0x00000800;
-//   const int elNonStructureRole    = 0x00001000;
+   const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
 //   const int elExtension           = 0x00004980;

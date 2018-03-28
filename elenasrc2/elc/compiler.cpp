@@ -1948,70 +1948,70 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
 //      current = current.nextNode();
 //   }
 //}
-//
-//void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         int value = current.argument;
-//         if (_logic->validateFieldAttribute(value, isSealed, isConstant)) {
-//            if (value == lxStaticAttr) {
-//               isStaticField = true;
-//            }
-//            else if (value == V_OBJARRAY) {
-//               elementRef = fieldRef;
-//               fieldRef = V_OBJARRAY;
-//            }
-//            else if (value == -1) {
-//               // ignore if constant / sealed attribute was set
-//            }
-//            else if (fieldRef == 0) {
-//               fieldRef = current.argument;
-//            }
-//            else scope.raiseError(errInvalidHint, node);
-//         }
-//         else scope.raiseError(errInvalidHint, node);
-//      }
-//      else if (current == lxSize) {
-//         if (size == 0) {
-//            size = current.argument;
-//         }
-//         else scope.raiseError(errInvalidHint, node);
-//      }
-//      else if (current == lxClassRefAttr) {
-//         if (fieldRef == 0) {
-//            fieldRef = scope.moduleScope->module->mapReference(current.identifier(), false);
-//            if (current.existChild(lxSize)) {
-//               if (size == 0) {
-//                  size = current.findChild(lxSize).argument;
-//               }
-//               else scope.raiseError(errInvalidHint, node);
-//            }
-//         }
-//         else scope.raiseError(errInvalidHint, node);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   //HOTFIX : recognize primitive numeric constants
-//   if (fieldRef == V_OBJARRAY && isPrimitiveRef(elementRef)) {
-//      switch (elementRef) {
-//         case V_INT32:
-//         case V_PTR32:
-//         case V_REAL64:
-//         case V_MESSAGE:
-//         case V_SYMBOL:
-//         case V_SIGNATURE:
-//         case V_EXTMESSAGE:
-//            fieldRef = elementRef;
-//            elementRef = 0;
-//            break;
-//      }
-//   }
-//}
-//
+
+void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope/*, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         int value = current.argument;
+         if (_logic->validateFieldAttribute(value/*, isSealed, isConstant*/)) {
+            //if (value == lxStaticAttr) {
+            //   isStaticField = true;
+            //}
+            //else if (value == V_OBJARRAY) {
+            //   elementRef = fieldRef;
+            //   fieldRef = V_OBJARRAY;
+            //}
+            /*else */if (value == -1) {
+               // ignore if constant / sealed attribute was set
+            }
+            //else if (fieldRef == 0) {
+            //   fieldRef = current.argument;
+            //}
+            else scope.raiseError(errInvalidHint, node);
+         }
+         else scope.raiseError(errInvalidHint, node);
+      }
+      //else if (current == lxSize) {
+      //   if (size == 0) {
+      //      size = current.argument;
+      //   }
+      //   else scope.raiseError(errInvalidHint, node);
+      //}
+      //else if (current == lxClassRefAttr) {
+      //   if (fieldRef == 0) {
+      //      fieldRef = scope.moduleScope->module->mapReference(current.identifier(), false);
+      //      if (current.existChild(lxSize)) {
+      //         if (size == 0) {
+      //            size = current.findChild(lxSize).argument;
+      //         }
+      //         else scope.raiseError(errInvalidHint, node);
+      //      }
+      //   }
+      //   else scope.raiseError(errInvalidHint, node);
+      //}
+
+      current = current.nextNode();
+   }
+
+   ////HOTFIX : recognize primitive numeric constants
+   //if (fieldRef == V_OBJARRAY && isPrimitiveRef(elementRef)) {
+   //   switch (elementRef) {
+   //      case V_INT32:
+   //      case V_PTR32:
+   //      case V_REAL64:
+   //      case V_MESSAGE:
+   //      case V_SYMBOL:
+   //      case V_SIGNATURE:
+   //      case V_EXTMESSAGE:
+   //         fieldRef = elementRef;
+   //         elementRef = 0;
+   //         break;
+   //   }
+   //}
+}
+
 //void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
 //{
 //   SNode current = node.firstChild();
@@ -5783,46 +5783,45 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
 //
 //   return counter;
 //}
-//
-//void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleField)
-//{
-//   SNode current = node.firstChild();
-//
-//   while (current != lxNone) {
-//      if (current == lxClassField) {
-//         ref_t fieldRef = 0;
-//         ref_t elementRef = 0;
-//         bool isStatic = false;
-//         bool isSealed = false;
-//         bool isConst = false;
-//         int sizeHint = 0;
-//         declareFieldAttributes(current, scope, fieldRef, elementRef, sizeHint, isStatic, isSealed, isConst);
-//
-//         if (isStatic) {
-//            generateClassStaticField(scope, current, fieldRef, elementRef, isSealed, isConst);
-//         }
-//         else if (isSealed || isConst) {
-//            scope.raiseError(errIllegalField, current);
-//         }
-//         else generateClassField(scope, current, fieldRef, elementRef, sizeHint, singleField);
-//      }
-//      else if (current == lxFieldInit) {
-//         // HOTFIX : reallocate static constant
-//         SNode nameNode = current.findChild(lxMemberIdentifier);
-//         ObjectInfo info = scope.mapField(nameNode.identifier().c_str() + 1);
-//         if (info.kind == okStaticConstantField) {
-//            ReferenceNs name(scope.moduleScope->module->resolveReference(scope.reference));
-//            name.append(STATICFIELD_POSTFIX);
-//            name.append("##");
-//            name.appendInt(-(int)info.param);
-//
-//            *scope.info.staticValues.getIt(info.param) = (scope.moduleScope->module->mapReference(name) | mskConstArray);
-//         }
-//
-//      }
-//      current = current.nextNode();
-//   }
-//}
+
+void Compiler :: generateClassFields(SNode node, ClassScope& scope/*, bool singleField*/)
+{
+   SNode current = node.firstChild();
+
+   while (current != lxNone) {
+      if (current == lxClassField) {
+         //ref_t fieldRef = 0;
+         //ref_t elementRef = 0;
+         //bool isStatic = false;
+         //bool isSealed = false;
+         //bool isConst = false;
+         //int sizeHint = 0;
+         declareFieldAttributes(current, scope/*, fieldRef, elementRef, sizeHint, isStatic, isSealed, isConst*/);
+
+         //if (isStatic) {
+         //   generateClassStaticField(scope, current, fieldRef, elementRef, isSealed, isConst);
+         //}
+         //else if (isSealed || isConst) {
+         //   scope.raiseError(errIllegalField, current);
+         //}
+         /*else */generateClassField(scope, current/*, fieldRef, elementRef, sizeHint, singleField*/);
+      }
+      //else if (current == lxFieldInit) {
+      //   // HOTFIX : reallocate static constant
+      //   SNode nameNode = current.findChild(lxMemberIdentifier);
+      //   ObjectInfo info = scope.mapField(nameNode.identifier().c_str() + 1);
+      //   if (info.kind == okStaticConstantField) {
+      //      ReferenceNs name(scope.moduleScope->module->resolveReference(scope.reference));
+      //      name.append(STATICFIELD_POSTFIX);
+      //      name.append("##");
+      //      name.appendInt(-(int)info.param);
+
+      //      *scope.info.staticValues.getIt(info.param) = (scope.moduleScope->module->mapReference(name) | mskConstArray);
+      //   }
+      //}
+      current = current.nextNode();
+   }
+}
 
 void Compiler :: compileSymbolCode(ClassScope& scope)
 {
@@ -6001,134 +6000,134 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root/*, bool& closu
 //   }
 }
 
-//void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t classRef, ref_t elementRef, int sizeHint, bool singleField)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   if (singleField && sizeHint == -1) {
-//      scope.info.header.flags |= elDynamicRole;
-//      sizeHint = 0;
+void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current/*, ref_t classRef, ref_t elementRef, int sizeHint, bool singleField*/)
+{
+   //ModuleScope* moduleScope = scope.moduleScope;
+
+   //if (singleField && sizeHint == -1) {
+   //   scope.info.header.flags |= elDynamicRole;
+   //   sizeHint = 0;
+   //}
+
+   int flags = scope.info.header.flags;
+   int offset = 0;
+   ident_t terminal = current.findChild(lxIdentifier/*, lxPrivate*/).identifier();
+
+//   if (!classRef && typeAttr) {
+//      classRef = moduleScope->attributeHints.get(typeAttr);
 //   }
-//
-//   int flags = scope.info.header.flags;
-//   int offset = 0;
-//   ident_t terminal = current.findChild(lxIdentifier, lxPrivate).identifier();
-//
-////   if (!classRef && typeAttr) {
-////      classRef = moduleScope->attributeHints.get(typeAttr);
-////   }
-//
-//   // a role cannot have fields
-//   if (test(flags, elStateless))
-//      scope.raiseError(errIllegalField, current);
-//
-//   int size = (classRef != 0) ? _logic->defineStructSize(*moduleScope, classRef, elementRef) : 0;
-//   bool fieldArray = false;
-//   if (sizeHint != 0) {
-//      if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
-//         // for primitive types size should be specified
-//         size = sizeHint;
-//      }
-//      else if (sizeHint == 8 && classRef == V_INT32) {
-//         // HOTFIX : turn int32 flag into int64
-//         classRef = V_INT64;
-//         size = 8;
-//      }
-//      else if (size > 0) {
-//         size *= sizeHint;
-//
-//         // HOTFIX : to recognize the fixed length array
-//         if (elementRef == 0 && !isPrimitiveRef(classRef))
-//            elementRef = classRef;
-//
-//         fieldArray = true;
-//         classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef);
-//      }
-//      else scope.raiseError(errIllegalField, current);
-//   }
-//
-//   if (test(flags, elWrapper) && scope.info.fields.Count() > 0) {
-//      // wrapper may have only one field
-//      scope.raiseError(errIllegalField, current);
-//   }
-//   // if it is a primitive data wrapper
-//   else if (isPrimitiveRef(classRef) && !fieldArray) {
-//      if (testany(flags, elNonStructureRole | elDynamicRole))
-//         scope.raiseError(errIllegalField, current);
-//
-//      if (test(flags, elStructureRole)) {
-//         scope.info.fields.add(terminal, scope.info.size);
-//         scope.info.size += size;
-//      }
-//      else scope.raiseError(errIllegalField, current);
-//
-//      if (!_logic->tweakPrimitiveClassFlags(classRef, scope.info))
-//         scope.raiseError(errIllegalField, current);
-//   }
-//   // a class with a dynamic length structure must have no fields
-//   else if (test(scope.info.header.flags, elDynamicRole)) {
-//      if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
-//         // compiler magic : turn a field declaration into an array or string one
-//         if (size != 0 && !test(scope.info.header.flags, elNonStructureRole)) {
-//            scope.info.header.flags |= elStructureRole;
-//            scope.info.size = -size;
-//         }
-//
-//         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
-//         scope.info.fields.add(terminal, -2);
-//      }
-//      else scope.raiseError(errIllegalField, current);
-//   }
-//   else {
-//      if (scope.info.fields.exist(terminal)) {
-//         if (current.argument == INVALID_REF) {
-//            //HOTFIX : ignore duplicate autogenerated fields
-//            return;
-//         }
-//         else scope.raiseError(errDuplicatedField, current);
-//      }
-//
-//      // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-//      if (!test(scope.info.header.flags, elNonStructureRole) && singleField
-//         && test(scope.info.header.flags, elSealed) && size > 0 && scope.info.fields.Count() == 0)
-//      {
-//         scope.info.header.flags |= elStructureRole;
-//         scope.info.size = size;
-//
-//         scope.info.fields.add(terminal, 0);
-//         scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
-//      }
-//      // if it is a structure field
-//      else if (test(scope.info.header.flags, elStructureRole)) {
-//         if (size <= 0)
-//            scope.raiseError(errIllegalField, current);
-//
-//         if (scope.info.size != 0 && scope.info.fields.Count() == 0)
-//            scope.raiseError(errIllegalField, current);
-//
-//         offset = scope.info.size;
-//         scope.info.size += size;
-//
-//         scope.info.fields.add(terminal, offset);
-//         scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, elementRef));
-//      }
-//      // if it is a normal field
-//      else {
-//         // primitive / virtual classes cannot be declared
-//         if (size != 0 && _logic->isPrimitiveRef(classRef))
-//            scope.raiseError(errIllegalField, current);
-//
-//         scope.info.header.flags |= elNonStructureRole;
-//
-//         offset = scope.info.fields.Count();
-//         scope.info.fields.add(terminal, offset);
-//
-//         if (/*typeRef != 0 || */classRef != 0)
-//            scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
-//      }
-//   }
-//}
-//
+
+   // a role cannot have fields
+   if (test(flags, elStateless))
+      scope.raiseError(errIllegalField, current);
+
+   //int size = (classRef != 0) ? _logic->defineStructSize(*moduleScope, classRef, elementRef) : 0;
+   //bool fieldArray = false;
+   //if (sizeHint != 0) {
+   //   if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
+   //      // for primitive types size should be specified
+   //      size = sizeHint;
+   //   }
+   //   else if (sizeHint == 8 && classRef == V_INT32) {
+   //      // HOTFIX : turn int32 flag into int64
+   //      classRef = V_INT64;
+   //      size = 8;
+   //   }
+   //   else if (size > 0) {
+   //      size *= sizeHint;
+
+   //      // HOTFIX : to recognize the fixed length array
+   //      if (elementRef == 0 && !isPrimitiveRef(classRef))
+   //         elementRef = classRef;
+
+   //      fieldArray = true;
+   //      classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef);
+   //   }
+   //   else scope.raiseError(errIllegalField, current);
+   //}
+
+   //if (test(flags, elWrapper) && scope.info.fields.Count() > 0) {
+   //   // wrapper may have only one field
+   //   scope.raiseError(errIllegalField, current);
+   //}
+   //// if it is a primitive data wrapper
+   //else if (isPrimitiveRef(classRef) && !fieldArray) {
+   //   if (testany(flags, elNonStructureRole | elDynamicRole))
+   //      scope.raiseError(errIllegalField, current);
+
+   //   if (test(flags, elStructureRole)) {
+   //      scope.info.fields.add(terminal, scope.info.size);
+   //      scope.info.size += size;
+   //   }
+   //   else scope.raiseError(errIllegalField, current);
+
+   //   if (!_logic->tweakPrimitiveClassFlags(classRef, scope.info))
+   //      scope.raiseError(errIllegalField, current);
+   //}
+   //// a class with a dynamic length structure must have no fields
+   //else if (test(scope.info.header.flags, elDynamicRole)) {
+   //   if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
+   //      // compiler magic : turn a field declaration into an array or string one
+   //      if (size != 0 && !test(scope.info.header.flags, elNonStructureRole)) {
+   //         scope.info.header.flags |= elStructureRole;
+   //         scope.info.size = -size;
+   //      }
+
+   //      scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
+   //      scope.info.fields.add(terminal, -2);
+   //   }
+   //   else scope.raiseError(errIllegalField, current);
+   //}
+   //else {
+      if (scope.info.fields.exist(terminal)) {
+         if (current.argument == INVALID_REF) {
+            //HOTFIX : ignore duplicate autogenerated fields
+            return;
+         }
+         else scope.raiseError(errDuplicatedField, current);
+      }
+
+      //// if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+      //if (!test(scope.info.header.flags, elNonStructureRole) && singleField
+      //   && test(scope.info.header.flags, elSealed) && size > 0 && scope.info.fields.Count() == 0)
+      //{
+      //   scope.info.header.flags |= elStructureRole;
+      //   scope.info.size = size;
+
+      //   scope.info.fields.add(terminal, 0);
+      //   scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
+      //}
+      //// if it is a structure field
+      //else if (test(scope.info.header.flags, elStructureRole)) {
+      //   if (size <= 0)
+      //      scope.raiseError(errIllegalField, current);
+
+      //   if (scope.info.size != 0 && scope.info.fields.Count() == 0)
+      //      scope.raiseError(errIllegalField, current);
+
+      //   offset = scope.info.size;
+      //   scope.info.size += size;
+
+      //   scope.info.fields.add(terminal, offset);
+      //   scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, elementRef));
+      //}
+      //// if it is a normal field
+      //else {
+         //// primitive / virtual classes cannot be declared
+         //if (size != 0 && _logic->isPrimitiveRef(classRef))
+         //   scope.raiseError(errIllegalField, current);
+
+         scope.info.header.flags |= elNonStructureRole;
+
+         offset = scope.info.fields.Count();
+         scope.info.fields.add(terminal, offset);
+
+         //if (/*typeRef != 0 || */classRef != 0)
+         //   scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
+      //}
+   //}
+}
+
 //void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst)
 //{
 //   _Module* module = scope.moduleScope->module;
@@ -6380,9 +6379,9 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
 //      if (test(scope.info.header.flags, elExtension)) {
 //         scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;
 //      }
-//
-//      // generate fields
-//      generateClassFields(node, scope, countFields(node) == 1);
+
+      // generate fields
+      generateClassFields(node, scope/*, countFields(node) == 1*/);
    }
 
 //   _logic->injectVirtualCode(*scope.moduleScope, node, scope.reference, scope.info, *this, closed);

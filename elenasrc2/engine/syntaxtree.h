@@ -41,7 +41,7 @@ enum LexicalType
    lxClass           = 0x0000E,
 //   lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
-//   lxClassField      = 0x00013,
+   lxClassField      = 0x00013,
 //   lxFieldTemplate   = 0x00014,
 //   lxAttributeValue  = 0x00015,
    lxClassMethod     = 0x00016,

@@ -74,7 +74,7 @@
 //#define V_SYMBOLEXPR     (ref_t)-16389
 //#define V_TYPETEMPL      (ref_t)-16390
 //#define V_TEMPLATE       (ref_t)-16391
-//#define V_FIELD          (ref_t)-16392
+#define V_FIELD          (ref_t)-16392
 //#define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
@@ -320,7 +320,7 @@ public:
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue) = 0;
-//   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant) = 0;
+   virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/) = 0;
 //   virtual bool validateLocalAttribute(int& attrValue) = 0;
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
 //////   virtual bool validateWarningAttribute(int& attrValue) = 0;

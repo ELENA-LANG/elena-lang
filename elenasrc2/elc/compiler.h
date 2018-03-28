@@ -850,12 +850,12 @@ private:
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
-//   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
-//
+   void generateClassFields(SNode member, ClassScope& scope/*, bool singleField*/);
+
 //   void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-//   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
+   void declareFieldAttributes(SNode member, ClassScope& scope/*, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/);
    void declareVMT(SNode member, ClassScope& scope);
 ////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
@@ -963,7 +963,7 @@ private:
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
-//   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField);
+   void generateClassField(ClassScope& scope, SNode node/*, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField*/);
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);

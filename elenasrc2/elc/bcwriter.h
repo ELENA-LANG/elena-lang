@@ -105,7 +105,7 @@ class ByteCodeWriter
    void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
-//   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
+   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
    void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
    void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
    void writeProcedureDebugInfo(Scope& scope, ident_t path);

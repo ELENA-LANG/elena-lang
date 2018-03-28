@@ -1529,34 +1529,34 @@ void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug
 //   return it.Eof() ? -1 : *it;
 //}
 
-//void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings)
-//{
-//   bool structure = test(info.header.flags, elStructureRole);
-//   int remainingSize = info.size;
-//
-//   ClassInfo::FieldMap::Iterator it = info.fields.start();
-//   while (!it.Eof()) {
-//      if (!emptystr(it.key())) {
-//         DebugLineInfo symbolInfo(dsField, 0, 0, 0);
-//
-//         symbolInfo.addresses.field.nameRef = debugStrings->Position();
-//         if (structure) {
-//            int nextOffset = getNextOffset(it);
-//            if (nextOffset == -1) {
-//               symbolInfo.addresses.field.size = remainingSize;
-//            }
-//            else symbolInfo.addresses.field.size = nextOffset - *it;
-//
-//            remainingSize -= symbolInfo.addresses.field.size;
-//         }
-//
-//         debugStrings->writeLiteral(it.key());
-//
-//         writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
-//      }
-//      it++;
-//   }
-//}
+void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings)
+{
+   //bool structure = test(info.header.flags, elStructureRole);
+   //int remainingSize = info.size;
+
+   ClassInfo::FieldMap::Iterator it = info.fields.start();
+   while (!it.Eof()) {
+      if (!emptystr(it.key())) {
+         DebugLineInfo symbolInfo(dsField, 0, 0, 0);
+
+         symbolInfo.addresses.field.nameRef = debugStrings->Position();
+         //if (structure) {
+         //   int nextOffset = getNextOffset(it);
+         //   if (nextOffset == -1) {
+         //      symbolInfo.addresses.field.size = remainingSize;
+         //   }
+         //   else symbolInfo.addresses.field.size = nextOffset - *it;
+
+         //   remainingSize -= symbolInfo.addresses.field.size;
+         //}
+
+         debugStrings->writeLiteral(it.key());
+
+         writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+      }
+      it++;
+   }
+}
 
 void ByteCodeWriter :: writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings,
                                            ident_t className, int flags)
@@ -1704,7 +1704,7 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Compil
 
      // save class debug info
       writeClassDebugInfo(compilerScope.debugModule, &debugWriter, &debugStringWriter, compilerScope.module->resolveReference(reference & ~mskAnyRef), info.header.flags);
-      //writeFieldDebugInfo(info, &debugWriter, &debugStringWriter);
+      writeFieldDebugInfo(info, &debugWriter, &debugStringWriter);
 
       writeVMT(classPosition, it, scope);
 
