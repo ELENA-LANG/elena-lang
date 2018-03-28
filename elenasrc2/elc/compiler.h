@@ -234,6 +234,10 @@ private:
          _Module*       module;
          Scope*         parent;
    
+         virtual void raiseError(const char* message)
+         {
+            moduleScope->project->raiseError(message);
+         }
          virtual void raiseError(const char* message, SNode terminal)
          {
             parent->raiseError(message, terminal);
@@ -362,6 +366,10 @@ private:
 ////         constantHints.add(reference, classReference);
 ////      }
 //
+      virtual void raiseError(const char* message)
+      {
+         Scope::raiseError(message);
+      }
       virtual void raiseError(const char* message, SNode terminal)
       {
          moduleScope->raiseError(message, sourcePath, terminal);
@@ -581,13 +589,13 @@ private:
 //
 //         return scope->info.methodHints.get(ClassInfo::Attribute(message, maReference));
 //      }
-//
-//      ref_t getClassFlags(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->info.header.flags : 0;
-//      }
+
+      //ref_t getClassFlags(bool ownerClass = true)
+      //{
+      //   ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+      //   return scope ? scope->info.header.flags : 0;
+      //}
 //      ref_t getClassRef(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -671,12 +679,12 @@ private:
          return scope ? scope->reference : 0;
       }
 
-//      ref_t getClassFlags(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->info.header.flags : 0;
-//      }
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.header.flags : 0;
+      }
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
@@ -843,9 +851,9 @@ private:
 //   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
    void declareVMT(SNode member, ClassScope& scope);
 ////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
-//
-//   void declareMethodAttributes(SNode member, MethodScope& scope);
-//
+
+   void declareMethodAttributes(SNode member, MethodScope& scope);
+
 //   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 //
 //   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
@@ -911,9 +919,9 @@ private:
 //
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
-//
-//   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-//   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+
+   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
@@ -932,10 +940,10 @@ private:
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods = false, bool withOpenArgGenerics = false*/);
 
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//   void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
+   void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
 //   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//
-//   void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
+
+   void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 //   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 //
 //   void compilePreloadedCode(SymbolScope& scope);

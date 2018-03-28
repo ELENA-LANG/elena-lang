@@ -1651,9 +1651,9 @@ void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode no
             generateExpressionTree(writer, current, scope);
 //            current = lxIdle; // HOTFIX : to prevent duble compilation of closure parameters
             break;
-//         case lxExpression:
-//            generateExpressionTree(writer, current, scope/*, *//*EXPRESSION_EXPLICIT_MODE | *//*EXPRESSION_MESSAGE_MODE*/);
-//            break;
+         case lxExpression:
+            generateExpressionTree(writer, current, scope/*, EXPRESSION_MESSAGE_MODE*/);
+            break;
 //         case lxInlineClosure:
 //            // COMPILER MAGIC : advanced closure syntax
 //            generateClosureTree(writer, current, scope);

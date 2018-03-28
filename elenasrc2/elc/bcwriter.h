@@ -157,10 +157,10 @@ class ByteCodeWriter
 //   void newDynamicStructure(CommandTape& tape, int itemSize);
 //   void newDynamicWStructure(CommandTape& tape);
 //   void newDynamicNStructure(CommandTape& tape);
-//
-//   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
+
+   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
-//   void newDynamicObject(CommandTape& tape);
+   void newDynamicObject(CommandTape& tape);
 //   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
 
    void popObject(CommandTape& tape, LexicalType sourceTypeS);
@@ -168,9 +168,9 @@ class ByteCodeWriter
 //   void copyBase(CommandTape& tape, int size);
 //   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
-//   void initBase(CommandTape& tape, int fieldCount);
-//   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void initBase(CommandTape& tape, int fieldCount);
+   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
+   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
@@ -186,7 +186,7 @@ class ByteCodeWriter
 
    void setSubject(CommandTape& tape, ref_t subject);
 
-//   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
+   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion = true);
 //   void callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode);
@@ -315,7 +315,7 @@ class ByteCodeWriter
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
-//   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
+   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
    void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);

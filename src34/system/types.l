@@ -3,7 +3,7 @@
 class           = #16386.
 //struct          = #8197.
 //symbol          = #16389.
-//constructor     = #16384.
+constructor     = #16384.
 //listable        = #8198.
 //sealed          = #8195.
 //embeddable      = #8193.

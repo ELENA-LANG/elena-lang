@@ -140,7 +140,7 @@ public:
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool validateClassAttribute(int& attrValue);
-//   virtual bool validateMethodAttribute(int& attrValue);
+   virtual bool validateMethodAttribute(int& attrValue);
 //   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant);
 //   virtual bool validateLocalAttribute(int& attrValue);
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
@@ -149,11 +149,11 @@ public:
 //
 //   virtual bool validateClassFlag(ClassInfo& info, int flag);
 
-//   virtual bool isDefaultConstructorEnabled(ClassInfo& info)
-//   {
-//      return (info.header.flags & elDebugMask) != elEnumList;
-//   }
-//
+   virtual bool isDefaultConstructorEnabled(ClassInfo& info)
+   {
+      return /*(info.header.flags & elDebugMask) != elEnumList*/true;
+   }
+
 //   bool recognizeEmbeddableOp(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t verb, ref_t& subject);
 //   bool recognizeEmbeddableOp2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t verb, ref_t& subject);
 //

@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   7
+#define REVISION_VERSION   8
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -163,14 +163,14 @@ void printHelp()
    printf("?                       - list all classes\n");
 }
 
-//_Memory* findClassMetaData(_Module* module, ident_t referenceName)
-//{
-//   ref_t reference = module->mapReference(referenceName, true);
-//   if (reference == 0) {
-//      return NULL;
-//   }
-//   return module->mapSection(reference | mskMetaRDataRef, true);
-//}
+_Memory* findClassMetaData(_Module* module, ident_t referenceName)
+{
+   ref_t reference = module->mapReference(referenceName, true);
+   if (reference == 0) {
+      return NULL;
+   }
+   return module->mapSection(reference | mskMetaRDataRef, true);
+}
 
 _Memory* findClassVMT(_Module* module, ident_t referenceName)
 {
@@ -910,41 +910,41 @@ void printSymbol(_Module* module, ident_t symbolReference, int pageSize)
    print("@end\n");
 }
 
-//bool loadClassInfo(_Module* module, ident_t reference, ClassInfo& info)
-//{
-//   // find class meta data
-//   _Memory* data = findClassMetaData(module, reference);
-//   if (data == NULL) {
-//      printLine("Class not found:", reference);
-//
-//      return false;
-//   }
-//
-//   MemoryReader reader(data);
-//   info.load(&reader);
-//
-//   return true;
-//}
-
-void listFields(_Module* module, ReferenceNs className, int& row, int pageSize)
+bool loadClassInfo(_Module* module, ident_t reference, ClassInfo& info)
 {
-   //ClassInfo info;
-   //if (!loadClassInfo(module, className, info)) {
-   //   return;
-   //}
-   //
-   //ClassInfo::FieldMap::Iterator it = info.fields.start();
-   //while (!it.Eof()) {
-   //   ref_t type = info.fieldTypes.get(*it).value1;
-   //   if (type != 0) {
-   //      ident_t typeName = module->resolveReference(type);
+   // find class meta data
+   _Memory* data = findClassMetaData(module, reference);
+   if (data == NULL) {
+      printLine("Class not found:", reference);
 
-   //      printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
-   //   }
-   //   else printLine("Field ", (const char*)it.key(), row, pageSize);
-   //
-   //   it++;
-   //}
+      return false;
+   }
+
+   MemoryReader reader(data);
+   info.load(&reader);
+
+   return true;
+}
+
+void listFields(_Module* module, ident_t className, int& row, int pageSize)
+{
+   ClassInfo info;
+   if (!loadClassInfo(module, className, info)) {
+      return;
+   }
+   
+   ClassInfo::FieldMap::Iterator it = info.fields.start();
+   while (!it.Eof()) {
+      /*ref_t type = info.fieldTypes.get(*it).value1;
+      if (type != 0) {
+         ident_t typeName = module->resolveReference(type);
+
+         printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
+      }
+      else */printLine("Field ", (const char*)it.key(), row, pageSize);
+   
+      it++;
+   }
 }
 
 void listFlags(int flags, int& row, int pageSize)
@@ -1134,7 +1134,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       }         
 
       listFlags(header.flags, row, pageSize);
-//      listFields(module, reference, row, pageSize);
+      listFields(module, className, row, pageSize);
    }
 
    //if (header.classRef != 0 && withConstructors) {

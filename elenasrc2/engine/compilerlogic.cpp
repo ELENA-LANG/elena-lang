@@ -1139,13 +1139,13 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, _Compiler& compiler
 
    if (test(info.header.flags, elNestedClass)) {
       // stateless inline class
-//      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
+      if (info.fields.Count() == 0/* && !test(info.header.flags, elStructureRole)*/) {
          info.header.flags |= elStateless;
 
          // stateless inline class is its own class class
          info.header.classRef = classRef;
-//      }
-//      else info.header.flags &= ~elStateless;
+      }
+      else info.header.flags &= ~elStateless;
 
       // nested class is sealed
       info.header.flags |= elSealed;
@@ -1278,52 +1278,52 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
    }
 }
 
-//bool CompilerLogic :: validateMethodAttribute(int& attrValue)
-//{
-//   switch ((size_t)attrValue)
-//   {
-//      case V_IFBRANCH:
-//         attrValue = tpIfBranch;
-//         return true;
-//      case V_IFNOTBRANCH:
-//         attrValue = tpIfNotBranch;
-//         return true;
-//      case V_STATCKSAFE:
-//         attrValue = tpStackSafe;
-//         return true;
-//      case V_EMBEDDABLE:
-//         attrValue = tpEmbeddable;
-//         return true;
-//      case V_GENERIC:
-//         attrValue = (tpGeneric | tpSealed);
-//         return true;
-//      case V_SEALED:
-//         attrValue = tpSealed;
-//         return true;
-//      case V_ACTION:
-//         attrValue = tpAction;
-//         return true;
-//      case V_CONSTRUCTOR:
-//         attrValue = tpConstructor;
-//         return true;
-//      case V_CONVERSION:
-//         attrValue = (tpConversion | tpSealed);
-//         return true;
-//      case V_MULTI:
-//         // obsolete
-//         attrValue = /*tpMultimethod*/0;
-//         return true;
-//      case V_METHOD:
-//         attrValue = 0;
-//         return true;
-//      case V_STATIC:
-//         attrValue = (tpStatic | tpSealed);
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-////
+bool CompilerLogic :: validateMethodAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
+      //case V_IFBRANCH:
+      //   attrValue = tpIfBranch;
+      //   return true;
+      //case V_IFNOTBRANCH:
+      //   attrValue = tpIfNotBranch;
+      //   return true;
+      //case V_STATCKSAFE:
+      //   attrValue = tpStackSafe;
+      //   return true;
+      //case V_EMBEDDABLE:
+      //   attrValue = tpEmbeddable;
+      //   return true;
+      //case V_GENERIC:
+      //   attrValue = (tpGeneric | tpSealed);
+      //   return true;
+      //case V_SEALED:
+      //   attrValue = tpSealed;
+      //   return true;
+      //case V_ACTION:
+      //   attrValue = tpAction;
+      //   return true;
+      case V_CONSTRUCTOR:
+         attrValue = tpConstructor;
+         return true;
+      //case V_CONVERSION:
+      //   attrValue = (tpConversion | tpSealed);
+      //   return true;
+      //case V_MULTI:
+      //   // obsolete
+      //   attrValue = /*tpMultimethod*/0;
+      //   return true;
+      //case V_METHOD:
+      //   attrValue = 0;
+      //   return true;
+      //case V_STATIC:
+      //   attrValue = (tpStatic | tpSealed);
+      //   return true;
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant)
 //{
 //   switch ((size_t)attrValue)

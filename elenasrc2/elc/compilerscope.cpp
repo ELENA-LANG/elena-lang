@@ -92,7 +92,7 @@ void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Modul
          it++;
       }
 
-      //target.fields.add(copy.fields);
+      target.fields.add(copy.fields);
 
       //// import field types
       //ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();

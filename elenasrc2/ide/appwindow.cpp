@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      IDE main window class implementation
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "appwindow.h"
@@ -2095,6 +2095,8 @@ void IDEController::ProjectManager::setBoolSetting(const char* key, bool value)
 
 void IDEController::ProjectManager :: reloadSources()
 {
+   _sources.clear();
+
    _ELENA_::Map<_ELENA_::ident_t, _ELENA_::_ConfigFile::Node> list;
    _model->project.xmlConfig.select(IDE_FILES_XMLSECTION, list);
 
@@ -2110,6 +2112,8 @@ void IDEController::ProjectManager :: reloadSources()
 
 void IDEController::ProjectManager :: reloadForwards()
 {
+   _forwards.clear();
+
    _ELENA_::Map<_ELENA_::ident_t, _ELENA_::_ConfigFile::Node> list;
    _model->project.xmlConfig.select(IDE_FORWARDS_XMLSECTION, list);
 

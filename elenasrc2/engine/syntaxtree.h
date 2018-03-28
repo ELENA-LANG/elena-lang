@@ -153,7 +153,7 @@ enum LexicalType
 //   lxFieldExpression = 0x0C022,
 //   lxExternFrame     = 0x04023,
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
-//   lxCreatingClass   = 0x0C025,   // arg - count
+   lxCreatingClass   = 0x0C025,   // arg - count
 //   lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
 //   lxNewOp           = 0x0C028,
